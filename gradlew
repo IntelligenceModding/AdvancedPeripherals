@@ -20,8 +20,12 @@ while [ -h "$PRG" ] ; do
     fi
 done
 SAVED="`pwd`"
+# shellcheck disable=SC2164
+# shellcheck disable=SC2006
 cd "`dirname \"$PRG\"`/" >/dev/null
+# shellcheck disable=SC2006
 APP_HOME="`pwd -P`"
+# shellcheck disable=SC2164
 cd "$SAVED" >/dev/null
 
 APP_NAME="Gradle"
