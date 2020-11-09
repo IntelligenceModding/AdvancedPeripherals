@@ -1,3 +1,5 @@
 {
-  "item.advancedperipherals.silver_ingot": "Silver_Ingot"
+  "item.advancedperipherals.silver_ingot": "Silver Ingot",
+  "block.advancedperipherals.silver_ore": "Silver Ore",
+  "block.advancedperipherals.silver_block": "Silver Block"
 }
