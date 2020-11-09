@@ -13,7 +13,6 @@ public class ModItems {
     }
 
     private static RegistryObject<Item> registerItem(String name, ItemGroup group) {
-        Registration.ITEMS.register(name, () -> new Item(new Item.Properties().group(group)));
-        return null;
+        return Registration.ITEMS.register(name, () -> new Item(new Item.Properties().group(group)));
     }
 }
