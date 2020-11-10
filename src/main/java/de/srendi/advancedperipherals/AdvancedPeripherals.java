@@ -1,8 +1,11 @@
 package de.srendi.advancedperipherals;
 
+import de.srendi.advancedperipherals.setup.ModItems;
 import de.srendi.advancedperipherals.setup.Registration;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
+import net.minecraft.item.ItemGroup;
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -68,4 +71,12 @@ public class AdvancedPeripherals {
             LOGGER.info("HELLO from Register Block");
         }
     }
+
+    public static final ItemGroup TAB = new ItemGroup("advancedperipheralstab") {
+        @Override
+        public ItemStack createIcon() {
+            return new ItemStack(ModItems.SILVER_INGOT.get());
+        }
+    };
+
 }
