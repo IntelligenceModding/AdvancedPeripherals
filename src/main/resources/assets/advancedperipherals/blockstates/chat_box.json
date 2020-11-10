@@ -1,0 +1,5 @@
+{
+    "variants": {
+      "": { "model": "advancedperipherals:block/chat_box" }
+    }
+}
