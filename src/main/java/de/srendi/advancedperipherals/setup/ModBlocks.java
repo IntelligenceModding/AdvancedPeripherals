@@ -1,5 +1,7 @@
 package de.srendi.advancedperipherals.setup;
 
+import de.srendi.advancedperipherals.AdvancedPeripherals;
+import de.srendi.advancedperipherals.blocks.SilverOre;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
@@ -14,9 +16,7 @@ import java.util.function.Supplier;
 
 public class ModBlocks {
     
-    public static final RegistryObject<Block> SILVER_ORE = register("silver_ore", () ->
-            new Block(AbstractBlock.Properties.create(Material.ROCK).hardnessAndResistance(3, 10).harvestLevel(2)
-                    .sound(SoundType.STONE).harvestTool(ToolType.PICKAXE)));
+    public static final RegistryObject<Block> SILVER_ORE = register("silver_ore", SilverOre::new);
 
     public static final RegistryObject<Block> SILVER_BLOCK = register("silver_block", () ->
             new Block(AbstractBlock.Properties.create(Material.IRON).hardnessAndResistance(3, 10).harvestLevel(1)
@@ -32,7 +32,7 @@ public class ModBlocks {
 
     private static <T extends Block>RegistryObject<T> register(String name, Supplier<T> block) {
         RegistryObject<T> ret = registerNoItem(name, block);
-        Registration.ITEMS.register(name, () -> new BlockItem(ret.get(), new Item.Properties().group(ItemGroup.BUILDING_BLOCKS)));
+        Registration.ITEMS.register(name, () -> new BlockItem(ret.get(), new Item.Properties().group(AdvancedPeripherals.TAB)));
         return ret;
     }
 }
