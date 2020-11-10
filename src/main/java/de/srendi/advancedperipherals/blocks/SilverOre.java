@@ -13,7 +13,8 @@ public class SilverOre extends Block {
                 .hardnessAndResistance(3, 10)
                 .harvestLevel(1)
                 .sound(SoundType.STONE)
-                .harvestTool(ToolType.PICKAXE));
+                .harvestTool(ToolType.PICKAXE)
+                .setRequiresTool());
     }
 
 }
