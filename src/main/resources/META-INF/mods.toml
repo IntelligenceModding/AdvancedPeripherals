@@ -1,5 +1,5 @@
 modLoader="javafml"
-loaderVersion="[34,)"
+loaderVersion="[35,34)"
 license="All rights reserved"
 issueTrackerURL="http://my.issue.tracker/"
 [[mods]]
@@ -16,7 +16,7 @@ Advanced Peripherals adds' a lot of new features for Computercraft.
 [[dependencies.advancedperipherals]] #optional
     modId="forge"
     mandatory=true
-    versionRange="[34,)"
+    versionRange="[35,34)"
     ordering="NONE"
     side="BOTH"
 [[dependencies.advancedperipherals]]
