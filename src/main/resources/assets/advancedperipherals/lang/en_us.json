@@ -1,7 +1,7 @@
 {
   "item.advancedperipherals.silver_ingot": "Silver Ingot",
   "block.advancedperipherals.silver_ore": "Silver Ore",
-  "block.advancedperipherals.speaker": "Speaker",
+  "block.advancedperipherals.light_sensor": "Light Sensor",
   "block.advancedperipherals.chat_box": "Chat box",
   "itemGroup.advancedperipheralstab": "Advanced Peripherals"
 }

@@ -5,9 +5,9 @@ import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraftforge.common.ToolType;
 
-public class Speaker extends Block {
+public class LightSensor extends Block {
 
-    public Speaker() {
+    public LightSensor() {
         super(Properties.create(Material.WOOD)
                 .hardnessAndResistance(2, 10)
                 .harvestLevel(0)

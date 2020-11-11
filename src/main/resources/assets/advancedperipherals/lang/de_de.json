@@ -1,3 +1,7 @@
 {
-  "item.advancedperipherals.silver_ingot": "Silberbarren"
+  "item.advancedperipherals.silver_ingot": "Silberbarren",
+  "block.advancedperipherals.silver_ore": "Silbererz",
+  "block.advancedperipherals.light_sensor": "Licht sensor",
+  "block.advancedperipherals.chat_box": "Chat box",
+  "itemGroup.advancedperipheralstab": "Advanced Peripherals"
 }
