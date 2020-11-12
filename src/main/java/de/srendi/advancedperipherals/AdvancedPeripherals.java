@@ -39,8 +39,7 @@ public class AdvancedPeripherals {
     }
 
     private void setup(final FMLCommonSetupEvent event) {
-        LOGGER.info("HELLO FROM PREINIT");
-        LOGGER.info("DIRT BLOCK >> {}", Blocks.DIRT.getRegistryName());
+        
     }
 
     private void doClientStuff(final FMLClientSetupEvent event) {
@@ -54,22 +53,16 @@ public class AdvancedPeripherals {
     }
 
     private void processIMC(final InterModProcessEvent event) {
-        LOGGER.info("Got IMC {}", event.getIMCStream().
-                map(m->m.getMessageSupplier().get()).
-                collect(Collectors.toList()));
+
     }
 
     @SubscribeEvent
     public void onServerStarting(FMLServerStartingEvent event) {
-        LOGGER.info("HELLO from server starting");
+        
     }
 
     @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
-    public static class RegistryEvents {
-        @SubscribeEvent
-        public static void onBlocksRegistry(final RegistryEvent.Register<Block> blockRegistryEvent) {
-            LOGGER.info("HELLO from Register Block");
-        }
+
     }
 
     public static final ItemGroup TAB = new ItemGroup("advancedperipheralstab") {
