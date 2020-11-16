@@ -1,13 +1,12 @@
 package de.srendi.advancedperipherals;
 
+import dan200.computercraft.api.ComputerCraftAPI;
+import de.srendi.advancedperipherals.blocks.ChatBox;
 import de.srendi.advancedperipherals.setup.ModItems;
 import de.srendi.advancedperipherals.setup.Registration;
-import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.InterModComms;
 import net.minecraftforge.fml.common.Mod;
@@ -20,7 +19,6 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.stream.Collectors;
 
 @Mod(AdvancedPeripherals.MOD_ID)
 public class AdvancedPeripherals {
@@ -39,10 +37,12 @@ public class AdvancedPeripherals {
     }
 
     private void setup(final FMLCommonSetupEvent event) {
-        
+        ComputerCraftAPI.registerPeripheralProvider(new ChatBox());
     }
 
     private void doClientStuff(final FMLClientSetupEvent event) {
+        ComputerCraftAPI.registerPeripheralProvider(new ChatBox());
+
     }
 
     private void enqueueIMC(final InterModEnqueueEvent event) {
@@ -53,16 +53,12 @@ public class AdvancedPeripherals {
     }
 
     private void processIMC(final InterModProcessEvent event) {
-
+        ComputerCraftAPI.registerPeripheralProvider(new ChatBox());
     }
 
     @SubscribeEvent
     public void onServerStarting(FMLServerStartingEvent event) {
         
-    }
-
-    @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
-
     }
 
     public static final ItemGroup TAB = new ItemGroup("advancedperipheralstab") {

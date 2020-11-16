@@ -23,6 +23,6 @@ public class SilverOre extends Block {
 
     @Override
     public int getExpDrop(BlockState state, IWorldReader world, BlockPos pos, int fortune, int silktouch) {
-        return 0;
+        return 2;
     }
 }

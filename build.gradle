@@ -78,7 +78,7 @@ sourceSets.main.resources { srcDir 'src/generated/resources' }
 dependencies {
     implementation 'org.jetbrains:annotations:20.1.0'
 
-    minecraft 'net.minecraftforge:forge:1.16.4-35.0.15'
+    minecraft 'net.minecraftforge:forge:1.16.4-35.0.18'
 
     implementation fg.deobf("org.squiddev:cc-tweaked-1.16.4:1.94.0")
 }
