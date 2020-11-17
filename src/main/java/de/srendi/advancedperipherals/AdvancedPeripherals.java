@@ -41,7 +41,6 @@ public class AdvancedPeripherals {
     }
 
     private void doClientStuff(final FMLClientSetupEvent event) {
-        ComputerCraftAPI.registerPeripheralProvider(new ChatBox());
 
     }
 
