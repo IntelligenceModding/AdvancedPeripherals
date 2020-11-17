@@ -53,7 +53,6 @@ public class AdvancedPeripherals {
     }
 
     private void processIMC(final InterModProcessEvent event) {
-        ComputerCraftAPI.registerPeripheralProvider(new ChatBox());
     }
 
     @SubscribeEvent
