@@ -1,12 +1,8 @@
 package de.srendi.advancedperipherals.blocks;
 
-import dan200.computercraft.api.lua.IArguments;
-import dan200.computercraft.api.lua.ILuaContext;
-import dan200.computercraft.api.lua.LuaException;
-import dan200.computercraft.api.lua.MethodResult;
 import dan200.computercraft.api.peripheral.IPeripheral;
 import dan200.computercraft.api.peripheral.IPeripheralProvider;
-import dan200.computercraft.core.asm.LuaMethod;
+import de.srendi.advancedperipherals.addons.computercraft.Peripheral;
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
@@ -17,10 +13,6 @@ import net.minecraftforge.common.ToolType;
 import net.minecraftforge.common.util.LazyOptional;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.ArrayList;
-import java.util.List;
-
 
 public class ChatBox extends Block implements IPeripheralProvider, IPeripheral {
 
@@ -36,16 +28,14 @@ public class ChatBox extends Block implements IPeripheralProvider, IPeripheral {
     @NotNull
     @Override
     public LazyOptional<IPeripheral> getPeripheral(@NotNull World world, @NotNull BlockPos blockPos, @NotNull Direction direction) {
-        IPeripheral peripheral = this;
+        IPeripheral peripheral = new Peripheral("chatBox");
         return LazyOptional.of(() -> peripheral);
     }
 
 
     @NotNull
     @Override
-    public String getType() {
-        return "chatBox";
-    }
+    public String getType() { return "chatBox"; }
 
     @Override
     public boolean equals(@Nullable IPeripheral iPeripheral) {

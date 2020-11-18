@@ -50,7 +50,6 @@ public class AdvancedPeripherals {
             return "Hello world";
         });
     }
-
     private void processIMC(final InterModProcessEvent event) {
     }
 
