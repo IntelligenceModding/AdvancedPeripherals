@@ -14,7 +14,7 @@ import net.minecraftforge.common.util.LazyOptional;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class ChatBox extends Block implements IPeripheralProvider, IPeripheral {
+public class ChatBox extends Block implements IPeripheralProvider {
 
     public ChatBox() {
         super(Properties.create(Material.WOOD)
@@ -28,17 +28,6 @@ public class ChatBox extends Block implements IPeripheralProvider, IPeripheral {
     @NotNull
     @Override
     public LazyOptional<IPeripheral> getPeripheral(@NotNull World world, @NotNull BlockPos blockPos, @NotNull Direction direction) {
-        IPeripheral peripheral = new Peripheral("chatBox");
-        return LazyOptional.of(() -> peripheral);
-    }
-
-
-    @NotNull
-    @Override
-    public String getType() { return "chatBox"; }
-
-    @Override
-    public boolean equals(@Nullable IPeripheral iPeripheral) {
-        return false;
+        return LazyOptional.of(() -> new Peripheral("chatBox"));
     }
 }
