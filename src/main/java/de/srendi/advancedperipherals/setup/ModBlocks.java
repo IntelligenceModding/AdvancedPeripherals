@@ -13,7 +13,7 @@ import java.util.function.Supplier;
 public class ModBlocks {
     
     public static final RegistryObject<Block> SILVER_ORE = register("silver_ore", SilverOre::new);
-    public static final RegistryObject<Block> SPEAKER = register("light_sensor", LightSensor::new);
+    public static final RegistryObject<Block> LIGHT_SENSOR = register("light_sensor", LightSensor::new);
     public static final RegistryObject<Block> CHAT_BOX = register("chat_box", ChatBox::new);
 
     static void register() {

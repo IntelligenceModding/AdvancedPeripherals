@@ -16,8 +16,6 @@ version = '1.0'
 group = 'de.srendi.advancedperipherals'
 archivesBaseName = 'advancedperipherals'
 
-sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8'
-
 println('Java: ' + System.getProperty('java.version') + ' JVM: ' + System.getProperty('java.vm.version') + '(' + System.getProperty('java.vendor') + ') Arch: ' + System.getProperty('os.arch'))
 minecraft {
 
@@ -77,9 +75,11 @@ sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 dependencies {
 
+    compileOnly "org.jetbrains:annotations:${jb_annotations}"
+
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
 
-    compileOnly fg.deobf("org.squiddev:cc-tweaked-${minecraft_version}:${cc_version}")
+    implementation fg.deobf("org.squiddev:cc-tweaked-${minecraft_version}:${cc_version}")
 }
 
 repositories {
@@ -93,7 +93,7 @@ jar {
         attributes([
             "Specification-Title": "advancedperipherals",
             "Specification-Vendor": "sr_endi",
-            "Specification-Version": "0.1",
+            "Specification-Version": "${version}",
             "Implementation-Title": "advancedperipherals",
             "Implementation-Version": "${version}",
             "Implementation-Vendor" :"sr_endi",
