@@ -9,10 +9,8 @@ import dan200.computercraft.api.peripheral.IDynamicPeripheral;
 import dan200.computercraft.api.peripheral.IPeripheral;
 import net.minecraft.tileentity.TileEntity;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
 
 public class AdvancedPeripheral implements IDynamicPeripheral, ComputerEventManager.IComputerEventSender{
 
@@ -44,11 +42,10 @@ public class AdvancedPeripheral implements IDynamicPeripheral, ComputerEventMana
     }
 
     @NotNull
+    @Nonnull
     @Override
-    public String[] @NotNull getMethodNames() {
-        String[] methods = new String[1];
-        methods[0] = "";
-        return methods;
+    public String @NotNull [] getMethodNames() {
+        return new String[0];
     }
 
     @NotNull
