@@ -1,6 +1,7 @@
 package de.srendi.advancedperipherals;
 
 import dan200.computercraft.api.ComputerCraftAPI;
+import de.srendi.advancedperipherals.blocks.ChatBox;
 import de.srendi.advancedperipherals.blocks.LightSensor;
 import de.srendi.advancedperipherals.setup.ModItems;
 import de.srendi.advancedperipherals.setup.Registration;
@@ -23,6 +24,7 @@ public class AdvancedPeripherals {
 
         MinecraftForge.EVENT_BUS.register(this);
         ComputerCraftAPI.registerPeripheralProvider(new LightSensor());
+        ComputerCraftAPI.registerPeripheralProvider(new ChatBox());
     }
 
     public static final ItemGroup TAB = new ItemGroup("advancedperipheralstab") {

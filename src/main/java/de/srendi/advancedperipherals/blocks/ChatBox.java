@@ -4,6 +4,7 @@ import dan200.computercraft.api.peripheral.IPeripheral;
 import dan200.computercraft.api.peripheral.IPeripheralProvider;
 import de.srendi.advancedperipherals.addons.computercraft.AdvancedPeripheral;
 import de.srendi.advancedperipherals.blocks.tileentity.ChatBoxTileEntity;
+import de.srendi.advancedperipherals.setup.ModTileEntityTypes;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.SoundType;
@@ -39,9 +40,14 @@ public class ChatBox extends Block implements IPeripheralProvider{
 
     }
 
+    @Override
+    public boolean hasTileEntity(BlockState state) {
+        return true;
+    }
+
     @Nullable
     @Override
     public TileEntity createTileEntity(BlockState state, IBlockReader world) {
-        return new ChatBoxTileEntity();
+        return ModTileEntityTypes.CHAT_BOX.get().create();
     }
 }

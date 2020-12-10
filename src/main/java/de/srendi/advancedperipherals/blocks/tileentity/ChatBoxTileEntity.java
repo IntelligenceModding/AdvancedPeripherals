@@ -1,34 +1,52 @@
 package de.srendi.advancedperipherals.blocks.tileentity;
 
+import com.google.common.collect.Lists;
+import dan200.computercraft.api.lua.IArguments;
+import dan200.computercraft.api.lua.ILuaContext;
+import dan200.computercraft.api.lua.LuaException;
+import dan200.computercraft.api.lua.MethodResult;
+import dan200.computercraft.api.peripheral.IComputerAccess;
+import dan200.computercraft.api.peripheral.IDynamicPeripheral;
+import dan200.computercraft.api.peripheral.IPeripheral;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
-import de.srendi.advancedperipherals.addons.computercraft.AdvancedPeripheral;
+import de.srendi.advancedperipherals.addons.computercraft.ComputerEventManager;
 import de.srendi.advancedperipherals.setup.ModTileEntityTypes;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextComponent;
+import net.minecraft.tileentity.TileEntityType;
 import org.apache.logging.log4j.Level;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.UUID;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
-public class ChatBoxTileEntity extends TileEntity implements ITickableTileEntity {
+public class ChatBoxTileEntity extends TileEntity implements ITickableTileEntity, ComputerEventManager.IComputerEventSender {
 
+    private int tick;
 
     public ChatBoxTileEntity() {
-        super(ModTileEntityTypes.CHAT_BOX.get());
+        this(ModTileEntityTypes.CHAT_BOX.get());
+    }
+
+    public ChatBoxTileEntity(final TileEntityType<?> tileEntityType) {
+        super(tileEntityType);
     }
 
     @Override
     public void tick() {
-        int x = this.pos.getX();
-        int y = this.pos.getY();
-        int z = this.pos.getZ();
-        AdvancedPeripherals.LOGGER.log(Level.INFO, "It works");
-        for (PlayerEntity playerEntity : world.getEntitiesWithinAABB(PlayerEntity.class, new AxisAlignedBB(((float) x - 5.0F), ((float) y - 5.0F), ((float) z - 5.0F), ((float) (x + 1) + 5.0F), ((float) (y + 1) + 5.0F), ((float) (z + 1) + 5.0F)))) {
-            playerEntity.sendMessage(new StringTextComponent("eeee"), UUID.randomUUID());
+        tick++;
+        if(tick == 40) {
+            AdvancedPeripherals.LOGGER.log(Level.ERROR, "noice");
+            sendEvent(this, "tickEvent", Arrays.asList("Noice"));
+            tick = 0;
         }
     }
+
+    @Override
+    public void sendEvent(TileEntity te, String name, Object... params) {
+
+    }
+
 }

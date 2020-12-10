@@ -1,13 +1,12 @@
 package de.srendi.advancedperipherals.addons.computercraft;
 
-import dan200.computercraft.api.lua.IArguments;
-import dan200.computercraft.api.lua.ILuaContext;
-import dan200.computercraft.api.lua.LuaException;
-import dan200.computercraft.api.lua.MethodResult;
+import dan200.computercraft.api.lua.*;
 import dan200.computercraft.api.peripheral.IComputerAccess;
 import dan200.computercraft.api.peripheral.IDynamicPeripheral;
 import dan200.computercraft.api.peripheral.IPeripheral;
+import de.srendi.advancedperipherals.AdvancedPeripherals;
 import net.minecraft.tileentity.TileEntity;
+import org.apache.logging.log4j.Level;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
@@ -41,16 +40,18 @@ public class AdvancedPeripheral implements IDynamicPeripheral, ComputerEventMana
 
     }
 
-    @NotNull
     @Nonnull
     @Override
-    public String @NotNull [] getMethodNames() {
-        return new String[0];
+    public String[] getMethodNames() {
+        String[] methods = new String[1];
+        methods[0] = "Nice";
+        return methods;
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public MethodResult callMethod(@NotNull IComputerAccess iComputerAccess, @NotNull ILuaContext iLuaContext, int i, @NotNull IArguments iArguments) throws LuaException {
-        return null;
+        AdvancedPeripherals.LOGGER.log(Level.ERROR, "It works (:" + iComputerAccess + " " + iLuaContext + " " + i + " " + iArguments);
+        return MethodResult.of("eeeeeeeeeeeeee");
     }
 }
