@@ -1,14 +1,16 @@
 package de.srendi.advancedperipherals;
 
-import dan200.computercraft.api.ComputerCraftAPI;
-import de.srendi.advancedperipherals.blocks.ChatBox;
-import de.srendi.advancedperipherals.blocks.LightSensor;
+import de.srendi.advancedperipherals.addons.computercraft.ComputerCraft;
 import de.srendi.advancedperipherals.setup.ModItems;
 import de.srendi.advancedperipherals.setup.Registration;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -20,11 +22,11 @@ public class AdvancedPeripherals {
     public static final Logger LOGGER = LogManager.getLogger();
 
     public AdvancedPeripherals() {
-        Registration.register();
+        IEventBus modBus = FMLJavaModLoadingContext.get().getModEventBus();
 
+        modBus.addListener(this::commonSetup);
+        Registration.register();
         MinecraftForge.EVENT_BUS.register(this);
-        ComputerCraftAPI.registerPeripheralProvider(new LightSensor());
-        ComputerCraftAPI.registerPeripheralProvider(new ChatBox());
     }
 
     public static final ItemGroup TAB = new ItemGroup("advancedperipheralstab") {
@@ -33,5 +35,13 @@ public class AdvancedPeripherals {
             return new ItemStack(ModItems.SILVER_INGOT.get());
         }
     };
+
+    private void commonSetup(FMLCommonSetupEvent event) {
+        LOGGER.log(Level.INFO, "AdvancedPeripherals says hello!");
+
+        ComputerCraft.initiate();
+    }
+
+    //TODO: Add more comments to the code
 
 }

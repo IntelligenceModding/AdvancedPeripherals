@@ -84,7 +84,8 @@ dependencies {
 
 repositories {
 
-    maven { url = 'https://squiddev.cc/maven/' }
+    maven { url 'https://squiddev.cc/maven/' }
+    maven { url 'https://modmaven.dev/' }
 
 }
 

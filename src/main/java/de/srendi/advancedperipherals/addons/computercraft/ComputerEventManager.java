@@ -7,7 +7,13 @@ import java.util.List;
 
 public class ComputerEventManager {
 
+    static final ComputerEventManager computerEventManager = new ComputerEventManager();
+
     private final List<IComputerEventSender> senders = new ArrayList<>();
+
+    public static ComputerEventManager getInstance() {
+        return computerEventManager;
+    }
 
     public void registerSender(IComputerEventSender sender) {
         senders.add(sender);

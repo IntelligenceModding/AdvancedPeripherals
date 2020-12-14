@@ -1,57 +1,66 @@
 package de.srendi.advancedperipherals.addons.computercraft;
 
-import dan200.computercraft.api.lua.*;
+import dan200.computercraft.api.lua.IArguments;
+import dan200.computercraft.api.lua.ILuaContext;
+import dan200.computercraft.api.lua.LuaException;
+import dan200.computercraft.api.lua.MethodResult;
 import dan200.computercraft.api.peripheral.IComputerAccess;
 import dan200.computercraft.api.peripheral.IDynamicPeripheral;
 import dan200.computercraft.api.peripheral.IPeripheral;
-import de.srendi.advancedperipherals.AdvancedPeripherals;
 import net.minecraft.tileentity.TileEntity;
-import org.apache.logging.log4j.Level;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class AdvancedPeripheral implements IDynamicPeripheral, ComputerEventManager.IComputerEventSender{
 
-    String type;
+    private final ILuaMethodProvider provider;
+    private final CopyOnWriteArrayList<IComputerAccess> attachedComputers = new CopyOnWriteArrayList<>();
 
-    public AdvancedPeripheral(String type) {
-        this.type = type;
-    }
-
-    @Nonnull
-    @Override
-    public String getType() {
-        return type;
-    }
-
-    @Override
-    public Object getTarget() {
-        return null;
-    }
-
-    @Override
-    public boolean equals(IPeripheral iPeripheral) {
-        return this == iPeripheral;
-    }
-
-    @Override
-    public void sendEvent(TileEntity te, String name, Object... params) {
-
+    public AdvancedPeripheral(ILuaMethodProvider provider) {
+        this.provider = provider;
     }
 
     @Nonnull
     @Override
     public String[] getMethodNames() {
-        String[] methods = new String[1];
-        methods[0] = "Nice";
-        return methods;
+        return provider.getLuaMethodRegistry().getMethodNames();
     }
 
     @Nonnull
     @Override
-    public MethodResult callMethod(@NotNull IComputerAccess iComputerAccess, @NotNull ILuaContext iLuaContext, int i, @NotNull IArguments iArguments) throws LuaException {
-        AdvancedPeripherals.LOGGER.log(Level.ERROR, "It works (:" + iComputerAccess + " " + iLuaContext + " " + i + " " + iArguments);
-        return MethodResult.of("eeeeeeeeeeeeee");
+    public MethodResult callMethod(@Nonnull IComputerAccess computer, @Nonnull ILuaContext ctx, int method, @Nonnull IArguments args) throws LuaException {
+        try {
+            return MethodResult.of(provider.getLuaMethodRegistry().getMethod(method).call(args.getAll()));
+        } catch (Exception e) {
+            throw new LuaException(e.getMessage());
+        }
+    }
+
+    @Nonnull
+    @Override
+    public String getType() {
+        return provider.getPeripheralType();
+    }
+
+    @Override
+    public boolean equals(@Nullable IPeripheral other) {
+        return this == other;
+    }
+
+    @Override
+    public void attach(@Nonnull IComputerAccess computer) {
+        attachedComputers.add(computer);
+    }
+
+    @Override
+    public void detach(@Nonnull IComputerAccess computer) {
+        attachedComputers.remove(computer);
+    }
+
+    @Override
+    public void sendEvent(TileEntity te, String name, Object... params) {
+        attachedComputers.forEach(a -> a.queueEvent(name, params));
     }
 }

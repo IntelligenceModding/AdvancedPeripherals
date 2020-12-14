@@ -14,7 +14,7 @@ import net.minecraftforge.common.ToolType;
 import net.minecraftforge.common.util.LazyOptional;
 import org.jetbrains.annotations.NotNull;
 
-public class LightSensor extends Block implements IPeripheralProvider{
+public class LightSensor extends Block {
 
     public LightSensor() {
         super(Properties.create(Material.IRON)
@@ -25,12 +25,12 @@ public class LightSensor extends Block implements IPeripheralProvider{
                 .setRequiresTool());
     }
 
-    @NotNull
+   /* @NotNull
     @Override
     public LazyOptional<IPeripheral> getPeripheral(@NotNull World world, @NotNull BlockPos blockPos, @NotNull Direction direction) {
         BlockState block = world.getBlockState(blockPos);
         return block.getBlock() instanceof LightSensor
                 ? LazyOptional.of(() -> new AdvancedPeripheral("lightSensor"))
                 : LazyOptional.empty();
-    }
+    }*/
 }

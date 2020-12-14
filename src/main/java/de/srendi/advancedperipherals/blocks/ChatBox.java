@@ -3,6 +3,7 @@ package de.srendi.advancedperipherals.blocks;
 import dan200.computercraft.api.peripheral.IPeripheral;
 import dan200.computercraft.api.peripheral.IPeripheralProvider;
 import de.srendi.advancedperipherals.addons.computercraft.AdvancedPeripheral;
+import de.srendi.advancedperipherals.addons.computercraft.ILuaMethodProvider;
 import de.srendi.advancedperipherals.blocks.tileentity.ChatBoxTileEntity;
 import de.srendi.advancedperipherals.setup.ModTileEntityTypes;
 import net.minecraft.block.Block;
@@ -19,7 +20,9 @@ import net.minecraftforge.common.util.LazyOptional;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+
 public class ChatBox extends Block implements IPeripheralProvider{
+
 
     public ChatBox() {
         super(Properties.create(Material.IRON)
@@ -34,8 +37,9 @@ public class ChatBox extends Block implements IPeripheralProvider{
     @Override
     public LazyOptional<IPeripheral> getPeripheral(@NotNull World world, @NotNull BlockPos blockPos, @NotNull Direction direction) {
         BlockState block = world.getBlockState(blockPos);
+        IPeripheral peripheral = new AdvancedPeripheral(ModTileEntityTypes.CHAT_BOX.get().create());
         return block.getBlock() instanceof ChatBox
-                ? LazyOptional.of(() -> new AdvancedPeripheral("chatBox"))
+                ? LazyOptional.of(() -> peripheral)
                 : LazyOptional.empty();
 
     }
