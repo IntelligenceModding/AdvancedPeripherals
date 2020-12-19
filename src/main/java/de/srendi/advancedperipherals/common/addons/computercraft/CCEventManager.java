@@ -1,17 +1,17 @@
-package de.srendi.advancedperipherals.addons.computercraft;
+package de.srendi.advancedperipherals.common.addons.computercraft;
 
 import net.minecraft.tileentity.TileEntity;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ComputerEventManager {
+public class CCEventManager {
 
-    static final ComputerEventManager computerEventManager = new ComputerEventManager();
+    static final CCEventManager computerEventManager = new CCEventManager();
 
-    private final List<IComputerEventSender> senders = new ArrayList<>();
+    public final List<IComputerEventSender> senders = new ArrayList<>();
 
-    public static ComputerEventManager getInstance() {
+    public static CCEventManager getInstance() {
         return computerEventManager;
     }
 

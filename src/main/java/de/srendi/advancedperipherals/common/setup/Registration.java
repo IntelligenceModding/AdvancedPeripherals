@@ -1,4 +1,4 @@
-package de.srendi.advancedperipherals.setup;
+package de.srendi.advancedperipherals.common.setup;
 
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import net.minecraft.block.Block;

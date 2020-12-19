@@ -1,4 +1,4 @@
-package de.srendi.advancedperipherals.addons.computercraft;
+package de.srendi.advancedperipherals.common.addons.computercraft;
 
 import dan200.computercraft.api.peripheral.IPeripheral;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
@@ -10,6 +10,9 @@ import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Mod.EventBusSubscriber
 public class ComputerCraft{
 
@@ -17,9 +20,10 @@ public class ComputerCraft{
     public static final Capability<IPeripheral> PERIPHERAL_CAPABILITY = null;
 
     public static void initiate() {
-        ComputerEventManager.getInstance().registerSender((te, name, params) -> te.getCapability(PERIPHERAL_CAPABILITY).ifPresent(handler -> {
-            if (handler instanceof ComputerEventManager.IComputerEventSender) {
-                ((ComputerEventManager.IComputerEventSender) handler).sendEvent(te, name, params);
+        CCEventManager.getInstance().registerSender((te, name, params) -> te.getCapability(PERIPHERAL_CAPABILITY)
+                .ifPresent(handler -> {
+            if (handler instanceof CCEventManager.IComputerEventSender) {
+                ((CCEventManager.IComputerEventSender) handler).sendEvent(te, name, params);
             }
         }));
     }
@@ -27,7 +31,8 @@ public class ComputerCraft{
     @SubscribeEvent
     public static void attachPeripheralCap(AttachCapabilitiesEvent<TileEntity> event) {
         if (PERIPHERAL_CAPABILITY != null && event.getObject() instanceof ILuaMethodProvider) {
-            event.addCapability(new ResourceLocation(AdvancedPeripherals.MOD_ID, ("computercraft")), new AdvancedPeripheralProvider((ILuaMethodProvider) event.getObject()));
+            event.addCapability(new ResourceLocation(AdvancedPeripherals.MOD_ID, ("computercraft")),
+                    new AdvancedPeripheralProvider((ILuaMethodProvider) event.getObject()));
         }
     }
 

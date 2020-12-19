@@ -1,4 +1,4 @@
-package de.srendi.advancedperipherals.items;
+package de.srendi.advancedperipherals.common.items;
 
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import net.minecraft.item.Item;

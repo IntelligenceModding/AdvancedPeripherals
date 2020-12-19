@@ -1,4 +1,4 @@
-package de.srendi.advancedperipherals.addons.computercraft;
+package de.srendi.advancedperipherals.common.addons.computercraft;
 
 public class LuaMethod implements ILuaMethod {
 

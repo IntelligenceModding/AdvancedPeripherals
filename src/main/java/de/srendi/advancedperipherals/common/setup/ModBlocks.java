@@ -1,7 +1,9 @@
-package de.srendi.advancedperipherals.setup;
+package de.srendi.advancedperipherals.common.setup;
 
 import de.srendi.advancedperipherals.AdvancedPeripherals;
-import de.srendi.advancedperipherals.blocks.*;
+import de.srendi.advancedperipherals.common.blocks.ChatBox;
+import de.srendi.advancedperipherals.common.blocks.EnvironmentDetector;
+import de.srendi.advancedperipherals.common.blocks.SilverOre;
 import net.minecraft.block.Block;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
@@ -13,7 +15,7 @@ import java.util.function.Supplier;
 public class ModBlocks {
     
     public static final RegistryObject<Block> SILVER_ORE = register("silver_ore", SilverOre::new);
-    public static final RegistryObject<Block> LIGHT_SENSOR = register("light_sensor", LightSensor::new);
+    public static final RegistryObject<Block> ENVIRONMENT_DETECTOR = register("environment_detector", EnvironmentDetector::new);
     public static final RegistryObject<Block> CHAT_BOX = register("chat_box", ChatBox::new);
 
     static void register() {

@@ -1,4 +1,4 @@
-package de.srendi.advancedperipherals.addons.computercraft;
+package de.srendi.advancedperipherals.common.addons.computercraft;
 
 import dan200.computercraft.api.lua.IArguments;
 import dan200.computercraft.api.lua.ILuaContext;
@@ -13,7 +13,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public class AdvancedPeripheral implements IDynamicPeripheral, ComputerEventManager.IComputerEventSender{
+public class AdvancedPeripheral implements IDynamicPeripheral, CCEventManager.IComputerEventSender{
 
     private final ILuaMethodProvider provider;
     private final CopyOnWriteArrayList<IComputerAccess> attachedComputers = new CopyOnWriteArrayList<>();

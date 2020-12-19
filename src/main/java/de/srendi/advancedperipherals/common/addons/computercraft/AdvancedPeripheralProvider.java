@@ -1,4 +1,4 @@
-package de.srendi.advancedperipherals.addons.computercraft;
+package de.srendi.advancedperipherals.common.addons.computercraft;
 
 import dan200.computercraft.api.peripheral.IPeripheral;
 import net.minecraft.util.Direction;

@@ -1,0 +1,81 @@
+package de.srendi.advancedperipherals.common.blocks.tileentity;
+
+import de.srendi.advancedperipherals.AdvancedPeripherals;
+import de.srendi.advancedperipherals.common.addons.computercraft.ILuaMethodProvider;
+import de.srendi.advancedperipherals.common.addons.computercraft.LuaMethod;
+import de.srendi.advancedperipherals.common.addons.computercraft.LuaMethodRegistry;
+import de.srendi.advancedperipherals.common.setup.ModTileEntityTypes;
+import net.minecraft.tileentity.ITickableTileEntity;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.TileEntityType;
+import net.minecraft.world.LightType;
+
+public class EnvironmentDetectorTileEntiy extends TileEntity implements ILuaMethodProvider, ITickableTileEntity {
+
+
+    int tick = 0;
+    private final LuaMethodRegistry luaMethodRegistry = new LuaMethodRegistry(this);
+
+    public EnvironmentDetectorTileEntiy() {
+        this(ModTileEntityTypes.ENVIRONMENT_DETECTOR.get());
+    }
+
+    public EnvironmentDetectorTileEntiy(TileEntityType<?> tileEntityTypeIn) {
+        super(tileEntityTypeIn);
+    }
+
+    @Override
+    public void tick() {
+
+        tick++;
+        if(tick == 40) {
+            AdvancedPeripherals.LOGGER.debug(world.getBiome(getPos()).getRegistryName() + "");
+        }
+    }
+
+    @Override
+    public void addLuaMethods(LuaMethodRegistry registry) {
+        registry.registerLuaMethod(new LuaMethod("getBiome") {
+            @Override
+            public Object[] call(Object[] args) {
+                String biomeName = getWorld().getBiome(getPos()).getRegistryName().toString();
+                int piece = 0;
+                String biome = "";
+                for(String biomeString : biomeName.split(":")) {
+                    if(piece == 1) {
+                        biome = biomeString;
+                    }
+                    piece++;
+                }
+                return new Object[]{biome};
+            }
+        });
+        registry.registerLuaMethod(new LuaMethod("getLightLevel") {
+            @Override
+            public Object[] call(Object[] args) {
+                getWorld().getLightFor(LightType.SKY, getPos().add(0,1,0));
+                return new Object[]{getWorld().getLightFor(LightType.SKY, getPos().add(0,1,0))};
+            }
+        });
+        registry.registerLuaMethod(new LuaMethod("getTime") {
+            @Override
+            public Object[] call(Object[] args) {
+                return new Object[]{getWorld().getDayTime()};
+            }
+        });
+    }
+
+    //weatherChangeEvent
+    //blockUpdateEvent
+    //changeLightLevelEvent
+
+    @Override
+    public LuaMethodRegistry getLuaMethodRegistry() {
+        return luaMethodRegistry;
+    }
+
+    @Override
+    public String getPeripheralType() {
+        return "environmentDetector";
+    }
+}

@@ -1,8 +1,8 @@
 package de.srendi.advancedperipherals;
 
-import de.srendi.advancedperipherals.addons.computercraft.ComputerCraft;
-import de.srendi.advancedperipherals.setup.ModItems;
-import de.srendi.advancedperipherals.setup.Registration;
+import de.srendi.advancedperipherals.common.addons.computercraft.ComputerCraft;
+import de.srendi.advancedperipherals.common.setup.ModItems;
+import de.srendi.advancedperipherals.common.setup.Registration;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
@@ -14,9 +14,9 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-
 @Mod(AdvancedPeripherals.MOD_ID)
 public class AdvancedPeripherals {
+
     public static final String MOD_ID = "advancedperipherals";
 
     public static final Logger LOGGER = LogManager.getLogger();
@@ -42,6 +42,9 @@ public class AdvancedPeripherals {
         ComputerCraft.initiate();
     }
 
-    //TODO: Add more comments to the code
+    public Logger getLogger() {
+        return LOGGER;
+    }
 
+    //TODO: Add more comments to the code
 }

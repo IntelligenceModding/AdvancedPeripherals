@@ -1,4 +1,4 @@
-package de.srendi.advancedperipherals.blocks;
+package de.srendi.advancedperipherals.common.blocks;
 
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
