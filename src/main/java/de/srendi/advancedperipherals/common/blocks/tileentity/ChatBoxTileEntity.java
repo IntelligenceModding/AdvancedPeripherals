@@ -1,11 +1,9 @@
 package de.srendi.advancedperipherals.common.blocks.tileentity;
 
 import de.srendi.advancedperipherals.AdvancedPeripherals;
-import de.srendi.advancedperipherals.common.addons.computercraft.CCEventManager;
 import de.srendi.advancedperipherals.common.addons.computercraft.ILuaMethodProvider;
 import de.srendi.advancedperipherals.common.addons.computercraft.LuaMethod;
 import de.srendi.advancedperipherals.common.addons.computercraft.LuaMethodRegistry;
-import de.srendi.advancedperipherals.common.events.TestEvent;
 import de.srendi.advancedperipherals.common.setup.ModTileEntityTypes;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -15,8 +13,6 @@ import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.server.ServerWorld;
-import net.minecraftforge.event.ServerChatEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 import java.util.HashMap;
@@ -26,8 +22,6 @@ import java.util.UUID;
 public class ChatBoxTileEntity extends TileEntity implements ITickableTileEntity, ILuaMethodProvider {
 
     private final LuaMethodRegistry luaMethodRegistry = new LuaMethodRegistry(this);
-
-    public final HashMap<BlockPos, String> anchors = new HashMap<>();
 
     private int tick;
 

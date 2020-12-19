@@ -1,5 +1,5 @@
 modLoader="javafml"
-loaderVersion="[34,)"
+loaderVersion="[35,)"
 license="All rights reserved"
 issueTrackerURL="http://my.issue.tracker/"
 [[mods]]
@@ -11,17 +11,23 @@ displayURL="https://srendi.de/"
 #logoFile="examplemod.png"
 authors="Sr_endi"
 description='''
-Advanced Peripherals adds' a lot of new features for Computercraft.
+Advanced Peripherals adds a lot of new features for Computercraft.
 '''
 [[dependencies.advancedperipherals]]
     modId="forge"
     mandatory=true
-    versionRange="[34,)"
+    versionRange="[35,)"
     ordering="NONE"
     side="BOTH"
 [[dependencies.advancedperipherals]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.16.3,1.16.4]"
+    versionRange="[1.16.4]"
+    ordering="NONE"
+    side="BOTH"
+[[dependencies.advancedperipherals]]
+    modId="computercraft"
+    mandatory=false
+    versionRange="[1.94.0]"
     ordering="NONE"
     side="BOTH"
