@@ -19,7 +19,7 @@ public class Events {
     public static void onChat(ServerChatEvent event) {
         for(TileEntity tileEntity : TileEntityList.get().getTileEntitys(event.getPlayer().getServerWorld())) {
             if(tileEntity instanceof ChatBoxTileEntity) {
-                CCEventManager.getInstance().sendEvent(tileEntity, "chatEvent", event.getMessage());
+                CCEventManager.getInstance().sendEvent(tileEntity, "chatEvent", event.getPlayer().getName().getString(), event.getMessage());
             }
         }
     }
