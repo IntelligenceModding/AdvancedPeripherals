@@ -21,7 +21,7 @@ public class Registration {
         TILE_ENTITIES.register(modEventBus);
 
         ModBlocks.register();
-        ModItems.register();
+        //ModItems.register();
         ModTileEntityTypes.register();
     }
 }

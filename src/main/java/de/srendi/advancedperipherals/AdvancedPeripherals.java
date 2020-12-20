@@ -1,6 +1,7 @@
 package de.srendi.advancedperipherals;
 
 import de.srendi.advancedperipherals.common.addons.computercraft.ComputerCraft;
+import de.srendi.advancedperipherals.common.setup.ModBlocks;
 import de.srendi.advancedperipherals.common.setup.ModItems;
 import de.srendi.advancedperipherals.common.setup.Registration;
 import de.srendi.advancedperipherals.common.util.PlayerController;
@@ -38,7 +39,7 @@ public class AdvancedPeripherals {
     public static final ItemGroup TAB = new ItemGroup("advancedperipheralstab") {
         @Override
         public ItemStack createIcon() {
-            return new ItemStack(ModItems.SILVER_INGOT.get());
+            return new ItemStack(ModBlocks.ENVIRONMENT_DETECTOR.get());
         }
     };
 

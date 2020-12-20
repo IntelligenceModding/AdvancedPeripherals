@@ -14,7 +14,7 @@ import java.util.function.Supplier;
 
 public class ModBlocks {
     
-    public static final RegistryObject<Block> SILVER_ORE = register("silver_ore", SilverOre::new);
+    //public static final RegistryObject<Block> SILVER_ORE = register("silver_ore", SilverOre::new);
     public static final RegistryObject<Block> ENVIRONMENT_DETECTOR = register("environment_detector", EnvironmentDetector::new);
     public static final RegistryObject<Block> CHAT_BOX = register("chat_box", ChatBox::new);
 
