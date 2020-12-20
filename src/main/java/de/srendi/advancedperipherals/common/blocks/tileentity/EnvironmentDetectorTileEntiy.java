@@ -1,16 +1,14 @@
 package de.srendi.advancedperipherals.common.blocks.tileentity;
 
-import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.addons.computercraft.ILuaMethodProvider;
 import de.srendi.advancedperipherals.common.addons.computercraft.LuaMethod;
 import de.srendi.advancedperipherals.common.addons.computercraft.LuaMethodRegistry;
 import de.srendi.advancedperipherals.common.setup.ModTileEntityTypes;
-import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.world.LightType;
 
-public class EnvironmentDetectorTileEntiy extends TileEntity implements ILuaMethodProvider, ITickableTileEntity {
+public class EnvironmentDetectorTileEntiy extends TileEntity implements ILuaMethodProvider {
 
 
     int tick = 0;
@@ -22,15 +20,6 @@ public class EnvironmentDetectorTileEntiy extends TileEntity implements ILuaMeth
 
     public EnvironmentDetectorTileEntiy(TileEntityType<?> tileEntityTypeIn) {
         super(tileEntityTypeIn);
-    }
-
-    @Override
-    public void tick() {
-
-        tick++;
-        if(tick == 40) {
-            AdvancedPeripherals.LOGGER.debug(world.getBiome(getPos()).getRegistryName() + "");
-        }
     }
 
     @Override
@@ -64,10 +53,6 @@ public class EnvironmentDetectorTileEntiy extends TileEntity implements ILuaMeth
             }
         });
     }
-
-    //weatherChangeEvent
-    //blockUpdateEvent
-    //changeLightLevelEvent
 
     @Override
     public LuaMethodRegistry getLuaMethodRegistry() {

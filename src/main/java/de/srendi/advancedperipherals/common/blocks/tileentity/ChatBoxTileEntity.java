@@ -5,8 +5,10 @@ import de.srendi.advancedperipherals.common.addons.computercraft.ILuaMethodProvi
 import de.srendi.advancedperipherals.common.addons.computercraft.LuaMethod;
 import de.srendi.advancedperipherals.common.addons.computercraft.LuaMethodRegistry;
 import de.srendi.advancedperipherals.common.setup.ModTileEntityTypes;
+import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
@@ -19,11 +21,9 @@ import java.util.HashMap;
 import java.util.UUID;
 
 @Mod.EventBusSubscriber(modid = AdvancedPeripherals.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
-public class ChatBoxTileEntity extends TileEntity implements ITickableTileEntity, ILuaMethodProvider {
+public class ChatBoxTileEntity extends TileEntity implements ILuaMethodProvider {
 
     private final LuaMethodRegistry luaMethodRegistry = new LuaMethodRegistry(this);
-
-    private int tick;
 
     public ChatBoxTileEntity() {
         this(ModTileEntityTypes.CHAT_BOX.get());
@@ -31,14 +31,6 @@ public class ChatBoxTileEntity extends TileEntity implements ITickableTileEntity
 
     public ChatBoxTileEntity(final TileEntityType<?> tileEntityType) {
         super(tileEntityType);
-    }
-
-    @Override
-    public void tick() {
-        tick++;
-        if(tick == 40) {
-            tick = 0;
-        }
     }
 
     @Override
