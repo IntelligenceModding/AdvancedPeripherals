@@ -12,7 +12,7 @@ apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 
-version = '1.0'
+version = "${mod_version}"
 group = 'de.srendi.advancedperipherals'
 archivesBaseName = 'advancedperipherals'
 
@@ -93,11 +93,11 @@ jar {
     manifest {
         attributes([
             "Specification-Title": "advancedperipherals",
-            "Specification-Vendor": "sr_endi",
+            "Specification-Vendor": "Sr_endi",
             "Specification-Version": "${version}",
             "Implementation-Title": "advancedperipherals",
             "Implementation-Version": "${version}",
-            "Implementation-Vendor" :"sr_endi",
+            "Implementation-Vendor" :"Sr_endi",
             "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
         ])
     }

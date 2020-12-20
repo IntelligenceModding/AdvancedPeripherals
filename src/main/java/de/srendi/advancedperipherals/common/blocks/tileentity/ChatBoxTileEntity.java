@@ -47,8 +47,8 @@ public class ChatBoxTileEntity extends TileEntity implements ITickableTileEntity
             @Override
             public Object[] call(Object[] args) {
                 requireArgs(args, 1, "<message>:String");
-                if (Minecraft.getInstance().player.getEntityWorld() instanceof ServerWorld) {
-                    ServerWorld world = (ServerWorld) Minecraft.getInstance().player.getEntityWorld();
+                if (AdvancedPeripherals.playerController.getWorld() instanceof ServerWorld) {
+                    ServerWorld world = (ServerWorld) AdvancedPeripherals.playerController.getWorld();
                     for (ServerPlayerEntity player : world.getServer().getPlayerList().getPlayers()) {
                         player.sendMessage(new StringTextComponent((String) args[0]), UUID.randomUUID());
                     }
@@ -62,8 +62,8 @@ public class ChatBoxTileEntity extends TileEntity implements ITickableTileEntity
             @Override
             public Object[] call(Object[] args) {
                 requireArgs(args, 2, "<playerName>:String | <message>:String");
-                if (Minecraft.getInstance().player.getEntityWorld() instanceof ServerWorld) {
-                    ServerWorld world = (ServerWorld) Minecraft.getInstance().player.getEntityWorld();
+                if (AdvancedPeripherals.playerController.getWorld() instanceof ServerWorld) {
+                    ServerWorld world = (ServerWorld) AdvancedPeripherals.playerController.getWorld();
                     for (ServerPlayerEntity player : world.getServer().getPlayerList().getPlayers()) {
                         if (player.getName().getString().equals(args[0])) {
                             player.sendMessage(new StringTextComponent((String) args[1]), UUID.randomUUID());
