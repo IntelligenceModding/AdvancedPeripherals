@@ -13,9 +13,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.ToolType;
 import org.jetbrains.annotations.Nullable;
 
-
 public class ChatBox extends Block{
-
 
     public ChatBox() {
         super(Properties.create(Material.IRON)

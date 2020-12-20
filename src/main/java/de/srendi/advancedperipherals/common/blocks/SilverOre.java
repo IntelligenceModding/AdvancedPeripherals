@@ -18,7 +18,6 @@ public class SilverOre extends Block {
                 .sound(SoundType.STONE)
                 .harvestTool(ToolType.PICKAXE)
                 .setRequiresTool());
-
     }
 
     @Override

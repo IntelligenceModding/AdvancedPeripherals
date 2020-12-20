@@ -10,8 +10,6 @@ import net.minecraft.world.LightType;
 
 public class EnvironmentDetectorTileEntiy extends TileEntity implements ILuaMethodProvider {
 
-
-    int tick = 0;
     private final LuaMethodRegistry luaMethodRegistry = new LuaMethodRegistry(this);
 
     public EnvironmentDetectorTileEntiy() {
