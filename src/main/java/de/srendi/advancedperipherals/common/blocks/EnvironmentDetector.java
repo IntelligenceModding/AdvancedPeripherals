@@ -38,6 +38,6 @@ public class EnvironmentDetector extends Block {
     @Override
     public void onReplaced(BlockState state, World worldIn, BlockPos pos, BlockState newState, boolean isMoving) {
         super.onReplaced(state, worldIn, pos, newState, isMoving);
-        TileEntityList.get().setTileEntity(pos);
+        TileEntityList.get().setTileEntity(worldIn, pos);
     }
 }

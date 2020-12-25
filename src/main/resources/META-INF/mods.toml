@@ -1,10 +1,10 @@
 modLoader="javafml"
-loaderVersion="${loader_version}"
+loaderVersion="[35,)"
 license="All rights reserved"
 issueTrackerURL="https://github.com/Seniorendi/AdvancedPeripherals/issues"
 [[mods]]
 modId="advancedperipherals"
-version="${mod_version}"
+version="0.1.1b"
 displayName="Advanced Peripherals"
 #updateJSONURL="http://myurl.me/"
 displayURL="https://srendi.de/"
