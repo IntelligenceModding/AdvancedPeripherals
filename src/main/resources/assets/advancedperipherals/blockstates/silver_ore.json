@@ -1,5 +1,7 @@
 {
-    "variants": {
-      "": { "model": "advancedperipherals:block/silver_ore" }
+  "variants": {
+    "": {
+      "model": "advancedperipherals:block/silver_ore"
     }
+  }
 }

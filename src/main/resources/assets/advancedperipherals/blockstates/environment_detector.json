@@ -1,5 +1,7 @@
 {
   "variants": {
-    "": { "model": "advancedperipherals:block/environment_detector" }
+    "": {
+      "model": "advancedperipherals:block/environment_detector"
+    }
   }
 }

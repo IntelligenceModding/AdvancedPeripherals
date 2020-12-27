@@ -14,14 +14,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Mod.EventBusSubscriber
-public class ComputerCraft{
+public class ComputerCraft {
 
     @CapabilityInject(IPeripheral.class)
     public static final Capability<IPeripheral> PERIPHERAL_CAPABILITY = null;
 
     public static void initiate() {
-        CCEventManager.getInstance().registerSender((te, name, params) -> te.getCapability(PERIPHERAL_CAPABILITY)
-                .ifPresent(handler -> {
+        CCEventManager.getInstance().registerSender((te, name, params)->te.getCapability(PERIPHERAL_CAPABILITY).ifPresent(handler->{
             if (handler instanceof CCEventManager.IComputerEventSender) {
                 ((CCEventManager.IComputerEventSender) handler).sendEvent(te, name, params);
             }
@@ -31,8 +30,7 @@ public class ComputerCraft{
     @SubscribeEvent
     public static void attachPeripheralCap(AttachCapabilitiesEvent<TileEntity> event) {
         if (PERIPHERAL_CAPABILITY != null && event.getObject() instanceof ILuaMethodProvider) {
-            event.addCapability(new ResourceLocation(AdvancedPeripherals.MOD_ID, ("computercraft")),
-                    new AdvancedPeripheralProvider((ILuaMethodProvider) event.getObject()));
+            event.addCapability(new ResourceLocation(AdvancedPeripherals.MOD_ID, ("computercraft")), new AdvancedPeripheralProvider((ILuaMethodProvider) event.getObject()));
         }
     }
 

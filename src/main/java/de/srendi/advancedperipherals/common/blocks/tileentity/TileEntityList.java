@@ -20,7 +20,7 @@ public class TileEntityList extends WorldSavedData {
 
     public final List<BlockPos> tileEntities = new ArrayList<>();
 
-    public static TileEntityList get()  {
+    public static TileEntityList get() {
         DimensionSavedDataManager storage = ServerLifecycleHooks.getCurrentServer().func_241755_D_().getSavedData();
         return storage.getOrCreate(TileEntityList::new, AdvancedPeripherals.MOD_ID);
     }
@@ -64,7 +64,7 @@ public class TileEntityList extends WorldSavedData {
     }
 
     public void setTileEntity(World world, BlockPos pos) {
-        if(!world.isRemote) {
+        if (!world.isRemote) {
             if (tileEntities.contains(pos)) {
                 tileEntities.remove(pos);
             } else {
@@ -74,10 +74,10 @@ public class TileEntityList extends WorldSavedData {
         this.markDirty();
     }
 
-    public List<TileEntity> getTileEntitys(ServerWorld world) {
+    public List<TileEntity> getTileEntitys(World world) {
         List<TileEntity> list = new ArrayList<>();
-        for(BlockPos blockPos : get().getBlockPositions()) {
-            if(world.isBlockLoaded(blockPos)) {
+        for (BlockPos blockPos : get().getBlockPositions()) {
+            if (world.isBlockLoaded(blockPos)) {
                 list.add(world.getTileEntity(blockPos));
             }
         }

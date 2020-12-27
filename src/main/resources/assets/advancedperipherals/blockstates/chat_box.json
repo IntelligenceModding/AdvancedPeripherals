@@ -1,5 +1,7 @@
 {
-    "variants": {
-      "": { "model": "advancedperipherals:block/chat_box" }
+  "variants": {
+    "": {
+      "model": "advancedperipherals:block/chat_box"
     }
+  }
 }

@@ -16,12 +16,7 @@ import org.jetbrains.annotations.Nullable;
 public class EnvironmentDetector extends Block {
 
     public EnvironmentDetector() {
-        super(Properties.create(Material.IRON)
-                .hardnessAndResistance(1, 5)
-                .harvestLevel(0)
-                .sound(SoundType.METAL)
-                .harvestTool(ToolType.AXE)
-                .setRequiresTool());
+        super(Properties.create(Material.IRON).hardnessAndResistance(1, 5).harvestLevel(0).sound(SoundType.METAL).harvestTool(ToolType.AXE).setRequiresTool());
     }
 
     @Override

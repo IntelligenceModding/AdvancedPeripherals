@@ -14,8 +14,8 @@ public class Events {
 
     @SubscribeEvent
     public static void onChat(ServerChatEvent event) {
-        for(TileEntity tileEntity : TileEntityList.get().getTileEntitys(event.getPlayer().getServerWorld())) {
-            if(tileEntity instanceof ChatBoxTileEntity) {
+        for (TileEntity tileEntity : TileEntityList.get().getTileEntitys(event.getPlayer().getServerWorld())) {
+            if (tileEntity instanceof ChatBoxTileEntity) {
                 CCEventManager.getInstance().sendEvent(tileEntity, "chatEvent", event.getUsername(), event.getMessage());
             }
         }

@@ -20,7 +20,7 @@ public class CCEventManager {
     }
 
     public void sendEvent(TileEntity tileEntity, String name, Object... params) {
-        senders.forEach(s -> s.sendEvent(tileEntity, name, params));
+        senders.forEach(s->s.sendEvent(tileEntity, name, params));
     }
 
     @FunctionalInterface

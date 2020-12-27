@@ -38,7 +38,7 @@ public class LuaMethodRegistry {
         initiate();
         if (luaMethodNames == null) {
             luaMethodNames = new String[luaMethods.size()];
-            Arrays.setAll(luaMethodNames, i -> luaMethods.get(i).getMethodName());
+            Arrays.setAll(luaMethodNames, i->luaMethods.get(i).getMethodName());
         }
         return luaMethodNames;
     }

@@ -15,7 +15,7 @@ public class AdvancedPeripheralProvider implements ICapabilityProvider {
 
     AdvancedPeripheralProvider(ILuaMethodProvider luaMethodProvider) {
         impl = new AdvancedPeripheral(luaMethodProvider);
-        lazy = LazyOptional.of(() -> impl);
+        lazy = LazyOptional.of(()->impl);
     }
 
     @NotNull

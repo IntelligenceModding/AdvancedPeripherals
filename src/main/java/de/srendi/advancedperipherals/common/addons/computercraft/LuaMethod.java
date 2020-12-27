@@ -19,7 +19,7 @@ public class LuaMethod implements ILuaMethod {
     }
 
     protected void requireArgs(Object[] args, int numArgs, String description) {
-        if(!(args.length == numArgs)) {
+        if (!(args.length == numArgs)) {
             String.format("The Method %s needs %s arguments! %s", getMethodName(), numArgs, description);
         }
     }

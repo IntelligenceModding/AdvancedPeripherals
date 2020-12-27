@@ -4,6 +4,7 @@ import de.srendi.advancedperipherals.common.addons.computercraft.ILuaMethodProvi
 import de.srendi.advancedperipherals.common.addons.computercraft.LuaMethod;
 import de.srendi.advancedperipherals.common.addons.computercraft.LuaMethodRegistry;
 import de.srendi.advancedperipherals.common.setup.ModTileEntityTypes;
+import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.world.LightType;
@@ -28,8 +29,8 @@ public class EnvironmentDetectorTileEntiy extends TileEntity implements ILuaMeth
                 String biomeName = getWorld().getBiome(getPos()).getRegistryName().toString();
                 int piece = 0;
                 String biome = "";
-                for(String biomeString : biomeName.split(":")) {
-                    if(piece == 1) {
+                for (String biomeString : biomeName.split(":")) {
+                    if (piece == 1) {
                         biome = biomeString;
                     }
                     piece++;
@@ -40,8 +41,8 @@ public class EnvironmentDetectorTileEntiy extends TileEntity implements ILuaMeth
         registry.registerLuaMethod(new LuaMethod("getLightLevel") {
             @Override
             public Object[] call(Object[] args) {
-                getWorld().getLightFor(LightType.SKY, getPos().add(0,1,0));
-                return new Object[]{getWorld().getLightFor(LightType.SKY, getPos().add(0,1,0))};
+                getWorld().getLightFor(LightType.SKY, getPos().add(0, 1, 0));
+                return new Object[]{getWorld().getLightFor(LightType.SKY, getPos().add(0, 1, 0))};
             }
         });
         registry.registerLuaMethod(new LuaMethod("getTime") {
@@ -52,6 +53,7 @@ public class EnvironmentDetectorTileEntiy extends TileEntity implements ILuaMeth
         });
     }
 
+
     @Override
     public LuaMethodRegistry getLuaMethodRegistry() {
         return luaMethodRegistry;
@@ -61,4 +63,5 @@ public class EnvironmentDetectorTileEntiy extends TileEntity implements ILuaMeth
     public String getPeripheralType() {
         return "environmentDetector";
     }
+
 }

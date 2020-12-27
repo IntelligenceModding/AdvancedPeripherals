@@ -13,7 +13,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public class AdvancedPeripheral implements IDynamicPeripheral, CCEventManager.IComputerEventSender{
+public class AdvancedPeripheral implements IDynamicPeripheral, CCEventManager.IComputerEventSender {
 
     private final ILuaMethodProvider provider;
     private final CopyOnWriteArrayList<IComputerAccess> attachedComputers = new CopyOnWriteArrayList<>();
@@ -61,6 +61,6 @@ public class AdvancedPeripheral implements IDynamicPeripheral, CCEventManager.IC
 
     @Override
     public void sendEvent(TileEntity te, String name, Object... params) {
-        attachedComputers.forEach(a -> a.queueEvent(name, params));
+        attachedComputers.forEach(a->a.queueEvent(name, params));
     }
 }

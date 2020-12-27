@@ -1,33 +1,33 @@
-modLoader="javafml"
-loaderVersion="[35,)"
-license="All rights reserved"
-issueTrackerURL="https://github.com/Seniorendi/AdvancedPeripherals/issues"
+modLoader = "javafml"
+loaderVersion = "[35,)"
+license = "All rights reserved"
+issueTrackerURL = "https://github.com/Seniorendi/AdvancedPeripherals/issues"
 [[mods]]
-modId="advancedperipherals"
-version="0.1.1b"
-displayName="Advanced Peripherals"
+modId = "advancedperipherals"
+version = "0.1.1b"
+displayName = "Advanced Peripherals"
 #updateJSONURL="http://myurl.me/"
-displayURL="https://srendi.de/"
+displayURL = "https://srendi.de/"
 #logoFile="examplemod.png"
-authors="Sr_endi"
-description='''
+authors = "Sr_endi"
+description = '''
 Advanced Peripherals adds a lot of new features for Computercraft.
 '''
 [[dependencies.advancedperipherals]]
-    modId="forge"
-    mandatory=true
-    versionRange="35.1.11"
-    ordering="NONE"
-    side="BOTH"
+modId = "forge"
+mandatory = true
+versionRange = "35.1.11"
+ordering = "NONE"
+side = "BOTH"
 [[dependencies.advancedperipherals]]
-    modId="minecraft"
-    mandatory=true
-    versionRange="1.16.4"
-    ordering="NONE"
-    side="BOTH"
+modId = "minecraft"
+mandatory = true
+versionRange = "1.16.4"
+ordering = "NONE"
+side = "BOTH"
 [[dependencies.advancedperipherals]]
-    modId="computercraft"
-    mandatory=true
-    versionRange="1.94.0"
-    ordering="NONE"
-    side="BOTH"
+modId = "computercraft"
+mandatory = true
+versionRange = "1.94.0"
+ordering = "NONE"
+side = "BOTH"

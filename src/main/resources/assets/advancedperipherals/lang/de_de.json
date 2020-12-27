@@ -3,5 +3,6 @@
   "block.advancedperipherals.silver_ore": "Silbererz",
   "block.advancedperipherals.environment_detector": "Umgebungs Detector",
   "block.advancedperipherals.chat_box": "Chat box",
+  "block.advancedperipherals.player_detector": "Spieler Detector",
   "itemGroup.advancedperipheralstab": "Advanced Peripherals"
 }
