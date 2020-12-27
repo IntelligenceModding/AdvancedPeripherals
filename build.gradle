@@ -79,6 +79,8 @@ dependencies {
 
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
 
+    runtimeOnly fg.deobf("mezz.jei:jei-${minecraft_version}:7.6.0.62")
+
     implementation fg.deobf("org.squiddev:cc-tweaked-${minecraft_version}:${cc_version}")
 }
 
@@ -86,6 +88,7 @@ repositories {
 
     maven { url 'https://squiddev.cc/maven/' }
     maven { url 'https://modmaven.dev/' }
+    maven { url 'https://dvs1.progwml6.com/files/maven/' }
 
 }
 

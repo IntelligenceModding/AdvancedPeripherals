@@ -76,6 +76,8 @@ public class ChatBoxTileEntity extends TileEntity implements ILuaMethodProvider 
         });
     }
 
+
+
     @Override
     public LuaMethodRegistry getLuaMethodRegistry() {
         return luaMethodRegistry;
