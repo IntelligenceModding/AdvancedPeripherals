@@ -2,6 +2,8 @@
 
 ![Logo](https://srendi.de/wp-content/uploads/2020/12/cooltext372542169478409.png "Logo")
 
+Curseforge site: https://www.curseforge.com/minecraft/mc-mods/advanced-peripherals
+
 Advanced Peripherals is a mod that adds many useful extensions for ComputerCraft. The mod aims to add features that were available in 1.12.2 of mods like PeripheralsPlusOne.
 
 ### [If you need help, join the Discord](https://discord.srendi.de/ "Join the discord").
