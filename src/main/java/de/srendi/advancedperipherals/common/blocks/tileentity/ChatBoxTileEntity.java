@@ -4,6 +4,7 @@ import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.addons.computercraft.ILuaMethodProvider;
 import de.srendi.advancedperipherals.common.addons.computercraft.LuaMethod;
 import de.srendi.advancedperipherals.common.addons.computercraft.LuaMethodRegistry;
+import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
 import de.srendi.advancedperipherals.common.setup.ModTileEntityTypes;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
@@ -40,48 +41,52 @@ public class ChatBoxTileEntity extends TileEntity implements ITickableTileEntity
 
     @Override
     public void addLuaMethods(LuaMethodRegistry registry) {
-        registry.registerLuaMethod(new LuaMethod("sendMessage") {
-            @Override
-            public Object[] call(Object[] args) {
-                requireArgs(args, 1, "<message>:String");
-                if (tick >= 10) {
-                    if (AdvancedPeripherals.playerController.getWorld() instanceof ServerWorld) {
-                        ServerWorld world = (ServerWorld) AdvancedPeripherals.playerController.getWorld();
-                        for (ServerPlayerEntity player : world.getServer().getPlayerList().getPlayers()) {
-                            player.sendMessage(new StringTextComponent((String) args[0]), UUID.randomUUID());
+        if(AdvancedPeripheralsConfig.CHAT_BOX_ENABLED.get()) {
+            registry.registerLuaMethod(new LuaMethod("sendMessage") {
+                @Override
+                public Object[] call(Object[] args) {
+                    requireArgs(args, 1, "<message>:String");
+                    if (tick >= AdvancedPeripheralsConfig.CHAT_BOX_COOLDOWN.get()) {
+                        if (AdvancedPeripherals.playerController.getWorld() instanceof ServerWorld) {
+                            ServerWorld world = (ServerWorld) AdvancedPeripherals.playerController.getWorld();
+                            for (ServerPlayerEntity player : world.getServer().getPlayerList().getPlayers()) {
+                                player.sendMessage(new StringTextComponent((String) args[0]), UUID.randomUUID());
+                            }
+                        } else {
+                            Minecraft.getInstance().player.sendMessage(new StringTextComponent((String) args[0]), UUID.randomUUID());
                         }
+                        tick = 0;
                     } else {
-                        Minecraft.getInstance().player.sendMessage(new StringTextComponent((String) args[0]), UUID.randomUUID());
+                        return new Object[]{"You are sending messages too often. You can modify the cooldown in the config."};
                     }
-                } else {
-                    return new Object[]{"You are sending messages too often"};
+                    return null;
                 }
-                return null;
-            }
-        });
-        registry.registerLuaMethod(new LuaMethod("sendMessageToPlayer") {
-            @Override
-            public Object[] call(Object[] args) {
-                requireArgs(args, 2, "<playerName>:String | <message>:String");
-                if (tick >= 10) {
-                    if (AdvancedPeripherals.playerController.getWorld() instanceof ServerWorld) {
-                        ServerWorld world = (ServerWorld) AdvancedPeripherals.playerController.getWorld();
-                        for (ServerPlayerEntity player : world.getServer().getPlayerList().getPlayers()) {
-                            if (player.getName().getString().equals(args[0])) {
-                                player.sendMessage(new StringTextComponent((String) args[1]), UUID.randomUUID());
+            });
+            registry.registerLuaMethod(new LuaMethod("sendMessageToPlayer") {
+                @Override
+                public Object[] call(Object[] args) {
+                    requireArgs(args, 2, "<playerName>:String | <message>:String");
+                    if (tick >= AdvancedPeripheralsConfig.CHAT_BOX_COOLDOWN.get()) {
+                        if (AdvancedPeripherals.playerController.getWorld() instanceof ServerWorld) {
+                            ServerWorld world = (ServerWorld) AdvancedPeripherals.playerController.getWorld();
+                            for (ServerPlayerEntity player : world.getServer().getPlayerList().getPlayers()) {
+                                if (player.getName().getString().equals(args[0])) {
+                                    player.sendMessage(new StringTextComponent((String) args[1]), UUID.randomUUID());
+                                }
+                            }
+                        } else {
+                            if (Minecraft.getInstance().player.getName().getString().equals(args[0])) {
+                                Minecraft.getInstance().player.sendMessage(new StringTextComponent((String) args[1]), UUID.randomUUID());
                             }
                         }
+                        tick = 0;
                     } else {
-                        if (Minecraft.getInstance().player.getName().getString().equals(args[0])) {
-                            Minecraft.getInstance().player.sendMessage(new StringTextComponent((String) args[1]), UUID.randomUUID());
-                        }
+                        return new Object[]{"You are sending messages too often. You can modify the cooldown in the config."};
                     }
-                } else {
-                    return new Object[]{"You are sending messages too often"};
+                    return null;
                 }
-                return null;
-            }
-        });
+            });
+        }
     }
 
 

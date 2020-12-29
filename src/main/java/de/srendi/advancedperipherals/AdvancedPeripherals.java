@@ -1,6 +1,7 @@
 package de.srendi.advancedperipherals;
 
 import de.srendi.advancedperipherals.common.addons.computercraft.ComputerCraft;
+import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
 import de.srendi.advancedperipherals.common.setup.ModBlocks;
 import de.srendi.advancedperipherals.common.setup.ModItems;
 import de.srendi.advancedperipherals.common.setup.Registration;
@@ -11,9 +12,12 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.fml.loading.FMLPaths;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -29,6 +33,9 @@ public class AdvancedPeripherals {
 
     public AdvancedPeripherals() {
         IEventBus modBus = FMLJavaModLoadingContext.get().getModEventBus();
+
+        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, AdvancedPeripheralsConfig.COMMON_CONFIG);
+        AdvancedPeripheralsConfig.loadConfig(AdvancedPeripheralsConfig.COMMON_CONFIG, FMLPaths.CONFIGDIR.get().resolve("advancedperipherals-common.toml"));
 
         MinecraftForge.EVENT_BUS.addListener(this::onWorldLoad);
         modBus.addListener(this::commonSetup);

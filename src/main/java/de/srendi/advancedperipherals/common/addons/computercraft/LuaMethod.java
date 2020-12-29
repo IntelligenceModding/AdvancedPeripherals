@@ -25,6 +25,6 @@ public class LuaMethod implements ILuaMethod {
     }
 
     protected void requireNoArgs(Object[] args) {
-        String.format("The Method %s needs no arguments! %s", getMethodName());
+        String.format("The Method %s needs no arguments! %s", getMethodName(), args);
     }
 }

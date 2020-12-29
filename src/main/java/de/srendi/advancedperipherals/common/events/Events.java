@@ -4,6 +4,7 @@ import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.addons.computercraft.CCEventManager;
 import de.srendi.advancedperipherals.common.blocks.tileentity.ChatBoxTileEntity;
 import de.srendi.advancedperipherals.common.blocks.tileentity.TileEntityList;
+import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.event.ServerChatEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -16,7 +17,9 @@ public class Events {
     public static void onChat(ServerChatEvent event) {
         for (TileEntity tileEntity : TileEntityList.get().getTileEntitys(event.getPlayer().getServerWorld())) {
             if (tileEntity instanceof ChatBoxTileEntity) {
-                CCEventManager.getInstance().sendEvent(tileEntity, "chatEvent", event.getUsername(), event.getMessage());
+                if (AdvancedPeripheralsConfig.CHAT_BOX_ENABLED.get()) {
+                    CCEventManager.getInstance().sendEvent(tileEntity, "chatEvent", event.getUsername(), event.getMessage());
+                }
             }
         }
     }
