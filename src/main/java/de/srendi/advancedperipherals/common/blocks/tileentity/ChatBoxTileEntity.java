@@ -6,10 +6,8 @@ import de.srendi.advancedperipherals.common.addons.computercraft.LuaMethod;
 import de.srendi.advancedperipherals.common.addons.computercraft.LuaMethodRegistry;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
 import de.srendi.advancedperipherals.common.setup.ModTileEntityTypes;
-import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
@@ -41,12 +39,12 @@ public class ChatBoxTileEntity extends TileEntity implements ITickableTileEntity
 
     @Override
     public void addLuaMethods(LuaMethodRegistry registry) {
-        if(AdvancedPeripheralsConfig.CHAT_BOX_ENABLED.get()) {
+        if(AdvancedPeripheralsConfig.enableChatBox) {
             registry.registerLuaMethod(new LuaMethod("sendMessage") {
                 @Override
                 public Object[] call(Object[] args) {
                     requireArgs(args, 1, "<message>:String");
-                    if (tick >= AdvancedPeripheralsConfig.CHAT_BOX_COOLDOWN.get()) {
+                    if (tick >= AdvancedPeripheralsConfig.chatBoxCooldown) {
                         if (AdvancedPeripherals.playerController.getWorld() instanceof ServerWorld) {
                             ServerWorld world = (ServerWorld) AdvancedPeripherals.playerController.getWorld();
                             for (ServerPlayerEntity player : world.getServer().getPlayerList().getPlayers()) {
@@ -66,7 +64,7 @@ public class ChatBoxTileEntity extends TileEntity implements ITickableTileEntity
                 @Override
                 public Object[] call(Object[] args) {
                     requireArgs(args, 2, "<playerName>:String | <message>:String");
-                    if (tick >= AdvancedPeripheralsConfig.CHAT_BOX_COOLDOWN.get()) {
+                    if (tick >= AdvancedPeripheralsConfig.chatBoxCooldown) {
                         if (AdvancedPeripherals.playerController.getWorld() instanceof ServerWorld) {
                             ServerWorld world = (ServerWorld) AdvancedPeripherals.playerController.getWorld();
                             for (ServerPlayerEntity player : world.getServer().getPlayerList().getPlayers()) {

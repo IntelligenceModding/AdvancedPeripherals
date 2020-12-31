@@ -1,42 +1,27 @@
 package de.srendi.advancedperipherals.common.configuration;
 
-import com.electronwill.nightconfig.core.file.CommentedFileConfig;
-import com.electronwill.nightconfig.core.io.WritingMode;
 import com.google.common.collect.Lists;
 import net.minecraftforge.common.ForgeConfigSpec;
 
-import java.nio.file.Path;
+import java.util.List;
 
 public class AdvancedPeripheralsConfig {
 
-    public static ForgeConfigSpec.BooleanValue CHAT_BOX_ENABLED;
+    public static int chatBoxCooldown;
+    public static boolean enableChatBox;
 
-    public static ForgeConfigSpec.IntValue CHAT_BOX_COOLDOWN;
+    public static class CommonConfig {
 
-    public static final ForgeConfigSpec.Builder COMMON_BUILDER = new ForgeConfigSpec.Builder();
+        final ForgeConfigSpec.IntValue CHAT_BOX_COOLDOWN;
+        final ForgeConfigSpec.BooleanValue ENABLE_CHAT_BOX;
 
-    public static ForgeConfigSpec COMMON_CONFIG;
+        CommonConfig(final ForgeConfigSpec.Builder builder) {
+            builder.comment("").push("Join Stuff");
 
-    static {
+            ENABLE_CHAT_BOX = builder.comment("Activate whether the message should be sent or not.").define("enableChatBox", true);
+            CHAT_BOX_COOLDOWN = builder.comment("This deactivates the methods and the event of the chat box.").defineInRange("chatBoxCooldown", 10, 1, Integer.MAX_VALUE);
 
-        COMMON_BUILDER.comment("").push("Features");
-
-        CHAT_BOX_ENABLED = COMMON_BUILDER.comment("This deactivates the methods and the event of the chat box. You need to restart the Client/Server.").define("enableChatBox", true);
-
-        CHAT_BOX_COOLDOWN = COMMON_BUILDER.comment("The time that has to be waited before a new message can be sent. In ticks. 20 ticks is one second.").defineInRange("chatBoxCooldown", 10,1,Integer.MAX_VALUE);
-
-        COMMON_BUILDER.pop();
-        COMMON_CONFIG = COMMON_BUILDER.build();
+            builder.pop();
+        }
     }
-
-    public static void loadConfig(ForgeConfigSpec spec, final Path path) {
-
-        final CommentedFileConfig configData = CommentedFileConfig.builder(path)
-                .sync().autosave().writingMode(WritingMode.REPLACE).build();
-
-        configData.load();
-        spec.setConfig(configData);
-
-    }
-
 }
