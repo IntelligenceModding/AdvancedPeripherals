@@ -4,7 +4,7 @@ license = "All rights reserved"
 issueTrackerURL = "https://github.com/Seniorendi/AdvancedPeripherals/issues"
 [[mods]]
 modId = "advancedperipherals"
-version = "0.2.3b"
+version = "0.2.4b"
 displayName = "Advanced Peripherals"
 #updateJSONURL="http://myurl.me/"
 displayURL = "https://srendi.de/"
