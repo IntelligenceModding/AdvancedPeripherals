@@ -36,13 +36,13 @@ public class ChatBox extends Block {
     @Override
     public void onBlockPlacedBy(World worldIn, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
         super.onBlockPlacedBy(worldIn, pos, state, placer, stack);
-        TileEntityList.get().setTileEntity(worldIn, pos);
+        TileEntityList.get(worldIn).setTileEntity(worldIn, pos);
     }
 
     @Override
     public void onPlayerDestroy(IWorld worldIn, BlockPos pos, BlockState state) {
         super.onPlayerDestroy(worldIn, pos, state);
-        TileEntityList.get().setTileEntity((World) worldIn, pos);
+        TileEntityList.get((World) worldIn).setTileEntity((World) worldIn, pos);
     }
 
 }

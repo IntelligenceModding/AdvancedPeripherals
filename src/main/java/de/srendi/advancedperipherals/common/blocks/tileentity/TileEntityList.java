@@ -6,7 +6,6 @@ import net.minecraft.nbt.ListNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
 import net.minecraft.world.storage.DimensionSavedDataManager;
 import net.minecraft.world.storage.WorldSavedData;
 import net.minecraftforge.common.util.Constants;
@@ -20,9 +19,15 @@ public class TileEntityList extends WorldSavedData {
 
     public final List<BlockPos> tileEntities = new ArrayList<>();
 
-    public static TileEntityList get() {
-        DimensionSavedDataManager storage = ServerLifecycleHooks.getCurrentServer().func_241755_D_().getSavedData();
-        return storage.getOrCreate(TileEntityList::new, AdvancedPeripherals.MOD_ID);
+    private static final TileEntityList clientInstance = new TileEntityList();
+
+    public static TileEntityList get(World world) {
+        if(!world.isRemote) {
+            DimensionSavedDataManager storage = ServerLifecycleHooks.getCurrentServer().func_241755_D_().getSavedData();
+            return storage.getOrCreate(TileEntityList::new, AdvancedPeripherals.MOD_ID);
+        } else {
+            return clientInstance;
+        }
     }
 
     public TileEntityList(String name) {
@@ -76,7 +81,7 @@ public class TileEntityList extends WorldSavedData {
 
     public List<TileEntity> getTileEntitys(World world) {
         List<TileEntity> list = new ArrayList<>();
-        for (BlockPos blockPos : get().getBlockPositions()) {
+        for (BlockPos blockPos : get(world).getBlockPositions()) {
             if (world.isBlockLoaded(blockPos)) {
                 list.add(world.getTileEntity(blockPos));
             }

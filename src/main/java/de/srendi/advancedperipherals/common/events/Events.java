@@ -15,7 +15,7 @@ public class Events {
 
     @SubscribeEvent
     public static void onChat(ServerChatEvent event) {
-        for (TileEntity tileEntity : TileEntityList.get().getTileEntitys(event.getPlayer().getServerWorld())) {
+        for (TileEntity tileEntity : TileEntityList.get(event.getPlayer().getServerWorld()).getTileEntitys(event.getPlayer().getServerWorld())) {
             if (tileEntity instanceof ChatBoxTileEntity) {
                 if (AdvancedPeripheralsConfig.enableChatBox) {
                     if(event.getMessage().startsWith("$")) {

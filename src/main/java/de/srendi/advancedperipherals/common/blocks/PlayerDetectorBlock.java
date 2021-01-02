@@ -48,7 +48,7 @@ public class PlayerDetectorBlock extends Block {
     @Override
     public ActionResultType onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity player, Hand handIn, BlockRayTraceResult hit) {
         //Todo: This stuff is called twice. I need to prevent this
-        for (TileEntity tileEntity : TileEntityList.get().getTileEntitys(worldIn)) {
+        for (TileEntity tileEntity : TileEntityList.get(worldIn).getTileEntitys(worldIn)) {
             if (tileEntity instanceof PlayerDetectorTileEntity) {
                 CCEventManager.getInstance().sendEvent(tileEntity, "playerClickEvent", player.getName().getString());
             }
@@ -59,13 +59,13 @@ public class PlayerDetectorBlock extends Block {
     @Override
     public void onBlockPlacedBy(World worldIn, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
         super.onBlockPlacedBy(worldIn, pos, state, placer, stack);
-        TileEntityList.get().setTileEntity(worldIn, pos);
+        TileEntityList.get(worldIn).setTileEntity(worldIn, pos);
     }
 
     @Override
     public void onPlayerDestroy(IWorld worldIn, BlockPos pos, BlockState state) {
         super.onPlayerDestroy(worldIn, pos, state);
-        TileEntityList.get().setTileEntity((World) worldIn, pos);
+        TileEntityList.get((World) worldIn).setTileEntity((World) worldIn, pos);
     }
 
 }
