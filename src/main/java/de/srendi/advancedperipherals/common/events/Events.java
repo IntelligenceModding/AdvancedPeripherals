@@ -18,6 +18,9 @@ public class Events {
         for (TileEntity tileEntity : TileEntityList.get().getTileEntitys(event.getPlayer().getServerWorld())) {
             if (tileEntity instanceof ChatBoxTileEntity) {
                 if (AdvancedPeripheralsConfig.enableChatBox) {
+                    if(event.getMessage().startsWith("$")) {
+                        event.setCanceled(true);
+                    }
                     CCEventManager.getInstance().sendEvent(tileEntity, "chatEvent", event.getUsername(), event.getMessage());
                 }
             }
