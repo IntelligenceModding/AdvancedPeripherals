@@ -10,7 +10,7 @@ Advanced Peripherals is a mod that adds many useful extensions for ComputerCraft
 
 Documentation: not created yet
 
-With Advanced Peripherals you can control your base in Minecraft only with messages in the chat, you can develop an AI that controls your farms you have no limits what you can create with ComputerCraft and this Advanced Peripherals.
+With Advanced Peripherals you can control your base in Minecraft only with messages in the chat, you can develop an AI that controls your farms you have no limits what you can create with ComputerCraft and Advanced Peripherals.
 
 ## Example 
 
