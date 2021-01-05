@@ -12,6 +12,7 @@ import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TextComponent;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.fml.common.Mod;
 
@@ -48,10 +49,10 @@ public class ChatBoxTileEntity extends TileEntity implements ITickableTileEntity
                         if (AdvancedPeripherals.playerController.getWorld() instanceof ServerWorld) {
                             ServerWorld world = (ServerWorld) AdvancedPeripherals.playerController.getWorld();
                             for (ServerPlayerEntity player : world.getServer().getPlayerList().getPlayers()) {
-                                player.sendMessage(new StringTextComponent((String) args[0]), UUID.randomUUID());
+                                player.sendMessage(new StringTextComponent("" + args[0]), UUID.randomUUID());
                             }
                         } else {
-                            Minecraft.getInstance().player.sendMessage(new StringTextComponent((String) args[0]), UUID.randomUUID());
+                            Minecraft.getInstance().player.sendMessage(new StringTextComponent("" + args[0]), UUID.randomUUID());
                         }
                         tick = 0;
                     } else {

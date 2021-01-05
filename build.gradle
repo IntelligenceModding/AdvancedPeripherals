@@ -8,6 +8,7 @@ buildscript {
         classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '3.+', changing: true
     }
 }
+
 apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
@@ -26,8 +27,8 @@ minecraft {
             workingDirectory project.file('run')
 
             property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-
-            property 'forge.logging.console.level', 'debug'
+            properties 'mixin.env.disableRefMap': 'true'
+            properties 'forge.logging.console.level': 'debug'
 
             mods {
                 advancedperipherals {
@@ -90,7 +91,8 @@ dependencies {
     runtimeOnly fg.deobf("mezz.jei:jei-${minecraft_version}:7.6.0.62")
 
     implementation fg.deobf("org.squiddev:cc-tweaked-${minecraft_version}:${cc_version}")
-    //compileOnly fg.deobf("appeng:appliedenergistics2:${appliedenergistics_version}:api");
+    compileOnly fg.deobf("appeng:appliedenergistics2:${appliedenergistics_version}:api");
+    runtimeOnly fg.deobf("appeng:appliedenergistics2:${appliedenergistics_version}");
 }
 
 jar {

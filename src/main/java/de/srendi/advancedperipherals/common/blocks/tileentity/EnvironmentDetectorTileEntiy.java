@@ -27,15 +27,8 @@ public class EnvironmentDetectorTileEntiy extends TileEntity implements ILuaMeth
             @Override
             public Object[] call(Object[] args) {
                 String biomeName = getWorld().getBiome(getPos()).getRegistryName().toString();
-                int piece = 0;
-                String biome = "";
-                for (String biomeString : biomeName.split(":")) {
-                    if (piece == 1) {
-                        biome = biomeString;
-                    }
-                    piece++;
-                }
-                return new Object[]{biome};
+                String[] biome = biomeName.split(":");
+                return new Object[]{biome[1]};
             }
         });
         registry.registerLuaMethod(new LuaMethod("getLightLevel") {

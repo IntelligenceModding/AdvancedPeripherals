@@ -1,7 +1,6 @@
 package de.srendi.advancedperipherals.common.blocks;
 
 import de.srendi.advancedperipherals.common.addons.computercraft.CCEventManager;
-import de.srendi.advancedperipherals.common.blocks.tileentity.ChatBoxTileEntity;
 import de.srendi.advancedperipherals.common.blocks.tileentity.PlayerDetectorTileEntity;
 import de.srendi.advancedperipherals.common.blocks.tileentity.TileEntityList;
 import de.srendi.advancedperipherals.common.setup.ModTileEntityTypes;
@@ -9,24 +8,20 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.server.MinecraftServer;
+import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ToolType;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.UUID;
 
 public class PlayerDetectorBlock extends Block {
 
@@ -67,5 +62,4 @@ public class PlayerDetectorBlock extends Block {
         super.onPlayerDestroy(worldIn, pos, state);
         TileEntityList.get((World) worldIn).setTileEntity((World) worldIn, pos);
     }
-
 }
