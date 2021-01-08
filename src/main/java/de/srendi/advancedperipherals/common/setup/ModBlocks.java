@@ -3,6 +3,7 @@ package de.srendi.advancedperipherals.common.setup;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.blocks.ChatBox;
 import de.srendi.advancedperipherals.common.blocks.EnvironmentDetector;
+import de.srendi.advancedperipherals.common.blocks.MeBridge;
 import de.srendi.advancedperipherals.common.blocks.PlayerDetectorBlock;
 import net.minecraft.block.Block;
 import net.minecraft.item.BlockItem;
@@ -19,6 +20,7 @@ public class ModBlocks {
     public static final RegistryObject<Block> ENVIRONMENT_DETECTOR = register("environment_detector", EnvironmentDetector::new);
     public static final RegistryObject<Block> CHAT_BOX = register("chat_box", ChatBox::new);
     public static final RegistryObject<Block> PLAYER_DETECTOR = register("player_detector", PlayerDetectorBlock::new);
+    public static final RegistryObject<Block> ME_BRIDGE = register("me_bridge", MeBridge::new);
 
     static void register() {
 

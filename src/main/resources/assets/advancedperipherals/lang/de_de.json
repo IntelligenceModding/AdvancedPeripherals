@@ -4,5 +4,6 @@
   "block.advancedperipherals.environment_detector": "Umgebungs Detector",
   "block.advancedperipherals.chat_box": "Chat box",
   "block.advancedperipherals.player_detector": "Spieler Detector",
+  "block.advancedperipherals.me_bridge": "ME Brücke",
   "itemGroup.advancedperipheralstab": "Advanced Peripherals"
 }
