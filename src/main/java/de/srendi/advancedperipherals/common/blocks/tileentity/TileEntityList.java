@@ -15,8 +15,6 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
-
-//i do currently do not need this class cause i changed how i send events. But i will let this here.
 public class TileEntityList extends WorldSavedData {
 
     public final List<BlockPos> tileEntities = new ArrayList<>();
