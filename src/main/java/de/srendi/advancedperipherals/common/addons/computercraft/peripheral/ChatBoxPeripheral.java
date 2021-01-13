@@ -1,0 +1,108 @@
+package de.srendi.advancedperipherals.common.addons.computercraft.peripheral;
+
+import dan200.computercraft.api.lua.LuaException;
+import dan200.computercraft.api.lua.LuaFunction;
+import dan200.computercraft.api.peripheral.IComputerAccess;
+import dan200.computercraft.api.peripheral.IPeripheral;
+import de.srendi.advancedperipherals.AdvancedPeripherals;
+import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
+import net.minecraft.client.Minecraft;
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.world.server.ServerWorld;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
+public class ChatBoxPeripheral implements IPeripheral {
+
+    private String type;
+
+    private int tick;
+
+    private final List<IComputerAccess> connectedComputers = new ArrayList<>();
+
+    public ChatBoxPeripheral(String type) {
+        this.type = type;
+    }
+
+    @NotNull
+    @Override
+    public String getType() {
+        return type;
+    }
+
+    public List<IComputerAccess> getConnectedComputers() {
+        return connectedComputers;
+    }
+
+    @Override
+    public void attach(@NotNull IComputerAccess computer) {
+        connectedComputers.add(computer);
+    }
+
+    @Override
+    public void detach(@NotNull IComputerAccess computer) {
+        connectedComputers.remove(computer);
+    }
+
+    @Nullable
+    @Override
+    public Object getTarget() {
+        return null;
+    }
+
+    public void setTick(int tick) {
+        this.tick = tick;
+    }
+
+    public int getTick() {
+        return tick;
+    }
+
+    @Override
+    public boolean equals(@Nullable IPeripheral iPeripheral) {
+        return iPeripheral == this;
+    }
+
+    @LuaFunction(mainThread = true)
+    public void sendMessage(Object message) throws LuaException {
+        if (tick >= AdvancedPeripheralsConfig.chatBoxCooldown) {
+            if (AdvancedPeripherals.playerController.getWorld() instanceof ServerWorld) {
+                ServerWorld world = (ServerWorld) AdvancedPeripherals.playerController.getWorld();
+                for (ServerPlayerEntity player : world.getServer().getPlayerList().getPlayers()) {
+                    player.sendMessage(new StringTextComponent("" + message), UUID.randomUUID());
+                }
+            } else {
+                Minecraft.getInstance().player.sendMessage(new StringTextComponent("" + message), UUID.randomUUID());
+            }
+            tick = 0;
+        } else {
+            throw new LuaException("You are sending messages too often. You can modify the cooldown in the config.");
+        }
+    }
+
+    @LuaFunction(mainThread = true)
+    public void sendMessageToPlayer(Object message, String playerName) throws LuaException {
+        if (tick >= AdvancedPeripheralsConfig.chatBoxCooldown) {
+            if (AdvancedPeripherals.playerController.getWorld() instanceof ServerWorld) {
+                ServerWorld world = (ServerWorld) AdvancedPeripherals.playerController.getWorld();
+                for (ServerPlayerEntity player : world.getServer().getPlayerList().getPlayers()) {
+                    if (player.getName().getString().equals(playerName)) {
+                        player.sendMessage(new StringTextComponent((String) message), UUID.randomUUID());
+                    }
+                }
+            } else {
+                if (Minecraft.getInstance().player.getName().getString().equals(playerName)) {
+                    Minecraft.getInstance().player.sendMessage(new StringTextComponent("" + message), UUID.randomUUID());
+                }
+            }
+            tick = 0;
+        } else {
+            throw new LuaException("You are sending messages too often. You can modify the cooldown in the config.");
+        }
+    }
+}

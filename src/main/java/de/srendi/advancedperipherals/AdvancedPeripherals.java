@@ -1,6 +1,5 @@
 package de.srendi.advancedperipherals;
 
-import de.srendi.advancedperipherals.common.addons.computercraft.ComputerCraft;
 import de.srendi.advancedperipherals.common.configuration.ConfigHolder;
 import de.srendi.advancedperipherals.common.setup.ModBlocks;
 import de.srendi.advancedperipherals.common.setup.Registration;
@@ -49,8 +48,6 @@ public class AdvancedPeripherals {
 
     private void commonSetup(FMLCommonSetupEvent event) {
         LOGGER.info("Registering CC:Tweaked integration!");
-
-        ComputerCraft.initiate();
     }
 
     public Logger getLogger() {

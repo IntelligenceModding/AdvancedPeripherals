@@ -1,29 +1,26 @@
 package de.srendi.advancedperipherals.common.blocks.tileentity;
 
+import dan200.computercraft.api.peripheral.IComputerAccess;
+import dan200.computercraft.api.peripheral.IPeripheral;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
-import de.srendi.advancedperipherals.common.addons.computercraft.ILuaMethodProvider;
-import de.srendi.advancedperipherals.common.addons.computercraft.LuaMethod;
-import de.srendi.advancedperipherals.common.addons.computercraft.LuaMethodRegistry;
-import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
+import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.ChatBoxPeripheral;
 import de.srendi.advancedperipherals.common.setup.ModTileEntityTypes;
-import net.minecraft.client.Minecraft;
-import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextComponent;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.util.Direction;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fml.common.Mod;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.UUID;
+import java.util.List;
+
+import static dan200.computercraft.shared.Capabilities.CAPABILITY_PERIPHERAL;
 
 @Mod.EventBusSubscriber(modid = AdvancedPeripherals.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
-public class ChatBoxTileEntity extends TileEntity implements ITickableTileEntity, ILuaMethodProvider {
-
-    private final LuaMethodRegistry luaMethodRegistry = new LuaMethodRegistry(this);
-
-    private int tick = 0;
+public class ChatBoxTileEntity extends TileEntity implements ITickableTileEntity {
 
     public ChatBoxTileEntity() {
         this(ModTileEntityTypes.CHAT_BOX.get());
@@ -33,69 +30,39 @@ public class ChatBoxTileEntity extends TileEntity implements ITickableTileEntity
         super(tileEntityType);
     }
 
+    private ChatBoxPeripheral peripheral;
+    private LazyOptional<IPeripheral> peripheralCap;
+
+    private int tick;
+
+    public List<IComputerAccess> getConnectedComputers() {
+        return peripheral.getConnectedComputers();
+    }
+
+    @Override
+    public <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction direction) {
+        if (cap == CAPABILITY_PERIPHERAL) {
+            if (peripheralCap == null) {
+                peripheralCap = LazyOptional.of(()->peripheral);
+            }
+            return peripheralCap.cast();
+        }
+
+        return super.getCapability(cap, direction);
+    }
+
+    @Override
+    public void validate() {
+        peripheral = new ChatBoxPeripheral("chatBox");
+        super.validate();
+    }
+
     @Override
     public void tick() {
-        tick++;
-    }
-
-    @Override
-    public void addLuaMethods(LuaMethodRegistry registry) {
-        if(AdvancedPeripheralsConfig.enableChatBox) {
-            registry.registerLuaMethod(new LuaMethod("sendMessage") {
-                @Override
-                public Object[] call(Object[] args) {
-                    requireArgs(args, 1, "<message>:String");
-                    if (tick >= AdvancedPeripheralsConfig.chatBoxCooldown) {
-                        if (AdvancedPeripherals.playerController.getWorld() instanceof ServerWorld) {
-                            ServerWorld world = (ServerWorld) AdvancedPeripherals.playerController.getWorld();
-                            for (ServerPlayerEntity player : world.getServer().getPlayerList().getPlayers()) {
-                                player.sendMessage(new StringTextComponent("" + args[0]), UUID.randomUUID());
-                            }
-                        } else {
-                            Minecraft.getInstance().player.sendMessage(new StringTextComponent("" + args[0]), UUID.randomUUID());
-                        }
-                        tick = 0;
-                    } else {
-                        return new Object[]{"You are sending messages too often. You can modify the cooldown in the config."};
-                    }
-                    return null;
-                }
-            });
-            registry.registerLuaMethod(new LuaMethod("sendMessageToPlayer") {
-                @Override
-                public Object[] call(Object[] args) {
-                    requireArgs(args, 2, "<playerName>:String | <message>:String");
-                    if (tick >= AdvancedPeripheralsConfig.chatBoxCooldown) {
-                        if (AdvancedPeripherals.playerController.getWorld() instanceof ServerWorld) {
-                            ServerWorld world = (ServerWorld) AdvancedPeripherals.playerController.getWorld();
-                            for (ServerPlayerEntity player : world.getServer().getPlayerList().getPlayers()) {
-                                if (player.getName().getString().equals(args[0])) {
-                                    player.sendMessage(new StringTextComponent((String) args[1]), UUID.randomUUID());
-                                }
-                            }
-                        } else {
-                            if (Minecraft.getInstance().player.getName().getString().equals(args[0])) {
-                                Minecraft.getInstance().player.sendMessage(new StringTextComponent((String) args[1]), UUID.randomUUID());
-                            }
-                        }
-                        tick = 0;
-                    } else {
-                        return new Object[]{"You are sending messages too often. You can modify the cooldown in the config."};
-                    }
-                    return null;
-                }
-            });
+        if(peripheral.getTick() == 0) {
+            tick = 0;
         }
-    }
-
-
-    @Override
-    public LuaMethodRegistry getLuaMethodRegistry() {
-        return luaMethodRegistry;
-    }
-
-    @Override
-    public String getPeripheralType() {
-        return "chatBox";
+        tick++;
+        peripheral.setTick(tick);
     }
 }

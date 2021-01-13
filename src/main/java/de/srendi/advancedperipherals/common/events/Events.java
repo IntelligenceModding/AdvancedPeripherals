@@ -1,7 +1,7 @@
 package de.srendi.advancedperipherals.common.events;
 
+import dan200.computercraft.api.peripheral.IComputerAccess;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
-import de.srendi.advancedperipherals.common.addons.computercraft.CCEventManager;
 import de.srendi.advancedperipherals.common.blocks.tileentity.ChatBoxTileEntity;
 import de.srendi.advancedperipherals.common.blocks.tileentity.TileEntityList;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
@@ -21,9 +21,13 @@ public class Events {
                     if(event.getMessage().startsWith("$")) {
                         event.setCanceled(true);
                     }
-                    CCEventManager.getInstance().sendEvent(tileEntity, "chatEvent", event.getUsername(), event.getMessage().replace("$", ""));
+                    ChatBoxTileEntity entity = (ChatBoxTileEntity) tileEntity;
+                    for(IComputerAccess computer : entity.getConnectedComputers()) {
+                        computer.queueEvent("chat", event.getUsername(), event.getMessage().replace("$", ""));
+                    }
                 }
             }
         }
     }
+
 }

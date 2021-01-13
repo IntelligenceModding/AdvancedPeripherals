@@ -1,17 +1,19 @@
 package de.srendi.advancedperipherals.common.blocks.tileentity;
 
-import de.srendi.advancedperipherals.common.addons.computercraft.ILuaMethodProvider;
-import de.srendi.advancedperipherals.common.addons.computercraft.LuaMethod;
-import de.srendi.advancedperipherals.common.addons.computercraft.LuaMethodRegistry;
+import dan200.computercraft.api.peripheral.IPeripheral;
+import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.EnvironmentDetectorPeripheral;
 import de.srendi.advancedperipherals.common.setup.ModTileEntityTypes;
-import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
-import net.minecraft.world.LightType;
+import net.minecraft.util.Direction;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.util.LazyOptional;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-public class EnvironmentDetectorTileEntiy extends TileEntity implements ILuaMethodProvider {
+import static dan200.computercraft.shared.Capabilities.CAPABILITY_PERIPHERAL;
 
-    private final LuaMethodRegistry luaMethodRegistry = new LuaMethodRegistry(this);
+public class EnvironmentDetectorTileEntiy extends TileEntity {
 
     public EnvironmentDetectorTileEntiy() {
         this(ModTileEntityTypes.ENVIRONMENT_DETECTOR.get());
@@ -21,40 +23,24 @@ public class EnvironmentDetectorTileEntiy extends TileEntity implements ILuaMeth
         super(tileEntityTypeIn);
     }
 
-    @Override
-    public void addLuaMethods(LuaMethodRegistry registry) {
-        registry.registerLuaMethod(new LuaMethod("getBiome") {
-            @Override
-            public Object[] call(Object[] args) {
-                String biomeName = getWorld().getBiome(getPos()).getRegistryName().toString();
-                String[] biome = biomeName.split(":");
-                return new Object[]{biome[1]};
-            }
-        });
-        registry.registerLuaMethod(new LuaMethod("getLightLevel") {
-            @Override
-            public Object[] call(Object[] args) {
-                getWorld().getLightFor(LightType.SKY, getPos().add(0, 1, 0));
-                return new Object[]{getWorld().getLightFor(LightType.SKY, getPos().add(0, 1, 0))};
-            }
-        });
-        registry.registerLuaMethod(new LuaMethod("getTime") {
-            @Override
-            public Object[] call(Object[] args) {
-                return new Object[]{getWorld().getDayTime()};
-            }
-        });
-    }
-
+    private EnvironmentDetectorPeripheral peripheral;
+    private LazyOptional<IPeripheral> peripheralCap;
 
     @Override
-    public LuaMethodRegistry getLuaMethodRegistry() {
-        return luaMethodRegistry;
+    public <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction direction) {
+        if (cap == CAPABILITY_PERIPHERAL) {
+            if (peripheralCap == null) {
+                peripheralCap = LazyOptional.of(()->peripheral);
+            }
+            return peripheralCap.cast();
+        }
+
+        return super.getCapability(cap, direction);
     }
 
     @Override
-    public String getPeripheralType() {
-        return "environmentDetector";
+    public void validate() {
+        peripheral = new EnvironmentDetectorPeripheral("environmentDetector", this);
+        super.validate();
     }
-
 }

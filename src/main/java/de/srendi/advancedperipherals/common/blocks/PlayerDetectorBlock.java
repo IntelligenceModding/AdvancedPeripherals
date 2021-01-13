@@ -1,6 +1,6 @@
 package de.srendi.advancedperipherals.common.blocks;
 
-import de.srendi.advancedperipherals.common.addons.computercraft.CCEventManager;
+import dan200.computercraft.api.peripheral.IComputerAccess;
 import de.srendi.advancedperipherals.common.blocks.tileentity.PlayerDetectorTileEntity;
 import de.srendi.advancedperipherals.common.blocks.tileentity.TileEntityList;
 import de.srendi.advancedperipherals.common.setup.ModTileEntityTypes;
@@ -11,7 +11,6 @@ import net.minecraft.block.material.Material;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
@@ -45,7 +44,10 @@ public class PlayerDetectorBlock extends Block {
         //Todo: This stuff is called twice. I need to prevent this
         for (TileEntity tileEntity : TileEntityList.get(worldIn).getTileEntitys(worldIn)) {
             if (tileEntity instanceof PlayerDetectorTileEntity) {
-                CCEventManager.getInstance().sendEvent(tileEntity, "playerClickEvent", player.getName().getString());
+                PlayerDetectorTileEntity entity = (PlayerDetectorTileEntity) tileEntity;
+                for(IComputerAccess computer : entity.getConnectedComputers()) {
+                    computer.queueEvent("playerClick", player.getName().getString());
+                }
             }
         }
         return super.onBlockActivated(state, worldIn, pos, player, handIn, hit);
