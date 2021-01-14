@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "FIF",
+    "ILI",
+    "FIF"
+  ],
+  "key": {
+    "F": {
+      "item": "appliedenergistics2:fluix_block"
+    },
+    "I": {
+      "item": "appliedenergistics2:interface"
+    },
+    "L": {
+      "item": "appliedenergistics2:logic_processor"
+    }
+  },
+  "result": {
+    "item": "advancedperipherals:me_bridge",
+    "count": 1
+  }
+}
