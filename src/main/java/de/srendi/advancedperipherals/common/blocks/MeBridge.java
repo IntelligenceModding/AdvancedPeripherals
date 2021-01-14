@@ -2,6 +2,7 @@ package de.srendi.advancedperipherals.common.blocks;
 
 import de.srendi.advancedperipherals.common.blocks.tileentity.MeBridgeTileEntity;
 import de.srendi.advancedperipherals.common.blocks.tileentity.TileEntityList;
+import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
 import de.srendi.advancedperipherals.common.setup.ModTileEntityTypes;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -30,13 +31,13 @@ public class MeBridge extends Block {
 
     @Override
     public boolean hasTileEntity(BlockState state) {
-        return ModList.get().isLoaded("appliedenergistics2");
+        return ModList.get().isLoaded("appliedenergistics2") && AdvancedPeripheralsConfig.enableMeBridge;
     }
 
     @Nullable
     @Override
     public TileEntity createTileEntity(BlockState state, IBlockReader world) {
-        if(ModList.get().isLoaded("appliedenergistics2")) {
+        if(ModList.get().isLoaded("appliedenergistics2") && AdvancedPeripheralsConfig.enableMeBridge) {
             return ModTileEntityTypes.ME_BRIDGE.get().create();
         } else {
             return null;
@@ -46,7 +47,7 @@ public class MeBridge extends Block {
     @Override
     public void onBlockPlacedBy(World worldIn, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
         super.onBlockPlacedBy(worldIn, pos, state, placer, stack);
-        if (!ModList.get().isLoaded("appliedenergistics2")) {
+        if (!ModList.get().isLoaded("appliedenergistics2") && AdvancedPeripheralsConfig.enableMeBridge) {
             return;
         }
         meBridge = (MeBridgeTileEntity) worldIn.getTileEntity(pos);
@@ -60,7 +61,7 @@ public class MeBridge extends Block {
     @Override
     public void onPlayerDestroy(IWorld worldIn, BlockPos pos, BlockState state) {
         super.onPlayerDestroy(worldIn, pos, state);
-        if (!ModList.get().isLoaded("appliedenergistics2"))
+        if (!ModList.get().isLoaded("appliedenergistics2") && AdvancedPeripheralsConfig.enableMeBridge)
             return;
         TileEntityList.get((World) worldIn).setTileEntity((World) worldIn, pos);
     }

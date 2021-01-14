@@ -122,6 +122,19 @@ public class MeBridgePeripheral implements IPeripheral {
     }
 
     @LuaFunction(mainThread = true)
+    public double getMaxEnergyStorage() {
+        return ((IEnergyGrid)node.getGrid().getCache(IEnergyGrid.class)).getMaxStoredPower();
+    }
+
+    @LuaFunction(mainThread = true)
+    public boolean isItemCrafting(String item) {
+        IMEMonitor<IAEItemStack> monitor = ((IStorageGrid) node.getGrid().getCache(IStorageGrid.class)).getInventory(AppEngApi.getInstance().getApi().storage().getStorageChannel(IItemStorageChannel.class));
+        ICraftingGrid grid = node.getGrid().getCache(ICraftingGrid.class);
+        return grid.isRequesting(AppEngApi.getInstance().findAEStackFromItemStack(monitor, new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation(item)))));
+    }
+
+
+    @LuaFunction(mainThread = true)
     public void retrieve(String item, int count, String directionString) throws LuaException {
         IMEMonitor<IAEItemStack> monitor = ((IStorageGrid) node.getGrid().getCache(IStorageGrid.class)).getInventory(AppEngApi.getInstance().getApi().storage().getStorageChannel(IItemStorageChannel.class));
         ItemStack stack = new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation(item)));

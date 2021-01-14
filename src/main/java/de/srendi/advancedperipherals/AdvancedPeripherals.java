@@ -34,7 +34,6 @@ public class AdvancedPeripherals {
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, ConfigHolder.COMMON_SPEC);
 
         MinecraftForge.EVENT_BUS.addListener(this::onWorldLoad);
-        modBus.addListener(this::commonSetup);
         Registration.register();
         MinecraftForge.EVENT_BUS.register(this);
     }
@@ -45,10 +44,6 @@ public class AdvancedPeripherals {
             return new ItemStack(ModBlocks.CHAT_BOX.get());
         }
     };
-
-    private void commonSetup(FMLCommonSetupEvent event) {
-        LOGGER.info("Registering CC:Tweaked integration!");
-    }
 
     public Logger getLogger() {
         return LOGGER;

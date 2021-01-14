@@ -5,6 +5,7 @@ import de.srendi.advancedperipherals.common.blocks.tileentity.ChatBoxTileEntity;
 import de.srendi.advancedperipherals.common.blocks.tileentity.EnvironmentDetectorTileEntiy;
 import de.srendi.advancedperipherals.common.blocks.tileentity.MeBridgeTileEntity;
 import de.srendi.advancedperipherals.common.blocks.tileentity.PlayerDetectorTileEntity;
+import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.RegistryObject;
@@ -22,7 +23,7 @@ public class ModTileEntityTypes {
     }
 
     private static RegistryObject<TileEntityType<MeBridgeTileEntity>> registerBridge() {
-        if(ModList.get().isLoaded("appliedenergistics2")) {
+        if(ModList.get().isLoaded("appliedenergistics2") && AdvancedPeripheralsConfig.enableMeBridge) {
             return Registration.TILE_ENTITIES.register("me_bridge", ()->new TileEntityType<>(MeBridgeTileEntity::new, Sets.newHashSet(ModBlocks.ME_BRIDGE.get()), null));
         }
         return null;
