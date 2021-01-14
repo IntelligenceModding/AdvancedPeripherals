@@ -1,5 +1,6 @@
 package de.srendi.advancedperipherals;
 
+import de.srendi.advancedperipherals.common.configuration.ConfigHandler;
 import de.srendi.advancedperipherals.common.configuration.ConfigHolder;
 import de.srendi.advancedperipherals.common.setup.ModBlocks;
 import de.srendi.advancedperipherals.common.setup.Registration;
@@ -32,8 +33,8 @@ public class AdvancedPeripherals {
         IEventBus modBus = FMLJavaModLoadingContext.get().getModEventBus();
 
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, ConfigHolder.COMMON_SPEC);
-
         MinecraftForge.EVENT_BUS.addListener(this::onWorldLoad);
+        modBus.addListener(ConfigHandler::configEvent);
         Registration.register();
         MinecraftForge.EVENT_BUS.register(this);
     }

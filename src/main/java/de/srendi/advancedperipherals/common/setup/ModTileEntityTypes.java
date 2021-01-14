@@ -1,6 +1,7 @@
 package de.srendi.advancedperipherals.common.setup;
 
 import com.google.common.collect.Sets;
+import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.blocks.tileentity.ChatBoxTileEntity;
 import de.srendi.advancedperipherals.common.blocks.tileentity.EnvironmentDetectorTileEntiy;
 import de.srendi.advancedperipherals.common.blocks.tileentity.MeBridgeTileEntity;
@@ -23,7 +24,7 @@ public class ModTileEntityTypes {
     }
 
     private static RegistryObject<TileEntityType<MeBridgeTileEntity>> registerBridge() {
-        if(ModList.get().isLoaded("appliedenergistics2") && AdvancedPeripheralsConfig.enableMeBridge) {
+        if(ModList.get().isLoaded("appliedenergistics2")) {
             return Registration.TILE_ENTITIES.register("me_bridge", ()->new TileEntityType<>(MeBridgeTileEntity::new, Sets.newHashSet(ModBlocks.ME_BRIDGE.get()), null));
         }
         return null;

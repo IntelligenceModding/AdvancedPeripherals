@@ -31,23 +31,26 @@ public class MeBridge extends Block {
 
     @Override
     public boolean hasTileEntity(BlockState state) {
-        return ModList.get().isLoaded("appliedenergistics2") && AdvancedPeripheralsConfig.enableMeBridge;
+        return ModList.get().isLoaded("appliedenergistics2");
     }
 
     @Nullable
     @Override
     public TileEntity createTileEntity(BlockState state, IBlockReader world) {
-        if(ModList.get().isLoaded("appliedenergistics2") && AdvancedPeripheralsConfig.enableMeBridge) {
-            return ModTileEntityTypes.ME_BRIDGE.get().create();
+        if(ModList.get().isLoaded("appliedenergistics2")) {
+            if(ModTileEntityTypes.ME_BRIDGE.get().create() != null) {
+                return ModTileEntityTypes.ME_BRIDGE.get().create();
+            }
         } else {
             return null;
         }
+        return null;
     }
 
     @Override
     public void onBlockPlacedBy(World worldIn, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
         super.onBlockPlacedBy(worldIn, pos, state, placer, stack);
-        if (!ModList.get().isLoaded("appliedenergistics2") && AdvancedPeripheralsConfig.enableMeBridge) {
+        if (!ModList.get().isLoaded("appliedenergistics2")) {
             return;
         }
         meBridge = (MeBridgeTileEntity) worldIn.getTileEntity(pos);
@@ -61,7 +64,7 @@ public class MeBridge extends Block {
     @Override
     public void onPlayerDestroy(IWorld worldIn, BlockPos pos, BlockState state) {
         super.onPlayerDestroy(worldIn, pos, state);
-        if (!ModList.get().isLoaded("appliedenergistics2") && AdvancedPeripheralsConfig.enableMeBridge)
+        if (!ModList.get().isLoaded("appliedenergistics2"))
             return;
         TileEntityList.get((World) worldIn).setTileEntity((World) worldIn, pos);
     }

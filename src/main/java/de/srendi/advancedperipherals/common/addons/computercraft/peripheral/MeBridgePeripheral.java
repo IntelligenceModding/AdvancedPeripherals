@@ -97,120 +97,168 @@ public class MeBridgePeripheral implements IPeripheral {
     }
 
     @LuaFunction(mainThread = false)
-    public final MethodResult craftItem(IComputerAccess computer, String item, double itemAmount){
-        String itemName =item;
-        int amount = (int) itemAmount;
-        ItemStack itemToCraft = new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation(itemName)));
-        if (itemToCraft.isEmpty())
-            throw new NullPointerException("Item " + itemName + " does not exists");
-        if(((IStorageGrid) node.getGrid().getCache(IStorageGrid.class)).getInventory(AppEngApi.getInstance().getApi().storage().getStorageChannel(IItemStorageChannel.class)) == null)
-            throw new NullPointerException("Storage grid is null");
+    public final MethodResult craftItem(IComputerAccess computer, String item, double itemAmount) {
+        if (AdvancedPeripheralsConfig.enableMeBridge) {
+            String itemName = item;
+            int amount = (int) itemAmount;
+            ItemStack itemToCraft = new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation(itemName)));
+            if (itemToCraft.isEmpty())
+                throw new NullPointerException("Item " + itemName + " does not exists");
+            if (((IStorageGrid) node.getGrid().getCache(IStorageGrid.class)).getInventory(AppEngApi.getInstance().getApi().storage().getStorageChannel(IItemStorageChannel.class)) == null)
+                throw new NullPointerException("Storage grid is null");
 
-        CraftJob job = new CraftJob(tileEntity.getWorld(), computer, node, item, Optional.of(amount), source);
-        ServerWorker.add(job::startCrafting);
-        return MethodResult.pullEvent("crafting", job);
+            CraftJob job = new CraftJob(tileEntity.getWorld(), computer, node, item, Optional.of(amount), source);
+            ServerWorker.add(job::startCrafting);
+            return MethodResult.pullEvent("crafting", job);
+        } else {
+            return MethodResult.of("Me Bridge is not enabled, enable it in the config.");
+        }
     }
 
     @LuaFunction(mainThread = true)
-    public double getEnergyUsage() {
-        return ((IEnergyGrid)node.getGrid().getCache(IEnergyGrid.class)).getAvgPowerUsage();
+    public double getEnergyUsage() throws LuaException {
+        if (AdvancedPeripheralsConfig.enableMeBridge) {
+            return ((IEnergyGrid) node.getGrid().getCache(IEnergyGrid.class)).getAvgPowerUsage();
+        } else {
+            throw new LuaException("Me Bridge is not enabled, enable it in the config.");
+        }
     }
 
     @LuaFunction(mainThread = true)
-    public double getEnergyStorage() {
-        return ((IEnergyGrid)node.getGrid().getCache(IEnergyGrid.class)).getStoredPower();
+    public double getEnergyStorage() throws LuaException {
+        if (AdvancedPeripheralsConfig.enableMeBridge) {
+            return ((IEnergyGrid) node.getGrid().getCache(IEnergyGrid.class)).getStoredPower();
+        } else {
+            throw new LuaException("Me Bridge is not enabled, enable it in the config.");
+        }
     }
 
     @LuaFunction(mainThread = true)
-    public double getMaxEnergyStorage() {
-        return ((IEnergyGrid)node.getGrid().getCache(IEnergyGrid.class)).getMaxStoredPower();
+    public double getMaxEnergyStorage() throws LuaException {
+        if (AdvancedPeripheralsConfig.enableMeBridge) {
+            return ((IEnergyGrid) node.getGrid().getCache(IEnergyGrid.class)).getMaxStoredPower();
+        } else {
+            throw new LuaException("Me Bridge is not enabled, enable it in the config.");
+        }
     }
 
     @LuaFunction(mainThread = true)
-    public boolean isItemCrafting(String item) {
-        IMEMonitor<IAEItemStack> monitor = ((IStorageGrid) node.getGrid().getCache(IStorageGrid.class)).getInventory(AppEngApi.getInstance().getApi().storage().getStorageChannel(IItemStorageChannel.class));
-        ICraftingGrid grid = node.getGrid().getCache(ICraftingGrid.class);
-        return grid.isRequesting(AppEngApi.getInstance().findAEStackFromItemStack(monitor, new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation(item)))));
+    public boolean isItemCrafting(String item) throws LuaException {
+        if (AdvancedPeripheralsConfig.enableMeBridge) {
+            IMEMonitor<IAEItemStack> monitor = ((IStorageGrid) node.getGrid().getCache(IStorageGrid.class)).getInventory(AppEngApi.getInstance().getApi().storage().getStorageChannel(IItemStorageChannel.class));
+            ICraftingGrid grid = node.getGrid().getCache(ICraftingGrid.class);
+            return grid.isRequesting(AppEngApi.getInstance().findAEStackFromItemStack(monitor, new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation(item)))));
+        } else {
+            throw new LuaException("Me Bridge is not enabled, enable it in the config.");
+        }
     }
 
 
     @LuaFunction(mainThread = true)
     public void retrieve(String item, int count, String directionString) throws LuaException {
-        IMEMonitor<IAEItemStack> monitor = ((IStorageGrid) node.getGrid().getCache(IStorageGrid.class)).getInventory(AppEngApi.getInstance().getApi().storage().getStorageChannel(IItemStorageChannel.class));
-        ItemStack stack = new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation(item)));
-        stack.setCount(count);
-        IAEItemStack aeStack = AppEngApi.getInstance().findAEStackFromItemStack(monitor, stack);
-        if (aeStack == null)
-            throw new NullPointerException("Item " + item + " does not exists in the ME system or the system is offline");
-        Direction direction = Direction.valueOf(directionString.toUpperCase(Locale.ROOT));
+        if (AdvancedPeripheralsConfig.enableMeBridge) {
+            IMEMonitor<IAEItemStack> monitor = ((IStorageGrid) node.getGrid().getCache(IStorageGrid.class)).getInventory(AppEngApi.getInstance().getApi().storage().getStorageChannel(IItemStorageChannel.class));
+            ItemStack stack = new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation(item)));
+            stack.setCount(count);
+            IAEItemStack aeStack = AppEngApi.getInstance().findAEStackFromItemStack(monitor, stack);
+            if (aeStack == null)
+                throw new NullPointerException("Item " + item + " does not exists in the ME system or the system is offline");
+            Direction direction = Direction.valueOf(directionString.toUpperCase(Locale.ROOT));
 
-        TileEntity targetEntity = tileEntity.getWorld().getTileEntity(tileEntity.getPos().offset(direction));
-        IItemHandler inventory = targetEntity != null ? targetEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, direction.getOpposite()).resolve().orElse(null) : null;
-        if (inventory == null)
-            throw new LuaException("No valid inventory at " + direction);
+            TileEntity targetEntity = tileEntity.getWorld().getTileEntity(tileEntity.getPos().offset(direction));
+            IItemHandler inventory = targetEntity != null ? targetEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, direction.getOpposite()).resolve().orElse(null) : null;
+            if (inventory == null)
+                throw new LuaException("No valid inventory at " + direction);
 
-        aeStack.setStackSize(count);
-        IAEItemStack extracted = monitor.extractItems(aeStack, Actionable.SIMULATE, source);
-        if(extracted == null)
-            throw new NullPointerException("Item " + item + " does not exists in the ME system or the system is offline");
+            aeStack.setStackSize(count);
+            IAEItemStack extracted = monitor.extractItems(aeStack, Actionable.SIMULATE, source);
+            if (extracted == null)
+                throw new NullPointerException("Item " + item + " does not exists in the ME system or the system is offline");
 
-        long transferableAmount = extracted.getStackSize();
+            long transferableAmount = extracted.getStackSize();
 
-        ItemStack remaining = ItemHandlerHelper.insertItemStacked(inventory, extracted.createItemStack(), true);
-        if (!remaining.isEmpty()) {
-            transferableAmount -= remaining.getCount();
+            ItemStack remaining = ItemHandlerHelper.insertItemStacked(inventory, extracted.createItemStack(), true);
+            if (!remaining.isEmpty()) {
+                transferableAmount -= remaining.getCount();
+            }
+
+            aeStack.setStackSize(transferableAmount);
+            extracted = monitor.extractItems(aeStack, Actionable.MODULATE, source);
+            remaining = ItemHandlerHelper.insertItemStacked(inventory, extracted.createItemStack(), false);
+
+            if (!remaining.isEmpty()) {
+                aeStack.setStackSize(remaining.getCount());
+                monitor.injectItems(aeStack, Actionable.MODULATE, source);
+            }
+        } else {
+            throw new LuaException("Me Bridge is not enabled, enable it in the config.");
         }
+    }
 
-        aeStack.setStackSize(transferableAmount);
-        extracted = monitor.extractItems(aeStack, Actionable.MODULATE, source);
-        remaining = ItemHandlerHelper.insertItemStacked(inventory, extracted.createItemStack(), false);
+    @LuaFunction(mainThread = true)
+    public Object[] listItems() throws LuaException {
+        if (AdvancedPeripheralsConfig.enableMeBridge) {
 
-        if (!remaining.isEmpty()) {
-            aeStack.setStackSize(remaining.getCount());
-            monitor.injectItems(aeStack, Actionable.MODULATE, source);
+            IMEMonitor<IAEItemStack> inventory = ((IStorageGrid) node.getGrid().getCache(IStorageGrid.class)).getInventory(AppEngApi.getInstance().getApi().storage().getStorageChannel(IItemStorageChannel.class));
+            return new Object[]{AppEngApi.INSTANCE.iteratorToMapStack(inventory.getStorageList().iterator(), 0)};
+        } else {
+            throw new LuaException("Me Bridge is not enabled, enable it in the config.");
         }
     }
 
     @LuaFunction(mainThread = true)
-    public Object[] listItems() {
-        IMEMonitor<IAEItemStack> inventory = ((IStorageGrid) node.getGrid().getCache(IStorageGrid.class)).getInventory(AppEngApi.getInstance().getApi().storage().getStorageChannel(IItemStorageChannel.class));
-        return new Object[]{AppEngApi.INSTANCE.iteratorToMapStack(inventory.getStorageList().iterator(), 0)};
+    public Object[] listCraftableItems() throws LuaException {
+        if (AdvancedPeripheralsConfig.enableMeBridge) {
+
+            IMEMonitor<IAEItemStack> inventory = ((IStorageGrid) node.getGrid().getCache(IStorageGrid.class)).getInventory(AppEngApi.getInstance().getApi().storage().getStorageChannel(IItemStorageChannel.class));
+            return new Object[]{AppEngApi.INSTANCE.iteratorToMapStack(inventory.getStorageList().iterator(), 2)};
+        } else {
+            throw new LuaException("Me Bridge is not enabled, enable it in the config.");
+        }
     }
 
     @LuaFunction(mainThread = true)
-    public Object[] listCraftableItems() {
-        IMEMonitor<IAEItemStack> inventory = ((IStorageGrid) node.getGrid().getCache(IStorageGrid.class)).getInventory(AppEngApi.getInstance().getApi().storage().getStorageChannel(IItemStorageChannel.class));
-        return new Object[]{AppEngApi.INSTANCE.iteratorToMapStack(inventory.getStorageList().iterator(), 2)};
+    public Object[] listFluid() throws LuaException {
+        if (AdvancedPeripheralsConfig.enableMeBridge) {
+
+            IMEMonitor<IAEFluidStack> inventory = ((IStorageGrid) node.getGrid().getCache(IStorageGrid.class)).getInventory(AppEngApi.getInstance().getApi().storage().getStorageChannel(IFluidStorageChannel.class));
+            return new Object[]{AppEngApi.INSTANCE.iteratorToMapFluid(inventory.getStorageList().iterator(), 0)};
+        } else {
+            throw new LuaException("Me Bridge is not enabled, enable it in the config.");
+        }
     }
 
     @LuaFunction(mainThread = true)
-    public Object[] listFluid() {
-        IMEMonitor<IAEFluidStack> inventory = ((IStorageGrid) node.getGrid().getCache(IStorageGrid.class)).getInventory(AppEngApi.getInstance().getApi().storage().getStorageChannel(IFluidStorageChannel.class));
-        return new Object[]{AppEngApi.INSTANCE.iteratorToMapFluid(inventory.getStorageList().iterator(), 0)};
-    }
+    public Object[] listCraftableFluid() throws LuaException {
+        if (AdvancedPeripheralsConfig.enableMeBridge) {
 
-    @LuaFunction(mainThread = true)
-    public Object[] listCraftableFluid() {
-        IMEMonitor<IAEFluidStack> inventory = ((IStorageGrid) node.getGrid().getCache(IStorageGrid.class)).getInventory(AppEngApi.getInstance().getApi().storage().getStorageChannel(IFluidStorageChannel.class));
-        return new Object[]{AppEngApi.INSTANCE.iteratorToMapFluid(inventory.getStorageList().iterator(), 2)};
+            IMEMonitor<IAEFluidStack> inventory = ((IStorageGrid) node.getGrid().getCache(IStorageGrid.class)).getInventory(AppEngApi.getInstance().getApi().storage().getStorageChannel(IFluidStorageChannel.class));
+            return new Object[]{AppEngApi.INSTANCE.iteratorToMapFluid(inventory.getStorageList().iterator(), 2)};
+        } else {
+            throw new LuaException("Me Bridge is not enabled, enable it in the config.");
+        }
     }
 
     @LuaFunction(mainThread = true)
     public Object[] getCraftingCPUs() throws LuaException {
-        ICraftingGrid grid = node.getGrid().getCache(ICraftingGrid.class);
-        if(grid == null)
-            throw new LuaException("Not connected");
-        Map<Integer, Object> map = new HashMap<>();
-        Iterator<ICraftingCPU> iterator = grid.getCpus().iterator();
-        if(!iterator.hasNext())
-            throw new LuaException("The system has no crafting cpus");
-        int i = 1;
-        while (iterator.hasNext()) {
-            Object o = AppEngApi.INSTANCE.getObjectFromCPU(iterator.next());
-            if (o != null)
-                map.put(i++, o);
+        if (AdvancedPeripheralsConfig.enableMeBridge) {
+            ICraftingGrid grid = node.getGrid().getCache(ICraftingGrid.class);
+            if (grid == null)
+                throw new LuaException("Not connected");
+            Map<Integer, Object> map = new HashMap<>();
+            Iterator<ICraftingCPU> iterator = grid.getCpus().iterator();
+            if (!iterator.hasNext())
+                throw new LuaException("The system has no crafting cpus");
+            int i = 1;
+            while (iterator.hasNext()) {
+                Object o = AppEngApi.INSTANCE.getObjectFromCPU(iterator.next());
+                if (o != null)
+                    map.put(i++, o);
+            }
+            return new Object[]{map};
+        } else {
+            throw new LuaException("Me Bridge is not enabled, enable it in the config.");
         }
-        return new Object[]{map};
     }
 
     private int getFreeSlot(IItemHandler inventory) {
