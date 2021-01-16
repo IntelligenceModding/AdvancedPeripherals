@@ -86,11 +86,11 @@ dependencies {
 
     compileOnly "org.jetbrains:annotations:${jb_annotations}"
 
-    minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
+    minecraft "net.minecraftforge:forge:1.16.5-${forge_version}"
 
-    runtimeOnly fg.deobf("mezz.jei:jei-${minecraft_version}:7.6.0.62")
+    runtimeOnly fg.deobf("mezz.jei:jei-1.16.4:7.6.0.62")
 
-    implementation fg.deobf("org.squiddev:cc-tweaked-${minecraft_version}:${cc_version}")
+    implementation fg.deobf("org.squiddev:cc-tweaked-1.16.4:${cc_version}")
     compileOnly fg.deobf("appeng:appliedenergistics2:${appliedenergistics_version}:api");
     runtimeOnly fg.deobf("appeng:appliedenergistics2:${appliedenergistics_version}");
 }
