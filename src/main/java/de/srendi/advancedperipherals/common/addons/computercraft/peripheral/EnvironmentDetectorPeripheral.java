@@ -117,13 +117,13 @@ public class EnvironmentDetectorPeripheral implements IPeripheral {
         if (entity.getWorld().getDimensionKey().getLocation().getPath().equals("overworld")) {
             switch (entity.getWorld().getMoonPhase()) {
                 case 0:
-                    moon.put(8, "Full moon");
+                    moon.put(0, "Full moon");
                     break;
                 case 1:
                     moon.put(1, "Waning gibbous");
                     break;
                 case 2:
-                    moon.put(2, "Third guarter");
+                    moon.put(2, "Third quarter");
                     break;
                 case 3:
                     moon.put(3, "Wanning crescent");
@@ -154,11 +154,6 @@ public class EnvironmentDetectorPeripheral implements IPeripheral {
     @LuaFunction(mainThread = true)
     public boolean isMoon(int phase) {
         return getCurrentMoonPhase().containsKey(phase);
-    }
-
-    @LuaFunction(mainThread = true)
-    public boolean isMoon(String phase) {
-        return getCurrentMoonPhase().containsValue(phase);
     }
 
     private HashMap<Integer, String> getMoonPhases() {
