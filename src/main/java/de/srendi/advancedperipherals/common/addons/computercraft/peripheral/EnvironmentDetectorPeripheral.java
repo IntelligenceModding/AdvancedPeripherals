@@ -114,7 +114,6 @@ public class EnvironmentDetectorPeripheral implements IPeripheral {
 
     private HashMap<Integer, String> getCurrentMoonPhase() {
         HashMap<Integer, String> moon = new HashMap<>();
-        Minecraft.getInstance().player.sendMessage(new StringTextComponent("" +  entity.getWorld().getMoonPhase()), UUID.randomUUID());
         if (entity.getWorld().getDimensionKey().getLocation().getPath().equals("overworld")) {
             switch (entity.getWorld().getMoonPhase()) {
                 case 0:
@@ -146,6 +145,7 @@ public class EnvironmentDetectorPeripheral implements IPeripheral {
             }
         } else {
             //Yay, easter egg
+            //Returns when the function is not used in the overworld
             moon.put(0, "Moon.exe not found...");
         }
         return moon;
