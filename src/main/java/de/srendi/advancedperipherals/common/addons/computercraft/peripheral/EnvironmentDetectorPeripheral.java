@@ -58,57 +58,57 @@ public class EnvironmentDetectorPeripheral implements IPeripheral {
     }
 
     @LuaFunction(mainThread = true)
-    public String getBiome() {
+    public final String getBiome() {
         String biomeName = entity.getWorld().getBiome(entity.getPos()).getRegistryName().toString();
         String[] biome = biomeName.split(":");
         return biome[1];
     }
 
     @LuaFunction(mainThread = true)
-    public int getLightLevel() {
+    public final int getLightLevel() {
         return entity.getWorld().getLightFor(LightType.SKY, entity.getPos().add(0, 1, 0));
     }
 
     @LuaFunction(mainThread = true)
-    public long getTime() {
+    public final long getTime() {
         return entity.getWorld().getDayTime();
     }
 
     @LuaFunction(mainThread = true)
-    public boolean isSlimeChunk() {
+    public final boolean isSlimeChunk() {
         ChunkPos chunkPos = new ChunkPos(entity.getPos());
         return (SharedSeedRandom.seedSlimeChunk(chunkPos.x, chunkPos.z, ((ISeedReader) entity.getWorld()).getSeed(), 987234911L).nextInt(10) == 0);
     }
 
     @LuaFunction(mainThread = true)
-    public String getDimensionProvider() {
+    public final String getDimensionProvider() {
         return entity.getWorld().getDimensionKey().getLocation().getNamespace();
     }
 
     @LuaFunction(mainThread = true)
-    public String getDimensionName() {
+    public final String getDimensionName() {
         return entity.getWorld().getDimensionKey().getLocation().getPath();
     }
 
     @LuaFunction(mainThread = true)
-    public String getDimensionPaN() {
+    public final String getDimensionPaN() {
         return entity.getWorld().getDimensionKey().getLocation().getNamespace() + ":" + entity.getWorld().getDimensionKey().getLocation().getPath();
     }
 
     @LuaFunction(mainThread = true)
-    public boolean isDimension(String dimension) {
+    public final boolean isDimension(String dimension) {
         return entity.getWorld().getDimensionKey().getLocation().getPath().equals(dimension);
     }
 
     @LuaFunction(mainThread = true)
-    public Set<String> listDimensions() {
+    public final Set<String> listDimensions() {
         Set<String> dimensions = new HashSet<>();
         ServerLifecycleHooks.getCurrentServer().getWorlds().forEach(serverWorld->dimensions.add(serverWorld.getDimensionKey().getLocation().getPath()));
         return dimensions;
     }
 
     @LuaFunction(mainThread = true)
-    public Object getMoon() {
+    public final Object getMoon() {
         return getCurrentMoonPhase();
     }
 
@@ -152,7 +152,7 @@ public class EnvironmentDetectorPeripheral implements IPeripheral {
     }
 
     @LuaFunction(mainThread = true)
-    public boolean isMoon(int phase) {
+    public final boolean isMoon(int phase) {
         return getCurrentMoonPhase().containsKey(phase);
     }
 
@@ -170,17 +170,17 @@ public class EnvironmentDetectorPeripheral implements IPeripheral {
     }
 
     @LuaFunction(mainThread = true)
-    public boolean isRaining() {
+    public final boolean isRaining() {
         return entity.getWorld().getRainStrength(0) > 0;
     }
 
     @LuaFunction(mainThread = true)
-    public boolean isThunder() {
+    public final boolean isThunder() {
         return entity.getWorld().getThunderStrength(0) > 0;
     }
 
     @LuaFunction(mainThread = true)
-    public boolean isSunny() {
+    public final boolean isSunny() {
         return entity.getWorld().getThunderStrength(0) < 1 && entity.getWorld().getRainStrength(0) < 1;
     }
 }

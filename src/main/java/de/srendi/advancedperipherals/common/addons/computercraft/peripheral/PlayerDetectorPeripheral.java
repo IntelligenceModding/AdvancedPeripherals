@@ -58,7 +58,7 @@ public class PlayerDetectorPeripheral implements IPeripheral {
     }
 
     @LuaFunction(mainThread = true)
-    public List<String> getPlayersInRange(int rangee) throws LuaException {
+    public final List<String> getPlayersInRange(int rangee) throws LuaException {
         double range = (double) rangee;
         double rangeNegative = -range;
         List<PlayerEntity> players = entity.getWorld().getEntitiesWithinAABB(PlayerEntity.class, new AxisAlignedBB(entity.getPos().add(rangeNegative,rangeNegative,rangeNegative), entity.getPos().add(range + 1, range + 1, range + 1)));
@@ -70,7 +70,7 @@ public class PlayerDetectorPeripheral implements IPeripheral {
     }
 
     @LuaFunction(mainThread = true)
-    public boolean isPlayersInRange(int rangee) throws LuaException {
+    public final boolean isPlayersInRange(int rangee) throws LuaException {
         double range = (double) rangee;
         double rangeNegative = -range;
         List<PlayerEntity> players = entity.getWorld().getEntitiesWithinAABB(PlayerEntity.class, new AxisAlignedBB(entity.getPos().add(rangeNegative,rangeNegative,rangeNegative), entity.getPos().add(range + 1, range + 1, range + 1)));
@@ -78,7 +78,7 @@ public class PlayerDetectorPeripheral implements IPeripheral {
     }
 
     @LuaFunction(mainThread = true)
-    public boolean isPlayerInRange(int rangee, String username) throws LuaException {
+    public final boolean isPlayerInRange(int rangee, String username) throws LuaException {
         double range = (double) rangee;
         double rangeNegative = -range;
         List<PlayerEntity> players = entity.getWorld().getEntitiesWithinAABB(PlayerEntity.class, new AxisAlignedBB(entity.getPos().add(rangeNegative,rangeNegative,rangeNegative), entity.getPos().add(range + 1, range + 1, range + 1)));

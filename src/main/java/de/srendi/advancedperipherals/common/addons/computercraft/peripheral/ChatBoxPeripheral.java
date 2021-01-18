@@ -69,7 +69,7 @@ public class ChatBoxPeripheral implements IPeripheral {
     }
 
     @LuaFunction(mainThread = true)
-    public void sendMessage(Object message) throws LuaException {
+    public final void sendMessage(Object message) throws LuaException {
         if (tick >= AdvancedPeripheralsConfig.chatBoxCooldown) {
             if (AdvancedPeripherals.playerController.getWorld() instanceof ServerWorld) {
                 ServerWorld world = (ServerWorld) AdvancedPeripherals.playerController.getWorld();
@@ -86,7 +86,7 @@ public class ChatBoxPeripheral implements IPeripheral {
     }
 
     @LuaFunction(mainThread = true)
-    public void sendMessageToPlayer(Object message, String playerName) throws LuaException {
+    public final void sendMessageToPlayer(Object message, String playerName) throws LuaException {
         if (tick >= AdvancedPeripheralsConfig.chatBoxCooldown) {
             if (AdvancedPeripherals.playerController.getWorld() instanceof ServerWorld) {
                 ServerWorld world = (ServerWorld) AdvancedPeripherals.playerController.getWorld();
