@@ -1,5 +1,6 @@
 package de.srendi.advancedperipherals;
 
+import de.srendi.advancedperipherals.common.addons.refinedstorage.RefinedStorage;
 import de.srendi.advancedperipherals.common.configuration.ConfigHandler;
 import de.srendi.advancedperipherals.common.configuration.ConfigHolder;
 import de.srendi.advancedperipherals.common.setup.ModBlocks;
@@ -14,12 +15,15 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 @Mod(AdvancedPeripherals.MOD_ID)
 public class AdvancedPeripherals {
+
+    private static RefinedStorage RSAPI;
 
     public static final String MOD_ID = "advancedperipherals";
 
@@ -50,9 +54,20 @@ public class AdvancedPeripherals {
     }
 
     @SubscribeEvent
+    public static void commonSetup(FMLCommonSetupEvent event) {
+        RSAPI = new RefinedStorage();
+        RSAPI.initiate();
+    }
+
+    @SubscribeEvent
     public void onWorldLoad(WorldEvent.Load event) {
         playerController.init(event.getWorld());
     }
+
+    public static RefinedStorage getRSAPI() {
+        return RSAPI;
+    }
+
 
     //TODO: Add more comments to the code
 }

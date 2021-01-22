@@ -26,7 +26,7 @@ public class MeBridge extends Block {
     private MeBridgeTileEntity meBridge;
 
     public MeBridge() {
-        super(Properties.create(Material.IRON).hardnessAndResistance(1, 5).harvestLevel(1).harvestTool(ToolType.PICKAXE).setRequiresTool().sound(SoundType.METAL));
+        super(Properties.create(Material.IRON).hardnessAndResistance(1, 5).harvestLevel(2).harvestTool(ToolType.PICKAXE).setRequiresTool().sound(SoundType.METAL));
     }
 
     @Override

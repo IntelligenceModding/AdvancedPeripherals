@@ -85,12 +85,6 @@ public class MeBridgePeripheral implements IPeripheral {
         connectedComputers.remove(computer);
     }
 
-    @Nullable
-    @Override
-    public Object getTarget() {
-        return null;
-    }
-
     @Override
     public boolean equals(@Nullable IPeripheral iPeripheral) {
         return iPeripheral == this;

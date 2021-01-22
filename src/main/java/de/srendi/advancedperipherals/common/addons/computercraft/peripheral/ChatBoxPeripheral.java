@@ -49,12 +49,6 @@ public class ChatBoxPeripheral implements IPeripheral {
         connectedComputers.remove(computer);
     }
 
-    @Nullable
-    @Override
-    public Object getTarget() {
-        return null;
-    }
-
     public void setTick(int tick) {
         this.tick = tick;
     }

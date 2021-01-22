@@ -46,22 +46,15 @@ public class PlayerDetectorPeripheral implements IPeripheral {
         connectedComputers.remove(computer);
     }
 
-    @Nullable
-    @Override
-    public Object getTarget() {
-        return null;
-    }
-
     @Override
     public boolean equals(@Nullable IPeripheral iPeripheral) {
         return iPeripheral == this;
     }
 
     @LuaFunction(mainThread = true)
-    public final List<String> getPlayersInRange(int rangee) throws LuaException {
-        double range = (double) rangee;
-        double rangeNegative = -range;
-        List<PlayerEntity> players = entity.getWorld().getEntitiesWithinAABB(PlayerEntity.class, new AxisAlignedBB(entity.getPos().add(rangeNegative,rangeNegative,rangeNegative), entity.getPos().add(range + 1, range + 1, range + 1)));
+    public final List<String> getPlayersInRange(int range) throws LuaException {
+        double rangeNegative = - (double) range;
+        List<PlayerEntity> players = entity.getWorld().getEntitiesWithinAABB(PlayerEntity.class, new AxisAlignedBB(entity.getPos().add(rangeNegative,rangeNegative,rangeNegative), entity.getPos().add((double) range + 1, (double) range + 1, (double) range + 1)));
         List<String> playersName = new ArrayList<>();
         for(PlayerEntity name : players) {
             playersName.add(name.getName().getString());
@@ -70,18 +63,16 @@ public class PlayerDetectorPeripheral implements IPeripheral {
     }
 
     @LuaFunction(mainThread = true)
-    public final boolean isPlayersInRange(int rangee) throws LuaException {
-        double range = (double) rangee;
-        double rangeNegative = -range;
-        List<PlayerEntity> players = entity.getWorld().getEntitiesWithinAABB(PlayerEntity.class, new AxisAlignedBB(entity.getPos().add(rangeNegative,rangeNegative,rangeNegative), entity.getPos().add(range + 1, range + 1, range + 1)));
+    public final boolean isPlayersInRange(int range) throws LuaException {
+        double rangeNegative = - (double) range;
+        List<PlayerEntity> players = entity.getWorld().getEntitiesWithinAABB(PlayerEntity.class, new AxisAlignedBB(entity.getPos().add(rangeNegative,rangeNegative,rangeNegative), entity.getPos().add((double) range + 1, (double) range + 1, (double) range + 1)));
         return !players.isEmpty();
     }
 
     @LuaFunction(mainThread = true)
-    public final boolean isPlayerInRange(int rangee, String username) throws LuaException {
-        double range = (double) rangee;
-        double rangeNegative = -range;
-        List<PlayerEntity> players = entity.getWorld().getEntitiesWithinAABB(PlayerEntity.class, new AxisAlignedBB(entity.getPos().add(rangeNegative,rangeNegative,rangeNegative), entity.getPos().add(range + 1, range + 1, range + 1)));
+    public final boolean isPlayerInRange(int range, String username) throws LuaException {
+        double rangeNegative = - (double) range;
+        List<PlayerEntity> players = entity.getWorld().getEntitiesWithinAABB(PlayerEntity.class, new AxisAlignedBB(entity.getPos().add(rangeNegative,rangeNegative,rangeNegative), entity.getPos().add((double) range + 1, (double) range + 1, (double) range + 1)));
         List<String> playersName = new ArrayList<>();
         for(PlayerEntity name : players) {
             playersName.add(name.getName().getString());
