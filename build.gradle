@@ -92,7 +92,7 @@ dependencies {
 
     implementation fg.deobf("org.squiddev:cc-tweaked-1.16.4:${cc_version}")
     compileOnly fg.deobf("com.refinedmods:refinedstorage:${rs_version}")
-    runtimeOnly fg.deobf("com.refinedmods:refinedstorage:${rs_version}")
+    //runtimeOnly fg.deobf("com.refinedmods:refinedstorage:${rs_version}")
     compileOnly fg.deobf("appeng:appliedenergistics2:${appliedenergistics_version}:api");
     runtimeOnly fg.deobf("appeng:appliedenergistics2:${appliedenergistics_version}");
 }

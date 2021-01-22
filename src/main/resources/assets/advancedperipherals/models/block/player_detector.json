@@ -6,6 +6,7 @@
     "west": "advancedperipherals:blocks/player_detector_side",
     "east": "advancedperipherals:blocks/player_detector_side",
     "up": "advancedperipherals:blocks/player_detector_up",
-    "down": "advancedperipherals:blocks/player_detector_up"
+    "down": "advancedperipherals:blocks/player_detector_up",
+    "particle": "advancedperipherals:blocks/player_detector_side"
   }
 }

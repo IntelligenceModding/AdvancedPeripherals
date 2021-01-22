@@ -29,7 +29,7 @@ public class ModTileEntityTypes {
     }
 
     private static RegistryObject<TileEntityType<RsBridgeTileEntity>> registerRsBridge() {
-        if(ModList.get().isLoaded("appliedenergistics2")) {
+        if(ModList.get().isLoaded("refinedstorage")) {
             return Registration.TILE_ENTITIES.register("rs_bridge", ()->new TileEntityType<>(RsBridgeTileEntity::new, Sets.newHashSet(ModBlocks.RS_BRIDGE.get()), null));
         }
         return null;
