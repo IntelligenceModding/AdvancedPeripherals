@@ -3,15 +3,13 @@ package de.srendi.advancedperipherals.common.addons.computercraft.peripheral;
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.peripheral.IComputerAccess;
 import dan200.computercraft.api.peripheral.IPeripheral;
-import net.minecraft.client.Minecraft;
-import net.minecraft.item.BucketItem;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.SharedSeedRandom;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
-import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.ISeedReader;
 import net.minecraft.world.LightType;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -59,8 +57,27 @@ public class EnvironmentDetectorPeripheral implements IPeripheral {
     }
 
     @LuaFunction(mainThread = true)
-    public final int getLightLevel() {
+    public final int getSkyLightLevel() {
         return entity.getWorld().getLightFor(LightType.SKY, entity.getPos().add(0, 1, 0));
+    }
+
+    @LuaFunction(mainThread = true)
+    public final int getBlockLightLevel() {
+        return entity.getWorld().getLightFor(LightType.BLOCK, entity.getPos().add(0, 1, 0));
+    }
+
+    @LuaFunction(mainThread = true)
+    public final int getDayLightLevel() {
+        World world = entity.getWorld();
+        int i = world.getLightFor(LightType.SKY, entity.getPos().add(0, 1, 0)) - world.getSkylightSubtracted();
+        float f = world.getCelestialAngleRadians(1.0F);
+        if (i > 0) {
+            float f1 = f < (float)Math.PI ? 0.0F : ((float)Math.PI * 2F);
+            f = f + (f1 - f) * 0.2F;
+            i = Math.round((float)i * MathHelper.cos(f));
+        }
+        i = MathHelper.clamp(i, 0, 15);
+        return i;
     }
 
     @LuaFunction(mainThread = true)
