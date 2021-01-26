@@ -8,7 +8,10 @@ import appeng.api.networking.crafting.ICraftingRequester;
 import appeng.api.networking.energy.IEnergyGrid;
 import appeng.api.networking.security.IActionSource;
 import appeng.api.networking.storage.IStorageGrid;
+import appeng.api.storage.ICellRegistry;
 import appeng.api.storage.IMEMonitor;
+import appeng.api.storage.cells.ICellHandler;
+import appeng.api.storage.cells.ICellProvider;
 import appeng.api.storage.channels.IFluidStorageChannel;
 import appeng.api.storage.channels.IItemStorageChannel;
 import appeng.api.storage.data.IAEFluidStack;
@@ -192,7 +195,6 @@ public class MeBridgePeripheral implements IPeripheral {
     @LuaFunction(mainThread = true)
     public final Object[] listItems() throws LuaException {
         if (AdvancedPeripheralsConfig.enableMeBridge) {
-
             IMEMonitor<IAEItemStack> inventory = ((IStorageGrid) node.getGrid().getCache(IStorageGrid.class)).getInventory(AppEngApi.getInstance().getApi().storage().getStorageChannel(IItemStorageChannel.class));
             return new Object[]{AppEngApi.INSTANCE.iteratorToMapStack(inventory.getStorageList().iterator(), 0)};
         } else {

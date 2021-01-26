@@ -119,12 +119,21 @@ public class EnvironmentDetectorPeripheral implements IPeripheral {
     }
 
     @LuaFunction(mainThread = true)
-    public final Object getMoon() {
-        return getCurrentMoonPhase();
+    public final int getMoonId() {
+        //for(int value : getCurrentMoonPhase().keySet()) {
+          //  return value;
+        //}
+        return getCurrentMoonPhase().keySet().toArray(new Integer[0])[0];
     }
 
-    private HashMap<Integer, String> getCurrentMoonPhase() {
-        HashMap<Integer, String> moon = new HashMap<>();
+    @LuaFunction(mainThread = true)
+    public final String getMoonName() {
+        String[] name = getCurrentMoonPhase().values().toArray(new String[0]);
+        return name[0];
+    }
+
+    private Map<Integer, String> getCurrentMoonPhase() {
+        Map<Integer, String> moon = new HashMap<>();
         if (entity.getWorld().getDimensionKey().getLocation().getPath().equals("overworld")) {
             switch (entity.getWorld().getMoonPhase()) {
                 case 0:
@@ -152,6 +161,7 @@ public class EnvironmentDetectorPeripheral implements IPeripheral {
                     moon.put(7, "Waxing gibbous");
                     break;
                 default:
+                    //should never happen
                     moon.put(0, "What is a moon");
             }
         } else {
@@ -162,10 +172,10 @@ public class EnvironmentDetectorPeripheral implements IPeripheral {
         return moon;
     }
 
-    @LuaFunction(mainThread = true)
+   /* @LuaFunction(mainThread = true)
     public final boolean isMoon(int phase) {
         return getCurrentMoonPhase().containsKey(phase);
-    }
+    }*/
 
     private HashMap<Integer, String> getMoonPhases() {
         HashMap<Integer, String> moon = new HashMap<>();
