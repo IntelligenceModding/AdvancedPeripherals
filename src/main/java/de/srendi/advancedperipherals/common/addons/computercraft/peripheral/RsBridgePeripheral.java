@@ -102,10 +102,11 @@ public class RsBridgePeripheral implements IPeripheral {
             HashMap<String, Object> map = new HashMap<>();
             CompoundNBT nbt = stack.getTag();
             map.put("name", ForgeRegistries.ITEMS.getKey(stack.getItem()).toString());
-            map.put("craftamount", stack.getCount());
-            for(ItemStack oStack : RefinedStorage.getItems(getNetwork(), false)) {
+            map.put("craftamount", stack.getCount()); //Returns the result amount of an crafting recipe
+            for(ItemStack oStack : RefinedStorage.getItems(getNetwork(), false)) { //Used to get the amount of the item
                 if(oStack.isItemEqual(stack)) {
                     map.put("amount", oStack.getCount());
+                    break;
                 } else {
                     map.put("amount", 0);
                 }
@@ -143,7 +144,14 @@ public class RsBridgePeripheral implements IPeripheral {
             HashMap<String, Object> map = new HashMap<>();
             map.put("name", ForgeRegistries.FLUIDS.getKey(stack.getFluid()).toString());
             map.put("craftamount", stack.getAmount());
-            map.put("amount", RefinedStorage.getFluids(getNetwork(), false).get(i).getAmount());
+            for(FluidStack oStack : RefinedStorage.getFluids(getNetwork(), false)) { //Used to get the amount of the item
+                if(oStack.isFluidEqual(stack)) {
+                    map.put("amount", oStack.getAmount());
+                    break;
+                } else {
+                    map.put("amount", 0);
+                }
+            }
             map.put("displayName", stack.getDisplayName().getString());
             items.put(i, map);
             i++;
