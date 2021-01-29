@@ -101,9 +101,6 @@ public class MeBridgePeripheral implements IPeripheral {
             ItemStack itemToCraft = new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation(itemName)));
             if (itemToCraft.isEmpty())
                 throw new NullPointerException("Item " + itemName + " does not exists");
-            if (((IStorageGrid) node.getGrid().getCache(IStorageGrid.class)).getInventory(AppEngApi.getInstance().getApi().storage().getStorageChannel(IItemStorageChannel.class)) == null)
-                throw new NullPointerException("Storage grid is null");
-
             CraftJob job = new CraftJob(tileEntity.getWorld(), computer, node, item, Optional.of(amount), source);
             ServerWorker.add(job::startCrafting);
             return MethodResult.pullEvent("crafting", job);
@@ -255,14 +252,5 @@ public class MeBridgePeripheral implements IPeripheral {
         } else {
             throw new LuaException("Me Bridge is not enabled, enable it in the config.");
         }
-    }
-
-    private int getFreeSlot(IItemHandler inventory) {
-        for (int i = 0; i < inventory.getSlots(); i++) {
-            if (inventory.getStackInSlot(i).isEmpty()) {
-                return i;
-            }
-        }
-        return -1;
     }
 }

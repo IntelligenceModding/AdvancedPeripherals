@@ -165,7 +165,7 @@ public class AppEngApi implements IAEAddon {
         return map;
     }
 
-    public Object getObjectFromJob(ICraftingJob jobb, IMEMonitor<IAEItemStack> monitor) {
+    public Object getObjectFromJob(ICraftingJob jobb) {
         final ICraftingJob job = jobb;
 
         final Map<Object, Object> result = new HashMap<>();

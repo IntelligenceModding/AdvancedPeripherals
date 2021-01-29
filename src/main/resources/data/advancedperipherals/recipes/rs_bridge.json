@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "BIB",
+    "IPI",
+    "BIB"
+  ],
+  "key": {
+    "B": {
+      "item": "refinedstorage:quartz_enriched_iron_block"
+    },
+    "I": {
+      "item": "refinedstorage:interface"
+    },
+    "P": {
+      "item": "refinedstorage:advanced_processor"
+    }
+  },
+  "result": {
+    "item": "advancedperipherals:rs_bridge",
+    "count": 1
+  }
+}

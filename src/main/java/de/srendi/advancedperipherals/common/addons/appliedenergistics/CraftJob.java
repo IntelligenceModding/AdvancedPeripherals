@@ -23,7 +23,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Optional;
 
 public class CraftJob implements ICraftingCallback, ILuaCallback {
-    public static final String COMPLETE = "crafting";
 
     private final IComputerAccess computer;
     private final IGridNode node;
@@ -47,7 +46,6 @@ public class CraftJob implements ICraftingCallback, ILuaCallback {
     public void startCrafting() {
         IGrid grid = node.getGrid();
         if (grid == null) {
-            this.computer.queueEvent(COMPLETE, null, "grid is null");
             result = MethodResult.of(null, "grid is null");
             exception = new LuaException("grid is null");
             return;
@@ -59,13 +57,11 @@ public class CraftJob implements ICraftingCallback, ILuaCallback {
         ItemStack itemstack = new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation(item)));
         IAEItemStack aeItem = AppEngApi.getInstance().findAEStackFromItemStack(monitor, itemstack);
         if (aeItem == null) {
-            this.computer.queueEvent(COMPLETE, null, item + " does not exists in the me system");
             result = MethodResult.of(null, item + " does not exists in the me system");
             exception = new LuaException(item + " is not craftable");
             return;
         }
         if (!aeItem.isCraftable()) {
-            this.computer.queueEvent(COMPLETE, null, item + " is not craftable");
             result = MethodResult.of(null, item + " is not craftable");
             exception = new LuaException(item + " is not craftable");
             return;
@@ -83,7 +79,6 @@ public class CraftJob implements ICraftingCallback, ILuaCallback {
 
     private void calcComplete(ICraftingJob job) {
         if (job.isSimulation()) {
-            this.computer.queueEvent(COMPLETE, null, "the me system has no ingredients for the crafting job");
             result = MethodResult.of(false, "the me system has no ingredients for the crafting job");
             exception = new LuaException("the me system has no ingredients for the crafting job");
             return;
@@ -91,7 +86,6 @@ public class CraftJob implements ICraftingCallback, ILuaCallback {
 
         IGrid grid = node.getGrid();
         if (grid == null) {
-            this.computer.queueEvent(COMPLETE, null, "not connected");
             result = MethodResult.of(null, "not connected");
             exception = new LuaException("not connected");
             return;
@@ -101,26 +95,22 @@ public class CraftJob implements ICraftingCallback, ILuaCallback {
         final ICraftingGrid crafting = grid.getCache(ICraftingGrid.class);
         final ICraftingLink link = crafting.submitJob(job, null, null, false, this.source);
         if (link == null) {
-            this.computer.queueEvent(COMPLETE, null, "an unexpected error has occurred");
             result = MethodResult.of(false, "an unexpected error has occurred");
             exception = new LuaException("grid is null");
         } else {
-            this.computer.queueEvent(COMPLETE, (Object) null);
-            result = MethodResult.of(AppEngApi.getInstance().getObjectFromJob(job, monitor));
+            result = MethodResult.of(AppEngApi.getInstance().getObjectFromJob(job));
         }
     }
 
     @NotNull
     @Override
     public MethodResult resume(Object[] objects) {
-
         if (result != null) {
             return result;
         }
         if (exception != null) {
             return MethodResult.of(exception);
         }
-
         return null;
     }
 }
