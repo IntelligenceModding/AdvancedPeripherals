@@ -19,11 +19,9 @@ import java.util.UUID;
 
 public class ChatBoxPeripheral implements IPeripheral {
 
-    private String type;
-
-    private int tick;
-
     private final List<IComputerAccess> connectedComputers = new ArrayList<>();
+    private String type;
+    private int tick;
 
     public ChatBoxPeripheral(String type) {
         this.type = type;
@@ -49,13 +47,13 @@ public class ChatBoxPeripheral implements IPeripheral {
         connectedComputers.remove(computer);
     }
 
-    public void setTick(int tick) {
-        this.tick = tick;
-    }
-
     public int getTick() {
         return tick;
     }
+
+    public void setTick(int tick) {
+        this.tick = tick;
+    } //TODO: There is a better way to do that, but this works for now.
 
     @Override
     public boolean equals(@Nullable IPeripheral iPeripheral) {

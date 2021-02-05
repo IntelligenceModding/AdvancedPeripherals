@@ -1,10 +1,8 @@
 package de.srendi.advancedperipherals.common.blocks.tileentity;
 
-import com.refinedmods.refinedstorage.apiimpl.network.node.NetworkNode;
 import com.refinedmods.refinedstorage.tile.NetworkNodeTile;
 import dan200.computercraft.api.peripheral.IComputerAccess;
 import dan200.computercraft.api.peripheral.IPeripheral;
-import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.PlayerDetectorPeripheral;
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.RsBridgePeripheral;
 import de.srendi.advancedperipherals.common.addons.refinedstorage.RefinedStorageNode;
 import de.srendi.advancedperipherals.common.setup.ModTileEntityTypes;
@@ -24,17 +22,15 @@ import static dan200.computercraft.shared.Capabilities.CAPABILITY_PERIPHERAL;
 public class RsBridgeTileEntity extends NetworkNodeTile<RefinedStorageNode> {
 
     private RefinedStorageNode node;
+    private RsBridgePeripheral peripheral;
+    private LazyOptional<IPeripheral> peripheralCap;
 
     public RsBridgeTileEntity() {
         this(ModTileEntityTypes.RS_BRIDGE.get());
     }
-
     public RsBridgeTileEntity(TileEntityType tileType) {
         super(tileType);
     }
-
-    private RsBridgePeripheral peripheral;
-    private LazyOptional<IPeripheral> peripheralCap;
 
     public List<IComputerAccess> getConnectedComputers() {
         return peripheral.getConnectedComputers();

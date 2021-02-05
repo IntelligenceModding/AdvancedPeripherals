@@ -24,13 +24,16 @@ import org.apache.logging.log4j.Logger;
 @Mod(AdvancedPeripherals.MOD_ID)
 public class AdvancedPeripherals {
 
-    private static RefinedStorage RSAPI;
-
     public static final String MOD_ID = "advancedperipherals";
-
     public static final Logger LOGGER = LogManager.getLogger(MOD_ID);
-
     public static final PlayerController playerController = new PlayerController();
+    public static final ItemGroup TAB = new ItemGroup("advancedperipheralstab") {
+        @Override
+        public ItemStack createIcon() {
+            return new ItemStack(ModBlocks.CHAT_BOX.get());
+        }
+    };
+    private static RefinedStorage RSAPI;
 
     public AdvancedPeripherals() {
         LOGGER.info("AdvancedPeripherals says hello!");
@@ -43,32 +46,25 @@ public class AdvancedPeripherals {
         MinecraftForge.EVENT_BUS.register(this);
     }
 
-    public static final ItemGroup TAB = new ItemGroup("advancedperipheralstab") {
-        @Override
-        public ItemStack createIcon() {
-            return new ItemStack(ModBlocks.CHAT_BOX.get());
+    @SubscribeEvent
+    public static void commonSetup(FMLCommonSetupEvent event) {
+        if (ModList.get().isLoaded("refinedstorage")) {
+            RSAPI = new RefinedStorage();
+            RSAPI.initiate();
         }
-    };
+    }
+
+    public static RefinedStorage getRSAPI() {
+        return RSAPI;
+    }
 
     public Logger getLogger() {
         return LOGGER;
     }
 
     @SubscribeEvent
-    public static void commonSetup(FMLCommonSetupEvent event) {
-        if(ModList.get().isLoaded("refinedstorage")) {
-            RSAPI = new RefinedStorage();
-            RSAPI.initiate();
-        }
-    }
-
-    @SubscribeEvent
     public void onWorldLoad(WorldEvent.Load event) {
         playerController.init(event.getWorld());
-    }
-
-    public static RefinedStorage getRSAPI() {
-        return RSAPI;
     }
 
 

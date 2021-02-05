@@ -45,7 +45,7 @@ public class PlayerDetectorBlock extends Block {
         for (TileEntity tileEntity : TileEntityList.get(worldIn).getTileEntitys(worldIn)) {
             if (tileEntity instanceof PlayerDetectorTileEntity) {
                 PlayerDetectorTileEntity entity = (PlayerDetectorTileEntity) tileEntity;
-                for(IComputerAccess computer : entity.getConnectedComputers()) {
+                for (IComputerAccess computer : entity.getConnectedComputers()) {
                     computer.queueEvent("playerClick", player.getName().getString());
                     //Todo: Let the eyes glow when clicked on the detector.
                 }

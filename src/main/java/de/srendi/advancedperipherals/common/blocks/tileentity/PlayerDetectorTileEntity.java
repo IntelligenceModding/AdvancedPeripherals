@@ -18,16 +18,15 @@ import static dan200.computercraft.shared.Capabilities.CAPABILITY_PERIPHERAL;
 
 public class PlayerDetectorTileEntity extends TileEntity {
 
+    private PlayerDetectorPeripheral peripheral;
+    private LazyOptional<IPeripheral> peripheralCap;
+
     public PlayerDetectorTileEntity() {
         this(ModTileEntityTypes.PLAYER_DETECTOR.get());
     }
-
     public PlayerDetectorTileEntity(final TileEntityType<?> tileEntityType) {
         super(tileEntityType);
     }
-
-    private PlayerDetectorPeripheral peripheral;
-    private LazyOptional<IPeripheral> peripheralCap;
 
     public List<IComputerAccess> getConnectedComputers() {
         return peripheral.getConnectedComputers();

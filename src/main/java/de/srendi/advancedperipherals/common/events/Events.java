@@ -18,11 +18,11 @@ public class Events {
         for (TileEntity tileEntity : TileEntityList.get(event.getPlayer().getServerWorld()).getTileEntitys(event.getPlayer().getServerWorld())) {
             if (tileEntity instanceof ChatBoxTileEntity) {
                 if (AdvancedPeripheralsConfig.enableChatBox) {
-                    if(event.getMessage().startsWith("$")) {
+                    if (event.getMessage().startsWith("$")) {
                         event.setCanceled(true);
                     }
                     ChatBoxTileEntity entity = (ChatBoxTileEntity) tileEntity;
-                    for(IComputerAccess computer : entity.getConnectedComputers()) {
+                    for (IComputerAccess computer : entity.getConnectedComputers()) {
                         computer.queueEvent("chat", event.getUsername(), event.getMessage().replace("$", ""));
                     }
                 }

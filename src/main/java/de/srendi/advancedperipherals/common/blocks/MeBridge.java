@@ -2,7 +2,6 @@ package de.srendi.advancedperipherals.common.blocks;
 
 import de.srendi.advancedperipherals.common.blocks.tileentity.MeBridgeTileEntity;
 import de.srendi.advancedperipherals.common.blocks.tileentity.TileEntityList;
-import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
 import de.srendi.advancedperipherals.common.setup.ModTileEntityTypes;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -12,7 +11,6 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorld;
@@ -37,8 +35,8 @@ public class MeBridge extends Block {
     @Nullable
     @Override
     public TileEntity createTileEntity(BlockState state, IBlockReader world) {
-        if(ModList.get().isLoaded("appliedenergistics2")) {
-            if(ModTileEntityTypes.ME_BRIDGE.get().create() != null) {
+        if (ModList.get().isLoaded("appliedenergistics2")) {
+            if (ModTileEntityTypes.ME_BRIDGE.get().create() != null) {
                 return ModTileEntityTypes.ME_BRIDGE.get().create();
             }
         } else {
@@ -57,7 +55,7 @@ public class MeBridge extends Block {
         if (meBridge == null || !(placer instanceof PlayerEntity)) {
             return;
         }
-        meBridge.setPlayer((PlayerEntity)placer);
+        meBridge.setPlayer((PlayerEntity) placer);
         TileEntityList.get(worldIn).setTileEntity(worldIn, pos);
     }
 

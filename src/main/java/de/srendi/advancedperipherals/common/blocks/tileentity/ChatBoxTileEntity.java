@@ -22,6 +22,9 @@ import static dan200.computercraft.shared.Capabilities.CAPABILITY_PERIPHERAL;
 @Mod.EventBusSubscriber(modid = AdvancedPeripherals.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class ChatBoxTileEntity extends TileEntity implements ITickableTileEntity {
 
+    private ChatBoxPeripheral peripheral;
+    private LazyOptional<IPeripheral> peripheralCap;
+    private int tick;
     public ChatBoxTileEntity() {
         this(ModTileEntityTypes.CHAT_BOX.get());
     }
@@ -29,11 +32,6 @@ public class ChatBoxTileEntity extends TileEntity implements ITickableTileEntity
     public ChatBoxTileEntity(final TileEntityType<?> tileEntityType) {
         super(tileEntityType);
     }
-
-    private ChatBoxPeripheral peripheral;
-    private LazyOptional<IPeripheral> peripheralCap;
-
-    private int tick;
 
     public List<IComputerAccess> getConnectedComputers() {
         return peripheral.getConnectedComputers();
@@ -59,8 +57,8 @@ public class ChatBoxTileEntity extends TileEntity implements ITickableTileEntity
 
     @Override
     public void tick() {
-        if(peripheral.getTick() == 0) {
-            tick = 0;
+        if (peripheral.getTick() == 0) {
+            tick = 0; //Sync the tick of the peripherals and the tile entity
         }
         tick++;
         peripheral.setTick(tick);

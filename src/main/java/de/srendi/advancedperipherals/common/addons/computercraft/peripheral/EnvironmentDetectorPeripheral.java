@@ -18,10 +18,9 @@ import java.util.*;
 
 public class EnvironmentDetectorPeripheral implements IPeripheral {
 
+    List<IComputerAccess> connectedComputers = new ArrayList<>();
     private String type;
     private TileEntity entity;
-
-    List<IComputerAccess> connectedComputers = new ArrayList<>();
 
     public EnvironmentDetectorPeripheral(String type, TileEntity entity) {
         this.type = type;
@@ -72,9 +71,9 @@ public class EnvironmentDetectorPeripheral implements IPeripheral {
         int i = world.getLightFor(LightType.SKY, entity.getPos().add(0, 1, 0)) - world.getSkylightSubtracted();
         float f = world.getCelestialAngleRadians(1.0F);
         if (i > 0) {
-            float f1 = f < (float)Math.PI ? 0.0F : ((float)Math.PI * 2F);
+            float f1 = f < (float) Math.PI ? 0.0F : ((float) Math.PI * 2F);
             f = f + (f1 - f) * 0.2F;
-            i = Math.round((float)i * MathHelper.cos(f));
+            i = Math.round((float) i * MathHelper.cos(f));
         }
         i = MathHelper.clamp(i, 0, 15);
         return i;
@@ -121,7 +120,7 @@ public class EnvironmentDetectorPeripheral implements IPeripheral {
     @LuaFunction(mainThread = true)
     public final int getMoonId() {
         //for(int value : getCurrentMoonPhase().keySet()) {
-          //  return value;
+        //  return value;
         //}
         return getCurrentMoonPhase().keySet().toArray(new Integer[0])[0];
     }

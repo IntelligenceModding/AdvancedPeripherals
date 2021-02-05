@@ -59,9 +59,9 @@ minecraft {
             property 'forge.logging.console.level', 'debug'
 
             args '--mod', 'advancedperipherals', '--all',
-                '--existing', file('src/main/resources').toString(), 
-                '--existing', file('src/generated/resources').toString(),
-                '--output', file('src/generated/resources/')
+                    '--existing', file('src/main/resources').toString(),
+                    '--existing', file('src/generated/resources').toString(),
+                    '--output', file('src/generated/resources/')
 
             mods {
                 advancedperipherals {
@@ -79,7 +79,7 @@ repositories {
     maven { url 'https://squiddev.cc/maven/' }
     maven { url 'https://modmaven.dev/' }
     maven { url 'https://dvs1.progwml6.com/files/maven/' }
-    maven { url 'https://repo.refinedmods.com/'}
+    maven { url 'https://repo.refinedmods.com/' }
 }
 
 dependencies {
@@ -104,13 +104,13 @@ dependencies {
 jar {
     manifest {
         attributes([
-            "Specification-Title": "advancedperipherals",
-            "Specification-Vendor": "Sr_endi",
-            "Specification-Version": "${version}",
-            "Implementation-Title": "advancedperipherals",
-            "Implementation-Version": "${version}",
-            "Implementation-Vendor" :"Sr_endi",
-            "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+                "Specification-Title"     : "advancedperipherals",
+                "Specification-Vendor"    : "Sr_endi",
+                "Specification-Version"   : "${version}",
+                "Implementation-Title"    : "advancedperipherals",
+                "Implementation-Version"  : "${version}",
+                "Implementation-Vendor"   : "Sr_endi",
+                "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
         ])
     }
 }

@@ -3,7 +3,8 @@ package de.srendi.advancedperipherals.common.addons.appliedenergistics;
 import appeng.api.AEAddon;
 import appeng.api.IAEAddon;
 import appeng.api.IAppEngApi;
-import appeng.api.networking.crafting.*;
+import appeng.api.networking.crafting.ICraftingCPU;
+import appeng.api.networking.crafting.ICraftingJob;
 import appeng.api.storage.IMEMonitor;
 import appeng.api.storage.data.IAEFluidStack;
 import appeng.api.storage.data.IAEItemStack;
@@ -12,7 +13,9 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.registries.ForgeRegistries;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 @AEAddon
 public class AppEngApi implements IAEAddon {
@@ -21,6 +24,10 @@ public class AppEngApi implements IAEAddon {
 
     private static IAppEngApi api;
 
+    public static AppEngApi getInstance() {
+        return INSTANCE;
+    }
+
     @Override
     public void onAPIAvailable(IAppEngApi iAppEngApi) {
         api = iAppEngApi;
@@ -28,10 +35,6 @@ public class AppEngApi implements IAEAddon {
 
     public IAppEngApi getApi() {
         return api;
-    }
-
-    public static AppEngApi getInstance() {
-        return INSTANCE;
     }
 
     public IAEItemStack findAEStackFromItemStack(IMEMonitor<IAEItemStack> monitor, ItemStack item) {
@@ -165,8 +168,7 @@ public class AppEngApi implements IAEAddon {
         return map;
     }
 
-    public Object getObjectFromJob(ICraftingJob jobb) {
-        final ICraftingJob job = jobb;
+    public Object getObjectFromJob(ICraftingJob job) {
 
         final Map<Object, Object> result = new HashMap<>();
         final Map<Object, Object> stack = new HashMap<>();

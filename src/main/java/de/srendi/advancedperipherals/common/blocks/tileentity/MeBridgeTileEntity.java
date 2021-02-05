@@ -2,7 +2,8 @@ package de.srendi.advancedperipherals.common.blocks.tileentity;
 
 import appeng.api.config.Actionable;
 import appeng.api.networking.*;
-import appeng.api.networking.crafting.*;
+import appeng.api.networking.crafting.ICraftingLink;
+import appeng.api.networking.crafting.ICraftingRequester;
 import appeng.api.networking.security.IActionHost;
 import appeng.api.networking.security.IActionSource;
 import appeng.api.storage.data.IAEItemStack;
@@ -28,11 +29,20 @@ import net.minecraftforge.common.util.LazyOptional;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Optional;
+
 import static dan200.computercraft.shared.Capabilities.CAPABILITY_PERIPHERAL;
 
-import java.util.*;
-
 public class MeBridgeTileEntity extends TileEntity implements ICraftingRequester, ITickableTileEntity, IGridBlock, IActionHost, IActionSource, IGridHost {
+
+    private AppEngApi aeAPI = AppEngApi.INSTANCE;
+    private IGridNode node;
+    private PlayerEntity placed;
+    private boolean initialized;
+    private MeBridgePeripheral peripheral;
+    private LazyOptional<IPeripheral> peripheralCap;
 
     public MeBridgeTileEntity() {
         this(ModTileEntityTypes.ME_BRIDGE.get());
@@ -42,18 +52,9 @@ public class MeBridgeTileEntity extends TileEntity implements ICraftingRequester
         super(tileEntityType);
     }
 
-
-    private AppEngApi aeAPI = AppEngApi.INSTANCE;
-    private IGridNode node;
-    private PlayerEntity placed;
-    private boolean initialized;
-
     public List<IComputerAccess> getConnectedComputers() {
         return peripheral.getConnectedComputers();
     }
-
-    private MeBridgePeripheral peripheral;
-    private LazyOptional<IPeripheral> peripheralCap;
 
     @Override
     public <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction direction) {
@@ -80,7 +81,7 @@ public class MeBridgeTileEntity extends TileEntity implements ICraftingRequester
 
     @Override
     public void tick() {
-        if(!getWorld().isRemote) {
+        if (!getWorld().isRemote) {
             if (!initialized) {
                 if (AppEngApi.INSTANCE.getApi() != null) {
                     node = AppEngApi.INSTANCE.getApi().grid().createGridNode(this);

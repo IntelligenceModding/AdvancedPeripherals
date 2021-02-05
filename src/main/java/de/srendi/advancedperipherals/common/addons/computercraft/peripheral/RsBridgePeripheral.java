@@ -5,8 +5,6 @@ import com.refinedmods.refinedstorage.api.autocrafting.task.ICalculationResult;
 import com.refinedmods.refinedstorage.api.autocrafting.task.ICraftingTask;
 import com.refinedmods.refinedstorage.api.network.INetwork;
 import com.refinedmods.refinedstorage.api.util.Action;
-import com.refinedmods.refinedstorage.api.util.IStackList;
-import com.refinedmods.refinedstorage.api.util.StackListEntry;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.peripheral.IComputerAccess;
@@ -14,13 +12,11 @@ import dan200.computercraft.api.peripheral.IPeripheral;
 import de.srendi.advancedperipherals.common.addons.refinedstorage.RefinedStorage;
 import de.srendi.advancedperipherals.common.addons.refinedstorage.RefinedStorageNode;
 import de.srendi.advancedperipherals.common.blocks.tileentity.RsBridgeTileEntity;
-import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
@@ -29,9 +25,10 @@ import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.Supplier;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
 
 public class RsBridgePeripheral implements IPeripheral {
 
@@ -85,7 +82,7 @@ public class RsBridgePeripheral implements IPeripheral {
             map.put("name", ForgeRegistries.ITEMS.getKey(stack.getItem()).toString());
             map.put("amount", stack.getCount());
             map.put("displayName", stack.getDisplayName().getString());
-            if(nbt != null && !nbt.isEmpty()) {
+            if (nbt != null && !nbt.isEmpty()) {
                 map.put("nbt", nbt.toString());
             }
             items.put(i, map);
@@ -103,8 +100,8 @@ public class RsBridgePeripheral implements IPeripheral {
             CompoundNBT nbt = stack.getTag();
             map.put("name", ForgeRegistries.ITEMS.getKey(stack.getItem()).toString());
             map.put("craftamount", stack.getCount()); //Returns the result amount of an crafting recipe
-            for(ItemStack oStack : RefinedStorage.getItems(getNetwork(), false)) { //Used to get the amount of the item
-                if(oStack.isItemEqual(stack)) {
+            for (ItemStack oStack : RefinedStorage.getItems(getNetwork(), false)) { //Used to get the amount of the item
+                if (oStack.isItemEqual(stack)) {
                     map.put("amount", oStack.getCount());
                     break;
                 } else {
@@ -112,7 +109,7 @@ public class RsBridgePeripheral implements IPeripheral {
                 }
             }
             map.put("displayName", stack.getDisplayName().getString());
-            if(nbt != null && !nbt.isEmpty()) {
+            if (nbt != null && !nbt.isEmpty()) {
                 map.put("nbt", nbt.toString());
             }
             items.put(i, map);
@@ -144,8 +141,8 @@ public class RsBridgePeripheral implements IPeripheral {
             HashMap<String, Object> map = new HashMap<>();
             map.put("name", ForgeRegistries.FLUIDS.getKey(stack.getFluid()).toString());
             map.put("craftamount", stack.getAmount());
-            for(FluidStack oStack : RefinedStorage.getFluids(getNetwork(), false)) { //Used to get the amount of the item
-                if(oStack.isFluidEqual(stack)) {
+            for (FluidStack oStack : RefinedStorage.getFluids(getNetwork(), false)) { //Used to get the amount of the item
+                if (oStack.isFluidEqual(stack)) {
                     map.put("amount", oStack.getAmount());
                     break;
                 } else {
@@ -188,7 +185,7 @@ public class RsBridgePeripheral implements IPeripheral {
         ItemStack extracted = getNetwork().extractItem(stack, count, Action.SIMULATE);
         if (extracted.isEmpty())
             return 0;
-            //throw new LuaException("Item " + item + " does not exists in the RS system or the system is offline");
+        //throw new LuaException("Item " + item + " does not exists in the RS system or the system is offline");
 
         int transferableAmount = extracted.getCount();
 
@@ -227,9 +224,9 @@ public class RsBridgePeripheral implements IPeripheral {
     @LuaFunction(mainThread = true)
     public final boolean isItemCrafting(String item) {
         ItemStack stack = new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation(item)));
-        for(ICraftingTask task : getNetwork().getCraftingManager().getTasks()) {
+        for (ICraftingTask task : getNetwork().getCraftingManager().getTasks()) {
             ItemStack taskStack = task.getRequested().getItem();
-            if(taskStack.isItemEqual(stack)) {
+            if (taskStack.isItemEqual(stack)) {
                 return true;
             }
         }

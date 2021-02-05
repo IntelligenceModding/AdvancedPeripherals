@@ -15,16 +15,15 @@ import static dan200.computercraft.shared.Capabilities.CAPABILITY_PERIPHERAL;
 
 public class EnvironmentDetectorTileEntiy extends TileEntity {
 
+    private EnvironmentDetectorPeripheral peripheral;
+    private LazyOptional<IPeripheral> peripheralCap;
+
     public EnvironmentDetectorTileEntiy() {
         this(ModTileEntityTypes.ENVIRONMENT_DETECTOR.get());
     }
-
     public EnvironmentDetectorTileEntiy(TileEntityType<?> tileEntityTypeIn) {
         super(tileEntityTypeIn);
     }
-
-    private EnvironmentDetectorPeripheral peripheral;
-    private LazyOptional<IPeripheral> peripheralCap;
 
     @Override
     public <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction direction) {

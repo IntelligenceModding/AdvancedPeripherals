@@ -1,9 +1,7 @@
 package de.srendi.advancedperipherals.common.setup;
 
 import com.google.common.collect.Sets;
-import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.blocks.tileentity.*;
-import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.RegistryObject;
@@ -22,14 +20,14 @@ public class ModTileEntityTypes {
     }
 
     private static RegistryObject<TileEntityType<MeBridgeTileEntity>> registerMeBridge() {
-        if(ModList.get().isLoaded("appliedenergistics2")) {
+        if (ModList.get().isLoaded("appliedenergistics2")) {
             return Registration.TILE_ENTITIES.register("me_bridge", ()->new TileEntityType<>(MeBridgeTileEntity::new, Sets.newHashSet(ModBlocks.ME_BRIDGE.get()), null));
         }
         return null;
     }
 
     private static RegistryObject<TileEntityType<RsBridgeTileEntity>> registerRsBridge() {
-        if(ModList.get().isLoaded("refinedstorage")) {
+        if (ModList.get().isLoaded("refinedstorage")) {
             return Registration.TILE_ENTITIES.register("rs_bridge", ()->new TileEntityType<>(RsBridgeTileEntity::new, Sets.newHashSet(ModBlocks.RS_BRIDGE.get()), null));
         }
         return null;

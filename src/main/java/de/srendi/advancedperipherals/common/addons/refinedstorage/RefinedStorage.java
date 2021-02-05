@@ -19,17 +19,8 @@ import java.util.List;
 public class RefinedStorage {
     private final IRSAPI api;
 
-    public void initiate() {
-        api.getNetworkNodeRegistry().add(new ResourceLocation(AdvancedPeripherals.MOD_ID, "peripheral"),
-                (tag, world, pos) -> read(tag, new RefinedStorageNode(world, pos)));
-    }
-
     public RefinedStorage() {
         this.api = API.instance();
-    }
-
-    public IRSAPI getApi() {
-        return api;
     }
 
     private static INetworkNode read(CompoundNBT tag, NetworkNode node) {
@@ -39,7 +30,7 @@ public class RefinedStorage {
 
     public static List<ItemStack> getItems(INetwork network, boolean craftable) {
         Collection<StackListEntry<ItemStack>> entries;
-        if(craftable) {
+        if (craftable) {
             entries = network.getItemStorageCache().getCraftablesList().getStacks();
         } else {
             entries = network.getItemStorageCache().getList().getStacks();
@@ -53,7 +44,7 @@ public class RefinedStorage {
 
     public static List<FluidStack> getFluids(INetwork network, boolean craftable) {
         Collection<StackListEntry<FluidStack>> entries;
-        if(craftable) {
+        if (craftable) {
             entries = network.getFluidStorageCache().getCraftablesList().getStacks();
         } else {
             entries = network.getFluidStorageCache().getList().getStacks();
@@ -63,6 +54,14 @@ public class RefinedStorage {
             result.add(entry.getStack());
         }
         return result;
+    }
+
+    public void initiate() {
+        api.getNetworkNodeRegistry().add(new ResourceLocation(AdvancedPeripherals.MOD_ID, "peripheral"), (tag, world, pos)->read(tag, new RefinedStorageNode(world, pos)));
+    }
+
+    public IRSAPI getApi() {
+        return api;
     }
 
 }

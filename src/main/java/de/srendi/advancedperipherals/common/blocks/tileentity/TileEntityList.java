@@ -17,18 +17,8 @@ import java.util.List;
 
 public class TileEntityList extends WorldSavedData {
 
-    public final List<BlockPos> tileEntities = new ArrayList<>();
-
     private static final TileEntityList clientInstance = new TileEntityList();
-
-    public static TileEntityList get(World world) {
-        if(!world.isRemote) {
-            DimensionSavedDataManager storage = ServerLifecycleHooks.getCurrentServer().func_241755_D_().getSavedData();
-            return storage.getOrCreate(TileEntityList::new, AdvancedPeripherals.MOD_ID);
-        } else {
-            return clientInstance;
-        }
-    }
+    public final List<BlockPos> tileEntities = new ArrayList<>();
 
     public TileEntityList(String name) {
         super(name);
@@ -36,6 +26,15 @@ public class TileEntityList extends WorldSavedData {
 
     public TileEntityList() {
         super(AdvancedPeripherals.MOD_ID);
+    }
+
+    public static TileEntityList get(World world) {
+        if (!world.isRemote) {
+            DimensionSavedDataManager storage = ServerLifecycleHooks.getCurrentServer().func_241755_D_().getSavedData();
+            return storage.getOrCreate(TileEntityList::new, AdvancedPeripherals.MOD_ID);
+        } else {
+            return clientInstance;
+        }
     }
 
     @Override
@@ -83,7 +82,7 @@ public class TileEntityList extends WorldSavedData {
         List<TileEntity> list = new ArrayList<>();
         for (BlockPos blockPos : get(world).getBlockPositions()) {
             if (world.isBlockLoaded(blockPos)) {
-                if(world.getTileEntity(blockPos) != null) {
+                if (world.getTileEntity(blockPos) != null) {
                     list.add(world.getTileEntity(blockPos));
                 }
             }

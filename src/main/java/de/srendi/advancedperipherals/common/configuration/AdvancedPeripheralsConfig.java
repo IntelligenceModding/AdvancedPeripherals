@@ -1,9 +1,6 @@
 package de.srendi.advancedperipherals.common.configuration;
 
-import com.google.common.collect.Lists;
 import net.minecraftforge.common.ForgeConfigSpec;
-
-import java.util.List;
 
 public class AdvancedPeripheralsConfig {
 
