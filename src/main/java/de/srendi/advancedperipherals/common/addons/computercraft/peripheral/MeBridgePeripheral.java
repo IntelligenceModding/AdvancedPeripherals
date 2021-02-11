@@ -17,6 +17,7 @@ import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.lua.MethodResult;
 import dan200.computercraft.api.peripheral.IComputerAccess;
 import dan200.computercraft.api.peripheral.IPeripheral;
+import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.addons.appliedenergistics.AppEngApi;
 import de.srendi.advancedperipherals.common.addons.appliedenergistics.CraftJob;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
@@ -31,6 +32,7 @@ import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.squiddev.cobalt.Lua;
 
 import java.util.*;
 
@@ -134,14 +136,14 @@ public class MeBridgePeripheral implements IPeripheral {
 
 
     @LuaFunction(mainThread = true)
-    public final void retrieve(String item, int count, String directionString) throws LuaException {
+    public final void exportItem(String item, int count, String directionString) throws LuaException {
         if (AdvancedPeripheralsConfig.enableMeBridge) {
             IMEMonitor<IAEItemStack> monitor = ((IStorageGrid) node.getGrid().getCache(IStorageGrid.class)).getInventory(AppEngApi.getInstance().getApi().storage().getStorageChannel(IItemStorageChannel.class));
             ItemStack stack = new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation(item)));
             stack.setCount(count);
             IAEItemStack aeStack = AppEngApi.getInstance().findAEStackFromItemStack(monitor, stack);
             if (aeStack == null)
-                throw new NullPointerException("Item " + item + " does not exists in the ME system or the system is offline");
+                throw new LuaException("Item " + item + " does not exists in the ME system or the system is offline");
             Direction direction = Direction.valueOf(directionString.toUpperCase(Locale.ROOT));
 
             TileEntity targetEntity = tileEntity.getWorld().getTileEntity(tileEntity.getPos().offset(direction));
@@ -152,7 +154,7 @@ public class MeBridgePeripheral implements IPeripheral {
             aeStack.setStackSize(count);
             IAEItemStack extracted = monitor.extractItems(aeStack, Actionable.SIMULATE, source);
             if (extracted == null)
-                throw new NullPointerException("Item " + item + " does not exists in the ME system or the system is offline");
+                throw new LuaException("Item " + item + " does not exists in the ME system or the system is offline");
 
             long transferableAmount = extracted.getStackSize();
 
@@ -173,6 +175,52 @@ public class MeBridgePeripheral implements IPeripheral {
             throw new LuaException("Me Bridge is not enabled, enable it in the config.");
         }
     }
+
+    @LuaFunction(mainThread = true)
+    public final void importItem(String item, int count, String directionString) throws LuaException {
+        if (AdvancedPeripheralsConfig.enableMeBridge) {
+            IMEMonitor<IAEItemStack> monitor = ((IStorageGrid) node.getGrid().getCache(IStorageGrid.class)).getInventory(AppEngApi.getInstance().getApi().storage().getStorageChannel(IItemStorageChannel.class));
+            ItemStack stack = new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation(item)));
+            if(count > 64 || count < 0)
+                throw new LuaException("Count need to be in the range of 1-64");
+            stack.setCount(count);
+            IAEItemStack aeStack = AppEngApi.getInstance().findAEStackFromItemStack(monitor, stack);
+            if (aeStack == null)
+                throw new LuaException("Item " + item + " does not exists in the ME system or the system is offline");
+            Direction direction = Direction.valueOf(directionString.toUpperCase(Locale.ROOT));
+
+            TileEntity targetEntity = tileEntity.getWorld().getTileEntity(tileEntity.getPos().offset(direction));
+            IItemHandler inventory = targetEntity != null ? targetEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, direction.getOpposite()).resolve().orElse(null) : null;
+            if (inventory == null)
+                throw new LuaException("No valid inventory at " + direction);
+
+            aeStack.setStackSize(count);
+
+            int amount = count;
+
+            for(int i = 0; i < inventory.getSlots(); i++) {
+                if(inventory.getStackInSlot(i).isItemEqual(stack)) {
+                    if(inventory.getStackInSlot(i).getCount() >= amount) {
+                        AdvancedPeripherals.LOGGER.info("Debug1 " + amount);
+                        aeStack.setStackSize(amount);
+                        monitor.injectItems(aeStack, Actionable.MODULATE, source);
+                        inventory.extractItem(i, amount, false);
+                        break;
+                    } else {
+                        amount = count - inventory.getStackInSlot(i).getCount();
+                        AdvancedPeripherals.LOGGER.info("Debug2 " + amount);
+                        aeStack.setStackSize(inventory.getStackInSlot(i).getCount());
+                        monitor.injectItems(aeStack, Actionable.MODULATE, source);
+                        inventory.extractItem(i, inventory.getStackInSlot(i).getCount(), false);
+                    }
+                }
+            }
+
+        } else {
+            throw new LuaException("Me Bridge is not enabled, enable it in the config.");
+        }
+    }
+
 
     @LuaFunction(mainThread = true)
     public final Object[] listItems() throws LuaException {

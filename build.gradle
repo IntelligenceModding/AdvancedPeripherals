@@ -86,9 +86,7 @@ dependencies {
 
     compileOnly "org.jetbrains:annotations:${jb_annotations}"
 
-    minecraft "net.minecraftforge:forge:1.16.5-${forge_version}"
-
-    runtimeOnly fg.deobf("mezz.jei:jei-1.16.4:7.6.0.62")
+    minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
 
     implementation fg.deobf("org.squiddev:cc-tweaked-1.16.4:${cc_version}")
     compileOnly fg.deobf("com.refinedmods:refinedstorage:${rs_version}")
@@ -99,6 +97,8 @@ dependencies {
     //Mods to test stuff(Not required mods)
     runtimeOnly fg.deobf("mekanism:Mekanism:1.16.4-10.0.19.446")
     runtimeOnly fg.deobf("mekanism:Mekanism:1.16.4-10.0.19.446:generators")
+    runtimeOnly fg.deobf("mezz.jei:jei-1.16.4:7.6.0.62")
+
 }
 
 jar {
