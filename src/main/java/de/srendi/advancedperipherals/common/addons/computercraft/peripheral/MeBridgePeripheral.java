@@ -221,7 +221,6 @@ public class MeBridgePeripheral implements IPeripheral {
         }
     }
 
-
     @LuaFunction(mainThread = true)
     public final Object[] listItems() throws LuaException {
         if (AdvancedPeripheralsConfig.enableMeBridge) {

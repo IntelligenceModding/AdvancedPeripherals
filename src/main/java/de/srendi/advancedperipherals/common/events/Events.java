@@ -20,10 +20,15 @@ public class Events {
                 if (AdvancedPeripheralsConfig.enableChatBox) {
                     if (event.getMessage().startsWith("$")) {
                         event.setCanceled(true);
+                        ChatBoxTileEntity entity = (ChatBoxTileEntity) tileEntity;
+                        for (IComputerAccess computer : entity.getConnectedComputers()) {
+                            computer.queueEvent("chat", event.getUsername(), event.getMessage().replace("$", ""));
+                        }
+                        return;
                     }
                     ChatBoxTileEntity entity = (ChatBoxTileEntity) tileEntity;
                     for (IComputerAccess computer : entity.getConnectedComputers()) {
-                        computer.queueEvent("chat", event.getUsername(), event.getMessage().replace("$", ""));
+                        computer.queueEvent("chat", event.getUsername(), event.getMessage());
                     }
                 }
             }

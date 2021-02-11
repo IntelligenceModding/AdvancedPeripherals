@@ -3,6 +3,7 @@ package de.srendi.advancedperipherals.common.blocks;
 import dan200.computercraft.api.peripheral.IComputerAccess;
 import de.srendi.advancedperipherals.common.blocks.tileentity.PlayerDetectorTileEntity;
 import de.srendi.advancedperipherals.common.blocks.tileentity.TileEntityList;
+import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
 import de.srendi.advancedperipherals.common.setup.ModTileEntityTypes;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -42,12 +43,14 @@ public class PlayerDetectorBlock extends Block {
     @Override
     public ActionResultType onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity player, Hand handIn, BlockRayTraceResult hit) {
         //Todo: This stuff is called twice. I need to prevent this
-        for (TileEntity tileEntity : TileEntityList.get(worldIn).getTileEntitys(worldIn)) {
-            if (tileEntity instanceof PlayerDetectorTileEntity) {
-                PlayerDetectorTileEntity entity = (PlayerDetectorTileEntity) tileEntity;
-                for (IComputerAccess computer : entity.getConnectedComputers()) {
-                    computer.queueEvent("playerClick", player.getName().getString());
-                    //Todo: Let the eyes glow when clicked on the detector.
+        if(AdvancedPeripheralsConfig.enablePlayerDetector) {
+            for (TileEntity tileEntity : TileEntityList.get(worldIn).getTileEntitys(worldIn)) {
+                if (tileEntity instanceof PlayerDetectorTileEntity) {
+                    PlayerDetectorTileEntity entity = (PlayerDetectorTileEntity) tileEntity;
+                    for (IComputerAccess computer : entity.getConnectedComputers()) {
+                        computer.queueEvent("playerClick", player.getName().getString());
+                        //Todo: Let the eyes glow when clicked on the detector.
+                    }
                 }
             }
         }
