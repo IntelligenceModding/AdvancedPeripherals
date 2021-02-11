@@ -136,7 +136,7 @@ public class MeBridgePeripheral implements IPeripheral {
 
 
     @LuaFunction(mainThread = true)
-    public final void exportItem(String item, int count, String directionString) throws LuaException {
+    public final int exportItem(String item, int count, String directionString) throws LuaException {
         if (AdvancedPeripheralsConfig.enableMeBridge) {
             IMEMonitor<IAEItemStack> monitor = ((IStorageGrid) node.getGrid().getCache(IStorageGrid.class)).getInventory(AppEngApi.getInstance().getApi().storage().getStorageChannel(IItemStorageChannel.class));
             ItemStack stack = new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation(item)));
@@ -156,7 +156,7 @@ public class MeBridgePeripheral implements IPeripheral {
             if (extracted == null)
                 throw new LuaException("Item " + item + " does not exists in the ME system or the system is offline");
 
-            long transferableAmount = extracted.getStackSize();
+            int transferableAmount = (int) extracted.getStackSize();
 
             ItemStack remaining = ItemHandlerHelper.insertItemStacked(inventory, extracted.createItemStack(), true);
             if (!remaining.isEmpty()) {
@@ -171,13 +171,14 @@ public class MeBridgePeripheral implements IPeripheral {
                 aeStack.setStackSize(remaining.getCount());
                 monitor.injectItems(aeStack, Actionable.MODULATE, source);
             }
+            return transferableAmount;
         } else {
             throw new LuaException("Me Bridge is not enabled, enable it in the config.");
         }
     }
 
     @LuaFunction(mainThread = true)
-    public final void importItem(String item, int count, String directionString) throws LuaException {
+    public final int importItem(String item, int count, String directionString) throws LuaException {
         if (AdvancedPeripheralsConfig.enableMeBridge) {
             IMEMonitor<IAEItemStack> monitor = ((IStorageGrid) node.getGrid().getCache(IStorageGrid.class)).getInventory(AppEngApi.getInstance().getApi().storage().getStorageChannel(IItemStorageChannel.class));
             ItemStack stack = new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation(item)));
@@ -198,17 +199,19 @@ public class MeBridgePeripheral implements IPeripheral {
 
             int amount = count;
 
+            int transferableAmount = 0;
+
             for(int i = 0; i < inventory.getSlots(); i++) {
                 if(inventory.getStackInSlot(i).isItemEqual(stack)) {
                     if(inventory.getStackInSlot(i).getCount() >= amount) {
-                        AdvancedPeripherals.LOGGER.info("Debug1 " + amount);
+                        transferableAmount += amount;
                         aeStack.setStackSize(amount);
                         monitor.injectItems(aeStack, Actionable.MODULATE, source);
                         inventory.extractItem(i, amount, false);
                         break;
                     } else {
                         amount = count - inventory.getStackInSlot(i).getCount();
-                        AdvancedPeripherals.LOGGER.info("Debug2 " + amount);
+                        transferableAmount += inventory.getStackInSlot(i).getCount();
                         aeStack.setStackSize(inventory.getStackInSlot(i).getCount());
                         monitor.injectItems(aeStack, Actionable.MODULATE, source);
                         inventory.extractItem(i, inventory.getStackInSlot(i).getCount(), false);
@@ -216,6 +219,7 @@ public class MeBridgePeripheral implements IPeripheral {
                 }
             }
 
+            return transferableAmount;
         } else {
             throw new LuaException("Me Bridge is not enabled, enable it in the config.");
         }

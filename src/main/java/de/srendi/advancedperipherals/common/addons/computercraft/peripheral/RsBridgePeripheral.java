@@ -1,5 +1,6 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.peripheral;
 
+import appeng.api.config.Actionable;
 import com.refinedmods.refinedstorage.api.autocrafting.task.CalculationResultType;
 import com.refinedmods.refinedstorage.api.autocrafting.task.ICalculationResult;
 import com.refinedmods.refinedstorage.api.autocrafting.task.ICraftingTask;
@@ -195,7 +196,7 @@ public class RsBridgePeripheral implements IPeripheral {
     }
 
     @LuaFunction(mainThread = true)
-    public final int retrieve(String item, int count, String directionString) throws LuaException {
+    public final int exportItem(String item, int count, String directionString) throws LuaException {
         if(AdvancedPeripheralsConfig.enableRsBridge) {
             ItemStack stack = new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation(item)));
             stack.setCount(count);
@@ -222,6 +223,43 @@ public class RsBridgePeripheral implements IPeripheral {
 
             if (!remaining.isEmpty()) {
                 getNetwork().insertItem(remaining, remaining.getCount(), Action.PERFORM);
+            }
+
+            return transferableAmount;
+        }
+        return 0;
+    }
+
+    @LuaFunction(mainThread = true)
+    public final int importItem(String item, int count, String directionString) throws LuaException {
+        if(AdvancedPeripheralsConfig.enableRsBridge) {
+            ItemStack stack = new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation(item)));
+            stack.setCount(count);
+            Direction direction = Direction.valueOf(directionString.toUpperCase(Locale.ROOT));
+
+            TileEntity targetEntity = tileEntity.getWorld().getTileEntity(tileEntity.getPos().offset(direction));
+            IItemHandler inventory = targetEntity != null ? targetEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, direction.getOpposite()).resolve().orElse(null) : null;
+            if (inventory == null)
+                throw new LuaException("No valid inventory at " + directionString);
+
+            int amount = count;
+
+            int transferableAmount = 0;
+
+            for(int i = 0; i < inventory.getSlots(); i++) {
+                if(inventory.getStackInSlot(i).isItemEqual(stack)) {
+                    if(inventory.getStackInSlot(i).getCount() >= amount) {
+                        transferableAmount += amount;
+                        getNetwork().insertItem(stack, amount, Action.PERFORM);
+                        inventory.extractItem(i, amount, false);
+                        break;
+                    } else {
+                        amount = count - inventory.getStackInSlot(i).getCount();
+                        transferableAmount += inventory.getStackInSlot(i).getCount();
+                        getNetwork().insertItem(stack, inventory.getStackInSlot(i).getCount(), Action.PERFORM);
+                        inventory.extractItem(i, inventory.getStackInSlot(i).getCount(), false);
+                    }
+                }
             }
 
             return transferableAmount;
