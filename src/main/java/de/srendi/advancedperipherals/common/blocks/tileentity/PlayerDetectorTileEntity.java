@@ -24,6 +24,7 @@ public class PlayerDetectorTileEntity extends TileEntity {
     public PlayerDetectorTileEntity() {
         this(ModTileEntityTypes.PLAYER_DETECTOR.get());
     }
+
     public PlayerDetectorTileEntity(final TileEntityType<?> tileEntityType) {
         super(tileEntityType);
     }

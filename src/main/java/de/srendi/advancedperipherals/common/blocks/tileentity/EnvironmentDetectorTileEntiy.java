@@ -1,7 +1,6 @@
 package de.srendi.advancedperipherals.common.blocks.tileentity;
 
 import dan200.computercraft.api.peripheral.IPeripheral;
-import dan200.computercraft.api.peripheral.IPeripheralProvider;
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.EnvironmentDetectorPeripheral;
 import de.srendi.advancedperipherals.common.setup.ModTileEntityTypes;
 import net.minecraft.tileentity.TileEntity;
@@ -22,6 +21,7 @@ public class EnvironmentDetectorTileEntiy extends TileEntity {
     public EnvironmentDetectorTileEntiy() {
         this(ModTileEntityTypes.ENVIRONMENT_DETECTOR.get());
     }
+
     public EnvironmentDetectorTileEntiy(TileEntityType<?> tileEntityTypeIn) {
         super(tileEntityTypeIn);
     }

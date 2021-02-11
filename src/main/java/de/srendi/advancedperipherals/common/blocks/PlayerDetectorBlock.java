@@ -43,7 +43,7 @@ public class PlayerDetectorBlock extends Block {
     @Override
     public ActionResultType onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity player, Hand handIn, BlockRayTraceResult hit) {
         //Todo: This stuff is called twice. I need to prevent this
-        if(AdvancedPeripheralsConfig.enablePlayerDetector) {
+        if (AdvancedPeripheralsConfig.enablePlayerDetector) {
             for (TileEntity tileEntity : TileEntityList.get(worldIn).getTileEntitys(worldIn)) {
                 if (tileEntity instanceof PlayerDetectorTileEntity) {
                     PlayerDetectorTileEntity entity = (PlayerDetectorTileEntity) tileEntity;

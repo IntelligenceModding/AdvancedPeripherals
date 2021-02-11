@@ -12,7 +12,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -54,7 +53,7 @@ public class PlayerDetectorPeripheral implements IPeripheral {
 
     @LuaFunction(mainThread = true)
     public final List<String> getPlayersInRange(int range) throws LuaException {
-        if(AdvancedPeripheralsConfig.enablePlayerDetector) {
+        if (AdvancedPeripheralsConfig.enablePlayerDetector) {
             double rangeNegative = -(double) range;
             List<PlayerEntity> players = entity.getWorld().getEntitiesWithinAABB(PlayerEntity.class, new AxisAlignedBB(entity.getPos().add(rangeNegative, rangeNegative, rangeNegative), entity.getPos().add((double) range + 1, (double) range + 1, (double) range + 1)));
             List<String> playersName = new ArrayList<>();
@@ -68,7 +67,7 @@ public class PlayerDetectorPeripheral implements IPeripheral {
 
     @LuaFunction(mainThread = true)
     public final boolean isPlayersInRange(int range) throws LuaException {
-        if(AdvancedPeripheralsConfig.enablePlayerDetector) {
+        if (AdvancedPeripheralsConfig.enablePlayerDetector) {
             double rangeNegative = -(double) range;
             List<PlayerEntity> players = entity.getWorld().getEntitiesWithinAABB(PlayerEntity.class, new AxisAlignedBB(entity.getPos().add(rangeNegative, rangeNegative, rangeNegative), entity.getPos().add((double) range + 1, (double) range + 1, (double) range + 1)));
             return !players.isEmpty();
@@ -78,7 +77,7 @@ public class PlayerDetectorPeripheral implements IPeripheral {
 
     @LuaFunction(mainThread = true)
     public final boolean isPlayerInRange(int range, String username) throws LuaException {
-        if(AdvancedPeripheralsConfig.enablePlayerDetector) {
+        if (AdvancedPeripheralsConfig.enablePlayerDetector) {
             double rangeNegative = -(double) range;
             List<PlayerEntity> players = entity.getWorld().getEntitiesWithinAABB(PlayerEntity.class, new AxisAlignedBB(entity.getPos().add(rangeNegative, rangeNegative, rangeNegative), entity.getPos().add((double) range + 1, (double) range + 1, (double) range + 1)));
             List<String> playersName = new ArrayList<>();

@@ -25,6 +25,7 @@ public class ChatBoxTileEntity extends TileEntity implements ITickableTileEntity
     private ChatBoxPeripheral peripheral;
     private LazyOptional<IPeripheral> peripheralCap;
     private int tick;
+
     public ChatBoxTileEntity() {
         this(ModTileEntityTypes.CHAT_BOX.get());
     }

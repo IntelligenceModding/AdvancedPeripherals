@@ -28,6 +28,7 @@ public class RsBridgeTileEntity extends NetworkNodeTile<RefinedStorageNode> {
     public RsBridgeTileEntity() {
         this(ModTileEntityTypes.RS_BRIDGE.get());
     }
+
     public RsBridgeTileEntity(TileEntityType tileType) {
         super(tileType);
     }

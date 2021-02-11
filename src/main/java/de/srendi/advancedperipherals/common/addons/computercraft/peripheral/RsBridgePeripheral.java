@@ -1,6 +1,5 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.peripheral;
 
-import appeng.api.config.Actionable;
 import com.refinedmods.refinedstorage.api.autocrafting.task.CalculationResultType;
 import com.refinedmods.refinedstorage.api.autocrafting.task.ICalculationResult;
 import com.refinedmods.refinedstorage.api.autocrafting.task.ICraftingTask;
@@ -76,7 +75,7 @@ public class RsBridgePeripheral implements IPeripheral {
 
     @LuaFunction(mainThread = true)
     public final Object[] listItems() {
-        if(AdvancedPeripheralsConfig.enableRsBridge) {
+        if (AdvancedPeripheralsConfig.enableRsBridge) {
             HashMap<Integer, Object> items = new HashMap<>();
             int i = 1;
             for (ItemStack stack : RefinedStorage.getItems(getNetwork(), false)) {
@@ -99,7 +98,7 @@ public class RsBridgePeripheral implements IPeripheral {
 
     @LuaFunction(mainThread = true)
     public final Object[] listCraftableItems() {
-        if(AdvancedPeripheralsConfig.enableRsBridge) {
+        if (AdvancedPeripheralsConfig.enableRsBridge) {
             HashMap<Integer, Object> items = new HashMap<>();
             int i = 1;
             for (ItemStack stack : RefinedStorage.getItems(getNetwork(), true)) {
@@ -129,7 +128,7 @@ public class RsBridgePeripheral implements IPeripheral {
 
     @LuaFunction(mainThread = true)
     public final Object[] listFluids() {
-        if(AdvancedPeripheralsConfig.enableRsBridge) {
+        if (AdvancedPeripheralsConfig.enableRsBridge) {
             HashMap<Integer, Object> items = new HashMap<>();
             int i = 1;
             for (FluidStack stack : RefinedStorage.getFluids(getNetwork(), false)) {
@@ -147,7 +146,7 @@ public class RsBridgePeripheral implements IPeripheral {
 
     @LuaFunction(mainThread = true)
     public final Object[] listCraftableFluids() {
-        if(AdvancedPeripheralsConfig.enableRsBridge) {
+        if (AdvancedPeripheralsConfig.enableRsBridge) {
             HashMap<Integer, Object> items = new HashMap<>();
             int i = 1;
             for (FluidStack stack : RefinedStorage.getFluids(getNetwork(), true)) {
@@ -173,7 +172,7 @@ public class RsBridgePeripheral implements IPeripheral {
 
     @LuaFunction(mainThread = true)
     public final int getEnergyUsage() {
-        if(AdvancedPeripheralsConfig.enableRsBridge) {
+        if (AdvancedPeripheralsConfig.enableRsBridge) {
             return getNetwork().getEnergyUsage();
         }
         return 0;
@@ -181,7 +180,7 @@ public class RsBridgePeripheral implements IPeripheral {
 
     @LuaFunction(mainThread = true)
     public final int getMaxEnergyStorage() {
-        if(AdvancedPeripheralsConfig.enableRsBridge) {
+        if (AdvancedPeripheralsConfig.enableRsBridge) {
             return getNetwork().getEnergyStorage().getMaxEnergyStored();
         }
         return 0;
@@ -189,7 +188,7 @@ public class RsBridgePeripheral implements IPeripheral {
 
     @LuaFunction(mainThread = true)
     public final int getEnergyStorage() {
-        if(AdvancedPeripheralsConfig.enableRsBridge) {
+        if (AdvancedPeripheralsConfig.enableRsBridge) {
             return getNetwork().getEnergyStorage().getEnergyStored();
         }
         return 0;
@@ -197,7 +196,7 @@ public class RsBridgePeripheral implements IPeripheral {
 
     @LuaFunction(mainThread = true)
     public final int exportItem(String item, int count, String directionString) throws LuaException {
-        if(AdvancedPeripheralsConfig.enableRsBridge) {
+        if (AdvancedPeripheralsConfig.enableRsBridge) {
             ItemStack stack = new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation(item)));
             stack.setCount(count);
             Direction direction = Direction.valueOf(directionString.toUpperCase(Locale.ROOT));
@@ -232,7 +231,7 @@ public class RsBridgePeripheral implements IPeripheral {
 
     @LuaFunction(mainThread = true)
     public final int importItem(String item, int count, String directionString) throws LuaException {
-        if(AdvancedPeripheralsConfig.enableRsBridge) {
+        if (AdvancedPeripheralsConfig.enableRsBridge) {
             ItemStack stack = new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation(item)));
             stack.setCount(count);
             Direction direction = Direction.valueOf(directionString.toUpperCase(Locale.ROOT));
@@ -246,9 +245,9 @@ public class RsBridgePeripheral implements IPeripheral {
 
             int transferableAmount = 0;
 
-            for(int i = 0; i < inventory.getSlots(); i++) {
-                if(inventory.getStackInSlot(i).isItemEqual(stack)) {
-                    if(inventory.getStackInSlot(i).getCount() >= amount) {
+            for (int i = 0; i < inventory.getSlots(); i++) {
+                if (inventory.getStackInSlot(i).isItemEqual(stack)) {
+                    if (inventory.getStackInSlot(i).getCount() >= amount) {
                         transferableAmount += amount;
                         getNetwork().insertItem(stack, amount, Action.PERFORM);
                         inventory.extractItem(i, amount, false);
@@ -269,7 +268,7 @@ public class RsBridgePeripheral implements IPeripheral {
 
     @LuaFunction(mainThread = true)
     public final boolean craftItem(String item, int count) {
-        if(AdvancedPeripheralsConfig.enableRsBridge) {
+        if (AdvancedPeripheralsConfig.enableRsBridge) {
             ICalculationResult result = getNetwork().getCraftingManager().create(new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation(item))), count);
             CalculationResultType type = result.getType();
             getNetwork().getCraftingManager().start(result.getTask());
@@ -281,7 +280,7 @@ public class RsBridgePeripheral implements IPeripheral {
 
     @LuaFunction(mainThread = true)
     public final boolean craftFluid(String item, int count) {
-        if(AdvancedPeripheralsConfig.enableRsBridge) {
+        if (AdvancedPeripheralsConfig.enableRsBridge) {
             ICalculationResult result = getNetwork().getCraftingManager().create(new FluidStack(ForgeRegistries.FLUIDS.getValue(new ResourceLocation(item)), 0), count);
             CalculationResultType type = result.getType();
             getNetwork().getCraftingManager().start(result.getTask());
@@ -293,7 +292,7 @@ public class RsBridgePeripheral implements IPeripheral {
 
     @LuaFunction(mainThread = true)
     public final boolean isItemCrafting(String item) {
-        if(AdvancedPeripheralsConfig.enableRsBridge) {
+        if (AdvancedPeripheralsConfig.enableRsBridge) {
             ItemStack stack = new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation(item)));
             for (ICraftingTask task : getNetwork().getCraftingManager().getTasks()) {
                 ItemStack taskStack = task.getRequested().getItem();
