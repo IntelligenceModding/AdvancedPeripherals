@@ -267,6 +267,83 @@ public class RsBridgePeripheral implements IPeripheral {
     }
 
     @LuaFunction(mainThread = true)
+    public final int exportItemToChest(IComputerAccess computer, String item, int count, String chestName) throws LuaException {
+        if (AdvancedPeripheralsConfig.enableRsBridge) {
+            ItemStack stack = new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation(item)));
+            stack.setCount(count);
+            IPeripheral chest = computer.getAvailablePeripheral(chestName);
+            if (chest == null)
+                throw new LuaException("No valid chest for " + chestName);
+
+            TileEntity targetEntity = (TileEntity) chest.getTarget();
+            IItemHandler inventory = targetEntity != null ? targetEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).resolve().orElse(null) : null;
+            if (inventory == null)
+                throw new LuaException("No valid inventory for " + chestName);
+
+            ItemStack extracted = getNetwork().extractItem(stack, count, Action.SIMULATE);
+            if (extracted.isEmpty())
+                return 0;
+            //throw new LuaException("Item " + item + " does not exists in the RS system or the system is offline");
+
+            int transferableAmount = extracted.getCount();
+
+            ItemStack remaining = ItemHandlerHelper.insertItemStacked(inventory, extracted, true);
+            if (!remaining.isEmpty())
+                transferableAmount -= remaining.getCount();
+
+            extracted = getNetwork().extractItem(stack, transferableAmount, Action.PERFORM);
+            remaining = ItemHandlerHelper.insertItemStacked(inventory, extracted, false);
+
+            if (!remaining.isEmpty()) {
+                getNetwork().insertItem(remaining, remaining.getCount(), Action.PERFORM);
+            }
+
+            return transferableAmount;
+        }
+        return 0;
+    }
+
+    @LuaFunction(mainThread = true)
+    public final int importItemFromChest(IComputerAccess computer, String item, int count, String chestName) throws LuaException {
+        if (AdvancedPeripheralsConfig.enableRsBridge) {
+            ItemStack stack = new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation(item)));
+            stack.setCount(count);
+            IPeripheral chest = computer.getAvailablePeripheral(chestName);
+            if (chest == null)
+                throw new LuaException("No valid chest for " + chestName);
+
+            TileEntity targetEntity = (TileEntity) chest.getTarget();
+            IItemHandler inventory = targetEntity != null ? targetEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).resolve().orElse(null) : null;
+            if (inventory == null)
+                throw new LuaException("No valid inventory for " + chestName);
+
+            int amount = count;
+
+            int transferableAmount = 0;
+
+            for (int i = 0; i < inventory.getSlots(); i++) {
+                if (inventory.getStackInSlot(i).isItemEqual(stack)) {
+                    if (inventory.getStackInSlot(i).getCount() >= amount) {
+                        transferableAmount += amount;
+                        getNetwork().insertItem(stack, amount, Action.PERFORM);
+                        inventory.extractItem(i, amount, false);
+                        break;
+                    } else {
+                        amount = count - inventory.getStackInSlot(i).getCount();
+                        transferableAmount += inventory.getStackInSlot(i).getCount();
+                        getNetwork().insertItem(stack, inventory.getStackInSlot(i).getCount(), Action.PERFORM);
+                        inventory.extractItem(i, inventory.getStackInSlot(i).getCount(), false);
+                    }
+                }
+            }
+
+            return transferableAmount;
+        }
+        return 0;
+    }
+
+
+    @LuaFunction(mainThread = true)
     public final boolean craftItem(String item, int count) {
         if (AdvancedPeripheralsConfig.enableRsBridge) {
             ICalculationResult result = getNetwork().getCraftingManager().create(new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation(item))), count);
