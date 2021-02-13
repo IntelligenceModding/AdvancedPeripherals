@@ -4,19 +4,19 @@ license = "All rights reserved"
 issueTrackerURL = "https://github.com/Seniorendi/AdvancedPeripherals/issues"
 [[mods]]
 modId = "advancedperipherals"
-version = "0.3.8b"
+version = "0.3.9b"
 displayName = "Advanced Peripherals"
 #updateJSONURL="http://myurl.me/"
 displayURL = "https://srendi.de/"
 #logoFile="examplemod.png"
 authors = "Sr_endi"
 description = '''
-Advanced Peripherals adds a lot of new features for Computercraft.
+A Peripheral addon mod for Computercraft. Adds things like the Me Bridge, the Chat Box and more.
 '''
 [[dependencies.advancedperipherals]]
 modId = "forge"
 mandatory = true
-versionRange = "35.1.11"
+versionRange = "35.1.37"
 ordering = "NONE"
 side = "BOTH"
 [[dependencies.advancedperipherals]]
