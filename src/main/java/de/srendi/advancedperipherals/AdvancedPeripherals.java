@@ -33,7 +33,6 @@ public class AdvancedPeripherals {
             return new ItemStack(ModBlocks.CHAT_BOX.get());
         }
     };
-    private static RefinedStorage RSAPI;
 
     public AdvancedPeripherals() {
         LOGGER.info("AdvancedPeripherals says hello!");
@@ -44,18 +43,6 @@ public class AdvancedPeripherals {
         modBus.addListener(ConfigHandler::configEvent);
         Registration.register();
         MinecraftForge.EVENT_BUS.register(this);
-    }
-
-    @SubscribeEvent
-    public static void commonSetup(FMLCommonSetupEvent event) {
-        if (ModList.get().isLoaded("refinedstorage")) {
-            RSAPI = new RefinedStorage();
-            RSAPI.initiate();
-        }
-    }
-
-    public static RefinedStorage getRSAPI() {
-        return RSAPI;
     }
 
     public Logger getLogger() {
