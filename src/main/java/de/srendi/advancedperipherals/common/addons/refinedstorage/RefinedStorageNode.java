@@ -15,7 +15,6 @@ public class RefinedStorageNode extends NetworkNode {
         super(world, pos);
     }
 
-
     @Override
     public int getEnergyUsage() {
         return 500;

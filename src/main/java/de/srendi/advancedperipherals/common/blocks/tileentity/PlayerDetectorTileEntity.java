@@ -41,7 +41,6 @@ public class PlayerDetectorTileEntity extends TileEntity {
             }
             return peripheralCap.cast();
         }
-
         return super.getCapability(cap, direction);
     }
 

@@ -45,7 +45,6 @@ public class RsBridgeTileEntity extends NetworkNodeTile<RefinedStorageNode> {
             }
             return peripheralCap.cast();
         }
-
         return super.getCapability(cap, direction);
     }
 

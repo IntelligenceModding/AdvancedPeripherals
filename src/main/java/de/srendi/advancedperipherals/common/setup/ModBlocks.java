@@ -19,9 +19,7 @@ public class ModBlocks {
     public static final RegistryObject<Block> ME_BRIDGE = register("me_bridge", MeBridge::new);
     public static final RegistryObject<Block> RS_BRIDGE = register("rs_bridge", RsBridge::new);
 
-    static void register() {
-
-    }
+    static void register() {}
 
     private static <T extends Block> RegistryObject<T> registerNoItem(String name, Supplier<T> block) {
         return Registration.BLOCKS.register(name, block);
@@ -32,5 +30,4 @@ public class ModBlocks {
         Registration.ITEMS.register(name, ()->new BlockItem(registryObject.get(), new Item.Properties().group(AdvancedPeripherals.TAB)));
         return registryObject;
     }
-
 }

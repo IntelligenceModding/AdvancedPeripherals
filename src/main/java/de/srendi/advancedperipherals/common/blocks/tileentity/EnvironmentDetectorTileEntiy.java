@@ -34,7 +34,6 @@ public class EnvironmentDetectorTileEntiy extends TileEntity {
             }
             return peripheralCap.cast();
         }
-
         return super.getCapability(cap, direction);
     }
 

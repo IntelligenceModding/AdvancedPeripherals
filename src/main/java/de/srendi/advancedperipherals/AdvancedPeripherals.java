@@ -67,6 +67,5 @@ public class AdvancedPeripherals {
         playerController.init(event.getWorld());
     }
 
-
     //TODO: Add more comments to the code
 }

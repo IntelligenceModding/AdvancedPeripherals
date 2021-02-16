@@ -76,7 +76,6 @@ public class CraftJob implements ICraftingCallback, ILuaCallback {
         count.ifPresent(aeItem::setStackSize);
 
         crafting.beginCraftingJob(world, grid, this.source, aeItem, this);
-
     }
 
     @Override
@@ -99,6 +98,7 @@ public class CraftJob implements ICraftingCallback, ILuaCallback {
             exception = new LuaException("not connected");
             return;
         }
+
         IStorageGrid storage = grid.getCache(IStorageGrid.class);
         IMEMonitor<IAEItemStack> monitor = storage.getInventory(AppEngApi.getInstance().getApi().storage().getStorageChannel(IItemStorageChannel.class));
         ICraftingGrid crafting = grid.getCache(ICraftingGrid.class);
@@ -116,12 +116,10 @@ public class CraftJob implements ICraftingCallback, ILuaCallback {
     @NotNull
     @Override
     public MethodResult resume(Object[] objects) {
-        if (result != null) {
+        if (result != null)
             return result;
-        }
-        if (exception != null) {
+        if (exception != null)
             return MethodResult.of(exception);
-        }
         return MethodResult.of();
     }
 }

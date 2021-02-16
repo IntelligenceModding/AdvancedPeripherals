@@ -46,7 +46,6 @@ public class ChatBoxTileEntity extends TileEntity implements ITickableTileEntity
             }
             return peripheralCap.cast();
         }
-
         return super.getCapability(cap, direction);
     }
 

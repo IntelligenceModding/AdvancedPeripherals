@@ -132,7 +132,6 @@ public class MeBridgePeripheral implements IPeripheral {
         }
     }
 
-
     @LuaFunction(mainThread = true)
     public final int exportItem(String item, int count, String directionString) throws LuaException {
         if (AdvancedPeripheralsConfig.enableMeBridge) {
@@ -268,7 +267,6 @@ public class MeBridgePeripheral implements IPeripheral {
         }
     }
 
-
     @LuaFunction(mainThread = true)
     public final int importItemFromChest(IComputerAccess computer, String item, int count, String chestName) throws LuaException {
         if (AdvancedPeripheralsConfig.enableMeBridge) {
@@ -313,7 +311,6 @@ public class MeBridgePeripheral implements IPeripheral {
                     }
                 }
             }
-
             return transferableAmount;
         } else {
             throw new LuaException("Me Bridge is not enabled, enable it in the config.");
@@ -333,7 +330,6 @@ public class MeBridgePeripheral implements IPeripheral {
     @LuaFunction(mainThread = true)
     public final Object[] listCraftableItems() throws LuaException {
         if (AdvancedPeripheralsConfig.enableMeBridge) {
-
             IMEMonitor<IAEItemStack> inventory = ((IStorageGrid) node.getGrid().getCache(IStorageGrid.class)).getInventory(AppEngApi.getInstance().getApi().storage().getStorageChannel(IItemStorageChannel.class));
             return new Object[]{AppEngApi.INSTANCE.iteratorToMapStack(inventory.getStorageList().iterator(), 2)};
         } else {
@@ -344,7 +340,6 @@ public class MeBridgePeripheral implements IPeripheral {
     @LuaFunction(mainThread = true)
     public final Object[] listFluid() throws LuaException {
         if (AdvancedPeripheralsConfig.enableMeBridge) {
-
             IMEMonitor<IAEFluidStack> inventory = ((IStorageGrid) node.getGrid().getCache(IStorageGrid.class)).getInventory(AppEngApi.getInstance().getApi().storage().getStorageChannel(IFluidStorageChannel.class));
             return new Object[]{AppEngApi.INSTANCE.iteratorToMapFluid(inventory.getStorageList().iterator(), 0)};
         } else {
@@ -355,7 +350,6 @@ public class MeBridgePeripheral implements IPeripheral {
     @LuaFunction(mainThread = true)
     public final Object[] listCraftableFluid() throws LuaException {
         if (AdvancedPeripheralsConfig.enableMeBridge) {
-
             IMEMonitor<IAEFluidStack> inventory = ((IStorageGrid) node.getGrid().getCache(IStorageGrid.class)).getInventory(AppEngApi.getInstance().getApi().storage().getStorageChannel(IFluidStorageChannel.class));
             return new Object[]{AppEngApi.INSTANCE.iteratorToMapFluid(inventory.getStorageList().iterator(), 2)};
         } else {

@@ -17,6 +17,7 @@ import java.util.Collection;
 import java.util.List;
 
 public class RefinedStorage {
+
     private final IRSAPI api;
 
     public RefinedStorage() {

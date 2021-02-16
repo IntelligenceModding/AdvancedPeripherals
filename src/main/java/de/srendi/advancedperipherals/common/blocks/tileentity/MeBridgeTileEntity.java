@@ -76,7 +76,6 @@ public class MeBridgeTileEntity extends TileEntity implements ICraftingRequester
     public void validate() {
         super.validate();
         peripheral = new MeBridgePeripheral("meBridge", null, this, this);
-
     }
 
     @Override
@@ -89,7 +88,6 @@ public class MeBridgeTileEntity extends TileEntity implements ICraftingRequester
                         node.setPlayerID(AppEngApi.INSTANCE.getApi().registries().players().getID(placed));
                     }
                     node.updateState();
-
                 }
                 peripheral.setNode(node);
                 initialized = true;

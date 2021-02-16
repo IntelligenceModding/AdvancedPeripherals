@@ -260,7 +260,6 @@ public class RsBridgePeripheral implements IPeripheral {
                     }
                 }
             }
-
             return transferableAmount;
         }
         return 0;

@@ -3,7 +3,7 @@ package de.srendi.advancedperipherals.common.events;
 import dan200.computercraft.api.peripheral.IComputerAccess;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.blocks.tileentity.ChatBoxTileEntity;
-import de.srendi.advancedperipherals.common.blocks.tileentity.TileEntityList;
+import de.srendi.advancedperipherals.common.blocks.base.TileEntityList;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.event.ServerChatEvent;

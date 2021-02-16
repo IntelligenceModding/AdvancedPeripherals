@@ -1,4 +1,4 @@
-package de.srendi.advancedperipherals.common.blocks.tileentity;
+package de.srendi.advancedperipherals.common.blocks.base;
 
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import net.minecraft.nbt.CompoundNBT;

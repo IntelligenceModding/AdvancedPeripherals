@@ -15,9 +15,7 @@ public class ModTileEntityTypes {
     public static final RegistryObject<TileEntityType<MeBridgeTileEntity>> ME_BRIDGE = registerMeBridge();
     public static final RegistryObject<TileEntityType<RsBridgeTileEntity>> RS_BRIDGE = registerRsBridge();
 
-    static void register() {
-
-    }
+    static void register() {}
 
     private static RegistryObject<TileEntityType<MeBridgeTileEntity>> registerMeBridge() {
         if (ModList.get().isLoaded("appliedenergistics2")) {
@@ -32,5 +30,4 @@ public class ModTileEntityTypes {
         }
         return null;
     }
-
 }

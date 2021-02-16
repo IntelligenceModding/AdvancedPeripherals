@@ -59,17 +59,6 @@ public class AppEngApi implements IAEAddon {
         return map;
     }
 
-    public HashMap<Integer, Object> iteratorToMapStack(Iterator<IAEItemStack> iterator) {
-        HashMap<Integer, Object> map = new HashMap<>();
-        int i = 1;
-        while (iterator.hasNext()) {
-            Object o = getObjectFromStack(iterator.next());
-            if (o != null)
-                map.put(i++, o);
-        }
-        return map;
-    }
-
     public HashMap<Integer, Object> iteratorToMapFluid(Iterator<IAEFluidStack> iterator, int flag) {
         HashMap<Integer, Object> map = new HashMap<>();
         int i = 1;
@@ -177,5 +166,4 @@ public class AppEngApi implements IAEAddon {
         result.put("bytes", job.getByteTotal());
         return result;
     }
-
 }
