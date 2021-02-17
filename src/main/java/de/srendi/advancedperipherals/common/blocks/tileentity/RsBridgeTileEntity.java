@@ -27,6 +27,7 @@ public class RsBridgeTileEntity extends NetworkNodeTile<RefinedStorageNode> {
 
     public RsBridgeTileEntity() {
         this(ModTileEntityTypes.RS_BRIDGE.get());
+        peripheral = new RsBridgePeripheral(this);
     }
 
     public RsBridgeTileEntity(TileEntityType tileType) {
@@ -56,7 +57,13 @@ public class RsBridgeTileEntity extends NetworkNodeTile<RefinedStorageNode> {
 
     @Override
     public void validate() {
-        peripheral = new RsBridgePeripheral(this);
         super.validate();
+    }
+
+    @Override
+    protected void invalidateCaps() {
+        super.invalidateCaps();
+        if(peripheralCap != null)
+            peripheralCap.invalidate();
     }
 }

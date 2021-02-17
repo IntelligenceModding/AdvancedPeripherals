@@ -42,9 +42,8 @@ public class MeBridgePeripheral implements IPeripheral {
     private IActionSource source;
     private TileEntity tileEntity;
 
-    public MeBridgePeripheral(String type, IGridNode node, IActionSource source, TileEntity tileEntity) {
+    public MeBridgePeripheral(String type, IActionSource source, TileEntity tileEntity) {
         this.type = type;
-        this.node = node;
         this.source = source;
         this.tileEntity = tileEntity;
     }
@@ -57,6 +56,12 @@ public class MeBridgePeripheral implements IPeripheral {
     @Override
     public String getType() {
         return type;
+    }
+
+    @Nullable
+    @Override
+    public Object getTarget() {
+        return tileEntity;
     }
 
     public List<IComputerAccess> getConnectedComputers() {

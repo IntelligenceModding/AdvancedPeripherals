@@ -8,6 +8,7 @@ import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.server.ServerWorld;
 import org.jetbrains.annotations.NotNull;
@@ -22,9 +23,17 @@ public class ChatBoxPeripheral implements IPeripheral {
     private final List<IComputerAccess> connectedComputers = new ArrayList<>();
     private String type;
     private int tick;
+    private TileEntity tileEntity;
 
-    public ChatBoxPeripheral(String type) {
+    public ChatBoxPeripheral(String type, TileEntity tileEntity) {
         this.type = type;
+        this.tileEntity = tileEntity;
+    }
+
+    @Nullable
+    @Override
+    public Object getTarget() {
+        return tileEntity;
     }
 
     @NotNull

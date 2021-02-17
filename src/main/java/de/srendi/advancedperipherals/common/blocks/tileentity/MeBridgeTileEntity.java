@@ -46,6 +46,7 @@ public class MeBridgeTileEntity extends TileEntity implements ICraftingRequester
 
     public MeBridgeTileEntity() {
         this(ModTileEntityTypes.ME_BRIDGE.get());
+        peripheral = new MeBridgePeripheral("meBridge", this, this);
     }
 
     public MeBridgeTileEntity(final TileEntityType<?> tileEntityType) {
@@ -75,7 +76,17 @@ public class MeBridgeTileEntity extends TileEntity implements ICraftingRequester
     @Override
     public void validate() {
         super.validate();
-        peripheral = new MeBridgePeripheral("meBridge", null, this, this);
+    }
+
+    @Override
+    protected void invalidateCaps() {
+        super.invalidateCaps();
+        if (node != null) {
+            node.destroy();
+            node = null;
+        }
+        if(peripheralCap != null)
+            peripheralCap.invalidate();
     }
 
     @Override
@@ -172,15 +183,6 @@ public class MeBridgeTileEntity extends TileEntity implements ICraftingRequester
     @Override
     public void securityBreak() {
 
-    }
-
-    @Override
-    protected void invalidateCaps() {
-        super.invalidateCaps();
-        if (node != null) {
-            node.destroy();
-            node = null;
-        }
     }
 
     @NotNull

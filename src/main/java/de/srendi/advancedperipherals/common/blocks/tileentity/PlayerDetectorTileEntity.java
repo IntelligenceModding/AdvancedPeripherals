@@ -23,6 +23,7 @@ public class PlayerDetectorTileEntity extends TileEntity {
 
     public PlayerDetectorTileEntity() {
         this(ModTileEntityTypes.PLAYER_DETECTOR.get());
+        peripheral = new PlayerDetectorPeripheral("playerDetector", this);
     }
 
     public PlayerDetectorTileEntity(final TileEntityType<?> tileEntityType) {
@@ -46,8 +47,14 @@ public class PlayerDetectorTileEntity extends TileEntity {
 
     @Override
     public void validate() {
-        peripheral = new PlayerDetectorPeripheral("playerDetector", this);
         super.validate();
+    }
+
+    @Override
+    protected void invalidateCaps() {
+        super.invalidateCaps();
+        if(peripheralCap != null)
+            peripheralCap.invalidate();
     }
 
 }

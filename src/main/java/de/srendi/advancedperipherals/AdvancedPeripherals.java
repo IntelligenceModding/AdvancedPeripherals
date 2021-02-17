@@ -4,11 +4,14 @@ import de.srendi.advancedperipherals.common.addons.refinedstorage.RefinedStorage
 import de.srendi.advancedperipherals.common.configuration.ConfigHandler;
 import de.srendi.advancedperipherals.common.configuration.ConfigHolder;
 import de.srendi.advancedperipherals.common.setup.ModBlocks;
+import de.srendi.advancedperipherals.common.setup.ModTurtles;
 import de.srendi.advancedperipherals.common.setup.Registration;
 import de.srendi.advancedperipherals.common.util.PlayerController;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;

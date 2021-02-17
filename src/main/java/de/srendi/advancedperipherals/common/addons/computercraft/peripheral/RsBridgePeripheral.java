@@ -58,6 +58,12 @@ public class RsBridgePeripheral implements IPeripheral {
         return "rsBridge";
     }
 
+    @Nullable
+    @Override
+    public Object getTarget() {
+        return tileEntity;
+    }
+
     @Override
     public void attach(@NotNull IComputerAccess computer) {
         connectedComputers.add(computer);

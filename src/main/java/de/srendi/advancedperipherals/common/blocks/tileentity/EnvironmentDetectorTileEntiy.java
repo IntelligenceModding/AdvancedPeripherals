@@ -20,6 +20,7 @@ public class EnvironmentDetectorTileEntiy extends TileEntity {
 
     public EnvironmentDetectorTileEntiy() {
         this(ModTileEntityTypes.ENVIRONMENT_DETECTOR.get());
+        peripheral = new EnvironmentDetectorPeripheral("environmentDetector", this);
     }
 
     public EnvironmentDetectorTileEntiy(TileEntityType<?> tileEntityTypeIn) {
@@ -39,7 +40,14 @@ public class EnvironmentDetectorTileEntiy extends TileEntity {
 
     @Override
     public void validate() {
-        peripheral = new EnvironmentDetectorPeripheral("environmentDetector", this);
         super.validate();
     }
+
+    @Override
+    protected void invalidateCaps() {
+        super.invalidateCaps();
+        if(peripheralCap != null)
+            peripheralCap.invalidate();
+    }
+
 }

@@ -28,6 +28,7 @@ public class ChatBoxTileEntity extends TileEntity implements ITickableTileEntity
 
     public ChatBoxTileEntity() {
         this(ModTileEntityTypes.CHAT_BOX.get());
+        peripheral = new ChatBoxPeripheral("chatBox", this);
     }
 
     public ChatBoxTileEntity(final TileEntityType<?> tileEntityType) {
@@ -51,8 +52,14 @@ public class ChatBoxTileEntity extends TileEntity implements ITickableTileEntity
 
     @Override
     public void validate() {
-        peripheral = new ChatBoxPeripheral("chatBox");
         super.validate();
+    }
+
+    @Override
+    protected void invalidateCaps() {
+        super.invalidateCaps();
+        if(peripheralCap != null)
+            peripheralCap.invalidate();
     }
 
     @Override

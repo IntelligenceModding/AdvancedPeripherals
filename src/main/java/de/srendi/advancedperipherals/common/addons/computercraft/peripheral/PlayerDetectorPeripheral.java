@@ -19,17 +19,23 @@ public class PlayerDetectorPeripheral implements IPeripheral {
 
     private final List<IComputerAccess> connectedComputers = new ArrayList<>();
     private String type;
-    private TileEntity entity;
+    private TileEntity tileEntity;
 
-    public PlayerDetectorPeripheral(String type, TileEntity entity) {
+    public PlayerDetectorPeripheral(String type, TileEntity tileEntity) {
         this.type = type;
-        this.entity = entity;
+        this.tileEntity = tileEntity;
     }
 
     @NotNull
     @Override
     public String getType() {
         return type;
+    }
+
+    @Nullable
+    @Override
+    public Object getTarget() {
+        return tileEntity;
     }
 
     public List<IComputerAccess> getConnectedComputers() {
@@ -55,7 +61,7 @@ public class PlayerDetectorPeripheral implements IPeripheral {
     public final List<String> getPlayersInRange(int range) throws LuaException {
         if (AdvancedPeripheralsConfig.enablePlayerDetector) {
             double rangeNegative = -(double) range;
-            List<PlayerEntity> players = entity.getWorld().getEntitiesWithinAABB(PlayerEntity.class, new AxisAlignedBB(entity.getPos().add(rangeNegative, rangeNegative, rangeNegative), entity.getPos().add((double) range + 1, (double) range + 1, (double) range + 1)));
+            List<PlayerEntity> players = tileEntity.getWorld().getEntitiesWithinAABB(PlayerEntity.class, new AxisAlignedBB(tileEntity.getPos().add(rangeNegative, rangeNegative, rangeNegative), tileEntity.getPos().add((double) range + 1, (double) range + 1, (double) range + 1)));
             List<String> playersName = new ArrayList<>();
             for (PlayerEntity name : players) {
                 playersName.add(name.getName().getString());
@@ -69,7 +75,7 @@ public class PlayerDetectorPeripheral implements IPeripheral {
     public final boolean isPlayersInRange(int range) throws LuaException {
         if (AdvancedPeripheralsConfig.enablePlayerDetector) {
             double rangeNegative = -(double) range;
-            List<PlayerEntity> players = entity.getWorld().getEntitiesWithinAABB(PlayerEntity.class, new AxisAlignedBB(entity.getPos().add(rangeNegative, rangeNegative, rangeNegative), entity.getPos().add((double) range + 1, (double) range + 1, (double) range + 1)));
+            List<PlayerEntity> players = tileEntity.getWorld().getEntitiesWithinAABB(PlayerEntity.class, new AxisAlignedBB(tileEntity.getPos().add(rangeNegative, rangeNegative, rangeNegative), tileEntity.getPos().add((double) range + 1, (double) range + 1, (double) range + 1)));
             return !players.isEmpty();
         }
         return false;
@@ -79,7 +85,7 @@ public class PlayerDetectorPeripheral implements IPeripheral {
     public final boolean isPlayerInRange(int range, String username) throws LuaException {
         if (AdvancedPeripheralsConfig.enablePlayerDetector) {
             double rangeNegative = -(double) range;
-            List<PlayerEntity> players = entity.getWorld().getEntitiesWithinAABB(PlayerEntity.class, new AxisAlignedBB(entity.getPos().add(rangeNegative, rangeNegative, rangeNegative), entity.getPos().add((double) range + 1, (double) range + 1, (double) range + 1)));
+            List<PlayerEntity> players = tileEntity.getWorld().getEntitiesWithinAABB(PlayerEntity.class, new AxisAlignedBB(tileEntity.getPos().add(rangeNegative, rangeNegative, rangeNegative), tileEntity.getPos().add((double) range + 1, (double) range + 1, (double) range + 1)));
             List<String> playersName = new ArrayList<>();
             for (PlayerEntity name : players) {
                 playersName.add(name.getName().getString());

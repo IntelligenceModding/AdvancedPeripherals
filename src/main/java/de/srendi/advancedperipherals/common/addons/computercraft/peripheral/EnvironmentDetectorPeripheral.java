@@ -21,17 +21,23 @@ public class EnvironmentDetectorPeripheral implements IPeripheral {
 
     List<IComputerAccess> connectedComputers = new ArrayList<>();
     private String type;
-    private TileEntity entity;
+    private TileEntity tileEntity;
 
-    public EnvironmentDetectorPeripheral(String type, TileEntity entity) {
+    public EnvironmentDetectorPeripheral(String type, TileEntity tileEntity) {
         this.type = type;
-        this.entity = entity;
+        this.tileEntity = tileEntity;
     }
 
     @NotNull
     @Override
     public String getType() {
         return type;
+    }
+
+    @Nullable
+    @Override
+    public Object getTarget() {
+        return tileEntity;
     }
 
     @Override
@@ -52,7 +58,7 @@ public class EnvironmentDetectorPeripheral implements IPeripheral {
     @LuaFunction(mainThread = true)
     public final String getBiome() {
         if (AdvancedPeripheralsConfig.enableEnvironmentDetector) {
-            String biomeName = entity.getWorld().getBiome(entity.getPos()).getRegistryName().toString();
+            String biomeName = tileEntity.getWorld().getBiome(tileEntity.getPos()).getRegistryName().toString();
             String[] biome = biomeName.split(":");
             return biome[1];
         }
@@ -62,7 +68,7 @@ public class EnvironmentDetectorPeripheral implements IPeripheral {
     @LuaFunction(mainThread = true)
     public final int getSkyLightLevel() {
         if (AdvancedPeripheralsConfig.enableEnvironmentDetector) {
-            return entity.getWorld().getLightFor(LightType.SKY, entity.getPos().add(0, 1, 0));
+            return tileEntity.getWorld().getLightFor(LightType.SKY, tileEntity.getPos().add(0, 1, 0));
         }
         return 0;
     }
@@ -70,7 +76,7 @@ public class EnvironmentDetectorPeripheral implements IPeripheral {
     @LuaFunction(mainThread = true)
     public final int getBlockLightLevel() {
         if (AdvancedPeripheralsConfig.enableEnvironmentDetector) {
-            return entity.getWorld().getLightFor(LightType.BLOCK, entity.getPos().add(0, 1, 0));
+            return tileEntity.getWorld().getLightFor(LightType.BLOCK, tileEntity.getPos().add(0, 1, 0));
         }
         return 0;
     }
@@ -78,8 +84,8 @@ public class EnvironmentDetectorPeripheral implements IPeripheral {
     @LuaFunction(mainThread = true)
     public final int getDayLightLevel() {
         if (AdvancedPeripheralsConfig.enableEnvironmentDetector) {
-            World world = entity.getWorld();
-            int i = world.getLightFor(LightType.SKY, entity.getPos().add(0, 1, 0)) - world.getSkylightSubtracted();
+            World world = tileEntity.getWorld();
+            int i = world.getLightFor(LightType.SKY, tileEntity.getPos().add(0, 1, 0)) - world.getSkylightSubtracted();
             float f = world.getCelestialAngleRadians(1.0F);
             if (i > 0) {
                 float f1 = f < (float) Math.PI ? 0.0F : ((float) Math.PI * 2F);
@@ -95,7 +101,7 @@ public class EnvironmentDetectorPeripheral implements IPeripheral {
     @LuaFunction(mainThread = true)
     public final long getTime() {
         if (AdvancedPeripheralsConfig.enableEnvironmentDetector) {
-            return entity.getWorld().getDayTime();
+            return tileEntity.getWorld().getDayTime();
         }
         return 0;
     }
@@ -103,8 +109,8 @@ public class EnvironmentDetectorPeripheral implements IPeripheral {
     @LuaFunction(mainThread = true)
     public final boolean isSlimeChunk() {
         if (AdvancedPeripheralsConfig.enableEnvironmentDetector) {
-            ChunkPos chunkPos = new ChunkPos(entity.getPos());
-            return (SharedSeedRandom.seedSlimeChunk(chunkPos.x, chunkPos.z, ((ISeedReader) entity.getWorld()).getSeed(), 987234911L).nextInt(10) == 0);
+            ChunkPos chunkPos = new ChunkPos(tileEntity.getPos());
+            return (SharedSeedRandom.seedSlimeChunk(chunkPos.x, chunkPos.z, ((ISeedReader) tileEntity.getWorld()).getSeed(), 987234911L).nextInt(10) == 0);
         }
         return false;
     }
@@ -112,7 +118,7 @@ public class EnvironmentDetectorPeripheral implements IPeripheral {
     @LuaFunction(mainThread = true)
     public final String getDimensionProvider() {
         if (AdvancedPeripheralsConfig.enableEnvironmentDetector) {
-            return entity.getWorld().getDimensionKey().getLocation().getNamespace();
+            return tileEntity.getWorld().getDimensionKey().getLocation().getNamespace();
         }
         return "";
     }
@@ -120,7 +126,7 @@ public class EnvironmentDetectorPeripheral implements IPeripheral {
     @LuaFunction(mainThread = true)
     public final String getDimensionName() {
         if (AdvancedPeripheralsConfig.enableEnvironmentDetector) {
-            return entity.getWorld().getDimensionKey().getLocation().getPath();
+            return tileEntity.getWorld().getDimensionKey().getLocation().getPath();
         }
         return "";
     }
@@ -128,7 +134,7 @@ public class EnvironmentDetectorPeripheral implements IPeripheral {
     @LuaFunction(mainThread = true)
     public final String getDimensionPaN() {
         if (AdvancedPeripheralsConfig.enableEnvironmentDetector) {
-            return entity.getWorld().getDimensionKey().getLocation().getNamespace() + ":" + entity.getWorld().getDimensionKey().getLocation().getPath();
+            return tileEntity.getWorld().getDimensionKey().getLocation().getNamespace() + ":" + tileEntity.getWorld().getDimensionKey().getLocation().getPath();
         }
         return "";
     }
@@ -136,7 +142,7 @@ public class EnvironmentDetectorPeripheral implements IPeripheral {
     @LuaFunction(mainThread = true)
     public final boolean isDimension(String dimension) {
         if (AdvancedPeripheralsConfig.enableEnvironmentDetector) {
-            return entity.getWorld().getDimensionKey().getLocation().getPath().equals(dimension);
+            return tileEntity.getWorld().getDimensionKey().getLocation().getPath().equals(dimension);
         }
         return false;
     }
@@ -171,8 +177,8 @@ public class EnvironmentDetectorPeripheral implements IPeripheral {
     private Map<Integer, String> getCurrentMoonPhase() {
         if (AdvancedPeripheralsConfig.enableEnvironmentDetector) {
             Map<Integer, String> moon = new HashMap<>();
-            if (entity.getWorld().getDimensionKey().getLocation().getPath().equals("overworld")) {
-                switch (entity.getWorld().getMoonPhase()) {
+            if (tileEntity.getWorld().getDimensionKey().getLocation().getPath().equals("overworld")) {
+                switch (tileEntity.getWorld().getMoonPhase()) {
                     case 0:
                         moon.put(0, "Full moon");
                         break;
@@ -235,7 +241,7 @@ public class EnvironmentDetectorPeripheral implements IPeripheral {
     @LuaFunction(mainThread = true)
     public final boolean isRaining() {
         if (AdvancedPeripheralsConfig.enableEnvironmentDetector) {
-            return entity.getWorld().getRainStrength(0) > 0;
+            return tileEntity.getWorld().getRainStrength(0) > 0;
         }
         return false;
     }
@@ -243,7 +249,7 @@ public class EnvironmentDetectorPeripheral implements IPeripheral {
     @LuaFunction(mainThread = true)
     public final boolean isThunder() {
         if (AdvancedPeripheralsConfig.enableEnvironmentDetector) {
-            return entity.getWorld().getThunderStrength(0) > 0;
+            return tileEntity.getWorld().getThunderStrength(0) > 0;
         }
         return false;
     }
@@ -251,7 +257,7 @@ public class EnvironmentDetectorPeripheral implements IPeripheral {
     @LuaFunction(mainThread = true)
     public final boolean isSunny() {
         if (AdvancedPeripheralsConfig.enableEnvironmentDetector) {
-            return entity.getWorld().getThunderStrength(0) < 1 && entity.getWorld().getRainStrength(0) < 1;
+            return tileEntity.getWorld().getThunderStrength(0) < 1 && tileEntity.getWorld().getRainStrength(0) < 1;
         }
         return false;
     }
