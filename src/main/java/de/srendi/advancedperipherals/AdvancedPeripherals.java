@@ -58,4 +58,5 @@ public class AdvancedPeripherals {
     }
 
     //TODO: Add more comments to the code
+    //TODO: The code is a little bit messy...
 }
