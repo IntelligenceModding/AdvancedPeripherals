@@ -3,7 +3,6 @@ package de.srendi.advancedperipherals.common.blocks.base;
 import dan200.computercraft.api.peripheral.IComputerAccess;
 import dan200.computercraft.api.peripheral.IPeripheral;
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.BasePeripheral;
-import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.ChatBoxPeripheral;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
@@ -39,7 +38,7 @@ public abstract class PeripheralTileEntity<T extends BasePeripheral> extends Til
     @Override
     protected void invalidateCaps() {
         super.invalidateCaps();
-        if(peripheralCap != null)
+        if (peripheralCap != null)
             peripheralCap.invalidate();
     }
 

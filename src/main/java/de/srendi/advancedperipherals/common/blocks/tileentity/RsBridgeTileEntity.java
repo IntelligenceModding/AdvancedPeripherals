@@ -5,13 +5,9 @@ import com.refinedmods.refinedstorage.api.network.node.INetworkNodeManager;
 import com.refinedmods.refinedstorage.api.network.node.INetworkNodeProxy;
 import com.refinedmods.refinedstorage.api.util.Action;
 import com.refinedmods.refinedstorage.apiimpl.API;
-import com.refinedmods.refinedstorage.apiimpl.network.node.NetworkNode;
 import com.refinedmods.refinedstorage.capability.NetworkNodeProxyCapability;
-import com.refinedmods.refinedstorage.tile.NetworkNodeTile;
 import com.refinedmods.refinedstorage.tile.config.IRedstoneConfigurable;
 import com.refinedmods.refinedstorage.tile.config.RedstoneMode;
-import dan200.computercraft.api.peripheral.IComputerAccess;
-import dan200.computercraft.api.peripheral.IPeripheral;
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.RsBridgePeripheral;
 import de.srendi.advancedperipherals.common.addons.refinedstorage.RefinedStorageNode;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
@@ -26,17 +22,11 @@ import net.minecraftforge.common.util.LazyOptional;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nonnull;
-import java.sql.Ref;
-import java.util.List;
-
-import static dan200.computercraft.shared.Capabilities.CAPABILITY_PERIPHERAL;
-
 public class RsBridgeTileEntity extends PeripheralTileEntity<RsBridgePeripheral> implements INetworkNodeProxy<RefinedStorageNode>, IRedstoneConfigurable {
 
+    private final LazyOptional<INetworkNodeProxy<RefinedStorageNode>> networkNodeProxy = LazyOptional.of(()->this);
     private RefinedStorageNode clientNode;
     private RefinedStorageNode removedNode;
-    private final LazyOptional<INetworkNodeProxy<RefinedStorageNode>> networkNodeProxy = LazyOptional.of(() ->this);
 
     public RsBridgeTileEntity() {
         this(TileEntityTypes.RS_BRIDGE.get());
@@ -73,7 +63,7 @@ public class RsBridgeTileEntity extends PeripheralTileEntity<RsBridgePeripheral>
 
             return this.clientNode;
         } else {
-            INetworkNodeManager manager = API.instance().getNetworkNodeManager((ServerWorld)this.world);
+            INetworkNodeManager manager = API.instance().getNetworkNodeManager((ServerWorld) this.world);
             INetworkNode node = manager.getNode(this.pos);
             if (node == null) {
                 throw new IllegalStateException("No network node present at " + this.pos.toString() + ", consider removing the block at this position");
@@ -86,7 +76,7 @@ public class RsBridgeTileEntity extends PeripheralTileEntity<RsBridgePeripheral>
     public void validate() {
         super.validate();
         if (!this.world.isRemote) {
-            INetworkNodeManager manager = API.instance().getNetworkNodeManager((ServerWorld)this.world);
+            INetworkNodeManager manager = API.instance().getNetworkNodeManager((ServerWorld) this.world);
             if (manager.getNode(this.pos) == null) {
                 manager.setNode(this.pos, this.createNode(this.world, this.pos));
                 manager.markForSaving();
@@ -97,7 +87,7 @@ public class RsBridgeTileEntity extends PeripheralTileEntity<RsBridgePeripheral>
     public void remove() {
         super.remove();
         if (!this.world.isRemote) {
-            INetworkNodeManager manager = API.instance().getNetworkNodeManager((ServerWorld)this.world);
+            INetworkNodeManager manager = API.instance().getNetworkNodeManager((ServerWorld) this.world);
             INetworkNode node = manager.getNode(this.pos);
             if (node != null) {
                 this.removedNode = (RefinedStorageNode) node;

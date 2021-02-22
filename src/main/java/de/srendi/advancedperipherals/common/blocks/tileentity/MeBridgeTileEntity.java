@@ -12,8 +12,6 @@ import appeng.api.util.AEColor;
 import appeng.api.util.AEPartLocation;
 import appeng.api.util.DimensionalCoord;
 import com.google.common.collect.ImmutableSet;
-import dan200.computercraft.api.peripheral.IComputerAccess;
-import dan200.computercraft.api.peripheral.IPeripheral;
 import de.srendi.advancedperipherals.common.addons.appliedenergistics.AppEngApi;
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.MeBridgePeripheral;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
@@ -22,19 +20,13 @@ import de.srendi.advancedperipherals.common.setup.TileEntityTypes;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.ITickableTileEntity;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.util.LazyOptional;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.EnumSet;
-import java.util.List;
 import java.util.Optional;
-
-import static dan200.computercraft.shared.Capabilities.CAPABILITY_PERIPHERAL;
 
 public class MeBridgeTileEntity extends PeripheralTileEntity<MeBridgePeripheral> implements ICraftingRequester, ITickableTileEntity, IGridBlock, IActionHost, IActionSource, IGridHost {
 

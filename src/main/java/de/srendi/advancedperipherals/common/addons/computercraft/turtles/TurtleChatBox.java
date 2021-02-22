@@ -2,7 +2,10 @@ package de.srendi.advancedperipherals.common.addons.computercraft.turtles;
 
 import dan200.computercraft.api.client.TransformedModel;
 import dan200.computercraft.api.peripheral.IPeripheral;
-import dan200.computercraft.api.turtle.*;
+import dan200.computercraft.api.turtle.ITurtleAccess;
+import dan200.computercraft.api.turtle.ITurtleUpgrade;
+import dan200.computercraft.api.turtle.TurtleSide;
+import dan200.computercraft.api.turtle.TurtleUpgradeType;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.ChatBoxPeripheral;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
@@ -15,8 +18,8 @@ import org.jetbrains.annotations.Nullable;
 
 public class TurtleChatBox implements ITurtleUpgrade {
 
-    private static final ModelResourceLocation leftModel = new ModelResourceLocation( "computercraft:turtle_speaker_upgrade_left", "inventory" );
-    private static final ModelResourceLocation rightModel = new ModelResourceLocation( "computercraft:turtle_speaker_upgrade_right", "inventory" );
+    private static final ModelResourceLocation leftModel = new ModelResourceLocation("computercraft:turtle_speaker_upgrade_left", "inventory");
+    private static final ModelResourceLocation rightModel = new ModelResourceLocation("computercraft:turtle_speaker_upgrade_right", "inventory");
 
     @NotNull
     @Override
@@ -39,7 +42,7 @@ public class TurtleChatBox implements ITurtleUpgrade {
     @NotNull
     @Override
     public ItemStack getCraftingItem() {
-        if(AdvancedPeripheralsConfig.enableChatBox)
+        if (AdvancedPeripheralsConfig.enableChatBox)
             return new ItemStack(Blocks.CHAT_BOX.get());
         return ItemStack.EMPTY;
     }

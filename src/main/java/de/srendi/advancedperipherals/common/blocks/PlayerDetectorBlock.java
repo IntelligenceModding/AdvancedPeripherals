@@ -2,8 +2,8 @@ package de.srendi.advancedperipherals.common.blocks;
 
 import dan200.computercraft.api.peripheral.IComputerAccess;
 import de.srendi.advancedperipherals.common.blocks.base.BaseBlock;
-import de.srendi.advancedperipherals.common.blocks.tileentity.PlayerDetectorTileEntity;
 import de.srendi.advancedperipherals.common.blocks.base.TileEntityList;
+import de.srendi.advancedperipherals.common.blocks.tileentity.PlayerDetectorTileEntity;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
 import de.srendi.advancedperipherals.common.setup.TileEntityTypes;
 import net.minecraft.block.BlockState;
