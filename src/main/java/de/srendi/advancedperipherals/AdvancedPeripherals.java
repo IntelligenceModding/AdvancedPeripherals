@@ -1,25 +1,19 @@
 package de.srendi.advancedperipherals;
 
-import de.srendi.advancedperipherals.common.addons.refinedstorage.RefinedStorage;
 import de.srendi.advancedperipherals.common.configuration.ConfigHandler;
 import de.srendi.advancedperipherals.common.configuration.ConfigHolder;
-import de.srendi.advancedperipherals.common.setup.ModBlocks;
-import de.srendi.advancedperipherals.common.setup.ModTurtles;
+import de.srendi.advancedperipherals.common.setup.Blocks;
 import de.srendi.advancedperipherals.common.setup.Registration;
 import de.srendi.advancedperipherals.common.util.PlayerController;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -33,7 +27,7 @@ public class AdvancedPeripherals {
     public static final ItemGroup TAB = new ItemGroup("advancedperipheralstab") {
         @Override
         public ItemStack createIcon() {
-            return new ItemStack(ModBlocks.CHAT_BOX.get());
+            return new ItemStack(Blocks.CHAT_BOX.get());
         }
     };
 

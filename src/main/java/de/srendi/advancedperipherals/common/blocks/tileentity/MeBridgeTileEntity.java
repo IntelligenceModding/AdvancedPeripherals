@@ -16,8 +16,9 @@ import dan200.computercraft.api.peripheral.IComputerAccess;
 import dan200.computercraft.api.peripheral.IPeripheral;
 import de.srendi.advancedperipherals.common.addons.appliedenergistics.AppEngApi;
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.MeBridgePeripheral;
-import de.srendi.advancedperipherals.common.setup.ModBlocks;
-import de.srendi.advancedperipherals.common.setup.ModTileEntityTypes;
+import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
+import de.srendi.advancedperipherals.common.setup.Blocks;
+import de.srendi.advancedperipherals.common.setup.TileEntityTypes;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.ITickableTileEntity;
@@ -35,47 +36,28 @@ import java.util.Optional;
 
 import static dan200.computercraft.shared.Capabilities.CAPABILITY_PERIPHERAL;
 
-public class MeBridgeTileEntity extends TileEntity implements ICraftingRequester, ITickableTileEntity, IGridBlock, IActionHost, IActionSource, IGridHost {
+public class MeBridgeTileEntity extends PeripheralTileEntity<MeBridgePeripheral> implements ICraftingRequester, ITickableTileEntity, IGridBlock, IActionHost, IActionSource, IGridHost {
 
-    private AppEngApi aeAPI = AppEngApi.INSTANCE;
     private IGridNode node;
     private PlayerEntity placed;
     private boolean initialized;
-    private MeBridgePeripheral peripheral;
-    private LazyOptional<IPeripheral> peripheralCap;
 
     public MeBridgeTileEntity() {
-        this(ModTileEntityTypes.ME_BRIDGE.get());
-        peripheral = new MeBridgePeripheral("meBridge", this, this);
+        this(TileEntityTypes.ME_BRIDGE.get());
     }
 
     public MeBridgeTileEntity(final TileEntityType<?> tileEntityType) {
         super(tileEntityType);
     }
 
-    public List<IComputerAccess> getConnectedComputers() {
-        return peripheral.getConnectedComputers();
-    }
-
-    @Override
-    public <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction direction) {
-        if (cap == CAPABILITY_PERIPHERAL) {
-            if (peripheralCap == null) {
-                peripheralCap = LazyOptional.of(()->peripheral);
-            }
-            return peripheralCap.cast();
-        }
-
-        return super.getCapability(cap, direction);
-    }
 
     public void setPlayer(PlayerEntity placed) {
         this.placed = placed;
     }
 
     @Override
-    public void validate() {
-        super.validate();
+    protected MeBridgePeripheral createPeripheral() {
+        return new MeBridgePeripheral("meBridge", this, this);
     }
 
     @Override
@@ -85,13 +67,11 @@ public class MeBridgeTileEntity extends TileEntity implements ICraftingRequester
             node.destroy();
             node = null;
         }
-        if(peripheralCap != null)
-            peripheralCap.invalidate();
     }
 
     @Override
     public void tick() {
-        if (!getWorld().isRemote) {
+        if (!this.world.isRemote) {
             if (!initialized) {
                 if (AppEngApi.INSTANCE.getApi() != null) {
                     node = AppEngApi.INSTANCE.getApi().grid().createGridNode(this);
@@ -135,9 +115,7 @@ public class MeBridgeTileEntity extends TileEntity implements ICraftingRequester
     }
 
     @Override
-    public void onGridNotification(@NotNull GridNotification gridNotification) {
-
-    }
+    public void onGridNotification(@NotNull GridNotification gridNotification) {}
 
     @NotNull
     @Override
@@ -152,14 +130,12 @@ public class MeBridgeTileEntity extends TileEntity implements ICraftingRequester
     }
 
     @Override
-    public void gridChanged() {
-
-    }
+    public void gridChanged() {}
 
     @NotNull
     @Override
     public ItemStack getMachineRepresentation() {
-        return new ItemStack(ModBlocks.ME_BRIDGE.get());
+        return new ItemStack(Blocks.ME_BRIDGE.get());
     }
 
     @Nullable
@@ -181,9 +157,7 @@ public class MeBridgeTileEntity extends TileEntity implements ICraftingRequester
     }
 
     @Override
-    public void securityBreak() {
-
-    }
+    public void securityBreak() {}
 
     @NotNull
     @Override
@@ -215,8 +189,6 @@ public class MeBridgeTileEntity extends TileEntity implements ICraftingRequester
     }
 
     @Override
-    public void jobStateChange(ICraftingLink iCraftingLink) {
-    }
-
+    public void jobStateChange(ICraftingLink iCraftingLink) {}
 
 }

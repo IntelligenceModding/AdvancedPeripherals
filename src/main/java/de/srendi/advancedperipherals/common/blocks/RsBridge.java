@@ -1,7 +1,7 @@
 package de.srendi.advancedperipherals.common.blocks;
 
 import de.srendi.advancedperipherals.common.blocks.base.BaseBlock;
-import de.srendi.advancedperipherals.common.setup.ModTileEntityTypes;
+import de.srendi.advancedperipherals.common.setup.TileEntityTypes;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
@@ -23,7 +23,7 @@ public class RsBridge extends BaseBlock {
     @Nullable
     @Override
     public TileEntity createTileEntity(BlockState state, IBlockReader world) {
-        return ModTileEntityTypes.RS_BRIDGE.get().create();
+        return TileEntityTypes.RS_BRIDGE.get().create();
     }
 
     @Override

@@ -2,7 +2,8 @@ package de.srendi.advancedperipherals.common.blocks.tileentity;
 
 import dan200.computercraft.api.peripheral.IPeripheral;
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.EnvironmentDetectorPeripheral;
-import de.srendi.advancedperipherals.common.setup.ModTileEntityTypes;
+import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
+import de.srendi.advancedperipherals.common.setup.TileEntityTypes;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
@@ -13,14 +14,10 @@ import org.jetbrains.annotations.Nullable;
 
 import static dan200.computercraft.shared.Capabilities.CAPABILITY_PERIPHERAL;
 
-public class EnvironmentDetectorTileEntiy extends TileEntity {
-
-    private EnvironmentDetectorPeripheral peripheral;
-    private LazyOptional<IPeripheral> peripheralCap;
+public class EnvironmentDetectorTileEntiy extends PeripheralTileEntity<EnvironmentDetectorPeripheral> {
 
     public EnvironmentDetectorTileEntiy() {
-        this(ModTileEntityTypes.ENVIRONMENT_DETECTOR.get());
-        peripheral = new EnvironmentDetectorPeripheral("environmentDetector", this);
+        this(TileEntityTypes.ENVIRONMENT_DETECTOR.get());
     }
 
     public EnvironmentDetectorTileEntiy(TileEntityType<?> tileEntityTypeIn) {
@@ -28,26 +25,9 @@ public class EnvironmentDetectorTileEntiy extends TileEntity {
     }
 
     @Override
-    public <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction direction) {
-        if (cap == CAPABILITY_PERIPHERAL) {
-            if (peripheralCap == null) {
-                peripheralCap = LazyOptional.of(()->peripheral);
-            }
-            return peripheralCap.cast();
-        }
-        return super.getCapability(cap, direction);
+    protected EnvironmentDetectorPeripheral createPeripheral() {
+        return new EnvironmentDetectorPeripheral("environmentDetector", this);
     }
 
-    @Override
-    public void validate() {
-        super.validate();
-    }
-
-    @Override
-    protected void invalidateCaps() {
-        super.invalidateCaps();
-        if(peripheralCap != null)
-            peripheralCap.invalidate();
-    }
 
 }

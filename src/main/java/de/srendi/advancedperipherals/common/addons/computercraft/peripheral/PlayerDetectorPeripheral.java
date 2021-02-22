@@ -4,6 +4,7 @@ import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.peripheral.IComputerAccess;
 import dan200.computercraft.api.peripheral.IPeripheral;
+import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.tileentity.TileEntity;
@@ -15,46 +16,16 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class PlayerDetectorPeripheral implements IPeripheral {
+public class PlayerDetectorPeripheral extends BasePeripheral {
 
     private final List<IComputerAccess> connectedComputers = new ArrayList<>();
-    private String type;
-    private TileEntity tileEntity;
 
-    public PlayerDetectorPeripheral(String type, TileEntity tileEntity) {
-        this.type = type;
-        this.tileEntity = tileEntity;
-    }
-
-    @NotNull
-    @Override
-    public String getType() {
-        return type;
-    }
-
-    @Nullable
-    @Override
-    public Object getTarget() {
-        return tileEntity;
+    public PlayerDetectorPeripheral(String type, PeripheralTileEntity tileEntity) {
+        super(type, tileEntity);
     }
 
     public List<IComputerAccess> getConnectedComputers() {
         return connectedComputers;
-    }
-
-    @Override
-    public void attach(@NotNull IComputerAccess computer) {
-        connectedComputers.add(computer);
-    }
-
-    @Override
-    public void detach(@NotNull IComputerAccess computer) {
-        connectedComputers.remove(computer);
-    }
-
-    @Override
-    public boolean equals(@Nullable IPeripheral iPeripheral) {
-        return iPeripheral == this;
     }
 
     @LuaFunction(mainThread = true)

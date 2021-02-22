@@ -11,6 +11,7 @@ import dan200.computercraft.api.peripheral.IComputerAccess;
 import dan200.computercraft.api.peripheral.IPeripheral;
 import de.srendi.advancedperipherals.common.addons.refinedstorage.RefinedStorage;
 import de.srendi.advancedperipherals.common.addons.refinedstorage.RefinedStorageNode;
+import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
 import de.srendi.advancedperipherals.common.blocks.tileentity.RsBridgeTileEntity;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
 import net.minecraft.item.ItemStack;
@@ -31,12 +32,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
-public class RsBridgePeripheral implements IPeripheral {
+public class RsBridgePeripheral extends BasePeripheral {
 
     private final List<IComputerAccess> connectedComputers = new ArrayList<>();
     private final RsBridgeTileEntity tileEntity;
 
-    public RsBridgePeripheral(RsBridgeTileEntity tileEntity) {
+    public RsBridgePeripheral(String type, RsBridgeTileEntity tileEntity) {
+        super(type, tileEntity);
         this.tileEntity = tileEntity;
     }
 
@@ -50,33 +52,6 @@ public class RsBridgePeripheral implements IPeripheral {
 
     public List<IComputerAccess> getConnectedComputers() {
         return connectedComputers;
-    }
-
-    @NotNull
-    @Override
-    public String getType() {
-        return "rsBridge";
-    }
-
-    @Nullable
-    @Override
-    public Object getTarget() {
-        return tileEntity;
-    }
-
-    @Override
-    public void attach(@NotNull IComputerAccess computer) {
-        connectedComputers.add(computer);
-    }
-
-    @Override
-    public void detach(@NotNull IComputerAccess computer) {
-        connectedComputers.remove(computer);
-    }
-
-    @Override
-    public boolean equals(@Nullable IPeripheral iPeripheral) {
-        return this == iPeripheral;
     }
 
     @LuaFunction(mainThread = true)

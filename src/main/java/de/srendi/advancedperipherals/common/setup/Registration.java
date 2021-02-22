@@ -20,8 +20,8 @@ public class Registration {
         ITEMS.register(modEventBus);
         TILE_ENTITIES.register(modEventBus);
 
-        ModBlocks.register();
+        Blocks.register();
         //ModItems.register();
-        ModTileEntityTypes.register();
+        TileEntityTypes.register();
     }
 }

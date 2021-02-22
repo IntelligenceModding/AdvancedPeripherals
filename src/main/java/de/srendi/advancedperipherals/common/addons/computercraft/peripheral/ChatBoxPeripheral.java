@@ -5,6 +5,7 @@ import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.peripheral.IComputerAccess;
 import dan200.computercraft.api.peripheral.IPeripheral;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
+import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -18,42 +19,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class ChatBoxPeripheral implements IPeripheral {
+public class ChatBoxPeripheral extends BasePeripheral {
 
-    private final List<IComputerAccess> connectedComputers = new ArrayList<>();
-    private String type;
     private int tick;
-    private TileEntity tileEntity;
 
-    public ChatBoxPeripheral(String type, TileEntity tileEntity) {
-        this.type = type;
-        this.tileEntity = tileEntity;
-    }
-
-    @Nullable
-    @Override
-    public Object getTarget() {
-        return tileEntity;
-    }
-
-    @NotNull
-    @Override
-    public String getType() {
-        return type;
-    }
-
-    public List<IComputerAccess> getConnectedComputers() {
-        return connectedComputers;
-    }
-
-    @Override
-    public void attach(@NotNull IComputerAccess computer) {
-        connectedComputers.add(computer);
-    }
-
-    @Override
-    public void detach(@NotNull IComputerAccess computer) {
-        connectedComputers.remove(computer);
+    public ChatBoxPeripheral(String type, PeripheralTileEntity tileEntity) {
+        super(type, tileEntity);
     }
 
     public int getTick() {

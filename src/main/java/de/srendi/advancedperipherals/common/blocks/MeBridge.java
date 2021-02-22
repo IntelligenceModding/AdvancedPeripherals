@@ -2,7 +2,7 @@ package de.srendi.advancedperipherals.common.blocks;
 
 import de.srendi.advancedperipherals.common.blocks.base.BaseBlock;
 import de.srendi.advancedperipherals.common.blocks.tileentity.MeBridgeTileEntity;
-import de.srendi.advancedperipherals.common.setup.ModTileEntityTypes;
+import de.srendi.advancedperipherals.common.setup.TileEntityTypes;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -28,8 +28,8 @@ public class MeBridge extends BaseBlock {
     @Override
     public TileEntity createTileEntity(BlockState state, IBlockReader world) {
         if (ModList.get().isLoaded("appliedenergistics2")) {
-            if (ModTileEntityTypes.ME_BRIDGE.get().create() != null) {
-                return ModTileEntityTypes.ME_BRIDGE.get().create();
+            if (TileEntityTypes.ME_BRIDGE.get().create() != null) {
+                return TileEntityTypes.ME_BRIDGE.get().create();
             }
         } else {
             return null;

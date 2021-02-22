@@ -11,12 +11,12 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 @Mod.EventBusSubscriber(modid = AdvancedPeripherals.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
-public class ModTurtles {
+public class Turtles {
 
     private static TurtleChatBox chatBox;
 
     public static void register() {
-        chatBox = new TurtleChatBox(new ResourceLocation(AdvancedPeripherals.MOD_ID, "chat_box"));
+        chatBox = new TurtleChatBox();
         ComputerCraftAPI.registerTurtleUpgrade(chatBox);
     }
 

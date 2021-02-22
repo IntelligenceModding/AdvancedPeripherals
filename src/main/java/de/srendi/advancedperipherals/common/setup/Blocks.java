@@ -9,7 +9,8 @@ import net.minecraftforge.fml.RegistryObject;
 
 import java.util.function.Supplier;
 
-public class ModBlocks {
+
+public class Blocks {
 
     //Disabled until i need this
     //public static final RegistryObject<Block> SILVER_ORE = register("silver_ore", SilverOre::new);

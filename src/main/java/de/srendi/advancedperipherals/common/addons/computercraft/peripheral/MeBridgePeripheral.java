@@ -19,6 +19,7 @@ import dan200.computercraft.api.peripheral.IComputerAccess;
 import dan200.computercraft.api.peripheral.IPeripheral;
 import de.srendi.advancedperipherals.common.addons.appliedenergistics.AppEngApi;
 import de.srendi.advancedperipherals.common.addons.appliedenergistics.CraftJob;
+import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
 import de.srendi.advancedperipherals.common.util.ServerWorker;
 import net.minecraft.item.ItemStack;
@@ -34,53 +35,23 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-public class MeBridgePeripheral implements IPeripheral {
+public class MeBridgePeripheral extends BasePeripheral {
 
     private final List<IComputerAccess> connectedComputers = new ArrayList<>();
-    private String type;
     private IGridNode node;
     private IActionSource source;
-    private TileEntity tileEntity;
 
-    public MeBridgePeripheral(String type, IActionSource source, TileEntity tileEntity) {
-        this.type = type;
+    public MeBridgePeripheral(String type, IActionSource source, PeripheralTileEntity tileEntity) {
+        super(type, tileEntity);
         this.source = source;
-        this.tileEntity = tileEntity;
     }
 
     public void setNode(IGridNode node) {
         this.node = node;
     }
 
-    @NotNull
-    @Override
-    public String getType() {
-        return type;
-    }
-
-    @Nullable
-    @Override
-    public Object getTarget() {
-        return tileEntity;
-    }
-
     public List<IComputerAccess> getConnectedComputers() {
         return connectedComputers;
-    }
-
-    @Override
-    public void attach(@NotNull IComputerAccess computer) {
-        connectedComputers.add(computer);
-    }
-
-    @Override
-    public void detach(@NotNull IComputerAccess computer) {
-        connectedComputers.remove(computer);
-    }
-
-    @Override
-    public boolean equals(@Nullable IPeripheral iPeripheral) {
-        return iPeripheral == this;
     }
 
     @LuaFunction(mainThread = false)

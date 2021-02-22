@@ -5,7 +5,7 @@ import de.srendi.advancedperipherals.common.blocks.base.BaseBlock;
 import de.srendi.advancedperipherals.common.blocks.tileentity.PlayerDetectorTileEntity;
 import de.srendi.advancedperipherals.common.blocks.base.TileEntityList;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
-import de.srendi.advancedperipherals.common.setup.ModTileEntityTypes;
+import de.srendi.advancedperipherals.common.setup.TileEntityTypes;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.tileentity.TileEntity;
@@ -22,7 +22,7 @@ public class PlayerDetectorBlock extends BaseBlock {
     @Nullable
     @Override
     public TileEntity createTileEntity(BlockState state, IBlockReader world) {
-        return ModTileEntityTypes.PLAYER_DETECTOR.get().create();
+        return TileEntityTypes.PLAYER_DETECTOR.get().create();
     }
 
     @Override

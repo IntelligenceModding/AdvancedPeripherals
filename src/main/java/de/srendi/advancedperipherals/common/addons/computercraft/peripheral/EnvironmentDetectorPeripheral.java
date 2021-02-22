@@ -3,6 +3,7 @@ package de.srendi.advancedperipherals.common.addons.computercraft.peripheral;
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.peripheral.IComputerAccess;
 import dan200.computercraft.api.peripheral.IPeripheral;
+import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.SharedSeedRandom;
@@ -17,42 +18,10 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-public class EnvironmentDetectorPeripheral implements IPeripheral {
+public class EnvironmentDetectorPeripheral extends BasePeripheral {
 
-    List<IComputerAccess> connectedComputers = new ArrayList<>();
-    private String type;
-    private TileEntity tileEntity;
-
-    public EnvironmentDetectorPeripheral(String type, TileEntity tileEntity) {
-        this.type = type;
-        this.tileEntity = tileEntity;
-    }
-
-    @NotNull
-    @Override
-    public String getType() {
-        return type;
-    }
-
-    @Nullable
-    @Override
-    public Object getTarget() {
-        return tileEntity;
-    }
-
-    @Override
-    public void attach(@NotNull IComputerAccess computer) {
-        connectedComputers.add(computer);
-    }
-
-    @Override
-    public void detach(@NotNull IComputerAccess computer) {
-        connectedComputers.remove(computer);
-    }
-
-    @Override
-    public boolean equals(@Nullable IPeripheral iPeripheral) {
-        return iPeripheral == this;
+    public EnvironmentDetectorPeripheral(String type, PeripheralTileEntity tileEntity) {
+        super(type, tileEntity);
     }
 
     @LuaFunction(mainThread = true)
