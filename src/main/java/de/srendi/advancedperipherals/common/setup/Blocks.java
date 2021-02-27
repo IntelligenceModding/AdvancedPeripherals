@@ -9,11 +9,8 @@ import net.minecraftforge.fml.RegistryObject;
 
 import java.util.function.Supplier;
 
-
 public class Blocks {
 
-    //Disabled until i need this
-    //public static final RegistryObject<Block> SILVER_ORE = register("silver_ore", SilverOre::new);
     public static final RegistryObject<Block> ENVIRONMENT_DETECTOR = register("environment_detector", EnvironmentDetector::new);
     public static final RegistryObject<Block> CHAT_BOX = register("chat_box", ChatBox::new);
     public static final RegistryObject<Block> PLAYER_DETECTOR = register("player_detector", PlayerDetectorBlock::new);

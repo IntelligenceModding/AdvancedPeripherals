@@ -12,17 +12,16 @@ import net.minecraftforge.fml.common.Mod;
 @Mod.EventBusSubscriber(modid = AdvancedPeripherals.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class Turtles {
 
-    private static TurtleChatBox chatBox;
+    public static TurtleChatBox chatBox;
 
     public static void register() {
-        chatBox = new TurtleChatBox();
-        ComputerCraftAPI.registerTurtleUpgrade(chatBox);
+            chatBox = new TurtleChatBox();
+            ComputerCraftAPI.registerTurtleUpgrade(chatBox);
     }
 
     @SubscribeEvent
-    public void registerItems(RegistryEvent.Register<Item> event) {
+    public static void registerItems(RegistryEvent.Register<Item> event) {
         register();
-        TurtleUpgrades.enable(chatBox);
     }
 
 }

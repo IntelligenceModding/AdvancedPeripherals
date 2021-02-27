@@ -30,7 +30,7 @@ public class TurtleChatBox implements ITurtleUpgrade {
     @NotNull
     @Override
     public String getUnlocalisedAdjective() {
-        return "block.advancedperipherals.chat_box";
+        return "block.advancedperipherals.chat_box_turtle";
     }
 
     @NotNull

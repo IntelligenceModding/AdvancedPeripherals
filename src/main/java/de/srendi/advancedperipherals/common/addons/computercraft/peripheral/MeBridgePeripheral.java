@@ -35,7 +35,6 @@ import java.util.*;
 
 public class MeBridgePeripheral extends BasePeripheral {
 
-    private final List<IComputerAccess> connectedComputers = new ArrayList<>();
     private IGridNode node;
     private IActionSource source;
 
@@ -46,10 +45,6 @@ public class MeBridgePeripheral extends BasePeripheral {
 
     public void setNode(IGridNode node) {
         this.node = node;
-    }
-
-    public List<IComputerAccess> getConnectedComputers() {
-        return connectedComputers;
     }
 
     @LuaFunction(mainThread = false)

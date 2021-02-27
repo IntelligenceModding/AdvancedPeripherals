@@ -3,6 +3,7 @@ package de.srendi.advancedperipherals.common.addons.computercraft.peripheral;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.peripheral.IComputerAccess;
+import dan200.computercraft.api.peripheral.IPeripheral;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
 import net.minecraft.entity.player.PlayerEntity;
@@ -14,14 +15,8 @@ import java.util.List;
 
 public class PlayerDetectorPeripheral extends BasePeripheral {
 
-    private final List<IComputerAccess> connectedComputers = new ArrayList<>();
-
     public PlayerDetectorPeripheral(String type, PeripheralTileEntity tileEntity) {
         super(type, tileEntity);
-    }
-
-    public List<IComputerAccess> getConnectedComputers() {
-        return connectedComputers;
     }
 
     @LuaFunction(mainThread = true)

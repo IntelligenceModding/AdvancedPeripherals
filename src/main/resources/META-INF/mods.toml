@@ -2,6 +2,7 @@ modLoader = "javafml"
 loaderVersion = "[35,)"
 license = "All rights reserved"
 issueTrackerURL = "https://github.com/Seniorendi/AdvancedPeripherals/issues"
+logoFile="pack.png"
 [[mods]]
 modId = "advancedperipherals"
 version = "0.3.10-DEVb"

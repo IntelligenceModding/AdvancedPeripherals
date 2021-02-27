@@ -1,9 +1,13 @@
 package de.srendi.advancedperipherals;
 
+import dan200.computercraft.api.ComputerCraftAPI;
+import dan200.computercraft.core.computer.Computer;
+import de.srendi.advancedperipherals.common.addons.computercraft.turtles.TurtleChatBox;
 import de.srendi.advancedperipherals.common.configuration.ConfigHandler;
 import de.srendi.advancedperipherals.common.configuration.ConfigHolder;
 import de.srendi.advancedperipherals.common.setup.Blocks;
 import de.srendi.advancedperipherals.common.setup.Registration;
+import de.srendi.advancedperipherals.common.setup.Turtles;
 import de.srendi.advancedperipherals.common.util.PlayerController;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;

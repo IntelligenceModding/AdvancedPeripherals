@@ -13,6 +13,7 @@ import de.srendi.advancedperipherals.common.addons.refinedstorage.RefinedStorage
 import de.srendi.advancedperipherals.common.addons.refinedstorage.RefinedStorageNode;
 import de.srendi.advancedperipherals.common.blocks.tileentity.RsBridgeTileEntity;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
+import net.minecraft.entity.merchant.villager.VillagerProfession;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
@@ -31,7 +32,6 @@ import java.util.Locale;
 
 public class RsBridgePeripheral extends BasePeripheral {
 
-    private final List<IComputerAccess> connectedComputers = new ArrayList<>();
     private final RsBridgeTileEntity tileEntity;
 
     public RsBridgePeripheral(String type, RsBridgeTileEntity tileEntity) {
@@ -45,10 +45,6 @@ public class RsBridgePeripheral extends BasePeripheral {
 
     private INetwork getNetwork() {
         return getNode().getNetwork();
-    }
-
-    public List<IComputerAccess> getConnectedComputers() {
-        return connectedComputers;
     }
 
     @LuaFunction(mainThread = true)
