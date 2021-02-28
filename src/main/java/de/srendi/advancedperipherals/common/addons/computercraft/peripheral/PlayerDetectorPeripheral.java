@@ -12,12 +12,12 @@ import java.util.List;
 
 public class PlayerDetectorPeripheral extends BasePeripheral {
 
-    public PlayerDetectorPeripheral(String type, PeripheralTileEntity tileEntity) {
+    public PlayerDetectorPeripheral(String type, PeripheralTileEntity<?> tileEntity) {
         super(type, tileEntity);
     }
 
     @Override
-    protected boolean isEnabled() {
+    public boolean isEnabled() {
         return AdvancedPeripheralsConfig.enablePlayerDetector;
     }
 

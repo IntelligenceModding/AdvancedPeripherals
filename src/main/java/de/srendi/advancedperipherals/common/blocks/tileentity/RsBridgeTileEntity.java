@@ -26,7 +26,6 @@ public class RsBridgeTileEntity extends PeripheralTileEntity<RsBridgePeripheral>
 
     private final LazyOptional<INetworkNodeProxy<RefinedStorageNode>> networkNodeProxy = LazyOptional.of(()->this);
     private RefinedStorageNode clientNode;
-    private RefinedStorageNode removedNode;
 
     public RsBridgeTileEntity() {
         this(TileEntityTypes.RS_BRIDGE.get());
@@ -36,6 +35,7 @@ public class RsBridgeTileEntity extends PeripheralTileEntity<RsBridgePeripheral>
         super(tileType);
     }
 
+    @NotNull
     @Override
     public <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction direction) {
         super.getCapability(cap, direction);
@@ -52,7 +52,7 @@ public class RsBridgeTileEntity extends PeripheralTileEntity<RsBridgePeripheral>
         return new RefinedStorageNode(world, blockPos);
     }
 
-    //Adapted from com.refinedmods.refinedstorage.tileNetworkNodeTile
+    //Adapted from com.refinedmods.refinedstorage.tile.NetworkNodeTile
     @NotNull
     @Override
     public RefinedStorageNode getNode() {
@@ -90,7 +90,7 @@ public class RsBridgeTileEntity extends PeripheralTileEntity<RsBridgePeripheral>
             INetworkNodeManager manager = API.instance().getNetworkNodeManager((ServerWorld) this.world);
             INetworkNode node = manager.getNode(this.pos);
             if (node != null) {
-                this.removedNode = (RefinedStorageNode) node;
+                RefinedStorageNode removedNode = (RefinedStorageNode) node;
             }
 
             manager.removeNode(this.pos);

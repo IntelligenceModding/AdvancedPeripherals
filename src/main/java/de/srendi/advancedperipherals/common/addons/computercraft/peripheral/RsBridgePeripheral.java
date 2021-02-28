@@ -45,7 +45,7 @@ public class RsBridgePeripheral extends BasePeripheral {
     }
 
     @Override
-    protected boolean isEnabled() {
+    public boolean isEnabled() {
         return AdvancedPeripheralsConfig.enableRsBridge;
     }
 

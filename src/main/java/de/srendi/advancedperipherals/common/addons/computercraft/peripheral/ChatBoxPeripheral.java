@@ -16,7 +16,7 @@ public class ChatBoxPeripheral extends BasePeripheral {
 
     private int tick;
 
-    public ChatBoxPeripheral(String type, PeripheralTileEntity tileEntity) {
+    public ChatBoxPeripheral(String type, PeripheralTileEntity<?> tileEntity) {
         super(type, tileEntity);
     }
 
@@ -29,7 +29,7 @@ public class ChatBoxPeripheral extends BasePeripheral {
     } //TODO: There is a better way to do that, but this works fine for now.
 
     @Override
-    protected boolean isEnabled() {
+    public boolean isEnabled() {
         return AdvancedPeripheralsConfig.enableChatBox;
     }
 

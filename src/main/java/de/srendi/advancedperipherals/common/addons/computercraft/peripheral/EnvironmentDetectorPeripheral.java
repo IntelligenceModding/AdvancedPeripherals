@@ -18,12 +18,12 @@ import java.util.Set;
 
 public class EnvironmentDetectorPeripheral extends BasePeripheral {
 
-    public EnvironmentDetectorPeripheral(String type, PeripheralTileEntity tileEntity) {
+    public EnvironmentDetectorPeripheral(String type, PeripheralTileEntity<?> tileEntity) {
         super(type, tileEntity);
     }
 
     @Override
-    protected boolean isEnabled() {
+    public boolean isEnabled() {
         return AdvancedPeripheralsConfig.enableEnvironmentDetector;
     }
 

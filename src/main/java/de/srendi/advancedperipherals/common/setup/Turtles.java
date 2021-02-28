@@ -1,7 +1,6 @@
 package de.srendi.advancedperipherals.common.setup;
 
 import dan200.computercraft.api.ComputerCraftAPI;
-import dan200.computercraft.shared.TurtleUpgrades;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.addons.computercraft.turtles.TurtleChatBox;
 import net.minecraft.item.Item;
@@ -15,8 +14,8 @@ public class Turtles {
     public static TurtleChatBox chatBox;
 
     public static void register() {
-            chatBox = new TurtleChatBox();
-            ComputerCraftAPI.registerTurtleUpgrade(chatBox);
+        chatBox = new TurtleChatBox();
+        ComputerCraftAPI.registerTurtleUpgrade(chatBox);
     }
 
     @SubscribeEvent

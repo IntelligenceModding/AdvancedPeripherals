@@ -38,7 +38,7 @@ public class MeBridgePeripheral extends BasePeripheral {
     private IGridNode node;
     private IActionSource source;
 
-    public MeBridgePeripheral(String type, IActionSource source, PeripheralTileEntity tileEntity) {
+    public MeBridgePeripheral(String type, IActionSource source, PeripheralTileEntity<?> tileEntity) {
         super(type, tileEntity);
         this.source = source;
     }
@@ -48,7 +48,7 @@ public class MeBridgePeripheral extends BasePeripheral {
     }
 
     @Override
-    protected boolean isEnabled() {
+    public boolean isEnabled() {
         return AdvancedPeripheralsConfig.enableMeBridge;
     }
 
