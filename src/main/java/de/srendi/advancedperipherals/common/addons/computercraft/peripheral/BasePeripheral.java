@@ -1,5 +1,6 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.peripheral;
 
+import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.peripheral.IComputerAccess;
 import dan200.computercraft.api.peripheral.IPeripheral;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
@@ -13,9 +14,9 @@ public abstract class BasePeripheral implements IPeripheral {
 
     protected final List<IComputerAccess> connectedComputers = new ArrayList<>();
     protected String type;
-    protected PeripheralTileEntity tileEntity;
+    protected PeripheralTileEntity<?> tileEntity;
 
-    public BasePeripheral(String type, PeripheralTileEntity tileEntity) {
+    public BasePeripheral(String type, PeripheralTileEntity<?> tileEntity) {
         this.type = type;
         this.tileEntity = tileEntity;
     }
@@ -52,5 +53,10 @@ public abstract class BasePeripheral implements IPeripheral {
     }
 
     public abstract boolean isEnabled();
+
+    @LuaFunction
+    public final String getName() {
+        return tileEntity.getTileData().getString("CustomName");
+    }
 
 }

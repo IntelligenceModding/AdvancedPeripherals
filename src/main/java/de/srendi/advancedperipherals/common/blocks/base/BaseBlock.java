@@ -26,6 +26,8 @@ public abstract class BaseBlock extends Block {
     @Override
     public void onBlockPlacedBy(World worldIn, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
         super.onBlockPlacedBy(worldIn, pos, state, placer, stack);
+        //Used for the lua function getName()
+        worldIn.getTileEntity(pos).getTileData().putString("CustomName", stack.getDisplayName().getString());
         TileEntityList.get(worldIn).setTileEntity(worldIn, pos);
     }
 
