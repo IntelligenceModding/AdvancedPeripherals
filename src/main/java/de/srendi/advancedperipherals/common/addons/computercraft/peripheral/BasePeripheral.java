@@ -51,4 +51,6 @@ public abstract class BasePeripheral implements IPeripheral {
         return iPeripheral == this;
     }
 
+    public abstract boolean isEnabled();
+
 }

@@ -3,6 +3,7 @@ package de.srendi.advancedperipherals;
 import dan200.computercraft.api.ComputerCraftAPI;
 import dan200.computercraft.core.computer.Computer;
 import de.srendi.advancedperipherals.common.addons.computercraft.turtles.TurtleChatBox;
+import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
 import de.srendi.advancedperipherals.common.configuration.ConfigHandler;
 import de.srendi.advancedperipherals.common.configuration.ConfigHolder;
 import de.srendi.advancedperipherals.common.setup.Blocks;
@@ -53,6 +54,12 @@ public class AdvancedPeripherals {
     @SubscribeEvent
     public void onWorldLoad(WorldEvent.Load event) {
         playerController.init(event.getWorld());
+    }
+
+    public static void Debug(String message) {
+        if(AdvancedPeripheralsConfig.enableDebugMode) {
+            LOGGER.debug("[DEBUG] "+message);
+        }
     }
 
     //TODO: Add more comments to the code

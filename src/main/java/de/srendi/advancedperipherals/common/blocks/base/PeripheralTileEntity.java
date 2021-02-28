@@ -2,6 +2,7 @@ package de.srendi.advancedperipherals.common.blocks.base;
 
 import dan200.computercraft.api.peripheral.IComputerAccess;
 import dan200.computercraft.api.peripheral.IPeripheral;
+import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.BasePeripheral;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
@@ -26,6 +27,9 @@ public abstract class PeripheralTileEntity<T extends BasePeripheral> extends Til
 
     @Override
     public <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction direction) {
+        if(!peripheral.isEnabled()) {
+            AdvancedPeripherals.Debug(peripheral.getType() + " is disabled, enable it in the Configuration.");
+        }
         if (cap == CAPABILITY_PERIPHERAL) {
             if (peripheralCap == null) {
                 peripheralCap = LazyOptional.of(()->peripheral);

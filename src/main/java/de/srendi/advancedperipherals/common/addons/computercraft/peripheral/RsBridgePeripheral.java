@@ -13,7 +13,6 @@ import de.srendi.advancedperipherals.common.addons.refinedstorage.RefinedStorage
 import de.srendi.advancedperipherals.common.addons.refinedstorage.RefinedStorageNode;
 import de.srendi.advancedperipherals.common.blocks.tileentity.RsBridgeTileEntity;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
-import net.minecraft.entity.merchant.villager.VillagerProfession;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
@@ -25,9 +24,7 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.registries.ForgeRegistries;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 
 public class RsBridgePeripheral extends BasePeripheral {
@@ -47,310 +44,271 @@ public class RsBridgePeripheral extends BasePeripheral {
         return getNode().getNetwork();
     }
 
+    @Override
+    protected boolean isEnabled() {
+        return AdvancedPeripheralsConfig.enableRsBridge;
+    }
+
     @LuaFunction(mainThread = true)
     public final Object[] listItems() {
-        if (AdvancedPeripheralsConfig.enableRsBridge) {
-            HashMap<Integer, Object> items = new HashMap<>();
-            int i = 1;
-            for (ItemStack stack : RefinedStorage.getItems(getNetwork(), false)) {
-                HashMap<String, Object> map = new HashMap<>();
-                CompoundNBT nbt = stack.getTag();
-                map.put("name", ForgeRegistries.ITEMS.getKey(stack.getItem()).toString());
-                map.put("amount", stack.getCount());
-                map.put("displayName", stack.getDisplayName().getString());
-                if (nbt != null && !nbt.isEmpty()) {
-                    map.put("nbt", nbt.toString());
-                }
-                items.put(i, map);
-                i++;
+        HashMap<Integer, Object> items = new HashMap<>();
+        int i = 1;
+        for (ItemStack stack : RefinedStorage.getItems(getNetwork(), false)) {
+            HashMap<String, Object> map = new HashMap<>();
+            CompoundNBT nbt = stack.getTag();
+            map.put("name", ForgeRegistries.ITEMS.getKey(stack.getItem()).toString());
+            map.put("amount", stack.getCount());
+            map.put("displayName", stack.getDisplayName().getString());
+            if (nbt != null && !nbt.isEmpty()) {
+                map.put("nbt", nbt.toString());
             }
-
-            return new Object[]{items};
+            items.put(i, map);
+            i++;
         }
-        return new Object[]{};
+        return new Object[]{items};
     }
 
     @LuaFunction(mainThread = true)
     public final Object[] listCraftableItems() {
-        if (AdvancedPeripheralsConfig.enableRsBridge) {
-            HashMap<Integer, Object> items = new HashMap<>();
-            int i = 1;
-            for (ItemStack stack : RefinedStorage.getItems(getNetwork(), true)) {
-                HashMap<String, Object> map = new HashMap<>();
-                CompoundNBT nbt = stack.getTag();
-                map.put("name", ForgeRegistries.ITEMS.getKey(stack.getItem()).toString());
-                map.put("craftamount", stack.getCount()); //Returns the result amount of an crafting recipe
-                for (ItemStack oStack : RefinedStorage.getItems(getNetwork(), false)) { //Used to get the amount of the item
-                    if (oStack.isItemEqual(stack)) {
-                        map.put("amount", oStack.getCount());
-                        break;
-                    } else {
-                        map.put("amount", 0);
-                    }
+        HashMap<Integer, Object> items = new HashMap<>();
+        int i = 1;
+        for (ItemStack stack : RefinedStorage.getItems(getNetwork(), true)) {
+            HashMap<String, Object> map = new HashMap<>();
+            CompoundNBT nbt = stack.getTag();
+            map.put("name", ForgeRegistries.ITEMS.getKey(stack.getItem()).toString());
+            map.put("craftamount", stack.getCount()); //Returns the result amount of an crafting recipe
+            for (ItemStack oStack : RefinedStorage.getItems(getNetwork(), false)) { //Used to get the amount of the item
+                if (oStack.isItemEqual(stack)) {
+                    map.put("amount", oStack.getCount());
+                    break;
+                } else {
+                    map.put("amount", 0);
                 }
-                map.put("displayName", stack.getDisplayName().getString());
-                if (nbt != null && !nbt.isEmpty()) {
-                    map.put("nbt", nbt.toString());
-                }
-                items.put(i, map);
-                i++;
             }
-            return new Object[]{items};
+            map.put("displayName", stack.getDisplayName().getString());
+            if (nbt != null && !nbt.isEmpty()) {
+                map.put("nbt", nbt.toString());
+            }
+            items.put(i, map);
+            i++;
         }
-        return new Object[]{};
+        return new Object[]{items};
     }
 
     @LuaFunction(mainThread = true)
     public final Object[] listFluids() {
-        if (AdvancedPeripheralsConfig.enableRsBridge) {
-            HashMap<Integer, Object> items = new HashMap<>();
-            int i = 1;
-            for (FluidStack stack : RefinedStorage.getFluids(getNetwork(), false)) {
-                HashMap<String, Object> map = new HashMap<>();
-                map.put("name", ForgeRegistries.FLUIDS.getKey(stack.getFluid()).toString());
-                map.put("amount", stack.getAmount());
-                map.put("displayName", stack.getDisplayName().getString());
-                items.put(i, map);
-                i++;
-            }
-            return new Object[]{items};
+        HashMap<Integer, Object> items = new HashMap<>();
+        int i = 1;
+        for (FluidStack stack : RefinedStorage.getFluids(getNetwork(), false)) {
+            HashMap<String, Object> map = new HashMap<>();
+            map.put("name", ForgeRegistries.FLUIDS.getKey(stack.getFluid()).toString());
+            map.put("amount", stack.getAmount());
+            map.put("displayName", stack.getDisplayName().getString());
+            items.put(i, map);
+            i++;
         }
-        return new Object[]{};
+        return new Object[]{items};
     }
 
     @LuaFunction(mainThread = true)
     public final Object[] listCraftableFluids() {
-        if (AdvancedPeripheralsConfig.enableRsBridge) {
-            HashMap<Integer, Object> items = new HashMap<>();
-            int i = 1;
-            for (FluidStack stack : RefinedStorage.getFluids(getNetwork(), true)) {
-                HashMap<String, Object> map = new HashMap<>();
-                map.put("name", ForgeRegistries.FLUIDS.getKey(stack.getFluid()).toString());
-                map.put("craftamount", stack.getAmount());
-                for (FluidStack oStack : RefinedStorage.getFluids(getNetwork(), false)) { //Used to get the amount of the item
-                    if (oStack.isFluidEqual(stack)) {
-                        map.put("amount", oStack.getAmount());
-                        break;
-                    } else {
-                        map.put("amount", 0);
-                    }
+        HashMap<Integer, Object> items = new HashMap<>();
+        int i = 1;
+        for (FluidStack stack : RefinedStorage.getFluids(getNetwork(), true)) {
+            HashMap<String, Object> map = new HashMap<>();
+            map.put("name", ForgeRegistries.FLUIDS.getKey(stack.getFluid()).toString());
+            map.put("craftamount", stack.getAmount());
+            for (FluidStack oStack : RefinedStorage.getFluids(getNetwork(), false)) { //Used to get the amount of the item
+                if (oStack.isFluidEqual(stack)) {
+                    map.put("amount", oStack.getAmount());
+                    break;
+                } else {
+                    map.put("amount", 0);
                 }
-                map.put("displayName", stack.getDisplayName().getString());
-                items.put(i, map);
-                i++;
             }
-            return new Object[]{items};
+            map.put("displayName", stack.getDisplayName().getString());
+            items.put(i, map);
+            i++;
         }
-        return new Object[]{};
+        return new Object[]{items};
     }
 
     @LuaFunction(mainThread = true)
     public final int getEnergyUsage() {
-        if (AdvancedPeripheralsConfig.enableRsBridge) {
-            return getNetwork().getEnergyUsage();
-        }
-        return 0;
+        return getNetwork().getEnergyUsage();
     }
 
     @LuaFunction(mainThread = true)
     public final int getMaxEnergyStorage() {
-        if (AdvancedPeripheralsConfig.enableRsBridge) {
-            return getNetwork().getEnergyStorage().getMaxEnergyStored();
-        }
-        return 0;
+        return getNetwork().getEnergyStorage().getMaxEnergyStored();
     }
 
     @LuaFunction(mainThread = true)
     public final int getEnergyStorage() {
-        if (AdvancedPeripheralsConfig.enableRsBridge) {
-            return getNetwork().getEnergyStorage().getEnergyStored();
-        }
-        return 0;
+        return getNetwork().getEnergyStorage().getEnergyStored();
     }
 
     @LuaFunction(mainThread = true)
     public final int exportItem(String item, int count, String directionString) throws LuaException {
-        if (AdvancedPeripheralsConfig.enableRsBridge) {
-            ItemStack stack = new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation(item)));
-            stack.setCount(count);
-            Direction direction = Direction.valueOf(directionString.toUpperCase(Locale.ROOT));
+        ItemStack stack = new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation(item)));
+        stack.setCount(count);
+        Direction direction = Direction.valueOf(directionString.toUpperCase(Locale.ROOT));
 
-            TileEntity targetEntity = tileEntity.getWorld().getTileEntity(tileEntity.getPos().offset(direction));
-            IItemHandler inventory = targetEntity != null ? targetEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, direction.getOpposite()).resolve().orElse(null) : null;
-            if (inventory == null)
-                throw new LuaException("No valid inventory at " + directionString);
+        TileEntity targetEntity = tileEntity.getWorld().getTileEntity(tileEntity.getPos().offset(direction));
+        IItemHandler inventory = targetEntity != null ? targetEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, direction.getOpposite()).resolve().orElse(null) : null;
+        if (inventory == null)
+            throw new LuaException("No valid inventory at " + directionString);
 
-            ItemStack extracted = getNetwork().extractItem(stack, count, Action.SIMULATE);
-            if (extracted.isEmpty())
-                return 0;
-            //throw new LuaException("Item " + item + " does not exists in the RS system or the system is offline");
+        ItemStack extracted = getNetwork().extractItem(stack, count, Action.SIMULATE);
+        if (extracted.isEmpty())
+            return 0;
+        //throw new LuaException("Item " + item + " does not exists in the RS system or the system is offline");
 
-            int transferableAmount = extracted.getCount();
+        int transferableAmount = extracted.getCount();
 
-            ItemStack remaining = ItemHandlerHelper.insertItemStacked(inventory, extracted, true);
-            if (!remaining.isEmpty())
-                transferableAmount -= remaining.getCount();
+        ItemStack remaining = ItemHandlerHelper.insertItemStacked(inventory, extracted, true);
+        if (!remaining.isEmpty())
+            transferableAmount -= remaining.getCount();
 
-            extracted = getNetwork().extractItem(stack, transferableAmount, Action.PERFORM);
-            remaining = ItemHandlerHelper.insertItemStacked(inventory, extracted, false);
+        extracted = getNetwork().extractItem(stack, transferableAmount, Action.PERFORM);
+        remaining = ItemHandlerHelper.insertItemStacked(inventory, extracted, false);
 
-            if (!remaining.isEmpty()) {
-                getNetwork().insertItem(remaining, remaining.getCount(), Action.PERFORM);
-            }
-
-            return transferableAmount;
+        if (!remaining.isEmpty()) {
+            getNetwork().insertItem(remaining, remaining.getCount(), Action.PERFORM);
         }
-        return 0;
+
+        return transferableAmount;
     }
 
     @LuaFunction(mainThread = true)
     public final int importItem(String item, int count, String directionString) throws LuaException {
-        if (AdvancedPeripheralsConfig.enableRsBridge) {
-            ItemStack stack = new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation(item)));
-            stack.setCount(count);
-            Direction direction = Direction.valueOf(directionString.toUpperCase(Locale.ROOT));
+        ItemStack stack = new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation(item)));
+        stack.setCount(count);
+        Direction direction = Direction.valueOf(directionString.toUpperCase(Locale.ROOT));
 
-            TileEntity targetEntity = tileEntity.getWorld().getTileEntity(tileEntity.getPos().offset(direction));
-            IItemHandler inventory = targetEntity != null ? targetEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, direction.getOpposite()).resolve().orElse(null) : null;
-            if (inventory == null)
-                throw new LuaException("No valid inventory at " + directionString);
+        TileEntity targetEntity = tileEntity.getWorld().getTileEntity(tileEntity.getPos().offset(direction));
+        IItemHandler inventory = targetEntity != null ? targetEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, direction.getOpposite()).resolve().orElse(null) : null;
+        if (inventory == null)
+            throw new LuaException("No valid inventory at " + directionString);
 
-            int amount = count;
+        int amount = count;
 
-            int transferableAmount = 0;
+        int transferableAmount = 0;
 
-            for (int i = 0; i < inventory.getSlots(); i++) {
-                if (inventory.getStackInSlot(i).isItemEqual(stack)) {
-                    if (inventory.getStackInSlot(i).getCount() >= amount) {
-                        transferableAmount += amount;
-                        getNetwork().insertItem(stack, amount, Action.PERFORM);
-                        inventory.extractItem(i, amount, false);
-                        break;
-                    } else {
-                        amount = count - inventory.getStackInSlot(i).getCount();
-                        transferableAmount += inventory.getStackInSlot(i).getCount();
-                        getNetwork().insertItem(stack, inventory.getStackInSlot(i).getCount(), Action.PERFORM);
-                        inventory.extractItem(i, inventory.getStackInSlot(i).getCount(), false);
-                    }
+        for (int i = 0; i < inventory.getSlots(); i++) {
+            if (inventory.getStackInSlot(i).isItemEqual(stack)) {
+                if (inventory.getStackInSlot(i).getCount() >= amount) {
+                    transferableAmount += amount;
+                    getNetwork().insertItem(stack, amount, Action.PERFORM);
+                    inventory.extractItem(i, amount, false);
+                    break;
+                } else {
+                    amount = count - inventory.getStackInSlot(i).getCount();
+                    transferableAmount += inventory.getStackInSlot(i).getCount();
+                    getNetwork().insertItem(stack, inventory.getStackInSlot(i).getCount(), Action.PERFORM);
+                    inventory.extractItem(i, inventory.getStackInSlot(i).getCount(), false);
                 }
             }
-            return transferableAmount;
         }
-        return 0;
+        return transferableAmount;
     }
 
     @LuaFunction(mainThread = true)
     public final int exportItemToChest(IComputerAccess computer, String item, int count, String chestName) throws LuaException {
-        if (AdvancedPeripheralsConfig.enableRsBridge) {
-            ItemStack stack = new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation(item)));
-            stack.setCount(count);
-            IPeripheral chest = computer.getAvailablePeripheral(chestName);
-            if (chest == null)
-                throw new LuaException("No valid chest for " + chestName);
+        ItemStack stack = new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation(item)));
+        stack.setCount(count);
+        IPeripheral chest = computer.getAvailablePeripheral(chestName);
+        if (chest == null)
+            throw new LuaException("No valid chest for " + chestName);
 
-            TileEntity targetEntity = (TileEntity) chest.getTarget();
-            IItemHandler inventory = targetEntity != null ? targetEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).resolve().orElse(null) : null;
-            if (inventory == null)
-                throw new LuaException("No valid inventory for " + chestName);
+        TileEntity targetEntity = (TileEntity) chest.getTarget();
+        IItemHandler inventory = targetEntity != null ? targetEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).resolve().orElse(null) : null;
+        if (inventory == null)
+            throw new LuaException("No valid inventory for " + chestName);
 
-            ItemStack extracted = getNetwork().extractItem(stack, count, Action.SIMULATE);
-            if (extracted.isEmpty())
-                return 0;
-            //throw new LuaException("Item " + item + " does not exists in the RS system or the system is offline");
+        ItemStack extracted = getNetwork().extractItem(stack, count, Action.SIMULATE);
+        if (extracted.isEmpty())
+            return 0;
+        //throw new LuaException("Item " + item + " does not exists in the RS system or the system is offline");
 
-            int transferableAmount = extracted.getCount();
+        int transferableAmount = extracted.getCount();
 
-            ItemStack remaining = ItemHandlerHelper.insertItemStacked(inventory, extracted, true);
-            if (!remaining.isEmpty())
-                transferableAmount -= remaining.getCount();
+        ItemStack remaining = ItemHandlerHelper.insertItemStacked(inventory, extracted, true);
+        if (!remaining.isEmpty())
+            transferableAmount -= remaining.getCount();
 
-            extracted = getNetwork().extractItem(stack, transferableAmount, Action.PERFORM);
-            remaining = ItemHandlerHelper.insertItemStacked(inventory, extracted, false);
+        extracted = getNetwork().extractItem(stack, transferableAmount, Action.PERFORM);
+        remaining = ItemHandlerHelper.insertItemStacked(inventory, extracted, false);
 
-            if (!remaining.isEmpty()) {
-                getNetwork().insertItem(remaining, remaining.getCount(), Action.PERFORM);
-            }
-
-            return transferableAmount;
+        if (!remaining.isEmpty()) {
+            getNetwork().insertItem(remaining, remaining.getCount(), Action.PERFORM);
         }
-        return 0;
+
+        return transferableAmount;
     }
 
     @LuaFunction(mainThread = true)
     public final int importItemFromChest(IComputerAccess computer, String item, int count, String chestName) throws LuaException {
-        if (AdvancedPeripheralsConfig.enableRsBridge) {
-            ItemStack stack = new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation(item)));
-            stack.setCount(count);
-            IPeripheral chest = computer.getAvailablePeripheral(chestName);
-            if (chest == null)
-                throw new LuaException("No valid chest for " + chestName);
+        ItemStack stack = new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation(item)));
+        stack.setCount(count);
+        IPeripheral chest = computer.getAvailablePeripheral(chestName);
+        if (chest == null)
+            throw new LuaException("No valid chest for " + chestName);
 
-            TileEntity targetEntity = (TileEntity) chest.getTarget();
-            IItemHandler inventory = targetEntity != null ? targetEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).resolve().orElse(null) : null;
-            if (inventory == null)
-                throw new LuaException("No valid inventory for " + chestName);
+        TileEntity targetEntity = (TileEntity) chest.getTarget();
+        IItemHandler inventory = targetEntity != null ? targetEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).resolve().orElse(null) : null;
+        if (inventory == null)
+            throw new LuaException("No valid inventory for " + chestName);
 
-            int amount = count;
+        int amount = count;
 
-            int transferableAmount = 0;
+        int transferableAmount = 0;
 
-            for (int i = 0; i < inventory.getSlots(); i++) {
-                if (inventory.getStackInSlot(i).isItemEqual(stack)) {
-                    if (inventory.getStackInSlot(i).getCount() >= amount) {
-                        transferableAmount += amount;
-                        getNetwork().insertItem(stack, amount, Action.PERFORM);
-                        inventory.extractItem(i, amount, false);
-                        break;
-                    } else {
-                        amount = count - inventory.getStackInSlot(i).getCount();
-                        transferableAmount += inventory.getStackInSlot(i).getCount();
-                        getNetwork().insertItem(stack, inventory.getStackInSlot(i).getCount(), Action.PERFORM);
-                        inventory.extractItem(i, inventory.getStackInSlot(i).getCount(), false);
-                    }
+        for (int i = 0; i < inventory.getSlots(); i++) {
+            if (inventory.getStackInSlot(i).isItemEqual(stack)) {
+                if (inventory.getStackInSlot(i).getCount() >= amount) {
+                    transferableAmount += amount;
+                    getNetwork().insertItem(stack, amount, Action.PERFORM);
+                    inventory.extractItem(i, amount, false);
+                    break;
+                } else {
+                    amount = count - inventory.getStackInSlot(i).getCount();
+                    transferableAmount += inventory.getStackInSlot(i).getCount();
+                    getNetwork().insertItem(stack, inventory.getStackInSlot(i).getCount(), Action.PERFORM);
+                    inventory.extractItem(i, inventory.getStackInSlot(i).getCount(), false);
                 }
             }
-
-            return transferableAmount;
         }
-        return 0;
+        return transferableAmount;
     }
 
 
     @LuaFunction(mainThread = true)
     public final boolean craftItem(String item, int count) {
-        if (AdvancedPeripheralsConfig.enableRsBridge) {
-            ICalculationResult result = getNetwork().getCraftingManager().create(new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation(item))), count);
-            CalculationResultType type = result.getType();
-            getNetwork().getCraftingManager().start(result.getTask());
-            //TODO: check some stuff to prevent issues
-            return type == CalculationResultType.OK;
-        }
-        return false;
+        ICalculationResult result = getNetwork().getCraftingManager().create(new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation(item))), count);
+        CalculationResultType type = result.getType();
+        getNetwork().getCraftingManager().start(result.getTask());
+        //TODO: check some stuff to prevent issues
+        return type == CalculationResultType.OK;
     }
 
     @LuaFunction(mainThread = true)
     public final boolean craftFluid(String item, int count) {
-        if (AdvancedPeripheralsConfig.enableRsBridge) {
-            ICalculationResult result = getNetwork().getCraftingManager().create(new FluidStack(ForgeRegistries.FLUIDS.getValue(new ResourceLocation(item)), 0), count);
-            CalculationResultType type = result.getType();
-            getNetwork().getCraftingManager().start(result.getTask());
-            //TODO: check some stuff to prevent issues
-            return type == CalculationResultType.OK;
-        }
-        return false;
+        ICalculationResult result = getNetwork().getCraftingManager().create(new FluidStack(ForgeRegistries.FLUIDS.getValue(new ResourceLocation(item)), 0), count);
+        CalculationResultType type = result.getType();
+        getNetwork().getCraftingManager().start(result.getTask());
+        //TODO: check some stuff to prevent issues
+        return type == CalculationResultType.OK;
     }
 
     @LuaFunction(mainThread = true)
     public final boolean isItemCrafting(String item) {
-        if (AdvancedPeripheralsConfig.enableRsBridge) {
-            ItemStack stack = new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation(item)));
-            for (ICraftingTask task : getNetwork().getCraftingManager().getTasks()) {
-                ItemStack taskStack = task.getRequested().getItem();
-                if (taskStack.isItemEqual(stack)) {
-                    return true;
-                }
+        ItemStack stack = new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation(item)));
+        for (ICraftingTask task : getNetwork().getCraftingManager().getTasks()) {
+            ItemStack taskStack = task.getRequested().getItem();
+            if (taskStack.isItemEqual(stack)) {
+                return true;
             }
-            return false;
         }
         return false;
     }
