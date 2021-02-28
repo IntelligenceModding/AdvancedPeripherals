@@ -287,16 +287,18 @@ public class RsBridgePeripheral extends BasePeripheral {
     public final boolean craftItem(String item, int count) {
         ICalculationResult result = getNetwork().getCraftingManager().create(new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation(item))), count);
         CalculationResultType type = result.getType();
-        getNetwork().getCraftingManager().start(result.getTask());
+        if(result.getType() == CalculationResultType.OK)
+            getNetwork().getCraftingManager().start(result.getTask());
         //TODO: check some stuff to prevent issues
         return type == CalculationResultType.OK;
     }
 
     @LuaFunction(mainThread = true)
-    public final boolean craftFluid(String item, int count) {
-        ICalculationResult result = getNetwork().getCraftingManager().create(new FluidStack(ForgeRegistries.FLUIDS.getValue(new ResourceLocation(item)), 0), count);
+    public final boolean craftFluid(String fluid, int count) {
+        ICalculationResult result = getNetwork().getCraftingManager().create(new FluidStack(ForgeRegistries.FLUIDS.getValue(new ResourceLocation(fluid)), 0), count);
         CalculationResultType type = result.getType();
-        getNetwork().getCraftingManager().start(result.getTask());
+        if(result.getType() == CalculationResultType.OK)
+            getNetwork().getCraftingManager().start(result.getTask());
         //TODO: check some stuff to prevent issues
         return type == CalculationResultType.OK;
     }

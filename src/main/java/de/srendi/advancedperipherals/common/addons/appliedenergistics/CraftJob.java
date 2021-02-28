@@ -26,7 +26,7 @@ import java.util.Optional;
 
 public class CraftJob implements ICraftingCallback, ILuaCallback {
 
-    public static final String COMPLETE = "crafting";
+    public static final String EVENT = "crafting";
 
     private final IComputerAccess computer;
     private final IGridNode node;
@@ -38,7 +38,7 @@ public class CraftJob implements ICraftingCallback, ILuaCallback {
     private MethodResult result;
     private LuaException exception;
 
-    public CraftJob(World world, final IComputerAccess computer, IGridNode node, String item, final Optional<Integer> count, IActionSource source) {
+    public CraftJob(World world, final IComputerAccess computer, IGridNode node, String item, Optional<Integer> count, IActionSource source) {
         this.computer = computer;
         this.node = node;
         this.world = world;
@@ -50,7 +50,7 @@ public class CraftJob implements ICraftingCallback, ILuaCallback {
     public void startCrafting() {
         IGrid grid = node.getGrid();
         if (grid == null) { //true when the block is not connected
-            this.computer.queueEvent(COMPLETE, null, "not connected");
+            this.computer.queueEvent(EVENT, null, "not connected");
             result = MethodResult.of(null, "not connected");
             exception = new LuaException("not connected");
             return;
@@ -62,13 +62,13 @@ public class CraftJob implements ICraftingCallback, ILuaCallback {
         ItemStack itemstack = new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation(item)));
         IAEItemStack aeItem = AppEngApi.getInstance().findAEStackFromItemStack(monitor, itemstack);
         if (aeItem == null) {
-            this.computer.queueEvent(COMPLETE, null, item + " does not exists in the me system");
+            this.computer.queueEvent(EVENT, null, item + " does not exists in the me system");
             result = MethodResult.of(null, item + " does not exists in the me system");
             exception = new LuaException(item + " is not craftable");
             return;
         }
         if (!aeItem.isCraftable()) {
-            this.computer.queueEvent(COMPLETE, null, item + " is not craftable");
+            this.computer.queueEvent(EVENT, null, item + " is not craftable");
             result = MethodResult.of(null, item + " is not craftable");
             exception = new LuaException(item + " is not craftable");
             return;
@@ -85,7 +85,7 @@ public class CraftJob implements ICraftingCallback, ILuaCallback {
 
     private void calcComplete(ICraftingJob job) {
         if (job.isSimulation()) {
-            this.computer.queueEvent(COMPLETE, null, "the me system has no ingredients for the crafting job");
+            this.computer.queueEvent(EVENT, null, "the me system has no ingredients for the crafting job");
             result = MethodResult.of(false, "the me system has no ingredients for the crafting job");
             exception = new LuaException("the me system has no ingredients for the crafting job");
             return;
@@ -93,7 +93,7 @@ public class CraftJob implements ICraftingCallback, ILuaCallback {
 
         IGrid grid = node.getGrid();
         if (grid == null) {
-            this.computer.queueEvent(COMPLETE, null, "not connected");
+            this.computer.queueEvent(EVENT, null, "not connected");
             result = MethodResult.of(null, "not connected");
             exception = new LuaException("not connected");
             return;
@@ -104,11 +104,11 @@ public class CraftJob implements ICraftingCallback, ILuaCallback {
         ICraftingGrid crafting = grid.getCache(ICraftingGrid.class);
         ICraftingLink link = crafting.submitJob(job, null, null, false, this.source);
         if (link == null) {
-            this.computer.queueEvent(COMPLETE, null, "an unexpected error has occurred");
+            this.computer.queueEvent(EVENT, null, "an unexpected error has occurred");
             result = MethodResult.of(false, "an unexpected error has occurred");
             exception = new LuaException("grid is null");
         } else {
-            this.computer.queueEvent(COMPLETE, (Object) null);
+            this.computer.queueEvent(EVENT, (Object) null);
             result = MethodResult.of(AppEngApi.getInstance().getObjectFromJob(job));
         }
     }
