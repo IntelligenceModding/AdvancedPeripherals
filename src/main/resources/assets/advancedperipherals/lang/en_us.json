@@ -6,5 +6,6 @@
   "block.advancedperipherals.player_detector": "Player Detector",
   "block.advancedperipherals.me_bridge": "ME Bridge",
   "block.advancedperipherals.rs_bridge": "RS Bridge",
+  "block.advancedperipherals.chat_box_turtle": "Chatty",
   "itemGroup.advancedperipheralstab": "Advanced Peripherals"
 }

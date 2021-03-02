@@ -65,17 +65,17 @@ public class MeBridgePeripheral extends BasePeripheral {
     }
 
     @LuaFunction(mainThread = true)
-    public final double getEnergyUsage() throws LuaException {
+    public final double getEnergyUsage() {
         return ((IEnergyGrid) node.getGrid().getCache(IEnergyGrid.class)).getAvgPowerUsage();
     }
 
     @LuaFunction(mainThread = true)
-    public final double getEnergyStorage() throws LuaException {
+    public final double getEnergyStorage() {
         return ((IEnergyGrid) node.getGrid().getCache(IEnergyGrid.class)).getStoredPower();
     }
 
     @LuaFunction(mainThread = true)
-    public final double getMaxEnergyStorage() throws LuaException {
+    public final double getMaxEnergyStorage() {
         return ((IEnergyGrid) node.getGrid().getCache(IEnergyGrid.class)).getMaxStoredPower();
     }
 
@@ -255,25 +255,25 @@ public class MeBridgePeripheral extends BasePeripheral {
     }
 
     @LuaFunction(mainThread = true)
-    public final Object[] listItems() throws LuaException {
+    public final Object[] listItems() {
         IMEMonitor<IAEItemStack> inventory = ((IStorageGrid) node.getGrid().getCache(IStorageGrid.class)).getInventory(AppEngApi.getInstance().getApi().storage().getStorageChannel(IItemStorageChannel.class));
         return new Object[]{AppEngApi.INSTANCE.iteratorToMapStack(inventory.getStorageList().iterator(), 0)};
     }
 
     @LuaFunction(mainThread = true)
-    public final Object[] listCraftableItems() throws LuaException {
+    public final Object[] listCraftableItems() {
         IMEMonitor<IAEItemStack> inventory = ((IStorageGrid) node.getGrid().getCache(IStorageGrid.class)).getInventory(AppEngApi.getInstance().getApi().storage().getStorageChannel(IItemStorageChannel.class));
         return new Object[]{AppEngApi.INSTANCE.iteratorToMapStack(inventory.getStorageList().iterator(), 2)};
     }
 
     @LuaFunction(mainThread = true)
-    public final Object[] listFluid() throws LuaException {
+    public final Object[] listFluid() {
         IMEMonitor<IAEFluidStack> inventory = ((IStorageGrid) node.getGrid().getCache(IStorageGrid.class)).getInventory(AppEngApi.getInstance().getApi().storage().getStorageChannel(IFluidStorageChannel.class));
         return new Object[]{AppEngApi.INSTANCE.iteratorToMapFluid(inventory.getStorageList().iterator(), 0)};
     }
 
     @LuaFunction(mainThread = true)
-    public final Object[] listCraftableFluid() throws LuaException {
+    public final Object[] listCraftableFluid() {
         IMEMonitor<IAEFluidStack> inventory = ((IStorageGrid) node.getGrid().getCache(IStorageGrid.class)).getInventory(AppEngApi.getInstance().getApi().storage().getStorageChannel(IFluidStorageChannel.class));
         return new Object[]{AppEngApi.INSTANCE.iteratorToMapFluid(inventory.getStorageList().iterator(), 2)};
     }

@@ -5,6 +5,7 @@ import dan200.computercraft.api.lua.LuaFunction;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.AxisAlignedBB;
 
 import java.util.ArrayList;
@@ -13,6 +14,10 @@ import java.util.List;
 public class PlayerDetectorPeripheral extends BasePeripheral {
 
     public PlayerDetectorPeripheral(String type, PeripheralTileEntity<?> tileEntity) {
+        super(type, tileEntity);
+    }
+
+    public PlayerDetectorPeripheral(String type, TileEntity tileEntity) {
         super(type, tileEntity);
     }
 

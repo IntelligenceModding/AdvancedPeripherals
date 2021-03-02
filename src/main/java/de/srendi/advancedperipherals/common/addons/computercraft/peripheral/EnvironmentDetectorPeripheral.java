@@ -3,6 +3,7 @@ package de.srendi.advancedperipherals.common.addons.computercraft.peripheral;
 import dan200.computercraft.api.lua.LuaFunction;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.SharedSeedRandom;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.MathHelper;
@@ -19,6 +20,10 @@ import java.util.Set;
 public class EnvironmentDetectorPeripheral extends BasePeripheral {
 
     public EnvironmentDetectorPeripheral(String type, PeripheralTileEntity<?> tileEntity) {
+        super(type, tileEntity);
+    }
+
+    public EnvironmentDetectorPeripheral(String type, TileEntity tileEntity) {
         super(type, tileEntity);
     }
 

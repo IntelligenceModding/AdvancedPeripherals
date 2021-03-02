@@ -4,6 +4,7 @@ import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.peripheral.IComputerAccess;
 import dan200.computercraft.api.peripheral.IPeripheral;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
+import net.minecraft.tileentity.TileEntity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -15,10 +16,16 @@ public abstract class BasePeripheral implements IPeripheral {
     protected final List<IComputerAccess> connectedComputers = new ArrayList<>();
     protected String type;
     protected PeripheralTileEntity<?> tileEntity;
+    protected TileEntity forgeTileEntity;
 
     public BasePeripheral(String type, PeripheralTileEntity<?> tileEntity) {
         this.type = type;
         this.tileEntity = tileEntity;
+    }
+
+    public BasePeripheral(String type, TileEntity tileEntity) {
+        this.type = type;
+        this.forgeTileEntity = tileEntity;
     }
 
     public List<IComputerAccess> getConnectedComputers() {
@@ -28,7 +35,7 @@ public abstract class BasePeripheral implements IPeripheral {
     @Nullable
     @Override
     public Object getTarget() {
-        return tileEntity;
+        return tileEntity != null ? tileEntity : forgeTileEntity;
     }
 
     @NotNull

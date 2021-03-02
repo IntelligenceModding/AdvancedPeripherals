@@ -99,10 +99,9 @@ dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
 
     implementation fg.deobf("org.squiddev:cc-tweaked-1.16.4:${cc_version}")
-    compileOnly fg.deobf("com.refinedmods:refinedstorage:${rs_version}")
-    runtimeOnly fg.deobf("com.refinedmods:refinedstorage:${rs_version}")
-    compileOnly fg.deobf("appeng:appliedenergistics2:${appliedenergistics_version}:api");
-    runtimeOnly fg.deobf("appeng:appliedenergistics2:${appliedenergistics_version}");
+    implementation fg.deobf("com.refinedmods:refinedstorage:${rs_version}")
+    compileOnly fg.deobf("appeng:appliedenergistics2:${ae_version}:api");
+    runtimeOnly fg.deobf("appeng:appliedenergistics2:${ae_version}");
 
     //Mods to test stuff(Not required mods)
     runtimeOnly fg.deobf("mekanism:Mekanism:1.16.4-10.0.19.446")

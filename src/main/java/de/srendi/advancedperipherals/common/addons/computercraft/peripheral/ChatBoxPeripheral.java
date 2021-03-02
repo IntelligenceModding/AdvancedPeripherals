@@ -7,6 +7,7 @@ import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.server.ServerWorld;
 
@@ -17,6 +18,10 @@ public class ChatBoxPeripheral extends BasePeripheral {
     private int tick;
 
     public ChatBoxPeripheral(String type, PeripheralTileEntity<?> tileEntity) {
+        super(type, tileEntity);
+    }
+
+    public ChatBoxPeripheral(String type, TileEntity tileEntity) {
         super(type, tileEntity);
     }
 

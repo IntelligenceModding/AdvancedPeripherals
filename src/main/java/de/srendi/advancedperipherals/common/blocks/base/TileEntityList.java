@@ -20,10 +20,6 @@ public class TileEntityList extends WorldSavedData {
     private static final TileEntityList clientInstance = new TileEntityList();
     public final List<BlockPos> tileEntities = new ArrayList<>();
 
-    public TileEntityList(String name) {
-        super(name);
-    }
-
     public TileEntityList() {
         super(AdvancedPeripherals.MOD_ID);
     }
@@ -81,9 +77,13 @@ public class TileEntityList extends WorldSavedData {
     public List<TileEntity> getTileEntitys(World world) {
         List<TileEntity> list = new ArrayList<>();
         for (BlockPos blockPos : get(world).getBlockPositions()) {
-            if (world.isBlockLoaded(blockPos)) {
-                if (world.getTileEntity(blockPos) != null) {
-                    list.add(world.getTileEntity(blockPos));
+            if(blockPos != null) {
+                if (world.isBlockLoaded(blockPos)) {
+                    if (world.getTileEntity(blockPos) != null) {
+                        list.add(world.getTileEntity(blockPos));
+                    } else {
+                        setTileEntity(world, blockPos); //No tile entity here anymore.
+                    }
                 }
             }
         }
