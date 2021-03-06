@@ -95,7 +95,6 @@ public class EnvironmentDetectorPeripheral extends BasePeripheral {
     @LuaFunction(mainThread = true)
     public final String getDimensionPaN() {
         return tileEntity.getWorld().getDimensionKey().getLocation().getNamespace() + ":" + tileEntity.getWorld().getDimensionKey().getLocation().getPath();
-
     }
 
     @LuaFunction(mainThread = true)

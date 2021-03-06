@@ -1,11 +1,13 @@
 {
-  "item.advancedperipherals.silver_ingot": "Silver Ingot",
-  "block.advancedperipherals.silver_ore": "Silver Ore",
+  "item.advancedperipherals.chunk_controller": "Chunk Controller",
   "block.advancedperipherals.environment_detector": "Environment Detector",
   "block.advancedperipherals.chat_box": "Chat box",
   "block.advancedperipherals.player_detector": "Player Detector",
   "block.advancedperipherals.me_bridge": "ME Bridge",
   "block.advancedperipherals.rs_bridge": "RS Bridge",
-  "block.advancedperipherals.chat_box_turtle": "Chatty",
+  "turtle.advancedperipherals.chat_box_turtle": "Chatty",
+  "turtle.advancedperipherals.environment_detector_turtle": "Environment",
+  "turtle.advancedperipherals.player_detector_turtle": "Player",
+  "turtle.advancedperipherals.chunky_turtle": "Chunky",
   "itemGroup.advancedperipheralstab": "Advanced Peripherals"
 }

@@ -6,14 +6,16 @@ import dan200.computercraft.api.turtle.AbstractTurtleUpgrade;
 import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
 import dan200.computercraft.api.turtle.TurtleUpgradeType;
+import dan200.computercraft.shared.turtle.core.TurtleBrain;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.BasePeripheral;
 import de.srendi.advancedperipherals.common.blocks.base.TileEntityList;
-import de.srendi.advancedperipherals.common.setup.Blocks;
 import net.minecraft.client.renderer.model.ModelResourceLocation;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
@@ -23,15 +25,16 @@ import javax.annotation.Nonnull;
 
 public abstract class BaseTurtle<T extends BasePeripheral> extends AbstractTurtleUpgrade {
 
-    protected boolean initiated = false;
     protected T peripheral;
     protected TileEntity tileEntity;
+    protected int tick;
+    protected boolean init;
 
     //Todo - 1.0r: Make unique models for the turtles.
     private static final ModelResourceLocation model = new ModelResourceLocation("computercraft:turtle_advanced", "inventory");
 
-    public BaseTurtle() {
-        super(new ResourceLocation(AdvancedPeripherals.MOD_ID, "chat_box_turtle"), TurtleUpgradeType.PERIPHERAL, "block.advancedperipherals.chat_box_turtle", new ItemStack(Blocks.CHAT_BOX.get()));
+    public BaseTurtle(String id, String adjective, ItemStack item) {
+        super(new ResourceLocation(AdvancedPeripherals.MOD_ID, id), TurtleUpgradeType.PERIPHERAL, adjective, item);
         peripheral = createPeripheral();
     }
 
@@ -52,16 +55,21 @@ public abstract class BaseTurtle<T extends BasePeripheral> extends AbstractTurtl
 
     @Override
     public void update(@NotNull ITurtleAccess turtle, @NotNull TurtleSide side) {
-        if(!initiated) {
-            if(turtle.getWorld().getTileEntity(turtle.getPosition()) != null) {
-                tileEntity = turtle.getWorld().getTileEntity(turtle.getPosition());
+        if (!init) {
+            if (!turtle.getWorld().isRemote) {
+                World world = turtle.getWorld();
+                BlockPos position = turtle.getPosition();
+                tileEntity = turtle instanceof TurtleBrain ? ((TurtleBrain) turtle).getOwner() : world.getTileEntity(position);
+                peripheral.setTileEntity(tileEntity);
+                init = true;
             }
-                TileEntityList tileEntityList = TileEntityList.get(turtle.getWorld());
-                if (!tileEntityList.getBlockPositions().contains(turtle.getPosition())) {
-                    tileEntityList.setTileEntity(turtle.getWorld(), turtle.getPosition()); //Add the turtle to the List for event use
-                }
-
-            initiated = true;
+        }
+        tick++;
+        if(tick > 10) {
+            TileEntityList tileEntityList = TileEntityList.get(turtle.getWorld()); //Sync the position with the tile entity list.
+            if (!tileEntityList.getBlockPositions().contains(turtle.getPosition())) {
+                tileEntityList.setTileEntity(turtle.getWorld(), turtle.getPosition()); //Add the turtle to the List for event use
+            }
         }
     }
 }

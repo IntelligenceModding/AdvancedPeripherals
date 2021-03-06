@@ -29,7 +29,7 @@ public class PlayerDetectorBlock extends BaseBlock {
     public ActionResultType onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity player, Hand handIn, BlockRayTraceResult hit) {
         //Todo: This stuff is called twice. I need to prevent this
         if (AdvancedPeripheralsConfig.enablePlayerDetector) {
-            for (TileEntity tileEntity : TileEntityList.get(worldIn).getTileEntitys(worldIn)) {
+            for (TileEntity tileEntity : TileEntityList.get(worldIn).getTileEntities(worldIn)) {
                 if (tileEntity instanceof PlayerDetectorTileEntity) {
                     PlayerDetectorTileEntity entity = (PlayerDetectorTileEntity) tileEntity;
                     for (IComputerAccess computer : entity.getConnectedComputers()) {

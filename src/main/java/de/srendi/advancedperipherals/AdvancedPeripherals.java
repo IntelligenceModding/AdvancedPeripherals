@@ -50,7 +50,7 @@ public class AdvancedPeripherals {
 
     public static void Debug(String message) {
         if(AdvancedPeripheralsConfig.enableDebugMode) {
-            LOGGER.debug("[DEBUG] "+message);
+            LOGGER.debug("[DEBUG] " + message);
         }
     }
 

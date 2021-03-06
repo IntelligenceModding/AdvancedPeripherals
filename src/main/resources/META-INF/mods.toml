@@ -1,11 +1,11 @@
 modLoader = "javafml"
-loaderVersion = "[35,)"
+loaderVersion = "[36,)"
 license = "All rights reserved"
 issueTrackerURL = "https://github.com/Seniorendi/AdvancedPeripherals/issues"
 logoFile="pack.png"
 [[mods]]
 modId = "advancedperipherals"
-version = "0.3.10-DEVb"
+version = "0.4-DEVb"
 displayName = "Advanced Peripherals"
 #updateJSONURL="http://myurl.me/"
 displayURL = "https://srendi.de/"
@@ -17,19 +17,19 @@ A Peripheral addon mod for Computercraft. Adds things like the Me Bridge, the Ch
 [[dependencies.advancedperipherals]]
 modId = "forge"
 mandatory = true
-versionRange = "35.1.37"
+versionRange = "[36.0.21,)"
 ordering = "NONE"
 side = "BOTH"
 [[dependencies.advancedperipherals]]
 modId = "minecraft"
 mandatory = true
-versionRange = "1.16.4"
+versionRange = "1.16.5"
 ordering = "NONE"
 side = "BOTH"
 [[dependencies.advancedperipherals]]
 modId = "computercraft"
 mandatory = true
-versionRange = "1.94.0"
+versionRange = "1.95.2"
 ordering = "NONE"
 side = "BOTH"
 [[dependencies.advancedperipherals]]

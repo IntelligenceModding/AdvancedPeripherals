@@ -15,8 +15,7 @@ public abstract class BasePeripheral implements IPeripheral {
 
     protected final List<IComputerAccess> connectedComputers = new ArrayList<>();
     protected String type;
-    protected PeripheralTileEntity<?> tileEntity;
-    protected TileEntity forgeTileEntity;
+    protected TileEntity tileEntity;
 
     public BasePeripheral(String type, PeripheralTileEntity<?> tileEntity) {
         this.type = type;
@@ -25,7 +24,11 @@ public abstract class BasePeripheral implements IPeripheral {
 
     public BasePeripheral(String type, TileEntity tileEntity) {
         this.type = type;
-        this.forgeTileEntity = tileEntity;
+        this.tileEntity = tileEntity;
+    }
+
+    public void setTileEntity(TileEntity tileEntity) {
+        this.tileEntity = tileEntity;
     }
 
     public List<IComputerAccess> getConnectedComputers() {
@@ -35,7 +38,7 @@ public abstract class BasePeripheral implements IPeripheral {
     @Nullable
     @Override
     public Object getTarget() {
-        return tileEntity != null ? tileEntity : forgeTileEntity;
+        return tileEntity;
     }
 
     @NotNull

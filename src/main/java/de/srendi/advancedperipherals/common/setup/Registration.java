@@ -23,5 +23,6 @@ public class Registration {
 
         Blocks.register();
         TileEntityTypes.register();
+        Items.register();
     }
 }
