@@ -8,6 +8,8 @@ import appeng.api.networking.crafting.ICraftingJob;
 import appeng.api.storage.IMEMonitor;
 import appeng.api.storage.data.IAEFluidStack;
 import appeng.api.storage.data.IAEItemStack;
+import net.minecraft.fluid.Fluid;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
@@ -73,14 +75,15 @@ public class AppEngApi implements IAEAddon {
     public Object getObjectFromStack(IAEItemStack stack, int flag) {
         HashMap<String, Object> map = new HashMap<>();
         ResourceLocation itemResourceLocation = ForgeRegistries.ITEMS.getKey(stack.getItem());
+        Item item = stack.getItem();
         String itemName = itemResourceLocation == null ? "null" : itemResourceLocation.toString();
-        long amount = stack.getStackSize();
-        String displayName = new ItemStack(stack.getItem()).getDisplayName().getString();
+        String displayName = new ItemStack(item).getDisplayName().getString();
         CompoundNBT nbt = stack.createItemStack().getOrCreateTag();
         map.put("name", itemName);
-        map.put("amount", amount);
+        map.put("amount", stack.getStackSize());
         map.put("displayName", displayName);
         map.put("nbt", nbt.toString());
+        map.put("tags", item.getTags());
         if (flag == 0) {
             return map;
         } else if (flag == 1) {
@@ -99,11 +102,10 @@ public class AppEngApi implements IAEAddon {
         HashMap<String, Object> map = new HashMap<>();
         ResourceLocation itemResourceLocation = ForgeRegistries.ITEMS.getKey(stack.getItem());
         String itemName = itemResourceLocation == null ? "null" : itemResourceLocation.toString();
-        long amount = stack.getStackSize();
         String displayName = new ItemStack(stack.getItem()).getDisplayName().getString();
         CompoundNBT nbt = stack.createItemStack().getOrCreateTag();
         map.put("name", itemName);
-        map.put("amount", amount);
+        map.put("amount", stack.getStackSize());
         map.put("displayName", displayName);
         map.put("nbt", nbt.toString());
         return map;
@@ -126,12 +128,14 @@ public class AppEngApi implements IAEAddon {
     public Object getObjectFromStack(IAEFluidStack stack, int flag) {
         HashMap<String, Object> map = new HashMap<>();
         ResourceLocation itemResourceLocation = ForgeRegistries.FLUIDS.getKey(stack.getFluid());
+        Fluid fluid = stack.getFluid();
         String itemName = itemResourceLocation == null ? "null" : itemResourceLocation.toString();
         long amount = stack.getStackSize();
         String displayName = stack.getFluidStack().getDisplayName().getString();
         map.put("name", itemName);
         map.put("amount", amount);
         map.put("displayName", displayName);
+        map.put("tags", fluid.getTags());
         if (flag == 0) {
             return map;
         } else if (flag == 1) {

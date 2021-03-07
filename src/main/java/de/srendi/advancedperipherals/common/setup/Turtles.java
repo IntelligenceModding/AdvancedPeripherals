@@ -34,5 +34,4 @@ public class Turtles {
     public static void registerItems(RegistryEvent.Register<Item> event) {
         register();
     }
-
 }
