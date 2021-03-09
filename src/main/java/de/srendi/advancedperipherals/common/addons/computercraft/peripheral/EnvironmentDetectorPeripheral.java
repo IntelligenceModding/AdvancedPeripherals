@@ -76,7 +76,7 @@ public class EnvironmentDetectorPeripheral extends BasePeripheral {
     @LuaFunction(mainThread = true)
     public final boolean isSlimeChunk() {
         ChunkPos chunkPos = new ChunkPos(tileEntity.getPos());
-        return (SharedSeedRandom.seedSlimeChunk(chunkPos.x, chunkPos.z, ((ISeedReader) tileEntity.getWorld()).getSeed(), 987234911L).nextInt(10) == 0);
+        return (SharedSeedRandom.createSlimeChunkSpawningSeed(chunkPos.x, chunkPos.z, ((ISeedReader) tileEntity.getWorld()).getSeed(), 987234911L).nextInt(10) == 0);
 
     }
 
