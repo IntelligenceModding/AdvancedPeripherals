@@ -5,11 +5,15 @@ import dan200.computercraft.api.lua.LuaFunction;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraftforge.fml.server.ServerLifecycleHooks;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class PlayerDetectorPeripheral extends BasePeripheral {
 
@@ -53,5 +57,24 @@ public class PlayerDetectorPeripheral extends BasePeripheral {
             playersName.add(name.getName().getString());
         }
         return playersName.contains(username);
+    }
+
+    @LuaFunction(mainThread = true)
+    public final Map<String, Double> getPlayerPos(String username) {
+        List<ServerPlayerEntity> players = ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers();
+        ServerPlayerEntity existingPlayer = null;
+        for(ServerPlayerEntity player : players) {
+           if(player.getName().getString().equals(username)) {
+               existingPlayer = player;
+               break;
+           }
+        }
+        if(existingPlayer == null)
+            return null;
+        Map<String, Double> coordinates = new HashMap<>();
+        coordinates.put("x", Math.floor(existingPlayer.getPosX()));
+        coordinates.put("y", Math.floor(existingPlayer.getPosY()));
+        coordinates.put("z", Math.floor(existingPlayer.getPosZ()));
+        return coordinates;
     }
 }

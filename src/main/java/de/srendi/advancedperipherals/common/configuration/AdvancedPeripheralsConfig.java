@@ -21,8 +21,8 @@ public class AdvancedPeripheralsConfig {
         final ForgeConfigSpec.BooleanValue ENABLE_RS_BRIDGE;
         final ForgeConfigSpec.BooleanValue ENABLE_PLAYER_DETECTOR;
         final ForgeConfigSpec.BooleanValue ENABLE_ENVIRONMENT_DETECTOR;
-        final ForgeConfigSpec.BooleanValue ENABLE_DEBUG_MODE;
         final ForgeConfigSpec.BooleanValue ENABLE_CHUNKY_TURTLE;
+        final ForgeConfigSpec.BooleanValue ENABLE_DEBUG_MODE;
 
         CommonConfig(final ForgeConfigSpec.Builder builder) {
             builder.comment("").push("Features");
