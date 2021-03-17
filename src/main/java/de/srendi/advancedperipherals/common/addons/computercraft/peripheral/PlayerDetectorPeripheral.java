@@ -1,13 +1,12 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.peripheral;
 
-import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 
 import java.util.ArrayList;
@@ -31,39 +30,40 @@ public class PlayerDetectorPeripheral extends BasePeripheral {
     }
 
     @LuaFunction(mainThread = true)
-    public final List<String> getPlayersInRange(int range) throws LuaException {
-        double rangeNegative = -(double) range;
-        List<PlayerEntity> players = tileEntity.getWorld().getEntitiesWithinAABB(PlayerEntity.class, new AxisAlignedBB(tileEntity.getPos().add(rangeNegative, rangeNegative, rangeNegative), tileEntity.getPos().add((double) range + 1, (double) range + 1, (double) range + 1)));
+    public final List<String> getPlayersInRange(int range) {
         List<String> playersName = new ArrayList<>();
-        for (PlayerEntity name : players) {
-            playersName.add(name.getName().getString());
+        for (ServerPlayerEntity player : getPlayers()) {
+            if(isInRange(tileEntity.getPos(), player, range))
+                playersName.add(player.getName().getString());
         }
         return playersName;
     }
 
     @LuaFunction(mainThread = true)
-    public final boolean isPlayersInRange(int range) throws LuaException {
-        double rangeNegative = -(double) range;
-        List<PlayerEntity> players = tileEntity.getWorld().getEntitiesWithinAABB(PlayerEntity.class, new AxisAlignedBB(tileEntity.getPos().add(rangeNegative, rangeNegative, rangeNegative), tileEntity.getPos().add((double) range + 1, (double) range + 1, (double) range + 1)));
-        return !players.isEmpty();
+    public final boolean isPlayersInRange(int range) {
+        if(getPlayers().isEmpty())
+            return false;
+        for(ServerPlayerEntity player : getPlayers()) {
+            if(isInRange(tileEntity.getPos(), player, range))
+                return true;
+        }
+        return false;
     }
 
     @LuaFunction(mainThread = true)
-    public final boolean isPlayerInRange(int range, String username) throws LuaException {
-        double rangeNegative = -(double) range;
-        List<PlayerEntity> players = tileEntity.getWorld().getEntitiesWithinAABB(PlayerEntity.class, new AxisAlignedBB(tileEntity.getPos().add(rangeNegative, rangeNegative, rangeNegative), tileEntity.getPos().add((double) range + 1, (double) range + 1, (double) range + 1)));
-        List<String> playersName = new ArrayList<>();
-        for (PlayerEntity name : players) {
-            playersName.add(name.getName().getString());
+    public final boolean isPlayerInRange(int range, String username) {
+         List<String> playersName = new ArrayList<>();
+        for (PlayerEntity player : getPlayers()) {
+            if(isInRange(tileEntity.getPos(), player, range))
+            playersName.add(player.getName().getString());
         }
         return playersName.contains(username);
     }
 
     @LuaFunction(mainThread = true)
     public final Map<String, Double> getPlayerPos(String username) {
-        List<ServerPlayerEntity> players = ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers();
         ServerPlayerEntity existingPlayer = null;
-        for(ServerPlayerEntity player : players) {
+        for(ServerPlayerEntity player : getPlayers()) {
            if(player.getName().getString().equals(username)) {
                existingPlayer = player;
                break;
@@ -76,5 +76,27 @@ public class PlayerDetectorPeripheral extends BasePeripheral {
         coordinates.put("y", Math.floor(existingPlayer.getPosY()));
         coordinates.put("z", Math.floor(existingPlayer.getPosZ()));
         return coordinates;
+    }
+
+    private List<ServerPlayerEntity> getPlayers() {
+        return ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers();
+    }
+
+    private boolean isInRange(BlockPos pos, PlayerEntity player, int range) {
+        BlockPos pos1 = new BlockPos(pos.getX()-range, pos.getY()+range, pos.getZ()+range);
+        BlockPos pos2 = new BlockPos(pos.getX()+range, pos.getY()-range, pos.getZ()-range);
+
+        int x1 = Math.min(pos1.getX(), pos2.getX());
+        int y1 = Math.min(pos1.getY(), pos2.getY());
+        int z1 = Math.min(pos1.getZ(), pos2.getZ());
+        int x2 = Math.max(pos1.getX(), pos2.getX());
+        int y2 = Math.max(pos1.getY(), pos2.getY());
+        int z2 = Math.max(pos1.getZ(), pos2.getZ());
+
+        int x = player.getPosition().getX();
+        int z = player.getPosition().getZ();
+        int y = player.getPosition().getY();
+
+        return x >= x1 && x <= x2 && y >= y1 && y <= y2 && z >= z1 && z <= z2;
     }
 }

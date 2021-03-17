@@ -27,19 +27,17 @@ public class PlayerDetectorBlock extends BaseBlock {
 
     @Override
     public ActionResultType onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity player, Hand handIn, BlockRayTraceResult hit) {
-        //Todo: This stuff is called twice. I need to prevent this
         if (AdvancedPeripheralsConfig.enablePlayerDetector) {
             for (TileEntity tileEntity : TileEntityList.get(worldIn).getTileEntities(worldIn)) {
                 if (tileEntity instanceof PlayerDetectorTileEntity) {
                     PlayerDetectorTileEntity entity = (PlayerDetectorTileEntity) tileEntity;
                     for (IComputerAccess computer : entity.getConnectedComputers()) {
                         computer.queueEvent("playerClick", player.getName().getString());
-                        //Todo: Let the eyes glow when clicked on the detector. I already made an texture.
+                        //Todo: Let the eyes glow when clicked on the detector.
                     }
                 }
             }
         }
         return super.onBlockActivated(state, worldIn, pos, player, handIn, hit);
     }
-
 }
