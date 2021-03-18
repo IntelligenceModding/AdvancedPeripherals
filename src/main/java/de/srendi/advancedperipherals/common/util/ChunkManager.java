@@ -31,7 +31,7 @@ public class ChunkManager implements ForgeChunkManager.LoadingValidationCallback
             TileEntity tileEntity = world.getTileEntity(blockPos);
             if(tileEntity instanceof TileTurtle) {
                 TileTurtle tileTurtle = (TileTurtle) tileEntity;
-                if(tileTurtle.getUpgrade(TurtleSide.RIGHT) instanceof TurtleChunky) {
+                if(tileTurtle.getUpgrade(TurtleSide.RIGHT) instanceof TurtleChunky || tileTurtle.getUpgrade(TurtleSide.LEFT) instanceof TurtleChunky) {
                     TurtleChunky turtle = (TurtleChunky) tileTurtle.getUpgrade(TurtleSide.RIGHT);
                     for(Long chunk : chunks.getSecond()) {
                         turtle.forceChunk(new ChunkPos(chunk.longValue()), true);
