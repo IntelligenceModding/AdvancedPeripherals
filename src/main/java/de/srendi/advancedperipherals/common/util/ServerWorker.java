@@ -18,8 +18,8 @@ public class ServerWorker {
     }
 
     @SubscribeEvent
-    public static void serverTick(TickEvent.ServerTickEvent e) {
-        if (e.phase == TickEvent.Phase.END) {
+    public static void serverTick(TickEvent.ServerTickEvent event) {
+        if (event.phase == TickEvent.Phase.END) {
             while (!callQueue.isEmpty()) {
                 final Runnable runnable = callQueue.poll();
                 runnable.run();

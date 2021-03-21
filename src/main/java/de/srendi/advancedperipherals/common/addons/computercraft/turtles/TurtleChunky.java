@@ -15,7 +15,7 @@ import java.util.List;
 
 public class TurtleChunky extends BaseTurtle<ChunkyPeripheral>{
 
-    private List<ChunkPos> loadedChunks = new ArrayList<>();
+    private static List<ChunkPos> loadedChunks = new ArrayList<>();
 
     public TurtleChunky() {
         super("chunky_turtle", "turtle.advancedperipherals.chunky_turtle", new ItemStack(Items.CHUNK_CONTROLLER.get()));
@@ -29,7 +29,7 @@ public class TurtleChunky extends BaseTurtle<ChunkyPeripheral>{
     @Override
     public void update(@NotNull ITurtleAccess turtle, @NotNull TurtleSide side) {
         super.update(turtle, side);
-        if(!loadedChunks.contains(turtle.getWorld().getChunk(turtle.getPosition()).getPos())) {
+        if(!turtle.getWorld().isRemote && !loadedChunks.contains(turtle.getWorld().getChunk(turtle.getPosition()).getPos())) {
             forceChunk(turtle.getWorld().getChunk(turtle.getPosition()).getPos(), true);
         }
     }
@@ -37,9 +37,8 @@ public class TurtleChunky extends BaseTurtle<ChunkyPeripheral>{
     public boolean forceChunk(ChunkPos chunkPos, boolean load) {
         boolean forced = ChunkManager.INSTANCE.forceChunk((ServerWorld) tileEntity.getWorld(), tileEntity.getPos(), chunkPos, load);
 
-        if(forced) {
+        if(forced)
             loadedChunks.add(chunkPos);
-        }
 
         return forced;
     }

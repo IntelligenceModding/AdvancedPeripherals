@@ -41,8 +41,8 @@ public class ChatBoxPeripheral extends BasePeripheral {
     @LuaFunction(mainThread = true)
     public final void sendMessage(Object message) throws LuaException {
         if (tick >= AdvancedPeripheralsConfig.chatBoxCooldown) {
-            if (!AdvancedPeripherals.playerController.getWorld().isRemote()) {
-                ServerWorld world = (ServerWorld) AdvancedPeripherals.playerController.getWorld();
+            if (!AdvancedPeripherals.PLAYER_CONTROLLER.getWorld().isRemote()) {
+                ServerWorld world = (ServerWorld) AdvancedPeripherals.PLAYER_CONTROLLER.getWorld();
                 for (ServerPlayerEntity player : world.getServer().getPlayerList().getPlayers()) {
                     player.sendMessage(new StringTextComponent("" + message), UUID.randomUUID());
                 }
@@ -59,8 +59,8 @@ public class ChatBoxPeripheral extends BasePeripheral {
     @LuaFunction(mainThread = true)
     public final void sendMessageToPlayer(Object message, String playerName) throws LuaException {
         if (tick >= AdvancedPeripheralsConfig.chatBoxCooldown) {
-            if (!AdvancedPeripherals.playerController.getWorld().isRemote()) {
-                ServerWorld world = (ServerWorld) AdvancedPeripherals.playerController.getWorld();
+            if (!AdvancedPeripherals.PLAYER_CONTROLLER.getWorld().isRemote()) {
+                ServerWorld world = (ServerWorld) AdvancedPeripherals.PLAYER_CONTROLLER.getWorld();
                 for (ServerPlayerEntity player : world.getServer().getPlayerList().getPlayers()) {
                     if (player.getName().getString().equals(playerName)) {
                         player.sendMessage(new StringTextComponent((String) message), UUID.randomUUID());

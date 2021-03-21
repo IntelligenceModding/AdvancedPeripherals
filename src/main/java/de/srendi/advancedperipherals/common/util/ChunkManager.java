@@ -28,16 +28,19 @@ public class ChunkManager implements ForgeChunkManager.LoadingValidationCallback
     @Override
     public void validateTickets(ServerWorld world, ForgeChunkManager.TicketHelper ticketHelper) {
         ticketHelper.getBlockTickets().forEach((blockPos, chunks) -> {
-            TileEntity tileEntity = world.getTileEntity(blockPos);
-            if(tileEntity instanceof TileTurtle) {
-                TileTurtle tileTurtle = (TileTurtle) tileEntity;
-                if(tileTurtle.getUpgrade(TurtleSide.RIGHT) instanceof TurtleChunky || tileTurtle.getUpgrade(TurtleSide.LEFT) instanceof TurtleChunky) {
-                    TurtleChunky turtle = (TurtleChunky) tileTurtle.getUpgrade(TurtleSide.RIGHT);
-                    for(Long chunk : chunks.getSecond()) {
-                        turtle.forceChunk(new ChunkPos(chunk.longValue()), true);
+            if(world.getTileEntity(blockPos) != null) {
+                TileEntity tileEntity = world.getTileEntity(blockPos);
+                if (tileEntity instanceof TileTurtle) {
+                    TileTurtle tileTurtle = (TileTurtle) tileEntity;
+                    if (tileTurtle.getUpgrade(TurtleSide.RIGHT) instanceof TurtleChunky || tileTurtle.getUpgrade(TurtleSide.LEFT) instanceof TurtleChunky) {
+                        TurtleChunky turtle =  (TurtleChunky) (tileTurtle.getUpgrade(TurtleSide.RIGHT) instanceof TurtleChunky ? tileTurtle.getUpgrade(TurtleSide.RIGHT) : tileTurtle.getUpgrade(TurtleSide.LEFT));
+                        for (Long chunk : chunks.getSecond()) {
+                            turtle.forceChunk(new ChunkPos(chunk.longValue()), true);
+                        }
+                    } else {
+                        AdvancedPeripherals.Debug("Trying remove forced chunk " + blockPos);
+                        ticketHelper.removeAllTickets(blockPos);
                     }
-                } else {
-                    ticketHelper.removeAllTickets(blockPos);
                 }
             }
         });
@@ -63,6 +66,10 @@ public class ChunkManager implements ForgeChunkManager.LoadingValidationCallback
 
     public boolean forceChunk(ServerWorld world, BlockPos pos, ChunkPos chunkPos, boolean add) {
         if(init) {
+            if(add)
+                AdvancedPeripherals.Debug("Trying force chunk " + pos);
+            if(!add)
+                AdvancedPeripherals.Debug("Trying unforce chunk " + pos);
             return ForgeChunkManager.forceChunk(world, AdvancedPeripherals.MOD_ID, pos, chunkPos.x, chunkPos.z, add, true);
         }
         return false;

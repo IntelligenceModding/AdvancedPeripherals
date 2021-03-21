@@ -1,7 +1,6 @@
 package de.srendi.advancedperipherals.common.setup;
 
 import de.srendi.advancedperipherals.AdvancedPeripherals;
-import de.srendi.advancedperipherals.common.util.ChunkManager;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntityType;
@@ -25,6 +24,5 @@ public class Registration {
         Blocks.register();
         TileEntityTypes.register();
         Items.register();
-        ChunkManager.register();
     }
 }
