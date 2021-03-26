@@ -1,5 +1,7 @@
 {
   "item.advancedperipherals.chunk_controller": "Chunk Controller",
+  "item.advancedperipherals.tooltip.hold_ctrl": "§b[§7CTRL§b] §7For Informations",
+  "item.advancedperipherals.tooltip.chunk_controller": "§7An crafting ingredient for the Chunky Turtle.",
   "block.advancedperipherals.environment_detector": "Umgebungs Detector",
   "block.advancedperipherals.chat_box": "Chat Box",
   "block.advancedperipherals.player_detector": "Spieler Detector",
