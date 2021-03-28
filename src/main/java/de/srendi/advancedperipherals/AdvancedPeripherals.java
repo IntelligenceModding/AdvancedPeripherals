@@ -6,11 +6,9 @@ import de.srendi.advancedperipherals.common.configuration.ConfigHolder;
 import de.srendi.advancedperipherals.common.setup.Blocks;
 import de.srendi.advancedperipherals.common.setup.Registration;
 import de.srendi.advancedperipherals.common.util.ChunkManager;
-import de.srendi.advancedperipherals.common.util.PlayerController;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModLoadingContext;
@@ -26,7 +24,6 @@ public class AdvancedPeripherals {
 
     public static final String MOD_ID = "advancedperipherals";
     public static final Logger LOGGER = LogManager.getLogger(MOD_ID);
-    public static final PlayerController PLAYER_CONTROLLER = new PlayerController();
     public static final ItemGroup TAB = new ItemGroup("advancedperipheralstab") {
         @Override
         public ItemStack createIcon() {
@@ -39,7 +36,6 @@ public class AdvancedPeripherals {
         IEventBus modBus = FMLJavaModLoadingContext.get().getModEventBus();
 
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, ConfigHolder.COMMON_SPEC);
-        MinecraftForge.EVENT_BUS.addListener(this::onWorldLoad);
         MinecraftForge.EVENT_BUS.addListener(this::commonSetup);
         modBus.addListener(ConfigHandler::configEvent);
         Registration.register();
@@ -49,11 +45,6 @@ public class AdvancedPeripherals {
     @SubscribeEvent
     public void commonSetup(FMLCommonSetupEvent event) {
         event.enqueueWork(ChunkManager::register);
-    }
-
-    @SubscribeEvent
-    public void onWorldLoad(WorldEvent.Load event) {
-        PLAYER_CONTROLLER.init(event.getWorld());
     }
 
     public static void Debug(String message) {
