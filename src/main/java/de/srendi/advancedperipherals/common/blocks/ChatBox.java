@@ -14,4 +14,5 @@ public class ChatBox extends BaseBlock {
     public TileEntity createTileEntity(BlockState state, IBlockReader world) {
         return TileEntityTypes.CHAT_BOX.get().create();
     }
+
 }

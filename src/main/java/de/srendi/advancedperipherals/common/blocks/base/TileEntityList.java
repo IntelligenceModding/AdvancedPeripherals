@@ -42,7 +42,7 @@ public class TileEntityList extends WorldSavedData {
                 CompoundNBT entryNBT = list.getCompound(i);
                 if (entryNBT.contains("x") && entryNBT.contains("y") && entryNBT.contains("z")) {
                     BlockPos pos = new BlockPos(entryNBT.getInt("x"), entryNBT.getInt("y"), entryNBT.getInt("z")).toImmutable();
-                    if(pos != null) {
+                    if (pos != null) {
                         this.tileEntities.add(pos);
                     } else {
                         this.markDirty();
@@ -80,19 +80,12 @@ public class TileEntityList extends WorldSavedData {
 
     public List<TileEntity> getTileEntities(World world) {
         List<TileEntity> list = new ArrayList<>();
-        AdvancedPeripherals.LOGGER.error(get(world).getBlockPositions());
-        for (BlockPos next : get(world).getBlockPositions()) {
-            if (!world.isAirBlock(next)) {
-                if (world.isBlockLoaded(next)) {
-                    if (world.getTileEntity(next) != null) {
-                        list.add(world.getTileEntity(next));
-                    } else {
-                        setTileEntity(world, next); //No tile entity here anymore.
-                    }
-                }
-            } else {
+        for (BlockPos next : new ArrayList<>(getBlockPositions())) {
+            if (world.isAirBlock(next) || !world.isBlockLoaded(next))
                 setTileEntity(world, next); //No block here anymore.
-            }
+            if (world.getTileEntity(next) != null)
+                setTileEntity(world, next); //No tile entity here anymore.
+            list.add(world.getTileEntity(next));
         }
         return list;
     }

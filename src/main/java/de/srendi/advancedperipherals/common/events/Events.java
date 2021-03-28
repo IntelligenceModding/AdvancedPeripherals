@@ -8,6 +8,7 @@ import de.srendi.advancedperipherals.common.addons.computercraft.turtles.TurtleC
 import de.srendi.advancedperipherals.common.blocks.base.TileEntityList;
 import de.srendi.advancedperipherals.common.blocks.tileentity.ChatBoxTileEntity;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.event.ServerChatEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -17,8 +18,8 @@ public class Events {
 
     @SubscribeEvent
     public static void onChat(ServerChatEvent event) {
-
-        TileEntityList.get(event.getPlayer().getServerWorld()).getTileEntities(event.getPlayer().getServerWorld()).forEach(tileEntity -> { //Events for computers
+        ServerWorld world = event.getPlayer().getServerWorld();
+        TileEntityList.get(world).getTileEntities(world).forEach(tileEntity -> { //Events for computers
             if (tileEntity instanceof ChatBoxTileEntity) {
                 if (AdvancedPeripheralsConfig.enableChatBox) {
                     if (event.getMessage().startsWith("$")) {
