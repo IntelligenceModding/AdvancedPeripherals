@@ -6,10 +6,17 @@ import de.srendi.advancedperipherals.common.setup.Blocks;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 
+import java.util.Optional;
+
 public class MeBridgeItem extends BaseBlockItem {
 
     public MeBridgeItem() {
         super(Blocks.ME_BRIDGE.get(), new Properties().group(AdvancedPeripherals.TAB));
+    }
+
+    @Override
+    protected Optional<String> getTurtleID() {
+        return Optional.empty();
     }
 
     @Override

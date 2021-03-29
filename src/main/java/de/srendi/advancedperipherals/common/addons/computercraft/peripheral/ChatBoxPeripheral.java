@@ -29,7 +29,7 @@ public class ChatBoxPeripheral extends BasePeripheral {
 
     public void setTick(int tick) {
         this.tick = tick;
-    } //TODO: There is a better way to do that, but this works fine for now.
+    } //TODO: There is maybe better way to do that, but this works fine for now.
 
     @Override
     public boolean isEnabled() {
