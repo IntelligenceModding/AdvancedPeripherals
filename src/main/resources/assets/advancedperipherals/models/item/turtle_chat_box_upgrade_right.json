@@ -1,6 +1,6 @@
 {
     "parent": "advancedperipherals:block/turtle_upgrade_base_right",
     "textures": {
-        "texture": "advancedperipherals:blocks/chat_box"
+        "texture": "advancedperipherals:block/chat_box"
     }
 }

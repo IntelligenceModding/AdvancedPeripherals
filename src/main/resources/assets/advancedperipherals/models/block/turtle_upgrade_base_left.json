@@ -1,5 +1,4 @@
 {
-    "_comment": "adapted from CC",
     "parent": "block/block",
     "textures": {
         "particle": "#texture"

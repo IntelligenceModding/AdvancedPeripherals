@@ -1,6 +1,6 @@
 {
   "parent": "block/cube_all",
   "textures": {
-    "all": "advancedperipherals:blocks/environment_detector"
+    "all": "advancedperipherals:block/environment_detector"
   }
 }

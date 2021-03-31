@@ -5,6 +5,7 @@ import dan200.computercraft.api.turtle.TurtleSide;
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.ChunkyPeripheral;
 import de.srendi.advancedperipherals.common.setup.Items;
 import de.srendi.advancedperipherals.common.util.ChunkManager;
+import net.minecraft.client.renderer.model.ModelResourceLocation;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.server.ServerWorld;
@@ -26,6 +27,16 @@ public class TurtleChunky extends BaseTurtle<ChunkyPeripheral>{
     @Override
     protected ChunkyPeripheral createPeripheral() {
         return new ChunkyPeripheral("chunky", tileEntity);
+    }
+
+    @Override
+    protected ModelResourceLocation getLeftModel() {
+        return null; //Null, the turtle uses the chunk controller item model. See BaseTurtle.java
+    }
+
+    @Override
+    protected ModelResourceLocation getRightModel() {
+        return null;
     }
 
     @Override

@@ -22,7 +22,6 @@ public enum EnumColor {
     YELLOW("\u00a7e", "Yellow", "yellow", "§e"),
     WHITE("\u00a7f", "White", "white", "§f");
 
-
     String code;
     String name;
     String technicalName;

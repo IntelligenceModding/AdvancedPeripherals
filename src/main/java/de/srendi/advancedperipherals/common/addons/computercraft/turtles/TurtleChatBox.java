@@ -4,10 +4,14 @@ import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.ChatBoxPeripheral;
 import de.srendi.advancedperipherals.common.setup.Blocks;
+import net.minecraft.client.renderer.model.ModelResourceLocation;
 import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 public class TurtleChatBox extends BaseTurtle<ChatBoxPeripheral> {
+
+    private static final ModelResourceLocation leftModel = new ModelResourceLocation("advancedperipherals:turtle_chat_box_upgrade_left", "inventory");
+    private static final ModelResourceLocation rightModel = new ModelResourceLocation("advancedperipherals:turtle_chat_box_upgrade_right", "inventory");
 
     private int sync;
 
@@ -18,6 +22,16 @@ public class TurtleChatBox extends BaseTurtle<ChatBoxPeripheral> {
     @Override
     protected ChatBoxPeripheral createPeripheral() {
         return new ChatBoxPeripheral("chatBox", tileEntity);
+    }
+
+    @Override
+    protected ModelResourceLocation getLeftModel() {
+        return leftModel;
+    }
+
+    @Override
+    protected ModelResourceLocation getRightModel() {
+        return rightModel;
     }
 
     @Override

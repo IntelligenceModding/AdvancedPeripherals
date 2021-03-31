@@ -15,13 +15,11 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.vector.Matrix4f;
+import net.minecraft.util.math.vector.TransformationMatrix;
 import net.minecraft.world.World;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import javax.annotation.Nonnull;
 
 public abstract class BaseTurtle<T extends BasePeripheral> extends AbstractTurtleUpgrade {
 
@@ -30,9 +28,6 @@ public abstract class BaseTurtle<T extends BasePeripheral> extends AbstractTurtl
     protected int tick;
     protected boolean init;
 
-    //Todo - 1.0r: Make unique models for the turtles.
-    private static final ModelResourceLocation model = new ModelResourceLocation("computercraft:turtle_advanced", "inventory");
-
     public BaseTurtle(String id, String adjective, ItemStack item) {
         super(new ResourceLocation(AdvancedPeripherals.MOD_ID, id), TurtleUpgradeType.PERIPHERAL, adjective, item);
         peripheral = createPeripheral();
@@ -40,17 +35,29 @@ public abstract class BaseTurtle<T extends BasePeripheral> extends AbstractTurtl
 
     protected abstract T createPeripheral();
 
+    protected abstract ModelResourceLocation getLeftModel();
+    protected abstract ModelResourceLocation getRightModel();
+
+    @NotNull
+    @Override
+    public TransformedModel getModel(@Nullable ITurtleAccess iTurtleAccess, @NotNull TurtleSide turtleSide) {
+        if(getLeftModel() == null) {
+            float xOffset = turtleSide == TurtleSide.LEFT ? -0.40625f : 0.40625f;
+            Matrix4f transform = new Matrix4f(new float[]{
+                    0.0f, 0.0f, -1.0f, 1.0f + xOffset,
+                    1.0f, 0.0f, 0.0f, 0.0f,
+                    0.0f, -1.0f, 0.0f, 1.0f,
+                    0.0f, 0.0f, 0.0f, 1.0f,
+            });
+            return TransformedModel.of(getCraftingItem(), new TransformationMatrix(transform));
+        }
+        return TransformedModel.of(turtleSide == TurtleSide.LEFT ? getLeftModel() : getRightModel() );
+    }
+
     @Nullable
     @Override
     public IPeripheral createPeripheral(@NotNull ITurtleAccess turtle, @NotNull TurtleSide side) {
         return peripheral;
-    }
-
-    @Nonnull
-    @Override
-    @OnlyIn(Dist.CLIENT)
-    public TransformedModel getModel(ITurtleAccess turtle, @Nonnull TurtleSide side) {
-        return TransformedModel.of(model);
     }
 
     @Override

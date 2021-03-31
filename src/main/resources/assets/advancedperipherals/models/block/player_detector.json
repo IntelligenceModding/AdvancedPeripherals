@@ -1,12 +1,12 @@
 {
   "parent": "block/cube_all",
   "textures": {
-    "north": "advancedperipherals:blocks/player_detector_side",
-    "south": "advancedperipherals:blocks/player_detector_side",
-    "west": "advancedperipherals:blocks/player_detector_side",
-    "east": "advancedperipherals:blocks/player_detector_side",
-    "up": "advancedperipherals:blocks/player_detector_up",
-    "down": "advancedperipherals:blocks/player_detector_up",
-    "particle": "advancedperipherals:blocks/player_detector_up"
+    "north": "advancedperipherals:block/player_detector_side",
+    "south": "advancedperipherals:block/player_detector_side",
+    "west": "advancedperipherals:block/player_detector_side",
+    "east": "advancedperipherals:block/player_detector_side",
+    "up": "advancedperipherals:block/player_detector_up",
+    "down": "advancedperipherals:block/player_detector_up",
+    "particle": "advancedperipherals:block/player_detector_up"
   }
 }

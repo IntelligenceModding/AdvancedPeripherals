@@ -6,6 +6,7 @@ buildscript {
     }
     dependencies {
         classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '4.0.23', changing: true
+        classpath 'com.android.tools.build:gradle:2.3.0'
     }
 }
 
