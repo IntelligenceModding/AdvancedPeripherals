@@ -24,7 +24,7 @@ public class ClientRegistry {
             "turtle_environment_upgrade_left",
             "turtle_environment_upgrade_right",
             "turtle_player_upgrade_left",
-            "turtle_player_upgrade_left"
+            "turtle_player_upgrade_right"
     };
 
     @SubscribeEvent

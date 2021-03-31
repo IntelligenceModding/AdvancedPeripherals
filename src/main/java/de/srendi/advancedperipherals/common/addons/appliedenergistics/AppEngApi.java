@@ -8,6 +8,9 @@ import appeng.api.networking.crafting.ICraftingJob;
 import appeng.api.storage.IMEMonitor;
 import appeng.api.storage.data.IAEFluidStack;
 import appeng.api.storage.data.IAEItemStack;
+import appeng.api.storage.data.IItemList;
+import dan200.computercraft.shared.util.NBTUtil;
+import de.srendi.advancedperipherals.AdvancedPeripherals;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -162,12 +165,28 @@ public class AppEngApi implements IAEAddon {
     }
 
     public Object getObjectFromJob(ICraftingJob job) {
-
         final Map<Object, Object> result = new HashMap<>();
         final Map<Object, Object> stack = new HashMap<>();
         stack.put("item", getMapFromStack(job.getOutput()));
         result.put("stack", stack);
         result.put("bytes", job.getByteTotal());
         return result;
+    }
+
+    public CompoundNBT findMatchingTag(ItemStack stack, String nbtHash, IMEMonitor<IAEItemStack> monitor) {
+        IItemList<IAEItemStack> itemStacks = monitor.getStorageList();
+        for(IAEItemStack aeStack : itemStacks) {
+            if(aeStack.getStackSize() > 0 && aeStack.getItem().equals(stack.getItem())) {
+                AdvancedPeripherals.Debug(aeStack + "");
+                CompoundNBT tag = aeStack.createItemStack().getTag();
+                String hash = NBTUtil.getNBTHash(tag);
+                AdvancedPeripherals.Debug("HASH: " + hash);
+                AdvancedPeripherals.Debug("TAG: " + tag);
+                if(nbtHash.equals(hash)) {
+                    return tag.copy();
+                }
+            }
+        }
+        return null;
     }
 }

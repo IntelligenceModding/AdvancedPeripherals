@@ -2,6 +2,7 @@ package de.srendi.advancedperipherals.common.addons.computercraft.turtles;
 
 import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
+import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.ChunkyPeripheral;
 import de.srendi.advancedperipherals.common.setup.Items;
 import de.srendi.advancedperipherals.common.util.ChunkManager;
@@ -44,21 +45,18 @@ public class TurtleChunky extends BaseTurtle<ChunkyPeripheral>{
         super.update(turtle, side);
         tick++;
         if(tick >= 10) {
+            //Add a chunk to the Chunk Manager every 10 ticks, if it's not already forced.
+            //The turtle can move, so we need to do that.
             if (!turtle.getWorld().isRemote && !loadedChunks.contains(turtle.getWorld().getChunk(turtle.getPosition()).getPos())) {
-                forceChunk(turtle.getWorld().getChunk(turtle.getPosition()).getPos(), true);
-               // AdvancedPeripherals.Debug("Debug 1");
+                AdvancedPeripherals.Debug(forceChunk(turtle.getWorld().getChunk(turtle.getPosition()).getPos(), true)+ "");
             }
             tick = 0;
         }
-        //AdvancedPeripherals.Debug("" + loadedChunks);
     }
 
     public boolean forceChunk(ChunkPos chunkPos, boolean load) {
         boolean forced = ChunkManager.INSTANCE.forceChunk((ServerWorld) tileEntity.getWorld(), tileEntity.getPos(), chunkPos, load);
-
-        if(forced)
-            loadedChunks.add(chunkPos);
-
+        loadedChunks.add(chunkPos);
         return forced;
     }
 }

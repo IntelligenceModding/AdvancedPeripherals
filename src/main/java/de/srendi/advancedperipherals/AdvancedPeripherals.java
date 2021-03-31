@@ -16,6 +16,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -53,6 +54,10 @@ public class AdvancedPeripherals {
         }
     }
 
-    //TODO: Add more comments to the code
-    //TODO: The code is a little bit messy...
+    public static void Debug(String message, Level level) {
+        if(AdvancedPeripheralsConfig.enableDebugMode) {
+            LOGGER.log(level, "[DEBUG] " + message);
+        }
+    }
+
 }

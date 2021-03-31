@@ -6,6 +6,7 @@ import com.refinedmods.refinedstorage.api.network.node.INetworkNode;
 import com.refinedmods.refinedstorage.api.util.StackListEntry;
 import com.refinedmods.refinedstorage.apiimpl.API;
 import com.refinedmods.refinedstorage.apiimpl.network.node.NetworkNode;
+import dan200.computercraft.shared.util.NBTUtil;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
@@ -22,6 +23,7 @@ public class RefinedStorage {
 
     public RefinedStorage() {
         this.api = API.instance();
+        initiate();
     }
 
     private static INetworkNode read(CompoundNBT tag, NetworkNode node) {
@@ -57,8 +59,24 @@ public class RefinedStorage {
         return result;
     }
 
+    public static CompoundNBT findMatchingTag(ItemStack stack, String nbtHash, List<ItemStack> items) {
+        for(ItemStack rsStack : items) {
+            if(rsStack.getCount() > 0 && rsStack.getItem().equals(stack.getItem())) {
+                AdvancedPeripherals.Debug(rsStack + "");
+                CompoundNBT tag = rsStack.getTag();
+                String hash = NBTUtil.getNBTHash(tag);
+                AdvancedPeripherals.Debug("HASH: " + hash);
+                AdvancedPeripherals.Debug("TAG: " + tag);
+                if(nbtHash.equals(hash)) {
+                    return tag.copy();
+                }
+            }
+        }
+        return null;
+    }
+
     public void initiate() {
-        api.getNetworkNodeRegistry().add(new ResourceLocation(AdvancedPeripherals.MOD_ID, "peripheral"), (tag, world, pos)->read(tag, new RefinedStorageNode(world, pos)));
+        api.getNetworkNodeRegistry().add(new ResourceLocation(AdvancedPeripherals.MOD_ID, "rs_bridge"), (tag, world, pos)->read(tag, new RefinedStorageNode(world, pos)));
     }
 
     public IRSAPI getApi() {
