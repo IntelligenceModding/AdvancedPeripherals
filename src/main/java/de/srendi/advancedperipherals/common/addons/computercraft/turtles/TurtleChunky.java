@@ -15,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashSet;
 import java.util.Set;
 
-public class TurtleChunky extends BaseTurtle<ChunkyPeripheral>{
+public class TurtleChunky extends BaseTurtle<ChunkyPeripheral> {
 
     protected static final Set<ChunkPos> loadedChunks = new HashSet<>();
 
@@ -44,14 +44,17 @@ public class TurtleChunky extends BaseTurtle<ChunkyPeripheral>{
     public void update(@NotNull ITurtleAccess turtle, @NotNull TurtleSide side) {
         super.update(turtle, side);
         tick++;
-        if(tick >= 10) {
+        if (tick >= 10) {
             //Add a chunk to the Chunk Manager every 10 ticks, if it's not already forced.
             //The turtle can move, so we need to do that.
-            if (!turtle.getWorld().isRemote && !loadedChunks.contains(turtle.getWorld().getChunk(turtle.getPosition()).getPos())) {
-                AdvancedPeripherals.Debug(forceChunk(turtle.getWorld().getChunk(turtle.getPosition()).getPos(), true)+ "");
+            if (peripheral.isEnabled()) {
+                if (!turtle.getWorld().isRemote && !loadedChunks.contains(turtle.getWorld().getChunk(turtle.getPosition()).getPos())) {
+                    AdvancedPeripherals.Debug(forceChunk(turtle.getWorld().getChunk(turtle.getPosition()).getPos(), true) + "");
+                }
+                tick = 0;
             }
-            tick = 0;
         }
+
     }
 
     public boolean forceChunk(ChunkPos chunkPos, boolean load) {
