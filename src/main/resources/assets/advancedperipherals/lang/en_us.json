@@ -1,8 +1,9 @@
 {
   "item.advancedperipherals.chunk_controller": "Chunk Controller",
   "item.advancedperipherals.computer_tool": "Computer Tool",
-  "item.advancedperipherals.tooltip.computer_tool": "§7You can access a GUI of our blocks with this magic tool.",
   "item.advancedperipherals.tooltip.hold_ctrl": "§b[§7CTRL§b] §7For Description",
+  "item.advancedperipherals.tooltip.computer_tool": "§7You can access a GUI of our blocks with this magic tool.",
+  "item.advancedperipherals.tooltip.energy_detector": "§7Can detect energy flow and acts as a resistor.",
   "item.advancedperipherals.tooltip.chunk_controller": "§7A crafting ingredient for the Chunky Turtle.",
   "item.advancedperipherals.tooltip.environment_detector": "§7Can be used to interact with the World.",
   "item.advancedperipherals.tooltip.player_detector": "§7Can be used to interact with Players.",
@@ -14,6 +15,7 @@
   "block.advancedperipherals.player_detector": "Player Detector",
   "block.advancedperipherals.me_bridge": "ME Bridge",
   "block.advancedperipherals.rs_bridge": "RS Bridge",
+  "block.advancedperipherals.energy_detector": "Energy Detector",
   "turtle.advancedperipherals.chat_box_turtle": "Chatty",
   "turtle.advancedperipherals.environment_detector_turtle": "Environment",
   "turtle.advancedperipherals.player_detector_turtle": "Player",

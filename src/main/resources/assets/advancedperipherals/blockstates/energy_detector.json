@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "advancedperipherals:block/energy_detector"
+    },
+    "facing=south": {
+      "model": "advancedperipherals:block/energy_detector",
+      "y": 180
+    },
+    "facing=east": {
+      "model": "advancedperipherals:block/energy_detector",
+      "y": 90
+    },
+    "facing=west": {
+      "model": "advancedperipherals:block/energy_detector",
+      "y": 270
+    }
+  }
+}

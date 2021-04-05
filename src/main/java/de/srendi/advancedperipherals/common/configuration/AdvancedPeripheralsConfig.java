@@ -12,6 +12,7 @@ public class AdvancedPeripheralsConfig {
     public static boolean enableEnvironmentDetector;
     public static boolean enableChunkyTurtle;
     public static boolean enableDebugMode;
+    public static boolean enableEnergyDetector;
 
     public static class CommonConfig {
 
@@ -23,6 +24,7 @@ public class AdvancedPeripheralsConfig {
         final ForgeConfigSpec.BooleanValue ENABLE_ENVIRONMENT_DETECTOR;
         final ForgeConfigSpec.BooleanValue ENABLE_CHUNKY_TURTLE;
         final ForgeConfigSpec.BooleanValue ENABLE_DEBUG_MODE;
+        final ForgeConfigSpec.BooleanValue ENABLE_ENERGY_DETECTOR;
 
         CommonConfig(final ForgeConfigSpec.Builder builder) {
             builder.comment("").push("Features");
@@ -35,6 +37,7 @@ public class AdvancedPeripheralsConfig {
             ENABLE_ENVIRONMENT_DETECTOR = builder.comment("Enable the Environment Detector or not.").define("enableEnvironmentDetector", true);
             ENABLE_CHUNKY_TURTLE = builder.comment("Enable the Chunky Turtle or not.").define("enableChunkyTurtle", true);
             ENABLE_DEBUG_MODE = builder.comment("Enable the debug mode, you should only enable it, if a developer say it or something does not work.").define("enableDebugMode", false);
+            ENABLE_ENERGY_DETECTOR = builder.comment("nable the Energy Detector or not.").define("enableEnergyDetector", true);
 
             builder.pop();
         }

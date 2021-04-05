@@ -15,6 +15,7 @@ public class Blocks {
     public static final RegistryObject<Block> PLAYER_DETECTOR = register("player_detector", PlayerDetectorBlock::new, PlayerDetectorItem::new);
     public static final RegistryObject<Block> ME_BRIDGE = register("me_bridge", MeBridge::new, MeBridgeItem::new);
     public static final RegistryObject<Block> RS_BRIDGE = register("rs_bridge", RsBridge::new, RsBridgeItem::new);
+    public static final RegistryObject<Block> ENERGY_DETECTOR = register("energy_detector", EnergyDetectorBlock::new, EnergyDetectorItem::new);
 
     static void register() {}
 
