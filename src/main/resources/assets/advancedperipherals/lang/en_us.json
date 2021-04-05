@@ -1,5 +1,7 @@
 {
   "item.advancedperipherals.chunk_controller": "Chunk Controller",
+  "item.advancedperipherals.computer_tool": "Computer Tool",
+  "item.advancedperipherals.tooltip.computer_tool": "§7You can access a GUI of our blocks with this magic tool.",
   "item.advancedperipherals.tooltip.hold_ctrl": "§b[§7CTRL§b] §7For Description",
   "item.advancedperipherals.tooltip.chunk_controller": "§7A crafting ingredient for the Chunky Turtle.",
   "item.advancedperipherals.tooltip.environment_detector": "§7Can be used to interact with the World.",

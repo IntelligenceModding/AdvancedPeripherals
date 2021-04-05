@@ -17,12 +17,8 @@ import dan200.computercraft.api.lua.MethodResult;
 import dan200.computercraft.api.peripheral.IComputerAccess;
 import de.srendi.advancedperipherals.common.util.ServerWorker;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
-import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Optional;
 
 public class CraftJob implements ICraftingCallback, ILuaCallback {
 
@@ -31,20 +27,18 @@ public class CraftJob implements ICraftingCallback, ILuaCallback {
     private final IComputerAccess computer;
     private final IGridNode node;
     private final IActionSource source;
-    private final String item;
-    private final Optional<Integer> count;
+    private final ItemStack item;
     private final World world;
 
     private MethodResult result;
     private LuaException exception;
 
-    public CraftJob(World world, final IComputerAccess computer, IGridNode node, String item, Optional<Integer> count, IActionSource source) {
+    public CraftJob(World world, final IComputerAccess computer, IGridNode node, ItemStack item, IActionSource source) {
         this.computer = computer;
         this.node = node;
         this.world = world;
         this.source = source;
         this.item = item;
-        this.count = count;
     }
 
     public void startCrafting() {
@@ -59,7 +53,7 @@ public class CraftJob implements ICraftingCallback, ILuaCallback {
         IStorageGrid storage = grid.getCache(IStorageGrid.class);
         ICraftingGrid crafting = grid.getCache(ICraftingGrid.class);
         IMEMonitor<IAEItemStack> monitor = storage.getInventory(AppEngApi.getInstance().getApi().storage().getStorageChannel(IItemStorageChannel.class));
-        ItemStack itemstack = new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation(item)));
+        ItemStack itemstack = item;
         IAEItemStack aeItem = AppEngApi.getInstance().findAEStackFromItemStack(monitor, itemstack);
         if (aeItem == null) {
             this.computer.queueEvent(EVENT, null, item + " does not exists in the me system");
@@ -73,7 +67,7 @@ public class CraftJob implements ICraftingCallback, ILuaCallback {
             exception = new LuaException(item + " is not craftable");
             return;
         }
-        count.ifPresent(aeItem::setStackSize);
+        aeItem.setStackSize(itemstack.getCount());
 
         crafting.beginCraftingJob(world, grid, this.source, aeItem, this);
     }
@@ -99,8 +93,6 @@ public class CraftJob implements ICraftingCallback, ILuaCallback {
             return;
         }
 
-        IStorageGrid storage = grid.getCache(IStorageGrid.class);
-        IMEMonitor<IAEItemStack> monitor = storage.getInventory(AppEngApi.getInstance().getApi().storage().getStorageChannel(IItemStorageChannel.class));
         ICraftingGrid crafting = grid.getCache(ICraftingGrid.class);
         ICraftingLink link = crafting.submitJob(job, null, null, false, this.source);
         if (link == null) {

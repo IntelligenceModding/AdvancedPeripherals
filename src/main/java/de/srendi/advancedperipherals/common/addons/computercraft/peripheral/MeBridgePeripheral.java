@@ -31,7 +31,10 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Locale;
+import java.util.Map;
 
 public class MeBridgePeripheral extends BasePeripheral {
 
@@ -59,7 +62,7 @@ public class MeBridgePeripheral extends BasePeripheral {
         ItemStack itemToCraft = ItemUtil.getItemStack(arguments.getTable(0), monitor);
         if (itemToCraft.isEmpty())
             throw new NullPointerException("Item " + itemToCraft + " does not exists");
-        CraftJob job = new CraftJob(tileEntity.getWorld(), computer, node, arguments.getString(1), Optional.of(itemToCraft.getCount()), source);
+        CraftJob job = new CraftJob(tileEntity.getWorld(), computer, node, itemToCraft, source);
         ServerWorker.add(job::startCrafting);
         return MethodResult.pullEvent("crafting", job);
     }
