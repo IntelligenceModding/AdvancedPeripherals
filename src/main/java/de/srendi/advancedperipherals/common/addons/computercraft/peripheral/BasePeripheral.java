@@ -4,7 +4,10 @@ import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.peripheral.IComputerAccess;
 import dan200.computercraft.api.peripheral.IPeripheral;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
+import net.minecraft.entity.Entity;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -16,6 +19,7 @@ public abstract class BasePeripheral implements IPeripheral {
     protected final List<IComputerAccess> connectedComputers = new ArrayList<>();
     protected String type;
     protected TileEntity tileEntity;
+    public Entity entity;
 
     public BasePeripheral(String type, PeripheralTileEntity<?> tileEntity) {
         this.type = type;
@@ -25,6 +29,11 @@ public abstract class BasePeripheral implements IPeripheral {
     public BasePeripheral(String type, TileEntity tileEntity) {
         this.type = type;
         this.tileEntity = tileEntity;
+    }
+
+    public BasePeripheral(String type, Entity entity) {
+        this.type = type;
+        this.entity = entity;
     }
 
     public void setTileEntity(TileEntity tileEntity) {
@@ -69,4 +78,15 @@ public abstract class BasePeripheral implements IPeripheral {
         return tileEntity.getTileData().getString("CustomName");
     }
 
+    protected BlockPos getPos() {
+        return tileEntity != null ? tileEntity.getPos() : entity.getPosition();
+    }
+
+    protected World getWorld() {
+        return tileEntity != null ? tileEntity.getWorld() : entity.getEntityWorld();
+    }
+
+    public void setEntity(Entity entity) {
+        this.entity = entity;
+    }
 }

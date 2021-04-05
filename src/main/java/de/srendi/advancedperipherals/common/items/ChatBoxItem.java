@@ -20,6 +20,11 @@ public class ChatBoxItem extends BaseBlockItem {
     }
 
     @Override
+    protected Optional<String> getPocketID() {
+        return Optional.empty();
+    }
+
+    @Override
     protected ITextComponent getDescription() {
         return new TranslationTextComponent("item.advancedperipherals.tooltip.chat_box");
     }

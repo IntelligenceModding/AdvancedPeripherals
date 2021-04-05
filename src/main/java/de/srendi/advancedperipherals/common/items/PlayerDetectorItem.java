@@ -15,6 +15,11 @@ public class PlayerDetectorItem extends BaseBlockItem {
     }
 
     @Override
+    protected Optional<String> getPocketID() {
+        return Optional.empty();
+    }
+
+    @Override
     protected Optional<String> getTurtleID() {
         return Optional.of("player_detector_turtle");
     }

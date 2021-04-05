@@ -1,6 +1,7 @@
 {
   "item.advancedperipherals.chunk_controller": "Chunk Controller",
   "item.advancedperipherals.computer_tool": "Computer Werkzeug",
+  "item.advancedperipherals.tooltip.computer_tool": "§7You can access a GUI of our blocks with this magic tool.",
   "item.advancedperipherals.tooltip.hold_ctrl": "§b[§7CTRL§b] §7Für Beschreibung",
   "item.advancedperipherals.tooltip.chunk_controller": "§7Crafting Komponente für die Chunky Turtle.",
   "item.advancedperipherals.tooltip.environment_detector": "§7Kann mit der Welt interagieren.",
@@ -17,5 +18,6 @@
   "turtle.advancedperipherals.environment_detector_turtle": "Umgebungs",
   "turtle.advancedperipherals.player_detector_turtle": "Spieler",
   "turtle.advancedperipherals.chunky_turtle": "Chunky",
+  "pocket.advancedperipherals.environment_pocket": "Environment",
   "itemGroup.advancedperipheralstab": "Advanced Peripherals"
 }

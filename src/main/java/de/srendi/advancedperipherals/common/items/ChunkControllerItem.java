@@ -9,9 +9,13 @@ import java.util.Optional;
 
 public class ChunkControllerItem extends BaseItem {
 
-
     public ChunkControllerItem() {
         super(new Properties().group(AdvancedPeripherals.TAB).maxStackSize(64));
+    }
+
+    @Override
+    protected Optional<String> getPocketID() {
+        return Optional.empty();
     }
 
     @Override
