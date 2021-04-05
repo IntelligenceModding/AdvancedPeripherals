@@ -4,6 +4,7 @@ import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.text.StringTextComponent;
@@ -21,6 +22,10 @@ public class ChatBoxPeripheral extends BasePeripheral {
 
     public ChatBoxPeripheral(String type, TileEntity tileEntity) {
         super(type, tileEntity);
+    }
+
+    public ChatBoxPeripheral(String type, Entity entity) {
+        super(type, entity);
     }
 
     public int getTick() {
