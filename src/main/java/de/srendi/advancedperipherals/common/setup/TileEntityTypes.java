@@ -13,6 +13,7 @@ public class TileEntityTypes {
     public static final RegistryObject<TileEntityType<PlayerDetectorTileEntity>> PLAYER_DETECTOR = Registration.TILE_ENTITIES.register("player_detector", ()->new TileEntityType<>(PlayerDetectorTileEntity::new, Sets.newHashSet(Blocks.PLAYER_DETECTOR.get()), null));
     public static final RegistryObject<TileEntityType<MeBridgeTileEntity>> ME_BRIDGE = ModList.get().isLoaded("appliedenergistics2") ? Registration.TILE_ENTITIES.register("me_bridge", ()->new TileEntityType<>(MeBridgeTileEntity::new, Sets.newHashSet(Blocks.ME_BRIDGE.get()), null)) : null;
     public static final RegistryObject<TileEntityType<RsBridgeTileEntity>> RS_BRIDGE = ModList.get().isLoaded("refinedstorage") ? Registration.TILE_ENTITIES.register("rs_bridge", ()->new TileEntityType<>(RsBridgeTileEntity::new, Sets.newHashSet(Blocks.RS_BRIDGE.get()), null)) : null;
+    public static final RegistryObject<TileEntityType<EnergyDetectorTileEntity>> ENERGY_DETECTOR = Registration.TILE_ENTITIES.register("energy_detector", ()->new TileEntityType<>(EnergyDetectorTileEntity::new, Sets.newHashSet(Blocks.ENERGY_DETECTOR.get()), null));
 
     static void register() {}
 

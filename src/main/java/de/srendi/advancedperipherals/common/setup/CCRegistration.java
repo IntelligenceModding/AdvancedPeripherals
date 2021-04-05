@@ -22,7 +22,12 @@ public class CCRegistration {
 
     public static PocketEnvironment environmentPocket;
 
-    public static void register() {
+    private static void registerPocketUpgrades() {
+        environmentPocket = new PocketEnvironment();
+        ComputerCraftAPI.registerPocketUpgrade(environmentPocket);
+    }
+
+    private static void registerTurtleUpgrades() {
         chatBox = new TurtleChatBox();
         ComputerCraftAPI.registerTurtleUpgrade(chatBox);
         playerDetector = new TurtlePlayerDetector();
@@ -31,12 +36,11 @@ public class CCRegistration {
         ComputerCraftAPI.registerTurtleUpgrade(environmentDetector);
         chunky = new TurtleChunky();
         ComputerCraftAPI.registerTurtleUpgrade(chunky);
-        environmentPocket = new PocketEnvironment();
-        ComputerCraftAPI.registerPocketUpgrade(environmentPocket);
     }
 
     @SubscribeEvent
     public static void registerItems(RegistryEvent.Register<Item> event) {
-        register();
+        registerPocketUpgrades();
+        registerTurtleUpgrades();
     }
 }
