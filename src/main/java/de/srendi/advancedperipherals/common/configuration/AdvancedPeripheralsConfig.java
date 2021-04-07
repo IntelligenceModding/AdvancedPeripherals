@@ -4,7 +4,11 @@ import net.minecraftforge.common.ForgeConfigSpec;
 
 public class AdvancedPeripheralsConfig {
 
+    //Restrictions
     public static int chatBoxCooldown;
+    public static int playerDetMaxRange;
+
+    //Features
     public static boolean enableChatBox;
     public static boolean enableMeBridge;
     public static boolean enableRsBridge;
@@ -16,7 +20,11 @@ public class AdvancedPeripheralsConfig {
 
     public static class CommonConfig {
 
+        //Restrictions
         final ForgeConfigSpec.IntValue CHAT_BOX_COOLDOWN;
+        final ForgeConfigSpec.IntValue PLAYER_DET_MAX_RANGE;
+
+        //Features
         final ForgeConfigSpec.BooleanValue ENABLE_CHAT_BOX;
         final ForgeConfigSpec.BooleanValue ENABLE_ME_BRIDGE;
         final ForgeConfigSpec.BooleanValue ENABLE_RS_BRIDGE;
@@ -27,9 +35,13 @@ public class AdvancedPeripheralsConfig {
         final ForgeConfigSpec.BooleanValue ENABLE_ENERGY_DETECTOR;
 
         CommonConfig(final ForgeConfigSpec.Builder builder) {
-            builder.comment("").push("Features");
+            builder.comment("").push("Restrictions");
 
             CHAT_BOX_COOLDOWN = builder.comment("This deactivates the methods and the event of the chat box.").defineInRange("chatBoxCooldown", 10, 1, 100000);
+            PLAYER_DET_MAX_RANGE = builder.comment("The max range of the player detector functions. " + "If anyone use a higher range, the detector will use this max range").defineInRange("playerDetMaxRange", 2147483646, 0, 2147483646);
+
+            builder.comment("").push("Features");
+
             ENABLE_CHAT_BOX = builder.comment("Enable the Chat Box or not.").define("enableChatBox", true);
             ENABLE_ME_BRIDGE = builder.comment("Enable the Me Bridge or not.").define("enableMeBridge", true);
             ENABLE_RS_BRIDGE = builder.comment("Enable the Rs Bridge or not.").define("enableRsBridge", true);

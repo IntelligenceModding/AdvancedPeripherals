@@ -175,14 +175,14 @@ public class AppEngApi implements IAEAddon {
 
     public CompoundNBT findMatchingTag(ItemStack stack, String nbtHash, IMEMonitor<IAEItemStack> monitor) {
         IItemList<IAEItemStack> itemStacks = monitor.getStorageList();
-        for(IAEItemStack aeStack : itemStacks) {
-            if(aeStack.getStackSize() > 0 && aeStack.getItem().equals(stack.getItem())) {
+        for (IAEItemStack aeStack : itemStacks) {
+            if (aeStack.getStackSize() > 0 && aeStack.getItem().equals(stack.getItem())) {
                 AdvancedPeripherals.Debug(aeStack + "");
                 CompoundNBT tag = aeStack.createItemStack().getTag();
                 String hash = NBTUtil.getNBTHash(tag);
                 AdvancedPeripherals.Debug("HASH: " + hash);
                 AdvancedPeripherals.Debug("TAG: " + tag);
-                if(nbtHash.equals(hash)) {
+                if (nbtHash.equals(hash)) {
                     return tag.copy();
                 }
             }

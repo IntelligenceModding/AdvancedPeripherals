@@ -8,6 +8,7 @@ import de.srendi.advancedperipherals.common.util.APEnergyStorage;
 import net.minecraft.block.BlockState;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.ITickableTileEntity;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
@@ -15,6 +16,8 @@ import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class EnergyDetectorTileEntity extends PeripheralTileEntity<EnergyDetectorPeripheral> implements ITickableTileEntity {
 
@@ -24,8 +27,8 @@ public class EnergyDetectorTileEntity extends PeripheralTileEntity<EnergyDetecto
     public APEnergyStorage storageIn = new APEnergyStorage(Integer.MAX_VALUE, Integer.MAX_VALUE, 0);
     public APEnergyStorage storageOut = new APEnergyStorage(Integer.MAX_VALUE, 0, Integer.MAX_VALUE);
 
-    LazyOptional<IEnergyStorage> energyStorageCapIn = LazyOptional.of(() -> storageIn);
-    LazyOptional<IEnergyStorage> energyStorageCapOut = LazyOptional.of(() -> storageOut);
+    LazyOptional<IEnergyStorage> energyStorageCapIn = LazyOptional.of(()->storageIn);
+    LazyOptional<IEnergyStorage> energyStorageCapOut = LazyOptional.of(()->storageOut);
 
     Direction energyInDirection = Direction.NORTH;
     Direction energyOutDirection = Direction.SOUTH;
@@ -44,9 +47,9 @@ public class EnergyDetectorTileEntity extends PeripheralTileEntity<EnergyDetecto
         energyInDirection = getBlockState().get(EnergyDetectorBlock.FACING);
         energyOutDirection = getBlockState().get(EnergyDetectorBlock.FACING).getOpposite();
         if (cap == CapabilityEnergy.ENERGY) {
-            if(direction == energyInDirection)
+            if (direction == energyInDirection)
                 return energyStorageCapIn.cast();
-            if(direction == energyOutDirection) {
+            if (direction == energyOutDirection) {
                 return energyStorageCapOut.cast();
             }
         }
@@ -55,11 +58,14 @@ public class EnergyDetectorTileEntity extends PeripheralTileEntity<EnergyDetecto
 
     @Override
     public void tick() {
-        if(!world.isRemote) {
-            if(storageIn.getEnergyStored() > 0) {
+        if (!world.isRemote) {
+            if (storageIn.getEnergyStored() > 0) {
                 int received = storageOut.receivePower(storageIn.getEnergyStored(), false, true);
                 storageIn.extractPower(received, false, true);
                 this.transferRate = received;
+            }
+            if (storageOut.getEnergyStored() > 0) {
+                sendOutPower();
             }
         }
     }
@@ -79,5 +85,26 @@ public class EnergyDetectorTileEntity extends PeripheralTileEntity<EnergyDetecto
         storageIn.setEnergy(nbt.getInt("storageInEnergy"));
         storageOut.setEnergy(nbt.getInt("storageOutEnergy"));
         super.read(state, nbt);
+    }
+
+    private void sendOutPower() {
+        AtomicInteger capacity = new AtomicInteger(storageOut.getEnergyStored());
+        if (capacity.get() > 0) {
+            Direction direction = energyOutDirection;
+            TileEntity te = world.getTileEntity(pos.offset(direction));
+            if (te != null) {
+                te.getCapability(CapabilityEnergy.ENERGY, direction.getOpposite()).map(handler->{
+                    if (handler.canReceive()) {
+                        int received = handler.receiveEnergy(Math.min(capacity.get(), maxTransferRate), false);
+                        capacity.addAndGet(-received);
+                        storageOut.extractPower(received, false, false);
+                        markDirty();
+                        return capacity.get() > 0;
+                    } else {
+                        return true;
+                    }
+                }).orElse(true);
+            }
+        }
     }
 }

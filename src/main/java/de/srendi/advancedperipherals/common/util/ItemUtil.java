@@ -25,12 +25,12 @@ public class ItemUtil {
         ResourceLocation location;
         try {
             location = new ResourceLocation(name);
-        } catch(ResourceLocationException ex) {
+        } catch (ResourceLocationException ex) {
             location = null;
         }
 
         T value;
-        if(location != null && forgeRegistry.containsKey(location) && (value = forgeRegistry.getValue(location)) != null) {
+        if (location != null && forgeRegistry.containsKey(location) && (value = forgeRegistry.getValue(location)) != null) {
             return value;
         } else {
             return null;
@@ -39,7 +39,7 @@ public class ItemUtil {
 
     //AE2
     public static ItemStack getItemStack(Map<?, ?> table, IMEMonitor<IAEItemStack> monitor) throws LuaException {
-        if(table == null || !table.containsKey("name"))
+        if (table == null || !table.containsKey("name"))
             return ItemStack.EMPTY;
 
         String name = TableHelper.getStringField(table, "name");
@@ -48,7 +48,7 @@ public class ItemUtil {
 
         ItemStack stack = new ItemStack(item, 1);
 
-        if(table.containsKey("count"))
+        if (table.containsKey("count"))
             stack.setCount(TableHelper.getIntField(table, "count"));
 
         stack.setTag(getTag(stack, table, monitor));
@@ -56,11 +56,11 @@ public class ItemUtil {
         return stack;
     }
 
-    private static CompoundNBT getTag(ItemStack stack, Map<? ,?> table, IMEMonitor<IAEItemStack> monitor) throws LuaException {
+    private static CompoundNBT getTag(ItemStack stack, Map<?, ?> table, IMEMonitor<IAEItemStack> monitor) throws LuaException {
         CompoundNBT nbt = NBTUtil.fromText(TableHelper.optStringField(table, "json", null));
-        if(nbt == null) {
+        if (nbt == null) {
             nbt = NBTUtil.fromBinary(TableHelper.optStringField(table, "tag", null));
-            if(nbt == null) {
+            if (nbt == null) {
                 nbt = parseNBTHash(stack, table, monitor);
             }
         }
@@ -69,10 +69,10 @@ public class ItemUtil {
 
     private static CompoundNBT parseNBTHash(ItemStack stack, Map<?, ?> table, IMEMonitor<IAEItemStack> monitor) throws LuaException {
         String nbt = TableHelper.optStringField(table, "nbt", null);
-        if(nbt == null || nbt.isEmpty())
+        if (nbt == null || nbt.isEmpty())
             return null;
         CompoundNBT tag = AppEngApi.getInstance().findMatchingTag(stack, nbt, monitor);
-        if(tag != null)
+        if (tag != null)
             return tag;
 
         tag = new CompoundNBT();
@@ -82,7 +82,7 @@ public class ItemUtil {
 
     //RS
     public static ItemStack getItemStackRS(Map<?, ?> table, List<ItemStack> items) throws LuaException {
-        if(table == null || !table.containsKey("name"))
+        if (table == null || !table.containsKey("name"))
             return ItemStack.EMPTY;
 
         String name = TableHelper.getStringField(table, "name");
@@ -91,7 +91,7 @@ public class ItemUtil {
 
         ItemStack stack = new ItemStack(item, 1);
 
-        if(table.containsKey("count"))
+        if (table.containsKey("count"))
             stack.setCount(TableHelper.getIntField(table, "count"));
 
         stack.setTag(getTagRS(stack, table, items));
@@ -99,11 +99,11 @@ public class ItemUtil {
         return stack;
     }
 
-    private static CompoundNBT getTagRS(ItemStack stack, Map<? ,?> table, List<ItemStack> items) throws LuaException {
+    private static CompoundNBT getTagRS(ItemStack stack, Map<?, ?> table, List<ItemStack> items) throws LuaException {
         CompoundNBT nbt = NBTUtil.fromText(TableHelper.optStringField(table, "json", null));
-        if(nbt == null) {
+        if (nbt == null) {
             nbt = NBTUtil.fromBinary(TableHelper.optStringField(table, "tag", null));
-            if(nbt == null) {
+            if (nbt == null) {
                 nbt = parseNBTHashRS(stack, table, items);
             }
         }
@@ -112,10 +112,10 @@ public class ItemUtil {
 
     private static CompoundNBT parseNBTHashRS(ItemStack stack, Map<?, ?> table, List<ItemStack> items) throws LuaException {
         String nbt = TableHelper.optStringField(table, "nbt", null);
-        if(nbt == null || nbt.isEmpty())
+        if (nbt == null || nbt.isEmpty())
             return null;
         CompoundNBT tag = RefinedStorage.findMatchingTag(stack, nbt, items);
-        if(tag != null)
+        if (tag != null)
             return tag;
 
         tag = new CompoundNBT();

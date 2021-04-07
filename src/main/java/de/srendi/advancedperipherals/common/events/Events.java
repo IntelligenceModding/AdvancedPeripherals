@@ -19,7 +19,7 @@ public class Events {
     @SubscribeEvent
     public static void onChat(ServerChatEvent event) {
         ServerWorld world = event.getPlayer().getServerWorld();
-        TileEntityList.get(world).getTileEntities(world).forEach(tileEntity -> { //Events for computers
+        TileEntityList.get(world).getTileEntities(world).forEach(tileEntity->{ //Events for computers
             if (tileEntity instanceof ChatBoxTileEntity) {
                 if (AdvancedPeripheralsConfig.enableChatBox) {
                     if (event.getMessage().startsWith("$")) {
@@ -35,9 +35,9 @@ public class Events {
                         computer.queueEvent("chat", event.getUsername(), event.getMessage());
                     }
                 }
-            } else if(tileEntity instanceof TileTurtle) { //Events for turtles
+            } else if (tileEntity instanceof TileTurtle) { //Events for turtles
                 TileTurtle tileTurtle = (TileTurtle) tileEntity;
-                if(tileTurtle.getUpgrade(TurtleSide.RIGHT) instanceof TurtleChatBox || tileTurtle.getUpgrade(TurtleSide.LEFT) instanceof TurtleChatBox) {
+                if (tileTurtle.getUpgrade(TurtleSide.RIGHT) instanceof TurtleChatBox || tileTurtle.getUpgrade(TurtleSide.LEFT) instanceof TurtleChatBox) {
                     if (event.getMessage().startsWith("$")) {
                         event.setCanceled(true);
                         tileTurtle.getServerComputer().queueEvent("chat", new Object[]{event.getUsername(), event.getMessage().replace("$", "")});

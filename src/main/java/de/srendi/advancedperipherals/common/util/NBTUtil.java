@@ -23,11 +23,11 @@ public class NBTUtil {
     }
 
     public static String toBinary(CompoundNBT nbt) {
-        if(nbt == null)
+        if (nbt == null)
             return null;
 
         try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
-            try(OutputStream stream = Base64.getEncoder().wrap(outputStream)) {
+            try (OutputStream stream = Base64.getEncoder().wrap(outputStream)) {
                 CompressedStreamTools.writeCompressed(nbt, stream);
             }
             return outputStream.toString();
@@ -39,11 +39,12 @@ public class NBTUtil {
     }
 
     public static CompoundNBT fromBinary(String base64) {
-        if(base64 == null) return null;
+        if (base64 == null)
+            return null;
 
-        try(InputStream inputStream = Base64.getDecoder().wrap(new ByteArrayInputStream(base64.getBytes()))) {
+        try (InputStream inputStream = Base64.getDecoder().wrap(new ByteArrayInputStream(base64.getBytes()))) {
             return CompressedStreamTools.readCompressed(inputStream);
-        } catch(IOException ex) {
+        } catch (IOException ex) {
             AdvancedPeripherals.Debug("Could not parse binary data to NBT", Level.ERROR);
             ex.printStackTrace();
             return null;

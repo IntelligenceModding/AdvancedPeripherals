@@ -27,7 +27,7 @@ public abstract class PeripheralTileEntity<T extends BasePeripheral> extends Til
 
     @Override
     public <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction direction) {
-        if(!peripheral.isEnabled()) {
+        if (!peripheral.isEnabled()) {
             AdvancedPeripherals.Debug(peripheral.getType() + " is disabled, enable it in the Configuration.");
         }
         if (cap == CAPABILITY_PERIPHERAL) {

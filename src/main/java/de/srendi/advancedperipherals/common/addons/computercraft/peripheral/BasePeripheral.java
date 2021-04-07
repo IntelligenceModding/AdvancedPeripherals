@@ -17,9 +17,9 @@ import java.util.List;
 public abstract class BasePeripheral implements IPeripheral {
 
     protected final List<IComputerAccess> connectedComputers = new ArrayList<>();
+    public Entity entity;
     protected String type;
     protected TileEntity tileEntity;
-    public Entity entity;
 
     public BasePeripheral(String type, PeripheralTileEntity<?> tileEntity) {
         this.type = type;

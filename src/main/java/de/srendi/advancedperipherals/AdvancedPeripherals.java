@@ -43,21 +43,21 @@ public class AdvancedPeripherals {
         MinecraftForge.EVENT_BUS.register(this);
     }
 
-    @SubscribeEvent
-    public void commonSetup(FMLCommonSetupEvent event) {
-        event.enqueueWork(ChunkManager::register);
-    }
-
     public static void Debug(String message) {
-        if(AdvancedPeripheralsConfig.enableDebugMode) {
+        if (AdvancedPeripheralsConfig.enableDebugMode) {
             LOGGER.debug("[DEBUG] " + message);
         }
     }
 
     public static void Debug(String message, Level level) {
-        if(AdvancedPeripheralsConfig.enableDebugMode) {
+        if (AdvancedPeripheralsConfig.enableDebugMode) {
             LOGGER.log(level, "[DEBUG] " + message);
         }
+    }
+
+    @SubscribeEvent
+    public void commonSetup(FMLCommonSetupEvent event) {
+        event.enqueueWork(ChunkManager::register);
     }
 
 }
