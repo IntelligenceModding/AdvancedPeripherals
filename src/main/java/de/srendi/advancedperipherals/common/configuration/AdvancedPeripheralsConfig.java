@@ -41,6 +41,8 @@ public class AdvancedPeripheralsConfig {
             PLAYER_DET_MAX_RANGE = builder.comment("The max range of the player detector functions. "
                     + "If anyone use a higher range, the detector will use this max range").defineInRange("playerDetMaxRange", 2147483646, 0, 2147483646);
 
+            builder.pop();
+
             builder.comment("").push("Features");
 
             ENABLE_CHAT_BOX = builder.comment("Enable the Chat Box or not.").define("enableChatBox", true);
@@ -50,7 +52,7 @@ public class AdvancedPeripheralsConfig {
             ENABLE_ENVIRONMENT_DETECTOR = builder.comment("Enable the Environment Detector or not.").define("enableEnvironmentDetector", true);
             ENABLE_CHUNKY_TURTLE = builder.comment("Enable the Chunky Turtle or not.").define("enableChunkyTurtle", true);
             ENABLE_DEBUG_MODE = builder.comment("Enable the debug mode, you should only enable it, if a developer say it or something does not work.").define("enableDebugMode", false);
-            ENABLE_ENERGY_DETECTOR = builder.comment("nable the Energy Detector or not.").define("enableEnergyDetector", true);
+            ENABLE_ENERGY_DETECTOR = builder.comment("Enable the Energy Detector or not.").define("enableEnergyDetector", true);
 
             builder.pop();
         }

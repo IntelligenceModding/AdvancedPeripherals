@@ -17,7 +17,7 @@ import net.minecraftforge.fml.common.Mod;
 public class Events {
 
     @SubscribeEvent
-    public static void onChat(ServerChatEvent event) {
+    public static void onChatBox(ServerChatEvent event) {
         ServerWorld world = event.getPlayer().getServerWorld();
         TileEntityList.get(world).getTileEntities(world).forEach(tileEntity->{ //Events for computers
             if (tileEntity instanceof ChatBoxTileEntity) {
@@ -35,7 +35,15 @@ public class Events {
                         computer.queueEvent("chat", event.getUsername(), event.getMessage());
                     }
                 }
-            } else if (tileEntity instanceof TileTurtle) { //Events for turtles
+            }
+        });
+    }
+
+    @SubscribeEvent
+    public static void onChatTurtle(ServerChatEvent event) {
+        ServerWorld world = event.getPlayer().getServerWorld();
+        TileEntityList.get(world).getTileEntities(world).forEach(tileEntity->{ //Events for computers
+            if (tileEntity instanceof TileTurtle) { //Events for turtles
                 TileTurtle tileTurtle = (TileTurtle) tileEntity;
                 if (tileTurtle.getUpgrade(TurtleSide.RIGHT) instanceof TurtleChatBox || tileTurtle.getUpgrade(TurtleSide.LEFT) instanceof TurtleChatBox) {
                     if (event.getMessage().startsWith("$")) {

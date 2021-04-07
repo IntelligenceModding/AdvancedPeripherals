@@ -78,12 +78,25 @@ public class TileEntityList extends WorldSavedData {
         this.markDirty();
     }
 
+    public void setTileEntity(World world, BlockPos pos, boolean force) {
+        if (!world.isRemote) {
+            if(force) {
+                if(!tileEntities.contains(pos))
+                tileEntities.add(pos);
+            } else {
+                if(tileEntities.contains(pos))
+                    tileEntities.remove(pos);
+            }
+        }
+        this.markDirty();
+    }
+
     public List<TileEntity> getTileEntities(World world) {
         List<TileEntity> list = new ArrayList<>();
         for (BlockPos next : new ArrayList<>(getBlockPositions())) {
             if (world.isAirBlock(next) || !world.isBlockLoaded(next))
                 setTileEntity(world, next); //No block here anymore.
-            if (world.getTileEntity(next) != null)
+            if (world.getTileEntity(next) == null)
                 setTileEntity(world, next); //No tile entity here anymore.
             list.add(world.getTileEntity(next));
         }
