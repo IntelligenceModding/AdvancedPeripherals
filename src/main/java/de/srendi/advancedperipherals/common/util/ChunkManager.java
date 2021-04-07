@@ -25,15 +25,25 @@ public class ChunkManager implements ForgeChunkManager.LoadingValidationCallback
         ForgeChunkManager.setForcedChunkLoadingCallback(AdvancedPeripherals.MOD_ID, INSTANCE);
     }
 
+    @SubscribeEvent
+    public static void onServerAboutStart(FMLServerAboutToStartEvent event) {
+        INSTANCE.onAboutStart();
+    }
+
+    @SubscribeEvent
+    public static void onServerStopping(FMLServerStoppingEvent event) {
+        INSTANCE.onServerStopping();
+    }
+
     @Override
     public void validateTickets(ServerWorld world, ForgeChunkManager.TicketHelper ticketHelper) {
-        ticketHelper.getBlockTickets().forEach((blockPos, chunks) -> {
-            if(world.getTileEntity(blockPos) != null) {
+        ticketHelper.getBlockTickets().forEach((blockPos, chunks)->{
+            if (world.getTileEntity(blockPos) != null) {
                 TileEntity tileEntity = world.getTileEntity(blockPos);
                 if (tileEntity instanceof TileTurtle) {
                     TileTurtle tileTurtle = (TileTurtle) tileEntity;
                     if (tileTurtle.getUpgrade(TurtleSide.RIGHT) instanceof TurtleChunky || tileTurtle.getUpgrade(TurtleSide.LEFT) instanceof TurtleChunky) {
-                        TurtleChunky turtle =  (TurtleChunky) (tileTurtle.getUpgrade(TurtleSide.RIGHT) instanceof TurtleChunky ? tileTurtle.getUpgrade(TurtleSide.RIGHT) : tileTurtle.getUpgrade(TurtleSide.LEFT));
+                        TurtleChunky turtle = (TurtleChunky) (tileTurtle.getUpgrade(TurtleSide.RIGHT) instanceof TurtleChunky ? tileTurtle.getUpgrade(TurtleSide.RIGHT) : tileTurtle.getUpgrade(TurtleSide.LEFT));
                         for (Long chunk : chunks.getSecond()) {
                             turtle.forceChunk(new ChunkPos(chunk), true);
                         }
@@ -54,22 +64,12 @@ public class ChunkManager implements ForgeChunkManager.LoadingValidationCallback
         init = false;
     }
 
-    @SubscribeEvent
-    public static void onServerAboutStart(FMLServerAboutToStartEvent event) {
-        INSTANCE.onAboutStart();
-    }
-
-    @SubscribeEvent
-    public static void onServerStopping(FMLServerStoppingEvent event) {
-        INSTANCE.onServerStopping();
-    }
-
     public boolean forceChunk(ServerWorld world, BlockPos pos, ChunkPos chunkPos, boolean add) {
-        if(init) {
-            if(add)
+        if (init) {
+            if (add)
                 //AdvancedPeripherals.Debug("Trying force chunk " + pos);
-            if(!add)
-                AdvancedPeripherals.Debug("Trying unforce chunk " + pos);
+                if (!add)
+                    AdvancedPeripherals.Debug("Trying unforce chunk " + pos);
             return ForgeChunkManager.forceChunk(world, AdvancedPeripherals.MOD_ID, pos, chunkPos.x, chunkPos.z, add, true);
         }
         return false;

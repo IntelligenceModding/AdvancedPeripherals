@@ -22,11 +22,15 @@ import java.util.Optional;
 
 public abstract class BaseBlockItem extends BlockItem {
 
-    @ObjectHolder("computercraft:turtle_normal") public static Item TURTLE_NORMAL;
-    @ObjectHolder("computercraft:turtle_advanced") public static Item TURTLE_ADVANCED;
+    @ObjectHolder("computercraft:turtle_normal")
+    public static Item TURTLE_NORMAL;
+    @ObjectHolder("computercraft:turtle_advanced")
+    public static Item TURTLE_ADVANCED;
 
-    @ObjectHolder("computercraft:pocket_computer_normal") public static Item POCKET_NORMAL;
-    @ObjectHolder("computercraft:pocket_computer_advanced") public static Item POCKET_ADVANCED;
+    @ObjectHolder("computercraft:pocket_computer_normal")
+    public static Item POCKET_NORMAL;
+    @ObjectHolder("computercraft:pocket_computer_advanced")
+    public static Item POCKET_ADVANCED;
 
     public BaseBlockItem(Block blockIn, Properties builder) {
         super(blockIn, builder);
@@ -35,9 +39,9 @@ public abstract class BaseBlockItem extends BlockItem {
     @Override
     public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
         super.addInformation(stack, worldIn, tooltip, flagIn);
-        if(!InputMappings.isKeyDown(Minecraft.getInstance().getMainWindow().getHandle(), GLFW.GLFW_KEY_LEFT_CONTROL)) {
+        if (!InputMappings.isKeyDown(Minecraft.getInstance().getMainWindow().getHandle(), GLFW.GLFW_KEY_LEFT_CONTROL)) {
             tooltip.add(EnumColor.buildTextComponent(new TranslationTextComponent("item.advancedperipherals.tooltip.hold_ctrl")));
-        } else  {
+        } else {
             tooltip.add(EnumColor.buildTextComponent(getDescription()));
         }
     }
@@ -51,13 +55,13 @@ public abstract class BaseBlockItem extends BlockItem {
     @Override
     public void fillItemGroup(ItemGroup group, NonNullList<ItemStack> items) {
         super.fillItemGroup(group, items);
-        if(!isInGroup(group))
+        if (!isInGroup(group))
             return;
-        if(getTurtleID().isPresent()) {
+        if (getTurtleID().isPresent()) {
             items.add(makeTurtle(TURTLE_ADVANCED, "advancedperipherals:" + getTurtleID().get()));
             items.add(makeTurtle(TURTLE_NORMAL, "advancedperipherals:" + getTurtleID().get()));
         }
-        if(getPocketID().isPresent()) {
+        if (getPocketID().isPresent()) {
             items.add(makePocket(POCKET_ADVANCED, "advancedperipherals:" + getPocketID().get()));
             items.add(makePocket(POCKET_NORMAL, "advancedperipherals:" + getPocketID().get()));
         }

@@ -57,8 +57,8 @@ public class ChatBoxPeripheral extends BasePeripheral {
     public final void sendMessageToPlayer(Object message, String playerName) throws LuaException {
         if (tick >= AdvancedPeripheralsConfig.chatBoxCooldown) {
             for (ServerPlayerEntity player : ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers()) {
-                if(player.getName().getString().equals(playerName))
-                player.sendMessage(new StringTextComponent("" + message), UUID.randomUUID());
+                if (player.getName().getString().equals(playerName))
+                    player.sendMessage(new StringTextComponent("" + message), UUID.randomUUID());
             }
             tick = 0;
         } else {

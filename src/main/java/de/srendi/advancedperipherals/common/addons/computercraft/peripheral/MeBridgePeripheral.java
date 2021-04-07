@@ -57,8 +57,7 @@ public class MeBridgePeripheral extends BasePeripheral {
 
     @LuaFunction(mainThread = false)
     public final MethodResult craftItem(IComputerAccess computer, IArguments arguments) throws LuaException {
-        IMEMonitor<IAEItemStack> monitor = ((IStorageGrid) node.getGrid().getCache(IStorageGrid.class))
-                .getInventory(AppEngApi.getInstance().getApi().storage().getStorageChannel(IItemStorageChannel.class));
+        IMEMonitor<IAEItemStack> monitor = ((IStorageGrid) node.getGrid().getCache(IStorageGrid.class)).getInventory(AppEngApi.getInstance().getApi().storage().getStorageChannel(IItemStorageChannel.class));
         ItemStack itemToCraft = ItemUtil.getItemStack(arguments.getTable(0), monitor);
         if (itemToCraft.isEmpty())
             throw new NullPointerException("Item " + itemToCraft + " does not exists");
@@ -84,16 +83,14 @@ public class MeBridgePeripheral extends BasePeripheral {
 
     @LuaFunction(mainThread = true)
     public final boolean isItemCrafting(IArguments arguments) throws LuaException {
-        IMEMonitor<IAEItemStack> monitor = ((IStorageGrid) node.getGrid().getCache(IStorageGrid.class))
-                .getInventory(AppEngApi.getInstance().getApi().storage().getStorageChannel(IItemStorageChannel.class));
+        IMEMonitor<IAEItemStack> monitor = ((IStorageGrid) node.getGrid().getCache(IStorageGrid.class)).getInventory(AppEngApi.getInstance().getApi().storage().getStorageChannel(IItemStorageChannel.class));
         ICraftingGrid grid = node.getGrid().getCache(ICraftingGrid.class);
         return grid.isRequesting(AppEngApi.getInstance().findAEStackFromItemStack(monitor, ItemUtil.getItemStack(arguments.getTable(0), monitor)));
     }
 
     @LuaFunction(mainThread = true)
     public final int exportItem(IArguments arguments) throws LuaException {
-        IMEMonitor<IAEItemStack> monitor = ((IStorageGrid) node.getGrid().getCache(IStorageGrid.class))
-                .getInventory(AppEngApi.getInstance().getApi().storage().getStorageChannel(IItemStorageChannel.class));
+        IMEMonitor<IAEItemStack> monitor = ((IStorageGrid) node.getGrid().getCache(IStorageGrid.class)).getInventory(AppEngApi.getInstance().getApi().storage().getStorageChannel(IItemStorageChannel.class));
         ItemStack stack = ItemUtil.getItemStack(arguments.getTable(0), monitor);
         IAEItemStack aeStack = AppEngApi.getInstance().findAEStackFromItemStack(monitor, stack);
         if (aeStack == null)
@@ -101,8 +98,7 @@ public class MeBridgePeripheral extends BasePeripheral {
         Direction direction = Direction.valueOf(arguments.getString(1).toUpperCase(Locale.ROOT));
 
         TileEntity targetEntity = tileEntity.getWorld().getTileEntity(tileEntity.getPos().offset(direction));
-        IItemHandler inventory = targetEntity != null ? targetEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY,
-                direction.getOpposite()).resolve().orElse(null) : null;
+        IItemHandler inventory = targetEntity != null ? targetEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, direction.getOpposite()).resolve().orElse(null) : null;
         if (inventory == null)
             throw new LuaException("No valid inventory at " + direction);
 
@@ -172,8 +168,7 @@ public class MeBridgePeripheral extends BasePeripheral {
 
     @LuaFunction(mainThread = true)
     public final int exportItemToChest(IComputerAccess computer, IArguments arguments) throws LuaException {
-        IMEMonitor<IAEItemStack> monitor = ((IStorageGrid) node.getGrid().getCache(IStorageGrid.class))
-                .getInventory(AppEngApi.getInstance().getApi().storage().getStorageChannel(IItemStorageChannel.class));
+        IMEMonitor<IAEItemStack> monitor = ((IStorageGrid) node.getGrid().getCache(IStorageGrid.class)).getInventory(AppEngApi.getInstance().getApi().storage().getStorageChannel(IItemStorageChannel.class));
         ItemStack stack = ItemUtil.getItemStack(arguments.getTable(0), monitor);
         IAEItemStack aeStack = AppEngApi.getInstance().findAEStackFromItemStack(monitor, stack);
         if (aeStack == null)
@@ -213,8 +208,7 @@ public class MeBridgePeripheral extends BasePeripheral {
 
     @LuaFunction(mainThread = true)
     public final int importItemFromChest(IComputerAccess computer, IArguments arguments) throws LuaException {
-        IMEMonitor<IAEItemStack> monitor = ((IStorageGrid) node.getGrid().getCache(IStorageGrid.class))
-                .getInventory(AppEngApi.getInstance().getApi().storage().getStorageChannel(IItemStorageChannel.class));
+        IMEMonitor<IAEItemStack> monitor = ((IStorageGrid) node.getGrid().getCache(IStorageGrid.class)).getInventory(AppEngApi.getInstance().getApi().storage().getStorageChannel(IItemStorageChannel.class));
         ItemStack stack = ItemUtil.getItemStack(arguments.getTable(0), monitor);
         int count = stack.getCount();
         stack.setCount(count);

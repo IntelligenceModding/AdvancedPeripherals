@@ -15,7 +15,7 @@ public class PocketEnvironment extends AbstractPocketUpgrade {
     private EnvironmentDetectorPeripheral peripheral;
 
     public PocketEnvironment() {
-        super(new ResourceLocation("advancedperipherals", "environment_pocket" ), "pocket.advancedperipherals.environment_pocket",Blocks.ENVIRONMENT_DETECTOR);
+        super(new ResourceLocation("advancedperipherals", "environment_pocket"), "pocket.advancedperipherals.environment_pocket", Blocks.ENVIRONMENT_DETECTOR);
     }
 
     @Nullable
@@ -27,7 +27,7 @@ public class PocketEnvironment extends AbstractPocketUpgrade {
 
     @Override
     public boolean onRightClick(@NotNull World world, @NotNull IPocketAccess access, @Nullable IPeripheral peripheral) {
-        if(access.getEntity() != null) {
+        if (access.getEntity() != null) {
             this.peripheral.setEntity(access.getEntity());
         }
         return false;

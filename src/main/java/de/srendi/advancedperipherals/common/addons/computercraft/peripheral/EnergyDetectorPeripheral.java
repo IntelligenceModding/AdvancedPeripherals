@@ -19,19 +19,19 @@ public class EnergyDetectorPeripheral extends BasePeripheral {
     }
 
     @LuaFunction(mainThread = true)
+    public final int getTransferRateLimit() {
+        return tileEntity.maxTransferRate;
+    }
+
+    @LuaFunction(mainThread = true)
     public final void setTransferRateLimit(long transferRate) {
-        if(transferRate > Integer.MAX_VALUE) {
+        if (transferRate > Integer.MAX_VALUE) {
             transferRate = Integer.MAX_VALUE; //Integer max value is the maximum of the transfer rate limit.
         }
         tileEntity.maxTransferRate = (int) transferRate;
         tileEntity.storageOut.setMaxExtract((int) transferRate);
         tileEntity.storageOut.setCapacity((int) transferRate);
         tileEntity.storageIn.setCapacity((int) transferRate);
-    }
-
-    @LuaFunction(mainThread = true)
-    public final int getTransferRateLimit() {
-        return tileEntity.maxTransferRate;
     }
 
     @LuaFunction(mainThread = true)

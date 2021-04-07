@@ -66,7 +66,7 @@ public class RsBridgePeripheral extends BasePeripheral {
             if (nbt != null && !nbt.isEmpty()) {
                 map.put("nbt", nbt.toString());
             }
-            if(!tags.isEmpty()) {
+            if (!tags.isEmpty()) {
                 map.put("tags", tags);
             }
             items.put(i, map);
@@ -97,7 +97,7 @@ public class RsBridgePeripheral extends BasePeripheral {
             if (nbt != null && !nbt.isEmpty()) {
                 map.put("nbt", nbt.toString());
             }
-            if(!tags.isEmpty()) {
+            if (!tags.isEmpty()) {
                 map.put("tags", tags);
             }
             items.put(i, map);
@@ -116,7 +116,7 @@ public class RsBridgePeripheral extends BasePeripheral {
             map.put("name", ForgeRegistries.FLUIDS.getKey(stack.getFluid()).toString());
             map.put("amount", stack.getAmount());
             map.put("displayName", stack.getDisplayName().getString());
-            if(!tags.isEmpty()) {
+            if (!tags.isEmpty()) {
                 map.put("tags", tags);
             }
             items.put(i, map);
@@ -143,7 +143,7 @@ public class RsBridgePeripheral extends BasePeripheral {
                 }
             }
             map.put("displayName", stack.getDisplayName().getString());
-            if(!tags.isEmpty()) {
+            if (!tags.isEmpty()) {
                 map.put("tags", tags);
             }
             items.put(i, map);
@@ -302,11 +302,11 @@ public class RsBridgePeripheral extends BasePeripheral {
     @LuaFunction(mainThread = true)
     public final boolean craftItem(IArguments arguments) throws LuaException {
         ItemStack stack = ItemUtil.getItemStackRS(arguments.getTable(0), RefinedStorage.getItems(getNetwork(), true));
-        if(stack == null)
+        if (stack == null)
             throw new LuaException("The item " + arguments.getTable(0).get("name") + "is not craftable");
         ICalculationResult result = getNetwork().getCraftingManager().create(stack, stack.getCount());
         CalculationResultType type = result.getType();
-        if(result.getType() == CalculationResultType.OK)
+        if (result.getType() == CalculationResultType.OK)
             getNetwork().getCraftingManager().start(result.getTask());
         return type == CalculationResultType.OK;
     }
@@ -315,7 +315,7 @@ public class RsBridgePeripheral extends BasePeripheral {
     public final boolean craftFluid(String fluid, int count) {
         ICalculationResult result = getNetwork().getCraftingManager().create(new FluidStack(ForgeRegistries.FLUIDS.getValue(new ResourceLocation(fluid)), 0), count);
         CalculationResultType type = result.getType();
-        if(result.getType() == CalculationResultType.OK)
+        if (result.getType() == CalculationResultType.OK)
             getNetwork().getCraftingManager().start(result.getTask());
         //TODO: check some stuff to prevent issues
         return type == CalculationResultType.OK;

@@ -33,7 +33,7 @@ public class PlayerDetectorPeripheral extends BasePeripheral {
     public final List<String> getPlayersInRange(int range) {
         List<String> playersName = new ArrayList<>();
         for (ServerPlayerEntity player : getPlayers()) {
-            if(isInRange(tileEntity.getPos(), player, range))
+            if (isInRange(getPos(), player, range))
                 playersName.add(player.getName().getString());
         }
         return playersName;
@@ -41,10 +41,10 @@ public class PlayerDetectorPeripheral extends BasePeripheral {
 
     @LuaFunction(mainThread = true)
     public final boolean isPlayersInRange(int range) {
-        if(getPlayers().isEmpty())
+        if (getPlayers().isEmpty())
             return false;
-        for(ServerPlayerEntity player : getPlayers()) {
-            if(isInRange(tileEntity.getPos(), player, range))
+        for (ServerPlayerEntity player : getPlayers()) {
+            if (isInRange(getPos(), player, range))
                 return true;
         }
         return false;
@@ -52,10 +52,10 @@ public class PlayerDetectorPeripheral extends BasePeripheral {
 
     @LuaFunction(mainThread = true)
     public final boolean isPlayerInRange(int range, String username) {
-         List<String> playersName = new ArrayList<>();
+        List<String> playersName = new ArrayList<>();
         for (PlayerEntity player : getPlayers()) {
-            if(isInRange(tileEntity.getPos(), player, range))
-            playersName.add(player.getName().getString());
+            if (isInRange(getPos(), player, range))
+                playersName.add(player.getName().getString());
         }
         return playersName.contains(username);
     }
@@ -63,13 +63,15 @@ public class PlayerDetectorPeripheral extends BasePeripheral {
     @LuaFunction(mainThread = true)
     public final Map<String, Double> getPlayerPos(String username) {
         ServerPlayerEntity existingPlayer = null;
-        for(ServerPlayerEntity player : getPlayers()) {
-           if(player.getName().getString().equals(username)) {
-               existingPlayer = player;
-               break;
-           }
+        for (ServerPlayerEntity player : getPlayers()) {
+            if (player.getName().getString().equals(username)) {
+                if (isInRange(getPos(), player, AdvancedPeripheralsConfig.playerDetMaxRange)) {
+                    existingPlayer = player;
+                    break;
+                }
+            }
         }
-        if(existingPlayer == null)
+        if (existingPlayer == null)
             return null;
         Map<String, Double> coordinates = new HashMap<>();
         coordinates.put("x", Math.floor(existingPlayer.getPosX()));
@@ -82,9 +84,11 @@ public class PlayerDetectorPeripheral extends BasePeripheral {
         return ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers();
     }
 
-    private boolean isInRange(BlockPos pos, PlayerEntity player, int range) {
-        BlockPos pos1 = new BlockPos(pos.getX()-range, pos.getY()+range, pos.getZ()+range);
-        BlockPos pos2 = new BlockPos(pos.getX()+range, pos.getY()-range, pos.getZ()-range);
+    private boolean isInRange(BlockPos pos, PlayerEntity player, int customRange) {
+        int range = Math.min(customRange, AdvancedPeripheralsConfig.playerDetMaxRange);
+
+        BlockPos pos1 = new BlockPos(pos.getX() - range, pos.getY() + range, pos.getZ() + range);
+        BlockPos pos2 = new BlockPos(pos.getX() + range, pos.getY() - range, pos.getZ() - range);
 
         int x1 = Math.min(pos1.getX(), pos2.getX());
         int y1 = Math.min(pos1.getY(), pos2.getY());

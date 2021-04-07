@@ -36,12 +36,13 @@ public abstract class BaseTurtle<T extends BasePeripheral> extends AbstractTurtl
     protected abstract T createPeripheral();
 
     protected abstract ModelResourceLocation getLeftModel();
+
     protected abstract ModelResourceLocation getRightModel();
 
     @NotNull
     @Override
     public TransformedModel getModel(@Nullable ITurtleAccess iTurtleAccess, @NotNull TurtleSide turtleSide) {
-        if(getLeftModel() == null) {
+        if (getLeftModel() == null) {
             float xOffset = turtleSide == TurtleSide.LEFT ? -0.40625f : 0.40625f;
             Matrix4f transform = new Matrix4f(new float[]{
                     0.0f, 0.0f, -1.0f, 1.0f + xOffset,
@@ -51,7 +52,7 @@ public abstract class BaseTurtle<T extends BasePeripheral> extends AbstractTurtl
             });
             return TransformedModel.of(getCraftingItem(), new TransformationMatrix(transform));
         }
-        return TransformedModel.of(turtleSide == TurtleSide.LEFT ? getLeftModel() : getRightModel() );
+        return TransformedModel.of(turtleSide == TurtleSide.LEFT ? getLeftModel() : getRightModel());
     }
 
     @Nullable
@@ -72,7 +73,7 @@ public abstract class BaseTurtle<T extends BasePeripheral> extends AbstractTurtl
             }
         }
         tick++;
-        if(tick > 10) {
+        if (tick > 10) {
             TileEntityList tileEntityList = TileEntityList.get(turtle.getWorld()); //Sync the position with the tile entity list.
             if (!tileEntityList.getBlockPositions().contains(turtle.getPosition())) {
                 tileEntityList.setTileEntity(turtle.getWorld(), turtle.getPosition()); //Add the turtle to the List for event use
