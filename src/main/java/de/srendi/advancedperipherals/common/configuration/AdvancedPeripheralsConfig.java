@@ -37,8 +37,9 @@ public class AdvancedPeripheralsConfig {
         CommonConfig(final ForgeConfigSpec.Builder builder) {
             builder.comment("").push("Restrictions");
 
-            CHAT_BOX_COOLDOWN = builder.comment("This deactivates the methods and the event of the chat box.").defineInRange("chatBoxCooldown", 10, 1, 100000);
-            PLAYER_DET_MAX_RANGE = builder.comment("The max range of the player detector functions. " + "If anyone use a higher range, the detector will use this max range").defineInRange("playerDetMaxRange", 2147483646, 0, 2147483646);
+            CHAT_BOX_COOLDOWN = builder.comment("Defines the chat box cooldown for message sending.").defineInRange("chatBoxCooldown", 10, 1, 100000);
+            PLAYER_DET_MAX_RANGE = builder.comment("The max range of the player detector functions. "
+                    + "If anyone use a higher range, the detector will use this max range").defineInRange("playerDetMaxRange", 2147483646, 0, 2147483646);
 
             builder.comment("").push("Features");
 
