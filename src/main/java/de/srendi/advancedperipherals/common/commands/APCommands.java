@@ -3,6 +3,7 @@ package de.srendi.advancedperipherals.common.commands;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import dan200.computercraft.shared.util.NBTUtil;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
+import de.srendi.advancedperipherals.common.blocks.base.TileEntityList;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -22,7 +23,9 @@ public class APCommands {
 
     @SubscribeEvent
     public static void register(RegisterCommandsEvent event) {
-        event.getDispatcher().register(Commands.literal("advancedperipherals").then(Commands.literal("getHashItem").executes(context->getHashItem(context.getSource()))));
+        event.getDispatcher().register(Commands.literal("advancedperipherals")
+                .then(Commands.literal("getHashItem").executes(context->getHashItem(context.getSource())))
+                .then(Commands.literal("debug").executes(context -> printDebugTileMessage(context.getSource()))));
     }
 
     private static int getHashItem(CommandSource source) throws CommandSyntaxException {
@@ -42,4 +45,10 @@ public class APCommands {
         return 1;
     }
 
+    private static int printDebugTileMessage(CommandSource source) throws CommandSyntaxException {
+        ServerPlayerEntity playerEntity = source.asPlayer();
+        TileEntityList list = TileEntityList.get(playerEntity.getServerWorld());
+        source.sendFeedback(TextComponentUtils.wrapWithSquareBrackets(new StringTextComponent("" + list.getBlockPositions()).modifyStyle((style)->style.setFormatting(TextFormatting.GREEN).setClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, "" + list.getBlockPositions())).setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new StringTextComponent("Copy"))))), true);
+        return 1;
+    }
 }
