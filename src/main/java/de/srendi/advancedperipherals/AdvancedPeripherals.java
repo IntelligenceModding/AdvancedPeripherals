@@ -44,15 +44,13 @@ public class AdvancedPeripherals {
     }
 
     public static void Debug(String message) {
-        if (AdvancedPeripheralsConfig.enableDebugMode) {
+        if (AdvancedPeripheralsConfig.enableDebugMode)
             LOGGER.debug("[DEBUG] " + message);
-        }
     }
 
     public static void Debug(String message, Level level) {
-        if (AdvancedPeripheralsConfig.enableDebugMode) {
+        if (AdvancedPeripheralsConfig.enableDebugMode)
             LOGGER.log(level, "[DEBUG] " + message);
-        }
     }
 
     @SubscribeEvent

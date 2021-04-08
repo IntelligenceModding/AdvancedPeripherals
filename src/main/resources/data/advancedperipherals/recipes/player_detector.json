@@ -2,15 +2,15 @@
   "type": "minecraft:crafting_shaped",
   "pattern": [
     "SSS",
-    "SOS",
+    "SCS",
     "SRS"
   ],
   "key": {
     "S": {
       "item": "minecraft:smooth_stone"
     },
-    "O": {
-      "item": "minecraft:observer"
+    "C": {
+      "item": "advancedperipherals:peripheral_casing"
     },
     "R": {
       "item": "minecraft:redstone"

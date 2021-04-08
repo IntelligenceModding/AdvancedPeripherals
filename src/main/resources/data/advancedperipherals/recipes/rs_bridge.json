@@ -2,7 +2,7 @@
   "type": "minecraft:crafting_shaped",
   "pattern": [
     "BIB",
-    "IPI",
+    "ICI",
     "BIB"
   ],
   "key": {
@@ -12,8 +12,8 @@
     "I": {
       "item": "refinedstorage:interface"
     },
-    "P": {
-      "item": "refinedstorage:advanced_processor"
+    "C": {
+      "item": "advancedperipherals:peripheral_casing"
     }
   },
   "result": {

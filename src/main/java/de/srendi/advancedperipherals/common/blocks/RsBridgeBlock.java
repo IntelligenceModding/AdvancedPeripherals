@@ -1,11 +1,9 @@
 package de.srendi.advancedperipherals.common.blocks;
 
-import de.srendi.advancedperipherals.common.blocks.base.BaseBlock;
-import de.srendi.advancedperipherals.common.blocks.tileentity.MeBridgeTileEntity;
+import de.srendi.advancedperipherals.common.blocks.base.BaseTileEntityBlock;
 import de.srendi.advancedperipherals.common.setup.TileEntityTypes;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
@@ -15,42 +13,29 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.ModList;
 import org.jetbrains.annotations.Nullable;
 
-public class MeBridge extends BaseBlock {
-
-    private MeBridgeTileEntity meBridge;
+public class RsBridgeBlock extends BaseTileEntityBlock {
 
     @Override
     public boolean hasTileEntity(BlockState state) {
-        return ModList.get().isLoaded("appliedenergistics2");
+        return ModList.get().isLoaded("refinedstorage");
     }
 
     @Nullable
     @Override
     public TileEntity createTileEntity(BlockState state, IBlockReader world) {
-        if (ModList.get().isLoaded("appliedenergistics2")) {
-            if (TileEntityTypes.ME_BRIDGE.get().create() != null) {
-                return TileEntityTypes.ME_BRIDGE.get().create();
-            }
-        } else {
-            return null;
-        }
-        return null;
+        return TileEntityTypes.RS_BRIDGE.get().create();
     }
 
     @Override
     public void onBlockPlacedBy(World worldIn, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
-        if (!ModList.get().isLoaded("appliedenergistics2"))
-            return;
-        meBridge = (MeBridgeTileEntity) worldIn.getTileEntity(pos);
-        if (meBridge == null || !(placer instanceof PlayerEntity))
+        if (!ModList.get().isLoaded("refinedstorage"))
             return;
         super.onBlockPlacedBy(worldIn, pos, state, placer, stack);
-        meBridge.setPlayer((PlayerEntity) placer);
     }
 
     @Override
     public void onPlayerDestroy(IWorld worldIn, BlockPos pos, BlockState state) {
-        if (!ModList.get().isLoaded("appliedenergistics2"))
+        if (!ModList.get().isLoaded("refinedstorage"))
             return;
         super.onPlayerDestroy(worldIn, pos, state);
     }

@@ -2,7 +2,7 @@
   "type": "minecraft:crafting_shaped",
   "pattern": [
     "FIF",
-    "ILI",
+    "ICI",
     "FIF"
   ],
   "key": {
@@ -12,8 +12,8 @@
     "I": {
       "item": "appliedenergistics2:interface"
     },
-    "L": {
-      "item": "appliedenergistics2:logic_processor"
+    "C": {
+      "item": "advancedperipherals:peripheral_casing"
     }
   },
   "result": {

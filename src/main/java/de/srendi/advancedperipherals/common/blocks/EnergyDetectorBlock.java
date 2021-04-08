@@ -1,6 +1,6 @@
 package de.srendi.advancedperipherals.common.blocks;
 
-import de.srendi.advancedperipherals.common.blocks.base.BaseBlock;
+import de.srendi.advancedperipherals.common.blocks.base.BaseTileEntityBlock;
 import de.srendi.advancedperipherals.common.setup.TileEntityTypes;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -18,7 +18,7 @@ import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorld;
 import org.jetbrains.annotations.Nullable;
 
-public class EnergyDetectorBlock extends BaseBlock {
+public class EnergyDetectorBlock extends BaseTileEntityBlock {
 
     public static final DirectionProperty FACING = HorizontalBlock.HORIZONTAL_FACING;
 
