@@ -21,7 +21,7 @@ public class ChatBoxItem extends BaseBlockItem {
 
     @Override
     protected Optional<String> getPocketID() {
-        return Optional.empty();
+        return Optional.of("chatty_turtle");
     }
 
     @Override

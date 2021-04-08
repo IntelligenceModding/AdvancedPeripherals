@@ -1,8 +1,11 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.peripheral;
 
 import dan200.computercraft.api.lua.LuaFunction;
+import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
+import de.srendi.advancedperipherals.common.util.MathUtil;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.tileentity.TileEntity;
@@ -23,6 +26,8 @@ public class PlayerDetectorPeripheral extends BasePeripheral {
     public PlayerDetectorPeripheral(String type, TileEntity tileEntity) {
         super(type, tileEntity);
     }
+
+    public PlayerDetectorPeripheral(String type, Entity entity) {super(type, entity);}
 
     @Override
     public boolean isEnabled() {
@@ -54,8 +59,9 @@ public class PlayerDetectorPeripheral extends BasePeripheral {
     public final boolean isPlayerInRange(int range, String username) {
         List<String> playersName = new ArrayList<>();
         for (PlayerEntity player : getPlayers()) {
-            if (isInRange(getPos(), player, range))
+            if (isInRange(getPos(), player, range)) {
                 playersName.add(player.getName().getString());
+            }
         }
         return playersName.contains(username);
     }
@@ -71,12 +77,14 @@ public class PlayerDetectorPeripheral extends BasePeripheral {
                 }
             }
         }
-        if (existingPlayer == null)
+        if (existingPlayer == null) {
             return null;
+        }
         Map<String, Double> coordinates = new HashMap<>();
         coordinates.put("x", Math.floor(existingPlayer.getPosX()));
         coordinates.put("y", Math.floor(existingPlayer.getPosY()));
         coordinates.put("z", Math.floor(existingPlayer.getPosZ()));
+        AdvancedPeripherals.Debug("Debug5 " + coordinates);
         return coordinates;
     }
 
@@ -85,10 +93,13 @@ public class PlayerDetectorPeripheral extends BasePeripheral {
     }
 
     private boolean isInRange(BlockPos pos, PlayerEntity player, int customRange) {
-        int range = Math.min(customRange, AdvancedPeripheralsConfig.playerDetMaxRange);
+        int range = Math.min(customRange, AdvancedPeripheralsConfig.playerDetMaxRange-1);
+        AdvancedPeripherals.Debug("Debug1 " + range);
 
-        BlockPos pos1 = new BlockPos(pos.getX() - range, pos.getY() + range, pos.getZ() + range);
-        BlockPos pos2 = new BlockPos(pos.getX() + range, pos.getY() - range, pos.getZ() - range);
+        //A player should not be higher than 1024 blocks.
+        //Todo - 1.17: use Math.max(pos.getY(), -64) instead of 0;
+        BlockPos pos1 = new BlockPos(MathUtil.safeSubtract(pos.getX(), range), Math.min(pos.getY(), 1024), MathUtil.safeAdd(pos.getY(), range));
+        BlockPos pos2 = new BlockPos(MathUtil.safeAdd(pos.getX(), range), Math.max(pos.getY(), 0), MathUtil.safeSubtract(pos.getY(), range));
 
         int x1 = Math.min(pos1.getX(), pos2.getX());
         int y1 = Math.min(pos1.getY(), pos2.getY());
@@ -96,10 +107,16 @@ public class PlayerDetectorPeripheral extends BasePeripheral {
         int x2 = Math.max(pos1.getX(), pos2.getX());
         int y2 = Math.max(pos1.getY(), pos2.getY());
         int z2 = Math.max(pos1.getZ(), pos2.getZ());
+        AdvancedPeripherals.Debug("Debug2 " + pos1);
+        AdvancedPeripherals.Debug("Debug3 " + pos2);
+
+        AdvancedPeripherals.Debug("Debug4 " + customRange);
 
         int x = player.getPosition().getX();
         int z = player.getPosition().getZ();
         int y = player.getPosition().getY();
+        boolean bool = x >= x1 && x <= x2 && y >= y1 && y <= y2 && z >= z1 && z <= z2;
+        AdvancedPeripherals.Debug("Debug55 " + bool);
 
         return x >= x1 && x <= x2 && y >= y1 && y <= y2 && z >= z1 && z <= z2;
     }
