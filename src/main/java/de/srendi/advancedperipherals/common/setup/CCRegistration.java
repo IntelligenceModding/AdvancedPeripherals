@@ -2,7 +2,9 @@ package de.srendi.advancedperipherals.common.setup;
 
 import dan200.computercraft.api.ComputerCraftAPI;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
+import de.srendi.advancedperipherals.common.addons.computercraft.pocket.PocketChatBox;
 import de.srendi.advancedperipherals.common.addons.computercraft.pocket.PocketEnvironment;
+import de.srendi.advancedperipherals.common.addons.computercraft.pocket.PocketPlayerDetector;
 import de.srendi.advancedperipherals.common.addons.computercraft.turtles.TurtleChatBox;
 import de.srendi.advancedperipherals.common.addons.computercraft.turtles.TurtleChunky;
 import de.srendi.advancedperipherals.common.addons.computercraft.turtles.TurtleEnvironmentDetector;
@@ -21,10 +23,16 @@ public class CCRegistration {
     public static TurtleChunky chunky;
 
     public static PocketEnvironment environmentPocket;
+    public static PocketChatBox chatPocket;
+    public static PocketPlayerDetector playerPocket;
 
     private static void registerPocketUpgrades() {
         environmentPocket = new PocketEnvironment();
         ComputerCraftAPI.registerPocketUpgrade(environmentPocket);
+        chatPocket = new PocketChatBox();
+        ComputerCraftAPI.registerPocketUpgrade(chatPocket);
+        playerPocket = new PocketPlayerDetector();
+        ComputerCraftAPI.registerPocketUpgrade(playerPocket);
     }
 
     private static void registerTurtleUpgrades() {
