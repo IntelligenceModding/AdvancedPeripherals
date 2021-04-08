@@ -19,7 +19,7 @@ public class ChunkManager implements ForgeChunkManager.LoadingValidationCallback
 
     public static final ChunkManager INSTANCE = new ChunkManager();
 
-    private boolean init = true;
+    private boolean init = false;
 
     public static void register() {
         ForgeChunkManager.setForcedChunkLoadingCallback(AdvancedPeripherals.MOD_ID, INSTANCE);
@@ -67,9 +67,9 @@ public class ChunkManager implements ForgeChunkManager.LoadingValidationCallback
     public boolean forceChunk(ServerWorld world, BlockPos pos, ChunkPos chunkPos, boolean add) {
         if (init) {
             if (add)
-                //AdvancedPeripherals.Debug("Trying force chunk " + pos);
-                if (!add)
-                    AdvancedPeripherals.Debug("Trying unforce chunk " + pos);
+                AdvancedPeripherals.Debug("Trying force chunk " + pos);
+            if (!add)
+                AdvancedPeripherals.Debug("Trying unforce chunk " + pos);
             return ForgeChunkManager.forceChunk(world, AdvancedPeripherals.MOD_ID, pos, chunkPos.x, chunkPos.z, add, true);
         }
         return false;

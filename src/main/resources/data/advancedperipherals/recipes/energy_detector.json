@@ -1,0 +1,29 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "#R#",
+    "CAC",
+    "#g#"
+  ],
+  "key": {
+    "#": {
+      "item": "minecraft:redstone_block"
+    },
+    "R": {
+      "item": "minecraft:redstone_torch"
+    },
+    "C": {
+      "item": "minecraft:comparator"
+    },
+    "A": {
+      "item": "advancedperipherals:peripheral_casing"
+    },
+    "g": {
+      "item": "minecraft:gold_ingot"
+    }
+  },
+  "result": {
+    "item": "advancedperipherals:energy_detector",
+    "count": 1
+  }
+}

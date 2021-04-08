@@ -1,0 +1,23 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        "iIi",
+        "IOI",
+        "iIi"
+    ],
+    "key": {
+        "i": {
+            "item": "minecraft:iron_ingot"
+        },
+        "I": {
+            "item": "minecraft:iron_bars"
+        },
+        "O": {
+            "item": "minecraft:observer"
+        }
+    },
+    "result": {
+        "item": "advancedperipherals:peripheral_casing",
+        "count": 1
+    }
+}

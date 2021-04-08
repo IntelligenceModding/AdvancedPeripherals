@@ -1,9 +1,9 @@
 {
   "type": "minecraft:crafting_shaped",
   "pattern": [
-    "WLW",
-    "CTl",
-    "WSW"
+    "WSW",
+    "LAl",
+    "WCW"
   ],
   "key": {
     "l": [
@@ -76,9 +76,6 @@
         "item": "minecraft:black_wool"
       }
     ],
-    "T": {
-      "item": "minecraft:target"
-    },
     "L": [
       {
         "item": "minecraft:oak_leaves"
@@ -129,9 +126,13 @@
       {
         "item": "minecraft:wheat"
       }
-    ]
+    ],
+    "A": {
+      "item": "advancedperipherals:peripheral_casing"
+    }
   },
   "result": {
-    "item": "advancedperipherals:environment_detector"
+    "item": "advancedperipherals:environment_detector",
+    "count": 1
   }
 }

@@ -2,8 +2,8 @@
   "type": "minecraft:crafting_shaped",
   "pattern": [
     "PPP",
-    "PNP",
-    "PGP"
+    "PAP",
+    "PgP"
   ],
   "key": {
     "P": [
@@ -32,10 +32,10 @@
         "item": "minecraft:warped_planks"
       }
     ],
-    "N": {
-      "item": "minecraft:note_block"
+    "A": {
+      "item": "advancedperipherals:peripheral_casing"
     },
-    "G": {
+    "g": {
       "item": "minecraft:gold_ingot"
     }
   },
