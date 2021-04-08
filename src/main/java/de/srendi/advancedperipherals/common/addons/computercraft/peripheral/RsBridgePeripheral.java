@@ -26,9 +26,7 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.registries.ForgeRegistries;
 
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Set;
+import java.util.*;
 
 public class RsBridgePeripheral extends BasePeripheral {
 
@@ -98,7 +96,11 @@ public class RsBridgePeripheral extends BasePeripheral {
                 map.put("nbt", nbt.toString());
             }
             if (!tags.isEmpty()) {
-                map.put("tags", tags);
+                List<String> itemTags = new ArrayList<>();
+                for(ResourceLocation tag : tags) {
+                    itemTags.add(tag.toString());
+                }
+                map.put("tags", itemTags);
             }
             items.put(i, map);
             i++;
@@ -144,7 +146,11 @@ public class RsBridgePeripheral extends BasePeripheral {
             }
             map.put("displayName", stack.getDisplayName().getString());
             if (!tags.isEmpty()) {
-                map.put("tags", tags);
+                List<String> itemTags = new ArrayList<>();
+                for(ResourceLocation tag : tags) {
+                    itemTags.add(tag.toString());
+                }
+                map.put("tags", itemTags);
             }
             items.put(i, map);
             i++;
