@@ -1,5 +1,6 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.turtles;
 
+import de.srendi.advancedperipherals.common.addons.computercraft.base.BaseTurtle;
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.EnvironmentDetectorPeripheral;
 import de.srendi.advancedperipherals.common.setup.Blocks;
 import net.minecraft.client.renderer.model.ModelResourceLocation;

@@ -1,4 +1,4 @@
-package de.srendi.advancedperipherals.common.addons.computercraft.turtles;
+package de.srendi.advancedperipherals.common.addons.computercraft.base;
 
 import dan200.computercraft.api.client.TransformedModel;
 import dan200.computercraft.api.peripheral.IPeripheral;
@@ -8,7 +8,6 @@ import dan200.computercraft.api.turtle.TurtleSide;
 import dan200.computercraft.api.turtle.TurtleUpgradeType;
 import dan200.computercraft.shared.turtle.core.TurtleBrain;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
-import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.BasePeripheral;
 import de.srendi.advancedperipherals.common.blocks.base.TileEntityList;
 import net.minecraft.client.renderer.model.ModelResourceLocation;
 import net.minecraft.item.ItemStack;
