@@ -31,4 +31,5 @@ public class ChatBoxTileEntity extends PeripheralTileEntity<ChatBoxPeripheral> i
         tick++;
         peripheral.setTick(tick);
     }
+
 }

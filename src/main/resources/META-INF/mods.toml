@@ -5,7 +5,7 @@ issueTrackerURL = "https://github.com/Seniorendi/AdvancedPeripherals/issues"
 logoFile = "pack.png"
 [[mods]]
 modId = "advancedperipherals"
-version = "0.4.3.1b"
+version = "0.5.0b"
 displayName = "Advanced Peripherals"
 #updateJSONURL="http://myurl.me/"
 displayURL = "https://srendi.de/"

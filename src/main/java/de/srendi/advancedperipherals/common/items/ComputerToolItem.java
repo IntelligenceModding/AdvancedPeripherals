@@ -18,6 +18,11 @@ public class ComputerToolItem extends BaseItem {
     }
 
     @Override
+    protected Optional<String> getPocketID() {
+        return Optional.empty();
+    }
+
+    @Override
     protected ITextComponent getDescription() {
         return null;
     }

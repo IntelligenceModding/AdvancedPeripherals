@@ -2,7 +2,6 @@ package de.srendi.advancedperipherals.common.blocks;
 
 import dan200.computercraft.api.peripheral.IComputerAccess;
 import de.srendi.advancedperipherals.common.blocks.base.BaseTileEntityBlock;
-import de.srendi.advancedperipherals.common.blocks.base.TileEntityList;
 import de.srendi.advancedperipherals.common.blocks.tileentity.PlayerDetectorTileEntity;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
 import de.srendi.advancedperipherals.common.setup.TileEntityTypes;
@@ -28,13 +27,12 @@ public class PlayerDetectorBlock extends BaseTileEntityBlock {
     @Override
     public ActionResultType onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity player, Hand handIn, BlockRayTraceResult hit) {
         if (AdvancedPeripheralsConfig.enablePlayerDetector) {
-            for (TileEntity tileEntity : TileEntityList.get(worldIn).getTileEntities(worldIn)) {
-                if (tileEntity instanceof PlayerDetectorTileEntity) {
-                    PlayerDetectorTileEntity entity = (PlayerDetectorTileEntity) tileEntity;
-                    for (IComputerAccess computer : entity.getConnectedComputers()) {
-                        computer.queueEvent("playerClick", player.getName().getString());
-                        //Todo: Let the eyes glow when clicked on the detector.
-                    }
+            TileEntity tileEntity = worldIn.getTileEntity(pos);
+            if(tileEntity instanceof  PlayerDetectorTileEntity) {
+                PlayerDetectorTileEntity entity = (PlayerDetectorTileEntity) tileEntity;
+                for (IComputerAccess computer : entity.getConnectedComputers()) {
+                    computer.queueEvent("playerClick", player.getName().getString());
+                    //Todo: Let the eyes glow when clicked on the detector.
                 }
             }
         }
