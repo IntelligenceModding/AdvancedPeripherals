@@ -5,14 +5,16 @@ issueTrackerURL = "https://github.com/Seniorendi/AdvancedPeripherals/issues"
 logoFile = "pack.png"
 [[mods]]
 modId = "advancedperipherals"
-version = "0.4.2.1b"
+version = "0.4.3b"
 displayName = "Advanced Peripherals"
 #updateJSONURL="http://myurl.me/"
 displayURL = "https://srendi.de/"
 #logoFile="examplemod.png"
 authors = "Sr_endi"
 description = '''
-A Peripheral addon mod for Computercraft. Adds things like the Me Bridge, the Chat Box and more.
+Advanced Peripherals is a mod that adds many useful extensions for CC:Tweaked(Computercraft).
+You can communicate with Rerfined Storage, Applied Energistics 2 or with the whole Minecraft world.
+Adds things like the Me Bridge, various types of turtles, the Chat Box and more.
 '''
 [[dependencies.advancedperipherals]]
 modId = "forge"
