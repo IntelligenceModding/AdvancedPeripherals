@@ -23,5 +23,7 @@
   "turtle.advancedperipherals.player_detector_turtle": "Player",
   "turtle.advancedperipherals.chunky_turtle": "Chunky",
   "pocket.advancedperipherals.environment_pocket": "Environment",
+  "pocket.advancedperipherals.player_pocket": "Player",
+  "pocket.advancedperipherals.chatty_pocket": "Chatty",
   "itemGroup.advancedperipheralstab": "Advanced Peripherals"
 }
