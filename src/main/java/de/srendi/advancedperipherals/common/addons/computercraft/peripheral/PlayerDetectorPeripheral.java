@@ -95,12 +95,11 @@ public class PlayerDetectorPeripheral extends BasePeripheral {
 
     private boolean isInRange(BlockPos pos, PlayerEntity player, int customRange) {
         int range = Math.min(customRange, AdvancedPeripheralsConfig.playerDetMaxRange-1);
-        AdvancedPeripherals.Debug("Debug1 " + range);
 
         //A player should not be higher than 1024 blocks.
-        //Todo - 1.17: use Math.max(pos.getY(), -64) instead of 0;
-        BlockPos pos1 = new BlockPos(MathUtil.safeSubtract(pos.getX(), range), Math.min(pos.getY(), 1024), MathUtil.safeAdd(pos.getY(), range));
-        BlockPos pos2 = new BlockPos(MathUtil.safeAdd(pos.getX(), range), Math.max(pos.getY(), 0), MathUtil.safeSubtract(pos.getY(), range));
+        //Todo - 1.17: use Math.max(pos.getY(), -64) instead of 0
+        BlockPos pos1 = new BlockPos(MathUtil.safeSubtract(pos.getX(), range), Math.min(MathUtil.safeAdd(pos.getY(), range), 1024), MathUtil.safeAdd(pos.getZ(), range));
+        BlockPos pos2 = new BlockPos(MathUtil.safeAdd(pos.getX(), range), Math.max(MathUtil.safeSubtract(pos.getY(), range), 0), MathUtil.safeSubtract(pos.getZ(), range));
 
         int x1 = Math.min(pos1.getX(), pos2.getX());
         int y1 = Math.min(pos1.getY(), pos2.getY());
@@ -108,16 +107,10 @@ public class PlayerDetectorPeripheral extends BasePeripheral {
         int x2 = Math.max(pos1.getX(), pos2.getX());
         int y2 = Math.max(pos1.getY(), pos2.getY());
         int z2 = Math.max(pos1.getZ(), pos2.getZ());
-        AdvancedPeripherals.Debug("Debug2 " + pos1);
-        AdvancedPeripherals.Debug("Debug3 " + pos2);
-
-        AdvancedPeripherals.Debug("Debug4 " + customRange);
 
         int x = player.getPosition().getX();
         int z = player.getPosition().getZ();
         int y = player.getPosition().getY();
-        boolean bool = x >= x1 && x <= x2 && y >= y1 && y <= y2 && z >= z1 && z <= z2;
-        AdvancedPeripherals.Debug("Debug55 " + bool);
 
         return x >= x1 && x <= x2 && y >= y1 && y <= y2 && z >= z1 && z <= z2;
     }
