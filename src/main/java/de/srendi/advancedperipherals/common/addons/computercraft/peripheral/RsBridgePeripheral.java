@@ -17,7 +17,6 @@ import de.srendi.advancedperipherals.common.blocks.tileentity.RsBridgeTileEntity
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
 import de.srendi.advancedperipherals.common.util.ItemUtil;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
@@ -27,7 +26,7 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.registries.ForgeRegistries;
 
-import java.util.*;
+import java.util.Locale;
 
 public class RsBridgePeripheral extends BasePeripheral {
 
@@ -53,110 +52,22 @@ public class RsBridgePeripheral extends BasePeripheral {
 
     @LuaFunction(mainThread = true)
     public final Object[] listItems() {
-        HashMap<Integer, Object> items = new HashMap<>();
-        int i = 1;
-        for (ItemStack stack : RefinedStorage.getItems(getNetwork(), false)) {
-            HashMap<String, Object> map = new HashMap<>();
-            CompoundNBT nbt = stack.getTag();
-            Set<ResourceLocation> tags = stack.getItem().getTags();
-            map.put("name", ForgeRegistries.ITEMS.getKey(stack.getItem()).toString());
-            map.put("amount", stack.getCount());
-            map.put("displayName", stack.getDisplayName().getString());
-            if (nbt != null && !nbt.isEmpty()) {
-                map.put("nbt", nbt.toString());
-            }
-            if (!tags.isEmpty()) {
-                map.put("tags", tags);
-            }
-            items.put(i, map);
-            i++;
-        }
-        return new Object[]{items};
+        return new Object[]{RefinedStorage.listItems(false, getNetwork())};
     }
 
     @LuaFunction(mainThread = true)
     public final Object[] listCraftableItems() {
-        HashMap<Integer, Object> items = new HashMap<>();
-        int i = 1;
-        for (ItemStack stack : RefinedStorage.getItems(getNetwork(), true)) {
-            HashMap<String, Object> map = new HashMap<>();
-            CompoundNBT nbt = stack.getTag();
-            Set<ResourceLocation> tags = stack.getItem().getTags();
-            map.put("name", ForgeRegistries.ITEMS.getKey(stack.getItem()).toString());
-            map.put("craftamount", stack.getCount()); //Returns the result amount of an crafting recipe
-            for (ItemStack oStack : RefinedStorage.getItems(getNetwork(), false)) { //Used to get the amount of the item
-                if (oStack.isItemEqual(stack)) {
-                    map.put("amount", oStack.getCount());
-                    break;
-                } else {
-                    map.put("amount", 0);
-                }
-            }
-            map.put("displayName", stack.getDisplayName().getString());
-            if (nbt != null && !nbt.isEmpty()) {
-                map.put("nbt", nbt.toString());
-            }
-            if (!tags.isEmpty()) {
-                List<String> itemTags = new ArrayList<>();
-                for(ResourceLocation tag : tags) {
-                    itemTags.add(tag.toString());
-                }
-                map.put("tags", itemTags);
-            }
-            items.put(i, map);
-            i++;
-        }
-        return new Object[]{items};
+        return new Object[]{RefinedStorage.listItems(true, getNetwork())};
     }
 
     @LuaFunction(mainThread = true)
     public final Object[] listFluids() {
-        HashMap<Integer, Object> items = new HashMap<>();
-        int i = 1;
-        for (FluidStack stack : RefinedStorage.getFluids(getNetwork(), false)) {
-            HashMap<String, Object> map = new HashMap<>();
-            Set<ResourceLocation> tags = stack.getFluid().getTags();
-            map.put("name", ForgeRegistries.FLUIDS.getKey(stack.getFluid()).toString());
-            map.put("amount", stack.getAmount());
-            map.put("displayName", stack.getDisplayName().getString());
-            if (!tags.isEmpty()) {
-                map.put("tags", tags);
-            }
-            items.put(i, map);
-            i++;
-        }
-        return new Object[]{items};
+        return new Object[]{RefinedStorage.listFluids(false, getNetwork())};
     }
 
     @LuaFunction(mainThread = true)
     public final Object[] listCraftableFluids() {
-        HashMap<Integer, Object> items = new HashMap<>();
-        int i = 1;
-        for (FluidStack stack : RefinedStorage.getFluids(getNetwork(), true)) {
-            HashMap<String, Object> map = new HashMap<>();
-            Set<ResourceLocation> tags = stack.getFluid().getTags();
-            map.put("name", ForgeRegistries.FLUIDS.getKey(stack.getFluid()).toString());
-            map.put("craftamount", stack.getAmount());
-            for (FluidStack oStack : RefinedStorage.getFluids(getNetwork(), false)) { //Used to get the amount of the item
-                if (oStack.isFluidEqual(stack)) {
-                    map.put("amount", oStack.getAmount());
-                    break;
-                } else {
-                    map.put("amount", 0);
-                }
-            }
-            map.put("displayName", stack.getDisplayName().getString());
-            if (!tags.isEmpty()) {
-                List<String> itemTags = new ArrayList<>();
-                for(ResourceLocation tag : tags) {
-                    itemTags.add(tag.toString());
-                }
-                map.put("tags", itemTags);
-            }
-            items.put(i, map);
-            i++;
-        }
-        return new Object[]{items};
+        return new Object[]{RefinedStorage.listFluids(true, getNetwork())};
     }
 
     @LuaFunction(mainThread = true)
@@ -305,6 +216,13 @@ public class RsBridgePeripheral extends BasePeripheral {
         return transferableAmount;
     }
 
+    @LuaFunction(mainThread = true)
+    public final Object[] getItem(IArguments arguments) throws LuaException {
+        ItemStack stack = ItemUtil.getItemStackRS(arguments.getTable(0), RefinedStorage.getItems(getNetwork(), true));
+        if (stack == null)
+            return new Object[]{}; //Return nothing instead of crashing the program.
+        return RefinedStorage.getItem(RefinedStorage.getItems(getNetwork(), false), stack);
+    }
 
     @LuaFunction(mainThread = true)
     public final boolean craftItem(IArguments arguments) throws LuaException {
