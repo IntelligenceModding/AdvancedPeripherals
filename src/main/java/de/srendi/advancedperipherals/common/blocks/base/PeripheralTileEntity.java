@@ -40,8 +40,8 @@ public abstract class PeripheralTileEntity<T extends BasePeripheral> extends Loc
 
     public PeripheralTileEntity(TileEntityType<?> tileEntityTypeIn) {
         super(tileEntityTypeIn);
-        if(this instanceof IHasInventory) {
-            items = NonNullList.withSize(((IHasInventory) this).getInvSize(), ItemStack.EMPTY);
+        if(this instanceof IInventoryBlock) {
+            items = NonNullList.withSize(((IInventoryBlock) this).getInvSize(), ItemStack.EMPTY);
         } else {
             items = NonNullList.withSize(0, ItemStack.EMPTY);
         }
@@ -58,8 +58,7 @@ public abstract class PeripheralTileEntity<T extends BasePeripheral> extends Loc
             }
             return peripheralCap.cast();
         }
-        if (cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && !removed && direction != null && this instanceof IHasInventory) {
-            AdvancedPeripherals.Debug("I'm here, but why?");
+        if (cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && !removed && direction != null && this instanceof IInventoryBlock) {
             return handler.cast();
         }
         return super.getCapability(cap, direction);
@@ -81,7 +80,7 @@ public abstract class PeripheralTileEntity<T extends BasePeripheral> extends Loc
 
     @Override
     public ITextComponent getDisplayName() {
-        return this instanceof IHasInventory ? ((IHasInventory) this).getDisplayName() : null;
+        return this instanceof IInventoryBlock ? ((IInventoryBlock) this).getDisplayName() : null;
     }
 
     @Override
@@ -97,7 +96,7 @@ public abstract class PeripheralTileEntity<T extends BasePeripheral> extends Loc
 
     @Override
     protected Container createMenu(int id, @NotNull PlayerInventory player) {
-        return this instanceof IHasInventory ? ((IHasInventory) this).createContainer(id, player, pos, world) : null;
+        return this instanceof IInventoryBlock ? ((IInventoryBlock) this).createContainer(id, player, pos, world) : null;
     }
 
     @Override
@@ -107,12 +106,12 @@ public abstract class PeripheralTileEntity<T extends BasePeripheral> extends Loc
 
     @Override
     public boolean canInsertItem(int index, ItemStack itemStackIn, @Nullable Direction direction) {
-        return this instanceof IHasInventory;
+        return this instanceof IInventoryBlock;
     }
 
     @Override
     public boolean canExtractItem(int index, ItemStack stack, Direction direction) {
-        return this instanceof IHasInventory;
+        return this instanceof IInventoryBlock;
     }
 
     @Override

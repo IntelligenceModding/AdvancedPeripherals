@@ -1,33 +1,26 @@
 package de.srendi.advancedperipherals.common.container.base;
 
-import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.ContainerType;
-import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class BaseContainer extends Container {
+public abstract class BaseItemContainer extends Container {
 
-    private final IItemHandler inventory;
-    protected PeripheralTileEntity tileEntity;
+    protected final IItemHandler inventory;
+    protected final ItemStack item;
 
-    protected BaseContainer(@Nullable ContainerType<?> type, int id, PlayerInventory inventory, BlockPos pos, World world) {
+    protected BaseItemContainer(int id, @Nullable ContainerType<?> type, PlayerInventory inventory, ItemStack item) {
         super(type, id);
         this.inventory = new InvWrapper(inventory);
-        if(world != null)
-            this.tileEntity = (PeripheralTileEntity) world.getTileEntity(pos);
+        this.item = item;
     }
 
-    @Override
+    /*@Override
     public ItemStack transferStackInSlot(PlayerEntity playerIn, int index) {
         ItemStack itemstack = ItemStack.EMPTY;
         Slot slot = this.inventorySlots.get(index);
@@ -55,7 +48,7 @@ public abstract class BaseContainer extends Container {
         }
 
         return itemstack;
-    }
+    }*/
 
 
     private int addSlotRange(IItemHandler handler, int index, int x, int y, int amount, int dx) {

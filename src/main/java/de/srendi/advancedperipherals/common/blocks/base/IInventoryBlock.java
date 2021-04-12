@@ -6,7 +6,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
 
-public interface IHasInventory<T extends BaseContainer> {
+public interface IInventoryBlock<T extends BaseContainer> {
 
     ITextComponent getDisplayName();
 

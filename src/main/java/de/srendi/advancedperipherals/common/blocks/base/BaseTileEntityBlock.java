@@ -28,7 +28,7 @@ public abstract class BaseTileEntityBlock extends BaseBlock {
     public ActionResultType onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity player, Hand handIn, BlockRayTraceResult hit) {
         if (worldIn.isRemote) return ActionResultType.SUCCESS;
         TileEntity tileEntity = worldIn.getTileEntity(pos);
-        if (tileEntity != null && !(tileEntity instanceof IHasInventory)) return ActionResultType.PASS;
+        if (tileEntity != null && !(tileEntity instanceof IInventoryBlock)) return ActionResultType.PASS;
         INamedContainerProvider namedContainerProvider = this.getContainer(state, worldIn, pos);
         if (namedContainerProvider != null) {
             if (!(player instanceof ServerPlayerEntity)) return ActionResultType.PASS;

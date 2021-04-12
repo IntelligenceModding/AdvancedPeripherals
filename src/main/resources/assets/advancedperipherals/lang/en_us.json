@@ -11,6 +11,7 @@
   "item.advancedperipherals.tooltip.me_bridge": "§7Can be used to interact with Applied Energistics 2.",
   "item.advancedperipherals.tooltip.chat_box": "§7Can be used to read and write messages to the ingame chat.",
   "item.advancedperipherals.tooltip.peripheral_casing": "§7An empty hull without the love it deserves.",
+  "item.advancedperipherals.tooltip.memory_card": "§7Can safe the rights of a player to use it in an Player Manager.",
   "block.advancedperipherals.environment_detector": "Environment Detector",
   "block.advancedperipherals.chat_box": "Chat box",
   "block.advancedperipherals.player_detector": "Player Detector",
