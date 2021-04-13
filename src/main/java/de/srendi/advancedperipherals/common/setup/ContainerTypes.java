@@ -8,7 +8,7 @@ import net.minecraftforge.fml.RegistryObject;
 public class ContainerTypes {
 
     public static final RegistryObject<ContainerType<MemoryCardContainer>> MEMORY_CARD = Registration.CONTAINER_TYPES
-            .register("memory_card_container", () -> IForgeContainerType.create((windowId, inv, data) -> new MemoryCardContainer(windowId, inv, null)));
+            .register("memory_card_container", () -> IForgeContainerType.create(MemoryCardContainer::new));
 
     public static void register() {
 

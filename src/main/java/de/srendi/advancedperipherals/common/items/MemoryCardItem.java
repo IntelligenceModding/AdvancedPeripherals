@@ -16,6 +16,11 @@ import java.util.Optional;
 
 public class MemoryCardItem extends BaseItem implements IInventoryItem {
 
+    public boolean canExtract;
+    public boolean canInject;
+
+    public String owner;
+
     public MemoryCardItem() {
         super(new Properties().group(AdvancedPeripherals.TAB));
     }
@@ -37,6 +42,6 @@ public class MemoryCardItem extends BaseItem implements IInventoryItem {
 
     @Override
     public INamedContainerProvider createContainer(PlayerEntity playerEntity, ItemStack itemStack) {
-        return new NamedContainerProvider(new StringTextComponent("Yep"), (id, playerInventory, player) -> new MemoryCardContainer(id, playerInventory, itemStack));
+        return new NamedContainerProvider(new StringTextComponent(""), (id, playerInventory, player) -> new MemoryCardContainer(id, playerInventory, itemStack));
     }
 }

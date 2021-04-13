@@ -46,7 +46,10 @@ public abstract class BaseItem extends Item {
             return new ActionResult<>(ActionResultType.PASS, playerIn.getHeldItem(handIn));
         if(this instanceof IInventoryItem) {
             ServerPlayerEntity serverPlayerEntity = (ServerPlayerEntity) playerIn;
-            NetworkHooks.openGui(serverPlayerEntity, ((IInventoryItem) this).createContainer(playerIn, playerIn.getHeldItem(handIn)));
+            ItemStack stack = playerIn.getHeldItem(handIn);
+            NetworkHooks.openGui(serverPlayerEntity, ((IInventoryItem) this).createContainer(playerIn, stack), buf -> {
+                buf.writeItemStack(stack);
+            });
         }
         return super.onItemRightClick(worldIn, playerIn, handIn);
     }
