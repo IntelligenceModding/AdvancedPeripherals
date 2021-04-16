@@ -50,7 +50,7 @@ public abstract class PeripheralTileEntity<T extends BasePeripheral> extends Loc
     @Override
     public <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction direction) {
         if (!peripheral.isEnabled()) {
-            AdvancedPeripherals.Debug(peripheral.getType() + " is disabled, enable it in the Configuration.");
+            AdvancedPeripherals.Debug(peripheral.getType() + " you can enable it in the Configuration.");
         }
         if (cap == CAPABILITY_PERIPHERAL) {
             if (peripheralCap == null) {

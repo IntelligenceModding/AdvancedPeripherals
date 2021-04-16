@@ -2,7 +2,6 @@ package de.srendi.advancedperipherals.common.addons.computercraft.turtles;
 
 import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
-import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.addons.computercraft.base.BaseTurtle;
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.ChunkyPeripheral;
 import de.srendi.advancedperipherals.common.setup.Items;
@@ -50,7 +49,7 @@ public class TurtleChunky extends BaseTurtle<ChunkyPeripheral> {
             //The turtle can move, so we need to do that.
             if (peripheral.isEnabled()) {
                 if (!turtle.getWorld().isRemote && !loadedChunks.contains(turtle.getWorld().getChunk(turtle.getPosition()).getPos())) {
-                    AdvancedPeripherals.Debug(forceChunk(turtle.getWorld().getChunk(turtle.getPosition()).getPos(), true) + "");
+                    forceChunk(turtle.getWorld().getChunk(turtle.getPosition()).getPos(), true);
                 }
                 tick = 0;
             }
