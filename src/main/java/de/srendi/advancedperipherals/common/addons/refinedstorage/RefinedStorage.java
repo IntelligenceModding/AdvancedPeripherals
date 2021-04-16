@@ -169,7 +169,6 @@ public class RefinedStorage {
     public static CompoundNBT findMatchingTag(ItemStack stack, String nbtHash, List<ItemStack> items) {
         for (ItemStack rsStack : items) {
             if (rsStack.getCount() > 0 && rsStack.getItem().equals(stack.getItem())) {
-                AdvancedPeripherals.Debug(rsStack + "");
                 CompoundNBT tag = rsStack.getTag();
                 String hash = NBTUtil.getNBTHash(tag);
                 AdvancedPeripherals.Debug("HASH: " + hash);

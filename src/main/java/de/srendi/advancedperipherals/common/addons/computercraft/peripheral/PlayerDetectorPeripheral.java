@@ -1,7 +1,6 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.peripheral;
 
 import dan200.computercraft.api.lua.LuaFunction;
-import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.addons.computercraft.base.BasePeripheral;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
@@ -85,7 +84,6 @@ public class PlayerDetectorPeripheral extends BasePeripheral {
         coordinates.put("x", Math.floor(existingPlayer.getPosX()));
         coordinates.put("y", Math.floor(existingPlayer.getPosY()));
         coordinates.put("z", Math.floor(existingPlayer.getPosZ()));
-        AdvancedPeripherals.Debug("Debug5 " + coordinates);
         return coordinates;
     }
 

@@ -17,18 +17,16 @@ import net.minecraftforge.energy.IEnergyStorage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.concurrent.atomic.AtomicInteger;
-
 public class EnergyDetectorTileEntity extends PeripheralTileEntity<EnergyDetectorPeripheral> implements ITickableTileEntity {
 
     public int maxTransferRate = Integer.MAX_VALUE;
     public int transferRate = 0;
 
-    public APEnergyStorage storageIn = new APEnergyStorage(Integer.MAX_VALUE, Integer.MAX_VALUE, 0);
-    public APEnergyStorage storageOut = new APEnergyStorage(Integer.MAX_VALUE, 0, Integer.MAX_VALUE);
+    public APEnergyStorage storage = new APEnergyStorage(0, 0);
+    //creating an storage so cables will be connect.
+    //The storage will not save any energy
 
-    LazyOptional<IEnergyStorage> energyStorageCapIn = LazyOptional.of(()->storageIn);
-    LazyOptional<IEnergyStorage> energyStorageCapOut = LazyOptional.of(()->storageOut);
+    LazyOptional<IEnergyStorage> energyStorageCap = LazyOptional.of(()->storage);
 
     Direction energyInDirection = Direction.NORTH;
     Direction energyOutDirection = Direction.SOUTH;
@@ -47,26 +45,20 @@ public class EnergyDetectorTileEntity extends PeripheralTileEntity<EnergyDetecto
         energyInDirection = getBlockState().get(EnergyDetectorBlock.FACING);
         energyOutDirection = getBlockState().get(EnergyDetectorBlock.FACING).getOpposite();
         if (cap == CapabilityEnergy.ENERGY) {
-            if (direction == energyInDirection)
-                return energyStorageCapIn.cast();
-            if (direction == energyOutDirection) {
-                return energyStorageCapOut.cast();
-            }
+            if (direction == energyInDirection || direction == energyOutDirection)
+                return energyStorageCap.cast();
         }
         return super.getCapability(cap, direction);
+    }
+
+    public void setMaxTransferRate(int rate) {
+        maxTransferRate = rate;
     }
 
     @Override
     public void tick() {
         if (!world.isRemote) {
-            if (storageIn.getEnergyStored() > 0) {
-                int received = storageOut.receivePower(storageIn.getEnergyStored(), false, true);
-                storageIn.extractPower(received, false, true);
-                this.transferRate = received;
-            }
-            if (storageOut.getEnergyStored() > 0) {
-                sendOutPower();
-            }
+            sendOutPower();
         }
     }
 
@@ -74,37 +66,33 @@ public class EnergyDetectorTileEntity extends PeripheralTileEntity<EnergyDetecto
     public CompoundNBT write(CompoundNBT compound) {
         super.write(compound);
         compound.putInt("rateLimit", maxTransferRate);
-        compound.putInt("storageInEnergy", storageIn.getEnergyStored());
-        compound.putInt("storageOutEnergy", storageOut.getEnergyStored());
         return compound;
     }
 
     @Override
     public void read(BlockState state, CompoundNBT nbt) {
         maxTransferRate = nbt.getInt("rateLimit");
-        storageIn.setEnergy(nbt.getInt("storageInEnergy"));
-        storageOut.setEnergy(nbt.getInt("storageOutEnergy"));
         super.read(state, nbt);
     }
 
     private void sendOutPower() {
-        AtomicInteger capacity = new AtomicInteger(storageOut.getEnergyStored());
-        if (capacity.get() > 0) {
-            Direction direction = energyOutDirection;
-            TileEntity te = world.getTileEntity(pos.offset(direction));
-            if (te != null) {
-                te.getCapability(CapabilityEnergy.ENERGY, direction.getOpposite()).map(handler->{
-                    if (handler.canReceive()) {
-                        int received = handler.receiveEnergy(Math.min(capacity.get(), maxTransferRate), false);
-                        capacity.addAndGet(-received);
-                        storageOut.extractPower(received, false, false);
-                        markDirty();
-                        return capacity.get() > 0;
-                    } else {
-                        return true;
-                    }
-                }).orElse(true);
-            }
+        Direction directionIn = energyInDirection;
+        Direction directionOut = energyOutDirection;
+        TileEntity teIn = world.getTileEntity(pos.offset(energyInDirection));
+        TileEntity teOut = world.getTileEntity(pos.offset(energyOutDirection));
+        if (teIn != null && teOut != null) {
+            teIn.getCapability(CapabilityEnergy.ENERGY, directionIn.getOpposite()).map(handler-> teOut.getCapability(CapabilityEnergy.ENERGY, directionOut.getOpposite()).map(handlerOut->{
+                if (handlerOut.canReceive()) {
+                    int received = handlerOut.receiveEnergy(Math.min(handler.getEnergyStored(), maxTransferRate),
+                            false);
+                    transferRate = received;
+                    handler.extractEnergy(received, false);
+                    return received;
+                } else {
+                    return true;
+                }
+            }).orElse(true)).orElse(true);
         }
+
     }
 }
