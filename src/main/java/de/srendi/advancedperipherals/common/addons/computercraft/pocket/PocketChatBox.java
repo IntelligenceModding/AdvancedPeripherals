@@ -10,7 +10,7 @@ import org.jetbrains.annotations.Nullable;
 public class PocketChatBox extends BasePocket<ChatBoxPeripheral> {
 
     public PocketChatBox() {
-        super(new ResourceLocation("advancedperipherals", "chatty_pocket"), "pocket.advancedperipherals.chatty_pocket", Blocks.ENVIRONMENT_DETECTOR);
+        super(new ResourceLocation("advancedperipherals", "chatty_pocket"), "pocket.advancedperipherals.chatty_pocket", Blocks.CHAT_BOX);
     }
 
     @Nullable
