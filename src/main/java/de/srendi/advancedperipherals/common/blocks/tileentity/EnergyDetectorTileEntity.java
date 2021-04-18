@@ -76,23 +76,24 @@ public class EnergyDetectorTileEntity extends PeripheralTileEntity<EnergyDetecto
     }
 
     private void sendOutPower() {
-        Direction directionIn = energyInDirection;
-        Direction directionOut = energyOutDirection;
+        if (world.getTileEntity(pos.offset(energyInDirection)) == null || world.getTileEntity(pos.offset(energyOutDirection)) == null) {
+            return;
+        }
         TileEntity teIn = world.getTileEntity(pos.offset(energyInDirection));
         TileEntity teOut = world.getTileEntity(pos.offset(energyOutDirection));
-        if (teIn != null && teOut != null) {
-            teIn.getCapability(CapabilityEnergy.ENERGY, directionIn.getOpposite()).map(handler-> teOut.getCapability(CapabilityEnergy.ENERGY, directionOut.getOpposite()).map(handlerOut->{
-                if (handlerOut.canReceive()) {
-                    int received = handlerOut.receiveEnergy(Math.min(handler.getEnergyStored(), maxTransferRate),
-                            false);
-                    transferRate = received;
-                    handler.extractEnergy(received, false);
-                    return received;
-                } else {
-                    return true;
-                }
-            }).orElse(true)).orElse(true);
-        }
+        teIn.getCapability(CapabilityEnergy.ENERGY, energyInDirection.getOpposite()).map(handler ->
+                teOut.getCapability(CapabilityEnergy.ENERGY, energyOutDirection.getOpposite()).map(handlerOut->{
+                    if (handlerOut.canReceive()) {
+                        int received = handlerOut.receiveEnergy(
+                                Math.min(handler.getEnergyStored(), maxTransferRate), false);
+                        transferRate = received;
+                        handler.extractEnergy(received, false);
+                        return received;
+                    } else {
+                        return true;
+                    }
+                }).orElse(true)).orElse(true);
+
 
     }
 }
