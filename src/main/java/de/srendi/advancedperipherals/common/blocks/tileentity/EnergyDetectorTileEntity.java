@@ -3,8 +3,9 @@ package de.srendi.advancedperipherals.common.blocks.tileentity;
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.EnergyDetectorPeripheral;
 import de.srendi.advancedperipherals.common.blocks.EnergyDetectorBlock;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
+import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
 import de.srendi.advancedperipherals.common.setup.TileEntityTypes;
-import de.srendi.advancedperipherals.common.util.APEnergyStorage;
+import de.srendi.advancedperipherals.common.util.EnergyStorageProxy;
 import net.minecraft.block.BlockState;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.ITickableTileEntity;
@@ -14,17 +15,20 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
+
+import java.util.Optional;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class EnergyDetectorTileEntity extends PeripheralTileEntity<EnergyDetectorPeripheral> implements ITickableTileEntity {
 
-    public int maxTransferRate = Integer.MAX_VALUE;
     public int transferRate = 0;
+    @NotNull
+    private Optional<IEnergyStorage> outStorage = Optional.empty();
 
-    public APEnergyStorage storage = new APEnergyStorage(0, 0);
-    //creating an storage so cables will be connect.
-    //The storage will not save any energy
+    // creating an storageProxy that will forward the energy to the output but limit it to maxTransferRate
+    public EnergyStorageProxy storage = new EnergyStorageProxy(this, AdvancedPeripheralsConfig.energyDetectorMaxFlow);
 
     LazyOptional<IEnergyStorage> energyStorageCap = LazyOptional.of(()->storage);
 
@@ -51,49 +55,53 @@ public class EnergyDetectorTileEntity extends PeripheralTileEntity<EnergyDetecto
         return super.getCapability(cap, direction);
     }
 
-    public void setMaxTransferRate(int rate) {
-        maxTransferRate = rate;
-    }
-
     @Override
     public void tick() {
         if (!world.isRemote) {
-            sendOutPower();
+            // this handles the rare edge case that receiveEnergy is called multiple times in one tick
+            transferRate = storage.getTransferedInThisTick();
+            storage.resetTransferedInThisTick();
         }
     }
 
     @Override
     public CompoundNBT write(CompoundNBT compound) {
         super.write(compound);
-        compound.putInt("rateLimit", maxTransferRate);
+        compound.putInt("rateLimit", storage.getMaxTransferRate());
         return compound;
     }
 
     @Override
     public void read(BlockState state, CompoundNBT nbt) {
-        maxTransferRate = nbt.getInt("rateLimit");
+        storage.setMaxTransferRate( nbt.getInt("rateLimit"));
         super.read(state, nbt);
     }
 
-    private void sendOutPower() {
-        if (world.getTileEntity(pos.offset(energyInDirection)) == null || world.getTileEntity(pos.offset(energyOutDirection)) == null) {
-            return;
-        }
-        TileEntity teIn = world.getTileEntity(pos.offset(energyInDirection));
+    /*
+    @Nullable
+    public LazyOptional<IEnergyStorage> getOutputStorage() {
         TileEntity teOut = world.getTileEntity(pos.offset(energyOutDirection));
-        teIn.getCapability(CapabilityEnergy.ENERGY, energyInDirection.getOpposite()).map(handler ->
-                teOut.getCapability(CapabilityEnergy.ENERGY, energyOutDirection.getOpposite()).map(handlerOut->{
-                    if (handlerOut.canReceive()) {
-                        int received = handlerOut.receiveEnergy(
-                                Math.min(handler.getEnergyStored(), maxTransferRate), false);
-                        transferRate = received;
-                        handler.extractEnergy(received, false);
-                        return received;
-                    } else {
-                        return true;
-                    }
-                }).orElse(true)).orElse(true);
+        if (teOut == null) {
+            return null;
+        }
 
-
+        return teOut.getCapability(CapabilityEnergy.ENERGY, energyOutDirection.getOpposite());
+    */
+    // the documentation says that the value of the LazyOptional should be cached locally and invallidated using addListener
+    // this alternative code shoud do this only need to add an private property outStorage to the class
+    @NotNull
+    public Optional<IEnergyStorage> getOutputStorage() {
+        if (outStorage.isEmpty()) {
+            TileEntity teOut = world.getTileEntity(pos.offset(energyOutDirection));
+            if (teOut == null) {
+                return Optional.empty();
+            }
+            LazyOptional<IEnergyStorage> lazyOptionalOutStorage = teOut.getCapability(CapabilityEnergy.ENERGY, energyOutDirection.getOpposite());
+            outStorage = lazyOptionalOutStorage.resolve();
+            lazyOptionalOutStorage.addListener(l -> {
+                outStorage = Optional.empty();
+            });
+        }
+        return outStorage;
     }
 }
