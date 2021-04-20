@@ -86,21 +86,11 @@ public class EnergyDetectorTileEntity extends PeripheralTileEntity<EnergyDetecto
         super.read(state, nbt);
     }
 
-    /*
-    @Nullable
-    public LazyOptional<IEnergyStorage> getOutputStorage() {
-        TileEntity teOut = world.getTileEntity(pos.offset(energyOutDirection));
-        if (teOut == null) {
-            return null;
-        }
-
-        return teOut.getCapability(CapabilityEnergy.ENERGY, energyOutDirection.getOpposite());
-    */
-    // the documentation says that the value of the LazyOptional should be cached locally and invallidated using addListener
-    // this alternative code shoud do this only need to add an private property outStorage to the class
+    /** returnes the cached output storage of the receiving block or refetches it if it has been invalidated */
     @NotNull
     public Optional<IEnergyStorage> getOutputStorage() {
-        if (outReceivingStorage.isEmpty()) {
+        // the documentation says that the value of the LazyOptional should be cached locally and invallidated using addListener
+        if (!outReceivingStorage.isPresent()) {
             TileEntity teOut = world.getTileEntity(pos.offset(energyOutDirection));
             if (teOut == null) {
                 return Optional.empty();
