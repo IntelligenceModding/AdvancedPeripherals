@@ -49,14 +49,15 @@ public abstract class PeripheralTileEntity<T extends BasePeripheral> extends Loc
 
     @Override
     public <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction direction) {
-        if (!peripheral.isEnabled()) {
-            AdvancedPeripherals.Debug(peripheral.getType() + " you can enable it in the Configuration.");
-        }
-        if (cap == CAPABILITY_PERIPHERAL) {
-            if (peripheralCap == null) {
-                peripheralCap = LazyOptional.of(()->peripheral);
+        if (peripheral.isEnabled()) {
+            if (cap == CAPABILITY_PERIPHERAL) {
+                if (peripheralCap == null) {
+                    peripheralCap = LazyOptional.of(()->peripheral);
+                }
+                return peripheralCap.cast();
             }
-            return peripheralCap.cast();
+        } else {
+            AdvancedPeripherals.Debug(peripheral.getType() + " is disabled, you can enable it in the Configuration.");
         }
         if (cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && !removed && direction != null && this instanceof IInventoryBlock) {
             return handler.cast();
