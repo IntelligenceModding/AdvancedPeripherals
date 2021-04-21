@@ -106,4 +106,5 @@ public class TileEntityList extends WorldSavedData {
     public List<BlockPos> getBlockPositions() {
         return tileEntities;
     }
+
 }
