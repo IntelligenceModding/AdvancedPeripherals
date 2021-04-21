@@ -1,13 +1,13 @@
 package de.srendi.advancedperipherals.common.util;
 
-import java.util.Optional;
-
 import de.srendi.advancedperipherals.common.blocks.tileentity.EnergyDetectorTileEntity;
 import net.minecraftforge.energy.IEnergyStorage;
 
+import java.util.Optional;
+
 public class EnergyStorageProxy implements IEnergyStorage {
 
-    private EnergyDetectorTileEntity energyDetectorTE;
+    private final EnergyDetectorTileEntity energyDetectorTE;
     private int maxTransferRate;
     private int transferedInThisTick = 0;
 
@@ -37,17 +37,13 @@ public class EnergyStorageProxy implements IEnergyStorage {
     @Override
     public int getEnergyStored() {
         Optional<IEnergyStorage> out = energyDetectorTE.getOutputStorage();
-        return out.map(outStorage -> {
-            return outStorage.getEnergyStored();
-        }).orElse(0);
+        return out.map(IEnergyStorage::getEnergyStored).orElse(0);
     }
 
     @Override
     public int getMaxEnergyStored() {
         Optional<IEnergyStorage> out = energyDetectorTE.getOutputStorage();
-        return out.map(outStorage -> {
-            return outStorage.getMaxEnergyStored();
-        }).orElse(0);
+        return out.map(IEnergyStorage::getMaxEnergyStored).orElse(0);
     }
 
     @Override

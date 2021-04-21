@@ -16,25 +16,23 @@ import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.EnergyStorage;
 import net.minecraftforge.energy.IEnergyStorage;
-
-import java.util.Optional;
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Optional;
 
 public class EnergyDetectorTileEntity extends PeripheralTileEntity<EnergyDetectorPeripheral> implements ITickableTileEntity {
 
     public int transferRate = 0;
 
-    /** caches the receiving storage at the output */
     @NotNull
     private Optional<IEnergyStorage> outReceivingStorage = Optional.empty();
 
-    /** storageProxy that will forward the energy to the output but limit it to maxTransferRate */
+    // storageProxy that will forward the energy to the output but limit it to maxTransferRate
     public EnergyStorageProxy storageProxy = new EnergyStorageProxy(this, AdvancedPeripheralsConfig.energyDetectorMaxFlow);
     LazyOptional<IEnergyStorage> energyStorageCap = LazyOptional.of(()->storageProxy);
 
-    /** an zero size, zero transfer energy storage to enshure that cables connect */
+    // an zero size, zero transfer energy storage to enshure that cables connect
     private EnergyStorage zeroStorage = new EnergyStorage(0, 0, 0);
     LazyOptional<IEnergyStorage> zeroStorageCap = LazyOptional.of(()->zeroStorage);
 
@@ -86,7 +84,7 @@ public class EnergyDetectorTileEntity extends PeripheralTileEntity<EnergyDetecto
         super.read(state, nbt);
     }
 
-    /** returnes the cached output storage of the receiving block or refetches it if it has been invalidated */
+    // returns the cached output storage of the receiving block or refetches it if it has been invalidated
     @NotNull
     public Optional<IEnergyStorage> getOutputStorage() {
         // the documentation says that the value of the LazyOptional should be cached locally and invallidated using addListener
