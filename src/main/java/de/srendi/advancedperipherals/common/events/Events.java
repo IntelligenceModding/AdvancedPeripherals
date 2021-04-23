@@ -10,6 +10,7 @@ import de.srendi.advancedperipherals.common.blocks.tileentity.ChatBoxTileEntity;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.event.ServerChatEvent;
+import net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
@@ -55,5 +56,9 @@ public class Events {
                 }
             }
         });
+    }
+    
+    public static void onEquipmentChange(LivingEquipmentChangeEvent event) {
+    	//TODO: send network message to player to clear HudOverlayHandler canvas, if the unequipped item were AR Goggles.
     }
 }

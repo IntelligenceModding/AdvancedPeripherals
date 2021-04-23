@@ -17,6 +17,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.InterModComms;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
@@ -37,6 +38,8 @@ public class AdvancedPeripherals {
             return new ItemStack(Blocks.CHAT_BOX.get());
         }
     };
+    
+    private static boolean curiosLoaded;
 
     public AdvancedPeripherals() {
         LOGGER.info("AdvancedPeripherals says hello!");
@@ -49,6 +52,7 @@ public class AdvancedPeripherals {
         modBus.addListener(this::clientSetup);
         Registration.register();
         MinecraftForge.EVENT_BUS.register(this);
+        curiosLoaded = ModList.get().isLoaded("curios");
     }
 
     public static void Debug(String message) {
@@ -72,7 +76,13 @@ public class AdvancedPeripherals {
     
     @SubscribeEvent
     public void interModComms(InterModEnqueueEvent event) {
+    	if (!curiosLoaded)
+    		return;
     	InterModComms.sendTo("curios", SlotTypeMessage.REGISTER_TYPE, ()->new SlotTypeMessage.Builder("glasses").size(1).build());
     }
+
+	public static boolean isCuriosLoaded() {
+		return curiosLoaded;
+	}
 
 }

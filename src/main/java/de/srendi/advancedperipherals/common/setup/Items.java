@@ -8,7 +8,7 @@ import net.minecraftforge.fml.RegistryObject;
 public class Items {
 
     public static final RegistryObject<Item> CHUNK_CONTROLLER = Registration.ITEMS.register("chunk_controller", ChunkControllerItem::new);
-    public static final RegistryObject<Item> AR_GOGGLES = Registration.ITEMS.register("ar_goggles", ARGogglesItem::new);
+    public static final RegistryObject<ARGogglesItem> AR_GOGGLES = Registration.ITEMS.register("ar_goggles", ARGogglesItem::new);
 
     public static void register() {}
 

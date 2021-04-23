@@ -7,12 +7,13 @@ import org.jetbrains.annotations.Nullable;
 
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.client.HudOverlayHandler;
+import de.srendi.advancedperipherals.common.addons.curios.CuriosHelper;
 import de.srendi.advancedperipherals.common.blocks.tileentity.ARControllerTileEntity;
 import de.srendi.advancedperipherals.common.items.base.BaseItem;
 import de.srendi.advancedperipherals.common.setup.Blocks;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUseContext;
 import net.minecraft.nbt.CompoundNBT;
@@ -22,11 +23,10 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
+import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.Constants.NBT;
-import top.theillusivec4.curios.api.SlotContext;
-import top.theillusivec4.curios.api.type.capability.ICurioItem;
 
-public class ARGogglesItem extends BaseItem implements ICurioItem {
+public class ARGogglesItem extends BaseItem {
 	private static final String CONTROLLER_POS = "controller_pos";
 	private static final String CONTROLLER_WORLD = "controller_world";
 
@@ -60,16 +60,21 @@ public class ARGogglesItem extends BaseItem implements ICurioItem {
     }
     
     @Override
-    public void curioTick(String identifier, int index, LivingEntity livingEntity, ItemStack stack) {
-    	if (livingEntity != Minecraft.getInstance().player)
-    		return;
-    	if (stack.hasTag() && stack.getTag().contains(CONTROLLER_POS) && stack.getTag().contains(CONTROLLER_WORLD)) {
+    public ICapabilityProvider initCapabilities(ItemStack stack, CompoundNBT nbt) {
+    	if (!AdvancedPeripherals.isCuriosLoaded()) {
+    		return null;
+    	}
+    	return CuriosHelper.createARGogglesProvider(stack);
+    }
+
+	public static void tick(PlayerEntity player, ItemStack stack) {
+		if (stack.hasTag() && stack.getTag().contains(CONTROLLER_POS) && stack.getTag().contains(CONTROLLER_WORLD)) {
     		int[] arr = stack.getTag().getIntArray(CONTROLLER_POS);
     		if (arr.length < 3) 
     			return;
     		BlockPos pos = new BlockPos(arr[0], arr[1], arr[2]);
     		String dimensionKey = stack.getTag().getString(CONTROLLER_WORLD);
-    		World world = livingEntity.world;
+    		World world = player.world;
     		if (!dimensionKey.equals(world.getDimensionKey().toString())) {
     			for (World w : world.getServer().getWorlds()) {
     				if (w.getDimensionKey().toString().equals(dimensionKey)) {
@@ -85,11 +90,16 @@ public class ARGogglesItem extends BaseItem implements ICurioItem {
     		HudOverlayHandler.clearCanvas();
     		HudOverlayHandler.updateCanvas(controller.getCanvas());
     	}
+	}
+    
+    @Override
+    public EquipmentSlotType getEquipmentSlot(ItemStack stack) {
+    	return EquipmentSlotType.HEAD;
     }
     
     @Override
-    public void onUnequip(SlotContext slotContext, ItemStack newStack, ItemStack stack) {
-    	HudOverlayHandler.clearCanvas();
+    public void onArmorTick(ItemStack stack, World world, PlayerEntity player) {
+    	tick(player, stack);
     }
     
     @Override

@@ -27,9 +27,12 @@ public class HudOverlayHandler {
 
 	@SubscribeEvent(priority = EventPriority.LOWEST)
 	public void onRender(RenderGameOverlayEvent.Post event) {
+		if (event.getWindow() == null) return;
 		Minecraft mc = Minecraft.getInstance();
 		MatrixStack matrixStack = event.getMatrixStack();
-		for (ARRenderAction action : canvas) {
+		List<ARRenderAction> canvasCopy = new ArrayList<ARRenderAction>();
+		canvasCopy.addAll(canvas);
+		for (ARRenderAction action : canvasCopy) {
 			action.draw(mc, matrixStack, event.getWindow().getScaledWidth(), event.getWindow().getScaledHeight());
 		}
 		mc.getTextureManager().bindTexture(AbstractGui.GUI_ICONS_LOCATION);
@@ -38,14 +41,12 @@ public class HudOverlayHandler {
 	public static HudOverlayHandler getInstance() {
 		return instance;
 	}
-	
+
 	public static void updateCanvas(List<ARRenderAction> actions) {
 		if (instance == null)
 			return;
 		instance.canvas.clear();
-		for (ARRenderAction action : actions) {
-			instance.canvas.add(action);
-		}
+		instance.canvas.addAll(actions);
 	}
 
 	public static void clearCanvas() {
