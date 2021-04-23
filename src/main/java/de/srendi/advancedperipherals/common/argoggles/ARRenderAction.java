@@ -17,7 +17,7 @@ public final class ARRenderAction implements INBTSerializable<CompoundNBT> {
 	private static final String INT_ARGS = "int_args";
 
 	private RenderActionType type;
-	private String stringArg = null;
+	private String stringArg = "";
 	private int[] intArgs = new int[0];
 	private Optional<int[]> virtualScreenSize = Optional.empty();
 
@@ -54,6 +54,7 @@ public final class ARRenderAction implements INBTSerializable<CompoundNBT> {
 						relativeY(i[1], h), i[2]);
 				break;
 			case Fill:
+				i[4] = ARRenderHelper.fixAlpha(i[4]);
 				ARRenderHelper.fill(matrixStack, relativeX(i[0], w), relativeY(i[1], h), relativeX(i[2], w),
 						relativeY(i[3], h), i[4]);
 				break;
