@@ -4,7 +4,7 @@ import de.srendi.advancedperipherals.AdvancedPeripherals;
 
 public enum RenderActionType {
 
-	DrawCenteredString(3), DrawString(3), Fill(5);
+	DrawCenteredString(3), DrawString(3), Fill(5), HorizontalLine(4), VerticalLine(4), FillGradient(6), DrawRightboundString(3);
 
 	int intArgCount;
 

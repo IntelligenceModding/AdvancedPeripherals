@@ -36,7 +36,11 @@ public class ARControllerPeripheral extends BasePeripheral{
     
     @LuaFunction
     public final MethodResult isRelativeMode() {
-    	return MethodResult.of(tileEntity.isRelativeMode(), tileEntity.getVirtualScreenSize());
+    	int[] virtualScreenSize = tileEntity.getVirtualScreenSize();
+    	if (virtualScreenSize != null)
+    		return MethodResult.of(tileEntity.isRelativeMode(), virtualScreenSize[0], virtualScreenSize[1]);
+    	else
+    		return MethodResult.of(tileEntity.isRelativeMode());
     }
     
     @LuaFunction
@@ -62,8 +66,28 @@ public class ARControllerPeripheral extends BasePeripheral{
     }
     
     @LuaFunction
+    public final void drawRightboundString(String text, int x, int y, int color) {
+    	tileEntity.addToCanvas(new ARRenderAction(RenderActionType.DrawRightboundString, text, x, y, color));
+    }
+    
+    @LuaFunction
+    public final void horizontalLine(int minX, int maxX, int y, int color) {
+    	tileEntity.addToCanvas(new ARRenderAction(RenderActionType.HorizontalLine, minX, maxX, y, color));
+    }
+    
+    @LuaFunction
+    public final void verticalLine(int x, int minY, int maxY, int color) {
+    	tileEntity.addToCanvas(new ARRenderAction(RenderActionType.VerticalLine, x, minY, maxY, color));
+    }
+    
+    @LuaFunction
     public final void fill(int minX, int minY, int maxX, int maxY, int color) {
     	tileEntity.addToCanvas(new ARRenderAction(RenderActionType.Fill, minX, minY, maxX, maxY, color));
+    }
+    
+    @LuaFunction
+    public final void fillGradient(int minX, int minY, int maxX, int maxY, int colorFrom, int colorTo) {
+    	tileEntity.addToCanvas(new ARRenderAction(RenderActionType.FillGradient, minX, minY, maxX, maxY, colorFrom, colorTo));
     }
     
     @LuaFunction

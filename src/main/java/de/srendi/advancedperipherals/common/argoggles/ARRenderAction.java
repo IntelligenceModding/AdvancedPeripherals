@@ -7,7 +7,6 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraftforge.common.util.INBTSerializable;
 
@@ -43,16 +42,32 @@ public final class ARRenderAction implements INBTSerializable<CompoundNBT> {
 		int[] i = intArgs;
 		switch (type) {
 			case DrawCenteredString:
-				AbstractGui.drawCenteredString(matrixStack, mc.fontRenderer, stringArg, relativeX(i[0], w),
+				ARRenderHelper.drawCenteredString(matrixStack, mc.fontRenderer, stringArg, relativeX(i[0], w),
 						relativeY(i[1], h), i[2]);
 				break;
 			case DrawString:
-				AbstractGui.drawString(matrixStack, mc.fontRenderer, stringArg, relativeX(i[0], w), relativeY(i[1], h),
-						i[2]);
+				ARRenderHelper.drawString(matrixStack, mc.fontRenderer, stringArg, relativeX(i[0], w),
+						relativeY(i[1], h), i[2]);
+				break;
+			case DrawRightboundString:
+				ARRenderHelper.drawRightboundString(matrixStack, mc.fontRenderer, stringArg, relativeX(i[0], w),
+						relativeY(i[1], h), i[2]);
 				break;
 			case Fill:
-				AbstractGui.fill(matrixStack, relativeX(i[0], w), relativeY(i[1], h), relativeX(i[2], w),
+				ARRenderHelper.fill(matrixStack, relativeX(i[0], w), relativeY(i[1], h), relativeX(i[2], w),
 						relativeY(i[3], h), i[4]);
+				break;
+			case HorizontalLine:
+				ARRenderHelper.getInstance().hLine(matrixStack, relativeX(i[0], w), relativeX(i[1], w),
+						relativeY(i[2], h), i[3]);
+				break;
+			case VerticalLine:
+				ARRenderHelper.getInstance().vLine(matrixStack, relativeX(i[0], w), relativeY(i[1], h),
+						relativeY(i[2], h), i[3]);
+				break;
+			case FillGradient:
+				ARRenderHelper.getInstance().fillGradient(matrixStack, relativeX(i[0], w), relativeY(i[1], h),
+						relativeX(i[2], w), relativeY(i[3], h), i[4], i[5]);
 				break;
 			default:
 				AdvancedPeripherals.LOGGER.warn("Failed to execute AR render action of unimplemented type " + type);
@@ -62,16 +77,18 @@ public final class ARRenderAction implements INBTSerializable<CompoundNBT> {
 
 	private int relativeX(int x, int windowWidth) {
 		if (virtualScreenSize.isPresent()) {
+			x = x >= 0 ? x : virtualScreenSize.get()[0] + x;
 			return (int) Math.round((double) x / virtualScreenSize.get()[0] * windowWidth);
 		} else
-			return x;
+			return x >= 0 ? x : windowWidth + x;
 	}
 
 	private int relativeY(int y, int windowHeight) {
 		if (virtualScreenSize.isPresent()) {
+			y = y >= 0 ? y : virtualScreenSize.get()[1] + y;
 			return (int) Math.round((double) y / virtualScreenSize.get()[1] * windowHeight);
 		} else
-			return y;
+			return y >= 0 ? y : windowHeight;
 	}
 
 	@Override
