@@ -31,7 +31,7 @@ public class RsBridgeTileEntity extends PeripheralTileEntity<RsBridgePeripheral>
         this(TileEntityTypes.RS_BRIDGE.get());
     }
 
-    public RsBridgeTileEntity(TileEntityType tileType) {
+    public RsBridgeTileEntity(TileEntityType<RsBridgeTileEntity> tileType) {
         super(tileType);
     }
 
