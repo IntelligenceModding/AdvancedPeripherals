@@ -37,7 +37,7 @@ side = "BOTH"
 [[dependencies.advancedperipherals]]
 modId = "curios"
 mandatory = true
-versionRange = "[4.0.5.1,)"
+versionRange = "[1.16.5-4.0.5.1,)"
 ordering = "NONE"
 side = "BOTH"
 [[dependencies.advancedperipherals]]
