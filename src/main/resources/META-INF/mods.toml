@@ -35,6 +35,12 @@ versionRange = "1.95.2"
 ordering = "NONE"
 side = "BOTH"
 [[dependencies.advancedperipherals]]
+modId = "curios"
+mandatory = true
+versionRange = "[4.0.5.1,)"
+ordering = "NONE"
+side = "BOTH"
+[[dependencies.advancedperipherals]]
 modId = "appliedenergistics2"
 mandatory = false
 versionRange = "8.2.0"

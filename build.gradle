@@ -104,15 +104,15 @@ dependencies {
     implementation fg.deobf("com.refinedmods:refinedstorage:${rs_version}")
     compileOnly fg.deobf("appeng:appliedenergistics2:${ae_version}:api");
     runtimeOnly fg.deobf("appeng:appliedenergistics2:${ae_version}");
+	
+	runtimeOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}")
+    compileOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}:api")
 
     runtimeOnly fg.deobf("mcjty.theoneprobe:TheOneProbe-1.16:${top_version}")
     //Mods to test stuff(Not required mods)
     runtimeOnly fg.deobf("mekanism:Mekanism:1.16.4-10.0.19.446")
     runtimeOnly fg.deobf("mekanism:Mekanism:1.16.4-10.0.19.446:generators")
     runtimeOnly fg.deobf("mezz.jei:jei-1.16.4:7.6.0.62")
-	
-	runtimeOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}")
-    compileOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}:api")
 
 }
 
