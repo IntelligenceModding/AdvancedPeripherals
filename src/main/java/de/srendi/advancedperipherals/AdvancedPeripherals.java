@@ -11,6 +11,7 @@ import de.srendi.advancedperipherals.common.configuration.ConfigHolder;
 import de.srendi.advancedperipherals.common.setup.Blocks;
 import de.srendi.advancedperipherals.common.setup.Registration;
 import de.srendi.advancedperipherals.common.util.ChunkManager;
+import de.srendi.advancedperipherals.network.MNetwork;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
@@ -46,7 +47,7 @@ public class AdvancedPeripherals {
         IEventBus modBus = FMLJavaModLoadingContext.get().getModEventBus();
 
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, ConfigHolder.COMMON_SPEC);
-        MinecraftForge.EVENT_BUS.addListener(this::commonSetup);
+        modBus.addListener(this::commonSetup);
         modBus.addListener(ConfigHandler::configEvent);
         modBus.addListener(this::interModComms);
         modBus.addListener(this::clientSetup);
@@ -68,6 +69,7 @@ public class AdvancedPeripherals {
     @SubscribeEvent
     public void commonSetup(FMLCommonSetupEvent event) {
         event.enqueueWork(ChunkManager::register);
+        MNetwork.init();
     }
     
     public void clientSetup(FMLClientSetupEvent event) {

@@ -1,9 +1,12 @@
 package de.srendi.advancedperipherals.common.addons.curios;
 
 import de.srendi.advancedperipherals.common.items.ARGogglesItem;
+import de.srendi.advancedperipherals.network.MNetwork;
+import de.srendi.advancedperipherals.network.messages.ClearHudCanvasMessage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Direction;
 import net.minecraftforge.common.capabilities.Capability;
@@ -30,7 +33,9 @@ public class CuriosHelper {
 					
 					@Override
 					public void onUnequip(SlotContext slotContext, ItemStack newStack) {
-						// TODO: send network message to player to clear HudOverlayHandler canvas
+						if (!(slotContext.getWearer() instanceof ServerPlayerEntity))
+							return;
+						MNetwork.sendTo(new ClearHudCanvasMessage(), (ServerPlayerEntity) slotContext.getWearer());
 					}
 				}));
 			}
