@@ -1,6 +1,6 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "advancedperipherals:item/ar_gogglesr"
+    "layer0": "advancedperipherals:item/ar_goggles"
   }
 }

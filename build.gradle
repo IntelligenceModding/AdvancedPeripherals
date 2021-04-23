@@ -91,6 +91,7 @@ repositories {
     maven { url 'https://modmaven.dev/' }
     maven { url 'https://dvs1.progwml6.com/files/maven/' }
     maven { url 'https://repo.refinedmods.com/' }
+	maven { url = "https://maven.theillusivec4.top/" }
 }
 
 dependencies {
@@ -109,6 +110,9 @@ dependencies {
     runtimeOnly fg.deobf("mekanism:Mekanism:1.16.4-10.0.19.446")
     runtimeOnly fg.deobf("mekanism:Mekanism:1.16.4-10.0.19.446:generators")
     runtimeOnly fg.deobf("mezz.jei:jei-1.16.4:7.6.0.62")
+	
+	runtimeOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}")
+    compileOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}:api")
 
 }
 

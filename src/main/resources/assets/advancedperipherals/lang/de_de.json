@@ -1,8 +1,9 @@
 {
   "item.advancedperipherals.chunk_controller": "Chunk Controller",
+  "item.advancedperipherals.ar_goggles": "AR-Brille",
   "item.advancedperipherals.computer_tool": "Computer Werkzeug",
   "item.advancedperipherals.tooltip.hold_ctrl": "§b[§7CTRL§b] §7Für Beschreibung",
-  "item.advancedperipherals.tooltip.computer_tool": "§7You can access a GUI of our blocks with this magic tool.",
+  "item.advancedperipherals.tooltip.computer_tool": "§7Mit diesem magischen Tool kannst du auf eine GUI f�r unsere Werkzeuge zugreifen..",
   "item.advancedperipherals.tooltip.energy_detector": "§7Kann die Übertragung von Energie erkennen und handelt als Wiederstand.",
   "item.advancedperipherals.tooltip.chunk_controller": "§7Crafting Komponente für die Chunky Turtle.",
   "item.advancedperipherals.tooltip.environment_detector": "§7Kann mit der Welt interagieren.",
@@ -10,6 +11,9 @@
   "item.advancedperipherals.tooltip.rs_bridge": "§7Kann mit Refined Storage interagieren.",
   "item.advancedperipherals.tooltip.me_bridge": "§7Kann mit Applied Energistics 2 interagieren.",
   "item.advancedperipherals.tooltip.chat_box": "§7Kann genutzt werden um Nachrichten zu lesen und zu schreiben.",
+  "item.advancedperipherals.tooltip.ar_controller": "§7Kann genutzt werden, um die AR-Brille kabellos zu kontrollieren.",
+  "item.advancedperipherals.tooltip.ar_goggles": "§7Stellt ein Overlay dar, welches vom verkn�pften AR-Controller gesteuert wird. Rechtsklick auf den Controller zum Verkn�pfen.",
+  "item.advancedperipherals.tooltip.ar_goggles.binding": "Verbunden mit dem Controller bei %d %d %d.",
   "item.advancedperipherals.tooltip.peripheral_casing": "§7Eine leere Hülle ohne die Liebe die sie verdient hat.",
   "block.advancedperipherals.environment_detector": "Umgebungs Detektor",
   "block.advancedperipherals.chat_box": "Chat Box",
@@ -17,6 +21,7 @@
   "block.advancedperipherals.me_bridge": "ME Brücke",
   "block.advancedperipherals.rs_bridge": "RS Brücke",
   "block.advancedperipherals.energy_detector": "Energie Detektor",
+  "block.advancedperipherals.ar_controller": "AR-Controller",
   "block.advancedperipherals.peripheral_casing": "Peripherie Casing",
   "turtle.advancedperipherals.chat_box_turtle": "Chatty",
   "turtle.advancedperipherals.environment_detector_turtle": "Umgebungs",
@@ -25,5 +30,6 @@
   "pocket.advancedperipherals.environment_pocket": "Umgebung",
   "pocket.advancedperipherals.player_pocket": "Spieler",
   "pocket.advancedperipherals.chatty_pocket": "Chatty",
-  "itemGroup.advancedperipheralstab": "Advanced Peripherals"
+  "itemGroup.advancedperipheralstab": "Advanced Peripherals",
+  "curios.identifier.glasses": "Brille"
 }

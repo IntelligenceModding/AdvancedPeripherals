@@ -28,5 +28,4 @@ public class ARControllerItem extends BaseBlockItem {
 	protected ITextComponent getDescription() {
 		return new TranslationTextComponent("item.advancedperipherals.tooltip.ar_controller");
 	}
-
 }

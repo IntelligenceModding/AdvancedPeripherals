@@ -1,5 +1,12 @@
 package de.srendi.advancedperipherals.common.blocks.base;
 
+import static dan200.computercraft.shared.Capabilities.CAPABILITY_PERIPHERAL;
+
+import java.util.List;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import dan200.computercraft.api.peripheral.IComputerAccess;
 import dan200.computercraft.api.peripheral.IPeripheral;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
@@ -9,12 +16,6 @@ import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
-
-import static dan200.computercraft.shared.Capabilities.CAPABILITY_PERIPHERAL;
 
 public abstract class PeripheralTileEntity<T extends BasePeripheral> extends TileEntity {
 
@@ -26,7 +27,7 @@ public abstract class PeripheralTileEntity<T extends BasePeripheral> extends Til
     }
 
     @Override
-    public <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction direction) {
+    public <T0> LazyOptional<T0> getCapability(@NotNull Capability<T0> cap, @Nullable Direction direction) {
         if (peripheral.isEnabled()) {
             if (cap == CAPABILITY_PERIPHERAL) {
                 if (peripheralCap == null) {
