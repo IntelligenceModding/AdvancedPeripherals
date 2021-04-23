@@ -1,9 +1,6 @@
 package de.srendi.advancedperipherals.client;
 
 import de.srendi.advancedperipherals.AdvancedPeripherals;
-import de.srendi.advancedperipherals.common.container.MemoryCardScreen;
-import de.srendi.advancedperipherals.common.setup.ContainerTypes;
-import net.minecraft.client.gui.ScreenManager;
 import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.client.renderer.model.IUnbakedModel;
 import net.minecraft.client.renderer.model.ModelResourceLocation;
@@ -52,7 +49,7 @@ public class ClientRegistry {
 
     @SubscribeEvent
     public static void onClientSetup(FMLClientSetupEvent event) {
-        ScreenManager.registerFactory(ContainerTypes.MEMORY_CARD.get(), MemoryCardScreen::new);
+        //ScreenManager.registerFactory(ContainerTypes.MEMORY_CARD.get(), MemoryCardScreen::new);
     }
 
 }
