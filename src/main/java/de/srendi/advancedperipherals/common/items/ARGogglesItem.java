@@ -1,19 +1,24 @@
 package de.srendi.advancedperipherals.common.items;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.jetbrains.annotations.Nullable;
+import org.lwjgl.glfw.GLFW;
 
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.client.HudOverlayHandler;
 import de.srendi.advancedperipherals.common.addons.curios.CuriosHelper;
 import de.srendi.advancedperipherals.common.blocks.tileentity.ARControllerTileEntity;
-import de.srendi.advancedperipherals.common.items.base.BaseItem;
 import de.srendi.advancedperipherals.common.setup.Blocks;
+import de.srendi.advancedperipherals.common.util.EnumColor;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.util.ITooltipFlag;
+import net.minecraft.client.util.InputMappings;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
+import net.minecraft.item.ArmorItem;
+import net.minecraft.item.ArmorMaterial;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUseContext;
 import net.minecraft.nbt.CompoundNBT;
@@ -26,25 +31,14 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.Constants.NBT;
 
-public class ARGogglesItem extends BaseItem {
+public class ARGogglesItem extends ArmorItem {
 	private static final String CONTROLLER_POS = "controller_pos";
 	private static final String CONTROLLER_WORLD = "controller_world";
 
 	public ARGogglesItem() {
-        super(new Properties().group(AdvancedPeripherals.TAB).maxStackSize(1));
+        super(ArmorMaterial.LEATHER, EquipmentSlotType.HEAD, new Properties().group(AdvancedPeripherals.TAB).maxStackSize(1));
     }
 
-    @Override
-    protected Optional<String> getPocketID() {
-        return Optional.empty();
-    }
-
-    @Override
-    protected Optional<String> getTurtleID() {
-        return Optional.empty();
-    }
-
-    @Override
     protected ITextComponent getDescription() {
         return new TranslationTextComponent("item.advancedperipherals.tooltip.ar_goggles");
     }
@@ -53,6 +47,11 @@ public class ARGogglesItem extends BaseItem {
     public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip,
     		ITooltipFlag flagIn) {
     	super.addInformation(stack, worldIn, tooltip, flagIn);
+        if (!InputMappings.isKeyDown(Minecraft.getInstance().getMainWindow().getHandle(), GLFW.GLFW_KEY_LEFT_CONTROL)) {
+            tooltip.add(EnumColor.buildTextComponent(new TranslationTextComponent("item.advancedperipherals.tooltip.hold_ctrl")));
+        } else {
+            tooltip.add(EnumColor.buildTextComponent(getDescription()));
+        }
     	if (stack.hasTag() && stack.getTag().contains(CONTROLLER_POS, NBT.TAG_INT_ARRAY)) {
     		int[] pos = stack.getTag().getIntArray(CONTROLLER_POS);
     		tooltip.add(new TranslationTextComponent("item.advancedperipherals.tooltip.ar_goggles.binding", pos[0], pos[1], pos[2]));
@@ -88,12 +87,14 @@ public class ARGogglesItem extends BaseItem {
 	}
     
     @Override
-    public EquipmentSlotType getEquipmentSlot(ItemStack stack) {
-    	return EquipmentSlotType.HEAD;
+    public String getArmorTexture(ItemStack stack, Entity entity, EquipmentSlotType slot, String type) {
+    	return AdvancedPeripherals.MOD_ID + ":textures/models/ar_goggles.png";
     }
     
     @Override
     public void onArmorTick(ItemStack stack, World world, PlayerEntity player) {
+    	if (!world.isRemote)	// only need to tick client side
+    		return;
     	tick(player, stack);
     }
     
