@@ -76,12 +76,7 @@ public class ARGogglesItem extends BaseItem {
     		String dimensionKey = stack.getTag().getString(CONTROLLER_WORLD);
     		World world = player.world;
     		if (!dimensionKey.equals(world.getDimensionKey().toString())) {
-    			for (World w : world.getServer().getWorlds()) {
-    				if (w.getDimensionKey().toString().equals(dimensionKey)) {
-    					world = w;
-    					break;
-    				}
-    			}
+    			// TODO: send request to server to request canvas data
     		}
     		TileEntity te = world.getTileEntity(pos);
     		if (!(te instanceof ARControllerTileEntity))
