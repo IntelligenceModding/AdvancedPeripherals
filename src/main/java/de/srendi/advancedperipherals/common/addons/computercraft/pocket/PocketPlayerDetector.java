@@ -12,7 +12,7 @@ public class PocketPlayerDetector extends BasePocket<PlayerDetectorPeripheral> {
 
 
     public PocketPlayerDetector() {
-        super(new ResourceLocation("advancedperipherals", "player_pocket"), "pocket.advancedperipherals.player_pocket", Blocks.ENVIRONMENT_DETECTOR);
+        super(new ResourceLocation("advancedperipherals", "player_pocket"), "pocket.advancedperipherals.player_pocket", Blocks.PLAYER_DETECTOR);
     }
 
     @Nullable

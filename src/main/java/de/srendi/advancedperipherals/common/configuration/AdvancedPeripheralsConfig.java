@@ -7,6 +7,7 @@ public class AdvancedPeripheralsConfig {
     //Restrictions
     public static int chatBoxCooldown;
     public static int playerDetMaxRange;
+    public static int energyDetectorMaxFlow;
 
     //Features
     public static boolean enableChatBox;
@@ -23,6 +24,7 @@ public class AdvancedPeripheralsConfig {
         //Restrictions
         final ForgeConfigSpec.IntValue CHAT_BOX_COOLDOWN;
         final ForgeConfigSpec.IntValue PLAYER_DET_MAX_RANGE;
+        final ForgeConfigSpec.IntValue ENERGY_DETECTOR_MAX_FLOW;
 
         //Features
         final ForgeConfigSpec.BooleanValue ENABLE_CHAT_BOX;
@@ -38,8 +40,9 @@ public class AdvancedPeripheralsConfig {
             builder.comment("").push("Restrictions");
 
             CHAT_BOX_COOLDOWN = builder.comment("Defines the chat box cooldown for message sending.").defineInRange("chatBoxCooldown", 10, 1, 100000);
-            PLAYER_DET_MAX_RANGE = builder.comment("The max range of the player detector functions. "
-                    + "If anyone use a higher range, the detector will use this max range").defineInRange("playerDetMaxRange", 2147483646, 0, 2147483646);
+            PLAYER_DET_MAX_RANGE = builder.comment("The max range of the player detector functions. " +
+                    "If anyone use a higher range, the detector will use this max range").defineInRange("playerDetMaxRange", 2147483646, 0, 2147483646);
+            ENERGY_DETECTOR_MAX_FLOW = builder.comment("Defines the maximum energy flow of the energy detector.").defineInRange("energyDetectorMaxFlow", Integer.MAX_VALUE, 1, Integer.MAX_VALUE);
 
             builder.pop();
 

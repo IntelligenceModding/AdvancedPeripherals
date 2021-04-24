@@ -1,6 +1,7 @@
 {
   "item.advancedperipherals.chunk_controller": "Chunk Controller",
   "item.advancedperipherals.computer_tool": "Computer Tool",
+  "item.advancedperipherals.memory_card": "Memory Card",
   "item.advancedperipherals.tooltip.hold_ctrl": "§b[§7CTRL§b] §7For Description",
   "item.advancedperipherals.tooltip.computer_tool": "§7You can access a GUI of our blocks with this magic tool.",
   "item.advancedperipherals.tooltip.energy_detector": "§7Can detect energy flow and acts as an resistor.",
@@ -11,7 +12,8 @@
   "item.advancedperipherals.tooltip.me_bridge": "§7Can be used to interact with Applied Energistics 2.",
   "item.advancedperipherals.tooltip.chat_box": "§7Can be used to read and write messages to the ingame chat.",
   "item.advancedperipherals.tooltip.peripheral_casing": "§7An empty hull without the love it deserves.",
-  "item.advancedperipherals.tooltip.memory_card": "§7Can safe the rights of a player to use it in an Player Manager.",
+  "item.advancedperipherals.tooltip.memory_card": "§7Can safe the rights of a player to use it in a inventory manager.",
+  "item.advancedperipherals.tooltip.inventory_manager": "§7This block is able to send or receive specific items from a player inventory.",
   "block.advancedperipherals.environment_detector": "Environment Detector",
   "block.advancedperipherals.chat_box": "Chat box",
   "block.advancedperipherals.player_detector": "Player Detector",
@@ -19,10 +21,15 @@
   "block.advancedperipherals.rs_bridge": "RS Bridge",
   "block.advancedperipherals.energy_detector": "Energy Detector",
   "block.advancedperipherals.peripheral_casing": "Peripheral Casing",
+  "block.advancedperipherals.inventory_manager": "Inventory Manager",
   "turtle.advancedperipherals.chat_box_turtle": "Chatty",
   "turtle.advancedperipherals.environment_detector_turtle": "Environment",
   "turtle.advancedperipherals.player_detector_turtle": "Player",
   "turtle.advancedperipherals.chunky_turtle": "Chunky",
   "pocket.advancedperipherals.environment_pocket": "Environment",
+  "pocket.advancedperipherals.player_pocket": "Player",
+  "pocket.advancedperipherals.chatty_pocket": "Chatty",
+  "text.advancedperipherals.removed_player": "Removed you from the memory card!",
+  "text.advancedperipherals.added_player": "Added your name to the memory card!",
   "itemGroup.advancedperipheralstab": "Advanced Peripherals"
 }

@@ -12,15 +12,12 @@ import appeng.api.storage.data.IItemList;
 import dan200.computercraft.shared.util.NBTUtil;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import net.minecraft.fluid.Fluid;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.registries.ForgeRegistries;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 
 @AEAddon
 public class AppEngApi implements IAEAddon {
@@ -76,17 +73,7 @@ public class AppEngApi implements IAEAddon {
     }
 
     public Object getObjectFromStack(IAEItemStack stack, int flag) {
-        HashMap<String, Object> map = new HashMap<>();
-        ResourceLocation itemResourceLocation = ForgeRegistries.ITEMS.getKey(stack.getItem());
-        Item item = stack.getItem();
-        String itemName = itemResourceLocation == null ? "null" : itemResourceLocation.toString();
-        String displayName = new ItemStack(item).getDisplayName().getString();
-        CompoundNBT nbt = stack.createItemStack().getOrCreateTag();
-        map.put("name", itemName);
-        map.put("amount", stack.getStackSize());
-        map.put("displayName", displayName);
-        map.put("nbt", nbt.toString());
-        map.put("tags", item.getTags());
+        Map<Object, Object> map = getMapFromStack(stack);
         if (flag == 0) {
             return map;
         } else if (flag == 1) {
@@ -101,31 +88,37 @@ public class AppEngApi implements IAEAddon {
         return null;
     }
 
-    public Object getObjectFromStack(IAEItemStack stack) {
-        HashMap<String, Object> map = new HashMap<>();
-        ResourceLocation itemResourceLocation = ForgeRegistries.ITEMS.getKey(stack.getItem());
-        String itemName = itemResourceLocation == null ? "null" : itemResourceLocation.toString();
-        String displayName = new ItemStack(stack.getItem()).getDisplayName().getString();
+    public Map<Object, Object> getMapFromStack(IAEItemStack stack) {
+        Map<Object, Object> map = new HashMap<>();
+        String displayName = stack.createItemStack().getDisplayName().getString();
         CompoundNBT nbt = stack.createItemStack().getOrCreateTag();
-        map.put("name", itemName);
+        map.put("name", stack.getItem().getRegistryName().toString());
         map.put("amount", stack.getStackSize());
         map.put("displayName", displayName);
-        map.put("nbt", nbt.toString());
+        map.put("nbt", getMapFromNBT(nbt));
+        map.put("tags", getListFromTags(stack.getItem().getTags()));
+        if(stack.isCraftable()) {
+            map.put("isCraftable", true);
+        } else {
+            map.put("isCraftable", false);
+        }
         return map;
     }
 
-    public Map<Object, Object> getMapFromStack(IAEItemStack stack) {
+    public Map<Object, Object> getMapFromNBT(CompoundNBT nbt) {
         Map<Object, Object> map = new HashMap<>();
-        ResourceLocation itemResourceLocation = ForgeRegistries.ITEMS.getKey(stack.getItem());
-        String itemName = itemResourceLocation == null ? "null" : itemResourceLocation.toString();
-        long amount = stack.getStackSize();
-        String displayName = new ItemStack(stack.getItem()).getDisplayName().getString();
-        CompoundNBT nbt = stack.createItemStack().getOrCreateTag();
-        map.put("name", itemName);
-        map.put("amount", amount);
-        map.put("displayName", displayName);
-        map.put("nbt", nbt.toString());
+        for(String value : nbt.keySet()) {
+            map.put(value, String.valueOf(nbt.get(value)));
+        }
         return map;
+    }
+
+    public List<String> getListFromTags(Set<ResourceLocation> tags) {
+        List<String> list = new ArrayList<>();
+        for(ResourceLocation value : tags) {
+            list.add(value.getNamespace() + ":" + value.getPath());
+        }
+        return list;
     }
 
     public Object getObjectFromStack(IAEFluidStack stack, int flag) {
@@ -138,7 +131,7 @@ public class AppEngApi implements IAEAddon {
         map.put("name", itemName);
         map.put("amount", amount);
         map.put("displayName", displayName);
-        map.put("tags", fluid.getTags());
+        map.put("tags", getListFromTags(fluid.getTags()));
         if (flag == 0) {
             return map;
         } else if (flag == 1) {
@@ -177,7 +170,6 @@ public class AppEngApi implements IAEAddon {
         IItemList<IAEItemStack> itemStacks = monitor.getStorageList();
         for (IAEItemStack aeStack : itemStacks) {
             if (aeStack.getStackSize() > 0 && aeStack.getItem().equals(stack.getItem())) {
-                AdvancedPeripherals.Debug(aeStack + "");
                 CompoundNBT tag = aeStack.createItemStack().getTag();
                 String hash = NBTUtil.getNBTHash(tag);
                 AdvancedPeripherals.Debug("HASH: " + hash);

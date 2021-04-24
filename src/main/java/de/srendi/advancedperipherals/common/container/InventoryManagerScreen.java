@@ -1,14 +1,14 @@
 package de.srendi.advancedperipherals.common.container;
 
 import de.srendi.advancedperipherals.AdvancedPeripherals;
-import de.srendi.advancedperipherals.common.container.base.BaseItemScreen;
+import de.srendi.advancedperipherals.common.container.base.BaseScreen;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 
-public class MemoryCardScreen extends BaseItemScreen<MemoryCardContainer> {
+public class InventoryManagerScreen extends BaseScreen<InventoryManagerContainer> {
 
-    public MemoryCardScreen(MemoryCardContainer screenContainer, PlayerInventory inv, ITextComponent titleIn) {
+    public InventoryManagerScreen(InventoryManagerContainer screenContainer, PlayerInventory inv, ITextComponent titleIn) {
         super(screenContainer, inv, titleIn);
     }
 
@@ -24,6 +24,6 @@ public class MemoryCardScreen extends BaseItemScreen<MemoryCardContainer> {
 
     @Override
     public ResourceLocation getTexture() {
-        return new ResourceLocation(AdvancedPeripherals.MOD_ID, "textures/gui/memory_card_gui.png");
+        return new ResourceLocation(AdvancedPeripherals.MOD_ID,"textures/gui/inventory_manager_gui.png");
     }
 }

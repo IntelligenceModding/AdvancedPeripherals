@@ -1,5 +1,6 @@
 package de.srendi.advancedperipherals.common.items.base;
 
+import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.util.EnumColor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.util.ITooltipFlag;
@@ -36,8 +37,12 @@ public abstract class BaseItem extends Item {
     @ObjectHolder("computercraft:pocket_computer_advanced")
     public static Item POCKET_ADVANCED;
 
+    public BaseItem() {
+        super(new Properties().group(AdvancedPeripherals.TAB));
+    }
+
     public BaseItem(Properties properties) {
-        super(properties);
+        super(properties.group(AdvancedPeripherals.TAB));
     }
 
     @Override
@@ -46,7 +51,10 @@ public abstract class BaseItem extends Item {
             return new ActionResult<>(ActionResultType.PASS, playerIn.getHeldItem(handIn));
         if(this instanceof IInventoryItem) {
             ServerPlayerEntity serverPlayerEntity = (ServerPlayerEntity) playerIn;
-            NetworkHooks.openGui(serverPlayerEntity, ((IInventoryItem) this).createContainer(playerIn, playerIn.getHeldItem(handIn)));
+            ItemStack stack = playerIn.getHeldItem(handIn);
+            NetworkHooks.openGui(serverPlayerEntity, ((IInventoryItem) this).createContainer(playerIn, stack), buf -> {
+                buf.writeItemStack(stack);
+            });
         }
         return super.onItemRightClick(worldIn, playerIn, handIn);
     }

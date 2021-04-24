@@ -11,7 +11,7 @@ import java.util.Optional;
 public class EnergyDetectorItem extends BaseBlockItem {
 
     public EnergyDetectorItem() {
-        super(Blocks.ENERGY_DETECTOR.get(), new Properties().group(AdvancedPeripherals.TAB));
+        super(Blocks.ENERGY_DETECTOR.get());
     }
 
     @Override

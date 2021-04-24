@@ -252,27 +252,40 @@ public class MeBridgePeripheral extends BasePeripheral {
     }
 
     @LuaFunction(mainThread = true)
+    public final Object[] getItem(IArguments arguments) throws LuaException {
+        IMEMonitor<IAEItemStack> monitor = ((IStorageGrid) node.getGrid().getCache(IStorageGrid.class)).getInventory(AppEngApi.getInstance().getApi().storage().getStorageChannel(IItemStorageChannel.class));
+        ItemStack stack = ItemUtil.getItemStack(arguments.getTable(0), monitor);
+        int count = stack.getCount();
+        stack.setCount(count);
+        IAEItemStack aeStack = AppEngApi.getInstance().findAEStackFromItemStack(monitor, stack);
+        if (aeStack == null)
+            return new Object[]{}; //Return nothing instead of crashing the program
+            //throw new LuaException("Item " + stack + " does not exists in the ME system or the system is offline");
+        return new Object[]{AppEngApi.getInstance().getMapFromStack(aeStack)};
+    }
+
+    @LuaFunction(mainThread = true)
     public final Object[] listItems() {
         IMEMonitor<IAEItemStack> inventory = ((IStorageGrid) node.getGrid().getCache(IStorageGrid.class)).getInventory(AppEngApi.getInstance().getApi().storage().getStorageChannel(IItemStorageChannel.class));
-        return new Object[]{AppEngApi.INSTANCE.iteratorToMapStack(inventory.getStorageList().iterator(), 0)};
+        return new Object[]{AppEngApi.getInstance().iteratorToMapStack(inventory.getStorageList().iterator(), 0)};
     }
 
     @LuaFunction(mainThread = true)
     public final Object[] listCraftableItems() {
         IMEMonitor<IAEItemStack> inventory = ((IStorageGrid) node.getGrid().getCache(IStorageGrid.class)).getInventory(AppEngApi.getInstance().getApi().storage().getStorageChannel(IItemStorageChannel.class));
-        return new Object[]{AppEngApi.INSTANCE.iteratorToMapStack(inventory.getStorageList().iterator(), 2)};
+        return new Object[]{AppEngApi.getInstance().iteratorToMapStack(inventory.getStorageList().iterator(), 2)};
     }
 
     @LuaFunction(mainThread = true)
     public final Object[] listFluid() {
         IMEMonitor<IAEFluidStack> inventory = ((IStorageGrid) node.getGrid().getCache(IStorageGrid.class)).getInventory(AppEngApi.getInstance().getApi().storage().getStorageChannel(IFluidStorageChannel.class));
-        return new Object[]{AppEngApi.INSTANCE.iteratorToMapFluid(inventory.getStorageList().iterator(), 0)};
+        return new Object[]{AppEngApi.getInstance().iteratorToMapFluid(inventory.getStorageList().iterator(), 0)};
     }
 
     @LuaFunction(mainThread = true)
     public final Object[] listCraftableFluid() {
         IMEMonitor<IAEFluidStack> inventory = ((IStorageGrid) node.getGrid().getCache(IStorageGrid.class)).getInventory(AppEngApi.getInstance().getApi().storage().getStorageChannel(IFluidStorageChannel.class));
-        return new Object[]{AppEngApi.INSTANCE.iteratorToMapFluid(inventory.getStorageList().iterator(), 2)};
+        return new Object[]{AppEngApi.getInstance().iteratorToMapFluid(inventory.getStorageList().iterator(), 2)};
     }
 
     @LuaFunction(mainThread = true)
@@ -286,7 +299,7 @@ public class MeBridgePeripheral extends BasePeripheral {
             throw new LuaException("The system has no crafting cpus");
         int i = 1;
         while (iterator.hasNext()) {
-            Object o = AppEngApi.INSTANCE.getObjectFromCPU(iterator.next());
+            Object o = AppEngApi.getInstance().getObjectFromCPU(iterator.next());
             if (o != null)
                 map.put(i++, o);
         }

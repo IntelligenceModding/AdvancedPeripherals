@@ -1,0 +1,77 @@
+package de.srendi.advancedperipherals.common.util;
+
+import de.srendi.advancedperipherals.common.blocks.tileentity.EnergyDetectorTileEntity;
+import net.minecraftforge.energy.IEnergyStorage;
+
+import java.util.Optional;
+
+public class EnergyStorageProxy implements IEnergyStorage {
+
+    private final EnergyDetectorTileEntity energyDetectorTE;
+    private int maxTransferRate;
+    private int transferedInThisTick = 0;
+
+    public EnergyStorageProxy(EnergyDetectorTileEntity energyDetectorTE, int maxTransferRate) {
+        this.energyDetectorTE = energyDetectorTE;
+        this.maxTransferRate = maxTransferRate;
+    }
+
+    @Override
+    public boolean canReceive() {
+        return true;
+    }
+
+    @Override
+    public int receiveEnergy(int maxReceive, boolean simulate) {
+        Optional<IEnergyStorage> out = energyDetectorTE.getOutputStorage();
+        return out.map(outStorage -> {
+            int transferred = outStorage.receiveEnergy(Math.min(maxReceive, maxTransferRate), simulate);
+            if (!simulate) {
+                transferedInThisTick += transferred;
+                //transferedInThisTick = transferred;
+            }
+            return transferred;
+        }).orElse(0);
+    }
+
+    @Override
+    public int getEnergyStored() {
+        Optional<IEnergyStorage> out = energyDetectorTE.getOutputStorage();
+        return out.map(IEnergyStorage::getEnergyStored).orElse(0);
+    }
+
+    @Override
+    public int getMaxEnergyStored() {
+        Optional<IEnergyStorage> out = energyDetectorTE.getOutputStorage();
+        return out.map(IEnergyStorage::getMaxEnergyStored).orElse(0);
+    }
+
+    @Override
+    public boolean canExtract() {
+        return false;
+    }
+
+    @Override
+    public int extractEnergy(int maxExtract, boolean simulate) {
+        return 0;
+    }
+
+    public void setMaxTransferRate(int rate) {
+        maxTransferRate = rate;
+    }
+
+    public int getMaxTransferRate() {
+        return maxTransferRate;
+    }
+
+    /**
+     * should be called on every tick
+     */
+    public void resetTransferedInThisTick() {
+        transferedInThisTick = 0;
+    }
+
+    public int getTransferedInThisTick() {
+        return transferedInThisTick;
+    }
+}

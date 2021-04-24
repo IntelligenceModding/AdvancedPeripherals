@@ -35,7 +35,8 @@ public abstract class BaseTileEntityBlock extends BaseBlock {
             ServerPlayerEntity serverPlayerEntity = (ServerPlayerEntity) player;
             NetworkHooks.openGui(serverPlayerEntity, namedContainerProvider, pos);
         }
-        return ActionResultType.SUCCESS;    }
+        return ActionResultType.SUCCESS;
+    }
 
     @Override
     public void onBlockPlacedBy(World worldIn, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {

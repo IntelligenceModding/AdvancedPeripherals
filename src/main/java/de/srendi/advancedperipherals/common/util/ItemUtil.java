@@ -21,7 +21,7 @@ import java.util.Map;
 
 public class ItemUtil {
 
-    private static <T extends ForgeRegistryEntry<T>> T getRegistryEntry(String name, IForgeRegistry<T> forgeRegistry) {
+    public static <T extends ForgeRegistryEntry<T>> T getRegistryEntry(String name, IForgeRegistry<T> forgeRegistry) {
         ResourceLocation location;
         try {
             location = new ResourceLocation(name);
