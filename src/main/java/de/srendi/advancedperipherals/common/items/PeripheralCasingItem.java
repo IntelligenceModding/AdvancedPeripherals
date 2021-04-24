@@ -11,7 +11,7 @@ import java.util.Optional;
 public class PeripheralCasingItem extends BaseBlockItem {
 
     public PeripheralCasingItem() {
-        super(Blocks.PERIPHERAL_CASING.get(), new Properties().group(AdvancedPeripherals.TAB).maxStackSize(16));
+        super(Blocks.PERIPHERAL_CASING.get());
     }
 
     @Override

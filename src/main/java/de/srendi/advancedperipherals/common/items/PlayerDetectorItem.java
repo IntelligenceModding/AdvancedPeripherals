@@ -11,7 +11,7 @@ import java.util.Optional;
 public class PlayerDetectorItem extends BaseBlockItem {
 
     public PlayerDetectorItem() {
-        super(Blocks.PLAYER_DETECTOR.get(), new Properties().group(AdvancedPeripherals.TAB));
+        super(Blocks.PLAYER_DETECTOR.get());
     }
 
     @Override

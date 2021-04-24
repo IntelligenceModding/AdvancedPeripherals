@@ -11,7 +11,7 @@ import java.util.Optional;
 public class EnvironmentDetectorItem extends BaseBlockItem {
 
     public EnvironmentDetectorItem() {
-        super(Blocks.ENVIRONMENT_DETECTOR.get(), new Properties().group(AdvancedPeripherals.TAB));
+        super(Blocks.ENVIRONMENT_DETECTOR.get());
     }
 
     @Override

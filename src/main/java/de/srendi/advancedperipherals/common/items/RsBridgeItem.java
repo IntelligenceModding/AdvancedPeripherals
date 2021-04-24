@@ -11,7 +11,7 @@ import java.util.Optional;
 public class RsBridgeItem extends BaseBlockItem {
 
     public RsBridgeItem() {
-        super(Blocks.RS_BRIDGE.get(), new Properties().group(AdvancedPeripherals.TAB));
+        super(Blocks.RS_BRIDGE.get());
     }
 
     @Override

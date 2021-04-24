@@ -26,6 +26,7 @@ public class AdvancedPeripherals {
     public static final String MOD_ID = "advancedperipherals";
     public static final Logger LOGGER = LogManager.getLogger("Advanced Peripherals");
     public static final ItemGroup TAB = new ItemGroup("advancedperipheralstab") {
+
         @Override
         public ItemStack createIcon() {
             return new ItemStack(Blocks.CHAT_BOX.get());

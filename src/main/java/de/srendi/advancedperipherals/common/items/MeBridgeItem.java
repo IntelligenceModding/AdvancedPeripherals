@@ -11,7 +11,7 @@ import java.util.Optional;
 public class MeBridgeItem extends BaseBlockItem {
 
     public MeBridgeItem() {
-        super(Blocks.ME_BRIDGE.get(), new Properties().group(AdvancedPeripherals.TAB));
+        super(Blocks.ME_BRIDGE.get());
     }
 
     @Override

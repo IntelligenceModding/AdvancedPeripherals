@@ -11,11 +11,11 @@ import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 
 import java.util.Optional;
+import java.util.UUID;
 
 public class MemoryCardItem extends BaseItem {
 
     public MemoryCardItem() {
-        super(new Properties().group(AdvancedPeripherals.TAB));
     }
 
     @Override
@@ -35,11 +35,15 @@ public class MemoryCardItem extends BaseItem {
 
     @Override
     public ActionResult<ItemStack> onItemRightClick(World worldIn, PlayerEntity playerIn, Hand handIn) {
-        ItemStack stack = playerIn.getHeldItem(handIn);
-        if(stack.getOrCreateTag().contains("owner")) {
-            stack.getOrCreateTag().remove("owner");
-        } else {
-            stack.getOrCreateTag().putString("owner", playerIn.getName().getString());
+        if(!worldIn.isRemote) {
+            ItemStack stack = playerIn.getHeldItem(handIn);
+            if (stack.getOrCreateTag().contains("owner")) {
+                playerIn.sendMessage(new TranslationTextComponent("text.advancedperipherals.removed_player"), UUID.randomUUID());
+                stack.getOrCreateTag().remove("owner");
+            } else {
+                playerIn.sendMessage(new TranslationTextComponent("text.advancedperipherals.added_player"), UUID.randomUUID());
+                stack.getOrCreateTag().putString("owner", playerIn.getName().getString());
+            }
         }
         return super.onItemRightClick(worldIn, playerIn, handIn);
     }

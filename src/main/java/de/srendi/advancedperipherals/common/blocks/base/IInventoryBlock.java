@@ -6,6 +6,10 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
 
+/**
+ * Used to assign a container to a TileEntity
+ *
+ */
 public interface IInventoryBlock<T extends BaseContainer> {
 
     ITextComponent getDisplayName();

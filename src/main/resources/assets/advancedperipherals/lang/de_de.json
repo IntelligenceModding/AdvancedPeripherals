@@ -1,6 +1,7 @@
 {
   "item.advancedperipherals.chunk_controller": "Chunk Controller",
   "item.advancedperipherals.computer_tool": "Computer Werkzeug",
+  "item.advancedperipherals.memory_card": "Memory Karte",
   "item.advancedperipherals.tooltip.hold_ctrl": "§b[§7CTRL§b] §7Für Beschreibung",
   "item.advancedperipherals.tooltip.computer_tool": "§7You can access a GUI of our blocks with this magic tool.",
   "item.advancedperipherals.tooltip.energy_detector": "§7Kann die Übertragung von Energie erkennen und handelt als Wiederstand.",
@@ -11,6 +12,8 @@
   "item.advancedperipherals.tooltip.me_bridge": "§7Kann mit Applied Energistics 2 interagieren.",
   "item.advancedperipherals.tooltip.chat_box": "§7Kann genutzt werden um Nachrichten zu lesen und zu schreiben.",
   "item.advancedperipherals.tooltip.peripheral_casing": "§7Eine leere Hülle ohne die Liebe die sie verdient hat.",
+  "item.advancedperipherals.tooltip.memory_card": "§7Speichert den Namen eines Spielers um diesen in einem Inventar Manager zu nutzen.",
+  "item.advancedperipherals.tooltip.inventory_manager": "§7Der Block ist in der Lage, items zu einem Spieler Inventar zu senden oder zu empfangen.",
   "block.advancedperipherals.environment_detector": "Umgebungs Detektor",
   "block.advancedperipherals.chat_box": "Chat Box",
   "block.advancedperipherals.player_detector": "Spieler Detektor",
@@ -18,6 +21,7 @@
   "block.advancedperipherals.rs_bridge": "RS Brücke",
   "block.advancedperipherals.energy_detector": "Energie Detektor",
   "block.advancedperipherals.peripheral_casing": "Peripherie Casing",
+  "block.advancedperipherals.inventory_manager": "Inventar Manager",
   "turtle.advancedperipherals.chat_box_turtle": "Chatty",
   "turtle.advancedperipherals.environment_detector_turtle": "Umgebungs",
   "turtle.advancedperipherals.player_detector_turtle": "Spieler",
@@ -25,5 +29,7 @@
   "pocket.advancedperipherals.environment_pocket": "Umgebung",
   "pocket.advancedperipherals.player_pocket": "Spieler",
   "pocket.advancedperipherals.chatty_pocket": "Chatty",
+  "text.advancedperipherals.removed_player": "Du wurdest aus der Memory Karte gelöscht!",
+  "text.advancedperipherals.added_player": "Du wurdest aus der Memory Karte entfernt!",
   "itemGroup.advancedperipheralstab": "Advanced Peripherals"
 }

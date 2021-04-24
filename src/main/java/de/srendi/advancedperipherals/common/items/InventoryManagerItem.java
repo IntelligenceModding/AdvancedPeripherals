@@ -1,16 +1,17 @@
 package de.srendi.advancedperipherals.common.items;
 
-import de.srendi.advancedperipherals.AdvancedPeripherals;
-import de.srendi.advancedperipherals.common.items.base.BaseItem;
+import de.srendi.advancedperipherals.common.items.base.BaseBlockItem;
+import de.srendi.advancedperipherals.common.setup.Blocks;
+import net.minecraft.block.Block;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 
 import java.util.Optional;
 
-public class ComputerToolItem extends BaseItem {
+public class InventoryManagerItem extends BaseBlockItem {
 
-    public ComputerToolItem() {
-        super(new Properties().maxStackSize(1));
+    public InventoryManagerItem() {
+        super(Blocks.INVENTORY_MANAGER.get());
     }
 
     @Override
@@ -25,6 +26,6 @@ public class ComputerToolItem extends BaseItem {
 
     @Override
     protected ITextComponent getDescription() {
-        return new TranslationTextComponent("item.advancedperipherals.tooltip.computer_tool");
+        return new TranslationTextComponent("item.advancedperipherals.tooltip.inventory_manager");
     }
 }

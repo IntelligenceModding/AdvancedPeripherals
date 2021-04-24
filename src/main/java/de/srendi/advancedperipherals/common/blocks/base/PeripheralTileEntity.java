@@ -5,6 +5,7 @@ import dan200.computercraft.api.peripheral.IPeripheral;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.addons.computercraft.base.BasePeripheral;
 import mcp.MethodsReturnNonnullByDefault;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.ISidedInventory;
@@ -12,6 +13,7 @@ import net.minecraft.inventory.ItemStackHelper;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.LockableTileEntity;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
@@ -79,14 +81,27 @@ public abstract class PeripheralTileEntity<T extends BasePeripheral> extends Loc
         return peripheral.getConnectedComputers();
     }
 
-    @Override
+    /*@Override
     public ITextComponent getDisplayName() {
         return this instanceof IInventoryBlock ? ((IInventoryBlock) this).getDisplayName() : null;
+    }*/
+
+    @Override
+    public CompoundNBT write(CompoundNBT compound) {
+        super.write(compound);
+        ItemStackHelper.saveAllItems(compound, items);
+        return compound;
+    }
+
+    @Override
+    public void read(BlockState state, CompoundNBT compound) {
+        ItemStackHelper.loadAllItems(compound, items);
+        super.read(state, compound);
     }
 
     @Override
     protected ITextComponent getDefaultName() {
-        return null;
+        return this instanceof IInventoryBlock ? ((IInventoryBlock) this).getDisplayName() : null;
     }
 
     @Nullable
