@@ -33,6 +33,10 @@ public abstract class BaseBlockItem extends BlockItem {
     @ObjectHolder("computercraft:pocket_computer_advanced")
     public static Item POCKET_ADVANCED;
 
+    public BaseBlockItem(Block blockIn, Properties properties) {
+        super(blockIn, properties.group(AdvancedPeripherals.TAB));
+    }
+
     public BaseBlockItem(Block blockIn) {
         super(blockIn, new Properties().group(AdvancedPeripherals.TAB));
     }

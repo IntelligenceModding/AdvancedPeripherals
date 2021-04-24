@@ -19,6 +19,7 @@ import net.minecraft.world.World;
 public class MemoryCardItem extends BaseItem {
 
 	public MemoryCardItem() {
+		super(new Properties().maxStackSize(1));
 	}
 
 	@Override

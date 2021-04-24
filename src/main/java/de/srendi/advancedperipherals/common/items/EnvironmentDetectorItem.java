@@ -19,11 +19,6 @@ public class EnvironmentDetectorItem extends BaseBlockItem {
     }
 
     @Override
-    protected Optional<String> getPocketID() {
-        return Optional.of("environment_pocket");
-    }
-
-    @Override
     protected Optional<String> getTurtleID() {
         return Optional.of("environment_detector_turtle");
     }

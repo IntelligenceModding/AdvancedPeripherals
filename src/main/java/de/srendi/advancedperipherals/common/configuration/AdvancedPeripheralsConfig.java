@@ -19,6 +19,7 @@ public class AdvancedPeripheralsConfig {
     public static boolean enableDebugMode;
     public static boolean enableEnergyDetector;
     public static boolean enableARGoggles;
+    public static boolean enableInventoryManager;
 
     public static class CommonConfig {
 
@@ -37,6 +38,7 @@ public class AdvancedPeripheralsConfig {
         final ForgeConfigSpec.BooleanValue ENABLE_DEBUG_MODE;
         final ForgeConfigSpec.BooleanValue ENABLE_ENERGY_DETECTOR;
         final ForgeConfigSpec.BooleanValue ENABLE_AR_GOGGLES;
+        final ForgeConfigSpec.BooleanValue ENABLE_INVENTORY_MANAGER;
 
         CommonConfig(final ForgeConfigSpec.Builder builder) {
             builder.comment("").push("Restrictions");
@@ -59,6 +61,7 @@ public class AdvancedPeripheralsConfig {
             ENABLE_DEBUG_MODE = builder.comment("Enable the debug mode, you should only enable it, if a developer say it or something does not work.").define("enableDebugMode", false);
             ENABLE_ENERGY_DETECTOR = builder.comment("Enable the Energy Detector or not.").define("enableEnergyDetector", true);
             ENABLE_AR_GOGGLES = builder.comment("Enable the AR goggles or not.").define("enableARGoggles", true);
+            ENABLE_INVENTORY_MANAGER = builder.comment("Enable the inventory manager or not.").define("enableInventoryManager", true);
 
             builder.pop();
         }

@@ -1,12 +1,5 @@
 package de.srendi.advancedperipherals.common.blocks.base;
 
-import static dan200.computercraft.shared.Capabilities.CAPABILITY_PERIPHERAL;
-
-import java.util.List;
-
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import dan200.computercraft.api.peripheral.IComputerAccess;
 import dan200.computercraft.api.peripheral.IPeripheral;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
@@ -31,9 +24,15 @@ import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.SidedInvWrapper;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
+
+import static dan200.computercraft.shared.Capabilities.CAPABILITY_PERIPHERAL;
 
 @MethodsReturnNonnullByDefault
-public abstract class PeripheralTileEntity<T extends BasePeripheral> extends LockableTileEntity implements ISidedInventory, INamedContainerProvider  {
+public abstract class PeripheralTileEntity<T extends BasePeripheral> extends LockableTileEntity implements ISidedInventory, INamedContainerProvider {
 
     private final LazyOptional<? extends IItemHandler> handler = LazyOptional.of(() -> new SidedInvWrapper(this, Direction.NORTH));
     protected NonNullList<ItemStack> items;
@@ -43,7 +42,7 @@ public abstract class PeripheralTileEntity<T extends BasePeripheral> extends Loc
 
     public PeripheralTileEntity(TileEntityType<?> tileEntityTypeIn) {
         super(tileEntityTypeIn);
-        if(this instanceof IInventoryBlock) {
+        if (this instanceof IInventoryBlock) {
             items = NonNullList.withSize(((IInventoryBlock<?>) this).getInvSize(), ItemStack.EMPTY);
         } else {
             items = NonNullList.withSize(0, ItemStack.EMPTY);
@@ -52,16 +51,17 @@ public abstract class PeripheralTileEntity<T extends BasePeripheral> extends Loc
 
     @Override
     public <T1> LazyOptional<T1> getCapability(@NotNull Capability<T1> cap, @Nullable Direction direction) {
-        if (peripheral.isEnabled()) {
-            if (cap == CAPABILITY_PERIPHERAL) {
+        if (cap == CAPABILITY_PERIPHERAL) {
+            if (peripheral.isEnabled()) {
                 if (peripheralCap == null) {
-                    peripheralCap = LazyOptional.of(()->peripheral);
+                    peripheralCap = LazyOptional.of(() -> peripheral);
                 }
                 return peripheralCap.cast();
+            } else {
+                AdvancedPeripherals.Debug(peripheral.getType() + " is disabled, you can enable it in the Configuration.");
             }
-        } else {
-            AdvancedPeripherals.Debug(peripheral.getType() + " is disabled, you can enable it in the Configuration.");
         }
+
         if (cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && !removed && direction != null && this instanceof IInventoryBlock) {
             return handler.cast();
         }
@@ -117,7 +117,7 @@ public abstract class PeripheralTileEntity<T extends BasePeripheral> extends Loc
     }
 
     @Override
-    public int [] getSlotsForFace(Direction side) {
+    public int[] getSlotsForFace(Direction side) {
         return new int[]{0};
     }
 
@@ -138,8 +138,8 @@ public abstract class PeripheralTileEntity<T extends BasePeripheral> extends Loc
 
     @Override
     public boolean isEmpty() {
-        for(ItemStack itemStack : items) {
-            if(itemStack.isEmpty())
+        for (ItemStack itemStack : items) {
+            if (itemStack.isEmpty())
                 return true;
         }
         return false;

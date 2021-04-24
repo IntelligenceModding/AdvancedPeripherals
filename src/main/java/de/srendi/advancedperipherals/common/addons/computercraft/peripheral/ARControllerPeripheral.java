@@ -14,19 +14,12 @@ import net.minecraft.entity.Entity;
 import net.minecraft.tileentity.TileEntity;
 
 public class ARControllerPeripheral extends BasePeripheral{
-	private ARControllerTileEntity tileEntity;
+
+	private final ARControllerTileEntity tileEntity;
 	
 	public ARControllerPeripheral(String type, ARControllerTileEntity tileEntity) {
         super(type, tileEntity);
         this.tileEntity = tileEntity;
-    }
-
-    public ARControllerPeripheral(String type, TileEntity tileEntity) {
-        super(type, tileEntity);
-    }
-
-    public ARControllerPeripheral(String type, Entity tileEntity) {
-        super(type, tileEntity);
     }
     
     @Override

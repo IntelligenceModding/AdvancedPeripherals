@@ -14,6 +14,7 @@ import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.addons.computercraft.base.BasePeripheral;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
 import de.srendi.advancedperipherals.common.blocks.tileentity.InventoryManagerTileEntity;
+import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
 import de.srendi.advancedperipherals.common.util.ItemUtil;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -35,7 +36,7 @@ public class InventoryManagerPeripheral extends BasePeripheral {
 
 	@Override
 	public boolean isEnabled() {
-		return true;
+		return AdvancedPeripheralsConfig.enableInventoryManager;
 	}
 
 	@LuaFunction

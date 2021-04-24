@@ -19,11 +19,6 @@ public class RsBridgeItem extends BaseBlockItem {
     }
 
     @Override
-    protected Optional<String> getPocketID() {
-        return Optional.empty();
-    }
-
-    @Override
     protected Optional<String> getTurtleID() {
         return Optional.empty();
     }
