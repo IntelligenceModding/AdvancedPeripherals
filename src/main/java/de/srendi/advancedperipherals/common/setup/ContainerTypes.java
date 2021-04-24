@@ -1,6 +1,5 @@
 package de.srendi.advancedperipherals.common.setup;
 
-import de.srendi.advancedperipherals.common.blocks.tileentity.InventoryManagerTileEntity;
 import de.srendi.advancedperipherals.common.container.InventoryManagerContainer;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.util.math.BlockPos;

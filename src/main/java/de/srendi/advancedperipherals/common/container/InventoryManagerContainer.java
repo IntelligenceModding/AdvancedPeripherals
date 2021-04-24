@@ -4,14 +4,10 @@ import de.srendi.advancedperipherals.common.container.base.BaseContainer;
 import de.srendi.advancedperipherals.common.setup.ContainerTypes;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.container.ContainerType;
-import net.minecraft.util.IIntArray;
-import net.minecraft.util.IntArray;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
-import org.jetbrains.annotations.Nullable;
 
 public class InventoryManagerContainer extends BaseContainer {
 

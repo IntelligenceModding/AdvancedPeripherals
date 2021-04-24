@@ -1,5 +1,7 @@
 package de.srendi.advancedperipherals.common.blocks.tileentity;
 
+import org.jetbrains.annotations.Nullable;
+
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.InventoryManagerPeripheral;
 import de.srendi.advancedperipherals.common.blocks.base.IInventoryBlock;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
@@ -14,9 +16,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.network.NetworkHooks;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
-import org.jetbrains.annotations.Nullable;
 
 public class InventoryManagerTileEntity extends PeripheralTileEntity<InventoryManagerPeripheral> implements IInventoryBlock<InventoryManagerContainer> {
 
