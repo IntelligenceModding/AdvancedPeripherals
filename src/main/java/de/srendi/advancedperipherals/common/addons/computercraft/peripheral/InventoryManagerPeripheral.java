@@ -20,7 +20,6 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.tileentity.HopperTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
@@ -29,10 +28,6 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.registries.ForgeRegistries;
 
 public class InventoryManagerPeripheral extends BasePeripheral {
-
-	// addItemToPlayer
-	// removeItemFromPlayer
-	// getItems
 
 	public InventoryManagerPeripheral(String type, PeripheralTileEntity<?> tileEntity) {
 		super(type, tileEntity);
