@@ -131,6 +131,7 @@ public class ARGogglesItem extends ArmorItem {
 				nbt.putString(CONTROLLER_WORLD, controller.getWorld().getDimensionKey().toString());
 				item.setTag(nbt);
 			}
+			context.getPlayer().sendStatusMessage(new TranslationTextComponent("text.advancedperipherals.linked_goggles"), true);
 			return ActionResultType.SUCCESS;
 		}
 	}

@@ -31,5 +31,6 @@
   "pocket.advancedperipherals.player_pocket": "Player",
   "pocket.advancedperipherals.chatty_pocket": "Chatty",
   "itemGroup.advancedperipheralstab": "Advanced Peripherals",
-  "curios.identifier.glasses": "Glasses"
+  "curios.identifier.glasses": "Glasses",
+  "text.advancedperipherals.linked_goggles": "Successfully linked AR goggles!"
 }
