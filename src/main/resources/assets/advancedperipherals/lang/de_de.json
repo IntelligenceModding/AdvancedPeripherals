@@ -13,6 +13,7 @@
   "item.advancedperipherals.tooltip.chat_box": "§7Kann genutzt werden um Nachrichten zu lesen und zu schreiben.",
   "item.advancedperipherals.tooltip.peripheral_casing": "§7Eine leere Hülle ohne die Liebe die sie verdient hat.",
   "item.advancedperipherals.tooltip.memory_card": "§7Speichert den Namen eines Spielers um diesen in einem Inventar Manager zu nutzen.",
+  "item.advancedperipherals.tooltip.memory_card.bound": "Verbunden mit %s.",
   "item.advancedperipherals.tooltip.inventory_manager": "§7Der Block ist in der Lage, items zu einem Spieler Inventar zu senden oder zu empfangen.",
   "block.advancedperipherals.environment_detector": "Umgebungs Detektor",
   "block.advancedperipherals.chat_box": "Chat Box",

@@ -1,5 +1,7 @@
 package de.srendi.advancedperipherals.common.container.base;
 
+import org.jetbrains.annotations.Nullable;
+
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -13,18 +15,17 @@ import net.minecraft.world.World;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
-import org.jetbrains.annotations.Nullable;
 
 public abstract class BaseContainer extends Container {
 
     private final IItemHandler inventory;
-    protected PeripheralTileEntity tileEntity;
+    protected PeripheralTileEntity<?> tileEntity;
 
     protected BaseContainer(@Nullable ContainerType<?> type, int id, PlayerInventory inventory, BlockPos pos, World world) {
         super(type, id);
         this.inventory = new InvWrapper(inventory);
         if(world != null)
-            this.tileEntity = (PeripheralTileEntity) world.getTileEntity(pos);
+            this.tileEntity = (PeripheralTileEntity<?>) world.getTileEntity(pos);
     }
 
     @Override

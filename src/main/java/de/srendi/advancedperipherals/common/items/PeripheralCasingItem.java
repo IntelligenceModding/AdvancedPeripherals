@@ -1,12 +1,11 @@
 package de.srendi.advancedperipherals.common.items;
 
-import de.srendi.advancedperipherals.AdvancedPeripherals;
+import java.util.Optional;
+
 import de.srendi.advancedperipherals.common.items.base.BaseBlockItem;
 import de.srendi.advancedperipherals.common.setup.Blocks;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
-
-import java.util.Optional;
 
 public class PeripheralCasingItem extends BaseBlockItem {
 
