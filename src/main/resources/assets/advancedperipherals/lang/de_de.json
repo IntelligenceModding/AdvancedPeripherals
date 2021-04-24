@@ -38,5 +38,6 @@
   "curios.identifier.glasses": "Brille",
   "text.advancedperipherals.removed_player": "Du wurdest aus der Memory Karte gelöscht!",
   "text.advancedperipherals.added_player": "Du wurdest aus der Memory Karte entfernt!",
+  "text.advancedperipherals.linked_goggles": "Erfolgreich verlinkt!",
   "itemGroup.advancedperipheralstab": "Advanced Peripherals"
 }

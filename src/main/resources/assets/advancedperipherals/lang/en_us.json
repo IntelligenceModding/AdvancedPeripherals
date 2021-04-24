@@ -37,6 +37,7 @@
   "pocket.advancedperipherals.chatty_pocket": "Chatty",
   "curios.identifier.glasses": "Glasses",
   "text.advancedperipherals.removed_player": "Removed you from the memory card!",
-  "text.advancedperipherals.added_player": "Added your name to the memory card!",
+  "text.advancedperipherals.added_player": "Added you to the memory card!",
+  "text.advancedperipherals.linked_goggles": "Successfully linked AR goggles!",
   "itemGroup.advancedperipheralstab": "Advanced Peripherals"
 }
