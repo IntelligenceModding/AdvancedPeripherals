@@ -1,5 +1,6 @@
 package de.srendi.advancedperipherals.common.items.base;
 
+import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.util.EnumColor;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
@@ -32,8 +33,12 @@ public abstract class BaseBlockItem extends BlockItem {
     @ObjectHolder("computercraft:pocket_computer_advanced")
     public static Item POCKET_ADVANCED;
 
-    public BaseBlockItem(Block blockIn, Properties builder) {
-        super(blockIn, builder);
+    public BaseBlockItem(Block blockIn, Properties properties) {
+        super(blockIn, properties.group(AdvancedPeripherals.TAB));
+    }
+
+    public BaseBlockItem(Block blockIn) {
+        super(blockIn, new Properties().group(AdvancedPeripherals.TAB));
     }
 
     @Override

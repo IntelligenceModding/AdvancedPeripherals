@@ -8,6 +8,7 @@ import com.refinedmods.refinedstorage.apiimpl.API;
 import com.refinedmods.refinedstorage.capability.NetworkNodeProxyCapability;
 import com.refinedmods.refinedstorage.tile.config.IRedstoneConfigurable;
 import com.refinedmods.refinedstorage.tile.config.RedstoneMode;
+
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.RsBridgePeripheral;
 import de.srendi.advancedperipherals.common.addons.refinedstorage.RefinedStorageNode;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
@@ -31,7 +32,7 @@ public class RsBridgeTileEntity extends PeripheralTileEntity<RsBridgePeripheral>
         this(TileEntityTypes.RS_BRIDGE.get());
     }
 
-    public RsBridgeTileEntity(TileEntityType<RsBridgeTileEntity> tileType) {
+    public RsBridgeTileEntity(TileEntityType<?> tileType) {
         super(tileType);
     }
 

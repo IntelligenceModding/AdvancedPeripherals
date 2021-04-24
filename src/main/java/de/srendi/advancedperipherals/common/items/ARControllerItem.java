@@ -11,7 +11,7 @@ import net.minecraft.util.text.TranslationTextComponent;
 public class ARControllerItem extends BaseBlockItem {
 
 	public ARControllerItem() {
-		super(Blocks.AR_CONTROLLER.get(), new Properties().group(AdvancedPeripherals.TAB));
+		super(Blocks.AR_CONTROLLER.get());
 	}
 
 	@Override

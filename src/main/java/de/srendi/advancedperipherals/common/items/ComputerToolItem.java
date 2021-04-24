@@ -2,15 +2,14 @@ package de.srendi.advancedperipherals.common.items;
 
 import java.util.Optional;
 
-import de.srendi.advancedperipherals.common.items.base.BaseBlockItem;
-import de.srendi.advancedperipherals.common.setup.Blocks;
+import de.srendi.advancedperipherals.common.items.base.BaseItem;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 
-public class EnergyDetectorItem extends BaseBlockItem {
+public class ComputerToolItem extends BaseItem {
 
-    public EnergyDetectorItem() {
-        super(Blocks.ENERGY_DETECTOR.get());
+    public ComputerToolItem() {
+        super(new Properties().maxStackSize(1));
     }
 
     @Override
@@ -25,8 +24,6 @@ public class EnergyDetectorItem extends BaseBlockItem {
 
     @Override
     protected ITextComponent getDescription() {
-        return new TranslationTextComponent("item.advancedperipherals.tooltip.energy_detector");
+        return new TranslationTextComponent("item.advancedperipherals.tooltip.computer_tool");
     }
-
-
 }

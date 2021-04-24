@@ -1,16 +1,23 @@
 package de.srendi.advancedperipherals.common.items.base;
 
+import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.util.EnumColor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.client.util.InputMappings;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.ActionResultType;
+import net.minecraft.util.Hand;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.network.NetworkHooks;
 import net.minecraftforge.registries.ObjectHolder;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
@@ -31,7 +38,21 @@ public abstract class BaseItem extends Item {
     public static Item POCKET_ADVANCED;
 
     public BaseItem(Properties properties) {
-        super(properties);
+        super(properties.group(AdvancedPeripherals.TAB));
+    }
+
+    @Override
+    public ActionResult<ItemStack> onItemRightClick(World worldIn, PlayerEntity playerIn, Hand handIn) {
+        if (worldIn.isRemote)
+            return new ActionResult<>(ActionResultType.PASS, playerIn.getHeldItem(handIn));
+        if (this instanceof IInventoryItem) {
+            ServerPlayerEntity serverPlayerEntity = (ServerPlayerEntity) playerIn;
+            ItemStack stack = playerIn.getHeldItem(handIn);
+            NetworkHooks.openGui(serverPlayerEntity, ((IInventoryItem) this).createContainer(playerIn, stack), buf -> {
+                buf.writeItemStack(stack);
+            });
+        }
+        return super.onItemRightClick(worldIn, playerIn, handIn);
     }
 
     @Override
