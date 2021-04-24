@@ -107,7 +107,8 @@ public class MeBridgeTileEntity extends PeripheralTileEntity<MeBridgePeripheral>
     }
 
     @Override
-    public void onGridNotification(@NotNull GridNotification gridNotification) {}
+    public void onGridNotification(@NotNull GridNotification gridNotification) {
+    }
 
     @NotNull
     @Override
@@ -122,7 +123,8 @@ public class MeBridgeTileEntity extends PeripheralTileEntity<MeBridgePeripheral>
     }
 
     @Override
-    public void gridChanged() {}
+    public void gridChanged() {
+    }
 
     @NotNull
     @Override
@@ -149,7 +151,8 @@ public class MeBridgeTileEntity extends PeripheralTileEntity<MeBridgePeripheral>
     }
 
     @Override
-    public void securityBreak() {}
+    public void securityBreak() {
+    }
 
     @NotNull
     @Override
@@ -181,6 +184,7 @@ public class MeBridgeTileEntity extends PeripheralTileEntity<MeBridgePeripheral>
     }
 
     @Override
-    public void jobStateChange(ICraftingLink iCraftingLink) {}
+    public void jobStateChange(ICraftingLink iCraftingLink) {
+    }
 
 }

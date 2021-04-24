@@ -38,7 +38,7 @@ public class RefinedStorage {
             Set<ResourceLocation> tags = stack.getFluid().getTags();
             ResourceLocation registryName = stack.getFluid().getRegistryName();
             map.put("name", registryName.getPath() + registryName.getNamespace());
-            if(craftable) {
+            if (craftable) {
                 map.put("craftamount", stack.getAmount());
                 for (FluidStack oStack : RefinedStorage.getFluids(network, false)) { //Used to get the amount of the item
                     if (oStack.isFluidEqual(stack)) {
@@ -62,8 +62,8 @@ public class RefinedStorage {
     }
 
     public static Object[] getItem(List<ItemStack> items, ItemStack item) {
-        for(ItemStack itemStack : items) {
-            if(itemStack.getItem().equals(item.getItem())) {
+        for (ItemStack itemStack : items) {
+            if (itemStack.getItem().equals(item.getItem())) {
                 return new Object[]{getObjectFromStack(itemStack)};
             }
         }
@@ -89,15 +89,15 @@ public class RefinedStorage {
 
     public static Map<Object, Object> getMapFromNBT(CompoundNBT nbt) {
         Map<Object, Object> map = new HashMap<>();
-        for(String value : nbt.keySet()) {
+        for (String value : nbt.keySet()) {
             map.put(value, String.valueOf(nbt.get(value)));
-         }
+        }
         return map;
     }
 
     public static List<String> getListFromTags(Set<ResourceLocation> tags) {
         List<String> list = new ArrayList<>();
-        for(ResourceLocation value : tags) {
+        for (ResourceLocation value : tags) {
             list.add(value.getNamespace() + ":" + value.getPath());
         }
         return list;
@@ -111,9 +111,9 @@ public class RefinedStorage {
             CompoundNBT nbt = stack.getTag();
             Set<ResourceLocation> tags = stack.getItem().getTags();
             map.put("name", ForgeRegistries.ITEMS.getKey(stack.getItem()).toString());
-            if(craftable)
+            if (craftable)
                 map.put("craftamount", stack.getCount()); //Returns the result amount of an crafting recipe
-            if(craftable) {
+            if (craftable) {
                 for (ItemStack oStack : RefinedStorage.getItems(network, false)) { //Used to get the amount of the item
                     if (oStack.isItemEqual(stack)) {
                         map.put("amount", oStack.getCount());
@@ -182,7 +182,7 @@ public class RefinedStorage {
     }
 
     public void initiate() {
-        api.getNetworkNodeRegistry().add(new ResourceLocation(AdvancedPeripherals.MOD_ID, "rs_bridge"), (tag, world, pos)->read(tag, new RefinedStorageNode(world, pos)));
+        api.getNetworkNodeRegistry().add(new ResourceLocation(AdvancedPeripherals.MOD_ID, "rs_bridge"), (tag, world, pos) -> read(tag, new RefinedStorageNode(world, pos)));
     }
 
     public IRSAPI getApi() {

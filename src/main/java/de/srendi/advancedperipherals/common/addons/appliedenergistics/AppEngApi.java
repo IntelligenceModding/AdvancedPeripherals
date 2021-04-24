@@ -97,7 +97,7 @@ public class AppEngApi implements IAEAddon {
         map.put("displayName", displayName);
         map.put("nbt", getMapFromNBT(nbt));
         map.put("tags", getListFromTags(stack.getItem().getTags()));
-        if(stack.isCraftable()) {
+        if (stack.isCraftable()) {
             map.put("isCraftable", true);
         } else {
             map.put("isCraftable", false);
@@ -107,7 +107,7 @@ public class AppEngApi implements IAEAddon {
 
     public Map<Object, Object> getMapFromNBT(CompoundNBT nbt) {
         Map<Object, Object> map = new HashMap<>();
-        for(String value : nbt.keySet()) {
+        for (String value : nbt.keySet()) {
             map.put(value, String.valueOf(nbt.get(value)));
         }
         return map;
@@ -115,7 +115,7 @@ public class AppEngApi implements IAEAddon {
 
     public List<String> getListFromTags(Set<ResourceLocation> tags) {
         List<String> list = new ArrayList<>();
-        for(ResourceLocation value : tags) {
+        for (ResourceLocation value : tags) {
             list.add(value.getNamespace() + ":" + value.getPath());
         }
         return list;

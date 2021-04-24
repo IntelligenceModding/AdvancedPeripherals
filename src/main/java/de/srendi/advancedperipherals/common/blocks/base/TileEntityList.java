@@ -80,11 +80,11 @@ public class TileEntityList extends WorldSavedData {
 
     public void setTileEntity(World world, BlockPos pos, boolean force) {
         if (!world.isRemote) {
-            if(force) {
-                if(!tileEntities.contains(pos))
-                tileEntities.add(pos);
+            if (force) {
+                if (!tileEntities.contains(pos))
+                    tileEntities.add(pos);
             } else {
-                if(tileEntities.contains(pos))
+                if (tileEntities.contains(pos))
                     tileEntities.remove(pos);
             }
         }

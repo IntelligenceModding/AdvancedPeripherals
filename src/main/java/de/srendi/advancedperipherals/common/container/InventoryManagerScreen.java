@@ -24,6 +24,6 @@ public class InventoryManagerScreen extends BaseScreen<InventoryManagerContainer
 
     @Override
     public ResourceLocation getTexture() {
-        return new ResourceLocation(AdvancedPeripherals.MOD_ID,"textures/gui/inventory_manager_gui.png");
+        return new ResourceLocation(AdvancedPeripherals.MOD_ID, "textures/gui/inventory_manager_gui.png");
     }
 }

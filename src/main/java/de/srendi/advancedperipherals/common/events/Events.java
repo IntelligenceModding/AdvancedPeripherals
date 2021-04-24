@@ -25,7 +25,7 @@ public class Events {
     @SubscribeEvent
     public static void onChatBox(ServerChatEvent event) {
         ServerWorld world = event.getPlayer().getServerWorld();
-        TileEntityList.get(world).getTileEntities(world).forEach(tileEntity->{ //Events for computers
+        TileEntityList.get(world).getTileEntities(world).forEach(tileEntity -> { //Events for computers
             if (tileEntity instanceof ChatBoxTileEntity) {
                 if (AdvancedPeripheralsConfig.enableChatBox) {
                     if (event.getMessage().startsWith("$")) {
@@ -48,7 +48,7 @@ public class Events {
     @SubscribeEvent
     public static void onChatTurtle(ServerChatEvent event) {
         ServerWorld world = event.getPlayer().getServerWorld();
-        TileEntityList.get(world).getTileEntities(world).forEach(tileEntity->{ //Events for computers
+        TileEntityList.get(world).getTileEntities(world).forEach(tileEntity -> { //Events for computers
             if (tileEntity instanceof TileTurtle) { //Events for turtles
                 TileTurtle tileTurtle = (TileTurtle) tileEntity;
                 if (tileTurtle.getUpgrade(TurtleSide.RIGHT) instanceof TurtleChatBox || tileTurtle.getUpgrade(TurtleSide.LEFT) instanceof TurtleChatBox) {
@@ -62,15 +62,15 @@ public class Events {
             }
         });
     }
-    
+
     @SubscribeEvent
     public static void onEquipmentChange(LivingEquipmentChangeEvent event) {
-    	LivingEntity livingEntity = event.getEntityLiving();
-    	if (!(livingEntity instanceof ServerPlayerEntity))
-    		return;
-    	ServerPlayerEntity player = (ServerPlayerEntity) livingEntity;
-    	if (event.getFrom().getItem() instanceof ARGogglesItem) {
-    		MNetwork.sendTo(new ClearHudCanvasMessage(), player);
-    	}
+        LivingEntity livingEntity = event.getEntityLiving();
+        if (!(livingEntity instanceof ServerPlayerEntity))
+            return;
+        ServerPlayerEntity player = (ServerPlayerEntity) livingEntity;
+        if (event.getFrom().getItem() instanceof ARGogglesItem) {
+            MNetwork.sendTo(new ClearHudCanvasMessage(), player);
+        }
     }
 }

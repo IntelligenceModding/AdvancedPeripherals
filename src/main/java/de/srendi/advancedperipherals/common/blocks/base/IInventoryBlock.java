@@ -8,7 +8,6 @@ import net.minecraft.world.World;
 
 /**
  * Used to assign a container to a TileEntity
- *
  */
 public interface IInventoryBlock<T extends BaseContainer> {
 

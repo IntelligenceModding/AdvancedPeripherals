@@ -8,15 +8,16 @@ import net.minecraftforge.fml.RegistryObject;
 
 public class TileEntityTypes {
 
-    public static final RegistryObject<TileEntityType<ChatBoxTileEntity>> CHAT_BOX = Registration.TILE_ENTITIES.register("chat_box", ()->new TileEntityType<>(ChatBoxTileEntity::new, Sets.newHashSet(Blocks.CHAT_BOX.get()), null));
-    public static final RegistryObject<TileEntityType<EnvironmentDetectorTileEntiy>> ENVIRONMENT_DETECTOR = Registration.TILE_ENTITIES.register("environment_detector", ()->new TileEntityType<>(EnvironmentDetectorTileEntiy::new, Sets.newHashSet(Blocks.ENVIRONMENT_DETECTOR.get()), null));
-    public static final RegistryObject<TileEntityType<PlayerDetectorTileEntity>> PLAYER_DETECTOR = Registration.TILE_ENTITIES.register("player_detector", ()->new TileEntityType<>(PlayerDetectorTileEntity::new, Sets.newHashSet(Blocks.PLAYER_DETECTOR.get()), null));
-    public static final RegistryObject<TileEntityType<MeBridgeTileEntity>> ME_BRIDGE = ModList.get().isLoaded("appliedenergistics2") ? Registration.TILE_ENTITIES.register("me_bridge", ()->new TileEntityType<>(MeBridgeTileEntity::new, Sets.newHashSet(Blocks.ME_BRIDGE.get()), null)) : null;
-    public static final RegistryObject<TileEntityType<RsBridgeTileEntity>> RS_BRIDGE = ModList.get().isLoaded("refinedstorage") ? Registration.TILE_ENTITIES.register("rs_bridge", ()->new TileEntityType<>(RsBridgeTileEntity::new, Sets.newHashSet(Blocks.RS_BRIDGE.get()), null)) : null;
-    public static final RegistryObject<TileEntityType<EnergyDetectorTileEntity>> ENERGY_DETECTOR = Registration.TILE_ENTITIES.register("energy_detector", ()->new TileEntityType<>(EnergyDetectorTileEntity::new, Sets.newHashSet(Blocks.ENERGY_DETECTOR.get()), null));
-    public static final RegistryObject<TileEntityType<ARControllerTileEntity>> AR_CONTROLLER = Registration.TILE_ENTITIES.register("ar_controller", ()->new TileEntityType<>(ARControllerTileEntity::new, Sets.newHashSet(Blocks.AR_CONTROLLER.get()), null));
-    public static final RegistryObject<TileEntityType<InventoryManagerTileEntity>> INVENTORY_MANAGER = Registration.TILE_ENTITIES.register("inventory_manager", ()->new TileEntityType<>(InventoryManagerTileEntity::new, Sets.newHashSet(Blocks.INVENTORY_MANAGER.get()), null));
+    public static final RegistryObject<TileEntityType<ChatBoxTileEntity>> CHAT_BOX = Registration.TILE_ENTITIES.register("chat_box", () -> new TileEntityType<>(ChatBoxTileEntity::new, Sets.newHashSet(Blocks.CHAT_BOX.get()), null));
+    public static final RegistryObject<TileEntityType<EnvironmentDetectorTileEntiy>> ENVIRONMENT_DETECTOR = Registration.TILE_ENTITIES.register("environment_detector", () -> new TileEntityType<>(EnvironmentDetectorTileEntiy::new, Sets.newHashSet(Blocks.ENVIRONMENT_DETECTOR.get()), null));
+    public static final RegistryObject<TileEntityType<PlayerDetectorTileEntity>> PLAYER_DETECTOR = Registration.TILE_ENTITIES.register("player_detector", () -> new TileEntityType<>(PlayerDetectorTileEntity::new, Sets.newHashSet(Blocks.PLAYER_DETECTOR.get()), null));
+    public static final RegistryObject<TileEntityType<MeBridgeTileEntity>> ME_BRIDGE = ModList.get().isLoaded("appliedenergistics2") ? Registration.TILE_ENTITIES.register("me_bridge", () -> new TileEntityType<>(MeBridgeTileEntity::new, Sets.newHashSet(Blocks.ME_BRIDGE.get()), null)) : null;
+    public static final RegistryObject<TileEntityType<RsBridgeTileEntity>> RS_BRIDGE = ModList.get().isLoaded("refinedstorage") ? Registration.TILE_ENTITIES.register("rs_bridge", () -> new TileEntityType<>(RsBridgeTileEntity::new, Sets.newHashSet(Blocks.RS_BRIDGE.get()), null)) : null;
+    public static final RegistryObject<TileEntityType<EnergyDetectorTileEntity>> ENERGY_DETECTOR = Registration.TILE_ENTITIES.register("energy_detector", () -> new TileEntityType<>(EnergyDetectorTileEntity::new, Sets.newHashSet(Blocks.ENERGY_DETECTOR.get()), null));
+    public static final RegistryObject<TileEntityType<ARControllerTileEntity>> AR_CONTROLLER = Registration.TILE_ENTITIES.register("ar_controller", () -> new TileEntityType<>(ARControllerTileEntity::new, Sets.newHashSet(Blocks.AR_CONTROLLER.get()), null));
+    public static final RegistryObject<TileEntityType<InventoryManagerTileEntity>> INVENTORY_MANAGER = Registration.TILE_ENTITIES.register("inventory_manager", () -> new TileEntityType<>(InventoryManagerTileEntity::new, Sets.newHashSet(Blocks.INVENTORY_MANAGER.get()), null));
 
-    static void register() {}
+    static void register() {
+    }
 
 }

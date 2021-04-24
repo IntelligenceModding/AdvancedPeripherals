@@ -37,7 +37,7 @@ public class ChunkManager implements ForgeChunkManager.LoadingValidationCallback
 
     @Override
     public void validateTickets(ServerWorld world, ForgeChunkManager.TicketHelper ticketHelper) {
-        ticketHelper.getBlockTickets().forEach((blockPos, chunks)->{
+        ticketHelper.getBlockTickets().forEach((blockPos, chunks) -> {
             if (world.getTileEntity(blockPos) != null) {
                 TileEntity tileEntity = world.getTileEntity(blockPos);
                 if (tileEntity instanceof TileTurtle) {

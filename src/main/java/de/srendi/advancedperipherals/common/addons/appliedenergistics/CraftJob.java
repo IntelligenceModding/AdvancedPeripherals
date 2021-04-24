@@ -74,7 +74,7 @@ public class CraftJob implements ICraftingCallback, ILuaCallback {
 
     @Override
     public void calculationComplete(ICraftingJob job) {
-        ServerWorker.add(()->calcComplete(job));
+        ServerWorker.add(() -> calcComplete(job));
     }
 
     private void calcComplete(ICraftingJob job) {

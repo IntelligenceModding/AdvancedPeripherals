@@ -1,10 +1,10 @@
 package de.srendi.advancedperipherals.common.items;
 
-import java.util.Optional;
-
 import de.srendi.advancedperipherals.common.items.base.BaseItem;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
+
+import java.util.Optional;
 
 public class ComputerToolItem extends BaseItem {
 

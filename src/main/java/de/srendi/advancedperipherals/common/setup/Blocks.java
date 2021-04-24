@@ -20,7 +20,8 @@ public class Blocks {
     public static final RegistryObject<Block> AR_CONTROLLER = register("ar_controller", ARControllerBlock::new, ARControllerItem::new);
     public static final RegistryObject<Block> INVENTORY_MANAGER = register("inventory_manager", InventoryManagerBlock::new, InventoryManagerItem::new);
 
-    static void register() {}
+    static void register() {
+    }
 
     private static <T extends Block> RegistryObject<T> registerNoItem(String name, Supplier<T> block) {
         return Registration.BLOCKS.register(name, block);

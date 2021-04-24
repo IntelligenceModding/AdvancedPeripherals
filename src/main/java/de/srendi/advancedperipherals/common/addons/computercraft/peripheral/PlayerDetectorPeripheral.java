@@ -27,7 +27,9 @@ public class PlayerDetectorPeripheral extends BasePeripheral {
         super(type, tileEntity);
     }
 
-    public PlayerDetectorPeripheral(String type, Entity entity) {super(type, entity);}
+    public PlayerDetectorPeripheral(String type, Entity entity) {
+        super(type, entity);
+    }
 
     @Override
     public boolean isEnabled() {
@@ -92,7 +94,7 @@ public class PlayerDetectorPeripheral extends BasePeripheral {
     }
 
     private boolean isInRange(BlockPos pos, PlayerEntity player, int customRange) {
-        int range = Math.min(customRange, AdvancedPeripheralsConfig.playerDetMaxRange-1);
+        int range = Math.min(customRange, AdvancedPeripheralsConfig.playerDetMaxRange - 1);
 
         //A player should not be higher than 1024 blocks.
         //Todo - 1.17: use Math.max(pos.getY(), -64) instead of 0

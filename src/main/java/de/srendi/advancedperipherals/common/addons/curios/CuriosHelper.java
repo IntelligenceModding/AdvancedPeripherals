@@ -17,30 +17,31 @@ import top.theillusivec4.curios.api.SlotContext;
 import top.theillusivec4.curios.api.type.capability.ICurio;
 
 public class CuriosHelper {
-	public static ICapabilityProvider createARGogglesProvider(ItemStack stackFor) {
-		return new ICapabilityProvider() {
-			
-			@Override
-			public <T> LazyOptional<T> getCapability(Capability<T> cap, Direction side) {
-				return CuriosCapability.ITEM.orEmpty(cap, LazyOptional.of(() -> new ICurio() {
-					ItemStack stack = stackFor;
-					@Override
-					public void curioTick(String identifier, int index, LivingEntity livingEntity) {
-						if (!SideHelper.isClientPlayer(livingEntity))
-							return;
-						ARGogglesItem.clientTick((ClientPlayerEntity) livingEntity, stack);
-					}
-					
-					@Override
-					public void onUnequip(SlotContext slotContext, ItemStack newStack) {
-						if (!(slotContext.getWearer() instanceof ServerPlayerEntity))
-							return;
-						MNetwork.sendTo(new ClearHudCanvasMessage(), (ServerPlayerEntity) slotContext.getWearer());
-					}
-					
-					//TODO: add rendering if in Curio slot
-				}));
-			}
-		};
-	}
+    public static ICapabilityProvider createARGogglesProvider(ItemStack stackFor) {
+        return new ICapabilityProvider() {
+
+            @Override
+            public <T> LazyOptional<T> getCapability(Capability<T> cap, Direction side) {
+                return CuriosCapability.ITEM.orEmpty(cap, LazyOptional.of(() -> new ICurio() {
+                    ItemStack stack = stackFor;
+
+                    @Override
+                    public void curioTick(String identifier, int index, LivingEntity livingEntity) {
+                        if (!SideHelper.isClientPlayer(livingEntity))
+                            return;
+                        ARGogglesItem.clientTick((ClientPlayerEntity) livingEntity, stack);
+                    }
+
+                    @Override
+                    public void onUnequip(SlotContext slotContext, ItemStack newStack) {
+                        if (!(slotContext.getWearer() instanceof ServerPlayerEntity))
+                            return;
+                        MNetwork.sendTo(new ClearHudCanvasMessage(), (ServerPlayerEntity) slotContext.getWearer());
+                    }
+
+                    //TODO: add rendering if in Curio slot
+                }));
+            }
+        };
+    }
 }

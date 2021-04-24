@@ -14,7 +14,8 @@ public class Items {
     public static final RegistryObject<Item> COMPUTER_TOOL = Registration.ITEMS.register("computer_tool", ComputerToolItem::new);
     public static final RegistryObject<Item> MEMORY_CARD = Registration.ITEMS.register("memory_card", MemoryCardItem::new);
 
-    public static void register() {}
+    public static void register() {
+    }
 
 
 }

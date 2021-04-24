@@ -1,9 +1,5 @@
 package de.srendi.advancedperipherals;
 
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import de.srendi.advancedperipherals.client.HudOverlayHandler;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
 import de.srendi.advancedperipherals.common.configuration.ConfigHandler;
@@ -26,6 +22,9 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import top.theillusivec4.curios.api.SlotTypeMessage;
 
 @Mod(AdvancedPeripherals.MOD_ID)
@@ -74,18 +73,18 @@ public class AdvancedPeripherals {
     }
 
     public void clientSetup(FMLClientSetupEvent event) {
-    	HudOverlayHandler.init();
+        HudOverlayHandler.init();
     }
 
     @SubscribeEvent
     public void interModComms(InterModEnqueueEvent event) {
-    	if (!curiosLoaded)
-    		return;
-    	InterModComms.sendTo("curios", SlotTypeMessage.REGISTER_TYPE, ()->new SlotTypeMessage.Builder("glasses").size(1).build());
+        if (!curiosLoaded)
+            return;
+        InterModComms.sendTo("curios", SlotTypeMessage.REGISTER_TYPE, () -> new SlotTypeMessage.Builder("glasses").size(1).build());
     }
 
-	public static boolean isCuriosLoaded() {
-		return curiosLoaded;
-	}
+    public static boolean isCuriosLoaded() {
+        return curiosLoaded;
+    }
 
 }

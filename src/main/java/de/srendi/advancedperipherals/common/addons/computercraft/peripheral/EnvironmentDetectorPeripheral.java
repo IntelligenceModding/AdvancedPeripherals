@@ -1,10 +1,5 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.peripheral;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
 import dan200.computercraft.api.lua.LuaFunction;
 import de.srendi.advancedperipherals.common.addons.computercraft.base.BasePeripheral;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
@@ -18,6 +13,11 @@ import net.minecraft.world.ISeedReader;
 import net.minecraft.world.LightType;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
+
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 public class EnvironmentDetectorPeripheral extends BasePeripheral {
 
@@ -103,7 +103,7 @@ public class EnvironmentDetectorPeripheral extends BasePeripheral {
     @LuaFunction(mainThread = true)
     public final Set<String> listDimensions() {
         Set<String> dimensions = new HashSet<>();
-        ServerLifecycleHooks.getCurrentServer().getWorlds().forEach(serverWorld->dimensions.add(serverWorld.getDimensionKey().getLocation().getPath()));
+        ServerLifecycleHooks.getCurrentServer().getWorlds().forEach(serverWorld -> dimensions.add(serverWorld.getDimensionKey().getLocation().getPath()));
         return dimensions;
     }
 

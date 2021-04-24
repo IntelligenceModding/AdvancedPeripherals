@@ -260,7 +260,7 @@ public class MeBridgePeripheral extends BasePeripheral {
         IAEItemStack aeStack = AppEngApi.getInstance().findAEStackFromItemStack(monitor, stack);
         if (aeStack == null)
             return new Object[]{}; //Return nothing instead of crashing the program
-            //throw new LuaException("Item " + stack + " does not exists in the ME system or the system is offline");
+        //throw new LuaException("Item " + stack + " does not exists in the ME system or the system is offline");
         return new Object[]{AppEngApi.getInstance().getMapFromStack(aeStack)};
     }
 

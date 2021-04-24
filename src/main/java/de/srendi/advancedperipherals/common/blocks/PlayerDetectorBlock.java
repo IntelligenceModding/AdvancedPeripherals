@@ -28,7 +28,7 @@ public class PlayerDetectorBlock extends BaseTileEntityBlock {
     public ActionResultType onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity player, Hand handIn, BlockRayTraceResult hit) {
         if (AdvancedPeripheralsConfig.enablePlayerDetector) {
             TileEntity tileEntity = worldIn.getTileEntity(pos);
-            if(tileEntity instanceof  PlayerDetectorTileEntity) {
+            if (tileEntity instanceof PlayerDetectorTileEntity) {
                 PlayerDetectorTileEntity entity = (PlayerDetectorTileEntity) tileEntity;
                 for (IComputerAccess computer : entity.getConnectedComputers()) {
                     computer.queueEvent("playerClick", player.getName().getString());
