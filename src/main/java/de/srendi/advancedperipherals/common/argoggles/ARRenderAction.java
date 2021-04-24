@@ -107,6 +107,12 @@ public final class ARRenderAction implements INBTSerializable<CompoundNBT> {
 		stringArg = nbt.getString(STRING_ARG);
 		intArgs = nbt.getIntArray(INT_ARGS);
 	}
+	
+	public static ARRenderAction deserialize(CompoundNBT nbt) {
+		ARRenderAction action = new ARRenderAction();
+		action.deserializeNBT(nbt);
+		return action;
+	}
 
 	@Override
 	public CompoundNBT serializeNBT() {

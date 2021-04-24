@@ -1,11 +1,11 @@
 package de.srendi.advancedperipherals.common.addons.curios;
 
 import de.srendi.advancedperipherals.common.items.ARGogglesItem;
+import de.srendi.advancedperipherals.common.util.SideHelper;
 import de.srendi.advancedperipherals.network.MNetwork;
 import de.srendi.advancedperipherals.network.messages.ClearHudCanvasMessage;
-import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Direction;
@@ -26,9 +26,9 @@ public class CuriosHelper {
 					ItemStack stack = stackFor;
 					@Override
 					public void curioTick(String identifier, int index, LivingEntity livingEntity) {
-						if (!(livingEntity instanceof PlayerEntity) || livingEntity != Minecraft.getInstance().player)
+						if (!SideHelper.isClientPlayer(livingEntity))
 							return;
-						ARGogglesItem.tick((PlayerEntity) livingEntity, stack);
+						ARGogglesItem.clientTick((ClientPlayerEntity) livingEntity, stack);
 					}
 					
 					@Override
@@ -37,6 +37,8 @@ public class CuriosHelper {
 							return;
 						MNetwork.sendTo(new ClearHudCanvasMessage(), (ServerPlayerEntity) slotContext.getWearer());
 					}
+					
+					//TODO: add rendering if in Curio slot
 				}));
 			}
 		};

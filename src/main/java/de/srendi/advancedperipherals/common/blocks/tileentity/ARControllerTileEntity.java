@@ -142,8 +142,7 @@ public class ARControllerTileEntity extends PeripheralTileEntity<ARControllerPer
 	}
 
 	/**
-	 * Returns a copy of the canvas with the virtual screen size added. This method
-	 * is intended for the HudOverlayHandler only.
+	 * Returns a copy of the canvas with the virtual screen size added.
 	 */
 	public List<ARRenderAction> getCanvas() {
 		List<ARRenderAction> list = new ArrayList<>();
