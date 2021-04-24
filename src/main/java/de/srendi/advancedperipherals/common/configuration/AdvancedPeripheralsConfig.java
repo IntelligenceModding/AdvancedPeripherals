@@ -18,6 +18,7 @@ public class AdvancedPeripheralsConfig {
     public static boolean enableChunkyTurtle;
     public static boolean enableDebugMode;
     public static boolean enableEnergyDetector;
+    public static boolean enableARGoggles;
 
     public static class CommonConfig {
 
@@ -35,6 +36,7 @@ public class AdvancedPeripheralsConfig {
         final ForgeConfigSpec.BooleanValue ENABLE_CHUNKY_TURTLE;
         final ForgeConfigSpec.BooleanValue ENABLE_DEBUG_MODE;
         final ForgeConfigSpec.BooleanValue ENABLE_ENERGY_DETECTOR;
+        final ForgeConfigSpec.BooleanValue ENABLE_AR_GOGGLES;
 
         CommonConfig(final ForgeConfigSpec.Builder builder) {
             builder.comment("").push("Restrictions");
@@ -56,6 +58,7 @@ public class AdvancedPeripheralsConfig {
             ENABLE_CHUNKY_TURTLE = builder.comment("Enable the Chunky Turtle or not.").define("enableChunkyTurtle", true);
             ENABLE_DEBUG_MODE = builder.comment("Enable the debug mode, you should only enable it, if a developer say it or something does not work.").define("enableDebugMode", false);
             ENABLE_ENERGY_DETECTOR = builder.comment("Enable the Energy Detector or not.").define("enableEnergyDetector", true);
+            ENABLE_AR_GOGGLES = builder.comment("Enable the AR goggles or not.").define("enableARGoggles", true);
 
             builder.pop();
         }

@@ -8,8 +8,14 @@ import de.srendi.advancedperipherals.common.addons.computercraft.turtles.TurtleC
 import de.srendi.advancedperipherals.common.blocks.base.TileEntityList;
 import de.srendi.advancedperipherals.common.blocks.tileentity.ChatBoxTileEntity;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
+import de.srendi.advancedperipherals.common.items.ARGogglesItem;
+import de.srendi.advancedperipherals.network.MNetwork;
+import de.srendi.advancedperipherals.network.messages.ClearHudCanvasMessage;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.event.ServerChatEvent;
+import net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
@@ -55,5 +61,16 @@ public class Events {
                 }
             }
         });
+    }
+    
+    @SubscribeEvent
+    public static void onEquipmentChange(LivingEquipmentChangeEvent event) {
+    	LivingEntity livingEntity = event.getEntityLiving();
+    	if (!(livingEntity instanceof ServerPlayerEntity))
+    		return;
+    	ServerPlayerEntity player = (ServerPlayerEntity) livingEntity;
+    	if (event.getFrom().getItem() instanceof ARGogglesItem) {
+    		MNetwork.sendTo(new ClearHudCanvasMessage(), player);
+    	}
     }
 }

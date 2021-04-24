@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "advancedperipherals:block/ar_controller"
+    }
+  }
+}
