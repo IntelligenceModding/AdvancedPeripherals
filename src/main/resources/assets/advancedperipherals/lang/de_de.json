@@ -13,7 +13,7 @@
   "item.advancedperipherals.tooltip.me_bridge": "§7Kann mit Applied Energistics 2 interagieren.",
   "item.advancedperipherals.tooltip.chat_box": "§7Kann genutzt werden um Nachrichten zu lesen und zu schreiben.",
   "item.advancedperipherals.tooltip.ar_controller": "§7Kann genutzt werden, um die AR-Brille kabellos zu kontrollieren.",
-  "item.advancedperipherals.tooltip.ar_goggles": "§7Stellt ein Overlay dar, welches vom verkn�pften AR-Controller gesteuert wird. Rechtsklick auf den Controller zum Verkn�pfen.",
+  "item.advancedperipherals.tooltip.ar_goggles": "§7Stellt ein Overlay dar, welches vom verknüpften AR-Controller gesteuert wird. Rechtsklick auf den Controller zum Verknüpfen.",
   "item.advancedperipherals.tooltip.ar_goggles.binding": "Verbunden mit dem Controller bei %d %d %d.",
   "item.advancedperipherals.tooltip.peripheral_casing": "§7Eine leere Hülle ohne die Liebe die sie verdient hat.",
   "item.advancedperipherals.tooltip.memory_card": "§7Speichert den Namen eines Spielers um diesen in einem Inventar Manager zu nutzen.",
@@ -38,6 +38,6 @@
   "curios.identifier.glasses": "Brille",
   "text.advancedperipherals.removed_player": "Du wurdest aus der Memory Karte gelöscht!",
   "text.advancedperipherals.added_player": "Du wurdest aus der Memory Karte entfernt!",
-  "text.advancedperipherals.linked_goggles": "Erfolgreich verlinkt!",
+  "text.advancedperipherals.linked_goggles": "Erfolgreich verknüpft!",
   "itemGroup.advancedperipheralstab": "Advanced Peripherals"
 }

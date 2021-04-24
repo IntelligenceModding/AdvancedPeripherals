@@ -2,6 +2,7 @@ package de.srendi.advancedperipherals.common.addons.computercraft.turtles;
 
 import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
+import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.addons.computercraft.base.BaseTurtle;
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.ChunkyPeripheral;
 import de.srendi.advancedperipherals.common.setup.Items;
@@ -13,6 +14,7 @@ import net.minecraft.world.server.ServerWorld;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 public class TurtleChunky extends BaseTurtle<ChunkyPeripheral> {
@@ -54,11 +56,15 @@ public class TurtleChunky extends BaseTurtle<ChunkyPeripheral> {
                 tick = 0;
             }
         }
-
     }
 
     public boolean forceChunk(ChunkPos chunkPos, boolean load) {
-        boolean forced = ChunkManager.INSTANCE.forceChunk((ServerWorld) tileEntity.getWorld(), tileEntity.getPos(), chunkPos, load);
+        if(tileEntity == null) {
+            AdvancedPeripherals.Debug("The turtle is null, why is the turtle null... (" + chunkPos + ")");
+            return false;
+        }
+
+        boolean forced = Objects.requireNonNull(ChunkManager.INSTANCE, "Instance is null").forceChunk((ServerWorld) Objects.requireNonNull(tileEntity.getWorld(), "World is null"), Objects.requireNonNull(tileEntity.getPos(), "Pos is null"), chunkPos, load);
         loadedChunks.add(chunkPos);
         return forced;
     }
