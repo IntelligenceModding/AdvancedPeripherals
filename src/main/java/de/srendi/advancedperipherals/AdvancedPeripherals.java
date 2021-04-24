@@ -32,14 +32,15 @@ import top.theillusivec4.curios.api.SlotTypeMessage;
 public class AdvancedPeripherals {
 
     public static final String MOD_ID = "advancedperipherals";
-    public static final Logger LOGGER = LogManager.getLogger(MOD_ID);
+    public static final Logger LOGGER = LogManager.getLogger("Advanced Peripherals");
     public static final ItemGroup TAB = new ItemGroup("advancedperipheralstab") {
+
         @Override
         public ItemStack createIcon() {
             return new ItemStack(Blocks.CHAT_BOX.get());
         }
     };
-    
+
     private static boolean curiosLoaded;
 
     public AdvancedPeripherals() {
@@ -56,6 +57,12 @@ public class AdvancedPeripherals {
         curiosLoaded = ModList.get().isLoaded("curios");
     }
 
+    @SubscribeEvent
+    public void commonSetup(FMLCommonSetupEvent event) {
+        event.enqueueWork(ChunkManager::register);
+        MNetwork.init();
+    }
+
     public static void Debug(String message) {
         if (AdvancedPeripheralsConfig.enableDebugMode)
             LOGGER.debug("[DEBUG] " + message);
@@ -66,16 +73,10 @@ public class AdvancedPeripherals {
             LOGGER.log(level, "[DEBUG] " + message);
     }
 
-    @SubscribeEvent
-    public void commonSetup(FMLCommonSetupEvent event) {
-        event.enqueueWork(ChunkManager::register);
-        MNetwork.init();
-    }
-    
     public void clientSetup(FMLClientSetupEvent event) {
     	HudOverlayHandler.init();
     }
-    
+
     @SubscribeEvent
     public void interModComms(InterModEnqueueEvent event) {
     	if (!curiosLoaded)
