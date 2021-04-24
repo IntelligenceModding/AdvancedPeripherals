@@ -1,5 +1,8 @@
 package de.srendi.advancedperipherals.common.blocks.tileentity;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.refinedmods.refinedstorage.api.network.node.INetworkNode;
 import com.refinedmods.refinedstorage.api.network.node.INetworkNodeManager;
 import com.refinedmods.refinedstorage.api.network.node.INetworkNodeProxy;
@@ -8,6 +11,7 @@ import com.refinedmods.refinedstorage.apiimpl.API;
 import com.refinedmods.refinedstorage.capability.NetworkNodeProxyCapability;
 import com.refinedmods.refinedstorage.tile.config.IRedstoneConfigurable;
 import com.refinedmods.refinedstorage.tile.config.RedstoneMode;
+
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.RsBridgePeripheral;
 import de.srendi.advancedperipherals.common.addons.refinedstorage.RefinedStorageNode;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
@@ -19,8 +23,6 @@ import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public class RsBridgeTileEntity extends PeripheralTileEntity<RsBridgePeripheral> implements INetworkNodeProxy<RefinedStorageNode>, IRedstoneConfigurable {
 
@@ -31,7 +33,7 @@ public class RsBridgeTileEntity extends PeripheralTileEntity<RsBridgePeripheral>
         this(TileEntityTypes.RS_BRIDGE.get());
     }
 
-    public RsBridgeTileEntity(TileEntityType tileType) {
+    public RsBridgeTileEntity(TileEntityType<?> tileType) {
         super(tileType);
     }
 
