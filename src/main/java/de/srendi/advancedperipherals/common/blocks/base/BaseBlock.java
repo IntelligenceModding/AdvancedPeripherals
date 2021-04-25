@@ -32,22 +32,4 @@ public abstract class BaseBlock extends ContainerBlock {
         return BlockRenderType.MODEL;
     }
 
-    @Override
-    public boolean hasTileEntity(BlockState state) {
-        return true;
-    }
-
-    @Override
-    public void onBlockPlacedBy(World worldIn, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
-        super.onBlockPlacedBy(worldIn, pos, state, placer, stack);
-        //Used for the lua function getName()
-        worldIn.getTileEntity(pos).getTileData().putString("CustomName", stack.getDisplayName().getString());
-        TileEntityList.get(worldIn).setTileEntity(worldIn, pos);
-    }
-
-    @Override
-    public void onPlayerDestroy(IWorld worldIn, BlockPos pos, BlockState state) {
-        super.onPlayerDestroy(worldIn, pos, state);
-        TileEntityList.get((World) worldIn).setTileEntity((World) worldIn, pos);
-    }
 }
