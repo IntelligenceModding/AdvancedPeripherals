@@ -68,6 +68,7 @@ public class TileEntityList extends WorldSavedData {
     }
 
     public void setTileEntity(World world, BlockPos pos) {
+        clearTileEntities(world);
         if (!world.isRemote) {
             if (tileEntities.contains(pos)) {
                 tileEntities.remove(pos);
@@ -79,6 +80,7 @@ public class TileEntityList extends WorldSavedData {
     }
 
     public void setTileEntity(World world, BlockPos pos, boolean force) {
+        clearTileEntities(world);
         if (!world.isRemote) {
             if (force) {
                 if (!tileEntities.contains(pos))
@@ -95,12 +97,23 @@ public class TileEntityList extends WorldSavedData {
         List<TileEntity> list = new ArrayList<>();
         for (BlockPos next : new ArrayList<>(getBlockPositions())) {
             if (world.isAirBlock(next) || !world.isBlockLoaded(next))
-                setTileEntity(world, next); //No block here anymore.
+                setTileEntity(world, next, false); //No block here anymore.
             if (world.getTileEntity(next) == null)
-                setTileEntity(world, next); //No tile entity here anymore.
+                setTileEntity(world, next, false); //No tile entity here anymore.
             list.add(world.getTileEntity(next));
         }
         return list;
+    }
+
+    public void clearTileEntities(World world) {
+        for (BlockPos next : new ArrayList<>(getBlockPositions())) {
+            if (world.isAirBlock(next) || !world.isBlockLoaded(next))
+                if (!tileEntities.contains(next))
+                    tileEntities.add(next);
+            if (world.getTileEntity(next) == null)
+                if (!tileEntities.contains(next))
+                    tileEntities.add(next);
+        }
     }
 
     public List<BlockPos> getBlockPositions() {

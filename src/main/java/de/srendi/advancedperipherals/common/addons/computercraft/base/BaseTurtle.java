@@ -74,9 +74,7 @@ public abstract class BaseTurtle<T extends BasePeripheral> extends AbstractTurtl
         tick++;
         if (tick > 10) {
             TileEntityList tileEntityList = TileEntityList.get(turtle.getWorld()); //Sync the position with the tile entity list.
-            if (!tileEntityList.getBlockPositions().contains(turtle.getPosition())) {
-                tileEntityList.setTileEntity(turtle.getWorld(), turtle.getPosition()); //Add the turtle to the List for event use
-            }
+            tileEntityList.setTileEntity(turtle.getWorld(), turtle.getPosition(), true); //Add the turtle to the List for event use
             tick = 0;
         }
     }

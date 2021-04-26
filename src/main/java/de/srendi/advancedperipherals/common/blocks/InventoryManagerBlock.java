@@ -1,10 +1,16 @@
 package de.srendi.advancedperipherals.common.blocks;
 
+import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.blocks.base.BaseTileEntityBlock;
+import de.srendi.advancedperipherals.common.blocks.tileentity.ARControllerTileEntity;
+import de.srendi.advancedperipherals.common.blocks.tileentity.InventoryManagerTileEntity;
 import de.srendi.advancedperipherals.common.setup.TileEntityTypes;
 import net.minecraft.block.BlockState;
+import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockReader;
+import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 public class InventoryManagerBlock extends BaseTileEntityBlock {
@@ -13,5 +19,14 @@ public class InventoryManagerBlock extends BaseTileEntityBlock {
     @Override
     public TileEntity createTileEntity(BlockState state, IBlockReader world) {
         return TileEntityTypes.INVENTORY_MANAGER.get().create();
+    }
+
+    @Override
+    public void onReplaced(BlockState state, World worldIn, BlockPos pos, BlockState newState, boolean isMoving) {
+        if (state.getBlock() != newState.getBlock()) {
+            InventoryManagerTileEntity tileEntity = (InventoryManagerTileEntity) worldIn.getTileEntity(pos);
+            InventoryHelper.dropInventoryItems(worldIn, pos, tileEntity);
+            super.onReplaced(state, worldIn, pos, newState, isMoving);
+        }
     }
 }
