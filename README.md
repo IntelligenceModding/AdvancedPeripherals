@@ -15,7 +15,7 @@ Documentation: https://docs.srendi.de
 
 You can find every example in the Documentation.
 
-##Credits
+## Credits
 
 [Srendi](https://github.com/Seniorendi) - Author
 
