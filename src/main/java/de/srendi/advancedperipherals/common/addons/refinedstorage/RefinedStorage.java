@@ -6,6 +6,7 @@ import com.refinedmods.refinedstorage.api.network.node.INetworkNode;
 import com.refinedmods.refinedstorage.api.util.StackListEntry;
 import com.refinedmods.refinedstorage.apiimpl.API;
 import com.refinedmods.refinedstorage.apiimpl.network.node.NetworkNode;
+import dan200.computercraft.core.apis.TableHelper;
 import dan200.computercraft.shared.util.NBTUtil;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import net.minecraft.item.ItemStack;
@@ -72,13 +73,13 @@ public class RefinedStorage {
 
     public static Object[] getObjectFromStack(ItemStack itemStack) {
         HashMap<String, Object> map = new HashMap<>();
-        CompoundNBT nbt = itemStack.getTag();
+        CompoundNBT nbt = itemStack.getOrCreateTag();
         Set<ResourceLocation> tags = itemStack.getItem().getTags();
         ResourceLocation registryName = itemStack.getItem().getRegistryName();
         map.put("name", registryName.getPath() + registryName.getNamespace());
         map.put("amount", itemStack.getCount());
         map.put("displayName", itemStack.getDisplayName().getString());
-        if (nbt != null && !nbt.isEmpty()) {
+        if (!nbt.isEmpty()) {
             map.put("nbt", getMapFromNBT(nbt));
         }
         if (!tags.isEmpty()) {
@@ -90,7 +91,7 @@ public class RefinedStorage {
     public static Map<Object, Object> getMapFromNBT(CompoundNBT nbt) {
         Map<Object, Object> map = new HashMap<>();
         for (String value : nbt.keySet()) {
-            map.put(value, String.valueOf(nbt.get(value)));
+            map.put(value, nbt.get(value));
         }
         return map;
     }
@@ -171,8 +172,8 @@ public class RefinedStorage {
             if (rsStack.getCount() > 0 && rsStack.getItem().equals(stack.getItem())) {
                 CompoundNBT tag = rsStack.getTag();
                 String hash = NBTUtil.getNBTHash(tag);
-                AdvancedPeripherals.Debug("HASH: " + hash);
-                AdvancedPeripherals.Debug("TAG: " + tag);
+                AdvancedPeripherals.debug("HASH: " + hash);
+                AdvancedPeripherals.debug("TAG: " + tag);
                 if (nbtHash.equals(hash)) {
                     return tag.copy();
                 }

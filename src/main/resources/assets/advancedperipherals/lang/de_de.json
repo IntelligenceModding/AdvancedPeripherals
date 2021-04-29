@@ -28,6 +28,7 @@
   "block.advancedperipherals.energy_detector": "Energie Detektor",
   "block.advancedperipherals.peripheral_casing": "Peripherie Casing",
   "block.advancedperipherals.inventory_manager": "Inventar Manager",
+  "block.advancedperipherals.redstone_integrator": "Redstone Integrator",
   "turtle.advancedperipherals.chat_box_turtle": "Chatty",
   "turtle.advancedperipherals.environment_detector_turtle": "Umgebungs",
   "turtle.advancedperipherals.player_detector_turtle": "Spieler",

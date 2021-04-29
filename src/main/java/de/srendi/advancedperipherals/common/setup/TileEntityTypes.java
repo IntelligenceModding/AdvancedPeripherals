@@ -16,6 +16,7 @@ public class TileEntityTypes {
     public static final RegistryObject<TileEntityType<EnergyDetectorTileEntity>> ENERGY_DETECTOR = Registration.TILE_ENTITIES.register("energy_detector", () -> new TileEntityType<>(EnergyDetectorTileEntity::new, Sets.newHashSet(Blocks.ENERGY_DETECTOR.get()), null));
     public static final RegistryObject<TileEntityType<ARControllerTileEntity>> AR_CONTROLLER = Registration.TILE_ENTITIES.register("ar_controller", () -> new TileEntityType<>(ARControllerTileEntity::new, Sets.newHashSet(Blocks.AR_CONTROLLER.get()), null));
     public static final RegistryObject<TileEntityType<InventoryManagerTileEntity>> INVENTORY_MANAGER = Registration.TILE_ENTITIES.register("inventory_manager", () -> new TileEntityType<>(InventoryManagerTileEntity::new, Sets.newHashSet(Blocks.INVENTORY_MANAGER.get()), null));
+    public static final RegistryObject<TileEntityType<RedstoneIntegratorTileEntity>> REDSTONE_INTEGRATOR = Registration.TILE_ENTITIES.register("redstone_integrator", () -> new TileEntityType<>(RedstoneIntegratorTileEntity::new, Sets.newHashSet(Blocks.INVENTORY_MANAGER.get()), null));
 
     static void register() {
     }

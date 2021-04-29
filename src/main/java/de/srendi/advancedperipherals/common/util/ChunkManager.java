@@ -48,7 +48,7 @@ public class ChunkManager implements ForgeChunkManager.LoadingValidationCallback
                             turtle.forceChunk(new ChunkPos(chunk), true);
                         }
                     } else {
-                        AdvancedPeripherals.Debug("Trying remove forced chunk " + blockPos);
+                        AdvancedPeripherals.debug("Trying remove forced chunk " + blockPos);
                         ticketHelper.removeAllTickets(blockPos);
                     }
                 }
@@ -67,9 +67,9 @@ public class ChunkManager implements ForgeChunkManager.LoadingValidationCallback
     public boolean forceChunk(ServerWorld world, BlockPos pos, ChunkPos chunkPos, boolean add) {
         if (init) {
             if (add)
-                AdvancedPeripherals.Debug("Trying force chunk " + pos);
+                AdvancedPeripherals.debug("Trying force chunk " + pos);
             if (!add)
-                AdvancedPeripherals.Debug("Trying unforce chunk " + pos);
+                AdvancedPeripherals.debug("Trying unforce chunk " + pos);
             return ForgeChunkManager.forceChunk(world, AdvancedPeripherals.MOD_ID, pos, chunkPos.x, chunkPos.z, add, true);
         }
         return false;

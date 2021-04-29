@@ -16,7 +16,7 @@ public class NBTUtil {
         try {
             return json == null ? null : JsonToNBT.getTagFromJson(json);
         } catch (CommandSyntaxException ex) {
-            AdvancedPeripherals.Debug("Could not parse json data to NBT", Level.ERROR);
+            AdvancedPeripherals.debug("Could not parse json data to NBT", Level.ERROR);
             ex.printStackTrace();
             return null;
         }
@@ -32,7 +32,7 @@ public class NBTUtil {
             }
             return outputStream.toString();
         } catch (IOException ex) {
-            AdvancedPeripherals.Debug("Could not parse NBT data to binary", Level.ERROR);
+            AdvancedPeripherals.debug("Could not parse NBT data to binary", Level.ERROR);
             ex.printStackTrace();
             return null;
         }
@@ -45,7 +45,7 @@ public class NBTUtil {
         try (InputStream inputStream = Base64.getDecoder().wrap(new ByteArrayInputStream(base64.getBytes()))) {
             return CompressedStreamTools.readCompressed(inputStream);
         } catch (IOException ex) {
-            AdvancedPeripherals.Debug("Could not parse binary data to NBT", Level.ERROR);
+            AdvancedPeripherals.debug("Could not parse binary data to NBT", Level.ERROR);
             ex.printStackTrace();
             return null;
         }

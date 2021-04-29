@@ -58,7 +58,7 @@ public abstract class PeripheralTileEntity<T extends BasePeripheral> extends Loc
                 }
                 return peripheralCap.cast();
             } else {
-                AdvancedPeripherals.Debug(peripheral.getType() + " is disabled, you can enable it in the Configuration.");
+                AdvancedPeripherals.debug(peripheral.getType() + " is disabled, you can enable it in the Configuration.");
             }
         }
 

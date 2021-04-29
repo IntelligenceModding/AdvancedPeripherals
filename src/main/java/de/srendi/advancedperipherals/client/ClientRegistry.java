@@ -10,6 +10,7 @@ import net.minecraft.client.renderer.model.ModelResourceLocation;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ModelBakeEvent;
+import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.SimpleModelTransform;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -53,6 +54,11 @@ public class ClientRegistry {
     @SubscribeEvent
     public static void onClientSetup(FMLClientSetupEvent event) {
         ScreenManager.registerFactory(ContainerTypes.INVENTORY_MANAGER_CONTAINER.get(), InventoryManagerScreen::new);
+    }
+
+    @SubscribeEvent
+    public static void onTextureStitching(TextureStitchEvent.Pre event) {
+        event.addSprite(new ResourceLocation(AdvancedPeripherals.MOD_ID, "textures/item/empty_glasses_slot.png"));
     }
 
 }

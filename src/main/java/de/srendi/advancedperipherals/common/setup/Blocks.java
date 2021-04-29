@@ -19,6 +19,7 @@ public class Blocks {
     public static final RegistryObject<Block> PERIPHERAL_CASING = register("peripheral_casing", PeripheralCasingBlock::new, PeripheralCasingItem::new);
     public static final RegistryObject<Block> AR_CONTROLLER = register("ar_controller", ARControllerBlock::new, ARControllerItem::new);
     public static final RegistryObject<Block> INVENTORY_MANAGER = register("inventory_manager", InventoryManagerBlock::new, InventoryManagerItem::new);
+    public static final RegistryObject<Block> REDSTONE_INTEGRATOR = register("redstone_integrator", RedstoneIntegratorBlock::new, RedstoneIntegratorItem::new);
 
     static void register() {
     }

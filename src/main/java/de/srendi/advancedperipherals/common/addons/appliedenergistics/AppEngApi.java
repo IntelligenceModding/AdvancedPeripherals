@@ -172,8 +172,8 @@ public class AppEngApi implements IAEAddon {
             if (aeStack.getStackSize() > 0 && aeStack.getItem().equals(stack.getItem())) {
                 CompoundNBT tag = aeStack.createItemStack().getTag();
                 String hash = NBTUtil.getNBTHash(tag);
-                AdvancedPeripherals.Debug("HASH: " + hash);
-                AdvancedPeripherals.Debug("TAG: " + tag);
+                AdvancedPeripherals.debug("HASH: " + hash);
+                AdvancedPeripherals.debug("TAG: " + tag);
                 if (nbtHash.equals(hash)) {
                     return tag.copy();
                 }

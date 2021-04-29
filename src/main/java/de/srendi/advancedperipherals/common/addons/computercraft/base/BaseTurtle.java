@@ -64,6 +64,7 @@ public abstract class BaseTurtle<T extends BasePeripheral> extends AbstractTurtl
     public void update(@NotNull ITurtleAccess turtle, @NotNull TurtleSide side) {
         if (!init) {
             if (!turtle.getWorld().isRemote) {
+                AdvancedPeripherals.debug("POSTURt: " + turtle.getPosition());
                 World world = turtle.getWorld();
                 BlockPos position = turtle.getPosition();
                 tileEntity = turtle instanceof TurtleBrain ? ((TurtleBrain) turtle).getOwner() : world.getTileEntity(position);

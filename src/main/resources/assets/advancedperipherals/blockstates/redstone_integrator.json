@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "advancedperipherals:block/redstone_integrator"
+    }
+  }
+}

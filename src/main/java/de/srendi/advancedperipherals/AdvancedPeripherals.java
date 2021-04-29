@@ -64,12 +64,12 @@ public class AdvancedPeripherals {
 		MNetwork.init();
 	}
 
-	public static void Debug(String message) {
+	public static void debug(String message) {
 		if (AdvancedPeripheralsConfig.enableDebugMode)
 			LOGGER.debug("[DEBUG] " + message);
 	}
 
-	public static void Debug(String message, Level level) {
+	public static void debug(String message, Level level) {
 		if (AdvancedPeripheralsConfig.enableDebugMode)
 			LOGGER.log(level, "[DEBUG] " + message);
 	}
@@ -82,8 +82,10 @@ public class AdvancedPeripherals {
 	public void interModComms(InterModEnqueueEvent event) {
 		if (!curiosLoaded)
 			return;
+		//InterModComms.sendTo("curios", SlotTypeMessage.REGISTER_TYPE, () -> new SlotTypeMessage.Builder("glasses")
+		//		.size(1).icon(new ResourceLocation(MOD_ID, "textures/item/empty_glasses_slot.png")).build());
 		InterModComms.sendTo("curios", SlotTypeMessage.REGISTER_TYPE, () -> new SlotTypeMessage.Builder("glasses")
-				.size(1).icon(new ResourceLocation(MOD_ID, "textures/item/empty_glasses_slot.png")).build());
+				.size(1).build());
 	}
 
 	public static boolean isCuriosLoaded() {

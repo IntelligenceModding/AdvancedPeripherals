@@ -20,6 +20,7 @@ public class AdvancedPeripheralsConfig {
     public static boolean enableEnergyDetector;
     public static boolean enableARGoggles;
     public static boolean enableInventoryManager;
+    public static boolean enableRedstoneIntegrator;
 
     public static class CommonConfig {
 
@@ -39,13 +40,14 @@ public class AdvancedPeripheralsConfig {
         final ForgeConfigSpec.BooleanValue ENABLE_ENERGY_DETECTOR;
         final ForgeConfigSpec.BooleanValue ENABLE_AR_GOGGLES;
         final ForgeConfigSpec.BooleanValue ENABLE_INVENTORY_MANAGER;
+        final ForgeConfigSpec.BooleanValue ENABLE_REDSTONE_INTEGRATOR;
 
         CommonConfig(final ForgeConfigSpec.Builder builder) {
             builder.comment("").push("Restrictions");
 
-            CHAT_BOX_COOLDOWN = builder.comment("Defines the chat box cooldown for message sending.").defineInRange("chatBoxCooldown", 10, 1, 100000);
+            CHAT_BOX_COOLDOWN = builder.comment("Defines the chat box cooldown for message sending.").defineInRange("chatBoxCooldown", 10, 1, Integer.MAX_VALUE);
             PLAYER_DET_MAX_RANGE = builder.comment("The max range of the player detector functions. " +
-                    "If anyone use a higher range, the detector will use this max range").defineInRange("playerDetMaxRange", 2147483646, 0, 2147483646);
+                    "If anyone use a higher range, the detector will use this max range").defineInRange("playerDetMaxRange", Integer.MAX_VALUE, 0, Integer.MAX_VALUE);
             ENERGY_DETECTOR_MAX_FLOW = builder.comment("Defines the maximum energy flow of the energy detector.").defineInRange("energyDetectorMaxFlow", Integer.MAX_VALUE, 1, Integer.MAX_VALUE);
 
             builder.pop();
@@ -62,6 +64,7 @@ public class AdvancedPeripheralsConfig {
             ENABLE_ENERGY_DETECTOR = builder.comment("Enable the Energy Detector or not.").define("enableEnergyDetector", true);
             ENABLE_AR_GOGGLES = builder.comment("Enable the AR goggles or not.").define("enableARGoggles", true);
             ENABLE_INVENTORY_MANAGER = builder.comment("Enable the inventory manager or not.").define("enableInventoryManager", true);
+            ENABLE_REDSTONE_INTEGRATOR = builder.comment("Enable the redstone integrator or not.").define("enableRedstoneIntegrator", true);
 
             builder.pop();
         }
