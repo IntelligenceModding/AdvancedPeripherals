@@ -39,29 +39,9 @@ public class RedstoneIntegratorTileEntity extends PeripheralTileEntity<RedstoneI
         int old = this.power[direction.getIndex()];
         this.power[direction.getIndex()] = power;
         if (old != power) {
-            /*BlockPos position = pos.offset(direction);
-            BlockState state = Objects.requireNonNull(getWorld()).getBlockState(position).with(RedstoneWireBlock.POWER, power);
-            getWorld().setBlockState(position, state, 8);*/
             this.markDirty();
         }
     }
-
-    /*@Override
-    public SUpdateTileEntityPacket getUpdatePacket() {
-        CompoundNBT compound = new CompoundNBT();
-        write(compound);
-        return new SUpdateTileEntityPacket(pos, 0, compound); // non-positive ID indicates non-vanilla packet
-    }
-
-    // called on client to read the packet sent by getUpdatePacket
-    @Override
-    public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket pkt) {
-        CompoundNBT compound = pkt.getNbtCompound();
-        BlockState state = this.getBlockState();
-        read(state, compound);
-        //world.notifyBlockUpdate(pos, state, state, 8);
-        super.onDataPacket(net, pkt);
-    }*/
 
     @Override
     public void read(BlockState state, CompoundNBT compound) {
@@ -89,7 +69,7 @@ public class RedstoneIntegratorTileEntity extends PeripheralTileEntity<RedstoneI
         if (computerSide == ComputerSide.TOP) return Direction.UP;
         if (computerSide == ComputerSide.BOTTOM) return Direction.DOWN;
         if (computerSide == ComputerSide.RIGHT) return getBlockState().get(RedstoneIntegratorBlock.FACING).rotateY();
-        if (computerSide == ComputerSide.FRONT) return getBlockState().get(RedstoneIntegratorBlock.FACING).rotateYCCW();
+        if (computerSide == ComputerSide.LEFT) return getBlockState().get(RedstoneIntegratorBlock.FACING).rotateYCCW();
         return Direction.DOWN;
     }
 }
