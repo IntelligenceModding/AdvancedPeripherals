@@ -16,7 +16,6 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.ForgeRegistryEntry;
 import net.minecraftforge.registries.IForgeRegistry;
 
-import java.sql.Ref;
 import java.util.List;
 import java.util.Map;
 
@@ -40,11 +39,15 @@ public class ItemUtil {
 
     //AE2
     public static ItemStack getItemStack(Map<?, ?> table, IMEMonitor<IAEItemStack> monitor) throws LuaException {
-        if(table.isEmpty())
+        if (table == null || table.isEmpty())
             return ItemStack.EMPTY;
 
-        if(table.containsKey("fingerprint"))
-            return AppEngApi.getInstance().findMatchingFingerprint(TableHelper.getStringField(table, "fingerprint"), monitor);
+        if (table.containsKey("fingerprint")) {
+            ItemStack fingerprint = AppEngApi.getInstance().findMatchingFingerprint(TableHelper.getStringField(table, "fingerprint"), monitor);
+            if (table.containsKey("count"))
+                fingerprint.setCount(TableHelper.getIntField(table, "count"));
+            return fingerprint;
+        }
 
         if (!table.containsKey("name"))
             return ItemStack.EMPTY;
@@ -58,7 +61,8 @@ public class ItemUtil {
         if (table.containsKey("count"))
             stack.setCount(TableHelper.getIntField(table, "count"));
 
-        stack.setTag(getTag(stack, table, monitor));
+        if(table.containsKey("nbt") || table.containsKey("json") || table.containsKey("tag"))
+            stack.setTag(getTag(stack, table, monitor));
 
         return stack;
     }
@@ -89,13 +93,16 @@ public class ItemUtil {
 
     //RS
     public static ItemStack getItemStackRS(Map<?, ?> table, List<ItemStack> items) throws LuaException {
-        if(table.isEmpty())
+        if (table == null || table.isEmpty())
             return ItemStack.EMPTY;
 
-        if(table.containsKey("fingerprint"))
-            return RefinedStorage.findMatchingFingerprint(TableHelper.getStringField(table, "fingerprint"), items);
-
-        if (table == null || !table.containsKey("name"))
+        if (table.containsKey("fingerprint")) {
+            ItemStack fingerprint = RefinedStorage.findMatchingFingerprint(TableHelper.getStringField(table, "fingerprint"), items);
+            if (table.containsKey("count"))
+                fingerprint.setCount(TableHelper.getIntField(table, "count"));
+            return fingerprint;
+        }
+        if (!table.containsKey("name"))
             return ItemStack.EMPTY;
 
         String name = TableHelper.getStringField(table, "name");
@@ -107,7 +114,8 @@ public class ItemUtil {
         if (table.containsKey("count"))
             stack.setCount(TableHelper.getIntField(table, "count"));
 
-        stack.setTag(getTagRS(stack, table, items));
+        if(table.containsKey("nbt") || table.containsKey("json") || table.containsKey("tag"))
+            stack.setTag(getTagRS(stack, table, items));
 
         return stack;
     }
