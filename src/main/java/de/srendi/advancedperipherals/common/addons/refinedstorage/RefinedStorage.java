@@ -1,5 +1,8 @@
 package de.srendi.advancedperipherals.common.addons.refinedstorage;
 
+import appeng.api.storage.IMEMonitor;
+import appeng.api.storage.data.IAEItemStack;
+import appeng.api.storage.data.IItemList;
 import com.refinedmods.refinedstorage.api.IRSAPI;
 import com.refinedmods.refinedstorage.api.network.INetwork;
 import com.refinedmods.refinedstorage.api.network.node.INetworkNode;
@@ -14,7 +17,11 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.registries.ForgeRegistries;
+import org.apache.commons.codec.binary.Hex;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.*;
 
 public class RefinedStorage {
@@ -111,6 +118,7 @@ public class RefinedStorage {
             HashMap<String, Object> map = new HashMap<>();
             CompoundNBT nbt = stack.getTag();
             Set<ResourceLocation> tags = stack.getItem().getTags();
+            map.put("fingerprint", getFingerpint(stack));
             map.put("name", ForgeRegistries.ITEMS.getKey(stack.getItem()).toString());
             if (craftable)
                 map.put("craftamount", stack.getCount()); //Returns the result amount of an crafting recipe
@@ -128,7 +136,7 @@ public class RefinedStorage {
             }
             map.put("displayName", stack.getDisplayName().getString());
             if (nbt != null && !nbt.isEmpty()) {
-                map.put("nbt", getMapFromNBT(nbt));
+                map.put("nbt", NBTUtil.toLua(nbt));
             }
             if (!tags.isEmpty()) {
                 map.put("tags", getListFromTags(tags));
@@ -180,6 +188,30 @@ public class RefinedStorage {
             }
         }
         return null;
+    }
+
+    public static ItemStack findMatchingFingerprint(String fingerprint, List<ItemStack> items) {
+        for (ItemStack rsStack : items) {
+            if (rsStack.getCount() > 0) {
+                if (fingerprint.equals(getFingerpint(rsStack))) {
+                    return rsStack;
+                }
+            }
+        }
+        return null;
+    }
+
+    public static String getFingerpint(ItemStack stack) {
+        String fingerprint = stack.getOrCreateTag() + stack.getItem().getRegistryName().toString();
+        try {
+            byte[] bytesOfHash = fingerprint.getBytes(StandardCharsets.UTF_8);
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            return new String(Hex.encodeHex(md.digest(bytesOfHash)));
+        } catch(NoSuchAlgorithmException ex) {
+            AdvancedPeripherals.debug("Could not parse fingerprint.");
+            ex.printStackTrace();
+        }
+        return "";
     }
 
     public void initiate() {

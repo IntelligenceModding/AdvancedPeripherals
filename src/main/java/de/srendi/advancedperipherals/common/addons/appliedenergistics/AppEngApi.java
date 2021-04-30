@@ -16,7 +16,12 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.registries.ForgeRegistries;
+import org.apache.commons.codec.binary.Hex;
 
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.*;
 
 @AEAddon
@@ -92,23 +97,16 @@ public class AppEngApi implements IAEAddon {
         Map<Object, Object> map = new HashMap<>();
         String displayName = stack.createItemStack().getDisplayName().getString();
         CompoundNBT nbt = stack.createItemStack().getOrCreateTag();
+        map.put("fingerprint", getFingerpint(stack));
         map.put("name", stack.getItem().getRegistryName().toString());
         map.put("amount", stack.getStackSize());
         map.put("displayName", displayName);
-        map.put("nbt", getMapFromNBT(nbt));
+        map.put("nbt", NBTUtil.toLua(nbt));
         map.put("tags", getListFromTags(stack.getItem().getTags()));
         if (stack.isCraftable()) {
             map.put("isCraftable", true);
         } else {
             map.put("isCraftable", false);
-        }
-        return map;
-    }
-
-    public Map<Object, Object> getMapFromNBT(CompoundNBT nbt) {
-        Map<Object, Object> map = new HashMap<>();
-        for (String value : nbt.keySet()) {
-            map.put(value, String.valueOf(nbt.get(value)));
         }
         return map;
     }
@@ -180,5 +178,31 @@ public class AppEngApi implements IAEAddon {
             }
         }
         return null;
+    }
+
+    public ItemStack findMatchingFingerprint(String fingerprint, IMEMonitor<IAEItemStack> monitor) {
+        IItemList<IAEItemStack> itemStacks = monitor.getStorageList();
+        for (IAEItemStack aeStack : itemStacks) {
+            if (aeStack.getStackSize() > 0) {
+                if (fingerprint.equals(getFingerpint(aeStack))) {
+                    return aeStack.createItemStack();
+                }
+            }
+        }
+        return null;
+    }
+
+    public String getFingerpint(IAEItemStack itemStack) {
+        ItemStack stack = itemStack.createItemStack();
+        String fingerprint = stack.getOrCreateTag() + stack.getItem().getRegistryName().toString();
+        try {
+            byte[] bytesOfHash = fingerprint.getBytes(StandardCharsets.UTF_8);
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            return new String(Hex.encodeHex(md.digest(bytesOfHash)));
+        } catch(NoSuchAlgorithmException ex) {
+            AdvancedPeripherals.debug("Could not parse fingerprint.");
+            ex.printStackTrace();
+        }
+        return "";
     }
 }
