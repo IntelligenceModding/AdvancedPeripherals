@@ -19,6 +19,7 @@
   "item.advancedperipherals.tooltip.memory_card": "§7Can save the rights of a player to use it in a inventory manager.",
   "item.advancedperipherals.tooltip.memory_card.bound": "Bound to %s.",
   "item.advancedperipherals.tooltip.inventory_manager": "§7This block is able to send or receive specific items from a player inventory.",
+  "item.advancedperipherals.tooltip.redstone_integrator": "§7This block is able to integrate with redstone. Works exactly like the redstone api of an computer..",
   "block.advancedperipherals.environment_detector": "Environment Detector",
   "block.advancedperipherals.chat_box": "Chat box",
   "block.advancedperipherals.player_detector": "Player Detector",

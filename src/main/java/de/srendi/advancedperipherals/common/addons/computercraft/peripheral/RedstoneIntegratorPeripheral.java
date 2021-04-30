@@ -29,14 +29,20 @@ public class RedstoneIntegratorPeripheral extends BasePeripheral {
     }
 
     @LuaFunction(mainThread = true)
-    public final int getOutput(String direction) throws LuaException {
-        return getTileEntity().power[validateSide(direction).getIndex()];
+    public final boolean getOutput(String direction) throws LuaException {
+        return getTileEntity().power[validateSide(direction).getIndex()] > 0;
     }
 
     @LuaFunction(value = {"getAnalogueInput", "getAnalogInput"}, mainThread = true)
     public final int getAnalogInput(String direction) throws LuaException {
         Direction dir = validateSide(direction);
         return getTileEntity().getRedstoneInput(dir);
+    }
+
+    @LuaFunction(value = {"getAnalogueOutput", "getAnalogOutput"}, mainThread = true)
+    public final int getAnalogOutput(String direction) throws LuaException {
+        Direction dir = validateSide(direction);
+        return getTileEntity().power[validateSide(direction).getIndex()];
     }
 
     @LuaFunction(mainThread = true)
