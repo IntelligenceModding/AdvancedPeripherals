@@ -59,7 +59,7 @@ public class TurtleChunky extends BaseTurtle<ChunkyPeripheral> {
     }
 
     public boolean forceChunk(ChunkPos chunkPos, boolean load) {
-        if(tileEntity == null) {
+        if (tileEntity == null) {
             AdvancedPeripherals.debug("The turtle is null, why is the turtle null... (" + chunkPos + ")");
             return false;
         }

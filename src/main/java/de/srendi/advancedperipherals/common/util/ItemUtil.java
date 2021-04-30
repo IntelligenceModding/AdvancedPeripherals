@@ -61,7 +61,7 @@ public class ItemUtil {
         if (table.containsKey("count"))
             stack.setCount(TableHelper.getIntField(table, "count"));
 
-        if(table.containsKey("nbt") || table.containsKey("json") || table.containsKey("tag"))
+        if (table.containsKey("nbt") || table.containsKey("json") || table.containsKey("tag"))
             stack.setTag(getTag(stack, table, monitor));
 
         return stack;
@@ -114,7 +114,7 @@ public class ItemUtil {
         if (table.containsKey("count"))
             stack.setCount(TableHelper.getIntField(table, "count"));
 
-        if(table.containsKey("nbt") || table.containsKey("json") || table.containsKey("tag"))
+        if (table.containsKey("nbt") || table.containsKey("json") || table.containsKey("tag"))
             stack.setTag(getTagRS(stack, table, items));
 
         return stack;

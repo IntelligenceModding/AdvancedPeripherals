@@ -172,6 +172,53 @@ public class InventoryManagerPeripheral extends BasePeripheral {
         return items;
     }
 
+    @LuaFunction
+    public final Map<Integer, Object> getArmor() throws LuaException {
+        ensurePlayerLinked();
+        Map<Integer, Object> items = new HashMap<>();
+        int i = 0;
+        for (ItemStack stack : getOwnerPlayer().inventory.armorInventory) {
+            if (!stack.isEmpty()) {
+                HashMap<Object, Object> map = new HashMap<>();
+                String displayName = stack.getDisplayName().getString();
+                CompoundNBT nbt = stack.getOrCreateTag();
+                map.put("name", stack.getItem().getRegistryName().toString());
+                map.put("amount", stack.getCount());
+                map.put("displayName", displayName);
+                map.put("nbt", getMapFromNBT(nbt));
+                map.put("tags", getListFromTags(stack.getItem().getTags()));
+                items.put(i, map);
+                i++;
+            }
+        }
+        return items;
+    }
+
+    @LuaFunction
+    public final boolean isPlayerEquipped() throws LuaException {
+        ensurePlayerLinked();
+        for (ItemStack stack : getOwnerPlayer().inventory.armorInventory) {
+            if (!stack.isEmpty()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @LuaFunction
+    public final boolean isWearing(int index) throws LuaException {
+        ensurePlayerLinked();
+        int i = 0;
+        for (ItemStack stack : getOwnerPlayer().inventory.armorInventory) {
+            if (!stack.isEmpty()) {
+                if (index == i)
+                    return true;
+                i++;
+            }
+        }
+        return false;
+    }
+
     private Map<Object, Object> getMapFromNBT(CompoundNBT nbt) {
         Map<Object, Object> map = new HashMap<>();
         for (String value : nbt.keySet()) {

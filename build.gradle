@@ -51,7 +51,7 @@ minecraft {
             workingDirectory project.file('run')
 
             property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-			properties 'mixin.env.disableRefMap': 'true'
+            properties 'mixin.env.disableRefMap': 'true'
             property 'forge.logging.console.level', 'debug'
 
             mods {
@@ -91,7 +91,7 @@ repositories {
     maven { url 'https://modmaven.dev/' }
     maven { url 'https://dvs1.progwml6.com/files/maven/' }
     maven { url 'https://repo.refinedmods.com/' }
-	maven { url = "https://maven.theillusivec4.top/" }
+    maven { url = "https://maven.theillusivec4.top/" }
 }
 
 dependencies {
@@ -104,8 +104,8 @@ dependencies {
     implementation fg.deobf("com.refinedmods:refinedstorage:${rs_version}")
     compileOnly fg.deobf("appeng:appliedenergistics2:${ae_version}:api");
     runtimeOnly fg.deobf("appeng:appliedenergistics2:${ae_version}");
-	
-	runtimeOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}")
+
+    runtimeOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}")
     compileOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}:api")
 
     runtimeOnly fg.deobf("mcjty.theoneprobe:TheOneProbe-1.16:${top_version}")

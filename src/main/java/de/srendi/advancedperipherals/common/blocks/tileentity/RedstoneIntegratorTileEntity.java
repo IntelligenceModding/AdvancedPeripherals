@@ -5,20 +5,12 @@ import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.Reds
 import de.srendi.advancedperipherals.common.blocks.RedstoneIntegratorBlock;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
 import de.srendi.advancedperipherals.common.setup.TileEntityTypes;
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.RedstoneWireBlock;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-import net.minecraftforge.event.ForgeEventFactory;
-
-import java.util.EnumSet;
-import java.util.Objects;
 
 public class RedstoneIntegratorTileEntity extends PeripheralTileEntity<RedstoneIntegratorPeripheral> {
 
@@ -91,12 +83,13 @@ public class RedstoneIntegratorTileEntity extends PeripheralTileEntity<RedstoneI
     }
 
     public Direction getDirecton(ComputerSide computerSide) {
-        if(computerSide == ComputerSide.FRONT) return getBlockState().get(RedstoneIntegratorBlock.FACING).getOpposite();
-        if(computerSide == ComputerSide.BACK) return getBlockState().get(RedstoneIntegratorBlock.FACING);
-        if(computerSide == ComputerSide.TOP) return Direction.UP;
-        if(computerSide == ComputerSide.BOTTOM) return Direction.DOWN;
-        if(computerSide == ComputerSide.RIGHT) return getBlockState().get(RedstoneIntegratorBlock.FACING).rotateY();
-        if(computerSide == ComputerSide.FRONT) return getBlockState().get(RedstoneIntegratorBlock.FACING).rotateYCCW();
+        if (computerSide == ComputerSide.FRONT)
+            return getBlockState().get(RedstoneIntegratorBlock.FACING).getOpposite();
+        if (computerSide == ComputerSide.BACK) return getBlockState().get(RedstoneIntegratorBlock.FACING);
+        if (computerSide == ComputerSide.TOP) return Direction.UP;
+        if (computerSide == ComputerSide.BOTTOM) return Direction.DOWN;
+        if (computerSide == ComputerSide.RIGHT) return getBlockState().get(RedstoneIntegratorBlock.FACING).rotateY();
+        if (computerSide == ComputerSide.FRONT) return getBlockState().get(RedstoneIntegratorBlock.FACING).rotateYCCW();
         return Direction.DOWN;
     }
 }

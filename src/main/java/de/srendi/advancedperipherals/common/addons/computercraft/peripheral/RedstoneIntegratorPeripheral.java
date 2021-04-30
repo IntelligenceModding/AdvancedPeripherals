@@ -65,7 +65,7 @@ public class RedstoneIntegratorPeripheral extends BasePeripheral {
         ComputerSide dir;
         try {
             dir = ComputerSide.valueOf(direction.toUpperCase(Locale.ROOT));
-        } catch(IllegalArgumentException exception) {
+        } catch (IllegalArgumentException exception) {
             throw new LuaException(direction + " is not a valid side.");
         }
         return getTileEntity().getDirecton(dir);

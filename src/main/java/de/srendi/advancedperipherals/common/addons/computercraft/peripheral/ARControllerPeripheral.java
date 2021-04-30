@@ -79,20 +79,20 @@ public class ARControllerPeripheral extends BasePeripheral {
     public final void fillGradient(int minX, int minY, int maxX, int maxY, int colorFrom, int colorTo) {
         tileEntity.addToCanvas(new ARRenderAction(RenderActionType.FillGradient, minX, minY, maxX, maxY, colorFrom, colorTo));
     }
-    
+
     @LuaFunction
     public final void drawCircle(int x, int y, int radius, int color) {
-    	tileEntity.addToCanvas(new ARRenderAction(RenderActionType.DrawCircle, x, y, radius, color));
+        tileEntity.addToCanvas(new ARRenderAction(RenderActionType.DrawCircle, x, y, radius, color));
     }
-    
+
     @LuaFunction
     public final void fillCircle(int x, int y, int radius, int color) {
-    	tileEntity.addToCanvas(new ARRenderAction(RenderActionType.FillCircle, x, y, radius, color));
+        tileEntity.addToCanvas(new ARRenderAction(RenderActionType.FillCircle, x, y, radius, color));
     }
-    
+
     @LuaFunction
     public final void drawItemIcon(String itemId, int x, int y) {
-    	tileEntity.addToCanvas(new ARRenderAction(RenderActionType.DrawItemIcon, itemId, x, y));
+        tileEntity.addToCanvas(new ARRenderAction(RenderActionType.DrawItemIcon, itemId, x, y));
     }
 
     @LuaFunction

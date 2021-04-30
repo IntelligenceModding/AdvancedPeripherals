@@ -1,15 +1,15 @@
 package de.srendi.advancedperipherals.common.blocks;
 
-import dan200.computercraft.shared.util.RedstoneUtil;
 import de.srendi.advancedperipherals.common.blocks.base.BaseTileEntityBlock;
 import de.srendi.advancedperipherals.common.blocks.tileentity.RedstoneIntegratorTileEntity;
 import de.srendi.advancedperipherals.common.setup.TileEntityTypes;
-import net.minecraft.block.*;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.HorizontalBlock;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.state.DirectionProperty;
 import net.minecraft.state.StateContainer;
-import net.minecraft.tileentity.DaylightDetectorTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Mirror;
@@ -17,10 +17,6 @@ import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorld;
-import net.minecraft.world.IWorldReader;
-import net.minecraft.world.World;
-import net.minecraftforge.client.ForgeHooksClient;
-import net.minecraftforge.event.ForgeEventFactory;
 import org.jetbrains.annotations.Nullable;
 
 public class RedstoneIntegratorBlock extends BaseTileEntityBlock {
@@ -30,7 +26,7 @@ public class RedstoneIntegratorBlock extends BaseTileEntityBlock {
     @Nullable
     @Override
     public TileEntity createTileEntity(BlockState state, IBlockReader world) {
-    return TileEntityTypes.REDSTONE_INTEGRATOR.get().create();
+        return TileEntityTypes.REDSTONE_INTEGRATOR.get().create();
     }
 
     @Override
