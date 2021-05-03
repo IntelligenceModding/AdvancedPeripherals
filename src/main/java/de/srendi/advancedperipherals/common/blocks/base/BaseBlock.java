@@ -13,7 +13,7 @@ import org.jetbrains.annotations.Nullable;
 public abstract class BaseBlock extends ContainerBlock {
 
     public BaseBlock() {
-        super(Properties.create(Material.IRON).hardnessAndResistance(1, 5).harvestLevel(0).sound(SoundType.METAL).harvestTool(ToolType.PICKAXE).setRequiresTool());
+        super(Properties.create(Material.IRON).hardnessAndResistance(1, 5).harvestLevel(0).sound(SoundType.METAL).notSolid().harvestTool(ToolType.PICKAXE).setRequiresTool());
     }
 
     @Nullable
