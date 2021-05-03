@@ -296,7 +296,7 @@ public class MeBridgePeripheral extends BasePeripheral {
         Map<Integer, Object> map = new HashMap<>();
         Iterator<ICraftingCPU> iterator = grid.getCpus().iterator();
         if (!iterator.hasNext())
-            throw new LuaException("The system has no crafting cpus");
+            return null;
         int i = 1;
         while (iterator.hasNext()) {
             Object o = AppEngApi.getInstance().getObjectFromCPU(iterator.next());
