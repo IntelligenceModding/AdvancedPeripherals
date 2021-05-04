@@ -43,18 +43,13 @@ public class RedstoneIntegratorBlock extends BaseTileEntityBlock {
     @Override
     public int getStrongPower(BlockState blockState, IBlockReader blockAccess, BlockPos pos, Direction side) {
         RedstoneIntegratorTileEntity tileEntity = (RedstoneIntegratorTileEntity) blockAccess.getTileEntity(pos);
-        AdvancedPeripherals.debug("DEBUG4 " + side);
-     //   if(side == Direction.NORTH || side == Direction.SOUTH)
-            return tileEntity.power[side.getOpposite().getIndex()];
-       // return tileEntity.power[side.getIndex()];
+        return tileEntity.power[side.getOpposite().getIndex()];
     }
 
     @Override
     public int getWeakPower(BlockState blockState, IBlockReader blockAccess, BlockPos pos, Direction side) {
         RedstoneIntegratorTileEntity tileEntity = (RedstoneIntegratorTileEntity) blockAccess.getTileEntity(pos);
-        AdvancedPeripherals.debug("DEBUG4 " + side);
-            return tileEntity.power[side.getOpposite().getIndex()];
-       // return tileEntity.power[side.getIndex()];
+        return tileEntity.power[side.getOpposite().getIndex()];
     }
 
     @Override

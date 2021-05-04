@@ -60,7 +60,6 @@ public class RedstoneIntegratorTileEntity extends PeripheralTileEntity<RedstoneI
         int old = this.power[direction.getIndex()];
         this.power[direction.getIndex()] = power;
         if (old != power) {
-            AdvancedPeripherals.debug("DEBUG1 " + direction);
             if(!getWorld().getBlockState(pos.offset(direction)).hasProperty(RedstoneWireBlock.POWER))
                 return;
             BlockState state = getWorld().getBlockState(pos.offset(direction)).with(RedstoneWireBlock.POWER, power);
@@ -97,8 +96,6 @@ public class RedstoneIntegratorTileEntity extends PeripheralTileEntity<RedstoneI
         if (computerSide == ComputerSide.BOTTOM) output = Direction.DOWN;
         if (computerSide == ComputerSide.RIGHT) output = getBlockState().get(RedstoneIntegratorBlock.FACING).rotateYCCW();
         if (computerSide == ComputerSide.LEFT) output = getBlockState().get(RedstoneIntegratorBlock.FACING).rotateY();
-        AdvancedPeripherals.debug("DEBUG2 " + computerSide);
-        AdvancedPeripherals.debug("DEBUG3 " + output);
         return output;
     }
 }
