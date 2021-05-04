@@ -1,5 +1,6 @@
 package de.srendi.advancedperipherals.common.blocks;
 
+import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.blocks.base.BaseTileEntityBlock;
 import de.srendi.advancedperipherals.common.blocks.tileentity.RedstoneIntegratorTileEntity;
 import de.srendi.advancedperipherals.common.setup.TileEntityTypes;
@@ -42,13 +43,18 @@ public class RedstoneIntegratorBlock extends BaseTileEntityBlock {
     @Override
     public int getStrongPower(BlockState blockState, IBlockReader blockAccess, BlockPos pos, Direction side) {
         RedstoneIntegratorTileEntity tileEntity = (RedstoneIntegratorTileEntity) blockAccess.getTileEntity(pos);
-        return tileEntity.power[side.getIndex()];
+        AdvancedPeripherals.debug("DEBUG4 " + side);
+     //   if(side == Direction.NORTH || side == Direction.SOUTH)
+            return tileEntity.power[side.getOpposite().getIndex()];
+       // return tileEntity.power[side.getIndex()];
     }
 
     @Override
     public int getWeakPower(BlockState blockState, IBlockReader blockAccess, BlockPos pos, Direction side) {
         RedstoneIntegratorTileEntity tileEntity = (RedstoneIntegratorTileEntity) blockAccess.getTileEntity(pos);
-        return tileEntity.power[side.getIndex()];
+        AdvancedPeripherals.debug("DEBUG4 " + side);
+            return tileEntity.power[side.getOpposite().getIndex()];
+       // return tileEntity.power[side.getIndex()];
     }
 
     @Override

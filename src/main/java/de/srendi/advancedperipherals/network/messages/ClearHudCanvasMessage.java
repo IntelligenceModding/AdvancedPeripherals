@@ -21,9 +21,7 @@ public class ClearHudCanvasMessage {
     }
 
     public static void handle(ClearHudCanvasMessage mes, Supplier<NetworkEvent.Context> cont) {
-        cont.get().enqueueWork(() -> {
-            HudOverlayHandler.clearCanvas();
-        });
+        cont.get().enqueueWork(HudOverlayHandler::clearCanvas);
         cont.get().setPacketHandled(true);
     }
 }

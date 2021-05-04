@@ -1,7 +1,9 @@
 ---
-name: Documentation issue report about: 'Report issues or misspelling errors in the documentation. '
-title: ''
-labels: documentation assignees: ''
+name: Documentation issue report
+about: 'Report issues or misspelling errors in the documentation. '
+title: '[Documentation]'
+labels: documentation
+assignees: ''
 
 ---
 
