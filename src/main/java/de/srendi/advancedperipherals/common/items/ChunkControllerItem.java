@@ -13,17 +13,17 @@ public class ChunkControllerItem extends BaseItem {
     }
 
     @Override
-    protected Optional<String> getPocketID() {
+    public Optional<String> getPocketID() {
         return Optional.empty();
     }
 
     @Override
-    protected Optional<String> getTurtleID() {
+    public Optional<String> getTurtleID() {
         return Optional.of("chunky_turtle");
     }
 
     @Override
-    protected ITextComponent getDescription() {
+    public ITextComponent getDescription() {
         return new TranslationTextComponent("item.advancedperipherals.tooltip.chunk_controller");
     }
 

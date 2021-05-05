@@ -14,17 +14,17 @@ public class PlayerDetectorItem extends BaseBlockItem {
     }
 
     @Override
-    protected Optional<String> getPocketID() {
+    public Optional<String> getPocketID() {
         return Optional.of("player_pocket");
     }
 
     @Override
-    protected Optional<String> getTurtleID() {
+    public Optional<String> getTurtleID() {
         return Optional.of("player_detector_turtle");
     }
 
     @Override
-    protected ITextComponent getDescription() {
+    public ITextComponent getDescription() {
         return new TranslationTextComponent("item.advancedperipherals.tooltip.player_detector");
     }
 }

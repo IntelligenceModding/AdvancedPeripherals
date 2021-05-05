@@ -15,11 +15,22 @@ import net.minecraft.util.ResourceLocationException;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.ForgeRegistryEntry;
 import net.minecraftforge.registries.IForgeRegistry;
+import net.minecraftforge.registries.ObjectHolder;
 
 import java.util.List;
 import java.util.Map;
 
 public class ItemUtil {
+
+    @ObjectHolder("computercraft:turtle_normal")
+    public static Item TURTLE_NORMAL;
+    @ObjectHolder("computercraft:turtle_advanced")
+    public static Item TURTLE_ADVANCED;
+
+    @ObjectHolder("computercraft:pocket_computer_normal")
+    public static Item POCKET_NORMAL;
+    @ObjectHolder("computercraft:pocket_computer_advanced")
+    public static Item POCKET_ADVANCED;
 
     public static <T extends ForgeRegistryEntry<T>> T getRegistryEntry(String name, IForgeRegistry<T> forgeRegistry) {
         ResourceLocation location;
@@ -143,5 +154,18 @@ public class ItemUtil {
         tag.put("_apPlaceholder_", IntNBT.valueOf(1));
         return tag;
     }
+
+    public static ItemStack makeTurtle(Item turtle, String upgrade) {
+        ItemStack stack = new ItemStack(turtle);
+        stack.getOrCreateTag().putString("RightUpgrade", upgrade);
+        return stack;
+    }
+
+    public static ItemStack makePocket(Item turtle, String upgrade) {
+        ItemStack stack = new ItemStack(turtle);
+        stack.getOrCreateTag().putString("Upgrade", upgrade);
+        return stack;
+    }
+
 
 }

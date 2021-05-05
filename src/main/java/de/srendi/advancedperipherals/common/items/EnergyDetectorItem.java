@@ -14,17 +14,17 @@ public class EnergyDetectorItem extends BaseBlockItem {
     }
 
     @Override
-    protected Optional<String> getTurtleID() {
+    public Optional<String> getTurtleID() {
         return Optional.empty();
     }
 
     @Override
-    protected Optional<String> getPocketID() {
+    public Optional<String> getPocketID() {
         return Optional.empty();
     }
 
     @Override
-    protected ITextComponent getDescription() {
+    public ITextComponent getDescription() {
         return new TranslationTextComponent("item.advancedperipherals.tooltip.energy_detector");
     }
 

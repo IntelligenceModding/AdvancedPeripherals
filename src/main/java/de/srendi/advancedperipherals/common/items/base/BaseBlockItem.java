@@ -2,6 +2,7 @@ package de.srendi.advancedperipherals.common.items.base;
 
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.util.EnumColor;
+import de.srendi.advancedperipherals.common.util.ItemUtil;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.util.ITooltipFlag;
@@ -23,16 +24,6 @@ import java.util.Optional;
 
 public abstract class BaseBlockItem extends BlockItem {
 
-    @ObjectHolder("computercraft:turtle_normal")
-    public static Item TURTLE_NORMAL;
-    @ObjectHolder("computercraft:turtle_advanced")
-    public static Item TURTLE_ADVANCED;
-
-    @ObjectHolder("computercraft:pocket_computer_normal")
-    public static Item POCKET_NORMAL;
-    @ObjectHolder("computercraft:pocket_computer_advanced")
-    public static Item POCKET_ADVANCED;
-
     public BaseBlockItem(Block blockIn, Properties properties) {
         super(blockIn, properties.group(AdvancedPeripherals.TAB));
     }
@@ -51,11 +42,11 @@ public abstract class BaseBlockItem extends BlockItem {
         }
     }
 
-    protected abstract Optional<String> getTurtleID();
+    public abstract Optional<String> getTurtleID();
 
-    protected abstract Optional<String> getPocketID();
+    public abstract Optional<String> getPocketID();
 
-    protected abstract ITextComponent getDescription();
+    public abstract ITextComponent getDescription();
 
     @Override
     public void fillItemGroup(ItemGroup group, NonNullList<ItemStack> items) {
@@ -63,25 +54,13 @@ public abstract class BaseBlockItem extends BlockItem {
         if (!isInGroup(group))
             return;
         if (getTurtleID().isPresent()) {
-            items.add(makeTurtle(TURTLE_ADVANCED, "advancedperipherals:" + getTurtleID().get()));
-            items.add(makeTurtle(TURTLE_NORMAL, "advancedperipherals:" + getTurtleID().get()));
+            items.add(ItemUtil.makeTurtle(ItemUtil.TURTLE_ADVANCED, AdvancedPeripherals.MOD_ID + ":" + getTurtleID().get()));
+            items.add(ItemUtil.makeTurtle(ItemUtil.TURTLE_NORMAL, AdvancedPeripherals.MOD_ID + ":" + getTurtleID().get()));
         }
         if (getPocketID().isPresent()) {
-            items.add(makePocket(POCKET_ADVANCED, "advancedperipherals:" + getPocketID().get()));
-            items.add(makePocket(POCKET_NORMAL, "advancedperipherals:" + getPocketID().get()));
+            items.add(ItemUtil.makePocket(ItemUtil.POCKET_ADVANCED, AdvancedPeripherals.MOD_ID + ":" + getPocketID().get()));
+            items.add(ItemUtil.makePocket(ItemUtil.POCKET_NORMAL, AdvancedPeripherals.MOD_ID + ":" + getPocketID().get()));
         }
-    }
-
-    private ItemStack makeTurtle(Item turtle, String upgrade) {
-        ItemStack stack = new ItemStack(turtle);
-        stack.getOrCreateTag().putString("RightUpgrade", upgrade);
-        return stack;
-    }
-
-    private ItemStack makePocket(Item turtle, String upgrade) {
-        ItemStack stack = new ItemStack(turtle);
-        stack.getOrCreateTag().putString("Upgrade", upgrade);
-        return stack;
     }
 
 }

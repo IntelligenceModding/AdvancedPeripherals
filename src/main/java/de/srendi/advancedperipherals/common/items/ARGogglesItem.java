@@ -45,7 +45,7 @@ public class ARGogglesItem extends ArmorItem {
                 new Properties().group(AdvancedPeripherals.TAB).maxStackSize(1));
     }
 
-    protected ITextComponent getDescription() {
+    public ITextComponent getDescription() {
         return new TranslationTextComponent("item.advancedperipherals.tooltip.ar_goggles");
     }
 

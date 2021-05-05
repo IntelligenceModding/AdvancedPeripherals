@@ -7,6 +7,8 @@ import de.srendi.advancedperipherals.common.addons.computercraft.base.BasePeriph
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
 import de.srendi.advancedperipherals.common.blocks.tileentity.RedstoneIntegratorTileEntity;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
+import net.minecraft.block.ComposterBlock;
+import net.minecraft.client.renderer.model.ModelRenderer;
 import net.minecraft.util.Direction;
 
 import java.util.Locale;
