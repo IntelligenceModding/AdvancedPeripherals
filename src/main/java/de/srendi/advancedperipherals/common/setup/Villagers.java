@@ -38,7 +38,7 @@ public class Villagers {
         event.getGenericTrades().add(new VillagerTrade(VillagerTrade.Type.ItemForEmerald).setItem(Blocks.PERIPHERAL_CASING.get())
                 .setEmeraldPrice(1).setMaxUses(16).setXp(3));
 
-        event.getRareTrades().add(new VillagerTrade(VillagerTrade.Type.EmeraldForItem).setItem(Registry.ModBlocks.TURTLE_ADVANCED.get())
+        event.getRareTrades().add(new VillagerTrade(VillagerTrade.Type.ItemForEmerald).setItem(Registry.ModBlocks.TURTLE_ADVANCED.get())
                 .setEmeraldPrice(6).setMaxUses(4).setXp(20).setItemAmount(8));
     }
 
