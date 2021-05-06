@@ -5,8 +5,8 @@ import de.srendi.advancedperipherals.common.blocks.tileentity.PeripheralProxyTil
 import de.srendi.advancedperipherals.common.setup.TileEntityTypes;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.DirectionalBlock;
 import net.minecraft.block.HorizontalBlock;
-import net.minecraft.block.ObserverBlock;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.state.DirectionProperty;
@@ -23,7 +23,11 @@ import org.jetbrains.annotations.Nullable;
 
 public class PeripheralProxyBlock extends BaseTileEntityBlock {
 
-    public static final DirectionProperty FACING = HorizontalBlock.HORIZONTAL_FACING;
+    public static final DirectionProperty FACING = DirectionalBlock.FACING;
+
+    public PeripheralProxyBlock() {
+        this.setDefaultState(this.stateContainer.getBaseState().with(FACING, Direction.SOUTH));
+    }
 
     @Nullable
     @Override
@@ -31,14 +35,12 @@ public class PeripheralProxyBlock extends BaseTileEntityBlock {
         return TileEntityTypes.PERIPHERAL_PROXY.get().create();
     }
 
-    @Override
-    public BlockState rotate(BlockState state, IWorld world, BlockPos pos, Rotation direction) {
-        return state.with(FACING, direction.rotate(state.get(FACING)));
+    public BlockState rotate(BlockState state, Rotation rot) {
+        return state.with(FACING, rot.rotate(state.get(FACING)));
     }
 
-    @Override
-    public BlockState mirror(BlockState state, Mirror mirror) {
-        return state.with(FACING, mirror.mirror(state.get(FACING)));
+    public BlockState mirror(BlockState state, Mirror mirrorIn) {
+        return state.rotate(mirrorIn.toRotation(state.get(FACING)));
     }
 
     protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
@@ -48,9 +50,7 @@ public class PeripheralProxyBlock extends BaseTileEntityBlock {
     @Nullable
     @Override
     public BlockState getStateForPlacement(BlockItemUseContext context) {
-        PlayerEntity player = context.getPlayer();
-        Direction facing = context.getNearestLookingDirection();
-        return getDefaultState().with(FACING, facing);
+        return this.getDefaultState().with(FACING, context.getNearestLookingDirection().getOpposite().getOpposite());
     }
 
     public TileEntity getTileEntityInFront(World world, BlockPos pos) {
