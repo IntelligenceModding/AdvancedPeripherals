@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "advancedperipherals:block/peripheral_proxy"
+    }
+  }
+}

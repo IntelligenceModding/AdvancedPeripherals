@@ -1,12 +1,12 @@
 package de.srendi.advancedperipherals.common.blocks;
 
-import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.blocks.base.BaseTileEntityBlock;
-import de.srendi.advancedperipherals.common.blocks.tileentity.RedstoneIntegratorTileEntity;
+import de.srendi.advancedperipherals.common.blocks.tileentity.PeripheralProxyTileEntity;
 import de.srendi.advancedperipherals.common.setup.TileEntityTypes;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.HorizontalBlock;
+import net.minecraft.block.ObserverBlock;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.state.DirectionProperty;
@@ -18,33 +18,17 @@ import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorld;
+import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
-public class RedstoneIntegratorBlock extends BaseTileEntityBlock {
+public class PeripheralProxyBlock extends BaseTileEntityBlock {
 
     public static final DirectionProperty FACING = HorizontalBlock.HORIZONTAL_FACING;
 
     @Nullable
     @Override
     public TileEntity createTileEntity(BlockState state, IBlockReader world) {
-        return TileEntityTypes.REDSTONE_INTEGRATOR.get().create();
-    }
-
-    @Override
-    public boolean canConnectRedstone(BlockState state, IBlockReader world, BlockPos pos, @Nullable Direction side) {
-        return true;
-    }
-
-    @Override
-    public int getStrongPower(BlockState blockState, IBlockReader blockAccess, BlockPos pos, Direction side) {
-        RedstoneIntegratorTileEntity tileEntity = (RedstoneIntegratorTileEntity) blockAccess.getTileEntity(pos);
-        return tileEntity.power[side.getOpposite().getIndex()];
-    }
-
-    @Override
-    public int getWeakPower(BlockState blockState, IBlockReader blockAccess, BlockPos pos, Direction side) {
-        RedstoneIntegratorTileEntity tileEntity = (RedstoneIntegratorTileEntity) blockAccess.getTileEntity(pos);
-        return tileEntity.power[side.getOpposite().getIndex()];
+        return TileEntityTypes.PERIPHERAL_PROXY.get().create();
     }
 
     @Override
@@ -65,8 +49,14 @@ public class RedstoneIntegratorBlock extends BaseTileEntityBlock {
     @Override
     public BlockState getStateForPlacement(BlockItemUseContext context) {
         PlayerEntity player = context.getPlayer();
-        Direction facing = player.getHorizontalFacing().getOpposite();
+        Direction facing = context.getNearestLookingDirection();
         return getDefaultState().with(FACING, facing);
+    }
+
+    public TileEntity getTileEntityInFront(World world, BlockPos pos) {
+        if(world.getTileEntity(pos.offset(world.getBlockState(pos).get(FACING))) == null)
+            return null;
+        return world.getTileEntity(pos.offset(world.getBlockState(pos).get(FACING)));
     }
 
 }

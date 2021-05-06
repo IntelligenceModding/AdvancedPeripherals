@@ -1,0 +1,12 @@
+{
+  "parent": "block/cube_all",
+  "textures": {
+    "north": "advancedperipherals:block/peripheral_proxy_front",
+    "south": "advancedperipherals:block/peripheral_proxy_back",
+    "west": "advancedperipherals:block/peripheral_proxy_side_one",
+    "east": "advancedperipherals:block/peripheral_proxy_side_three",
+    "up": "advancedperipherals:block/peripheral_proxy_side_two",
+    "down": "advancedperipherals:block/peripheral_proxy_side_four",
+    "particle": "advancedperipherals:block/peripheral_proxy_side_one"
+  }
+}

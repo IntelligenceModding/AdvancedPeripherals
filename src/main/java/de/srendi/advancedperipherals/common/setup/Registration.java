@@ -1,6 +1,7 @@
 package de.srendi.advancedperipherals.common.setup;
 
 import de.srendi.advancedperipherals.AdvancedPeripherals;
+import de.srendi.advancedperipherals.common.addons.computercraft.base.ProxyIntegrationRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.entity.merchant.villager.VillagerProfession;
 import net.minecraft.inventory.container.ContainerType;
@@ -35,5 +36,6 @@ public class Registration {
         Items.register();
         ContainerTypes.register();
         Villagers.register();
+        ProxyIntegrationRegistry.register();
     }
 }
