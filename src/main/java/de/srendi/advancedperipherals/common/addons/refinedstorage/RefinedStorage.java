@@ -2,10 +2,23 @@ package de.srendi.advancedperipherals.common.addons.refinedstorage;
 
 import com.refinedmods.refinedstorage.api.IRSAPI;
 import com.refinedmods.refinedstorage.api.network.INetwork;
+import com.refinedmods.refinedstorage.api.network.INetworkNodeGraphEntry;
 import com.refinedmods.refinedstorage.api.network.node.INetworkNode;
+import com.refinedmods.refinedstorage.api.storage.AccessType;
+import com.refinedmods.refinedstorage.api.storage.IStorage;
+import com.refinedmods.refinedstorage.api.storage.IStorageProvider;
+import com.refinedmods.refinedstorage.api.storage.cache.IStorageCache;
+import com.refinedmods.refinedstorage.api.storage.cache.IStorageCacheListener;
+import com.refinedmods.refinedstorage.api.storage.cache.InvalidateCause;
 import com.refinedmods.refinedstorage.api.util.StackListEntry;
 import com.refinedmods.refinedstorage.apiimpl.API;
+import com.refinedmods.refinedstorage.apiimpl.network.grid.CraftingGridBehavior;
 import com.refinedmods.refinedstorage.apiimpl.network.node.NetworkNode;
+import com.refinedmods.refinedstorage.container.GridContainer;
+import com.refinedmods.refinedstorage.container.StorageMonitorContainer;
+import com.refinedmods.refinedstorage.render.tesr.StorageMonitorTileRenderer;
+import com.refinedmods.refinedstorage.tile.ImporterTile;
+import com.refinedmods.refinedstorage.tile.StorageMonitorTile;
 import dan200.computercraft.shared.util.NBTUtil;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import net.minecraft.item.ItemStack;
@@ -145,29 +158,33 @@ public class RefinedStorage {
 
     public static List<ItemStack> getItems(INetwork network, boolean craftable) {
         Collection<StackListEntry<ItemStack>> entries;
+        IStorageCache<ItemStack> cache = network.getItemStorageCache();
         if (craftable) {
-            entries = network.getItemStorageCache().getCraftablesList().getStacks();
+            entries = cache.getCraftablesList().getStacks();
         } else {
-            entries = network.getItemStorageCache().getList().getStacks();
+            entries = cache.getList().getStacks();
         }
         List<ItemStack> result = new ArrayList<>(entries.size());
         for (StackListEntry<ItemStack> entry : entries) {
             result.add(entry.getStack());
         }
+        cache.invalidate(InvalidateCause.UNKNOWN);
         return result;
     }
 
     public static List<FluidStack> getFluids(INetwork network, boolean craftable) {
         Collection<StackListEntry<FluidStack>> entries;
+        IStorageCache<FluidStack> cache = network.getFluidStorageCache();
         if (craftable) {
-            entries = network.getFluidStorageCache().getCraftablesList().getStacks();
+            entries = cache.getCraftablesList().getStacks();
         } else {
-            entries = network.getFluidStorageCache().getList().getStacks();
+            entries = cache.getList().getStacks();
         }
         List<FluidStack> result = new ArrayList<>(entries.size());
         for (StackListEntry<FluidStack> entry : entries) {
             result.add(entry.getStack());
         }
+        cache.invalidate(InvalidateCause.UNKNOWN);
         return result;
     }
 
