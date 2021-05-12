@@ -1,12 +1,9 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.base;
 
-import dan200.computercraft.api.peripheral.IDynamicPeripheral;
 import dan200.computercraft.api.peripheral.IPeripheral;
 import net.minecraft.tileentity.TileEntity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.lang.reflect.ParameterizedType;
 
 public abstract class ProxyIntegration<T extends TileEntity> implements IPeripheral {
 

@@ -23,7 +23,7 @@ public class ProxyIntegrationRegistry {
         registerIntegration(true, new BeaconIntegration());
         registerIntegration(ModList.get().isLoaded("mekanism"), new InductionPortIntegration());
         registerIntegration(ModList.get().isLoaded("mekanismgenerators"), new TurbineIntegration());
-        registerIntegration(ModList.get().isLoaded("mekanis"), new BoilerIntegration());
+        registerIntegration(ModList.get().isLoaded("mekanism"), new BoilerIntegration());
         registerIntegration(ModList.get().isLoaded("mekanismgenerators"), new FissionIntegration());
     }
 
