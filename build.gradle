@@ -23,6 +23,8 @@ minecraft {
 
     mappings channel: 'snapshot', version: "${mappings_version}"
 
+    accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
+
     runs {
         client {
             workingDirectory project.file('run')
@@ -108,10 +110,11 @@ dependencies {
     runtimeOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}")
     compileOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}:api")
 
-    runtimeOnly fg.deobf("mcjty.theoneprobe:TheOneProbe-1.16:${top_version}")
+    implementation fg.deobf("mekanism:Mekanism:1.16.4-10.0.19.446")
+    implementation fg.deobf("mekanism:Mekanism:1.16.4-10.0.19.446:generators")
+
     //Mods to test stuff(Not required mods)
-    runtimeOnly fg.deobf("mekanism:Mekanism:1.16.4-10.0.19.446")
-    runtimeOnly fg.deobf("mekanism:Mekanism:1.16.4-10.0.19.446:generators")
+    runtimeOnly fg.deobf("mcjty.theoneprobe:TheOneProbe-1.16:${top_version}")
     runtimeOnly fg.deobf("mezz.jei:jei-1.16.4:7.6.0.62")
 
 }

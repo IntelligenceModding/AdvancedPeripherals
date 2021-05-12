@@ -2,13 +2,19 @@ package de.srendi.advancedperipherals.common.addons.computercraft.proxyintegrati
 
 import dan200.computercraft.api.lua.LuaFunction;
 import de.srendi.advancedperipherals.common.addons.computercraft.base.ProxyIntegration;
+import mekanism.common.tile.multiblock.TileEntityInductionPort;
 import net.minecraft.tileentity.BeaconTileEntity;
 import org.jetbrains.annotations.NotNull;
 
-public class BeaconIntegration extends ProxyIntegration {
+public class BeaconIntegration extends ProxyIntegration<BeaconTileEntity> {
     @Override
-    public Class<?> getTargetClass() {
+    public Class<BeaconTileEntity> getTargetClass() {
         return BeaconTileEntity.class;
+    }
+
+    @Override
+    public BeaconIntegration getNewInstance() {
+        return new BeaconIntegration();
     }
 
     @Override
@@ -17,12 +23,18 @@ public class BeaconIntegration extends ProxyIntegration {
     }
 
     @LuaFunction
-    public final String test() {
-        return "Well, it works... i think";
+    public final int getLevel() {
+        return getTileEntity().getLevels();
     }
 
-    @Override
-    public BeaconIntegration getNewInstance() {
-        return new BeaconIntegration();
+    @LuaFunction
+    public final String getPrimaryEffect() {
+        return getTileEntity().primaryEffect == null ? "none" : getTileEntity().primaryEffect.getName();
     }
+
+    @LuaFunction
+    public final String getSecondaryEffect() {
+        return getTileEntity().secondaryEffect == null ? "none" : getTileEntity().secondaryEffect.getName();
+    }
+
 }

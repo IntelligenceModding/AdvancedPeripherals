@@ -22,8 +22,6 @@ public class PeripheralProxyTileEntity extends TileEntity {
         super(TileEntityTypes.PERIPHERAL_PROXY.get());
     }
 
-    private int tick;
-
     private ProxyIntegration integration;
     private LazyOptional<IPeripheral> peripheralCap = LazyOptional.empty();
 
@@ -35,7 +33,8 @@ public class PeripheralProxyTileEntity extends TileEntity {
             if(block.getTileEntityInFront(getWorld(), getPos()) != null) {
                 if(integration == null) {
                     if(ProxyIntegrationRegistry.getIntegration(block.getTileEntityInFront(getWorld(), getPos())) != null) {
-                        this.integration = ProxyIntegrationRegistry.getIntegration(block.getTileEntityInFront(getWorld(), getPos()));
+                        integration = ProxyIntegrationRegistry.getIntegration(block.getTileEntityInFront(getWorld(), getPos()));
+                        integration.setTileEntity(block.getTileEntityInFront(getWorld(), getPos()));
                         peripheralCap = LazyOptional.of(() -> integration);
                     }
                 }
