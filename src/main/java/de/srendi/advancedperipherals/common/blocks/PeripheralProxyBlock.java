@@ -1,13 +1,10 @@
 package de.srendi.advancedperipherals.common.blocks;
 
 import de.srendi.advancedperipherals.common.blocks.base.BaseTileEntityBlock;
-import de.srendi.advancedperipherals.common.blocks.tileentity.PeripheralProxyTileEntity;
 import de.srendi.advancedperipherals.common.setup.TileEntityTypes;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.DirectionalBlock;
-import net.minecraft.block.HorizontalBlock;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.state.DirectionProperty;
 import net.minecraft.state.StateContainer;
@@ -17,7 +14,6 @@ import net.minecraft.util.Mirror;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockReader;
-import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
@@ -54,7 +50,7 @@ public class PeripheralProxyBlock extends BaseTileEntityBlock {
     }
 
     public TileEntity getTileEntityInFront(World world, BlockPos pos) {
-        if(world.getTileEntity(pos.offset(world.getBlockState(pos).get(FACING))) == null)
+        if (world.getTileEntity(pos.offset(world.getBlockState(pos).get(FACING))) == null)
             return null;
         return world.getTileEntity(pos.offset(world.getBlockState(pos).get(FACING)));
     }

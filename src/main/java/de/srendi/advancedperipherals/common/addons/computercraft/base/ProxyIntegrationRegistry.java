@@ -1,12 +1,10 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.base;
 
-import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.addons.computercraft.proxyintegrations.*;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.fml.ModList;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public class ProxyIntegrationRegistry {
@@ -14,8 +12,8 @@ public class ProxyIntegrationRegistry {
     public static final List<ProxyIntegration<?>> integrations = new ArrayList<>();
 
     public static void registerIntegration(boolean condition, ProxyIntegration<?> integration) {
-        if(condition)
-        integrations.add(integration);
+        if (condition)
+            integrations.add(integration);
     }
 
     public static void register() {
@@ -29,8 +27,8 @@ public class ProxyIntegrationRegistry {
     }
 
     public static ProxyIntegration<?> getIntegration(TileEntity tileEntity) {
-        for(ProxyIntegration<?> integration : integrations) {
-            if(integration.isTileEntity(tileEntity)) {
+        for (ProxyIntegration<?> integration : integrations) {
+            if (integration.isTileEntity(tileEntity)) {
                 return integration.getNewInstance();
             }
         }

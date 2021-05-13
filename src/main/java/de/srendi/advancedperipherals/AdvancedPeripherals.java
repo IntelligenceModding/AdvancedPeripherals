@@ -56,12 +56,6 @@ public class AdvancedPeripherals {
         curiosLoaded = ModList.get().isLoaded("curios");
     }
 
-    @SubscribeEvent
-    public void commonSetup(FMLCommonSetupEvent event) {
-        event.enqueueWork(ChunkManager::register);
-        MNetwork.init();
-    }
-
     public static void debug(String message) {
         if (AdvancedPeripheralsConfig.enableDebugMode)
             LOGGER.debug("[DEBUG] " + message);
@@ -70,6 +64,16 @@ public class AdvancedPeripherals {
     public static void debug(String message, Level level) {
         if (AdvancedPeripheralsConfig.enableDebugMode)
             LOGGER.log(level, "[DEBUG] " + message);
+    }
+
+    public static boolean isCuriosLoaded() {
+        return curiosLoaded;
+    }
+
+    @SubscribeEvent
+    public void commonSetup(FMLCommonSetupEvent event) {
+        event.enqueueWork(ChunkManager::register);
+        MNetwork.init();
     }
 
     public void clientSetup(FMLClientSetupEvent event) {
@@ -84,10 +88,6 @@ public class AdvancedPeripherals {
         //		.size(1).icon(new ResourceLocation(MOD_ID, "textures/item/empty_glasses_slot.png")).build());
         InterModComms.sendTo("curios", SlotTypeMessage.REGISTER_TYPE, () -> new SlotTypeMessage.Builder("glasses")
                 .size(1).build());
-    }
-
-    public static boolean isCuriosLoaded() {
-        return curiosLoaded;
     }
 
 }

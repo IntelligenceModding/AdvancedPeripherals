@@ -1,10 +1,7 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.proxyintegrations;
 
 import dan200.computercraft.api.lua.LuaFunction;
-import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.addons.computercraft.base.ProxyIntegration;
-import mekanism.api.Action;
-import mekanism.api.inventory.AutomationType;
 import mekanism.api.math.FloatingLong;
 import mekanism.api.math.MathUtils;
 import mekanism.common.config.MekanismConfig;
@@ -52,7 +49,7 @@ public class TurbineIntegration extends ProxyIntegration<TileEntityTurbineValve>
 
     @LuaFunction
     public final double getSteamFilledPercentage() {
-        return getSteam()/(double)getSteamCapacity();
+        return getSteam() / (double) getSteamCapacity();
     }
 
     @LuaFunction

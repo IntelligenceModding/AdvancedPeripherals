@@ -7,9 +7,8 @@ import org.jetbrains.annotations.Nullable;
 
 public abstract class ProxyIntegration<T extends TileEntity> implements IPeripheral {
 
-    protected T tileEntity;
-
     private final Class<T> targetClass = getTargetClass();
+    protected T tileEntity;
 
     protected abstract Class<T> getTargetClass();
 
@@ -21,12 +20,12 @@ public abstract class ProxyIntegration<T extends TileEntity> implements IPeriphe
         return targetClass.isAssignableFrom(tileEntity.getClass());
     }
 
-    public void setTileEntity(T tileEntity) {
-        this.tileEntity = tileEntity;
-    }
-
     public T getTileEntity() {
         return tileEntity;
+    }
+
+    public void setTileEntity(T tileEntity) {
+        this.tileEntity = tileEntity;
     }
 
     @Override

@@ -2,9 +2,7 @@ package de.srendi.advancedperipherals.common.addons.computercraft.proxyintegrati
 
 import dan200.computercraft.api.lua.LuaFunction;
 import de.srendi.advancedperipherals.common.addons.computercraft.base.ProxyIntegration;
-import mekanism.common.tile.multiblock.TileEntityInductionPort;
 import net.minecraft.tileentity.BeaconTileEntity;
-import org.jetbrains.annotations.NotNull;
 
 public class BeaconIntegration extends ProxyIntegration<BeaconTileEntity> {
     @Override

@@ -23,6 +23,14 @@ public class ARRenderHelper extends AbstractGui {
         drawString(matrixStack, fontRenderer, text, x - fontRenderer.getStringWidth(text), y, color);
     }
 
+    public static ARRenderHelper getInstance() {
+        return instance;
+    }
+
+    public static int fixAlpha(int color) {
+        return (color & -67108864) == 0 ? color | -16777216 : color;
+    }
+
     @Override
     public void hLine(MatrixStack matrixStack, int minX, int maxX, int y, int color) {
         color = ARRenderHelper.fixAlpha(color);
@@ -101,13 +109,5 @@ public class ARRenderHelper extends AbstractGui {
     public void drawItemIcon(MatrixStack matrixStack, ItemRenderer itemRenderer, String item, int x, int y) {
         ItemStack stack = new ItemStack(ItemUtil.getRegistryEntry(item, ForgeRegistries.ITEMS));
         itemRenderer.renderItemIntoGUI(stack, x, y);
-    }
-
-    public static ARRenderHelper getInstance() {
-        return instance;
-    }
-
-    public static int fixAlpha(int color) {
-        return (color & -67108864) == 0 ? color | -16777216 : color;
     }
 }

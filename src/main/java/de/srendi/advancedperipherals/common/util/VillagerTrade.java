@@ -10,7 +10,6 @@ import net.minecraft.item.MerchantOffer;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Random;
-import java.util.concurrent.BlockingDeque;
 
 public class VillagerTrade implements VillagerTrades.ITrade {
 
@@ -25,11 +24,6 @@ public class VillagerTrade implements VillagerTrades.ITrade {
 
     private int maxUses = 1;
     private int xp = 5;
-
-    public enum Type {
-        ItemForEmerald,
-        EmeraldForItem
-    }
 
     public VillagerTrade(Type type) {
         this.type = type;
@@ -73,23 +67,28 @@ public class VillagerTrade implements VillagerTrades.ITrade {
     @Nullable
     @Override
     public MerchantOffer getOffer(Entity trader, Random rand) {
-        if(type == Type.EmeraldForItem) {
-            if(itemStack != null)
+        if (type == Type.EmeraldForItem) {
+            if (itemStack != null)
                 return new MerchantOffer(itemStack, new ItemStack(Items.EMERALD, emeraldPrice), maxUses, xp, 1);
-            if(item != null)
+            if (item != null)
                 return new MerchantOffer(new ItemStack(item, itemAmount), new ItemStack(Items.EMERALD, emeraldPrice), maxUses, xp, 1);
 
             return new MerchantOffer(new ItemStack(block, itemAmount), new ItemStack(Items.EMERALD, emeraldPrice), maxUses, xp, 1);
         }
-        if(type == Type.ItemForEmerald) {
-            if(itemStack != null)
+        if (type == Type.ItemForEmerald) {
+            if (itemStack != null)
                 return new MerchantOffer(new ItemStack(Items.EMERALD, emeraldPrice), itemStack, maxUses, xp, 1);
-            if(item != null)
+            if (item != null)
                 return new MerchantOffer(new ItemStack(Items.EMERALD, emeraldPrice), new ItemStack(item, itemAmount), maxUses, xp, 1);
 
             return new MerchantOffer(new ItemStack(Items.EMERALD, emeraldPrice), new ItemStack(block, itemAmount), maxUses, xp, 1);
         }
         return null;
+    }
+
+    public enum Type {
+        ItemForEmerald,
+        EmeraldForItem
     }
 
 }

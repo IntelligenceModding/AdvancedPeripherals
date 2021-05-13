@@ -56,12 +56,12 @@ public class EnergyStorageProxy implements IEnergyStorage {
         return 0;
     }
 
-    public void setMaxTransferRate(int rate) {
-        maxTransferRate = rate;
-    }
-
     public int getMaxTransferRate() {
         return maxTransferRate;
+    }
+
+    public void setMaxTransferRate(int rate) {
+        maxTransferRate = rate;
     }
 
     /**

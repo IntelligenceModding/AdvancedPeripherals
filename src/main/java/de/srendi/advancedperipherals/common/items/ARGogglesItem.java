@@ -45,6 +45,28 @@ public class ARGogglesItem extends ArmorItem {
                 new Properties().group(AdvancedPeripherals.TAB).maxStackSize(1));
     }
 
+    @OnlyIn(Dist.CLIENT)
+    public static void clientTick(ClientPlayerEntity player, ItemStack stack) {
+        if (stack.hasTag() && stack.getTag().contains(CONTROLLER_POS) && stack.getTag().contains(CONTROLLER_WORLD)) {
+            int[] arr = stack.getTag().getIntArray(CONTROLLER_POS);
+            if (arr.length < 3)
+                return;
+            BlockPos pos = new BlockPos(arr[0], arr[1], arr[2]);
+            String dimensionKey = stack.getTag().getString(CONTROLLER_WORLD);
+            World world = player.world;
+            if (!dimensionKey.equals(world.getDimensionKey().toString())) {
+                MNetwork.sendToServer(new RequestHudCanvasMessage(pos, dimensionKey));
+                return;
+            }
+            TileEntity te = world.getTileEntity(pos);
+            if (!(te instanceof ARControllerTileEntity))
+                return;
+            ARControllerTileEntity controller = (ARControllerTileEntity) te;
+            HudOverlayHandler.clearCanvas();
+            HudOverlayHandler.updateCanvas(controller.getCanvas());
+        }
+    }
+
     public ITextComponent getDescription() {
         return new TranslationTextComponent("item.advancedperipherals.tooltip.ar_goggles");
     }
@@ -72,28 +94,6 @@ public class ARGogglesItem extends ArmorItem {
             return null;
         }
         return CuriosHelper.createARGogglesProvider(stack);
-    }
-
-    @OnlyIn(Dist.CLIENT)
-    public static void clientTick(ClientPlayerEntity player, ItemStack stack) {
-        if (stack.hasTag() && stack.getTag().contains(CONTROLLER_POS) && stack.getTag().contains(CONTROLLER_WORLD)) {
-            int[] arr = stack.getTag().getIntArray(CONTROLLER_POS);
-            if (arr.length < 3)
-                return;
-            BlockPos pos = new BlockPos(arr[0], arr[1], arr[2]);
-            String dimensionKey = stack.getTag().getString(CONTROLLER_WORLD);
-            World world = player.world;
-            if (!dimensionKey.equals(world.getDimensionKey().toString())) {
-                MNetwork.sendToServer(new RequestHudCanvasMessage(pos, dimensionKey));
-                return;
-            }
-            TileEntity te = world.getTileEntity(pos);
-            if (!(te instanceof ARControllerTileEntity))
-                return;
-            ARControllerTileEntity controller = (ARControllerTileEntity) te;
-            HudOverlayHandler.clearCanvas();
-            HudOverlayHandler.updateCanvas(controller.getCanvas());
-        }
     }
 
     @Override

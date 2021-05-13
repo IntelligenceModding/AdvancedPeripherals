@@ -24,19 +24,6 @@ public class HudOverlayHandler {
         MinecraftForge.EVENT_BUS.register(instance);
     }
 
-    @SubscribeEvent(priority = EventPriority.LOWEST)
-    public void onRender(RenderGameOverlayEvent.Post event) {
-        if (event.getWindow() == null) return;
-        Minecraft mc = Minecraft.getInstance();
-        MatrixStack matrixStack = event.getMatrixStack();
-        List<ARRenderAction> canvasCopy = new ArrayList<ARRenderAction>();
-        canvasCopy.addAll(canvas);
-        for (ARRenderAction action : canvasCopy) {
-            action.draw(mc, matrixStack, event.getWindow().getScaledWidth(), event.getWindow().getScaledHeight());
-        }
-        mc.getTextureManager().bindTexture(AbstractGui.GUI_ICONS_LOCATION);
-    }
-
     public static HudOverlayHandler getInstance() {
         return instance;
     }
@@ -52,5 +39,18 @@ public class HudOverlayHandler {
         if (instance == null)
             return;
         instance.canvas.clear();
+    }
+
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public void onRender(RenderGameOverlayEvent.Post event) {
+        if (event.getWindow() == null) return;
+        Minecraft mc = Minecraft.getInstance();
+        MatrixStack matrixStack = event.getMatrixStack();
+        List<ARRenderAction> canvasCopy = new ArrayList<ARRenderAction>();
+        canvasCopy.addAll(canvas);
+        for (ARRenderAction action : canvasCopy) {
+            action.draw(mc, matrixStack, event.getWindow().getScaledWidth(), event.getWindow().getScaledHeight());
+        }
+        mc.getTextureManager().bindTexture(AbstractGui.GUI_ICONS_LOCATION);
     }
 }

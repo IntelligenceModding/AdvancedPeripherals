@@ -7,7 +7,6 @@ import mekanism.api.chemical.ChemicalStack;
 import mekanism.generators.common.content.fission.FissionReactorMultiblockData;
 import mekanism.generators.common.tile.fission.TileEntityFissionReactorLogicAdapter;
 import net.minecraftforge.fluids.FluidStack;
-import org.squiddev.cobalt.Lua;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -30,15 +29,14 @@ public class FissionIntegration extends ProxyIntegration<TileEntityFissionReacto
 
     @LuaFunction
     public final Map<String, Object> getCoolant() {
+        Map<String, Object> wrapped = new HashMap<>(2);
         if (getReactor().fluidCoolantTank.isEmpty() && !getReactor().gasCoolantTank.isEmpty()) {
             ChemicalStack<?> stack = getReactor().gasCoolantTank.getStack();
-            Map<String, Object> wrapped = new HashMap<>(2);
             wrapped.put("name", stack.getType().getRegistryName() == null ? null : stack.getType().getRegistryName().toString());
             wrapped.put("amount", stack.getAmount());
             return wrapped;
         }
         FluidStack stack = getReactor().fluidCoolantTank.getFluid();
-        Map<String, Object> wrapped = new HashMap<>(2);
         wrapped.put("name", stack.getFluid().getRegistryName() == null ? null : stack.getFluid().getRegistryName().toString());
         wrapped.put("amount", stack.getAmount());
         return wrapped;
@@ -153,6 +151,16 @@ public class FissionIntegration extends ProxyIntegration<TileEntityFissionReacto
     }
 
     @LuaFunction
+    public final void setBurnRate(double rate) throws LuaException {
+        rate = (double) Math.round(rate * 100) / 100;
+        int max = getMaxBurnRate();
+        if (rate < 0 || rate > max)
+            throw new LuaException("Burn Rate '" + rate + "' is out of range must be between 0 and " + max + ". (Inclusive)");
+
+        getReactor().rateLimit = Math.max(Math.min(getMaxBurnRate(), rate), 0);
+    }
+
+    @LuaFunction
     public final double getActualBurnRate() {
         return getReactor().lastBurnRate;
     }
@@ -200,16 +208,6 @@ public class FissionIntegration extends ProxyIntegration<TileEntityFissionReacto
     @LuaFunction
     public final double getBoilEfficiency() {
         return getReactor().getBoilEfficiency();
-    }
-
-    @LuaFunction
-    public final void setBurnRate(double rate) throws LuaException {
-        rate = (double) Math.round(rate * 100) / 100;
-        int max = getMaxBurnRate();
-        if(rate < 0 || rate > max)
-            throw new LuaException("Burn Rate '" + rate + "' is out of range must be between 0 and " + max + ". (Inclusive)");
-
-        getReactor().rateLimit = Math.max(Math.min(getMaxBurnRate(), rate), 0);
     }
 
     private FissionReactorMultiblockData getReactor() {

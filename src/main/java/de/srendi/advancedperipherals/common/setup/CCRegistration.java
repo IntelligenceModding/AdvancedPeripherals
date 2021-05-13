@@ -9,7 +9,6 @@ import de.srendi.advancedperipherals.common.addons.computercraft.turtles.TurtleC
 import de.srendi.advancedperipherals.common.addons.computercraft.turtles.TurtleChunky;
 import de.srendi.advancedperipherals.common.addons.computercraft.turtles.TurtleEnvironmentDetector;
 import de.srendi.advancedperipherals.common.addons.computercraft.turtles.TurtlePlayerDetector;
-import net.minecraft.entity.merchant.villager.VillagerProfession;
 import net.minecraft.item.Item;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;

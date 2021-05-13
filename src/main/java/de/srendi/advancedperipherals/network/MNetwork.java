@@ -18,11 +18,11 @@ import net.minecraftforge.fml.network.PacketDistributor;
 import net.minecraftforge.fml.network.simple.SimpleChannel;
 
 public class MNetwork {
-    private static int id = 0;
     private static final String PROTOCOL_VERSION = Integer.toString(1);
     private static final SimpleChannel NETWORK_CHANNEL = NetworkRegistry.newSimpleChannel(
             new ResourceLocation(AdvancedPeripherals.MOD_ID, "main_channel"), () -> PROTOCOL_VERSION,
             PROTOCOL_VERSION::equals, PROTOCOL_VERSION::equals);
+    private static int id = 0;
 
     public static void init() {
         NETWORK_CHANNEL.registerMessage(++id, ClearHudCanvasMessage.class, ClearHudCanvasMessage::encode,

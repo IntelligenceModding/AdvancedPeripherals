@@ -19,7 +19,6 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.network.NetworkHooks;
-import net.minecraftforge.registries.ObjectHolder;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
 

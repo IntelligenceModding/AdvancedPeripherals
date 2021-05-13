@@ -18,6 +18,7 @@ public class SlotCondition {
 
     /**
      * Sets the valid tags for the item
+     *
      * @param neededTags the tags which the item should have
      * @return the current instance
      */
@@ -28,6 +29,7 @@ public class SlotCondition {
 
     /**
      * Sets the valid items for the slot
+     *
      * @param neededItems the items which the item should be
      * @return the current instance
      */
@@ -38,6 +40,7 @@ public class SlotCondition {
 
     /**
      * Sets the valid item for the slot
+     *
      * @param item the item which the item should be
      * @return the current instance
      */
@@ -49,6 +52,7 @@ public class SlotCondition {
 
     /**
      * Sets the valid tag for the item
+     *
      * @param tag the tag which the item should have
      * @return the current instance
      */
@@ -60,19 +64,20 @@ public class SlotCondition {
 
     /**
      * Checks if the stack is valid for the tags/items. Used in {@link SlotInputHandler}
+     *
      * @param stack the {@link ItemStack} which needs to be checked
      * @return returns true if the item is valid
      */
     public boolean isValid(ItemStack stack) {
         boolean valid = true;
-        if(!neededTags.isEmpty()) {
-            for(ITag.INamedTag tag : neededTags) {
-                if(!stack.getItem().getTags().contains(tag.getName()))
+        if (!neededTags.isEmpty()) {
+            for (ITag.INamedTag tag : neededTags) {
+                if (!stack.getItem().getTags().contains(tag.getName()))
                     valid = false;
             }
         }
-        if(!neededItems.isEmpty()) {
-            if(!neededItems.contains(stack.getItem()))
+        if (!neededItems.isEmpty()) {
+            if (!neededItems.contains(stack.getItem()))
                 valid = false;
         }
         return valid;

@@ -3,14 +3,11 @@ package de.srendi.advancedperipherals.common.setup;
 import com.google.common.collect.ImmutableSet;
 import dan200.computercraft.shared.Registry;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
-import de.srendi.advancedperipherals.common.items.EnvironmentDetectorItem;
-import de.srendi.advancedperipherals.common.items.base.BaseBlockItem;
 import de.srendi.advancedperipherals.common.util.ItemUtil;
 import de.srendi.advancedperipherals.common.util.VillagerTrade;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import net.minecraft.entity.merchant.villager.VillagerProfession;
 import net.minecraft.entity.merchant.villager.VillagerTrades;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.village.PointOfInterestType;
 import net.minecraftforge.event.village.VillagerTradesEvent;
@@ -31,7 +28,8 @@ public class Villagers {
             () -> new VillagerProfession(AdvancedPeripherals.MOD_ID + ":" + "computer_scientist", COMPUTER_SCIENTIST_POI.get(),
                     ImmutableSet.of(Items.COMPUTER_TOOL.get()), ImmutableSet.of(Blocks.ENVIRONMENT_DETECTOR.get(), Blocks.PLAYER_DETECTOR.get(), Registry.ModBlocks.COMPUTER_ADVANCED.get()), SoundEvents.ENTITY_VILLAGER_WORK_ARMORER));
 
-    public static void register() { }
+    public static void register() {
+    }
 
     @SubscribeEvent
     public static void registerWanderingTrade(WandererTradesEvent event) {
@@ -45,7 +43,7 @@ public class Villagers {
     @SubscribeEvent
     public static void registerVillagerTrades(VillagerTradesEvent event) {
         Int2ObjectMap<List<VillagerTrades.ITrade>> trades = event.getTrades();
-        if(event.getType() == Villagers.COMPUTER_SCIENTIST.get()) {
+        if (event.getType() == Villagers.COMPUTER_SCIENTIST.get()) {
 
             trades.get(1).add(new VillagerTrade(VillagerTrade.Type.ItemForEmerald).setItem(Blocks.PERIPHERAL_CASING.get())
                     .setEmeraldPrice(2).setMaxUses(10).setXp(4));

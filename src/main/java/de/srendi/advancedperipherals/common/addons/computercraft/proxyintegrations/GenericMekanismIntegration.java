@@ -1,14 +1,11 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.proxyintegrations;
 
-import dan200.computercraft.api.lua.*;
-import dan200.computercraft.api.peripheral.IComputerAccess;
-import dan200.computercraft.api.peripheral.IDynamicPeripheral;
+import dan200.computercraft.api.lua.LuaFunction;
 import de.srendi.advancedperipherals.common.addons.computercraft.base.ProxyIntegration;
 import mekanism.api.energy.IEnergyContainer;
 import mekanism.api.math.FloatingLong;
 import mekanism.common.integration.energy.EnergyCompatUtils;
 import mekanism.common.tile.base.TileEntityMekanism;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.function.Function;

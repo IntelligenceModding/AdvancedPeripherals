@@ -1,7 +1,6 @@
 package de.srendi.advancedperipherals.common.blocks.tileentity;
 
 import dan200.computercraft.core.computer.ComputerSide;
-import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.RedstoneIntegratorPeripheral;
 import de.srendi.advancedperipherals.common.blocks.RedstoneIntegratorBlock;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
@@ -13,7 +12,6 @@ import net.minecraft.block.RedstoneWireBlock;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 
 import java.util.EnumSet;
 
@@ -30,13 +28,10 @@ public class RedstoneIntegratorTileEntity extends PeripheralTileEntity<RedstoneI
         return new RedstoneIntegratorPeripheral("redstoneIntegrator", this);
     }
 
-    public void updateRedstone(BlockState newState, EnumSet<Direction> updateDirections, boolean doConductedPowerUpdates)
-    {
+    public void updateRedstone(BlockState newState, EnumSet<Direction> updateDirections, boolean doConductedPowerUpdates) {
         Block newBlock = newState.getBlock();
-        if (!net.minecraftforge.event.ForgeEventFactory.onNeighborNotify(world, getPos(), newState, updateDirections, false).isCanceled())
-        {
-            for (Direction direction : updateDirections)
-            {
+        if (!net.minecraftforge.event.ForgeEventFactory.onNeighborNotify(world, getPos(), newState, updateDirections, false).isCanceled()) {
+            for (Direction direction : updateDirections) {
                 BlockPos neighborPos = getPos().offset(direction);
                 boolean doSecondaryNeighborUpdates = doConductedPowerUpdates && world.getBlockState(neighborPos).shouldCheckWeakPower(world, neighborPos, direction);
                 world.neighborChanged(neighborPos, newBlock, getPos());
@@ -60,7 +55,7 @@ public class RedstoneIntegratorTileEntity extends PeripheralTileEntity<RedstoneI
         int old = this.power[direction.getIndex()];
         this.power[direction.getIndex()] = power;
         if (old != power) {
-            if(!getWorld().getBlockState(pos.offset(direction)).hasProperty(RedstoneWireBlock.POWER))
+            if (!getWorld().getBlockState(pos.offset(direction)).hasProperty(RedstoneWireBlock.POWER))
                 return;
             BlockState state = getWorld().getBlockState(pos.offset(direction)).with(RedstoneWireBlock.POWER, power);
             world.setBlockState(pos.offset(direction), state);
@@ -91,10 +86,12 @@ public class RedstoneIntegratorTileEntity extends PeripheralTileEntity<RedstoneI
     public Direction getDirecton(ComputerSide computerSide) {
         Direction output = Direction.DOWN;
         if (computerSide == ComputerSide.FRONT) output = getBlockState().get(RedstoneIntegratorBlock.FACING);
-        if (computerSide == ComputerSide.BACK) output = getBlockState().get(RedstoneIntegratorBlock.FACING).getOpposite();
+        if (computerSide == ComputerSide.BACK)
+            output = getBlockState().get(RedstoneIntegratorBlock.FACING).getOpposite();
         if (computerSide == ComputerSide.TOP) output = Direction.UP;
         if (computerSide == ComputerSide.BOTTOM) output = Direction.DOWN;
-        if (computerSide == ComputerSide.RIGHT) output = getBlockState().get(RedstoneIntegratorBlock.FACING).rotateYCCW();
+        if (computerSide == ComputerSide.RIGHT)
+            output = getBlockState().get(RedstoneIntegratorBlock.FACING).rotateYCCW();
         if (computerSide == ComputerSide.LEFT) output = getBlockState().get(RedstoneIntegratorBlock.FACING).rotateY();
         return output;
     }

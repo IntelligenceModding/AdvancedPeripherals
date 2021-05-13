@@ -7,18 +7,11 @@ import de.srendi.advancedperipherals.common.setup.ContainerTypes;
 import de.srendi.advancedperipherals.common.setup.Items;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.container.Slot;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.items.CapabilityItemHandler;
-import net.minecraftforge.items.SlotItemHandler;
 
 public class InventoryManagerContainer extends BaseContainer {
-
-    @Override
-    public boolean canInteractWith(PlayerEntity playerIn) {
-        return true;
-    }
 
     public InventoryManagerContainer(int id, PlayerInventory inventory, BlockPos pos, World world) {
         super(ContainerTypes.INVENTORY_MANAGER_CONTAINER.get(), id, inventory, pos, world);
@@ -28,5 +21,10 @@ public class InventoryManagerContainer extends BaseContainer {
                 addSlot(new SlotInputHandler(handler, 0, 79, 29, new SlotCondition().setNeededItem(Items.MEMORY_CARD.get()))); //Input
             });
         }
+    }
+
+    @Override
+    public boolean canInteractWith(PlayerEntity playerIn) {
+        return true;
     }
 }

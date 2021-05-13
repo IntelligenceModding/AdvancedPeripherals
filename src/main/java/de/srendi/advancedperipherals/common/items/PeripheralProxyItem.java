@@ -2,7 +2,6 @@ package de.srendi.advancedperipherals.common.items;
 
 import de.srendi.advancedperipherals.common.items.base.BaseBlockItem;
 import de.srendi.advancedperipherals.common.setup.Blocks;
-import net.minecraft.block.Block;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 

@@ -2,10 +2,8 @@ package de.srendi.advancedperipherals.common.addons.computercraft.proxyintegrati
 
 import dan200.computercraft.api.lua.LuaFunction;
 import de.srendi.advancedperipherals.common.addons.computercraft.base.ProxyIntegration;
-import mekanism.client.gui.GuiInductionMatrix;
 import mekanism.common.integration.energy.EnergyCompatUtils;
 import mekanism.common.tile.multiblock.TileEntityInductionPort;
-import mekanism.common.util.text.EnergyDisplay;
 
 public class InductionPortIntegration extends ProxyIntegration<TileEntityInductionPort> {
     @Override
@@ -45,7 +43,7 @@ public class InductionPortIntegration extends ProxyIntegration<TileEntityInducti
 
     @LuaFunction
     public final double getEnergyFilledPercentage() {
-        return getEnergy()/(double)getMaxEnergy();
+        return getEnergy() / (double) getMaxEnergy();
     }
 
     @LuaFunction

@@ -4,7 +4,6 @@ import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.shared.util.NBTUtil;
 import de.srendi.advancedperipherals.common.addons.computercraft.base.ProxyIntegration;
 import mekanism.common.integration.energy.EnergyCompatUtils;
-import mekanism.generators.common.config.MekanismGeneratorsConfig;
 import mekanism.generators.common.content.fusion.FusionReactorMultiblockData;
 import mekanism.generators.common.tile.fusion.TileEntityFusionReactorLogicAdapter;
 import net.minecraft.item.ItemStack;
