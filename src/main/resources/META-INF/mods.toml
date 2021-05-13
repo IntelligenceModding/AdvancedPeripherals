@@ -10,7 +10,7 @@ displayName = "Advanced Peripherals"
 #updateJSONURL="http://myurl.me/"
 displayURL = "https://srendi.de/"
 #logoFile="examplemod.png"
-authors = "Sr_endi"
+authors = "Srendi"
 description = '''
 Advanced Peripherals is a mod that adds many useful extensions for CC:Tweaked(Computercraft).
 You can communicate with Rerfined Storage, Applied Energistics 2 or with the whole Minecraft world.

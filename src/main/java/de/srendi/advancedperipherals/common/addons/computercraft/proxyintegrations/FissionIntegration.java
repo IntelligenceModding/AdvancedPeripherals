@@ -1,11 +1,13 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.proxyintegrations;
 
+import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
 import de.srendi.advancedperipherals.common.addons.computercraft.base.ProxyIntegration;
 import mekanism.api.chemical.ChemicalStack;
 import mekanism.generators.common.content.fission.FissionReactorMultiblockData;
 import mekanism.generators.common.tile.fission.TileEntityFissionReactorLogicAdapter;
 import net.minecraftforge.fluids.FluidStack;
+import org.squiddev.cobalt.Lua;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -156,7 +158,7 @@ public class FissionIntegration extends ProxyIntegration<TileEntityFissionReacto
     }
 
     @LuaFunction
-    public final double getMaxBurnRate() {
+    public final int getMaxBurnRate() {
         return getReactor().fuelAssemblies;
     }
 
@@ -198,6 +200,16 @@ public class FissionIntegration extends ProxyIntegration<TileEntityFissionReacto
     @LuaFunction
     public final double getBoilEfficiency() {
         return getReactor().getBoilEfficiency();
+    }
+
+    @LuaFunction
+    public final void setBurnRate(double rate) throws LuaException {
+        rate = (double) Math.round(rate * 100) / 100;
+        int max = getMaxBurnRate();
+        if(rate < 0 || rate > max)
+            throw new LuaException("Burn Rate '" + rate + "' is out of range must be between 0 and " + max + ". (Inclusive)");
+
+        getReactor().rateLimit = Math.max(Math.min(getMaxBurnRate(), rate), 0);
     }
 
     private FissionReactorMultiblockData getReactor() {

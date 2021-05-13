@@ -35,7 +35,12 @@ public class BoilerIntegration extends ProxyIntegration<TileEntityBoilerValve> {
 
     @LuaFunction
     public final int getWaterCapacity() {
-        return getBoiler().getWaterTankCapacity();
+        return getBoiler().waterTank.getCapacity();
+    }
+
+    @LuaFunction
+    public final int getWaterNeeded() {
+        return getBoiler().waterTank.getNeeded();
     }
 
     @LuaFunction
@@ -75,6 +80,11 @@ public class BoilerIntegration extends ProxyIntegration<TileEntityBoilerValve> {
     @LuaFunction
     public final long getSteamCapacity() {
         return getBoiler().steamTank.getCapacity();
+    }
+
+    @LuaFunction
+    public final long getSteamNeeded() {
+        return getBoiler().steamTank.getNeeded();
     }
 
     @LuaFunction

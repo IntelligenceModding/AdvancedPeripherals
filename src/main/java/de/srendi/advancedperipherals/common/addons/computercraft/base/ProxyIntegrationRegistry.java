@@ -25,6 +25,7 @@ public class ProxyIntegrationRegistry {
         registerIntegration(ModList.get().isLoaded("mekanismgenerators"), new TurbineIntegration());
         registerIntegration(ModList.get().isLoaded("mekanism"), new BoilerIntegration());
         registerIntegration(ModList.get().isLoaded("mekanismgenerators"), new FissionIntegration());
+        registerIntegration(ModList.get().isLoaded("mekanism"), new GenericMekanismIntegration());
     }
 
     public static ProxyIntegration<?> getIntegration(TileEntity tileEntity) {
