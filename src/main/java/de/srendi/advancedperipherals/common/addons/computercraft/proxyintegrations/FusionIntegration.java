@@ -18,7 +18,7 @@ public class FusionIntegration extends ProxyIntegration<TileEntityFusionReactorL
     }
 
     @Override
-    protected FusionIntegration getNewInstance() {
+    public FusionIntegration getNewInstance() {
         return new FusionIntegration();
     }
 

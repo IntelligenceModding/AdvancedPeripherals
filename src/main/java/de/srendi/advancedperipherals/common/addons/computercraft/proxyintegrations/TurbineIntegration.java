@@ -18,7 +18,7 @@ public class TurbineIntegration extends ProxyIntegration<TileEntityTurbineValve>
     }
 
     @Override
-    protected TurbineIntegration getNewInstance() {
+    public TurbineIntegration getNewInstance() {
         return new TurbineIntegration();
     }
 

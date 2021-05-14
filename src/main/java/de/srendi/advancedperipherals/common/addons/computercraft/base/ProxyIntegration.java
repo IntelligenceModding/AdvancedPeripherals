@@ -12,7 +12,7 @@ public abstract class ProxyIntegration<T extends TileEntity> implements IPeriphe
 
     protected abstract Class<T> getTargetClass();
 
-    protected abstract ProxyIntegration<?> getNewInstance();
+    public abstract ProxyIntegration<?> getNewInstance();
 
     protected abstract String getName();
 

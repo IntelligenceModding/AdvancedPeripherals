@@ -19,7 +19,7 @@ public class BoilerIntegration extends ProxyIntegration<TileEntityBoilerValve> {
     }
 
     @Override
-    protected BoilerIntegration getNewInstance() {
+    public BoilerIntegration getNewInstance() {
         return new BoilerIntegration();
     }
 

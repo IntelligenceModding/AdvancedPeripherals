@@ -12,7 +12,7 @@ public class InductionPortIntegration extends ProxyIntegration<TileEntityInducti
     }
 
     @Override
-    protected InductionPortIntegration getNewInstance() {
+    public InductionPortIntegration getNewInstance() {
         return new InductionPortIntegration();
     }
 

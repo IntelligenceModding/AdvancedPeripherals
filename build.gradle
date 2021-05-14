@@ -30,7 +30,8 @@ minecraft {
             workingDirectory project.file('run')
 
             property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-            properties 'mixin.env.disableRefMap': 'true'
+            property 'mixin.env.remapRefMap', 'true'
+            property 'mixin.env.refMapRemappingFile', "${buildDir}/createSrgToMcp/output.srg"
             properties 'forge.logging.console.level': 'debug'
 
             mods {
@@ -54,6 +55,8 @@ minecraft {
 
             property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
             properties 'mixin.env.disableRefMap': 'true'
+            property 'mixin.env.remapRefMap', 'true'
+            property 'mixin.env.refMapRemappingFile', "${buildDir}/createSrgToMcp/output.srg"
             property 'forge.logging.console.level', 'debug'
 
             mods {
@@ -68,6 +71,8 @@ minecraft {
 
             property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
             properties 'mixin.env.disableRefMap': 'true'
+            property 'mixin.env.remapRefMap', 'true'
+            property 'mixin.env.refMapRemappingFile', "${buildDir}/createSrgToMcp/output.srg"
             property 'forge.logging.console.level', 'debug'
 
             args '--mod', 'advancedperipherals', '--all',
@@ -81,7 +86,6 @@ minecraft {
                 }
             }
         }
-
     }
 }
 
@@ -93,7 +97,8 @@ repositories {
     maven { url 'https://modmaven.dev/' }
     maven { url 'https://dvs1.progwml6.com/files/maven/' }
     maven { url 'https://repo.refinedmods.com/' }
-    maven { url = "https://maven.theillusivec4.top/" }
+    maven { url 'https://maven.theillusivec4.top/' }
+    maven { url 'https://maven.blamejared.com' }
 }
 
 dependencies {
@@ -103,17 +108,23 @@ dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
 
     implementation fg.deobf("org.squiddev:cc-tweaked-1.16.4:${cc_version}")
+
+    implementation fg.deobf("vazkii.botania:Botania:${botania_version}")
+    //Botania needs patchouli to run
+    runtimeOnly fg.deobf("vazkii.patchouli:Patchouli:${patchouli_version}")
+
     implementation fg.deobf("com.refinedmods:refinedstorage:${rs_version}")
+
     implementation fg.deobf("appeng:appliedenergistics2:${ae_version}");
 
     runtimeOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}")
     compileOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}:api")
 
-    implementation fg.deobf("mekanism:Mekanism:1.16.4-10.0.19.446")
-    implementation fg.deobf("mekanism:Mekanism:1.16.4-10.0.19.446:generators")
+    implementation fg.deobf("mekanism:Mekanism:${mekanism_version}")
+    implementation fg.deobf("mekanism:Mekanism:${mekanism_version}:generators")
 
     //Mods to test stuff(Not required mods)
-    runtimeOnly fg.deobf("mcjty.theoneprobe:TheOneProbe-1.16:${top_version}")
+    //runtimeOnly fg.deobf("mcjty.theoneprobe:TheOneProbe-1.16:${top_version}")
     runtimeOnly fg.deobf("mezz.jei:jei-1.16.4:7.6.0.62")
 
 }

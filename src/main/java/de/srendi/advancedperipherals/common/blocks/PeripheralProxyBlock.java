@@ -1,5 +1,6 @@
 package de.srendi.advancedperipherals.common.blocks;
 
+import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.blocks.base.BaseTileEntityBlock;
 import de.srendi.advancedperipherals.common.setup.TileEntityTypes;
 import net.minecraft.block.Block;
@@ -50,8 +51,8 @@ public class PeripheralProxyBlock extends BaseTileEntityBlock {
     }
 
     public TileEntity getTileEntityInFront(World world, BlockPos pos) {
-        if (world.getTileEntity(pos.offset(world.getBlockState(pos).get(FACING))) == null)
-            return null;
+        AdvancedPeripherals.debug("Tried to get tile entity " +
+                world.getTileEntity(pos.offset(world.getBlockState(pos).get(FACING))) + " at position " + pos);
         return world.getTileEntity(pos.offset(world.getBlockState(pos).get(FACING)));
     }
 

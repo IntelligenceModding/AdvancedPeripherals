@@ -1,5 +1,6 @@
-package de.srendi.advancedperipherals.common.addons.computercraft.base;
+package de.srendi.advancedperipherals.common.setup;
 
+import de.srendi.advancedperipherals.common.addons.computercraft.base.ProxyIntegration;
 import de.srendi.advancedperipherals.common.addons.computercraft.proxyintegrations.*;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.fml.ModList;
@@ -25,6 +26,9 @@ public class ProxyIntegrationRegistry {
         registerIntegration(ModList.get().isLoaded("mekanismgenerators"), new FissionIntegration());
         registerIntegration(ModList.get().isLoaded("mekanismgenerators"), new FusionIntegration());
         registerIntegration(ModList.get().isLoaded("mekanism"), new GenericMekanismIntegration());
+        registerIntegration(ModList.get().isLoaded("botania"), new ManaPoolIntegration());
+        registerIntegration(ModList.get().isLoaded("botania"), new SpreaderIntegration());
+        registerIntegration(ModList.get().isLoaded("botania"), new ManaFlowerIntegration());
     }
 
     public static ProxyIntegration<?> getIntegration(TileEntity tileEntity) {

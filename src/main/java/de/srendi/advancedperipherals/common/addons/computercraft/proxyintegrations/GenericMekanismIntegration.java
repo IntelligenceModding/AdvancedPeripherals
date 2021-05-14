@@ -20,7 +20,7 @@ public class GenericMekanismIntegration extends ProxyIntegration<TileEntityMekan
     }
 
     @Override
-    protected GenericMekanismIntegration getNewInstance() {
+    public GenericMekanismIntegration getNewInstance() {
         return new GenericMekanismIntegration();
     }
 

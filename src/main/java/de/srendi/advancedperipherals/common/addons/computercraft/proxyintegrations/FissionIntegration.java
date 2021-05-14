@@ -18,7 +18,7 @@ public class FissionIntegration extends ProxyIntegration<TileEntityFissionReacto
     }
 
     @Override
-    protected FissionIntegration getNewInstance() {
+    public FissionIntegration getNewInstance() {
         return new FissionIntegration();
     }
 

@@ -3,7 +3,7 @@ package de.srendi.advancedperipherals.common.blocks.tileentity;
 import dan200.computercraft.api.peripheral.IPeripheral;
 import dan200.computercraft.shared.Capabilities;
 import de.srendi.advancedperipherals.common.addons.computercraft.base.ProxyIntegration;
-import de.srendi.advancedperipherals.common.addons.computercraft.base.ProxyIntegrationRegistry;
+import de.srendi.advancedperipherals.common.setup.ProxyIntegrationRegistry;
 import de.srendi.advancedperipherals.common.blocks.PeripheralProxyBlock;
 import de.srendi.advancedperipherals.common.setup.TileEntityTypes;
 import net.minecraft.tileentity.TileEntity;
@@ -27,10 +27,11 @@ public class PeripheralProxyTileEntity extends TileEntity {
         if (cap == Capabilities.CAPABILITY_PERIPHERAL) {
             PeripheralProxyBlock block = (PeripheralProxyBlock) getBlockState().getBlock();
             if (block.getTileEntityInFront(getWorld(), getPos()) != null) {
+                TileEntity tileEntity = block.getTileEntityInFront(getWorld(), getPos());
                 if (integration == null) {
-                    if (ProxyIntegrationRegistry.getIntegration(block.getTileEntityInFront(getWorld(), getPos())) != null) {
-                        integration = ProxyIntegrationRegistry.getIntegration(block.getTileEntityInFront(getWorld(), getPos()));
-                        integration.setTileEntity(block.getTileEntityInFront(getWorld(), getPos()));
+                    if (ProxyIntegrationRegistry.getIntegration(tileEntity) != null) {
+                        integration = ProxyIntegrationRegistry.getIntegration(tileEntity);
+                        integration.setTileEntity(tileEntity);
                         peripheralCap = LazyOptional.of(() -> integration);
                     }
                 }
