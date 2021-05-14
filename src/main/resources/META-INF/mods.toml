@@ -31,7 +31,7 @@ side = "BOTH"
 [[dependencies.advancedperipherals]]
 modId = "computercraft"
 mandatory = true
-versionRange = "1.95.2"
+versionRange = "1.95.3"
 ordering = "NONE"
 side = "BOTH"
 [[dependencies.advancedperipherals]]

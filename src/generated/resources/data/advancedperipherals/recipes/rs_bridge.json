@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "QIQ",
+    "IAI",
+    "QIQ"
+  ],
+  "key": {
+    "Q": {
+      "item": "refinedstorage:quartz_enriched_iron"
+    },
+    "I": {
+      "item": "refinedstorage:interface"
+    },
+    "A": {
+      "item": "advancedperipherals:peripheral_casing"
+    }
+  },
+  "result": {
+    "item": "advancedperipherals:rs_bridge"
+  }
+}

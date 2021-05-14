@@ -67,7 +67,7 @@ minecraft {
             workingDirectory project.file('run')
 
             property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-
+            properties 'mixin.env.disableRefMap': 'true'
             property 'forge.logging.console.level', 'debug'
 
             args '--mod', 'advancedperipherals', '--all',
@@ -104,8 +104,7 @@ dependencies {
 
     implementation fg.deobf("org.squiddev:cc-tweaked-1.16.4:${cc_version}")
     implementation fg.deobf("com.refinedmods:refinedstorage:${rs_version}")
-    compileOnly fg.deobf("appeng:appliedenergistics2:${ae_version}:api");
-    runtimeOnly fg.deobf("appeng:appliedenergistics2:${ae_version}");
+    implementation fg.deobf("appeng:appliedenergistics2:${ae_version}");
 
     runtimeOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}")
     compileOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}:api")
