@@ -58,7 +58,7 @@ public class ClientRegistry {
 
     @SubscribeEvent
     public static void onTextureStitching(TextureStitchEvent.Pre event) {
-        event.addSprite(new ResourceLocation(AdvancedPeripherals.MOD_ID, "textures/item/empty_glasses_slot.png"));
+        event.addSprite(new ResourceLocation(AdvancedPeripherals.MOD_ID, "textures/item/empty_glasses_slot"));
     }
 
 }

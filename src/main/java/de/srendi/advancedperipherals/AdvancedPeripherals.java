@@ -7,6 +7,7 @@ import de.srendi.advancedperipherals.common.configuration.ConfigHolder;
 import de.srendi.advancedperipherals.common.setup.Blocks;
 import de.srendi.advancedperipherals.common.setup.Registration;
 import de.srendi.advancedperipherals.common.util.ChunkManager;
+import de.srendi.advancedperipherals.common.village.VillageStructures;
 import de.srendi.advancedperipherals.network.MNetwork;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
@@ -72,6 +73,7 @@ public class AdvancedPeripherals {
 
     @SubscribeEvent
     public void commonSetup(FMLCommonSetupEvent event) {
+        VillageStructures.init();
         event.enqueueWork(ChunkManager::register);
         MNetwork.init();
     }
