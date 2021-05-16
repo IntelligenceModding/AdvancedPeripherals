@@ -51,12 +51,12 @@ public class MemoryCardItem extends BaseItem {
         if (!worldIn.isRemote) {
             ItemStack stack = playerIn.getHeldItem(handIn);
             if (stack.getOrCreateTag().contains("owner")) {
-                playerIn.sendMessage(new TranslationTextComponent("text.advancedperipherals.removed_player"),
-                        UUID.randomUUID());
+                playerIn.sendStatusMessage(new TranslationTextComponent("text.advancedperipherals.removed_player"),
+                        true);
                 stack.getOrCreateTag().remove("owner");
             } else {
-                playerIn.sendMessage(new TranslationTextComponent("text.advancedperipherals.added_player"),
-                        UUID.randomUUID());
+                playerIn.sendStatusMessage(new TranslationTextComponent("text.advancedperipherals.added_player"),
+                        true);
                 stack.getOrCreateTag().putString("owner", playerIn.getName().getString());
             }
         }

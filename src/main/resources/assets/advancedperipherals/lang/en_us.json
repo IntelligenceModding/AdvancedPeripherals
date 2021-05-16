@@ -40,8 +40,8 @@
   "pocket.advancedperipherals.player_pocket": "Player",
   "pocket.advancedperipherals.chatty_pocket": "Chatty",
   "curios.identifier.glasses": "Glasses",
-  "text.advancedperipherals.removed_player": "Removed you from the memory card!",
-  "text.advancedperipherals.added_player": "Added you to the memory card!",
+  "text.advancedperipherals.removed_player": "Cleared the memory card",
+  "text.advancedperipherals.added_player": "Added you to the memory card",
   "text.advancedperipherals.linked_goggles": "Successfully linked AR goggles!",
   "entity.minecraft.villager.advancedperipherals.computer_scientist": "Computer Scientist",
   "itemGroup.advancedperipheralstab": "Advanced Peripherals"
