@@ -12,23 +12,28 @@ public class ProxyIntegrationRegistry {
 
     public static final List<ProxyIntegration<?>> integrations = new ArrayList<>();
 
-    public static void registerIntegration(boolean condition, ProxyIntegration<?> integration) {
-        if (condition)
-            integrations.add(integration);
+    public static void registerIntegration(ProxyIntegration<?> integration) {
+        integrations.add(integration);
     }
 
     public static void register() {
         //It's vanilla, so the condition is always true
-        registerIntegration(true, new BeaconIntegration());
-        registerIntegration(ModList.get().isLoaded("mekanism"), new InductionPortIntegration());
-        registerIntegration(ModList.get().isLoaded("mekanismgenerators"), new TurbineIntegration());
-        registerIntegration(ModList.get().isLoaded("mekanism"), new BoilerIntegration());
-        registerIntegration(ModList.get().isLoaded("mekanismgenerators"), new FissionIntegration());
-        registerIntegration(ModList.get().isLoaded("mekanismgenerators"), new FusionIntegration());
-        registerIntegration(ModList.get().isLoaded("mekanism"), new GenericMekanismIntegration());
-        registerIntegration(ModList.get().isLoaded("botania"), new ManaPoolIntegration());
-        registerIntegration(ModList.get().isLoaded("botania"), new SpreaderIntegration());
-        registerIntegration(ModList.get().isLoaded("botania"), new ManaFlowerIntegration());
+        registerIntegration(new BeaconIntegration());
+        if(ModList.get().isLoaded("mekanismgenerators")) {
+            registerIntegration(new FissionIntegration());
+            registerIntegration(new FusionIntegration());
+            registerIntegration(new TurbineIntegration());
+        }
+        if(ModList.get().isLoaded("mekanism")) {
+            registerIntegration(new InductionPortIntegration());
+            registerIntegration(new BoilerIntegration());
+            registerIntegration(new GenericMekanismIntegration());
+        }
+        if(ModList.get().isLoaded("botania")) {
+            registerIntegration(new ManaPoolIntegration());
+            registerIntegration(new SpreaderIntegration());
+            registerIntegration(new ManaFlowerIntegration());
+        }
     }
 
     public static ProxyIntegration<?> getIntegration(TileEntity tileEntity) {
