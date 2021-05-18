@@ -26,6 +26,7 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.registries.ForgeRegistries;
 
+import java.sql.Ref;
 import java.util.Locale;
 
 public class RsBridgePeripheral extends BasePeripheral {
@@ -50,39 +51,46 @@ public class RsBridgePeripheral extends BasePeripheral {
         return AdvancedPeripheralsConfig.enableRsBridge;
     }
 
-    @LuaFunction(mainThread = true)
-    public final Object[] listItems() {
-        return new Object[]{RefinedStorage.listItems(false, getNetwork())};
+    @LuaFunction()
+    public final Object listItems() {
+        return RefinedStorage.listItems(false, getNetwork());
     }
 
-    @LuaFunction(mainThread = true)
-    public final Object[] listCraftableItems() {
-        return new Object[]{RefinedStorage.listItems(true, getNetwork())};
+    @LuaFunction()
+    public final Object listCraftableItems() {
+        return RefinedStorage.listItems(true, getNetwork());
     }
 
-    @LuaFunction(mainThread = true)
-    public final Object[] listFluids() {
-        return new Object[]{RefinedStorage.listFluids(false, getNetwork())};
+    @LuaFunction()
+    public final Object listFluids() {
+        return RefinedStorage.listFluids(false, getNetwork());
     }
 
-    @LuaFunction(mainThread = true)
-    public final Object[] listCraftableFluids() {
-        return new Object[]{RefinedStorage.listFluids(true, getNetwork())};
+    @LuaFunction()
+    public final Object listCraftableFluids() {
+        return RefinedStorage.listFluids(true, getNetwork());
     }
 
-    @LuaFunction(mainThread = true)
+    @LuaFunction()
     public final int getEnergyUsage() {
         return getNetwork().getEnergyUsage();
     }
 
-    @LuaFunction(mainThread = true)
+    @LuaFunction()
     public final int getMaxEnergyStorage() {
         return getNetwork().getEnergyStorage().getMaxEnergyStored();
     }
 
-    @LuaFunction(mainThread = true)
+    @LuaFunction()
     public final int getEnergyStorage() {
         return getNetwork().getEnergyStorage().getEnergyStored();
+    }
+
+    @LuaFunction()
+    public final Object getPattern(IArguments arguments) throws LuaException {
+        ItemStack stack = ItemUtil.getItemStackRS(arguments.getTable(0), RefinedStorage.getItems(getNetwork(), true));
+
+        return RefinedStorage.getObjectFromPattern(getNetwork().getCraftingManager().getPattern(stack));
     }
 
     @LuaFunction(mainThread = true)
@@ -216,15 +224,15 @@ public class RsBridgePeripheral extends BasePeripheral {
         return transferableAmount;
     }
 
-    @LuaFunction(mainThread = true)
-    public final Object[] getItem(IArguments arguments) throws LuaException {
+    @LuaFunction()
+    public final Object getItem(IArguments arguments) throws LuaException {
         ItemStack stack = ItemUtil.getItemStackRS(arguments.getTable(0), RefinedStorage.getItems(getNetwork(), true));
         if (stack == null)
-            return new Object[]{}; //Return nothing instead of crashing the program.
+            return null; //Return null instead of crashing the program.
         return RefinedStorage.getItem(RefinedStorage.getItems(getNetwork(), false), stack);
     }
 
-    @LuaFunction(mainThread = true)
+    @LuaFunction()
     public final boolean craftItem(IArguments arguments) throws LuaException {
         ItemStack stack = ItemUtil.getItemStackRS(arguments.getTable(0), RefinedStorage.getItems(getNetwork(), true));
         if (stack == null)
@@ -236,7 +244,7 @@ public class RsBridgePeripheral extends BasePeripheral {
         return type == CalculationResultType.OK;
     }
 
-    @LuaFunction(mainThread = true)
+    @LuaFunction()
     public final boolean craftFluid(String fluid, int count) {
         ICalculationResult result = getNetwork().getCraftingManager().create(new FluidStack(ForgeRegistries.FLUIDS.getValue(new ResourceLocation(fluid)), 0), count);
         CalculationResultType type = result.getType();
@@ -246,7 +254,7 @@ public class RsBridgePeripheral extends BasePeripheral {
         return type == CalculationResultType.OK;
     }
 
-    @LuaFunction(mainThread = true)
+    @LuaFunction()
     public final boolean isItemCrafting(String item) {
         ItemStack stack = new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation(item)));
         for (ICraftingTask task : getNetwork().getCraftingManager().getTasks()) {

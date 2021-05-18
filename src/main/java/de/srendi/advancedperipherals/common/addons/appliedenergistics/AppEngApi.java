@@ -113,7 +113,7 @@ public class AppEngApi implements IAEAddon {
     public List<String> getListFromTags(Set<ResourceLocation> tags) {
         List<String> list = new ArrayList<>();
         for (ResourceLocation value : tags) {
-            list.add(value.getNamespace() + ":" + value.getPath());
+            list.add(value.toString());
         }
         return list;
     }
