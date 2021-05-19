@@ -2,6 +2,13 @@ package de.srendi.advancedperipherals.common.setup;
 
 import de.srendi.advancedperipherals.common.addons.computercraft.base.ProxyIntegration;
 import de.srendi.advancedperipherals.common.addons.computercraft.proxyintegrations.*;
+import de.srendi.advancedperipherals.common.addons.computercraft.proxyintegrations.botania.ManaFlowerIntegration;
+import de.srendi.advancedperipherals.common.addons.computercraft.proxyintegrations.botania.ManaPoolIntegration;
+import de.srendi.advancedperipherals.common.addons.computercraft.proxyintegrations.botania.SpreaderIntegration;
+import de.srendi.advancedperipherals.common.addons.computercraft.proxyintegrations.immersiveengineering.CapacitorIntegration;
+import de.srendi.advancedperipherals.common.addons.computercraft.proxyintegrations.immersiveengineering.RedstoneConnectorIntegration;
+import de.srendi.advancedperipherals.common.addons.computercraft.proxyintegrations.immersiveengineering.RedstoneProbeIntegration;
+import de.srendi.advancedperipherals.common.addons.computercraft.proxyintegrations.mekanism.*;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.fml.ModList;
 
@@ -33,6 +40,11 @@ public class ProxyIntegrationRegistry {
             registerIntegration(new ManaPoolIntegration());
             registerIntegration(new SpreaderIntegration());
             registerIntegration(new ManaFlowerIntegration());
+        }
+        if(ModList.get().isLoaded("immersiveengineering")) {
+            registerIntegration(new RedstoneProbeIntegration());
+            registerIntegration(new RedstoneConnectorIntegration());
+            registerIntegration(new CapacitorIntegration());
         }
     }
 

@@ -1,8 +1,7 @@
-package de.srendi.advancedperipherals.common.addons.computercraft.proxyintegrations;
+package de.srendi.advancedperipherals.common.addons.computercraft.proxyintegrations.botania;
 
 import dan200.computercraft.api.lua.LuaFunction;
 import de.srendi.advancedperipherals.common.addons.computercraft.base.ProxyIntegration;
-import net.minecraft.util.math.BlockPos;
 import vazkii.botania.common.block.tile.mana.TileSpreader;
 
 import java.util.HashMap;

@@ -2,9 +2,10 @@ package de.srendi.advancedperipherals.common.blocks.tileentity;
 
 import dan200.computercraft.api.peripheral.IPeripheral;
 import dan200.computercraft.shared.Capabilities;
+import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.addons.computercraft.base.ProxyIntegration;
-import de.srendi.advancedperipherals.common.setup.ProxyIntegrationRegistry;
 import de.srendi.advancedperipherals.common.blocks.PeripheralProxyBlock;
+import de.srendi.advancedperipherals.common.setup.ProxyIntegrationRegistry;
 import de.srendi.advancedperipherals.common.setup.TileEntityTypes;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
@@ -17,6 +18,7 @@ public class PeripheralProxyTileEntity extends TileEntity {
 
     private ProxyIntegration integration;
     private LazyOptional<IPeripheral> peripheralCap = LazyOptional.empty();
+
     public PeripheralProxyTileEntity() {
         super(TileEntityTypes.PERIPHERAL_PROXY.get());
     }
@@ -28,12 +30,11 @@ public class PeripheralProxyTileEntity extends TileEntity {
             PeripheralProxyBlock block = (PeripheralProxyBlock) getBlockState().getBlock();
             if (block.getTileEntityInFront(getWorld(), getPos()) != null) {
                 TileEntity tileEntity = block.getTileEntityInFront(getWorld(), getPos());
-                if (integration == null) {
-                    if (ProxyIntegrationRegistry.getIntegration(tileEntity) != null) {
-                        integration = ProxyIntegrationRegistry.getIntegration(tileEntity);
-                        integration.setTileEntity(tileEntity);
-                        peripheralCap = LazyOptional.of(() -> integration);
-                    }
+                AdvancedPeripherals.debug("Tried to wrap " + tileEntity);
+                if (ProxyIntegrationRegistry.getIntegration(tileEntity) != null) {
+                    integration = ProxyIntegrationRegistry.getIntegration(tileEntity);
+                    integration.setTileEntity(tileEntity);
+                    peripheralCap = LazyOptional.of(() -> integration);
                 }
                 return peripheralCap.cast();
             }

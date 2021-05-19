@@ -1,9 +1,8 @@
-package de.srendi.advancedperipherals.common.addons.computercraft.proxyintegrations;
+package de.srendi.advancedperipherals.common.addons.computercraft.proxyintegrations.botania;
 
 import dan200.computercraft.api.lua.LuaFunction;
 import de.srendi.advancedperipherals.common.addons.computercraft.base.ProxyIntegration;
 import vazkii.botania.api.subtile.TileEntityGeneratingFlower;
-import vazkii.botania.api.subtile.TileEntitySpecialFlower;
 
 public class ManaFlowerIntegration extends ProxyIntegration<TileEntityGeneratingFlower> {
     @Override
