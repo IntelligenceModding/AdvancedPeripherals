@@ -31,8 +31,4 @@ public class RefinedStorageNode extends NetworkNode {
         return super.getItemStack();
     }
 
-    @Override
-    public boolean shouldRebuildGraphOnChange() {
-        return true;
-    }
 }

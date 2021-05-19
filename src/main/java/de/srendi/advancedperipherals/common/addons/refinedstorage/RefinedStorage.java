@@ -153,7 +153,7 @@ public class RefinedStorage {
         map.put("amount", itemStack.getCount());
         map.put("displayName", itemStack.getDisplayName().getString());
         if (!nbt.isEmpty()) {
-            map.put("nbt", getMapFromNBT(nbt));
+            map.put("nbt", NBTUtil.toLua(nbt));
         }
         if (!tags.isEmpty()) {
             map.put("tags", getListFromTags(tags));
@@ -161,29 +161,21 @@ public class RefinedStorage {
         return map;
     }
 
-    public static Map<Object, Object> getMapFromNBT(CompoundNBT nbt) {
-        Map<Object, Object> map = new HashMap<>();
-        for (String value : nbt.keySet()) {
-            map.put(value, nbt.get(value));
-        }
-        return map;
-    }
-
     public static List<String> getListFromTags(Set<ResourceLocation> tags) {
         List<String> list = new ArrayList<>();
         for (ResourceLocation value : tags) {
-            list.add(value.getNamespace() + ":" + value.getPath());
+            list.add(value.toString());
         }
         return list;
     }
 
-    public static Object[] getItem(List<ItemStack> items, ItemStack item) {
+    public static Object getItem(List<ItemStack> items, ItemStack item) {
         for (ItemStack itemStack : items) {
-            if (itemStack.getItem().equals(item.getItem())) {
-                return new Object[]{getObjectFromStack(itemStack)};
+            if (itemStack.getItem().equals(item.getItem()) && itemStack.getTag().equals(item.getTag())) {
+                return getObjectFromStack(itemStack);
             }
         }
-        return new Object[]{};
+        return new Object();
     }
 
     public static List<ItemStack> getItems(INetwork network, boolean craftable) {
@@ -222,6 +214,7 @@ public class RefinedStorage {
                 CompoundNBT tag = rsStack.getTag();
                 String hash = NBTUtil.getNBTHash(tag);
                 AdvancedPeripherals.debug("HASH: " + hash);
+                AdvancedPeripherals.debug("NBTHASH: " + nbtHash);
                 AdvancedPeripherals.debug("TAG: " + tag);
                 if (nbtHash.equals(hash)) {
                     return tag.copy();
