@@ -52,5 +52,4 @@ public class RsBridgeTileEntity extends NetworkNodeTile<RefinedStorageNode> impl
     }
 
 
-
 }

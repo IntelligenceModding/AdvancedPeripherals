@@ -1,9 +1,7 @@
 package de.srendi.advancedperipherals.common.data;
 
-import de.srendi.advancedperipherals.common.setup.Blocks;
 import de.srendi.advancedperipherals.common.setup.Registration;
 import net.minecraft.block.Block;
-import net.minecraft.item.Items;
 import net.minecraftforge.fml.RegistryObject;
 
 public class BlockLootTables extends net.minecraft.data.loot.BlockLootTables {

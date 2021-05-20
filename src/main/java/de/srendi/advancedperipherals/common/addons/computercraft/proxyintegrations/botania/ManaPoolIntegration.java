@@ -40,4 +40,5 @@ public class ManaPoolIntegration extends ProxyIntegration<TilePool> {
     public final boolean isEmpty() {
         return getMana() == 0;
     }
+
 }

@@ -9,7 +9,6 @@ import net.minecraft.world.gen.feature.jigsaw.JigsawPattern;
 import net.minecraft.world.gen.feature.jigsaw.JigsawPattern.PlacementBehaviour;
 import net.minecraft.world.gen.feature.jigsaw.JigsawPiece;
 import net.minecraft.world.gen.feature.structure.*;
-import org.jline.utils.Log;
 
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;

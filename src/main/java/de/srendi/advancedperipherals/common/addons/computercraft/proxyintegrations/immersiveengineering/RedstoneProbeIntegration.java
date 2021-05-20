@@ -24,12 +24,8 @@ public class RedstoneProbeIntegration extends ProxyIntegration<ConnectorProbeTil
     }
 
     @LuaFunction
-    public final void setSendingChannel(DyeColor color) {
-        getTileEntity().redstoneChannelSending = color;
-        getTileEntity().markDirty();
-        GlobalWireNetwork.getNetwork(getTileEntity().getWorld()).getLocalNet(getTileEntity().getPos()).getHandler(RedstoneNetworkHandler.ID, RedstoneNetworkHandler.class).updateValues();
-        getTileEntity().markContainingBlockForUpdate(null);
-        getTileEntity().getWorld().addBlockEvent(getTileEntity().getPos(), getTileEntity().getBlockState().getBlock(), 254, 0);
+    public final String getReceivingChannel() {
+        return getTileEntity().redstoneChannel.toString();
     }
 
     @LuaFunction
@@ -42,12 +38,22 @@ public class RedstoneProbeIntegration extends ProxyIntegration<ConnectorProbeTil
     }
 
     @LuaFunction
-    public final String getReceivingChannel() {
-        return getTileEntity().redstoneChannel.toString();
+    public final String getSendingChannel() {
+        return getTileEntity().redstoneChannelSending.toString();
     }
 
     @LuaFunction
-    public final String getSendingChannel() {
-        return getTileEntity().redstoneChannelSending.toString();
+    public final void setSendingChannel(DyeColor color) {
+        getTileEntity().redstoneChannelSending = color;
+        getTileEntity().markDirty();
+        GlobalWireNetwork.getNetwork(getTileEntity().getWorld()).getLocalNet(getTileEntity().getPos()).getHandler(RedstoneNetworkHandler.ID, RedstoneNetworkHandler.class).updateValues();
+        getTileEntity().markContainingBlockForUpdate(null);
+        getTileEntity().getWorld().addBlockEvent(getTileEntity().getPos(), getTileEntity().getBlockState().getBlock(), 254, 0);
+    }
+
+    @LuaFunction
+    public final int getRedstoneForChannel(DyeColor color) {
+        return GlobalWireNetwork.getNetwork(getTileEntity().getWorld()).getLocalNet(getTileEntity().getPos())
+                .getHandler(RedstoneNetworkHandler.ID, RedstoneNetworkHandler.class).getValue(color.getId());
     }
 }

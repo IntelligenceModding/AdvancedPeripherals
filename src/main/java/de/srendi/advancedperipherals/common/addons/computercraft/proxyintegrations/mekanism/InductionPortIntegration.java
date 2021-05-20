@@ -2,6 +2,7 @@ package de.srendi.advancedperipherals.common.addons.computercraft.proxyintegrati
 
 import dan200.computercraft.api.lua.LuaFunction;
 import de.srendi.advancedperipherals.common.addons.computercraft.base.ProxyIntegration;
+import mekanism.common.content.matrix.MatrixMultiblockData;
 import mekanism.common.integration.energy.EnergyCompatUtils;
 import mekanism.common.tile.multiblock.TileEntityInductionPort;
 
@@ -23,22 +24,22 @@ public class InductionPortIntegration extends ProxyIntegration<TileEntityInducti
 
     @LuaFunction
     public final long getEnergy() {
-        return getTileEntity().getEnergy(0).getValue();
+        return EnergyCompatUtils.EnergyType.FORGE.convertToAsLong(getMatrix().getEnergyContainer().getEnergy());
     }
 
     @LuaFunction
     public final long getInputRate() {
-        return EnergyCompatUtils.EnergyType.FORGE.convertToAsLong(getTileEntity().getMultiblock().getLastInput());
+        return EnergyCompatUtils.EnergyType.FORGE.convertToAsLong(getMatrix().getEnergyContainer().getLastInput());
     }
 
     @LuaFunction
     public final long getOutputRate() {
-        return EnergyCompatUtils.EnergyType.FORGE.convertToAsLong(getTileEntity().getMultiblock().getLastOutput());
+        return EnergyCompatUtils.EnergyType.FORGE.convertToAsLong(getMatrix().getEnergyContainer().getLastOutput());
     }
 
     @LuaFunction
     public final long getEnergyNeeded() {
-        return EnergyCompatUtils.EnergyType.FORGE.convertToAsLong(getTileEntity().getMultiblock().getNeededEnergy(0));
+        return EnergyCompatUtils.EnergyType.FORGE.convertToAsLong(getMatrix().getEnergyContainer().getNeeded());
     }
 
     @LuaFunction
@@ -48,22 +49,25 @@ public class InductionPortIntegration extends ProxyIntegration<TileEntityInducti
 
     @LuaFunction
     public final long getTransferCap() {
-        return EnergyCompatUtils.EnergyType.FORGE.convertToAsLong(getTileEntity().getMultiblock().getTransferCap());
+        return EnergyCompatUtils.EnergyType.FORGE.convertToAsLong(getMatrix().getTransferCap());
     }
 
     @LuaFunction
     public final int getInstalledCells() {
-        return getTileEntity().getMultiblock().getCellCount();
+        return getMatrix().getCellCount();
     }
 
     @LuaFunction
     public final int getInstalledProviders() {
-        return getTileEntity().getMultiblock().getProviderCount();
+        return getMatrix().getProviderCount();
     }
 
     @LuaFunction
     public final long getMaxEnergy() {
-        return getTileEntity().getMaxEnergy(0).getValue();
+        return EnergyCompatUtils.EnergyType.FORGE.convertToAsLong(getMatrix().getEnergyContainer().getMaxEnergy());
     }
 
+    private MatrixMultiblockData getMatrix() {
+        return getTileEntity().getMultiblock();
+    }
 }

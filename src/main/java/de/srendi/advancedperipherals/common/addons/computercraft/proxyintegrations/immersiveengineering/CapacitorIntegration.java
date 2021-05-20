@@ -1,6 +1,5 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.proxyintegrations.immersiveengineering;
 
-import blusunrize.immersiveengineering.common.blocks.generic.PoweredMultiblockTileEntity;
 import blusunrize.immersiveengineering.common.blocks.metal.CapacitorTileEntity;
 import dan200.computercraft.api.lua.LuaFunction;
 import de.srendi.advancedperipherals.common.addons.computercraft.base.ProxyIntegration;
@@ -18,7 +17,7 @@ public class CapacitorIntegration extends ProxyIntegration<CapacitorTileEntity> 
 
     @Override
     protected String getName() {
-        return "IEMultiblock";
+        return "IECapacitor";
     }
 
     @LuaFunction
@@ -34,5 +33,10 @@ public class CapacitorIntegration extends ProxyIntegration<CapacitorTileEntity> 
     @LuaFunction
     public final int getEnergyNeeded() {
         return getMaxEnergy() - getStoredEnergy();
+    }
+
+    @LuaFunction
+    public final double getEnergyFilledPercentage() {
+        return getStoredEnergy() / (double) getMaxEnergy();
     }
 }

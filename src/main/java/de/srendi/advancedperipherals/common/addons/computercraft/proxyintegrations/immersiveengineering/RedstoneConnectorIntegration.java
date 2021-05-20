@@ -24,6 +24,11 @@ public class RedstoneConnectorIntegration extends ProxyIntegration<ConnectorReds
     }
 
     @LuaFunction
+    public final String getRedstoneChannel() {
+        return getTileEntity().redstoneChannel.toString();
+    }
+
+    @LuaFunction
     public final void setRedstoneChannel(DyeColor color) {
         getTileEntity().redstoneChannel = color;
         getTileEntity().markDirty();
@@ -33,15 +38,9 @@ public class RedstoneConnectorIntegration extends ProxyIntegration<ConnectorReds
     }
 
     @LuaFunction
-    public final String getRedstoneChannel() {
-        return getTileEntity().redstoneChannel.toString();
-    }
-
-    @LuaFunction
     public final int getRedstoneForChannel(DyeColor color) {
         return GlobalWireNetwork.getNetwork(getTileEntity().getWorld()).getLocalNet(getTileEntity().getPos())
                 .getHandler(RedstoneNetworkHandler.ID, RedstoneNetworkHandler.class).getValue(color.getId());
-
     }
 
     @LuaFunction

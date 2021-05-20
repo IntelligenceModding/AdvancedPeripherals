@@ -5,7 +5,6 @@ import com.refinedmods.refinedstorage.api.autocrafting.ICraftingPattern;
 import com.refinedmods.refinedstorage.api.network.INetwork;
 import com.refinedmods.refinedstorage.api.network.node.INetworkNode;
 import com.refinedmods.refinedstorage.api.storage.cache.IStorageCache;
-import com.refinedmods.refinedstorage.api.storage.cache.InvalidateCause;
 import com.refinedmods.refinedstorage.api.util.StackListEntry;
 import com.refinedmods.refinedstorage.apiimpl.API;
 import com.refinedmods.refinedstorage.apiimpl.network.node.NetworkNode;
@@ -114,7 +113,7 @@ public class RefinedStorage {
     }
 
     public static Object getObjectFromPattern(ICraftingPattern pattern) {
-        if(pattern == null)
+        if (pattern == null)
             return null;
         Map<String, Object> map = new HashMap<>();
         List<ItemStack> outputsList = pattern.getOutputs();

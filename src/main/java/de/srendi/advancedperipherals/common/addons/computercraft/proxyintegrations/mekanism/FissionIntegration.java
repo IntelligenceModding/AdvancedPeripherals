@@ -106,7 +106,7 @@ public class FissionIntegration extends ProxyIntegration<TileEntityFissionReacto
     }
 
     @LuaFunction
-    public final double getFuelPercentage() {
+    public final double getFuelFilledPercentage() {
         return getFuel() / (double) getFuelCapacity();
     }
 

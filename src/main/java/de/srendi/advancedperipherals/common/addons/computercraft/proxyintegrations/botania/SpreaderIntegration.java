@@ -35,7 +35,7 @@ public class SpreaderIntegration extends ProxyIntegration<TileSpreader> {
 
     @LuaFunction
     public final Object getBounding() {
-        if(getTileEntity().getBinding() == null)
+        if (getTileEntity().getBinding() == null)
             return null;
         Map<String, Integer> coords = new HashMap<>(3);
         coords.put("x", getTileEntity().getBinding().getX());
@@ -47,11 +47,6 @@ public class SpreaderIntegration extends ProxyIntegration<TileSpreader> {
     @LuaFunction
     public final String getVariant() {
         return getTileEntity().getVariant().toString();
-    }
-
-    @LuaFunction
-    public final void setCanShoot(boolean canShoot) {
-        getTileEntity().setCanShoot(canShoot);
     }
 
     @LuaFunction

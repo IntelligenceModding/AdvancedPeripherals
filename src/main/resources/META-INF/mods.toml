@@ -5,7 +5,7 @@ issueTrackerURL = "https://github.com/Seniorendi/AdvancedPeripherals/issues"
 logoFile = "pack.png"
 [[mods]]
 modId = "advancedperipherals"
-version = "0.6-DEVb"
+version = "0.6r"
 displayName = "Advanced Peripherals"
 #updateJSONURL="http://myurl.me/"
 displayURL = "https://srendi.de/"
@@ -19,7 +19,7 @@ Adds things like the Me Bridge, various types of turtles, the Chat Box and more.
 [[dependencies.advancedperipherals]]
 modId = "forge"
 mandatory = true
-versionRange = "[36.0.21,)"
+versionRange = "[36.0.46,)"
 ordering = "NONE"
 side = "BOTH"
 [[dependencies.advancedperipherals]]

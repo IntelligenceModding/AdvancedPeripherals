@@ -3,20 +3,10 @@ package de.srendi.advancedperipherals.common.setup;
 import com.google.common.collect.ImmutableSet;
 import dan200.computercraft.shared.Registry;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
-import de.srendi.advancedperipherals.common.util.ItemUtil;
-import de.srendi.advancedperipherals.common.util.VillagerTrade;
-import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import net.minecraft.entity.merchant.villager.VillagerProfession;
-import net.minecraft.entity.merchant.villager.VillagerTrades;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.village.PointOfInterestType;
-import net.minecraftforge.event.village.VillagerTradesEvent;
-import net.minecraftforge.event.village.WandererTradesEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.RegistryObject;
-import net.minecraftforge.fml.common.Mod;
-
-import java.util.List;
 
 public class Villagers {
 

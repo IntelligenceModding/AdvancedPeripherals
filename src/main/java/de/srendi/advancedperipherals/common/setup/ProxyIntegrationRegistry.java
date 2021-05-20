@@ -1,7 +1,7 @@
 package de.srendi.advancedperipherals.common.setup;
 
 import de.srendi.advancedperipherals.common.addons.computercraft.base.ProxyIntegration;
-import de.srendi.advancedperipherals.common.addons.computercraft.proxyintegrations.*;
+import de.srendi.advancedperipherals.common.addons.computercraft.proxyintegrations.BeaconIntegration;
 import de.srendi.advancedperipherals.common.addons.computercraft.proxyintegrations.botania.ManaFlowerIntegration;
 import de.srendi.advancedperipherals.common.addons.computercraft.proxyintegrations.botania.ManaPoolIntegration;
 import de.srendi.advancedperipherals.common.addons.computercraft.proxyintegrations.botania.SpreaderIntegration;
@@ -26,22 +26,22 @@ public class ProxyIntegrationRegistry {
     public static void register() {
         //It's vanilla, so the condition is always true
         registerIntegration(new BeaconIntegration());
-        if(ModList.get().isLoaded("mekanismgenerators")) {
+        if (ModList.get().isLoaded("mekanismgenerators")) {
             registerIntegration(new FissionIntegration());
             registerIntegration(new FusionIntegration());
             registerIntegration(new TurbineIntegration());
         }
-        if(ModList.get().isLoaded("mekanism")) {
+        if (ModList.get().isLoaded("mekanism")) {
             registerIntegration(new InductionPortIntegration());
             registerIntegration(new BoilerIntegration());
             registerIntegration(new GenericMekanismIntegration());
         }
-        if(ModList.get().isLoaded("botania")) {
+        if (ModList.get().isLoaded("botania")) {
             registerIntegration(new ManaPoolIntegration());
             registerIntegration(new SpreaderIntegration());
             registerIntegration(new ManaFlowerIntegration());
         }
-        if(ModList.get().isLoaded("immersiveengineering")) {
+        if (ModList.get().isLoaded("immersiveengineering")) {
             registerIntegration(new RedstoneProbeIntegration());
             registerIntegration(new RedstoneConnectorIntegration());
             registerIntegration(new CapacitorIntegration());

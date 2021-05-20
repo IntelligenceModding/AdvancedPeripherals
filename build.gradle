@@ -125,7 +125,7 @@ dependencies {
     implementation fg.deobf("mekanism:Mekanism:${mekanism_version}")
     implementation fg.deobf("mekanism:Mekanism:${mekanism_version}:generators")
 
-    implementation fg.deobf("curse.maven:ie-231951:3233018")
+    compileOnly fg.deobf("curse.maven:ie-231951:3233018")
 
     //Mods to test stuff(Not required mods)
     //runtimeOnly fg.deobf("mcjty.theoneprobe:TheOneProbe-1.16:${top_version}")

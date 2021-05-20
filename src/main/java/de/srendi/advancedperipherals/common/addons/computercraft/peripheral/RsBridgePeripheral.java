@@ -26,7 +26,6 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.registries.ForgeRegistries;
 
-import java.sql.Ref;
 import java.util.Locale;
 
 public class RsBridgePeripheral extends BasePeripheral {
