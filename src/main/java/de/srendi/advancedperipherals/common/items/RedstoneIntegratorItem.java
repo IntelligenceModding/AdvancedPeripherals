@@ -25,7 +25,7 @@ public class RedstoneIntegratorItem extends BaseBlockItem {
 
     @Override
     public ITextComponent getDescription() {
-        return new TranslationTextComponent("");
+        return new TranslationTextComponent("item.advancedperipherals.tooltip.redstone_integrator");
     }
 
 }
