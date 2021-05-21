@@ -3,6 +3,7 @@ package de.srendi.advancedperipherals.common.data;
 import appeng.core.Api;
 import com.refinedmods.refinedstorage.RSBlocks;
 import com.refinedmods.refinedstorage.RSItems;
+import dan200.computercraft.shared.Registry;
 import de.srendi.advancedperipherals.common.setup.Blocks;
 import net.minecraft.block.Block;
 import net.minecraft.data.DataGenerator;
@@ -166,6 +167,18 @@ public class RecipesProvider extends RecipeProvider implements IConditionBuilder
                 .patternLine("QIQ")
                 .patternLine("IAI")
                 .patternLine("QIQ")
+                .addCriterion("has_item", hasItem(CASING))
+                .build(consumer);
+
+        ShapedRecipeBuilder.shapedRecipe(Blocks.PERIPHERAL_PROXY.get())
+                .key('O', Items.OBSERVER)
+                .key('I', Items.IRON_INGOT)
+                .key('M', Registry.ModBlocks.WIRED_MODEM_FULL.get())
+                .key('R', Items.REDSTONE_BLOCK)
+                .key('A', CASING)
+                .patternLine("IRI")
+                .patternLine("MAO")
+                .patternLine("IRI")
                 .addCriterion("has_item", hasItem(CASING))
                 .build(consumer);
     }
