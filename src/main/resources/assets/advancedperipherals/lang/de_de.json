@@ -43,6 +43,6 @@
   "text.advancedperipherals.removed_player": "Die Speicher Karte wurde geleert",
   "text.advancedperipherals.added_player": "Die Speicher Karte wurde dir zugewiesen",
   "text.advancedperipherals.linked_goggles": "Erfolgreich verknüpft!",
-  "entity.minecraft.villager.advancedperipherals.computer_scientist": "Informatiker",
+  "entity.minecraft.villager.advancedperipherals:computer_scientist": "Informatiker",
   "itemGroup.advancedperipheralstab": "Advanced Peripherals"
 }
