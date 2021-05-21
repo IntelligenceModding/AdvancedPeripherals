@@ -6,11 +6,11 @@ import de.srendi.advancedperipherals.common.setup.Blocks;
 import de.srendi.advancedperipherals.common.setup.Items;
 import de.srendi.advancedperipherals.common.setup.Villagers;
 import de.srendi.advancedperipherals.common.util.ItemUtil;
-import de.srendi.advancedperipherals.common.util.VillagerTrade;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import net.minecraftforge.event.village.VillagerTradesEvent;
 import net.minecraftforge.event.village.WandererTradesEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
 
 import java.util.List;
@@ -76,6 +76,7 @@ public class VillagerTrades {
                     .setEmeraldPrice(3).setMaxUses(6).setXp(30));
             trades.get(5).add(new VillagerTrade(VillagerTrade.Type.ItemForEmerald).setItem(Items.AR_GOGGLES.get())
                     .setEmeraldPrice(4).setMaxUses(8).setXp(30));
+            if(ModList.get().isLoaded("appliedenergistics2"))
             trades.get(5).add(new VillagerTrade(VillagerTrade.Type.ItemForEmerald).setItem(Blocks.ME_BRIDGE.get())
                     .setEmeraldPrice(3).setMaxUses(10).setXp(18));
             trades.get(5).add(new VillagerTrade(VillagerTrade.Type.EmeraldForItem).setItem(Registry.ModBlocks.WIRELESS_MODEM_ADVANCED.get())
