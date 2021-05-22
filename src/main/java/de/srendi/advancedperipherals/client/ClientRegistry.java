@@ -56,9 +56,8 @@ public class ClientRegistry {
         ScreenManager.registerFactory(ContainerTypes.INVENTORY_MANAGER_CONTAINER.get(), InventoryManagerScreen::new);
     }
 
-    @SubscribeEvent
+    /*@SubscribeEvent
     public static void onTextureStitching(TextureStitchEvent.Pre event) {
-        event.addSprite(new ResourceLocation(AdvancedPeripherals.MOD_ID, "textures/item/empty_glasses_slot"));
-    }
-
+        event.addSprite(new ResourceLocation(AdvancedPeripherals.MOD_ID, "item/empty_glasses_slot"));
+    }*/
 }
