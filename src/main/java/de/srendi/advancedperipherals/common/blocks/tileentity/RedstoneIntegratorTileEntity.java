@@ -5,10 +5,7 @@ import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.Reds
 import de.srendi.advancedperipherals.common.blocks.RedstoneIntegratorBlock;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
 import de.srendi.advancedperipherals.common.setup.TileEntityTypes;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.RedstoneWireBlock;
+import net.minecraft.block.*;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
@@ -55,11 +52,15 @@ public class RedstoneIntegratorTileEntity extends PeripheralTileEntity<RedstoneI
         int old = this.power[direction.getIndex()];
         this.power[direction.getIndex()] = power;
         if (old != power) {
-            if (!getWorld().getBlockState(pos.offset(direction)).hasProperty(RedstoneWireBlock.POWER))
-                return;
-            BlockState state = getWorld().getBlockState(pos.offset(direction)).with(RedstoneWireBlock.POWER, power);
-            world.setBlockState(pos.offset(direction), state);
-            updateRedstone(state, EnumSet.of(direction), true);
+            if (getWorld().getBlockState(pos.offset(direction)).hasProperty(RedstoneWireBlock.POWER)) {
+                BlockState state = getWorld().getBlockState(pos.offset(direction)).with(RedstoneWireBlock.POWER, power);
+                world.setBlockState(pos.offset(direction), state);
+                updateRedstone(state, EnumSet.of(direction), true);
+            } else if(getWorld().getBlockState(pos.offset(direction)).hasProperty(RedstoneDiodeBlock.POWERED)){
+                BlockState state = getWorld().getBlockState(pos.offset(direction)).with(RedstoneDiodeBlock.POWERED, power > 0);
+                world.setBlockState(pos.offset(direction), state);
+                updateRedstone(state, EnumSet.of(direction), true);
+            }
             this.markDirty();
         }
     }

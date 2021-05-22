@@ -60,11 +60,11 @@ public abstract class BaseTurtle<T extends BasePeripheral> extends AbstractTurtl
         return peripheral;
     }
 
+    //TODO: 0.7r Work on this system, we need to polish here a lot
     @Override
     public void update(@NotNull ITurtleAccess turtle, @NotNull TurtleSide side) {
         if (!init) {
             if (!turtle.getWorld().isRemote) {
-                AdvancedPeripherals.debug("POSTURt: " + turtle.getPosition());
                 World world = turtle.getWorld();
                 BlockPos position = turtle.getPosition();
                 tileEntity = turtle instanceof TurtleBrain ? ((TurtleBrain) turtle).getOwner() : world.getTileEntity(position);
