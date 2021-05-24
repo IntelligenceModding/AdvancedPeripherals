@@ -19,7 +19,7 @@ public class InductionPortIntegration extends ProxyIntegration<TileEntityInducti
 
     @Override
     protected String getName() {
-        return "inductionMaxtrix";
+        return "inductionMatrix";
     }
 
     @LuaFunction
