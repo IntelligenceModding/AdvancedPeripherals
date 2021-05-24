@@ -2,6 +2,7 @@ package de.srendi.advancedperipherals.common.addons.computercraft.peripheral;
 
 import dan200.computercraft.api.lua.LuaFunction;
 import de.srendi.advancedperipherals.common.addons.computercraft.base.BasePeripheral;
+import de.srendi.advancedperipherals.common.addons.mekanism.Mekanism;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
 import net.minecraft.entity.Entity;
@@ -12,6 +13,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.ISeedReader;
 import net.minecraft.world.LightType;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 
 import java.util.HashMap;
@@ -189,5 +191,10 @@ public class EnvironmentDetectorPeripheral extends BasePeripheral {
     @LuaFunction(mainThread = true)
     public final boolean isSunny() {
         return getWorld().getThunderStrength(0) < 1 && getWorld().getRainStrength(0) < 1;
+    }
+
+    @LuaFunction(mainThread = true)
+    public final Object getRadiation() {
+        return ModList.get().isLoaded("mekanism") ? Mekanism.getRadiation(getWorld(), getPos()) : null;
     }
 }

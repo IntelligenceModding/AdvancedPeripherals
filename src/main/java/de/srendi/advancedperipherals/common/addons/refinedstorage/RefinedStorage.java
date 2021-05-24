@@ -170,7 +170,7 @@ public class RefinedStorage {
 
     public static Object getItem(List<ItemStack> items, ItemStack item) {
         for (ItemStack itemStack : items) {
-            if (itemStack.getItem().equals(item.getItem()) && Objects.equals(itemStack.getTag(), item.getTag())) {
+            if (itemStack.getItem().equals(item.getItem()) && Objects.equals(itemStack.getOrCreateTag(), item.getOrCreateTag())) {
                 return getObjectFromStack(itemStack);
             }
         }
