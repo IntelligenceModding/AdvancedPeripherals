@@ -6,17 +6,15 @@ import dan200.computercraft.api.turtle.AbstractTurtleUpgrade;
 import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
 import dan200.computercraft.api.turtle.TurtleUpgradeType;
-import dan200.computercraft.shared.turtle.core.TurtleBrain;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
+import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.EnvironmentDetectorPeripheral;
 import de.srendi.advancedperipherals.common.blocks.base.TileEntityList;
 import net.minecraft.client.renderer.model.ModelResourceLocation;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Matrix4f;
 import net.minecraft.util.math.vector.TransformationMatrix;
-import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -25,11 +23,9 @@ public abstract class BaseTurtle<T extends BasePeripheral> extends AbstractTurtl
     protected T peripheral;
     protected TileEntity tileEntity;
     protected int tick;
-    protected boolean init;
 
     public BaseTurtle(String id, String adjective, ItemStack item) {
         super(new ResourceLocation(AdvancedPeripherals.MOD_ID, id), TurtleUpgradeType.PERIPHERAL, adjective, item);
-        peripheral = createPeripheral();
     }
 
     protected abstract T createPeripheral();
@@ -57,21 +53,18 @@ public abstract class BaseTurtle<T extends BasePeripheral> extends AbstractTurtl
     @Nullable
     @Override
     public IPeripheral createPeripheral(@NotNull ITurtleAccess turtle, @NotNull TurtleSide side) {
-        return peripheral;
+        return createPeripheral();
     }
 
     //TODO: 0.7r Work on this system, we need to polish here a lot
     @Override
     public void update(@NotNull ITurtleAccess turtle, @NotNull TurtleSide side) {
-        if (!init) {
-            if (!turtle.getWorld().isRemote) {
-                World world = turtle.getWorld();
-                BlockPos position = turtle.getPosition();
-                tileEntity = turtle instanceof TurtleBrain ? ((TurtleBrain) turtle).getOwner() : world.getTileEntity(position);
-                peripheral.setTileEntity(tileEntity);
-                init = true;
-            }
+        if (!turtle.getWorld().isRemote) {
+            IPeripheral turtlePeripheral = turtle.getPeripheral(side);
+            if (turtlePeripheral instanceof EnvironmentDetectorPeripheral)
+                ((EnvironmentDetectorPeripheral) turtlePeripheral).setTurtle(turtle);
         }
+
         tick++;
         if (tick > 10) {
             TileEntityList tileEntityList = TileEntityList.get(turtle.getWorld()); //Sync the position with the tile entity list.

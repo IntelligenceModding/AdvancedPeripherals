@@ -3,6 +3,7 @@ package de.srendi.advancedperipherals.common.addons.computercraft.base;
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.peripheral.IComputerAccess;
 import dan200.computercraft.api.peripheral.IPeripheral;
+import dan200.computercraft.api.turtle.ITurtleAccess;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.tileentity.TileEntity;
@@ -20,6 +21,7 @@ public abstract class BasePeripheral implements IPeripheral {
     public Entity entity;
     protected String type;
     protected TileEntity tileEntity;
+    protected ITurtleAccess turtle;
 
     public BasePeripheral(String type, PeripheralTileEntity<?> tileEntity) {
         this.type = type;
@@ -79,14 +81,28 @@ public abstract class BasePeripheral implements IPeripheral {
     }
 
     protected BlockPos getPos() {
-        return tileEntity != null ? tileEntity.getPos() : entity.getPosition();
+        if(tileEntity != null)
+            return tileEntity.getPos();
+        if(turtle != null)
+            return turtle.getPosition();
+        if(entity != null)
+            return entity.getPosition();
+        return null;
     }
 
     protected World getWorld() {
-        return tileEntity != null ? tileEntity.getWorld() : entity.getEntityWorld();
+        if(tileEntity != null)
+            return tileEntity.getWorld();
+        if(turtle != null)
+            return turtle.getWorld();
+        if(entity != null)
+            return entity.getEntityWorld();
+        return null;
     }
 
     public void setEntity(Entity entity) {
         this.entity = entity;
     }
+
+    public void setTurtle(ITurtleAccess turtle) { this.turtle = turtle; }
 }
