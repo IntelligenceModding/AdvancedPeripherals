@@ -28,12 +28,12 @@ public class InductionPortIntegration extends ProxyIntegration<TileEntityInducti
     }
 
     @LuaFunction
-    public final long getInputRate() {
+    public final long getLastInput() {
         return EnergyCompatUtils.EnergyType.FORGE.convertToAsLong(getMatrix().getEnergyContainer().getLastInput());
     }
 
     @LuaFunction
-    public final long getOutputRate() {
+    public final long getLastOutput() {
         return EnergyCompatUtils.EnergyType.FORGE.convertToAsLong(getMatrix().getEnergyContainer().getLastOutput());
     }
 
