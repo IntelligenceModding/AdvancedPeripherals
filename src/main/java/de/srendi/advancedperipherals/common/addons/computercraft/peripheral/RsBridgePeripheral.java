@@ -167,7 +167,7 @@ public class RsBridgePeripheral extends BasePeripheral {
         if (inventory == null)
             throw new LuaException("No valid inventory for " + arguments.getString(1));
 
-        ItemStack extracted = getNetwork().extractItem(stack, stack.getCount(), 2, Action.SIMULATE);
+        ItemStack extracted = getNetwork().extractItem(stack, stack.getCount(), 1, Action.SIMULATE);
         if (extracted.isEmpty())
             return 0;
         //throw new LuaException("Item " + item + " does not exists in the RS system or the system is offline");
@@ -178,7 +178,7 @@ public class RsBridgePeripheral extends BasePeripheral {
         if (!remaining.isEmpty())
             transferableAmount -= remaining.getCount();
 
-        extracted = getNetwork().extractItem(stack, transferableAmount, 2, Action.PERFORM);
+        extracted = getNetwork().extractItem(stack, transferableAmount, 1, Action.PERFORM);
         remaining = ItemHandlerHelper.insertItemStacked(inventory, extracted, false);
 
         if (!remaining.isEmpty()) {
