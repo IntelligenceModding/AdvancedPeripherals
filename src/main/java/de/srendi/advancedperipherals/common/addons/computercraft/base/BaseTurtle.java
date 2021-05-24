@@ -56,7 +56,6 @@ public abstract class BaseTurtle<T extends BasePeripheral> extends AbstractTurtl
         return createPeripheral();
     }
 
-    //TODO: 0.7r Work on this system, we need to polish here a lot
     @Override
     public void update(@NotNull ITurtleAccess turtle, @NotNull TurtleSide side) {
         if (!turtle.getWorld().isRemote) {

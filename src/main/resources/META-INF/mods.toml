@@ -5,11 +5,9 @@ issueTrackerURL = "https://github.com/Seniorendi/AdvancedPeripherals/issues"
 logoFile = "pack.png"
 [[mods]]
 modId = "advancedperipherals"
-version = "0.6.1b"
+version = "0.6.2b"
 displayName = "Advanced Peripherals"
-#updateJSONURL="http://myurl.me/"
 displayURL = "https://srendi.de/"
-#logoFile="examplemod.png"
 authors = "Srendi"
 description = '''
 Advanced Peripherals is a mod that adds many useful extensions for CC:Tweaked(Computercraft).
