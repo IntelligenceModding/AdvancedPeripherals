@@ -58,7 +58,7 @@ public class TurtleChunky extends BaseTurtle<ChunkyPeripheral> {
     }
 
     public boolean forceChunk(ChunkPos chunkPos, boolean load) {
-        if (turtle == null) //The turtle can be null.
+        if (turtle == null) //The turtle can be null if it has just been placed.
             return false;
         boolean forced = ChunkManager.INSTANCE.forceChunk((ServerWorld) turtle.getWorld(), turtle.getPosition(), chunkPos, load);
         loadedChunks.add(chunkPos);
