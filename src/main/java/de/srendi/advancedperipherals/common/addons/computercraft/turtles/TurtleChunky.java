@@ -2,7 +2,6 @@ package de.srendi.advancedperipherals.common.addons.computercraft.turtles;
 
 import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
-import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.addons.computercraft.base.BaseTurtle;
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.ChunkyPeripheral;
 import de.srendi.advancedperipherals.common.setup.Items;
@@ -14,7 +13,6 @@ import net.minecraft.world.server.ServerWorld;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
-import java.util.Objects;
 import java.util.Set;
 
 public class TurtleChunky extends BaseTurtle<ChunkyPeripheral> {
@@ -44,16 +42,15 @@ public class TurtleChunky extends BaseTurtle<ChunkyPeripheral> {
 
     @Override
     public void update(@NotNull ITurtleAccess turtle, @NotNull TurtleSide side) {
-        if(peripheral != null) {
+        if (peripheral != null) {
             super.update(turtle, side);
             tick++;
             if (tick >= 10) {
                 //Add a chunk to the Chunk Manager every 10 ticks, if it's not already forced.
                 //The turtle can move, so we need to do that.
                 if (peripheral.isEnabled()) {
-                    if (!turtle.getWorld().isRemote && !loadedChunks.contains(turtle.getWorld().getChunk(turtle.getPosition()).getPos())) {
+                    if (!turtle.getWorld().isRemote && !loadedChunks.contains(turtle.getWorld().getChunk(turtle.getPosition()).getPos()))
                         forceChunk(turtle.getWorld().getChunk(turtle.getPosition()).getPos(), true);
-                    }
                     tick = 0;
                 }
             }
@@ -61,7 +58,8 @@ public class TurtleChunky extends BaseTurtle<ChunkyPeripheral> {
     }
 
     public boolean forceChunk(ChunkPos chunkPos, boolean load) {
-
+        if (turtle == null) //The turtle can be null.
+            return false;
         boolean forced = ChunkManager.INSTANCE.forceChunk((ServerWorld) turtle.getWorld(), turtle.getPosition(), chunkPos, load);
         loadedChunks.add(chunkPos);
         return forced;
