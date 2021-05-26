@@ -7,6 +7,7 @@ import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.Chat
 import de.srendi.advancedperipherals.common.setup.Blocks;
 import net.minecraft.client.renderer.model.ModelResourceLocation;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import org.jetbrains.annotations.NotNull;
 
 public class TurtleChatBox extends BaseTurtle<ChatBoxPeripheral> {
@@ -22,7 +23,7 @@ public class TurtleChatBox extends BaseTurtle<ChatBoxPeripheral> {
 
     @Override
     protected ChatBoxPeripheral createPeripheral() {
-        return new ChatBoxPeripheral("chatBox", tileEntity);
+        return new ChatBoxPeripheral("chatBox", (TileEntity) null);
     }
 
     @Override
@@ -37,12 +38,14 @@ public class TurtleChatBox extends BaseTurtle<ChatBoxPeripheral> {
 
     @Override
     public void update(@NotNull ITurtleAccess turtle, @NotNull TurtleSide side) {
-        super.update(turtle, side);
-        //Sync the tick of the peripherals and the turtle
-        if (peripheral.getTick() == 0) {
-            sync = 0;
+        if(peripheral != null) {
+            super.update(turtle, side);
+            //Sync the tick of the peripherals and the turtle
+            if (peripheral.getTick() == 0) {
+                sync = 0;
+            }
+            sync++;
+            peripheral.setTick(sync);
         }
-        sync++;
-        peripheral.setTick(sync);
     }
 }

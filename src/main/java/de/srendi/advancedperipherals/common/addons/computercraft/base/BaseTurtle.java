@@ -21,7 +21,7 @@ import org.jetbrains.annotations.Nullable;
 public abstract class BaseTurtle<T extends BasePeripheral> extends AbstractTurtleUpgrade {
 
     protected T peripheral;
-    protected TileEntity tileEntity;
+    protected ITurtleAccess turtle;
     protected int tick;
 
     public BaseTurtle(String id, String adjective, ItemStack item) {
@@ -53,13 +53,15 @@ public abstract class BaseTurtle<T extends BasePeripheral> extends AbstractTurtl
     @Nullable
     @Override
     public IPeripheral createPeripheral(@NotNull ITurtleAccess turtle, @NotNull TurtleSide side) {
-        return createPeripheral();
+        this.peripheral = createPeripheral();
+        return peripheral;
     }
 
     @Override
     public void update(@NotNull ITurtleAccess turtle, @NotNull TurtleSide side) {
         if (!turtle.getWorld().isRemote) {
             IPeripheral turtlePeripheral = turtle.getPeripheral(side);
+            this.turtle = turtle;
             if (turtlePeripheral instanceof EnvironmentDetectorPeripheral)
                 ((EnvironmentDetectorPeripheral) turtlePeripheral).setTurtle(turtle);
         }

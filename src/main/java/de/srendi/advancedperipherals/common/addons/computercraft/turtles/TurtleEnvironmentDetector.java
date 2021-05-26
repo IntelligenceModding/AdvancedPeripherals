@@ -5,6 +5,7 @@ import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.Envi
 import de.srendi.advancedperipherals.common.setup.Blocks;
 import net.minecraft.client.renderer.model.ModelResourceLocation;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 
 public class TurtleEnvironmentDetector extends BaseTurtle<EnvironmentDetectorPeripheral> {
 
@@ -17,7 +18,7 @@ public class TurtleEnvironmentDetector extends BaseTurtle<EnvironmentDetectorPer
 
     @Override
     protected EnvironmentDetectorPeripheral createPeripheral() {
-        return new EnvironmentDetectorPeripheral("environmentDetector", tileEntity);
+        return new EnvironmentDetectorPeripheral("environmentDetector", (TileEntity) null);
     }
 
     @Override

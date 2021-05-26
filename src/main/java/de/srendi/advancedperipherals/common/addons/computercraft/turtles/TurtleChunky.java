@@ -29,7 +29,7 @@ public class TurtleChunky extends BaseTurtle<ChunkyPeripheral> {
 
     @Override
     protected ChunkyPeripheral createPeripheral() {
-        return new ChunkyPeripheral("chunky", tileEntity);
+        return new ChunkyPeripheral("chunky", null);
     }
 
     @Override
@@ -44,27 +44,25 @@ public class TurtleChunky extends BaseTurtle<ChunkyPeripheral> {
 
     @Override
     public void update(@NotNull ITurtleAccess turtle, @NotNull TurtleSide side) {
-        super.update(turtle, side);
-        tick++;
-        if (tick >= 10) {
-            //Add a chunk to the Chunk Manager every 10 ticks, if it's not already forced.
-            //The turtle can move, so we need to do that.
-            if (peripheral.isEnabled()) {
-                if (!turtle.getWorld().isRemote && !loadedChunks.contains(turtle.getWorld().getChunk(turtle.getPosition()).getPos())) {
-                    forceChunk(turtle.getWorld().getChunk(turtle.getPosition()).getPos(), true);
+        if(peripheral != null) {
+            super.update(turtle, side);
+            tick++;
+            if (tick >= 10) {
+                //Add a chunk to the Chunk Manager every 10 ticks, if it's not already forced.
+                //The turtle can move, so we need to do that.
+                if (peripheral.isEnabled()) {
+                    if (!turtle.getWorld().isRemote && !loadedChunks.contains(turtle.getWorld().getChunk(turtle.getPosition()).getPos())) {
+                        forceChunk(turtle.getWorld().getChunk(turtle.getPosition()).getPos(), true);
+                    }
+                    tick = 0;
                 }
-                tick = 0;
             }
         }
     }
 
     public boolean forceChunk(ChunkPos chunkPos, boolean load) {
-        if (tileEntity == null) {
-            AdvancedPeripherals.debug("The turtle is null, why is the turtle null... (" + chunkPos + ")");
-            return false;
-        }
 
-        boolean forced = Objects.requireNonNull(ChunkManager.INSTANCE, "Instance is null").forceChunk((ServerWorld) Objects.requireNonNull(tileEntity.getWorld(), "World is null"), Objects.requireNonNull(tileEntity.getPos(), "Pos is null"), chunkPos, load);
+        boolean forced = ChunkManager.INSTANCE.forceChunk((ServerWorld) turtle.getWorld(), turtle.getPosition(), chunkPos, load);
         loadedChunks.add(chunkPos);
         return forced;
     }

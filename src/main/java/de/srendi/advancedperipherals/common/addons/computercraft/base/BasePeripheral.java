@@ -38,6 +38,11 @@ public abstract class BasePeripheral implements IPeripheral {
         this.entity = entity;
     }
 
+    public BasePeripheral(String type, ITurtleAccess turtle) {
+        this.type = type;
+        this.turtle = turtle;
+    }
+
     public void setTileEntity(TileEntity tileEntity) {
         this.tileEntity = tileEntity;
     }

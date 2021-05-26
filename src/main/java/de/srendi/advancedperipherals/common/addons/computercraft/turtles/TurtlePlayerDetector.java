@@ -5,6 +5,7 @@ import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.Play
 import de.srendi.advancedperipherals.common.setup.Blocks;
 import net.minecraft.client.renderer.model.ModelResourceLocation;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 
 public class TurtlePlayerDetector extends BaseTurtle<PlayerDetectorPeripheral> {
 
@@ -17,7 +18,7 @@ public class TurtlePlayerDetector extends BaseTurtle<PlayerDetectorPeripheral> {
 
     @Override
     protected PlayerDetectorPeripheral createPeripheral() {
-        return new PlayerDetectorPeripheral("environmentDetector", tileEntity);
+        return new PlayerDetectorPeripheral("environmentDetector", (TileEntity) null);
     }
 
     @Override
