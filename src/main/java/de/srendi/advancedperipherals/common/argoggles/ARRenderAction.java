@@ -14,6 +14,7 @@ public final class ARRenderAction implements INBTSerializable<CompoundNBT> {
     private static final String TYPE = "type";
     private static final String STRING_ARG = "string_arg";
     private static final String INT_ARGS = "int_args";
+    private static final String VIRTUAL_SCREEN_SIZE = "virtualScreenSize";
 
     private RenderActionType type;
     private String stringArg = "";
@@ -129,9 +130,12 @@ public final class ARRenderAction implements INBTSerializable<CompoundNBT> {
 
     @Override
     public void deserializeNBT(CompoundNBT nbt) {
+        int[] virtualScreenSizeFromNbt = nbt.getIntArray(VIRTUAL_SCREEN_SIZE);
+
         type = RenderActionType.valueOf(nbt.getString(TYPE));
         stringArg = nbt.getString(STRING_ARG);
         intArgs = nbt.getIntArray(INT_ARGS);
+        virtualScreenSize = virtualScreenSizeFromNbt.length == 0 ? Optional.empty() : Optional.of(virtualScreenSizeFromNbt);
     }
 
     @Override
@@ -140,6 +144,7 @@ public final class ARRenderAction implements INBTSerializable<CompoundNBT> {
         nbt.putString(TYPE, type.toString());
         nbt.putString(STRING_ARG, stringArg);
         nbt.putIntArray(INT_ARGS, intArgs);
+        nbt.putIntArray(VIRTUAL_SCREEN_SIZE,  virtualScreenSize.orElse(new int[]{}));
         return nbt;
     }
 
