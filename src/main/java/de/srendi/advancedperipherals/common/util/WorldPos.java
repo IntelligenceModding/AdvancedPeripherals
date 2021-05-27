@@ -62,7 +62,7 @@ public class WorldPos {
 
     @Override
     public String toString() {
-        return "WorldPos{x=" + x + ", y=" + y + ", z=" + z + ", world=`" + world +'}';
+        return "WorldPos{x=" + x + ", y=" + y + ", z=" + z + ", world=`" + world.getLocation() +'}';
     }
 
     public int getX() {
