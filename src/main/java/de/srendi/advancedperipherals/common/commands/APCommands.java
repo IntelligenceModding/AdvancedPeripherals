@@ -49,6 +49,7 @@ public class APCommands {
         ServerPlayerEntity playerEntity = source.asPlayer();
         TileEntityList list = TileEntityList.get(playerEntity.getServerWorld());
         source.sendFeedback(TextComponentUtils.wrapWithSquareBrackets(new StringTextComponent("" + list.getBlockPositions()).modifyStyle((style) -> style.setFormatting(TextFormatting.GREEN).setClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, "" + list.getBlockPositions())).setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new StringTextComponent("Copy"))))), true);
+        source.sendFeedback(new StringTextComponent(list.getBlockPositions().size() + ""), false);
         return 1;
     }
 }

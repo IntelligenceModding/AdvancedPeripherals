@@ -1,5 +1,6 @@
 package de.srendi.advancedperipherals.common.blocks.base;
 
+import de.srendi.advancedperipherals.common.util.WorldPos;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -43,13 +44,13 @@ public abstract class BaseTileEntityBlock extends BaseBlock {
         super.onBlockPlacedBy(worldIn, pos, state, placer, stack);
         //Used for the lua function getName()
         worldIn.getTileEntity(pos).getTileData().putString("CustomName", stack.getDisplayName().getString());
-        TileEntityList.get(worldIn).setTileEntity(worldIn, pos, true);
+        TileEntityList.get(worldIn).setTileEntity(worldIn, new WorldPos(pos, worldIn), true);
     }
 
     @Override
     public void onPlayerDestroy(IWorld worldIn, BlockPos pos, BlockState state) {
         super.onPlayerDestroy(worldIn, pos, state);
-        TileEntityList.get((World) worldIn).setTileEntity((World) worldIn, pos, false);
+        TileEntityList.get((World) worldIn).setTileEntity((World) worldIn, new WorldPos(pos, (World)worldIn), false);
     }
 
     @Nullable

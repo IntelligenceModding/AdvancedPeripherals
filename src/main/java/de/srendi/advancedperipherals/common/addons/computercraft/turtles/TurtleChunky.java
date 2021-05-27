@@ -45,13 +45,12 @@ public class TurtleChunky extends BaseTurtle<ChunkyPeripheral> {
         if (peripheral != null) {
             super.update(turtle, side);
             tick++;
-            if (tick >= 10) {
+            if (tick % 10 == 0) {
                 //Add a chunk to the Chunk Manager every 10 ticks, if it's not already forced.
                 //The turtle can move, so we need to do that.
                 if (peripheral.isEnabled()) {
                     if (!turtle.getWorld().isRemote && !loadedChunks.contains(turtle.getWorld().getChunk(turtle.getPosition()).getPos()))
                         forceChunk(turtle.getWorld().getChunk(turtle.getPosition()).getPos(), true);
-                    tick = 0;
                 }
             }
         }

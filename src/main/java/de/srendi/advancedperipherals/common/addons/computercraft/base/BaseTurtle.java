@@ -9,6 +9,7 @@ import dan200.computercraft.api.turtle.TurtleUpgradeType;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.EnvironmentDetectorPeripheral;
 import de.srendi.advancedperipherals.common.blocks.base.TileEntityList;
+import de.srendi.advancedperipherals.common.util.WorldPos;
 import net.minecraft.client.renderer.model.ModelResourceLocation;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -68,8 +69,7 @@ public abstract class BaseTurtle<T extends BasePeripheral> extends AbstractTurtl
 
         tick++;
         if (tick > 10) {
-            TileEntityList tileEntityList = TileEntityList.get(turtle.getWorld()); //Sync the position with the tile entity list.
-            tileEntityList.setTileEntity(turtle.getWorld(), turtle.getPosition(), true); //Add the turtle to the List for event use
+            TileEntityList.get(turtle.getWorld()).setTileEntity(turtle.getWorld(), new WorldPos(turtle.getPosition(), turtle.getWorld()), true); //Add the turtle to the List for event use
             tick = 0;
         }
     }
