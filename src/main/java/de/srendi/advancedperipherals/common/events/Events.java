@@ -49,6 +49,8 @@ public class Events {
     public static void onChatTurtle(ServerChatEvent event) {
         ServerWorld world = event.getPlayer().getServerWorld();
         TileEntityList.get(world).getTileEntities().forEach(tileEntity -> {
+            if(tileEntity == null) //We only update the positions of turtles every 10 ticks so the tile entity in the list can be null
+                return;
             if (tileEntity instanceof TileTurtle) { //Events for turtles
                 TileTurtle tileTurtle = (TileTurtle) tileEntity;
                 if (tileTurtle.getUpgrade(TurtleSide.RIGHT) instanceof TurtleChatBox || tileTurtle.getUpgrade(TurtleSide.LEFT) instanceof TurtleChatBox) {
