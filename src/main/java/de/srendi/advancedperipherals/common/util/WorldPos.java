@@ -38,6 +38,16 @@ public class WorldPos {
         this.world = world.getDimensionKey();
     }
 
+    public static WorldPos read(CompoundNBT nbt) {
+        if (!(nbt.contains("x") && nbt.contains("y") && nbt.contains("z") && nbt.contains("world")))
+            return null;
+        int x = nbt.getInt("x");
+        int y = nbt.getInt("y");
+        int z = nbt.getInt("z");
+        String world = nbt.getString("world");
+        return new WorldPos(x, y, z, RegistryKey.getOrCreateKey(Registry.WORLD_KEY, new ResourceLocation(world)));
+    }
+
     public CompoundNBT write(CompoundNBT nbt) {
         nbt.putInt("x", this.x);
         nbt.putInt("y", this.y);
@@ -46,23 +56,13 @@ public class WorldPos {
         return nbt;
     }
 
-    public static WorldPos read(CompoundNBT nbt) {
-        if(!(nbt.contains("x") && nbt.contains("y") && nbt.contains("z") && nbt.contains("world")))
-            return null;
-        int x = nbt.getInt("x");
-        int y = nbt.getInt("y");
-        int z = nbt.getInt("z");
-        String world = nbt.getString("world");
-        return new WorldPos(x,y,z,RegistryKey.getOrCreateKey(Registry.WORLD_KEY, new ResourceLocation(world)));
-    }
-
     public BlockPos getBlockPos() {
         return new BlockPos(x, y, z);
     }
 
     @Override
     public String toString() {
-        return "WorldPos{x=" + x + ", y=" + y + ", z=" + z + ", world=`" + world.getLocation() +'}';
+        return "WorldPos{x=" + x + ", y=" + y + ", z=" + z + ", world=`" + world.getLocation() + '}';
     }
 
     public int getX() {

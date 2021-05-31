@@ -2,7 +2,6 @@ package de.srendi.advancedperipherals.common.addons.mekanism;
 
 import mekanism.api.Coord4D;
 import mekanism.common.util.UnitDisplayUtils;
-import net.minecraft.util.Unit;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -15,7 +14,7 @@ import java.util.Map;
 public class Mekanism {
 
     public static Object getRadiation(World world, BlockPos pos) {
-        if(!world.isRemote) {
+        if (!world.isRemote) {
             Map<String, Object> map = new HashMap<>();
             String[] radiation = UnitDisplayUtils.getDisplayShort(mekanism.common.Mekanism.radiationManager.getRadiationLevel(new Coord4D(pos, world)), UnitDisplayUtils.RadiationUnit.SV, 4).getString().split(" ");
             map.put("radiation", radiation[0]);
@@ -27,8 +26,8 @@ public class Mekanism {
     }
 
     public static double getRadiationRaw(World world, BlockPos pos) {
-        if(!world.isRemote) {
-            return mekanism.common.Mekanism.radiationManager.getRadiationLevel(new Coord4D(pos,world));
+        if (!world.isRemote) {
+            return mekanism.common.Mekanism.radiationManager.getRadiationLevel(new Coord4D(pos, world));
         }
         return 0;
     }

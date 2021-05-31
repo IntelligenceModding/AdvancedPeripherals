@@ -36,6 +36,14 @@ public class TileEntityList extends WorldSavedData {
         }
     }
 
+    public static World getWorldFromKey(RegistryKey<World> key) {
+        for (ServerWorld serverWorld : ServerLifecycleHooks.getCurrentServer().getWorlds()) {
+            if (serverWorld.getDimensionKey().getLocation().equals(key.getLocation()))
+                return serverWorld;
+        }
+        return null;
+    }
+
     @Override
     public void read(@Nonnull CompoundNBT nbt) {
         this.tileEntities.clear();
@@ -106,7 +114,6 @@ public class TileEntityList extends WorldSavedData {
     public void clearTileEntities() {
         for (WorldPos next : new ArrayList<>(tileEntities)) {
             World currentWorld = getWorldFromKey(next.getWorld());
-            AdvancedPeripherals.debug("DEBUG1");
             if (currentWorld.isAirBlock(next.getBlockPos()) || !currentWorld.isBlockLoaded(next.getBlockPos()))
                 if (tileEntities.contains(next))
                     tileEntities.remove(next);
@@ -118,14 +125,6 @@ public class TileEntityList extends WorldSavedData {
 
     public HashSet<WorldPos> getBlockPositions() {
         return tileEntities;
-    }
-
-    public static World getWorldFromKey(RegistryKey<World> key) {
-        for (ServerWorld serverWorld : ServerLifecycleHooks.getCurrentServer().getWorlds()) {
-            if (serverWorld.getDimensionKey().getLocation().equals(key.getLocation()))
-                return serverWorld;
-        }
-        return null;
     }
 
 }

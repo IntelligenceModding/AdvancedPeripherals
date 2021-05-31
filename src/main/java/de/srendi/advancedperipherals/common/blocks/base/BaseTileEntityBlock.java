@@ -50,7 +50,7 @@ public abstract class BaseTileEntityBlock extends BaseBlock {
     @Override
     public void onPlayerDestroy(IWorld worldIn, BlockPos pos, BlockState state) {
         super.onPlayerDestroy(worldIn, pos, state);
-        TileEntityList.get((World) worldIn).setTileEntity((World) worldIn, new WorldPos(pos, (World)worldIn), false);
+        TileEntityList.get((World) worldIn).setTileEntity((World) worldIn, new WorldPos(pos, (World) worldIn), false);
     }
 
     @Nullable

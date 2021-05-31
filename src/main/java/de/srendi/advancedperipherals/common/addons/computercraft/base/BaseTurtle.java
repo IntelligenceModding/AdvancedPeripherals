@@ -12,7 +12,6 @@ import de.srendi.advancedperipherals.common.blocks.base.TileEntityList;
 import de.srendi.advancedperipherals.common.util.WorldPos;
 import net.minecraft.client.renderer.model.ModelResourceLocation;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.vector.Matrix4f;
 import net.minecraft.util.math.vector.TransformationMatrix;

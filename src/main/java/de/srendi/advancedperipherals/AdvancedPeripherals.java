@@ -11,7 +11,6 @@ import de.srendi.advancedperipherals.common.village.VillageStructures;
 import de.srendi.advancedperipherals.network.MNetwork;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;

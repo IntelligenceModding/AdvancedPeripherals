@@ -56,7 +56,7 @@ public class RedstoneIntegratorTileEntity extends PeripheralTileEntity<RedstoneI
                 BlockState state = getWorld().getBlockState(pos.offset(direction)).with(RedstoneWireBlock.POWER, power);
                 world.setBlockState(pos.offset(direction), state);
                 updateRedstone(state, EnumSet.of(direction), true);
-            } else if(getWorld().getBlockState(pos.offset(direction)).hasProperty(RedstoneDiodeBlock.POWERED)){
+            } else if (getWorld().getBlockState(pos.offset(direction)).hasProperty(RedstoneDiodeBlock.POWERED)) {
                 BlockState state = getWorld().getBlockState(pos.offset(direction)).with(RedstoneDiodeBlock.POWERED, power > 0);
                 world.setBlockState(pos.offset(direction), state);
                 updateRedstone(state, EnumSet.of(direction), true);

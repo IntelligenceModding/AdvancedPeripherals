@@ -2,15 +2,14 @@ package de.srendi.advancedperipherals.common.addons.computercraft.proxyintegrati
 
 import dan200.computercraft.api.lua.LuaFunction;
 import de.srendi.advancedperipherals.common.addons.computercraft.base.ProxyIntegration;
-import mekanism.common.tile.machine.TileEntityDigitalMiner;
 import mekanism.api.energy.IEnergyContainer;
 import mekanism.api.math.FloatingLong;
-import net.minecraft.nbt.CompoundNBT;
+import mekanism.common.tile.machine.TileEntityDigitalMiner;
 
 import java.util.List;
-import java.util.function.Function;
 
 public class DigitalMinerIntegration extends ProxyIntegration<TileEntityDigitalMiner> {
+
     @Override
     protected Class<TileEntityDigitalMiner> getTargetClass() {
         return TileEntityDigitalMiner.class;
@@ -37,13 +36,28 @@ public class DigitalMinerIntegration extends ProxyIntegration<TileEntityDigitalM
     }
 
     @LuaFunction
+    public void setRadius(int newRadius) {
+        getTileEntity().setRadiusFromPacket(newRadius);
+    }
+
+    @LuaFunction
     public int getMinY() {
         return getTileEntity().getMinY();
     }
 
     @LuaFunction
+    public void setMinY(int newMinY) {
+        getTileEntity().setMinYFromPacket(newMinY);
+    }
+
+    @LuaFunction
     public int getMaxY() {
         return getTileEntity().getMaxY();
+    }
+
+    @LuaFunction
+    public void setMaxY(int newMaxY) {
+        getTileEntity().setMaxYFromPacket(newMaxY);
     }
 
     @LuaFunction
@@ -67,32 +81,17 @@ public class DigitalMinerIntegration extends ProxyIntegration<TileEntityDigitalM
     }
 
     @LuaFunction
-    public void setRadius(int newRadius) {
-        getTileEntity().setRadiusFromPacket(newRadius);
-    }
-
-    @LuaFunction
-    public void setMinY(int newMinY) {
-        getTileEntity().setMinYFromPacket(newMinY);
-    }
-
-    @LuaFunction
-    public void setMaxY(int newMaxY) {
-        getTileEntity().setMaxYFromPacket(newMaxY);
-    }
-
-    @LuaFunction
-    public void start(){
+    public void start() {
         getTileEntity().start();
     }
-    
+
     @LuaFunction
-    public void stop(){
+    public void stop() {
         getTileEntity().stop();
     }
-    
+
     @LuaFunction
-    public void reset(){
+    public void reset() {
         getTileEntity().reset();
     }
 

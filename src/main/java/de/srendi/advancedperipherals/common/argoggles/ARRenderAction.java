@@ -144,7 +144,7 @@ public final class ARRenderAction implements INBTSerializable<CompoundNBT> {
         nbt.putString(TYPE, type.toString());
         nbt.putString(STRING_ARG, stringArg);
         nbt.putIntArray(INT_ARGS, intArgs);
-        nbt.putIntArray(VIRTUAL_SCREEN_SIZE,  virtualScreenSize.orElse(new int[]{}));
+        nbt.putIntArray(VIRTUAL_SCREEN_SIZE, virtualScreenSize.orElse(new int[]{}));
         return nbt;
     }
 
