@@ -34,6 +34,7 @@ public class ProxyIntegrationRegistry {
         if (ModList.get().isLoaded("mekanism")) {
             registerIntegration(new InductionPortIntegration());
             registerIntegration(new BoilerIntegration());
+            registerIntegration(new DigitalMinerIntegration());
             registerIntegration(new GenericMekanismIntegration());
         }
         if (ModList.get().isLoaded("botania")) {

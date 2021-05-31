@@ -46,9 +46,7 @@ public class HudOverlayHandler {
         if (event.getWindow() == null) return;
         Minecraft mc = Minecraft.getInstance();
         MatrixStack matrixStack = event.getMatrixStack();
-        List<ARRenderAction> canvasCopy = new ArrayList<ARRenderAction>();
-        canvasCopy.addAll(canvas);
-        for (ARRenderAction action : canvasCopy) {
+        for (ARRenderAction action : canvas) {
             action.draw(mc, matrixStack, event.getWindow().getScaledWidth(), event.getWindow().getScaledHeight());
         }
         mc.getTextureManager().bindTexture(AbstractGui.GUI_ICONS_LOCATION);

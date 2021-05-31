@@ -59,10 +59,13 @@ public class ARGogglesItem extends ArmorItem {
                 return;
             }
             TileEntity te = world.getTileEntity(pos);
-            if (!(te instanceof ARControllerTileEntity))
+            if (!(te instanceof ARControllerTileEntity)) {
+                // If distance to ARController is larger than view distance
+                MNetwork.sendToServer(new RequestHudCanvasMessage(pos, dimensionKey));
                 return;
+            }
+
             ARControllerTileEntity controller = (ARControllerTileEntity) te;
-            HudOverlayHandler.clearCanvas();
             HudOverlayHandler.updateCanvas(controller.getCanvas());
         }
     }
