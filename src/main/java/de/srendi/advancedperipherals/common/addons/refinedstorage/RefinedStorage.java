@@ -174,7 +174,7 @@ public class RefinedStorage {
                 return getObjectFromStack(itemStack);
             }
         }
-        return new Object();
+        return null;
     }
 
     public static List<ItemStack> getItems(INetwork network, boolean craftable) {
@@ -235,7 +235,7 @@ public class RefinedStorage {
     }
 
     public static String getFingerpint(ItemStack stack) {
-        String fingerprint = stack.getOrCreateTag() + stack.getItem().getRegistryName().toString();
+        String fingerprint = stack.getOrCreateTag() + stack.getItem().getRegistryName().toString() + stack.getDisplayName().getString();
         try {
             byte[] bytesOfHash = fingerprint.getBytes(StandardCharsets.UTF_8);
             MessageDigest md = MessageDigest.getInstance("MD5");
