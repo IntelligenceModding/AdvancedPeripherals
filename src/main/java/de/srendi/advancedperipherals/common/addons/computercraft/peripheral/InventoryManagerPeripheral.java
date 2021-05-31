@@ -55,8 +55,9 @@ public class InventoryManagerPeripheral extends BasePeripheral {
         IItemHandler inventoryFrom = targetEntity != null ? targetEntity
                 .getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, direction).resolve().orElse(null) : null;
         PlayerInventory inventoryTo = getOwnerPlayer().inventory;
-        if (inventoryFrom == null) {
-            AdvancedPeripherals.debug("Debug2");
+
+        // inventoryFrom is checked via ensurePlayerLinked()
+        if (inventoryTo == null) {
             return 0;
         }
 
