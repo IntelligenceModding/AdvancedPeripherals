@@ -198,4 +198,9 @@ public class EnvironmentDetectorPeripheral extends BasePeripheral {
     public final Object getRadiation() {
         return ModList.get().isLoaded("mekanism") ? Mekanism.getRadiation(getWorld(), getPos()) : null;
     }
+
+    @LuaFunction(mainThread = true)
+    public final double getRadiationRaw() {
+        return ModList.get().isLoaded("mekanism") ? Mekanism.getRadiationRaw(getWorld(), getPos()) : 0D;
+    }
 }

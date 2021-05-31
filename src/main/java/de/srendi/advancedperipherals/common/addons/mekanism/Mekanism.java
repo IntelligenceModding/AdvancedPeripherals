@@ -26,4 +26,11 @@ public class Mekanism {
         return null;
     }
 
+    public static double getRadiationRaw(World world, BlockPos pos) {
+        if(!world.isRemote) {
+            return mekanism.common.Mekanism.radiationManager.getRadiationLevel(new Coord4D(pos,world));
+        }
+        return 0;
+    }
+
 }
