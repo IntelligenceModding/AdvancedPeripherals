@@ -14,7 +14,7 @@ import java.util.Map;
 public class Mekanism {
 
     public static Object getRadiation(World world, BlockPos pos) {
-        if (!world.isRemote) {
+        if (!world.isClientSide) {
             Map<String, Object> map = new HashMap<>();
             String[] radiation = UnitDisplayUtils.getDisplayShort(mekanism.common.Mekanism.radiationManager.getRadiationLevel(new Coord4D(pos, world)), UnitDisplayUtils.RadiationUnit.SV, 4).getString().split(" ");
             map.put("radiation", radiation[0]);
@@ -26,7 +26,7 @@ public class Mekanism {
     }
 
     public static double getRadiationRaw(World world, BlockPos pos) {
-        if (!world.isRemote) {
+        if (!world.isClientSide) {
             return mekanism.common.Mekanism.radiationManager.getRadiationLevel(new Coord4D(pos, world));
         }
         return 0;

@@ -25,9 +25,9 @@ public class PlayerDetectorBlock extends BaseTileEntityBlock {
     }
 
     @Override
-    public ActionResultType onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity player, Hand handIn, BlockRayTraceResult hit) {
+    public ActionResultType use(BlockState state, World worldIn, BlockPos pos, PlayerEntity player, Hand handIn, BlockRayTraceResult hit) {
         if (AdvancedPeripheralsConfig.enablePlayerDetector) {
-            TileEntity tileEntity = worldIn.getTileEntity(pos);
+            TileEntity tileEntity = worldIn.getBlockEntity(pos);
             if (tileEntity instanceof PlayerDetectorTileEntity) {
                 PlayerDetectorTileEntity entity = (PlayerDetectorTileEntity) tileEntity;
                 for (IComputerAccess computer : entity.getConnectedComputers()) {
@@ -36,6 +36,6 @@ public class PlayerDetectorBlock extends BaseTileEntityBlock {
                 }
             }
         }
-        return super.onBlockActivated(state, worldIn, pos, player, handIn, hit);
+        return super.use(state, worldIn, pos, player, handIn, hit);
     }
 }

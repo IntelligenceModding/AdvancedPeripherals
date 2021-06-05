@@ -41,9 +41,9 @@ public class ClientRegistry {
         for (String modelName : TURTLE_MODELS) {
             ResourceLocation location = new ResourceLocation(AdvancedPeripherals.MOD_ID, "item/" + modelName);
             IUnbakedModel model = loader.getModelOrMissing(location);
-            model.getTextures(loader::getModelOrMissing, new HashSet<>());
+            model.getMaterials(loader::getModelOrMissing, new HashSet<>());
 
-            IBakedModel baked = model.bakeModel(loader, ModelLoader.defaultTextureGetter(), SimpleModelTransform.IDENTITY, location);
+            IBakedModel baked = model.bake(loader, ModelLoader.defaultTextureGetter(), SimpleModelTransform.IDENTITY, location);
             if (baked != null) {
                 registry.put(new ModelResourceLocation(new ResourceLocation(AdvancedPeripherals.MOD_ID, modelName), "inventory"), baked);
             }
@@ -52,7 +52,7 @@ public class ClientRegistry {
 
     @SubscribeEvent
     public static void onClientSetup(FMLClientSetupEvent event) {
-        ScreenManager.registerFactory(ContainerTypes.INVENTORY_MANAGER_CONTAINER.get(), InventoryManagerScreen::new);
+        ScreenManager.register(ContainerTypes.INVENTORY_MANAGER_CONTAINER.get(), InventoryManagerScreen::new);
     }
 
     /*@SubscribeEvent

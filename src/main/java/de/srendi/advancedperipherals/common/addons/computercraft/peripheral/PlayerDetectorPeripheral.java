@@ -83,9 +83,9 @@ public class PlayerDetectorPeripheral extends BasePeripheral {
             return null;
         }
         Map<String, Double> coordinates = new HashMap<>();
-        coordinates.put("x", Math.floor(existingPlayer.getPosX()));
-        coordinates.put("y", Math.floor(existingPlayer.getPosY()));
-        coordinates.put("z", Math.floor(existingPlayer.getPosZ()));
+        coordinates.put("x", Math.floor(existingPlayer.getX()));
+        coordinates.put("y", Math.floor(existingPlayer.getY()));
+        coordinates.put("z", Math.floor(existingPlayer.getZ()));
         return coordinates;
     }
 
@@ -108,9 +108,9 @@ public class PlayerDetectorPeripheral extends BasePeripheral {
         int y2 = Math.max(pos1.getY(), pos2.getY());
         int z2 = Math.max(pos1.getZ(), pos2.getZ());
 
-        int x = player.getPosition().getX();
-        int z = player.getPosition().getZ();
-        int y = player.getPosition().getY();
+        int x = player.blockPosition().getX();
+        int z = player.blockPosition().getZ();
+        int y = player.blockPosition().getY();
 
         return x >= x1 && x <= x2 && y >= y1 && y <= y2 && z >= z1 && z <= z2;
     }

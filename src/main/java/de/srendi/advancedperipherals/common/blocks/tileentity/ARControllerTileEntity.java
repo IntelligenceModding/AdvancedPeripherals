@@ -55,12 +55,12 @@ public class ARControllerTileEntity extends PeripheralTileEntity<ARControllerPer
     }
 
     @Override
-    public void read(BlockState state, CompoundNBT nbt) {
-        super.read(state, nbt);
-        read(nbt);
+    public void deserializeNBT(BlockState state, CompoundNBT nbt) {
+        super.deserializeNBT(state, nbt);
+        deserializeNBT(nbt);
     }
 
-    public void read(CompoundNBT nbt) {
+    public void deserializeNBT(CompoundNBT nbt) {
         if (nbt.getIntArray(VIRTUAL_SCREEN_SIZE).length > 0)
             virtualScreenSize = Optional.of(nbt.getIntArray(VIRTUAL_SCREEN_SIZE));
         else
@@ -76,7 +76,7 @@ public class ARControllerTileEntity extends PeripheralTileEntity<ARControllerPer
     }
 
     @Override
-    public CompoundNBT write(CompoundNBT compound) {
+    public CompoundNBT save(CompoundNBT compound) {
         if (virtualScreenSize.isPresent())
             compound.putIntArray(VIRTUAL_SCREEN_SIZE, virtualScreenSize.get());
         else if (compound.contains(VIRTUAL_SCREEN_SIZE))
@@ -86,33 +86,33 @@ public class ARControllerTileEntity extends PeripheralTileEntity<ARControllerPer
             list.add(action.serializeNBT());
         }
         compound.put(CANVAS, list);
-        return super.write(compound);
+        return super.save(compound);
     }
 
     @Override
     public CompoundNBT getUpdateTag() {
         CompoundNBT nbt = super.getUpdateTag();
-        write(nbt);
+        save(nbt);
         return nbt;
     }
 
     @Override
     public void handleUpdateTag(BlockState state, CompoundNBT tag) {
-        read(state, tag);
+        deserializeNBT(state, tag);
         super.handleUpdateTag(state, tag);
     }
 
     @Override
     public SUpdateTileEntityPacket getUpdatePacket() {
         CompoundNBT nbt = new CompoundNBT();
-        write(nbt);
-        return new SUpdateTileEntityPacket(getPos(), -1, nbt);
+        save(nbt);
+        return new SUpdateTileEntityPacket(getBlockPos(), -1, nbt);
     }
 
     @Override
     public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket pkt) {
-        CompoundNBT nbt = pkt.getNbtCompound();
-        read(nbt);
+        CompoundNBT nbt = pkt.getTag();
+        deserializeNBT(nbt);
     }
 
     public boolean isRelativeMode() {
@@ -137,8 +137,8 @@ public class ARControllerTileEntity extends PeripheralTileEntity<ARControllerPer
     }
 
     private void blockChanged() {
-        markDirty();
-        world.notifyBlockUpdate(getPos(), getBlockState(), getBlockState(), BlockFlags.BLOCK_UPDATE);
+        setChanged();
+        level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), BlockFlags.BLOCK_UPDATE);
     }
 
     /**

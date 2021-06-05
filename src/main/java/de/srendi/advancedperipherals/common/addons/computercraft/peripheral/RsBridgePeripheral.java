@@ -97,7 +97,7 @@ public class RsBridgePeripheral extends BasePeripheral {
         ItemStack stack = ItemUtil.getItemStackRS(arguments.getTable(0), RefinedStorage.getItems(getNetwork(), false));
         Direction direction = Direction.valueOf(arguments.getString(1).toUpperCase(Locale.ROOT));
 
-        TileEntity targetEntity = tileEntity.getWorld().getTileEntity(tileEntity.getPos().offset(direction));
+        TileEntity targetEntity = tileEntity.getLevel().getBlockEntity(tileEntity.getBlockPos().relative(direction));
         IItemHandler inventory = targetEntity != null ? targetEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, direction.getOpposite()).resolve().orElse(null) : null;
         if (inventory == null)
             throw new LuaException("No valid inventory at " + arguments.getString(1));
@@ -129,7 +129,7 @@ public class RsBridgePeripheral extends BasePeripheral {
         Direction direction = Direction.valueOf(arguments.getString(1).toUpperCase(Locale.ROOT));
         int count = stack.getCount();
 
-        TileEntity targetEntity = tileEntity.getWorld().getTileEntity(tileEntity.getPos().offset(direction));
+        TileEntity targetEntity = tileEntity.getLevel().getBlockEntity(tileEntity.getBlockPos().relative(direction));
         IItemHandler inventory = targetEntity != null ? targetEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, direction.getOpposite()).resolve().orElse(null) : null;
         if (inventory == null)
             throw new LuaException("No valid inventory at " + arguments.getString(1));
@@ -138,7 +138,7 @@ public class RsBridgePeripheral extends BasePeripheral {
         int transferableAmount = 0;
 
         for (int i = 0; i < inventory.getSlots(); i++) {
-            if (inventory.getStackInSlot(i).isItemEqual(stack)) {
+            if (inventory.getStackInSlot(i).sameItem(stack)) {
                 if (inventory.getStackInSlot(i).getCount() >= amount) {
                     transferableAmount += amount;
                     getNetwork().insertItem(stack, amount, Action.PERFORM);
@@ -206,7 +206,7 @@ public class RsBridgePeripheral extends BasePeripheral {
         int transferableAmount = 0;
 
         for (int i = 0; i < inventory.getSlots(); i++) {
-            if (inventory.getStackInSlot(i).isItemEqual(stack)) {
+            if (inventory.getStackInSlot(i).sameItem(stack)) {
                 if (inventory.getStackInSlot(i).getCount() >= amount) {
                     transferableAmount += amount;
                     getNetwork().insertItem(stack, amount, Action.PERFORM);
@@ -257,7 +257,7 @@ public class RsBridgePeripheral extends BasePeripheral {
         ItemStack stack = new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation(item)));
         for (ICraftingTask task : getNetwork().getCraftingManager().getTasks()) {
             ItemStack taskStack = task.getRequested().getItem();
-            if (taskStack.isItemEqual(stack)) {
+            if (taskStack.sameItem(stack)) {
                 return true;
             }
         }

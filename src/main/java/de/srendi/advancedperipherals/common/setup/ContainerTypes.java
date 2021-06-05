@@ -12,7 +12,7 @@ public class ContainerTypes {
     public static final RegistryObject<ContainerType<InventoryManagerContainer>> INVENTORY_MANAGER_CONTAINER = Registration.CONTAINER_TYPES
             .register("memory_card_container", () -> IForgeContainerType.create((windowId, inv, data) -> {
                 BlockPos pos = data.readBlockPos();
-                World world = inv.player.getEntityWorld();
+                World world = inv.player.getCommandSenderWorld();
                 return new InventoryManagerContainer(windowId, inv, pos, world);
             }));
 

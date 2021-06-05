@@ -21,7 +21,7 @@ archivesBaseName = 'advancedperipherals'
 println('Java: ' + System.getProperty('java.version') + ' JVM: ' + System.getProperty('java.vm.version') + '(' + System.getProperty('java.vendor') + ') Arch: ' + System.getProperty('os.arch'))
 minecraft {
 
-    mappings channel: 'snapshot', version: "${mappings_version}"
+    mappings channel: 'official', version: '1.16.5'
 
     accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
 
@@ -70,7 +70,6 @@ minecraft {
             workingDirectory project.file('run')
 
             property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-            properties 'mixin.env.disableRefMap': 'true'
             property 'mixin.env.remapRefMap', 'true'
             property 'mixin.env.refMapRemappingFile', "${buildDir}/createSrgToMcp/output.srg"
             property 'forge.logging.console.level', 'debug'
@@ -111,9 +110,9 @@ dependencies {
 
     implementation fg.deobf("org.squiddev:cc-tweaked-1.16.4:${cc_version}")
 
-    implementation fg.deobf("vazkii.botania:Botania:${botania_version}")
+    compileOnly fg.deobf("vazkii.botania:Botania:${botania_version}")
     //Botania needs patchouli to run
-    runtimeOnly fg.deobf("vazkii.patchouli:Patchouli:${patchouli_version}")
+    //runtimeOnly fg.deobf("vazkii.patchouli:Patchouli:${patchouli_version}")
 
     implementation fg.deobf("com.refinedmods:refinedstorage:${rs_version}")
 

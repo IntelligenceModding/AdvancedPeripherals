@@ -23,17 +23,17 @@ import java.util.Optional;
 public abstract class BaseBlockItem extends BlockItem {
 
     public BaseBlockItem(Block blockIn, Properties properties) {
-        super(blockIn, properties.group(AdvancedPeripherals.TAB));
+        super(blockIn, properties.tab(AdvancedPeripherals.TAB));
     }
 
     public BaseBlockItem(Block blockIn) {
-        super(blockIn, new Properties().group(AdvancedPeripherals.TAB));
+        super(blockIn, new Properties().tab(AdvancedPeripherals.TAB));
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
-        super.addInformation(stack, worldIn, tooltip, flagIn);
-        if (!InputMappings.isKeyDown(Minecraft.getInstance().getMainWindow().getHandle(), GLFW.GLFW_KEY_LEFT_CONTROL)) {
+    public void appendHoverText(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
+        super.appendHoverText(stack, worldIn, tooltip, flagIn);
+        if (!InputMappings.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), GLFW.GLFW_KEY_LEFT_CONTROL)) {
             tooltip.add(EnumColor.buildTextComponent(new TranslationTextComponent("item.advancedperipherals.tooltip.hold_ctrl")));
         } else {
             tooltip.add(EnumColor.buildTextComponent(getDescription()));
@@ -47,9 +47,9 @@ public abstract class BaseBlockItem extends BlockItem {
     public abstract ITextComponent getDescription();
 
     @Override
-    public void fillItemGroup(ItemGroup group, NonNullList<ItemStack> items) {
-        super.fillItemGroup(group, items);
-        if (!isInGroup(group))
+    public void fillItemCategory(ItemGroup group, NonNullList<ItemStack> items) {
+        super.fillItemCategory(group, items);
+        if (!allowdedIn(group))
             return;
         if (getTurtleID().isPresent()) {
             items.add(ItemUtil.makeTurtle(ItemUtil.TURTLE_ADVANCED, AdvancedPeripherals.MOD_ID + ":" + getTurtleID().get()));

@@ -27,55 +27,55 @@ public class RedstoneIntegratorTileEntity extends PeripheralTileEntity<RedstoneI
 
     public void updateRedstone(BlockState newState, EnumSet<Direction> updateDirections, boolean doConductedPowerUpdates) {
         Block newBlock = newState.getBlock();
-        if (!net.minecraftforge.event.ForgeEventFactory.onNeighborNotify(world, getPos(), newState, updateDirections, false).isCanceled()) {
+        if (!net.minecraftforge.event.ForgeEventFactory.onNeighborNotify(level, getBlockPos(), newState, updateDirections, false).isCanceled()) {
             for (Direction direction : updateDirections) {
-                BlockPos neighborPos = getPos().offset(direction);
-                boolean doSecondaryNeighborUpdates = doConductedPowerUpdates && world.getBlockState(neighborPos).shouldCheckWeakPower(world, neighborPos, direction);
-                world.neighborChanged(neighborPos, newBlock, getPos());
+                BlockPos neighborPos = getBlockPos().relative(direction);
+                boolean doSecondaryNeighborUpdates = doConductedPowerUpdates && level.getBlockState(neighborPos).shouldCheckWeakPower(level, neighborPos, direction);
+                level.neighborChanged(neighborPos, newBlock, getBlockPos());
                 if (doSecondaryNeighborUpdates)
-                    world.notifyNeighborsOfStateChange(neighborPos, newBlock);
+                    level.updateNeighborsAt(neighborPos, newBlock);
             }
         }
     }
 
     public int getRedstoneInput(Direction direction) {
-        BlockPos neighbourPos = getPos().offset(direction);
-        int power = getWorld().getRedstonePower(neighbourPos, direction);
+        BlockPos neighbourPos = getBlockPos().relative(direction);
+        int power = getLevel().getSignal(neighbourPos, direction);
         if (power >= 15) return power;
 
-        BlockState neighbourState = getWorld().getBlockState(neighbourPos);
+        BlockState neighbourState = getLevel().getBlockState(neighbourPos);
         return neighbourState.getBlock() == Blocks.REDSTONE_WIRE
-                ? Math.max(power, neighbourState.get(RedstoneWireBlock.POWER)) : power;
+                ? Math.max(power, neighbourState.getValue(RedstoneWireBlock.POWER)) : power;
     }
 
     public void setRedstoneOutput(Direction direction, int power) {
-        int old = this.power[direction.getIndex()];
-        this.power[direction.getIndex()] = power;
+        int old = this.power[direction.get3DDataValue()];
+        this.power[direction.get3DDataValue()] = power;
         if (old != power) {
-            if (getWorld().getBlockState(pos.offset(direction)).hasProperty(RedstoneWireBlock.POWER)) {
-                BlockState state = getWorld().getBlockState(pos.offset(direction)).with(RedstoneWireBlock.POWER, power);
-                world.setBlockState(pos.offset(direction), state);
+            if (getLevel().getBlockState(getBlockPos().relative(direction)).hasProperty(RedstoneWireBlock.POWER)) {
+                BlockState state = getLevel().getBlockState(getBlockPos().relative(direction)).setValue(RedstoneWireBlock.POWER, power);
+                level.setBlockAndUpdate(getBlockPos().relative(direction), state);
                 updateRedstone(state, EnumSet.of(direction), true);
-            } else if (getWorld().getBlockState(pos.offset(direction)).hasProperty(RedstoneDiodeBlock.POWERED)) {
-                BlockState state = getWorld().getBlockState(pos.offset(direction)).with(RedstoneDiodeBlock.POWERED, power > 0);
-                world.setBlockState(pos.offset(direction), state);
+            } else if (getLevel().getBlockState(getBlockPos().relative(direction)).hasProperty(RedstoneDiodeBlock.POWERED)) {
+                BlockState state = getLevel().getBlockState(getBlockPos().relative(direction)).setValue(RedstoneDiodeBlock.POWERED, power > 0);
+                level.setBlockAndUpdate(getBlockPos().relative(direction), state);
                 updateRedstone(state, EnumSet.of(direction), true);
             }
-            this.markDirty();
+            this.setChanged();
         }
     }
 
     @Override
-    public void read(BlockState state, CompoundNBT compound) {
+    public void deserializeNBT(BlockState state, CompoundNBT compound) {
         for (Direction direction : Direction.values()) {
             setRedstoneOutput(direction, compound.getInt(direction.name() + "Power"));
         }
-        super.read(state, compound);
+        super.deserializeNBT(state, compound);
     }
 
     @Override
-    public CompoundNBT write(CompoundNBT compound) {
-        super.write(compound);
+    public CompoundNBT save(CompoundNBT compound) {
+        super.save(compound);
         int i = 0;
         for (Direction direction : Direction.values()) {
             compound.putInt(direction.name() + "Power", power[i]);
@@ -86,14 +86,14 @@ public class RedstoneIntegratorTileEntity extends PeripheralTileEntity<RedstoneI
 
     public Direction getDirecton(ComputerSide computerSide) {
         Direction output = Direction.DOWN;
-        if (computerSide == ComputerSide.FRONT) output = getBlockState().get(RedstoneIntegratorBlock.FACING);
+        if (computerSide == ComputerSide.FRONT) output = getBlockState().getValue(RedstoneIntegratorBlock.FACING);
         if (computerSide == ComputerSide.BACK)
-            output = getBlockState().get(RedstoneIntegratorBlock.FACING).getOpposite();
+            output = getBlockState().getValue(RedstoneIntegratorBlock.FACING).getOpposite();
         if (computerSide == ComputerSide.TOP) output = Direction.UP;
         if (computerSide == ComputerSide.BOTTOM) output = Direction.DOWN;
         if (computerSide == ComputerSide.RIGHT)
-            output = getBlockState().get(RedstoneIntegratorBlock.FACING).rotateYCCW();
-        if (computerSide == ComputerSide.LEFT) output = getBlockState().get(RedstoneIntegratorBlock.FACING).rotateY();
+            output = getBlockState().getValue(RedstoneIntegratorBlock.FACING).getCounterClockWise();
+        if (computerSide == ComputerSide.LEFT) output = getBlockState().getValue(RedstoneIntegratorBlock.FACING).getClockWise();
         return output;
     }
 }

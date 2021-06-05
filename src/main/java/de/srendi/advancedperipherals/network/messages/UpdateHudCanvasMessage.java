@@ -31,7 +31,7 @@ public class UpdateHudCanvasMessage {
         CompoundNBT nbt;
         List<ARRenderAction> canvas = new ArrayList<ARRenderAction>();
         try {
-            nbt = CompressedStreamTools.read(streamin, NBTSizeTracker.INFINITE);
+            nbt = CompressedStreamTools.read(streamin, NBTSizeTracker.UNLIMITED);
             ListNBT list = nbt.getList(LIST, NBT.TAG_COMPOUND);
             list.forEach(x -> canvas.add(ARRenderAction.deserialize((CompoundNBT) x)));
         } catch (IOException e) {

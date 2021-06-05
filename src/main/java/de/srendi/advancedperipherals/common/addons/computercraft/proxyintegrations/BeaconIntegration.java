@@ -27,12 +27,12 @@ public class BeaconIntegration extends ProxyIntegration<BeaconTileEntity> {
 
     @LuaFunction
     public final String getPrimaryEffect() {
-        return getTileEntity().primaryEffect == null ? "none" : getTileEntity().primaryEffect.getName();
+        return getTileEntity().primaryPower == null ? "none" : getTileEntity().primaryPower.getDescriptionId();
     }
 
     @LuaFunction
     public final String getSecondaryEffect() {
-        return getTileEntity().secondaryEffect == null ? "none" : getTileEntity().secondaryEffect.getName();
+        return getTileEntity().secondaryPower == null ? "none" : getTileEntity().secondaryPower.getDescriptionId();
     }
 
 }

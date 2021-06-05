@@ -14,7 +14,7 @@ public class NBTUtil {
 
     public static CompoundNBT fromText(String json) {
         try {
-            return json == null ? null : JsonToNBT.getTagFromJson(json);
+            return json == null ? null : JsonToNBT.parseTag(json);
         } catch (CommandSyntaxException ex) {
             AdvancedPeripherals.debug("Could not parse json data to NBT", Level.ERROR);
             ex.printStackTrace();

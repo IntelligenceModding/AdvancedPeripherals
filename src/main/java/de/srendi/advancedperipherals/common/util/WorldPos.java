@@ -21,7 +21,7 @@ public class WorldPos {
         this.x = x;
         this.y = y;
         this.z = z;
-        this.world = world.getDimensionKey();
+        this.world = world.dimension();
     }
 
     public WorldPos(int x, int y, int z, RegistryKey<World> world) {
@@ -35,7 +35,7 @@ public class WorldPos {
         this.x = pos.getX();
         this.y = pos.getY();
         this.z = pos.getZ();
-        this.world = world.getDimensionKey();
+        this.world = world.dimension();
     }
 
     public static WorldPos read(CompoundNBT nbt) {
@@ -45,14 +45,14 @@ public class WorldPos {
         int y = nbt.getInt("y");
         int z = nbt.getInt("z");
         String world = nbt.getString("world");
-        return new WorldPos(x, y, z, RegistryKey.getOrCreateKey(Registry.WORLD_KEY, new ResourceLocation(world)));
+        return new WorldPos(x, y, z, RegistryKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(world)));
     }
 
     public CompoundNBT write(CompoundNBT nbt) {
         nbt.putInt("x", this.x);
         nbt.putInt("y", this.y);
         nbt.putInt("z", this.z);
-        nbt.putString("world", this.world.getLocation().toString());
+        nbt.putString("world", this.world.getRegistryName().toString());
         return nbt;
     }
 
@@ -62,7 +62,7 @@ public class WorldPos {
 
     @Override
     public String toString() {
-        return "WorldPos{x=" + x + ", y=" + y + ", z=" + z + ", world=`" + world.getLocation() + '}';
+        return "WorldPos{x=" + x + ", y=" + y + ", z=" + z + ", world=`" + world.getRegistryName() + '}';
     }
 
     public int getX() {

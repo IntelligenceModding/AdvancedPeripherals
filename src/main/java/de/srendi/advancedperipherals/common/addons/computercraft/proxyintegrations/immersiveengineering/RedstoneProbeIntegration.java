@@ -31,10 +31,10 @@ public class RedstoneProbeIntegration extends ProxyIntegration<ConnectorProbeTil
     @LuaFunction
     public final void setReceivingChannel(DyeColor color) {
         getTileEntity().redstoneChannel = color;
-        getTileEntity().markDirty();
-        GlobalWireNetwork.getNetwork(getTileEntity().getWorld()).getLocalNet(getTileEntity().getPos()).getHandler(RedstoneNetworkHandler.ID, RedstoneNetworkHandler.class).updateValues();
+        getTileEntity().setChanged();
+        GlobalWireNetwork.getNetwork(getTileEntity().getLevel()).getLocalNet(getTileEntity().getBlockPos()).getHandler(RedstoneNetworkHandler.ID, RedstoneNetworkHandler.class).updateValues();
         getTileEntity().markContainingBlockForUpdate(null);
-        getTileEntity().getWorld().addBlockEvent(getTileEntity().getPos(), getTileEntity().getBlockState().getBlock(), 254, 0);
+        getTileEntity().getLevel().blockEvent(getTileEntity().getBlockPos(), getTileEntity().getBlockState().getBlock(), 254, 0);
     }
 
     @LuaFunction
@@ -45,15 +45,15 @@ public class RedstoneProbeIntegration extends ProxyIntegration<ConnectorProbeTil
     @LuaFunction
     public final void setSendingChannel(DyeColor color) {
         getTileEntity().redstoneChannelSending = color;
-        getTileEntity().markDirty();
-        GlobalWireNetwork.getNetwork(getTileEntity().getWorld()).getLocalNet(getTileEntity().getPos()).getHandler(RedstoneNetworkHandler.ID, RedstoneNetworkHandler.class).updateValues();
+        getTileEntity().setChanged();
+        GlobalWireNetwork.getNetwork(getTileEntity().getLevel()).getLocalNet(getTileEntity().getBlockPos()).getHandler(RedstoneNetworkHandler.ID, RedstoneNetworkHandler.class).updateValues();
         getTileEntity().markContainingBlockForUpdate(null);
-        getTileEntity().getWorld().addBlockEvent(getTileEntity().getPos(), getTileEntity().getBlockState().getBlock(), 254, 0);
+        getTileEntity().getLevel().blockEvent(getTileEntity().getBlockPos(), getTileEntity().getBlockState().getBlock(), 254, 0);
     }
 
     @LuaFunction
     public final int getRedstoneForChannel(DyeColor color) {
-        return GlobalWireNetwork.getNetwork(getTileEntity().getWorld()).getLocalNet(getTileEntity().getPos())
+        return GlobalWireNetwork.getNetwork(getTileEntity().getLevel()).getLocalNet(getTileEntity().getBlockPos())
                 .getHandler(RedstoneNetworkHandler.ID, RedstoneNetworkHandler.class).getValue(color.getId());
     }
 }

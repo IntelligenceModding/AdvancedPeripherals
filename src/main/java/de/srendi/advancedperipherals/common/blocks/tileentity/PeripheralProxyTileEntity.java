@@ -28,8 +28,8 @@ public class PeripheralProxyTileEntity extends TileEntity {
     public <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
         if (cap == Capabilities.CAPABILITY_PERIPHERAL) {
             PeripheralProxyBlock block = (PeripheralProxyBlock) getBlockState().getBlock();
-            if (block.getTileEntityInFront(getWorld(), getPos()) != null) {
-                TileEntity tileEntity = block.getTileEntityInFront(getWorld(), getPos());
+            if (block.getTileEntityInFront(getLevel(), getBlockPos()) != null) {
+                TileEntity tileEntity = block.getTileEntityInFront(getLevel(), getBlockPos());
                 AdvancedPeripherals.debug("Tried to wrap " + tileEntity);
                 if (ProxyIntegrationRegistry.getIntegration(tileEntity) != null) {
                     integration = ProxyIntegrationRegistry.getIntegration(tileEntity);

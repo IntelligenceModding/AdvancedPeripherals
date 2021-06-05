@@ -49,19 +49,19 @@ public class EnvironmentDetectorPeripheral extends BasePeripheral {
 
     @LuaFunction(mainThread = true)
     public final int getSkyLightLevel() {
-        return getWorld().getLightFor(LightType.SKY, getPos().add(0, 1, 0));
+        return getWorld().getBrightness(LightType.SKY, getPos().offset(0, 1, 0));
     }
 
     @LuaFunction(mainThread = true)
     public final int getBlockLightLevel() {
-        return getWorld().getLightFor(LightType.BLOCK, getPos().add(0, 1, 0));
+        return getWorld().getBrightness(LightType.BLOCK, getPos().offset(0, 1, 0));
     }
 
     @LuaFunction(mainThread = true)
     public final int getDayLightLevel() {
         World world = getWorld();
-        int i = world.getLightFor(LightType.SKY, getPos().add(0, 1, 0)) - world.getSkylightSubtracted();
-        float f = world.getCelestialAngleRadians(1.0F);
+        int i = world.getBrightness(LightType.SKY, getPos().offset(0, 1, 0)) - world.getSkyDarken();
+        float f = world.getSunAngle(1.0F);
         if (i > 0) {
             float f1 = f < (float) Math.PI ? 0.0F : ((float) Math.PI * 2F);
             f = f + (f1 - f) * 0.2F;
@@ -79,33 +79,33 @@ public class EnvironmentDetectorPeripheral extends BasePeripheral {
     @LuaFunction(mainThread = true)
     public final boolean isSlimeChunk() {
         ChunkPos chunkPos = new ChunkPos(getPos());
-        return (SharedSeedRandom.createSlimeChunkSpawningSeed(chunkPos.x, chunkPos.z, ((ISeedReader) getWorld()).getSeed(), 987234911L).nextInt(10) == 0);
+        return (SharedSeedRandom.seedSlimeChunk(chunkPos.x, chunkPos.z, ((ISeedReader) getWorld()).getSeed(), 987234911L).nextInt(10) == 0);
     }
 
     @LuaFunction(mainThread = true)
     public final String getDimensionProvider() {
-        return getWorld().getDimensionKey().getLocation().getNamespace();
+        return getWorld().dimension().getRegistryName().getNamespace();
     }
 
     @LuaFunction(mainThread = true)
     public final String getDimensionName() {
-        return getWorld().getDimensionKey().getLocation().getPath();
+        return getWorld().dimension().getRegistryName().getPath();
     }
 
     @LuaFunction(mainThread = true)
     public final String getDimensionPaN() {
-        return getWorld().getDimensionKey().getLocation().getNamespace() + ":" + getWorld().getDimensionKey().getLocation().getPath();
+        return getWorld().dimension().getRegistryName().toString();
     }
 
     @LuaFunction(mainThread = true)
     public final boolean isDimension(String dimension) {
-        return getWorld().getDimensionKey().getLocation().getPath().equals(dimension);
+        return getWorld().dimension().getRegistryName().getPath().equals(dimension);
     }
 
     @LuaFunction(mainThread = true)
     public final Set<String> listDimensions() {
         Set<String> dimensions = new HashSet<>();
-        ServerLifecycleHooks.getCurrentServer().getWorlds().forEach(serverWorld -> dimensions.add(serverWorld.getDimensionKey().getLocation().getPath()));
+        ServerLifecycleHooks.getCurrentServer().getAllLevels().forEach(serverWorld -> dimensions.add(serverWorld.dimension().getRegistryName().getPath()));
         return dimensions;
     }
 
@@ -122,7 +122,7 @@ public class EnvironmentDetectorPeripheral extends BasePeripheral {
 
     private Map<Integer, String> getCurrentMoonPhase() {
         Map<Integer, String> moon = new HashMap<>();
-        if (getWorld().getDimensionKey().getLocation().getPath().equals("overworld")) {
+        if (getWorld().dimension().getRegistryName().getPath().equals("overworld")) {
             switch (getWorld().getMoonPhase()) {
                 case 0:
                     moon.put(0, "Full moon");
@@ -180,17 +180,17 @@ public class EnvironmentDetectorPeripheral extends BasePeripheral {
 
     @LuaFunction(mainThread = true)
     public final boolean isRaining() {
-        return getWorld().getRainStrength(0) > 0;
+        return getWorld().getRainLevel(0) > 0;
     }
 
     @LuaFunction(mainThread = true)
     public final boolean isThunder() {
-        return getWorld().getThunderStrength(0) > 0;
+        return getWorld().getRainLevel(0) > 0;
     }
 
     @LuaFunction(mainThread = true)
     public final boolean isSunny() {
-        return getWorld().getThunderStrength(0) < 1 && getWorld().getRainStrength(0) < 1;
+        return getWorld().getThunderLevel(0) < 1 && getWorld().getRainLevel(0) < 1;
     }
 
     @LuaFunction(mainThread = true)

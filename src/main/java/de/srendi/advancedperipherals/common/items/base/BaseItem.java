@@ -28,27 +28,27 @@ import java.util.Optional;
 public abstract class BaseItem extends Item {
 
     public BaseItem(Properties properties) {
-        super(properties.group(AdvancedPeripherals.TAB));
+        super(properties.tab(AdvancedPeripherals.TAB));
     }
 
     @Override
-    public ActionResult<ItemStack> onItemRightClick(World worldIn, PlayerEntity playerIn, Hand handIn) {
-        if (worldIn.isRemote)
-            return new ActionResult<>(ActionResultType.PASS, playerIn.getHeldItem(handIn));
+    public ActionResult<ItemStack> use(World worldIn, PlayerEntity playerIn, Hand handIn) {
+        if (worldIn.isClientSide)
+            return new ActionResult<>(ActionResultType.PASS, playerIn.getItemInHand(handIn));
         if (this instanceof IInventoryItem) {
             ServerPlayerEntity serverPlayerEntity = (ServerPlayerEntity) playerIn;
-            ItemStack stack = playerIn.getHeldItem(handIn);
+            ItemStack stack = playerIn.getItemInHand(handIn);
             NetworkHooks.openGui(serverPlayerEntity, ((IInventoryItem) this).createContainer(playerIn, stack), buf -> {
-                buf.writeItemStack(stack);
+                buf.writeItem(stack);
             });
         }
-        return super.onItemRightClick(worldIn, playerIn, handIn);
+        return super.use(worldIn, playerIn, handIn);
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
-        super.addInformation(stack, worldIn, tooltip, flagIn);
-        if (!InputMappings.isKeyDown(Minecraft.getInstance().getMainWindow().getHandle(), GLFW.GLFW_KEY_LEFT_CONTROL)) {
+    public void appendHoverText(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
+        super.appendHoverText(stack, worldIn, tooltip, flagIn);
+        if (!InputMappings.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), GLFW.GLFW_KEY_LEFT_CONTROL)) {
             tooltip.add(EnumColor.buildTextComponent(new TranslationTextComponent("item.advancedperipherals.tooltip.hold_ctrl")));
         } else {
             tooltip.add(EnumColor.buildTextComponent(getDescription()));
@@ -62,9 +62,9 @@ public abstract class BaseItem extends Item {
     public abstract ITextComponent getDescription();
 
     @Override
-    public void fillItemGroup(ItemGroup group, NonNullList<ItemStack> items) {
-        super.fillItemGroup(group, items);
-        if (!isInGroup(group))
+    public void fillItemCategory(ItemGroup group, NonNullList<ItemStack> items) {
+        super.fillItemCategory(group, items);
+        if (!allowdedIn(group))
             return;
         if (getTurtleID().isPresent()) {
             items.add(ItemUtil.makeTurtle(ItemUtil.TURTLE_ADVANCED, AdvancedPeripherals.MOD_ID + ":" + getTurtleID().get()));

@@ -9,7 +9,7 @@ import java.util.Optional;
 public class ComputerToolItem extends BaseItem {
 
     public ComputerToolItem() {
-        super(new Properties().maxStackSize(1));
+        super(new Properties().stacksTo(1));
     }
 
     @Override

@@ -11,26 +11,27 @@ public abstract class BaseItemScreen<T extends BaseItemContainer> extends Contai
 
     public BaseItemScreen(T screenContainer, PlayerInventory inv, ITextComponent titleIn) {
         super(screenContainer, inv, titleIn);
-        xSize = getSizeX();
-        ySize = getSizeY();
+
+        imageWidth = getSizeX();
+        imageHeight = getSizeY();
     }
 
     @Override
     public void render(MatrixStack matrixStack, int x, int y, float partialTicks) {
         renderBackground(matrixStack);
         super.render(matrixStack, x, y, partialTicks);
-        renderHoveredTooltip(matrixStack, x, y);
+        renderTooltip(matrixStack, x, y);
     }
 
     @Override
-    protected void drawGuiContainerBackgroundLayer(MatrixStack matrixStack, float partialTicks, int x, int y) {
+    protected void renderBg(MatrixStack matrixStack, float partialTicks, int x, int y) {
         RenderSystem.color4f(1F, 1F, 1F, 1F);
-        minecraft.getTextureManager().bindTexture(getTexture());
+        minecraft.getTextureManager().bind(getTexture());
 
-        int xPos = (width - xSize) / 2;
-        int yPos = (height - ySize) / 2;
+        int xPos = (width - imageWidth) / 2;
+        int yPos = (height - imageHeight) / 2;
 
-        blit(matrixStack, xPos, yPos, 0, 0, xSize, ySize);
+        blit(matrixStack, xPos, yPos, 0, 0, imageWidth, imageHeight);
     }
 
     public abstract int getSizeX();

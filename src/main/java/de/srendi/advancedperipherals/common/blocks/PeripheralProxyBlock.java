@@ -23,7 +23,7 @@ public class PeripheralProxyBlock extends BaseTileEntityBlock {
     public static final DirectionProperty FACING = DirectionalBlock.FACING;
 
     public PeripheralProxyBlock() {
-        this.setDefaultState(this.stateContainer.getBaseState().with(FACING, Direction.SOUTH));
+        this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.SOUTH));
     }
 
     @Nullable
@@ -33,27 +33,28 @@ public class PeripheralProxyBlock extends BaseTileEntityBlock {
     }
 
     public BlockState rotate(BlockState state, Rotation rot) {
-        return state.with(FACING, rot.rotate(state.get(FACING)));
+        return state.setValue(FACING, rot.rotate(state.getValue(FACING)));
     }
 
     public BlockState mirror(BlockState state, Mirror mirrorIn) {
-        return state.rotate(mirrorIn.toRotation(state.get(FACING)));
+        return state.rotate(mirrorIn.getRotation(state.getValue(FACING)));
     }
 
-    protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
+    @Override
+    protected void createBlockStateDefinition(StateContainer.Builder<Block, BlockState> builder) {
         builder.add(FACING);
     }
 
     @Nullable
     @Override
     public BlockState getStateForPlacement(BlockItemUseContext context) {
-        return this.getDefaultState().with(FACING, context.getNearestLookingDirection().getOpposite().getOpposite());
+        return this.defaultBlockState().setValue(FACING, context.getNearestLookingDirection().getOpposite().getOpposite());
     }
 
     public TileEntity getTileEntityInFront(World world, BlockPos pos) {
         AdvancedPeripherals.debug("Tried to get tile entity " +
-                world.getTileEntity(pos.offset(world.getBlockState(pos).get(FACING))) + " at position " + pos);
-        return world.getTileEntity(pos.offset(world.getBlockState(pos).get(FACING)));
+                world.getBlockEntity(pos.relative(world.getBlockState(pos).getValue(FACING))) + " at position " + pos);
+        return world.getBlockEntity(pos.relative(world.getBlockState(pos).getValue(FACING)));
     }
 
 }

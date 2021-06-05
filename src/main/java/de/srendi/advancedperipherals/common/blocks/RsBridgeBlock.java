@@ -27,16 +27,16 @@ public class RsBridgeBlock extends BaseTileEntityBlock {
     }
 
     @Override
-    public void onBlockPlacedBy(World worldIn, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
+    public void setPlacedBy(World worldIn, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
         if (!ModList.get().isLoaded("refinedstorage"))
             return;
-        super.onBlockPlacedBy(worldIn, pos, state, placer, stack);
+        super.setPlacedBy(worldIn, pos, state, placer, stack);
     }
 
     @Override
-    public void onPlayerDestroy(IWorld worldIn, BlockPos pos, BlockState state) {
+    public void destroy(IWorld worldIn, BlockPos pos, BlockState state) {
         if (!ModList.get().isLoaded("refinedstorage"))
             return;
-        super.onPlayerDestroy(worldIn, pos, state);
+        super.destroy(worldIn, pos, state);
     }
 }

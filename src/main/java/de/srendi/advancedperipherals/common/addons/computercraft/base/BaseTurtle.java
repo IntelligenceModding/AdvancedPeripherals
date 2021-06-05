@@ -59,7 +59,7 @@ public abstract class BaseTurtle<T extends BasePeripheral> extends AbstractTurtl
 
     @Override
     public void update(@NotNull ITurtleAccess turtle, @NotNull TurtleSide side) {
-        if (!turtle.getWorld().isRemote) {
+        if (!turtle.getWorld().isClientSide) {
             IPeripheral turtlePeripheral = turtle.getPeripheral(side);
             this.turtle = turtle;
             if (turtlePeripheral instanceof EnvironmentDetectorPeripheral)

@@ -20,11 +20,11 @@ public class InventoryManagerBlock extends BaseTileEntityBlock {
     }
 
     @Override
-    public void onReplaced(BlockState state, World worldIn, BlockPos pos, BlockState newState, boolean isMoving) {
+    public void onRemove(BlockState state, World worldIn, BlockPos pos, BlockState newState, boolean isMoving) {
         if (state.getBlock() != newState.getBlock()) {
-            InventoryManagerTileEntity tileEntity = (InventoryManagerTileEntity) worldIn.getTileEntity(pos);
-            InventoryHelper.dropInventoryItems(worldIn, pos, tileEntity);
-            super.onReplaced(state, worldIn, pos, newState, isMoving);
+            InventoryManagerTileEntity tileEntity = (InventoryManagerTileEntity) worldIn.getBlockEntity(pos);
+            InventoryHelper.dropContents(worldIn, pos, tileEntity);
+            super.onRemove(state, worldIn, pos, newState, isMoving);
         }
     }
 }

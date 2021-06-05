@@ -36,7 +36,7 @@ public class AdvancedPeripherals {
     public static final ItemGroup TAB = new ItemGroup("advancedperipheralstab") {
 
         @Override
-        public ItemStack createIcon() {
+        public ItemStack makeIcon() {
             return new ItemStack(Blocks.CHAT_BOX.get());
         }
     };

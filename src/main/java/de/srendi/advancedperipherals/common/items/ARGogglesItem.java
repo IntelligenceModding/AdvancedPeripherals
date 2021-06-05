@@ -42,7 +42,7 @@ public class ARGogglesItem extends ArmorItem {
 
     public ARGogglesItem() {
         super(ArmorMaterial.LEATHER, EquipmentSlotType.HEAD,
-                new Properties().group(AdvancedPeripherals.TAB).maxStackSize(1));
+                new Properties().tab(AdvancedPeripherals.TAB).stacksTo(1));
     }
 
     @OnlyIn(Dist.CLIENT)
@@ -53,12 +53,12 @@ public class ARGogglesItem extends ArmorItem {
                 return;
             BlockPos pos = new BlockPos(arr[0], arr[1], arr[2]);
             String dimensionKey = stack.getTag().getString(CONTROLLER_WORLD);
-            World world = player.world;
-            if (!dimensionKey.equals(world.getDimensionKey().toString())) {
+            World world = player.level;
+            if (!dimensionKey.equals(world.dimension().toString())) {
                 MNetwork.sendToServer(new RequestHudCanvasMessage(pos, dimensionKey));
                 return;
             }
-            TileEntity te = world.getTileEntity(pos);
+            TileEntity te = world.getBlockEntity(pos);
             if (!(te instanceof ARControllerTileEntity)) {
                 // If distance to ARController is larger than view distance
                 MNetwork.sendToServer(new RequestHudCanvasMessage(pos, dimensionKey));
@@ -75,10 +75,10 @@ public class ARGogglesItem extends ArmorItem {
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip,
+    public void appendHoverText(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip,
                                ITooltipFlag flagIn) {
-        super.addInformation(stack, worldIn, tooltip, flagIn);
-        if (!InputMappings.isKeyDown(Minecraft.getInstance().getMainWindow().getHandle(), GLFW.GLFW_KEY_LEFT_CONTROL)) {
+        super.appendHoverText(stack, worldIn, tooltip, flagIn);
+        if (!InputMappings.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), GLFW.GLFW_KEY_LEFT_CONTROL)) {
             tooltip.add(EnumColor
                     .buildTextComponent(new TranslationTextComponent("item.advancedperipherals.tooltip.hold_ctrl")));
         } else {
@@ -113,27 +113,27 @@ public class ARGogglesItem extends ArmorItem {
     }
 
     @Override
-    public ActionResultType onItemUse(ItemUseContext context) {
-        BlockPos blockpos = context.getPos();
-        World world = context.getWorld();
-        if (!world.getBlockState(blockpos).matchesBlock(Blocks.AR_CONTROLLER.get())) {
-            return super.onItemUse(context);
+    public ActionResultType useOn(ItemUseContext context) {
+        BlockPos blockpos = context.getClickedPos();
+        World world = context.getLevel();
+        if (!world.getBlockState(blockpos).is(Blocks.AR_CONTROLLER.get())) {
+            return super.useOn(context);
         } else {
-            TileEntity entity = world.getTileEntity(blockpos);
+            TileEntity entity = world.getBlockEntity(blockpos);
             if (!(entity instanceof ARControllerTileEntity))
-                return super.onItemUse(context);
+                return super.useOn(context);
             ARControllerTileEntity controller = (ARControllerTileEntity) entity;
-            if (!context.getWorld().isRemote) {
-                ItemStack item = context.getItem();
+            if (!context.getLevel().isClientSide) {
+                ItemStack item = context.getItemInHand();
                 if (!item.hasTag())
                     item.setTag(new CompoundNBT());
                 CompoundNBT nbt = item.getTag();
-                BlockPos pos = controller.getPos();
+                BlockPos pos = controller.getBlockPos();
                 nbt.putIntArray(CONTROLLER_POS, new int[]{pos.getX(), pos.getY(), pos.getZ()});
-                nbt.putString(CONTROLLER_WORLD, controller.getWorld().getDimensionKey().toString());
+                nbt.putString(CONTROLLER_WORLD, controller.getLevel().dimension().toString());
                 item.setTag(nbt);
             }
-            context.getPlayer().sendStatusMessage(new TranslationTextComponent("text.advancedperipherals.linked_goggles"), true);
+            context.getPlayer().displayClientMessage(new TranslationTextComponent("text.advancedperipherals.linked_goggles"), true);
             return ActionResultType.SUCCESS;
         }
     }

@@ -10,7 +10,7 @@ public class BlockLootTables extends net.minecraft.data.loot.BlockLootTables {
     protected void addTables() {
         Registration.BLOCKS.getEntries().stream()
                 .map(RegistryObject::get)
-                .forEach(this::registerDropSelfLootTable);
+                .forEach(this::dropSelf);
     }
 
     @Override

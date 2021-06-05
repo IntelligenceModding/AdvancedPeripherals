@@ -48,15 +48,15 @@ public final class ARRenderAction implements INBTSerializable<CompoundNBT> {
         int[] i = intArgs;
         switch (type) {
             case DrawCenteredString:
-                ARRenderHelper.drawCenteredString(matrixStack, mc.fontRenderer, stringArg, relativeX(i[0], w),
+                ARRenderHelper.drawCenteredString(matrixStack, mc.font, stringArg, relativeX(i[0], w),
                         relativeY(i[1], h), i[2]);
                 break;
             case DrawString:
-                ARRenderHelper.drawString(matrixStack, mc.fontRenderer, stringArg, relativeX(i[0], w),
+                ARRenderHelper.drawString(matrixStack, mc.font, stringArg, relativeX(i[0], w),
                         relativeY(i[1], h), i[2]);
                 break;
             case DrawRightboundString:
-                ARRenderHelper.drawRightboundString(matrixStack, mc.fontRenderer, stringArg, relativeX(i[0], w),
+                ARRenderHelper.drawRightboundString(matrixStack, mc.font, stringArg, relativeX(i[0], w),
                         relativeY(i[1], h), i[2]);
                 break;
             case Fill:

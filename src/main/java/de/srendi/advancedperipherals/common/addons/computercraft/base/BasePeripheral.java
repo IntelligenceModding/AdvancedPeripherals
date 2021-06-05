@@ -87,21 +87,21 @@ public abstract class BasePeripheral implements IPeripheral {
 
     protected BlockPos getPos() {
         if (tileEntity != null)
-            return tileEntity.getPos();
+            return tileEntity.getBlockPos();
         if (turtle != null)
             return turtle.getPosition();
         if (entity != null)
-            return entity.getPosition();
+            return entity.blockPosition();
         return null;
     }
 
     protected World getWorld() {
         if (tileEntity != null)
-            return tileEntity.getWorld();
+            return tileEntity.getLevel();
         if (turtle != null)
             return turtle.getWorld();
         if (entity != null)
-            return entity.getEntityWorld();
+            return entity.getCommandSenderWorld();
         return null;
     }
 

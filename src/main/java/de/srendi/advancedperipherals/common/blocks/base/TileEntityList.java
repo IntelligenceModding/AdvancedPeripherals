@@ -1,5 +1,6 @@
 package de.srendi.advancedperipherals.common.blocks.base;
 
+import com.google.common.collect.Lists;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.util.WorldPos;
 import net.minecraft.nbt.CompoundNBT;
@@ -15,6 +16,7 @@ import net.minecraftforge.fml.server.ServerLifecycleHooks;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
@@ -28,24 +30,24 @@ public class TileEntityList extends WorldSavedData {
     }
 
     public static TileEntityList get(World world) {
-        if (!world.isRemote) {
-            DimensionSavedDataManager storage = ServerLifecycleHooks.getCurrentServer().func_241755_D_().getSavedData();
-            return storage.getOrCreate(TileEntityList::new, AdvancedPeripherals.MOD_ID);
+        if (!world.isClientSide) {
+            DimensionSavedDataManager storage = ServerLifecycleHooks.getCurrentServer().overworld().getDataStorage();
+            return storage.computeIfAbsent(TileEntityList::new, AdvancedPeripherals.MOD_ID);
         } else {
             return clientInstance;
         }
     }
 
     public static World getWorldFromKey(RegistryKey<World> key) {
-        for (ServerWorld serverWorld : ServerLifecycleHooks.getCurrentServer().getWorlds()) {
-            if (serverWorld.getDimensionKey().getLocation().equals(key.getLocation()))
+        for (ServerWorld serverWorld : ServerLifecycleHooks.getCurrentServer().getAllLevels()) {
+            if (serverWorld.dimension().getRegistryName().equals(key.getRegistryName()))
                 return serverWorld;
         }
         return null;
     }
 
     @Override
-    public void read(@Nonnull CompoundNBT nbt) {
+    public void load(@Nonnull CompoundNBT nbt) {
         this.tileEntities.clear();
         if (nbt.contains("advancedperipheralstileentities", Constants.NBT.TAG_LIST)) {
             ListNBT list = nbt.getList("advancedperipheralstileentities", Constants.NBT.TAG_COMPOUND);
@@ -55,7 +57,7 @@ public class TileEntityList extends WorldSavedData {
                 if (pos != null) {
                     this.tileEntities.add(pos);
                 } else {
-                    this.markDirty();
+                    this.setDirty();
                 }
             }
         }
@@ -63,7 +65,7 @@ public class TileEntityList extends WorldSavedData {
 
     @Nonnull
     @Override
-    public CompoundNBT write(@Nonnull CompoundNBT nbt) {
+    public CompoundNBT save(@Nonnull CompoundNBT nbt) {
         ListNBT list = new ListNBT();
         for (WorldPos entry : this.tileEntities) {
             CompoundNBT entryNBT = new CompoundNBT();
@@ -75,19 +77,19 @@ public class TileEntityList extends WorldSavedData {
 
     public void setTileEntity(World world, WorldPos pos) {
         clearTileEntities();
-        if (!world.isRemote) {
+        if (!world.isClientSide) {
             if (tileEntities.contains(pos)) {
                 tileEntities.remove(pos);
             } else {
                 this.tileEntities.add(pos);
             }
         }
-        this.markDirty();
+        this.setDirty();
     }
 
     public void setTileEntity(World world, WorldPos pos, boolean force) {
         clearTileEntities();
-        if (!world.isRemote) {
+        if (!world.isClientSide) {
             if (force) {
                 if (!tileEntities.contains(pos))
                     tileEntities.add(pos);
@@ -95,18 +97,18 @@ public class TileEntityList extends WorldSavedData {
                 tileEntities.remove(pos);
             }
         }
-        this.markDirty();
+        this.setDirty();
     }
 
     public List<TileEntity> getTileEntities() {
         List<TileEntity> list = new ArrayList<>();
         for (WorldPos next : new ArrayList<>(tileEntities)) {
             World currentWorld = getWorldFromKey(next.getWorld());
-            if (currentWorld.isAirBlock(next.getBlockPos()) || !currentWorld.isBlockLoaded(next.getBlockPos()))
+            if (currentWorld.isEmptyBlock(next.getBlockPos()) || !currentWorld.isLoaded(next.getBlockPos()))
                 setTileEntity(currentWorld, next, false); //No block here anymore.
-            if (currentWorld.getTileEntity(next.getBlockPos()) == null)
+            if (currentWorld.getBlockEntity(next.getBlockPos()) == null)
                 setTileEntity(currentWorld, next, false); //No tile entity here anymore.
-            list.add(currentWorld.getTileEntity(next.getBlockPos()));
+            list.add(currentWorld.getBlockEntity(next.getBlockPos()));
         }
         return list;
     }
@@ -114,10 +116,10 @@ public class TileEntityList extends WorldSavedData {
     public void clearTileEntities() {
         for (WorldPos next : new ArrayList<>(tileEntities)) {
             World currentWorld = getWorldFromKey(next.getWorld());
-            if (currentWorld.isAirBlock(next.getBlockPos()) || !currentWorld.isBlockLoaded(next.getBlockPos()))
+            if (currentWorld.isEmptyBlock(next.getBlockPos()) || !currentWorld.isLoaded(next.getBlockPos()))
                 if (tileEntities.contains(next))
                     tileEntities.remove(next);
-            if (currentWorld.getTileEntity(next.getBlockPos()) == null)
+            if (currentWorld.getBlockEntity(next.getBlockPos()) == null)
                 if (tileEntities.contains(next))
                     tileEntities.remove(next);
         }

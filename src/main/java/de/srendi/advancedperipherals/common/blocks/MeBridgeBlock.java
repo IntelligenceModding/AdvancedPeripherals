@@ -38,20 +38,20 @@ public class MeBridgeBlock extends BaseTileEntityBlock {
     }
 
     @Override
-    public void onBlockPlacedBy(World worldIn, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
+    public void setPlacedBy(World worldIn, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
         if (!ModList.get().isLoaded("appliedenergistics2"))
             return;
-        meBridge = (MeBridgeTileEntity) worldIn.getTileEntity(pos);
+        meBridge = (MeBridgeTileEntity) worldIn.getBlockEntity(pos);
         if (meBridge == null || !(placer instanceof PlayerEntity))
             return;
-        super.onBlockPlacedBy(worldIn, pos, state, placer, stack);
+        super.setPlacedBy(worldIn, pos, state, placer, stack);
         meBridge.setPlayer((PlayerEntity) placer);
     }
 
     @Override
-    public void onPlayerDestroy(IWorld worldIn, BlockPos pos, BlockState state) {
+    public void destroy(IWorld worldIn, BlockPos pos, BlockState state) {
         if (!ModList.get().isLoaded("appliedenergistics2"))
             return;
-        super.onPlayerDestroy(worldIn, pos, state);
+        super.destroy(worldIn, pos, state);
     }
 }

@@ -63,7 +63,7 @@ public class MeBridgeTileEntity extends PeripheralTileEntity<MeBridgePeripheral>
 
     @Override
     public void tick() {
-        if (!this.world.isRemote) {
+        if (!this.level.isClientSide) {
             if (!initialized) {
                 if (AppEngApi.INSTANCE.getApi() != null) {
                     node = AppEngApi.INSTANCE.getApi().grid().createGridNode(this);

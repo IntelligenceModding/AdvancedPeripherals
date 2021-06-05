@@ -9,7 +9,7 @@ import java.util.Optional;
 public class ChunkControllerItem extends BaseItem {
 
     public ChunkControllerItem() {
-        super(new Properties().maxStackSize(64));
+        super(new Properties().stacksTo(16));
     }
 
     @Override

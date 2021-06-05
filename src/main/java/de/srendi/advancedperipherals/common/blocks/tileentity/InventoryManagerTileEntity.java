@@ -39,7 +39,7 @@ public class InventoryManagerTileEntity extends PeripheralTileEntity<InventoryMa
     }
 
     @Override
-    public boolean canInsertItem(int index, ItemStack itemStackIn, @Nullable Direction direction) {
+    public boolean canPlaceItemThroughFace(int index, ItemStack itemStackIn, @Nullable Direction direction) {
         return itemStackIn.getItem() instanceof MemoryCardItem;
     }
 

@@ -62,7 +62,7 @@ public abstract class PeripheralTileEntity<T extends BasePeripheral> extends Loc
             }
         }
 
-        if (cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && !removed && direction != null && this instanceof IInventoryBlock) {
+        if (cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && !remove && direction != null && this instanceof IInventoryBlock) {
             return handler.cast();
         }
         return super.getCapability(cap, direction);
@@ -88,16 +88,16 @@ public abstract class PeripheralTileEntity<T extends BasePeripheral> extends Loc
     }*/
 
     @Override
-    public CompoundNBT write(CompoundNBT compound) {
-        super.write(compound);
+    public CompoundNBT save(CompoundNBT compound) {
+        super.save(compound);
         ItemStackHelper.saveAllItems(compound, items);
         return compound;
     }
 
     @Override
-    public void read(BlockState state, CompoundNBT compound) {
+    public void deserializeNBT(BlockState state, CompoundNBT compound) {
         ItemStackHelper.loadAllItems(compound, items);
-        super.read(state, compound);
+        super.deserializeNBT(state, compound);
     }
 
     @Override
@@ -113,7 +113,7 @@ public abstract class PeripheralTileEntity<T extends BasePeripheral> extends Loc
 
     @Override
     protected Container createMenu(int id, @NotNull PlayerInventory player) {
-        return this instanceof IInventoryBlock ? ((IInventoryBlock<?>) this).createContainer(id, player, pos, world) : null;
+        return this instanceof IInventoryBlock ? ((IInventoryBlock<?>) this).createContainer(id, player, worldPosition, level) : null;
     }
 
     @Override
@@ -122,17 +122,17 @@ public abstract class PeripheralTileEntity<T extends BasePeripheral> extends Loc
     }
 
     @Override
-    public boolean canInsertItem(int index, ItemStack itemStackIn, @Nullable Direction direction) {
+    public boolean canPlaceItemThroughFace(int index, ItemStack itemStackIn, @Nullable Direction direction) {
         return this instanceof IInventoryBlock;
     }
 
     @Override
-    public boolean canExtractItem(int index, ItemStack stack, Direction direction) {
+    public boolean canTakeItemThroughFace(int index, ItemStack stack, Direction direction) {
         return this instanceof IInventoryBlock;
     }
 
     @Override
-    public int getSizeInventory() {
+    public int getContainerSize() {
         return items.size();
     }
 
@@ -145,9 +145,10 @@ public abstract class PeripheralTileEntity<T extends BasePeripheral> extends Loc
         return false;
     }
 
+
     @NotNull
     @Override
-    public ItemStack getStackInSlot(int index) {
+    public ItemStack getItem(int index) {
         if (index < 0 || index >= items.size()) {
             return ItemStack.EMPTY;
         }
@@ -156,31 +157,31 @@ public abstract class PeripheralTileEntity<T extends BasePeripheral> extends Loc
 
     @NotNull
     @Override
-    public ItemStack decrStackSize(int index, int count) {
-        return ItemStackHelper.getAndSplit(items, index, count);
+    public ItemStack removeItem(int index, int count) {
+        return ItemStackHelper.removeItem(items, index, count);
     }
 
     @NotNull
     @Override
-    public ItemStack removeStackFromSlot(int index) {
-        return ItemStackHelper.getAndRemove(items, index);
+    public ItemStack removeItemNoUpdate(int index) {
+        return ItemStackHelper.takeItem(items, index);
     }
 
     @Override
-    public void setInventorySlotContents(int index, ItemStack stack) {
+    public void setItem(int index, ItemStack stack) {
         items.set(index, stack);
-        if (stack.getCount() > getInventoryStackLimit()) {
-            stack.setCount(getInventoryStackLimit());
+        if (stack.getCount() > getMaxStackSize()) {
+            stack.setCount(getMaxStackSize());
         }
     }
 
     @Override
-    public boolean isUsableByPlayer(PlayerEntity player) {
+    public boolean stillValid(PlayerEntity player) {
         return true;
     }
 
     @Override
-    public void clear() {
+    public void clearContent() {
         items.clear();
     }
 }

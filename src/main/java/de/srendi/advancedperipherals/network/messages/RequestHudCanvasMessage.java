@@ -22,21 +22,21 @@ public class RequestHudCanvasMessage {
 
     public static RequestHudCanvasMessage decode(PacketBuffer buf) {
         BlockPos blockPos = buf.readBlockPos();
-        String dimensionKey = buf.readString(Short.MAX_VALUE);
+        String dimensionKey = buf.readUtf(Short.MAX_VALUE);
         return new RequestHudCanvasMessage(blockPos, dimensionKey);
     }
 
     public static void encode(RequestHudCanvasMessage mes, PacketBuffer buf) {
         buf.writeBlockPos(mes.getBlockPos());
-        buf.writeString(mes.getDimensionKey(), Short.MAX_VALUE);
+        buf.writeUtf(mes.getDimensionKey(), Short.MAX_VALUE);
     }
 
     public static void handle(RequestHudCanvasMessage mes, Supplier<NetworkEvent.Context> cont) {
         cont.get().enqueueWork(() -> {
-            Iterable<ServerWorld> worlds = cont.get().getSender().getServer().getWorlds();
+            Iterable<ServerWorld> worlds = cont.get().getSender().getServer().getAllLevels();
             for (ServerWorld world : worlds) {
-                if (world.getDimensionKey().toString().equals(mes.getDimensionKey())) {
-                    TileEntity te = world.getTileEntity(mes.getBlockPos());
+                if (world.dimension().toString().equals(mes.getDimensionKey())) {
+                    TileEntity te = world.getBlockEntity(mes.getBlockPos());
                     if (!(te instanceof ARControllerTileEntity))
                         return;
                     ARControllerTileEntity controller = (ARControllerTileEntity) te;

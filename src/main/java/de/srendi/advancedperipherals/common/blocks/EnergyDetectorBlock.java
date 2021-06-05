@@ -20,7 +20,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class EnergyDetectorBlock extends BaseTileEntityBlock {
 
-    public static final DirectionProperty FACING = HorizontalBlock.HORIZONTAL_FACING;
+    public static final DirectionProperty FACING = HorizontalBlock.FACING;
 
     @Nullable
     @Override
@@ -30,15 +30,16 @@ public class EnergyDetectorBlock extends BaseTileEntityBlock {
 
     @Override
     public BlockState rotate(BlockState state, IWorld world, BlockPos pos, Rotation direction) {
-        return state.with(FACING, direction.rotate(state.get(FACING)));
+        return state.setValue(FACING, direction.rotate(state.getValue(FACING)));
     }
 
     @Override
     public BlockState mirror(BlockState state, Mirror mirror) {
-        return state.with(FACING, mirror.mirror(state.get(FACING)));
+        return state.setValue(FACING, mirror.mirror(state.getValue(FACING)));
     }
 
-    protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
+    @Override
+    protected void createBlockStateDefinition(StateContainer.Builder<Block, BlockState> builder) {
         builder.add(FACING);
     }
 
@@ -46,8 +47,8 @@ public class EnergyDetectorBlock extends BaseTileEntityBlock {
     @Override
     public BlockState getStateForPlacement(BlockItemUseContext context) {
         PlayerEntity player = context.getPlayer();
-        Direction facing = player.getHorizontalFacing().getOpposite();
-        return getDefaultState().with(FACING, facing);
+        Direction facing = player.getDirection().getOpposite();
+        return defaultBlockState().setValue(FACING, facing);
     }
 
 }

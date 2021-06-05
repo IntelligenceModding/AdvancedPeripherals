@@ -46,8 +46,8 @@ public class EnergyDetectorTileEntity extends PeripheralTileEntity<EnergyDetecto
 
     @Override
     public <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction direction) {
-        energyInDirection = getBlockState().get(EnergyDetectorBlock.FACING);
-        energyOutDirection = getBlockState().get(EnergyDetectorBlock.FACING).getOpposite();
+        energyInDirection = getBlockState().getValue(EnergyDetectorBlock.FACING);
+        energyOutDirection = getBlockState().getValue(EnergyDetectorBlock.FACING).getOpposite();
         if (cap == CapabilityEnergy.ENERGY) {
             if (direction == energyInDirection) {
                 return energyStorageCap.cast();
@@ -60,7 +60,7 @@ public class EnergyDetectorTileEntity extends PeripheralTileEntity<EnergyDetecto
 
     @Override
     public void tick() {
-        if (!world.isRemote) {
+        if (!level.isClientSide) {
             // this handles the rare edge case that receiveEnergy is called multiple times in one tick
             transferRate = storageProxy.getTransferedInThisTick();
             storageProxy.resetTransferedInThisTick();
@@ -68,16 +68,16 @@ public class EnergyDetectorTileEntity extends PeripheralTileEntity<EnergyDetecto
     }
 
     @Override
-    public CompoundNBT write(CompoundNBT compound) {
-        super.write(compound);
+    public CompoundNBT save(CompoundNBT compound) {
+        super.save(compound);
         compound.putInt("rateLimit", storageProxy.getMaxTransferRate());
         return compound;
     }
 
     @Override
-    public void read(BlockState state, CompoundNBT nbt) {
+    public void deserializeNBT(BlockState state, CompoundNBT nbt) {
         storageProxy.setMaxTransferRate(nbt.getInt("rateLimit"));
-        super.read(state, nbt);
+        super.deserializeNBT(state, nbt);
     }
 
     // returns the cached output storage of the receiving block or refetches it if it has been invalidated
@@ -85,7 +85,7 @@ public class EnergyDetectorTileEntity extends PeripheralTileEntity<EnergyDetecto
     public Optional<IEnergyStorage> getOutputStorage() {
         // the documentation says that the value of the LazyOptional should be cached locally and invallidated using addListener
         if (!outReceivingStorage.isPresent()) {
-            TileEntity teOut = world.getTileEntity(pos.offset(energyOutDirection));
+            TileEntity teOut = level.getBlockEntity(worldPosition.relative(energyOutDirection));
             if (teOut == null) {
                 return Optional.empty();
             }

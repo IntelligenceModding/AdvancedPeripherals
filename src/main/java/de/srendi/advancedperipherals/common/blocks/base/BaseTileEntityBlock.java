@@ -26,11 +26,11 @@ public abstract class BaseTileEntityBlock extends BaseBlock {
     }
 
     @Override
-    public ActionResultType onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity player, Hand handIn, BlockRayTraceResult hit) {
-        if (worldIn.isRemote) return ActionResultType.SUCCESS;
-        TileEntity tileEntity = worldIn.getTileEntity(pos);
+    public ActionResultType use(BlockState state, World worldIn, BlockPos pos, PlayerEntity player, Hand handIn, BlockRayTraceResult hit) {
+        if (worldIn.isClientSide) return ActionResultType.SUCCESS;
+        TileEntity tileEntity = worldIn.getBlockEntity(pos);
         if (tileEntity != null && !(tileEntity instanceof IInventoryBlock)) return ActionResultType.PASS;
-        INamedContainerProvider namedContainerProvider = this.getContainer(state, worldIn, pos);
+        INamedContainerProvider namedContainerProvider = this.getMenuProvider(state, worldIn, pos);
         if (namedContainerProvider != null) {
             if (!(player instanceof ServerPlayerEntity)) return ActionResultType.PASS;
             ServerPlayerEntity serverPlayerEntity = (ServerPlayerEntity) player;
@@ -40,22 +40,22 @@ public abstract class BaseTileEntityBlock extends BaseBlock {
     }
 
     @Override
-    public void onBlockPlacedBy(World worldIn, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
-        super.onBlockPlacedBy(worldIn, pos, state, placer, stack);
+    public void setPlacedBy(World worldIn, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
+        super.setPlacedBy(worldIn, pos, state, placer, stack);
         //Used for the lua function getName()
-        worldIn.getTileEntity(pos).getTileData().putString("CustomName", stack.getDisplayName().getString());
+        worldIn.getBlockEntity(pos).getTileData().putString("CustomName", stack.getDisplayName().getString());
         TileEntityList.get(worldIn).setTileEntity(worldIn, new WorldPos(pos, worldIn), true);
     }
 
     @Override
-    public void onPlayerDestroy(IWorld worldIn, BlockPos pos, BlockState state) {
-        super.onPlayerDestroy(worldIn, pos, state);
+    public void destroy(IWorld worldIn, BlockPos pos, BlockState state) {
+        super.destroy(worldIn, pos, state);
         TileEntityList.get((World) worldIn).setTileEntity((World) worldIn, new WorldPos(pos, (World) worldIn), false);
     }
 
     @Nullable
     @Override
-    public TileEntity createNewTileEntity(IBlockReader worldIn) {
-        return hasTileEntity(getDefaultState()) ? createTileEntity(getDefaultState(), worldIn) : null;
+    public TileEntity newBlockEntity(IBlockReader worldIn) {
+        return hasTileEntity(defaultBlockState()) ? createTileEntity(defaultBlockState(), worldIn) : null;
     }
 }
