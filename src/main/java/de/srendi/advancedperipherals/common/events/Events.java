@@ -2,6 +2,7 @@ package de.srendi.advancedperipherals.common.events;
 
 import dan200.computercraft.api.peripheral.IComputerAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
+import dan200.computercraft.shared.computer.core.ServerComputer;
 import dan200.computercraft.shared.turtle.blocks.TileTurtle;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.addons.computercraft.turtles.TurtleChatBox;
@@ -56,12 +57,17 @@ public class Events {
             if (tileEntity instanceof TileTurtle) { //Events for turtles
                 TileTurtle tileTurtle = (TileTurtle) tileEntity;
                 if (tileTurtle.getUpgrade(TurtleSide.RIGHT) instanceof TurtleChatBox || tileTurtle.getUpgrade(TurtleSide.LEFT) instanceof TurtleChatBox) {
+                    ServerComputer computer = tileTurtle.getServerComputer();
+
+                    if (computer == null)
+                        return;
+
                     if (event.getMessage().startsWith("$")) {
                         event.setCanceled(true);
-                        tileTurtle.getServerComputer().queueEvent("chat", new Object[]{event.getUsername(), event.getMessage().replace("$", "")});
+                        computer.queueEvent("chat", new Object[]{event.getUsername(), event.getMessage().replace("$", "")});
                         return;
                     }
-                    tileTurtle.getServerComputer().queueEvent("chat", new Object[]{event.getUsername(), event.getMessage()});
+                    computer.queueEvent("chat", new Object[]{event.getUsername(), event.getMessage()});
                 }
             }
         });
