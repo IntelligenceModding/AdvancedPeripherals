@@ -4,12 +4,14 @@ import dan200.computercraft.api.lua.LuaFunction;
 import de.srendi.advancedperipherals.common.addons.computercraft.base.BasePeripheral;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
-import de.srendi.advancedperipherals.common.util.MathUtil;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityPredicate;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 
 import java.util.ArrayList;
@@ -93,25 +95,9 @@ public class PlayerDetectorPeripheral extends BasePeripheral {
         return ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers();
     }
 
-    private boolean isInRange(BlockPos pos, PlayerEntity player, int customRange) {
-        int range = Math.min(customRange, AdvancedPeripheralsConfig.playerDetMaxRange - 1);
-
-        //A player should not be higher than 1024 blocks.
-        //Todo - 1.17: use Math.max(pos.getY(), -64) instead of 0
-        BlockPos pos1 = new BlockPos(MathUtil.safeSubtract(pos.getX(), range), Math.min(MathUtil.safeAdd(pos.getY(), range), 1024), MathUtil.safeAdd(pos.getZ(), range));
-        BlockPos pos2 = new BlockPos(MathUtil.safeAdd(pos.getX(), range), Math.max(MathUtil.safeSubtract(pos.getY(), range), 0), MathUtil.safeSubtract(pos.getZ(), range));
-
-        int x1 = Math.min(pos1.getX(), pos2.getX());
-        int y1 = Math.min(pos1.getY(), pos2.getY());
-        int z1 = Math.min(pos1.getZ(), pos2.getZ());
-        int x2 = Math.max(pos1.getX(), pos2.getX());
-        int y2 = Math.max(pos1.getY(), pos2.getY());
-        int z2 = Math.max(pos1.getZ(), pos2.getZ());
-
-        int x = player.blockPosition().getX();
-        int z = player.blockPosition().getZ();
-        int y = player.blockPosition().getY();
-
-        return x >= x1 && x <= x2 && y >= y1 && y <= y2 && z >= z1 && z <= z2;
+    private boolean isInRange(BlockPos pos, PlayerEntity player, int range) {
+        World world = getWorld();
+        return world.getNearbyPlayers(new EntityPredicate().allowInvulnerable().allowNonAttackable().allowUnseeable().allowSameTeam(),
+                null, new AxisAlignedBB(pos.offset(range, range, range), pos.offset(-range, -range, -range))).contains(player);
     }
 }

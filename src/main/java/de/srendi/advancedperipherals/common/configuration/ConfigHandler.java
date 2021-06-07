@@ -33,5 +33,7 @@ public class ConfigHandler {
         AdvancedPeripheralsConfig.enableARGoggles = ConfigHolder.COMMON_CONFIG.ENABLE_AR_GOGGLES.get();
         AdvancedPeripheralsConfig.enableInventoryManager = ConfigHolder.COMMON_CONFIG.ENABLE_INVENTORY_MANAGER.get();
         AdvancedPeripheralsConfig.enableRedstoneIntegrator = ConfigHolder.COMMON_CONFIG.ENABLE_REDSTONE_INTEGRATOR.get();
+
+        AdvancedPeripheralsConfig.enableVillagerStructures = ConfigHolder.COMMON_CONFIG.ENABLE_VILLAGER_STRUCTURES.get();
     }
 }

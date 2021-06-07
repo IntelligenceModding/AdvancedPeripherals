@@ -2,6 +2,7 @@ package de.srendi.advancedperipherals.common.village;
 
 import com.mojang.datafixers.util.Pair;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
+import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.WorldGenRegistries;
@@ -18,6 +19,8 @@ import java.util.stream.Collectors;
 public class VillageStructures {
     //Adapted from Pneumaticcraft
     public static void init() {
+        if(!AdvancedPeripheralsConfig.enableVillagerStructures)
+            return;
         //Ensure the vanilla static init is done
         PlainsVillagePools.bootstrap();
         SavannaVillagePools.bootstrap();
