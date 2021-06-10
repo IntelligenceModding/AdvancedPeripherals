@@ -93,7 +93,8 @@ public class RedstoneIntegratorTileEntity extends PeripheralTileEntity<RedstoneI
         if (computerSide == ComputerSide.BOTTOM) output = Direction.DOWN;
         if (computerSide == ComputerSide.RIGHT)
             output = getBlockState().getValue(RedstoneIntegratorBlock.FACING).getCounterClockWise();
-        if (computerSide == ComputerSide.LEFT) output = getBlockState().getValue(RedstoneIntegratorBlock.FACING).getClockWise();
+        if (computerSide == ComputerSide.LEFT)
+            output = getBlockState().getValue(RedstoneIntegratorBlock.FACING).getClockWise();
         return output;
     }
 }

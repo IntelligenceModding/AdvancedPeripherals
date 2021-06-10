@@ -1,6 +1,5 @@
 package de.srendi.advancedperipherals.common.blocks.base;
 
-import com.google.common.collect.Lists;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.util.WorldPos;
 import net.minecraft.nbt.CompoundNBT;
@@ -16,7 +15,6 @@ import net.minecraftforge.fml.server.ServerLifecycleHooks;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 

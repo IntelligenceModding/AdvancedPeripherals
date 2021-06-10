@@ -151,7 +151,6 @@ public class ItemUtil {
             return tag;
 
         tag = new CompoundNBT();
-        tag.put("_apPlaceholder_", IntNBT.valueOf(1));
         return tag;
     }
 

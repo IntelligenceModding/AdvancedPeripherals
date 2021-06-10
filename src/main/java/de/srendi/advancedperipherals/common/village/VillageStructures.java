@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 public class VillageStructures {
     //Adapted from Pneumaticcraft
     public static void init() {
-        if(!AdvancedPeripheralsConfig.enableVillagerStructures)
+        if (!AdvancedPeripheralsConfig.enableVillagerStructures)
             return;
         //Ensure the vanilla static init is done
         PlainsVillagePools.bootstrap();

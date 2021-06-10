@@ -3,7 +3,6 @@ package de.srendi.advancedperipherals.common.blocks;
 import de.srendi.advancedperipherals.common.blocks.base.BaseTileEntityBlock;
 import de.srendi.advancedperipherals.common.blocks.tileentity.RedstoneIntegratorTileEntity;
 import de.srendi.advancedperipherals.common.setup.TileEntityTypes;
-import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.HorizontalBlock;

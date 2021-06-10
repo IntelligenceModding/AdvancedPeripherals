@@ -10,7 +10,6 @@ import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsCon
 import de.srendi.advancedperipherals.common.util.ItemUtil;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
