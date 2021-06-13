@@ -7,6 +7,9 @@ import mekanism.common.tile.TileEntityChemicalTank;
 import mekanism.api.chemical.IChemicalTank;
 import mekanism.api.chemical.merged.MergedChemicalTank;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class ChemicalTankIntegration extends ProxyIntegration<TileEntityChemicalTank> {
     @Override
     protected Class<TileEntityChemicalTank> getTargetClass() {
@@ -24,8 +27,12 @@ public class ChemicalTankIntegration extends ProxyIntegration<TileEntityChemical
     }
 
     @LuaFunction
-    public final long getStored() {
-        return getTank().getStored();
+    public final Map<String, Object> getStored() {
+        Map<String, Object> result = new HashMap<>(3);
+        result.put("name", DataHelpers.getId(getTank().getStack().getType()));
+        result.put("amount", getTank().getStored());
+        result.put("type", getMergedTank().getCurrent().name());
+        return result;
     }
 
     @LuaFunction
@@ -35,22 +42,12 @@ public class ChemicalTankIntegration extends ProxyIntegration<TileEntityChemical
 
     @LuaFunction
     public final double getFilledPercentage() {
-        return getStored() / (double) getCapacity();
+        return getTank().getStored() / (double) getCapacity();
     }
 
     @LuaFunction
     public final long getNeeded() {
         return getTank().getNeeded();
-    }
-
-    @LuaFunction
-    public final String getChemicalType() {
-        return getMergedTank().getCurrent().name();
-    }
-
-    @LuaFunction
-    public final String getChemical() {
-        return DataHelpers.getId(getTank().getStack().getType());
     }
 
     private IChemicalTank<?, ?> getTank() {
