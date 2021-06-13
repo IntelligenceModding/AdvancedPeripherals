@@ -24,17 +24,22 @@ public class ChemicalTankIntegration extends ProxyIntegration<TileEntityChemical
     }
 
     @LuaFunction
-    public final long getTankCapacity() {
-        return getTank().getCapacity();
-    }
-
-    @LuaFunction
-    public final long getFillLevel() {
+    public final long getStored() {
         return getTank().getStored();
     }
 
     @LuaFunction
-    public final long getFreeSpace() {
+    public final long getCapacity() {
+        return getTank().getCapacity();
+    }
+
+    @LuaFunction
+    public final double getFilledPercentage() {
+        return getStored() / (double) getCapacity();
+    }
+
+    @LuaFunction
+    public final long getNeeded() {
         return getTank().getNeeded();
     }
 
