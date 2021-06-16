@@ -60,7 +60,7 @@ public class ARGogglesItem extends ArmorItem {
             }
             TileEntity te = world.getBlockEntity(pos);
             if (!(te instanceof ARControllerTileEntity)) {
-                // If distance to ARController is larger than view distance
+                //If distance to ARController is larger than view distance
                 MNetwork.sendToServer(new RequestHudCanvasMessage(pos, dimensionKey));
                 return;
             }

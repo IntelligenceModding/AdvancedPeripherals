@@ -22,22 +22,6 @@ public class NBTUtil {
         }
     }
 
-    public static String toBinary(CompoundNBT nbt) {
-        if (nbt == null)
-            return null;
-
-        try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
-            try (OutputStream stream = Base64.getEncoder().wrap(outputStream)) {
-                CompressedStreamTools.writeCompressed(nbt, stream);
-            }
-            return outputStream.toString();
-        } catch (IOException ex) {
-            AdvancedPeripherals.debug("Could not parse NBT data to binary", Level.ERROR);
-            ex.printStackTrace();
-            return null;
-        }
-    }
-
     public static CompoundNBT fromBinary(String base64) {
         if (base64 == null)
             return null;

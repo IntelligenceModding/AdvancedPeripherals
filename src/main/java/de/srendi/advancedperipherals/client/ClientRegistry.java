@@ -55,6 +55,7 @@ public class ClientRegistry {
         ScreenManager.register(ContainerTypes.INVENTORY_MANAGER_CONTAINER.get(), InventoryManagerScreen::new);
     }
 
+    //TODO change the icon of the curio icon
     /*@SubscribeEvent
     public static void onTextureStitching(TextureStitchEvent.Pre event) {
         event.addSprite(new ResourceLocation(AdvancedPeripherals.MOD_ID, "item/empty_glasses_slot"));
