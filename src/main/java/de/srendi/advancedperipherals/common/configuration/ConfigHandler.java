@@ -15,6 +15,13 @@ public class ConfigHandler {
         }
     }
 
+    @SubscribeEvent
+    public static void reloadConfigEvent(final ModConfig.Reloading event) {
+        if (event.getConfig().getSpec() == ConfigHolder.COMMON_SPEC) {
+            ConfigHandler.bakeCommon();
+        }
+    }
+
     private static void bakeCommon() {
         //Restrictions
         AdvancedPeripheralsConfig.chatBoxCooldown = ConfigHolder.COMMON_CONFIG.CHAT_BOX_COOLDOWN.get();
@@ -33,6 +40,7 @@ public class ConfigHandler {
         AdvancedPeripheralsConfig.enableARGoggles = ConfigHolder.COMMON_CONFIG.ENABLE_AR_GOGGLES.get();
         AdvancedPeripheralsConfig.enableInventoryManager = ConfigHolder.COMMON_CONFIG.ENABLE_INVENTORY_MANAGER.get();
         AdvancedPeripheralsConfig.enableRedstoneIntegrator = ConfigHolder.COMMON_CONFIG.ENABLE_REDSTONE_INTEGRATOR.get();
+        AdvancedPeripheralsConfig.enableBlockReader = ConfigHolder.COMMON_CONFIG.ENABLE_BLOCK_READER.get();
 
         AdvancedPeripheralsConfig.enableVillagerStructures = ConfigHolder.COMMON_CONFIG.ENABLE_VILLAGER_STRUCTURES.get();
     }

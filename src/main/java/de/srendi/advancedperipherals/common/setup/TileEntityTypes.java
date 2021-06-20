@@ -17,7 +17,7 @@ public class TileEntityTypes {
     public static final RegistryObject<TileEntityType<ARControllerTileEntity>> AR_CONTROLLER = Registration.TILE_ENTITIES.register("ar_controller", () -> new TileEntityType<>(ARControllerTileEntity::new, Sets.newHashSet(Blocks.AR_CONTROLLER.get()), null));
     public static final RegistryObject<TileEntityType<InventoryManagerTileEntity>> INVENTORY_MANAGER = Registration.TILE_ENTITIES.register("inventory_manager", () -> new TileEntityType<>(InventoryManagerTileEntity::new, Sets.newHashSet(Blocks.INVENTORY_MANAGER.get()), null));
     public static final RegistryObject<TileEntityType<RedstoneIntegratorTileEntity>> REDSTONE_INTEGRATOR = Registration.TILE_ENTITIES.register("redstone_integrator", () -> new TileEntityType<>(RedstoneIntegratorTileEntity::new, Sets.newHashSet(Blocks.REDSTONE_INTEGRATOR.get()), null));
-    public static final RegistryObject<TileEntityType<PeripheralProxyTileEntity>> PERIPHERAL_PROXY = Registration.TILE_ENTITIES.register("peripheral_proxy", () -> new TileEntityType<>(PeripheralProxyTileEntity::new, Sets.newHashSet(Blocks.PERIPHERAL_PROXY.get()), null));
+    public static final RegistryObject<TileEntityType<PeripheralProxyTileEntity>> BLOCK_READER = Registration.TILE_ENTITIES.register("block_reader", () -> new TileEntityType<>(PeripheralProxyTileEntity::new, Sets.newHashSet(Blocks.BLOCK_READER.get()), null));
 
     static void register() {
     }

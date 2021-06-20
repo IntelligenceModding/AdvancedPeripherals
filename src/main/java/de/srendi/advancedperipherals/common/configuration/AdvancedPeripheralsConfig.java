@@ -21,6 +21,7 @@ public class AdvancedPeripheralsConfig {
     public static boolean enableARGoggles;
     public static boolean enableInventoryManager;
     public static boolean enableRedstoneIntegrator;
+    public static boolean enableBlockReader;
     public static boolean enableVillagerStructures;
 
     public static class CommonConfig {
@@ -42,6 +43,7 @@ public class AdvancedPeripheralsConfig {
         final ForgeConfigSpec.BooleanValue ENABLE_AR_GOGGLES;
         final ForgeConfigSpec.BooleanValue ENABLE_INVENTORY_MANAGER;
         final ForgeConfigSpec.BooleanValue ENABLE_REDSTONE_INTEGRATOR;
+        final ForgeConfigSpec.BooleanValue ENABLE_BLOCK_READER;
 
         final ForgeConfigSpec.BooleanValue ENABLE_VILLAGER_STRUCTURES;
 
@@ -68,6 +70,7 @@ public class AdvancedPeripheralsConfig {
             ENABLE_AR_GOGGLES = builder.comment("Enable the AR goggles or not.").define("enableARGoggles", true);
             ENABLE_INVENTORY_MANAGER = builder.comment("Enable the inventory manager or not.").define("enableInventoryManager", true);
             ENABLE_REDSTONE_INTEGRATOR = builder.comment("Enable the redstone integrator or not.").define("enableRedstoneIntegrator", true);
+            ENABLE_BLOCK_READER = builder.comment("Enable the block reader or not.").define("enableBlockReader", true);
 
             ENABLE_VILLAGER_STRUCTURES = builder.comment("Enable the villager structures for the computer scientist.").define("enableVillagerStructures", true);
             builder.pop();

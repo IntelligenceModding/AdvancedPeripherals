@@ -1,10 +1,13 @@
 package de.srendi.advancedperipherals.common.blocks.base;
 
+import de.srendi.advancedperipherals.common.blocks.tileentity.InventoryManagerTileEntity;
 import de.srendi.advancedperipherals.common.util.WorldPos;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -37,6 +40,16 @@ public abstract class BaseTileEntityBlock extends BaseBlock {
             NetworkHooks.openGui(serverPlayerEntity, namedContainerProvider, pos);
         }
         return ActionResultType.SUCCESS;
+    }
+
+    @Override
+    public void onRemove(BlockState state, World worldIn, BlockPos pos, BlockState newState, boolean isMoving) {
+        if (state.getBlock() != newState.getBlock()) {
+            TileEntity tileEntity = worldIn.getBlockEntity(pos);
+            if(tileEntity instanceof IInventoryBlock)
+            InventoryHelper.dropContents(worldIn, pos, (IInventory) tileEntity);
+            super.onRemove(state, worldIn, pos, newState, isMoving);
+        }
     }
 
     @Override
