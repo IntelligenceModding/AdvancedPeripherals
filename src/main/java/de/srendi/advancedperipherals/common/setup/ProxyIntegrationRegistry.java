@@ -1,14 +1,15 @@
 package de.srendi.advancedperipherals.common.setup;
 
+import dan200.computercraft.api.ComputerCraftAPI;
 import de.srendi.advancedperipherals.common.addons.computercraft.base.ProxyIntegration;
-import de.srendi.advancedperipherals.common.addons.computercraft.proxyintegrations.BeaconIntegration;
-import de.srendi.advancedperipherals.common.addons.computercraft.proxyintegrations.botania.ManaFlowerIntegration;
-import de.srendi.advancedperipherals.common.addons.computercraft.proxyintegrations.botania.ManaPoolIntegration;
-import de.srendi.advancedperipherals.common.addons.computercraft.proxyintegrations.botania.SpreaderIntegration;
-import de.srendi.advancedperipherals.common.addons.computercraft.proxyintegrations.immersiveengineering.CapacitorIntegration;
-import de.srendi.advancedperipherals.common.addons.computercraft.proxyintegrations.immersiveengineering.RedstoneConnectorIntegration;
-import de.srendi.advancedperipherals.common.addons.computercraft.proxyintegrations.immersiveengineering.RedstoneProbeIntegration;
-import de.srendi.advancedperipherals.common.addons.computercraft.proxyintegrations.mekanism.*;
+import de.srendi.advancedperipherals.common.addons.computercraft.integrations.BeaconIntegration;
+import de.srendi.advancedperipherals.common.addons.computercraft.integrations.botania.ManaFlowerIntegration;
+import de.srendi.advancedperipherals.common.addons.computercraft.integrations.botania.ManaPoolIntegration;
+import de.srendi.advancedperipherals.common.addons.computercraft.integrations.botania.SpreaderIntegration;
+import de.srendi.advancedperipherals.common.addons.computercraft.integrations.immersiveengineering.CapacitorIntegration;
+import de.srendi.advancedperipherals.common.addons.computercraft.integrations.immersiveengineering.RedstoneConnectorIntegration;
+import de.srendi.advancedperipherals.common.addons.computercraft.integrations.immersiveengineering.RedstoneProbeIntegration;
+import de.srendi.advancedperipherals.common.addons.computercraft.integrations.mekanism.*;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.fml.ModList;
 
@@ -24,29 +25,28 @@ public class ProxyIntegrationRegistry {
     }
 
     public static void register() {
-        //It's vanilla, so the condition is always true
-        registerIntegration(new BeaconIntegration());
+        ComputerCraftAPI.registerGenericSource(new BeaconIntegration());
         if (ModList.get().isLoaded("mekanismgenerators")) {
-            registerIntegration(new FissionIntegration());
-            registerIntegration(new FusionIntegration());
-            registerIntegration(new TurbineIntegration());
+            ComputerCraftAPI.registerGenericSource(new FissionIntegration());
+            ComputerCraftAPI.registerGenericSource(new FusionIntegration());
+            ComputerCraftAPI.registerGenericSource(new TurbineIntegration());
         }
         if (ModList.get().isLoaded("mekanism")) {
-            registerIntegration(new InductionPortIntegration());
-            registerIntegration(new BoilerIntegration());
-            registerIntegration(new DigitalMinerIntegration());
-            registerIntegration(new ChemicalTankIntegration());
-            registerIntegration(new GenericMekanismIntegration());
+            ComputerCraftAPI.registerGenericSource(new InductionPortIntegration());
+            ComputerCraftAPI.registerGenericSource(new BoilerIntegration());
+            ComputerCraftAPI.registerGenericSource(new DigitalMinerIntegration());
+            ComputerCraftAPI.registerGenericSource(new ChemicalTankIntegration());
+            ComputerCraftAPI.registerGenericSource(new GenericMekanismIntegration());
         }
         if (ModList.get().isLoaded("botania")) {
-            registerIntegration(new ManaPoolIntegration());
-            registerIntegration(new SpreaderIntegration());
-            registerIntegration(new ManaFlowerIntegration());
+            ComputerCraftAPI.registerGenericSource(new ManaPoolIntegration());
+            ComputerCraftAPI.registerGenericSource(new SpreaderIntegration());
+            ComputerCraftAPI.registerGenericSource(new ManaFlowerIntegration());
         }
         if (ModList.get().isLoaded("immersiveengineering")) {
-            registerIntegration(new RedstoneProbeIntegration());
-            registerIntegration(new RedstoneConnectorIntegration());
-            registerIntegration(new CapacitorIntegration());
+            ComputerCraftAPI.registerGenericSource(new RedstoneProbeIntegration());
+            ComputerCraftAPI.registerGenericSource(new RedstoneConnectorIntegration());
+            ComputerCraftAPI.registerGenericSource(new CapacitorIntegration());
         }
     }
 

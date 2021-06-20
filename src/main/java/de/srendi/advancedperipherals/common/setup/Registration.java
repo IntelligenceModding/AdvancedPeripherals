@@ -35,6 +35,5 @@ public class Registration {
         Items.register();
         ContainerTypes.register();
         Villagers.register();
-        ProxyIntegrationRegistry.register();
     }
 }

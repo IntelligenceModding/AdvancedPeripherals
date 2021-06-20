@@ -5,6 +5,7 @@ import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsCon
 import de.srendi.advancedperipherals.common.configuration.ConfigHandler;
 import de.srendi.advancedperipherals.common.configuration.ConfigHolder;
 import de.srendi.advancedperipherals.common.setup.Blocks;
+import de.srendi.advancedperipherals.common.setup.ProxyIntegrationRegistry;
 import de.srendi.advancedperipherals.common.setup.Registration;
 import de.srendi.advancedperipherals.common.util.ChunkManager;
 import de.srendi.advancedperipherals.common.village.VillageStructures;
@@ -74,7 +75,10 @@ public class AdvancedPeripherals {
     @SubscribeEvent
     public void commonSetup(FMLCommonSetupEvent event) {
         VillageStructures.init();
-        event.enqueueWork(ChunkManager::register);
+        event.enqueueWork(() -> {
+            ChunkManager.register();
+            ProxyIntegrationRegistry.register();
+        });
         MNetwork.init();
     }
 
