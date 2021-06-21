@@ -25,6 +25,7 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.registries.ForgeRegistries;
+import org.squiddev.cobalt.LuaTable;
 
 import java.util.Locale;
 
@@ -225,10 +226,12 @@ public class RsBridgePeripheral extends BasePeripheral {
 
     @LuaFunction()
     public final Object getItem(IArguments arguments) throws LuaException {
-        ItemStack stack = ItemUtil.getItemStackRS(arguments.getTable(0), RefinedStorage.getItems(getNetwork(), false));
-        if (stack == null)
-            return null; //Return null instead of crashing the program.
-        return RefinedStorage.getItem(RefinedStorage.getItems(getNetwork(), false), stack);
+        return new LuaTable();
+
+//        ItemStack stack = ItemUtil.getItemStackRS(arguments.getTable(0), RefinedStorage.getItems(getNetwork(), false));
+//        if (stack == null)
+//            return null; //Return null instead of crashing the program.
+//        return RefinedStorage.getItem(RefinedStorage.getItems(getNetwork(), false), stack);
     }
 
     @LuaFunction()
