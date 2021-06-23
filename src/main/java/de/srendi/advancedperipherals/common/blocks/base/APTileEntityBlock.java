@@ -1,9 +1,11 @@
 package de.srendi.advancedperipherals.common.blocks.base;
 
+import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.setup.TileEntityTypes;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.DirectionalBlock;
+import net.minecraft.block.ObserverBlock;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.state.DirectionProperty;
 import net.minecraft.state.StateContainer;
@@ -32,7 +34,7 @@ public class APTileEntityBlock<T extends TileEntity> extends BaseTileEntityBlock
 
     public APTileEntityBlock(RegistryObject<TileEntityType<T>> tileEntity, boolean isRotatable, boolean hasTileEntity) {
         this(tileEntity, isRotatable);
-        this.hasTileEntity = false;
+        this.hasTileEntity = hasTileEntity;
     }
 
     @Override
@@ -60,6 +62,7 @@ public class APTileEntityBlock<T extends TileEntity> extends BaseTileEntityBlock
 
     @Override
     protected void createBlockStateDefinition(StateContainer.Builder<Block, BlockState> builder) {
+        AdvancedPeripherals.debug("DEBUG1 " + isRotatable);
         if(isRotatable)
             builder.add(FACING);
     }

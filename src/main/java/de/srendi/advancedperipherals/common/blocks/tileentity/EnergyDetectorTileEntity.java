@@ -1,7 +1,7 @@
 package de.srendi.advancedperipherals.common.blocks.tileentity;
 
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.EnergyDetectorPeripheral;
-import de.srendi.advancedperipherals.common.blocks.EnergyDetectorBlock;
+import de.srendi.advancedperipherals.common.blocks.base.APTileEntityBlock;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
 import de.srendi.advancedperipherals.common.setup.TileEntityTypes;
@@ -46,8 +46,8 @@ public class EnergyDetectorTileEntity extends PeripheralTileEntity<EnergyDetecto
 
     @Override
     public <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction direction) {
-        energyInDirection = getBlockState().getValue(EnergyDetectorBlock.FACING);
-        energyOutDirection = getBlockState().getValue(EnergyDetectorBlock.FACING).getOpposite();
+        energyInDirection = getBlockState().getValue(APTileEntityBlock.FACING);
+        energyOutDirection = getBlockState().getValue(APTileEntityBlock.FACING).getOpposite();
         if (cap == CapabilityEnergy.ENERGY) {
             if (direction == energyInDirection) {
                 return energyStorageCap.cast();

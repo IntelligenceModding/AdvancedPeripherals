@@ -51,6 +51,7 @@ public class AdvancedPeripherals {
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, ConfigHolder.COMMON_SPEC);
         modBus.addListener(this::commonSetup);
         modBus.addListener(ConfigHandler::configEvent);
+        modBus.addListener(ConfigHandler::reloadConfigEvent);
         modBus.addListener(this::interModComms);
         modBus.addListener(this::clientSetup);
         Registration.register();

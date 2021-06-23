@@ -170,7 +170,7 @@ public class RecipesProvider extends RecipeProvider implements IConditionBuilder
                 .unlockedBy("has_item", has(CASING))
                 .save(consumer);
 
-        ShapedRecipeBuilder.shaped(Blocks.PERIPHERAL_PROXY.get())
+        ShapedRecipeBuilder.shaped(Blocks.BLOCK_READER.get())
                 .define('O', Items.OBSERVER)
                 .define('I', Items.IRON_INGOT)
                 .define('M', Registry.ModBlocks.WIRED_MODEM_FULL.get())
