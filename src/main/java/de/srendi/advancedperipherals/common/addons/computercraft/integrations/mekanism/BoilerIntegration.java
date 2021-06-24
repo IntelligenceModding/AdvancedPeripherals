@@ -1,52 +1,56 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.integrations.mekanism;
 
-import dan200.computercraft.api.lua.GenericSource;
 import dan200.computercraft.api.lua.LuaFunction;
-import de.srendi.advancedperipherals.AdvancedPeripherals;
-import de.srendi.advancedperipherals.common.addons.computercraft.base.ProxyIntegration;
+import de.srendi.advancedperipherals.common.addons.computercraft.base.Integration;
 import mekanism.api.chemical.ChemicalStack;
 import mekanism.api.math.MathUtils;
 import mekanism.common.config.MekanismConfig;
 import mekanism.common.content.boiler.BoilerMultiblockData;
 import mekanism.common.tile.multiblock.TileEntityBoilerValve;
 import mekanism.common.util.HeatUtils;
-import net.minecraft.util.ResourceLocation;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class BoilerIntegration implements GenericSource {
-
-    @NotNull
+public class BoilerIntegration extends Integration<TileEntityBoilerValve> {
     @Override
-    public ResourceLocation id() {
-        return new ResourceLocation(AdvancedPeripherals.MOD_ID, "boiler");
+    protected Class<TileEntityBoilerValve> getTargetClass() {
+        return TileEntityBoilerValve.class;
+    }
+
+    @Override
+    public BoilerIntegration getNewInstance() {
+        return new BoilerIntegration();
+    }
+
+    @Override
+    public String getType() {
+        return "boiler";
     }
 
     @LuaFunction
-    public static int getWater(TileEntityBoilerValve tileEntity) {
-        return getBoiler(tileEntity).waterTank.getFluidAmount();
+    public final int getWater() {
+        return getBoiler().waterTank.getFluidAmount();
     }
 
     @LuaFunction
-    public static int getWaterCapacity(TileEntityBoilerValve tileEntity) {
-        return getBoiler(tileEntity).waterTank.getCapacity();
+    public final int getWaterCapacity() {
+        return getBoiler().waterTank.getCapacity();
     }
 
     @LuaFunction
-    public static int getWaterNeeded(TileEntityBoilerValve tileEntity) {
-        return getBoiler(tileEntity).waterTank.getNeeded();
+    public final int getWaterNeeded() {
+        return getBoiler().waterTank.getNeeded();
     }
 
     @LuaFunction
-    public static double getWaterFilledPercentage(TileEntityBoilerValve tileEntity) {
-        return getWater(tileEntity) / (double) getWaterCapacity(tileEntity);
+    public final double getWaterFilledPercentage() {
+        return getWater() / (double) getWaterCapacity();
     }
 
     @LuaFunction
-    public static Map<String, Object> getHeatedCoolant(TileEntityBoilerValve tileEntity) {
-        ChemicalStack<?> stack = getBoiler(tileEntity).superheatedCoolantTank.getStack();
+    public final Map<String, Object> getHeatedCoolant() {
+        ChemicalStack<?> stack = getBoiler().superheatedCoolantTank.getStack();
         Map<String, Object> wrapped = new HashMap<>(2);
         wrapped.put("name", stack.getType().getRegistryName() == null ? null : stack.getType().getRegistryName().toString());
         wrapped.put("amount", stack.getAmount());
@@ -54,43 +58,43 @@ public class BoilerIntegration implements GenericSource {
     }
 
     @LuaFunction
-    public static long getHeatedCoolantCapacity(TileEntityBoilerValve tileEntity) {
-        return getBoiler(tileEntity).superheatedCoolantTank.getCapacity();
+    public final long getHeatedCoolantCapacity() {
+        return getBoiler().superheatedCoolantTank.getCapacity();
     }
 
     @LuaFunction
-    public static long getHeatedCoolantNeeded(TileEntityBoilerValve tileEntity) {
-        return getBoiler(tileEntity).superheatedCoolantTank.getNeeded();
+    public final long getHeatedCoolantNeeded() {
+        return getBoiler().superheatedCoolantTank.getNeeded();
     }
 
     @LuaFunction
-    public static double getHeatedCoolantFilledPercentage(TileEntityBoilerValve tileEntity) {
-        return getBoiler(tileEntity).superheatedCoolantTank.getStored() / (double) getHeatedCoolantCapacity(tileEntity);
+    public final double getHeatedCoolantFilledPercentage() {
+        return getBoiler().superheatedCoolantTank.getStored() / (double) getHeatedCoolantCapacity();
     }
 
     @LuaFunction
-    public static long getSteam(TileEntityBoilerValve tileEntity) {
-        return getBoiler(tileEntity).steamTank.getStored();
+    public final long getSteam() {
+        return getBoiler().steamTank.getStored();
     }
 
     @LuaFunction
-    public static long getSteamCapacity(TileEntityBoilerValve tileEntity) {
-        return getBoiler(tileEntity).steamTank.getCapacity();
+    public final long getSteamCapacity() {
+        return getBoiler().steamTank.getCapacity();
     }
 
     @LuaFunction
-    public static long getSteamNeeded(TileEntityBoilerValve tileEntity) {
-        return getBoiler(tileEntity).steamTank.getNeeded();
+    public final long getSteamNeeded() {
+        return getBoiler().steamTank.getNeeded();
     }
 
     @LuaFunction
-    public static double getSteamFilledPercentage(TileEntityBoilerValve tileEntity) {
-        return getSteam(tileEntity) / (double) getSteamCapacity(tileEntity);
+    public final double getSteamFilledPercentage() {
+        return getSteam() / (double) getSteamCapacity();
     }
 
     @LuaFunction
-    public static Map<String, Object> getCooledCoolant(TileEntityBoilerValve tileEntity) {
-        ChemicalStack<?> stack = getBoiler(tileEntity).cooledCoolantTank.getStack();
+    public final Map<String, Object> getCooledCoolant() {
+        ChemicalStack<?> stack = getBoiler().cooledCoolantTank.getStack();
         Map<String, Object> wrapped = new HashMap<>(2);
         wrapped.put("name", stack.getType().getRegistryName() == null ? null : stack.getType().getRegistryName().toString());
         wrapped.put("amount", stack.getAmount());
@@ -98,52 +102,52 @@ public class BoilerIntegration implements GenericSource {
     }
 
     @LuaFunction
-    public static long getCooledCoolantCapacity(TileEntityBoilerValve tileEntity) {
-        return getBoiler(tileEntity).cooledCoolantTank.getCapacity();
+    public final long getCooledCoolantCapacity() {
+        return getBoiler().cooledCoolantTank.getCapacity();
     }
 
     @LuaFunction
-    public static long getCooledCoolantNeeded(TileEntityBoilerValve tileEntity) {
-        return getBoiler(tileEntity).cooledCoolantTank.getNeeded();
+    public final long getCooledCoolantNeeded() {
+        return getBoiler().cooledCoolantTank.getNeeded();
     }
 
     @LuaFunction
-    public static double getCooledCoolantFilledPercentage(TileEntityBoilerValve tileEntity) {
-        return getBoiler(tileEntity).cooledCoolantTank.getStack().getAmount() / (double) getCooledCoolantCapacity(tileEntity);
+    public final double getCooledCoolantFilledPercentage() {
+        return getBoiler().cooledCoolantTank.getStack().getAmount() / (double) getCooledCoolantCapacity();
     }
 
     @LuaFunction
-    public static double getEnvironmentalLoss(TileEntityBoilerValve tileEntity) {
-        return getBoiler(tileEntity).lastEnvironmentLoss;
+    public final double getEnvironmentalLoss() {
+        return getBoiler().lastEnvironmentLoss;
     }
 
     @LuaFunction
-    public static double getTemperature(TileEntityBoilerValve tileEntity) {
-        return getBoiler(tileEntity).getTotalTemperature();
+    public final double getTemperature() {
+        return getBoiler().getTotalTemperature();
     }
 
     @LuaFunction
-    public static int getBoilRate(TileEntityBoilerValve tileEntity) {
-        return getBoiler(tileEntity).lastBoilRate;
+    public final int getBoilRate() {
+        return getBoiler().lastBoilRate;
     }
 
     @LuaFunction
-    public static int getMaxBoilRate(TileEntityBoilerValve tileEntity) {
-        return getBoiler(tileEntity).lastMaxBoil;
+    public final int getMaxBoilRate() {
+        return getBoiler().lastMaxBoil;
     }
 
     @LuaFunction
-    public static int getSuperheaters(TileEntityBoilerValve tileEntity) {
-        return getBoiler(tileEntity).superheatingElements;
+    public final int getSuperheaters() {
+        return getBoiler().superheatingElements;
     }
 
     @LuaFunction
-    public static long getBoilCapacity(TileEntityBoilerValve tileEntity) {
-        double boilCapacity = MekanismConfig.general.superheatingHeatTransfer.get() * getSuperheaters(tileEntity) / HeatUtils.getWaterThermalEnthalpy();
+    public final long getBoilCapacity() {
+        double boilCapacity = MekanismConfig.general.superheatingHeatTransfer.get() * getSuperheaters() / HeatUtils.getWaterThermalEnthalpy();
         return MathUtils.clampToLong(boilCapacity * HeatUtils.getSteamEnergyEfficiency());
     }
 
-    private static BoilerMultiblockData getBoiler(TileEntityBoilerValve tileEntity) {
-        return tileEntity.getMultiblock();
+    private BoilerMultiblockData getBoiler() {
+        return getTileEntity().getMultiblock();
     }
 }

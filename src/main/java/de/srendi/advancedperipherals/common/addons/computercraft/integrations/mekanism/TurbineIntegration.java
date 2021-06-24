@@ -1,8 +1,7 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.integrations.mekanism;
 
-import dan200.computercraft.api.lua.GenericSource;
 import dan200.computercraft.api.lua.LuaFunction;
-import de.srendi.advancedperipherals.AdvancedPeripherals;
+import de.srendi.advancedperipherals.common.addons.computercraft.base.Integration;
 import mekanism.api.math.FloatingLong;
 import mekanism.api.math.MathUtils;
 import mekanism.common.config.MekanismConfig;
@@ -11,107 +10,113 @@ import mekanism.generators.common.config.MekanismGeneratorsConfig;
 import mekanism.generators.common.content.turbine.TurbineMultiblockData;
 import mekanism.generators.common.content.turbine.TurbineValidator;
 import mekanism.generators.common.tile.turbine.TileEntityTurbineValve;
-import net.minecraft.util.ResourceLocation;
-import org.jetbrains.annotations.NotNull;
 
-public class TurbineIntegration implements GenericSource {
-
-    @NotNull
+public class TurbineIntegration extends Integration<TileEntityTurbineValve> {
     @Override
-    public ResourceLocation id() {
-        return new ResourceLocation(AdvancedPeripherals.MOD_ID, "turbine");
+    protected Class<TileEntityTurbineValve> getTargetClass() {
+        return TileEntityTurbineValve.class;
+    }
+
+    @Override
+    public TurbineIntegration getNewInstance() {
+        return new TurbineIntegration();
+    }
+
+    @Override
+    public String getType() {
+        return "turbine";
     }
 
     @LuaFunction
-    public static long getSteam(TileEntityTurbineValve tileEntity) {
-        return getTurbine(tileEntity).gasTank.getStored();
+    public final long getSteam() {
+        return getTurbine().gasTank.getStored();
     }
 
     @LuaFunction
-    public static long getSteamCapacity(TileEntityTurbineValve tileEntity) {
-        return getTurbine(tileEntity).gasTank.getCapacity();
+    public final long getSteamCapacity() {
+        return getTurbine().gasTank.getCapacity();
     }
 
     @LuaFunction
-    public static long getSteamNeeded(TileEntityTurbineValve tileEntity) {
-        return getTurbine(tileEntity).gasTank.getNeeded();
+    public final long getSteamNeeded() {
+        return getTurbine().gasTank.getNeeded();
     }
 
     @LuaFunction
-    public static long getLastSteamInputRate(TileEntityTurbineValve tileEntity) {
-        return getTurbine(tileEntity).lastSteamInput;
+    public final long getLastSteamInputRate() {
+        return getTurbine().lastSteamInput;
     }
 
     @LuaFunction
-    public static double getSteamFilledPercentage(TileEntityTurbineValve tileEntity) {
-        return getSteam(tileEntity) / (double) getSteamCapacity(tileEntity);
+    public final double getSteamFilledPercentage() {
+        return getSteam() / (double) getSteamCapacity();
     }
 
     @LuaFunction
-    public static String getDumpingMode(TileEntityTurbineValve tileEntity) {
-        return getTurbine(tileEntity).dumpMode.name();
+    public final String getDumpingMode() {
+        return getTurbine().dumpMode.name();
     }
 
     @LuaFunction
-    public static long getProductionRate(TileEntityTurbineValve tileEntity) {
+    public final long getProductionRate() {
         FloatingLong energyMultiplier = MekanismConfig.general.maxEnergyPerSteam.get().divide(TurbineValidator.MAX_BLADES)
-                .multiply(Math.min(getBlades(tileEntity), getCoils(tileEntity) * MekanismGeneratorsConfig.generators.turbineBladesPerCoil.get()));
-        return EnergyCompatUtils.EnergyType.FORGE.convertToAsLong(energyMultiplier.multiply(getTurbine(tileEntity).clientFlow));
+                .multiply(Math.min(getBlades(), getCoils() * MekanismGeneratorsConfig.generators.turbineBladesPerCoil.get()));
+        return EnergyCompatUtils.EnergyType.FORGE.convertToAsLong(energyMultiplier.multiply(getTurbine().clientFlow));
     }
 
     @LuaFunction
-    public static long getMaxProduction(TileEntityTurbineValve tileEntity) {
+    public final long getMaxProduction() {
         FloatingLong energyMultiplier = MekanismConfig.general.maxEnergyPerSteam.get().divide(TurbineValidator.MAX_BLADES)
-                .multiply(Math.min(getBlades(tileEntity), getCoils(tileEntity) * MekanismGeneratorsConfig.generators.turbineBladesPerCoil.get()));
-        double rate = getTurbine(tileEntity).lowerVolume * (getTurbine(tileEntity).getDispersers() * MekanismGeneratorsConfig.generators.turbineDisperserGasFlow.get());
-        rate = Math.min(rate, getVents(tileEntity) * MekanismGeneratorsConfig.generators.turbineVentGasFlow.get());
+                .multiply(Math.min(getBlades(), getCoils() * MekanismGeneratorsConfig.generators.turbineBladesPerCoil.get()));
+        double rate = getTurbine().lowerVolume * (getTurbine().getDispersers() * MekanismGeneratorsConfig.generators.turbineDisperserGasFlow.get());
+        rate = Math.min(rate, getVents() * MekanismGeneratorsConfig.generators.turbineVentGasFlow.get());
         return EnergyCompatUtils.EnergyType.FORGE.convertToAsLong(energyMultiplier.multiply(rate));
     }
 
     @LuaFunction
-    public static long getFlowRate(TileEntityTurbineValve tileEntity) {
-        return getTurbine(tileEntity).clientFlow;
+    public final long getFlowRate() {
+        return getTurbine().clientFlow;
     }
 
     @LuaFunction
-    public static long getMaxFlowRate(TileEntityTurbineValve tileEntity) {
-        double rate = getTurbine(tileEntity).lowerVolume * (getTurbine(tileEntity).getDispersers() * MekanismGeneratorsConfig.generators.turbineDisperserGasFlow.get());
-        rate = Math.min(rate, getVents(tileEntity) * MekanismGeneratorsConfig.generators.turbineVentGasFlow.get());
+    public final long getMaxFlowRate() {
+        double rate = getTurbine().lowerVolume * (getTurbine().getDispersers() * MekanismGeneratorsConfig.generators.turbineDisperserGasFlow.get());
+        rate = Math.min(rate, getVents() * MekanismGeneratorsConfig.generators.turbineVentGasFlow.get());
         return MathUtils.clampToLong(rate);
     }
 
     @LuaFunction
-    public static long getMaxWaterOutput(TileEntityTurbineValve tileEntity) {
-        return (long) getCondensers(tileEntity) * MekanismGeneratorsConfig.generators.condenserRate.get();
+    public final long getMaxWaterOutput() {
+        return (long) getCondensers() * MekanismGeneratorsConfig.generators.condenserRate.get();
     }
 
     @LuaFunction
-    public static int getDispersers(TileEntityTurbineValve tileEntity) {
-        return getTurbine(tileEntity).getDispersers();
+    public final int getDispersers() {
+        return getTurbine().getDispersers();
     }
 
     @LuaFunction
-    public static int getVents(TileEntityTurbineValve tileEntity) {
-        return getTurbine(tileEntity).vents;
+    public final int getVents() {
+        return getTurbine().vents;
     }
 
     @LuaFunction
-    public static int getBlades(TileEntityTurbineValve tileEntity) {
-        return getTurbine(tileEntity).blades;
+    public final int getBlades() {
+        return getTurbine().blades;
     }
 
     @LuaFunction
-    public static int getCoils(TileEntityTurbineValve tileEntity) {
-        return getTurbine(tileEntity).coils;
+    public final int getCoils() {
+        return getTurbine().coils;
     }
 
     @LuaFunction
-    public static int getCondensers(TileEntityTurbineValve tileEntity) {
-        return getTurbine(tileEntity).condensers;
+    public final int getCondensers() {
+        return getTurbine().condensers;
     }
 
-    private static TurbineMultiblockData getTurbine(TileEntityTurbineValve tileEntity) {
-        return tileEntity.getMultiblock();
+    private TurbineMultiblockData getTurbine() {
+        return getTileEntity().getMultiblock();
     }
 
 }

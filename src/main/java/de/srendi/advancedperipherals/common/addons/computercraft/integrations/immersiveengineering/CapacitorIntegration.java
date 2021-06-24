@@ -1,38 +1,42 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.integrations.immersiveengineering;
 
 import blusunrize.immersiveengineering.common.blocks.metal.CapacitorTileEntity;
-import dan200.computercraft.api.lua.GenericSource;
 import dan200.computercraft.api.lua.LuaFunction;
-import de.srendi.advancedperipherals.AdvancedPeripherals;
-import de.srendi.advancedperipherals.common.addons.computercraft.base.ProxyIntegration;
-import net.minecraft.util.ResourceLocation;
-import org.jetbrains.annotations.NotNull;
+import de.srendi.advancedperipherals.common.addons.computercraft.base.Integration;
 
-public class CapacitorIntegration implements GenericSource {
-
-    @NotNull
+public class CapacitorIntegration extends Integration<CapacitorTileEntity> {
     @Override
-    public ResourceLocation id() {
-        return new ResourceLocation(AdvancedPeripherals.MOD_ID, "IECapacitor");
+    protected Class<CapacitorTileEntity> getTargetClass() {
+        return CapacitorTileEntity.class;
+    }
+
+    @Override
+    public CapacitorIntegration getNewInstance() {
+        return new CapacitorIntegration();
+    }
+
+    @Override
+    public String getType() {
+        return "IECapacitor";
     }
 
     @LuaFunction
-    public static int getStoredEnergy(CapacitorTileEntity tileEntity) {
-        return tileEntity.getFluxStorage().getEnergyStored();
+    public final int getStoredEnergy() {
+        return getTileEntity().getFluxStorage().getEnergyStored();
     }
 
     @LuaFunction
-    public static int getMaxEnergy(CapacitorTileEntity tileEntity) {
-        return tileEntity.getFluxStorage().getMaxEnergyStored();
+    public final int getMaxEnergy() {
+        return getTileEntity().getFluxStorage().getMaxEnergyStored();
     }
 
     @LuaFunction
-    public static int getEnergyNeeded(CapacitorTileEntity tileEntity) {
-        return getMaxEnergy(tileEntity) - getStoredEnergy(tileEntity);
+    public final int getEnergyNeeded() {
+        return getMaxEnergy() - getStoredEnergy();
     }
 
     @LuaFunction
-    public static double getEnergyFilledPercentage(CapacitorTileEntity tileEntity) {
-        return getStoredEnergy(tileEntity) / (double) getMaxEnergy(tileEntity);
+    public final double getEnergyFilledPercentage() {
+        return getStoredEnergy() / (double) getMaxEnergy();
     }
 }

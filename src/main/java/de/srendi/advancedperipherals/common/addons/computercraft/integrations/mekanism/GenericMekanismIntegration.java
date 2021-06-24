@@ -1,29 +1,37 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.integrations.mekanism;
 
-import dan200.computercraft.api.lua.GenericSource;
 import dan200.computercraft.api.lua.LuaFunction;
-import de.srendi.advancedperipherals.AdvancedPeripherals;
+import de.srendi.advancedperipherals.common.addons.computercraft.base.Integration;
 import mekanism.api.energy.IEnergyContainer;
 import mekanism.api.math.FloatingLong;
 import mekanism.common.integration.energy.EnergyCompatUtils;
 import mekanism.common.tile.base.TileEntityMekanism;
-import net.minecraft.util.ResourceLocation;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.function.Function;
 
-public class GenericMekanismIntegration implements GenericSource {
+public class GenericMekanismIntegration extends Integration<TileEntityMekanism> {
 
-    @NotNull
+    //Most of the functions are adapted from mekanism
+
     @Override
-    public ResourceLocation id() {
-        return new ResourceLocation(AdvancedPeripherals.MOD_ID, "mekanismMachine");
+    protected Class<TileEntityMekanism> getTargetClass() {
+        return TileEntityMekanism.class;
     }
 
-    private static FloatingLong getTotalEnergy(TileEntityMekanism tileEntity, Function<IEnergyContainer, FloatingLong> getter) {
+    @Override
+    public GenericMekanismIntegration getNewInstance() {
+        return new GenericMekanismIntegration();
+    }
+
+    @Override
+    public String getType() {
+        return "mekanismMachine";
+    }
+
+    private FloatingLong getTotalEnergy(Function<IEnergyContainer, FloatingLong> getter) {
         FloatingLong total = FloatingLong.ZERO;
-        List<IEnergyContainer> energyContainers = tileEntity.getEnergyContainers(null);
+        List<IEnergyContainer> energyContainers = getTileEntity().getEnergyContainers(null);
         for (IEnergyContainer energyContainer : energyContainers) {
             total = total.plusEqual(getter.apply(energyContainer));
         }
@@ -31,10 +39,10 @@ public class GenericMekanismIntegration implements GenericSource {
     }
 
     @LuaFunction
-    public static double getTotalEnergyFilledPercentage(TileEntityMekanism tileEntity) {
+    public final double getTotalEnergyFilledPercentage() {
         FloatingLong stored = FloatingLong.ZERO;
         FloatingLong max = FloatingLong.ZERO;
-        List<IEnergyContainer> energyContainers = tileEntity.getEnergyContainers(null);
+        List<IEnergyContainer> energyContainers = getTileEntity().getEnergyContainers(null);
         for (IEnergyContainer energyContainer : energyContainers) {
             stored = stored.plusEqual(energyContainer.getEnergy());
             max = max.plusEqual(energyContainer.getMaxEnergy());
@@ -43,18 +51,18 @@ public class GenericMekanismIntegration implements GenericSource {
     }
 
     @LuaFunction
-    public static long getTotalEnergy(TileEntityMekanism tileEntity) {
-        return EnergyCompatUtils.EnergyType.FORGE.convertToAsLong(getTotalEnergy(tileEntity, IEnergyContainer::getEnergy));
+    public final long getTotalEnergy() {
+        return EnergyCompatUtils.EnergyType.FORGE.convertToAsLong(getTotalEnergy(IEnergyContainer::getEnergy));
     }
 
     @LuaFunction
-    public static long getTotalMaxEnergy(TileEntityMekanism tileEntity) {
-        return EnergyCompatUtils.EnergyType.FORGE.convertToAsLong(getTotalEnergy(tileEntity, IEnergyContainer::getMaxEnergy));
+    public final long getTotalMaxEnergy() {
+        return EnergyCompatUtils.EnergyType.FORGE.convertToAsLong(getTotalEnergy(IEnergyContainer::getMaxEnergy));
     }
 
     @LuaFunction
-    public static long getTotalEnergyNeeded(TileEntityMekanism tileEntity) {
-        return EnergyCompatUtils.EnergyType.FORGE.convertToAsLong(getTotalEnergy(tileEntity, IEnergyContainer::getNeeded));
+    public final long getTotalEnergyNeeded() {
+        return EnergyCompatUtils.EnergyType.FORGE.convertToAsLong(getTotalEnergy(IEnergyContainer::getNeeded));
     }
 
 }

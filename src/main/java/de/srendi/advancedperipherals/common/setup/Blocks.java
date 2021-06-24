@@ -15,7 +15,7 @@ import java.util.function.Supplier;
 
 public class Blocks {
 
-    //TODO -1.17 fix the turtle and pocket ids of the chat box
+    //TODO-1.17 fix the turtle and pocket ids of the chat box
     public static final RegistryObject<Block> ENVIRONMENT_DETECTOR = register("environment_detector", () -> new APTileEntityBlock<>(TileEntityTypes.ENVIRONMENT_DETECTOR, false),
             ()-> new APBlockItem(Blocks.ENVIRONMENT_DETECTOR.get(), "environment_detector_turtle", "environment_pocket",
                     new TranslationTextComponent("item.advancedperipherals.tooltip.environment_detector")));

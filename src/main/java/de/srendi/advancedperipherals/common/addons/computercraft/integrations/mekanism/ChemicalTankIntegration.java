@@ -1,61 +1,64 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.integrations.mekanism;
 
-import dan200.computercraft.api.lua.GenericSource;
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.shared.peripheral.generic.data.DataHelpers;
-import de.srendi.advancedperipherals.AdvancedPeripherals;
-import de.srendi.advancedperipherals.common.addons.computercraft.base.ProxyIntegration;
+import de.srendi.advancedperipherals.common.addons.computercraft.base.Integration;
 import mekanism.common.tile.TileEntityChemicalTank;
 import mekanism.api.chemical.IChemicalTank;
 import mekanism.api.chemical.merged.MergedChemicalTank;
-import net.minecraft.util.ResourceLocation;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class ChemicalTankIntegration implements GenericSource {
-
-    @NotNull
+public class ChemicalTankIntegration extends Integration<TileEntityChemicalTank> {
     @Override
-    public ResourceLocation id() {
-        return new ResourceLocation(AdvancedPeripherals.MOD_ID, "chemicalTank");
+    protected Class<TileEntityChemicalTank> getTargetClass() {
+        return TileEntityChemicalTank.class;
+    }
+
+    @Override
+    public ChemicalTankIntegration getNewInstance() {
+        return new ChemicalTankIntegration();
+    }
+
+    @Override
+    public String getType() {
+        return "chemicalTank";
     }
 
     @LuaFunction
-    public static Map<String, Object> getStored(TileEntityChemicalTank tileEntity) {
+    public final Map<String, Object> getStored() {
         Map<String, Object> result = new HashMap<>(3);
-        result.put("name", DataHelpers.getId(getTank(tileEntity).getStack().getType()));
-        result.put("amount", getTank(tileEntity).getStored());
-        result.put("type", getMergedTank(tileEntity).getCurrent().name());
+        result.put("name", DataHelpers.getId(getTank().getStack().getType()));
+        result.put("amount", getTank().getStored());
+        result.put("type", getMergedTank().getCurrent().name());
         return result;
     }
 
     @LuaFunction
-    public static long getCapacity(TileEntityChemicalTank tileEntity) {
-        return getTank(tileEntity).getCapacity();
+    public final long getCapacity() {
+        return getTank().getCapacity();
     }
 
     @LuaFunction
-    public static double getFilledPercentage(TileEntityChemicalTank tileEntity) {
-        return getTank(tileEntity).getStored() / (double) getCapacity(tileEntity);
+    public final double getFilledPercentage() {
+        return getTank().getStored() / (double) getCapacity();
     }
 
     @LuaFunction
-    public static long getNeeded(TileEntityChemicalTank tileEntity) {
-        return getTank(tileEntity).getNeeded();
+    public final long getNeeded() {
+        return getTank().getNeeded();
     }
 
-    private static IChemicalTank<?, ?> getTank(TileEntityChemicalTank tileEntity) {
-        MergedChemicalTank mergedTank = getMergedTank(tileEntity);
+    private IChemicalTank<?, ?> getTank() {
+        MergedChemicalTank mergedTank = getMergedTank();
         if (mergedTank.getCurrent() != MergedChemicalTank.Current.EMPTY) {
             return mergedTank.getTankFromCurrent(mergedTank.getCurrent());
         }
         return mergedTank.getGasTank();
     }
 
-    private static MergedChemicalTank getMergedTank(TileEntityChemicalTank tileEntity) {
-        return tileEntity.getChemicalTank();
+    private MergedChemicalTank getMergedTank() {
+        return getTileEntity().getChemicalTank();
     }
-
 }

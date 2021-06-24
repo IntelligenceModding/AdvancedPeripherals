@@ -1,39 +1,44 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.integrations.botania;
 
-import dan200.computercraft.api.lua.GenericSource;
 import dan200.computercraft.api.lua.LuaFunction;
-import de.srendi.advancedperipherals.AdvancedPeripherals;
-import de.srendi.advancedperipherals.common.addons.computercraft.base.ProxyIntegration;
-import net.minecraft.util.ResourceLocation;
-import org.jetbrains.annotations.NotNull;
+import de.srendi.advancedperipherals.common.addons.computercraft.base.Integration;
 import vazkii.botania.common.block.tile.mana.TilePool;
 
-public class ManaPoolIntegration implements GenericSource {
+public class ManaPoolIntegration extends Integration<TilePool> {
 
-    @NotNull
     @Override
-    public ResourceLocation id() {
-        return new ResourceLocation(AdvancedPeripherals.MOD_ID, "manaPool");
+    protected Class<TilePool> getTargetClass() {
+        return TilePool.class;
+    }
+
+    @Override
+    public Integration<?> getNewInstance() {
+        return new ManaPoolIntegration();
+    }
+
+    @Override
+    public String getType() {
+        return "manaPool";
     }
 
     @LuaFunction
-    public static int getMana(TilePool tileEntity) {
-        return tileEntity.getCurrentMana();
+    public final int getMana() {
+        return getTileEntity().getCurrentMana();
     }
 
     @LuaFunction
-    public static int getMaxMana(TilePool tileEntity) {
-        return tileEntity.getAvailableSpaceForMana();
+    public final int getMaxMana() {
+        return getTileEntity().getAvailableSpaceForMana();
     }
 
     @LuaFunction
-    public static boolean isFull(TilePool tileEntity) {
-        return tileEntity.isFull();
+    public final boolean isFull() {
+        return getTileEntity().isFull();
     }
 
     @LuaFunction
-    public static boolean isEmpty(TilePool tileEntity) {
-        return getMana(tileEntity) == 0;
+    public final boolean isEmpty() {
+        return getMana() == 0;
     }
 
 }

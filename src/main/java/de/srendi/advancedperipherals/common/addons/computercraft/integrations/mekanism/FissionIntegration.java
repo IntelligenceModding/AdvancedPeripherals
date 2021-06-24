@@ -1,71 +1,74 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.integrations.mekanism;
 
-import dan200.computercraft.api.lua.GenericSource;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
-import de.srendi.advancedperipherals.AdvancedPeripherals;
-import de.srendi.advancedperipherals.common.addons.computercraft.base.ProxyIntegration;
+import de.srendi.advancedperipherals.common.addons.computercraft.base.Integration;
 import mekanism.api.chemical.ChemicalStack;
 import mekanism.generators.common.content.fission.FissionReactorMultiblockData;
 import mekanism.generators.common.tile.fission.TileEntityFissionReactorLogicAdapter;
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.FluidStack;
-import org.jetbrains.annotations.NotNull;
 
-import javax.swing.text.AbstractDocument;
 import java.util.HashMap;
 import java.util.Map;
 
-public class FissionIntegration implements GenericSource {
-
-    @NotNull
+public class FissionIntegration extends Integration<TileEntityFissionReactorLogicAdapter> {
     @Override
-    public ResourceLocation id() {
-        return new ResourceLocation(AdvancedPeripherals.MOD_ID, "fissionReactor");
+    protected Class<TileEntityFissionReactorLogicAdapter> getTargetClass() {
+        return TileEntityFissionReactorLogicAdapter.class;
+    }
+
+    @Override
+    public FissionIntegration getNewInstance() {
+        return new FissionIntegration();
+    }
+
+    @Override
+    public String getType() {
+        return "fissionReactor";
     }
 
     @LuaFunction
-    public static Map<String, Object> getCoolant(TileEntityFissionReactorLogicAdapter tileEntity) {
+    public final Map<String, Object> getCoolant() {
         Map<String, Object> wrapped = new HashMap<>(2);
-        if (getReactor(tileEntity).fluidCoolantTank.isEmpty() && !getReactor(tileEntity).gasCoolantTank.isEmpty()) {
-            ChemicalStack<?> stack = getReactor(tileEntity).gasCoolantTank.getStack();
+        if (getReactor().fluidCoolantTank.isEmpty() && !getReactor().gasCoolantTank.isEmpty()) {
+            ChemicalStack<?> stack = getReactor().gasCoolantTank.getStack();
             wrapped.put("name", stack.getType().getRegistryName() == null ? null : stack.getType().getRegistryName().toString());
             wrapped.put("amount", stack.getAmount());
             return wrapped;
         }
-        FluidStack stack = getReactor(tileEntity).fluidCoolantTank.getFluid();
+        FluidStack stack = getReactor().fluidCoolantTank.getFluid();
         wrapped.put("name", stack.getFluid().getRegistryName() == null ? null : stack.getFluid().getRegistryName().toString());
         wrapped.put("amount", stack.getAmount());
         return wrapped;
     }
 
     @LuaFunction
-    public static long getCoolantCapacity(TileEntityFissionReactorLogicAdapter tileEntity) {
-        if (getReactor(tileEntity).fluidCoolantTank.isEmpty() && !getReactor(tileEntity).gasCoolantTank.isEmpty()) {
-            return getReactor(tileEntity).gasCoolantTank.getCapacity();
+    public final long getCoolantCapacity() {
+        if (getReactor().fluidCoolantTank.isEmpty() && !getReactor().gasCoolantTank.isEmpty()) {
+            return getReactor().gasCoolantTank.getCapacity();
         }
-        return getReactor(tileEntity).fluidCoolantTank.getCapacity();
+        return getReactor().fluidCoolantTank.getCapacity();
     }
 
     @LuaFunction
-    public static long getCoolantNeeded(TileEntityFissionReactorLogicAdapter tileEntity) {
-        if (getReactor(tileEntity).fluidCoolantTank.isEmpty() && !getReactor(tileEntity).gasCoolantTank.isEmpty()) {
-            return getReactor(tileEntity).gasCoolantTank.getNeeded();
+    public final long getCoolantNeeded() {
+        if (getReactor().fluidCoolantTank.isEmpty() && !getReactor().gasCoolantTank.isEmpty()) {
+            return getReactor().gasCoolantTank.getNeeded();
         }
-        return getReactor(tileEntity).fluidCoolantTank.getNeeded();
+        return getReactor().fluidCoolantTank.getNeeded();
     }
 
     @LuaFunction
-    public static double getCoolantFilledPercentage(TileEntityFissionReactorLogicAdapter tileEntity) {
-        if (getReactor(tileEntity).fluidCoolantTank.isEmpty() && !getReactor(tileEntity).gasCoolantTank.isEmpty()) {
-            return getReactor(tileEntity).gasCoolantTank.getStored() / (double) getReactor(tileEntity).gasCoolantTank.getCapacity();
+    public final double getCoolantFilledPercentage() {
+        if (getReactor().fluidCoolantTank.isEmpty() && !getReactor().gasCoolantTank.isEmpty()) {
+            return getReactor().gasCoolantTank.getStored() / (double) getReactor().gasCoolantTank.getCapacity();
         }
-        return getReactor(tileEntity).fluidCoolantTank.getFluidAmount() / (double) getReactor(tileEntity).fluidCoolantTank.getCapacity();
+        return getReactor().fluidCoolantTank.getFluidAmount() / (double) getReactor().fluidCoolantTank.getCapacity();
     }
 
     @LuaFunction
-    public static Map<String, Object> getHeatedCoolant(TileEntityFissionReactorLogicAdapter tileEntity) {
-        ChemicalStack<?> stack = getReactor(tileEntity).heatedCoolantTank.getStack();
+    public final Map<String, Object> getHeatedCoolant() {
+        ChemicalStack<?> stack = getReactor().heatedCoolantTank.getStack();
         Map<String, Object> wrapped = new HashMap<>(2);
         wrapped.put("name", stack.getType().getRegistryName() == null ? null : stack.getType().getRegistryName().toString());
         wrapped.put("amount", stack.getAmount());
@@ -73,141 +76,141 @@ public class FissionIntegration implements GenericSource {
     }
 
     @LuaFunction
-    public static long getHeatedCoolantCapacity(TileEntityFissionReactorLogicAdapter tileEntity) {
-        return getReactor(tileEntity).heatedCoolantTank.getCapacity();
+    public final long getHeatedCoolantCapacity() {
+        return getReactor().heatedCoolantTank.getCapacity();
     }
 
     @LuaFunction
-    public static long getHeatedCoolantNeeded(TileEntityFissionReactorLogicAdapter tileEntity) {
-        return getReactor(tileEntity).heatedCoolantTank.getNeeded();
+    public final long getHeatedCoolantNeeded() {
+        return getReactor().heatedCoolantTank.getNeeded();
     }
 
     @LuaFunction
-    public static double getHeatedCoolantFilledPercentage(TileEntityFissionReactorLogicAdapter tileEntity) {
-        return getReactor(tileEntity).heatedCoolantTank.getStored() / (double) getHeatedCoolantCapacity(tileEntity);
+    public final double getHeatedCoolantFilledPercentage() {
+        return getReactor().heatedCoolantTank.getStored() / (double) getHeatedCoolantCapacity();
     }
 
     @LuaFunction
-    public static long getFuel(TileEntityFissionReactorLogicAdapter tileEntity) {
-        return getReactor(tileEntity).fuelTank.getStored();
+    public final long getFuel() {
+        return getReactor().fuelTank.getStored();
     }
 
     @LuaFunction
-    public static long getFuelCapacity(TileEntityFissionReactorLogicAdapter tileEntity) {
-        return getReactor(tileEntity).fuelTank.getCapacity();
+    public final long getFuelCapacity() {
+        return getReactor().fuelTank.getCapacity();
     }
 
     @LuaFunction
-    public static long getFuelNeeded(TileEntityFissionReactorLogicAdapter tileEntity) {
-        return getReactor(tileEntity).fuelTank.getNeeded();
+    public final long getFuelNeeded() {
+        return getReactor().fuelTank.getNeeded();
     }
 
     @LuaFunction
-    public static double getFuelFilledPercentage(TileEntityFissionReactorLogicAdapter tileEntity) {
-        return getFuel(tileEntity) / (double) getFuelCapacity(tileEntity);
+    public final double getFuelFilledPercentage() {
+        return getFuel() / (double) getFuelCapacity();
     }
 
     @LuaFunction
-    public static long getWaste(TileEntityFissionReactorLogicAdapter tileEntity) {
-        return getReactor(tileEntity).wasteTank.getStored();
+    public final long getWaste() {
+        return getReactor().wasteTank.getStored();
     }
 
     @LuaFunction
-    public static long getWasteCapacity(TileEntityFissionReactorLogicAdapter tileEntity) {
-        return getReactor(tileEntity).wasteTank.getCapacity();
+    public final long getWasteCapacity() {
+        return getReactor().wasteTank.getCapacity();
     }
 
     @LuaFunction
-    public static long getWasteNeeded(TileEntityFissionReactorLogicAdapter tileEntity) {
-        return getReactor(tileEntity).wasteTank.getNeeded();
+    public final long getWasteNeeded() {
+        return getReactor().wasteTank.getNeeded();
     }
 
     @LuaFunction
-    public static double getWasteFilledPercentage(TileEntityFissionReactorLogicAdapter tileEntity) {
-        return getWaste(tileEntity) / (double) getWasteCapacity(tileEntity);
+    public final double getWasteFilledPercentage() {
+        return getWaste() / (double) getWasteCapacity();
     }
 
     @LuaFunction
-    public static boolean getStatus(TileEntityFissionReactorLogicAdapter tileEntity) {
-        return getReactor(tileEntity).isActive();
+    public final boolean getStatus() {
+        return getReactor().isActive();
     }
 
     @LuaFunction
-    public static void scram(TileEntityFissionReactorLogicAdapter tileEntity) {
-        getReactor(tileEntity).setActive(false);
+    public final void scram() {
+        getReactor().setActive(false);
     }
 
     @LuaFunction
-    public static void activate(TileEntityFissionReactorLogicAdapter tileEntity) {
-        getReactor(tileEntity).setActive(true);
+    public final void activate() {
+        getReactor().setActive(true);
     }
 
     @LuaFunction
-    public static double getBurnRate(TileEntityFissionReactorLogicAdapter tileEntity) {
-        return getReactor(tileEntity).rateLimit;
+    public final double getBurnRate() {
+        return getReactor().rateLimit;
     }
 
     @LuaFunction
-    public static void setBurnRate(TileEntityFissionReactorLogicAdapter tileEntity, double rate) throws LuaException {
+    public final void setBurnRate(double rate) throws LuaException {
         rate = (double) Math.round(rate * 100) / 100;
-        int max = getMaxBurnRate(tileEntity);
+        int max = getMaxBurnRate();
         if (rate < 0 || rate > max)
             throw new LuaException("Burn Rate '" + rate + "' is out of range must be between 0 and " + max + ". (Inclusive)");
 
-        getReactor(tileEntity).rateLimit = Math.max(Math.min(getMaxBurnRate(tileEntity), rate), 0);
+        getReactor().rateLimit = Math.max(Math.min(getMaxBurnRate(), rate), 0);
     }
 
     @LuaFunction
-    public static double getActualBurnRate(TileEntityFissionReactorLogicAdapter tileEntity) {
-        return getReactor(tileEntity).lastBurnRate;
+    public final double getActualBurnRate() {
+        return getReactor().lastBurnRate;
     }
 
     @LuaFunction
-    public static int getMaxBurnRate(TileEntityFissionReactorLogicAdapter tileEntity) {
-        return getReactor(tileEntity).fuelAssemblies;
+    public final int getMaxBurnRate() {
+        return getReactor().fuelAssemblies;
     }
 
     @LuaFunction
-    public static double getDamagePercent(TileEntityFissionReactorLogicAdapter tileEntity) {
-        return Math.round(getReactor(tileEntity).reactorDamage);
+    public final double getDamagePercent() {
+        return Math.round(getReactor().reactorDamage);
     }
 
     @LuaFunction
-    public static double getHeatingRate(TileEntityFissionReactorLogicAdapter tileEntity) {
-        return getReactor(tileEntity).lastBoilRate;
+    public final double getHeatingRate() {
+        return getReactor().lastBoilRate;
     }
 
     @LuaFunction
-    public static double getEnvironmentalLoss(TileEntityFissionReactorLogicAdapter tileEntity) {
-        return getReactor(tileEntity).lastEnvironmentLoss;
+    public final double getEnvironmentalLoss() {
+        return getReactor().lastEnvironmentLoss;
     }
 
     @LuaFunction
-    public static double getTemperature(TileEntityFissionReactorLogicAdapter tileEntity) {
-        return getReactor(tileEntity).getTotalTemperature();
+    public final double getTemperature() {
+        return getReactor().getTotalTemperature();
     }
 
     @LuaFunction
-    public static double getHeatCapacity(TileEntityFissionReactorLogicAdapter tileEntity) {
-        return getReactor(tileEntity).heatCapacitor.getHeatCapacity();
+    public final double getHeatCapacity() {
+        return getReactor().heatCapacitor.getHeatCapacity();
     }
 
     @LuaFunction
-    public static int getFuelAssemblies(TileEntityFissionReactorLogicAdapter tileEntity) {
-        return getReactor(tileEntity).fuelAssemblies;
+    public final int getFuelAssemblies() {
+        return getReactor().fuelAssemblies;
     }
 
     @LuaFunction
-    public static int getFuelSurfaceArea(TileEntityFissionReactorLogicAdapter tileEntity) {
-        return getReactor(tileEntity).surfaceArea;
+    public final int getFuelSurfaceArea() {
+        return getReactor().surfaceArea;
     }
 
     @LuaFunction
-    public static double getBoilEfficiency(TileEntityFissionReactorLogicAdapter tileEntity) {
-        return getReactor(tileEntity).getBoilEfficiency();
+    public final double getBoilEfficiency() {
+        return getReactor().getBoilEfficiency();
     }
 
-    private static FissionReactorMultiblockData getReactor(TileEntityFissionReactorLogicAdapter tileEntity) {
-        return tileEntity.getMultiblock();
+    private FissionReactorMultiblockData getReactor() {
+        return getTileEntity().getMultiblock();
     }
 }

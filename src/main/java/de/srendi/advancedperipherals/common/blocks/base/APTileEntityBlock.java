@@ -1,11 +1,8 @@
 package de.srendi.advancedperipherals.common.blocks.base;
 
-import de.srendi.advancedperipherals.AdvancedPeripherals;
-import de.srendi.advancedperipherals.common.setup.TileEntityTypes;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.DirectionalBlock;
-import net.minecraft.block.ObserverBlock;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.state.DirectionProperty;
 import net.minecraft.state.StateContainer;
@@ -28,7 +25,6 @@ public class APTileEntityBlock<T extends TileEntity> extends BaseTileEntityBlock
     public APTileEntityBlock(RegistryObject<TileEntityType<T>> tileEntity, boolean isRotatable) {
         this.tileEntity = tileEntity;
         this.isRotatable = isRotatable;
-        if(isRotatable)
         this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.SOUTH));
     }
 
@@ -49,28 +45,26 @@ public class APTileEntityBlock<T extends TileEntity> extends BaseTileEntityBlock
     }
 
     public BlockState rotate(BlockState state, Rotation rot) {
-        if(isRotatable)
+        if (isRotatable)
             return state.setValue(FACING, rot.rotate(state.getValue(FACING)));
         return state;
     }
 
     public BlockState mirror(BlockState state, Mirror mirrorIn) {
-        if(isRotatable)
+        if (isRotatable)
             return state.rotate(mirrorIn.getRotation(state.getValue(FACING)));
         return state;
     }
 
     @Override
     protected void createBlockStateDefinition(StateContainer.Builder<Block, BlockState> builder) {
-        AdvancedPeripherals.debug("DEBUG1 " + isRotatable);
-        if(isRotatable)
-            builder.add(FACING);
+        builder.add(FACING);
     }
 
     @Nullable
     @Override
     public BlockState getStateForPlacement(BlockItemUseContext context) {
-        if(isRotatable)
+        if (isRotatable)
             return this.defaultBlockState().setValue(FACING, context.getNearestLookingDirection().getOpposite().getOpposite());
         return this.defaultBlockState();
     }

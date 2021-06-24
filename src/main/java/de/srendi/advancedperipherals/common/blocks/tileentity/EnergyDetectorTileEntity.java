@@ -24,14 +24,14 @@ import java.util.Optional;
 public class EnergyDetectorTileEntity extends PeripheralTileEntity<EnergyDetectorPeripheral> implements ITickableTileEntity {
 
     public int transferRate = 0;
-    // storageProxy that will forward the energy to the output but limit it to maxTransferRate
+    //storageProxy that will forward the energy to the output but limit it to maxTransferRate
     public EnergyStorageProxy storageProxy = new EnergyStorageProxy(this, AdvancedPeripheralsConfig.energyDetectorMaxFlow);
     LazyOptional<IEnergyStorage> energyStorageCap = LazyOptional.of(() -> storageProxy);
     Direction energyInDirection = Direction.NORTH;
     Direction energyOutDirection = Direction.SOUTH;
     @NotNull
     private Optional<IEnergyStorage> outReceivingStorage = Optional.empty();
-    // an zero size, zero transfer energy storage to enshure that cables connect
+    //a zero size, zero transfer energy storage to ensure that cables connect
     private EnergyStorage zeroStorage = new EnergyStorage(0, 0, 0);
     LazyOptional<IEnergyStorage> zeroStorageCap = LazyOptional.of(() -> zeroStorage);
 

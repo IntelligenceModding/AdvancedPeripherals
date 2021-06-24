@@ -1,29 +1,35 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.integrations.mekanism;
 
-import dan200.computercraft.api.lua.GenericSource;
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.shared.util.NBTUtil;
-import de.srendi.advancedperipherals.AdvancedPeripherals;
+import de.srendi.advancedperipherals.common.addons.computercraft.base.Integration;
 import mekanism.common.integration.energy.EnergyCompatUtils;
 import mekanism.generators.common.content.fusion.FusionReactorMultiblockData;
 import mekanism.generators.common.tile.fusion.TileEntityFusionReactorLogicAdapter;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
-public class FusionIntegration implements GenericSource {
-
-    @NotNull
+public class FusionIntegration extends Integration<TileEntityFusionReactorLogicAdapter> {
     @Override
-    public ResourceLocation id() {
-        return new ResourceLocation(AdvancedPeripherals.MOD_ID, "fusionReactor");
+    protected Class<TileEntityFusionReactorLogicAdapter> getTargetClass() {
+        return TileEntityFusionReactorLogicAdapter.class;
+    }
+
+    @Override
+    public FusionIntegration getNewInstance() {
+        return new FusionIntegration();
+    }
+
+    @Override
+    public String getType() {
+        return "fusionReactor";
     }
 
     @LuaFunction
-    public static Map<String, Object> getHohlraum(TileEntityFusionReactorLogicAdapter tileEntity) {
-        ItemStack stack = getReactor(tileEntity).getStackInSlot(0);
+    public final Map<String, Object> getHohlraum() {
+        ItemStack stack = getReactor().getStackInSlot(0);
         Map<String, Object> wrapped = new HashMap<>(3);
         wrapped.put("name", stack.getItem().getRegistryName().toString());
         wrapped.put("count", stack.getCount());
@@ -33,140 +39,140 @@ public class FusionIntegration implements GenericSource {
     }
 
     @LuaFunction
-    public static double getPlasmaTemperature(TileEntityFusionReactorLogicAdapter tileEntity) {
-        return getReactor(tileEntity).getPlasmaTemp();
+    public final double getPlasmaTemperature() {
+        return getReactor().getPlasmaTemp();
     }
 
     @LuaFunction
-    public static double getCaseTemperature(TileEntityFusionReactorLogicAdapter tileEntity) {
-        return getReactor(tileEntity).getCaseTemp();
+    public final double getCaseTemperature() {
+        return getReactor().getCaseTemp();
     }
 
     @LuaFunction
-    public static int getWater(TileEntityFusionReactorLogicAdapter tileEntity) {
-        return getReactor(tileEntity).waterTank.getFluidAmount();
+    public final int getWater() {
+        return getReactor().waterTank.getFluidAmount();
     }
 
     @LuaFunction
-    public static int getWaterCapacity(TileEntityFusionReactorLogicAdapter tileEntity) {
-        return getReactor(tileEntity).waterTank.getCapacity();
+    public final int getWaterCapacity() {
+        return getReactor().waterTank.getCapacity();
     }
 
     @LuaFunction
-    public static int getWaterNeeded(TileEntityFusionReactorLogicAdapter tileEntity) {
-        return getReactor(tileEntity).waterTank.getNeeded();
+    public final int getWaterNeeded() {
+        return getReactor().waterTank.getNeeded();
     }
 
     @LuaFunction
-    public static double getWaterFilledPercentage(TileEntityFusionReactorLogicAdapter tileEntity) {
-        return getWater(tileEntity) / (double) getWaterCapacity(tileEntity);
+    public final double getWaterFilledPercentage() {
+        return getWater() / (double) getWaterCapacity();
     }
 
     @LuaFunction
-    public static long getSteam(TileEntityFusionReactorLogicAdapter tileEntity) {
-        return getReactor(tileEntity).steamTank.getStored();
+    public final long getSteam() {
+        return getReactor().steamTank.getStored();
     }
 
     @LuaFunction
-    public static long getSteamCapacity(TileEntityFusionReactorLogicAdapter tileEntity) {
-        return getReactor(tileEntity).steamTank.getCapacity();
+    public final long getSteamCapacity() {
+        return getReactor().steamTank.getCapacity();
     }
 
     @LuaFunction
-    public static long getSteamNeeded(TileEntityFusionReactorLogicAdapter tileEntity) {
-        return getReactor(tileEntity).steamTank.getNeeded();
+    public final long getSteamNeeded() {
+        return getReactor().steamTank.getNeeded();
     }
 
     @LuaFunction
-    public static double getSteamFilledPercentage(TileEntityFusionReactorLogicAdapter tileEntity) {
-        return getSteam(tileEntity) / (double) getSteamCapacity(tileEntity);
+    public final double getSteamFilledPercentage() {
+        return getSteam() / (double) getSteamCapacity();
     }
 
     @LuaFunction
-    public static long getTritium(TileEntityFusionReactorLogicAdapter tileEntity) {
-        return getReactor(tileEntity).tritiumTank.getStored();
+    public final long getTritium() {
+        return getReactor().tritiumTank.getStored();
     }
 
     @LuaFunction
-    public static long getTritiumCapacity(TileEntityFusionReactorLogicAdapter tileEntity) {
-        return getReactor(tileEntity).tritiumTank.getCapacity();
+    public final long getTritiumCapacity() {
+        return getReactor().tritiumTank.getCapacity();
     }
 
     @LuaFunction
-    public static long getTritiumNeeded(TileEntityFusionReactorLogicAdapter tileEntity) {
-        return getReactor(tileEntity).tritiumTank.getNeeded();
+    public final long getTritiumNeeded() {
+        return getReactor().tritiumTank.getNeeded();
     }
 
     @LuaFunction
-    public static double getTritiumFilledPercentage(TileEntityFusionReactorLogicAdapter tileEntity) {
-        return getTritium(tileEntity) / (double) getTritiumCapacity(tileEntity);
+    public final double getTritiumFilledPercentage() {
+        return getTritium() / (double) getTritiumCapacity();
     }
 
     @LuaFunction
-    public static long getDeuterium(TileEntityFusionReactorLogicAdapter tileEntity) {
-        return getReactor(tileEntity).deuteriumTank.getStored();
+    public final long getDeuterium() {
+        return getReactor().deuteriumTank.getStored();
     }
 
     @LuaFunction
-    public static long getDeuteriumCapacity(TileEntityFusionReactorLogicAdapter tileEntity) {
-        return getReactor(tileEntity).deuteriumTank.getCapacity();
+    public final long getDeuteriumCapacity() {
+        return getReactor().deuteriumTank.getCapacity();
     }
 
     @LuaFunction
-    public static long getDeuteriumNeeded(TileEntityFusionReactorLogicAdapter tileEntity) {
-        return getReactor(tileEntity).deuteriumTank.getNeeded();
+    public final long getDeuteriumNeeded() {
+        return getReactor().deuteriumTank.getNeeded();
     }
 
     @LuaFunction
-    public static double getDeuteriumFilledPercentage(TileEntityFusionReactorLogicAdapter tileEntity) {
-        return getDeuterium(tileEntity) / (double) getDeuteriumCapacity(tileEntity);
+    public final double getDeuteriumFilledPercentage() {
+        return getDeuterium() / (double) getDeuteriumCapacity();
     }
 
     @LuaFunction
-    public static long getDTFuel(TileEntityFusionReactorLogicAdapter tileEntity) {
-        return getReactor(tileEntity).fuelTank.getStored();
+    public final long getDTFuel() {
+        return getReactor().fuelTank.getStored();
     }
 
     @LuaFunction
-    public static long getDTFuelCapacity(TileEntityFusionReactorLogicAdapter tileEntity) {
-        return getReactor(tileEntity).fuelTank.getCapacity();
+    public final long getDTFuelCapacity() {
+        return getReactor().fuelTank.getCapacity();
     }
 
     @LuaFunction
-    public static long getDTFuelNeeded(TileEntityFusionReactorLogicAdapter tileEntity) {
-        return getReactor(tileEntity).fuelTank.getNeeded();
+    public final long getDTFuelNeeded() {
+        return getReactor().fuelTank.getNeeded();
     }
 
     @LuaFunction
-    public static double getDTFuelFilledPercentage(TileEntityFusionReactorLogicAdapter tileEntity) {
-        return getDTFuel(tileEntity) / (double) getDTFuelCapacity(tileEntity);
+    public final double getDTFuelFilledPercentage() {
+        return getDTFuel() / (double) getDTFuelCapacity();
     }
 
     @LuaFunction
-    public static long getProduction(TileEntityFusionReactorLogicAdapter tileEntity) {
-        return EnergyCompatUtils.EnergyType.FORGE.convertToAsLong(getReactor(tileEntity).getPassiveGeneration(false, false));
+    public final long getProduction() {
+        return EnergyCompatUtils.EnergyType.FORGE.convertToAsLong(getReactor().getPassiveGeneration(false, false));
     }
 
     @LuaFunction
-    public static int getInjectionRate(TileEntityFusionReactorLogicAdapter tileEntity) {
-        return getReactor(tileEntity).getInjectionRate();
+    public final int getInjectionRate() {
+        return getReactor().getInjectionRate();
     }
 
     @LuaFunction
-    public static void setInjectionRate(TileEntityFusionReactorLogicAdapter tileEntity, int rate) {
-        getReactor(tileEntity).setInjectionRate(rate);
+    public final void setInjectionRate(int rate) {
+        getReactor().setInjectionRate(rate);
     }
 
     @LuaFunction
-    public static long getPassiveGeneration(TileEntityFusionReactorLogicAdapter tileEntity, boolean active) {
-        return EnergyCompatUtils.EnergyType.FORGE.convertToAsLong(getReactor(tileEntity).getPassiveGeneration(active, false));
+    public final long getPassiveGeneration(boolean active) {
+        return EnergyCompatUtils.EnergyType.FORGE.convertToAsLong(getReactor().getPassiveGeneration(active, false));
     }
 
-    private static FusionReactorMultiblockData getReactor(TileEntityFusionReactorLogicAdapter tileEntity) {
-        return tileEntity.getMultiblock();
+    private FusionReactorMultiblockData getReactor() {
+        return getTileEntity().getMultiblock();
     }
 
-    public static List<String> getListFromTags(Set<ResourceLocation> tags) {
+    public List<String> getListFromTags(Set<ResourceLocation> tags) {
         List<String> list = new ArrayList<>();
         for (ResourceLocation value : tags) {
             list.add(value.toString());

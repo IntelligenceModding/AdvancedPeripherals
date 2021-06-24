@@ -1,43 +1,47 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.integrations.botania;
 
-import dan200.computercraft.api.lua.GenericSource;
 import dan200.computercraft.api.lua.LuaFunction;
-import de.srendi.advancedperipherals.AdvancedPeripherals;
-import de.srendi.advancedperipherals.common.addons.computercraft.base.ProxyIntegration;
-import net.minecraft.util.ResourceLocation;
-import org.jetbrains.annotations.NotNull;
+import de.srendi.advancedperipherals.common.addons.computercraft.base.Integration;
 import vazkii.botania.api.subtile.TileEntityGeneratingFlower;
 
-public class ManaFlowerIntegration implements GenericSource {
-
-    @NotNull
+public class ManaFlowerIntegration extends Integration<TileEntityGeneratingFlower> {
     @Override
-    public ResourceLocation id() {
-        return new ResourceLocation(AdvancedPeripherals.MOD_ID, "manaFlower");
+    protected Class<TileEntityGeneratingFlower> getTargetClass() {
+        return TileEntityGeneratingFlower.class;
+    }
+
+    @Override
+    public Integration<?> getNewInstance() {
+        return new ManaFlowerIntegration();
+    }
+
+    @Override
+    public String getType() {
+        return "manaFlower";
     }
 
     @LuaFunction
-    public static boolean isPassiveFlower(TileEntityGeneratingFlower tileEntity) {
-        return tileEntity.isPassiveFlower();
+    public final boolean isPassiveFlower() {
+        return getTileEntity().isPassiveFlower();
     }
 
     @LuaFunction
-    public static int getMaxMana(TileEntityGeneratingFlower tileEntity) {
-        return tileEntity.getMaxMana();
+    public final int getMaxMana() {
+        return getTileEntity().getMaxMana();
     }
 
     @LuaFunction
-    public static int getGeneration(TileEntityGeneratingFlower tileEntity) {
-        return tileEntity.getValueForPassiveGeneration();
+    public final int getGeneration() {
+        return getTileEntity().getValueForPassiveGeneration();
     }
 
     @LuaFunction
-    public static int getMana(TileEntityGeneratingFlower tileEntity) {
-        return tileEntity.getMana();
+    public final int getMana() {
+        return getTileEntity().getMana();
     }
 
     @LuaFunction
-    public static boolean isOnEnchantedSoil(TileEntityGeneratingFlower tileEntity) {
-        return tileEntity.overgrowth;
+    public final boolean isOnEnchantedSoil() {
+        return getTileEntity().overgrowth;
     }
 }

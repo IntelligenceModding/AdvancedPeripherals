@@ -1,68 +1,73 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.integrations.mekanism;
 
-import dan200.computercraft.api.lua.GenericSource;
 import dan200.computercraft.api.lua.LuaFunction;
-import de.srendi.advancedperipherals.AdvancedPeripherals;
+import de.srendi.advancedperipherals.common.addons.computercraft.base.Integration;
 import mekanism.common.content.matrix.MatrixMultiblockData;
 import mekanism.common.integration.energy.EnergyCompatUtils;
 import mekanism.common.tile.multiblock.TileEntityInductionPort;
-import net.minecraft.util.ResourceLocation;
-import org.jetbrains.annotations.NotNull;
 
-public class InductionPortIntegration implements GenericSource {
-
-    @NotNull
+public class InductionPortIntegration extends Integration<TileEntityInductionPort> {
     @Override
-    public ResourceLocation id() {
-        return new ResourceLocation(AdvancedPeripherals.MOD_ID, "inductionMatrix");
+    protected Class<TileEntityInductionPort> getTargetClass() {
+        return TileEntityInductionPort.class;
+    }
+
+    @Override
+    public InductionPortIntegration getNewInstance() {
+        return new InductionPortIntegration();
+    }
+
+    @Override
+    public String getType() {
+        return "inductionMatrix";
     }
 
     @LuaFunction
-    public static long getEnergy(TileEntityInductionPort tileEntity) {
-        return EnergyCompatUtils.EnergyType.FORGE.convertToAsLong(getMatrix(tileEntity).getEnergyContainer().getEnergy());
+    public final long getEnergy() {
+        return EnergyCompatUtils.EnergyType.FORGE.convertToAsLong(getMatrix().getEnergyContainer().getEnergy());
     }
 
     @LuaFunction
-    public static long getLastInput(TileEntityInductionPort tileEntity) {
-        return EnergyCompatUtils.EnergyType.FORGE.convertToAsLong(getMatrix(tileEntity).getEnergyContainer().getLastInput());
+    public final long getLastInput() {
+        return EnergyCompatUtils.EnergyType.FORGE.convertToAsLong(getMatrix().getEnergyContainer().getLastInput());
     }
 
     @LuaFunction
-    public static long getLastOutput(TileEntityInductionPort tileEntity) {
-        return EnergyCompatUtils.EnergyType.FORGE.convertToAsLong(getMatrix(tileEntity).getEnergyContainer().getLastOutput());
+    public final long getLastOutput() {
+        return EnergyCompatUtils.EnergyType.FORGE.convertToAsLong(getMatrix().getEnergyContainer().getLastOutput());
     }
 
     @LuaFunction
-    public static long getEnergyNeeded(TileEntityInductionPort tileEntity) {
-        return EnergyCompatUtils.EnergyType.FORGE.convertToAsLong(getMatrix(tileEntity).getEnergyContainer().getNeeded());
+    public final long getEnergyNeeded() {
+        return EnergyCompatUtils.EnergyType.FORGE.convertToAsLong(getMatrix().getEnergyContainer().getNeeded());
     }
 
     @LuaFunction
-    public static double getEnergyFilledPercentage(TileEntityInductionPort tileEntity) {
-        return getEnergy(tileEntity) / (double) getMaxEnergy(tileEntity);
+    public final double getEnergyFilledPercentage() {
+        return getEnergy() / (double) getMaxEnergy();
     }
 
     @LuaFunction
-    public static long getTransferCap(TileEntityInductionPort tileEntity) {
-        return EnergyCompatUtils.EnergyType.FORGE.convertToAsLong(getMatrix(tileEntity).getTransferCap());
+    public final long getTransferCap() {
+        return EnergyCompatUtils.EnergyType.FORGE.convertToAsLong(getMatrix().getTransferCap());
     }
 
     @LuaFunction
-    public static int getInstalledCells(TileEntityInductionPort tileEntity) {
-        return getMatrix(tileEntity).getCellCount();
+    public final int getInstalledCells() {
+        return getMatrix().getCellCount();
     }
 
     @LuaFunction
-    public static int getInstalledProviders(TileEntityInductionPort tileEntity) {
-        return getMatrix(tileEntity).getProviderCount();
+    public final int getInstalledProviders() {
+        return getMatrix().getProviderCount();
     }
 
     @LuaFunction
-    public static long getMaxEnergy(TileEntityInductionPort tileEntity) {
-        return EnergyCompatUtils.EnergyType.FORGE.convertToAsLong(getMatrix(tileEntity).getEnergyContainer().getMaxEnergy());
+    public final long getMaxEnergy() {
+        return EnergyCompatUtils.EnergyType.FORGE.convertToAsLong(getMatrix().getEnergyContainer().getMaxEnergy());
     }
 
-    private static MatrixMultiblockData getMatrix(TileEntityInductionPort tileEntity) {
-        return tileEntity.getMultiblock();
+    private MatrixMultiblockData getMatrix() {
+        return getTileEntity().getMultiblock();
     }
 }

@@ -46,7 +46,7 @@ public enum EnumColor {
         return code;
     }
 
-    public String getName() {
+    public String getType() {
         return name;
     }
 

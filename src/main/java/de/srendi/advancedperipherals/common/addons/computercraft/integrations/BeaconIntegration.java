@@ -1,33 +1,38 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.integrations;
 
-import dan200.computercraft.api.lua.GenericSource;
 import dan200.computercraft.api.lua.LuaFunction;
-import de.srendi.advancedperipherals.AdvancedPeripherals;
+import de.srendi.advancedperipherals.common.addons.computercraft.base.Integration;
 import net.minecraft.tileentity.BeaconTileEntity;
-import net.minecraft.util.ResourceLocation;
-import org.jetbrains.annotations.NotNull;
 
-public class BeaconIntegration implements GenericSource {
-
-    @NotNull
+public class BeaconIntegration extends Integration<BeaconTileEntity> {
     @Override
-    public ResourceLocation id() {
-        return new ResourceLocation(AdvancedPeripherals.MOD_ID, "beacon");
+    public Class<BeaconTileEntity> getTargetClass() {
+        return BeaconTileEntity.class;
+    }
+
+    @Override
+    public BeaconIntegration getNewInstance() {
+        return new BeaconIntegration();
+    }
+
+    @Override
+    public String getType() {
+        return "beacon";
     }
 
     @LuaFunction
-    public static int getLevel(BeaconTileEntity tileEntity) {
-        return tileEntity.getLevels();
+    public final int getLevel() {
+        return getTileEntity().getLevels();
     }
 
     @LuaFunction
-    public static String getPrimaryEffect(BeaconTileEntity tileEntity) {
-        return tileEntity.primaryPower == null ? "none" : tileEntity.primaryPower.getDescriptionId();
+    public final String getPrimaryEffect() {
+        return getTileEntity().primaryPower == null ? "none" : getTileEntity().primaryPower.getDescriptionId();
     }
 
     @LuaFunction
-    public static String getSecondaryEffect(BeaconTileEntity tileEntity) {
-        return tileEntity.secondaryPower == null ? "none" : tileEntity.secondaryPower.getDescriptionId();
+    public final String getSecondaryEffect() {
+        return getTileEntity().secondaryPower == null ? "none" : getTileEntity().secondaryPower.getDescriptionId();
     }
 
 }
