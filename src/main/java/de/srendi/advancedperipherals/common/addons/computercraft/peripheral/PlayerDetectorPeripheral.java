@@ -39,6 +39,11 @@ public class PlayerDetectorPeripheral extends BasePeripheral {
     }
 
     @LuaFunction(mainThread = true)
+    public final String[] getOnlinePlayers() {
+        return ServerLifecycleHooks.getCurrentServer().getPlayerNames();
+    }
+
+    @LuaFunction(mainThread = true)
     public final List<String> getPlayersInRange(int range) {
         List<String> playersName = new ArrayList<>();
         for (ServerPlayerEntity player : getPlayers()) {
