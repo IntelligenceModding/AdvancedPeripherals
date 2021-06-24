@@ -232,7 +232,7 @@ public class RefinedStorage {
                 }
             }
         }
-        return null;
+        return ItemStack.EMPTY;
     }
 
     public static String getFingerpint(ItemStack stack) {
