@@ -5,9 +5,12 @@ import de.srendi.advancedperipherals.common.blocks.base.APTileEntityBlock;
 import de.srendi.advancedperipherals.common.blocks.tileentity.ChatBoxTileEntity;
 import de.srendi.advancedperipherals.common.items.*;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.world.IBlockReader;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.RegistryObject;
 
@@ -61,5 +64,9 @@ public class Blocks {
         RegistryObject<T> registryObject = registerNoItem(name, block);
         Registration.ITEMS.register(name, blockItem);
         return registryObject;
+    }
+
+    public static boolean never(BlockState p_235436_0_, IBlockReader p_235436_1_, BlockPos p_235436_2_) {
+        return false;
     }
 }

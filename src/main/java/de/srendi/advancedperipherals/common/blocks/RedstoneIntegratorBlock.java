@@ -2,10 +2,12 @@ package de.srendi.advancedperipherals.common.blocks;
 
 import de.srendi.advancedperipherals.common.blocks.base.BaseTileEntityBlock;
 import de.srendi.advancedperipherals.common.blocks.tileentity.RedstoneIntegratorTileEntity;
+import de.srendi.advancedperipherals.common.setup.Blocks;
 import de.srendi.advancedperipherals.common.setup.TileEntityTypes;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.HorizontalBlock;
+import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.state.DirectionProperty;
@@ -22,6 +24,10 @@ import org.jetbrains.annotations.Nullable;
 public class RedstoneIntegratorBlock extends BaseTileEntityBlock {
 
     public static final DirectionProperty FACING = HorizontalBlock.FACING;
+
+    public RedstoneIntegratorBlock() {
+        super(Properties.of(Material.METAL).isRedstoneConductor(Blocks::never));
+    }
 
     @Nullable
     @Override

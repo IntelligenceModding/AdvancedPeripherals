@@ -3,6 +3,8 @@ package de.srendi.advancedperipherals.common.blocks.base;
 import de.srendi.advancedperipherals.common.blocks.tileentity.InventoryManagerTileEntity;
 import de.srendi.advancedperipherals.common.util.WorldPos;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.SoundType;
+import net.minecraft.block.material.Material;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -18,10 +20,19 @@ import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
+import net.minecraftforge.common.ToolType;
 import net.minecraftforge.fml.network.NetworkHooks;
 import org.jetbrains.annotations.Nullable;
 
 public abstract class BaseTileEntityBlock extends BaseBlock {
+
+    public BaseTileEntityBlock() {
+        this(Properties.of(Material.METAL).strength(1, 5).harvestLevel(0).sound(SoundType.METAL).noOcclusion().harvestTool(ToolType.PICKAXE).requiresCorrectToolForDrops());
+    }
+
+    public BaseTileEntityBlock(Properties properties) {
+        super(properties);
+    }
 
     @Override
     public boolean hasTileEntity(BlockState state) {
