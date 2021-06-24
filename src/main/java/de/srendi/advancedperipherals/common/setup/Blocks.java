@@ -48,7 +48,7 @@ public class Blocks {
                 new TranslationTextComponent("item.advancedperipherals.tooltip.redstone_integrator")));
     public static final RegistryObject<Block> BLOCK_READER = register("block_reader", () -> new APTileEntityBlock<>(TileEntityTypes.BLOCK_READER, true),
             ()-> new APBlockItem(Blocks.BLOCK_READER.get(), null, null,
-                new TranslationTextComponent("item.advancedperipherals.tooltip.peripheral_proxy")));
+                new TranslationTextComponent("item.advancedperipherals.tooltip.block_reader")));
 
     static void register() {
     }

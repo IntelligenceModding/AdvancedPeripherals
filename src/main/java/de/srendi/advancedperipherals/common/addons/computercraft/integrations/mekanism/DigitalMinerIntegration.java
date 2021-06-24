@@ -26,72 +26,72 @@ public class DigitalMinerIntegration extends Integration<TileEntityDigitalMiner>
     }
 
     @LuaFunction
-    public int getDelay() {
+    public final int getDelay() {
         return getTileEntity().getDelay();
     }
 
     @LuaFunction
-    public int getRadius() {
+    public final int getRadius() {
         return getTileEntity().getRadius();
     }
 
     @LuaFunction
-    public void setRadius(int newRadius) {
+    public final void setRadius(int newRadius) {
         getTileEntity().setRadiusFromPacket(newRadius);
     }
 
     @LuaFunction
-    public int getMinY() {
+    public final int getMinY() {
         return getTileEntity().getMinY();
     }
 
     @LuaFunction
-    public void setMinY(int newMinY) {
+    public final void setMinY(int newMinY) {
         getTileEntity().setMinYFromPacket(newMinY);
     }
 
     @LuaFunction
-    public int getMaxY() {
+    public final int getMaxY() {
         return getTileEntity().getMaxY();
     }
 
     @LuaFunction
-    public void setMaxY(int newMaxY) {
+    public final void setMaxY(int newMaxY) {
         getTileEntity().setMaxYFromPacket(newMaxY);
     }
 
     @LuaFunction
-    public void toggleSilkTouch() {
+    public final void toggleSilkTouch() {
         getTileEntity().toggleSilkTouch();
     }
 
     @LuaFunction
-    public void toggleInverse() {
+    public final void toggleInverse() {
         getTileEntity().toggleInverse();
     }
 
     @LuaFunction
-    public void toggleAutoEject() {
+    public final void toggleAutoEject() {
         getTileEntity().toggleAutoEject();
     }
 
     @LuaFunction
-    public void toggleAutoPull() {
+    public final void toggleAutoPull() {
         getTileEntity().toggleAutoPull();
     }
 
     @LuaFunction
-    public void start() {
+    public final void start() {
         getTileEntity().start();
     }
 
     @LuaFunction
-    public void stop() {
+    public final void stop() {
         getTileEntity().stop();
     }
 
     @LuaFunction
-    public void reset() {
+    public final void reset() {
         getTileEntity().reset();
     }
 

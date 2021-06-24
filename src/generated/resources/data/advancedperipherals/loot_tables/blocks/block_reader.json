@@ -6,7 +6,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "advancedperipherals:peripheral_proxy"
+          "name": "advancedperipherals:block_reader"
         }
       ],
       "conditions": [

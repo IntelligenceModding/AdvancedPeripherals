@@ -4,9 +4,9 @@ import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.Bloc
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
 import de.srendi.advancedperipherals.common.setup.TileEntityTypes;
 
-public class PeripheralProxyTileEntity extends PeripheralTileEntity<BlockReaderPeripheral> {
+public class BlockReaderTileEntity extends PeripheralTileEntity<BlockReaderPeripheral> {
 
-    public PeripheralProxyTileEntity() {
+    public BlockReaderTileEntity() {
         super(TileEntityTypes.BLOCK_READER.get());
     }
 
