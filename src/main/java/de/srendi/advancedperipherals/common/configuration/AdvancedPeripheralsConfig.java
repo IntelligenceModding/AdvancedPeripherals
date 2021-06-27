@@ -70,7 +70,7 @@ public class AdvancedPeripheralsConfig {
             GEO_SCANNER_MAX_COST_RADIUS = builder.comment("Defines max cost radius for geo scanner").defineInRange("geoScannerMaxCostRadius", 16, 1, 64);
             GEO_SCANNER_ADDITIONAL_BLOCK_COST = builder.comment("Defines block cost in RF for any extra block out of cost-free radius").defineInRange("geoScannerAdditionalBlockCost", 100, 100, Integer.MAX_VALUE);
             GEO_SCANNER_MAX_ENERGY_STORAGE = builder.comment("Defines max energy stored in geo scanner").defineInRange("geoScannerMaxEnergyStorage", 100_000_000, 1_000_000, Integer.MAX_VALUE);
-            GEO_SCANNER_MIN_SCAN_PERIOD = builder.comment("Defines min period between scans").defineInRange("geoScannerMinScanPeriod", 20, 20, Integer.MAX_VALUE);
+            GEO_SCANNER_MIN_SCAN_PERIOD = builder.comment("Defines min period between scans in milliseconds").defineInRange("geoScannerMinScanPeriod", 20_000, 2_000, Integer.MAX_VALUE);
 
             builder.pop();
 

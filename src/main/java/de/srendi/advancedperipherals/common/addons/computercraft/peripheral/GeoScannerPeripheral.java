@@ -91,7 +91,12 @@ public class GeoScannerPeripheral extends BasePeripheral {
 
 	private long getScanCooldownLeft() {
     	Timestamp currentTimestamp = Timestamp.valueOf(LocalDateTime.now());
-    	return lastScanTimestamp.map(timestamp -> currentTimestamp.getTime() - timestamp.getTime()).orElse(0L);
+    	return lastScanTimestamp.map(
+    			timestamp -> Math.max(
+    					0,
+						AdvancedPeripheralsConfig.geoScannerMinScanPeriod - currentTimestamp.getTime() + timestamp.getTime()
+				)
+		).orElse(0L);
 	}
 
 	@LuaFunction(mainThread = true)
