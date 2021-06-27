@@ -1,16 +1,23 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.peripheral;
 
-import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
+import dan200.computercraft.api.lua.MethodResult;
+import dan200.computercraft.shared.util.NBTUtil;
 import de.srendi.advancedperipherals.common.addons.computercraft.base.BasePeripheral;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import com.google.common.math.IntMath;
+import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.energy.CapabilityEnergy;
+import net.minecraftforge.energy.IEnergyStorage;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -63,11 +70,100 @@ public class GeoScannerPeripheral extends BasePeripheral {
 		return result;
 	}
 
+	private static int estimateCost(int radius) {
+    	if (radius <= AdvancedPeripheralsConfig.geoScannerMaxFreeRadius) {
+    		return 0;
+		}
+    	if (radius > AdvancedPeripheralsConfig.geoScannerMaxCostRadius) {
+    		return -1;
+		}
+    	int freeBlockCount = IntMath.pow(2 * AdvancedPeripheralsConfig.geoScannerMaxFreeRadius + 1, 3);
+    	int allBlockCount = IntMath.pow(2 * radius + 1, 3);
+    	return (allBlockCount - freeBlockCount) * AdvancedPeripheralsConfig.geoScannerAdditionalBlockCost;
+	}
+
+	@LuaFunction(mainThread = true)
+	public final MethodResult cost(int radius){
+    	int estimatedCost = estimateCost(radius);
+    	if (estimatedCost < 0) {
+    		return MethodResult.of(null, "Radius is exceed max value");
+		}
+    	return MethodResult.of(estimatedCost);
+	}
+
+	@LuaFunction(mainThread = true)
+	public final int getEnergy(){
+    	if (tileEntity == null) {
+    		return 0;
+		}
+    	return tileEntity.getCapability(CapabilityEnergy.ENERGY).map(IEnergyStorage::getEnergyStored).orElse(0);
+	}
+
+	@LuaFunction(mainThread = true)
+	public final int getEnergyCapacity(){
+		if (tileEntity == null) {
+			return 0;
+		}
+		return tileEntity.getCapability(CapabilityEnergy.ENERGY).map(IEnergyStorage::getMaxEnergyStored).orElse(0);
+	}
+
+	@LuaFunction(mainThread = true)
+	public final MethodResult deepScan(int x, int y, int z) {
+    	World world = getWorld();
+    	int maxShift = Math.max(Math.max(x, y), z);
+    	if (maxShift > AdvancedPeripheralsConfig.geoScannerMaxCostRadius) {
+			return MethodResult.of(null, "Radius is exceed max value");
+		}
+    	if (maxShift > AdvancedPeripheralsConfig.geoScannerMaxFreeRadius) {
+			if (tileEntity == null) {
+				return MethodResult.of(null, "Radius is exceed max value");
+			}
+			LazyOptional<IEnergyStorage> lazyEnergyStorage = tileEntity.getCapability(CapabilityEnergy.ENERGY);
+			int energyCount = lazyEnergyStorage.map(IEnergyStorage::getEnergyStored).orElse(0);
+			if (energyCount < AdvancedPeripheralsConfig.geoScannerAdditionalBlockCost) {
+				return MethodResult.of(null, String.format("Not enough RF energy, %d needed", AdvancedPeripheralsConfig.geoScannerAdditionalBlockCost));
+			}
+			lazyEnergyStorage.ifPresent(iEnergyStorage -> iEnergyStorage.extractEnergy(AdvancedPeripheralsConfig.geoScannerAdditionalBlockCost, false));
+		}
+    	BlockPos blockPos = getPos().offset(x, y, z);
+		BlockState block = world.getBlockState(blockPos);
+
+		HashMap<String, Object> data = new HashMap<>();
+		ResourceLocation name = block.getBlock().getRegistryName();
+		data.put("name", name == null ? "unknown" : name.toString());
+		if (!block.is(Blocks.AIR)) {
+			data.put("tags", block.getBlock().getTags());
+			if (block.hasTileEntity()) {
+				try {
+					data.put("nbt", NBTUtil.toLua(world.getBlockEntity(blockPos).save(new CompoundNBT())));
+				} catch (NullPointerException e) {
+					// just do nothing ...
+				}
+			}
+		}
+		return MethodResult.of(data);
+	}
+
     @LuaFunction(mainThread = true)
-    public final Object scan(int radius) throws LuaException {
+    public final MethodResult scan(int radius) {
     	BlockPos pos = getPos();
     	World world = getWorld();
-    	List<Map<String, ?>> scanResult = scan(world, pos.getX(), pos.getY(), pos.getZ(), Math.min(radius, 8));
-    	return scanResult;
+    	if (radius > AdvancedPeripheralsConfig.geoScannerMaxCostRadius) {
+    		return MethodResult.of(null, "Radius is exceed max value");
+		}
+    	if (radius > AdvancedPeripheralsConfig.geoScannerMaxFreeRadius) {
+    		if (tileEntity == null) {
+				return MethodResult.of(null, "Radius is exceed max value");
+			}
+			LazyOptional<IEnergyStorage> lazyEnergyStorage = tileEntity.getCapability(CapabilityEnergy.ENERGY);
+			int cost = estimateCost(radius);
+			int energyCount = lazyEnergyStorage.map(IEnergyStorage::getEnergyStored).orElse(0);
+			if (energyCount < cost) {
+				return MethodResult.of(null, String.format("Not enough RF energy, %d needed", cost));
+			}
+			lazyEnergyStorage.ifPresent(iEnergyStorage -> iEnergyStorage.extractEnergy(cost, false));
+		}
+		List<Map<String, ?>> scanResult = scan(world, pos.getX(), pos.getY(), pos.getZ(), Math.min(radius, 8));
+    	return MethodResult.of(scanResult);
     }
 }

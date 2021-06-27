@@ -27,6 +27,10 @@ public class ConfigHandler {
         AdvancedPeripheralsConfig.chatBoxCooldown = ConfigHolder.COMMON_CONFIG.CHAT_BOX_COOLDOWN.get();
         AdvancedPeripheralsConfig.playerDetMaxRange = ConfigHolder.COMMON_CONFIG.PLAYER_DET_MAX_RANGE.get();
         AdvancedPeripheralsConfig.energyDetectorMaxFlow = ConfigHolder.COMMON_CONFIG.ENERGY_DETECTOR_MAX_FLOW.get();
+        AdvancedPeripheralsConfig.geoScannerMaxFreeRadius = ConfigHolder.COMMON_CONFIG.GEO_SCANNER_MAX_FREE_RADIUS.get();
+        AdvancedPeripheralsConfig.geoScannerMaxCostRadius = ConfigHolder.COMMON_CONFIG.GEO_SCANNER_MAX_COST_RADIUS.get();
+        AdvancedPeripheralsConfig.geoScannerAdditionalBlockCost = ConfigHolder.COMMON_CONFIG.GEO_SCANNER_ADDITIONAL_BLOCK_COST.get();
+        AdvancedPeripheralsConfig.geoScannerMaxEnergyStorage = ConfigHolder.COMMON_CONFIG.GEO_SCANNER_MAX_ENERGY_STORAGE.get();
 
         //Features
         AdvancedPeripheralsConfig.enableChatBox = ConfigHolder.COMMON_CONFIG.ENABLE_CHAT_BOX.get();
@@ -41,6 +45,7 @@ public class ConfigHandler {
         AdvancedPeripheralsConfig.enableInventoryManager = ConfigHolder.COMMON_CONFIG.ENABLE_INVENTORY_MANAGER.get();
         AdvancedPeripheralsConfig.enableRedstoneIntegrator = ConfigHolder.COMMON_CONFIG.ENABLE_REDSTONE_INTEGRATOR.get();
         AdvancedPeripheralsConfig.enableBlockReader = ConfigHolder.COMMON_CONFIG.ENABLE_BLOCK_READER.get();
+        AdvancedPeripheralsConfig.enableGeoScanner = ConfigHolder.COMMON_CONFIG.ENABLE_GEO_SCANNER.get();
 
         AdvancedPeripheralsConfig.enableVillagerStructures = ConfigHolder.COMMON_CONFIG.ENABLE_VILLAGER_STRUCTURES.get();
     }
