@@ -181,5 +181,17 @@ public class RecipesProvider extends RecipeProvider implements IConditionBuilder
                 .pattern("IRI")
                 .unlockedBy("has_item", has(CASING))
                 .save(consumer);
+
+        ShapedRecipeBuilder.shaped(Blocks.GEO_SCANNER.get())
+                .define('O', Items.OBSERVER)
+                .define('D', Items.DIAMOND)
+                .define('C', CASING)
+                .define('R', Items.REDSTONE_BLOCK)
+                .define('M', Registry.ModBlocks.WIRED_MODEM_FULL.get())
+                .pattern("DMD")
+                .pattern("DCD")
+                .pattern("ROR")
+                .unlockedBy("has_item", has(CASING))
+                .save(consumer);
     }
 }
