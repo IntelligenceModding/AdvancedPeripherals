@@ -19,15 +19,16 @@ import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.util.*;
 
 public class GeoScannerPeripheral extends BasePeripheral {
 	/*
 	Highly inspired by https://github.com/SquidDev-CC/plethora/ BlockScanner
 	*/
+
+	private Optional<Timestamp> lastScanTimestamp = Optional.empty();
 
     public GeoScannerPeripheral(String type, PeripheralTileEntity<?> tileEntity) {
         super(type, tileEntity);
@@ -82,6 +83,17 @@ public class GeoScannerPeripheral extends BasePeripheral {
     	return (allBlockCount - freeBlockCount) * AdvancedPeripheralsConfig.geoScannerAdditionalBlockCost;
 	}
 
+	private boolean isScanOnCooldown(Timestamp currentTimestamp) {
+    	return lastScanTimestamp.map(
+    			timestamp -> (currentTimestamp.getTime() - timestamp.getTime()) < AdvancedPeripheralsConfig.geoScannerMinScanPeriod
+		).orElse(false);
+	}
+
+	private long getScanCooldownLeft() {
+    	Timestamp currentTimestamp = Timestamp.valueOf(LocalDateTime.now());
+    	return lastScanTimestamp.map(timestamp -> currentTimestamp.getTime() - timestamp.getTime()).orElse(0L);
+	}
+
 	@LuaFunction(mainThread = true)
 	public final MethodResult cost(int radius){
     	int estimatedCost = estimateCost(radius);
@@ -108,7 +120,16 @@ public class GeoScannerPeripheral extends BasePeripheral {
 	}
 
 	@LuaFunction(mainThread = true)
+	public final long getScanCooldown(){
+    	return getScanCooldownLeft();
+	}
+
+	@LuaFunction(mainThread = true)
 	public final MethodResult deepScan(int x, int y, int z) {
+    	Timestamp currentTimestamp = Timestamp.valueOf(LocalDateTime.now());
+		if (isScanOnCooldown(currentTimestamp)) {
+			return MethodResult.of(null, "Scanner need some time to cooldown");
+		}
     	World world = getWorld();
     	int maxShift = Math.max(Math.max(x, y), z);
     	if (maxShift > AdvancedPeripheralsConfig.geoScannerMaxCostRadius) {
@@ -141,11 +162,16 @@ public class GeoScannerPeripheral extends BasePeripheral {
 				}
 			}
 		}
+		lastScanTimestamp = Optional.of(currentTimestamp);
 		return MethodResult.of(data);
 	}
 
     @LuaFunction(mainThread = true)
     public final MethodResult scan(int radius) {
+		Timestamp currentTimestamp = Timestamp.valueOf(LocalDateTime.now());
+		if (isScanOnCooldown(currentTimestamp)) {
+			return MethodResult.of(null, "Scanner need some time to cooldown");
+		}
     	BlockPos pos = getPos();
     	World world = getWorld();
     	if (radius > AdvancedPeripheralsConfig.geoScannerMaxCostRadius) {
@@ -164,6 +190,7 @@ public class GeoScannerPeripheral extends BasePeripheral {
 			lazyEnergyStorage.ifPresent(iEnergyStorage -> iEnergyStorage.extractEnergy(cost, false));
 		}
 		List<Map<String, ?>> scanResult = scan(world, pos.getX(), pos.getY(), pos.getZ(), Math.min(radius, 8));
+    	lastScanTimestamp = Optional.of(currentTimestamp);
     	return MethodResult.of(scanResult);
     }
 }
