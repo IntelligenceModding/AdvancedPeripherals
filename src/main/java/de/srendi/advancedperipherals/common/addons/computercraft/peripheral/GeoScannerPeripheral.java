@@ -18,6 +18,9 @@ import java.util.List;
 import java.util.Map;
 
 public class GeoScannerPeripheral extends BasePeripheral {
+	/*
+	Highly inspired by https://github.com/SquidDev-CC/plethora/ BlockScanner
+	*/
 
     public GeoScannerPeripheral(String type, PeripheralTileEntity<?> tileEntity) {
         super(type, tileEntity);
