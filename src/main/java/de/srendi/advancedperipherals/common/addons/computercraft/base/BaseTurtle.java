@@ -62,8 +62,8 @@ public abstract class BaseTurtle<T extends BasePeripheral> extends AbstractTurtl
         if (!turtle.getWorld().isClientSide) {
             IPeripheral turtlePeripheral = turtle.getPeripheral(side);
             this.turtle = turtle;
-            if (turtlePeripheral instanceof EnvironmentDetectorPeripheral)
-                ((EnvironmentDetectorPeripheral) turtlePeripheral).setTurtle(turtle);
+            if (turtlePeripheral instanceof BasePeripheral) 
+                ((BasePeripheral) turtlePeripheral).setTurtle(turtle);
         }
 
         tick++;
