@@ -2,10 +2,14 @@ package de.srendi.advancedperipherals.common.addons.computercraft.base;
 
 import dan200.computercraft.api.peripheral.IPeripheral;
 import dan200.computercraft.api.peripheral.IPeripheralProvider;
+import de.srendi.advancedperipherals.common.addons.computercraft.integrations.BeaconIntegration;
+import de.srendi.advancedperipherals.common.addons.computercraft.integrations.botania.ManaFlowerIntegration;
+import de.srendi.advancedperipherals.common.addons.computercraft.integrations.botania.ManaPoolIntegration;
+import de.srendi.advancedperipherals.common.addons.computercraft.integrations.botania.SpreaderIntegration;
+import de.srendi.advancedperipherals.common.addons.computercraft.integrations.immersiveengineering.CapacitorIntegration;
+import de.srendi.advancedperipherals.common.addons.computercraft.integrations.immersiveengineering.RedstoneConnectorIntegration;
+import de.srendi.advancedperipherals.common.addons.computercraft.integrations.immersiveengineering.RedstoneProbeIntegration;
 import de.srendi.advancedperipherals.common.addons.computercraft.integrations.mekanism.*;
-import de.srendi.advancedperipherals.common.addons.computercraft.integrations.botania.*;
-import de.srendi.advancedperipherals.common.addons.computercraft.integrations.immersiveengineering.*;
-import de.srendi.advancedperipherals.common.addons.computercraft.integrations.*;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
@@ -65,7 +69,7 @@ public class IntegrationPeripheralProvider implements IPeripheralProvider {
     @NotNull
     @Override
     public LazyOptional<IPeripheral> getPeripheral(@NotNull World world, @NotNull BlockPos blockPos, @NotNull Direction direction) {
-        if(world.getBlockEntity(blockPos) == null)
+        if (world.getBlockEntity(blockPos) == null)
             return LazyOptional.empty();
         TileEntity tileEntity = world.getBlockEntity(blockPos);
         return getIntegration(tileEntity);

@@ -29,7 +29,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.ModList;
-import org.squiddev.cobalt.Lua;
 
 import java.util.*;
 import java.util.stream.Collectors;

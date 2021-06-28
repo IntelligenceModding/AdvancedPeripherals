@@ -8,7 +8,8 @@ import net.minecraftforge.fml.RegistryObject;
 
 public class TileEntityTypes {
 
-    public static final RegistryObject<TileEntityType<ChatBoxTile>> CHAT_BOX = Registration.TILE_ENTITIES.register("chat_box", () -> new TileEntityType<>(ChatBoxTile::new, Sets.newHashSet(Blocks.CHAT_BOX.get()), null));
+    static void register() {
+    }    public static final RegistryObject<TileEntityType<ChatBoxTile>> CHAT_BOX = Registration.TILE_ENTITIES.register("chat_box", () -> new TileEntityType<>(ChatBoxTile::new, Sets.newHashSet(Blocks.CHAT_BOX.get()), null));
     public static final RegistryObject<TileEntityType<EnvironmentDetectorTile>> ENVIRONMENT_DETECTOR = Registration.TILE_ENTITIES.register("environment_detector", () -> new TileEntityType<>(EnvironmentDetectorTile::new, Sets.newHashSet(Blocks.ENVIRONMENT_DETECTOR.get()), null));
     public static final RegistryObject<TileEntityType<PlayerDetectorTile>> PLAYER_DETECTOR = Registration.TILE_ENTITIES.register("player_detector", () -> new TileEntityType<>(PlayerDetectorTile::new, Sets.newHashSet(Blocks.PLAYER_DETECTOR.get()), null));
     public static final RegistryObject<TileEntityType<MeBridgeTile>> ME_BRIDGE = ModList.get().isLoaded("appliedenergistics2") ? Registration.TILE_ENTITIES.register("me_bridge", () -> new TileEntityType<>(MeBridgeTile::new, Sets.newHashSet(Blocks.ME_BRIDGE.get()), null)) : null;
@@ -20,7 +21,6 @@ public class TileEntityTypes {
     public static final RegistryObject<TileEntityType<BlockReaderTile>> BLOCK_READER = Registration.TILE_ENTITIES.register("block_reader", () -> new TileEntityType<>(BlockReaderTile::new, Sets.newHashSet(Blocks.BLOCK_READER.get()), null));
     public static final RegistryObject<TileEntityType<ColonyIntegratorTile>> COLONY_INTEGRATOR = Registration.TILE_ENTITIES.register("colony_integrator", () -> new TileEntityType<>(ColonyIntegratorTile::new, Sets.newHashSet(Blocks.COLONY_INTEGRATOR.get()), null));
 
-    static void register() {
-    }
+
 
 }

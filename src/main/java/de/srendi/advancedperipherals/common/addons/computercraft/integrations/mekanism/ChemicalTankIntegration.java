@@ -3,9 +3,9 @@ package de.srendi.advancedperipherals.common.addons.computercraft.integrations.m
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.shared.peripheral.generic.data.DataHelpers;
 import de.srendi.advancedperipherals.common.addons.computercraft.base.Integration;
-import mekanism.common.tile.TileEntityChemicalTank;
 import mekanism.api.chemical.IChemicalTank;
 import mekanism.api.chemical.merged.MergedChemicalTank;
+import mekanism.common.tile.TileEntityChemicalTank;
 
 import java.util.HashMap;
 import java.util.Map;
