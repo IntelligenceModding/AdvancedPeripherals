@@ -16,15 +16,15 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import net.minecraftforge.energy.CapabilityEnergy;
 
-public class GeoScannerTileEntity extends PeripheralTileEntity<GeoScannerPeripheral> {
+public class GeoScannerTile extends PeripheralTileEntity<GeoScannerPeripheral> {
 
     private final LazyOptional<IEnergyStorage> lazyEnergyStorage = LazyOptional.of(() -> new EnergyStorage(AdvancedPeripheralsConfig.geoScannerMaxEnergyStorage));
 
-    public GeoScannerTileEntity() {
+    public GeoScannerTile() {
         this(TileEntityTypes.GEO_SCANNER.get());
     }
 
-    public GeoScannerTileEntity(final TileEntityType<?> tileEntityType) {
+    public GeoScannerTile(final TileEntityType<?> tileEntityType) {
         super(tileEntityType);
     }
     
