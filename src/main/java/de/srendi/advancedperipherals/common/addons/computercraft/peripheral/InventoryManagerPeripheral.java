@@ -2,10 +2,9 @@ package de.srendi.advancedperipherals.common.addons.computercraft.peripheral;
 
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
-import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.addons.computercraft.base.BasePeripheral;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
-import de.srendi.advancedperipherals.common.blocks.tileentity.InventoryManagerTileEntity;
+import de.srendi.advancedperipherals.common.blocks.tileentity.InventoryManagerTile;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
 import de.srendi.advancedperipherals.common.util.ItemUtil;
 import net.minecraft.entity.player.PlayerEntity;
@@ -247,7 +246,7 @@ public class InventoryManagerPeripheral extends BasePeripheral {
     }
 
     private PlayerEntity getOwnerPlayer() {
-        return ((InventoryManagerTileEntity) tileEntity).getOwnerPlayer();
+        return ((InventoryManagerTile) tileEntity).getOwnerPlayer();
     }
 
     private void ensurePlayerLinked() throws LuaException {

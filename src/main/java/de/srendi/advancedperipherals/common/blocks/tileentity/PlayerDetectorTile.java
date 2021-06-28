@@ -4,17 +4,19 @@ import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.Play
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
 import de.srendi.advancedperipherals.common.setup.TileEntityTypes;
 import net.minecraft.tileentity.TileEntityType;
+import org.jetbrains.annotations.NotNull;
 
-public class PlayerDetectorTileEntity extends PeripheralTileEntity<PlayerDetectorPeripheral> {
+public class PlayerDetectorTile extends PeripheralTileEntity<PlayerDetectorPeripheral> {
 
-    public PlayerDetectorTileEntity() {
+    public PlayerDetectorTile() {
         this(TileEntityTypes.PLAYER_DETECTOR.get());
     }
 
-    public PlayerDetectorTileEntity(final TileEntityType<?> tileEntityType) {
+    public PlayerDetectorTile(final TileEntityType<?> tileEntityType) {
         super(tileEntityType);
     }
 
+    @NotNull
     @Override
     protected PlayerDetectorPeripheral createPeripheral() {
         return new PlayerDetectorPeripheral("playerDetector", this);

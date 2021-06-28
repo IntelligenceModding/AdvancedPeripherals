@@ -9,6 +9,7 @@ import org.jetbrains.annotations.Nullable;
 public abstract class Integration<T extends TileEntity> implements IPeripheral {
 
     private final Class<T> targetClass = getTargetClass();
+
     protected T tileEntity;
 
     protected abstract Class<T> getTargetClass();

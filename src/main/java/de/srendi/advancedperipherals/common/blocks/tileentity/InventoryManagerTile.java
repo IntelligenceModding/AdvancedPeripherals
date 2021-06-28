@@ -15,14 +15,16 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class InventoryManagerTileEntity extends PeripheralTileEntity<InventoryManagerPeripheral> implements IInventoryBlock<InventoryManagerContainer> {
+public class InventoryManagerTile extends PeripheralTileEntity<InventoryManagerPeripheral> implements IInventoryBlock<InventoryManagerContainer> {
 
-    public InventoryManagerTileEntity() {
+    public InventoryManagerTile() {
         super(TileEntityTypes.INVENTORY_MANAGER.get());
     }
 
+    @NotNull
     @Override
     protected InventoryManagerPeripheral createPeripheral() {
         return new InventoryManagerPeripheral("inventoryManager", this);

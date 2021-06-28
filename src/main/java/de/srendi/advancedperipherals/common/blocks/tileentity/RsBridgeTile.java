@@ -19,16 +19,16 @@ import org.jetbrains.annotations.Nullable;
 
 import static dan200.computercraft.shared.Capabilities.CAPABILITY_PERIPHERAL;
 
-public class RsBridgeTileEntity extends NetworkNodeTile<RefinedStorageNode> implements INetworkNodeProxy<RefinedStorageNode>, IRedstoneConfigurable {
+public class RsBridgeTile extends NetworkNodeTile<RefinedStorageNode> implements INetworkNodeProxy<RefinedStorageNode>, IRedstoneConfigurable {
 
     protected RsBridgePeripheral peripheral = new RsBridgePeripheral("rsBridge", this);
     private LazyOptional<IPeripheral> peripheralCap;
 
-    public RsBridgeTileEntity() {
+    public RsBridgeTile() {
         this(TileEntityTypes.RS_BRIDGE.get());
     }
 
-    public RsBridgeTileEntity(TileEntityType<?> tileType) {
+    public RsBridgeTile(TileEntityType<?> tileType) {
         super(tileType);
     }
 

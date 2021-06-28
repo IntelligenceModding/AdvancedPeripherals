@@ -1,7 +1,7 @@
 package de.srendi.advancedperipherals.common.blocks;
 
 import de.srendi.advancedperipherals.common.blocks.base.BaseTileEntityBlock;
-import de.srendi.advancedperipherals.common.blocks.tileentity.RedstoneIntegratorTileEntity;
+import de.srendi.advancedperipherals.common.blocks.tileentity.RedstoneIntegratorTile;
 import de.srendi.advancedperipherals.common.setup.Blocks;
 import de.srendi.advancedperipherals.common.setup.TileEntityTypes;
 import net.minecraft.block.Block;
@@ -42,7 +42,7 @@ public class RedstoneIntegratorBlock extends BaseTileEntityBlock {
 
     @Override
     public int getDirectSignal(BlockState blockState, IBlockReader blockAccess, BlockPos pos, Direction side) {
-        RedstoneIntegratorTileEntity tileEntity = (RedstoneIntegratorTileEntity) blockAccess.getBlockEntity(pos);
+        RedstoneIntegratorTile tileEntity = (RedstoneIntegratorTile) blockAccess.getBlockEntity(pos);
         return tileEntity.power[side.getOpposite().get3DDataValue()];
     }
 

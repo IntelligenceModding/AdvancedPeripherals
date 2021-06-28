@@ -28,17 +28,17 @@ import org.jetbrains.annotations.Nullable;
 import java.util.EnumSet;
 import java.util.Optional;
 
-public class MeBridgeTileEntity extends PeripheralTileEntity<MeBridgePeripheral> implements ICraftingRequester, ITickableTileEntity, IGridBlock, IActionHost, IActionSource, IGridHost {
+public class MeBridgeTile extends PeripheralTileEntity<MeBridgePeripheral> implements ICraftingRequester, ITickableTileEntity, IGridBlock, IActionHost, IActionSource, IGridHost {
 
     private IGridNode node;
     private PlayerEntity placed;
     private boolean initialized;
 
-    public MeBridgeTileEntity() {
+    public MeBridgeTile() {
         this(TileEntityTypes.ME_BRIDGE.get());
     }
 
-    public MeBridgeTileEntity(final TileEntityType<?> tileEntityType) {
+    public MeBridgeTile(final TileEntityType<?> tileEntityType) {
         super(tileEntityType);
     }
 
@@ -47,6 +47,7 @@ public class MeBridgeTileEntity extends PeripheralTileEntity<MeBridgePeripheral>
         this.placed = placed;
     }
 
+    @NotNull
     @Override
     protected MeBridgePeripheral createPeripheral() {
         return new MeBridgePeripheral("meBridge", this, this);

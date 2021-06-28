@@ -21,7 +21,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 
-public class EnergyDetectorTileEntity extends PeripheralTileEntity<EnergyDetectorPeripheral> implements ITickableTileEntity {
+public class EnergyDetectorTile extends PeripheralTileEntity<EnergyDetectorPeripheral> implements ITickableTileEntity {
 
     public int transferRate = 0;
     //storageProxy that will forward the energy to the output but limit it to maxTransferRate
@@ -35,10 +35,11 @@ public class EnergyDetectorTileEntity extends PeripheralTileEntity<EnergyDetecto
     private EnergyStorage zeroStorage = new EnergyStorage(0, 0, 0);
     LazyOptional<IEnergyStorage> zeroStorageCap = LazyOptional.of(() -> zeroStorage);
 
-    public EnergyDetectorTileEntity() {
+    public EnergyDetectorTile() {
         super(TileEntityTypes.ENERGY_DETECTOR.get());
     }
 
+    @NotNull
     @Override
     protected EnergyDetectorPeripheral createPeripheral() {
         return new EnergyDetectorPeripheral("energyDetector", this);

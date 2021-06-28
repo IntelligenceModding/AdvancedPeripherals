@@ -3,7 +3,7 @@ package de.srendi.advancedperipherals.common.items;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.client.HudOverlayHandler;
 import de.srendi.advancedperipherals.common.addons.curios.CuriosHelper;
-import de.srendi.advancedperipherals.common.blocks.tileentity.ARControllerTileEntity;
+import de.srendi.advancedperipherals.common.blocks.tileentity.ARControllerTile;
 import de.srendi.advancedperipherals.common.setup.Blocks;
 import de.srendi.advancedperipherals.common.util.EnumColor;
 import de.srendi.advancedperipherals.common.util.SideHelper;
@@ -59,13 +59,13 @@ public class ARGogglesItem extends ArmorItem {
                 return;
             }
             TileEntity te = world.getBlockEntity(pos);
-            if (!(te instanceof ARControllerTileEntity)) {
+            if (!(te instanceof ARControllerTile)) {
                 //If distance to ARController is larger than view distance
                 MNetwork.sendToServer(new RequestHudCanvasMessage(pos, dimensionKey));
                 return;
             }
 
-            ARControllerTileEntity controller = (ARControllerTileEntity) te;
+            ARControllerTile controller = (ARControllerTile) te;
             HudOverlayHandler.updateCanvas(controller.getCanvas());
         }
     }
@@ -120,9 +120,9 @@ public class ARGogglesItem extends ArmorItem {
             return super.useOn(context);
         } else {
             TileEntity entity = world.getBlockEntity(blockpos);
-            if (!(entity instanceof ARControllerTileEntity))
+            if (!(entity instanceof ARControllerTile))
                 return super.useOn(context);
-            ARControllerTileEntity controller = (ARControllerTileEntity) entity;
+            ARControllerTile controller = (ARControllerTile) entity;
             if (!context.getLevel().isClientSide) {
                 ItemStack item = context.getItemInHand();
                 if (!item.hasTag())
