@@ -13,7 +13,7 @@ import dan200.computercraft.api.peripheral.IPeripheral;
 import de.srendi.advancedperipherals.common.addons.computercraft.base.BasePeripheral;
 import de.srendi.advancedperipherals.common.addons.refinedstorage.RefinedStorage;
 import de.srendi.advancedperipherals.common.addons.refinedstorage.RefinedStorageNode;
-import de.srendi.advancedperipherals.common.blocks.tileentity.RsBridgeTileEntity;
+import de.srendi.advancedperipherals.common.blocks.tileentity.RsBridgeTile;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
 import de.srendi.advancedperipherals.common.util.ItemUtil;
 import net.minecraft.item.ItemStack;
@@ -30,9 +30,9 @@ import java.util.Locale;
 
 public class RsBridgePeripheral extends BasePeripheral {
 
-    private final RsBridgeTileEntity tileEntity;
+    private final RsBridgeTile tileEntity;
 
-    public RsBridgePeripheral(String type, RsBridgeTileEntity tileEntity) {
+    public RsBridgePeripheral(String type, RsBridgeTile tileEntity) {
         super(type, tileEntity);
         this.tileEntity = tileEntity;
     }

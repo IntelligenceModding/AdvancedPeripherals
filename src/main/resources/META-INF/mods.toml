@@ -41,12 +41,18 @@ side = "BOTH"
 [[dependencies.advancedperipherals]]
 modId = "appliedenergistics2"
 mandatory = false
-versionRange = "8.2.0"
+versionRange = "8.4.0"
 ordnering = "NONE"
 side = "BOTH"
 [[dependencies.advancedperipherals]]
 modId = "refinedstorage"
 mandatory = false
 versionRange = "[1.9.12,)"
+ordnering = "NONE"
+side = "BOTH"
+[[dependencies.advancedperipherals]]
+modId = "minecolonies"
+mandatory = false
+versionRange = "[0.14.237-ALPHA,)"
 ordnering = "NONE"
 side = "BOTH"

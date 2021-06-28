@@ -1,6 +1,5 @@
 package de.srendi.advancedperipherals.common.blocks.base;
 
-import de.srendi.advancedperipherals.common.blocks.tileentity.InventoryManagerTileEntity;
 import de.srendi.advancedperipherals.common.util.WorldPos;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.SoundType;
@@ -57,8 +56,8 @@ public abstract class BaseTileEntityBlock extends BaseBlock {
     public void onRemove(BlockState state, World worldIn, BlockPos pos, BlockState newState, boolean isMoving) {
         if (state.getBlock() != newState.getBlock()) {
             TileEntity tileEntity = worldIn.getBlockEntity(pos);
-            if(tileEntity instanceof IInventoryBlock)
-            InventoryHelper.dropContents(worldIn, pos, (IInventory) tileEntity);
+            if (tileEntity instanceof IInventoryBlock)
+                InventoryHelper.dropContents(worldIn, pos, (IInventory) tileEntity);
             super.onRemove(state, worldIn, pos, newState, isMoving);
         }
     }
@@ -66,6 +65,8 @@ public abstract class BaseTileEntityBlock extends BaseBlock {
     @Override
     public void setPlacedBy(World worldIn, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
         super.setPlacedBy(worldIn, pos, state, placer, stack);
+        if (worldIn.getBlockEntity(pos) == null)
+            return;
         //Used for the lua function getName()
         worldIn.getBlockEntity(pos).getTileData().putString("CustomName", stack.getDisplayName().getString());
         TileEntityList.get(worldIn).setTileEntity(worldIn, new WorldPos(pos, worldIn), true);
@@ -74,6 +75,8 @@ public abstract class BaseTileEntityBlock extends BaseBlock {
     @Override
     public void destroy(IWorld worldIn, BlockPos pos, BlockState state) {
         super.destroy(worldIn, pos, state);
+        if (worldIn.getBlockEntity(pos) == null)
+            return;
         TileEntityList.get((World) worldIn).setTileEntity((World) worldIn, new WorldPos(pos, (World) worldIn), false);
     }
 

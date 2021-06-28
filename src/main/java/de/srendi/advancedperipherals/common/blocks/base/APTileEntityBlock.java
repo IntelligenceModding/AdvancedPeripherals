@@ -17,10 +17,10 @@ import org.jetbrains.annotations.Nullable;
 
 public class APTileEntityBlock<T extends TileEntity> extends BaseTileEntityBlock {
 
+    public static final DirectionProperty FACING = DirectionalBlock.FACING;
     private RegistryObject<TileEntityType<T>> tileEntity;
     private boolean isRotatable;
     private boolean hasTileEntity = true;
-    public static final DirectionProperty FACING = DirectionalBlock.FACING;
 
     public APTileEntityBlock(RegistryObject<TileEntityType<T>> tileEntity, boolean isRotatable) {
         this.tileEntity = tileEntity;

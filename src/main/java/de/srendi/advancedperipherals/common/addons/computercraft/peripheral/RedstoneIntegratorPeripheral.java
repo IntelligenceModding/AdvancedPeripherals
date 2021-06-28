@@ -5,7 +5,7 @@ import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.core.computer.ComputerSide;
 import de.srendi.advancedperipherals.common.addons.computercraft.base.BasePeripheral;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
-import de.srendi.advancedperipherals.common.blocks.tileentity.RedstoneIntegratorTileEntity;
+import de.srendi.advancedperipherals.common.blocks.tileentity.RedstoneIntegratorTile;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
 import net.minecraft.util.Direction;
 
@@ -57,8 +57,8 @@ public class RedstoneIntegratorPeripheral extends BasePeripheral {
         getTileEntity().setRedstoneOutput(dir, power);
     }
 
-    private RedstoneIntegratorTileEntity getTileEntity() {
-        return (RedstoneIntegratorTileEntity) tileEntity;
+    private RedstoneIntegratorTile getTileEntity() {
+        return (RedstoneIntegratorTile) tileEntity;
     }
 
     private Direction validateSide(String direction) throws LuaException {

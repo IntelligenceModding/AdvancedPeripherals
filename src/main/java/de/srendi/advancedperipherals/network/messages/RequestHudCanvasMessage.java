@@ -1,6 +1,6 @@
 package de.srendi.advancedperipherals.network.messages;
 
-import de.srendi.advancedperipherals.common.blocks.tileentity.ARControllerTileEntity;
+import de.srendi.advancedperipherals.common.blocks.tileentity.ARControllerTile;
 import de.srendi.advancedperipherals.network.MNetwork;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
@@ -37,9 +37,9 @@ public class RequestHudCanvasMessage {
             for (ServerWorld world : worlds) {
                 if (world.dimension().toString().equals(mes.getDimensionKey())) {
                     TileEntity te = world.getBlockEntity(mes.getBlockPos());
-                    if (!(te instanceof ARControllerTileEntity))
+                    if (!(te instanceof ARControllerTile))
                         return;
-                    ARControllerTileEntity controller = (ARControllerTileEntity) te;
+                    ARControllerTile controller = (ARControllerTile) te;
                     MNetwork.sendTo(new UpdateHudCanvasMessage(controller.getCanvas()), cont.get().getSender());
                     break;
                 }

@@ -76,6 +76,7 @@ public abstract class PeripheralTileEntity<T extends BasePeripheral> extends Loc
         handler.invalidate();
     }
 
+    @NotNull
     protected abstract T createPeripheral();
 
     public List<IComputerAccess> getConnectedComputers() {
