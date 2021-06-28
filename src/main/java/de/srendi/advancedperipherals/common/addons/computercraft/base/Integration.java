@@ -1,14 +1,13 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.base;
 
 import dan200.computercraft.api.peripheral.IPeripheral;
-import de.srendi.advancedperipherals.common.setup.TileEntityTypes;
 import net.minecraft.tileentity.TileEntity;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public abstract class Integration<T extends TileEntity> implements IPeripheral {
 
     private final Class<T> targetClass = getTargetClass();
+
     protected T tileEntity;
 
     protected abstract Class<T> getTargetClass();

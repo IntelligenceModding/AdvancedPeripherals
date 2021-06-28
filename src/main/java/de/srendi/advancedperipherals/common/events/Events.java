@@ -7,7 +7,7 @@ import dan200.computercraft.shared.turtle.blocks.TileTurtle;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.addons.computercraft.turtles.TurtleChatBox;
 import de.srendi.advancedperipherals.common.blocks.base.TileEntityList;
-import de.srendi.advancedperipherals.common.blocks.tileentity.ChatBoxTileEntity;
+import de.srendi.advancedperipherals.common.blocks.tileentity.ChatBoxTile;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
 import de.srendi.advancedperipherals.common.items.ARGogglesItem;
 import de.srendi.advancedperipherals.network.MNetwork;
@@ -27,17 +27,17 @@ public class Events {
     public static void onChatBox(ServerChatEvent event) {
         ServerWorld world = event.getPlayer().getLevel();
         TileEntityList.get(world).getTileEntities().forEach(tileEntity -> { //Events for computers
-            if (tileEntity instanceof ChatBoxTileEntity) {
+            if (tileEntity instanceof ChatBoxTile) {
                 if (AdvancedPeripheralsConfig.enableChatBox) {
                     if (event.getMessage().startsWith("$")) {
                         event.setCanceled(true);
-                        ChatBoxTileEntity entity = (ChatBoxTileEntity) tileEntity;
+                        ChatBoxTile entity = (ChatBoxTile) tileEntity;
                         for (IComputerAccess computer : entity.getConnectedComputers()) {
                             computer.queueEvent("chat", event.getUsername(), event.getMessage().replace("$", ""));
                         }
                         return;
                     }
-                    ChatBoxTileEntity entity = (ChatBoxTileEntity) tileEntity;
+                    ChatBoxTile entity = (ChatBoxTile) tileEntity;
                     for (IComputerAccess computer : entity.getConnectedComputers()) {
                         computer.queueEvent("chat", event.getUsername(), event.getMessage());
                     }

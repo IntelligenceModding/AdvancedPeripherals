@@ -7,7 +7,6 @@ import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.RegistryObject;
 
 public class TileEntityTypes {
-
     public static final RegistryObject<TileEntityType<ChatBoxTileEntity>> CHAT_BOX = Registration.TILE_ENTITIES.register("chat_box", () -> new TileEntityType<>(ChatBoxTileEntity::new, Sets.newHashSet(Blocks.CHAT_BOX.get()), null));
     public static final RegistryObject<TileEntityType<EnvironmentDetectorTileEntiy>> ENVIRONMENT_DETECTOR = Registration.TILE_ENTITIES.register("environment_detector", () -> new TileEntityType<>(EnvironmentDetectorTileEntiy::new, Sets.newHashSet(Blocks.ENVIRONMENT_DETECTOR.get()), null));
     public static final RegistryObject<TileEntityType<PlayerDetectorTileEntity>> PLAYER_DETECTOR = Registration.TILE_ENTITIES.register("player_detector", () -> new TileEntityType<>(PlayerDetectorTileEntity::new, Sets.newHashSet(Blocks.PLAYER_DETECTOR.get()), null));
@@ -19,8 +18,5 @@ public class TileEntityTypes {
     public static final RegistryObject<TileEntityType<RedstoneIntegratorTileEntity>> REDSTONE_INTEGRATOR = Registration.TILE_ENTITIES.register("redstone_integrator", () -> new TileEntityType<>(RedstoneIntegratorTileEntity::new, Sets.newHashSet(Blocks.REDSTONE_INTEGRATOR.get()), null));
     public static final RegistryObject<TileEntityType<BlockReaderTileEntity>> BLOCK_READER = Registration.TILE_ENTITIES.register("block_reader", () -> new TileEntityType<>(BlockReaderTileEntity::new, Sets.newHashSet(Blocks.BLOCK_READER.get()), null));
     public static final RegistryObject<TileEntityType<GeoScannerTileEntity>> GEO_SCANNER = Registration.TILE_ENTITIES.register("geo_scanner", () -> new TileEntityType<>(GeoScannerTileEntity::new, Sets.newHashSet(Blocks.GEO_SCANNER.get()), null));
-
-    static void register() {
-    }
-
+    public static final RegistryObject<TileEntityType<ColonyIntegratorTile>> COLONY_INTEGRATOR = Registration.TILE_ENTITIES.register("colony_integrator", () -> new TileEntityType<>(ColonyIntegratorTile::new, Sets.newHashSet(Blocks.COLONY_INTEGRATOR.get()), null));
 }

@@ -1,7 +1,6 @@
 package de.srendi.advancedperipherals.common.items;
 
 import de.srendi.advancedperipherals.common.items.base.BaseItem;
-import net.minecraft.block.Block;
 import net.minecraft.util.text.ITextComponent;
 
 import java.util.Optional;

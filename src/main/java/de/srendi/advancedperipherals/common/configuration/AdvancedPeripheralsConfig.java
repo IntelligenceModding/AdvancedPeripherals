@@ -27,6 +27,9 @@ public class AdvancedPeripheralsConfig {
     public static boolean enableInventoryManager;
     public static boolean enableRedstoneIntegrator;
     public static boolean enableBlockReader;
+    public static boolean enableColonyIntegrator;
+
+    //World Features
     public static boolean enableVillagerStructures;
     public static boolean enableGeoScanner;
 
@@ -56,7 +59,9 @@ public class AdvancedPeripheralsConfig {
         final ForgeConfigSpec.BooleanValue ENABLE_REDSTONE_INTEGRATOR;
         final ForgeConfigSpec.BooleanValue ENABLE_BLOCK_READER;
         final ForgeConfigSpec.BooleanValue ENABLE_GEO_SCANNER;
+        final ForgeConfigSpec.BooleanValue ENABLE_COLONY_INTEGRATOR;
 
+        //World Features
         final ForgeConfigSpec.BooleanValue ENABLE_VILLAGER_STRUCTURES;
 
         CommonConfig(final ForgeConfigSpec.Builder builder) {
@@ -89,6 +94,7 @@ public class AdvancedPeripheralsConfig {
             ENABLE_REDSTONE_INTEGRATOR = builder.comment("Enable the redstone integrator or not.").define("enableRedstoneIntegrator", true);
             ENABLE_BLOCK_READER = builder.comment("Enable the block reader or not.").define("enableBlockReader", true);
             ENABLE_GEO_SCANNER = builder.comment("Enable the geo scanner or not.").define("enableGeoScanner", true);
+            ENABLE_COLONY_INTEGRATOR = builder.comment("Enable the colony integrator or not.").define("enableColonyIntegrator", true);
 
             ENABLE_VILLAGER_STRUCTURES = builder.comment("Enable the villager structures for the computer scientist.").define("enableVillagerStructures", true);
             builder.pop();

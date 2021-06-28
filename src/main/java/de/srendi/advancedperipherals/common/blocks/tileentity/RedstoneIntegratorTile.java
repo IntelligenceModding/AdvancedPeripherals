@@ -9,17 +9,19 @@ import net.minecraft.block.*;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.EnumSet;
 
-public class RedstoneIntegratorTileEntity extends PeripheralTileEntity<RedstoneIntegratorPeripheral> {
+public class RedstoneIntegratorTile extends PeripheralTileEntity<RedstoneIntegratorPeripheral> {
 
     public int[] power = new int[Direction.values().length];
 
-    public RedstoneIntegratorTileEntity() {
+    public RedstoneIntegratorTile() {
         super(TileEntityTypes.REDSTONE_INTEGRATOR.get());
     }
 
+    @NotNull
     @Override
     protected RedstoneIntegratorPeripheral createPeripheral() {
         return new RedstoneIntegratorPeripheral("redstoneIntegrator", this);

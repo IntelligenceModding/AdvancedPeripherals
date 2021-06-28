@@ -5,19 +5,21 @@ import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
 import de.srendi.advancedperipherals.common.setup.TileEntityTypes;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntityType;
+import org.jetbrains.annotations.NotNull;
 
-public class ChatBoxTileEntity extends PeripheralTileEntity<ChatBoxPeripheral> implements ITickableTileEntity {
+public class ChatBoxTile extends PeripheralTileEntity<ChatBoxPeripheral> implements ITickableTileEntity {
 
     private int tick;
 
-    public ChatBoxTileEntity() {
+    public ChatBoxTile() {
         this(TileEntityTypes.CHAT_BOX.get());
     }
 
-    public ChatBoxTileEntity(final TileEntityType<?> tileEntityType) {
+    public ChatBoxTile(final TileEntityType<?> tileEntityType) {
         super(tileEntityType);
     }
 
+    @NotNull
     @Override
     protected ChatBoxPeripheral createPeripheral() {
         return new ChatBoxPeripheral("chatBox", this);

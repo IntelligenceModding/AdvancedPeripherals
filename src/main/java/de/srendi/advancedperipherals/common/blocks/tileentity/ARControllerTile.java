@@ -12,22 +12,23 @@ import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraftforge.common.util.Constants.BlockFlags;
 import net.minecraftforge.common.util.Constants.NBT;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class ARControllerTileEntity extends PeripheralTileEntity<ARControllerPeripheral> {
+public class ARControllerTile extends PeripheralTileEntity<ARControllerPeripheral> {
     private static final String CANVAS = "canvas";
     private static final String VIRTUAL_SCREEN_SIZE = "virtual_screen_size";
     private Optional<int[]> virtualScreenSize = Optional.empty();
     private List<ARRenderAction> canvas = new ArrayList<>();
 
-    public ARControllerTileEntity() {
+    public ARControllerTile() {
         this(TileEntityTypes.AR_CONTROLLER.get());
     }
 
-    public ARControllerTileEntity(TileEntityType<?> tileEntityTypeIn) {
+    public ARControllerTile(TileEntityType<?> tileEntityTypeIn) {
         super(tileEntityTypeIn);
     }
 
@@ -49,6 +50,7 @@ public class ARControllerTileEntity extends PeripheralTileEntity<ARControllerPer
         blockChanged();
     }
 
+    @NotNull
     @Override
     protected ARControllerPeripheral createPeripheral() {
         return new ARControllerPeripheral("arController", this);
