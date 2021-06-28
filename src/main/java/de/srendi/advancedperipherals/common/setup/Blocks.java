@@ -56,6 +56,9 @@ public class Blocks {
     public static final RegistryObject<Block> COLONY_INTEGRATOR = register("colony_integrator", () -> new APTileEntityBlock<>(TileEntityTypes.COLONY_INTEGRATOR, false, ModList.get().isLoaded("minecolonies")),
             () -> new APBlockItem(Blocks.COLONY_INTEGRATOR.get(), null, null,
                     new TranslationTextComponent("item.advancedperipherals.tooltip.colony_integrator")));
+    public static final RegistryObject<Block> NBT_STORAGE = register("nbt_storage", () -> new APTileEntityBlock<>(TileEntityTypes.NBT_STORAGE, true),
+            () -> new APBlockItem(Blocks.NBT_STORAGE.get(), null, null,
+                    new TranslationTextComponent("item.advancedperipherals.tooltip.nbt_storage")));
 
     static void register() {
     }

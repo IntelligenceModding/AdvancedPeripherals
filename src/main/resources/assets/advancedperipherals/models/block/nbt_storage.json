@@ -1,0 +1,12 @@
+{
+  "parent": "block/cube_all",
+  "textures": {
+    "north": "advancedperipherals:block/nbt_storage_side",
+    "south": "advancedperipherals:block/nbt_storage_side",
+    "west": "advancedperipherals:block/nbt_storage_side",
+    "east": "advancedperipherals:block/nbt_storage_side",
+    "up": "advancedperipherals:block/peripheral_casing",
+    "down": "advancedperipherals:block/peripheral_casing",
+    "particle": "advancedperipherals:block/peripheral_casing"
+  }
+}

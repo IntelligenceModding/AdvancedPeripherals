@@ -8,6 +8,7 @@ public class AdvancedPeripheralsConfig {
     public static int chatBoxCooldown;
     public static int playerDetMaxRange;
     public static int energyDetectorMaxFlow;
+    public static int nbtStorageMaxSize;
 
     //Features
     public static boolean enableChatBox;
@@ -23,6 +24,7 @@ public class AdvancedPeripheralsConfig {
     public static boolean enableRedstoneIntegrator;
     public static boolean enableBlockReader;
     public static boolean enableColonyIntegrator;
+    public static boolean enableNBTStorage;
 
     //World Features
     public static boolean enableVillagerStructures;
@@ -33,6 +35,7 @@ public class AdvancedPeripheralsConfig {
         final ForgeConfigSpec.IntValue CHAT_BOX_COOLDOWN;
         final ForgeConfigSpec.IntValue PLAYER_DET_MAX_RANGE;
         final ForgeConfigSpec.IntValue ENERGY_DETECTOR_MAX_FLOW;
+        final ForgeConfigSpec.IntValue NBT_STORAGE_MAX_SIZE;
 
         //Features
         final ForgeConfigSpec.BooleanValue ENABLE_CHAT_BOX;
@@ -48,6 +51,7 @@ public class AdvancedPeripheralsConfig {
         final ForgeConfigSpec.BooleanValue ENABLE_REDSTONE_INTEGRATOR;
         final ForgeConfigSpec.BooleanValue ENABLE_BLOCK_READER;
         final ForgeConfigSpec.BooleanValue ENABLE_COLONY_INTEGRATOR;
+        final ForgeConfigSpec.BooleanValue ENABLE_NBT_STORAGE;
 
         //World Features
         final ForgeConfigSpec.BooleanValue ENABLE_VILLAGER_STRUCTURES;
@@ -59,6 +63,7 @@ public class AdvancedPeripheralsConfig {
             PLAYER_DET_MAX_RANGE = builder.comment("The max range of the player detector functions. " +
                     "If anyone use a higher range, the detector will use this max range").defineInRange("playerDetMaxRange", 100000000, 0, 100000000);
             ENERGY_DETECTOR_MAX_FLOW = builder.comment("Defines the maximum energy flow of the energy detector.").defineInRange("energyDetectorMaxFlow", Integer.MAX_VALUE, 1, Integer.MAX_VALUE);
+            NBT_STORAGE_MAX_SIZE = builder.comment("Defines max nbt string that can be stored in nbt storage").defineInRange("nbtStorageMaxSize", 1048576, 0, Integer.MAX_VALUE);
 
             builder.pop();
 
@@ -77,6 +82,7 @@ public class AdvancedPeripheralsConfig {
             ENABLE_REDSTONE_INTEGRATOR = builder.comment("Enable the redstone integrator or not.").define("enableRedstoneIntegrator", true);
             ENABLE_BLOCK_READER = builder.comment("Enable the block reader or not.").define("enableBlockReader", true);
             ENABLE_COLONY_INTEGRATOR = builder.comment("Enable the colony integrator or not.").define("enableColonyIntegrator", true);
+            ENABLE_NBT_STORAGE = builder.comment("Enable the nbt storage block or not").define("enableNBTStorage", true);
 
             ENABLE_VILLAGER_STRUCTURES = builder.comment("Enable the villager structures for the computer scientist.").define("enableVillagerStructures", true);
             builder.pop();
