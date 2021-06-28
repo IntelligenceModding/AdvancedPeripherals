@@ -2,6 +2,7 @@ package de.srendi.advancedperipherals.common.addons.computercraft.base;
 
 import dan200.computercraft.api.peripheral.IPeripheral;
 import dan200.computercraft.api.peripheral.IPeripheralProvider;
+import de.srendi.advancedperipherals.common.addons.computercraft.integrations.integrateddynamics.VariableStoreIntegration;
 import de.srendi.advancedperipherals.common.addons.computercraft.integrations.mekanism.*;
 import de.srendi.advancedperipherals.common.addons.computercraft.integrations.botania.*;
 import de.srendi.advancedperipherals.common.addons.computercraft.integrations.immersiveengineering.*;
@@ -48,6 +49,9 @@ public class IntegrationPeripheralProvider implements IPeripheralProvider {
             registerIntegration(new RedstoneProbeIntegration());
             registerIntegration(new RedstoneConnectorIntegration());
             registerIntegration(new CapacitorIntegration());
+        }
+        if (ModList.get().isLoaded("integrateddynamics")) {
+            registerIntegration(new VariableStoreIntegration());
         }
     }
 

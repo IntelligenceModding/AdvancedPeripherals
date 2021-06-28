@@ -118,6 +118,10 @@ dependencies {
 
     implementation fg.deobf("appeng:appliedenergistics2:${ae_version}");
 
+    implementation fg.deobf("curse.maven:id-236307:3365631")
+    implementation fg.deobf("curse.maven:CommonCapabilites-247007:3292062")
+    implementation fg.deobf("curse.maven:CyclopsCore-232758:3336467")
+
     runtimeOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}")
     compileOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}:api")
 
