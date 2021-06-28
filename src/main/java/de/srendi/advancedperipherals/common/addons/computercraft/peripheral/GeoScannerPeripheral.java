@@ -1,20 +1,20 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.peripheral;
 
+import com.google.common.math.IntMath;
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.lua.MethodResult;
-import dan200.computercraft.shared.util.NBTUtil;
 import de.srendi.advancedperipherals.common.addons.computercraft.base.BasePeripheral;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
-import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.World;
-import com.google.common.math.IntMath;
+import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
@@ -53,15 +53,18 @@ public class GeoScannerPeripheral extends BasePeripheral {
 			for (int oY = y - radius; oY <= y + radius; oY++) {
 				for (int oZ = z - radius; oZ <= z + radius; oZ++) {
 					BlockPos subPos = new BlockPos(oX, oY, oZ);
-					BlockState block = world.getBlockState(subPos);
+					BlockState blockState = world.getBlockState(subPos);
+					Block block = blockState.getBlock();
 
 					HashMap<String, Object> data = new HashMap<>(6);
 					data.put("x", oX - x);
 					data.put("y", oY - y);
 					data.put("z", oZ - z);
 
-					ResourceLocation name = block.getBlock().getRegistryName();
+					ResourceLocation name = block.getRegistryName();
 					data.put("name", name == null ? "unknown" : name.toString());
+
+					data.put("tags", block.getTags());
 
 					result.add(data);
 				}
@@ -130,40 +133,26 @@ public class GeoScannerPeripheral extends BasePeripheral {
 	}
 
 	@LuaFunction(mainThread = true)
-	public final MethodResult deepScan(int x, int y, int z) {
-    	Timestamp currentTimestamp = Timestamp.valueOf(LocalDateTime.now());
+	public final MethodResult chunkAnalyze() {
+		Timestamp currentTimestamp = Timestamp.valueOf(LocalDateTime.now());
 		if (isScanOnCooldown(currentTimestamp)) {
 			return MethodResult.of(null, "Scanner need some time to cooldown");
 		}
     	World world = getWorld();
-    	int maxShift = Math.max(Math.max(x, y), z);
-    	if (maxShift > AdvancedPeripheralsConfig.geoScannerMaxCostRadius) {
-			return MethodResult.of(null, "Radius is exceed max value");
-		}
-    	if (maxShift > AdvancedPeripheralsConfig.geoScannerMaxFreeRadius) {
-			if (tileEntity == null) {
-				return MethodResult.of(null, "Radius is exceed max value");
-			}
-			LazyOptional<IEnergyStorage> lazyEnergyStorage = tileEntity.getCapability(CapabilityEnergy.ENERGY);
-			int energyCount = lazyEnergyStorage.map(IEnergyStorage::getEnergyStored).orElse(0);
-			if (energyCount < AdvancedPeripheralsConfig.geoScannerAdditionalBlockCost) {
-				return MethodResult.of(null, String.format("Not enough RF energy, %d needed", AdvancedPeripheralsConfig.geoScannerAdditionalBlockCost));
-			}
-			lazyEnergyStorage.ifPresent(iEnergyStorage -> iEnergyStorage.extractEnergy(AdvancedPeripheralsConfig.geoScannerAdditionalBlockCost, false));
-		}
-    	BlockPos blockPos = getPos().offset(x, y, z);
-		BlockState block = world.getBlockState(blockPos);
-
-		HashMap<String, Object> data = new HashMap<>();
-		ResourceLocation name = block.getBlock().getRegistryName();
-		data.put("name", name == null ? "unknown" : name.toString());
-		if (!block.is(Blocks.AIR)) {
-			data.put("tags", block.getBlock().getTags());
-			if (block.hasTileEntity()) {
-				try {
-					data.put("nbt", NBTUtil.toLua(world.getBlockEntity(blockPos).save(new CompoundNBT())));
-				} catch (NullPointerException e) {
-					// just do nothing ...
+		Chunk chunk = world.getChunkAt(getPos());
+		ChunkPos chunkPos = chunk.getPos();
+		HashMap<String, Integer> data = new HashMap<>();
+		for (int x = chunkPos.getMinBlockX(); x <= chunkPos.getMaxBlockX(); x++) {
+			for (int z = chunkPos.getMinBlockZ(); z <= chunkPos.getMaxBlockZ(); z++) {
+				for (int y = 0; y < 256; y++) {
+					BlockState block = chunk.getBlockState(new BlockPos(x, y, z));
+					ResourceLocation name = block.getBlock().getRegistryName();
+					if (name != null) {
+						String localizedName = name.toString();
+						if (localizedName.toLowerCase().contains("ore")) {
+							data.put(name.toString(), data.getOrDefault(name.toString(), 0) + 1);
+						}
+					}
 				}
 			}
 		}
