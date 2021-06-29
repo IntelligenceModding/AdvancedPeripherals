@@ -21,6 +21,7 @@ public class TileEntityTypes {
     public static final RegistryObject<TileEntityType<InventoryManagerTile>> INVENTORY_MANAGER = Registration.TILE_ENTITIES.register("inventory_manager", () -> new TileEntityType<>(InventoryManagerTile::new, Sets.newHashSet(Blocks.INVENTORY_MANAGER.get()), null));
     public static final RegistryObject<TileEntityType<RedstoneIntegratorTile>> REDSTONE_INTEGRATOR = Registration.TILE_ENTITIES.register("redstone_integrator", () -> new TileEntityType<>(RedstoneIntegratorTile::new, Sets.newHashSet(Blocks.REDSTONE_INTEGRATOR.get()), null));
     public static final RegistryObject<TileEntityType<BlockReaderTile>> BLOCK_READER = Registration.TILE_ENTITIES.register("block_reader", () -> new TileEntityType<>(BlockReaderTile::new, Sets.newHashSet(Blocks.BLOCK_READER.get()), null));
+    public static final RegistryObject<TileEntityType<GeoScannerTile>> GEO_SCANNER = Registration.TILE_ENTITIES.register("geo_scanner", () -> new TileEntityType<>(GeoScannerTile::new, Sets.newHashSet(Blocks.GEO_SCANNER.get()), null));
     public static final RegistryObject<TileEntityType<ColonyIntegratorTile>> COLONY_INTEGRATOR = Registration.TILE_ENTITIES.register("colony_integrator", () -> new TileEntityType<>(ColonyIntegratorTile::new, Sets.newHashSet(Blocks.COLONY_INTEGRATOR.get()), null));
     public static final RegistryObject<TileEntityType<NBTStorageTile>> NBT_STORAGE = Registration.TILE_ENTITIES.register("nbt_storage", () -> new TileEntityType<>(NBTStorageTile::new, Sets.newHashSet(Blocks.NBT_STORAGE.get()), null));
 }

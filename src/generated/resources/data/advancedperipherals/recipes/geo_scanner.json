@@ -1,0 +1,28 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "DMD",
+    "DCD",
+    "ROR"
+  ],
+  "key": {
+    "O": {
+      "item": "minecraft:observer"
+    },
+    "D": {
+      "item": "minecraft:diamond"
+    },
+    "C": {
+      "item": "advancedperipherals:peripheral_casing"
+    },
+    "R": {
+      "item": "minecraft:redstone_block"
+    },
+    "M": {
+      "item": "computercraft:wired_modem_full"
+    }
+  },
+  "result": {
+    "item": "advancedperipherals:geo_scanner"
+  }
+}

@@ -8,6 +8,11 @@ public class AdvancedPeripheralsConfig {
     public static int chatBoxCooldown;
     public static int playerDetMaxRange;
     public static int energyDetectorMaxFlow;
+    public static int geoScannerMaxFreeRadius;
+    public static int geoScannerMaxCostRadius;
+    public static int geoScannerAdditionalBlockCost;
+    public static int geoScannerMaxEnergyStorage;
+    public static int geoScannerMinScanPeriod;
     public static int nbtStorageMaxSize;
 
     //Features
@@ -28,6 +33,7 @@ public class AdvancedPeripheralsConfig {
 
     //World Features
     public static boolean enableVillagerStructures;
+    public static boolean enableGeoScanner;
 
     public static class CommonConfig {
 
@@ -35,6 +41,11 @@ public class AdvancedPeripheralsConfig {
         final ForgeConfigSpec.IntValue CHAT_BOX_COOLDOWN;
         final ForgeConfigSpec.IntValue PLAYER_DET_MAX_RANGE;
         final ForgeConfigSpec.IntValue ENERGY_DETECTOR_MAX_FLOW;
+        final ForgeConfigSpec.IntValue GEO_SCANNER_MAX_FREE_RADIUS;
+        final ForgeConfigSpec.IntValue GEO_SCANNER_MAX_COST_RADIUS;
+        final ForgeConfigSpec.IntValue GEO_SCANNER_ADDITIONAL_BLOCK_COST;
+        final ForgeConfigSpec.IntValue GEO_SCANNER_MAX_ENERGY_STORAGE;
+        final ForgeConfigSpec.IntValue GEO_SCANNER_MIN_SCAN_PERIOD;
         final ForgeConfigSpec.IntValue NBT_STORAGE_MAX_SIZE;
 
         //Features
@@ -50,6 +61,7 @@ public class AdvancedPeripheralsConfig {
         final ForgeConfigSpec.BooleanValue ENABLE_INVENTORY_MANAGER;
         final ForgeConfigSpec.BooleanValue ENABLE_REDSTONE_INTEGRATOR;
         final ForgeConfigSpec.BooleanValue ENABLE_BLOCK_READER;
+        final ForgeConfigSpec.BooleanValue ENABLE_GEO_SCANNER;
         final ForgeConfigSpec.BooleanValue ENABLE_COLONY_INTEGRATOR;
         final ForgeConfigSpec.BooleanValue ENABLE_NBT_STORAGE;
 
@@ -63,6 +75,11 @@ public class AdvancedPeripheralsConfig {
             PLAYER_DET_MAX_RANGE = builder.comment("The max range of the player detector functions. " +
                     "If anyone use a higher range, the detector will use this max range").defineInRange("playerDetMaxRange", 100000000, 0, 100000000);
             ENERGY_DETECTOR_MAX_FLOW = builder.comment("Defines the maximum energy flow of the energy detector.").defineInRange("energyDetectorMaxFlow", Integer.MAX_VALUE, 1, Integer.MAX_VALUE);
+            GEO_SCANNER_MAX_FREE_RADIUS = builder.comment("Defines max cost-free radius for geo scanner").defineInRange("geoScannerMaxFreeRadius", 8, 1, 64);
+            GEO_SCANNER_MAX_COST_RADIUS = builder.comment("Defines max cost radius for geo scanner").defineInRange("geoScannerMaxCostRadius", 16, 1, 64);
+            GEO_SCANNER_ADDITIONAL_BLOCK_COST = builder.comment("Defines block cost in RF for any extra block out of cost-free radius").defineInRange("geoScannerAdditionalBlockCost", 100, 100, Integer.MAX_VALUE);
+            GEO_SCANNER_MAX_ENERGY_STORAGE = builder.comment("Defines max energy stored in geo scanner").defineInRange("geoScannerMaxEnergyStorage", 100_000_000, 1_000_000, Integer.MAX_VALUE);
+            GEO_SCANNER_MIN_SCAN_PERIOD = builder.comment("Defines min period between scans in milliseconds").defineInRange("geoScannerMinScanPeriod", 2_000, 2_000, Integer.MAX_VALUE);
             NBT_STORAGE_MAX_SIZE = builder.comment("Defines max nbt string that can be stored in nbt storage").defineInRange("nbtStorageMaxSize", 1048576, 0, Integer.MAX_VALUE);
 
             builder.pop();
@@ -81,6 +98,7 @@ public class AdvancedPeripheralsConfig {
             ENABLE_INVENTORY_MANAGER = builder.comment("Enable the inventory manager or not.").define("enableInventoryManager", true);
             ENABLE_REDSTONE_INTEGRATOR = builder.comment("Enable the redstone integrator or not.").define("enableRedstoneIntegrator", true);
             ENABLE_BLOCK_READER = builder.comment("Enable the block reader or not.").define("enableBlockReader", true);
+            ENABLE_GEO_SCANNER = builder.comment("Enable the geo scanner or not.").define("enableGeoScanner", true);
             ENABLE_COLONY_INTEGRATOR = builder.comment("Enable the colony integrator or not.").define("enableColonyIntegrator", true);
             ENABLE_NBT_STORAGE = builder.comment("Enable the nbt storage block or not").define("enableNBTStorage", true);
 
