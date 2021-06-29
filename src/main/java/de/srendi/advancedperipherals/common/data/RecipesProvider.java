@@ -191,6 +191,15 @@ public class RecipesProvider extends RecipeProvider implements IConditionBuilder
                 .pattern("DMD")
                 .pattern("DCD")
                 .pattern("ROR")
+
+          ShapedRecipeBuilder.shaped(Blocks.NBT_STORAGE.get())
+                .define('C', Items.CHEST)
+                .define('A', CASING)
+                .define('R', Items.REDSTONE_BLOCK)
+                .define('I', Items.IRON_INGOT)
+                .pattern("ICI")
+                .pattern("CAC")
+                .pattern("RCR")
                 .unlockedBy("has_item", has(CASING))
                 .save(consumer);
     }

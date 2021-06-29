@@ -32,6 +32,7 @@ public class ConfigHandler {
         AdvancedPeripheralsConfig.geoScannerAdditionalBlockCost = ConfigHolder.COMMON_CONFIG.GEO_SCANNER_ADDITIONAL_BLOCK_COST.get();
         AdvancedPeripheralsConfig.geoScannerMaxEnergyStorage = ConfigHolder.COMMON_CONFIG.GEO_SCANNER_MAX_ENERGY_STORAGE.get();
         AdvancedPeripheralsConfig.geoScannerMinScanPeriod = ConfigHolder.COMMON_CONFIG.GEO_SCANNER_MIN_SCAN_PERIOD.get();
+        AdvancedPeripheralsConfig.nbtStorageMaxSize = ConfigHolder.COMMON_CONFIG.NBT_STORAGE_MAX_SIZE.get();
 
         //Features
         AdvancedPeripheralsConfig.enableChatBox = ConfigHolder.COMMON_CONFIG.ENABLE_CHAT_BOX.get();
@@ -48,6 +49,7 @@ public class ConfigHandler {
         AdvancedPeripheralsConfig.enableBlockReader = ConfigHolder.COMMON_CONFIG.ENABLE_BLOCK_READER.get();
         AdvancedPeripheralsConfig.enableGeoScanner = ConfigHolder.COMMON_CONFIG.ENABLE_GEO_SCANNER.get();
         AdvancedPeripheralsConfig.enableColonyIntegrator = ConfigHolder.COMMON_CONFIG.ENABLE_COLONY_INTEGRATOR.get();
+        AdvancedPeripheralsConfig.enableNBTStorage = ConfigHolder.COMMON_CONFIG.ENABLE_NBT_STORAGE.get();
 
         AdvancedPeripheralsConfig.enableVillagerStructures = ConfigHolder.COMMON_CONFIG.ENABLE_VILLAGER_STRUCTURES.get();
     }

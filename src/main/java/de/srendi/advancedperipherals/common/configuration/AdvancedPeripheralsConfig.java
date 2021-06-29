@@ -13,6 +13,7 @@ public class AdvancedPeripheralsConfig {
     public static int geoScannerAdditionalBlockCost;
     public static int geoScannerMaxEnergyStorage;
     public static int geoScannerMinScanPeriod;
+    public static int nbtStorageMaxSize;
 
     //Features
     public static boolean enableChatBox;
@@ -28,6 +29,7 @@ public class AdvancedPeripheralsConfig {
     public static boolean enableRedstoneIntegrator;
     public static boolean enableBlockReader;
     public static boolean enableColonyIntegrator;
+    public static boolean enableNBTStorage;
 
     //World Features
     public static boolean enableVillagerStructures;
@@ -44,6 +46,7 @@ public class AdvancedPeripheralsConfig {
         final ForgeConfigSpec.IntValue GEO_SCANNER_ADDITIONAL_BLOCK_COST;
         final ForgeConfigSpec.IntValue GEO_SCANNER_MAX_ENERGY_STORAGE;
         final ForgeConfigSpec.IntValue GEO_SCANNER_MIN_SCAN_PERIOD;
+        final ForgeConfigSpec.IntValue NBT_STORAGE_MAX_SIZE;
 
         //Features
         final ForgeConfigSpec.BooleanValue ENABLE_CHAT_BOX;
@@ -60,6 +63,7 @@ public class AdvancedPeripheralsConfig {
         final ForgeConfigSpec.BooleanValue ENABLE_BLOCK_READER;
         final ForgeConfigSpec.BooleanValue ENABLE_GEO_SCANNER;
         final ForgeConfigSpec.BooleanValue ENABLE_COLONY_INTEGRATOR;
+        final ForgeConfigSpec.BooleanValue ENABLE_NBT_STORAGE;
 
         //World Features
         final ForgeConfigSpec.BooleanValue ENABLE_VILLAGER_STRUCTURES;
@@ -76,6 +80,7 @@ public class AdvancedPeripheralsConfig {
             GEO_SCANNER_ADDITIONAL_BLOCK_COST = builder.comment("Defines block cost in RF for any extra block out of cost-free radius").defineInRange("geoScannerAdditionalBlockCost", 100, 100, Integer.MAX_VALUE);
             GEO_SCANNER_MAX_ENERGY_STORAGE = builder.comment("Defines max energy stored in geo scanner").defineInRange("geoScannerMaxEnergyStorage", 100_000_000, 1_000_000, Integer.MAX_VALUE);
             GEO_SCANNER_MIN_SCAN_PERIOD = builder.comment("Defines min period between scans in milliseconds").defineInRange("geoScannerMinScanPeriod", 2_000, 2_000, Integer.MAX_VALUE);
+            NBT_STORAGE_MAX_SIZE = builder.comment("Defines max nbt string that can be stored in nbt storage").defineInRange("nbtStorageMaxSize", 1048576, 0, Integer.MAX_VALUE);
 
             builder.pop();
 
@@ -95,6 +100,7 @@ public class AdvancedPeripheralsConfig {
             ENABLE_BLOCK_READER = builder.comment("Enable the block reader or not.").define("enableBlockReader", true);
             ENABLE_GEO_SCANNER = builder.comment("Enable the geo scanner or not.").define("enableGeoScanner", true);
             ENABLE_COLONY_INTEGRATOR = builder.comment("Enable the colony integrator or not.").define("enableColonyIntegrator", true);
+            ENABLE_NBT_STORAGE = builder.comment("Enable the nbt storage block or not").define("enableNBTStorage", true);
 
             ENABLE_VILLAGER_STRUCTURES = builder.comment("Enable the villager structures for the computer scientist.").define("enableVillagerStructures", true);
             builder.pop();
