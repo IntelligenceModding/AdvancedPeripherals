@@ -14,6 +14,7 @@ import net.minecraft.nbt.JsonToNBT;
 
 import java.io.IOException;
 import java.io.ObjectOutputStream;
+import java.util.HashMap;
 import java.util.Map;
 
 public class NBTStoragePeripheral extends BasePeripheral {
@@ -25,6 +26,13 @@ public class NBTStoragePeripheral extends BasePeripheral {
     @Override
     public boolean isEnabled() {
         return AdvancedPeripheralsConfig.enableNBTStorage;
+    }
+
+    @LuaFunction(mainThread = true)
+    public final Map<String, Integer> getConfiguration() {
+        Map<String, Integer> result = new HashMap<>();
+        result.put("maxSize", AdvancedPeripheralsConfig.nbtStorageMaxSize);
+        return result;
     }
 
     @LuaFunction
