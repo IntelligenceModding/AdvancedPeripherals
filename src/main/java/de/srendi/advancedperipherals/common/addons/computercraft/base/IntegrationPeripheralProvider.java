@@ -9,6 +9,7 @@ import de.srendi.advancedperipherals.common.addons.computercraft.integrations.bo
 import de.srendi.advancedperipherals.common.addons.computercraft.integrations.immersiveengineering.CapacitorIntegration;
 import de.srendi.advancedperipherals.common.addons.computercraft.integrations.immersiveengineering.RedstoneConnectorIntegration;
 import de.srendi.advancedperipherals.common.addons.computercraft.integrations.immersiveengineering.RedstoneProbeIntegration;
+import de.srendi.advancedperipherals.common.addons.computercraft.integrations.integrateddynamics.VariableStoreIntegration;
 import de.srendi.advancedperipherals.common.addons.computercraft.integrations.mekanism.*;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
@@ -52,6 +53,9 @@ public class IntegrationPeripheralProvider implements IPeripheralProvider {
             registerIntegration(new RedstoneProbeIntegration());
             registerIntegration(new RedstoneConnectorIntegration());
             registerIntegration(new CapacitorIntegration());
+        }
+        if (ModList.get().isLoaded("integrateddynamics")) {
+            registerIntegration(new VariableStoreIntegration());
         }
     }
 
