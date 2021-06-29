@@ -33,7 +33,7 @@
   "block.advancedperipherals.inventory_manager": "Inventory Manager",
   "block.advancedperipherals.redstone_integrator": "Redstone Integrator",
   "block.advancedperipherals.block_reader": "Block Reader",
-  "block.advancedperipheral.colony_integrator": "Colony Integrator",
+  "block.advancedperipherals.colony_integrator": "Colony Integrator",
   "turtle.advancedperipherals.chat_box_turtle": "Chatty",
   "turtle.advancedperipherals.environment_detector_turtle": "Environment",
   "turtle.advancedperipherals.player_detector_turtle": "Player",
