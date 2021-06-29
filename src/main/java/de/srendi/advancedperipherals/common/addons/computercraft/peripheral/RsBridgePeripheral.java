@@ -140,15 +140,15 @@ public class RsBridgePeripheral extends BasePeripheral {
         for (int i = 0; i < inventory.getSlots(); i++) {
             if (inventory.getStackInSlot(i).sameItem(stack)) {
                 if (inventory.getStackInSlot(i).getCount() >= amount) {
-                    transferableAmount += amount;
-                    getNetwork().insertItem(stack, amount, Action.PERFORM);
-                    inventory.extractItem(i, amount, false);
+                    ItemStack insertedStack = getNetwork().insertItem(stack, amount, Action.PERFORM);
+                    inventory.extractItem(i, amount - insertedStack.getCount(), false);
+                    transferableAmount += amount - insertedStack.getCount();
                     break;
                 } else {
                     amount = count - inventory.getStackInSlot(i).getCount();
-                    transferableAmount += inventory.getStackInSlot(i).getCount();
-                    getNetwork().insertItem(stack, inventory.getStackInSlot(i).getCount(), Action.PERFORM);
-                    inventory.extractItem(i, inventory.getStackInSlot(i).getCount(), false);
+                    ItemStack insertedStack = getNetwork().insertItem(stack, inventory.getStackInSlot(i).getCount(), Action.PERFORM);
+                    inventory.extractItem(i, inventory.getStackInSlot(i).getCount() - insertedStack.getCount(), false);
+                    transferableAmount += inventory.getStackInSlot(i).getCount() - insertedStack.getCount();
                 }
             }
         }
@@ -208,15 +208,15 @@ public class RsBridgePeripheral extends BasePeripheral {
         for (int i = 0; i < inventory.getSlots(); i++) {
             if (inventory.getStackInSlot(i).sameItem(stack)) {
                 if (inventory.getStackInSlot(i).getCount() >= amount) {
-                    transferableAmount += amount;
-                    getNetwork().insertItem(stack, amount, Action.PERFORM);
-                    inventory.extractItem(i, amount, false);
+                    ItemStack insertedStack = getNetwork().insertItem(stack, amount, Action.PERFORM);
+                    inventory.extractItem(i, amount - insertedStack.getCount(), false);
+                    transferableAmount += amount - insertedStack.getCount();
                     break;
                 } else {
                     amount = count - inventory.getStackInSlot(i).getCount();
-                    transferableAmount += inventory.getStackInSlot(i).getCount();
-                    getNetwork().insertItem(stack, inventory.getStackInSlot(i).getCount(), Action.PERFORM);
-                    inventory.extractItem(i, inventory.getStackInSlot(i).getCount(), false);
+                    ItemStack insertedStack = getNetwork().insertItem(stack, inventory.getStackInSlot(i).getCount(), Action.PERFORM);
+                    inventory.extractItem(i, inventory.getStackInSlot(i).getCount() - insertedStack.getCount(), false);
+                    transferableAmount += inventory.getStackInSlot(i).getCount() - insertedStack.getCount();
                 }
             }
         }
