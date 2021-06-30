@@ -192,7 +192,7 @@ public class RecipesProvider extends RecipeProvider implements IConditionBuilder
                 .pattern("DCD")
                 .pattern("ROR");
 
-          ShapedRecipeBuilder.shaped(Blocks.NBT_STORAGE.get())
+        ShapedRecipeBuilder.shaped(Blocks.NBT_STORAGE.get())
                 .define('C', Items.CHEST)
                 .define('A', CASING)
                 .define('R', Items.REDSTONE_BLOCK)

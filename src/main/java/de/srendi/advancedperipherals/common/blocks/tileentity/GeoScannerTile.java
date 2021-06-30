@@ -10,11 +10,11 @@ import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.energy.IEnergyStorage;
+import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.EnergyStorage;
+import net.minecraftforge.energy.IEnergyStorage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import net.minecraftforge.energy.CapabilityEnergy;
 
 public class GeoScannerTile extends PeripheralTileEntity<GeoScannerPeripheral> {
 
@@ -27,7 +27,7 @@ public class GeoScannerTile extends PeripheralTileEntity<GeoScannerPeripheral> {
     public GeoScannerTile(final TileEntityType<?> tileEntityType) {
         super(tileEntityType);
     }
-    
+
     @Override
     public <T1> LazyOptional<T1> getCapability(@NotNull Capability<T1> cap, @Nullable Direction direction) {
         if (cap == CapabilityEnergy.ENERGY) {
