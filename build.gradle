@@ -124,7 +124,8 @@ dependencies {
 
     compileOnly fg.deobf("vazkii.botania:Botania:${botania_version}")
     //Botania needs patchouli to run
-    //runtimeOnly fg.deobf("vazkii.patchouli:Patchouli:${patchouli_version}")
+    compileOnly fg.deobf("vazkii.patchouli:Patchouli:${patchouli_version}:api")
+    runtimeOnly fg.deobf("vazkii.patchouli:Patchouli:${patchouli_version}")
 
     implementation fg.deobf("com.refinedmods:refinedstorage:${rs_version}")
 
