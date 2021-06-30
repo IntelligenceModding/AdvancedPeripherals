@@ -24,11 +24,11 @@ public class NBTStoragePeripheral extends BasePeripheral {
 
     @LuaFunction
     public final MethodResult read() {
-        return MethodResult.of(NBTUtil.toLua(((NBTStorageTile)tileEntity).getStored()));
+        return MethodResult.of(NBTUtil.toLua(((NBTStorageTile) tileEntity).getStored()));
     }
 
     @LuaFunction
-    public final MethodResult write(String dataInJson){
+    public final MethodResult write(String dataInJson) {
         if (dataInJson.length() > AdvancedPeripheralsConfig.nbtStorageMaxSize) {
             return MethodResult.of(null, "JSON size is bigger than allowed");
         }
@@ -38,7 +38,7 @@ public class NBTStoragePeripheral extends BasePeripheral {
         } catch (CommandSyntaxException ex) {
             return MethodResult.of(null, String.format("Cannot parse json data to NBT: %s", ex.getMessage()));
         }
-        ((NBTStorageTile)tileEntity).setStored(parsedData);
+        ((NBTStorageTile) tileEntity).setStored(parsedData);
         return MethodResult.of(true);
     }
 }

@@ -7,7 +7,6 @@ import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
 import dan200.computercraft.api.turtle.TurtleUpgradeType;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
-import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.EnvironmentDetectorPeripheral;
 import de.srendi.advancedperipherals.common.blocks.base.TileEntityList;
 import de.srendi.advancedperipherals.common.util.WorldPos;
 import net.minecraft.client.renderer.model.ModelResourceLocation;
@@ -62,7 +61,7 @@ public abstract class BaseTurtle<T extends BasePeripheral> extends AbstractTurtl
         if (!turtle.getWorld().isClientSide) {
             IPeripheral turtlePeripheral = turtle.getPeripheral(side);
             this.turtle = turtle;
-            if (turtlePeripheral instanceof BasePeripheral) 
+            if (turtlePeripheral instanceof BasePeripheral)
                 ((BasePeripheral) turtlePeripheral).setTurtle(turtle);
         }
 

@@ -21,7 +21,6 @@ import io.netty.buffer.Unpooled;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
@@ -198,16 +197,18 @@ public class MineColonies {
         return result;
     }
 
-    public static Object getBuilderResources(IColony colony, BlockPos pos) {
+    public static Object builderResourcesToObject(IColony colony, BlockPos pos) {
         IBuilding building = colony.getBuildingManager().getBuilding(pos);
         if (!(building instanceof AbstractBuildingStructureBuilder))
             return null;
 
+        AbstractBuildingStructureBuilder builderBuilding = (AbstractBuildingStructureBuilder) building;
+
         PacketBuffer buffer = new PacketBuffer(Unpooled.buffer());
-        building.serializeToView(buffer);
+        builderBuilding.serializeToView(buffer);
         buffer.release();
 
-        final List<BuildingBuilderResource> resources = new ArrayList<>(((AbstractBuildingStructureBuilder) building).getNeededResources().values());
+        List<BuildingBuilderResource> resources = new ArrayList<>(builderBuilding.getNeededResources().values());
         resources.sort(new BuildingBuilderResource.ResourceComparator());
 
         List<Object> result = new ArrayList<>();
@@ -216,9 +217,8 @@ public class MineColonies {
             BuildingBuilderResource resourceCopy = new BuildingBuilderResource(resource.getItemStack(), resource.getAmount(), resource.getAvailable());
             resourceCopy.setAmountInDelivery(resource.getAmountInDelivery());
 
-            ItemStack stack = resourceCopy.getItemStack().copy();
-            stack.setCount(resourceCopy.getAmount());
-            map.put("item", stack.getItem().getRegistryName().toString());
+            map.put("item", resourceCopy.getItemStack().copy());
+            map.put("displayName", resourceCopy.getName());
             map.put("available", resourceCopy.getAvailable());
             map.put("delivering", resourceCopy.getAmountInDelivery());
             map.put("status", resourceCopy.getAvailabilityStatus().toString());
