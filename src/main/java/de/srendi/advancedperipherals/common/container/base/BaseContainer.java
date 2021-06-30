@@ -24,31 +24,31 @@ public abstract class BaseContainer extends Container {
         super(type, id);
         this.inventory = new InvWrapper(inventory);
         if (world != null)
-            this.tileEntity = (PeripheralTileEntity<?>) world.getTileEntity(pos);
+            this.tileEntity = (PeripheralTileEntity<?>) world.getBlockEntity(pos);
     }
 
     @Override
-    public ItemStack transferStackInSlot(PlayerEntity playerIn, int index) {
+    public ItemStack quickMoveStack(PlayerEntity playerIn, int index) {
         ItemStack itemstack = ItemStack.EMPTY;
-        Slot slot = this.inventorySlots.get(index);
-        if (slot != null && slot.getHasStack()) {
-            ItemStack itemstack1 = slot.getStack();
+        Slot slot = this.slots.get(index);
+        if (slot != null && slot.hasItem()) {
+            ItemStack itemstack1 = slot.getItem();
             itemstack = itemstack1.copy();
             if (index >= 36) {
-                if (!this.mergeItemStack(itemstack, 0, 36, false) && !tileEntity.canExtractItem(index, itemstack, Direction.NORTH)) {
+                if (!this.moveItemStackTo(itemstack, 0, 36, false) && !tileEntity.canTakeItemThroughFace(index, itemstack, Direction.NORTH)) {
                     return ItemStack.EMPTY;
                 }
-                slot.onSlotChange(itemstack, itemstack1);
+                slot.onQuickCraft(itemstack, itemstack1);
             } else {
-                if (!this.mergeItemStack(itemstack, 36, getInventory().size(), false) && !tileEntity.canInsertItem(index, itemstack, Direction.NORTH)) {
+                if (!this.moveItemStackTo(itemstack, 36, getItems().size(), false) && !tileEntity.canPlaceItemThroughFace(index, itemstack, Direction.NORTH)) {
                     return ItemStack.EMPTY;
                 }
             }
 
             if (itemstack.getCount() == 0) {
-                slot.putStack(ItemStack.EMPTY);
+                slot.set(ItemStack.EMPTY);
             } else {
-                slot.onSlotChanged();
+                slot.setChanged();
             }
 
             slot.onTake(playerIn, itemstack);

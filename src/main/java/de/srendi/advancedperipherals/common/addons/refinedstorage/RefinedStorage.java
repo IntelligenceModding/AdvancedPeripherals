@@ -80,7 +80,7 @@ public class RefinedStorage {
             if (craftable) {
                 map.put("craftamount", stack.getCount()); //Returns the result amount of the crafting recipe
                 for (ItemStack oStack : RefinedStorage.getItems(network, false)) { //Used to get the amount of the item
-                    if (oStack.isItemEqual(stack)) {
+                    if (oStack.sameItem(stack)) {
                         map.put("amount", oStack.getCount());
                         break;
                     } else {
@@ -148,7 +148,8 @@ public class RefinedStorage {
         Map<String, Object> map = new HashMap<>();
         CompoundNBT nbt = itemStack.getOrCreateTag();
         Set<ResourceLocation> tags = itemStack.getItem().getTags();
-        map.put("name", itemStack.getItem().getRegistryName().toString());
+        ResourceLocation name = itemStack.getItem().getRegistryName();
+        map.put("name", name.toString());
         map.put("amount", itemStack.getCount());
         map.put("displayName", itemStack.getDisplayName().getString());
         if (!nbt.isEmpty()) {
@@ -174,7 +175,7 @@ public class RefinedStorage {
                 return getObjectFromStack(itemStack);
             }
         }
-        return new Object();
+        return null;
     }
 
     public static List<ItemStack> getItems(INetwork network, boolean craftable) {
@@ -231,11 +232,11 @@ public class RefinedStorage {
                 }
             }
         }
-        return null;
+        return ItemStack.EMPTY;
     }
 
     public static String getFingerpint(ItemStack stack) {
-        String fingerprint = stack.getOrCreateTag() + stack.getItem().getRegistryName().toString();
+        String fingerprint = stack.getOrCreateTag() + stack.getItem().getRegistryName().toString() + stack.getDisplayName().getString();
         try {
             byte[] bytesOfHash = fingerprint.getBytes(StandardCharsets.UTF_8);
             MessageDigest md = MessageDigest.getInstance("MD5");

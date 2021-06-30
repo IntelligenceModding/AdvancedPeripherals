@@ -20,7 +20,7 @@ public class ARRenderHelper extends AbstractGui {
 
     public static void drawRightboundString(MatrixStack matrixStack, FontRenderer fontRenderer, String text, int x,
                                             int y, int color) {
-        drawString(matrixStack, fontRenderer, text, x - fontRenderer.getStringWidth(text), y, color);
+        drawString(matrixStack, fontRenderer, text, x - fontRenderer.width(text), y, color);
     }
 
     public static ARRenderHelper getInstance() {
@@ -54,14 +54,14 @@ public class ARRenderHelper extends AbstractGui {
         color = fixAlpha(color);
 
         final int n_segments = 360;
-        Matrix4f matrix = matrixStack.getLast().getMatrix();
+        Matrix4f matrix = matrixStack.last().pose();
 
         float z = this.getBlitOffset();
         float a = (float) (color >> 24 & 255) / 255.0F;
         float r = (float) (color >> 16 & 255) / 255.0F;
         float g = (float) (color >> 8 & 255) / 255.0F;
         float b = (float) (color & 255) / 255.0F;
-        BufferBuilder bufferbuilder = Tessellator.getInstance().getBuffer();
+        BufferBuilder bufferbuilder = Tessellator.getInstance().getBuilder();
         RenderSystem.enableBlend();
         RenderSystem.disableTexture();
         RenderSystem.defaultBlendFunc();
@@ -70,10 +70,10 @@ public class ARRenderHelper extends AbstractGui {
             double angle = 2 * Math.PI * i / n_segments;
             float xd = (float) (radius * Math.sin(angle));
             float yd = (float) (radius * Math.cos(angle));
-            bufferbuilder.pos(matrix, centerX + xd, centerY + yd, z).color(r, g, b, a).endVertex();
+            bufferbuilder.vertex(matrix, centerX + xd, centerY + yd, z).color(r, g, b, a).endVertex();
         }
-        bufferbuilder.finishDrawing();
-        WorldVertexBufferUploader.draw(bufferbuilder);
+        bufferbuilder.end();
+        WorldVertexBufferUploader.end(bufferbuilder);
         RenderSystem.enableTexture();
         RenderSystem.disableBlend();
     }
@@ -82,14 +82,14 @@ public class ARRenderHelper extends AbstractGui {
         color = fixAlpha(color);
 
         final float increment = 0.5f;
-        Matrix4f matrix = matrixStack.getLast().getMatrix();
+        Matrix4f matrix = matrixStack.last().pose();
 
         float z = this.getBlitOffset();
         float a = (float) (color >> 24 & 255) / 255.0F;
         float r = (float) (color >> 16 & 255) / 255.0F;
         float g = (float) (color >> 8 & 255) / 255.0F;
         float b = (float) (color & 255) / 255.0F;
-        BufferBuilder bufferbuilder = Tessellator.getInstance().getBuffer();
+        BufferBuilder bufferbuilder = Tessellator.getInstance().getBuilder();
         RenderSystem.enableBlend();
         RenderSystem.disableTexture();
         RenderSystem.defaultBlendFunc();
@@ -97,17 +97,17 @@ public class ARRenderHelper extends AbstractGui {
         for (float y = centerY - radius; y < centerY + radius; y += increment) {
             float yd = centerY - y;
             float xd = (float) Math.sqrt(Math.pow(radius, 2) - Math.pow(yd, 2));
-            bufferbuilder.pos(matrix, centerX - xd, y, z).color(r, g, b, a).endVertex();
-            bufferbuilder.pos(matrix, centerX + xd, y, z).color(r, g, b, a).endVertex();
+            bufferbuilder.vertex(matrix, centerX - xd, y, z).color(r, g, b, a).endVertex();
+            bufferbuilder.vertex(matrix, centerX + xd, y, z).color(r, g, b, a).endVertex();
         }
-        bufferbuilder.finishDrawing();
-        WorldVertexBufferUploader.draw(bufferbuilder);
+        bufferbuilder.end();
+        WorldVertexBufferUploader.end(bufferbuilder);
         RenderSystem.enableTexture();
         RenderSystem.disableBlend();
     }
 
     public void drawItemIcon(MatrixStack matrixStack, ItemRenderer itemRenderer, String item, int x, int y) {
         ItemStack stack = new ItemStack(ItemUtil.getRegistryEntry(item, ForgeRegistries.ITEMS));
-        itemRenderer.renderItemIntoGUI(stack, x, y);
+        itemRenderer.renderGuiItem(stack, x, y);
     }
 }

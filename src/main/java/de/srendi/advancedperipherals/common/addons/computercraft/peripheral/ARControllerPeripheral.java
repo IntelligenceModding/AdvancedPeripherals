@@ -6,16 +6,16 @@ import dan200.computercraft.api.lua.MethodResult;
 import de.srendi.advancedperipherals.common.addons.computercraft.base.BasePeripheral;
 import de.srendi.advancedperipherals.common.argoggles.ARRenderAction;
 import de.srendi.advancedperipherals.common.argoggles.RenderActionType;
-import de.srendi.advancedperipherals.common.blocks.tileentity.ARControllerTileEntity;
+import de.srendi.advancedperipherals.common.blocks.tileentity.ARControllerTile;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
 
 import java.util.Optional;
 
 public class ARControllerPeripheral extends BasePeripheral {
 
-    private final ARControllerTileEntity tileEntity;
+    private final ARControllerTile tileEntity;
 
-    public ARControllerPeripheral(String type, ARControllerTileEntity tileEntity) {
+    public ARControllerPeripheral(String type, ARControllerTile tileEntity) {
         super(type, tileEntity);
         this.tileEntity = tileEntity;
     }

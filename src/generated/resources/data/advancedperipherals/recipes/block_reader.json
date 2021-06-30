@@ -1,0 +1,28 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "IRI",
+    "MAO",
+    "IRI"
+  ],
+  "key": {
+    "O": {
+      "item": "minecraft:observer"
+    },
+    "I": {
+      "item": "minecraft:iron_ingot"
+    },
+    "M": {
+      "item": "computercraft:wired_modem_full"
+    },
+    "R": {
+      "item": "minecraft:redstone_block"
+    },
+    "A": {
+      "item": "advancedperipherals:peripheral_casing"
+    }
+  },
+  "result": {
+    "item": "advancedperipherals:block_reader"
+  }
+}

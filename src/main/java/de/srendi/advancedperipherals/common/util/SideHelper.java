@@ -6,7 +6,7 @@ import net.minecraft.entity.player.PlayerEntity;
 
 public class SideHelper {
     public static boolean isClientPlayer(LivingEntity player) {
-        return player.world.isRemote && player instanceof PlayerEntity && player.world.getServer() == null
+        return player.level.isClientSide && player instanceof PlayerEntity && player.level.getServer() == null
                 && player == Minecraft.getInstance().player;
     }
 }

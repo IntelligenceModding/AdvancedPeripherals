@@ -13,7 +13,7 @@ import dan200.computercraft.api.peripheral.IPeripheral;
 import de.srendi.advancedperipherals.common.addons.computercraft.base.BasePeripheral;
 import de.srendi.advancedperipherals.common.addons.refinedstorage.RefinedStorage;
 import de.srendi.advancedperipherals.common.addons.refinedstorage.RefinedStorageNode;
-import de.srendi.advancedperipherals.common.blocks.tileentity.RsBridgeTileEntity;
+import de.srendi.advancedperipherals.common.blocks.tileentity.RsBridgeTile;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
 import de.srendi.advancedperipherals.common.util.ItemUtil;
 import net.minecraft.item.ItemStack;
@@ -30,9 +30,9 @@ import java.util.Locale;
 
 public class RsBridgePeripheral extends BasePeripheral {
 
-    private final RsBridgeTileEntity tileEntity;
+    private final RsBridgeTile tileEntity;
 
-    public RsBridgePeripheral(String type, RsBridgeTileEntity tileEntity) {
+    public RsBridgePeripheral(String type, RsBridgeTile tileEntity) {
         super(type, tileEntity);
         this.tileEntity = tileEntity;
     }
@@ -97,7 +97,7 @@ public class RsBridgePeripheral extends BasePeripheral {
         ItemStack stack = ItemUtil.getItemStackRS(arguments.getTable(0), RefinedStorage.getItems(getNetwork(), false));
         Direction direction = Direction.valueOf(arguments.getString(1).toUpperCase(Locale.ROOT));
 
-        TileEntity targetEntity = tileEntity.getWorld().getTileEntity(tileEntity.getPos().offset(direction));
+        TileEntity targetEntity = tileEntity.getLevel().getBlockEntity(tileEntity.getBlockPos().relative(direction));
         IItemHandler inventory = targetEntity != null ? targetEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, direction.getOpposite()).resolve().orElse(null) : null;
         if (inventory == null)
             throw new LuaException("No valid inventory at " + arguments.getString(1));
@@ -129,7 +129,7 @@ public class RsBridgePeripheral extends BasePeripheral {
         Direction direction = Direction.valueOf(arguments.getString(1).toUpperCase(Locale.ROOT));
         int count = stack.getCount();
 
-        TileEntity targetEntity = tileEntity.getWorld().getTileEntity(tileEntity.getPos().offset(direction));
+        TileEntity targetEntity = tileEntity.getLevel().getBlockEntity(tileEntity.getBlockPos().relative(direction));
         IItemHandler inventory = targetEntity != null ? targetEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, direction.getOpposite()).resolve().orElse(null) : null;
         if (inventory == null)
             throw new LuaException("No valid inventory at " + arguments.getString(1));
@@ -138,17 +138,17 @@ public class RsBridgePeripheral extends BasePeripheral {
         int transferableAmount = 0;
 
         for (int i = 0; i < inventory.getSlots(); i++) {
-            if (inventory.getStackInSlot(i).isItemEqual(stack)) {
+            if (inventory.getStackInSlot(i).sameItem(stack)) {
                 if (inventory.getStackInSlot(i).getCount() >= amount) {
-                    transferableAmount += amount;
-                    getNetwork().insertItem(stack, amount, Action.PERFORM);
-                    inventory.extractItem(i, amount, false);
+                    ItemStack insertedStack = getNetwork().insertItem(stack, amount, Action.PERFORM);
+                    inventory.extractItem(i, amount - insertedStack.getCount(), false);
+                    transferableAmount += amount - insertedStack.getCount();
                     break;
                 } else {
                     amount = count - inventory.getStackInSlot(i).getCount();
-                    transferableAmount += inventory.getStackInSlot(i).getCount();
-                    getNetwork().insertItem(stack, inventory.getStackInSlot(i).getCount(), Action.PERFORM);
-                    inventory.extractItem(i, inventory.getStackInSlot(i).getCount(), false);
+                    ItemStack insertedStack = getNetwork().insertItem(stack, inventory.getStackInSlot(i).getCount(), Action.PERFORM);
+                    inventory.extractItem(i, inventory.getStackInSlot(i).getCount() - insertedStack.getCount(), false);
+                    transferableAmount += inventory.getStackInSlot(i).getCount() - insertedStack.getCount();
                 }
             }
         }
@@ -206,17 +206,17 @@ public class RsBridgePeripheral extends BasePeripheral {
         int transferableAmount = 0;
 
         for (int i = 0; i < inventory.getSlots(); i++) {
-            if (inventory.getStackInSlot(i).isItemEqual(stack)) {
+            if (inventory.getStackInSlot(i).sameItem(stack)) {
                 if (inventory.getStackInSlot(i).getCount() >= amount) {
-                    transferableAmount += amount;
-                    getNetwork().insertItem(stack, amount, Action.PERFORM);
-                    inventory.extractItem(i, amount, false);
+                    ItemStack insertedStack = getNetwork().insertItem(stack, amount, Action.PERFORM);
+                    inventory.extractItem(i, amount - insertedStack.getCount(), false);
+                    transferableAmount += amount - insertedStack.getCount();
                     break;
                 } else {
                     amount = count - inventory.getStackInSlot(i).getCount();
-                    transferableAmount += inventory.getStackInSlot(i).getCount();
-                    getNetwork().insertItem(stack, inventory.getStackInSlot(i).getCount(), Action.PERFORM);
-                    inventory.extractItem(i, inventory.getStackInSlot(i).getCount(), false);
+                    ItemStack insertedStack = getNetwork().insertItem(stack, inventory.getStackInSlot(i).getCount(), Action.PERFORM);
+                    inventory.extractItem(i, inventory.getStackInSlot(i).getCount() - insertedStack.getCount(), false);
+                    transferableAmount += inventory.getStackInSlot(i).getCount() - insertedStack.getCount();
                 }
             }
         }
@@ -257,7 +257,7 @@ public class RsBridgePeripheral extends BasePeripheral {
         ItemStack stack = new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation(item)));
         for (ICraftingTask task : getNetwork().getCraftingManager().getTasks()) {
             ItemStack taskStack = task.getRequested().getItem();
-            if (taskStack.isItemEqual(stack)) {
+            if (taskStack.sameItem(stack)) {
                 return true;
             }
         }

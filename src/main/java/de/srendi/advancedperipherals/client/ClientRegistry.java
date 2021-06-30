@@ -10,7 +10,6 @@ import net.minecraft.client.renderer.model.ModelResourceLocation;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ModelBakeEvent;
-import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.SimpleModelTransform;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -29,7 +28,9 @@ public class ClientRegistry {
             "turtle_environment_upgrade_left",
             "turtle_environment_upgrade_right",
             "turtle_player_upgrade_left",
-            "turtle_player_upgrade_right"
+            "turtle_player_upgrade_right",
+            "turtle_geoscanner_upgrade_left",
+            "turtle_geoscanner_upgrade_right"
     };
 
     @SubscribeEvent
@@ -42,9 +43,9 @@ public class ClientRegistry {
         for (String modelName : TURTLE_MODELS) {
             ResourceLocation location = new ResourceLocation(AdvancedPeripherals.MOD_ID, "item/" + modelName);
             IUnbakedModel model = loader.getModelOrMissing(location);
-            model.getTextures(loader::getModelOrMissing, new HashSet<>());
+            model.getMaterials(loader::getModelOrMissing, new HashSet<>());
 
-            IBakedModel baked = model.bakeModel(loader, ModelLoader.defaultTextureGetter(), SimpleModelTransform.IDENTITY, location);
+            IBakedModel baked = model.bake(loader, ModelLoader.defaultTextureGetter(), SimpleModelTransform.IDENTITY, location);
             if (baked != null) {
                 registry.put(new ModelResourceLocation(new ResourceLocation(AdvancedPeripherals.MOD_ID, modelName), "inventory"), baked);
             }
@@ -53,9 +54,10 @@ public class ClientRegistry {
 
     @SubscribeEvent
     public static void onClientSetup(FMLClientSetupEvent event) {
-        ScreenManager.registerFactory(ContainerTypes.INVENTORY_MANAGER_CONTAINER.get(), InventoryManagerScreen::new);
+        ScreenManager.register(ContainerTypes.INVENTORY_MANAGER_CONTAINER.get(), InventoryManagerScreen::new);
     }
 
+    //TODO change the icon of the curio icon
     /*@SubscribeEvent
     public static void onTextureStitching(TextureStitchEvent.Pre event) {
         event.addSprite(new ResourceLocation(AdvancedPeripherals.MOD_ID, "item/empty_glasses_slot"));

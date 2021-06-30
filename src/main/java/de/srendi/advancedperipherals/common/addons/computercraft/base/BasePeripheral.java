@@ -86,22 +86,22 @@ public abstract class BasePeripheral implements IPeripheral {
     }
 
     protected BlockPos getPos() {
-        if(tileEntity != null)
-            return tileEntity.getPos();
-        if(turtle != null)
+        if (tileEntity != null)
+            return tileEntity.getBlockPos();
+        if (turtle != null)
             return turtle.getPosition();
-        if(entity != null)
-            return entity.getPosition();
+        if (entity != null)
+            return entity.blockPosition();
         return null;
     }
 
     protected World getWorld() {
-        if(tileEntity != null)
-            return tileEntity.getWorld();
-        if(turtle != null)
+        if (tileEntity != null)
+            return tileEntity.getLevel();
+        if (turtle != null)
             return turtle.getWorld();
-        if(entity != null)
-            return entity.getEntityWorld();
+        if (entity != null)
+            return entity.getCommandSenderWorld();
         return null;
     }
 
@@ -109,5 +109,7 @@ public abstract class BasePeripheral implements IPeripheral {
         this.entity = entity;
     }
 
-    public void setTurtle(ITurtleAccess turtle) { this.turtle = turtle; }
+    public void setTurtle(ITurtleAccess turtle) {
+        this.turtle = turtle;
+    }
 }

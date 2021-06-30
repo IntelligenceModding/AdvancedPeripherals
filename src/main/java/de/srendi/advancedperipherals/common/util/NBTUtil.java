@@ -7,32 +7,18 @@ import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.JsonToNBT;
 import org.apache.logging.log4j.Level;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Base64;
 
 public class NBTUtil {
 
     public static CompoundNBT fromText(String json) {
         try {
-            return json == null ? null : JsonToNBT.getTagFromJson(json);
+            return json == null ? null : JsonToNBT.parseTag(json);
         } catch (CommandSyntaxException ex) {
             AdvancedPeripherals.debug("Could not parse json data to NBT", Level.ERROR);
-            ex.printStackTrace();
-            return null;
-        }
-    }
-
-    public static String toBinary(CompoundNBT nbt) {
-        if (nbt == null)
-            return null;
-
-        try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
-            try (OutputStream stream = Base64.getEncoder().wrap(outputStream)) {
-                CompressedStreamTools.writeCompressed(nbt, stream);
-            }
-            return outputStream.toString();
-        } catch (IOException ex) {
-            AdvancedPeripherals.debug("Could not parse NBT data to binary", Level.ERROR);
             ex.printStackTrace();
             return null;
         }

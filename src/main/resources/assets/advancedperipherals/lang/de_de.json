@@ -20,7 +20,8 @@
   "item.advancedperipherals.tooltip.memory_card.bound": "Verbunden mit %s.",
   "item.advancedperipherals.tooltip.inventory_manager": "§Dieser Block ist in der Lage, items zu einem Spieler Inventar zu senden oder zu empfangen.",
   "item.advancedperipherals.tooltip.redstone_integrator": "§7Dieser Block ist in der Lage, mit redstone zu interagieren genau so wie es ein normaler computer tut.",
-  "item.advancedperipherals.tooltip.peripheral_proxy": "§7Dieser Block ist in der Lage, mit vielen anderen Blöcken zu interagieren. \n Platziere dazu einfach einen unterstützen Block vor diesem um ihn zu nutzen.",
+  "item.advancedperipherals.tooltip.block_reader": "§7Dieser Block ist in der Lage, Daten von Blöcken und Tile Entities vor ihm zu lesen.",
+  "item.advancedperipherals.tooltip.colony_integrator": "§7Dieser Block ist in der Lage, mit Mine Colonies und deren kolonien zu interagieren.",
   "block.advancedperipherals.environment_detector": "Umgebungs Detektor",
   "block.advancedperipherals.chat_box": "Chat Box",
   "block.advancedperipherals.player_detector": "Spieler Detektor",
@@ -31,7 +32,8 @@
   "block.advancedperipherals.peripheral_casing": "Peripherie Gehäuse",
   "block.advancedperipherals.inventory_manager": "Inventar Manager",
   "block.advancedperipherals.redstone_integrator": "Redstone Integrator",
-  "block.advancedperipherals.peripheral_proxy": "Peripheral Proxy",
+  "block.advancedperipherals.block_reader": "Block Leser",
+  "block.advancedperipheral.colony_integrator": "Kolonie Integrator",
   "turtle.advancedperipherals.chat_box_turtle": "Chatty",
   "turtle.advancedperipherals.environment_detector_turtle": "Umgebungs",
   "turtle.advancedperipherals.player_detector_turtle": "Spieler",
@@ -43,6 +45,6 @@
   "text.advancedperipherals.removed_player": "Die Speicher Karte wurde geleert",
   "text.advancedperipherals.added_player": "Die Speicher Karte wurde dir zugewiesen",
   "text.advancedperipherals.linked_goggles": "Erfolgreich verknüpft!",
-  "entity.minecraft.villager.advancedperipherals:computer_scientist": "Informatiker",
+  "entity.minecraft.villager.advancedperipherals.computer_scientist": "Informatiker",
   "itemGroup.advancedperipheralstab": "Advanced Peripherals"
 }

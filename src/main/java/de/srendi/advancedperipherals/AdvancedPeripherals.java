@@ -5,13 +5,13 @@ import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsCon
 import de.srendi.advancedperipherals.common.configuration.ConfigHandler;
 import de.srendi.advancedperipherals.common.configuration.ConfigHolder;
 import de.srendi.advancedperipherals.common.setup.Blocks;
+import de.srendi.advancedperipherals.common.setup.CCRegistration;
 import de.srendi.advancedperipherals.common.setup.Registration;
 import de.srendi.advancedperipherals.common.util.ChunkManager;
 import de.srendi.advancedperipherals.common.village.VillageStructures;
 import de.srendi.advancedperipherals.network.MNetwork;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -37,7 +37,7 @@ public class AdvancedPeripherals {
     public static final ItemGroup TAB = new ItemGroup("advancedperipheralstab") {
 
         @Override
-        public ItemStack createIcon() {
+        public ItemStack makeIcon() {
             return new ItemStack(Blocks.CHAT_BOX.get());
         }
     };
@@ -51,6 +51,7 @@ public class AdvancedPeripherals {
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, ConfigHolder.COMMON_SPEC);
         modBus.addListener(this::commonSetup);
         modBus.addListener(ConfigHandler::configEvent);
+        modBus.addListener(ConfigHandler::reloadConfigEvent);
         modBus.addListener(this::interModComms);
         modBus.addListener(this::clientSetup);
         Registration.register();
@@ -74,9 +75,12 @@ public class AdvancedPeripherals {
 
     @SubscribeEvent
     public void commonSetup(FMLCommonSetupEvent event) {
-        VillageStructures.init();
-        event.enqueueWork(ChunkManager::register);
-        MNetwork.init();
+        event.enqueueWork(() -> {
+            VillageStructures.init();
+            ChunkManager.register();
+            CCRegistration.register();
+            MNetwork.init();
+        });
     }
 
     public void clientSetup(FMLClientSetupEvent event) {

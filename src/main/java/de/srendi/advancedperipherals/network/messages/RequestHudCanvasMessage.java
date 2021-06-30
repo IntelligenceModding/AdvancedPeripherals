@@ -1,6 +1,6 @@
 package de.srendi.advancedperipherals.network.messages;
 
-import de.srendi.advancedperipherals.common.blocks.tileentity.ARControllerTileEntity;
+import de.srendi.advancedperipherals.common.blocks.tileentity.ARControllerTile;
 import de.srendi.advancedperipherals.network.MNetwork;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
@@ -22,24 +22,24 @@ public class RequestHudCanvasMessage {
 
     public static RequestHudCanvasMessage decode(PacketBuffer buf) {
         BlockPos blockPos = buf.readBlockPos();
-        String dimensionKey = buf.readString(Short.MAX_VALUE);
+        String dimensionKey = buf.readUtf(Short.MAX_VALUE);
         return new RequestHudCanvasMessage(blockPos, dimensionKey);
     }
 
     public static void encode(RequestHudCanvasMessage mes, PacketBuffer buf) {
         buf.writeBlockPos(mes.getBlockPos());
-        buf.writeString(mes.getDimensionKey(), Short.MAX_VALUE);
+        buf.writeUtf(mes.getDimensionKey(), Short.MAX_VALUE);
     }
 
     public static void handle(RequestHudCanvasMessage mes, Supplier<NetworkEvent.Context> cont) {
         cont.get().enqueueWork(() -> {
-            Iterable<ServerWorld> worlds = cont.get().getSender().getServer().getWorlds();
+            Iterable<ServerWorld> worlds = cont.get().getSender().getServer().getAllLevels();
             for (ServerWorld world : worlds) {
-                if (world.getDimensionKey().toString().equals(mes.getDimensionKey())) {
-                    TileEntity te = world.getTileEntity(mes.getBlockPos());
-                    if (!(te instanceof ARControllerTileEntity))
+                if (world.dimension().toString().equals(mes.getDimensionKey())) {
+                    TileEntity te = world.getBlockEntity(mes.getBlockPos());
+                    if (!(te instanceof ARControllerTile))
                         return;
-                    ARControllerTileEntity controller = (ARControllerTileEntity) te;
+                    ARControllerTile controller = (ARControllerTile) te;
                     MNetwork.sendTo(new UpdateHudCanvasMessage(controller.getCanvas()), cont.get().getSender());
                     break;
                 }

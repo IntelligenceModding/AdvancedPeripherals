@@ -15,7 +15,7 @@ public class SlotInputHandler extends SlotItemHandler {
     }
 
     @Override
-    public boolean isItemValid(@NotNull ItemStack stack) {
+    public boolean mayPlace(@NotNull ItemStack stack) {
         return condition.isValid(stack);
     }
 }

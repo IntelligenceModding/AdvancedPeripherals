@@ -193,7 +193,7 @@ public class AppEngApi implements IAEAddon {
 
     public String getFingerpint(IAEItemStack itemStack) {
         ItemStack stack = itemStack.createItemStack();
-        String fingerprint = stack.getOrCreateTag() + stack.getItem().getRegistryName().toString();
+        String fingerprint = stack.getOrCreateTag() + stack.getItem().getRegistryName().toString() + stack.getDisplayName().getString();
         try {
             byte[] bytesOfHash = fingerprint.getBytes(StandardCharsets.UTF_8);
             MessageDigest md = MessageDigest.getInstance("MD5");

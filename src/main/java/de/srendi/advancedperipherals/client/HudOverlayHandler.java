@@ -47,8 +47,8 @@ public class HudOverlayHandler {
         Minecraft mc = Minecraft.getInstance();
         MatrixStack matrixStack = event.getMatrixStack();
         for (ARRenderAction action : canvas) {
-            action.draw(mc, matrixStack, event.getWindow().getScaledWidth(), event.getWindow().getScaledHeight());
+            action.draw(mc, matrixStack, event.getWindow().getScreenWidth(), event.getWindow().getScreenHeight());
         }
-        mc.getTextureManager().bindTexture(AbstractGui.GUI_ICONS_LOCATION);
+        mc.getTextureManager().bind(AbstractGui.GUI_ICONS_LOCATION);
     }
 }

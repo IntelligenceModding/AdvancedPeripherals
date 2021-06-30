@@ -13,17 +13,21 @@ import org.jetbrains.annotations.Nullable;
 public abstract class BaseBlock extends ContainerBlock {
 
     public BaseBlock() {
-        super(Properties.create(Material.IRON).hardnessAndResistance(1, 5).harvestLevel(0).sound(SoundType.METAL).notSolid().harvestTool(ToolType.PICKAXE).setRequiresTool());
+        this(Properties.of(Material.METAL).strength(1, 5).harvestLevel(0).sound(SoundType.METAL).noOcclusion().harvestTool(ToolType.PICKAXE).requiresCorrectToolForDrops());
+    }
+
+    public BaseBlock(Properties properties) {
+        super(properties);
     }
 
     @Nullable
     @Override
-    public TileEntity createNewTileEntity(IBlockReader worldIn) {
+    public TileEntity newBlockEntity(IBlockReader worldIn) {
         return null;
     }
 
     @Override
-    public BlockRenderType getRenderType(BlockState state) {
+    public BlockRenderType getRenderShape(BlockState state) {
         return BlockRenderType.MODEL;
     }
 

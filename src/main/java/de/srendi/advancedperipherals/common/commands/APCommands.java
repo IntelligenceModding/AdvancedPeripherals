@@ -29,27 +29,27 @@ public class APCommands {
     }
 
     private static int getHashItem(CommandSource source) throws CommandSyntaxException {
-        ServerPlayerEntity playerEntity = source.asPlayer();
-        if (playerEntity.getHeldItemMainhand() == ItemStack.EMPTY) {
-            source.sendErrorMessage(new StringTextComponent("You need an item in your main hand."));
+        ServerPlayerEntity playerEntity = source.getPlayerOrException();
+        if (playerEntity.getMainHandItem() == ItemStack.EMPTY) {
+            source.sendFailure(new StringTextComponent("You need an item in your main hand."));
             return 0;
         }
-        CompoundNBT tag = playerEntity.getHeldItemMainhand().getTag();
+        CompoundNBT tag = playerEntity.getMainHandItem().getTag();
         String hash = NBTUtil.getNBTHash(tag);
         if (hash == null) {
-            source.sendErrorMessage(new StringTextComponent("That item does not have NBT data"));
+            source.sendFailure(new StringTextComponent("That item does not have NBT data"));
             return 0;
         }
-        source.sendFeedback(new StringTextComponent("Hash of you main hand item: "), true);
-        source.sendFeedback(TextComponentUtils.wrapWithSquareBrackets(new StringTextComponent(hash).modifyStyle((style) -> style.setFormatting(TextFormatting.GREEN).setClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, hash)).setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new StringTextComponent("Copy"))))), true);
+        source.sendSuccess(new StringTextComponent("Hash of you main hand item: "), true);
+        source.sendSuccess(TextComponentUtils.wrapInSquareBrackets(new StringTextComponent(hash).withStyle((style) -> style.applyFormat(TextFormatting.GREEN).withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, hash)).withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new StringTextComponent("Copy"))))), true);
         return 1;
     }
 
     private static int printDebugTileMessage(CommandSource source) throws CommandSyntaxException {
-        ServerPlayerEntity playerEntity = source.asPlayer();
-        TileEntityList list = TileEntityList.get(playerEntity.getServerWorld());
-        source.sendFeedback(TextComponentUtils.wrapWithSquareBrackets(new StringTextComponent("" + list.getBlockPositions()).modifyStyle((style) -> style.setFormatting(TextFormatting.GREEN).setClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, "" + list.getBlockPositions())).setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new StringTextComponent("Copy"))))), true);
-        source.sendFeedback(new StringTextComponent(list.getBlockPositions().size() + ""), false);
+        ServerPlayerEntity playerEntity = source.getPlayerOrException();
+        TileEntityList list = TileEntityList.get(playerEntity.getLevel());
+        source.sendSuccess(TextComponentUtils.wrapInSquareBrackets(new StringTextComponent("" + list.getBlockPositions()).withStyle((style) -> style.applyFormat(TextFormatting.GREEN).withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, "" + list.getBlockPositions())).withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new StringTextComponent("Copy"))))), true);
+        source.sendSuccess(new StringTextComponent(list.getBlockPositions().size() + ""), false);
         return 1;
     }
 }

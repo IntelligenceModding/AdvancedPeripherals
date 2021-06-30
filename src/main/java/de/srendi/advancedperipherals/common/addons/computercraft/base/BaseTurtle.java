@@ -12,7 +12,6 @@ import de.srendi.advancedperipherals.common.blocks.base.TileEntityList;
 import de.srendi.advancedperipherals.common.util.WorldPos;
 import net.minecraft.client.renderer.model.ModelResourceLocation;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.vector.Matrix4f;
 import net.minecraft.util.math.vector.TransformationMatrix;
@@ -60,11 +59,11 @@ public abstract class BaseTurtle<T extends BasePeripheral> extends AbstractTurtl
 
     @Override
     public void update(@NotNull ITurtleAccess turtle, @NotNull TurtleSide side) {
-        if (!turtle.getWorld().isRemote) {
+        if (!turtle.getWorld().isClientSide) {
             IPeripheral turtlePeripheral = turtle.getPeripheral(side);
             this.turtle = turtle;
-            if (turtlePeripheral instanceof EnvironmentDetectorPeripheral)
-                ((EnvironmentDetectorPeripheral) turtlePeripheral).setTurtle(turtle);
+            if (turtlePeripheral instanceof BasePeripheral) 
+                ((BasePeripheral) turtlePeripheral).setTurtle(turtle);
         }
 
         tick++;

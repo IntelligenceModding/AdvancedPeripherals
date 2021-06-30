@@ -48,15 +48,15 @@ public final class ARRenderAction implements INBTSerializable<CompoundNBT> {
         int[] i = intArgs;
         switch (type) {
             case DrawCenteredString:
-                ARRenderHelper.drawCenteredString(matrixStack, mc.fontRenderer, stringArg, relativeX(i[0], w),
+                ARRenderHelper.drawCenteredString(matrixStack, mc.font, stringArg, relativeX(i[0], w),
                         relativeY(i[1], h), i[2]);
                 break;
             case DrawString:
-                ARRenderHelper.drawString(matrixStack, mc.fontRenderer, stringArg, relativeX(i[0], w),
+                ARRenderHelper.drawString(matrixStack, mc.font, stringArg, relativeX(i[0], w),
                         relativeY(i[1], h), i[2]);
                 break;
             case DrawRightboundString:
-                ARRenderHelper.drawRightboundString(matrixStack, mc.fontRenderer, stringArg, relativeX(i[0], w),
+                ARRenderHelper.drawRightboundString(matrixStack, mc.font, stringArg, relativeX(i[0], w),
                         relativeY(i[1], h), i[2]);
                 break;
             case Fill:
@@ -144,7 +144,7 @@ public final class ARRenderAction implements INBTSerializable<CompoundNBT> {
         nbt.putString(TYPE, type.toString());
         nbt.putString(STRING_ARG, stringArg);
         nbt.putIntArray(INT_ARGS, intArgs);
-        nbt.putIntArray(VIRTUAL_SCREEN_SIZE,  virtualScreenSize.orElse(new int[]{}));
+        nbt.putIntArray(VIRTUAL_SCREEN_SIZE, virtualScreenSize.orElse(new int[]{}));
         return nbt;
     }
 

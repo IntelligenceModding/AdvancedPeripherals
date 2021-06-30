@@ -5,7 +5,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '4.1+', changing: true
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.0.16', changing: true
         classpath 'com.android.tools.build:gradle:2.3.0'
     }
 }
@@ -14,6 +14,13 @@ apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 
+apply plugin: 'net.minecraftforge.gradle'
+
+wrapper {
+    gradleVersion = '7.1'
+    distributionType = Wrapper.DistributionType.ALL
+}
+
 version = "${mod_version}"
 group = 'de.srendi.advancedperipherals'
 archivesBaseName = 'advancedperipherals'
@@ -21,7 +28,7 @@ archivesBaseName = 'advancedperipherals'
 println('Java: ' + System.getProperty('java.version') + ' JVM: ' + System.getProperty('java.vm.version') + '(' + System.getProperty('java.vendor') + ') Arch: ' + System.getProperty('os.arch'))
 minecraft {
 
-    mappings channel: 'snapshot', version: "${mappings_version}"
+    mappings channel: 'official', version: '1.16.5'
 
     accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
 
@@ -70,7 +77,6 @@ minecraft {
             workingDirectory project.file('run')
 
             property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-            properties 'mixin.env.disableRefMap': 'true'
             property 'mixin.env.remapRefMap', 'true'
             property 'mixin.env.refMapRemappingFile', "${buildDir}/createSrgToMcp/output.srg"
             property 'forge.logging.console.level', 'debug'
@@ -92,18 +98,23 @@ minecraft {
 sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 repositories {
-
+    mavenCentral()
     maven { url 'https://squiddev.cc/maven/' }
     maven { url 'https://modmaven.dev/' }
     maven { url 'https://dvs1.progwml6.com/files/maven/' }
     maven { url 'https://repo.refinedmods.com/' }
     maven { url 'https://maven.theillusivec4.top/' }
     maven { url 'https://maven.blamejared.com' }
-    maven { url "https://www.cursemaven.com" }
-
+    maven { url 'https://www.cursemaven.com' }
+    maven {
+        url 'https://ldtteam.jfrog.io/ldtteam/modding'
+    }
 }
 
 dependencies {
+
+    implementation fg.deobf("com.minecolonies:minecolonies:${colony_version}:universal")
+    implementation fg.deobf("com.ldtteam:structurize:${structurize_version}:universal")
 
     compileOnly "org.jetbrains:annotations:${jb_annotations}"
 
@@ -111,7 +122,7 @@ dependencies {
 
     implementation fg.deobf("org.squiddev:cc-tweaked-1.16.4:${cc_version}")
 
-    implementation fg.deobf("vazkii.botania:Botania:${botania_version}")
+    compileOnly fg.deobf("vazkii.botania:Botania:${botania_version}")
     //Botania needs patchouli to run
     compileOnly fg.deobf("vazkii.patchouli:Patchouli:${patchouli_version}:api")
     runtimeOnly fg.deobf("vazkii.patchouli:Patchouli:${patchouli_version}")
@@ -120,22 +131,27 @@ dependencies {
 
     implementation fg.deobf("appeng:appliedenergistics2:${ae_version}");
 
+    implementation fg.deobf("curse.maven:id-236307:3365631")
+    implementation fg.deobf("curse.maven:CommonCapabilites-247007:3292062")
+    implementation fg.deobf("curse.maven:CyclopsCore-232758:3336467")
+
     runtimeOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}")
     compileOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}:api")
 
     implementation fg.deobf("mekanism:Mekanism:${mekanism_version}")
     implementation fg.deobf("mekanism:Mekanism:${mekanism_version}:generators")
 
+    //Immersive Engineering
     compileOnly fg.deobf("curse.maven:ie-231951:3233018")
 
     //Mods to test stuff(Not required mods)
     //runtimeOnly fg.deobf("mcjty.theoneprobe:TheOneProbe-1.16:${top_version}")
-    runtimeOnly fg.deobf("mezz.jei:jei-1.16.4:7.6.0.62")
+    runtimeOnly fg.deobf("mezz.jei:jei-1.16.4:7.6.1.71")
 
 }
 
 jar {
-    manifest {
+    manifest({
         attributes([
                 "Specification-Title"     : "advancedperipherals",
                 "Specification-Vendor"    : "Srendi",
@@ -145,7 +161,7 @@ jar {
                 "Implementation-Vendor"   : "Srendi",
                 "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
         ])
-    }
+    })
 }
 
 jar.finalizedBy('reobfJar')

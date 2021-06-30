@@ -2,10 +2,9 @@ package de.srendi.advancedperipherals.common.addons.computercraft.peripheral;
 
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
-import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.addons.computercraft.base.BasePeripheral;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
-import de.srendi.advancedperipherals.common.blocks.tileentity.InventoryManagerTileEntity;
+import de.srendi.advancedperipherals.common.blocks.tileentity.InventoryManagerTile;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
 import de.srendi.advancedperipherals.common.util.ItemUtil;
 import net.minecraft.entity.player.PlayerEntity;
@@ -51,31 +50,30 @@ public class InventoryManagerPeripheral extends BasePeripheral {
 
         Direction direction = Direction.valueOf(inventoryBlock.toUpperCase(Locale.ROOT));
 
-        TileEntity targetEntity = tileEntity.getWorld().getTileEntity(tileEntity.getPos().offset(direction));
+        TileEntity targetEntity = tileEntity.getLevel().getBlockEntity(tileEntity.getBlockPos().relative(direction));
         IItemHandler inventoryFrom = targetEntity != null ? targetEntity
                 .getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, direction).resolve().orElse(null) : null;
         PlayerInventory inventoryTo = getOwnerPlayer().inventory;
 
-        // inventoryFrom is checked via ensurePlayerLinked()
-        if (inventoryTo == null) {
+        //inventoryTo is checked via ensurePlayerLinked()
+        if (inventoryFrom == null)
             return 0;
-        }
 
         int amount = count;
         int transferableAmount = 0;
 
         for (int i = 0; i < inventoryFrom.getSlots(); i++) {
             if (!stack.isEmpty())
-                if (inventoryFrom.getStackInSlot(i).isItemEqual(stack)) {
+                if (inventoryFrom.getStackInSlot(i).sameItem(stack)) {
                     if (inventoryFrom.getStackInSlot(i).getCount() >= amount) {
-                        if (inventoryTo.addItemStackToInventory(inventoryFrom.extractItem(i, amount, true))) {
+                        if (inventoryTo.add(inventoryFrom.extractItem(i, amount, true))) {
                             inventoryFrom.extractItem(i, amount, false);
                             transferableAmount += amount;
                         }
                         break;
                     } else {
                         int subcount = inventoryFrom.getStackInSlot(i).getCount();
-                        if (inventoryTo.addItemStackToInventory(inventoryFrom.extractItem(i, subcount, true))) {
+                        if (inventoryTo.add(inventoryFrom.extractItem(i, subcount, true))) {
                             inventoryFrom.extractItem(i, subcount, false);
                             amount = count - subcount;
                             transferableAmount += subcount;
@@ -84,14 +82,14 @@ public class InventoryManagerPeripheral extends BasePeripheral {
                 }
             if (stack.isEmpty())
                 if (inventoryFrom.getStackInSlot(i).getCount() >= amount) {
-                    if (inventoryTo.addItemStackToInventory(inventoryFrom.extractItem(i, amount, true))) {
+                    if (inventoryTo.add(inventoryFrom.extractItem(i, amount, true))) {
                         inventoryFrom.extractItem(i, amount, false);
                         transferableAmount += amount;
                     }
                     break;
                 } else {
                     int subcount = inventoryFrom.getStackInSlot(i).getCount();
-                    if (inventoryTo.addItemStackToInventory(inventoryFrom.extractItem(i, subcount, true))) {
+                    if (inventoryTo.add(inventoryFrom.extractItem(i, subcount, true))) {
                         inventoryFrom.extractItem(i, subcount, false);
                         amount = count - subcount;
                         transferableAmount += subcount;
@@ -112,12 +110,13 @@ public class InventoryManagerPeripheral extends BasePeripheral {
 
         Direction direction = Direction.valueOf(inventoryBlock.toUpperCase(Locale.ROOT));
 
-        TileEntity targetEntity = tileEntity.getWorld().getTileEntity(tileEntity.getPos().offset(direction));
+        TileEntity targetEntity = tileEntity.getLevel().getBlockEntity(tileEntity.getBlockPos().relative(direction));
         PlayerInventory inventoryFrom = getOwnerPlayer().inventory;
         IItemHandler inventoryTo = targetEntity != null ? targetEntity
                 .getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, direction).resolve().orElse(null) : null;
-        if (inventoryFrom == null) {
-            AdvancedPeripherals.debug("Debug2");
+
+        // invetoryFrom is checked via ensurePlayerLinked()
+        if (inventoryTo == null) {
             return 0;
         }
 
@@ -125,16 +124,16 @@ public class InventoryManagerPeripheral extends BasePeripheral {
         int transferableAmount = 0;
 
         ItemStack rest = ItemStack.EMPTY;
-        for (int i = 0; i < inventoryFrom.getSizeInventory(); i++) {
+        for (int i = 0; i < inventoryFrom.getContainerSize(); i++) {
             if (!stack.isEmpty())
-                if (inventoryFrom.getStackInSlot(i).isItemEqual(stack)) {
-                    if (inventoryFrom.getStackInSlot(i).getCount() >= amount) {
-                        rest = insertItem(inventoryTo, inventoryFrom.decrStackSize(i, amount));
+                if (inventoryFrom.getItem(i).sameItem(stack)) {
+                    if (inventoryFrom.getItem(i).getCount() >= amount) {
+                        rest = insertItem(inventoryTo, inventoryFrom.removeItem(i, amount));
                         transferableAmount += amount - rest.getCount();
                         break;
                     } else {
-                        int subcount = inventoryFrom.getStackInSlot(i).getCount();
-                        rest = insertItem(inventoryTo, inventoryFrom.decrStackSize(i, subcount));
+                        int subcount = inventoryFrom.getItem(i).getCount();
+                        rest = insertItem(inventoryTo, inventoryFrom.removeItem(i, subcount));
                         amount = count - subcount;
                         transferableAmount += subcount - rest.getCount();
                         if (!rest.isEmpty())
@@ -142,13 +141,13 @@ public class InventoryManagerPeripheral extends BasePeripheral {
                     }
                 }
             if (stack.isEmpty())
-                if (inventoryFrom.getStackInSlot(i).getCount() >= amount) {
-                    rest = insertItem(inventoryTo, inventoryFrom.decrStackSize(i, amount));
+                if (inventoryFrom.getItem(i).getCount() >= amount) {
+                    rest = insertItem(inventoryTo, inventoryFrom.removeItem(i, amount));
                     transferableAmount += amount - rest.getCount();
                     break;
                 } else {
-                    int subcount = inventoryFrom.getStackInSlot(i).getCount();
-                    rest = insertItem(inventoryTo, inventoryFrom.decrStackSize(i, subcount));
+                    int subcount = inventoryFrom.getItem(i).getCount();
+                    rest = insertItem(inventoryTo, inventoryFrom.removeItem(i, subcount));
                     amount = count - subcount;
                     transferableAmount += subcount - rest.getCount();
                     if (!rest.isEmpty())
@@ -156,7 +155,7 @@ public class InventoryManagerPeripheral extends BasePeripheral {
                 }
         }
         if (!rest.isEmpty()) {
-            inventoryFrom.addItemStackToInventory(rest);
+            inventoryFrom.add(rest);
         }
         return transferableAmount;
     }
@@ -166,7 +165,7 @@ public class InventoryManagerPeripheral extends BasePeripheral {
         ensurePlayerLinked();
         Map<Integer, Object> items = new HashMap<>();
         int i = 0;
-        for (ItemStack stack : getOwnerPlayer().inventory.mainInventory) {
+        for (ItemStack stack : getOwnerPlayer().inventory.items) {
             if (!stack.isEmpty()) {
                 HashMap<Object, Object> map = new HashMap<>();
                 String displayName = stack.getDisplayName().getString();
@@ -188,7 +187,7 @@ public class InventoryManagerPeripheral extends BasePeripheral {
         ensurePlayerLinked();
         Map<Integer, Object> items = new HashMap<>();
         int i = 0;
-        for (ItemStack stack : getOwnerPlayer().inventory.armorInventory) {
+        for (ItemStack stack : getOwnerPlayer().inventory.armor) {
             if (!stack.isEmpty()) {
                 HashMap<Object, Object> map = new HashMap<>();
                 String displayName = stack.getDisplayName().getString();
@@ -208,7 +207,7 @@ public class InventoryManagerPeripheral extends BasePeripheral {
     @LuaFunction
     public final boolean isPlayerEquipped() throws LuaException {
         ensurePlayerLinked();
-        for (ItemStack stack : getOwnerPlayer().inventory.armorInventory) {
+        for (ItemStack stack : getOwnerPlayer().inventory.armor) {
             if (!stack.isEmpty()) {
                 return true;
             }
@@ -220,7 +219,7 @@ public class InventoryManagerPeripheral extends BasePeripheral {
     public final boolean isWearing(int index) throws LuaException {
         ensurePlayerLinked();
         int i = 0;
-        for (ItemStack stack : getOwnerPlayer().inventory.armorInventory) {
+        for (ItemStack stack : getOwnerPlayer().inventory.armor) {
             if (!stack.isEmpty()) {
                 if (index == i)
                     return true;
@@ -232,7 +231,7 @@ public class InventoryManagerPeripheral extends BasePeripheral {
 
     private Map<Object, Object> getMapFromNBT(CompoundNBT nbt) {
         Map<Object, Object> map = new HashMap<>();
-        for (String value : nbt.keySet()) {
+        for (String value : nbt.getAllKeys()) {
             map.put(value, String.valueOf(nbt.get(value)));
         }
         return map;
@@ -247,7 +246,7 @@ public class InventoryManagerPeripheral extends BasePeripheral {
     }
 
     private PlayerEntity getOwnerPlayer() {
-        return ((InventoryManagerTileEntity) tileEntity).getOwnerPlayer();
+        return ((InventoryManagerTile) tileEntity).getOwnerPlayer();
     }
 
     private void ensurePlayerLinked() throws LuaException {

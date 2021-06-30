@@ -2,14 +2,14 @@ package de.srendi.advancedperipherals.common.addons.computercraft.peripheral;
 
 import dan200.computercraft.api.lua.LuaFunction;
 import de.srendi.advancedperipherals.common.addons.computercraft.base.BasePeripheral;
-import de.srendi.advancedperipherals.common.blocks.tileentity.EnergyDetectorTileEntity;
+import de.srendi.advancedperipherals.common.blocks.tileentity.EnergyDetectorTile;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
 
 public class EnergyDetectorPeripheral extends BasePeripheral {
 
-    EnergyDetectorTileEntity tileEntity;
+    EnergyDetectorTile tileEntity;
 
-    public EnergyDetectorPeripheral(String type, EnergyDetectorTileEntity tileEntity) {
+    public EnergyDetectorPeripheral(String type, EnergyDetectorTile tileEntity) {
         super(type, tileEntity);
         this.tileEntity = tileEntity;
     }

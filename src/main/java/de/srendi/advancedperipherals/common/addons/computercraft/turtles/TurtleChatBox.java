@@ -38,7 +38,7 @@ public class TurtleChatBox extends BaseTurtle<ChatBoxPeripheral> {
 
     @Override
     public void update(@NotNull ITurtleAccess turtle, @NotNull TurtleSide side) {
-        if(peripheral != null) {
+        if (peripheral != null) {
             super.update(turtle, side);
             //Sync the tick of the peripherals and the turtle
             if (peripheral.getTick() == 0) {

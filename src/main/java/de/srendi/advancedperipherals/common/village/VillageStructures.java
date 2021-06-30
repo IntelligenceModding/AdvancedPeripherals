@@ -2,6 +2,7 @@ package de.srendi.advancedperipherals.common.village;
 
 import com.mojang.datafixers.util.Pair;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
+import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.WorldGenRegistries;
@@ -18,12 +19,14 @@ import java.util.stream.Collectors;
 public class VillageStructures {
     //Adapted from Pneumaticcraft
     public static void init() {
+        if (!AdvancedPeripheralsConfig.enableVillagerStructures)
+            return;
         //Ensure the vanilla static init is done
-        PlainsVillagePools.init();
-        SavannaVillagePools.init();
-        TaigaVillagePools.init();
-        DesertVillagePools.init();
-        SnowyVillagePools.init();
+        PlainsVillagePools.bootstrap();
+        SavannaVillagePools.bootstrap();
+        TaigaVillagePools.bootstrap();
+        DesertVillagePools.bootstrap();
+        SnowyVillagePools.bootstrap();
         //Add the scientist house to each village biome
         for (String biome : new String[]{"desert", "snowy", "plains", "savanna", "taiga"}) {
             AdvancedPeripherals.debug("Register generating scientist_" + biome + " village house");
@@ -33,16 +36,16 @@ public class VillageStructures {
     }
 
     private static void addToPool(ResourceLocation pool, String toAdd, int weight) {
-        JigsawPattern old = WorldGenRegistries.JIGSAW_POOL.getOrDefault(pool);
+        JigsawPattern old = WorldGenRegistries.TEMPLATE_POOL.get(pool);
         if (old == null) {
             AdvancedPeripherals.debug("no jigsaw pool for " + pool + "? skipping villager house generation for it");
             return;
         }
-        List<JigsawPiece> shuffled = old.getShuffledPieces(ThreadLocalRandom.current());
+        List<JigsawPiece> shuffled = old.getShuffledTemplates(ThreadLocalRandom.current());
         List<Pair<JigsawPiece, Integer>> newPieces = shuffled.stream().map(p -> Pair.of(p, 1)).collect(Collectors.toList());
-        JigsawPiece newPiece = JigsawPiece.func_242849_a(toAdd).apply(PlacementBehaviour.RIGID);
+        JigsawPiece newPiece = JigsawPiece.legacy(toAdd).apply(PlacementBehaviour.RIGID);
         newPieces.add(Pair.of(newPiece, weight));
-        Registry.register(WorldGenRegistries.JIGSAW_POOL, pool, new JigsawPattern(pool, old.getName(), newPieces));
+        Registry.register(WorldGenRegistries.TEMPLATE_POOL, pool, new JigsawPattern(pool, old.getName(), newPieces));
         AdvancedPeripherals.debug("Finished registration for " + toAdd);
     }
 }

@@ -56,7 +56,7 @@ public class MNetwork {
     }
 
     public static SUpdateTileEntityPacket createTEUpdatePacket(TileEntity tile) {
-        return new SUpdateTileEntityPacket(tile.getPos(), -1, tile.getUpdateTag());
+        return new SUpdateTileEntityPacket(tile.getBlockPos(), -1, tile.getUpdateTag());
     }
 
     public static void sendToAllAround(Object mes, RegistryKey<World> dim, BlockPos pos, int radius) {
@@ -65,6 +65,6 @@ public class MNetwork {
     }
 
     public static void sendToAllInWorld(Object mes, ServerWorld world) {
-        NETWORK_CHANNEL.send(PacketDistributor.DIMENSION.with(world::getDimensionKey), mes);
+        NETWORK_CHANNEL.send(PacketDistributor.DIMENSION.with(world::dimension), mes);
     }
 }
