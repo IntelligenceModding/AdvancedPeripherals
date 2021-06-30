@@ -41,7 +41,7 @@ side = "BOTH"
 [[dependencies.advancedperipherals]]
 modId = "appliedenergistics2"
 mandatory = false
-versionRange = "8.4.0"
+versionRange = "8.2.0"
 ordnering = "NONE"
 side = "BOTH"
 [[dependencies.advancedperipherals]]
