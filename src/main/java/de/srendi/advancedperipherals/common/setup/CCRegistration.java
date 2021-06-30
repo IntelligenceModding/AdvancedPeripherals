@@ -7,11 +7,7 @@ import de.srendi.advancedperipherals.common.addons.computercraft.pocket.PocketCh
 import de.srendi.advancedperipherals.common.addons.computercraft.pocket.PocketEnvironment;
 import de.srendi.advancedperipherals.common.addons.computercraft.pocket.PocketGeoScanner;
 import de.srendi.advancedperipherals.common.addons.computercraft.pocket.PocketPlayerDetector;
-import de.srendi.advancedperipherals.common.addons.computercraft.turtles.TurtleChatBox;
-import de.srendi.advancedperipherals.common.addons.computercraft.turtles.TurtleChunky;
-import de.srendi.advancedperipherals.common.addons.computercraft.turtles.TurtleEnvironmentDetector;
-import de.srendi.advancedperipherals.common.addons.computercraft.turtles.TurtleGeoScanner;
-import de.srendi.advancedperipherals.common.addons.computercraft.turtles.TurtlePlayerDetector;
+import de.srendi.advancedperipherals.common.addons.computercraft.turtles.*;
 import net.minecraftforge.fml.common.Mod;
 
 @Mod.EventBusSubscriber(modid = AdvancedPeripherals.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
