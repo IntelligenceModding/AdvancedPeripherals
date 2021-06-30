@@ -8,7 +8,6 @@ import com.refinedmods.refinedstorage.api.storage.cache.IStorageCache;
 import com.refinedmods.refinedstorage.api.util.StackListEntry;
 import com.refinedmods.refinedstorage.apiimpl.API;
 import com.refinedmods.refinedstorage.apiimpl.network.node.NetworkNode;
-import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.shared.util.NBTUtil;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import net.minecraft.item.ItemStack;
@@ -18,8 +17,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.commons.codec.binary.Hex;
-import org.squiddev.cobalt.*;
-import org.squiddev.cobalt.function.ZeroArgFunction;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -171,27 +168,13 @@ public class RefinedStorage {
         return list;
     }
 
-    public static LuaTable getItem(List<ItemStack> items, ItemStack item) {
-        var mt = ValueFactory.tableOf();
-        mt.rawset("__index", new ZeroArgFunction() {
-            @Override
-            public LuaValue call(LuaState luaState) throws LuaError, UnwindThrowable {
-                return ValueFactory.valueOf("yay");
+    public static Object getItem(List<ItemStack> items, ItemStack item) {
+        for (ItemStack itemStack : items) {
+            if (itemStack.getItem().equals(item.getItem()) && Objects.equals(itemStack.getOrCreateTag(), item.getOrCreateTag())) {
+                return getObjectFromStack(itemStack);
             }
-        });
-
-        var t = new LuaTable();
-        t.setMetatable(mt);
-        t.rawset("hello", ValueFactory.valueOf("world"));
-
-        return t;
-
-//        for (ItemStack itemStack : items) {
-//            if (itemStack.getItem().equals(item.getItem()) && Objects.equals(itemStack.getOrCreateTag(), item.getOrCreateTag())) {
-//                return getObjectFromStack(itemStack);
-//            }
-//        }
-//        return new Object();
+        }
+        return new Object();
     }
 
     public static List<ItemStack> getItems(INetwork network, boolean craftable) {
