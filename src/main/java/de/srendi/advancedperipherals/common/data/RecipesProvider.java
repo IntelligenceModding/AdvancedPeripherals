@@ -190,7 +190,7 @@ public class RecipesProvider extends RecipeProvider implements IConditionBuilder
                 .define('M', Registry.ModBlocks.WIRED_MODEM_FULL.get())
                 .pattern("DMD")
                 .pattern("DCD")
-                .pattern("ROR")
+                .pattern("ROR");
 
           ShapedRecipeBuilder.shaped(Blocks.NBT_STORAGE.get())
                 .define('C', Items.CHEST)
