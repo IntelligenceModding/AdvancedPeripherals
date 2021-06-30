@@ -5,7 +5,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.0.16', changing: true
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.0.20', changing: true
         classpath 'com.android.tools.build:gradle:2.3.0'
     }
 }
@@ -13,6 +13,7 @@ buildscript {
 apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
+apply plugin: 'java-library'
 
 apply plugin: 'net.minecraftforge.gradle'
 
@@ -28,7 +29,7 @@ archivesBaseName = 'advancedperipherals'
 println('Java: ' + System.getProperty('java.version') + ' JVM: ' + System.getProperty('java.vm.version') + '(' + System.getProperty('java.vendor') + ') Arch: ' + System.getProperty('os.arch'))
 minecraft {
 
-    mappings channel: 'official', version: '1.16.5'
+    mappings channel: "${mappings_channel}", version: "${mappings_version}"
 
     accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
 
@@ -113,26 +114,27 @@ repositories {
 
 dependencies {
 
-    implementation fg.deobf("com.minecolonies:minecolonies:${colony_version}:universal")
+    implementation fg.deobf("com.minecolonies:minecolonies:${minecolonies_version}:universal")
     implementation fg.deobf("com.ldtteam:structurize:${structurize_version}:universal")
 
     compileOnly "org.jetbrains:annotations:${jb_annotations}"
 
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
 
-    implementation fg.deobf("org.squiddev:cc-tweaked-1.16.4:${cc_version}")
+    implementation fg.deobf("org.squiddev:cc-tweaked-${cc_version}")
 
     compileOnly fg.deobf("vazkii.botania:Botania:${botania_version}")
     //Botania needs patchouli to run
-    //runtimeOnly fg.deobf("vazkii.patchouli:Patchouli:${patchouli_version}")
+    compileOnly fg.deobf("vazkii.patchouli:Patchouli:${patchouli_version}:api")
+    runtimeOnly fg.deobf("vazkii.patchouli:Patchouli:${patchouli_version}")
 
     implementation fg.deobf("com.refinedmods:refinedstorage:${rs_version}")
 
     implementation fg.deobf("appeng:appliedenergistics2:${ae_version}");
 
-    implementation fg.deobf("curse.maven:id-236307:3365631")
-    implementation fg.deobf("curse.maven:CommonCapabilites-247007:3292062")
-    implementation fg.deobf("curse.maven:CyclopsCore-232758:3336467")
+    implementation fg.deobf("curse.maven:integrateddynamics-${integrated_dynamics_version}")
+    implementation fg.deobf("curse.maven:CommonCapabilites-${common_capabilities_version}")
+    implementation fg.deobf("curse.maven:CyclopsCore-${cyclops_core_version}")
 
     runtimeOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}")
     compileOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}:api")
@@ -141,11 +143,11 @@ dependencies {
     implementation fg.deobf("mekanism:Mekanism:${mekanism_version}:generators")
 
     //Immersive Engineering
-    compileOnly fg.deobf("curse.maven:ie-231951:3233018")
+    compileOnly fg.deobf("curse.maven:immersiveengineering-${immersive_engineering_version}")
 
     //Mods to test stuff(Not required mods)
     //runtimeOnly fg.deobf("mcjty.theoneprobe:TheOneProbe-1.16:${top_version}")
-    runtimeOnly fg.deobf("mezz.jei:jei-1.16.4:7.6.1.71")
+    runtimeOnly fg.deobf("mezz.jei:jei-${jei_version}")
 
 }
 

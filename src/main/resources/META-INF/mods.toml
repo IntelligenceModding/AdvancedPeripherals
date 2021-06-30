@@ -41,7 +41,7 @@ side = "BOTH"
 [[dependencies.advancedperipherals]]
 modId = "appliedenergistics2"
 mandatory = false
-versionRange = "8.4.0"
+versionRange = "8.2.0"
 ordnering = "NONE"
 side = "BOTH"
 [[dependencies.advancedperipherals]]
@@ -53,6 +53,30 @@ side = "BOTH"
 [[dependencies.advancedperipherals]]
 modId = "minecolonies"
 mandatory = false
-versionRange = "[0.14.237-ALPHA,)"
+versionRange = "[0.14.238-BETA,)"
+ordnering = "NONE"
+side = "BOTH"
+[[dependencies.advancedperipherals]]
+modId = "mekanism"
+mandatory = false
+versionRange = "[10.0.21,)"
+ordnering = "NONE"
+side = "BOTH"
+[[dependencies.advancedperipherals]]
+modId = "mekanismgenerators"
+mandatory = false
+versionRange = "[10.0.21,)"
+ordnering = "NONE"
+side = "BOTH"
+[[dependencies.advancedperipherals]]
+modId = "integrateddynamics"
+mandatory = false
+versionRange = "[1.8.5,)"
+ordnering = "NONE"
+side = "BOTH"
+[[dependencies.advancedperipherals]]
+modId = "botania"
+mandatory = false
+versionRange = "[1.16.5-416,)"
 ordnering = "NONE"
 side = "BOTH"

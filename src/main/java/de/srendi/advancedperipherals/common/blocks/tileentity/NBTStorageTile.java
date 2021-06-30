@@ -1,10 +1,8 @@
 package de.srendi.advancedperipherals.common.blocks.tileentity;
 
-import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.BlockReaderPeripheral;
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.NBTStoragePeripheral;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
 import de.srendi.advancedperipherals.common.setup.TileEntityTypes;
-import de.srendi.advancedperipherals.common.util.NBTUtil;
 import net.minecraft.block.BlockState;
 import net.minecraft.nbt.CompoundNBT;
 import org.jetbrains.annotations.NotNull;

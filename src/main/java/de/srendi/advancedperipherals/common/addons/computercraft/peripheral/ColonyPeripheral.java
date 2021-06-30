@@ -1,7 +1,6 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.peripheral;
 
 import com.minecolonies.api.IMinecoloniesAPI;
-import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.ICivilianData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IVisitorData;
@@ -47,16 +46,13 @@ public class ColonyPeripheral extends BasePeripheral {
     }
 
     @LuaFunction(mainThread = true)
-    public final boolean isInColony() {
-        return getColony() != null;
+    public final boolean isInColony() throws LuaException {
+        return getColonyWithoutPermission() != null;
     }
 
     @LuaFunction(mainThread = true)
     public final Object isWithin(Map<?, ?> pos) throws LuaException {
-        IColony colony = getColony();
-        if (colony == null || !this.hasPermission) {
-            throw new LuaException("Here is no colony or you don't have the right permissions");
-        }
+        IColony colony = getColonyWithoutPermission();
 
         if (!(pos.containsKey("x") && pos.containsKey("y") && pos.containsKey("z")))
             throw new LuaException("Coordinates expected");
@@ -68,21 +64,18 @@ public class ColonyPeripheral extends BasePeripheral {
     @LuaFunction(mainThread = true)
     public final Object getCitizens() throws LuaException {
         IColony colony = getColony();
-        if (colony == null || !this.hasPermission)
-            throw new LuaException("Here is no colony or you don't have the right permissions");
 
         List<Object> list = new ArrayList<>();
-        for (ICitizenData citizen : colony.getCitizenManager().getCitizens()) {
+        colony.getCitizenManager().getCitizens().forEach(citizen -> {
             list.add(MineColonies.citizenToObject(citizen));
-        }
+        });
+
         return list;
     }
 
     @LuaFunction(mainThread = true)
     public final int getColonyID() throws LuaException {
         IColony colony = getColony();
-        if (colony == null || !this.hasPermission)
-            throw new LuaException("Here is no colony or you don't have the right permissions");
 
         return colony.getID();
     }
@@ -90,8 +83,6 @@ public class ColonyPeripheral extends BasePeripheral {
     @LuaFunction(mainThread = true)
     public final String getColonyName() throws LuaException {
         IColony colony = getColony();
-        if (colony == null || !this.hasPermission)
-            throw new LuaException("Here is no colony or you don't have the right permissions");
 
         return colony.getName();
     }
@@ -99,8 +90,6 @@ public class ColonyPeripheral extends BasePeripheral {
     @LuaFunction(mainThread = true)
     public final String getColonyStyle() throws LuaException {
         IColony colony = getColony();
-        if (colony == null || !this.hasPermission)
-            throw new LuaException("Here is no colony or you don't have the right permissions");
 
         return colony.getStyle();
     }
@@ -108,8 +97,6 @@ public class ColonyPeripheral extends BasePeripheral {
     @LuaFunction(mainThread = true)
     public final boolean isActive() throws LuaException {
         IColony colony = getColony();
-        if (colony == null || !this.hasPermission)
-            throw new LuaException("Here is no colony or you don't have the right permissions");
 
         return colony.isActive();
     }
@@ -117,8 +104,6 @@ public class ColonyPeripheral extends BasePeripheral {
     @LuaFunction(mainThread = true)
     public final double getHappiness() throws LuaException {
         IColony colony = getColony();
-        if (colony == null || !this.hasPermission)
-            throw new LuaException("Here is no colony or you don't have the right permissions");
 
         return colony.getOverallHappiness();
     }
@@ -126,8 +111,6 @@ public class ColonyPeripheral extends BasePeripheral {
     @LuaFunction(mainThread = true)
     public final Object getLocation() throws LuaException {
         IColony colony = getColony();
-        if (colony == null || !this.hasPermission)
-            throw new LuaException("Here is no colony or you don't have the right permissions");
 
         return Converter.posToObject(colony.getCenter());
     }
@@ -135,8 +118,6 @@ public class ColonyPeripheral extends BasePeripheral {
     @LuaFunction(mainThread = true)
     public final boolean isUnderAttack() throws LuaException {
         IColony colony = getColony();
-        if (colony == null || !this.hasPermission)
-            throw new LuaException("Here is no colony or you don't have the right permissions");
 
         return colony.isColonyUnderAttack();
     }
@@ -144,8 +125,6 @@ public class ColonyPeripheral extends BasePeripheral {
     @LuaFunction(mainThread = true)
     public final int amountOfCitizens() throws LuaException {
         IColony colony = getColony();
-        if (colony == null || !this.hasPermission)
-            throw new LuaException("Here is no colony or you don't have the right permissions");
 
         return colony.getCitizenManager().getCurrentCitizenCount();
     }
@@ -153,8 +132,6 @@ public class ColonyPeripheral extends BasePeripheral {
     @LuaFunction(mainThread = true)
     public final int maxOfCitizens() throws LuaException {
         IColony colony = getColony();
-        if (colony == null || !this.hasPermission)
-            throw new LuaException("Here is no colony or you don't have the right permissions");
 
         return colony.getCitizenManager().getMaxCitizens();
     }
@@ -162,8 +139,6 @@ public class ColonyPeripheral extends BasePeripheral {
     @LuaFunction(mainThread = true)
     public final int amountOfGraves() throws LuaException {
         IColony colony = getColony();
-        if (colony == null || !this.hasPermission)
-            throw new LuaException("Here is no colony or you don't have the right permissions");
 
         return colony.getGraveManager().getGraves().size();
     }
@@ -171,8 +146,6 @@ public class ColonyPeripheral extends BasePeripheral {
     @LuaFunction(mainThread = true)
     public final Object getVisitors() throws LuaException {
         IColony colony = getColony();
-        if (colony == null || !this.hasPermission)
-            throw new LuaException("Here is no colony or you don't have the right permissions");
 
         List<Object> list = new ArrayList<>();
         for (ICivilianData civilian : colony.getVisitorManager().getCivilianDataMap().values()) {
@@ -185,8 +158,6 @@ public class ColonyPeripheral extends BasePeripheral {
     @LuaFunction(mainThread = true)
     public final Object getBuildings() throws LuaException {
         IColony colony = getColony();
-        if (colony == null || !this.hasPermission)
-            throw new LuaException("Here is no colony or you don't have the right permissions");
 
         IBuildingManager manager = colony.getBuildingManager();
         List<Object> buildingData = new ArrayList<>();
@@ -200,8 +171,6 @@ public class ColonyPeripheral extends BasePeripheral {
     @LuaFunction(mainThread = true)
     public final Object getWorkOrders() throws LuaException {
         IColony colony = getColony();
-        if (colony == null || !this.hasPermission)
-            throw new LuaException("Here is no colony or you don't have the right permissions");
 
         List<Object> worksData = new ArrayList<>();
         for (IWorkOrder workOrder : colony.getWorkManager().getWorkOrders().values()) {
@@ -216,8 +185,6 @@ public class ColonyPeripheral extends BasePeripheral {
     @LuaFunction(mainThread = true)
     public final Object getResearch() throws LuaException {
         IColony colony = getColony();
-        if (colony == null || !this.hasPermission)
-            throw new LuaException("Here is no colony or you don't have the right permissions");
 
         IGlobalResearchTree tree = IGlobalResearchTree.getInstance();
         ILocalResearchTree colonyTree = colony.getResearchManager().getResearchTree();
@@ -233,34 +200,28 @@ public class ColonyPeripheral extends BasePeripheral {
     @LuaFunction(mainThread = true)
     public final Object getWorkOrderResources(int id) throws LuaException {
         IColony colony = getColony();
-        if (colony == null || !this.hasPermission)
-            throw new LuaException("Here is no colony or you don't have the right permissions");
 
         IWorkOrder workOrder = colony.getWorkManager().getWorkOrder(id);
         if (workOrder == null)
             return null;
 
-        return MineColonies.getBuilderResources(colony, workOrder.getClaimedBy());
+        return MineColonies.builderResourcesToObject(colony, workOrder.getClaimedBy());
     }
 
     @LuaFunction(mainThread = true)
     public final Object getBuilderResources(Map<?, ?> pos) throws LuaException {
         IColony colony = getColony();
-        if (colony == null || !this.hasPermission)
-            throw new LuaException("Here is no colony or you don't have the right permissions");
 
         if (!(pos.containsKey("x") && pos.containsKey("y") && pos.containsKey("z")))
             throw new LuaException("Coordinates expected");
         BlockPos blockPos = new BlockPos(((Number) pos.get("x")).intValue(), ((Number) pos.get("y")).intValue(), ((Number) pos.get("z")).intValue());
 
-        return MineColonies.getBuilderResources(colony, blockPos);
+        return MineColonies.builderResourcesToObject(colony, blockPos);
     }
 
     @LuaFunction(mainThread = true)
     public final Object getRequests() throws LuaException {
         IColony colony = getColony();
-        if (colony == null || !this.hasPermission)
-            throw new LuaException("Here is no colony or you don't have the right permissions");
 
         IRequestManager manager = colony.getRequestManager();
 
@@ -276,7 +237,7 @@ public class ColonyPeripheral extends BasePeripheral {
                 .distinct().collect(Collectors.toList());
 
         List<Object> result = new ArrayList<>();
-        for (IRequest<?> request : requests) {
+        requests.forEach(request -> {
             IDeliverable deliverable = (IDeliverable) request.getRequest();
             Map<Object, Object> map = new HashMap<>();
             map.put("id", request.getId().getIdentifier().toString());
@@ -288,11 +249,19 @@ public class ColonyPeripheral extends BasePeripheral {
             map.put("items", request.getDisplayStacks());
             map.put("target", request.getRequester().getRequesterDisplayName(manager, request).getString());
             result.add(map);
-        }
+        });
         return result;
     }
 
-    private IColony getColony() {
+    private IColony getColony() throws LuaException {
+        IMinecoloniesAPI api = IMinecoloniesAPI.getInstance();
+        IColony colony = api.getColonyManager().getColonyByPosFromWorld(getWorld(), getPos());
+        if (colony == null || !this.hasPermission)
+            throw new LuaException("Here is no colony or you don't have the right permissions");
+        return colony;
+    }
+
+    private IColony getColonyWithoutPermission() {
         IMinecoloniesAPI api = IMinecoloniesAPI.getInstance();
         return api.getColonyManager().getColonyByPosFromWorld(getWorld(), getPos());
     }
