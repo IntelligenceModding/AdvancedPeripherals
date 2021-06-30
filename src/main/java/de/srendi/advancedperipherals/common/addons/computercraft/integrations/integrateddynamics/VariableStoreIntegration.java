@@ -46,12 +46,13 @@ public class VariableStoreIntegration extends Integration<TileVariablestore> {
             variableData.put("label", entry.getValue().getLabel());
             variableData.put("type", entry.getValue().getOutputType().getTypeName());
             variableData.put("dynamic", entry.getValue() instanceof OperatorVariableFacade);
-            return new AbstractMap.SimpleImmutableEntry<>(entry.getKey(), variableData);
+            return new AbstractMap.SimpleImmutableEntry<>(entry.getKey() + 1, variableData); // Transform from java array start to lua array start
         }).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue))).orElse(new HashMap<>());
     }
 
     @LuaFunction
     public final MethodResult read(int slot) {
+        int realSlot = slot - 1; // Transform from lua array start to Java array start
         LazyOptional<IVariableContainer> lazyContainer = tileEntity.getCapability(VariableContainerConfig.CAPABILITY);
         return lazyContainer.map(container -> {
             IVariableFacade facade = container.getVariableCache().get(slot);

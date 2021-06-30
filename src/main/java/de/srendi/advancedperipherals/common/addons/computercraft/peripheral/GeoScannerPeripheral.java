@@ -133,6 +133,16 @@ public class GeoScannerPeripheral extends BasePeripheral {
     }
 
     @LuaFunction(mainThread = true)
+    public final Map<String, Integer> getConfiguration() {
+        Map<String, Integer> result = new HashMap<>();
+        result.put("freeRadius", AdvancedPeripheralsConfig.geoScannerMaxCostRadius);
+        result.put("scanPeriod", AdvancedPeripheralsConfig.geoScannerMinScanPeriod);
+        result.put("costRadius", AdvancedPeripheralsConfig.geoScannerMaxCostRadius);
+        result.put("blockCost", AdvancedPeripheralsConfig.geoScannerAdditionalBlockCost);
+        return result;
+    }
+
+    @LuaFunction(mainThread = true)
     public final MethodResult chunkAnalyze() {
         Timestamp currentTimestamp = Timestamp.valueOf(LocalDateTime.now());
         if (isScanOnCooldown(currentTimestamp)) {
