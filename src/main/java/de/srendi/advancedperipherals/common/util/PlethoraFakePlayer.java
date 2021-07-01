@@ -1,44 +1,34 @@
 package de.srendi.advancedperipherals.common.util;
 
 import com.mojang.authlib.GameProfile;
+import com.mojang.datafixers.util.Pair;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityList;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.init.Blocks;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.fluid.FluidState;
+import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.client.CPlayerDiggingPacket;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.management.PlayerInteractionManager;
 import net.minecraft.stats.Stat;
-import net.minecraft.stats.StatBase;
 import net.minecraft.tileentity.SignTileEntity;
-import net.minecraft.tileentity.TileEntitySign;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.Hand;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextComponent;
-import net.minecraft.util.text.TextComponentString;
-import net.minecraft.util.text.event.HoverEvent;
+import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
 import net.minecraft.world.server.ServerWorld;
+import net.minecraftforge.common.ToolType;
 import net.minecraftforge.common.util.FakePlayer;
-import org.apache.commons.lang3.tuple.Pair;
-import org.squiddev.plethora.api.Constants;
-import org.squiddev.plethora.utils.FakeNetHandler;
 
 import javax.annotation.Nonnull;
 import java.lang.ref.WeakReference;
@@ -52,14 +42,13 @@ public class PlethoraFakePlayer extends FakePlayer {
 	private BlockPos digPosition;
 	private Block digBlock;
 
-	private int currentDamage = -1;
-	private int currentDamageState = -1;
+	private float currentDamage = 0;
 
 	public PlethoraFakePlayer(ServerWorld world, Entity owner, GameProfile profile) {
 		super(world, profile != null && profile.isComplete() ? profile : PROFILE);
-		setSize(0, 0);
+		connection = new FakeNetHandler(this);
 		if (owner != null) {
-			setCustomNameTag(owner.getName());
+			setCustomName(owner.getName());
 			this.owner = new WeakReference<>(owner);
 		} else {
 			this.owner = null;
@@ -71,8 +60,6 @@ public class PlethoraFakePlayer extends FakePlayer {
 		super((ServerWorld) world, PROFILE);
 		owner = null;
 	}
-
-
 	public Entity getOwner() {
 		return owner == null ? null : owner.get();
 	}
@@ -104,15 +91,15 @@ public class PlethoraFakePlayer extends FakePlayer {
 	public void playSound(@Nonnull SoundEvent soundIn, float volume, float pitch) {
 	}
 
-	//region Dig
 	private void setState(Block block, BlockPos pos) {
-		interactionManager.cancelDestroyingBlock();
-		interactionManager.durabilityRemainingOnBlock = -1;
+
+		if (digPosition != null) {
+			gameMode.handleBlockBreakAction(digPosition, CPlayerDiggingPacket.Action.ABORT_DESTROY_BLOCK, Direction.EAST, 1);
+		}
 
 		digPosition = pos;
 		digBlock = block;
-		currentDamage = -1;
-		currentDamageState = -1;
+		currentDamage = 0;
 	}
 
 	public Pair<Boolean, String> dig(BlockPos pos, Direction direction) {
@@ -120,37 +107,37 @@ public class PlethoraFakePlayer extends FakePlayer {
 		BlockState state = world.getBlockState(pos);
 		Block block = state.getBlock();
 
+		ItemStack tool = inventory.getSelected();
+
+		if (tool.isEmpty()) {
+			return Pair.of(false, "Cannot dig without tool");
+		}
+
 		if (block != digBlock || !pos.equals(digPosition)) setState(block, pos);
 
 		if (!world.isEmptyBlock(pos) && !state.getMaterial().isLiquid()) {
-			if (block == Blocks.BEDROCK || state.getHarvestLevel() <= -1) {
+			if (block == Blocks.BEDROCK || state.getDestroySpeed(world, pos) <= -1) {
 				return Pair.of(false, "Unbreakable block detected");
 			}
 
-			PlayerInteractionManager manager = interactionManager;
+			if (tool.getHarvestLevel(ToolType.PICKAXE, this, state) < state.getHarvestLevel()) {
+				return Pair.of(false, "Tool are too cheap for this block");
+			}
+
+			PlayerInteractionManager manager = gameMode;
+			float breakSpeed = 0.5f * tool.getDestroySpeed(state) / state.getDestroySpeed(level, pos) - 0.1f;
 			for (int i = 0; i < 10; i++) {
-				if (currentDamageState == -1) {
-					manager.
-					manager.onBlockClicked(pos, direction.getOpposite());
-					currentDamageState = manager.durabilityRemainingOnBlock;
-				} else {
-					currentDamage++;
-					state.getHarde
-					float hardness = state.getPlayerRelativeBlockHardness(this, world, pos) * (currentDamage + 1);
-					int hardnessState = (int) (hardness * 10);
+				currentDamage += breakSpeed;
 
-					if (hardnessState != currentDamageState) {
-						world.sendBlockBreakProgress(getEntityId(), pos, hardnessState);
-						currentDamageState = hardnessState;
-					}
+				world.destroyBlockProgress(getId(), pos, i);
 
-					if (hardness >= 1) {
-						manager.handleBlockBreakAction(pos, CPlayerDiggingPacket.Action.START_DESTROY_BLOCK, direction.getOpposite(), 1);
-						manager.tryHarvestBlock(pos);
-
-						setState(null, null);
-						break;
-					}
+				if (currentDamage > 9) {
+					world.playSound(null, pos, state.getSoundType().getHitSound(), SoundCategory.NEUTRAL, .25f, 1);
+					manager.handleBlockBreakAction(pos, CPlayerDiggingPacket.Action.STOP_DESTROY_BLOCK, direction.getOpposite(), 1);
+					manager.destroyBlock(pos);
+					world.destroyBlockProgress(getId(), pos, -1);
+					setState(null, null);
+					break;
 				}
 			}
 
