@@ -18,7 +18,7 @@ public class CCRegistration {
     public static TurtlePlayerDetector playerDetector;
     public static TurtleChunky chunky;
     public static TurtleGeoScanner geoScanner;
-    public static TurtleKinetic kinetic;
+    public static TurtleWeakMechanicSoul kinetic;
 
     public static PocketEnvironment environmentPocket;
     public static PocketChatBox chatPocket;
@@ -57,7 +57,7 @@ public class CCRegistration {
         ComputerCraftAPI.registerTurtleUpgrade(chunky);
         geoScanner = new TurtleGeoScanner();
         ComputerCraftAPI.registerTurtleUpgrade(geoScanner);
-        kinetic = new TurtleKinetic();
+        kinetic = new TurtleWeakMechanicSoul();
         ComputerCraftAPI.registerTurtleUpgrade(kinetic);
     }
 

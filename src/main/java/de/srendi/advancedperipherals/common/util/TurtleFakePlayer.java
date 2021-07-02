@@ -34,7 +34,7 @@ import javax.annotation.Nonnull;
 import java.lang.ref.WeakReference;
 import java.util.UUID;
 
-public class PlethoraFakePlayer extends FakePlayer {
+public class TurtleFakePlayer extends FakePlayer {
 	public static final GameProfile PROFILE = new GameProfile(UUID.fromString("6e483f02-30db-4454-b612-3a167614b276"), "[" + AdvancedPeripherals.MOD_ID + "]");
 
 	private final WeakReference<Entity> owner;
@@ -44,7 +44,7 @@ public class PlethoraFakePlayer extends FakePlayer {
 
 	private float currentDamage = 0;
 
-	public PlethoraFakePlayer(ServerWorld world, Entity owner, GameProfile profile) {
+	public TurtleFakePlayer(ServerWorld world, Entity owner, GameProfile profile) {
 		super(world, profile != null && profile.isComplete() ? profile : PROFILE);
 		connection = new FakeNetHandler(this);
 		if (owner != null) {
@@ -56,7 +56,7 @@ public class PlethoraFakePlayer extends FakePlayer {
 	}
 
 	@Deprecated
-	public PlethoraFakePlayer(World world) {
+	public TurtleFakePlayer(World world) {
 		super((ServerWorld) world, PROFILE);
 		owner = null;
 	}

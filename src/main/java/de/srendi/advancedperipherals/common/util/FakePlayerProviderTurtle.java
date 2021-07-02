@@ -17,22 +17,22 @@ import net.minecraftforge.items.ItemHandlerHelper;
 import java.util.WeakHashMap;
 
 public final class FakePlayerProviderTurtle {
-	private static final WeakHashMap<ITurtleAccess, PlethoraFakePlayer> registeredPlayers = new WeakHashMap<>();
+	private static final WeakHashMap<ITurtleAccess, TurtleFakePlayer> registeredPlayers = new WeakHashMap<>();
 
 	private FakePlayerProviderTurtle() {
 	}
 
-	public static PlethoraFakePlayer getPlayer(ITurtleAccess turtle, GameProfile profile) {
-		PlethoraFakePlayer fake = registeredPlayers.get(turtle);
+	public static TurtleFakePlayer getPlayer(ITurtleAccess turtle, GameProfile profile) {
+		TurtleFakePlayer fake = registeredPlayers.get(turtle);
 		if (fake == null) {
-			fake = new PlethoraFakePlayer((ServerWorld) turtle.getWorld(), null, profile);
+			fake = new TurtleFakePlayer((ServerWorld) turtle.getWorld(), null, profile);
 			registeredPlayers.put(turtle, fake);
 		}
 
 		return fake;
 	}
 
-	public static void load(PlethoraFakePlayer player, ITurtleAccess turtle, Direction direction) {
+	public static void load(TurtleFakePlayer player, ITurtleAccess turtle, Direction direction) {
 		player.setLevel(turtle.getWorld());
 
 		BlockPos position = turtle.getPosition();
@@ -66,7 +66,7 @@ public final class FakePlayerProviderTurtle {
 		}
 	}
 
-	public static void unload(PlethoraFakePlayer player, ITurtleAccess turtle) {
+	public static void unload(TurtleFakePlayer player, ITurtleAccess turtle) {
 		player.inventory.selected = 0;
 
 		// Remove properties

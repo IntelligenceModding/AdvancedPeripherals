@@ -11,8 +11,8 @@ public class Items {
 
     public static final RegistryObject<Item> CHUNK_CONTROLLER = Registration.ITEMS.register("chunk_controller", () -> new APItem(new Item.Properties().stacksTo(16),
             "chunky_turtle", null, new TranslationTextComponent("item.advancedperipherals.tooltip.chunk_controller")));
-    public static final RegistryObject<Item> KINETIC_ENGINE = Registration.ITEMS.register("kinetic_engine", () -> new APItem(new Item.Properties().stacksTo(16),
-            "kinetic_turtle", null, new TranslationTextComponent("item.advancedperipherals.tooltip.kinetic_engine")));
+    public static final RegistryObject<Item> WEAK_MECHANIC_SOUL = Registration.ITEMS.register("weak_mechanic_soul", () -> new APItem(new Item.Properties().stacksTo(16),
+            "weak_mechanic_soul_turtle", null, new TranslationTextComponent("item.advancedperipherals.tooltip.weak_mechanic_soul")));
     public static final RegistryObject<ARGogglesItem> AR_GOGGLES = Registration.ITEMS.register("ar_goggles", ARGogglesItem::new);
     public static final RegistryObject<Item> COMPUTER_TOOL = Registration.ITEMS.register("computer_tool", () -> new APItem(new Item.Properties().stacksTo(1),
             "chunky_turtle", null, new TranslationTextComponent("item.advancedperipherals.tooltip.computer_tool")));
