@@ -17,6 +17,9 @@ import net.minecraftforge.items.ItemHandlerHelper;
 import java.util.WeakHashMap;
 
 public final class FakePlayerProviderTurtle {
+	/*
+	Highly inspired by https://github.com/SquidDev-CC/plethora/blob/minecraft-1.12/src/main/java/org/squiddev/plethora/integration/computercraft/FakePlayerProviderTurtle.java
+	*/
 	private static final WeakHashMap<ITurtleAccess, TurtleFakePlayer> registeredPlayers = new WeakHashMap<>();
 
 	private FakePlayerProviderTurtle() {

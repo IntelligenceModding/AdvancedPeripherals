@@ -15,6 +15,9 @@ import net.minecraftforge.common.util.FakePlayer;
 import javax.annotation.Nonnull;
 
 public class FakeNetHandler extends ServerPlayNetHandler {
+	/*
+	Highly inspired by https://github.com/SquidDev-CC/plethora/blob/minecraft-1.12/src/main/java/org/squiddev/plethora/utils/FakeNetHandler.java
+	 */
 	public static class FakeNetworkManager extends NetworkManager {
 		private INetHandler handler;
 
@@ -25,10 +28,6 @@ public class FakeNetHandler extends ServerPlayNetHandler {
 		@Override
 		public void channelActive(ChannelHandlerContext context) {
 		}
-
-//		@Override
-//		public void setConnectionState(@Nonnull ConnectionState state) {
-//		}
 
 		@Override
 		public void channelInactive(ChannelHandlerContext context) {
@@ -50,16 +49,10 @@ public class FakeNetHandler extends ServerPlayNetHandler {
 		public void channelReadComplete(ChannelHandlerContext ctx) throws Exception {
 		}
 
-
-
-		//		@Override
-//		public void processReceivedPackets() {
-//		}
-//
 		@Override
 		public void disconnect(@Nonnull ITextComponent channel) {
 		}
-//
+
 		@Override
 		public boolean isMemoryConnection() {
 			return false;
@@ -68,11 +61,6 @@ public class FakeNetHandler extends ServerPlayNetHandler {
 		@Override
 		public boolean isConnected() {
 			return false;
-		}
-
-		@Nonnull
-		public INetHandler getNetHandler() {
-			return handler;
 		}
 
 		@Nonnull

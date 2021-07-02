@@ -35,6 +35,9 @@ import java.lang.ref.WeakReference;
 import java.util.UUID;
 
 public class TurtleFakePlayer extends FakePlayer {
+	/*
+	Highly inspired by https://github.com/SquidDev-CC/plethora/blob/minecraft-1.12/src/main/java/org/squiddev/plethora/gameplay/PlethoraFakePlayer.java
+	*/
 	public static final GameProfile PROFILE = new GameProfile(UUID.fromString("6e483f02-30db-4454-b612-3a167614b276"), "[" + AdvancedPeripherals.MOD_ID + "]");
 
 	private final WeakReference<Entity> owner;
