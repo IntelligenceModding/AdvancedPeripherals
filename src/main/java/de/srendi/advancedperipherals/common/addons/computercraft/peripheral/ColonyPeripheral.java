@@ -1,5 +1,6 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.peripheral;
 
+import appeng.parts.reporting.ConversionMonitorPart;
 import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.colony.ICivilianData;
 import com.minecolonies.api.colony.IColony;
@@ -186,13 +187,11 @@ public class ColonyPeripheral extends BasePeripheral {
     public final Object getResearch() throws LuaException {
         IColony colony = getColony();
 
-        IGlobalResearchTree tree = IGlobalResearchTree.getInstance();
-        ILocalResearchTree colonyTree = colony.getResearchManager().getResearchTree();
+        IGlobalResearchTree globalTree = IGlobalResearchTree.getInstance();
 
-        Map<Object, Object> result = new HashMap<>();
-        for (ResourceLocation branch : tree.getBranches()) {
-            result.put(branch.toString(), MineColonies.getResearch(branch, tree.getPrimaryResearch(branch), tree, colonyTree));
-        }
+        Map<String, Object> result = new HashMap<>();
+        for (ResourceLocation branch : globalTree.getBranches())
+            result.put(branch.toString(), MineColonies.getResearch(branch, globalTree.getPrimaryResearch(branch), colony));
 
         return result;
     }
@@ -223,31 +222,36 @@ public class ColonyPeripheral extends BasePeripheral {
     public final Object getRequests() throws LuaException {
         IColony colony = getColony();
 
-        IRequestManager manager = colony.getRequestManager();
-
-        IPlayerRequestResolver player = manager.getPlayerResolver();
-        IRetryingRequestResolver retrying = manager.getRetryingRequestResolver();
+        IRequestManager requestManager = colony.getRequestManager();
+        //All requests assigned to players
+        IPlayerRequestResolver playerResolver = requestManager.getPlayerResolver();
+        //All requests not assigned to players
+        IRetryingRequestResolver requestResolver = requestManager.getRetryingRequestResolver();
 
         Set<IToken<?>> tokens = new HashSet<>();
-        tokens.addAll(player.getAllAssignedRequests());
-        tokens.addAll(retrying.getAllAssignedRequests());
+        tokens.addAll(playerResolver.getAllAssignedRequests());
+        tokens.addAll(requestResolver.getAllAssignedRequests());
 
-        List<IRequest<?>> requests = tokens.stream().map(manager::getRequestForToken)
-                .filter(r -> r != null && r.getRequest() instanceof IDeliverable)
-                .distinct().collect(Collectors.toList());
+        List<IRequest<?>> requests = new ArrayList<>();
+        for(IToken<?> token : tokens) {
+            IRequest<?> request = requestManager.getRequestForToken(token);
+            if(request != null && !(request instanceof IDeliverable))
+                requests.add(request);
+        }
 
         List<Object> result = new ArrayList<>();
         requests.forEach(request -> {
-            IDeliverable deliverable = (IDeliverable) request.getRequest();
-            Map<Object, Object> map = new HashMap<>();
+            IDeliverable deliverableRequest = (IDeliverable) request.getRequest();
+            Map<String, Object> map = new HashMap<>();
             map.put("id", request.getId().getIdentifier().toString());
             map.put("name", TextFormatting.stripFormatting(request.getShortDisplayString().getString()));
             map.put("desc", TextFormatting.stripFormatting(request.getLongDisplayString().getString()));
             map.put("state", request.getState().toString());
-            map.put("count", deliverable.getCount());
-            map.put("minCount", deliverable.getMinimumCount());
-            map.put("items", request.getDisplayStacks());
-            map.put("target", request.getRequester().getRequesterDisplayName(manager, request).getString());
+            map.put("count", deliverableRequest.getCount());
+            map.put("minCount", deliverableRequest.getMinimumCount());
+            map.put("items", request.getDisplayStacks().stream().map(Converter::stackToObject)
+                    .collect(Collectors.toList()));
+            map.put("target", request.getRequester().getRequesterDisplayName(requestManager, request).getString());
             result.add(map);
         });
         return result;
