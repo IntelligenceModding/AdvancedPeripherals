@@ -7,8 +7,8 @@ import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.shared.util.InventoryUtil;
 import de.srendi.advancedperipherals.common.addons.computercraft.base.BasePeripheral;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
-import de.srendi.advancedperipherals.common.util.FakePlayerProviderTurtle;
-import de.srendi.advancedperipherals.common.util.TurtleFakePlayer;
+import de.srendi.advancedperipherals.common.util.fakeplayer.FakePlayerProviderTurtle;
+import de.srendi.advancedperipherals.common.util.fakeplayer.TurtleFakePlayer;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.ItemEntity;
@@ -18,7 +18,6 @@ import net.minecraft.util.ActionResultType;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.*;
 
-import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,6 +30,10 @@ public class WeakMechanicSoulPeripheral extends BasePeripheral {
 
     public WeakMechanicSoulPeripheral(String type, ITurtleAccess turtle) {
         super(type, turtle);
+    }
+
+    public int getItemSuckRadius() {
+        return TURTLE_SUCK_ITEM_RADIUS;
     }
 
     @Override
@@ -61,7 +64,7 @@ public class WeakMechanicSoulPeripheral extends BasePeripheral {
     }
 
     protected List<ItemEntity> getItems() {
-        return getWorld().getEntitiesOfClass(ItemEntity.class, getBox(getPos(), TURTLE_SUCK_ITEM_RADIUS));
+        return getWorld().getEntitiesOfClass(ItemEntity.class, getBox(getPos(), getItemSuckRadius()));
     }
 
     protected int suckItem(ItemEntity entity, int requiredQuantity) {
@@ -107,7 +110,9 @@ public class WeakMechanicSoulPeripheral extends BasePeripheral {
         BlockRayTraceResult blockHit = (BlockRayTraceResult) result;
         BlockState state = getWorld().getBlockState(blockHit.getBlockPos());
         Map<String, Object> data = new HashMap<>();
-        data.put("name", state.getBlock().getRegistryName().toString());
+        ResourceLocation blockName = state.getBlock().getRegistryName();
+        if (blockName != null)
+            data.put("name", blockName.toString());
         data.put("tags", state.getBlock().getTags());
         return MethodResult.of(data);
     }
@@ -166,7 +171,9 @@ public class WeakMechanicSoulPeripheral extends BasePeripheral {
             Map<String, Object> itemData = new HashMap<>();
             itemData.put("entity_id", item.getId());
             itemData.put("name", item.getItem().getDisplayName().getString());
-            itemData.put("technicalName", item.getItem().getItem().getRegistryName().toString());
+            ResourceLocation itemName = item.getItem().getItem().getRegistryName();
+            if (itemName != null)
+                itemData.put("technicalName", itemName.toString());
             itemData.put("count", item.getItem().getCount());
             itemData.put("tags", item.getItem().getItem().getTags().stream().map(ResourceLocation::toString).collect(Collectors.toList()));
             data.put(index, itemData);
@@ -176,7 +183,8 @@ public class WeakMechanicSoulPeripheral extends BasePeripheral {
     }
 
     @LuaFunction
-    public final MethodResult suckSpecificItem(String technicalName, Optional<Integer> quantity){
+    public final MethodResult suckSpecificItem(String technicalName, Integer rawQuantity){
+        Optional<Integer> quantity = Optional.of(rawQuantity);
         Optional<MethodResult> checkResults = turtleChecks();
         if (checkResults.isPresent()) return checkResults.get();
 
@@ -185,7 +193,9 @@ public class WeakMechanicSoulPeripheral extends BasePeripheral {
         List<ItemEntity> items = getItems();
 
         for (ItemEntity item: items) {
-            if (item.getItem().getItem().getRegistryName().toString().equals(technicalName)) {
+            ResourceLocation itemName = item.getItem().getItem().getRegistryName();
+            if (itemName == null) continue;
+            if (itemName.toString().equals(technicalName)) {
                 requiredQuantity -= suckItem(item, requiredQuantity);
             }
         }
@@ -194,7 +204,8 @@ public class WeakMechanicSoulPeripheral extends BasePeripheral {
     }
 
     @LuaFunction
-    public final MethodResult suckItems(Optional<Integer> quantity) {
+    public final MethodResult suckItems(Integer rawQuantity) {
+        Optional<Integer> quantity = Optional.of(rawQuantity);
         Optional<MethodResult> checkResults = turtleChecks();
         if (checkResults.isPresent()) return checkResults.get();
 

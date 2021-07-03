@@ -1,15 +1,13 @@
-package de.srendi.advancedperipherals.common.util;
+package de.srendi.advancedperipherals.common.util.fakeplayer;
 
 import com.mojang.authlib.GameProfile;
 import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.shared.util.WorldUtil;
-import net.minecraft.entity.Pose;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.math.vector.Vector3i;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.items.IItemHandler;

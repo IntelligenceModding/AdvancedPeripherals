@@ -1,6 +1,5 @@
-package de.srendi.advancedperipherals.common.util;
+package de.srendi.advancedperipherals.common.util.fakeplayer;
 
-import com.minecolonies.api.colony.permissions.Player;
 import com.mojang.authlib.GameProfile;
 import com.mojang.datafixers.util.Pair;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
@@ -9,9 +8,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.Pose;
 import net.minecraft.entity.ai.attributes.ModifiableAttributeInstance;
-import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.fluid.FluidState;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUseContext;
@@ -20,12 +17,9 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.management.PlayerInteractionManager;
 import net.minecraft.stats.Stat;
 import net.minecraft.tileentity.SignTileEntity;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 import net.minecraft.util.math.*;
-import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.world.GameRules;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
@@ -36,6 +30,7 @@ import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.Event;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.lang.ref.WeakReference;
@@ -80,7 +75,7 @@ public class TurtleFakePlayer extends FakePlayer {
     }
 
     @Override
-    public void awardStat(Stat<?> stat) {
+    public void awardStat(@NotNull Stat<?> stat) {
         MinecraftServer server = level.getServer();
         if (server != null && getGameProfile() != PROFILE) {
             PlayerEntity player = server.getPlayerList().getPlayer(getUUID());
@@ -89,12 +84,12 @@ public class TurtleFakePlayer extends FakePlayer {
     }
 
     @Override
-    public boolean canAttack(LivingEntity p_213336_1_) {
+    public boolean canAttack(@NotNull LivingEntity p_213336_1_) {
         return true;
     }
 
     @Override
-    public void openTextEdit(SignTileEntity p_175141_1_) {
+    public void openTextEdit(@NotNull SignTileEntity p_175141_1_) {
     }
 
 
@@ -119,7 +114,7 @@ public class TurtleFakePlayer extends FakePlayer {
     }
 
     @Override
-    public float getEyeHeight(Pose pose) {
+    public float getEyeHeight(@NotNull Pose pose) {
         return 0;
     }
 

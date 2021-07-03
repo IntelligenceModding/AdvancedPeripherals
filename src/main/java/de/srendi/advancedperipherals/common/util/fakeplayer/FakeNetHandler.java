@@ -1,4 +1,4 @@
-package de.srendi.advancedperipherals.common.util;
+package de.srendi.advancedperipherals.common.util.fakeplayer;
 
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
