@@ -9,13 +9,16 @@ import de.srendi.advancedperipherals.common.addons.computercraft.base.BasePeriph
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
 import de.srendi.advancedperipherals.common.util.FakePlayerProviderTurtle;
 import de.srendi.advancedperipherals.common.util.TurtleFakePlayer;
+import net.minecraft.block.BlockState;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.ActionResultType;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.*;
 
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -93,16 +96,48 @@ public class WeakMechanicSoulPeripheral extends BasePeripheral {
     }
 
     @LuaFunction
+    public final MethodResult lookAtBlock() {
+        Optional<MethodResult> checkResults = turtleChecks();
+        if (checkResults.isPresent()) return checkResults.get();
+
+        RayTraceResult result = FakePlayerProviderTurtle.withPlayer(turtle, turtleFakePlayer -> turtleFakePlayer.findHit(true, false));
+        if (result.getType() == RayTraceResult.Type.MISS) {
+            return MethodResult.of(null, "No block find");
+        }
+        BlockRayTraceResult blockHit = (BlockRayTraceResult) result;
+        BlockState state = getWorld().getBlockState(blockHit.getBlockPos());
+        Map<String, Object> data = new HashMap<>();
+        data.put("name", state.getBlock().getRegistryName().toString());
+        data.put("tags", state.getBlock().getTags());
+        return MethodResult.of(data);
+    }
+
+    @LuaFunction
+    public final MethodResult lookAtEntity() {
+        Optional<MethodResult> checkResults = turtleChecks();
+        if (checkResults.isPresent()) return checkResults.get();
+
+        RayTraceResult result = FakePlayerProviderTurtle.withPlayer(turtle, turtleFakePlayer -> turtleFakePlayer.findHit(false, true));
+        if (result.getType() == RayTraceResult.Type.MISS) {
+            return MethodResult.of(null, "No entity find");
+        }
+        EntityRayTraceResult entityHit = (EntityRayTraceResult) result;
+        Map<String, Object> data = new HashMap<>();
+        Entity entity = entityHit.getEntity();
+        data.put("entity_id", entity.getId());
+        data.put("name", entity.getName().getString());
+        data.put("tags", entity.getTags());
+        return MethodResult.of(data);
+    }
+
+    @LuaFunction
     public final MethodResult digBlock() {
         Optional<MethodResult> checkResults = turtleChecks();
         if (checkResults.isPresent()) return checkResults.get();
 
-        TurtleFakePlayer fakePlayer = FakePlayerProviderTurtle.getPlayer(turtle, turtle.getOwningPlayer());
         BlockPos blockPos = turtle.getPosition().relative(turtle.getDirection());
 
-        FakePlayerProviderTurtle.load(fakePlayer, turtle, turtle.getDirection());
-
-        Pair<Boolean, String> result = fakePlayer.dig(blockPos, turtle.getDirection().getOpposite());
+        Pair<Boolean, String> result = FakePlayerProviderTurtle.withPlayer(turtle, turtleFakePlayer -> turtleFakePlayer.digBlock(blockPos, turtle.getDirection().getOpposite()));
         if (!result.getFirst()) {
             return MethodResult.of(null, result.getSecond());
         }
@@ -112,18 +147,16 @@ public class WeakMechanicSoulPeripheral extends BasePeripheral {
 
     @LuaFunction
     public final MethodResult clickBlock() {
-        // TODO: implement
         Optional<MethodResult> checkResults = turtleChecks();
         if (checkResults.isPresent()) return checkResults.get();
 
-        TurtleFakePlayer fakePlayer = FakePlayerProviderTurtle.getPlayer(turtle, turtle.getOwningPlayer());
-        BlockPos blockPos = turtle.getPosition().relative(turtle.getDirection());
+        ActionResultType result = FakePlayerProviderTurtle.withPlayer(turtle, TurtleFakePlayer::clickBlock);
 
-        return MethodResult.of(true);
+        return MethodResult.of(true, result.toString());
     }
 
     @LuaFunction
-    public final MethodResult detectItems() {
+    public final MethodResult scanItems() {
         Optional<MethodResult> checkResults = turtleChecks();
         if (checkResults.isPresent()) return checkResults.get();
         List<ItemEntity> items = getItems();

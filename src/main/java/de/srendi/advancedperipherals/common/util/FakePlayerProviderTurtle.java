@@ -9,12 +9,15 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.util.math.vector.Vector3i;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemHandlerHelper;
 
 import java.util.WeakHashMap;
+import java.util.function.Function;
 
 public final class FakePlayerProviderTurtle {
 	/*
@@ -35,19 +38,21 @@ public final class FakePlayerProviderTurtle {
 		return fake;
 	}
 
-	public static void load(TurtleFakePlayer player, ITurtleAccess turtle, Direction direction) {
+	public static void load(TurtleFakePlayer player, ITurtleAccess turtle) {
+		Direction direction = turtle.getDirection();
 		player.setLevel(turtle.getWorld());
-
 		BlockPos position = turtle.getPosition();
-		player.setPos(
-			position.getX() + 0.5 + 0.51 * direction.getStepX(),
-			position.getY() + 0.5 + 0.51 * direction.getStepY(),
-			position.getZ() + 0.5 + 0.51 * direction.getStepZ()
-		);
-		player.setYBodyRot(direction.toYRot());
-		player.setYHeadRot(direction.toYRot());
-		player.setPose(Pose.CROUCHING);
-
+		// Player position
+		float pitch = direction == Direction.UP ? -90 : direction == Direction.DOWN ? 90 : 0;
+		float yaw = direction == Direction.SOUTH ? 0 : direction == Direction.WEST ? 90 : direction == Direction.NORTH ? 180 : -90;
+		Vector3i sideVec = direction.getNormal();
+		Direction.Axis a = direction.getAxis();
+		Direction.AxisDirection ad = direction.getAxisDirection();
+		double x = a == Direction.Axis.X && ad == Direction.AxisDirection.NEGATIVE ? -.5 : .5 + sideVec.getX() / 1.9D;
+		double y = 0.5 + sideVec.getY() / 1.9D;
+		double z = a == Direction.Axis.Z && ad == Direction.AxisDirection.NEGATIVE ? -.5 : .5 + sideVec.getZ() / 1.9D;
+		player.moveTo(position.getX() + x, position.getY() + y, position.getZ() + z, yaw, pitch);
+		// Player inventory
 		player.inventory.selected = 0;
 
 		// Copy primary items into player inventory and empty the rest
@@ -102,5 +107,12 @@ public final class FakePlayerProviderTurtle {
 		}
 	}
 
+	public static <T> T withPlayer(ITurtleAccess turtle, Function<TurtleFakePlayer, T> function) {
+		TurtleFakePlayer player = getPlayer(turtle, turtle.getOwningPlayer());
+		load(player, turtle);
+		T result = function.apply(player);
+		unload(player, turtle);
+		return result;
+	}
 
 }
