@@ -21,27 +21,17 @@ public class Blocks {
 
     static void register() {
     }    //TODO-1.17 fix the turtle and pocket ids of the chat box
+
     public static final RegistryObject<Block> ENVIRONMENT_DETECTOR = register("environment_detector", () -> new APTileEntityBlock<>(TileEntityTypes.ENVIRONMENT_DETECTOR, false),
             () -> new APBlockItem(Blocks.ENVIRONMENT_DETECTOR.get(), "environment_detector_turtle", "environment_pocket",
                     new TranslationTextComponent("item.advancedperipherals.tooltip.environment_detector")));
-
-    private static <T extends Block> RegistryObject<T> registerNoItem(String name, Supplier<T> block) {
-        return Registration.BLOCKS.register(name, block);
-    }    public static final RegistryObject<Block> CHAT_BOX = register("chat_box", () -> new APTileEntityBlock<>(TileEntityTypes.CHAT_BOX, false),
-            () -> new APBlockItem(Blocks.CHAT_BOX.get(), "chat_box_turtle", "chatty_turtle",
+    public static final RegistryObject<Block> CHAT_BOX = register("chat_box", () -> new APTileEntityBlock<>(TileEntityTypes.CHAT_BOX, false),
+            () -> new APBlockItem(Blocks.CHAT_BOX.get(), "chat_box_turtle", "chatty_pocket",
                     new TranslationTextComponent("item.advancedperipherals.tooltip.chat_box")));
-
-    private static <T extends Block> RegistryObject<T> register(String name, Supplier<T> block, Supplier<BlockItem> blockItem) {
-        RegistryObject<T> registryObject = registerNoItem(name, block);
-        Registration.ITEMS.register(name, blockItem);
-        return registryObject;
-    }    public static final RegistryObject<Block> PLAYER_DETECTOR = register("player_detector", PlayerDetectorBlock::new,
+    public static final RegistryObject<Block> PLAYER_DETECTOR = register("player_detector", PlayerDetectorBlock::new,
             () -> new APBlockItem(Blocks.PLAYER_DETECTOR.get(), "player_detector_turtle", "player_pocket",
                     new TranslationTextComponent("item.advancedperipherals.tooltip.player_detector")));
-
-    public static boolean never(BlockState p_235436_0_, IBlockReader p_235436_1_, BlockPos p_235436_2_) {
-        return false;
-    }    public static final RegistryObject<Block> ME_BRIDGE = register("me_bridge", () -> new APTileEntityBlock<>(TileEntityTypes.ME_BRIDGE, false, ModList.get().isLoaded("appliedenergistics2")),
+    public static final RegistryObject<Block> ME_BRIDGE = register("me_bridge", () -> new APTileEntityBlock<>(TileEntityTypes.ME_BRIDGE, false, ModList.get().isLoaded("appliedenergistics2")),
             () -> new APBlockItem(Blocks.ME_BRIDGE.get(), null, null,
                     new TranslationTextComponent("item.advancedperipherals.tooltip.me_bridge")));
     public static final RegistryObject<Block> RS_BRIDGE = register("rs_bridge", () -> new APTileEntityBlock<>(TileEntityTypes.RS_BRIDGE, false, ModList.get().isLoaded("refinedstorage")),
@@ -75,11 +65,18 @@ public class Blocks {
             () -> new APBlockItem(Blocks.NBT_STORAGE.get(), null, null,
                     new TranslationTextComponent("item.advancedperipherals.tooltip.nbt_storage")));
 
+    private static <T extends Block> RegistryObject<T> registerNoItem(String name, Supplier<T> block) {
+        return Registration.BLOCKS.register(name, block);
+    }
 
+    private static <T extends Block> RegistryObject<T> register(String name, Supplier<T> block, Supplier<BlockItem> blockItem) {
+        RegistryObject<T> registryObject = registerNoItem(name, block);
+        Registration.ITEMS.register(name, blockItem);
+        return registryObject;
+    }
 
-
-
-
-
+    public static boolean never(BlockState p_235436_0_, IBlockReader p_235436_1_, BlockPos p_235436_2_) {
+        return false;
+    }
 
 }
