@@ -163,45 +163,67 @@ public class TurtleFakePlayer extends FakePlayer {
         return Pair.of(false, "Nothing to dig here");
     }
 
-    public ActionResultType clickBlock() {
-        RayTraceResult hit = findHit(true, false);
-        if (!(hit instanceof BlockRayTraceResult)) {
+    public ActionResultType useOnBlock() {
+        return use(true, false);
+    }
+
+    public ActionResultType useOnEntity() {
+        return use(false, true);
+    }
+
+    public ActionResultType useOnSpecificEntity(@NotNull Entity entity, RayTraceResult result){
+        ActionResultType simpleInteraction = interactOn(entity, Hand.MAIN_HAND);
+        if (simpleInteraction == ActionResultType.SUCCESS)
+            return simpleInteraction;
+        if (ForgeHooks.onInteractEntityAt(this, entity, result.getLocation(), Hand.MAIN_HAND) != null) {
             return ActionResultType.FAIL;
         }
+        return entity.interactAt(this, result.getLocation(), Hand.MAIN_HAND);
+    }
 
-        ItemStack stack = getMainHandItem();
-        BlockRayTraceResult blockHit = (BlockRayTraceResult) hit;
-        BlockPos pos = ((BlockRayTraceResult) hit).getBlockPos();
-        PlayerInteractEvent.RightClickBlock event = ForgeHooks.onRightClickBlock(this, Hand.MAIN_HAND, pos, blockHit);
-        if (event.isCanceled()) return event.getCancellationResult();
+    public ActionResultType use(boolean skipEntity, boolean skipBlock) {
+        RayTraceResult hit = findHit(skipEntity, skipBlock);
 
-        if (event.getUseItem() != Event.Result.DENY) {
-            ActionResultType result = stack.onItemUseFirst(new ItemUseContext(level, this, Hand.MAIN_HAND, stack, blockHit));
-            if (result != ActionResultType.PASS) return result;
-        }
+        if (hit instanceof BlockRayTraceResult) {
 
-        boolean bypass = getMainHandItem().doesSneakBypassUse(level, pos, this) && getMainHandItem().doesSneakBypassUse(level, pos, this);
-        if (getPose() != Pose.CROUCHING || bypass || event.getUseBlock() == Event.Result.ALLOW) {
-            ActionResultType useType = gameMode.useItemOn(this, level, stack, Hand.MAIN_HAND, blockHit);
-            if (event.getUseBlock() != Event.Result.DENY && useType == ActionResultType.SUCCESS) {
-                return ActionResultType.SUCCESS;
+            ItemStack stack = getMainHandItem();
+            BlockRayTraceResult blockHit = (BlockRayTraceResult) hit;
+            BlockPos pos = ((BlockRayTraceResult) hit).getBlockPos();
+            PlayerInteractEvent.RightClickBlock event = ForgeHooks.onRightClickBlock(this, Hand.MAIN_HAND, pos, blockHit);
+            if (event.isCanceled()) return event.getCancellationResult();
+
+            if (event.getUseItem() != Event.Result.DENY) {
+                ActionResultType result = stack.onItemUseFirst(new ItemUseContext(level, this, Hand.MAIN_HAND, stack, blockHit));
+                if (result != ActionResultType.PASS) return result;
             }
+
+            boolean bypass = getMainHandItem().doesSneakBypassUse(level, pos, this) && getMainHandItem().doesSneakBypassUse(level, pos, this);
+            if (getPose() != Pose.CROUCHING || bypass || event.getUseBlock() == Event.Result.ALLOW) {
+                ActionResultType useType = gameMode.useItemOn(this, level, stack, Hand.MAIN_HAND, blockHit);
+                if (event.getUseBlock() != Event.Result.DENY && useType == ActionResultType.SUCCESS) {
+                    return ActionResultType.SUCCESS;
+                }
+            }
+
+            if (stack.isEmpty() || getCooldowns().isOnCooldown(stack.getItem())) return ActionResultType.PASS;
+
+
+            if (stack.getItem() instanceof BlockItem) {
+                Block block = ((BlockItem) stack.getItem()).getBlock();
+                if (block instanceof CommandBlockBlock || block instanceof StructureBlock) return ActionResultType.FAIL;
+            }
+
+            if (event.getUseItem() == Event.Result.DENY) return ActionResultType.PASS;
+
+            ItemStack copyBeforeUse = stack.copy();
+            ActionResultType result = stack.useOn(new ItemUseContext(level, this, Hand.MAIN_HAND, copyBeforeUse, blockHit));
+            if (stack.isEmpty()) ForgeEventFactory.onPlayerDestroyItem(this, copyBeforeUse, Hand.MAIN_HAND);
+            return result;
+        } else if (hit instanceof EntityRayTraceResult) {
+            EntityRayTraceResult entityHit = (EntityRayTraceResult) hit;
+            return useOnSpecificEntity(entityHit.getEntity(), entityHit);
         }
-
-        if (stack.isEmpty() || getCooldowns().isOnCooldown(stack.getItem())) return ActionResultType.PASS;
-
-
-        if (stack.getItem() instanceof BlockItem) {
-            Block block = ((BlockItem) stack.getItem()).getBlock();
-            if (block instanceof CommandBlockBlock || block instanceof StructureBlock) return ActionResultType.FAIL;
-        }
-
-        if (event.getUseItem() == Event.Result.DENY) return ActionResultType.PASS;
-
-        ItemStack copyBeforeUse = stack.copy();
-        ActionResultType result = stack.useOn(new ItemUseContext(level, this, Hand.MAIN_HAND, copyBeforeUse, blockHit));
-        if (stack.isEmpty()) ForgeEventFactory.onPlayerDestroyItem(this, copyBeforeUse, Hand.MAIN_HAND);
-        return result;
+        return ActionResultType.FAIL;
     }
 
     @Nonnull

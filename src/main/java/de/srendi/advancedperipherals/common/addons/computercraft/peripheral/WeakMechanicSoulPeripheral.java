@@ -7,6 +7,7 @@ import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.shared.util.InventoryUtil;
 import de.srendi.advancedperipherals.common.addons.computercraft.base.BasePeripheral;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
+import de.srendi.advancedperipherals.common.items.WeakMechanicalSoul;
 import de.srendi.advancedperipherals.common.util.fakeplayer.FakePlayerProviderTurtle;
 import de.srendi.advancedperipherals.common.util.fakeplayer.TurtleFakePlayer;
 import net.minecraft.block.BlockState;
@@ -155,7 +156,7 @@ public class WeakMechanicSoulPeripheral extends BasePeripheral {
         Optional<MethodResult> checkResults = turtleChecks();
         if (checkResults.isPresent()) return checkResults.get();
 
-        ActionResultType result = FakePlayerProviderTurtle.withPlayer(turtle, TurtleFakePlayer::clickBlock);
+        ActionResultType result = FakePlayerProviderTurtle.withPlayer(turtle, TurtleFakePlayer::useOnBlock);
 
         return MethodResult.of(true, result.toString());
     }
@@ -167,7 +168,7 @@ public class WeakMechanicSoulPeripheral extends BasePeripheral {
         List<ItemEntity> items = getItems();
         Map<Integer, Map<String, Object>> data = new HashMap<>();
         int index = 1;
-        for (ItemEntity item: items) {
+        for (ItemEntity item : items) {
             Map<String, Object> itemData = new HashMap<>();
             itemData.put("entity_id", item.getId());
             itemData.put("name", item.getItem().getDisplayName().getString());
@@ -183,7 +184,7 @@ public class WeakMechanicSoulPeripheral extends BasePeripheral {
     }
 
     @LuaFunction
-    public final MethodResult suckSpecificItem(String technicalName, Integer rawQuantity){
+    public final MethodResult suckSpecificItem(String technicalName, Integer rawQuantity) {
         Optional<Integer> quantity = Optional.of(rawQuantity);
         Optional<MethodResult> checkResults = turtleChecks();
         if (checkResults.isPresent()) return checkResults.get();
@@ -192,7 +193,7 @@ public class WeakMechanicSoulPeripheral extends BasePeripheral {
 
         List<ItemEntity> items = getItems();
 
-        for (ItemEntity item: items) {
+        for (ItemEntity item : items) {
             ResourceLocation itemName = item.getItem().getItem().getRegistryName();
             if (itemName == null) continue;
             if (itemName.toString().equals(technicalName)) {
@@ -228,6 +229,17 @@ public class WeakMechanicSoulPeripheral extends BasePeripheral {
         }
 
         return MethodResult.of(true);
+    }
+
+    @LuaFunction
+    public final MethodResult feedSoul() {
+        Optional<MethodResult> checkResults = turtleChecks();
+        if (checkResults.isPresent()) return checkResults.get();
+        if(!(turtle.getInventory().getItem(turtle.getSelectedSlot()).getItem() instanceof WeakMechanicalSoul)) {
+            return MethodResult.of(null, "Well, you should feed weak mechanical soul!");
+        }
+        ActionResultType result = FakePlayerProviderTurtle.withPlayer(turtle, TurtleFakePlayer::useOnEntity);
+        return MethodResult.of(true, result.toString());
     }
 
 }
