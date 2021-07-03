@@ -26,7 +26,7 @@ public class Blocks {
             () -> new APBlockItem(Blocks.ENVIRONMENT_DETECTOR.get(), "environment_detector_turtle", "environment_pocket",
                     new TranslationTextComponent("item.advancedperipherals.tooltip.environment_detector")));
     public static final RegistryObject<Block> CHAT_BOX = register("chat_box", () -> new APTileEntityBlock<>(TileEntityTypes.CHAT_BOX, false),
-            () -> new APBlockItem(Blocks.CHAT_BOX.get(), "chat_box_turtle", "chatty_turtle",
+            () -> new APBlockItem(Blocks.CHAT_BOX.get(), "chat_box_turtle", "chatty_pocket",
                     new TranslationTextComponent("item.advancedperipherals.tooltip.chat_box")));
     public static final RegistryObject<Block> PLAYER_DETECTOR = register("player_detector", PlayerDetectorBlock::new,
             () -> new APBlockItem(Blocks.PLAYER_DETECTOR.get(), "player_detector_turtle", "player_pocket",
