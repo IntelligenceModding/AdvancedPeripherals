@@ -1,7 +1,7 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.turtles;
 
 import de.srendi.advancedperipherals.common.addons.computercraft.base.BaseTurtle;
-import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.mechanical.WeakMechanicSoulPeripheral;
+import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.mechanic.WeakMechanicSoulPeripheral;
 import de.srendi.advancedperipherals.common.setup.Items;
 import net.minecraft.client.renderer.model.ModelResourceLocation;
 import net.minecraft.item.ItemStack;

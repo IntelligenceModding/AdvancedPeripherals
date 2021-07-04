@@ -1,4 +1,4 @@
-package de.srendi.advancedperipherals.common.addons.computercraft.peripheral.mechanical;
+package de.srendi.advancedperipherals.common.addons.computercraft.peripheral.mechanic;
 
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.lua.MethodResult;
@@ -35,14 +35,11 @@ public class EndMechanicalSoulPeripheral extends WeakMechanicSoulPeripheral {
         return AdvancedPeripheralsConfig.endMechanicalSoulSuckRange;
     }
 
-    private Pair<MethodResult, CompoundNBT> getPointData(IComputerAccess access){
-        TurtleSide side;
-        try {
-            side = TurtleSide.valueOf(access.getAttachmentName().toUpperCase());
-        } catch (IllegalArgumentException e) {
-            return Pair.onlyLeft(MethodResult.of(null, e.getMessage()));
-        }
-        CompoundNBT upgradeData = turtle.getUpgradeNBTData(side);
+    protected Pair<MethodResult, CompoundNBT> getPointData(IComputerAccess access){
+        Pair<MethodResult, TurtleSide> sideResult = getTurtleSide(access);
+        if (sideResult.leftPresent())
+            return sideResult.ignoreRight();
+        CompoundNBT upgradeData = turtle.getUpgradeNBTData(sideResult.getRight());
         if (!upgradeData.contains(WORLD_DATA_MARK)) {
             upgradeData.putString(WORLD_DATA_MARK, getWorld().dimension().location().toString());
         } else {
@@ -54,7 +51,7 @@ public class EndMechanicalSoulPeripheral extends WeakMechanicSoulPeripheral {
         if (!upgradeData.contains(POINT_DATA_MARK)) {
             upgradeData.put(POINT_DATA_MARK, new CompoundNBT());
         }
-        return Pair.onlyRight(turtle.getUpgradeNBTData(side).getCompound(POINT_DATA_MARK));
+        return Pair.onlyRight(turtle.getUpgradeNBTData(sideResult.getRight()).getCompound(POINT_DATA_MARK));
     }
 
     private int getWarpCost(BlockPos warpTarget) {

@@ -1,5 +1,7 @@
 package de.srendi.advancedperipherals.common.util;
 
+import java.util.function.Function;
+
 public class Pair<T, V> {
     private final T left;
     private final V right;
@@ -25,11 +27,31 @@ public class Pair<T, V> {
         return right != null;
     }
 
+    public <T1> Pair<T1, V> mapLeft(Function<T, T1> mapFunc) {
+        return new Pair<>(mapFunc.apply(left), right);
+    }
+
+    public <V1> Pair<T, V1> mapRight(Function<V, V1> mapFunc) {
+        return new Pair<>(left, mapFunc.apply(right));
+    }
+
+    public <T1> Pair<T1, V> ignoreLeft() {
+        return new Pair<>(null, right);
+    }
+
+    public <V1> Pair<T, V1> ignoreRight() {
+        return new Pair<>(left, null);
+    }
+
     public static <T, V> Pair<T, V> onlyRight(V v) {
         return new Pair<>(null, v);
     }
 
     public static <T, V> Pair<T, V> onlyLeft(T t) {
         return new Pair<>(t, null);
+    }
+
+    public static <T, V> Pair<T, V> of(T t, V v) {
+        return new Pair<>(t, v);
     }
 }
