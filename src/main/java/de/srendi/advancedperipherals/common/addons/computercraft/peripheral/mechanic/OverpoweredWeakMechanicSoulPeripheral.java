@@ -11,6 +11,7 @@ import de.srendi.advancedperipherals.common.util.fakeplayer.FakePlayerProviderTu
 import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
 import java.util.Optional;
 
 
@@ -42,7 +43,7 @@ public class OverpoweredWeakMechanicSoulPeripheral extends WeakMechanicSoulPerip
 
     @NotNull
     @Override
-    protected MethodResult fuelErrorCallback(IComputerAccess access, MethodResult fuelErrorResult) {
+    protected @Nonnull MethodResult fuelErrorCallback(@Nonnull IComputerAccess access,@Nonnull MethodResult fuelErrorResult) {
         Pair<MethodResult, TurtleSide> sidePair = getTurtleSide(access);
         if (sidePair.leftPresent())
             return fuelErrorResult;
