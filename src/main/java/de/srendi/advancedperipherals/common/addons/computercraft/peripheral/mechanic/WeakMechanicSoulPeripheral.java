@@ -1,5 +1,7 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.peripheral.mechanic;
 
+import dan200.computercraft.api.lua.IArguments;
+import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.lua.MethodResult;
 import dan200.computercraft.api.peripheral.IComputerAccess;
@@ -21,7 +23,6 @@ import net.minecraft.util.ActionResultType;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.*;
 
-import javax.annotation.Nonnull;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,7 +45,7 @@ public class WeakMechanicSoulPeripheral extends FuelConsumingPeripheral {
         return AdvancedPeripheralsConfig.enableWeakMechanicalSoul;
     }
 
-    protected @Nonnull MethodResult fuelErrorCallback(@Nonnull IComputerAccess access, MethodResult fuelErrorResult) {
+    protected MethodResult fuelErrorCallback(IComputerAccess access, MethodResult fuelErrorResult) {
         return fuelErrorResult;
     }
 
@@ -121,6 +122,7 @@ public class WeakMechanicSoulPeripheral extends FuelConsumingPeripheral {
         result.put("digCost", AdvancedPeripheralsConfig.digBlockCost);
         result.put("clickCost", AdvancedPeripheralsConfig.clickBlockCost);
         result.put("suckCost", AdvancedPeripheralsConfig.suckItemCost);
+        result.put("suckRadius", getItemSuckRadius());
         return result;
     }
 
@@ -162,7 +164,7 @@ public class WeakMechanicSoulPeripheral extends FuelConsumingPeripheral {
     }
 
     @LuaFunction(mainThread = true)
-    public MethodResult digBlock(@Nonnull IComputerAccess access) {
+    public MethodResult digBlock(IComputerAccess access) {
         Optional<MethodResult> checkResults = turtleChecks();
         if (checkResults.isPresent()) return checkResults.get();
         checkResults = consumeFuelOp(AdvancedPeripheralsConfig.digBlockCost);
@@ -177,7 +179,7 @@ public class WeakMechanicSoulPeripheral extends FuelConsumingPeripheral {
     }
 
     @LuaFunction(mainThread = true)
-    public final MethodResult clickBlock(@Nonnull IComputerAccess access) {
+    public final MethodResult clickBlock(IComputerAccess access) {
         Optional<MethodResult> checkResults = turtleChecks();
         if (checkResults.isPresent()) return checkResults.get();
         checkResults = consumeFuelOp(AdvancedPeripheralsConfig.clickBlockCost);
@@ -211,14 +213,14 @@ public class WeakMechanicSoulPeripheral extends FuelConsumingPeripheral {
     }
 
     @LuaFunction(mainThread = true)
-    public final MethodResult suckSpecificItem(@Nonnull IComputerAccess access, String technicalName, Integer rawQuantity) {
-        Optional<Integer> quantity = Optional.of(rawQuantity);
+    public MethodResult collectSpecificItem(IComputerAccess access, IArguments arguments) throws LuaException {
+        String technicalName = arguments.getString(0);
         Optional<MethodResult> checkResults = turtleChecks();
         if (checkResults.isPresent()) return checkResults.get();
         checkResults = consumeFuelOp(AdvancedPeripheralsConfig.suckItemCost);
         if (checkResults.isPresent()) return checkResults.map(result -> fuelErrorCallback(access, result)).get();
 
-        int requiredQuantity = quantity.orElse(Integer.MAX_VALUE);
+        int requiredQuantity = arguments.optInt(1, Integer.MAX_VALUE);
 
         List<ItemEntity> items = getItems();
 
@@ -234,11 +236,10 @@ public class WeakMechanicSoulPeripheral extends FuelConsumingPeripheral {
     }
 
     @LuaFunction(mainThread = true)
-    public final MethodResult suckItems(@Nonnull IComputerAccess access, Integer rawQuantity) {
-        Optional<Integer> quantity = Optional.of(rawQuantity);
+    public MethodResult collectItems(IComputerAccess access, IArguments arguments) throws LuaException {
         Optional<MethodResult> checkResults = turtleChecks();
         if (checkResults.isPresent()) return checkResults.get();
-        int requiredQuantity = quantity.orElse(Integer.MAX_VALUE);
+        int requiredQuantity = arguments.optInt(0, Integer.MAX_VALUE);
 
         if (requiredQuantity == 0) {
             return MethodResult.of(true);

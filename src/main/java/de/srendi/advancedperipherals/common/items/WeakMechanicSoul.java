@@ -38,15 +38,16 @@ public class WeakMechanicSoul extends APItem {
         }
     }
 
-    private final static Map<Class<? extends Entity>, Integer> entityRegister = new HashMap<>() {{
+    // So, I have
+    private final static Map<Class<? extends Entity>, Integer> entityRegister = new HashMap<Class<? extends Entity>, Integer>() {{
         put(EndermanEntity.class, 1);
     }};
 
-    private final static Map<Integer, Class<? extends Entity>> reverseEntityRegister = new HashMap<>() {{
+    private final static Map<Integer, Class<? extends Entity>> reverseEntityRegister = new HashMap<Integer, Class<? extends Entity>>() {{
         entityRegister.forEach((aClass, integer) -> put(integer, aClass));
     }};
 
-    private final static Map<Class<? extends Entity>, MechanicalSoulRecord> MECHANICAL_SOUL_REGISTRY = new HashMap<>() {{
+    private final static Map<Class<? extends Entity>, MechanicalSoulRecord> MECHANICAL_SOUL_REGISTRY = new HashMap<Class<? extends Entity>, MechanicalSoulRecord>() {{
         put(EndermanEntity.class, new MechanicalSoulRecord(
                 10, EndermanEntity.class, Items.END_MECHANIC_SOUL.get()
         ));

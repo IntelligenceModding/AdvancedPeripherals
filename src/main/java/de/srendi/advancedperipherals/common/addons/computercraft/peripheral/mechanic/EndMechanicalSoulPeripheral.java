@@ -13,9 +13,7 @@ import de.srendi.advancedperipherals.common.util.Pair;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.MinecraftForge;
-import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
 
 public class EndMechanicalSoulPeripheral extends WeakMechanicSoulPeripheral {
 
@@ -59,7 +57,7 @@ public class EndMechanicalSoulPeripheral extends WeakMechanicSoulPeripheral {
     }
 
     @LuaFunction
-    public final MethodResult savePoint(@Nonnull IComputerAccess access, String name) {
+    public final MethodResult savePoint(IComputerAccess access, String name) {
         Pair<MethodResult, CompoundNBT> pairData = getPointData(access);
         if (pairData.leftPresent()) {
             return pairData.getLeft();
@@ -70,7 +68,7 @@ public class EndMechanicalSoulPeripheral extends WeakMechanicSoulPeripheral {
     }
 
     @LuaFunction
-    public final MethodResult points(@Nonnull IComputerAccess access) {
+    public final MethodResult points(IComputerAccess access) {
         Pair<MethodResult, CompoundNBT> pairData = getPointData(access);
         if (pairData.leftPresent()) {
             return pairData.getLeft();
@@ -80,7 +78,7 @@ public class EndMechanicalSoulPeripheral extends WeakMechanicSoulPeripheral {
     }
 
     @LuaFunction(mainThread = true)
-    public final MethodResult warpToPoint(@Nonnull IComputerAccess access, String name) {
+    public final MethodResult warpToPoint(IComputerAccess access, String name) {
         Pair<MethodResult, CompoundNBT> pairData = getPointData(access);
         if (pairData.leftPresent()) {
             return pairData.getLeft();
@@ -105,7 +103,7 @@ public class EndMechanicalSoulPeripheral extends WeakMechanicSoulPeripheral {
     }
 
     @LuaFunction
-    public final MethodResult estimateWarpCost(@Nonnull IComputerAccess access, String name) {
+    public final MethodResult estimateWarpCost(IComputerAccess access, String name) {
         Pair<MethodResult, CompoundNBT> pairData = getPointData(access);
         if (pairData.leftPresent()) {
             return pairData.getLeft();
@@ -116,7 +114,7 @@ public class EndMechanicalSoulPeripheral extends WeakMechanicSoulPeripheral {
     }
 
     @LuaFunction
-    public final MethodResult distanceToPoint(@NotNull IComputerAccess access, String name) {
+    public final MethodResult distanceToPoint(IComputerAccess access, String name) {
         Pair<MethodResult, CompoundNBT> pairData = getPointData(access);
         if (pairData.leftPresent()) {
             return pairData.getLeft();

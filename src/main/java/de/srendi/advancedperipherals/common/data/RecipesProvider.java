@@ -6,13 +6,18 @@ import com.refinedmods.refinedstorage.RSItems;
 import dan200.computercraft.shared.Registry;
 import de.srendi.advancedperipherals.common.setup.Blocks;
 import net.minecraft.block.Block;
-import net.minecraft.data.DataGenerator;
-import net.minecraft.data.IFinishedRecipe;
-import net.minecraft.data.RecipeProvider;
-import net.minecraft.data.ShapedRecipeBuilder;
+import net.minecraft.data.*;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.item.PotionItem;
+import net.minecraft.item.crafting.Ingredient;
+import net.minecraft.potion.Potion;
+import net.minecraft.potion.PotionUtils;
+import net.minecraft.potion.Potions;
 import net.minecraft.tags.ItemTags;
 import net.minecraftforge.common.Tags;
+import net.minecraftforge.common.crafting.NBTIngredient;
 import net.minecraftforge.common.crafting.conditions.IConditionBuilder;
 
 import java.util.function.Consumer;
@@ -190,7 +195,9 @@ public class RecipesProvider extends RecipeProvider implements IConditionBuilder
                 .define('M', Registry.ModBlocks.WIRED_MODEM_FULL.get())
                 .pattern("DMD")
                 .pattern("DCD")
-                .pattern("ROR");
+                .pattern("ROR")
+                .unlockedBy("has_item", has(CASING))
+                .save(consumer);
 
         ShapedRecipeBuilder.shaped(Blocks.NBT_STORAGE.get())
                 .define('C', Items.CHEST)
@@ -201,6 +208,24 @@ public class RecipesProvider extends RecipeProvider implements IConditionBuilder
                 .pattern("CAC")
                 .pattern("RCR")
                 .unlockedBy("has_item", has(CASING))
+                .save(consumer);
+
+        ShapedRecipeBuilder.shaped(de.srendi.advancedperipherals.common.setup.Items.WEAK_MECHANIC_SOUL.get())
+                .define('A', CASING)
+                .define('R', Items.REDSTONE_BLOCK)
+                .define('S', Items.SOUL_LANTERN)
+                .define('D', Items.DIAMOND)
+                .define('L', NBTIngredient.of(PotionUtils.setPotion(new ItemStack(Items.POTION), Potions.LONG_REGENERATION)))
+                .pattern("RAR")
+                .pattern("DSD")
+                .pattern("RLR")
+                .unlockedBy("has_item", has(CASING))
+                .save(consumer);
+
+        ShapelessRecipeBuilder.shapeless(de.srendi.advancedperipherals.common.setup.Items.OVERPOWERED_WEAK_MECHANIC_SOUL.get())
+                .requires(de.srendi.advancedperipherals.common.setup.Items.WEAK_MECHANIC_SOUL.get())
+                .requires(Items.NETHER_STAR)
+                .unlockedBy("has_item", has(de.srendi.advancedperipherals.common.setup.Items.WEAK_MECHANIC_SOUL.get()))
                 .save(consumer);
     }
 }

@@ -42,7 +42,7 @@ public class OverpoweredWeakMechanicSoulPeripheral extends WeakMechanicSoulPerip
 
     @NotNull
     @Override
-    protected MethodResult fuelErrorCallback(@NotNull IComputerAccess access, MethodResult fuelErrorResult) {
+    protected MethodResult fuelErrorCallback(IComputerAccess access, MethodResult fuelErrorResult) {
         Pair<MethodResult, TurtleSide> sidePair = getTurtleSide(access);
         if (sidePair.leftPresent())
             return fuelErrorResult;

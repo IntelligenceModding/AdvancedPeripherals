@@ -1,0 +1,23 @@
+{
+  "name": "Weak mechanic soul",
+  "icon": "advancedperipherals:weak_mechanic_soul",
+  "category": "advancedperipherals:items",
+  "pages": [
+    {
+      "type": "text",
+      "text": "The Weak Mechanic Soul is turtle upgrade, that allow to transform turtle into powerful automata!$(p)For the full documentation please see the $(9)$(l:https://docs.srendi.de/items/weak_mechanic_soul/)official wiki page$(/l)$()!"
+    },
+    {
+      "type": "text",
+      "text": "Weak mechanic soul provide several ability for turtles.$(li)Digging block with tool;$(li)Click on block with item or empty hand;$(li)Suck item around, all or specific;$(li)Detect items around;$(li)Detect block or turtle in line of view"
+    },
+    {
+      "type": "text",
+      "text": "But weak soul is only a start of jorney! Understanding of automata stabilization and general soul nature will allow to create more powerful soul variants. Try to feed monster or animal souls to weak mechanic soul!$(li)$(l:items/end_mechanic_soul)End Mechanic Soul"
+    },
+    {
+      "type": "crafting",
+      "recipe": "advancedperipherals:weak_mechanic_soul"
+    }
+  ]
+}
