@@ -9,7 +9,6 @@ import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsCon
 import de.srendi.advancedperipherals.common.util.Pair;
 import de.srendi.advancedperipherals.common.util.fakeplayer.FakePlayerProviderTurtle;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
@@ -27,12 +26,10 @@ public class OverpoweredWeakMechanicSoulPeripheral extends WeakMechanicSoulPerip
         checkResults = consumeFuelOp(AdvancedPeripheralsConfig.digBlockCost);
         if (checkResults.isPresent()) return checkResults.map(result -> fuelErrorCallback(access, result)).get();
 
-        BlockPos blockPos = turtle.getPosition().relative(turtle.getDirection());
-
         ItemStack selectedTool = turtle.getInventory().getItem(turtle.getSelectedSlot());
         int previousDamageValue = selectedTool.getDamageValue();
 
-        Pair<Boolean, String> result = FakePlayerProviderTurtle.withPlayer(turtle, turtleFakePlayer -> turtleFakePlayer.digBlock(blockPos, turtle.getDirection().getOpposite()));
+        Pair<Boolean, String> result = FakePlayerProviderTurtle.withPlayer(turtle, turtleFakePlayer -> turtleFakePlayer.digBlock(turtle.getDirection().getOpposite()));
         if (!result.getLeft()) {
             return MethodResult.of(null, result.getRight());
         }

@@ -168,9 +168,7 @@ public class WeakMechanicSoulPeripheral extends FuelConsumingPeripheral {
         checkResults = consumeFuelOp(AdvancedPeripheralsConfig.digBlockCost);
         if (checkResults.isPresent()) return checkResults.map(result -> fuelErrorCallback(access, result)).get();
 
-        BlockPos blockPos = turtle.getPosition().relative(turtle.getDirection());
-
-        Pair<Boolean, String> result = FakePlayerProviderTurtle.withPlayer(turtle, turtleFakePlayer -> turtleFakePlayer.digBlock(blockPos, turtle.getDirection().getOpposite()));
+        Pair<Boolean, String> result = FakePlayerProviderTurtle.withPlayer(turtle, turtleFakePlayer -> turtleFakePlayer.digBlock(turtle.getDirection().getOpposite()));
         if (!result.getLeft()) {
             return MethodResult.of(null, result.getRight());
         }

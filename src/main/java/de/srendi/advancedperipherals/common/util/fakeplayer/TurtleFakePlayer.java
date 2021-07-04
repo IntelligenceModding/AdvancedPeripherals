@@ -118,8 +118,13 @@ public class TurtleFakePlayer extends FakePlayer {
         return 0;
     }
 
-    public Pair<Boolean, String> digBlock(BlockPos pos, Direction direction) {
+    public Pair<Boolean, String> digBlock(Direction direction) {
         World world = getLevel();
+        RayTraceResult hit = findHit(true, false);
+        if (hit.getType() == RayTraceResult.Type.MISS) {
+            return Pair.of(false, "Nothing to break");
+        }
+        BlockPos pos = new BlockPos(hit.getLocation().x, hit.getLocation().y, hit.getLocation().z);
         BlockState state = world.getBlockState(pos);
         Block block = state.getBlock();
 
