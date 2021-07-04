@@ -4,6 +4,7 @@ import com.google.common.math.IntMath;
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.lua.MethodResult;
 import de.srendi.advancedperipherals.common.addons.computercraft.base.BasePeripheral;
+import de.srendi.advancedperipherals.common.addons.computercraft.base.FuelConsumingPeripheral;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
 import net.minecraft.block.Block;
@@ -23,12 +24,12 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.*;
 
-public class GeoScannerPeripheral extends BasePeripheral {
+public class GeoScannerPeripheral extends FuelConsumingPeripheral {
 	/*
 	Highly inspired by https://github.com/SquidDev-CC/plethora/ BlockScanner
 	*/
 
-    private Optional<Timestamp> lastScanTimestamp = Optional.empty();
+    private Timestamp lastScanTimestamp = null;
 
     public GeoScannerPeripheral(String type, PeripheralTileEntity<?> tileEntity) {
         super(type, tileEntity);
@@ -78,7 +79,7 @@ public class GeoScannerPeripheral extends BasePeripheral {
         }
         int freeBlockCount = IntMath.pow(2 * AdvancedPeripheralsConfig.geoScannerMaxFreeRadius + 1, 3);
         int allBlockCount = IntMath.pow(2 * radius + 1, 3);
-        return (allBlockCount - freeBlockCount) * AdvancedPeripheralsConfig.geoScannerAdditionalBlockCost;
+        return (int) Math.floor((allBlockCount - freeBlockCount) * AdvancedPeripheralsConfig.geoScannerExtraBlockCost);
     }
 
     @Override
@@ -87,22 +88,21 @@ public class GeoScannerPeripheral extends BasePeripheral {
     }
 
     private boolean isScanOnCooldown(Timestamp currentTimestamp) {
-        return lastScanTimestamp.map(
-                timestamp -> (currentTimestamp.getTime() - timestamp.getTime()) < AdvancedPeripheralsConfig.geoScannerMinScanPeriod
-        ).orElse(false);
+        if (lastScanTimestamp == null) {
+            return false;
+        }
+        return currentTimestamp.getTime() - lastScanTimestamp.getTime() < AdvancedPeripheralsConfig.geoScannerMinScanPeriod;
     }
 
     private long getScanCooldownLeft() {
+        if (lastScanTimestamp == null) {
+            return 0;
+        }
         Timestamp currentTimestamp = Timestamp.valueOf(LocalDateTime.now());
-        return lastScanTimestamp.map(
-                timestamp -> Math.max(
-                        0,
-                        AdvancedPeripheralsConfig.geoScannerMinScanPeriod - currentTimestamp.getTime() + timestamp.getTime()
-                )
-        ).orElse(0L);
+        return Math.max(0, AdvancedPeripheralsConfig.geoScannerMinScanPeriod - currentTimestamp.getTime() + lastScanTimestamp.getTime());
     }
 
-    @LuaFunction(mainThread = true)
+    @LuaFunction
     public final MethodResult cost(int radius) {
         int estimatedCost = estimateCost(radius);
         if (estimatedCost < 0) {
@@ -111,38 +111,22 @@ public class GeoScannerPeripheral extends BasePeripheral {
         return MethodResult.of(estimatedCost);
     }
 
-    @LuaFunction(mainThread = true)
-    public final int getEnergy() {
-        if (tileEntity == null) {
-            return 0;
-        }
-        return tileEntity.getCapability(CapabilityEnergy.ENERGY).map(IEnergyStorage::getEnergyStored).orElse(0);
-    }
-
-    @LuaFunction(mainThread = true)
-    public final int getEnergyCapacity() {
-        if (tileEntity == null) {
-            return 0;
-        }
-        return tileEntity.getCapability(CapabilityEnergy.ENERGY).map(IEnergyStorage::getMaxEnergyStored).orElse(0);
-    }
-
-    @LuaFunction(mainThread = true)
+    @LuaFunction
     public final long getScanCooldown() {
         return getScanCooldownLeft();
     }
 
-    @LuaFunction(mainThread = true)
-    public final Map<String, Integer> getConfiguration() {
-        Map<String, Integer> result = new HashMap<>();
+    @LuaFunction
+    public final Map<String, Object> getConfiguration() {
+        Map<String, Object> result = new HashMap<>();
         result.put("freeRadius", AdvancedPeripheralsConfig.geoScannerMaxCostRadius);
         result.put("scanPeriod", AdvancedPeripheralsConfig.geoScannerMinScanPeriod);
         result.put("costRadius", AdvancedPeripheralsConfig.geoScannerMaxCostRadius);
-        result.put("blockCost", AdvancedPeripheralsConfig.geoScannerAdditionalBlockCost);
+        result.put("blockCost", AdvancedPeripheralsConfig.geoScannerExtraBlockCost);
         return result;
     }
 
-    @LuaFunction(mainThread = true)
+    @LuaFunction
     public final MethodResult chunkAnalyze() {
         Timestamp currentTimestamp = Timestamp.valueOf(LocalDateTime.now());
         if (isScanOnCooldown(currentTimestamp)) {
@@ -166,11 +150,11 @@ public class GeoScannerPeripheral extends BasePeripheral {
                 }
             }
         }
-        lastScanTimestamp = Optional.of(currentTimestamp);
+        lastScanTimestamp = currentTimestamp;
         return MethodResult.of(data);
     }
 
-    @LuaFunction(mainThread = true)
+    @LuaFunction
     public final MethodResult scan(int radius) {
         Timestamp currentTimestamp = Timestamp.valueOf(LocalDateTime.now());
         if (isScanOnCooldown(currentTimestamp)) {
@@ -187,14 +171,12 @@ public class GeoScannerPeripheral extends BasePeripheral {
             }
             LazyOptional<IEnergyStorage> lazyEnergyStorage = tileEntity.getCapability(CapabilityEnergy.ENERGY);
             int cost = estimateCost(radius);
-            int energyCount = lazyEnergyStorage.map(IEnergyStorage::getEnergyStored).orElse(0);
-            if (energyCount < cost) {
-                return MethodResult.of(null, String.format("Not enough RF energy, %d needed", cost));
+            if (!consumeFuel(cost, false)) {
+                return MethodResult.of(null, String.format("Not enough fuel, %d needed", cost));
             }
-            lazyEnergyStorage.ifPresent(iEnergyStorage -> iEnergyStorage.extractEnergy(cost, false));
         }
         List<Map<String, ?>> scanResult = scan(world, pos.getX(), pos.getY(), pos.getZ(), Math.min(radius, 8));
-        lastScanTimestamp = Optional.of(currentTimestamp);
+        lastScanTimestamp = currentTimestamp;
         return MethodResult.of(scanResult);
     }
 }

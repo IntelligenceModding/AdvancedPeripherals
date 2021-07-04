@@ -3,6 +3,8 @@ package de.srendi.advancedperipherals.common.util;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import net.minecraft.nbt.*;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import org.apache.logging.log4j.Level;
 
 import java.io.ByteArrayInputStream;
@@ -66,5 +68,17 @@ public class NBTUtil {
             ex.printStackTrace();
             return null;
         }
+    }
+
+    public static CompoundNBT toNBT(BlockPos pos) {
+        CompoundNBT data = new CompoundNBT();
+        data.putInt("x", pos.getX());
+        data.putInt("y", pos.getY());
+        data.putInt("z", pos.getZ());
+        return data;
+    }
+
+    public static BlockPos blockPosFromNBT(CompoundNBT nbt) {
+        return new BlockPos(nbt.getInt("x"), nbt.getInt("y"), nbt.getInt("z"));
     }
 }

@@ -1,20 +1,21 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.turtles;
 
 import de.srendi.advancedperipherals.common.addons.computercraft.base.BaseTurtle;
+import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.mechanical.EndMechanicalSoulPeripheral;
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.mechanical.WeakMechanicSoulPeripheral;
 import de.srendi.advancedperipherals.common.setup.Items;
 import net.minecraft.client.renderer.model.ModelResourceLocation;
 import net.minecraft.item.ItemStack;
 
-public class TurtleWeakMechanicSoul extends BaseTurtle<WeakMechanicSoulPeripheral> {
+public class TurtleEndMechanicSoul extends BaseTurtle<WeakMechanicSoulPeripheral> {
 
-    public TurtleWeakMechanicSoul() {
-        super("weak_mechanic_soul_turtle", "turtle.advancedperipherals.weak_mechanic_soul", new ItemStack(Items.WEAK_MECHANIC_SOUL.get()));
+    public TurtleEndMechanicSoul() {
+        super("end_mechanic_soul_turtle", "turtle.advancedperipherals.end_mechanic_soul", new ItemStack(Items.END_MECHANIC_SOUL.get()));
     }
 
     @Override
     protected WeakMechanicSoulPeripheral createPeripheral() {
-        return new WeakMechanicSoulPeripheral("weak_mechanic_soul", null);
+        return new EndMechanicalSoulPeripheral("end_mechanic_soul", null);
     }
 
     @Override

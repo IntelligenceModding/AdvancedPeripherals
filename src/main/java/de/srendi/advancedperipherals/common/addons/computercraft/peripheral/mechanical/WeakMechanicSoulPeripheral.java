@@ -1,4 +1,4 @@
-package de.srendi.advancedperipherals.common.addons.computercraft.peripheral;
+package de.srendi.advancedperipherals.common.addons.computercraft.peripheral.mechanical;
 
 import com.mojang.datafixers.util.Pair;
 import dan200.computercraft.api.lua.LuaFunction;
@@ -6,6 +6,7 @@ import dan200.computercraft.api.lua.MethodResult;
 import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.shared.util.InventoryUtil;
 import de.srendi.advancedperipherals.common.addons.computercraft.base.BasePeripheral;
+import de.srendi.advancedperipherals.common.addons.computercraft.base.FuelConsumingPeripheral;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
 import de.srendi.advancedperipherals.common.items.WeakMechanicalSoul;
 import de.srendi.advancedperipherals.common.util.fakeplayer.FakePlayerProviderTurtle;
@@ -25,21 +26,20 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class WeakMechanicSoulPeripheral extends BasePeripheral {
+public class WeakMechanicSoulPeripheral extends FuelConsumingPeripheral {
 
-    private static final int TURTLE_SUCK_ITEM_RADIUS = 2;
 
     public WeakMechanicSoulPeripheral(String type, ITurtleAccess turtle) {
         super(type, turtle);
     }
 
     public int getItemSuckRadius() {
-        return TURTLE_SUCK_ITEM_RADIUS;
+        return AdvancedPeripheralsConfig.weakMechanicalSoulSuckRange;
     }
 
     @Override
     public boolean isEnabled() {
-        return AdvancedPeripheralsConfig.enableChunkyTurtle;
+        return AdvancedPeripheralsConfig.enableWeakMechanicalSoul;
     }
 
     private Optional<MethodResult> turtleChecks() {
@@ -136,9 +136,11 @@ public class WeakMechanicSoulPeripheral extends BasePeripheral {
         return MethodResult.of(data);
     }
 
-    @LuaFunction
+    @LuaFunction(mainThread = true)
     public final MethodResult digBlock() {
         Optional<MethodResult> checkResults = turtleChecks();
+        if (checkResults.isPresent()) return checkResults.get();
+        checkResults = consumeFuelOp(AdvancedPeripheralsConfig.digBlockCost);
         if (checkResults.isPresent()) return checkResults.get();
 
         BlockPos blockPos = turtle.getPosition().relative(turtle.getDirection());
@@ -151,9 +153,11 @@ public class WeakMechanicSoulPeripheral extends BasePeripheral {
         return MethodResult.of(true);
     }
 
-    @LuaFunction
+    @LuaFunction(mainThread = true)
     public final MethodResult clickBlock() {
         Optional<MethodResult> checkResults = turtleChecks();
+        if (checkResults.isPresent()) return checkResults.get();
+        checkResults = consumeFuelOp(AdvancedPeripheralsConfig.clickBlockCost);
         if (checkResults.isPresent()) return checkResults.get();
 
         ActionResultType result = FakePlayerProviderTurtle.withPlayer(turtle, TurtleFakePlayer::useOnBlock);
@@ -183,10 +187,12 @@ public class WeakMechanicSoulPeripheral extends BasePeripheral {
         return MethodResult.of(data);
     }
 
-    @LuaFunction
+    @LuaFunction(mainThread = true)
     public final MethodResult suckSpecificItem(String technicalName, Integer rawQuantity) {
         Optional<Integer> quantity = Optional.of(rawQuantity);
         Optional<MethodResult> checkResults = turtleChecks();
+        if (checkResults.isPresent()) return checkResults.get();
+        checkResults = consumeFuelOp(AdvancedPeripheralsConfig.suckItemCost);
         if (checkResults.isPresent()) return checkResults.get();
 
         int requiredQuantity = quantity.orElse(Integer.MAX_VALUE);
@@ -204,12 +210,11 @@ public class WeakMechanicSoulPeripheral extends BasePeripheral {
         return MethodResult.of(true);
     }
 
-    @LuaFunction
+    @LuaFunction(mainThread = true)
     public final MethodResult suckItems(Integer rawQuantity) {
         Optional<Integer> quantity = Optional.of(rawQuantity);
         Optional<MethodResult> checkResults = turtleChecks();
         if (checkResults.isPresent()) return checkResults.get();
-
         int requiredQuantity = quantity.orElse(Integer.MAX_VALUE);
 
         if (requiredQuantity == 0) {
@@ -222,6 +227,9 @@ public class WeakMechanicSoulPeripheral extends BasePeripheral {
         }
 
         for (ItemEntity entity : items) {
+            int consumedCount = Math.min(entity.getItem().getCount(), requiredQuantity);
+            if (!consumeFuel(consumedCount * AdvancedPeripheralsConfig.suckItemCost))
+                break;
             requiredQuantity -= suckItem(entity, requiredQuantity);
             if (requiredQuantity <= 0) {
                 break;
@@ -231,7 +239,7 @@ public class WeakMechanicSoulPeripheral extends BasePeripheral {
         return MethodResult.of(true);
     }
 
-    @LuaFunction
+    @LuaFunction(mainThread = true)
     public final MethodResult feedSoul() {
         Optional<MethodResult> checkResults = turtleChecks();
         if (checkResults.isPresent()) return checkResults.get();
