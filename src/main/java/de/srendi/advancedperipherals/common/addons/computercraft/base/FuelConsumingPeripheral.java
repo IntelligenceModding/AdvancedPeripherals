@@ -41,7 +41,7 @@ public abstract class FuelConsumingPeripheral extends BasePeripheral {
         if (turtle != null)
             return turtle.getFuelLimit();
         if (tileEntity != null)
-            return tileEntity.getCapability(CapabilityEnergy.ENERGY).map(IEnergyStorage::getMaxEnergyStored).orElse(0);
+            return tileEntity.getCapability(CapabilityEnergy.ENERGY).map(storage -> storage.getMaxEnergyStored() / AdvancedPeripheralsConfig.energyToFuelRate).orElse(0);
         return 0;
     }
 
@@ -83,7 +83,8 @@ public abstract class FuelConsumingPeripheral extends BasePeripheral {
             turtle.addFuel(count);
         if (tileEntity != null)
             tileEntity.getCapability(CapabilityEnergy.ENERGY).ifPresent(storage -> {
-                storage.receiveEnergy(count, false);
+                int energyCount = count * AdvancedPeripheralsConfig.energyToFuelRate;
+                storage.receiveEnergy(energyCount, false);
             });
     }
 
