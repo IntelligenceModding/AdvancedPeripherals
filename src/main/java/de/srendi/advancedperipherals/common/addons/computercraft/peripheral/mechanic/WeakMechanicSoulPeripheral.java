@@ -139,7 +139,7 @@ public class WeakMechanicSoulPeripheral extends OperationPeripheral {
 
     @LuaFunction
     public Map<String, Object> getConfiguration() {
-        Map<String, Object> result = new HashMap<>();
+        Map<String, Object> result = super.getConfiguration();
         result.put("digCost", AdvancedPeripheralsConfig.digBlockCost);
         result.put("digCooldown", AdvancedPeripheralsConfig.digBlockCooldown);
         result.put("clickCost", AdvancedPeripheralsConfig.clickBlockCost);
@@ -158,7 +158,7 @@ public class WeakMechanicSoulPeripheral extends OperationPeripheral {
     }
 
     @LuaFunction
-    public int getDigooldown() {
+    public int getDigCooldown() {
         return getCurrentCooldown(DIG_OPERATION);
     }
 

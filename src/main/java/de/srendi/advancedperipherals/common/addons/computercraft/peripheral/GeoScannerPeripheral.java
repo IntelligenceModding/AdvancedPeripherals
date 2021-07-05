@@ -110,7 +110,7 @@ public class GeoScannerPeripheral extends OperationPeripheral {
 
     @LuaFunction
     public final Map<String, Object> getConfiguration() {
-        Map<String, Object> result = new HashMap<>();
+        Map<String, Object> result = super.getConfiguration();
         result.put("freeRadius", AdvancedPeripheralsConfig.geoScannerMaxCostRadius);
         result.put("scanPeriod", AdvancedPeripheralsConfig.geoScannerMinScanPeriod);
         result.put("costRadius", AdvancedPeripheralsConfig.geoScannerMaxCostRadius);

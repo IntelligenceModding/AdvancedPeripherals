@@ -70,7 +70,7 @@ public class EndMechanicalSoulPeripheral extends WeakMechanicSoulPeripheral {
     }
 
     private int getWarpCost(BlockPos warpTarget) {
-        return (int) Math.sqrt(warpTarget.distManhattan(getPos()));
+        return (int) Math.sqrt(warpTarget.distManhattan(getPos())) * fuelConsumptionMultiply();
     }
 
     @LuaFunction
