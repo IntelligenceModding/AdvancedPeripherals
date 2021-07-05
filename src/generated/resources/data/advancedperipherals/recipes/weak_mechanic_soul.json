@@ -19,7 +19,10 @@
       "item": "minecraft:diamond"
     },
     "L": {
-      "item": "minecraft:potion"
+      "type": "forge:nbt",
+      "item": "minecraft:potion",
+      "count": 1,
+      "nbt": "{Potion:\"minecraft:long_regeneration\"}"
     }
   },
   "result": {

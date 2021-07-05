@@ -24,6 +24,12 @@ import java.util.function.Consumer;
 
 public class RecipesProvider extends RecipeProvider implements IConditionBuilder {
 
+    public static class NBTIngredient extends net.minecraftforge.common.crafting.NBTIngredient {
+        public NBTIngredient(ItemStack stack) {
+            super(stack);
+        }
+    }
+
     private static final Block CASING = Blocks.PERIPHERAL_CASING.get();
 
     public RecipesProvider(DataGenerator generatorIn) {
@@ -215,7 +221,7 @@ public class RecipesProvider extends RecipeProvider implements IConditionBuilder
                 .define('R', Items.REDSTONE_BLOCK)
                 .define('S', Items.SOUL_LANTERN)
                 .define('D', Items.DIAMOND)
-                .define('L', NBTIngredient.of(PotionUtils.setPotion(new ItemStack(Items.POTION), Potions.LONG_REGENERATION)))
+                .define('L', new NBTIngredient(PotionUtils.setPotion(new ItemStack(Items.POTION), Potions.LONG_REGENERATION)))
                 .pattern("RAR")
                 .pattern("DSD")
                 .pattern("RLR")
