@@ -22,6 +22,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.*;
+import net.minecraftforge.energy.CapabilityEnergy;
 
 import javax.annotation.Nonnull;
 import java.util.HashMap;
@@ -274,6 +275,27 @@ public class WeakMechanicSoulPeripheral extends FuelConsumingPeripheral {
         }
         ActionResultType result = FakePlayerProviderTurtle.withPlayer(turtle, TurtleFakePlayer::useOnEntity);
         return MethodResult.of(true, result.toString());
+    }
+
+    @LuaFunction(mainThread = true)
+    public final MethodResult chargeTurtle(@Nonnull IArguments arguments) throws LuaException {
+        Optional<MethodResult> checkResults = turtleChecks();
+        if (checkResults.isPresent()) return checkResults.get();
+        ItemStack stack = turtle.getInventory().getItem(turtle.getSelectedSlot());
+        int fuel = arguments.optInt(0, -1);
+        return stack.getCapability(CapabilityEnergy.ENERGY).map(storage -> {
+            int availableFuelSpace = turtle.getFuelLimit() - turtle.getFuelLevel();
+            int requestedRF;
+            if (fuel != -1) {
+                requestedRF = fuel * AdvancedPeripheralsConfig.energyToFuelRate;
+            } else {
+                requestedRF = storage.getEnergyStored();
+            }
+            int realConsumedRF = storage.extractEnergy(Math.min(requestedRF, availableFuelSpace * AdvancedPeripheralsConfig.energyToFuelRate), false);
+            int receivedFuel = realConsumedRF / AdvancedPeripheralsConfig.energyToFuelRate;
+            turtle.addFuel(receivedFuel);
+            return MethodResult.of(true, receivedFuel);
+        }).orElse(MethodResult.of(null, "Item should provide energy ..."));
     }
 
 }

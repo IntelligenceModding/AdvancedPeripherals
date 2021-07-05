@@ -14,7 +14,7 @@ public class TurtleWeakMechanicSoul extends BaseTurtle<WeakMechanicSoulPeriphera
 
     @Override
     protected WeakMechanicSoulPeripheral createPeripheral() {
-        return new WeakMechanicSoulPeripheral("weak_mechanic_soul", null);
+        return new WeakMechanicSoulPeripheral("weakMechanicSoul", null);
     }
 
     @Override
