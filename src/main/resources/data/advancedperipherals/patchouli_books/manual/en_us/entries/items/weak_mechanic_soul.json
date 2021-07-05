@@ -5,11 +5,11 @@
   "pages": [
     {
       "type": "text",
-      "text": "The Weak Mechanic Soul is turtle upgrade, that allow to transform turtle into powerful automata!$(p)For the full documentation please see the $(9)$(l:https://docs.srendi.de/items/weak_mechanic_soul/)official wiki page$(/l)$()!"
+      "text": "The Weak Mechanic Soul is turtle upgrade, that allow to transform turtle into powerful automata!$(p)For the full documentation please see the $(9)$(l:https://docs.srendi.de/items/weak_automata/)official wiki page$(/l)$()!"
     },
     {
       "type": "text",
-      "text": "Weak mechanic soul provide several ability for turtles.$(li)Digging block with tool;$(li)Click on block with item or empty hand;$(li)Suck item around, all or specific;$(li)Detect items around;$(li)Detect block or turtle in line of view"
+      "text": "It provides several ability for turtles.$(li)Digging block with tool;$(li)Click on block with item or empty hand;$(li)Suck item around, all or specific;$(li)Detect items around;$(li)Detect block or turtle in line of view"
     },
     {
       "type": "text",
