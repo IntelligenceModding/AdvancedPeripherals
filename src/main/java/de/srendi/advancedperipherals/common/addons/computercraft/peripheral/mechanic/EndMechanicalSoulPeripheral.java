@@ -15,12 +15,15 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.MinecraftForge;
 
 import javax.annotation.Nonnull;
+import java.util.Map;
+import java.util.Optional;
 
 
 public class EndMechanicalSoulPeripheral extends WeakMechanicSoulPeripheral {
 
     private final static String POINT_DATA_MARK = "warp_points";
     private final static String WORLD_DATA_MARK = "warp_world";
+    private final static String WARP_OPERATION = "warp";
 
     public EndMechanicalSoulPeripheral(String type, ITurtleAccess turtle) {
         super(type, turtle);
@@ -28,15 +31,26 @@ public class EndMechanicalSoulPeripheral extends WeakMechanicSoulPeripheral {
 
     @Override
     public boolean isEnabled() {
-        return AdvancedPeripheralsConfig.enableEndMechanicalSoul;
+        return AdvancedPeripheralsConfig.enableEndMechanicSoul;
     }
 
     public int getItemSuckRadius() {
-        return AdvancedPeripheralsConfig.endMechanicalSoulSuckRange;
+        return AdvancedPeripheralsConfig.endMechanicSoulSuckRange;
     }
 
-    protected @Nonnull
-    Pair<MethodResult, CompoundNBT> getPointData(@Nonnull IComputerAccess access) {
+    @Override
+    protected int getRawCooldown(String name) {
+        if (name.equals(WARP_OPERATION))
+            return AdvancedPeripheralsConfig.warpCooldown;
+        return super.getRawCooldown(name);
+    }
+
+    @Override
+    protected int getMaxFuelConsumptionRate() {
+        return AdvancedPeripheralsConfig.endMechanicSoulMaxFueldConsumptionLevel;
+    }
+
+    protected @Nonnull Pair<MethodResult, CompoundNBT> getPointData(@Nonnull IComputerAccess access) {
         Pair<MethodResult, TurtleSide> sideResult = getTurtleSide(access);
         if (sideResult.leftPresent())
             return sideResult.ignoreRight();
@@ -57,6 +71,18 @@ public class EndMechanicalSoulPeripheral extends WeakMechanicSoulPeripheral {
 
     private int getWarpCost(BlockPos warpTarget) {
         return (int) Math.sqrt(warpTarget.distManhattan(getPos()));
+    }
+
+    @LuaFunction
+    public Map<String, Object> getConfiguration() {
+        Map<String, Object> result = super.getConfiguration();
+        result.put("warpCooldown", AdvancedPeripheralsConfig.warpCooldown);
+        return result;
+    }
+
+    @LuaFunction
+    public int getWarpCooldown() {
+        return getCurrentCooldown(WARP_OPERATION);
     }
 
     @LuaFunction
@@ -86,6 +112,8 @@ public class EndMechanicalSoulPeripheral extends WeakMechanicSoulPeripheral {
         if (pairData.leftPresent()) {
             return pairData.getLeft();
         }
+        Optional<MethodResult> checkResults = cooldownCheck(WARP_OPERATION);
+        if (checkResults.isPresent()) return checkResults.get();
         CompoundNBT data = pairData.getRight();
         BlockPos newPosition = NBTUtil.blockPosFromNBT(data.getCompound(name));
         TurtlePlayer turtlePlayer = TurtlePlayer.getWithPosition(turtle, getPos(), turtle.getDirection());
@@ -102,6 +130,7 @@ public class EndMechanicalSoulPeripheral extends WeakMechanicSoulPeripheral {
                 return MethodResult.of(null, "Cannot teleport to location");
             }
         }
+        trackOperation(WARP_OPERATION);
         return MethodResult.of(null, String.format("Not enough fuel, %d needed", warpCost));
     }
 

@@ -5,7 +5,7 @@
   "pages": [
     {
       "type": "text",
-      "text": "Overpowered weak mechanic soul that will not use item durability on dig operations.$(p)But everything come for price. If you try to perform any operation with this soul without fuel - upgrade will broke immediately.$(p)For the full documentation please see the $(9)$(l:https://docs.srendi.de/items/overpowered_weak_automata/)official wiki page$(/l)$()!"
+      "text": "Overpowered weak mechanic soul that will not use item durability and without cooldown for dig operations.$(p)But everything come for price. If you try to perform any operation with this soul without fuel - upgrade will broke immediately.$(p)For the full documentation please see the $(9)$(l:https://docs.srendi.de/items/overpowered_weak_automata/)official wiki page$(/l)$()!"
     },
     {
       "type": "crafting",

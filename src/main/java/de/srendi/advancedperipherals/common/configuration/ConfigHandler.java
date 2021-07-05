@@ -54,12 +54,18 @@ public class ConfigHandler {
         //Mechanical soul
         AdvancedPeripheralsConfig.energyToFuelRate = ConfigHolder.COMMON_CONFIG.ENERGY_TO_FUEL_RATE.get();
         AdvancedPeripheralsConfig.suckItemCost = ConfigHolder.COMMON_CONFIG.SUCK_ITEM_COST.get();
+        AdvancedPeripheralsConfig.suckItemCooldown = ConfigHolder.COMMON_CONFIG.SUCK_ITEM_COOLDOWN.get();
         AdvancedPeripheralsConfig.digBlockCost = ConfigHolder.COMMON_CONFIG.DIG_BLOCK_COST.get();
+        AdvancedPeripheralsConfig.digBlockCooldown = ConfigHolder.COMMON_CONFIG.DIG_BLOCK_COOLDOWN.get();
         AdvancedPeripheralsConfig.clickBlockCost = ConfigHolder.COMMON_CONFIG.CLICK_BLOCK_COST.get();
-        AdvancedPeripheralsConfig.enableWeakMechanicalSoul = ConfigHolder.COMMON_CONFIG.ENABLE_WEAK_MECHANICAL_SOUL.get();
-        AdvancedPeripheralsConfig.weakMechanicalSoulSuckRange = ConfigHolder.COMMON_CONFIG.WEAK_MECHANICAL_SOUL_TURTLE_SUCK_RANGE.get();
-        AdvancedPeripheralsConfig.enableEndMechanicalSoul = ConfigHolder.COMMON_CONFIG.ENABLE_END_MECHANICAL_SOUL.get();
-        AdvancedPeripheralsConfig.endMechanicalSoulSuckRange = ConfigHolder.COMMON_CONFIG.END_MECHANICAL_SOUL_TURTLE_SUCK_RANGE.get();
+        AdvancedPeripheralsConfig.clickBlockCooldown = ConfigHolder.COMMON_CONFIG.CLICK_BLOCK_COOLDOWN.get();
+        AdvancedPeripheralsConfig.warpCooldown = ConfigHolder.COMMON_CONFIG.WARP_COOLDOWN.get();
+        AdvancedPeripheralsConfig.enableWeakMechanicSoul = ConfigHolder.COMMON_CONFIG.ENABLE_WEAK_MECHANIC_SOUL.get();
+        AdvancedPeripheralsConfig.weakMechanicSoulSuckRange = ConfigHolder.COMMON_CONFIG.WEAK_MECHANIC_SOUL_TURTLE_SUCK_RANGE.get();
+        AdvancedPeripheralsConfig.weakMechanicSoulMaxFuelConsumptionLevel = ConfigHolder.COMMON_CONFIG.WEAK_MECHANIC_SOUL_TURTLE_MAX_FUEL_CONSUMPTION_LEVEL.get();
+        AdvancedPeripheralsConfig.enableEndMechanicSoul = ConfigHolder.COMMON_CONFIG.ENABLE_END_MECHANIC_SOUL.get();
+        AdvancedPeripheralsConfig.endMechanicSoulSuckRange = ConfigHolder.COMMON_CONFIG.END_MECHANIC_SOUL_TURTLE_SUCK_RANGE.get();
+        AdvancedPeripheralsConfig.endMechanicSoulMaxFueldConsumptionLevel = ConfigHolder.COMMON_CONFIG.END_MECHANIC_SOUL_TURTLE_MAX_FUEL_CONSUMPTION_LEVEL.get();
 
         AdvancedPeripheralsConfig.enableVillagerStructures = ConfigHolder.COMMON_CONFIG.ENABLE_VILLAGER_STRUCTURES.get();
     }

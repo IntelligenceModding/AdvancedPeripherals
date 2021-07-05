@@ -3,8 +3,7 @@ package de.srendi.advancedperipherals.common.addons.computercraft.peripheral;
 import com.google.common.math.IntMath;
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.lua.MethodResult;
-import de.srendi.advancedperipherals.common.addons.computercraft.base.BasePeripheral;
-import de.srendi.advancedperipherals.common.addons.computercraft.base.FuelConsumingPeripheral;
+import de.srendi.advancedperipherals.common.addons.computercraft.base.OperationPeripheral;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
 import net.minecraft.block.Block;
@@ -20,16 +19,14 @@ import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
 
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
 import java.util.*;
 
-public class GeoScannerPeripheral extends FuelConsumingPeripheral {
+public class GeoScannerPeripheral extends OperationPeripheral {
 	/*
 	Highly inspired by https://github.com/SquidDev-CC/plethora/ BlockScanner
 	*/
 
-    private Timestamp lastScanTimestamp = null;
+    private final static String SCAN_OPERATION = "scan";
 
     public GeoScannerPeripheral(String type, PeripheralTileEntity<?> tileEntity) {
         super(type, tileEntity);
@@ -41,6 +38,16 @@ public class GeoScannerPeripheral extends FuelConsumingPeripheral {
 
     public GeoScannerPeripheral(String type, Entity entity) {
         super(type, entity);
+    }
+
+    @Override
+    protected int getRawCooldown(String name) {
+        return AdvancedPeripheralsConfig.geoScannerMinScanPeriod;
+    }
+
+    @Override
+    protected int getMaxFuelConsumptionRate() {
+        return 1;
     }
 
     private static List<Map<String, ?>> scan(World world, int x, int y, int z, int radius) {
@@ -87,21 +94,6 @@ public class GeoScannerPeripheral extends FuelConsumingPeripheral {
         return AdvancedPeripheralsConfig.enableGeoScanner;
     }
 
-    private boolean isScanOnCooldown(Timestamp currentTimestamp) {
-        if (lastScanTimestamp == null) {
-            return false;
-        }
-        return currentTimestamp.getTime() - lastScanTimestamp.getTime() < AdvancedPeripheralsConfig.geoScannerMinScanPeriod;
-    }
-
-    private long getScanCooldownLeft() {
-        if (lastScanTimestamp == null) {
-            return 0;
-        }
-        Timestamp currentTimestamp = Timestamp.valueOf(LocalDateTime.now());
-        return Math.max(0, AdvancedPeripheralsConfig.geoScannerMinScanPeriod - currentTimestamp.getTime() + lastScanTimestamp.getTime());
-    }
-
     @LuaFunction
     public final MethodResult cost(int radius) {
         int estimatedCost = estimateCost(radius);
@@ -113,7 +105,7 @@ public class GeoScannerPeripheral extends FuelConsumingPeripheral {
 
     @LuaFunction
     public final long getScanCooldown() {
-        return getScanCooldownLeft();
+        return getCurrentCooldown(SCAN_OPERATION);
     }
 
     @LuaFunction
@@ -128,10 +120,8 @@ public class GeoScannerPeripheral extends FuelConsumingPeripheral {
 
     @LuaFunction
     public final MethodResult chunkAnalyze() {
-        Timestamp currentTimestamp = Timestamp.valueOf(LocalDateTime.now());
-        if (isScanOnCooldown(currentTimestamp)) {
-            return MethodResult.of(null, "Scanner need some time to cooldown");
-        }
+        Optional<MethodResult> checkResult = cooldownCheck(SCAN_OPERATION);
+        if (checkResult.isPresent()) return checkResult.get();
         World world = getWorld();
         Chunk chunk = world.getChunkAt(getPos());
         ChunkPos chunkPos = chunk.getPos();
@@ -150,16 +140,14 @@ public class GeoScannerPeripheral extends FuelConsumingPeripheral {
                 }
             }
         }
-        lastScanTimestamp = currentTimestamp;
+        trackOperation(SCAN_OPERATION);
         return MethodResult.of(data);
     }
 
     @LuaFunction
     public final MethodResult scan(int radius) {
-        Timestamp currentTimestamp = Timestamp.valueOf(LocalDateTime.now());
-        if (isScanOnCooldown(currentTimestamp)) {
-            return MethodResult.of(null, "Scanner need some time to cooldown");
-        }
+        Optional<MethodResult> checkResult = cooldownCheck(SCAN_OPERATION);
+        if (checkResult.isPresent()) return checkResult.get();
         BlockPos pos = getPos();
         World world = getWorld();
         if (radius > AdvancedPeripheralsConfig.geoScannerMaxCostRadius) {
@@ -176,7 +164,7 @@ public class GeoScannerPeripheral extends FuelConsumingPeripheral {
             }
         }
         List<Map<String, ?>> scanResult = scan(world, pos.getX(), pos.getY(), pos.getZ(), Math.min(radius, 8));
-        lastScanTimestamp = currentTimestamp;
+        trackOperation(SCAN_OPERATION);
         return MethodResult.of(scanResult);
     }
 }

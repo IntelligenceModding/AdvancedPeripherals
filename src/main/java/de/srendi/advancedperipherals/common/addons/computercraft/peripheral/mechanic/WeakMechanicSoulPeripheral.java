@@ -8,7 +8,7 @@ import dan200.computercraft.api.peripheral.IComputerAccess;
 import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
 import dan200.computercraft.shared.util.InventoryUtil;
-import de.srendi.advancedperipherals.common.addons.computercraft.base.FuelConsumingPeripheral;
+import de.srendi.advancedperipherals.common.addons.computercraft.base.OperationPeripheral;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
 import de.srendi.advancedperipherals.common.items.WeakMechanicSoul;
 import de.srendi.advancedperipherals.common.util.Pair;
@@ -31,20 +31,38 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class WeakMechanicSoulPeripheral extends FuelConsumingPeripheral {
+public class WeakMechanicSoulPeripheral extends OperationPeripheral {
 
+    protected static final String DIG_OPERATION = "dig";
+    protected static final String CLICK_OPERATION = "click";
+    protected static final String SUCK_OPERATION = "suck";
 
     public WeakMechanicSoulPeripheral(String type, ITurtleAccess turtle) {
         super(type, turtle);
     }
 
+    @Override
+    protected int getRawCooldown(String name) {
+        switch (name) {
+            case DIG_OPERATION: return AdvancedPeripheralsConfig.digBlockCooldown;
+            case CLICK_OPERATION: return AdvancedPeripheralsConfig.clickBlockCooldown;
+            case SUCK_OPERATION: return AdvancedPeripheralsConfig.suckItemCooldown;
+        }
+        throw new IllegalArgumentException(String.format("Cannot find cooldown for op %s", name));
+    }
+
+    @Override
+    protected int getMaxFuelConsumptionRate() {
+        return AdvancedPeripheralsConfig.weakMechanicSoulMaxFuelConsumptionLevel;
+    }
+
     public int getItemSuckRadius() {
-        return AdvancedPeripheralsConfig.weakMechanicalSoulSuckRange;
+        return AdvancedPeripheralsConfig.weakMechanicSoulSuckRange;
     }
 
     @Override
     public boolean isEnabled() {
-        return AdvancedPeripheralsConfig.enableWeakMechanicalSoul;
+        return AdvancedPeripheralsConfig.enableWeakMechanicSoul;
     }
 
     protected @Nonnull
@@ -120,13 +138,33 @@ public class WeakMechanicSoulPeripheral extends FuelConsumingPeripheral {
     }
 
     @LuaFunction
-    public final Map<String, Object> getConfiguration() {
+    public Map<String, Object> getConfiguration() {
         Map<String, Object> result = new HashMap<>();
         result.put("digCost", AdvancedPeripheralsConfig.digBlockCost);
+        result.put("digCooldown", AdvancedPeripheralsConfig.digBlockCooldown);
         result.put("clickCost", AdvancedPeripheralsConfig.clickBlockCost);
+        result.put("clickCooldown", AdvancedPeripheralsConfig.clickBlockCooldown);
         result.put("suckCost", AdvancedPeripheralsConfig.suckItemCost);
+        result.put("suckCooldown", AdvancedPeripheralsConfig.suckItemCooldown);
+        result.put("fuelConsumptionRate", getFuelConsumptionRate());
+        result.put("maxFuelConsumptionRate", getMaxFuelConsumptionRate());
         result.put("suckRadius", getItemSuckRadius());
         return result;
+    }
+
+    @LuaFunction
+    public int getSuckCooldown() {
+        return getCurrentCooldown(SUCK_OPERATION);
+    }
+
+    @LuaFunction
+    public int getDigooldown() {
+        return getCurrentCooldown(DIG_OPERATION);
+    }
+
+    @LuaFunction
+    public int getClickCooldown() {
+        return getCurrentCooldown(CLICK_OPERATION);
     }
 
     @LuaFunction
@@ -170,6 +208,8 @@ public class WeakMechanicSoulPeripheral extends FuelConsumingPeripheral {
     public MethodResult digBlock(@Nonnull IComputerAccess access) {
         Optional<MethodResult> checkResults = turtleChecks();
         if (checkResults.isPresent()) return checkResults.get();
+        checkResults = cooldownCheck(DIG_OPERATION);
+        if (checkResults.isPresent()) return checkResults.get();
         checkResults = consumeFuelOp(AdvancedPeripheralsConfig.digBlockCost);
         if (checkResults.isPresent()) return checkResults.map(result -> fuelErrorCallback(access, result)).get();
 
@@ -178,6 +218,7 @@ public class WeakMechanicSoulPeripheral extends FuelConsumingPeripheral {
             return MethodResult.of(null, result.getRight());
         }
 
+        trackOperation(DIG_OPERATION);
         return MethodResult.of(true);
     }
 
@@ -185,11 +226,13 @@ public class WeakMechanicSoulPeripheral extends FuelConsumingPeripheral {
     public final MethodResult clickBlock(@Nonnull IComputerAccess access) {
         Optional<MethodResult> checkResults = turtleChecks();
         if (checkResults.isPresent()) return checkResults.get();
+        checkResults = cooldownCheck(CLICK_OPERATION);
+        if (checkResults.isPresent()) return checkResults.get();
         checkResults = consumeFuelOp(AdvancedPeripheralsConfig.clickBlockCost);
         if (checkResults.isPresent()) return checkResults.map(result -> fuelErrorCallback(access, result)).get();
 
         ActionResultType result = FakePlayerProviderTurtle.withPlayer(turtle, TurtleFakePlayer::useOnBlock);
-
+        trackOperation(CLICK_OPERATION);
         return MethodResult.of(true, result.toString());
     }
 
@@ -220,6 +263,8 @@ public class WeakMechanicSoulPeripheral extends FuelConsumingPeripheral {
         String technicalName = arguments.getString(0);
         Optional<MethodResult> checkResults = turtleChecks();
         if (checkResults.isPresent()) return checkResults.get();
+        checkResults = cooldownCheck(SUCK_OPERATION);
+        if (checkResults.isPresent()) return checkResults.get();
         checkResults = consumeFuelOp(AdvancedPeripheralsConfig.suckItemCost);
         if (checkResults.isPresent()) return checkResults.map(result -> fuelErrorCallback(access, result)).get();
 
@@ -235,12 +280,15 @@ public class WeakMechanicSoulPeripheral extends FuelConsumingPeripheral {
             }
         }
 
+        trackOperation(SUCK_OPERATION);
         return MethodResult.of(true);
     }
 
     @LuaFunction(mainThread = true)
     public MethodResult collectItems(@Nonnull IComputerAccess access, @Nonnull IArguments arguments) throws LuaException {
         Optional<MethodResult> checkResults = turtleChecks();
+        if (checkResults.isPresent()) return checkResults.get();
+        checkResults = cooldownCheck(SUCK_OPERATION);
         if (checkResults.isPresent()) return checkResults.get();
         int requiredQuantity = arguments.optInt(0, Integer.MAX_VALUE);
 
@@ -263,6 +311,7 @@ public class WeakMechanicSoulPeripheral extends FuelConsumingPeripheral {
             }
         }
 
+        trackOperation(SUCK_OPERATION);
         return MethodResult.of(true);
     }
 

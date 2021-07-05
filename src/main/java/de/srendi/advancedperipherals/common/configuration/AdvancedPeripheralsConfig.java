@@ -31,15 +31,21 @@ public class AdvancedPeripheralsConfig {
     public static boolean enableColonyIntegrator;
     public static boolean enableNBTStorage;
 
-    // mechanical soul configuration
+    // mechanic soul configuration
     public static int energyToFuelRate;
     public static int suckItemCost;
+    public static int suckItemCooldown;
     public static int digBlockCost;
+    public static int digBlockCooldown;
     public static int clickBlockCost;
-    public static boolean enableWeakMechanicalSoul;
-    public static int weakMechanicalSoulSuckRange;
-    public static boolean enableEndMechanicalSoul;
-    public static int endMechanicalSoulSuckRange;
+    public static int clickBlockCooldown;
+    public static int warpCooldown;
+    public static boolean enableWeakMechanicSoul;
+    public static int weakMechanicSoulSuckRange;
+    public static int weakMechanicSoulMaxFuelConsumptionLevel;
+    public static boolean enableEndMechanicSoul;
+    public static int endMechanicSoulSuckRange;
+    public static int endMechanicSoulMaxFueldConsumptionLevel;
 
     //World Features
     public static boolean enableVillagerStructures;
@@ -78,12 +84,18 @@ public class AdvancedPeripheralsConfig {
         // Mechanical soul
         final ForgeConfigSpec.IntValue ENERGY_TO_FUEL_RATE;
         final ForgeConfigSpec.IntValue SUCK_ITEM_COST;
+        final ForgeConfigSpec.IntValue SUCK_ITEM_COOLDOWN;
         final ForgeConfigSpec.IntValue DIG_BLOCK_COST;
+        final ForgeConfigSpec.IntValue DIG_BLOCK_COOLDOWN;
         final ForgeConfigSpec.IntValue CLICK_BLOCK_COST;
-        final ForgeConfigSpec.IntValue WEAK_MECHANICAL_SOUL_TURTLE_SUCK_RANGE;
-        final ForgeConfigSpec.IntValue END_MECHANICAL_SOUL_TURTLE_SUCK_RANGE;
-        final ForgeConfigSpec.BooleanValue ENABLE_WEAK_MECHANICAL_SOUL;
-        final ForgeConfigSpec.BooleanValue ENABLE_END_MECHANICAL_SOUL;
+        final ForgeConfigSpec.IntValue CLICK_BLOCK_COOLDOWN;
+        final ForgeConfigSpec.IntValue WARP_COOLDOWN;
+        final ForgeConfigSpec.IntValue WEAK_MECHANIC_SOUL_TURTLE_SUCK_RANGE;
+        final ForgeConfigSpec.IntValue WEAK_MECHANIC_SOUL_TURTLE_MAX_FUEL_CONSUMPTION_LEVEL;
+        final ForgeConfigSpec.IntValue END_MECHANIC_SOUL_TURTLE_SUCK_RANGE;
+        final ForgeConfigSpec.IntValue END_MECHANIC_SOUL_TURTLE_MAX_FUEL_CONSUMPTION_LEVEL;
+        final ForgeConfigSpec.BooleanValue ENABLE_WEAK_MECHANIC_SOUL;
+        final ForgeConfigSpec.BooleanValue ENABLE_END_MECHANIC_SOUL;
 
 
         //World Features
@@ -125,13 +137,19 @@ public class AdvancedPeripheralsConfig {
 
             builder.comment("").push("Mechanical soul");
             ENERGY_TO_FUEL_RATE = builder.comment("Defines energy to fuel rate").defineInRange("energyToFuelRate", 575, 575, Integer.MAX_VALUE);
-            SUCK_ITEM_COST = builder.comment("Defines cost of suck single item").defineInRange("digBlockCost", 1, 1, Integer.MAX_VALUE);
-            DIG_BLOCK_COST = builder.comment("Defines cost of dig block action").defineInRange("clickBlockCost", 1, 1, Integer.MAX_VALUE);
-            CLICK_BLOCK_COST = builder.comment("Defines cost of click block action").defineInRange("suckItemCost", 1, 1, Integer.MAX_VALUE);
-            ENABLE_WEAK_MECHANICAL_SOUL = builder.comment("Enable the weak mechanical soul or not").define("enableWeakMechanicalSoul", true);
-            WEAK_MECHANICAL_SOUL_TURTLE_SUCK_RANGE = builder.comment("Defines weak metchanical soul turtle suck range").defineInRange("weakMechanicalSoulSuckRange", 2, 1, 10);
-            ENABLE_END_MECHANICAL_SOUL = builder.comment("Enable the end mechanical soul or not").define("enableEndMechanicalSoul", true);
-            END_MECHANICAL_SOUL_TURTLE_SUCK_RANGE = builder.comment("Defines weak metchanical soul turtle suck range").defineInRange("weakMechanicalSoulSuckRange", 2, 1, 10);
+            SUCK_ITEM_COST = builder.comment("Defines cost of suck single item").defineInRange("suckItemCost", 1, 1, Integer.MAX_VALUE);
+            SUCK_ITEM_COOLDOWN = builder.comment("Defines cooldown of suck single item").defineInRange("suckItemCooldown", 1_000, 0, Integer.MAX_VALUE);
+            DIG_BLOCK_COST = builder.comment("Defines cost of dig block action").defineInRange("digBlockCost", 1, 1, Integer.MAX_VALUE);
+            DIG_BLOCK_COOLDOWN = builder.comment("Defines cooldown of dig block action").defineInRange("digBlockCooldown", 100, 0, Integer.MAX_VALUE);
+            CLICK_BLOCK_COST = builder.comment("Defines cost of click block action").defineInRange("clickBlockCost", 1, 1, Integer.MAX_VALUE);
+            CLICK_BLOCK_COOLDOWN = builder.comment("Defines cooldown of click block action").defineInRange("clickBlockCooldown", 5_000, 0, Integer.MAX_VALUE);
+            WARP_COOLDOWN = builder.comment("Defines cooldown of warp action").defineInRange("warpCooldown", 1_000, 0, Integer.MAX_VALUE);
+            ENABLE_WEAK_MECHANIC_SOUL = builder.comment("Enable the weak mechanic soul or not").define("enableWeakMechanicSoul", true);
+            WEAK_MECHANIC_SOUL_TURTLE_SUCK_RANGE = builder.comment("Defines weak mechanic soul turtle suck range").defineInRange("weakMechanicSoulSuckRange", 2, 1, 10);
+            WEAK_MECHANIC_SOUL_TURTLE_MAX_FUEL_CONSUMPTION_LEVEL = builder.comment("Defines weak mechanic soul turtle max fuel consumption level").defineInRange("weakMechanicSoulMaxFuelConsumptionLevel", 2, 1, 10);
+            ENABLE_END_MECHANIC_SOUL = builder.comment("Enable the end mechanic soul or not").define("enableEndMechanicSoul", true);
+            END_MECHANIC_SOUL_TURTLE_SUCK_RANGE = builder.comment("Defines weak mechanic soul turtle suck range").defineInRange("endMechanicSoulSuckRange", 4, 1, 10);
+            END_MECHANIC_SOUL_TURTLE_MAX_FUEL_CONSUMPTION_LEVEL = builder.comment("Defines end mechanic soul turtle max fuel consumption level").defineInRange("endMechanicSoulMaxFuelConsumptionLevel", 4, 1, 10);
 
             ENABLE_VILLAGER_STRUCTURES = builder.comment("Enable the villager structures for the computer scientist.").define("enableVillagerStructures", true);
             builder.pop();
