@@ -23,22 +23,44 @@ import org.jetbrains.annotations.Nullable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public class WeakMechanicSoul extends APItem {
 
+    private static final String CONSUMED_ENTITY_COUNT = "consumed_entity_count";
+    private static final String CONSUMED_ENTITY_NAME = "consumed_entity_name";
+    private static final String CONSUMER_ENTITY_COMPOUND = "consumed_entity_compound";
+
     public static class MechanicalSoulRecord {
-        public final int requiredCount;
-        public final Class<? extends Entity> entityClass;
+        public final Map<Class<? extends Entity>, Integer> ingredients;
         public final Item resultSoul;
 
-        public MechanicalSoulRecord(int requiredCount, Class<? extends Entity> entityClass, Item resultSoul) {
-            this.requiredCount = requiredCount;
-            this.entityClass = entityClass;
+        public MechanicalSoulRecord( Map<Class<? extends Entity>, Integer> ingredients, Item resultSoul) {
+            this.ingredients = ingredients;
             this.resultSoul = resultSoul;
+        }
+
+        public int getRequiredCount(Class<? extends Entity> entityClass) {
+            return this.ingredients.getOrDefault(entityClass, 0);
+        }
+
+        public boolean isSuitable(Class<? extends Entity> entityClass, CompoundNBT consumedData) {
+            if (!ingredients.containsKey(entityClass))
+                return false;
+            int requiredCount = ingredients.get(entityClass);
+            int currentCount = consumedData.getCompound(entityRegister.get(entityClass).toString()).getInt(CONSUMED_ENTITY_COUNT);
+            return currentCount < requiredCount;
+        }
+
+        public boolean isFinished(CompoundNBT consumedData) {
+            return ingredients.entrySet().stream().map(entry -> {
+                String entityCode = entityRegister.get(entry.getKey()).toString();
+                return entry.getValue() == consumedData.getCompound(entityCode).getInt(CONSUMED_ENTITY_COUNT);
+            }).reduce((a, b) -> a && b).orElse(true);
         }
     }
 
-    // So, I have
+    // So, I have to duplicate <> description for some reason, because linter refused to work)
     private final static Map<Class<? extends Entity>, Integer> entityRegister = new HashMap<Class<? extends Entity>, Integer>() {{
         put(EndermanEntity.class, 1);
     }};
@@ -48,14 +70,11 @@ public class WeakMechanicSoul extends APItem {
     }};
 
     private final static Map<Class<? extends Entity>, MechanicalSoulRecord> MECHANICAL_SOUL_REGISTRY = new HashMap<Class<? extends Entity>, MechanicalSoulRecord>() {{
-        put(EndermanEntity.class, new MechanicalSoulRecord(
-                10, EndermanEntity.class, Items.END_MECHANIC_SOUL.get()
-        ));
+        MechanicalSoulRecord endSoulRecord = new MechanicalSoulRecord(
+                new HashMap<>(){{ put(EndermanEntity.class, 10); }}, Items.END_MECHANIC_SOUL.get()
+        );
+        put(EndermanEntity.class, endSoulRecord);
     }};
-
-    private final String CONSUMED_ENTITY_INDEX = "consumed_entity_index";
-    private final String CONSUMED_ENTITY_COUNT = "consumed_entity_count";
-    private final String CONSUMED_ENTITY_NAME = "consumed_entity_name";
 
     public WeakMechanicSoul(Properties properties, String turtleID, String pocketID, ITextComponent description) {
         super(properties, turtleID, pocketID, description);
@@ -69,11 +88,15 @@ public class WeakMechanicSoul extends APItem {
     public void appendHoverText(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
         super.appendHoverText(stack, worldIn, tooltip, flagIn);
         CompoundNBT tag = stack.getOrCreateTag();
-        int entityIndex = tag.getInt(CONSUMED_ENTITY_INDEX);
-        if (entityIndex != 0) {
-            MechanicalSoulRecord record = MECHANICAL_SOUL_REGISTRY.get(reverseEntityRegister.get(entityIndex));
-            tooltip.add(EnumColor.buildTextComponent(new StringTextComponent(String.format("Consumed: %d/%d %s", tag.getInt(CONSUMED_ENTITY_COUNT), record.requiredCount, tag.getString(CONSUMED_ENTITY_NAME)))));
-        }
+        CompoundNBT consumedData = tag.getCompound(CONSUMER_ENTITY_COMPOUND);
+        consumedData.getAllKeys().forEach(key -> {
+            Class<? extends Entity> entityClass = reverseEntityRegister.get(Integer.parseInt(key));
+            MechanicalSoulRecord record = MECHANICAL_SOUL_REGISTRY.get(entityClass);
+            CompoundNBT recordData = consumedData.getCompound(key);
+            tooltip.add(EnumColor.buildTextComponent(new StringTextComponent(
+                    String.format("Consumed: %d/%d %s", recordData.getInt(CONSUMED_ENTITY_COUNT), record.getRequiredCount(entityClass), recordData.getString(CONSUMED_ENTITY_NAME)))
+            ));
+        });
     }
 
     @Override
@@ -82,21 +105,33 @@ public class WeakMechanicSoul extends APItem {
             player.displayClientMessage(new TranslationTextComponent("text.advancedperipherals.weak_mechanical_player_used_by_player"), true);
             return ActionResultType.FAIL;
         }
-        if (MECHANICAL_SOUL_REGISTRY.containsKey(entity.getClass())) {
-            int entityIndex = entityRegister.get(entity.getClass());
+        Class<? extends Entity> entityClass = entity.getClass();
+        if (MECHANICAL_SOUL_REGISTRY.containsKey(entityClass)) {
             CompoundNBT tag = stack.getOrCreateTag();
-            int consumedEntityIndex = tag.getInt(CONSUMED_ENTITY_INDEX);
-            if (consumedEntityIndex != 0 && consumedEntityIndex != entityIndex) {
-                return ActionResultType.PASS;
+            CompoundNBT consumedData = tag.getCompound(CONSUMER_ENTITY_COMPOUND);
+            MechanicalSoulRecord record;
+            if (consumedData.isEmpty()) {
+                record = MECHANICAL_SOUL_REGISTRY.get(entityClass);
+            } else {
+                Optional<String> anyKey = consumedData.getAllKeys().stream().findAny();
+                if (!anyKey.isPresent())
+                    return ActionResultType.PASS;
+                record = MECHANICAL_SOUL_REGISTRY.get(reverseEntityRegister.get(Integer.parseInt(anyKey.get())));
             }
-            MechanicalSoulRecord record = MECHANICAL_SOUL_REGISTRY.get(entity.getClass());
+            if (!record.isSuitable(entity.getClass(), consumedData))
+                return ActionResultType.PASS;
             entity.remove();
-            tag.putInt(CONSUMED_ENTITY_INDEX, entityIndex);
-            tag.putInt(CONSUMED_ENTITY_COUNT, tag.getInt(CONSUMED_ENTITY_COUNT) + 1);
-            tag.putString(CONSUMED_ENTITY_NAME, entity.getName().getString());
-            if (tag.getInt(CONSUMED_ENTITY_COUNT) == record.requiredCount) {
+            String entityCode = entityRegister.get(entityClass).toString();
+            CompoundNBT entityCompound = consumedData.getCompound(entityCode);
+            entityCompound.putInt(
+                    CONSUMED_ENTITY_COUNT, consumedData.getCompound(entityCode).getInt(CONSUMED_ENTITY_COUNT) + 1
+            );
+            entityCompound.putString(CONSUMED_ENTITY_NAME, entity.getName().getString());
+            consumedData.put(entityCode, entityCompound);
+            if (record.isFinished(consumedData)) {
                 player.setItemInHand(hand, new ItemStack(record.resultSoul));
             }
+            tag.put(CONSUMER_ENTITY_COMPOUND, consumedData);
             return ActionResultType.SUCCESS;
         }
         return ActionResultType.PASS;
