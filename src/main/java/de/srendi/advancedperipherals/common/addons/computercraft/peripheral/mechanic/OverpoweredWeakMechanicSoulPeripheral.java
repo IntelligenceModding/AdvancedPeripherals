@@ -24,7 +24,7 @@ public class OverpoweredWeakMechanicSoulPeripheral extends WeakMechanicSoulPerip
     public MethodResult digBlock(@NotNull IComputerAccess access) {
         Optional<MethodResult> checkResults = turtleChecks();
         if (checkResults.isPresent()) return checkResults.get();
-        checkResults = consumeFuelOp(AdvancedPeripheralsConfig.digBlockCost);
+        checkResults = consumeFuelOp(access, AdvancedPeripheralsConfig.digBlockCost);
         if (checkResults.isPresent()) return checkResults.map(result -> fuelErrorCallback(access, result)).get();
 
         ItemStack selectedTool = turtle.getInventory().getItem(turtle.getSelectedSlot());

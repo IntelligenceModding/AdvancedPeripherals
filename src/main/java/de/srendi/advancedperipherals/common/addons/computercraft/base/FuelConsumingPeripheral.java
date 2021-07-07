@@ -2,6 +2,7 @@ package de.srendi.advancedperipherals.common.addons.computercraft.base;
 
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.lua.MethodResult;
+import dan200.computercraft.api.peripheral.IComputerAccess;
 import dan200.computercraft.api.turtle.ITurtleAccess;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
@@ -10,6 +11,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
 
+import javax.annotation.Nonnull;
 import java.util.Optional;
 
 public abstract class FuelConsumingPeripheral extends BasePeripheral {
@@ -45,11 +47,11 @@ public abstract class FuelConsumingPeripheral extends BasePeripheral {
         return 0;
     }
 
-    public boolean consumeFuel(int count) {
-        return consumeFuel(count, false);
+    public boolean consumeFuel(@Nonnull IComputerAccess access, int count) {
+        return consumeFuel(access, count, false);
     }
 
-    public boolean consumeFuel(int count, boolean simulate) {
+    public boolean consumeFuel(@Nonnull IComputerAccess access, int count, boolean simulate) {
         if (turtle != null) {
             if (turtle.getFuelLevel() >= count) {
                 if (simulate) return true;
@@ -72,8 +74,8 @@ public abstract class FuelConsumingPeripheral extends BasePeripheral {
         return false;
     }
 
-    public Optional<MethodResult> consumeFuelOp(int count) {
-        if (!consumeFuel(count))
+    public Optional<MethodResult> consumeFuelOp(@Nonnull IComputerAccess access, int count) {
+        if (!consumeFuel(access, count))
             return Optional.of(MethodResult.of(null, String.format("Not enough fuel, %d needed", count)));
         return Optional.empty();
     }

@@ -1,8 +1,11 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.peripheral;
 
 import com.google.common.math.IntMath;
+import dan200.computercraft.api.lua.IArguments;
+import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.lua.MethodResult;
+import dan200.computercraft.api.peripheral.IComputerAccess;
 import de.srendi.advancedperipherals.common.addons.computercraft.base.OperationPeripheral;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
@@ -18,7 +21,9 @@ import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
+import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
 import java.util.*;
 
 public class GeoScannerPeripheral extends OperationPeripheral {
@@ -48,6 +53,15 @@ public class GeoScannerPeripheral extends OperationPeripheral {
     @Override
     protected int getMaxFuelConsumptionRate() {
         return 1;
+    }
+
+    @Override
+    protected int _getFuelConsumptionRate(@NotNull IComputerAccess access) {
+        return 1;
+    }
+
+    @Override
+    protected void _setFuelConsumptionRate(@NotNull IComputerAccess access, int rate) {
     }
 
     private static List<Map<String, ?>> scan(World world, int x, int y, int z, int radius) {
@@ -119,7 +133,7 @@ public class GeoScannerPeripheral extends OperationPeripheral {
     }
 
     @LuaFunction
-    public final MethodResult chunkAnalyze() {
+    public final MethodResult chunkAnalyze(@Nonnull IComputerAccess access) {
         Optional<MethodResult> checkResult = cooldownCheck(SCAN_OPERATION);
         if (checkResult.isPresent()) return checkResult.get();
         World world = getWorld();
@@ -140,12 +154,13 @@ public class GeoScannerPeripheral extends OperationPeripheral {
                 }
             }
         }
-        trackOperation(SCAN_OPERATION);
+        trackOperation(access, SCAN_OPERATION);
         return MethodResult.of(data);
     }
 
     @LuaFunction
-    public final MethodResult scan(int radius) {
+    public final MethodResult scan(@Nonnull IComputerAccess access, @Nonnull IArguments arguments) throws LuaException {
+        int radius = arguments.getInt(0);
         Optional<MethodResult> checkResult = cooldownCheck(SCAN_OPERATION);
         if (checkResult.isPresent()) return checkResult.get();
         BlockPos pos = getPos();
@@ -159,12 +174,12 @@ public class GeoScannerPeripheral extends OperationPeripheral {
             }
             LazyOptional<IEnergyStorage> lazyEnergyStorage = tileEntity.getCapability(CapabilityEnergy.ENERGY);
             int cost = estimateCost(radius);
-            if (!consumeFuel(cost, false)) {
+            if (!consumeFuel(access, cost, false)) {
                 return MethodResult.of(null, String.format("Not enough fuel, %d needed", cost));
             }
         }
         List<Map<String, ?>> scanResult = scan(world, pos.getX(), pos.getY(), pos.getZ(), Math.min(radius, 8));
-        trackOperation(SCAN_OPERATION);
+        trackOperation(access, SCAN_OPERATION);
         return MethodResult.of(scanResult);
     }
 }

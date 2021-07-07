@@ -1,12 +1,16 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.base;
 
+import dan200.computercraft.api.lua.IArguments;
+import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.lua.MethodResult;
+import dan200.computercraft.api.peripheral.IComputerAccess;
 import dan200.computercraft.api.turtle.ITurtleAccess;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.tileentity.TileEntity;
 
+import javax.annotation.Nonnull;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -16,7 +20,6 @@ import java.util.Optional;
 
 public abstract class OperationPeripheral extends FuelConsumingPeripheral{
 
-    private int fuelConsumptionRate = 1;
     private final Map<String, Timestamp> targetOperationTimestamp = new HashMap<>();
 
     public OperationPeripheral(String type, PeripheralTileEntity<?> tileEntity) {
@@ -35,30 +38,29 @@ public abstract class OperationPeripheral extends FuelConsumingPeripheral{
         super(type, turtle);
     }
 
-    protected int fuelConsumptionMultiply() {
-        return (int) Math.pow(2, fuelConsumptionRate - 1);
+    protected int fuelConsumptionMultiply(@Nonnull IComputerAccess access) {
+        return (int) Math.pow(2, getFuelConsumptionRate(access) - 1);
     }
 
     @Override
-    public boolean consumeFuel(int count) {
-        return super.consumeFuel(count * fuelConsumptionMultiply());
-    }
-
-    @Override
-    public boolean consumeFuel(int count, boolean simulate) {
-        return super.consumeFuel(count * fuelConsumptionMultiply(), simulate);
+    public boolean consumeFuel(@Nonnull IComputerAccess access, int count, boolean simulate) {
+        return super.consumeFuel(access, count * fuelConsumptionMultiply(access), simulate);
     }
 
     protected abstract int getRawCooldown(String name);
 
     protected abstract int getMaxFuelConsumptionRate();
 
-    public int getCooldown(String name) {
-        return getRawCooldown(name) / fuelConsumptionRate;
+    protected abstract int _getFuelConsumptionRate(@Nonnull IComputerAccess access);
+
+    protected abstract void _setFuelConsumptionRate(@Nonnull IComputerAccess access, int rate);
+
+    public int getCooldown(@Nonnull IComputerAccess access, String name) {
+        return getRawCooldown(name) / _getFuelConsumptionRate(access);
     }
 
-    public void trackOperation(String name) {
-        targetOperationTimestamp.put(name, Timestamp.valueOf(LocalDateTime.now().plus(getCooldown(name), ChronoUnit.MILLIS)));
+    public void trackOperation(@Nonnull IComputerAccess access, String name) {
+        targetOperationTimestamp.put(name, Timestamp.valueOf(LocalDateTime.now().plus(getCooldown(access, name), ChronoUnit.MILLIS)));
     }
 
     public Optional<MethodResult> cooldownCheck(String name){
@@ -84,8 +86,8 @@ public abstract class OperationPeripheral extends FuelConsumingPeripheral{
     }
 
     @LuaFunction
-    public final int getFuelConsumptionRate() {
-        return fuelConsumptionRate;
+    public final int getFuelConsumptionRate(@Nonnull IComputerAccess access) {
+        return _getFuelConsumptionRate(access);
     }
 
     @LuaFunction
@@ -96,13 +98,14 @@ public abstract class OperationPeripheral extends FuelConsumingPeripheral{
     }
 
     @LuaFunction
-    public final MethodResult setFuelConsumptionRate(int rate) {
+    public final MethodResult setFuelConsumptionRate(@Nonnull IComputerAccess access, @Nonnull IArguments arguments) throws LuaException {
+        int rate = arguments.getInt(0);
         int maxConsumptionRate = getMaxFuelConsumptionRate();
         if (rate > maxConsumptionRate)
             return MethodResult.of(null, String.format("Rate is bigger than max allowed %d", maxConsumptionRate));
         if (rate < 1)
             return MethodResult.of(null, "Consumption rate cannot be lower than 1");
-        fuelConsumptionRate = rate;
+        _setFuelConsumptionRate(access, rate);
         return MethodResult.of(true);
     }
 }

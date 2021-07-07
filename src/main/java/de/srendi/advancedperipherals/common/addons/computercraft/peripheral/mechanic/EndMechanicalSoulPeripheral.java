@@ -69,8 +69,8 @@ public class EndMechanicalSoulPeripheral extends WeakMechanicSoulPeripheral {
         return Pair.onlyRight(turtle.getUpgradeNBTData(sideResult.getRight()).getCompound(POINT_DATA_MARK));
     }
 
-    private int getWarpCost(BlockPos warpTarget) {
-        return (int) Math.sqrt(warpTarget.distManhattan(getPos())) * fuelConsumptionMultiply();
+    private int getWarpCost(@Nonnull IComputerAccess access, BlockPos warpTarget) {
+        return (int) Math.sqrt(warpTarget.distManhattan(getPos())) * fuelConsumptionMultiply(access);
     }
 
     @LuaFunction
@@ -120,17 +120,17 @@ public class EndMechanicalSoulPeripheral extends WeakMechanicSoulPeripheral {
         TurtleBlockEvent.Move moveEvent = new TurtleBlockEvent.Move(turtle, turtlePlayer, getWorld(), newPosition);
         if (MinecraftForge.EVENT_BUS.post(moveEvent))
             return MethodResult.of(null, "Move forbidden");
-        int warpCost = getWarpCost(newPosition);
-        if (consumeFuel(warpCost, true)) {
+        int warpCost = getWarpCost(access, newPosition);
+        if (consumeFuel(access, warpCost, true)) {
             boolean teleportResult = turtle.teleportTo(getWorld(), newPosition);
             if (teleportResult) {
-                consumeFuel(warpCost, false);
+                consumeFuel(access, warpCost, false);
                 return MethodResult.of(true);
             } else {
                 return MethodResult.of(null, "Cannot teleport to location");
             }
         }
-        trackOperation(WARP_OPERATION);
+        trackOperation(access, WARP_OPERATION);
         return MethodResult.of(null, String.format("Not enough fuel, %d needed", warpCost));
     }
 
@@ -142,7 +142,7 @@ public class EndMechanicalSoulPeripheral extends WeakMechanicSoulPeripheral {
         }
         CompoundNBT data = pairData.getRight();
         BlockPos newPosition = NBTUtil.blockPosFromNBT(data.getCompound(name));
-        return MethodResult.of(getWarpCost(newPosition));
+        return MethodResult.of(getWarpCost(access, newPosition));
     }
 
     @LuaFunction

@@ -8,6 +8,7 @@ import dan200.computercraft.api.peripheral.IComputerAccess;
 import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
 import dan200.computercraft.shared.util.InventoryUtil;
+import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.addons.computercraft.base.OperationPeripheral;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
 import de.srendi.advancedperipherals.common.items.WeakMechanicSoul;
@@ -18,11 +19,13 @@ import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.*;
 import net.minecraftforge.energy.CapabilityEnergy;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.HashMap;
@@ -36,6 +39,8 @@ public class WeakMechanicSoulPeripheral extends OperationPeripheral {
     protected static final String DIG_OPERATION = "dig";
     protected static final String CLICK_OPERATION = "click";
     protected static final String SUCK_OPERATION = "suck";
+    protected static final String FUEL_CONSUMING_RATE_SETTING = "FUEL_CONSUMING_RATE";
+    protected static final int DEFAULT_FUEL_CONSUMING_RATE = 1;
 
     public WeakMechanicSoulPeripheral(String type, ITurtleAccess turtle) {
         super(type, turtle);
@@ -54,6 +59,28 @@ public class WeakMechanicSoulPeripheral extends OperationPeripheral {
     @Override
     protected int getMaxFuelConsumptionRate() {
         return AdvancedPeripheralsConfig.weakMechanicSoulMaxFuelConsumptionLevel;
+    }
+
+    @Override
+    protected int _getFuelConsumptionRate(@NotNull IComputerAccess access) {
+        Pair<MethodResult, Integer> searchResult = getIntSetting(access, FUEL_CONSUMING_RATE_SETTING);
+        if (searchResult.rightPresent()) {
+            int rate = searchResult.getRight();
+            if (rate == 0) {
+                _setFuelConsumptionRate(access, DEFAULT_FUEL_CONSUMING_RATE);
+                return DEFAULT_FUEL_CONSUMING_RATE;
+            }
+            return searchResult.getRight();
+        }
+        AdvancedPeripherals.LOGGER.error("Lost error: " + searchResult.getLeft().toString());
+        return DEFAULT_FUEL_CONSUMING_RATE;
+    }
+
+    @Override
+    protected void _setFuelConsumptionRate(@NotNull IComputerAccess access, int rate) {
+        Pair<MethodResult, Boolean> setResult = setIntSetting(access, FUEL_CONSUMING_RATE_SETTING, rate);
+        if (setResult.leftPresent())
+            AdvancedPeripherals.LOGGER.error("Lost error: " + setResult.getLeft().toString());
     }
 
     public int getItemSuckRadius() {
@@ -92,6 +119,21 @@ public class WeakMechanicSoulPeripheral extends OperationPeripheral {
             return Pair.onlyLeft(MethodResult.of(null, e.getMessage()));
         }
         return Pair.onlyRight(side);
+    }
+
+    protected Pair<MethodResult, CompoundNBT> getSettings(@Nonnull IComputerAccess access) {
+        return getTurtleSide(access).mapRight(side -> turtle.getUpgradeNBTData(side));
+    }
+
+    protected Pair<MethodResult, Boolean> setIntSetting(@Nonnull IComputerAccess access, String name, int value) {
+        return getSettings(access).mapRight(data -> {
+            data.putInt(name, value);
+            return true;
+        });
+    }
+
+    protected Pair<MethodResult, Integer> getIntSetting(@Nonnull IComputerAccess access, String name) {
+        return getSettings(access).mapRight(data -> data.getInt(name));
     }
 
     protected AxisAlignedBB getBox(BlockPos pos, int radius) {
@@ -138,7 +180,7 @@ public class WeakMechanicSoulPeripheral extends OperationPeripheral {
     }
 
     @LuaFunction
-    public Map<String, Object> getConfiguration() {
+    public Map<String, Object> getConfiguration(@Nonnull IComputerAccess access) {
         Map<String, Object> result = super.getConfiguration();
         result.put("digCost", AdvancedPeripheralsConfig.digBlockCost);
         result.put("digCooldown", AdvancedPeripheralsConfig.digBlockCooldown);
@@ -146,7 +188,7 @@ public class WeakMechanicSoulPeripheral extends OperationPeripheral {
         result.put("clickCooldown", AdvancedPeripheralsConfig.clickBlockCooldown);
         result.put("suckCost", AdvancedPeripheralsConfig.suckItemCost);
         result.put("suckCooldown", AdvancedPeripheralsConfig.suckItemCooldown);
-        result.put("fuelConsumptionRate", getFuelConsumptionRate());
+        result.put("fuelConsumptionRate", getFuelConsumptionRate(access));
         result.put("maxFuelConsumptionRate", getMaxFuelConsumptionRate());
         result.put("suckRadius", getItemSuckRadius());
         return result;
@@ -210,7 +252,7 @@ public class WeakMechanicSoulPeripheral extends OperationPeripheral {
         if (checkResults.isPresent()) return checkResults.get();
         checkResults = cooldownCheck(DIG_OPERATION);
         if (checkResults.isPresent()) return checkResults.get();
-        checkResults = consumeFuelOp(AdvancedPeripheralsConfig.digBlockCost);
+        checkResults = consumeFuelOp(access, AdvancedPeripheralsConfig.digBlockCost);
         if (checkResults.isPresent()) return checkResults.map(result -> fuelErrorCallback(access, result)).get();
 
         Pair<Boolean, String> result = FakePlayerProviderTurtle.withPlayer(turtle, turtleFakePlayer -> turtleFakePlayer.digBlock(turtle.getDirection().getOpposite()));
@@ -218,7 +260,7 @@ public class WeakMechanicSoulPeripheral extends OperationPeripheral {
             return MethodResult.of(null, result.getRight());
         }
 
-        trackOperation(DIG_OPERATION);
+        trackOperation(access, DIG_OPERATION);
         return MethodResult.of(true);
     }
 
@@ -228,11 +270,11 @@ public class WeakMechanicSoulPeripheral extends OperationPeripheral {
         if (checkResults.isPresent()) return checkResults.get();
         checkResults = cooldownCheck(CLICK_OPERATION);
         if (checkResults.isPresent()) return checkResults.get();
-        checkResults = consumeFuelOp(AdvancedPeripheralsConfig.clickBlockCost);
+        checkResults = consumeFuelOp(access, AdvancedPeripheralsConfig.clickBlockCost);
         if (checkResults.isPresent()) return checkResults.map(result -> fuelErrorCallback(access, result)).get();
 
         ActionResultType result = FakePlayerProviderTurtle.withPlayer(turtle, TurtleFakePlayer::useOnBlock);
-        trackOperation(CLICK_OPERATION);
+        trackOperation(access, CLICK_OPERATION);
         return MethodResult.of(true, result.toString());
     }
 
@@ -265,7 +307,7 @@ public class WeakMechanicSoulPeripheral extends OperationPeripheral {
         if (checkResults.isPresent()) return checkResults.get();
         checkResults = cooldownCheck(SUCK_OPERATION);
         if (checkResults.isPresent()) return checkResults.get();
-        checkResults = consumeFuelOp(AdvancedPeripheralsConfig.suckItemCost);
+        checkResults = consumeFuelOp(access, AdvancedPeripheralsConfig.suckItemCost);
         if (checkResults.isPresent()) return checkResults.map(result -> fuelErrorCallback(access, result)).get();
 
         int requiredQuantity = arguments.optInt(1, Integer.MAX_VALUE);
@@ -280,7 +322,7 @@ public class WeakMechanicSoulPeripheral extends OperationPeripheral {
             }
         }
 
-        trackOperation(SUCK_OPERATION);
+        trackOperation(access, SUCK_OPERATION);
         return MethodResult.of(true);
     }
 
@@ -303,7 +345,7 @@ public class WeakMechanicSoulPeripheral extends OperationPeripheral {
 
         for (ItemEntity entity : items) {
             int consumedCount = Math.min(entity.getItem().getCount(), requiredQuantity);
-            if (!consumeFuel(consumedCount * AdvancedPeripheralsConfig.suckItemCost))
+            if (!consumeFuel(access, consumedCount * AdvancedPeripheralsConfig.suckItemCost))
                 return fuelErrorCallback(access, MethodResult.of(null, "Not enough fuel to continue sucking"));
             requiredQuantity -= suckItem(entity, requiredQuantity);
             if (requiredQuantity <= 0) {
@@ -311,7 +353,7 @@ public class WeakMechanicSoulPeripheral extends OperationPeripheral {
             }
         }
 
-        trackOperation(SUCK_OPERATION);
+        trackOperation(access, SUCK_OPERATION);
         return MethodResult.of(true);
     }
 
