@@ -8,6 +8,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.Pose;
 import net.minecraft.entity.ai.attributes.ModifiableAttributeInstance;
+import net.minecraft.entity.passive.CowEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
@@ -33,10 +34,12 @@ import net.minecraftforge.eventbus.api.Event;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.lang.ref.WeakReference;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Function;
 import java.util.function.Predicate;
 
 public class TurtleFakePlayer extends FakePlayer {
@@ -176,6 +179,10 @@ public class TurtleFakePlayer extends FakePlayer {
         return use(false, true);
     }
 
+    public ActionResultType useOnFilteredEntity(Function<Entity, Boolean> filter) {
+        return use(false, true);
+    }
+
     public ActionResultType useOnSpecificEntity(@NotNull Entity entity, RayTraceResult result){
         ActionResultType simpleInteraction = interactOn(entity, Hand.MAIN_HAND);
         if (simpleInteraction == ActionResultType.SUCCESS)
@@ -185,9 +192,12 @@ public class TurtleFakePlayer extends FakePlayer {
         }
         return entity.interactAt(this, result.getLocation(), Hand.MAIN_HAND);
     }
-
     public ActionResultType use(boolean skipEntity, boolean skipBlock) {
-        RayTraceResult hit = findHit(skipEntity, skipBlock);
+        return use(skipEntity, skipBlock, null);
+    }
+
+    public ActionResultType use(boolean skipEntity, boolean skipBlock, @Nullable Function<Entity, Boolean> entityFilter) {
+        RayTraceResult hit = findHit(skipEntity, skipBlock, entityFilter);
 
         if (hit instanceof BlockRayTraceResult) {
 
@@ -231,8 +241,12 @@ public class TurtleFakePlayer extends FakePlayer {
         return ActionResultType.FAIL;
     }
 
-    @Nonnull
     public RayTraceResult findHit(boolean skipEntity, boolean skipBlock) {
+        return findHit(skipEntity, skipBlock, null);
+    }
+
+    @Nonnull
+    public RayTraceResult findHit(boolean skipEntity, boolean skipBlock, @Nullable Function<Entity, Boolean> entityFilter) {
         ModifiableAttributeInstance reachAttribute = getAttribute(ForgeMod.REACH_DISTANCE.get());
         if (reachAttribute == null) {
             throw new IllegalArgumentException("How did this happened?");
@@ -268,17 +282,21 @@ public class TurtleFakePlayer extends FakePlayer {
                 collidablePredicate
         );
 
-        Entity closestEntity = null;
+        LivingEntity closestEntity = null;
         Vector3d closestVec = null;
         double closestDistance = range;
         for (Entity entityHit : entities) {
+            if (!(entityHit instanceof LivingEntity))
+                continue;
+            if (entityFilter != null && !entityFilter.apply(entityHit))
+                continue;
             // Add litter bigger that just pick radius
             AxisAlignedBB box = entityHit.getBoundingBox().inflate(entityHit.getPickRadius() + 0.5);
             Optional<Vector3d> clipResult = box.clip(origin, target);
 
             if (box.contains(origin)) {
                 if (closestDistance >= 0.0D) {
-                    closestEntity = entityHit;
+                    closestEntity = (LivingEntity) entityHit;
                     closestVec = clipResult.orElse(origin);
                     closestDistance = 0.0D;
                 }
@@ -289,18 +307,18 @@ public class TurtleFakePlayer extends FakePlayer {
                 if (distance < closestDistance || closestDistance == 0.0D) {
                     if (entityHit == entityHit.getRootVehicle() && !entityHit.canRiderInteract()) {
                         if (closestDistance == 0.0D) {
-                            closestEntity = entityHit;
+                            closestEntity = (LivingEntity) entityHit;
                             closestVec = clipVec;
                         }
                     } else {
-                        closestEntity = entityHit;
+                        closestEntity = (LivingEntity) entityHit;
                         closestVec = clipVec;
                         closestDistance = distance;
                     }
                 }
             }
         }
-        if (closestEntity instanceof LivingEntity && closestDistance <= range && (blockHit.getType() == RayTraceResult.Type.MISS || distanceToSqr(blockHit.getLocation()) > closestDistance * closestDistance)) {
+        if (closestEntity != null && closestDistance <= range && (blockHit.getType() == RayTraceResult.Type.MISS || distanceToSqr(blockHit.getLocation()) > closestDistance * closestDistance)) {
             return new EntityRayTraceResult(closestEntity, closestVec);
         } else {
             return blockHit;

@@ -57,8 +57,8 @@ public class ConfigHandler {
         AdvancedPeripheralsConfig.suckItemCooldown = ConfigHolder.COMMON_CONFIG.SUCK_ITEM_COOLDOWN.get();
         AdvancedPeripheralsConfig.digBlockCost = ConfigHolder.COMMON_CONFIG.DIG_BLOCK_COST.get();
         AdvancedPeripheralsConfig.digBlockCooldown = ConfigHolder.COMMON_CONFIG.DIG_BLOCK_COOLDOWN.get();
-        AdvancedPeripheralsConfig.clickBlockCost = ConfigHolder.COMMON_CONFIG.CLICK_BLOCK_COST.get();
-        AdvancedPeripheralsConfig.clickBlockCooldown = ConfigHolder.COMMON_CONFIG.CLICK_BLOCK_COOLDOWN.get();
+        AdvancedPeripheralsConfig.clickBlockCost = ConfigHolder.COMMON_CONFIG.USE_ON_BLOCK_COST.get();
+        AdvancedPeripheralsConfig.useOnBlockCooldown = ConfigHolder.COMMON_CONFIG.USE_ON_BLOCK_COOLDOWN.get();
         AdvancedPeripheralsConfig.warpCooldown = ConfigHolder.COMMON_CONFIG.WARP_COOLDOWN.get();
         AdvancedPeripheralsConfig.enableWeakMechanicSoul = ConfigHolder.COMMON_CONFIG.ENABLE_WEAK_MECHANIC_SOUL.get();
         AdvancedPeripheralsConfig.weakMechanicSoulSuckRange = ConfigHolder.COMMON_CONFIG.WEAK_MECHANIC_SOUL_TURTLE_SUCK_RANGE.get();

@@ -7,13 +7,13 @@ import de.srendi.advancedperipherals.common.setup.Items;
 import net.minecraft.client.renderer.model.ModelResourceLocation;
 import net.minecraft.item.ItemStack;
 
-public class TurtleOverpoweredWeakMechanicSoul extends BaseTurtle {
+public class TurtleOverpoweredWeakMechanicSoul extends BaseTurtle<OverpoweredWeakMechanicSoulPeripheral> {
     public TurtleOverpoweredWeakMechanicSoul() {
         super("overpowered_weak_mechanic_soul_turtle", "turtle.advancedperipherals.overpowered_weak_mechanic_soul", new ItemStack(Items.OVERPOWERED_WEAK_MECHANIC_SOUL.get()));
     }
 
     @Override
-    protected WeakMechanicSoulPeripheral createPeripheral() {
+    protected OverpoweredWeakMechanicSoulPeripheral createPeripheral() {
         return new OverpoweredWeakMechanicSoulPeripheral("overpoweredWeakMechanicSoul", null);
     }
 

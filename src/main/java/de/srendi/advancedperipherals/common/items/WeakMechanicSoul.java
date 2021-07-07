@@ -6,6 +6,10 @@ import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.monster.EndermanEntity;
+import net.minecraft.entity.passive.ChickenEntity;
+import net.minecraft.entity.passive.CowEntity;
+import net.minecraft.entity.passive.SheepEntity;
+import net.minecraft.entity.passive.horse.HorseEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -63,6 +67,10 @@ public class WeakMechanicSoul extends APItem {
     // So, I have to duplicate <> description for some reason, because linter refused to work)
     private final static Map<Class<? extends Entity>, Integer> entityRegister = new HashMap<Class<? extends Entity>, Integer>() {{
         put(EndermanEntity.class, 1);
+        put(CowEntity.class, 2);
+        put(SheepEntity.class, 3);
+        put(ChickenEntity.class, 4);
+        put(HorseEntity.class, 5);
     }};
 
     private final static Map<Integer, Class<? extends Entity>> reverseEntityRegister = new HashMap<Integer, Class<? extends Entity>>() {{
@@ -73,7 +81,16 @@ public class WeakMechanicSoul extends APItem {
         MechanicalSoulRecord endSoulRecord = new MechanicalSoulRecord(
                 new HashMap<>(){{ put(EndermanEntity.class, 10); }}, Items.END_MECHANIC_SOUL.get()
         );
-        put(EndermanEntity.class, endSoulRecord);
+        MechanicalSoulRecord husbandrySoulRecord = new MechanicalSoulRecord(
+                new HashMap<>() {{
+                    put(CowEntity.class, 3);
+                    put(SheepEntity.class, 3);
+                    put(ChickenEntity.class, 3);
+                    put(HorseEntity.class, 1);
+                }}, Items.HUSBANDRY_MECHANIC_SOUL.get()
+        );
+        endSoulRecord.ingredients.keySet().forEach(entityClass -> put(entityClass, endSoulRecord));
+        husbandrySoulRecord.ingredients.keySet().forEach(entityClass -> put(entityClass, husbandrySoulRecord));
     }};
 
     public WeakMechanicSoul(Properties properties, String turtleID, String pocketID, ITextComponent description) {

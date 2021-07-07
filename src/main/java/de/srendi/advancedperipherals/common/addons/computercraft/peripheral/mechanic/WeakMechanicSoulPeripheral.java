@@ -37,7 +37,7 @@ import java.util.stream.Collectors;
 public class WeakMechanicSoulPeripheral extends OperationPeripheral {
 
     protected static final String DIG_OPERATION = "dig";
-    protected static final String CLICK_OPERATION = "click";
+    protected static final String USE_ON_BLOCK_OPERATION = "useOnBlock";
     protected static final String SUCK_OPERATION = "suck";
     protected static final String FUEL_CONSUMING_RATE_SETTING = "FUEL_CONSUMING_RATE";
     protected static final int DEFAULT_FUEL_CONSUMING_RATE = 1;
@@ -50,7 +50,7 @@ public class WeakMechanicSoulPeripheral extends OperationPeripheral {
     protected int getRawCooldown(String name) {
         switch (name) {
             case DIG_OPERATION: return AdvancedPeripheralsConfig.digBlockCooldown;
-            case CLICK_OPERATION: return AdvancedPeripheralsConfig.clickBlockCooldown;
+            case USE_ON_BLOCK_OPERATION: return AdvancedPeripheralsConfig.useOnBlockCooldown;
             case SUCK_OPERATION: return AdvancedPeripheralsConfig.suckItemCooldown;
         }
         throw new IllegalArgumentException(String.format("Cannot find cooldown for op %s", name));
@@ -184,8 +184,8 @@ public class WeakMechanicSoulPeripheral extends OperationPeripheral {
         Map<String, Object> result = super.getConfiguration();
         result.put("digCost", AdvancedPeripheralsConfig.digBlockCost);
         result.put("digCooldown", AdvancedPeripheralsConfig.digBlockCooldown);
-        result.put("clickCost", AdvancedPeripheralsConfig.clickBlockCost);
-        result.put("clickCooldown", AdvancedPeripheralsConfig.clickBlockCooldown);
+        result.put("useOnBlockCost", AdvancedPeripheralsConfig.clickBlockCost);
+        result.put("useOnBlockCooldown", AdvancedPeripheralsConfig.useOnBlockCooldown);
         result.put("suckCost", AdvancedPeripheralsConfig.suckItemCost);
         result.put("suckCooldown", AdvancedPeripheralsConfig.suckItemCooldown);
         result.put("fuelConsumptionRate", getFuelConsumptionRate(access));
@@ -205,8 +205,8 @@ public class WeakMechanicSoulPeripheral extends OperationPeripheral {
     }
 
     @LuaFunction
-    public int getClickCooldown() {
-        return getCurrentCooldown(CLICK_OPERATION);
+    public int getUseOnBlockCooldown() {
+        return getCurrentCooldown(USE_ON_BLOCK_OPERATION);
     }
 
     @LuaFunction
@@ -265,16 +265,16 @@ public class WeakMechanicSoulPeripheral extends OperationPeripheral {
     }
 
     @LuaFunction(mainThread = true)
-    public final MethodResult clickBlock(@Nonnull IComputerAccess access) {
+    public final MethodResult useOnBlock(@Nonnull IComputerAccess access) {
         Optional<MethodResult> checkResults = turtleChecks();
         if (checkResults.isPresent()) return checkResults.get();
-        checkResults = cooldownCheck(CLICK_OPERATION);
+        checkResults = cooldownCheck(USE_ON_BLOCK_OPERATION);
         if (checkResults.isPresent()) return checkResults.get();
         checkResults = consumeFuelOp(access, AdvancedPeripheralsConfig.clickBlockCost);
         if (checkResults.isPresent()) return checkResults.map(result -> fuelErrorCallback(access, result)).get();
 
         ActionResultType result = FakePlayerProviderTurtle.withPlayer(turtle, TurtleFakePlayer::useOnBlock);
-        trackOperation(access, CLICK_OPERATION);
+        trackOperation(access, USE_ON_BLOCK_OPERATION);
         return MethodResult.of(true, result.toString());
     }
 

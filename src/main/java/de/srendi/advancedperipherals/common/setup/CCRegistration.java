@@ -20,6 +20,7 @@ public class CCRegistration {
     public static TurtleGeoScanner geoScanner;
     public static TurtleWeakMechanicSoul weakMechanicSoul;
     public static TurtleEndMechanicSoul endMechanicSoul;
+    public static TurtleHusbandryMechanicSoul husbandryMechanicSoul;
     public static TurtleOverpoweredWeakMechanicSoul overpoweredWeakMechanicSoul;
 
     public static PocketEnvironment environmentPocket;
@@ -63,6 +64,8 @@ public class CCRegistration {
         ComputerCraftAPI.registerTurtleUpgrade(weakMechanicSoul);
         endMechanicSoul = new TurtleEndMechanicSoul();
         ComputerCraftAPI.registerTurtleUpgrade(endMechanicSoul);
+        husbandryMechanicSoul = new TurtleHusbandryMechanicSoul();
+        ComputerCraftAPI.registerTurtleUpgrade(husbandryMechanicSoul);
         overpoweredWeakMechanicSoul = new TurtleOverpoweredWeakMechanicSoul();
         ComputerCraftAPI.registerTurtleUpgrade(overpoweredWeakMechanicSoul);
     }
