@@ -11,7 +11,7 @@ import de.srendi.advancedperipherals.common.addons.computercraft.integrations.im
 import de.srendi.advancedperipherals.common.addons.computercraft.integrations.immersiveengineering.RedstoneProbeIntegration;
 import de.srendi.advancedperipherals.common.addons.computercraft.integrations.integrateddynamics.VariableStoreIntegration;
 import de.srendi.advancedperipherals.common.addons.computercraft.integrations.mekanism.*;
-import de.srendi.advancedperipherals.common.addons.computercraft.integrations.storagedrawers.StandardDrawerIntegration;
+import de.srendi.advancedperipherals.common.addons.computercraft.integrations.storagedrawers.DrawerIntegration;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
@@ -59,7 +59,7 @@ public class IntegrationPeripheralProvider implements IPeripheralProvider {
             registerIntegration(new VariableStoreIntegration());
         }
         if (ModList.get().isLoaded("storagedrawers")) {
-            registerIntegration(new StandardDrawerIntegration());
+            registerIntegration(new DrawerIntegration());
         }
     }
 

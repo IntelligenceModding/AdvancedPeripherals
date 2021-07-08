@@ -3,6 +3,7 @@ package de.srendi.advancedperipherals.common.addons.computercraft.integrations.s
 import com.jaquadro.minecraft.storagedrawers.api.storage.IDrawer;
 import com.jaquadro.minecraft.storagedrawers.api.storage.IDrawerAttributes;
 import com.jaquadro.minecraft.storagedrawers.api.storage.IDrawerGroup;
+import com.jaquadro.minecraft.storagedrawers.block.tile.TileEntityDrawers;
 import com.jaquadro.minecraft.storagedrawers.block.tile.TileEntityDrawersStandard;
 import dan200.computercraft.api.lua.IArguments;
 import dan200.computercraft.api.lua.LuaException;
@@ -20,7 +21,6 @@ import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
@@ -29,15 +29,15 @@ import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class StandardDrawerIntegration extends Integration<TileEntityDrawersStandard> {
+public class DrawerIntegration extends Integration<TileEntityDrawers> {
     @Override
-    protected Class<TileEntityDrawersStandard> getTargetClass() {
-        return TileEntityDrawersStandard.class;
+    protected Class<TileEntityDrawers> getTargetClass() {
+        return TileEntityDrawers.class;
     }
 
     @Override
     public Integration<?> getNewInstance() {
-        return new StandardDrawerIntegration();
+        return new DrawerIntegration();
     }
 
     @Nullable
