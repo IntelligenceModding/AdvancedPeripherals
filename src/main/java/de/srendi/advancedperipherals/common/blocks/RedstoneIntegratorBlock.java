@@ -1,5 +1,6 @@
 package de.srendi.advancedperipherals.common.blocks;
 
+import de.srendi.advancedperipherals.common.blocks.base.APTileEntityBlock;
 import de.srendi.advancedperipherals.common.blocks.base.BaseTileEntityBlock;
 import de.srendi.advancedperipherals.common.blocks.tileentity.RedstoneIntegratorTile;
 import de.srendi.advancedperipherals.common.setup.Blocks;
@@ -22,8 +23,6 @@ import net.minecraft.world.IWorld;
 import org.jetbrains.annotations.Nullable;
 
 public class RedstoneIntegratorBlock extends BaseTileEntityBlock {
-
-    public static final DirectionProperty FACING = HorizontalBlock.FACING;
 
     public RedstoneIntegratorBlock() {
         super(Properties.of(Material.METAL).isRedstoneConductor(Blocks::never));
@@ -53,17 +52,17 @@ public class RedstoneIntegratorBlock extends BaseTileEntityBlock {
 
     @Override
     public BlockState rotate(BlockState state, IWorld world, BlockPos pos, Rotation direction) {
-        return state.setValue(FACING, direction.rotate(state.getValue(FACING)));
+        return state.setValue(APTileEntityBlock.FACING, direction.rotate(state.getValue(APTileEntityBlock.FACING)));
     }
 
     @Override
     public BlockState mirror(BlockState state, Mirror mirror) {
-        return state.setValue(FACING, mirror.mirror(state.getValue(FACING)));
+        return state.setValue(APTileEntityBlock.FACING, mirror.mirror(state.getValue(APTileEntityBlock.FACING)));
     }
 
     @Override
     protected void createBlockStateDefinition(StateContainer.Builder<Block, BlockState> builder) {
-        builder.add(FACING);
+        builder.add(APTileEntityBlock.FACING);
     }
 
     @Nullable
@@ -71,7 +70,7 @@ public class RedstoneIntegratorBlock extends BaseTileEntityBlock {
     public BlockState getStateForPlacement(BlockItemUseContext context) {
         PlayerEntity player = context.getPlayer();
         Direction facing = player.getDirection().getOpposite();
-        return defaultBlockState().setValue(FACING, facing);
+        return defaultBlockState().setValue(APTileEntityBlock.FACING, facing);
     }
 
 }

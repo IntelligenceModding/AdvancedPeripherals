@@ -61,13 +61,4 @@ public class RedstoneIntegratorPeripheral extends BasePeripheral {
         return (RedstoneIntegratorTile) tileEntity;
     }
 
-    private Direction validateSide(String direction) throws LuaException {
-        ComputerSide dir;
-        try {
-            dir = ComputerSide.valueOf(direction.toUpperCase(Locale.ROOT));
-        } catch (IllegalArgumentException exception) {
-            throw new LuaException(direction + " is not a valid side.");
-        }
-        return getTileEntity().getDirecton(dir);
-    }
 }

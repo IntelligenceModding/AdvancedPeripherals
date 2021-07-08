@@ -1,12 +1,16 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.base;
 
+import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.peripheral.IComputerAccess;
 import dan200.computercraft.api.peripheral.IPeripheral;
 import dan200.computercraft.api.turtle.ITurtleAccess;
+import dan200.computercraft.core.computer.ComputerSide;
+import de.srendi.advancedperipherals.common.blocks.base.APTileEntityBlock;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
@@ -14,6 +18,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public abstract class BasePeripheral implements IPeripheral {
 
@@ -111,5 +116,15 @@ public abstract class BasePeripheral implements IPeripheral {
 
     public void setTurtle(ITurtleAccess turtle) {
         this.turtle = turtle;
+    }
+
+    protected Direction validateSide(String direction) throws LuaException {
+        ComputerSide dir;
+        try {
+            dir = ComputerSide.valueOf(direction.toUpperCase(Locale.ROOT));
+        } catch (IllegalArgumentException exception) {
+            throw new LuaException(direction + " is not a valid side.");
+        }
+        return Converter.getDirection(tileEntity.getBlockState().getValue(APTileEntityBlock.FACING) ,dir);
     }
 }
