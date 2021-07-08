@@ -145,8 +145,11 @@ dependencies {
     //Immersive Engineering
     compileOnly fg.deobf("curse.maven:immersiveengineering-${immersive_engineering_version}")
 
+    // Storage Drawers
+    implementation fg.deobf("curse.maven:storagedrawers-${storagedrawers_version}")
+
     //Mods to test stuff(Not required mods)
-    //runtimeOnly fg.deobf("mcjty.theoneprobe:TheOneProbe-1.16:${top_version}")
+    runtimeOnly fg.deobf("mcjty.theoneprobe:TheOneProbe-1.16:${top_version}")
     runtimeOnly fg.deobf("mezz.jei:jei-${jei_version}")
 
 }
