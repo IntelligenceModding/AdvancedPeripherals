@@ -60,6 +60,10 @@ public class ConfigHandler {
         AdvancedPeripheralsConfig.clickBlockCost = ConfigHolder.COMMON_CONFIG.USE_ON_BLOCK_COST.get();
         AdvancedPeripheralsConfig.useOnBlockCooldown = ConfigHolder.COMMON_CONFIG.USE_ON_BLOCK_COOLDOWN.get();
         AdvancedPeripheralsConfig.warpCooldown = ConfigHolder.COMMON_CONFIG.WARP_COOLDOWN.get();
+        AdvancedPeripheralsConfig.useOnAnimalCost = ConfigHolder.COMMON_CONFIG.USE_ON_ANIMAL_COST.get();
+        AdvancedPeripheralsConfig.useOnAnimalCooldown = ConfigHolder.COMMON_CONFIG.USE_ON_ANIMAL_COOLDOWN.get();
+        AdvancedPeripheralsConfig.captureAnimalCost = ConfigHolder.COMMON_CONFIG.CAPTURE_ANIMAL_COST.get();
+        AdvancedPeripheralsConfig.captureAnimalCooldown = ConfigHolder.COMMON_CONFIG.CAPTURE_ANIMAL_COOLDOWN.get();
         AdvancedPeripheralsConfig.enableWeakMechanicSoul = ConfigHolder.COMMON_CONFIG.ENABLE_WEAK_MECHANIC_SOUL.get();
         AdvancedPeripheralsConfig.weakMechanicSoulInteractionRadius = ConfigHolder.COMMON_CONFIG.WEAK_MECHANIC_SOUL_TURTLE_INTERACTION_RANGE.get();
         AdvancedPeripheralsConfig.weakMechanicSoulMaxFuelConsumptionLevel = ConfigHolder.COMMON_CONFIG.WEAK_MECHANIC_SOUL_TURTLE_MAX_FUEL_CONSUMPTION_LEVEL.get();

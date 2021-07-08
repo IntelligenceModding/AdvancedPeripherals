@@ -40,6 +40,10 @@ public class AdvancedPeripheralsConfig {
     public static int clickBlockCost;
     public static int useOnBlockCooldown;
     public static int warpCooldown;
+    public static int useOnAnimalCost;
+    public static int useOnAnimalCooldown;
+    public static int captureAnimalCost;
+    public static int captureAnimalCooldown;
     public static boolean enableWeakMechanicSoul;
     public static int weakMechanicSoulInteractionRadius;
     public static int weakMechanicSoulMaxFuelConsumptionLevel;
@@ -93,6 +97,10 @@ public class AdvancedPeripheralsConfig {
         final ForgeConfigSpec.IntValue USE_ON_BLOCK_COST;
         final ForgeConfigSpec.IntValue USE_ON_BLOCK_COOLDOWN;
         final ForgeConfigSpec.IntValue WARP_COOLDOWN;
+        final ForgeConfigSpec.IntValue USE_ON_ANIMAL_COST;
+        final ForgeConfigSpec.IntValue USE_ON_ANIMAL_COOLDOWN;
+        final ForgeConfigSpec.IntValue CAPTURE_ANIMAL_COST;
+        final ForgeConfigSpec.IntValue CAPTURE_ANIMAL_COOLDOWN;
         final ForgeConfigSpec.IntValue WEAK_MECHANIC_SOUL_TURTLE_INTERACTION_RANGE;
         final ForgeConfigSpec.IntValue WEAK_MECHANIC_SOUL_TURTLE_MAX_FUEL_CONSUMPTION_LEVEL;
         final ForgeConfigSpec.IntValue END_MECHANIC_SOUL_TURTLE_INTERACTION_RANGE;
@@ -147,9 +155,13 @@ public class AdvancedPeripheralsConfig {
             SUCK_ITEM_COOLDOWN = builder.comment("Defines cooldown of suck single item").defineInRange("suckItemCooldown", 1_000, 0, Integer.MAX_VALUE);
             DIG_BLOCK_COST = builder.comment("Defines cost of dig block action").defineInRange("digBlockCost", 1, 1, Integer.MAX_VALUE);
             DIG_BLOCK_COOLDOWN = builder.comment("Defines cooldown of dig block action").defineInRange("digBlockCooldown", 100, 0, Integer.MAX_VALUE);
-            USE_ON_BLOCK_COST = builder.comment("Defines cost of use on  block action").defineInRange("useOnBlockCost", 1, 1, Integer.MAX_VALUE);
+            USE_ON_BLOCK_COST = builder.comment("Defines cost of use on block action").defineInRange("useOnBlockCost", 1, 1, Integer.MAX_VALUE);
             USE_ON_BLOCK_COOLDOWN = builder.comment("Defines cooldown of use on block action").defineInRange("useOnBlockCooldown", 5_000, 0, Integer.MAX_VALUE);
             WARP_COOLDOWN = builder.comment("Defines cooldown of warp action").defineInRange("warpCooldown", 1_000, 0, Integer.MAX_VALUE);
+            USE_ON_ANIMAL_COST = builder.comment("Defines cost of use on animal action").defineInRange("useOnAnimalCost", 10, 1, Integer.MAX_VALUE);
+            USE_ON_ANIMAL_COOLDOWN = builder.comment("Defines cooldown of use on animal action").defineInRange("useOnAnimalCooldown", 2_500, 0, Integer.MAX_VALUE);
+            CAPTURE_ANIMAL_COST = builder.comment("Defines cost of capture animal action").defineInRange("captureAnimalCost", 100, 1, Integer.MAX_VALUE);
+            CAPTURE_ANIMAL_COOLDOWN = builder.comment("Defines cooldown of capture animal action").defineInRange("captureAnimalCooldown", 50_000, 0, Integer.MAX_VALUE);
             ENABLE_WEAK_MECHANIC_SOUL = builder.comment("Enable the weak mechanic soul or not").define("enableWeakMechanicSoul", true);
             WEAK_MECHANIC_SOUL_TURTLE_INTERACTION_RANGE = builder.comment("Defines weak mechanic soul turtle interaction range").defineInRange("weakMechanicSoulInteractionRange", 2, 1, 10);
             WEAK_MECHANIC_SOUL_TURTLE_MAX_FUEL_CONSUMPTION_LEVEL = builder.comment("Defines weak mechanic soul turtle max fuel consumption level").defineInRange("weakMechanicSoulMaxFuelConsumptionLevel", 2, 1, 10);

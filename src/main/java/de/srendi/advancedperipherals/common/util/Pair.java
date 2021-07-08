@@ -1,5 +1,6 @@
 package de.srendi.advancedperipherals.common.util;
 
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 public class Pair<T, V> {
@@ -41,6 +42,10 @@ public class Pair<T, V> {
 
     public <V1> Pair<T, V1> ignoreRight() {
         return new Pair<>(left, null);
+    }
+
+    public <R> R reduce(BiFunction<T, V, R> reduceFunc) {
+        return reduceFunc.apply(left, right);
     }
 
     public static <T, V> Pair<T, V> onlyRight(V v) {

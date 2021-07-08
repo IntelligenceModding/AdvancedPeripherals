@@ -136,6 +136,24 @@ public class WeakMechanicSoulPeripheral extends OperationPeripheral {
         return getSettings(access).mapRight(data -> data.getInt(name));
     }
 
+    protected Pair<MethodResult, CompoundNBT> getCompoundSetting(@Nonnull IComputerAccess access, String name) {
+        return getSettings(access).mapRight(data -> data.getCompound(name));
+    }
+
+    protected Pair<MethodResult, Boolean> setCompoundSetting(@Nonnull IComputerAccess access, String name, CompoundNBT value) {
+        return getSettings(access).mapRight(data -> {
+            data.put(name, value);
+            return true;
+        });
+    }
+
+    protected Pair<MethodResult, Boolean> removeSetting(@Nonnull IComputerAccess access, String name) {
+        return getSettings(access).mapRight(data -> {
+            data.remove(name);
+            return true;
+        });
+    }
+
     protected AxisAlignedBB getBox(BlockPos pos, int radius) {
         int x = pos.getX(), y = pos.getY(), z = pos.getZ();
         return new AxisAlignedBB(
