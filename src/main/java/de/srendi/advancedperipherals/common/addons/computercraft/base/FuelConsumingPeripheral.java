@@ -1,5 +1,6 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.base;
 
+import dan200.computercraft.ComputerCraft;
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.lua.MethodResult;
 import dan200.computercraft.api.peripheral.IComputerAccess;
@@ -31,6 +32,10 @@ public abstract class FuelConsumingPeripheral extends BasePeripheral {
         super(type, turtle);
     }
 
+    public boolean fuelConsumptionDisabled() {
+        return !ComputerCraft.turtlesNeedFuel;
+    }
+
     public int getFuelCount() {
         if (turtle != null)
             return turtle.getFuelLevel();
@@ -52,6 +57,8 @@ public abstract class FuelConsumingPeripheral extends BasePeripheral {
     }
 
     public boolean consumeFuel(@Nonnull IComputerAccess access, int count, boolean simulate) {
+        if (fuelConsumptionDisabled())
+            return true;
         if (turtle != null) {
             if (turtle.getFuelLevel() >= count) {
                 if (simulate) return true;
@@ -81,6 +88,8 @@ public abstract class FuelConsumingPeripheral extends BasePeripheral {
     }
 
     public void addFuel(int count) {
+        if (fuelConsumptionDisabled())
+            return;
         if (turtle != null)
             turtle.addFuel(count);
         if (tileEntity != null)

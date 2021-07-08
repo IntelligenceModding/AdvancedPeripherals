@@ -385,6 +385,8 @@ public class WeakMechanicSoulPeripheral extends OperationPeripheral {
     public final MethodResult chargeTurtle(@Nonnull IArguments arguments) throws LuaException {
         Optional<MethodResult> checkResults = turtleChecks();
         if (checkResults.isPresent()) return checkResults.get();
+        if (fuelConsumptionDisabled())
+            return MethodResult.of(null, "Fuel consumption is disabled, why do you even need this?");
         ItemStack stack = turtle.getInventory().getItem(turtle.getSelectedSlot());
         int fuel = arguments.optInt(0, -1);
         return stack.getCapability(CapabilityEnergy.ENERGY).map(storage -> {
