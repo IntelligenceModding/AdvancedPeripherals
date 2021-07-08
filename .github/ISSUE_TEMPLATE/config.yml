@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Documentation Issues
+    url: https://github.com/Seniorendi/Advanced-Peripherals-Documentation/issues
+    about: Please create issues of the documentation at the proper repository.

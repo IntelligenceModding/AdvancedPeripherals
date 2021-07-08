@@ -57,8 +57,8 @@ public class ARControllerTile extends PeripheralTileEntity<ARControllerPeriphera
     }
 
     @Override
-    public void deserializeNBT(BlockState state, CompoundNBT nbt) {
-        super.deserializeNBT(state, nbt);
+    public void load(BlockState state, CompoundNBT nbt) {
+        super.load(state, nbt);
         deserializeNBT(nbt);
     }
 

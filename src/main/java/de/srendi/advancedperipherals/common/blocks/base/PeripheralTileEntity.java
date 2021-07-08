@@ -96,9 +96,9 @@ public abstract class PeripheralTileEntity<T extends BasePeripheral> extends Loc
     }
 
     @Override
-    public void deserializeNBT(BlockState state, CompoundNBT compound) {
+    public void load(BlockState state, CompoundNBT compound) {
         ItemStackHelper.loadAllItems(compound, items);
-        super.deserializeNBT(state, compound);
+        super.load(state, compound);
     }
 
     @Override

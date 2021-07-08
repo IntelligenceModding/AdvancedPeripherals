@@ -68,11 +68,11 @@ public class RedstoneIntegratorTile extends PeripheralTileEntity<RedstoneIntegra
     }
 
     @Override
-    public void deserializeNBT(BlockState state, CompoundNBT compound) {
+    public void load(BlockState state, CompoundNBT compound) {
         for (Direction direction : Direction.values()) {
             setRedstoneOutput(direction, compound.getInt(direction.name() + "Power"));
         }
-        super.deserializeNBT(state, compound);
+        super.load(state, compound);
     }
 
     @Override
@@ -86,17 +86,4 @@ public class RedstoneIntegratorTile extends PeripheralTileEntity<RedstoneIntegra
         return compound;
     }
 
-    public Direction getDirecton(ComputerSide computerSide) {
-        Direction output = Direction.DOWN;
-        if (computerSide == ComputerSide.FRONT) output = getBlockState().getValue(RedstoneIntegratorBlock.FACING);
-        if (computerSide == ComputerSide.BACK)
-            output = getBlockState().getValue(RedstoneIntegratorBlock.FACING).getOpposite();
-        if (computerSide == ComputerSide.TOP) output = Direction.UP;
-        if (computerSide == ComputerSide.BOTTOM) output = Direction.DOWN;
-        if (computerSide == ComputerSide.RIGHT)
-            output = getBlockState().getValue(RedstoneIntegratorBlock.FACING).getCounterClockWise();
-        if (computerSide == ComputerSide.LEFT)
-            output = getBlockState().getValue(RedstoneIntegratorBlock.FACING).getClockWise();
-        return output;
-    }
 }
