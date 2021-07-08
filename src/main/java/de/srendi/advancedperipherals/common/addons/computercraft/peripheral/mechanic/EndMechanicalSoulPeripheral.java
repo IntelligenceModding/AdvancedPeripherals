@@ -34,8 +34,8 @@ public class EndMechanicalSoulPeripheral extends WeakMechanicSoulPeripheral {
         return AdvancedPeripheralsConfig.enableEndMechanicSoul;
     }
 
-    public int getItemSuckRadius() {
-        return AdvancedPeripheralsConfig.endMechanicSoulSuckRange;
+    public int getInteractionRadius() {
+        return AdvancedPeripheralsConfig.endMechanicSoulInteractionRadius;
     }
 
     @Override
@@ -47,7 +47,7 @@ public class EndMechanicalSoulPeripheral extends WeakMechanicSoulPeripheral {
 
     @Override
     protected int getMaxFuelConsumptionRate() {
-        return AdvancedPeripheralsConfig.endMechanicSoulMaxFueldConsumptionLevel;
+        return AdvancedPeripheralsConfig.endMechanicSoulMaxFuelConsumptionLevel;
     }
 
     protected @Nonnull Pair<MethodResult, CompoundNBT> getPointData(@Nonnull IComputerAccess access) {

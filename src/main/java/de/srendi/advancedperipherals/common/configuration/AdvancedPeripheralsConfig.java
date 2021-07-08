@@ -41,11 +41,14 @@ public class AdvancedPeripheralsConfig {
     public static int useOnBlockCooldown;
     public static int warpCooldown;
     public static boolean enableWeakMechanicSoul;
-    public static int weakMechanicSoulSuckRange;
+    public static int weakMechanicSoulInteractionRadius;
     public static int weakMechanicSoulMaxFuelConsumptionLevel;
     public static boolean enableEndMechanicSoul;
-    public static int endMechanicSoulSuckRange;
-    public static int endMechanicSoulMaxFueldConsumptionLevel;
+    public static int endMechanicSoulInteractionRadius;
+    public static int endMechanicSoulMaxFuelConsumptionLevel;
+    public static boolean enableHusbandryMechanicSoul;
+    public static int husbandryMechanicSoulInteractionRadius;
+    public static int husbandryMechanicSoulMaxFuelConsumptionLevel;
 
     //World Features
     public static boolean enableVillagerStructures;
@@ -90,12 +93,15 @@ public class AdvancedPeripheralsConfig {
         final ForgeConfigSpec.IntValue USE_ON_BLOCK_COST;
         final ForgeConfigSpec.IntValue USE_ON_BLOCK_COOLDOWN;
         final ForgeConfigSpec.IntValue WARP_COOLDOWN;
-        final ForgeConfigSpec.IntValue WEAK_MECHANIC_SOUL_TURTLE_SUCK_RANGE;
+        final ForgeConfigSpec.IntValue WEAK_MECHANIC_SOUL_TURTLE_INTERACTION_RANGE;
         final ForgeConfigSpec.IntValue WEAK_MECHANIC_SOUL_TURTLE_MAX_FUEL_CONSUMPTION_LEVEL;
-        final ForgeConfigSpec.IntValue END_MECHANIC_SOUL_TURTLE_SUCK_RANGE;
+        final ForgeConfigSpec.IntValue END_MECHANIC_SOUL_TURTLE_INTERACTION_RANGE;
         final ForgeConfigSpec.IntValue END_MECHANIC_SOUL_TURTLE_MAX_FUEL_CONSUMPTION_LEVEL;
+        final ForgeConfigSpec.IntValue HUSBANDRY_MECHANIC_SOUL_TURTLE_INTERACTION_RANGE;
+        final ForgeConfigSpec.IntValue HUSBANDRY_MECHANIC_SOUL_TURTLE_MAX_FUEL_CONSUMPTION_LEVEL;
         final ForgeConfigSpec.BooleanValue ENABLE_WEAK_MECHANIC_SOUL;
         final ForgeConfigSpec.BooleanValue ENABLE_END_MECHANIC_SOUL;
+        final ForgeConfigSpec.BooleanValue ENABLE_HUSBANDRY_MECHANIC_SOUL;
 
 
         //World Features
@@ -145,11 +151,14 @@ public class AdvancedPeripheralsConfig {
             USE_ON_BLOCK_COOLDOWN = builder.comment("Defines cooldown of use on block action").defineInRange("useOnBlockCooldown", 5_000, 0, Integer.MAX_VALUE);
             WARP_COOLDOWN = builder.comment("Defines cooldown of warp action").defineInRange("warpCooldown", 1_000, 0, Integer.MAX_VALUE);
             ENABLE_WEAK_MECHANIC_SOUL = builder.comment("Enable the weak mechanic soul or not").define("enableWeakMechanicSoul", true);
-            WEAK_MECHANIC_SOUL_TURTLE_SUCK_RANGE = builder.comment("Defines weak mechanic soul turtle suck range").defineInRange("weakMechanicSoulSuckRange", 2, 1, 10);
+            WEAK_MECHANIC_SOUL_TURTLE_INTERACTION_RANGE = builder.comment("Defines weak mechanic soul turtle interaction range").defineInRange("weakMechanicSoulInteractionRange", 2, 1, 10);
             WEAK_MECHANIC_SOUL_TURTLE_MAX_FUEL_CONSUMPTION_LEVEL = builder.comment("Defines weak mechanic soul turtle max fuel consumption level").defineInRange("weakMechanicSoulMaxFuelConsumptionLevel", 2, 1, 10);
             ENABLE_END_MECHANIC_SOUL = builder.comment("Enable the end mechanic soul or not").define("enableEndMechanicSoul", true);
-            END_MECHANIC_SOUL_TURTLE_SUCK_RANGE = builder.comment("Defines weak mechanic soul turtle suck range").defineInRange("endMechanicSoulSuckRange", 4, 1, 10);
+            END_MECHANIC_SOUL_TURTLE_INTERACTION_RANGE = builder.comment("Defines end mechanic soul turtle interaction range").defineInRange("endMechanicSoulInteractionRange", 4, 1, 10);
             END_MECHANIC_SOUL_TURTLE_MAX_FUEL_CONSUMPTION_LEVEL = builder.comment("Defines end mechanic soul turtle max fuel consumption level").defineInRange("endMechanicSoulMaxFuelConsumptionLevel", 4, 1, 10);
+            ENABLE_HUSBANDRY_MECHANIC_SOUL = builder.comment("Enable the husbandry mechanic soul or not").define("enableHusbandryMechanicSoul", true);
+            HUSBANDRY_MECHANIC_SOUL_TURTLE_INTERACTION_RANGE = builder.comment("Defines husbandry mechanic soul turtle interaction range").defineInRange("husbandryMechanicSoulInteractionRange", 4, 1, 10);
+            HUSBANDRY_MECHANIC_SOUL_TURTLE_MAX_FUEL_CONSUMPTION_LEVEL = builder.comment("Defines husbandry mechanic soul turtle max fuel consumption level").defineInRange("husbandryMechanicSoulMaxFuelConsumptionLevel", 4, 1, 10);
 
             ENABLE_VILLAGER_STRUCTURES = builder.comment("Enable the villager structures for the computer scientist.").define("enableVillagerStructures", true);
             builder.pop();

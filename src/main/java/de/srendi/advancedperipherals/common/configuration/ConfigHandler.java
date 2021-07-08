@@ -61,11 +61,14 @@ public class ConfigHandler {
         AdvancedPeripheralsConfig.useOnBlockCooldown = ConfigHolder.COMMON_CONFIG.USE_ON_BLOCK_COOLDOWN.get();
         AdvancedPeripheralsConfig.warpCooldown = ConfigHolder.COMMON_CONFIG.WARP_COOLDOWN.get();
         AdvancedPeripheralsConfig.enableWeakMechanicSoul = ConfigHolder.COMMON_CONFIG.ENABLE_WEAK_MECHANIC_SOUL.get();
-        AdvancedPeripheralsConfig.weakMechanicSoulSuckRange = ConfigHolder.COMMON_CONFIG.WEAK_MECHANIC_SOUL_TURTLE_SUCK_RANGE.get();
+        AdvancedPeripheralsConfig.weakMechanicSoulInteractionRadius = ConfigHolder.COMMON_CONFIG.WEAK_MECHANIC_SOUL_TURTLE_INTERACTION_RANGE.get();
         AdvancedPeripheralsConfig.weakMechanicSoulMaxFuelConsumptionLevel = ConfigHolder.COMMON_CONFIG.WEAK_MECHANIC_SOUL_TURTLE_MAX_FUEL_CONSUMPTION_LEVEL.get();
         AdvancedPeripheralsConfig.enableEndMechanicSoul = ConfigHolder.COMMON_CONFIG.ENABLE_END_MECHANIC_SOUL.get();
-        AdvancedPeripheralsConfig.endMechanicSoulSuckRange = ConfigHolder.COMMON_CONFIG.END_MECHANIC_SOUL_TURTLE_SUCK_RANGE.get();
-        AdvancedPeripheralsConfig.endMechanicSoulMaxFueldConsumptionLevel = ConfigHolder.COMMON_CONFIG.END_MECHANIC_SOUL_TURTLE_MAX_FUEL_CONSUMPTION_LEVEL.get();
+        AdvancedPeripheralsConfig.endMechanicSoulInteractionRadius = ConfigHolder.COMMON_CONFIG.END_MECHANIC_SOUL_TURTLE_INTERACTION_RANGE.get();
+        AdvancedPeripheralsConfig.endMechanicSoulMaxFuelConsumptionLevel = ConfigHolder.COMMON_CONFIG.END_MECHANIC_SOUL_TURTLE_MAX_FUEL_CONSUMPTION_LEVEL.get();
+        AdvancedPeripheralsConfig.enableNBTStorage = ConfigHolder.COMMON_CONFIG.ENABLE_HUSBANDRY_MECHANIC_SOUL.get();
+        AdvancedPeripheralsConfig.husbandryMechanicSoulInteractionRadius = ConfigHolder.COMMON_CONFIG.HUSBANDRY_MECHANIC_SOUL_TURTLE_INTERACTION_RANGE.get();
+        AdvancedPeripheralsConfig.husbandryMechanicSoulMaxFuelConsumptionLevel = ConfigHolder.COMMON_CONFIG.HUSBANDRY_MECHANIC_SOUL_TURTLE_MAX_FUEL_CONSUMPTION_LEVEL.get();
 
         AdvancedPeripheralsConfig.enableVillagerStructures = ConfigHolder.COMMON_CONFIG.ENABLE_VILLAGER_STRUCTURES.get();
     }

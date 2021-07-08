@@ -13,10 +13,10 @@ import de.srendi.advancedperipherals.common.addons.computercraft.base.OperationP
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
 import de.srendi.advancedperipherals.common.items.WeakMechanicSoul;
 import de.srendi.advancedperipherals.common.util.Pair;
+import de.srendi.advancedperipherals.common.util.RepresentationUtil;
 import de.srendi.advancedperipherals.common.util.fakeplayer.FakePlayerProviderTurtle;
 import de.srendi.advancedperipherals.common.util.fakeplayer.TurtleFakePlayer;
 import net.minecraft.block.BlockState;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
@@ -83,8 +83,8 @@ public class WeakMechanicSoulPeripheral extends OperationPeripheral {
             AdvancedPeripherals.LOGGER.error("Lost error: " + setResult.getLeft().toString());
     }
 
-    public int getItemSuckRadius() {
-        return AdvancedPeripheralsConfig.weakMechanicSoulSuckRange;
+    public int getInteractionRadius() {
+        return AdvancedPeripheralsConfig.weakMechanicSoulInteractionRadius;
     }
 
     @Override
@@ -145,7 +145,7 @@ public class WeakMechanicSoulPeripheral extends OperationPeripheral {
     }
 
     protected List<ItemEntity> getItems() {
-        return getWorld().getEntitiesOfClass(ItemEntity.class, getBox(getPos(), getItemSuckRadius()));
+        return getWorld().getEntitiesOfClass(ItemEntity.class, getBox(getPos(), getInteractionRadius()));
     }
 
     protected int suckItem(ItemEntity entity, int requiredQuantity) {
@@ -190,7 +190,7 @@ public class WeakMechanicSoulPeripheral extends OperationPeripheral {
         result.put("suckCooldown", AdvancedPeripheralsConfig.suckItemCooldown);
         result.put("fuelConsumptionRate", getFuelConsumptionRate(access));
         result.put("maxFuelConsumptionRate", getMaxFuelConsumptionRate());
-        result.put("suckRadius", getItemSuckRadius());
+        result.put("suckRadius", getInteractionRadius());
         return result;
     }
 
@@ -238,12 +238,7 @@ public class WeakMechanicSoulPeripheral extends OperationPeripheral {
             return MethodResult.of(null, "No entity find");
         }
         EntityRayTraceResult entityHit = (EntityRayTraceResult) result;
-        Map<String, Object> data = new HashMap<>();
-        Entity entity = entityHit.getEntity();
-        data.put("entity_id", entity.getId());
-        data.put("name", entity.getName().getString());
-        data.put("tags", entity.getTags());
-        return MethodResult.of(data);
+        return MethodResult.of(RepresentationUtil.entityToLua(entityHit.getEntity()));
     }
 
     @LuaFunction(mainThread = true)

@@ -179,8 +179,8 @@ public class TurtleFakePlayer extends FakePlayer {
         return use(false, true);
     }
 
-    public ActionResultType useOnFilteredEntity(Function<Entity, Boolean> filter) {
-        return use(false, true);
+    public ActionResultType useOnFilteredEntity(Predicate<Entity> filter) {
+        return use(false, true, filter);
     }
 
     public ActionResultType useOnSpecificEntity(@NotNull Entity entity, RayTraceResult result){
@@ -196,7 +196,7 @@ public class TurtleFakePlayer extends FakePlayer {
         return use(skipEntity, skipBlock, null);
     }
 
-    public ActionResultType use(boolean skipEntity, boolean skipBlock, @Nullable Function<Entity, Boolean> entityFilter) {
+    public ActionResultType use(boolean skipEntity, boolean skipBlock, @Nullable Predicate<Entity> entityFilter) {
         RayTraceResult hit = findHit(skipEntity, skipBlock, entityFilter);
 
         if (hit instanceof BlockRayTraceResult) {
@@ -246,7 +246,7 @@ public class TurtleFakePlayer extends FakePlayer {
     }
 
     @Nonnull
-    public RayTraceResult findHit(boolean skipEntity, boolean skipBlock, @Nullable Function<Entity, Boolean> entityFilter) {
+    public RayTraceResult findHit(boolean skipEntity, boolean skipBlock, @Nullable Predicate<Entity> entityFilter) {
         ModifiableAttributeInstance reachAttribute = getAttribute(ForgeMod.REACH_DISTANCE.get());
         if (reachAttribute == null) {
             throw new IllegalArgumentException("How did this happened?");
@@ -288,7 +288,7 @@ public class TurtleFakePlayer extends FakePlayer {
         for (Entity entityHit : entities) {
             if (!(entityHit instanceof LivingEntity))
                 continue;
-            if (entityFilter != null && !entityFilter.apply(entityHit))
+            if (entityFilter != null && !entityFilter.test(entityHit))
                 continue;
             // Add litter bigger that just pick radius
             AxisAlignedBB box = entityHit.getBoundingBox().inflate(entityHit.getPickRadius() + 0.5);
