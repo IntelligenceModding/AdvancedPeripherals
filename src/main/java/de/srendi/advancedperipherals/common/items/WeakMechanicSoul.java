@@ -1,5 +1,6 @@
 package de.srendi.advancedperipherals.common.items;
 
+import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
 import de.srendi.advancedperipherals.common.setup.Items;
 import de.srendi.advancedperipherals.common.util.EnumColor;
 import net.minecraft.client.util.ITooltipFlag;
@@ -93,11 +94,11 @@ public class WeakMechanicSoul extends APItem {
     }};
 
     public WeakMechanicSoul(Properties properties, String turtleID, String pocketID, ITextComponent description) {
-        super(properties, turtleID, pocketID, description);
+        super(properties, turtleID, pocketID, description, () -> AdvancedPeripheralsConfig.enableWeakMechanicSoul);
     }
 
     public WeakMechanicSoul(String turtleID, String pocketID, ITextComponent description) {
-        super(turtleID, pocketID, description);
+        super(turtleID, pocketID, description, () -> AdvancedPeripheralsConfig.enableWeakMechanicSoul);
     }
 
     @Override

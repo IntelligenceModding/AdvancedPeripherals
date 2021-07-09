@@ -55,6 +55,8 @@ public abstract class BaseTurtle<T extends BasePeripheral> extends AbstractTurtl
     @Override
     public IPeripheral createPeripheral(@NotNull ITurtleAccess turtle, @NotNull TurtleSide side) {
         this.peripheral = createPeripheral();
+        if (!this.peripheral.isEnabled())
+            return DisabledPeripheral.INSTANCE;
         return peripheral;
     }
 

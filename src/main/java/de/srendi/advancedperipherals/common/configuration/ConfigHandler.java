@@ -70,7 +70,7 @@ public class ConfigHandler {
         AdvancedPeripheralsConfig.enableEndMechanicSoul = ConfigHolder.COMMON_CONFIG.ENABLE_END_MECHANIC_SOUL.get();
         AdvancedPeripheralsConfig.endMechanicSoulInteractionRadius = ConfigHolder.COMMON_CONFIG.END_MECHANIC_SOUL_TURTLE_INTERACTION_RANGE.get();
         AdvancedPeripheralsConfig.endMechanicSoulMaxFuelConsumptionLevel = ConfigHolder.COMMON_CONFIG.END_MECHANIC_SOUL_TURTLE_MAX_FUEL_CONSUMPTION_LEVEL.get();
-        AdvancedPeripheralsConfig.enableNBTStorage = ConfigHolder.COMMON_CONFIG.ENABLE_HUSBANDRY_MECHANIC_SOUL.get();
+        AdvancedPeripheralsConfig.enableHusbandryMechanicSoul = ConfigHolder.COMMON_CONFIG.ENABLE_HUSBANDRY_MECHANIC_SOUL.get();
         AdvancedPeripheralsConfig.husbandryMechanicSoulInteractionRadius = ConfigHolder.COMMON_CONFIG.HUSBANDRY_MECHANIC_SOUL_TURTLE_INTERACTION_RANGE.get();
         AdvancedPeripheralsConfig.husbandryMechanicSoulMaxFuelConsumptionLevel = ConfigHolder.COMMON_CONFIG.HUSBANDRY_MECHANIC_SOUL_TURTLE_MAX_FUEL_CONSUMPTION_LEVEL.get();
 

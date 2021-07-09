@@ -5,25 +5,29 @@ import net.minecraft.block.Block;
 import net.minecraft.util.text.ITextComponent;
 
 import java.util.Optional;
+import java.util.function.Supplier;
 
 public class APBlockItem extends BaseBlockItem {
 
     String turtleID;
     String pocketID;
     ITextComponent description;
+    Supplier<Boolean> enabledSup;
 
-    public APBlockItem(Block blockIn, Properties properties, String turtleID, String pocketID, ITextComponent description) {
+    public APBlockItem(Block blockIn, Properties properties, String turtleID, String pocketID, ITextComponent description, Supplier<Boolean> enabledSup) {
         super(blockIn, properties);
         this.turtleID = turtleID;
         this.pocketID = pocketID;
         this.description = description;
+        this.enabledSup = enabledSup;
     }
 
-    public APBlockItem(Block blockIn, String turtleID, String pocketID, ITextComponent description) {
+    public APBlockItem(Block blockIn, String turtleID, String pocketID, ITextComponent description, Supplier<Boolean> enabledSup) {
         super(blockIn);
         this.turtleID = turtleID;
         this.pocketID = pocketID;
         this.description = description;
+        this.enabledSup = enabledSup;
     }
 
     @Override
@@ -39,5 +43,10 @@ public class APBlockItem extends BaseBlockItem {
     @Override
     public ITextComponent getDescription() {
         return description;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return enabledSup.get();
     }
 }

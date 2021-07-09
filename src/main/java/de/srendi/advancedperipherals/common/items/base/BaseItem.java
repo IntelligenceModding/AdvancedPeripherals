@@ -58,6 +58,8 @@ public abstract class BaseItem extends Item {
         } else {
             tooltip.add(EnumColor.buildTextComponent(getDescription()));
         }
+        if (!isEnabled())
+            tooltip.add(EnumColor.buildTextComponent(new TranslationTextComponent("item.advancedperipherals.tooltip.disabled")));
     }
 
     public abstract Optional<String> getTurtleID();
@@ -65,6 +67,8 @@ public abstract class BaseItem extends Item {
     public abstract Optional<String> getPocketID();
 
     public abstract ITextComponent getDescription();
+
+    public abstract boolean isEnabled();
 
     @Override
     public void fillItemCategory(ItemGroup group, NonNullList<ItemStack> items) {
