@@ -1,0 +1,46 @@
+{
+  "display": {
+    "icon": {
+      "item": "advancedperipherals:redstone_integrator"
+    },
+    "title": {
+      "translate": "advancements.advancedperipherals.base_toolkit"
+    },
+    "description": {
+      "translate": "advancements.advancedperipherals.base_toolkit.description"
+    }
+  },
+  "parent": "advancedperipherals:root",
+  "criteria": {
+    "redstone_integrator_in_inventory": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "advancedperipherals:redstone_integrator"
+          }
+        ]
+      }
+    },
+    "energy_detector_in_inventory": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "advancedperipherals:energy_detector"
+          }
+        ]
+      }
+    },
+    "inventory_manager_in_inventory": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "advancedperipherals:inventory_manager"
+          }
+        ]
+      }
+    }
+  }
+}
