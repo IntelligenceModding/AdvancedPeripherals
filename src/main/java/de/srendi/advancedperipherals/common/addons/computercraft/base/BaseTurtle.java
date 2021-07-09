@@ -21,7 +21,7 @@ import org.jetbrains.annotations.Nullable;
 
 public abstract class BaseTurtle<T extends BasePeripheral> extends AbstractTurtleUpgrade {
 
-    protected T peripheral;
+    protected @Nullable T peripheral;
     protected ITurtleAccess turtle;
     protected int tick;
 

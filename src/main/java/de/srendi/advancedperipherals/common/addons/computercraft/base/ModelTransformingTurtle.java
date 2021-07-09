@@ -26,7 +26,8 @@ public abstract class ModelTransformingTurtle<T extends MechanicSoulPeripheral> 
             int sign = 1;
             if (turtleSide == TurtleSide.LEFT)
                 sign = -1;
-            stack.mulPose(Vector3f.XN.rotationDegrees(10 * peripheral.getRotationStep() * sign));
+            if (peripheral != null)
+                stack.mulPose(Vector3f.XN.rotationDegrees(10 * peripheral.getRotationStep() * sign));
             stack.translate(0.0f, -0.5f, -0.5f);
             stack.mulPose(Vector3f.YN.rotationDegrees(90));
             stack.translate(0, 0, -0.6);
@@ -38,7 +39,7 @@ public abstract class ModelTransformingTurtle<T extends MechanicSoulPeripheral> 
     @Override
     public void update(@NotNull ITurtleAccess turtle, @NotNull TurtleSide side) {
         super.update(turtle, side);
-        if (tick %3 == 0)
+        if (peripheral != null && tick %3 == 0)
             peripheral.consumeRotationCharge();
     }
 }
