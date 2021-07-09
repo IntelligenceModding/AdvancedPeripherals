@@ -25,6 +25,8 @@ public abstract class BasePocket<T extends BasePeripheral> extends AbstractPocke
     @Override
     public IPeripheral createPeripheral(@NotNull IPocketAccess iPocketAccess) {
         peripheral = getPeripheral(iPocketAccess);
+        if (!peripheral.isEnabled())
+            return DisabledPeripheral.INSTANCE;
         return peripheral;
     }
 
