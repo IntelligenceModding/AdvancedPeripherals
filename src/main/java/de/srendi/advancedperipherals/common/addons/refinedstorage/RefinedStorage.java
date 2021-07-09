@@ -10,6 +10,7 @@ import com.refinedmods.refinedstorage.apiimpl.API;
 import com.refinedmods.refinedstorage.apiimpl.network.node.NetworkNode;
 import dan200.computercraft.shared.util.NBTUtil;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
+import de.srendi.advancedperipherals.common.addons.computercraft.base.Converter;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.NonNullList;
@@ -18,17 +19,17 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.commons.codec.binary.Hex;
 
-import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class RefinedStorage {
 
-    //TODO: Improve code quality very well...
-
     private final IRSAPI api;
+
+    public static RefinedStorage instance;
 
     public RefinedStorage() {
         this.api = API.instance();
@@ -41,76 +42,54 @@ public class RefinedStorage {
     }
 
     public static Object listFluids(boolean craftable, INetwork network) {
-        Map<Integer, Object> items = new HashMap<>();
-        int i = 1;
+        List<Object> items = new ArrayList<>();
         for (FluidStack stack : RefinedStorage.getFluids(network, craftable)) {
             Map<String, Object> map = new HashMap<>();
             Set<ResourceLocation> tags = stack.getFluid().getTags();
-            ResourceLocation registryName = stack.getFluid().getRegistryName();
-            map.put("name", registryName.getPath() + registryName.getNamespace());
+            map.put("name", stack.getFluid().getRegistryName().toString());
             if (craftable) {
                 map.put("craftamount", stack.getAmount());
-                for (FluidStack oStack : RefinedStorage.getFluids(network, false)) { //Used to get the amount of the item
-                    if (oStack.isFluidEqual(stack)) {
-                        map.put("amount", oStack.getAmount());
-                        break;
-                    } else {
-                        map.put("amount", 0);
-                    }
-                }
+                map.put("amount", getFluids(network, false).stream()
+                        .filter(fluidStack -> fluidStack.isFluidEqual(stack)).collect(Collectors.toList()).get(0).getAmount());
             } else {
                 map.put("amount", stack.getAmount());
             }
             map.put("displayName", stack.getDisplayName().getString());
-            if (!tags.isEmpty()) {
-                map.put("tags", getListFromTags(tags));
-            }
-            items.put(i, map);
-            i++;
+            map.put("tags", Converter.tagsToList(tags));
+            items.add(map);
         }
         return items;
     }
 
     public static Object listItems(boolean craftable, INetwork network) {
-        Map<Integer, Object> items = new HashMap<>();
-        int i = 1;
+        List<Object> items = new ArrayList<>();
         for (ItemStack stack : RefinedStorage.getItems(network, craftable)) {
-            Map<String, Object> map = new HashMap<>();
-            CompoundNBT nbt = stack.getTag();
-            Set<ResourceLocation> tags = stack.getItem().getTags();
-            map.put("fingerprint", getFingerpint(stack));
-            map.put("name", ForgeRegistries.ITEMS.getKey(stack.getItem()).toString());
+            Map<String, Object> map = new HashMap<>(getObjectFromStack(stack));
             if (craftable) {
-                map.put("craftamount", stack.getCount()); //Returns the result amount of the crafting recipe
-                for (ItemStack oStack : RefinedStorage.getItems(network, false)) { //Used to get the amount of the item
-                    if (oStack.sameItem(stack)) {
-                        map.put("amount", oStack.getCount());
-                        break;
+                map.put("craftamount", stack.getCount());
+                //The craftable item cache returns the items with the amount of the crafting recipe output.
+                //So we need to loop through the normal item cache and get the amount
+                map.put("amount", getItems(network, false).stream()
+                        .filter(itemStack -> itemStack.getItem().equals(stack.getItem())).collect(Collectors.toList()).get(0).getCount());
+                List<Object> ingredients = new ArrayList<>();
+                for (List<ItemStack> craftingSlot : network.getCraftingManager().getPattern(stack).getInputs()) {
+                    if (craftingSlot != null) {
+                        List<Object> slotIngredient = new ArrayList<>();
+                        for (ItemStack craftingStack : craftingSlot) {
+                            if (craftingStack != null)
+                                slotIngredient.add(getObjectFromStack(craftingStack));
+                        }
+                        ingredients.add(slotIngredient);
                     } else {
-                        map.put("amount", 0);
+                        //Add null so the ingredients list has always a size of 9
+                        ingredients.add(null);
                     }
                 }
-                List<HashMap<String, Object>> ingredients = new ArrayList<>();
-                /*for(List<ItemStack> craftingSlot : network.getCraftingManager().getPattern(stack).getInputs()) {
-                    if(craftingSlot != null)
-                    for(ItemStack craftingStack : craftingSlot) {
-                        if(craftingStack != null)
-                            ingredients.add(getObjectFromStack(craftingStack));
-                    }
-                }*/
                 map.put("ingredient", ingredients);
             } else {
                 map.put("amount", stack.getCount());
             }
-            map.put("displayName", stack.getDisplayName().getString());
-            if (nbt != null && !nbt.isEmpty()) {
-                map.put("nbt", NBTUtil.toLua(nbt));
-            }
-            if (!tags.isEmpty()) {
-                map.put("tags", getListFromTags(tags));
-            }
-            items.put(i, map);
-            i++;
+            items.add(map);
         }
         return items;
     }
@@ -120,25 +99,25 @@ public class RefinedStorage {
             return null;
         Map<String, Object> map = new HashMap<>();
         List<ItemStack> outputsList = pattern.getOutputs();
-        Map<Object, Object> outputs = new HashMap<>();
-        for (int i = 0, count = outputsList.size(); i < count; ++i) {
-            outputs.put(i + 1, getObjectFromStack(outputsList.get(i).copy()));
-        }
+        List<Object> outputs = new ArrayList<>();
+        for (ItemStack itemStack : outputsList)
+            outputs.add(getObjectFromStack(itemStack.copy()));
+
         map.put("outputs", outputs);
 
         List<NonNullList<ItemStack>> inputList = pattern.getInputs();
-        Map<Object, Object> inputs = new HashMap<>();
-        for (int i = 0, count = inputList.size(); i < count; ++i) {
-            List<ItemStack> singleInputList = inputList.get(i);
-            for (int iSingle = 0, countSingle = singleInputList.size(); iSingle < countSingle; ++iSingle) {
-                inputs.put(inputs.size() + 1, getObjectFromStack(singleInputList.get(iSingle).copy()));
-            }
+        List<Object> inputs = new ArrayList<>();
+        for (List<ItemStack> singleInputList : inputList) {
+            List<Object> inputs1 = new ArrayList<>();
+            for (ItemStack stack : singleInputList)
+                inputs1.add(getObjectFromStack(stack.copy()));
+
+            inputs.add(inputs1);
         }
         List<ItemStack> byproductsList = pattern.getByproducts();
-        Map<Object, Object> byproducts = new HashMap<>();
-        for (int i = 0, count = byproductsList.size(); i < count; ++i) {
-            byproducts.put(i + 1, getObjectFromStack(byproductsList.get(i).copy()));
-        }
+        List<Object> byproducts = new ArrayList<>();
+        for (ItemStack stack : byproductsList)
+            byproducts.add(getObjectFromStack(stack.copy()));
 
         map.put("inputs", inputs);
         map.put("outputs", outputs);
@@ -151,63 +130,44 @@ public class RefinedStorage {
         Map<String, Object> map = new HashMap<>();
         CompoundNBT nbt = itemStack.getOrCreateTag();
         Set<ResourceLocation> tags = itemStack.getItem().getTags();
-        ResourceLocation name = itemStack.getItem().getRegistryName();
-        map.put("name", name.toString());
+        map.put("fingerprint", getFingerpint(itemStack));
+        map.put("name", itemStack.getItem().getRegistryName().toString());
         map.put("amount", itemStack.getCount());
         map.put("displayName", itemStack.getDisplayName().getString());
-        if (!nbt.isEmpty()) {
-            map.put("nbt", NBTUtil.toLua(nbt));
-        }
-        if (!tags.isEmpty()) {
-            map.put("tags", getListFromTags(tags));
-        }
-        return map;
-    }
+        map.put("nbt", nbt.isEmpty() ? null : NBTUtil.toLua(nbt));
+        map.put("tags", tags.isEmpty() ? null : Converter.tagsToList(itemStack.getItem().getTags()));
 
-    public static List<String> getListFromTags(Set<ResourceLocation> tags) {
-        List<String> list = new ArrayList<>();
-        for (ResourceLocation value : tags) {
-            list.add(value.toString());
-        }
-        return list;
+        return map;
     }
 
     public static Object getItem(List<ItemStack> items, ItemStack item) {
         for (ItemStack itemStack : items) {
-            if (itemStack.getItem().equals(item.getItem()) && Objects.equals(itemStack.getOrCreateTag(), item.getOrCreateTag())) {
+            if (itemStack.getItem().equals(item.getItem()) && Objects.equals(itemStack.getOrCreateTag(), item.getOrCreateTag()))
                 return getObjectFromStack(itemStack);
-            }
+
         }
         return null;
     }
 
     public static List<ItemStack> getItems(INetwork network, boolean craftable) {
-        Collection<StackListEntry<ItemStack>> entries;
         IStorageCache<ItemStack> cache = network.getItemStorageCache();
-        if (craftable) {
-            entries = cache.getCraftablesList().getStacks();
-        } else {
-            entries = cache.getList().getStacks();
-        }
+        Collection<StackListEntry<ItemStack>> entries = craftable ? cache.getCraftablesList().getStacks() : cache.getList().getStacks();
         List<ItemStack> result = new ArrayList<>(entries.size());
-        for (StackListEntry<ItemStack> entry : entries) {
+
+        for (StackListEntry<ItemStack> entry : entries)
             result.add(entry.getStack().copy());
-        }
+
         return result;
     }
 
     public static List<FluidStack> getFluids(INetwork network, boolean craftable) {
-        Collection<StackListEntry<FluidStack>> entries;
         IStorageCache<FluidStack> cache = network.getFluidStorageCache();
-        if (craftable) {
-            entries = cache.getCraftablesList().getStacks();
-        } else {
-            entries = cache.getList().getStacks();
-        }
+        Collection<StackListEntry<FluidStack>> entries = craftable ? cache.getCraftablesList().getStacks() : cache.getList().getStacks();
         List<FluidStack> result = new ArrayList<>(entries.size());
-        for (StackListEntry<FluidStack> entry : entries) {
+
+        for (StackListEntry<FluidStack> entry : entries)
             result.add(entry.getStack().copy());
-        }
+
         return result;
     }
 
@@ -216,12 +176,9 @@ public class RefinedStorage {
             if (rsStack.getCount() > 0 && rsStack.getItem().equals(stack.getItem())) {
                 CompoundNBT tag = rsStack.getTag();
                 String hash = NBTUtil.getNBTHash(tag);
-                AdvancedPeripherals.debug("HASH: " + hash);
-                AdvancedPeripherals.debug("NBTHASH: " + nbtHash);
-                AdvancedPeripherals.debug("TAG: " + tag);
-                if (nbtHash.equals(hash)) {
+                if (nbtHash.equals(hash))
                     return tag.copy();
-                }
+
             }
         }
         return null;
@@ -230,9 +187,9 @@ public class RefinedStorage {
     public static ItemStack findMatchingFingerprint(String fingerprint, List<ItemStack> items) {
         for (ItemStack rsStack : items) {
             if (rsStack.getCount() > 0) {
-                if (fingerprint.equals(getFingerpint(rsStack))) {
+                if (fingerprint.equals(getFingerpint(rsStack)))
                     return rsStack;
-                }
+
             }
         }
         return ItemStack.EMPTY;

@@ -128,7 +128,6 @@ public class RsBridgePeripheral extends BasePeripheral {
     public final int importItem(IArguments arguments) throws LuaException {
         ItemStack stack = ItemUtil.getItemStackRS(arguments.getTable(0), RefinedStorage.getItems(getNetwork(), false));
         Direction direction = validateSide(arguments.getString(1));
-        int count = stack.getCount();
 
         TileEntity targetEntity = tileEntity.getLevel().getBlockEntity(tileEntity.getBlockPos().relative(direction));
         IItemHandler inventory = targetEntity != null ?
@@ -136,7 +135,7 @@ public class RsBridgePeripheral extends BasePeripheral {
         if (inventory == null)
             throw new LuaException("No valid inventory at " + arguments.getString(1));
 
-        int amount = count;
+        int amount = stack.getCount();
         int transferableAmount = 0;
 
         for (int i = 0; i < inventory.getSlots(); i++) {
@@ -147,7 +146,7 @@ public class RsBridgePeripheral extends BasePeripheral {
                     transferableAmount += amount - insertedStack.getCount();
                     break;
                 } else {
-                    amount = count - inventory.getStackInSlot(i).getCount();
+                    amount -= inventory.getStackInSlot(i).getCount();
                     ItemStack insertedStack = getNetwork().insertItem(stack, inventory.getStackInSlot(i).getCount(),
                             Action.PERFORM);
                     inventory.extractItem(i, inventory.getStackInSlot(i).getCount() - insertedStack.getCount(), false);

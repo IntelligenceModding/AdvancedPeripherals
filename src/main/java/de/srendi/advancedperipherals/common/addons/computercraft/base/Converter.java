@@ -40,6 +40,8 @@ public class Converter {
     }
 
     public static List<String> tagsToList(@NotNull Set<ResourceLocation> tags) {
+        if(tags.isEmpty())
+            return null;
         return tags.stream().map(ResourceLocation::toString).collect(Collectors.toList());
     }
 
