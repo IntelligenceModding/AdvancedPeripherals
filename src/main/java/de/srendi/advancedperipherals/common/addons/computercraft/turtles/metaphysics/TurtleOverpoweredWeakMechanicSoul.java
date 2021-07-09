@@ -18,7 +18,7 @@ public class TurtleOverpoweredWeakMechanicSoul extends ModelTransformingTurtle<O
 
     @Override
     protected ModelResourceLocation getLeftModel() {
-        return null; //Null, the turtle uses the chunk controller item model. See BaseTurtle.java
+        return null;
     }
 
     @Override

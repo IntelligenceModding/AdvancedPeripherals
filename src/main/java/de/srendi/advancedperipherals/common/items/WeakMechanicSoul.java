@@ -1,5 +1,6 @@
 package de.srendi.advancedperipherals.common.items;
 
+import de.srendi.advancedperipherals.common.items.base.BaseItem;
 import de.srendi.advancedperipherals.common.setup.Items;
 import de.srendi.advancedperipherals.common.util.EnumColor;
 import net.minecraft.client.util.ITooltipFlag;

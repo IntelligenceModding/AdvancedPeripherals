@@ -35,7 +35,6 @@ public abstract class BaseItem extends Item {
         super(new Properties().tab(AdvancedPeripherals.TAB));
     }
 
-
     @Override
     public ActionResult<ItemStack> use(World worldIn, PlayerEntity playerIn, Hand handIn) {
         if (worldIn.isClientSide)
