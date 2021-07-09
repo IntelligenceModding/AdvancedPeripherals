@@ -3,6 +3,7 @@ package de.srendi.advancedperipherals.common.util;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.IForgeShearable;
 
@@ -35,5 +36,13 @@ public class RepresentationUtil {
         if (entity instanceof AnimalEntity)
             return animalToLua((AnimalEntity) entity, itemInHand);
         return entityToLua(entity);
+    }
+
+    public static Map<String, Object> completeEntityWithPositionToLua(Entity entity, ItemStack itemInHand, BlockPos pos) {
+        Map<String, Object> data = completeEntityToLua(entity, itemInHand);
+        data.put("x", entity.getX() - pos.getX());
+        data.put("y", entity.getY() - pos.getY());
+        data.put("z", entity.getZ() - pos.getZ());
+        return data;
     }
 }

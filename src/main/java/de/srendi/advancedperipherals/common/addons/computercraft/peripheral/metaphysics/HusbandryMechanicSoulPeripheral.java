@@ -148,7 +148,8 @@ public class HusbandryMechanicSoulPeripheral extends WeakMechanicSoulPeripheral 
         AxisAlignedBB box = new AxisAlignedBB(getPos());
         List<Map<String, Object>> entities = new ArrayList<>();
         ItemStack itemInHand = getItemInHand();
-        getWorld().getEntities((Entity) null, box.inflate(getInteractionRadius()), suitableEntity).forEach(entity -> entities.add(RepresentationUtil.completeEntityToLua(entity, itemInHand)));
+        BlockPos currentPos = getPos();
+        getWorld().getEntities((Entity) null, box.inflate(getInteractionRadius()), suitableEntity).forEach(entity -> entities.add(RepresentationUtil.completeEntityWithPositionToLua(entity, itemInHand, currentPos)));
         return MethodResult.of(entities);
     }
 
