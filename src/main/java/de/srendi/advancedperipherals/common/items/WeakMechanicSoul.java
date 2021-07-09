@@ -39,7 +39,7 @@ public class WeakMechanicSoul extends APItem {
         public final Map<Class<? extends Entity>, Integer> ingredients;
         public final Item resultSoul;
 
-        public MechanicalSoulRecord( Map<Class<? extends Entity>, Integer> ingredients, Item resultSoul) {
+        public MechanicalSoulRecord(Map<Class<? extends Entity>, Integer> ingredients, Item resultSoul) {
             this.ingredients = ingredients;
             this.resultSoul = resultSoul;
         }
@@ -64,7 +64,6 @@ public class WeakMechanicSoul extends APItem {
         }
     }
 
-    // So, I have to duplicate <> description for some reason, because linter refused to work)
     private final static Map<Class<? extends Entity>, Integer> entityRegister = new HashMap<Class<? extends Entity>, Integer>() {{
         put(EndermanEntity.class, 1);
         put(CowEntity.class, 2);
@@ -79,10 +78,10 @@ public class WeakMechanicSoul extends APItem {
 
     private final static Map<Class<? extends Entity>, MechanicalSoulRecord> MECHANICAL_SOUL_REGISTRY = new HashMap<Class<? extends Entity>, MechanicalSoulRecord>() {{
         MechanicalSoulRecord endSoulRecord = new MechanicalSoulRecord(
-                new HashMap<>(){{ put(EndermanEntity.class, 10); }}, Items.END_MECHANIC_SOUL.get()
+                new HashMap<Class<? extends Entity>, Integer>(){{ put(EndermanEntity.class, 10); }}, Items.END_MECHANIC_SOUL.get()
         );
         MechanicalSoulRecord husbandrySoulRecord = new MechanicalSoulRecord(
-                new HashMap<>() {{
+                new HashMap<Class<? extends Entity>, Integer>() {{
                     put(CowEntity.class, 3);
                     put(SheepEntity.class, 3);
                     put(ChickenEntity.class, 3);

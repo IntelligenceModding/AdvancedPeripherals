@@ -89,7 +89,7 @@ public class DrawerIntegration extends Integration<TileEntityDrawers> {
             IDrawer drawer = group.getDrawer(slot);
             if (drawer.isEmpty())
                 continue;
-            data.put(slot + 1, new HashMap<>() {{
+            data.put(slot + 1, new HashMap<String, Object>() {{
                 put("count", drawer.getStoredItemCount());
                 ResourceLocation registryName = drawer.getStoredItemPrototype().getItem().getRegistryName();
                 if (registryName != null) {

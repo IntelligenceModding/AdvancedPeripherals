@@ -52,11 +52,11 @@ public class HusbandryMechanicSoulPeripheral extends WeakMechanicSoulPeripheral 
 
     @Override
     protected int getRawCooldown(String name) {
-        return switch (name) {
-            case USE_ON_ANIMAL_OPERATION -> AdvancedPeripheralsConfig.useOnAnimalCooldown;
-            case CAPTURE_ANIMAL_OPERATION -> AdvancedPeripheralsConfig.captureAnimalCooldown;
-            default -> super.getRawCooldown(name);
-        };
+        switch (name){
+            case USE_ON_ANIMAL_OPERATION: return AdvancedPeripheralsConfig.useOnAnimalCooldown;
+            case CAPTURE_ANIMAL_OPERATION: return AdvancedPeripheralsConfig.captureAnimalCooldown;
+            default: return super.getRawCooldown(name);
+        }
     }
 
     @Override
