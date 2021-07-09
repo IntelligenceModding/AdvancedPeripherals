@@ -1,0 +1,49 @@
+{
+  "display": {
+    "icon": {
+      "item": "advancedperipherals:overpowered_weak_mechanic_soul"
+    },
+    "title": {
+      "translate": "advancements.advancedperipherals.overpowered_mechanic_soul"
+    },
+    "description": {
+      "translate": "advancements.advancedperipherals.overpowered_mechanic_soul.description"
+    }
+  },
+  "parent": "advancedperipherals:weak_mechanic_soul",
+  "criteria": {
+    "overpowered_weak_in_inventory": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "advancedperipherals:overpowered_weak_mechanic_soul"
+          }
+        ]
+      }
+    },
+    "overpowered_end_in_inventory": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "advancedperipherals:overpowered_end_mechanic_soul"
+          }
+        ]
+      }
+    },
+    "overpowered_husbandry_in_inventory": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "advancedperipherals:overpowered_husbandry_mechanic_soul"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    ["overpowered_weak_in_inventory", "overpowered_end_in_inventory", "overpowered_husbandry_in_inventory"]
+  ]
+}

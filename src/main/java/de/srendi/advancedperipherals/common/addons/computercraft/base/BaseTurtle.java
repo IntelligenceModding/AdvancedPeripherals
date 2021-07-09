@@ -1,5 +1,6 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.base;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import dan200.computercraft.api.client.TransformedModel;
 import dan200.computercraft.api.peripheral.IPeripheral;
 import dan200.computercraft.api.turtle.AbstractTurtleUpgrade;
@@ -11,6 +12,7 @@ import de.srendi.advancedperipherals.common.blocks.base.TileEntityList;
 import de.srendi.advancedperipherals.common.util.WorldPos;
 import net.minecraft.client.renderer.model.ModelResourceLocation;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.vector.Matrix4f;
 import net.minecraft.util.math.vector.TransformationMatrix;
@@ -19,7 +21,7 @@ import org.jetbrains.annotations.Nullable;
 
 public abstract class BaseTurtle<T extends BasePeripheral> extends AbstractTurtleUpgrade {
 
-    protected T peripheral;
+    protected @Nullable T peripheral;
     protected ITurtleAccess turtle;
     protected int tick;
 

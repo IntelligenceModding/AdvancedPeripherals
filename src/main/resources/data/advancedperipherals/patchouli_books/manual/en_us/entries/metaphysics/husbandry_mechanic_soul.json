@@ -1,0 +1,20 @@
+{
+  "name": "Husbandry mechanic soul",
+  "icon": "advancedperipherals:husbandry_mechanic_soul",
+  "category": "advancedperipherals:metaphysics",
+  "advancement": "advancedperipherals:husbandry_mechanic_soul",
+  "pages": [
+    {
+      "type": "spotlight",
+      "title": "Husbandry mechanic soul",
+      "item": "advancedperipherals:husbandry_mechanic_soul",
+      "text": "After consuming 3 chickens, 3 cows, 3 sheeps and 1 horse, weak mechanic soul was transformed to husbandry mechanic soul!$(p)In addition to be more powerful weak mechanic soul variant, seems, this soul also provide abilities to interact with animals!"
+    },
+    {
+      "type": "link",
+      "text": "In additions to weak mechanic soul abilities, this soul also allow to interact with animals and even transfer them inside!$(p)But be aware, any stored animal will be lost after turtle is broken.",
+      "url": "https://docs.srendi.de/items/husbandry_automata/",
+      "link_text": "API documentation"
+    }
+  ]
+}

@@ -10,7 +10,7 @@ public class AdvancedPeripheralsConfig {
     public static int energyDetectorMaxFlow;
     public static int geoScannerMaxFreeRadius;
     public static int geoScannerMaxCostRadius;
-    public static int geoScannerAdditionalBlockCost;
+    public static double geoScannerExtraBlockCost;
     public static int geoScannerMaxEnergyStorage;
     public static int geoScannerMinScanPeriod;
     public static int nbtStorageMaxSize;
@@ -31,6 +31,29 @@ public class AdvancedPeripheralsConfig {
     public static boolean enableColonyIntegrator;
     public static boolean enableNBTStorage;
 
+    // mechanic soul configuration
+    public static int energyToFuelRate;
+    public static int suckItemCost;
+    public static int suckItemCooldown;
+    public static int digBlockCost;
+    public static int digBlockCooldown;
+    public static int clickBlockCost;
+    public static int useOnBlockCooldown;
+    public static int warpCooldown;
+    public static int useOnAnimalCost;
+    public static int useOnAnimalCooldown;
+    public static int captureAnimalCost;
+    public static int captureAnimalCooldown;
+    public static boolean enableWeakMechanicSoul;
+    public static int weakMechanicSoulInteractionRadius;
+    public static int weakMechanicSoulMaxFuelConsumptionLevel;
+    public static boolean enableEndMechanicSoul;
+    public static int endMechanicSoulInteractionRadius;
+    public static int endMechanicSoulMaxFuelConsumptionLevel;
+    public static boolean enableHusbandryMechanicSoul;
+    public static int husbandryMechanicSoulInteractionRadius;
+    public static int husbandryMechanicSoulMaxFuelConsumptionLevel;
+
     //World Features
     public static boolean enableVillagerStructures;
     public static boolean enableGeoScanner;
@@ -43,7 +66,7 @@ public class AdvancedPeripheralsConfig {
         final ForgeConfigSpec.IntValue ENERGY_DETECTOR_MAX_FLOW;
         final ForgeConfigSpec.IntValue GEO_SCANNER_MAX_FREE_RADIUS;
         final ForgeConfigSpec.IntValue GEO_SCANNER_MAX_COST_RADIUS;
-        final ForgeConfigSpec.IntValue GEO_SCANNER_ADDITIONAL_BLOCK_COST;
+        final ForgeConfigSpec.DoubleValue GEO_SCANNER_EXTRA_BLOCK_COST;
         final ForgeConfigSpec.IntValue GEO_SCANNER_MAX_ENERGY_STORAGE;
         final ForgeConfigSpec.IntValue GEO_SCANNER_MIN_SCAN_PERIOD;
         final ForgeConfigSpec.IntValue NBT_STORAGE_MAX_SIZE;
@@ -65,6 +88,30 @@ public class AdvancedPeripheralsConfig {
         final ForgeConfigSpec.BooleanValue ENABLE_COLONY_INTEGRATOR;
         final ForgeConfigSpec.BooleanValue ENABLE_NBT_STORAGE;
 
+        // Mechanical soul
+        final ForgeConfigSpec.IntValue ENERGY_TO_FUEL_RATE;
+        final ForgeConfigSpec.IntValue SUCK_ITEM_COST;
+        final ForgeConfigSpec.IntValue SUCK_ITEM_COOLDOWN;
+        final ForgeConfigSpec.IntValue DIG_BLOCK_COST;
+        final ForgeConfigSpec.IntValue DIG_BLOCK_COOLDOWN;
+        final ForgeConfigSpec.IntValue USE_ON_BLOCK_COST;
+        final ForgeConfigSpec.IntValue USE_ON_BLOCK_COOLDOWN;
+        final ForgeConfigSpec.IntValue WARP_COOLDOWN;
+        final ForgeConfigSpec.IntValue USE_ON_ANIMAL_COST;
+        final ForgeConfigSpec.IntValue USE_ON_ANIMAL_COOLDOWN;
+        final ForgeConfigSpec.IntValue CAPTURE_ANIMAL_COST;
+        final ForgeConfigSpec.IntValue CAPTURE_ANIMAL_COOLDOWN;
+        final ForgeConfigSpec.IntValue WEAK_MECHANIC_SOUL_TURTLE_INTERACTION_RANGE;
+        final ForgeConfigSpec.IntValue WEAK_MECHANIC_SOUL_TURTLE_MAX_FUEL_CONSUMPTION_LEVEL;
+        final ForgeConfigSpec.IntValue END_MECHANIC_SOUL_TURTLE_INTERACTION_RANGE;
+        final ForgeConfigSpec.IntValue END_MECHANIC_SOUL_TURTLE_MAX_FUEL_CONSUMPTION_LEVEL;
+        final ForgeConfigSpec.IntValue HUSBANDRY_MECHANIC_SOUL_TURTLE_INTERACTION_RANGE;
+        final ForgeConfigSpec.IntValue HUSBANDRY_MECHANIC_SOUL_TURTLE_MAX_FUEL_CONSUMPTION_LEVEL;
+        final ForgeConfigSpec.BooleanValue ENABLE_WEAK_MECHANIC_SOUL;
+        final ForgeConfigSpec.BooleanValue ENABLE_END_MECHANIC_SOUL;
+        final ForgeConfigSpec.BooleanValue ENABLE_HUSBANDRY_MECHANIC_SOUL;
+
+
         //World Features
         final ForgeConfigSpec.BooleanValue ENABLE_VILLAGER_STRUCTURES;
 
@@ -77,7 +124,7 @@ public class AdvancedPeripheralsConfig {
             ENERGY_DETECTOR_MAX_FLOW = builder.comment("Defines the maximum energy flow of the energy detector.").defineInRange("energyDetectorMaxFlow", Integer.MAX_VALUE, 1, Integer.MAX_VALUE);
             GEO_SCANNER_MAX_FREE_RADIUS = builder.comment("Defines max cost-free radius for geo scanner").defineInRange("geoScannerMaxFreeRadius", 8, 1, 64);
             GEO_SCANNER_MAX_COST_RADIUS = builder.comment("Defines max cost radius for geo scanner").defineInRange("geoScannerMaxCostRadius", 16, 1, 64);
-            GEO_SCANNER_ADDITIONAL_BLOCK_COST = builder.comment("Defines block cost in RF for any extra block out of cost-free radius").defineInRange("geoScannerAdditionalBlockCost", 100, 100, Integer.MAX_VALUE);
+            GEO_SCANNER_EXTRA_BLOCK_COST = builder.comment("Defines block cost in RF for any extra block out of cost-free radius").defineInRange("geoScannerExtraBlockCost", 0.17, 0.17, 1000);
             GEO_SCANNER_MAX_ENERGY_STORAGE = builder.comment("Defines max energy stored in geo scanner").defineInRange("geoScannerMaxEnergyStorage", 100_000_000, 1_000_000, Integer.MAX_VALUE);
             GEO_SCANNER_MIN_SCAN_PERIOD = builder.comment("Defines min period between scans in milliseconds").defineInRange("geoScannerMinScanPeriod", 2_000, 2_000, Integer.MAX_VALUE);
             NBT_STORAGE_MAX_SIZE = builder.comment("Defines max nbt string that can be stored in nbt storage").defineInRange("nbtStorageMaxSize", 1048576, 0, Integer.MAX_VALUE);
@@ -101,6 +148,29 @@ public class AdvancedPeripheralsConfig {
             ENABLE_GEO_SCANNER = builder.comment("Enable the geo scanner or not.").define("enableGeoScanner", true);
             ENABLE_COLONY_INTEGRATOR = builder.comment("Enable the colony integrator or not.").define("enableColonyIntegrator", true);
             ENABLE_NBT_STORAGE = builder.comment("Enable the nbt storage block or not").define("enableNBTStorage", true);
+
+            builder.comment("").push("Mechanical soul");
+            ENERGY_TO_FUEL_RATE = builder.comment("Defines energy to fuel rate").defineInRange("energyToFuelRate", 575, 575, Integer.MAX_VALUE);
+            SUCK_ITEM_COST = builder.comment("Defines cost of suck single item").defineInRange("suckItemCost", 1, 1, Integer.MAX_VALUE);
+            SUCK_ITEM_COOLDOWN = builder.comment("Defines cooldown of suck single item").defineInRange("suckItemCooldown", 1_000, 0, Integer.MAX_VALUE);
+            DIG_BLOCK_COST = builder.comment("Defines cost of dig block action").defineInRange("digBlockCost", 1, 1, Integer.MAX_VALUE);
+            DIG_BLOCK_COOLDOWN = builder.comment("Defines cooldown of dig block action").defineInRange("digBlockCooldown", 100, 0, Integer.MAX_VALUE);
+            USE_ON_BLOCK_COST = builder.comment("Defines cost of use on block action").defineInRange("useOnBlockCost", 1, 1, Integer.MAX_VALUE);
+            USE_ON_BLOCK_COOLDOWN = builder.comment("Defines cooldown of use on block action").defineInRange("useOnBlockCooldown", 5_000, 0, Integer.MAX_VALUE);
+            WARP_COOLDOWN = builder.comment("Defines cooldown of warp action").defineInRange("warpCooldown", 1_000, 0, Integer.MAX_VALUE);
+            USE_ON_ANIMAL_COST = builder.comment("Defines cost of use on animal action").defineInRange("useOnAnimalCost", 10, 1, Integer.MAX_VALUE);
+            USE_ON_ANIMAL_COOLDOWN = builder.comment("Defines cooldown of use on animal action").defineInRange("useOnAnimalCooldown", 2_500, 0, Integer.MAX_VALUE);
+            CAPTURE_ANIMAL_COST = builder.comment("Defines cost of capture animal action").defineInRange("captureAnimalCost", 100, 1, Integer.MAX_VALUE);
+            CAPTURE_ANIMAL_COOLDOWN = builder.comment("Defines cooldown of capture animal action").defineInRange("captureAnimalCooldown", 50_000, 0, Integer.MAX_VALUE);
+            ENABLE_WEAK_MECHANIC_SOUL = builder.comment("Enable the weak mechanic soul or not").define("enableWeakMechanicSoul", true);
+            WEAK_MECHANIC_SOUL_TURTLE_INTERACTION_RANGE = builder.comment("Defines weak mechanic soul turtle interaction range").defineInRange("weakMechanicSoulInteractionRange", 2, 1, 10);
+            WEAK_MECHANIC_SOUL_TURTLE_MAX_FUEL_CONSUMPTION_LEVEL = builder.comment("Defines weak mechanic soul turtle max fuel consumption level").defineInRange("weakMechanicSoulMaxFuelConsumptionLevel", 2, 1, 10);
+            ENABLE_END_MECHANIC_SOUL = builder.comment("Enable the end mechanic soul or not").define("enableEndMechanicSoul", true);
+            END_MECHANIC_SOUL_TURTLE_INTERACTION_RANGE = builder.comment("Defines end mechanic soul turtle interaction range").defineInRange("endMechanicSoulInteractionRange", 4, 1, 10);
+            END_MECHANIC_SOUL_TURTLE_MAX_FUEL_CONSUMPTION_LEVEL = builder.comment("Defines end mechanic soul turtle max fuel consumption level").defineInRange("endMechanicSoulMaxFuelConsumptionLevel", 4, 1, 10);
+            ENABLE_HUSBANDRY_MECHANIC_SOUL = builder.comment("Enable the husbandry mechanic soul or not").define("enableHusbandryMechanicSoul", true);
+            HUSBANDRY_MECHANIC_SOUL_TURTLE_INTERACTION_RANGE = builder.comment("Defines husbandry mechanic soul turtle interaction range").defineInRange("husbandryMechanicSoulInteractionRange", 4, 1, 10);
+            HUSBANDRY_MECHANIC_SOUL_TURTLE_MAX_FUEL_CONSUMPTION_LEVEL = builder.comment("Defines husbandry mechanic soul turtle max fuel consumption level").defineInRange("husbandryMechanicSoulMaxFuelConsumptionLevel", 4, 1, 10);
 
             ENABLE_VILLAGER_STRUCTURES = builder.comment("Enable the villager structures for the computer scientist.").define("enableVillagerStructures", true);
             builder.pop();

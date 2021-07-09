@@ -1,0 +1,26 @@
+{
+  "display": {
+    "icon": {
+      "item": "advancedperipherals:peripheral_casing"
+    },
+    "title": {
+      "translate": "advancements.advancedperipherals.root"
+    },
+    "description": {
+      "translate": "advancements.advancedperipherals.root.description"
+    },
+    "background": "minecraft:textures/gui/advancements/backgrounds/stone.png"
+  },
+  "criteria": {
+    "item_in_inventory": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "advancedperipherals:peripheral_casing"
+          }
+        ]
+      }
+    }
+  }
+}

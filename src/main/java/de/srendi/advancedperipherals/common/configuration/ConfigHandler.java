@@ -29,7 +29,7 @@ public class ConfigHandler {
         AdvancedPeripheralsConfig.energyDetectorMaxFlow = ConfigHolder.COMMON_CONFIG.ENERGY_DETECTOR_MAX_FLOW.get();
         AdvancedPeripheralsConfig.geoScannerMaxFreeRadius = ConfigHolder.COMMON_CONFIG.GEO_SCANNER_MAX_FREE_RADIUS.get();
         AdvancedPeripheralsConfig.geoScannerMaxCostRadius = ConfigHolder.COMMON_CONFIG.GEO_SCANNER_MAX_COST_RADIUS.get();
-        AdvancedPeripheralsConfig.geoScannerAdditionalBlockCost = ConfigHolder.COMMON_CONFIG.GEO_SCANNER_ADDITIONAL_BLOCK_COST.get();
+        AdvancedPeripheralsConfig.geoScannerExtraBlockCost = ConfigHolder.COMMON_CONFIG.GEO_SCANNER_EXTRA_BLOCK_COST.get();
         AdvancedPeripheralsConfig.geoScannerMaxEnergyStorage = ConfigHolder.COMMON_CONFIG.GEO_SCANNER_MAX_ENERGY_STORAGE.get();
         AdvancedPeripheralsConfig.geoScannerMinScanPeriod = ConfigHolder.COMMON_CONFIG.GEO_SCANNER_MIN_SCAN_PERIOD.get();
         AdvancedPeripheralsConfig.nbtStorageMaxSize = ConfigHolder.COMMON_CONFIG.NBT_STORAGE_MAX_SIZE.get();
@@ -50,6 +50,29 @@ public class ConfigHandler {
         AdvancedPeripheralsConfig.enableGeoScanner = ConfigHolder.COMMON_CONFIG.ENABLE_GEO_SCANNER.get();
         AdvancedPeripheralsConfig.enableColonyIntegrator = ConfigHolder.COMMON_CONFIG.ENABLE_COLONY_INTEGRATOR.get();
         AdvancedPeripheralsConfig.enableNBTStorage = ConfigHolder.COMMON_CONFIG.ENABLE_NBT_STORAGE.get();
+
+        //Mechanical soul
+        AdvancedPeripheralsConfig.energyToFuelRate = ConfigHolder.COMMON_CONFIG.ENERGY_TO_FUEL_RATE.get();
+        AdvancedPeripheralsConfig.suckItemCost = ConfigHolder.COMMON_CONFIG.SUCK_ITEM_COST.get();
+        AdvancedPeripheralsConfig.suckItemCooldown = ConfigHolder.COMMON_CONFIG.SUCK_ITEM_COOLDOWN.get();
+        AdvancedPeripheralsConfig.digBlockCost = ConfigHolder.COMMON_CONFIG.DIG_BLOCK_COST.get();
+        AdvancedPeripheralsConfig.digBlockCooldown = ConfigHolder.COMMON_CONFIG.DIG_BLOCK_COOLDOWN.get();
+        AdvancedPeripheralsConfig.clickBlockCost = ConfigHolder.COMMON_CONFIG.USE_ON_BLOCK_COST.get();
+        AdvancedPeripheralsConfig.useOnBlockCooldown = ConfigHolder.COMMON_CONFIG.USE_ON_BLOCK_COOLDOWN.get();
+        AdvancedPeripheralsConfig.warpCooldown = ConfigHolder.COMMON_CONFIG.WARP_COOLDOWN.get();
+        AdvancedPeripheralsConfig.useOnAnimalCost = ConfigHolder.COMMON_CONFIG.USE_ON_ANIMAL_COST.get();
+        AdvancedPeripheralsConfig.useOnAnimalCooldown = ConfigHolder.COMMON_CONFIG.USE_ON_ANIMAL_COOLDOWN.get();
+        AdvancedPeripheralsConfig.captureAnimalCost = ConfigHolder.COMMON_CONFIG.CAPTURE_ANIMAL_COST.get();
+        AdvancedPeripheralsConfig.captureAnimalCooldown = ConfigHolder.COMMON_CONFIG.CAPTURE_ANIMAL_COOLDOWN.get();
+        AdvancedPeripheralsConfig.enableWeakMechanicSoul = ConfigHolder.COMMON_CONFIG.ENABLE_WEAK_MECHANIC_SOUL.get();
+        AdvancedPeripheralsConfig.weakMechanicSoulInteractionRadius = ConfigHolder.COMMON_CONFIG.WEAK_MECHANIC_SOUL_TURTLE_INTERACTION_RANGE.get();
+        AdvancedPeripheralsConfig.weakMechanicSoulMaxFuelConsumptionLevel = ConfigHolder.COMMON_CONFIG.WEAK_MECHANIC_SOUL_TURTLE_MAX_FUEL_CONSUMPTION_LEVEL.get();
+        AdvancedPeripheralsConfig.enableEndMechanicSoul = ConfigHolder.COMMON_CONFIG.ENABLE_END_MECHANIC_SOUL.get();
+        AdvancedPeripheralsConfig.endMechanicSoulInteractionRadius = ConfigHolder.COMMON_CONFIG.END_MECHANIC_SOUL_TURTLE_INTERACTION_RANGE.get();
+        AdvancedPeripheralsConfig.endMechanicSoulMaxFuelConsumptionLevel = ConfigHolder.COMMON_CONFIG.END_MECHANIC_SOUL_TURTLE_MAX_FUEL_CONSUMPTION_LEVEL.get();
+        AdvancedPeripheralsConfig.enableNBTStorage = ConfigHolder.COMMON_CONFIG.ENABLE_HUSBANDRY_MECHANIC_SOUL.get();
+        AdvancedPeripheralsConfig.husbandryMechanicSoulInteractionRadius = ConfigHolder.COMMON_CONFIG.HUSBANDRY_MECHANIC_SOUL_TURTLE_INTERACTION_RANGE.get();
+        AdvancedPeripheralsConfig.husbandryMechanicSoulMaxFuelConsumptionLevel = ConfigHolder.COMMON_CONFIG.HUSBANDRY_MECHANIC_SOUL_TURTLE_MAX_FUEL_CONSUMPTION_LEVEL.get();
 
         AdvancedPeripheralsConfig.enableVillagerStructures = ConfigHolder.COMMON_CONFIG.ENABLE_VILLAGER_STRUCTURES.get();
     }
