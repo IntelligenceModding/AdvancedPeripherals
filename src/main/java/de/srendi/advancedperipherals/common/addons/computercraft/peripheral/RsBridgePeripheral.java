@@ -95,10 +95,11 @@ public class RsBridgePeripheral extends BasePeripheral {
     @LuaFunction(mainThread = true)
     public final int exportItem(IArguments arguments) throws LuaException {
         ItemStack stack = ItemUtil.getItemStackRS(arguments.getTable(0), RefinedStorage.getItems(getNetwork(), false));
-        Direction direction = Direction.valueOf(arguments.getString(1).toUpperCase(Locale.ROOT));
+        Direction direction = validateSide(arguments.getString(1));
 
         TileEntity targetEntity = tileEntity.getLevel().getBlockEntity(tileEntity.getBlockPos().relative(direction));
-        IItemHandler inventory = targetEntity != null ? targetEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, direction.getOpposite()).resolve().orElse(null) : null;
+        IItemHandler inventory = targetEntity != null ?
+                targetEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, direction.getOpposite()).resolve().orElse(null) : null;
         if (inventory == null)
             throw new LuaException("No valid inventory at " + arguments.getString(1));
 
@@ -126,15 +127,15 @@ public class RsBridgePeripheral extends BasePeripheral {
     @LuaFunction(mainThread = true)
     public final int importItem(IArguments arguments) throws LuaException {
         ItemStack stack = ItemUtil.getItemStackRS(arguments.getTable(0), RefinedStorage.getItems(getNetwork(), false));
-        Direction direction = Direction.valueOf(arguments.getString(1).toUpperCase(Locale.ROOT));
-        int count = stack.getCount();
+        Direction direction = validateSide(arguments.getString(1));
 
         TileEntity targetEntity = tileEntity.getLevel().getBlockEntity(tileEntity.getBlockPos().relative(direction));
-        IItemHandler inventory = targetEntity != null ? targetEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, direction.getOpposite()).resolve().orElse(null) : null;
+        IItemHandler inventory = targetEntity != null ?
+                targetEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, direction.getOpposite()).resolve().orElse(null) : null;
         if (inventory == null)
             throw new LuaException("No valid inventory at " + arguments.getString(1));
 
-        int amount = count;
+        int amount = stack.getCount();
         int transferableAmount = 0;
 
         for (int i = 0; i < inventory.getSlots(); i++) {
@@ -145,8 +146,9 @@ public class RsBridgePeripheral extends BasePeripheral {
                     transferableAmount += amount - insertedStack.getCount();
                     break;
                 } else {
-                    amount = count - inventory.getStackInSlot(i).getCount();
-                    ItemStack insertedStack = getNetwork().insertItem(stack, inventory.getStackInSlot(i).getCount(), Action.PERFORM);
+                    amount -= inventory.getStackInSlot(i).getCount();
+                    ItemStack insertedStack = getNetwork().insertItem(stack, inventory.getStackInSlot(i).getCount(),
+                            Action.PERFORM);
                     inventory.extractItem(i, inventory.getStackInSlot(i).getCount() - insertedStack.getCount(), false);
                     transferableAmount += inventory.getStackInSlot(i).getCount() - insertedStack.getCount();
                 }
@@ -156,14 +158,15 @@ public class RsBridgePeripheral extends BasePeripheral {
     }
 
     @LuaFunction(mainThread = true)
-    public final int exportItemToChest(IComputerAccess computer, IArguments arguments) throws LuaException {
+    public final int exportItemToPeripheral(IComputerAccess computer, IArguments arguments) throws LuaException {
         ItemStack stack = ItemUtil.getItemStackRS(arguments.getTable(0), RefinedStorage.getItems(getNetwork(), false));
         IPeripheral chest = computer.getAvailablePeripheral(arguments.getString(1));
         if (chest == null)
             throw new LuaException("No valid chest for " + arguments.getString(1));
 
         TileEntity targetEntity = (TileEntity) chest.getTarget();
-        IItemHandler inventory = targetEntity != null ? targetEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).resolve().orElse(null) : null;
+        IItemHandler inventory = targetEntity != null ?
+                targetEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).resolve().orElse(null) : null;
         if (inventory == null)
             throw new LuaException("No valid inventory for " + arguments.getString(1));
 
@@ -197,7 +200,8 @@ public class RsBridgePeripheral extends BasePeripheral {
             throw new LuaException("No valid chest for " + arguments.getString(1));
 
         TileEntity targetEntity = (TileEntity) chest.getTarget();
-        IItemHandler inventory = targetEntity != null ? targetEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).resolve().orElse(null) : null;
+        IItemHandler inventory = targetEntity != null ?
+                targetEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).resolve().orElse(null) : null;
         if (inventory == null)
             throw new LuaException("No valid inventory for " + arguments.getString(1));
 
@@ -214,7 +218,8 @@ public class RsBridgePeripheral extends BasePeripheral {
                     break;
                 } else {
                     amount = count - inventory.getStackInSlot(i).getCount();
-                    ItemStack insertedStack = getNetwork().insertItem(stack, inventory.getStackInSlot(i).getCount(), Action.PERFORM);
+                    ItemStack insertedStack = getNetwork().insertItem(stack, inventory.getStackInSlot(i).getCount(),
+                            Action.PERFORM);
                     inventory.extractItem(i, inventory.getStackInSlot(i).getCount() - insertedStack.getCount(), false);
                     transferableAmount += inventory.getStackInSlot(i).getCount() - insertedStack.getCount();
                 }
@@ -245,7 +250,8 @@ public class RsBridgePeripheral extends BasePeripheral {
 
     @LuaFunction()
     public final boolean craftFluid(String fluid, int count) {
-        ICalculationResult result = getNetwork().getCraftingManager().create(new FluidStack(ForgeRegistries.FLUIDS.getValue(new ResourceLocation(fluid)), 0), count);
+        ICalculationResult result = getNetwork().getCraftingManager()
+                .create(new FluidStack(ForgeRegistries.FLUIDS.getValue(new ResourceLocation(fluid)), 0), count);
         CalculationResultType type = result.getType();
         if (result.getType() == CalculationResultType.OK)
             getNetwork().getCraftingManager().start(result.getTask());

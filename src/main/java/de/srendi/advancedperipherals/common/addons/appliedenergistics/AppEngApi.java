@@ -11,11 +11,10 @@ import appeng.api.storage.data.IAEItemStack;
 import appeng.api.storage.data.IItemList;
 import dan200.computercraft.shared.util.NBTUtil;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
+import de.srendi.advancedperipherals.common.addons.computercraft.base.Converter;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.commons.codec.binary.Hex;
 
 import java.nio.charset.StandardCharsets;
@@ -54,26 +53,24 @@ public class AppEngApi implements IAEAddon {
         return stack;
     }
 
-    public HashMap<Integer, Object> iteratorToMapStack(Iterator<IAEItemStack> iterator, int flag) {
-        HashMap<Integer, Object> map = new HashMap<>();
-        int i = 1;
+    public List<Object> iteratorToMapStack(Iterator<IAEItemStack> iterator, int flag) {
+        List<Object> items = new ArrayList<>();
         while (iterator.hasNext()) {
-            Object o = getObjectFromStack(iterator.next(), flag);
-            if (o != null)
-                map.put(i++, o);
+            Object item = getObjectFromStack(iterator.next(), flag);
+            if (item != null)
+                items.add(item);
         }
-        return map;
+        return items;
     }
 
-    public HashMap<Integer, Object> iteratorToMapFluid(Iterator<IAEFluidStack> iterator, int flag) {
-        HashMap<Integer, Object> map = new HashMap<>();
-        int i = 1;
+    public List<Object> iteratorToMapFluid(Iterator<IAEFluidStack> iterator, int flag) {
+        List<Object> items = new ArrayList<>();
         while (iterator.hasNext()) {
-            Object o = getObjectFromStack(iterator.next(), flag);
-            if (o != null)
-                map.put(i++, o);
+            Object item = getObjectFromStack(iterator.next(), flag);
+            if (item != null)
+                items.add(item);
         }
-        return map;
+        return items;
     }
 
     public Object getObjectFromStack(IAEItemStack stack, int flag) {
@@ -86,8 +83,6 @@ public class AppEngApi implements IAEAddon {
         } else if (flag == 2) {
             if (stack.isCraftable())
                 return map;
-        } else if (flag >= 3) {
-            throw new IllegalArgumentException("flag cannot be " + flag);
         }
         return null;
     }
@@ -101,34 +96,17 @@ public class AppEngApi implements IAEAddon {
         map.put("amount", stack.getStackSize());
         map.put("displayName", displayName);
         map.put("nbt", NBTUtil.toLua(nbt));
-        map.put("tags", getListFromTags(stack.getItem().getTags()));
-        if (stack.isCraftable()) {
-            map.put("isCraftable", true);
-        } else {
-            map.put("isCraftable", false);
-        }
+        map.put("tags", Converter.tagsToList(stack.getItem().getTags()));
+        map.put("isCraftable", stack.isCraftable());
         return map;
-    }
-
-    public List<String> getListFromTags(Set<ResourceLocation> tags) {
-        List<String> list = new ArrayList<>();
-        for (ResourceLocation value : tags) {
-            list.add(value.toString());
-        }
-        return list;
     }
 
     public Object getObjectFromStack(IAEFluidStack stack, int flag) {
         HashMap<String, Object> map = new HashMap<>();
-        ResourceLocation itemResourceLocation = ForgeRegistries.FLUIDS.getKey(stack.getFluid());
-        Fluid fluid = stack.getFluid();
-        String itemName = itemResourceLocation == null ? "null" : itemResourceLocation.toString();
-        long amount = stack.getStackSize();
-        String displayName = stack.getFluidStack().getDisplayName().getString();
-        map.put("name", itemName);
-        map.put("amount", amount);
-        map.put("displayName", displayName);
-        map.put("tags", getListFromTags(fluid.getTags()));
+        map.put("name", stack.getFluidStack().getFluid().getRegistryName().toString());
+        map.put("amount", stack.getFluidStack().getAmount());
+        map.put("displayName", stack.getFluidStack().getDisplayName());
+        map.put("tags", Converter.tagsToList(stack.getFluid().getTags()));
         if (flag == 0) {
             return map;
         } else if (flag == 1) {
@@ -137,8 +115,6 @@ public class AppEngApi implements IAEAddon {
         } else if (flag == 2) {
             if (stack.isCraftable())
                 return map;
-        } else if (flag >= 3) {
-            throw new IllegalArgumentException("flag cannot be " + flag);
         }
         return null;
     }
@@ -169,11 +145,9 @@ public class AppEngApi implements IAEAddon {
             if (aeStack.getStackSize() > 0 && aeStack.getItem().equals(stack.getItem())) {
                 CompoundNBT tag = aeStack.createItemStack().getTag();
                 String hash = NBTUtil.getNBTHash(tag);
-                AdvancedPeripherals.debug("HASH: " + hash);
-                AdvancedPeripherals.debug("TAG: " + tag);
-                if (nbtHash.equals(hash)) {
+                if (nbtHash.equals(hash))
                     return tag.copy();
-                }
+
             }
         }
         return null;
@@ -183,9 +157,9 @@ public class AppEngApi implements IAEAddon {
         IItemList<IAEItemStack> itemStacks = monitor.getStorageList();
         for (IAEItemStack aeStack : itemStacks) {
             if (aeStack.getStackSize() > 0) {
-                if (fingerprint.equals(getFingerpint(aeStack))) {
+                if (fingerprint.equals(getFingerpint(aeStack)))
                     return aeStack.createItemStack();
-                }
+
             }
         }
         return null;

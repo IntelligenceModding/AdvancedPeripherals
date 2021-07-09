@@ -1,6 +1,7 @@
 package de.srendi.advancedperipherals;
 
 import de.srendi.advancedperipherals.client.HudOverlayHandler;
+import de.srendi.advancedperipherals.common.addons.refinedstorage.RefinedStorage;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
 import de.srendi.advancedperipherals.common.configuration.ConfigHandler;
 import de.srendi.advancedperipherals.common.configuration.ConfigHolder;
@@ -28,6 +29,8 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import top.theillusivec4.curios.api.SlotTypeMessage;
+
+import java.sql.Ref;
 
 @Mod(AdvancedPeripherals.MOD_ID)
 public class AdvancedPeripherals {
@@ -57,6 +60,10 @@ public class AdvancedPeripherals {
         Registration.register();
         MinecraftForge.EVENT_BUS.register(this);
         curiosLoaded = ModList.get().isLoaded("curios");
+        if(ModList.get().isLoaded("refinedstorage")) {
+            RefinedStorage.instance = new RefinedStorage();
+            RefinedStorage.instance.initiate();
+        }
     }
 
     public static void debug(String message) {

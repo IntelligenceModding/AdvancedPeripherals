@@ -12,6 +12,7 @@ import appeng.api.storage.channels.IFluidStorageChannel;
 import appeng.api.storage.channels.IItemStorageChannel;
 import appeng.api.storage.data.IAEFluidStack;
 import appeng.api.storage.data.IAEItemStack;
+import appeng.util.item.AEItemStack;
 import dan200.computercraft.api.lua.IArguments;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
@@ -96,7 +97,7 @@ public class MeBridgePeripheral extends BasePeripheral {
         IAEItemStack aeStack = AppEngApi.getInstance().findAEStackFromItemStack(monitor, stack);
         if (aeStack == null)
             throw new LuaException("Item " + stack + " does not exists in the ME system or the system is offline");
-        Direction direction = Direction.valueOf(arguments.getString(1).toUpperCase(Locale.ROOT));
+        Direction direction = validateSide(arguments.getString(1));
 
         TileEntity targetEntity = tileEntity.getLevel().getBlockEntity(tileEntity.getBlockPos().relative(direction));
         IItemHandler inventory = targetEntity != null ? targetEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, direction.getOpposite()).resolve().orElse(null) : null;
@@ -130,21 +131,17 @@ public class MeBridgePeripheral extends BasePeripheral {
     public final int importItem(IArguments arguments) throws LuaException {
         IMEMonitor<IAEItemStack> monitor = ((IStorageGrid) node.getGrid().getCache(IStorageGrid.class)).getInventory(AppEngApi.getInstance().getApi().storage().getStorageChannel(IItemStorageChannel.class));
         ItemStack stack = ItemUtil.getItemStack(arguments.getTable(0), monitor);
-        int count = stack.getCount();
-        stack.setCount(count);
-        IAEItemStack aeStack = AppEngApi.getInstance().findAEStackFromItemStack(monitor, stack);
+        IAEItemStack aeStack = AEItemStack.fromItemStack(stack);
         if (aeStack == null)
             throw new LuaException("Item " + stack + " does not exists in the ME system or the system is offline");
-        Direction direction = Direction.valueOf(arguments.getString(1).toUpperCase(Locale.ROOT));
+        Direction direction = validateSide(arguments.getString(1));
 
         TileEntity targetEntity = tileEntity.getLevel().getBlockEntity(tileEntity.getBlockPos().relative(direction));
         IItemHandler inventory = targetEntity != null ? targetEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, direction.getOpposite()).resolve().orElse(null) : null;
         if (inventory == null)
             throw new LuaException("No valid inventory at " + direction);
 
-        aeStack.setStackSize(count);
-
-        int amount = count;
+        int amount = stack.getCount();
         int transferableAmount = 0;
 
         for (int i = 0; i < inventory.getSlots(); i++) {
@@ -156,7 +153,7 @@ public class MeBridgePeripheral extends BasePeripheral {
                     inventory.extractItem(i, amount, false);
                     break;
                 } else {
-                    amount = count - inventory.getStackInSlot(i).getCount();
+                    amount -= inventory.getStackInSlot(i).getCount();
                     transferableAmount += inventory.getStackInSlot(i).getCount();
                     aeStack.setStackSize(inventory.getStackInSlot(i).getCount());
                     monitor.injectItems(aeStack, Actionable.MODULATE, source);
@@ -168,10 +165,10 @@ public class MeBridgePeripheral extends BasePeripheral {
     }
 
     @LuaFunction(mainThread = true)
-    public final int exportItemToChest(IComputerAccess computer, IArguments arguments) throws LuaException {
+    public final int exportItemToPeripheral(IComputerAccess computer, IArguments arguments) throws LuaException {
         IMEMonitor<IAEItemStack> monitor = ((IStorageGrid) node.getGrid().getCache(IStorageGrid.class)).getInventory(AppEngApi.getInstance().getApi().storage().getStorageChannel(IItemStorageChannel.class));
         ItemStack stack = ItemUtil.getItemStack(arguments.getTable(0), monitor);
-        IAEItemStack aeStack = AppEngApi.getInstance().findAEStackFromItemStack(monitor, stack);
+        IAEItemStack aeStack = AEItemStack.fromItemStack(stack);
         if (aeStack == null)
             throw new LuaException("Item " + stack + " does not exists in the ME system or the system is offline");
 
@@ -208,12 +205,10 @@ public class MeBridgePeripheral extends BasePeripheral {
     }
 
     @LuaFunction(mainThread = true)
-    public final int importItemFromChest(IComputerAccess computer, IArguments arguments) throws LuaException {
+    public final int importItemFromPeripheral(IComputerAccess computer, IArguments arguments) throws LuaException {
         IMEMonitor<IAEItemStack> monitor = ((IStorageGrid) node.getGrid().getCache(IStorageGrid.class)).getInventory(AppEngApi.getInstance().getApi().storage().getStorageChannel(IItemStorageChannel.class));
         ItemStack stack = ItemUtil.getItemStack(arguments.getTable(0), monitor);
-        int count = stack.getCount();
-        stack.setCount(count);
-        IAEItemStack aeStack = AppEngApi.getInstance().findAEStackFromItemStack(monitor, stack);
+        IAEItemStack aeStack = AEItemStack.fromItemStack(stack);
         if (aeStack == null)
             throw new LuaException("Item " + stack + " does not exists in the ME system or the system is offline");
 
@@ -226,9 +221,7 @@ public class MeBridgePeripheral extends BasePeripheral {
         if (inventory == null)
             throw new LuaException("No valid inventory for " + arguments.getString(1));
 
-        aeStack.setStackSize(count);
-
-        int amount = count;
+        int amount = stack.getCount();
         int transferableAmount = 0;
 
         for (int i = 0; i < inventory.getSlots(); i++) {
@@ -240,7 +233,7 @@ public class MeBridgePeripheral extends BasePeripheral {
                     inventory.extractItem(i, amount, false);
                     break;
                 } else {
-                    amount = count - inventory.getStackInSlot(i).getCount();
+                    amount -= inventory.getStackInSlot(i).getCount();
                     transferableAmount += inventory.getStackInSlot(i).getCount();
                     aeStack.setStackSize(inventory.getStackInSlot(i).getCount());
                     monitor.injectItems(aeStack, Actionable.MODULATE, source);
@@ -255,9 +248,7 @@ public class MeBridgePeripheral extends BasePeripheral {
     public final Object[] getItem(IArguments arguments) throws LuaException {
         IMEMonitor<IAEItemStack> monitor = ((IStorageGrid) node.getGrid().getCache(IStorageGrid.class)).getInventory(AppEngApi.getInstance().getApi().storage().getStorageChannel(IItemStorageChannel.class));
         ItemStack stack = ItemUtil.getItemStack(arguments.getTable(0), monitor);
-        int count = stack.getCount();
-        stack.setCount(count);
-        IAEItemStack aeStack = AppEngApi.getInstance().findAEStackFromItemStack(monitor, stack);
+        IAEItemStack aeStack = AEItemStack.fromItemStack(stack);
         if (aeStack == null)
             return new Object[]{}; //Return nothing instead of crashing the program
         //throw new LuaException("Item " + stack + " does not exists in the ME system or the system is offline");
