@@ -1,6 +1,7 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "advancedperipherals:item/weak_mechanic_soul"
+    "layer0": "advancedperipherals:item/gear",
+    "layer1": "advancedperipherals:item/fire"
   }
 }

@@ -6,10 +6,9 @@ import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.lua.MethodResult;
 import dan200.computercraft.api.peripheral.IComputerAccess;
 import dan200.computercraft.api.turtle.ITurtleAccess;
-import dan200.computercraft.api.turtle.TurtleSide;
 import dan200.computercraft.shared.util.InventoryUtil;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
-import de.srendi.advancedperipherals.common.addons.computercraft.base.OperationPeripheral;
+import de.srendi.advancedperipherals.common.addons.computercraft.base.MechanicSoulPeripheral;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
 import de.srendi.advancedperipherals.common.items.WeakMechanicSoul;
 import de.srendi.advancedperipherals.common.util.Pair;
@@ -19,11 +18,11 @@ import de.srendi.advancedperipherals.common.util.fakeplayer.TurtleFakePlayer;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.*;
+import net.minecraft.util.math.BlockRayTraceResult;
+import net.minecraft.util.math.EntityRayTraceResult;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraftforge.energy.CapabilityEnergy;
 import org.jetbrains.annotations.NotNull;
 
@@ -34,7 +33,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class WeakMechanicSoulPeripheral extends OperationPeripheral {
+public class WeakMechanicSoulPeripheral extends MechanicSoulPeripheral {
 
     protected static final String DIG_OPERATION = "dig";
     protected static final String USE_ON_BLOCK_OPERATION = "useOnBlock";
@@ -95,71 +94,6 @@ public class WeakMechanicSoulPeripheral extends OperationPeripheral {
     protected @Nonnull
     MethodResult fuelErrorCallback(@Nonnull IComputerAccess access, MethodResult fuelErrorResult) {
         return fuelErrorResult;
-    }
-
-    protected Optional<MethodResult> turtleChecks() {
-        if (turtle == null) {
-            return Optional.of(MethodResult.of(null, "Well, you can use it only from turtle now!"));
-        }
-        if (turtle.getOwningPlayer() == null) {
-            return Optional.of(MethodResult.of(null, "Well, turtle should have owned player!"));
-        }
-        MinecraftServer server = getWorld().getServer();
-        if (server == null) {
-            return Optional.of(MethodResult.of(null, "Problem with server finding ..."));
-        }
-        return Optional.empty();
-    }
-
-    protected Pair<MethodResult, TurtleSide> getTurtleSide(@Nonnull IComputerAccess access) {
-        TurtleSide side;
-        try {
-            side = TurtleSide.valueOf(access.getAttachmentName().toUpperCase());
-        } catch (IllegalArgumentException e) {
-            return Pair.onlyLeft(MethodResult.of(null, e.getMessage()));
-        }
-        return Pair.onlyRight(side);
-    }
-
-    protected Pair<MethodResult, CompoundNBT> getSettings(@Nonnull IComputerAccess access) {
-        return getTurtleSide(access).mapRight(side -> turtle.getUpgradeNBTData(side));
-    }
-
-    protected Pair<MethodResult, Boolean> setIntSetting(@Nonnull IComputerAccess access, String name, int value) {
-        return getSettings(access).mapRight(data -> {
-            data.putInt(name, value);
-            return true;
-        });
-    }
-
-    protected Pair<MethodResult, Integer> getIntSetting(@Nonnull IComputerAccess access, String name) {
-        return getSettings(access).mapRight(data -> data.getInt(name));
-    }
-
-    protected Pair<MethodResult, CompoundNBT> getCompoundSetting(@Nonnull IComputerAccess access, String name) {
-        return getSettings(access).mapRight(data -> data.getCompound(name));
-    }
-
-    protected Pair<MethodResult, Boolean> setCompoundSetting(@Nonnull IComputerAccess access, String name, CompoundNBT value) {
-        return getSettings(access).mapRight(data -> {
-            data.put(name, value);
-            return true;
-        });
-    }
-
-    protected Pair<MethodResult, Boolean> removeSetting(@Nonnull IComputerAccess access, String name) {
-        return getSettings(access).mapRight(data -> {
-            data.remove(name);
-            return true;
-        });
-    }
-
-    protected AxisAlignedBB getBox(BlockPos pos, int radius) {
-        int x = pos.getX(), y = pos.getY(), z = pos.getZ();
-        return new AxisAlignedBB(
-                x - radius, y - radius, z - radius,
-                x + radius, y + radius, z + radius
-        );
     }
 
     protected List<ItemEntity> getItems() {
@@ -231,7 +165,7 @@ public class WeakMechanicSoulPeripheral extends OperationPeripheral {
     public final MethodResult lookAtBlock() {
         Optional<MethodResult> checkResults = turtleChecks();
         if (checkResults.isPresent()) return checkResults.get();
-
+        addRotationCycle();
         RayTraceResult result = FakePlayerProviderTurtle.withPlayer(turtle, turtleFakePlayer -> turtleFakePlayer.findHit(true, false));
         if (result.getType() == RayTraceResult.Type.MISS) {
             return MethodResult.of(null, "No block find");
@@ -250,7 +184,7 @@ public class WeakMechanicSoulPeripheral extends OperationPeripheral {
     public final MethodResult lookAtEntity() {
         Optional<MethodResult> checkResults = turtleChecks();
         if (checkResults.isPresent()) return checkResults.get();
-
+        addRotationCycle();
         RayTraceResult result = FakePlayerProviderTurtle.withPlayer(turtle, turtleFakePlayer -> turtleFakePlayer.findHit(false, true));
         if (result.getType() == RayTraceResult.Type.MISS) {
             return MethodResult.of(null, "No entity find");
@@ -267,12 +201,11 @@ public class WeakMechanicSoulPeripheral extends OperationPeripheral {
         if (checkResults.isPresent()) return checkResults.get();
         checkResults = consumeFuelOp(access, AdvancedPeripheralsConfig.digBlockCost);
         if (checkResults.isPresent()) return checkResults.map(result -> fuelErrorCallback(access, result)).get();
-
+        addRotationCycle();
         Pair<Boolean, String> result = FakePlayerProviderTurtle.withPlayer(turtle, turtleFakePlayer -> turtleFakePlayer.digBlock(turtle.getDirection().getOpposite()));
         if (!result.getLeft()) {
             return MethodResult.of(null, result.getRight());
         }
-
         trackOperation(access, DIG_OPERATION);
         return MethodResult.of(true);
     }
@@ -285,7 +218,7 @@ public class WeakMechanicSoulPeripheral extends OperationPeripheral {
         if (checkResults.isPresent()) return checkResults.get();
         checkResults = consumeFuelOp(access, AdvancedPeripheralsConfig.clickBlockCost);
         if (checkResults.isPresent()) return checkResults.map(result -> fuelErrorCallback(access, result)).get();
-
+        addRotationCycle();
         ActionResultType result = FakePlayerProviderTurtle.withPlayer(turtle, TurtleFakePlayer::useOnBlock);
         trackOperation(access, USE_ON_BLOCK_OPERATION);
         return MethodResult.of(true, result.toString());
@@ -295,6 +228,7 @@ public class WeakMechanicSoulPeripheral extends OperationPeripheral {
     public final MethodResult scanItems() {
         Optional<MethodResult> checkResults = turtleChecks();
         if (checkResults.isPresent()) return checkResults.get();
+        addRotationCycle();
         List<ItemEntity> items = getItems();
         Map<Integer, Map<String, Object>> data = new HashMap<>();
         int index = 1;
@@ -322,7 +256,7 @@ public class WeakMechanicSoulPeripheral extends OperationPeripheral {
         if (checkResults.isPresent()) return checkResults.get();
         checkResults = consumeFuelOp(access, AdvancedPeripheralsConfig.suckItemCost);
         if (checkResults.isPresent()) return checkResults.map(result -> fuelErrorCallback(access, result)).get();
-
+        addRotationCycle();
         int requiredQuantity = arguments.optInt(1, Integer.MAX_VALUE);
 
         List<ItemEntity> items = getItems();
@@ -334,7 +268,6 @@ public class WeakMechanicSoulPeripheral extends OperationPeripheral {
                 requiredQuantity -= suckItem(item, requiredQuantity);
             }
         }
-
         trackOperation(access, SUCK_OPERATION);
         return MethodResult.of(true);
     }
@@ -346,7 +279,7 @@ public class WeakMechanicSoulPeripheral extends OperationPeripheral {
         checkResults = cooldownCheck(SUCK_OPERATION);
         if (checkResults.isPresent()) return checkResults.get();
         int requiredQuantity = arguments.optInt(0, Integer.MAX_VALUE);
-
+        addRotationCycle();
         if (requiredQuantity == 0) {
             return MethodResult.of(true);
         }
@@ -365,7 +298,6 @@ public class WeakMechanicSoulPeripheral extends OperationPeripheral {
                 break;
             }
         }
-
         trackOperation(access, SUCK_OPERATION);
         return MethodResult.of(true);
     }
@@ -378,6 +310,7 @@ public class WeakMechanicSoulPeripheral extends OperationPeripheral {
             return MethodResult.of(null, "Well, you should feed weak mechanical soul!");
         }
         ActionResultType result = FakePlayerProviderTurtle.withPlayer(turtle, TurtleFakePlayer::useOnEntity);
+        addRotationCycle(3);
         return MethodResult.of(true, result.toString());
     }
 
@@ -400,6 +333,7 @@ public class WeakMechanicSoulPeripheral extends OperationPeripheral {
             int realConsumedRF = storage.extractEnergy(Math.min(requestedRF, availableFuelSpace * AdvancedPeripheralsConfig.energyToFuelRate), false);
             int receivedFuel = realConsumedRF / AdvancedPeripheralsConfig.energyToFuelRate;
             turtle.addFuel(receivedFuel);
+            addRotationCycle();
             return MethodResult.of(true, receivedFuel);
         }).orElse(MethodResult.of(null, "Item should provide energy ..."));
     }
