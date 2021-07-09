@@ -1,4 +1,4 @@
-package de.srendi.advancedperipherals.common.addons.computercraft.peripheral.mechanic;
+package de.srendi.advancedperipherals.common.addons.computercraft.peripheral.metaphysics;
 
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.lua.MethodResult;

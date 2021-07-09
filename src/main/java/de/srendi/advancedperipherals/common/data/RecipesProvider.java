@@ -7,17 +7,12 @@ import dan200.computercraft.shared.Registry;
 import de.srendi.advancedperipherals.common.setup.Blocks;
 import net.minecraft.block.Block;
 import net.minecraft.data.*;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.item.PotionItem;
-import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionUtils;
 import net.minecraft.potion.Potions;
 import net.minecraft.tags.ItemTags;
 import net.minecraftforge.common.Tags;
-import net.minecraftforge.common.crafting.NBTIngredient;
 import net.minecraftforge.common.crafting.conditions.IConditionBuilder;
 
 import java.util.function.Consumer;
@@ -232,6 +227,18 @@ public class RecipesProvider extends RecipeProvider implements IConditionBuilder
                 .requires(de.srendi.advancedperipherals.common.setup.Items.WEAK_MECHANIC_SOUL.get())
                 .requires(Items.NETHER_STAR)
                 .unlockedBy("has_item", has(de.srendi.advancedperipherals.common.setup.Items.WEAK_MECHANIC_SOUL.get()))
+                .save(consumer);
+
+        ShapelessRecipeBuilder.shapeless(de.srendi.advancedperipherals.common.setup.Items.OVERPOWERED_END_MECHANIC_SOUL.get())
+                .requires(de.srendi.advancedperipherals.common.setup.Items.END_MECHANIC_SOUL.get())
+                .requires(Items.NETHER_STAR)
+                .unlockedBy("has_item", has(de.srendi.advancedperipherals.common.setup.Items.END_MECHANIC_SOUL.get()))
+                .save(consumer);
+
+        ShapelessRecipeBuilder.shapeless(de.srendi.advancedperipherals.common.setup.Items.OVERPOWERED_HUSBANDRY_MECHANIC_SOUL.get())
+                .requires(de.srendi.advancedperipherals.common.setup.Items.HUSBANDRY_MECHANIC_SOUL.get())
+                .requires(Items.NETHER_STAR)
+                .unlockedBy("has_item", has(de.srendi.advancedperipherals.common.setup.Items.HUSBANDRY_MECHANIC_SOUL.get()))
                 .save(consumer);
     }
 }

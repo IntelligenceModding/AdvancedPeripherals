@@ -1,7 +1,7 @@
-package de.srendi.advancedperipherals.common.addons.computercraft.turtles;
+package de.srendi.advancedperipherals.common.addons.computercraft.turtles.metaphysics;
 
 import de.srendi.advancedperipherals.common.addons.computercraft.base.ModelTransformingTurtle;
-import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.mechanic.EndMechanicalSoulPeripheral;
+import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.metaphysics.EndMechanicalSoulPeripheral;
 import de.srendi.advancedperipherals.common.setup.Items;
 import net.minecraft.client.renderer.model.ModelResourceLocation;
 import net.minecraft.item.ItemStack;

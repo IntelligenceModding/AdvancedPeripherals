@@ -1,4 +1,4 @@
-package de.srendi.advancedperipherals.common.addons.computercraft.peripheral.mechanic;
+package de.srendi.advancedperipherals.common.addons.computercraft.peripheral.metaphysics;
 
 import dan200.computercraft.api.lua.IArguments;
 import dan200.computercraft.api.lua.LuaException;
@@ -58,6 +58,10 @@ public class WeakMechanicSoulPeripheral extends MechanicSoulPeripheral {
     @Override
     protected int getMaxFuelConsumptionRate() {
         return AdvancedPeripheralsConfig.weakMechanicSoulMaxFuelConsumptionLevel;
+    }
+
+    protected boolean restoreToolDurability() {
+        return false;
     }
 
     @Override
@@ -202,10 +206,14 @@ public class WeakMechanicSoulPeripheral extends MechanicSoulPeripheral {
         checkResults = consumeFuelOp(access, AdvancedPeripheralsConfig.digBlockCost);
         if (checkResults.isPresent()) return checkResults.map(result -> fuelErrorCallback(access, result)).get();
         addRotationCycle();
+        ItemStack selectedTool = turtle.getInventory().getItem(turtle.getSelectedSlot());
+        int previousDamageValue = selectedTool.getDamageValue();
         Pair<Boolean, String> result = FakePlayerProviderTurtle.withPlayer(turtle, turtleFakePlayer -> turtleFakePlayer.digBlock(turtle.getDirection().getOpposite()));
         if (!result.getLeft()) {
             return MethodResult.of(null, result.getRight());
         }
+        if (restoreToolDurability())
+            selectedTool.setDamageValue(previousDamageValue);
         trackOperation(access, DIG_OPERATION);
         return MethodResult.of(true);
     }
@@ -219,7 +227,11 @@ public class WeakMechanicSoulPeripheral extends MechanicSoulPeripheral {
         checkResults = consumeFuelOp(access, AdvancedPeripheralsConfig.clickBlockCost);
         if (checkResults.isPresent()) return checkResults.map(result -> fuelErrorCallback(access, result)).get();
         addRotationCycle();
+        ItemStack selectedTool = turtle.getInventory().getItem(turtle.getSelectedSlot());
+        int previousDamageValue = selectedTool.getDamageValue();
         ActionResultType result = FakePlayerProviderTurtle.withPlayer(turtle, TurtleFakePlayer::useOnBlock);
+        if (restoreToolDurability())
+            selectedTool.setDamageValue(previousDamageValue);
         trackOperation(access, USE_ON_BLOCK_OPERATION);
         return MethodResult.of(true, result.toString());
     }

@@ -20,6 +20,10 @@ public class Items {
             "weak_mechanic_soul_turtle", null, new TranslationTextComponent("item.advancedperipherals.tooltip.weak_mechanic_soul")));
     public static final RegistryObject<Item> OVERPOWERED_WEAK_MECHANIC_SOUL = Registration.ITEMS.register("overpowered_weak_mechanic_soul", () -> new APItem(new Item.Properties().stacksTo(1),
             "overpowered_weak_mechanic_soul_turtle", null, new TranslationTextComponent("item.advancedperipherals.tooltip.overpowered_weak_mechanic_soul")));
+    public static final RegistryObject<Item> OVERPOWERED_END_MECHANIC_SOUL = Registration.ITEMS.register("overpowered_end_mechanic_soul", () -> new APItem(new Item.Properties().stacksTo(1),
+            "overpowered_end_mechanic_soul_turtle", null, new TranslationTextComponent("item.advancedperipherals.tooltip.overpowered_end_mechanic_soul")));
+    public static final RegistryObject<Item> OVERPOWERED_HUSBANDRY_MECHANIC_SOUL = Registration.ITEMS.register("overpowered_husbandry_mechanic_soul", () -> new APItem(new Item.Properties().stacksTo(1),
+            "overpowered_husbandry_mechanic_soul_turtle", null, new TranslationTextComponent("item.advancedperipherals.tooltip.overpowered_husbandry_mechanic_soul")));
     public static final RegistryObject<ARGogglesItem> AR_GOGGLES = Registration.ITEMS.register("ar_goggles", ARGogglesItem::new);
     public static final RegistryObject<Item> COMPUTER_TOOL = Registration.ITEMS.register("computer_tool", () -> new APItem(new Item.Properties().stacksTo(1),
             "chunky_turtle", null, new TranslationTextComponent("item.advancedperipherals.tooltip.computer_tool")));

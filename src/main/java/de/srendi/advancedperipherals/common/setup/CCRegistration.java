@@ -8,6 +8,7 @@ import de.srendi.advancedperipherals.common.addons.computercraft.pocket.PocketEn
 import de.srendi.advancedperipherals.common.addons.computercraft.pocket.PocketGeoScanner;
 import de.srendi.advancedperipherals.common.addons.computercraft.pocket.PocketPlayerDetector;
 import de.srendi.advancedperipherals.common.addons.computercraft.turtles.*;
+import de.srendi.advancedperipherals.common.addons.computercraft.turtles.metaphysics.*;
 import net.minecraftforge.fml.common.Mod;
 
 @Mod.EventBusSubscriber(modid = AdvancedPeripherals.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
@@ -22,6 +23,8 @@ public class CCRegistration {
     public static TurtleEndMechanicSoul endMechanicSoul;
     public static TurtleHusbandryMechanicSoul husbandryMechanicSoul;
     public static TurtleOverpoweredWeakMechanicSoul overpoweredWeakMechanicSoul;
+    public static TurtleOverpoweredEndMechanicSoul overpoweredEndMechanicSoul;
+    public static TurtleOverpoweredHusbandryMechanicSoul overpoweredHusbandryMechanicSoul;
 
     public static PocketEnvironment environmentPocket;
     public static PocketChatBox chatPocket;
@@ -68,6 +71,10 @@ public class CCRegistration {
         ComputerCraftAPI.registerTurtleUpgrade(husbandryMechanicSoul);
         overpoweredWeakMechanicSoul = new TurtleOverpoweredWeakMechanicSoul();
         ComputerCraftAPI.registerTurtleUpgrade(overpoweredWeakMechanicSoul);
+        overpoweredEndMechanicSoul = new TurtleOverpoweredEndMechanicSoul();
+        ComputerCraftAPI.registerTurtleUpgrade(overpoweredEndMechanicSoul);
+        overpoweredHusbandryMechanicSoul = new TurtleOverpoweredHusbandryMechanicSoul();
+        ComputerCraftAPI.registerTurtleUpgrade(overpoweredHusbandryMechanicSoul);
     }
 
 }

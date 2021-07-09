@@ -1,6 +1,7 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "advancedperipherals:item/husbandry_mechanic_soul"
+    "layer0": "advancedperipherals:item/metaphysics/base_gear",
+    "layer1": "advancedperipherals:item/metaphysics/fire_green"
   }
 }

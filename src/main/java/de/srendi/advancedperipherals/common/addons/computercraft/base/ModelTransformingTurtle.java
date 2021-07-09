@@ -23,7 +23,10 @@ public abstract class ModelTransformingTurtle<T extends MechanicSoulPeripheral> 
             MatrixStack stack = new MatrixStack();
             stack.pushPose();
             stack.translate(0.0f, 0.5f, 0.5f);
-            stack.mulPose(Vector3f.XN.rotationDegrees(10 * peripheral.getRotationStep()));
+            int sign = 1;
+            if (turtleSide == TurtleSide.LEFT)
+                sign = -1;
+            stack.mulPose(Vector3f.XN.rotationDegrees(10 * peripheral.getRotationStep() * sign));
             stack.translate(0.0f, -0.5f, -0.5f);
             stack.mulPose(Vector3f.YN.rotationDegrees(90));
             stack.translate(0, 0, -0.6);

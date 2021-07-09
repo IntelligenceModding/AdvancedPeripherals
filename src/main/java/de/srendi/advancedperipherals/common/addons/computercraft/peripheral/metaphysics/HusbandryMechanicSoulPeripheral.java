@@ -1,4 +1,4 @@
-package de.srendi.advancedperipherals.common.addons.computercraft.peripheral.mechanic;
+package de.srendi.advancedperipherals.common.addons.computercraft.peripheral.metaphysics;
 
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.lua.MethodResult;
@@ -79,8 +79,8 @@ public class HusbandryMechanicSoulPeripheral extends WeakMechanicSoulPeripheral 
         return getCompoundSetting(access, ENTITY_NBT_KEY);
     }
 
-    protected void removeEntity(@Nonnull IComputerAccess access) {
-        removeSetting(access, ENTITY_NBT_KEY);
+    protected Pair<MethodResult, Boolean> removeEntity(@Nonnull IComputerAccess access) {
+        return removeSetting(access, ENTITY_NBT_KEY);
     }
 
     protected Pair<MethodResult, Entity> extractEntity(@Nonnull IComputerAccess access) {
@@ -119,7 +119,11 @@ public class HusbandryMechanicSoulPeripheral extends WeakMechanicSoulPeripheral 
         if (checkResults.isPresent()) return checkResults.get();
         checkResults = consumeFuelOp(access, AdvancedPeripheralsConfig.useOnAnimalCost);
         if (checkResults.isPresent()) return checkResults.map(result -> fuelErrorCallback(access, result)).get();
+        ItemStack selectedTool = turtle.getInventory().getItem(turtle.getSelectedSlot());
+        int previousDamageValue = selectedTool.getDamageValue();
         ActionResultType result = FakePlayerProviderTurtle.withPlayer(turtle, player -> player.useOnFilteredEntity(suitableEntity));
+        if (restoreToolDurability())
+            selectedTool.setDamageValue(previousDamageValue);
         trackOperation(access, USE_ON_ANIMAL_OPERATION);
         return MethodResult.of(true, result.toString());
     }
@@ -187,9 +191,12 @@ public class HusbandryMechanicSoulPeripheral extends WeakMechanicSoulPeripheral 
         Entity entity = extractedEntity.getRight();
         BlockPos blockPos = getPos().offset(turtle.getDirection().getNormal());
         entity.absMoveTo(blockPos.getX() + 0.5, blockPos.getY(), blockPos.getZ() + 0.5, 0, 0);
-        removeEntity(access);
-        getWorld().addFreshEntity(entity);
-        return MethodResult.of(true);
+        return removeEntity(access).reduce((mResult, bool) -> {
+            if (mResult != null)
+                return mResult;
+            getWorld().addFreshEntity(entity);
+            return MethodResult.of(bool);
+        });
     }
 
     @LuaFunction
