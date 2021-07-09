@@ -30,8 +30,13 @@ public class ConfigHandler {
         AdvancedPeripheralsConfig.geoScannerMaxFreeRadius = ConfigHolder.COMMON_CONFIG.GEO_SCANNER_MAX_FREE_RADIUS.get();
         AdvancedPeripheralsConfig.geoScannerMaxCostRadius = ConfigHolder.COMMON_CONFIG.GEO_SCANNER_MAX_COST_RADIUS.get();
         AdvancedPeripheralsConfig.geoScannerExtraBlockCost = ConfigHolder.COMMON_CONFIG.GEO_SCANNER_EXTRA_BLOCK_COST.get();
-        AdvancedPeripheralsConfig.geoScannerMaxEnergyStorage = ConfigHolder.COMMON_CONFIG.GEO_SCANNER_MAX_ENERGY_STORAGE.get();
+        AdvancedPeripheralsConfig.geoScannerMaxEnergyStored = ConfigHolder.COMMON_CONFIG.GEO_SCANNER_MAX_ENERGY_STORED.get();
         AdvancedPeripheralsConfig.geoScannerMinScanPeriod = ConfigHolder.COMMON_CONFIG.GEO_SCANNER_MIN_SCAN_PERIOD.get();
+        AdvancedPeripheralsConfig.environmentDetectorMaxCostRadius = ConfigHolder.COMMON_CONFIG.ENVIRONMENT_DETECTOR_MAX_COST_RADIUS.get();
+        AdvancedPeripheralsConfig.environmentDetectorExtraBlockCost = ConfigHolder.COMMON_CONFIG.ENVIRONMENT_DETECTOR_EXTRA_BLOCK_COST.get();
+        AdvancedPeripheralsConfig.environmentDetectorMaxEnergyStored = ConfigHolder.COMMON_CONFIG.ENVIRONMENT_DETECTOR_MAX_ENERGY_STORED.get();
+        AdvancedPeripheralsConfig.environmentDetectorMaxFreeRadius = ConfigHolder.COMMON_CONFIG.ENVIRONMENT_DETECTOR_MAX_FREE_RADIUS.get();
+        AdvancedPeripheralsConfig.environmentDetectorMinScanPeriod = ConfigHolder.COMMON_CONFIG.ENVIRONMENT_DETECTOR_MIN_SCAN_PERIOD.get();
         AdvancedPeripheralsConfig.nbtStorageMaxSize = ConfigHolder.COMMON_CONFIG.NBT_STORAGE_MAX_SIZE.get();
 
         //Features

@@ -145,10 +145,10 @@ public class HusbandryMechanicSoulPeripheral extends WeakMechanicSoulPeripheral 
     public final MethodResult searchAnimals() {
         Optional<MethodResult> checkResults = turtleChecks();
         if (checkResults.isPresent()) return checkResults.get();
-        AxisAlignedBB box = new AxisAlignedBB(getPos());
+        BlockPos currentPos = getPos();
+        AxisAlignedBB box = new AxisAlignedBB(currentPos);
         List<Map<String, Object>> entities = new ArrayList<>();
         ItemStack itemInHand = getItemInHand();
-        BlockPos currentPos = getPos();
         getWorld().getEntities((Entity) null, box.inflate(getInteractionRadius()), suitableEntity).forEach(entity -> entities.add(RepresentationUtil.completeEntityWithPositionToLua(entity, itemInHand, currentPos)));
         return MethodResult.of(entities);
     }

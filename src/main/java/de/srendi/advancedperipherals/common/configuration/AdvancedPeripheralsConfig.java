@@ -11,8 +11,13 @@ public class AdvancedPeripheralsConfig {
     public static int geoScannerMaxFreeRadius;
     public static int geoScannerMaxCostRadius;
     public static double geoScannerExtraBlockCost;
-    public static int geoScannerMaxEnergyStorage;
+    public static int geoScannerMaxEnergyStored;
     public static int geoScannerMinScanPeriod;
+    public static int environmentDetectorMaxEnergyStored;
+    public static int environmentDetectorMaxFreeRadius;
+    public static int environmentDetectorMaxCostRadius;
+    public static double environmentDetectorExtraBlockCost;
+    public static int environmentDetectorMinScanPeriod;
     public static int nbtStorageMaxSize;
 
     //Features
@@ -67,8 +72,13 @@ public class AdvancedPeripheralsConfig {
         final ForgeConfigSpec.IntValue GEO_SCANNER_MAX_FREE_RADIUS;
         final ForgeConfigSpec.IntValue GEO_SCANNER_MAX_COST_RADIUS;
         final ForgeConfigSpec.DoubleValue GEO_SCANNER_EXTRA_BLOCK_COST;
-        final ForgeConfigSpec.IntValue GEO_SCANNER_MAX_ENERGY_STORAGE;
+        final ForgeConfigSpec.IntValue GEO_SCANNER_MAX_ENERGY_STORED;
         final ForgeConfigSpec.IntValue GEO_SCANNER_MIN_SCAN_PERIOD;
+        final ForgeConfigSpec.IntValue ENVIRONMENT_DETECTOR_MAX_ENERGY_STORED;
+        final ForgeConfigSpec.IntValue ENVIRONMENT_DETECTOR_MAX_FREE_RADIUS;
+        final ForgeConfigSpec.IntValue ENVIRONMENT_DETECTOR_MAX_COST_RADIUS;
+        final ForgeConfigSpec.DoubleValue ENVIRONMENT_DETECTOR_EXTRA_BLOCK_COST;
+        final ForgeConfigSpec.IntValue ENVIRONMENT_DETECTOR_MIN_SCAN_PERIOD;
         final ForgeConfigSpec.IntValue NBT_STORAGE_MAX_SIZE;
 
         //Features
@@ -124,9 +134,14 @@ public class AdvancedPeripheralsConfig {
             ENERGY_DETECTOR_MAX_FLOW = builder.comment("Defines the maximum energy flow of the energy detector.").defineInRange("energyDetectorMaxFlow", Integer.MAX_VALUE, 1, Integer.MAX_VALUE);
             GEO_SCANNER_MAX_FREE_RADIUS = builder.comment("Defines max cost-free radius for geo scanner").defineInRange("geoScannerMaxFreeRadius", 8, 1, 64);
             GEO_SCANNER_MAX_COST_RADIUS = builder.comment("Defines max cost radius for geo scanner").defineInRange("geoScannerMaxCostRadius", 16, 1, 64);
-            GEO_SCANNER_EXTRA_BLOCK_COST = builder.comment("Defines block cost in RF for any extra block out of cost-free radius").defineInRange("geoScannerExtraBlockCost", 0.17, 0.17, 1000);
-            GEO_SCANNER_MAX_ENERGY_STORAGE = builder.comment("Defines max energy stored in geo scanner").defineInRange("geoScannerMaxEnergyStorage", 100_000_000, 1_000_000, Integer.MAX_VALUE);
-            GEO_SCANNER_MIN_SCAN_PERIOD = builder.comment("Defines min period between scans in milliseconds").defineInRange("geoScannerMinScanPeriod", 2_000, 2_000, Integer.MAX_VALUE);
+            GEO_SCANNER_EXTRA_BLOCK_COST = builder.comment("Defines block cost in RF for any extra block out of cost-free radius for geo scanner").defineInRange("geoScannerExtraBlockCost", 0.17, 0.17, 1000);
+            GEO_SCANNER_MAX_ENERGY_STORED = builder.comment("Defines max energy stored in geo scanner").defineInRange("geoScannerMaxEnergyStored", 100_000_000, 1_000_000, Integer.MAX_VALUE);
+            GEO_SCANNER_MIN_SCAN_PERIOD = builder.comment("Defines min period between scans in milliseconds for geo scanner").defineInRange("geoScannerMinScanPeriod", 2_000, 2_000, Integer.MAX_VALUE);
+            ENVIRONMENT_DETECTOR_MAX_FREE_RADIUS = builder.comment("Defines max cost-free radius for environment detector").defineInRange("environmentDetectorMaxFreeRadius", 8, 1, 64);
+            ENVIRONMENT_DETECTOR_MAX_COST_RADIUS = builder.comment("Defines max cost radius for environment detector").defineInRange("environmentDetectorMaxCostRadius", 16, 1, 64);
+            ENVIRONMENT_DETECTOR_EXTRA_BLOCK_COST = builder.comment("Defines block cost in RF for any extra block out of cost-free radius for environment detector").defineInRange("environmentDetectorExtraBlockCost", 0.17, 0.17, 1000);
+            ENVIRONMENT_DETECTOR_MAX_ENERGY_STORED = builder.comment("Defines max energy stored in environment detector").defineInRange("environmentDetectorMaxEnergyStored", 100_000_000, 1_000_000, Integer.MAX_VALUE);
+            ENVIRONMENT_DETECTOR_MIN_SCAN_PERIOD = builder.comment("Defines min period between scans in milliseconds for environment detector").defineInRange("environmentDetectorMinScanPeriod", 2_000, 2_000, Integer.MAX_VALUE);
             NBT_STORAGE_MAX_SIZE = builder.comment("Defines max nbt string that can be stored in nbt storage").defineInRange("nbtStorageMaxSize", 1048576, 0, Integer.MAX_VALUE);
 
             builder.pop();

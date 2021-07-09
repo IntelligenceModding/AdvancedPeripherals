@@ -1,27 +1,21 @@
 package de.srendi.advancedperipherals.common.blocks.tileentity;
 
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.GeoScannerPeripheral;
-import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
+import de.srendi.advancedperipherals.common.blocks.base.PoweredPeripheralTileEntity;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
 import de.srendi.advancedperipherals.common.setup.TileEntityTypes;
-import net.minecraft.block.BlockState;
-import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntityType;
-import net.minecraft.util.Direction;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.energy.CapabilityEnergy;
-import net.minecraftforge.energy.EnergyStorage;
-import net.minecraftforge.energy.IEnergyStorage;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-public class GeoScannerTile extends PeripheralTileEntity<GeoScannerPeripheral> {
-
-    private final LazyOptional<IEnergyStorage> lazyEnergyStorage = LazyOptional.of(() -> new EnergyStorage(AdvancedPeripheralsConfig.geoScannerMaxEnergyStorage));
+public class GeoScannerTile extends PoweredPeripheralTileEntity<GeoScannerPeripheral> {
 
     public GeoScannerTile() {
         this(TileEntityTypes.GEO_SCANNER.get());
+    }
+
+    @Override
+    protected int getMaxEnergyStored() {
+        return AdvancedPeripheralsConfig.geoScannerMaxEnergyStored;
     }
 
     public GeoScannerTile(final TileEntityType<?> tileEntityType) {
@@ -29,37 +23,7 @@ public class GeoScannerTile extends PeripheralTileEntity<GeoScannerPeripheral> {
     }
 
     @Override
-    public <T1> LazyOptional<T1> getCapability(@NotNull Capability<T1> cap, @Nullable Direction direction) {
-        if (cap == CapabilityEnergy.ENERGY) {
-            return lazyEnergyStorage.cast();
-        }
-        return super.getCapability(cap, direction);
-    }
-
-    @Override
-    public CompoundNBT save(CompoundNBT compound) {
-        lazyEnergyStorage.resolve().ifPresent(iEnergyStorage -> {
-            compound.putInt("energy", iEnergyStorage.getEnergyStored());
-        });
-        return super.save(compound);
-    }
-
-    @Override
-    public void load(BlockState blockState, CompoundNBT compound) {
-        super.load(blockState, compound);
-        lazyEnergyStorage.resolve().ifPresent(iEnergyStorage -> {
-            iEnergyStorage.receiveEnergy(compound.getInt("energy") - iEnergyStorage.getEnergyStored(), false);
-        });
-    }
-
-    @Override
-    protected void invalidateCaps() {
-        super.invalidateCaps();
-        this.lazyEnergyStorage.invalidate();
-    }
-
-    @Override
-    protected GeoScannerPeripheral createPeripheral() {
+    protected @NotNull GeoScannerPeripheral createPeripheral() {
         return new GeoScannerPeripheral("geoScanner", this);
     }
 }

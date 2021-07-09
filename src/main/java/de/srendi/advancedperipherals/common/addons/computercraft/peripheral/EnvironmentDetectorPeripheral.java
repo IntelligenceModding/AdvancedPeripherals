@@ -1,13 +1,23 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.peripheral;
 
+import com.google.common.math.IntMath;
+import dan200.computercraft.api.lua.IArguments;
+import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
-import de.srendi.advancedperipherals.common.addons.computercraft.base.BasePeripheral;
+import dan200.computercraft.api.lua.MethodResult;
+import dan200.computercraft.api.peripheral.IComputerAccess;
+import de.srendi.advancedperipherals.common.addons.computercraft.base.OperationPeripheral;
 import de.srendi.advancedperipherals.common.addons.mekanism.Mekanism;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
+import de.srendi.advancedperipherals.common.util.RepresentationUtil;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.SharedSeedRandom;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.ISeedReader;
@@ -15,13 +25,14 @@ import net.minecraft.world.LightType;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import javax.annotation.Nonnull;
+import java.util.*;
 
-public class EnvironmentDetectorPeripheral extends BasePeripheral {
+public class EnvironmentDetectorPeripheral extends OperationPeripheral {
+
+    private static final String SCAN_OPERATION = "scan";
 
     public EnvironmentDetectorPeripheral(String type, PeripheralTileEntity<?> tileEntity) {
         super(type, tileEntity);
@@ -33,6 +44,27 @@ public class EnvironmentDetectorPeripheral extends BasePeripheral {
 
     public EnvironmentDetectorPeripheral(String type, Entity tileEntity) {
         super(type, tileEntity);
+    }
+
+    @Override
+    protected int getRawCooldown(String name) {
+        if (name.equals(SCAN_OPERATION))
+            return AdvancedPeripheralsConfig.environmentDetectorMinScanPeriod;
+        return 0;
+    }
+
+    @Override
+    protected int getMaxFuelConsumptionRate() {
+        return 1;
+    }
+
+    @Override
+    protected int _getFuelConsumptionRate(@NotNull IComputerAccess access) {
+        return 1;
+    }
+
+    @Override
+    protected void _setFuelConsumptionRate(@NotNull IComputerAccess access, int rate) {
     }
 
     @Override
@@ -178,6 +210,18 @@ public class EnvironmentDetectorPeripheral extends BasePeripheral {
         return moon;
     }
 
+    private static int estimateCost(int radius) {
+        if (radius <= AdvancedPeripheralsConfig.environmentDetectorMaxFreeRadius) {
+            return 0;
+        }
+        if (radius > AdvancedPeripheralsConfig.environmentDetectorMaxCostRadius) {
+            return -1;
+        }
+        int freeBlockCount = IntMath.pow(2 * AdvancedPeripheralsConfig.environmentDetectorMaxFreeRadius + 1, 3);
+        int allBlockCount = IntMath.pow(2 * radius + 1, 3);
+        return (int) Math.floor((allBlockCount - freeBlockCount) * AdvancedPeripheralsConfig.environmentDetectorExtraBlockCost);
+    }
+
     @LuaFunction(mainThread = true)
     public final boolean isRaining() {
         return getWorld().getRainLevel(0) > 0;
@@ -201,5 +245,56 @@ public class EnvironmentDetectorPeripheral extends BasePeripheral {
     @LuaFunction(mainThread = true)
     public final double getRadiationRaw() {
         return ModList.get().isLoaded("mekanism") ? Mekanism.getRadiationRaw(getWorld(), getPos()) : 0D;
+    }
+
+    @LuaFunction
+    public final long getScanCooldown() {
+        return getCurrentCooldown(SCAN_OPERATION);
+    }
+
+    @LuaFunction
+    public final Map<String, Object> getConfiguration() {
+        Map<String, Object> result = super.getConfiguration();
+        result.put("freeRadius", AdvancedPeripheralsConfig.environmentDetectorMaxFreeRadius);
+        result.put("scanPeriod", AdvancedPeripheralsConfig.environmentDetectorMinScanPeriod);
+        result.put("costRadius", AdvancedPeripheralsConfig.environmentDetectorMaxCostRadius);
+        result.put("blockCost", AdvancedPeripheralsConfig.environmentDetectorExtraBlockCost);
+        return result;
+    }
+
+    @LuaFunction
+    public final MethodResult scanEntities(@Nonnull IComputerAccess access, @Nonnull IArguments arguments) throws LuaException {
+        int radius = arguments.getInt(0);
+        Optional<MethodResult> checkResult = cooldownCheck(SCAN_OPERATION);
+        if (checkResult.isPresent()) return checkResult.get();
+        BlockPos pos = getPos();
+        if (radius > AdvancedPeripheralsConfig.geoScannerMaxCostRadius) {
+            return MethodResult.of(null, "Radius is exceed max value");
+        }
+        if (radius > AdvancedPeripheralsConfig.geoScannerMaxFreeRadius) {
+            if (tileEntity == null) {
+                return MethodResult.of(null, "Radius is exceed max value");
+            }
+            int cost = estimateCost(radius);
+            if (!consumeFuel(access, cost, false)) {
+                return MethodResult.of(null, String.format("Not enough fuel, %d needed", cost));
+            }
+        }
+        AxisAlignedBB box = new AxisAlignedBB(pos);
+        List<Map<String, Object>> entities = new ArrayList<>();
+        getWorld().getEntities((Entity) null, box.inflate(radius), entity -> entity instanceof LivingEntity).forEach(
+                entity -> entities.add(RepresentationUtil.completeEntityWithPositionToLua(entity, ItemStack.EMPTY, pos))
+        );
+        trackOperation(access, SCAN_OPERATION);
+        return MethodResult.of(entities);
+    }
+
+    @LuaFunction
+    public final MethodResult scanCost(int radius) {
+        int estimatedCost = estimateCost(radius);
+        if (estimatedCost < 0) {
+            return MethodResult.of(null, "Radius is exceed max value");
+        }
+        return MethodResult.of(estimatedCost);
     }
 }

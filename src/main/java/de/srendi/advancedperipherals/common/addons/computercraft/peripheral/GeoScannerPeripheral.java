@@ -172,13 +172,12 @@ public class GeoScannerPeripheral extends OperationPeripheral {
             if (tileEntity == null) {
                 return MethodResult.of(null, "Radius is exceed max value");
             }
-            LazyOptional<IEnergyStorage> lazyEnergyStorage = tileEntity.getCapability(CapabilityEnergy.ENERGY);
             int cost = estimateCost(radius);
             if (!consumeFuel(access, cost, false)) {
                 return MethodResult.of(null, String.format("Not enough fuel, %d needed", cost));
             }
         }
-        List<Map<String, ?>> scanResult = scan(world, pos.getX(), pos.getY(), pos.getZ(), Math.min(radius, 8));
+        List<Map<String, ?>> scanResult = scan(world, pos.getX(), pos.getY(), pos.getZ(), radius);
         trackOperation(access, SCAN_OPERATION);
         return MethodResult.of(scanResult);
     }
