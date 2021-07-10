@@ -125,9 +125,4 @@ public class PocketPeripheralOwner implements IPeripheralOwner {
     public boolean move(@NotNull World world, @NotNull BlockPos pos) {
         return false;
     }
-
-    @Override
-    public Object getObjectInside() {
-        return pocket;
-    }
 }

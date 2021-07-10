@@ -128,9 +128,4 @@ public class TurtlePeripheralOwner implements IPeripheralOwner {
     public boolean move(@Nonnull World world,@Nonnull BlockPos pos) {
         return turtle.teleportTo(world, pos);
     }
-
-    @Override
-    public Object getObjectInside() {
-        return turtle;
-    }
 }

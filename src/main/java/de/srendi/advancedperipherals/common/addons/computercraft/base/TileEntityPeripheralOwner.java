@@ -143,9 +143,4 @@ public class TileEntityPeripheralOwner<T extends TileEntity & IPeripheralTileEnt
     public boolean move(@NotNull World world, @NotNull BlockPos pos) {
         return false;
     }
-
-    @Override
-    public Object getObjectInside() {
-        return tileEntity;
-    }
 }

@@ -32,7 +32,6 @@ public interface IPeripheralOwner {
     void destroyUpgrade();
     boolean isMovementPossible(@Nonnull World world, @Nonnull BlockPos pos);
     boolean move(@Nonnull World world, @Nonnull BlockPos pos);
-    Object getObjectInside();
 
     // Strange methods, that shouldn't exists ...
     void triggerClientServerSync();
