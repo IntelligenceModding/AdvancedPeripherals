@@ -47,6 +47,26 @@ public class PlayerDetectorPeripheral extends BasePeripheral {
     }
 
     @LuaFunction(mainThread = true)
+    public final List<String> getPlayersInCoords(HashMap<String, Integer> posOne, HashMap<String, Integer> posTwo) {
+        List<String> playersName = new ArrayList<>();
+        for (ServerPlayerEntity player : getPlayers()) {
+            if (isInRange(player, posOne, posTwo))
+                playersName.add(player.getName().getString());
+        }
+        return playersName;
+    }
+
+    @LuaFunction(mainThread = true)
+    public final List<String> getPlayersInCubic(int x, int y, int z) {
+        List<String> playersName = new ArrayList<>();
+        for (ServerPlayerEntity player : getPlayers()) {
+            if (isInRange(getPos(), player, x, y, z))
+                playersName.add(player.getName().getString());
+        }
+        return playersName;
+    }
+
+    @LuaFunction(mainThread = true)
     public final List<String> getPlayersInRange(int range) {
         List<String> playersName = new ArrayList<>();
         for (ServerPlayerEntity player : getPlayers()) {
@@ -54,6 +74,28 @@ public class PlayerDetectorPeripheral extends BasePeripheral {
                 playersName.add(player.getName().getString());
         }
         return playersName;
+    }
+
+    @LuaFunction(mainThread = true)
+    public final boolean isPlayersInCoords(HashMap<String, Integer> posOne, HashMap<String, Integer> posTwo) {
+        if (getPlayers().isEmpty())
+            return false;
+        for (ServerPlayerEntity player : getPlayers()) {
+            if (isInRange(player, posOne, posTwo))
+                return true;
+        }
+        return false;
+    }
+
+    @LuaFunction(mainThread = true)
+    public final boolean isPlayersInCubic(int x, int y, int z) {
+        if (getPlayers().isEmpty())
+            return false;
+        for (ServerPlayerEntity player : getPlayers()) {
+            if (isInRange(getPos(), player, x, y, z))
+                return true;
+        }
+        return false;
     }
 
     @LuaFunction(mainThread = true)
@@ -65,6 +107,17 @@ public class PlayerDetectorPeripheral extends BasePeripheral {
                 return true;
         }
         return false;
+    }
+
+    @LuaFunction(mainThread = true)
+    public final boolean isPlayerInCubic(int x, int y, int z, String username) {
+        List<String> playersName = new ArrayList<>();
+        for (PlayerEntity player : getPlayers()) {
+            if (isInRange(getPos(), player, x, y, z)) {
+                playersName.add(player.getName().getString());
+            }
+        }
+        return playersName.contains(username);
     }
 
     @LuaFunction(mainThread = true)
@@ -107,5 +160,20 @@ public class PlayerDetectorPeripheral extends BasePeripheral {
         World world = getWorld();
         return world.getNearbyPlayers(new EntityPredicate().allowInvulnerable().allowNonAttackable().allowUnseeable().allowSameTeam(),
                 null, new AxisAlignedBB(pos.offset(range, range, range), pos.offset(-range, -range, -range))).contains(player);
+    }
+
+    private boolean isInRange(BlockPos pos, PlayerEntity player, int x, int y, int z) {
+        World world = getWorld();
+        return world.getNearbyPlayers(new EntityPredicate().allowInvulnerable().allowNonAttackable().allowUnseeable().allowSameTeam(),
+                null, new AxisAlignedBB(pos.offset(x, y, z), pos.offset(-x, -y, -z))).contains(player);
+    }
+
+    private boolean isInRange(PlayerEntity player, HashMap<String, Integer> coordOne, HashMap<String, Integer> coordTwo) {
+        World world = getWorld();
+        BlockPos posOne = new BlockPos(coordOne.get("x"), coordOne.get("y"), coordOne.get("z"));
+        BlockPos posTwo = new BlockPos(coordTwo.get("x"), coordTwo.get("y"), coordTwo.get("z"));
+
+        return world.getNearbyPlayers(new EntityPredicate().allowInvulnerable().allowNonAttackable().allowUnseeable().allowSameTeam(),
+                null, new AxisAlignedBB(posOne, posTwo)).contains(player);
     }
 }
