@@ -4,6 +4,10 @@ import net.minecraftforge.common.ForgeConfigSpec;
 
 public class AdvancedPeripheralsConfig {
 
+    //Defaults
+
+    public static String defaultChatBoxPrefix;
+
     //Restrictions
     public static int chatBoxCooldown;
     public static int playerDetMaxRange;
@@ -65,6 +69,9 @@ public class AdvancedPeripheralsConfig {
     public static boolean enableGeoScanner;
 
     public static class CommonConfig {
+
+        //Defaults
+        final ForgeConfigSpec.ConfigValue<String> DEFAULT_CHAT_BOX_PREFIX;
 
         //Restrictions
         final ForgeConfigSpec.IntValue CHAT_BOX_COOLDOWN;
@@ -128,6 +135,11 @@ public class AdvancedPeripheralsConfig {
         final ForgeConfigSpec.BooleanValue ENABLE_VILLAGER_STRUCTURES;
 
         CommonConfig(final ForgeConfigSpec.Builder builder) {
+            builder.comment("").push("Defaults");
+
+            DEFAULT_CHAT_BOX_PREFIX = builder.comment("Defines default chatbox prefix").define("defaultChatBoxPrefix", "AP");
+
+            builder.pop();
             builder.comment("").push("Restrictions");
 
             CHAT_BOX_COOLDOWN = builder.comment("Defines the chat box cooldown in seconds for message sending.").defineInRange("chatBoxCooldown", 10, 1, Integer.MAX_VALUE);

@@ -23,6 +23,9 @@ public class ConfigHandler {
     }
 
     private static void bakeCommon() {
+        //Defaults
+        AdvancedPeripheralsConfig.defaultChatBoxPrefix = ConfigHolder.COMMON_CONFIG.DEFAULT_CHAT_BOX_PREFIX.get();
+
         //Restrictions
         AdvancedPeripheralsConfig.chatBoxCooldown = ConfigHolder.COMMON_CONFIG.CHAT_BOX_COOLDOWN.get();
         AdvancedPeripheralsConfig.playerDetMaxRange = ConfigHolder.COMMON_CONFIG.PLAYER_DET_MAX_RANGE.get();
