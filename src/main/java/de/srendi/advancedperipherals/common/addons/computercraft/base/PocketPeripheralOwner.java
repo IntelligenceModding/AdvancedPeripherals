@@ -1,0 +1,133 @@
+package de.srendi.advancedperipherals.common.addons.computercraft.base;
+
+import dan200.computercraft.api.pocket.IPocketAccess;
+import de.srendi.advancedperipherals.api.peripheral.IPeripheralOwner;
+import de.srendi.advancedperipherals.common.util.fakeplayer.APFakePlayer;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.Direction;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.world.World;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.function.Function;
+
+public class PocketPeripheralOwner implements IPeripheralOwner {
+    private final IPocketAccess pocket;
+
+    public PocketPeripheralOwner(IPocketAccess pocket) {
+        this.pocket = pocket;
+    }
+
+    @Nullable
+    @Override
+    public String getCustomName() {
+        return null;
+    }
+
+    @Nullable
+    @Override
+    public World getWorld() {
+        Entity owner = pocket.getEntity();
+        if (owner == null)
+            return null;
+        return owner.getCommandSenderWorld();
+    }
+
+    @NotNull
+    @Override
+    public BlockPos getPos() {
+        Entity owner = pocket.getEntity();
+        if (owner == null)
+            return new BlockPos(0, 0, 0);
+        return owner.blockPosition();
+    }
+
+    @NotNull
+    @Override
+    public Direction getFacing() {
+        Entity owner = pocket.getEntity();
+        if (owner == null)
+            return Direction.NORTH;
+        return owner.getDirection();
+    }
+
+    @Nullable
+    @Override
+    public PlayerEntity getOwner() {
+        Entity owner = pocket.getEntity();
+        if (owner instanceof PlayerEntity)
+            return (PlayerEntity) owner;
+        return null;
+    }
+
+    @NotNull
+    @Override
+    public CompoundNBT getSettings() {
+        return pocket.getUpgradeNBTData();
+    }
+
+    @Override
+    public int getFuelCount() {
+        return 0;
+    }
+
+    @Override
+    public int getFuelMaxCount() {
+        return 0;
+    }
+
+    @Override
+    public boolean consumeFuel(int count, boolean simulate) {
+        return false;
+    }
+
+    @Override
+    public void addFuel(int count) {
+    }
+
+    @Override
+    public void triggerClientServerSync() {
+        throw new RuntimeException("Not implemented yet");
+    }
+
+    @Override
+    public <T> T withPlayer(Function<APFakePlayer, T> function) {
+        throw new RuntimeException("Not implemented yet");
+    }
+
+    @Override
+    public ItemStack getToolInMainHand() {
+        return ItemStack.EMPTY;
+    }
+
+    @Override
+    public ItemStack storeItem(ItemStack stored) {
+        // Tricks with inventory needed
+        throw new RuntimeException("Not implemented yet");
+    }
+
+    @Override
+    public void destroyUpgrade() {
+        throw new RuntimeException("Not implemented yet");
+    }
+
+    @Override
+    public boolean isMovementPossible(@NotNull World world, @NotNull BlockPos pos) {
+        return false;
+    }
+
+    @Override
+    public boolean move(@NotNull World world, @NotNull BlockPos pos) {
+        return false;
+    }
+
+    @Override
+    public Object getObjectInside() {
+        return pocket;
+    }
+}

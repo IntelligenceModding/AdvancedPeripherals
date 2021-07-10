@@ -2,6 +2,7 @@ package de.srendi.advancedperipherals.common.addons.computercraft.base;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import dan200.computercraft.api.client.TransformedModel;
+import dan200.computercraft.api.peripheral.IPeripheral;
 import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
 import net.minecraft.item.ItemStack;
@@ -23,14 +24,21 @@ public abstract class ModelTransformingTurtle<T extends MechanicSoulPeripheral> 
             MatrixStack stack = new MatrixStack();
             stack.pushPose();
             stack.translate(0.0f, 0.5f, 0.5f);
-            int sign = 1;
-            if (turtleSide == TurtleSide.LEFT)
-                sign = -1;
-            if (peripheral != null)
-                stack.mulPose(Vector3f.XN.rotationDegrees(10 * peripheral.getRotationStep() * sign));
+            if (iTurtleAccess != null) {
+                // TODO: extract via turtle transfer data logic!
+//                IPeripheral peripheral = ((BaseTurtle)iTurtleAccess.getUpgrade(turtleSide)).peripheral;
+//                if (peripheral instanceof MechanicSoulPeripheral) {
+//                    int rotationStep = ((MechanicSoulPeripheral) peripheral).getRotationStep(iTurtleAccess, turtleSide);
+//                    stack.mulPose(Vector3f.XN.rotationDegrees(-10 * rotationStep));
+//                }
+            }
             stack.translate(0.0f, -0.5f, -0.5f);
             stack.mulPose(Vector3f.YN.rotationDegrees(90));
-            stack.translate(0, 0, -0.6);
+            if (turtleSide == TurtleSide.LEFT) {
+                stack.translate(0, 0, -0.6);
+            } else {
+                stack.translate(0, 0, -1.4);
+            }
             return TransformedModel.of(getCraftingItem(), new TransformationMatrix(stack.last().pose()));
         }
         return TransformedModel.of(turtleSide == TurtleSide.LEFT ? getLeftModel() : getRightModel());
@@ -39,7 +47,9 @@ public abstract class ModelTransformingTurtle<T extends MechanicSoulPeripheral> 
     @Override
     public void update(@NotNull ITurtleAccess turtle, @NotNull TurtleSide side) {
         super.update(turtle, side);
-        if (peripheral != null && tick %3 == 0)
-            peripheral.consumeRotationCharge();
+        // TODO: extract via turtle transfer data logic!
+//        IPeripheral peripheral = ((BaseTurtle)turtle.getUpgrade(side)).peripheral;
+//        if (peripheral instanceof MechanicSoulPeripheral && tick % 2 == 0)
+//            ((MechanicSoulPeripheral) peripheral).consumeRotationCharge(turtle, side);
     }
 }

@@ -42,7 +42,7 @@ import java.util.UUID;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-public class TurtleFakePlayer extends FakePlayer {
+public class APFakePlayer extends FakePlayer {
     /*
     Highly inspired by https://github.com/SquidDev-CC/plethora/blob/minecraft-1.12/src/main/java/org/squiddev/plethora/gameplay/PlethoraFakePlayer.java
     */
@@ -56,7 +56,7 @@ public class TurtleFakePlayer extends FakePlayer {
 
     private float currentDamage = 0;
 
-    public TurtleFakePlayer(ServerWorld world, Entity owner, GameProfile profile) {
+    public APFakePlayer(ServerWorld world, Entity owner, GameProfile profile) {
         super(world, profile != null && profile.isComplete() ? profile : PROFILE);
         connection = new FakeNetHandler(this);
         if (owner != null) {
@@ -68,7 +68,7 @@ public class TurtleFakePlayer extends FakePlayer {
     }
 
     @Deprecated
-    public TurtleFakePlayer(World world) {
+    public APFakePlayer(World world) {
         super((ServerWorld) world, PROFILE);
         owner = null;
     }

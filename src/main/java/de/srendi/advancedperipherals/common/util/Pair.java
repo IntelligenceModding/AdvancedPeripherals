@@ -36,6 +36,10 @@ public class Pair<T, V> {
         return new Pair<>(left, mapFunc.apply(right));
     }
 
+    public <T1, V1> Pair<T1, V1> mapBoth(BiFunction<T, V, Pair<T1, V1>> mapFunc) {
+        return mapFunc.apply(left, right);
+    }
+
     public <T1> Pair<T1, V> ignoreLeft() {
         return new Pair<>(null, right);
     }

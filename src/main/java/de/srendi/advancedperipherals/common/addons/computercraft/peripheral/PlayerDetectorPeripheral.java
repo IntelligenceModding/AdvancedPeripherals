@@ -1,6 +1,9 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.peripheral;
 
 import dan200.computercraft.api.lua.LuaFunction;
+import dan200.computercraft.api.pocket.IPocketAccess;
+import dan200.computercraft.api.turtle.ITurtleAccess;
+import dan200.computercraft.api.turtle.TurtleSide;
 import de.srendi.advancedperipherals.common.addons.computercraft.base.BasePeripheral;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
@@ -25,12 +28,12 @@ public class PlayerDetectorPeripheral extends BasePeripheral {
         super(type, tileEntity);
     }
 
-    public PlayerDetectorPeripheral(String type, TileEntity tileEntity) {
-        super(type, tileEntity);
+    public PlayerDetectorPeripheral(String type, ITurtleAccess access, TurtleSide side) {
+        super(type, access, side);
     }
 
-    public PlayerDetectorPeripheral(String type, Entity entity) {
-        super(type, entity);
+    public PlayerDetectorPeripheral(String type, IPocketAccess pocket) {
+        super(type, pocket);
     }
 
     @Override

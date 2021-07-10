@@ -57,7 +57,7 @@ public class InventoryManagerPeripheral extends BasePeripheral {
 
         Direction direction = validateSide(invDirection);
 
-        TileEntity targetEntity = tileEntity.getLevel().getBlockEntity(tileEntity.getBlockPos().relative(direction));
+        TileEntity targetEntity = owner.getWorld().getBlockEntity(owner.getPos().relative(direction));
         IItemHandler inventoryFrom = targetEntity != null ? targetEntity
                 .getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, direction).resolve().orElse(null) : null;
         PlayerInventory inventoryTo = getOwnerPlayer().inventory;
@@ -153,7 +153,7 @@ public class InventoryManagerPeripheral extends BasePeripheral {
 
         Direction direction = validateSide(invDirection);
 
-        TileEntity targetEntity = tileEntity.getLevel().getBlockEntity(tileEntity.getBlockPos().relative(direction));
+        TileEntity targetEntity = owner.getWorld().getBlockEntity(owner.getPos().relative(direction));
         PlayerInventory inventoryFrom = getOwnerPlayer().inventory;
         IItemHandler inventoryTo = targetEntity != null ? targetEntity
                 .getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, direction).resolve().orElse(null) : null;
@@ -295,7 +295,7 @@ public class InventoryManagerPeripheral extends BasePeripheral {
     }
 
     private PlayerEntity getOwnerPlayer() {
-        return ((InventoryManagerTile) tileEntity).getOwnerPlayer();
+        return owner.getOwner();
     }
 
     private void ensurePlayerIsLinked() throws LuaException {

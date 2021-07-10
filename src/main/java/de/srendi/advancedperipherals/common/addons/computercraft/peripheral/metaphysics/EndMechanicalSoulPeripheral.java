@@ -12,6 +12,7 @@ import de.srendi.advancedperipherals.common.util.NBTUtil;
 import de.srendi.advancedperipherals.common.util.Pair;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 
 import javax.annotation.Nonnull;
@@ -25,8 +26,8 @@ public class EndMechanicalSoulPeripheral extends WeakMechanicSoulPeripheral {
     private final static String WORLD_DATA_MARK = "warp_world";
     private final static String WARP_OPERATION = "warp";
 
-    public EndMechanicalSoulPeripheral(String type, ITurtleAccess turtle) {
-        super(type, turtle);
+    public EndMechanicalSoulPeripheral(String type, ITurtleAccess turtle, TurtleSide side) {
+        super(type, turtle, side);
     }
 
     @Override
@@ -50,32 +51,29 @@ public class EndMechanicalSoulPeripheral extends WeakMechanicSoulPeripheral {
         return AdvancedPeripheralsConfig.endMechanicSoulMaxFuelConsumptionLevel;
     }
 
-    protected @Nonnull Pair<MethodResult, CompoundNBT> getPointData(@Nonnull IComputerAccess access) {
-        Pair<MethodResult, TurtleSide> sideResult = getTurtleSide(access);
-        if (sideResult.leftPresent())
-            return sideResult.ignoreRight();
-        CompoundNBT upgradeData = turtle.getUpgradeNBTData(sideResult.getRight());
-        if (!upgradeData.contains(WORLD_DATA_MARK)) {
-            upgradeData.putString(WORLD_DATA_MARK, getWorld().dimension().location().toString());
+    protected @Nonnull Pair<MethodResult, CompoundNBT> getPointData() {
+        CompoundNBT settings = owner.getSettings();
+        if (!settings.contains(WORLD_DATA_MARK)) {
+            settings.putString(WORLD_DATA_MARK, getWorld().dimension().location().toString());
         } else {
-            String worldName = upgradeData.getString(WORLD_DATA_MARK);
+            String worldName = settings.getString(WORLD_DATA_MARK);
             if (!getWorld().dimension().location().toString().equals(worldName)) {
                 return Pair.onlyLeft(MethodResult.of(null, "Incorrect world for this upgrade"));
             }
         }
-        if (!upgradeData.contains(POINT_DATA_MARK)) {
-            upgradeData.put(POINT_DATA_MARK, new CompoundNBT());
+        if (!settings.contains(POINT_DATA_MARK)) {
+            settings.put(POINT_DATA_MARK, new CompoundNBT());
         }
-        return Pair.onlyRight(turtle.getUpgradeNBTData(sideResult.getRight()).getCompound(POINT_DATA_MARK));
+        return Pair.onlyRight(settings.getCompound(POINT_DATA_MARK));
     }
 
-    private int getWarpCost(@Nonnull IComputerAccess access, BlockPos warpTarget) {
-        return (int) Math.sqrt(warpTarget.distManhattan(getPos())) * fuelConsumptionMultiply(access);
+    private int getWarpCost(BlockPos warpTarget) {
+        return (int) Math.sqrt(warpTarget.distManhattan(getPos())) * fuelConsumptionMultiply();
     }
 
-    @LuaFunction
-    public Map<String, Object> getConfiguration() {
-        Map<String, Object> result = super.getConfiguration();
+    @Override
+    public Map<String, Object> getPeripheralConfiguration() {
+        Map<String, Object> result = super.getPeripheralConfiguration();
         result.put("warpCooldown", AdvancedPeripheralsConfig.warpCooldown);
         return result;
     }
@@ -87,7 +85,8 @@ public class EndMechanicalSoulPeripheral extends WeakMechanicSoulPeripheral {
 
     @LuaFunction
     public final MethodResult savePoint(@Nonnull IComputerAccess access, String name) {
-        Pair<MethodResult, CompoundNBT> pairData = getPointData(access);
+        addRotationCycle();
+        Pair<MethodResult, CompoundNBT> pairData = getPointData();
         if (pairData.leftPresent()) {
             return pairData.getLeft();
         }
@@ -98,7 +97,7 @@ public class EndMechanicalSoulPeripheral extends WeakMechanicSoulPeripheral {
 
     @LuaFunction
     public final MethodResult points(@Nonnull IComputerAccess access) {
-        Pair<MethodResult, CompoundNBT> pairData = getPointData(access);
+        Pair<MethodResult, CompoundNBT> pairData = getPointData();
         if (pairData.leftPresent()) {
             return pairData.getLeft();
         }
@@ -108,46 +107,46 @@ public class EndMechanicalSoulPeripheral extends WeakMechanicSoulPeripheral {
 
     @LuaFunction(mainThread = true)
     public final MethodResult warpToPoint(@Nonnull IComputerAccess access, String name) {
-        Pair<MethodResult, CompoundNBT> pairData = getPointData(access);
+        Pair<MethodResult, CompoundNBT> pairData = getPointData();
         if (pairData.leftPresent()) {
             return pairData.getLeft();
         }
         Optional<MethodResult> checkResults = cooldownCheck(WARP_OPERATION);
         if (checkResults.isPresent()) return checkResults.get();
+        World world = getWorld();
+        addRotationCycle();
         CompoundNBT data = pairData.getRight();
         BlockPos newPosition = NBTUtil.blockPosFromNBT(data.getCompound(name));
-        TurtlePlayer turtlePlayer = TurtlePlayer.getWithPosition(turtle, getPos(), turtle.getDirection());
-        TurtleBlockEvent.Move moveEvent = new TurtleBlockEvent.Move(turtle, turtlePlayer, getWorld(), newPosition);
-        if (MinecraftForge.EVENT_BUS.post(moveEvent))
+        if (owner.isMovementPossible(world, newPosition))
             return MethodResult.of(null, "Move forbidden");
-        int warpCost = getWarpCost(access, newPosition);
-        if (consumeFuel(access, warpCost, true)) {
-            boolean teleportResult = turtle.teleportTo(getWorld(), newPosition);
+        int warpCost = getWarpCost(newPosition);
+        if (consumeFuel(warpCost, true)) {
+            boolean teleportResult = owner.move(world, newPosition);
             if (teleportResult) {
-                consumeFuel(access, warpCost, false);
+                consumeFuel(warpCost, false);
                 return MethodResult.of(true);
             } else {
                 return MethodResult.of(null, "Cannot teleport to location");
             }
         }
-        trackOperation(access, WARP_OPERATION);
+        trackOperation(WARP_OPERATION);
         return MethodResult.of(null, String.format("Not enough fuel, %d needed", warpCost));
     }
 
     @LuaFunction
     public final MethodResult estimateWarpCost(@Nonnull IComputerAccess access, String name) {
-        Pair<MethodResult, CompoundNBT> pairData = getPointData(access);
+        Pair<MethodResult, CompoundNBT> pairData = getPointData();
         if (pairData.leftPresent()) {
             return pairData.getLeft();
         }
         CompoundNBT data = pairData.getRight();
         BlockPos newPosition = NBTUtil.blockPosFromNBT(data.getCompound(name));
-        return MethodResult.of(getWarpCost(access, newPosition));
+        return MethodResult.of(getWarpCost(newPosition));
     }
 
     @LuaFunction
     public final MethodResult distanceToPoint(@Nonnull IComputerAccess access, String name) {
-        Pair<MethodResult, CompoundNBT> pairData = getPointData(access);
+        Pair<MethodResult, CompoundNBT> pairData = getPointData();
         if (pairData.leftPresent()) {
             return pairData.getLeft();
         }

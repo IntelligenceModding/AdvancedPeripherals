@@ -58,7 +58,7 @@ public class RedstoneIntegratorPeripheral extends BasePeripheral {
     }
 
     private RedstoneIntegratorTile getTileEntity() {
-        return (RedstoneIntegratorTile) tileEntity;
+        return (RedstoneIntegratorTile) owner.getObjectInside();
     }
 
 }

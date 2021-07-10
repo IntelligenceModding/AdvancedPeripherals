@@ -4,9 +4,12 @@ import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.peripheral.IComputerAccess;
 import dan200.computercraft.api.peripheral.IPeripheral;
+import dan200.computercraft.api.pocket.IPocketAccess;
 import dan200.computercraft.api.turtle.ITurtleAccess;
+import dan200.computercraft.api.turtle.TurtleSide;
 import dan200.computercraft.core.computer.ComputerSide;
-import de.srendi.advancedperipherals.common.blocks.base.APTileEntityBlock;
+import de.srendi.advancedperipherals.api.peripheral.IPeripheralOwner;
+import de.srendi.advancedperipherals.api.peripheral.IPeripheralTileEntity;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.tileentity.TileEntity;
@@ -23,33 +26,21 @@ import java.util.Locale;
 public abstract class BasePeripheral implements IPeripheral {
 
     protected final List<IComputerAccess> connectedComputers = new ArrayList<>();
-    public Entity entity;
     protected String type;
-    protected TileEntity tileEntity;
-    protected ITurtleAccess turtle;
+    protected IPeripheralOwner owner;
 
-    public BasePeripheral(String type, PeripheralTileEntity<?> tileEntity) {
+    public <T extends TileEntity & IPeripheralTileEntity> BasePeripheral(String type, T tileEntity) {
         this.type = type;
-        this.tileEntity = tileEntity;
+        this.owner = new TileEntityPeripheralOwner<>(tileEntity);
     }
 
-    public BasePeripheral(String type, TileEntity tileEntity) {
+    public BasePeripheral(String type, ITurtleAccess turtle, TurtleSide side) {
         this.type = type;
-        this.tileEntity = tileEntity;
+        this.owner = new TurtlePeripheralOwner(turtle, side);
     }
 
-    public BasePeripheral(String type, Entity entity) {
-        this.type = type;
-        this.entity = entity;
-    }
-
-    public BasePeripheral(String type, ITurtleAccess turtle) {
-        this.type = type;
-        this.turtle = turtle;
-    }
-
-    public void setTileEntity(TileEntity tileEntity) {
-        this.tileEntity = tileEntity;
+    public BasePeripheral(String type, IPocketAccess access) {
+        this.owner = new PocketPeripheralOwner(access);
     }
 
     public List<IComputerAccess> getConnectedComputers() {
@@ -59,7 +50,7 @@ public abstract class BasePeripheral implements IPeripheral {
     @Nullable
     @Override
     public Object getTarget() {
-        return tileEntity;
+        return owner;
     }
 
     @NotNull
@@ -87,35 +78,15 @@ public abstract class BasePeripheral implements IPeripheral {
 
     @LuaFunction
     public final String getName() {
-        return tileEntity.getTileData().getString("CustomName");
+        return owner.getCustomName();
     }
 
     protected BlockPos getPos() {
-        if (tileEntity != null)
-            return tileEntity.getBlockPos();
-        if (turtle != null)
-            return turtle.getPosition();
-        if (entity != null)
-            return entity.blockPosition();
-        return null;
+        return owner.getPos();
     }
 
     protected World getWorld() {
-        if (tileEntity != null)
-            return tileEntity.getLevel();
-        if (turtle != null)
-            return turtle.getWorld();
-        if (entity != null)
-            return entity.getCommandSenderWorld();
-        return null;
-    }
-
-    public void setEntity(Entity entity) {
-        this.entity = entity;
-    }
-
-    public void setTurtle(ITurtleAccess turtle) {
-        this.turtle = turtle;
+        return owner.getWorld();
     }
 
     protected Direction validateSide(String direction) throws LuaException {
@@ -125,6 +96,6 @@ public abstract class BasePeripheral implements IPeripheral {
         } catch (IllegalArgumentException exception) {
             throw new LuaException(direction + " is not a valid side.");
         }
-        return Converter.getDirection(tileEntity.getBlockState().getValue(APTileEntityBlock.FACING) ,dir);
+        return Converter.getDirection(owner.getFacing(), dir);
     }
 }

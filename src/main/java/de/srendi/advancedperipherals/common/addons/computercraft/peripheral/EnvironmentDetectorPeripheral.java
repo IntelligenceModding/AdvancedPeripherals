@@ -6,6 +6,10 @@ import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.lua.MethodResult;
 import dan200.computercraft.api.peripheral.IComputerAccess;
+import dan200.computercraft.api.pocket.IPocketAccess;
+import dan200.computercraft.api.turtle.ITurtleAccess;
+import dan200.computercraft.api.turtle.TurtleSide;
+import de.srendi.advancedperipherals.common.addons.computercraft.base.FuelConsumingPeripheral;
 import de.srendi.advancedperipherals.common.addons.computercraft.base.OperationPeripheral;
 import de.srendi.advancedperipherals.common.addons.mekanism.Mekanism;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
@@ -30,7 +34,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nonnull;
 import java.util.*;
 
-public class EnvironmentDetectorPeripheral extends OperationPeripheral {
+public class EnvironmentDetectorPeripheral extends FuelConsumingPeripheral {
 
     private static final String SCAN_OPERATION = "scan";
 
@@ -38,12 +42,12 @@ public class EnvironmentDetectorPeripheral extends OperationPeripheral {
         super(type, tileEntity);
     }
 
-    public EnvironmentDetectorPeripheral(String type, TileEntity tileEntity) {
-        super(type, tileEntity);
+    public EnvironmentDetectorPeripheral(String type, ITurtleAccess turtle, TurtleSide side) {
+        super(type, turtle, side);
     }
 
-    public EnvironmentDetectorPeripheral(String type, Entity tileEntity) {
-        super(type, tileEntity);
+    public EnvironmentDetectorPeripheral(String type, IPocketAccess pocket) {
+        super(type, pocket);
     }
 
     @Override
@@ -59,12 +63,12 @@ public class EnvironmentDetectorPeripheral extends OperationPeripheral {
     }
 
     @Override
-    protected int _getFuelConsumptionRate(@NotNull IComputerAccess access) {
+    protected int _getFuelConsumptionRate() {
         return 1;
     }
 
     @Override
-    protected void _setFuelConsumptionRate(@NotNull IComputerAccess access, int rate) {
+    protected void _setFuelConsumptionRate(int rate) {
     }
 
     @Override
@@ -252,9 +256,8 @@ public class EnvironmentDetectorPeripheral extends OperationPeripheral {
         return getCurrentCooldown(SCAN_OPERATION);
     }
 
-    @LuaFunction
-    public final Map<String, Object> getConfiguration() {
-        Map<String, Object> result = super.getConfiguration();
+    public Map<String, Object> getPeripheralConfiguration() {
+        Map<String, Object> result = super.getPeripheralConfiguration();
         result.put("freeRadius", AdvancedPeripheralsConfig.environmentDetectorMaxFreeRadius);
         result.put("scanPeriod", AdvancedPeripheralsConfig.environmentDetectorMinScanPeriod);
         result.put("costRadius", AdvancedPeripheralsConfig.environmentDetectorMaxCostRadius);
@@ -272,11 +275,11 @@ public class EnvironmentDetectorPeripheral extends OperationPeripheral {
             return MethodResult.of(null, "Radius is exceed max value");
         }
         if (radius > AdvancedPeripheralsConfig.geoScannerMaxFreeRadius) {
-            if (tileEntity == null) {
+            if (owner.getFuelMaxCount() == 0) {
                 return MethodResult.of(null, "Radius is exceed max value");
             }
             int cost = estimateCost(radius);
-            if (!consumeFuel(access, cost, false)) {
+            if (!consumeFuel(cost, false)) {
                 return MethodResult.of(null, String.format("Not enough fuel, %d needed", cost));
             }
         }
@@ -285,7 +288,7 @@ public class EnvironmentDetectorPeripheral extends OperationPeripheral {
         getWorld().getEntities((Entity) null, box.inflate(radius), entity -> entity instanceof LivingEntity).forEach(
                 entity -> entities.add(RepresentationUtil.completeEntityWithPositionToLua(entity, ItemStack.EMPTY, pos))
         );
-        trackOperation(access, SCAN_OPERATION);
+        trackOperation(SCAN_OPERATION);
         return MethodResult.of(entities);
     }
 

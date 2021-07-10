@@ -29,12 +29,4 @@ public abstract class BasePocket<T extends BasePeripheral> extends AbstractPocke
             return DisabledPeripheral.INSTANCE;
         return peripheral;
     }
-
-    @Override
-    public boolean onRightClick(@NotNull World world, @NotNull IPocketAccess access, @Nullable IPeripheral peripheral) {
-        if (access.getEntity() != null) {
-            this.peripheral.setEntity(access.getEntity());
-        }
-        return false;
-    }
 }

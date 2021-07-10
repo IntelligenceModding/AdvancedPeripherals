@@ -15,15 +15,8 @@ public class TurtleChatBox extends BaseTurtle<ChatBoxPeripheral> {
     private static final ModelResourceLocation leftModel = new ModelResourceLocation("advancedperipherals:turtle_chat_box_upgrade_left", "inventory");
     private static final ModelResourceLocation rightModel = new ModelResourceLocation("advancedperipherals:turtle_chat_box_upgrade_right", "inventory");
 
-    private int sync;
-
     public TurtleChatBox() {
         super("chat_box_turtle", "turtle.advancedperipherals.chat_box_turtle", new ItemStack(Blocks.CHAT_BOX.get()));
-    }
-
-    @Override
-    protected ChatBoxPeripheral createPeripheral() {
-        return new ChatBoxPeripheral("chatBox", (TileEntity) null);
     }
 
     @Override
@@ -37,15 +30,7 @@ public class TurtleChatBox extends BaseTurtle<ChatBoxPeripheral> {
     }
 
     @Override
-    public void update(@NotNull ITurtleAccess turtle, @NotNull TurtleSide side) {
-        if (peripheral != null) {
-            super.update(turtle, side);
-            //Sync the tick of the peripherals and the turtle
-            if (peripheral.getTick() == 0) {
-                sync = 0;
-            }
-            sync++;
-            peripheral.setTick(sync);
-        }
+    protected ChatBoxPeripheral buildPeripheral(@NotNull ITurtleAccess turtle, @NotNull TurtleSide side) {
+        return new ChatBoxPeripheral("chatBox", turtle, side);
     }
 }

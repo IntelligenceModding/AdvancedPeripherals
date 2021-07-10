@@ -11,8 +11,8 @@ import javax.annotation.Nonnull;
 
 
 public class OverpoweredHusbandryMechanicSoulPeripheral extends HusbandryMechanicSoulPeripheral {
-    public OverpoweredHusbandryMechanicSoulPeripheral(String type, ITurtleAccess turtle) {
-        super(type, turtle);
+    public OverpoweredHusbandryMechanicSoulPeripheral(String type, ITurtleAccess turtle, TurtleSide side) {
+        super(type, turtle, side);
     }
 
     @Override
@@ -22,11 +22,8 @@ public class OverpoweredHusbandryMechanicSoulPeripheral extends HusbandryMechani
 
     @NotNull
     @Override
-    protected @Nonnull MethodResult fuelErrorCallback(@Nonnull IComputerAccess access,@Nonnull MethodResult fuelErrorResult) {
-        Pair<MethodResult, TurtleSide> sidePair = getTurtleSide(access);
-        if (sidePair.leftPresent())
-            return fuelErrorResult;
-        turtle.setUpgrade(sidePair.getRight(), null);
+    protected @Nonnull MethodResult fuelErrorCallback(@Nonnull MethodResult fuelErrorResult) {
+        owner.destroyUpgrade();
         return MethodResult.of(null, "Too much power! Soul is broken ...");
     }
 }

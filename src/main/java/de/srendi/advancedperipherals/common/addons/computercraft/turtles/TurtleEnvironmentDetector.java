@@ -1,11 +1,14 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.turtles;
 
+import dan200.computercraft.api.turtle.ITurtleAccess;
+import dan200.computercraft.api.turtle.TurtleSide;
 import de.srendi.advancedperipherals.common.addons.computercraft.base.BaseTurtle;
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.EnvironmentDetectorPeripheral;
 import de.srendi.advancedperipherals.common.setup.Blocks;
 import net.minecraft.client.renderer.model.ModelResourceLocation;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import org.jetbrains.annotations.NotNull;
 
 public class TurtleEnvironmentDetector extends BaseTurtle<EnvironmentDetectorPeripheral> {
 
@@ -17,11 +20,6 @@ public class TurtleEnvironmentDetector extends BaseTurtle<EnvironmentDetectorPer
     }
 
     @Override
-    protected EnvironmentDetectorPeripheral createPeripheral() {
-        return new EnvironmentDetectorPeripheral("environmentDetector", (TileEntity) null);
-    }
-
-    @Override
     protected ModelResourceLocation getLeftModel() {
         return leftModel;
     }
@@ -29,5 +27,10 @@ public class TurtleEnvironmentDetector extends BaseTurtle<EnvironmentDetectorPer
     @Override
     protected ModelResourceLocation getRightModel() {
         return rightModel;
+    }
+
+    @Override
+    protected EnvironmentDetectorPeripheral buildPeripheral(@NotNull ITurtleAccess turtle, @NotNull TurtleSide side) {
+        return new EnvironmentDetectorPeripheral("environmentDetector", turtle, side);
     }
 }

@@ -4,38 +4,22 @@ import dan200.computercraft.api.lua.MethodResult;
 import dan200.computercraft.api.peripheral.IComputerAccess;
 import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
-import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
 import de.srendi.advancedperipherals.common.util.Pair;
-import net.minecraft.entity.Entity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 
 import javax.annotation.Nonnull;
 import java.util.Optional;
 
-public abstract class MechanicSoulPeripheral extends OperationPeripheral {
+public abstract class MechanicSoulPeripheral extends FuelConsumingPeripheral {
 
     public final static int ROTATION_STEPS = 36;
+    public final static String ROTATION_CHARGE_SETTING = "rotationCharge";
 
-    private int rotationCharge = 0;
-
-    public MechanicSoulPeripheral(String type, PeripheralTileEntity<?> tileEntity) {
-        super(type, tileEntity);
-    }
-
-    public MechanicSoulPeripheral(String type, TileEntity tileEntity) {
-        super(type, tileEntity);
-    }
-
-    public MechanicSoulPeripheral(String type, Entity entity) {
-        super(type, entity);
-    }
-
-    public MechanicSoulPeripheral(String type, ITurtleAccess turtle) {
-        super(type, turtle);
+    public MechanicSoulPeripheral(String type, ITurtleAccess turtle, TurtleSide side) {
+        super(type, turtle, side);
     }
 
     public void addRotationCycle() {
@@ -43,74 +27,27 @@ public abstract class MechanicSoulPeripheral extends OperationPeripheral {
     }
 
     public void addRotationCycle(int count) {
-        if (count > 0)
-            rotationCharge += count * ROTATION_STEPS;
+        System.out.printf("Adding rotation cycle %d with turtle access%n", count);
+        CompoundNBT data = owner.getSettings();
+        data.putInt(ROTATION_CHARGE_SETTING, Math.max(0, data.getInt(ROTATION_CHARGE_SETTING)) + count * ROTATION_STEPS);
+        owner.triggerClientServerSync();
     }
 
     public void consumeRotationCharge() {
-        if (rotationCharge > 0)
-            rotationCharge -= 1;
+        CompoundNBT data = owner.getSettings();
+        int currentCharge = data.getInt(ROTATION_CHARGE_SETTING);
+        if (currentCharge > 0) {
+            System.out.printf("Consume rotation charge, was %d%n", data.getInt(ROTATION_CHARGE_SETTING));
+            data.putInt(ROTATION_CHARGE_SETTING, Math.max(0, data.getInt(ROTATION_CHARGE_SETTING) - 1));
+            System.out.printf("Consume rotation charge, left %d%n", data.getInt(ROTATION_CHARGE_SETTING));
+        }
     }
 
     public int getRotationStep() {
-        return rotationCharge % ROTATION_STEPS;
-    }
-
-    protected Optional<MethodResult> turtleChecks() {
-        if (turtle == null) {
-            return Optional.of(MethodResult.of(null, "Well, you can use it only from turtle now!"));
-        }
-        if (turtle.getOwningPlayer() == null) {
-            return Optional.of(MethodResult.of(null, "Well, turtle should have owned player!"));
-        }
-        MinecraftServer server = getWorld().getServer();
-        if (server == null) {
-            return Optional.of(MethodResult.of(null, "Problem with server finding ..."));
-        }
-        return Optional.empty();
-    }
-
-    protected Pair<MethodResult, TurtleSide> getTurtleSide(@Nonnull IComputerAccess access) {
-        TurtleSide side;
-        try {
-            side = TurtleSide.valueOf(access.getAttachmentName().toUpperCase());
-        } catch (IllegalArgumentException e) {
-            return Pair.onlyLeft(MethodResult.of(null, e.getMessage()));
-        }
-        return Pair.onlyRight(side);
-    }
-
-    protected Pair<MethodResult, CompoundNBT> getSettings(@Nonnull IComputerAccess access) {
-        return getTurtleSide(access).mapRight(side -> turtle.getUpgradeNBTData(side));
-    }
-
-    protected Pair<MethodResult, Boolean> setIntSetting(@Nonnull IComputerAccess access, String name, int value) {
-        return getSettings(access).mapRight(data -> {
-            data.putInt(name, value);
-            return true;
-        });
-    }
-
-    protected Pair<MethodResult, Integer> getIntSetting(@Nonnull IComputerAccess access, String name) {
-        return getSettings(access).mapRight(data -> data.getInt(name));
-    }
-
-    protected Pair<MethodResult, CompoundNBT> getCompoundSetting(@Nonnull IComputerAccess access, String name) {
-        return getSettings(access).mapRight(data -> data.getCompound(name));
-    }
-
-    protected Pair<MethodResult, Boolean> setCompoundSetting(@Nonnull IComputerAccess access, String name, CompoundNBT value) {
-        return getSettings(access).mapRight(data -> {
-            data.put(name, value);
-            return true;
-        });
-    }
-
-    protected Pair<MethodResult, Boolean> removeSetting(@Nonnull IComputerAccess access, String name) {
-        return getSettings(access).mapRight(data -> {
-            data.remove(name);
-            return true;
-        });
+        int rotation = owner.getSettings().getInt(ROTATION_CHARGE_SETTING);
+        if (rotation > 0)
+            System.out.printf("Current charge %d%n", rotation);
+        return rotation;
     }
 
     protected AxisAlignedBB getBox(BlockPos pos, int radius) {

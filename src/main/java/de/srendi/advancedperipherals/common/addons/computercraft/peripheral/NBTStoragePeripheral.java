@@ -37,7 +37,7 @@ public class NBTStoragePeripheral extends BasePeripheral {
 
     @LuaFunction
     public final MethodResult read() {
-        return MethodResult.of(NBTUtil.toLua(((NBTStorageTile) tileEntity).getStored()));
+        return MethodResult.of(NBTUtil.toLua(((NBTStorageTile) owner.getObjectInside()).getStored()));
     }
 
     @LuaFunction
@@ -51,7 +51,7 @@ public class NBTStoragePeripheral extends BasePeripheral {
         } catch (CommandSyntaxException ex) {
             return MethodResult.of(null, String.format("Cannot parse json: %s", ex.getMessage()));
         }
-        ((NBTStorageTile) tileEntity).setStored(parsedData);
+        ((NBTStorageTile) owner.getObjectInside()).setStored(parsedData);
         return MethodResult.of(true);
     }
 
@@ -66,7 +66,7 @@ public class NBTStoragePeripheral extends BasePeripheral {
             return MethodResult.of(null, String.format("No idea, how this happened, but java IO Exception appear %s", e.getMessage()));
         }
         CompoundNBT parsedData = (CompoundNBT) de.srendi.advancedperipherals.common.util.NBTUtil.toDirectNBT(data);
-        ((NBTStorageTile) tileEntity).setStored(parsedData);
+        ((NBTStorageTile) owner.getObjectInside()).setStored(parsedData);
         return MethodResult.of(true);
     }
 }
