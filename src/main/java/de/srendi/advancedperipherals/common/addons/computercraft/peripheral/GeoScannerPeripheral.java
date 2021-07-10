@@ -136,7 +136,7 @@ public class GeoScannerPeripheral extends FuelConsumingPeripheral {
     }
 
     @LuaFunction
-    public final MethodResult chunkAnalyze(@Nonnull IComputerAccess access) {
+    public final MethodResult chunkAnalyze() {
         Optional<MethodResult> checkResult = cooldownCheck(SCAN_OPERATION);
         if (checkResult.isPresent()) return checkResult.get();
         World world = getWorld();
@@ -162,7 +162,7 @@ public class GeoScannerPeripheral extends FuelConsumingPeripheral {
     }
 
     @LuaFunction
-    public final MethodResult scan(@Nonnull IComputerAccess access, @Nonnull IArguments arguments) throws LuaException {
+    public final MethodResult scan(@Nonnull IArguments arguments) throws LuaException {
         int radius = arguments.getInt(0);
         Optional<MethodResult> checkResult = cooldownCheck(SCAN_OPERATION);
         if (checkResult.isPresent()) return checkResult.get();

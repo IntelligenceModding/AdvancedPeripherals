@@ -67,6 +67,8 @@ public class NBTStoragePeripheral extends BasePeripheral {
         } catch (IOException e){
             return MethodResult.of(null, String.format("No idea, how this happened, but java IO Exception appear %s", e.getMessage()));
         }
+        if (countingStream.getWrittenBytes() > AdvancedPeripheralsConfig.nbtStorageMaxSize)
+            return MethodResult.of(null, "JSON size is bigger than allowed");
         CompoundNBT parsedData = (CompoundNBT) de.srendi.advancedperipherals.common.util.NBTUtil.toDirectNBT(data);
         tile.setStored(parsedData);
         return MethodResult.of(true);

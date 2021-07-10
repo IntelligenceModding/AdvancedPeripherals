@@ -2,7 +2,6 @@ package de.srendi.advancedperipherals.common.addons.computercraft.peripheral.met
 
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.lua.MethodResult;
-import dan200.computercraft.api.peripheral.IComputerAccess;
 import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
@@ -20,7 +19,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.EntityRayTraceResult;
 import net.minecraft.util.math.RayTraceResult;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
@@ -80,7 +78,7 @@ public class HusbandryMechanicSoulPeripheral extends WeakMechanicSoulPeripheral 
         owner.getDataStorage().remove(ENTITY_NBT_KEY);
     }
 
-    protected @Nullable Entity extractEntity(@Nonnull IComputerAccess access) {
+    protected @Nullable Entity extractEntity() {
         CompoundNBT data = getEntity();
         EntityType<?> type = EntityType.byString(data.getString("entity")).orElse(null);
         if (type != null) {
@@ -104,7 +102,7 @@ public class HusbandryMechanicSoulPeripheral extends WeakMechanicSoulPeripheral 
     }
 
     @LuaFunction(mainThread = true)
-    public final MethodResult useOnAnimal(@Nonnull IComputerAccess access) {
+    public final MethodResult useOnAnimal() {
         Optional<MethodResult> checkResults = cooldownCheck(USE_ON_ANIMAL_OPERATION);
         if (checkResults.isPresent()) return checkResults.get();
         checkResults = consumeFuelOp(AdvancedPeripheralsConfig.useOnAnimalCost);
@@ -120,7 +118,7 @@ public class HusbandryMechanicSoulPeripheral extends WeakMechanicSoulPeripheral 
     }
 
     @LuaFunction
-    public final MethodResult inspectAnimal(@Nonnull IComputerAccess access) {
+    public final MethodResult inspectAnimal() {
         addRotationCycle();
         RayTraceResult entityHit = owner.withPlayer(player -> player.findHit(false, true, suitableEntity));
         if (entityHit.getType() == RayTraceResult.Type.MISS)
@@ -132,7 +130,7 @@ public class HusbandryMechanicSoulPeripheral extends WeakMechanicSoulPeripheral 
     }
 
     @LuaFunction
-    public final MethodResult searchAnimals(@Nonnull IComputerAccess access) {
+    public final MethodResult searchAnimals() {
         addRotationCycle();
         BlockPos currentPos = getPos();
         AxisAlignedBB box = new AxisAlignedBB(currentPos);
@@ -143,7 +141,7 @@ public class HusbandryMechanicSoulPeripheral extends WeakMechanicSoulPeripheral 
     }
 
     @LuaFunction
-    public final MethodResult captureAnimal(@Nonnull IComputerAccess access) {
+    public final MethodResult captureAnimal() {
         Optional<MethodResult> checkResults = cooldownCheck(CAPTURE_ANIMAL_OPERATION);
         if (checkResults.isPresent()) return checkResults.get();
         if (isEntityInside())
@@ -166,11 +164,11 @@ public class HusbandryMechanicSoulPeripheral extends WeakMechanicSoulPeripheral 
     }
 
     @LuaFunction
-    public final MethodResult releaseAnimal(@Nonnull IComputerAccess access) {
+    public final MethodResult releaseAnimal() {
         if (!isEntityInside())
             return MethodResult.of(null, "No entity is stored");
         addRotationCycle();
-        Entity extractedEntity = extractEntity(access);
+        Entity extractedEntity = extractEntity();
         if (extractedEntity == null)
             return MethodResult.of(null, "Problem with entity unpacking");
         BlockPos blockPos = getPos().offset(owner.getFacing().getNormal());
@@ -181,8 +179,8 @@ public class HusbandryMechanicSoulPeripheral extends WeakMechanicSoulPeripheral 
     }
 
     @LuaFunction
-    public final MethodResult getCapturedAnimal(@Nonnull IComputerAccess access) {
-        Entity extractedEntity = extractEntity(access);
+    public final MethodResult getCapturedAnimal() {
+        Entity extractedEntity = extractEntity();
         return MethodResult.of(RepresentationUtil.completeEntityToLua(extractedEntity, owner.getToolInMainHand()));
     }
 }

@@ -40,6 +40,7 @@ public abstract class BasePeripheral implements IPeripheral {
     }
 
     public BasePeripheral(String type, IPocketAccess access) {
+        this.type = type;
         this.owner = new PocketPeripheralOwner(access);
     }
 

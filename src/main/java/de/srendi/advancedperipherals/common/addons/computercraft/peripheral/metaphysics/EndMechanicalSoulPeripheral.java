@@ -81,7 +81,7 @@ public class EndMechanicalSoulPeripheral extends WeakMechanicSoulPeripheral {
     }
 
     @LuaFunction
-    public final MethodResult savePoint(@Nonnull IComputerAccess access, String name) {
+    public final MethodResult savePoint(String name) {
         addRotationCycle();
         Pair<MethodResult, CompoundNBT> pairData = getPointData();
         if (pairData.leftPresent()) {
@@ -93,7 +93,7 @@ public class EndMechanicalSoulPeripheral extends WeakMechanicSoulPeripheral {
     }
 
     @LuaFunction
-    public final MethodResult points(@Nonnull IComputerAccess access) {
+    public final MethodResult points() {
         Pair<MethodResult, CompoundNBT> pairData = getPointData();
         if (pairData.leftPresent()) {
             return pairData.getLeft();
@@ -103,7 +103,7 @@ public class EndMechanicalSoulPeripheral extends WeakMechanicSoulPeripheral {
     }
 
     @LuaFunction(mainThread = true)
-    public final MethodResult warpToPoint(@Nonnull IComputerAccess access, String name) {
+    public final MethodResult warpToPoint(String name) {
         Pair<MethodResult, CompoundNBT> pairData = getPointData();
         if (pairData.leftPresent()) {
             return pairData.getLeft();
@@ -131,7 +131,7 @@ public class EndMechanicalSoulPeripheral extends WeakMechanicSoulPeripheral {
     }
 
     @LuaFunction
-    public final MethodResult estimateWarpCost(@Nonnull IComputerAccess access, String name) {
+    public final MethodResult estimateWarpCost(String name) {
         Pair<MethodResult, CompoundNBT> pairData = getPointData();
         if (pairData.leftPresent()) {
             return pairData.getLeft();
@@ -142,7 +142,7 @@ public class EndMechanicalSoulPeripheral extends WeakMechanicSoulPeripheral {
     }
 
     @LuaFunction
-    public final MethodResult distanceToPoint(@Nonnull IComputerAccess access, String name) {
+    public final MethodResult distanceToPoint(String name) {
         Pair<MethodResult, CompoundNBT> pairData = getPointData();
         if (pairData.leftPresent()) {
             return pairData.getLeft();

@@ -9,10 +9,6 @@ import net.minecraft.tileentity.TileEntity;
 public class DisabledPeripheral extends BasePeripheral {
     public final static DisabledPeripheral INSTANCE = new DisabledPeripheral("disabledPeripheral", null, TurtleSide.LEFT);
 
-    public DisabledPeripheral(String type, PeripheralTileEntity<?> tileEntity) {
-        super(type, tileEntity);
-    }
-
     public DisabledPeripheral(String type, ITurtleAccess turtle, TurtleSide side) {
         super(type, turtle, side);
     }

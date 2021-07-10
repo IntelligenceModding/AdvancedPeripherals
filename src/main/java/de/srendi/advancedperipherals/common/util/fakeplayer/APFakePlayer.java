@@ -73,10 +73,6 @@ public class APFakePlayer extends FakePlayer {
         owner = null;
     }
 
-    public Entity getOwner() {
-        return owner == null ? null : owner.get();
-    }
-
     @Override
     public void awardStat(@NotNull Stat<?> stat) {
         MinecraftServer server = level.getServer();

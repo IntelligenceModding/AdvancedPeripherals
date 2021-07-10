@@ -22,7 +22,6 @@ import org.jetbrains.annotations.Nullable;
 import javax.annotation.Nonnull;
 
 public abstract class BaseTurtle<T extends BasePeripheral> extends AbstractTurtleUpgrade {
-    protected ITurtleAccess turtle;
     protected int tick;
 
     public BaseTurtle(String id, String adjective, ItemStack item) {
@@ -63,10 +62,6 @@ public abstract class BaseTurtle<T extends BasePeripheral> extends AbstractTurtl
 
     @Override
     public void update(@NotNull ITurtleAccess turtle, @NotNull TurtleSide side) {
-        if (!turtle.getWorld().isClientSide) {
-            this.turtle = turtle;
-        }
-
         tick++;
         if (tick > 10) {
             TileEntityList.get(turtle.getWorld()).setTileEntity(turtle.getWorld(), new WorldPos(turtle.getPosition(), turtle.getWorld()), true); //Add the turtle to the List for event use
