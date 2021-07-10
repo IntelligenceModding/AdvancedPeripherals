@@ -35,6 +35,7 @@ public class AdvancedPeripheralsConfig {
     public static boolean enableBlockReader;
     public static boolean enableColonyIntegrator;
     public static boolean enableNBTStorage;
+    public static boolean enablePoweredPeripherals;
 
     // mechanic soul configuration
     public static int energyToFuelRate;
@@ -97,6 +98,7 @@ public class AdvancedPeripheralsConfig {
         final ForgeConfigSpec.BooleanValue ENABLE_GEO_SCANNER;
         final ForgeConfigSpec.BooleanValue ENABLE_COLONY_INTEGRATOR;
         final ForgeConfigSpec.BooleanValue ENABLE_NBT_STORAGE;
+        final ForgeConfigSpec.BooleanValue ENABLE_POWERED_PERIPHERALS;
 
         // Mechanical soul
         final ForgeConfigSpec.IntValue ENERGY_TO_FUEL_RATE;
@@ -163,8 +165,9 @@ public class AdvancedPeripheralsConfig {
             ENABLE_GEO_SCANNER = builder.comment("Enable the geo scanner or not.").define("enableGeoScanner", true);
             ENABLE_COLONY_INTEGRATOR = builder.comment("Enable the colony integrator or not.").define("enableColonyIntegrator", true);
             ENABLE_NBT_STORAGE = builder.comment("Enable the nbt storage block or not").define("enableNBTStorage", true);
+            ENABLE_POWERED_PERIPHERALS = builder.comment("Enable RF storage for peripherals, that could use it").define("enablePoweredPeripherals", true);
 
-            builder.comment("").push("Mechanical soul");
+            builder.comment("").push("metaphysics");
             ENERGY_TO_FUEL_RATE = builder.comment("Defines energy to fuel rate").defineInRange("energyToFuelRate", 575, 575, Integer.MAX_VALUE);
             SUCK_ITEM_COST = builder.comment("Defines cost of suck single item").defineInRange("suckItemCost", 1, 1, Integer.MAX_VALUE);
             SUCK_ITEM_COOLDOWN = builder.comment("Defines cooldown of suck single item").defineInRange("suckItemCooldown", 1_000, 0, Integer.MAX_VALUE);
@@ -186,6 +189,8 @@ public class AdvancedPeripheralsConfig {
             ENABLE_HUSBANDRY_MECHANIC_SOUL = builder.comment("Enable the husbandry mechanic soul or not").define("enableHusbandryMechanicSoul", true);
             HUSBANDRY_MECHANIC_SOUL_TURTLE_INTERACTION_RANGE = builder.comment("Defines husbandry mechanic soul turtle interaction range").defineInRange("husbandryMechanicSoulInteractionRange", 4, 1, 10);
             HUSBANDRY_MECHANIC_SOUL_TURTLE_MAX_FUEL_CONSUMPTION_LEVEL = builder.comment("Defines husbandry mechanic soul turtle max fuel consumption level").defineInRange("husbandryMechanicSoulMaxFuelConsumptionLevel", 4, 1, 10);
+
+            builder.comment("").push("world");
 
             ENABLE_VILLAGER_STRUCTURES = builder.comment("Enable the villager structures for the computer scientist.").define("enableVillagerStructures", true);
             builder.pop();

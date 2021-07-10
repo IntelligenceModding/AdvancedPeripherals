@@ -1,6 +1,7 @@
 package de.srendi.advancedperipherals.common.blocks.base;
 
 import de.srendi.advancedperipherals.common.addons.computercraft.base.BasePeripheral;
+import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
 import mcp.MethodsReturnNonnullByDefault;
 import net.minecraft.block.BlockState;
 import net.minecraft.nbt.CompoundNBT;
@@ -17,17 +18,22 @@ import org.jetbrains.annotations.Nullable;
 @MethodsReturnNonnullByDefault
 public abstract class PoweredPeripheralTileEntity<T extends BasePeripheral>  extends PeripheralTileEntity<T> {
 
-    private final LazyOptional<IEnergyStorage> lazyEnergyStorage = LazyOptional.of(() -> new EnergyStorage(this.getMaxEnergyStored()));
+    private final LazyOptional<IEnergyStorage> lazyEnergyStorage;
 
     protected abstract int getMaxEnergyStored();
 
     public PoweredPeripheralTileEntity(TileEntityType<?> tileEntityTypeIn) {
         super(tileEntityTypeIn);
+        if (AdvancedPeripheralsConfig.enablePoweredPeripherals) {
+            lazyEnergyStorage = LazyOptional.of(() -> new EnergyStorage(this.getMaxEnergyStored()));
+        } else {
+            lazyEnergyStorage = LazyOptional.empty();
+        }
     }
 
     @Override
     public CompoundNBT save(CompoundNBT compound) {
-        lazyEnergyStorage.resolve().ifPresent(iEnergyStorage -> {
+        lazyEnergyStorage.ifPresent(iEnergyStorage -> {
             compound.putInt("energy", iEnergyStorage.getEnergyStored());
         });
         return super.save(compound);
@@ -36,14 +42,14 @@ public abstract class PoweredPeripheralTileEntity<T extends BasePeripheral>  ext
     @Override
     public void load(BlockState blockState, CompoundNBT compound) {
         super.load(blockState, compound);
-        lazyEnergyStorage.resolve().ifPresent(iEnergyStorage -> {
+        lazyEnergyStorage.ifPresent(iEnergyStorage -> {
             iEnergyStorage.receiveEnergy(compound.getInt("energy") - iEnergyStorage.getEnergyStored(), false);
         });
     }
 
     @Override
     public <T1> @NotNull LazyOptional<T1> getCapability(@NotNull Capability<T1> cap, @Nullable Direction direction) {
-        if (cap == CapabilityEnergy.ENERGY) {
+        if (cap == CapabilityEnergy.ENERGY && lazyEnergyStorage.isPresent()) {
             return lazyEnergyStorage.cast();
         }
         return super.getCapability(cap, direction);

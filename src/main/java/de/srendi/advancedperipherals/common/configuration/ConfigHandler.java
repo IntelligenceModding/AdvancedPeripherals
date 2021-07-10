@@ -55,6 +55,7 @@ public class ConfigHandler {
         AdvancedPeripheralsConfig.enableGeoScanner = ConfigHolder.COMMON_CONFIG.ENABLE_GEO_SCANNER.get();
         AdvancedPeripheralsConfig.enableColonyIntegrator = ConfigHolder.COMMON_CONFIG.ENABLE_COLONY_INTEGRATOR.get();
         AdvancedPeripheralsConfig.enableNBTStorage = ConfigHolder.COMMON_CONFIG.ENABLE_NBT_STORAGE.get();
+        AdvancedPeripheralsConfig.enablePoweredPeripherals = ConfigHolder.COMMON_CONFIG.ENABLE_POWERED_PERIPHERALS.get();
 
         //Mechanical soul
         AdvancedPeripheralsConfig.energyToFuelRate = ConfigHolder.COMMON_CONFIG.ENERGY_TO_FUEL_RATE.get();
