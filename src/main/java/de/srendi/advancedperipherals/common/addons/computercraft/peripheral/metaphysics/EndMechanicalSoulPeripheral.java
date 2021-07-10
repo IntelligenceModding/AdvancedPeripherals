@@ -5,15 +5,12 @@ import dan200.computercraft.api.lua.MethodResult;
 import dan200.computercraft.api.peripheral.IComputerAccess;
 import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
-import dan200.computercraft.api.turtle.event.TurtleBlockEvent;
-import dan200.computercraft.shared.turtle.core.TurtlePlayer;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
 import de.srendi.advancedperipherals.common.util.NBTUtil;
 import de.srendi.advancedperipherals.common.util.Pair;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.common.MinecraftForge;
 
 import javax.annotation.Nonnull;
 import java.util.Map;
@@ -52,7 +49,7 @@ public class EndMechanicalSoulPeripheral extends WeakMechanicSoulPeripheral {
     }
 
     protected @Nonnull Pair<MethodResult, CompoundNBT> getPointData() {
-        CompoundNBT settings = owner.getSettings();
+        CompoundNBT settings = owner.getDataStorage();
         if (!settings.contains(WORLD_DATA_MARK)) {
             settings.putString(WORLD_DATA_MARK, getWorld().dimension().location().toString());
         } else {

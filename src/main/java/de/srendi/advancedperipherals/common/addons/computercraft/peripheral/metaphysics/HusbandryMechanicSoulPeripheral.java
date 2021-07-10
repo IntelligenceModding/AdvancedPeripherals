@@ -6,9 +6,7 @@ import dan200.computercraft.api.peripheral.IComputerAccess;
 import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
-import de.srendi.advancedperipherals.common.util.Pair;
 import de.srendi.advancedperipherals.common.util.RepresentationUtil;
-import de.srendi.advancedperipherals.common.util.fakeplayer.FakePlayerProviderTurtle;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -67,19 +65,19 @@ public class HusbandryMechanicSoulPeripheral extends WeakMechanicSoulPeripheral 
     }
 
     protected boolean isEntityInside() {
-        return !owner.getSettings().getCompound(ENTITY_NBT_KEY).isEmpty();
+        return !owner.getDataStorage().getCompound(ENTITY_NBT_KEY).isEmpty();
     }
 
     protected void saveEntity(CompoundNBT data) {
-        owner.getSettings().put(ENTITY_NBT_KEY, data);
+        owner.getDataStorage().put(ENTITY_NBT_KEY, data);
     }
 
     protected CompoundNBT getEntity() {
-        return owner.getSettings().getCompound(ENTITY_NBT_KEY);
+        return owner.getDataStorage().getCompound(ENTITY_NBT_KEY);
     }
 
     protected void removeEntity() {
-        owner.getSettings().remove(ENTITY_NBT_KEY);
+        owner.getDataStorage().remove(ENTITY_NBT_KEY);
     }
 
     protected @Nullable Entity extractEntity(@Nonnull IComputerAccess access) {

@@ -4,7 +4,6 @@ import dan200.computercraft.api.lua.IArguments;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.lua.MethodResult;
-import dan200.computercraft.api.peripheral.IComputerAccess;
 import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
 import de.srendi.advancedperipherals.common.addons.computercraft.base.MechanicSoulPeripheral;
@@ -64,7 +63,7 @@ public class WeakMechanicSoulPeripheral extends MechanicSoulPeripheral {
 
     @Override
     protected int _getFuelConsumptionRate() {
-        CompoundNBT settings = owner.getSettings();
+        CompoundNBT settings = owner.getDataStorage();
         int rate = settings.getInt(FUEL_CONSUMING_RATE_SETTING);
         if (rate == 0) {
             _setFuelConsumptionRate(DEFAULT_FUEL_CONSUMING_RATE);
@@ -75,7 +74,7 @@ public class WeakMechanicSoulPeripheral extends MechanicSoulPeripheral {
 
     @Override
     protected void _setFuelConsumptionRate(int rate) {
-        owner.getSettings().putInt(FUEL_CONSUMING_RATE_SETTING, rate);
+        owner.getDataStorage().putInt(FUEL_CONSUMING_RATE_SETTING, rate);
     }
 
     public int getInteractionRadius() {

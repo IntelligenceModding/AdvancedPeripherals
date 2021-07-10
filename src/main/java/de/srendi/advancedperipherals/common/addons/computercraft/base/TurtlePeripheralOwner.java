@@ -8,6 +8,7 @@ import dan200.computercraft.api.turtle.event.TurtleBlockEvent;
 import dan200.computercraft.shared.turtle.core.TurtlePlayer;
 import dan200.computercraft.shared.util.InventoryUtil;
 import de.srendi.advancedperipherals.api.peripheral.IPeripheralOwner;
+import de.srendi.advancedperipherals.common.util.DataStorageUtil;
 import de.srendi.advancedperipherals.common.util.fakeplayer.APFakePlayer;
 import de.srendi.advancedperipherals.common.util.fakeplayer.FakePlayerProviderTurtle;
 import net.minecraft.entity.player.PlayerEntity;
@@ -66,8 +67,8 @@ public class TurtlePeripheralOwner implements IPeripheralOwner {
 
     @NotNull
     @Override
-    public CompoundNBT getSettings() {
-        return turtle.getUpgradeNBTData(side);
+    public CompoundNBT getDataStorage() {
+        return DataStorageUtil.getDataStorage(turtle, side);
     }
 
     @Override

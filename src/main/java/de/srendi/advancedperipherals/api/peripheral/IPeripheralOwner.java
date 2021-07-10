@@ -1,6 +1,5 @@
 package de.srendi.advancedperipherals.api.peripheral;
 
-import dan200.computercraft.api.turtle.ITurtleAccess;
 import de.srendi.advancedperipherals.common.util.fakeplayer.APFakePlayer;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -8,7 +7,6 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.FakePlayer;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -20,7 +18,7 @@ public interface IPeripheralOwner {
     @Nonnull BlockPos getPos();
     @Nonnull Direction getFacing();
     @Nullable PlayerEntity getOwner();
-    @Nonnull CompoundNBT getSettings();
+    @Nonnull CompoundNBT getDataStorage();
     int getFuelCount();
     int getFuelMaxCount();
     boolean consumeFuel(int count, boolean simulate);

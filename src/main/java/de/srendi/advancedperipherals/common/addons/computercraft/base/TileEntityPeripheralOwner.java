@@ -6,6 +6,7 @@ import de.srendi.advancedperipherals.common.blocks.base.APTileEntityBlock;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
 import de.srendi.advancedperipherals.common.blocks.tileentity.InventoryManagerTile;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
+import de.srendi.advancedperipherals.common.util.DataStorageUtil;
 import de.srendi.advancedperipherals.common.util.fakeplayer.APFakePlayer;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
@@ -63,8 +64,8 @@ public class TileEntityPeripheralOwner<T extends TileEntity & IPeripheralTileEnt
 
     @NotNull
     @Override
-    public CompoundNBT getSettings() {
-        return tileEntity.getApSettings();
+    public CompoundNBT getDataStorage() {
+        return DataStorageUtil.getDataStorage(tileEntity);
     }
 
     @Override

@@ -69,18 +69,32 @@ public abstract class FuelConsumingPeripheral extends OperationPeripheral {
     @Override
     public Map<String, Object> getPeripheralConfiguration() {
         Map<String, Object> data = super.getPeripheralConfiguration();
-        data.put("fuelConsumptionRate", _getFuelConsumptionRate());
         data.put("maxFuelConsumptionRate", getMaxFuelConsumptionRate());
         return data;
     }
 
     @LuaFunction(mainThread = true)
-    public int getFuelLevel() {
+    public final int getFuelLevel() {
         return owner.getFuelCount();
     }
 
     @LuaFunction(mainThread = true)
-    public int getMaxFuelLevel() {
+    public final int getMaxFuelLevel() {
         return owner.getFuelMaxCount();
+    }
+
+    @LuaFunction
+    public final int getFuelConsumptionRate() {
+        return _getFuelConsumptionRate();
+    }
+
+    @LuaFunction
+    public final MethodResult setFuelConsumptionRate(int rate) {
+        if (rate < 1)
+            return MethodResult.of(null, "Too small fuel consumption rate");
+        if (rate > getMaxFuelConsumptionRate())
+            return MethodResult.of(null, "Too big fuel consumption rate");
+        _setFuelConsumptionRate(rate);
+        return MethodResult.of(true);
     }
 }

@@ -2,6 +2,7 @@ package de.srendi.advancedperipherals.common.addons.computercraft.base;
 
 import dan200.computercraft.api.pocket.IPocketAccess;
 import de.srendi.advancedperipherals.api.peripheral.IPeripheralOwner;
+import de.srendi.advancedperipherals.common.util.DataStorageUtil;
 import de.srendi.advancedperipherals.common.util.fakeplayer.APFakePlayer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -67,8 +68,8 @@ public class PocketPeripheralOwner implements IPeripheralOwner {
 
     @NotNull
     @Override
-    public CompoundNBT getSettings() {
-        return pocket.getUpgradeNBTData();
+    public CompoundNBT getDataStorage() {
+        return DataStorageUtil.getDataStorage(pocket);
     }
 
     @Override
