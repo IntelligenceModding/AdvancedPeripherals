@@ -36,7 +36,9 @@ public class ChatBoxPeripheral extends OperationPeripheral {
     @Override
     protected int getRawCooldown(String name) {
         if (name.equals(SEND_MESSAGE_OPERATION))
-            return AdvancedPeripheralsConfig.chatBoxCooldown;
+            // Some legacy logic, cooldown defined in seconds
+            // and we need miliseconds here
+            return AdvancedPeripheralsConfig.chatBoxCooldown * 1000;
         return 0;
     }
 

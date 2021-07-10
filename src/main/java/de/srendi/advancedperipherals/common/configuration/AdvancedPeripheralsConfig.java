@@ -130,7 +130,7 @@ public class AdvancedPeripheralsConfig {
         CommonConfig(final ForgeConfigSpec.Builder builder) {
             builder.comment("").push("Restrictions");
 
-            CHAT_BOX_COOLDOWN = builder.comment("Defines the chat box cooldown for message sending.").defineInRange("chatBoxCooldown", 10, 1, Integer.MAX_VALUE);
+            CHAT_BOX_COOLDOWN = builder.comment("Defines the chat box cooldown in seconds for message sending.").defineInRange("chatBoxCooldown", 10, 1, Integer.MAX_VALUE);
             PLAYER_DET_MAX_RANGE = builder.comment("The max range of the player detector functions. " +
                     "If anyone use a higher range, the detector will use this max range").defineInRange("playerDetMaxRange", 100000000, 0, 100000000);
             ENERGY_DETECTOR_MAX_FLOW = builder.comment("Defines the maximum energy flow of the energy detector.").defineInRange("energyDetectorMaxFlow", Integer.MAX_VALUE, 1, Integer.MAX_VALUE);
@@ -189,6 +189,7 @@ public class AdvancedPeripheralsConfig {
             ENABLE_HUSBANDRY_MECHANIC_SOUL = builder.comment("Enable the husbandry mechanic soul or not").define("enableHusbandryMechanicSoul", true);
             HUSBANDRY_MECHANIC_SOUL_TURTLE_INTERACTION_RANGE = builder.comment("Defines husbandry mechanic soul turtle interaction range").defineInRange("husbandryMechanicSoulInteractionRange", 4, 1, 10);
             HUSBANDRY_MECHANIC_SOUL_TURTLE_MAX_FUEL_CONSUMPTION_LEVEL = builder.comment("Defines husbandry mechanic soul turtle max fuel consumption level").defineInRange("husbandryMechanicSoulMaxFuelConsumptionLevel", 4, 1, 10);
+            builder.pop();
 
             builder.comment("").push("world");
 
