@@ -69,7 +69,7 @@ public abstract class BaseTileEntityBlock extends BaseBlock {
             return;
         //Used for the lua function getName()
         worldIn.getBlockEntity(pos).getTileData().putString("CustomName", stack.getDisplayName().getString());
-        TileEntityList.get(worldIn).setTileEntity(worldIn, new WorldPos(pos, worldIn), true);
+//        TileEntityList.get(worldIn).setTileEntity(worldIn, new WorldPos(pos, worldIn), true);
     }
 
     @Override
@@ -77,7 +77,7 @@ public abstract class BaseTileEntityBlock extends BaseBlock {
         super.destroy(worldIn, pos, state);
         if (worldIn.getBlockEntity(pos) == null)
             return;
-        TileEntityList.get((World) worldIn).setTileEntity((World) worldIn, new WorldPos(pos, (World) worldIn), false);
+//        TileEntityList.get((World) worldIn).setTileEntity((World) worldIn, new WorldPos(pos, (World) worldIn), false);
     }
 
     @Nullable

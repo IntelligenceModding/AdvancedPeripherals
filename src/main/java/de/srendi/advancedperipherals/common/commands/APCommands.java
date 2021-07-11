@@ -3,7 +3,6 @@ package de.srendi.advancedperipherals.common.commands;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import dan200.computercraft.shared.util.NBTUtil;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
-import de.srendi.advancedperipherals.common.blocks.base.TileEntityList;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -46,10 +45,10 @@ public class APCommands {
     }
 
     private static int printDebugTileMessage(CommandSource source) throws CommandSyntaxException {
-        ServerPlayerEntity playerEntity = source.getPlayerOrException();
-        TileEntityList list = TileEntityList.get(playerEntity.getLevel());
-        source.sendSuccess(TextComponentUtils.wrapInSquareBrackets(new StringTextComponent("" + list.getBlockPositions()).withStyle((style) -> style.applyFormat(TextFormatting.GREEN).withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, "" + list.getBlockPositions())).withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new StringTextComponent("Copy"))))), true);
-        source.sendSuccess(new StringTextComponent(list.getBlockPositions().size() + ""), false);
+//        ServerPlayerEntity playerEntity = source.getPlayerOrException();
+//        TileEntityList list = TileEntityList.get(playerEntity.getLevel());
+//        source.sendSuccess(TextComponentUtils.wrapInSquareBrackets(new StringTextComponent("" + list.getBlockPositions()).withStyle((style) -> style.applyFormat(TextFormatting.GREEN).withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, "" + list.getBlockPositions())).withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new StringTextComponent("Copy"))))), true);
+//        source.sendSuccess(new StringTextComponent(list.getBlockPositions().size() + ""), false);
         return 1;
     }
 }

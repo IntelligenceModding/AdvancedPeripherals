@@ -59,13 +59,4 @@ public abstract class BaseTurtle<T extends BasePeripheral> extends AbstractTurtl
         }
         return peripheral;
     }
-
-    @Override
-    public void update(@NotNull ITurtleAccess turtle, @NotNull TurtleSide side) {
-        tick++;
-        if (tick > 10) {
-            TileEntityList.get(turtle.getWorld()).setTileEntity(turtle.getWorld(), new WorldPos(turtle.getPosition(), turtle.getWorld()), true); //Add the turtle to the List for event use
-            tick = 0;
-        }
-    }
 }
