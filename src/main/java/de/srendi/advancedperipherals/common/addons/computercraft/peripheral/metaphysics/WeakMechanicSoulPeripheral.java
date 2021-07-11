@@ -15,7 +15,6 @@ import de.srendi.advancedperipherals.common.util.fakeplayer.APFakePlayer;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockRayTraceResult;
@@ -35,8 +34,6 @@ public class WeakMechanicSoulPeripheral extends MechanicSoulPeripheral {
     protected static final String DIG_OPERATION = "dig";
     protected static final String USE_ON_BLOCK_OPERATION = "useOnBlock";
     protected static final String SUCK_OPERATION = "suck";
-    protected static final String FUEL_CONSUMING_RATE_SETTING = "FUEL_CONSUMING_RATE";
-    protected static final int DEFAULT_FUEL_CONSUMING_RATE = 1;
 
     public WeakMechanicSoulPeripheral(String type, ITurtleAccess turtle, TurtleSide side) {
         super(type, turtle, side);
@@ -59,22 +56,6 @@ public class WeakMechanicSoulPeripheral extends MechanicSoulPeripheral {
 
     protected boolean restoreToolDurability() {
         return false;
-    }
-
-    @Override
-    protected int _getFuelConsumptionRate() {
-        CompoundNBT settings = owner.getDataStorage();
-        int rate = settings.getInt(FUEL_CONSUMING_RATE_SETTING);
-        if (rate == 0) {
-            _setFuelConsumptionRate(DEFAULT_FUEL_CONSUMING_RATE);
-            return DEFAULT_FUEL_CONSUMING_RATE;
-        }
-        return rate;
-    }
-
-    @Override
-    protected void _setFuelConsumptionRate(int rate) {
-        owner.getDataStorage().putInt(FUEL_CONSUMING_RATE_SETTING, rate);
     }
 
     public int getInteractionRadius() {

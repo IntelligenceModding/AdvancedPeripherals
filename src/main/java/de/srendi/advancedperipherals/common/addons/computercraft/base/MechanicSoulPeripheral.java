@@ -9,6 +9,9 @@ import net.minecraft.util.math.BlockPos;
 
 public abstract class MechanicSoulPeripheral extends FuelConsumingPeripheral {
 
+    protected static final String FUEL_CONSUMING_RATE_SETTING = "FUEL_CONSUMING_RATE";
+    protected static final int DEFAULT_FUEL_CONSUMING_RATE = 1;
+
     public MechanicSoulPeripheral(String type, ITurtleAccess turtle, TurtleSide side) {
         super(type, turtle, side);
     }
@@ -20,6 +23,22 @@ public abstract class MechanicSoulPeripheral extends FuelConsumingPeripheral {
     public void addRotationCycle(int count) {
         DataStorageUtil.RotationCharge.addCycles(owner, count);
         owner.triggerClientServerSync();
+    }
+
+    @Override
+    protected int _getFuelConsumptionRate() {
+        CompoundNBT settings = owner.getDataStorage();
+        int rate = settings.getInt(FUEL_CONSUMING_RATE_SETTING);
+        if (rate == 0) {
+            _setFuelConsumptionRate(DEFAULT_FUEL_CONSUMING_RATE);
+            return DEFAULT_FUEL_CONSUMING_RATE;
+        }
+        return rate;
+    }
+
+    @Override
+    protected void _setFuelConsumptionRate(int rate) {
+        owner.getDataStorage().putInt(FUEL_CONSUMING_RATE_SETTING, rate);
     }
 
     protected AxisAlignedBB getBox(BlockPos pos, int radius) {
