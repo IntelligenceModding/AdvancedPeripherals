@@ -1,14 +1,7 @@
 package de.srendi.advancedperipherals.common.events;
 
 import com.google.common.collect.EvictingQueue;
-import dan200.computercraft.api.peripheral.IComputerAccess;
-import dan200.computercraft.api.turtle.TurtleSide;
-import dan200.computercraft.shared.computer.core.ServerComputer;
-import dan200.computercraft.shared.turtle.blocks.TileTurtle;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
-import de.srendi.advancedperipherals.common.addons.computercraft.turtles.TurtleChatBox;
-import de.srendi.advancedperipherals.common.blocks.base.TileEntityList;
-import de.srendi.advancedperipherals.common.blocks.tileentity.ChatBoxTile;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
 import de.srendi.advancedperipherals.common.items.ARGogglesItem;
 import de.srendi.advancedperipherals.common.util.Pair;
@@ -16,14 +9,11 @@ import de.srendi.advancedperipherals.network.MNetwork;
 import de.srendi.advancedperipherals.network.messages.ClearHudCanvasMessage;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.event.ServerChatEvent;
 import net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
-import javax.annotation.Nullable;
-import java.util.UUID;
 import java.util.function.Consumer;
 
 @Mod.EventBusSubscriber(modid = AdvancedPeripherals.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
