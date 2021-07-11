@@ -6,9 +6,9 @@ import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.lua.MethodResult;
 import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
+import de.srendi.advancedperipherals.api.metaphysics.IFeedableMechanicSoul;
 import de.srendi.advancedperipherals.common.addons.computercraft.base.MechanicSoulPeripheral;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
-import de.srendi.advancedperipherals.common.items.WeakMechanicSoul;
 import de.srendi.advancedperipherals.common.util.Pair;
 import de.srendi.advancedperipherals.common.util.RepresentationUtil;
 import de.srendi.advancedperipherals.common.util.fakeplayer.APFakePlayer;
@@ -290,8 +290,8 @@ public class WeakMechanicSoulPeripheral extends MechanicSoulPeripheral {
 
     @LuaFunction(mainThread = true)
     public final MethodResult feedSoul() {
-        if (!(owner.getToolInMainHand().getItem() instanceof WeakMechanicSoul)) {
-            return MethodResult.of(null, "Well, you should feed weak mechanical soul!");
+        if (!(owner.getToolInMainHand().getItem() instanceof IFeedableMechanicSoul)) {
+            return MethodResult.of(null, "Well, you should feed correct mechanical soul!");
         }
         ActionResultType result = owner.withPlayer(APFakePlayer::useOnEntity);
         addRotationCycle(3);
