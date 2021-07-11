@@ -9,11 +9,18 @@ import net.minecraft.util.math.BlockPos;
 
 public abstract class MechanicSoulPeripheral extends FuelConsumingPeripheral {
 
+    // So, we storing here turtle and side
+    // Because this peripheral are only for turtles
+    private final ITurtleAccess turtle;
+    private final TurtleSide side;
+
     protected static final String FUEL_CONSUMING_RATE_SETTING = "FUEL_CONSUMING_RATE";
     protected static final int DEFAULT_FUEL_CONSUMING_RATE = 1;
 
     public MechanicSoulPeripheral(String type, ITurtleAccess turtle, TurtleSide side) {
         super(type, turtle, side);
+        this.turtle = turtle;
+        this.side = side;
     }
 
     public void addRotationCycle() {
