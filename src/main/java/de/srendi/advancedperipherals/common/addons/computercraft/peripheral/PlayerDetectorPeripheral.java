@@ -139,9 +139,9 @@ public class PlayerDetectorPeripheral extends BasePeripheral {
                 }
             }
         }
-        if (existingPlayer == null) {
+        if (existingPlayer == null)
             return null;
-        }
+
         Map<String, Double> coordinates = new HashMap<>();
         coordinates.put("x", Math.floor(existingPlayer.getX()));
         coordinates.put("y", Math.floor(existingPlayer.getY()));

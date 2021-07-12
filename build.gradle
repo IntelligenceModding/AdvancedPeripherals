@@ -150,9 +150,12 @@ dependencies {
     compileOnly fg.deobf("mekanism:Mekanism:${mekanism_version}")
     compileOnly fg.deobf("mekanism:Mekanism:${mekanism_version}:generators")
 
+    runtimeOnly fg.deobf("mekanism:Mekanism:${mekanism_version}")
+    runtimeOnly fg.deobf("mekanism:Mekanism:${mekanism_version}:generators")
     // Immersive Engineering
     compileOnly fg.deobf("curse.maven:immersiveengineering-${immersive_engineering_version}")
 
+    runtimeOnly fg.deobf("curse.maven:immersiveengineering-${immersive_engineering_version}")
     // Storage Drawers
     compileOnly fg.deobf("curse.maven:storagedrawers-${storagedrawers_version}")
 

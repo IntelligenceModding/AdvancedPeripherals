@@ -52,7 +52,7 @@ public class ColonyPeripheral extends BasePeripheral {
     }
 
     @LuaFunction(mainThread = true)
-    public final Object isWithin(Map<?, ?> pos) throws LuaException {
+    public final boolean isWithin(Map<?, ?> pos) throws LuaException {
         IColony colony = getColonyWithoutPermission();
 
         if (!(pos.containsKey("x") && pos.containsKey("y") && pos.containsKey("z")))
