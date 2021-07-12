@@ -68,7 +68,7 @@ public class WeakAutomataCorePeripheral extends AutomataCorePeripheral {
         return AdvancedPeripheralsConfig.enableWeakAutomataCore;
     }
 
-    protected @Nonnull MethodResult fuelErrorCallback(MethodResult fuelErrorResult) {
+    public @Nonnull MethodResult fuelErrorCallback(MethodResult fuelErrorResult) {
         return fuelErrorResult;
     }
 

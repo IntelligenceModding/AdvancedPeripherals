@@ -20,7 +20,7 @@ public class OverpoweredHusbandryAutomataCorePeripheral extends HusbandryAutomat
 
     @NotNull
     @Override
-    protected @Nonnull MethodResult fuelErrorCallback(@Nonnull MethodResult fuelErrorResult) {
+    public @Nonnull MethodResult fuelErrorCallback(@Nonnull MethodResult fuelErrorResult) {
         owner.destroyUpgrade();
         return MethodResult.of(null, "Too much power! Soul is broken ...");
     }
