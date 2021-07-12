@@ -6,7 +6,7 @@ import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.lua.MethodResult;
 import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
-import de.srendi.advancedperipherals.api.metaphysics.IFeedableMechanicSoul;
+import de.srendi.advancedperipherals.api.metaphysics.IFeedableAutomataCore;
 import de.srendi.advancedperipherals.common.addons.computercraft.base.AutomataCorePeripheral;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
 import de.srendi.advancedperipherals.common.util.Pair;
@@ -272,7 +272,7 @@ public class WeakAutomataCorePeripheral extends AutomataCorePeripheral {
 
     @LuaFunction(mainThread = true)
     public final MethodResult feedSoul() {
-        if (!(owner.getToolInMainHand().getItem() instanceof IFeedableMechanicSoul)) {
+        if (!(owner.getToolInMainHand().getItem() instanceof IFeedableAutomataCore)) {
             return MethodResult.of(null, "Well, you should feed correct mechanical soul!");
         }
         ActionResultType result = owner.withPlayer(APFakePlayer::useOnEntity);

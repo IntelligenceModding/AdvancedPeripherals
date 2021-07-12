@@ -1,6 +1,6 @@
 package de.srendi.advancedperipherals.common.items;
 
-import de.srendi.advancedperipherals.api.metaphysics.IFeedableMechanicSoul;
+import de.srendi.advancedperipherals.api.metaphysics.IFeedableAutomataCore;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
 import de.srendi.advancedperipherals.common.setup.Items;
 import de.srendi.advancedperipherals.common.util.EnumColor;
@@ -31,7 +31,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-public class WeakAutomataCore extends APItem implements IFeedableMechanicSoul {
+public class WeakAutomataCore extends APItem implements IFeedableAutomataCore {
 
     private static final String CONSUMED_ENTITY_COUNT = "consumed_entity_count";
     private static final String CONSUMED_ENTITY_NAME = "consumed_entity_name";
