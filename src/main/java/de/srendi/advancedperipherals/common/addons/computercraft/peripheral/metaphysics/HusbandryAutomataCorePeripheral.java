@@ -26,7 +26,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Predicate;
 
-public class HusbandryMechanicSoulPeripheral extends WeakMechanicSoulPeripheral {
+public class HusbandryAutomataCorePeripheral extends WeakAutomataCorePeripheral {
     private static final Predicate<Entity> isAnimal = entity1 -> entity1.getType().getCategory().isFriendly();
     private static final Predicate<Entity> isLivingEntity = entity1 -> entity1 instanceof LivingEntity;
     private static final Predicate<Entity> isNotPlayer = entity1 -> !(entity1 instanceof PlayerEntity);
@@ -35,17 +35,18 @@ public class HusbandryMechanicSoulPeripheral extends WeakMechanicSoulPeripheral 
     private final static String USE_ON_ANIMAL_OPERATION = "use_on_animal";
     private final static String CAPTURE_ANIMAL_OPERATION = "capture_animal";
 
-    public HusbandryMechanicSoulPeripheral(String type, ITurtleAccess turtle, TurtleSide side) {
+    public HusbandryAutomataCorePeripheral(String type, ITurtleAccess turtle, TurtleSide side) {
         super(type, turtle, side);
     }
 
     @Override
     public boolean isEnabled() {
-        return AdvancedPeripheralsConfig.enableHusbandryMechanicSoul;
+        return AdvancedPeripheralsConfig.enableHusbandryAutomataCore;
     }
 
+    @Override
     public int getInteractionRadius() {
-        return AdvancedPeripheralsConfig.husbandryMechanicSoulInteractionRadius;
+        return AdvancedPeripheralsConfig.husbandryAutomataCoreInteractionRadius;
     }
 
     @Override
@@ -59,7 +60,7 @@ public class HusbandryMechanicSoulPeripheral extends WeakMechanicSoulPeripheral 
 
     @Override
     protected int getMaxFuelConsumptionRate() {
-        return AdvancedPeripheralsConfig.husbandryMechanicSoulMaxFuelConsumptionLevel;
+        return AdvancedPeripheralsConfig.husbandryAutomataCoreMaxFuelConsumptionLevel;
     }
 
     protected boolean isEntityInside() {

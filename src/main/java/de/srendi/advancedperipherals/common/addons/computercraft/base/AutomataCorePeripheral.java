@@ -7,7 +7,9 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 
-public abstract class MechanicSoulPeripheral extends FuelConsumingPeripheral {
+import java.util.Map;
+
+public abstract class AutomataCorePeripheral extends FuelConsumingPeripheral {
 
     // So, we storing here turtle and side
     // Because this peripheral are only for turtles
@@ -17,7 +19,7 @@ public abstract class MechanicSoulPeripheral extends FuelConsumingPeripheral {
     protected static final String FUEL_CONSUMING_RATE_SETTING = "FUEL_CONSUMING_RATE";
     protected static final int DEFAULT_FUEL_CONSUMING_RATE = 1;
 
-    public MechanicSoulPeripheral(String type, ITurtleAccess turtle, TurtleSide side) {
+    public AutomataCorePeripheral(String type, ITurtleAccess turtle, TurtleSide side) {
         super(type, turtle, side);
         this.turtle = turtle;
         this.side = side;
@@ -55,4 +57,13 @@ public abstract class MechanicSoulPeripheral extends FuelConsumingPeripheral {
                 x + radius, y + radius, z + radius
         );
     }
+
+    @Override
+    public Map<String, Object> getPeripheralConfiguration() {
+        Map<String, Object> data = super.getPeripheralConfiguration();
+        data.put("interactionRadius", getInteractionRadius());
+        return data;
+    }
+
+    public abstract int getInteractionRadius();
 }

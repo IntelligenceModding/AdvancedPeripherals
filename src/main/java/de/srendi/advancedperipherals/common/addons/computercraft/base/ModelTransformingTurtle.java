@@ -11,7 +11,7 @@ import net.minecraft.util.math.vector.Vector3f;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class ModelTransformingTurtle<T extends MechanicSoulPeripheral> extends BaseTurtle<T> {
+public abstract class ModelTransformingTurtle<T extends AutomataCorePeripheral> extends BaseTurtle<T> {
 
     public ModelTransformingTurtle(String id, String adjective, ItemStack item) {
         super(id, adjective, item);

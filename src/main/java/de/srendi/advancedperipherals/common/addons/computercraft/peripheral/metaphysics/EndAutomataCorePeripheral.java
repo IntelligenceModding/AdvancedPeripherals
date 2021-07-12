@@ -2,7 +2,6 @@ package de.srendi.advancedperipherals.common.addons.computercraft.peripheral.met
 
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.lua.MethodResult;
-import dan200.computercraft.api.peripheral.IComputerAccess;
 import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
@@ -17,23 +16,24 @@ import java.util.Map;
 import java.util.Optional;
 
 
-public class EndMechanicalSoulPeripheral extends WeakMechanicSoulPeripheral {
+public class EndAutomataCorePeripheral extends WeakAutomataCorePeripheral {
 
     private final static String POINT_DATA_MARK = "warp_points";
     private final static String WORLD_DATA_MARK = "warp_world";
     private final static String WARP_OPERATION = "warp";
 
-    public EndMechanicalSoulPeripheral(String type, ITurtleAccess turtle, TurtleSide side) {
+    public EndAutomataCorePeripheral(String type, ITurtleAccess turtle, TurtleSide side) {
         super(type, turtle, side);
     }
 
     @Override
     public boolean isEnabled() {
-        return AdvancedPeripheralsConfig.enableEndMechanicSoul;
+        return AdvancedPeripheralsConfig.enableEndAutomataCore;
     }
 
+    @Override
     public int getInteractionRadius() {
-        return AdvancedPeripheralsConfig.endMechanicSoulInteractionRadius;
+        return AdvancedPeripheralsConfig.endAutomataCoreInteractionRadius;
     }
 
     @Override
@@ -45,7 +45,7 @@ public class EndMechanicalSoulPeripheral extends WeakMechanicSoulPeripheral {
 
     @Override
     protected int getMaxFuelConsumptionRate() {
-        return AdvancedPeripheralsConfig.endMechanicSoulMaxFuelConsumptionLevel;
+        return AdvancedPeripheralsConfig.endAutomataCoreMaxFuelConsumptionLevel;
     }
 
     protected @Nonnull Pair<MethodResult, CompoundNBT> getPointData() {

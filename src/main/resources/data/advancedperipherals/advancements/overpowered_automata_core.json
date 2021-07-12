@@ -1,23 +1,23 @@
 {
   "display": {
     "icon": {
-      "item": "advancedperipherals:overpowered_weak_mechanic_soul"
+      "item": "advancedperipherals:overpowered_weak_automata_core"
     },
     "title": {
-      "translate": "advancements.advancedperipherals.overpowered_mechanic_soul"
+      "translate": "advancements.advancedperipherals.overpowered_automata_core"
     },
     "description": {
-      "translate": "advancements.advancedperipherals.overpowered_mechanic_soul.description"
+      "translate": "advancements.advancedperipherals.overpowered_automata_core.description"
     }
   },
-  "parent": "advancedperipherals:weak_mechanic_soul",
+  "parent": "advancedperipherals:weak_automata_core",
   "criteria": {
     "overpowered_weak_in_inventory": {
       "trigger": "minecraft:inventory_changed",
       "conditions": {
         "items": [
           {
-            "item": "advancedperipherals:overpowered_weak_mechanic_soul"
+            "item": "advancedperipherals:overpowered_weak_automata_core"
           }
         ]
       }
@@ -27,7 +27,7 @@
       "conditions": {
         "items": [
           {
-            "item": "advancedperipherals:overpowered_end_mechanic_soul"
+            "item": "advancedperipherals:overpowered_end_automata_core"
           }
         ]
       }
@@ -37,7 +37,7 @@
       "conditions": {
         "items": [
           {
-            "item": "advancedperipherals:overpowered_husbandry_mechanic_soul"
+            "item": "advancedperipherals:overpowered_husbandry_automata_core"
           }
         ]
       }

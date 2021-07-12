@@ -2,13 +2,13 @@
   "type": "minecraft:crafting_shapeless",
   "ingredients": [
     {
-      "item": "advancedperipherals:husbandry_mechanic_soul"
+      "item": "advancedperipherals:weak_automata_core"
     },
     {
       "item": "minecraft:nether_star"
     }
   ],
   "result": {
-    "item": "advancedperipherals:overpowered_husbandry_mechanic_soul"
+    "item": "advancedperipherals:overpowered_weak_automata_core"
   }
 }

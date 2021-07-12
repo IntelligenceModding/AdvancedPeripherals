@@ -7,7 +7,7 @@ import dan200.computercraft.api.lua.MethodResult;
 import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
 import de.srendi.advancedperipherals.api.metaphysics.IFeedableMechanicSoul;
-import de.srendi.advancedperipherals.common.addons.computercraft.base.MechanicSoulPeripheral;
+import de.srendi.advancedperipherals.common.addons.computercraft.base.AutomataCorePeripheral;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
 import de.srendi.advancedperipherals.common.util.Pair;
 import de.srendi.advancedperipherals.common.util.RepresentationUtil;
@@ -29,13 +29,13 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class WeakMechanicSoulPeripheral extends MechanicSoulPeripheral {
+public class WeakAutomataCorePeripheral extends AutomataCorePeripheral {
 
     protected static final String DIG_OPERATION = "dig";
     protected static final String USE_ON_BLOCK_OPERATION = "useOnBlock";
     protected static final String SUCK_OPERATION = "suck";
 
-    public WeakMechanicSoulPeripheral(String type, ITurtleAccess turtle, TurtleSide side) {
+    public WeakAutomataCorePeripheral(String type, ITurtleAccess turtle, TurtleSide side) {
         super(type, turtle, side);
     }
 
@@ -51,20 +51,21 @@ public class WeakMechanicSoulPeripheral extends MechanicSoulPeripheral {
 
     @Override
     protected int getMaxFuelConsumptionRate() {
-        return AdvancedPeripheralsConfig.weakMechanicSoulMaxFuelConsumptionLevel;
+        return AdvancedPeripheralsConfig.weakAutomataCoreMaxFuelConsumptionLevel;
     }
 
     protected boolean restoreToolDurability() {
         return false;
     }
 
+    @Override
     public int getInteractionRadius() {
-        return AdvancedPeripheralsConfig.weakMechanicSoulInteractionRadius;
+        return AdvancedPeripheralsConfig.weakAutomataCoreInteractionRadius;
     }
 
     @Override
     public boolean isEnabled() {
-        return AdvancedPeripheralsConfig.enableWeakMechanicSoul;
+        return AdvancedPeripheralsConfig.enableWeakAutomataCore;
     }
 
     protected @Nonnull MethodResult fuelErrorCallback(MethodResult fuelErrorResult) {

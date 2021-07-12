@@ -1,20 +1,17 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.turtles.metaphysics;
 
-import dan200.computercraft.api.peripheral.IPeripheral;
 import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
 import de.srendi.advancedperipherals.common.addons.computercraft.base.ModelTransformingTurtle;
-import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.metaphysics.WeakMechanicSoulPeripheral;
+import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.metaphysics.OverpoweredEndAutomataCorePeripheral;
 import de.srendi.advancedperipherals.common.setup.Items;
 import net.minecraft.client.renderer.model.ModelResourceLocation;
 import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-public class TurtleWeakMechanicSoul extends ModelTransformingTurtle<WeakMechanicSoulPeripheral> {
-
-    public TurtleWeakMechanicSoul() {
-        super("weak_mechanic_soul_turtle", "turtle.advancedperipherals.weak_mechanic_soul", new ItemStack(Items.WEAK_MECHANIC_SOUL.get()));
+public class OverpoweredEndAutomata extends ModelTransformingTurtle<OverpoweredEndAutomataCorePeripheral> {
+    public OverpoweredEndAutomata() {
+        super("overpowered_end_automata", "turtle.advancedperipherals.overpowered_end_automata", new ItemStack(Items.OVERPOWERED_END_AUTOMATA_CORE.get()));
     }
 
     @Override
@@ -28,7 +25,7 @@ public class TurtleWeakMechanicSoul extends ModelTransformingTurtle<WeakMechanic
     }
 
     @Override
-    protected WeakMechanicSoulPeripheral buildPeripheral(@NotNull ITurtleAccess turtle, @NotNull TurtleSide side) {
-        return new WeakMechanicSoulPeripheral("weakMechanicSoul", turtle, side);
+    protected OverpoweredEndAutomataCorePeripheral buildPeripheral(@NotNull ITurtleAccess turtle, @NotNull TurtleSide side) {
+        return new OverpoweredEndAutomataCorePeripheral("overpoweredEndAutomata", turtle, side);
     }
 }

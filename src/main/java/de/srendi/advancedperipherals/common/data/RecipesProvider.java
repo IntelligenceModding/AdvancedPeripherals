@@ -211,7 +211,7 @@ public class RecipesProvider extends RecipeProvider implements IConditionBuilder
                 .unlockedBy("has_item", has(CASING))
                 .save(consumer);
 
-        ShapedRecipeBuilder.shaped(de.srendi.advancedperipherals.common.setup.Items.WEAK_MECHANIC_SOUL.get())
+        ShapedRecipeBuilder.shaped(de.srendi.advancedperipherals.common.setup.Items.WEAK_AUTOMATA_CORE.get())
                 .define('A', CASING)
                 .define('R', Items.REDSTONE_BLOCK)
                 .define('S', Items.SOUL_LANTERN)
@@ -223,22 +223,22 @@ public class RecipesProvider extends RecipeProvider implements IConditionBuilder
                 .unlockedBy("has_item", has(CASING))
                 .save(consumer);
 
-        ShapelessRecipeBuilder.shapeless(de.srendi.advancedperipherals.common.setup.Items.OVERPOWERED_WEAK_MECHANIC_SOUL.get())
-                .requires(de.srendi.advancedperipherals.common.setup.Items.WEAK_MECHANIC_SOUL.get())
+        ShapelessRecipeBuilder.shapeless(de.srendi.advancedperipherals.common.setup.Items.OVERPOWERED_WEAK_AUTOMATA_CORE.get())
+                .requires(de.srendi.advancedperipherals.common.setup.Items.WEAK_AUTOMATA_CORE.get())
                 .requires(Items.NETHER_STAR)
-                .unlockedBy("has_item", has(de.srendi.advancedperipherals.common.setup.Items.WEAK_MECHANIC_SOUL.get()))
+                .unlockedBy("has_item", has(de.srendi.advancedperipherals.common.setup.Items.WEAK_AUTOMATA_CORE.get()))
                 .save(consumer);
 
-        ShapelessRecipeBuilder.shapeless(de.srendi.advancedperipherals.common.setup.Items.OVERPOWERED_END_MECHANIC_SOUL.get())
-                .requires(de.srendi.advancedperipherals.common.setup.Items.END_MECHANIC_SOUL.get())
+        ShapelessRecipeBuilder.shapeless(de.srendi.advancedperipherals.common.setup.Items.OVERPOWERED_END_AUTOMATA_CORE.get())
+                .requires(de.srendi.advancedperipherals.common.setup.Items.END_AUTOMATA_CORE.get())
                 .requires(Items.NETHER_STAR)
-                .unlockedBy("has_item", has(de.srendi.advancedperipherals.common.setup.Items.END_MECHANIC_SOUL.get()))
+                .unlockedBy("has_item", has(de.srendi.advancedperipherals.common.setup.Items.END_AUTOMATA_CORE.get()))
                 .save(consumer);
 
-        ShapelessRecipeBuilder.shapeless(de.srendi.advancedperipherals.common.setup.Items.OVERPOWERED_HUSBANDRY_MECHANIC_SOUL.get())
-                .requires(de.srendi.advancedperipherals.common.setup.Items.HUSBANDRY_MECHANIC_SOUL.get())
+        ShapelessRecipeBuilder.shapeless(de.srendi.advancedperipherals.common.setup.Items.OVERPOWERED_HUSBANDRY_AUTOMATA_CORE.get())
+                .requires(de.srendi.advancedperipherals.common.setup.Items.HUSBANDRY_AUTOMATA_CORE.get())
                 .requires(Items.NETHER_STAR)
-                .unlockedBy("has_item", has(de.srendi.advancedperipherals.common.setup.Items.HUSBANDRY_MECHANIC_SOUL.get()))
+                .unlockedBy("has_item", has(de.srendi.advancedperipherals.common.setup.Items.HUSBANDRY_AUTOMATA_CORE.get()))
                 .save(consumer);
     }
 }

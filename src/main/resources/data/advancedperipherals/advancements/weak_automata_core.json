@@ -1,13 +1,13 @@
 {
   "display": {
     "icon": {
-      "item": "advancedperipherals:weak_mechanic_soul"
+      "item": "advancedperipherals:weak_automata_core"
     },
     "title": {
-      "translate": "advancements.advancedperipherals.weak_mechanic_soul"
+      "translate": "advancements.advancedperipherals.weak_automata_core"
     },
     "description": {
-      "translate": "advancements.advancedperipherals.weak_mechanic_soul.description"
+      "translate": "advancements.advancedperipherals.weak_automata_core.description"
     }
   },
   "parent": "advancedperipherals:root",
@@ -17,7 +17,7 @@
       "conditions": {
         "items": [
           {
-            "item": "advancedperipherals:weak_mechanic_soul"
+            "item": "advancedperipherals:weak_automata_core"
           }
         ]
       }

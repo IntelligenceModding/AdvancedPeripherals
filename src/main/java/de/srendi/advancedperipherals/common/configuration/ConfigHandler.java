@@ -73,15 +73,15 @@ public class ConfigHandler {
         AdvancedPeripheralsConfig.useOnAnimalCooldown = ConfigHolder.COMMON_CONFIG.USE_ON_ANIMAL_COOLDOWN.get();
         AdvancedPeripheralsConfig.captureAnimalCost = ConfigHolder.COMMON_CONFIG.CAPTURE_ANIMAL_COST.get();
         AdvancedPeripheralsConfig.captureAnimalCooldown = ConfigHolder.COMMON_CONFIG.CAPTURE_ANIMAL_COOLDOWN.get();
-        AdvancedPeripheralsConfig.enableWeakMechanicSoul = ConfigHolder.COMMON_CONFIG.ENABLE_WEAK_MECHANIC_SOUL.get();
-        AdvancedPeripheralsConfig.weakMechanicSoulInteractionRadius = ConfigHolder.COMMON_CONFIG.WEAK_MECHANIC_SOUL_TURTLE_INTERACTION_RANGE.get();
-        AdvancedPeripheralsConfig.weakMechanicSoulMaxFuelConsumptionLevel = ConfigHolder.COMMON_CONFIG.WEAK_MECHANIC_SOUL_TURTLE_MAX_FUEL_CONSUMPTION_LEVEL.get();
-        AdvancedPeripheralsConfig.enableEndMechanicSoul = ConfigHolder.COMMON_CONFIG.ENABLE_END_MECHANIC_SOUL.get();
-        AdvancedPeripheralsConfig.endMechanicSoulInteractionRadius = ConfigHolder.COMMON_CONFIG.END_MECHANIC_SOUL_TURTLE_INTERACTION_RANGE.get();
-        AdvancedPeripheralsConfig.endMechanicSoulMaxFuelConsumptionLevel = ConfigHolder.COMMON_CONFIG.END_MECHANIC_SOUL_TURTLE_MAX_FUEL_CONSUMPTION_LEVEL.get();
-        AdvancedPeripheralsConfig.enableHusbandryMechanicSoul = ConfigHolder.COMMON_CONFIG.ENABLE_HUSBANDRY_MECHANIC_SOUL.get();
-        AdvancedPeripheralsConfig.husbandryMechanicSoulInteractionRadius = ConfigHolder.COMMON_CONFIG.HUSBANDRY_MECHANIC_SOUL_TURTLE_INTERACTION_RANGE.get();
-        AdvancedPeripheralsConfig.husbandryMechanicSoulMaxFuelConsumptionLevel = ConfigHolder.COMMON_CONFIG.HUSBANDRY_MECHANIC_SOUL_TURTLE_MAX_FUEL_CONSUMPTION_LEVEL.get();
+        AdvancedPeripheralsConfig.enableWeakAutomataCore = ConfigHolder.COMMON_CONFIG.ENABLE_WEAK_AUTOMATA_CORE.get();
+        AdvancedPeripheralsConfig.weakAutomataCoreInteractionRadius = ConfigHolder.COMMON_CONFIG.WEAK_AUTOMATA_CORE_TURTLE_INTERACTION_RANGE.get();
+        AdvancedPeripheralsConfig.weakAutomataCoreMaxFuelConsumptionLevel = ConfigHolder.COMMON_CONFIG.WEAK_AUTOMATA_CORE_TURTLE_MAX_FUEL_CONSUMPTION_LEVEL.get();
+        AdvancedPeripheralsConfig.enableEndAutomataCore = ConfigHolder.COMMON_CONFIG.ENABLE_END_AUTOMATA_CORE.get();
+        AdvancedPeripheralsConfig.endAutomataCoreInteractionRadius = ConfigHolder.COMMON_CONFIG.END_AUTOMATA_CORE_TURTLE_INTERACTION_RANGE.get();
+        AdvancedPeripheralsConfig.endAutomataCoreMaxFuelConsumptionLevel = ConfigHolder.COMMON_CONFIG.END_AUTOMATA_CORE_TURTLE_MAX_FUEL_CONSUMPTION_LEVEL.get();
+        AdvancedPeripheralsConfig.enableHusbandryAutomataCore = ConfigHolder.COMMON_CONFIG.ENABLE_HUSBANDRY_AUTOMATA_CORE.get();
+        AdvancedPeripheralsConfig.husbandryAutomataCoreInteractionRadius = ConfigHolder.COMMON_CONFIG.HUSBANDRY_AUTOMATA_CORE_TURTLE_INTERACTION_RANGE.get();
+        AdvancedPeripheralsConfig.husbandryAutomataCoreMaxFuelConsumptionLevel = ConfigHolder.COMMON_CONFIG.HUSBANDRY_AUTOMATA_CORE_TURTLE_MAX_FUEL_CONSUMPTION_LEVEL.get();
 
         AdvancedPeripheralsConfig.enableVillagerStructures = ConfigHolder.COMMON_CONFIG.ENABLE_VILLAGER_STRUCTURES.get();
     }

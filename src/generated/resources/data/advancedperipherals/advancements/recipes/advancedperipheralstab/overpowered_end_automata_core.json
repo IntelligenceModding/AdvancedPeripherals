@@ -2,7 +2,7 @@
   "parent": "minecraft:recipes/root",
   "rewards": {
     "recipes": [
-      "advancedperipherals:weak_mechanic_soul"
+      "advancedperipherals:overpowered_end_automata_core"
     ]
   },
   "criteria": {
@@ -11,7 +11,7 @@
       "conditions": {
         "items": [
           {
-            "item": "advancedperipherals:peripheral_casing"
+            "item": "advancedperipherals:end_automata_core"
           }
         ]
       }
@@ -19,7 +19,7 @@
     "has_the_recipe": {
       "trigger": "minecraft:recipe_unlocked",
       "conditions": {
-        "recipe": "advancedperipherals:weak_mechanic_soul"
+        "recipe": "advancedperipherals:overpowered_end_automata_core"
       }
     }
   },

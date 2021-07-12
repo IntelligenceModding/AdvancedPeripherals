@@ -31,17 +31,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-public class WeakMechanicSoul extends APItem implements IFeedableMechanicSoul {
+public class WeakAutomataCore extends APItem implements IFeedableMechanicSoul {
 
     private static final String CONSUMED_ENTITY_COUNT = "consumed_entity_count";
     private static final String CONSUMED_ENTITY_NAME = "consumed_entity_name";
     private static final String CONSUMER_ENTITY_COMPOUND = "consumed_entity_compound";
 
-    public static class MechanicalSoulRecord {
+    public static class WeakAutomataCoreRecord {
         public final Map<Class<? extends Entity>, Integer> ingredients;
         public final Item resultSoul;
 
-        public MechanicalSoulRecord(Map<Class<? extends Entity>, Integer> ingredients, Item resultSoul) {
+        public WeakAutomataCoreRecord(Map<Class<? extends Entity>, Integer> ingredients, Item resultSoul) {
             this.ingredients = ingredients;
             this.resultSoul = resultSoul;
         }
@@ -78,28 +78,28 @@ public class WeakMechanicSoul extends APItem implements IFeedableMechanicSoul {
         entityRegister.forEach((aClass, integer) -> put(integer, aClass));
     }};
 
-    private final static Map<Class<? extends Entity>, MechanicalSoulRecord> MECHANICAL_SOUL_REGISTRY = new HashMap<Class<? extends Entity>, MechanicalSoulRecord>() {{
-        MechanicalSoulRecord endSoulRecord = new MechanicalSoulRecord(
-                new HashMap<Class<? extends Entity>, Integer>(){{ put(EndermanEntity.class, 10); }}, Items.END_MECHANIC_SOUL.get()
+    private final static Map<Class<? extends Entity>, WeakAutomataCoreRecord> AUTOMATA_CORE_REGISTRY = new HashMap<Class<? extends Entity>, WeakAutomataCoreRecord>() {{
+        WeakAutomataCoreRecord endSoulRecord = new WeakAutomataCoreRecord(
+                new HashMap<Class<? extends Entity>, Integer>(){{ put(EndermanEntity.class, 10); }}, Items.END_AUTOMATA_CORE.get()
         );
-        MechanicalSoulRecord husbandrySoulRecord = new MechanicalSoulRecord(
+        WeakAutomataCoreRecord husbandrySoulRecord = new WeakAutomataCoreRecord(
                 new HashMap<Class<? extends Entity>, Integer>() {{
                     put(CowEntity.class, 3);
                     put(SheepEntity.class, 3);
                     put(ChickenEntity.class, 3);
                     put(HorseEntity.class, 1);
-                }}, Items.HUSBANDRY_MECHANIC_SOUL.get()
+                }}, Items.HUSBANDRY_AUTOMATA_CORE.get()
         );
         endSoulRecord.ingredients.keySet().forEach(entityClass -> put(entityClass, endSoulRecord));
         husbandrySoulRecord.ingredients.keySet().forEach(entityClass -> put(entityClass, husbandrySoulRecord));
     }};
 
-    public WeakMechanicSoul(Properties properties, String turtleID, String pocketID, ITextComponent description) {
-        super(properties, turtleID, pocketID, description, () -> AdvancedPeripheralsConfig.enableWeakMechanicSoul);
+    public WeakAutomataCore(Properties properties, String turtleID, String pocketID, ITextComponent description) {
+        super(properties, turtleID, pocketID, description, () -> AdvancedPeripheralsConfig.enableWeakAutomataCore);
     }
 
-    public WeakMechanicSoul(String turtleID, String pocketID, ITextComponent description) {
-        super(turtleID, pocketID, description, () -> AdvancedPeripheralsConfig.enableWeakMechanicSoul);
+    public WeakAutomataCore(String turtleID, String pocketID, ITextComponent description) {
+        super(turtleID, pocketID, description, () -> AdvancedPeripheralsConfig.enableWeakAutomataCore);
     }
 
     @Override
@@ -109,7 +109,7 @@ public class WeakMechanicSoul extends APItem implements IFeedableMechanicSoul {
         CompoundNBT consumedData = tag.getCompound(CONSUMER_ENTITY_COMPOUND);
         consumedData.getAllKeys().forEach(key -> {
             Class<? extends Entity> entityClass = reverseEntityRegister.get(Integer.parseInt(key));
-            MechanicalSoulRecord record = MECHANICAL_SOUL_REGISTRY.get(entityClass);
+            WeakAutomataCoreRecord record = AUTOMATA_CORE_REGISTRY.get(entityClass);
             CompoundNBT recordData = consumedData.getCompound(key);
             tooltip.add(EnumColor.buildTextComponent(new StringTextComponent(
                     String.format("Consumed: %d/%d %s", recordData.getInt(CONSUMED_ENTITY_COUNT), record.getRequiredCount(entityClass), recordData.getString(CONSUMED_ENTITY_NAME)))
@@ -120,21 +120,21 @@ public class WeakMechanicSoul extends APItem implements IFeedableMechanicSoul {
     @Override
     public @NotNull ActionResultType interactLivingEntity(@NotNull ItemStack stack, @NotNull PlayerEntity player, @NotNull LivingEntity entity, @NotNull Hand hand) {
         if (!(player instanceof FakePlayer)) {
-            player.displayClientMessage(new TranslationTextComponent("text.advancedperipherals.weak_mechanical_player_used_by_player"), true);
+            player.displayClientMessage(new TranslationTextComponent("text.advancedperipherals.automata_core_feed_by_player"), true);
             return ActionResultType.FAIL;
         }
         Class<? extends Entity> entityClass = entity.getClass();
-        if (MECHANICAL_SOUL_REGISTRY.containsKey(entityClass)) {
+        if (AUTOMATA_CORE_REGISTRY.containsKey(entityClass)) {
             CompoundNBT tag = stack.getOrCreateTag();
             CompoundNBT consumedData = tag.getCompound(CONSUMER_ENTITY_COMPOUND);
-            MechanicalSoulRecord record;
+            WeakAutomataCoreRecord record;
             if (consumedData.isEmpty()) {
-                record = MECHANICAL_SOUL_REGISTRY.get(entityClass);
+                record = AUTOMATA_CORE_REGISTRY.get(entityClass);
             } else {
                 Optional<String> anyKey = consumedData.getAllKeys().stream().findAny();
                 if (!anyKey.isPresent())
                     return ActionResultType.PASS;
-                record = MECHANICAL_SOUL_REGISTRY.get(reverseEntityRegister.get(Integer.parseInt(anyKey.get())));
+                record = AUTOMATA_CORE_REGISTRY.get(reverseEntityRegister.get(Integer.parseInt(anyKey.get())));
             }
             if (!record.isSuitable(entity.getClass(), consumedData))
                 return ActionResultType.PASS;

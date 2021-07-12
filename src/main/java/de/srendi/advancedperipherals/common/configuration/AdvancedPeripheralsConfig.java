@@ -41,7 +41,7 @@ public class AdvancedPeripheralsConfig {
     public static boolean enableNBTStorage;
     public static boolean enablePoweredPeripherals;
 
-    // mechanic soul configuration
+    // automata cores configuration
     public static int energyToFuelRate;
     public static int suckItemCost;
     public static int suckItemCooldown;
@@ -54,15 +54,15 @@ public class AdvancedPeripheralsConfig {
     public static int useOnAnimalCooldown;
     public static int captureAnimalCost;
     public static int captureAnimalCooldown;
-    public static boolean enableWeakMechanicSoul;
-    public static int weakMechanicSoulInteractionRadius;
-    public static int weakMechanicSoulMaxFuelConsumptionLevel;
-    public static boolean enableEndMechanicSoul;
-    public static int endMechanicSoulInteractionRadius;
-    public static int endMechanicSoulMaxFuelConsumptionLevel;
-    public static boolean enableHusbandryMechanicSoul;
-    public static int husbandryMechanicSoulInteractionRadius;
-    public static int husbandryMechanicSoulMaxFuelConsumptionLevel;
+    public static boolean enableWeakAutomataCore;
+    public static int weakAutomataCoreInteractionRadius;
+    public static int weakAutomataCoreMaxFuelConsumptionLevel;
+    public static boolean enableEndAutomataCore;
+    public static int endAutomataCoreInteractionRadius;
+    public static int endAutomataCoreMaxFuelConsumptionLevel;
+    public static boolean enableHusbandryAutomataCore;
+    public static int husbandryAutomataCoreInteractionRadius;
+    public static int husbandryAutomataCoreMaxFuelConsumptionLevel;
 
     //World Features
     public static boolean enableVillagerStructures;
@@ -120,15 +120,15 @@ public class AdvancedPeripheralsConfig {
         final ForgeConfigSpec.IntValue USE_ON_ANIMAL_COOLDOWN;
         final ForgeConfigSpec.IntValue CAPTURE_ANIMAL_COST;
         final ForgeConfigSpec.IntValue CAPTURE_ANIMAL_COOLDOWN;
-        final ForgeConfigSpec.IntValue WEAK_MECHANIC_SOUL_TURTLE_INTERACTION_RANGE;
-        final ForgeConfigSpec.IntValue WEAK_MECHANIC_SOUL_TURTLE_MAX_FUEL_CONSUMPTION_LEVEL;
-        final ForgeConfigSpec.IntValue END_MECHANIC_SOUL_TURTLE_INTERACTION_RANGE;
-        final ForgeConfigSpec.IntValue END_MECHANIC_SOUL_TURTLE_MAX_FUEL_CONSUMPTION_LEVEL;
-        final ForgeConfigSpec.IntValue HUSBANDRY_MECHANIC_SOUL_TURTLE_INTERACTION_RANGE;
-        final ForgeConfigSpec.IntValue HUSBANDRY_MECHANIC_SOUL_TURTLE_MAX_FUEL_CONSUMPTION_LEVEL;
-        final ForgeConfigSpec.BooleanValue ENABLE_WEAK_MECHANIC_SOUL;
-        final ForgeConfigSpec.BooleanValue ENABLE_END_MECHANIC_SOUL;
-        final ForgeConfigSpec.BooleanValue ENABLE_HUSBANDRY_MECHANIC_SOUL;
+        final ForgeConfigSpec.IntValue WEAK_AUTOMATA_CORE_TURTLE_INTERACTION_RANGE;
+        final ForgeConfigSpec.IntValue WEAK_AUTOMATA_CORE_TURTLE_MAX_FUEL_CONSUMPTION_LEVEL;
+        final ForgeConfigSpec.IntValue END_AUTOMATA_CORE_TURTLE_INTERACTION_RANGE;
+        final ForgeConfigSpec.IntValue END_AUTOMATA_CORE_TURTLE_MAX_FUEL_CONSUMPTION_LEVEL;
+        final ForgeConfigSpec.IntValue HUSBANDRY_AUTOMATA_CORE_TURTLE_INTERACTION_RANGE;
+        final ForgeConfigSpec.IntValue HUSBANDRY_AUTOMATA_CORE_TURTLE_MAX_FUEL_CONSUMPTION_LEVEL;
+        final ForgeConfigSpec.BooleanValue ENABLE_WEAK_AUTOMATA_CORE;
+        final ForgeConfigSpec.BooleanValue ENABLE_END_AUTOMATA_CORE;
+        final ForgeConfigSpec.BooleanValue ENABLE_HUSBANDRY_AUTOMATA_CORE;
 
 
         //World Features
@@ -192,15 +192,15 @@ public class AdvancedPeripheralsConfig {
             USE_ON_ANIMAL_COOLDOWN = builder.comment("Defines cooldown of use on animal action").defineInRange("useOnAnimalCooldown", 2_500, 0, Integer.MAX_VALUE);
             CAPTURE_ANIMAL_COST = builder.comment("Defines cost of capture animal action").defineInRange("captureAnimalCost", 100, 1, Integer.MAX_VALUE);
             CAPTURE_ANIMAL_COOLDOWN = builder.comment("Defines cooldown of capture animal action").defineInRange("captureAnimalCooldown", 50_000, 0, Integer.MAX_VALUE);
-            ENABLE_WEAK_MECHANIC_SOUL = builder.comment("Enable the weak mechanic soul or not").define("enableWeakMechanicSoul", true);
-            WEAK_MECHANIC_SOUL_TURTLE_INTERACTION_RANGE = builder.comment("Defines weak mechanic soul turtle interaction range").defineInRange("weakMechanicSoulInteractionRange", 2, 1, 10);
-            WEAK_MECHANIC_SOUL_TURTLE_MAX_FUEL_CONSUMPTION_LEVEL = builder.comment("Defines weak mechanic soul turtle max fuel consumption level").defineInRange("weakMechanicSoulMaxFuelConsumptionLevel", 2, 1, 10);
-            ENABLE_END_MECHANIC_SOUL = builder.comment("Enable the end mechanic soul or not").define("enableEndMechanicSoul", true);
-            END_MECHANIC_SOUL_TURTLE_INTERACTION_RANGE = builder.comment("Defines end mechanic soul turtle interaction range").defineInRange("endMechanicSoulInteractionRange", 4, 1, 10);
-            END_MECHANIC_SOUL_TURTLE_MAX_FUEL_CONSUMPTION_LEVEL = builder.comment("Defines end mechanic soul turtle max fuel consumption level").defineInRange("endMechanicSoulMaxFuelConsumptionLevel", 4, 1, 10);
-            ENABLE_HUSBANDRY_MECHANIC_SOUL = builder.comment("Enable the husbandry mechanic soul or not").define("enableHusbandryMechanicSoul", true);
-            HUSBANDRY_MECHANIC_SOUL_TURTLE_INTERACTION_RANGE = builder.comment("Defines husbandry mechanic soul turtle interaction range").defineInRange("husbandryMechanicSoulInteractionRange", 4, 1, 10);
-            HUSBANDRY_MECHANIC_SOUL_TURTLE_MAX_FUEL_CONSUMPTION_LEVEL = builder.comment("Defines husbandry mechanic soul turtle max fuel consumption level").defineInRange("husbandryMechanicSoulMaxFuelConsumptionLevel", 4, 1, 10);
+            ENABLE_WEAK_AUTOMATA_CORE = builder.define("enableWeakAutomataCore", true);
+            WEAK_AUTOMATA_CORE_TURTLE_INTERACTION_RANGE = builder.defineInRange("weakAutomataCoreInteractionRange", 2, 1, 10);
+            WEAK_AUTOMATA_CORE_TURTLE_MAX_FUEL_CONSUMPTION_LEVEL = builder.defineInRange("weakAutomataCoreMaxFuelConsumptionLevel", 2, 1, 10);
+            ENABLE_END_AUTOMATA_CORE = builder.define("enableEndAutomataCore", true);
+            END_AUTOMATA_CORE_TURTLE_INTERACTION_RANGE = builder.defineInRange("endAutomataCoreInteractionRange", 4, 1, 10);
+            END_AUTOMATA_CORE_TURTLE_MAX_FUEL_CONSUMPTION_LEVEL = builder.defineInRange("endAutomataCoreMaxFuelConsumptionLevel", 4, 1, 10);
+            ENABLE_HUSBANDRY_AUTOMATA_CORE = builder.define("enableHusbandryAutomataCore", true);
+            HUSBANDRY_AUTOMATA_CORE_TURTLE_INTERACTION_RANGE = builder.defineInRange("husbandryAutomataCoreInteractionRange", 4, 1, 10);
+            HUSBANDRY_AUTOMATA_CORE_TURTLE_MAX_FUEL_CONSUMPTION_LEVEL = builder.defineInRange("husbandryAutomataCoreMaxFuelConsumptionLevel", 4, 1, 10);
             builder.pop();
 
             builder.comment("").push("world");

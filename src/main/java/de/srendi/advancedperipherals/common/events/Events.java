@@ -19,8 +19,10 @@ import java.util.function.Consumer;
 @Mod.EventBusSubscriber(modid = AdvancedPeripherals.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class Events {
 
+    private static final int CHAT_QUEUE_MAX_SIZE = 50;
+
     public static long counter = 0;
-    public static final EvictingQueue<Pair<Long, Pair<String, String>>> messageQueue = EvictingQueue.create(50);
+    public static final EvictingQueue<Pair<Long, Pair<String, String>>> messageQueue = EvictingQueue.create(CHAT_QUEUE_MAX_SIZE);
 
     @SubscribeEvent
     public static void onChatBox(ServerChatEvent event) {
