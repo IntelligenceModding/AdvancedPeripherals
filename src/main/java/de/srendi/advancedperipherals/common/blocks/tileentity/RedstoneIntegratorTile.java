@@ -25,19 +25,6 @@ public class RedstoneIntegratorTile extends PeripheralTileEntity<RedstoneIntegra
         return new RedstoneIntegratorPeripheral("redstoneIntegrator", this);
     }
 
-    public void updateRedstone(BlockState newState, EnumSet<Direction> updateDirections, boolean doConductedPowerUpdates) {
-        Block newBlock = newState.getBlock();
-        if (!net.minecraftforge.event.ForgeEventFactory.onNeighborNotify(level, getBlockPos(), newState, updateDirections, false).isCanceled()) {
-            for (Direction direction : updateDirections) {
-                BlockPos neighborPos = getBlockPos().relative(direction);
-                boolean doSecondaryNeighborUpdates = doConductedPowerUpdates && level.getBlockState(neighborPos).shouldCheckWeakPower(level, neighborPos, direction);
-                level.neighborChanged(neighborPos, newBlock, getBlockPos());
-                if (doSecondaryNeighborUpdates)
-                    level.updateNeighborsAt(neighborPos, newBlock);
-            }
-        }
-    }
-
     public int getRedstoneInput(Direction direction) {
         BlockPos neighbourPos = getBlockPos().relative(direction);
         int power = getLevel().getSignal(neighbourPos, direction);
@@ -52,15 +39,8 @@ public class RedstoneIntegratorTile extends PeripheralTileEntity<RedstoneIntegra
         int old = this.power[direction.get3DDataValue()];
         this.power[direction.get3DDataValue()] = power;
         if (old != power) {
-            if (getLevel().getBlockState(getBlockPos().relative(direction)).hasProperty(RedstoneWireBlock.POWER)) {
-                BlockState state = getLevel().getBlockState(getBlockPos().relative(direction)).setValue(RedstoneWireBlock.POWER, power);
-                level.setBlockAndUpdate(getBlockPos().relative(direction), state);
-                updateRedstone(state, EnumSet.of(direction), true);
-            } else if (getLevel().getBlockState(getBlockPos().relative(direction)).hasProperty(RedstoneDiodeBlock.POWERED)) {
-                BlockState state = getLevel().getBlockState(getBlockPos().relative(direction)).setValue(RedstoneDiodeBlock.POWERED, power > 0);
-                level.setBlockAndUpdate(getBlockPos().relative(direction), state);
-                updateRedstone(state, EnumSet.of(direction), true);
-            }
+            level.updateNeighborsAt(getBlockPos().relative(direction),
+                    getLevel().getBlockState(getBlockPos().relative(direction)).getBlock());
             this.setChanged();
         }
     }
