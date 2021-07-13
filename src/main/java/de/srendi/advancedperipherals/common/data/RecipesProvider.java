@@ -1,8 +1,5 @@
 package de.srendi.advancedperipherals.common.data;
 
-import appeng.core.Api;
-import com.refinedmods.refinedstorage.RSBlocks;
-import com.refinedmods.refinedstorage.RSItems;
 import dan200.computercraft.shared.Registry;
 import de.srendi.advancedperipherals.common.setup.Blocks;
 import net.minecraft.block.Block;
@@ -109,15 +106,15 @@ public class RecipesProvider extends RecipeProvider implements IConditionBuilder
                 .unlockedBy("has_item", has(CASING))
                 .save(consumer);
 
-        ShapedRecipeBuilder.shaped(Blocks.ME_BRIDGE.get())
-                .define('F', Api.INSTANCE.definitions().blocks().fluixBlock().block())
-                .define('I', Api.INSTANCE.definitions().parts().iface().item())
-                .define('A', CASING)
-                .pattern("FIF")
-                .pattern("IAI")
-                .pattern("FIF")
-                .unlockedBy("has_item", has(CASING))
-                .save(consumer);
+//        ShapedRecipeBuilder.shaped(Blocks.ME_BRIDGE.get())
+//                .define('F', Api.INSTANCE.definitions().blocks().fluixBlock().block())
+//                .define('I', Api.INSTANCE.definitions().parts().iface().item())
+//                .define('A', CASING)
+//                .pattern("FIF")
+//                .pattern("IAI")
+//                .pattern("FIF")
+//                .unlockedBy("has_item", has(CASING))
+//                .save(consumer);
 
         ShapedRecipeBuilder.shaped(de.srendi.advancedperipherals.common.setup.Items.MEMORY_CARD.get())
                 .define('I', Items.IRON_INGOT)
@@ -160,15 +157,15 @@ public class RecipesProvider extends RecipeProvider implements IConditionBuilder
                 .unlockedBy("has_item", has(CASING))
                 .save(consumer);
 
-        ShapedRecipeBuilder.shaped(Blocks.RS_BRIDGE.get())
-                .define('Q', RSItems.QUARTZ_ENRICHED_IRON.get())
-                .define('I', RSBlocks.INTERFACE.get())
-                .define('A', CASING)
-                .pattern("QIQ")
-                .pattern("IAI")
-                .pattern("QIQ")
-                .unlockedBy("has_item", has(CASING))
-                .save(consumer);
+//        ShapedRecipeBuilder.shaped(Blocks.RS_BRIDGE.get())
+//                .define('Q', RSItems.QUARTZ_ENRICHED_IRON.get())
+//                .define('I', RSBlocks.INTERFACE.get())
+//                .define('A', CASING)
+//                .pattern("QIQ")
+//                .pattern("IAI")
+//                .pattern("QIQ")
+//                .unlockedBy("has_item", has(CASING))
+//                .save(consumer);
 
         ShapedRecipeBuilder.shaped(Blocks.BLOCK_READER.get())
                 .define('O', Items.OBSERVER)

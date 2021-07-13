@@ -128,7 +128,6 @@ dependencies {
     // Patchouli
     runtimeOnly fg.deobf("vazkii.patchouli:Patchouli:${patchouli_version}")
 
-    // Required for successful data generation
     // Refined Storage
     implementation fg.deobf("com.refinedmods:refinedstorage:${rs_version}")
     // AE2
@@ -162,7 +161,6 @@ dependencies {
     // Testing stuff
 //    runtimeOnly fg.deobf("mcjty.theoneprobe:TheOneProbe-1.16:${top_version}")
     runtimeOnly fg.deobf("mezz.jei:jei-${jei_version}")
-//    runtimeOnly fg.deobf("curse.maven:betteradvancements-${betteradvancements_version}")
 
 }
 
