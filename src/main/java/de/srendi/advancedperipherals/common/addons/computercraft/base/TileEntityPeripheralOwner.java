@@ -3,7 +3,6 @@ package de.srendi.advancedperipherals.common.addons.computercraft.base;
 import de.srendi.advancedperipherals.api.peripheral.IPeripheralOwner;
 import de.srendi.advancedperipherals.api.peripheral.IPeripheralTileEntity;
 import de.srendi.advancedperipherals.common.blocks.base.APTileEntityBlock;
-import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
 import de.srendi.advancedperipherals.common.blocks.tileentity.InventoryManagerTile;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
 import de.srendi.advancedperipherals.common.util.DataStorageUtil;

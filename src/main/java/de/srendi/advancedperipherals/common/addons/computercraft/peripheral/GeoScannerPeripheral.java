@@ -5,27 +5,19 @@ import dan200.computercraft.api.lua.IArguments;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.lua.MethodResult;
-import dan200.computercraft.api.peripheral.IComputerAccess;
 import dan200.computercraft.api.pocket.IPocketAccess;
 import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
 import de.srendi.advancedperipherals.common.addons.computercraft.base.FuelConsumingPeripheral;
-import de.srendi.advancedperipherals.common.addons.computercraft.base.OperationPeripheral;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.entity.Entity;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.energy.CapabilityEnergy;
-import net.minecraftforge.energy.IEnergyStorage;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.*;
@@ -47,25 +39,6 @@ public class GeoScannerPeripheral extends FuelConsumingPeripheral {
 
     public GeoScannerPeripheral(String type, IPocketAccess pocket) {
         super(type, pocket);
-    }
-
-    @Override
-    protected int getRawCooldown(String name) {
-        return AdvancedPeripheralsConfig.geoScannerMinScanPeriod;
-    }
-
-    @Override
-    protected int getMaxFuelConsumptionRate() {
-        return 1;
-    }
-
-    @Override
-    protected int _getFuelConsumptionRate() {
-        return 1;
-    }
-
-    @Override
-    protected void _setFuelConsumptionRate(int rate) {
     }
 
     private static List<Map<String, ?>> scan(World world, int x, int y, int z, int radius) {
@@ -105,6 +78,25 @@ public class GeoScannerPeripheral extends FuelConsumingPeripheral {
         int freeBlockCount = IntMath.pow(2 * AdvancedPeripheralsConfig.geoScannerMaxFreeRadius + 1, 3);
         int allBlockCount = IntMath.pow(2 * radius + 1, 3);
         return (int) Math.floor((allBlockCount - freeBlockCount) * AdvancedPeripheralsConfig.geoScannerExtraBlockCost);
+    }
+
+    @Override
+    protected int getRawCooldown(String name) {
+        return AdvancedPeripheralsConfig.geoScannerMinScanPeriod;
+    }
+
+    @Override
+    protected int getMaxFuelConsumptionRate() {
+        return 1;
+    }
+
+    @Override
+    protected int _getFuelConsumptionRate() {
+        return 1;
+    }
+
+    @Override
+    protected void _setFuelConsumptionRate(int rate) {
     }
 
     @Override

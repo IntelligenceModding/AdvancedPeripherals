@@ -13,22 +13,42 @@ import javax.annotation.Nullable;
 import java.util.function.Function;
 
 public interface IPeripheralOwner {
-    @Nullable String getCustomName();
-    @Nullable World getWorld();
-    @Nonnull BlockPos getPos();
-    @Nonnull Direction getFacing();
-    @Nullable PlayerEntity getOwner();
-    @Nonnull CompoundNBT getDataStorage();
+    @Nullable
+    String getCustomName();
+
+    @Nullable
+    World getWorld();
+
+    @Nonnull
+    BlockPos getPos();
+
+    @Nonnull
+    Direction getFacing();
+
+    @Nullable
+    PlayerEntity getOwner();
+
+    @Nonnull
+    CompoundNBT getDataStorage();
+
     int getFuelCount();
+
     int getFuelMaxCount();
+
     boolean consumeFuel(int count, boolean simulate);
+
     void addFuel(int count);
 
     <T> T withPlayer(Function<APFakePlayer, T> function);
+
     ItemStack getToolInMainHand();
+
     ItemStack storeItem(ItemStack stored);
+
     void destroyUpgrade();
+
     boolean isMovementPossible(@Nonnull World world, @Nonnull BlockPos pos);
+
     boolean move(@Nonnull World world, @Nonnull BlockPos pos);
 
     // Strange methods, that shouldn't exists ...

@@ -36,10 +36,8 @@ import static dan200.computercraft.shared.Capabilities.CAPABILITY_PERIPHERAL;
 public abstract class PeripheralTileEntity<T extends BasePeripheral> extends LockableTileEntity implements ISidedInventory, INamedContainerProvider, IPeripheralTileEntity {
     // TODO: move inventory logic to another tile entity?
     private static final String AP_SETTINGS_KEY = "AP_SETTINGS";
-
-    protected CompoundNBT apSettings;
-
     private final LazyOptional<? extends IItemHandler> handler = LazyOptional.of(() -> new SidedInvWrapper(this, Direction.NORTH));
+    protected CompoundNBT apSettings;
     protected NonNullList<ItemStack> items;
 
     protected T peripheral = createPeripheral();

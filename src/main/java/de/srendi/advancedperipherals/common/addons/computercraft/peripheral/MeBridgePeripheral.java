@@ -35,7 +35,6 @@ import net.minecraftforge.items.ItemHandlerHelper;
 
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Locale;
 import java.util.Map;
 
 public class MeBridgePeripheral extends BasePeripheral {

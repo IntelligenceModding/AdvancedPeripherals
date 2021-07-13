@@ -51,10 +51,13 @@ public class HusbandryAutomataCorePeripheral extends WeakAutomataCorePeripheral 
 
     @Override
     protected int getRawCooldown(String name) {
-        switch (name){
-            case USE_ON_ANIMAL_OPERATION: return AdvancedPeripheralsConfig.useOnAnimalCooldown;
-            case CAPTURE_ANIMAL_OPERATION: return AdvancedPeripheralsConfig.captureAnimalCooldown;
-            default: return super.getRawCooldown(name);
+        switch (name) {
+            case USE_ON_ANIMAL_OPERATION:
+                return AdvancedPeripheralsConfig.useOnAnimalCooldown;
+            case CAPTURE_ANIMAL_OPERATION:
+                return AdvancedPeripheralsConfig.captureAnimalCooldown;
+            default:
+                return super.getRawCooldown(name);
         }
     }
 
@@ -79,7 +82,8 @@ public class HusbandryAutomataCorePeripheral extends WeakAutomataCorePeripheral 
         owner.getDataStorage().remove(ENTITY_NBT_KEY);
     }
 
-    protected @Nullable Entity extractEntity() {
+    protected @Nullable
+    Entity extractEntity() {
         CompoundNBT data = getEntity();
         EntityType<?> type = EntityType.byString(data.getString("entity")).orElse(null);
         if (type != null) {
@@ -124,7 +128,7 @@ public class HusbandryAutomataCorePeripheral extends WeakAutomataCorePeripheral 
         RayTraceResult entityHit = owner.withPlayer(player -> player.findHit(false, true, suitableEntity));
         if (entityHit.getType() == RayTraceResult.Type.MISS)
             return MethodResult.of(null, "Nothing found");
-        Entity entity = ((EntityRayTraceResult)entityHit).getEntity();
+        Entity entity = ((EntityRayTraceResult) entityHit).getEntity();
         if (!(entity instanceof AnimalEntity))
             return MethodResult.of(null, "Well, entity is not animal entity, but how?");
         return MethodResult.of(RepresentationUtil.animalToLua((AnimalEntity) entity, owner.getToolInMainHand()));
@@ -153,7 +157,7 @@ public class HusbandryAutomataCorePeripheral extends WeakAutomataCorePeripheral 
             return MethodResult.of(null, "Nothing found");
         checkResults = consumeFuelOp(AdvancedPeripheralsConfig.captureAnimalCost);
         if (checkResults.isPresent()) return checkResults.map(this::fuelErrorCallback).get();
-        LivingEntity entity = (LivingEntity) ((EntityRayTraceResult)entityHit).getEntity();
+        LivingEntity entity = (LivingEntity) ((EntityRayTraceResult) entityHit).getEntity();
         if (entity instanceof PlayerEntity || !entity.isAlive()) return MethodResult.of(null, "Unsuitable entity");
         CompoundNBT nbt = new CompoundNBT();
         nbt.putString("entity", EntityType.getKey(entity.getType()).toString());

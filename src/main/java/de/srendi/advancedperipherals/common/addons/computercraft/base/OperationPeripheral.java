@@ -40,7 +40,7 @@ public abstract class OperationPeripheral extends BasePeripheral {
         targetOperationTimestamp.put(name, Timestamp.valueOf(LocalDateTime.now().plus(getCooldown(name), ChronoUnit.MILLIS)));
     }
 
-    public Optional<MethodResult> cooldownCheck(String name){
+    public Optional<MethodResult> cooldownCheck(String name) {
         if (isOnCooldown(name))
             return Optional.of(MethodResult.of(null, String.format("%s is on cooldown", name)));
         return Optional.empty();

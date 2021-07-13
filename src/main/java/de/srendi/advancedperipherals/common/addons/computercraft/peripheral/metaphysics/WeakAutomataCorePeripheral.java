@@ -42,9 +42,12 @@ public class WeakAutomataCorePeripheral extends AutomataCorePeripheral {
     @Override
     protected int getRawCooldown(String name) {
         switch (name) {
-            case DIG_OPERATION: return AdvancedPeripheralsConfig.digBlockCooldown;
-            case USE_ON_BLOCK_OPERATION: return AdvancedPeripheralsConfig.useOnBlockCooldown;
-            case SUCK_OPERATION: return AdvancedPeripheralsConfig.suckItemCooldown;
+            case DIG_OPERATION:
+                return AdvancedPeripheralsConfig.digBlockCooldown;
+            case USE_ON_BLOCK_OPERATION:
+                return AdvancedPeripheralsConfig.useOnBlockCooldown;
+            case SUCK_OPERATION:
+                return AdvancedPeripheralsConfig.suckItemCooldown;
         }
         throw new IllegalArgumentException(String.format("Cannot find cooldown for op %s", name));
     }
@@ -68,7 +71,8 @@ public class WeakAutomataCorePeripheral extends AutomataCorePeripheral {
         return AdvancedPeripheralsConfig.enableWeakAutomataCore;
     }
 
-    public @Nonnull MethodResult fuelErrorCallback(MethodResult fuelErrorResult) {
+    @Nonnull
+    public MethodResult fuelErrorCallback(MethodResult fuelErrorResult) {
         return fuelErrorResult;
     }
 
@@ -165,7 +169,7 @@ public class WeakAutomataCorePeripheral extends AutomataCorePeripheral {
 
     @LuaFunction(mainThread = true)
     public MethodResult digBlock() {
-        Optional<MethodResult>  checkResults = cooldownCheck(DIG_OPERATION);
+        Optional<MethodResult> checkResults = cooldownCheck(DIG_OPERATION);
         if (checkResults.isPresent()) return checkResults.get();
         checkResults = consumeFuelOp(AdvancedPeripheralsConfig.digBlockCost);
         if (checkResults.isPresent()) return checkResults.map(this::fuelErrorCallback).get();

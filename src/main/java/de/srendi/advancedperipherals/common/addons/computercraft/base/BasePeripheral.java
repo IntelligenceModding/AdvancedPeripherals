@@ -10,8 +10,6 @@ import dan200.computercraft.api.turtle.TurtleSide;
 import dan200.computercraft.core.computer.ComputerSide;
 import de.srendi.advancedperipherals.api.peripheral.IPeripheralOwner;
 import de.srendi.advancedperipherals.api.peripheral.IPeripheralTileEntity;
-import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
-import net.minecraft.entity.Entity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;

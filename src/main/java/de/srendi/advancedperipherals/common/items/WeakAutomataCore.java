@@ -36,36 +36,6 @@ public class WeakAutomataCore extends APItem implements IFeedableAutomataCore {
     private static final String CONSUMED_ENTITY_COUNT = "consumed_entity_count";
     private static final String CONSUMED_ENTITY_NAME = "consumed_entity_name";
     private static final String CONSUMER_ENTITY_COMPOUND = "consumed_entity_compound";
-
-    public static class WeakAutomataCoreRecord {
-        public final Map<Class<? extends Entity>, Integer> ingredients;
-        public final Item resultSoul;
-
-        public WeakAutomataCoreRecord(Map<Class<? extends Entity>, Integer> ingredients, Item resultSoul) {
-            this.ingredients = ingredients;
-            this.resultSoul = resultSoul;
-        }
-
-        public int getRequiredCount(Class<? extends Entity> entityClass) {
-            return this.ingredients.getOrDefault(entityClass, 0);
-        }
-
-        public boolean isSuitable(Class<? extends Entity> entityClass, CompoundNBT consumedData) {
-            if (!ingredients.containsKey(entityClass))
-                return false;
-            int requiredCount = ingredients.get(entityClass);
-            int currentCount = consumedData.getCompound(entityRegister.get(entityClass).toString()).getInt(CONSUMED_ENTITY_COUNT);
-            return currentCount < requiredCount;
-        }
-
-        public boolean isFinished(CompoundNBT consumedData) {
-            return ingredients.entrySet().stream().map(entry -> {
-                String entityCode = entityRegister.get(entry.getKey()).toString();
-                return entry.getValue() == consumedData.getCompound(entityCode).getInt(CONSUMED_ENTITY_COUNT);
-            }).reduce((a, b) -> a && b).orElse(true);
-        }
-    }
-
     private final static Map<Class<? extends Entity>, Integer> entityRegister = new HashMap<Class<? extends Entity>, Integer>() {{
         put(EndermanEntity.class, 1);
         put(CowEntity.class, 2);
@@ -73,14 +43,14 @@ public class WeakAutomataCore extends APItem implements IFeedableAutomataCore {
         put(ChickenEntity.class, 4);
         put(HorseEntity.class, 5);
     }};
-
     private final static Map<Integer, Class<? extends Entity>> reverseEntityRegister = new HashMap<Integer, Class<? extends Entity>>() {{
         entityRegister.forEach((aClass, integer) -> put(integer, aClass));
     }};
-
     private final static Map<Class<? extends Entity>, WeakAutomataCoreRecord> AUTOMATA_CORE_REGISTRY = new HashMap<Class<? extends Entity>, WeakAutomataCoreRecord>() {{
         WeakAutomataCoreRecord endSoulRecord = new WeakAutomataCoreRecord(
-                new HashMap<Class<? extends Entity>, Integer>(){{ put(EndermanEntity.class, 10); }}, Items.END_AUTOMATA_CORE.get()
+                new HashMap<Class<? extends Entity>, Integer>() {{
+                    put(EndermanEntity.class, 10);
+                }}, Items.END_AUTOMATA_CORE.get()
         );
         WeakAutomataCoreRecord husbandrySoulRecord = new WeakAutomataCoreRecord(
                 new HashMap<Class<? extends Entity>, Integer>() {{
@@ -153,5 +123,34 @@ public class WeakAutomataCore extends APItem implements IFeedableAutomataCore {
             return ActionResultType.SUCCESS;
         }
         return ActionResultType.PASS;
+    }
+
+    public static class WeakAutomataCoreRecord {
+        public final Map<Class<? extends Entity>, Integer> ingredients;
+        public final Item resultSoul;
+
+        public WeakAutomataCoreRecord(Map<Class<? extends Entity>, Integer> ingredients, Item resultSoul) {
+            this.ingredients = ingredients;
+            this.resultSoul = resultSoul;
+        }
+
+        public int getRequiredCount(Class<? extends Entity> entityClass) {
+            return this.ingredients.getOrDefault(entityClass, 0);
+        }
+
+        public boolean isSuitable(Class<? extends Entity> entityClass, CompoundNBT consumedData) {
+            if (!ingredients.containsKey(entityClass))
+                return false;
+            int requiredCount = ingredients.get(entityClass);
+            int currentCount = consumedData.getCompound(entityRegister.get(entityClass).toString()).getInt(CONSUMED_ENTITY_COUNT);
+            return currentCount < requiredCount;
+        }
+
+        public boolean isFinished(CompoundNBT consumedData) {
+            return ingredients.entrySet().stream().map(entry -> {
+                String entityCode = entityRegister.get(entry.getKey()).toString();
+                return entry.getValue() == consumedData.getCompound(entityCode).getInt(CONSUMED_ENTITY_COUNT);
+            }).reduce((a, b) -> a && b).orElse(true);
+        }
     }
 }

@@ -20,9 +20,8 @@ import java.util.function.Consumer;
 public class Events {
 
     private static final int CHAT_QUEUE_MAX_SIZE = 50;
-
-    public static long counter = 0;
     public static final EvictingQueue<Pair<Long, Pair<String, String>>> messageQueue = EvictingQueue.create(CHAT_QUEUE_MAX_SIZE);
+    public static long counter = 0;
 
     @SubscribeEvent
     public static void onChatBox(ServerChatEvent event) {
@@ -49,7 +48,7 @@ public class Events {
     }
 
     public static long traverseChatMessages(long lastConsumedMessage, Consumer<Pair<String, String>> consumer) {
-        for (Pair<Long, Pair<String, String>> message: messageQueue) {
+        for (Pair<Long, Pair<String, String>> message : messageQueue) {
             if (message.getLeft() <= lastConsumedMessage)
                 continue;
             consumer.accept(message.getRight());

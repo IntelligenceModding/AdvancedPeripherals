@@ -8,7 +8,10 @@ import com.minecolonies.api.colony.buildings.IBuildingWorker;
 import com.minecolonies.api.colony.managers.interfaces.IBuildingManager;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.entity.citizen.Skill;
-import com.minecolonies.api.research.*;
+import com.minecolonies.api.research.IGlobalResearch;
+import com.minecolonies.api.research.IGlobalResearchTree;
+import com.minecolonies.api.research.ILocalResearch;
+import com.minecolonies.api.research.ILocalResearchTree;
 import com.minecolonies.api.research.effects.IResearchEffect;
 import com.minecolonies.api.research.util.ResearchState;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingStructureBuilder;
@@ -136,6 +139,7 @@ public class MineColonies {
 
     /**
      * Converts a skill into a map
+     *
      * @param skills skills as list. Can be obtained via {@link ICitizenData#getCitizenSkillHandler#getSkills}
      * @return a map with information about the skill
      */
@@ -154,8 +158,8 @@ public class MineColonies {
      * Returns information about the building like structure data, the citizens and some other values
      *
      * @param buildingManager The building manager of the colony
-     * @param building The building as instance
-     * @param pos The location of the buildings block
+     * @param building        The building as instance
+     * @param pos             The location of the buildings block
      * @return information about the building
      */
     public static Object buildingToObject(IBuildingManager buildingManager, IBuilding building, BlockPos pos) {
@@ -208,9 +212,9 @@ public class MineColonies {
     /**
      * Returns a map with all possible researches
      *
-     * @param branch The branch, there are only a few branches
+     * @param branch     The branch, there are only a few branches
      * @param researches The primary researches of the branch
-     * @param colony The colony
+     * @param colony     The colony
      * @return a map with all possible researches
      */
     public static List<Object> getResearch(ResourceLocation branch, List<ResourceLocation> researches, IColony colony) {
@@ -228,7 +232,7 @@ public class MineColonies {
                 ILocalResearch colonyResearch = colonyTree.getResearch(branch, researchName);
 
                 List<String> effects = new ArrayList<>();
-                for(IResearchEffect<?> researchEffect : research.getEffects())
+                for (IResearchEffect<?> researchEffect : research.getEffects())
                     effects.add(researchEffect.getDesc().toString());
 
                 Map<String, Object> map = new HashMap<>();
@@ -251,7 +255,7 @@ public class MineColonies {
      * Returns the resources(As items) which the builder needs
      *
      * @param colony The colony
-     * @param pos The position of the builder's hut block
+     * @param pos    The position of the builder's hut block
      * @return a map with all needed resources
      */
     public static Object builderResourcesToObject(IColony colony, BlockPos pos) {

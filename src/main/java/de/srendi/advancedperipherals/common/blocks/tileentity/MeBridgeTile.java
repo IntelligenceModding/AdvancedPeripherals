@@ -35,13 +35,8 @@ public class MeBridgeTile extends PeripheralTileEntity<MeBridgePeripheral> imple
     private boolean initialized;
 
     public MeBridgeTile() {
-        this(TileEntityTypes.ME_BRIDGE.get());
+        super(TileEntityTypes.ME_BRIDGE.get());
     }
-
-    public MeBridgeTile(final TileEntityType<?> tileEntityType) {
-        super(tileEntityType);
-    }
-
 
     public void setPlayer(PlayerEntity placed) {
         this.placed = placed;

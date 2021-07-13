@@ -19,12 +19,6 @@ import java.util.function.Consumer;
 
 public class RecipesProvider extends RecipeProvider implements IConditionBuilder {
 
-    public static class NBTIngredient extends net.minecraftforge.common.crafting.NBTIngredient {
-        public NBTIngredient(ItemStack stack) {
-            super(stack);
-        }
-    }
-
     private static final Block CASING = Blocks.PERIPHERAL_CASING.get();
 
     public RecipesProvider(DataGenerator generatorIn) {
@@ -240,5 +234,11 @@ public class RecipesProvider extends RecipeProvider implements IConditionBuilder
                 .requires(Items.NETHER_STAR)
                 .unlockedBy("has_item", has(de.srendi.advancedperipherals.common.setup.Items.HUSBANDRY_AUTOMATA_CORE.get()))
                 .save(consumer);
+    }
+
+    public static class NBTIngredient extends net.minecraftforge.common.crafting.NBTIngredient {
+        public NBTIngredient(ItemStack stack) {
+            super(stack);
+        }
     }
 }

@@ -11,13 +11,12 @@ import java.util.Map;
 
 public abstract class AutomataCorePeripheral extends FuelConsumingPeripheral {
 
+    protected static final String FUEL_CONSUMING_RATE_SETTING = "FUEL_CONSUMING_RATE";
+    protected static final int DEFAULT_FUEL_CONSUMING_RATE = 1;
     // So, we storing here turtle and side
     // Because this peripheral are only for turtles
     protected final ITurtleAccess turtle;
     protected final TurtleSide side;
-
-    protected static final String FUEL_CONSUMING_RATE_SETTING = "FUEL_CONSUMING_RATE";
-    protected static final int DEFAULT_FUEL_CONSUMING_RATE = 1;
 
     public AutomataCorePeripheral(String type, ITurtleAccess turtle, TurtleSide side) {
         super(type, turtle, side);

@@ -47,6 +47,18 @@ public class EnvironmentDetectorPeripheral extends FuelConsumingPeripheral {
         super(type, pocket);
     }
 
+    private static int estimateCost(int radius) {
+        if (radius <= AdvancedPeripheralsConfig.environmentDetectorMaxFreeRadius) {
+            return 0;
+        }
+        if (radius > AdvancedPeripheralsConfig.environmentDetectorMaxCostRadius) {
+            return -1;
+        }
+        int freeBlockCount = IntMath.pow(2 * AdvancedPeripheralsConfig.environmentDetectorMaxFreeRadius + 1, 3);
+        int allBlockCount = IntMath.pow(2 * radius + 1, 3);
+        return (int) Math.floor((allBlockCount - freeBlockCount) * AdvancedPeripheralsConfig.environmentDetectorExtraBlockCost);
+    }
+
     @Override
     protected int getRawCooldown(String name) {
         if (name.equals(SCAN_OPERATION))
@@ -153,6 +165,11 @@ public class EnvironmentDetectorPeripheral extends FuelConsumingPeripheral {
         return name[0];
     }
 
+   /* @LuaFunction(mainThread = true)
+    public final boolean isMoon(int phase) {
+        return getCurrentMoonPhase().containsKey(phase);
+    }*/
+
     private Map<Integer, String> getCurrentMoonPhase() {
         Map<Integer, String> moon = new HashMap<>();
         if (getWorld().dimension().getRegistryName().getPath().equals("overworld")) {
@@ -191,36 +208,6 @@ public class EnvironmentDetectorPeripheral extends FuelConsumingPeripheral {
             moon.put(0, "Moon.exe not found...");
         }
         return moon;
-    }
-
-   /* @LuaFunction(mainThread = true)
-    public final boolean isMoon(int phase) {
-        return getCurrentMoonPhase().containsKey(phase);
-    }*/
-
-    private HashMap<Integer, String> getMoonPhases() {
-        HashMap<Integer, String> moon = new HashMap<>();
-        moon.put(1, "Waning gibbous");
-        moon.put(2, "Third guarter");
-        moon.put(3, "Wanning crescent");
-        moon.put(4, "New moon");
-        moon.put(5, "Waxing crescent");
-        moon.put(6, "First quarter");
-        moon.put(7, "Waxing gibbous");
-        moon.put(8, "Full moon");
-        return moon;
-    }
-
-    private static int estimateCost(int radius) {
-        if (radius <= AdvancedPeripheralsConfig.environmentDetectorMaxFreeRadius) {
-            return 0;
-        }
-        if (radius > AdvancedPeripheralsConfig.environmentDetectorMaxCostRadius) {
-            return -1;
-        }
-        int freeBlockCount = IntMath.pow(2 * AdvancedPeripheralsConfig.environmentDetectorMaxFreeRadius + 1, 3);
-        int allBlockCount = IntMath.pow(2 * radius + 1, 3);
-        return (int) Math.floor((allBlockCount - freeBlockCount) * AdvancedPeripheralsConfig.environmentDetectorExtraBlockCost);
     }
 
     @LuaFunction(mainThread = true)

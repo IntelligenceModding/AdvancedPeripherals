@@ -16,11 +16,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 @MethodsReturnNonnullByDefault
-public abstract class PoweredPeripheralTileEntity<T extends BasePeripheral>  extends PeripheralTileEntity<T> {
+public abstract class PoweredPeripheralTileEntity<T extends BasePeripheral> extends PeripheralTileEntity<T> {
 
     private final LazyOptional<IEnergyStorage> lazyEnergyStorage;
-
-    protected abstract int getMaxEnergyStored();
 
     public PoweredPeripheralTileEntity(TileEntityType<?> tileEntityTypeIn) {
         super(tileEntityTypeIn);
@@ -30,6 +28,8 @@ public abstract class PoweredPeripheralTileEntity<T extends BasePeripheral>  ext
             lazyEnergyStorage = LazyOptional.empty();
         }
     }
+
+    protected abstract int getMaxEnergyStored();
 
     @Override
     public CompoundNBT save(CompoundNBT compound) {

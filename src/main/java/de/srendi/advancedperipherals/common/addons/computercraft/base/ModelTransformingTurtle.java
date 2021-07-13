@@ -43,7 +43,7 @@ public abstract class ModelTransformingTurtle<T extends AutomataCorePeripheral> 
     @Override
     public void update(@NotNull ITurtleAccess turtle, @NotNull TurtleSide side) {
         super.update(turtle, side);
-        if (tick %2 == 0)
+        if (tick % 2 == 0)
             DataStorageUtil.RotationCharge.consume(turtle, side);
     }
 }

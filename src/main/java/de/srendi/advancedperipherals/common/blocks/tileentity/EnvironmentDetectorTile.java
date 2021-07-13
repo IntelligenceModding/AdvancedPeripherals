@@ -10,16 +10,12 @@ import org.jetbrains.annotations.NotNull;
 public class EnvironmentDetectorTile extends PoweredPeripheralTileEntity<EnvironmentDetectorPeripheral> {
 
     public EnvironmentDetectorTile() {
-        this(TileEntityTypes.ENVIRONMENT_DETECTOR.get());
+        super(TileEntityTypes.ENVIRONMENT_DETECTOR.get());
     }
 
     @Override
     protected int getMaxEnergyStored() {
         return AdvancedPeripheralsConfig.environmentDetectorMaxEnergyStored;
-    }
-
-    public EnvironmentDetectorTile(TileEntityType<?> tileEntityTypeIn) {
-        super(tileEntityTypeIn);
     }
 
     @NotNull

@@ -32,11 +32,7 @@ public class RsBridgeTile extends NetworkNodeTile<RefinedStorageNode> implements
     private LazyOptional<IPeripheral> peripheralCap;
 
     public RsBridgeTile() {
-        this(TileEntityTypes.RS_BRIDGE.get());
-    }
-
-    public RsBridgeTile(TileEntityType<?> tileType) {
-        super(tileType);
+        super(TileEntityTypes.RS_BRIDGE.get());
     }
 
     @NotNull

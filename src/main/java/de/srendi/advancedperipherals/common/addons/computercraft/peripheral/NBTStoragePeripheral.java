@@ -43,7 +43,7 @@ public class NBTStoragePeripheral extends BasePeripheral {
     }
 
     @LuaFunction
-    public final MethodResult writeJson(String jsonData){
+    public final MethodResult writeJson(String jsonData) {
         if (jsonData.length() > AdvancedPeripheralsConfig.nbtStorageMaxSize) {
             return MethodResult.of(null, "JSON size is bigger than allowed");
         }
@@ -64,7 +64,7 @@ public class NBTStoragePeripheral extends BasePeripheral {
             ObjectOutputStream objectOutputStream = new ObjectOutputStream(countingStream);
             objectOutputStream.writeObject(data);
             objectOutputStream.close();
-        } catch (IOException e){
+        } catch (IOException e) {
             return MethodResult.of(null, String.format("No idea, how this happened, but java IO Exception appear %s", e.getMessage()));
         }
         if (countingStream.getWrittenBytes() > AdvancedPeripheralsConfig.nbtStorageMaxSize)

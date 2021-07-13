@@ -32,6 +32,7 @@ public class TurtlePeripheralOwner implements IPeripheralOwner {
         this.turtle = turtle;
         this.side = side;
     }
+
     @Nullable
     @Override
     public String getCustomName() {
@@ -126,7 +127,7 @@ public class TurtlePeripheralOwner implements IPeripheralOwner {
     }
 
     @Override
-    public boolean move(@Nonnull World world,@Nonnull BlockPos pos) {
+    public boolean move(@Nonnull World world, @Nonnull BlockPos pos) {
         return turtle.teleportTo(world, pos);
     }
 }

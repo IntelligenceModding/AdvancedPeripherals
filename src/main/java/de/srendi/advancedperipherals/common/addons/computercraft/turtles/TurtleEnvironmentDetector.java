@@ -7,7 +7,6 @@ import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.Envi
 import de.srendi.advancedperipherals.common.setup.Blocks;
 import net.minecraft.client.renderer.model.ModelResourceLocation;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
 import org.jetbrains.annotations.NotNull;
 
 public class TurtleEnvironmentDetector extends BaseTurtle<EnvironmentDetectorPeripheral> {

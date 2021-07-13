@@ -44,6 +44,10 @@
     }
   },
   "requirements": [
-    ["overpowered_weak_in_inventory", "overpowered_end_in_inventory", "overpowered_husbandry_in_inventory"]
+    [
+      "overpowered_weak_in_inventory",
+      "overpowered_end_in_inventory",
+      "overpowered_husbandry_in_inventory"
+    ]
   ]
 }

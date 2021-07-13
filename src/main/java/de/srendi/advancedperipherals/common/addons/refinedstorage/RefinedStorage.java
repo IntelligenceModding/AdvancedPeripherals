@@ -16,7 +16,6 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.commons.codec.binary.Hex;
 
 import java.nio.charset.StandardCharsets;
@@ -27,9 +26,8 @@ import java.util.stream.Collectors;
 
 public class RefinedStorage {
 
-    private final IRSAPI api;
-
     public static RefinedStorage instance;
+    private final IRSAPI api;
 
     public RefinedStorage() {
         this.api = API.instance();

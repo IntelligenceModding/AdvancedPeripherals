@@ -8,7 +8,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.Pose;
 import net.minecraft.entity.ai.attributes.ModifiableAttributeInstance;
-import net.minecraft.entity.passive.CowEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
@@ -39,7 +38,6 @@ import java.lang.ref.WeakReference;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.function.Function;
 import java.util.function.Predicate;
 
 public class APFakePlayer extends FakePlayer {
@@ -179,7 +177,7 @@ public class APFakePlayer extends FakePlayer {
         return use(false, true, filter);
     }
 
-    public ActionResultType useOnSpecificEntity(@NotNull Entity entity, RayTraceResult result){
+    public ActionResultType useOnSpecificEntity(@NotNull Entity entity, RayTraceResult result) {
         ActionResultType simpleInteraction = interactOn(entity, Hand.MAIN_HAND);
         if (simpleInteraction == ActionResultType.SUCCESS)
             return simpleInteraction;
@@ -188,6 +186,7 @@ public class APFakePlayer extends FakePlayer {
         }
         return entity.interactAt(this, result.getLocation(), Hand.MAIN_HAND);
     }
+
     public ActionResultType use(boolean skipEntity, boolean skipBlock) {
         return use(skipEntity, skipBlock, null);
     }
@@ -256,7 +255,7 @@ public class APFakePlayer extends FakePlayer {
         Direction traceDirection = Direction.getNearest(directionVec.x, directionVec.y, directionVec.z);
         RayTraceResult blockHit;
         if (skipBlock) {
-            blockHit = BlockRayTraceResult.miss(traceContext.getTo(), traceDirection , new BlockPos(traceContext.getTo()));
+            blockHit = BlockRayTraceResult.miss(traceContext.getTo(), traceDirection, new BlockPos(traceContext.getTo()));
         } else {
             blockHit = IBlockReader.traverseBlocks(traceContext, (rayTraceContext, blockPos) -> {
                 if (level.isEmptyBlock(blockPos)) {

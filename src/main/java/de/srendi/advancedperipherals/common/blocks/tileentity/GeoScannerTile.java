@@ -13,13 +13,13 @@ public class GeoScannerTile extends PoweredPeripheralTileEntity<GeoScannerPeriph
         this(TileEntityTypes.GEO_SCANNER.get());
     }
 
+    public GeoScannerTile(final TileEntityType<?> tileEntityType) {
+        super(tileEntityType);
+    }
+
     @Override
     protected int getMaxEnergyStored() {
         return AdvancedPeripheralsConfig.geoScannerMaxEnergyStored;
-    }
-
-    public GeoScannerTile(final TileEntityType<?> tileEntityType) {
-        super(tileEntityType);
     }
 
     @Override

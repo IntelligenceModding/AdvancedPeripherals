@@ -4,14 +4,12 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import net.minecraft.nbt.*;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 import org.apache.logging.log4j.Level;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Base64;
-import java.util.Iterator;
 import java.util.Map;
 
 public class NBTUtil {
@@ -28,11 +26,11 @@ public class NBTUtil {
         } else if (object instanceof Integer) {
             return IntNBT.valueOf((Integer) object);
         } else if (object instanceof Number) {
-            return DoubleNBT.valueOf(((Number)object).doubleValue());
+            return DoubleNBT.valueOf(((Number) object).doubleValue());
         } else if (object instanceof String) {
             return StringNBT.valueOf(object.toString());
         } else if (object instanceof Map) {
-            Map<?, ?> m = (Map<?, ?>)object;
+            Map<?, ?> m = (Map<?, ?>) object;
             CompoundNBT nbt = new CompoundNBT();
 
             for (Map.Entry<?, ?> item : m.entrySet()) {

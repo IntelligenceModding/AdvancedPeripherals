@@ -1,6 +1,5 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.turtles;
 
-import dan200.computercraft.api.peripheral.IPeripheral;
 import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
 import de.srendi.advancedperipherals.common.addons.computercraft.base.BaseTurtle;
