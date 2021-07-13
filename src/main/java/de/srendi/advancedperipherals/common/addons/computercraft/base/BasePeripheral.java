@@ -8,8 +8,6 @@ import dan200.computercraft.api.pocket.IPocketAccess;
 import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
 import dan200.computercraft.core.computer.ComputerSide;
-import de.srendi.advancedperipherals.api.peripheral.IPeripheralOwner;
-import de.srendi.advancedperipherals.api.peripheral.IPeripheralTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;

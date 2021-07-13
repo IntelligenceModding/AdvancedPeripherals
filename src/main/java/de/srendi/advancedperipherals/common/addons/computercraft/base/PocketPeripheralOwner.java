@@ -1,7 +1,6 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.base;
 
 import dan200.computercraft.api.pocket.IPocketAccess;
-import de.srendi.advancedperipherals.api.peripheral.IPeripheralOwner;
 import de.srendi.advancedperipherals.common.util.DataStorageUtil;
 import de.srendi.advancedperipherals.common.util.fakeplayer.APFakePlayer;
 import net.minecraft.entity.Entity;

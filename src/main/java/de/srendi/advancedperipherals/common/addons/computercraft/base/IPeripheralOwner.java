@@ -1,4 +1,4 @@
-package de.srendi.advancedperipherals.api.peripheral;
+package de.srendi.advancedperipherals.common.addons.computercraft.base;
 
 import de.srendi.advancedperipherals.common.util.fakeplayer.APFakePlayer;
 import net.minecraft.entity.player.PlayerEntity;

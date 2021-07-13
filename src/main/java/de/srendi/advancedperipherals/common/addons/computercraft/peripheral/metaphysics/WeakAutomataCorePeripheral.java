@@ -6,7 +6,7 @@ import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.lua.MethodResult;
 import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
-import de.srendi.advancedperipherals.api.metaphysics.IFeedableAutomataCore;
+import de.srendi.advancedperipherals.common.addons.computercraft.base.IFeedableAutomataCore;
 import de.srendi.advancedperipherals.common.addons.computercraft.base.AutomataCorePeripheral;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
 import de.srendi.advancedperipherals.common.util.Pair;
