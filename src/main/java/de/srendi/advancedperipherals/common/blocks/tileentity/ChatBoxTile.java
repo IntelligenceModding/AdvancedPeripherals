@@ -31,7 +31,8 @@ public class ChatBoxTile extends PeripheralTileEntity<ChatBoxPeripheral> impleme
     @Override
     public void tick() {
         lastConsumedMessage = Events.traverseChatMessages(lastConsumedMessage, message -> {
-            getConnectedComputers().forEach(computer -> computer.queueEvent("chat", message.getLeft(), message.getRight()));
+            getConnectedComputers().forEach(computer -> computer.queueEvent("chat", message.username, message.message,
+                    message.uuid, message.isHidden));
         });
     }
 }

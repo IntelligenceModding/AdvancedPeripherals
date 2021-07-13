@@ -20,18 +20,21 @@ import java.util.function.Consumer;
 public class Events {
 
     private static final int CHAT_QUEUE_MAX_SIZE = 50;
-    public static final EvictingQueue<Pair<Long, Pair<String, String>>> messageQueue = EvictingQueue.create(CHAT_QUEUE_MAX_SIZE);
+    public static final EvictingQueue<Pair<Long, ChatMessageObject>> messageQueue = EvictingQueue.create(CHAT_QUEUE_MAX_SIZE);
     public static long counter = 0;
 
     @SubscribeEvent
     public static void onChatBox(ServerChatEvent event) {
         if (AdvancedPeripheralsConfig.enableChatBox) {
             String message = event.getMessage();
+            boolean isHidden = false;
             if (message.startsWith("$")) {
                 event.setCanceled(true);
                 message = message.replace("$", "");
+                isHidden = true;
             }
-            messageQueue.add(Pair.of(counter, Pair.of(event.getUsername(), message)));
+            messageQueue.add(Pair.of(counter, new ChatMessageObject(event.getUsername(), message,
+                    event.getPlayer().getUUID().toString(), isHidden)));
             counter++;
         }
     }
@@ -47,13 +50,28 @@ public class Events {
         }
     }
 
-    public static long traverseChatMessages(long lastConsumedMessage, Consumer<Pair<String, String>> consumer) {
-        for (Pair<Long, Pair<String, String>> message : messageQueue) {
+    public static long traverseChatMessages(long lastConsumedMessage, Consumer<ChatMessageObject> consumer) {
+        for (Pair<Long, ChatMessageObject> message : messageQueue) {
             if (message.getLeft() <= lastConsumedMessage)
                 continue;
             consumer.accept(message.getRight());
             lastConsumedMessage = message.getLeft();
         }
         return lastConsumedMessage;
+    }
+
+    public static class ChatMessageObject {
+
+        public String username;
+        public String message;
+        public String uuid;
+        public boolean isHidden;
+
+        public ChatMessageObject(String username, String message, String uuid, boolean isHidden) {
+            this.username = username;
+            this.message = message;
+            this.uuid = uuid;
+            this.isHidden = isHidden;
+        }
     }
 }

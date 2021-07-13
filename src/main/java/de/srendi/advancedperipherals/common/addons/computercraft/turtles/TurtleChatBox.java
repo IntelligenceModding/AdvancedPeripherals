@@ -50,7 +50,8 @@ public class TurtleChatBox extends BaseTurtle<ChatBoxPeripheral> {
                 TileTurtle tileTurtle = (TileTurtle) tile;
                 ServerComputer computer = tileTurtle.getServerComputer();
                 lastConsumedMessage = Events.traverseChatMessages(lastConsumedMessage, message -> {
-                    computer.queueEvent("chat", new Object[]{message.getLeft(), message.getRight()});
+                    computer.queueEvent("chat", new Object[]{message.username, message.message,
+                            message.uuid, message.isHidden});
                 });
             }
         }
