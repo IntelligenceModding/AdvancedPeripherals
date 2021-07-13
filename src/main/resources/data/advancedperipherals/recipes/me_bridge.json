@@ -5,6 +5,9 @@
     "IAI",
     "FIF"
   ],
+  "conditions": [
+    {"type":  "forge:mod_loaded", "modid":  "appliedenergistics2"}
+  ],
   "key": {
     "F": {
       "item": "appliedenergistics2:fluix_block"
