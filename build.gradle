@@ -156,9 +156,8 @@ dependencies {
     compileOnly fg.deobf("curse.maven:storagedrawers-${storagedrawers_version}")
 
     // Testing stuff
-    runtimeOnly fg.deobf("mcjty.theoneprobe:TheOneProbe-1.16:${top_version}")
+//    runtimeOnly fg.deobf("mcjty.theoneprobe:TheOneProbe-1.16:${top_version}")
     runtimeOnly fg.deobf("mezz.jei:jei-${jei_version}")
-//    runtimeOnly fg.deobf("curse.maven:betteradvancements-${betteradvancements_version}")
 
 }
 
