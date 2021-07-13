@@ -1,0 +1,36 @@
+{
+  "display": {
+    "icon": {
+      "item": "advancedperipherals:ar_goggles"
+    },
+    "title": {
+      "translate": "advancements.advancedperipherals.ar_toolkit"
+    },
+    "description": {
+      "translate": "advancements.advancedperipherals.ar_toolkit.description"
+    }
+  },
+  "parent": "advancedperipherals:root",
+  "criteria": {
+    "goggles_in_inventory": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "advancedperipherals:ar_goggles"
+          }
+        ]
+      }
+    },
+    "controller_in_inventory": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "advancedperipherals:ar_controller"
+          }
+        ]
+      }
+    }
+  }
+}

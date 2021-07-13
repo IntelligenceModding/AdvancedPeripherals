@@ -1,0 +1,26 @@
+{
+  "display": {
+    "icon": {
+      "item": "advancedperipherals:weak_automata_core"
+    },
+    "title": {
+      "translate": "advancements.advancedperipherals.weak_automata_core"
+    },
+    "description": {
+      "translate": "advancements.advancedperipherals.weak_automata_core.description"
+    }
+  },
+  "parent": "advancedperipherals:root",
+  "criteria": {
+    "item_in_inventory": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "advancedperipherals:weak_automata_core"
+          }
+        ]
+      }
+    }
+  }
+}

@@ -25,7 +25,7 @@ public class RepresentationUtil {
         data.put("baby", animal.isBaby());
         data.put("inLove", animal.isInLove());
         data.put("aggressive", animal.isAggressive());
-        if (animal instanceof IForgeShearable) {
+        if (animal instanceof IForgeShearable && !itemInHand.isEmpty()) {
             IForgeShearable shareable = (IForgeShearable) animal;
             data.put("shareable", shareable.isShearable(itemInHand, animal.level, animal.blockPosition()));
         }

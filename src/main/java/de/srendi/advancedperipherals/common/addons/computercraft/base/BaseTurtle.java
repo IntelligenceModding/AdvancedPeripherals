@@ -19,21 +19,20 @@ import net.minecraft.util.math.vector.TransformationMatrix;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class BaseTurtle<T extends BasePeripheral> extends AbstractTurtleUpgrade {
+import javax.annotation.Nonnull;
 
-    protected @Nullable T peripheral;
-    protected ITurtleAccess turtle;
+public abstract class BaseTurtle<T extends BasePeripheral> extends AbstractTurtleUpgrade {
     protected int tick;
 
     public BaseTurtle(String id, String adjective, ItemStack item) {
         super(new ResourceLocation(AdvancedPeripherals.MOD_ID, id), TurtleUpgradeType.PERIPHERAL, adjective, item);
     }
 
-    protected abstract T createPeripheral();
-
     protected abstract ModelResourceLocation getLeftModel();
 
     protected abstract ModelResourceLocation getRightModel();
+
+    protected abstract T buildPeripheral(@NotNull ITurtleAccess turtle, @NotNull TurtleSide side);
 
     @NotNull
     @Override
@@ -54,23 +53,10 @@ public abstract class BaseTurtle<T extends BasePeripheral> extends AbstractTurtl
     @Nullable
     @Override
     public IPeripheral createPeripheral(@NotNull ITurtleAccess turtle, @NotNull TurtleSide side) {
-        this.peripheral = createPeripheral();
+        T peripheral = buildPeripheral(turtle, side);
+        if (!peripheral.isEnabled()) {
+            return DisabledPeripheral.INSTANCE;
+        }
         return peripheral;
-    }
-
-    @Override
-    public void update(@NotNull ITurtleAccess turtle, @NotNull TurtleSide side) {
-        if (!turtle.getWorld().isClientSide) {
-            IPeripheral turtlePeripheral = turtle.getPeripheral(side);
-            this.turtle = turtle;
-            if (turtlePeripheral instanceof BasePeripheral)
-                ((BasePeripheral) turtlePeripheral).setTurtle(turtle);
-        }
-
-        tick++;
-        if (tick > 10) {
-            TileEntityList.get(turtle.getWorld()).setTileEntity(turtle.getWorld(), new WorldPos(turtle.getPosition(), turtle.getWorld()), true); //Add the turtle to the List for event use
-            tick = 0;
-        }
     }
 }

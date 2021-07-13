@@ -2,7 +2,7 @@
   "name": "Cooldowns and fuel",
   "icon": "minecraft:coal",
   "category": "advancedperipherals:metaphysics",
-  "advancement": "advancedperipherals:weak_mechanic_soul",
+  "advancement": "advancedperipherals:weak_automata_core",
   "priority": true,
   "pages": [
     {
@@ -15,7 +15,7 @@
     },
     {
       "type": "text",
-      "text": "However, fuel consumption rate is not so simple! Every mechanic soul has max fuel consumption limitation, that can be retrieved via $(l)getConfiguration$() method.$(p)Also, fuel point will grow faster, than cooldown drops. Fuel consumption 3 will required 4 fuel points, fuel consumption 4 will required fuel points, etc."
+      "text": "However, fuel consumption rate is not so simple! Every automata core has max fuel consumption limitation, that can be retrieved via $(l)getConfiguration$() method.$(p)Also, fuel point will grow faster, than cooldown drops. Fuel consumption 3 will required 4 fuel points, fuel consumption 4 will required fuel points, etc."
     }
   ]
 }

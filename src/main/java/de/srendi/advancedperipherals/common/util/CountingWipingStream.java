@@ -1,5 +1,7 @@
 package de.srendi.advancedperipherals.common.util;
 
+import dan200.computercraft.api.lua.MethodResult;
+
 import java.io.IOException;
 import java.io.OutputStream;
 
@@ -8,10 +10,6 @@ public class CountingWipingStream  extends OutputStream  {
 
     public int getWrittenBytes() {
         return counter;
-    }
-
-    public void resetCounter() {
-        counter = 0;
     }
 
     @Override

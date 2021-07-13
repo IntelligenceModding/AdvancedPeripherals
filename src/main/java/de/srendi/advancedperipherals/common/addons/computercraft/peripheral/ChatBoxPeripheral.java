@@ -1,70 +1,98 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.peripheral;
 
+import dan200.computercraft.api.lua.IArguments;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
-import de.srendi.advancedperipherals.common.addons.computercraft.base.BasePeripheral;
+import dan200.computercraft.api.lua.MethodResult;
+import dan200.computercraft.api.pocket.IPocketAccess;
+import dan200.computercraft.api.turtle.ITurtleAccess;
+import dan200.computercraft.api.turtle.TurtleSide;
+import de.srendi.advancedperipherals.common.addons.computercraft.base.OperationPeripheral;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.Util;
+import net.minecraft.util.text.*;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 
-import java.util.UUID;
+import javax.annotation.Nonnull;
 
-public class ChatBoxPeripheral extends BasePeripheral {
+public class ChatBoxPeripheral extends OperationPeripheral {
 
-    private int tick;
+    private final static String SEND_MESSAGE_OPERATION = "sendMessage";
+    private final static String PREFIX_FORMAT = "[%s] ";
 
     public ChatBoxPeripheral(String type, PeripheralTileEntity<?> tileEntity) {
         super(type, tileEntity);
     }
 
-    public ChatBoxPeripheral(String type, TileEntity tileEntity) {
-        super(type, tileEntity);
+    public ChatBoxPeripheral(String type, ITurtleAccess turtle, TurtleSide side) {
+        super(type, turtle, side);
     }
 
-    public ChatBoxPeripheral(String type, Entity entity) {
-        super(type, entity);
+    public ChatBoxPeripheral(String type, IPocketAccess pocket) {
+        super(type, pocket);
     }
 
-    public int getTick() {
-        return tick;
+    @Override
+    protected int getRawCooldown(String name) {
+        if (name.equals(SEND_MESSAGE_OPERATION))
+            // Some legacy logic, cooldown defined in seconds
+            // and we need miliseconds here
+            return AdvancedPeripheralsConfig.chatBoxCooldown * 1000;
+        return 0;
     }
-
-    public void setTick(int tick) {
-        this.tick = tick;
-    } //TODO: There is maybe better way to do that, but this works fine for now.
 
     @Override
     public boolean isEnabled() {
         return AdvancedPeripheralsConfig.enableChatBox;
     }
 
-    @LuaFunction(mainThread = true)
-    public final void sendMessage(Object message) throws LuaException {
-        if (tick >= AdvancedPeripheralsConfig.chatBoxCooldown) {
-            for (ServerPlayerEntity player : ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers()) {
-                player.sendMessage(new StringTextComponent("" + message), UUID.randomUUID());
-            }
-            tick = 0;
-        } else {
-            throw new LuaException("You are sending messages too often. You can modify the cooldown in the config.");
-        }
+    @LuaFunction
+    public final int getSendCooldown() {
+        return getCurrentCooldown(SEND_MESSAGE_OPERATION);
     }
 
     @LuaFunction(mainThread = true)
-    public final void sendMessageToPlayer(Object message, String playerName) throws LuaException {
-        if (tick >= AdvancedPeripheralsConfig.chatBoxCooldown) {
-            for (ServerPlayerEntity player : ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers()) {
-                if (player.getName().getString().equals(playerName))
-                    player.sendMessage(new StringTextComponent("" + message), UUID.randomUUID());
-            }
-            tick = 0;
-        } else {
+    public final MethodResult sendFormattedMessage(@Nonnull IArguments arguments) throws LuaException {
+        if (isOnCooldown(SEND_MESSAGE_OPERATION))
             throw new LuaException("You are sending messages too often. You can modify the cooldown in the config.");
+        String message = arguments.getString(0);
+        IFormattableTextComponent prefix = new StringTextComponent(String.format(PREFIX_FORMAT, arguments.optString(1, AdvancedPeripheralsConfig.defaultChatBoxPrefix)));
+        for (ServerPlayerEntity player : ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers()) {
+            IFormattableTextComponent component = ITextComponent.Serializer.fromJson(message);
+            if (component == null)
+                return MethodResult.of(null, "incorrect json");
+            player.sendMessage(prefix.append(component), Util.NIL_UUID);
         }
+        trackOperation(SEND_MESSAGE_OPERATION);
+        return MethodResult.of(true);
+    }
+
+    @LuaFunction(mainThread = true)
+    public final void sendMessage(@Nonnull IArguments arguments) throws LuaException {
+        if (isOnCooldown(SEND_MESSAGE_OPERATION))
+            throw new LuaException("You are sending messages too often. You can modify the cooldown in the config.");
+        String message = arguments.getString(0);
+        IFormattableTextComponent prefix = new StringTextComponent(String.format(PREFIX_FORMAT, arguments.optString(1, AdvancedPeripheralsConfig.defaultChatBoxPrefix)));
+        for (ServerPlayerEntity player : ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers()) {
+            player.sendMessage(prefix.append(message), Util.NIL_UUID);
+        }
+        trackOperation(SEND_MESSAGE_OPERATION);
+    }
+
+    @LuaFunction(mainThread = true)
+    public final void sendMessageToPlayer(@Nonnull IArguments arguments) throws LuaException {
+        if (isOnCooldown(SEND_MESSAGE_OPERATION))
+            throw new LuaException("You are sending messages too often. You can modify the cooldown in the config.");
+        String message = arguments.getString(0);
+        String playerName = arguments.getString(1);
+        IFormattableTextComponent prefix = new StringTextComponent(String.format(PREFIX_FORMAT, arguments.optString(2, AdvancedPeripheralsConfig.defaultChatBoxPrefix)));
+        for (ServerPlayerEntity player : ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers()) {
+            if (player.getName().getString().equals(playerName))
+                player.sendMessage(prefix.append(message), Util.NIL_UUID);
+        }
+        trackOperation(SEND_MESSAGE_OPERATION);
     }
 
 }

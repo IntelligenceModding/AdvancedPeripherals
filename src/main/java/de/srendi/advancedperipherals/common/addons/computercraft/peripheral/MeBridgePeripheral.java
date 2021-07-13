@@ -63,7 +63,7 @@ public class MeBridgePeripheral extends BasePeripheral {
         ItemStack itemToCraft = ItemUtil.getItemStack(arguments.getTable(0), monitor);
         if (itemToCraft.isEmpty())
             throw new NullPointerException("Item " + itemToCraft + " does not exists");
-        CraftJob job = new CraftJob(tileEntity.getLevel(), computer, node, itemToCraft, source);
+        CraftJob job = new CraftJob(owner.getWorld(), computer, node, itemToCraft, source);
         ServerWorker.add(job::startCrafting);
         return MethodResult.pullEvent("crafting", job);
     }
@@ -99,7 +99,7 @@ public class MeBridgePeripheral extends BasePeripheral {
             throw new LuaException("Item " + stack + " does not exists in the ME system or the system is offline");
         Direction direction = validateSide(arguments.getString(1));
 
-        TileEntity targetEntity = tileEntity.getLevel().getBlockEntity(tileEntity.getBlockPos().relative(direction));
+        TileEntity targetEntity = owner.getWorld().getBlockEntity(owner.getPos().relative(direction));
         IItemHandler inventory = targetEntity != null ? targetEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, direction.getOpposite()).resolve().orElse(null) : null;
         if (inventory == null)
             throw new LuaException("No valid inventory at " + direction);
@@ -136,7 +136,7 @@ public class MeBridgePeripheral extends BasePeripheral {
             throw new LuaException("Item " + stack + " does not exists in the ME system or the system is offline");
         Direction direction = validateSide(arguments.getString(1));
 
-        TileEntity targetEntity = tileEntity.getLevel().getBlockEntity(tileEntity.getBlockPos().relative(direction));
+        TileEntity targetEntity = owner.getWorld().getBlockEntity(owner.getPos().relative(direction));
         IItemHandler inventory = targetEntity != null ? targetEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, direction.getOpposite()).resolve().orElse(null) : null;
         if (inventory == null)
             throw new LuaException("No valid inventory at " + direction);

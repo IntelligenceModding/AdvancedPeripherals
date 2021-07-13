@@ -2,8 +2,11 @@ package de.srendi.advancedperipherals.common.addons.computercraft.turtles;
 
 import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
+import dan200.computercraft.shared.computer.core.ServerComputer;
+import dan200.computercraft.shared.turtle.blocks.TileTurtle;
 import de.srendi.advancedperipherals.common.addons.computercraft.base.BaseTurtle;
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.ChatBoxPeripheral;
+import de.srendi.advancedperipherals.common.events.Events;
 import de.srendi.advancedperipherals.common.setup.Blocks;
 import net.minecraft.client.renderer.model.ModelResourceLocation;
 import net.minecraft.item.ItemStack;
@@ -14,16 +17,11 @@ public class TurtleChatBox extends BaseTurtle<ChatBoxPeripheral> {
 
     private static final ModelResourceLocation leftModel = new ModelResourceLocation("advancedperipherals:turtle_chat_box_upgrade_left", "inventory");
     private static final ModelResourceLocation rightModel = new ModelResourceLocation("advancedperipherals:turtle_chat_box_upgrade_right", "inventory");
-
-    private int sync;
+    private long lastConsumedMessage;
 
     public TurtleChatBox() {
         super("chat_box_turtle", "turtle.advancedperipherals.chat_box_turtle", new ItemStack(Blocks.CHAT_BOX.get()));
-    }
-
-    @Override
-    protected ChatBoxPeripheral createPeripheral() {
-        return new ChatBoxPeripheral("chatBox", (TileEntity) null);
+        lastConsumedMessage = Events.counter - 1;
     }
 
     @Override
@@ -37,15 +35,24 @@ public class TurtleChatBox extends BaseTurtle<ChatBoxPeripheral> {
     }
 
     @Override
+    protected ChatBoxPeripheral buildPeripheral(@NotNull ITurtleAccess turtle, @NotNull TurtleSide side) {
+        return new ChatBoxPeripheral("chatBox", turtle, side);
+    }
+
+    @Override
     public void update(@NotNull ITurtleAccess turtle, @NotNull TurtleSide side) {
-        if (peripheral != null) {
-            super.update(turtle, side);
-            //Sync the tick of the peripherals and the turtle
-            if (peripheral.getTick() == 0) {
-                sync = 0;
+        super.update(turtle, side);
+        if (turtle.getWorld().isClientSide) return;
+
+        if (turtle.getUpgrade(side) instanceof TurtleChatBox) {
+            TileEntity tile = turtle.getWorld().getBlockEntity(turtle.getPosition());
+            if (tile instanceof TileTurtle) {
+                TileTurtle tileTurtle = (TileTurtle) tile;
+                ServerComputer computer = tileTurtle.getServerComputer();
+                lastConsumedMessage = Events.traverseChatMessages(lastConsumedMessage, message -> {
+                    computer.queueEvent("chat", new Object[]{message.getLeft(), message.getRight()});
+                });
             }
-            sync++;
-            peripheral.setTick(sync);
         }
     }
 }

@@ -23,6 +23,9 @@ public class ConfigHandler {
     }
 
     private static void bakeCommon() {
+        //Defaults
+        AdvancedPeripheralsConfig.defaultChatBoxPrefix = ConfigHolder.COMMON_CONFIG.DEFAULT_CHAT_BOX_PREFIX.get();
+
         //Restrictions
         AdvancedPeripheralsConfig.chatBoxCooldown = ConfigHolder.COMMON_CONFIG.CHAT_BOX_COOLDOWN.get();
         AdvancedPeripheralsConfig.playerDetMaxRange = ConfigHolder.COMMON_CONFIG.PLAYER_DET_MAX_RANGE.get();
@@ -30,8 +33,13 @@ public class ConfigHandler {
         AdvancedPeripheralsConfig.geoScannerMaxFreeRadius = ConfigHolder.COMMON_CONFIG.GEO_SCANNER_MAX_FREE_RADIUS.get();
         AdvancedPeripheralsConfig.geoScannerMaxCostRadius = ConfigHolder.COMMON_CONFIG.GEO_SCANNER_MAX_COST_RADIUS.get();
         AdvancedPeripheralsConfig.geoScannerExtraBlockCost = ConfigHolder.COMMON_CONFIG.GEO_SCANNER_EXTRA_BLOCK_COST.get();
-        AdvancedPeripheralsConfig.geoScannerMaxEnergyStorage = ConfigHolder.COMMON_CONFIG.GEO_SCANNER_MAX_ENERGY_STORAGE.get();
+        AdvancedPeripheralsConfig.geoScannerMaxEnergyStored = ConfigHolder.COMMON_CONFIG.GEO_SCANNER_MAX_ENERGY_STORED.get();
         AdvancedPeripheralsConfig.geoScannerMinScanPeriod = ConfigHolder.COMMON_CONFIG.GEO_SCANNER_MIN_SCAN_PERIOD.get();
+        AdvancedPeripheralsConfig.environmentDetectorMaxCostRadius = ConfigHolder.COMMON_CONFIG.ENVIRONMENT_DETECTOR_MAX_COST_RADIUS.get();
+        AdvancedPeripheralsConfig.environmentDetectorExtraBlockCost = ConfigHolder.COMMON_CONFIG.ENVIRONMENT_DETECTOR_EXTRA_BLOCK_COST.get();
+        AdvancedPeripheralsConfig.environmentDetectorMaxEnergyStored = ConfigHolder.COMMON_CONFIG.ENVIRONMENT_DETECTOR_MAX_ENERGY_STORED.get();
+        AdvancedPeripheralsConfig.environmentDetectorMaxFreeRadius = ConfigHolder.COMMON_CONFIG.ENVIRONMENT_DETECTOR_MAX_FREE_RADIUS.get();
+        AdvancedPeripheralsConfig.environmentDetectorMinScanPeriod = ConfigHolder.COMMON_CONFIG.ENVIRONMENT_DETECTOR_MIN_SCAN_PERIOD.get();
         AdvancedPeripheralsConfig.nbtStorageMaxSize = ConfigHolder.COMMON_CONFIG.NBT_STORAGE_MAX_SIZE.get();
 
         //Features
@@ -50,6 +58,7 @@ public class ConfigHandler {
         AdvancedPeripheralsConfig.enableGeoScanner = ConfigHolder.COMMON_CONFIG.ENABLE_GEO_SCANNER.get();
         AdvancedPeripheralsConfig.enableColonyIntegrator = ConfigHolder.COMMON_CONFIG.ENABLE_COLONY_INTEGRATOR.get();
         AdvancedPeripheralsConfig.enableNBTStorage = ConfigHolder.COMMON_CONFIG.ENABLE_NBT_STORAGE.get();
+        AdvancedPeripheralsConfig.enablePoweredPeripherals = ConfigHolder.COMMON_CONFIG.ENABLE_POWERED_PERIPHERALS.get();
 
         //Mechanical soul
         AdvancedPeripheralsConfig.energyToFuelRate = ConfigHolder.COMMON_CONFIG.ENERGY_TO_FUEL_RATE.get();
@@ -64,15 +73,15 @@ public class ConfigHandler {
         AdvancedPeripheralsConfig.useOnAnimalCooldown = ConfigHolder.COMMON_CONFIG.USE_ON_ANIMAL_COOLDOWN.get();
         AdvancedPeripheralsConfig.captureAnimalCost = ConfigHolder.COMMON_CONFIG.CAPTURE_ANIMAL_COST.get();
         AdvancedPeripheralsConfig.captureAnimalCooldown = ConfigHolder.COMMON_CONFIG.CAPTURE_ANIMAL_COOLDOWN.get();
-        AdvancedPeripheralsConfig.enableWeakMechanicSoul = ConfigHolder.COMMON_CONFIG.ENABLE_WEAK_MECHANIC_SOUL.get();
-        AdvancedPeripheralsConfig.weakMechanicSoulInteractionRadius = ConfigHolder.COMMON_CONFIG.WEAK_MECHANIC_SOUL_TURTLE_INTERACTION_RANGE.get();
-        AdvancedPeripheralsConfig.weakMechanicSoulMaxFuelConsumptionLevel = ConfigHolder.COMMON_CONFIG.WEAK_MECHANIC_SOUL_TURTLE_MAX_FUEL_CONSUMPTION_LEVEL.get();
-        AdvancedPeripheralsConfig.enableEndMechanicSoul = ConfigHolder.COMMON_CONFIG.ENABLE_END_MECHANIC_SOUL.get();
-        AdvancedPeripheralsConfig.endMechanicSoulInteractionRadius = ConfigHolder.COMMON_CONFIG.END_MECHANIC_SOUL_TURTLE_INTERACTION_RANGE.get();
-        AdvancedPeripheralsConfig.endMechanicSoulMaxFuelConsumptionLevel = ConfigHolder.COMMON_CONFIG.END_MECHANIC_SOUL_TURTLE_MAX_FUEL_CONSUMPTION_LEVEL.get();
-        AdvancedPeripheralsConfig.enableNBTStorage = ConfigHolder.COMMON_CONFIG.ENABLE_HUSBANDRY_MECHANIC_SOUL.get();
-        AdvancedPeripheralsConfig.husbandryMechanicSoulInteractionRadius = ConfigHolder.COMMON_CONFIG.HUSBANDRY_MECHANIC_SOUL_TURTLE_INTERACTION_RANGE.get();
-        AdvancedPeripheralsConfig.husbandryMechanicSoulMaxFuelConsumptionLevel = ConfigHolder.COMMON_CONFIG.HUSBANDRY_MECHANIC_SOUL_TURTLE_MAX_FUEL_CONSUMPTION_LEVEL.get();
+        AdvancedPeripheralsConfig.enableWeakAutomataCore = ConfigHolder.COMMON_CONFIG.ENABLE_WEAK_AUTOMATA_CORE.get();
+        AdvancedPeripheralsConfig.weakAutomataCoreInteractionRadius = ConfigHolder.COMMON_CONFIG.WEAK_AUTOMATA_CORE_TURTLE_INTERACTION_RANGE.get();
+        AdvancedPeripheralsConfig.weakAutomataCoreMaxFuelConsumptionLevel = ConfigHolder.COMMON_CONFIG.WEAK_AUTOMATA_CORE_TURTLE_MAX_FUEL_CONSUMPTION_LEVEL.get();
+        AdvancedPeripheralsConfig.enableEndAutomataCore = ConfigHolder.COMMON_CONFIG.ENABLE_END_AUTOMATA_CORE.get();
+        AdvancedPeripheralsConfig.endAutomataCoreInteractionRadius = ConfigHolder.COMMON_CONFIG.END_AUTOMATA_CORE_TURTLE_INTERACTION_RANGE.get();
+        AdvancedPeripheralsConfig.endAutomataCoreMaxFuelConsumptionLevel = ConfigHolder.COMMON_CONFIG.END_AUTOMATA_CORE_TURTLE_MAX_FUEL_CONSUMPTION_LEVEL.get();
+        AdvancedPeripheralsConfig.enableHusbandryAutomataCore = ConfigHolder.COMMON_CONFIG.ENABLE_HUSBANDRY_AUTOMATA_CORE.get();
+        AdvancedPeripheralsConfig.husbandryAutomataCoreInteractionRadius = ConfigHolder.COMMON_CONFIG.HUSBANDRY_AUTOMATA_CORE_TURTLE_INTERACTION_RANGE.get();
+        AdvancedPeripheralsConfig.husbandryAutomataCoreMaxFuelConsumptionLevel = ConfigHolder.COMMON_CONFIG.HUSBANDRY_AUTOMATA_CORE_TURTLE_MAX_FUEL_CONSUMPTION_LEVEL.get();
 
         AdvancedPeripheralsConfig.enableVillagerStructures = ConfigHolder.COMMON_CONFIG.ENABLE_VILLAGER_STRUCTURES.get();
     }

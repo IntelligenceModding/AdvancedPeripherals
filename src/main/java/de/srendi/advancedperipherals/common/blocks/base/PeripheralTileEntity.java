@@ -3,6 +3,7 @@ package de.srendi.advancedperipherals.common.blocks.base;
 import dan200.computercraft.api.peripheral.IComputerAccess;
 import dan200.computercraft.api.peripheral.IPeripheral;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
+import de.srendi.advancedperipherals.api.peripheral.IPeripheralTileEntity;
 import de.srendi.advancedperipherals.common.addons.computercraft.base.BasePeripheral;
 import mcp.MethodsReturnNonnullByDefault;
 import net.minecraft.block.BlockState;
@@ -32,7 +33,11 @@ import java.util.List;
 import static dan200.computercraft.shared.Capabilities.CAPABILITY_PERIPHERAL;
 
 @MethodsReturnNonnullByDefault
-public abstract class PeripheralTileEntity<T extends BasePeripheral> extends LockableTileEntity implements ISidedInventory, INamedContainerProvider {
+public abstract class PeripheralTileEntity<T extends BasePeripheral> extends LockableTileEntity implements ISidedInventory, INamedContainerProvider, IPeripheralTileEntity {
+    // TODO: move inventory logic to another tile entity?
+    private static final String AP_SETTINGS_KEY = "AP_SETTINGS";
+
+    protected CompoundNBT apSettings;
 
     private final LazyOptional<? extends IItemHandler> handler = LazyOptional.of(() -> new SidedInvWrapper(this, Direction.NORTH));
     protected NonNullList<ItemStack> items;
@@ -47,10 +52,11 @@ public abstract class PeripheralTileEntity<T extends BasePeripheral> extends Loc
         } else {
             items = NonNullList.withSize(0, ItemStack.EMPTY);
         }
+        apSettings = new CompoundNBT();
     }
 
     @Override
-    public <T1> LazyOptional<T1> getCapability(@NotNull Capability<T1> cap, @Nullable Direction direction) {
+    public <T1> @NotNull LazyOptional<T1> getCapability(@NotNull Capability<T1> cap, @Nullable Direction direction) {
         if (cap == CAPABILITY_PERIPHERAL) {
             if (peripheral.isEnabled()) {
                 if (peripheralCap == null) {
@@ -92,12 +98,15 @@ public abstract class PeripheralTileEntity<T extends BasePeripheral> extends Loc
     public CompoundNBT save(CompoundNBT compound) {
         super.save(compound);
         ItemStackHelper.saveAllItems(compound, items);
+        if (!apSettings.isEmpty())
+            compound.put(AP_SETTINGS_KEY, apSettings);
         return compound;
     }
 
     @Override
     public void load(BlockState state, CompoundNBT compound) {
         ItemStackHelper.loadAllItems(compound, items);
+        apSettings = compound.getCompound(AP_SETTINGS_KEY);
         super.load(state, compound);
     }
 
@@ -184,6 +193,10 @@ public abstract class PeripheralTileEntity<T extends BasePeripheral> extends Loc
     @Override
     public void clearContent() {
         items.clear();
+    }
+
+    public CompoundNBT getApSettings() {
+        return apSettings;
     }
 }
 

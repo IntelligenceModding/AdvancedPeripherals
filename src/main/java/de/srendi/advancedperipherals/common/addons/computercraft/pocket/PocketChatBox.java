@@ -16,7 +16,7 @@ public class PocketChatBox extends BasePocket<ChatBoxPeripheral> {
     @Nullable
     @Override
     public ChatBoxPeripheral getPeripheral(IPocketAccess access) {
-        return new ChatBoxPeripheral("chatBox", access.getEntity());
+        return new ChatBoxPeripheral("chatBox", access);
     }
 
 }

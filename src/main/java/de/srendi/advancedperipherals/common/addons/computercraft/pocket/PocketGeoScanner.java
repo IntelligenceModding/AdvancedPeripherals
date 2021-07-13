@@ -17,7 +17,7 @@ public class PocketGeoScanner extends BasePocket<GeoScannerPeripheral> {
     @Nullable
     @Override
     public GeoScannerPeripheral getPeripheral(@NotNull IPocketAccess iPocketAccess) {
-        return new GeoScannerPeripheral("geoScanner", iPocketAccess.getEntity());
+        return new GeoScannerPeripheral("geoScanner", iPocketAccess);
     }
 
 }

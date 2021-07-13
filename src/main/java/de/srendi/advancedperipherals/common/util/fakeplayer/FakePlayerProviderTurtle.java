@@ -21,22 +21,22 @@ public final class FakePlayerProviderTurtle {
 	/*
 	Highly inspired by https://github.com/SquidDev-CC/plethora/blob/minecraft-1.12/src/main/java/org/squiddev/plethora/integration/computercraft/FakePlayerProviderTurtle.java
 	*/
-	private static final WeakHashMap<ITurtleAccess, TurtleFakePlayer> registeredPlayers = new WeakHashMap<>();
+	private static final WeakHashMap<ITurtleAccess, APFakePlayer> registeredPlayers = new WeakHashMap<>();
 
 	private FakePlayerProviderTurtle() {
 	}
 
-	public static TurtleFakePlayer getPlayer(ITurtleAccess turtle, GameProfile profile) {
-		TurtleFakePlayer fake = registeredPlayers.get(turtle);
+	public static APFakePlayer getPlayer(ITurtleAccess turtle, GameProfile profile) {
+		APFakePlayer fake = registeredPlayers.get(turtle);
 		if (fake == null) {
-			fake = new TurtleFakePlayer((ServerWorld) turtle.getWorld(), null, profile);
+			fake = new APFakePlayer((ServerWorld) turtle.getWorld(), null, profile);
 			registeredPlayers.put(turtle, fake);
 		}
 
 		return fake;
 	}
 
-	public static void load(TurtleFakePlayer player, ITurtleAccess turtle) {
+	public static void load(APFakePlayer player, ITurtleAccess turtle) {
 		Direction direction = turtle.getDirection();
 		player.setLevel(turtle.getWorld());
 		BlockPos position = turtle.getPosition();
@@ -72,7 +72,7 @@ public final class FakePlayerProviderTurtle {
 		}
 	}
 
-	public static void unload(TurtleFakePlayer player, ITurtleAccess turtle) {
+	public static void unload(APFakePlayer player, ITurtleAccess turtle) {
 		player.inventory.selected = 0;
 
 		// Remove properties
@@ -105,8 +105,8 @@ public final class FakePlayerProviderTurtle {
 		}
 	}
 
-	public static <T> T withPlayer(ITurtleAccess turtle, Function<TurtleFakePlayer, T> function) {
-		TurtleFakePlayer player = getPlayer(turtle, turtle.getOwningPlayer());
+	public static <T> T withPlayer(ITurtleAccess turtle, Function<APFakePlayer, T> function) {
+		APFakePlayer player = getPlayer(turtle, turtle.getOwningPlayer());
 		load(player, turtle);
 		T result = function.apply(player);
 		unload(player, turtle);
