@@ -73,7 +73,6 @@ public class WeakAutomataCore extends APItem implements IFeedableAutomataCore {
                     put(EntityType.COW.getRegistryName().toString(), 3);
                     put(EntityType.SHEEP.getRegistryName().toString(), 3);
                     put(EntityType.CHICKEN.getRegistryName().toString(), 3);
-                    put(EntityType.HORSE.getRegistryName().toString(), 1);
                 }}, Items.HUSBANDRY_AUTOMATA_CORE.get()
         );
         endSoulRecord.ingredients.keySet().forEach(entityKey -> put(entityKey, endSoulRecord));

@@ -5,6 +5,9 @@
     "IAI",
     "QIQ"
   ],
+  "conditions": [
+    {"type":  "forge:mod_loaded", "modid":  "refinedstorage"}
+  ],
   "key": {
     "Q": {
       "item": "refinedstorage:quartz_enriched_iron"
