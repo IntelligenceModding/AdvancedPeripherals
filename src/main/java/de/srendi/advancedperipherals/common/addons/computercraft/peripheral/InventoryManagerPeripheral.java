@@ -6,7 +6,6 @@ import dan200.computercraft.shared.util.NBTUtil;
 import de.srendi.advancedperipherals.common.addons.computercraft.base.BasePeripheral;
 import de.srendi.advancedperipherals.common.addons.computercraft.base.Converter;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
-import de.srendi.advancedperipherals.common.blocks.tileentity.InventoryManagerTile;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
 import de.srendi.advancedperipherals.common.util.ItemUtil;
 import net.minecraft.entity.player.PlayerEntity;
@@ -16,12 +15,13 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.registries.ForgeRegistries;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 
 public class InventoryManagerPeripheral extends BasePeripheral {
 
@@ -52,12 +52,12 @@ public class InventoryManagerPeripheral extends BasePeripheral {
         //With this, we can use the item parameter without need to use the slot parameter. If we don't want to use
         //the slot parameter, we can use -1
         int invSlot = -1;
-        if(slot.isPresent() && slot.get() > 0)
+        if (slot.isPresent() && slot.get() > 0)
             invSlot = slot.get();
 
         Direction direction = validateSide(invDirection);
 
-        TileEntity targetEntity = tileEntity.getLevel().getBlockEntity(tileEntity.getBlockPos().relative(direction));
+        TileEntity targetEntity = owner.getWorld().getBlockEntity(owner.getPos().relative(direction));
         IItemHandler inventoryFrom = targetEntity != null ? targetEntity
                 .getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, direction).resolve().orElse(null) : null;
         PlayerInventory inventoryTo = getOwnerPlayer().inventory;
@@ -104,7 +104,7 @@ public class InventoryManagerPeripheral extends BasePeripheral {
                         }
                     }
             }
-        if(invSlot != -1) {
+        if (invSlot != -1) {
             if (stack.isEmpty())
                 if (inventoryFrom.getStackInSlot(slot.get()).getCount() >= amount) {
                     if (inventoryTo.add(inventoryFrom.extractItem(slot.get(), amount, true))) {
@@ -148,12 +148,12 @@ public class InventoryManagerPeripheral extends BasePeripheral {
         //With this, we can use the item parameter without need to use the slot parameter. If we don't want to use
         //the slot parameter, we can use -1
         int invSlot = -1;
-        if(slot.isPresent() && slot.get() > 0)
+        if (slot.isPresent() && slot.get() > 0)
             invSlot = slot.get();
 
         Direction direction = validateSide(invDirection);
 
-        TileEntity targetEntity = tileEntity.getLevel().getBlockEntity(tileEntity.getBlockPos().relative(direction));
+        TileEntity targetEntity = owner.getWorld().getBlockEntity(owner.getPos().relative(direction));
         PlayerInventory inventoryFrom = getOwnerPlayer().inventory;
         IItemHandler inventoryTo = targetEntity != null ? targetEntity
                 .getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, direction).resolve().orElse(null) : null;
@@ -295,7 +295,7 @@ public class InventoryManagerPeripheral extends BasePeripheral {
     }
 
     private PlayerEntity getOwnerPlayer() {
-        return ((InventoryManagerTile) tileEntity).getOwnerPlayer();
+        return owner.getOwner();
     }
 
     private void ensurePlayerIsLinked() throws LuaException {
@@ -308,7 +308,7 @@ public class InventoryManagerPeripheral extends BasePeripheral {
             if (stack.isEmpty())
                 break;
             //Fixes https://github.com/Seniorendi/AdvancedPeripherals/issues/93
-            if(!stack.hasTag())
+            if (!stack.hasTag())
                 stack.setTag(null);
             stack = inventoryTo.insertItem(i, stack, false);
         }

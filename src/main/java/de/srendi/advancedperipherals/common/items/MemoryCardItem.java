@@ -1,5 +1,6 @@
 package de.srendi.advancedperipherals.common.items;
 
+import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
 import de.srendi.advancedperipherals.common.items.base.BaseItem;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.PlayerEntity;
@@ -33,6 +34,11 @@ public class MemoryCardItem extends BaseItem {
     @Override
     public ITextComponent getDescription() {
         return new TranslationTextComponent("item.advancedperipherals.tooltip.memory_card");
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return AdvancedPeripheralsConfig.enableInventoryManager;
     }
 
     @Override

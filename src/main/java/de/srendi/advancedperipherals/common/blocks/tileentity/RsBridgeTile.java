@@ -5,10 +5,12 @@ import com.refinedmods.refinedstorage.tile.NetworkNodeTile;
 import com.refinedmods.refinedstorage.tile.config.IRedstoneConfigurable;
 import dan200.computercraft.api.peripheral.IPeripheral;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
+import de.srendi.advancedperipherals.common.addons.computercraft.base.IPeripheralTileEntity;
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.RsBridgePeripheral;
 import de.srendi.advancedperipherals.common.addons.refinedstorage.RefinedStorageNode;
 import de.srendi.advancedperipherals.common.setup.TileEntityTypes;
-import net.minecraft.tileentity.TileEntityType;
+import net.minecraft.block.BlockState;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -19,17 +21,17 @@ import org.jetbrains.annotations.Nullable;
 
 import static dan200.computercraft.shared.Capabilities.CAPABILITY_PERIPHERAL;
 
-public class RsBridgeTile extends NetworkNodeTile<RefinedStorageNode> implements INetworkNodeProxy<RefinedStorageNode>, IRedstoneConfigurable {
+public class RsBridgeTile extends NetworkNodeTile<RefinedStorageNode> implements INetworkNodeProxy<RefinedStorageNode>, IRedstoneConfigurable, IPeripheralTileEntity {
+
+    private static final String AP_SETTINGS_KEY = "AP_SETTINGS";
+
+    protected CompoundNBT apSettings;
 
     protected RsBridgePeripheral peripheral = new RsBridgePeripheral("rsBridge", this);
     private LazyOptional<IPeripheral> peripheralCap;
 
     public RsBridgeTile() {
-        this(TileEntityTypes.RS_BRIDGE.get());
-    }
-
-    public RsBridgeTile(TileEntityType<?> tileType) {
-        super(tileType);
+        super(TileEntityTypes.RS_BRIDGE.get());
     }
 
     @NotNull
@@ -51,5 +53,22 @@ public class RsBridgeTile extends NetworkNodeTile<RefinedStorageNode> implements
         return new RefinedStorageNode(world, blockPos);
     }
 
+    @Override
+    public @NotNull CompoundNBT save(@NotNull CompoundNBT compound) {
+        super.save(compound);
+        if (!apSettings.isEmpty())
+            compound.put(AP_SETTINGS_KEY, apSettings);
+        return compound;
+    }
 
+    @Override
+    public void load(@NotNull BlockState state, CompoundNBT compound) {
+        apSettings = compound.getCompound(AP_SETTINGS_KEY);
+        super.load(state, compound);
+    }
+
+    @Override
+    public CompoundNBT getApSettings() {
+        return apSettings;
+    }
 }

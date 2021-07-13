@@ -3,86 +3,54 @@ package de.srendi.advancedperipherals.common.addons.computercraft.base;
 import dan200.computercraft.ComputerCraft;
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.lua.MethodResult;
-import dan200.computercraft.api.peripheral.IComputerAccess;
+import dan200.computercraft.api.pocket.IPocketAccess;
 import dan200.computercraft.api.turtle.ITurtleAccess;
+import dan200.computercraft.api.turtle.TurtleSide;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
-import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
-import net.minecraft.entity.Entity;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.energy.CapabilityEnergy;
-import net.minecraftforge.energy.IEnergyStorage;
 
-import javax.annotation.Nonnull;
+import java.util.Map;
 import java.util.Optional;
 
-public abstract class FuelConsumingPeripheral extends BasePeripheral {
+public abstract class FuelConsumingPeripheral extends OperationPeripheral {
     public FuelConsumingPeripheral(String type, PeripheralTileEntity<?> tileEntity) {
         super(type, tileEntity);
     }
 
-    public FuelConsumingPeripheral(String type, TileEntity tileEntity) {
-        super(type, tileEntity);
+    public FuelConsumingPeripheral(String type, ITurtleAccess turtle, TurtleSide side) {
+        super(type, turtle, side);
     }
 
-    public FuelConsumingPeripheral(String type, Entity entity) {
-        super(type, entity);
+    public FuelConsumingPeripheral(String type, IPocketAccess pocket) {
+        super(type, pocket);
     }
 
-    public FuelConsumingPeripheral(String type, ITurtleAccess turtle) {
-        super(type, turtle);
+    protected abstract int getMaxFuelConsumptionRate();
+
+    protected abstract int _getFuelConsumptionRate();
+
+    protected abstract void _setFuelConsumptionRate(int rate);
+
+    protected int fuelConsumptionMultiply() {
+        return (int) Math.pow(2, _getFuelConsumptionRate() - 1);
     }
 
     public boolean fuelConsumptionDisabled() {
         return !ComputerCraft.turtlesNeedFuel;
     }
 
-    public int getFuelCount() {
-        if (turtle != null)
-            return turtle.getFuelLevel();
-        if (tileEntity != null)
-            return tileEntity.getCapability(CapabilityEnergy.ENERGY).map(storage -> storage.getEnergyStored() / AdvancedPeripheralsConfig.energyToFuelRate).orElse(0);
-        return 0;
+    public boolean consumeFuel(int count) {
+        return consumeFuel(count, false);
     }
 
-    public int getMaxFuelCount() {
-        if (turtle != null)
-            return turtle.getFuelLimit();
-        if (tileEntity != null)
-            return tileEntity.getCapability(CapabilityEnergy.ENERGY).map(storage -> storage.getMaxEnergyStored() / AdvancedPeripheralsConfig.energyToFuelRate).orElse(0);
-        return 0;
-    }
-
-    public boolean consumeFuel(@Nonnull IComputerAccess access, int count) {
-        return consumeFuel(access, count, false);
-    }
-
-    public boolean consumeFuel(@Nonnull IComputerAccess access, int count, boolean simulate) {
+    public boolean consumeFuel(int count, boolean simulate) {
         if (fuelConsumptionDisabled())
             return true;
-        if (turtle != null) {
-            if (turtle.getFuelLevel() >= count) {
-                if (simulate) return true;
-                return turtle.consumeFuel(count);
-            }
-        }
-        if (tileEntity != null) {
-            return tileEntity.getCapability(CapabilityEnergy.ENERGY).map(storage -> {
-                int energyCount = count * AdvancedPeripheralsConfig.energyToFuelRate;
-                int extractedCount = storage.extractEnergy(energyCount, true);
-                if (extractedCount == energyCount) {
-                    if (simulate)
-                        return true;
-                    storage.extractEnergy(energyCount, false);
-                    return true;
-                }
-                return false;
-            }).orElse(false);
-        }
-        return false;
+        count = count * fuelConsumptionMultiply();
+        return owner.consumeFuel(count, simulate);
     }
 
-    public Optional<MethodResult> consumeFuelOp(@Nonnull IComputerAccess access, int count) {
-        if (!consumeFuel(access, count))
+    public Optional<MethodResult> consumeFuelOp(int count) {
+        if (!consumeFuel(count))
             return Optional.of(MethodResult.of(null, String.format("Not enough fuel, %d needed", count)));
         return Optional.empty();
     }
@@ -90,22 +58,43 @@ public abstract class FuelConsumingPeripheral extends BasePeripheral {
     public void addFuel(int count) {
         if (fuelConsumptionDisabled())
             return;
-        if (turtle != null)
-            turtle.addFuel(count);
-        if (tileEntity != null)
-            tileEntity.getCapability(CapabilityEnergy.ENERGY).ifPresent(storage -> {
-                int energyCount = count * AdvancedPeripheralsConfig.energyToFuelRate;
-                storage.receiveEnergy(energyCount, false);
-            });
+        owner.addFuel(count);
+    }
+
+    @Override
+    public int getCooldown(String name) {
+        return getRawCooldown(name) / _getFuelConsumptionRate();
+    }
+
+    @Override
+    public Map<String, Object> getPeripheralConfiguration() {
+        Map<String, Object> data = super.getPeripheralConfiguration();
+        data.put("maxFuelConsumptionRate", getMaxFuelConsumptionRate());
+        return data;
     }
 
     @LuaFunction(mainThread = true)
-    public int getFuelLevel() {
-        return getFuelCount();
+    public final int getFuelLevel() {
+        return owner.getFuelCount();
     }
 
     @LuaFunction(mainThread = true)
-    public int getMaxFuelLevel() {
-        return getMaxFuelCount();
+    public final int getMaxFuelLevel() {
+        return owner.getFuelMaxCount();
+    }
+
+    @LuaFunction
+    public final int getFuelConsumptionRate() {
+        return _getFuelConsumptionRate();
+    }
+
+    @LuaFunction
+    public final MethodResult setFuelConsumptionRate(int rate) {
+        if (rate < 1)
+            return MethodResult.of(null, "Too small fuel consumption rate");
+        if (rate > getMaxFuelConsumptionRate())
+            return MethodResult.of(null, "Too big fuel consumption rate");
+        _setFuelConsumptionRate(rate);
+        return MethodResult.of(true);
     }
 }

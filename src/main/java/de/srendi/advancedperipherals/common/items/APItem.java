@@ -4,25 +4,29 @@ import de.srendi.advancedperipherals.common.items.base.BaseItem;
 import net.minecraft.util.text.ITextComponent;
 
 import java.util.Optional;
+import java.util.function.Supplier;
 
 public class APItem extends BaseItem {
 
     String turtleID;
     String pocketID;
     ITextComponent description;
+    Supplier<Boolean> enabledSup;
 
-    public APItem(Properties properties, String turtleID, String pocketID, ITextComponent description) {
+    public APItem(Properties properties, String turtleID, String pocketID, ITextComponent description, Supplier<Boolean> enabledSup) {
         super(properties);
         this.turtleID = turtleID;
         this.pocketID = pocketID;
         this.description = description;
+        this.enabledSup = enabledSup;
     }
 
-    public APItem(String turtleID, String pocketID, ITextComponent description) {
+    public APItem(String turtleID, String pocketID, ITextComponent description, Supplier<Boolean> enabledSup) {
         super();
         this.turtleID = turtleID;
         this.pocketID = pocketID;
         this.description = description;
+        this.enabledSup = enabledSup;
     }
 
     @Override
@@ -38,5 +42,10 @@ public class APItem extends BaseItem {
     @Override
     public ITextComponent getDescription() {
         return description;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return enabledSup.get();
     }
 }

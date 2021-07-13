@@ -30,6 +30,20 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class DrawerIntegration extends Integration<TileEntityDrawers> {
+    private static IItemHandler extractHandler(@Nullable Object object) {
+        if (object instanceof TileEntityDrawersStandard)
+            return new DrawerItemHandler(((TileEntityDrawersStandard) object).getGroup());
+        if (object instanceof ICapabilityProvider) {
+            LazyOptional<IItemHandler> cap = ((ICapabilityProvider) object).getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY);
+            if (cap.isPresent()) return cap.orElseThrow(NullPointerException::new);
+        }
+        if (object instanceof IItemHandler)
+            return (IItemHandler) object;
+        if (object instanceof IInventory)
+            return new InvWrapper((IInventory) object);
+        return null;
+    }
+
     @Override
     protected Class<TileEntityDrawers> getTargetClass() {
         return TileEntityDrawers.class;
@@ -50,20 +64,6 @@ public class DrawerIntegration extends Integration<TileEntityDrawers> {
     @Override
     public String getType() {
         return "standardDrawer";
-    }
-
-    private static IItemHandler extractHandler(@Nullable Object object) {
-        if (object instanceof TileEntityDrawersStandard)
-            return new DrawerItemHandler(((TileEntityDrawersStandard) object).getGroup());
-        if (object instanceof ICapabilityProvider) {
-            LazyOptional<IItemHandler> cap = ((ICapabilityProvider) object).getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY);
-            if (cap.isPresent()) return cap.orElseThrow(NullPointerException::new);
-        }
-        if (object instanceof IItemHandler)
-            return (IItemHandler) object;
-        if (object instanceof IInventory)
-            return new InvWrapper((IInventory) object);
-        return null;
     }
 
     @LuaFunction
@@ -158,7 +158,7 @@ public class DrawerIntegration extends Integration<TileEntityDrawers> {
 
         if (limit <= 0)
             return MethodResult.of(0);
-        return MethodResult.of(InventoryUtil.moveItem(new DrawerItemHandler(tileEntity.getGroup()), fromSlot - 1, to, toSlot -1, limit));
+        return MethodResult.of(InventoryUtil.moveItem(new DrawerItemHandler(tileEntity.getGroup()), fromSlot - 1, to, toSlot - 1, limit));
     }
 
     @LuaFunction(mainThread = true)

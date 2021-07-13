@@ -17,7 +17,7 @@ public class PocketEnvironment extends BasePocket<EnvironmentDetectorPeripheral>
     @Nullable
     @Override
     public EnvironmentDetectorPeripheral getPeripheral(@NotNull IPocketAccess iPocketAccess) {
-        return new EnvironmentDetectorPeripheral("environmentDetector", iPocketAccess.getEntity());
+        return new EnvironmentDetectorPeripheral("environmentDetector", iPocketAccess);
     }
 
 }

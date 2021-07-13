@@ -1,0 +1,27 @@
+{
+  "display": {
+    "frame": "challenge",
+    "icon": {
+      "item": "advancedperipherals:end_automata_core"
+    },
+    "title": {
+      "translate": "advancements.advancedperipherals.end_automata_core"
+    },
+    "description": {
+      "translate": "advancements.advancedperipherals.end_automata_core.description"
+    }
+  },
+  "parent": "advancedperipherals:weak_automata_core",
+  "criteria": {
+    "controller_in_inventory": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "advancedperipherals:end_automata_core"
+          }
+        ]
+      }
+    }
+  }
+}

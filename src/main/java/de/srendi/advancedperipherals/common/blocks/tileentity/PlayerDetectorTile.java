@@ -9,11 +9,7 @@ import org.jetbrains.annotations.NotNull;
 public class PlayerDetectorTile extends PeripheralTileEntity<PlayerDetectorPeripheral> {
 
     public PlayerDetectorTile() {
-        this(TileEntityTypes.PLAYER_DETECTOR.get());
-    }
-
-    public PlayerDetectorTile(final TileEntityType<?> tileEntityType) {
-        super(tileEntityType);
+        super(TileEntityTypes.PLAYER_DETECTOR.get());
     }
 
     @NotNull

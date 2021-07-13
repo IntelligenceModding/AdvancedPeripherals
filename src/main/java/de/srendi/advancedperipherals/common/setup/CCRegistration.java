@@ -19,12 +19,12 @@ public class CCRegistration {
     public static TurtlePlayerDetector playerDetector;
     public static TurtleChunky chunky;
     public static TurtleGeoScanner geoScanner;
-    public static TurtleWeakMechanicSoul weakMechanicSoul;
-    public static TurtleEndMechanicSoul endMechanicSoul;
-    public static TurtleHusbandryMechanicSoul husbandryMechanicSoul;
-    public static TurtleOverpoweredWeakMechanicSoul overpoweredWeakMechanicSoul;
-    public static TurtleOverpoweredEndMechanicSoul overpoweredEndMechanicSoul;
-    public static TurtleOverpoweredHusbandryMechanicSoul overpoweredHusbandryMechanicSoul;
+    public static WeakAutomata weakAutomata;
+    public static EndAutomata endAutomata;
+    public static HusbandryAutomata husbandryAutomata;
+    public static OverpoweredWeakAutomata overpoweredWeakAutomata;
+    public static OverpoweredEndAutomata overpoweredEndAutomata;
+    public static OverpoweredHusbandryAutomata overpoweredHusbandryAutomata;
 
     public static PocketEnvironment environmentPocket;
     public static PocketChatBox chatPocket;
@@ -63,18 +63,18 @@ public class CCRegistration {
         ComputerCraftAPI.registerTurtleUpgrade(chunky);
         geoScanner = new TurtleGeoScanner();
         ComputerCraftAPI.registerTurtleUpgrade(geoScanner);
-        weakMechanicSoul = new TurtleWeakMechanicSoul();
-        ComputerCraftAPI.registerTurtleUpgrade(weakMechanicSoul);
-        endMechanicSoul = new TurtleEndMechanicSoul();
-        ComputerCraftAPI.registerTurtleUpgrade(endMechanicSoul);
-        husbandryMechanicSoul = new TurtleHusbandryMechanicSoul();
-        ComputerCraftAPI.registerTurtleUpgrade(husbandryMechanicSoul);
-        overpoweredWeakMechanicSoul = new TurtleOverpoweredWeakMechanicSoul();
-        ComputerCraftAPI.registerTurtleUpgrade(overpoweredWeakMechanicSoul);
-        overpoweredEndMechanicSoul = new TurtleOverpoweredEndMechanicSoul();
-        ComputerCraftAPI.registerTurtleUpgrade(overpoweredEndMechanicSoul);
-        overpoweredHusbandryMechanicSoul = new TurtleOverpoweredHusbandryMechanicSoul();
-        ComputerCraftAPI.registerTurtleUpgrade(overpoweredHusbandryMechanicSoul);
+        weakAutomata = new WeakAutomata();
+        ComputerCraftAPI.registerTurtleUpgrade(weakAutomata);
+        endAutomata = new EndAutomata();
+        ComputerCraftAPI.registerTurtleUpgrade(endAutomata);
+        husbandryAutomata = new HusbandryAutomata();
+        ComputerCraftAPI.registerTurtleUpgrade(husbandryAutomata);
+        overpoweredWeakAutomata = new OverpoweredWeakAutomata();
+        ComputerCraftAPI.registerTurtleUpgrade(overpoweredWeakAutomata);
+        overpoweredEndAutomata = new OverpoweredEndAutomata();
+        ComputerCraftAPI.registerTurtleUpgrade(overpoweredEndAutomata);
+        overpoweredHusbandryAutomata = new OverpoweredHusbandryAutomata();
+        ComputerCraftAPI.registerTurtleUpgrade(overpoweredHusbandryAutomata);
     }
 
 }

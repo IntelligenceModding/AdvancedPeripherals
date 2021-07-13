@@ -18,7 +18,7 @@ public class PocketPlayerDetector extends BasePocket<PlayerDetectorPeripheral> {
     @Nullable
     @Override
     public PlayerDetectorPeripheral getPeripheral(@NotNull IPocketAccess iPocketAccess) {
-        return new PlayerDetectorPeripheral("playerDetector", iPocketAccess.getEntity());
+        return new PlayerDetectorPeripheral("playerDetector", iPocketAccess);
     }
 
 }

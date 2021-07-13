@@ -4,7 +4,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 import net.minecraftforge.common.IForgeShearable;
 
 import java.util.HashMap;
@@ -25,7 +24,7 @@ public class RepresentationUtil {
         data.put("baby", animal.isBaby());
         data.put("inLove", animal.isInLove());
         data.put("aggressive", animal.isAggressive());
-        if (animal instanceof IForgeShearable) {
+        if (animal instanceof IForgeShearable && !itemInHand.isEmpty()) {
             IForgeShearable shareable = (IForgeShearable) animal;
             data.put("shareable", shareable.isShearable(itemInHand, animal.level, animal.blockPosition()));
         }

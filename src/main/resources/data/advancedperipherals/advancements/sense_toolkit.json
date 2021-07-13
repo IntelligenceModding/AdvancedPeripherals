@@ -1,0 +1,36 @@
+{
+  "display": {
+    "icon": {
+      "item": "advancedperipherals:geo_scanner"
+    },
+    "title": {
+      "translate": "advancements.advancedperipherals.sense_toolkit"
+    },
+    "description": {
+      "translate": "advancements.advancedperipherals.sense_toolkit.description"
+    }
+  },
+  "parent": "advancedperipherals:base_toolkit",
+  "criteria": {
+    "block_in_inventory": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "advancedperipherals:geo_scanner"
+          }
+        ]
+      }
+    },
+    "environment_in_inventory": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "advancedperipherals:environment_detector"
+          }
+        ]
+      }
+    }
+  }
+}

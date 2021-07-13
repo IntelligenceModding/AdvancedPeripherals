@@ -1,6 +1,5 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.base;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
 import dan200.computercraft.api.client.TransformedModel;
 import dan200.computercraft.api.peripheral.IPeripheral;
 import dan200.computercraft.api.turtle.AbstractTurtleUpgrade;
@@ -8,11 +7,8 @@ import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
 import dan200.computercraft.api.turtle.TurtleUpgradeType;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
-import de.srendi.advancedperipherals.common.blocks.base.TileEntityList;
-import de.srendi.advancedperipherals.common.util.WorldPos;
 import net.minecraft.client.renderer.model.ModelResourceLocation;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.vector.Matrix4f;
 import net.minecraft.util.math.vector.TransformationMatrix;
@@ -20,20 +16,17 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public abstract class BaseTurtle<T extends BasePeripheral> extends AbstractTurtleUpgrade {
-
-    protected @Nullable T peripheral;
-    protected ITurtleAccess turtle;
     protected int tick;
 
     public BaseTurtle(String id, String adjective, ItemStack item) {
         super(new ResourceLocation(AdvancedPeripherals.MOD_ID, id), TurtleUpgradeType.PERIPHERAL, adjective, item);
     }
 
-    protected abstract T createPeripheral();
-
     protected abstract ModelResourceLocation getLeftModel();
 
     protected abstract ModelResourceLocation getRightModel();
+
+    protected abstract T buildPeripheral(@NotNull ITurtleAccess turtle, @NotNull TurtleSide side);
 
     @NotNull
     @Override
@@ -54,23 +47,10 @@ public abstract class BaseTurtle<T extends BasePeripheral> extends AbstractTurtl
     @Nullable
     @Override
     public IPeripheral createPeripheral(@NotNull ITurtleAccess turtle, @NotNull TurtleSide side) {
-        this.peripheral = createPeripheral();
+        T peripheral = buildPeripheral(turtle, side);
+        if (!peripheral.isEnabled()) {
+            return DisabledPeripheral.INSTANCE;
+        }
         return peripheral;
-    }
-
-    @Override
-    public void update(@NotNull ITurtleAccess turtle, @NotNull TurtleSide side) {
-        if (!turtle.getWorld().isClientSide) {
-            IPeripheral turtlePeripheral = turtle.getPeripheral(side);
-            this.turtle = turtle;
-            if (turtlePeripheral instanceof BasePeripheral)
-                ((BasePeripheral) turtlePeripheral).setTurtle(turtle);
-        }
-
-        tick++;
-        if (tick > 10) {
-            TileEntityList.get(turtle.getWorld()).setTileEntity(turtle.getWorld(), new WorldPos(turtle.getPosition(), turtle.getWorld()), true); //Add the turtle to the List for event use
-            tick = 0;
-        }
     }
 }

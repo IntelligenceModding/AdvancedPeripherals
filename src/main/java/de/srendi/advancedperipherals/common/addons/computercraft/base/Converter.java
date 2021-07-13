@@ -1,17 +1,17 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.base;
 
 import dan200.computercraft.core.computer.ComputerSide;
-import de.srendi.advancedperipherals.common.blocks.RedstoneIntegratorBlock;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import org.jetbrains.annotations.NotNull;
-import org.lwjgl.system.CallbackI;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class Converter {
@@ -40,7 +40,7 @@ public class Converter {
     }
 
     public static List<String> tagsToList(@NotNull Set<ResourceLocation> tags) {
-        if(tags.isEmpty())
+        if (tags.isEmpty())
             return null;
         return tags.stream().map(ResourceLocation::toString).collect(Collectors.toList());
     }

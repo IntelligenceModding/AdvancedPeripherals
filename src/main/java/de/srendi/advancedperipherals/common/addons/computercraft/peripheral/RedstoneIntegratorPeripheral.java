@@ -2,19 +2,18 @@ package de.srendi.advancedperipherals.common.addons.computercraft.peripheral;
 
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
-import dan200.computercraft.core.computer.ComputerSide;
 import de.srendi.advancedperipherals.common.addons.computercraft.base.BasePeripheral;
-import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
 import de.srendi.advancedperipherals.common.blocks.tileentity.RedstoneIntegratorTile;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
 import net.minecraft.util.Direction;
 
-import java.util.Locale;
-
 public class RedstoneIntegratorPeripheral extends BasePeripheral {
 
-    public RedstoneIntegratorPeripheral(String type, PeripheralTileEntity<?> tileEntity) {
+    private final RedstoneIntegratorTile tile;
+
+    public RedstoneIntegratorPeripheral(String type, RedstoneIntegratorTile tileEntity) {
         super(type, tileEntity);
+        this.tile = tileEntity;
     }
 
     @Override
@@ -25,40 +24,35 @@ public class RedstoneIntegratorPeripheral extends BasePeripheral {
     @LuaFunction(mainThread = true)
     public final boolean getInput(String direction) throws LuaException {
         Direction dir = validateSide(direction);
-        return getTileEntity().getRedstoneInput(dir) > 0;
+        return tile.getRedstoneInput(dir) > 0;
     }
 
     @LuaFunction(mainThread = true)
     public final boolean getOutput(String direction) throws LuaException {
-        return getTileEntity().power[validateSide(direction).get3DDataValue()] > 0;
+        return tile.power[validateSide(direction).get3DDataValue()] > 0;
     }
 
     @LuaFunction(value = {"getAnalogueInput", "getAnalogInput"}, mainThread = true)
     public final int getAnalogInput(String direction) throws LuaException {
         Direction dir = validateSide(direction);
-        return getTileEntity().getRedstoneInput(dir);
+        return tile.getRedstoneInput(dir);
     }
 
     @LuaFunction(value = {"getAnalogueOutput", "getAnalogOutput"}, mainThread = true)
     public final int getAnalogOutput(String direction) throws LuaException {
         Direction dir = validateSide(direction);
-        return getTileEntity().power[validateSide(direction).get3DDataValue()];
+        return tile.power[validateSide(direction).get3DDataValue()];
     }
 
     @LuaFunction(mainThread = true)
     public final void setOutput(String direction, boolean power) throws LuaException {
         Direction dir = validateSide(direction);
-        getTileEntity().setRedstoneOutput(dir, power ? 15 : 0);
+        tile.setRedstoneOutput(dir, power ? 15 : 0);
     }
 
     @LuaFunction(value = {"setAnalogueOutput", "setAnalogOutput"}, mainThread = true)
     public final void setAnalogOutput(String direction, int power) throws LuaException {
         Direction dir = validateSide(direction);
-        getTileEntity().setRedstoneOutput(dir, power);
+        tile.setRedstoneOutput(dir, power);
     }
-
-    private RedstoneIntegratorTile getTileEntity() {
-        return (RedstoneIntegratorTile) tileEntity;
-    }
-
 }

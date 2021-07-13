@@ -5,28 +5,24 @@ import dan200.computercraft.api.lua.IArguments;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.lua.MethodResult;
-import dan200.computercraft.api.peripheral.IComputerAccess;
-import de.srendi.advancedperipherals.common.addons.computercraft.base.OperationPeripheral;
+import dan200.computercraft.api.pocket.IPocketAccess;
+import dan200.computercraft.api.turtle.ITurtleAccess;
+import dan200.computercraft.api.turtle.TurtleSide;
+import de.srendi.advancedperipherals.common.addons.computercraft.base.FuelConsumingPeripheral;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.entity.Entity;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.energy.CapabilityEnergy;
-import net.minecraftforge.energy.IEnergyStorage;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.*;
 
-public class GeoScannerPeripheral extends OperationPeripheral {
+public class GeoScannerPeripheral extends FuelConsumingPeripheral {
 	/*
 	Highly inspired by https://github.com/SquidDev-CC/plethora/ BlockScanner
 	*/
@@ -37,31 +33,12 @@ public class GeoScannerPeripheral extends OperationPeripheral {
         super(type, tileEntity);
     }
 
-    public GeoScannerPeripheral(String type, TileEntity tileEntity) {
-        super(type, tileEntity);
+    public GeoScannerPeripheral(String type, ITurtleAccess turtle, TurtleSide side) {
+        super(type, turtle, side);
     }
 
-    public GeoScannerPeripheral(String type, Entity entity) {
-        super(type, entity);
-    }
-
-    @Override
-    protected int getRawCooldown(String name) {
-        return AdvancedPeripheralsConfig.geoScannerMinScanPeriod;
-    }
-
-    @Override
-    protected int getMaxFuelConsumptionRate() {
-        return 1;
-    }
-
-    @Override
-    protected int _getFuelConsumptionRate(@NotNull IComputerAccess access) {
-        return 1;
-    }
-
-    @Override
-    protected void _setFuelConsumptionRate(@NotNull IComputerAccess access, int rate) {
+    public GeoScannerPeripheral(String type, IPocketAccess pocket) {
+        super(type, pocket);
     }
 
     private static List<Map<String, ?>> scan(World world, int x, int y, int z, int radius) {
@@ -104,6 +81,25 @@ public class GeoScannerPeripheral extends OperationPeripheral {
     }
 
     @Override
+    protected int getRawCooldown(String name) {
+        return AdvancedPeripheralsConfig.geoScannerMinScanPeriod;
+    }
+
+    @Override
+    protected int getMaxFuelConsumptionRate() {
+        return 1;
+    }
+
+    @Override
+    protected int _getFuelConsumptionRate() {
+        return 1;
+    }
+
+    @Override
+    protected void _setFuelConsumptionRate(int rate) {
+    }
+
+    @Override
     public boolean isEnabled() {
         return AdvancedPeripheralsConfig.enableGeoScanner;
     }
@@ -122,9 +118,8 @@ public class GeoScannerPeripheral extends OperationPeripheral {
         return getCurrentCooldown(SCAN_OPERATION);
     }
 
-    @LuaFunction
-    public final Map<String, Object> getConfiguration() {
-        Map<String, Object> result = super.getConfiguration();
+    public Map<String, Object> getPeripheralConfiguration() {
+        Map<String, Object> result = super.getPeripheralConfiguration();
         result.put("freeRadius", AdvancedPeripheralsConfig.geoScannerMaxCostRadius);
         result.put("scanPeriod", AdvancedPeripheralsConfig.geoScannerMinScanPeriod);
         result.put("costRadius", AdvancedPeripheralsConfig.geoScannerMaxCostRadius);
@@ -133,7 +128,7 @@ public class GeoScannerPeripheral extends OperationPeripheral {
     }
 
     @LuaFunction
-    public final MethodResult chunkAnalyze(@Nonnull IComputerAccess access) {
+    public final MethodResult chunkAnalyze() {
         Optional<MethodResult> checkResult = cooldownCheck(SCAN_OPERATION);
         if (checkResult.isPresent()) return checkResult.get();
         World world = getWorld();
@@ -154,12 +149,12 @@ public class GeoScannerPeripheral extends OperationPeripheral {
                 }
             }
         }
-        trackOperation(access, SCAN_OPERATION);
+        trackOperation(SCAN_OPERATION);
         return MethodResult.of(data);
     }
 
     @LuaFunction
-    public final MethodResult scan(@Nonnull IComputerAccess access, @Nonnull IArguments arguments) throws LuaException {
+    public final MethodResult scan(@Nonnull IArguments arguments) throws LuaException {
         int radius = arguments.getInt(0);
         Optional<MethodResult> checkResult = cooldownCheck(SCAN_OPERATION);
         if (checkResult.isPresent()) return checkResult.get();
@@ -169,17 +164,16 @@ public class GeoScannerPeripheral extends OperationPeripheral {
             return MethodResult.of(null, "Radius is exceed max value");
         }
         if (radius > AdvancedPeripheralsConfig.geoScannerMaxFreeRadius) {
-            if (tileEntity == null) {
+            if (owner.getFuelMaxCount() == 0) {
                 return MethodResult.of(null, "Radius is exceed max value");
             }
-            LazyOptional<IEnergyStorage> lazyEnergyStorage = tileEntity.getCapability(CapabilityEnergy.ENERGY);
             int cost = estimateCost(radius);
-            if (!consumeFuel(access, cost, false)) {
+            if (!consumeFuel(cost, false)) {
                 return MethodResult.of(null, String.format("Not enough fuel, %d needed", cost));
             }
         }
-        List<Map<String, ?>> scanResult = scan(world, pos.getX(), pos.getY(), pos.getZ(), Math.min(radius, 8));
-        trackOperation(access, SCAN_OPERATION);
+        List<Map<String, ?>> scanResult = scan(world, pos.getX(), pos.getY(), pos.getZ(), radius);
+        trackOperation(SCAN_OPERATION);
         return MethodResult.of(scanResult);
     }
 }

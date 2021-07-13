@@ -5,7 +5,6 @@ import dan200.computercraft.api.pocket.AbstractPocketUpgrade;
 import dan200.computercraft.api.pocket.IPocketAccess;
 import net.minecraft.util.IItemProvider;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -25,14 +24,8 @@ public abstract class BasePocket<T extends BasePeripheral> extends AbstractPocke
     @Override
     public IPeripheral createPeripheral(@NotNull IPocketAccess iPocketAccess) {
         peripheral = getPeripheral(iPocketAccess);
+        if (!peripheral.isEnabled())
+            return DisabledPeripheral.INSTANCE;
         return peripheral;
-    }
-
-    @Override
-    public boolean onRightClick(@NotNull World world, @NotNull IPocketAccess access, @Nullable IPeripheral peripheral) {
-        if (access.getEntity() != null) {
-            this.peripheral.setEntity(access.getEntity());
-        }
-        return false;
     }
 }

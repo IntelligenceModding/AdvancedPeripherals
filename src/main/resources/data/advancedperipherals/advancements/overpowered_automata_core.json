@@ -1,0 +1,53 @@
+{
+  "display": {
+    "icon": {
+      "item": "advancedperipherals:overpowered_weak_automata_core"
+    },
+    "title": {
+      "translate": "advancements.advancedperipherals.overpowered_automata_core"
+    },
+    "description": {
+      "translate": "advancements.advancedperipherals.overpowered_automata_core.description"
+    }
+  },
+  "parent": "advancedperipherals:weak_automata_core",
+  "criteria": {
+    "overpowered_weak_in_inventory": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "advancedperipherals:overpowered_weak_automata_core"
+          }
+        ]
+      }
+    },
+    "overpowered_end_in_inventory": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "advancedperipherals:overpowered_end_automata_core"
+          }
+        ]
+      }
+    },
+    "overpowered_husbandry_in_inventory": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "advancedperipherals:overpowered_husbandry_automata_core"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "overpowered_weak_in_inventory",
+      "overpowered_end_in_inventory",
+      "overpowered_husbandry_in_inventory"
+    ]
+  ]
+}

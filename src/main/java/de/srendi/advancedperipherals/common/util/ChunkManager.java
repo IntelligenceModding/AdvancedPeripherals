@@ -45,7 +45,7 @@ public class ChunkManager implements ForgeChunkManager.LoadingValidationCallback
                     if (tileTurtle.getUpgrade(TurtleSide.RIGHT) instanceof TurtleChunky || tileTurtle.getUpgrade(TurtleSide.LEFT) instanceof TurtleChunky) {
                         TurtleChunky turtle = (TurtleChunky) (tileTurtle.getUpgrade(TurtleSide.RIGHT) instanceof TurtleChunky ? tileTurtle.getUpgrade(TurtleSide.RIGHT) : tileTurtle.getUpgrade(TurtleSide.LEFT));
                         for (Long chunk : chunks.getSecond()) {
-                            turtle.forceChunk(new ChunkPos(chunk), true);
+                            turtle.forceChunk(tileTurtle.getAccess(), new ChunkPos(chunk), true);
                         }
                     } else {
                         AdvancedPeripherals.debug("Trying remove forced chunk " + blockPos);

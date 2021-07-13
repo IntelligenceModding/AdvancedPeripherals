@@ -12,6 +12,18 @@ public class Pair<T, V> {
         right = v;
     }
 
+    public static <T, V> Pair<T, V> onlyRight(V v) {
+        return new Pair<>(null, v);
+    }
+
+    public static <T, V> Pair<T, V> onlyLeft(T t) {
+        return new Pair<>(t, null);
+    }
+
+    public static <T, V> Pair<T, V> of(T t, V v) {
+        return new Pair<>(t, v);
+    }
+
     public T getLeft() {
         return left;
     }
@@ -36,6 +48,10 @@ public class Pair<T, V> {
         return new Pair<>(left, mapFunc.apply(right));
     }
 
+    public <T1, V1> Pair<T1, V1> mapBoth(BiFunction<T, V, Pair<T1, V1>> mapFunc) {
+        return mapFunc.apply(left, right);
+    }
+
     public <T1> Pair<T1, V> ignoreLeft() {
         return new Pair<>(null, right);
     }
@@ -46,17 +62,5 @@ public class Pair<T, V> {
 
     public <R> R reduce(BiFunction<T, V, R> reduceFunc) {
         return reduceFunc.apply(left, right);
-    }
-
-    public static <T, V> Pair<T, V> onlyRight(V v) {
-        return new Pair<>(null, v);
-    }
-
-    public static <T, V> Pair<T, V> onlyLeft(T t) {
-        return new Pair<>(t, null);
-    }
-
-    public static <T, V> Pair<T, V> of(T t, V v) {
-        return new Pair<>(t, v);
     }
 }

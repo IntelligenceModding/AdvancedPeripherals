@@ -1,6 +1,5 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.peripheral;
 
-import appeng.parts.reporting.ConversionMonitorPart;
 import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.colony.ICivilianData;
 import com.minecolonies.api.colony.IColony;
@@ -15,7 +14,6 @@ import com.minecolonies.api.colony.requestsystem.resolver.retrying.IRetryingRequ
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.colony.workorders.IWorkOrder;
 import com.minecolonies.api.research.IGlobalResearchTree;
-import com.minecolonies.api.research.ILocalResearchTree;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.shared.util.NBTUtil;
@@ -233,9 +231,9 @@ public class ColonyPeripheral extends BasePeripheral {
         tokens.addAll(requestResolver.getAllAssignedRequests());
 
         List<IRequest<?>> requests = new ArrayList<>();
-        for(IToken<?> token : tokens) {
+        for (IToken<?> token : tokens) {
             IRequest<?> request = requestManager.getRequestForToken(token);
-            if(request != null && !(request instanceof IDeliverable))
+            if (request != null && !(request instanceof IDeliverable))
                 requests.add(request);
         }
 

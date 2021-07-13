@@ -25,11 +25,7 @@ public class ARControllerTile extends PeripheralTileEntity<ARControllerPeriphera
     private List<ARRenderAction> canvas = new ArrayList<>();
 
     public ARControllerTile() {
-        this(TileEntityTypes.AR_CONTROLLER.get());
-    }
-
-    public ARControllerTile(TileEntityType<?> tileEntityTypeIn) {
-        super(tileEntityTypeIn);
+        super(TileEntityTypes.AR_CONTROLLER.get());
     }
 
     /**
