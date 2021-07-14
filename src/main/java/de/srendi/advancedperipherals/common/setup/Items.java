@@ -27,7 +27,7 @@ public class Items {
             "overpowered_husbandry_automata", null, new TranslationTextComponent("item.advancedperipherals.tooltip.overpowered_husbandry_automata_core"), () -> AdvancedPeripheralsConfig.enableHusbandryAutomataCore));
     public static final RegistryObject<ARGogglesItem> AR_GOGGLES = Registration.ITEMS.register("ar_goggles", ARGogglesItem::new);
     public static final RegistryObject<Item> COMPUTER_TOOL = Registration.ITEMS.register("computer_tool", () -> new APItem(new Item.Properties().stacksTo(1),
-            "chunky_turtle", null, new TranslationTextComponent("item.advancedperipherals.tooltip.computer_tool"), () -> true));
+            null, null, new TranslationTextComponent("item.advancedperipherals.tooltip.computer_tool"), () -> true));
     public static final RegistryObject<Item> MEMORY_CARD = Registration.ITEMS.register("memory_card", MemoryCardItem::new);
 
     public static void register() {
