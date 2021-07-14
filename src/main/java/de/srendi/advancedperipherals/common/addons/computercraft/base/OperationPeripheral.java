@@ -37,7 +37,11 @@ public abstract class OperationPeripheral extends BasePeripheral {
     }
 
     public void trackOperation(String name) {
-        targetOperationTimestamp.put(name, Timestamp.valueOf(LocalDateTime.now().plus(getCooldown(name), ChronoUnit.MILLIS)));
+        trackOperation(name, 1);
+    }
+
+    public void trackOperation(String name, int count) {
+        targetOperationTimestamp.put(name, Timestamp.valueOf(LocalDateTime.now().plus((long) count * getCooldown(name), ChronoUnit.MILLIS)));
     }
 
     public Optional<MethodResult> cooldownCheck(String name) {
