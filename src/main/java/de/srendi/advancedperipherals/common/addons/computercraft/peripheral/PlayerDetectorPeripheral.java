@@ -45,7 +45,7 @@ public class PlayerDetectorPeripheral extends BasePeripheral {
     }
 
     @LuaFunction(mainThread = true)
-    public final List<String> getPlayersInCoords(HashMap<String, Integer> posOne, HashMap<String, Integer> posTwo) {
+    public final List<String> getPlayersInCoords(Map<String, Integer> posOne, Map<String, Integer> posTwo) {
         List<String> playersName = new ArrayList<>();
         for (ServerPlayerEntity player : getPlayers()) {
             if (isInRange(player, posOne, posTwo))
@@ -75,7 +75,7 @@ public class PlayerDetectorPeripheral extends BasePeripheral {
     }
 
     @LuaFunction(mainThread = true)
-    public final boolean isPlayersInCoords(HashMap<String, Integer> posOne, HashMap<String, Integer> posTwo) {
+    public final boolean isPlayersInCoords(Map<String, Integer> posOne, Map<String, Integer> posTwo) {
         if (getPlayers().isEmpty())
             return false;
         for (ServerPlayerEntity player : getPlayers()) {
@@ -166,7 +166,7 @@ public class PlayerDetectorPeripheral extends BasePeripheral {
                 null, new AxisAlignedBB(pos.offset(x, y, z), pos.offset(-x, -y, -z))).contains(player);
     }
 
-    private boolean isInRange(PlayerEntity player, HashMap<String, Integer> coordOne, HashMap<String, Integer> coordTwo) {
+    private boolean isInRange(PlayerEntity player, Map<String, Integer> coordOne, Map<String, Integer> coordTwo) {
         World world = getWorld();
         BlockPos posOne = new BlockPos(coordOne.get("x"), coordOne.get("y"), coordOne.get("z"));
         BlockPos posTwo = new BlockPos(coordTwo.get("x"), coordTwo.get("y"), coordTwo.get("z"));

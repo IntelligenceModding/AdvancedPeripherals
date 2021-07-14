@@ -125,17 +125,17 @@ public class WeakAutomataCorePeripheral extends AutomataCorePeripheral {
     }
 
     @LuaFunction
-    public int getSuckCooldown() {
+    public final int getSuckCooldown() {
         return getCurrentCooldown(SUCK_OPERATION);
     }
 
     @LuaFunction
-    public int getDigCooldown() {
+    public final int getDigCooldown() {
         return getCurrentCooldown(DIG_OPERATION);
     }
 
     @LuaFunction
-    public int getUseOnBlockCooldown() {
+    public final int getUseOnBlockCooldown() {
         return getCurrentCooldown(USE_ON_BLOCK_OPERATION);
     }
 
@@ -168,7 +168,7 @@ public class WeakAutomataCorePeripheral extends AutomataCorePeripheral {
     }
 
     @LuaFunction(mainThread = true)
-    public MethodResult digBlock() {
+    public final MethodResult digBlock() {
         Optional<MethodResult> checkResults = cooldownCheck(DIG_OPERATION);
         if (checkResults.isPresent()) return checkResults.get();
         checkResults = consumeFuelOp(AdvancedPeripheralsConfig.digBlockCost);
@@ -224,7 +224,7 @@ public class WeakAutomataCorePeripheral extends AutomataCorePeripheral {
     }
 
     @LuaFunction(mainThread = true)
-    public MethodResult collectSpecificItem(@Nonnull IArguments arguments) throws LuaException {
+    public final MethodResult collectSpecificItem(@Nonnull IArguments arguments) throws LuaException {
         String technicalName = arguments.getString(0);
         Optional<MethodResult> checkResults = cooldownCheck(SUCK_OPERATION);
         if (checkResults.isPresent()) return checkResults.get();
@@ -247,7 +247,7 @@ public class WeakAutomataCorePeripheral extends AutomataCorePeripheral {
     }
 
     @LuaFunction(mainThread = true)
-    public MethodResult collectItems(@Nonnull IArguments arguments) throws LuaException {
+    public final MethodResult collectItems(@Nonnull IArguments arguments) throws LuaException {
         Optional<MethodResult> checkResults = cooldownCheck(SUCK_OPERATION);
         if (checkResults.isPresent()) return checkResults.get();
         int requiredQuantity = arguments.optInt(0, Integer.MAX_VALUE);
