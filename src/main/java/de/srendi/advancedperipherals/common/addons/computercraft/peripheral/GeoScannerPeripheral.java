@@ -18,6 +18,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
+import net.minecraftforge.common.Tags;
 
 import javax.annotation.Nonnull;
 import java.util.*;
@@ -141,8 +142,7 @@ public class GeoScannerPeripheral extends FuelConsumingPeripheral {
                     BlockState block = chunk.getBlockState(new BlockPos(x, y, z));
                     ResourceLocation name = block.getBlock().getRegistryName();
                     if (name != null) {
-                        String localizedName = name.toString();
-                        if (localizedName.toLowerCase().contains("ore")) {
+                        if (block.getBlock().is(Tags.Blocks.ORES)) {
                             data.put(name.toString(), data.getOrDefault(name.toString(), 0) + 1);
                         }
                     }

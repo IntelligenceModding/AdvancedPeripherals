@@ -22,6 +22,10 @@ public abstract class BaseTurtle<T extends BasePeripheral> extends AbstractTurtl
         super(new ResourceLocation(AdvancedPeripherals.MOD_ID, id), TurtleUpgradeType.PERIPHERAL, adjective, item);
     }
 
+    public BaseTurtle(ResourceLocation id, String adjective, ItemStack item) {
+        super(id, TurtleUpgradeType.PERIPHERAL, adjective, item);
+    }
+
     protected abstract ModelResourceLocation getLeftModel();
 
     protected abstract ModelResourceLocation getRightModel();

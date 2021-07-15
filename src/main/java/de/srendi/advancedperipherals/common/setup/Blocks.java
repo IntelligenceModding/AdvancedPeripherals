@@ -57,7 +57,7 @@ public class Blocks {
             () -> new APBlockItem(Blocks.BLOCK_READER.get(), null, null,
                     new TranslationTextComponent("item.advancedperipherals.tooltip.block_reader"), () -> AdvancedPeripheralsConfig.enableBlockReader));
     public static final RegistryObject<Block> GEO_SCANNER = register("geo_scanner", () -> new APTileEntityBlock<>(TileEntityTypes.GEO_SCANNER, false),
-            () -> new APBlockItem(Blocks.GEO_SCANNER.get(), null, null,
+            () -> new APBlockItem(Blocks.GEO_SCANNER.get(), "geoscanner_turtle", "geoscanner_pocket",
                     new TranslationTextComponent("item.advancedperipherals.tooltip.geo_scanner"), () -> AdvancedPeripheralsConfig.enableGeoScanner));
     public static final RegistryObject<Block> COLONY_INTEGRATOR = register("colony_integrator", () -> new APTileEntityBlock<>(TileEntityTypes.COLONY_INTEGRATOR, false, ModList.get().isLoaded("minecolonies")),
             () -> new APBlockItem(Blocks.COLONY_INTEGRATOR.get(), null, null,

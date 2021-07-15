@@ -76,7 +76,7 @@ public class EndAutomataCorePeripheral extends WeakAutomataCorePeripheral {
     }
 
     @LuaFunction
-    public int getWarpCooldown() {
+    public final int getWarpCooldown() {
         return getCurrentCooldown(WARP_OPERATION);
     }
 

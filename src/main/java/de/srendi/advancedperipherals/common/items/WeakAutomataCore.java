@@ -6,12 +6,8 @@ import de.srendi.advancedperipherals.common.setup.Items;
 import de.srendi.advancedperipherals.common.util.EnumColor;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.monster.EndermanEntity;
-import net.minecraft.entity.passive.ChickenEntity;
-import net.minecraft.entity.passive.CowEntity;
-import net.minecraft.entity.passive.SheepEntity;
-import net.minecraft.entity.passive.horse.HorseEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -36,32 +32,21 @@ public class WeakAutomataCore extends APItem implements IFeedableAutomataCore {
     private static final String CONSUMED_ENTITY_COUNT = "consumed_entity_count";
     private static final String CONSUMED_ENTITY_NAME = "consumed_entity_name";
     private static final String CONSUMER_ENTITY_COMPOUND = "consumed_entity_compound";
-    private final static Map<Class<? extends Entity>, Integer> entityRegister = new HashMap<Class<? extends Entity>, Integer>() {{
-        put(EndermanEntity.class, 1);
-        put(CowEntity.class, 2);
-        put(SheepEntity.class, 3);
-        put(ChickenEntity.class, 4);
-        put(HorseEntity.class, 5);
-    }};
-    private final static Map<Integer, Class<? extends Entity>> reverseEntityRegister = new HashMap<Integer, Class<? extends Entity>>() {{
-        entityRegister.forEach((aClass, integer) -> put(integer, aClass));
-    }};
-    private final static Map<Class<? extends Entity>, WeakAutomataCoreRecord> AUTOMATA_CORE_REGISTRY = new HashMap<Class<? extends Entity>, WeakAutomataCoreRecord>() {{
+    private final static Map<String, WeakAutomataCoreRecord> AUTOMATA_CORE_REGISTRY = new HashMap<String, WeakAutomataCoreRecord>() {{
         WeakAutomataCoreRecord endSoulRecord = new WeakAutomataCoreRecord(
-                new HashMap<Class<? extends Entity>, Integer>() {{
-                    put(EndermanEntity.class, 10);
+                new HashMap<String, Integer>() {{
+                    put(EntityType.ENDERMAN.getRegistryName().toString(), 10);
                 }}, Items.END_AUTOMATA_CORE.get()
         );
         WeakAutomataCoreRecord husbandrySoulRecord = new WeakAutomataCoreRecord(
-                new HashMap<Class<? extends Entity>, Integer>() {{
-                    put(CowEntity.class, 3);
-                    put(SheepEntity.class, 3);
-                    put(ChickenEntity.class, 3);
-                    put(HorseEntity.class, 1);
+                new HashMap<String, Integer>() {{
+                    put(EntityType.COW.getRegistryName().toString(), 3);
+                    put(EntityType.SHEEP.getRegistryName().toString(), 3);
+                    put(EntityType.CHICKEN.getRegistryName().toString(), 3);
                 }}, Items.HUSBANDRY_AUTOMATA_CORE.get()
         );
-        endSoulRecord.ingredients.keySet().forEach(entityClass -> put(entityClass, endSoulRecord));
-        husbandrySoulRecord.ingredients.keySet().forEach(entityClass -> put(entityClass, husbandrySoulRecord));
+        endSoulRecord.ingredients.keySet().forEach(entityType -> put(entityType, endSoulRecord));
+        husbandrySoulRecord.ingredients.keySet().forEach(entityType -> put(entityType, husbandrySoulRecord));
     }};
 
     public WeakAutomataCore(Properties properties, String turtleID, String pocketID, ITextComponent description) {
@@ -78,11 +63,10 @@ public class WeakAutomataCore extends APItem implements IFeedableAutomataCore {
         CompoundNBT tag = stack.getOrCreateTag();
         CompoundNBT consumedData = tag.getCompound(CONSUMER_ENTITY_COMPOUND);
         consumedData.getAllKeys().forEach(key -> {
-            Class<? extends Entity> entityClass = reverseEntityRegister.get(Integer.parseInt(key));
-            WeakAutomataCoreRecord record = AUTOMATA_CORE_REGISTRY.get(entityClass);
+            WeakAutomataCoreRecord record = AUTOMATA_CORE_REGISTRY.get(key);
             CompoundNBT recordData = consumedData.getCompound(key);
             tooltip.add(EnumColor.buildTextComponent(new StringTextComponent(
-                    String.format("Consumed: %d/%d %s", recordData.getInt(CONSUMED_ENTITY_COUNT), record.getRequiredCount(entityClass), recordData.getString(CONSUMED_ENTITY_NAME)))
+                    String.format("Consumed: %d/%d %s", recordData.getInt(CONSUMED_ENTITY_COUNT), record.getRequiredCount(key), recordData.getString(CONSUMED_ENTITY_NAME)))
             ));
         });
     }
@@ -93,29 +77,29 @@ public class WeakAutomataCore extends APItem implements IFeedableAutomataCore {
             player.displayClientMessage(new TranslationTextComponent("text.advancedperipherals.automata_core_feed_by_player"), true);
             return ActionResultType.FAIL;
         }
+        String entityType = EntityType.getKey(entity.getType()).toString();
         Class<? extends Entity> entityClass = entity.getClass();
-        if (AUTOMATA_CORE_REGISTRY.containsKey(entityClass)) {
+        if (AUTOMATA_CORE_REGISTRY.containsKey(entityType)) {
             CompoundNBT tag = stack.getOrCreateTag();
             CompoundNBT consumedData = tag.getCompound(CONSUMER_ENTITY_COMPOUND);
             WeakAutomataCoreRecord record;
             if (consumedData.isEmpty()) {
-                record = AUTOMATA_CORE_REGISTRY.get(entityClass);
+                record = AUTOMATA_CORE_REGISTRY.get(entityType);
             } else {
                 Optional<String> anyKey = consumedData.getAllKeys().stream().findAny();
                 if (!anyKey.isPresent())
                     return ActionResultType.PASS;
-                record = AUTOMATA_CORE_REGISTRY.get(reverseEntityRegister.get(Integer.parseInt(anyKey.get())));
+                record = AUTOMATA_CORE_REGISTRY.get(anyKey.get());
             }
-            if (!record.isSuitable(entity.getClass(), consumedData))
+            if (!record.isSuitable(entityType, consumedData))
                 return ActionResultType.PASS;
             entity.remove();
-            String entityCode = entityRegister.get(entityClass).toString();
-            CompoundNBT entityCompound = consumedData.getCompound(entityCode);
+            CompoundNBT entityCompound = consumedData.getCompound(entityType);
             entityCompound.putInt(
-                    CONSUMED_ENTITY_COUNT, consumedData.getCompound(entityCode).getInt(CONSUMED_ENTITY_COUNT) + 1
+                    CONSUMED_ENTITY_COUNT, entityCompound.getInt(CONSUMED_ENTITY_COUNT) + 1
             );
             entityCompound.putString(CONSUMED_ENTITY_NAME, entity.getName().getString());
-            consumedData.put(entityCode, entityCompound);
+            consumedData.put(entityType, entityCompound);
             if (record.isFinished(consumedData)) {
                 player.setItemInHand(hand, new ItemStack(record.resultSoul));
             }
@@ -126,31 +110,28 @@ public class WeakAutomataCore extends APItem implements IFeedableAutomataCore {
     }
 
     public static class WeakAutomataCoreRecord {
-        public final Map<Class<? extends Entity>, Integer> ingredients;
+        public final Map<String, Integer> ingredients;
         public final Item resultSoul;
 
-        public WeakAutomataCoreRecord(Map<Class<? extends Entity>, Integer> ingredients, Item resultSoul) {
+        public WeakAutomataCoreRecord(Map<String, Integer> ingredients, Item resultSoul) {
             this.ingredients = ingredients;
             this.resultSoul = resultSoul;
         }
 
-        public int getRequiredCount(Class<? extends Entity> entityClass) {
-            return this.ingredients.getOrDefault(entityClass, 0);
+        public int getRequiredCount(String entityType) {
+            return this.ingredients.getOrDefault(entityType, 0);
         }
 
-        public boolean isSuitable(Class<? extends Entity> entityClass, CompoundNBT consumedData) {
-            if (!ingredients.containsKey(entityClass))
+        public boolean isSuitable(String entityType, CompoundNBT consumedData) {
+            if (!ingredients.containsKey(entityType))
                 return false;
-            int requiredCount = ingredients.get(entityClass);
-            int currentCount = consumedData.getCompound(entityRegister.get(entityClass).toString()).getInt(CONSUMED_ENTITY_COUNT);
+            int requiredCount = ingredients.get(entityType);
+            int currentCount = consumedData.getCompound(entityType).getInt(CONSUMED_ENTITY_COUNT);
             return currentCount < requiredCount;
         }
 
         public boolean isFinished(CompoundNBT consumedData) {
-            return ingredients.entrySet().stream().map(entry -> {
-                String entityCode = entityRegister.get(entry.getKey()).toString();
-                return entry.getValue() == consumedData.getCompound(entityCode).getInt(CONSUMED_ENTITY_COUNT);
-            }).reduce((a, b) -> a && b).orElse(true);
+            return ingredients.entrySet().stream().map(entry -> entry.getValue() == consumedData.getCompound(entry.getKey()).getInt(CONSUMED_ENTITY_COUNT)).reduce((a, b) -> a && b).orElse(true);
         }
     }
 }

@@ -6,6 +6,7 @@ import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
 import de.srendi.advancedperipherals.common.util.DataStorageUtil;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.vector.TransformationMatrix;
 import net.minecraft.util.math.vector.Vector3f;
 import org.jetbrains.annotations.NotNull;
@@ -14,6 +15,10 @@ import org.jetbrains.annotations.Nullable;
 public abstract class ModelTransformingTurtle<T extends AutomataCorePeripheral> extends BaseTurtle<T> {
 
     public ModelTransformingTurtle(String id, String adjective, ItemStack item) {
+        super(id, adjective, item);
+    }
+
+    public ModelTransformingTurtle(ResourceLocation id, String adjective, ItemStack item) {
         super(id, adjective, item);
     }
 
