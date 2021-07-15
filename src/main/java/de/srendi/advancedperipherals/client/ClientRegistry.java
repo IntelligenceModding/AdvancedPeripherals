@@ -55,6 +55,7 @@ public class ClientRegistry {
     @SubscribeEvent
     public static void onClientSetup(FMLClientSetupEvent event) {
         ScreenManager.register(ContainerTypes.INVENTORY_MANAGER_CONTAINER.get(), InventoryManagerScreen::new);
+        KeyBindings.register();
     }
 
     //TODO change the icon of the curio icon

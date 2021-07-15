@@ -81,7 +81,7 @@ public class ARGogglesItem extends ArmorItem {
         super.appendHoverText(stack, worldIn, tooltip, flagIn);
         if (!InputMappings.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), GLFW.GLFW_KEY_LEFT_CONTROL)) {
             tooltip.add(EnumColor
-                    .buildTextComponent(new TranslationTextComponent("item.advancedperipherals.tooltip.hold_ctrl")));
+                    .buildTextComponent(new TranslationTextComponent("item.advancedperipherals.tooltip.show_desc")));
         } else {
             tooltip.add(EnumColor.buildTextComponent(getDescription()));
         }

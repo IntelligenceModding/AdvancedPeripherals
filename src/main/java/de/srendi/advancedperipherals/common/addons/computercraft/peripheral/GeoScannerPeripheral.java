@@ -42,7 +42,7 @@ public class GeoScannerPeripheral extends FuelConsumingPeripheral {
         super(type, pocket);
     }
 
-    private static List<Map<String, ?>> scan(World world, int x, int y, int z, int radius) {
+    private static List<Map<String, ?>> scan(World world, int x, int y, int z, int radius, boolean useAbsolute) {
         List<Map<String, ?>> result = new ArrayList<>();
         for (int oX = x - radius; oX <= x + radius; oX++) {
             for (int oY = y - radius; oY <= y + radius; oY++) {
@@ -52,9 +52,15 @@ public class GeoScannerPeripheral extends FuelConsumingPeripheral {
                     Block block = blockState.getBlock();
 
                     HashMap<String, Object> data = new HashMap<>(6);
-                    data.put("x", oX - x);
-                    data.put("y", oY - y);
-                    data.put("z", oZ - z);
+                    if(useAbsolute) {
+                        data.put("x", oX);
+                        data.put("y", oY);
+                        data.put("z", oZ);
+                    } else {
+                        data.put("x", oX);
+                        data.put("y", oY);
+                        data.put("z", oZ);
+                    }
 
                     ResourceLocation name = block.getRegistryName();
                     data.put("name", name == null ? "unknown" : name.toString());
@@ -70,12 +76,12 @@ public class GeoScannerPeripheral extends FuelConsumingPeripheral {
     }
 
     private static int estimateCost(int radius) {
-        if (radius <= AdvancedPeripheralsConfig.geoScannerMaxFreeRadius) {
+        if (radius <= AdvancedPeripheralsConfig.geoScannerMaxFreeRadius)
             return 0;
-        }
-        if (radius > AdvancedPeripheralsConfig.geoScannerMaxCostRadius) {
+
+        if (radius > AdvancedPeripheralsConfig.geoScannerMaxCostRadius)
             return -1;
-        }
+
         int freeBlockCount = IntMath.pow(2 * AdvancedPeripheralsConfig.geoScannerMaxFreeRadius + 1, 3);
         int allBlockCount = IntMath.pow(2 * radius + 1, 3);
         return (int) Math.floor((allBlockCount - freeBlockCount) * AdvancedPeripheralsConfig.geoScannerExtraBlockCost);
@@ -156,6 +162,7 @@ public class GeoScannerPeripheral extends FuelConsumingPeripheral {
     @LuaFunction
     public final MethodResult scan(@Nonnull IArguments arguments) throws LuaException {
         int radius = arguments.getInt(0);
+        boolean useAbsolute = arguments.getBoolean(1); //Will return the absolute coordinates if this boolean is true
         Optional<MethodResult> checkResult = cooldownCheck(SCAN_OPERATION);
         if (checkResult.isPresent()) return checkResult.get();
         BlockPos pos = getPos();
@@ -172,7 +179,7 @@ public class GeoScannerPeripheral extends FuelConsumingPeripheral {
                 return MethodResult.of(null, String.format("Not enough fuel, %d needed", cost));
             }
         }
-        List<Map<String, ?>> scanResult = scan(world, pos.getX(), pos.getY(), pos.getZ(), radius);
+        List<Map<String, ?>> scanResult = scan(world, pos.getX(), pos.getY(), pos.getZ(), radius, useAbsolute);
         trackOperation(SCAN_OPERATION);
         return MethodResult.of(scanResult);
     }

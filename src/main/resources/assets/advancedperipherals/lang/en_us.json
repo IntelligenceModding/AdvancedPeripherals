@@ -28,7 +28,7 @@
   "item.advancedperipherals.husbandry_automata_core": "Husbandry automata core",
   "item.advancedperipherals.overpowered_husbandry_automata_core": "Overpowered husbandry automata core",
   "item.advancedperipherals.tooltip.computer_tool": "§7You can access a GUI of our blocks with this magic tool. But for now, it's useless.",
-  "item.advancedperipherals.tooltip.hold_ctrl": "§b[§7CTRL§b] §7For Description",
+  "item.advancedperipherals.tooltip.show_desc": "§b[§7%s§b] §7For Description",
   "item.advancedperipherals.tooltip.disabled": "§cThis item is disabled in config, so you can craft it, but peripheral logic will not work",
   "item.advancedperipherals.tooltip.energy_detector": "§7Can detect energy flow and acts as an resistor.",
   "item.advancedperipherals.tooltip.chunk_controller": "§7A crafting ingredient for the Chunky Turtle.",
@@ -90,5 +90,7 @@
   "text.advancedperipherals.linked_goggles": "Successfully linked AR goggles!",
   "text.advancedperipherals.automata_core_feed_by_player": "You trying to feed entity to soul, but your own body refuses to do this. Maybe something more mechanical can do this?",
   "entity.minecraft.villager.advancedperipherals.computer_scientist": "Computer Scientist",
+  "keybind.advancedperipherals.category": "Advanced Peripherals",
+  "keybind.advancedperipherals.description": "Show Description",
   "itemGroup.advancedperipheralstab": "Advanced Peripherals"
 }

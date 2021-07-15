@@ -154,7 +154,7 @@ public class AdvancedPeripheralsConfig {
             ENVIRONMENT_DETECTOR_MAX_FREE_RADIUS = builder.comment("Defines max cost-free radius for environment detector").defineInRange("environmentDetectorMaxFreeRadius", 8, 1, 64);
             ENVIRONMENT_DETECTOR_MAX_COST_RADIUS = builder.comment("Defines max cost radius for environment detector").defineInRange("environmentDetectorMaxCostRadius", 16, 1, 64);
             ENVIRONMENT_DETECTOR_EXTRA_BLOCK_COST = builder.comment("Defines block cost in RF for any extra block out of cost-free radius for environment detector").defineInRange("environmentDetectorExtraBlockCost", 0.17, 0.17, 1000);
-            ENVIRONMENT_DETECTOR_MAX_ENERGY_STORED = builder.comment("Defines max energy stored in environment detector").defineInRange("environmentDetectorMaxEnergyStored", 100_000_000, 1_000_000, Integer.MAX_VALUE);
+            ENVIRONMENT_DETECTOR_MAX_ENERGY_STORED = builder.comment("Defines max energy stored in environment detector").defineInRange("environmentDetectorMaxEnergyStored", 1_000_000, 1_000_000, Integer.MAX_VALUE);
             ENVIRONMENT_DETECTOR_MIN_SCAN_PERIOD = builder.comment("Defines min period between scans in milliseconds for environment detector").defineInRange("environmentDetectorMinScanPeriod", 2_000, 2_000, Integer.MAX_VALUE);
             NBT_STORAGE_MAX_SIZE = builder.comment("Defines max nbt string that can be stored in nbt storage").defineInRange("nbtStorageMaxSize", 1048576, 0, Integer.MAX_VALUE);
 
@@ -177,7 +177,7 @@ public class AdvancedPeripheralsConfig {
             ENABLE_GEO_SCANNER = builder.comment("Enable the geo scanner or not.").define("enableGeoScanner", true);
             ENABLE_COLONY_INTEGRATOR = builder.comment("Enable the colony integrator or not.").define("enableColonyIntegrator", true);
             ENABLE_NBT_STORAGE = builder.comment("Enable the nbt storage block or not").define("enableNBTStorage", true);
-            ENABLE_POWERED_PERIPHERALS = builder.comment("Enable RF storage for peripherals, that could use it").define("enablePoweredPeripherals", true);
+            ENABLE_POWERED_PERIPHERALS = builder.comment("Enable RF storage for peripherals, that could use it").define("enablePoweredPeripherals", false);
 
             builder.comment("").push("metaphysics");
             ENERGY_TO_FUEL_RATE = builder.comment("Defines energy to fuel rate").defineInRange("energyToFuelRate", 575, 575, Integer.MAX_VALUE);
