@@ -13,7 +13,8 @@ public class RepresentationUtil {
 
     public static Map<String, Object> entityToLua(Entity entity) {
         Map<String, Object> data = new HashMap<>();
-        data.put("entity_id", entity.getId());
+        data.put("id", entity.getId());
+        data.put("uuid", entity.getStringUUID());
         data.put("name", entity.getName().getString());
         data.put("tags", entity.getTags());
         return data;
