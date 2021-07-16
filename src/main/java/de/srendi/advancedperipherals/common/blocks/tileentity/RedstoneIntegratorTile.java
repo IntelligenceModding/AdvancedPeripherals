@@ -3,13 +3,13 @@ package de.srendi.advancedperipherals.common.blocks.tileentity;
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.RedstoneIntegratorPeripheral;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
 import de.srendi.advancedperipherals.common.setup.TileEntityTypes;
-import net.minecraft.block.*;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
+import net.minecraft.block.RedstoneWireBlock;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.EnumSet;
 
 public class RedstoneIntegratorTile extends PeripheralTileEntity<RedstoneIntegratorPeripheral> {
 

@@ -52,9 +52,9 @@ public class GeoScannerPeripheral extends FuelConsumingPeripheral {
                     Block block = blockState.getBlock();
 
                     HashMap<String, Object> data = new HashMap<>(6);
-                        data.put("x", oX - x);
-                        data.put("y", oY - y);
-                        data.put("z", oZ - z);
+                    data.put("x", oX - x);
+                    data.put("y", oY - y);
+                    data.put("z", oZ - z);
 
                     ResourceLocation name = block.getRegistryName();
                     data.put("name", name == null ? "unknown" : name.toString());

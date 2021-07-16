@@ -3,10 +3,7 @@ package de.srendi.advancedperipherals.common.setup;
 import dan200.computercraft.api.ComputerCraftAPI;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.addons.computercraft.base.IntegrationPeripheralProvider;
-import de.srendi.advancedperipherals.common.addons.computercraft.pocket.PocketChatBox;
-import de.srendi.advancedperipherals.common.addons.computercraft.pocket.PocketEnvironment;
-import de.srendi.advancedperipherals.common.addons.computercraft.pocket.PocketGeoScanner;
-import de.srendi.advancedperipherals.common.addons.computercraft.pocket.PocketPlayerDetector;
+import de.srendi.advancedperipherals.common.addons.computercraft.pocket.*;
 import de.srendi.advancedperipherals.common.addons.computercraft.turtles.*;
 import de.srendi.advancedperipherals.common.addons.computercraft.turtles.metaphysics.*;
 import net.minecraftforge.fml.common.Mod;
@@ -30,6 +27,7 @@ public class CCRegistration {
     public static PocketChatBox chatPocket;
     public static PocketPlayerDetector playerPocket;
     public static PocketGeoScanner geoScannerPocket;
+    public static PocketColonyIntegrator colonyIntegratorPocket;
 
     public static IntegrationPeripheralProvider integrationPeripheralProvider;
 
@@ -50,6 +48,8 @@ public class CCRegistration {
         ComputerCraftAPI.registerPocketUpgrade(playerPocket);
         geoScannerPocket = new PocketGeoScanner();
         ComputerCraftAPI.registerPocketUpgrade(geoScannerPocket);
+        colonyIntegratorPocket = new PocketColonyIntegrator();
+        ComputerCraftAPI.registerPocketUpgrade(colonyIntegratorPocket);
     }
 
     private static void registerTurtleUpgrades() {

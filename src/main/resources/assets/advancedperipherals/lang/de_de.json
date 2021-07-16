@@ -84,11 +84,14 @@
   "pocket.advancedperipherals.player_pocket": "Player",
   "pocket.advancedperipherals.chatty_pocket": "Chatty",
   "pocket.advancedperipherals.geoscanner_pocket": "Geoscanning",
+  "pocket.advancedperipherals.colony_pocket": "Colony",
   "curios.identifier.glasses": "Glasses",
   "text.advancedperipherals.removed_player": "Cleared the memory card",
   "text.advancedperipherals.added_player": "Added you to the memory card",
   "text.advancedperipherals.linked_goggles": "Successfully linked AR goggles!",
   "text.advancedperipherals.automata_core_feed_by_player": "You trying to feed entity to soul, but your own body refuses to do this. Maybe something more mechanical can do this?",
   "entity.minecraft.villager.advancedperipherals.computer_scientist": "Computer Scientist",
+  "keybind.advancedperipherals.category": "Advanced Peripherals",
+  "keybind.advancedperipherals.description": "Show Description",
   "itemGroup.advancedperipheralstab": "Advanced Peripherals"
 }

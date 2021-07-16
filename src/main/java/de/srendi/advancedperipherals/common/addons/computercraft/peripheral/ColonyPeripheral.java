@@ -16,8 +16,10 @@ import com.minecolonies.api.colony.workorders.IWorkOrder;
 import com.minecolonies.api.research.IGlobalResearchTree;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
+import dan200.computercraft.api.pocket.IPocketAccess;
 import dan200.computercraft.shared.util.NBTUtil;
 import de.srendi.advancedperipherals.common.addons.computercraft.base.BasePeripheral;
+import de.srendi.advancedperipherals.common.addons.computercraft.base.PocketPeripheralOwner;
 import de.srendi.advancedperipherals.common.addons.minecolonies.MineColonies;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
@@ -37,6 +39,10 @@ public class ColonyPeripheral extends BasePeripheral {
 
     public ColonyPeripheral(String type, PeripheralTileEntity<?> tileEntity) {
         super(type, tileEntity);
+    }
+
+    public ColonyPeripheral(String type, IPocketAccess access) {
+        super(type, access);
     }
 
     @Override
@@ -258,6 +264,7 @@ public class ColonyPeripheral extends BasePeripheral {
     private IColony getColony() throws LuaException {
         IMinecoloniesAPI api = IMinecoloniesAPI.getInstance();
         IColony colony = api.getColonyManager().getColonyByPosFromWorld(getWorld(), getPos());
+        this.hasPermission = !(owner instanceof PocketPeripheralOwner) || MineColonies.hasAccess(owner.getOwner(), colony);
         if (colony == null || !this.hasPermission)
             throw new LuaException("Here is no colony or you don't have the right permissions");
         return colony;

@@ -48,7 +48,8 @@ public class EndAutomataCorePeripheral extends WeakAutomataCorePeripheral {
         return AdvancedPeripheralsConfig.endAutomataCoreMaxFuelConsumptionLevel;
     }
 
-    protected @Nonnull Pair<MethodResult, CompoundNBT> getPointData() {
+    protected @Nonnull
+    Pair<MethodResult, CompoundNBT> getPointData() {
         CompoundNBT settings = owner.getDataStorage();
         if (!settings.contains(WORLD_DATA_MARK)) {
             settings.putString(WORLD_DATA_MARK, getWorld().dimension().location().toString());

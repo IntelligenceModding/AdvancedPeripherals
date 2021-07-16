@@ -6,7 +6,10 @@
     "QIQ"
   ],
   "conditions": [
-    {"type":  "forge:mod_loaded", "modid":  "refinedstorage"}
+    {
+      "type": "forge:mod_loaded",
+      "modid": "refinedstorage"
+    }
   ],
   "key": {
     "Q": {
