@@ -5,7 +5,7 @@ import dan200.computercraft.api.lua.MethodResult;
 import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
-import de.srendi.advancedperipherals.common.util.RepresentationUtil;
+import de.srendi.advancedperipherals.common.util.LuaConverter;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -131,7 +131,7 @@ public class HusbandryAutomataCorePeripheral extends WeakAutomataCorePeripheral 
         Entity entity = ((EntityRayTraceResult) entityHit).getEntity();
         if (!(entity instanceof AnimalEntity))
             return MethodResult.of(null, "Well, entity is not animal entity, but how?");
-        return MethodResult.of(RepresentationUtil.animalToLua((AnimalEntity) entity, owner.getToolInMainHand()));
+        return MethodResult.of(LuaConverter.animalToLua((AnimalEntity) entity, owner.getToolInMainHand()));
     }
 
     @LuaFunction
@@ -141,7 +141,7 @@ public class HusbandryAutomataCorePeripheral extends WeakAutomataCorePeripheral 
         AxisAlignedBB box = new AxisAlignedBB(currentPos);
         List<Map<String, Object>> entities = new ArrayList<>();
         ItemStack itemInHand = owner.getToolInMainHand();
-        getWorld().getEntities((Entity) null, box.inflate(getInteractionRadius()), suitableEntity).forEach(entity -> entities.add(RepresentationUtil.completeEntityWithPositionToLua(entity, itemInHand, currentPos)));
+        getWorld().getEntities((Entity) null, box.inflate(getInteractionRadius()), suitableEntity).forEach(entity -> entities.add(LuaConverter.completeEntityWithPositionToLua(entity, itemInHand, currentPos)));
         return MethodResult.of(entities);
     }
 
@@ -186,6 +186,6 @@ public class HusbandryAutomataCorePeripheral extends WeakAutomataCorePeripheral 
     @LuaFunction
     public final MethodResult getCapturedAnimal() {
         Entity extractedEntity = extractEntity();
-        return MethodResult.of(RepresentationUtil.completeEntityToLua(extractedEntity, owner.getToolInMainHand()));
+        return MethodResult.of(LuaConverter.completeEntityToLua(extractedEntity, owner.getToolInMainHand()));
     }
 }

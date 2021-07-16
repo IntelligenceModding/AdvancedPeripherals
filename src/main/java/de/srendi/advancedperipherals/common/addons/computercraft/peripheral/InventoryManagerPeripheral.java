@@ -4,10 +4,10 @@ import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.shared.util.NBTUtil;
 import de.srendi.advancedperipherals.common.addons.computercraft.base.BasePeripheral;
-import de.srendi.advancedperipherals.common.addons.computercraft.base.Converter;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
 import de.srendi.advancedperipherals.common.util.ItemUtil;
+import de.srendi.advancedperipherals.common.util.LuaConverter;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.Item;
@@ -239,7 +239,7 @@ public class InventoryManagerPeripheral extends BasePeripheral {
                 map.put("amount", stack.getCount());
                 map.put("displayName", displayName);
                 map.put("nbt", NBTUtil.toLua(nbt));
-                map.put("tags", Converter.tagsToList(stack.getItem().getTags()));
+                map.put("tags", LuaConverter.tagsToList(stack.getItem().getTags()));
                 items.put(i, map);
                 i++;
             }
@@ -261,7 +261,7 @@ public class InventoryManagerPeripheral extends BasePeripheral {
                 map.put("amount", stack.getCount());
                 map.put("displayName", displayName);
                 map.put("nbt", NBTUtil.toLua(nbt));
-                map.put("tags", Converter.tagsToList(stack.getItem().getTags()));
+                map.put("tags", LuaConverter.tagsToList(stack.getItem().getTags()));
                 items.put(i, map);
                 i++;
             }

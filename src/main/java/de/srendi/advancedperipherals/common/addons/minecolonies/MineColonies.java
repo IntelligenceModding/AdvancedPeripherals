@@ -16,7 +16,7 @@ import com.minecolonies.api.research.effects.IResearchEffect;
 import com.minecolonies.api.research.util.ResearchState;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingStructureBuilder;
 import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
-import de.srendi.advancedperipherals.common.addons.computercraft.base.Converter;
+import de.srendi.advancedperipherals.common.util.LuaConverter;
 import io.netty.buffer.Unpooled;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.ai.attributes.Attributes;
@@ -63,9 +63,9 @@ public class MineColonies {
         Map<String, Object> map = new HashMap<>();
         map.put("id", citizen.getId());
         map.put("name", citizen.getName());
-        map.put("bedPos", Converter.posToObject(citizen.getBedPos()));
+        map.put("bedPos", LuaConverter.posToObject(citizen.getBedPos()));
         map.put("children", citizen.getChildren());
-        map.put("location", Converter.posToObject(citizen.getLastPosition()));
+        map.put("location", LuaConverter.posToObject(citizen.getLastPosition()));
         map.put("state", citizen.getStatus() == null ? "Idle" : citizen.getStatus().getTranslatedText());
         map.put("age", citizen.isChild() ? "child" : "adult");
         map.put("gender", citizen.isFemale() ? "female" : "male");
@@ -98,7 +98,7 @@ public class MineColonies {
         Map<String, Object> map = new HashMap<>();
         map.put("id", visitor.getId());
         map.put("name", visitor.getName());
-        map.put("location", Converter.posToObject(visitor.getSittingPosition()));
+        map.put("location", LuaConverter.posToObject(visitor.getSittingPosition()));
         map.put("age", visitor.isChild() ? "child" : "adult");
         map.put("gender", visitor.isFemale() ? "female" : "male");
         map.put("saturation", visitor.getSaturation());
@@ -116,7 +116,7 @@ public class MineColonies {
      */
     public static Object jobToObject(IBuildingWorker work) {
         Map<String, Object> map = new HashMap<>();
-        map.put("location", Converter.posToObject(work.getLocation().getInDimensionLocation()));
+        map.put("location", LuaConverter.posToObject(work.getLocation().getInDimensionLocation()));
         map.put("type", work.getSchematicName());
         map.put("level", work.getBuildingLevel());
         map.put("name", work.getJobName());
@@ -131,7 +131,7 @@ public class MineColonies {
      */
     public static Object homeToObject(IBuilding home) {
         Map<String, Object> map = new HashMap<>();
-        map.put("location", Converter.posToObject(home.getLocation().getInDimensionLocation()));
+        map.put("location", LuaConverter.posToObject(home.getLocation().getInDimensionLocation()));
         map.put("type", home.getSchematicName());
         map.put("level", home.getBuildingLevel());
         return map;
@@ -178,7 +178,7 @@ public class MineColonies {
         }
 
         Map<String, Object> map = new HashMap<>();
-        map.put("location", Converter.posToObject(pos));
+        map.put("location", LuaConverter.posToObject(pos));
         map.put("type", building.getSchematicName());
         map.put("style", building.getStyle());
         map.put("level", building.getBuildingLevel());

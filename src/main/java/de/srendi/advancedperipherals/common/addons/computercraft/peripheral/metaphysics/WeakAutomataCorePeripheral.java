@@ -9,8 +9,8 @@ import dan200.computercraft.api.turtle.TurtleSide;
 import de.srendi.advancedperipherals.common.addons.computercraft.base.IFeedableAutomataCore;
 import de.srendi.advancedperipherals.common.addons.computercraft.base.AutomataCorePeripheral;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
+import de.srendi.advancedperipherals.common.util.LuaConverter;
 import de.srendi.advancedperipherals.common.util.Pair;
-import de.srendi.advancedperipherals.common.util.RepresentationUtil;
 import de.srendi.advancedperipherals.common.util.fakeplayer.APFakePlayer;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.item.ItemEntity;
@@ -164,7 +164,7 @@ public class WeakAutomataCorePeripheral extends AutomataCorePeripheral {
             return MethodResult.of(null, "No entity find");
         }
         EntityRayTraceResult entityHit = (EntityRayTraceResult) result;
-        return MethodResult.of(RepresentationUtil.entityToLua(entityHit.getEntity()));
+        return MethodResult.of(LuaConverter.entityToLua(entityHit.getEntity()));
     }
 
     @LuaFunction(mainThread = true)

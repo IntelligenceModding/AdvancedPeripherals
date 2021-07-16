@@ -13,7 +13,7 @@ import de.srendi.advancedperipherals.common.addons.computercraft.base.FuelConsum
 import de.srendi.advancedperipherals.common.addons.mekanism.Mekanism;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
-import de.srendi.advancedperipherals.common.util.RepresentationUtil;
+import de.srendi.advancedperipherals.common.util.LuaConverter;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
@@ -270,7 +270,7 @@ public class EnvironmentDetectorPeripheral extends FuelConsumingPeripheral {
         AxisAlignedBB box = new AxisAlignedBB(pos);
         List<Map<String, Object>> entities = new ArrayList<>();
         getWorld().getEntities((Entity) null, box.inflate(radius), entity -> entity instanceof LivingEntity).forEach(
-                entity -> entities.add(RepresentationUtil.completeEntityWithPositionToLua(entity, ItemStack.EMPTY, pos))
+                entity -> entities.add(LuaConverter.completeEntityWithPositionToLua(entity, ItemStack.EMPTY, pos))
         );
         trackOperation(SCAN_OPERATION);
         return MethodResult.of(entities);

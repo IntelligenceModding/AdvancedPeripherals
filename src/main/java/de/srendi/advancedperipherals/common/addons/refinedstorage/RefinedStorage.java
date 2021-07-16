@@ -10,7 +10,7 @@ import com.refinedmods.refinedstorage.apiimpl.API;
 import com.refinedmods.refinedstorage.apiimpl.network.node.NetworkNode;
 import dan200.computercraft.shared.util.NBTUtil;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
-import de.srendi.advancedperipherals.common.addons.computercraft.base.Converter;
+import de.srendi.advancedperipherals.common.util.LuaConverter;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.NonNullList;
@@ -53,7 +53,7 @@ public class RefinedStorage {
                 map.put("amount", stack.getAmount());
             }
             map.put("displayName", stack.getDisplayName().getString());
-            map.put("tags", Converter.tagsToList(tags));
+            map.put("tags", LuaConverter.tagsToList(tags));
             items.add(map);
         }
         return items;
@@ -133,7 +133,7 @@ public class RefinedStorage {
         map.put("amount", itemStack.getCount());
         map.put("displayName", itemStack.getDisplayName().getString());
         map.put("nbt", nbt.isEmpty() ? null : NBTUtil.toLua(nbt));
-        map.put("tags", tags.isEmpty() ? null : Converter.tagsToList(itemStack.getItem().getTags()));
+        map.put("tags", tags.isEmpty() ? null : LuaConverter.tagsToList(itemStack.getItem().getTags()));
 
         return map;
     }

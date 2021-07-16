@@ -11,7 +11,7 @@ import appeng.api.storage.data.IAEItemStack;
 import appeng.api.storage.data.IItemList;
 import dan200.computercraft.shared.util.NBTUtil;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
-import de.srendi.advancedperipherals.common.addons.computercraft.base.Converter;
+import de.srendi.advancedperipherals.common.util.LuaConverter;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import org.apache.commons.codec.binary.Hex;
@@ -95,7 +95,7 @@ public class AppEngApi implements IAEAddon {
         map.put("amount", stack.getStackSize());
         map.put("displayName", displayName);
         map.put("nbt", NBTUtil.toLua(nbt));
-        map.put("tags", Converter.tagsToList(stack.getItem().getTags()));
+        map.put("tags", LuaConverter.tagsToList(stack.getItem().getTags()));
         map.put("isCraftable", stack.isCraftable());
         return map;
     }
@@ -105,7 +105,7 @@ public class AppEngApi implements IAEAddon {
         map.put("name", stack.getFluidStack().getFluid().getRegistryName().toString());
         map.put("amount", stack.getFluidStack().getAmount());
         map.put("displayName", stack.getFluidStack().getDisplayName());
-        map.put("tags", Converter.tagsToList(stack.getFluid().getTags()));
+        map.put("tags", LuaConverter.tagsToList(stack.getFluid().getTags()));
         if (flag == 0) {
             return map;
         } else if (flag == 1) {

@@ -18,10 +18,10 @@ import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.shared.util.NBTUtil;
 import de.srendi.advancedperipherals.common.addons.computercraft.base.BasePeripheral;
-import de.srendi.advancedperipherals.common.addons.computercraft.base.Converter;
 import de.srendi.advancedperipherals.common.addons.minecolonies.MineColonies;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
+import de.srendi.advancedperipherals.common.util.LuaConverter;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
@@ -111,7 +111,7 @@ public class ColonyPeripheral extends BasePeripheral {
     public final Object getLocation() throws LuaException {
         IColony colony = getColony();
 
-        return Converter.posToObject(colony.getCenter());
+        return LuaConverter.posToObject(colony.getCenter());
     }
 
     @LuaFunction(mainThread = true)
@@ -247,7 +247,7 @@ public class ColonyPeripheral extends BasePeripheral {
             map.put("state", request.getState().toString());
             map.put("count", deliverableRequest.getCount());
             map.put("minCount", deliverableRequest.getMinimumCount());
-            map.put("items", request.getDisplayStacks().stream().map(Converter::stackToObject)
+            map.put("items", request.getDisplayStacks().stream().map(LuaConverter::stackToObject)
                     .collect(Collectors.toList()));
             map.put("target", request.getRequester().getRequesterDisplayName(requestManager, request).getString());
             result.add(map);
