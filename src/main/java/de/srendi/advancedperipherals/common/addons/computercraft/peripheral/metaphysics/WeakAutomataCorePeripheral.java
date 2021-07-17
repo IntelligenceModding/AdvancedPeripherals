@@ -7,6 +7,8 @@ import dan200.computercraft.api.lua.MethodResult;
 import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
 import de.srendi.advancedperipherals.common.addons.computercraft.base.AutomataCorePeripheral;
+import de.srendi.advancedperipherals.common.addons.computercraft.base.AutomataCoreTier;
+import de.srendi.advancedperipherals.common.addons.computercraft.base.IAutomataCoreTier;
 import de.srendi.advancedperipherals.common.addons.computercraft.base.IFeedableAutomataCore;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
@@ -29,41 +31,23 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class WeakAutomataCorePeripheral extends AutomataCorePeripheral {
+import static de.srendi.advancedperipherals.common.addons.computercraft.base.CountDependOperations.DIG;
+import static de.srendi.advancedperipherals.common.addons.computercraft.base.CountDependOperations.SUCK;
+import static de.srendi.advancedperipherals.common.addons.computercraft.base.CountDependOperations.USE_ON_BLOCK;
 
-    protected static final String DIG_OPERATION = "dig";
-    protected static final String USE_ON_BLOCK_OPERATION = "useOnBlock";
-    protected static final String SUCK_OPERATION = "suck";
+public class WeakAutomataCorePeripheral extends AutomataCorePeripheral {
 
     public WeakAutomataCorePeripheral(String type, ITurtleAccess turtle, TurtleSide side) {
         super(type, turtle, side);
     }
 
     @Override
-    protected int getRawCooldown(String name) {
-        switch (name) {
-            case DIG_OPERATION:
-                return AdvancedPeripheralsConfig.digBlockCooldown;
-            case USE_ON_BLOCK_OPERATION:
-                return AdvancedPeripheralsConfig.useOnBlockCooldown;
-            case SUCK_OPERATION:
-                return AdvancedPeripheralsConfig.suckItemCooldown;
-        }
-        throw new IllegalArgumentException(String.format("Cannot find cooldown for op %s", name));
-    }
-
-    @Override
-    protected int getMaxFuelConsumptionRate() {
-        return AdvancedPeripheralsConfig.weakAutomataCoreMaxFuelConsumptionLevel;
+    public IAutomataCoreTier getTier() {
+        return AutomataCoreTier.WEAK;
     }
 
     protected boolean restoreToolDurability() {
         return false;
-    }
-
-    @Override
-    public int getInteractionRadius() {
-        return AdvancedPeripheralsConfig.weakAutomataCoreInteractionRadius;
     }
 
     @Override
@@ -114,29 +98,28 @@ public class WeakAutomataCorePeripheral extends AutomataCorePeripheral {
     @Override
     public Map<String, Object> getPeripheralConfiguration() {
         Map<String, Object> result = super.getPeripheralConfiguration();
-        result.put("digCost", AdvancedPeripheralsConfig.digBlockCost);
-        result.put("digCooldown", AdvancedPeripheralsConfig.digBlockCooldown);
-        result.put("useOnBlockCost", AdvancedPeripheralsConfig.clickBlockCost);
-        result.put("useOnBlockCooldown", AdvancedPeripheralsConfig.useOnBlockCooldown);
-        result.put("suckCost", AdvancedPeripheralsConfig.suckItemCost);
-        result.put("suckCooldown", AdvancedPeripheralsConfig.suckItemCooldown);
-        result.put("suckRadius", getInteractionRadius());
+//        result.put("digCost", AdvancedPeripheralsConfig.digBlockCost);
+//        result.put("digCooldown", AdvancedPeripheralsConfig.digBlockCooldown);
+//        result.put("useOnBlockCost", AdvancedPeripheralsConfig.clickBlockCost);
+//        result.put("useOnBlockCooldown", AdvancedPeripheralsConfig.useOnBlockCooldown);
+//        result.put("suckCost", AdvancedPeripheralsConfig.suckItemCost);
+//        result.put("suckCooldown", AdvancedPeripheralsConfig.suckItemCooldown);
         return result;
     }
 
     @LuaFunction
     public final int getSuckCooldown() {
-        return getCurrentCooldown(SUCK_OPERATION);
+        return getCurrentCooldown(SUCK);
     }
 
     @LuaFunction
     public final int getDigCooldown() {
-        return getCurrentCooldown(DIG_OPERATION);
+        return getCurrentCooldown(DIG);
     }
 
     @LuaFunction
     public final int getUseOnBlockCooldown() {
-        return getCurrentCooldown(USE_ON_BLOCK_OPERATION);
+        return getCurrentCooldown(USE_ON_BLOCK);
     }
 
     @LuaFunction(mainThread = true)
@@ -169,9 +152,9 @@ public class WeakAutomataCorePeripheral extends AutomataCorePeripheral {
 
     @LuaFunction(mainThread = true)
     public final MethodResult digBlock() {
-        Optional<MethodResult> checkResults = cooldownCheck(DIG_OPERATION);
+        Optional<MethodResult> checkResults = cooldownCheck(DIG);
         if (checkResults.isPresent()) return checkResults.get();
-        checkResults = consumeFuelOp(AdvancedPeripheralsConfig.digBlockCost);
+        checkResults = consumeFuelOp(DIG, 1);
         if (checkResults.isPresent()) return checkResults.map(this::fuelErrorCallback).get();
         addRotationCycle();
         ItemStack selectedTool = owner.getToolInMainHand();
@@ -182,15 +165,15 @@ public class WeakAutomataCorePeripheral extends AutomataCorePeripheral {
         }
         if (restoreToolDurability())
             selectedTool.setDamageValue(previousDamageValue);
-        trackOperation(DIG_OPERATION);
+        trackOperation(DIG, 1);
         return MethodResult.of(true);
     }
 
     @LuaFunction(mainThread = true)
     public final MethodResult useOnBlock() {
-        Optional<MethodResult> checkResults = cooldownCheck(USE_ON_BLOCK_OPERATION);
+        Optional<MethodResult> checkResults = cooldownCheck(USE_ON_BLOCK);
         if (checkResults.isPresent()) return checkResults.get();
-        checkResults = consumeFuelOp(AdvancedPeripheralsConfig.clickBlockCost);
+        checkResults = consumeFuelOp(USE_ON_BLOCK, 1);
         if (checkResults.isPresent()) return checkResults.map(this::fuelErrorCallback).get();
         addRotationCycle();
         ItemStack selectedTool = owner.getToolInMainHand();
@@ -198,7 +181,7 @@ public class WeakAutomataCorePeripheral extends AutomataCorePeripheral {
         ActionResultType result = owner.withPlayer(APFakePlayer::useOnBlock);
         if (restoreToolDurability())
             selectedTool.setDamageValue(previousDamageValue);
-        trackOperation(USE_ON_BLOCK_OPERATION);
+        trackOperation(USE_ON_BLOCK, 1);
         return MethodResult.of(true, result.toString());
     }
 
@@ -226,9 +209,9 @@ public class WeakAutomataCorePeripheral extends AutomataCorePeripheral {
     @LuaFunction(mainThread = true)
     public final MethodResult collectSpecificItem(@Nonnull IArguments arguments) throws LuaException {
         String technicalName = arguments.getString(0);
-        Optional<MethodResult> checkResults = cooldownCheck(SUCK_OPERATION);
+        Optional<MethodResult> checkResults = cooldownCheck(SUCK);
         if (checkResults.isPresent()) return checkResults.get();
-        checkResults = consumeFuelOp(AdvancedPeripheralsConfig.suckItemCost);
+        checkResults = consumeFuelOp(SUCK, 1);
         if (checkResults.isPresent()) return checkResults.map(this::fuelErrorCallback).get();
         addRotationCycle();
         int requiredQuantity = arguments.optInt(1, Integer.MAX_VALUE);
@@ -242,13 +225,13 @@ public class WeakAutomataCorePeripheral extends AutomataCorePeripheral {
                 requiredQuantity -= suckItem(item, requiredQuantity);
             }
         }
-        trackOperation(SUCK_OPERATION);
+        trackOperation(SUCK, 1);
         return MethodResult.of(true);
     }
 
     @LuaFunction(mainThread = true)
     public final MethodResult collectItems(@Nonnull IArguments arguments) throws LuaException {
-        Optional<MethodResult> checkResults = cooldownCheck(SUCK_OPERATION);
+        Optional<MethodResult> checkResults = cooldownCheck(SUCK);
         if (checkResults.isPresent()) return checkResults.get();
         int requiredQuantity = arguments.optInt(0, Integer.MAX_VALUE);
         addRotationCycle();
@@ -263,14 +246,14 @@ public class WeakAutomataCorePeripheral extends AutomataCorePeripheral {
 
         for (ItemEntity entity : items) {
             int consumedCount = Math.min(entity.getItem().getCount(), requiredQuantity);
-            if (!consumeFuel(consumedCount * AdvancedPeripheralsConfig.suckItemCost))
+            if (!consumeFuel(SUCK.getCost(consumedCount)))
                 return fuelErrorCallback(MethodResult.of(null, "Not enough fuel to continue sucking"));
             requiredQuantity -= suckItem(entity, requiredQuantity);
             if (requiredQuantity <= 0) {
                 break;
             }
         }
-        trackOperation(SUCK_OPERATION);
+        trackOperation(SUCK, 1);
         return MethodResult.of(true);
     }
 

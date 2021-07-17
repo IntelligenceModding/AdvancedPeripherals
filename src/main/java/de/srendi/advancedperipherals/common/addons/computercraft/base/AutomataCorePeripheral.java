@@ -64,5 +64,14 @@ public abstract class AutomataCorePeripheral extends FuelConsumingPeripheral {
         return data;
     }
 
-    public abstract int getInteractionRadius();
+    public abstract IAutomataCoreTier getTier();
+
+    public final int getInteractionRadius() {
+        return getTier().getInteractionRadius();
+    }
+
+    @Override
+    protected final int getMaxFuelConsumptionRate() {
+        return getTier().getMaxFuelConsumptionRate();
+    }
 }

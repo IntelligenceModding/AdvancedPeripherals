@@ -1,5 +1,9 @@
 package de.srendi.advancedperipherals.common.configuration;
 
+import de.srendi.advancedperipherals.common.addons.computercraft.base.CountDependOperations;
+import de.srendi.advancedperipherals.common.addons.computercraft.base.AutomataCoreTier;
+import de.srendi.advancedperipherals.common.addons.computercraft.base.DistanceDependOperation;
+import de.srendi.advancedperipherals.common.addons.computercraft.base.IConfigHandler;
 import net.minecraftforge.common.ForgeConfigSpec;
 
 public class AdvancedPeripheralsConfig {
@@ -43,26 +47,9 @@ public class AdvancedPeripheralsConfig {
 
     // automata cores configuration
     public static int energyToFuelRate;
-    public static int suckItemCost;
-    public static int suckItemCooldown;
-    public static int digBlockCost;
-    public static int digBlockCooldown;
-    public static int clickBlockCost;
-    public static int useOnBlockCooldown;
-    public static int warpCooldown;
-    public static int useOnAnimalCost;
-    public static int useOnAnimalCooldown;
-    public static int captureAnimalCost;
-    public static int captureAnimalCooldown;
     public static boolean enableWeakAutomataCore;
-    public static int weakAutomataCoreInteractionRadius;
-    public static int weakAutomataCoreMaxFuelConsumptionLevel;
     public static boolean enableEndAutomataCore;
-    public static int endAutomataCoreInteractionRadius;
-    public static int endAutomataCoreMaxFuelConsumptionLevel;
     public static boolean enableHusbandryAutomataCore;
-    public static int husbandryAutomataCoreInteractionRadius;
-    public static int husbandryAutomataCoreMaxFuelConsumptionLevel;
 
     //World Features
     public static boolean enableVillagerStructures;
@@ -109,23 +96,6 @@ public class AdvancedPeripheralsConfig {
 
         // Mechanical soul
         final ForgeConfigSpec.IntValue ENERGY_TO_FUEL_RATE;
-        final ForgeConfigSpec.IntValue SUCK_ITEM_COST;
-        final ForgeConfigSpec.IntValue SUCK_ITEM_COOLDOWN;
-        final ForgeConfigSpec.IntValue DIG_BLOCK_COST;
-        final ForgeConfigSpec.IntValue DIG_BLOCK_COOLDOWN;
-        final ForgeConfigSpec.IntValue USE_ON_BLOCK_COST;
-        final ForgeConfigSpec.IntValue USE_ON_BLOCK_COOLDOWN;
-        final ForgeConfigSpec.IntValue WARP_COOLDOWN;
-        final ForgeConfigSpec.IntValue USE_ON_ANIMAL_COST;
-        final ForgeConfigSpec.IntValue USE_ON_ANIMAL_COOLDOWN;
-        final ForgeConfigSpec.IntValue CAPTURE_ANIMAL_COST;
-        final ForgeConfigSpec.IntValue CAPTURE_ANIMAL_COOLDOWN;
-        final ForgeConfigSpec.IntValue WEAK_AUTOMATA_CORE_TURTLE_INTERACTION_RANGE;
-        final ForgeConfigSpec.IntValue WEAK_AUTOMATA_CORE_TURTLE_MAX_FUEL_CONSUMPTION_LEVEL;
-        final ForgeConfigSpec.IntValue END_AUTOMATA_CORE_TURTLE_INTERACTION_RANGE;
-        final ForgeConfigSpec.IntValue END_AUTOMATA_CORE_TURTLE_MAX_FUEL_CONSUMPTION_LEVEL;
-        final ForgeConfigSpec.IntValue HUSBANDRY_AUTOMATA_CORE_TURTLE_INTERACTION_RANGE;
-        final ForgeConfigSpec.IntValue HUSBANDRY_AUTOMATA_CORE_TURTLE_MAX_FUEL_CONSUMPTION_LEVEL;
         final ForgeConfigSpec.BooleanValue ENABLE_WEAK_AUTOMATA_CORE;
         final ForgeConfigSpec.BooleanValue ENABLE_END_AUTOMATA_CORE;
         final ForgeConfigSpec.BooleanValue ENABLE_HUSBANDRY_AUTOMATA_CORE;
@@ -181,32 +151,26 @@ public class AdvancedPeripheralsConfig {
 
             builder.comment("").push("metaphysics");
             ENERGY_TO_FUEL_RATE = builder.comment("Defines energy to fuel rate").defineInRange("energyToFuelRate", 575, 575, Integer.MAX_VALUE);
-            SUCK_ITEM_COST = builder.comment("Defines cost of suck single item").defineInRange("suckItemCost", 1, 1, Integer.MAX_VALUE);
-            SUCK_ITEM_COOLDOWN = builder.comment("Defines cooldown of suck single item").defineInRange("suckItemCooldown", 1_000, 0, Integer.MAX_VALUE);
-            DIG_BLOCK_COST = builder.comment("Defines cost of dig block action").defineInRange("digBlockCost", 1, 1, Integer.MAX_VALUE);
-            DIG_BLOCK_COOLDOWN = builder.comment("Defines cooldown of dig block action").defineInRange("digBlockCooldown", 100, 0, Integer.MAX_VALUE);
-            USE_ON_BLOCK_COST = builder.comment("Defines cost of use on block action").defineInRange("useOnBlockCost", 1, 1, Integer.MAX_VALUE);
-            USE_ON_BLOCK_COOLDOWN = builder.comment("Defines cooldown of use on block action").defineInRange("useOnBlockCooldown", 5_000, 0, Integer.MAX_VALUE);
-            WARP_COOLDOWN = builder.comment("Defines cooldown of warp action").defineInRange("warpCooldown", 1_000, 0, Integer.MAX_VALUE);
-            USE_ON_ANIMAL_COST = builder.comment("Defines cost of use on animal action").defineInRange("useOnAnimalCost", 10, 1, Integer.MAX_VALUE);
-            USE_ON_ANIMAL_COOLDOWN = builder.comment("Defines cooldown of use on animal action").defineInRange("useOnAnimalCooldown", 2_500, 0, Integer.MAX_VALUE);
-            CAPTURE_ANIMAL_COST = builder.comment("Defines cost of capture animal action").defineInRange("captureAnimalCost", 100, 1, Integer.MAX_VALUE);
-            CAPTURE_ANIMAL_COOLDOWN = builder.comment("Defines cooldown of capture animal action").defineInRange("captureAnimalCooldown", 50_000, 0, Integer.MAX_VALUE);
             ENABLE_WEAK_AUTOMATA_CORE = builder.define("enableWeakAutomataCore", true);
-            WEAK_AUTOMATA_CORE_TURTLE_INTERACTION_RANGE = builder.defineInRange("weakAutomataCoreInteractionRange", 2, 1, 10);
-            WEAK_AUTOMATA_CORE_TURTLE_MAX_FUEL_CONSUMPTION_LEVEL = builder.defineInRange("weakAutomataCoreMaxFuelConsumptionLevel", 2, 1, 10);
             ENABLE_END_AUTOMATA_CORE = builder.define("enableEndAutomataCore", true);
-            END_AUTOMATA_CORE_TURTLE_INTERACTION_RANGE = builder.defineInRange("endAutomataCoreInteractionRange", 4, 1, 10);
-            END_AUTOMATA_CORE_TURTLE_MAX_FUEL_CONSUMPTION_LEVEL = builder.defineInRange("endAutomataCoreMaxFuelConsumptionLevel", 4, 1, 10);
             ENABLE_HUSBANDRY_AUTOMATA_CORE = builder.define("enableHusbandryAutomataCore", true);
-            HUSBANDRY_AUTOMATA_CORE_TURTLE_INTERACTION_RANGE = builder.defineInRange("husbandryAutomataCoreInteractionRange", 4, 1, 10);
-            HUSBANDRY_AUTOMATA_CORE_TURTLE_MAX_FUEL_CONSUMPTION_LEVEL = builder.defineInRange("husbandryAutomataCoreMaxFuelConsumptionLevel", 4, 1, 10);
+
+            // automata core tiers registration
+            register(AutomataCoreTier.values(), builder);
+            register(CountDependOperations.values(), builder);
+            register(DistanceDependOperation.values(), builder);
             builder.pop();
 
             builder.comment("").push("world");
 
             ENABLE_VILLAGER_STRUCTURES = builder.comment("Enable the villager structures for the computer scientist.").define("enableVillagerStructures", true);
             builder.pop();
+        }
+
+        protected void register(IConfigHandler[] data, final ForgeConfigSpec.Builder builder) {
+            for (IConfigHandler handler: data) {
+                handler.addToConfig(builder);
+            }
         }
     }
 }

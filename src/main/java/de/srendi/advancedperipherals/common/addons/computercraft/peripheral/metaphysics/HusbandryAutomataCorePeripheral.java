@@ -4,6 +4,8 @@ import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.lua.MethodResult;
 import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
+import de.srendi.advancedperipherals.common.addons.computercraft.base.AutomataCoreTier;
+import de.srendi.advancedperipherals.common.addons.computercraft.base.IAutomataCoreTier;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
 import net.minecraft.entity.Entity;
@@ -26,14 +28,15 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Predicate;
 
+import static de.srendi.advancedperipherals.common.addons.computercraft.base.CountDependOperations.USE_ON_ANIMAL;
+import static de.srendi.advancedperipherals.common.addons.computercraft.base.CountDependOperations.CAPTURE_ANIMAL;
+
 public class HusbandryAutomataCorePeripheral extends WeakAutomataCorePeripheral {
     private static final Predicate<Entity> isAnimal = entity1 -> entity1.getType().getCategory().isFriendly();
     private static final Predicate<Entity> isLivingEntity = entity1 -> entity1 instanceof LivingEntity;
     private static final Predicate<Entity> isNotPlayer = entity1 -> !(entity1 instanceof PlayerEntity);
     private static final Predicate<Entity> suitableEntity = isAnimal.and(isLivingEntity).and(isNotPlayer);
     private static final String ENTITY_NBT_KEY = "storedEntity";
-    private final static String USE_ON_ANIMAL_OPERATION = "use_on_animal";
-    private final static String CAPTURE_ANIMAL_OPERATION = "capture_animal";
 
     public HusbandryAutomataCorePeripheral(String type, ITurtleAccess turtle, TurtleSide side) {
         super(type, turtle, side);
@@ -45,27 +48,9 @@ public class HusbandryAutomataCorePeripheral extends WeakAutomataCorePeripheral 
     }
 
     @Override
-    public int getInteractionRadius() {
-        return AdvancedPeripheralsConfig.husbandryAutomataCoreInteractionRadius;
+    public IAutomataCoreTier getTier() {
+        return AutomataCoreTier.WEAK_UPDATED;
     }
-
-    @Override
-    protected int getRawCooldown(String name) {
-        switch (name) {
-            case USE_ON_ANIMAL_OPERATION:
-                return AdvancedPeripheralsConfig.useOnAnimalCooldown;
-            case CAPTURE_ANIMAL_OPERATION:
-                return AdvancedPeripheralsConfig.captureAnimalCooldown;
-            default:
-                return super.getRawCooldown(name);
-        }
-    }
-
-    @Override
-    protected int getMaxFuelConsumptionRate() {
-        return AdvancedPeripheralsConfig.husbandryAutomataCoreMaxFuelConsumptionLevel;
-    }
-
     protected boolean isEntityInside() {
         return !owner.getDataStorage().getCompound(ENTITY_NBT_KEY).isEmpty();
     }
@@ -99,18 +84,18 @@ public class HusbandryAutomataCorePeripheral extends WeakAutomataCorePeripheral 
     @Override
     public Map<String, Object> getPeripheralConfiguration() {
         Map<String, Object> result = super.getPeripheralConfiguration();
-        result.put("useOnAnimalCost", AdvancedPeripheralsConfig.useOnAnimalCost);
-        result.put("useOnAnimalCooldown", AdvancedPeripheralsConfig.useOnAnimalCooldown);
-        result.put("captureAnimalCost", AdvancedPeripheralsConfig.captureAnimalCost);
-        result.put("captureAnimalCooldown", AdvancedPeripheralsConfig.captureAnimalCooldown);
+        result.put("useOnAnimalCost", USE_ON_ANIMAL.getCost(1));
+        result.put("useOnAnimalCooldown", USE_ON_ANIMAL.getCooldown(1));
+        result.put("captureAnimalCost", CAPTURE_ANIMAL.getCost(1));
+        result.put("captureAnimalCooldown", CAPTURE_ANIMAL.getCooldown(1));
         return result;
     }
 
     @LuaFunction(mainThread = true)
     public final MethodResult useOnAnimal() {
-        Optional<MethodResult> checkResults = cooldownCheck(USE_ON_ANIMAL_OPERATION);
+        Optional<MethodResult> checkResults = cooldownCheck(USE_ON_ANIMAL);
         if (checkResults.isPresent()) return checkResults.get();
-        checkResults = consumeFuelOp(AdvancedPeripheralsConfig.useOnAnimalCost);
+        checkResults = consumeFuelOp(USE_ON_ANIMAL, 1);
         if (checkResults.isPresent()) return checkResults.map(this::fuelErrorCallback).get();
         addRotationCycle();
         ItemStack selectedTool = owner.getToolInMainHand();
@@ -118,7 +103,7 @@ public class HusbandryAutomataCorePeripheral extends WeakAutomataCorePeripheral 
         ActionResultType result = owner.withPlayer(player -> player.useOnFilteredEntity(suitableEntity));
         if (restoreToolDurability())
             selectedTool.setDamageValue(previousDamageValue);
-        trackOperation(USE_ON_ANIMAL_OPERATION);
+        trackOperation(USE_ON_ANIMAL, 1);
         return MethodResult.of(true, result.toString());
     }
 
@@ -147,7 +132,7 @@ public class HusbandryAutomataCorePeripheral extends WeakAutomataCorePeripheral 
 
     @LuaFunction
     public final MethodResult captureAnimal() {
-        Optional<MethodResult> checkResults = cooldownCheck(CAPTURE_ANIMAL_OPERATION);
+        Optional<MethodResult> checkResults = cooldownCheck(CAPTURE_ANIMAL);
         if (checkResults.isPresent()) return checkResults.get();
         if (isEntityInside())
             return MethodResult.of(null, "Another entity already captured");
@@ -155,7 +140,7 @@ public class HusbandryAutomataCorePeripheral extends WeakAutomataCorePeripheral 
         RayTraceResult entityHit = owner.withPlayer(player -> player.findHit(false, true, suitableEntity));
         if (entityHit.getType() == RayTraceResult.Type.MISS)
             return MethodResult.of(null, "Nothing found");
-        checkResults = consumeFuelOp(AdvancedPeripheralsConfig.captureAnimalCost);
+        checkResults = consumeFuelOp(CAPTURE_ANIMAL, 1);
         if (checkResults.isPresent()) return checkResults.map(this::fuelErrorCallback).get();
         LivingEntity entity = (LivingEntity) ((EntityRayTraceResult) entityHit).getEntity();
         if (entity instanceof PlayerEntity || !entity.isAlive()) return MethodResult.of(null, "Unsuitable entity");
@@ -163,7 +148,7 @@ public class HusbandryAutomataCorePeripheral extends WeakAutomataCorePeripheral 
         nbt.putString("entity", EntityType.getKey(entity.getType()).toString());
         entity.saveWithoutId(nbt);
         entity.remove();
-        trackOperation(CAPTURE_ANIMAL_OPERATION);
+        trackOperation(CAPTURE_ANIMAL, 1);
         saveEntity(nbt);
         return MethodResult.of(true);
     }

@@ -16,7 +16,7 @@ import java.util.Optional;
 
 public abstract class OperationPeripheral extends BasePeripheral {
 
-    private final Map<String, Timestamp> targetOperationTimestamp = new HashMap<>();
+    private final Map<IPeripheralOperation<?>, Timestamp> targetOperationTimestamp = new HashMap<>();
 
     public OperationPeripheral(String type, PeripheralTileEntity<?> tileEntity) {
         super(type, tileEntity);
@@ -30,36 +30,34 @@ public abstract class OperationPeripheral extends BasePeripheral {
         super(type, pocket);
     }
 
-    protected abstract int getRawCooldown(String name);
-
-    public int getCooldown(String name) {
-        return getRawCooldown(name);
+    public <T> int getCooldown(IPeripheralOperation<T> operation, T context) {
+        return operation.getCooldown(context);
     }
 
-    public void trackOperation(String name) {
-        trackOperation(name, 1);
+    public <T> void trackOperation(IPeripheralOperation<T> operation, T context) {
+        trackOperation(operation, context, 1);
     }
 
-    public void trackOperation(String name, int count) {
-        targetOperationTimestamp.put(name, Timestamp.valueOf(LocalDateTime.now().plus((long) count * getCooldown(name), ChronoUnit.MILLIS)));
+    public <T> void trackOperation(IPeripheralOperation<T> operation, T context, int count) {
+        targetOperationTimestamp.put(operation, Timestamp.valueOf(LocalDateTime.now().plus((long) count * getCooldown(operation, context), ChronoUnit.MILLIS)));
     }
 
-    public Optional<MethodResult> cooldownCheck(String name) {
-        if (isOnCooldown(name))
-            return Optional.of(MethodResult.of(null, String.format("%s is on cooldown", name)));
+    public Optional<MethodResult> cooldownCheck(IPeripheralOperation<?> operation) {
+        if (isOnCooldown(operation))
+            return Optional.of(MethodResult.of(null, String.format("%s is on cooldown", operation)));
         return Optional.empty();
     }
 
-    public boolean isOnCooldown(String name) {
-        Timestamp targetTimestamp = targetOperationTimestamp.get(name);
+    public boolean isOnCooldown(IPeripheralOperation<?> operation) {
+        Timestamp targetTimestamp = targetOperationTimestamp.get(operation);
         if (targetTimestamp == null) {
             return false;
         }
         return Timestamp.valueOf(LocalDateTime.now()).before(targetTimestamp);
     }
 
-    public int getCurrentCooldown(String name) {
-        Timestamp targetTimestamp = targetOperationTimestamp.get(name);
+    public int getCurrentCooldown(IPeripheralOperation<?> operation) {
+        Timestamp targetTimestamp = targetOperationTimestamp.get(operation);
         if (targetTimestamp == null) {
             return 0;
         }
