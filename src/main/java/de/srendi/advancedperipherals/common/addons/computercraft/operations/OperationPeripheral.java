@@ -50,7 +50,7 @@ public abstract class OperationPeripheral extends BasePeripheral {
 
     public Optional<MethodResult> cooldownCheck(IPeripheralOperation<?> operation) {
         if (isOnCooldown(operation))
-            return Optional.of(MethodResult.of(null, String.format("%s is on cooldown", operation)));
+            return Optional.of(MethodResult.of(null, String.format("%s is on cooldown", operation.settingsName())));
         return Optional.empty();
     }
 
