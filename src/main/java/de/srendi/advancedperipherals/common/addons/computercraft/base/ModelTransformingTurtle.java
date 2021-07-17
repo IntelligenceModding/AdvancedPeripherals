@@ -4,6 +4,7 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import dan200.computercraft.api.client.TransformedModel;
 import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
+import de.srendi.advancedperipherals.common.addons.computercraft.operations.AutomataCorePeripheral;
 import de.srendi.advancedperipherals.common.util.DataStorageUtil;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -18,6 +19,7 @@ public abstract class ModelTransformingTurtle<T extends AutomataCorePeripheral> 
         super(id, adjective, item);
     }
 
+    // Required for addons based on AP
     public ModelTransformingTurtle(ResourceLocation id, String adjective, ItemStack item) {
         super(id, adjective, item);
     }
@@ -45,10 +47,16 @@ public abstract class ModelTransformingTurtle<T extends AutomataCorePeripheral> 
         return TransformedModel.of(side == TurtleSide.LEFT ? getLeftModel() : getRightModel());
     }
 
+    // Optional callbacks for addons based on AP
+    public void chargeConsumingCallback() {
+
+    }
+
     @Override
     public void update(@NotNull ITurtleAccess turtle, @NotNull TurtleSide side) {
         super.update(turtle, side);
         if (tick % 2 == 0)
-            DataStorageUtil.RotationCharge.consume(turtle, side);
+            if (DataStorageUtil.RotationCharge.consume(turtle, side))
+                chargeConsumingCallback();
     }
 }
