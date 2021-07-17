@@ -7,7 +7,8 @@ import dan200.computercraft.api.lua.MethodResult;
 import dan200.computercraft.api.pocket.IPocketAccess;
 import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
-import de.srendi.advancedperipherals.common.addons.computercraft.base.OperationPeripheral;
+import de.srendi.advancedperipherals.common.addons.computercraft.operations.IPeripheralOperation;
+import de.srendi.advancedperipherals.common.addons.computercraft.operations.OperationPeripheral;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -19,9 +20,13 @@ import net.minecraftforge.fml.server.ServerLifecycleHooks;
 
 import javax.annotation.Nonnull;
 
+import java.util.Collections;
+import java.util.List;
+
+import static de.srendi.advancedperipherals.common.addons.computercraft.operations.SimpleFreeOperation.CHAT_MESSAGE;
+
 public class ChatBoxPeripheral extends OperationPeripheral {
 
-    private final static String SEND_MESSAGE_OPERATION = "sendMessage";
     private final static String PREFIX_FORMAT = "[%s] ";
 
     public ChatBoxPeripheral(String type, PeripheralTileEntity<?> tileEntity) {
@@ -37,12 +42,8 @@ public class ChatBoxPeripheral extends OperationPeripheral {
     }
 
     @Override
-    protected int getRawCooldown(String name) {
-        if (name.equals(SEND_MESSAGE_OPERATION))
-            // Some legacy logic, cooldown defined in seconds
-            // and we need miliseconds here
-            return AdvancedPeripheralsConfig.chatBoxCooldown * 1000;
-        return 0;
+    public List<IPeripheralOperation<?>> possibleOperations() {
+        return Collections.singletonList(CHAT_MESSAGE);
     }
 
     @Override
@@ -50,14 +51,9 @@ public class ChatBoxPeripheral extends OperationPeripheral {
         return AdvancedPeripheralsConfig.enableChatBox;
     }
 
-    @LuaFunction
-    public final int getSendCooldown() {
-        return getCurrentCooldown(SEND_MESSAGE_OPERATION);
-    }
-
     @LuaFunction(mainThread = true)
     public final MethodResult sendFormattedMessage(@Nonnull IArguments arguments) throws LuaException {
-        if (isOnCooldown(SEND_MESSAGE_OPERATION))
+        if (isOnCooldown(CHAT_MESSAGE))
             throw new LuaException("You are sending messages too often. You can modify the cooldown in the config.");
         String message = arguments.getString(0);
         IFormattableTextComponent prefix = new StringTextComponent(String.format(PREFIX_FORMAT, arguments.optString(1, AdvancedPeripheralsConfig.defaultChatBoxPrefix)));
@@ -67,25 +63,25 @@ public class ChatBoxPeripheral extends OperationPeripheral {
                 return MethodResult.of(null, "incorrect json");
             player.sendMessage(prefix.append(component), Util.NIL_UUID);
         }
-        trackOperation(SEND_MESSAGE_OPERATION);
+        trackOperation(CHAT_MESSAGE, null);
         return MethodResult.of(true);
     }
 
     @LuaFunction(mainThread = true)
     public final void sendMessage(@Nonnull IArguments arguments) throws LuaException {
-        if (isOnCooldown(SEND_MESSAGE_OPERATION))
+        if (isOnCooldown(CHAT_MESSAGE))
             throw new LuaException("You are sending messages too often. You can modify the cooldown in the config.");
         String message = arguments.getString(0);
         IFormattableTextComponent prefix = new StringTextComponent(String.format(PREFIX_FORMAT, arguments.optString(1, AdvancedPeripheralsConfig.defaultChatBoxPrefix)));
         for (ServerPlayerEntity player : ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers()) {
             player.sendMessage(prefix.append(message), Util.NIL_UUID);
         }
-        trackOperation(SEND_MESSAGE_OPERATION);
+        trackOperation(CHAT_MESSAGE, null);
     }
 
     @LuaFunction(mainThread = true)
     public final void sendMessageToPlayer(@Nonnull IArguments arguments) throws LuaException {
-        if (isOnCooldown(SEND_MESSAGE_OPERATION))
+        if (isOnCooldown(CHAT_MESSAGE))
             throw new LuaException("You are sending messages too often. You can modify the cooldown in the config.");
         String message = arguments.getString(0);
         String playerName = arguments.getString(1);
@@ -94,7 +90,7 @@ public class ChatBoxPeripheral extends OperationPeripheral {
             if (player.getName().getString().equals(playerName))
                 player.sendMessage(prefix.append(message), Util.NIL_UUID);
         }
-        trackOperation(SEND_MESSAGE_OPERATION);
+        trackOperation(CHAT_MESSAGE, null);
     }
 
 }

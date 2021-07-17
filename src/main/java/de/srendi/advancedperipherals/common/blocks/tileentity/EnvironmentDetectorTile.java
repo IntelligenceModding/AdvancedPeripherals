@@ -14,7 +14,7 @@ public class EnvironmentDetectorTile extends PoweredPeripheralTileEntity<Environ
 
     @Override
     protected int getMaxEnergyStored() {
-        return AdvancedPeripheralsConfig.environmentDetectorMaxEnergyStored;
+        return AdvancedPeripheralsConfig.poweredPeripheralMaxEnergyStored;
     }
 
     @NotNull

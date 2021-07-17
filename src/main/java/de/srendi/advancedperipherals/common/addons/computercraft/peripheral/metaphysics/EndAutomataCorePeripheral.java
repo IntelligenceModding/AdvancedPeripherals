@@ -6,6 +6,8 @@ import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
 import de.srendi.advancedperipherals.common.addons.computercraft.base.AutomataCoreTier;
 import de.srendi.advancedperipherals.common.addons.computercraft.base.IAutomataCoreTier;
+import de.srendi.advancedperipherals.common.addons.computercraft.operations.IPeripheralOperation;
+import de.srendi.advancedperipherals.common.addons.computercraft.operations.SingleOperationContext;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
 import de.srendi.advancedperipherals.common.util.NBTUtil;
 import de.srendi.advancedperipherals.common.util.Pair;
@@ -14,10 +16,10 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
-import java.util.Map;
+import java.util.List;
 import java.util.Optional;
 
-import static de.srendi.advancedperipherals.common.addons.computercraft.base.DistanceDependOperation.WARP;
+import static de.srendi.advancedperipherals.common.addons.computercraft.operations.SingleOperation.WARP;
 
 
 public class EndAutomataCorePeripheral extends WeakAutomataCorePeripheral {
@@ -56,20 +58,15 @@ public class EndAutomataCorePeripheral extends WeakAutomataCorePeripheral {
         return Pair.onlyRight(settings.getCompound(POINT_DATA_MARK));
     }
 
-    private int getWarpCost(BlockPos warpTarget) {
-        return WARP.getCooldown(warpTarget.distManhattan(getPos())) * fuelConsumptionMultiply();
+    private int getWarpCost(SingleOperationContext context) {
+        return WARP.getCost(context) * fuelConsumptionMultiply();
     }
 
     @Override
-    public Map<String, Object> getPeripheralConfiguration() {
-        Map<String, Object> result = super.getPeripheralConfiguration();
-//        result.put("warpCooldown", AdvancedPeripheralsConfig.warpCooldown);
-        return result;
-    }
-
-    @LuaFunction
-    public final int getWarpCooldown() {
-        return getCurrentCooldown(WARP);
+    public List<IPeripheralOperation<?>> possibleOperations() {
+        List<IPeripheralOperation<?>> data = super.possibleOperations();
+        data.add(WARP);
+        return data;
     }
 
     @LuaFunction
@@ -108,7 +105,8 @@ public class EndAutomataCorePeripheral extends WeakAutomataCorePeripheral {
         BlockPos newPosition = NBTUtil.blockPosFromNBT(data.getCompound(name));
         if (owner.isMovementPossible(world, newPosition))
             return MethodResult.of(null, "Move forbidden");
-        int warpCost = getWarpCost(newPosition);
+        SingleOperationContext context = toDistance(newPosition);
+        int warpCost = getWarpCost(context);
         if (consumeFuel(warpCost, true)) {
             boolean teleportResult = owner.move(world, newPosition);
             if (teleportResult) {
@@ -118,7 +116,7 @@ public class EndAutomataCorePeripheral extends WeakAutomataCorePeripheral {
                 return MethodResult.of(null, "Cannot teleport to location");
             }
         }
-        trackOperation(WARP, 1);
+        trackOperation(WARP, context);
         return MethodResult.of(null, String.format("Not enough fuel, %d needed", warpCost));
     }
 
@@ -130,7 +128,7 @@ public class EndAutomataCorePeripheral extends WeakAutomataCorePeripheral {
         }
         CompoundNBT data = pairData.getRight();
         BlockPos newPosition = NBTUtil.blockPosFromNBT(data.getCompound(name));
-        return MethodResult.of(getWarpCost(newPosition));
+        return MethodResult.of(getWarpCost(toDistance(newPosition)));
     }
 
     @LuaFunction

@@ -1,4 +1,4 @@
-package de.srendi.advancedperipherals.common.addons.computercraft.base;
+package de.srendi.advancedperipherals.common.addons.computercraft.operations;
 
 import dan200.computercraft.ComputerCraft;
 import dan200.computercraft.api.lua.LuaFunction;

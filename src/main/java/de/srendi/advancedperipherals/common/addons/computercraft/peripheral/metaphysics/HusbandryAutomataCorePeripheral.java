@@ -6,6 +6,7 @@ import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
 import de.srendi.advancedperipherals.common.addons.computercraft.base.AutomataCoreTier;
 import de.srendi.advancedperipherals.common.addons.computercraft.base.IAutomataCoreTier;
+import de.srendi.advancedperipherals.common.addons.computercraft.operations.IPeripheralOperation;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
 import net.minecraft.entity.Entity;
@@ -28,8 +29,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Predicate;
 
-import static de.srendi.advancedperipherals.common.addons.computercraft.base.CountDependOperations.USE_ON_ANIMAL;
-import static de.srendi.advancedperipherals.common.addons.computercraft.base.CountDependOperations.CAPTURE_ANIMAL;
+import static de.srendi.advancedperipherals.common.addons.computercraft.operations.SingleOperation.*;
 
 public class HusbandryAutomataCorePeripheral extends WeakAutomataCorePeripheral {
     private static final Predicate<Entity> isAnimal = entity1 -> entity1.getType().getCategory().isFriendly();
@@ -82,29 +82,23 @@ public class HusbandryAutomataCorePeripheral extends WeakAutomataCorePeripheral 
     }
 
     @Override
-    public Map<String, Object> getPeripheralConfiguration() {
-        Map<String, Object> result = super.getPeripheralConfiguration();
-        result.put("useOnAnimalCost", USE_ON_ANIMAL.getCost(1));
-        result.put("useOnAnimalCooldown", USE_ON_ANIMAL.getCooldown(1));
-        result.put("captureAnimalCost", CAPTURE_ANIMAL.getCost(1));
-        result.put("captureAnimalCooldown", CAPTURE_ANIMAL.getCooldown(1));
-        return result;
+    public List<IPeripheralOperation<?>> possibleOperations() {
+        List<IPeripheralOperation<?>> data = super.possibleOperations();
+        data.add(USE_ON_ANIMAL);
+        data.add(CAPTURE_ANIMAL);
+        return data;
     }
 
     @LuaFunction(mainThread = true)
     public final MethodResult useOnAnimal() {
-        Optional<MethodResult> checkResults = cooldownCheck(USE_ON_ANIMAL);
-        if (checkResults.isPresent()) return checkResults.get();
-        checkResults = consumeFuelOp(USE_ON_ANIMAL, 1);
-        if (checkResults.isPresent()) return checkResults.map(this::fuelErrorCallback).get();
-        addRotationCycle();
-        ItemStack selectedTool = owner.getToolInMainHand();
-        int previousDamageValue = selectedTool.getDamageValue();
-        ActionResultType result = owner.withPlayer(player -> player.useOnFilteredEntity(suitableEntity));
-        if (restoreToolDurability())
-            selectedTool.setDamageValue(previousDamageValue);
-        trackOperation(USE_ON_ANIMAL, 1);
-        return MethodResult.of(true, result.toString());
+        return withOperation(USE_ON_ANIMAL, context -> {
+            ItemStack selectedTool = owner.getToolInMainHand();
+            int previousDamageValue = selectedTool.getDamageValue();
+            ActionResultType result = owner.withPlayer(player -> player.useOnFilteredEntity(suitableEntity));
+            if (restoreToolDurability())
+                selectedTool.setDamageValue(previousDamageValue);
+            return MethodResult.of(true, result.toString());
+        });
     }
 
     @LuaFunction
@@ -132,25 +126,23 @@ public class HusbandryAutomataCorePeripheral extends WeakAutomataCorePeripheral 
 
     @LuaFunction
     public final MethodResult captureAnimal() {
-        Optional<MethodResult> checkResults = cooldownCheck(CAPTURE_ANIMAL);
-        if (checkResults.isPresent()) return checkResults.get();
-        if (isEntityInside())
-            return MethodResult.of(null, "Another entity already captured");
-        addRotationCycle();
         RayTraceResult entityHit = owner.withPlayer(player -> player.findHit(false, true, suitableEntity));
         if (entityHit.getType() == RayTraceResult.Type.MISS)
             return MethodResult.of(null, "Nothing found");
-        checkResults = consumeFuelOp(CAPTURE_ANIMAL, 1);
-        if (checkResults.isPresent()) return checkResults.map(this::fuelErrorCallback).get();
-        LivingEntity entity = (LivingEntity) ((EntityRayTraceResult) entityHit).getEntity();
-        if (entity instanceof PlayerEntity || !entity.isAlive()) return MethodResult.of(null, "Unsuitable entity");
-        CompoundNBT nbt = new CompoundNBT();
-        nbt.putString("entity", EntityType.getKey(entity.getType()).toString());
-        entity.saveWithoutId(nbt);
-        entity.remove();
-        trackOperation(CAPTURE_ANIMAL, 1);
-        saveEntity(nbt);
-        return MethodResult.of(true);
+        return withOperation(CAPTURE_ANIMAL, context -> {
+            LivingEntity entity = (LivingEntity) ((EntityRayTraceResult) entityHit).getEntity();
+            if (entity instanceof PlayerEntity || !entity.isAlive()) return MethodResult.of(null, "Unsuitable entity");
+            CompoundNBT nbt = new CompoundNBT();
+            nbt.putString("entity", EntityType.getKey(entity.getType()).toString());
+            entity.saveWithoutId(nbt);
+            entity.remove();
+            saveEntity(nbt);
+            return MethodResult.of(true);
+        }, context -> {
+            if (isEntityInside())
+                return Optional.of(MethodResult.of(null, "Another entity already captured"));
+            return Optional.empty();
+        });
     }
 
     @LuaFunction

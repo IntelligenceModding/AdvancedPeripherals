@@ -19,7 +19,7 @@ public class GeoScannerTile extends PoweredPeripheralTileEntity<GeoScannerPeriph
 
     @Override
     protected int getMaxEnergyStored() {
-        return AdvancedPeripheralsConfig.geoScannerMaxEnergyStored;
+        return AdvancedPeripheralsConfig.poweredPeripheralMaxEnergyStored;
     }
 
     @Override

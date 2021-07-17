@@ -40,12 +40,14 @@ public class DataStorageUtil {
             return getDataStorage(access, side).getInt(ROTATION_CHARGE_SETTING);
         }
 
-        public static void consume(@Nonnull ITurtleAccess access, @Nonnull TurtleSide side) {
+        public static boolean consume(@Nonnull ITurtleAccess access, @Nonnull TurtleSide side) {
             CompoundNBT data = getDataStorage(access, side);
             int currentCharge = data.getInt(ROTATION_CHARGE_SETTING);
             if (currentCharge > 0) {
                 data.putInt(ROTATION_CHARGE_SETTING, Math.max(0, data.getInt(ROTATION_CHARGE_SETTING) - 1));
+                return true;
             }
+            return false;
         }
 
         public static void addCycles(IPeripheralOwner owner, int count) {

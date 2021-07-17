@@ -9,7 +9,9 @@ import dan200.computercraft.api.peripheral.IComputerAccess;
 import dan200.computercraft.api.pocket.IPocketAccess;
 import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
-import de.srendi.advancedperipherals.common.addons.computercraft.base.FuelConsumingPeripheral;
+import de.srendi.advancedperipherals.common.addons.computercraft.operations.FuelConsumingPeripheral;
+import de.srendi.advancedperipherals.common.addons.computercraft.operations.IPeripheralOperation;
+import de.srendi.advancedperipherals.common.addons.computercraft.operations.SphereOperationContext;
 import de.srendi.advancedperipherals.common.addons.mekanism.Mekanism;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
@@ -31,9 +33,9 @@ import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import javax.annotation.Nonnull;
 import java.util.*;
 
-public class EnvironmentDetectorPeripheral extends FuelConsumingPeripheral {
+import static de.srendi.advancedperipherals.common.addons.computercraft.operations.SphereOperation.SCAN_ENTITIES;
 
-    private static final String SCAN_OPERATION = "scan";
+public class EnvironmentDetectorPeripheral extends FuelConsumingPeripheral {
 
     public EnvironmentDetectorPeripheral(String type, PeripheralTileEntity<?> tileEntity) {
         super(type, tileEntity);
@@ -48,22 +50,13 @@ public class EnvironmentDetectorPeripheral extends FuelConsumingPeripheral {
     }
 
     private static int estimateCost(int radius) {
-        if (radius <= AdvancedPeripheralsConfig.environmentDetectorMaxFreeRadius) {
+        if (radius <= SCAN_ENTITIES.getMaxFreeRadius()) {
             return 0;
         }
-        if (radius > AdvancedPeripheralsConfig.environmentDetectorMaxCostRadius) {
+        if (radius > SCAN_ENTITIES.getMaxCostRadius()) {
             return -1;
         }
-        int freeBlockCount = IntMath.pow(2 * AdvancedPeripheralsConfig.environmentDetectorMaxFreeRadius + 1, 3);
-        int allBlockCount = IntMath.pow(2 * radius + 1, 3);
-        return (int) Math.floor((allBlockCount - freeBlockCount) * AdvancedPeripheralsConfig.environmentDetectorExtraBlockCost);
-    }
-
-    @Override
-    protected int getRawCooldown(String name) {
-        if (name.equals(SCAN_OPERATION))
-            return AdvancedPeripheralsConfig.environmentDetectorMinScanPeriod;
-        return 0;
+        return SCAN_ENTITIES.getCost(SphereOperationContext.of(radius));
     }
 
     @Override
@@ -78,6 +71,11 @@ public class EnvironmentDetectorPeripheral extends FuelConsumingPeripheral {
 
     @Override
     protected void _setFuelConsumptionRate(int rate) {
+    }
+
+    @Override
+    public List<IPeripheralOperation<?>> possibleOperations() {
+        return Collections.singletonList(SCAN_ENTITIES);
     }
 
     @Override
@@ -236,29 +234,15 @@ public class EnvironmentDetectorPeripheral extends FuelConsumingPeripheral {
     }
 
     @LuaFunction
-    public final long getScanCooldown() {
-        return getCurrentCooldown(SCAN_OPERATION);
-    }
-
-    public Map<String, Object> getPeripheralConfiguration() {
-        Map<String, Object> result = super.getPeripheralConfiguration();
-        result.put("freeRadius", AdvancedPeripheralsConfig.environmentDetectorMaxFreeRadius);
-        result.put("scanPeriod", AdvancedPeripheralsConfig.environmentDetectorMinScanPeriod);
-        result.put("costRadius", AdvancedPeripheralsConfig.environmentDetectorMaxCostRadius);
-        result.put("blockCost", AdvancedPeripheralsConfig.environmentDetectorExtraBlockCost);
-        return result;
-    }
-
-    @LuaFunction
     public final MethodResult scanEntities(@Nonnull IComputerAccess access, @Nonnull IArguments arguments) throws LuaException {
         int radius = arguments.getInt(0);
-        Optional<MethodResult> checkResult = cooldownCheck(SCAN_OPERATION);
+        Optional<MethodResult> checkResult = cooldownCheck(SCAN_ENTITIES);
         if (checkResult.isPresent()) return checkResult.get();
         BlockPos pos = getPos();
-        if (radius > AdvancedPeripheralsConfig.geoScannerMaxCostRadius) {
+        if (radius > SCAN_ENTITIES.getMaxCostRadius()) {
             return MethodResult.of(null, "Radius is exceed max value");
         }
-        if (radius > AdvancedPeripheralsConfig.geoScannerMaxFreeRadius) {
+        if (radius > SCAN_ENTITIES.getMaxFreeRadius()) {
             if (owner.getFuelMaxCount() == 0) {
                 return MethodResult.of(null, "Radius is exceed max value");
             }
@@ -272,7 +256,7 @@ public class EnvironmentDetectorPeripheral extends FuelConsumingPeripheral {
         getWorld().getEntities((Entity) null, box.inflate(radius), entity -> entity instanceof LivingEntity).forEach(
                 entity -> entities.add(LuaConverter.completeEntityWithPositionToLua(entity, ItemStack.EMPTY, pos))
         );
-        trackOperation(SCAN_OPERATION);
+        trackOperation(SCAN_ENTITIES, SCAN_ENTITIES.free());
         return MethodResult.of(entities);
     }
 

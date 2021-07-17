@@ -1,33 +1,39 @@
-package de.srendi.advancedperipherals.common.addons.computercraft.base;
+package de.srendi.advancedperipherals.common.addons.computercraft.operations;
 
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.lua.MethodResult;
 import dan200.computercraft.api.pocket.IPocketAccess;
 import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
+import de.srendi.advancedperipherals.common.addons.computercraft.base.BasePeripheral;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 public abstract class OperationPeripheral extends BasePeripheral {
 
     private final Map<IPeripheralOperation<?>, Timestamp> targetOperationTimestamp = new HashMap<>();
+    private final Map<String, IPeripheralOperation<?>> allowedOperations;
 
     public OperationPeripheral(String type, PeripheralTileEntity<?> tileEntity) {
         super(type, tileEntity);
+        this.allowedOperations = buildAllowedOperations();
     }
 
     public OperationPeripheral(String type, ITurtleAccess turtle, TurtleSide side) {
         super(type, turtle, side);
+        this.allowedOperations = buildAllowedOperations();
     }
 
     public OperationPeripheral(String type, IPocketAccess pocket) {
         super(type, pocket);
+        this.allowedOperations = buildAllowedOperations();
     }
 
     public <T> int getCooldown(IPeripheralOperation<T> operation, T context) {
@@ -64,12 +70,32 @@ public abstract class OperationPeripheral extends BasePeripheral {
         return (int) Math.max(0, targetTimestamp.getTime() - Timestamp.valueOf(LocalDateTime.now()).getTime());
     }
 
+    public abstract List<IPeripheralOperation<?>> possibleOperations();
+
+    private Map<String, IPeripheralOperation<?>> buildAllowedOperations() {
+        Map<String, IPeripheralOperation<?>> allowedOperations = new HashMap<>();
+        possibleOperations().forEach(op -> allowedOperations.put(op.settingsName(), op));
+        return allowedOperations;
+    }
+
     public Map<String, Object> getPeripheralConfiguration() {
-        return new HashMap<>();
+        Map<String, Object> data = new HashMap<>();
+        for (IPeripheralOperation<?> operation: allowedOperations.values()) {
+            data.put(operation.settingsName(), operation.computerDescription());
+        }
+        return data;
     }
 
     @LuaFunction
     public final Map<String, Object> getConfiguration() {
         return getPeripheralConfiguration();
+    }
+
+    @LuaFunction
+    public final MethodResult getOperationCooldown(String name) {
+        IPeripheralOperation<?> op = allowedOperations.get(name);
+        if (op == null)
+            return MethodResult.of(null, "Cannot find this operation");
+        return MethodResult.of(getCurrentCooldown(op));
     }
 }

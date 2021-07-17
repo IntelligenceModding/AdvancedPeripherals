@@ -1,13 +1,25 @@
-package de.srendi.advancedperipherals.common.addons.computercraft.base;
+package de.srendi.advancedperipherals.common.addons.computercraft.operations;
 
+import dan200.computercraft.api.lua.MethodResult;
 import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
+import de.srendi.advancedperipherals.common.addons.computercraft.base.IAutomataCoreTier;
 import de.srendi.advancedperipherals.common.util.DataStorageUtil;
+import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.function.Function;
+import java.util.function.Supplier;
+
+import static de.srendi.advancedperipherals.common.addons.computercraft.operations.SingleOperation.SUCK;
 
 public abstract class AutomataCorePeripheral extends FuelConsumingPeripheral {
 
@@ -73,5 +85,41 @@ public abstract class AutomataCorePeripheral extends FuelConsumingPeripheral {
     @Override
     protected final int getMaxFuelConsumptionRate() {
         return getTier().getMaxFuelConsumptionRate();
+    }
+
+    @Nonnull
+    public MethodResult fuelErrorCallback(MethodResult fuelErrorResult) {
+        return fuelErrorResult;
+    }
+
+    protected SingleOperationContext forUnknownDistance() {
+        return new SingleOperationContext(1, getInteractionRadius());
+    }
+
+    protected SingleOperationContext toDistance(BlockPos pos) {
+        return new SingleOperationContext(1, getPos().distManhattan(pos));
+    }
+
+    protected <T> MethodResult withOperation(IPeripheralOperation<T> operation, T context, Function<T, MethodResult> function, @Nullable Function<T, Optional<MethodResult>> checkBeforeFuel) {
+        Optional<MethodResult> checkResults = cooldownCheck(operation);
+        if (checkResults.isPresent()) return checkResults.get();
+        if (checkBeforeFuel != null) {
+            checkResults = checkBeforeFuel.apply(context);
+            if (checkResults.isPresent()) return checkResults.get();
+        }
+        checkResults = consumeFuelOp(operation, context);
+        if (checkResults.isPresent()) return checkResults.map(this::fuelErrorCallback).get();
+        addRotationCycle();
+        MethodResult functionResult = function.apply(context);
+        trackOperation(operation, context);
+        return functionResult;
+    }
+
+    protected MethodResult withOperation(SingleOperation operation, Function<SingleOperationContext, MethodResult> function) {
+        return withOperation(operation, forUnknownDistance(), function, null);
+    }
+
+    protected MethodResult withOperation(SingleOperation operation, Function<SingleOperationContext, MethodResult> function, @Nonnull Function<SingleOperationContext, Optional<MethodResult>> checkBeforeFuel) {
+        return withOperation(operation, forUnknownDistance(), function, checkBeforeFuel);
     }
 }
