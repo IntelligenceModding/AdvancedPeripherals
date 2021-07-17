@@ -93,7 +93,7 @@ public enum SingleOperation implements IPeripheralOperation<SingleOperationConte
                 settingsName() + "Cooldown", defaultCooldown, 1_000, Integer.MAX_VALUE
         );
         cost = builder.defineInRange(
-                settingsName() + "Cost", defaultCost, 1, Integer.MAX_VALUE
+                settingsName() + "Cost", defaultCost, 0, Integer.MAX_VALUE
         );
     }
 }
