@@ -17,7 +17,7 @@ import java.util.List;
 @OnlyIn(Dist.CLIENT)
 public class HudOverlayHandler {
     private static HudOverlayHandler instance;
-    private List<ARRenderAction> canvas = new ArrayList<ARRenderAction>();
+    private final List<ARRenderAction> canvas = new ArrayList<>();
 
     public static void init() {
         instance = new HudOverlayHandler();
