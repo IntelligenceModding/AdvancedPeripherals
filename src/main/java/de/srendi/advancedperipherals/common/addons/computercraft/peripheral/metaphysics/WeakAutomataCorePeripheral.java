@@ -6,7 +6,7 @@ import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.lua.MethodResult;
 import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
-import de.srendi.advancedperipherals.common.addons.computercraft.base.AutomataCoreTier;
+import de.srendi.advancedperipherals.common.addons.computercraft.operations.AutomataCoreTier;
 import de.srendi.advancedperipherals.common.addons.computercraft.base.IAutomataCoreTier;
 import de.srendi.advancedperipherals.common.addons.computercraft.base.IFeedableAutomataCore;
 import de.srendi.advancedperipherals.common.addons.computercraft.operations.AutomataCorePeripheral;
@@ -39,7 +39,7 @@ public class WeakAutomataCorePeripheral extends AutomataCorePeripheral {
 
     @Override
     public IAutomataCoreTier getTier() {
-        return AutomataCoreTier.WEAK;
+        return AutomataCoreTier.TIER1;
     }
 
     protected boolean restoreToolDurability() {

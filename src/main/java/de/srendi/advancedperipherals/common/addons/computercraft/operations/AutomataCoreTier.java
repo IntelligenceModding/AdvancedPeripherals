@@ -1,15 +1,13 @@
-package de.srendi.advancedperipherals.common.addons.computercraft.base;
+package de.srendi.advancedperipherals.common.addons.computercraft.operations;
 
+import de.srendi.advancedperipherals.common.addons.computercraft.base.IAutomataCoreTier;
 import net.minecraftforge.common.ForgeConfigSpec;
 
-import java.util.Arrays;
-import java.util.stream.Collectors;
-
 public enum AutomataCoreTier implements IAutomataCoreTier {
-    WEAK(2, 2),
-    WEAK_UPDATED(4, 3),
-    OVERPOWERED_WEAK(4, 3),
-    OVERPOWERED_WEAK_UPDATED(6, 4);
+    TIER1(2, 2),
+    TIER2(4, 3),
+    OVERPOWERED_TIER1(4, 3),
+    OVERPOWERED_TIER2(6, 4);
 
     private ForgeConfigSpec.IntValue interactionRadius;
     private ForgeConfigSpec.IntValue maxFuelConsumptionRate;

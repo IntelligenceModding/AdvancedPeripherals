@@ -4,7 +4,7 @@ import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.lua.MethodResult;
 import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
-import de.srendi.advancedperipherals.common.addons.computercraft.base.AutomataCoreTier;
+import de.srendi.advancedperipherals.common.addons.computercraft.operations.AutomataCoreTier;
 import de.srendi.advancedperipherals.common.addons.computercraft.base.IAutomataCoreTier;
 import de.srendi.advancedperipherals.common.addons.computercraft.operations.IPeripheralOperation;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
@@ -49,7 +49,7 @@ public class HusbandryAutomataCorePeripheral extends WeakAutomataCorePeripheral 
 
     @Override
     public IAutomataCoreTier getTier() {
-        return AutomataCoreTier.WEAK_UPDATED;
+        return AutomataCoreTier.TIER2;
     }
     protected boolean isEntityInside() {
         return !owner.getDataStorage().getCompound(ENTITY_NBT_KEY).isEmpty();

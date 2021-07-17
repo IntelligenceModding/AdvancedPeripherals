@@ -2,7 +2,7 @@ package de.srendi.advancedperipherals.common.configuration;
 
 import de.srendi.advancedperipherals.common.addons.computercraft.operations.SimpleFreeOperation;
 import de.srendi.advancedperipherals.common.addons.computercraft.operations.SingleOperation;
-import de.srendi.advancedperipherals.common.addons.computercraft.base.AutomataCoreTier;
+import de.srendi.advancedperipherals.common.addons.computercraft.operations.AutomataCoreTier;
 import de.srendi.advancedperipherals.common.addons.computercraft.base.IConfigHandler;
 import de.srendi.advancedperipherals.common.addons.computercraft.operations.SphereOperation;
 import net.minecraftforge.common.ForgeConfigSpec;
