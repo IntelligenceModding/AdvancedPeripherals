@@ -34,7 +34,7 @@ public class MNetwork {
     }
 
     /**
-     * Sends a packet to the server.<br>
+     * Sends a packet to the server.<p>
      * Must be called Client side.
      */
     public static void sendToServer(Object msg) {
@@ -42,7 +42,7 @@ public class MNetwork {
     }
 
     /**
-     * Send a packet to a specific player.<br>
+     * Send a packet to a specific player.<p>
      * Must be called Server side.
      */
     public static void sendTo(Object msg, ServerPlayerEntity player) {
