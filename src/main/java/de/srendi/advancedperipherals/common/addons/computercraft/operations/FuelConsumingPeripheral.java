@@ -1,4 +1,4 @@
-package de.srendi.advancedperipherals.common.addons.computercraft.base;
+package de.srendi.advancedperipherals.common.addons.computercraft.operations;
 
 import dan200.computercraft.ComputerCraft;
 import dan200.computercraft.api.lua.LuaFunction;
@@ -55,6 +55,10 @@ public abstract class FuelConsumingPeripheral extends OperationPeripheral {
         return Optional.empty();
     }
 
+    public <T> Optional<MethodResult> consumeFuelOp(IPeripheralOperation<T> operation, T context) {
+        return consumeFuelOp(operation.getCost(context));
+    }
+
     public void addFuel(int count) {
         if (fuelConsumptionDisabled())
             return;
@@ -62,8 +66,8 @@ public abstract class FuelConsumingPeripheral extends OperationPeripheral {
     }
 
     @Override
-    public int getCooldown(String name) {
-        return getRawCooldown(name) / _getFuelConsumptionRate();
+    public <T> int getCooldown(IPeripheralOperation<T> operation, T context) {
+        return operation.getCooldown(context) / _getFuelConsumptionRate();
     }
 
     @Override
