@@ -2,6 +2,7 @@ package de.srendi.advancedperipherals.common.blocks.base;
 
 import dan200.computercraft.api.peripheral.IComputerAccess;
 import dan200.computercraft.api.peripheral.IPeripheral;
+import dan200.computercraft.shared.Capabilities;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.addons.computercraft.base.BasePeripheral;
 import de.srendi.advancedperipherals.common.addons.computercraft.base.IPeripheralTileEntity;
@@ -30,8 +31,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-import static dan200.computercraft.shared.Capabilities.CAPABILITY_PERIPHERAL;
-
 @MethodsReturnNonnullByDefault
 public abstract class PeripheralTileEntity<T extends BasePeripheral> extends LockableTileEntity implements ISidedInventory, INamedContainerProvider, IPeripheralTileEntity {
     // TODO: move inventory logic to another tile entity?
@@ -53,9 +52,10 @@ public abstract class PeripheralTileEntity<T extends BasePeripheral> extends Loc
         apSettings = new CompoundNBT();
     }
 
+    @NotNull
     @Override
-    public <T1> @NotNull LazyOptional<T1> getCapability(@NotNull Capability<T1> cap, @Nullable Direction direction) {
-        if (cap == CAPABILITY_PERIPHERAL) {
+    public <T1> LazyOptional<T1> getCapability(@NotNull Capability<T1> cap, @Nullable Direction direction) {
+        if (cap == Capabilities.CAPABILITY_PERIPHERAL) {
             if (peripheral.isEnabled()) {
                 if (peripheralCap == null || !peripheralCap.isPresent()) {
                     peripheralCap = LazyOptional.of(() -> peripheral);
