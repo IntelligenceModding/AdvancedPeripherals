@@ -87,7 +87,7 @@ public abstract class BasePeripheral implements IPeripheral {
         return owner.getWorld();
     }
 
-    protected Direction validateSide(String direction) {
+    protected Direction validateSide(String direction) throws LuaException {
         String dir = direction.toUpperCase(Locale.ROOT);
 
         return LuaConverter.getDirection(owner.getFacing(), dir);
