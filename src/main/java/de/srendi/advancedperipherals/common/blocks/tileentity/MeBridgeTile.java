@@ -67,6 +67,8 @@ public class MeBridgeTile extends PeripheralTileEntity<MeBridgePeripheral> imple
                     }
                     node.updateState();
                 }
+                if (peripheral == null) // should never happen, but still, in any case
+                    peripheral = createPeripheral();
                 peripheral.setNode(node);
                 initialized = true;
             }

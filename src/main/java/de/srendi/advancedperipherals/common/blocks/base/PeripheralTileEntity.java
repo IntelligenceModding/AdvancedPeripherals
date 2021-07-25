@@ -29,6 +29,7 @@ import net.minecraftforge.items.wrapper.SidedInvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collections;
 import java.util.List;
 
 @MethodsReturnNonnullByDefault
@@ -98,6 +99,8 @@ public abstract class PeripheralTileEntity<T extends BasePeripheral> extends Loc
     protected abstract T createPeripheral();
 
     public List<IComputerAccess> getConnectedComputers() {
+        if (peripheral == null) // just avoid some NPE in strange cases
+            return Collections.emptyList();
         return peripheral.getConnectedComputers();
     }
 
