@@ -88,12 +88,8 @@ public abstract class BasePeripheral implements IPeripheral {
     }
 
     protected Direction validateSide(String direction) throws LuaException {
-        ComputerSide dir;
-        try {
-            dir = ComputerSide.valueOf(direction.toUpperCase(Locale.ROOT));
-        } catch (IllegalArgumentException exception) {
-            throw new LuaException(direction + " is not a valid side.");
-        }
+        String dir = direction.toUpperCase(Locale.ROOT);
+
         return LuaConverter.getDirection(owner.getFacing(), dir);
     }
 }

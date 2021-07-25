@@ -79,7 +79,7 @@ public class ARControllerTile extends PeripheralTileEntity<ARControllerPeriphera
         else if (compound.contains(VIRTUAL_SCREEN_SIZE))
             compound.remove(VIRTUAL_SCREEN_SIZE);
         ListNBT list = new ListNBT();
-        for (ARRenderAction action : canvas) {
+        for (ARRenderAction action : new ArrayList<>(canvas)) {
             list.add(action.serializeNBT());
         }
         compound.put(CANVAS, list);
