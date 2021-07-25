@@ -45,6 +45,7 @@ public class EnergyDetectorTile extends PeripheralTileEntity<EnergyDetectorPerip
         return new EnergyDetectorPeripheral("energyDetector", this);
     }
 
+    @NotNull
     @Override
     public <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction direction) {
         energyInDirection = getBlockState().getValue(APTileEntityBlock.FACING);
