@@ -11,7 +11,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.IForgeShearable;
 import org.jetbrains.annotations.NotNull;
-import org.squiddev.cobalt.Lua;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -53,7 +52,10 @@ public class LuaConverter {
         return data;
     }
 
-    public static Object posToObject(@NotNull BlockPos pos) {
+    public static Object posToObject(BlockPos pos) {
+        if(pos == null)
+            return null;
+
         Map<String, Object> map = new HashMap<>();
         map.put("x", pos.getX());
         map.put("y", pos.getY());

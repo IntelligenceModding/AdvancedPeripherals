@@ -17,14 +17,12 @@ import com.minecolonies.api.research.IGlobalResearchTree;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.pocket.IPocketAccess;
-import dan200.computercraft.shared.util.NBTUtil;
 import de.srendi.advancedperipherals.common.addons.computercraft.base.BasePeripheral;
 import de.srendi.advancedperipherals.common.addons.computercraft.base.PocketPeripheralOwner;
 import de.srendi.advancedperipherals.common.addons.minecolonies.MineColonies;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
-import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
@@ -76,6 +74,11 @@ public class ColonyPeripheral extends BasePeripheral {
         });
 
         return list;
+    }
+
+    @LuaFunction(mainThread = true)
+    public final int getAmountOfConstructionSites() throws LuaException {
+        return MineColonies.getAmountOfConstructionSites(getColony());
     }
 
     @LuaFunction(mainThread = true)
@@ -178,11 +181,8 @@ public class ColonyPeripheral extends BasePeripheral {
         IColony colony = getColony();
 
         List<Object> worksData = new ArrayList<>();
-        for (IWorkOrder workOrder : colony.getWorkManager().getWorkOrders().values()) {
-            CompoundNBT nbt = new CompoundNBT();
-            workOrder.write(nbt);
-            worksData.add(NBTUtil.toLua(nbt));
-        }
+        for (IWorkOrder workOrder : colony.getWorkManager().getWorkOrders().values())
+            worksData.add(MineColonies.workOrderToObject(workOrder));
 
         return worksData;
     }

@@ -7,6 +7,7 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IBuildingWorker;
 import com.minecolonies.api.colony.managers.interfaces.IBuildingManager;
 import com.minecolonies.api.colony.permissions.Action;
+import com.minecolonies.api.colony.workorders.IWorkOrder;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.research.IGlobalResearch;
 import com.minecolonies.api.research.IGlobalResearchTree;
@@ -16,6 +17,7 @@ import com.minecolonies.api.research.effects.IResearchEffect;
 import com.minecolonies.api.research.util.ResearchState;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingStructureBuilder;
 import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
+import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
 import io.netty.buffer.Unpooled;
 import net.minecraft.entity.Entity;
@@ -35,7 +37,6 @@ import java.util.List;
 import java.util.Map;
 
 public class MineColonies {
-    //Todo: 0.7r Add pocket computer version
 
     /**
      * To ensure that the user of a pocket computer has the appropriate rights.
@@ -207,6 +208,30 @@ public class MineColonies {
         if (handler != null)
             return handler.getSlots();
         return 0;
+    }
+
+    public static int getAmountOfConstructionSites(IColony colony) {
+        int constructionSites = 0;
+        for(IBuilding building : colony.getBuildingManager().getBuildings().values()) {
+            if(building.hasWorkOrder())
+                constructionSites++;
+        }
+        return constructionSites;
+    }
+
+    public static Object workOrderToObject(IWorkOrder workOrder) {
+        Map<String, Object> map = new HashMap<>();
+
+        map.put("builder", LuaConverter.posToObject(workOrder.getClaimedBy()));
+        map.put("changed", workOrder.hasChanged());
+        map.put("id", workOrder.getID());
+        map.put("priority", workOrder.getPriority());
+        map.put("isClaimed", workOrder.isClaimed());
+        map.put("location", workOrder instanceof WorkOrderBuildDecoration ?
+                LuaConverter.posToObject(((WorkOrderBuildDecoration) workOrder).getSchematicLocation()) : null);
+        map.put("type", workOrder.getClass().getSimpleName());
+
+        return map;
     }
 
     /**
