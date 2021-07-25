@@ -36,7 +36,7 @@ import static dan200.computercraft.shared.Capabilities.CAPABILITY_PERIPHERAL;
 public abstract class PeripheralTileEntity<T extends BasePeripheral> extends LockableTileEntity implements ISidedInventory, INamedContainerProvider, IPeripheralTileEntity {
     // TODO: move inventory logic to another tile entity?
     private static final String AP_SETTINGS_KEY = "AP_SETTINGS";
-    private final LazyOptional<? extends IItemHandler> handler = LazyOptional.of(() -> new SidedInvWrapper(this, Direction.NORTH));
+    private LazyOptional<? extends IItemHandler> handler;
     protected CompoundNBT apSettings;
     protected NonNullList<ItemStack> items;
 
@@ -57,7 +57,7 @@ public abstract class PeripheralTileEntity<T extends BasePeripheral> extends Loc
     public <T1> @NotNull LazyOptional<T1> getCapability(@NotNull Capability<T1> cap, @Nullable Direction direction) {
         if (cap == CAPABILITY_PERIPHERAL) {
             if (peripheral.isEnabled()) {
-                if (peripheralCap == null) {
+                if (peripheralCap == null || !peripheralCap.isPresent()) {
                     peripheralCap = LazyOptional.of(() -> peripheral);
                 }
                 return peripheralCap.cast();
@@ -67,6 +67,8 @@ public abstract class PeripheralTileEntity<T extends BasePeripheral> extends Loc
         }
 
         if (cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && !remove && direction != null && this instanceof IInventoryBlock) {
+            if (handler == null || !handler.isPresent())
+                handler = LazyOptional.of(() -> new SidedInvWrapper(this, Direction.NORTH));
             return handler.cast();
         }
         return super.getCapability(cap, direction);
@@ -77,7 +79,8 @@ public abstract class PeripheralTileEntity<T extends BasePeripheral> extends Loc
         super.invalidateCaps();
         if (peripheralCap != null)
             peripheralCap.invalidate();
-        handler.invalidate();
+        if (handler != null)
+            handler.invalidate();
     }
 
     @NotNull
