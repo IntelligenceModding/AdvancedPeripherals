@@ -77,7 +77,7 @@ public class ColonyPeripheral extends BasePeripheral {
     }
 
     @LuaFunction(mainThread = true)
-    public final int getAmountOfConstructionSites() throws LuaException {
+    public final int amountOfConstructionSites() throws LuaException {
         return MineColonies.getAmountOfConstructionSites(getColony());
     }
 
