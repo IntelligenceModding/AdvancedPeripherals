@@ -29,6 +29,7 @@ import net.minecraftforge.items.wrapper.SidedInvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collections;
 import java.util.List;
 
 @MethodsReturnNonnullByDefault
@@ -39,7 +40,7 @@ public abstract class PeripheralTileEntity<T extends BasePeripheral> extends Loc
     protected CompoundNBT apSettings;
     protected NonNullList<ItemStack> items;
 
-    protected T peripheral = createPeripheral();
+    protected @Nullable T peripheral = null;
     private LazyOptional<IPeripheral> peripheralCap;
 
     public PeripheralTileEntity(TileEntityType<?> tileEntityTypeIn) {
@@ -56,8 +57,19 @@ public abstract class PeripheralTileEntity<T extends BasePeripheral> extends Loc
     @Override
     public <T1> LazyOptional<T1> getCapability(@NotNull Capability<T1> cap, @Nullable Direction direction) {
         if (cap == Capabilities.CAPABILITY_PERIPHERAL) {
+            if (peripheral == null)
+                // Perform later peripheral creation, because creating peripheral
+                // on init of tile entity cause some infinity loop, if peripheral
+                // are depend on tile entity data
+                this.peripheral = createPeripheral();
             if (peripheral.isEnabled()) {
-                if (peripheralCap == null || !peripheralCap.isPresent()) {
+                if (peripheralCap == null) {
+                    peripheralCap = LazyOptional.of(() -> peripheral);
+                } else if (!peripheralCap.isPresent()) {
+                    // Recreate peripheral to allow CC: Tweaked correctly handle
+                    // peripheral update logic, so new peripheral and old one will be
+                    // different
+                    peripheral = createPeripheral();
                     peripheralCap = LazyOptional.of(() -> peripheral);
                 }
                 return peripheralCap.cast();
@@ -87,6 +99,8 @@ public abstract class PeripheralTileEntity<T extends BasePeripheral> extends Loc
     protected abstract T createPeripheral();
 
     public List<IComputerAccess> getConnectedComputers() {
+        if (peripheral == null) // just avoid some NPE in strange cases
+            return Collections.emptyList();
         return peripheral.getConnectedComputers();
     }
 
