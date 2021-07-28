@@ -56,6 +56,8 @@ public class ConfigHandler {
         AdvancedPeripheralsConfig.enableEndAutomataCore = ConfigHolder.COMMON_CONFIG.ENABLE_END_AUTOMATA_CORE.get();
         AdvancedPeripheralsConfig.enableHusbandryAutomataCore = ConfigHolder.COMMON_CONFIG.ENABLE_HUSBANDRY_AUTOMATA_CORE.get();
 
+        //World
+        AdvancedPeripheralsConfig.givePlayerBookOnJoin = ConfigHolder.COMMON_CONFIG.GIVE_PLAYER_BOOK_ON_JOIN.get();
         AdvancedPeripheralsConfig.enableVillagerStructures = ConfigHolder.COMMON_CONFIG.ENABLE_VILLAGER_STRUCTURES.get();
     }
 }

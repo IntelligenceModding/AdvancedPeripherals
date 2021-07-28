@@ -8,20 +8,41 @@ import de.srendi.advancedperipherals.common.util.Pair;
 import de.srendi.advancedperipherals.network.MNetwork;
 import de.srendi.advancedperipherals.network.messages.ClearHudCanvasMessage;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.ServerChatEvent;
 import net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.function.Consumer;
 
 @Mod.EventBusSubscriber(modid = AdvancedPeripherals.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class Events {
 
+    private static final String PLAYED_BEFORE = "ap_played_before";
     private static final int CHAT_QUEUE_MAX_SIZE = 50;
     public static final EvictingQueue<Pair<Long, ChatMessageObject>> messageQueue = EvictingQueue.create(CHAT_QUEUE_MAX_SIZE);
     public static long counter = 0;
+
+    @SubscribeEvent
+    public static void onWorldJoin(PlayerEvent.PlayerLoggedInEvent event) {
+        if(AdvancedPeripheralsConfig.givePlayerBookOnJoin) {
+            PlayerEntity player = event.getPlayer();
+            if(!hasPlayedBefore(player)) {
+                ItemStack book = new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation("patchouli", "guide_book")));
+                CompoundNBT nbt = new CompoundNBT();
+                nbt.putString("patchouli:book", "advancedperipherals:manual");
+                book.setTag(nbt);
+                player.addItem(book);
+            }
+        }
+    }
 
     @SubscribeEvent
     public static void onChatBox(ServerChatEvent event) {
@@ -60,6 +81,17 @@ public class Events {
         return lastConsumedMessage;
     }
 
+    private static boolean hasPlayedBefore(PlayerEntity player) {
+        CompoundNBT tag = player.getPersistentData().getCompound(PlayerEntity.PERSISTED_NBT_TAG);
+        if(tag.getBoolean(PLAYED_BEFORE)) {
+            return true;
+        } else {
+            tag.putBoolean(PLAYED_BEFORE, true);
+            player.getPersistentData().put(PlayerEntity.PERSISTED_NBT_TAG, tag);
+            return false;
+        }
+    }
+
     public static class ChatMessageObject {
 
         public String username;
@@ -74,4 +106,6 @@ public class Events {
             this.isHidden = isHidden;
         }
     }
+
+
 }

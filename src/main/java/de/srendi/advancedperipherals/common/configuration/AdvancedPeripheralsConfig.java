@@ -35,6 +35,7 @@ public class AdvancedPeripheralsConfig {
     public static boolean enableColonyIntegrator;
     public static boolean enableNBTStorage;
     public static boolean enablePoweredPeripherals;
+    public static boolean enableGeoScanner;
 
     // automata cores configuration
     public static int energyToFuelRate;
@@ -44,7 +45,7 @@ public class AdvancedPeripheralsConfig {
 
     //World Features
     public static boolean enableVillagerStructures;
-    public static boolean enableGeoScanner;
+    public static boolean givePlayerBookOnJoin;
 
     public static class CommonConfig {
 
@@ -75,15 +76,15 @@ public class AdvancedPeripheralsConfig {
         final ForgeConfigSpec.BooleanValue ENABLE_NBT_STORAGE;
         final ForgeConfigSpec.BooleanValue ENABLE_POWERED_PERIPHERALS;
 
-        // Mechanical soul
+        // Automata Core
         final ForgeConfigSpec.IntValue ENERGY_TO_FUEL_RATE;
         final ForgeConfigSpec.BooleanValue ENABLE_WEAK_AUTOMATA_CORE;
         final ForgeConfigSpec.BooleanValue ENABLE_END_AUTOMATA_CORE;
         final ForgeConfigSpec.BooleanValue ENABLE_HUSBANDRY_AUTOMATA_CORE;
 
-
         //World Features
         final ForgeConfigSpec.BooleanValue ENABLE_VILLAGER_STRUCTURES;
+        final ForgeConfigSpec.BooleanValue GIVE_PLAYER_BOOK_ON_JOIN;
 
         CommonConfig(final ForgeConfigSpec.Builder builder) {
             builder.comment("").push("Defaults");
@@ -140,6 +141,7 @@ public class AdvancedPeripheralsConfig {
             builder.comment("").push("world");
 
             ENABLE_VILLAGER_STRUCTURES = builder.comment("Enable the villager structures for the computer scientist.").define("enableVillagerStructures", true);
+            GIVE_PLAYER_BOOK_ON_JOIN = builder.comment("Gives the ap documentation to new players on a world.").define("givePlayerBookOnJoin", true);
             builder.pop();
         }
 
