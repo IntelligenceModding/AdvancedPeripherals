@@ -55,6 +55,7 @@ public class ConfigHandler {
         AdvancedPeripheralsConfig.enableWeakAutomataCore = ConfigHolder.COMMON_CONFIG.ENABLE_WEAK_AUTOMATA_CORE.get();
         AdvancedPeripheralsConfig.enableEndAutomataCore = ConfigHolder.COMMON_CONFIG.ENABLE_END_AUTOMATA_CORE.get();
         AdvancedPeripheralsConfig.enableHusbandryAutomataCore = ConfigHolder.COMMON_CONFIG.ENABLE_HUSBANDRY_AUTOMATA_CORE.get();
+        AdvancedPeripheralsConfig.endAutomataCoreWarpPointLimit = ConfigHolder.COMMON_CONFIG.END_AUTOMATA_CORE_WARP_POINT_LIMIT.get();
 
         //World
         AdvancedPeripheralsConfig.givePlayerBookOnJoin = ConfigHolder.COMMON_CONFIG.GIVE_PLAYER_BOOK_ON_JOIN.get();

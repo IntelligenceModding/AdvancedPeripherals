@@ -77,7 +77,23 @@ public class EndAutomataCorePeripheral extends WeakAutomataCorePeripheral {
             return pairData.getLeft();
         }
         CompoundNBT data = pairData.getRight();
+        if (data.getAllKeys().size() >= AdvancedPeripheralsConfig.endAutomataCoreWarpPointLimit)
+            return MethodResult.of(null, "Cannot add new point, limit reached");
         data.put(name, NBTUtil.toNBT(getPos()));
+        return MethodResult.of(true);
+    }
+
+    @LuaFunction
+    public final MethodResult deletePoint(String name) {
+        addRotationCycle();
+        Pair<MethodResult, CompoundNBT> pairData = getPointData();
+        if (pairData.leftPresent()) {
+            return pairData.getLeft();
+        }
+        CompoundNBT data = pairData.getRight();
+        if (!data.contains(name))
+            return MethodResult.of(null, "Cannot find point to delete");
+        data.remove(name);
         return MethodResult.of(true);
     }
 
