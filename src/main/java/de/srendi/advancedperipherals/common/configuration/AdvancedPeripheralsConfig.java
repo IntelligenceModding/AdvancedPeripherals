@@ -41,6 +41,7 @@ public class AdvancedPeripheralsConfig {
     public static boolean enableWeakAutomataCore;
     public static boolean enableEndAutomataCore;
     public static boolean enableHusbandryAutomataCore;
+    public static int endAutomataCoreWarpPointLimit;
 
     //World Features
     public static boolean enableVillagerStructures;
@@ -80,6 +81,7 @@ public class AdvancedPeripheralsConfig {
         final ForgeConfigSpec.BooleanValue ENABLE_WEAK_AUTOMATA_CORE;
         final ForgeConfigSpec.BooleanValue ENABLE_END_AUTOMATA_CORE;
         final ForgeConfigSpec.BooleanValue ENABLE_HUSBANDRY_AUTOMATA_CORE;
+        final ForgeConfigSpec.IntValue END_AUTOMATA_CORE_WARP_POINT_LIMIT;
 
 
         //World Features
@@ -132,6 +134,7 @@ public class AdvancedPeripheralsConfig {
             ENABLE_WEAK_AUTOMATA_CORE = builder.define("enableWeakAutomataCore", true);
             ENABLE_END_AUTOMATA_CORE = builder.define("enableEndAutomataCore", true);
             ENABLE_HUSBANDRY_AUTOMATA_CORE = builder.define("enableHusbandryAutomataCore", true);
+            END_AUTOMATA_CORE_WARP_POINT_LIMIT = builder.comment("Defines max warp point stored in warp core. Mostly need to not allow NBT overflow error").defineInRange("endAutomataCoreWarpPointLimit", 64, 1, Integer.MAX_VALUE);
 
             // automata core tiers registration
             register(AutomataCoreTier.values(), builder);

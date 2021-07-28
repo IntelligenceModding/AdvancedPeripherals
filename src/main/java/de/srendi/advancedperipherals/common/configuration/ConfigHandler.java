@@ -55,6 +55,7 @@ public class ConfigHandler {
         AdvancedPeripheralsConfig.enableWeakAutomataCore = ConfigHolder.COMMON_CONFIG.ENABLE_WEAK_AUTOMATA_CORE.get();
         AdvancedPeripheralsConfig.enableEndAutomataCore = ConfigHolder.COMMON_CONFIG.ENABLE_END_AUTOMATA_CORE.get();
         AdvancedPeripheralsConfig.enableHusbandryAutomataCore = ConfigHolder.COMMON_CONFIG.ENABLE_HUSBANDRY_AUTOMATA_CORE.get();
+        AdvancedPeripheralsConfig.endAutomataCoreWarpPointLimit = ConfigHolder.COMMON_CONFIG.END_AUTOMATA_CORE_WARP_POINT_LIMIT.get();
 
         AdvancedPeripheralsConfig.enableVillagerStructures = ConfigHolder.COMMON_CONFIG.ENABLE_VILLAGER_STRUCTURES.get();
     }
