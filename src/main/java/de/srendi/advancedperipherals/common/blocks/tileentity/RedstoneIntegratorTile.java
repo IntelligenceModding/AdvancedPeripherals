@@ -39,8 +39,10 @@ public class RedstoneIntegratorTile extends PeripheralTileEntity<RedstoneIntegra
         int old = this.power[direction.get3DDataValue()];
         this.power[direction.get3DDataValue()] = power;
         if (old != power) {
-            level.updateNeighborsAt(getBlockPos().relative(direction),
-                    getLevel().getBlockState(getBlockPos().relative(direction)).getBlock());
+            if (level != null)
+                level.updateNeighborsAt(getBlockPos().relative(direction),
+                        getLevel().getBlockState(getBlockPos().relative(direction)).getBlock());
+
             this.setChanged();
         }
     }
