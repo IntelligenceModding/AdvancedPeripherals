@@ -25,7 +25,7 @@ public class RsBridgeTile extends NetworkNodeTile<RefinedStorageNode> implements
 
     private static final String AP_SETTINGS_KEY = "AP_SETTINGS";
 
-    protected CompoundNBT apSettings;
+    protected CompoundNBT apSettings = new CompoundNBT();
 
     protected RsBridgePeripheral peripheral = new RsBridgePeripheral("rsBridge", this);
     private LazyOptional<IPeripheral> peripheralCap;
