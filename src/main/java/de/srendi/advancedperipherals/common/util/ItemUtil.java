@@ -6,12 +6,12 @@ import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.core.apis.TableHelper;
 import de.srendi.advancedperipherals.common.addons.appliedenergistics.AppEngApi;
 import de.srendi.advancedperipherals.common.addons.refinedstorage.RefinedStorage;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.IntNBT;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.ResourceLocationException;
+import net.minecraft.ResourceLocationException;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.IntTag;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.ForgeRegistryEntry;
 import net.minecraftforge.registries.IForgeRegistry;
@@ -78,8 +78,8 @@ public class ItemUtil {
         return stack;
     }
 
-    private static CompoundNBT getTag(ItemStack stack, Map<?, ?> table, IMEMonitor<IAEItemStack> monitor) throws LuaException {
-        CompoundNBT nbt = NBTUtil.fromText(TableHelper.optStringField(table, "json", null));
+    private static CompoundTag getTag(ItemStack stack, Map<?, ?> table, IMEMonitor<IAEItemStack> monitor) throws LuaException {
+        CompoundTag nbt = NBTUtil.fromText(TableHelper.optStringField(table, "json", null));
         if (nbt == null) {
             nbt = NBTUtil.fromBinary(TableHelper.optStringField(table, "tag", null));
             if (nbt == null) {
@@ -89,16 +89,16 @@ public class ItemUtil {
         return nbt;
     }
 
-    private static CompoundNBT parseNBTHash(ItemStack stack, Map<?, ?> table, IMEMonitor<IAEItemStack> monitor) throws LuaException {
+    private static CompoundTag parseNBTHash(ItemStack stack, Map<?, ?> table, IMEMonitor<IAEItemStack> monitor) throws LuaException {
         String nbt = TableHelper.optStringField(table, "nbt", null);
         if (nbt == null || nbt.isEmpty())
             return null;
-        CompoundNBT tag = AppEngApi.getInstance().findMatchingTag(stack, nbt, monitor);
+        CompoundTag tag = AppEngApi.getInstance().findMatchingTag(stack, nbt, monitor);
         if (tag != null)
             return tag;
 
-        tag = new CompoundNBT();
-        tag.put("_apPlaceholder_", IntNBT.valueOf(1));
+        tag = new CompoundTag();
+        tag.put("_apPlaceholder_", IntTag.valueOf(1));
         return tag;
     }
 
@@ -131,8 +131,8 @@ public class ItemUtil {
         return stack;
     }
 
-    private static CompoundNBT getTagRS(ItemStack stack, Map<?, ?> table, List<ItemStack> items) throws LuaException {
-        CompoundNBT nbt = NBTUtil.fromText(TableHelper.optStringField(table, "json", null));
+    private static CompoundTag getTagRS(ItemStack stack, Map<?, ?> table, List<ItemStack> items) throws LuaException {
+        CompoundTag nbt = NBTUtil.fromText(TableHelper.optStringField(table, "json", null));
         if (nbt == null) {
             nbt = NBTUtil.fromBinary(TableHelper.optStringField(table, "tag", null));
             if (nbt == null) {
@@ -142,15 +142,15 @@ public class ItemUtil {
         return nbt;
     }
 
-    private static CompoundNBT parseNBTHashRS(ItemStack stack, Map<?, ?> table, List<ItemStack> items) throws LuaException {
+    private static CompoundTag parseNBTHashRS(ItemStack stack, Map<?, ?> table, List<ItemStack> items) throws LuaException {
         String nbt = TableHelper.optStringField(table, "nbt", null);
         if (nbt == null || nbt.isEmpty())
             return null;
-        CompoundNBT tag = RefinedStorage.findMatchingTag(stack, nbt, items);
+        CompoundTag tag = RefinedStorage.findMatchingTag(stack, nbt, items);
         if (tag != null)
             return tag;
 
-        tag = new CompoundNBT();
+        tag = new CompoundTag();
         return tag;
     }
 

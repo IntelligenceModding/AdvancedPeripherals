@@ -1,8 +1,9 @@
 package de.srendi.advancedperipherals.common.items;
 
 import de.srendi.advancedperipherals.common.items.base.BaseBlockItem;
-import net.minecraft.block.Block;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.Block;
 
 import java.util.Optional;
 import java.util.function.Supplier;
@@ -11,10 +12,10 @@ public class APBlockItem extends BaseBlockItem {
 
     String turtleID;
     String pocketID;
-    ITextComponent description;
+    Component description;
     Supplier<Boolean> enabledSup;
 
-    public APBlockItem(Block blockIn, Properties properties, String turtleID, String pocketID, ITextComponent description, Supplier<Boolean> enabledSup) {
+    public APBlockItem(Block blockIn, Item.Properties properties, String turtleID, String pocketID, Component description, Supplier<Boolean> enabledSup) {
         super(blockIn, properties);
         this.turtleID = turtleID;
         this.pocketID = pocketID;
@@ -22,7 +23,7 @@ public class APBlockItem extends BaseBlockItem {
         this.enabledSup = enabledSup;
     }
 
-    public APBlockItem(Block blockIn, String turtleID, String pocketID, ITextComponent description, Supplier<Boolean> enabledSup) {
+    public APBlockItem(Block blockIn, String turtleID, String pocketID, Component description, Supplier<Boolean> enabledSup) {
         super(blockIn);
         this.turtleID = turtleID;
         this.pocketID = pocketID;
@@ -41,7 +42,7 @@ public class APBlockItem extends BaseBlockItem {
     }
 
     @Override
-    public ITextComponent getDescription() {
+    public Component getDescription() {
         return description;
     }
 

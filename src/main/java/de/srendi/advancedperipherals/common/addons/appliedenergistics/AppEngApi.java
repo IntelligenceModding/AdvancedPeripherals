@@ -14,6 +14,8 @@ import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.item.ItemStack;
 import org.apache.commons.codec.binary.Hex;
 
 import java.nio.charset.StandardCharsets;
@@ -138,11 +140,11 @@ public class AppEngApi implements IAEAddon {
         return result;
     }
 
-    public CompoundNBT findMatchingTag(ItemStack stack, String nbtHash, IMEMonitor<IAEItemStack> monitor) {
+    public CompoundTag findMatchingTag(ItemStack stack, String nbtHash, IMEMonitor<IAEItemStack> monitor) {
         IItemList<IAEItemStack> itemStacks = monitor.getStorageList();
         for (IAEItemStack aeStack : itemStacks) {
             if (aeStack.getStackSize() > 0 && aeStack.getItem().equals(stack.getItem())) {
-                CompoundNBT tag = aeStack.createItemStack().getTag();
+                CompoundTag tag = aeStack.createItemStack().getTag();
                 String hash = NBTUtil.getNBTHash(tag);
                 if (nbtHash.equals(hash))
                     return tag.copy();

@@ -1,5 +1,7 @@
 package de.srendi.advancedperipherals.common.util;
 
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 
@@ -34,12 +36,12 @@ public enum EnumColor {
         this.alternativeCode = alternativeCode;
     }
 
-    public static ITextComponent buildTextComponent(ITextComponent textComponent) {
+    public static Component buildTextComponent(Component textComponent) {
         String text = textComponent.getString();
         for (EnumColor color : EnumColor.values()) {
             text.replaceAll(color.alternativeCode, color.code);
         }
-        return new StringTextComponent(text);
+        return new TextComponent(text);
     }
 
     public String getCode() {

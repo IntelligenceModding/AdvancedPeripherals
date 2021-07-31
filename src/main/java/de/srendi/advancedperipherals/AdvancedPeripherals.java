@@ -11,8 +11,8 @@ import de.srendi.advancedperipherals.common.setup.Registration;
 import de.srendi.advancedperipherals.common.util.ChunkManager;
 import de.srendi.advancedperipherals.common.village.VillageStructures;
 import de.srendi.advancedperipherals.network.MNetwork;
-import net.minecraft.item.ItemGroup;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -35,11 +35,11 @@ public class AdvancedPeripherals {
 
     public static final String MOD_ID = "advancedperipherals";
     public static final Logger LOGGER = LogManager.getLogger("Advanced Peripherals");
-    public static final ItemGroup TAB = new ItemGroup("advancedperipheralstab") {
+    public static final CreativeModeTab TAB = new CreativeModeTab("advancedperipheralstab") {
 
         @Override
         public ItemStack makeIcon() {
-            return new ItemStack(Blocks.CHAT_BOX.get());
+            return new ItemStack(Blocks.CHAT_BOX.);
         }
     };
 

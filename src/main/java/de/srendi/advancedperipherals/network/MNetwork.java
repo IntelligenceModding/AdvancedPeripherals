@@ -4,18 +4,13 @@ import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.network.messages.ClearHudCanvasMessage;
 import de.srendi.advancedperipherals.network.messages.RequestHudCanvasMessage;
 import de.srendi.advancedperipherals.network.messages.UpdateHudCanvasMessage;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.network.play.server.SUpdateTileEntityPacket;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.RegistryKey;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
+
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.common.util.FakePlayer;
-import net.minecraftforge.fml.network.NetworkRegistry;
-import net.minecraftforge.fml.network.PacketDistributor;
-import net.minecraftforge.fml.network.simple.SimpleChannel;
+import net.minecraftforge.fmllegacy.network.NetworkRegistry;
+import net.minecraftforge.fmllegacy.network.PacketDistributor;
+import net.minecraftforge.fmllegacy.network.simple.SimpleChannel;
 
 public class MNetwork {
     private static final String PROTOCOL_VERSION = Integer.toString(1);
@@ -45,7 +40,7 @@ public class MNetwork {
      * Send a packet to a specific player.<p>
      * Must be called Server side.
      */
-    public static void sendTo(Object msg, ServerPlayerEntity player) {
+    public static void sendTo(Object msg, ServerPlayer player) {
         if (!(player instanceof FakePlayer)) {
             NETWORK_CHANNEL.send(PacketDistributor.PLAYER.with(() -> player), msg);
         }
@@ -55,7 +50,7 @@ public class MNetwork {
         NETWORK_CHANNEL.send(PacketDistributor.ALL.noArg(), packet);
     }
 
-    public static SUpdateTileEntityPacket createTEUpdatePacket(TileEntity tile) {
+    public static  createTEUpdatePacket(TileEntity tile) {
         return new SUpdateTileEntityPacket(tile.getBlockPos(), -1, tile.getUpdateTag());
     }
 

@@ -2,8 +2,8 @@ package de.srendi.advancedperipherals.common.util;
 
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.*;
-import net.minecraft.util.math.BlockPos;
 import org.apache.logging.log4j.Level;
 
 import java.io.ByteArrayInputStream;
@@ -14,27 +14,23 @@ import java.util.Map;
 
 public class NBTUtil {
 
-    public static INBT toDirectNBT(Object object) {
-        // Mostly dan200.computercraft.shared.util toNBTTag method
-        // put this map storing changes
-        // instead of map serialization use direct map as CompoundNBT
-        // assuming that map keys are strings
+    public static Tag toDirectNBT(Object object) {
         if (object == null) {
             return null;
         } else if (object instanceof Boolean) {
-            return ByteNBT.valueOf((byte) ((Boolean) object ? 1 : 0));
+            return ByteTag.valueOf((byte) ((Boolean) object ? 1 : 0));
         } else if (object instanceof Integer) {
-            return IntNBT.valueOf((Integer) object);
+            return IntTag.valueOf((Integer) object);
         } else if (object instanceof Number) {
-            return DoubleNBT.valueOf(((Number) object).doubleValue());
+            return DoubleTag.valueOf(((Number) object).doubleValue());
         } else if (object instanceof String) {
-            return StringNBT.valueOf(object.toString());
+            return StringTag.valueOf(object.toString());
         } else if (object instanceof Map) {
             Map<?, ?> m = (Map<?, ?>) object;
-            CompoundNBT nbt = new CompoundNBT();
+            CompoundTag nbt = new CompoundTag();
 
             for (Map.Entry<?, ?> item : m.entrySet()) {
-                INBT value = toDirectNBT(item.getValue());
+                Tag value = toDirectNBT(item.getValue());
                 if (item.getKey() != null && value != null) {
                     nbt.put(item.getKey().toString(), value);
                 }
@@ -45,9 +41,9 @@ public class NBTUtil {
         }
     }
 
-    public static CompoundNBT fromText(String json) {
+    public static CompoundTag fromText(String json) {
         try {
-            return json == null ? null : JsonToNBT.parseTag(json);
+            return json == null ? null : TagParser.parseTag(json);
         } catch (CommandSyntaxException ex) {
             AdvancedPeripherals.debug("Could not parse json data to NBT", Level.ERROR);
             ex.printStackTrace();
@@ -55,12 +51,12 @@ public class NBTUtil {
         }
     }
 
-    public static CompoundNBT fromBinary(String base64) {
+    public static CompoundTag fromBinary(String base64) {
         if (base64 == null)
             return null;
 
         try (InputStream inputStream = Base64.getDecoder().wrap(new ByteArrayInputStream(base64.getBytes()))) {
-            return CompressedStreamTools.readCompressed(inputStream);
+            return NbtIo.readCompressed(inputStream);
         } catch (IOException ex) {
             AdvancedPeripherals.debug("Could not parse binary data to NBT", Level.ERROR);
             ex.printStackTrace();
@@ -68,15 +64,15 @@ public class NBTUtil {
         }
     }
 
-    public static CompoundNBT toNBT(BlockPos pos) {
-        CompoundNBT data = new CompoundNBT();
+    public static CompoundTag toNBT(BlockPos pos) {
+        CompoundTag data = new CompoundTag();
         data.putInt("x", pos.getX());
         data.putInt("y", pos.getY());
         data.putInt("z", pos.getZ());
         return data;
     }
 
-    public static BlockPos blockPosFromNBT(CompoundNBT nbt) {
+    public static BlockPos blockPosFromNBT(CompoundTag nbt) {
         return new BlockPos(nbt.getInt("x"), nbt.getInt("y"), nbt.getInt("z"));
     }
 }
