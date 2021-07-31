@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public enum SimpleFreeOperation implements IPeripheralOperation<Object> {
-    CHAT_MESSAGE(10_000);
+    CHAT_MESSAGE(100);
 
     private ForgeConfigSpec.IntValue cooldown;
     private final int defaultCooldown;
