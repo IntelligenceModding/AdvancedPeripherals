@@ -8,8 +8,11 @@ import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsCon
 import de.srendi.advancedperipherals.common.setup.Items;
 import de.srendi.advancedperipherals.common.util.ChunkManager;
 import net.minecraft.client.renderer.model.ModelResourceLocation;
+import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.item.ItemStack;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.math.ChunkPos;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.server.ServerWorld;
 import org.jetbrains.annotations.NotNull;
 
@@ -60,7 +63,7 @@ public class TurtleChunky extends BaseTurtle<ChunkyPeripheral> {
     }
 
     public boolean forceChunk(@NotNull ITurtleAccess turtle, ChunkPos chunkPos, boolean load) {
-        boolean forced = ChunkManager.INSTANCE.forceChunk((ServerWorld) turtle.getWorld(), turtle.getPosition(), chunkPos, load);
+        boolean forced = ChunkManager.INSTANCE.forceChunk((ServerLevel) turtle.getWorld(), turtle.getPosition(), chunkPos, load);
         loadedChunks.add(chunkPos);
         return forced;
     }

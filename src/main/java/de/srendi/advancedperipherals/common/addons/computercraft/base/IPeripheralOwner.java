@@ -1,12 +1,12 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.base;
 
 import de.srendi.advancedperipherals.common.util.fakeplayer.APFakePlayer;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -17,7 +17,7 @@ public interface IPeripheralOwner {
     String getCustomName();
 
     @Nullable
-    World getWorld();
+    Level getWorld();
 
     @Nonnull
     BlockPos getPos();
@@ -26,10 +26,10 @@ public interface IPeripheralOwner {
     Direction getFacing();
 
     @Nullable
-    PlayerEntity getOwner();
+    Player getOwner();
 
     @Nonnull
-    CompoundNBT getDataStorage();
+    CompoundTag getDataStorage();
 
     int getFuelCount();
 
@@ -47,9 +47,9 @@ public interface IPeripheralOwner {
 
     void destroyUpgrade();
 
-    boolean isMovementPossible(@Nonnull World world, @Nonnull BlockPos pos);
+    boolean isMovementPossible(@Nonnull Level world, @Nonnull BlockPos pos);
 
-    boolean move(@Nonnull World world, @Nonnull BlockPos pos);
+    boolean move(@Nonnull Level world, @Nonnull BlockPos pos);
 
     // Strange methods, that shouldn't exists ...
     void triggerClientServerSync();

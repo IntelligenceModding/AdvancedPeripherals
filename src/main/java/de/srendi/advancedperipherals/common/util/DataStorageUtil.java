@@ -5,21 +5,21 @@ import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
 import de.srendi.advancedperipherals.common.addons.computercraft.base.IPeripheralOwner;
 import de.srendi.advancedperipherals.common.addons.computercraft.base.IPeripheralTileEntity;
-import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.CompoundTag;
 
 import javax.annotation.Nonnull;
 
 public class DataStorageUtil {
 
-    public static CompoundNBT getDataStorage(@Nonnull ITurtleAccess access, @Nonnull TurtleSide side) {
+    public static CompoundTag getDataStorage(@Nonnull ITurtleAccess access, @Nonnull TurtleSide side) {
         return access.getUpgradeNBTData(side);
     }
 
-    public static CompoundNBT getDataStorage(@Nonnull IPeripheralTileEntity tileEntity) {
+    public static CompoundTag getDataStorage(@Nonnull IPeripheralTileEntity tileEntity) {
         return tileEntity.getApSettings();
     }
 
-    public static CompoundNBT getDataStorage(@Nonnull IPocketAccess pocket) {
+    public static CompoundTag getDataStorage(@Nonnull IPocketAccess pocket) {
         return pocket.getUpgradeNBTData();
     }
 
@@ -41,7 +41,7 @@ public class DataStorageUtil {
         }
 
         public static boolean consume(@Nonnull ITurtleAccess access, @Nonnull TurtleSide side) {
-            CompoundNBT data = getDataStorage(access, side);
+            CompoundTag data = getDataStorage(access, side);
             int currentCharge = data.getInt(ROTATION_CHARGE_SETTING);
             if (currentCharge > 0) {
                 data.putInt(ROTATION_CHARGE_SETTING, Math.max(0, data.getInt(ROTATION_CHARGE_SETTING) - 1));
@@ -51,7 +51,7 @@ public class DataStorageUtil {
         }
 
         public static void addCycles(IPeripheralOwner owner, int count) {
-            CompoundNBT data = owner.getDataStorage();
+            CompoundTag data = owner.getDataStorage();
             data.putInt(ROTATION_CHARGE_SETTING, Math.max(0, data.getInt(ROTATION_CHARGE_SETTING)) + count * ROTATION_STEPS);
         }
 

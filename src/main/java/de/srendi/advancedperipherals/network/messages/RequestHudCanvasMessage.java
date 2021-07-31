@@ -2,11 +2,11 @@ package de.srendi.advancedperipherals.network.messages;
 
 import de.srendi.advancedperipherals.common.blocks.tileentity.ARControllerTile;
 import de.srendi.advancedperipherals.network.MNetwork;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.server.ServerWorld;
-import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraftforge.fmllegacy.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
@@ -20,23 +20,23 @@ public class RequestHudCanvasMessage {
         this.dimensionKey = dimensionKey;
     }
 
-    public static RequestHudCanvasMessage decode(PacketBuffer buf) {
+    public static RequestHudCanvasMessage decode(FriendlyByteBuf buf) {
         BlockPos blockPos = buf.readBlockPos();
         String dimensionKey = buf.readUtf(Short.MAX_VALUE);
         return new RequestHudCanvasMessage(blockPos, dimensionKey);
     }
 
-    public static void encode(RequestHudCanvasMessage mes, PacketBuffer buf) {
+    public static void encode(RequestHudCanvasMessage mes, FriendlyByteBuf buf) {
         buf.writeBlockPos(mes.getBlockPos());
         buf.writeUtf(mes.getDimensionKey(), Short.MAX_VALUE);
     }
 
     public static void handle(RequestHudCanvasMessage mes, Supplier<NetworkEvent.Context> cont) {
         cont.get().enqueueWork(() -> {
-            Iterable<ServerWorld> worlds = cont.get().getSender().getServer().getAllLevels();
-            for (ServerWorld world : worlds) {
+            Iterable<ServerLevel> worlds = cont.get().getSender().getServer().getAllLevels();
+            for (ServerLevel world : worlds) {
                 if (world.dimension().toString().equals(mes.getDimensionKey())) {
-                    TileEntity te = world.getBlockEntity(mes.getBlockPos());
+                    BlockEntity te = world.getBlockEntity(mes.getBlockPos());
                     if (!(te instanceof ARControllerTile))
                         return;
                     ARControllerTile controller = (ARControllerTile) te;

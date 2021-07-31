@@ -1,6 +1,7 @@
 package de.srendi.advancedperipherals.client;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import de.srendi.advancedperipherals.common.argoggles.ARRenderAction;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.AbstractGui;
@@ -45,7 +46,7 @@ public class HudOverlayHandler {
     public void onRender(RenderGameOverlayEvent.Post event) {
         if (event.getWindow() == null) return;
         Minecraft mc = Minecraft.getInstance();
-        MatrixStack matrixStack = event.getMatrixStack();
+        PoseStack matrixStack = event.getMatrixStack();
         for (ARRenderAction action : canvas) {
             action.draw(mc, matrixStack, event.getWindow().getScreenWidth(), event.getWindow().getScreenHeight());
         }

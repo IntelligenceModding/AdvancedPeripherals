@@ -12,12 +12,19 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.common.util.FakePlayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -49,23 +56,23 @@ public class WeakAutomataCore extends APItem implements IFeedableAutomataCore {
         husbandrySoulRecord.ingredients.keySet().forEach(entityType -> put(entityType, husbandrySoulRecord));
     }};
 
-    public WeakAutomataCore(Properties properties, String turtleID, String pocketID, ITextComponent description) {
+    public WeakAutomataCore(Properties properties, String turtleID, String pocketID, Component description) {
         super(properties, turtleID, pocketID, description, () -> AdvancedPeripheralsConfig.enableWeakAutomataCore);
     }
 
-    public WeakAutomataCore(String turtleID, String pocketID, ITextComponent description) {
+    public WeakAutomataCore(String turtleID, String pocketID, Component description) {
         super(turtleID, pocketID, description, () -> AdvancedPeripheralsConfig.enableWeakAutomataCore);
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
+    public void appendHoverText(ItemStack stack, @Nullable Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
         super.appendHoverText(stack, worldIn, tooltip, flagIn);
-        CompoundNBT tag = stack.getOrCreateTag();
-        CompoundNBT consumedData = tag.getCompound(CONSUMER_ENTITY_COMPOUND);
+        CompoundTag tag = stack.getOrCreateTag();
+        CompoundTag consumedData = tag.getCompound(CONSUMER_ENTITY_COMPOUND);
         consumedData.getAllKeys().forEach(key -> {
             WeakAutomataCoreRecord record = AUTOMATA_CORE_REGISTRY.get(key);
-            CompoundNBT recordData = consumedData.getCompound(key);
-            tooltip.add(EnumColor.buildTextComponent(new StringTextComponent(
+            CompoundTag recordData = consumedData.getCompound(key);
+            tooltip.add(EnumColor.buildTextComponent(new TextComponent(
                     String.format("Consumed: %d/%d %s", recordData.getInt(CONSUMED_ENTITY_COUNT), record.getRequiredCount(key), recordData.getString(CONSUMED_ENTITY_NAME)))
             ));
         });

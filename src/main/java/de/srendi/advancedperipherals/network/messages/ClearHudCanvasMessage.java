@@ -1,8 +1,8 @@
 package de.srendi.advancedperipherals.network.messages;
 
 import de.srendi.advancedperipherals.client.HudOverlayHandler;
-import net.minecraft.network.PacketBuffer;
-import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraftforge.fmllegacy.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
@@ -12,11 +12,11 @@ public class ClearHudCanvasMessage {
 
     }
 
-    public static ClearHudCanvasMessage decode(PacketBuffer buf) {
+    public static ClearHudCanvasMessage decode(FriendlyByteBuf buf) {
         return new ClearHudCanvasMessage();
     }
 
-    public static void encode(ClearHudCanvasMessage mes, PacketBuffer buf) {
+    public static void encode(ClearHudCanvasMessage mes, FriendlyByteBuf buf) {
 
     }
 

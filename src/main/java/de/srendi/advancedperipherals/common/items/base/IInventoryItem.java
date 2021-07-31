@@ -1,11 +1,11 @@
 package de.srendi.advancedperipherals.common.items.base;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.container.INamedContainerProvider;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 
 public interface IInventoryItem {
 
-    INamedContainerProvider createContainer(PlayerEntity playerEntity, ItemStack itemStack);
+    MenuProvider createContainer(Player playerEntity, ItemStack itemStack);
 
 }

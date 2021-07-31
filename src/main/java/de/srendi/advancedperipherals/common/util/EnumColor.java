@@ -2,8 +2,6 @@ package de.srendi.advancedperipherals.common.util;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
 
 public enum EnumColor {
 

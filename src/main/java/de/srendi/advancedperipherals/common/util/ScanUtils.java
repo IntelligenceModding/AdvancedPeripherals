@@ -1,20 +1,20 @@
 package de.srendi.advancedperipherals.common.util;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.function.BiConsumer;
 
 public class ScanUtils {
-    public static void relativeTraverseBlocks(World world, BlockPos center, int radius, BiConsumer<BlockState, BlockPos> consumer) {
+    public static void relativeTraverseBlocks(Level world, BlockPos center, int radius, BiConsumer<BlockState, BlockPos> consumer) {
         traverseBlocks(world, center, radius, consumer, true);
     }
 
-    public static void traverseBlocks(World world, BlockPos center, int radius, BiConsumer<BlockState, BlockPos> consumer) {
+    public static void traverseBlocks(Level world, BlockPos center, int radius, BiConsumer<BlockState, BlockPos> consumer) {
         traverseBlocks(world, center, radius, consumer, false);
     }
-    public static void traverseBlocks(World world, BlockPos center, int radius, BiConsumer<BlockState, BlockPos> consumer, boolean relativePosition) {
+    public static void traverseBlocks(Level world, BlockPos center, int radius, BiConsumer<BlockState, BlockPos> consumer, boolean relativePosition) {
         int x = center.getX();
         int y = center.getY();
         int z = center.getZ();
@@ -23,7 +23,7 @@ public class ScanUtils {
                 for (int oZ = z - radius; oZ <= z + radius; oZ++) {
                     BlockPos subPos = new BlockPos(oX, oY, oZ);
                     BlockState blockState = world.getBlockState(subPos);
-                    if (!blockState.isAir(world, subPos)) {
+                    if (!blockState.isAir()) {
                         if (relativePosition) {
                             consumer.accept(blockState, new BlockPos(oX - x, oY - y, oZ - z));
                         } else {

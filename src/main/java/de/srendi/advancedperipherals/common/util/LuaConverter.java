@@ -2,13 +2,13 @@ package de.srendi.advancedperipherals.common.util;
 
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.core.computer.ComputerSide;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.passive.AnimalEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.Direction;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.animal.Animal;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.IForgeShearable;
 import org.jetbrains.annotations.NotNull;
 
@@ -26,7 +26,7 @@ public class LuaConverter {
         return data;
     }
 
-    public static Map<String, Object> animalToLua(AnimalEntity animal, ItemStack itemInHand) {
+    public static Map<String, Object> animalToLua(Animal animal, ItemStack itemInHand) {
         Map<String, Object> data = entityToLua(animal);
         data.put("baby", animal.isBaby());
         data.put("inLove", animal.isInLove());
@@ -39,8 +39,8 @@ public class LuaConverter {
     }
 
     public static Map<String, Object> completeEntityToLua(Entity entity, ItemStack itemInHand) {
-        if (entity instanceof AnimalEntity)
-            return animalToLua((AnimalEntity) entity, itemInHand);
+        if (entity instanceof Animal)
+            return animalToLua((Animal) entity, itemInHand);
         return entityToLua(entity);
     }
 

@@ -4,15 +4,15 @@ import dan200.computercraft.api.turtle.TurtleSide;
 import dan200.computercraft.shared.turtle.blocks.TileTurtle;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.addons.computercraft.turtles.TurtleChunky;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.ChunkPos;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.common.world.ForgeChunkManager;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.server.FMLServerAboutToStartEvent;
-import net.minecraftforge.fml.event.server.FMLServerStoppingEvent;
+import net.minecraftforge.fmlserverevents.FMLServerAboutToStartEvent;
+import net.minecraftforge.fmlserverevents.FMLServerStoppingEvent;
 
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.FORGE, modid = AdvancedPeripherals.MOD_ID)
 public class ChunkManager implements ForgeChunkManager.LoadingValidationCallback {
@@ -36,10 +36,10 @@ public class ChunkManager implements ForgeChunkManager.LoadingValidationCallback
     }
 
     @Override
-    public void validateTickets(ServerWorld world, ForgeChunkManager.TicketHelper ticketHelper) {
+    public void validateTickets(ServerLevel world, ForgeChunkManager.TicketHelper ticketHelper) {
         ticketHelper.getBlockTickets().forEach((blockPos, chunks) -> {
             if (world.getBlockEntity(blockPos) != null) {
-                TileEntity tileEntity = world.getBlockEntity(blockPos);
+                BlockEntity tileEntity = world.getBlockEntity(blockPos);
                 if (tileEntity instanceof TileTurtle) {
                     TileTurtle tileTurtle = (TileTurtle) tileEntity;
                     if (tileTurtle.getUpgrade(TurtleSide.RIGHT) instanceof TurtleChunky || tileTurtle.getUpgrade(TurtleSide.LEFT) instanceof TurtleChunky) {
@@ -64,7 +64,7 @@ public class ChunkManager implements ForgeChunkManager.LoadingValidationCallback
         init = false;
     }
 
-    public boolean forceChunk(ServerWorld world, BlockPos pos, ChunkPos chunkPos, boolean add) {
+    public boolean forceChunk(ServerLevel world, BlockPos pos, ChunkPos chunkPos, boolean add) {
         if (init) {
             if (add)
                 AdvancedPeripherals.debug("Trying force chunk " + pos);

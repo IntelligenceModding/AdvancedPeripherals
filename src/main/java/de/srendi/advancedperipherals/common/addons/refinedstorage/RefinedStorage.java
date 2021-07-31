@@ -11,10 +11,10 @@ import com.refinedmods.refinedstorage.apiimpl.network.node.NetworkNode;
 import dan200.computercraft.shared.util.NBTUtil;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.core.NonNullList;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 import org.apache.commons.codec.binary.Hex;
 
@@ -34,7 +34,7 @@ public class RefinedStorage {
         initiate();
     }
 
-    private static INetworkNode read(CompoundNBT tag, NetworkNode node) {
+    private static INetworkNode read(CompoundTag tag, NetworkNode node) {
         node.read(tag);
         return node;
     }
@@ -126,7 +126,7 @@ public class RefinedStorage {
 
     public static Map<String, Object> getObjectFromStack(ItemStack itemStack) {
         Map<String, Object> map = new HashMap<>();
-        CompoundNBT nbt = itemStack.getOrCreateTag();
+        CompoundTag nbt = itemStack.getOrCreateTag();
         Set<ResourceLocation> tags = itemStack.getItem().getTags();
         map.put("fingerprint", getFingerpint(itemStack));
         map.put("name", itemStack.getItem().getRegistryName().toString());
@@ -169,10 +169,10 @@ public class RefinedStorage {
         return result;
     }
 
-    public static CompoundNBT findMatchingTag(ItemStack stack, String nbtHash, List<ItemStack> items) {
+    public static CompoundTag findMatchingTag(ItemStack stack, String nbtHash, List<ItemStack> items) {
         for (ItemStack rsStack : items) {
             if (rsStack.getCount() > 0 && rsStack.getItem().equals(stack.getItem())) {
-                CompoundNBT tag = rsStack.getTag();
+                CompoundTag tag = rsStack.getTag();
                 String hash = NBTUtil.getNBTHash(tag);
                 if (nbtHash.equals(hash))
                     return tag.copy();

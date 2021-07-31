@@ -5,8 +5,14 @@ import de.srendi.advancedperipherals.network.messages.ClearHudCanvasMessage;
 import de.srendi.advancedperipherals.network.messages.RequestHudCanvasMessage;
 import de.srendi.advancedperipherals.network.messages.UpdateHudCanvasMessage;
 
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.fmllegacy.network.NetworkRegistry;
 import net.minecraftforge.fmllegacy.network.PacketDistributor;
@@ -50,16 +56,16 @@ public class MNetwork {
         NETWORK_CHANNEL.send(PacketDistributor.ALL.noArg(), packet);
     }
 
-    public static  createTEUpdatePacket(TileEntity tile) {
-        return new SUpdateTileEntityPacket(tile.getBlockPos(), -1, tile.getUpdateTag());
+    public static ClientboundBlockEntityDataPacket createTEUpdatePacket(BlockEntity tile) {
+        return new ClientboundBlockEntityDataPacket(tile.getBlockPos(), -1, tile.getUpdateTag());
     }
 
-    public static void sendToAllAround(Object mes, RegistryKey<World> dim, BlockPos pos, int radius) {
+    public static void sendToAllAround(Object mes, ResourceKey<Level> dim, BlockPos pos, int radius) {
         NETWORK_CHANNEL.send(PacketDistributor.NEAR
                 .with(() -> new PacketDistributor.TargetPoint(pos.getX(), pos.getY(), pos.getZ(), radius, dim)), mes);
     }
 
-    public static void sendToAllInWorld(Object mes, ServerWorld world) {
+    public static void sendToAllInWorld(Object mes, ServerLevel world) {
         NETWORK_CHANNEL.send(PacketDistributor.DIMENSION.with(world::dimension), mes);
     }
 }

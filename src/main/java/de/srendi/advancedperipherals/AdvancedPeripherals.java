@@ -39,7 +39,7 @@ public class AdvancedPeripherals {
 
         @Override
         public ItemStack makeIcon() {
-            return new ItemStack(Blocks.CHAT_BOX.);
+            return new ItemStack(Blocks.CHAT_BOX.get());
         }
     };
 

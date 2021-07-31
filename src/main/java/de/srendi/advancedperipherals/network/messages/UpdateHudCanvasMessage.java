@@ -5,13 +5,13 @@ import de.srendi.advancedperipherals.client.HudOverlayHandler;
 import de.srendi.advancedperipherals.common.argoggles.ARRenderAction;
 import io.netty.buffer.ByteBufInputStream;
 import io.netty.buffer.ByteBufOutputStream;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.CompressedStreamTools;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.nbt.NBTSizeTracker;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.NbtAccounter;
+import net.minecraft.nbt.NbtIo;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.common.util.Constants.NBT;
-import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraftforge.fmllegacy.network.NetworkEvent;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -26,14 +26,14 @@ public class UpdateHudCanvasMessage {
         this.canvas = canvas;
     }
 
-    public static UpdateHudCanvasMessage decode(PacketBuffer buf) {
+    public static UpdateHudCanvasMessage decode(FriendlyByteBuf buf) {
         ByteBufInputStream streamin = new ByteBufInputStream(buf);
-        CompoundNBT nbt;
+        CompoundTag nbt;
         List<ARRenderAction> canvas = new ArrayList<ARRenderAction>();
         try {
-            nbt = CompressedStreamTools.read(streamin, NBTSizeTracker.UNLIMITED);
-            ListNBT list = nbt.getList(LIST, NBT.TAG_COMPOUND);
-            list.forEach(x -> canvas.add(ARRenderAction.deserialize((CompoundNBT) x)));
+            nbt = NbtIo.read(streamin, NbtAccounter.UNLIMITED);
+            ListTag list = nbt.getList(LIST, NBT.TAG_COMPOUND);
+            list.forEach(x -> canvas.add(ARRenderAction.deserialize((CompoundTag) x)));
         } catch (IOException e) {
             AdvancedPeripherals.LOGGER.error("Failed to decode UpdateHudCanvasMessage: {}", e.getMessage());
             e.printStackTrace();
@@ -41,14 +41,14 @@ public class UpdateHudCanvasMessage {
         return new UpdateHudCanvasMessage(canvas);
     }
 
-    public static void encode(UpdateHudCanvasMessage mes, PacketBuffer buf) {
+    public static void encode(UpdateHudCanvasMessage mes, FriendlyByteBuf buf) {
         ByteBufOutputStream stream = new ByteBufOutputStream(buf);
-        CompoundNBT nbt = new CompoundNBT();
-        ListNBT list = new ListNBT();
+        CompoundTag nbt = new CompoundTag();
+        ListTag list = new ListTag();
         mes.getCanvas().forEach(x -> list.add(x.serializeNBT()));
         nbt.put(LIST, list);
         try {
-            CompressedStreamTools.write(nbt, stream);
+            NbtIo.write(nbt, stream);
         } catch (IOException e) {
             AdvancedPeripherals.LOGGER.error("Failed to encode UpdateHudCanvasMessage: {}", e.getMessage());
             e.printStackTrace();

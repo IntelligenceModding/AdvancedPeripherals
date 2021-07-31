@@ -1,7 +1,8 @@
 package de.srendi.advancedperipherals.common.items;
 
 import de.srendi.advancedperipherals.common.items.base.BaseItem;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.Item;
 
 import java.util.Optional;
 import java.util.function.Supplier;
@@ -10,10 +11,10 @@ public class APItem extends BaseItem {
 
     String turtleID;
     String pocketID;
-    ITextComponent description;
+    Component description;
     Supplier<Boolean> enabledSup;
 
-    public APItem(Properties properties, String turtleID, String pocketID, ITextComponent description, Supplier<Boolean> enabledSup) {
+    public APItem(Item.Properties properties, String turtleID, String pocketID, Component description, Supplier<Boolean> enabledSup) {
         super(properties);
         this.turtleID = turtleID;
         this.pocketID = pocketID;
@@ -21,7 +22,7 @@ public class APItem extends BaseItem {
         this.enabledSup = enabledSup;
     }
 
-    public APItem(String turtleID, String pocketID, ITextComponent description, Supplier<Boolean> enabledSup) {
+    public APItem(String turtleID, String pocketID, Component description, Supplier<Boolean> enabledSup) {
         super();
         this.turtleID = turtleID;
         this.pocketID = pocketID;
@@ -40,7 +41,7 @@ public class APItem extends BaseItem {
     }
 
     @Override
-    public ITextComponent getDescription() {
+    public Component getDescription() {
         return description;
     }
 
