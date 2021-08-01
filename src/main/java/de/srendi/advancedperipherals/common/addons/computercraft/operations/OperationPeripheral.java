@@ -6,7 +6,10 @@ import dan200.computercraft.api.pocket.IPocketAccess;
 import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
 import de.srendi.advancedperipherals.common.addons.computercraft.base.BasePeripheral;
+import de.srendi.advancedperipherals.common.addons.computercraft.base.IPeripheralTileEntity;
+import de.srendi.advancedperipherals.common.addons.computercraft.base.TileEntityPeripheralOwner;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
+import net.minecraft.tileentity.TileEntity;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
@@ -21,7 +24,7 @@ public abstract class OperationPeripheral extends BasePeripheral {
     private final Map<IPeripheralOperation<?>, Timestamp> targetOperationTimestamp = new HashMap<>();
     private final Map<String, IPeripheralOperation<?>> allowedOperations;
 
-    public OperationPeripheral(String type, PeripheralTileEntity<?> tileEntity) {
+    public <T extends TileEntity & IPeripheralTileEntity> OperationPeripheral(String type, T tileEntity) {
         super(type, tileEntity);
         this.allowedOperations = buildAllowedOperations();
     }
