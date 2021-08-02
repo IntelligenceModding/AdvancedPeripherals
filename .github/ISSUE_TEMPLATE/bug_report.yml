@@ -28,6 +28,7 @@ body:
         multiple: false
         options:
             - Own compiled build
+            - 0.7a
             - 0.6.7b (Latest)
             - 0.6.6b 
             - 0.6r

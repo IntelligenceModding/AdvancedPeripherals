@@ -56,12 +56,12 @@ public class ChatBoxPeripheral extends OperationPeripheral {
         if (isOnCooldown(CHAT_MESSAGE))
             throw new LuaException("You are sending messages too often. You can modify the cooldown in the config.");
         String message = arguments.getString(0);
-        IFormattableTextComponent prefix = new StringTextComponent(String.format(PREFIX_FORMAT, arguments.optString(1, AdvancedPeripheralsConfig.defaultChatBoxPrefix)));
+        IFormattableTextComponent component = ITextComponent.Serializer.fromJson(message);
+        if (component == null)
+            return MethodResult.of(null, "incorrect json");
+        IFormattableTextComponent preparedMessage = new StringTextComponent(String.format(PREFIX_FORMAT, arguments.optString(1, AdvancedPeripheralsConfig.defaultChatBoxPrefix))).append(message);
         for (ServerPlayerEntity player : ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers()) {
-            IFormattableTextComponent component = ITextComponent.Serializer.fromJson(message);
-            if (component == null)
-                return MethodResult.of(null, "incorrect json");
-            player.sendMessage(prefix.append(component), Util.NIL_UUID);
+            player.sendMessage(preparedMessage, Util.NIL_UUID);
         }
         trackOperation(CHAT_MESSAGE, null);
         return MethodResult.of(true);
@@ -72,9 +72,9 @@ public class ChatBoxPeripheral extends OperationPeripheral {
         if (isOnCooldown(CHAT_MESSAGE))
             throw new LuaException("You are sending messages too often. You can modify the cooldown in the config.");
         String message = arguments.getString(0);
-        IFormattableTextComponent prefix = new StringTextComponent(String.format(PREFIX_FORMAT, arguments.optString(1, AdvancedPeripheralsConfig.defaultChatBoxPrefix)));
+        IFormattableTextComponent preparedMessage = new StringTextComponent(String.format(PREFIX_FORMAT, arguments.optString(1, AdvancedPeripheralsConfig.defaultChatBoxPrefix))).append(message);
         for (ServerPlayerEntity player : ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers()) {
-            player.sendMessage(prefix.append(message), Util.NIL_UUID);
+            player.sendMessage(preparedMessage, Util.NIL_UUID);
         }
         trackOperation(CHAT_MESSAGE, null);
     }
@@ -85,10 +85,10 @@ public class ChatBoxPeripheral extends OperationPeripheral {
             throw new LuaException("You are sending messages too often. You can modify the cooldown in the config.");
         String message = arguments.getString(0);
         String playerName = arguments.getString(1);
-        IFormattableTextComponent prefix = new StringTextComponent(String.format(PREFIX_FORMAT, arguments.optString(2, AdvancedPeripheralsConfig.defaultChatBoxPrefix)));
+        IFormattableTextComponent preparedMessage = new StringTextComponent(String.format(PREFIX_FORMAT, arguments.optString(2, AdvancedPeripheralsConfig.defaultChatBoxPrefix))).append(message);
         for (ServerPlayerEntity player : ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers()) {
             if (player.getName().getString().equals(playerName))
-                player.sendMessage(prefix.append(message), Util.NIL_UUID);
+                player.sendMessage(preparedMessage, Util.NIL_UUID);
         }
         trackOperation(CHAT_MESSAGE, null);
     }

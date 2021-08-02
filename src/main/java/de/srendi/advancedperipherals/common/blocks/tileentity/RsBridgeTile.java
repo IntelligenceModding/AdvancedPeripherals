@@ -32,6 +32,7 @@ public class RsBridgeTile extends NetworkNodeTile<RefinedStorageNode> implements
 
     public RsBridgeTile() {
         super(TileEntityTypes.RS_BRIDGE.get());
+        apSettings = new CompoundNBT();
     }
 
     @NotNull

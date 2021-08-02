@@ -45,7 +45,7 @@ public class PlayerDetectorPeripheral extends BasePeripheral {
     }
 
     @LuaFunction(mainThread = true)
-    public final List<String> getPlayersInCoords(Map<String, Integer> posOne, Map<String, Integer> posTwo) {
+    public final List<String> getPlayersInCoords(Map<?, ?> posOne, Map<?, ?> posTwo) {
         List<String> playersName = new ArrayList<>();
         for (ServerPlayerEntity player : getPlayers()) {
             if (isInRange(player, posOne, posTwo))
@@ -75,7 +75,7 @@ public class PlayerDetectorPeripheral extends BasePeripheral {
     }
 
     @LuaFunction(mainThread = true)
-    public final boolean isPlayersInCoords(Map<String, Integer> posOne, Map<String, Integer> posTwo) {
+    public final boolean isPlayersInCoords(Map<?, ?> posOne, Map<?, ?> posTwo) {
         if (getPlayers().isEmpty())
             return false;
         for (ServerPlayerEntity player : getPlayers()) {
@@ -105,6 +105,17 @@ public class PlayerDetectorPeripheral extends BasePeripheral {
                 return true;
         }
         return false;
+    }
+
+    @LuaFunction(mainThread = true)
+    public final boolean isPlayerInCoords(Map<?, ?> posOne, Map<?, ?> posTwo, String username) {
+        List<String> playersName = new ArrayList<>();
+        for (PlayerEntity player : getPlayers()) {
+            if (isInRange(player, posOne, posTwo)) {
+                playersName.add(player.getName().getString());
+            }
+        }
+        return playersName.contains(username);
     }
 
     @LuaFunction(mainThread = true)
@@ -166,10 +177,10 @@ public class PlayerDetectorPeripheral extends BasePeripheral {
                 null, new AxisAlignedBB(pos.offset(x, y, z), pos.offset(-x, -y, -z))).contains(player);
     }
 
-    private boolean isInRange(PlayerEntity player, Map<String, Integer> coordOne, Map<String, Integer> coordTwo) {
+    private boolean isInRange(PlayerEntity player, Map<?, ?> coordOne, Map<?, ?> coordTwo) {
         World world = getWorld();
-        BlockPos posOne = new BlockPos(coordOne.get("x"), coordOne.get("y"), coordOne.get("z"));
-        BlockPos posTwo = new BlockPos(coordTwo.get("x"), coordTwo.get("y"), coordTwo.get("z"));
+        BlockPos posOne = new BlockPos(((Number) coordOne.get("x")).intValue(), ((Number) coordOne.get("y")).intValue(), ((Number) coordOne.get("z")).intValue());
+        BlockPos posTwo = new BlockPos(((Number) coordTwo.get("x")).intValue(), ((Number) coordTwo.get("y")).intValue(), ((Number) coordTwo.get("z")).intValue());
 
         return world.getNearbyPlayers(new EntityPredicate().allowInvulnerable().allowNonAttackable().allowUnseeable().allowSameTeam(),
                 null, new AxisAlignedBB(posOne, posTwo)).contains(player);

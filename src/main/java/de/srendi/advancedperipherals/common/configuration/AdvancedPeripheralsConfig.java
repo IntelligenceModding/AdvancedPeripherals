@@ -35,6 +35,7 @@ public class AdvancedPeripheralsConfig {
     public static boolean enableColonyIntegrator;
     public static boolean enableNBTStorage;
     public static boolean enablePoweredPeripherals;
+    public static boolean enableGeoScanner;
 
     // automata cores configuration
     public static int energyToFuelRate;
@@ -45,7 +46,7 @@ public class AdvancedPeripheralsConfig {
 
     //World Features
     public static boolean enableVillagerStructures;
-    public static boolean enableGeoScanner;
+    public static boolean givePlayerBookOnJoin;
 
     public static class CommonConfig {
 
@@ -76,16 +77,16 @@ public class AdvancedPeripheralsConfig {
         final ForgeConfigSpec.BooleanValue ENABLE_NBT_STORAGE;
         final ForgeConfigSpec.BooleanValue ENABLE_POWERED_PERIPHERALS;
 
-        // Mechanical soul
+        // Automata Core
         final ForgeConfigSpec.IntValue ENERGY_TO_FUEL_RATE;
         final ForgeConfigSpec.BooleanValue ENABLE_WEAK_AUTOMATA_CORE;
         final ForgeConfigSpec.BooleanValue ENABLE_END_AUTOMATA_CORE;
         final ForgeConfigSpec.BooleanValue ENABLE_HUSBANDRY_AUTOMATA_CORE;
         final ForgeConfigSpec.IntValue END_AUTOMATA_CORE_WARP_POINT_LIMIT;
 
-
         //World Features
         final ForgeConfigSpec.BooleanValue ENABLE_VILLAGER_STRUCTURES;
+        final ForgeConfigSpec.BooleanValue GIVE_PLAYER_BOOK_ON_JOIN;
 
         CommonConfig(final ForgeConfigSpec.Builder builder) {
             builder.comment("").push("Defaults");
@@ -93,7 +94,7 @@ public class AdvancedPeripheralsConfig {
             DEFAULT_CHAT_BOX_PREFIX = builder.comment("Defines default chatbox prefix").define("defaultChatBoxPrefix", "AP");
 
             builder.pop();
-            builder.comment("").push("Restrictions");
+            builder.push("Restrictions");
 
             PLAYER_DET_MAX_RANGE = builder.comment("The max range of the player detector functions. " +
                     "If anyone use a higher range, the detector will use this max range").defineInRange("playerDetMaxRange", 100000000, 0, 100000000);
@@ -103,7 +104,7 @@ public class AdvancedPeripheralsConfig {
 
             builder.pop();
 
-            builder.comment("").push("Features");
+            builder.push("Features");
 
             ENABLE_CHAT_BOX = builder.comment("Enable the Chat Box or not.").define("enableChatBox", true);
             ENABLE_ME_BRIDGE = builder.comment("Enable the Me Bridge or not.").define("enableMeBridge", true);
@@ -111,7 +112,7 @@ public class AdvancedPeripheralsConfig {
             ENABLE_PLAYER_DETECTOR = builder.comment("Enable the Player Detector or not.").define("enablePlayerDetector", true);
             ENABLE_ENVIRONMENT_DETECTOR = builder.comment("Enable the Environment Detector or not.").define("enableEnvironmentDetector", true);
             ENABLE_CHUNKY_TURTLE = builder.comment("Enable the Chunky Turtle or not.").define("enableChunkyTurtle", true);
-            ENABLE_DEBUG_MODE = builder.comment("Enable the debug mode, you should only enable it, if a developer say it or something does not work.").define("enableDebugMode", false);
+            ENABLE_DEBUG_MODE = builder.comment("Enable the debug mode. You should only enable it, if a developer say it or something does not work.").define("enableDebugMode", false);
             ENABLE_ENERGY_DETECTOR = builder.comment("Enable the Energy Detector or not.").define("enableEnergyDetector", true);
             ENABLE_AR_GOGGLES = builder.comment("Enable the AR goggles or not.").define("enableARGoggles", true);
             ENABLE_INVENTORY_MANAGER = builder.comment("Enable the inventory manager or not.").define("enableInventoryManager", true);
@@ -123,13 +124,13 @@ public class AdvancedPeripheralsConfig {
             ENABLE_POWERED_PERIPHERALS = builder.comment("Enable RF storage for peripherals, that could use it").define("enablePoweredPeripherals", false);
 
             builder.pop();
-            builder.comment("").push("operations");
+            builder.push("operations");
             register(SingleOperation.values(), builder);
             register(SphereOperation.values(), builder);
             register(SimpleFreeOperation.values(), builder);
 
             builder.pop();
-            builder.comment("").push("metaphysics");
+            builder.push("metaphysics");
             ENERGY_TO_FUEL_RATE = builder.comment("Defines energy to fuel rate").defineInRange("energyToFuelRate", 575, 575, Integer.MAX_VALUE);
             ENABLE_WEAK_AUTOMATA_CORE = builder.define("enableWeakAutomataCore", true);
             ENABLE_END_AUTOMATA_CORE = builder.define("enableEndAutomataCore", true);
@@ -140,9 +141,10 @@ public class AdvancedPeripheralsConfig {
             register(AutomataCoreTier.values(), builder);
             builder.pop();
 
-            builder.comment("").push("world");
+            builder.push("world");
 
             ENABLE_VILLAGER_STRUCTURES = builder.comment("Enable the villager structures for the computer scientist.").define("enableVillagerStructures", true);
+            GIVE_PLAYER_BOOK_ON_JOIN = builder.comment("Gives the ap documentation to new players on a world.").define("givePlayerBookOnJoin", true);
             builder.pop();
         }
 
