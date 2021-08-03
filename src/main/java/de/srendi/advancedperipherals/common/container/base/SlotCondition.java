@@ -1,8 +1,8 @@
 package de.srendi.advancedperipherals.common.container.base;
 
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tags.ITag;
+import net.minecraft.tags.Tag;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +12,7 @@ import java.util.List;
  */
 public class SlotCondition {
 
-    public List<ITag.INamedTag> neededTags = new ArrayList<>();
+    public List<Tag.Named> neededTags = new ArrayList<>();
 
     public List<Item> neededItems = new ArrayList<>();
 
@@ -22,7 +22,7 @@ public class SlotCondition {
      * @param neededTags the tags which the item should have
      * @return the current instance
      */
-    public SlotCondition setNeededTags(List<ITag.INamedTag> neededTags) {
+    public SlotCondition setNeededTags(List<Tag.Named> neededTags) {
         this.neededTags = neededTags;
         return this;
     }
@@ -56,7 +56,7 @@ public class SlotCondition {
      * @param tag the tag which the item should have
      * @return the current instance
      */
-    public SlotCondition setNeededTag(ITag.INamedTag tag) {
+    public SlotCondition setNeededTag(Tag.Named tag) {
         neededTags.clear();
         neededTags.add(tag);
         return this;
@@ -71,7 +71,7 @@ public class SlotCondition {
     public boolean isValid(ItemStack stack) {
         boolean valid = true;
         if (!neededTags.isEmpty()) {
-            for (ITag.INamedTag tag : neededTags) {
+            for (Tag.Named tag : neededTags) {
                 if (!stack.getItem().getTags().contains(tag.getName()))
                     valid = false;
             }

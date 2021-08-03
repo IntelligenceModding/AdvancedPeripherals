@@ -4,7 +4,7 @@ import dan200.computercraft.api.pocket.IPocketAccess;
 import de.srendi.advancedperipherals.common.addons.computercraft.base.BasePocket;
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.ColonyPeripheral;
 import de.srendi.advancedperipherals.common.setup.Blocks;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 
 public class PocketColonyIntegrator extends BasePocket<ColonyPeripheral> {
 

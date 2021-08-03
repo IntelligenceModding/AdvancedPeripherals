@@ -4,19 +4,13 @@ import de.srendi.advancedperipherals.AdvancedPeripherals;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.fml.event.config.ModConfigEvent;
 
 @Mod.EventBusSubscriber(modid = AdvancedPeripherals.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class ConfigHandler {
 
     @SubscribeEvent
-    public static void configEvent(final ModConfig.ModConfigEvent event) {
-        if (event.getConfig().getSpec() == ConfigHolder.COMMON_SPEC) {
-            ConfigHandler.bakeCommon();
-        }
-    }
-
-    @SubscribeEvent
-    public static void reloadConfigEvent(final ModConfig.Reloading event) {
+    public static void configEvent(final ModConfigEvent event) {
         if (event.getConfig().getSpec() == ConfigHolder.COMMON_SPEC) {
             ConfigHandler.bakeCommon();
         }

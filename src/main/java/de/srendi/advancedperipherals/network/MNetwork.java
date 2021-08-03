@@ -4,7 +4,6 @@ import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.network.messages.ClearHudCanvasMessage;
 import de.srendi.advancedperipherals.network.messages.RequestHudCanvasMessage;
 import de.srendi.advancedperipherals.network.messages.UpdateHudCanvasMessage;
-
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.resources.ResourceKey;

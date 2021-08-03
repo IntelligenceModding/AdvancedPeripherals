@@ -12,8 +12,6 @@ import appeng.api.storage.data.IItemList;
 import dan200.computercraft.shared.util.NBTUtil;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
 import org.apache.commons.codec.binary.Hex;
@@ -91,7 +89,7 @@ public class AppEngApi implements IAEAddon {
     public Map<Object, Object> getMapFromStack(IAEItemStack stack) {
         Map<Object, Object> map = new HashMap<>();
         String displayName = stack.createItemStack().getDisplayName().getString();
-        CompoundNBT nbt = stack.createItemStack().getOrCreateTag();
+        CompoundTag nbt = stack.createItemStack().getOrCreateTag();
         map.put("fingerprint", getFingerpint(stack));
         map.put("name", stack.getItem().getRegistryName().toString());
         map.put("amount", stack.getStackSize());

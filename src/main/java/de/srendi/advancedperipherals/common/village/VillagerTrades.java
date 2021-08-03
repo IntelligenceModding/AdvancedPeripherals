@@ -29,7 +29,7 @@ public class VillagerTrades {
 
     @SubscribeEvent
     public static void registerVillagerTrades(VillagerTradesEvent event) {
-        Int2ObjectMap<List<net.minecraft.entity.merchant.villager.VillagerTrades.ITrade>> trades = event.getTrades();
+        Int2ObjectMap<List<net.minecraft.world.entity.npc.VillagerTrades.ItemListing>> trades = event.getTrades();
         if (event.getType() == Villagers.COMPUTER_SCIENTIST.get()) {
 
             trades.get(1).add(new VillagerTrade(VillagerTrade.Type.ItemForEmerald).setItem(Blocks.PERIPHERAL_CASING.get())

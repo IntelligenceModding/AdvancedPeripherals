@@ -1,10 +1,10 @@
 package de.srendi.advancedperipherals.common.data;
 
 import de.srendi.advancedperipherals.common.setup.Registration;
-import net.minecraft.block.Block;
-import net.minecraftforge.fml.RegistryObject;
+import net.minecraft.world.level.block.Block;
+import net.minecraftforge.fmllegacy.RegistryObject;
 
-public class BlockLootTables extends net.minecraft.data.loot.BlockLootTables {
+public class BlockLootTables extends net.minecraft.data.loot.BlockLoot {
 
     @Override
     protected void addTables() {

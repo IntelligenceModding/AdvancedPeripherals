@@ -1,9 +1,9 @@
 package de.srendi.advancedperipherals.common.setup;
 
-import de.srendi.advancedperipherals.common.blocks.PeripheralCasingBlock;
 import de.srendi.advancedperipherals.common.blocks.PlayerDetectorBlock;
 import de.srendi.advancedperipherals.common.blocks.RedstoneIntegratorBlock;
 import de.srendi.advancedperipherals.common.blocks.base.APTileEntityBlock;
+import de.srendi.advancedperipherals.common.blocks.base.BaseBlock;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
 import de.srendi.advancedperipherals.common.items.APBlockItem;
 import net.minecraft.core.BlockPos;
@@ -23,12 +23,6 @@ public class Blocks {
     static void register() {
     }    //TODO-1.17 fix the turtle and pocket ids of the chat box
 
-    /**
-    Minecraft has changes its tile entity(Now block entity) system. We now need to implement {@link net.minecraft.world.level.block.EntityBlock} if we want to
-     use a block entity for a block.
-     So we need to rework our Block and EntityBlock classes.
-    */
-
     public static final RegistryObject<Block> ENVIRONMENT_DETECTOR = register("environment_detector", () -> new APTileEntityBlock<>(TileEntityTypes.ENVIRONMENT_DETECTOR, false),
             () -> new APBlockItem(Blocks.ENVIRONMENT_DETECTOR.get(), "environment_detector_turtle", "environment_pocket",
                     new TranslatableComponent("item.advancedperipherals.tooltip.environment_detector"), () -> AdvancedPeripheralsConfig.enableEnvironmentDetector));
@@ -41,13 +35,13 @@ public class Blocks {
     public static final RegistryObject<Block> ME_BRIDGE = register("me_bridge", () -> new APTileEntityBlock<>(TileEntityTypes.ME_BRIDGE, false, ModList.get().isLoaded("appliedenergistics2")),
             () -> new APBlockItem(Blocks.ME_BRIDGE.get(), null, null,
                     new TranslatableComponent("item.advancedperipherals.tooltip.me_bridge"), () -> AdvancedPeripheralsConfig.enableMeBridge));
-    public static final RegistryObject<Block> RS_BRIDGE = register("rs_bridge", () -> new APTileEntityBlock<>(TileEntityTypes.RS_BRIDGE, false, ModList.get().isLoaded("refinedstorage")),
+    /*public static final RegistryObject<Block> RS_BRIDGE = register("rs_bridge", () -> new APTileEntityBlock<>(TileEntityTypes.RS_BRIDGE, false, ModList.get().isLoaded("refinedstorage")),
             () -> new APBlockItem(Blocks.RS_BRIDGE.get(), null, null,
-                    new TranslatableComponent("item.advancedperipherals.tooltip.rs_bridge"), () -> AdvancedPeripheralsConfig.enableRsBridge));
+                    new TranslatableComponent("item.advancedperipherals.tooltip.rs_bridge"), () -> AdvancedPeripheralsConfig.enableRsBridge));*/
     public static final RegistryObject<Block> ENERGY_DETECTOR = register("energy_detector", () -> new APTileEntityBlock<>(TileEntityTypes.ENERGY_DETECTOR, true),
             () -> new APBlockItem(Blocks.ENERGY_DETECTOR.get(), null, null,
                     new TranslatableComponent("item.advancedperipherals.tooltip.energy_detector"), () -> AdvancedPeripheralsConfig.enableEnergyDetector));
-    public static final RegistryObject<Block> PERIPHERAL_CASING = register("peripheral_casing", PeripheralCasingBlock::new,
+    public static final RegistryObject<Block> PERIPHERAL_CASING = register("peripheral_casing", BaseBlock::new,
             () -> new APBlockItem(Blocks.PERIPHERAL_CASING.get(), new Item.Properties().stacksTo(16), null, null,
                     new TranslatableComponent("item.advancedperipherals.tooltip.peripheral_casing"), () -> true));
     public static final RegistryObject<Block> AR_CONTROLLER = register("ar_controller", () -> new APTileEntityBlock<>(TileEntityTypes.AR_CONTROLLER, false),

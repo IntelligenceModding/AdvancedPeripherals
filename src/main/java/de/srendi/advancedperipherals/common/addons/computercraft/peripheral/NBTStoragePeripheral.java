@@ -8,8 +8,8 @@ import de.srendi.advancedperipherals.common.addons.computercraft.base.BasePeriph
 import de.srendi.advancedperipherals.common.blocks.tileentity.NBTStorageTile;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
 import de.srendi.advancedperipherals.common.util.CountingWipingStream;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.JsonToNBT;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.TagParser;
 
 import java.io.IOException;
 import java.io.ObjectOutputStream;
@@ -47,9 +47,9 @@ public class NBTStoragePeripheral extends BasePeripheral {
         if (jsonData.length() > AdvancedPeripheralsConfig.nbtStorageMaxSize) {
             return MethodResult.of(null, "JSON size is bigger than allowed");
         }
-        CompoundNBT parsedData;
+        CompoundTag parsedData;
         try {
-            parsedData = JsonToNBT.parseTag(jsonData);
+            parsedData = TagParser.parseTag(jsonData);
         } catch (CommandSyntaxException ex) {
             return MethodResult.of(null, String.format("Cannot parse json: %s", ex.getMessage()));
         }
@@ -69,7 +69,7 @@ public class NBTStoragePeripheral extends BasePeripheral {
         }
         if (countingStream.getWrittenBytes() > AdvancedPeripheralsConfig.nbtStorageMaxSize)
             return MethodResult.of(null, "JSON size is bigger than allowed");
-        CompoundNBT parsedData = (CompoundNBT) de.srendi.advancedperipherals.common.util.NBTUtil.toDirectNBT(data);
+        CompoundTag parsedData = (CompoundTag) de.srendi.advancedperipherals.common.util.NBTUtil.toDirectNBT(data);
         tile.setStored(parsedData);
         return MethodResult.of(true);
     }

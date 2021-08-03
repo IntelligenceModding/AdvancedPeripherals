@@ -70,7 +70,7 @@ public class VariableStoreIntegration extends Integration<TileVariablestore> {
             try {
                 value = variable.getValue();
             } catch (EvaluationException e) {
-                return MethodResult.of(null, e.getErrorMessage().toString());
+                return MethodResult.of(null, e.getErrorMessage());
             }
             HashMap<String, Object> valueData = new HashMap<>(4);
             valueData.put("type", value.getType().getTypeName());

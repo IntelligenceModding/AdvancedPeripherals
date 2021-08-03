@@ -17,27 +17,29 @@ import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.MeBr
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
 import de.srendi.advancedperipherals.common.setup.Blocks;
 import de.srendi.advancedperipherals.common.setup.TileEntityTypes;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.ITickableTileEntity;
-import net.minecraft.util.Direction;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.entity.TickableBlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.EnumSet;
 import java.util.Optional;
 
-public class MeBridgeTile extends PeripheralTileEntity<MeBridgePeripheral> implements ICraftingRequester, ITickableTileEntity, IGridBlock, IActionHost, IActionSource, IGridHost {
+public class MeBridgeTile extends PeripheralTileEntity<MeBridgePeripheral> implements ICraftingRequester, IGridBlock, IActionHost, IActionSource, IGridHost {
 
     private IGridNode node;
-    private PlayerEntity placed;
+    private Player placed;
     private boolean initialized;
 
-    public MeBridgeTile() {
-        super(TileEntityTypes.ME_BRIDGE.get());
+    public MeBridgeTile(BlockPos pos, BlockState state) {
+        super(TileEntityTypes.ME_BRIDGE.get(), pos, state);
     }
 
-    public void setPlayer(PlayerEntity placed) {
+    public void setPlayer(Player placed) {
         this.placed = placed;
     }
 
@@ -153,7 +155,7 @@ public class MeBridgeTile extends PeripheralTileEntity<MeBridgePeripheral> imple
 
     @NotNull
     @Override
-    public Optional<PlayerEntity> player() {
+    public Optional<Player> player() {
         return Optional.empty();
     }
 

@@ -6,17 +6,10 @@ import dan200.computercraft.shared.util.WorldUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.ItemStack;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.util.Direction;
-import net.minecraft.util.Hand;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.vector.Vector3i;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemHandlerHelper;
@@ -58,18 +51,18 @@ public final class FakePlayerProviderTurtle {
         double z = a == Direction.Axis.Z && ad == Direction.AxisDirection.NEGATIVE ? -.5 : .5 + sideVec.getZ() / 1.9D;
         player.moveTo(position.getX() + x, position.getY() + y, position.getZ() + z, yaw, pitch);
         // Player inventory
-        player.getInventory().selected = 0;
+        player.inventory.selected = 0;
 
         // Copy primary items into player inventory and empty the rest
         IItemHandler turtleInventory = turtle.getItemHandler();
         int size = turtleInventory.getSlots();
-        int largerSize = player.getInventory().getContainerSize();
-        player.getInventory().selected = turtle.getSelectedSlot();
+        int largerSize = player.inventory.getContainerSize();
+        player.inventory.selected = turtle.getSelectedSlot();
         for (int i = 0; i < size; i++) {
-            player.getInventory().setItem(i, turtleInventory.getStackInSlot(i));
+            player.inventory.setItem(i, turtleInventory.getStackInSlot(i));
         }
         for (int i = size; i < largerSize; i++) {
-            player.getInventory().setItem(i, ItemStack.EMPTY);
+            player.inventory.setItem(i, ItemStack.EMPTY);
         }
 
         // Add properties
@@ -80,7 +73,7 @@ public final class FakePlayerProviderTurtle {
     }
 
     public static void unload(APFakePlayer player, ITurtleAccess turtle) {
-        player.getInventory().selected = 0;
+        player.inventory.selected = 0;
 
         // Remove properties
         ItemStack activeStack = player.getItemInHand(InteractionHand.MAIN_HAND);
@@ -91,15 +84,15 @@ public final class FakePlayerProviderTurtle {
         // Copy primary items into turtle inventory and then insert/drop the rest
         IItemHandlerModifiable turtleInventory = turtle.getItemHandler();
         int size = turtleInventory.getSlots();
-        int largerSize = player.getInventory().getContainerSize();
-        player.getInventory().selected = turtle.getSelectedSlot();
+        int largerSize = player.inventory.getContainerSize();
+        player.inventory.selected = turtle.getSelectedSlot();
         for (int i = 0; i < size; i++) {
-            turtleInventory.setStackInSlot(i, player.getInventory().getItem(i));
-            player.getInventory().setItem(i, ItemStack.EMPTY);
+            turtleInventory.setStackInSlot(i, player.inventory.getItem(i));
+            player.inventory.setItem(i, ItemStack.EMPTY);
         }
 
         for (int i = size; i < largerSize; i++) {
-            ItemStack remaining = player.getInventory().getItem(i);
+            ItemStack remaining = player.inventory.getItem(i);
             if (!remaining.isEmpty()) {
                 remaining = ItemHandlerHelper.insertItem(turtleInventory, remaining, false);
                 if (!remaining.isEmpty()) {
@@ -108,7 +101,7 @@ public final class FakePlayerProviderTurtle {
                 }
             }
 
-            player.getInventory().setItem(i, ItemStack.EMPTY);
+            player.inventory.setItem(i, ItemStack.EMPTY);
         }
     }
 

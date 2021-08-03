@@ -6,11 +6,14 @@ import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
 import de.srendi.advancedperipherals.common.setup.TileEntityTypes;
 import de.srendi.advancedperipherals.common.util.EnergyStorageProxy;
-import net.minecraft.block.BlockState;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.tileentity.ITickableTileEntity;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Direction;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.CapabilityEnergy;
@@ -21,7 +24,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 
-public class EnergyDetectorTile extends PeripheralTileEntity<EnergyDetectorPeripheral> implements ITickableTileEntity {
+public class EnergyDetectorTile extends PeripheralTileEntity<EnergyDetectorPeripheral> {
 
     public int transferRate = 0;
     //storageProxy that will forward the energy to the output but limit it to maxTransferRate
@@ -35,8 +38,8 @@ public class EnergyDetectorTile extends PeripheralTileEntity<EnergyDetectorPerip
     private EnergyStorage zeroStorage = new EnergyStorage(0, 0, 0);
     LazyOptional<IEnergyStorage> zeroStorageCap = LazyOptional.of(() -> zeroStorage);
 
-    public EnergyDetectorTile() {
-        super(TileEntityTypes.ENERGY_DETECTOR.get());
+    public EnergyDetectorTile(BlockPos pos, BlockState state) {
+        super(TileEntityTypes.ENERGY_DETECTOR.get(), pos, state);
     }
 
     @NotNull
@@ -60,26 +63,32 @@ public class EnergyDetectorTile extends PeripheralTileEntity<EnergyDetectorPerip
         return super.getCapability(cap, direction);
     }
 
-    @Override
-    public void tick() {
+    public static void serverTick(Level level, BlockPos blockPos, BlockState state, EnergyDetectorTile blockEntity) {
         if (!level.isClientSide) {
             // this handles the rare edge case that receiveEnergy is called multiple times in one tick
-            transferRate = storageProxy.getTransferedInThisTick();
-            storageProxy.resetTransferedInThisTick();
+            blockEntity.transferRate = blockEntity.storageProxy.getTransferedInThisTick();
+            blockEntity.storageProxy.resetTransferedInThisTick();
         }
     }
 
     @Override
-    public CompoundNBT save(CompoundNBT compound) {
+    public CompoundTag save(CompoundTag compound) {
         super.save(compound);
         compound.putInt("rateLimit", storageProxy.getMaxTransferRate());
         return compound;
     }
 
     @Override
-    public void deserializeNBT(BlockState state, CompoundNBT nbt) {
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
+        return (level1, blockPos, blockState, blockEntity) -> {
+            serverTick(level, blockPos, blockState, (EnergyDetectorTile) blockEntity);
+        };
+    }
+
+    @Override
+    public void deserializeNBT(CompoundTag nbt) {
         storageProxy.setMaxTransferRate(nbt.getInt("rateLimit"));
-        super.deserializeNBT(state, nbt);
+        super.deserializeNBT(nbt);
     }
 
     // returns the cached output storage of the receiving block or refetches it if it has been invalidated
@@ -87,7 +96,7 @@ public class EnergyDetectorTile extends PeripheralTileEntity<EnergyDetectorPerip
     public Optional<IEnergyStorage> getOutputStorage() {
         // the documentation says that the value of the LazyOptional should be cached locally and invallidated using addListener
         if (!outReceivingStorage.isPresent()) {
-            TileEntity teOut = level.getBlockEntity(worldPosition.relative(energyOutDirection));
+            BlockEntity teOut = level.getBlockEntity(worldPosition.relative(energyOutDirection));
             if (teOut == null) {
                 return Optional.empty();
             }

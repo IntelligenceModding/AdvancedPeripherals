@@ -1,20 +1,20 @@
 package de.srendi.advancedperipherals.common.container.base;
 
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.ContainerType;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class BaseItemContainer extends Container {
+public abstract class BaseItemContainer extends AbstractContainerMenu {
 
     protected final IItemHandler inventory;
     protected final ItemStack item;
 
-    protected BaseItemContainer(int id, @Nullable ContainerType<?> type, PlayerInventory inventory, ItemStack item) {
+    protected BaseItemContainer(int id, @Nullable MenuType<?> type, Inventory inventory, ItemStack item) {
         super(type, id);
         this.inventory = new InvWrapper(inventory);
         this.item = item;

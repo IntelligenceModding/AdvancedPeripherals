@@ -3,8 +3,8 @@ package de.srendi.advancedperipherals.common.addons.computercraft.base;
 import dan200.computercraft.api.peripheral.IPeripheral;
 import dan200.computercraft.api.pocket.AbstractPocketUpgrade;
 import dan200.computercraft.api.pocket.IPocketAccess;
-import net.minecraft.util.IItemProvider;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.ItemLike;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -14,7 +14,7 @@ public abstract class BasePocket<T extends BasePeripheral> extends AbstractPocke
 
     protected T peripheral;
 
-    protected BasePocket(ResourceLocation id, String adjective, Supplier<? extends IItemProvider> stack) {
+    protected BasePocket(ResourceLocation id, String adjective, Supplier<? extends ItemLike> stack) {
         super(id, adjective, stack);
     }
 

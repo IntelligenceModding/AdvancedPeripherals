@@ -10,12 +10,11 @@ import de.srendi.advancedperipherals.common.addons.computercraft.integrations.im
 import de.srendi.advancedperipherals.common.addons.computercraft.integrations.immersiveengineering.RedstoneConnectorIntegration;
 import de.srendi.advancedperipherals.common.addons.computercraft.integrations.immersiveengineering.RedstoneProbeIntegration;
 import de.srendi.advancedperipherals.common.addons.computercraft.integrations.integrateddynamics.VariableStoreIntegration;
-import de.srendi.advancedperipherals.common.addons.computercraft.integrations.mekanism.*;
 import de.srendi.advancedperipherals.common.addons.computercraft.integrations.storagedrawers.DrawerIntegration;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fml.ModList;
 import org.jetbrains.annotations.NotNull;
@@ -33,7 +32,8 @@ public class IntegrationPeripheralProvider implements IPeripheralProvider {
 
     public void register() {
         registerIntegration(new BeaconIntegration());
-        if (ModList.get().isLoaded("mekanismgenerators")) {
+        //Mekanism does have cc integration in V10.1.
+        /*if (ModList.get().isLoaded("mekanismgenerators")) {
             registerIntegration(new FissionIntegration());
             registerIntegration(new FusionIntegration());
             registerIntegration(new TurbineIntegration());
@@ -44,7 +44,7 @@ public class IntegrationPeripheralProvider implements IPeripheralProvider {
             registerIntegration(new DigitalMinerIntegration());
             registerIntegration(new ChemicalTankIntegration());
             registerIntegration(new GenericMekanismIntegration());
-        }
+        }*/
         if (ModList.get().isLoaded("botania")) {
             registerIntegration(new ManaPoolIntegration());
             registerIntegration(new SpreaderIntegration());
@@ -63,7 +63,7 @@ public class IntegrationPeripheralProvider implements IPeripheralProvider {
         }
     }
 
-    public LazyOptional<IPeripheral> getIntegration(TileEntity tileEntity) {
+    public LazyOptional<IPeripheral> getIntegration(BlockEntity tileEntity) {
         for (Integration<?> integration : integrations) {
             if (integration.isTileEntity(tileEntity)) {
                 Integration<?> Integration = integration.getNewInstance();
@@ -76,10 +76,10 @@ public class IntegrationPeripheralProvider implements IPeripheralProvider {
 
     @NotNull
     @Override
-    public LazyOptional<IPeripheral> getPeripheral(@NotNull World world, @NotNull BlockPos blockPos, @NotNull Direction direction) {
+    public LazyOptional<IPeripheral> getPeripheral(@NotNull Level world, @NotNull BlockPos blockPos, @NotNull Direction direction) {
         if (world.getBlockEntity(blockPos) == null)
             return LazyOptional.empty();
-        TileEntity tileEntity = world.getBlockEntity(blockPos);
+        BlockEntity tileEntity = world.getBlockEntity(blockPos);
         return getIntegration(tileEntity);
     }
 }

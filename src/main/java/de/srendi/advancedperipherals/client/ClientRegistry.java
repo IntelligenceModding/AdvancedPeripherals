@@ -1,6 +1,5 @@
 package de.srendi.advancedperipherals.client;
 
-import com.mojang.blaze3d.platform.ScreenManager;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.container.InventoryManagerScreen;
 import de.srendi.advancedperipherals.common.setup.ContainerTypes;

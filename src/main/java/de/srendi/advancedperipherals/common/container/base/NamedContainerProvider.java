@@ -1,31 +1,31 @@
 package de.srendi.advancedperipherals.common.container.base;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.IContainerProvider;
-import net.minecraft.inventory.container.INamedContainerProvider;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.MenuConstructor;
 import org.jetbrains.annotations.Nullable;
 
-public class NamedContainerProvider implements INamedContainerProvider {
+public class NamedContainerProvider implements MenuProvider {
 
-    protected ITextComponent component;
-    protected IContainerProvider containerProvider;
+    protected Component component;
+    protected MenuConstructor containerProvider;
 
-    public NamedContainerProvider(ITextComponent component, IContainerProvider containerProvider) {
+    public NamedContainerProvider(Component component, MenuConstructor containerProvider) {
         this.component = component;
         this.containerProvider = containerProvider;
     }
 
     @Override
-    public ITextComponent getDisplayName() {
+    public Component getDisplayName() {
         return component;
     }
 
     @Nullable
     @Override
-    public Container createMenu(int id, PlayerInventory playerInventory, PlayerEntity playerEntity) {
+    public AbstractContainerMenu createMenu(int id, Inventory playerInventory, Player playerEntity) {
         return containerProvider.createMenu(id, playerInventory, playerEntity);
     }
 }

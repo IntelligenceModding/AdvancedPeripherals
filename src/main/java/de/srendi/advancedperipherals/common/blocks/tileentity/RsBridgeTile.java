@@ -9,11 +9,11 @@ import de.srendi.advancedperipherals.common.addons.computercraft.base.IPeriphera
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.RsBridgePeripheral;
 import de.srendi.advancedperipherals.common.addons.refinedstorage.RefinedStorageNode;
 import de.srendi.advancedperipherals.common.setup.TileEntityTypes;
-import net.minecraft.block.BlockState;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import org.jetbrains.annotations.NotNull;
@@ -25,14 +25,14 @@ public class RsBridgeTile extends NetworkNodeTile<RefinedStorageNode> implements
 
     private static final String AP_SETTINGS_KEY = "AP_SETTINGS";
 
-    protected CompoundNBT apSettings;
+    protected CompoundTag apSettings;
 
     protected RsBridgePeripheral peripheral = new RsBridgePeripheral("rsBridge", this);
     private LazyOptional<IPeripheral> peripheralCap;
 
-    public RsBridgeTile() {
-        super(TileEntityTypes.RS_BRIDGE.get());
-        apSettings = new CompoundNBT();
+    public RsBridgeTile(BlockPos pos, BlockState state) {
+        super(TileEntityTypes.RS_BRIDGE.get(), pos, state);
+        apSettings = new CompoundTag();
     }
 
     @NotNull
@@ -50,12 +50,12 @@ public class RsBridgeTile extends NetworkNodeTile<RefinedStorageNode> implements
         return super.getCapability(cap, direction);
     }
 
-    public RefinedStorageNode createNode(World world, BlockPos blockPos) {
+    public RefinedStorageNode createNode(Level world, BlockPos blockPos) {
         return new RefinedStorageNode(world, blockPos);
     }
 
     @Override
-    public @NotNull CompoundNBT save(@NotNull CompoundNBT compound) {
+    public @NotNull CompoundTag save(@NotNull CompoundTag compound) {
         super.save(compound);
         if (!apSettings.isEmpty())
             compound.put(AP_SETTINGS_KEY, apSettings);
@@ -63,13 +63,13 @@ public class RsBridgeTile extends NetworkNodeTile<RefinedStorageNode> implements
     }
 
     @Override
-    public void load(@NotNull BlockState state, CompoundNBT compound) {
+    public void load(CompoundTag compound) {
         apSettings = compound.getCompound(AP_SETTINGS_KEY);
-        super.load(state, compound);
+        super.load(compound);
     }
 
     @Override
-    public CompoundNBT getApSettings() {
+    public CompoundTag getApSettings() {
         return apSettings;
     }
 }

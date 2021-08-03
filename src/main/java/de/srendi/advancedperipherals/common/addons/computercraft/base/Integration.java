@@ -1,10 +1,10 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.base;
 
 import dan200.computercraft.api.peripheral.IPeripheral;
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class Integration<T extends TileEntity> implements IPeripheral {
+public abstract class Integration<T extends BlockEntity> implements IPeripheral {
 
     private final Class<T> targetClass = getTargetClass();
 
@@ -14,7 +14,7 @@ public abstract class Integration<T extends TileEntity> implements IPeripheral {
 
     public abstract Integration<?> getNewInstance();
 
-    public boolean isTileEntity(TileEntity tileEntity) {
+    public boolean isTileEntity(BlockEntity tileEntity) {
         return targetClass.isAssignableFrom(tileEntity.getClass());
     }
 
@@ -22,7 +22,7 @@ public abstract class Integration<T extends TileEntity> implements IPeripheral {
         return tileEntity;
     }
 
-    public void setTileEntity(TileEntity tileEntity) {
+    public void setTileEntity(BlockEntity tileEntity) {
         this.tileEntity = (T) tileEntity;
     }
 

@@ -5,21 +5,15 @@ import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
 import de.srendi.advancedperipherals.common.addons.computercraft.base.IAutomataCoreTier;
 import de.srendi.advancedperipherals.common.util.DataStorageUtil;
-import net.minecraft.entity.item.ItemEntity;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.phys.AABB;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
-import java.util.function.Supplier;
-
-import static de.srendi.advancedperipherals.common.addons.computercraft.operations.SingleOperation.SUCK;
 
 public abstract class AutomataCorePeripheral extends FuelConsumingPeripheral {
 
@@ -47,7 +41,7 @@ public abstract class AutomataCorePeripheral extends FuelConsumingPeripheral {
 
     @Override
     protected int _getFuelConsumptionRate() {
-        CompoundNBT settings = owner.getDataStorage();
+        CompoundTag settings = owner.getDataStorage();
         int rate = settings.getInt(FUEL_CONSUMING_RATE_SETTING);
         if (rate == 0) {
             _setFuelConsumptionRate(DEFAULT_FUEL_CONSUMING_RATE);
@@ -61,9 +55,9 @@ public abstract class AutomataCorePeripheral extends FuelConsumingPeripheral {
         owner.getDataStorage().putInt(FUEL_CONSUMING_RATE_SETTING, rate);
     }
 
-    protected AxisAlignedBB getBox(BlockPos pos, int radius) {
+    protected AABB getBox(BlockPos pos, int radius) {
         int x = pos.getX(), y = pos.getY(), z = pos.getZ();
-        return new AxisAlignedBB(
+        return new AABB(
                 x - radius, y - radius, z - radius,
                 x + radius, y + radius, z + radius
         );

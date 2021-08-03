@@ -1,15 +1,15 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.base;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Transformation;
+import com.mojang.math.Vector3f;
 import dan200.computercraft.api.client.TransformedModel;
 import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
 import de.srendi.advancedperipherals.common.addons.computercraft.operations.AutomataCorePeripheral;
 import de.srendi.advancedperipherals.common.util.DataStorageUtil;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.vector.TransformationMatrix;
-import net.minecraft.util.math.vector.Vector3f;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -28,7 +28,7 @@ public abstract class ModelTransformingTurtle<T extends AutomataCorePeripheral> 
     @Override
     public TransformedModel getModel(@Nullable ITurtleAccess turtle, @NotNull TurtleSide side) {
         if (getLeftModel() == null) {
-            MatrixStack stack = new MatrixStack();
+            PoseStack stack = new PoseStack();
             stack.pushPose();
             stack.translate(0.0f, 0.5f, 0.5f);
             if (turtle != null) {
@@ -42,7 +42,7 @@ public abstract class ModelTransformingTurtle<T extends AutomataCorePeripheral> 
             } else {
                 stack.translate(0, 0, -1.4);
             }
-            return TransformedModel.of(getCraftingItem(), new TransformationMatrix(stack.last().pose()));
+            return TransformedModel.of(getCraftingItem(), new Transformation(stack.last().pose()));
         }
         return TransformedModel.of(side == TurtleSide.LEFT ? getLeftModel() : getRightModel());
     }

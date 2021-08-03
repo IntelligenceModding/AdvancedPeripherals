@@ -7,13 +7,13 @@ import dan200.computercraft.api.turtle.TurtleSide;
 import de.srendi.advancedperipherals.common.addons.computercraft.base.BasePeripheral;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
-import net.minecraft.entity.EntityPredicate;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-import net.minecraftforge.fml.server.ServerLifecycleHooks;
+import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.ai.targeting.TargetingConditions;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.AABB;
+import net.minecraftforge.fmllegacy.server.ServerLifecycleHooks;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -47,7 +47,7 @@ public class PlayerDetectorPeripheral extends BasePeripheral {
     @LuaFunction(mainThread = true)
     public final List<String> getPlayersInCoords(Map<?, ?> posOne, Map<?, ?> posTwo) {
         List<String> playersName = new ArrayList<>();
-        for (ServerPlayerEntity player : getPlayers()) {
+        for (ServerPlayer player : getPlayers()) {
             if (isInRange(player, posOne, posTwo))
                 playersName.add(player.getName().getString());
         }
@@ -57,7 +57,7 @@ public class PlayerDetectorPeripheral extends BasePeripheral {
     @LuaFunction(mainThread = true)
     public final List<String> getPlayersInCubic(int x, int y, int z) {
         List<String> playersName = new ArrayList<>();
-        for (ServerPlayerEntity player : getPlayers()) {
+        for (ServerPlayer player : getPlayers()) {
             if (isInRange(getPos(), player, x, y, z))
                 playersName.add(player.getName().getString());
         }
@@ -67,7 +67,7 @@ public class PlayerDetectorPeripheral extends BasePeripheral {
     @LuaFunction(mainThread = true)
     public final List<String> getPlayersInRange(int range) {
         List<String> playersName = new ArrayList<>();
-        for (ServerPlayerEntity player : getPlayers()) {
+        for (ServerPlayer player : getPlayers()) {
             if (isInRange(getPos(), player, range))
                 playersName.add(player.getName().getString());
         }
@@ -78,7 +78,7 @@ public class PlayerDetectorPeripheral extends BasePeripheral {
     public final boolean isPlayersInCoords(Map<?, ?> posOne, Map<?, ?> posTwo) {
         if (getPlayers().isEmpty())
             return false;
-        for (ServerPlayerEntity player : getPlayers()) {
+        for (ServerPlayer player : getPlayers()) {
             if (isInRange(player, posOne, posTwo))
                 return true;
         }
@@ -89,7 +89,7 @@ public class PlayerDetectorPeripheral extends BasePeripheral {
     public final boolean isPlayersInCubic(int x, int y, int z) {
         if (getPlayers().isEmpty())
             return false;
-        for (ServerPlayerEntity player : getPlayers()) {
+        for (ServerPlayer player : getPlayers()) {
             if (isInRange(getPos(), player, x, y, z))
                 return true;
         }
@@ -100,7 +100,7 @@ public class PlayerDetectorPeripheral extends BasePeripheral {
     public final boolean isPlayersInRange(int range) {
         if (getPlayers().isEmpty())
             return false;
-        for (ServerPlayerEntity player : getPlayers()) {
+        for (ServerPlayer player : getPlayers()) {
             if (isInRange(getPos(), player, range))
                 return true;
         }
@@ -110,7 +110,7 @@ public class PlayerDetectorPeripheral extends BasePeripheral {
     @LuaFunction(mainThread = true)
     public final boolean isPlayerInCoords(Map<?, ?> posOne, Map<?, ?> posTwo, String username) {
         List<String> playersName = new ArrayList<>();
-        for (PlayerEntity player : getPlayers()) {
+        for (Player player : getPlayers()) {
             if (isInRange(player, posOne, posTwo)) {
                 playersName.add(player.getName().getString());
             }
@@ -121,7 +121,7 @@ public class PlayerDetectorPeripheral extends BasePeripheral {
     @LuaFunction(mainThread = true)
     public final boolean isPlayerInCubic(int x, int y, int z, String username) {
         List<String> playersName = new ArrayList<>();
-        for (PlayerEntity player : getPlayers()) {
+        for (Player player : getPlayers()) {
             if (isInRange(getPos(), player, x, y, z)) {
                 playersName.add(player.getName().getString());
             }
@@ -132,7 +132,7 @@ public class PlayerDetectorPeripheral extends BasePeripheral {
     @LuaFunction(mainThread = true)
     public final boolean isPlayerInRange(int range, String username) {
         List<String> playersName = new ArrayList<>();
-        for (PlayerEntity player : getPlayers()) {
+        for (Player player : getPlayers()) {
             if (isInRange(getPos(), player, range)) {
                 playersName.add(player.getName().getString());
             }
@@ -142,8 +142,8 @@ public class PlayerDetectorPeripheral extends BasePeripheral {
 
     @LuaFunction(mainThread = true)
     public final Map<String, Double> getPlayerPos(String username) {
-        ServerPlayerEntity existingPlayer = null;
-        for (ServerPlayerEntity player : getPlayers()) {
+        ServerPlayer existingPlayer = null;
+        for (ServerPlayer player : getPlayers()) {
             if (player.getName().getString().equals(username)) {
                 if (isInRange(getPos(), player, AdvancedPeripheralsConfig.playerDetMaxRange)) {
                     existingPlayer = player;
@@ -161,28 +161,28 @@ public class PlayerDetectorPeripheral extends BasePeripheral {
         return coordinates;
     }
 
-    private List<ServerPlayerEntity> getPlayers() {
+    private List<ServerPlayer> getPlayers() {
         return ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers();
     }
 
-    private boolean isInRange(BlockPos pos, PlayerEntity player, int range) {
-        World world = getWorld();
-        return world.getNearbyPlayers(new EntityPredicate().allowInvulnerable().allowNonAttackable().allowUnseeable().allowSameTeam(),
-                null, new AxisAlignedBB(pos.offset(range, range, range), pos.offset(-range, -range, -range))).contains(player);
+    private boolean isInRange(BlockPos pos, Player player, int range) {
+        Level world = getWorld();
+        return world.getNearbyPlayers(TargetingConditions.forNonCombat().ignoreInvisibilityTesting().ignoreLineOfSight(),
+                null, new AABB(pos.offset(range, range, range), pos.offset(-range, -range, -range))).contains(player);
     }
 
-    private boolean isInRange(BlockPos pos, PlayerEntity player, int x, int y, int z) {
-        World world = getWorld();
-        return world.getNearbyPlayers(new EntityPredicate().allowInvulnerable().allowNonAttackable().allowUnseeable().allowSameTeam(),
-                null, new AxisAlignedBB(pos.offset(x, y, z), pos.offset(-x, -y, -z))).contains(player);
+    private boolean isInRange(BlockPos pos, Player player, int x, int y, int z) {
+        Level world = getWorld();
+        return world.getNearbyPlayers(TargetingConditions.forNonCombat().ignoreInvisibilityTesting().ignoreLineOfSight(),
+                null, new AABB(pos.offset(x, y, z), pos.offset(-x, -y, -z))).contains(player);
     }
 
-    private boolean isInRange(PlayerEntity player, Map<?, ?> coordOne, Map<?, ?> coordTwo) {
-        World world = getWorld();
+    private boolean isInRange(Player player, Map<?, ?> coordOne, Map<?, ?> coordTwo) {
+        Level world = getWorld();
         BlockPos posOne = new BlockPos(((Number) coordOne.get("x")).intValue(), ((Number) coordOne.get("y")).intValue(), ((Number) coordOne.get("z")).intValue());
         BlockPos posTwo = new BlockPos(((Number) coordTwo.get("x")).intValue(), ((Number) coordTwo.get("y")).intValue(), ((Number) coordTwo.get("z")).intValue());
 
-        return world.getNearbyPlayers(new EntityPredicate().allowInvulnerable().allowNonAttackable().allowUnseeable().allowSameTeam(),
-                null, new AxisAlignedBB(posOne, posTwo)).contains(player);
+        return world.getNearbyPlayers(TargetingConditions.forNonCombat().ignoreInvisibilityTesting().ignoreLineOfSight(),
+                null, new AABB(posOne, posTwo)).contains(player);
     }
 }

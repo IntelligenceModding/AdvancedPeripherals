@@ -4,17 +4,18 @@ import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.GeoS
 import de.srendi.advancedperipherals.common.blocks.base.PoweredPeripheralTileEntity;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
 import de.srendi.advancedperipherals.common.setup.TileEntityTypes;
-import net.minecraft.tileentity.TileEntityType;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 
 public class GeoScannerTile extends PoweredPeripheralTileEntity<GeoScannerPeripheral> {
 
-    public GeoScannerTile() {
-        this(TileEntityTypes.GEO_SCANNER.get());
-    }
-
-    public GeoScannerTile(final TileEntityType<?> tileEntityType) {
-        super(tileEntityType);
+    public GeoScannerTile(BlockPos pos, BlockState state) {
+        super(TileEntityTypes.GEO_SCANNER.get(), pos, state);
     }
 
     @Override
@@ -25,5 +26,10 @@ public class GeoScannerTile extends PoweredPeripheralTileEntity<GeoScannerPeriph
     @Override
     protected @NotNull GeoScannerPeripheral createPeripheral() {
         return new GeoScannerPeripheral("geoScanner", this);
+    }
+
+    @Override
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
+        return null;
     }
 }

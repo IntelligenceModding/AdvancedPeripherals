@@ -3,7 +3,6 @@ package de.srendi.advancedperipherals.common.items;
 import com.mojang.blaze3d.platform.InputConstants;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.client.HudOverlayHandler;
-import de.srendi.advancedperipherals.client.KeyBindings;
 import de.srendi.advancedperipherals.common.addons.curios.CuriosHelper;
 import de.srendi.advancedperipherals.common.blocks.tileentity.ARControllerTile;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
@@ -13,33 +12,20 @@ import de.srendi.advancedperipherals.common.util.SideHelper;
 import de.srendi.advancedperipherals.network.MNetwork;
 import de.srendi.advancedperipherals.network.messages.RequestHudCanvasMessage;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.client.util.InputMappings;
 import net.minecraft.core.BlockPos;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.ArmorItem;
-import net.minecraft.item.ArmorMaterial;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemUseContext;
-import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.World;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterials;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.api.distmarker.Dist;
@@ -93,8 +79,9 @@ public class ARGogglesItem extends ArmorItem {
     public void appendHoverText(ItemStack stack, @Nullable Level worldIn, List<Component> tooltip,
                                 TooltipFlag flagIn) {
         super.appendHoverText(stack, worldIn, tooltip, flagIn);
-        if (!KeyBindings.DESCRIPTION_KEYBINDING.isDown()) {
-            tooltip.add(EnumColor.buildTextComponent(new TranslatableComponent("item.advancedperipherals.tooltip.show_desc", KeyBindings.DESCRIPTION_KEYBINDING.getTranslatedKeyMessage())));
+        if (!InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), GLFW.GLFW_KEY_LEFT_CONTROL)) {
+            tooltip.add(EnumColor
+                    .buildTextComponent(new TranslatableComponent("item.advancedperipherals.tooltip.show_desc")));
         } else {
             tooltip.add(EnumColor.buildTextComponent(getDescription()));
         }
@@ -116,41 +103,41 @@ public class ARGogglesItem extends ArmorItem {
     }
 
     @Override
-    public String getArmorTexture(ItemStack stack, Entity entity, EquipmentSlotType slot, String type) {
+    public String getArmorTexture(ItemStack stack, Entity entity, EquipmentSlot slot, String type) {
         return AdvancedPeripherals.MOD_ID + ":textures/models/ar_goggles.png";
     }
 
     @Override
-    public void onArmorTick(ItemStack stack, World world, PlayerEntity player) {
+    public void onArmorTick(ItemStack stack, Level world, Player player) {
         // only need to tick client side, if client is wearing them himself
         if (!SideHelper.isClientPlayer(player))
             return;
-        clientTick((ClientPlayerEntity) player, stack);
+        clientTick((LocalPlayer) player, stack);
     }
 
     @Override
-    public ActionResultType useOn(ItemUseContext context) {
+    public InteractionResult useOn(UseOnContext context) {
         BlockPos blockpos = context.getClickedPos();
-        World world = context.getLevel();
+        Level world = context.getLevel();
         if (!world.getBlockState(blockpos).is(Blocks.AR_CONTROLLER.get())) {
             return super.useOn(context);
         } else {
-            TileEntity entity = world.getBlockEntity(blockpos);
+            BlockEntity entity = world.getBlockEntity(blockpos);
             if (!(entity instanceof ARControllerTile))
                 return super.useOn(context);
             ARControllerTile controller = (ARControllerTile) entity;
             if (!context.getLevel().isClientSide) {
                 ItemStack item = context.getItemInHand();
                 if (!item.hasTag())
-                    item.setTag(new CompoundNBT());
-                CompoundNBT nbt = item.getTag();
+                    item.setTag(new CompoundTag());
+                CompoundTag nbt = item.getTag();
                 BlockPos pos = controller.getBlockPos();
                 nbt.putIntArray(CONTROLLER_POS, new int[]{pos.getX(), pos.getY(), pos.getZ()});
                 nbt.putString(CONTROLLER_WORLD, controller.getLevel().dimension().toString());
                 item.setTag(nbt);
             }
-            context.getPlayer().displayClientMessage(new TranslationTextComponent("text.advancedperipherals.linked_goggles"), true);
-            return ActionResultType.SUCCESS;
+            context.getPlayer().displayClientMessage(new TranslatableComponent("text.advancedperipherals.linked_goggles"), true);
+            return InteractionResult.SUCCESS;
         }
     }
 }

@@ -6,22 +6,26 @@ import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
 import de.srendi.advancedperipherals.common.container.InventoryManagerContainer;
 import de.srendi.advancedperipherals.common.items.MemoryCardItem;
 import de.srendi.advancedperipherals.common.setup.TileEntityTypes;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.World;
-import net.minecraftforge.fml.server.ServerLifecycleHooks;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.fmllegacy.server.ServerLifecycleHooks;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class InventoryManagerTile extends PeripheralTileEntity<InventoryManagerPeripheral> implements IInventoryBlock<InventoryManagerContainer> {
 
-    public InventoryManagerTile() {
-        super(TileEntityTypes.INVENTORY_MANAGER.get());
+    public InventoryManagerTile(BlockPos pos, BlockState state) {
+        super(TileEntityTypes.INVENTORY_MANAGER.get(), pos, state);
     }
 
     @NotNull
@@ -31,7 +35,7 @@ public class InventoryManagerTile extends PeripheralTileEntity<InventoryManagerP
     }
 
     @Override
-    public InventoryManagerContainer createContainer(int id, PlayerInventory playerInventory, BlockPos pos, World world) {
+    public InventoryManagerContainer createContainer(int id, Inventory playerInventory, BlockPos pos, Level world) {
         return new InventoryManagerContainer(id, playerInventory, pos, world);
     }
 
@@ -46,11 +50,16 @@ public class InventoryManagerTile extends PeripheralTileEntity<InventoryManagerP
     }
 
     @Override
-    public ITextComponent getDisplayName() {
-        return new TranslationTextComponent("block.advancedperipherals.inventory_manager");
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
+        return null;
     }
 
-    public PlayerEntity getOwnerPlayer() {
+    @Override
+    public Component getDisplayName() {
+        return new TranslatableComponent("block.advancedperipherals.inventory_manager");
+    }
+
+    public Player getOwnerPlayer() {
         //Checks if the tile entity has an item in his inventory
         if (items.get(0).isEmpty())
             return null;
@@ -59,7 +68,7 @@ public class InventoryManagerTile extends PeripheralTileEntity<InventoryManagerP
         if (!stack.getOrCreateTag().contains("owner"))
             return null;
         //Loop through all players and check if the player is online
-        for (PlayerEntity entity : ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers()) {
+        for (Player entity : ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers()) {
             if (entity.getName().getString().equals(stack.getOrCreateTag().getString("owner")))
                 return entity;
         }

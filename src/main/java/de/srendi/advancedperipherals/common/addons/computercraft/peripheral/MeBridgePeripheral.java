@@ -26,9 +26,9 @@ import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
 import de.srendi.advancedperipherals.common.util.ItemUtil;
 import de.srendi.advancedperipherals.common.util.ServerWorker;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Direction;
+import net.minecraft.core.Direction;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
@@ -98,7 +98,7 @@ public class MeBridgePeripheral extends BasePeripheral {
             throw new LuaException("Item " + stack + " does not exists in the ME system or the system is offline");
         Direction direction = validateSide(arguments.getString(1));
 
-        TileEntity targetEntity = owner.getWorld().getBlockEntity(owner.getPos().relative(direction));
+        BlockEntity targetEntity = owner.getWorld().getBlockEntity(owner.getPos().relative(direction));
         IItemHandler inventory = targetEntity != null ? targetEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, direction.getOpposite()).resolve().orElse(null) : null;
         if (inventory == null)
             throw new LuaException("No valid inventory at " + direction);
@@ -135,7 +135,7 @@ public class MeBridgePeripheral extends BasePeripheral {
             throw new LuaException("Item " + stack + " does not exists in the ME system or the system is offline");
         Direction direction = validateSide(arguments.getString(1));
 
-        TileEntity targetEntity = owner.getWorld().getBlockEntity(owner.getPos().relative(direction));
+        BlockEntity targetEntity = owner.getWorld().getBlockEntity(owner.getPos().relative(direction));
         IItemHandler inventory = targetEntity != null ? targetEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, direction.getOpposite()).resolve().orElse(null) : null;
         if (inventory == null)
             throw new LuaException("No valid inventory at " + direction);
@@ -175,7 +175,7 @@ public class MeBridgePeripheral extends BasePeripheral {
         if (chest == null)
             throw new LuaException("No valid chest for " + arguments.getString(1));
 
-        TileEntity targetEntity = (TileEntity) chest.getTarget();
+        BlockEntity targetEntity = (BlockEntity) chest.getTarget();
         IItemHandler inventory = targetEntity != null ? targetEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).resolve().orElse(null) : null;
         if (inventory == null)
             throw new LuaException("No valid inventory for " + arguments.getString(1));
@@ -215,7 +215,7 @@ public class MeBridgePeripheral extends BasePeripheral {
         if (chest == null)
             throw new LuaException("Peripheral not found" + arguments.getString(1));
 
-        TileEntity targetEntity = (TileEntity) chest.getTarget();
+        BlockEntity targetEntity = (BlockEntity) chest.getTarget();
         IItemHandler inventory = targetEntity != null ? targetEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).resolve().orElse(null) : null;
         if (inventory == null)
             throw new LuaException("No valid inventory for " + arguments.getString(1));

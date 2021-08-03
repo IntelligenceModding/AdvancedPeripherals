@@ -2,14 +2,14 @@ package de.srendi.advancedperipherals.common.items;
 
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
 import de.srendi.advancedperipherals.common.items.base.BaseItem;
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.World;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -32,8 +32,8 @@ public class MemoryCardItem extends BaseItem {
     }
 
     @Override
-    public ITextComponent getDescription() {
-        return new TranslationTextComponent("item.advancedperipherals.tooltip.memory_card");
+    public Component getDescription() {
+        return new TranslatableComponent("item.advancedperipherals.tooltip.memory_card");
     }
 
     @Override
@@ -42,25 +42,25 @@ public class MemoryCardItem extends BaseItem {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip,
-                                ITooltipFlag flagIn) {
+    public void appendHoverText(ItemStack stack, @Nullable Level worldIn, List<Component> tooltip,
+                                TooltipFlag flagIn) {
         super.appendHoverText(stack, worldIn, tooltip, flagIn);
         if (stack.getOrCreateTag().contains("owner")) {
-            tooltip.add(new TranslationTextComponent("item.advancedperipherals.tooltip.memory_card.bound",
+            tooltip.add(new TranslatableComponent("item.advancedperipherals.tooltip.memory_card.bound",
                     stack.getOrCreateTag().getString("owner")));
         }
     }
 
     @Override
-    public ActionResult<ItemStack> use(World worldIn, PlayerEntity playerIn, Hand handIn) {
+    public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn) {
         if (!worldIn.isClientSide) {
             ItemStack stack = playerIn.getItemInHand(handIn);
             if (stack.getOrCreateTag().contains("owner")) {
-                playerIn.displayClientMessage(new TranslationTextComponent("text.advancedperipherals.removed_player"),
+                playerIn.displayClientMessage(new TranslatableComponent("text.advancedperipherals.removed_player"),
                         true);
                 stack.getOrCreateTag().remove("owner");
             } else {
-                playerIn.displayClientMessage(new TranslationTextComponent("text.advancedperipherals.added_player"),
+                playerIn.displayClientMessage(new TranslatableComponent("text.advancedperipherals.added_player"),
                         true);
                 stack.getOrCreateTag().putString("owner", playerIn.getName().getString());
             }

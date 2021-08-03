@@ -2,11 +2,11 @@ package de.srendi.advancedperipherals.common.blocks.base;
 
 import de.srendi.advancedperipherals.common.addons.computercraft.base.BasePeripheral;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
-import mcp.MethodsReturnNonnullByDefault;
-import net.minecraft.block.BlockState;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.tileentity.TileEntityType;
-import net.minecraft.util.Direction;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.CapabilityEnergy;
@@ -15,13 +15,12 @@ import net.minecraftforge.energy.IEnergyStorage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-@MethodsReturnNonnullByDefault
 public abstract class PoweredPeripheralTileEntity<T extends BasePeripheral> extends PeripheralTileEntity<T> {
 
     private final LazyOptional<IEnergyStorage> lazyEnergyStorage;
 
-    public PoweredPeripheralTileEntity(TileEntityType<?> tileEntityTypeIn) {
-        super(tileEntityTypeIn);
+    public PoweredPeripheralTileEntity(BlockEntityType<?> tileEntityTypeIn, BlockPos pos, BlockState state) {
+        super(tileEntityTypeIn, pos, state);
         if (AdvancedPeripheralsConfig.enablePoweredPeripherals) {
             lazyEnergyStorage = LazyOptional.of(() -> new EnergyStorage(this.getMaxEnergyStored()));
         } else {
@@ -32,7 +31,7 @@ public abstract class PoweredPeripheralTileEntity<T extends BasePeripheral> exte
     protected abstract int getMaxEnergyStored();
 
     @Override
-    public CompoundNBT save(CompoundNBT compound) {
+    public CompoundTag save(CompoundTag compound) {
         lazyEnergyStorage.ifPresent(iEnergyStorage -> {
             compound.putInt("energy", iEnergyStorage.getEnergyStored());
         });
@@ -40,8 +39,8 @@ public abstract class PoweredPeripheralTileEntity<T extends BasePeripheral> exte
     }
 
     @Override
-    public void load(BlockState blockState, CompoundNBT compound) {
-        super.load(blockState, compound);
+    public void load(CompoundTag compound) {
+        super.load(compound);
         lazyEnergyStorage.ifPresent(iEnergyStorage -> {
             iEnergyStorage.receiveEnergy(compound.getInt("energy") - iEnergyStorage.getEnergyStored(), false);
         });

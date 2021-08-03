@@ -2,7 +2,6 @@ package de.srendi.advancedperipherals.common.items;
 
 import de.srendi.advancedperipherals.common.items.base.BaseItem;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.item.Item;
 
 import java.util.Optional;
 import java.util.function.Supplier;
@@ -14,7 +13,7 @@ public class APItem extends BaseItem {
     Component description;
     Supplier<Boolean> enabledSup;
 
-    public APItem(Item.Properties properties, String turtleID, String pocketID, Component description, Supplier<Boolean> enabledSup) {
+    public APItem(Properties properties, String turtleID, String pocketID, Component description, Supplier<Boolean> enabledSup) {
         super(properties);
         this.turtleID = turtleID;
         this.pocketID = pocketID;

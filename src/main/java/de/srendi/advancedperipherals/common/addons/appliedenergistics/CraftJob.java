@@ -16,8 +16,8 @@ import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.MethodResult;
 import dan200.computercraft.api.peripheral.IComputerAccess;
 import de.srendi.advancedperipherals.common.util.ServerWorker;
-import net.minecraft.item.ItemStack;
-import net.minecraft.world.World;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
 public class CraftJob implements ICraftingCallback, ILuaCallback {
@@ -28,12 +28,12 @@ public class CraftJob implements ICraftingCallback, ILuaCallback {
     private final IGridNode node;
     private final IActionSource source;
     private final ItemStack item;
-    private final World world;
+    private final Level world;
 
     private MethodResult result;
     private LuaException exception;
 
-    public CraftJob(World world, final IComputerAccess computer, IGridNode node, ItemStack item, IActionSource source) {
+    public CraftJob(Level world, final IComputerAccess computer, IGridNode node, ItemStack item, IActionSource source) {
         this.computer = computer;
         this.node = node;
         this.world = world;

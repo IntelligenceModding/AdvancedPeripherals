@@ -2,12 +2,12 @@ package de.srendi.advancedperipherals.common.addons.computercraft.integrations;
 
 import dan200.computercraft.api.lua.LuaFunction;
 import de.srendi.advancedperipherals.common.addons.computercraft.base.Integration;
-import net.minecraft.tileentity.BeaconTileEntity;
+import net.minecraft.world.level.block.entity.BeaconBlockEntity;
 
-public class BeaconIntegration extends Integration<BeaconTileEntity> {
+public class BeaconIntegration extends Integration<BeaconBlockEntity> {
     @Override
-    public Class<BeaconTileEntity> getTargetClass() {
-        return BeaconTileEntity.class;
+    public Class<BeaconBlockEntity> getTargetClass() {
+        return BeaconBlockEntity.class;
     }
 
     @Override

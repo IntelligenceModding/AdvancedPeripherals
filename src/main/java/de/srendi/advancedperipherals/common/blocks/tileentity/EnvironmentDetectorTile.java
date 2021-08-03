@@ -4,12 +4,18 @@ import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.Envi
 import de.srendi.advancedperipherals.common.blocks.base.PoweredPeripheralTileEntity;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
 import de.srendi.advancedperipherals.common.setup.TileEntityTypes;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 
 public class EnvironmentDetectorTile extends PoweredPeripheralTileEntity<EnvironmentDetectorPeripheral> {
 
-    public EnvironmentDetectorTile() {
-        super(TileEntityTypes.ENVIRONMENT_DETECTOR.get());
+    public EnvironmentDetectorTile(BlockPos pos, BlockState state) {
+        super(TileEntityTypes.ENVIRONMENT_DETECTOR.get(), pos, state);
     }
 
     @Override
@@ -21,6 +27,11 @@ public class EnvironmentDetectorTile extends PoweredPeripheralTileEntity<Environ
     @Override
     protected EnvironmentDetectorPeripheral createPeripheral() {
         return new EnvironmentDetectorPeripheral("environmentDetector", this);
+    }
+
+    @Override
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
+        return null;
     }
 
 

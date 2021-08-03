@@ -6,9 +6,10 @@ import de.srendi.advancedperipherals.common.addons.computercraft.base.BasePeriph
 import de.srendi.advancedperipherals.common.blocks.base.APTileEntityBlock;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.EntityBlock;
+import net.minecraft.world.level.block.state.BlockState;
 
 public class BlockReaderPeripheral extends BasePeripheral {
 
@@ -30,10 +31,10 @@ public class BlockReaderPeripheral extends BasePeripheral {
 
     @LuaFunction(mainThread = true)
     public final Object getBlockData() {
-        if (getBlockInFront().is(Blocks.AIR) && !getBlockInFront().getBlock().hasTileEntity(getBlockInFront()))
+        if (getBlockInFront().is(Blocks.AIR) && !(getBlockInFront().getBlock() instanceof EntityBlock))
             return null;
         return NBTUtil.toLua(getWorld().getBlockEntity(getPos().relative(getWorld().getBlockState(getPos()).
-                getValue(APTileEntityBlock.FACING))).save(new CompoundNBT()));
+                getValue(APTileEntityBlock.FACING))).save(new CompoundTag()));
     }
 
     private BlockState getBlockInFront() {

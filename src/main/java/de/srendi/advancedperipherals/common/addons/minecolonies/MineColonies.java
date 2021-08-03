@@ -20,13 +20,13 @@ import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
 import io.netty.buffer.Unpooled;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.ai.attributes.Attributes;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Tuple;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
@@ -46,9 +46,9 @@ public class MineColonies {
      * @return true if the user has the appropriate rights
      */
     public static boolean hasAccess(Entity entity, IColony colony) {
-        if (entity instanceof PlayerEntity) {
+        if (entity instanceof Player) {
             if (colony != null) {
-                return colony.getPermissions().hasPermission((PlayerEntity) entity, Action.ACCESS_HUTS);
+                return colony.getPermissions().hasPermission((Player) entity, Action.ACCESS_HUTS);
             }
         }
         return false;
@@ -291,7 +291,7 @@ public class MineColonies {
         AbstractBuildingStructureBuilder builderBuilding = (AbstractBuildingStructureBuilder) building;
 
         //We need to say the building that we want information about it
-        PacketBuffer buffer = new PacketBuffer(Unpooled.buffer());
+        FriendlyByteBuf buffer = new FriendlyByteBuf(Unpooled.buffer());
         builderBuilding.serializeToView(buffer);
         buffer.release();
 

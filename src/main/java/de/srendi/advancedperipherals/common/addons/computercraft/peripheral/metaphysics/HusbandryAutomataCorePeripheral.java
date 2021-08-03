@@ -4,23 +4,23 @@ import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.lua.MethodResult;
 import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
-import de.srendi.advancedperipherals.common.addons.computercraft.operations.AutomataCoreTier;
 import de.srendi.advancedperipherals.common.addons.computercraft.base.IAutomataCoreTier;
+import de.srendi.advancedperipherals.common.addons.computercraft.operations.AutomataCoreTier;
 import de.srendi.advancedperipherals.common.addons.computercraft.operations.IPeripheralOperation;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.passive.AnimalEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.EntityRayTraceResult;
-import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.animal.Animal;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.world.phys.HitResult;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -29,12 +29,13 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Predicate;
 
-import static de.srendi.advancedperipherals.common.addons.computercraft.operations.SingleOperation.*;
+import static de.srendi.advancedperipherals.common.addons.computercraft.operations.SingleOperation.CAPTURE_ANIMAL;
+import static de.srendi.advancedperipherals.common.addons.computercraft.operations.SingleOperation.USE_ON_ANIMAL;
 
 public class HusbandryAutomataCorePeripheral extends WeakAutomataCorePeripheral {
     private static final Predicate<Entity> isAnimal = entity1 -> entity1.getType().getCategory().isFriendly();
     private static final Predicate<Entity> isLivingEntity = entity1 -> entity1 instanceof LivingEntity;
-    private static final Predicate<Entity> isNotPlayer = entity1 -> !(entity1 instanceof PlayerEntity);
+    private static final Predicate<Entity> isNotPlayer = entity1 -> !(entity1 instanceof Player);
     private static final Predicate<Entity> suitableEntity = isAnimal.and(isLivingEntity).and(isNotPlayer);
     private static final String ENTITY_NBT_KEY = "storedEntity";
 
@@ -55,11 +56,11 @@ public class HusbandryAutomataCorePeripheral extends WeakAutomataCorePeripheral 
         return !owner.getDataStorage().getCompound(ENTITY_NBT_KEY).isEmpty();
     }
 
-    protected void saveEntity(CompoundNBT data) {
+    protected void saveEntity(CompoundTag data) {
         owner.getDataStorage().put(ENTITY_NBT_KEY, data);
     }
 
-    protected CompoundNBT getEntity() {
+    protected CompoundTag getEntity() {
         return owner.getDataStorage().getCompound(ENTITY_NBT_KEY);
     }
 
@@ -69,7 +70,7 @@ public class HusbandryAutomataCorePeripheral extends WeakAutomataCorePeripheral 
 
     protected @Nullable
     Entity extractEntity() {
-        CompoundNBT data = getEntity();
+        CompoundTag data = getEntity();
         EntityType<?> type = EntityType.byString(data.getString("entity")).orElse(null);
         if (type != null) {
             Entity entity = type.create(getWorld());
@@ -94,7 +95,7 @@ public class HusbandryAutomataCorePeripheral extends WeakAutomataCorePeripheral 
         return withOperation(USE_ON_ANIMAL, context -> {
             ItemStack selectedTool = owner.getToolInMainHand();
             int previousDamageValue = selectedTool.getDamageValue();
-            ActionResultType result = owner.withPlayer(player -> player.useOnFilteredEntity(suitableEntity));
+            InteractionResult result = owner.withPlayer(player -> player.useOnFilteredEntity(suitableEntity));
             if (restoreToolDurability())
                 selectedTool.setDamageValue(previousDamageValue);
             return MethodResult.of(true, result.toString());
@@ -104,20 +105,20 @@ public class HusbandryAutomataCorePeripheral extends WeakAutomataCorePeripheral 
     @LuaFunction
     public final MethodResult inspectAnimal() {
         addRotationCycle();
-        RayTraceResult entityHit = owner.withPlayer(player -> player.findHit(false, true, suitableEntity));
-        if (entityHit.getType() == RayTraceResult.Type.MISS)
+        HitResult entityHit = owner.withPlayer(player -> player.findHit(false, true, suitableEntity));
+        if (entityHit.getType() == HitResult.Type.MISS)
             return MethodResult.of(null, "Nothing found");
-        Entity entity = ((EntityRayTraceResult) entityHit).getEntity();
-        if (!(entity instanceof AnimalEntity))
+        Entity entity = ((EntityHitResult) entityHit).getEntity();
+        if (!(entity instanceof Animal))
             return MethodResult.of(null, "Well, entity is not animal entity, but how?");
-        return MethodResult.of(LuaConverter.animalToLua((AnimalEntity) entity, owner.getToolInMainHand()));
+        return MethodResult.of(LuaConverter.animalToLua((Animal) entity, owner.getToolInMainHand()));
     }
 
     @LuaFunction
     public final MethodResult searchAnimals() {
         addRotationCycle();
         BlockPos currentPos = getPos();
-        AxisAlignedBB box = new AxisAlignedBB(currentPos);
+        AABB box = new AABB(currentPos);
         List<Map<String, Object>> entities = new ArrayList<>();
         ItemStack itemInHand = owner.getToolInMainHand();
         getWorld().getEntities((Entity) null, box.inflate(getInteractionRadius()), suitableEntity).forEach(entity -> entities.add(LuaConverter.completeEntityWithPositionToLua(entity, itemInHand, currentPos)));
@@ -126,16 +127,16 @@ public class HusbandryAutomataCorePeripheral extends WeakAutomataCorePeripheral 
 
     @LuaFunction
     public final MethodResult captureAnimal() {
-        RayTraceResult entityHit = owner.withPlayer(player -> player.findHit(false, true, suitableEntity));
-        if (entityHit.getType() == RayTraceResult.Type.MISS)
+        HitResult entityHit = owner.withPlayer(player -> player.findHit(false, true, suitableEntity));
+        if (entityHit.getType() == HitResult.Type.MISS)
             return MethodResult.of(null, "Nothing found");
         return withOperation(CAPTURE_ANIMAL, context -> {
-            LivingEntity entity = (LivingEntity) ((EntityRayTraceResult) entityHit).getEntity();
-            if (entity instanceof PlayerEntity || !entity.isAlive()) return MethodResult.of(null, "Unsuitable entity");
-            CompoundNBT nbt = new CompoundNBT();
+            LivingEntity entity = (LivingEntity) ((EntityHitResult) entityHit).getEntity();
+            if (entity instanceof Player || !entity.isAlive()) return MethodResult.of(null, "Unsuitable entity");
+            CompoundTag nbt = new CompoundTag();
             nbt.putString("entity", EntityType.getKey(entity.getType()).toString());
             entity.saveWithoutId(nbt);
-            entity.remove();
+            entity.remove(false);
             saveEntity(nbt);
             return MethodResult.of(true);
         }, context -> {

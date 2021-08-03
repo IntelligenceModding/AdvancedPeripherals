@@ -7,12 +7,12 @@ import de.srendi.advancedperipherals.common.items.ARGogglesItem;
 import de.srendi.advancedperipherals.common.util.Pair;
 import de.srendi.advancedperipherals.network.MNetwork;
 import de.srendi.advancedperipherals.network.messages.ClearHudCanvasMessage;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.event.ServerChatEvent;
 import net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
@@ -33,10 +33,10 @@ public class Events {
     @SubscribeEvent
     public static void onWorldJoin(PlayerEvent.PlayerLoggedInEvent event) {
         if(AdvancedPeripheralsConfig.givePlayerBookOnJoin) {
-            PlayerEntity player = event.getPlayer();
+            Player player = event.getPlayer();
             if(!hasPlayedBefore(player)) {
                 ItemStack book = new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation("patchouli", "guide_book")));
-                CompoundNBT nbt = new CompoundNBT();
+                CompoundTag nbt = new CompoundTag();
                 nbt.putString("patchouli:book", "advancedperipherals:manual");
                 book.setTag(nbt);
                 player.addItem(book);
@@ -63,9 +63,9 @@ public class Events {
     @SubscribeEvent
     public static void onEquipmentChange(LivingEquipmentChangeEvent event) {
         LivingEntity livingEntity = event.getEntityLiving();
-        if (!(livingEntity instanceof ServerPlayerEntity))
+        if (!(livingEntity instanceof ServerPlayer))
             return;
-        ServerPlayerEntity player = (ServerPlayerEntity) livingEntity;
+        ServerPlayer player = (ServerPlayer) livingEntity;
         if (event.getFrom().getItem() instanceof ARGogglesItem) {
             MNetwork.sendTo(new ClearHudCanvasMessage(), player);
         }
@@ -81,13 +81,13 @@ public class Events {
         return lastConsumedMessage;
     }
 
-    private static boolean hasPlayedBefore(PlayerEntity player) {
-        CompoundNBT tag = player.getPersistentData().getCompound(PlayerEntity.PERSISTED_NBT_TAG);
+    private static boolean hasPlayedBefore(Player player) {
+        CompoundTag tag = player.getPersistentData().getCompound(Player.PERSISTED_NBT_TAG);
         if(tag.getBoolean(PLAYED_BEFORE)) {
             return true;
         } else {
             tag.putBoolean(PLAYED_BEFORE, true);
-            player.getPersistentData().put(PlayerEntity.PERSISTED_NBT_TAG, tag);
+            player.getPersistentData().put(Player.PERSISTED_NBT_TAG, tag);
             return false;
         }
     }

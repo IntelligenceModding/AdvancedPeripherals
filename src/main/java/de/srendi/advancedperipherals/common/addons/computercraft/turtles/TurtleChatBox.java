@@ -8,9 +8,9 @@ import de.srendi.advancedperipherals.common.addons.computercraft.base.BaseTurtle
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.ChatBoxPeripheral;
 import de.srendi.advancedperipherals.common.events.Events;
 import de.srendi.advancedperipherals.common.setup.Blocks;
-import net.minecraft.client.renderer.model.ModelResourceLocation;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.NotNull;
 
 public class TurtleChatBox extends BaseTurtle<ChatBoxPeripheral> {
@@ -45,7 +45,7 @@ public class TurtleChatBox extends BaseTurtle<ChatBoxPeripheral> {
         if (turtle.getWorld().isClientSide) return;
 
         if (turtle.getUpgrade(side) instanceof TurtleChatBox) {
-            TileEntity tile = turtle.getWorld().getBlockEntity(turtle.getPosition());
+            BlockEntity tile = turtle.getWorld().getBlockEntity(turtle.getPosition());
             if (tile instanceof TileTurtle) {
                 TileTurtle tileTurtle = (TileTurtle) tile;
                 ServerComputer computer = tileTurtle.getServerComputer();

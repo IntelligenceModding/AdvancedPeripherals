@@ -4,11 +4,12 @@ import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.ARCo
 import de.srendi.advancedperipherals.common.argoggles.ARRenderAction;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
 import de.srendi.advancedperipherals.common.setup.TileEntityTypes;
-import net.minecraft.block.BlockState;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.server.SUpdateTileEntityPacket;
+import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.network.Connection;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.util.Constants.BlockFlags;
 import net.minecraftforge.common.util.Constants.NBT;
 import org.jetbrains.annotations.NotNull;
@@ -23,8 +24,8 @@ public class ARControllerTile extends PeripheralTileEntity<ARControllerPeriphera
     private Optional<int[]> virtualScreenSize = Optional.empty();
     private List<ARRenderAction> canvas = new ArrayList<>();
 
-    public ARControllerTile() {
-        super(TileEntityTypes.AR_CONTROLLER.get());
+    public ARControllerTile(BlockPos pos, BlockState state) {
+        super(TileEntityTypes.AR_CONTROLLER.get(), pos, state);
     }
 
     /**
@@ -52,20 +53,20 @@ public class ARControllerTile extends PeripheralTileEntity<ARControllerPeriphera
     }
 
     @Override
-    public void load(BlockState state, CompoundNBT nbt) {
-        super.load(state, nbt);
+    public void load(CompoundTag nbt) {
+        super.load(nbt);
         deserializeNBT(nbt);
     }
 
-    public void deserializeNBT(CompoundNBT nbt) {
+    public void deserializeNBT(CompoundTag nbt) {
         if (nbt.getIntArray(VIRTUAL_SCREEN_SIZE).length > 0)
             virtualScreenSize = Optional.of(nbt.getIntArray(VIRTUAL_SCREEN_SIZE));
         else
             virtualScreenSize = Optional.empty();
-        ListNBT list = nbt.getList(CANVAS, NBT.TAG_COMPOUND);
+        ListTag list = nbt.getList(CANVAS, NBT.TAG_COMPOUND);
         canvas.clear();
         for (int i = 0; i < list.size(); i++) {
-            CompoundNBT c = list.getCompound(i);
+            CompoundTag c = list.getCompound(i);
             ARRenderAction action = new ARRenderAction();
             action.deserializeNBT(c);
             canvas.add(action);
@@ -73,12 +74,12 @@ public class ARControllerTile extends PeripheralTileEntity<ARControllerPeriphera
     }
 
     @Override
-    public CompoundNBT save(CompoundNBT compound) {
+    public CompoundTag save(CompoundTag compound) {
         if (virtualScreenSize.isPresent())
             compound.putIntArray(VIRTUAL_SCREEN_SIZE, virtualScreenSize.get());
         else if (compound.contains(VIRTUAL_SCREEN_SIZE))
             compound.remove(VIRTUAL_SCREEN_SIZE);
-        ListNBT list = new ListNBT();
+        ListTag list = new ListTag();
         for (ARRenderAction action : new ArrayList<>(canvas)) {
             list.add(action.serializeNBT());
         }
@@ -87,28 +88,28 @@ public class ARControllerTile extends PeripheralTileEntity<ARControllerPeriphera
     }
 
     @Override
-    public CompoundNBT getUpdateTag() {
-        CompoundNBT nbt = super.getUpdateTag();
+    public CompoundTag getUpdateTag() {
+        CompoundTag nbt = super.getUpdateTag();
         save(nbt);
         return nbt;
     }
 
     @Override
-    public void handleUpdateTag(BlockState state, CompoundNBT tag) {
-        deserializeNBT(state, tag);
-        super.handleUpdateTag(state, tag);
+    public void handleUpdateTag(CompoundTag tag) {
+        deserializeNBT(tag);
+        super.handleUpdateTag(tag);
     }
 
     @Override
-    public SUpdateTileEntityPacket getUpdatePacket() {
-        CompoundNBT nbt = new CompoundNBT();
+    public ClientboundBlockEntityDataPacket getUpdatePacket() {
+        CompoundTag nbt = new CompoundTag();
         save(nbt);
-        return new SUpdateTileEntityPacket(getBlockPos(), -1, nbt);
+        return new ClientboundBlockEntityDataPacket(getBlockPos(), -1, nbt);
     }
 
     @Override
-    public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket pkt) {
-        CompoundNBT nbt = pkt.getTag();
+    public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt) {
+        CompoundTag nbt = pkt.getTag();
         deserializeNBT(nbt);
     }
 

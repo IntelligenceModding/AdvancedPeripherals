@@ -7,7 +7,10 @@ import de.srendi.advancedperipherals.common.util.ItemUtil;
 import net.minecraft.core.NonNullList;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
-import net.minecraft.world.item.*;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import org.jetbrains.annotations.Nullable;
@@ -17,7 +20,7 @@ import java.util.Optional;
 
 public abstract class BaseBlockItem extends BlockItem {
 
-    public BaseBlockItem(Block blockIn, Item.Properties properties) {
+    public BaseBlockItem(Block blockIn, Properties properties) {
         super(blockIn, properties.tab(AdvancedPeripherals.TAB));
     }
 

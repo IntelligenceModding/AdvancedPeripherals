@@ -5,7 +5,7 @@ import blusunrize.immersiveengineering.api.wires.redstone.RedstoneNetworkHandler
 import blusunrize.immersiveengineering.common.blocks.metal.ConnectorRedstoneTileEntity;
 import dan200.computercraft.api.lua.LuaFunction;
 import de.srendi.advancedperipherals.common.addons.computercraft.base.Integration;
-import net.minecraft.item.DyeColor;
+import net.minecraft.world.item.DyeColor;
 
 public class RedstoneConnectorIntegration extends Integration<ConnectorRedstoneTileEntity> {
     @Override

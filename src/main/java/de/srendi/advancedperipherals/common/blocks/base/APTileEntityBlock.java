@@ -1,10 +1,18 @@
 package de.srendi.advancedperipherals.common.blocks.base;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.DirectionalBlock;
+import net.minecraft.world.level.block.Mirror;
+import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraftforge.fmllegacy.RegistryObject;
 import org.jetbrains.annotations.Nullable;
@@ -27,9 +35,10 @@ public class APTileEntityBlock<T extends BlockEntity> extends BaseTileEntityBloc
         this.hasTileEntity = hasTileEntity;
     }
 
+    @Nullable
     @Override
-    public boolean hasTileEntity(BlockState state) {
-        return hasTileEntity;
+    public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+        return tileEntity.get().create(pos, state);
     }
 
     public BlockState rotate(BlockState state, Rotation rot) {
@@ -45,15 +54,16 @@ public class APTileEntityBlock<T extends BlockEntity> extends BaseTileEntityBloc
     }
 
     @Override
-    protected void createBlockStateDefinition(StateContainer.Builder<Block, BlockState> builder) {
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(FACING);
     }
 
     @Nullable
     @Override
-    public BlockState getStateForPlacement(BlockItemUseContext context) {
+    public BlockState getStateForPlacement(BlockPlaceContext context) {
         if (isRotatable)
             return this.defaultBlockState().setValue(FACING, context.getNearestLookingDirection().getOpposite().getOpposite());
         return this.defaultBlockState();
     }
+
 }

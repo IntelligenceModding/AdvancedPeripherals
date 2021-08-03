@@ -8,13 +8,13 @@ import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
 import de.srendi.advancedperipherals.common.util.ItemUtil;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Direction;
+import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -57,10 +57,10 @@ public class InventoryManagerPeripheral extends BasePeripheral {
 
         Direction direction = validateSide(invDirection);
 
-        TileEntity targetEntity = owner.getWorld().getBlockEntity(owner.getPos().relative(direction));
+        BlockEntity targetEntity = owner.getWorld().getBlockEntity(owner.getPos().relative(direction));
         IItemHandler inventoryFrom = targetEntity != null ? targetEntity
                 .getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, direction).resolve().orElse(null) : null;
-        PlayerInventory inventoryTo = getOwnerPlayer().inventory;
+        Inventory inventoryTo = getOwnerPlayer().inventory;
 
         //inventoryTo is checked via ensurePlayerIsLinked()
         if (inventoryFrom == null)
@@ -153,8 +153,8 @@ public class InventoryManagerPeripheral extends BasePeripheral {
 
         Direction direction = validateSide(invDirection);
 
-        TileEntity targetEntity = owner.getWorld().getBlockEntity(owner.getPos().relative(direction));
-        PlayerInventory inventoryFrom = getOwnerPlayer().inventory;
+        BlockEntity targetEntity = owner.getWorld().getBlockEntity(owner.getPos().relative(direction));
+        Inventory inventoryFrom = getOwnerPlayer().inventory;
         IItemHandler inventoryTo = targetEntity != null ? targetEntity
                 .getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, direction).resolve().orElse(null) : null;
 
@@ -230,11 +230,11 @@ public class InventoryManagerPeripheral extends BasePeripheral {
         ensurePlayerIsLinked();
         Map<Integer, Object> items = new HashMap<>();
         int i = 0;
-        for (ItemStack stack : getOwnerPlayer().inventory.items) {
+        for (ItemStack stack : getOwnerPlayer().getInventory().items) {
             if (!stack.isEmpty()) {
                 Map<String, Object> map = new HashMap<>();
                 String displayName = stack.getDisplayName().getString();
-                CompoundNBT nbt = stack.getOrCreateTag();
+                CompoundTag nbt = stack.getOrCreateTag();
                 map.put("name", stack.getItem().getRegistryName().toString());
                 map.put("amount", stack.getCount());
                 map.put("displayName", displayName);
@@ -252,11 +252,11 @@ public class InventoryManagerPeripheral extends BasePeripheral {
         ensurePlayerIsLinked();
         Map<Integer, Object> items = new HashMap<>();
         int i = 0;
-        for (ItemStack stack : getOwnerPlayer().inventory.armor) {
+        for (ItemStack stack : getOwnerPlayer().getInventory().armor) {
             if (!stack.isEmpty()) {
                 Map<String, Object> map = new HashMap<>();
                 String displayName = stack.getDisplayName().getString();
-                CompoundNBT nbt = stack.getOrCreateTag();
+                CompoundTag nbt = stack.getOrCreateTag();
                 map.put("name", stack.getItem().getRegistryName().toString());
                 map.put("amount", stack.getCount());
                 map.put("displayName", displayName);
@@ -272,7 +272,7 @@ public class InventoryManagerPeripheral extends BasePeripheral {
     @LuaFunction
     public final boolean isPlayerEquipped() throws LuaException {
         ensurePlayerIsLinked();
-        for (ItemStack stack : getOwnerPlayer().inventory.armor) {
+        for (ItemStack stack : getOwnerPlayer().getInventory().armor) {
             if (!stack.isEmpty()) {
                 return true;
             }
@@ -284,7 +284,7 @@ public class InventoryManagerPeripheral extends BasePeripheral {
     public final boolean isWearing(int index) throws LuaException {
         ensurePlayerIsLinked();
         int i = 0;
-        for (ItemStack stack : getOwnerPlayer().inventory.armor) {
+        for (ItemStack stack : getOwnerPlayer().getInventory().armor) {
             if (!stack.isEmpty()) {
                 if (index == i)
                     return true;
@@ -294,7 +294,7 @@ public class InventoryManagerPeripheral extends BasePeripheral {
         return false;
     }
 
-    private PlayerEntity getOwnerPlayer() {
+    private Player getOwnerPlayer() {
         return owner.getOwner();
     }
 

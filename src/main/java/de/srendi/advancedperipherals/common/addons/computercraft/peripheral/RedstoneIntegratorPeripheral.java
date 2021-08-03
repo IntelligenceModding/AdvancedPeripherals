@@ -5,7 +5,7 @@ import dan200.computercraft.api.lua.LuaFunction;
 import de.srendi.advancedperipherals.common.addons.computercraft.base.BasePeripheral;
 import de.srendi.advancedperipherals.common.blocks.tileentity.RedstoneIntegratorTile;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
-import net.minecraft.util.Direction;
+import net.minecraft.core.Direction;
 
 public class RedstoneIntegratorPeripheral extends BasePeripheral {
 

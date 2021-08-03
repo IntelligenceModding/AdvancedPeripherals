@@ -1,6 +1,5 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.peripheral;
 
-import com.google.common.math.IntMath;
 import dan200.computercraft.api.lua.IArguments;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
@@ -16,17 +15,17 @@ import de.srendi.advancedperipherals.common.addons.mekanism.Mekanism;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.SharedSeedRandom;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.ChunkPos;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.ISeedReader;
-import net.minecraft.world.LightType;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LightLayer;
+import net.minecraft.world.level.WorldGenLevel;
+import net.minecraft.world.level.levelgen.WorldgenRandom;
+import net.minecraft.world.phys.AABB;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 
@@ -92,25 +91,25 @@ public class EnvironmentDetectorPeripheral extends FuelConsumingPeripheral {
 
     @LuaFunction(mainThread = true)
     public final int getSkyLightLevel() {
-        return getWorld().getBrightness(LightType.SKY, getPos().offset(0, 1, 0));
+        return getWorld().getBrightness(LightLayer.SKY, getPos().offset(0, 1, 0));
     }
 
     @LuaFunction(mainThread = true)
     public final int getBlockLightLevel() {
-        return getWorld().getBrightness(LightType.BLOCK, getPos().offset(0, 1, 0));
+        return getWorld().getBrightness(LightLayer.BLOCK, getPos().offset(0, 1, 0));
     }
 
     @LuaFunction(mainThread = true)
     public final int getDayLightLevel() {
-        World world = getWorld();
-        int i = world.getBrightness(LightType.SKY, getPos().offset(0, 1, 0)) - world.getSkyDarken();
+        Level world = getWorld();
+        int i = world.getBrightness(LightLayer.SKY, getPos().offset(0, 1, 0)) - world.getSkyDarken();
         float f = world.getSunAngle(1.0F);
         if (i > 0) {
             float f1 = f < (float) Math.PI ? 0.0F : ((float) Math.PI * 2F);
             f = f + (f1 - f) * 0.2F;
-            i = Math.round((float) i * MathHelper.cos(f));
+            i = Math.round((float) i * Mth.cos(f));
         }
-        i = MathHelper.clamp(i, 0, 15);
+        i = Mth.clamp(i, 0, 15);
         return i;
     }
 
@@ -122,7 +121,7 @@ public class EnvironmentDetectorPeripheral extends FuelConsumingPeripheral {
     @LuaFunction(mainThread = true)
     public final boolean isSlimeChunk() {
         ChunkPos chunkPos = new ChunkPos(getPos());
-        return (SharedSeedRandom.seedSlimeChunk(chunkPos.x, chunkPos.z, ((ISeedReader) getWorld()).getSeed(), 987234911L).nextInt(10) == 0);
+        return (WorldgenRandom.seedSlimeChunk(chunkPos.x, chunkPos.z, ((WorldGenLevel) getWorld()).getSeed(), 987234911L).nextInt(10) == 0);
     }
 
     @LuaFunction(mainThread = true)
@@ -251,7 +250,7 @@ public class EnvironmentDetectorPeripheral extends FuelConsumingPeripheral {
                 return MethodResult.of(null, String.format("Not enough fuel, %d needed", cost));
             }
         }
-        AxisAlignedBB box = new AxisAlignedBB(pos);
+        AABB box = new AABB(pos);
         List<Map<String, Object>> entities = new ArrayList<>();
         getWorld().getEntities((Entity) null, box.inflate(radius), entity -> entity instanceof LivingEntity).forEach(
                 entity -> entities.add(LuaConverter.completeEntityWithPositionToLua(entity, ItemStack.EMPTY, pos))

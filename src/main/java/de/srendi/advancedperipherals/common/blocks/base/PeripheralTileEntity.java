@@ -6,14 +6,24 @@ import dan200.computercraft.shared.Capabilities;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.addons.computercraft.base.BasePeripheral;
 import de.srendi.advancedperipherals.common.addons.computercraft.base.IPeripheralTileEntity;
-import net.minecraft.MethodsReturnNonnullByDefault;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.WorldlyContainer;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.CapabilityItemHandler;
@@ -35,8 +45,8 @@ public abstract class PeripheralTileEntity<T extends BasePeripheral> extends Bas
     protected @Nullable T peripheral = null;
     private LazyOptional<IPeripheral> peripheralCap;
 
-    public PeripheralTileEntity(BlockEntityType<?> tileEntityTypeIn) {
-        super(tileEntityTypeIn);
+    public PeripheralTileEntity(BlockEntityType<?> tileEntityTypeIn, BlockPos pos, BlockState state) {
+        super(tileEntityTypeIn, pos, state);
         if (this instanceof IInventoryBlock) {
             items = NonNullList.withSize(((IInventoryBlock<?>) this).getInvSize(), ItemStack.EMPTY);
         } else {
@@ -102,34 +112,34 @@ public abstract class PeripheralTileEntity<T extends BasePeripheral> extends Bas
     }*/
 
     @Override
-    public CompoundNBT save(CompoundNBT compound) {
+    public CompoundTag save(CompoundTag compound) {
         super.save(compound);
-        ItemStackHelper.saveAllItems(compound, items);
+        ContainerHelper.saveAllItems(compound, items);
         if (!apSettings.isEmpty())
             compound.put(AP_SETTINGS_KEY, apSettings);
         return compound;
     }
 
     @Override
-    public void load(BlockState state, CompoundNBT compound) {
-        ItemStackHelper.loadAllItems(compound, items);
+    public void load(CompoundTag compound) {
+        ContainerHelper.loadAllItems(compound, items);
         apSettings = compound.getCompound(AP_SETTINGS_KEY);
-        super.load(state, compound);
+        super.load(compound);
     }
 
     @Override
-    protected ITextComponent getDefaultName() {
+    protected Component getDefaultName() {
         return this instanceof IInventoryBlock ? ((IInventoryBlock<?>) this).getDisplayName() : null;
     }
 
     @Nullable
     @Override
-    public Container createMenu(int id, @NotNull PlayerInventory inventory, @NotNull PlayerEntity playerEntity) {
+    public AbstractContainerMenu createMenu(int id, @NotNull Inventory inventory, @NotNull Player playerEntity) {
         return createMenu(id, inventory);
     }
 
     @Override
-    protected Container createMenu(int id, @NotNull PlayerInventory player) {
+    protected AbstractContainerMenu createMenu(int id, @NotNull Inventory player) {
         return this instanceof IInventoryBlock ? ((IInventoryBlock<?>) this).createContainer(id, player, worldPosition, level) : null;
     }
 
@@ -175,13 +185,13 @@ public abstract class PeripheralTileEntity<T extends BasePeripheral> extends Bas
     @NotNull
     @Override
     public ItemStack removeItem(int index, int count) {
-        return ItemStackHelper.removeItem(items, index, count);
+        return ContainerHelper.removeItem(items, index, count);
     }
 
     @NotNull
     @Override
     public ItemStack removeItemNoUpdate(int index) {
-        return ItemStackHelper.takeItem(items, index);
+        return ContainerHelper.takeItem(items, index);
     }
 
     @Override
@@ -193,7 +203,7 @@ public abstract class PeripheralTileEntity<T extends BasePeripheral> extends Bas
     }
 
     @Override
-    public boolean stillValid(PlayerEntity player) {
+    public boolean stillValid(Player player) {
         return true;
     }
 
@@ -202,8 +212,12 @@ public abstract class PeripheralTileEntity<T extends BasePeripheral> extends Bas
         items.clear();
     }
 
-    public CompoundNBT getApSettings() {
+    public CompoundTag getApSettings() {
         return apSettings;
     }
+
+    public abstract <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type);
+
+
 }
 

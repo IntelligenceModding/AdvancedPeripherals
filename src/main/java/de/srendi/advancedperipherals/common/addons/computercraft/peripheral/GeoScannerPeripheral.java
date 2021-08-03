@@ -13,13 +13,13 @@ import de.srendi.advancedperipherals.common.addons.computercraft.operations.Sphe
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
 import de.srendi.advancedperipherals.common.util.ScanUtils;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.ChunkPos;
-import net.minecraft.world.World;
-import net.minecraft.world.chunk.Chunk;
+import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraftforge.common.Tags;
 
 import javax.annotation.Nonnull;
@@ -44,7 +44,7 @@ public class GeoScannerPeripheral extends FuelConsumingPeripheral {
         super(type, pocket);
     }
 
-    private static List<Map<String, ?>> scan(World world, BlockPos center, int radius) {
+    private static List<Map<String, ?>> scan(Level world, BlockPos center, int radius) {
         List<Map<String, ?>> result = new ArrayList<>();
         ScanUtils.relativeTraverseBlocks(world, center, radius, (state, pos) -> {
             HashMap<String, Object> data = new HashMap<>(6);
@@ -108,8 +108,8 @@ public class GeoScannerPeripheral extends FuelConsumingPeripheral {
     public final MethodResult chunkAnalyze() {
         Optional<MethodResult> checkResult = cooldownCheck(SCAN_BLOCKS);
         if (checkResult.isPresent()) return checkResult.get();
-        World world = getWorld();
-        Chunk chunk = world.getChunkAt(getPos());
+        Level world = getWorld();
+        LevelChunk chunk = world.getChunkAt(getPos());
         ChunkPos chunkPos = chunk.getPos();
         HashMap<String, Integer> data = new HashMap<>();
         for (int x = chunkPos.getMinBlockX(); x <= chunkPos.getMaxBlockX(); x++) {
@@ -118,7 +118,7 @@ public class GeoScannerPeripheral extends FuelConsumingPeripheral {
                     BlockState block = chunk.getBlockState(new BlockPos(x, y, z));
                     ResourceLocation name = block.getBlock().getRegistryName();
                     if (name != null) {
-                        if (block.getBlock().is(Tags.Blocks.ORES)) {
+                        if (block.is(Tags.Blocks.ORES)) {
                             data.put(name.toString(), data.getOrDefault(name.toString(), 0) + 1);
                         }
                     }
@@ -135,7 +135,7 @@ public class GeoScannerPeripheral extends FuelConsumingPeripheral {
         Optional<MethodResult> checkResult = cooldownCheck(SCAN_BLOCKS);
         if (checkResult.isPresent()) return checkResult.get();
         BlockPos pos = getPos();
-        World world = getWorld();
+        Level world = getWorld();
         if (radius > SCAN_BLOCKS.getMaxCostRadius()) {
             return MethodResult.of(null, "Radius is exceed max value");
         }

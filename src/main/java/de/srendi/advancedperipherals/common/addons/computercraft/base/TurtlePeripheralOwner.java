@@ -10,12 +10,12 @@ import dan200.computercraft.shared.util.InventoryUtil;
 import de.srendi.advancedperipherals.common.util.DataStorageUtil;
 import de.srendi.advancedperipherals.common.util.fakeplayer.APFakePlayer;
 import de.srendi.advancedperipherals.common.util.fakeplayer.FakePlayerProviderTurtle;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.common.MinecraftForge;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -40,7 +40,7 @@ public class TurtlePeripheralOwner implements IPeripheralOwner {
 
     @Nullable
     @Override
-    public World getWorld() {
+    public Level getWorld() {
         return turtle.getWorld();
     }
 
@@ -58,7 +58,7 @@ public class TurtlePeripheralOwner implements IPeripheralOwner {
 
     @Nullable
     @Override
-    public PlayerEntity getOwner() {
+    public Player getOwner() {
         GameProfile owningPlayer = turtle.getOwningPlayer();
         if (owningPlayer == null)
             return null;
@@ -67,7 +67,7 @@ public class TurtlePeripheralOwner implements IPeripheralOwner {
 
     @NotNull
     @Override
-    public CompoundNBT getDataStorage() {
+    public CompoundTag getDataStorage() {
         return DataStorageUtil.getDataStorage(turtle, side);
     }
 
@@ -119,14 +119,14 @@ public class TurtlePeripheralOwner implements IPeripheralOwner {
     }
 
     @Override
-    public boolean isMovementPossible(@Nonnull World world, @Nonnull BlockPos pos) {
+    public boolean isMovementPossible(@Nonnull Level world, @Nonnull BlockPos pos) {
         TurtlePlayer turtlePlayer = TurtlePlayer.getWithPosition(turtle, getPos(), turtle.getDirection());
         TurtleBlockEvent.Move moveEvent = new TurtleBlockEvent.Move(turtle, turtlePlayer, world, pos);
         return !MinecraftForge.EVENT_BUS.post(moveEvent);
     }
 
     @Override
-    public boolean move(@Nonnull World world, @Nonnull BlockPos pos) {
+    public boolean move(@Nonnull Level world, @Nonnull BlockPos pos) {
         return turtle.teleportTo(world, pos);
     }
 }

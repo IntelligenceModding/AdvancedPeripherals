@@ -14,9 +14,9 @@ import dan200.computercraft.api.peripheral.IPeripheral;
 import de.srendi.advancedperipherals.common.addons.computercraft.base.Integration;
 import de.srendi.advancedperipherals.common.addons.storagedrawers.DrawerItemHandler;
 import de.srendi.advancedperipherals.common.util.InventoryUtil;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.Container;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.CapabilityItemHandler;
@@ -39,8 +39,8 @@ public class DrawerIntegration extends Integration<TileEntityDrawers> {
         }
         if (object instanceof IItemHandler)
             return (IItemHandler) object;
-        if (object instanceof IInventory)
-            return new InvWrapper((IInventory) object);
+        if (object instanceof Container)
+            return new InvWrapper((Container) object);
         return null;
     }
 

@@ -7,15 +7,14 @@ import dan200.computercraft.api.pocket.IPocketAccess;
 import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
 import de.srendi.advancedperipherals.common.addons.computercraft.base.IPeripheralTileEntity;
-import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.level.block.entity.BlockEntity;
 
 import java.util.Map;
 import java.util.Optional;
 
 public abstract class FuelConsumingPeripheral extends OperationPeripheral {
 
-    public <T extends TileEntity & IPeripheralTileEntity> FuelConsumingPeripheral(String type, T tileEntity) {
+    public <T extends BlockEntity & IPeripheralTileEntity> FuelConsumingPeripheral(String type, T tileEntity) {
         super(type, tileEntity);
     }
 

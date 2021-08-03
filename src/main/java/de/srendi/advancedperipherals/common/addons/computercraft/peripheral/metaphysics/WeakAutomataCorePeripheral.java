@@ -6,27 +6,30 @@ import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.lua.MethodResult;
 import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
-import de.srendi.advancedperipherals.common.addons.computercraft.operations.AutomataCoreTier;
 import de.srendi.advancedperipherals.common.addons.computercraft.base.IAutomataCoreTier;
 import de.srendi.advancedperipherals.common.addons.computercraft.base.IFeedableAutomataCore;
 import de.srendi.advancedperipherals.common.addons.computercraft.operations.AutomataCorePeripheral;
+import de.srendi.advancedperipherals.common.addons.computercraft.operations.AutomataCoreTier;
 import de.srendi.advancedperipherals.common.addons.computercraft.operations.IPeripheralOperation;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
 import de.srendi.advancedperipherals.common.util.Pair;
 import de.srendi.advancedperipherals.common.util.fakeplayer.APFakePlayer;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.item.ItemEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.math.EntityRayTraceResult;
-import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.world.phys.HitResult;
 import net.minecraftforge.energy.CapabilityEnergy;
 
 import javax.annotation.Nonnull;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static de.srendi.advancedperipherals.common.addons.computercraft.operations.SingleOperation.*;
@@ -72,7 +75,7 @@ public class WeakAutomataCorePeripheral extends AutomataCorePeripheral {
 
         if (remainder != storeStack) {
             if (remainder.isEmpty() && leaveStack.isEmpty()) {
-                entity.remove();
+                entity.remove(false);
             } else if (remainder.isEmpty()) {
                 entity.setItem(leaveStack);
             } else if (leaveStack.isEmpty()) {
@@ -98,11 +101,11 @@ public class WeakAutomataCorePeripheral extends AutomataCorePeripheral {
     @LuaFunction(mainThread = true)
     public final MethodResult lookAtBlock() {
         addRotationCycle();
-        RayTraceResult result = owner.withPlayer(APFakePlayer -> APFakePlayer.findHit(true, false));
-        if (result.getType() == RayTraceResult.Type.MISS) {
+        HitResult result = owner.withPlayer(APFakePlayer -> APFakePlayer.findHit(true, false));
+        if (result.getType() == HitResult.Type.MISS) {
             return MethodResult.of(null, "No block find");
         }
-        BlockRayTraceResult blockHit = (BlockRayTraceResult) result;
+        BlockHitResult blockHit = (BlockHitResult) result;
         BlockState state = getWorld().getBlockState(blockHit.getBlockPos());
         Map<String, Object> data = new HashMap<>();
         ResourceLocation blockName = state.getBlock().getRegistryName();
@@ -115,11 +118,11 @@ public class WeakAutomataCorePeripheral extends AutomataCorePeripheral {
     @LuaFunction
     public final MethodResult lookAtEntity() {
         addRotationCycle();
-        RayTraceResult result = owner.withPlayer(APFakePlayer -> APFakePlayer.findHit(false, true));
-        if (result.getType() == RayTraceResult.Type.MISS) {
+        HitResult result = owner.withPlayer(APFakePlayer -> APFakePlayer.findHit(false, true));
+        if (result.getType() == HitResult.Type.MISS) {
             return MethodResult.of(null, "No entity find");
         }
-        EntityRayTraceResult entityHit = (EntityRayTraceResult) result;
+        EntityHitResult entityHit = (EntityHitResult) result;
         return MethodResult.of(LuaConverter.entityToLua(entityHit.getEntity()));
     }
 
@@ -143,7 +146,7 @@ public class WeakAutomataCorePeripheral extends AutomataCorePeripheral {
         return withOperation(USE_ON_BLOCK, context -> {
             ItemStack selectedTool = owner.getToolInMainHand();
             int previousDamageValue = selectedTool.getDamageValue();
-            ActionResultType result = owner.withPlayer(APFakePlayer::useOnBlock);
+            InteractionResult result = owner.withPlayer(APFakePlayer::useOnBlock);
             if (restoreToolDurability())
                 selectedTool.setDamageValue(previousDamageValue);
             return MethodResult.of(true, result.toString());
@@ -222,7 +225,7 @@ public class WeakAutomataCorePeripheral extends AutomataCorePeripheral {
         if (!(owner.getToolInMainHand().getItem() instanceof IFeedableAutomataCore)) {
             return MethodResult.of(null, "Well, you should feed correct mechanical soul!");
         }
-        ActionResultType result = owner.withPlayer(APFakePlayer::useOnEntity);
+        InteractionResult result = owner.withPlayer(APFakePlayer::useOnEntity);
         addRotationCycle(3);
         return MethodResult.of(true, result.toString());
     }

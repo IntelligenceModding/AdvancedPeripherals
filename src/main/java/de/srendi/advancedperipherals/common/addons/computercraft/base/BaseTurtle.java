@@ -1,5 +1,7 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.base;
 
+import com.mojang.math.Matrix4f;
+import com.mojang.math.Transformation;
 import dan200.computercraft.api.client.TransformedModel;
 import dan200.computercraft.api.peripheral.IPeripheral;
 import dan200.computercraft.api.turtle.AbstractTurtleUpgrade;
@@ -7,13 +9,8 @@ import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
 import dan200.computercraft.api.turtle.TurtleUpgradeType;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
-import net.minecraft.client.renderer.model.ModelResourceLocation;
 import net.minecraft.client.resources.model.ModelResourceLocation;
-import net.minecraft.item.ItemStack;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.vector.Matrix4f;
-import net.minecraft.util.math.vector.TransformationMatrix;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -47,7 +44,7 @@ public abstract class BaseTurtle<T extends BasePeripheral> extends AbstractTurtl
                     0.0f, -1.0f, 0.0f, 1.0f,
                     0.0f, 0.0f, 0.0f, 1.0f,
             });
-            return TransformedModel.of(getCraftingItem(), new TransformationMatrix(transform));
+            return TransformedModel.of(getCraftingItem(), new Transformation(transform));
         }
         return TransformedModel.of(turtleSide == TurtleSide.LEFT ? getLeftModel() : getRightModel());
     }

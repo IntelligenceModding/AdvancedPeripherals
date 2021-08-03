@@ -7,13 +7,10 @@ import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.Chun
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
 import de.srendi.advancedperipherals.common.setup.Items;
 import de.srendi.advancedperipherals.common.util.ChunkManager;
-import net.minecraft.client.renderer.model.ModelResourceLocation;
 import net.minecraft.client.resources.model.ModelResourceLocation;
-import net.minecraft.item.ItemStack;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.util.math.ChunkPos;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ChunkPos;
-import net.minecraft.world.server.ServerWorld;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;

@@ -3,20 +3,24 @@ package de.srendi.advancedperipherals.common.blocks.tileentity;
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.RedstoneIntegratorPeripheral;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
 import de.srendi.advancedperipherals.common.setup.TileEntityTypes;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.RedstoneWireBlock;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.RedStoneWireBlock;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 
 public class RedstoneIntegratorTile extends PeripheralTileEntity<RedstoneIntegratorPeripheral> {
 
     public int[] power = new int[Direction.values().length];
 
-    public RedstoneIntegratorTile() {
-        super(TileEntityTypes.REDSTONE_INTEGRATOR.get());
+    public RedstoneIntegratorTile(BlockPos pos, BlockState state) {
+        super(TileEntityTypes.REDSTONE_INTEGRATOR.get(), pos, state);
     }
 
     @NotNull
@@ -32,7 +36,7 @@ public class RedstoneIntegratorTile extends PeripheralTileEntity<RedstoneIntegra
 
         BlockState neighbourState = getLevel().getBlockState(neighbourPos);
         return neighbourState.getBlock() == Blocks.REDSTONE_WIRE
-                ? Math.max(power, neighbourState.getValue(RedstoneWireBlock.POWER)) : power;
+                ? Math.max(power, neighbourState.getValue(RedStoneWireBlock.POWER)) : power;
     }
 
     public void setRedstoneOutput(Direction direction, int power) {
@@ -48,15 +52,15 @@ public class RedstoneIntegratorTile extends PeripheralTileEntity<RedstoneIntegra
     }
 
     @Override
-    public void load(BlockState state, CompoundNBT compound) {
+    public void load(CompoundTag compound) {
         for (Direction direction : Direction.values()) {
             setRedstoneOutput(direction, compound.getInt(direction.name() + "Power"));
         }
-        super.load(state, compound);
+        super.load(compound);
     }
 
     @Override
-    public CompoundNBT save(CompoundNBT compound) {
+    public CompoundTag save(CompoundTag compound) {
         super.save(compound);
         int i = 0;
         for (Direction direction : Direction.values()) {
@@ -64,6 +68,11 @@ public class RedstoneIntegratorTile extends PeripheralTileEntity<RedstoneIntegra
             i++;
         }
         return compound;
+    }
+
+    @Override
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
+        return null;
     }
 
 }

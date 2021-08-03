@@ -42,8 +42,6 @@ public final class ARRenderAction implements INBTSerializable<CompoundTag> {
         return action;
     }
 
-
-
     public void draw(Minecraft mc, PoseStack matrixStack, int w, int h) {
         if (!type.ensureArgs(intArgs))
             return;

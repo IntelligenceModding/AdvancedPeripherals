@@ -2,13 +2,17 @@ package de.srendi.advancedperipherals.common.data;
 
 import dan200.computercraft.shared.Registry;
 import de.srendi.advancedperipherals.common.setup.Blocks;
-import net.minecraft.block.Block;
-import net.minecraft.data.*;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.potion.PotionUtils;
-import net.minecraft.potion.Potions;
+import net.minecraft.data.DataGenerator;
+import net.minecraft.data.recipes.FinishedRecipe;
+import net.minecraft.data.recipes.RecipeProvider;
+import net.minecraft.data.recipes.ShapedRecipeBuilder;
+import net.minecraft.data.recipes.ShapelessRecipeBuilder;
 import net.minecraft.tags.ItemTags;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.alchemy.PotionUtils;
+import net.minecraft.world.item.alchemy.Potions;
+import net.minecraft.world.level.block.Block;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.crafting.conditions.IConditionBuilder;
 
@@ -23,7 +27,7 @@ public class RecipesProvider extends RecipeProvider implements IConditionBuilder
     }
 
     @Override
-    protected void buildShapelessRecipes(Consumer<IFinishedRecipe> consumer) {
+    protected void buildCraftingRecipes(Consumer<FinishedRecipe> consumer) {
         ShapedRecipeBuilder.shaped(Blocks.AR_CONTROLLER.get())
                 .define('E', Items.ENDER_PEARL)
                 .define('C', CASING)
@@ -120,7 +124,7 @@ public class RecipesProvider extends RecipeProvider implements IConditionBuilder
                 .define('I', Items.IRON_INGOT)
                 .define('W', Items.WHITE_STAINED_GLASS)
                 .define('O', Items.OBSERVER)
-                .define('G', Items.GOLD_INGOT.getItem())
+                .define('G', Items.GOLD_INGOT)
                 .pattern("IWI")
                 .pattern("IOI")
                 .pattern(" G ")
@@ -167,7 +171,7 @@ public class RecipesProvider extends RecipeProvider implements IConditionBuilder
 //                .unlockedBy("has_item", has(CASING))
 //                .save(consumer);
 
-        ShapedRecipeBuilder.shaped(Blocks.BLOCK_READER.get())
+        /*ShapedRecipeBuilder.shaped(Blocks.BLOCK_READER.get())
                 .define('O', Items.OBSERVER)
                 .define('I', Items.IRON_INGOT)
                 .define('M', Registry.ModBlocks.WIRED_MODEM_FULL.get())
@@ -189,7 +193,7 @@ public class RecipesProvider extends RecipeProvider implements IConditionBuilder
                 .pattern("DCD")
                 .pattern("ROR")
                 .unlockedBy("has_item", has(CASING))
-                .save(consumer);
+                .save(consumer);*/
 
         ShapedRecipeBuilder.shaped(Blocks.NBT_STORAGE.get())
                 .define('C', Items.CHEST)

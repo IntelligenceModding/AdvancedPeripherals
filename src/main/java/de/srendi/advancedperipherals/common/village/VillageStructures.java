@@ -3,18 +3,17 @@ package de.srendi.advancedperipherals.common.village;
 import com.mojang.datafixers.util.Pair;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.WorldGenRegistries;
-import net.minecraft.world.gen.feature.jigsaw.JigsawPattern;
-import net.minecraft.world.gen.feature.jigsaw.JigsawPattern.PlacementBehaviour;
-import net.minecraft.world.gen.feature.jigsaw.JigsawPiece;
-import net.minecraft.world.gen.feature.structure.*;
+import net.minecraft.core.Registry;
+import net.minecraft.data.BuiltinRegistries;
+import net.minecraft.data.worldgen.*;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.levelgen.feature.structures.StructurePoolElement;
+import net.minecraft.world.level.levelgen.feature.structures.StructureTemplatePool;
+import net.minecraft.world.level.levelgen.feature.structures.StructureTemplatePool.Projection;
 
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
-
 
 public class VillageStructures {
     //Adapted from Pneumaticcraft
@@ -22,7 +21,7 @@ public class VillageStructures {
         if (!AdvancedPeripheralsConfig.enableVillagerStructures)
             return;
         //Ensure the vanilla static init is done
-        PlainsVillagePools.bootstrap();
+        PlainVillagePools.bootstrap();
         SavannaVillagePools.bootstrap();
         TaigaVillagePools.bootstrap();
         DesertVillagePools.bootstrap();
@@ -36,16 +35,16 @@ public class VillageStructures {
     }
 
     private static void addToPool(ResourceLocation pool, String toAdd, int weight) {
-        JigsawPattern old = WorldGenRegistries.TEMPLATE_POOL.get(pool);
+        StructureTemplatePool old = BuiltinRegistries.TEMPLATE_POOL.get(pool);
         if (old == null) {
             AdvancedPeripherals.debug("no jigsaw pool for " + pool + "? skipping villager house generation for it");
             return;
         }
-        List<JigsawPiece> shuffled = old.getShuffledTemplates(ThreadLocalRandom.current());
-        List<Pair<JigsawPiece, Integer>> newPieces = shuffled.stream().map(p -> Pair.of(p, 1)).collect(Collectors.toList());
-        JigsawPiece newPiece = JigsawPiece.legacy(toAdd).apply(PlacementBehaviour.RIGID);
+        List<StructurePoolElement> shuffled = old.getShuffledTemplates(ThreadLocalRandom.current());
+        List<Pair<StructurePoolElement, Integer>> newPieces = shuffled.stream().map(p -> Pair.of(p, 1)).collect(Collectors.toList());
+        StructurePoolElement newPiece = StructurePoolElement.legacy(toAdd).apply(Projection.RIGID);
         newPieces.add(Pair.of(newPiece, weight));
-        Registry.register(WorldGenRegistries.TEMPLATE_POOL, pool, new JigsawPattern(pool, old.getName(), newPieces));
+        Registry.register(BuiltinRegistries.TEMPLATE_POOL, pool, new StructureTemplatePool(pool, old.getName(), newPieces));
         AdvancedPeripherals.debug("Finished registration for " + toAdd);
     }
 }

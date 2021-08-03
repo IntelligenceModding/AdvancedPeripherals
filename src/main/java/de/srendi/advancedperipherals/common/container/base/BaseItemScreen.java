@@ -1,15 +1,17 @@
 package de.srendi.advancedperipherals.common.container.base;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
-import net.minecraft.client.gui.screen.inventory.ContainerScreen;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.ITextComponent;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.gui.screens.inventory.FurnaceScreen;
+import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Inventory;
 
-public abstract class BaseItemScreen<T extends BaseItemContainer> extends ContainerScreen<T> {
+public abstract class BaseItemScreen<T extends BaseItemContainer> extends AbstractContainerScreen<T> {
 
-    public BaseItemScreen(T screenContainer, PlayerInventory inv, ITextComponent titleIn) {
+    public BaseItemScreen(T screenContainer, Inventory inv, Component titleIn) {
         super(screenContainer, inv, titleIn);
 
         imageWidth = getSizeX();
@@ -17,16 +19,17 @@ public abstract class BaseItemScreen<T extends BaseItemContainer> extends Contai
     }
 
     @Override
-    public void render(MatrixStack matrixStack, int x, int y, float partialTicks) {
+    public void render(PoseStack matrixStack, int x, int y, float partialTicks) {
         renderBackground(matrixStack);
         super.render(matrixStack, x, y, partialTicks);
         renderTooltip(matrixStack, x, y);
     }
 
     @Override
-    protected void renderBg(MatrixStack matrixStack, float partialTicks, int x, int y) {
-        RenderSystem.color4f(1F, 1F, 1F, 1F);
-        minecraft.getTextureManager().bind(getTexture());
+    protected void renderBg(PoseStack matrixStack, float partialTicks, int x, int y) {
+        RenderSystem.setShader(GameRenderer::getPositionTexShader);
+        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+        RenderSystem.setShaderTexture(0, getTexture());
 
         int xPos = (width - imageWidth) / 2;
         int yPos = (height - imageHeight) / 2;

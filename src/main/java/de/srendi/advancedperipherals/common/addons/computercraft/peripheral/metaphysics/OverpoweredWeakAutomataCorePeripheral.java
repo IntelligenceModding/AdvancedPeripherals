@@ -3,8 +3,8 @@ package de.srendi.advancedperipherals.common.addons.computercraft.peripheral.met
 import dan200.computercraft.api.lua.MethodResult;
 import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
-import de.srendi.advancedperipherals.common.addons.computercraft.operations.AutomataCoreTier;
 import de.srendi.advancedperipherals.common.addons.computercraft.base.IAutomataCoreTier;
+import de.srendi.advancedperipherals.common.addons.computercraft.operations.AutomataCoreTier;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;

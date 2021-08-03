@@ -15,6 +15,10 @@ import java.util.Map;
 public class NBTUtil {
 
     public static Tag toDirectNBT(Object object) {
+        // Mostly dan200.computercraft.shared.util toNBTTag method
+        // put this map storing changes
+        // instead of map serialization use direct map as CompoundNBT
+        // assuming that map keys are strings
         if (object == null) {
             return null;
         } else if (object instanceof Boolean) {

@@ -3,13 +3,13 @@ package de.srendi.advancedperipherals.common.addons.computercraft.base;
 import dan200.computercraft.api.pocket.IPocketAccess;
 import de.srendi.advancedperipherals.common.util.DataStorageUtil;
 import de.srendi.advancedperipherals.common.util.fakeplayer.APFakePlayer;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -30,7 +30,7 @@ public class PocketPeripheralOwner implements IPeripheralOwner {
 
     @Nullable
     @Override
-    public World getWorld() {
+    public Level getWorld() {
         Entity owner = pocket.getEntity();
         if (owner == null)
             return null;
@@ -57,16 +57,16 @@ public class PocketPeripheralOwner implements IPeripheralOwner {
 
     @Nullable
     @Override
-    public PlayerEntity getOwner() {
+    public Player getOwner() {
         Entity owner = pocket.getEntity();
-        if (owner instanceof PlayerEntity)
-            return (PlayerEntity) owner;
+        if (owner instanceof Player)
+            return (Player) owner;
         return null;
     }
 
     @NotNull
     @Override
-    public CompoundNBT getDataStorage() {
+    public CompoundTag getDataStorage() {
         return DataStorageUtil.getDataStorage(pocket);
     }
 
@@ -116,12 +116,12 @@ public class PocketPeripheralOwner implements IPeripheralOwner {
     }
 
     @Override
-    public boolean isMovementPossible(@NotNull World world, @NotNull BlockPos pos) {
+    public boolean isMovementPossible(@NotNull Level world, @NotNull BlockPos pos) {
         return false;
     }
 
     @Override
-    public boolean move(@NotNull World world, @NotNull BlockPos pos) {
+    public boolean move(@NotNull Level world, @NotNull BlockPos pos) {
         return false;
     }
 }

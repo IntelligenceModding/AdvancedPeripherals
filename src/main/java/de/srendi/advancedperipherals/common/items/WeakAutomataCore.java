@@ -4,24 +4,17 @@ import de.srendi.advancedperipherals.common.addons.computercraft.base.IFeedableA
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
 import de.srendi.advancedperipherals.common.setup.Items;
 import de.srendi.advancedperipherals.common.util.EnumColor;
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Hand;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.World;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
@@ -79,29 +72,28 @@ public class WeakAutomataCore extends APItem implements IFeedableAutomataCore {
     }
 
     @Override
-    public @NotNull ActionResultType interactLivingEntity(@NotNull ItemStack stack, @NotNull PlayerEntity player, @NotNull LivingEntity entity, @NotNull Hand hand) {
+    public @NotNull InteractionResult interactLivingEntity(@NotNull ItemStack stack, @NotNull Player player, @NotNull LivingEntity entity, @NotNull InteractionHand hand) {
         if (!(player instanceof FakePlayer)) {
-            player.displayClientMessage(new TranslationTextComponent("text.advancedperipherals.automata_core_feed_by_player"), true);
-            return ActionResultType.FAIL;
+            player.displayClientMessage(new TranslatableComponent("text.advancedperipherals.automata_core_feed_by_player"), true);
+            return InteractionResult.FAIL;
         }
         String entityType = EntityType.getKey(entity.getType()).toString();
-        Class<? extends Entity> entityClass = entity.getClass();
         if (AUTOMATA_CORE_REGISTRY.containsKey(entityType)) {
-            CompoundNBT tag = stack.getOrCreateTag();
-            CompoundNBT consumedData = tag.getCompound(CONSUMER_ENTITY_COMPOUND);
+            CompoundTag tag = stack.getOrCreateTag();
+            CompoundTag consumedData = tag.getCompound(CONSUMER_ENTITY_COMPOUND);
             WeakAutomataCoreRecord record;
             if (consumedData.isEmpty()) {
                 record = AUTOMATA_CORE_REGISTRY.get(entityType);
             } else {
                 Optional<String> anyKey = consumedData.getAllKeys().stream().findAny();
                 if (!anyKey.isPresent())
-                    return ActionResultType.PASS;
+                    return InteractionResult.PASS;
                 record = AUTOMATA_CORE_REGISTRY.get(anyKey.get());
             }
             if (!record.isSuitable(entityType, consumedData))
-                return ActionResultType.PASS;
-            entity.remove();
-            CompoundNBT entityCompound = consumedData.getCompound(entityType);
+                return InteractionResult.PASS;
+            entity.remove(false);
+            CompoundTag entityCompound = consumedData.getCompound(entityType);
             entityCompound.putInt(
                     CONSUMED_ENTITY_COUNT, entityCompound.getInt(CONSUMED_ENTITY_COUNT) + 1
             );
@@ -111,9 +103,9 @@ public class WeakAutomataCore extends APItem implements IFeedableAutomataCore {
                 player.setItemInHand(hand, new ItemStack(record.resultSoul));
             }
             tag.put(CONSUMER_ENTITY_COMPOUND, consumedData);
-            return ActionResultType.SUCCESS;
+            return InteractionResult.SUCCESS;
         }
-        return ActionResultType.PASS;
+        return InteractionResult.PASS;
     }
 
     public static class WeakAutomataCoreRecord {
@@ -129,7 +121,7 @@ public class WeakAutomataCore extends APItem implements IFeedableAutomataCore {
             return this.ingredients.getOrDefault(entityType, 0);
         }
 
-        public boolean isSuitable(String entityType, CompoundNBT consumedData) {
+        public boolean isSuitable(String entityType, CompoundTag consumedData) {
             if (!ingredients.containsKey(entityType))
                 return false;
             int requiredCount = ingredients.get(entityType);
@@ -137,7 +129,7 @@ public class WeakAutomataCore extends APItem implements IFeedableAutomataCore {
             return currentCount < requiredCount;
         }
 
-        public boolean isFinished(CompoundNBT consumedData) {
+        public boolean isFinished(CompoundTag consumedData) {
             return ingredients.entrySet().stream().map(entry -> entry.getValue() == consumedData.getCompound(entry.getKey()).getInt(CONSUMED_ENTITY_COUNT)).reduce((a, b) -> a && b).orElse(true);
         }
     }

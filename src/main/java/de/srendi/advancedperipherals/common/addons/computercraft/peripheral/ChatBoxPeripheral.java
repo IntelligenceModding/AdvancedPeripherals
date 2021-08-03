@@ -11,15 +11,14 @@ import de.srendi.advancedperipherals.common.addons.computercraft.operations.IPer
 import de.srendi.advancedperipherals.common.addons.computercraft.operations.OperationPeripheral;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.util.Util;
-import net.minecraft.util.text.IFormattableTextComponent;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraftforge.fml.server.ServerLifecycleHooks;
+import net.minecraft.Util;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraftforge.fmllegacy.server.ServerLifecycleHooks;
 
 import javax.annotation.Nonnull;
-
 import java.util.Collections;
 import java.util.List;
 
@@ -56,11 +55,11 @@ public class ChatBoxPeripheral extends OperationPeripheral {
         if (isOnCooldown(CHAT_MESSAGE))
             throw new LuaException("You are sending messages too often. You can modify the cooldown in the config.");
         String message = arguments.getString(0);
-        IFormattableTextComponent component = ITextComponent.Serializer.fromJson(message);
+        MutableComponent component = Component.Serializer.fromJson(message);
         if (component == null)
             return MethodResult.of(null, "incorrect json");
-        IFormattableTextComponent preparedMessage = new StringTextComponent(String.format(PREFIX_FORMAT, arguments.optString(1, AdvancedPeripheralsConfig.defaultChatBoxPrefix))).append(message);
-        for (ServerPlayerEntity player : ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers()) {
+        MutableComponent preparedMessage = new TextComponent(String.format(PREFIX_FORMAT, arguments.optString(1, AdvancedPeripheralsConfig.defaultChatBoxPrefix))).append(message);
+        for (ServerPlayer player : ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers()) {
             player.sendMessage(preparedMessage, Util.NIL_UUID);
         }
         trackOperation(CHAT_MESSAGE, null);
@@ -72,8 +71,8 @@ public class ChatBoxPeripheral extends OperationPeripheral {
         if (isOnCooldown(CHAT_MESSAGE))
             throw new LuaException("You are sending messages too often. You can modify the cooldown in the config.");
         String message = arguments.getString(0);
-        IFormattableTextComponent preparedMessage = new StringTextComponent(String.format(PREFIX_FORMAT, arguments.optString(1, AdvancedPeripheralsConfig.defaultChatBoxPrefix))).append(message);
-        for (ServerPlayerEntity player : ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers()) {
+        MutableComponent preparedMessage = new TextComponent(String.format(PREFIX_FORMAT, arguments.optString(1, AdvancedPeripheralsConfig.defaultChatBoxPrefix))).append(message);
+        for (ServerPlayer player : ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers()) {
             player.sendMessage(preparedMessage, Util.NIL_UUID);
         }
         trackOperation(CHAT_MESSAGE, null);
@@ -85,8 +84,8 @@ public class ChatBoxPeripheral extends OperationPeripheral {
             throw new LuaException("You are sending messages too often. You can modify the cooldown in the config.");
         String message = arguments.getString(0);
         String playerName = arguments.getString(1);
-        IFormattableTextComponent preparedMessage = new StringTextComponent(String.format(PREFIX_FORMAT, arguments.optString(2, AdvancedPeripheralsConfig.defaultChatBoxPrefix))).append(message);
-        for (ServerPlayerEntity player : ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers()) {
+        MutableComponent preparedMessage = new TextComponent(String.format(PREFIX_FORMAT, arguments.optString(2, AdvancedPeripheralsConfig.defaultChatBoxPrefix))).append(message);
+        for (ServerPlayer player : ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers()) {
             if (player.getName().getString().equals(playerName))
                 player.sendMessage(preparedMessage, Util.NIL_UUID);
         }

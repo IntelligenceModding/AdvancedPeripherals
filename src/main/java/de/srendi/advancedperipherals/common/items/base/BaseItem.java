@@ -25,7 +25,7 @@ import java.util.Optional;
 
 public abstract class BaseItem extends Item {
 
-    public BaseItem(Item.Properties properties) {
+    public BaseItem(Properties properties) {
         super(properties.tab(AdvancedPeripherals.TAB));
     }
 

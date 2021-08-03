@@ -16,10 +16,10 @@ import de.srendi.advancedperipherals.common.addons.refinedstorage.RefinedStorage
 import de.srendi.advancedperipherals.common.blocks.tileentity.RsBridgeTile;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
 import de.srendi.advancedperipherals.common.util.ItemUtil;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Direction;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
@@ -95,7 +95,7 @@ public class RsBridgePeripheral extends BasePeripheral {
         ItemStack stack = ItemUtil.getItemStackRS(arguments.getTable(0), RefinedStorage.getItems(getNetwork(), false));
         Direction direction = validateSide(arguments.getString(1));
 
-        TileEntity targetEntity = tileEntity.getLevel().getBlockEntity(tileEntity.getBlockPos().relative(direction));
+        BlockEntity targetEntity = tileEntity.getLevel().getBlockEntity(tileEntity.getBlockPos().relative(direction));
         IItemHandler inventory = targetEntity != null ?
                 targetEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, direction.getOpposite()).resolve().orElse(null) : null;
         if (inventory == null)
@@ -127,7 +127,7 @@ public class RsBridgePeripheral extends BasePeripheral {
         ItemStack stack = ItemUtil.getItemStackRS(arguments.getTable(0), RefinedStorage.getItems(getNetwork(), false));
         Direction direction = validateSide(arguments.getString(1));
 
-        TileEntity targetEntity = tileEntity.getLevel().getBlockEntity(tileEntity.getBlockPos().relative(direction));
+        BlockEntity targetEntity = tileEntity.getLevel().getBlockEntity(tileEntity.getBlockPos().relative(direction));
         IItemHandler inventory = targetEntity != null ?
                 targetEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, direction.getOpposite()).resolve().orElse(null) : null;
         if (inventory == null)
@@ -162,7 +162,7 @@ public class RsBridgePeripheral extends BasePeripheral {
         if (chest == null)
             throw new LuaException("No valid chest for " + arguments.getString(1));
 
-        TileEntity targetEntity = (TileEntity) chest.getTarget();
+        BlockEntity targetEntity = (BlockEntity) chest.getTarget();
         IItemHandler inventory = targetEntity != null ?
                 targetEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).resolve().orElse(null) : null;
         if (inventory == null)
@@ -197,7 +197,7 @@ public class RsBridgePeripheral extends BasePeripheral {
         if (chest == null)
             throw new LuaException("No valid chest for " + arguments.getString(1));
 
-        TileEntity targetEntity = (TileEntity) chest.getTarget();
+        BlockEntity targetEntity = (BlockEntity) chest.getTarget();
         IItemHandler inventory = targetEntity != null ?
                 targetEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).resolve().orElse(null) : null;
         if (inventory == null)

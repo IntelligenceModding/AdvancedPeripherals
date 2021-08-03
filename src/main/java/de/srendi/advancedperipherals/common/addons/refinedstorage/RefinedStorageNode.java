@@ -3,15 +3,15 @@ package de.srendi.advancedperipherals.common.addons.refinedstorage;
 
 import com.refinedmods.refinedstorage.apiimpl.network.node.NetworkNode;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
 public class RefinedStorageNode extends NetworkNode {
 
-    public RefinedStorageNode(World world, BlockPos pos) {
+    public RefinedStorageNode(Level world, BlockPos pos) {
         super(world, pos);
     }
 

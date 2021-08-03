@@ -1,10 +1,9 @@
 package de.srendi.advancedperipherals.client;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.PoseStack;
 import de.srendi.advancedperipherals.common.argoggles.ARRenderAction;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.AbstractGui;
+import net.minecraft.client.gui.GuiComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
@@ -50,6 +49,6 @@ public class HudOverlayHandler {
         for (ARRenderAction action : canvas) {
             action.draw(mc, matrixStack, event.getWindow().getScreenWidth(), event.getWindow().getScreenHeight());
         }
-        mc.getTextureManager().bind(AbstractGui.GUI_ICONS_LOCATION);
+        mc.getTextureManager().bindForSetup(GuiComponent.GUI_ICONS_LOCATION);
     }
 }

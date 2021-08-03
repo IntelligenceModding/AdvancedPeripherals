@@ -7,12 +7,11 @@ import dan200.computercraft.api.peripheral.IPeripheral;
 import dan200.computercraft.api.pocket.IPocketAccess;
 import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
-import dan200.computercraft.core.computer.ComputerSide;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -26,7 +25,7 @@ public abstract class BasePeripheral implements IPeripheral {
     protected String type;
     protected IPeripheralOwner owner;
 
-    public <T extends TileEntity & IPeripheralTileEntity> BasePeripheral(String type, T tileEntity) {
+    public <T extends BlockEntity & IPeripheralTileEntity> BasePeripheral(String type, T tileEntity) {
         this.type = type;
         this.owner = new TileEntityPeripheralOwner<>(tileEntity);
     }
@@ -83,7 +82,7 @@ public abstract class BasePeripheral implements IPeripheral {
         return owner.getPos();
     }
 
-    protected World getWorld() {
+    protected Level getWorld() {
         return owner.getWorld();
     }
 

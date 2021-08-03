@@ -23,9 +23,9 @@ import de.srendi.advancedperipherals.common.addons.minecolonies.MineColonies;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.ChatFormatting;
+import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.fml.ModList;
 
 import java.util.*;
@@ -248,8 +248,8 @@ public class ColonyPeripheral extends BasePeripheral {
             IDeliverable deliverableRequest = (IDeliverable) request.getRequest();
             Map<String, Object> map = new HashMap<>();
             map.put("id", request.getId().getIdentifier().toString());
-            map.put("name", TextFormatting.stripFormatting(request.getShortDisplayString().getString()));
-            map.put("desc", TextFormatting.stripFormatting(request.getLongDisplayString().getString()));
+            map.put("name", ChatFormatting.stripFormatting(request.getShortDisplayString().getString()));
+            map.put("desc", ChatFormatting.stripFormatting(request.getLongDisplayString().getString()));
             map.put("state", request.getState().toString());
             map.put("count", deliverableRequest.getCount());
             map.put("minCount", deliverableRequest.getMinimumCount());
