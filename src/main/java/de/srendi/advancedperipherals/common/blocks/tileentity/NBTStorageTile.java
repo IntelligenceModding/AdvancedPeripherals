@@ -48,8 +48,4 @@ public class NBTStorageTile extends PeripheralTileEntity<NBTStoragePeripheral> {
         super.load(compound);
     }
 
-    @Override
-    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
-        return null;
-    }
 }

@@ -50,11 +50,6 @@ public class InventoryManagerTile extends PeripheralTileEntity<InventoryManagerP
     }
 
     @Override
-    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
-        return null;
-    }
-
-    @Override
     public Component getDisplayName() {
         return new TranslatableComponent("block.advancedperipherals.inventory_manager");
     }

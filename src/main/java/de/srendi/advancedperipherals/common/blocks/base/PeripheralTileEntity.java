@@ -216,7 +216,9 @@ public abstract class PeripheralTileEntity<T extends BasePeripheral> extends Bas
         return apSettings;
     }
 
-    public abstract <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type);
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
+        return null;
+    }
 
 
 }

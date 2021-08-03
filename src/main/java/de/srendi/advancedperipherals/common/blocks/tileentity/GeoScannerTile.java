@@ -28,8 +28,4 @@ public class GeoScannerTile extends PoweredPeripheralTileEntity<GeoScannerPeriph
         return new GeoScannerPeripheral("geoScanner", this);
     }
 
-    @Override
-    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
-        return null;
-    }
 }
