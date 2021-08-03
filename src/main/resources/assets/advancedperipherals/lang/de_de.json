@@ -17,6 +17,7 @@
   "advancements.advancedperipherals.nbt_toolkit.description": "Erlange den NBT Speicher Block und den Block Leser. Jetzt ist jedes Welten Geheimnis offen zu dir!",
   "advancements.advancedperipherals.sense_toolkit": "Die Wahrheit kann nicht für immer versteckt sein.",
   "advancements.advancedperipherals.sense_toolkit.description": "Erlange den Geo Scanner und den Umgebungs Detektor! Es gibt keine limits für die Observation!",
+
   "item.advancedperipherals.chunk_controller": "Chunk Controller",
   "item.advancedperipherals.computer_tool": "Computer Werkzeug",
   "item.advancedperipherals.ar_goggles": "AR-Brille",
@@ -55,6 +56,7 @@
   "item.advancedperipherals.tooltip.overpowered_end_automata_core": "§7Verbesserte version des end automata core, welches überrangende Fähigkeiten besitzt! Sei vorsichtig, das Update ist sehr fragil.",
   "item.advancedperipherals.tooltip.husbandry_automata_core": "§7Upgrade für turtles, welches basische und erweiterte Interaktion mit Tieren bereitstellt.",
   "item.advancedperipherals.tooltip.overpowered_husbandry_automata_core": "§7Verbesserte version des Landwirtschafts automata core, welches überrangende Fähigkeiten besitzt! Sei vorsichtig, das Update ist sehr fragil.",
+
   "block.advancedperipherals.environment_detector": "Umgebungs Detektor",
   "block.advancedperipherals.chat_box": "Chat Box",
   "block.advancedperipherals.player_detector": "Spieler Detektor",
@@ -69,6 +71,7 @@
   "block.advancedperipherals.geo_scanner": "Geo Scanner",
   "block.advancedperipherals.nbt_storage": "NBT Speicher",
   "block.advancedperipherals.colony_integrator": "Kolonie Integrator",
+
   "turtle.advancedperipherals.chat_box_turtle": "Chatty",
   "turtle.advancedperipherals.environment_detector_turtle": "Umgebungs",
   "turtle.advancedperipherals.player_detector_turtle": "Spieler",
@@ -80,18 +83,24 @@
   "turtle.advancedperipherals.overpowered_husbandry_automata": "Overpowered landwirtschafts automata",
   "turtle.advancedperipherals.end_automata": "End automata",
   "turtle.advancedperipherals.overpowered_end_automata": "Overpowered end automata",
+
   "pocket.advancedperipherals.environment_pocket": "Umgebung",
   "pocket.advancedperipherals.player_pocket": "Spieler",
   "pocket.advancedperipherals.chatty_pocket": "Chatty",
   "pocket.advancedperipherals.geoscanner_pocket": "Geoscanning",
   "pocket.advancedperipherals.colony_pocket": "Kolonie",
+
   "curios.identifier.glasses": "Brille",
+
   "text.advancedperipherals.removed_player": "Die Speicherkarte wurde geleert",
   "text.advancedperipherals.added_player": "Die Speicherkarte wurde dir zugewiesen",
   "text.advancedperipherals.linked_goggles": "Erfolgreich verknüpft!",
   "text.advancedperipherals.automata_core_feed_by_player": "You trying to feed entity to soul, but your own body refuses to do this. Maybe something more mechanical can do this?",
+
   "entity.minecraft.villager.advancedperipherals.computer_scientist": "Informatiker",
+
   "keybind.advancedperipherals.category": "Advanced Peripherals",
   "keybind.advancedperipherals.description": "Zeige Beschreibung",
+
   "itemGroup.advancedperipheralstab": "Advanced Peripherals"
 }
