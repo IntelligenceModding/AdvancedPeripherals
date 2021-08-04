@@ -54,9 +54,8 @@ public class Events {
                 message = message.replace("$", "");
                 isHidden = true;
             }
-            messageQueue.add(Pair.of(counter, new ChatMessageObject(event.getUsername(), message,
+            putChatMessage(Pair.of(counter, new ChatMessageObject(event.getUsername(), message,
                     event.getPlayer().getUUID().toString(), isHidden)));
-            counter++;
         }
     }
 
@@ -71,7 +70,12 @@ public class Events {
         }
     }
 
-    public static long traverseChatMessages(long lastConsumedMessage, Consumer<ChatMessageObject> consumer) {
+    public static synchronized void putChatMessage(Pair<Long, ChatMessageObject> message) {
+        messageQueue.add(message);
+        counter++;
+    }
+
+    public static synchronized long traverseChatMessages(long lastConsumedMessage, Consumer<ChatMessageObject> consumer) {
         for (Pair<Long, ChatMessageObject> message : messageQueue) {
             if (message.getLeft() <= lastConsumedMessage)
                 continue;
