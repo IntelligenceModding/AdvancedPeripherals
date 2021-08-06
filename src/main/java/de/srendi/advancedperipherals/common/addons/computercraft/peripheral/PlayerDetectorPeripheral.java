@@ -166,19 +166,19 @@ public class PlayerDetectorPeripheral extends BasePeripheral {
     }
 
     private boolean isInRange(BlockPos pos, Player player, int range) {
-        Level world = getWorld();
+        Level world = getLevel();
         return world.getNearbyPlayers(TargetingConditions.forNonCombat().ignoreInvisibilityTesting().ignoreLineOfSight(),
                 null, new AABB(pos.offset(range, range, range), pos.offset(-range, -range, -range))).contains(player);
     }
 
     private boolean isInRange(BlockPos pos, Player player, int x, int y, int z) {
-        Level world = getWorld();
+        Level world = getLevel();
         return world.getNearbyPlayers(TargetingConditions.forNonCombat().ignoreInvisibilityTesting().ignoreLineOfSight(),
                 null, new AABB(pos.offset(x, y, z), pos.offset(-x, -y, -z))).contains(player);
     }
 
     private boolean isInRange(Player player, Map<?, ?> coordOne, Map<?, ?> coordTwo) {
-        Level world = getWorld();
+        Level world = getLevel();
         BlockPos posOne = new BlockPos(((Number) coordOne.get("x")).intValue(), ((Number) coordOne.get("y")).intValue(), ((Number) coordOne.get("z")).intValue());
         BlockPos posTwo = new BlockPos(((Number) coordTwo.get("x")).intValue(), ((Number) coordTwo.get("y")).intValue(), ((Number) coordTwo.get("z")).intValue());
 

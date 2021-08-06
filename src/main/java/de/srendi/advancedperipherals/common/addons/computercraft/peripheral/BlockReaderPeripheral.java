@@ -33,11 +33,11 @@ public class BlockReaderPeripheral extends BasePeripheral {
     public final Object getBlockData() {
         if (getBlockInFront().is(Blocks.AIR) && !(getBlockInFront().getBlock() instanceof EntityBlock))
             return null;
-        return NBTUtil.toLua(getWorld().getBlockEntity(getPos().relative(getWorld().getBlockState(getPos()).
+        return NBTUtil.toLua(getLevel().getBlockEntity(getPos().relative(getLevel().getBlockState(getPos()).
                 getValue(APTileEntityBlock.FACING))).save(new CompoundTag()));
     }
 
     private BlockState getBlockInFront() {
-        return getWorld().getBlockState(getPos().relative(getWorld().getBlockState(getPos()).getValue(APTileEntityBlock.FACING)));
+        return getLevel().getBlockState(getPos().relative(getLevel().getBlockState(getPos()).getValue(APTileEntityBlock.FACING)));
     }
 }

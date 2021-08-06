@@ -53,14 +53,14 @@ public class TurtleChunky extends BaseTurtle<ChunkyPeripheral> {
             //Add a chunk to the Chunk Manager every 10 ticks, if it's not already forced.
             //The turtle can move, so we need to do that.
             if (AdvancedPeripheralsConfig.enableChunkyTurtle) {
-                if (!turtle.getWorld().isClientSide && !loadedChunks.contains(turtle.getWorld().getChunk(turtle.getPosition()).getPos()))
-                    forceChunk(turtle, turtle.getWorld().getChunk(turtle.getPosition()).getPos(), true);
+                if (!turtle.getLevel().isClientSide && !loadedChunks.contains(turtle.getLevel().getChunk(turtle.getPosition()).getPos()))
+                    forceChunk(turtle, turtle.getLevel().getChunk(turtle.getPosition()).getPos(), true);
             }
         }
     }
 
     public boolean forceChunk(@NotNull ITurtleAccess turtle, ChunkPos chunkPos, boolean load) {
-        boolean forced = ChunkManager.INSTANCE.forceChunk((ServerLevel) turtle.getWorld(), turtle.getPosition(), chunkPos, load);
+        boolean forced = ChunkManager.INSTANCE.forceChunk((ServerLevel) turtle.getLevel(), turtle.getPosition(), chunkPos, load);
         loadedChunks.add(chunkPos);
         return forced;
     }

@@ -9,6 +9,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.BaseEntityBlock;
+import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
@@ -18,6 +19,7 @@ import net.minecraft.world.level.material.Material;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraftforge.common.ToolType;
 import net.minecraftforge.fmllegacy.network.NetworkHooks;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public abstract class BaseTileEntityBlock extends BaseEntityBlock {
@@ -31,14 +33,13 @@ public abstract class BaseTileEntityBlock extends BaseEntityBlock {
     }
 
     @Override
-    public InteractionResult use(BlockState state, Level worldIn, BlockPos pos, Player player, InteractionHand handIn, BlockHitResult hit) {
-        if (worldIn.isClientSide) return InteractionResult.SUCCESS;
-        BlockEntity tileEntity = worldIn.getBlockEntity(pos);
+    public InteractionResult use(BlockState state, Level levelIn, BlockPos pos, Player player, InteractionHand handIn, BlockHitResult hit) {
+        if (levelIn.isClientSide) return InteractionResult.SUCCESS;
+        BlockEntity tileEntity = levelIn.getBlockEntity(pos);
         if (tileEntity != null && !(tileEntity instanceof IInventoryBlock)) return InteractionResult.PASS;
-        MenuProvider namedContainerProvider = this.getMenuProvider(state, worldIn, pos);
+        MenuProvider namedContainerProvider = this.getMenuProvider(state, levelIn, pos);
         if (namedContainerProvider != null) {
-            if (!(player instanceof ServerPlayer)) return InteractionResult.PASS;
-            ServerPlayer serverPlayerEntity = (ServerPlayer) player;
+            if (!(player instanceof ServerPlayer serverPlayerEntity)) return InteractionResult.PASS;
             NetworkHooks.openGui(serverPlayerEntity, namedContainerProvider, pos);
         }
         return InteractionResult.SUCCESS;
@@ -76,10 +77,14 @@ public abstract class BaseTileEntityBlock extends BaseEntityBlock {
         if(level.isClientSide)
             return null;
         return (level1, blockPos, blockState, entity) -> {
-            if(entity instanceof PeripheralTileEntity blockEntity) {
+            if(entity instanceof PeripheralTileEntity<?> blockEntity) {
                  blockEntity.getTicker(level, state, type);
             }
         };
+    }
+
+    public @NotNull RenderShape getRenderShape(@NotNull BlockState p_49232_) {
+        return RenderShape.MODEL;
     }
 
 }

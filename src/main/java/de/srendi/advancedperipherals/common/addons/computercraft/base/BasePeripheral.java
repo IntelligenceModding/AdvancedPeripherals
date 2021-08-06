@@ -80,8 +80,8 @@ public abstract class BasePeripheral implements IBasePeripheral {
         return owner.getPos();
     }
 
-    protected Level getWorld() {
-        return owner.getWorld();
+    protected Level getLevel() {
+        return owner.getLevel();
     }
 
     protected Direction validateSide(String direction) throws LuaException {

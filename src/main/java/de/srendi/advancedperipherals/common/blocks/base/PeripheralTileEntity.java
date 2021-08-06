@@ -89,7 +89,7 @@ public abstract class PeripheralTileEntity<T extends BasePeripheral> extends Bas
     }
 
     @Override
-    protected void invalidateCaps() {
+    public void invalidateCaps() {
         super.invalidateCaps();
         if (peripheralCap != null)
             peripheralCap.invalidate();

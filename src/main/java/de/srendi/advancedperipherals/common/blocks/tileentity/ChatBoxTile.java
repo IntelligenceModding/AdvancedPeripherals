@@ -1,7 +1,6 @@
 package de.srendi.advancedperipherals.common.blocks.tileentity;
 
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.ChatBoxPeripheral;
-import de.srendi.advancedperipherals.common.blocks.base.BaseTileEntityBlock;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
 import de.srendi.advancedperipherals.common.events.Events;
 import de.srendi.advancedperipherals.common.setup.TileEntityTypes;
@@ -19,7 +18,7 @@ public class ChatBoxTile extends PeripheralTileEntity<ChatBoxPeripheral> {
 
     public ChatBoxTile(BlockPos pos, BlockState state) {
         super(TileEntityTypes.CHAT_BOX.get(), pos, state);
-        lastConsumedMessage = Events.counter - 1;
+        lastConsumedMessage = Events.getLastChatMessageID() - 1;
     }
 
     @NotNull
@@ -29,17 +28,17 @@ public class ChatBoxTile extends PeripheralTileEntity<ChatBoxPeripheral> {
     }
 
     @Override
-    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
-        return (level1, blockPos, blockState, blockEntity) -> {
-            serverTick(level, blockPos, blockState, (ChatBoxTile) blockEntity);
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level createLevel, BlockState state, BlockEntityType<T> type) {
+        if (createLevel.isClientSide)
+            return null;
+        return (level, blockPos, blockState, blockEntity) -> {
+            ChatBoxTile chatBox = (ChatBoxTile) blockEntity;
+            chatBox.lastConsumedMessage = Events.traverseChatMessages(chatBox.lastConsumedMessage, message -> {
+                chatBox.getConnectedComputers().forEach(computer -> computer.queueEvent(
+                        "chat", message.username, message.message, message.uuid, message.isHidden)
+                );
+            });
         };
-    }
-
-    public static void serverTick(Level level, BlockPos blockPos, BlockState state, ChatBoxTile blockEntity) {
-        blockEntity.lastConsumedMessage = Events.traverseChatMessages(blockEntity.lastConsumedMessage, message -> {
-            blockEntity.getConnectedComputers().forEach(computer -> computer.queueEvent("chat", message.username, message.message,
-                    message.uuid, message.isHidden));
-        });
     }
 
 }

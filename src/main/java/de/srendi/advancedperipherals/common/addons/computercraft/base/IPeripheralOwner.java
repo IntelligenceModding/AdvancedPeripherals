@@ -17,7 +17,7 @@ public interface IPeripheralOwner {
     String getCustomName();
 
     @Nullable
-    Level getWorld();
+    Level getLevel();
 
     @Nonnull
     BlockPos getPos();
@@ -47,9 +47,9 @@ public interface IPeripheralOwner {
 
     void destroyUpgrade();
 
-    boolean isMovementPossible(@Nonnull Level world, @Nonnull BlockPos pos);
+    boolean isMovementPossible(@Nonnull Level level, @Nonnull BlockPos pos);
 
-    boolean move(@Nonnull Level world, @Nonnull BlockPos pos);
+    boolean move(@Nonnull Level level, @Nonnull BlockPos pos);
 
     // Strange methods, that shouldn't exists ...
     void triggerClientServerSync();

@@ -73,7 +73,7 @@ public class HusbandryAutomataCorePeripheral extends WeakAutomataCorePeripheral 
         CompoundTag data = getEntity();
         EntityType<?> type = EntityType.byString(data.getString("entity")).orElse(null);
         if (type != null) {
-            Entity entity = type.create(getWorld());
+            Entity entity = type.create(getLevel());
             if (entity == null)
                 return null;
             entity.load(data);
@@ -121,7 +121,7 @@ public class HusbandryAutomataCorePeripheral extends WeakAutomataCorePeripheral 
         AABB box = new AABB(currentPos);
         List<Map<String, Object>> entities = new ArrayList<>();
         ItemStack itemInHand = owner.getToolInMainHand();
-        getWorld().getEntities((Entity) null, box.inflate(getInteractionRadius()), suitableEntity).forEach(entity -> entities.add(LuaConverter.completeEntityWithPositionToLua(entity, itemInHand, currentPos)));
+        getLevel().getEntities((Entity) null, box.inflate(getInteractionRadius()), suitableEntity).forEach(entity -> entities.add(LuaConverter.completeEntityWithPositionToLua(entity, itemInHand, currentPos)));
         return MethodResult.of(entities);
     }
 
@@ -136,7 +136,7 @@ public class HusbandryAutomataCorePeripheral extends WeakAutomataCorePeripheral 
             CompoundTag nbt = new CompoundTag();
             nbt.putString("entity", EntityType.getKey(entity.getType()).toString());
             entity.saveWithoutId(nbt);
-            entity.remove(false);
+            entity.remove(Entity.RemovalReason.CHANGED_DIMENSION);
             saveEntity(nbt);
             return MethodResult.of(true);
         }, context -> {
@@ -157,7 +157,7 @@ public class HusbandryAutomataCorePeripheral extends WeakAutomataCorePeripheral 
         BlockPos blockPos = getPos().offset(owner.getFacing().getNormal());
         extractedEntity.absMoveTo(blockPos.getX() + 0.5, blockPos.getY(), blockPos.getZ() + 0.5, 0, 0);
         removeEntity();
-        getWorld().addFreshEntity(extractedEntity);
+        getLevel().addFreshEntity(extractedEntity);
         return MethodResult.of(true);
     }
 

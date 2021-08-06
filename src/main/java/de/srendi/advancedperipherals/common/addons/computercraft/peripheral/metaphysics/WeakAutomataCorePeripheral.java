@@ -17,6 +17,7 @@ import de.srendi.advancedperipherals.common.util.Pair;
 import de.srendi.advancedperipherals.common.util.fakeplayer.APFakePlayer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
@@ -55,7 +56,7 @@ public class WeakAutomataCorePeripheral extends AutomataCorePeripheral {
     }
 
     protected List<ItemEntity> getItems() {
-        return getWorld().getEntitiesOfClass(ItemEntity.class, getBox(getPos(), getInteractionRadius()));
+        return getLevel().getEntitiesOfClass(ItemEntity.class, getBox(getPos(), getInteractionRadius()));
     }
 
     protected int suckItem(ItemEntity entity, int requiredQuantity) {
@@ -75,7 +76,7 @@ public class WeakAutomataCorePeripheral extends AutomataCorePeripheral {
 
         if (remainder != storeStack) {
             if (remainder.isEmpty() && leaveStack.isEmpty()) {
-                entity.remove(false);
+                entity.remove(Entity.RemovalReason.KILLED);
             } else if (remainder.isEmpty()) {
                 entity.setItem(leaveStack);
             } else if (leaveStack.isEmpty()) {
@@ -106,7 +107,7 @@ public class WeakAutomataCorePeripheral extends AutomataCorePeripheral {
             return MethodResult.of(null, "No block find");
         }
         BlockHitResult blockHit = (BlockHitResult) result;
-        BlockState state = getWorld().getBlockState(blockHit.getBlockPos());
+        BlockState state = getLevel().getBlockState(blockHit.getBlockPos());
         Map<String, Object> data = new HashMap<>();
         ResourceLocation blockName = state.getBlock().getRegistryName();
         if (blockName != null)

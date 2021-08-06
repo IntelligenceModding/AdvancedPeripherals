@@ -13,8 +13,8 @@ import net.minecraftforge.items.CapabilityItemHandler;
 
 public class InventoryManagerContainer extends BaseContainer {
 
-    public InventoryManagerContainer(int id, Inventory inventory, BlockPos pos, Level world) {
-        super(ContainerTypes.INVENTORY_MANAGER_CONTAINER.get(), id, inventory, pos, world);
+    public InventoryManagerContainer(int id, Inventory inventory, BlockPos pos, Level level) {
+        super(ContainerTypes.INVENTORY_MANAGER_CONTAINER.get(), id, inventory, pos, level);
         layoutPlayerInventorySlots(7, 84);
         if (tileEntity != null) {
             tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(handler -> {

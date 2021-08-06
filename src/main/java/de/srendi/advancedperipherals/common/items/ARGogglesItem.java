@@ -39,7 +39,7 @@ import java.util.List;
 
 public class ARGogglesItem extends ArmorItem {
     private static final String CONTROLLER_POS = "controller_pos";
-    private static final String CONTROLLER_WORLD = "controller_world";
+    private static final String CONTROLLER_LEVEL = "controller_level";
 
     public ARGogglesItem() {
         super(ArmorMaterials.LEATHER, EquipmentSlot.HEAD,
@@ -48,18 +48,18 @@ public class ARGogglesItem extends ArmorItem {
 
     @OnlyIn(Dist.CLIENT)
     public static void clientTick(LocalPlayer player, ItemStack stack) {
-        if (stack.hasTag() && stack.getTag().contains(CONTROLLER_POS) && stack.getTag().contains(CONTROLLER_WORLD)) {
+        if (stack.hasTag() && stack.getTag().contains(CONTROLLER_POS) && stack.getTag().contains(CONTROLLER_LEVEL)) {
             int[] arr = stack.getTag().getIntArray(CONTROLLER_POS);
             if (arr.length < 3)
                 return;
             BlockPos pos = new BlockPos(arr[0], arr[1], arr[2]);
-            String dimensionKey = stack.getTag().getString(CONTROLLER_WORLD);
-            Level world = player.level;
-            if (!dimensionKey.equals(world.dimension().toString())) {
+            String dimensionKey = stack.getTag().getString(CONTROLLER_LEVEL);
+            Level level = player.level;
+            if (!dimensionKey.equals(level.dimension().toString())) {
                 MNetwork.sendToServer(new RequestHudCanvasMessage(pos, dimensionKey));
                 return;
             }
-            BlockEntity te = world.getBlockEntity(pos);
+            BlockEntity te = level.getBlockEntity(pos);
             if (!(te instanceof ARControllerTile)) {
                 //If distance to ARController is larger than view distance
                 MNetwork.sendToServer(new RequestHudCanvasMessage(pos, dimensionKey));
@@ -76,9 +76,9 @@ public class ARGogglesItem extends ArmorItem {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable Level worldIn, List<Component> tooltip,
+    public void appendHoverText(ItemStack stack, @Nullable Level levelIn, List<Component> tooltip,
                                 TooltipFlag flagIn) {
-        super.appendHoverText(stack, worldIn, tooltip, flagIn);
+        super.appendHoverText(stack, levelIn, tooltip, flagIn);
         if (!InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), GLFW.GLFW_KEY_LEFT_CONTROL)) {
             tooltip.add(EnumColor
                     .buildTextComponent(new TranslatableComponent("item.advancedperipherals.tooltip.show_desc")));
@@ -108,7 +108,7 @@ public class ARGogglesItem extends ArmorItem {
     }
 
     @Override
-    public void onArmorTick(ItemStack stack, Level world, Player player) {
+    public void onArmorTick(ItemStack stack, Level level, Player player) {
         // only need to tick client side, if client is wearing them himself
         if (!SideHelper.isClientPlayer(player))
             return;
@@ -118,11 +118,11 @@ public class ARGogglesItem extends ArmorItem {
     @Override
     public InteractionResult useOn(UseOnContext context) {
         BlockPos blockpos = context.getClickedPos();
-        Level world = context.getLevel();
-        if (!world.getBlockState(blockpos).is(Blocks.AR_CONTROLLER.get())) {
+        Level level = context.getLevel();
+        if (!level.getBlockState(blockpos).is(Blocks.AR_CONTROLLER.get())) {
             return super.useOn(context);
         } else {
-            BlockEntity entity = world.getBlockEntity(blockpos);
+            BlockEntity entity = level.getBlockEntity(blockpos);
             if (!(entity instanceof ARControllerTile))
                 return super.useOn(context);
             ARControllerTile controller = (ARControllerTile) entity;
@@ -133,7 +133,7 @@ public class ARGogglesItem extends ArmorItem {
                 CompoundTag nbt = item.getTag();
                 BlockPos pos = controller.getBlockPos();
                 nbt.putIntArray(CONTROLLER_POS, new int[]{pos.getX(), pos.getY(), pos.getZ()});
-                nbt.putString(CONTROLLER_WORLD, controller.getLevel().dimension().toString());
+                nbt.putString(CONTROLLER_LEVEL, controller.getLevel().dimension().toString());
                 item.setTag(nbt);
             }
             context.getPlayer().displayClientMessage(new TranslatableComponent("text.advancedperipherals.linked_goggles"), true);

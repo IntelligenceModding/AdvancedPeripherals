@@ -171,7 +171,7 @@ public class RecipesProvider extends RecipeProvider implements IConditionBuilder
 //                .unlockedBy("has_item", has(CASING))
 //                .save(consumer);
 
-        /*ShapedRecipeBuilder.shaped(Blocks.BLOCK_READER.get())
+        ShapedRecipeBuilder.shaped(Blocks.BLOCK_READER.get())
                 .define('O', Items.OBSERVER)
                 .define('I', Items.IRON_INGOT)
                 .define('M', Registry.ModBlocks.WIRED_MODEM_FULL.get())
@@ -193,7 +193,7 @@ public class RecipesProvider extends RecipeProvider implements IConditionBuilder
                 .pattern("DCD")
                 .pattern("ROR")
                 .unlockedBy("has_item", has(CASING))
-                .save(consumer);*/
+                .save(consumer);
 
         ShapedRecipeBuilder.shaped(Blocks.NBT_STORAGE.get())
                 .define('C', Items.CHEST)

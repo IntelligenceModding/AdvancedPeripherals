@@ -2,6 +2,7 @@ package de.srendi.advancedperipherals.common.addons.computercraft.integrations;
 
 import dan200.computercraft.api.lua.LuaFunction;
 import de.srendi.advancedperipherals.common.addons.computercraft.base.Integration;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.entity.BeaconBlockEntity;
 
 public class BeaconIntegration extends Integration<BeaconBlockEntity> {
@@ -22,7 +23,9 @@ public class BeaconIntegration extends Integration<BeaconBlockEntity> {
 
     @LuaFunction
     public final int getLevel() {
-        return getTileEntity().getLevels();
+        // because levels are now protected field .... why?
+        CompoundTag savedData = getTileEntity().save(new CompoundTag());
+        return savedData.getInt("Levels");
     }
 
     @LuaFunction

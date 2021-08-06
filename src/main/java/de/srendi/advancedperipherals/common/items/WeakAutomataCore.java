@@ -92,7 +92,7 @@ public class WeakAutomataCore extends APItem implements IFeedableAutomataCore {
             }
             if (!record.isSuitable(entityType, consumedData))
                 return InteractionResult.PASS;
-            entity.remove(false);
+            entity.remove(Entity.RemovalReason.KILLED);
             CompoundTag entityCompound = consumedData.getCompound(entityType);
             entityCompound.putInt(
                     CONSUMED_ENTITY_COUNT, entityCompound.getInt(CONSUMED_ENTITY_COUNT) + 1
@@ -108,14 +108,8 @@ public class WeakAutomataCore extends APItem implements IFeedableAutomataCore {
         return InteractionResult.PASS;
     }
 
-    public static class WeakAutomataCoreRecord {
-        public final Map<String, Integer> ingredients;
-        public final Item resultSoul;
-
-        public WeakAutomataCoreRecord(Map<String, Integer> ingredients, Item resultSoul) {
-            this.ingredients = ingredients;
-            this.resultSoul = resultSoul;
-        }
+    public record WeakAutomataCoreRecord(Map<String, Integer> ingredients,
+                                         Item resultSoul) {
 
         public int getRequiredCount(String entityType) {
             return this.ingredients.getOrDefault(entityType, 0);

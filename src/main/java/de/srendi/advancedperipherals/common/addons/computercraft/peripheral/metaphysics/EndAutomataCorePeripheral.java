@@ -25,7 +25,7 @@ import static de.srendi.advancedperipherals.common.addons.computercraft.operatio
 public class EndAutomataCorePeripheral extends WeakAutomataCorePeripheral {
 
     private final static String POINT_DATA_MARK = "warp_points";
-    private final static String WORLD_DATA_MARK = "warp_world";
+    private final static String LEVEL_DATA_MARK = "warp_level";
 
     public EndAutomataCorePeripheral(String type, ITurtleAccess turtle, TurtleSide side) {
         super(type, turtle, side);
@@ -44,12 +44,12 @@ public class EndAutomataCorePeripheral extends WeakAutomataCorePeripheral {
     protected @Nonnull
     Pair<MethodResult, CompoundTag> getPointData() {
         CompoundTag settings = owner.getDataStorage();
-        if (!settings.contains(WORLD_DATA_MARK)) {
-            settings.putString(WORLD_DATA_MARK, getWorld().dimension().location().toString());
+        if (!settings.contains(LEVEL_DATA_MARK)) {
+            settings.putString(LEVEL_DATA_MARK, getLevel().dimension().location().toString());
         } else {
-            String worldName = settings.getString(WORLD_DATA_MARK);
-            if (!getWorld().dimension().location().toString().equals(worldName)) {
-                return Pair.onlyLeft(MethodResult.of(null, "Incorrect world for this upgrade"));
+            String levelName = settings.getString(LEVEL_DATA_MARK);
+            if (!getLevel().dimension().location().toString().equals(levelName)) {
+                return Pair.onlyLeft(MethodResult.of(null, "Incorrect dimension for this upgrade"));
             }
         }
         if (!settings.contains(POINT_DATA_MARK)) {
@@ -115,16 +115,16 @@ public class EndAutomataCorePeripheral extends WeakAutomataCorePeripheral {
         }
         Optional<MethodResult> checkResults = cooldownCheck(WARP);
         if (checkResults.isPresent()) return checkResults.get();
-        Level world = getWorld();
+        Level level = getLevel();
         addRotationCycle();
         CompoundTag data = pairData.getRight();
         BlockPos newPosition = NBTUtil.blockPosFromNBT(data.getCompound(name));
-        if (owner.isMovementPossible(world, newPosition))
+        if (owner.isMovementPossible(level, newPosition))
             return MethodResult.of(null, "Move forbidden");
         SingleOperationContext context = toDistance(newPosition);
         int warpCost = getWarpCost(context);
         if (consumeFuel(warpCost, true)) {
-            boolean teleportResult = owner.move(world, newPosition);
+            boolean teleportResult = owner.move(level, newPosition);
             if (teleportResult) {
                 consumeFuel(warpCost, false);
                 return MethodResult.of(true);

@@ -21,7 +21,7 @@ public class TurtleChatBox extends BaseTurtle<ChatBoxPeripheral> {
 
     public TurtleChatBox() {
         super("chat_box_turtle", "turtle.advancedperipherals.chat_box_turtle", new ItemStack(Blocks.CHAT_BOX.get()));
-        lastConsumedMessage = Events.counter - 1;
+        lastConsumedMessage = Events.getLastChatMessageID() - 1;
     }
 
     @Override
@@ -42,10 +42,10 @@ public class TurtleChatBox extends BaseTurtle<ChatBoxPeripheral> {
     @Override
     public void update(@NotNull ITurtleAccess turtle, @NotNull TurtleSide side) {
         super.update(turtle, side);
-        if (turtle.getWorld().isClientSide) return;
+        if (turtle.getLevel().isClientSide) return;
 
         if (turtle.getUpgrade(side) instanceof TurtleChatBox) {
-            BlockEntity tile = turtle.getWorld().getBlockEntity(turtle.getPosition());
+            BlockEntity tile = turtle.getLevel().getBlockEntity(turtle.getPosition());
             if (tile instanceof TileTurtle) {
                 TileTurtle tileTurtle = (TileTurtle) tile;
                 ServerComputer computer = tileTurtle.getServerComputer();

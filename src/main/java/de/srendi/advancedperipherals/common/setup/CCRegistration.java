@@ -27,7 +27,6 @@ public class CCRegistration {
     public static PocketChatBox chatPocket;
     public static PocketPlayerDetector playerPocket;
     public static PocketGeoScanner geoScannerPocket;
-    public static PocketColonyIntegrator colonyIntegratorPocket;
 
     public static IntegrationPeripheralProvider integrationPeripheralProvider;
 
@@ -48,8 +47,6 @@ public class CCRegistration {
         ComputerCraftAPI.registerPocketUpgrade(playerPocket);
         geoScannerPocket = new PocketGeoScanner();
         ComputerCraftAPI.registerPocketUpgrade(geoScannerPocket);
-        colonyIntegratorPocket = new PocketColonyIntegrator();
-        ComputerCraftAPI.registerPocketUpgrade(colonyIntegratorPocket);
     }
 
     private static void registerTurtleUpgrades() {

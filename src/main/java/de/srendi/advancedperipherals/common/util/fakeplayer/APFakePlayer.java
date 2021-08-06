@@ -3,7 +3,6 @@ package de.srendi.advancedperipherals.common.util.fakeplayer;
 import com.mojang.authlib.GameProfile;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.util.Pair;
-import net.minecraft.block.*;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.protocol.game.ServerboundPlayerActionPacket;
@@ -13,7 +12,6 @@ import net.minecraft.server.level.ServerPlayerGameMode;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stat;
-import net.minecraft.util.math.*;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
@@ -67,8 +65,7 @@ public class APFakePlayer extends FakePlayer {
     private float currentDamage = 0;
 
     public APFakePlayer(ServerLevel world, Entity owner, GameProfile profile) {
-        super(world, profile != null && profile.isComplete() ? profile : PROFILE);
-        connection = new FakeNetHandler(this);
+        super(world, profile != null && profile.isComplete() ? profile : PROFILE);;
         if (owner != null) {
             setCustomName(owner.getName());
             this.owner = new WeakReference<>(owner);
@@ -137,7 +134,7 @@ public class APFakePlayer extends FakePlayer {
         BlockState state = world.getBlockState(pos);
         Block block = state.getBlock();
 
-        ItemStack tool = inventory.getSelected();
+        ItemStack tool = getInventory().getSelected();
 
         if (tool.isEmpty()) {
             return Pair.of(false, "Cannot dig without tool");
@@ -269,7 +266,7 @@ public class APFakePlayer extends FakePlayer {
         if (skipBlock) {
             blockHit = BlockHitResult.miss(traceContext.getTo(), traceDirection, new BlockPos(traceContext.getTo()));
         } else {
-            blockHit = BlockGetter.traverseBlocks(traceContext, (rayTraceContext, blockPos) -> {
+            blockHit = BlockGetter.traverseBlocks(traceContext.getFrom(), traceContext.getTo(), traceContext, (rayTraceContext, blockPos) -> {
                 if (level.isEmptyBlock(blockPos)) {
                     return null;
                 }

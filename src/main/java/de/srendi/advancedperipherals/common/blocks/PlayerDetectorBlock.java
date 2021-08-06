@@ -9,7 +9,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -25,9 +24,9 @@ public class PlayerDetectorBlock extends BaseTileEntityBlock {
     }
 
     @Override
-    public InteractionResult use(BlockState state, Level worldIn, BlockPos pos, Player player, InteractionHand handIn, BlockHitResult hit) {
+    public InteractionResult use(BlockState state, Level levelIn, BlockPos pos, Player player, InteractionHand handIn, BlockHitResult hit) {
         if (AdvancedPeripheralsConfig.enablePlayerDetector) {
-            BlockEntity tileEntity = worldIn.getBlockEntity(pos);
+            BlockEntity tileEntity = levelIn.getBlockEntity(pos);
             if (tileEntity instanceof PlayerDetectorTile) {
                 PlayerDetectorTile entity = (PlayerDetectorTile) tileEntity;
                 for (IComputerAccess computer : entity.getConnectedComputers()) {
@@ -36,7 +35,7 @@ public class PlayerDetectorBlock extends BaseTileEntityBlock {
                 }
             }
         }
-        return super.use(state, worldIn, pos, player, handIn, hit);
+        return super.use(state, levelIn, pos, player, handIn, hit);
     }
 
 }

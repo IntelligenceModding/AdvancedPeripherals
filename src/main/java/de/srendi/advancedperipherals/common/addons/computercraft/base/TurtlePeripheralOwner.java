@@ -40,8 +40,8 @@ public class TurtlePeripheralOwner implements IPeripheralOwner {
 
     @Nullable
     @Override
-    public Level getWorld() {
-        return turtle.getWorld();
+    public Level getLevel() {
+        return turtle.getLevel();
     }
 
     @NotNull
@@ -62,7 +62,7 @@ public class TurtlePeripheralOwner implements IPeripheralOwner {
         GameProfile owningPlayer = turtle.getOwningPlayer();
         if (owningPlayer == null)
             return null;
-        return turtle.getWorld().getPlayerByUUID(owningPlayer.getId());
+        return turtle.getLevel().getPlayerByUUID(owningPlayer.getId());
     }
 
     @NotNull
@@ -119,14 +119,14 @@ public class TurtlePeripheralOwner implements IPeripheralOwner {
     }
 
     @Override
-    public boolean isMovementPossible(@Nonnull Level world, @Nonnull BlockPos pos) {
+    public boolean isMovementPossible(@Nonnull Level level, @Nonnull BlockPos pos) {
         TurtlePlayer turtlePlayer = TurtlePlayer.getWithPosition(turtle, getPos(), turtle.getDirection());
-        TurtleBlockEvent.Move moveEvent = new TurtleBlockEvent.Move(turtle, turtlePlayer, world, pos);
+        TurtleBlockEvent.Move moveEvent = new TurtleBlockEvent.Move(turtle, turtlePlayer, level, pos);
         return !MinecraftForge.EVENT_BUS.post(moveEvent);
     }
 
     @Override
-    public boolean move(@Nonnull Level world, @Nonnull BlockPos pos) {
-        return turtle.teleportTo(world, pos);
+    public boolean move(@Nonnull Level level, @Nonnull BlockPos pos) {
+        return turtle.teleportTo(level, pos);
     }
 }

@@ -28,7 +28,7 @@ public class Events {
     private static final String PLAYED_BEFORE = "ap_played_before";
     private static final int CHAT_QUEUE_MAX_SIZE = 50;
     public static final EvictingQueue<Pair<Long, ChatMessageObject>> messageQueue = EvictingQueue.create(CHAT_QUEUE_MAX_SIZE);
-    public static long counter = 0;
+    private static long lastChatMessageID = 0;
 
     @SubscribeEvent
     public static void onWorldJoin(PlayerEvent.PlayerLoggedInEvent event) {
@@ -54,7 +54,7 @@ public class Events {
                 message = message.replace("$", "");
                 isHidden = true;
             }
-            putChatMessage(Pair.of(counter, new ChatMessageObject(event.getUsername(), message,
+            putChatMessage(Pair.of(getLastChatMessageID(), new ChatMessageObject(event.getUsername(), message,
                     event.getPlayer().getUUID().toString(), isHidden)));
         }
     }
@@ -72,7 +72,7 @@ public class Events {
 
     public static synchronized void putChatMessage(Pair<Long, ChatMessageObject> message) {
         messageQueue.add(message);
-        counter++;
+        lastChatMessageID++;
     }
 
     public static synchronized long traverseChatMessages(long lastConsumedMessage, Consumer<ChatMessageObject> consumer) {
@@ -83,6 +83,10 @@ public class Events {
             lastConsumedMessage = message.getLeft();
         }
         return lastConsumedMessage;
+    }
+
+    public static synchronized long getLastChatMessageID() {
+        return lastChatMessageID;
     }
 
     private static boolean hasPlayedBefore(Player player) {

@@ -55,7 +55,7 @@ public abstract class PoweredPeripheralTileEntity<T extends BasePeripheral> exte
     }
 
     @Override
-    protected void invalidateCaps() {
+    public void invalidateCaps() {
         super.invalidateCaps();
         this.lazyEnergyStorage.invalidate();
     }

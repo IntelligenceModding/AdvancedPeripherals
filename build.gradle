@@ -103,13 +103,7 @@ sourceSets.main.resources { srcDir 'src/generated/resources' }
 repositories {
     mavenCentral()
     maven { url 'https://squiddev.cc/maven/' }
-    maven { url 'https://modmaven.dev/' }
-    maven { url 'https://dvs1.progwml6.com/files/maven/' }
-    maven { url 'https://repo.refinedmods.com/' }
     maven { url 'https://maven.theillusivec4.top/' }
-    maven { url 'https://maven.blamejared.com' }
-    maven { url 'https://www.cursemaven.com' }
-    maven { url 'https://ldtteam.jfrog.io/ldtteam/modding' }
 }
 
 dependencies {
@@ -118,56 +112,14 @@ dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
     implementation fg.deobf("org.squiddev:cc-tweaked-${cc_version}")
     // Compile-time API required
-    compileOnly fg.deobf("vazkii.patchouli:Patchouli:${patchouli_version}:api")
     compileOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}:api")
     // Minimal requirements end
 
     // Extended requirements
     // Curios
     runtimeOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}")
-    // Patchouli
-    runtimeOnly fg.deobf("vazkii.patchouli:Patchouli:${patchouli_version}")
 
-    // Refined Storage
-    implementation fg.deobf("com.refinedmods:refinedstorage:${rs_version}")
-    // AE2
-    implementation fg.deobf("appeng:appliedenergistics2:${ae_version}");
-
-    // Minecolonies
-    compileOnly fg.deobf("com.minecolonies:minecolonies:${minecolonies_version}:universal")
-    compileOnly fg.deobf("com.ldtteam:structurize:${structurize_version}:universal")
-
-    runtimeOnly fg.deobf("com.minecolonies:minecolonies:${minecolonies_version}:universal")
-    runtimeOnly fg.deobf("com.ldtteam:structurize:${structurize_version}:universal")
-    // Botania with deps
-    compileOnly fg.deobf("vazkii.botania:Botania:${botania_version}")
-
-    // Integrated dynamics
-    compileOnly fg.deobf("curse.maven:integrateddynamics-${integrated_dynamics_version}")
-    compileOnly fg.deobf("curse.maven:CommonCapabilites-${common_capabilities_version}")
-    compileOnly fg.deobf("curse.maven:CyclopsCore-${cyclops_core_version}")
-
-    runtimeOnly fg.deobf("curse.maven:integrateddynamics-${integrated_dynamics_version}")
-    runtimeOnly fg.deobf("curse.maven:CommonCapabilites-${common_capabilities_version}")
-    runtimeOnly fg.deobf("curse.maven:CyclopsCore-${cyclops_core_version}")
-    // Mekanism with addons
-    compileOnly fg.deobf("mekanism:Mekanism:${mekanism_version}")
-    compileOnly fg.deobf("mekanism:Mekanism:${mekanism_version}:generators")
-
-    runtimeOnly fg.deobf("mekanism:Mekanism:${mekanism_version}")
-    runtimeOnly fg.deobf("mekanism:Mekanism:${mekanism_version}:generators")
-    // Immersive Engineering
-    compileOnly fg.deobf("curse.maven:immersiveengineering-${immersive_engineering_version}")
-
-    runtimeOnly fg.deobf("curse.maven:immersiveengineering-${immersive_engineering_version}")
-    // Storage Drawers
-    compileOnly fg.deobf("curse.maven:storagedrawers-${storagedrawers_version}")
-
-    runtimeOnly fg.deobf("curse.maven:storagedrawers-${storagedrawers_version}")
     // Testing stuff
-//    runtimeOnly fg.deobf("mcjty.theoneprobe:TheOneProbe-1.16:${top_version}")
-    runtimeOnly fg.deobf("mezz.jei:jei-${jei_version}")
-
 }
 
 jar {

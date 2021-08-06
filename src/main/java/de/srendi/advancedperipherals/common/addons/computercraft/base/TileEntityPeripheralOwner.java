@@ -35,7 +35,7 @@ public class TileEntityPeripheralOwner<T extends BlockEntity & IPeripheralTileEn
 
     @Nullable
     @Override
-    public Level getWorld() {
+    public Level getLevel() {
         return tileEntity.getLevel();
     }
 
@@ -100,12 +100,12 @@ public class TileEntityPeripheralOwner<T extends BlockEntity & IPeripheralTileEn
 
     @Override
     public void triggerClientServerSync() {
-        Level world = tileEntity.getLevel();
-        if (world != null) {
+        Level level = tileEntity.getLevel();
+        if (level != null) {
             tileEntity.setChanged();
             BlockPos pos = tileEntity.getBlockPos();
             BlockState state = tileEntity.getBlockState();
-            world.sendBlockUpdated(pos, state, state, 3);
+            level.sendBlockUpdated(pos, state, state, 3);
         }
     }
 
@@ -127,18 +127,18 @@ public class TileEntityPeripheralOwner<T extends BlockEntity & IPeripheralTileEn
 
     @Override
     public void destroyUpgrade() {
-        Level world = getWorld();
-        if (world != null)
-            getWorld().removeBlock(tileEntity.getBlockPos(), false);
+        Level level = getLevel();
+        if (level != null)
+            getLevel().removeBlock(tileEntity.getBlockPos(), false);
     }
 
     @Override
-    public boolean isMovementPossible(@NotNull Level world, @NotNull BlockPos pos) {
+    public boolean isMovementPossible(@NotNull Level level, @NotNull BlockPos pos) {
         return false;
     }
 
     @Override
-    public boolean move(@NotNull Level world, @NotNull BlockPos pos) {
+    public boolean move(@NotNull Level level, @NotNull BlockPos pos) {
         return false;
     }
 }

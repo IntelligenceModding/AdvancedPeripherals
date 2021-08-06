@@ -33,6 +33,11 @@ public class CuriosHelper {
                     }
 
                     @Override
+                    public ItemStack getStack() {
+                        return stack;
+                    }
+
+                    @Override
                     public void onUnequip(SlotContext slotContext, ItemStack newStack) {
                         if (!(slotContext.getWearer() instanceof ServerPlayer))
                             return;

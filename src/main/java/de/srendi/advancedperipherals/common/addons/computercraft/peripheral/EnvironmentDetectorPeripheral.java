@@ -11,7 +11,6 @@ import dan200.computercraft.api.turtle.TurtleSide;
 import de.srendi.advancedperipherals.common.addons.computercraft.operations.FuelConsumingPeripheral;
 import de.srendi.advancedperipherals.common.addons.computercraft.operations.IPeripheralOperation;
 import de.srendi.advancedperipherals.common.addons.computercraft.operations.SphereOperationContext;
-import de.srendi.advancedperipherals.common.addons.mekanism.Mekanism;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
@@ -26,8 +25,7 @@ import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.levelgen.WorldgenRandom;
 import net.minecraft.world.phys.AABB;
-import net.minecraftforge.fml.ModList;
-import net.minecraftforge.fml.server.ServerLifecycleHooks;
+import net.minecraftforge.fmllegacy.server.ServerLifecycleHooks;
 
 import javax.annotation.Nonnull;
 import java.util.*;
@@ -84,26 +82,26 @@ public class EnvironmentDetectorPeripheral extends FuelConsumingPeripheral {
 
     @LuaFunction(mainThread = true)
     public final String getBiome() {
-        String biomeName = getWorld().getBiome(getPos()).getRegistryName().toString();
+        String biomeName = getLevel().getBiome(getPos()).getRegistryName().toString();
         String[] biome = biomeName.split(":");
         return biome[1];
     }
 
     @LuaFunction(mainThread = true)
     public final int getSkyLightLevel() {
-        return getWorld().getBrightness(LightLayer.SKY, getPos().offset(0, 1, 0));
+        return getLevel().getBrightness(LightLayer.SKY, getPos().offset(0, 1, 0));
     }
 
     @LuaFunction(mainThread = true)
     public final int getBlockLightLevel() {
-        return getWorld().getBrightness(LightLayer.BLOCK, getPos().offset(0, 1, 0));
+        return getLevel().getBrightness(LightLayer.BLOCK, getPos().offset(0, 1, 0));
     }
 
     @LuaFunction(mainThread = true)
     public final int getDayLightLevel() {
-        Level world = getWorld();
-        int i = world.getBrightness(LightLayer.SKY, getPos().offset(0, 1, 0)) - world.getSkyDarken();
-        float f = world.getSunAngle(1.0F);
+        Level level = getLevel();
+        int i = level.getBrightness(LightLayer.SKY, getPos().offset(0, 1, 0)) - level.getSkyDarken();
+        float f = level.getSunAngle(1.0F);
         if (i > 0) {
             float f1 = f < (float) Math.PI ? 0.0F : ((float) Math.PI * 2F);
             f = f + (f1 - f) * 0.2F;
@@ -115,33 +113,33 @@ public class EnvironmentDetectorPeripheral extends FuelConsumingPeripheral {
 
     @LuaFunction(mainThread = true)
     public final long getTime() {
-        return getWorld().getDayTime();
+        return getLevel().getDayTime();
     }
 
     @LuaFunction(mainThread = true)
     public final boolean isSlimeChunk() {
         ChunkPos chunkPos = new ChunkPos(getPos());
-        return (WorldgenRandom.seedSlimeChunk(chunkPos.x, chunkPos.z, ((WorldGenLevel) getWorld()).getSeed(), 987234911L).nextInt(10) == 0);
+        return (WorldgenRandom.seedSlimeChunk(chunkPos.x, chunkPos.z, ((WorldGenLevel) getLevel()).getSeed(), 987234911L).nextInt(10) == 0);
     }
 
     @LuaFunction(mainThread = true)
     public final String getDimensionProvider() {
-        return getWorld().dimension().getRegistryName().getNamespace();
+        return getLevel().dimension().getRegistryName().getNamespace();
     }
 
     @LuaFunction(mainThread = true)
     public final String getDimensionName() {
-        return getWorld().dimension().getRegistryName().getPath();
+        return getLevel().dimension().getRegistryName().getPath();
     }
 
     @LuaFunction(mainThread = true)
     public final String getDimensionPaN() {
-        return getWorld().dimension().getRegistryName().toString();
+        return getLevel().dimension().getRegistryName().toString();
     }
 
     @LuaFunction(mainThread = true)
     public final boolean isDimension(String dimension) {
-        return getWorld().dimension().getRegistryName().getPath().equals(dimension);
+        return getLevel().dimension().getRegistryName().getPath().equals(dimension);
     }
 
     @LuaFunction(mainThread = true)
@@ -169,8 +167,8 @@ public class EnvironmentDetectorPeripheral extends FuelConsumingPeripheral {
 
     private Map<Integer, String> getCurrentMoonPhase() {
         Map<Integer, String> moon = new HashMap<>();
-        if (getWorld().dimension().getRegistryName().getPath().equals("overworld")) {
-            switch (getWorld().getMoonPhase()) {
+        if (getLevel().dimension().getRegistryName().getPath().equals("overworld")) {
+            switch (getLevel().getMoonPhase()) {
                 case 0:
                     moon.put(0, "Full moon");
                     break;
@@ -209,27 +207,17 @@ public class EnvironmentDetectorPeripheral extends FuelConsumingPeripheral {
 
     @LuaFunction(mainThread = true)
     public final boolean isRaining() {
-        return getWorld().getRainLevel(0) > 0;
+        return getLevel().getRainLevel(0) > 0;
     }
 
     @LuaFunction(mainThread = true)
     public final boolean isThunder() {
-        return getWorld().getRainLevel(0) > 0;
+        return getLevel().getRainLevel(0) > 0;
     }
 
     @LuaFunction(mainThread = true)
     public final boolean isSunny() {
-        return getWorld().getThunderLevel(0) < 1 && getWorld().getRainLevel(0) < 1;
-    }
-
-    @LuaFunction(mainThread = true)
-    public final Object getRadiation() {
-        return ModList.get().isLoaded("mekanism") ? Mekanism.getRadiation(getWorld(), getPos()) : null;
-    }
-
-    @LuaFunction(mainThread = true)
-    public final double getRadiationRaw() {
-        return ModList.get().isLoaded("mekanism") ? Mekanism.getRadiationRaw(getWorld(), getPos()) : 0D;
+        return getLevel().getThunderLevel(0) < 1 && getLevel().getRainLevel(0) < 1;
     }
 
     @LuaFunction
@@ -252,7 +240,7 @@ public class EnvironmentDetectorPeripheral extends FuelConsumingPeripheral {
         }
         AABB box = new AABB(pos);
         List<Map<String, Object>> entities = new ArrayList<>();
-        getWorld().getEntities((Entity) null, box.inflate(radius), entity -> entity instanceof LivingEntity).forEach(
+        getLevel().getEntities((Entity) null, box.inflate(radius), entity -> entity instanceof LivingEntity).forEach(
                 entity -> entities.add(LuaConverter.completeEntityWithPositionToLua(entity, ItemStack.EMPTY, pos))
         );
         trackOperation(SCAN_ENTITIES, SCAN_ENTITIES.free());

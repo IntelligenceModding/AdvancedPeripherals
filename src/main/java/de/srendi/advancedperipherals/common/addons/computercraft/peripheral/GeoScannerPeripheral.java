@@ -24,6 +24,7 @@ import net.minecraftforge.common.Tags;
 
 import javax.annotation.Nonnull;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static de.srendi.advancedperipherals.common.addons.computercraft.operations.SphereOperation.SCAN_BLOCKS;
 
@@ -44,9 +45,9 @@ public class GeoScannerPeripheral extends FuelConsumingPeripheral {
         super(type, pocket);
     }
 
-    private static List<Map<String, ?>> scan(Level world, BlockPos center, int radius) {
+    private static List<Map<String, ?>> scan(Level level, BlockPos center, int radius) {
         List<Map<String, ?>> result = new ArrayList<>();
-        ScanUtils.relativeTraverseBlocks(world, center, radius, (state, pos) -> {
+        ScanUtils.relativeTraverseBlocks(level, center, radius, (state, pos) -> {
             HashMap<String, Object> data = new HashMap<>(6);
             data.put("x", pos.getX());
             data.put("y", pos.getY());
@@ -56,7 +57,7 @@ public class GeoScannerPeripheral extends FuelConsumingPeripheral {
             ResourceLocation name = block.getRegistryName();
             data.put("name", name == null ? "unknown" : name.toString());
 
-            data.put("tags", block.getTags());
+            data.put("tags", block.getTags().stream().map(ResourceLocation::toString).collect(Collectors.toList()));
 
             result.add(data);
         });
@@ -108,7 +109,7 @@ public class GeoScannerPeripheral extends FuelConsumingPeripheral {
     public final MethodResult chunkAnalyze() {
         Optional<MethodResult> checkResult = cooldownCheck(SCAN_BLOCKS);
         if (checkResult.isPresent()) return checkResult.get();
-        Level world = getWorld();
+        Level world = getLevel();
         LevelChunk chunk = world.getChunkAt(getPos());
         ChunkPos chunkPos = chunk.getPos();
         HashMap<String, Integer> data = new HashMap<>();
@@ -135,7 +136,7 @@ public class GeoScannerPeripheral extends FuelConsumingPeripheral {
         Optional<MethodResult> checkResult = cooldownCheck(SCAN_BLOCKS);
         if (checkResult.isPresent()) return checkResult.get();
         BlockPos pos = getPos();
-        Level world = getWorld();
+        Level world = getLevel();
         if (radius > SCAN_BLOCKS.getMaxCostRadius()) {
             return MethodResult.of(null, "Radius is exceed max value");
         }

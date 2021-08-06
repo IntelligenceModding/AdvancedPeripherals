@@ -30,7 +30,7 @@ public class PocketPeripheralOwner implements IPeripheralOwner {
 
     @Nullable
     @Override
-    public Level getWorld() {
+    public Level getLevel() {
         Entity owner = pocket.getEntity();
         if (owner == null)
             return null;
@@ -116,12 +116,12 @@ public class PocketPeripheralOwner implements IPeripheralOwner {
     }
 
     @Override
-    public boolean isMovementPossible(@NotNull Level world, @NotNull BlockPos pos) {
+    public boolean isMovementPossible(@NotNull Level level, @NotNull BlockPos pos) {
         return false;
     }
 
     @Override
-    public boolean move(@NotNull Level world, @NotNull BlockPos pos) {
+    public boolean move(@NotNull Level level, @NotNull BlockPos pos) {
         return false;
     }
 }

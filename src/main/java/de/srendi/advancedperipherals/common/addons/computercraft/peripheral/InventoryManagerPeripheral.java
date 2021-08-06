@@ -57,10 +57,10 @@ public class InventoryManagerPeripheral extends BasePeripheral {
 
         Direction direction = validateSide(invDirection);
 
-        BlockEntity targetEntity = owner.getWorld().getBlockEntity(owner.getPos().relative(direction));
+        BlockEntity targetEntity = owner.getLevel().getBlockEntity(owner.getPos().relative(direction));
         IItemHandler inventoryFrom = targetEntity != null ? targetEntity
                 .getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, direction).resolve().orElse(null) : null;
-        Inventory inventoryTo = getOwnerPlayer().inventory;
+        Inventory inventoryTo = getOwnerPlayer().getInventory();
 
         //inventoryTo is checked via ensurePlayerIsLinked()
         if (inventoryFrom == null)
@@ -153,8 +153,8 @@ public class InventoryManagerPeripheral extends BasePeripheral {
 
         Direction direction = validateSide(invDirection);
 
-        BlockEntity targetEntity = owner.getWorld().getBlockEntity(owner.getPos().relative(direction));
-        Inventory inventoryFrom = getOwnerPlayer().inventory;
+        BlockEntity targetEntity = owner.getLevel().getBlockEntity(owner.getPos().relative(direction));
+        Inventory inventoryFrom = getOwnerPlayer().getInventory();
         IItemHandler inventoryTo = targetEntity != null ? targetEntity
                 .getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, direction).resolve().orElse(null) : null;
 
