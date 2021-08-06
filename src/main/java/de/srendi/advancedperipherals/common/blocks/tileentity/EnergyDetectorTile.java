@@ -11,7 +11,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.capabilities.Capability;
@@ -63,14 +62,6 @@ public class EnergyDetectorTile extends PeripheralTileEntity<EnergyDetectorPerip
         return super.getCapability(cap, direction);
     }
 
-    public static void serverTick(Level level, BlockPos blockPos, BlockState state, EnergyDetectorTile blockEntity) {
-        if (!level.isClientSide) {
-            // this handles the rare edge case that receiveEnergy is called multiple times in one tick
-            blockEntity.transferRate = blockEntity.storageProxy.getTransferedInThisTick();
-            blockEntity.storageProxy.resetTransferedInThisTick();
-        }
-    }
-
     @Override
     public CompoundTag save(CompoundTag compound) {
         super.save(compound);
@@ -79,10 +70,12 @@ public class EnergyDetectorTile extends PeripheralTileEntity<EnergyDetectorPerip
     }
 
     @Override
-    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
-        return (level1, blockPos, blockState, blockEntity) -> {
-            serverTick(level, blockPos, blockState, (EnergyDetectorTile) blockEntity);
-        };
+    public <T extends BlockEntity> void handleTick(Level level, BlockState state, BlockEntityType<T> type) {
+        if (!level.isClientSide) {
+            // this handles the rare edge case that receiveEnergy is called multiple times in one tick
+            transferRate = storageProxy.getTransferedInThisTick();
+            storageProxy.resetTransferedInThisTick();
+        }
     }
 
     @Override

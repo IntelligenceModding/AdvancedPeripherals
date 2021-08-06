@@ -26,7 +26,7 @@ public class Blocks {
             () -> new APBlockItem(Blocks.ENVIRONMENT_DETECTOR.get(), "environment_detector_turtle", "environment_pocket",
                     new TranslatableComponent("item.advancedperipherals.tooltip.environment_detector"), () -> AdvancedPeripheralsConfig.enableEnvironmentDetector));
 
-    public static final RegistryObject<Block> CHAT_BOX = register("chat_box", () -> new APTileEntityBlock<>(TileEntityTypes.CHAT_BOX, false),
+    public static final RegistryObject<Block> CHAT_BOX = register("chat_box", () -> new APTileEntityBlock<>(TileEntityTypes.CHAT_BOX, false, true),
             () -> new APBlockItem(Blocks.CHAT_BOX.get(), "chat_box_turtle", "chatty_pocket",
                     new TranslatableComponent("item.advancedperipherals.tooltip.chat_box"), () -> AdvancedPeripheralsConfig.enableChatBox));
 
@@ -34,7 +34,7 @@ public class Blocks {
             () -> new APBlockItem(Blocks.PLAYER_DETECTOR.get(), "player_detector_turtle", "player_pocket",
                     new TranslatableComponent("item.advancedperipherals.tooltip.player_detector"), () -> AdvancedPeripheralsConfig.enablePlayerDetector));
 
-    public static final RegistryObject<Block> ENERGY_DETECTOR = register("energy_detector", () -> new APTileEntityBlock<>(TileEntityTypes.ENERGY_DETECTOR, true),
+    public static final RegistryObject<Block> ENERGY_DETECTOR = register("energy_detector", () -> new APTileEntityBlock<>(TileEntityTypes.ENERGY_DETECTOR, true, true),
             () -> new APBlockItem(Blocks.ENERGY_DETECTOR.get(), null, null,
                     new TranslatableComponent("item.advancedperipherals.tooltip.energy_detector"), () -> AdvancedPeripheralsConfig.enableEnergyDetector));
 

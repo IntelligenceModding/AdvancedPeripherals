@@ -3,13 +3,11 @@ package de.srendi.advancedperipherals.common.blocks.base;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.context.BlockPlaceContext;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.DirectionalBlock;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
@@ -20,19 +18,21 @@ import org.jetbrains.annotations.Nullable;
 public class APTileEntityBlock<T extends BlockEntity> extends BaseTileEntityBlock {
 
     public static final DirectionProperty FACING = DirectionalBlock.FACING;
-    private RegistryObject<BlockEntityType<T>> tileEntity;
-    private boolean isRotatable;
-    private boolean hasTileEntity = true;
+    private final RegistryObject<BlockEntityType<T>> tileEntity;
+    private final boolean isRotatable;
 
     public APTileEntityBlock(RegistryObject<BlockEntityType<T>> tileEntity, boolean isRotatable) {
+        super(false);
         this.tileEntity = tileEntity;
         this.isRotatable = isRotatable;
         this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.SOUTH));
     }
 
-    public APTileEntityBlock(RegistryObject<BlockEntityType<T>> tileEntity, boolean isRotatable, boolean hasTileEntity) {
-        this(tileEntity, isRotatable);
-        this.hasTileEntity = hasTileEntity;
+    public APTileEntityBlock(RegistryObject<BlockEntityType<T>> tileEntity, boolean isRotatable, boolean belongToTickingEntity) {
+        super(belongToTickingEntity);
+        this.tileEntity = tileEntity;
+        this.isRotatable = isRotatable;
+        this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.SOUTH));
     }
 
     @Nullable

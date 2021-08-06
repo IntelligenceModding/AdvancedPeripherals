@@ -17,6 +17,10 @@ import org.jetbrains.annotations.Nullable;
 
 public class PlayerDetectorBlock extends BaseTileEntityBlock {
 
+    public PlayerDetectorBlock() {
+        super(false);
+    }
+
     @Nullable
     @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {

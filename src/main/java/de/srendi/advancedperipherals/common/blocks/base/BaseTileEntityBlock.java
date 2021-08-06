@@ -1,5 +1,6 @@
 package de.srendi.advancedperipherals.common.blocks.base;
 
+import de.srendi.advancedperipherals.common.addons.computercraft.base.IPeripheralTileEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.*;
@@ -24,12 +25,15 @@ import org.jetbrains.annotations.Nullable;
 
 public abstract class BaseTileEntityBlock extends BaseEntityBlock {
 
-    public BaseTileEntityBlock() {
-        this(Properties.of(Material.METAL).strength(1, 5).harvestLevel(2).sound(SoundType.METAL).noOcclusion().harvestTool(ToolType.PICKAXE).requiresCorrectToolForDrops());
+    private final boolean belongToTickingEntity;
+
+    public BaseTileEntityBlock(boolean belongToTickingEntity) {
+        this(belongToTickingEntity, Properties.of(Material.METAL).strength(1, 5).harvestLevel(2).sound(SoundType.METAL).noOcclusion().harvestTool(ToolType.PICKAXE).requiresCorrectToolForDrops());
     }
 
-    public BaseTileEntityBlock(Properties properties) {
+    public BaseTileEntityBlock(boolean belongToTickingEntity, Properties properties) {
         super(properties);
+        this.belongToTickingEntity = true;
     }
 
     @Override
@@ -74,11 +78,11 @@ public abstract class BaseTileEntityBlock extends BaseEntityBlock {
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
-        if(level.isClientSide)
+        if (level.isClientSide || !belongToTickingEntity)
             return null;
         return (level1, blockPos, blockState, entity) -> {
-            if(entity instanceof PeripheralTileEntity<?> blockEntity) {
-                 blockEntity.getTicker(level, state, type);
+            if (entity instanceof IPeripheralTileEntity blockEntity) {
+                 blockEntity.handleTick(level, state, type);
             }
         };
     }

@@ -7,7 +7,6 @@ import de.srendi.advancedperipherals.common.setup.TileEntityTypes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
@@ -28,17 +27,11 @@ public class ChatBoxTile extends PeripheralTileEntity<ChatBoxPeripheral> {
     }
 
     @Override
-    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level createLevel, BlockState state, BlockEntityType<T> type) {
-        if (createLevel.isClientSide)
-            return null;
-        return (level, blockPos, blockState, blockEntity) -> {
-            ChatBoxTile chatBox = (ChatBoxTile) blockEntity;
-            chatBox.lastConsumedMessage = Events.traverseChatMessages(chatBox.lastConsumedMessage, message -> {
-                chatBox.getConnectedComputers().forEach(computer -> computer.queueEvent(
-                        "chat", message.username, message.message, message.uuid, message.isHidden)
-                );
-            });
-        };
+    public <T extends BlockEntity> void handleTick(Level level, BlockState state, BlockEntityType<T> type) {
+        lastConsumedMessage = Events.traverseChatMessages(lastConsumedMessage, message -> {
+            getConnectedComputers().forEach(computer -> computer.queueEvent(
+                    "chat", message.username, message.message, message.uuid, message.isHidden)
+            );
+        });
     }
-
 }

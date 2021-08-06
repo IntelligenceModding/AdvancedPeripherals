@@ -23,7 +23,7 @@ import org.jetbrains.annotations.Nullable;
 public class RedstoneIntegratorBlock extends BaseTileEntityBlock {
 
     public RedstoneIntegratorBlock() {
-        super(Properties.of(Material.METAL).isRedstoneConductor(Blocks::never));
+        super(false, Properties.of(Material.METAL).isRedstoneConductor(Blocks::never));
     }
 
     @Nullable
