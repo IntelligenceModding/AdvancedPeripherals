@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-public abstract class BasePeripheral implements IPeripheral {
+public abstract class BasePeripheral implements IBasePeripheral {
 
     protected final List<IComputerAccess> connectedComputers = new ArrayList<>();
     protected String type;
