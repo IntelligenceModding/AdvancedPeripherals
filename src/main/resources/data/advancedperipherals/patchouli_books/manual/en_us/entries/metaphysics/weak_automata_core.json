@@ -2,7 +2,6 @@
   "name": "Weak automata core",
   "icon": "advancedperipherals:weak_automata_core",
   "category": "advancedperipherals:metaphysics",
-  "advancement": "advancedperipherals:weak_automata_core",
   "pages": [
     {
       "type": "spotlight",

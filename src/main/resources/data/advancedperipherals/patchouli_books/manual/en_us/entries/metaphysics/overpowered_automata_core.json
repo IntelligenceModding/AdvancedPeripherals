@@ -2,7 +2,7 @@
   "name": "Overpowered automata core",
   "icon": "advancedperipherals:overpowered_weak_automata_core",
   "category": "advancedperipherals:metaphysics",
-  "advancement": "advancedperipherals:overpowered_automata_core",
+  "advancement": "advancedperipherals:weak_automata_core",
   "pages": [
     {
       "type": "spotlight",

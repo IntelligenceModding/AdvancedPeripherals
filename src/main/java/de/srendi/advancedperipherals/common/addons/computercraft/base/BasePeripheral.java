@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-public abstract class BasePeripheral implements IPeripheral {
+public abstract class BasePeripheral implements IBasePeripheral {
 
     protected final List<IComputerAccess> connectedComputers = new ArrayList<>();
     protected String type;
@@ -70,8 +70,6 @@ public abstract class BasePeripheral implements IPeripheral {
     public boolean equals(@Nullable IPeripheral iPeripheral) {
         return iPeripheral == this;
     }
-
-    public abstract boolean isEnabled();
 
     @LuaFunction
     public final String getName() {
