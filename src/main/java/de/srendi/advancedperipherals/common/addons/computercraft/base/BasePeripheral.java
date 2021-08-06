@@ -72,8 +72,6 @@ public abstract class BasePeripheral implements IBasePeripheral {
         return iPeripheral == this;
     }
 
-    public abstract boolean isEnabled();
-
     @LuaFunction
     public final String getName() {
         return owner.getCustomName();
