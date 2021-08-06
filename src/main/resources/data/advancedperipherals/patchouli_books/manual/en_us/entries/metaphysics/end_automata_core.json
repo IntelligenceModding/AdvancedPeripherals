@@ -2,13 +2,13 @@
   "name": "End automata core",
   "icon": "advancedperipherals:end_automata_core",
   "category": "advancedperipherals:metaphysics",
-  "advancement": "advancedperipherals:end_automata_core",
+  "advancement": "advancedperipherals:weak_automata_core",
   "pages": [
     {
       "type": "spotlight",
       "title": "End automata core",
       "item": "advancedperipherals:end_automata_core",
-      "text": "After consuming 10 enderman, weak automata core was transformed to end automata core!$(p)In addition to be more powerful weak automata core variant, seems, this soul also provide some limited teleportation abilities for turtle itself."
+      "text": "After consuming 10 enderman, weak automata core will be transformed to end automata core!$(p)In addition to be more powerful weak automata core variant, seems, this soul also provide some limited teleportation abilities for turtle itself."
     },
     {
       "type": "link",
