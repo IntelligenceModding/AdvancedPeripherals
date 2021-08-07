@@ -12,6 +12,7 @@ import de.srendi.advancedperipherals.common.addons.computercraft.operations.IPer
 import de.srendi.advancedperipherals.common.addons.computercraft.operations.SphereOperationContext;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
+import de.srendi.advancedperipherals.common.util.LuaConverter;
 import de.srendi.advancedperipherals.common.util.ScanUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -56,7 +57,7 @@ public class GeoScannerPeripheral extends FuelConsumingPeripheral {
             ResourceLocation name = block.getRegistryName();
             data.put("name", name == null ? "unknown" : name.toString());
 
-            data.put("tags", block.getTags());
+            data.put("tags", LuaConverter.tagsToList(block.getTags()));
 
             result.add(data);
         });
