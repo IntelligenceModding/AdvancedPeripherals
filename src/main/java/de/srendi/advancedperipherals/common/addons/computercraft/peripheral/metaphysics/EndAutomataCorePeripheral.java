@@ -119,7 +119,7 @@ public class EndAutomataCorePeripheral extends WeakAutomataCorePeripheral {
         addRotationCycle();
         CompoundTag data = pairData.getRight();
         BlockPos newPosition = NBTUtil.blockPosFromNBT(data.getCompound(name));
-        if (owner.isMovementPossible(level, newPosition))
+        if (!owner.isMovementPossible(level, newPosition))
             return MethodResult.of(null, "Move forbidden");
         SingleOperationContext context = toDistance(newPosition);
         int warpCost = getWarpCost(context);
