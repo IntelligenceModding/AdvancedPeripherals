@@ -5,7 +5,7 @@ issueTrackerURL = "https://github.com/Seniorendi/AdvancedPeripherals/issues"
 logoFile = "pack.png"
 [[mods]]
 modId = "advancedperipherals"
-version = "0.7-DEV"
+version = "0.7r"
 displayName = "Advanced Peripherals"
 displayURL = "https://docs.srendi.de/"
 authors = "Srendi"
