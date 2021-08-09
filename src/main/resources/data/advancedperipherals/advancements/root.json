@@ -17,7 +17,7 @@
       "conditions": {
         "items": [
           {
-            "item": "advancedperipherals:peripheral_casing"
+            "items": ["advancedperipherals:peripheral_casing"]
           }
         ]
       }

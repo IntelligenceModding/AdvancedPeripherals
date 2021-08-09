@@ -17,7 +17,9 @@
       "conditions": {
         "items": [
           {
-            "item": "advancedperipherals:ar_goggles"
+            "items": [
+              "advancedperipherals:ar_goggles"
+            ]
           }
         ]
       }
@@ -27,7 +29,9 @@
       "conditions": {
         "items": [
           {
-            "item": "advancedperipherals:ar_controller"
+            "items": [
+              "advancedperipherals:ar_controller"
+            ]
           }
         ]
       }

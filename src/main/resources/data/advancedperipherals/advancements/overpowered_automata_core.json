@@ -17,7 +17,7 @@
       "conditions": {
         "items": [
           {
-            "item": "advancedperipherals:overpowered_weak_automata_core"
+            "items": ["advancedperipherals:overpowered_weak_automata_core"]
           }
         ]
       }
@@ -27,7 +27,7 @@
       "conditions": {
         "items": [
           {
-            "item": "advancedperipherals:overpowered_end_automata_core"
+            "items": ["advancedperipherals:overpowered_end_automata_core"]
           }
         ]
       }
@@ -37,7 +37,7 @@
       "conditions": {
         "items": [
           {
-            "item": "advancedperipherals:overpowered_husbandry_automata_core"
+            "items": ["advancedperipherals:overpowered_husbandry_automata_core"]
           }
         ]
       }

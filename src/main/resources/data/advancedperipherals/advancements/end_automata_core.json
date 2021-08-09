@@ -18,7 +18,7 @@
       "conditions": {
         "items": [
           {
-            "item": "advancedperipherals:end_automata_core"
+            "items": ["advancedperipherals:end_automata_core"]
           }
         ]
       }
