@@ -101,7 +101,7 @@ public class HusbandryAutomataCorePeripheral extends WeakAutomataCorePeripheral 
         });
     }
 
-    @LuaFunction
+    @LuaFunction(mainThread = true)
     public final MethodResult inspectAnimal() {
         addRotationCycle();
         RayTraceResult entityHit = owner.withPlayer(player -> player.findHit(false, true, suitableEntity));
@@ -113,7 +113,7 @@ public class HusbandryAutomataCorePeripheral extends WeakAutomataCorePeripheral 
         return MethodResult.of(LuaConverter.animalToLua((AnimalEntity) entity, owner.getToolInMainHand()));
     }
 
-    @LuaFunction
+    @LuaFunction(mainThread = true)
     public final MethodResult searchAnimals() {
         addRotationCycle();
         BlockPos currentPos = getPos();
@@ -124,7 +124,7 @@ public class HusbandryAutomataCorePeripheral extends WeakAutomataCorePeripheral 
         return MethodResult.of(entities);
     }
 
-    @LuaFunction
+    @LuaFunction(mainThread = true)
     public final MethodResult captureAnimal() {
         RayTraceResult entityHit = owner.withPlayer(player -> player.findHit(false, true, suitableEntity));
         if (entityHit.getType() == RayTraceResult.Type.MISS)
@@ -145,7 +145,7 @@ public class HusbandryAutomataCorePeripheral extends WeakAutomataCorePeripheral 
         });
     }
 
-    @LuaFunction
+    @LuaFunction(mainThread = true)
     public final MethodResult releaseAnimal() {
         if (!isEntityInside())
             return MethodResult.of(null, "No entity is stored");

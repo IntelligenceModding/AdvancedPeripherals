@@ -105,7 +105,7 @@ public class GeoScannerPeripheral extends FuelConsumingPeripheral {
         return MethodResult.of(estimatedCost);
     }
 
-    @LuaFunction
+    @LuaFunction(mainThread = true)
     public final MethodResult chunkAnalyze() {
         Optional<MethodResult> checkResult = cooldownCheck(SCAN_BLOCKS);
         if (checkResult.isPresent()) return checkResult.get();
@@ -130,7 +130,7 @@ public class GeoScannerPeripheral extends FuelConsumingPeripheral {
         return MethodResult.of(data);
     }
 
-    @LuaFunction
+    @LuaFunction(mainThread = true)
     public final MethodResult scan(@Nonnull IArguments arguments) throws LuaException {
         int radius = arguments.getInt(0);
         Optional<MethodResult> checkResult = cooldownCheck(SCAN_BLOCKS);
