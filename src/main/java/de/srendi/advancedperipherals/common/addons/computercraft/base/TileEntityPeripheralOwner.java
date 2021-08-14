@@ -99,17 +99,6 @@ public class TileEntityPeripheralOwner<T extends BlockEntity & IPeripheralTileEn
     }
 
     @Override
-    public void triggerClientServerSync() {
-        Level level = tileEntity.getLevel();
-        if (level != null) {
-            tileEntity.setChanged();
-            BlockPos pos = tileEntity.getBlockPos();
-            BlockState state = tileEntity.getBlockState();
-            level.sendBlockUpdated(pos, state, state, 3);
-        }
-    }
-
-    @Override
     public <T1> T1 withPlayer(Function<APFakePlayer, T1> function) {
         throw new RuntimeException("Not implemented yet");
     }

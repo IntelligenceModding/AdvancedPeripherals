@@ -116,7 +116,7 @@ public class WeakAutomataCorePeripheral extends AutomataCorePeripheral {
         return MethodResult.of(data);
     }
 
-    @LuaFunction
+    @LuaFunction(mainThread = true)
     public final MethodResult lookAtEntity() {
         addRotationCycle();
         HitResult result = owner.withPlayer(APFakePlayer -> APFakePlayer.findHit(false, true));
@@ -154,7 +154,7 @@ public class WeakAutomataCorePeripheral extends AutomataCorePeripheral {
         });
     }
 
-    @LuaFunction
+    @LuaFunction(mainThread = true)
     public final MethodResult scanItems() {
         addRotationCycle();
         List<ItemEntity> items = getItems();

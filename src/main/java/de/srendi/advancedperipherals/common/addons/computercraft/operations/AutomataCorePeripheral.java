@@ -36,7 +36,6 @@ public abstract class AutomataCorePeripheral extends FuelConsumingPeripheral {
 
     public void addRotationCycle(int count) {
         DataStorageUtil.RotationCharge.addCycles(owner, count);
-        owner.triggerClientServerSync();
     }
 
     @Override

@@ -94,11 +94,6 @@ public class TurtlePeripheralOwner implements IPeripheralOwner {
     }
 
     @Override
-    public void triggerClientServerSync() {
-        turtle.playAnimation(TurtleAnimation.NONE);
-    }
-
-    @Override
     public <T> T withPlayer(Function<APFakePlayer, T> function) {
         return FakePlayerProviderTurtle.withPlayer(turtle, function);
     }

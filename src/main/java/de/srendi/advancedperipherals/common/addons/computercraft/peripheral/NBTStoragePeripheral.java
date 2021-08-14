@@ -30,7 +30,7 @@ public class NBTStoragePeripheral extends BasePeripheral {
         return AdvancedPeripheralsConfig.enableNBTStorage;
     }
 
-    @LuaFunction(mainThread = true)
+    @LuaFunction
     public final Map<String, Integer> getConfiguration() {
         Map<String, Integer> result = new HashMap<>();
         result.put("maxSize", AdvancedPeripheralsConfig.nbtStorageMaxSize);
