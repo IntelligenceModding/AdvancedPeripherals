@@ -5,7 +5,6 @@ import de.srendi.advancedperipherals.common.blocks.tileentity.InventoryManagerTi
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
 import de.srendi.advancedperipherals.common.util.DataStorageUtil;
 import de.srendi.advancedperipherals.common.util.fakeplayer.APFakePlayer;
-import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
@@ -96,17 +95,6 @@ public class TileEntityPeripheralOwner<T extends TileEntity & IPeripheralTileEnt
             int energyCount = count * AdvancedPeripheralsConfig.energyToFuelRate;
             storage.receiveEnergy(energyCount, false);
         });
-    }
-
-    @Override
-    public void triggerClientServerSync() {
-        World world = tileEntity.getLevel();
-        if (world != null) {
-            tileEntity.setChanged();
-            BlockPos pos = tileEntity.getBlockPos();
-            BlockState state = tileEntity.getBlockState();
-            world.sendBlockUpdated(pos, state, state, 3);
-        }
     }
 
     @Override

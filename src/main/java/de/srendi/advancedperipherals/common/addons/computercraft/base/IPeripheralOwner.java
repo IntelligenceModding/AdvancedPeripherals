@@ -50,7 +50,4 @@ public interface IPeripheralOwner {
     boolean isMovementPossible(@Nonnull World world, @Nonnull BlockPos pos);
 
     boolean move(@Nonnull World world, @Nonnull BlockPos pos);
-
-    // Strange methods, that shouldn't exists ...
-    void triggerClientServerSync();
 }

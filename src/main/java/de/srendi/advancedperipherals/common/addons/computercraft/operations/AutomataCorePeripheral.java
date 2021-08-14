@@ -5,21 +5,15 @@ import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
 import de.srendi.advancedperipherals.common.addons.computercraft.base.IAutomataCoreTier;
 import de.srendi.advancedperipherals.common.util.DataStorageUtil;
-import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
-import java.util.function.Supplier;
-
-import static de.srendi.advancedperipherals.common.addons.computercraft.operations.SingleOperation.SUCK;
 
 public abstract class AutomataCorePeripheral extends FuelConsumingPeripheral {
 
@@ -42,7 +36,6 @@ public abstract class AutomataCorePeripheral extends FuelConsumingPeripheral {
 
     public void addRotationCycle(int count) {
         DataStorageUtil.RotationCharge.addCycles(owner, count);
-        owner.triggerClientServerSync();
     }
 
     @Override

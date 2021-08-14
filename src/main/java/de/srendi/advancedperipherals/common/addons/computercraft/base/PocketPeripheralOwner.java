@@ -90,11 +90,6 @@ public class PocketPeripheralOwner implements IPeripheralOwner {
     }
 
     @Override
-    public void triggerClientServerSync() {
-        throw new RuntimeException("Not implemented yet");
-    }
-
-    @Override
     public <T> T withPlayer(Function<APFakePlayer, T> function) {
         throw new RuntimeException("Not implemented yet");
     }
