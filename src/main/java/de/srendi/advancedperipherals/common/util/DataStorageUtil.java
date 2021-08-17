@@ -45,6 +45,7 @@ public class DataStorageUtil {
             int currentCharge = data.getInt(ROTATION_CHARGE_SETTING);
             if (currentCharge > 0) {
                 data.putInt(ROTATION_CHARGE_SETTING, Math.max(0, data.getInt(ROTATION_CHARGE_SETTING) - 1));
+                access.updateUpgradeNBTData(side);
                 return true;
             }
             return false;
@@ -53,6 +54,7 @@ public class DataStorageUtil {
         public static void addCycles(IPeripheralOwner owner, int count) {
             CompoundTag data = owner.getDataStorage();
             data.putInt(ROTATION_CHARGE_SETTING, Math.max(0, data.getInt(ROTATION_CHARGE_SETTING)) + count * ROTATION_STEPS);
+            owner.markDataStorageDirty();
         }
 
     }

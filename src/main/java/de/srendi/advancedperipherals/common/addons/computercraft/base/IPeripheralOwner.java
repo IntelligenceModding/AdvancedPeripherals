@@ -31,6 +31,8 @@ public interface IPeripheralOwner {
     @Nonnull
     CompoundTag getDataStorage();
 
+    void markDataStorageDirty();
+
     int getFuelCount();
 
     int getFuelMaxCount();

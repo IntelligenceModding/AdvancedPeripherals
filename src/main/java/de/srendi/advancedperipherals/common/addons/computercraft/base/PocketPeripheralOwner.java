@@ -71,6 +71,11 @@ public class PocketPeripheralOwner implements IPeripheralOwner {
     }
 
     @Override
+    public void markDataStorageDirty() {
+        pocket.updateUpgradeNBTData();
+    }
+
+    @Override
     public int getFuelCount() {
         return 0;
     }
