@@ -4,24 +4,16 @@ import com.jaquadro.minecraft.storagedrawers.api.storage.IDrawer;
 import com.jaquadro.minecraft.storagedrawers.api.storage.IDrawerAttributes;
 import com.jaquadro.minecraft.storagedrawers.api.storage.IDrawerGroup;
 import com.jaquadro.minecraft.storagedrawers.block.tile.TileEntityDrawers;
-import com.jaquadro.minecraft.storagedrawers.block.tile.TileEntityDrawersStandard;
 import dan200.computercraft.api.lua.IArguments;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.lua.MethodResult;
 import dan200.computercraft.api.peripheral.IComputerAccess;
-import dan200.computercraft.api.peripheral.IPeripheral;
 import de.srendi.advancedperipherals.common.addons.computercraft.base.Integration;
 import de.srendi.advancedperipherals.common.addons.storagedrawers.DrawerItemHandler;
 import de.srendi.advancedperipherals.common.util.InventoryUtil;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.items.CapabilityItemHandler;
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
@@ -30,19 +22,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class DrawerIntegration extends Integration<TileEntityDrawers> {
-    private static IItemHandler extractHandler(@Nullable Object object) {
-        if (object instanceof TileEntityDrawersStandard)
-            return new DrawerItemHandler(((TileEntityDrawersStandard) object).getGroup());
-        if (object instanceof ICapabilityProvider) {
-            LazyOptional<IItemHandler> cap = ((ICapabilityProvider) object).getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY);
-            if (cap.isPresent()) return cap.orElseThrow(NullPointerException::new);
-        }
-        if (object instanceof IItemHandler)
-            return (IItemHandler) object;
-        if (object instanceof IInventory)
-            return new InvWrapper((IInventory) object);
-        return null;
-    }
 
     @Override
     protected Class<TileEntityDrawers> getTargetClass() {
@@ -140,46 +119,11 @@ public class DrawerIntegration extends Integration<TileEntityDrawers> {
 
     @LuaFunction(mainThread = true)
     public final MethodResult pushItems(@Nonnull IComputerAccess access, @Nonnull IArguments arguments) throws LuaException {
-        // Parsing arguments
-        String toName = arguments.getString(0);
-        int fromSlot = arguments.getInt(1);
-        int limit = arguments.optInt(2, Integer.MAX_VALUE);
-        int toSlot = arguments.optInt(3, -1);
-        if (fromSlot < 1 || fromSlot > tileEntity.getGroup().getDrawerCount())
-            return MethodResult.of(null, "From slot is incorrect");
-        // Find location to transfer to
-        IPeripheral location = access.getAvailablePeripheral(toName);
-        if (location == null) throw new LuaException("Target '" + toName + "' does not exist");
-
-        IItemHandler to = extractHandler(location.getTarget());
-        if (to == null) throw new LuaException("Target '" + toName + "' is not an inventory");
-        if (toSlot != -1 && (toSlot < 1 || toSlot > to.getSlots()))
-            return MethodResult.of(null, "To slot is incorrect");
-
-        if (limit <= 0)
-            return MethodResult.of(0);
-        return MethodResult.of(InventoryUtil.moveItem(new DrawerItemHandler(tileEntity.getGroup()), fromSlot - 1, to, toSlot - 1, limit));
+        return InventoryUtil.pushItems(arguments, access, new DrawerItemHandler(tileEntity.getGroup()));
     }
 
     @LuaFunction(mainThread = true)
     public final MethodResult pullItems(@Nonnull IComputerAccess access, @Nonnull IArguments arguments) throws LuaException {
-        // Parsing arguments
-        String fromName = arguments.getString(0);
-        int fromSlot = arguments.getInt(1);
-        int limit = arguments.optInt(2, Integer.MAX_VALUE);
-        int toSlot = arguments.optInt(3, -1);
-        if (toSlot != -1 && (toSlot < 1 || toSlot > tileEntity.getGroup().getDrawerCount()))
-            return MethodResult.of(null, "To slot is incorrect");
-        // Find location to transfer to
-        IPeripheral location = access.getAvailablePeripheral(fromName);
-        if (location == null) throw new LuaException("Target '" + fromName + "' does not exist");
-
-        IItemHandler from = extractHandler(location.getTarget());
-        if (from == null) throw new LuaException("Target '" + fromName + "' is not an inventory");
-        if (fromSlot < 1 || fromSlot > from.getSlots())
-            return MethodResult.of(null, "From slot is incorrect");
-        if (limit <= 0)
-            return MethodResult.of(0);
-        return MethodResult.of(InventoryUtil.moveItem(from, fromSlot - 1, new DrawerItemHandler(tileEntity.getGroup()), toSlot - 1, limit));
+        return InventoryUtil.pullItems(arguments, access, new DrawerItemHandler(tileEntity.getGroup()));
     }
 }

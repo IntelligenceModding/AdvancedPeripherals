@@ -1,5 +1,6 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.base;
 
+import com.jaquadro.minecraft.storagedrawers.block.tile.TileEntityDrawersStandard;
 import dan200.computercraft.api.peripheral.IPeripheral;
 import dan200.computercraft.api.peripheral.IPeripheralProvider;
 import de.srendi.advancedperipherals.common.addons.computercraft.integrations.BeaconIntegration;
@@ -12,6 +13,8 @@ import de.srendi.advancedperipherals.common.addons.computercraft.integrations.im
 import de.srendi.advancedperipherals.common.addons.computercraft.integrations.integrateddynamics.VariableStoreIntegration;
 import de.srendi.advancedperipherals.common.addons.computercraft.integrations.mekanism.*;
 import de.srendi.advancedperipherals.common.addons.computercraft.integrations.storagedrawers.DrawerIntegration;
+import de.srendi.advancedperipherals.common.addons.storagedrawers.DrawerItemHandler;
+import de.srendi.advancedperipherals.common.util.InventoryUtil;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
@@ -60,6 +63,7 @@ public class IntegrationPeripheralProvider implements IPeripheralProvider {
         }
         if (ModList.get().isLoaded("storagedrawers")) {
             registerIntegration(new DrawerIntegration());
+            InventoryUtil.registerExtractor(TileEntityDrawersStandard.class::isInstance, obj -> new DrawerItemHandler(((TileEntityDrawersStandard) obj).getGroup()));
         }
     }
 
