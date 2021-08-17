@@ -11,7 +11,9 @@
       "conditions": {
         "items": [
           {
-            "item": "advancedperipherals:weak_automata_core"
+            "items": [
+              "advancedperipherals:weak_automata_core"
+            ]
           }
         ]
       }

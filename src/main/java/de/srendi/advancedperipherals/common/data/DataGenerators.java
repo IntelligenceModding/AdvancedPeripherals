@@ -1,6 +1,7 @@
 package de.srendi.advancedperipherals.common.data;
 
 import de.srendi.advancedperipherals.AdvancedPeripherals;
+import de.srendi.advancedperipherals.common.setup.Registration;
 import net.minecraft.data.DataGenerator;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -18,6 +19,7 @@ public class DataGenerators {
         DataGenerator generator = event.getGenerator();
         ExistingFileHelper existingFileHelper = event.getExistingFileHelper();
 
+        generator.addProvider(new BlockTagsProvider(generator, existingFileHelper, Registration.BLOCKS));
         generator.addProvider(new RecipesProvider(generator));
         generator.addProvider(new BlockLootTablesProvider(generator));
     }

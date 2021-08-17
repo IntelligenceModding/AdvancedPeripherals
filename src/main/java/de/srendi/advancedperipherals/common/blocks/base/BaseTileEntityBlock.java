@@ -3,6 +3,8 @@ package de.srendi.advancedperipherals.common.blocks.base;
 import de.srendi.advancedperipherals.common.addons.computercraft.base.IPeripheralTileEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.Tag;
 import net.minecraft.world.*;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -10,6 +12,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.BaseEntityBlock;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -18,17 +21,16 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Material;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraftforge.common.ToolType;
 import net.minecraftforge.fmllegacy.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class BaseTileEntityBlock extends BaseEntityBlock {
+public abstract class BaseTileEntityBlock extends BaseEntityBlock implements IHarvesterBlock {
 
     private final boolean belongToTickingEntity;
 
     public BaseTileEntityBlock(boolean belongToTickingEntity) {
-        this(belongToTickingEntity, Properties.of(Material.METAL).strength(1, 5).harvestLevel(2).sound(SoundType.METAL).noOcclusion().harvestTool(ToolType.PICKAXE).requiresCorrectToolForDrops());
+        this(belongToTickingEntity, Properties.of(Material.METAL).strength(1, 5).sound(SoundType.METAL).noOcclusion().requiresCorrectToolForDrops());
     }
 
     public BaseTileEntityBlock(boolean belongToTickingEntity, Properties properties) {
@@ -91,4 +93,8 @@ public abstract class BaseTileEntityBlock extends BaseEntityBlock {
         return RenderShape.MODEL;
     }
 
+    @Override
+    public Tag.Named<Block> getHarvestTag() {
+        return BlockTags.NEEDS_IRON_TOOL;
+    }
 }

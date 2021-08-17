@@ -21,6 +21,7 @@ import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.DiggerItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.BlockGetter;
@@ -35,7 +36,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.*;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.ForgeMod;
-import net.minecraftforge.common.ToolType;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -147,9 +147,11 @@ public class APFakePlayer extends FakePlayer {
                 return Pair.of(false, "Unbreakable block detected");
             }
 
-            if (tool.getHarvestLevel(ToolType.PICKAXE, this, state) < state.getHarvestLevel()) {
-                return Pair.of(false, "Tool are too cheap for this block");
-            }
+            if (!(tool.getItem() instanceof DiggerItem toolItem))
+                return Pair.of(false, "Item should be digger tool");
+
+            if (!toolItem.isCorrectToolForDrops(tool, state))
+                return Pair.of(false, "Tool cannot mine this block");
 
             ServerPlayerGameMode manager = gameMode;
             float breakSpeed = 0.5f * tool.getDestroySpeed(state) / state.getDestroySpeed(level, pos) - 0.1f;
