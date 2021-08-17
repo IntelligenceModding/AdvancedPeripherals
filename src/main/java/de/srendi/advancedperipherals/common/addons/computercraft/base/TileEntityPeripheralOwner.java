@@ -65,6 +65,11 @@ public class TileEntityPeripheralOwner<T extends TileEntity & IPeripheralTileEnt
     }
 
     @Override
+    public void markDataStorageDirty() {
+        tileEntity.setChanged();
+    }
+
+    @Override
     public int getFuelCount() {
         return tileEntity.getCapability(CapabilityEnergy.ENERGY).map(storage -> storage.getEnergyStored() / AdvancedPeripheralsConfig.energyToFuelRate).orElse(0);
     }

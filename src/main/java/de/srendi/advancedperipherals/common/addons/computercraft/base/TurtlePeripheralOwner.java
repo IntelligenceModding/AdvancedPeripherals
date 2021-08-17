@@ -2,7 +2,6 @@ package de.srendi.advancedperipherals.common.addons.computercraft.base;
 
 import com.mojang.authlib.GameProfile;
 import dan200.computercraft.api.turtle.ITurtleAccess;
-import dan200.computercraft.api.turtle.TurtleAnimation;
 import dan200.computercraft.api.turtle.TurtleSide;
 import dan200.computercraft.api.turtle.event.TurtleBlockEvent;
 import dan200.computercraft.shared.turtle.core.TurtlePlayer;
@@ -69,6 +68,11 @@ public class TurtlePeripheralOwner implements IPeripheralOwner {
     @Override
     public CompoundNBT getDataStorage() {
         return DataStorageUtil.getDataStorage(turtle, side);
+    }
+
+    @Override
+    public void markDataStorageDirty() {
+        turtle.updateUpgradeNBTData(side);
     }
 
     @Override
