@@ -17,66 +17,24 @@ Adds things like the Me Bridge, various types of turtles, the Chat Box and more.
 [[dependencies.advancedperipherals]]
 modId = "forge"
 mandatory = true
-versionRange = "[36.0.46,)"
+versionRange = "[37.0.34,)"
 ordering = "NONE"
 side = "BOTH"
 [[dependencies.advancedperipherals]]
 modId = "minecraft"
 mandatory = true
-versionRange = "1.16.5"
+versionRange = "1.17.1"
 ordering = "NONE"
 side = "BOTH"
 [[dependencies.advancedperipherals]]
 modId = "computercraft"
 mandatory = true
-versionRange = "1.96.0"
+versionRange = "1.98.1"
 ordering = "NONE"
 side = "BOTH"
 [[dependencies.advancedperipherals]]
 modId = "curios"
 mandatory = false
-versionRange = "[1.16.5-4.0.5.1,)"
+versionRange = "[1.17.1-5.0.0.1,)"
 ordering = "NONE"
-side = "BOTH"
-[[dependencies.advancedperipherals]]
-modId = "appliedenergistics2"
-mandatory = false
-versionRange = "8.2.0"
-ordnering = "NONE"
-side = "BOTH"
-[[dependencies.advancedperipherals]]
-modId = "refinedstorage"
-mandatory = false
-versionRange = "[1.9.12,)"
-ordnering = "NONE"
-side = "BOTH"
-[[dependencies.advancedperipherals]]
-modId = "minecolonies"
-mandatory = false
-versionRange = "[0.14.238-BETA,)"
-ordnering = "NONE"
-side = "BOTH"
-[[dependencies.advancedperipherals]]
-modId = "mekanism"
-mandatory = false
-versionRange = "[10.0.21,)"
-ordnering = "NONE"
-side = "BOTH"
-[[dependencies.advancedperipherals]]
-modId = "mekanismgenerators"
-mandatory = false
-versionRange = "[10.0.21,)"
-ordnering = "NONE"
-side = "BOTH"
-[[dependencies.advancedperipherals]]
-modId = "integrateddynamics"
-mandatory = false
-versionRange = "[1.8.5,)"
-ordnering = "NONE"
-side = "BOTH"
-[[dependencies.advancedperipherals]]
-modId = "botania"
-mandatory = false
-versionRange = "[1.16.5-416,)"
-ordnering = "NONE"
 side = "BOTH"
