@@ -23,6 +23,15 @@ body:
         required: true
     - type: dropdown
       attributes:
+        label: Multiplayer?
+        description: Do you play on a server?
+        multiple: false
+        options:
+            - Yes
+            - No
+            - LAN
+    - type: dropdown
+      attributes:
         label: Version
         description: What version of advanced peripherals are you using? 
         multiple: false
