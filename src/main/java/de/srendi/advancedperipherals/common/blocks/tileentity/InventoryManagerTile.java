@@ -27,7 +27,7 @@ public class InventoryManagerTile extends PeripheralTileEntity<InventoryManagerP
     @NotNull
     @Override
     protected InventoryManagerPeripheral createPeripheral() {
-        return new InventoryManagerPeripheral("inventoryManager", this);
+        return new InventoryManagerPeripheral(this);
     }
 
     @Override

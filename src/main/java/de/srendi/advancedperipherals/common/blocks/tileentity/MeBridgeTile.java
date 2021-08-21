@@ -44,7 +44,7 @@ public class MeBridgeTile extends PeripheralTileEntity<MeBridgePeripheral> imple
     @NotNull
     @Override
     protected MeBridgePeripheral createPeripheral() {
-        return new MeBridgePeripheral("meBridge", this, this);
+        return new MeBridgePeripheral(this, this);
     }
 
     @Override

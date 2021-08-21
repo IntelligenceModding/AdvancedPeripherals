@@ -32,8 +32,13 @@ import java.util.stream.Collectors;
 import static de.srendi.advancedperipherals.common.addons.computercraft.operations.SingleOperation.*;
 
 public class WeakAutomataCorePeripheral extends AutomataCorePeripheral {
+    public static final String TYPE = "weakAutomata";
 
-    public WeakAutomataCorePeripheral(String type, ITurtleAccess turtle, TurtleSide side) {
+    public WeakAutomataCorePeripheral(ITurtleAccess turtle, TurtleSide side) {
+        super(TYPE, turtle, side);
+    }
+
+    protected WeakAutomataCorePeripheral(String type, ITurtleAccess turtle, TurtleSide side) {
         super(type, turtle, side);
     }
 

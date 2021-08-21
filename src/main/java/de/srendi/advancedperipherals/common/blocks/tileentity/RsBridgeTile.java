@@ -27,7 +27,7 @@ public class RsBridgeTile extends NetworkNodeTile<RefinedStorageNode> implements
 
     protected CompoundNBT apSettings;
 
-    protected RsBridgePeripheral peripheral = new RsBridgePeripheral("rsBridge", this);
+    protected RsBridgePeripheral peripheral = new RsBridgePeripheral(this);
     private LazyOptional<IPeripheral> peripheralCap;
 
     public RsBridgeTile() {

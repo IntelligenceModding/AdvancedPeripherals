@@ -33,16 +33,18 @@ public class GeoScannerPeripheral extends FuelConsumingPeripheral {
 	Highly inspired by https://github.com/SquidDev-CC/plethora/ BlockScanner
 	*/
 
-    public GeoScannerPeripheral(String type, PeripheralTileEntity<?> tileEntity) {
-        super(type, tileEntity);
+    public static final String TYPE = "geoScanner";
+
+    public GeoScannerPeripheral(PeripheralTileEntity<?> tileEntity) {
+        super(TYPE, tileEntity);
     }
 
-    public GeoScannerPeripheral(String type, ITurtleAccess turtle, TurtleSide side) {
-        super(type, turtle, side);
+    public GeoScannerPeripheral(ITurtleAccess turtle, TurtleSide side) {
+        super(TYPE, turtle, side);
     }
 
-    public GeoScannerPeripheral(String type, IPocketAccess pocket) {
-        super(type, pocket);
+    public GeoScannerPeripheral(IPocketAccess pocket) {
+        super(TYPE, pocket);
     }
 
     private static List<Map<String, ?>> scan(World world, BlockPos center, int radius) {

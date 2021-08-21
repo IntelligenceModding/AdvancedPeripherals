@@ -2,6 +2,7 @@ package de.srendi.advancedperipherals.common.addons.computercraft.turtles;
 
 import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
+import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.addons.computercraft.base.BaseTurtle;
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.ChunkyPeripheral;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
@@ -9,6 +10,7 @@ import de.srendi.advancedperipherals.common.setup.Items;
 import de.srendi.advancedperipherals.common.util.ChunkManager;
 import net.minecraft.client.renderer.model.ModelResourceLocation;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.server.ServerWorld;
 import org.jetbrains.annotations.NotNull;
@@ -17,6 +19,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class TurtleChunky extends BaseTurtle<ChunkyPeripheral> {
+    public static final ResourceLocation ID = new ResourceLocation(AdvancedPeripherals.MOD_ID, "chunky_turtle");
 
     protected static final Set<ChunkPos> loadedChunks = new HashSet<>();
     protected ChunkyPeripheral randomPeripheral;
@@ -24,7 +27,7 @@ public class TurtleChunky extends BaseTurtle<ChunkyPeripheral> {
     private int tick;
 
     public TurtleChunky() {
-        super("chunky_turtle", "turtle.advancedperipherals.chunky_turtle", new ItemStack(Items.CHUNK_CONTROLLER.get()));
+        super(ID, new ItemStack(Items.CHUNK_CONTROLLER.get()));
     }
 
     @Override
@@ -39,7 +42,7 @@ public class TurtleChunky extends BaseTurtle<ChunkyPeripheral> {
 
     @Override
     protected ChunkyPeripheral buildPeripheral(@NotNull ITurtleAccess turtle, @NotNull TurtleSide side) {
-        ChunkyPeripheral newPeripheral = new ChunkyPeripheral("chunky", turtle, side);
+        ChunkyPeripheral newPeripheral = new ChunkyPeripheral(turtle, side);
         if (randomPeripheral == null)
             randomPeripheral = newPeripheral;
         return newPeripheral;

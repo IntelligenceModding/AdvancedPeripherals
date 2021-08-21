@@ -42,7 +42,7 @@ public class EnergyDetectorTile extends PeripheralTileEntity<EnergyDetectorPerip
     @NotNull
     @Override
     protected EnergyDetectorPeripheral createPeripheral() {
-        return new EnergyDetectorPeripheral("energyDetector", this);
+        return new EnergyDetectorPeripheral(this);
     }
 
     @NotNull

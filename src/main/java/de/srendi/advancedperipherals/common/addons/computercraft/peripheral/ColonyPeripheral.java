@@ -33,14 +33,16 @@ import java.util.stream.Collectors;
 
 public class ColonyPeripheral extends BasePeripheral {
 
+    public static final String TYPE = "colonyIntegrator";
+
     protected boolean hasPermission = true;
 
-    public ColonyPeripheral(String type, PeripheralTileEntity<?> tileEntity) {
-        super(type, tileEntity);
+    public ColonyPeripheral(PeripheralTileEntity<?> tileEntity) {
+        super(TYPE, tileEntity);
     }
 
-    public ColonyPeripheral(String type, IPocketAccess access) {
-        super(type, access);
+    public ColonyPeripheral(IPocketAccess access) {
+        super(TYPE, access);
     }
 
     @Override

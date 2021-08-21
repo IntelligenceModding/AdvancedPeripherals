@@ -20,7 +20,7 @@ public class EnvironmentDetectorTile extends PoweredPeripheralTileEntity<Environ
     @NotNull
     @Override
     protected EnvironmentDetectorPeripheral createPeripheral() {
-        return new EnvironmentDetectorPeripheral("environmentDetector", this);
+        return new EnvironmentDetectorPeripheral(this);
     }
 
 

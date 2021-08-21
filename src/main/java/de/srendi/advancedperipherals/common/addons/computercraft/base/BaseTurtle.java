@@ -6,7 +6,7 @@ import dan200.computercraft.api.turtle.AbstractTurtleUpgrade;
 import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
 import dan200.computercraft.api.turtle.TurtleUpgradeType;
-import de.srendi.advancedperipherals.AdvancedPeripherals;
+import de.srendi.advancedperipherals.common.util.TranslationUtil;
 import net.minecraft.client.renderer.model.ModelResourceLocation;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -18,13 +18,12 @@ import org.jetbrains.annotations.Nullable;
 public abstract class BaseTurtle<T extends BasePeripheral> extends AbstractTurtleUpgrade {
     protected int tick;
 
-    public BaseTurtle(String id, String adjective, ItemStack item) {
-        super(new ResourceLocation(AdvancedPeripherals.MOD_ID, id), TurtleUpgradeType.PERIPHERAL, adjective, item);
-    }
-
-    // Required for addons based on AP
     public BaseTurtle(ResourceLocation id, String adjective, ItemStack item) {
         super(id, TurtleUpgradeType.PERIPHERAL, adjective, item);
+    }
+
+    public BaseTurtle(ResourceLocation id, ItemStack item) {
+        super(id, TurtleUpgradeType.PERIPHERAL, TranslationUtil.turtle(id.getPath()), item);
     }
 
     protected abstract ModelResourceLocation getLeftModel();

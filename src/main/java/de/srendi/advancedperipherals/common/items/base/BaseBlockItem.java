@@ -3,22 +3,21 @@ package de.srendi.advancedperipherals.common.items.base;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.client.KeyBindings;
 import de.srendi.advancedperipherals.common.util.EnumColor;
-import de.srendi.advancedperipherals.common.util.ItemUtil;
+import de.srendi.advancedperipherals.common.util.TranslationUtil;
 import net.minecraft.block.Block;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.BlockItem;
-import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.NonNullList;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.Optional;
 
 public abstract class BaseBlockItem extends BlockItem {
+    private ITextComponent description;
 
     public BaseBlockItem(Block blockIn, Properties properties) {
         super(blockIn, properties.tab(AdvancedPeripherals.TAB));
@@ -40,27 +39,11 @@ public abstract class BaseBlockItem extends BlockItem {
             tooltip.add(EnumColor.buildTextComponent(new TranslationTextComponent("item.advancedperipherals.tooltip.disabled")));
     }
 
-    public abstract Optional<String> getTurtleID();
-
-    public abstract Optional<String> getPocketID();
-
-    public abstract ITextComponent getDescription();
-
-    public abstract boolean isEnabled();
-
-    @Override
-    public void fillItemCategory(ItemGroup group, NonNullList<ItemStack> items) {
-        super.fillItemCategory(group, items);
-        if (!allowdedIn(group))
-            return;
-        if (getTurtleID().isPresent()) {
-            items.add(ItemUtil.makeTurtle(ItemUtil.TURTLE_ADVANCED, AdvancedPeripherals.MOD_ID + ":" + getTurtleID().get()));
-            items.add(ItemUtil.makeTurtle(ItemUtil.TURTLE_NORMAL, AdvancedPeripherals.MOD_ID + ":" + getTurtleID().get()));
-        }
-        if (getPocketID().isPresent()) {
-            items.add(ItemUtil.makePocket(ItemUtil.POCKET_ADVANCED, AdvancedPeripherals.MOD_ID + ":" + getPocketID().get()));
-            items.add(ItemUtil.makePocket(ItemUtil.POCKET_NORMAL, AdvancedPeripherals.MOD_ID + ":" + getPocketID().get()));
-        }
+    public @NotNull ITextComponent getDescription() {
+        if (description == null)
+            description = TranslationUtil.itemTooltip(getDescriptionId());
+        return description;
     }
 
+    public abstract boolean isEnabled();
 }

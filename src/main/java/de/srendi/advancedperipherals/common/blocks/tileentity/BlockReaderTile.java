@@ -14,6 +14,6 @@ public class BlockReaderTile extends PeripheralTileEntity<BlockReaderPeripheral>
     @NotNull
     @Override
     protected BlockReaderPeripheral createPeripheral() {
-        return new BlockReaderPeripheral("blockReader", this);
+        return new BlockReaderPeripheral(this);
     }
 }

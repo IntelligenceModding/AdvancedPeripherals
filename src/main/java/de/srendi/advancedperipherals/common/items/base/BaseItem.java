@@ -3,27 +3,26 @@ package de.srendi.advancedperipherals.common.items.base;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.client.KeyBindings;
 import de.srendi.advancedperipherals.common.util.EnumColor;
-import de.srendi.advancedperipherals.common.util.ItemUtil;
+import de.srendi.advancedperipherals.common.util.TranslationUtil;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
-import net.minecraft.util.NonNullList;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.network.NetworkHooks;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.Optional;
 
 public abstract class BaseItem extends Item {
+    private ITextComponent description;
 
     public BaseItem(Properties properties) {
         super(properties.tab(AdvancedPeripherals.TAB));
@@ -40,9 +39,7 @@ public abstract class BaseItem extends Item {
         if (this instanceof IInventoryItem) {
             ServerPlayerEntity serverPlayerEntity = (ServerPlayerEntity) playerIn;
             ItemStack stack = playerIn.getItemInHand(handIn);
-            NetworkHooks.openGui(serverPlayerEntity, ((IInventoryItem) this).createContainer(playerIn, stack), buf -> {
-                buf.writeItem(stack);
-            });
+            NetworkHooks.openGui(serverPlayerEntity, ((IInventoryItem) this).createContainer(playerIn, stack), buf -> buf.writeItem(stack));
         }
         return super.use(worldIn, playerIn, handIn);
     }
@@ -59,27 +56,13 @@ public abstract class BaseItem extends Item {
             tooltip.add(EnumColor.buildTextComponent(new TranslationTextComponent("item.advancedperipherals.tooltip.disabled")));
     }
 
-    public abstract Optional<String> getTurtleID();
-
-    public abstract Optional<String> getPocketID();
-
-    public abstract ITextComponent getDescription();
+    public @NotNull ITextComponent getDescription() {
+        if (description == null)
+            description = TranslationUtil.itemTooltip(getDescriptionId());
+        return description;
+    }
 
     public abstract boolean isEnabled();
 
-    @Override
-    public void fillItemCategory(ItemGroup group, NonNullList<ItemStack> items) {
-        super.fillItemCategory(group, items);
-        if (!allowdedIn(group))
-            return;
-        if (getTurtleID().isPresent()) {
-            items.add(ItemUtil.makeTurtle(ItemUtil.TURTLE_ADVANCED, AdvancedPeripherals.MOD_ID + ":" + getTurtleID().get()));
-            items.add(ItemUtil.makeTurtle(ItemUtil.TURTLE_NORMAL, AdvancedPeripherals.MOD_ID + ":" + getTurtleID().get()));
-        }
-        if (getPocketID().isPresent()) {
-            items.add(ItemUtil.makePocket(ItemUtil.POCKET_ADVANCED, AdvancedPeripherals.MOD_ID + ":" + getPocketID().get()));
-            items.add(ItemUtil.makePocket(ItemUtil.POCKET_NORMAL, AdvancedPeripherals.MOD_ID + ":" + getPocketID().get()));
-        }
-    }
 
 }
