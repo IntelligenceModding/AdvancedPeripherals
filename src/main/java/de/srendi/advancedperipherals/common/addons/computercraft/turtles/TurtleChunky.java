@@ -39,7 +39,7 @@ public class TurtleChunky extends BaseTurtle<ChunkyPeripheral> {
 
     @Override
     protected ChunkyPeripheral buildPeripheral(@NotNull ITurtleAccess turtle, @NotNull TurtleSide side) {
-        ChunkyPeripheral newPeripheral = new ChunkyPeripheral("chunky", turtle, side);
+        ChunkyPeripheral newPeripheral = new ChunkyPeripheral(turtle, side);
         if (randomPeripheral == null)
             randomPeripheral = newPeripheral;
         return newPeripheral;

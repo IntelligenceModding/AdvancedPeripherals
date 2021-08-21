@@ -36,7 +36,7 @@ public class TurtleChatBox extends BaseTurtle<ChatBoxPeripheral> {
 
     @Override
     protected ChatBoxPeripheral buildPeripheral(@NotNull ITurtleAccess turtle, @NotNull TurtleSide side) {
-        return new ChatBoxPeripheral("chatBox", turtle, side);
+        return new ChatBoxPeripheral(turtle, side);
     }
 
     @Override

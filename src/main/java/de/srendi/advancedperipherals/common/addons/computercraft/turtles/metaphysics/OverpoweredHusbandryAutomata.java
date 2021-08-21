@@ -26,6 +26,6 @@ public class OverpoweredHusbandryAutomata extends ModelTransformingTurtle<Overpo
 
     @Override
     protected OverpoweredHusbandryAutomataCorePeripheral buildPeripheral(@NotNull ITurtleAccess turtle, @NotNull TurtleSide side) {
-        return new OverpoweredHusbandryAutomataCorePeripheral("overpoweredHusbandryAutomata", turtle, side);
+        return new OverpoweredHusbandryAutomataCorePeripheral(turtle, side);
     }
 }

@@ -27,6 +27,6 @@ public class HusbandryAutomata extends ModelTransformingTurtle<HusbandryAutomata
 
     @Override
     protected HusbandryAutomataCorePeripheral buildPeripheral(@NotNull ITurtleAccess turtle, @NotNull TurtleSide side) {
-        return new HusbandryAutomataCorePeripheral("husbandryAutomata", turtle, side);
+        return new HusbandryAutomataCorePeripheral(turtle, side);
     }
 }

@@ -14,6 +14,6 @@ public class PocketColonyIntegrator extends BasePocket<ColonyPeripheral> {
 
     @Override
     protected ColonyPeripheral getPeripheral(IPocketAccess access) {
-        return new ColonyPeripheral("colonyIntegrator", access);
+        return new ColonyPeripheral(access);
     }
 }

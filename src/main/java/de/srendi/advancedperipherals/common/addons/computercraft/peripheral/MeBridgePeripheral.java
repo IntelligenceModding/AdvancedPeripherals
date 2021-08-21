@@ -39,11 +39,13 @@ import java.util.Map;
 
 public class MeBridgePeripheral extends BasePeripheral {
 
+    public static final String TYPE = "meBridge";
+
     private IGridNode node;
     private IActionSource source;
 
-    public MeBridgePeripheral(String type, IActionSource source, PeripheralTileEntity<?> tileEntity) {
-        super(type, tileEntity);
+    public MeBridgePeripheral(IActionSource source, PeripheralTileEntity<?> tileEntity) {
+        super(TYPE, tileEntity);
         this.source = source;
     }
 

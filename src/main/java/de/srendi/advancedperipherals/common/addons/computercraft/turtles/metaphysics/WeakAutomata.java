@@ -27,6 +27,6 @@ public class WeakAutomata extends ModelTransformingTurtle<WeakAutomataCorePeriph
 
     @Override
     protected WeakAutomataCorePeripheral buildPeripheral(@NotNull ITurtleAccess turtle, @NotNull TurtleSide side) {
-        return new WeakAutomataCorePeripheral("weakAutomata", turtle, side);
+        return new WeakAutomataCorePeripheral(turtle, side);
     }
 }

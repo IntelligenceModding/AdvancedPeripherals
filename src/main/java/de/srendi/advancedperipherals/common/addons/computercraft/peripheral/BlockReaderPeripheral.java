@@ -12,8 +12,10 @@ import net.minecraft.nbt.CompoundNBT;
 
 public class BlockReaderPeripheral extends BasePeripheral {
 
-    public BlockReaderPeripheral(String type, PeripheralTileEntity<?> tileEntity) {
-        super(type, tileEntity);
+    public static final String TYPE = "blockReader";
+
+    public BlockReaderPeripheral(PeripheralTileEntity<?> tileEntity) {
+        super(TYPE, tileEntity);
     }
 
     @Override

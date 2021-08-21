@@ -24,6 +24,6 @@ public class GeoScannerTile extends PoweredPeripheralTileEntity<GeoScannerPeriph
 
     @Override
     protected @NotNull GeoScannerPeripheral createPeripheral() {
-        return new GeoScannerPeripheral("geoScanner", this);
+        return new GeoScannerPeripheral(this);
     }
 }

@@ -7,10 +7,12 @@ import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsCon
 
 public class EnergyDetectorPeripheral extends BasePeripheral {
 
+    public static final String TYPE = "energyDetector";
+
     EnergyDetectorTile tileEntity;
 
-    public EnergyDetectorPeripheral(String type, EnergyDetectorTile tileEntity) {
-        super(type, tileEntity);
+    public EnergyDetectorPeripheral(EnergyDetectorTile tileEntity) {
+        super(TYPE, tileEntity);
         this.tileEntity = tileEntity;
     }
 

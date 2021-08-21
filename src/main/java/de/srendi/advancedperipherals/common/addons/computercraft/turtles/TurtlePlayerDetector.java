@@ -30,6 +30,6 @@ public class TurtlePlayerDetector extends BaseTurtle<PlayerDetectorPeripheral> {
 
     @Override
     protected PlayerDetectorPeripheral buildPeripheral(@NotNull ITurtleAccess turtle, @NotNull TurtleSide side) {
-        return new PlayerDetectorPeripheral("environmentDetector", turtle, side);
+        return new PlayerDetectorPeripheral(turtle, side);
     }
 }

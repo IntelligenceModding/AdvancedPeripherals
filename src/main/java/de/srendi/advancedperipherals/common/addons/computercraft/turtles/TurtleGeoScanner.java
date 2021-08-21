@@ -30,6 +30,6 @@ public class TurtleGeoScanner extends BaseTurtle<GeoScannerPeripheral> {
 
     @Override
     protected GeoScannerPeripheral buildPeripheral(@NotNull ITurtleAccess turtle, @NotNull TurtleSide side) {
-        return new GeoScannerPeripheral("geoScanner", turtle, side);
+        return new GeoScannerPeripheral(turtle, side);
     }
 }

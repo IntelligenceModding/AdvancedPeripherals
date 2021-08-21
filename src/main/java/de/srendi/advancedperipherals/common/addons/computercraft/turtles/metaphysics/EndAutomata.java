@@ -27,6 +27,6 @@ public class EndAutomata extends ModelTransformingTurtle<EndAutomataCorePeripher
 
     @Override
     protected EndAutomataCorePeripheral buildPeripheral(@NotNull ITurtleAccess turtle, @NotNull TurtleSide side) {
-        return new EndAutomataCorePeripheral("endAutomata", turtle, side);
+        return new EndAutomataCorePeripheral(turtle, side);
     }
 }

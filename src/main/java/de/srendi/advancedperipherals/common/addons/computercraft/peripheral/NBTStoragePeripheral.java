@@ -18,10 +18,12 @@ import java.util.Map;
 
 public class NBTStoragePeripheral extends BasePeripheral {
 
+    public static final String TYPE = "nbtStorage";
+
     private final NBTStorageTile tile;
 
-    public NBTStoragePeripheral(String type, NBTStorageTile tileEntity) {
-        super(type, tileEntity);
+    public NBTStoragePeripheral(NBTStorageTile tileEntity) {
+        super(TYPE, tileEntity);
         this.tile = tileEntity;
     }
 

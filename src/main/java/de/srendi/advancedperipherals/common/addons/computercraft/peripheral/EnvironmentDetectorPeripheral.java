@@ -1,6 +1,5 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.peripheral;
 
-import com.google.common.math.IntMath;
 import dan200.computercraft.api.lua.IArguments;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
@@ -37,16 +36,18 @@ import static de.srendi.advancedperipherals.common.addons.computercraft.operatio
 
 public class EnvironmentDetectorPeripheral extends FuelConsumingPeripheral {
 
-    public EnvironmentDetectorPeripheral(String type, PeripheralTileEntity<?> tileEntity) {
-        super(type, tileEntity);
+    public static final String TYPE = "environmentDetector";
+
+    public EnvironmentDetectorPeripheral(PeripheralTileEntity<?> tileEntity) {
+        super(TYPE, tileEntity);
     }
 
-    public EnvironmentDetectorPeripheral(String type, ITurtleAccess turtle, TurtleSide side) {
-        super(type, turtle, side);
+    public EnvironmentDetectorPeripheral(ITurtleAccess turtle, TurtleSide side) {
+        super(TYPE, turtle, side);
     }
 
-    public EnvironmentDetectorPeripheral(String type, IPocketAccess pocket) {
-        super(type, pocket);
+    public EnvironmentDetectorPeripheral(IPocketAccess pocket) {
+        super(TYPE, pocket);
     }
 
     private static int estimateCost(int radius) {

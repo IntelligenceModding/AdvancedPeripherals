@@ -7,8 +7,10 @@ import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsCon
 
 public class ChunkyPeripheral extends BasePeripheral {
 
-    public ChunkyPeripheral(String type, ITurtleAccess turtle, TurtleSide side) {
-        super(type, turtle, side);
+    public static final String TYPE = "chunky";
+
+    public ChunkyPeripheral(ITurtleAccess turtle, TurtleSide side) {
+        super(TYPE, turtle, side);
     }
 
     @Override

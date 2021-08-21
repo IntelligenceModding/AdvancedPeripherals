@@ -30,6 +30,6 @@ public class TurtleEnvironmentDetector extends BaseTurtle<EnvironmentDetectorPer
 
     @Override
     protected EnvironmentDetectorPeripheral buildPeripheral(@NotNull ITurtleAccess turtle, @NotNull TurtleSide side) {
-        return new EnvironmentDetectorPeripheral("environmentDetector", turtle, side);
+        return new EnvironmentDetectorPeripheral(turtle, side);
     }
 }

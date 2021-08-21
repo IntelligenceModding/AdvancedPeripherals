@@ -27,18 +27,20 @@ import static de.srendi.advancedperipherals.common.addons.computercraft.operatio
 
 public class ChatBoxPeripheral extends OperationPeripheral {
 
+    public static final String TYPE = "chatBox";
+
     private final static String PREFIX_FORMAT = "[%s] ";
 
-    public ChatBoxPeripheral(String type, PeripheralTileEntity<?> tileEntity) {
-        super(type, tileEntity);
+    public ChatBoxPeripheral(PeripheralTileEntity<?> tileEntity) {
+        super(TYPE, tileEntity);
     }
 
-    public ChatBoxPeripheral(String type, ITurtleAccess turtle, TurtleSide side) {
-        super(type, turtle, side);
+    public ChatBoxPeripheral(ITurtleAccess turtle, TurtleSide side) {
+        super(TYPE, turtle, side);
     }
 
-    public ChatBoxPeripheral(String type, IPocketAccess pocket) {
-        super(type, pocket);
+    public ChatBoxPeripheral(IPocketAccess pocket) {
+        super(TYPE, pocket);
     }
 
     @Override

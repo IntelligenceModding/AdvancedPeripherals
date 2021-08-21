@@ -28,10 +28,12 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 public class RsBridgePeripheral extends BasePeripheral {
 
+    public static final String TYPE = "rsBridge";
+
     private final RsBridgeTile tileEntity;
 
-    public RsBridgePeripheral(String type, RsBridgeTile tileEntity) {
-        super(type, tileEntity);
+    public RsBridgePeripheral(RsBridgeTile tileEntity) {
+        super(TYPE, tileEntity);
         this.tileEntity = tileEntity;
     }
 

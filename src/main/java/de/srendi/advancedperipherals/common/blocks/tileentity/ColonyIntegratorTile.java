@@ -14,6 +14,6 @@ public class ColonyIntegratorTile extends PeripheralTileEntity<ColonyPeripheral>
     @NotNull
     @Override
     protected ColonyPeripheral createPeripheral() {
-        return new ColonyPeripheral("colonyIntegrator", this);
+        return new ColonyPeripheral(this);
     }
 }
