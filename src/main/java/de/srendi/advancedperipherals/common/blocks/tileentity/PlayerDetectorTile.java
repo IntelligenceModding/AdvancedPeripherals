@@ -20,7 +20,7 @@ public class PlayerDetectorTile extends PeripheralTileEntity<PlayerDetectorPerip
     @NotNull
     @Override
     protected PlayerDetectorPeripheral createPeripheral() {
-        return new PlayerDetectorPeripheral("playerDetector", this);
+        return new PlayerDetectorPeripheral(this);
     }
 
 }

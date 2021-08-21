@@ -15,13 +15,12 @@ import org.jetbrains.annotations.Nullable;
 
 public abstract class ModelTransformingTurtle<T extends AutomataCorePeripheral> extends BaseTurtle<T> {
 
-    public ModelTransformingTurtle(String id, String adjective, ItemStack item) {
+    public ModelTransformingTurtle(ResourceLocation id, String adjective, ItemStack item) {
         super(id, adjective, item);
     }
 
-    // Required for addons based on AP
-    public ModelTransformingTurtle(ResourceLocation id, String adjective, ItemStack item) {
-        super(id, adjective, item);
+    public ModelTransformingTurtle(ResourceLocation id, ItemStack item) {
+        super(id, item);
     }
 
     @NotNull

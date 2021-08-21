@@ -8,6 +8,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
@@ -34,12 +35,12 @@ public class WeakAutomataCore extends APItem implements IFeedableAutomataCore {
     private static final String CONSUMER_ENTITY_COMPOUND = "consumed_entity_compound";
     private final static Map<String, WeakAutomataCoreRecord> AUTOMATA_CORE_REGISTRY = new HashMap<String, WeakAutomataCoreRecord>() {{
         WeakAutomataCoreRecord endSoulRecord = new WeakAutomataCoreRecord(
-                new HashMap<String, Integer>() {{
+                new HashMap<>() {{
                     put(EntityType.ENDERMAN.getRegistryName().toString(), 10);
                 }}, Items.END_AUTOMATA_CORE.get()
         );
         WeakAutomataCoreRecord husbandrySoulRecord = new WeakAutomataCoreRecord(
-                new HashMap<String, Integer>() {{
+                new HashMap<>() {{
                     put(EntityType.COW.getRegistryName().toString(), 3);
                     put(EntityType.SHEEP.getRegistryName().toString(), 3);
                     put(EntityType.CHICKEN.getRegistryName().toString(), 3);
@@ -49,12 +50,12 @@ public class WeakAutomataCore extends APItem implements IFeedableAutomataCore {
         husbandrySoulRecord.ingredients.keySet().forEach(entityType -> put(entityType, husbandrySoulRecord));
     }};
 
-    public WeakAutomataCore(Properties properties, String turtleID, String pocketID, Component description) {
-        super(properties, turtleID, pocketID, description, () -> AdvancedPeripheralsConfig.enableWeakAutomataCore);
+    public WeakAutomataCore(Properties properties, @Nullable ResourceLocation turtleID, @Nullable ResourceLocation pocketID) {
+        super(properties, turtleID, pocketID, () -> AdvancedPeripheralsConfig.enableWeakAutomataCore);
     }
 
-    public WeakAutomataCore(String turtleID, String pocketID, Component description) {
-        super(turtleID, pocketID, description, () -> AdvancedPeripheralsConfig.enableWeakAutomataCore);
+    public WeakAutomataCore(@Nullable ResourceLocation turtleID, @Nullable ResourceLocation pocketID) {
+        super(turtleID, pocketID, () -> AdvancedPeripheralsConfig.enableWeakAutomataCore);
     }
 
     @Override

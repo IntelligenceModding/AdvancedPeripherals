@@ -25,8 +25,10 @@ import java.util.Optional;
 
 public class InventoryManagerPeripheral extends BasePeripheral {
 
-    public InventoryManagerPeripheral(String type, PeripheralTileEntity<?> tileEntity) {
-        super(type, tileEntity);
+    public static final String TYPE = "inventoryManager";
+
+    public InventoryManagerPeripheral(PeripheralTileEntity<?> tileEntity) {
+        super(TYPE, tileEntity);
     }
 
     @Override

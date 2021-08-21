@@ -23,7 +23,7 @@ public class ChatBoxTile extends PeripheralTileEntity<ChatBoxPeripheral> {
     @NotNull
     @Override
     protected ChatBoxPeripheral createPeripheral() {
-        return new ChatBoxPeripheral("chatBox", this);
+        return new ChatBoxPeripheral(this);
     }
 
     @Override

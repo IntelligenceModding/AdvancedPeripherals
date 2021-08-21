@@ -24,7 +24,7 @@ public class NBTStorageTile extends PeripheralTileEntity<NBTStoragePeripheral> {
     @NotNull
     @Override
     protected NBTStoragePeripheral createPeripheral() {
-        return new NBTStoragePeripheral("nbtStorage", this);
+        return new NBTStoragePeripheral(this);
     }
 
     public CompoundTag getStored() {

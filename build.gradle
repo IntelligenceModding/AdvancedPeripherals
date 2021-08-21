@@ -118,7 +118,6 @@ dependencies {
     // Extended requirements
     // Curios
     runtimeOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}")
-
     // Testing stuff
 }
 
@@ -146,7 +145,11 @@ publishing {
     }
     repositories {
         maven {
-            url "file:///${project.projectDir}/mcmodsrepo"
+            url "https://repo.repsy.io/mvn/siredvin/default"
+            credentials {
+                username = System.getenv("USERNAME")
+                password = System.getenv("TOKEN")
+            }
         }
     }
 }

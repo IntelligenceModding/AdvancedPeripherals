@@ -2,17 +2,20 @@ package de.srendi.advancedperipherals.common.addons.computercraft.turtles.metaph
 
 import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
+import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.addons.computercraft.base.ModelTransformingTurtle;
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.metaphysics.EndAutomataCorePeripheral;
 import de.srendi.advancedperipherals.common.setup.Items;
 import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 public class EndAutomata extends ModelTransformingTurtle<EndAutomataCorePeripheral> {
+    public static final ResourceLocation ID = new ResourceLocation(AdvancedPeripherals.MOD_ID, "end_automata");
 
     public EndAutomata() {
-        super("end_automata", "turtle.advancedperipherals.end_automata", new ItemStack(Items.END_AUTOMATA_CORE.get()));
+        super(ID, new ItemStack(Items.END_AUTOMATA_CORE.get()));
     }
 
     @Override
@@ -27,6 +30,6 @@ public class EndAutomata extends ModelTransformingTurtle<EndAutomataCorePeripher
 
     @Override
     protected EndAutomataCorePeripheral buildPeripheral(@NotNull ITurtleAccess turtle, @NotNull TurtleSide side) {
-        return new EndAutomataCorePeripheral("endAutomata", turtle, side);
+        return new EndAutomataCorePeripheral(turtle, side);
     }
 }

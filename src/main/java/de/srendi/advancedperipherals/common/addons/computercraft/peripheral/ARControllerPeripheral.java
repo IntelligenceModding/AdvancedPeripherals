@@ -12,11 +12,12 @@ import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsCon
 import java.util.Optional;
 
 public class ARControllerPeripheral extends BasePeripheral {
+    public static final String TYPE = "arController";
 
     private final ARControllerTile tileEntity;
 
-    public ARControllerPeripheral(String type, ARControllerTile tileEntity) {
-        super(type, tileEntity);
+    public ARControllerPeripheral(ARControllerTile tileEntity) {
+        super(TYPE, tileEntity);
         this.tileEntity = tileEntity;
     }
 

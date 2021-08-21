@@ -24,10 +24,16 @@ import static de.srendi.advancedperipherals.common.addons.computercraft.operatio
 
 public class EndAutomataCorePeripheral extends WeakAutomataCorePeripheral {
 
+    public static final String TYPE = "endAutomata";
+
     private final static String POINT_DATA_MARK = "warp_points";
     private final static String LEVEL_DATA_MARK = "warp_level";
 
-    public EndAutomataCorePeripheral(String type, ITurtleAccess turtle, TurtleSide side) {
+    public EndAutomataCorePeripheral(ITurtleAccess turtle, TurtleSide side) {
+        super(TYPE, turtle, side);
+    }
+
+    protected EndAutomataCorePeripheral(String type, ITurtleAccess turtle, TurtleSide side) {
         super(type, turtle, side);
     }
 

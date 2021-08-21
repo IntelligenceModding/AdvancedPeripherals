@@ -4,23 +4,26 @@ import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
 import dan200.computercraft.shared.computer.core.ServerComputer;
 import dan200.computercraft.shared.turtle.blocks.TileTurtle;
+import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.addons.computercraft.base.BaseTurtle;
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.ChatBoxPeripheral;
 import de.srendi.advancedperipherals.common.events.Events;
 import de.srendi.advancedperipherals.common.setup.Blocks;
 import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.NotNull;
 
 public class TurtleChatBox extends BaseTurtle<ChatBoxPeripheral> {
+    public static final ResourceLocation ID = new ResourceLocation(AdvancedPeripherals.MOD_ID, "chat_box_turtle");
 
     private static final ModelResourceLocation leftModel = new ModelResourceLocation("advancedperipherals:turtle_chat_box_upgrade_left", "inventory");
     private static final ModelResourceLocation rightModel = new ModelResourceLocation("advancedperipherals:turtle_chat_box_upgrade_right", "inventory");
     private long lastConsumedMessage;
 
     public TurtleChatBox() {
-        super("chat_box_turtle", "turtle.advancedperipherals.chat_box_turtle", new ItemStack(Blocks.CHAT_BOX.get()));
+        super(ID, new ItemStack(Blocks.CHAT_BOX.get()));
         lastConsumedMessage = Events.getLastChatMessageID() - 1;
     }
 
@@ -36,7 +39,7 @@ public class TurtleChatBox extends BaseTurtle<ChatBoxPeripheral> {
 
     @Override
     protected ChatBoxPeripheral buildPeripheral(@NotNull ITurtleAccess turtle, @NotNull TurtleSide side) {
-        return new ChatBoxPeripheral("chatBox", turtle, side);
+        return new ChatBoxPeripheral(turtle, side);
     }
 
     @Override
@@ -46,8 +49,7 @@ public class TurtleChatBox extends BaseTurtle<ChatBoxPeripheral> {
 
         if (turtle.getUpgrade(side) instanceof TurtleChatBox) {
             BlockEntity tile = turtle.getLevel().getBlockEntity(turtle.getPosition());
-            if (tile instanceof TileTurtle) {
-                TileTurtle tileTurtle = (TileTurtle) tile;
+            if (tile instanceof TileTurtle tileTurtle) {
                 ServerComputer computer = tileTurtle.getServerComputer();
                 lastConsumedMessage = Events.traverseChatMessages(lastConsumedMessage, message -> {
                     computer.queueEvent("chat", new Object[]{message.username, message.message,

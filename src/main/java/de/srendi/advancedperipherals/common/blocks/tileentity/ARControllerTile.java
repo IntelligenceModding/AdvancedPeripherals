@@ -49,7 +49,7 @@ public class ARControllerTile extends PeripheralTileEntity<ARControllerPeriphera
     @NotNull
     @Override
     protected ARControllerPeripheral createPeripheral() {
-        return new ARControllerPeripheral("arController", this);
+        return new ARControllerPeripheral(this);
     }
 
     @Override

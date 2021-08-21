@@ -11,8 +11,10 @@ import javax.annotation.Nonnull;
 
 
 public class OverpoweredEndAutomataCorePeripheral extends EndAutomataCorePeripheral {
-    public OverpoweredEndAutomataCorePeripheral(String type, ITurtleAccess turtle, TurtleSide side) {
-        super(type, turtle, side);
+    public static final String TYPE = "overpoweredEndAutomata";
+
+    public OverpoweredEndAutomataCorePeripheral(ITurtleAccess turtle, TurtleSide side) {
+        super(TYPE, turtle, side);
     }
 
     @Override

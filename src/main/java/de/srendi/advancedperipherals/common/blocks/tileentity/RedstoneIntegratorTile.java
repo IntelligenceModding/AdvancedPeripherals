@@ -26,7 +26,7 @@ public class RedstoneIntegratorTile extends PeripheralTileEntity<RedstoneIntegra
     @NotNull
     @Override
     protected RedstoneIntegratorPeripheral createPeripheral() {
-        return new RedstoneIntegratorPeripheral("redstoneIntegrator", this);
+        return new RedstoneIntegratorPeripheral(this);
     }
 
     public int getRedstoneInput(Direction direction) {

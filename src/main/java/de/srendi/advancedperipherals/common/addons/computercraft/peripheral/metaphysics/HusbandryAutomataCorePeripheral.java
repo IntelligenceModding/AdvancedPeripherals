@@ -33,13 +33,19 @@ import static de.srendi.advancedperipherals.common.addons.computercraft.operatio
 import static de.srendi.advancedperipherals.common.addons.computercraft.operations.SingleOperation.USE_ON_ANIMAL;
 
 public class HusbandryAutomataCorePeripheral extends WeakAutomataCorePeripheral {
+    public static final String TYPE = "husbandryAutomata";
+
     private static final Predicate<Entity> isAnimal = entity1 -> entity1.getType().getCategory().isFriendly();
     private static final Predicate<Entity> isLivingEntity = entity1 -> entity1 instanceof LivingEntity;
     private static final Predicate<Entity> isNotPlayer = entity1 -> !(entity1 instanceof Player);
     private static final Predicate<Entity> suitableEntity = isAnimal.and(isLivingEntity).and(isNotPlayer);
     private static final String ENTITY_NBT_KEY = "storedEntity";
 
-    public HusbandryAutomataCorePeripheral(String type, ITurtleAccess turtle, TurtleSide side) {
+    public HusbandryAutomataCorePeripheral(ITurtleAccess turtle, TurtleSide side) {
+        super(TYPE, turtle, side);
+    }
+
+    protected HusbandryAutomataCorePeripheral(String type, ITurtleAccess turtle, TurtleSide side) {
         super(type, turtle, side);
     }
 

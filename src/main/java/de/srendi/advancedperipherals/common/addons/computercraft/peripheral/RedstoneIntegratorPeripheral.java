@@ -9,10 +9,12 @@ import net.minecraft.core.Direction;
 
 public class RedstoneIntegratorPeripheral extends BasePeripheral {
 
+    public static final String TYPE = "redstoneIntegrator";
+
     private final RedstoneIntegratorTile tile;
 
-    public RedstoneIntegratorPeripheral(String type, RedstoneIntegratorTile tileEntity) {
-        super(type, tileEntity);
+    public RedstoneIntegratorPeripheral(RedstoneIntegratorTile tileEntity) {
+        super(TYPE, tileEntity);
         this.tile = tileEntity;
     }
 
