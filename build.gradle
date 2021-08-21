@@ -134,36 +134,26 @@ dependencies {
     implementation fg.deobf("appeng:appliedenergistics2:${ae_version}");
 
     // Minecolonies
-    compileOnly fg.deobf("com.minecolonies:minecolonies:${minecolonies_version}:universal")
-    compileOnly fg.deobf("com.ldtteam:structurize:${structurize_version}:universal")
-
-    runtimeOnly fg.deobf("com.minecolonies:minecolonies:${minecolonies_version}:universal")
-    runtimeOnly fg.deobf("com.ldtteam:structurize:${structurize_version}:universal")
+    implementation fg.deobf("com.minecolonies:minecolonies:${minecolonies_version}:universal")
+    implementation fg.deobf("com.ldtteam:structurize:${structurize_version}:universal")
     // Botania with deps
-    compileOnly fg.deobf("vazkii.botania:Botania:${botania_version}")
+    implementation fg.deobf("vazkii.botania:Botania:${botania_version}")
 
     // Integrated dynamics
-    compileOnly fg.deobf("curse.maven:integrateddynamics-${integrated_dynamics_version}")
-    compileOnly fg.deobf("curse.maven:CommonCapabilites-${common_capabilities_version}")
-    compileOnly fg.deobf("curse.maven:CyclopsCore-${cyclops_core_version}")
-
-    runtimeOnly fg.deobf("curse.maven:integrateddynamics-${integrated_dynamics_version}")
-    runtimeOnly fg.deobf("curse.maven:CommonCapabilites-${common_capabilities_version}")
-    runtimeOnly fg.deobf("curse.maven:CyclopsCore-${cyclops_core_version}")
+    implementation fg.deobf("curse.maven:integrateddynamics-${integrated_dynamics_version}")
+    implementation fg.deobf("curse.maven:CommonCapabilites-${common_capabilities_version}")
+    implementation fg.deobf("curse.maven:CyclopsCore-${cyclops_core_version}")
+    
     // Mekanism with addons
-    compileOnly fg.deobf("mekanism:Mekanism:${mekanism_version}")
-    compileOnly fg.deobf("mekanism:Mekanism:${mekanism_version}:generators")
+    implementation fg.deobf("mekanism:Mekanism:${mekanism_version}")
+    implementation fg.deobf("mekanism:Mekanism:${mekanism_version}:generators")
 
-    runtimeOnly fg.deobf("mekanism:Mekanism:${mekanism_version}")
-    runtimeOnly fg.deobf("mekanism:Mekanism:${mekanism_version}:generators")
     // Immersive Engineering
-    compileOnly fg.deobf("curse.maven:immersiveengineering-${immersive_engineering_version}")
+    implementation fg.deobf("curse.maven:immersiveengineering-${immersive_engineering_version}")
 
-    runtimeOnly fg.deobf("curse.maven:immersiveengineering-${immersive_engineering_version}")
     // Storage Drawers
-    compileOnly fg.deobf("curse.maven:storagedrawers-${storagedrawers_version}")
+    implementation fg.deobf("curse.maven:storagedrawers-${storagedrawers_version}")
 
-    runtimeOnly fg.deobf("curse.maven:storagedrawers-${storagedrawers_version}")
     // Testing stuff
 //    runtimeOnly fg.deobf("mcjty.theoneprobe:TheOneProbe-1.16:${top_version}")
     runtimeOnly fg.deobf("mezz.jei:jei-${jei_version}")
@@ -194,7 +184,11 @@ publishing {
     }
     repositories {
         maven {
-            url "file:///${project.projectDir}/mcmodsrepo"
+            url "https://repo.repsy.io/mvn/siredvin/default"
+            credentials {
+                username = System.getenv("USERNAME")
+                password = System.getenv("TOKEN")
+            }
         }
     }
 }
