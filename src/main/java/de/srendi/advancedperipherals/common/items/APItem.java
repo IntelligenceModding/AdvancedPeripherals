@@ -6,7 +6,6 @@ import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.ITextComponent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -16,28 +15,20 @@ public class APItem extends BaseItem {
 
     @Nullable ResourceLocation turtleID;
     @Nullable ResourceLocation pocketID;
-    ITextComponent description;
     Supplier<Boolean> enabledSup;
 
-    public APItem(Properties properties, @Nullable ResourceLocation turtleID, @Nullable ResourceLocation pocketID, ITextComponent description, Supplier<Boolean> enabledSup) {
+    public APItem(Properties properties, @Nullable ResourceLocation turtleID, @Nullable ResourceLocation pocketID, Supplier<Boolean> enabledSup) {
         super(properties);
         this.turtleID = turtleID;
         this.pocketID = pocketID;
-        this.description = description;
         this.enabledSup = enabledSup;
     }
 
-    public APItem(@Nullable ResourceLocation turtleID, @Nullable ResourceLocation pocketID, ITextComponent description, Supplier<Boolean> enabledSup) {
+    public APItem(@Nullable ResourceLocation turtleID, @Nullable ResourceLocation pocketID, Supplier<Boolean> enabledSup) {
         super();
         this.turtleID = turtleID;
         this.pocketID = pocketID;
-        this.description = description;
         this.enabledSup = enabledSup;
-    }
-
-    @Override
-    public ITextComponent getDescription() {
-        return description;
     }
 
     @Override

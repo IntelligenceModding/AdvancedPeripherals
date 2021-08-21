@@ -50,12 +50,12 @@ public class WeakAutomataCore extends APItem implements IFeedableAutomataCore {
         husbandrySoulRecord.ingredients.keySet().forEach(entityType -> put(entityType, husbandrySoulRecord));
     }};
 
-    public WeakAutomataCore(Properties properties, @Nullable ResourceLocation turtleID, @Nullable ResourceLocation pocketID, ITextComponent description) {
-        super(properties, turtleID, pocketID, description, () -> AdvancedPeripheralsConfig.enableWeakAutomataCore);
+    public WeakAutomataCore(Properties properties, @Nullable ResourceLocation turtleID, @Nullable ResourceLocation pocketID) {
+        super(properties, turtleID, pocketID, () -> AdvancedPeripheralsConfig.enableWeakAutomataCore);
     }
 
-    public WeakAutomataCore(@Nullable ResourceLocation turtleID, @Nullable ResourceLocation pocketID, ITextComponent description) {
-        super(turtleID, pocketID, description, () -> AdvancedPeripheralsConfig.enableWeakAutomataCore);
+    public WeakAutomataCore(@Nullable ResourceLocation turtleID, @Nullable ResourceLocation pocketID) {
+        super(turtleID, pocketID, () -> AdvancedPeripheralsConfig.enableWeakAutomataCore);
     }
 
     @Override

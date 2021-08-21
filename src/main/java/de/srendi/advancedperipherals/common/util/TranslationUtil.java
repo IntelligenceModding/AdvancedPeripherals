@@ -5,7 +5,12 @@ import net.minecraft.util.text.*;
 
 public class TranslationUtil {
     public static TranslationTextComponent itemTooltip(String descriptionId) {
-        return new TranslationTextComponent(String.format("%s.tooltip", descriptionId));
+        int lastIndex = descriptionId.lastIndexOf('.');
+        return new TranslationTextComponent(String.format(
+                "%s.tooltip.%s",
+                descriptionId.substring(0, lastIndex).replaceFirst("^block", "item"),
+                descriptionId.substring(lastIndex + 1)
+        ));
     }
 
     public static String turtle(String name) {

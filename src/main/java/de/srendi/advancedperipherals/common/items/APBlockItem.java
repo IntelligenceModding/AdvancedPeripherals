@@ -7,7 +7,6 @@ import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.ITextComponent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -17,22 +16,19 @@ public class APBlockItem extends BaseBlockItem {
 
     @Nullable ResourceLocation turtleID;
     @Nullable ResourceLocation pocketID;
-    ITextComponent description;
     Supplier<Boolean> enabledSup;
 
-    public APBlockItem(Block blockIn, Properties properties, @Nullable ResourceLocation turtleID, @Nullable ResourceLocation pocketID, ITextComponent description, Supplier<Boolean> enabledSup) {
+    public APBlockItem(Block blockIn, Properties properties, @Nullable ResourceLocation turtleID, @Nullable ResourceLocation pocketID, Supplier<Boolean> enabledSup) {
         super(blockIn, properties);
         this.turtleID = turtleID;
         this.pocketID = pocketID;
-        this.description = description;
         this.enabledSup = enabledSup;
     }
 
-    public APBlockItem(Block blockIn, @Nullable ResourceLocation turtleID, @Nullable ResourceLocation pocketID, ITextComponent description, Supplier<Boolean> enabledSup) {
+    public APBlockItem(Block blockIn, @Nullable ResourceLocation turtleID, @Nullable ResourceLocation pocketID, Supplier<Boolean> enabledSup) {
         super(blockIn);
         this.turtleID = turtleID;
         this.pocketID = pocketID;
-        this.description = description;
         this.enabledSup = enabledSup;
     }
 
@@ -49,12 +45,6 @@ public class APBlockItem extends BaseBlockItem {
             items.add(ItemUtil.makePocket(ItemUtil.POCKET_ADVANCED, pocketID.toString()));
             items.add(ItemUtil.makePocket(ItemUtil.POCKET_NORMAL, pocketID.toString()));
         }
-    }
-
-
-    @Override
-    public ITextComponent getDescription() {
-        return description;
     }
 
     @Override

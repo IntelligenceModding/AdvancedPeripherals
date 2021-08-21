@@ -3,6 +3,7 @@ package de.srendi.advancedperipherals.common.items.base;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.client.KeyBindings;
 import de.srendi.advancedperipherals.common.util.EnumColor;
+import de.srendi.advancedperipherals.common.util.TranslationUtil;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -15,11 +16,13 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.network.NetworkHooks;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
 public abstract class BaseItem extends Item {
+    private ITextComponent description;
 
     public BaseItem(Properties properties) {
         super(properties.tab(AdvancedPeripherals.TAB));
@@ -53,7 +56,11 @@ public abstract class BaseItem extends Item {
             tooltip.add(EnumColor.buildTextComponent(new TranslationTextComponent("item.advancedperipherals.tooltip.disabled")));
     }
 
-    public abstract ITextComponent getDescription();
+    public @NotNull ITextComponent getDescription() {
+        if (description == null)
+            description = TranslationUtil.itemTooltip(getDescriptionId());
+        return description;
+    }
 
     public abstract boolean isEnabled();
 
