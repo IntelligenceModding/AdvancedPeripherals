@@ -70,13 +70,6 @@ public abstract class BaseTileEntityBlock extends BaseEntityBlock implements IHa
         worldIn.getBlockEntity(pos).getTileData().putString("CustomName", stack.getDisplayName().getString());
     }
 
-    @Override
-    public void destroy(LevelAccessor worldIn, BlockPos pos, BlockState state) {
-        super.destroy(worldIn, pos, state);
-        if (worldIn.getBlockEntity(pos) == null)
-            return;
-    }
-
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
