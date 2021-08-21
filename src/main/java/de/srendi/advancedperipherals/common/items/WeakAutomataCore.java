@@ -14,6 +14,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -49,11 +50,11 @@ public class WeakAutomataCore extends APItem implements IFeedableAutomataCore {
         husbandrySoulRecord.ingredients.keySet().forEach(entityType -> put(entityType, husbandrySoulRecord));
     }};
 
-    public WeakAutomataCore(Properties properties, String turtleID, String pocketID, ITextComponent description) {
+    public WeakAutomataCore(Properties properties, @Nullable ResourceLocation turtleID, @Nullable ResourceLocation pocketID, ITextComponent description) {
         super(properties, turtleID, pocketID, description, () -> AdvancedPeripheralsConfig.enableWeakAutomataCore);
     }
 
-    public WeakAutomataCore(String turtleID, String pocketID, ITextComponent description) {
+    public WeakAutomataCore(@Nullable ResourceLocation turtleID, @Nullable ResourceLocation pocketID, ITextComponent description) {
         super(turtleID, pocketID, description, () -> AdvancedPeripheralsConfig.enableWeakAutomataCore);
     }
 

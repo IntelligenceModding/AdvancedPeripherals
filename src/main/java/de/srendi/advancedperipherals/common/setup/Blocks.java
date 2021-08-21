@@ -1,5 +1,10 @@
 package de.srendi.advancedperipherals.common.setup;
 
+import de.srendi.advancedperipherals.common.addons.computercraft.pocket.*;
+import de.srendi.advancedperipherals.common.addons.computercraft.turtles.TurtleChatBox;
+import de.srendi.advancedperipherals.common.addons.computercraft.turtles.TurtleEnvironmentDetector;
+import de.srendi.advancedperipherals.common.addons.computercraft.turtles.TurtleGeoScanner;
+import de.srendi.advancedperipherals.common.addons.computercraft.turtles.TurtlePlayerDetector;
 import de.srendi.advancedperipherals.common.blocks.PeripheralCasingBlock;
 import de.srendi.advancedperipherals.common.blocks.PlayerDetectorBlock;
 import de.srendi.advancedperipherals.common.blocks.RedstoneIntegratorBlock;
@@ -21,16 +26,16 @@ import java.util.function.Supplier;
 public class Blocks {
 
     static void register() {
-    }    //TODO-1.17 fix the turtle and pocket ids of the chat box
+    }
 
     public static final RegistryObject<Block> ENVIRONMENT_DETECTOR = register("environment_detector", () -> new APTileEntityBlock<>(TileEntityTypes.ENVIRONMENT_DETECTOR, false),
-            () -> new APBlockItem(Blocks.ENVIRONMENT_DETECTOR.get(), "environment_detector_turtle", "environment_pocket",
+            () -> new APBlockItem(Blocks.ENVIRONMENT_DETECTOR.get(), TurtleEnvironmentDetector.ID, PocketEnvironment.ID,
                     new TranslationTextComponent("item.advancedperipherals.tooltip.environment_detector"), () -> AdvancedPeripheralsConfig.enableEnvironmentDetector));
     public static final RegistryObject<Block> CHAT_BOX = register("chat_box", () -> new APTileEntityBlock<>(TileEntityTypes.CHAT_BOX, false),
-            () -> new APBlockItem(Blocks.CHAT_BOX.get(), "chat_box_turtle", "chatty_pocket",
+            () -> new APBlockItem(Blocks.CHAT_BOX.get(), TurtleChatBox.ID, PocketChatBox.ID,
                     new TranslationTextComponent("item.advancedperipherals.tooltip.chat_box"), () -> AdvancedPeripheralsConfig.enableChatBox));
     public static final RegistryObject<Block> PLAYER_DETECTOR = register("player_detector", PlayerDetectorBlock::new,
-            () -> new APBlockItem(Blocks.PLAYER_DETECTOR.get(), "player_detector_turtle", "player_pocket",
+            () -> new APBlockItem(Blocks.PLAYER_DETECTOR.get(), TurtlePlayerDetector.ID, PocketPlayerDetector.ID,
                     new TranslationTextComponent("item.advancedperipherals.tooltip.player_detector"), () -> AdvancedPeripheralsConfig.enablePlayerDetector));
     public static final RegistryObject<Block> ME_BRIDGE = register("me_bridge", () -> new APTileEntityBlock<>(TileEntityTypes.ME_BRIDGE, false, ModList.get().isLoaded("appliedenergistics2")),
             () -> new APBlockItem(Blocks.ME_BRIDGE.get(), null, null,
@@ -57,10 +62,10 @@ public class Blocks {
             () -> new APBlockItem(Blocks.BLOCK_READER.get(), null, null,
                     new TranslationTextComponent("item.advancedperipherals.tooltip.block_reader"), () -> AdvancedPeripheralsConfig.enableBlockReader));
     public static final RegistryObject<Block> GEO_SCANNER = register("geo_scanner", () -> new APTileEntityBlock<>(TileEntityTypes.GEO_SCANNER, false),
-            () -> new APBlockItem(Blocks.GEO_SCANNER.get(), "geoscanner_turtle", "geoscanner_pocket",
+            () -> new APBlockItem(Blocks.GEO_SCANNER.get(), TurtleGeoScanner.ID, PocketGeoScanner.ID,
                     new TranslationTextComponent("item.advancedperipherals.tooltip.geo_scanner"), () -> AdvancedPeripheralsConfig.enableGeoScanner));
     public static final RegistryObject<Block> COLONY_INTEGRATOR = register("colony_integrator", () -> new APTileEntityBlock<>(TileEntityTypes.COLONY_INTEGRATOR, false, ModList.get().isLoaded("minecolonies")),
-            () -> new APBlockItem(Blocks.COLONY_INTEGRATOR.get(), null, "colony_pocket",
+            () -> new APBlockItem(Blocks.COLONY_INTEGRATOR.get(), null, PocketColonyIntegrator.ID,
                     new TranslationTextComponent("item.advancedperipherals.tooltip.colony_integrator"), () -> AdvancedPeripheralsConfig.enableColonyIntegrator));
     public static final RegistryObject<Block> NBT_STORAGE = register("nbt_storage", () -> new APTileEntityBlock<>(TileEntityTypes.NBT_STORAGE, true),
             () -> new APBlockItem(Blocks.NBT_STORAGE.get(), null, null,

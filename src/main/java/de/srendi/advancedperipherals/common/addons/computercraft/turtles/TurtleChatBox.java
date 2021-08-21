@@ -4,6 +4,7 @@ import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
 import dan200.computercraft.shared.computer.core.ServerComputer;
 import dan200.computercraft.shared.turtle.blocks.TileTurtle;
+import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.addons.computercraft.base.BaseTurtle;
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.ChatBoxPeripheral;
 import de.srendi.advancedperipherals.common.events.Events;
@@ -11,16 +12,18 @@ import de.srendi.advancedperipherals.common.setup.Blocks;
 import net.minecraft.client.renderer.model.ModelResourceLocation;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
 public class TurtleChatBox extends BaseTurtle<ChatBoxPeripheral> {
+    public static final ResourceLocation ID = new ResourceLocation(AdvancedPeripherals.MOD_ID, "chat_box_turtle");
 
     private static final ModelResourceLocation leftModel = new ModelResourceLocation("advancedperipherals:turtle_chat_box_upgrade_left", "inventory");
     private static final ModelResourceLocation rightModel = new ModelResourceLocation("advancedperipherals:turtle_chat_box_upgrade_right", "inventory");
     private long lastConsumedMessage;
 
     public TurtleChatBox() {
-        super("chat_box_turtle", "turtle.advancedperipherals.chat_box_turtle", new ItemStack(Blocks.CHAT_BOX.get()));
+        super(ID, new ItemStack(Blocks.CHAT_BOX.get()));
         lastConsumedMessage = Events.counter - 1;
     }
 

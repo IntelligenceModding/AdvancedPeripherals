@@ -13,22 +13,11 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.Optional;
 
 public class MemoryCardItem extends BaseItem {
 
     public MemoryCardItem() {
         super(new Properties().stacksTo(1));
-    }
-
-    @Override
-    public Optional<String> getTurtleID() {
-        return Optional.empty();
-    }
-
-    @Override
-    public Optional<String> getPocketID() {
-        return Optional.empty();
     }
 
     @Override
