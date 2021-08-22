@@ -1,5 +1,6 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.turtles;
 
+import dan200.computercraft.api.peripheral.IPeripheral;
 import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
@@ -7,24 +8,13 @@ import de.srendi.advancedperipherals.common.addons.computercraft.base.BaseTurtle
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.ChunkyPeripheral;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
 import de.srendi.advancedperipherals.common.setup.Items;
-import de.srendi.advancedperipherals.common.util.ChunkManager;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.ChunkPos;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.HashSet;
-import java.util.Set;
 
 public class TurtleChunky extends BaseTurtle<ChunkyPeripheral> {
     public static final ResourceLocation ID = new ResourceLocation(AdvancedPeripherals.MOD_ID, "chunky_turtle");
-
-    protected static final Set<ChunkPos> loadedChunks = new HashSet<>();
-    protected ChunkyPeripheral randomPeripheral;
-
-    private int tick;
 
     public TurtleChunky() {
         super(ID, new ItemStack(Items.CHUNK_CONTROLLER.get()));
@@ -42,29 +32,19 @@ public class TurtleChunky extends BaseTurtle<ChunkyPeripheral> {
 
     @Override
     protected ChunkyPeripheral buildPeripheral(@NotNull ITurtleAccess turtle, @NotNull TurtleSide side) {
-        ChunkyPeripheral newPeripheral = new ChunkyPeripheral(turtle, side);
-        if (randomPeripheral == null)
-            randomPeripheral = newPeripheral;
-        return newPeripheral;
+        return new ChunkyPeripheral(turtle, side);
     }
 
     @Override
     public void update(@NotNull ITurtleAccess turtle, @NotNull TurtleSide side) {
+        //Add a chunk to the Chunk Manager every 10 ticks, if it's not already forced.
+        //The turtle can move, so we need to do that.
         super.update(turtle, side);
-        tick++;
-        if (tick % 10 == 0) {
-            //Add a chunk to the Chunk Manager every 10 ticks, if it's not already forced.
-            //The turtle can move, so we need to do that.
-            if (AdvancedPeripheralsConfig.enableChunkyTurtle) {
-                if (!turtle.getLevel().isClientSide && !loadedChunks.contains(turtle.getLevel().getChunk(turtle.getPosition()).getPos()))
-                    forceChunk(turtle, turtle.getLevel().getChunk(turtle.getPosition()).getPos(), true);
+        if (AdvancedPeripheralsConfig.enableChunkyTurtle) {
+            IPeripheral peripheral = turtle.getPeripheral(side);
+            if (peripheral instanceof ChunkyPeripheral chunkyPeripheral) {
+                chunkyPeripheral.updateChunkState();
             }
         }
-    }
-
-    public boolean forceChunk(@NotNull ITurtleAccess turtle, ChunkPos chunkPos, boolean load) {
-        boolean forced = ChunkManager.INSTANCE.forceChunk((ServerLevel) turtle.getLevel(), turtle.getPosition(), chunkPos, load);
-        loadedChunks.add(chunkPos);
-        return forced;
     }
 }

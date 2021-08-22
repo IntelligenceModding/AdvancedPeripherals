@@ -4,6 +4,7 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.*;
+import net.minecraft.world.level.ChunkPos;
 import org.apache.logging.log4j.Level;
 
 import java.io.ByteArrayInputStream;
@@ -78,5 +79,16 @@ public class NBTUtil {
 
     public static BlockPos blockPosFromNBT(CompoundTag nbt) {
         return new BlockPos(nbt.getInt("x"), nbt.getInt("y"), nbt.getInt("z"));
+    }
+
+    public static CompoundTag toNBT(ChunkPos pos) {
+        CompoundTag data = new CompoundTag();
+        data.putInt("x", pos.x);
+        data.putInt("z", pos.z);
+        return data;
+    }
+
+    public static ChunkPos chunkPosFromNBT(CompoundTag nbt) {
+        return new ChunkPos(nbt.getInt("x"), nbt.getInt("z"));
     }
 }

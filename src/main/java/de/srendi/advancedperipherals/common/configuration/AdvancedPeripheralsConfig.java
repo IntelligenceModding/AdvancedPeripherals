@@ -18,6 +18,7 @@ public class AdvancedPeripheralsConfig {
     public static int energyDetectorMaxFlow;
     public static int poweredPeripheralMaxEnergyStored;
     public static int nbtStorageMaxSize;
+    public static int chunkLoadValidTime;
 
     //Features
     public static boolean enableChatBox;
@@ -58,6 +59,7 @@ public class AdvancedPeripheralsConfig {
         final ForgeConfigSpec.IntValue ENERGY_DETECTOR_MAX_FLOW;
         final ForgeConfigSpec.IntValue POWERED_PERIPHERAL_MAX_ENERGY_STORED;
         final ForgeConfigSpec.IntValue NBT_STORAGE_MAX_SIZE;
+        final ForgeConfigSpec.IntValue CHUNK_LOAD_VALID_TIME;
 
         //Features
         final ForgeConfigSpec.BooleanValue ENABLE_CHAT_BOX;
@@ -101,6 +103,7 @@ public class AdvancedPeripheralsConfig {
             ENERGY_DETECTOR_MAX_FLOW = builder.comment("Defines the maximum energy flow of the energy detector.").defineInRange("energyDetectorMaxFlow", Integer.MAX_VALUE, 1, Integer.MAX_VALUE);
             POWERED_PERIPHERAL_MAX_ENERGY_STORED = builder.comment("Defines max energy stored in any powered peripheral").defineInRange("poweredPeripheralMaxEnergyStored", 100_000_000, 1_000_000, Integer.MAX_VALUE);
             NBT_STORAGE_MAX_SIZE = builder.comment("Defines max nbt string that can be stored in nbt storage").defineInRange("nbtStorageMaxSize", 1048576, 0, Integer.MAX_VALUE);
+            CHUNK_LOAD_VALID_TIME = builder.comment("Time in seconds, while loaded chunk can be consider as valid without touch").defineInRange("chunkLoadValidTime", 600, 60, Integer.MAX_VALUE);
 
             builder.pop();
 

@@ -25,6 +25,7 @@ public class ConfigHandler {
         AdvancedPeripheralsConfig.energyDetectorMaxFlow = ConfigHolder.COMMON_CONFIG.ENERGY_DETECTOR_MAX_FLOW.get();
         AdvancedPeripheralsConfig.poweredPeripheralMaxEnergyStored = ConfigHolder.COMMON_CONFIG.POWERED_PERIPHERAL_MAX_ENERGY_STORED.get();
         AdvancedPeripheralsConfig.nbtStorageMaxSize = ConfigHolder.COMMON_CONFIG.NBT_STORAGE_MAX_SIZE.get();
+        AdvancedPeripheralsConfig.chunkLoadValidTime = ConfigHolder.COMMON_CONFIG.CHUNK_LOAD_VALID_TIME.get();
 
         //Features
         AdvancedPeripheralsConfig.enableChatBox = ConfigHolder.COMMON_CONFIG.ENABLE_CHAT_BOX.get();
