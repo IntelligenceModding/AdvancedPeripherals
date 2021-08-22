@@ -186,7 +186,7 @@ public class PlayerDetectorPeripheral extends BasePeripheral {
         return world.getNearbyPlayers(TargetingConditions.forNonCombat().ignoreInvisibilityTesting().ignoreLineOfSight(),
                 null, new AABB(pos.offset(x, y, z), pos.offset(-x, -y, -z))).contains(player);
     }
-    
+
     private boolean isInRange(Player player, BlockPos firstPos, BlockPos secondPos) {
         Level world = getLevel();
 
