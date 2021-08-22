@@ -42,7 +42,7 @@ public class MeBridgePeripheral extends BasePeripheral {
     public static final String TYPE = "meBridge";
 
     private IGridNode node;
-    private IActionSource source;
+    private final IActionSource source;
 
     public MeBridgePeripheral(IActionSource source, PeripheralTileEntity<?> tileEntity) {
         super(TYPE, tileEntity);
@@ -58,7 +58,7 @@ public class MeBridgePeripheral extends BasePeripheral {
         return AdvancedPeripheralsConfig.enableMeBridge;
     }
 
-    @LuaFunction(mainThread = false)
+    @LuaFunction(mainThread = true)
     public final MethodResult craftItem(IComputerAccess computer, IArguments arguments) throws LuaException {
         IMEMonitor<IAEItemStack> monitor = ((IStorageGrid) node.getGrid().getCache(IStorageGrid.class)).getInventory(AppEngApi.getInstance().getApi().storage().getStorageChannel(IItemStorageChannel.class));
         ItemStack itemToCraft = ItemUtil.getItemStack(arguments.getTable(0), monitor);
