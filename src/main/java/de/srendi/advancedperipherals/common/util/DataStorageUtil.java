@@ -16,7 +16,7 @@ public class DataStorageUtil {
     }
 
     public static CompoundTag getDataStorage(@Nonnull IPeripheralTileEntity tileEntity) {
-        return tileEntity.getApSettings();
+        return tileEntity.getPeripheralSettings();
     }
 
     public static CompoundTag getDataStorage(@Nonnull IPocketAccess pocket) {

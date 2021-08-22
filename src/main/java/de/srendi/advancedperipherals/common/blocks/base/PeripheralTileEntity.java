@@ -34,9 +34,9 @@ import java.util.List;
 
 public abstract class PeripheralTileEntity<T extends BasePeripheral> extends BaseContainerBlockEntity implements WorldlyContainer, MenuProvider, IPeripheralTileEntity {
     // TODO: move inventory logic to another tile entity?
-    private static final String AP_SETTINGS_KEY = "AP_SETTINGS";
+    private static final String PERIPHERAL_SETTINGS_KEY = "peripheralSettings";
     private LazyOptional<? extends IItemHandler> handler;
-    protected CompoundTag apSettings;
+    protected CompoundTag peripheralSettings;
     protected NonNullList<ItemStack> items;
 
     protected @Nullable T peripheral = null;
@@ -49,7 +49,7 @@ public abstract class PeripheralTileEntity<T extends BasePeripheral> extends Bas
         } else {
             items = NonNullList.withSize(0, ItemStack.EMPTY);
         }
-        apSettings = new CompoundTag();
+        peripheralSettings = new CompoundTag();
     }
 
     @NotNull
@@ -112,15 +112,15 @@ public abstract class PeripheralTileEntity<T extends BasePeripheral> extends Bas
     public CompoundTag save(CompoundTag compound) {
         super.save(compound);
         ContainerHelper.saveAllItems(compound, items);
-        if (!apSettings.isEmpty())
-            compound.put(AP_SETTINGS_KEY, apSettings);
+        if (!peripheralSettings.isEmpty())
+            compound.put(PERIPHERAL_SETTINGS_KEY, peripheralSettings);
         return compound;
     }
 
     @Override
     public void load(CompoundTag compound) {
         ContainerHelper.loadAllItems(compound, items);
-        apSettings = compound.getCompound(AP_SETTINGS_KEY);
+        peripheralSettings = compound.getCompound(PERIPHERAL_SETTINGS_KEY);
         super.load(compound);
     }
 
@@ -209,8 +209,8 @@ public abstract class PeripheralTileEntity<T extends BasePeripheral> extends Bas
         items.clear();
     }
 
-    public CompoundTag getApSettings() {
-        return apSettings;
+    public CompoundTag getPeripheralSettings() {
+        return peripheralSettings;
     }
 
 }

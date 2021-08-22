@@ -7,7 +7,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
 public interface IPeripheralTileEntity {
-    CompoundTag getApSettings();
+    CompoundTag getPeripheralSettings();
     default <T extends BlockEntity> void handleTick(Level level, BlockState state, BlockEntityType<T> type) {
 
     }

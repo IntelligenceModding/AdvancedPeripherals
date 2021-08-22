@@ -6,7 +6,7 @@ import net.minecraft.world.level.block.Block;
 
 public interface IHarvesterBlock {
 
-    public Tag.Named<Block> getHarvestTag();
+    Tag.Named<Block> getHarvestTag();
 
     default Tag.Named<Block> getToolTag() {
         return BlockTags.MINEABLE_WITH_PICKAXE;
