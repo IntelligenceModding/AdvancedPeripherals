@@ -1,5 +1,6 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.peripheral;
 
+import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.pocket.IPocketAccess;
 import dan200.computercraft.api.turtle.ITurtleAccess;
@@ -7,6 +8,7 @@ import dan200.computercraft.api.turtle.TurtleSide;
 import de.srendi.advancedperipherals.common.addons.computercraft.base.BasePeripheral;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
+import de.srendi.advancedperipherals.common.util.LuaConverter;
 import net.minecraft.entity.EntityPredicate;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -47,10 +49,12 @@ public class PlayerDetectorPeripheral extends BasePeripheral {
     }
 
     @LuaFunction(mainThread = true)
-    public final List<String> getPlayersInCoords(Map<?, ?> posOne, Map<?, ?> posTwo) {
+    public final List<String> getPlayersInCoords(Map<?, ?> firstCoord, Map<?, ?> secondCoord) throws LuaException {
         List<String> playersName = new ArrayList<>();
+        BlockPos firstPos = LuaConverter.convertToBlockPos(firstCoord);
+        BlockPos secondPos = LuaConverter.convertToBlockPos(secondCoord);
         for (ServerPlayerEntity player : getPlayers()) {
-            if (isInRange(player, posOne, posTwo))
+            if (isInRange(player, firstPos, secondPos))
                 playersName.add(player.getName().getString());
         }
         return playersName;
@@ -77,11 +81,13 @@ public class PlayerDetectorPeripheral extends BasePeripheral {
     }
 
     @LuaFunction(mainThread = true)
-    public final boolean isPlayersInCoords(Map<?, ?> posOne, Map<?, ?> posTwo) {
+    public final boolean isPlayersInCoords(Map<?, ?> firstCoord, Map<?, ?> secondCoord) throws LuaException {
         if (getPlayers().isEmpty())
             return false;
+        BlockPos firstPos = LuaConverter.convertToBlockPos(firstCoord);
+        BlockPos secondPos = LuaConverter.convertToBlockPos(secondCoord);
         for (ServerPlayerEntity player : getPlayers()) {
-            if (isInRange(player, posOne, posTwo))
+            if (isInRange(player, firstPos, secondPos))
                 return true;
         }
         return false;
@@ -110,10 +116,12 @@ public class PlayerDetectorPeripheral extends BasePeripheral {
     }
 
     @LuaFunction(mainThread = true)
-    public final boolean isPlayerInCoords(Map<?, ?> posOne, Map<?, ?> posTwo, String username) {
+    public final boolean isPlayerInCoords(Map<?, ?> firstCoord, Map<?, ?> secondCoord, String username) throws LuaException {
         List<String> playersName = new ArrayList<>();
+        BlockPos firstPos = LuaConverter.convertToBlockPos(firstCoord);
+        BlockPos secondPos = LuaConverter.convertToBlockPos(secondCoord);
         for (PlayerEntity player : getPlayers()) {
-            if (isInRange(player, posOne, posTwo)) {
+            if (isInRange(player, firstPos, secondPos)) {
                 playersName.add(player.getName().getString());
             }
         }
@@ -179,12 +187,10 @@ public class PlayerDetectorPeripheral extends BasePeripheral {
                 null, new AxisAlignedBB(pos.offset(x, y, z), pos.offset(-x, -y, -z))).contains(player);
     }
 
-    private boolean isInRange(PlayerEntity player, Map<?, ?> coordOne, Map<?, ?> coordTwo) {
+    private boolean isInRange(PlayerEntity player, BlockPos firstPos, BlockPos secondPos) {
         World world = getWorld();
-        BlockPos posOne = new BlockPos(((Number) coordOne.get("x")).intValue(), ((Number) coordOne.get("y")).intValue(), ((Number) coordOne.get("z")).intValue());
-        BlockPos posTwo = new BlockPos(((Number) coordTwo.get("x")).intValue(), ((Number) coordTwo.get("y")).intValue(), ((Number) coordTwo.get("z")).intValue());
 
         return world.getNearbyPlayers(new EntityPredicate().allowInvulnerable().allowNonAttackable().allowUnseeable().allowSameTeam(),
-                null, new AxisAlignedBB(posOne, posTwo)).contains(player);
+                null, new AxisAlignedBB(firstPos, secondPos)).contains(player);
     }
 }
