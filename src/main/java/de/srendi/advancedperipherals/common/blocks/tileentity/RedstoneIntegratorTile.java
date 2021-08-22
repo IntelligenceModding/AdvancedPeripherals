@@ -1,5 +1,6 @@
 package de.srendi.advancedperipherals.common.blocks.tileentity;
 
+import dan200.computercraft.shared.util.RedstoneUtil;
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.RedstoneIntegratorPeripheral;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
 import de.srendi.advancedperipherals.common.setup.TileEntityTypes;
@@ -10,6 +11,8 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Objects;
 
 public class RedstoneIntegratorTile extends PeripheralTileEntity<RedstoneIntegratorPeripheral> {
 
@@ -26,11 +29,12 @@ public class RedstoneIntegratorTile extends PeripheralTileEntity<RedstoneIntegra
     }
 
     public int getRedstoneInput(Direction direction) {
+        Objects.requireNonNull(level);
         BlockPos neighbourPos = getBlockPos().relative(direction);
-        int power = getLevel().getSignal(neighbourPos, direction);
+        int power = level.getSignal(neighbourPos, direction);
         if (power >= 15) return power;
 
-        BlockState neighbourState = getLevel().getBlockState(neighbourPos);
+        BlockState neighbourState = level.getBlockState(neighbourPos);
         return neighbourState.getBlock() == Blocks.REDSTONE_WIRE
                 ? Math.max(power, neighbourState.getValue(RedstoneWireBlock.POWER)) : power;
     }
@@ -40,8 +44,7 @@ public class RedstoneIntegratorTile extends PeripheralTileEntity<RedstoneIntegra
         this.power[direction.get3DDataValue()] = power;
         if (old != power) {
             if (level != null)
-                level.updateNeighborsAt(getBlockPos().relative(direction),
-                        getLevel().getBlockState(getBlockPos().relative(direction)).getBlock());
+                RedstoneUtil.propagateRedstoneOutput(level, getBlockPos(), direction);
 
             this.setChanged();
         }

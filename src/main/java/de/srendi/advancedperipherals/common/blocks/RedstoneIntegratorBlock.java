@@ -8,7 +8,6 @@ import de.srendi.advancedperipherals.common.setup.TileEntityTypes;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.material.Material;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.state.StateContainer;
 import net.minecraft.tileentity.TileEntity;
@@ -18,6 +17,7 @@ import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorld;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class RedstoneIntegratorBlock extends BaseTileEntityBlock {
@@ -38,13 +38,20 @@ public class RedstoneIntegratorBlock extends BaseTileEntityBlock {
     }
 
     @Override
-    public int getDirectSignal(BlockState blockState, IBlockReader blockAccess, BlockPos pos, Direction side) {
-        RedstoneIntegratorTile tileEntity = (RedstoneIntegratorTile) blockAccess.getBlockEntity(pos);
-        return tileEntity.power[side.getOpposite().get3DDataValue()];
+    public boolean isSignalSource(@NotNull BlockState blockState) {
+        return true;
     }
 
     @Override
-    public int getSignal(BlockState blockState, IBlockReader blockAccess, BlockPos pos, Direction side) {
+    public int getDirectSignal(@NotNull BlockState blockState, IBlockReader blockAccess, @NotNull BlockPos pos, @NotNull Direction side) {
+        TileEntity te = blockAccess.getBlockEntity(pos);
+        if (te instanceof RedstoneIntegratorTile)
+            return ((RedstoneIntegratorTile) te).power[side.getOpposite().get3DDataValue()];
+        return 0;
+    }
+
+    @Override
+    public int getSignal(@NotNull BlockState blockState, @NotNull IBlockReader blockAccess, @NotNull BlockPos pos, @NotNull Direction side) {
         return getDirectSignal(blockState, blockAccess, pos, side);
     }
 
@@ -54,7 +61,7 @@ public class RedstoneIntegratorBlock extends BaseTileEntityBlock {
     }
 
     @Override
-    public BlockState mirror(BlockState state, Mirror mirror) {
+    public @NotNull BlockState mirror(BlockState state, Mirror mirror) {
         return state.setValue(APTileEntityBlock.FACING, mirror.mirror(state.getValue(APTileEntityBlock.FACING)));
     }
 
@@ -66,8 +73,6 @@ public class RedstoneIntegratorBlock extends BaseTileEntityBlock {
     @Nullable
     @Override
     public BlockState getStateForPlacement(BlockItemUseContext context) {
-        PlayerEntity player = context.getPlayer();
-        Direction facing = player.getDirection().getOpposite();
-        return defaultBlockState().setValue(APTileEntityBlock.FACING, facing);
+        return defaultBlockState().setValue(APTileEntityBlock.FACING, context.getNearestLookingDirection().getOpposite());
     }
 }
