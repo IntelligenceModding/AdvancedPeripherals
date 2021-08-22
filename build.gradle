@@ -157,6 +157,7 @@ dependencies {
     // Testing stuff
 //    runtimeOnly fg.deobf("mcjty.theoneprobe:TheOneProbe-1.16:${top_version}")
     runtimeOnly fg.deobf("mezz.jei:jei-${jei_version}")
+    runtimeOnly fg.deobf("curse.maven:crashutilites-${cu_version}")
 
 }
 
