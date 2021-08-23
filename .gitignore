@@ -28,3 +28,4 @@ forge*changelog.txt
 /.github/
 
 1.17
+.env
