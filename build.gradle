@@ -22,11 +22,26 @@ wrapper {
     distributionType = Wrapper.DistributionType.ALL
 }
 
-version = "${mod_version}"
+version = "${mod_version}" + (Boolean.valueOf(System.getProperty("snapshot")) ? "-SNAPSHOT" : "")
 group = 'de.srendi.advancedperipherals'
-archivesBaseName = 'advancedperipherals'
+archivesBaseName = "advancedperipherals-${minecraft_version}"
 
-println('Java: ' + System.getProperty('java.version') + ' JVM: ' + System.getProperty('java.vm.version') + '(' + System.getProperty('java.vendor') + ') Arch: ' + System.getProperty('os.arch'))
+def static getenv(path = ".env") {
+    def env = [:]
+
+    def file = new File(path)
+    if (file.exists()) {
+        file.eachLine { line ->
+            def (name, value) = line.tokenize("=")
+            env[name.trim()] = value.trim()
+        }
+    }
+
+    return env
+}
+
+def secretEnv = getenv()
+
 minecraft {
 
     mappings channel: "${mappings_channel}", version: "${mappings_version}"
@@ -180,15 +195,16 @@ jar.finalizedBy('reobfJar')
 publishing {
     publications {
         mavenJava(MavenPublication) {
+            artifactId archivesBaseName
             artifact jar
         }
     }
     repositories {
         maven {
-            url "https://repo.repsy.io/mvn/siredvin/default"
+            url "https://maven.pkg.github.com/SirEdvin/ProgressivePeripherals"
             credentials {
-                username = System.getenv("USERNAME")
-                password = System.getenv("TOKEN")
+                username = secretEnv["USERNAME"]
+                password = secretEnv["TOKEN"]
             }
         }
     }
