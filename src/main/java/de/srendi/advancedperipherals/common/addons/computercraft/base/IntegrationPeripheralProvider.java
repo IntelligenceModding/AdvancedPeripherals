@@ -47,6 +47,7 @@ public class IntegrationPeripheralProvider implements IPeripheralProvider {
             registerIntegration(new DigitalMinerIntegration());
             registerIntegration(new ChemicalTankIntegration());
             registerIntegration(new GenericMekanismIntegration());
+            registerIntegration(new WasteBarrelIntegration());
         }
         if (ModList.get().isLoaded("botania")) {
             registerIntegration(new ManaPoolIntegration());
