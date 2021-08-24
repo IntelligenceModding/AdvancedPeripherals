@@ -41,6 +41,11 @@ public class ChemicalTankIntegration extends Integration<TileEntityChemicalTank>
     }
 
     @LuaFunction
+    public final String getTier() {
+        return getTileEntity().getTier().name();
+    }
+
+    @LuaFunction
     public final double getFilledPercentage() {
         return getTank().getStored() / (double) getCapacity();
     }
