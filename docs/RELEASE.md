@@ -27,6 +27,6 @@ TOKEN=<github token with access to packages API>
 ### Release process
 
 - Execute `./gradlew patchChangelog` or manually update `CHANGELOG.md` and commit result to repository
-- Run `git tag v<version>` to create git tag and push it to repository via `git push --tags`
+- Run `git tag <minecraft_version>-<version>` to create git tag and push it to repository via `git push --tags`
 - Upload project to curseforge via `./gradlew curseforge`
 - Update `mod_version` to next patch or minor version, what you want
