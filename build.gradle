@@ -1,3 +1,5 @@
+import java.text.SimpleDateFormat
+
 buildscript {
     repositories {
         maven { url = 'https://maven.minecraftforge.net/' }
@@ -37,7 +39,9 @@ def static getenv(path = ".env") {
     if (file.exists()) {
         file.eachLine { line ->
             def (name, value) = line.tokenize("=")
-            env[name.trim()] = value.trim()
+            if (value != null) {
+                env[name.trim()] = value.trim()
+            }
         }
     }
 
@@ -180,6 +184,17 @@ dependencies {
 
 }
 
+changelog {
+    version = "${project.version}"
+    path = "${project.projectDir}/CHANGELOG.md"
+    header = "[${-> version.get()}] - ${new SimpleDateFormat("yyyy-MM-dd").format(new Date())}"
+    headerParserRegex = ~/\d+\.\d+\.\d+/
+    itemPrefix = "-"
+    keepUnreleasedSection = true
+    unreleasedTerm = "[Unreleased]"
+    groups = ["Added", "Changed", "Deprecated", "Removed", "Fixed", "Security"]
+}
+
 jar {
     manifest({
         attributes([
@@ -195,6 +210,32 @@ jar {
 }
 
 jar.finalizedBy('reobfJar')
+
+if (!isSnapshotVersion) {
+    curseforge {
+        apiKey = secretEnv["CURSEFORGE_KEY"] ?: System.getenv("CURSEFORGE_KEY")
+
+        project {
+            id = "431725"
+            releaseType = "beta"
+            mainArtifact(jar) {
+                displayName = "Progressive Peripherals ${version}"
+                relations {
+                    requiredDependency 'advanced-peripherals'
+                    requiredDependency 'cc-tweaked'
+                    requiredDependency 'patchouli'
+                }
+            }
+            try {
+                changelog = "${project.changelog.get(project.version).withHeader(false).toText()}"
+                changelogType = "markdown"
+            } catch (err) {
+                System.out.println(err)
+                changelog = ""
+            }
+        }
+    }
+}
 
 publishing {
     publications {
