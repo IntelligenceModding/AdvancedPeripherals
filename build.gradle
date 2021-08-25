@@ -1,7 +1,6 @@
 buildscript {
     repositories {
         maven { url = 'https://maven.minecraftforge.net/' }
-        jcenter()
         mavenCentral()
     }
     dependencies {
@@ -10,19 +9,24 @@ buildscript {
     }
 }
 
+
+plugins {
+    id 'com.matthewprenger.cursegradle' version '1.4.0'
+    id 'org.jetbrains.changelog' version '1.2.1'
+}
 apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 apply plugin: 'java-library'
-
-apply plugin: 'net.minecraftforge.gradle'
 
 wrapper {
     gradleVersion = '7.1'
     distributionType = Wrapper.DistributionType.ALL
 }
 
-version = "${mod_version}" + (Boolean.valueOf(System.getProperty("snapshot")) ? "-SNAPSHOT" : "")
+def isSnapshotVersion = Boolean.valueOf(System.getProperty("snapshot"))
+
+version = "${mod_version}" + (isSnapshotVersion ? "-SNAPSHOT" : "")
 group = 'de.srendi.advancedperipherals'
 archivesBaseName = "advancedperipherals-${minecraft_version}"
 
@@ -201,7 +205,7 @@ publishing {
     }
     repositories {
         maven {
-            url "https://maven.pkg.github.com/SirEdvin/ProgressivePeripherals"
+            url "https://maven.pkg.github.com/Seniorendi/AdvancedPeripherals"
             credentials {
                 username = secretEnv["USERNAME"]
                 password = secretEnv["TOKEN"]
