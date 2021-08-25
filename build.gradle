@@ -211,27 +211,25 @@ jar {
 
 jar.finalizedBy('reobfJar')
 
-if (!isSnapshotVersion) {
-    curseforge {
-        apiKey = secretEnv["CURSEFORGE_KEY"] ?: System.getenv("CURSEFORGE_KEY") ?: "DUMMY_KEY"
+curseforge {
+    apiKey = secretEnv["CURSEFORGE_KEY"] ?: System.getenv("CURSEFORGE_KEY") ?: "DUMMY_KEY"
 
-        project {
-            id = "431725"
-            releaseType = "${release_type}"
-            mainArtifact(jar) {
-                displayName = "Progressive Peripherals ${version}"
-                relations {
-                    requiredDependency 'cc-tweaked'
-                    optionalDependency 'patchouli'
-                }
+    project {
+        id = "431725"
+        releaseType = "${release_type}"
+        mainArtifact(jar) {
+            displayName = "Advanced Peripherals ${version}"
+            relations {
+                requiredDependency 'cc-tweaked'
+                optionalDependency 'patchouli'
             }
-            try {
-                changelog = "${project.changelog.get(project.version).withHeader(false).toText()}"
-                changelogType = "markdown"
-            } catch (err) {
-                System.out.println(err)
-                changelog = ""
-            }
+        }
+        try {
+            changelog = "${project.changelog.get(project.version).withHeader(false).toText()}"
+            changelogType = "markdown"
+        } catch (err) {
+            System.out.println(err)
+            changelog = ""
         }
     }
 }
