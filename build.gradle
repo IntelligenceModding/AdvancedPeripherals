@@ -207,8 +207,8 @@ publishing {
         maven {
             url "https://maven.pkg.github.com/Seniorendi/AdvancedPeripherals"
             credentials {
-                username = secretEnv["USERNAME"]
-                password = secretEnv["TOKEN"]
+                username = secretEnv["USERNAME"] ?: System.getenv("USERNAME")
+                password = secretEnv["TOKEN"] ?: System.getenv("TOKEN")
             }
         }
     }
