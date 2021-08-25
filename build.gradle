@@ -188,11 +188,11 @@ changelog {
     version = "${project.version}"
     path = "${project.projectDir}/CHANGELOG.md"
     header = "[${-> version.get()}] - ${new SimpleDateFormat("yyyy-MM-dd").format(new Date())}"
-    headerParserRegex = ~/\d+\.\d+\.\d+/
+    headerParserRegex = ~/\d+\.\d+\.\d+\w/
     itemPrefix = "-"
     keepUnreleasedSection = true
     unreleasedTerm = "[Unreleased]"
-    groups = ["Added", "Changed", "Deprecated", "Removed", "Fixed", "Security"]
+    groups = []
 }
 
 jar {
@@ -213,17 +213,16 @@ jar.finalizedBy('reobfJar')
 
 if (!isSnapshotVersion) {
     curseforge {
-        apiKey = secretEnv["CURSEFORGE_KEY"] ?: System.getenv("CURSEFORGE_KEY")
+        apiKey = secretEnv["CURSEFORGE_KEY"] ?: System.getenv("CURSEFORGE_KEY") ?: "DUMMY_KEY"
 
         project {
             id = "431725"
-            releaseType = "beta"
+            releaseType = ${release_type}
             mainArtifact(jar) {
                 displayName = "Progressive Peripherals ${version}"
                 relations {
-                    requiredDependency 'advanced-peripherals'
                     requiredDependency 'cc-tweaked'
-                    requiredDependency 'patchouli'
+                    optionalDependency 'patchouli'
                 }
             }
             try {
