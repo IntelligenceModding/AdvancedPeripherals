@@ -30,15 +30,18 @@ body:
             - "Yes"
             - No
             - LAN
+      validations:
+        required: true
     - type: dropdown
       attributes:
         label: Version
         description: What version of advanced peripherals are you using? 
         multiple: false
         options:
-            - Own compiled build
-            - 0.7r (Latest)
-            - 0.7a
+            - Own compiled build.
+            - 0.7.1r (Latest)
+            - 0.7.0.1r
+            - 0.7r
             - 0.6.7b 
             - 0.6.6b 
             - 0.6r
