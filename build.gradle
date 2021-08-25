@@ -217,7 +217,7 @@ if (!isSnapshotVersion) {
 
         project {
             id = "431725"
-            releaseType = ${release_type}
+            releaseType = "${release_type}"
             mainArtifact(jar) {
                 displayName = "Progressive Peripherals ${version}"
                 relations {
