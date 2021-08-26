@@ -218,7 +218,7 @@ curseforge {
         id = "431725"
         releaseType = "${release_type}"
         mainArtifact(jar) {
-            displayName = "Advanced Peripherals ${version}"
+            displayName = "Advanced Peripherals ${minecraft_version} ${version}"
             relations {
                 requiredDependency 'cc-tweaked'
                 optionalDependency 'patchouli'
