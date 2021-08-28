@@ -1,7 +1,8 @@
+import java.text.SimpleDateFormat
+
 buildscript {
     repositories {
         maven { url = 'https://maven.minecraftforge.net/' }
-        jcenter()
         mavenCentral()
     }
     dependencies {
@@ -10,19 +11,24 @@ buildscript {
     }
 }
 
+
+plugins {
+    id 'com.matthewprenger.cursegradle' version '1.4.0'
+    id 'org.jetbrains.changelog' version '1.2.1'
+}
 apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 apply plugin: 'java-library'
-
-apply plugin: 'net.minecraftforge.gradle'
 
 wrapper {
     gradleVersion = '7.1'
     distributionType = Wrapper.DistributionType.ALL
 }
 
-version = "${mod_version}" + (Boolean.valueOf(System.getProperty("snapshot")) ? "-SNAPSHOT" : "")
+def isSnapshotVersion = Boolean.valueOf(System.getProperty("snapshot"))
+
+version = "${mod_version}" + (isSnapshotVersion ? "-SNAPSHOT" : "")
 group = 'de.srendi.advancedperipherals'
 archivesBaseName = "advancedperipherals-${minecraft_version}"
 
@@ -33,7 +39,9 @@ def static getenv(path = ".env") {
     if (file.exists()) {
         file.eachLine { line ->
             def (name, value) = line.tokenize("=")
-            env[name.trim()] = value.trim()
+            if (value != null) {
+                env[name.trim()] = value.trim()
+            }
         }
     }
 
@@ -176,6 +184,17 @@ dependencies {
 
 }
 
+changelog {
+    version = "${project.version}"
+    path = "${project.projectDir}/CHANGELOG.md"
+    header = "[${-> version.get()}] - ${new SimpleDateFormat("yyyy-MM-dd").format(new Date())}"
+    headerParserRegex = ~/\d+\.\d+\.\d+\w/
+    itemPrefix = "-"
+    keepUnreleasedSection = true
+    unreleasedTerm = "[Unreleased]"
+    groups = []
+}
+
 jar {
     manifest({
         attributes([
@@ -192,6 +211,29 @@ jar {
 
 jar.finalizedBy('reobfJar')
 
+curseforge {
+    apiKey = secretEnv["CURSEFORGE_KEY"] ?: System.getenv("CURSEFORGE_KEY") ?: "DUMMY_KEY"
+
+    project {
+        id = "431725"
+        releaseType = "${release_type}"
+        mainArtifact(jar) {
+            displayName = "Advanced Peripherals ${minecraft_version} ${version}"
+            relations {
+                requiredDependency 'cc-tweaked'
+                optionalDependency 'patchouli'
+            }
+        }
+        try {
+            changelog = "${project.changelog.get(project.version).withHeader(false).toText()}"
+            changelogType = "markdown"
+        } catch (err) {
+            System.out.println(err)
+            changelog = ""
+        }
+    }
+}
+
 publishing {
     publications {
         mavenJava(MavenPublication) {
@@ -201,10 +243,10 @@ publishing {
     }
     repositories {
         maven {
-            url "https://maven.pkg.github.com/SirEdvin/ProgressivePeripherals"
+            url "https://maven.pkg.github.com/Seniorendi/AdvancedPeripherals"
             credentials {
-                username = secretEnv["USERNAME"]
-                password = secretEnv["TOKEN"]
+                username = secretEnv["USERNAME"] ?: System.getenv("USERNAME")
+                password = secretEnv["TOKEN"] ?: System.getenv("TOKEN")
             }
         }
     }
