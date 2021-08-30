@@ -12,7 +12,7 @@ Second, you need to create `.env` file in root folder and put in this file
 CURSEFORGE_KEY=<your_api_key>
 ```
 
-If you also want to do manual upload to AdvancedPeripheral maven repository, you can add next variabels
+If you also want to do manual upload to AdvancedPeripheral maven repository, you can add next variables
 
 ```
 USERNAME=<github username>
