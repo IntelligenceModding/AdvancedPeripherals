@@ -22,3 +22,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - RS and ME Bridge related issues
 - redstone integrator block updates
 - peripheral name of the player detector turtle
+- Compatability with CC:T 1.98.2
