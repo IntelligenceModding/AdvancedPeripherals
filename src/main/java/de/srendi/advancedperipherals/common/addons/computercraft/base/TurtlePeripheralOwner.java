@@ -1,10 +1,10 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.base;
 
 import com.mojang.authlib.GameProfile;
+import dan200.computercraft.ComputerCraft;
 import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
-import dan200.computercraft.api.turtle.event.TurtleBlockEvent;
-import dan200.computercraft.shared.turtle.core.TurtlePlayer;
+import dan200.computercraft.shared.TurtlePermissions;
 import dan200.computercraft.shared.util.InventoryUtil;
 import de.srendi.advancedperipherals.common.util.DataStorageUtil;
 import de.srendi.advancedperipherals.common.util.fakeplayer.APFakePlayer;
@@ -15,7 +15,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.common.MinecraftForge;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -119,9 +118,17 @@ public class TurtlePeripheralOwner implements IPeripheralOwner {
 
     @Override
     public boolean isMovementPossible(@Nonnull Level level, @Nonnull BlockPos pos) {
-        TurtlePlayer turtlePlayer = TurtlePlayer.getWithPosition(turtle, getPos(), turtle.getDirection());
-        TurtleBlockEvent.Move moveEvent = new TurtleBlockEvent.Move(turtle, turtlePlayer, level, pos);
-        return !MinecraftForge.EVENT_BUS.post(moveEvent);
+        return FakePlayerProviderTurtle.withPlayer(turtle, player -> {
+            if (level.isOutsideBuildHeight(pos))
+                return false;
+            if (!level.isInWorldBounds(pos))
+                return false;
+            if (ComputerCraft.turtlesObeyBlockProtection && !TurtlePermissions.isBlockEnterable(level, pos, player))
+                return false;
+            if (!level.isAreaLoaded(pos, 0))
+                return false;
+            return level.getWorldBorder().isWithinBounds(pos);
+        });
     }
 
     @Override

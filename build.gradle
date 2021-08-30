@@ -184,6 +184,7 @@ curseforge {
                 optionalDependency 'patchouli'
             }
         }
+        addGameVersion "${minecraft_version}"
         try {
             changelog = "${project.changelog.get(project.version).withHeader(false).toText()}"
             changelogType = "markdown"
