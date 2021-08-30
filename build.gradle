@@ -181,7 +181,7 @@ curseforge {
             displayName = "Advanced Peripherals ${minecraft_version} ${version}"
             relations {
                 requiredDependency 'cc-tweaked'
-                optionalDependency 'patchouli'
+                tool 'curios'
             }
         }
         addGameVersion "${minecraft_version}"
