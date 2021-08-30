@@ -13,3 +13,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Incorrect links to automata cores documentation
+
+## [0.7.1r] - 2021-08-23
+
+### Fixed
+
+- chunky turtle related issues
+- RS and ME Bridge related issues
+- redstone integrator block updates
+- peripheral name of the player detector turtle
