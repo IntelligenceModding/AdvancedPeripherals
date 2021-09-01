@@ -1,4 +1,5 @@
 import java.text.SimpleDateFormat
+import com.modrinth.minotaur.TaskModrinthUpload
 
 buildscript {
     repositories {
@@ -15,6 +16,7 @@ buildscript {
 plugins {
     id 'com.matthewprenger.cursegradle' version '1.4.0'
     id 'org.jetbrains.changelog' version '1.2.1'
+    id "com.modrinth.minotaur" version "1.2.1"
 }
 apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'eclipse'
@@ -49,6 +51,8 @@ def static getenv(path = ".env") {
 }
 
 def secretEnv = getenv()
+def curseforgeKey = secretEnv["CURSEFORGE_KEY"] ?: System.getenv("CURSEFORGE_KEY") ?: ''
+def modrinthKey = secretEnv["MODRINTH_KEY"] ?: System.getenv("MODRINTH_KEY")
 
 minecraft {
 
@@ -231,6 +235,33 @@ curseforge {
             System.out.println(err)
             changelog = ""
         }
+    }
+}
+
+
+task publishModrinth (type: TaskModrinthUpload) {
+    dependsOn('assemble', 'reobfJar')
+    onlyIf {
+        modrinthKey
+    }
+
+    token = modrinthKey
+    projectId = 'SOw6jD6x'
+    uploadFile = jar
+
+    versionNumber = project.version
+    versionName = "Advanced Peripherals ${minecraft_version} ${version}"
+    versionType = release_type
+
+    addGameVersion(minecraft_version)
+    addLoader('forge')
+
+    try {
+        changelog = "${project.changelog.get(project.version).withHeader(false).toText()}"
+        changelogType = "markdown"
+    } catch (err) {
+        System.out.println(err)
+        changelog = ""
     }
 }
 
