@@ -18,20 +18,18 @@ import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.lua.MethodResult;
 import dan200.computercraft.api.peripheral.IComputerAccess;
-import dan200.computercraft.api.peripheral.IPeripheral;
 import de.srendi.advancedperipherals.common.addons.appliedenergistics.AppEngApi;
 import de.srendi.advancedperipherals.common.addons.appliedenergistics.CraftJob;
 import de.srendi.advancedperipherals.common.addons.computercraft.base.BasePeripheral;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
+import de.srendi.advancedperipherals.common.util.InventoryUtil;
 import de.srendi.advancedperipherals.common.util.ItemUtil;
 import de.srendi.advancedperipherals.common.util.ServerWorker;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Direction;
-import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -56,6 +54,74 @@ public class MeBridgePeripheral extends BasePeripheral {
     @Override
     public boolean isEnabled() {
         return AdvancedPeripheralsConfig.enableMeBridge;
+    }
+
+    protected int _exportItem(@NotNull IArguments arguments, @NotNull IItemHandler targetInventory) throws LuaException {
+        AppEngApi appEngApi = AppEngApi.getInstance();
+        IMEMonitor<IAEItemStack> monitor = ((IStorageGrid) node.getGrid().getCache(IStorageGrid.class)).getInventory(appEngApi.getApi().storage().getStorageChannel(IItemStorageChannel.class));
+
+        ItemStack stack = ItemUtil.getItemStack(arguments.getTable(0), monitor);
+        IAEItemStack targetStack = AEItemStack.fromItemStack(stack);
+        if (targetStack == null)
+            throw new LuaException("Illegal AE2 state ...");
+
+        IAEItemStack extracted = monitor.extractItems(targetStack, Actionable.SIMULATE, source);
+        if (extracted == null)
+            throw new LuaException("Item " + stack + " does not exists in the ME system or the system is offline");
+
+        int transferableAmount = (int) extracted.getStackSize();
+
+        ItemStack remaining = ItemHandlerHelper.insertItemStacked(targetInventory, extracted.createItemStack(), true);
+        if (!remaining.isEmpty()) {
+            transferableAmount -= remaining.getCount();
+        }
+
+        if (transferableAmount == 0)
+            return transferableAmount;
+
+        targetStack.setStackSize(transferableAmount);
+
+        extracted = monitor.extractItems(targetStack, Actionable.MODULATE, source);
+        remaining = ItemHandlerHelper.insertItemStacked(targetInventory, extracted.createItemStack(), false);
+
+        if (!remaining.isEmpty()) {
+            monitor.injectItems(AEItemStack.fromItemStack(remaining), Actionable.MODULATE, source);
+        }
+        return transferableAmount;
+    }
+
+    protected int _importItem(@NotNull IArguments arguments, @NotNull IItemHandler targetInventory) throws LuaException {
+        IMEMonitor<IAEItemStack> monitor = ((IStorageGrid) node.getGrid().getCache(IStorageGrid.class)).getInventory(AppEngApi.getInstance().getApi().storage().getStorageChannel(IItemStorageChannel.class));
+        ItemStack stack = ItemUtil.getItemStack(arguments.getTable(0), monitor);
+        IAEItemStack aeStack = AEItemStack.fromItemStack(stack);
+        if (aeStack == null)
+            throw new LuaException("Illegal AE2 state ...");
+
+        IAEItemStack remaining = monitor.injectItems(aeStack, Actionable.SIMULATE, source);
+        if (remaining != null && remaining.getStackSize() != 0)
+            aeStack.setStackSize(aeStack.getStackSize() - remaining.getStackSize());
+
+        if (aeStack.getStackSize() == 0)
+            return 0;
+
+
+        int amount = (int) aeStack.getStackSize();
+        int transferableAmount = 0;
+
+        for (int i = 0; i < targetInventory.getSlots(); i++) {
+            if (targetInventory.getStackInSlot(i).sameItem(stack)) {
+                int countInSlot = targetInventory.getStackInSlot(i).getCount();
+                int extractCount = Math.min(countInSlot, amount);
+                IAEItemStack extractionStack = aeStack.copy();
+                extractionStack.setStackSize(extractCount);
+                remaining = monitor.injectItems(extractionStack, Actionable.MODULATE, source);
+                if (remaining != null)
+                    extractCount -= remaining.getStackSize();
+                targetInventory.extractItem(i, extractCount, false);
+                transferableAmount += extractCount;
+            }
+        }
+        return transferableAmount;
     }
 
     @LuaFunction(mainThread = true)
@@ -92,168 +158,42 @@ public class MeBridgePeripheral extends BasePeripheral {
     }
 
     @LuaFunction(mainThread = true)
-    public final int exportItem(IArguments arguments) throws LuaException {
-        IMEMonitor<IAEItemStack> monitor = ((IStorageGrid) node.getGrid().getCache(IStorageGrid.class)).getInventory(AppEngApi.getInstance().getApi().storage().getStorageChannel(IItemStorageChannel.class));
-        ItemStack stack = ItemUtil.getItemStack(arguments.getTable(0), monitor);
-        IAEItemStack aeStack = AppEngApi.getInstance().findAEStackFromItemStack(monitor, stack);
-        if (aeStack == null)
-            throw new LuaException("Item " + stack + " does not exists in the ME system or the system is offline");
-        Direction direction = validateSide(arguments.getString(1));
-
-        TileEntity targetEntity = owner.getWorld().getBlockEntity(owner.getPos().relative(direction));
-        IItemHandler inventory = targetEntity != null ? targetEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, direction.getOpposite()).resolve().orElse(null) : null;
-        if (inventory == null)
-            throw new LuaException("No valid inventory at " + direction);
-
-        aeStack.setStackSize(stack.getCount());
-        IAEItemStack extracted = monitor.extractItems(aeStack, Actionable.SIMULATE, source);
-        if (extracted == null)
-            throw new LuaException("Item " + stack + " does not exists in the ME system or the system is offline");
-
-        int transferableAmount = (int) extracted.getStackSize();
-
-        ItemStack remaining = ItemHandlerHelper.insertItemStacked(inventory, extracted.createItemStack(), true);
-        if (!remaining.isEmpty()) {
-            transferableAmount -= remaining.getCount();
-        }
-
-        aeStack.setStackSize(transferableAmount);
-        extracted = monitor.extractItems(aeStack, Actionable.MODULATE, source);
-        remaining = ItemHandlerHelper.insertItemStacked(inventory, extracted.createItemStack(), false);
-
-        if (!remaining.isEmpty()) {
-            aeStack.setStackSize(remaining.getCount());
-            monitor.injectItems(aeStack, Actionable.MODULATE, source);
-        }
-        return transferableAmount;
-    }
-
-    @LuaFunction(mainThread = true)
-    public final int importItem(IArguments arguments) throws LuaException {
-        IMEMonitor<IAEItemStack> monitor = ((IStorageGrid) node.getGrid().getCache(IStorageGrid.class)).getInventory(AppEngApi.getInstance().getApi().storage().getStorageChannel(IItemStorageChannel.class));
-        ItemStack stack = ItemUtil.getItemStack(arguments.getTable(0), monitor);
-        IAEItemStack aeStack = AEItemStack.fromItemStack(stack);
-        if (aeStack == null)
-            throw new LuaException("Item " + stack + " does not exists in the ME system or the system is offline");
-        Direction direction = validateSide(arguments.getString(1));
-
-        TileEntity targetEntity = owner.getWorld().getBlockEntity(owner.getPos().relative(direction));
-        IItemHandler inventory = targetEntity != null ? targetEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, direction.getOpposite()).resolve().orElse(null) : null;
-        if (inventory == null)
-            throw new LuaException("No valid inventory at " + direction);
-
-        int amount = stack.getCount();
-        int transferableAmount = 0;
-
-        for (int i = 0; i < inventory.getSlots(); i++) {
-            if (inventory.getStackInSlot(i).sameItem(stack)) {
-                if (inventory.getStackInSlot(i).getCount() >= amount) {
-                    transferableAmount += amount;
-                    aeStack.setStackSize(amount);
-                    monitor.injectItems(aeStack, Actionable.MODULATE, source);
-                    inventory.extractItem(i, amount, false);
-                    break;
-                } else {
-                    amount -= inventory.getStackInSlot(i).getCount();
-                    transferableAmount += inventory.getStackInSlot(i).getCount();
-                    aeStack.setStackSize(inventory.getStackInSlot(i).getCount());
-                    monitor.injectItems(aeStack, Actionable.MODULATE, source);
-                    inventory.extractItem(i, inventory.getStackInSlot(i).getCount(), false);
-                }
-            }
-        }
-        return transferableAmount;
+    public final int exportItem(@NotNull IArguments arguments) throws LuaException {
+        IItemHandler inventory = InventoryUtil.getHandlerFromDirection(arguments.getString(1), owner);
+        return _exportItem(arguments, inventory);
     }
 
     @LuaFunction(mainThread = true)
     public final int exportItemToPeripheral(IComputerAccess computer, IArguments arguments) throws LuaException {
-        IMEMonitor<IAEItemStack> monitor = ((IStorageGrid) node.getGrid().getCache(IStorageGrid.class)).getInventory(AppEngApi.getInstance().getApi().storage().getStorageChannel(IItemStorageChannel.class));
-        ItemStack stack = ItemUtil.getItemStack(arguments.getTable(0), monitor);
-        IAEItemStack aeStack = AEItemStack.fromItemStack(stack);
-        if (aeStack == null)
-            throw new LuaException("Item " + stack + " does not exists in the ME system or the system is offline");
+        IItemHandler inventory = InventoryUtil.getHandlerFromName(computer, arguments.getString(1));
+        return _exportItem(arguments, inventory);
+    }
 
-        IPeripheral chest = computer.getAvailablePeripheral(arguments.getString(1));
-        if (chest == null)
-            throw new LuaException("No valid chest for " + arguments.getString(1));
-
-        TileEntity targetEntity = (TileEntity) chest.getTarget();
-        IItemHandler inventory = targetEntity != null ? targetEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).resolve().orElse(null) : null;
-        if (inventory == null)
-            throw new LuaException("No valid inventory for " + arguments.getString(1));
-
-        aeStack.setStackSize(stack.getCount());
-        IAEItemStack extracted = monitor.extractItems(aeStack, Actionable.SIMULATE, source);
-        if (extracted == null)
-            throw new LuaException("Item " + stack + " does not exists in the ME system or the system is offline");
-
-        int transferableAmount = (int) extracted.getStackSize();
-
-        ItemStack remaining = ItemHandlerHelper.insertItemStacked(inventory, extracted.createItemStack(), true);
-        if (!remaining.isEmpty()) {
-            transferableAmount -= remaining.getCount();
-        }
-
-        aeStack.setStackSize(transferableAmount);
-        extracted = monitor.extractItems(aeStack, Actionable.MODULATE, source);
-        remaining = ItemHandlerHelper.insertItemStacked(inventory, extracted.createItemStack(), false);
-
-        if (!remaining.isEmpty()) {
-            aeStack.setStackSize(remaining.getCount());
-            monitor.injectItems(aeStack, Actionable.MODULATE, source);
-        }
-        return transferableAmount;
+    @LuaFunction(mainThread = true)
+    public final int importItem(IArguments arguments) throws LuaException {
+        IItemHandler inventory = InventoryUtil.getHandlerFromDirection(arguments.getString(1), owner);
+        return _importItem(arguments, inventory);
     }
 
     @LuaFunction(mainThread = true)
     public final int importItemFromPeripheral(IComputerAccess computer, IArguments arguments) throws LuaException {
-        IMEMonitor<IAEItemStack> monitor = ((IStorageGrid) node.getGrid().getCache(IStorageGrid.class)).getInventory(AppEngApi.getInstance().getApi().storage().getStorageChannel(IItemStorageChannel.class));
-        ItemStack stack = ItemUtil.getItemStack(arguments.getTable(0), monitor);
-        IAEItemStack aeStack = AEItemStack.fromItemStack(stack);
-        if (aeStack == null)
-            throw new LuaException("Item " + stack + " does not exists in the ME system or the system is offline");
-
-        IPeripheral chest = computer.getAvailablePeripheral(arguments.getString(1));
-        if (chest == null)
-            throw new LuaException("Peripheral not found" + arguments.getString(1));
-
-        TileEntity targetEntity = (TileEntity) chest.getTarget();
-        IItemHandler inventory = targetEntity != null ? targetEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).resolve().orElse(null) : null;
-        if (inventory == null)
-            throw new LuaException("No valid inventory for " + arguments.getString(1));
-
-        int amount = stack.getCount();
-        int transferableAmount = 0;
-
-        for (int i = 0; i < inventory.getSlots(); i++) {
-            if (inventory.getStackInSlot(i).sameItem(stack)) {
-                if (inventory.getStackInSlot(i).getCount() >= amount) {
-                    transferableAmount += amount;
-                    aeStack.setStackSize(amount);
-                    monitor.injectItems(aeStack, Actionable.MODULATE, source);
-                    inventory.extractItem(i, amount, false);
-                    break;
-                } else {
-                    amount -= inventory.getStackInSlot(i).getCount();
-                    transferableAmount += inventory.getStackInSlot(i).getCount();
-                    aeStack.setStackSize(inventory.getStackInSlot(i).getCount());
-                    monitor.injectItems(aeStack, Actionable.MODULATE, source);
-                    inventory.extractItem(i, inventory.getStackInSlot(i).getCount(), false);
-                }
-            }
-        }
-        return transferableAmount;
+        IItemHandler inventory = InventoryUtil.getHandlerFromName(computer, arguments.getString(1));
+        return _importItem(arguments, inventory);
     }
 
     @LuaFunction(mainThread = true)
-    public final Object[] getItem(IArguments arguments) throws LuaException {
-        IMEMonitor<IAEItemStack> monitor = ((IStorageGrid) node.getGrid().getCache(IStorageGrid.class)).getInventory(AppEngApi.getInstance().getApi().storage().getStorageChannel(IItemStorageChannel.class));
+    public final MethodResult getItem(IArguments arguments) throws LuaException {
+        AppEngApi INSTANCE = AppEngApi.getInstance();
+        IMEMonitor<IAEItemStack> monitor = ((IStorageGrid) node.getGrid().getCache(IStorageGrid.class)).getInventory(INSTANCE.getApi().storage().getStorageChannel(IItemStorageChannel.class));
         ItemStack stack = ItemUtil.getItemStack(arguments.getTable(0), monitor);
         IAEItemStack aeStack = AEItemStack.fromItemStack(stack);
         if (aeStack == null)
-            return new Object[]{}; //Return nothing instead of crashing the program
-        //throw new LuaException("Item " + stack + " does not exists in the ME system or the system is offline");
-        return new Object[]{AppEngApi.getInstance().getMapFromStack(aeStack)};
+            return MethodResult.of((Object) null);
+        for (IAEItemStack potentialStack : monitor.getStorageList()) {
+            if (potentialStack.isSameType(aeStack))
+                return MethodResult.of(INSTANCE.getMapFromStack(potentialStack));
+        }
+        return MethodResult.of((Object) null);
     }
 
     @LuaFunction(mainThread = true)
