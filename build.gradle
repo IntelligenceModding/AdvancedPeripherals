@@ -307,7 +307,7 @@ jar {
 jar.finalizedBy('reobfJar')
 
 curseforge {
-    apiKey = secretEnv["CURSEFORGE_KEY"] ?: System.getenv("CURSEFORGE_KEY") ?: "DUMMY_KEY"
+    apiKey = curseforgeKey
 
     project {
         id = "431725"
