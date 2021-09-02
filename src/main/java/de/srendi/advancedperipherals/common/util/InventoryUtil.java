@@ -5,8 +5,12 @@ import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.MethodResult;
 import dan200.computercraft.api.peripheral.IComputerAccess;
 import dan200.computercraft.api.peripheral.IPeripheral;
+import de.srendi.advancedperipherals.common.addons.computercraft.base.IPeripheralOwner;
+import net.minecraft.core.Direction;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.CapabilityItemHandler;
@@ -18,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -70,11 +75,7 @@ public class InventoryUtil {
         if (fromSlot < 1 || fromSlot > source.getSlots())
             return MethodResult.of(null, "From slot is incorrect");
         // Find location to transfer to
-        IPeripheral location = access.getAvailablePeripheral(toName);
-        if (location == null) throw new LuaException("Target '" + toName + "' does not exist");
-
-        IItemHandler to = extractHandler(location.getTarget());
-        if (to == null) throw new LuaException("Target '" + toName + "' is not an inventory");
+        IItemHandler to = getHandlerFromName(access, toName);
         if (toSlot != -1 && (toSlot < 1 || toSlot > to.getSlots()))
             return MethodResult.of(null, "To slot is incorrect");
 
@@ -92,15 +93,37 @@ public class InventoryUtil {
         if (toSlot != -1 && (toSlot < 1 || toSlot > source.getSlots()))
             return MethodResult.of(null, "To slot is incorrect");
         // Find location to transfer to
-        IPeripheral location = access.getAvailablePeripheral(fromName);
-        if (location == null) throw new LuaException("Target '" + fromName + "' does not exist");
 
-        IItemHandler from = extractHandler(location.getTarget());
-        if (from == null) throw new LuaException("Target '" + fromName + "' is not an inventory");
+        IItemHandler from = getHandlerFromName(access, fromName);
         if (fromSlot < 1 || fromSlot > from.getSlots())
             return MethodResult.of(null, "From slot is incorrect");
         if (limit <= 0)
             return MethodResult.of(0);
         return MethodResult.of(InventoryUtil.moveItem(from, fromSlot - 1, source, toSlot - 1, limit));
+    }
+
+    public static @NotNull IItemHandler getHandlerFromName(@NotNull IComputerAccess access, String name) throws LuaException {
+        IPeripheral location = access.getAvailablePeripheral(name);
+        if (location == null)
+            throw new LuaException("Target '" + name + "' does not exist");
+
+        IItemHandler handler = extractHandler(location.getTarget());
+        if (handler == null)
+            throw new LuaException("Target '" + name + "' is not an inventory");
+        return handler;
+    }
+
+    public static @NotNull IItemHandler getHandlerFromDirection(@NotNull String direction, @NotNull IPeripheralOwner owner) throws LuaException {
+        Level level = owner.getLevel();
+        Objects.requireNonNull(level);
+        Direction relativeDirection = LuaConverter.getDirection(owner.getFacing(), direction);
+        BlockEntity target = level.getBlockEntity(owner.getPos().relative(relativeDirection));
+        if (target == null)
+            throw new LuaException("Target '" + direction + "' is empty or defenetly not inventory");
+
+        IItemHandler handler = extractHandler(target);
+        if (handler == null)
+            throw new LuaException("Target '" + direction + "' is not an inventory");
+        return handler;
     }
 }

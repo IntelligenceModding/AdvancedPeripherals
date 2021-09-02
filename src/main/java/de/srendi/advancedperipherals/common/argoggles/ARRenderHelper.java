@@ -23,7 +23,7 @@ public class ARRenderHelper extends GuiComponent {
     }
 
     public static int fixAlpha(int color) {
-        return (color & -67108864) == 0 ? color | -16777216 : color;
+        return (color & 0xFF000000) == 0 ? color | 0xFF000000 : color;
     }
 
     @Override
