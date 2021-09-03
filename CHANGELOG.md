@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Incorrect links to automata cores documentation
+- Several ME bugs with import/export with partially full cases
 
 ## [0.7.1r] - 2021-08-23
 

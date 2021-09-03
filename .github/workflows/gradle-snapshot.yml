@@ -45,13 +45,7 @@ jobs:
           TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build with Gradle
-        run: ./gradlew build -Dsnapshot=true
-        env:
-          USERNAME: ${{ github.actor }}
-          TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Test with Gradle
-        run: ./gradlew test
+        run: xvfb-run ./gradlew build -Dsnapshot=true
         env:
           USERNAME: ${{ github.actor }}
           TOKEN: ${{ secrets.GITHUB_TOKEN }}

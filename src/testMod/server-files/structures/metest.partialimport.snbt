@@ -1,0 +1,369 @@
+{
+    size: [5, 2, 4],
+    entities: [],
+    blocks: [
+        {
+            pos: [0, 0, 0],
+            state: 0
+        },
+        {
+            pos: [0, 0, 2],
+            state: 0
+        },
+        {
+            pos: [0, 0, 3],
+            state: 0
+        },
+        {
+            pos: [1, 0, 0],
+            state: 0
+        },
+        {
+            pos: [1, 0, 2],
+            state: 0
+        },
+        {
+            pos: [1, 0, 3],
+            state: 0
+        },
+        {
+            pos: [2, 0, 0],
+            state: 0
+        },
+        {
+            pos: [3, 0, 0],
+            state: 0
+        },
+        {
+            pos: [3, 0, 2],
+            state: 0
+        },
+        {
+            pos: [3, 0, 3],
+            state: 0
+        },
+        {
+            pos: [4, 0, 0],
+            state: 0
+        },
+        {
+            pos: [4, 0, 2],
+            state: 0
+        },
+        {
+            pos: [4, 0, 3],
+            state: 0
+        },
+        {
+            pos: [0, 1, 0],
+            state: 0
+        },
+        {
+            pos: [0, 1, 1],
+            state: 0
+        },
+        {
+            pos: [0, 1, 2],
+            state: 0
+        },
+        {
+            pos: [0, 1, 3],
+            state: 0
+        },
+        {
+            pos: [1, 1, 0],
+            state: 0
+        },
+        {
+            pos: [1, 1, 1],
+            state: 0
+        },
+        {
+            pos: [1, 1, 2],
+            state: 0
+        },
+        {
+            pos: [1, 1, 3],
+            state: 0
+        },
+        {
+            pos: [2, 1, 0],
+            state: 0
+        },
+        {
+            pos: [2, 1, 1],
+            state: 0
+        },
+        {
+            pos: [2, 1, 2],
+            state: 0
+        },
+        {
+            pos: [2, 1, 3],
+            state: 0
+        },
+        {
+            pos: [3, 1, 0],
+            state: 0
+        },
+        {
+            pos: [3, 1, 1],
+            state: 0
+        },
+        {
+            pos: [3, 1, 2],
+            state: 0
+        },
+        {
+            pos: [3, 1, 3],
+            state: 0
+        },
+        {
+            pos: [4, 1, 0],
+            state: 0
+        },
+        {
+            pos: [4, 1, 2],
+            state: 0
+        },
+        {
+            pos: [4, 1, 3],
+            state: 0
+        },
+        {
+            nbt: {
+                inv: {
+                    item0: {
+                        id: "appliedenergistics2:1k_storage_cell",
+                        Count: 1b,
+                        tag: {
+                            "@0": 8096,
+                            "@1": 1,
+                            ic: 8096,
+                            it: 1s,
+                            "#0": {
+                                cnt: 8096L,
+                                craft: 0b,
+                                is: {
+                                    id: "minecraft:cobblestone",
+                                    Count: 1b
+                                },
+                                req: 0L
+                            },
+                            "#1": {
+                                cnt: 1L,
+                                craft: 0b,
+                                is: {
+                                    id: "advancedperipherals:me_bridge",
+                                    Count: 1b
+                                },
+                                req: 0L
+                            }
+                        }
+                    },
+                    item2: {},
+                    item1: {},
+                    item8: {},
+                    item7: {},
+                    item9: {},
+                    item4: {},
+                    item3: {},
+                    item6: {},
+                    item5: {}
+                },
+                proxy: {
+                    p: 0,
+                    g: 30L,
+                    k: -1L
+                },
+                forward: "NORTH",
+                id: "appliedenergistics2:drive",
+                up: "UP",
+                priority: 0
+            },
+            pos: [0, 0, 1],
+            state: 1
+        },
+        {
+            nbt: {
+                hasRedstone: 2,
+                "def:6": {
+                    id: "appliedenergistics2:fluix_glass_cable",
+                    Count: 1b
+                },
+                "extra:2": {
+                    part: {
+                        p: 0,
+                        g: 30L,
+                        k: -1L
+                    },
+                    spin: 0b,
+                    SORT_BY: "NAME",
+                    VIEW_MODE: "ALL",
+                    viewCell: {
+                        Size: 5,
+                        Items: [
+                            {
+                                Slot: 0,
+                                id: "appliedenergistics2:view_cell",
+                                Count: 1b
+                            }
+                        ]
+                    },
+                    SORT_DIRECTION: "ASCENDING"
+                },
+                id: "appliedenergistics2:cable_bus",
+                "def:2": {
+                    id: "appliedenergistics2:terminal",
+                    Count: 1b
+                },
+                "extra:6": {
+                    part: {
+                        p: 0,
+                        g: 30L,
+                        k: -1L
+                    }
+                }
+            },
+            pos: [1, 0, 1],
+            state: 2
+        },
+        {
+            nbt: {
+                proxy: {
+                    p: 0,
+                    g: 30L,
+                    k: -1L
+                },
+                forward: "NORTH",
+                id: "appliedenergistics2:controller",
+                up: "UP",
+                internalCurrentPower: 0.0d
+            },
+            pos: [2, 0, 1],
+            state: 3
+        },
+        {
+            nbt: {
+                hasRedstone: 2,
+                "def:6": {
+                    id: "appliedenergistics2:fluix_glass_cable",
+                    Count: 1b
+                },
+                id: "appliedenergistics2:cable_bus",
+                "extra:6": {
+                    part: {
+                        p: 0,
+                        g: 30L,
+                        k: -1L
+                    }
+                }
+            },
+            pos: [2, 0, 2],
+            state: 4
+        },
+        {
+            nbt: {
+                proxy: {
+                    p: 0,
+                    g: 30L,
+                    k: -1L
+                },
+                forward: "WEST",
+                id: "appliedenergistics2:creative_energy_cell",
+                up: "UP"
+            },
+            pos: [2, 0, 3],
+            state: 5
+        },
+        {
+            nbt: {
+                ForgeData: {
+                    CustomName: "[ME Bridge]"
+                },
+                Items: [],
+                id: "advancedperipherals:me_bridge"
+            },
+            pos: [3, 0, 1],
+            state: 6
+        },
+        {
+            nbt: {
+                Label: "metest.partialimport",
+                id: "computercraft:computer_advanced",
+                ComputerId: 0,
+                On: 1b
+            },
+            pos: [4, 0, 1],
+            state: 7
+        },
+        {
+            nbt: {
+                Items: [
+                    {
+                        Slot: 0b,
+                        id: "minecraft:cobblestone",
+                        Count: 64b
+                    }
+                ],
+                id: "minecraft:chest"
+            },
+            pos: [4, 1, 1],
+            state: 8
+        }
+    ],
+    palette: [
+        {
+            Name: "minecraft:air"
+        },
+        {
+            Name: "appliedenergistics2:drive"
+        },
+        {
+            Properties: {
+                waterlogged: "false",
+                light_level: "9"
+            },
+            Name: "appliedenergistics2:cable_bus"
+        },
+        {
+            Properties: {
+                state: "online",
+                type: "block"
+            },
+            Name: "appliedenergistics2:controller"
+        },
+        {
+            Properties: {
+                waterlogged: "false",
+                light_level: "0"
+            },
+            Name: "appliedenergistics2:cable_bus"
+        },
+        {
+            Name: "appliedenergistics2:creative_energy_cell"
+        },
+        {
+            Properties: {
+                facing: "south"
+            },
+            Name: "advancedperipherals:me_bridge"
+        },
+        {
+            Properties: {
+                facing: "north",
+                state: "blinking"
+            },
+            Name: "computercraft:computer_advanced"
+        },
+        {
+            Properties: {
+                waterlogged: "false",
+                facing: "north",
+                type: "single"
+            },
+            Name: "minecraft:chest"
+        }
+    ],
+    DataVersion: 2586
+}
