@@ -1,6 +1,6 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.operations;
 
-import de.srendi.advancedperipherals.common.addons.computercraft.base.IAutomataCoreTier;
+import de.srendi.advancedperipherals.api.metaphysics.IAutomataCoreTier;
 import net.minecraftforge.common.ForgeConfigSpec;
 
 public enum AutomataCoreTier implements IAutomataCoreTier {

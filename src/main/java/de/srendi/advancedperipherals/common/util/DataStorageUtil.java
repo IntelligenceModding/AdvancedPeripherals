@@ -3,8 +3,8 @@ package de.srendi.advancedperipherals.common.util;
 import dan200.computercraft.api.pocket.IPocketAccess;
 import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
-import de.srendi.advancedperipherals.common.addons.computercraft.base.IPeripheralOwner;
-import de.srendi.advancedperipherals.common.addons.computercraft.base.IPeripheralTileEntity;
+import de.srendi.advancedperipherals.api.peripherals.owner.IPeripheralOwner;
+import de.srendi.advancedperipherals.api.peripherals.IPeripheralTileEntity;
 import net.minecraft.nbt.CompoundNBT;
 
 import javax.annotation.Nonnull;
@@ -16,7 +16,7 @@ public class DataStorageUtil {
     }
 
     public static CompoundNBT getDataStorage(@Nonnull IPeripheralTileEntity tileEntity) {
-        return tileEntity.getApSettings();
+        return tileEntity.getPeripheralSettings();
     }
 
     public static CompoundNBT getDataStorage(@Nonnull IPocketAccess pocket) {

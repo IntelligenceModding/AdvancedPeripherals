@@ -17,12 +17,14 @@ import com.minecolonies.api.research.IGlobalResearchTree;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.pocket.IPocketAccess;
-import de.srendi.advancedperipherals.common.addons.computercraft.base.BasePeripheral;
-import de.srendi.advancedperipherals.common.addons.computercraft.base.PocketPeripheralOwner;
+import de.srendi.advancedperipherals.api.peripherals.owner.IPeripheralOwner;
+import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
+import de.srendi.advancedperipherals.lib.peripherals.owner.PocketPeripheralOwner;
 import de.srendi.advancedperipherals.common.addons.minecolonies.MineColonies;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
+import de.srendi.advancedperipherals.lib.peripherals.owner.TileEntityPeripheralOwner;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
@@ -31,18 +33,18 @@ import net.minecraftforge.fml.ModList;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class ColonyPeripheral extends BasePeripheral {
+public class ColonyPeripheral extends BasePeripheral<IPeripheralOwner> {
 
     public static final String TYPE = "colonyIntegrator";
 
     protected boolean hasPermission = true;
 
     public ColonyPeripheral(PeripheralTileEntity<?> tileEntity) {
-        super(TYPE, tileEntity);
+        super(TYPE, new TileEntityPeripheralOwner<>(tileEntity));
     }
 
     public ColonyPeripheral(IPocketAccess access) {
-        super(TYPE, access);
+        super(TYPE, new PocketPeripheralOwner(access));
     }
 
     @Override
@@ -51,7 +53,7 @@ public class ColonyPeripheral extends BasePeripheral {
     }
 
     @LuaFunction(mainThread = true)
-    public final boolean isInColony() throws LuaException {
+    public final boolean isInColony() {
         return getColonyWithoutPermission() != null;
     }
 

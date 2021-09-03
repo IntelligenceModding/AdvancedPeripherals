@@ -3,7 +3,7 @@ package de.srendi.advancedperipherals.common.configuration;
 import de.srendi.advancedperipherals.common.addons.computercraft.operations.SimpleFreeOperation;
 import de.srendi.advancedperipherals.common.addons.computercraft.operations.SingleOperation;
 import de.srendi.advancedperipherals.common.addons.computercraft.operations.AutomataCoreTier;
-import de.srendi.advancedperipherals.common.addons.computercraft.base.IConfigHandler;
+import de.srendi.advancedperipherals.api.misc.IConfigHandler;
 import de.srendi.advancedperipherals.common.addons.computercraft.operations.SphereOperation;
 import net.minecraftforge.common.ForgeConfigSpec;
 
@@ -44,6 +44,7 @@ public class AdvancedPeripheralsConfig {
     public static boolean enableEndAutomataCore;
     public static boolean enableHusbandryAutomataCore;
     public static int endAutomataCoreWarpPointLimit;
+    public static double overpoweredAutomataBreakChance;
 
     //World Features
     public static boolean enableVillagerStructures;
@@ -85,6 +86,7 @@ public class AdvancedPeripheralsConfig {
         final ForgeConfigSpec.BooleanValue ENABLE_END_AUTOMATA_CORE;
         final ForgeConfigSpec.BooleanValue ENABLE_HUSBANDRY_AUTOMATA_CORE;
         final ForgeConfigSpec.IntValue END_AUTOMATA_CORE_WARP_POINT_LIMIT;
+        final ForgeConfigSpec.DoubleValue OVERPOWERED_AUTOMATA_BREAK_CHANCE;
 
         //World Features
         final ForgeConfigSpec.BooleanValue ENABLE_VILLAGER_STRUCTURES;
@@ -139,6 +141,7 @@ public class AdvancedPeripheralsConfig {
             ENABLE_END_AUTOMATA_CORE = builder.define("enableEndAutomataCore", true);
             ENABLE_HUSBANDRY_AUTOMATA_CORE = builder.define("enableHusbandryAutomataCore", true);
             END_AUTOMATA_CORE_WARP_POINT_LIMIT = builder.comment("Defines max warp point stored in warp core. Mostly need to not allow NBT overflow error").defineInRange("endAutomataCoreWarpPointLimit", 64, 1, Integer.MAX_VALUE);
+            OVERPOWERED_AUTOMATA_BREAK_CHANCE = builder.comment("Chance that overpowered automata will break after rotation cycle").defineInRange("overpoweredAutomataBreakChance", 0.002, 0, 1);
 
             // automata core tiers registration
             register(AutomataCoreTier.values(), builder);

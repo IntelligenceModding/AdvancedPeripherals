@@ -1,5 +1,6 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.operations;
 
+import de.srendi.advancedperipherals.api.peripherals.IPeripheralOperation;
 import net.minecraftforge.common.ForgeConfigSpec;
 
 import java.util.HashMap;
@@ -61,6 +62,11 @@ public enum SingleOperation implements IPeripheralOperation<SingleOperationConte
 
     SingleOperation(int defaultCooldown, int defaultCost) {
         this(defaultCooldown, DistancePolicy.IGNORED, CountPolicy.MULTIPLY, defaultCost, DistancePolicy.IGNORED, CountPolicy.MULTIPLY);
+    }
+
+    @Override
+    public int getInitialCooldown() {
+        return cooldown.get() * countCooldownPolicy.getFactor(5) * distanceCooldownPolicy.getFactor(2);
     }
 
     @Override

@@ -20,12 +20,13 @@ import dan200.computercraft.api.lua.MethodResult;
 import dan200.computercraft.api.peripheral.IComputerAccess;
 import de.srendi.advancedperipherals.common.addons.appliedenergistics.AppEngApi;
 import de.srendi.advancedperipherals.common.addons.appliedenergistics.CraftJob;
-import de.srendi.advancedperipherals.common.addons.computercraft.base.BasePeripheral;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
 import de.srendi.advancedperipherals.common.util.InventoryUtil;
 import de.srendi.advancedperipherals.common.util.ItemUtil;
 import de.srendi.advancedperipherals.common.util.ServerWorker;
+import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
+import de.srendi.advancedperipherals.lib.peripherals.owner.TileEntityPeripheralOwner;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
@@ -35,7 +36,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-public class MeBridgePeripheral extends BasePeripheral {
+public class MeBridgePeripheral extends BasePeripheral<TileEntityPeripheralOwner<?>> {
 
     public static final String TYPE = "meBridge";
 
@@ -43,7 +44,7 @@ public class MeBridgePeripheral extends BasePeripheral {
     private final IActionSource source;
 
     public MeBridgePeripheral(IActionSource source, PeripheralTileEntity<?> tileEntity) {
-        super(TYPE, tileEntity);
+        super(TYPE, new TileEntityPeripheralOwner<>(tileEntity));
         this.source = source;
     }
 

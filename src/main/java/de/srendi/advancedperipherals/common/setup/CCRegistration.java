@@ -31,22 +31,22 @@ public class CCRegistration {
 
     private static void registerPocketUpgrades() {
         pocketUpgrades = new ArrayList<AbstractPocketUpgrade>() {{
-            add(new PocketEnvironment());
-            add(new PocketChatBox());
-            add(new PocketPlayerDetector());
-            add(new PocketGeoScanner());
-            add(new PocketColonyIntegrator());
+            add(new PocketEnvironmentUpgrade());
+            add(new PocketChatBoxUpgrade());
+            add(new PocketPlayerDetectorUpgrade());
+            add(new PocketGeoScannerUpgrade());
+            add(new PocketColonyIntegratorUpgrade());
         }};
         pocketUpgrades.forEach(ComputerCraftAPI::registerPocketUpgrade);
     }
 
     private static void registerTurtleUpgrades() {
         turtleUpgrades = new ArrayList<AbstractTurtleUpgrade>() {{
-            add(new TurtleChatBox());
-            add(new TurtlePlayerDetector());
-            add(new TurtleEnvironmentDetector());
-            add(new TurtleChunky());
-            add(new TurtleGeoScanner());
+            add(new TurtleChatBoxUpgrade());
+            add(new TurtlePlayerDetectorUpgrade());
+            add(new TurtleEnvironmentDetectorUpgrade());
+            add(new TurtleChunkyUpgrade());
+            add(new TurtleGeoScannerUpgrade());
             add(new WeakAutomata());
             add(new EndAutomata());
             add(new HusbandryAutomata());

@@ -10,12 +10,13 @@ import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.peripheral.IComputerAccess;
 import dan200.computercraft.api.peripheral.IPeripheral;
-import de.srendi.advancedperipherals.common.addons.computercraft.base.BasePeripheral;
+import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
 import de.srendi.advancedperipherals.common.addons.refinedstorage.RefinedStorage;
 import de.srendi.advancedperipherals.common.addons.refinedstorage.RefinedStorageNode;
 import de.srendi.advancedperipherals.common.blocks.tileentity.RsBridgeTile;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
 import de.srendi.advancedperipherals.common.util.ItemUtil;
+import de.srendi.advancedperipherals.lib.peripherals.owner.TileEntityPeripheralOwner;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
@@ -26,19 +27,16 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.registries.ForgeRegistries;
 
-public class RsBridgePeripheral extends BasePeripheral {
+public class RsBridgePeripheral extends BasePeripheral<TileEntityPeripheralOwner<RsBridgeTile>> {
 
     public static final String TYPE = "rsBridge";
 
-    private final RsBridgeTile tileEntity;
-
     public RsBridgePeripheral(RsBridgeTile tileEntity) {
-        super(TYPE, tileEntity);
-        this.tileEntity = tileEntity;
+        super(TYPE, new TileEntityPeripheralOwner<>(tileEntity));
     }
 
     private RefinedStorageNode getNode() {
-        return this.tileEntity.getNode();
+        return owner.tileEntity.getNode();
     }
 
     private INetwork getNetwork() {
@@ -97,7 +95,7 @@ public class RsBridgePeripheral extends BasePeripheral {
         ItemStack stack = ItemUtil.getItemStackRS(arguments.getTable(0), RefinedStorage.getItems(getNetwork(), false));
         Direction direction = validateSide(arguments.getString(1));
 
-        TileEntity targetEntity = tileEntity.getLevel().getBlockEntity(tileEntity.getBlockPos().relative(direction));
+        TileEntity targetEntity = owner.tileEntity.getLevel().getBlockEntity(owner.tileEntity.getBlockPos().relative(direction));
         IItemHandler inventory = targetEntity != null ?
                 targetEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, direction.getOpposite()).resolve().orElse(null) : null;
         if (inventory == null)
@@ -129,7 +127,7 @@ public class RsBridgePeripheral extends BasePeripheral {
         ItemStack stack = ItemUtil.getItemStackRS(arguments.getTable(0), RefinedStorage.getItems(getNetwork(), false));
         Direction direction = validateSide(arguments.getString(1));
 
-        TileEntity targetEntity = tileEntity.getLevel().getBlockEntity(tileEntity.getBlockPos().relative(direction));
+        TileEntity targetEntity = owner.tileEntity.getLevel().getBlockEntity(owner.tileEntity.getBlockPos().relative(direction));
         IItemHandler inventory = targetEntity != null ?
                 targetEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, direction.getOpposite()).resolve().orElse(null) : null;
         if (inventory == null)

@@ -4,8 +4,8 @@ import dan200.computercraft.api.peripheral.IComputerAccess;
 import dan200.computercraft.api.peripheral.IPeripheral;
 import dan200.computercraft.shared.Capabilities;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
-import de.srendi.advancedperipherals.common.addons.computercraft.base.BasePeripheral;
-import de.srendi.advancedperipherals.common.addons.computercraft.base.IPeripheralTileEntity;
+import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
+import de.srendi.advancedperipherals.api.peripherals.IPeripheralTileEntity;
 import mcp.MethodsReturnNonnullByDefault;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
@@ -210,8 +210,13 @@ public abstract class PeripheralTileEntity<T extends BasePeripheral> extends Loc
         items.clear();
     }
 
-    public CompoundNBT getApSettings() {
+    public CompoundNBT getPeripheralSettings() {
         return apSettings;
+    }
+
+    @Override
+    public void markSettingsChanged() {
+        setChanged();
     }
 }
 

@@ -290,6 +290,13 @@ task setupServer(type: Copy) {
     }
 }
 
+test {
+    useJUnitPlatform()
+    testLogging {
+        events "skipped", "failed"
+    }
+}
+
 jar {
     manifest({
         attributes([
