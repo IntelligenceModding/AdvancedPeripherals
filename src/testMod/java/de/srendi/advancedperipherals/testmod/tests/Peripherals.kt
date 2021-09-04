@@ -7,7 +7,7 @@ import dan200.computercraft.ingame.api.thenComputerOk
 import de.srendi.advancedperipherals.common.addons.computercraft.operations.SphereOperation
 
 class Peripherals {
-    @GameTest
+    @GameTest(batch = "server3")
     fun geoscanner(context: GameTestHelper) = context.sequence {
         thenComputerOk()
     }
