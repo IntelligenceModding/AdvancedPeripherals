@@ -1,6 +1,7 @@
 package de.srendi.advancedperipherals.common.configuration;
 
 import de.srendi.advancedperipherals.AdvancedPeripherals;
+import de.srendi.advancedperipherals.api.LibConfig;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
@@ -12,6 +13,7 @@ public class ConfigHandler {
     public static void configEvent(final ModConfig.ModConfigEvent event) {
         if (event.getConfig().getSpec() == ConfigHolder.COMMON_SPEC) {
             ConfigHandler.bakeCommon();
+            LibConfig.reloadConfig();
         }
     }
 
@@ -19,6 +21,7 @@ public class ConfigHandler {
     public static void reloadConfigEvent(final ModConfig.Reloading event) {
         if (event.getConfig().getSpec() == ConfigHolder.COMMON_SPEC) {
             ConfigHandler.bakeCommon();
+            LibConfig.reloadConfig();
         }
     }
 

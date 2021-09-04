@@ -1,5 +1,6 @@
 package de.srendi.advancedperipherals.common.configuration;
 
+import de.srendi.advancedperipherals.api.LibConfig;
 import de.srendi.advancedperipherals.common.addons.computercraft.operations.SimpleFreeOperation;
 import de.srendi.advancedperipherals.common.addons.computercraft.operations.SingleOperation;
 import de.srendi.advancedperipherals.common.addons.computercraft.operations.AutomataCoreTier;
@@ -96,6 +97,11 @@ public class AdvancedPeripheralsConfig {
             builder.comment("").push("Defaults");
 
             DEFAULT_CHAT_BOX_PREFIX = builder.comment("Defines default chatbox prefix").define("defaultChatBoxPrefix", "AP");
+
+            builder.pop();
+            builder.push("Core");
+
+            LibConfig.build(builder);
 
             builder.pop();
             builder.push("Restrictions");

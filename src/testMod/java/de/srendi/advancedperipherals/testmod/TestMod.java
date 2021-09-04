@@ -1,5 +1,6 @@
-package siredvin.site.progressiveperipherals.testmod;
+package de.srendi.advancedperipherals.testmod;
 
+import de.srendi.advancedperipherals.api.LibConfig;
 import net.minecraftforge.fml.common.Mod;
 import site.siredvin.ttoolkit.TToolkitMod;
 
@@ -13,5 +14,6 @@ public class TestMod {
 
     public TestMod() {
         TToolkitMod.performConfiguration(sourceDir, 20 * 3);
+        LibConfig.isInitialCooldownEnabled = false;
     }
 }

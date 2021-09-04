@@ -2,6 +2,7 @@ package de.srendi.advancedperipherals.common.addons.computercraft.integrations;
 
 import dan200.computercraft.api.peripheral.IPeripheral;
 import dan200.computercraft.api.peripheral.IPeripheralProvider;
+import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.api.integrations.IPeripheralIntegration;
 import de.srendi.advancedperipherals.common.util.Platform;
 import de.srendi.advancedperipherals.lib.peripherals.TileEntityIntegrationPeripheral;
@@ -14,6 +15,7 @@ import net.minecraftforge.common.util.LazyOptional;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Comparator;
+import java.util.Optional;
 import java.util.PriorityQueue;
 import java.util.function.Function;
 
@@ -53,13 +55,15 @@ public class IntegrationPeripheralProvider implements IPeripheralProvider {
 
     public static void load() {
         registerIntegration(new TileEntityIntegration(BeaconIntegration::new, BeaconTileEntity.class::isInstance));
-        for (String mod: SUPPORTED_MODS)
-            Platform.maybeLoadIntegration(mod, mod + ".Integration").ifPresent(obj -> ((Runnable) obj).run());
-//        if (ModList.get().isLoaded("mekanismgenerators")) {
-//            registerIntegration(new FissionIntegration());
-//            registerIntegration(new FusionIntegration());
-//            registerIntegration(new TurbineIntegration());
-//        }
+        for (String mod: SUPPORTED_MODS) {
+            Optional<Object> integration = Platform.maybeLoadIntegration(mod, mod + ".Integration");
+            integration.ifPresent(obj -> {
+                AdvancedPeripherals.LOGGER.warn("Successfully loaded integration for {}", mod);
+                ((Runnable) obj).run();
+            });
+            if (!integration.isPresent())
+                AdvancedPeripherals.LOGGER.warn("Failed to load integration for {}", mod);
+        }
     }
 
     @NotNull

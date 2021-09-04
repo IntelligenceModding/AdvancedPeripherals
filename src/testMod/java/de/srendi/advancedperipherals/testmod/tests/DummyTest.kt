@@ -1,4 +1,4 @@
-package siredvin.site.progressiveperipherals.testmod.tests
+package de.srendi.advancedperipherals.testmod.tests
 
 import dan200.computercraft.ingame.api.GameTest
 import dan200.computercraft.ingame.api.GameTestHelper

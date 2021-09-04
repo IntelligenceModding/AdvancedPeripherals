@@ -1,4 +1,4 @@
-package siredvin.site.progressiveperipherals.testmod.tests
+package de.srendi.advancedperipherals.testmod.tests
 
 import com.mojang.blaze3d.matrix.MatrixStack
 import dan200.computercraft.ingame.api.GameTest

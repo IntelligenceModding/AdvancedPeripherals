@@ -3,7 +3,11 @@ package de.srendi.advancedperipherals.api.peripherals.owner;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.lua.MethodResult;
-import de.srendi.advancedperipherals.api.peripherals.*;
+import de.srendi.advancedperipherals.api.LibConfig;
+import de.srendi.advancedperipherals.api.peripherals.IPeripheralCheck;
+import de.srendi.advancedperipherals.api.peripherals.IPeripheralFunction;
+import de.srendi.advancedperipherals.api.peripherals.IPeripheralOperation;
+import de.srendi.advancedperipherals.api.peripherals.IPeripheralPlugin;
 import net.minecraft.nbt.CompoundNBT;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -30,7 +34,7 @@ public class OperationAbility implements IOwnerAbility, IPeripheralPlugin {
             CompoundNBT dataStorage = owner.getDataStorage();
             if (!dataStorage.contains(COOLDOWNS_TAG))
                 dataStorage.put(COOLDOWNS_TAG, new CompoundNBT());
-            dataStorage.getCompound(COOLDOWNS_TAG).putInt(operation.settingsName(), Timestamp.valueOf(LocalDateTime.now().plus(cooldown, ChronoUnit.MILLIS)).getNanos());
+            dataStorage.getCompound(COOLDOWNS_TAG).putLong(operation.settingsName(), Timestamp.valueOf(LocalDateTime.now().plus(cooldown, ChronoUnit.MILLIS)).getTime());
         }
     }
 
@@ -42,13 +46,17 @@ public class OperationAbility implements IOwnerAbility, IPeripheralPlugin {
         String operationName = operation.settingsName();
         if (!cooldowns.contains(operationName))
             return 0;
-        int currentNanos = Timestamp.valueOf(LocalDateTime.now()).getNanos();
-        return Math.max(0, cooldowns.getInt(operationName) - currentNanos);
+        long currentTime = Timestamp.valueOf(LocalDateTime.now()).getTime();
+        return (int) Math.max(0, cooldowns.getLong(operationName) - currentTime);
     }
 
     public void registerOperation(@NotNull IPeripheralOperation<?> operation) {
         allowedOperations.put(operation.settingsName(), operation);
-        setCooldown(operation, operation.getInitialCooldown());
+        if (LibConfig.isInitialCooldownEnabled) {
+            int initialCooldown = operation.getInitialCooldown();
+            if (initialCooldown >= LibConfig.initialCooldownSensetiveLevel)
+                setCooldown(operation, initialCooldown);
+        }
     }
 
     public <T> @NotNull MethodResult performOperation(IPeripheralOperation<T> operation, T context, @Nullable IPeripheralCheck<T> check, IPeripheralFunction<T, MethodResult> method, @Nullable Consumer<T> successCallback) throws LuaException {
@@ -82,7 +90,7 @@ public class OperationAbility implements IOwnerAbility, IPeripheralPlugin {
     }
 
     public boolean isOnCooldown(IPeripheralOperation<?> operation) {
-        return getCurrentCooldown(operation) <= 0;
+        return getCurrentCooldown(operation) > 0;
     }
 
     @Override
