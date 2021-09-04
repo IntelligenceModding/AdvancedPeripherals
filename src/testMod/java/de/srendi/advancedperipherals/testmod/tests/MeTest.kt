@@ -15,4 +15,9 @@ class MeTest {
     fun partialImport(context: GameTestHelper) = context.sequence {
         thenComputerOk()
     }
+
+    @GameTest(timeoutTicks = 800)
+    fun crafting(context: GameTestHelper) = context.sequence {
+        thenComputerOk()
+    }
 }

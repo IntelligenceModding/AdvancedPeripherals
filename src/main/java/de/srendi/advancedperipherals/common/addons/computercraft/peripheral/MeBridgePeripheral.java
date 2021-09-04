@@ -125,12 +125,12 @@ public class MeBridgePeripheral extends BasePeripheral<TileEntityPeripheralOwner
         return transferableAmount;
     }
 
-    @LuaFunction(mainThread = true)
+    @LuaFunction
     public final MethodResult craftItem(IComputerAccess computer, IArguments arguments) throws LuaException {
         IMEMonitor<IAEItemStack> monitor = ((IStorageGrid) node.getGrid().getCache(IStorageGrid.class)).getInventory(AppEngApi.getInstance().getApi().storage().getStorageChannel(IItemStorageChannel.class));
         ItemStack itemToCraft = ItemUtil.getItemStack(arguments.getTable(0), monitor);
         if (itemToCraft.isEmpty())
-            throw new NullPointerException("Item " + itemToCraft + " does not exists");
+            throw new LuaException("Item " + itemToCraft + " does not exists");
         CraftJob job = new CraftJob(owner.getWorld(), computer, node, itemToCraft, source);
         ServerWorker.add(job::startCrafting);
         return MethodResult.pullEvent("crafting", job);
