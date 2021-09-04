@@ -217,9 +217,7 @@ public class EnvironmentDetectorPeripheral extends BasePeripheral<IPeripheralOwn
         return getWorld().getThunderLevel(0) < 1 && getWorld().getRainLevel(0) < 1;
     }
 
-    // TODO: add natures aura integration
-
-    @LuaFunction
+    @LuaFunction(mainThread = true)
     public final MethodResult scanEntities(@Nonnull IComputerAccess access, @Nonnull IArguments arguments) throws LuaException {
         int radius = arguments.getInt(0);
         return withOperation(SCAN_ENTITIES,  new SphereOperationContext(radius), context -> {
