@@ -51,7 +51,6 @@ public class OperationAbilityTest {
     @Test
     public void testCooldownLong() {
         DummyPeripheralOwner owner = new DummyPeripheralOwner();
-        LibConfig.isInitialCooldownEnabled = true;
         owner.attachOperation(DummyOperations.LONG);
         OperationAbility operationAbility = owner.getAbility(PeripheralOwnerAbility.OPERATION);
         assertNotNull(operationAbility);
@@ -64,7 +63,6 @@ public class OperationAbilityTest {
     @Test
     public void testCooldownShort() {
         DummyPeripheralOwner owner = new DummyPeripheralOwner();
-        LibConfig.isInitialCooldownEnabled = true;
         assertTrue(LibConfig.initialCooldownSensetiveLevel > DummyOperations.SHORT.cooldown);
         owner.attachOperation(DummyOperations.LONG);
         OperationAbility operationAbility = owner.getAbility(PeripheralOwnerAbility.OPERATION);
@@ -77,13 +75,14 @@ public class OperationAbilityTest {
     @Test
     public void testCooldownWithoutInitialCooldown() {
         DummyPeripheralOwner owner = new DummyPeripheralOwner();
-        LibConfig.isInitialCooldownEnabled = false;
+        LibConfig.setTestMode(true);
         owner.attachOperation(DummyOperations.LONG);
         OperationAbility operationAbility = owner.getAbility(PeripheralOwnerAbility.OPERATION);
         assertNotNull(operationAbility);
         int abilityCooldown = operationAbility.getCurrentCooldown(DummyOperations.LONG);
         assertFalse(operationAbility.isOnCooldown(DummyOperations.LONG));
         assertEquals(0, abilityCooldown);
+        LibConfig.setTestMode(false);
     }
 
 }

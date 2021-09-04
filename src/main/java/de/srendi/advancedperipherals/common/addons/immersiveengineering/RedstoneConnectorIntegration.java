@@ -19,7 +19,7 @@ public class RedstoneConnectorIntegration extends TileEntityIntegrationPeriphera
         return "redstoneConnector";
     }
 
-    @LuaFunction
+    @LuaFunction(mainThread = true)
     public final String getRedstoneChannel() {
         return tileEntity.redstoneChannel.toString();
     }

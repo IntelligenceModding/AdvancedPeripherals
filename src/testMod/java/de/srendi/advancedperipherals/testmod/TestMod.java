@@ -12,8 +12,8 @@ public class TestMod {
     public static final Path sourceDir = Paths.get("../../src/testMod/server-files").normalize().toAbsolutePath();
     public static final String MOD_ID = "aptest";
 
-    public TestMod() {
+    static {
         TToolkitMod.performConfiguration(sourceDir, 20 * 3);
-        LibConfig.isInitialCooldownEnabled = false;
+        LibConfig.setTestMode(true);
     }
 }
