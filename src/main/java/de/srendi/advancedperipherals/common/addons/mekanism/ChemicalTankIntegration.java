@@ -1,24 +1,20 @@
-package de.srendi.advancedperipherals.common.addons.computercraft.integrations.mekanism;
+package de.srendi.advancedperipherals.common.addons.mekanism;
 
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.shared.peripheral.generic.data.DataHelpers;
-import de.srendi.advancedperipherals.common.addons.computercraft.base.Integration;
+import de.srendi.advancedperipherals.lib.peripherals.TileEntityIntegrationPeripheral;
 import mekanism.api.chemical.IChemicalTank;
 import mekanism.api.chemical.merged.MergedChemicalTank;
 import mekanism.common.tile.TileEntityChemicalTank;
+import net.minecraft.tileentity.TileEntity;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class ChemicalTankIntegration extends Integration<TileEntityChemicalTank> {
-    @Override
-    protected Class<TileEntityChemicalTank> getTargetClass() {
-        return TileEntityChemicalTank.class;
-    }
+public class ChemicalTankIntegration extends TileEntityIntegrationPeripheral<TileEntityChemicalTank> {
 
-    @Override
-    public ChemicalTankIntegration getNewInstance() {
-        return new ChemicalTankIntegration();
+    public ChemicalTankIntegration(TileEntity entity) {
+        super(entity);
     }
 
     @Override
@@ -26,7 +22,7 @@ public class ChemicalTankIntegration extends Integration<TileEntityChemicalTank>
         return "chemicalTank";
     }
 
-    @LuaFunction
+    @LuaFunction(mainThread = true)
     public final Map<String, Object> getStored() {
         Map<String, Object> result = new HashMap<>(3);
         result.put("name", DataHelpers.getId(getTank().getStack().getType()));
@@ -35,17 +31,17 @@ public class ChemicalTankIntegration extends Integration<TileEntityChemicalTank>
         return result;
     }
 
-    @LuaFunction
+    @LuaFunction(mainThread = true)
     public final long getCapacity() {
         return getTank().getCapacity();
     }
 
-    @LuaFunction
+    @LuaFunction(mainThread = true)
     public final double getFilledPercentage() {
         return getTank().getStored() / (double) getCapacity();
     }
 
-    @LuaFunction
+    @LuaFunction(mainThread = true)
     public final long getNeeded() {
         return getTank().getNeeded();
     }
@@ -59,6 +55,6 @@ public class ChemicalTankIntegration extends Integration<TileEntityChemicalTank>
     }
 
     private MergedChemicalTank getMergedTank() {
-        return getTileEntity().getChemicalTank();
+        return tileEntity.getChemicalTank();
     }
 }

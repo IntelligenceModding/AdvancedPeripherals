@@ -1,9 +1,10 @@
-package de.srendi.advancedperipherals.common.addons.computercraft.integrations.integrateddynamics;
+package de.srendi.advancedperipherals.common.addons.integrateddynamics;
 
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.lua.MethodResult;
 import dan200.computercraft.shared.util.NBTUtil;
-import de.srendi.advancedperipherals.common.addons.computercraft.base.Integration;
+import de.srendi.advancedperipherals.lib.peripherals.TileEntityIntegrationPeripheral;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.LazyOptional;
 import org.cyclops.integrateddynamics.api.block.IVariableContainer;
 import org.cyclops.integrateddynamics.api.evaluate.EvaluationException;
@@ -21,15 +22,9 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 
-public class VariableStoreIntegration extends Integration<TileVariablestore> {
-    @Override
-    protected Class<TileVariablestore> getTargetClass() {
-        return TileVariablestore.class;
-    }
-
-    @Override
-    public VariableStoreIntegration getNewInstance() {
-        return new VariableStoreIntegration();
+public class VariableStoreIntegration extends TileEntityIntegrationPeripheral<TileVariablestore> {
+    public VariableStoreIntegration(TileEntity entity) {
+        super(entity);
     }
 
     @Override
@@ -37,7 +32,7 @@ public class VariableStoreIntegration extends Integration<TileVariablestore> {
         return "variableStore";
     }
 
-    @LuaFunction
+    @LuaFunction(mainThread = true)
     public final Map<Integer, HashMap<String, Object>> list() {
         LazyOptional<IVariableContainer> lazyContainer = tileEntity.getCapability(VariableContainerConfig.CAPABILITY);
         return lazyContainer.map(container -> container.getVariableCache().entrySet().stream().map(entry -> {
@@ -50,14 +45,14 @@ public class VariableStoreIntegration extends Integration<TileVariablestore> {
         }).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue))).orElse(new HashMap<>());
     }
 
-    @LuaFunction
+    @LuaFunction(mainThread = true)
     public final MethodResult read(int slot) {
         int realSlot = slot - 1; // Transform from lua array start to Java array start
         LazyOptional<IVariableContainer> lazyContainer = tileEntity.getCapability(VariableContainerConfig.CAPABILITY);
         return lazyContainer.map(container -> {
-            IVariableFacade facade = container.getVariableCache().get(slot);
+            IVariableFacade facade = container.getVariableCache().get(realSlot);
             if (facade == null) {
-                return MethodResult.of(null, String.format("Slot %d is empty", slot));
+                return MethodResult.of(null, String.format("Slot %d is empty", realSlot));
             }
             if (tileEntity.getNetwork() == null) {
                 return MethodResult.of(null, "Integred Dynamic network is configured incorrect");

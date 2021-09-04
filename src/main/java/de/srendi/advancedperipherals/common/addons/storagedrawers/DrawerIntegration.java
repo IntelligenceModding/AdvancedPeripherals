@@ -1,4 +1,4 @@
-package de.srendi.advancedperipherals.common.addons.computercraft.integrations.storagedrawers;
+package de.srendi.advancedperipherals.common.addons.storagedrawers;
 
 import com.jaquadro.minecraft.storagedrawers.api.storage.IDrawer;
 import com.jaquadro.minecraft.storagedrawers.api.storage.IDrawerAttributes;
@@ -9,34 +9,21 @@ import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.lua.MethodResult;
 import dan200.computercraft.api.peripheral.IComputerAccess;
-import de.srendi.advancedperipherals.common.addons.computercraft.base.Integration;
-import de.srendi.advancedperipherals.common.addons.storagedrawers.DrawerItemHandler;
 import de.srendi.advancedperipherals.common.util.InventoryUtil;
+import de.srendi.advancedperipherals.lib.peripherals.TileEntityIntegrationPeripheral;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class DrawerIntegration extends Integration<TileEntityDrawers> {
+public class DrawerIntegration extends TileEntityIntegrationPeripheral<TileEntityDrawers> {
 
-    @Override
-    protected Class<TileEntityDrawers> getTargetClass() {
-        return TileEntityDrawers.class;
-    }
-
-    @Override
-    public Integration<?> getNewInstance() {
-        return new DrawerIntegration();
-    }
-
-    @Nullable
-    @Override
-    public Object getTarget() {
-        return tileEntity;
+    public DrawerIntegration(TileEntity entity) {
+        super(entity);
     }
 
     @NotNull

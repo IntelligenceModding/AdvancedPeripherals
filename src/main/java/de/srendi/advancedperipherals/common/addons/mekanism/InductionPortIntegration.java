@@ -1,20 +1,16 @@
-package de.srendi.advancedperipherals.common.addons.computercraft.integrations.mekanism;
+package de.srendi.advancedperipherals.common.addons.mekanism;
 
 import dan200.computercraft.api.lua.LuaFunction;
-import de.srendi.advancedperipherals.common.addons.computercraft.base.Integration;
+import de.srendi.advancedperipherals.lib.peripherals.TileEntityIntegrationPeripheral;
 import mekanism.common.content.matrix.MatrixMultiblockData;
 import mekanism.common.integration.energy.EnergyCompatUtils;
 import mekanism.common.tile.multiblock.TileEntityInductionPort;
+import net.minecraft.tileentity.TileEntity;
 
-public class InductionPortIntegration extends Integration<TileEntityInductionPort> {
-    @Override
-    protected Class<TileEntityInductionPort> getTargetClass() {
-        return TileEntityInductionPort.class;
-    }
+public class InductionPortIntegration extends TileEntityIntegrationPeripheral<TileEntityInductionPort> {
 
-    @Override
-    public InductionPortIntegration getNewInstance() {
-        return new InductionPortIntegration();
+    public InductionPortIntegration(TileEntity entity) {
+        super(entity);
     }
 
     @Override
@@ -22,52 +18,52 @@ public class InductionPortIntegration extends Integration<TileEntityInductionPor
         return "inductionMatrix";
     }
 
-    @LuaFunction
+    @LuaFunction(mainThread = true)
     public final long getEnergy() {
         return EnergyCompatUtils.EnergyType.FORGE.convertToAsLong(getMatrix().getEnergyContainer().getEnergy());
     }
 
-    @LuaFunction
+    @LuaFunction(mainThread = true)
     public final long getLastInput() {
         return EnergyCompatUtils.EnergyType.FORGE.convertToAsLong(getMatrix().getEnergyContainer().getLastInput());
     }
 
-    @LuaFunction
+    @LuaFunction(mainThread = true)
     public final long getLastOutput() {
         return EnergyCompatUtils.EnergyType.FORGE.convertToAsLong(getMatrix().getEnergyContainer().getLastOutput());
     }
 
-    @LuaFunction
+    @LuaFunction(mainThread = true)
     public final long getEnergyNeeded() {
         return EnergyCompatUtils.EnergyType.FORGE.convertToAsLong(getMatrix().getEnergyContainer().getNeeded());
     }
 
-    @LuaFunction
+    @LuaFunction(mainThread = true)
     public final double getEnergyFilledPercentage() {
         return getEnergy() / (double) getMaxEnergy();
     }
 
-    @LuaFunction
+    @LuaFunction(mainThread = true)
     public final long getTransferCap() {
         return EnergyCompatUtils.EnergyType.FORGE.convertToAsLong(getMatrix().getTransferCap());
     }
 
-    @LuaFunction
+    @LuaFunction(mainThread = true)
     public final int getInstalledCells() {
         return getMatrix().getCellCount();
     }
 
-    @LuaFunction
+    @LuaFunction(mainThread = true)
     public final int getInstalledProviders() {
         return getMatrix().getProviderCount();
     }
 
-    @LuaFunction
+    @LuaFunction(mainThread = true)
     public final long getMaxEnergy() {
         return EnergyCompatUtils.EnergyType.FORGE.convertToAsLong(getMatrix().getEnergyContainer().getMaxEnergy());
     }
 
     private MatrixMultiblockData getMatrix() {
-        return getTileEntity().getMultiblock();
+        return tileEntity.getMultiblock();
     }
 }

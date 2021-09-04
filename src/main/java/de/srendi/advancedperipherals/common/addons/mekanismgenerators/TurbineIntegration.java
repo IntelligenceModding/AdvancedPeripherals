@@ -1,7 +1,7 @@
-package de.srendi.advancedperipherals.common.addons.computercraft.integrations.mekanism;
+package de.srendi.advancedperipherals.common.addons.mekanismgenerators;
 
 import dan200.computercraft.api.lua.LuaFunction;
-import de.srendi.advancedperipherals.common.addons.computercraft.base.Integration;
+import de.srendi.advancedperipherals.lib.peripherals.TileEntityIntegrationPeripheral;
 import mekanism.api.math.FloatingLong;
 import mekanism.api.math.MathUtils;
 import mekanism.common.config.MekanismConfig;
@@ -10,16 +10,12 @@ import mekanism.generators.common.config.MekanismGeneratorsConfig;
 import mekanism.generators.common.content.turbine.TurbineMultiblockData;
 import mekanism.generators.common.content.turbine.TurbineValidator;
 import mekanism.generators.common.tile.turbine.TileEntityTurbineValve;
+import net.minecraft.tileentity.TileEntity;
 
-public class TurbineIntegration extends Integration<TileEntityTurbineValve> {
-    @Override
-    protected Class<TileEntityTurbineValve> getTargetClass() {
-        return TileEntityTurbineValve.class;
-    }
+public class TurbineIntegration extends TileEntityIntegrationPeripheral<TileEntityTurbineValve> {
 
-    @Override
-    public TurbineIntegration getNewInstance() {
-        return new TurbineIntegration();
+    public TurbineIntegration(TileEntity entity) {
+        super(entity);
     }
 
     @Override
@@ -27,44 +23,44 @@ public class TurbineIntegration extends Integration<TileEntityTurbineValve> {
         return "turbine";
     }
 
-    @LuaFunction
+    @LuaFunction(mainThread = true)
     public final long getSteam() {
         return getTurbine().gasTank.getStored();
     }
 
-    @LuaFunction
+    @LuaFunction(mainThread = true)
     public final long getSteamCapacity() {
         return getTurbine().gasTank.getCapacity();
     }
 
-    @LuaFunction
+    @LuaFunction(mainThread = true)
     public final long getSteamNeeded() {
         return getTurbine().gasTank.getNeeded();
     }
 
-    @LuaFunction
+    @LuaFunction(mainThread = true)
     public final long getLastSteamInputRate() {
         return getTurbine().lastSteamInput;
     }
 
-    @LuaFunction
+    @LuaFunction(mainThread = true)
     public final double getSteamFilledPercentage() {
         return getSteam() / (double) getSteamCapacity();
     }
 
-    @LuaFunction
+    @LuaFunction(mainThread = true)
     public final String getDumpingMode() {
         return getTurbine().dumpMode.name();
     }
 
-    @LuaFunction
+    @LuaFunction(mainThread = true)
     public final long getProductionRate() {
         FloatingLong energyMultiplier = MekanismConfig.general.maxEnergyPerSteam.get().divide(TurbineValidator.MAX_BLADES)
                 .multiply(Math.min(getBlades(), getCoils() * MekanismGeneratorsConfig.generators.turbineBladesPerCoil.get()));
         return EnergyCompatUtils.EnergyType.FORGE.convertToAsLong(energyMultiplier.multiply(getTurbine().clientFlow));
     }
 
-    @LuaFunction
+    @LuaFunction(mainThread = true)
     public final long getMaxProduction() {
         FloatingLong energyMultiplier = MekanismConfig.general.maxEnergyPerSteam.get().divide(TurbineValidator.MAX_BLADES)
                 .multiply(Math.min(getBlades(), getCoils() * MekanismGeneratorsConfig.generators.turbineBladesPerCoil.get()));
@@ -73,50 +69,50 @@ public class TurbineIntegration extends Integration<TileEntityTurbineValve> {
         return EnergyCompatUtils.EnergyType.FORGE.convertToAsLong(energyMultiplier.multiply(rate));
     }
 
-    @LuaFunction
+    @LuaFunction(mainThread = true)
     public final long getFlowRate() {
         return getTurbine().clientFlow;
     }
 
-    @LuaFunction
+    @LuaFunction(mainThread = true)
     public final long getMaxFlowRate() {
         double rate = getTurbine().lowerVolume * (getTurbine().getDispersers() * MekanismGeneratorsConfig.generators.turbineDisperserGasFlow.get());
         rate = Math.min(rate, getVents() * MekanismGeneratorsConfig.generators.turbineVentGasFlow.get());
         return MathUtils.clampToLong(rate);
     }
 
-    @LuaFunction
+    @LuaFunction(mainThread = true)
     public final long getMaxWaterOutput() {
         return (long) getCondensers() * MekanismGeneratorsConfig.generators.condenserRate.get();
     }
 
-    @LuaFunction
+    @LuaFunction(mainThread = true)
     public final int getDispersers() {
         return getTurbine().getDispersers();
     }
 
-    @LuaFunction
+    @LuaFunction(mainThread = true)
     public final int getVents() {
         return getTurbine().vents;
     }
 
-    @LuaFunction
+    @LuaFunction(mainThread = true)
     public final int getBlades() {
         return getTurbine().blades;
     }
 
-    @LuaFunction
+    @LuaFunction(mainThread = true)
     public final int getCoils() {
         return getTurbine().coils;
     }
 
-    @LuaFunction
+    @LuaFunction(mainThread = true)
     public final int getCondensers() {
         return getTurbine().condensers;
     }
 
     private TurbineMultiblockData getTurbine() {
-        return getTileEntity().getMultiblock();
+        return tileEntity.getMultiblock();
     }
 
 }

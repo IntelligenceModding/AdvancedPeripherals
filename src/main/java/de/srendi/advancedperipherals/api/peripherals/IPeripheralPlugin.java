@@ -1,5 +1,6 @@
 package de.srendi.advancedperipherals.api.peripherals;
 
+import dan200.computercraft.api.peripheral.IPeripheral;
 import dan200.computercraft.core.asm.PeripheralMethod;
 import org.jetbrains.annotations.Nullable;
 
@@ -15,7 +16,7 @@ public interface IPeripheralPlugin {
         return null;
     }
 
-    default boolean isSuitable(IBasePeripheral<?> peripheral) {
+    default boolean isSuitable(IPeripheral peripheral) {
         return true;
     }
 }

@@ -4,7 +4,7 @@ import dan200.computercraft.api.ComputerCraftAPI;
 import dan200.computercraft.api.pocket.AbstractPocketUpgrade;
 import dan200.computercraft.api.turtle.AbstractTurtleUpgrade;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
-import de.srendi.advancedperipherals.common.addons.computercraft.base.IntegrationPeripheralProvider;
+import de.srendi.advancedperipherals.common.addons.computercraft.integrations.IntegrationPeripheralProvider;
 import de.srendi.advancedperipherals.common.addons.computercraft.pocket.*;
 import de.srendi.advancedperipherals.common.addons.computercraft.turtles.*;
 import de.srendi.advancedperipherals.common.addons.computercraft.turtles.metaphysics.*;
@@ -24,8 +24,8 @@ public class CCRegistration {
     public static void register() {
         registerPocketUpgrades();
         registerTurtleUpgrades();
+        IntegrationPeripheralProvider.load();
         integrationPeripheralProvider = new IntegrationPeripheralProvider();
-        integrationPeripheralProvider.register();
         ComputerCraftAPI.registerPeripheralProvider(integrationPeripheralProvider);
     }
 

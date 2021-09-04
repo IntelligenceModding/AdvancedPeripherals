@@ -1,25 +1,21 @@
-package de.srendi.advancedperipherals.common.addons.computercraft.integrations.mekanism;
+package de.srendi.advancedperipherals.common.addons.mekanismgenerators;
 
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
-import de.srendi.advancedperipherals.common.addons.computercraft.base.Integration;
+import de.srendi.advancedperipherals.lib.peripherals.TileEntityIntegrationPeripheral;
 import mekanism.api.chemical.ChemicalStack;
 import mekanism.generators.common.content.fission.FissionReactorMultiblockData;
 import mekanism.generators.common.tile.fission.TileEntityFissionReactorLogicAdapter;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.fluids.FluidStack;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class FissionIntegration extends Integration<TileEntityFissionReactorLogicAdapter> {
-    @Override
-    protected Class<TileEntityFissionReactorLogicAdapter> getTargetClass() {
-        return TileEntityFissionReactorLogicAdapter.class;
-    }
+public class FissionIntegration extends TileEntityIntegrationPeripheral<TileEntityFissionReactorLogicAdapter> {
 
-    @Override
-    public FissionIntegration getNewInstance() {
-        return new FissionIntegration();
+    public FissionIntegration(TileEntity entity) {
+        super(entity);
     }
 
     @Override
@@ -27,7 +23,7 @@ public class FissionIntegration extends Integration<TileEntityFissionReactorLogi
         return "fissionReactor";
     }
 
-    @LuaFunction
+    @LuaFunction(mainThread = true)
     public final Map<String, Object> getCoolant() {
         Map<String, Object> wrapped = new HashMap<>(2);
         if (getReactor().fluidCoolantTank.isEmpty() && !getReactor().gasCoolantTank.isEmpty()) {
@@ -42,7 +38,7 @@ public class FissionIntegration extends Integration<TileEntityFissionReactorLogi
         return wrapped;
     }
 
-    @LuaFunction
+    @LuaFunction(mainThread = true)
     public final long getCoolantCapacity() {
         if (getReactor().fluidCoolantTank.isEmpty() && !getReactor().gasCoolantTank.isEmpty()) {
             return getReactor().gasCoolantTank.getCapacity();
@@ -50,7 +46,7 @@ public class FissionIntegration extends Integration<TileEntityFissionReactorLogi
         return getReactor().fluidCoolantTank.getCapacity();
     }
 
-    @LuaFunction
+    @LuaFunction(mainThread = true)
     public final long getCoolantNeeded() {
         if (getReactor().fluidCoolantTank.isEmpty() && !getReactor().gasCoolantTank.isEmpty()) {
             return getReactor().gasCoolantTank.getNeeded();
@@ -58,7 +54,7 @@ public class FissionIntegration extends Integration<TileEntityFissionReactorLogi
         return getReactor().fluidCoolantTank.getNeeded();
     }
 
-    @LuaFunction
+    @LuaFunction(mainThread = true)
     public final double getCoolantFilledPercentage() {
         if (getReactor().fluidCoolantTank.isEmpty() && !getReactor().gasCoolantTank.isEmpty()) {
             return getReactor().gasCoolantTank.getStored() / (double) getReactor().gasCoolantTank.getCapacity();
@@ -66,7 +62,7 @@ public class FissionIntegration extends Integration<TileEntityFissionReactorLogi
         return getReactor().fluidCoolantTank.getFluidAmount() / (double) getReactor().fluidCoolantTank.getCapacity();
     }
 
-    @LuaFunction
+    @LuaFunction(mainThread = true)
     public final Map<String, Object> getHeatedCoolant() {
         ChemicalStack<?> stack = getReactor().heatedCoolantTank.getStack();
         Map<String, Object> wrapped = new HashMap<>(2);
@@ -75,82 +71,82 @@ public class FissionIntegration extends Integration<TileEntityFissionReactorLogi
         return wrapped;
     }
 
-    @LuaFunction
+    @LuaFunction(mainThread = true)
     public final long getHeatedCoolantCapacity() {
         return getReactor().heatedCoolantTank.getCapacity();
     }
 
-    @LuaFunction
+    @LuaFunction(mainThread = true)
     public final long getHeatedCoolantNeeded() {
         return getReactor().heatedCoolantTank.getNeeded();
     }
 
-    @LuaFunction
+    @LuaFunction(mainThread = true)
     public final double getHeatedCoolantFilledPercentage() {
         return getReactor().heatedCoolantTank.getStored() / (double) getHeatedCoolantCapacity();
     }
 
-    @LuaFunction
+    @LuaFunction(mainThread = true)
     public final long getFuel() {
         return getReactor().fuelTank.getStored();
     }
 
-    @LuaFunction
+    @LuaFunction(mainThread = true)
     public final long getFuelCapacity() {
         return getReactor().fuelTank.getCapacity();
     }
 
-    @LuaFunction
+    @LuaFunction(mainThread = true)
     public final long getFuelNeeded() {
         return getReactor().fuelTank.getNeeded();
     }
 
-    @LuaFunction
+    @LuaFunction(mainThread = true)
     public final double getFuelFilledPercentage() {
         return getFuel() / (double) getFuelCapacity();
     }
 
-    @LuaFunction
+    @LuaFunction(mainThread = true)
     public final long getWaste() {
         return getReactor().wasteTank.getStored();
     }
 
-    @LuaFunction
+    @LuaFunction(mainThread = true)
     public final long getWasteCapacity() {
         return getReactor().wasteTank.getCapacity();
     }
 
-    @LuaFunction
+    @LuaFunction(mainThread = true)
     public final long getWasteNeeded() {
         return getReactor().wasteTank.getNeeded();
     }
 
-    @LuaFunction
+    @LuaFunction(mainThread = true)
     public final double getWasteFilledPercentage() {
         return getWaste() / (double) getWasteCapacity();
     }
 
-    @LuaFunction
+    @LuaFunction(mainThread = true)
     public final boolean getStatus() {
         return getReactor().isActive();
     }
 
-    @LuaFunction
+    @LuaFunction(mainThread = true)
     public final void scram() {
         getReactor().setActive(false);
     }
 
-    @LuaFunction
+    @LuaFunction(mainThread = true)
     public final void activate() {
         getReactor().setActive(true);
     }
 
-    @LuaFunction
+    @LuaFunction(mainThread = true)
     public final double getBurnRate() {
         return getReactor().rateLimit;
     }
 
-    @LuaFunction
+    @LuaFunction(mainThread = true)
     public final void setBurnRate(double rate) throws LuaException {
         rate = (double) Math.round(rate * 100) / 100;
         int max = getMaxBurnRate();
@@ -160,57 +156,57 @@ public class FissionIntegration extends Integration<TileEntityFissionReactorLogi
         getReactor().rateLimit = Math.max(Math.min(getMaxBurnRate(), rate), 0);
     }
 
-    @LuaFunction
+    @LuaFunction(mainThread = true)
     public final double getActualBurnRate() {
         return getReactor().lastBurnRate;
     }
 
-    @LuaFunction
+    @LuaFunction(mainThread = true)
     public final int getMaxBurnRate() {
         return getReactor().fuelAssemblies;
     }
 
-    @LuaFunction
+    @LuaFunction(mainThread = true)
     public final double getDamagePercent() {
         return Math.round(getReactor().reactorDamage);
     }
 
-    @LuaFunction
+    @LuaFunction(mainThread = true)
     public final double getHeatingRate() {
         return getReactor().lastBoilRate;
     }
 
-    @LuaFunction
+    @LuaFunction(mainThread = true)
     public final double getEnvironmentalLoss() {
         return getReactor().lastEnvironmentLoss;
     }
 
-    @LuaFunction
+    @LuaFunction(mainThread = true)
     public final double getTemperature() {
         return getReactor().getTotalTemperature();
     }
 
-    @LuaFunction
+    @LuaFunction(mainThread = true)
     public final double getHeatCapacity() {
         return getReactor().heatCapacitor.getHeatCapacity();
     }
 
-    @LuaFunction
+    @LuaFunction(mainThread = true)
     public final int getFuelAssemblies() {
         return getReactor().fuelAssemblies;
     }
 
-    @LuaFunction
+    @LuaFunction(mainThread = true)
     public final int getFuelSurfaceArea() {
         return getReactor().surfaceArea;
     }
 
-    @LuaFunction
+    @LuaFunction(mainThread = true)
     public final double getBoilEfficiency() {
         return getReactor().getBoilEfficiency();
     }
 
     private FissionReactorMultiblockData getReactor() {
-        return getTileEntity().getMultiblock();
+        return tileEntity.getMultiblock();
     }
 }

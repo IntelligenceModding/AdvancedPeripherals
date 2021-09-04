@@ -8,9 +8,9 @@ import dan200.computercraft.api.peripheral.IComputerAccess;
 import dan200.computercraft.api.pocket.IPocketAccess;
 import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
+import de.srendi.advancedperipherals.api.peripherals.IPeripheralPlugin;
 import de.srendi.advancedperipherals.api.peripherals.owner.IPeripheralOwner;
 import de.srendi.advancedperipherals.common.addons.computercraft.operations.SphereOperationContext;
-import de.srendi.advancedperipherals.common.addons.mekanism.Mekanism;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
@@ -29,21 +29,25 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.ISeedReader;
 import net.minecraft.world.LightType;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 
 import javax.annotation.Nonnull;
 import java.util.*;
+import java.util.function.Function;
 
 import static de.srendi.advancedperipherals.common.addons.computercraft.operations.SphereOperation.SCAN_ENTITIES;
 
 public class EnvironmentDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
+
+    private static final List<Function<IPeripheralOwner, IPeripheralPlugin>> PLUGINS = new LinkedList<>();
 
     public static final String TYPE = "environmentDetector";
 
     protected EnvironmentDetectorPeripheral(IPeripheralOwner owner) {
         super(TYPE, owner);
         owner.attachOperation(SCAN_ENTITIES);
+        for (Function<IPeripheralOwner, IPeripheralPlugin> plugin: PLUGINS)
+            addPlugin(plugin.apply(owner));
     }
 
     public EnvironmentDetectorPeripheral(PeripheralTileEntity<?> tileEntity) {
@@ -213,18 +217,6 @@ public class EnvironmentDetectorPeripheral extends BasePeripheral<IPeripheralOwn
         return getWorld().getThunderLevel(0) < 1 && getWorld().getRainLevel(0) < 1;
     }
 
-    // TODO: migrate to plugin
-    @LuaFunction(mainThread = true)
-    public final Object getRadiation() {
-        return ModList.get().isLoaded("mekanism") ? Mekanism.getRadiation(getWorld(), getPos()) : null;
-    }
-
-    // TODO: migrate to plugin
-    @LuaFunction(mainThread = true)
-    public final double getRadiationRaw() {
-        return ModList.get().isLoaded("mekanism") ? Mekanism.getRadiationRaw(getWorld(), getPos()) : 0D;
-    }
-
     // TODO: add natures aura integration
 
     @LuaFunction
@@ -253,5 +245,9 @@ public class EnvironmentDetectorPeripheral extends BasePeripheral<IPeripheralOwn
             return MethodResult.of(null, "Radius is exceed max value");
         }
         return MethodResult.of(estimatedCost);
+    }
+
+    public static void addIntegrationPlugin(Function<IPeripheralOwner, IPeripheralPlugin> plugin) {
+        PLUGINS.add(plugin);
     }
 }
