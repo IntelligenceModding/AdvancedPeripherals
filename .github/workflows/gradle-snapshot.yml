@@ -8,6 +8,10 @@ on:
     branches:
       - "1.16"
       - "1.17"
+  pull_request:
+    branches:
+      - "1.16"
+      - "1.17"
 
 jobs:
   build:
@@ -44,8 +48,14 @@ jobs:
           USERNAME: ${{ github.actor }}
           TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Test with Gradle
+        run: |
+          ./gradlew test
+          ./gradlew testServer
+          xvfb-run ./gradlew testClient
+
       - name: Build with Gradle
-        run: xvfb-run ./gradlew build -Dsnapshot=true
+        run: ./gradlew build -Dsnapshot=true
         env:
           USERNAME: ${{ github.actor }}
           TOKEN: ${{ secrets.GITHUB_TOKEN }}
