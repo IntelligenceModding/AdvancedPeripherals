@@ -30,3 +30,4 @@ forge*changelog.txt
 .env
 
 test-files
+logs/
