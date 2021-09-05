@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Several ME bugs with import/export with partially full cases
 - Crafting jobs [bug](https://github.com/Seniorendi/AdvancedPeripherals/issues/188)
 - `lookAtBlock` now correctly shows tags
+- Possible problem with crafting job race condition
 
 ## [0.7.1r] - 2021-08-23
 
