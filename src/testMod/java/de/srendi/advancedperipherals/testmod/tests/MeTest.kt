@@ -16,7 +16,7 @@ class MeTest {
         thenComputerOk()
     }
 
-    @GameTest(timeoutTicks = 800, batch = "server3")
+    @GameTest(timeoutTicks = 600)
     fun crafting(context: GameTestHelper) = context.sequence {
         thenComputerOk()
     }

@@ -189,12 +189,13 @@ public class MeBridgePeripheral extends BasePeripheral<TileEntityPeripheralOwner
         ItemStack stack = ItemUtil.getItemStack(arguments.getTable(0), monitor);
         IAEItemStack aeStack = AEItemStack.fromItemStack(stack);
         if (aeStack == null)
-            return MethodResult.of((Object) null);
+            return MethodResult.of(null, "Cannot determinate item for search");
         for (IAEItemStack potentialStack : monitor.getStorageList()) {
             if (potentialStack.isSameType(aeStack))
                 return MethodResult.of(INSTANCE.getMapFromStack(potentialStack));
         }
-        return MethodResult.of((Object) null);
+        aeStack.setStackSize(0);
+        return MethodResult.of(INSTANCE.getMapFromStack(aeStack));
     }
 
     @LuaFunction(mainThread = true)

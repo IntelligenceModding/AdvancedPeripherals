@@ -13,7 +13,7 @@ public class TestMod {
     public static final String MOD_ID = "aptest";
 
     static {
-        TToolkitMod.performConfiguration(sourceDir, 20 * 10);
+        TToolkitMod.performConfiguration(sourceDir, 20 * 30);
         LibConfig.setTestMode(true);
     }
 }
