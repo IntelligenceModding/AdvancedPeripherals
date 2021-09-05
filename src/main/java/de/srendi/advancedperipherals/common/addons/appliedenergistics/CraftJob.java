@@ -19,6 +19,7 @@ import de.srendi.advancedperipherals.common.util.ServerWorker;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class CraftJob implements ICraftingCallback, ILuaCallback {
 
@@ -41,12 +42,27 @@ public class CraftJob implements ICraftingCallback, ILuaCallback {
         this.item = item;
     }
 
+    protected void fireEvent(@Nullable ICraftingJob job, @Nullable String exception) {
+        if (exception != null) {
+            this.result = MethodResult.of(null, exception);
+            this.exception = new LuaException(exception);
+            this.computer.queueEvent(EVENT, null, exception);
+        } else if (job != null) {
+            this.result = MethodResult.of(AppEngApi.getInstance().getObjectFromJob(job));
+            this.computer.queueEvent(EVENT, (Object) null);
+        } else {
+            throw new IllegalArgumentException("job or exception should be not null!");
+        }
+    }
+
+    protected void fireNotConnected() {
+        fireEvent(null, "not connected");
+    }
+
     public void startCrafting() {
         IGrid grid = node.getGrid();
         if (grid == null) { //true when the block is not connected
-            this.computer.queueEvent(EVENT, null, "not connected");
-            result = MethodResult.of(null, "not connected");
-            exception = new LuaException("not connected");
+            fireNotConnected();
             return;
         }
 
@@ -56,15 +72,11 @@ public class CraftJob implements ICraftingCallback, ILuaCallback {
         ItemStack itemstack = item;
         IAEItemStack aeItem = AppEngApi.getInstance().findAEStackFromItemStack(monitor, itemstack);
         if (aeItem == null) {
-            this.computer.queueEvent(EVENT, null, item + " does not exists in the me system");
-            result = MethodResult.of(null, item + " does not exists in the me system");
-            exception = new LuaException(item + " is not craftable");
+            fireEvent(null, item.getDescriptionId() + " does not exists in the me system");
             return;
         }
         if (!aeItem.isCraftable()) {
-            this.computer.queueEvent(EVENT, null, item + " is not craftable");
-            result = MethodResult.of(null, item + " is not craftable");
-            exception = new LuaException(item + " is not craftable");
+            fireEvent(null, item.getDescriptionId() + " is not craftable");
             return;
         }
         aeItem.setStackSize(itemstack.getCount());
@@ -79,29 +91,22 @@ public class CraftJob implements ICraftingCallback, ILuaCallback {
 
     private void calcComplete(ICraftingJob job) {
         if (job.isSimulation()) {
-            this.computer.queueEvent(EVENT, null, "the me system has no ingredients for the crafting job");
-            result = MethodResult.of(false, "the me system has no ingredients for the crafting job");
-            exception = new LuaException("the me system has no ingredients for the crafting job");
+            fireEvent(null, "the me system has no ingredients for the crafting job");
             return;
         }
 
         IGrid grid = node.getGrid();
         if (grid == null) {
-            this.computer.queueEvent(EVENT, null, "not connected");
-            result = MethodResult.of(null, "not connected");
-            exception = new LuaException("not connected");
+            fireNotConnected();
             return;
         }
 
         ICraftingGrid crafting = grid.getCache(ICraftingGrid.class);
         ICraftingLink link = crafting.submitJob(job, null, null, false, this.source);
         if (link == null) {
-            this.computer.queueEvent(EVENT, null, "an unexpected error has occurred");
-            result = MethodResult.of(false, "an unexpected error has occurred");
-            exception = new LuaException("grid is null");
+            fireEvent(null, "an unexpected error has occurred");
         } else {
-            this.computer.queueEvent(EVENT, (Object) null);
-            result = MethodResult.of(AppEngApi.getInstance().getObjectFromJob(job));
+            fireEvent(job, null);
         }
     }
 
