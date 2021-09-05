@@ -1,4 +1,4 @@
-package de.srendi.advancedperipherals.api.peripherals;
+package de.srendi.advancedperipherals.lib.peripherals;
 
 import net.minecraft.nbt.CompoundNBT;
 

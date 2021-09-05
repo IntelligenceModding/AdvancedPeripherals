@@ -1,4 +1,4 @@
-package de.srendi.advancedperipherals.api.peripherals;
+package de.srendi.advancedperipherals.lib.peripherals;
 
 import dan200.computercraft.api.peripheral.IPeripheral;
 import dan200.computercraft.core.asm.PeripheralMethod;

@@ -7,9 +7,6 @@ import dan200.computercraft.api.lua.MethodResult;
 import dan200.computercraft.api.peripheral.IComputerAccess;
 import dan200.computercraft.api.peripheral.IDynamicPeripheral;
 import dan200.computercraft.api.peripheral.IPeripheral;
-import de.srendi.advancedperipherals.api.peripherals.BoundMethod;
-import de.srendi.advancedperipherals.api.peripherals.IPeripheralOperation;
-import de.srendi.advancedperipherals.api.peripherals.IPeripheralPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

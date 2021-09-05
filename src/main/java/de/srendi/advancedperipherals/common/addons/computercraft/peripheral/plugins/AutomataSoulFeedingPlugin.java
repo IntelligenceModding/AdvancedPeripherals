@@ -3,7 +3,7 @@ package de.srendi.advancedperipherals.common.addons.computercraft.peripheral.plu
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.lua.MethodResult;
 import dan200.computercraft.api.peripheral.IPeripheral;
-import de.srendi.advancedperipherals.api.metaphysics.IFeedableAutomataCore;
+import de.srendi.advancedperipherals.lib.metaphysics.IFeedableAutomataCore;
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.metaphysics.WeakAutomataCorePeripheral;
 import de.srendi.advancedperipherals.common.util.fakeplayer.APFakePlayer;
 import de.srendi.advancedperipherals.lib.peripherals.AutomataCorePeripheral;

@@ -1,8 +1,8 @@
 package de.srendi.advancedperipherals.common.addons.mekanism;
 
 import dan200.computercraft.api.lua.LuaFunction;
-import de.srendi.advancedperipherals.api.peripherals.IPeripheralPlugin;
-import de.srendi.advancedperipherals.api.peripherals.owner.IPeripheralOwner;
+import de.srendi.advancedperipherals.lib.peripherals.IPeripheralPlugin;
+import de.srendi.advancedperipherals.lib.peripherals.owner.IPeripheralOwner;
 import mekanism.api.Coord4D;
 import mekanism.common.Mekanism;
 import mekanism.common.util.UnitDisplayUtils;

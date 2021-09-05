@@ -1,4 +1,4 @@
-package de.srendi.advancedperipherals.api.integrations;
+package de.srendi.advancedperipherals.lib.integrations;
 
 import dan200.computercraft.api.peripheral.IPeripheral;
 import net.minecraft.util.Direction;

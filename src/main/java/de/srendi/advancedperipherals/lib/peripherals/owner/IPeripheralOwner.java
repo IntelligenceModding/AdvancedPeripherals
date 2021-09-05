@@ -1,6 +1,6 @@
-package de.srendi.advancedperipherals.api.peripherals.owner;
+package de.srendi.advancedperipherals.lib.peripherals.owner;
 
-import de.srendi.advancedperipherals.api.peripherals.IPeripheralOperation;
+import de.srendi.advancedperipherals.lib.peripherals.IPeripheralOperation;
 import de.srendi.advancedperipherals.common.util.fakeplayer.APFakePlayer;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;

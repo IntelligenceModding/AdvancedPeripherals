@@ -1,6 +1,6 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.peripheral.plugins;
 
-import de.srendi.advancedperipherals.api.peripherals.IPeripheralPlugin;
+import de.srendi.advancedperipherals.lib.peripherals.IPeripheralPlugin;
 import de.srendi.advancedperipherals.lib.peripherals.AutomataCorePeripheral;
 
 public class AutomataCorePlugin implements IPeripheralPlugin {

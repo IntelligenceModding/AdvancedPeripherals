@@ -1,7 +1,6 @@
 package de.srendi.advancedperipherals.lib.peripherals.owner;
 
 import dan200.computercraft.ComputerCraft;
-import de.srendi.advancedperipherals.api.peripherals.owner.FuelAbility;
 import org.jetbrains.annotations.NotNull;
 
 public class TurtleFuelAbility extends FuelAbility<TurtlePeripheralOwner> {

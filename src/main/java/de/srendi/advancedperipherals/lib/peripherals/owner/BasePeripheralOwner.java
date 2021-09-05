@@ -1,8 +1,5 @@
 package de.srendi.advancedperipherals.lib.peripherals.owner;
 
-import de.srendi.advancedperipherals.api.peripherals.owner.IOwnerAbility;
-import de.srendi.advancedperipherals.api.peripherals.owner.IPeripheralOwner;
-import de.srendi.advancedperipherals.api.peripherals.owner.PeripheralOwnerAbility;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;

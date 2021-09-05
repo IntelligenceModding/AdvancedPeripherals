@@ -3,7 +3,7 @@ package de.srendi.advancedperipherals.common.addons.computercraft.integrations;
 import dan200.computercraft.api.peripheral.IPeripheral;
 import dan200.computercraft.api.peripheral.IPeripheralProvider;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
-import de.srendi.advancedperipherals.api.integrations.IPeripheralIntegration;
+import de.srendi.advancedperipherals.lib.integrations.IPeripheralIntegration;
 import de.srendi.advancedperipherals.common.util.Platform;
 import de.srendi.advancedperipherals.lib.peripherals.TileEntityIntegrationPeripheral;
 import net.minecraft.tileentity.BeaconTileEntity;

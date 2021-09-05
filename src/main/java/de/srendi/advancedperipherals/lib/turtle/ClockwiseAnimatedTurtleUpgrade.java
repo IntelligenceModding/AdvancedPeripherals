@@ -4,7 +4,7 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import dan200.computercraft.api.client.TransformedModel;
 import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
-import de.srendi.advancedperipherals.api.peripherals.IBasePeripheral;
+import de.srendi.advancedperipherals.lib.peripherals.IBasePeripheral;
 import de.srendi.advancedperipherals.common.util.DataStorageUtil;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;

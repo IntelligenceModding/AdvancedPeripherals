@@ -1,9 +1,7 @@
 package de.srendi.advancedperipherals.lib.peripherals.owner;
 
-import de.srendi.advancedperipherals.api.LibConfig;
-import de.srendi.advancedperipherals.api.peripherals.IPeripheralOperation;
-import de.srendi.advancedperipherals.api.peripherals.owner.OperationAbility;
-import de.srendi.advancedperipherals.api.peripherals.owner.PeripheralOwnerAbility;
+import de.srendi.advancedperipherals.lib.LibConfig;
+import de.srendi.advancedperipherals.lib.peripherals.IPeripheralOperation;
 import de.srendi.advancedperipherals.test.DummyPeripheralOwner;
 import net.minecraftforge.common.ForgeConfigSpec;
 import org.junit.jupiter.api.Test;

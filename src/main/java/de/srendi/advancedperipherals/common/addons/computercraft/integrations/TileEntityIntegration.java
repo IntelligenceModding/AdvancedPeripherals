@@ -1,7 +1,7 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.integrations;
 
 import dan200.computercraft.api.peripheral.IPeripheral;
-import de.srendi.advancedperipherals.api.integrations.IPeripheralIntegration;
+import de.srendi.advancedperipherals.lib.integrations.IPeripheralIntegration;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;

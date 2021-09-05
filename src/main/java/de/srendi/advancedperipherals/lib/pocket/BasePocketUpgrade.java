@@ -3,7 +3,7 @@ package de.srendi.advancedperipherals.lib.pocket;
 import dan200.computercraft.api.peripheral.IPeripheral;
 import dan200.computercraft.api.pocket.AbstractPocketUpgrade;
 import dan200.computercraft.api.pocket.IPocketAccess;
-import de.srendi.advancedperipherals.api.peripherals.IBasePeripheral;
+import de.srendi.advancedperipherals.lib.peripherals.IBasePeripheral;
 import de.srendi.advancedperipherals.common.util.TranslationUtil;
 import de.srendi.advancedperipherals.lib.peripherals.DisabledPeripheral;
 import net.minecraft.util.IItemProvider;

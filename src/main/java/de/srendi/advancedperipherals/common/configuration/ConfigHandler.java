@@ -1,7 +1,7 @@
 package de.srendi.advancedperipherals.common.configuration;
 
 import de.srendi.advancedperipherals.AdvancedPeripherals;
-import de.srendi.advancedperipherals.api.LibConfig;
+import de.srendi.advancedperipherals.lib.LibConfig;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;

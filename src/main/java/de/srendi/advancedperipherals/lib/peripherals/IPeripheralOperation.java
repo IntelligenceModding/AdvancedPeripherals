@@ -1,6 +1,6 @@
-package de.srendi.advancedperipherals.api.peripherals;
+package de.srendi.advancedperipherals.lib.peripherals;
 
-import de.srendi.advancedperipherals.api.misc.IConfigHandler;
+import de.srendi.advancedperipherals.lib.misc.IConfigHandler;
 
 import java.util.Map;
 

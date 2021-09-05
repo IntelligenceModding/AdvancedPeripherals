@@ -1,8 +1,8 @@
-package de.srendi.advancedperipherals.api.peripherals.owner;
+package de.srendi.advancedperipherals.lib.peripherals.owner;
 
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.lua.MethodResult;
-import de.srendi.advancedperipherals.api.peripherals.IPeripheralPlugin;
+import de.srendi.advancedperipherals.lib.peripherals.IPeripheralPlugin;
 import net.minecraft.nbt.CompoundNBT;
 import org.jetbrains.annotations.NotNull;
 

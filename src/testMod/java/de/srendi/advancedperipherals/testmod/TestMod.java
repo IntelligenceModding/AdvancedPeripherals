@@ -1,6 +1,6 @@
 package de.srendi.advancedperipherals.testmod;
 
-import de.srendi.advancedperipherals.api.LibConfig;
+import de.srendi.advancedperipherals.lib.LibConfig;
 import net.minecraftforge.fml.common.Mod;
 import site.siredvin.ttoolkit.TToolkitMod;
 

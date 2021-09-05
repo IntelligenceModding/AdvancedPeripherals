@@ -6,7 +6,7 @@ import dan200.computercraft.api.turtle.AbstractTurtleUpgrade;
 import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
 import dan200.computercraft.api.turtle.TurtleUpgradeType;
-import de.srendi.advancedperipherals.api.peripherals.IBasePeripheral;
+import de.srendi.advancedperipherals.lib.peripherals.IBasePeripheral;
 import de.srendi.advancedperipherals.common.util.TranslationUtil;
 import de.srendi.advancedperipherals.lib.peripherals.DisabledPeripheral;
 import net.minecraft.client.renderer.model.ModelResourceLocation;

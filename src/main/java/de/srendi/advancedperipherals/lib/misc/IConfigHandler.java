@@ -1,4 +1,4 @@
-package de.srendi.advancedperipherals.api.misc;
+package de.srendi.advancedperipherals.lib.misc;
 
 import net.minecraftforge.common.ForgeConfigSpec;
 

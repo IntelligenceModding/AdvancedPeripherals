@@ -1,7 +1,7 @@
  package de.srendi.advancedperipherals.common.addons.computercraft.operations;
 
 import com.google.common.math.IntMath;
-import de.srendi.advancedperipherals.api.peripherals.IPeripheralOperation;
+import de.srendi.advancedperipherals.lib.peripherals.IPeripheralOperation;
 import net.minecraftforge.common.ForgeConfigSpec;
 
 import java.util.HashMap;

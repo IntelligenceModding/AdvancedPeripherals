@@ -1,4 +1,4 @@
-package de.srendi.advancedperipherals.api.peripherals.owner;
+package de.srendi.advancedperipherals.lib.peripherals.owner;
 
 import java.util.Map;
 

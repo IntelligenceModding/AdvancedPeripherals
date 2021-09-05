@@ -17,7 +17,7 @@ import com.minecolonies.api.research.IGlobalResearchTree;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.pocket.IPocketAccess;
-import de.srendi.advancedperipherals.api.peripherals.owner.IPeripheralOwner;
+import de.srendi.advancedperipherals.lib.peripherals.owner.IPeripheralOwner;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
 import de.srendi.advancedperipherals.lib.peripherals.owner.PocketPeripheralOwner;
 import de.srendi.advancedperipherals.common.addons.minecolonies.MineColonies;

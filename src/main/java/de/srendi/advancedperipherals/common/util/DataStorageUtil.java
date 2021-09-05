@@ -3,8 +3,8 @@ package de.srendi.advancedperipherals.common.util;
 import dan200.computercraft.api.pocket.IPocketAccess;
 import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
-import de.srendi.advancedperipherals.api.peripherals.owner.IPeripheralOwner;
-import de.srendi.advancedperipherals.api.peripherals.IPeripheralTileEntity;
+import de.srendi.advancedperipherals.lib.peripherals.owner.IPeripheralOwner;
+import de.srendi.advancedperipherals.lib.peripherals.IPeripheralTileEntity;
 import net.minecraft.nbt.CompoundNBT;
 
 import javax.annotation.Nonnull;

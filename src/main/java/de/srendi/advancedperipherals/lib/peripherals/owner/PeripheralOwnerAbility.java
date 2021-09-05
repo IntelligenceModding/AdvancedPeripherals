@@ -1,4 +1,4 @@
-package de.srendi.advancedperipherals.api.peripherals.owner;
+package de.srendi.advancedperipherals.lib.peripherals.owner;
 
 @SuppressWarnings("InstantiationOfUtilityClass")
 public class PeripheralOwnerAbility<T> {

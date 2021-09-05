@@ -1,13 +1,13 @@
-package de.srendi.advancedperipherals.api.peripherals.owner;
+package de.srendi.advancedperipherals.lib.peripherals.owner;
 
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.lua.MethodResult;
-import de.srendi.advancedperipherals.api.LibConfig;
-import de.srendi.advancedperipherals.api.peripherals.IPeripheralCheck;
-import de.srendi.advancedperipherals.api.peripherals.IPeripheralFunction;
-import de.srendi.advancedperipherals.api.peripherals.IPeripheralOperation;
-import de.srendi.advancedperipherals.api.peripherals.IPeripheralPlugin;
+import de.srendi.advancedperipherals.lib.LibConfig;
+import de.srendi.advancedperipherals.lib.peripherals.IPeripheralCheck;
+import de.srendi.advancedperipherals.lib.peripherals.IPeripheralFunction;
+import de.srendi.advancedperipherals.lib.peripherals.IPeripheralOperation;
+import de.srendi.advancedperipherals.lib.peripherals.IPeripheralPlugin;
 import net.minecraft.nbt.CompoundNBT;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

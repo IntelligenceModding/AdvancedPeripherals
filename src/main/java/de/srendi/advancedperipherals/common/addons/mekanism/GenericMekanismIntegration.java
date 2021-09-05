@@ -1,7 +1,7 @@
 package de.srendi.advancedperipherals.common.addons.mekanism;
 
 import dan200.computercraft.api.lua.LuaFunction;
-import de.srendi.advancedperipherals.api.peripherals.IPeripheralPlugin;
+import de.srendi.advancedperipherals.lib.peripherals.IPeripheralPlugin;
 import de.srendi.advancedperipherals.lib.peripherals.TileEntityIntegrationPeripheral;
 import mekanism.api.energy.IEnergyContainer;
 import mekanism.api.math.FloatingLong;

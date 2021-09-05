@@ -1,7 +1,6 @@
 package de.srendi.advancedperipherals.lib.peripherals.owner;
 
-import de.srendi.advancedperipherals.api.peripherals.IPeripheralTileEntity;
-import de.srendi.advancedperipherals.api.peripherals.owner.FuelAbility;
+import de.srendi.advancedperipherals.lib.peripherals.IPeripheralTileEntity;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.energy.CapabilityEnergy;

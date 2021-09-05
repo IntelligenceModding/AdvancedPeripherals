@@ -1,6 +1,6 @@
 package de.srendi.advancedperipherals.common.items;
 
-import de.srendi.advancedperipherals.api.metaphysics.IFeedableAutomataCore;
+import de.srendi.advancedperipherals.lib.metaphysics.IFeedableAutomataCore;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
 import de.srendi.advancedperipherals.common.setup.Items;
 import de.srendi.advancedperipherals.common.util.EnumColor;

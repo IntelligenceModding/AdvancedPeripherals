@@ -1,6 +1,6 @@
-package de.srendi.advancedperipherals.api.metaphysics;
+package de.srendi.advancedperipherals.lib.metaphysics;
 
-import de.srendi.advancedperipherals.api.misc.IConfigHandler;
+import de.srendi.advancedperipherals.lib.misc.IConfigHandler;
 
 public interface IAutomataCoreTier extends IConfigHandler {
     int getInteractionRadius();
