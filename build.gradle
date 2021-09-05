@@ -170,6 +170,15 @@ repositories {
     }
 
     maven {
+        name = "Create maven"
+        url = "https://maven.tterrag.com/"
+        content {
+            includeGroup "com.simibubi.create"
+            includeGroup "com.jozufozu.flywheel"
+        }
+    }
+
+    maven {
         name = "SirEdvin's private repository"
         url = "https://repo.repsy.io/mvn/siredvin/default"
         content {
@@ -224,6 +233,11 @@ dependencies {
 
     // Storage Drawers
     implementation fg.deobf("curse.maven:storagedrawers-${storagedrawers_version}")
+
+    // Create
+
+    implementation fg.deobf("com.simibubi.create:Create:${create_version}")
+    implementation fg.deobf("com.jozufozu.flywheel:Flywheel:${flywheel_version}")
 
     testModImplementation sourceSets.main.output
 

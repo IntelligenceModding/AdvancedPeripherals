@@ -22,8 +22,9 @@ import java.util.function.Function;
 public class IntegrationPeripheralProvider implements IPeripheralProvider {
 
     public static final String[] SUPPORTED_MODS = new String[]{
-        "mekanismgenerators", "mekanism", "botania",
-        "immersiveengineering", "integrateddynamics", "storagedrawers"
+            "mekanismgenerators", "mekanism", "botania",
+            "immersiveengineering", "integrateddynamics", "storagedrawers",
+            "create",
     };
 
     public static final PriorityQueue<IPeripheralIntegration> integrations = new PriorityQueue<>(Comparator.comparingInt(IPeripheralIntegration::getPriority));
