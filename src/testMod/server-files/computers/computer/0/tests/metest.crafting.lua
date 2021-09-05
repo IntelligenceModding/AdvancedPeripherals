@@ -7,6 +7,7 @@ test.eq(0, stoneBricks.count, "should be 0 stone bricks")
 test.eq(false, p.isItemCrafting({name = "minecraft:stone_bricks"}), "Item is crafting?...")
 local craft, craftErr = p.craftItem({name = "minecraft:stone_bricks", count = 1})
 test.eq(nil, craftErr, "Craft err should be nul");
+test.neq(nil, craft, "Craft result shouldn't be nil")
 test.eq(1, craft.stack.item.count, "Count should be correct")
 test.eq("[Stone Bricks]", craft.stack.item.displayName, "Name should be correct")
 test.eq(true, p.isItemCrafting({name = "minecraft:stone_bricks"}), "Item is not crafting?...")
