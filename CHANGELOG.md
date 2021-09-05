@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- waste barrel integration
+- Mekanism waste barrel integration
 - Create rotation speed controller and blaze burner integration
 
 ### Fixed
