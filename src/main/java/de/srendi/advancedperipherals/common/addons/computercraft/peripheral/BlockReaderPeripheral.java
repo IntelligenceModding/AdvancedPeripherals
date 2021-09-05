@@ -2,20 +2,21 @@ package de.srendi.advancedperipherals.common.addons.computercraft.peripheral;
 
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.shared.util.NBTUtil;
-import de.srendi.advancedperipherals.common.addons.computercraft.base.BasePeripheral;
 import de.srendi.advancedperipherals.common.blocks.base.APTileEntityBlock;
-import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
+import de.srendi.advancedperipherals.common.blocks.tileentity.BlockReaderTile;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
+import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
+import de.srendi.advancedperipherals.lib.peripherals.owner.TileEntityPeripheralOwner;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.nbt.CompoundNBT;
 
-public class BlockReaderPeripheral extends BasePeripheral {
+public class BlockReaderPeripheral extends BasePeripheral<TileEntityPeripheralOwner<BlockReaderTile>> {
 
     public static final String TYPE = "blockReader";
 
-    public BlockReaderPeripheral(PeripheralTileEntity<?> tileEntity) {
-        super(TYPE, tileEntity);
+    public BlockReaderPeripheral(BlockReaderTile tileEntity) {
+        super(TYPE, new TileEntityPeripheralOwner<>(tileEntity));
     }
 
     @Override
@@ -23,7 +24,7 @@ public class BlockReaderPeripheral extends BasePeripheral {
         return AdvancedPeripheralsConfig.enableBlockReader;
     }
 
-    @LuaFunction
+    @LuaFunction(mainThread = true)
     public final String getBlockName() {
         if (getBlockInFront().is(Blocks.AIR))
             return "none";

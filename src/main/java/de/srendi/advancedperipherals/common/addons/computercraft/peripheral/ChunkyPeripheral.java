@@ -3,9 +3,10 @@ package de.srendi.advancedperipherals.common.addons.computercraft.peripheral;
 import dan200.computercraft.api.peripheral.IComputerAccess;
 import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
-import de.srendi.advancedperipherals.common.addons.computercraft.base.BasePeripheral;
+import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
 import de.srendi.advancedperipherals.common.util.ChunkManager;
+import de.srendi.advancedperipherals.lib.peripherals.owner.TurtlePeripheralOwner;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.server.ServerWorld;
@@ -15,7 +16,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Objects;
 import java.util.UUID;
 
-public class ChunkyPeripheral extends BasePeripheral {
+public class ChunkyPeripheral extends BasePeripheral<TurtlePeripheralOwner> {
 
     private static final String UUID_TAG = "uuid";
 
@@ -24,7 +25,7 @@ public class ChunkyPeripheral extends BasePeripheral {
     private @Nullable ChunkPos loadedChunk;
 
     public ChunkyPeripheral(ITurtleAccess turtle, TurtleSide side) {
-        super(TYPE, turtle, side);
+        super(TYPE, new TurtlePeripheralOwner(turtle, side));
     }
 
     protected UUID getUUID() {

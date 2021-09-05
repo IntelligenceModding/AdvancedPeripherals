@@ -23,8 +23,7 @@ public class APCommands {
     @SubscribeEvent
     public static void register(RegisterCommandsEvent event) {
         event.getDispatcher().register(Commands.literal("advancedperipherals")
-                .then(Commands.literal("getHashItem").executes(context -> getHashItem(context.getSource())))
-                .then(Commands.literal("debug").executes(context -> printDebugTileMessage(context.getSource()))));
+                .then(Commands.literal("getHashItem").executes(context -> getHashItem(context.getSource()))));
     }
 
     private static int getHashItem(CommandSource source) throws CommandSyntaxException {
@@ -41,14 +40,6 @@ public class APCommands {
         }
         source.sendSuccess(new StringTextComponent("Hash of you main hand item: "), true);
         source.sendSuccess(TextComponentUtils.wrapInSquareBrackets(new StringTextComponent(hash).withStyle((style) -> style.applyFormat(TextFormatting.GREEN).withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, hash)).withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new StringTextComponent("Copy"))))), true);
-        return 1;
-    }
-
-    private static int printDebugTileMessage(CommandSource source) throws CommandSyntaxException {
-//        ServerPlayerEntity playerEntity = source.getPlayerOrException();
-//        TileEntityList list = TileEntityList.get(playerEntity.getLevel());
-//        source.sendSuccess(TextComponentUtils.wrapInSquareBrackets(new StringTextComponent("" + list.getBlockPositions()).withStyle((style) -> style.applyFormat(TextFormatting.GREEN).withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, "" + list.getBlockPositions())).withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new StringTextComponent("Copy"))))), true);
-//        source.sendSuccess(new StringTextComponent(list.getBlockPositions().size() + ""), false);
         return 1;
     }
 }

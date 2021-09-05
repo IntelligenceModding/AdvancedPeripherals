@@ -170,6 +170,15 @@ repositories {
     }
 
     maven {
+        name = "Create maven"
+        url = "https://maven.tterrag.com/"
+        content {
+            includeGroup "com.simibubi.create"
+            includeGroup "com.jozufozu.flywheel"
+        }
+    }
+
+    maven {
         name = "SirEdvin's private repository"
         url = "https://repo.repsy.io/mvn/siredvin/default"
         content {
@@ -205,8 +214,8 @@ dependencies {
     implementation fg.deobf("appeng:appliedenergistics2:${ae_version}");
 
     // Minecolonies
-    implementation fg.deobf("com.minecolonies:minecolonies:${minecolonies_version}:universal")
-    implementation fg.deobf("com.ldtteam:structurize:${structurize_version}:universal")
+    compileOnly fg.deobf("com.minecolonies:minecolonies:${minecolonies_version}:universal")
+    compileOnly fg.deobf("com.ldtteam:structurize:${structurize_version}:universal")
     // Botania with deps
     implementation fg.deobf("vazkii.botania:Botania:${botania_version}")
 
@@ -223,7 +232,12 @@ dependencies {
     implementation fg.deobf("curse.maven:immersiveengineering-${immersive_engineering_version}")
 
     // Storage Drawers
-    implementation fg.deobf("curse.maven:storagedrawers-${storagedrawers_version}")
+    compileOnly fg.deobf("curse.maven:storagedrawers-${storagedrawers_version}")
+
+    // Create
+
+    compileOnly fg.deobf("com.simibubi.create:Create:${create_version}")
+    compileOnly fg.deobf("com.jozufozu.flywheel:Flywheel:${flywheel_version}")
 
     testModImplementation sourceSets.main.output
 
@@ -287,6 +301,13 @@ task setupServer(type: Copy) {
 
         it.systemProperty('forge.logging.console.level', 'info')
         it.systemProperty('ttoolkit.run', 'true')
+    }
+}
+
+test {
+    useJUnitPlatform()
+    testLogging {
+        events "skipped", "failed"
     }
 }
 

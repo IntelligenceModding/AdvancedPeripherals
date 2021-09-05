@@ -1,0 +1,6 @@
+local p = peripheral.find("manaPool")
+test.assert(p, "Pool not found")
+test.eq(500000, p.getMana(), "Problem with mana")
+test.eq(500000, p.getMaxMana(), "Max mana")
+test.eq(false, p.isFull(), "is full")
+test.eq(false, p.isEmpty(), "is empty")

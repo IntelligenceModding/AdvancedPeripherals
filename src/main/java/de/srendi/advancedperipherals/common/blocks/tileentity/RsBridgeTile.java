@@ -5,7 +5,7 @@ import com.refinedmods.refinedstorage.tile.NetworkNodeTile;
 import com.refinedmods.refinedstorage.tile.config.IRedstoneConfigurable;
 import dan200.computercraft.api.peripheral.IPeripheral;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
-import de.srendi.advancedperipherals.common.addons.computercraft.base.IPeripheralTileEntity;
+import de.srendi.advancedperipherals.lib.peripherals.IPeripheralTileEntity;
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.RsBridgePeripheral;
 import de.srendi.advancedperipherals.common.addons.refinedstorage.RefinedStorageNode;
 import de.srendi.advancedperipherals.common.setup.TileEntityTypes;
@@ -23,16 +23,16 @@ import static dan200.computercraft.shared.Capabilities.CAPABILITY_PERIPHERAL;
 
 public class RsBridgeTile extends NetworkNodeTile<RefinedStorageNode> implements INetworkNodeProxy<RefinedStorageNode>, IRedstoneConfigurable, IPeripheralTileEntity {
 
-    private static final String AP_SETTINGS_KEY = "AP_SETTINGS";
+    private static final String PERIPHERAL_SETTINGS = "AP_SETTINGS";
 
-    protected CompoundNBT apSettings;
+    protected CompoundNBT peripheralSettings;
 
     protected RsBridgePeripheral peripheral = new RsBridgePeripheral(this);
     private LazyOptional<IPeripheral> peripheralCap;
 
     public RsBridgeTile() {
         super(TileEntityTypes.RS_BRIDGE.get());
-        apSettings = new CompoundNBT();
+        peripheralSettings = new CompoundNBT();
     }
 
     @NotNull
@@ -57,19 +57,24 @@ public class RsBridgeTile extends NetworkNodeTile<RefinedStorageNode> implements
     @Override
     public @NotNull CompoundNBT save(@NotNull CompoundNBT compound) {
         super.save(compound);
-        if (!apSettings.isEmpty())
-            compound.put(AP_SETTINGS_KEY, apSettings);
+        if (!peripheralSettings.isEmpty())
+            compound.put(PERIPHERAL_SETTINGS, peripheralSettings);
         return compound;
     }
 
     @Override
     public void load(@NotNull BlockState state, CompoundNBT compound) {
-        apSettings = compound.getCompound(AP_SETTINGS_KEY);
+        peripheralSettings = compound.getCompound(PERIPHERAL_SETTINGS);
         super.load(state, compound);
     }
 
     @Override
-    public CompoundNBT getApSettings() {
-        return apSettings;
+    public CompoundNBT getPeripheralSettings() {
+        return peripheralSettings;
+    }
+
+    @Override
+    public void markSettingsChanged() {
+        setChanged();
     }
 }

@@ -1,38 +1,42 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.integrations;
 
 import dan200.computercraft.api.lua.LuaFunction;
-import de.srendi.advancedperipherals.common.addons.computercraft.base.Integration;
+import dan200.computercraft.api.peripheral.IPeripheral;
+import de.srendi.advancedperipherals.lib.peripherals.TileEntityIntegrationPeripheral;
 import net.minecraft.tileentity.BeaconTileEntity;
+import net.minecraft.tileentity.TileEntity;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-public class BeaconIntegration extends Integration<BeaconTileEntity> {
-    @Override
-    public Class<BeaconTileEntity> getTargetClass() {
-        return BeaconTileEntity.class;
+public class BeaconIntegration extends TileEntityIntegrationPeripheral<BeaconTileEntity> {
+
+    public BeaconIntegration(TileEntity entity) {
+        super(entity);
     }
 
     @Override
-    public BeaconIntegration getNewInstance() {
-        return new BeaconIntegration();
-    }
-
-    @Override
-    public String getType() {
+    public @NotNull String getType() {
         return "beacon";
     }
 
-    @LuaFunction
+    @Override
+    public boolean equals(@Nullable IPeripheral iPeripheral) {
+        return false;
+    }
+
+    @LuaFunction(mainThread = true)
     public final int getLevel() {
-        return getTileEntity().getLevels();
+        return tileEntity.getLevels();
     }
 
-    @LuaFunction
+    @LuaFunction(mainThread = true)
     public final String getPrimaryEffect() {
-        return getTileEntity().primaryPower == null ? "none" : getTileEntity().primaryPower.getDescriptionId();
+        return tileEntity.primaryPower == null ? "none" : tileEntity.primaryPower.getDescriptionId();
     }
 
-    @LuaFunction
+    @LuaFunction(mainThread = true)
     public final String getSecondaryEffect() {
-        return getTileEntity().secondaryPower == null ? "none" : getTileEntity().secondaryPower.getDescriptionId();
+        return tileEntity.secondaryPower == null ? "none" : tileEntity.secondaryPower.getDescriptionId();
     }
 
 }

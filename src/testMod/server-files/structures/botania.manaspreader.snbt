@@ -1,0 +1,171 @@
+{
+    size: [3, 3, 3],
+    entities: [],
+    blocks: [
+        {
+            pos: [0, 0, 0],
+            state: 0
+        },
+        {
+            pos: [0, 0, 1],
+            state: 0
+        },
+        {
+            pos: [0, 0, 2],
+            state: 0
+        },
+        {
+            pos: [1, 0, 0],
+            state: 0
+        },
+        {
+            pos: [1, 0, 1],
+            state: 0
+        },
+        {
+            pos: [1, 0, 2],
+            state: 0
+        },
+        {
+            pos: [2, 0, 0],
+            state: 0
+        },
+        {
+            pos: [2, 0, 1],
+            state: 0
+        },
+        {
+            pos: [2, 0, 2],
+            state: 0
+        },
+        {
+            pos: [0, 1, 0],
+            state: 1
+        },
+        {
+            pos: [0, 1, 1],
+            state: 1
+        },
+        {
+            pos: [0, 1, 2],
+            state: 1
+        },
+        {
+            pos: [1, 1, 0],
+            state: 1
+        },
+        {
+            pos: [2, 1, 0],
+            state: 1
+        },
+        {
+            pos: [2, 1, 1],
+            state: 1
+        },
+        {
+            pos: [2, 1, 2],
+            state: 1
+        },
+        {
+            pos: [0, 2, 0],
+            state: 1
+        },
+        {
+            pos: [0, 2, 1],
+            state: 1
+        },
+        {
+            pos: [0, 2, 2],
+            state: 1
+        },
+        {
+            pos: [1, 2, 0],
+            state: 1
+        },
+        {
+            pos: [1, 2, 1],
+            state: 1
+        },
+        {
+            pos: [1, 2, 2],
+            state: 1
+        },
+        {
+            pos: [2, 2, 0],
+            state: 1
+        },
+        {
+            pos: [2, 2, 1],
+            state: 1
+        },
+        {
+            pos: [2, 2, 2],
+            state: 1
+        },
+        {
+            nbt: {
+                Label: "botania.manaspreader",
+                id: "computercraft:computer_advanced",
+                ComputerId: 0,
+                On: 1b
+            },
+            pos: [1, 1, 1],
+            state: 2
+        },
+        {
+            nbt: {
+                forceClientBindingX: 0,
+                mmForcedTicksBeforeManaLoss: 60,
+                forceClientBindingY: -1,
+                forceClientBindingZ: 0,
+                uuid: [I; 798428380, 1813203143, -1766447262, 1937029444],
+                uuidLeast: -7586833218461714108L,
+                mmForcedManaLossPerTick: 4.0f,
+                rotationX: 0.0f,
+                rotationY: 90.0f,
+                Items: [],
+                id: "botania:mana_spreader",
+                mmForcedVelocityMultiplier: 1.0f,
+                mapmakerOverrideEnabled: 0b,
+                pingbackTicks: 0,
+                requestUpdate: 0b,
+                paddingColor: -1,
+                uuidMost: 3429223782111463623L,
+                canShootBurst: 1b,
+                mmForcedGravity: 0.0f,
+                lastPingbackZ: 0.0d,
+                mmForcedColor: 2162464,
+                lastPingbackY: -1.0d,
+                lastPingbackX: 0.0d,
+                outputKey: "",
+                mana: 0,
+                mmForcedManaPayload: 160,
+                inputKey: ""
+            },
+            pos: [1, 1, 2],
+            state: 3
+        }
+    ],
+    palette: [
+        {
+            Name: "minecraft:polished_andesite"
+        },
+        {
+            Name: "minecraft:air"
+        },
+        {
+            Properties: {
+                facing: "north",
+                state: "blinking"
+            },
+            Name: "computercraft:computer_advanced"
+        },
+        {
+            Properties: {
+                waterlogged: "false"
+            },
+            Name: "botania:elven_spreader"
+        }
+    ],
+    DataVersion: 2586
+}

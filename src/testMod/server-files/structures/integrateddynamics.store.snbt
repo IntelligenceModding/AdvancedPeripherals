@@ -1,0 +1,209 @@
+{
+    size: [3, 3, 3],
+    entities: [],
+    blocks: [
+        {
+            pos: [0, 0, 0],
+            state: 0
+        },
+        {
+            pos: [0, 0, 1],
+            state: 0
+        },
+        {
+            pos: [0, 0, 2],
+            state: 0
+        },
+        {
+            pos: [1, 0, 0],
+            state: 0
+        },
+        {
+            pos: [1, 0, 1],
+            state: 0
+        },
+        {
+            pos: [1, 0, 2],
+            state: 0
+        },
+        {
+            pos: [2, 0, 0],
+            state: 0
+        },
+        {
+            pos: [2, 0, 1],
+            state: 0
+        },
+        {
+            pos: [2, 0, 2],
+            state: 0
+        },
+        {
+            pos: [0, 1, 0],
+            state: 1
+        },
+        {
+            pos: [0, 1, 1],
+            state: 1
+        },
+        {
+            pos: [0, 1, 2],
+            state: 1
+        },
+        {
+            pos: [1, 1, 0],
+            state: 1
+        },
+        {
+            pos: [2, 1, 0],
+            state: 1
+        },
+        {
+            pos: [2, 1, 1],
+            state: 1
+        },
+        {
+            pos: [2, 1, 2],
+            state: 1
+        },
+        {
+            pos: [0, 2, 0],
+            state: 1
+        },
+        {
+            pos: [0, 2, 1],
+            state: 1
+        },
+        {
+            pos: [0, 2, 2],
+            state: 1
+        },
+        {
+            pos: [1, 2, 0],
+            state: 1
+        },
+        {
+            pos: [1, 2, 1],
+            state: 1
+        },
+        {
+            pos: [1, 2, 2],
+            state: 1
+        },
+        {
+            pos: [2, 2, 0],
+            state: 1
+        },
+        {
+            pos: [2, 2, 1],
+            state: 1
+        },
+        {
+            pos: [2, 2, 2],
+            state: 1
+        },
+        {
+            nbt: {
+                Label: "integrateddynamics.store",
+                id: "computercraft:computer_advanced",
+                ComputerId: 0,
+                On: 1b
+            },
+            pos: [1, 1, 1],
+            state: 2
+        },
+        {
+            nbt: {
+                connected: {
+                    valueType: "java.lang.Boolean",
+                    map: [
+                        {
+                            value: 0b,
+                            key: 0
+                        },
+                        {
+                            value: 0b,
+                            key: 1
+                        },
+                        {
+                            value: 0b,
+                            key: 2
+                        },
+                        {
+                            value: 0b,
+                            key: 3
+                        },
+                        {
+                            value: 0b,
+                            key: 4
+                        },
+                        {
+                            value: 0b,
+                            key: 5
+                        }
+                    ]
+                },
+                id: "integrateddynamics:variable_store",
+                inventory: [
+                    {
+                        Slot: 0b,
+                        id: "integrateddynamics:variable",
+                        Count: 1b,
+                        tag: {
+                            _type: "integrateddynamics:valuetype",
+                            typeName: "integrateddynamics:string",
+                            _id: 0,
+                            value: "test1"
+                        }
+                    },
+                    {
+                        Slot: 1b,
+                        id: "integrateddynamics:variable",
+                        Count: 1b,
+                        tag: {
+                            _type: "integrateddynamics:valuetype",
+                            typeName: "integrateddynamics:string",
+                            _id: 1,
+                            value: "test2"
+                        }
+                    },
+                    {
+                        Slot: 2b,
+                        id: "integrateddynamics:variable",
+                        Count: 1b,
+                        tag: {
+                            variableIds: [I; 0, 1],
+                            _type: "integrateddynamics:operator",
+                            _id: 2,
+                            operatorName: "integrateddynamics:string_concat"
+                        }
+                    }
+                ]
+            },
+            pos: [1, 1, 2],
+            state: 3
+        }
+    ],
+    palette: [
+        {
+            Name: "minecraft:polished_andesite"
+        },
+        {
+            Name: "minecraft:air"
+        },
+        {
+            Properties: {
+                facing: "north",
+                state: "blinking"
+            },
+            Name: "computercraft:computer_advanced"
+        },
+        {
+            Properties: {
+                facing: "south"
+            },
+            Name: "integrateddynamics:variablestore"
+        }
+    ],
+    DataVersion: 2586
+}

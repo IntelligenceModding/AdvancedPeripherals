@@ -93,6 +93,7 @@ public class AppEngApi implements IAEAddon {
         map.put("fingerprint", getFingerpint(stack));
         map.put("name", stack.getItem().getRegistryName().toString());
         map.put("amount", stack.getStackSize());
+        map.put("count", stack.getStackSize());
         map.put("displayName", displayName);
         map.put("nbt", NBTUtil.toLua(nbt));
         map.put("tags", LuaConverter.tagsToList(stack.getItem().getTags()));
@@ -104,6 +105,7 @@ public class AppEngApi implements IAEAddon {
         HashMap<String, Object> map = new HashMap<>();
         map.put("name", stack.getFluidStack().getFluid().getRegistryName().toString());
         map.put("amount", stack.getFluidStack().getAmount());
+        map.put("count", stack.getFluidStack().getAmount());
         map.put("displayName", stack.getFluidStack().getDisplayName());
         map.put("tags", LuaConverter.tagsToList(stack.getFluid().getTags()));
         if (flag == 0) {
