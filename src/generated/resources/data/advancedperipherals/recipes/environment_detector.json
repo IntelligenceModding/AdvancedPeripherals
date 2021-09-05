@@ -7,7 +7,7 @@
   ],
   "key": {
     "W": {
-      "tag": "minecraft:wool"
+      "tag": "forge:wool"
     },
     "S": {
       "tag": "minecraft:saplings"

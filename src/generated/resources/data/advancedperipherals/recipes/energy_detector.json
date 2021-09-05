@@ -7,7 +7,7 @@
   ],
   "key": {
     "B": {
-      "item": "minecraft:redstone_block"
+      "tag": "forge:storage_blocks/redstone"
     },
     "R": {
       "item": "minecraft:redstone_torch"
@@ -19,7 +19,7 @@
       "item": "advancedperipherals:peripheral_casing"
     },
     "G": {
-      "item": "minecraft:gold_ingot"
+      "tag": "forge:ingots/gold"
     }
   },
   "result": {

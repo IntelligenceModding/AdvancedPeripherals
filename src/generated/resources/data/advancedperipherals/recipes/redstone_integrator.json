@@ -7,7 +7,7 @@
   ],
   "key": {
     "R": {
-      "item": "minecraft:redstone_block"
+      "tag": "forge:storage_blocks/redstone"
     },
     "A": {
       "item": "advancedperipherals:peripheral_casing"

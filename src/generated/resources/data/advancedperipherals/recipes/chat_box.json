@@ -13,7 +13,7 @@
       "item": "advancedperipherals:peripheral_casing"
     },
     "g": {
-      "item": "minecraft:gold_ingot"
+      "tag": "forge:ingots/gold"
     }
   },
   "result": {

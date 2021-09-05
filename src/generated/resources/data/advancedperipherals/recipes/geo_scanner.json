@@ -10,13 +10,13 @@
       "item": "minecraft:observer"
     },
     "D": {
-      "item": "minecraft:diamond"
+      "tag": "forge:gems/diamond"
     },
     "C": {
       "item": "advancedperipherals:peripheral_casing"
     },
     "R": {
-      "item": "minecraft:redstone_block"
+      "tag": "forge:storage_blocks/redstone"
     },
     "M": {
       "item": "computercraft:wired_modem_full"

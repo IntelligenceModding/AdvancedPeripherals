@@ -6,13 +6,13 @@
   ],
   "key": {
     "E": {
-      "item": "minecraft:ender_pearl"
+      "tag": "forge:ender_pearls"
     },
     "S": {
-      "item": "minecraft:stick"
+      "tag": "forge:rods/wooden"
     },
     "G": {
-      "item": "minecraft:black_stained_glass"
+      "tag": "forge:glass/black"
     }
   },
   "result": {
