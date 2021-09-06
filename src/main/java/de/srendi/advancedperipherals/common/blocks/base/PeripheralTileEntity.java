@@ -4,8 +4,8 @@ import dan200.computercraft.api.peripheral.IComputerAccess;
 import dan200.computercraft.api.peripheral.IPeripheral;
 import dan200.computercraft.shared.Capabilities;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
-import de.srendi.advancedperipherals.common.addons.computercraft.base.BasePeripheral;
-import de.srendi.advancedperipherals.common.addons.computercraft.base.IPeripheralTileEntity;
+import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
+import de.srendi.advancedperipherals.lib.peripherals.IPeripheralTileEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
@@ -32,7 +32,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collections;
 import java.util.List;
 
-public abstract class PeripheralTileEntity<T extends BasePeripheral> extends BaseContainerBlockEntity implements WorldlyContainer, MenuProvider, IPeripheralTileEntity {
+public abstract class PeripheralTileEntity<T extends BasePeripheral<?>> extends BaseContainerBlockEntity implements WorldlyContainer, MenuProvider, IPeripheralTileEntity {
     // TODO: move inventory logic to another tile entity?
     private static final String PERIPHERAL_SETTINGS_KEY = "peripheralSettings";
     private LazyOptional<? extends IItemHandler> handler;
@@ -213,5 +213,9 @@ public abstract class PeripheralTileEntity<T extends BasePeripheral> extends Bas
         return peripheralSettings;
     }
 
+    @Override
+    public void markSettingsChanged() {
+        setChanged();
+    }
 }
 

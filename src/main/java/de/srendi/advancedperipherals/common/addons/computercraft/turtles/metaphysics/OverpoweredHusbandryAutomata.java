@@ -3,7 +3,7 @@ package de.srendi.advancedperipherals.common.addons.computercraft.turtles.metaph
 import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
-import de.srendi.advancedperipherals.common.addons.computercraft.base.ModelTransformingTurtle;
+import de.srendi.advancedperipherals.lib.turtle.ClockwiseAnimatedTurtleUpgrade;
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.metaphysics.OverpoweredHusbandryAutomataCorePeripheral;
 import de.srendi.advancedperipherals.common.setup.Items;
 import net.minecraft.client.resources.model.ModelResourceLocation;
@@ -11,7 +11,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-public class OverpoweredHusbandryAutomata extends ModelTransformingTurtle<OverpoweredHusbandryAutomataCorePeripheral> {
+public class OverpoweredHusbandryAutomata extends ClockwiseAnimatedTurtleUpgrade<OverpoweredHusbandryAutomataCorePeripheral> {
     public static final ResourceLocation ID = new ResourceLocation(AdvancedPeripherals.MOD_ID, "overpowered_husbandry_automata");
 
     public OverpoweredHusbandryAutomata() {

@@ -3,11 +3,12 @@ package de.srendi.advancedperipherals.common.addons.computercraft.peripheral;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.shared.util.NBTUtil;
-import de.srendi.advancedperipherals.common.addons.computercraft.base.BasePeripheral;
-import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
+import de.srendi.advancedperipherals.common.blocks.tileentity.InventoryManagerTile;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
 import de.srendi.advancedperipherals.common.util.ItemUtil;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
+import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
+import de.srendi.advancedperipherals.lib.peripherals.owner.BlockEntityPeripheralOwner;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.player.Inventory;
@@ -23,12 +24,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-public class InventoryManagerPeripheral extends BasePeripheral {
+public class InventoryManagerPeripheral extends BasePeripheral<BlockEntityPeripheralOwner<InventoryManagerTile>> {
 
     public static final String TYPE = "inventoryManager";
 
-    public InventoryManagerPeripheral(PeripheralTileEntity<?> tileEntity) {
-        super(TYPE, tileEntity);
+    public InventoryManagerPeripheral(InventoryManagerTile tileEntity) {
+        super(TYPE, new BlockEntityPeripheralOwner<>(tileEntity));
     }
 
     @Override
@@ -227,7 +228,7 @@ public class InventoryManagerPeripheral extends BasePeripheral {
         return transferableAmount;
     }
 
-    @LuaFunction(value = {"list", "getItems"})
+    @LuaFunction(value = {"list", "getItems"}, mainThread = true)
     public final Map<Integer, Object> getItems() throws LuaException {
         ensurePlayerIsLinked();
         Map<Integer, Object> items = new HashMap<>();
@@ -249,7 +250,7 @@ public class InventoryManagerPeripheral extends BasePeripheral {
         return items;
     }
 
-    @LuaFunction
+    @LuaFunction(mainThread = true)
     public final Map<Integer, Object> getArmor() throws LuaException {
         ensurePlayerIsLinked();
         Map<Integer, Object> items = new HashMap<>();
@@ -271,7 +272,7 @@ public class InventoryManagerPeripheral extends BasePeripheral {
         return items;
     }
 
-    @LuaFunction
+    @LuaFunction(mainThread = true)
     public final boolean isPlayerEquipped() throws LuaException {
         ensurePlayerIsLinked();
         for (ItemStack stack : getOwnerPlayer().getInventory().armor) {
@@ -282,7 +283,7 @@ public class InventoryManagerPeripheral extends BasePeripheral {
         return false;
     }
 
-    @LuaFunction
+    @LuaFunction(mainThread = true)
     public final boolean isWearing(int index) throws LuaException {
         ensurePlayerIsLinked();
         int i = 0;

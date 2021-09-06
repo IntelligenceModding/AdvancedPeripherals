@@ -1,41 +1,45 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.integrations;
 
 import dan200.computercraft.api.lua.LuaFunction;
-import de.srendi.advancedperipherals.common.addons.computercraft.base.Integration;
+import dan200.computercraft.api.peripheral.IPeripheral;
+import de.srendi.advancedperipherals.lib.peripherals.BlockEntityIntegrationPeripheral;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.entity.BeaconBlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-public class BeaconIntegration extends Integration<BeaconBlockEntity> {
-    @Override
-    public Class<BeaconBlockEntity> getTargetClass() {
-        return BeaconBlockEntity.class;
+public class BeaconIntegration extends BlockEntityIntegrationPeripheral<BeaconBlockEntity> {
+
+    public BeaconIntegration(BlockEntity entity) {
+        super(entity);
     }
 
     @Override
-    public BeaconIntegration getNewInstance() {
-        return new BeaconIntegration();
-    }
-
-    @Override
-    public String getType() {
+    public @NotNull String getType() {
         return "beacon";
     }
 
-    @LuaFunction
+    @Override
+    public boolean equals(@Nullable IPeripheral iPeripheral) {
+        return false;
+    }
+
+    @LuaFunction(mainThread = true)
     public final int getLevel() {
         // because levels are now protected field .... why?
-        CompoundTag savedData = getTileEntity().save(new CompoundTag());
+        CompoundTag savedData = blockEntity.save(new CompoundTag());
         return savedData.getInt("Levels");
     }
 
-    @LuaFunction
+    @LuaFunction(mainThread = true)
     public final String getPrimaryEffect() {
-        return getTileEntity().primaryPower == null ? "none" : getTileEntity().primaryPower.getDescriptionId();
+        return blockEntity.primaryPower == null ? "none" : blockEntity.primaryPower.getDescriptionId();
     }
 
-    @LuaFunction
+    @LuaFunction(mainThread = true)
     public final String getSecondaryEffect() {
-        return getTileEntity().secondaryPower == null ? "none" : getTileEntity().secondaryPower.getDescriptionId();
+        return blockEntity.secondaryPower == null ? "none" : blockEntity.secondaryPower.getDescriptionId();
     }
 
 }

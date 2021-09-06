@@ -150,4 +150,9 @@ public class ARControllerTile extends PeripheralTileEntity<ARControllerPeriphera
         }
         return list;
     }
+
+    @Override
+    public void markSettingsChanged() {
+
+    }
 }

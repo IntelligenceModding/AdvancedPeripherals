@@ -5,10 +5,14 @@ import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.pocket.IPocketAccess;
 import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
-import de.srendi.advancedperipherals.common.addons.computercraft.base.BasePeripheral;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
+import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
+import de.srendi.advancedperipherals.lib.peripherals.owner.BlockEntityPeripheralOwner;
+import de.srendi.advancedperipherals.lib.peripherals.owner.IPeripheralOwner;
+import de.srendi.advancedperipherals.lib.peripherals.owner.PocketPeripheralOwner;
+import de.srendi.advancedperipherals.lib.peripherals.owner.TurtlePeripheralOwner;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
@@ -22,20 +26,20 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class PlayerDetectorPeripheral extends BasePeripheral {
+public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
 
     public static final String TYPE = "playerDetector";
 
     public PlayerDetectorPeripheral(PeripheralTileEntity<?> tileEntity) {
-        super(TYPE, tileEntity);
+        super(TYPE, new BlockEntityPeripheralOwner<>(tileEntity));
     }
 
     public PlayerDetectorPeripheral(ITurtleAccess access, TurtleSide side) {
-        super(TYPE, access, side);
+        super(TYPE, new TurtlePeripheralOwner(access, side));
     }
 
     public PlayerDetectorPeripheral(IPocketAccess pocket) {
-        super(TYPE, pocket);
+        super(TYPE, new PocketPeripheralOwner(pocket));
     }
 
     @Override

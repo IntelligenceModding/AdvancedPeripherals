@@ -184,6 +184,15 @@ repositories {
     maven { url 'https://squiddev.cc/maven/' }
     maven { url 'https://maven.theillusivec4.top/' }
     maven {
+        name = "Create maven"
+        url = "https://maven.tterrag.com/"
+        content {
+            includeGroup "com.simibubi.create"
+            includeGroup "com.jozufozu.flywheel"
+        }
+    }
+
+    maven {
         name = "SirEdvin's private repository"
         url = "https://repo.repsy.io/mvn/siredvin/default"
         content {
@@ -266,6 +275,13 @@ task setupServer(type: Copy) {
 
         it.systemProperty('forge.logging.console.level', 'info')
         it.systemProperty('ttoolkit.run', 'true')
+    }
+}
+
+test {
+    useJUnitPlatform()
+    testLogging {
+        events "skipped", "failed"
     }
 }
 

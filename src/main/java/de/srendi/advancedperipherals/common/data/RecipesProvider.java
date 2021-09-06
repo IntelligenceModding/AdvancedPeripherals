@@ -29,7 +29,7 @@ public class RecipesProvider extends RecipeProvider implements IConditionBuilder
     @Override
     protected void buildCraftingRecipes(Consumer<FinishedRecipe> consumer) {
         ShapedRecipeBuilder.shaped(Blocks.AR_CONTROLLER.get())
-                .define('E', Items.ENDER_PEARL)
+                .define('E', Tags.Items.ENDER_PEARLS)
                 .define('C', CASING)
                 .define('G', Items.SMOOTH_STONE)
                 .pattern("GEG")
@@ -39,9 +39,9 @@ public class RecipesProvider extends RecipeProvider implements IConditionBuilder
                 .save(consumer);
 
         ShapedRecipeBuilder.shaped(de.srendi.advancedperipherals.common.setup.Items.AR_GOGGLES.get())
-                .define('E', Items.ENDER_PEARL)
-                .define('S', Items.STICK)
-                .define('G', Items.BLACK_STAINED_GLASS)
+                .define('E', Tags.Items.ENDER_PEARLS)
+                .define('S', Tags.Items.RODS_WOODEN)
+                .define('G', Tags.Items.GLASS_BLACK)
                 .pattern("GSG")
                 .pattern(" E ")
                 .unlockedBy("has_item", has(Items.STICK))
@@ -50,16 +50,16 @@ public class RecipesProvider extends RecipeProvider implements IConditionBuilder
         ShapedRecipeBuilder.shaped(Blocks.CHAT_BOX.get())
                 .define('P', ItemTags.LOGS)
                 .define('A', CASING)
-                .define('g', Items.GOLD_INGOT)
+                .define('G', Tags.Items.INGOTS_GOLD)
                 .pattern("PPP")
                 .pattern("PAP")
-                .pattern("PgP")
+                .pattern("PGP")
                 .unlockedBy("has_item", has(CASING))
                 .save(consumer);
 
         ShapedRecipeBuilder.shaped(de.srendi.advancedperipherals.common.setup.Items.CHUNK_CONTROLLER.get())
-                .define('I', Items.IRON_INGOT)
-                .define('R', Items.REDSTONE)
+                .define('I', Tags.Items.INGOTS_IRON)
+                .define('R', Tags.Items.DUSTS_REDSTONE)
                 .define('A', Items.RESPAWN_ANCHOR)
                 .pattern("IRI")
                 .pattern("RAR")
@@ -68,7 +68,7 @@ public class RecipesProvider extends RecipeProvider implements IConditionBuilder
                 .save(consumer);
 
         ShapedRecipeBuilder.shaped(de.srendi.advancedperipherals.common.setup.Items.COMPUTER_TOOL.get())
-                .define('I', Items.IRON_INGOT)
+                .define('I', Tags.Items.INGOTS_IRON)
                 .define('B', Items.BLUE_TERRACOTTA)
                 .pattern("I I")
                 .pattern("IBI")
@@ -77,11 +77,11 @@ public class RecipesProvider extends RecipeProvider implements IConditionBuilder
                 .save(consumer);
 
         ShapedRecipeBuilder.shaped(Blocks.ENERGY_DETECTOR.get())
-                .define('B', Items.REDSTONE_BLOCK)
+                .define('B', Tags.Items.STORAGE_BLOCKS_REDSTONE)
                 .define('R', Items.REDSTONE_TORCH)
                 .define('C', Items.COMPARATOR)
                 .define('A', CASING)
-                .define('G', Items.GOLD_INGOT)
+                .define('G', Tags.Items.INGOTS_GOLD)
                 .pattern("BRB")
                 .pattern("CAC")
                 .pattern("BGB")
@@ -101,7 +101,7 @@ public class RecipesProvider extends RecipeProvider implements IConditionBuilder
                 .save(consumer);
 
         ShapedRecipeBuilder.shaped(Blocks.INVENTORY_MANAGER.get())
-                .define('I', Items.IRON_INGOT)
+                .define('I', Tags.Items.INGOTS_IRON)
                 .define('C', Tags.Items.CHESTS)
                 .define('A', CASING)
                 .pattern("ICI")
@@ -110,21 +110,11 @@ public class RecipesProvider extends RecipeProvider implements IConditionBuilder
                 .unlockedBy("has_item", has(CASING))
                 .save(consumer);
 
-//        ShapedRecipeBuilder.shaped(Blocks.ME_BRIDGE.get())
-//                .define('F', Api.INSTANCE.definitions().blocks().fluixBlock().block())
-//                .define('I', Api.INSTANCE.definitions().parts().iface().item())
-//                .define('A', CASING)
-//                .pattern("FIF")
-//                .pattern("IAI")
-//                .pattern("FIF")
-//                .unlockedBy("has_item", has(CASING))
-//                .save(consumer);
-
         ShapedRecipeBuilder.shaped(de.srendi.advancedperipherals.common.setup.Items.MEMORY_CARD.get())
-                .define('I', Items.IRON_INGOT)
-                .define('W', Items.WHITE_STAINED_GLASS)
+                .define('I', Tags.Items.INGOTS_IRON)
+                .define('W', Tags.Items.GLASS_WHITE)
                 .define('O', Items.OBSERVER)
-                .define('G', Items.GOLD_INGOT)
+                .define('G', Tags.Items.INGOTS_GOLD)
                 .pattern("IWI")
                 .pattern("IOI")
                 .pattern(" G ")
@@ -132,9 +122,9 @@ public class RecipesProvider extends RecipeProvider implements IConditionBuilder
                 .save(consumer);
 
         ShapedRecipeBuilder.shaped(Blocks.PERIPHERAL_CASING.get())
-                .define('I', Items.IRON_INGOT)
+                .define('I', Tags.Items.INGOTS_IRON)
                 .define('i', Items.IRON_BARS)
-                .define('R', Items.REDSTONE_BLOCK)
+                .define('R', Tags.Items.STORAGE_BLOCKS_REDSTONE)
                 .pattern("IiI")
                 .pattern("iRi")
                 .pattern("IiI")
@@ -144,7 +134,7 @@ public class RecipesProvider extends RecipeProvider implements IConditionBuilder
         ShapedRecipeBuilder.shaped(Blocks.PLAYER_DETECTOR.get())
                 .define('S', Items.SMOOTH_STONE)
                 .define('A', CASING)
-                .define('R', Items.REDSTONE_BLOCK)
+                .define('R', Tags.Items.STORAGE_BLOCKS_REDSTONE)
                 .pattern("SSS")
                 .pattern("SAS")
                 .pattern("SRS")
@@ -152,7 +142,7 @@ public class RecipesProvider extends RecipeProvider implements IConditionBuilder
                 .save(consumer);
 
         ShapedRecipeBuilder.shaped(Blocks.REDSTONE_INTEGRATOR.get())
-                .define('R', Items.REDSTONE_BLOCK)
+                .define('R', Tags.Items.STORAGE_BLOCKS_REDSTONE)
                 .define('A', CASING)
                 .define('C', Items.COMPARATOR)
                 .pattern("RCR")
@@ -161,21 +151,11 @@ public class RecipesProvider extends RecipeProvider implements IConditionBuilder
                 .unlockedBy("has_item", has(CASING))
                 .save(consumer);
 
-//        ShapedRecipeBuilder.shaped(Blocks.RS_BRIDGE.get())
-//                .define('Q', RSItems.QUARTZ_ENRICHED_IRON.get())
-//                .define('I', RSBlocks.INTERFACE.get())
-//                .define('A', CASING)
-//                .pattern("QIQ")
-//                .pattern("IAI")
-//                .pattern("QIQ")
-//                .unlockedBy("has_item", has(CASING))
-//                .save(consumer);
-
         ShapedRecipeBuilder.shaped(Blocks.BLOCK_READER.get())
                 .define('O', Items.OBSERVER)
-                .define('I', Items.IRON_INGOT)
+                .define('I', Tags.Items.INGOTS_IRON)
                 .define('M', Registry.ModBlocks.WIRED_MODEM_FULL.get())
-                .define('R', Items.REDSTONE_BLOCK)
+                .define('R', Tags.Items.STORAGE_BLOCKS_REDSTONE)
                 .define('A', CASING)
                 .pattern("IRI")
                 .pattern("MAO")
@@ -185,9 +165,9 @@ public class RecipesProvider extends RecipeProvider implements IConditionBuilder
 
         ShapedRecipeBuilder.shaped(Blocks.GEO_SCANNER.get())
                 .define('O', Items.OBSERVER)
-                .define('D', Items.DIAMOND)
+                .define('D', Tags.Items.GEMS_DIAMOND)
                 .define('C', CASING)
-                .define('R', Items.REDSTONE_BLOCK)
+                .define('R', Tags.Items.STORAGE_BLOCKS_REDSTONE)
                 .define('M', Registry.ModBlocks.WIRED_MODEM_FULL.get())
                 .pattern("DMD")
                 .pattern("DCD")
@@ -196,10 +176,10 @@ public class RecipesProvider extends RecipeProvider implements IConditionBuilder
                 .save(consumer);
 
         ShapedRecipeBuilder.shaped(Blocks.NBT_STORAGE.get())
-                .define('C', Items.CHEST)
+                .define('C', Tags.Items.CHESTS)
                 .define('A', CASING)
-                .define('R', Items.REDSTONE_BLOCK)
-                .define('I', Items.IRON_INGOT)
+                .define('R', Tags.Items.STORAGE_BLOCKS_REDSTONE)
+                .define('I', Tags.Items.INGOTS_IRON)
                 .pattern("ICI")
                 .pattern("CAC")
                 .pattern("RCR")
@@ -208,9 +188,9 @@ public class RecipesProvider extends RecipeProvider implements IConditionBuilder
 
         ShapedRecipeBuilder.shaped(de.srendi.advancedperipherals.common.setup.Items.WEAK_AUTOMATA_CORE.get())
                 .define('A', CASING)
-                .define('R', Items.REDSTONE_BLOCK)
+                .define('R', Tags.Items.STORAGE_BLOCKS_REDSTONE)
                 .define('S', Items.SOUL_LANTERN)
-                .define('D', Items.DIAMOND)
+                .define('D', Tags.Items.GEMS_DIAMOND)
                 .define('L', new NBTIngredient(PotionUtils.setPotion(new ItemStack(Items.POTION), Potions.LONG_REGENERATION)))
                 .pattern("RAR")
                 .pattern("DSD")

@@ -1,5 +1,6 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.operations;
 
+import de.srendi.advancedperipherals.lib.peripherals.IPeripheralOperation;
 import net.minecraftforge.common.ForgeConfigSpec;
 
 import java.util.HashMap;
@@ -20,6 +21,11 @@ public enum SimpleFreeOperation implements IPeripheralOperation<Object> {
         cooldown = builder.defineInRange(
                 settingsName() + "Cooldown", defaultCooldown, 1_000, Integer.MAX_VALUE
         );
+    }
+
+    @Override
+    public int getInitialCooldown() {
+        return cooldown.get();
     }
 
     @Override

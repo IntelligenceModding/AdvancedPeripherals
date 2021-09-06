@@ -3,7 +3,7 @@
   "pattern": [
     "PPP",
     "PAP",
-    "PgP"
+    "PGP"
   ],
   "key": {
     "P": {
@@ -12,8 +12,8 @@
     "A": {
       "item": "advancedperipherals:peripheral_casing"
     },
-    "g": {
-      "item": "minecraft:gold_ingot"
+    "G": {
+      "tag": "forge:ingots/gold"
     }
   },
   "result": {

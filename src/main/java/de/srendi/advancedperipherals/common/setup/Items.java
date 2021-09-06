@@ -1,6 +1,6 @@
 package de.srendi.advancedperipherals.common.setup;
 
-import de.srendi.advancedperipherals.common.addons.computercraft.turtles.TurtleChunky;
+import de.srendi.advancedperipherals.common.addons.computercraft.turtles.TurtleChunkyUpgrade;
 import de.srendi.advancedperipherals.common.addons.computercraft.turtles.metaphysics.*;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
 import de.srendi.advancedperipherals.common.items.APItem;
@@ -13,7 +13,7 @@ import net.minecraftforge.fmllegacy.RegistryObject;
 public class Items {
 
     public static final RegistryObject<Item> CHUNK_CONTROLLER = Registration.ITEMS.register("chunk_controller", () -> new APItem(new Item.Properties().stacksTo(16),
-            TurtleChunky.ID, null, () -> AdvancedPeripheralsConfig.enableChunkyTurtle));
+            TurtleChunkyUpgrade.ID, null, () -> AdvancedPeripheralsConfig.enableChunkyTurtle));
 
     public static final RegistryObject<ARGogglesItem> AR_GOGGLES = Registration.ITEMS.register("ar_goggles", ARGogglesItem::new);
 

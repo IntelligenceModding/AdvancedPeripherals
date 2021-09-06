@@ -4,27 +4,25 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.lua.MethodResult;
 import dan200.computercraft.shared.util.NBTUtil;
-import de.srendi.advancedperipherals.common.addons.computercraft.base.BasePeripheral;
 import de.srendi.advancedperipherals.common.blocks.tileentity.NBTStorageTile;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
 import de.srendi.advancedperipherals.common.util.CountingWipingStream;
+import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
+import de.srendi.advancedperipherals.lib.peripherals.owner.BlockEntityPeripheralOwner;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.TagParser;
 
 import java.io.IOException;
 import java.io.ObjectOutputStream;
-import java.util.HashMap;
 import java.util.Map;
 
-public class NBTStoragePeripheral extends BasePeripheral {
+public class NBTStoragePeripheral extends BasePeripheral<BlockEntityPeripheralOwner<NBTStorageTile>> {
 
     public static final String TYPE = "nbtStorage";
 
-    private final NBTStorageTile tile;
 
     public NBTStoragePeripheral(NBTStorageTile tileEntity) {
-        super(TYPE, tileEntity);
-        this.tile = tileEntity;
+        super(TYPE, new BlockEntityPeripheralOwner<>(tileEntity));
     }
 
     @Override
@@ -32,19 +30,19 @@ public class NBTStoragePeripheral extends BasePeripheral {
         return AdvancedPeripheralsConfig.enableNBTStorage;
     }
 
-    @LuaFunction
-    public final Map<String, Integer> getConfiguration() {
-        Map<String, Integer> result = new HashMap<>();
-        result.put("maxSize", AdvancedPeripheralsConfig.nbtStorageMaxSize);
-        return result;
+    @Override
+    public Map<String, Object> getPeripheralConfiguration() {
+        Map<String, Object> data = super.getPeripheralConfiguration();
+        data.put("maxSize", AdvancedPeripheralsConfig.nbtStorageMaxSize);
+        return data;
     }
 
-    @LuaFunction
+    @LuaFunction(mainThread = true)
     public final MethodResult read() {
-        return MethodResult.of(NBTUtil.toLua(tile.getStored()));
+        return MethodResult.of(NBTUtil.toLua(owner.tileEntity.getStored()));
     }
 
-    @LuaFunction
+    @LuaFunction(mainThread = true)
     public final MethodResult writeJson(String jsonData) {
         if (jsonData.length() > AdvancedPeripheralsConfig.nbtStorageMaxSize) {
             return MethodResult.of(null, "JSON size is bigger than allowed");
@@ -55,11 +53,11 @@ public class NBTStoragePeripheral extends BasePeripheral {
         } catch (CommandSyntaxException ex) {
             return MethodResult.of(null, String.format("Cannot parse json: %s", ex.getMessage()));
         }
-        tile.setStored(parsedData);
+        owner.tileEntity.setStored(parsedData);
         return MethodResult.of(true);
     }
 
-    @LuaFunction
+    @LuaFunction(mainThread = true)
     public final MethodResult writeTable(Map<?, ?> data) {
         CountingWipingStream countingStream = new CountingWipingStream();
         try {
@@ -72,7 +70,7 @@ public class NBTStoragePeripheral extends BasePeripheral {
         if (countingStream.getWrittenBytes() > AdvancedPeripheralsConfig.nbtStorageMaxSize)
             return MethodResult.of(null, "JSON size is bigger than allowed");
         CompoundTag parsedData = (CompoundTag) de.srendi.advancedperipherals.common.util.NBTUtil.toDirectNBT(data);
-        tile.setStored(parsedData);
+        owner.tileEntity.setStored(parsedData);
         return MethodResult.of(true);
     }
 }

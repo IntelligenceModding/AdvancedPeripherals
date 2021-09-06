@@ -1,9 +1,9 @@
 package de.srendi.advancedperipherals.common.configuration;
 
 import de.srendi.advancedperipherals.AdvancedPeripherals;
+import de.srendi.advancedperipherals.lib.LibConfig;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.config.ModConfigEvent;
 
 @Mod.EventBusSubscriber(modid = AdvancedPeripherals.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
@@ -13,6 +13,7 @@ public class ConfigHandler {
     public static void configEvent(final ModConfigEvent event) {
         if (event.getConfig().getSpec() == ConfigHolder.COMMON_SPEC) {
             ConfigHandler.bakeCommon();
+            LibConfig.reloadConfig();
         }
     }
 
@@ -51,6 +52,7 @@ public class ConfigHandler {
         AdvancedPeripheralsConfig.enableEndAutomataCore = ConfigHolder.COMMON_CONFIG.ENABLE_END_AUTOMATA_CORE.get();
         AdvancedPeripheralsConfig.enableHusbandryAutomataCore = ConfigHolder.COMMON_CONFIG.ENABLE_HUSBANDRY_AUTOMATA_CORE.get();
         AdvancedPeripheralsConfig.endAutomataCoreWarpPointLimit = ConfigHolder.COMMON_CONFIG.END_AUTOMATA_CORE_WARP_POINT_LIMIT.get();
+        AdvancedPeripheralsConfig.overpoweredAutomataBreakChance = ConfigHolder.COMMON_CONFIG.OVERPOWERED_AUTOMATA_BREAK_CHANCE.get();
 
         //World
         AdvancedPeripheralsConfig.givePlayerBookOnJoin = ConfigHolder.COMMON_CONFIG.GIVE_PLAYER_BOOK_ON_JOIN.get();
