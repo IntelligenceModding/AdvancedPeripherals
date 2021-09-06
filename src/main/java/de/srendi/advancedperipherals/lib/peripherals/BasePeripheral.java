@@ -15,6 +15,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 public abstract class BasePeripheral<O extends IPeripheralOwner> implements IBasePeripheral<O>, IDynamicPeripheral {
@@ -130,10 +131,6 @@ public abstract class BasePeripheral<O extends IPeripheralOwner> implements IBas
         return LuaConverter.getDirection(owner.getFacing(), dir);
     }
 
-    protected List<IPeripheralPlugin> getAvailablePlugins() {
-        return Collections.emptyList();
-    }
-
     @Override
     @NotNull
     public String @NotNull [] getMethodNames() {
@@ -150,10 +147,18 @@ public abstract class BasePeripheral<O extends IPeripheralOwner> implements IBas
         return pluggedMethods.get(index).apply(access, context, arguments);
     }
 
-    protected <T> MethodResult withOperation(IPeripheralOperation<T> operation, T context, @Nullable IPeripheralCheck<T> check, IPeripheralFunction<T, MethodResult> method, @Nullable Consumer<T> successCallback) throws LuaException {
+    protected <T> MethodResult withOperation(
+            IPeripheralOperation<T> operation, T context, @Nullable IPeripheralCheck<T> check, IPeripheralFunction<T, MethodResult> method,
+            @Nullable Consumer<T> successCallback) throws LuaException {
+        return withOperation(operation, context, check, method, successCallback, null);
+    }
+
+    protected <T> MethodResult withOperation(
+            IPeripheralOperation<T> operation, T context, @Nullable IPeripheralCheck<T> check, IPeripheralFunction<T, MethodResult> method,
+            @Nullable Consumer<T> successCallback, @Nullable BiConsumer<MethodResult, OperationAbility.FailReason> failCallback) throws LuaException {
         OperationAbility operationAbility = owner.getAbility(PeripheralOwnerAbility.OPERATION);
         if (operationAbility == null)
             throw new IllegalArgumentException("This shouldn't happen at all");
-        return operationAbility.performOperation(operation, context, check, method, successCallback);
+        return operationAbility.performOperation(operation, context, check, method, successCallback, failCallback);
     }
 }

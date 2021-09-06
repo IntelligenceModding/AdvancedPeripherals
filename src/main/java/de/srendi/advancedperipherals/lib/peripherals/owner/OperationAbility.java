@@ -17,6 +17,7 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 public class OperationAbility implements IOwnerAbility, IPeripheralPlugin {
@@ -59,23 +60,40 @@ public class OperationAbility implements IOwnerAbility, IPeripheralPlugin {
         }
     }
 
-    public <T> @NotNull MethodResult performOperation(IPeripheralOperation<T> operation, T context, @Nullable IPeripheralCheck<T> check, IPeripheralFunction<T, MethodResult> method, @Nullable Consumer<T> successCallback) throws LuaException {
-        if (isOnCooldown(operation))
-            return MethodResult.of(null, String.format("%s is on cooldown", operation.settingsName()));
+    public <T> @NotNull MethodResult performOperation(
+            IPeripheralOperation<T> operation, T context, @Nullable IPeripheralCheck<T> check, IPeripheralFunction<T, MethodResult> method,
+            @Nullable Consumer<T> successCallback, @Nullable BiConsumer<MethodResult, FailReason> failCallback) throws LuaException {
+        if (isOnCooldown(operation)) {
+            MethodResult result = MethodResult.of(null, String.format("%s is on cooldown", operation.settingsName()));
+            if (failCallback != null)
+                failCallback.accept(result, FailReason.COOLDOWN);
+            return result;
+        }
         if (check != null) {
             MethodResult checkResult = check.check(context);
-            if (checkResult != null)
+            if (checkResult != null) {
+                if (failCallback != null)
+                    failCallback.accept(checkResult, FailReason.CHECK_FAILED);
                 return checkResult;
+            }
         }
         int cost = operation.getCost(context);
         int cooldown = operation.getCooldown(context);
         FuelAbility<?> fuelAbility;
         if (cost != 0) {
             fuelAbility = owner.getAbility(PeripheralOwnerAbility.FUEL);
-            if (fuelAbility == null)
-                return MethodResult.of(null, "This peripheral has no fuel at all");
-            if (!fuelAbility.consumeFuel(cost, false))
-                return MethodResult.of(null, "Not enough fuel for operation");
+            if (fuelAbility == null) {
+                MethodResult result = MethodResult.of(null, "This peripheral has no fuel at all");
+                if (failCallback != null)
+                    failCallback.accept(result, FailReason.NOT_ENOUGH_FUEL);
+                return result;
+            }
+            if (!fuelAbility.consumeFuel(cost, false)) {
+                MethodResult result = MethodResult.of(null, "Not enough fuel for operation");
+                if (failCallback != null)
+                    failCallback.accept(result, FailReason.NOT_ENOUGH_FUEL);
+                return result;
+            }
             cooldown = fuelAbility.reduceCooldownAccordingToConsumptionRate(cooldown);
         }
         MethodResult result = method.apply(context);
@@ -106,5 +124,9 @@ public class OperationAbility implements IOwnerAbility, IPeripheralPlugin {
         if (op == null)
             return MethodResult.of(null, "Cannot find this operation");
         return MethodResult.of(getCurrentCooldown(op));
+    }
+
+    public enum FailReason {
+        COOLDOWN, NOT_ENOUGH_FUEL, CHECK_FAILED;
     }
 }
