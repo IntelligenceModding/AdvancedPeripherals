@@ -2,12 +2,12 @@ package de.srendi.advancedperipherals.test;
 
 import de.srendi.advancedperipherals.common.util.fakeplayer.APFakePlayer;
 import de.srendi.advancedperipherals.lib.peripherals.owner.BasePeripheralOwner;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -15,7 +15,7 @@ import java.util.function.Function;
 
 public class DummyPeripheralOwner extends BasePeripheralOwner {
 
-    private final CompoundNBT dataStorage = new CompoundNBT();
+    private final CompoundTag dataStorage = new CompoundTag();
 
     @Override
     public @Nullable String getCustomName() {
@@ -23,27 +23,31 @@ public class DummyPeripheralOwner extends BasePeripheralOwner {
     }
 
     @Override
-    public @Nullable World getLevel() {
+    public @Nullable
+    Level getLevel() {
         return null;
     }
 
     @Override
-    public @NotNull BlockPos getPos() {
+    public @NotNull
+    BlockPos getPos() {
         return new BlockPos(0, 0, 0);
     }
 
     @Override
-    public @NotNull Direction getFacing() {
+    public @NotNull
+    Direction getFacing() {
         return Direction.NORTH;
     }
 
     @Override
-    public @Nullable PlayerEntity getOwner() {
+    public @Nullable
+    Player getOwner() {
         return null;
     }
 
     @Override
-    public @NotNull CompoundNBT getDataStorage() {
+    public @NotNull CompoundTag getDataStorage() {
         return dataStorage;
     }
 
@@ -73,12 +77,12 @@ public class DummyPeripheralOwner extends BasePeripheralOwner {
     }
 
     @Override
-    public boolean isMovementPossible(@NotNull World world, @NotNull BlockPos pos) {
+    public boolean isMovementPossible(@NotNull Level level, @NotNull BlockPos pos) {
         return false;
     }
 
     @Override
-    public boolean move(@NotNull World world, @NotNull BlockPos pos) {
+    public boolean move(@NotNull Level level, @NotNull BlockPos pos) {
         return false;
     }
 }
