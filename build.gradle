@@ -336,7 +336,7 @@ task publishModrinth (type: TaskModrinthUpload) {
     projectId = 'SOw6jD6x'
     uploadFile = jar
 
-    versionNumber = project.version
+    versionNumber = "${minecraft_version}-${project.version}"
     versionName = "Advanced Peripherals ${minecraft_version} ${version}"
     versionType = release_type
 
