@@ -4,7 +4,10 @@ import com.refinedmods.refinedstorage.api.IRSAPI;
 import com.refinedmods.refinedstorage.api.autocrafting.ICraftingPattern;
 import com.refinedmods.refinedstorage.api.network.INetwork;
 import com.refinedmods.refinedstorage.api.network.node.INetworkNode;
+import com.refinedmods.refinedstorage.api.storage.IStorage;
 import com.refinedmods.refinedstorage.api.storage.cache.IStorageCache;
+import com.refinedmods.refinedstorage.api.storage.disk.IStorageDisk;
+import com.refinedmods.refinedstorage.api.storage.externalstorage.IExternalStorage;
 import com.refinedmods.refinedstorage.api.util.StackListEntry;
 import com.refinedmods.refinedstorage.apiimpl.API;
 import com.refinedmods.refinedstorage.apiimpl.network.node.NetworkNode;
@@ -90,6 +93,50 @@ public class RefinedStorage {
             items.add(map);
         }
         return items;
+    }
+
+    public static Integer getMaxItemDiskStorage(INetwork network) {
+        int total = 0;
+        boolean creative = false;
+        for(IStorage<ItemStack> store : network.getItemStorageCache().getStorages()) {
+            if(store instanceof IStorageDisk) {
+                int cap = ((IStorageDisk<ItemStack>) store).getCapacity();
+                if(cap > 0) total += cap;
+                else creative = true;
+            }
+        }
+        return creative ? -1 : total;
+    }
+    public static Integer getMaxFluidDiskStorage(INetwork network) {
+        int total = 0;
+        boolean creative = false;
+        for(IStorage<FluidStack> store : network.getFluidStorageCache().getStorages()) {
+            if(store instanceof IStorageDisk) {
+                int cap = ((IStorageDisk<FluidStack>) store).getCapacity();
+                if(cap > 0) total += cap;
+                else creative = true;
+            }
+        }
+        return creative ? -1 : total;
+    }
+
+    public static Integer getMaxItemExternalStorage(INetwork network) {
+        int total = 0;
+        for(IStorage<ItemStack> store : network.getItemStorageCache().getStorages()) {
+            if(store instanceof IExternalStorage) {
+                total += ((IExternalStorage<ItemStack>) store).getCapacity();
+            }
+        }
+        return total;
+    }
+    public static Integer getMaxFluidExternalStorage(INetwork network) {
+        int total = 0;
+        for(IStorage<FluidStack> store : network.getFluidStorageCache().getStorages()) {
+            if(store instanceof IExternalStorage) {
+                total += ((IExternalStorage<FluidStack>) store).getCapacity();
+            }
+        }
+        return total;
     }
 
     public static Object getObjectFromPattern(ICraftingPattern pattern) {
