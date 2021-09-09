@@ -23,22 +23,22 @@ public class EvaporationIntegration extends TileEntityIntegrationPeripheral<Tile
         return "evaporationTower";
     }
 
-    @LuaFunction
+    @LuaFunction(mainThread = true)
     public final double getHeat() {
         return getMultiblock().getTemp();
     }
 
-    @LuaFunction
+    @LuaFunction(mainThread = true)
     public final int getHeight() {
         return getMultiblock().height();
     }
 
-    @LuaFunction
+    @LuaFunction(mainThread = true)
     public final double getProduction() {
         return (double)Math.round(getMultiblock().lastGain * 100.0D) / 100.0D;
     }
 
-    @LuaFunction
+    @LuaFunction(mainThread = true)
     public final Map<String, Object> getInputTank() {
         Map<String, Object> result = new HashMap<>(3);
         BasicFluidTank inputTank = getMultiblock().inputTank;
@@ -47,7 +47,7 @@ public class EvaporationIntegration extends TileEntityIntegrationPeripheral<Tile
         return result;
     }
 
-    @LuaFunction
+    @LuaFunction(mainThread = true)
     public final Map<String, Object> getOutputTank() {
         Map<String, Object> result = new HashMap<>(3);
         BasicFluidTank outputTank = getMultiblock().outputTank;

@@ -21,7 +21,7 @@ public class FluidTankIntegration extends TileEntityIntegrationPeripheral<TileEn
         return "chemicalTank";
     }
 
-    @LuaFunction
+    @LuaFunction(mainThread = true)
     public final Map<String, Object> getStored() {
         Map<String, Object> result = new HashMap<>(3);
         result.put("name", DataHelpers.getId(getTank().getFluid().getFluid()));
@@ -29,22 +29,22 @@ public class FluidTankIntegration extends TileEntityIntegrationPeripheral<TileEn
         return result;
     }
 
-    @LuaFunction
+    @LuaFunction(mainThread = true)
     public final String getTier() {
         return tileEntity.tier.name();
     }
 
-    @LuaFunction
+    @LuaFunction(mainThread = true)
     public final long getCapacity() {
         return getTank().getCapacity();
     }
 
-    @LuaFunction
+    @LuaFunction(mainThread = true)
     public final double getFilledPercentage() {
         return getTank().getFluidAmount() / (double) getCapacity();
     }
 
-    @LuaFunction
+    @LuaFunction(mainThread = true)
     public final long getNeeded() {
         return getTank().getNeeded();
     }

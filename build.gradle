@@ -214,8 +214,8 @@ dependencies {
     implementation fg.deobf("appeng:appliedenergistics2:${ae_version}");
 
     // Minecolonies
-    compileOnly fg.deobf("com.minecolonies:minecolonies:${minecolonies_version}:universal")
-    compileOnly fg.deobf("com.ldtteam:structurize:${structurize_version}:universal")
+    implementation fg.deobf("com.minecolonies:minecolonies:${minecolonies_version}:universal")
+    implementation fg.deobf("com.ldtteam:structurize:${structurize_version}:universal")
     // Botania with deps
     implementation fg.deobf("vazkii.botania:Botania:${botania_version}")
 

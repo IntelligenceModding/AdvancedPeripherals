@@ -302,11 +302,12 @@ public class MineColonies {
         for (BuildingBuilderResource resource : resources) {
             Map<String, Object> map = new HashMap<>();
 
-            map.put("item", resource.getItemStack().copy());
+            map.put("item", resource.getItemStack().copy().getItem().getRegistryName().toString());
             map.put("displayName", resource.getName());
             map.put("available", resource.getAvailable());
             map.put("delivering", resource.getAmountInDelivery());
             map.put("status", resource.getAvailabilityStatus().toString());
+            map.put("needed", resource.getAmount());
             result.add(map);
         }
 
