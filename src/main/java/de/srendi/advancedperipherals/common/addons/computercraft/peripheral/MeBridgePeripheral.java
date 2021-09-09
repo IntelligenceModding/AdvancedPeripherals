@@ -20,12 +20,13 @@ import dan200.computercraft.api.lua.MethodResult;
 import dan200.computercraft.api.peripheral.IComputerAccess;
 import de.srendi.advancedperipherals.common.addons.appliedenergistics.AppEngApi;
 import de.srendi.advancedperipherals.common.addons.appliedenergistics.CraftJob;
-import de.srendi.advancedperipherals.common.addons.computercraft.base.BasePeripheral;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
 import de.srendi.advancedperipherals.common.util.InventoryUtil;
 import de.srendi.advancedperipherals.common.util.ItemUtil;
 import de.srendi.advancedperipherals.common.util.ServerWorker;
+import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
+import de.srendi.advancedperipherals.lib.peripherals.owner.TileEntityPeripheralOwner;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
@@ -35,7 +36,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-public class MeBridgePeripheral extends BasePeripheral {
+public class MeBridgePeripheral extends BasePeripheral<TileEntityPeripheralOwner<?>> {
 
     public static final String TYPE = "meBridge";
 
@@ -43,7 +44,7 @@ public class MeBridgePeripheral extends BasePeripheral {
     private final IActionSource source;
 
     public MeBridgePeripheral(IActionSource source, PeripheralTileEntity<?> tileEntity) {
-        super(TYPE, tileEntity);
+        super(TYPE, new TileEntityPeripheralOwner<>(tileEntity));
         this.source = source;
     }
 
@@ -124,12 +125,12 @@ public class MeBridgePeripheral extends BasePeripheral {
         return transferableAmount;
     }
 
-    @LuaFunction(mainThread = true)
+    @LuaFunction
     public final MethodResult craftItem(IComputerAccess computer, IArguments arguments) throws LuaException {
         IMEMonitor<IAEItemStack> monitor = ((IStorageGrid) node.getGrid().getCache(IStorageGrid.class)).getInventory(AppEngApi.getInstance().getApi().storage().getStorageChannel(IItemStorageChannel.class));
         ItemStack itemToCraft = ItemUtil.getItemStack(arguments.getTable(0), monitor);
         if (itemToCraft.isEmpty())
-            throw new NullPointerException("Item " + itemToCraft + " does not exists");
+            throw new LuaException("Item " + itemToCraft + " does not exists");
         CraftJob job = new CraftJob(owner.getWorld(), computer, node, itemToCraft, source);
         ServerWorker.add(job::startCrafting);
         return MethodResult.pullEvent("crafting", job);
@@ -188,12 +189,13 @@ public class MeBridgePeripheral extends BasePeripheral {
         ItemStack stack = ItemUtil.getItemStack(arguments.getTable(0), monitor);
         IAEItemStack aeStack = AEItemStack.fromItemStack(stack);
         if (aeStack == null)
-            return MethodResult.of((Object) null);
+            return MethodResult.of(null, "Cannot determinate item for search");
         for (IAEItemStack potentialStack : monitor.getStorageList()) {
             if (potentialStack.isSameType(aeStack))
                 return MethodResult.of(INSTANCE.getMapFromStack(potentialStack));
         }
-        return MethodResult.of((Object) null);
+        aeStack.setStackSize(0);
+        return MethodResult.of(INSTANCE.getMapFromStack(aeStack));
     }
 
     @LuaFunction(mainThread = true)

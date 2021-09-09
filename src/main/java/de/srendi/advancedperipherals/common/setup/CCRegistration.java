@@ -4,7 +4,7 @@ import dan200.computercraft.api.ComputerCraftAPI;
 import dan200.computercraft.api.pocket.AbstractPocketUpgrade;
 import dan200.computercraft.api.turtle.AbstractTurtleUpgrade;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
-import de.srendi.advancedperipherals.common.addons.computercraft.base.IntegrationPeripheralProvider;
+import de.srendi.advancedperipherals.common.addons.computercraft.integrations.IntegrationPeripheralProvider;
 import de.srendi.advancedperipherals.common.addons.computercraft.pocket.*;
 import de.srendi.advancedperipherals.common.addons.computercraft.turtles.*;
 import de.srendi.advancedperipherals.common.addons.computercraft.turtles.metaphysics.*;
@@ -24,29 +24,29 @@ public class CCRegistration {
     public static void register() {
         registerPocketUpgrades();
         registerTurtleUpgrades();
+        IntegrationPeripheralProvider.load();
         integrationPeripheralProvider = new IntegrationPeripheralProvider();
-        integrationPeripheralProvider.register();
         ComputerCraftAPI.registerPeripheralProvider(integrationPeripheralProvider);
     }
 
     private static void registerPocketUpgrades() {
         pocketUpgrades = new ArrayList<AbstractPocketUpgrade>() {{
-            add(new PocketEnvironment());
-            add(new PocketChatBox());
-            add(new PocketPlayerDetector());
-            add(new PocketGeoScanner());
-            add(new PocketColonyIntegrator());
+            add(new PocketEnvironmentUpgrade());
+            add(new PocketChatBoxUpgrade());
+            add(new PocketPlayerDetectorUpgrade());
+            add(new PocketGeoScannerUpgrade());
+            add(new PocketColonyIntegratorUpgrade());
         }};
         pocketUpgrades.forEach(ComputerCraftAPI::registerPocketUpgrade);
     }
 
     private static void registerTurtleUpgrades() {
         turtleUpgrades = new ArrayList<AbstractTurtleUpgrade>() {{
-            add(new TurtleChatBox());
-            add(new TurtlePlayerDetector());
-            add(new TurtleEnvironmentDetector());
-            add(new TurtleChunky());
-            add(new TurtleGeoScanner());
+            add(new TurtleChatBoxUpgrade());
+            add(new TurtlePlayerDetectorUpgrade());
+            add(new TurtleEnvironmentDetectorUpgrade());
+            add(new TurtleChunkyUpgrade());
+            add(new TurtleGeoScannerUpgrade());
             add(new WeakAutomata());
             add(new EndAutomata());
             add(new HusbandryAutomata());

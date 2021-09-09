@@ -1,7 +1,7 @@
 package de.srendi.advancedperipherals.common.blocks.base;
 
-import de.srendi.advancedperipherals.common.addons.computercraft.base.BasePeripheral;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
+import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
 import mcp.MethodsReturnNonnullByDefault;
 import net.minecraft.block.BlockState;
 import net.minecraft.nbt.CompoundNBT;
@@ -16,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 @MethodsReturnNonnullByDefault
-public abstract class PoweredPeripheralTileEntity<T extends BasePeripheral> extends PeripheralTileEntity<T> {
+public abstract class PoweredPeripheralTileEntity<T extends BasePeripheral<?>> extends PeripheralTileEntity<T> {
 
     private final LazyOptional<IEnergyStorage> lazyEnergyStorage;
 

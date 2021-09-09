@@ -1,6 +1,7 @@
  package de.srendi.advancedperipherals.common.addons.computercraft.operations;
 
 import com.google.common.math.IntMath;
+import de.srendi.advancedperipherals.lib.peripherals.IPeripheralOperation;
 import net.minecraftforge.common.ForgeConfigSpec;
 
 import java.util.HashMap;
@@ -40,6 +41,11 @@ public enum SphereOperation implements IPeripheralOperation<SphereOperationConte
         extra_block_cost = builder.defineInRange(
                 settingsName() + "ExtraBlockCost", defaultExtraBlockCost, 0.1, Double.MAX_VALUE
         );
+    }
+
+    @Override
+    public int getInitialCooldown() {
+        return cooldown.get();
     }
 
     @Override

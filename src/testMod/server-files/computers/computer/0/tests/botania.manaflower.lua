@@ -1,0 +1,7 @@
+local p = peripheral.find("manaFlower")
+test.assert(p, "Flower not found")
+test.eq(20, p.getGeneration(), "generation")
+test.eq(0, p.getMana(), "mana")
+test.eq(500, p.getMaxMana(), "maxMana")
+test.eq(false, p.isOnEnchantedSoil(), "soil")
+test.eq(false, p.isPassiveFlower(), "passive")

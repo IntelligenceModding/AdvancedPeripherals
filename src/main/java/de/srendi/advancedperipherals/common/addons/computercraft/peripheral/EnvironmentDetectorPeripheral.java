@@ -8,13 +8,16 @@ import dan200.computercraft.api.peripheral.IComputerAccess;
 import dan200.computercraft.api.pocket.IPocketAccess;
 import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
-import de.srendi.advancedperipherals.common.addons.computercraft.operations.FuelConsumingPeripheral;
-import de.srendi.advancedperipherals.common.addons.computercraft.operations.IPeripheralOperation;
+import de.srendi.advancedperipherals.lib.peripherals.IPeripheralPlugin;
+import de.srendi.advancedperipherals.lib.peripherals.owner.IPeripheralOwner;
 import de.srendi.advancedperipherals.common.addons.computercraft.operations.SphereOperationContext;
-import de.srendi.advancedperipherals.common.addons.mekanism.Mekanism;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
+import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
+import de.srendi.advancedperipherals.lib.peripherals.owner.PocketPeripheralOwner;
+import de.srendi.advancedperipherals.lib.peripherals.owner.TileEntityPeripheralOwner;
+import de.srendi.advancedperipherals.lib.peripherals.owner.TurtlePeripheralOwner;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
@@ -26,28 +29,37 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.ISeedReader;
 import net.minecraft.world.LightType;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 
 import javax.annotation.Nonnull;
 import java.util.*;
+import java.util.function.Function;
 
 import static de.srendi.advancedperipherals.common.addons.computercraft.operations.SphereOperation.SCAN_ENTITIES;
 
-public class EnvironmentDetectorPeripheral extends FuelConsumingPeripheral {
+public class EnvironmentDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
+
+    private static final List<Function<IPeripheralOwner, IPeripheralPlugin>> PLUGINS = new LinkedList<>();
 
     public static final String TYPE = "environmentDetector";
 
+    protected EnvironmentDetectorPeripheral(IPeripheralOwner owner) {
+        super(TYPE, owner);
+        owner.attachOperation(SCAN_ENTITIES);
+        for (Function<IPeripheralOwner, IPeripheralPlugin> plugin: PLUGINS)
+            addPlugin(plugin.apply(owner));
+    }
+
     public EnvironmentDetectorPeripheral(PeripheralTileEntity<?> tileEntity) {
-        super(TYPE, tileEntity);
+        this(new TileEntityPeripheralOwner<>(tileEntity).attachFuel());
     }
 
     public EnvironmentDetectorPeripheral(ITurtleAccess turtle, TurtleSide side) {
-        super(TYPE, turtle, side);
+        this(new TurtlePeripheralOwner(turtle, side).attachFuel(1));
     }
 
     public EnvironmentDetectorPeripheral(IPocketAccess pocket) {
-        super(TYPE, pocket);
+        this(new PocketPeripheralOwner(pocket));
     }
 
     private static int estimateCost(int radius) {
@@ -58,25 +70,6 @@ public class EnvironmentDetectorPeripheral extends FuelConsumingPeripheral {
             return -1;
         }
         return SCAN_ENTITIES.getCost(SphereOperationContext.of(radius));
-    }
-
-    @Override
-    protected int getMaxFuelConsumptionRate() {
-        return 1;
-    }
-
-    @Override
-    protected int _getFuelConsumptionRate() {
-        return 1;
-    }
-
-    @Override
-    protected void _setFuelConsumptionRate(int rate) {
-    }
-
-    @Override
-    public List<IPeripheralOperation<?>> possibleOperations() {
-        return Collections.singletonList(SCAN_ENTITIES);
     }
 
     @Override
@@ -225,40 +218,22 @@ public class EnvironmentDetectorPeripheral extends FuelConsumingPeripheral {
     }
 
     @LuaFunction(mainThread = true)
-    public final Object getRadiation() {
-        return ModList.get().isLoaded("mekanism") ? Mekanism.getRadiation(getWorld(), getPos()) : null;
-    }
-
-    @LuaFunction(mainThread = true)
-    public final double getRadiationRaw() {
-        return ModList.get().isLoaded("mekanism") ? Mekanism.getRadiationRaw(getWorld(), getPos()) : 0D;
-    }
-
-    @LuaFunction
     public final MethodResult scanEntities(@Nonnull IComputerAccess access, @Nonnull IArguments arguments) throws LuaException {
         int radius = arguments.getInt(0);
-        Optional<MethodResult> checkResult = cooldownCheck(SCAN_ENTITIES);
-        if (checkResult.isPresent()) return checkResult.get();
-        BlockPos pos = getPos();
-        if (radius > SCAN_ENTITIES.getMaxCostRadius()) {
-            return MethodResult.of(null, "Radius is exceed max value");
-        }
-        if (radius > SCAN_ENTITIES.getMaxFreeRadius()) {
-            if (owner.getFuelMaxCount() == 0) {
+        return withOperation(SCAN_ENTITIES,  new SphereOperationContext(radius), context -> {
+            if (radius > SCAN_ENTITIES.getMaxCostRadius()) {
                 return MethodResult.of(null, "Radius is exceed max value");
             }
-            int cost = estimateCost(radius);
-            if (!consumeFuel(cost, false)) {
-                return MethodResult.of(null, String.format("Not enough fuel, %d needed", cost));
-            }
-        }
-        AxisAlignedBB box = new AxisAlignedBB(pos);
-        List<Map<String, Object>> entities = new ArrayList<>();
-        getWorld().getEntities((Entity) null, box.inflate(radius), entity -> entity instanceof LivingEntity).forEach(
-                entity -> entities.add(LuaConverter.completeEntityWithPositionToLua(entity, ItemStack.EMPTY, pos))
-        );
-        trackOperation(SCAN_ENTITIES, SCAN_ENTITIES.free());
-        return MethodResult.of(entities);
+            return null;
+        }, context -> {
+            BlockPos pos = owner.getPos();
+            AxisAlignedBB box = new AxisAlignedBB(pos);
+            List<Map<String, Object>> entities = new ArrayList<>();
+            getWorld().getEntities((Entity) null, box.inflate(radius), entity -> entity instanceof LivingEntity).forEach(
+                    entity -> entities.add(LuaConverter.completeEntityWithPositionToLua(entity, ItemStack.EMPTY, pos))
+            );
+            return MethodResult.of(entities);
+        }, null);
     }
 
     @LuaFunction
@@ -268,5 +243,9 @@ public class EnvironmentDetectorPeripheral extends FuelConsumingPeripheral {
             return MethodResult.of(null, "Radius is exceed max value");
         }
         return MethodResult.of(estimatedCost);
+    }
+
+    public static void addIntegrationPlugin(Function<IPeripheralOwner, IPeripheralPlugin> plugin) {
+        PLUGINS.add(plugin);
     }
 }

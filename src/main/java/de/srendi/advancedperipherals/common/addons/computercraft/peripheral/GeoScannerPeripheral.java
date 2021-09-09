@@ -7,13 +7,16 @@ import dan200.computercraft.api.lua.MethodResult;
 import dan200.computercraft.api.pocket.IPocketAccess;
 import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
-import de.srendi.advancedperipherals.common.addons.computercraft.operations.FuelConsumingPeripheral;
-import de.srendi.advancedperipherals.common.addons.computercraft.operations.IPeripheralOperation;
+import de.srendi.advancedperipherals.lib.peripherals.owner.IPeripheralOwner;
 import de.srendi.advancedperipherals.common.addons.computercraft.operations.SphereOperationContext;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
 import de.srendi.advancedperipherals.common.util.ScanUtils;
+import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
+import de.srendi.advancedperipherals.lib.peripherals.owner.PocketPeripheralOwner;
+import de.srendi.advancedperipherals.lib.peripherals.owner.TileEntityPeripheralOwner;
+import de.srendi.advancedperipherals.lib.peripherals.owner.TurtlePeripheralOwner;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.util.ResourceLocation;
@@ -24,27 +27,35 @@ import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.Tags;
 
 import javax.annotation.Nonnull;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static de.srendi.advancedperipherals.common.addons.computercraft.operations.SphereOperation.SCAN_BLOCKS;
 
-public class GeoScannerPeripheral extends FuelConsumingPeripheral {
+public class GeoScannerPeripheral extends BasePeripheral<IPeripheralOwner> {
 	/*
 	Highly inspired by https://github.com/SquidDev-CC/plethora/ BlockScanner
 	*/
 
     public static final String TYPE = "geoScanner";
 
+    protected GeoScannerPeripheral(IPeripheralOwner owner) {
+        super(TYPE, owner);
+        owner.attachOperation(SCAN_BLOCKS);
+    }
+
     public GeoScannerPeripheral(PeripheralTileEntity<?> tileEntity) {
-        super(TYPE, tileEntity);
+        this(new TileEntityPeripheralOwner<>(tileEntity).attachFuel());
     }
 
     public GeoScannerPeripheral(ITurtleAccess turtle, TurtleSide side) {
-        super(TYPE, turtle, side);
+        this(new TurtlePeripheralOwner(turtle, side).attachFuel(1));
     }
 
     public GeoScannerPeripheral(IPocketAccess pocket) {
-        super(TYPE, pocket);
+        this(new PocketPeripheralOwner(pocket));
     }
 
     private static List<Map<String, ?>> scan(World world, BlockPos center, int radius) {
@@ -75,25 +86,6 @@ public class GeoScannerPeripheral extends FuelConsumingPeripheral {
     }
 
     @Override
-    protected int getMaxFuelConsumptionRate() {
-        return 1;
-    }
-
-    @Override
-    protected int _getFuelConsumptionRate() {
-        return 1;
-    }
-
-    @Override
-    protected void _setFuelConsumptionRate(int rate) {
-    }
-
-    @Override
-    public List<IPeripheralOperation<?>> possibleOperations() {
-        return Collections.singletonList(SCAN_BLOCKS);
-    }
-
-    @Override
     public boolean isEnabled() {
         return AdvancedPeripheralsConfig.enableGeoScanner;
     }
@@ -108,51 +100,37 @@ public class GeoScannerPeripheral extends FuelConsumingPeripheral {
     }
 
     @LuaFunction(mainThread = true)
-    public final MethodResult chunkAnalyze() {
-        Optional<MethodResult> checkResult = cooldownCheck(SCAN_BLOCKS);
-        if (checkResult.isPresent()) return checkResult.get();
-        World world = getWorld();
-        Chunk chunk = world.getChunkAt(getPos());
-        ChunkPos chunkPos = chunk.getPos();
-        HashMap<String, Integer> data = new HashMap<>();
-        for (int x = chunkPos.getMinBlockX(); x <= chunkPos.getMaxBlockX(); x++) {
-            for (int z = chunkPos.getMinBlockZ(); z <= chunkPos.getMaxBlockZ(); z++) {
-                for (int y = 0; y < 256; y++) {
-                    BlockState block = chunk.getBlockState(new BlockPos(x, y, z));
-                    ResourceLocation name = block.getBlock().getRegistryName();
-                    if (name != null) {
-                        if (block.getBlock().is(Tags.Blocks.ORES)) {
-                            data.put(name.toString(), data.getOrDefault(name.toString(), 0) + 1);
+    public final MethodResult chunkAnalyze() throws LuaException {
+        return withOperation(SCAN_BLOCKS, SCAN_BLOCKS.free(), null, ignored -> {
+            World world = getWorld();
+            Chunk chunk = world.getChunkAt(getPos());
+            ChunkPos chunkPos = chunk.getPos();
+            HashMap<String, Integer> data = new HashMap<>();
+            for (int x = chunkPos.getMinBlockX(); x <= chunkPos.getMaxBlockX(); x++) {
+                for (int z = chunkPos.getMinBlockZ(); z <= chunkPos.getMaxBlockZ(); z++) {
+                    for (int y = 0; y < 256; y++) {
+                        BlockState block = chunk.getBlockState(new BlockPos(x, y, z));
+                        ResourceLocation name = block.getBlock().getRegistryName();
+                        if (name != null) {
+                            if (block.getBlock().is(Tags.Blocks.ORES)) {
+                                data.put(name.toString(), data.getOrDefault(name.toString(), 0) + 1);
+                            }
                         }
                     }
                 }
             }
-        }
-        trackOperation(SCAN_BLOCKS, SCAN_BLOCKS.free());
-        return MethodResult.of(data);
+            return MethodResult.of(data);
+        }, null);
     }
 
     @LuaFunction(mainThread = true)
     public final MethodResult scan(@Nonnull IArguments arguments) throws LuaException {
         int radius = arguments.getInt(0);
-        Optional<MethodResult> checkResult = cooldownCheck(SCAN_BLOCKS);
-        if (checkResult.isPresent()) return checkResult.get();
-        BlockPos pos = getPos();
-        World world = getWorld();
-        if (radius > SCAN_BLOCKS.getMaxCostRadius()) {
-            return MethodResult.of(null, "Radius is exceed max value");
-        }
-        if (radius > SCAN_BLOCKS.getMaxFreeRadius()) {
-            if (owner.getFuelMaxCount() == 0) {
+        return withOperation(SCAN_BLOCKS, new SphereOperationContext(radius), context -> {
+            if (context.getRadius() > SCAN_BLOCKS.getMaxCostRadius()) {
                 return MethodResult.of(null, "Radius is exceed max value");
             }
-            int cost = estimateCost(radius);
-            if (!consumeFuel(cost, false)) {
-                return MethodResult.of(null, String.format("Not enough fuel, %d needed", cost));
-            }
-        }
-        List<Map<String, ?>> scanResult = scan(world, pos, radius);
-        trackOperation(SCAN_BLOCKS, SphereOperationContext.of(radius));
-        return MethodResult.of(scanResult);
+            return null;
+        }, context -> MethodResult.of(scan(getWorld(), getPos(), context.getRadius())), null);
     }
 }
