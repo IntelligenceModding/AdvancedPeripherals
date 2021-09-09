@@ -38,7 +38,7 @@ public class ChemicalTankIntegration extends TileEntityIntegrationPeripheral<Til
 
     @LuaFunction
     public final String getTier() {
-        return getTileEntity().getTier().name();
+        return tileEntity.getTier().name();
     }
 
     @LuaFunction(mainThread = true)

@@ -1,28 +1,19 @@
-package de.srendi.advancedperipherals.common.addons.computercraft.integrations.mekanism;
+package de.srendi.advancedperipherals.common.addons.mekanism;
 
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.shared.peripheral.generic.data.DataHelpers;
-import de.srendi.advancedperipherals.common.addons.computercraft.base.Integration;
-import mekanism.api.chemical.IChemicalTank;
-import mekanism.api.chemical.merged.MergedChemicalTank;
+import de.srendi.advancedperipherals.lib.peripherals.TileEntityIntegrationPeripheral;
 import mekanism.common.capabilities.fluid.FluidTankFluidTank;
-import mekanism.common.tile.TileEntityChemicalTank;
 import mekanism.common.tile.TileEntityFluidTank;
-import net.minecraftforge.fluids.capability.templates.FluidTank;
+import net.minecraft.tileentity.TileEntity;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class FluidTankIntegration extends Integration<TileEntityFluidTank> {
+public class FluidTankIntegration extends TileEntityIntegrationPeripheral<TileEntityFluidTank> {
 
-    @Override
-    protected Class<TileEntityFluidTank> getTargetClass() {
-        return TileEntityFluidTank.class;
-    }
-
-    @Override
-    public FluidTankIntegration getNewInstance() {
-        return new FluidTankIntegration();
+    public FluidTankIntegration(TileEntity entity) {
+        super(entity);
     }
 
     @Override
@@ -40,7 +31,7 @@ public class FluidTankIntegration extends Integration<TileEntityFluidTank> {
 
     @LuaFunction
     public final String getTier() {
-        return getTileEntity().tier.name();
+        return tileEntity.tier.name();
     }
 
     @LuaFunction
@@ -59,8 +50,7 @@ public class FluidTankIntegration extends Integration<TileEntityFluidTank> {
     }
 
     private FluidTankFluidTank getTank() {
-        TileEntityFluidTank mergedTank = getTileEntity();
-        return mergedTank.fluidTank;
+        return tileEntity.fluidTank;
     }
 
 }

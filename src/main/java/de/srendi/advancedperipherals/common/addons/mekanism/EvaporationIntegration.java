@@ -1,27 +1,20 @@
-package de.srendi.advancedperipherals.common.addons.computercraft.integrations.mekanism;
+package de.srendi.advancedperipherals.common.addons.mekanism;
 
 import dan200.computercraft.api.lua.LuaFunction;
-import dan200.computercraft.shared.peripheral.generic.data.DataHelpers;
-import de.srendi.advancedperipherals.common.addons.computercraft.base.Integration;
+import de.srendi.advancedperipherals.lib.peripherals.TileEntityIntegrationPeripheral;
 import mekanism.common.capabilities.fluid.BasicFluidTank;
-import mekanism.common.command.builders.Builders;
 import mekanism.common.content.evaporation.EvaporationMultiblockData;
 import mekanism.common.tile.multiblock.TileEntityThermalEvaporationValve;
+import net.minecraft.tileentity.TileEntity;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class EvaporationIntegration extends Integration<TileEntityThermalEvaporationValve> {
+public class EvaporationIntegration extends TileEntityIntegrationPeripheral<TileEntityThermalEvaporationValve> {
 
-    @Override
-    protected Class<TileEntityThermalEvaporationValve> getTargetClass() {
-        return TileEntityThermalEvaporationValve.class;
-    }
-
-    @Override
-    public Integration<?> getNewInstance() {
-        return new EvaporationIntegration();
+    public EvaporationIntegration(TileEntity entity) {
+        super(entity);
     }
 
     @NotNull
@@ -64,6 +57,6 @@ public class EvaporationIntegration extends Integration<TileEntityThermalEvapora
     }
 
     private EvaporationMultiblockData getMultiblock() {
-        return getTileEntity().getMultiblock();
+        return tileEntity.getMultiblock();
     }
 }

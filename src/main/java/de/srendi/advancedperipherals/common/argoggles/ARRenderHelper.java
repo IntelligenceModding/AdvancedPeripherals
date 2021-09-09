@@ -16,6 +16,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import org.lwjgl.opengl.GL11;
 
 public class ARRenderHelper extends AbstractGui {
+
     private static ARRenderHelper instance = new ARRenderHelper();
 
     public static void drawRightboundString(MatrixStack matrixStack, FontRenderer fontRenderer, String text, int x,
