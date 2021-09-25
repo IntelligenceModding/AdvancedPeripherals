@@ -59,6 +59,24 @@ public class RsBridgePeripheral extends BasePeripheral<TileEntityPeripheralOwner
     }
 
     @LuaFunction(mainThread = true)
+    public final Integer getMaxItemDiskStorage() {
+        return RefinedStorage.getMaxItemDiskStorage(getNetwork());
+    }
+    @LuaFunction(mainThread = true)
+    public final Integer getMaxFluidDiskStorage() {
+        return RefinedStorage.getMaxFluidDiskStorage(getNetwork());
+    }
+
+    @LuaFunction(mainThread = true)
+    public final Integer getMaxItemExternalStorage() {
+        return RefinedStorage.getMaxItemExternalStorage(getNetwork());
+    }
+    @LuaFunction(mainThread = true)
+    public final Integer getMaxFluidExternalStorage() {
+        return RefinedStorage.getMaxFluidExternalStorage(getNetwork());
+    }
+
+    @LuaFunction(mainThread = true)
     public final Object listFluids() {
         return RefinedStorage.listFluids(false, getNetwork());
     }
