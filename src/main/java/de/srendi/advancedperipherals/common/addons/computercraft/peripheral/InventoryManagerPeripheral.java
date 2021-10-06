@@ -237,10 +237,13 @@ public class InventoryManagerPeripheral extends BasePeripheral<TileEntityPeriphe
             if (!stack.isEmpty()) {
                 Map<String, Object> map = new HashMap<>();
                 String displayName = stack.getDisplayName().getString();
-                CompoundNBT nbt = stack.getOrCreateTag();
+                CompoundNBT nbt = stack.getTag(); //use getTag instead of getOrCreateTag to fix https://github.com/Seniorendi/AdvancedPeripherals/issues/177
                 map.put("name", stack.getItem().getRegistryName().toString());
                 map.put("amount", stack.getCount());
                 map.put("displayName", displayName);
+                if(nbt == null) {
+                    nbt = new CompoundNBT();//ensure compatibility with lua programs relying on a non-nil value
+                }
                 map.put("nbt", NBTUtil.toLua(nbt));
                 map.put("tags", LuaConverter.tagsToList(stack.getItem().getTags()));
                 items.put(i, map);
@@ -259,10 +262,13 @@ public class InventoryManagerPeripheral extends BasePeripheral<TileEntityPeriphe
             if (!stack.isEmpty()) {
                 Map<String, Object> map = new HashMap<>();
                 String displayName = stack.getDisplayName().getString();
-                CompoundNBT nbt = stack.getOrCreateTag();
+                CompoundNBT nbt = stack.getTag(); //use getTag instead of getOrCreateTag to fix https://github.com/Seniorendi/AdvancedPeripherals/issues/177
                 map.put("name", stack.getItem().getRegistryName().toString());
                 map.put("amount", stack.getCount());
                 map.put("displayName", displayName);
+                if(nbt == null) {
+                    nbt = new CompoundNBT();//ensure compatibility with lua programs relying on a non-nil value
+                }
                 map.put("nbt", NBTUtil.toLua(nbt));
                 map.put("tags", LuaConverter.tagsToList(stack.getItem().getTags()));
                 items.put(i, map);
