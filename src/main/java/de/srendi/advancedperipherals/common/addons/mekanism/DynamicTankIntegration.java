@@ -46,7 +46,7 @@ public class DynamicTankIntegration extends TileEntityIntegrationPeripheral<Tile
             case INFUSION:
                 result.put("name", getTank().getInfusionTank().getType().toString());
                 result.put("amount", getTank().getInfusionTank().getStored());
-            default:
+            case EMPTY:
                 result.put("name", "");
                 result.put("amount", 0);
         }
@@ -72,9 +72,10 @@ public class DynamicTankIntegration extends TileEntityIntegrationPeripheral<Tile
                 return getTank().getPigmentTank().getStored() / (double) getCapacity();
             case INFUSION:
                 return getTank().getInfusionTank().getStored() / (double) getCapacity();
-            default:
+            case EMPTY:
                 return 0D;
         }
+        return 0;
     }
 
     @LuaFunction(mainThread = true)
@@ -90,9 +91,10 @@ public class DynamicTankIntegration extends TileEntityIntegrationPeripheral<Tile
                 return getTank().getPigmentTank().getNeeded();
             case INFUSION:
                 return getTank().getInfusionTank().getNeeded();
-            default:
+            case EMPTY:
                 return getCapacity();
         }
+        return 0;
     }
 
     @LuaFunction(mainThread = true)
