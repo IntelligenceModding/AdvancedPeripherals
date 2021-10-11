@@ -21,11 +21,11 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.FluidStack;
 import org.apache.commons.codec.binary.Hex;
 
+import javax.annotation.Nullable;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class RefinedStorage {
 
@@ -42,60 +42,27 @@ public class RefinedStorage {
         return node;
     }
 
-    public static Object listFluids(boolean craftable, INetwork network) {
+    public static Object listFluids(INetwork network) {
+        List<Object> fluids = new ArrayList<>();
+        getFluids(network).forEach(item -> fluids.add(getObjectFromFluid(item)));
+        return fluids;
+    }
+
+    public static Object listItems(INetwork network) {
         List<Object> items = new ArrayList<>();
-        for (FluidStack stack : RefinedStorage.getFluids(network, craftable)) {
-            Map<String, Object> map = new HashMap<>();
-            Set<ResourceLocation> tags = stack.getFluid().getTags();
-            map.put("name", stack.getFluid().getRegistryName().toString());
-            if (craftable) {
-                map.put("craftamount", stack.getAmount());
-                map.put("amount", getFluids(network, false).stream()
-                        .filter(fluidStack -> fluidStack.isFluidEqual(stack)).collect(Collectors.toList()).get(0).getAmount());
-            } else {
-                map.put("amount", stack.getAmount());
-            }
-            map.put("displayName", stack.getDisplayName().getString());
-            map.put("tags", LuaConverter.tagsToList(tags));
-            items.add(map);
-        }
+        getItems(network).forEach(item -> items.add(getObjectFromStack(item)));
         return items;
     }
 
-    public static Object listItems(boolean craftable, INetwork network) {
-        List<Object> items = new ArrayList<>();
-        for (ItemStack stack : RefinedStorage.getItems(network, craftable)) {
-            Map<String, Object> map = new HashMap<>(getObjectFromStack(stack));
-            if (craftable) {
-                map.put("craftamount", stack.getCount());
-                //The craftable item cache returns the items with the amount of the crafting recipe output.
-                //So we need to loop through the normal item cache and get the amount
-                map.put("amount", getItems(network, false).stream()
-                        .filter(itemStack -> itemStack.getItem().equals(stack.getItem())).collect(Collectors.toList()).get(0).getCount());
-                List<Object> ingredients = new ArrayList<>();
-                for (List<ItemStack> craftingSlot : network.getCraftingManager().getPattern(stack).getInputs()) {
-                    if (craftingSlot != null) {
-                        List<Object> slotIngredient = new ArrayList<>();
-                        for (ItemStack craftingStack : craftingSlot) {
-                            if (craftingStack != null)
-                                slotIngredient.add(getObjectFromStack(craftingStack));
-                        }
-                        ingredients.add(slotIngredient);
-                    } else {
-                        //Add null so the ingredients list has always a size of 9
-                        ingredients.add(null);
-                    }
-                }
-                map.put("ingredient", ingredients);
-            } else {
-                map.put("amount", stack.getCount());
-            }
-            items.add(map);
+    public static boolean isItemCraftable(INetwork network, ItemStack stack) {
+        for(ItemStack craftableStack : getCraftableItems(network)) {
+            if(craftableStack.sameItem(stack))
+                return true;
         }
-        return items;
+        return false;
     }
 
-    public static Integer getMaxItemDiskStorage(INetwork network) {
+    public static int getMaxItemDiskStorage(INetwork network) {
         int total = 0;
         boolean creative = false;
         for(IStorage<ItemStack> store : network.getItemStorageCache().getStorages()) {
@@ -107,7 +74,7 @@ public class RefinedStorage {
         }
         return creative ? -1 : total;
     }
-    public static Integer getMaxFluidDiskStorage(INetwork network) {
+    public static int getMaxFluidDiskStorage(INetwork network) {
         int total = 0;
         boolean creative = false;
         for(IStorage<FluidStack> store : network.getFluidStorageCache().getStorages()) {
@@ -120,7 +87,7 @@ public class RefinedStorage {
         return creative ? -1 : total;
     }
 
-    public static Integer getMaxItemExternalStorage(INetwork network) {
+    public static int getMaxItemExternalStorage(INetwork network) {
         int total = 0;
         for(IStorage<ItemStack> store : network.getItemStorageCache().getStorages()) {
             if(store instanceof IExternalStorage) {
@@ -129,7 +96,7 @@ public class RefinedStorage {
         }
         return total;
     }
-    public static Integer getMaxFluidExternalStorage(INetwork network) {
+    public static int getMaxFluidExternalStorage(INetwork network) {
         int total = 0;
         for(IStorage<FluidStack> store : network.getFluidStorageCache().getStorages()) {
             if(store instanceof IExternalStorage) {
@@ -171,7 +138,9 @@ public class RefinedStorage {
         return map;
     }
 
-    public static Map<String, Object> getObjectFromStack(ItemStack itemStack) {
+    public static Map<String, Object> getObjectFromStack(@Nullable ItemStack itemStack) {
+        if (itemStack == null)
+            return null;
         Map<String, Object> map = new HashMap<>();
         CompoundNBT nbt = itemStack.getOrCreateTag();
         Set<ResourceLocation> tags = itemStack.getItem().getTags();
@@ -185,29 +154,60 @@ public class RefinedStorage {
         return map;
     }
 
-    public static Object getItem(List<ItemStack> items, ItemStack item) {
-        for (ItemStack itemStack : items) {
-            if (itemStack.getItem().equals(item.getItem()) && Objects.equals(itemStack.getOrCreateTag(), item.getOrCreateTag()))
+    public static Map<String, Object> getObjectFromFluid(@Nullable FluidStack fluidStack) {
+        if (fluidStack == null)
+            return null;
+        Map<String, Object> map = new HashMap<>();
+        Set<ResourceLocation> tags = fluidStack.getFluid().getTags();
+        map.put("name", fluidStack.getFluid().getRegistryName().toString());
+        map.put("amount", fluidStack.getAmount());
+        map.put("displayName", fluidStack.getDisplayName().getString());
+        map.put("tags", tags.isEmpty() ? null : LuaConverter.tagsToList(fluidStack.getFluid().getTags()));
+
+        return map;
+    }
+
+    public static Object getItem(INetwork network, ItemStack item) {
+        for (ItemStack itemStack : getItems(network)) {
+            if (itemStack.sameItem(item) && Objects.equals(itemStack.getOrCreateTag(), item.getOrCreateTag()))
                 return getObjectFromStack(itemStack);
 
         }
         return null;
     }
 
-    public static List<ItemStack> getItems(INetwork network, boolean craftable) {
+    public static List<ItemStack> getCraftableItems(INetwork network) {
         IStorageCache<ItemStack> cache = network.getItemStorageCache();
-        Collection<StackListEntry<ItemStack>> entries = craftable ? cache.getCraftablesList().getStacks() : cache.getList().getStacks();
+        Collection<StackListEntry<ItemStack>> craftableEntries = cache.getCraftablesList().getStacks();
+        List<ItemStack> result = new ArrayList<>(craftableEntries.size());
+
+        for (StackListEntry<ItemStack> entry : craftableEntries) {
+            result.add(entry.getStack());
+        }
+
+        return result;
+    }
+
+    public static List<ItemStack> getItems(INetwork network) {
+        IStorageCache<ItemStack> cache = network.getItemStorageCache();
+        Collection<StackListEntry<ItemStack>> entries = cache.getList().getStacks();
+        Collection<StackListEntry<ItemStack>> craftableEntries = cache.getCraftablesList().getStacks();
         List<ItemStack> result = new ArrayList<>(entries.size());
 
         for (StackListEntry<ItemStack> entry : entries)
             result.add(entry.getStack().copy());
 
+        //We add all craftable items to the list too. If we wanted to use getItem() on an empty item, it would return null
+        for (StackListEntry<ItemStack> entry : craftableEntries) {
+            result.add(entry.getStack());
+        }
+
         return result;
     }
 
-    public static List<FluidStack> getFluids(INetwork network, boolean craftable) {
+    public static List<FluidStack> getFluids(INetwork network) {
         IStorageCache<FluidStack> cache = network.getFluidStorageCache();
-        Collection<StackListEntry<FluidStack>> entries = craftable ? cache.getCraftablesList().getStacks() : cache.getList().getStacks();
+        Collection<StackListEntry<FluidStack>> entries = cache.getList().getStacks();
         List<FluidStack> result = new ArrayList<>(entries.size());
 
         for (StackListEntry<FluidStack> entry : entries)

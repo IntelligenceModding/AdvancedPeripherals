@@ -159,6 +159,12 @@ public class MeBridgePeripheral extends BasePeripheral<TileEntityPeripheralOwner
     }
 
     @LuaFunction(mainThread = true)
+    public final boolean isItemCraftable(IArguments arguments) throws LuaException {
+        IMEMonitor<IAEItemStack> monitor = ((IStorageGrid) node.getGrid().getCache(IStorageGrid.class)).getInventory(AppEngApi.getInstance().getApi().storage().getStorageChannel(IItemStorageChannel.class));
+        return AppEngApi.getInstance().findAEStackFromItemStack(monitor, ItemUtil.getItemStack(arguments.getTable(0), monitor)).isCraftable();
+    }
+
+    @LuaFunction(mainThread = true)
     public final int exportItem(@NotNull IArguments arguments) throws LuaException {
         IItemHandler inventory = InventoryUtil.getHandlerFromDirection(arguments.getString(1), owner);
         return _exportItem(arguments, inventory);

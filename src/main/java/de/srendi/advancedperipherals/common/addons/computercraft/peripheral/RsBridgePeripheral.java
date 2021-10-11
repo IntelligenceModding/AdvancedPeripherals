@@ -10,12 +10,11 @@ import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.peripheral.IComputerAccess;
 import dan200.computercraft.api.peripheral.IPeripheral;
-import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
-import de.srendi.advancedperipherals.common.addons.refinedstorage.RefinedStorage;
-import de.srendi.advancedperipherals.common.addons.refinedstorage.RefinedStorageNode;
+import de.srendi.advancedperipherals.common.addons.refinedstorage.*;
 import de.srendi.advancedperipherals.common.blocks.tileentity.RsBridgeTile;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
 import de.srendi.advancedperipherals.common.util.ItemUtil;
+import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
 import de.srendi.advancedperipherals.lib.peripherals.owner.TileEntityPeripheralOwner;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -50,12 +49,7 @@ public class RsBridgePeripheral extends BasePeripheral<TileEntityPeripheralOwner
 
     @LuaFunction(mainThread = true)
     public final Object listItems() {
-        return RefinedStorage.listItems(false, getNetwork());
-    }
-
-    @LuaFunction(mainThread = true)
-    public final Object listCraftableItems() {
-        return RefinedStorage.listItems(true, getNetwork());
+        return RefinedStorage.listItems(getNetwork());
     }
 
     @LuaFunction(mainThread = true)
@@ -78,12 +72,7 @@ public class RsBridgePeripheral extends BasePeripheral<TileEntityPeripheralOwner
 
     @LuaFunction(mainThread = true)
     public final Object listFluids() {
-        return RefinedStorage.listFluids(false, getNetwork());
-    }
-
-    @LuaFunction(mainThread = true)
-    public final Object listCraftableFluids() {
-        return RefinedStorage.listFluids(true, getNetwork());
+        return RefinedStorage.listFluids(getNetwork());
     }
 
     @LuaFunction(mainThread = true)
@@ -103,14 +92,12 @@ public class RsBridgePeripheral extends BasePeripheral<TileEntityPeripheralOwner
 
     @LuaFunction(mainThread = true)
     public final Object getPattern(IArguments arguments) throws LuaException {
-        ItemStack stack = ItemUtil.getItemStackRS(arguments.getTable(0), RefinedStorage.getItems(getNetwork(), true));
-
-        return RefinedStorage.getObjectFromPattern(getNetwork().getCraftingManager().getPattern(stack));
+        return RefinedStorage.getObjectFromPattern(getNetwork().getCraftingManager().getPattern(ItemUtil.getItemStackRS(arguments.getTable(0), RefinedStorage.getItems(getNetwork()))));
     }
 
     @LuaFunction(mainThread = true)
     public final int exportItem(IArguments arguments) throws LuaException {
-        ItemStack stack = ItemUtil.getItemStackRS(arguments.getTable(0), RefinedStorage.getItems(getNetwork(), false));
+        ItemStack stack = ItemUtil.getItemStackRS(arguments.getTable(0), RefinedStorage.getItems(getNetwork()));
         Direction direction = validateSide(arguments.getString(1));
 
         TileEntity targetEntity = owner.tileEntity.getLevel().getBlockEntity(owner.tileEntity.getBlockPos().relative(direction));
@@ -142,7 +129,7 @@ public class RsBridgePeripheral extends BasePeripheral<TileEntityPeripheralOwner
 
     @LuaFunction(mainThread = true)
     public final int importItem(IArguments arguments) throws LuaException {
-        ItemStack stack = ItemUtil.getItemStackRS(arguments.getTable(0), RefinedStorage.getItems(getNetwork(), false));
+        ItemStack stack = ItemUtil.getItemStackRS(arguments.getTable(0), RefinedStorage.getItems(getNetwork()));
         Direction direction = validateSide(arguments.getString(1));
 
         TileEntity targetEntity = owner.tileEntity.getLevel().getBlockEntity(owner.tileEntity.getBlockPos().relative(direction));
@@ -175,10 +162,10 @@ public class RsBridgePeripheral extends BasePeripheral<TileEntityPeripheralOwner
 
     @LuaFunction(mainThread = true)
     public final int exportItemToPeripheral(IComputerAccess computer, IArguments arguments) throws LuaException {
-        ItemStack stack = ItemUtil.getItemStackRS(arguments.getTable(0), RefinedStorage.getItems(getNetwork(), false));
+        ItemStack stack = ItemUtil.getItemStackRS(arguments.getTable(0), RefinedStorage.getItems(getNetwork()));
         IPeripheral chest = computer.getAvailablePeripheral(arguments.getString(1));
         if (chest == null)
-            throw new LuaException("No valid chest for " + arguments.getString(1));
+            throw new LuaException("No valid inventory block for " + arguments.getString(1));
 
         TileEntity targetEntity = (TileEntity) chest.getTarget();
         IItemHandler inventory = targetEntity != null ?
@@ -208,12 +195,12 @@ public class RsBridgePeripheral extends BasePeripheral<TileEntityPeripheralOwner
     }
 
     @LuaFunction(mainThread = true)
-    public final int importItemFromChest(IComputerAccess computer, IArguments arguments) throws LuaException {
-        ItemStack stack = ItemUtil.getItemStackRS(arguments.getTable(0), RefinedStorage.getItems(getNetwork(), false));
+    public final int importItemFromPeripheral(IComputerAccess computer, IArguments arguments) throws LuaException {
+        ItemStack stack = ItemUtil.getItemStackRS(arguments.getTable(0), RefinedStorage.getItems(getNetwork()));
         IPeripheral chest = computer.getAvailablePeripheral(arguments.getString(1));
         int count = stack.getCount();
         if (chest == null)
-            throw new LuaException("No valid chest for " + arguments.getString(1));
+            throw new LuaException("No inventory block for " + arguments.getString(1));
 
         TileEntity targetEntity = (TileEntity) chest.getTarget();
         IItemHandler inventory = targetEntity != null ?
@@ -246,15 +233,12 @@ public class RsBridgePeripheral extends BasePeripheral<TileEntityPeripheralOwner
 
     @LuaFunction(mainThread = true)
     public final Object getItem(IArguments arguments) throws LuaException {
-        ItemStack stack = ItemUtil.getItemStackRS(arguments.getTable(0), RefinedStorage.getItems(getNetwork(), false));
-        if (stack == null)
-            return null; //Return null instead of crashing the program.
-        return RefinedStorage.getItem(RefinedStorage.getItems(getNetwork(), false), stack);
+        return RefinedStorage.getItem(getNetwork(), ItemUtil.getItemStackRS(arguments.getTable(0), RefinedStorage.getItems(getNetwork())));
     }
 
     @LuaFunction(mainThread = true)
     public final boolean craftItem(IArguments arguments) throws LuaException {
-        ItemStack stack = ItemUtil.getItemStackRS(arguments.getTable(0), RefinedStorage.getItems(getNetwork(), true));
+        ItemStack stack = ItemUtil.getItemStackRS(arguments.getTable(0), RefinedStorage.getItems(getNetwork()));
         if (stack == null)
             throw new LuaException("The item " + arguments.getTable(0).get("name") + "is not craftable");
         ICalculationResult result = getNetwork().getCraftingManager().create(stack, stack.getCount());
@@ -284,5 +268,11 @@ public class RsBridgePeripheral extends BasePeripheral<TileEntityPeripheralOwner
             }
         }
         return false;
+    }
+
+    @LuaFunction(mainThread = true)
+    public final boolean isItemCraftable(IArguments arguments) throws LuaException {
+        ItemStack stack = ItemUtil.getItemStackRS(arguments.getTable(0), RefinedStorage.getItems(getNetwork()));
+        return RefinedStorage.isItemCraftable(getNetwork(), stack);
     }
 }
