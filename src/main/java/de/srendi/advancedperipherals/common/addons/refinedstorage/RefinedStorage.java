@@ -199,7 +199,7 @@ public class RefinedStorage {
 
         //We add all craftable items to the list too. If we wanted to use getItem() on an empty item, it would return null
         for (StackListEntry<ItemStack> entry : craftableEntries) {
-            result.add(entry.getStack());
+            result.add(entry.getStack().copy());
         }
 
         return result;
@@ -223,7 +223,6 @@ public class RefinedStorage {
                 String hash = NBTUtil.getNBTHash(tag);
                 if (nbtHash.equals(hash))
                     return tag.copy();
-
             }
         }
         return null;
