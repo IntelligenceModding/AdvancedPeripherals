@@ -83,20 +83,22 @@ public class InventoryManagerPeripheral extends BasePeripheral<TileEntityPeriphe
 
             if (inventoryFrom.getStackInSlot(i).sameItem(stack)) {
                 ItemStack invSlotItem = inventoryTo.getItem(invSlot);
+
+                //Checks if the selected slot is full or have another item
+                // If so, change to the first free slot in player's inventory
+                if (!invSlotItem.isEmpty() && (!invSlotItem.sameItem(stack) || invSlotItem.getCount() == invSlotItem.getMaxStackSize())) {
+                    invSlot = inventoryTo.getSlotWithRemainingSpace(stack);
+                    if (invSlot == -1) invSlot = inventoryTo.getFreeSlot();
+                    if (invSlot == -1) break;
+                    invSlotItem = inventoryTo.getItem(invSlot);
+                }
+
                 int subcount = Math.min( inventoryFrom.getStackInSlot(i).getCount(), amount);
-                if (!invSlotItem.sameItem(stack) || invSlotItem.getCount() == invSlotItem.getMaxStackSize()) {
-                    if (inventoryTo.add(inventoryFrom.extractItem(i, subcount, true))) {
-                        transferableAmount += subcount;
-                        amount -= subcount;
-                        inventoryFrom.extractItem(i, subcount, false);
-                    }
-                } else {
-                    subcount = Math.min(subcount, stack.getMaxStackSize() - invSlotItem.getCount());
-                    if (inventoryTo.add(invSlot, inventoryFrom.extractItem(i, subcount, true))) {
-                        inventoryFrom.extractItem(i, subcount, false);
-                        amount -= subcount;
-                        transferableAmount += subcount;
-                    }
+                subcount = Math.min(subcount, stack.getMaxStackSize() - invSlotItem.getCount());
+                if (inventoryTo.add(invSlot, inventoryFrom.extractItem(i, subcount, true))) {
+                    inventoryFrom.extractItem(i, subcount, false);
+                    amount -= subcount;
+                    transferableAmount += subcount;
                 }
             }
         }
