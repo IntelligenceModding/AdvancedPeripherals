@@ -5,6 +5,7 @@ import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.shared.util.NBTUtil;
 import de.srendi.advancedperipherals.common.blocks.tileentity.InventoryManagerTile;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
+import de.srendi.advancedperipherals.common.util.InventoryUtil;
 import de.srendi.advancedperipherals.common.util.ItemUtil;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
@@ -18,6 +19,8 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.ItemHandlerHelper;
+import net.minecraftforge.items.wrapper.PlayerInvWrapper;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.HashMap;
@@ -58,14 +61,14 @@ public class InventoryManagerPeripheral extends BasePeripheral<TileEntityPeriphe
         TileEntity targetEntity = owner.getWorld().getBlockEntity(owner.getPos().relative(direction));
         IItemHandler inventoryFrom = targetEntity != null ? targetEntity
                 .getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, direction).resolve().orElse(null) : null;
-        PlayerInventory inventoryTo = getOwnerPlayer().inventory;
+        IItemHandler inventoryTo = new PlayerInvWrapper(getOwnerPlayer().inventory);
 
 
 
         int invSlot = slot.orElse(0);
 
-        if (invSlot > inventoryTo.getContainerSize() || invSlot < 0)
-            throw new LuaException("Inventory out of bounds " + invSlot + " (max: " + (inventoryTo.getContainerSize()-1) + ")");
+        if (invSlot >= inventoryTo.getSlots() || invSlot < 0)
+            throw new LuaException("Inventory out of bounds " + invSlot + " (max: " + (inventoryTo.getSlots()-1) + ")");
 
         //inventoryTo is checked via ensurePlayerIsLinked()
         if (inventoryFrom == null)
@@ -81,23 +84,14 @@ public class InventoryManagerPeripheral extends BasePeripheral<TileEntityPeriphe
                     continue;
             }
 
-            if (inventoryFrom.getStackInSlot(i).sameItem(stack)) {
-                ItemStack invSlotItem = inventoryTo.getItem(invSlot);
-                int subcount = Math.min( inventoryFrom.getStackInSlot(i).getCount(), amount);
-                if (!invSlotItem.sameItem(stack) || invSlotItem.getCount() == invSlotItem.getMaxStackSize()) {
-                    if (inventoryTo.add(inventoryFrom.extractItem(i, subcount, true))) {
-                        transferableAmount += subcount;
-                        amount -= subcount;
-                        inventoryFrom.extractItem(i, subcount, false);
-                    }
-                } else {
-                    subcount = Math.min(subcount, stack.getMaxStackSize() - invSlotItem.getCount());
-                    if (inventoryTo.add(invSlot, inventoryFrom.extractItem(i, subcount, true))) {
-                        inventoryFrom.extractItem(i, subcount, false);
-                        amount -= subcount;
-                        transferableAmount += subcount;
-                    }
-                }
+            if (ItemHandlerHelper.canItemStacksStack(stack, inventoryFrom.getStackInSlot(i))) {
+                int inserted = InventoryUtil.moveItem(inventoryFrom, i, inventoryTo, invSlot, amount);
+                transferableAmount += inserted;
+                amount -= inserted;
+
+                inserted = InventoryUtil.moveItem(inventoryFrom, i, inventoryTo, -1, amount);
+                transferableAmount += inserted;
+                amount -= inserted;
             }
         }
 
