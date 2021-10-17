@@ -4,6 +4,7 @@ import de.srendi.advancedperipherals.AdvancedPeripherals;
 import net.minecraft.network.chat.TranslatableComponent;
 
 public class TranslationUtil {
+
     public static TranslatableComponent itemTooltip(String descriptionId) {
         int lastIndex = descriptionId.lastIndexOf('.');
         return new TranslatableComponent(String.format(
