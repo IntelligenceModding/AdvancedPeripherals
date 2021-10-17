@@ -206,7 +206,7 @@ public class InventoryManagerPeripheral extends BasePeripheral<BlockEntityPeriph
                 map.put("amount", stack.getCount());
                 map.put("displayName", displayName);
                 if(nbt == null) {
-                    nbt = new CompoundNBT();//ensure compatibility with lua programs relying on a non-nil value
+                    nbt = new CompoundTag();//ensure compatibility with lua programs relying on a non-nil value
                 }
                 map.put("nbt", NBTUtil.toLua(nbt));
                 map.put("tags", LuaConverter.tagsToList(stack.getItem().getTags()));
@@ -231,7 +231,7 @@ public class InventoryManagerPeripheral extends BasePeripheral<BlockEntityPeriph
                 map.put("amount", stack.getCount());
                 map.put("displayName", displayName);
                 if(nbt == null) {
-                    nbt = new CompoundNBT();//ensure compatibility with lua programs relying on a non-nil value
+                    nbt = new CompoundTag();//ensure compatibility with lua programs relying on a non-nil value
                 }
                 map.put("nbt", NBTUtil.toLua(nbt));
                 map.put("tags", LuaConverter.tagsToList(stack.getItem().getTags()));
