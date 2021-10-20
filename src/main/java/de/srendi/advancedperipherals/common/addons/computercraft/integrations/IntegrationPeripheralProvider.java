@@ -6,6 +6,7 @@ import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.lib.integrations.IPeripheralIntegration;
 import de.srendi.advancedperipherals.common.util.Platform;
 import de.srendi.advancedperipherals.lib.peripherals.TileEntityIntegrationPeripheral;
+import net.minecraft.block.NoteBlock;
 import net.minecraft.tileentity.BeaconTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
@@ -56,6 +57,8 @@ public class IntegrationPeripheralProvider implements IPeripheralProvider {
 
     public static void load() {
         registerIntegration(new TileEntityIntegration(BeaconIntegration::new, BeaconTileEntity.class::isInstance));
+        registerIntegration(new BlockIntegration(NoteblockIntegration::new, NoteBlock.class::isInstance));
+
         for (String mod: SUPPORTED_MODS) {
             Optional<Object> integration = Platform.maybeLoadIntegration(mod, mod + ".Integration");
             integration.ifPresent(obj -> {
