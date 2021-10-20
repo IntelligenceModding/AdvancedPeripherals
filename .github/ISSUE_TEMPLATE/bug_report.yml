@@ -39,8 +39,9 @@ body:
       multiple: false
       options:
         - Own compiled build.
-        - 0.7.2r (Latest)
-        - 0.7.1r (Latest)
+        - 0.7.3r (Latest)
+        - 0.7.2r 
+        - 0.7.1r
         - 0.7.0.1r
         - 0.7r
         - 0.6.7b
