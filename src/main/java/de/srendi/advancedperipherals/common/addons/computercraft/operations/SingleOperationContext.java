@@ -3,8 +3,8 @@ package de.srendi.advancedperipherals.common.addons.computercraft.operations;
 import java.io.Serializable;
 
 public class SingleOperationContext implements Serializable {
-    private int count;
     private final int distance;
+    private int count;
 
     public SingleOperationContext(int count, int distance) {
         this.count = count;

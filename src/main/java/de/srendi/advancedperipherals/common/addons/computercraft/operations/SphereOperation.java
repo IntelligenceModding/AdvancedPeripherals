@@ -1,4 +1,4 @@
- package de.srendi.advancedperipherals.common.addons.computercraft.operations;
+package de.srendi.advancedperipherals.common.addons.computercraft.operations;
 
 import com.google.common.math.IntMath;
 import de.srendi.advancedperipherals.lib.peripherals.IPeripheralOperation;
@@ -11,14 +11,14 @@ public enum SphereOperation implements IPeripheralOperation<SphereOperationConte
     SCAN_BLOCKS(2_000, 8, 16, 0.17),
     SCAN_ENTITIES(2_000, 8, 16, 0.17);
 
-    private ForgeConfigSpec.IntValue cooldown;
-    private ForgeConfigSpec.IntValue max_free_radius;
-    private ForgeConfigSpec.IntValue max_cost_radius;
-    private ForgeConfigSpec.DoubleValue extra_block_cost;
     private final int defaultCooldown;
     private final int defaultMaxFreeRadius;
     private final int defaultMaxCostRadius;
     private final double defaultExtraBlockCost;
+    private ForgeConfigSpec.IntValue cooldown;
+    private ForgeConfigSpec.IntValue max_free_radius;
+    private ForgeConfigSpec.IntValue max_cost_radius;
+    private ForgeConfigSpec.DoubleValue extra_block_cost;
 
     SphereOperation(int defaultCooldown, int defaultMaxFreeRadius, int defaultMaxCostRadius, double defaultExtraBlockCost) {
         this.defaultCooldown = defaultCooldown;

@@ -35,7 +35,7 @@ public class EvaporationIntegration extends TileEntityIntegrationPeripheral<Tile
 
     @LuaFunction(mainThread = true)
     public final double getProduction() {
-        return (double)Math.round(getMultiblock().lastGain * 100.0D) / 100.0D;
+        return (double) Math.round(getMultiblock().lastGain * 100.0D) / 100.0D;
     }
 
     @LuaFunction(mainThread = true)

@@ -1,67 +1,67 @@
 name: Bug Report
 description: Report bugs and problems
 body:
-    - type: markdown
-      attributes:
-        value: "Please use the search function before submitting an issue!"
-    - type: textarea
-      attributes:
-        label: Descripe
-        description: Clearly describe the bug you found 
-        placeholder: A clear description of what the bug is
-      validations:
-        required: true
-    - type: textarea
-      attributes:
-        label: Steps to reproduce
-        description: Steps to reproduce the behavior. Feel free to remove or add steps.
-        placeholder: 
-          1. Do this...
-          2. Then hit this...
-          3. Then...
-      validations:
-        required: true
-    - type: dropdown
-      attributes:
-        label: Multiplayer?
-        description: Do you play on a server?
-        multiple: false
-        options:
-            - "Yes"
-            - No
-            - LAN
-      validations:
-        required: true
-    - type: dropdown
-      attributes:
-        label: Version
-        description: What version of advanced peripherals are you using? 
-        multiple: false
-        options:
-            - Own compiled build.
-            - 0.7.2r (Latest)
-            - 0.7.1r (Latest)
-            - 0.7.0.1r
-            - 0.7r
-            - 0.6.7b 
-            - 0.6.6b 
-            - 0.6r
-            - 0.5.x
-            - older 
-      validations:
-        required: true
-    - type: input
-      attributes:
-        label: Minecraft, Forge and maybe other related mods versions
-        description: What version of Forge and Minecraft do you use?
-        placeholder: Forge 36.1.32 Minecraft 1.16.5
-      validations:
-        required: true
-    - type: input
-      attributes:
-        label: Screenshots or Videos
-        description: If applicable, add screenshots or videos to help explain your problem.
-    - type: input
-      attributes:
-        label: Crashlog/log 
-        description: Use https://gist.github.com or https://pastebin.com to upload your crashlog/log
+  - type: markdown
+    attributes:
+      value: "Please use the search function before submitting an issue!"
+  - type: textarea
+    attributes:
+      label: Descripe
+      description: Clearly describe the bug you found
+      placeholder: A clear description of what the bug is
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Steps to reproduce
+      description: Steps to reproduce the behavior. Feel free to remove or add steps.
+      placeholder:
+        1. Do this...
+        2. Then hit this...
+        3. Then...
+    validations:
+      required: true
+  - type: dropdown
+    attributes:
+      label: Multiplayer?
+      description: Do you play on a server?
+      multiple: false
+      options:
+        - "Yes"
+        - No
+        - LAN
+    validations:
+      required: true
+  - type: dropdown
+    attributes:
+      label: Version
+      description: What version of advanced peripherals are you using?
+      multiple: false
+      options:
+        - Own compiled build.
+        - 0.7.2r (Latest)
+        - 0.7.1r (Latest)
+        - 0.7.0.1r
+        - 0.7r
+        - 0.6.7b
+        - 0.6.6b
+        - 0.6r
+        - 0.5.x
+        - older
+    validations:
+      required: true
+  - type: input
+    attributes:
+      label: Minecraft, Forge and maybe other related mods versions
+      description: What version of Forge and Minecraft do you use?
+      placeholder: Forge 36.1.32 Minecraft 1.16.5
+    validations:
+      required: true
+  - type: input
+    attributes:
+      label: Screenshots or Videos
+      description: If applicable, add screenshots or videos to help explain your problem.
+  - type: input
+    attributes:
+      label: Crashlog/log
+      description: Use https://gist.github.com or https://pastebin.com to upload your crashlog/log

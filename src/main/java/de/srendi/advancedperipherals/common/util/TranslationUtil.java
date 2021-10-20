@@ -1,7 +1,7 @@
 package de.srendi.advancedperipherals.common.util;
 
 import de.srendi.advancedperipherals.AdvancedPeripherals;
-import net.minecraft.util.text.*;
+import net.minecraft.util.text.TranslationTextComponent;
 
 public class TranslationUtil {
 

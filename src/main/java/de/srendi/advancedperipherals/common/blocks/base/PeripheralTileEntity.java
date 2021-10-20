@@ -36,20 +36,15 @@ import java.util.List;
 public abstract class PeripheralTileEntity<T extends BasePeripheral> extends LockableTileEntity implements ISidedInventory, INamedContainerProvider, IPeripheralTileEntity {
     // TODO: move inventory logic to another tile entity?
     private static final String AP_SETTINGS_KEY = "AP_SETTINGS";
-    private LazyOptional<? extends IItemHandler> handler;
     protected CompoundNBT apSettings;
     protected NonNullList<ItemStack> items;
-
     protected @Nullable T peripheral = null;
+    private LazyOptional<? extends IItemHandler> handler;
     private LazyOptional<IPeripheral> peripheralCap;
 
     public PeripheralTileEntity(TileEntityType<?> tileEntityTypeIn) {
         super(tileEntityTypeIn);
-        if (this instanceof IInventoryBlock) {
-            items = NonNullList.withSize(((IInventoryBlock<?>) this).getInvSize(), ItemStack.EMPTY);
-        } else {
-            items = NonNullList.withSize(0, ItemStack.EMPTY);
-        }
+        items = this instanceof IInventoryBlock ? NonNullList.withSize(((IInventoryBlock<?>) this).getInvSize(), ItemStack.EMPTY) : NonNullList.withSize(0, ItemStack.EMPTY);
         apSettings = new CompoundNBT();
     }
 

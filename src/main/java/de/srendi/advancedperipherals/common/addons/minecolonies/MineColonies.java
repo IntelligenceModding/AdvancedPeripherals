@@ -212,8 +212,8 @@ public class MineColonies {
 
     public static int getAmountOfConstructionSites(IColony colony) {
         int constructionSites = 0;
-        for(IBuilding building : colony.getBuildingManager().getBuildings().values()) {
-            if(building.hasWorkOrder())
+        for (IBuilding building : colony.getBuildingManager().getBuildings().values()) {
+            if (building.hasWorkOrder())
                 constructionSites++;
         }
         return constructionSites;

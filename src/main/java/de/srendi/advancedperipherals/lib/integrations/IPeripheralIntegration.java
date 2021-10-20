@@ -8,6 +8,7 @@ import org.jetbrains.annotations.NotNull;
 
 public interface IPeripheralIntegration {
     boolean isSuitable(@NotNull World world, @NotNull BlockPos blockPos, @NotNull Direction direction);
+
     @NotNull IPeripheral buildPeripheral(@NotNull World world, @NotNull BlockPos blockPos, @NotNull Direction direction);
 
     /**

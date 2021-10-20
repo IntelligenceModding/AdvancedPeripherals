@@ -7,11 +7,9 @@ import net.minecraftforge.common.ForgeConfigSpec;
  */
 public class LibConfig {
 
-    private static boolean testMode = false;
-
     public static boolean isInitialCooldownEnabled = true;
     public static int initialCooldownSensetiveLevel = 6_000;
-
+    private static boolean testMode = false;
     private static ForgeConfigSpec.BooleanValue IS_INITIAL_COOLDOWN_ENABLED;
     private static ForgeConfigSpec.IntValue INITIAL_COOLDOWN_SENSENTIVE_LEVEL;
 

@@ -18,32 +18,38 @@ public class DummyPeripheralOwner extends BasePeripheralOwner {
     private final CompoundNBT dataStorage = new CompoundNBT();
 
     @Override
-    public @Nullable String getCustomName() {
+    @Nullable
+    public String getCustomName() {
         return null;
     }
 
     @Override
-    public @Nullable World getWorld() {
+    @Nullable
+    public World getWorld() {
         return null;
     }
 
     @Override
-    public @NotNull BlockPos getPos() {
+    @NotNull
+    public BlockPos getPos() {
         return new BlockPos(0, 0, 0);
     }
 
     @Override
-    public @NotNull Direction getFacing() {
+    @NotNull
+    public Direction getFacing() {
         return Direction.NORTH;
     }
 
     @Override
-    public @Nullable PlayerEntity getOwner() {
+    @Nullable
+    public PlayerEntity getOwner() {
         return null;
     }
 
     @Override
-    public @NotNull CompoundNBT getDataStorage() {
+    @NotNull
+    public CompoundNBT getDataStorage() {
         return dataStorage;
     }
 

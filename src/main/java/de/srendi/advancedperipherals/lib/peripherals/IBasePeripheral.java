@@ -8,6 +8,8 @@ import java.util.List;
 
 public interface IBasePeripheral<T extends IPeripheralOwner> extends IPeripheral {
     boolean isEnabled();
+
     List<IComputerAccess> getConnectedComputers();
+
     T getPeripheralOwner();
 }

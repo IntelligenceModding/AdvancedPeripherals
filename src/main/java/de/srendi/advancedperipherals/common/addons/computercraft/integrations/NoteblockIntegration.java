@@ -2,15 +2,11 @@ package de.srendi.advancedperipherals.common.addons.computercraft.integrations;
 
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
-import dan200.computercraft.api.peripheral.IComputerAccess;
 import de.srendi.advancedperipherals.lib.peripherals.BlockIntegrationPeripheral;
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.NoteBlock;
-import net.minecraft.util.ActionResultType;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import org.squiddev.cobalt.Lua;
 
 import javax.annotation.Nonnull;
 
@@ -39,7 +35,7 @@ public class NoteblockIntegration extends BlockIntegrationPeripheral<NoteBlock> 
     @LuaFunction(mainThread = true)
     public int changeNoteBy(int note) throws LuaException {
         BlockState state = world.getBlockState(pos);
-        if(!(note >= 0 && note <= 24))
+        if (!(note >= 0 && note <= 24))
             throw new LuaException("Note argument need to be in a range of 0 and 24");
         state = state.setValue(NoteBlock.NOTE, note);
         world.setBlock(pos, state, 3);

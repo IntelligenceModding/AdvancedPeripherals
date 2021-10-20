@@ -1,6 +1,5 @@
 package de.srendi.advancedperipherals.common.addons.mekanism;
 
-import com.simibubi.create.content.contraptions.fluids.tank.FluidTankTileEntity;
 import de.srendi.advancedperipherals.common.addons.computercraft.integrations.IntegrationPeripheralProvider;
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.EnvironmentDetectorPeripheral;
 import mekanism.common.tile.TileEntityChemicalTank;

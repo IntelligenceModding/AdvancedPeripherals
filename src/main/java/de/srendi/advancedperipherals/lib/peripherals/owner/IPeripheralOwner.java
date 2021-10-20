@@ -1,7 +1,7 @@
 package de.srendi.advancedperipherals.lib.peripherals.owner;
 
-import de.srendi.advancedperipherals.lib.peripherals.IPeripheralOperation;
 import de.srendi.advancedperipherals.common.util.fakeplayer.APFakePlayer;
+import de.srendi.advancedperipherals.lib.peripherals.IPeripheralOperation;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
@@ -48,7 +48,7 @@ public interface IPeripheralOwner {
 
     boolean move(@NotNull World world, @NotNull BlockPos pos);
 
-    <T extends IOwnerAbility>void attachAbility(PeripheralOwnerAbility<T> ability, T abilityImplementation);
+    <T extends IOwnerAbility> void attachAbility(PeripheralOwnerAbility<T> ability, T abilityImplementation);
 
     @Nullable <T extends IOwnerAbility> T getAbility(PeripheralOwnerAbility<T> ability);
 

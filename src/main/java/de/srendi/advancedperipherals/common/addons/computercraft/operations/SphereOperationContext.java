@@ -9,11 +9,11 @@ public class SphereOperationContext implements Serializable {
         this.radius = radius;
     }
 
-    public int getRadius() {
-        return radius;
-    }
-
     public static SphereOperationContext of(int radius) {
         return new SphereOperationContext(radius);
+    }
+
+    public int getRadius() {
+        return radius;
     }
 }
