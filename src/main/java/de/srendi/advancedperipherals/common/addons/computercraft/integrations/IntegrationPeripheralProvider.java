@@ -3,9 +3,10 @@ package de.srendi.advancedperipherals.common.addons.computercraft.integrations;
 import dan200.computercraft.api.peripheral.IPeripheral;
 import dan200.computercraft.api.peripheral.IPeripheralProvider;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
-import de.srendi.advancedperipherals.lib.integrations.IPeripheralIntegration;
 import de.srendi.advancedperipherals.common.util.Platform;
+import de.srendi.advancedperipherals.lib.integrations.IPeripheralIntegration;
 import de.srendi.advancedperipherals.lib.peripherals.TileEntityIntegrationPeripheral;
+import net.minecraft.block.NoteBlock;
 import net.minecraft.tileentity.BeaconTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
@@ -35,9 +36,10 @@ public class IntegrationPeripheralProvider implements IPeripheralProvider {
 
     /**
      * Register tile entity integration, better use this method over manual TileEntityIntegration creation, because this method provides type check
+     *
      * @param integration integration generator
-     * @param tileClass target integration class
-     * @param <T> target integration
+     * @param tileClass   target integration class
+     * @param <T>         target integration
      */
     public static <T extends TileEntity> void registerTileEntityIntegration(Function<TileEntity, TileEntityIntegrationPeripheral<T>> integration, Class<T> tileClass) {
         registerIntegration(new TileEntityIntegration(integration, tileClass::isInstance));
@@ -45,10 +47,11 @@ public class IntegrationPeripheralProvider implements IPeripheralProvider {
 
     /**
      * Register tile entity integration, better use this method over manual TileEntityIntegration creation, because this method provides type check
+     *
      * @param integration integration generator
-     * @param tileClass target integration class
-     * @param priority Integration priority, lower is better
-     * @param <T> target integration
+     * @param tileClass   target integration class
+     * @param priority    Integration priority, lower is better
+     * @param <T>         target integration
      */
     public static <T extends TileEntity> void registerTileEntityIntegration(Function<TileEntity, TileEntityIntegrationPeripheral<T>> integration, Class<T> tileClass, int priority) {
         registerIntegration(new TileEntityIntegration(integration, tileClass::isInstance, priority));
@@ -56,7 +59,9 @@ public class IntegrationPeripheralProvider implements IPeripheralProvider {
 
     public static void load() {
         registerIntegration(new TileEntityIntegration(BeaconIntegration::new, BeaconTileEntity.class::isInstance));
-        for (String mod: SUPPORTED_MODS) {
+        registerIntegration(new BlockIntegration(NoteblockIntegration::new, NoteBlock.class::isInstance));
+
+        for (String mod : SUPPORTED_MODS) {
             Optional<Object> integration = Platform.maybeLoadIntegration(mod, mod + ".Integration");
             integration.ifPresent(obj -> {
                 AdvancedPeripherals.LOGGER.warn("Successfully loaded integration for {}", mod);

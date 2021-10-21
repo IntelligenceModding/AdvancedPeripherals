@@ -1,5 +1,6 @@
-import java.text.SimpleDateFormat
 import com.modrinth.minotaur.TaskModrinthUpload
+
+import java.text.SimpleDateFormat
 
 buildscript {
     repositories {
@@ -211,7 +212,7 @@ dependencies {
     // Refined Storage
     implementation fg.deobf("com.refinedmods:refinedstorage:${rs_version}")
     // AE2
-    implementation fg.deobf("appeng:appliedenergistics2:${ae_version}");
+    implementation fg.deobf("appeng:appliedenergistics2:${ae_version}")
 
     // Minecolonies
     implementation fg.deobf("com.minecolonies:minecolonies:${minecolonies_version}:universal")
@@ -223,7 +224,7 @@ dependencies {
     implementation fg.deobf("curse.maven:integrateddynamics-${integrated_dynamics_version}")
     implementation fg.deobf("curse.maven:CommonCapabilites-${common_capabilities_version}")
     implementation fg.deobf("curse.maven:CyclopsCore-${cyclops_core_version}")
-    
+
     // Mekanism with addons
     implementation fg.deobf("mekanism:Mekanism:${mekanism_version}")
     implementation fg.deobf("mekanism:Mekanism:${mekanism_version}:generators")
@@ -235,7 +236,6 @@ dependencies {
     compileOnly fg.deobf("curse.maven:storagedrawers-${storagedrawers_version}")
 
     // Create
-
     compileOnly fg.deobf("com.simibubi.create:Create:${create_version}")
     compileOnly fg.deobf("com.jozufozu.flywheel:Flywheel:${flywheel_version}")
 
@@ -351,7 +351,7 @@ curseforge {
 }
 
 
-task publishModrinth (type: TaskModrinthUpload) {
+task publishModrinth(type: TaskModrinthUpload) {
     dependsOn('assemble', 'reobfJar')
     onlyIf {
         modrinthKey

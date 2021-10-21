@@ -8,13 +8,13 @@ import dan200.computercraft.api.peripheral.IComputerAccess;
 import dan200.computercraft.api.pocket.IPocketAccess;
 import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
-import de.srendi.advancedperipherals.lib.peripherals.IPeripheralPlugin;
-import de.srendi.advancedperipherals.lib.peripherals.owner.IPeripheralOwner;
 import de.srendi.advancedperipherals.common.addons.computercraft.operations.SphereOperationContext;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
+import de.srendi.advancedperipherals.lib.peripherals.IPeripheralPlugin;
+import de.srendi.advancedperipherals.lib.peripherals.owner.IPeripheralOwner;
 import de.srendi.advancedperipherals.lib.peripherals.owner.PocketPeripheralOwner;
 import de.srendi.advancedperipherals.lib.peripherals.owner.TileEntityPeripheralOwner;
 import de.srendi.advancedperipherals.lib.peripherals.owner.TurtlePeripheralOwner;
@@ -39,14 +39,13 @@ import static de.srendi.advancedperipherals.common.addons.computercraft.operatio
 
 public class EnvironmentDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
 
-    private static final List<Function<IPeripheralOwner, IPeripheralPlugin>> PLUGINS = new LinkedList<>();
-
     public static final String TYPE = "environmentDetector";
+    private static final List<Function<IPeripheralOwner, IPeripheralPlugin>> PLUGINS = new LinkedList<>();
 
     protected EnvironmentDetectorPeripheral(IPeripheralOwner owner) {
         super(TYPE, owner);
         owner.attachOperation(SCAN_ENTITIES);
-        for (Function<IPeripheralOwner, IPeripheralPlugin> plugin: PLUGINS)
+        for (Function<IPeripheralOwner, IPeripheralPlugin> plugin : PLUGINS)
             addPlugin(plugin.apply(owner));
     }
 
@@ -70,6 +69,10 @@ public class EnvironmentDetectorPeripheral extends BasePeripheral<IPeripheralOwn
             return -1;
         }
         return SCAN_ENTITIES.getCost(SphereOperationContext.of(radius));
+    }
+
+    public static void addIntegrationPlugin(Function<IPeripheralOwner, IPeripheralPlugin> plugin) {
+        PLUGINS.add(plugin);
     }
 
     @Override
@@ -151,16 +154,16 @@ public class EnvironmentDetectorPeripheral extends BasePeripheral<IPeripheralOwn
         return getCurrentMoonPhase().keySet().toArray(new Integer[0])[0];
     }
 
+   /* @LuaFunction(mainThread = true)
+    public final boolean isMoon(int phase) {
+        return getCurrentMoonPhase().containsKey(phase);
+    }*/
+
     @LuaFunction(mainThread = true)
     public final String getMoonName() {
         String[] name = getCurrentMoonPhase().values().toArray(new String[0]);
         return name[0];
     }
-
-   /* @LuaFunction(mainThread = true)
-    public final boolean isMoon(int phase) {
-        return getCurrentMoonPhase().containsKey(phase);
-    }*/
 
     private Map<Integer, String> getCurrentMoonPhase() {
         Map<Integer, String> moon = new HashMap<>();
@@ -220,7 +223,7 @@ public class EnvironmentDetectorPeripheral extends BasePeripheral<IPeripheralOwn
     @LuaFunction(mainThread = true)
     public final MethodResult scanEntities(@Nonnull IComputerAccess access, @Nonnull IArguments arguments) throws LuaException {
         int radius = arguments.getInt(0);
-        return withOperation(SCAN_ENTITIES,  new SphereOperationContext(radius), context -> {
+        return withOperation(SCAN_ENTITIES, new SphereOperationContext(radius), context -> {
             if (radius > SCAN_ENTITIES.getMaxCostRadius()) {
                 return MethodResult.of(null, "Radius is exceed max value");
             }
@@ -243,9 +246,5 @@ public class EnvironmentDetectorPeripheral extends BasePeripheral<IPeripheralOwn
             return MethodResult.of(null, "Radius is exceed max value");
         }
         return MethodResult.of(estimatedCost);
-    }
-
-    public static void addIntegrationPlugin(Function<IPeripheralOwner, IPeripheralPlugin> plugin) {
-        PLUGINS.add(plugin);
     }
 }

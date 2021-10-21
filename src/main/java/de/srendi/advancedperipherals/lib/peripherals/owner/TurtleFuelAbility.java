@@ -5,6 +5,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class TurtleFuelAbility extends FuelAbility<TurtlePeripheralOwner> {
     private final int maxFuelConsumptionLevel;
+
     public TurtleFuelAbility(@NotNull TurtlePeripheralOwner owner, int maxFuelConsumptionLevel) {
         super(owner);
         this.maxFuelConsumptionLevel = maxFuelConsumptionLevel;

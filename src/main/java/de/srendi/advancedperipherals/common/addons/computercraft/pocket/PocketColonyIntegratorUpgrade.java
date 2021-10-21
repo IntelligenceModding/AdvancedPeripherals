@@ -2,9 +2,9 @@ package de.srendi.advancedperipherals.common.addons.computercraft.pocket;
 
 import dan200.computercraft.api.pocket.IPocketAccess;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
-import de.srendi.advancedperipherals.lib.pocket.BasePocketUpgrade;
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.ColonyPeripheral;
 import de.srendi.advancedperipherals.common.setup.Blocks;
+import de.srendi.advancedperipherals.lib.pocket.BasePocketUpgrade;
 import net.minecraft.util.ResourceLocation;
 
 public class PocketColonyIntegratorUpgrade extends BasePocketUpgrade<ColonyPeripheral> {

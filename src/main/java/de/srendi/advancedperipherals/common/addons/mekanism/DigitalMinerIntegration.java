@@ -7,15 +7,17 @@ import mekanism.api.math.FloatingLong;
 import mekanism.common.tile.machine.TileEntityDigitalMiner;
 import net.minecraft.tileentity.TileEntity;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 
 public class DigitalMinerIntegration extends TileEntityIntegrationPeripheral<TileEntityDigitalMiner> {
-    
+
     public DigitalMinerIntegration(TileEntity entity) {
         super(entity);
     }
 
     @Override
+    @Nonnull
     public String getType() {
         return "digitalMiner";
     }

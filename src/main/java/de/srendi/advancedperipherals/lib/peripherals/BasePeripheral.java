@@ -4,10 +4,10 @@ import dan200.computercraft.api.lua.*;
 import dan200.computercraft.api.peripheral.IComputerAccess;
 import dan200.computercraft.api.peripheral.IDynamicPeripheral;
 import dan200.computercraft.api.peripheral.IPeripheral;
+import de.srendi.advancedperipherals.common.util.LuaConverter;
 import de.srendi.advancedperipherals.lib.peripherals.owner.IPeripheralOwner;
 import de.srendi.advancedperipherals.lib.peripherals.owner.OperationAbility;
 import de.srendi.advancedperipherals.lib.peripherals.owner.PeripheralOwnerAbility;
-import de.srendi.advancedperipherals.common.util.LuaConverter;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -23,8 +23,8 @@ public abstract class BasePeripheral<O extends IPeripheralOwner> implements IBas
     protected final List<IComputerAccess> connectedComputers = new ArrayList<>();
     protected final String type;
     protected final O owner;
-    protected boolean initialized = false;
     protected final List<BoundMethod> pluggedMethods = new ArrayList<>();
+    protected boolean initialized = false;
     protected List<IPeripheralPlugin> plugins = null;
     protected String[] methodNames = new String[0];
 
@@ -59,7 +59,7 @@ public abstract class BasePeripheral<O extends IPeripheralOwner> implements IBas
             OperationAbility operationAbility = owner.getAbility(PeripheralOwnerAbility.OPERATION);
             if (operationAbility == null)
                 throw new IllegalArgumentException("This is not possible to attach plugin with operations to not operationable owner");
-            for (IPeripheralOperation<?> operation: operations)
+            for (IPeripheralOperation<?> operation : operations)
                 operationAbility.registerOperation(operation);
         }
     }

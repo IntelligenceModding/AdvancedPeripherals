@@ -17,8 +17,8 @@ import java.util.List;
 public abstract class IntegrationPeripheral implements IDynamicPeripheral {
 
     protected final List<IComputerAccess> connectedComputers = new ArrayList<>();
-    protected boolean initialized = false;
     protected final List<BoundMethod> pluggedMethods = new ArrayList<>();
+    protected boolean initialized = false;
     protected List<IPeripheralPlugin> plugins = null;
     protected String[] methodNames = new String[0];
 

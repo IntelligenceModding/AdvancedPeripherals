@@ -32,9 +32,9 @@ public class Events {
 
     @SubscribeEvent
     public static void onWorldJoin(PlayerEvent.PlayerLoggedInEvent event) {
-        if(AdvancedPeripheralsConfig.givePlayerBookOnJoin) {
+        if (AdvancedPeripheralsConfig.givePlayerBookOnJoin) {
             PlayerEntity player = event.getPlayer();
-            if(!hasPlayedBefore(player)) {
+            if (!hasPlayedBefore(player)) {
                 ItemStack book = new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation("patchouli", "guide_book")));
                 CompoundNBT nbt = new CompoundNBT();
                 nbt.putString("patchouli:book", "advancedperipherals:manual");
@@ -87,7 +87,7 @@ public class Events {
 
     private static boolean hasPlayedBefore(PlayerEntity player) {
         CompoundNBT tag = player.getPersistentData().getCompound(PlayerEntity.PERSISTED_NBT_TAG);
-        if(tag.getBoolean(PLAYED_BEFORE)) {
+        if (tag.getBoolean(PLAYED_BEFORE)) {
             return true;
         } else {
             tag.putBoolean(PLAYED_BEFORE, true);

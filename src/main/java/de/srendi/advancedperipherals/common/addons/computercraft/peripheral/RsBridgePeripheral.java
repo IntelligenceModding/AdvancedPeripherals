@@ -10,7 +10,8 @@ import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.peripheral.IComputerAccess;
 import dan200.computercraft.api.peripheral.IPeripheral;
-import de.srendi.advancedperipherals.common.addons.refinedstorage.*;
+import de.srendi.advancedperipherals.common.addons.refinedstorage.RefinedStorage;
+import de.srendi.advancedperipherals.common.addons.refinedstorage.RefinedStorageNode;
 import de.srendi.advancedperipherals.common.blocks.tileentity.RsBridgeTile;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
 import de.srendi.advancedperipherals.common.util.ItemUtil;
@@ -56,6 +57,7 @@ public class RsBridgePeripheral extends BasePeripheral<TileEntityPeripheralOwner
     public final Integer getMaxItemDiskStorage() {
         return RefinedStorage.getMaxItemDiskStorage(getNetwork());
     }
+
     @LuaFunction(mainThread = true)
     public final Integer getMaxFluidDiskStorage() {
         return RefinedStorage.getMaxFluidDiskStorage(getNetwork());
@@ -65,6 +67,7 @@ public class RsBridgePeripheral extends BasePeripheral<TileEntityPeripheralOwner
     public final Integer getMaxItemExternalStorage() {
         return RefinedStorage.getMaxItemExternalStorage(getNetwork());
     }
+
     @LuaFunction(mainThread = true)
     public final Integer getMaxFluidExternalStorage() {
         return RefinedStorage.getMaxFluidExternalStorage(getNetwork());

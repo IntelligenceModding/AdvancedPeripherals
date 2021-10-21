@@ -1,14 +1,9 @@
 package de.srendi.advancedperipherals.common.addons.mekanism;
 
 import dan200.computercraft.api.lua.LuaFunction;
-import dan200.computercraft.shared.peripheral.generic.data.DataHelpers;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.lib.peripherals.TileEntityIntegrationPeripheral;
-import mekanism.api.chemical.IChemicalTank;
-import mekanism.api.chemical.merged.MergedChemicalTank;
 import mekanism.common.capabilities.merged.MergedTank;
-import mekanism.common.content.tank.TankMultiblockData;
-import mekanism.common.tile.TileEntityChemicalTank;
 import mekanism.common.tile.multiblock.TileEntityDynamicValve;
 import net.minecraft.tileentity.TileEntity;
 
@@ -32,7 +27,7 @@ public class DynamicTankIntegration extends TileEntityIntegrationPeripheral<Tile
     public final Map<String, Object> getStored() {
         Map<String, Object> result = new HashMap<>(3);
         AdvancedPeripherals.debug("Debug1");
-        switch(getTank().getCurrentType()) {
+        switch (getTank().getCurrentType()) {
             case GAS:
                 result.put("name", getTank().getGasTank().getType().getRegistryName().toString());
                 result.put("amount", getTank().getGasTank().getStored());
@@ -70,7 +65,7 @@ public class DynamicTankIntegration extends TileEntityIntegrationPeripheral<Tile
 
     @LuaFunction(mainThread = true)
     public final double getFilledPercentage() {
-        switch(getTank().getCurrentType()) {
+        switch (getTank().getCurrentType()) {
             case GAS:
                 return getTank().getGasTank().getStored() / (double) getCapacity();
             case FLUID:
@@ -89,7 +84,7 @@ public class DynamicTankIntegration extends TileEntityIntegrationPeripheral<Tile
 
     @LuaFunction(mainThread = true)
     public final long getNeeded() {
-        switch(getTank().getCurrentType()) {
+        switch (getTank().getCurrentType()) {
             case GAS:
                 return getTank().getGasTank().getNeeded();
             case FLUID:

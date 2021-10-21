@@ -2,10 +2,10 @@ package de.srendi.advancedperipherals.common.addons.computercraft.peripheral.met
 
 import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
-import de.srendi.advancedperipherals.lib.metaphysics.IAutomataCoreTier;
 import de.srendi.advancedperipherals.common.addons.computercraft.operations.AutomataCoreTier;
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.plugins.AutomataWarpingPlugin;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
+import de.srendi.advancedperipherals.lib.metaphysics.IAutomataCoreTier;
 
 
 public class EndAutomataCorePeripheral extends WeakAutomataCorePeripheral {

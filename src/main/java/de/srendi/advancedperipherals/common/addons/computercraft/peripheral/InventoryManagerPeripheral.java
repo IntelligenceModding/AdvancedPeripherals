@@ -63,12 +63,10 @@ public class InventoryManagerPeripheral extends BasePeripheral<TileEntityPeriphe
                 .getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, direction).resolve().orElse(null) : null;
         IItemHandler inventoryTo = new PlayerInvWrapper(getOwnerPlayer().inventory);
 
-
-
         int invSlot = slot.orElse(0);
 
         if (invSlot >= inventoryTo.getSlots() || invSlot < 0)
-            throw new LuaException("Inventory out of bounds " + invSlot + " (max: " + (inventoryTo.getSlots()-1) + ")");
+            throw new LuaException("Inventory out of bounds " + invSlot + " (max: " + (inventoryTo.getSlots() - 1) + ")");
 
         //inventoryTo is checked via ensurePlayerIsLinked()
         if (inventoryFrom == null)
@@ -199,7 +197,7 @@ public class InventoryManagerPeripheral extends BasePeripheral<TileEntityPeriphe
                 map.put("name", stack.getItem().getRegistryName().toString());
                 map.put("amount", stack.getCount());
                 map.put("displayName", displayName);
-                if(nbt == null) {
+                if (nbt == null) {
                     nbt = new CompoundNBT();//ensure compatibility with lua programs relying on a non-nil value
                 }
                 map.put("nbt", NBTUtil.toLua(nbt));
@@ -224,7 +222,7 @@ public class InventoryManagerPeripheral extends BasePeripheral<TileEntityPeriphe
                 map.put("name", stack.getItem().getRegistryName().toString());
                 map.put("amount", stack.getCount());
                 map.put("displayName", displayName);
-                if(nbt == null) {
+                if (nbt == null) {
                     nbt = new CompoundNBT();//ensure compatibility with lua programs relying on a non-nil value
                 }
                 map.put("nbt", NBTUtil.toLua(nbt));

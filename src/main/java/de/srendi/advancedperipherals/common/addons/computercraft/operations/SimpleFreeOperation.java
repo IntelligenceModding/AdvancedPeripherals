@@ -9,8 +9,8 @@ import java.util.Map;
 public enum SimpleFreeOperation implements IPeripheralOperation<Object> {
     CHAT_MESSAGE(100);
 
-    private ForgeConfigSpec.IntValue cooldown;
     private final int defaultCooldown;
+    private ForgeConfigSpec.IntValue cooldown;
 
     SimpleFreeOperation(int defaultCooldown) {
         this.defaultCooldown = defaultCooldown;

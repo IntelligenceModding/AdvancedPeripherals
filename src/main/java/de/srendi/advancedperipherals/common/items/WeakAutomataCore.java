@@ -1,9 +1,9 @@
 package de.srendi.advancedperipherals.common.items;
 
-import de.srendi.advancedperipherals.lib.metaphysics.IFeedableAutomataCore;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
 import de.srendi.advancedperipherals.common.setup.Items;
 import de.srendi.advancedperipherals.common.util.EnumColor;
+import de.srendi.advancedperipherals.lib.metaphysics.IFeedableAutomataCore;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
