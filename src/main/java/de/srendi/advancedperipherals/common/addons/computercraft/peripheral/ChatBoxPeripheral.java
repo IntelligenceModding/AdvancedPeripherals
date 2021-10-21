@@ -65,7 +65,7 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
             IFormattableTextComponent component = ITextComponent.Serializer.fromJson(message);
             if (component == null)
                 return MethodResult.of(null, "incorrect json");
-            IFormattableTextComponent preparedMessage = new StringTextComponent(String.format(PREFIX_FORMAT, arguments.optString(1, AdvancedPeripheralsConfig.defaultChatBoxPrefix))).append(message);
+            IFormattableTextComponent preparedMessage = new StringTextComponent(String.format(PREFIX_FORMAT, arguments.optString(1, AdvancedPeripheralsConfig.defaultChatBoxPrefix))).append(component);
             for (ServerPlayerEntity player : ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers()) {
                 player.sendMessage(preparedMessage, Util.NIL_UUID);
             }
