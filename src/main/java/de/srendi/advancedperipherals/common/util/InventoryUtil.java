@@ -36,7 +36,7 @@ public class InventoryUtil {
 
     public static IItemHandler extractHandler(@Nullable Object object) {
 
-        for (Pair<Predicate<Object>, Function<Object, IItemHandler>> extractor: EXTRACTORS) {
+        for (Pair<Predicate<Object>, Function<Object, IItemHandler>> extractor : EXTRACTORS) {
             if (extractor.getLeft().test(object))
                 return extractor.getRight().apply(object);
         }

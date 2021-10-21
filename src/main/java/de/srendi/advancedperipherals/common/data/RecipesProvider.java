@@ -15,6 +15,7 @@ import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.crafting.conditions.IConditionBuilder;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
 
@@ -27,7 +28,7 @@ public class RecipesProvider extends RecipeProvider implements IConditionBuilder
     }
 
     @Override
-    protected void buildCraftingRecipes(Consumer<FinishedRecipe> consumer) {
+    protected void buildCraftingRecipes(@NotNull Consumer<FinishedRecipe> consumer) {
         ShapedRecipeBuilder.shaped(Blocks.AR_CONTROLLER.get())
                 .define('E', Tags.Items.ENDER_PEARLS)
                 .define('C', CASING)

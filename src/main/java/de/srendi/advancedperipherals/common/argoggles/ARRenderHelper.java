@@ -11,6 +11,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.registries.ForgeRegistries;
 
 public class ARRenderHelper extends GuiComponent {
+
     private static ARRenderHelper instance = new ARRenderHelper();
 
     public static void drawRightboundString(PoseStack matrixStack, Font fontRenderer, String text, int x,

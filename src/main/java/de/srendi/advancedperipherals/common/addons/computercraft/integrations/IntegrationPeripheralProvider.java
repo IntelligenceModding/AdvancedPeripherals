@@ -9,6 +9,7 @@ import de.srendi.advancedperipherals.lib.peripherals.BlockEntityIntegrationPerip
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.NoteBlock;
 import net.minecraft.world.level.block.entity.BeaconBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.common.util.LazyOptional;
@@ -31,9 +32,10 @@ public class IntegrationPeripheralProvider implements IPeripheralProvider {
 
     /**
      * Register tile entity integration, better use this method over manual TileEntityIntegration creation, because this method provides type check
+     *
      * @param integration integration generator
-     * @param tileClass target integration class
-     * @param <T> target integration
+     * @param tileClass   target integration class
+     * @param <T>         target integration
      */
     public static <T extends BlockEntity> void registerBlockEntityIntegration(Function<BlockEntity, BlockEntityIntegrationPeripheral<T>> integration, Class<T> tileClass) {
         registerIntegration(new BlockEntityIntegration(integration, tileClass::isInstance));
@@ -41,10 +43,11 @@ public class IntegrationPeripheralProvider implements IPeripheralProvider {
 
     /**
      * Register tile entity integration, better use this method over manual TileEntityIntegration creation, because this method provides type check
+     *
      * @param integration integration generator
-     * @param tileClass target integration class
-     * @param priority Integration priority, lower is better
-     * @param <T> target integration
+     * @param tileClass   target integration class
+     * @param priority    Integration priority, lower is better
+     * @param <T>         target integration
      */
     public static <T extends BlockEntity> void registerBlockEntityIntegration(Function<BlockEntity, BlockEntityIntegrationPeripheral<T>> integration, Class<T> tileClass, int priority) {
         registerIntegration(new BlockEntityIntegration(integration, tileClass::isInstance, priority));
@@ -52,7 +55,9 @@ public class IntegrationPeripheralProvider implements IPeripheralProvider {
 
     public static void load() {
         registerIntegration(new BlockEntityIntegration(BeaconIntegration::new, BeaconBlockEntity.class::isInstance));
-        for (String mod: SUPPORTED_MODS) {
+        registerIntegration(new BlockIntegration(NoteblockIntegration::new, NoteBlock.class::isInstance));
+
+        for (String mod : SUPPORTED_MODS) {
             Optional<Object> integration = Platform.maybeLoadIntegration(mod, mod + ".Integration");
             integration.ifPresent(obj -> {
                 AdvancedPeripherals.LOGGER.warn("Successfully loaded integration for {}", mod);

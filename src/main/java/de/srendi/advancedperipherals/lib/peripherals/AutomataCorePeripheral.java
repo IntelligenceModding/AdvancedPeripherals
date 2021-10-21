@@ -62,14 +62,14 @@ public abstract class AutomataCorePeripheral extends BasePeripheral<TurtlePeriph
     }
 
     public <T> MethodResult withOperation(IPeripheralOperation<T> operation, T context, IPeripheralFunction<T, MethodResult> function, IPeripheralCheck<T> check) throws LuaException {
-        return withOperation(operation, context, check,  function, ignored -> addRotationCycle());
+        return withOperation(operation, context, check, function, ignored -> addRotationCycle());
     }
 
     public MethodResult withOperation(SingleOperation operation, IPeripheralFunction<SingleOperationContext, MethodResult> function) throws LuaException {
         return withOperation(operation, forUnknownDistance(), function, null);
     }
 
-    public MethodResult withOperation(SingleOperation operation, IPeripheralFunction<SingleOperationContext, MethodResult> function,  IPeripheralCheck<SingleOperationContext> check) throws LuaException {
+    public MethodResult withOperation(SingleOperation operation, IPeripheralFunction<SingleOperationContext, MethodResult> function, IPeripheralCheck<SingleOperationContext> check) throws LuaException {
         return withOperation(operation, forUnknownDistance(), function, check);
     }
 

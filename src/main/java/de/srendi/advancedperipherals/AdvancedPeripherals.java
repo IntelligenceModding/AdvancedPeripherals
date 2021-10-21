@@ -26,6 +26,7 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 import top.theillusivec4.curios.api.SlotTypeMessage;
 
 @Mod(AdvancedPeripherals.MOD_ID)
@@ -36,6 +37,7 @@ public class AdvancedPeripherals {
     public static final CreativeModeTab TAB = new CreativeModeTab("advancedperipheralstab") {
 
         @Override
+        @NotNull
         public ItemStack makeIcon() {
             return new ItemStack(Blocks.CHAT_BOX.get());
         }

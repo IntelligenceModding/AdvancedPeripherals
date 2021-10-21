@@ -65,7 +65,7 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
             MutableComponent component = Component.Serializer.fromJson(message);
             if (component == null)
                 return MethodResult.of(null, "incorrect json");
-            MutableComponent preparedMessage = new TextComponent(String.format(PREFIX_FORMAT, arguments.optString(1, AdvancedPeripheralsConfig.defaultChatBoxPrefix))).append(message);
+            MutableComponent preparedMessage = new TextComponent(String.format(PREFIX_FORMAT, arguments.optString(1, AdvancedPeripheralsConfig.defaultChatBoxPrefix))).append(component);
             for (ServerPlayer player : ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers()) {
                 player.sendMessage(preparedMessage, Util.NIL_UUID);
             }

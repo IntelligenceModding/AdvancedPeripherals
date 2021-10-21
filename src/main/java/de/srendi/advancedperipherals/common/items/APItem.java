@@ -12,9 +12,9 @@ import java.util.function.Supplier;
 
 public class APItem extends BaseItem {
 
-    @Nullable ResourceLocation turtleID;
-    @Nullable ResourceLocation pocketID;
-    Supplier<Boolean> enabledSup;
+    private final @Nullable ResourceLocation turtleID;
+    private final @Nullable ResourceLocation pocketID;
+    private final Supplier<Boolean> enabledSup;
 
     public APItem(Properties properties, @Nullable ResourceLocation turtleID, @Nullable ResourceLocation pocketID, Supplier<Boolean> enabledSup) {
         super(properties);

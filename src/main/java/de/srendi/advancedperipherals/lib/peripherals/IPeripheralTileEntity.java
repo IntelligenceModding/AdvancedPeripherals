@@ -7,6 +7,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
 public interface IPeripheralTileEntity {
+
     CompoundTag getPeripheralSettings();
     void markSettingsChanged();
 

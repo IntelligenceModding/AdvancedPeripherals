@@ -39,14 +39,13 @@ import static de.srendi.advancedperipherals.common.addons.computercraft.operatio
 
 public class EnvironmentDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
 
-    private static final List<Function<IPeripheralOwner, IPeripheralPlugin>> PLUGINS = new LinkedList<>();
-
     public static final String TYPE = "environmentDetector";
+    private static final List<Function<IPeripheralOwner, IPeripheralPlugin>> PLUGINS = new LinkedList<>();
 
     protected EnvironmentDetectorPeripheral(IPeripheralOwner owner) {
         super(TYPE, owner);
         owner.attachOperation(SCAN_ENTITIES);
-        for (Function<IPeripheralOwner, IPeripheralPlugin> plugin: PLUGINS)
+        for (Function<IPeripheralOwner, IPeripheralPlugin> plugin : PLUGINS)
             addPlugin(plugin.apply(owner));
     }
 
@@ -70,6 +69,10 @@ public class EnvironmentDetectorPeripheral extends BasePeripheral<IPeripheralOwn
             return -1;
         }
         return SCAN_ENTITIES.getCost(SphereOperationContext.of(radius));
+    }
+
+    public static void addIntegrationPlugin(Function<IPeripheralOwner, IPeripheralPlugin> plugin) {
+        PLUGINS.add(plugin);
     }
 
     @Override
@@ -151,48 +154,32 @@ public class EnvironmentDetectorPeripheral extends BasePeripheral<IPeripheralOwn
         return getCurrentMoonPhase().keySet().toArray(new Integer[0])[0];
     }
 
+   /* @LuaFunction(mainThread = true)
+    public final boolean isMoon(int phase) {
+        return getCurrentMoonPhase().containsKey(phase);
+    }*/
+
     @LuaFunction(mainThread = true)
     public final String getMoonName() {
         String[] name = getCurrentMoonPhase().values().toArray(new String[0]);
         return name[0];
     }
 
-   /* @LuaFunction(mainThread = true)
-    public final boolean isMoon(int phase) {
-        return getCurrentMoonPhase().containsKey(phase);
-    }*/
-
     private Map<Integer, String> getCurrentMoonPhase() {
         Map<Integer, String> moon = new HashMap<>();
         if (getLevel().dimension().getRegistryName().getPath().equals("overworld")) {
             switch (getLevel().getMoonPhase()) {
-                case 0:
-                    moon.put(0, "Full moon");
-                    break;
-                case 1:
-                    moon.put(1, "Waning gibbous");
-                    break;
-                case 2:
-                    moon.put(2, "Third quarter");
-                    break;
-                case 3:
-                    moon.put(3, "Wanning crescent");
-                    break;
-                case 4:
-                    moon.put(4, "New moon");
-                    break;
-                case 5:
-                    moon.put(5, "Waxing crescent");
-                    break;
-                case 6:
-                    moon.put(6, "First quarter");
-                    break;
-                case 7:
-                    moon.put(7, "Waxing gibbous");
-                    break;
-                default:
-                    //should never happen
-                    moon.put(0, "What is a moon");
+                case 0 -> moon.put(0, "Full moon");
+                case 1 -> moon.put(1, "Waning gibbous");
+                case 2 -> moon.put(2, "Third quarter");
+                case 3 -> moon.put(3, "Wanning crescent");
+                case 4 -> moon.put(4, "New moon");
+                case 5 -> moon.put(5, "Waxing crescent");
+                case 6 -> moon.put(6, "First quarter");
+                case 7 -> moon.put(7, "Waxing gibbous");
+                default ->
+                        //should never happen
+                        moon.put(0, "What is a moon");
             }
         } else {
             //Yay, easter egg
@@ -220,7 +207,7 @@ public class EnvironmentDetectorPeripheral extends BasePeripheral<IPeripheralOwn
     @LuaFunction(mainThread = true)
     public final MethodResult scanEntities(@Nonnull IComputerAccess access, @Nonnull IArguments arguments) throws LuaException {
         int radius = arguments.getInt(0);
-        return withOperation(SCAN_ENTITIES,  new SphereOperationContext(radius), context -> {
+        return withOperation(SCAN_ENTITIES, new SphereOperationContext(radius), context -> {
             if (radius > SCAN_ENTITIES.getMaxCostRadius()) {
                 return MethodResult.of(null, "Radius is exceed max value");
             }
@@ -243,9 +230,5 @@ public class EnvironmentDetectorPeripheral extends BasePeripheral<IPeripheralOwn
             return MethodResult.of(null, "Radius is exceed max value");
         }
         return MethodResult.of(estimatedCost);
-    }
-
-    public static void addIntegrationPlugin(Function<IPeripheralOwner, IPeripheralPlugin> plugin) {
-        PLUGINS.add(plugin);
     }
 }

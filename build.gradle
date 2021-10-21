@@ -1,5 +1,6 @@
-import java.text.SimpleDateFormat
 import com.modrinth.minotaur.TaskModrinthUpload
+
+import java.text.SimpleDateFormat
 
 buildscript {
     repositories {
@@ -326,7 +327,7 @@ curseforge {
 }
 
 
-task publishModrinth (type: TaskModrinthUpload) {
+task publishModrinth(type: TaskModrinthUpload) {
     dependsOn('assemble', 'reobfJar')
     onlyIf {
         modrinthKey

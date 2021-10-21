@@ -15,40 +15,14 @@ public enum SingleOperation implements IPeripheralOperation<SingleOperationConte
     CAPTURE_ANIMAL(50_000, 100),
     WARP(1000, DistancePolicy.IGNORED, CountPolicy.MULTIPLY, 1, DistancePolicy.SQRT, CountPolicy.MULTIPLY);
 
-    public enum DistancePolicy {
-        IGNORED(d -> 1), SQRT(d -> (int) Math.sqrt(d));
-
-        private final Function<Integer, Integer> factorFunction;
-        DistancePolicy(Function<Integer, Integer> factorFunction) {
-            this.factorFunction = factorFunction;
-        }
-
-        public int getFactor(int distance) {
-            return factorFunction.apply(distance);
-        }
-    }
-    public enum CountPolicy {
-        MULTIPLY(c -> c);
-
-        private final Function<Integer, Integer> factorFunction;
-        CountPolicy(Function<Integer, Integer> factorFunction) {
-            this.factorFunction = factorFunction;
-        }
-
-        public int getFactor(int count) {
-            return factorFunction.apply(count);
-        }
-    }
-
-    private ForgeConfigSpec.IntValue cooldown;
-    private ForgeConfigSpec.IntValue cost;
     private final int defaultCooldown;
     private final DistancePolicy distanceCooldownPolicy;
     private final CountPolicy countCooldownPolicy;
     private final int defaultCost;
     private final DistancePolicy distanceCostPolicy;
     private final CountPolicy countCostPolicy;
-
+    private ForgeConfigSpec.IntValue cooldown;
+    private ForgeConfigSpec.IntValue cost;
     SingleOperation(
             int defaultCooldown, DistancePolicy distanceCooldownPolicy, CountPolicy countCooldownPolicy,
             int defaultCost, DistancePolicy distanceCostPolicy, CountPolicy countCostPolicy) {
@@ -59,7 +33,6 @@ public enum SingleOperation implements IPeripheralOperation<SingleOperationConte
         this.distanceCostPolicy = distanceCostPolicy;
         this.countCostPolicy = countCostPolicy;
     }
-
     SingleOperation(int defaultCooldown, int defaultCost) {
         this(defaultCooldown, DistancePolicy.IGNORED, CountPolicy.MULTIPLY, defaultCost, DistancePolicy.IGNORED, CountPolicy.MULTIPLY);
     }
@@ -101,5 +74,33 @@ public enum SingleOperation implements IPeripheralOperation<SingleOperationConte
         cost = builder.defineInRange(
                 settingsName() + "Cost", defaultCost, 0, Integer.MAX_VALUE
         );
+    }
+
+    public enum DistancePolicy {
+        IGNORED(d -> 1), SQRT(d -> (int) Math.sqrt(d));
+
+        private final Function<Integer, Integer> factorFunction;
+
+        DistancePolicy(Function<Integer, Integer> factorFunction) {
+            this.factorFunction = factorFunction;
+        }
+
+        public int getFactor(int distance) {
+            return factorFunction.apply(distance);
+        }
+    }
+
+    public enum CountPolicy {
+        MULTIPLY(c -> c);
+
+        private final Function<Integer, Integer> factorFunction;
+
+        CountPolicy(Function<Integer, Integer> factorFunction) {
+            this.factorFunction = factorFunction;
+        }
+
+        public int getFactor(int count) {
+            return factorFunction.apply(count);
+        }
     }
 }

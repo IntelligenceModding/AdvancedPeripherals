@@ -7,10 +7,13 @@ import java.util.stream.Collectors;
 
 public interface IConfigHandler {
     void addToConfig(final ForgeConfigSpec.Builder builder);
+
     String name();
+
     default String settingsPostfix() {
         return "";
     }
+
     default String settingsName() {
         String name = name();
         String startName = Arrays.stream(name.toLowerCase().split("_"))

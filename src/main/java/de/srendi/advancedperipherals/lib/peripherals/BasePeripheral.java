@@ -23,8 +23,8 @@ public abstract class BasePeripheral<O extends IPeripheralOwner> implements IBas
     protected final List<IComputerAccess> connectedComputers = new ArrayList<>();
     protected final String type;
     protected final O owner;
-    protected boolean initialized = false;
     protected final List<BoundMethod> pluggedMethods = new ArrayList<>();
+    protected boolean initialized = false;
     protected List<IPeripheralPlugin> plugins = null;
     protected String[] methodNames = new String[0];
 
@@ -59,7 +59,7 @@ public abstract class BasePeripheral<O extends IPeripheralOwner> implements IBas
             OperationAbility operationAbility = owner.getAbility(PeripheralOwnerAbility.OPERATION);
             if (operationAbility == null)
                 throw new IllegalArgumentException("This is not possible to attach plugin with operations to not operationable owner");
-            for (IPeripheralOperation<?> operation: operations)
+            for (IPeripheralOperation<?> operation : operations)
                 operationAbility.registerOperation(operation);
         }
     }

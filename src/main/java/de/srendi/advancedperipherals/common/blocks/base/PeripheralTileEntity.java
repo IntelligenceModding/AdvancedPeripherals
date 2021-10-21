@@ -38,7 +38,6 @@ public abstract class PeripheralTileEntity<T extends BasePeripheral<?>> extends 
     private LazyOptional<? extends IItemHandler> handler;
     protected CompoundTag peripheralSettings;
     protected NonNullList<ItemStack> items;
-
     protected @Nullable T peripheral = null;
     private LazyOptional<IPeripheral> peripheralCap;
 

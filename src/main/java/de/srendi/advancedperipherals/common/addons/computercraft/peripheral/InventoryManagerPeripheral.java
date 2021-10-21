@@ -5,6 +5,7 @@ import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.shared.util.NBTUtil;
 import de.srendi.advancedperipherals.common.blocks.tileentity.InventoryManagerTile;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
+import de.srendi.advancedperipherals.common.util.InventoryUtil;
 import de.srendi.advancedperipherals.common.util.ItemUtil;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
@@ -18,6 +19,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.ItemHandlerHelper;
+import net.minecraftforge.items.wrapper.PlayerInvWrapper;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.HashMap;
@@ -52,18 +55,19 @@ public class InventoryManagerPeripheral extends BasePeripheral<BlockEntityPeriph
             Item item1 = ItemUtil.getRegistryEntry(item.get(), ForgeRegistries.ITEMS);
             stack = new ItemStack(item1, count);
         }
-        //With this, we can use the item parameter without need to use the slot parameter. If we don't want to use
-        //the slot parameter, we can use -1
-        int invSlot = -1;
-        if (slot.isPresent() && slot.get() > 0)
-            invSlot = slot.get();
 
         Direction direction = validateSide(invDirection);
 
         BlockEntity targetEntity = owner.getLevel().getBlockEntity(owner.getPos().relative(direction));
         IItemHandler inventoryFrom = targetEntity != null ? targetEntity
                 .getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, direction).resolve().orElse(null) : null;
-        Inventory inventoryTo = getOwnerPlayer().getInventory();
+
+        IItemHandler inventoryTo = new PlayerInvWrapper(getOwnerPlayer().getInventory());
+
+        int invSlot = slot.orElse(0);
+
+        if (invSlot >= inventoryTo.getSlots() || invSlot < 0)
+            throw new LuaException("Inventory out of bounds " + invSlot + " (max: " + (inventoryTo.getSlots() - 1) + ")");
 
         //inventoryTo is checked via ensurePlayerIsLinked()
         if (inventoryFrom == null)
@@ -72,71 +76,24 @@ public class InventoryManagerPeripheral extends BasePeripheral<BlockEntityPeriph
         int amount = count;
         int transferableAmount = 0;
 
-        if (invSlot == -1)
-            for (int i = 0; i < inventoryFrom.getSlots(); i++) {
-                if (!stack.isEmpty())
-                    if (inventoryFrom.getStackInSlot(i).sameItem(stack)) {
-                        if (inventoryFrom.getStackInSlot(i).getCount() >= amount) {
-                            if (inventoryTo.add(inventoryFrom.extractItem(i, amount, true))) {
-                                inventoryFrom.extractItem(i, amount, false);
-                                transferableAmount += amount;
-                            }
-                            break;
-                        } else {
-                            int subcount = inventoryFrom.getStackInSlot(i).getCount();
-                            if (inventoryTo.add(inventoryFrom.extractItem(i, subcount, true))) {
-                                inventoryFrom.extractItem(i, subcount, false);
-                                amount = count - subcount;
-                                transferableAmount += subcount;
-                            }
-                        }
-                    }
+        for (int i = 0; i < inventoryFrom.getSlots() && amount > 0; i++) {
+            if (stack.isEmpty()) {
+                stack = inventoryFrom.getStackInSlot(i).copy();
                 if (stack.isEmpty())
-                    if (inventoryFrom.getStackInSlot(i).getCount() >= amount) {
-                        if (inventoryTo.add(inventoryFrom.extractItem(i, amount, true))) {
-                            inventoryFrom.extractItem(i, amount, false);
-                            transferableAmount += amount;
-                        }
-                        break;
-                    } else {
-                        int subcount = inventoryFrom.getStackInSlot(i).getCount();
-                        if (inventoryTo.add(inventoryFrom.extractItem(i, subcount, true))) {
-                            inventoryFrom.extractItem(i, subcount, false);
-                            amount = count - subcount;
-                            transferableAmount += subcount;
-                        }
-                    }
+                    continue;
             }
-        if (invSlot != -1) {
-            if (stack.isEmpty())
-                if (inventoryFrom.getStackInSlot(slot.get()).getCount() >= amount) {
-                    if (inventoryTo.add(inventoryFrom.extractItem(slot.get(), amount, true))) {
-                        inventoryFrom.extractItem(slot.get(), amount, false);
-                        transferableAmount += amount;
-                    }
-                } else {
-                    int subcount = inventoryFrom.getStackInSlot(slot.get()).getCount();
-                    if (inventoryTo.add(inventoryFrom.extractItem(slot.get(), subcount, true))) {
-                        inventoryFrom.extractItem(slot.get(), subcount, false);
-                        transferableAmount += subcount;
-                    }
-                }
-            if (!stack.isEmpty())
-                if (inventoryFrom.getStackInSlot(slot.get()).sameItem(stack)) {
-                    if (inventoryFrom.getStackInSlot(slot.get()).getCount() >= amount) {
-                        if (inventoryTo.add(inventoryFrom.extractItem(slot.get(), amount, true))) {
-                            inventoryFrom.extractItem(slot.get(), amount, false);
-                            transferableAmount += amount;
-                        }
-                    } else {
-                        int subcount = inventoryFrom.getStackInSlot(slot.get()).getCount();
-                        if (inventoryTo.add(inventoryFrom.extractItem(slot.get(), subcount, true))) {
-                            inventoryFrom.extractItem(slot.get(), subcount, false);
-                            transferableAmount += subcount;
-                        }
-                    }
-                }
+
+            if (ItemHandlerHelper.canItemStacksStack(stack, inventoryFrom.getStackInSlot(i))) {
+                int inserted = InventoryUtil.moveItem(inventoryFrom, i, inventoryTo, invSlot, amount);
+                transferableAmount += inserted;
+                amount -= inserted;
+
+                inserted = InventoryUtil.moveItem(inventoryFrom, i, inventoryTo, -1, amount);
+                transferableAmount += inserted;
+                amount -= inserted;
+            }
         }
+
         return transferableAmount;
     }
 
@@ -237,10 +194,13 @@ public class InventoryManagerPeripheral extends BasePeripheral<BlockEntityPeriph
             if (!stack.isEmpty()) {
                 Map<String, Object> map = new HashMap<>();
                 String displayName = stack.getDisplayName().getString();
-                CompoundTag nbt = stack.getOrCreateTag();
+                CompoundTag nbt = stack.getTag(); // use getTag instead of getOrCreateTag to fix https://github.com/Seniorendi/AdvancedPeripherals/issues/177
                 map.put("name", stack.getItem().getRegistryName().toString());
                 map.put("amount", stack.getCount());
                 map.put("displayName", displayName);
+                if (nbt == null) {
+                    nbt = new CompoundTag();  // ensure compatibility with lua programs relying on a non-nil value
+                }
                 map.put("nbt", NBTUtil.toLua(nbt));
                 map.put("tags", LuaConverter.tagsToList(stack.getItem().getTags()));
                 items.put(i, map);
@@ -259,10 +219,13 @@ public class InventoryManagerPeripheral extends BasePeripheral<BlockEntityPeriph
             if (!stack.isEmpty()) {
                 Map<String, Object> map = new HashMap<>();
                 String displayName = stack.getDisplayName().getString();
-                CompoundTag nbt = stack.getOrCreateTag();
+                CompoundTag nbt = stack.getTag();
                 map.put("name", stack.getItem().getRegistryName().toString());
                 map.put("amount", stack.getCount());
                 map.put("displayName", displayName);
+                if (nbt == null) {
+                    nbt = new CompoundTag();  // ensure compatibility with lua programs relying on a non-nil value
+                }
                 map.put("nbt", NBTUtil.toLua(nbt));
                 map.put("tags", LuaConverter.tagsToList(stack.getItem().getTags()));
                 items.put(i, map);

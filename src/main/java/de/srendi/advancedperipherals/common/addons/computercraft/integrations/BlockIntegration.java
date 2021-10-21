@@ -5,44 +5,39 @@ import de.srendi.advancedperipherals.lib.integrations.IPeripheralIntegration;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.Block;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.function.Function;
+import java.util.function.BiFunction;
 import java.util.function.Predicate;
 
-public class BlockEntityIntegration implements IPeripheralIntegration {
+public class BlockIntegration implements IPeripheralIntegration {
 
     private final static int DEFAULT_PRIORITY = 50;
 
-    private final Function<BlockEntity, ? extends IPeripheral> build;
-    private final Predicate<BlockEntity> predicate;
+    private final BiFunction<Level, BlockPos, ? extends IPeripheral> build;
+    private final Predicate<Block> predicate;
     private final int priority;
 
-    public BlockEntityIntegration(Function<BlockEntity, ? extends IPeripheral> build, Predicate<BlockEntity> predicate, int priority) {
+    public BlockIntegration(BiFunction<Level, BlockPos, ? extends IPeripheral> build, Predicate<Block> predicate, int priority) {
         this.build = build;
         this.predicate = predicate;
         this.priority = priority;
     }
 
-    public BlockEntityIntegration(Function<BlockEntity, ? extends IPeripheral> build, Predicate<BlockEntity> predicate) {
+    public BlockIntegration(BiFunction<Level, BlockPos, ? extends IPeripheral> build, Predicate<Block> predicate) {
         this(build, predicate, DEFAULT_PRIORITY);
     }
 
     @Override
     public boolean isSuitable(@NotNull Level level, @NotNull BlockPos blockPos, @NotNull Direction direction) {
-        BlockEntity te = level.getBlockEntity(blockPos);
-        if (te == null)
-            return false;
-        return predicate.test(te);
+        Block block = level.getBlockState(blockPos).getBlock();
+        return predicate.test(block);
     }
 
     @Override
     public @NotNull IPeripheral buildPeripheral(@NotNull Level level, @NotNull BlockPos blockPos, @NotNull Direction direction) {
-        BlockEntity te = level.getBlockEntity(blockPos);
-        if (te == null)
-            throw new IllegalArgumentException("This should not happen");
-        return build.apply(te);
+        return build.apply(level, blockPos);
     }
 
     @Override

@@ -52,7 +52,7 @@ public class LuaConverter {
     }
 
     public static Object posToObject(BlockPos pos) {
-        if(pos == null)
+        if (pos == null)
             return null;
 
         Map<String, Object> map = new HashMap<>();
@@ -65,7 +65,7 @@ public class LuaConverter {
     public static Object stackToObject(@NotNull ItemStack stack) {
         Map<String, Object> map = (Map<String, Object>) itemToObject(stack.getItem());
         map.put("count", stack.getCount());
-        map.put("displayName", stack.getDisplayName());
+        map.put("displayName", stack.getDisplayName().getString());
         map.put("maxStackSize", stack.getMaxStackSize());
         return map;
     }
@@ -84,7 +84,7 @@ public class LuaConverter {
     }
 
     public static Direction getDirection(Direction facing, String computerSide) throws LuaException {
-        if(Direction.byName(computerSide) != null)
+        if (Direction.byName(computerSide) != null)
             return Direction.byName(computerSide);
         if (Objects.equals(computerSide, ComputerSide.FRONT.toString())) return facing;
         if (Objects.equals(computerSide, ComputerSide.BACK.toString()))

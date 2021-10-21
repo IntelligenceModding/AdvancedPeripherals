@@ -1,12 +1,15 @@
 ## Release process
 
-This documentation focused on release process for Advanced Peripherals. 
+This documentation focused on release process for Advanced Peripherals.
 
 ### Preparation
 
-First, you need to get curseforge api key. [Here](https://support.curseforge.com/en/support/solutions/articles/9000197321-curseforge-api) is some documentation about it.
+First, you need to get curseforge api
+key. [Here](https://support.curseforge.com/en/support/solutions/articles/9000197321-curseforge-api) is some
+documentation about it.
 
-Then, you need to get modrinth key, from [settings](https://modrinth.com/dashboard/settings) in "Authorization token" section
+Then, you need to get modrinth key, from [settings](https://modrinth.com/dashboard/settings) in "Authorization token"
+section
 
 Second, you need to create `.env` file in root folder and put in this file
 
@@ -25,7 +28,7 @@ TOKEN=<github token with access to packages API>
 ### Before release
 
 - Manually review `CHANGELOG.md` to check it for mistakes or some problems
-- Make sure, that `mod_version` and `release_type` in `gradle.properties` matches to what you want to receive 
+- Make sure, that `mod_version` and `release_type` in `gradle.properties` matches to what you want to receive
 
 ### Release process
 
