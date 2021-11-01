@@ -7,6 +7,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Fixed
+
+- FormattedMessage formatting mistake
+
 ## [0.7.3r] - 2021-10-13
 
 ### Removed
