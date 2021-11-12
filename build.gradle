@@ -222,8 +222,13 @@ dependencies {
 
     // Integrated dynamics
     implementation fg.deobf("curse.maven:integrateddynamics-${integrated_dynamics_version}")
-    implementation fg.deobf("curse.maven:CommonCapabilites-${common_capabilities_version}")
-    implementation fg.deobf("curse.maven:CyclopsCore-${cyclops_core_version}")
+    implementation fg.deobf("curse.maven:commoncapabilites-${common_capabilities_version}")
+    implementation fg.deobf("curse.maven:cyclopscore-${cyclops_core_version}")
+
+    // Draconic Evolution
+    implementation fg.deobf("curse.maven:draconic-${draconic_evolution_version}")
+    implementation fg.deobf("curse.maven:brandons-${brandon_core_version}")
+    implementation fg.deobf("curse.maven:codechicken-${code_chicken_version}")
 
     // Mekanism with addons
     implementation fg.deobf("mekanism:Mekanism:${mekanism_version}")
