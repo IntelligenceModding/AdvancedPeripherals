@@ -26,7 +26,6 @@ public class DynamicTankIntegration extends TileEntityIntegrationPeripheral<Tile
     @LuaFunction(mainThread = true)
     public final Map<String, Object> getStored() {
         Map<String, Object> result = new HashMap<>(3);
-        AdvancedPeripherals.debug("Debug1");
         switch (getTank().getCurrentType()) {
             case GAS:
                 result.put("name", getTank().getGasTank().getType().getRegistryName().toString());

@@ -79,7 +79,7 @@ minecraft {
             property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
             property 'mixin.env.remapRefMap', 'true'
             property 'mixin.env.refMapRemappingFile', "${buildDir}/createSrgToMcp/output.srg"
-            properties 'forge.logging.console.level': 'info'
+            properties 'forge.logging.console.level': 'debug'
 
             mods {
                 advancedperipherals {

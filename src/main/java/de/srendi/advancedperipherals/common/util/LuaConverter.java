@@ -2,10 +2,12 @@ package de.srendi.advancedperipherals.common.util;
 
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.core.computer.ComputerSide;
+import dan200.computercraft.shared.util.NBTUtil;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
@@ -63,15 +65,22 @@ public class LuaConverter {
         return map;
     }
 
-    public static Object stackToObject(@NotNull ItemStack stack) {
-        Map<String, Object> map = (Map<String, Object>) itemToObject(stack.getItem());
+    public static Map<String, Object> stackToObject(@NotNull ItemStack stack) {
+        if (stack.isEmpty())
+            return new HashMap<>();
+        Map<String, Object> map = itemToObject(stack.getItem());
+        CompoundNBT nbt = stack.getTag();
         map.put("count", stack.getCount());
         map.put("displayName", stack.getDisplayName().getString());
         map.put("maxStackSize", stack.getMaxStackSize());
+        if (nbt == null) {
+            nbt = new CompoundNBT();//ensure compatibility with lua programs relying on a non-nil value
+        }
+        map.put("nbt", NBTUtil.toLua(nbt));
         return map;
     }
 
-    public static Object itemToObject(@NotNull Item item) {
+    public static Map<String, Object> itemToObject(@NotNull Item item) {
         Map<String, Object> map = new HashMap<>();
         map.put("tags", tagsToList(item.getTags()));
         map.put("name", item.getRegistryName().toString());
@@ -101,7 +110,6 @@ public class LuaConverter {
     }
 
     // BlockPos tricks
-
     public static BlockPos convertToBlockPos(Map<?, ?> table) throws LuaException {
         if (!table.containsKey("x") || !table.containsKey("y") || !table.containsKey("z"))
             throw new LuaException("Table should be block position table");
