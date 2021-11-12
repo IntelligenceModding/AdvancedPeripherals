@@ -5,6 +5,7 @@ import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.pocket.IPocketAccess;
 import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
+import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
 import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
@@ -155,7 +156,9 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
     }
 
     @LuaFunction(mainThread = true)
-    public final Map<String, Double> getPlayerPos(String username) {
+    public final Map<String, Object> getPlayerPos(String username) throws LuaException {
+        if(!AdvancedPeripheralsConfig.playerSpy)
+            throw new LuaException("This function is disabled in the config. Activate it or ask an admin if he can activate it.");
         ServerPlayerEntity existingPlayer = null;
         for (ServerPlayerEntity player : getPlayers()) {
             if (player.getName().getString().equals(username)) {
@@ -168,11 +171,17 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
         if (existingPlayer == null)
             return null;
 
-        Map<String, Double> coordinates = new HashMap<>();
-        coordinates.put("x", Math.floor(existingPlayer.getX()));
-        coordinates.put("y", Math.floor(existingPlayer.getY()));
-        coordinates.put("z", Math.floor(existingPlayer.getZ()));
-        return coordinates;
+        Map<String, Object> info = new HashMap<>();
+        info.put("x", Math.floor(existingPlayer.getX()));
+        info.put("y", Math.floor(existingPlayer.getY()));
+        info.put("z", Math.floor(existingPlayer.getZ()));
+        if(AdvancedPeripheralsConfig.morePlayerInformation) {
+            info.put("yaw", existingPlayer.yRot);
+            info.put("pitch", existingPlayer.xRot);
+            info.put("dimension", existingPlayer.getLevel().dimension().location().toString());
+            info.put("eyeHeight", existingPlayer.getEyeHeight());
+        }
+        return info;
     }
 
     private List<ServerPlayerEntity> getPlayers() {

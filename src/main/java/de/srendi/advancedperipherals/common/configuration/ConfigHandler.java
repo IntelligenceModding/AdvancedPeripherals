@@ -35,6 +35,8 @@ public class ConfigHandler {
         AdvancedPeripheralsConfig.poweredPeripheralMaxEnergyStored = ConfigHolder.COMMON_CONFIG.POWERED_PERIPHERAL_MAX_ENERGY_STORED.get();
         AdvancedPeripheralsConfig.nbtStorageMaxSize = ConfigHolder.COMMON_CONFIG.NBT_STORAGE_MAX_SIZE.get();
         AdvancedPeripheralsConfig.chunkLoadValidTime = ConfigHolder.COMMON_CONFIG.CHUNK_LOAD_VALID_TIME.get();
+        AdvancedPeripheralsConfig.playerSpy = ConfigHolder.COMMON_CONFIG.PLAYER_SPY.get();
+        AdvancedPeripheralsConfig.morePlayerInformation = ConfigHolder.COMMON_CONFIG.MORE_PLAYER_INFORMATION.get();
 
         //Features
         AdvancedPeripheralsConfig.enableChatBox = ConfigHolder.COMMON_CONFIG.ENABLE_CHAT_BOX.get();

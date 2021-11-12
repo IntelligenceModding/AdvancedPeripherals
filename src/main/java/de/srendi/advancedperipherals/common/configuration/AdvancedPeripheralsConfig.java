@@ -8,10 +8,11 @@ import de.srendi.advancedperipherals.lib.LibConfig;
 import de.srendi.advancedperipherals.lib.misc.IConfigHandler;
 import net.minecraftforge.common.ForgeConfigSpec;
 
+//TODO - 0.8r: Completely remake our config system. Create our own folder, sort the values better and cleaner code. This will also
+//make ConfigHandler and ConfigHolder obsolete. I already made a system like this in other projects.
 public class AdvancedPeripheralsConfig {
 
     //Defaults
-
     public static String defaultChatBoxPrefix;
 
     //Restrictions
@@ -20,6 +21,8 @@ public class AdvancedPeripheralsConfig {
     public static int poweredPeripheralMaxEnergyStored;
     public static int nbtStorageMaxSize;
     public static int chunkLoadValidTime;
+    public static boolean playerSpy;
+    public static boolean morePlayerInformation;
 
     //Features
     public static boolean enableChatBox;
@@ -62,6 +65,8 @@ public class AdvancedPeripheralsConfig {
         final ForgeConfigSpec.IntValue POWERED_PERIPHERAL_MAX_ENERGY_STORED;
         final ForgeConfigSpec.IntValue NBT_STORAGE_MAX_SIZE;
         final ForgeConfigSpec.IntValue CHUNK_LOAD_VALID_TIME;
+        final ForgeConfigSpec.BooleanValue PLAYER_SPY;
+        final ForgeConfigSpec.BooleanValue MORE_PLAYER_INFORMATION;
 
         //Features
         final ForgeConfigSpec.BooleanValue ENABLE_CHAT_BOX;
@@ -112,6 +117,8 @@ public class AdvancedPeripheralsConfig {
             POWERED_PERIPHERAL_MAX_ENERGY_STORED = builder.comment("Defines max energy stored in any powered peripheral").defineInRange("poweredPeripheralMaxEnergyStored", 100_000_000, 1_000_000, Integer.MAX_VALUE);
             NBT_STORAGE_MAX_SIZE = builder.comment("Defines max nbt string that can be stored in nbt storage").defineInRange("nbtStorageMaxSize", 1048576, 0, Integer.MAX_VALUE);
             CHUNK_LOAD_VALID_TIME = builder.comment("Time in seconds, while loaded chunk can be consider as valid without touch").defineInRange("chunkLoadValidTime", 600, 60, Integer.MAX_VALUE);
+            PLAYER_SPY = builder.comment("Activates the `getPlayerPos` function of the Player Detector").define("enablePlayePosFunction", true);
+            MORE_PLAYER_INFORMATION = builder.comment("Adds more information to `getPlayerPos` of the Player Detector. Like rotation and dimension").define("morePlayerInformation", true);
 
             builder.pop();
 

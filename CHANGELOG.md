@@ -17,6 +17,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Added noteblock integration
 - Added `getItemInHand`, `getFreeSlot`, `isSpaceAvailable` and `getEmptySpace` to the inventory manager.
 - Added support for armor items. You can use the slots 100-103 to access armor items.
+- Added more information to the `getPlayerPos` function. (Configurable)
 
 ## [0.7.3r] - 2021-10-13
 
