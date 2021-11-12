@@ -23,7 +23,7 @@ public class NoteblockIntegration extends BlockIntegrationPeripheral<NoteBlock> 
     }
 
     @LuaFunction(mainThread = true)
-    public int changeNote() {
+    public final int changeNote() {
         BlockState state = world.getBlockState(pos);
         int newNote = net.minecraftforge.common.ForgeHooks.onNoteChange(world, pos, state, state.getValue(NoteBlock.NOTE), state.cycle(NoteBlock.NOTE).getValue(NoteBlock.NOTE));
         if (newNote == -1) return -1;
@@ -33,7 +33,7 @@ public class NoteblockIntegration extends BlockIntegrationPeripheral<NoteBlock> 
     }
 
     @LuaFunction(mainThread = true)
-    public int changeNoteBy(int note) throws LuaException {
+    public final int changeNoteBy(int note) throws LuaException {
         BlockState state = world.getBlockState(pos);
         if (!(note >= 0 && note <= 24))
             throw new LuaException("Note argument need to be in a range of 0 and 24");
@@ -43,13 +43,13 @@ public class NoteblockIntegration extends BlockIntegrationPeripheral<NoteBlock> 
     }
 
     @LuaFunction(mainThread = true)
-    public int getNote() {
+    public final int getNote() {
         BlockState state = world.getBlockState(pos);
         return state.getValue(NoteBlock.NOTE);
     }
 
     @LuaFunction(mainThread = true)
-    public void playNote() {
+    public final void playNote() {
         if (world.isEmptyBlock(pos.above())) {
             world.blockEvent(pos, getBlock(), 0, 0);
         }
