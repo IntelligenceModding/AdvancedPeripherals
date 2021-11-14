@@ -9,9 +9,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Fixed
 
-- FormattedMessage formatting mistake
+- A FormattedMessage formatting mistake.
 - [#203]Fixed Inventory Manager api, slot argument behaviour is now correct.
-- [#219]Fixed that the inventory manager sees slot 0 as nil
+- [#219]Fixed that the inventory manager sees slot 0 as nil.
+- Fixed `getMaxMana` of the mana pool integration.
 
 ### Added
 
@@ -19,6 +20,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - [#217]Added `getItemInHand`, `getFreeSlot`, `isSpaceAvailable` and `getEmptySpace` to the inventory manager.
 - Added support for armor items. You can use the slots 100-103 to access armor items.
 - Added more information to the `getPlayerPos` function. (Configurable)
+- Added `getManaNeeded` to the mana pool integration
 
 ## [0.7.3r] - 2021-10-13
 

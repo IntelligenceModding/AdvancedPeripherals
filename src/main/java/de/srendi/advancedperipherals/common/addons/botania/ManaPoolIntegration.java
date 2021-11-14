@@ -23,6 +23,11 @@ public class ManaPoolIntegration extends TileEntityIntegrationPeripheral<TilePoo
 
     @LuaFunction(mainThread = true)
     public final int getMaxMana() {
+        return tileEntity.manaCap;
+    }
+
+    @LuaFunction(mainThread = true)
+    public final int getManaNeeded() {
         return tileEntity.getAvailableSpaceForMana();
     }
 
