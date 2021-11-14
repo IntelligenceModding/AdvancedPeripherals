@@ -25,7 +25,7 @@ public class IntegrationPeripheralProvider implements IPeripheralProvider {
     public static final String[] SUPPORTED_MODS = new String[]{
             "mekanismgenerators", "mekanism", "botania",
             "immersiveengineering", "integrateddynamics", "storagedrawers",
-            "create",
+            "create", "draconicevolution",
     };
 
     public static final PriorityQueue<IPeripheralIntegration> integrations = new PriorityQueue<>(Comparator.comparingInt(IPeripheralIntegration::getPriority));

@@ -21,6 +21,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Added support for armor items. You can use the slots 100-103 to access armor items.
 - Added more information to the `getPlayerPos` function. (Configurable)
 - Added `getManaNeeded` to the mana pool integration
+- [#186] Added draconic evolution integration for the reactor and the energy core.
 
 ## [0.7.3r] - 2021-10-13
 

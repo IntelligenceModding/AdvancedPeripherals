@@ -1,18 +1,16 @@
-package de.srendi.advancedperipherals.common.addons.draconic;
+package de.srendi.advancedperipherals.common.addons.draconicevolution;
 
-import com.brandon3055.draconicevolution.DraconicEvolution;
-import com.brandon3055.draconicevolution.blocks.reactor.tileentity.TileReactorInjector;
-import com.brandon3055.draconicevolution.blocks.reactor.tileentity.TileReactorStabilizer;
+import com.brandon3055.draconicevolution.blocks.tileentity.TileEnergyCore;
 import com.brandon3055.draconicevolution.blocks.tileentity.TileEnergyPylon;
-import com.brandon3055.draconicevolution.blocks.tileentity.flowgate.TileFluidGate;
 import dan200.computercraft.api.lua.LuaFunction;
+import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.lib.peripherals.TileEntityIntegrationPeripheral;
 import net.minecraft.tileentity.TileEntity;
+import org.apache.logging.log4j.Level;
 
 import javax.annotation.Nonnull;
+import java.lang.reflect.Field;
 
-//TODO: A lot of methods and fields are private or protected. https://github.com/brandon3055/Draconic-Evolution/issues/1572
-//Wait until this changed.
 public class EnergyPylonIntegration extends TileEntityIntegrationPeripheral<TileEnergyPylon> {
 
     public EnergyPylonIntegration(TileEntity entity) {
@@ -38,6 +36,23 @@ public class EnergyPylonIntegration extends TileEntityIntegrationPeripheral<Tile
 
     @LuaFunction(mainThread = true)
     public final long getTransferPerTick() {
-        return 0;
+        return getCore().transferRate.get();
+    }
+
+    @LuaFunction(mainThread = true)
+    public final int getTier() {
+        return getCore().tier.get();
+    }
+
+    private TileEnergyCore getCore() {
+        try {
+            Field field = tileEntity.getClass().getDeclaredField("core");
+            field.setAccessible(true);
+            TileEnergyCore core = (TileEnergyCore) field.get(tileEntity);
+            return core;
+        } catch (NoSuchFieldException | IllegalAccessException ex) {
+            AdvancedPeripherals.debug("Could not access the core of the pylon! " + ex.getMessage(), Level.ERROR);
+        }
+        return null;
     }
 }
