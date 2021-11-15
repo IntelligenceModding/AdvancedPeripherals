@@ -3,7 +3,8 @@ package de.srendi.advancedperipherals.common.blocks.tileentity;
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.EnergyDetectorPeripheral;
 import de.srendi.advancedperipherals.common.blocks.base.APTileEntityBlock;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
-import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
+import de.srendi.advancedperipherals.common.configuration.APConfig;
+import de.srendi.advancedperipherals.common.configuration.GeneralConfig;
 import de.srendi.advancedperipherals.common.setup.TileEntityTypes;
 import de.srendi.advancedperipherals.common.util.EnergyStorageProxy;
 import net.minecraft.block.BlockState;
@@ -25,14 +26,14 @@ public class EnergyDetectorTile extends PeripheralTileEntity<EnergyDetectorPerip
 
     public int transferRate = 0;
     //storageProxy that will forward the energy to the output but limit it to maxTransferRate
-    public EnergyStorageProxy storageProxy = new EnergyStorageProxy(this, AdvancedPeripheralsConfig.energyDetectorMaxFlow);
+    public EnergyStorageProxy storageProxy = new EnergyStorageProxy(this, APConfig.PERIPHERALS_CONFIG.ENERGY_DETECTOR_MAX_FLOW.get());
     LazyOptional<IEnergyStorage> energyStorageCap = LazyOptional.of(() -> storageProxy);
     Direction energyInDirection = Direction.NORTH;
     Direction energyOutDirection = Direction.SOUTH;
     @NotNull
     private Optional<IEnergyStorage> outReceivingStorage = Optional.empty();
     //a zero size, zero transfer energy storage to ensure that cables connect
-    private EnergyStorage zeroStorage = new EnergyStorage(0, 0, 0);
+    private final EnergyStorage zeroStorage = new EnergyStorage(0, 0, 0);
     LazyOptional<IEnergyStorage> zeroStorageCap = LazyOptional.of(() -> zeroStorage);
 
     public EnergyDetectorTile() {

@@ -4,7 +4,8 @@ import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.lua.MethodResult;
 import de.srendi.advancedperipherals.common.addons.computercraft.operations.SingleOperationContext;
-import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
+import de.srendi.advancedperipherals.common.configuration.APConfig;
+import de.srendi.advancedperipherals.common.configuration.GeneralConfig;
 import de.srendi.advancedperipherals.common.util.NBTUtil;
 import de.srendi.advancedperipherals.common.util.Pair;
 import de.srendi.advancedperipherals.lib.peripherals.AutomataCorePeripheral;
@@ -68,7 +69,7 @@ public class AutomataWarpingPlugin extends AutomataCorePlugin {
             return pairData.getLeft();
         }
         CompoundNBT data = pairData.getRight();
-        if (data.getAllKeys().size() >= AdvancedPeripheralsConfig.endAutomataCoreWarpPointLimit)
+        if (data.getAllKeys().size() >= APConfig.METAPHYSICS_CONFIG.END_AUTOMATA_CORE_WARP_POINT_LIMIT.get())
             return MethodResult.of(null, "Cannot add new point, limit reached");
         data.put(name, NBTUtil.toNBT(automataCore.getPeripheralOwner().getPos()));
         return MethodResult.of(true);

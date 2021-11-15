@@ -1,6 +1,7 @@
 package de.srendi.advancedperipherals.common.blocks.base;
 
-import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
+import de.srendi.advancedperipherals.common.configuration.APConfig;
+import de.srendi.advancedperipherals.common.configuration.GeneralConfig;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
 import mcp.MethodsReturnNonnullByDefault;
 import net.minecraft.block.BlockState;
@@ -22,7 +23,7 @@ public abstract class PoweredPeripheralTileEntity<T extends BasePeripheral<?>> e
 
     public PoweredPeripheralTileEntity(TileEntityType<?> tileEntityTypeIn) {
         super(tileEntityTypeIn);
-        if (AdvancedPeripheralsConfig.enablePoweredPeripherals) {
+        if (APConfig.PERIPHERALS_CONFIG.ENABLE_POWERED_PERIPHERALS.get()) {
             lazyEnergyStorage = LazyOptional.of(() -> new EnergyStorage(this.getMaxEnergyStored()));
         } else {
             lazyEnergyStorage = LazyOptional.empty();

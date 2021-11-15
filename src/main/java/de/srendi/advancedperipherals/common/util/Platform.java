@@ -1,7 +1,8 @@
 package de.srendi.advancedperipherals.common.util;
 
 import de.srendi.advancedperipherals.AdvancedPeripherals;
-import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
+import de.srendi.advancedperipherals.common.configuration.APConfig;
+import de.srendi.advancedperipherals.common.configuration.GeneralConfig;
 import net.minecraftforge.fml.ModList;
 
 import java.util.Optional;
@@ -21,7 +22,7 @@ public class Platform {
             Class<?> clazz = Class.forName(AdvancedPeripherals.class.getPackage().getName() + ".common.addons." + path);
             return Optional.of(clazz.newInstance());
         } catch (InstantiationException | IllegalAccessException | ClassNotFoundException loadException) {
-            if (AdvancedPeripheralsConfig.enableDebugMode)
+            if (APConfig.GENERAL_CONFIG.ENABLE_DEBUG_MODE.get())
                 loadException.printStackTrace();
             return Optional.empty();
         } catch (Exception e) {

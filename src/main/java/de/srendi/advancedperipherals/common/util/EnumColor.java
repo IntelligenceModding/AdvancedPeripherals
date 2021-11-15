@@ -22,10 +22,10 @@ public enum EnumColor {
     YELLOW("\u00a7e", "Yellow", "yellow", "§e"),
     WHITE("\u00a7f", "White", "white", "§f");
 
-    String code;
-    String name;
-    String technicalName;
-    String alternativeCode;
+    private final String code;
+    private final String name;
+    private final String technicalName;
+    private final String alternativeCode;
 
     EnumColor(String code, String name, String technicalName, String alternativeCode) {
         this.code = code;

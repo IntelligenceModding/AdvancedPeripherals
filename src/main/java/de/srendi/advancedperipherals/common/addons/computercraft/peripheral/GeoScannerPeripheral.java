@@ -9,7 +9,8 @@ import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
 import de.srendi.advancedperipherals.common.addons.computercraft.operations.SphereOperationContext;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
-import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
+import de.srendi.advancedperipherals.common.configuration.APConfig;
+import de.srendi.advancedperipherals.common.configuration.GeneralConfig;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
 import de.srendi.advancedperipherals.common.util.ScanUtils;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
@@ -61,7 +62,7 @@ public class GeoScannerPeripheral extends BasePeripheral<IPeripheralOwner> {
     private static List<Map<String, ?>> scan(World world, BlockPos center, int radius) {
         List<Map<String, ?>> result = new ArrayList<>();
         ScanUtils.relativeTraverseBlocks(world, center, radius, (state, pos) -> {
-            HashMap<String, Object> data = new HashMap<>(6);
+            Map<String, Object> data = new HashMap<>(6);
             data.put("x", pos.getX());
             data.put("y", pos.getY());
             data.put("z", pos.getZ());
@@ -87,7 +88,7 @@ public class GeoScannerPeripheral extends BasePeripheral<IPeripheralOwner> {
 
     @Override
     public boolean isEnabled() {
-        return AdvancedPeripheralsConfig.enableGeoScanner;
+        return APConfig.PERIPHERALS_CONFIG.ENABLE_GEO_SCANNER.get();
     }
 
     @LuaFunction

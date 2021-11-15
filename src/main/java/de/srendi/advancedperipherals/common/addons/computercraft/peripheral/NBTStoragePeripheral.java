@@ -5,7 +5,8 @@ import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.lua.MethodResult;
 import dan200.computercraft.shared.util.NBTUtil;
 import de.srendi.advancedperipherals.common.blocks.tileentity.NBTStorageTile;
-import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
+import de.srendi.advancedperipherals.common.configuration.APConfig;
+import de.srendi.advancedperipherals.common.configuration.GeneralConfig;
 import de.srendi.advancedperipherals.common.util.CountingWipingStream;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
 import de.srendi.advancedperipherals.lib.peripherals.owner.TileEntityPeripheralOwner;
@@ -27,13 +28,13 @@ public class NBTStoragePeripheral extends BasePeripheral<TileEntityPeripheralOwn
 
     @Override
     public boolean isEnabled() {
-        return AdvancedPeripheralsConfig.enableNBTStorage;
+        return APConfig.PERIPHERALS_CONFIG.ENABLE_NBT_STORAGE.get();
     }
 
     @Override
     public Map<String, Object> getPeripheralConfiguration() {
         Map<String, Object> data = super.getPeripheralConfiguration();
-        data.put("maxSize", AdvancedPeripheralsConfig.nbtStorageMaxSize);
+        data.put("maxSize", APConfig.PERIPHERALS_CONFIG.NBT_STORAGE_MAX_SIZE.get());
         return data;
     }
 
@@ -44,7 +45,7 @@ public class NBTStoragePeripheral extends BasePeripheral<TileEntityPeripheralOwn
 
     @LuaFunction(mainThread = true)
     public final MethodResult writeJson(String jsonData) {
-        if (jsonData.length() > AdvancedPeripheralsConfig.nbtStorageMaxSize) {
+        if (jsonData.length() > APConfig.PERIPHERALS_CONFIG.NBT_STORAGE_MAX_SIZE.get()) {
             return MethodResult.of(null, "JSON size is bigger than allowed");
         }
         CompoundNBT parsedData;
@@ -67,7 +68,7 @@ public class NBTStoragePeripheral extends BasePeripheral<TileEntityPeripheralOwn
         } catch (IOException e) {
             return MethodResult.of(null, String.format("No idea, how this happened, but java IO Exception appear %s", e.getMessage()));
         }
-        if (countingStream.getWrittenBytes() > AdvancedPeripheralsConfig.nbtStorageMaxSize)
+        if (countingStream.getWrittenBytes() > APConfig.PERIPHERALS_CONFIG.NBT_STORAGE_MAX_SIZE.get())
             return MethodResult.of(null, "JSON size is bigger than allowed");
         CompoundNBT parsedData = (CompoundNBT) de.srendi.advancedperipherals.common.util.NBTUtil.toDirectNBT(data);
         owner.tileEntity.setStored(parsedData);

@@ -6,6 +6,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+## [0.7.4.1b] - 2021-11-15
+
+### Attention
+We changed our config system. So if you want to update the mod in your pack, don't forget to use the new files.
+We also recommend you to delete the old one, no one needs crap.
+
+### Added
+- A new config system. You can find every config in `gamePath/config/AdvancedPeripherals/xxx.toml` 
+  De divided the config files in 4 different ones. General, World, Peripherals and Metaphysics.
+- [#210]Added a new config value, `villagerStructureWeight`. Can be used to change the weight of the structures of our villager.
+
 ## [0.7.4r] - 2021-11-14
 
 ### Fixed

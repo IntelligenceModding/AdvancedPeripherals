@@ -4,7 +4,8 @@ import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
 import de.srendi.advancedperipherals.common.addons.computercraft.operations.AutomataCoreTier;
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.plugins.*;
-import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
+import de.srendi.advancedperipherals.common.configuration.APConfig;
+import de.srendi.advancedperipherals.common.configuration.GeneralConfig;
 import de.srendi.advancedperipherals.lib.metaphysics.IAutomataCoreTier;
 import de.srendi.advancedperipherals.lib.peripherals.AutomataCorePeripheral;
 
@@ -26,7 +27,7 @@ public class WeakAutomataCorePeripheral extends AutomataCorePeripheral {
 
     @Override
     public boolean isEnabled() {
-        return AdvancedPeripheralsConfig.enableWeakAutomataCore;
+        return APConfig.METAPHYSICS_CONFIG.ENABLE_WEAK_AUTOMATA_CORE.get();
     }
 
 }

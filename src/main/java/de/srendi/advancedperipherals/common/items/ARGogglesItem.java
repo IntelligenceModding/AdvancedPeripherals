@@ -4,7 +4,8 @@ import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.client.HudOverlayHandler;
 import de.srendi.advancedperipherals.common.addons.curios.CuriosHelper;
 import de.srendi.advancedperipherals.common.blocks.tileentity.ARControllerTile;
-import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
+import de.srendi.advancedperipherals.common.configuration.APConfig;
+import de.srendi.advancedperipherals.common.configuration.GeneralConfig;
 import de.srendi.advancedperipherals.common.setup.Blocks;
 import de.srendi.advancedperipherals.common.util.EnumColor;
 import de.srendi.advancedperipherals.common.util.SideHelper;
@@ -85,7 +86,7 @@ public class ARGogglesItem extends ArmorItem {
         } else {
             tooltip.add(EnumColor.buildTextComponent(getDescription()));
         }
-        if (!AdvancedPeripheralsConfig.enableARGoggles)
+        if (!APConfig.PERIPHERALS_CONFIG.ENABLE_AR_GOGGLES.get())
             tooltip.add(EnumColor.buildTextComponent(new TranslationTextComponent("item.advancedperipherals.tooltip.disabled")));
         if (stack.hasTag() && stack.getTag().contains(CONTROLLER_POS, NBT.TAG_INT_ARRAY)) {
             int[] pos = stack.getTag().getIntArray(CONTROLLER_POS);

@@ -95,9 +95,9 @@ public class ReactorIntegration extends TileEntityIntegrationPeripheral<TileReac
 
     private TileReactorCore getCore() {
         try {
-            Method method = TileReactorComponent.class.getDeclaredMethod("getCachedCore", null);
+            Method method = TileReactorComponent.class.getDeclaredMethod("getCachedCore");
             method.setAccessible(true);
-            return (TileReactorCore) method.invoke(tileEntity, null);
+            return (TileReactorCore) method.invoke(tileEntity);
         } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException ex) {
             AdvancedPeripherals.debug("Could not access the reactor of the stabilizer! " + ex, Level.ERROR);
         }

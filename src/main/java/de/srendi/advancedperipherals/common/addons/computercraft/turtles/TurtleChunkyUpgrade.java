@@ -5,7 +5,8 @@ import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.ChunkyPeripheral;
-import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
+import de.srendi.advancedperipherals.common.configuration.APConfig;
+import de.srendi.advancedperipherals.common.configuration.GeneralConfig;
 import de.srendi.advancedperipherals.common.setup.Items;
 import de.srendi.advancedperipherals.lib.turtle.PeripheralTurtleUpgrade;
 import net.minecraft.client.renderer.model.ModelResourceLocation;
@@ -40,7 +41,7 @@ public class TurtleChunkyUpgrade extends PeripheralTurtleUpgrade<ChunkyPeriphera
         //Add a chunk to the Chunk Manager every 10 ticks, if it's not already forced.
         //The turtle can move, so we need to do that.
         super.update(turtle, side);
-        if (AdvancedPeripheralsConfig.enableChunkyTurtle) {
+        if (APConfig.PERIPHERALS_CONFIG.ENABLE_CHUNKY_TURTLE.get()) {
             IPeripheral peripheral = turtle.getPeripheral(side);
             if (peripheral instanceof ChunkyPeripheral) {
                 ChunkyPeripheral chunkyPeripheral = (ChunkyPeripheral) peripheral;

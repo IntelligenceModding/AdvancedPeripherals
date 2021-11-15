@@ -2,9 +2,8 @@ package de.srendi.advancedperipherals;
 
 import de.srendi.advancedperipherals.client.HudOverlayHandler;
 import de.srendi.advancedperipherals.common.addons.refinedstorage.RefinedStorage;
-import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
-import de.srendi.advancedperipherals.common.configuration.ConfigHandler;
-import de.srendi.advancedperipherals.common.configuration.ConfigHolder;
+import de.srendi.advancedperipherals.common.configuration.APConfig;
+import de.srendi.advancedperipherals.common.configuration.GeneralConfig;
 import de.srendi.advancedperipherals.common.setup.Blocks;
 import de.srendi.advancedperipherals.common.setup.CCRegistration;
 import de.srendi.advancedperipherals.common.setup.Registration;
@@ -50,10 +49,9 @@ public class AdvancedPeripherals {
         LOGGER.info("AdvancedPeripherals says hello!");
         IEventBus modBus = FMLJavaModLoadingContext.get().getModEventBus();
 
-        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, ConfigHolder.COMMON_SPEC);
+        APConfig.register(ModLoadingContext.get());
+
         modBus.addListener(this::commonSetup);
-        modBus.addListener(ConfigHandler::configEvent);
-        modBus.addListener(ConfigHandler::reloadConfigEvent);
         modBus.addListener(this::interModComms);
         modBus.addListener(this::clientSetup);
         Registration.register();
@@ -66,12 +64,12 @@ public class AdvancedPeripherals {
     }
 
     public static void debug(String message) {
-        if (AdvancedPeripheralsConfig.enableDebugMode)
+        if (APConfig.GENERAL_CONFIG.ENABLE_DEBUG_MODE.get())
             LOGGER.debug("[DEBUG] " + message);
     }
 
     public static void debug(String message, Level level) {
-        if (AdvancedPeripheralsConfig.enableDebugMode)
+        if (APConfig.GENERAL_CONFIG.ENABLE_DEBUG_MODE.get())
             LOGGER.log(level, "[DEBUG] " + message);
     }
 

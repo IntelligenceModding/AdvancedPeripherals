@@ -1,7 +1,8 @@
 package de.srendi.advancedperipherals.common.util;
 
 import de.srendi.advancedperipherals.AdvancedPeripherals;
-import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
+import de.srendi.advancedperipherals.common.configuration.APConfig;
+import de.srendi.advancedperipherals.common.configuration.GeneralConfig;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.server.ServerWorld;
@@ -50,7 +51,7 @@ public class ChunkManager extends WorldSavedData {
     public static void serverTick(TickEvent.ServerTickEvent event) {
         if (event.phase == TickEvent.Phase.END) {
             tickCounter++;
-            if (tickCounter % (AdvancedPeripheralsConfig.chunkLoadValidTime / 2) == 0) {
+            if (tickCounter % (APConfig.PERIPHERALS_CONFIG.CHUNK_LOAD_VALID_TIME.get() / 2) == 0) {
                 ChunkManager.get(ServerLifecycleHooks.getCurrentServer().overworld()).cleanup();
             }
         }
@@ -172,7 +173,7 @@ public class ChunkManager extends WorldSavedData {
 
         public boolean isValid() {
             long currentEpoch = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC);
-            return lastTouch + AdvancedPeripheralsConfig.chunkLoadValidTime >= currentEpoch;
+            return lastTouch + APConfig.PERIPHERALS_CONFIG.CHUNK_LOAD_VALID_TIME.get() >= currentEpoch;
         }
 
         public @NotNull CompoundNBT serialize() {

@@ -1,6 +1,7 @@
 package de.srendi.advancedperipherals.common.items;
 
-import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
+import de.srendi.advancedperipherals.common.configuration.APConfig;
+import de.srendi.advancedperipherals.common.configuration.GeneralConfig;
 import de.srendi.advancedperipherals.common.setup.Items;
 import de.srendi.advancedperipherals.common.util.EnumColor;
 import de.srendi.advancedperipherals.lib.metaphysics.IFeedableAutomataCore;
@@ -51,11 +52,11 @@ public class WeakAutomataCore extends APItem implements IFeedableAutomataCore {
     }};
 
     public WeakAutomataCore(Properties properties, @Nullable ResourceLocation turtleID, @Nullable ResourceLocation pocketID) {
-        super(properties, turtleID, pocketID, () -> AdvancedPeripheralsConfig.enableWeakAutomataCore);
+        super(properties, turtleID, pocketID, APConfig.METAPHYSICS_CONFIG.ENABLE_WEAK_AUTOMATA_CORE::get);
     }
 
     public WeakAutomataCore(@Nullable ResourceLocation turtleID, @Nullable ResourceLocation pocketID) {
-        super(turtleID, pocketID, () -> AdvancedPeripheralsConfig.enableWeakAutomataCore);
+        super(turtleID, pocketID, APConfig.METAPHYSICS_CONFIG.ENABLE_WEAK_AUTOMATA_CORE::get);
     }
 
     @Override

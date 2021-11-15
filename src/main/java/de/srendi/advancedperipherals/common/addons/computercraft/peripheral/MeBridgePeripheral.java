@@ -21,7 +21,8 @@ import dan200.computercraft.api.peripheral.IComputerAccess;
 import de.srendi.advancedperipherals.common.addons.appliedenergistics.AppEngApi;
 import de.srendi.advancedperipherals.common.addons.appliedenergistics.CraftJob;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
-import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
+import de.srendi.advancedperipherals.common.configuration.APConfig;
+import de.srendi.advancedperipherals.common.configuration.GeneralConfig;
 import de.srendi.advancedperipherals.common.util.InventoryUtil;
 import de.srendi.advancedperipherals.common.util.ItemUtil;
 import de.srendi.advancedperipherals.common.util.ServerWorker;
@@ -53,7 +54,7 @@ public class MeBridgePeripheral extends BasePeripheral<TileEntityPeripheralOwner
 
     @Override
     public boolean isEnabled() {
-        return AdvancedPeripheralsConfig.enableMeBridge;
+        return APConfig.PERIPHERALS_CONFIG.ENABLE_ME_BRIDGE.get();
     }
 
     protected int _exportItem(@NotNull IArguments arguments, @NotNull IItemHandler targetInventory) throws LuaException {

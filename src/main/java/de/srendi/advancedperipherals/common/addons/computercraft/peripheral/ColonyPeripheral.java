@@ -19,7 +19,8 @@ import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.pocket.IPocketAccess;
 import de.srendi.advancedperipherals.common.addons.minecolonies.MineColonies;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
-import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
+import de.srendi.advancedperipherals.common.configuration.APConfig;
+import de.srendi.advancedperipherals.common.configuration.GeneralConfig;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
 import de.srendi.advancedperipherals.lib.peripherals.owner.IPeripheralOwner;
@@ -49,7 +50,7 @@ public class ColonyPeripheral extends BasePeripheral<IPeripheralOwner> {
 
     @Override
     public boolean isEnabled() {
-        return ModList.get().isLoaded("minecolonies") && AdvancedPeripheralsConfig.enableColonyIntegrator;
+        return ModList.get().isLoaded("minecolonies") && APConfig.PERIPHERALS_CONFIG.ENABLE_COLONY_INTEGRATOR.get();
     }
 
     @LuaFunction(mainThread = true)

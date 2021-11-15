@@ -3,7 +3,8 @@ package de.srendi.advancedperipherals.common.blocks;
 import dan200.computercraft.api.peripheral.IComputerAccess;
 import de.srendi.advancedperipherals.common.blocks.base.BaseTileEntityBlock;
 import de.srendi.advancedperipherals.common.blocks.tileentity.PlayerDetectorTile;
-import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
+import de.srendi.advancedperipherals.common.configuration.APConfig;
+import de.srendi.advancedperipherals.common.configuration.GeneralConfig;
 import de.srendi.advancedperipherals.common.setup.TileEntityTypes;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
@@ -26,7 +27,7 @@ public class PlayerDetectorBlock extends BaseTileEntityBlock {
 
     @Override
     public ActionResultType use(BlockState state, World worldIn, BlockPos pos, PlayerEntity player, Hand handIn, BlockRayTraceResult hit) {
-        if (AdvancedPeripheralsConfig.enablePlayerDetector) {
+        if (APConfig.PERIPHERALS_CONFIG.ENABLE_PLAYER_DETECTOR.get()) {
             TileEntity tileEntity = worldIn.getBlockEntity(pos);
             if (tileEntity instanceof PlayerDetectorTile) {
                 PlayerDetectorTile entity = (PlayerDetectorTile) tileEntity;
