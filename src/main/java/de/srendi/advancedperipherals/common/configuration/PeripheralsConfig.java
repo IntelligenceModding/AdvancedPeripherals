@@ -34,9 +34,11 @@ public class PeripheralsConfig implements IAPConfig {
 
     //ME Bridge
     public final ForgeConfigSpec.BooleanValue ENABLE_ME_BRIDGE;
+    public final ForgeConfigSpec.IntValue ME_CONSUMPTION;
 
     //RS Bridge
     public final ForgeConfigSpec.BooleanValue ENABLE_RS_BRIDGE;
+    public final ForgeConfigSpec.IntValue RS_CONSUMPTION;
 
     //Environment Detector
     public final ForgeConfigSpec.BooleanValue ENABLE_ENVIRONMENT_DETECTOR;
@@ -99,10 +101,12 @@ public class PeripheralsConfig implements IAPConfig {
         pop("ME_Bridge", builder);
 
         ENABLE_ME_BRIDGE = builder.comment("Enable the Me Bridge or not.").define("enableMeBridge", true);
+        ME_CONSUMPTION = builder.comment("Power consumption per tick.").defineInRange("mePowerConsumption", 500, 0, Integer.MAX_VALUE);
 
         pop("RS_Bridge", builder);
 
         ENABLE_RS_BRIDGE = builder.comment("Enable the Rs Bridge or not.").define("enableRsBridge", true);
+        RS_CONSUMPTION = builder.comment("Power consumption per tick.").defineInRange("rsPowerConsumption", 500, 0, Integer.MAX_VALUE);
 
         pop("Environment_Detector", builder);
 

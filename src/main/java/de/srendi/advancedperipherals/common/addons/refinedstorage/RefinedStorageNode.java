@@ -3,6 +3,7 @@ package de.srendi.advancedperipherals.common.addons.refinedstorage;
 
 import com.refinedmods.refinedstorage.apiimpl.network.node.NetworkNode;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
+import de.srendi.advancedperipherals.common.configuration.APConfig;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
@@ -17,7 +18,7 @@ public class RefinedStorageNode extends NetworkNode {
 
     @Override
     public int getEnergyUsage() {
-        return 500;
+        return APConfig.PERIPHERALS_CONFIG.RS_CONSUMPTION.get();
     }
 
     @Override

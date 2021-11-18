@@ -15,6 +15,7 @@ import com.google.common.collect.ImmutableSet;
 import de.srendi.advancedperipherals.common.addons.appliedenergistics.AppEngApi;
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.MeBridgePeripheral;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
+import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.setup.Blocks;
 import de.srendi.advancedperipherals.common.setup.TileEntityTypes;
 import net.minecraft.entity.player.PlayerEntity;
@@ -77,7 +78,7 @@ public class MeBridgeTile extends PeripheralTileEntity<MeBridgePeripheral> imple
 
     @Override
     public double getIdlePowerUsage() {
-        return 500;
+        return APConfig.PERIPHERALS_CONFIG.ME_CONSUMPTION.get();
     }
 
     @NotNull
