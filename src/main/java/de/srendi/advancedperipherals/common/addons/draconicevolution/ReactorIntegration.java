@@ -17,8 +17,6 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-//TODO: A lot of methods and fields are private or protected. https://github.com/brandon3055/Draconic-Evolution/issues/1572
-//Wait until this changed.
 public class ReactorIntegration extends TileEntityIntegrationPeripheral<TileReactorStabilizer> {
 
     public ReactorIntegration(TileEntity entity) {
