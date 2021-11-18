@@ -20,7 +20,6 @@ import dan200.computercraft.api.pocket.IPocketAccess;
 import de.srendi.advancedperipherals.common.addons.minecolonies.MineColonies;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
-import de.srendi.advancedperipherals.common.configuration.GeneralConfig;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
 import de.srendi.advancedperipherals.lib.peripherals.owner.IPeripheralOwner;

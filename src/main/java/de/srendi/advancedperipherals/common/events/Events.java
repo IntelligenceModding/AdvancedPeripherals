@@ -3,7 +3,6 @@ package de.srendi.advancedperipherals.common.events;
 import com.google.common.collect.EvictingQueue;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
-import de.srendi.advancedperipherals.common.configuration.GeneralConfig;
 import de.srendi.advancedperipherals.common.items.ARGogglesItem;
 import de.srendi.advancedperipherals.common.util.Pair;
 import de.srendi.advancedperipherals.network.MNetwork;

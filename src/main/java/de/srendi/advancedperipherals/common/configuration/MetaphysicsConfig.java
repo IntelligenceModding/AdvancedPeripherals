@@ -6,14 +6,13 @@ import net.minecraftforge.fml.config.ModConfig;
 
 public class MetaphysicsConfig implements IAPConfig {
 
-    private final ForgeConfigSpec configSpec;
-
     public final ForgeConfigSpec.IntValue ENERGY_TO_FUEL_RATE;
     public final ForgeConfigSpec.BooleanValue ENABLE_WEAK_AUTOMATA_CORE;
     public final ForgeConfigSpec.BooleanValue ENABLE_END_AUTOMATA_CORE;
     public final ForgeConfigSpec.BooleanValue ENABLE_HUSBANDRY_AUTOMATA_CORE;
     public final ForgeConfigSpec.IntValue END_AUTOMATA_CORE_WARP_POINT_LIMIT;
     public final ForgeConfigSpec.DoubleValue OVERPOWERED_AUTOMATA_BREAK_CHANCE;
+    private final ForgeConfigSpec configSpec;
 
     public MetaphysicsConfig() {
         ForgeConfigSpec.Builder builder = new ForgeConfigSpec.Builder();

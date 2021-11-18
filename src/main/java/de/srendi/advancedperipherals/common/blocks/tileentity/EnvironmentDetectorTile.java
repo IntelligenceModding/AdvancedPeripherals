@@ -3,7 +3,6 @@ package de.srendi.advancedperipherals.common.blocks.tileentity;
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.EnvironmentDetectorPeripheral;
 import de.srendi.advancedperipherals.common.blocks.base.PoweredPeripheralTileEntity;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
-import de.srendi.advancedperipherals.common.configuration.GeneralConfig;
 import de.srendi.advancedperipherals.common.setup.TileEntityTypes;
 import org.jetbrains.annotations.NotNull;
 

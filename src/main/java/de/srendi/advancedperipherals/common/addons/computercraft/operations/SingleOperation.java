@@ -23,6 +23,7 @@ public enum SingleOperation implements IPeripheralOperation<SingleOperationConte
     private final CountPolicy countCostPolicy;
     private ForgeConfigSpec.IntValue cooldown;
     private ForgeConfigSpec.IntValue cost;
+
     SingleOperation(
             int defaultCooldown, DistancePolicy distanceCooldownPolicy, CountPolicy countCooldownPolicy,
             int defaultCost, DistancePolicy distanceCostPolicy, CountPolicy countCostPolicy) {
@@ -33,6 +34,7 @@ public enum SingleOperation implements IPeripheralOperation<SingleOperationConte
         this.distanceCostPolicy = distanceCostPolicy;
         this.countCostPolicy = countCostPolicy;
     }
+
     SingleOperation(int defaultCooldown, int defaultCost) {
         this(defaultCooldown, DistancePolicy.IGNORED, CountPolicy.MULTIPLY, defaultCost, DistancePolicy.IGNORED, CountPolicy.MULTIPLY);
     }

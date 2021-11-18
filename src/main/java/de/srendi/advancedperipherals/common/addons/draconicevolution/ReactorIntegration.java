@@ -33,7 +33,7 @@ public class ReactorIntegration extends TileEntityIntegrationPeripheral<TileReac
     @LuaFunction(mainThread = true)
     public final Map<String, Object> getReactorInfo() {
         TileReactorCore reactor = getCore();
-        if(reactor == null)
+        if (reactor == null)
             return null;
         Map<String, Object> map = new HashMap<>();
         map.put("temperature", MathUtils.round(reactor.temperature.get(), 100.0D));

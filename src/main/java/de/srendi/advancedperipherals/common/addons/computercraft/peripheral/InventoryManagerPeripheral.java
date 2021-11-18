@@ -5,7 +5,6 @@ import dan200.computercraft.api.lua.LuaFunction;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.blocks.tileentity.InventoryManagerTile;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
-import de.srendi.advancedperipherals.common.configuration.GeneralConfig;
 import de.srendi.advancedperipherals.common.util.InventoryUtil;
 import de.srendi.advancedperipherals.common.util.ItemUtil;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
@@ -38,6 +37,20 @@ public class InventoryManagerPeripheral extends BasePeripheral<TileEntityPeriphe
         super(TYPE, new TileEntityPeripheralOwner<>(tileEntity));
     }
 
+    private static int getArmorSlot(int index) {
+        switch (index) {
+            case 103:
+                return 3;
+            case 102:
+                return 2;
+            case 101:
+                return 1;
+            case 100:
+                return 0;
+        }
+        return 0;
+    }
+
     @Override
     public boolean isEnabled() {
         return APConfig.PERIPHERALS_CONFIG.ENABLE_INVENTORY_MANAGER.get();
@@ -68,7 +81,7 @@ public class InventoryManagerPeripheral extends BasePeripheral<TileEntityPeriphe
         int invSlot = slot.orElse(0);
 
         //if (invSlot >= inventoryTo.getSlots() || invSlot < 0)
-          //  throw new LuaException("Inventory out of bounds " + invSlot + " (max: " + (inventoryTo.getSlots() - 1) + ")");
+        //  throw new LuaException("Inventory out of bounds " + invSlot + " (max: " + (inventoryTo.getSlots() - 1) + ")");
 
         if (inventoryFrom == null)
             return 0;
@@ -85,11 +98,11 @@ public class InventoryManagerPeripheral extends BasePeripheral<TileEntityPeriphe
 
             if (ItemHandlerHelper.canItemStacksStack(stack, inventoryFrom.getStackInSlot(i))) {
                 int inserted;
-                if(invSlot >= 100 && invSlot < 104) {
-                    if(!(stack.getItem() instanceof ArmorItem))
+                if (invSlot >= 100 && invSlot < 104) {
+                    if (!(stack.getItem() instanceof ArmorItem))
                         throw new LuaException(stack + "is not an armor item. Can't put it into the slot " + invSlot);
                     //When there is already an item in the slot, just continue
-                    if(!getOwnerPlayer().inventory.armor.get(getArmorSlot(invSlot)).isEmpty())
+                    if (!getOwnerPlayer().inventory.armor.get(getArmorSlot(invSlot)).isEmpty())
                         continue;
                     getOwnerPlayer().inventory.armor.set(getArmorSlot(invSlot), stack);
                     inventoryFrom.extractItem(i, 1, false);
@@ -249,7 +262,6 @@ public class InventoryManagerPeripheral extends BasePeripheral<TileEntityPeriphe
         return false;
     }
 
-
     @LuaFunction(mainThread = true)
     public final int getEmptySpace() throws LuaException {
         int i = 0;
@@ -294,20 +306,6 @@ public class InventoryManagerPeripheral extends BasePeripheral<TileEntityPeriphe
         return stack;
     }
 
-    private static int getArmorSlot(int index) {
-        switch (index) {
-            case 103:
-                return 3;
-            case 102:
-                return 2;
-            case 101:
-                return 1;
-            case 100:
-                return 0;
-        }
-        return 0;
-    }
-
     /**
      * Used to get the proper slot number for armor. See https://docs.srendi.de/ for the slot numbers
      *
@@ -328,10 +326,6 @@ public class InventoryManagerPeripheral extends BasePeripheral<TileEntityPeriphe
             this.slotType = slotType;
         }
 
-        public int getSlot() {
-            return slot;
-        }
-
         public static int getSlotForItem(ItemStack stack) {
             if (stack.getItem() instanceof ArmorItem) {
                 for (ArmorSlot slot : values()) {
@@ -342,6 +336,10 @@ public class InventoryManagerPeripheral extends BasePeripheral<TileEntityPeriphe
             }
             AdvancedPeripherals.LOGGER.warn("Tried to get armor item slot for non armor item " + stack + ". Returning 0");
             return 0;
+        }
+
+        public int getSlot() {
+            return slot;
         }
 
     }

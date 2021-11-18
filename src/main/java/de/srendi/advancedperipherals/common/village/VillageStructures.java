@@ -3,7 +3,6 @@ package de.srendi.advancedperipherals.common.village;
 import com.mojang.datafixers.util.Pair;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
-import de.srendi.advancedperipherals.common.configuration.GeneralConfig;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.WorldGenRegistries;

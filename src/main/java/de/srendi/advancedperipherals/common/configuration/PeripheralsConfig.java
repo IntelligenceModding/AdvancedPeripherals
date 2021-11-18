@@ -8,62 +8,47 @@ import net.minecraftforge.fml.config.ModConfig;
 
 public class PeripheralsConfig implements IAPConfig {
 
-    private final ForgeConfigSpec configSpec;
-
     //Player Detector
     public final ForgeConfigSpec.IntValue PLAYER_DET_MAX_RANGE;
     public final ForgeConfigSpec.BooleanValue PLAYER_SPY;
     public final ForgeConfigSpec.BooleanValue MORE_PLAYER_INFORMATION;
     public final ForgeConfigSpec.BooleanValue ENABLE_PLAYER_DETECTOR;
-
     //Energy Detector
     public final ForgeConfigSpec.IntValue ENERGY_DETECTOR_MAX_FLOW;
     public final ForgeConfigSpec.BooleanValue ENABLE_ENERGY_DETECTOR;
-
     //NBT Storage
     public final ForgeConfigSpec.IntValue NBT_STORAGE_MAX_SIZE;
     public final ForgeConfigSpec.BooleanValue ENABLE_NBT_STORAGE;
-
     //Chunky turtle
     public final ForgeConfigSpec.IntValue CHUNK_LOAD_VALID_TIME;
     public final ForgeConfigSpec.BooleanValue ENABLE_CHUNKY_TURTLE;
-
     //Chat box
     public final ForgeConfigSpec.BooleanValue ENABLE_CHAT_BOX;
     public final ForgeConfigSpec.ConfigValue<String> DEFAULT_CHAT_BOX_PREFIX;
-
     //ME Bridge
     public final ForgeConfigSpec.BooleanValue ENABLE_ME_BRIDGE;
     public final ForgeConfigSpec.IntValue ME_CONSUMPTION;
-
     //RS Bridge
     public final ForgeConfigSpec.BooleanValue ENABLE_RS_BRIDGE;
     public final ForgeConfigSpec.IntValue RS_CONSUMPTION;
-
     //Environment Detector
     public final ForgeConfigSpec.BooleanValue ENABLE_ENVIRONMENT_DETECTOR;
-
     //AR Controller
     public final ForgeConfigSpec.BooleanValue ENABLE_AR_GOGGLES;
-
     //Inventory Manager
     public final ForgeConfigSpec.BooleanValue ENABLE_INVENTORY_MANAGER;
-
     //Redstone Integrator
     public final ForgeConfigSpec.BooleanValue ENABLE_REDSTONE_INTEGRATOR;
-
     //Block reader
     public final ForgeConfigSpec.BooleanValue ENABLE_BLOCK_READER;
-
     //Geo Scanner
     public final ForgeConfigSpec.BooleanValue ENABLE_GEO_SCANNER;
-
     //Colony integrator
     public final ForgeConfigSpec.BooleanValue ENABLE_COLONY_INTEGRATOR;
-
     //Powered Peripherals
     public final ForgeConfigSpec.BooleanValue ENABLE_POWERED_PERIPHERALS;
     public final ForgeConfigSpec.IntValue POWERED_PERIPHERAL_MAX_ENERGY_STORAGE;
+    private final ForgeConfigSpec configSpec;
 
     public PeripheralsConfig() {
         ForgeConfigSpec.Builder builder = new ForgeConfigSpec.Builder();

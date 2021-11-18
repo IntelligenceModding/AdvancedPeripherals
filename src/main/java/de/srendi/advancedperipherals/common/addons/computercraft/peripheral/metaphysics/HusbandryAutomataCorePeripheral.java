@@ -6,7 +6,6 @@ import de.srendi.advancedperipherals.common.addons.computercraft.operations.Auto
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.plugins.AutomataEntityHandPlugin;
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.plugins.AutomataEntityTransferPlugin;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
-import de.srendi.advancedperipherals.common.configuration.GeneralConfig;
 import de.srendi.advancedperipherals.lib.metaphysics.IAutomataCoreTier;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;

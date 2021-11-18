@@ -1,7 +1,6 @@
 package de.srendi.advancedperipherals.common.addons.mekanism;
 
 import dan200.computercraft.api.lua.LuaFunction;
-import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.lib.peripherals.TileEntityIntegrationPeripheral;
 import mekanism.common.capabilities.merged.MergedTank;
 import mekanism.common.tile.multiblock.TileEntityDynamicValve;

@@ -5,11 +5,10 @@ import net.minecraftforge.fml.config.ModConfig;
 
 public class WorldConfig implements IAPConfig {
 
-    private final ForgeConfigSpec configSpec;
-
     public final ForgeConfigSpec.BooleanValue ENABLE_VILLAGER_STRUCTURES;
     public final ForgeConfigSpec.BooleanValue GIVE_PLAYER_BOOK_ON_JOIN;
     public final ForgeConfigSpec.IntValue VILLAGER_STRUCTURE_WEIGHT;
+    private final ForgeConfigSpec configSpec;
 
     public WorldConfig() {
         ForgeConfigSpec.Builder builder = new ForgeConfigSpec.Builder();

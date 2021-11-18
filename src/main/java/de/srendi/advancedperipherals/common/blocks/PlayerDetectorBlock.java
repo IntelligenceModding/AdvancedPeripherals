@@ -4,7 +4,6 @@ import dan200.computercraft.api.peripheral.IComputerAccess;
 import de.srendi.advancedperipherals.common.blocks.base.BaseTileEntityBlock;
 import de.srendi.advancedperipherals.common.blocks.tileentity.PlayerDetectorTile;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
-import de.srendi.advancedperipherals.common.configuration.GeneralConfig;
 import de.srendi.advancedperipherals.common.setup.TileEntityTypes;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;

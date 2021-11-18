@@ -3,7 +3,6 @@ package de.srendi.advancedperipherals.common.setup;
 import de.srendi.advancedperipherals.common.addons.computercraft.turtles.TurtleChunkyUpgrade;
 import de.srendi.advancedperipherals.common.addons.computercraft.turtles.metaphysics.*;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
-import de.srendi.advancedperipherals.common.configuration.GeneralConfig;
 import de.srendi.advancedperipherals.common.items.APItem;
 import de.srendi.advancedperipherals.common.items.ARGogglesItem;
 import de.srendi.advancedperipherals.common.items.MemoryCardItem;

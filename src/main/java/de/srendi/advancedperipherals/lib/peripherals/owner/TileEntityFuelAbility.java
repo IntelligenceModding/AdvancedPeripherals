@@ -1,7 +1,6 @@
 package de.srendi.advancedperipherals.lib.peripherals.owner;
 
 import de.srendi.advancedperipherals.common.configuration.APConfig;
-import de.srendi.advancedperipherals.common.configuration.GeneralConfig;
 import de.srendi.advancedperipherals.lib.peripherals.IPeripheralTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.energy.CapabilityEnergy;

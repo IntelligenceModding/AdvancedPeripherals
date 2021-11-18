@@ -14,7 +14,6 @@ import de.srendi.advancedperipherals.common.addons.refinedstorage.RefinedStorage
 import de.srendi.advancedperipherals.common.addons.refinedstorage.RefinedStorageNode;
 import de.srendi.advancedperipherals.common.blocks.tileentity.RsBridgeTile;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
-import de.srendi.advancedperipherals.common.configuration.GeneralConfig;
 import de.srendi.advancedperipherals.common.util.ItemUtil;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
 import de.srendi.advancedperipherals.lib.peripherals.owner.TileEntityPeripheralOwner;

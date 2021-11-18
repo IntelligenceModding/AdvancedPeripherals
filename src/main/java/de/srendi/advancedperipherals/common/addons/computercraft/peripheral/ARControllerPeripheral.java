@@ -7,7 +7,6 @@ import de.srendi.advancedperipherals.common.argoggles.ARRenderAction;
 import de.srendi.advancedperipherals.common.argoggles.RenderActionType;
 import de.srendi.advancedperipherals.common.blocks.tileentity.ARControllerTile;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
-import de.srendi.advancedperipherals.common.configuration.GeneralConfig;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
 import de.srendi.advancedperipherals.lib.peripherals.owner.TileEntityPeripheralOwner;
 

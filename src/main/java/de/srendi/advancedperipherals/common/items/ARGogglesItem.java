@@ -5,7 +5,6 @@ import de.srendi.advancedperipherals.client.HudOverlayHandler;
 import de.srendi.advancedperipherals.common.addons.curios.CuriosHelper;
 import de.srendi.advancedperipherals.common.blocks.tileentity.ARControllerTile;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
-import de.srendi.advancedperipherals.common.configuration.GeneralConfig;
 import de.srendi.advancedperipherals.common.setup.Blocks;
 import de.srendi.advancedperipherals.common.util.EnumColor;
 import de.srendi.advancedperipherals.common.util.SideHelper;

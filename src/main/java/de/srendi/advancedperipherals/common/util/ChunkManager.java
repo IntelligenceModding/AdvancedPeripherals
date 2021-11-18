@@ -2,7 +2,6 @@ package de.srendi.advancedperipherals.common.util;
 
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
-import de.srendi.advancedperipherals.common.configuration.GeneralConfig;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.server.ServerWorld;
@@ -29,6 +28,7 @@ public class ChunkManager extends WorldSavedData {
     private static int tickCounter = 0;
     private final Map<UUID, LoadChunkRecord> forcedChunks = new HashMap<>();
     private boolean initialized = false;
+
     public ChunkManager() {
         super(DATA_NAME);
     }

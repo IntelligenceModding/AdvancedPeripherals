@@ -6,7 +6,6 @@ import dan200.computercraft.api.lua.MethodResult;
 import dan200.computercraft.shared.util.NBTUtil;
 import de.srendi.advancedperipherals.common.blocks.tileentity.NBTStorageTile;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
-import de.srendi.advancedperipherals.common.configuration.GeneralConfig;
 import de.srendi.advancedperipherals.common.util.CountingWipingStream;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
 import de.srendi.advancedperipherals.lib.peripherals.owner.TileEntityPeripheralOwner;

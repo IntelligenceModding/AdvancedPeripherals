@@ -1,18 +1,13 @@
 package de.srendi.advancedperipherals.common.configuration;
 
-import de.srendi.advancedperipherals.common.addons.computercraft.operations.AutomataCoreTier;
-import de.srendi.advancedperipherals.common.addons.computercraft.operations.SimpleFreeOperation;
-import de.srendi.advancedperipherals.common.addons.computercraft.operations.SingleOperation;
-import de.srendi.advancedperipherals.common.addons.computercraft.operations.SphereOperation;
 import de.srendi.advancedperipherals.lib.LibConfig;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.fml.config.ModConfig;
 
 public class GeneralConfig implements IAPConfig {
 
-    private final ForgeConfigSpec configSpec;
-
     public final ForgeConfigSpec.BooleanValue ENABLE_DEBUG_MODE;
+    private final ForgeConfigSpec configSpec;
 
     GeneralConfig() {
         ForgeConfigSpec.Builder builder = new ForgeConfigSpec.Builder();

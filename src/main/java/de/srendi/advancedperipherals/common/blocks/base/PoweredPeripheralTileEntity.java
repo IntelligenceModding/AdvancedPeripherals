@@ -1,7 +1,6 @@
 package de.srendi.advancedperipherals.common.blocks.base;
 
 import de.srendi.advancedperipherals.common.configuration.APConfig;
-import de.srendi.advancedperipherals.common.configuration.GeneralConfig;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
 import mcp.MethodsReturnNonnullByDefault;
 import net.minecraft.block.BlockState;

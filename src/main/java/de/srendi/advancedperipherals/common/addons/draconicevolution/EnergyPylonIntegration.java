@@ -5,8 +5,6 @@ import com.brandon3055.draconicevolution.blocks.tileentity.TileEnergyPylon;
 import dan200.computercraft.api.lua.LuaFunction;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.lib.peripherals.TileEntityIntegrationPeripheral;
-import net.minecraft.block.RedstoneWireBlock;
-import net.minecraft.tileentity.HopperTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import org.apache.logging.log4j.Level;
 

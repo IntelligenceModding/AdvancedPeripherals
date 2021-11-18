@@ -23,11 +23,6 @@ public class APConfig extends ModConfig {
         super(config.getType(), config.getConfigSpec(), container, "Advancedperipherals/" + config.getFileName() + ".toml");
     }
 
-    @Override
-    public ConfigFileTypeHandler getHandler() {
-        return CONFIG_FILE_HANDLER;
-    }
-
     public static void register(ModLoadingContext context) {
         //Creates the config folder
         FMLPaths.getOrCreateGameRelativePath(FMLPaths.CONFIGDIR.get().resolve("Advancedperipherals"), "Advancedperipherals");
@@ -37,6 +32,11 @@ public class APConfig extends ModConfig {
         modContainer.addConfig(new APConfig(PERIPHERALS_CONFIG, modContainer));
         modContainer.addConfig(new APConfig(METAPHYSICS_CONFIG, modContainer));
         modContainer.addConfig(new APConfig(WORLD_CONFIG, modContainer));
+    }
+
+    @Override
+    public ConfigFileTypeHandler getHandler() {
+        return CONFIG_FILE_HANDLER;
     }
 
     public static class ConfigFileHandler extends ConfigFileTypeHandler {
