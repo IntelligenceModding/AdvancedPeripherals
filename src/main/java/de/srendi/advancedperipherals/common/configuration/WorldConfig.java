@@ -17,7 +17,7 @@ public class WorldConfig implements IAPConfig {
 
         ENABLE_VILLAGER_STRUCTURES = builder.comment("Enable the villager structures for the computer scientist.").define("enableVillagerStructures", true);
         GIVE_PLAYER_BOOK_ON_JOIN = builder.comment("Gives the ap documentation to new players on a world.").define("givePlayerBookOnJoin", true);
-        VILLAGER_STRUCTURE_WEIGHT = builder.comment("Gives the ap documentation to new players on a world.").defineInRange("villagerStructureWeight", 10, 0, 16000);
+        VILLAGER_STRUCTURE_WEIGHT = builder.comment("The weight of the villager structures").defineInRange("villagerStructureWeight", 10, 0, 16000);
 
         builder.pop();
         configSpec = builder.build();

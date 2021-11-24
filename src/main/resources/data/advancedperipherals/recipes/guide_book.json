@@ -1,0 +1,28 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "BM ",
+    "   ",
+    "   "
+  ],
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "patchouli"
+    }
+  ],
+  "key": {
+    "B": {
+      "item": "minecraft:book"
+    },
+    "M": {
+      "tag": "computercraft:wired_modem"
+    }
+  },
+  "result": {
+    "item": "patchouli:guide_book",
+    "nbt": {
+      "patchouli:book": "advancedperipherals:manual"
+    }
+  }
+}

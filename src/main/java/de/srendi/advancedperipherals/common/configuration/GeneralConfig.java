@@ -14,7 +14,7 @@ public class GeneralConfig implements IAPConfig {
 
         builder.comment("Config to adjust general mod settings").push("General");
 
-        ENABLE_DEBUG_MODE = builder.comment("Enable the debug mode. You should only enable it, if a developer say it or something does not work.").define("enableDebugMode", false);
+        ENABLE_DEBUG_MODE = builder.comment("Enable the debug mode. You should only enable it, if a developer says it or something does not work.").define("enableDebugMode", false);
 
         builder.pop();
         builder.push("Core");

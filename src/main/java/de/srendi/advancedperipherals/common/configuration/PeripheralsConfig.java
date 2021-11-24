@@ -71,7 +71,7 @@ public class PeripheralsConfig implements IAPConfig {
         pop("NBT_Storage", builder);
 
         ENABLE_NBT_STORAGE = builder.comment("Enable the nbt storage block or not").define("enableNBTStorage", true);
-        NBT_STORAGE_MAX_SIZE = builder.comment("Defines max nbt string that can be stored in nbt storage").defineInRange("nbtStorageMaxSize", 1048576, 0, Integer.MAX_VALUE);
+        NBT_STORAGE_MAX_SIZE = builder.comment("Defines max nbt string length that can be stored in nbt storage").defineInRange("nbtStorageMaxSize", 1048576, 0, Integer.MAX_VALUE);
 
         pop("Chunky_Turtle", builder);
 
