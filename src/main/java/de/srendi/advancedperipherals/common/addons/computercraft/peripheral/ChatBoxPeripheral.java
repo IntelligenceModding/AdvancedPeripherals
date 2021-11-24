@@ -8,13 +8,13 @@ import dan200.computercraft.api.pocket.IPocketAccess;
 import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
-import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
+import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
 import de.srendi.advancedperipherals.lib.peripherals.IPeripheralFunction;
-import de.srendi.advancedperipherals.lib.peripherals.owner.BlockEntityPeripheralOwner;
-import de.srendi.advancedperipherals.lib.peripherals.owner.IPeripheralOwner;
-import de.srendi.advancedperipherals.lib.peripherals.owner.PocketPeripheralOwner;
-import de.srendi.advancedperipherals.lib.peripherals.owner.TurtlePeripheralOwner;
+import de.srendi.advancedperipherals.common.addons.computercraft.owner.BlockEntityPeripheralOwner;
+import de.srendi.advancedperipherals.common.addons.computercraft.owner.IPeripheralOwner;
+import de.srendi.advancedperipherals.common.addons.computercraft.owner.PocketPeripheralOwner;
+import de.srendi.advancedperipherals.common.addons.computercraft.owner.TurtlePeripheralOwner;
 import net.minecraft.Util;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -51,7 +51,7 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
 
     @Override
     public boolean isEnabled() {
-        return AdvancedPeripheralsConfig.enableChatBox;
+        return APConfig.PERIPHERALS_CONFIG.ENABLE_CHAT_BOX.get();
     }
 
     protected MethodResult withChatOperation(IPeripheralFunction<Object, MethodResult> function) throws LuaException {
@@ -65,38 +65,38 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
             MutableComponent component = Component.Serializer.fromJson(message);
             if (component == null)
                 return MethodResult.of(null, "incorrect json");
-            MutableComponent preparedMessage = new TextComponent(String.format(PREFIX_FORMAT, arguments.optString(1, AdvancedPeripheralsConfig.defaultChatBoxPrefix))).append(message);
+            MutableComponent preparedMessage = new TextComponent(String.format(PREFIX_FORMAT, arguments.optString(1, APConfig.PERIPHERALS_CONFIG.DEFAULT_CHAT_BOX_PREFIX.get()))).append(component);
             for (ServerPlayer player : ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers()) {
                 player.sendMessage(preparedMessage, Util.NIL_UUID);
             }
-            return MethodResult.of(true);
-        });
-    }
+                return MethodResult.of(true);
+            });
+        }
 
-    @LuaFunction(mainThread = true)
-    public final MethodResult sendMessage(@Nonnull IArguments arguments) throws LuaException {
-        return withChatOperation(ignored -> {
-            String message = arguments.getString(0);
-            MutableComponent preparedMessage = new TextComponent(String.format(PREFIX_FORMAT, arguments.optString(1, AdvancedPeripheralsConfig.defaultChatBoxPrefix))).append(message);
-            for (ServerPlayer player : ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers()) {
-                player.sendMessage(preparedMessage, Util.NIL_UUID);
-            }
-            return MethodResult.of(true);
-        });
-    }
-
-    @LuaFunction(mainThread = true)
-    public final MethodResult sendMessageToPlayer(@Nonnull IArguments arguments) throws LuaException {
-        return withChatOperation(ignored -> {
-            String message = arguments.getString(0);
-            String playerName = arguments.getString(1);
-            MutableComponent preparedMessage = new TextComponent(String.format(PREFIX_FORMAT, arguments.optString(2, AdvancedPeripheralsConfig.defaultChatBoxPrefix))).append(message);
-            for (ServerPlayer player : ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers()) {
-                if (player.getName().getString().equals(playerName))
+        @LuaFunction(mainThread = true)
+        public final MethodResult sendMessage (@Nonnull IArguments arguments) throws LuaException {
+            return withChatOperation(ignored -> {
+                String message = arguments.getString(0);
+                MutableComponent preparedMessage = new TextComponent(String.format(PREFIX_FORMAT, arguments.optString(1, APConfig.PERIPHERALS_CONFIG.DEFAULT_CHAT_BOX_PREFIX.get()))).append(message);
+                for (ServerPlayer player : ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers()) {
                     player.sendMessage(preparedMessage, Util.NIL_UUID);
-            }
-            return MethodResult.of(true);
-        });
-    }
+                }
+                return MethodResult.of(true);
+            });
+        }
 
-}
+        @LuaFunction(mainThread = true)
+        public final MethodResult sendMessageToPlayer (@Nonnull IArguments arguments) throws LuaException {
+            return withChatOperation(ignored -> {
+                String message = arguments.getString(0);
+                String playerName = arguments.getString(1);
+                MutableComponent preparedMessage = new TextComponent(String.format(PREFIX_FORMAT, arguments.optString(2, APConfig.PERIPHERALS_CONFIG.DEFAULT_CHAT_BOX_PREFIX.get()))).append(message);
+                for (ServerPlayer player : ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers()) {
+                    if (player.getName().getString().equals(playerName))
+                        player.sendMessage(preparedMessage, Util.NIL_UUID);
+                }
+                    return MethodResult.of(true);
+                });
+            }
+
+        }

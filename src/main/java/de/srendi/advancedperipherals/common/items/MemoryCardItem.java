@@ -1,6 +1,6 @@
 package de.srendi.advancedperipherals.common.items;
 
-import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
+import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.items.base.BaseItem;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
@@ -22,7 +22,7 @@ public class MemoryCardItem extends BaseItem {
 
     @Override
     public boolean isEnabled() {
-        return AdvancedPeripheralsConfig.enableInventoryManager;
+        return APConfig.PERIPHERALS_CONFIG.ENABLE_INVENTORY_MANAGER.get();
     }
 
     @Override

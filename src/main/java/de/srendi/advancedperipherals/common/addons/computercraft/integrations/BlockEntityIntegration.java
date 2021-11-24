@@ -41,7 +41,7 @@ public class BlockEntityIntegration implements IPeripheralIntegration {
     public @NotNull IPeripheral buildPeripheral(@NotNull Level level, @NotNull BlockPos blockPos, @NotNull Direction direction) {
         BlockEntity te = level.getBlockEntity(blockPos);
         if (te == null)
-            throw new IllegalArgumentException("This should happen");
+            throw new IllegalArgumentException("This should not happen");
         return build.apply(te);
     }
 

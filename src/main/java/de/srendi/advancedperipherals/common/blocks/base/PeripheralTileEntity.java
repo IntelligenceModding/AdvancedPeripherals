@@ -38,8 +38,8 @@ public abstract class PeripheralTileEntity<T extends BasePeripheral<?>> extends 
     private LazyOptional<? extends IItemHandler> handler;
     protected CompoundTag peripheralSettings;
     protected NonNullList<ItemStack> items;
-
-    protected @Nullable T peripheral = null;
+    @Nullable
+    protected T peripheral = null;
     private LazyOptional<IPeripheral> peripheralCap;
 
     public PeripheralTileEntity(BlockEntityType<?> tileEntityTypeIn, BlockPos pos, BlockState state) {

@@ -4,11 +4,11 @@ import dan200.computercraft.api.lua.IArguments;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.lua.MethodResult;
-import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
+import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.lib.peripherals.AutomataCorePeripheral;
-import de.srendi.advancedperipherals.lib.peripherals.owner.FuelAbility;
-import de.srendi.advancedperipherals.lib.peripherals.owner.PeripheralOwnerAbility;
-import de.srendi.advancedperipherals.lib.peripherals.owner.TurtlePeripheralOwner;
+import de.srendi.advancedperipherals.common.addons.computercraft.owner.FuelAbility;
+import de.srendi.advancedperipherals.common.addons.computercraft.owner.PeripheralOwnerAbility;
+import de.srendi.advancedperipherals.common.addons.computercraft.owner.TurtlePeripheralOwner;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.energy.CapabilityEnergy;
 
@@ -34,12 +34,12 @@ public class AutomataChargingPlugin extends AutomataCorePlugin {
             int availableFuelSpace = fuelAbility.getFuelMaxCount() - fuelAbility.getFuelCount();
             int requestedRF;
             if (fuel != -1) {
-                requestedRF = fuel * AdvancedPeripheralsConfig.energyToFuelRate;
+                requestedRF = fuel * APConfig.METAPHYSICS_CONFIG.ENERGY_TO_FUEL_RATE.get();
             } else {
                 requestedRF = storage.getEnergyStored();
             }
-            int realConsumedRF = storage.extractEnergy(Math.min(requestedRF, availableFuelSpace * AdvancedPeripheralsConfig.energyToFuelRate), false);
-            int receivedFuel = realConsumedRF / AdvancedPeripheralsConfig.energyToFuelRate;
+            int realConsumedRF = storage.extractEnergy(Math.min(requestedRF, availableFuelSpace * APConfig.METAPHYSICS_CONFIG.ENERGY_TO_FUEL_RATE.get()), false);
+            int receivedFuel = realConsumedRF / APConfig.METAPHYSICS_CONFIG.ENERGY_TO_FUEL_RATE.get();
             fuelAbility.addFuel(receivedFuel);
             automataCore.addRotationCycle();
             return MethodResult.of(true, receivedFuel);

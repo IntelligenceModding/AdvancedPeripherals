@@ -1,7 +1,7 @@
 package de.srendi.advancedperipherals.test;
 
 import de.srendi.advancedperipherals.common.util.fakeplayer.APFakePlayer;
-import de.srendi.advancedperipherals.lib.peripherals.owner.BasePeripheralOwner;
+import de.srendi.advancedperipherals.common.addons.computercraft.owner.BasePeripheralOwner;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -18,36 +18,38 @@ public class DummyPeripheralOwner extends BasePeripheralOwner {
     private final CompoundTag dataStorage = new CompoundTag();
 
     @Override
-    public @Nullable String getCustomName() {
+    @Nullable
+    public String getCustomName() {
         return null;
     }
 
     @Override
-    public @Nullable
-    Level getLevel() {
+    @Nullable
+    public Level getLevel() {
         return null;
     }
 
     @Override
-    public @NotNull
-    BlockPos getPos() {
+    @NotNull
+    public BlockPos getPos() {
         return new BlockPos(0, 0, 0);
     }
 
     @Override
-    public @NotNull
-    Direction getFacing() {
+    @NotNull
+    public Direction getFacing() {
         return Direction.NORTH;
     }
 
     @Override
-    public @Nullable
-    Player getOwner() {
+    @Nullable
+    public Player getOwner() {
         return null;
     }
 
     @Override
-    public @NotNull CompoundTag getDataStorage() {
+    @NotNull
+    public CompoundTag getDataStorage() {
         return dataStorage;
     }
 

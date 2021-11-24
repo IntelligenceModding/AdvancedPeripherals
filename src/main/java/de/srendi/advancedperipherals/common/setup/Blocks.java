@@ -1,9 +1,6 @@
 package de.srendi.advancedperipherals.common.setup;
 
-import de.srendi.advancedperipherals.common.addons.computercraft.pocket.PocketChatBoxUpgrade;
-import de.srendi.advancedperipherals.common.addons.computercraft.pocket.PocketEnvironmentUpgrade;
-import de.srendi.advancedperipherals.common.addons.computercraft.pocket.PocketGeoScannerUpgrade;
-import de.srendi.advancedperipherals.common.addons.computercraft.pocket.PocketPlayerDetectorUpgrade;
+import de.srendi.advancedperipherals.common.addons.computercraft.pocket.*;
 import de.srendi.advancedperipherals.common.addons.computercraft.turtles.TurtleChatBoxUpgrade;
 import de.srendi.advancedperipherals.common.addons.computercraft.turtles.TurtleEnvironmentDetectorUpgrade;
 import de.srendi.advancedperipherals.common.addons.computercraft.turtles.TurtleGeoScannerUpgrade;
@@ -11,15 +8,17 @@ import de.srendi.advancedperipherals.common.addons.computercraft.turtles.TurtleP
 import de.srendi.advancedperipherals.common.blocks.PlayerDetectorBlock;
 import de.srendi.advancedperipherals.common.blocks.RedstoneIntegratorBlock;
 import de.srendi.advancedperipherals.common.blocks.base.APTileEntityBlock;
-import de.srendi.advancedperipherals.common.blocks.base.BaseBlock;
-import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
+import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.items.APBlockItem;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.Material;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fmllegacy.RegistryObject;
 
 import java.util.function.Supplier;
@@ -30,37 +29,31 @@ public class Blocks {
     }
 
     public static final RegistryObject<Block> ENVIRONMENT_DETECTOR = register("environment_detector", () -> new APTileEntityBlock<>(TileEntityTypes.ENVIRONMENT_DETECTOR, false),
-            () -> new APBlockItem(Blocks.ENVIRONMENT_DETECTOR.get(), TurtleEnvironmentDetectorUpgrade.ID, PocketEnvironmentUpgrade.ID, () -> AdvancedPeripheralsConfig.enableEnvironmentDetector));
-
+            () -> new APBlockItem(Blocks.ENVIRONMENT_DETECTOR.get(), TurtleEnvironmentDetectorUpgrade.ID, PocketEnvironmentUpgrade.ID, APConfig.PERIPHERALS_CONFIG.ENABLE_ENVIRONMENT_DETECTOR::get));
     public static final RegistryObject<Block> CHAT_BOX = register("chat_box", () -> new APTileEntityBlock<>(TileEntityTypes.CHAT_BOX, false),
-            () -> new APBlockItem(Blocks.CHAT_BOX.get(), TurtleChatBoxUpgrade.ID, PocketChatBoxUpgrade.ID, () -> AdvancedPeripheralsConfig.enableChatBox));
-
+            () -> new APBlockItem(Blocks.CHAT_BOX.get(), TurtleChatBoxUpgrade.ID, PocketChatBoxUpgrade.ID, APConfig.PERIPHERALS_CONFIG.ENABLE_CHAT_BOX::get));
     public static final RegistryObject<Block> PLAYER_DETECTOR = register("player_detector", PlayerDetectorBlock::new,
-            () -> new APBlockItem(Blocks.PLAYER_DETECTOR.get(), TurtlePlayerDetectorUpgrade.ID, PocketPlayerDetectorUpgrade.ID, () -> AdvancedPeripheralsConfig.enablePlayerDetector));
-
+            () -> new APBlockItem(Blocks.PLAYER_DETECTOR.get(), TurtlePlayerDetectorUpgrade.ID, PocketPlayerDetectorUpgrade.ID, APConfig.PERIPHERALS_CONFIG.ENABLE_PLAYER_DETECTOR::get));
+    public static final RegistryObject<Block> ME_BRIDGE = register("me_bridge", () -> new APTileEntityBlock<>(TileEntityTypes.ME_BRIDGE, false, ModList.get().isLoaded("appliedenergistics2")),
+            () -> new APBlockItem(Blocks.ME_BRIDGE.get(), null, null, APConfig.PERIPHERALS_CONFIG.ENABLE_ME_BRIDGE::get));
     public static final RegistryObject<Block> ENERGY_DETECTOR = register("energy_detector", () -> new APTileEntityBlock<>(TileEntityTypes.ENERGY_DETECTOR, true),
-            () -> new APBlockItem(Blocks.ENERGY_DETECTOR.get(), null, null, () -> AdvancedPeripheralsConfig.enableEnergyDetector));
-
-    public static final RegistryObject<Block> PERIPHERAL_CASING = register("peripheral_casing", BaseBlock::new,
+            () -> new APBlockItem(Blocks.ENERGY_DETECTOR.get(), null, null, APConfig.PERIPHERALS_CONFIG.ENABLE_ENERGY_DETECTOR::get));
+    public static final RegistryObject<Block> PERIPHERAL_CASING = register("peripheral_casing", () -> new Block(BlockBehaviour.Properties.of(Material.METAL).requiresCorrectToolForDrops().strength(5, 5)),
             () -> new APBlockItem(Blocks.PERIPHERAL_CASING.get(), new Item.Properties().stacksTo(16), null, null, () -> true));
-
     public static final RegistryObject<Block> AR_CONTROLLER = register("ar_controller", () -> new APTileEntityBlock<>(TileEntityTypes.AR_CONTROLLER, false),
-            () -> new APBlockItem(Blocks.AR_CONTROLLER.get(), null, null, () -> AdvancedPeripheralsConfig.enableARGoggles));
-
+            () -> new APBlockItem(Blocks.AR_CONTROLLER.get(), null, null, APConfig.PERIPHERALS_CONFIG.ENABLE_AR_GOGGLES::get));
     public static final RegistryObject<Block> INVENTORY_MANAGER = register("inventory_manager", () -> new APTileEntityBlock<>(TileEntityTypes.INVENTORY_MANAGER, false),
-            () -> new APBlockItem(Blocks.INVENTORY_MANAGER.get(), null, null, () -> AdvancedPeripheralsConfig.enableInventoryManager));
-
+            () -> new APBlockItem(Blocks.INVENTORY_MANAGER.get(), null, null, APConfig.PERIPHERALS_CONFIG.ENABLE_INVENTORY_MANAGER::get));
     public static final RegistryObject<Block> REDSTONE_INTEGRATOR = register("redstone_integrator", RedstoneIntegratorBlock::new,
-            () -> new APBlockItem(Blocks.REDSTONE_INTEGRATOR.get(), null, null, () -> AdvancedPeripheralsConfig.enableRedstoneIntegrator));
-
+            () -> new APBlockItem(Blocks.REDSTONE_INTEGRATOR.get(), null, null, APConfig.PERIPHERALS_CONFIG.ENABLE_REDSTONE_INTEGRATOR::get));
     public static final RegistryObject<Block> BLOCK_READER = register("block_reader", () -> new APTileEntityBlock<>(TileEntityTypes.BLOCK_READER, true),
-            () -> new APBlockItem(Blocks.BLOCK_READER.get(), null, null, () -> AdvancedPeripheralsConfig.enableBlockReader));
-
+            () -> new APBlockItem(Blocks.BLOCK_READER.get(), null, null, APConfig.PERIPHERALS_CONFIG.ENABLE_BLOCK_READER::get));
     public static final RegistryObject<Block> GEO_SCANNER = register("geo_scanner", () -> new APTileEntityBlock<>(TileEntityTypes.GEO_SCANNER, false),
-            () -> new APBlockItem(Blocks.GEO_SCANNER.get(), TurtleGeoScannerUpgrade.ID, PocketGeoScannerUpgrade.ID, () -> AdvancedPeripheralsConfig.enableGeoScanner));
-
+            () -> new APBlockItem(Blocks.GEO_SCANNER.get(), TurtleGeoScannerUpgrade.ID, PocketGeoScannerUpgrade.ID, APConfig.PERIPHERALS_CONFIG.ENABLE_GEO_SCANNER::get));
+    public static final RegistryObject<Block> COLONY_INTEGRATOR = register("colony_integrator", () -> new APTileEntityBlock<>(TileEntityTypes.COLONY_INTEGRATOR, false, ModList.get().isLoaded("minecolonies")),
+            () -> new APBlockItem(Blocks.COLONY_INTEGRATOR.get(), null, PocketColonyIntegratorUpgrade.ID, APConfig.PERIPHERALS_CONFIG.ENABLE_COLONY_INTEGRATOR::get));
     public static final RegistryObject<Block> NBT_STORAGE = register("nbt_storage", () -> new APTileEntityBlock<>(TileEntityTypes.NBT_STORAGE, true),
-            () -> new APBlockItem(Blocks.NBT_STORAGE.get(), null, null, () -> AdvancedPeripheralsConfig.enableNBTStorage));
+            () -> new APBlockItem(Blocks.NBT_STORAGE.get(), null, null, APConfig.PERIPHERALS_CONFIG.ENABLE_NBT_STORAGE::get));
 
     private static <T extends Block> RegistryObject<T> registerNoItem(String name, Supplier<T> block) {
         return Registration.BLOCKS.register(name, block);

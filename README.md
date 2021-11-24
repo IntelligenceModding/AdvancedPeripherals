@@ -2,6 +2,8 @@
 
 ![Logo](https://www.bisecthosting.com/images/CF/Advanced_Peripherals/BH_AP_Header.png "Logo")
 
+[![Gradle Snapshot](https://github.com/Seniorendi/AdvancedPeripherals/actions/workflows/gradle-snapshot.yml/badge.svg?branch=1.16)](https://github.com/Seniorendi/AdvancedPeripherals/actions/workflows/gradle-snapshot.yml)
+
 Curseforge site: https://www.curseforge.com/minecraft/mc-mods/advanced-peripherals
 
 Advanced Peripherals is a mod that adds many useful extensions for ComputerCraft. The mod aims to add features that were

@@ -5,7 +5,7 @@ import dan200.computercraft.api.turtle.TurtleSide;
 import de.srendi.advancedperipherals.common.addons.computercraft.operations.AutomataCoreTier;
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.plugins.AutomataEntityHandPlugin;
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.plugins.AutomataEntityTransferPlugin;
-import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
+import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.lib.metaphysics.IAutomataCoreTier;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -33,6 +33,6 @@ public class HusbandryAutomataCorePeripheral extends WeakAutomataCorePeripheral 
 
     @Override
     public boolean isEnabled() {
-        return AdvancedPeripheralsConfig.enableHusbandryAutomataCore;
+        return APConfig.METAPHYSICS_CONFIG.ENABLE_HUSBANDRY_AUTOMATA_CORE.get();
     }
 }

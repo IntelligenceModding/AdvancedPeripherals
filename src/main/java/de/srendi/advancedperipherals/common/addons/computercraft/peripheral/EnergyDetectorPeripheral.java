@@ -1,10 +1,10 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.peripheral;
 
 import dan200.computercraft.api.lua.LuaFunction;
-import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
 import de.srendi.advancedperipherals.common.blocks.tileentity.EnergyDetectorTile;
-import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
-import de.srendi.advancedperipherals.lib.peripherals.owner.BlockEntityPeripheralOwner;
+import de.srendi.advancedperipherals.common.configuration.APConfig;
+import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
+import de.srendi.advancedperipherals.common.addons.computercraft.owner.BlockEntityPeripheralOwner;
 
 public class EnergyDetectorPeripheral extends BasePeripheral<BlockEntityPeripheralOwner<EnergyDetectorTile>> {
 
@@ -16,7 +16,7 @@ public class EnergyDetectorPeripheral extends BasePeripheral<BlockEntityPeripher
 
     @Override
     public boolean isEnabled() {
-        return AdvancedPeripheralsConfig.enableEnergyDetector;
+        return APConfig.PERIPHERALS_CONFIG.ENABLE_ENERGY_DETECTOR.get();
     }
 
     @LuaFunction(mainThread = true)
@@ -26,7 +26,7 @@ public class EnergyDetectorPeripheral extends BasePeripheral<BlockEntityPeripher
 
     @LuaFunction(mainThread = true)
     public final void setTransferRateLimit(long transferRate) {
-        transferRate = Math.min(AdvancedPeripheralsConfig.energyDetectorMaxFlow, transferRate);
+        transferRate = Math.min(APConfig.PERIPHERALS_CONFIG.ENERGY_DETECTOR_MAX_FLOW.get(), transferRate);
         owner.tileEntity.storageProxy.setMaxTransferRate((int) transferRate);
     }
 

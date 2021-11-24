@@ -4,7 +4,7 @@ import dan200.computercraft.api.pocket.IPocketAccess;
 import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
 import de.srendi.advancedperipherals.lib.peripherals.IPeripheralTileEntity;
-import de.srendi.advancedperipherals.lib.peripherals.owner.IPeripheralOwner;
+import de.srendi.advancedperipherals.common.addons.computercraft.owner.IPeripheralOwner;
 import net.minecraft.nbt.CompoundTag;
 
 import javax.annotation.Nonnull;

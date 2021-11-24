@@ -2,24 +2,29 @@ package de.srendi.advancedperipherals.common.addons.computercraft.peripheral;
 
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
-import dan200.computercraft.shared.util.NBTUtil;
+import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.blocks.tileentity.InventoryManagerTile;
-import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
+import de.srendi.advancedperipherals.common.configuration.APConfig;
+import de.srendi.advancedperipherals.common.util.InventoryUtil;
 import de.srendi.advancedperipherals.common.util.ItemUtil;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
-import de.srendi.advancedperipherals.lib.peripherals.owner.BlockEntityPeripheralOwner;
+import de.srendi.advancedperipherals.common.addons.computercraft.owner.BlockEntityPeripheralOwner;
 import net.minecraft.core.Direction;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.ItemHandlerHelper;
+import net.minecraftforge.items.wrapper.PlayerInvWrapper;
 import net.minecraftforge.registries.ForgeRegistries;
 
+import javax.annotation.Nonnull;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -32,13 +37,22 @@ public class InventoryManagerPeripheral extends BasePeripheral<BlockEntityPeriph
         super(TYPE, new BlockEntityPeripheralOwner<>(tileEntity));
     }
 
+    private static int getArmorSlot(int index) {
+        return switch (index) {
+            case 103 -> 3;
+            case 102 -> 2;
+            case 101 -> 1;
+            default -> 0;
+        };
+    }
+
     @Override
     public boolean isEnabled() {
-        return AdvancedPeripheralsConfig.enableInventoryManager;
+        return APConfig.PERIPHERALS_CONFIG.ENABLE_INVENTORY_MANAGER.get();
     }
 
     @LuaFunction
-    public final String getOwner() {
+    public final String getOwner() throws LuaException {
         if (getOwnerPlayer() == null)
             return null;
         return getOwnerPlayer().getName().getString();
@@ -46,7 +60,6 @@ public class InventoryManagerPeripheral extends BasePeripheral<BlockEntityPeriph
 
     @LuaFunction(mainThread = true, value = {"pullItems", "addItemToPlayer"})
     public final int addItemToPlayer(String invDirection, int count, Optional<Integer> slot, Optional<String> item) throws LuaException {
-        ensurePlayerIsLinked();
         ItemStack stack = ItemStack.EMPTY;
         if (item.isPresent()) {
             Item item1 = ItemUtil.getRegistryEntry(item.get(), ForgeRegistries.ITEMS);
@@ -58,16 +71,13 @@ public class InventoryManagerPeripheral extends BasePeripheral<BlockEntityPeriph
         BlockEntity targetEntity = owner.getLevel().getBlockEntity(owner.getPos().relative(direction));
         IItemHandler inventoryFrom = targetEntity != null ? targetEntity
                 .getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, direction).resolve().orElse(null) : null;
-        Inventory inventoryTo = getOwnerPlayer().getInventory();
-
-
+        IItemHandler inventoryTo = new PlayerInvWrapper(getOwnerPlayer().getInventory());
 
         int invSlot = slot.orElse(0);
 
-        if (invSlot > inventoryTo.getContainerSize() || invSlot < 0)
-            throw new LuaException("Inventory out of bounds " + invSlot + " (max: " + (inventoryTo.getContainerSize()-1) + ")");
+        //if (invSlot >= inventoryTo.getSlots() || invSlot < 0)
+        //  throw new LuaException("Inventory out of bounds " + invSlot + " (max: " + (inventoryTo.getSlots() - 1) + ")");
 
-        //inventoryTo is checked via ensurePlayerIsLinked()
         if (inventoryFrom == null)
             return 0;
 
@@ -81,23 +91,28 @@ public class InventoryManagerPeripheral extends BasePeripheral<BlockEntityPeriph
                     continue;
             }
 
-            if (inventoryFrom.getStackInSlot(i).sameItem(stack)) {
-                ItemStack invSlotItem = inventoryTo.getItem(invSlot);
-                int subcount = Math.min( inventoryFrom.getStackInSlot(i).getCount(), amount);
-                if (!invSlotItem.sameItem(stack) || invSlotItem.getCount() == invSlotItem.getMaxStackSize()) {
-                    if (inventoryTo.add(inventoryFrom.extractItem(i, subcount, true))) {
-                        transferableAmount += subcount;
-                        amount -= subcount;
-                        inventoryFrom.extractItem(i, subcount, false);
-                    }
-                } else {
-                    subcount = Math.min(subcount, stack.getMaxStackSize() - invSlotItem.getCount());
-                    if (inventoryTo.add(invSlot, inventoryFrom.extractItem(i, subcount, true))) {
-                        inventoryFrom.extractItem(i, subcount, false);
-                        amount -= subcount;
-                        transferableAmount += subcount;
-                    }
+            if (ItemHandlerHelper.canItemStacksStack(stack, inventoryFrom.getStackInSlot(i))) {
+                int inserted;
+                if (invSlot >= 100 && invSlot < 104) {
+                    if (!(stack.getItem() instanceof ArmorItem))
+                        throw new LuaException(stack + "is not an armor item. Can't put it into the slot " + invSlot);
+                    //When there is already an item in the slot, just continue
+                    if (!getOwnerPlayer().getInventory().armor.get(getArmorSlot(invSlot)).isEmpty())
+                        continue;
+                    getOwnerPlayer().getInventory().armor.set(getArmorSlot(invSlot), stack);
+                    inventoryFrom.extractItem(i, 1, false);
+                    //Armor can't be stacked, so we set this just to one
+                    transferableAmount = 1;
+                    //Continue as we don't want to run the normal code for non armor items
+                    continue;
                 }
+                inserted = InventoryUtil.moveItem(inventoryFrom, i, inventoryTo, invSlot, amount);
+                transferableAmount += inserted;
+                amount -= inserted;
+
+                inserted = InventoryUtil.moveItem(inventoryFrom, i, inventoryTo, -1, amount);
+                transferableAmount += inserted;
+                amount -= inserted;
             }
         }
 
@@ -106,7 +121,6 @@ public class InventoryManagerPeripheral extends BasePeripheral<BlockEntityPeriph
 
     @LuaFunction(mainThread = true, value = {"pushItems", "removeItemFromPlayer"})
     public final int removeItemFromPlayer(String invDirection, int count, Optional<Integer> slot, Optional<String> item) throws LuaException {
-        ensurePlayerIsLinked();
         ItemStack stack = ItemStack.EMPTY;
         if (item.isPresent()) {
             Item item1 = ItemUtil.getRegistryEntry(item.get(), ForgeRegistries.ITEMS);
@@ -192,59 +206,35 @@ public class InventoryManagerPeripheral extends BasePeripheral<BlockEntityPeriph
         return transferableAmount;
     }
 
+    @Nonnull
     @LuaFunction(value = {"list", "getItems"}, mainThread = true)
     public final Map<Integer, Object> getItems() throws LuaException {
-        ensurePlayerIsLinked();
         Map<Integer, Object> items = new HashMap<>();
-        int i = 0;
+        int i = 0; //Used to let users easily sort the items by the slots. Also a better way for the user to see where a item actually is
         for (ItemStack stack : getOwnerPlayer().getInventory().items) {
             if (!stack.isEmpty()) {
-                Map<String, Object> map = new HashMap<>();
-                String displayName = stack.getDisplayName().getString();
-                CompoundTag nbt = stack.getTag();  //use getTag instead of getOrCreateTag to fix https://github.com/Seniorendi/AdvancedPeripherals/issues/177
-                map.put("name", stack.getItem().getRegistryName().toString());
-                map.put("amount", stack.getCount());
-                map.put("displayName", displayName);
-                if(nbt == null) {
-                    nbt = new CompoundTag();//ensure compatibility with lua programs relying on a non-nil value
-                }
-                map.put("nbt", NBTUtil.toLua(nbt));
-                map.put("tags", LuaConverter.tagsToList(stack.getItem().getTags()));
-                items.put(i, map);
-                i++;
+                items.put(i, LuaConverter.stackToObject(stack));
             }
+            i++;
         }
         return items;
     }
 
     @LuaFunction(mainThread = true)
     public final Map<Integer, Object> getArmor() throws LuaException {
-        ensurePlayerIsLinked();
         Map<Integer, Object> items = new HashMap<>();
         int i = 0;
         for (ItemStack stack : getOwnerPlayer().getInventory().armor) {
             if (!stack.isEmpty()) {
-                Map<String, Object> map = new HashMap<>();
-                String displayName = stack.getDisplayName().getString();
-                CompoundTag nbt = stack.getTag();  //use getTag instead of getOrCreateTag to fix https://github.com/Seniorendi/AdvancedPeripherals/issues/177
-                map.put("name", stack.getItem().getRegistryName().toString());
-                map.put("amount", stack.getCount());
-                map.put("displayName", displayName);
-                if(nbt == null) {
-                    nbt = new CompoundTag();//ensure compatibility with lua programs relying on a non-nil value
-                }
-                map.put("nbt", NBTUtil.toLua(nbt));
-                map.put("tags", LuaConverter.tagsToList(stack.getItem().getTags()));
-                items.put(i, map);
-                i++;
+                items.put(ArmorSlot.getSlotForItem(stack), LuaConverter.stackToObject(stack));
             }
+            i++;
         }
         return items;
     }
 
     @LuaFunction(mainThread = true)
     public final boolean isPlayerEquipped() throws LuaException {
-        ensurePlayerIsLinked();
         for (ItemStack stack : getOwnerPlayer().getInventory().armor) {
             if (!stack.isEmpty()) {
                 return true;
@@ -255,7 +245,6 @@ public class InventoryManagerPeripheral extends BasePeripheral<BlockEntityPeriph
 
     @LuaFunction(mainThread = true)
     public final boolean isWearing(int index) throws LuaException {
-        ensurePlayerIsLinked();
         int i = 0;
         for (ItemStack stack : getOwnerPlayer().getInventory().armor) {
             if (!stack.isEmpty()) {
@@ -267,13 +256,30 @@ public class InventoryManagerPeripheral extends BasePeripheral<BlockEntityPeriph
         return false;
     }
 
-    private Player getOwnerPlayer() {
-        return owner.getOwner();
+    @LuaFunction(mainThread = true)
+    public final int getEmptySpace() throws LuaException {
+        int i = 0;
+        for (ItemStack stack : getOwnerPlayer().getInventory().items) {
+            if (stack.isEmpty())
+                i++;
+
+        }
+        return i;
     }
 
-    private void ensurePlayerIsLinked() throws LuaException {
-        if (getOwnerPlayer() == null)
-            throw new LuaException("The Inventory Manager doesn't have a memory card or it isn't bound to a player.");
+    @LuaFunction(mainThread = true)
+    public final boolean isSpaceAvailable() throws LuaException {
+        return getEmptySpace() > 0;
+    }
+
+    @LuaFunction(mainThread = true)
+    public final int getFreeSlot() throws LuaException {
+        return getOwnerPlayer().getInventory().getFreeSlot();
+    }
+
+    @LuaFunction(mainThread = true)
+    public final Map<String, Object> getItemInHand() throws LuaException {
+        return LuaConverter.stackToObject(getOwnerPlayer().getInventory().getSelected());
     }
 
     private ItemStack insertItem(IItemHandler inventoryTo, ItemStack stack) {
@@ -286,5 +292,49 @@ public class InventoryManagerPeripheral extends BasePeripheral<BlockEntityPeriph
             stack = inventoryTo.insertItem(i, stack, false);
         }
         return stack;
+    }
+
+    private Player getOwnerPlayer() throws LuaException {
+        if (owner.getOwner() == null)
+            throw new LuaException("The Inventory Manager doesn't have a memory card or it isn't bound to a player.");
+        return owner.getOwner();
+    }
+
+    /**
+     * Used to get the proper slot number for armor. See https://docs.srendi.de/ for the slot numbers
+     *
+     * @see InventoryManagerPeripheral#getArmor()
+     */
+    private enum ArmorSlot {
+
+        HELMET_SLOT(103, EquipmentSlot.HEAD),
+        CHEST_SLOT(102, EquipmentSlot.CHEST),
+        LEGGINGS_SLOT(101, EquipmentSlot.LEGS),
+        BOOTS_SLOT(100, EquipmentSlot.FEET);
+
+        private final int slot;
+        private final EquipmentSlot slotType;
+
+        ArmorSlot(int slot, EquipmentSlot slotType) {
+            this.slot = slot;
+            this.slotType = slotType;
+        }
+
+        public static int getSlotForItem(ItemStack stack) {
+            if (stack.getItem() instanceof ArmorItem) {
+                for (ArmorSlot slot : values()) {
+                    if (((ArmorItem) stack.getItem()).getSlot() == slot.slotType) {
+                        return slot.slot;
+                    }
+                }
+            }
+            AdvancedPeripherals.LOGGER.warn("Tried to get armor item slot for non armor item " + stack + ". Returning 0");
+            return 0;
+        }
+
+        public int getSlot() {
+            return slot;
+        }
+
     }
 }

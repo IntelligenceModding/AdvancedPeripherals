@@ -1,77 +1,83 @@
-package de.srendi.advancedperipherals.lib.peripherals.owner;
+package de.srendi.advancedperipherals.common.addons.computercraft.owner;
 
-import de.srendi.advancedperipherals.lib.peripherals.IPeripheralTileEntity;
-import de.srendi.advancedperipherals.common.blocks.base.APTileEntityBlock;
-import de.srendi.advancedperipherals.common.blocks.tileentity.InventoryManagerTile;
+import dan200.computercraft.api.pocket.IPocketAccess;
 import de.srendi.advancedperipherals.common.util.DataStorageUtil;
 import de.srendi.advancedperipherals.common.util.fakeplayer.APFakePlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Objects;
 import java.util.function.Function;
 
-public class BlockEntityPeripheralOwner<T extends BlockEntity & IPeripheralTileEntity> extends BasePeripheralOwner {
+public class PocketPeripheralOwner extends BasePeripheralOwner {
+    private final IPocketAccess pocket;
 
-    public final T tileEntity;
-
-    public BlockEntityPeripheralOwner(T tileEntity) {
+    public PocketPeripheralOwner(IPocketAccess pocket) {
         super();
-        this.tileEntity = tileEntity;
+        this.pocket = pocket;
     }
 
     @Nullable
     @Override
     public String getCustomName() {
-        return tileEntity.getTileData().getString("CustomName");
+        return null;
     }
 
-    @NotNull
+    @Nullable
     @Override
     public Level getLevel() {
-        return Objects.requireNonNull(tileEntity.getLevel());
+        Entity owner = pocket.getEntity();
+        if (owner == null)
+            return null;
+        return owner.getCommandSenderWorld();
     }
 
     @NotNull
     @Override
     public BlockPos getPos() {
-        return tileEntity.getBlockPos();
+        Entity owner = pocket.getEntity();
+        if (owner == null)
+            return new BlockPos(0, 0, 0);
+        return owner.blockPosition();
     }
 
     @NotNull
     @Override
     public Direction getFacing() {
-        return tileEntity.getBlockState().getValue(APTileEntityBlock.FACING);
+        Entity owner = pocket.getEntity();
+        if (owner == null)
+            return Direction.NORTH;
+        return owner.getDirection();
     }
 
     @Nullable
     @Override
     public Player getOwner() {
-        if (tileEntity instanceof InventoryManagerTile)
-            return ((InventoryManagerTile) tileEntity).getOwnerPlayer();
+        Entity owner = pocket.getEntity();
+        if (owner instanceof Player)
+            return (Player) owner;
         return null;
     }
 
     @NotNull
     @Override
     public CompoundTag getDataStorage() {
-        return DataStorageUtil.getDataStorage(tileEntity);
+        return DataStorageUtil.getDataStorage(pocket);
     }
 
     @Override
     public void markDataStorageDirty() {
-        tileEntity.setChanged();
+        pocket.updateUpgradeNBTData();
     }
 
     @Override
-    public <T1> T1 withPlayer(Function<APFakePlayer, T1> function) {
+    public <T> T withPlayer(Function<APFakePlayer, T> function) {
         throw new RuntimeException("Not implemented yet");
     }
 
@@ -82,13 +88,13 @@ public class BlockEntityPeripheralOwner<T extends BlockEntity & IPeripheralTileE
 
     @Override
     public ItemStack storeItem(ItemStack stored) {
-        // TODO: tricks with capability needed
+        // Tricks with inventory needed
         throw new RuntimeException("Not implemented yet");
     }
 
     @Override
     public void destroyUpgrade() {
-        getLevel().removeBlock(tileEntity.getBlockPos(), false);
+        throw new RuntimeException("Not implemented yet");
     }
 
     @Override
@@ -99,10 +105,5 @@ public class BlockEntityPeripheralOwner<T extends BlockEntity & IPeripheralTileE
     @Override
     public boolean move(@NotNull Level level, @NotNull BlockPos pos) {
         return false;
-    }
-
-    public BlockEntityPeripheralOwner<T> attachFuel() {
-        attachAbility(PeripheralOwnerAbility.FUEL, new TileEntityFuelAbility<>(this));
-        return this;
     }
 }

@@ -9,14 +9,14 @@ import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
 import de.srendi.advancedperipherals.common.addons.computercraft.operations.SphereOperationContext;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
-import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
+import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
 import de.srendi.advancedperipherals.common.util.ScanUtils;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
-import de.srendi.advancedperipherals.lib.peripherals.owner.BlockEntityPeripheralOwner;
-import de.srendi.advancedperipherals.lib.peripherals.owner.IPeripheralOwner;
-import de.srendi.advancedperipherals.lib.peripherals.owner.PocketPeripheralOwner;
-import de.srendi.advancedperipherals.lib.peripherals.owner.TurtlePeripheralOwner;
+import de.srendi.advancedperipherals.common.addons.computercraft.owner.BlockEntityPeripheralOwner;
+import de.srendi.advancedperipherals.common.addons.computercraft.owner.IPeripheralOwner;
+import de.srendi.advancedperipherals.common.addons.computercraft.owner.PocketPeripheralOwner;
+import de.srendi.advancedperipherals.common.addons.computercraft.owner.TurtlePeripheralOwner;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.ChunkPos;
@@ -62,6 +62,7 @@ public class GeoScannerPeripheral extends BasePeripheral<IPeripheralOwner> {
         List<Map<String, ?>> result = new ArrayList<>();
         ScanUtils.relativeTraverseBlocks(level, center, radius, (state, pos) -> {
             HashMap<String, Object> data = new HashMap<>(6);
+
             data.put("x", pos.getX());
             data.put("y", pos.getY());
             data.put("z", pos.getZ());
@@ -86,7 +87,7 @@ public class GeoScannerPeripheral extends BasePeripheral<IPeripheralOwner> {
 
     @Override
     public boolean isEnabled() {
-        return AdvancedPeripheralsConfig.enableGeoScanner;
+        return APConfig.PERIPHERALS_CONFIG.ENABLE_GEO_SCANNER.get();
     }
 
     @LuaFunction

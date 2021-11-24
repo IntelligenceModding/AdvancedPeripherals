@@ -7,7 +7,7 @@ import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.meta
 import de.srendi.advancedperipherals.common.util.fakeplayer.APFakePlayer;
 import de.srendi.advancedperipherals.lib.metaphysics.IFeedableAutomataCore;
 import de.srendi.advancedperipherals.lib.peripherals.AutomataCorePeripheral;
-import de.srendi.advancedperipherals.lib.peripherals.owner.TurtlePeripheralOwner;
+import de.srendi.advancedperipherals.common.addons.computercraft.owner.TurtlePeripheralOwner;
 import net.minecraft.world.InteractionResult;
 
 public class AutomataSoulFeedingPlugin extends AutomataCorePlugin {

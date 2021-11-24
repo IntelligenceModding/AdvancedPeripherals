@@ -1,4 +1,4 @@
-package de.srendi.advancedperipherals.lib.peripherals.owner;
+package de.srendi.advancedperipherals.common.addons.computercraft.owner;
 
 import com.mojang.authlib.GameProfile;
 import dan200.computercraft.ComputerCraft;

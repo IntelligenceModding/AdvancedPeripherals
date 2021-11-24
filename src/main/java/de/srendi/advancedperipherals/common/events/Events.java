@@ -2,7 +2,7 @@ package de.srendi.advancedperipherals.common.events;
 
 import com.google.common.collect.EvictingQueue;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
-import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
+import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.items.ARGogglesItem;
 import de.srendi.advancedperipherals.common.util.Pair;
 import de.srendi.advancedperipherals.network.MNetwork;
@@ -32,9 +32,9 @@ public class Events {
 
     @SubscribeEvent
     public static void onWorldJoin(PlayerEvent.PlayerLoggedInEvent event) {
-        if(AdvancedPeripheralsConfig.givePlayerBookOnJoin) {
+        if (APConfig.WORLD_CONFIG.GIVE_PLAYER_BOOK_ON_JOIN.get()) {
             Player player = event.getPlayer();
-            if(!hasPlayedBefore(player)) {
+            if (!hasPlayedBefore(player)) {
                 ItemStack book = new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation("patchouli", "guide_book")));
                 CompoundTag nbt = new CompoundTag();
                 nbt.putString("patchouli:book", "advancedperipherals:manual");
@@ -46,7 +46,7 @@ public class Events {
 
     @SubscribeEvent
     public static void onChatBox(ServerChatEvent event) {
-        if (AdvancedPeripheralsConfig.enableChatBox) {
+        if (APConfig.PERIPHERALS_CONFIG.ENABLE_CHAT_BOX.get()) {
             String message = event.getMessage();
             boolean isHidden = false;
             if (message.startsWith("$")) {

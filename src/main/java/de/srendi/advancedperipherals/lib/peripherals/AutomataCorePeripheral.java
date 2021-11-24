@@ -8,7 +8,7 @@ import de.srendi.advancedperipherals.common.addons.computercraft.operations.Sing
 import de.srendi.advancedperipherals.common.addons.computercraft.operations.SingleOperationContext;
 import de.srendi.advancedperipherals.common.util.DataStorageUtil;
 import de.srendi.advancedperipherals.lib.metaphysics.IAutomataCoreTier;
-import de.srendi.advancedperipherals.lib.peripherals.owner.TurtlePeripheralOwner;
+import de.srendi.advancedperipherals.common.addons.computercraft.owner.TurtlePeripheralOwner;
 import net.minecraft.core.BlockPos;
 
 import java.util.ArrayList;
@@ -62,14 +62,14 @@ public abstract class AutomataCorePeripheral extends BasePeripheral<TurtlePeriph
     }
 
     public <T> MethodResult withOperation(IPeripheralOperation<T> operation, T context, IPeripheralFunction<T, MethodResult> function, IPeripheralCheck<T> check) throws LuaException {
-        return withOperation(operation, context, check,  function, ignored -> addRotationCycle());
+        return withOperation(operation, context, check, function, ignored -> addRotationCycle());
     }
 
     public MethodResult withOperation(SingleOperation operation, IPeripheralFunction<SingleOperationContext, MethodResult> function) throws LuaException {
         return withOperation(operation, forUnknownDistance(), function, null);
     }
 
-    public MethodResult withOperation(SingleOperation operation, IPeripheralFunction<SingleOperationContext, MethodResult> function,  IPeripheralCheck<SingleOperationContext> check) throws LuaException {
+    public MethodResult withOperation(SingleOperation operation, IPeripheralFunction<SingleOperationContext, MethodResult> function, IPeripheralCheck<SingleOperationContext> check) throws LuaException {
         return withOperation(operation, forUnknownDistance(), function, check);
     }
 

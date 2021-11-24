@@ -7,7 +7,7 @@ import de.srendi.advancedperipherals.common.util.Pair;
 import de.srendi.advancedperipherals.common.util.fakeplayer.APFakePlayer;
 import de.srendi.advancedperipherals.lib.peripherals.AutomataCorePeripheral;
 import de.srendi.advancedperipherals.lib.peripherals.IPeripheralOperation;
-import de.srendi.advancedperipherals.lib.peripherals.owner.TurtlePeripheralOwner;
+import de.srendi.advancedperipherals.common.addons.computercraft.owner.TurtlePeripheralOwner;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;

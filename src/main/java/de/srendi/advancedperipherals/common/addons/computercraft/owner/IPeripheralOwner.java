@@ -1,4 +1,4 @@
-package de.srendi.advancedperipherals.lib.peripherals.owner;
+package de.srendi.advancedperipherals.common.addons.computercraft.owner;
 
 import de.srendi.advancedperipherals.common.util.fakeplayer.APFakePlayer;
 import de.srendi.advancedperipherals.lib.peripherals.IPeripheralOperation;

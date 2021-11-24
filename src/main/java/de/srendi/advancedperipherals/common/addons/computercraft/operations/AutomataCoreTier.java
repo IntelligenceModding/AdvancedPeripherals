@@ -9,10 +9,10 @@ public enum AutomataCoreTier implements IAutomataCoreTier {
     OVERPOWERED_TIER1(4, 3),
     OVERPOWERED_TIER2(6, 4);
 
-    private ForgeConfigSpec.IntValue interactionRadius;
-    private ForgeConfigSpec.IntValue maxFuelConsumptionRate;
     private final int defaultInteractionRadius;
     private final int defaultMaxFuelConsumptionRate;
+    private ForgeConfigSpec.IntValue interactionRadius;
+    private ForgeConfigSpec.IntValue maxFuelConsumptionRate;
 
     AutomataCoreTier(int defaultInteractionRadius, int defaultMaxFuelConsumptionRate) {
         this.defaultInteractionRadius = defaultInteractionRadius;

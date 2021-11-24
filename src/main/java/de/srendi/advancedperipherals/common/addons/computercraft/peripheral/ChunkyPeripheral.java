@@ -3,10 +3,10 @@ package de.srendi.advancedperipherals.common.addons.computercraft.peripheral;
 import dan200.computercraft.api.peripheral.IComputerAccess;
 import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
-import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
+import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.util.ChunkManager;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
-import de.srendi.advancedperipherals.lib.peripherals.owner.TurtlePeripheralOwner;
+import de.srendi.advancedperipherals.common.addons.computercraft.owner.TurtlePeripheralOwner;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.ChunkPos;
@@ -18,10 +18,8 @@ import java.util.UUID;
 
 public class ChunkyPeripheral extends BasePeripheral<TurtlePeripheralOwner> {
 
-    private static final String UUID_TAG = "uuid";
-
     public static final String TYPE = "chunky";
-
+    private static final String UUID_TAG = "uuid";
     private @Nullable ChunkPos loadedChunk;
 
     public ChunkyPeripheral(ITurtleAccess turtle, TurtleSide side) {
@@ -43,7 +41,7 @@ public class ChunkyPeripheral extends BasePeripheral<TurtlePeripheralOwner> {
 
     @Override
     public boolean isEnabled() {
-        return AdvancedPeripheralsConfig.enableChunkyTurtle;
+        return APConfig.PERIPHERALS_CONFIG.ENABLE_CHUNKY_TURTLE.get();
     }
 
     public void updateChunkState() {

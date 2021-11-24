@@ -3,7 +3,7 @@ package de.srendi.advancedperipherals.common.blocks;
 import dan200.computercraft.api.peripheral.IComputerAccess;
 import de.srendi.advancedperipherals.common.blocks.base.BaseTileEntityBlock;
 import de.srendi.advancedperipherals.common.blocks.tileentity.PlayerDetectorTile;
-import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
+import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.setup.TileEntityTypes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
@@ -29,10 +29,9 @@ public class PlayerDetectorBlock extends BaseTileEntityBlock {
 
     @Override
     public InteractionResult use(BlockState state, Level levelIn, BlockPos pos, Player player, InteractionHand handIn, BlockHitResult hit) {
-        if (AdvancedPeripheralsConfig.enablePlayerDetector) {
+        if (APConfig.PERIPHERALS_CONFIG.ENABLE_PLAYER_DETECTOR.get()) {
             BlockEntity tileEntity = levelIn.getBlockEntity(pos);
-            if (tileEntity instanceof PlayerDetectorTile) {
-                PlayerDetectorTile entity = (PlayerDetectorTile) tileEntity;
+            if (tileEntity instanceof PlayerDetectorTile entity) {
                 for (IComputerAccess computer : entity.getConnectedComputers()) {
                     computer.queueEvent("playerClick", player.getName().getString());
                     //Todo: Let the eyes glow when clicked on the detector.

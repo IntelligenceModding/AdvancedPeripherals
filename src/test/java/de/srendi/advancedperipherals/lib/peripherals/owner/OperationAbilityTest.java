@@ -1,5 +1,7 @@
 package de.srendi.advancedperipherals.lib.peripherals.owner;
 
+import de.srendi.advancedperipherals.common.addons.computercraft.owner.OperationAbility;
+import de.srendi.advancedperipherals.common.addons.computercraft.owner.PeripheralOwnerAbility;
 import de.srendi.advancedperipherals.lib.LibConfig;
 import de.srendi.advancedperipherals.lib.peripherals.IPeripheralOperation;
 import de.srendi.advancedperipherals.test.DummyPeripheralOwner;
@@ -12,39 +14,6 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class OperationAbilityTest {
-
-    public enum DummyOperations implements IPeripheralOperation<Object> {
-        LONG(20_000), SHORT(3_000);
-
-        private final int cooldown;
-
-        DummyOperations(int cooldown) {
-            this.cooldown = cooldown;
-        }
-
-        @Override
-        public void addToConfig(ForgeConfigSpec.Builder builder) {}
-
-        @Override
-        public int getInitialCooldown() {
-            return cooldown;
-        }
-
-        @Override
-        public int getCooldown(Object context) {
-            return cooldown;
-        }
-
-        @Override
-        public int getCost(Object context) {
-            return 3;
-        }
-
-        @Override
-        public Map<String, Object> computerDescription() {
-            return new HashMap<>();
-        }
-    }
 
     @Test
     public void testCooldownLong() {
@@ -81,6 +50,40 @@ public class OperationAbilityTest {
         assertFalse(operationAbility.isOnCooldown(DummyOperations.LONG));
         assertEquals(0, abilityCooldown);
         LibConfig.setTestMode(false);
+    }
+
+    public enum DummyOperations implements IPeripheralOperation<Object> {
+        LONG(20_000), SHORT(3_000);
+
+        private final int cooldown;
+
+        DummyOperations(int cooldown) {
+            this.cooldown = cooldown;
+        }
+
+        @Override
+        public void addToConfig(ForgeConfigSpec.Builder builder) {
+        }
+
+        @Override
+        public int getInitialCooldown() {
+            return cooldown;
+        }
+
+        @Override
+        public int getCooldown(Object context) {
+            return cooldown;
+        }
+
+        @Override
+        public int getCost(Object context) {
+            return 3;
+        }
+
+        @Override
+        public Map<String, Object> computerDescription() {
+            return new HashMap<>();
+        }
     }
 
 }

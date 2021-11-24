@@ -2,7 +2,7 @@ package de.srendi.advancedperipherals.common.village;
 
 import com.mojang.datafixers.util.Pair;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
-import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
+import de.srendi.advancedperipherals.common.configuration.APConfig;
 import net.minecraft.core.Registry;
 import net.minecraft.data.BuiltinRegistries;
 import net.minecraft.data.worldgen.*;
@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 public class VillageStructures {
     //Adapted from Pneumaticcraft
     public static void init() {
-        if (!AdvancedPeripheralsConfig.enableVillagerStructures)
+        if (!APConfig.WORLD_CONFIG.ENABLE_VILLAGER_STRUCTURES.get())
             return;
         //Ensure the vanilla static init is done
         PlainVillagePools.bootstrap();
@@ -30,7 +30,7 @@ public class VillageStructures {
         for (String biome : new String[]{"desert", "snowy", "plains", "savanna", "taiga"}) {
             AdvancedPeripherals.debug("Register generating scientist_" + biome + " village house");
             addToPool(new ResourceLocation("village/" + biome + "/houses"),
-                    AdvancedPeripherals.MOD_ID + ":villages/scientist_" + biome, 10);
+                    AdvancedPeripherals.MOD_ID + ":villages/scientist_" + biome, APConfig.WORLD_CONFIG.VILLAGER_STRUCTURE_WEIGHT.get());
         }
     }
 

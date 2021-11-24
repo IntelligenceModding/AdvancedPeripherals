@@ -1,5 +1,6 @@
-import java.text.SimpleDateFormat
 import com.modrinth.minotaur.TaskModrinthUpload
+
+import java.text.SimpleDateFormat
 
 buildscript {
     repositories {
@@ -90,7 +91,7 @@ minecraft {
             property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
             property 'mixin.env.remapRefMap', 'true'
             property 'mixin.env.refMapRemappingFile', "${buildDir}/createSrgToMcp/output.srg"
-            properties 'forge.logging.console.level': 'info'
+            properties 'forge.logging.console.level': 'debug'
 
             mods {
                 advancedperipherals {
@@ -115,7 +116,7 @@ minecraft {
             property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
             property 'mixin.env.remapRefMap', 'true'
             property 'mixin.env.refMapRemappingFile', "${buildDir}/createSrgToMcp/output.srg"
-            property 'forge.logging.console.level', 'info'
+            property 'forge.logging.console.level', 'debug'
 
             mods {
                 advancedperipherals {
@@ -182,8 +183,18 @@ minecraft {
 
 repositories {
     mavenCentral()
-    maven { url 'https://squiddev.cc/maven/' }
-    maven { url 'https://maven.theillusivec4.top/' }
+    maven {
+        name = "Squiddev maven"
+        url = 'https://squiddev.cc/maven/'
+    }
+    maven {
+        name = "LDT Team"
+        url = 'https://ldtteam.jfrog.io/ldtteam/modding'
+    }
+    maven {
+        name = "Modmaven"
+        url = 'https://modmaven.dev/'
+    }
     maven {
         name = "Create maven"
         url = "https://maven.tterrag.com/"
@@ -220,6 +231,19 @@ dependencies {
     // Extended requirements
     // Curios
     runtimeOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}")
+    // JEI
+    //runtimeOnly fg.deobf("mezz.jei:jei-${jei_version}")
+
+    // Minecolonies
+    implementation (fg.deobf("com.ldtteam:minecolonies:${minecolonies_version}") {
+        exclude group: "mezz.jei", module: "*"
+    })
+    implementation fg.deobf("com.ldtteam:structurize:${structurize_version}")
+    runtimeOnly fg.deobf("com.ldtteam:multi-piston:${multipiston_version}")
+    runtimeOnly fg.deobf("com.ldtteam:domum_ornamentum:${domumornamentum_version}:universal")
+    runtimeOnly fg.deobf("com.ldtteam:blockui:${blockui_version}")
+
+    implementation fg.deobf("appeng:appliedenergistics2:9.0.0-beta.2")
 
     testModImplementation sourceSets.main.output
 
@@ -274,7 +298,7 @@ task setupServer(type: Copy) {
         it.mainClass = exec.mainClass
         it.setArgs(exec.getArgs())
 
-        it.systemProperty('forge.logging.console.level', 'info')
+        it.systemProperty('forge.logging.console.level', 'debug')
         it.systemProperty('ttoolkit.run', 'true')
     }
 }

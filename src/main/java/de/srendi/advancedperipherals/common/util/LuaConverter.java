@@ -2,8 +2,10 @@ package de.srendi.advancedperipherals.common.util;
 
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.core.computer.ComputerSide;
+import dan200.computercraft.shared.util.NBTUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.animal.Animal;
@@ -52,7 +54,7 @@ public class LuaConverter {
     }
 
     public static Object posToObject(BlockPos pos) {
-        if(pos == null)
+        if (pos == null)
             return null;
 
         Map<String, Object> map = new HashMap<>();
@@ -62,15 +64,22 @@ public class LuaConverter {
         return map;
     }
 
-    public static Object stackToObject(@NotNull ItemStack stack) {
-        Map<String, Object> map = (Map<String, Object>) itemToObject(stack.getItem());
+    public static Map<String, Object> stackToObject(@NotNull ItemStack stack) {
+        if (stack.isEmpty())
+            return new HashMap<>();
+        Map<String, Object> map = itemToObject(stack.getItem());
+        CompoundTag nbt = stack.getTag();
         map.put("count", stack.getCount());
         map.put("displayName", stack.getDisplayName().getString());
         map.put("maxStackSize", stack.getMaxStackSize());
+        if (nbt == null) {
+            nbt = new CompoundTag();//ensure compatibility with lua programs relying on a non-nil value
+        }
+        map.put("nbt", NBTUtil.toLua(nbt));
         return map;
     }
 
-    public static Object itemToObject(@NotNull Item item) {
+    public static Map<String, Object> itemToObject(@NotNull Item item) {
         Map<String, Object> map = new HashMap<>();
         map.put("tags", tagsToList(item.getTags()));
         map.put("name", item.getRegistryName().toString());
@@ -84,7 +93,7 @@ public class LuaConverter {
     }
 
     public static Direction getDirection(Direction facing, String computerSide) throws LuaException {
-        if(Direction.byName(computerSide) != null)
+        if (Direction.byName(computerSide) != null)
             return Direction.byName(computerSide);
         if (Objects.equals(computerSide, ComputerSide.FRONT.toString())) return facing;
         if (Objects.equals(computerSide, ComputerSide.BACK.toString()))
@@ -100,7 +109,6 @@ public class LuaConverter {
     }
 
     // BlockPos tricks
-
     public static BlockPos convertToBlockPos(Map<?, ?> table) throws LuaException {
         if (!table.containsKey("x") || !table.containsKey("y") || !table.containsKey("z"))
             throw new LuaException("Table should be block position table");

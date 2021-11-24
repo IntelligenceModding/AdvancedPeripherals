@@ -1,6 +1,6 @@
-package de.srendi.advancedperipherals.lib.peripherals.owner;
+package de.srendi.advancedperipherals.common.addons.computercraft.owner;
 
-import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
+import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.lib.peripherals.IPeripheralTileEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.energy.CapabilityEnergy;
@@ -15,7 +15,7 @@ public class TileEntityFuelAbility<T extends BlockEntity & IPeripheralTileEntity
     @Override
     protected boolean _consumeFuel(int count) {
         return owner.tileEntity.getCapability(CapabilityEnergy.ENERGY).map(storage -> {
-            int energyCount = count * AdvancedPeripheralsConfig.energyToFuelRate;
+            int energyCount = count * APConfig.METAPHYSICS_CONFIG.ENERGY_TO_FUEL_RATE.get();
             int extractedCount = storage.extractEnergy(energyCount, true);
             if (extractedCount == energyCount) {
                 storage.extractEnergy(energyCount, false);
@@ -37,18 +37,18 @@ public class TileEntityFuelAbility<T extends BlockEntity & IPeripheralTileEntity
 
     @Override
     public int getFuelCount() {
-        return owner.tileEntity.getCapability(CapabilityEnergy.ENERGY).map(storage -> storage.getEnergyStored() / AdvancedPeripheralsConfig.energyToFuelRate).orElse(0);
+        return owner.tileEntity.getCapability(CapabilityEnergy.ENERGY).map(storage -> storage.getEnergyStored() / APConfig.METAPHYSICS_CONFIG.ENERGY_TO_FUEL_RATE.get()).orElse(0);
     }
 
     @Override
     public int getFuelMaxCount() {
-        return owner.tileEntity.getCapability(CapabilityEnergy.ENERGY).map(storage -> storage.getMaxEnergyStored() / AdvancedPeripheralsConfig.energyToFuelRate).orElse(0);
+        return owner.tileEntity.getCapability(CapabilityEnergy.ENERGY).map(storage -> storage.getMaxEnergyStored() / APConfig.METAPHYSICS_CONFIG.ENERGY_TO_FUEL_RATE.get()).orElse(0);
     }
 
     @Override
     public void addFuel(int count) {
         owner.tileEntity.getCapability(CapabilityEnergy.ENERGY).ifPresent(storage -> {
-            int energyCount = count * AdvancedPeripheralsConfig.energyToFuelRate;
+            int energyCount = count * APConfig.METAPHYSICS_CONFIG.ENERGY_TO_FUEL_RATE.get();
             storage.receiveEnergy(energyCount, false);
         });
     }

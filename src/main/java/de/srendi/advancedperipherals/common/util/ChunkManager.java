@@ -1,7 +1,7 @@
 package de.srendi.advancedperipherals.common.util;
 
 import de.srendi.advancedperipherals.AdvancedPeripherals;
-import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
+import de.srendi.advancedperipherals.common.configuration.APConfig;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.ChunkPos;
@@ -52,7 +52,7 @@ public class ChunkManager extends SavedData {
 
         public boolean isValid() {
             long currentEpoch = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC);
-            return lastTouch + AdvancedPeripheralsConfig.chunkLoadValidTime >= currentEpoch;
+            return lastTouch + APConfig.PERIPHERALS_CONFIG.CHUNK_LOAD_VALID_TIME.get() >= currentEpoch;
         }
 
         public @NotNull CompoundTag serialize() {
@@ -69,9 +69,7 @@ public class ChunkManager extends SavedData {
 
     private static final String DATA_NAME = AdvancedPeripherals.MOD_ID + "_ForcedChunks";
     private static final String FORCED_CHUNKS_TAG = "forcedChunks";
-
     private static int tickCounter = 0;
-
     private final Map<UUID, LoadChunkRecord> forcedChunks = new HashMap<>();
     private boolean initialized = false;
 
@@ -181,7 +179,7 @@ public class ChunkManager extends SavedData {
     public static void serverTick(TickEvent.ServerTickEvent event) {
         if (event.phase == TickEvent.Phase.END) {
             tickCounter++;
-            if (tickCounter % (AdvancedPeripheralsConfig.chunkLoadValidTime / 2) == 0) {
+            if (tickCounter % (APConfig.PERIPHERALS_CONFIG.CHUNK_LOAD_VALID_TIME.get() / 2) == 0) {
                 ChunkManager.get(ServerLifecycleHooks.getCurrentServer().overworld()).cleanup();
             }
         }

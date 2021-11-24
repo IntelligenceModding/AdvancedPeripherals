@@ -3,9 +3,9 @@ package de.srendi.advancedperipherals.common.addons.computercraft.peripheral;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
 import de.srendi.advancedperipherals.common.blocks.tileentity.RedstoneIntegratorTile;
-import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
+import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
-import de.srendi.advancedperipherals.lib.peripherals.owner.BlockEntityPeripheralOwner;
+import de.srendi.advancedperipherals.common.addons.computercraft.owner.BlockEntityPeripheralOwner;
 import net.minecraft.core.Direction;
 
 public class RedstoneIntegratorPeripheral extends BasePeripheral<BlockEntityPeripheralOwner<RedstoneIntegratorTile>> {
@@ -18,7 +18,7 @@ public class RedstoneIntegratorPeripheral extends BasePeripheral<BlockEntityPeri
 
     @Override
     public boolean isEnabled() {
-        return AdvancedPeripheralsConfig.enableRedstoneIntegrator;
+        return APConfig.PERIPHERALS_CONFIG.ENABLE_REDSTONE_INTEGRATOR.get();
     }
 
     @LuaFunction(mainThread = true)

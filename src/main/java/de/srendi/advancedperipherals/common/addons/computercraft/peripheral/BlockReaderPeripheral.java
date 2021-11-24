@@ -4,9 +4,9 @@ import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.shared.util.NBTUtil;
 import de.srendi.advancedperipherals.common.blocks.base.APTileEntityBlock;
 import de.srendi.advancedperipherals.common.blocks.tileentity.BlockReaderTile;
-import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
+import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
-import de.srendi.advancedperipherals.lib.peripherals.owner.BlockEntityPeripheralOwner;
+import de.srendi.advancedperipherals.common.addons.computercraft.owner.BlockEntityPeripheralOwner;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.EntityBlock;
@@ -22,7 +22,7 @@ public class BlockReaderPeripheral extends BasePeripheral<BlockEntityPeripheralO
 
     @Override
     public boolean isEnabled() {
-        return AdvancedPeripheralsConfig.enableBlockReader;
+        return APConfig.PERIPHERALS_CONFIG.ENABLE_BLOCK_READER.get();
     }
 
     @LuaFunction(mainThread = true)

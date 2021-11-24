@@ -5,7 +5,7 @@ import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.MethodResult;
 import dan200.computercraft.api.peripheral.IComputerAccess;
 import dan200.computercraft.api.peripheral.IPeripheral;
-import de.srendi.advancedperipherals.lib.peripherals.owner.IPeripheralOwner;
+import de.srendi.advancedperipherals.common.addons.computercraft.owner.IPeripheralOwner;
 import net.minecraft.core.Direction;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
@@ -36,7 +36,7 @@ public class InventoryUtil {
 
     public static IItemHandler extractHandler(@Nullable Object object) {
 
-        for (Pair<Predicate<Object>, Function<Object, IItemHandler>> extractor: EXTRACTORS) {
+        for (Pair<Predicate<Object>, Function<Object, IItemHandler>> extractor : EXTRACTORS) {
             if (extractor.getLeft().test(object))
                 return extractor.getRight().apply(object);
         }

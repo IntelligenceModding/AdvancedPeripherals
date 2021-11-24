@@ -6,13 +6,13 @@ import dan200.computercraft.api.pocket.IPocketAccess;
 import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
-import de.srendi.advancedperipherals.common.configuration.AdvancedPeripheralsConfig;
+import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
-import de.srendi.advancedperipherals.lib.peripherals.owner.BlockEntityPeripheralOwner;
-import de.srendi.advancedperipherals.lib.peripherals.owner.IPeripheralOwner;
-import de.srendi.advancedperipherals.lib.peripherals.owner.PocketPeripheralOwner;
-import de.srendi.advancedperipherals.lib.peripherals.owner.TurtlePeripheralOwner;
+import de.srendi.advancedperipherals.common.addons.computercraft.owner.BlockEntityPeripheralOwner;
+import de.srendi.advancedperipherals.common.addons.computercraft.owner.IPeripheralOwner;
+import de.srendi.advancedperipherals.common.addons.computercraft.owner.PocketPeripheralOwner;
+import de.srendi.advancedperipherals.common.addons.computercraft.owner.TurtlePeripheralOwner;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
@@ -44,7 +44,7 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
 
     @Override
     public boolean isEnabled() {
-        return AdvancedPeripheralsConfig.enablePlayerDetector;
+        return APConfig.PERIPHERALS_CONFIG.ENABLE_PLAYER_DETECTOR.get();
     }
 
     @LuaFunction(mainThread = true)
@@ -155,11 +155,13 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
     }
 
     @LuaFunction(mainThread = true)
-    public final Map<String, Double> getPlayerPos(String username) {
+    public final Map<String, Object> getPlayerPos(String username) throws LuaException {
+        if (!APConfig.PERIPHERALS_CONFIG.PLAYER_SPY.get())
+            throw new LuaException("This function is disabled in the config. Activate it or ask an admin if he can activate it.");
         ServerPlayer existingPlayer = null;
         for (ServerPlayer player : getPlayers()) {
             if (player.getName().getString().equals(username)) {
-                if (isInRange(getPos(), player, AdvancedPeripheralsConfig.playerDetMaxRange)) {
+                if (isInRange(getPos(), player, APConfig.PERIPHERALS_CONFIG.PLAYER_DET_MAX_RANGE.get())) {
                     existingPlayer = player;
                     break;
                 }
@@ -168,11 +170,17 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
         if (existingPlayer == null)
             return null;
 
-        Map<String, Double> coordinates = new HashMap<>();
-        coordinates.put("x", Math.floor(existingPlayer.getX()));
-        coordinates.put("y", Math.floor(existingPlayer.getY()));
-        coordinates.put("z", Math.floor(existingPlayer.getZ()));
-        return coordinates;
+        Map<String, Object> info = new HashMap<>();
+        info.put("x", Math.floor(existingPlayer.getX()));
+        info.put("y", Math.floor(existingPlayer.getY()));
+        info.put("z", Math.floor(existingPlayer.getZ()));
+        if (APConfig.PERIPHERALS_CONFIG.MORE_PLAYER_INFORMATION.get()) {
+            info.put("yaw", existingPlayer.yRotO);
+            info.put("pitch", existingPlayer.xRotO);
+            info.put("dimension", existingPlayer.getLevel().dimension().location().toString());
+            info.put("eyeHeight", existingPlayer.getEyeHeight());
+        }
+        return info;
     }
 
     private List<ServerPlayer> getPlayers() {
