@@ -7,10 +7,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.7.5r] - 2021-11-25
+
 ### Fixed
 - Config typos and descriptions
 
-### Added 
+### Added
 - [#224](https://github.com/Seniorendi/AdvancedPeripherals/pull/224) Added Korean language by mindy15963
 - [#223]Added consumption of the RS and ME Bridge to the config.
 
@@ -21,9 +23,10 @@ We changed our config system. So if you want to update the mod in your pack, don
 We also recommend you to delete the old one, no one needs crap.
 
 ### Added
-- A new config system. You can find every config in `gamePath/config/AdvancedPeripherals/xxx.toml` 
+- A new config system. You can find every config in `gamePath/config/AdvancedPeripherals/xxx.toml`
   De divided the config files in 4 different ones. General, World, Peripherals and Metaphysics.
 - [#210]Added a new config value, `villagerStructureWeight`. Can be used to change the weight of the structures of our villager.
+
 
 ## [0.7.4r] - 2021-11-14
 
