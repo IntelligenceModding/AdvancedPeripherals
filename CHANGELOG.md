@@ -7,6 +7,13 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Fixed
+- Config typos and descriptions
+
+### Added 
+- [#224](https://github.com/Seniorendi/AdvancedPeripherals/pull/224) Added Korean language by mindy15963
+- [#223]Added consumption of the RS and ME Bridge to the config.
+
 ## [0.7.4.1b] - 2021-11-15
 
 ### Attention
