@@ -7,6 +7,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.7.5.1r] - 2021-11-26
+
+### Added
+- Added back me bridge and colony integrator recipe. 
+- Added back colony integrator pocket upgrade.
+
 ## [0.7.5r] - 2021-11-26
 
 ### Attention

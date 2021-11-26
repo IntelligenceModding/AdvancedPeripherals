@@ -1,0 +1,28 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "FIF",
+    "IAI",
+    "FIF"
+  ],
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "appliedenergistics2"
+    }
+  ],
+  "key": {
+    "F": {
+      "item": "appliedenergistics2:fluix_block"
+    },
+    "I": {
+      "item": "appliedenergistics2:item_interface"
+    },
+    "A": {
+      "item": "advancedperipherals:peripheral_casing"
+    }
+  },
+  "result": {
+    "item": "advancedperipherals:me_bridge"
+  }
+}

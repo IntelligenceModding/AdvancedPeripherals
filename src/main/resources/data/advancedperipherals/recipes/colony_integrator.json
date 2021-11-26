@@ -1,0 +1,28 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "ORO",
+    " A ",
+    "ORO"
+  ],
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "minecolonies"
+    }
+  ],
+  "key": {
+    "R": {
+      "item": "minecolonies:blockminecoloniesrack"
+    },
+    "O": {
+      "tag": "minecraft:logs"
+    },
+    "A": {
+      "item": "advancedperipherals:peripheral_casing"
+    }
+  },
+  "result": {
+    "item": "advancedperipherals:colony_integrator"
+  }
+}

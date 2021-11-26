@@ -232,7 +232,7 @@ dependencies {
     // Curios
     runtimeOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}")
     // JEI
-    //runtimeOnly fg.deobf("mezz.jei:jei-${jei_version}")
+    runtimeOnly fg.deobf("mezz.jei:jei-${jei_version}")
 
     // Minecolonies
     implementation (fg.deobf("com.ldtteam:minecolonies:${minecolonies_version}") {
@@ -243,7 +243,7 @@ dependencies {
     runtimeOnly fg.deobf("com.ldtteam:domum_ornamentum:${domumornamentum_version}:universal")
     runtimeOnly fg.deobf("com.ldtteam:blockui:${blockui_version}")
 
-    implementation fg.deobf("appeng:appliedenergistics2:9.0.0-beta.2")
+    implementation fg.deobf("appeng:appliedenergistics2:${appliedenergistics_version}")
 
     testModImplementation sourceSets.main.output
 
@@ -264,7 +264,7 @@ changelog {
     version = "${project.version}"
     path = "${project.projectDir}/CHANGELOG.md"
     header = "[${-> version.get()}] - ${new SimpleDateFormat("yyyy-MM-dd").format(new Date())}"
-    headerParserRegex = ~/\d+\.\d+\.\d+\w/
+    headerParserRegex = ~/\d+\.\d+\.\d+(\w)?(\.\d(\w)?)?/
     itemPrefix = "-"
     keepUnreleasedSection = true
     unreleasedTerm = "[Unreleased]"
