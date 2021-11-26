@@ -7,14 +7,31 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
-## [0.7.5r] - 2021-11-25
+## [0.7.5r] - 2021-11-26
+
+### Attention
+We changed our config system. So if you want to update the mod in your pack, don't forget to use the new files.
+We also recommend you to delete the old one, no one needs crap.
+
+This is the port of 0.7.4r, 0.7.4.1b and 0.7.5r as 1.17 version.
 
 ### Fixed
 - Config typos and descriptions
+- A FormattedMessage formatting mistake.
+- [#203]Fixed Inventory Manager api, slot argument behaviour is now correct.
+- [#219]Fixed that the inventory manager sees slot 0 as nil.
 
 ### Added
-- [#224](https://github.com/Seniorendi/AdvancedPeripherals/pull/224) Added Korean language by mindy15963
-- [#223]Added consumption of the RS and ME Bridge to the config.
+- Added back AE2 and MineColonies integration.
+- [[#224]](https://github.com/Seniorendi/AdvancedPeripherals/pull/224) Added Korean language by mindy15963
+- [#223]Added consumption of the ME Bridge to the config.
+- [#76]Added noteblock integration
+- [#217]Added `getItemInHand`, `getFreeSlot`, `isSpaceAvailable` and `getEmptySpace` to the inventory manager.
+- Added support for armor items. You can use the slots 100-103 to access armor items.
+- Added more information to the `getPlayerPos` function. (Configurable)
+- A new config system. You can find every config in `gamePath/config/AdvancedPeripherals/xxx.toml`
+  De divided the config files in 4 different ones. General, World, Peripherals and Metaphysics.
+- [#210]Added a new config value, `villagerStructureWeight`. Can be used to change the weight of the structures of our villager.
 
 ## [0.7.4.1b] - 2021-11-15
 
@@ -26,7 +43,6 @@ We also recommend you to delete the old one, no one needs crap.
 - A new config system. You can find every config in `gamePath/config/AdvancedPeripherals/xxx.toml`
   De divided the config files in 4 different ones. General, World, Peripherals and Metaphysics.
 - [#210]Added a new config value, `villagerStructureWeight`. Can be used to change the weight of the structures of our villager.
-
 
 ## [0.7.4r] - 2021-11-14
 
