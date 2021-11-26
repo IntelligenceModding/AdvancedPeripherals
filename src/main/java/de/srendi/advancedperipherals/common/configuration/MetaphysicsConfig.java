@@ -40,7 +40,7 @@ public class MetaphysicsConfig implements IAPConfig {
 
     @Override
     public String getFileName() {
-        return "methapysics";
+        return "methaphysics";
     }
 
     @Override
