@@ -8,6 +8,7 @@ import de.srendi.advancedperipherals.common.addons.computercraft.turtles.TurtleP
 import de.srendi.advancedperipherals.common.blocks.PlayerDetectorBlock;
 import de.srendi.advancedperipherals.common.blocks.RedstoneIntegratorBlock;
 import de.srendi.advancedperipherals.common.blocks.base.APTileEntityBlock;
+import de.srendi.advancedperipherals.common.blocks.base.BaseBlock;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.items.APBlockItem;
 import net.minecraft.core.BlockPos;
@@ -38,7 +39,7 @@ public class Blocks {
             () -> new APBlockItem(Blocks.ME_BRIDGE.get(), null, null, APConfig.PERIPHERALS_CONFIG.ENABLE_ME_BRIDGE::get));
     public static final RegistryObject<Block> ENERGY_DETECTOR = register("energy_detector", () -> new APTileEntityBlock<>(TileEntityTypes.ENERGY_DETECTOR, true),
             () -> new APBlockItem(Blocks.ENERGY_DETECTOR.get(), null, null, APConfig.PERIPHERALS_CONFIG.ENABLE_ENERGY_DETECTOR::get));
-    public static final RegistryObject<Block> PERIPHERAL_CASING = register("peripheral_casing", () -> new Block(BlockBehaviour.Properties.of(Material.METAL).requiresCorrectToolForDrops().strength(5, 5)),
+    public static final RegistryObject<Block> PERIPHERAL_CASING = register("peripheral_casing", BaseBlock::new,
             () -> new APBlockItem(Blocks.PERIPHERAL_CASING.get(), new Item.Properties().stacksTo(16), null, null, () -> true));
     public static final RegistryObject<Block> AR_CONTROLLER = register("ar_controller", () -> new APTileEntityBlock<>(TileEntityTypes.AR_CONTROLLER, false),
             () -> new APBlockItem(Blocks.AR_CONTROLLER.get(), null, null, APConfig.PERIPHERALS_CONFIG.ENABLE_AR_GOGGLES::get));

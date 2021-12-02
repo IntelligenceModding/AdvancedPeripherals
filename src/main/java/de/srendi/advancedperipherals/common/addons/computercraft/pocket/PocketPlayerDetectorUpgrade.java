@@ -6,14 +6,15 @@ import de.srendi.advancedperipherals.lib.pocket.BasePocketUpgrade;
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.PlayerDetectorPeripheral;
 import de.srendi.advancedperipherals.common.setup.Blocks;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class PocketPlayerDetectorUpgrade extends BasePocketUpgrade<PlayerDetectorPeripheral> {
     public static final ResourceLocation ID = new ResourceLocation(AdvancedPeripherals.MOD_ID, "player_pocket");
 
-    public PocketPlayerDetectorUpgrade() {
-        super(ID, Blocks.PLAYER_DETECTOR);
+    public PocketPlayerDetectorUpgrade(ResourceLocation id, ItemStack stack) {
+        super(id, stack);
     }
 
     @Nullable

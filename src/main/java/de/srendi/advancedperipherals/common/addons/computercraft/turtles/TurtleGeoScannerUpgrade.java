@@ -17,8 +17,8 @@ public class TurtleGeoScannerUpgrade extends PeripheralTurtleUpgrade<GeoScannerP
     private static final ModelResourceLocation leftModel = new ModelResourceLocation("advancedperipherals:turtle_geoscanner_upgrade_left", "inventory");
     private static final ModelResourceLocation rightModel = new ModelResourceLocation("advancedperipherals:turtle_geoscanner_upgrade_right", "inventory");
 
-    public TurtleGeoScannerUpgrade() {
-        super(ID, new ItemStack(Blocks.GEO_SCANNER.get()));
+    public TurtleGeoScannerUpgrade(ResourceLocation id, ItemStack stack) {
+        super(id, stack);
     }
 
     @Override

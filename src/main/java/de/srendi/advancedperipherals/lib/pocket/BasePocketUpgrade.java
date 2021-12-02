@@ -7,6 +7,8 @@ import de.srendi.advancedperipherals.common.util.TranslationUtil;
 import de.srendi.advancedperipherals.lib.peripherals.DisabledPeripheral;
 import de.srendi.advancedperipherals.lib.peripherals.IBasePeripheral;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ItemLike;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -17,11 +19,11 @@ public abstract class BasePocketUpgrade<T extends IBasePeripheral<?>> extends Ab
 
     protected T peripheral;
 
-    protected BasePocketUpgrade(ResourceLocation id, String adjective, Supplier<? extends ItemLike> stack) {
+    protected BasePocketUpgrade(ResourceLocation id, String adjective, ItemStack stack) {
         super(id, adjective, stack);
     }
 
-    protected BasePocketUpgrade(ResourceLocation id, Supplier<? extends ItemLike> stack) {
+    protected BasePocketUpgrade(ResourceLocation id, ItemStack stack) {
         super(id, TranslationUtil.pocket(id.getPath()), stack);
     }
 

@@ -7,7 +7,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "advancedperipherals:geo_scanner"
+          "name": "advancedperipherals:colony_integrator"
         }
       ],
       "conditions": [

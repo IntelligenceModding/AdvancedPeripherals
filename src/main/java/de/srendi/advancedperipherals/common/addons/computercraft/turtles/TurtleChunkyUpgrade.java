@@ -16,8 +16,8 @@ import org.jetbrains.annotations.NotNull;
 public class TurtleChunkyUpgrade extends PeripheralTurtleUpgrade<ChunkyPeripheral> {
     public static final ResourceLocation ID = new ResourceLocation(AdvancedPeripherals.MOD_ID, "chunky_turtle");
 
-    public TurtleChunkyUpgrade() {
-        super(ID, new ItemStack(Items.CHUNK_CONTROLLER.get()));
+    public TurtleChunkyUpgrade(ResourceLocation id, ItemStack stack) {
+        super(id, stack);
     }
 
     @Override

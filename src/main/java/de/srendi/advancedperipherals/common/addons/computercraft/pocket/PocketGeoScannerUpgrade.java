@@ -6,14 +6,15 @@ import de.srendi.advancedperipherals.lib.pocket.BasePocketUpgrade;
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.GeoScannerPeripheral;
 import de.srendi.advancedperipherals.common.setup.Blocks;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class PocketGeoScannerUpgrade extends BasePocketUpgrade<GeoScannerPeripheral> {
     public static final ResourceLocation ID = new ResourceLocation(AdvancedPeripherals.MOD_ID, "geoscanner_pocket");
 
-    public PocketGeoScannerUpgrade() {
-        super(ID, Blocks.GEO_SCANNER);
+    public PocketGeoScannerUpgrade(ResourceLocation id, ItemStack stack) {
+        super(id, stack);
     }
 
     @Nullable

@@ -14,8 +14,8 @@ import org.jetbrains.annotations.NotNull;
 public class WeakAutomata extends ClockwiseAnimatedTurtleUpgrade<WeakAutomataCorePeripheral> {
     public static final ResourceLocation ID = new ResourceLocation(AdvancedPeripherals.MOD_ID, "weak_automata");
 
-    public WeakAutomata() {
-        super(ID, new ItemStack(Items.WEAK_AUTOMATA_CORE.get()));
+    public WeakAutomata(ResourceLocation id, ItemStack stack) {
+        super(id, stack);
     }
 
     @Override

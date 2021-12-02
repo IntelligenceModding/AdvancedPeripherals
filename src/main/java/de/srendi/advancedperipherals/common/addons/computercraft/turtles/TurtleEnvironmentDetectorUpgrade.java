@@ -17,8 +17,8 @@ public class TurtleEnvironmentDetectorUpgrade extends PeripheralTurtleUpgrade<En
     private static final ModelResourceLocation leftModel = new ModelResourceLocation("advancedperipherals:turtle_environment_upgrade_left", "inventory");
     private static final ModelResourceLocation rightModel = new ModelResourceLocation("advancedperipherals:turtle_environment_upgrade_right", "inventory");
 
-    public TurtleEnvironmentDetectorUpgrade() {
-        super(ID, new ItemStack(Blocks.ENVIRONMENT_DETECTOR.get()));
+    public TurtleEnvironmentDetectorUpgrade(ResourceLocation id, ItemStack stack) {
+        super(id, stack);
     }
 
     @Override

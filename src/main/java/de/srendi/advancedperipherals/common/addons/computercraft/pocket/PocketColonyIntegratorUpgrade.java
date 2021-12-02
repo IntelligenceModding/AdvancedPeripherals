@@ -6,12 +6,13 @@ import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.Colo
 import de.srendi.advancedperipherals.common.setup.Blocks;
 import de.srendi.advancedperipherals.lib.pocket.BasePocketUpgrade;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
 
 public class PocketColonyIntegratorUpgrade extends BasePocketUpgrade<ColonyPeripheral> {
     public static final ResourceLocation ID = new ResourceLocation(AdvancedPeripherals.MOD_ID, "colony_pocket");
 
-    public PocketColonyIntegratorUpgrade() {
-        super(ID, Blocks.COLONY_INTEGRATOR);
+    public PocketColonyIntegratorUpgrade(ResourceLocation id, ItemStack stack) {
+        super(id, stack);
     }
 
     @Override

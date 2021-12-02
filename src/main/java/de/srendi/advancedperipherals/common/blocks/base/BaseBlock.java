@@ -10,12 +10,19 @@ import net.minecraftforge.common.Tags;
 
 public class BaseBlock extends Block implements IHarvesterBlock {
 
+    private final Tag.Named<Block> harvestTag;
+
     public BaseBlock() {
-        this(Properties.of(Material.METAL).strength(1, 5).sound(SoundType.METAL).noOcclusion().requiresCorrectToolForDrops());
+        this(Tags.Blocks.NEEDS_WOOD_TOOL);
     }
 
-    public BaseBlock(Properties properties) {
+    public BaseBlock(Tag.Named<Block> harvestTag) {
+        this(Properties.of(Material.METAL).strength(1, 5).sound(SoundType.METAL).noOcclusion().requiresCorrectToolForDrops(), harvestTag);
+    }
+
+    public BaseBlock(Properties properties,Tag.Named<Block> harvestTag) {
         super(properties);
+        this.harvestTag = harvestTag;
     }
 
     @Override
@@ -24,7 +31,7 @@ public class BaseBlock extends Block implements IHarvesterBlock {
     }
 
     public Tag.Named<Block> getHarvestTag() {
-        return Tags.Blocks.NEEDS_WOOD_TOOL;
+        return harvestTag;
     }
 
 }

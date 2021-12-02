@@ -14,8 +14,8 @@ import org.jetbrains.annotations.NotNull;
 public class OverpoweredEndAutomata extends ClockwiseAnimatedTurtleUpgrade<OverpoweredEndAutomataCorePeripheral> {
     public static final ResourceLocation ID = new ResourceLocation(AdvancedPeripherals.MOD_ID, "overpowered_end_automata");
 
-    public OverpoweredEndAutomata() {
-        super(ID, new ItemStack(Items.OVERPOWERED_END_AUTOMATA_CORE.get()));
+    public OverpoweredEndAutomata(ResourceLocation id, ItemStack stack) {
+        super(id, stack);
     }
 
     @Override

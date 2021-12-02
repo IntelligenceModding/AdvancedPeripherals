@@ -74,7 +74,6 @@ public class AdvancedPeripherals {
     public void commonSetup(FMLCommonSetupEvent event) {
         event.enqueueWork(() -> {
             VillageStructures.init();
-            CCRegistration.register();
             MNetwork.init();
         });
     }

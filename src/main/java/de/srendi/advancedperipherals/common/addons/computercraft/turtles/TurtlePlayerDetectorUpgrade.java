@@ -17,8 +17,8 @@ public class TurtlePlayerDetectorUpgrade extends PeripheralTurtleUpgrade<PlayerD
     private static final ModelResourceLocation leftModel = new ModelResourceLocation("advancedperipherals:turtle_player_upgrade_left", "inventory");
     private static final ModelResourceLocation rightModel = new ModelResourceLocation("advancedperipherals:turtle_player_upgrade_right", "inventory");
 
-    public TurtlePlayerDetectorUpgrade() {
-        super(ID, new ItemStack(Blocks.PLAYER_DETECTOR.get()));
+    public TurtlePlayerDetectorUpgrade(ResourceLocation id, ItemStack stack) {
+        super(id, stack);
     }
 
     @Override

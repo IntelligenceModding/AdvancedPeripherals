@@ -6,14 +6,15 @@ import de.srendi.advancedperipherals.lib.pocket.BasePocketUpgrade;
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.EnvironmentDetectorPeripheral;
 import de.srendi.advancedperipherals.common.setup.Blocks;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class PocketEnvironmentUpgrade extends BasePocketUpgrade<EnvironmentDetectorPeripheral> {
     public static final ResourceLocation ID = new ResourceLocation(AdvancedPeripherals.MOD_ID, "environment_pocket");
 
-    public PocketEnvironmentUpgrade() {
-        super(ID, Blocks.ENVIRONMENT_DETECTOR);
+    public PocketEnvironmentUpgrade(ResourceLocation id, ItemStack stack) {
+        super(id, stack);
     }
 
     @Nullable

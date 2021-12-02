@@ -22,8 +22,8 @@ public class TurtleChatBoxUpgrade extends PeripheralTurtleUpgrade<ChatBoxPeriphe
     private static final ModelResourceLocation rightModel = new ModelResourceLocation("advancedperipherals:turtle_chat_box_upgrade_right", "inventory");
     private long lastConsumedMessage;
 
-    public TurtleChatBoxUpgrade() {
-        super(ID, new ItemStack(Blocks.CHAT_BOX.get()));
+    public TurtleChatBoxUpgrade(ResourceLocation id, ItemStack item) {
+        super(id, item);
         lastConsumedMessage = Events.getLastChatMessageID() - 1;
     }
 
