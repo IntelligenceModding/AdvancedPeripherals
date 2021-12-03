@@ -24,7 +24,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Set Swap Space
-      - uses: pierotofy/set-swap-space@v1.0
+        uses: pierotofy/set-swap-space@v1.0
       - name: Set up JDK 8
         uses: actions/setup-java@v2
         with:
