@@ -215,6 +215,7 @@ dependencies {
     implementation fg.deobf("appeng:appliedenergistics2:${ae_version}")
 
     // Minecolonies
+    // Remove this from runtime when using `runData`
     implementation fg.deobf("com.minecolonies:minecolonies:${minecolonies_version}:universal")
     implementation fg.deobf("com.ldtteam:structurize:${structurize_version}:universal")
     // Botania with deps
