@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+## [0.7.6r] - 2021-12-03
+
+# This is the last 1.17 version of Advanced Peripherals.
+We will now work on a 1.18 port. Supported is 1.16 and 1.18. Join our discord to read why.
+Rest in piece 1.17!
+
+### Fixed
+Added compatibility with the latest CC version.
 
 ## [0.7.5.1r] - 2021-11-26
 
