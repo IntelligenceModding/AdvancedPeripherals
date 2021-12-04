@@ -34,20 +34,6 @@ public class ClientRegistry {
     public static void onModelBakeEvent(ModelRegistryEvent event) {
         //Loading turtle models
         //Adapted from CC-Tweaked
-        /*ModelL
-        ModelLoader loader = event.getModelLoader();
-        Map<ResourceLocation, BakedModel> registry = event.getModelRegistry();
-
-        for (String modelName : TURTLE_MODELS) {
-            ResourceLocation location = new ResourceLocation(AdvancedPeripherals.MOD_ID, "item/" + modelName);
-            UnbakedModel model = loader.getModelOrMissing(location);
-            model.getMaterials(loader::getModelOrMissing, new HashSet<>());
-
-            BakedModel baked = model.bake(loader, ModelLoader.defaultTextureGetter(), SimpleModelState.IDENTITY, location);
-            if (baked != null) {
-                registry.put(new ModelResourceLocation(new ResourceLocation(AdvancedPeripherals.MOD_ID, modelName), "inventory"), baked);
-            }
-        }*/
         ModelLoaderRegistry.registerLoader( new ResourceLocation( AdvancedPeripherals.MOD_ID, "turtle" ), TurtleModelLoader.INSTANCE );
         for( String model : TURTLE_MODELS )
         {
