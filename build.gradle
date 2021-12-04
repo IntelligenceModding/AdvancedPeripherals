@@ -260,12 +260,10 @@ dependencies {
     testImplementation "org.junit.jupiter:junit-jupiter-api:${junit_version}"
     testImplementation "org.junit.jupiter:junit-jupiter-params:${junit_version}"
     testImplementation "org.hamcrest:hamcrest:${hamcrest_version}"
-    testImplementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:${kotlin_version}"
     testImplementation "org.jetbrains.kotlin:kotlin-reflect:${kotlin_version}"
     testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:${kotlinx_coroutines_version}"
 
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junit_version}"
-    implementationExtra "org.jetbrains.kotlin:kotlin-stdlib-jdk8:${kotlin_version}"
     // Testing stuff
 }
 
