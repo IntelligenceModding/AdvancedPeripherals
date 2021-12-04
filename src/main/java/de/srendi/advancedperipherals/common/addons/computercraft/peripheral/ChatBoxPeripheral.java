@@ -7,20 +7,20 @@ import dan200.computercraft.api.lua.MethodResult;
 import dan200.computercraft.api.pocket.IPocketAccess;
 import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
-import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
-import de.srendi.advancedperipherals.common.configuration.APConfig;
-import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
-import de.srendi.advancedperipherals.lib.peripherals.IPeripheralFunction;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.BlockEntityPeripheralOwner;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.IPeripheralOwner;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.PocketPeripheralOwner;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.TurtlePeripheralOwner;
+import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
+import de.srendi.advancedperipherals.common.configuration.APConfig;
+import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
+import de.srendi.advancedperipherals.lib.peripherals.IPeripheralFunction;
 import net.minecraft.Util;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraftforge.fmllegacy.server.ServerLifecycleHooks;
+import net.minecraftforge.server.ServerLifecycleHooks;
 
 import javax.annotation.Nonnull;
 

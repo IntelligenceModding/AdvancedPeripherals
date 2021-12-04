@@ -7,13 +7,9 @@ import de.srendi.advancedperipherals.common.util.TranslationUtil;
 import de.srendi.advancedperipherals.lib.peripherals.DisabledPeripheral;
 import de.srendi.advancedperipherals.lib.peripherals.IBasePeripheral;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.ItemLike;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.function.Supplier;
 
 public abstract class BasePocketUpgrade<T extends IBasePeripheral<?>> extends AbstractPocketUpgrade {
 

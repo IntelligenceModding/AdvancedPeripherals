@@ -1,10 +1,7 @@
 package de.srendi.advancedperipherals.common.util;
 
-import appeng.api.storage.IMEMonitor;
-import appeng.api.storage.data.IAEItemStack;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.core.apis.TableHelper;
-import de.srendi.advancedperipherals.common.addons.appliedenergistics.AppEngApi;
 import net.minecraft.ResourceLocationException;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.IntTag;
@@ -58,7 +55,7 @@ public class ItemUtil {
         return stack;
     }
 
-    //AE2
+   /* //AE2
     public static ItemStack getItemStack(Map<?, ?> table, IMEMonitor<IAEItemStack> monitor) throws LuaException {
         if (table == null || table.isEmpty())
             return ItemStack.EMPTY;
@@ -113,6 +110,6 @@ public class ItemUtil {
     }
 
     //RS
-
+*/
 
 }

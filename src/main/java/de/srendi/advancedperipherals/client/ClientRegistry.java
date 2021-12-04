@@ -1,23 +1,20 @@
 package de.srendi.advancedperipherals.client;
 
+import dan200.computercraft.client.render.TurtleModelLoader;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.container.InventoryManagerScreen;
 import de.srendi.advancedperipherals.common.setup.ContainerTypes;
 import net.minecraft.client.gui.screens.MenuScreens;
-import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.ModelResourceLocation;
-import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ModelBakeEvent;
-import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.client.model.SimpleModelState;
+import net.minecraftforge.client.event.ModelRegistryEvent;
+import net.minecraftforge.client.model.ForgeModelBakery;
+import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
-
-import java.util.HashSet;
-import java.util.Map;
 
 @Mod.EventBusSubscriber(modid = AdvancedPeripherals.MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class ClientRegistry {
@@ -34,9 +31,10 @@ public class ClientRegistry {
     };
 
     @SubscribeEvent
-    public static void onModelBakeEvent(ModelBakeEvent event) {
+    public static void onModelBakeEvent(ModelRegistryEvent event) {
         //Loading turtle models
         //Adapted from CC-Tweaked
+        /*ModelL
         ModelLoader loader = event.getModelLoader();
         Map<ResourceLocation, BakedModel> registry = event.getModelRegistry();
 
@@ -49,6 +47,11 @@ public class ClientRegistry {
             if (baked != null) {
                 registry.put(new ModelResourceLocation(new ResourceLocation(AdvancedPeripherals.MOD_ID, modelName), "inventory"), baked);
             }
+        }*/
+        ModelLoaderRegistry.registerLoader( new ResourceLocation( AdvancedPeripherals.MOD_ID, "turtle" ), TurtleModelLoader.INSTANCE );
+        for( String model : TURTLE_MODELS )
+        {
+            ForgeModelBakery.addSpecialModel( new ModelResourceLocation( new ResourceLocation( AdvancedPeripherals.MOD_ID, model ), "inventory" ) );
         }
     }
 

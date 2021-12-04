@@ -5,13 +5,9 @@ import de.srendi.advancedperipherals.client.HudOverlayHandler;
 import de.srendi.advancedperipherals.common.argoggles.ARRenderAction;
 import io.netty.buffer.ByteBufInputStream;
 import io.netty.buffer.ByteBufOutputStream;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.NbtAccounter;
-import net.minecraft.nbt.NbtIo;
+import net.minecraft.nbt.*;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.common.util.Constants.NBT;
-import net.minecraftforge.fmllegacy.network.NetworkEvent;
+import net.minecraftforge.network.NetworkEvent;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -32,7 +28,7 @@ public class UpdateHudCanvasMessage {
         List<ARRenderAction> canvas = new ArrayList<ARRenderAction>();
         try {
             nbt = NbtIo.read(streamin, NbtAccounter.UNLIMITED);
-            ListTag list = nbt.getList(LIST, NBT.TAG_COMPOUND);
+            ListTag list = nbt.getList(LIST, Tag.TAG_COMPOUND);
             list.forEach(x -> canvas.add(ARRenderAction.deserialize((CompoundTag) x)));
         } catch (IOException e) {
             AdvancedPeripherals.LOGGER.error("Failed to decode UpdateHudCanvasMessage: {}", e.getMessage());

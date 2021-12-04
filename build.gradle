@@ -22,8 +22,10 @@ plugins {
     id "org.jetbrains.kotlin.jvm" version "1.5.21"
 }
 apply plugin: 'net.minecraftforge.gradle'
+apply from: 'https://raw.githubusercontent.com/SizableShrimp/Forge-Class-Remapper/main/classremapper.gradle'
 
-def javaVersion = JavaLanguageVersion.of(16)
+
+def javaVersion = JavaLanguageVersion.of(17)
 
 java {
     toolchain {
@@ -38,7 +40,7 @@ tasks.withType(JavaExec).configureEach {
 }
 
 wrapper {
-    gradleVersion = '7.1'
+    gradleVersion = '7.3'
     distributionType = Wrapper.DistributionType.ALL
 }
 
@@ -211,6 +213,14 @@ repositories {
             includeGroup "site.siredvin.ttoolkit"
         }
     }
+
+    maven {
+        name = "Srendis repo"
+        url = "https://srendi.jfrog.io/artifactory/default-maven-local/"
+        content {
+            includeGroup "site.siredvin.ttoolkit"
+        }
+    }
 }
 
 configurations {
@@ -232,18 +242,17 @@ dependencies {
     // Curios
     runtimeOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}")
     // JEI
-    runtimeOnly fg.deobf("mezz.jei:jei-${jei_version}")
+    //runtimeOnly fg.deobf("mezz.jei:jei-${jei_version}")
 
     // Minecolonies
-    implementation (fg.deobf("com.ldtteam:minecolonies:${minecolonies_version}") {
+    /*implementation (fg.deobf("com.ldtteam:minecolonies:${minecolonies_version}") {
         exclude group: "mezz.jei", module: "*"
     })
     implementation fg.deobf("com.ldtteam:structurize:${structurize_version}")
     runtimeOnly fg.deobf("com.ldtteam:multi-piston:${multipiston_version}")
     runtimeOnly fg.deobf("com.ldtteam:domum_ornamentum:${domumornamentum_version}:universal")
     runtimeOnly fg.deobf("com.ldtteam:blockui:${blockui_version}")
-
-    implementation fg.deobf("appeng:appliedenergistics2:${appliedenergistics_version}")
+    */
 
     testModImplementation sourceSets.main.output
 

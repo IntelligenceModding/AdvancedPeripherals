@@ -1,7 +1,6 @@
 package de.srendi.advancedperipherals.client;
 
 import net.minecraft.client.KeyMapping;
-import net.minecraftforge.fmlclient.registry.ClientRegistry;
 import org.lwjgl.glfw.GLFW;
 
 public class KeyBindings {
@@ -10,7 +9,7 @@ public class KeyBindings {
             "keybind.advancedperipherals.category");
 
     public static void register() {
-        ClientRegistry.registerKeyBinding(DESCRIPTION_KEYBINDING);
+        net.minecraftforge.client.ClientRegistry.registerKeyBinding(DESCRIPTION_KEYBINDING);
     }
 
 }

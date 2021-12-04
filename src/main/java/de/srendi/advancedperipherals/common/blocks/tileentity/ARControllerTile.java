@@ -7,11 +7,11 @@ import de.srendi.advancedperipherals.common.setup.TileEntityTypes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.util.Constants.BlockFlags;
-import net.minecraftforge.common.util.Constants.NBT;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -63,7 +63,7 @@ public class ARControllerTile extends PeripheralTileEntity<ARControllerPeriphera
             virtualScreenSize = Optional.of(nbt.getIntArray(VIRTUAL_SCREEN_SIZE));
         else
             virtualScreenSize = Optional.empty();
-        ListTag list = nbt.getList(CANVAS, NBT.TAG_COMPOUND);
+        ListTag list = nbt.getList(CANVAS, Tag.TAG_COMPOUND);
         canvas.clear();
         for (int i = 0; i < list.size(); i++) {
             CompoundTag c = list.getCompound(i);
@@ -104,7 +104,7 @@ public class ARControllerTile extends PeripheralTileEntity<ARControllerPeriphera
     public ClientboundBlockEntityDataPacket getUpdatePacket() {
         CompoundTag nbt = new CompoundTag();
         save(nbt);
-        return new ClientboundBlockEntityDataPacket(getBlockPos(), -1, nbt);
+        return ClientboundBlockEntityDataPacket.create(this, BlockEntity::getUpdateTag);
     }
 
     @Override
@@ -136,7 +136,7 @@ public class ARControllerTile extends PeripheralTileEntity<ARControllerPeriphera
 
     private void blockChanged() {
         setChanged();
-        level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), BlockFlags.BLOCK_UPDATE);
+        level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), 3);
     }
 
     /**

@@ -6,7 +6,6 @@ import dan200.computercraft.api.turtle.TurtleSide;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.ChunkyPeripheral;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
-import de.srendi.advancedperipherals.common.setup.Items;
 import de.srendi.advancedperipherals.lib.turtle.PeripheralTurtleUpgrade;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.resources.ResourceLocation;

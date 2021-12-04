@@ -6,9 +6,9 @@ import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
 import de.srendi.advancedperipherals.common.addons.computercraft.operations.SingleOperation;
 import de.srendi.advancedperipherals.common.addons.computercraft.operations.SingleOperationContext;
+import de.srendi.advancedperipherals.common.addons.computercraft.owner.TurtlePeripheralOwner;
 import de.srendi.advancedperipherals.common.util.DataStorageUtil;
 import de.srendi.advancedperipherals.lib.metaphysics.IAutomataCoreTier;
-import de.srendi.advancedperipherals.common.addons.computercraft.owner.TurtlePeripheralOwner;
 import net.minecraft.core.BlockPos;
 
 import java.util.ArrayList;

@@ -8,15 +8,18 @@ on:
     branches:
       - "1.16"
       - "1.17"
+      - "1.18"
+
   pull_request:
     branches:
       - "1.16"
       - "1.17"
+      - "1.18"
 
 jobs:
   build:
 
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     permissions:
       contents: read
       packages: write
@@ -41,7 +44,6 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
-
       - name: Collect dependencies
         run: ./gradlew dependencies
         env:
@@ -53,7 +55,6 @@ jobs:
           ./gradlew test
           ./gradlew testServer
           xvfb-run ./gradlew testClient
-
       - name: Build with Gradle
         run: ./gradlew build -Dsnapshot=true
         env:

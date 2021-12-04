@@ -13,9 +13,9 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.common.util.FakePlayer;
-import net.minecraftforge.fmllegacy.network.NetworkRegistry;
-import net.minecraftforge.fmllegacy.network.PacketDistributor;
-import net.minecraftforge.fmllegacy.network.simple.SimpleChannel;
+import net.minecraftforge.network.NetworkRegistry;
+import net.minecraftforge.network.PacketDistributor;
+import net.minecraftforge.network.simple.SimpleChannel;
 
 public class MNetwork {
     private static final String PROTOCOL_VERSION = Integer.toString(1);
@@ -56,7 +56,7 @@ public class MNetwork {
     }
 
     public static ClientboundBlockEntityDataPacket createTEUpdatePacket(BlockEntity tile) {
-        return new ClientboundBlockEntityDataPacket(tile.getBlockPos(), -1, tile.getUpdateTag());
+        return ClientboundBlockEntityDataPacket.create(tile);
     }
 
     public static void sendToAllAround(Object mes, ResourceKey<Level> dim, BlockPos pos, int radius) {

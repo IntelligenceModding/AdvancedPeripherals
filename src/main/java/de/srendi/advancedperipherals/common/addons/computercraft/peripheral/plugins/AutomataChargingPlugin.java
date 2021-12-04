@@ -4,11 +4,11 @@ import dan200.computercraft.api.lua.IArguments;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.lua.MethodResult;
-import de.srendi.advancedperipherals.common.configuration.APConfig;
-import de.srendi.advancedperipherals.lib.peripherals.AutomataCorePeripheral;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.FuelAbility;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.PeripheralOwnerAbility;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.TurtlePeripheralOwner;
+import de.srendi.advancedperipherals.common.configuration.APConfig;
+import de.srendi.advancedperipherals.lib.peripherals.AutomataCorePeripheral;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.energy.CapabilityEnergy;
 

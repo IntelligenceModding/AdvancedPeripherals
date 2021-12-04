@@ -3,7 +3,6 @@ package de.srendi.advancedperipherals;
 import de.srendi.advancedperipherals.client.HudOverlayHandler;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.setup.Blocks;
-import de.srendi.advancedperipherals.common.setup.CCRegistration;
 import de.srendi.advancedperipherals.common.setup.Registration;
 import de.srendi.advancedperipherals.common.village.VillageStructures;
 import de.srendi.advancedperipherals.network.MNetwork;

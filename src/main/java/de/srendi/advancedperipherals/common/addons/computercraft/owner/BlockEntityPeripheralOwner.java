@@ -1,10 +1,10 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.owner;
 
-import de.srendi.advancedperipherals.lib.peripherals.IPeripheralTileEntity;
 import de.srendi.advancedperipherals.common.blocks.base.APTileEntityBlock;
 import de.srendi.advancedperipherals.common.blocks.tileentity.InventoryManagerTile;
 import de.srendi.advancedperipherals.common.util.DataStorageUtil;
 import de.srendi.advancedperipherals.common.util.fakeplayer.APFakePlayer;
+import de.srendi.advancedperipherals.lib.peripherals.IPeripheralTileEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;

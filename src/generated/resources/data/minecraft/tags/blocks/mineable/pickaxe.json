@@ -4,7 +4,6 @@
     "advancedperipherals:environment_detector",
     "advancedperipherals:chat_box",
     "advancedperipherals:player_detector",
-    "advancedperipherals:me_bridge",
     "advancedperipherals:energy_detector",
     "advancedperipherals:peripheral_casing",
     "advancedperipherals:ar_controller",
@@ -12,7 +11,6 @@
     "advancedperipherals:redstone_integrator",
     "advancedperipherals:block_reader",
     "advancedperipherals:geo_scanner",
-    "advancedperipherals:colony_integrator",
     "advancedperipherals:nbt_storage"
   ]
 }

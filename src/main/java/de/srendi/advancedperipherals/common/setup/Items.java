@@ -8,7 +8,7 @@ import de.srendi.advancedperipherals.common.items.ARGogglesItem;
 import de.srendi.advancedperipherals.common.items.MemoryCardItem;
 import de.srendi.advancedperipherals.common.items.WeakAutomataCore;
 import net.minecraft.world.item.Item;
-import net.minecraftforge.fmllegacy.RegistryObject;
+import net.minecraftforge.registries.RegistryObject;
 
 public class Items {
 

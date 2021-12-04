@@ -4,14 +4,12 @@
     "advancedperipherals:environment_detector",
     "advancedperipherals:chat_box",
     "advancedperipherals:player_detector",
-    "advancedperipherals:me_bridge",
     "advancedperipherals:energy_detector",
     "advancedperipherals:ar_controller",
     "advancedperipherals:inventory_manager",
     "advancedperipherals:redstone_integrator",
     "advancedperipherals:block_reader",
     "advancedperipherals:geo_scanner",
-    "advancedperipherals:colony_integrator",
     "advancedperipherals:nbt_storage"
   ]
 }

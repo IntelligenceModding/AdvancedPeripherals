@@ -2,10 +2,10 @@ package de.srendi.advancedperipherals.common.addons.computercraft.peripheral;
 
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
+import de.srendi.advancedperipherals.common.addons.computercraft.owner.BlockEntityPeripheralOwner;
 import de.srendi.advancedperipherals.common.blocks.tileentity.RedstoneIntegratorTile;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
-import de.srendi.advancedperipherals.common.addons.computercraft.owner.BlockEntityPeripheralOwner;
 import net.minecraft.core.Direction;
 
 public class RedstoneIntegratorPeripheral extends BasePeripheral<BlockEntityPeripheralOwner<RedstoneIntegratorTile>> {

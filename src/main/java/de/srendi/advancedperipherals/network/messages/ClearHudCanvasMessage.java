@@ -2,7 +2,7 @@ package de.srendi.advancedperipherals.network.messages;
 
 import de.srendi.advancedperipherals.client.HudOverlayHandler;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.fmllegacy.network.NetworkEvent;
+import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
 

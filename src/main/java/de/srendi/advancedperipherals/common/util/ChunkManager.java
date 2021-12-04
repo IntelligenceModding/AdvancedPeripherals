@@ -8,11 +8,11 @@ import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraftforge.common.world.ForgeChunkManager;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.server.ServerStartedEvent;
+import net.minecraftforge.event.server.ServerStoppingEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fmllegacy.server.ServerLifecycleHooks;
-import net.minecraftforge.fmlserverevents.FMLServerStartedEvent;
-import net.minecraftforge.fmlserverevents.FMLServerStoppingEvent;
+import net.minecraftforge.server.ServerLifecycleHooks;
 import org.apache.logging.log4j.Level;
 import org.jetbrains.annotations.NotNull;
 
@@ -166,12 +166,12 @@ public class ChunkManager extends SavedData {
     }
 
     @SubscribeEvent
-    public static void beforeServerStopped(FMLServerStoppingEvent event) {
+    public static void beforeServerStopped(ServerStoppingEvent event) {
         ChunkManager.get(event.getServer().overworld()).stop();
     }
 
     @SubscribeEvent
-    public static void afterServerStarted(FMLServerStartedEvent event) {
+    public static void afterServerStarted(ServerStartedEvent event) {
         ChunkManager.get(event.getServer().overworld()).init();
     }
 
