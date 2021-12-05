@@ -256,7 +256,8 @@ dependencies {
 
     testModImplementation sourceSets.main.output
 
-    testImplementation fg.deobf("site.siredvin.ttoolkit:ttoolkit-${minecraft_version}:${ttoolkit_version}")
+    //Removed until fully ported
+    //testImplementation fg.deobf("site.siredvin.ttoolkit:ttoolkit-${minecraft_version}:${ttoolkit_version}")
     testImplementation "org.junit.jupiter:junit-jupiter-api:${junit_version}"
     testImplementation "org.junit.jupiter:junit-jupiter-params:${junit_version}"
     testImplementation "org.hamcrest:hamcrest:${hamcrest_version}"
