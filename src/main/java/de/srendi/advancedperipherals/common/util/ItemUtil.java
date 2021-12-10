@@ -1,7 +1,9 @@
 package de.srendi.advancedperipherals.common.util;
 
+import appeng.api.storage.MEMonitorStorage;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.core.apis.TableHelper;
+import de.srendi.advancedperipherals.common.addons.appliedenergistics.AppEngApi;
 import net.minecraft.ResourceLocationException;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.IntTag;
@@ -55,8 +57,8 @@ public class ItemUtil {
         return stack;
     }
 
-   /* //AE2
-    public static ItemStack getItemStack(Map<?, ?> table, IMEMonitor<IAEItemStack> monitor) throws LuaException {
+   //AE2
+    public static ItemStack getItemStack(Map<?, ?> table, MEMonitorStorage monitor) throws LuaException {
         if (table == null || table.isEmpty())
             return ItemStack.EMPTY;
 
@@ -85,7 +87,7 @@ public class ItemUtil {
         return stack;
     }
 
-    private static CompoundTag getTag(ItemStack stack, Map<?, ?> table, IMEMonitor<IAEItemStack> monitor) throws LuaException {
+    private static CompoundTag getTag(ItemStack stack, Map<?, ?> table, MEMonitorStorage monitor) throws LuaException {
         CompoundTag nbt = NBTUtil.fromText(TableHelper.optStringField(table, "json", null));
         if (nbt == null) {
             nbt = NBTUtil.fromBinary(TableHelper.optStringField(table, "tag", null));
@@ -96,7 +98,7 @@ public class ItemUtil {
         return nbt;
     }
 
-    private static CompoundTag parseNBTHash(ItemStack stack, Map<?, ?> table, IMEMonitor<IAEItemStack> monitor) throws LuaException {
+    private static CompoundTag parseNBTHash(ItemStack stack, Map<?, ?> table, MEMonitorStorage monitor) throws LuaException {
         String nbt = TableHelper.optStringField(table, "nbt", null);
         if (nbt == null || nbt.isEmpty())
             return null;
@@ -108,8 +110,5 @@ public class ItemUtil {
         tag.put("_apPlaceholder_", IntTag.valueOf(1));
         return tag;
     }
-
-    //RS
-*/
 
 }

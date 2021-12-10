@@ -6,10 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
-## [0.7.7r] - 2021-12-05
+## [0.7.7r] - 2021-12-10
 # 1.18 port
 This is the 1.18 port of Advanced Peripherals.
-This version does not contain any mod integration except for curios.
+This version comes with applied energistics 2 and curios integration.
 
 ## [0.7.6r] - 2021-12-03
 
