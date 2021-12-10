@@ -84,6 +84,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
             return transferableAmount;
 
         extracted = monitor.extract(targetStack, transferableAmount, Actionable.MODULATE, tile.getActionSource());
+        stack.setCount((int) extracted);
         remaining = ItemHandlerHelper.insertItemStacked(targetInventory, stack, false);
 
         if (!remaining.isEmpty()) {
