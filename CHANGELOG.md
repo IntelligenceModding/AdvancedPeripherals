@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+## [0.7.7.1r] - 2021-12-10
+
+### Fixed
+- Fixed a critical dupe bug with the ME Bridge.
+
 ## [0.7.7r] - 2021-12-10
 # 1.18 port
 This is the 1.18 port of Advanced Peripherals.
