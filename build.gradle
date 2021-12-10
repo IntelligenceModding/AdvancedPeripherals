@@ -270,8 +270,8 @@ dependencies {
 changelog {
     version = "${project.version}"
     path = "${project.projectDir}/CHANGELOG.md"
-    header = "[${-> version.get()}] - ${new SimpleDateFormat("yyyy-MM-dd").format(new Date())}"
-    headerParserRegex = ~/\d+\.\d+\.\d+\w/
+    header = "[${minecraft_version}-${-> version.get()}] - ${new SimpleDateFormat("yyyy-MM-dd").format(new Date())}"
+    headerParserRegex = ~/\d+\.\d+\d+\.?\d?-\d+\.\d\w?\.?\d?\w?\.?\d?\w/
     itemPrefix = "-"
     keepUnreleasedSection = true
     unreleasedTerm = "[Unreleased]"
