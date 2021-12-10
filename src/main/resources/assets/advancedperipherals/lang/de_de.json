@@ -73,7 +73,7 @@
   "block.advancedperipherals.colony_integrator": "Kolonie Integrator",
 
   "turtle.advancedperipherals.chat_box_turtle": "Chatty",
-  "turtle.advancedperipherals.environment_detector_turtle": "Umgebungs",
+  "turtle.advancedperipherals.environment_turtle": "Umgebungs",
   "turtle.advancedperipherals.player_detector_turtle": "Spieler",
   "turtle.advancedperipherals.chunky_turtle": "Chunky",
   "turtle.advancedperipherals.geoscanner_turtle": "Geoscanning",

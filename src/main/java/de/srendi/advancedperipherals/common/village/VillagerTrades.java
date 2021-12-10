@@ -3,6 +3,7 @@ package de.srendi.advancedperipherals.common.village;
 import dan200.computercraft.shared.Registry;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.setup.Blocks;
+import de.srendi.advancedperipherals.common.setup.CCRegistration;
 import de.srendi.advancedperipherals.common.setup.Items;
 import de.srendi.advancedperipherals.common.setup.Villagers;
 import de.srendi.advancedperipherals.common.util.ItemUtil;
@@ -49,9 +50,9 @@ public class VillagerTrades {
             trades.get(2).add(new VillagerTrade(VillagerTrade.Type.ItemForEmerald).setItem(Registry.ModBlocks.MONITOR_NORMAL.get())
                     .setEmeraldPrice(1).setMaxUses(8).setXp(6).setItemAmount(8));
 
-            trades.get(3).add(new VillagerTrade(VillagerTrade.Type.ItemForEmerald).setItem(ItemUtil.makeTurtle(ItemUtil.TURTLE_NORMAL, AdvancedPeripherals.MOD_ID + ":environment_detector_turtle"))
+            trades.get(3).add(new VillagerTrade(VillagerTrade.Type.ItemForEmerald).setItem(ItemUtil.makeTurtle(ItemUtil.TURTLE_NORMAL, CCRegistration.ID.ENVIRONMENT_TURTLE.toString()))
                     .setEmeraldPrice(3).setMaxUses(4).setXp(10));
-            trades.get(3).add(new VillagerTrade(VillagerTrade.Type.ItemForEmerald).setItem(ItemUtil.makePocket(ItemUtil.POCKET_NORMAL, AdvancedPeripherals.MOD_ID + ":player_pocket"))
+            trades.get(3).add(new VillagerTrade(VillagerTrade.Type.ItemForEmerald).setItem(ItemUtil.makePocket(ItemUtil.POCKET_NORMAL, CCRegistration.ID.PLAYER_POCKET.toString()))
                     .setEmeraldPrice(2).setMaxUses(4).setXp(10));
             trades.get(3).add(new VillagerTrade(VillagerTrade.Type.EmeraldForItem).setItem(Items.CHUNK_CONTROLLER.get())
                     .setEmeraldPrice(1).setMaxUses(6).setXp(8));

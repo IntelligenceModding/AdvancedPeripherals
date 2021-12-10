@@ -73,8 +73,8 @@
   "block.advancedperipherals.colony_integrator": "Integratore di colonie",
 
   "turtle.advancedperipherals.chat_box_turtle": "Chiacchierone",
-  "turtle.advancedperipherals.environment_detector_turtle": "Ambiente",
-  "turtle.advancedperipherals.player_detector_turtle": "Giocatore",
+  "turtle.advancedperipherals.environment_turtle": "Ambiente",
+  "turtle.advancedperipherals.player_turtle": "Giocatore",
   "turtle.advancedperipherals.chunky_turtle": "Grosso",
   "turtle.advancedperipherals.geoscanner_turtle": "Geoscanning",
   "turtle.advancedperipherals.weak_automata": "Automa debole",

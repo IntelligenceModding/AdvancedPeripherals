@@ -13,7 +13,6 @@ import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 public class TurtleChunkyUpgrade extends PeripheralTurtleUpgrade<ChunkyPeripheral> {
-    public static final ResourceLocation ID = new ResourceLocation(AdvancedPeripherals.MOD_ID, "chunky_turtle");
 
     public TurtleChunkyUpgrade(ResourceLocation id, ItemStack stack) {
         super(id, stack);

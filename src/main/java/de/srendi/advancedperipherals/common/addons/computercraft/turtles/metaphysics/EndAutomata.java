@@ -11,7 +11,6 @@ import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 public class EndAutomata extends ClockwiseAnimatedTurtleUpgrade<EndAutomataCorePeripheral> {
-    public static final ResourceLocation ID = new ResourceLocation(AdvancedPeripherals.MOD_ID, "end_automata");
 
     public EndAutomata(ResourceLocation id, ItemStack stack) {
         super(id, stack);

@@ -11,8 +11,6 @@ import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 public class HusbandryAutomata extends ClockwiseAnimatedTurtleUpgrade<HusbandryAutomataCorePeripheral> {
-    public static final ResourceLocation ID = new ResourceLocation(AdvancedPeripherals.MOD_ID, "husbandry_automata");
-
     public HusbandryAutomata(ResourceLocation id, ItemStack stack) {
         super(id, stack);
     }

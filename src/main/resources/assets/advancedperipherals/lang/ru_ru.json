@@ -74,8 +74,8 @@
 	"block.advancedperipherals.colony_integrator": "Интегратор колонии",
 
 	"turtle.advancedperipherals.chat_box_turtle": "Болтушка",
-	"turtle.advancedperipherals.environment_detector_turtle": "Окружающая среда",
-	"turtle.advancedperipherals.player_detector_turtle": "Игрок",
+	"turtle.advancedperipherals.environment_turtle": "Окружающая среда",
+	"turtle.advancedperipherals.player_turtle": "Игрок",
 	"turtle.advancedperipherals.chunky_turtle": "Пухлый",
 	"turtle.advancedperipherals.geoscanner_turtle": "Геосканирование",
 	"turtle.advancedperipherals.weak_automata": "Автомат: Слабый",

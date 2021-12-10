@@ -10,7 +10,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class PocketGeoScannerUpgrade extends BasePocketUpgrade<GeoScannerPeripheral> {
-    public static final ResourceLocation ID = new ResourceLocation(AdvancedPeripherals.MOD_ID, "geoscanner_pocket");
 
     public PocketGeoScannerUpgrade(ResourceLocation id, ItemStack stack) {
         super(id, stack);

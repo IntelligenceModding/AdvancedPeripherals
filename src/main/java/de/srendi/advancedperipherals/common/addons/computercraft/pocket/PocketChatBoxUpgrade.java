@@ -9,7 +9,6 @@ import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 public class PocketChatBoxUpgrade extends BasePocketUpgrade<ChatBoxPeripheral> {
-    public static final ResourceLocation ID = new ResourceLocation(AdvancedPeripherals.MOD_ID, "chatty_pocket");
 
     public PocketChatBoxUpgrade(ResourceLocation id, ItemStack stack) {
         super(id, stack);

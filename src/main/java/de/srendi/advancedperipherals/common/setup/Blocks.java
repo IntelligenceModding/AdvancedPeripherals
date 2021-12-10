@@ -28,11 +28,11 @@ public class Blocks {
     }
 
     public static final RegistryObject<Block> ENVIRONMENT_DETECTOR = register("environment_detector", () -> new APTileEntityBlock<>(TileEntityTypes.ENVIRONMENT_DETECTOR, false),
-            () -> new APBlockItem(Blocks.ENVIRONMENT_DETECTOR.get(), TurtleEnvironmentDetectorUpgrade.ID, PocketEnvironmentUpgrade.ID, APConfig.PERIPHERALS_CONFIG.ENABLE_ENVIRONMENT_DETECTOR::get));
+            () -> new APBlockItem(Blocks.ENVIRONMENT_DETECTOR.get(), CCRegistration.ID.ENVIRONMENT_TURTLE, CCRegistration.ID.ENVIRONMENT_POCKET, APConfig.PERIPHERALS_CONFIG.ENABLE_ENVIRONMENT_DETECTOR::get));
     public static final RegistryObject<Block> CHAT_BOX = register("chat_box", () -> new APTileEntityBlock<>(TileEntityTypes.CHAT_BOX, false),
-            () -> new APBlockItem(Blocks.CHAT_BOX.get(), TurtleChatBoxUpgrade.ID, PocketChatBoxUpgrade.ID, APConfig.PERIPHERALS_CONFIG.ENABLE_CHAT_BOX::get));
+            () -> new APBlockItem(Blocks.CHAT_BOX.get(), CCRegistration.ID.CHATTY_TURTLE, CCRegistration.ID.CHATTY_POCKET, APConfig.PERIPHERALS_CONFIG.ENABLE_CHAT_BOX::get));
     public static final RegistryObject<Block> PLAYER_DETECTOR = register("player_detector", PlayerDetectorBlock::new,
-            () -> new APBlockItem(Blocks.PLAYER_DETECTOR.get(), TurtlePlayerDetectorUpgrade.ID, PocketPlayerDetectorUpgrade.ID, APConfig.PERIPHERALS_CONFIG.ENABLE_PLAYER_DETECTOR::get));
+            () -> new APBlockItem(Blocks.PLAYER_DETECTOR.get(), CCRegistration.ID.PLAYER_TURTLE, CCRegistration.ID.PLAYER_POCKET, APConfig.PERIPHERALS_CONFIG.ENABLE_PLAYER_DETECTOR::get));
  public static final RegistryObject<Block> ENERGY_DETECTOR = register("energy_detector", () -> new APTileEntityBlock<>(TileEntityTypes.ENERGY_DETECTOR, true),
             () -> new APBlockItem(Blocks.ENERGY_DETECTOR.get(), null, null, APConfig.PERIPHERALS_CONFIG.ENABLE_ENERGY_DETECTOR::get));
     public static final RegistryObject<Block> PERIPHERAL_CASING = register("peripheral_casing", BaseBlock::new,
@@ -46,7 +46,7 @@ public class Blocks {
     public static final RegistryObject<Block> BLOCK_READER = register("block_reader", () -> new APTileEntityBlock<>(TileEntityTypes.BLOCK_READER, true),
             () -> new APBlockItem(Blocks.BLOCK_READER.get(), null, null, APConfig.PERIPHERALS_CONFIG.ENABLE_BLOCK_READER::get));
     public static final RegistryObject<Block> GEO_SCANNER = register("geo_scanner", () -> new APTileEntityBlock<>(TileEntityTypes.GEO_SCANNER, false),
-            () -> new APBlockItem(Blocks.GEO_SCANNER.get(), TurtleGeoScannerUpgrade.ID, PocketGeoScannerUpgrade.ID, APConfig.PERIPHERALS_CONFIG.ENABLE_GEO_SCANNER::get));
+            () -> new APBlockItem(Blocks.GEO_SCANNER.get(), CCRegistration.ID.GEOSCANNER_TURTLE, CCRegistration.ID.GEOSCANNER_POCKET, APConfig.PERIPHERALS_CONFIG.ENABLE_GEO_SCANNER::get));
     public static final RegistryObject<Block> NBT_STORAGE = register("nbt_storage", () -> new APTileEntityBlock<>(TileEntityTypes.NBT_STORAGE, true),
             () -> new APBlockItem(Blocks.NBT_STORAGE.get(), null, null, APConfig.PERIPHERALS_CONFIG.ENABLE_NBT_STORAGE::get));
 

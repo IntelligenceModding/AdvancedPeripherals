@@ -2,7 +2,6 @@ package de.srendi.advancedperipherals.common.addons.computercraft.turtles.metaph
 
 import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
-import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.metaphysics.OverpoweredWeakAutomataCorePeripheral;
 import de.srendi.advancedperipherals.lib.turtle.ClockwiseAnimatedTurtleUpgrade;
 import net.minecraft.client.resources.model.ModelResourceLocation;
@@ -11,9 +10,8 @@ import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 public class OverpoweredWeakAutomata extends ClockwiseAnimatedTurtleUpgrade<OverpoweredWeakAutomataCorePeripheral> {
-    public static final ResourceLocation ID = new ResourceLocation(AdvancedPeripherals.MOD_ID, "overpowered_weak_automata");
 
-public OverpoweredWeakAutomata(ResourceLocation id, ItemStack stack) {
+    public OverpoweredWeakAutomata(ResourceLocation id, ItemStack stack) {
         super(id, stack);
     }
 

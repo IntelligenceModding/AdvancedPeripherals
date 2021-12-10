@@ -11,7 +11,6 @@ import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 public class WeakAutomata extends ClockwiseAnimatedTurtleUpgrade<WeakAutomataCorePeripheral> {
-    public static final ResourceLocation ID = new ResourceLocation(AdvancedPeripherals.MOD_ID, "weak_automata");
 
     public WeakAutomata(ResourceLocation id, ItemStack stack) {
         super(id, stack);
