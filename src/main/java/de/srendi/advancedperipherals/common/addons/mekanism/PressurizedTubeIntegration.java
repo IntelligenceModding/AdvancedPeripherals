@@ -1,12 +1,10 @@
 package de.srendi.advancedperipherals.common.addons.mekanism;
 
-import com.brandon3055.draconicevolution.blocks.tileentity.TileEnergyCore;
 import dan200.computercraft.api.lua.LuaFunction;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.lib.peripherals.TileEntityIntegrationPeripheral;
 import mekanism.api.math.FloatingLong;
-import mekanism.common.content.network.transmitter.UniversalCable;
-import mekanism.common.item.ItemNetworkReader;
+import mekanism.common.tile.transmitter.TileEntityPressurizedTube;
 import mekanism.common.tile.transmitter.TileEntityUniversalCable;
 import net.minecraft.tileentity.TileEntity;
 import org.apache.logging.log4j.Level;
@@ -14,16 +12,16 @@ import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Field;
 
-public class UniversalCableIntegration extends TileEntityIntegrationPeripheral<TileEntityUniversalCable> {
+public class PressurizedTubeIntegration extends TileEntityIntegrationPeripheral<TileEntityPressurizedTube> {
 
-    public UniversalCableIntegration(TileEntity entity) {
+    public PressurizedTubeIntegration(TileEntity entity) {
         super(entity);
     }
 
     @NotNull
     @Override
     public String getType() {
-        return "universalCable";
+        return "pressurizedTube";
     }
 
     @LuaFunction(mainThread = true)
@@ -51,12 +49,12 @@ public class UniversalCableIntegration extends TileEntityIntegrationPeripheral<T
 
     @LuaFunction(mainThread = true)
     public long getStored() {
-        return tileEntity.getTransmitter().buffer.getEnergy().getValue();
+        return tileEntity.getTransmitter().chemicalTank.getGasTank().getStored();
     }
 
     @LuaFunction(mainThread = true)
     public long getNetworkStored() {
-        return tileEntity.getTransmitter().getTransmitterNetwork().getBuffer().getValue();
+        return tileEntity.getTransmitter().getTransmitterNetwork().chemicalTank.getGasTank().getStored();
     }
 
 

@@ -11,7 +11,7 @@ import mekanism.common.tile.multiblock.TileEntityBoilerValve;
 import mekanism.common.tile.multiblock.TileEntityDynamicValve;
 import mekanism.common.tile.multiblock.TileEntityInductionPort;
 import mekanism.common.tile.multiblock.TileEntityThermalEvaporationValve;
-import mekanism.common.tile.transmitter.TileEntityUniversalCable;
+import mekanism.common.tile.transmitter.*;
 
 public class Integration implements Runnable {
     @Override
@@ -25,6 +25,10 @@ public class Integration implements Runnable {
         IntegrationPeripheralProvider.registerTileEntityIntegration(FluidTankIntegration::new, TileEntityFluidTank.class);
         IntegrationPeripheralProvider.registerTileEntityIntegration(DynamicTankIntegration::new, TileEntityDynamicValve.class);
         IntegrationPeripheralProvider.registerTileEntityIntegration(UniversalCableIntegration::new, TileEntityUniversalCable.class);
+        IntegrationPeripheralProvider.registerTileEntityIntegration(LogisticalTransporterIntegration::new, TileEntityLogisticalTransporter.class);
+        IntegrationPeripheralProvider.registerTileEntityIntegration(MechanicalPipeIntegration::new, TileEntityMechanicalPipe.class);
+        IntegrationPeripheralProvider.registerTileEntityIntegration(PressurizedTubeIntegration::new, TileEntityPressurizedTube.class);
+        IntegrationPeripheralProvider.registerTileEntityIntegration(ThermodynamicConductorIntegration::new, TileEntityThermodynamicConductor.class);
         IntegrationPeripheralProvider.registerTileEntityIntegration(GenericMekanismIntegration::new, TileEntityMekanism.class, 100);
 
         EnvironmentDetectorPeripheral.addIntegrationPlugin(EnvironmentDetectorPlugin::new);
