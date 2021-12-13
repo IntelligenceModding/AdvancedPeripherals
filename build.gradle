@@ -216,7 +216,8 @@ dependencies {
 
     // Minecolonies
     // Remove this from runtime when using `runData`
-    implementation fg.deobf("com.minecolonies:minecolonies:${minecolonies_version}:universal")
+    // The latest minecolonies version is not uploaded on their repo.
+    implementation fg.deobf("curse.maven:minecolonies-${minecolonies_version}")
     implementation fg.deobf("com.ldtteam:structurize:${structurize_version}:universal")
     // Botania with deps
     implementation fg.deobf("vazkii.botania:Botania:${botania_version}")

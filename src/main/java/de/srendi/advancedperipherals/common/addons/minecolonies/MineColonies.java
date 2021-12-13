@@ -4,7 +4,6 @@ import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IVisitorData;
 import com.minecolonies.api.colony.buildings.IBuilding;
-import com.minecolonies.api.colony.buildings.IBuildingWorker;
 import com.minecolonies.api.colony.managers.interfaces.IBuildingManager;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.colony.workorders.IWorkOrder;
@@ -115,12 +114,12 @@ public class MineColonies {
      * @param work the home building
      * @return a map with information about the job building
      */
-    public static Object jobToObject(IBuildingWorker work) {
+    public static Object jobToObject(IBuilding work) {
         Map<String, Object> map = new HashMap<>();
         map.put("location", LuaConverter.posToObject(work.getLocation().getInDimensionLocation()));
         map.put("type", work.getSchematicName());
         map.put("level", work.getBuildingLevel());
-        map.put("name", work.getJobName());
+        map.put("name", work.getCustomBuildingName());
         return map;
     }
 
@@ -171,7 +170,7 @@ public class MineColonies {
         structureData.put("mirror", building.isMirrored());
 
         List<Object> citizensData = new ArrayList<>();
-        for (ICitizenData citizen : building.getAssignedCitizen()) {
+        for (ICitizenData citizen : building.getAllAssignedCitizen()) {
             Map<String, Object> citizenData = new HashMap<>();
             citizenData.put("id", citizen.getId());
             citizenData.put("name", citizen.getName());
