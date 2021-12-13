@@ -27,9 +27,9 @@ body:
       description: Do you play on a server?
       multiple: false
       options:
-        - Yes
-        - No
-        - LAN
+        - "Yes"
+        - "No"
+        - "LAN"
     validations:
       required: true
   - type: dropdown
