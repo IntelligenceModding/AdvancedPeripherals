@@ -8,7 +8,8 @@ import appeng.api.networking.storage.IStorageService;
 import appeng.api.stacks.AEFluidKey;
 import appeng.api.stacks.AEItemKey;
 import appeng.api.stacks.AEKey;
-import appeng.api.storage.MEMonitorStorage;
+import appeng.api.storage.IStorageMonitorableAccessor;
+import appeng.api.storage.MEStorage;
 import dan200.computercraft.shared.util.NBTUtil;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
@@ -26,9 +27,9 @@ import java.util.*;
 
 public class AppEngApi {
 
-    public static Pair<Long, AEItemKey> findAEStackFromItemStack(MEMonitorStorage monitor, ItemStack item) {
+    public static Pair<Long, AEItemKey> findAEStackFromItemStack(MEStorage monitor, ItemStack item) {
         Pair<Long, AEItemKey> stack = null;
-        for (Object2LongMap.Entry<AEKey> temp : monitor.getCachedAvailableStacks()) {
+        for (Object2LongMap.Entry<AEKey> temp : monitor.getAvailableStacks()) {
             if (temp.getKey() instanceof AEItemKey key) {
                 if (key.matches(item)) {
                     stack = Pair.of(temp.getLongValue(), key);
@@ -39,9 +40,9 @@ public class AppEngApi {
         return stack;
     }
 
-    public static List<Object> listStacks(MEMonitorStorage monitor, ICraftingService service, int flag) {
+    public static List<Object> listStacks(MEStorage monitor, ICraftingService service, int flag) {
         List<Object> items = new ArrayList<>();
-        for (Object2LongMap.Entry<AEKey> aeKey : monitor.getCachedAvailableStacks()) {
+        for (Object2LongMap.Entry<AEKey> aeKey : monitor.getAvailableStacks()) {
             if(aeKey.getKey() instanceof AEItemKey itemKey) {
                 if (flag == 1) {
                     if (aeKey.getLongValue() < 0)
@@ -57,9 +58,9 @@ public class AppEngApi {
         return items;
     }
 
-    public static List<Object> listFluids(MEMonitorStorage monitor, ICraftingService service, int flag) {
+    public static List<Object> listFluids(MEStorage monitor, ICraftingService service, int flag) {
         List<Object> items = new ArrayList<>();
-        for (Object2LongMap.Entry<AEKey> aeKey : monitor.getCachedAvailableStacks()) {
+        for (Object2LongMap.Entry<AEKey> aeKey : monitor.getAvailableStacks()) {
             if(aeKey.getKey() instanceof AEFluidKey itemKey) {
                 if (flag == 1) {
                     if (aeKey.getLongValue() < 0)
@@ -146,8 +147,8 @@ public class AppEngApi {
         return result;
     }
 
-    public static CompoundTag findMatchingTag(ItemStack stack, String nbtHash, MEMonitorStorage monitor) {
-        for (Object2LongMap.Entry<AEKey> aeKey : monitor.getCachedAvailableStacks()) {
+    public static CompoundTag findMatchingTag(ItemStack stack, String nbtHash, MEStorage monitor) {
+        for (Object2LongMap.Entry<AEKey> aeKey : monitor.getAvailableStacks()) {
             if (aeKey.getKey() instanceof AEItemKey itemKey) {
                 if (aeKey.getLongValue() > 0 && itemKey.getItem() == stack.getItem()){
                     CompoundTag tag = itemKey.toStack().getTag();
@@ -161,8 +162,8 @@ public class AppEngApi {
         return null;
     }
 
-    public static ItemStack findMatchingFingerprint(String fingerprint, MEMonitorStorage monitor) {
-        for (Object2LongMap.Entry<AEKey> aeKey : monitor.getCachedAvailableStacks()) {
+    public static ItemStack findMatchingFingerprint(String fingerprint, MEStorage monitor) {
+        for (Object2LongMap.Entry<AEKey> aeKey : monitor.getAvailableStacks()) {
             if (aeKey.getKey() instanceof AEItemKey itemKey) {
                 if (aeKey.getLongValue() > 0) {
                     if (fingerprint.equals(getFingerpint(itemKey)))
@@ -188,7 +189,7 @@ public class AppEngApi {
         return "";
     }
 
-    public static MEMonitorStorage getMonitor(IGridNode node) {
+    public static MEStorage getMonitor(IGridNode node) {
         return node.getGrid().getService(IStorageService.class).getInventory();
     }
 

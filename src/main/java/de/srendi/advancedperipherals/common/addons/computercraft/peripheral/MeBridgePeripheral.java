@@ -8,7 +8,7 @@ import appeng.api.networking.crafting.ICraftingService;
 import appeng.api.networking.crafting.ICraftingSimulationRequester;
 import appeng.api.stacks.AEItemKey;
 import appeng.api.stacks.AEKey;
-import appeng.api.storage.MEMonitorStorage;
+import appeng.api.storage.MEStorage;
 import dan200.computercraft.api.lua.IArguments;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
@@ -63,7 +63,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     }
 
     protected long _exportItem(@NotNull IArguments arguments, @NotNull IItemHandler targetInventory) throws LuaException {
-        MEMonitorStorage monitor = AppEngApi.getMonitor(node);
+        MEStorage monitor = AppEngApi.getMonitor(node);
         ItemStack stack = ItemUtil.getItemStack(arguments.getTable(0), monitor);
         AEItemKey targetStack = AEItemKey.of(stack);
         if (targetStack == null)
@@ -94,7 +94,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     }
 
     protected int _importItem(@NotNull IArguments arguments, @NotNull IItemHandler targetInventory) throws LuaException {
-        MEMonitorStorage monitor = AppEngApi.getMonitor(node);
+        MEStorage monitor = AppEngApi.getMonitor(node);
         ItemStack stack = ItemUtil.getItemStack(arguments.getTable(0), monitor);
         AEItemKey aeStack = AEItemKey.of(stack);
         int amount = stack.getCount();
@@ -122,7 +122,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
     @LuaFunction
     public final MethodResult craftItem(IComputerAccess computer, IArguments arguments) throws LuaException {
-        MEMonitorStorage monitor = AppEngApi.getMonitor(node);
+        MEStorage monitor = AppEngApi.getMonitor(node);
         ItemStack itemToCraft = ItemUtil.getItemStack(arguments.getTable(0), monitor);
         if (itemToCraft.isEmpty())
             throw new LuaException("Item " + itemToCraft + " does not exists");
@@ -160,14 +160,14 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
     @LuaFunction(mainThread = true)
     public final boolean isItemCrafting(IArguments arguments) throws LuaException {
-        MEMonitorStorage monitor = AppEngApi.getMonitor(node);
+        MEStorage monitor = AppEngApi.getMonitor(node);
         ICraftingService grid = node.getGrid().getService(ICraftingService.class);
         return grid.isRequesting(AppEngApi.findAEStackFromItemStack(monitor, ItemUtil.getItemStack(arguments.getTable(0), monitor)).getRight());
     }
 
     @LuaFunction(mainThread = true)
     public final boolean isItemCraftable(IArguments arguments) throws LuaException {
-        MEMonitorStorage monitor = AppEngApi.getMonitor(node);
+        MEStorage monitor = AppEngApi.getMonitor(node);
         return getCraftingService().isCraftable(AppEngApi.findAEStackFromItemStack(monitor, ItemUtil.getItemStack(arguments.getTable(0), monitor)).getRight());
     }
 
@@ -197,11 +197,11 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
     @LuaFunction(mainThread = true)
     public final MethodResult getItem(IArguments arguments) throws LuaException {
-        MEMonitorStorage monitor = AppEngApi.getMonitor(node);
+        MEStorage monitor = AppEngApi.getMonitor(node);
         ItemStack stack = ItemUtil.getItemStack(arguments.getTable(0), monitor);
         if (stack.isEmpty())
             return MethodResult.of(null, "Cannot determinate item for search");
-        for (Object2LongMap.Entry<AEKey> potentialStack : monitor.getCachedAvailableStacks()) {
+        for (Object2LongMap.Entry<AEKey> potentialStack : monitor.getAvailableStacks()) {
             if (potentialStack.getKey() instanceof AEItemKey itemKey) {
                 if (itemKey.matches(stack))
                     return MethodResult.of(AppEngApi.getObjectFromStack(new Pair<>(potentialStack.getLongValue(), itemKey), getCraftingService(), 0));

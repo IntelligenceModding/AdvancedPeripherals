@@ -1,6 +1,6 @@
 package de.srendi.advancedperipherals.common.util;
 
-import appeng.api.storage.MEMonitorStorage;
+import appeng.api.storage.MEStorage;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.core.apis.TableHelper;
 import de.srendi.advancedperipherals.common.addons.appliedenergistics.AppEngApi;
@@ -58,7 +58,7 @@ public class ItemUtil {
     }
 
    //AE2
-    public static ItemStack getItemStack(Map<?, ?> table, MEMonitorStorage monitor) throws LuaException {
+    public static ItemStack getItemStack(Map<?, ?> table, MEStorage monitor) throws LuaException {
         if (table == null || table.isEmpty())
             return ItemStack.EMPTY;
 
@@ -87,7 +87,7 @@ public class ItemUtil {
         return stack;
     }
 
-    private static CompoundTag getTag(ItemStack stack, Map<?, ?> table, MEMonitorStorage monitor) throws LuaException {
+    private static CompoundTag getTag(ItemStack stack, Map<?, ?> table, MEStorage monitor) throws LuaException {
         CompoundTag nbt = NBTUtil.fromText(TableHelper.optStringField(table, "json", null));
         if (nbt == null) {
             nbt = NBTUtil.fromBinary(TableHelper.optStringField(table, "tag", null));
@@ -98,7 +98,7 @@ public class ItemUtil {
         return nbt;
     }
 
-    private static CompoundTag parseNBTHash(ItemStack stack, Map<?, ?> table, MEMonitorStorage monitor) throws LuaException {
+    private static CompoundTag parseNBTHash(ItemStack stack, Map<?, ?> table, MEStorage monitor) throws LuaException {
         String nbt = TableHelper.optStringField(table, "nbt", null);
         if (nbt == null || nbt.isEmpty())
             return null;

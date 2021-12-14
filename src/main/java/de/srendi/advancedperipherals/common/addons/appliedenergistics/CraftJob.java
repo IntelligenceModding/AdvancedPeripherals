@@ -8,7 +8,7 @@ import appeng.api.networking.crafting.ICraftingSimulationRequester;
 import appeng.api.networking.security.IActionSource;
 import appeng.api.networking.storage.IStorageService;
 import appeng.api.stacks.AEItemKey;
-import appeng.api.storage.MEMonitorStorage;
+import appeng.api.storage.MEStorage;
 import dan200.computercraft.api.lua.ILuaCallback;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.MethodResult;
@@ -77,7 +77,7 @@ public class CraftJob implements ILuaCallback {
 
         IStorageService storage = grid.getService(IStorageService.class);
         ICraftingService crafting = grid.getService(ICraftingService.class);
-        MEMonitorStorage monitor = storage.getInventory();
+        MEStorage monitor = storage.getInventory();
         ItemStack itemstack = item;
         Pair<Long, AEItemKey> aeItem = AppEngApi.findAEStackFromItemStack(monitor, itemstack);
         AdvancedPeripherals.debug("DEBUG1 " + aeItem.getRight() + " " + aeItem.getLeft());
