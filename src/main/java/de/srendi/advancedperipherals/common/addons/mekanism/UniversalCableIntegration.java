@@ -42,7 +42,7 @@ public class UniversalCableIntegration extends TileEntityIntegrationPeripheral<T
             Field field = tileEntity.getClass().getDeclaredField("prevTransferAmount");
             field.setAccessible(true);
             FloatingLong throughput = (FloatingLong) field.get(tileEntity);
-            return throughput.getValue();
+            return (long) (throughput.getValue() / 2.5);
         } catch (NoSuchFieldException | IllegalAccessException ex) {
             AdvancedPeripherals.debug("Could not access the throughout of the pylon! " + ex.getMessage(), Level.ERROR);
         }
@@ -51,23 +51,23 @@ public class UniversalCableIntegration extends TileEntityIntegrationPeripheral<T
 
     @LuaFunction(mainThread = true)
     public long getStored() {
-        return tileEntity.getTransmitter().buffer.getEnergy().getValue();
+        return (long) (tileEntity.getTransmitter().buffer.getEnergy().getValue() / 2.5);
     }
 
     @LuaFunction(mainThread = true)
     public long getNetworkStored() {
-        return tileEntity.getTransmitter().getTransmitterNetwork().getBuffer().getValue();
+        return (long) (tileEntity.getTransmitter().getTransmitterNetwork().getBuffer().getValue() / 2.5);
     }
 
 
     @LuaFunction(mainThread = true)
     public long getCapacity() {
-        return tileEntity.getTransmitter().getCapacity();
+        return (long) (tileEntity.getTransmitter().getCapacity() / 2.5);
     }
 
     @LuaFunction(mainThread = true)
     public long getNetworkCapacity() {
-        return tileEntity.getTransmitter().getTransmitterNetwork().getCapacity();
+        return (long) (tileEntity.getTransmitter().getTransmitterNetwork().getCapacity() / 2.5);
     }
 
     @LuaFunction(mainThread = true)
