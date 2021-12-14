@@ -59,7 +59,6 @@ public class UniversalCableIntegration extends TileEntityIntegrationPeripheral<T
         return (long) (tileEntity.getTransmitter().getTransmitterNetwork().getBuffer().getValue() / 2.5);
     }
 
-
     @LuaFunction(mainThread = true)
     public long getCapacity() {
         return (long) (tileEntity.getTransmitter().getCapacity() / 2.5);

@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+## [1.16.5-0.7.6r] - 2021-12-14
+
+### Fixed
+- Crashes with newer minecolonies versions.
+
+### Added
+- Transmitter integration for mekanism
 
 ## [1.18-0.7.7.1r] - 2021-12-10
 
