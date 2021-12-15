@@ -6,17 +6,29 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
-## [0.7.7.1r] - 2021-12-10
+
+### Fixed
+- [#228]Typo of metaphysics config file. You may need to redo some configurations.
+
+## [1.16.5-0.7.6r] - 2021-12-14
+
+### Fixed
+- Crashes with newer minecolonies versions.
+
+### Added
+- Transmitter integration for mekanism
+
+## [1.18-0.7.7.1r] - 2021-12-10
 
 ### Fixed
 - Fixed a critical dupe bug with the ME Bridge.
 
-## [0.7.7r] - 2021-12-10
+## [1.18-0.7.7r] - 2021-12-10
 # 1.18 port
 This is the 1.18 port of Advanced Peripherals.
 This version comes with applied energistics 2 and curios integration.
 
-## [0.7.6r] - 2021-12-03
+## [1.17.1-0.7.6r] - 2021-12-03
 
 # This is the last 1.17 version of Advanced Peripherals.
 We will now work on a 1.18 port. Supported is 1.16 and 1.18. Join our discord to read why.
@@ -25,13 +37,13 @@ Rest in piece 1.17!
 ### Fixed
 Added compatibility with the latest CC version.
 
-## [0.7.5.1r] - 2021-11-26
+## [1.17.1-0.7.5.1r] - 2021-11-26
 
 ### Added
-- Added back me bridge and colony integrator recipe. 
+- Added back me bridge and colony integrator recipe.
 - Added back colony integrator pocket upgrade.
 
-## [0.7.5r] - 2021-11-26
+## [1.17.1-0.7.5r] - 2021-11-26
 
 ### Attention
 We changed our config system. So if you want to update the mod in your pack, don't forget to use the new files.
@@ -57,7 +69,7 @@ This is the port of 0.7.4r, 0.7.4.1b and 0.7.5r as 1.17 version.
   De divided the config files in 4 different ones. General, World, Peripherals and Metaphysics.
 - [#210]Added a new config value, `villagerStructureWeight`. Can be used to change the weight of the structures of our villager.
 
-## [0.7.4.1b] - 2021-11-15
+## [1.16.5-0.7.4.1b] - 2021-11-15
 
 ### Attention
 We changed our config system. So if you want to update the mod in your pack, don't forget to use the new files.
@@ -68,7 +80,7 @@ We also recommend you to delete the old one, no one needs crap.
   De divided the config files in 4 different ones. General, World, Peripherals and Metaphysics.
 - [#210]Added a new config value, `villagerStructureWeight`. Can be used to change the weight of the structures of our villager.
 
-## [0.7.4r] - 2021-11-14
+## [1.16.5-0.7.4r] - 2021-11-14
 
 ### Fixed
 
@@ -86,7 +98,7 @@ We also recommend you to delete the old one, no one needs crap.
 - Added `getManaNeeded` to the mana pool integration
 - [#186] Added draconic evolution integration for the reactor and the energy core.
 
-## [0.7.3r] - 2021-10-13
+## [1.17.1-0.7.3r] - 2021-10-13
 
 ### Removed
 
@@ -110,13 +122,13 @@ We also recommend you to delete the old one, no one needs crap.
 - [#194]Fixed error spamming when using `getRequests()` from the colony integrator
 - [#203]Fixed Inventory Manager api, slot argument behaviour is now correct.
 
-## [0.7.2r] - 2021-09-06
+## [1.17.1-0.7.2r] - 2021-09-06
 
 ### Fixed
 
 - `lookAtBlock` now correctly shows tags
 
-## [0.7.1r] - 2021-08-23
+## [1.16.5-0.7.1r] - 2021-08-23
 
 ### Fixed
 
