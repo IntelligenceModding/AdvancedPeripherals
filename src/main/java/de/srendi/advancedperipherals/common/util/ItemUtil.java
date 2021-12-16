@@ -57,7 +57,7 @@ public class ItemUtil {
         return stack;
     }
 
-   //AE2
+    //AE2
     public static ItemStack getItemStack(Map<?, ?> table, MEStorage monitor) throws LuaException {
         if (table == null || table.isEmpty())
             return ItemStack.EMPTY;

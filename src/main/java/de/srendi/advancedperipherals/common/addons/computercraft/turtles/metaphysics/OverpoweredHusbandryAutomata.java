@@ -2,7 +2,6 @@ package de.srendi.advancedperipherals.common.addons.computercraft.turtles.metaph
 
 import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
-import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.metaphysics.OverpoweredHusbandryAutomataCorePeripheral;
 import de.srendi.advancedperipherals.lib.turtle.ClockwiseAnimatedTurtleUpgrade;
 import net.minecraft.client.resources.model.ModelResourceLocation;

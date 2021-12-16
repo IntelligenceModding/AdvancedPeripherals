@@ -38,9 +38,9 @@ import java.util.Map;
 public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwner<MeBridgeTile>> {
 
     public static final String TYPE = "meBridge";
-    private IGridNode node;
     private final ICraftingSimulationRequester requester;
     private final MeBridgeTile tile;
+    private IGridNode node;
 
     public MeBridgePeripheral(MeBridgeTile tileEntity) {
         super(TYPE, new BlockEntityPeripheralOwner<>(tileEntity));

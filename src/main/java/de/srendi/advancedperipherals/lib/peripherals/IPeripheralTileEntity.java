@@ -8,6 +8,7 @@ import net.minecraft.world.level.block.state.BlockState;
 
 public interface IPeripheralTileEntity {
     CompoundTag getPeripheralSettings();
+
     void markSettingsChanged();
 
     default <T extends BlockEntity> void handleTick(Level level, BlockState state, BlockEntityType<T> type) {

@@ -8,7 +8,6 @@ import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ForgeModelBakery;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
@@ -34,10 +33,9 @@ public class ClientRegistry {
     public static void onModelBakeEvent(ModelRegistryEvent event) {
         //Loading turtle models
         //Adapted from CC-Tweaked
-        ModelLoaderRegistry.registerLoader( new ResourceLocation( AdvancedPeripherals.MOD_ID, "turtle" ), TurtleModelLoader.INSTANCE );
-        for( String model : TURTLE_MODELS )
-        {
-            ForgeModelBakery.addSpecialModel( new ModelResourceLocation( new ResourceLocation( AdvancedPeripherals.MOD_ID, model ), "inventory" ) );
+        ModelLoaderRegistry.registerLoader(new ResourceLocation(AdvancedPeripherals.MOD_ID, "turtle"), TurtleModelLoader.INSTANCE);
+        for (String model : TURTLE_MODELS) {
+            ForgeModelBakery.addSpecialModel(new ModelResourceLocation(new ResourceLocation(AdvancedPeripherals.MOD_ID, model), "inventory"));
         }
     }
 

@@ -91,7 +91,7 @@ public class Events {
 
     private static boolean hasPlayedBefore(Player player) {
         CompoundTag tag = player.getPersistentData().getCompound(Player.PERSISTED_NBT_TAG);
-        if(tag.getBoolean(PLAYED_BEFORE)) {
+        if (tag.getBoolean(PLAYED_BEFORE)) {
             return true;
         } else {
             tag.putBoolean(PLAYED_BEFORE, true);

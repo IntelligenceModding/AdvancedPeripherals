@@ -8,7 +8,6 @@ import appeng.api.networking.storage.IStorageService;
 import appeng.api.stacks.AEFluidKey;
 import appeng.api.stacks.AEItemKey;
 import appeng.api.stacks.AEKey;
-import appeng.api.storage.IStorageMonitorableAccessor;
 import appeng.api.storage.MEStorage;
 import dan200.computercraft.shared.util.NBTUtil;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
@@ -23,7 +22,10 @@ import org.apache.logging.log4j.Level;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class AppEngApi {
 
@@ -43,7 +45,7 @@ public class AppEngApi {
     public static List<Object> listStacks(MEStorage monitor, ICraftingService service, int flag) {
         List<Object> items = new ArrayList<>();
         for (Object2LongMap.Entry<AEKey> aeKey : monitor.getAvailableStacks()) {
-            if(aeKey.getKey() instanceof AEItemKey itemKey) {
+            if (aeKey.getKey() instanceof AEItemKey itemKey) {
                 if (flag == 1) {
                     if (aeKey.getLongValue() < 0)
                         continue;
@@ -61,7 +63,7 @@ public class AppEngApi {
     public static List<Object> listFluids(MEStorage monitor, ICraftingService service, int flag) {
         List<Object> items = new ArrayList<>();
         for (Object2LongMap.Entry<AEKey> aeKey : monitor.getAvailableStacks()) {
-            if(aeKey.getKey() instanceof AEFluidKey itemKey) {
+            if (aeKey.getKey() instanceof AEFluidKey itemKey) {
                 if (flag == 1) {
                     if (aeKey.getLongValue() < 0)
                         continue;
@@ -150,7 +152,7 @@ public class AppEngApi {
     public static CompoundTag findMatchingTag(ItemStack stack, String nbtHash, MEStorage monitor) {
         for (Object2LongMap.Entry<AEKey> aeKey : monitor.getAvailableStacks()) {
             if (aeKey.getKey() instanceof AEItemKey itemKey) {
-                if (aeKey.getLongValue() > 0 && itemKey.getItem() == stack.getItem()){
+                if (aeKey.getLongValue() > 0 && itemKey.getItem() == stack.getItem()) {
                     CompoundTag tag = itemKey.toStack().getTag();
                     String hash = NBTUtil.getNBTHash(tag);
                     if (nbtHash.equals(hash))

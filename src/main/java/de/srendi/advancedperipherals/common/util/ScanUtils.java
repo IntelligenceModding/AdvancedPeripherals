@@ -14,6 +14,7 @@ public class ScanUtils {
     public static void traverseBlocks(Level world, BlockPos center, int radius, BiConsumer<BlockState, BlockPos> consumer) {
         traverseBlocks(world, center, radius, consumer, false);
     }
+
     public static void traverseBlocks(Level world, BlockPos center, int radius, BiConsumer<BlockState, BlockPos> consumer, boolean relativePosition) {
         int x = center.getX();
         int y = center.getY();

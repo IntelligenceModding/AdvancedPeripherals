@@ -31,10 +31,9 @@ public class CraftJob implements ILuaCallback {
     private final IGridNode node;
     private final IActionSource source;
     private final ICraftingSimulationRequester requester;
-    private Future<ICraftingPlan> futureJob;
     private final ItemStack item;
     private final Level world;
-
+    private Future<ICraftingPlan> futureJob;
     private boolean startedCrafting = false;
 
     private MethodResult result;
@@ -50,9 +49,9 @@ public class CraftJob implements ILuaCallback {
     }
 
     protected void fireEvent(boolean success, @Nullable String exception) {
-            this.result = MethodResult.of(success, exception);
-            this.exception = new LuaException(exception);
-            this.computer.queueEvent(EVENT, success, exception);
+        this.result = MethodResult.of(success, exception);
+        this.exception = new LuaException(exception);
+        this.computer.queueEvent(EVENT, success, exception);
 
     }
 
@@ -91,17 +90,17 @@ public class CraftJob implements ILuaCallback {
     }
 
     public void maybeCraft() {
-        if(startedCrafting || futureJob == null || !futureJob.isDone())
+        if (startedCrafting || futureJob == null || !futureJob.isDone())
             return;
         ICraftingPlan job = null;
         try {
             job = futureJob.get();
-        } catch(ExecutionException | InterruptedException ex) {
+        } catch (ExecutionException | InterruptedException ex) {
             AdvancedPeripherals.debug("Tried to get job, but job calculation is not done. Should be done.", org.apache.logging.log4j.Level.FATAL);
             ex.printStackTrace();
         }
 
-        if(job == null) {
+        if (job == null) {
             AdvancedPeripherals.debug("Job is null, should not be null.", org.apache.logging.log4j.Level.FATAL);
             return;
         }

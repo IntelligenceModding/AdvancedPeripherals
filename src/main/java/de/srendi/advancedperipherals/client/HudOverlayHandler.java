@@ -41,6 +41,7 @@ public class HudOverlayHandler {
         instance.canvas.clear();
     }
 
+    //TODO: Use the forge Overlay System instead
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public void onRender(RenderGameOverlayEvent.Post event) {
         if (event.getWindow() == null) return;

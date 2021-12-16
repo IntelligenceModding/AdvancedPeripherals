@@ -2,7 +2,6 @@ package de.srendi.advancedperipherals.common.data;
 
 import dan200.computercraft.api.pocket.PocketUpgradeDataProvider;
 import dan200.computercraft.api.pocket.PocketUpgradeSerialiser;
-import de.srendi.advancedperipherals.common.addons.computercraft.pocket.*;
 import de.srendi.advancedperipherals.common.setup.Blocks;
 import de.srendi.advancedperipherals.common.setup.CCRegistration;
 import net.minecraft.data.DataGenerator;

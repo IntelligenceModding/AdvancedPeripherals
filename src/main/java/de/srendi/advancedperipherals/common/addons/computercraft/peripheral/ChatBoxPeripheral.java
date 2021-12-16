@@ -69,34 +69,34 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
             for (ServerPlayer player : ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers()) {
                 player.sendMessage(preparedMessage, Util.NIL_UUID);
             }
-                return MethodResult.of(true);
-            });
-        }
+            return MethodResult.of(true);
+        });
+    }
 
-        @LuaFunction(mainThread = true)
-        public final MethodResult sendMessage (@Nonnull IArguments arguments) throws LuaException {
-            return withChatOperation(ignored -> {
-                String message = arguments.getString(0);
-                MutableComponent preparedMessage = new TextComponent(String.format(PREFIX_FORMAT, arguments.optString(1, APConfig.PERIPHERALS_CONFIG.DEFAULT_CHAT_BOX_PREFIX.get()))).append(message);
-                for (ServerPlayer player : ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers()) {
-                    player.sendMessage(preparedMessage, Util.NIL_UUID);
-                }
-                return MethodResult.of(true);
-            });
-        }
-
-        @LuaFunction(mainThread = true)
-        public final MethodResult sendMessageToPlayer (@Nonnull IArguments arguments) throws LuaException {
-            return withChatOperation(ignored -> {
-                String message = arguments.getString(0);
-                String playerName = arguments.getString(1);
-                MutableComponent preparedMessage = new TextComponent(String.format(PREFIX_FORMAT, arguments.optString(2, APConfig.PERIPHERALS_CONFIG.DEFAULT_CHAT_BOX_PREFIX.get()))).append(message);
-                for (ServerPlayer player : ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers()) {
-                    if (player.getName().getString().equals(playerName))
-                        player.sendMessage(preparedMessage, Util.NIL_UUID);
-                }
-                    return MethodResult.of(true);
-                });
+    @LuaFunction(mainThread = true)
+    public final MethodResult sendMessage(@Nonnull IArguments arguments) throws LuaException {
+        return withChatOperation(ignored -> {
+            String message = arguments.getString(0);
+            MutableComponent preparedMessage = new TextComponent(String.format(PREFIX_FORMAT, arguments.optString(1, APConfig.PERIPHERALS_CONFIG.DEFAULT_CHAT_BOX_PREFIX.get()))).append(message);
+            for (ServerPlayer player : ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers()) {
+                player.sendMessage(preparedMessage, Util.NIL_UUID);
             }
+            return MethodResult.of(true);
+        });
+    }
 
-        }
+    @LuaFunction(mainThread = true)
+    public final MethodResult sendMessageToPlayer(@Nonnull IArguments arguments) throws LuaException {
+        return withChatOperation(ignored -> {
+            String message = arguments.getString(0);
+            String playerName = arguments.getString(1);
+            MutableComponent preparedMessage = new TextComponent(String.format(PREFIX_FORMAT, arguments.optString(2, APConfig.PERIPHERALS_CONFIG.DEFAULT_CHAT_BOX_PREFIX.get()))).append(message);
+            for (ServerPlayer player : ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers()) {
+                if (player.getName().getString().equals(playerName))
+                    player.sendMessage(preparedMessage, Util.NIL_UUID);
+            }
+            return MethodResult.of(true);
+        });
+    }
+
+}

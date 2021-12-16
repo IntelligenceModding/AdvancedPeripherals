@@ -20,7 +20,7 @@ public class BaseBlock extends Block implements IHarvesterBlock {
         this(Properties.of(Material.METAL).strength(1, 5).sound(SoundType.METAL).noOcclusion().requiresCorrectToolForDrops(), harvestTag);
     }
 
-    public BaseBlock(Properties properties,Tag.Named<Block> harvestTag) {
+    public BaseBlock(Properties properties, Tag.Named<Block> harvestTag) {
         super(properties);
         this.harvestTag = harvestTag;
     }

@@ -76,7 +76,7 @@ public abstract class BaseTileEntityBlock extends BaseEntityBlock implements IHa
             return null;
         return (level1, blockPos, blockState, entity) -> {
             if (entity instanceof IPeripheralTileEntity blockEntity) {
-                 blockEntity.handleTick(level, state, type);
+                blockEntity.handleTick(level, state, type);
             }
         };
     }

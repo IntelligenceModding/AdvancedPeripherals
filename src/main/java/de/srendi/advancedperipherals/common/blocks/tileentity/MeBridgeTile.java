@@ -31,15 +31,13 @@ import java.util.Optional;
 
 public class MeBridgeTile extends PeripheralTileEntity<MeBridgePeripheral> implements IActionSource, IActionHost, IInWorldGridNodeHost, ICraftingSimulationRequester {
 
-    private boolean initialized = false;
-
     private final List<CraftJob> jobs = new ArrayList<>();
+    private boolean initialized = false;
+    private IManagedGridNode mainNode = GridHelper.createManagedNode(this, MeBridgeEntityListener.INSTANCE);
 
     public MeBridgeTile(BlockPos pos, BlockState state) {
         super(TileEntityTypes.ME_BRIDGE.get(), pos, state);
     }
-
-    private IManagedGridNode mainNode = GridHelper.createManagedNode(this, MeBridgeEntityListener.INSTANCE);
 
     @NotNull
     @Override
@@ -65,7 +63,7 @@ public class MeBridgeTile extends PeripheralTileEntity<MeBridgePeripheral> imple
                 initialized = true;
                 AdvancedPeripherals.debug("DEBUG2 " + mainNode.isReady(), org.apache.logging.log4j.Level.ERROR);
             }
-            for(CraftJob job : jobs) {
+            for (CraftJob job : jobs) {
                 job.maybeCraft();
             }
             jobs.removeIf(CraftJob::isCraftingStarted);

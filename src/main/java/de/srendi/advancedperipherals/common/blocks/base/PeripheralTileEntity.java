@@ -35,11 +35,11 @@ import java.util.List;
 public abstract class PeripheralTileEntity<T extends BasePeripheral<?>> extends BaseContainerBlockEntity implements WorldlyContainer, MenuProvider, IPeripheralTileEntity {
     // TODO: move inventory logic to another tile entity?
     private static final String PERIPHERAL_SETTINGS_KEY = "peripheralSettings";
-    private LazyOptional<? extends IItemHandler> handler;
     protected CompoundTag peripheralSettings;
     protected NonNullList<ItemStack> items;
     @Nullable
     protected T peripheral = null;
+    private LazyOptional<? extends IItemHandler> handler;
     private LazyOptional<IPeripheral> peripheralCap;
 
     public PeripheralTileEntity(BlockEntityType<?> tileEntityTypeIn, BlockPos pos, BlockState state) {

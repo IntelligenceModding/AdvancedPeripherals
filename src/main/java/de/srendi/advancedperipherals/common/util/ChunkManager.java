@@ -23,58 +23,46 @@ import java.util.*;
 @Mod.EventBusSubscriber(modid = AdvancedPeripherals.MOD_ID)
 public class ChunkManager extends SavedData {
 
-    private static class LoadChunkRecord {
-
-        private static final String POS_TAG = "pos";
-        private static final String DIMENSION_NAME_TAG = "dimensionName";
-
-        private final @NotNull String dimensionName;
-        private final @NotNull ChunkPos pos;
-        private long lastTouch;
-
-        public LoadChunkRecord(@NotNull String dimensionName, @NotNull ChunkPos pos) {
-            this.dimensionName = dimensionName;
-            this.pos = pos;
-            this.lastTouch = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC);
-        }
-
-        public @NotNull ChunkPos getPos() {
-            return pos;
-        }
-
-        public @NotNull String getDimensionName() {
-            return dimensionName;
-        }
-
-        public void touch() {
-            lastTouch = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC);
-        }
-
-        public boolean isValid() {
-            long currentEpoch = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC);
-            return lastTouch + APConfig.PERIPHERALS_CONFIG.CHUNK_LOAD_VALID_TIME.get() >= currentEpoch;
-        }
-
-        public @NotNull CompoundTag serialize() {
-            CompoundTag tag = new CompoundTag();
-            tag.putString(DIMENSION_NAME_TAG, dimensionName);
-            tag.put(POS_TAG, NBTUtil.toNBT(pos));
-            return tag;
-        }
-
-        public static LoadChunkRecord deserialize(@NotNull CompoundTag tag) {
-            return new LoadChunkRecord(tag.getString(DIMENSION_NAME_TAG), NBTUtil.chunkPosFromNBT(tag.getCompound(POS_TAG)));
-        }
-    }
-
     private static final String DATA_NAME = AdvancedPeripherals.MOD_ID + "_ForcedChunks";
     private static final String FORCED_CHUNKS_TAG = "forcedChunks";
     private static int tickCounter = 0;
     private final Map<UUID, LoadChunkRecord> forcedChunks = new HashMap<>();
     private boolean initialized = false;
-
     public ChunkManager() {
         super();
+    }
+
+    public static @NotNull ChunkManager get(@NotNull ServerLevel level) {
+        return level.getDataStorage().computeIfAbsent(ChunkManager::load, ChunkManager::new, DATA_NAME);
+    }
+
+    public static ChunkManager load(@NotNull CompoundTag data) {
+        ChunkManager manager = new ChunkManager();
+        CompoundTag forcedData = data.getCompound(FORCED_CHUNKS_TAG);
+        for (String key : forcedData.getAllKeys()) {
+            manager.forcedChunks.put(UUID.fromString(key), LoadChunkRecord.deserialize(forcedData.getCompound(key)));
+        }
+        return manager;
+    }
+
+    @SubscribeEvent
+    public static void beforeServerStopped(ServerStoppingEvent event) {
+        ChunkManager.get(event.getServer().overworld()).stop();
+    }
+
+    @SubscribeEvent
+    public static void afterServerStarted(ServerStartedEvent event) {
+        ChunkManager.get(event.getServer().overworld()).init();
+    }
+
+    @SubscribeEvent
+    public static void serverTick(TickEvent.ServerTickEvent event) {
+        if (event.phase == TickEvent.Phase.END) {
+            tickCounter++;
+            if (tickCounter % (APConfig.PERIPHERALS_CONFIG.CHUNK_LOAD_VALID_TIME.get() / 2) == 0) {
+                ChunkManager.get(ServerLifecycleHooks.getCurrentServer().overworld()).cleanup();
+            }
+        }
     }
 
     public synchronized boolean addForceChunk(ServerLevel level, UUID owner, ChunkPos pos) {
@@ -152,36 +140,47 @@ public class ChunkManager extends SavedData {
         return data;
     }
 
-    public static @NotNull ChunkManager get(@NotNull ServerLevel level) {
-        return level.getDataStorage().computeIfAbsent(ChunkManager::load, ChunkManager::new, DATA_NAME);
-    }
+    private static class LoadChunkRecord {
 
-    public static ChunkManager load(@NotNull CompoundTag data) {
-        ChunkManager manager = new ChunkManager();
-        CompoundTag forcedData = data.getCompound(FORCED_CHUNKS_TAG);
-        for (String key: forcedData.getAllKeys()) {
-            manager.forcedChunks.put(UUID.fromString(key), LoadChunkRecord.deserialize(forcedData.getCompound(key)));
+        private static final String POS_TAG = "pos";
+        private static final String DIMENSION_NAME_TAG = "dimensionName";
+
+        private final @NotNull String dimensionName;
+        private final @NotNull ChunkPos pos;
+        private long lastTouch;
+
+        public LoadChunkRecord(@NotNull String dimensionName, @NotNull ChunkPos pos) {
+            this.dimensionName = dimensionName;
+            this.pos = pos;
+            this.lastTouch = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC);
         }
-        return manager;
-    }
 
-    @SubscribeEvent
-    public static void beforeServerStopped(ServerStoppingEvent event) {
-        ChunkManager.get(event.getServer().overworld()).stop();
-    }
+        public static LoadChunkRecord deserialize(@NotNull CompoundTag tag) {
+            return new LoadChunkRecord(tag.getString(DIMENSION_NAME_TAG), NBTUtil.chunkPosFromNBT(tag.getCompound(POS_TAG)));
+        }
 
-    @SubscribeEvent
-    public static void afterServerStarted(ServerStartedEvent event) {
-        ChunkManager.get(event.getServer().overworld()).init();
-    }
+        public @NotNull ChunkPos getPos() {
+            return pos;
+        }
 
-    @SubscribeEvent
-    public static void serverTick(TickEvent.ServerTickEvent event) {
-        if (event.phase == TickEvent.Phase.END) {
-            tickCounter++;
-            if (tickCounter % (APConfig.PERIPHERALS_CONFIG.CHUNK_LOAD_VALID_TIME.get() / 2) == 0) {
-                ChunkManager.get(ServerLifecycleHooks.getCurrentServer().overworld()).cleanup();
-            }
+        public @NotNull String getDimensionName() {
+            return dimensionName;
+        }
+
+        public void touch() {
+            lastTouch = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC);
+        }
+
+        public boolean isValid() {
+            long currentEpoch = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC);
+            return lastTouch + APConfig.PERIPHERALS_CONFIG.CHUNK_LOAD_VALID_TIME.get() >= currentEpoch;
+        }
+
+        public @NotNull CompoundTag serialize() {
+            CompoundTag tag = new CompoundTag();
+            tag.putString(DIMENSION_NAME_TAG, dimensionName);
+            tag.put(POS_TAG, NBTUtil.toNBT(pos));
+            return tag;
         }
     }
 }
