@@ -17,13 +17,13 @@ Adds things like the Me Bridge, various types of turtles, the Chat Box and more.
 [[dependencies.advancedperipherals]]
 modId = "forge"
 mandatory = true
-versionRange = "[38.0.17,)"
+versionRange = "[39.0.5,)"
 ordering = "NONE"
 side = "BOTH"
 [[dependencies.advancedperipherals]]
 modId = "minecraft"
 mandatory = true
-versionRange = "[1.18,)"
+versionRange = "[1.18.1,)"
 ordering = "NONE"
 side = "BOTH"
 [[dependencies.advancedperipherals]]
@@ -41,6 +41,6 @@ side = "BOTH"
 [[dependencies.advancedperipherals]]
 modId = "ae2"
 mandatory = false
-versionRange = "[10.0.0-alpha.2,)"
+versionRange = "[10.0.0-alpha.6,)"
 ordering = "NONE"
 side = "BOTH"
