@@ -207,6 +207,10 @@ repositories {
             includeGroup "com.jozufozu.flywheel"
         }
     }
+    maven {
+        name = "Patchouli Maven"
+        url = 'https://maven.blamejared.com'
+    }
 
     maven {
         name = "SirEdvin's private repository"
@@ -246,8 +250,6 @@ dependencies {
     runtimeOnly fg.deobf("appeng:appliedenergistics2:${appliedenergistics_version}")
     // Curios
     runtimeOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}")
-    // JEI
-    runtimeOnly fg.deobf("mezz.jei:jei-${jei_version}")
 
     // Minecolonies
     implementation (fg.deobf("com.ldtteam:minecolonies:${minecolonies_version}") {
@@ -258,6 +260,8 @@ dependencies {
     runtimeOnly fg.deobf("com.ldtteam:domum_ornamentum:${domumornamentum_version}:universal")
     runtimeOnly fg.deobf("com.ldtteam:blockui:${blockui_version}")
 
+    //Patchouli
+    runtimeOnly "vazkii.patchouli:Patchouli:${patchouli_version}"
 
     testModImplementation sourceSets.main.output
 
@@ -271,6 +275,9 @@ dependencies {
 
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junit_version}"
     // Testing stuff
+    // JEI
+    runtimeOnly fg.deobf("mezz.jei:jei-${jei_version}")
+
 }
 
 changelog {
