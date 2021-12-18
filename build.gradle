@@ -19,7 +19,7 @@ plugins {
     id 'com.matthewprenger.cursegradle' version '1.4.0'
     id 'org.jetbrains.changelog' version '1.2.1'
     id "com.modrinth.minotaur" version "1.2.1"
-    id "org.jetbrains.kotlin.jvm" version "1.5.21"
+    id "org.jetbrains.kotlin.jvm" version "1.6.10"
 }
 apply plugin: 'net.minecraftforge.gradle'
 apply from: 'https://raw.githubusercontent.com/SizableShrimp/Forge-Class-Remapper/main/classremapper.gradle'
@@ -78,6 +78,8 @@ sourceSets {
     }
     testMod {}
 }
+
+
 
 minecraft {
 
@@ -248,14 +250,14 @@ dependencies {
     runtimeOnly fg.deobf("mezz.jei:jei-${jei_version}")
 
     // Minecolonies
-    /*implementation (fg.deobf("com.ldtteam:minecolonies:${minecolonies_version}") {
+    implementation (fg.deobf("com.ldtteam:minecolonies:${minecolonies_version}") {
         exclude group: "mezz.jei", module: "*"
     })
     implementation fg.deobf("com.ldtteam:structurize:${structurize_version}")
     runtimeOnly fg.deobf("com.ldtteam:multi-piston:${multipiston_version}")
     runtimeOnly fg.deobf("com.ldtteam:domum_ornamentum:${domumornamentum_version}:universal")
     runtimeOnly fg.deobf("com.ldtteam:blockui:${blockui_version}")
-    */
+
 
     testModImplementation sourceSets.main.output
 

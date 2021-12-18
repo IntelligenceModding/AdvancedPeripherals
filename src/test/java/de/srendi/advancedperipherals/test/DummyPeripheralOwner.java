@@ -2,20 +2,14 @@ package de.srendi.advancedperipherals.test;
 
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.BasePeripheralOwner;
 import de.srendi.advancedperipherals.common.util.fakeplayer.APFakePlayer;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Function;
 
-public class DummyPeripheralOwner extends BasePeripheralOwner {
+public class DummyPeripheralOwner /*extends BasePeripheralOwner*/ {
 
-    private final CompoundTag dataStorage = new CompoundTag();
+   /* private final CompoundTag dataStorage = new CompoundTag();
 
     @Override
     @Nullable
@@ -87,4 +81,6 @@ public class DummyPeripheralOwner extends BasePeripheralOwner {
     public boolean move(@NotNull Level level, @NotNull BlockPos pos) {
         return false;
     }
+    */
+
 }
