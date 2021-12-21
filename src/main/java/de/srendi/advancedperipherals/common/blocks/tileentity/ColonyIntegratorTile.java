@@ -1,5 +1,6 @@
 package de.srendi.advancedperipherals.common.blocks.tileentity;
 
+import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.ColonyPeripheral;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
 import de.srendi.advancedperipherals.common.setup.TileEntityTypes;
 import net.minecraft.core.BlockPos;

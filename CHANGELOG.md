@@ -13,7 +13,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Fixed
 - [#228]Typo of metaphysics config file. You may need to redo some configurations.
-- [#235]Fixed blurry HUD when opening the journey map fullscreen.
+- [#235]Fixed blurry HUD when opening the journey map full screen.
 - [#236]Fixed patchouli loading
 
 ## [1.16.5-0.7.6r] - 2021-12-14

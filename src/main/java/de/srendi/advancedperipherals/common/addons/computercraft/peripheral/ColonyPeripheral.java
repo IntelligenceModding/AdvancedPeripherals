@@ -1,4 +1,4 @@
-package de.srendi.advancedperipherals.common.blocks.tileentity;
+package de.srendi.advancedperipherals.common.addons.computercraft.peripheral;
 
 import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.colony.ICivilianData;

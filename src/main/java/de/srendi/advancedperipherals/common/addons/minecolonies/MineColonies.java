@@ -76,7 +76,6 @@ public class MineColonies {
         map.put("work", citizen.getWorkBuilding() == null ? null : jobToObject((IBuildingWorker) citizen.getWorkBuilding()));
         map.put("home", citizen.getHomeBuilding() == null ? null : homeToObject(citizen.getHomeBuilding()));
         map.put("betterFood", citizen.needsBetterFood());
-        //For some reason, ICitizenData#isAsleep and isIdleAtJob does not really work, we use this way
         map.put("isAsleep", map.get("state").toString().toLowerCase().contains("sleeping"));
         map.put("isIdle", map.get("state").toString().toLowerCase().contains("idle"));
         citizen.getEntity().ifPresent(entity -> {
