@@ -261,7 +261,7 @@ dependencies {
     runtimeOnly fg.deobf("com.ldtteam:blockui:${blockui_version}")
 
     //Patchouli
-    runtimeOnly "vazkii.patchouli:Patchouli:${patchouli_version}"
+    //runtimeOnly "vazkii.patchouli:Patchouli:${patchouli_version}"
 
     testModImplementation sourceSets.main.output
 

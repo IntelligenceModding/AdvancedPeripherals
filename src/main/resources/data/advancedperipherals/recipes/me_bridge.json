@@ -8,15 +8,15 @@
   "conditions": [
     {
       "type": "forge:mod_loaded",
-      "modid": "appliedenergistics2"
+      "modid": "ae2"
     }
   ],
   "key": {
     "F": {
-      "item": "appliedenergistics2:fluix_block"
+      "item": "ae2:fluix_block"
     },
     "I": {
-      "item": "appliedenergistics2:item_interface"
+      "item": "ae2:interface"
     },
     "A": {
       "item": "advancedperipherals:peripheral_casing"
