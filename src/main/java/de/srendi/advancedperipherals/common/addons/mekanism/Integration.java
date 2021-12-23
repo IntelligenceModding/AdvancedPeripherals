@@ -16,20 +16,8 @@ import mekanism.common.tile.transmitter.*;
 public class Integration implements Runnable {
     @Override
     public void run() {
-        IntegrationPeripheralProvider.registerTileEntityIntegration(BoilerIntegration::new, TileEntityBoilerValve.class);
-        IntegrationPeripheralProvider.registerTileEntityIntegration(ChemicalTankIntegration::new, TileEntityChemicalTank.class);
-        IntegrationPeripheralProvider.registerTileEntityIntegration(DigitalMinerIntegration::new, TileEntityDigitalMiner.class);
-        IntegrationPeripheralProvider.registerTileEntityIntegration(InductionPortIntegration::new, TileEntityInductionPort.class);
-        IntegrationPeripheralProvider.registerTileEntityIntegration(WasteBarrelIntegration::new, TileEntityRadioactiveWasteBarrel.class);
-        IntegrationPeripheralProvider.registerTileEntityIntegration(EvaporationIntegration::new, TileEntityThermalEvaporationValve.class);
-        IntegrationPeripheralProvider.registerTileEntityIntegration(FluidTankIntegration::new, TileEntityFluidTank.class);
-        IntegrationPeripheralProvider.registerTileEntityIntegration(DynamicTankIntegration::new, TileEntityDynamicValve.class);
-        IntegrationPeripheralProvider.registerTileEntityIntegration(UniversalCableIntegration::new, TileEntityUniversalCable.class);
         IntegrationPeripheralProvider.registerTileEntityIntegration(LogisticalTransporterIntegration::new, TileEntityLogisticalTransporter.class);
-        IntegrationPeripheralProvider.registerTileEntityIntegration(MechanicalPipeIntegration::new, TileEntityMechanicalPipe.class);
-        IntegrationPeripheralProvider.registerTileEntityIntegration(PressurizedTubeIntegration::new, TileEntityPressurizedTube.class);
         IntegrationPeripheralProvider.registerTileEntityIntegration(ThermodynamicConductorIntegration::new, TileEntityThermodynamicConductor.class);
-        IntegrationPeripheralProvider.registerTileEntityIntegration(GenericMekanismIntegration::new, TileEntityMekanism.class, 100);
 
         EnvironmentDetectorPeripheral.addIntegrationPlugin(EnvironmentDetectorPlugin::new);
     }

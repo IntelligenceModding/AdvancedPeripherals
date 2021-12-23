@@ -4,6 +4,7 @@ import dan200.computercraft.api.lua.LuaFunction;
 import de.srendi.advancedperipherals.lib.peripherals.IPeripheralPlugin;
 import de.srendi.advancedperipherals.lib.peripherals.owner.IPeripheralOwner;
 import mekanism.api.Coord4D;
+import mekanism.api.MekanismAPI;
 import mekanism.common.Mekanism;
 import mekanism.common.util.UnitDisplayUtils;
 
@@ -22,7 +23,7 @@ public class EnvironmentDetectorPlugin implements IPeripheralPlugin {
     public final Object getRadiation() {
         Map<String, Object> map = new HashMap<>();
         String[] radiation = UnitDisplayUtils.getDisplayShort(
-                Mekanism.radiationManager.getRadiationLevel(new Coord4D(owner.getPos(), Objects.requireNonNull(owner.getWorld()))),
+                MekanismAPI.getRadiationManager().getRadiationLevel(new Coord4D(owner.getPos(), Objects.requireNonNull(owner.getWorld()))),
                 UnitDisplayUtils.RadiationUnit.SV, 4
         ).getString().split(" ");
         map.put("radiation", radiation[0]);
@@ -32,6 +33,6 @@ public class EnvironmentDetectorPlugin implements IPeripheralPlugin {
 
     @LuaFunction(mainThread = true)
     public final double getRadiationRaw() {
-        return Mekanism.radiationManager.getRadiationLevel(new Coord4D(owner.getPos(), Objects.requireNonNull(owner.getWorld())));
+        return MekanismAPI.getRadiationManager().getRadiationLevel(new Coord4D(owner.getPos(), Objects.requireNonNull(owner.getWorld())));
     }
 }
