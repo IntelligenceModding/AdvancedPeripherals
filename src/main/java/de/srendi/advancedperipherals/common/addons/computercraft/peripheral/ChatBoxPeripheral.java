@@ -8,6 +8,7 @@ import dan200.computercraft.api.lua.MethodResult;
 import dan200.computercraft.api.pocket.IPocketAccess;
 import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
+import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.util.CoordUtil;
@@ -61,16 +62,20 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
     }
 
     private String appendPrefix(String prefix, String brackets, String color) {
+        if(prefix.isEmpty())
+            prefix = APConfig.PERIPHERALS_CONFIG.DEFAULT_CHAT_BOX_PREFIX.get();
+        if(brackets.isEmpty())
+            prefix = "[]";
         IFormattableTextComponent formattablePrefix = null;
         try {
             formattablePrefix = ITextComponent.Serializer.fromJson(prefix);
         } catch (JsonSyntaxException exception) {
-
+            AdvancedPeripherals.debug("Non json prefix, using plain text instead.");
         } finally {
             if (formattablePrefix != null)
                 prefix = formattablePrefix.getString();
         }
-        return String.format(PREFIX_FORMAT, prefix).replace("[", color + brackets.charAt(0) + "\u00a7r").replace("]", color + brackets.charAt(1) + "\u00a7r");
+        return String.format(PREFIX_FORMAT, prefix).replace("[", color + (brackets.isEmpty() ? "" : brackets.charAt(0)) + "\u00a7r").replace("]", color + (brackets.isEmpty() ? "" : brackets.charAt(1)) + "\u00a7r");
     }
 
     /**
