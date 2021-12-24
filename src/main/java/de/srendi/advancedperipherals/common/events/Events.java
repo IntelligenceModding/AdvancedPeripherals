@@ -17,6 +17,8 @@ import net.minecraftforge.event.ServerChatEvent;
 import net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.ModContainer;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.ForgeRegistries;
 
@@ -34,7 +36,7 @@ public class Events {
     public static void onWorldJoin(PlayerEvent.PlayerLoggedInEvent event) {
         if (APConfig.WORLD_CONFIG.GIVE_PLAYER_BOOK_ON_JOIN.get()) {
             PlayerEntity player = event.getPlayer();
-            if (!hasPlayedBefore(player)) {
+            if (!hasPlayedBefore(player) && ModList.get().isLoaded("patchouli")) {
                 ItemStack book = new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation("patchouli", "guide_book")));
                 CompoundNBT nbt = new CompoundNBT();
                 nbt.putString("patchouli:book", "advancedperipherals:manual");
