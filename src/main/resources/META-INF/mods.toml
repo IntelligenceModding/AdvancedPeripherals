@@ -41,6 +41,6 @@ side = "BOTH"
 [[dependencies.advancedperipherals]]
 modId = "ae2"
 mandatory = false
-versionRange = "[10.0.0-alpha.6,)"
+versionRange = "[10.0.0-beta.1,)"
 ordering = "NONE"
 side = "BOTH"

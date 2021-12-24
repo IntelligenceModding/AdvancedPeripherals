@@ -2,6 +2,7 @@ package de.srendi.advancedperipherals.common.addons.appliedenergistics;
 
 import appeng.api.networking.IGrid;
 import appeng.api.networking.IGridNode;
+import appeng.api.networking.crafting.CalculationStrategy;
 import appeng.api.networking.crafting.ICraftingPlan;
 import appeng.api.networking.crafting.ICraftingService;
 import appeng.api.networking.crafting.ICraftingSimulationRequester;
@@ -79,13 +80,12 @@ public class CraftJob implements ILuaCallback {
         MEStorage monitor = storage.getInventory();
         ItemStack itemstack = item;
         Pair<Long, AEItemKey> aeItem = AppEngApi.findAEStackFromItemStack(monitor, itemstack);
-        AdvancedPeripherals.debug("DEBUG1 " + aeItem.getRight() + " " + aeItem.getLeft());
         if (!crafting.isCraftable(aeItem.getRight())) {
             fireEvent(false, item.getDescriptionId() + " is not craftable");
             return;
         }
 
-        futureJob = crafting.beginCraftingCalculation(world, this.requester, aeItem.getRight(), itemstack.getCount());
+        futureJob = crafting.beginCraftingCalculation(world, this.requester, aeItem.getRight(), itemstack.getCount(), CalculationStrategy.REPORT_MISSING_ITEMS);
         fireEvent(true, "Started calculation of the recipe. After it's finished, the system will start crafting the item.");
     }
 

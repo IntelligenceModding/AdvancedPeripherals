@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+## [1.18.1-0.7.8.1r] - 2021-12-24
+
+### Fixed
+- Fixed incompatibility with ae2 10.0.0-beta.1
+
 ## [1.18.1-0.7.8r] - 2021-12-18
 
 ### Added
