@@ -47,6 +47,7 @@ public class CCRegistration {
             add(new TurtleEnvironmentDetectorUpgrade());
             add(new TurtleChunkyUpgrade());
             add(new TurtleGeoScannerUpgrade());
+            add(new TurtleCompassUpgrade());
             add(new WeakAutomata());
             add(new EndAutomata());
             add(new HusbandryAutomata());
