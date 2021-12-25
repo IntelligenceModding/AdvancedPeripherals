@@ -7,8 +7,19 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Removed
+- Removed mekanism integration. The latest mekanism version does now support computercraft.
+
+### Added
+- [#237] Added `sendFormattedMessageToPlayer` to the chat box
+- [#237] Added the ability to format prefixes with the chat box
+- [#237] UUID's can now be used for `ToPlayer` functions in the chat box.
+- [#237] Added a range parameter to the chat box(Parameter 5)
+- [#190] The shape and color of the brackets of the chat box can now be changed
+
 ### Fixed
-- [#228]Typo of metaphysics config file. You may need to redo some configurations.
+- [#228] Typo of metaphysics config file. You may need to redo some configurations.
+- [#189] Fixed that the player detector ignores config values.
 
 ## [1.16.5-0.7.6r] - 2021-12-14
 
