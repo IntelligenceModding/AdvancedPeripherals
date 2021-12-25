@@ -23,17 +23,19 @@ import net.minecraft.util.Util;
 import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TextComponent;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 
 import javax.annotation.Nonnull;
+
+import java.util.Optional;
+import java.util.UUID;
 
 import static de.srendi.advancedperipherals.common.addons.computercraft.operations.SimpleFreeOperation.CHAT_MESSAGE;
 
 public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
 
     public static final String TYPE = "chatBox";
-
-    private final static String PREFIX_FORMAT = "[%s] ";
 
     protected ChatBoxPeripheral(IPeripheralOwner owner) {
         super(TYPE, owner);
@@ -61,43 +63,67 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
         return withOperation(CHAT_MESSAGE, null, null, function, null);
     }
 
-    private String appendPrefix(String prefix, String brackets, String color) {
-        if(prefix.isEmpty())
-            prefix = APConfig.PERIPHERALS_CONFIG.DEFAULT_CHAT_BOX_PREFIX.get();
-        if(brackets.isEmpty())
-            prefix = "[]";
-        IFormattableTextComponent formattablePrefix = null;
-        try {
-            formattablePrefix = ITextComponent.Serializer.fromJson(prefix);
-        } catch (JsonSyntaxException exception) {
-            AdvancedPeripherals.debug("Non json prefix, using plain text instead.");
-        } finally {
-            if (formattablePrefix != null)
-                prefix = formattablePrefix.getString();
+    private IFormattableTextComponent appendPrefix(String prefix, String brackets, String color) {
+        TextComponent prefixComponent = new StringTextComponent(APConfig.PERIPHERALS_CONFIG.DEFAULT_CHAT_BOX_PREFIX.get());
+        if (!prefix.isEmpty()) {
+            IFormattableTextComponent formattablePrefix;
+            try {
+                formattablePrefix = ITextComponent.Serializer.fromJson(prefix);
+                prefixComponent = (TextComponent) formattablePrefix;
+            } catch (JsonSyntaxException exception) {
+                AdvancedPeripherals.debug("Non json prefix, using plain text instead.");
+                prefixComponent = new StringTextComponent(prefix);
+            }
         }
-        return String.format(PREFIX_FORMAT, prefix).replace("[", color + (brackets.isEmpty() ? "" : brackets.charAt(0)) + "\u00a7r").replace("]", color + (brackets.isEmpty() ? "" : brackets.charAt(1)) + "\u00a7r");
+        if(brackets.isEmpty())
+            brackets = "[]";
+
+        return new StringTextComponent(color + brackets.charAt(0) + "\u00a7r").append(prefixComponent).append(color + brackets.charAt(1) + "\u00a7r ");
+    }
+
+    // /**
+    //  * @param player   the current player to check
+    //  * @param argument the uuid or the name of the player
+    //  * @return true if the player belongs to the name or the uuid
+    //  */
+    // private boolean isPlayer(ServerPlayerEntity player, String argument) {
+    //     return player.getUUID().toString().equals(argument) || player.getName().getString().equals(argument);
+    // }
+    /**
+     * @param argument uuid/name of a player
+     * @return true if the name/uuid belongs to a player
+     */
+    private ServerPlayerEntity getPlayer(String argument) {
+        if (argument.matches("\\b[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}\\b"))
+            return ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayer(UUID.fromString(argument));
+        else
+            return ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayerByName(argument);
     }
 
     /**
-     * @param player   the current player to check
-     * @param argument the uuid or the name of the player
-     * @return true if the player belongs to the name or the uuid
+     * Checks if brackets are in correct format if present
+     * @param brackets {@link IArguments#optString(int) IArguments.optString()} to check
+     * @return true if brackets are in the right format
      */
-    private boolean isPlayer(ServerPlayerEntity player, String argument) {
-        if (player.getUUID().toString().equals(argument))
-            return true;
-        return player.getName().getString().equals(argument);
+    private boolean checkBrackets(Optional<String> brackets) {
+        return brackets.isPresent() && brackets.get().length() != 2;
     }
 
     @LuaFunction(mainThread = true)
     public final MethodResult sendFormattedMessage(@Nonnull IArguments arguments) throws LuaException {
         return withChatOperation(ignored -> {
             String message = arguments.getString(0);
-            int range = arguments.optInt(4, -1);
+            int range = arguments.optInt(2, -1);
             IFormattableTextComponent component = ITextComponent.Serializer.fromJson(message);
             if (component == null)
                 return MethodResult.of(null, "incorrect json");
-            IFormattableTextComponent preparedMessage = new StringTextComponent(appendPrefix(arguments.optString(1, APConfig.PERIPHERALS_CONFIG.DEFAULT_CHAT_BOX_PREFIX.get()), arguments.optString(2, "[]"), arguments.optString(3, ""))).append(component);
+            if (checkBrackets(arguments.optString(3)))
+                return MethodResult.of(null, "incorrect bracket string (e.g. [], {}, <>, ...)");
+            IFormattableTextComponent preparedMessage = appendPrefix(
+                    arguments.optString(1, APConfig.PERIPHERALS_CONFIG.DEFAULT_CHAT_BOX_PREFIX.get()),
+                    arguments.optString(3, "[]"),
+                    arguments.optString(4, "")
+            ).append(component);
             for (ServerPlayerEntity player : ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers()) {
                 if (range != -1) {
                     if (CoordUtil.isInRange(getPos(), getWorld(), player, range))
@@ -114,15 +140,20 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
     public final MethodResult sendMessage(@Nonnull IArguments arguments) throws LuaException {
         return withChatOperation(ignored -> {
             String message = arguments.getString(0);
-            int range = arguments.optInt(4, -1);
-            IFormattableTextComponent preparedMessage = new StringTextComponent(appendPrefix(arguments.optString(1, APConfig.PERIPHERALS_CONFIG.DEFAULT_CHAT_BOX_PREFIX.get()), arguments.optString(2, "[]"), arguments.optString(3, ""))).append(message);
+            int range = arguments.optInt(2, -1);
+            if (checkBrackets(arguments.optString(3)))
+                return MethodResult.of(null, "incorrect bracket string (e.g. [], {}, <>, ...)");
+            IFormattableTextComponent preparedMessage = appendPrefix(
+                    arguments.optString(1, APConfig.PERIPHERALS_CONFIG.DEFAULT_CHAT_BOX_PREFIX.get()),
+                    arguments.optString(3, "[]"),
+                    arguments.optString(4, "")
+            ).append(message);
             for (ServerPlayerEntity player : ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers()) {
                 if (range != -1) {
                     if (CoordUtil.isInRange(getPos(), getWorld(), player, range))
                         player.sendMessage(preparedMessage, Util.NIL_UUID);
-                } else {
+                } else
                     player.sendMessage(preparedMessage, Util.NIL_UUID);
-                }
             }
             return MethodResult.of(true);
         });
@@ -133,21 +164,18 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
         return withChatOperation(ignored -> {
             String message = arguments.getString(0);
             String playerName = arguments.getString(1);
-            int range = arguments.optInt(5, -1);
+            ServerPlayerEntity player = getPlayer(playerName);
+            if (player == null) return MethodResult.of(null, "incorrect player name/uuid");
             IFormattableTextComponent component = ITextComponent.Serializer.fromJson(message);
-            if (component == null)
-                return MethodResult.of(null, "incorrect json");
-            IFormattableTextComponent preparedMessage = new StringTextComponent(appendPrefix(arguments.optString(2, APConfig.PERIPHERALS_CONFIG.DEFAULT_CHAT_BOX_PREFIX.get()), arguments.optString(3, "[]"), arguments.optString(4, ""))).append(component);
-            for (ServerPlayerEntity player : ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers()) {
-                if (isPlayer(player, playerName)) {
-                    if (range != -1) {
-                        if (CoordUtil.isInRange(getPos(), getWorld(), player, range))
-                            player.sendMessage(preparedMessage, Util.NIL_UUID);
-                    } else {
-                        player.sendMessage(preparedMessage, Util.NIL_UUID);
-                    }
-                }
-            }
+            if (component == null) return MethodResult.of(null, "incorrect json");
+            if (checkBrackets(arguments.optString(3)))
+                return MethodResult.of(null, "incorrect bracket string (e.g. [], {}, <>, ...)");
+            IFormattableTextComponent preparedMessage = appendPrefix(
+                    arguments.optString(2, APConfig.PERIPHERALS_CONFIG.DEFAULT_CHAT_BOX_PREFIX.get()),
+                    arguments.optString(3, "[]"),
+                    arguments.optString(4, "")
+            ).append(component);
+            player.sendMessage(preparedMessage, Util.NIL_UUID);
             return MethodResult.of(true);
         });
     }
@@ -157,21 +185,17 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
         return withChatOperation(ignored -> {
             String message = arguments.getString(0);
             String playerName = arguments.getString(1);
-            int range = arguments.optInt(5, -1);
-            IFormattableTextComponent preparedMessage = new StringTextComponent(appendPrefix(arguments.optString(2, APConfig.PERIPHERALS_CONFIG.DEFAULT_CHAT_BOX_PREFIX.get()), arguments.optString(3, "[]"), arguments.optString(4, ""))).append(message);
-            for (ServerPlayerEntity player : ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers()) {
-                if (isPlayer(player, playerName)) {
-                    if (range != -1) {
-                        if (CoordUtil.isInRange(getPos(), getWorld(), player, range))
-                            player.sendMessage(preparedMessage, Util.NIL_UUID);
-                    } else {
-                        player.sendMessage(preparedMessage, Util.NIL_UUID);
-                    }
-                }
-            }
+            ServerPlayerEntity player = getPlayer(playerName);
+            if (player == null) return MethodResult.of(null, "incorrect player name/uuid");
+            if (checkBrackets(arguments.optString(3)))
+                return MethodResult.of(null, "incorrect bracket string (e.g. [], {}, <>, ...)");
+            IFormattableTextComponent preparedMessage = appendPrefix(
+                    arguments.optString(2, APConfig.PERIPHERALS_CONFIG.DEFAULT_CHAT_BOX_PREFIX.get()),
+                    arguments.optString(3, "[]"),
+                    arguments.optString(4, "")
+            ).append(message);
+            player.sendMessage(preparedMessage, Util.NIL_UUID);
             return MethodResult.of(true);
         });
     }
-
-
 }
