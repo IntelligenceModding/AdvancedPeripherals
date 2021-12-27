@@ -73,7 +73,7 @@
   "block.advancedperipherals.colony_integrator": "콜로니 인테그레이터",
 
   "turtle.advancedperipherals.chat_box_turtle": "채티",
-  "turtle.advancedperipherals.environment_detector_turtle": "환경",
+  "turtle.advancedperipherals.environment_turtle": "환경",
   "turtle.advancedperipherals.player_detector_turtle": "플레이어",
   "turtle.advancedperipherals.chunky_turtle": "청키",
   "turtle.advancedperipherals.geoscanner_turtle": "지리스캔",
@@ -102,5 +102,5 @@
   "keybind.advancedperipherals.category": "고급 주변장치",
   "keybind.advancedperipherals.description": "설명 표시",
 
-  "itemGroup.advancedperipheralstab": "고급 주변장치"
+  "itemGroup.advancedperipheralstab": "컴퓨터크래프트: 고급 주변장치"
 }
