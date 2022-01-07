@@ -25,4 +25,6 @@ You can find every example in the Documentation.
 
 [Olfi01](https://github.com/Olfi01) - Contributor
 
-[bessw](https://github.com/bessw) - Some bug fixes and improvements
+[FatalMerlin](https://github.com/FatalMerlin) - Ingame guide and minor bug fixes
+
+[Every Contributor](https://github.com/Seniorendi/AdvancedPeripherals/graphs/contributors) - ❣️
