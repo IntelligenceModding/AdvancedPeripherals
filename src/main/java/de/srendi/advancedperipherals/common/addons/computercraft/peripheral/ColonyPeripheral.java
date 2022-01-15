@@ -221,7 +221,7 @@ public class ColonyPeripheral extends BasePeripheral<IPeripheralOwner> {
 
         if (!(pos.containsKey("x") && pos.containsKey("y") && pos.containsKey("z")))
             throw new LuaException("Coordinates expected");
-        BlockPos blockPos = new BlockPos(((Number) pos.get("x")).intValue(), ((Number) pos.get("y")).intValue(), ((Number) pos.get("z")).intValue());
+        BlockPos blockPos = LuaConverter.convertToBlockPos(pos);
 
         return MineColonies.builderResourcesToObject(colony, blockPos);
     }

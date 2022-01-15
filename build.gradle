@@ -235,6 +235,8 @@ configurations {
     testModImplementation.extendsFrom(testImplementation)
 }
 
+
+
 dependencies {
     // Minimal requirements
     compileOnly "org.jetbrains:annotations:${jb_annotations}"
@@ -252,13 +254,11 @@ dependencies {
     runtimeOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}")
 
     // Minecolonies
-    implementation (fg.deobf("com.ldtteam:minecolonies:${minecolonies_version}") {
-        exclude group: "mezz.jei", module: "*"
-    })
-    implementation fg.deobf("com.ldtteam:structurize:${structurize_version}")
-    runtimeOnly fg.deobf("com.ldtteam:multi-piston:${multipiston_version}")
-    runtimeOnly fg.deobf("com.ldtteam:domum_ornamentum:${domumornamentum_version}:universal")
-    runtimeOnly fg.deobf("com.ldtteam:blockui:${blockui_version}")
+    compileOnly fg.deobf("com.ldtteam:minecolonies:${minecolonies_version}")
+    compileOnly fg.deobf("com.ldtteam:structurize:${structurize_version}")
+    compileOnly fg.deobf("com.ldtteam:multi-piston:${multipiston_version}")
+    compileOnly fg.deobf("com.ldtteam:domum_ornamentum:${domumornamentum_version}:universal")
+    compileOnly fg.deobf("com.ldtteam:blockui:${blockui_version}")
 
     //Patchouli
     //runtimeOnly "vazkii.patchouli:Patchouli:${patchouli_version}"
@@ -277,8 +277,8 @@ dependencies {
     // Testing stuff
     // JEI
     runtimeOnly fg.deobf("mezz.jei:jei-${jei_version}")
-
 }
+
 
 changelog {
     version = "${project.version}"
