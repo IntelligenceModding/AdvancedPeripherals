@@ -4,15 +4,18 @@
 name: Gradle Snapshot
 
 on:
-  push:
-    branches:
-      - "1.16"
-      - "1.18"
-      
-  pull_request:
-    branches:
-      - "1.16"
-      - "1.18"
+  workflow_dispatch:
+
+#on:
+#  push:
+#    branches:
+#      - "1.16"
+#      - "1.18"
+#      
+#  pull_request:
+#    branches:
+#      - "1.16"
+#      - "1.18"
 
 jobs:
   build:
