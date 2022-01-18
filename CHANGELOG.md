@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+### Fixed
+- Fixed `getBlockData` of the block reader peripheral
+- Fixed not dropping blocks
+- Fixed several recipes
+
 ## [1.18.1-0.7.8.1r] - 2021-12-24
 
 ### Fixed
