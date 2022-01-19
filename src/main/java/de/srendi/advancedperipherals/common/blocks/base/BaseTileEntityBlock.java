@@ -29,7 +29,7 @@ public abstract class BaseTileEntityBlock extends BaseBlock {
     }
 
     public BaseTileEntityBlock(Properties properties) {
-        super(properties);
+        super(properties.strength(1, 5).harvestLevel(0).sound(SoundType.METAL).noOcclusion().harvestTool(ToolType.PICKAXE).requiresCorrectToolForDrops());
     }
 
     @Override

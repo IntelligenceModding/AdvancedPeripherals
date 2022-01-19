@@ -1,15 +1,18 @@
 package de.srendi.advancedperipherals;
 
 import de.srendi.advancedperipherals.client.HudOverlayHandler;
+import de.srendi.advancedperipherals.common.addons.computercraft.turtles.TurtleCompassUpgrade;
 import de.srendi.advancedperipherals.common.addons.refinedstorage.RefinedStorage;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.setup.Blocks;
 import de.srendi.advancedperipherals.common.setup.CCRegistration;
 import de.srendi.advancedperipherals.common.setup.Registration;
+import de.srendi.advancedperipherals.common.util.ItemUtil;
 import de.srendi.advancedperipherals.common.village.VillageStructures;
 import de.srendi.advancedperipherals.network.MNetwork;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.NonNullList;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -38,6 +41,12 @@ public class AdvancedPeripherals {
         @NotNull
         public ItemStack makeIcon() {
             return new ItemStack(Blocks.CHAT_BOX.get());
+        }
+
+        @Override
+        public void fillItemList(@NotNull NonNullList<ItemStack> list) {
+            super.fillItemList(list);
+            list.add(ItemUtil.makeTurtle(ItemUtil.TURTLE_ADVANCED, TurtleCompassUpgrade.ID.toString()));
         }
     };
 

@@ -1,7 +1,7 @@
 {
   "parent": "block/cube_all",
   "textures": {
-    "north": "advancedperipherals:block/player_detector_side",
+    "north": "advancedperipherals:block/player_detector_side_active",
     "south": "advancedperipherals:block/player_detector_side",
     "west": "advancedperipherals:block/player_detector_side",
     "east": "advancedperipherals:block/player_detector_side",
