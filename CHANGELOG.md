@@ -6,9 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+## [1.16.5-0.7.7r] - 2022-01-20
 
 ### Removed
 - Removed mekanism integration. The latest mekanism version does now support computercraft.
+- Removed draconic evolution integration.
+
+### Changed
+- [#247] We changed the textures of our blocks. Every block is now rotatable and the front texture of every block is now marked with a light aqua box.
 
 ### Added
 - [#237] Added `sendFormattedMessageToPlayer` to the chat box
@@ -20,6 +25,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Fixed
 - [#228] Typo of metaphysics config file. You may need to redo some configurations.
 - [#189] Fixed that the player detector ignores config values.
+- Fixed the key `status` of the table of the function `getResearch` from the minecolonies integration.
 
 ## [1.16.5-0.7.6r] - 2021-12-14
 
