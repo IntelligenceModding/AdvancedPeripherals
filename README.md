@@ -3,6 +3,7 @@
 ![Logo](https://www.bisecthosting.com/images/CF/Advanced_Peripherals/BH_AP_Header.png "Logo")
 
 [![Gradle Snapshot](https://github.com/Seniorendi/AdvancedPeripherals/actions/workflows/gradle-snapshot.yml/badge.svg?branch=1.16)](https://github.com/Seniorendi/AdvancedPeripherals/actions/workflows/gradle-snapshot.yml)
+[![Crowdin](https://badges.crowdin.net/advanced-peripherals/localized.svg)](https://crowdin.com/project/advanced-peripherals)
 
 Curseforge site: https://www.curseforge.com/minecraft/mc-mods/advanced-peripherals
 
@@ -13,9 +14,11 @@ available in 1.12.2 of mods like PeripheralsPlusOne.
 
 Documentation: https://docs.srendi.de
 
-## Example
+## Translating
 
-You can find every example in the Documentation.
+All translating is done via crowdin. -> https://crowdin.com/translate/advanced-peripherals/
+
+We will close pull requests related to translations.
 
 ## Credits
 
