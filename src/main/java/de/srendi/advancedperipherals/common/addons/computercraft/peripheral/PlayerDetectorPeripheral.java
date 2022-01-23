@@ -11,6 +11,7 @@ import de.srendi.advancedperipherals.common.addons.computercraft.owner.PocketPer
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.TurtlePeripheralOwner;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
+import de.srendi.advancedperipherals.common.util.CoordUtil;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
 import net.minecraft.core.BlockPos;
@@ -58,7 +59,7 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
         BlockPos firstPos = LuaConverter.convertToBlockPos(firstCoord);
         BlockPos secondPos = LuaConverter.convertToBlockPos(secondCoord);
         for (ServerPlayer player : getPlayers()) {
-            if (isInRange(player, firstPos, secondPos))
+            if (CoordUtil.isInRange(player, getWorld(), firstPos, secondPos))
                 playersName.add(player.getName().getString());
         }
         return playersName;
@@ -68,7 +69,7 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
     public final List<String> getPlayersInCubic(int x, int y, int z) {
         List<String> playersName = new ArrayList<>();
         for (ServerPlayer player : getPlayers()) {
-            if (isInRange(getPos(), player, x, y, z))
+            if (CoordUtil.isInRange(getPos(), getWorld(), player, x, y, z))
                 playersName.add(player.getName().getString());
         }
         return playersName;
@@ -78,7 +79,7 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
     public final List<String> getPlayersInRange(int range) {
         List<String> playersName = new ArrayList<>();
         for (ServerPlayer player : getPlayers()) {
-            if (isInRange(getPos(), player, range))
+            if (CoordUtil.isInRange(getPos(), getWorld(), player, range))
                 playersName.add(player.getName().getString());
         }
         return playersName;
@@ -91,7 +92,7 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
         BlockPos firstPos = LuaConverter.convertToBlockPos(firstCoord);
         BlockPos secondPos = LuaConverter.convertToBlockPos(secondCoord);
         for (ServerPlayer player : getPlayers()) {
-            if (isInRange(player, firstPos, secondPos))
+            if (CoordUtil.isInRange(player, getWorld(), firstPos, secondPos))
                 return true;
         }
         return false;
@@ -102,7 +103,7 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
         if (getPlayers().isEmpty())
             return false;
         for (ServerPlayer player : getPlayers()) {
-            if (isInRange(getPos(), player, x, y, z))
+            if (CoordUtil.isInRange(getPos(), getWorld(), player, x, y, z))
                 return true;
         }
         return false;
@@ -112,8 +113,8 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
     public final boolean isPlayersInRange(int range) {
         if (getPlayers().isEmpty())
             return false;
-        for (ServerPlayer player : getPlayers()) {
-            if (isInRange(getPos(), player, range))
+        for (ServerPlayerEntity player : getPlayers()) {
+            if (CoordUtil.isInRange(getPos(), getWorld(), player, range))
                 return true;
         }
         return false;
@@ -124,8 +125,8 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
         List<String> playersName = new ArrayList<>();
         BlockPos firstPos = LuaConverter.convertToBlockPos(firstCoord);
         BlockPos secondPos = LuaConverter.convertToBlockPos(secondCoord);
-        for (Player player : getPlayers()) {
-            if (isInRange(player, firstPos, secondPos)) {
+        for (PlayerEntity player : getPlayers()) {
+            if (CoordUtil.isInRange(player, getWorld(), firstPos, secondPos)) {
                 playersName.add(player.getName().getString());
             }
         }
@@ -135,8 +136,8 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
     @LuaFunction(mainThread = true)
     public final boolean isPlayerInCubic(int x, int y, int z, String username) {
         List<String> playersName = new ArrayList<>();
-        for (Player player : getPlayers()) {
-            if (isInRange(getPos(), player, x, y, z)) {
+        for (PlayerEntity player : getPlayers()) {
+            if (CoordUtil.isInRange(getPos(), getWorld(), player, x, y, z)) {
                 playersName.add(player.getName().getString());
             }
         }
@@ -147,7 +148,7 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
     public final boolean isPlayerInRange(int range, String username) {
         List<String> playersName = new ArrayList<>();
         for (Player player : getPlayers()) {
-            if (isInRange(getPos(), player, range)) {
+            if (CoordUtil.isInRange(getPos(), getWorld(), player, range)) {
                 playersName.add(player.getName().getString());
             }
         }
@@ -161,7 +162,7 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
         ServerPlayer existingPlayer = null;
         for (ServerPlayer player : getPlayers()) {
             if (player.getName().getString().equals(username)) {
-                if (isInRange(getPos(), player, APConfig.PERIPHERALS_CONFIG.PLAYER_DET_MAX_RANGE.get())) {
+                if (CoordUtil.isInRange(getPos(), getWorld(), player, APConfig.PERIPHERALS_CONFIG.PLAYER_DET_MAX_RANGE.get())) {
                     existingPlayer = player;
                     break;
                 }
@@ -187,22 +188,4 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
         return ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers();
     }
 
-    private boolean isInRange(BlockPos pos, Player player, int range) {
-        Level world = getLevel();
-        return world.getNearbyPlayers(TargetingConditions.forNonCombat().ignoreInvisibilityTesting().ignoreLineOfSight(),
-                null, new AABB(pos.offset(range, range, range), pos.offset(-range, -range, -range))).contains(player);
-    }
-
-    private boolean isInRange(BlockPos pos, Player player, int x, int y, int z) {
-        Level world = getLevel();
-        return world.getNearbyPlayers(TargetingConditions.forNonCombat().ignoreInvisibilityTesting().ignoreLineOfSight(),
-                null, new AABB(pos.offset(x, y, z), pos.offset(-x, -y, -z))).contains(player);
-    }
-
-    private boolean isInRange(Player player, BlockPos firstPos, BlockPos secondPos) {
-        Level world = getLevel();
-
-        return world.getNearbyPlayers(TargetingConditions.forNonCombat().ignoreInvisibilityTesting().ignoreLineOfSight(),
-                null, new AABB(firstPos, secondPos)).contains(player);
-    }
 }

@@ -1,6 +1,12 @@
 {
   "parent": "block/cube_all",
   "textures": {
-    "all": "advancedperipherals:block/me_bridge"
+    "north": "advancedperipherals:block/me_bridge_front",
+    "south": "advancedperipherals:block/me_bridge",
+    "west": "advancedperipherals:block/me_bridge",
+    "east": "advancedperipherals:block/me_bridge",
+    "up": "advancedperipherals:block/me_bridge",
+    "down": "advancedperipherals:block/me_bridge",
+    "particle": "advancedperipherals:block/me_bridge"
   }
 }

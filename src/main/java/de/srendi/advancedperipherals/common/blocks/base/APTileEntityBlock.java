@@ -19,20 +19,22 @@ public class APTileEntityBlock<T extends BlockEntity> extends BaseTileEntityBloc
 
     public static final DirectionProperty FACING = DirectionalBlock.FACING;
     private final RegistryObject<BlockEntityType<T>> tileEntity;
-    private final boolean isRotatable;
+    private boolean hasTileEntity = true;
 
-    public APTileEntityBlock(RegistryObject<BlockEntityType<T>> tileEntity, boolean isRotatable) {
-        super(false);
+    public APTileEntityBlock(RegistryObject<TileEntityType<T>> tileEntity, Properties properties) {
+        super(properties);
         this.tileEntity = tileEntity;
-        this.isRotatable = isRotatable;
-        this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.SOUTH));
+        this.hasTileEntity = tileEntity != null;
+        this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH));
     }
 
-    public APTileEntityBlock(RegistryObject<BlockEntityType<T>> tileEntity, boolean isRotatable, boolean belongToTickingEntity) {
-        super(belongToTickingEntity);
-        this.tileEntity = tileEntity;
-        this.isRotatable = isRotatable;
-        this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.SOUTH));
+    public APTileEntityBlock(RegistryObject<TileEntityType<T>> tileEntity) {
+        this(tileEntity, Properties.of(Material.METAL));
+    }
+
+    @Override
+    public boolean hasTileEntity(BlockState state) {
+        return hasTileEntity;
     }
 
     @Nullable
@@ -42,15 +44,11 @@ public class APTileEntityBlock<T extends BlockEntity> extends BaseTileEntityBloc
     }
 
     public BlockState rotate(BlockState state, Rotation rot) {
-        if (isRotatable)
-            return state.setValue(FACING, rot.rotate(state.getValue(FACING)));
-        return state;
+        return state.setValue(FACING, rot.rotate(state.getValue(FACING)));
     }
 
     public BlockState mirror(BlockState state, Mirror mirrorIn) {
-        if (isRotatable)
-            return state.rotate(mirrorIn.getRotation(state.getValue(FACING)));
-        return state;
+        return state.rotate(mirrorIn.getRotation(state.getValue(FACING)));
     }
 
     @Override
@@ -61,9 +59,6 @@ public class APTileEntityBlock<T extends BlockEntity> extends BaseTileEntityBloc
     @Nullable
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext context) {
-        if (isRotatable)
-            return this.defaultBlockState().setValue(FACING, context.getNearestLookingDirection().getOpposite().getOpposite());
-        return this.defaultBlockState();
+        return this.defaultBlockState().setValue(FACING, context.getNearestLookingDirection().getOpposite());
     }
-
 }

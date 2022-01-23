@@ -12,10 +12,31 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Fixed not dropping blocks
 - Fixed several recipes
 
+## [1.16.5-0.7.7r] - 2022-01-20
+
+### Removed
+- Removed mekanism integration. The latest mekanism version does now support computercraft.
+- Removed draconic evolution integration.
+
 ## [1.18.1-0.7.8.1r] - 2021-12-24
 
 ### Fixed
 - Fixed incompatibility with ae2 10.0.0-beta.1
+- 
+### Changed
+- [#247] We changed the textures of our blocks. Every block is now rotatable and the front texture of every block is now marked with a light aqua box.
+
+### Added
+- [#237] Added `sendFormattedMessageToPlayer` to the chat box
+- [#237] Added the ability to format prefixes with the chat box
+- [#237] UUID's can now be used for `ToPlayer` functions in the chat box.
+- [#237] Added a range parameter to the chat box(Parameter 5)
+- [#190] The shape and color of the brackets of the chat box can now be changed
+
+### Fixed
+- [#228] Typo of metaphysics config file. You may need to redo some configurations.
+- [#189] Fixed that the player detector ignores config values.
+- Fixed the key `status` of the table of the function `getResearch` from the minecolonies integration.
 
 ## [1.18.1-0.7.8r] - 2021-12-18
 
@@ -26,6 +47,61 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - [#228]Typo of metaphysics config file. You may need to redo some configurations.
 - [#235]Fixed blurry HUD when opening the journey map full screen.
 - [#236]Fixed patchouli loading
+
+## [1.16.5-0.7.6r] - 2021-12-14
+
+### Fixed
+- Crashes with newer minecolonies versions.
+
+### Added
+- Transmitter integration for mekanism
+
+## [1.18-0.7.7.1r] - 2021-12-10
+
+### Fixed
+- Fixed a critical dupe bug with the ME Bridge.
+
+## [1.18-0.7.7r] - 2021-12-10
+# 1.18 port
+This is the 1.18 port of Advanced Peripherals.
+This version comes with applied energistics 2 and curios integration.
+
+## [1.17.1-0.7.6r] - 2021-12-03
+
+# This is the last 1.17 version of Advanced Peripherals.
+We will now work on a 1.18 port. Supported is 1.16 and 1.18. Join our discord to read why.
+Rest in piece 1.17!
+
+### Fixed
+Added compatibility with the latest CC version.
+
+## [1.17.1-0.7.5.1r] - 2021-11-26
+
+### Added
+- Added back me bridge and colony integrator recipe.
+- Added back colony integrator pocket upgrade.
+
+## [1.17.1-0.7.5r] - 2021-11-26
+
+### Attention
+We changed our config system. So if you want to update the mod in your pack, don't forget to use the new files.
+We also recommend you to delete the old one, no one needs crap.
+
+This is the port of 0.7.4r, 0.7.4.1b and 0.7.5r as 1.17 version.
+### Changed
+- [#247] We changed the textures of our blocks. Every block is now rotatable and the front texture of every block is now marked with a light aqua box.
+
+### Added
+- [#237] Added `sendFormattedMessageToPlayer` to the chat box
+- [#237] Added the ability to format prefixes with the chat box
+- [#237] UUID's can now be used for `ToPlayer` functions in the chat box.
+- [#237] Added a range parameter to the chat box(Parameter 5)
+- [#190] The shape and color of the brackets of the chat box can now be changed
+
+### Fixed
+- [#228] Typo of metaphysics config file. You may need to redo some configurations.
+- [#189] Fixed that the player detector ignores config values.
+- Fixed the key `status` of the table of the function `getResearch` from the minecolonies integration.
 
 ## [1.16.5-0.7.6r] - 2021-12-14
 

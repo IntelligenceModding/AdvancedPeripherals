@@ -37,6 +37,12 @@ public class AdvancedPeripherals {
         public ItemStack makeIcon() {
             return new ItemStack(Blocks.CHAT_BOX.get());
         }
+
+        @Override
+        public void fillItemList(@NotNull NonNullList<ItemStack> list) {
+            super.fillItemList(list);
+            list.add(ItemUtil.makeTurtle(ItemUtil.TURTLE_ADVANCED, TurtleCompassUpgrade.ID.toString()));
+        }
     };
 
     private static boolean curiosLoaded;

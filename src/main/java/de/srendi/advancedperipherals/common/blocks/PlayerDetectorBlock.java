@@ -1,7 +1,7 @@
 package de.srendi.advancedperipherals.common.blocks;
 
 import dan200.computercraft.api.peripheral.IComputerAccess;
-import de.srendi.advancedperipherals.common.blocks.base.BaseTileEntityBlock;
+import de.srendi.advancedperipherals.common.blocks.base.APTileEntityBlock;
 import de.srendi.advancedperipherals.common.blocks.tileentity.PlayerDetectorTile;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.setup.TileEntityTypes;
@@ -15,7 +15,11 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.Nullable;
 
-public class PlayerDetectorBlock extends BaseTileEntityBlock {
+public class PlayerDetectorBlock extends APTileEntityBlock<PlayerDetectorTile> {
+
+    public PlayerDetectorBlock() {
+        super(TileEntityTypes.PLAYER_DETECTOR);
+    }
 
     public PlayerDetectorBlock() {
         super(false);

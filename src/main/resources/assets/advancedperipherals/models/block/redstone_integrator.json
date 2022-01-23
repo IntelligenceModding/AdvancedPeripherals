@@ -1,6 +1,12 @@
 {
   "parent": "block/cube_all",
   "textures": {
-    "all": "advancedperipherals:block/redstone_integrator"
+    "north": "advancedperipherals:block/redstone_integrator_front",
+    "south": "advancedperipherals:block/redstone_integrator",
+    "west": "advancedperipherals:block/redstone_integrator",
+    "east": "advancedperipherals:block/redstone_integrator",
+    "up": "advancedperipherals:block/redstone_integrator",
+    "down": "advancedperipherals:block/redstone_integrator",
+    "particle": "advancedperipherals:block/redstone_integrator"
   }
 }

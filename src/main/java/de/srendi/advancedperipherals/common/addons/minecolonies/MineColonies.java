@@ -4,7 +4,6 @@ import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IVisitorData;
 import com.minecolonies.api.colony.buildings.IBuilding;
-import com.minecolonies.api.colony.buildings.IBuildingWorker;
 import com.minecolonies.api.colony.managers.interfaces.IBuildingManager;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.colony.workorders.IWorkOrder;
@@ -114,12 +113,12 @@ public class MineColonies {
      * @param work the home building
      * @return a map with information about the job building
      */
-    public static Object jobToObject(IBuildingWorker work) {
+    public static Object jobToObject(IBuilding work) {
         Map<String, Object> map = new HashMap<>();
         map.put("location", LuaConverter.posToObject(work.getLocation().getInDimensionLocation()));
         map.put("type", work.getSchematicName());
         map.put("level", work.getBuildingLevel());
-        map.put("name", work.getJobName());
+        map.put("name", work.getCustomBuildingName());
         return map;
     }
 
@@ -263,7 +262,7 @@ public class MineColonies {
                 map.put("id", researchName.toString());
                 map.put("name", research.getName().getString());
                 map.put("researchEffects", effects);
-                map.put("status", colonyResearch == null ? ResearchState.NOT_STARTED : colonyResearch.getState());
+                map.put("status", colonyResearch == null ? ResearchState.NOT_STARTED.toString() : colonyResearch.getState());
 
                 List<Object> childrenResearch = getResearch(branch, research.getChildren(), colony);
                 if (!childrenResearch.isEmpty())

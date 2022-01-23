@@ -61,7 +61,7 @@ public abstract class BaseTileEntityBlock extends BaseEntityBlock implements IHa
     }
 
     @Override
-    public void setPlacedBy(Level worldIn, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
+    public void setPlacedBy(World worldIn, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
         super.setPlacedBy(worldIn, pos, state, placer, stack);
         if (worldIn.getBlockEntity(pos) == null)
             return;

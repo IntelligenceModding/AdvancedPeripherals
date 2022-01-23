@@ -42,6 +42,8 @@ public class PeripheralsConfig implements IAPConfig {
     public final ForgeConfigSpec.BooleanValue ENABLE_GEO_SCANNER;
     //Colony integrator
     public final ForgeConfigSpec.BooleanValue ENABLE_COLONY_INTEGRATOR;
+    //Compass turtle
+    public final ForgeConfigSpec.BooleanValue ENABLE_COMPASS_TURTLE;
     //Powered Peripherals
     public final ForgeConfigSpec.BooleanValue ENABLE_POWERED_PERIPHERALS;
     public final ForgeConfigSpec.IntValue POWERED_PERIPHERAL_MAX_ENERGY_STORAGE;
@@ -112,6 +114,10 @@ public class PeripheralsConfig implements IAPConfig {
         pop("Colony_Integrator", builder);
 
         ENABLE_COLONY_INTEGRATOR = builder.comment("Enable the colony integrator or not.").define("enableColonyIntegrator", true);
+
+        pop("Compass_Turtle", builder);
+
+        ENABLE_COMPASS_TURTLE = builder.comment("Enable the compass turtle or not.").define("enableCompassTurtle", true);
 
         pop("Powered_Peripherals", builder);
 

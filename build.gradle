@@ -25,19 +25,7 @@ apply plugin: 'net.minecraftforge.gradle'
 apply from: 'https://raw.githubusercontent.com/SizableShrimp/Forge-Class-Remapper/main/classremapper.gradle'
 
 
-def javaVersion = JavaLanguageVersion.of(17)
-
-java {
-    toolchain {
-        languageVersion = javaVersion
-    }
-}
-
-tasks.withType(JavaExec).configureEach {
-    javaLauncher = javaToolchains.launcherFor {
-        languageVersion = javaVersion
-    }
-}
+java.toolchain.languageVersion = JavaLanguageVersion.of(8) // Mojang ships Java 8 to end users, so your mod should target Java 8.
 
 wrapper {
     gradleVersion = '7.3'
@@ -120,7 +108,7 @@ minecraft {
             property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
             property 'mixin.env.remapRefMap', 'true'
             property 'mixin.env.refMapRemappingFile', "${buildDir}/createSrgToMcp/output.srg"
-            property 'forge.logging.console.level', 'debug'
+            property 'forge.logging.console.level', 'info'
 
             mods {
                 advancedperipherals {
@@ -288,7 +276,7 @@ changelog {
     //1.16.5-1.1.1.1b
     //1.18-1.0r
     //1.19-1.0.0a
-    headerParserRegex = ~/\d+\.\d+\d+\.?\d?-\d+\.\d\w?\.?\d?\w?\.?\d?\w/
+    headerParserRegex = ~/\d+(\.\d+){1,2}-\d+(\.\d+){1,3}\w/
     itemPrefix = "-"
     keepUnreleasedSection = true
     unreleasedTerm = "[Unreleased]"
