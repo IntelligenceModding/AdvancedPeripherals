@@ -1,5 +1,6 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.peripheral;
 
+import com.google.gson.JsonSyntaxException;
 import dan200.computercraft.api.lua.IArguments;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
@@ -7,18 +8,21 @@ import dan200.computercraft.api.lua.MethodResult;
 import dan200.computercraft.api.pocket.IPocketAccess;
 import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
+import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.BlockEntityPeripheralOwner;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.IPeripheralOwner;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.PocketPeripheralOwner;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.TurtlePeripheralOwner;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
+import de.srendi.advancedperipherals.common.util.CoordUtil;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
 import de.srendi.advancedperipherals.lib.peripherals.IPeripheralFunction;
 import net.minecraft.Util;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.server.ServerLifecycleHooks;
 
@@ -58,29 +62,29 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
         return withOperation(CHAT_MESSAGE, null, null, function, null);
     }
 
-    private IFormattableTextComponent appendPrefix(String prefix, String brackets, String color) {
-        TextComponent prefixComponent = new StringTextComponent(APConfig.PERIPHERALS_CONFIG.DEFAULT_CHAT_BOX_PREFIX.get());
+    private MutableComponent appendPrefix(String prefix, String brackets, String color) {
+        TextComponent prefixComponent = new TextComponent(APConfig.PERIPHERALS_CONFIG.DEFAULT_CHAT_BOX_PREFIX.get());
         if (!prefix.isEmpty()) {
-            IFormattableTextComponent formattablePrefix;
+            MutableComponent formattablePrefix;
             try {
-                formattablePrefix = ITextComponent.Serializer.fromJson(prefix);
+                formattablePrefix = MutableComponent.Serializer.fromJson(prefix);
                 prefixComponent = (TextComponent) formattablePrefix;
             } catch (JsonSyntaxException exception) {
                 AdvancedPeripherals.debug("Non json prefix, using plain text instead.");
-                prefixComponent = new StringTextComponent(prefix);
+                prefixComponent = new TextComponent(prefix);
             }
         }
         if (brackets.isEmpty())
             brackets = "[]";
 
-        return new StringTextComponent(color + brackets.charAt(0) + "\u00a7r").append(prefixComponent).append(color + brackets.charAt(1) + "\u00a7r ");
+        return new TextComponent(color + brackets.charAt(0) + "\u00a7r").append(prefixComponent).append(color + brackets.charAt(1) + "\u00a7r ");
     }
 
     /**
      * @param argument uuid/name of a player
      * @return true if the name/uuid belongs to a player
      */
-    private ServerPlayerEntity getPlayer(String argument) {
+    private ServerPlayer getPlayer(String argument) {
         if (argument.matches("\\b[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}\\b"))
             return ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayer(UUID.fromString(argument));
         return ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayerByName(argument);
@@ -101,19 +105,19 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
         return withChatOperation(ignored -> {
             String message = arguments.getString(0);
             int range = arguments.optInt(4, -1);
-            IFormattableTextComponent component = ITextComponent.Serializer.fromJson(message);
+            MutableComponent component = Component.Serializer.fromJson(message);
             if (component == null)
                 return MethodResult.of(null, "incorrect json");
             if (checkBrackets(arguments.optString(2)))
                 return MethodResult.of(null, "incorrect bracket string (e.g. [], {}, <>, ...)");
-            IFormattableTextComponent preparedMessage = appendPrefix(
+            MutableComponent preparedMessage = appendPrefix(
                     arguments.optString(1, APConfig.PERIPHERALS_CONFIG.DEFAULT_CHAT_BOX_PREFIX.get()),
                     arguments.optString(2, "[]"),
                     arguments.optString(3, "")
             ).append(component);
-            for (ServerPlayerEntity player : ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers()) {
+            for (ServerPlayer player : ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers()) {
                 if (range != -1) {
-                    if (CoordUtil.isInRange(getPos(), getWorld(), player, range))
+                    if (CoordUtil.isInRange(getPos(), getLevel(), player, range))
                         player.sendMessage(preparedMessage, Util.NIL_UUID);
                 } else {
                     player.sendMessage(preparedMessage, Util.NIL_UUID);
@@ -130,14 +134,14 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
             int range = arguments.optInt(4, -1);
             if (checkBrackets(arguments.optString(2)))
                 return MethodResult.of(null, "incorrect bracket string (e.g. [], {}, <>, ...)");
-            IFormattableTextComponent preparedMessage = appendPrefix(
+            MutableComponent preparedMessage = appendPrefix(
                     arguments.optString(1, APConfig.PERIPHERALS_CONFIG.DEFAULT_CHAT_BOX_PREFIX.get()),
                     arguments.optString(2, "[]"),
                     arguments.optString(3, "")
             ).append(message);
-            for (ServerPlayerEntity player : ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers()) {
+            for (ServerPlayer player : ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers()) {
                 if (range != -1) {
-                    if (CoordUtil.isInRange(getPos(), getWorld(), player, range))
+                    if (CoordUtil.isInRange(getPos(), getLevel(), player, range))
                         player.sendMessage(preparedMessage, Util.NIL_UUID);
                 } else
                     player.sendMessage(preparedMessage, Util.NIL_UUID);
@@ -151,10 +155,10 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
         return withChatOperation(ignored -> {
             String message = arguments.getString(0);
             String playerName = arguments.getString(1);
-            ServerPlayerEntity player = getPlayer(playerName);
+            ServerPlayer player = getPlayer(playerName);
             if (player == null)
                 return MethodResult.of(null, "incorrect player name/uuid");
-            IFormattableTextComponent component = ITextComponent.Serializer.fromJson(message);
+            Mut component = ITextComponent.Serializer.fromJson(message);
             if (component == null)
                 return MethodResult.of(null, "incorrect json");
             if (checkBrackets(arguments.optString(3)))
