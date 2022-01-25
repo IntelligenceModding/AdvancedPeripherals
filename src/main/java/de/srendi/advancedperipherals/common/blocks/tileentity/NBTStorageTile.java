@@ -32,14 +32,13 @@ public class NBTStorageTile extends PeripheralTileEntity<NBTStoragePeripheral> {
     }
 
     @Override
-    public CompoundTag save(CompoundTag compound) {
-        compound = super.save(compound);
+    public void saveAdditional(@NotNull CompoundTag compound) {
+        super.saveAdditional(compound);
         compound.put("storedData", stored);
-        return compound;
     }
 
     @Override
-    public void load(CompoundTag compound) {
+    public void load(@NotNull CompoundTag compound) {
         stored = compound.getCompound("storedData");
         super.load(compound);
     }

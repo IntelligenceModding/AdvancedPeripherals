@@ -1,11 +1,14 @@
 package de.srendi.advancedperipherals;
 
 import de.srendi.advancedperipherals.client.HudOverlayHandler;
+import de.srendi.advancedperipherals.common.addons.computercraft.turtles.TurtleCompassUpgrade;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.setup.Blocks;
 import de.srendi.advancedperipherals.common.setup.Registration;
+import de.srendi.advancedperipherals.common.util.ItemUtil;
 import de.srendi.advancedperipherals.common.village.VillageStructures;
 import de.srendi.advancedperipherals.network.MNetwork;
+import net.minecraft.core.NonNullList;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;

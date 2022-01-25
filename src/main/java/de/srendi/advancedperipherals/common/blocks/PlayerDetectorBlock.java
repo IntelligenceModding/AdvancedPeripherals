@@ -13,26 +13,23 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class PlayerDetectorBlock extends APTileEntityBlock<PlayerDetectorTile> {
 
     public PlayerDetectorBlock() {
-        super(TileEntityTypes.PLAYER_DETECTOR);
-    }
-
-    public PlayerDetectorBlock() {
-        super(false);
+        super(TileEntityTypes.PLAYER_DETECTOR, false);
     }
 
     @Nullable
     @Override
-    public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+    public BlockEntity newBlockEntity(@NotNull BlockPos pos, @NotNull BlockState state) {
         return TileEntityTypes.PLAYER_DETECTOR.get().create(pos, state);
     }
 
     @Override
-    public InteractionResult use(BlockState state, Level levelIn, BlockPos pos, Player player, InteractionHand handIn, BlockHitResult hit) {
+    public @NotNull InteractionResult use(@NotNull BlockState state, Level levelIn, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand handIn, @NotNull BlockHitResult hit) {
         if (APConfig.PERIPHERALS_CONFIG.ENABLE_PLAYER_DETECTOR.get()) {
             BlockEntity tileEntity = levelIn.getBlockEntity(pos);
             if (tileEntity instanceof PlayerDetectorTile entity) {

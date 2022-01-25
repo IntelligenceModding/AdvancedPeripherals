@@ -22,7 +22,7 @@ public class ARControllerTile extends PeripheralTileEntity<ARControllerPeriphera
     private static final String CANVAS = "canvas";
     private static final String VIRTUAL_SCREEN_SIZE = "virtual_screen_size";
     private Optional<int[]> virtualScreenSize = Optional.empty();
-    private List<ARRenderAction> canvas = new ArrayList<>();
+    private final List<ARRenderAction> canvas = new ArrayList<>();
 
     public ARControllerTile(BlockPos pos, BlockState state) {
         super(TileEntityTypes.AR_CONTROLLER.get(), pos, state);
@@ -53,7 +53,7 @@ public class ARControllerTile extends PeripheralTileEntity<ARControllerPeriphera
     }
 
     @Override
-    public void load(CompoundTag nbt) {
+    public void load(@NotNull CompoundTag nbt) {
         super.load(nbt);
         deserializeNBT(nbt);
     }
@@ -73,8 +73,8 @@ public class ARControllerTile extends PeripheralTileEntity<ARControllerPeriphera
         }
     }
 
-    @Override
-    public CompoundTag save(CompoundTag compound) {
+    public void saveAdditional(@NotNull CompoundTag compound) {
+        super.saveAdditional(compound);
         if (virtualScreenSize.isPresent())
             compound.putIntArray(VIRTUAL_SCREEN_SIZE, virtualScreenSize.get());
         else if (compound.contains(VIRTUAL_SCREEN_SIZE))
@@ -84,13 +84,13 @@ public class ARControllerTile extends PeripheralTileEntity<ARControllerPeriphera
             list.add(action.serializeNBT());
         }
         compound.put(CANVAS, list);
-        return super.save(compound);
     }
 
+    @NotNull
     @Override
     public CompoundTag getUpdateTag() {
         CompoundTag nbt = super.getUpdateTag();
-        save(nbt);
+        saveAdditional(nbt);
         return nbt;
     }
 
@@ -103,7 +103,7 @@ public class ARControllerTile extends PeripheralTileEntity<ARControllerPeriphera
     @Override
     public ClientboundBlockEntityDataPacket getUpdatePacket() {
         CompoundTag nbt = new CompoundTag();
-        save(nbt);
+        saveAdditional(nbt);
         return ClientboundBlockEntityDataPacket.create(this, BlockEntity::getUpdateTag);
     }
 
@@ -118,10 +118,7 @@ public class ARControllerTile extends PeripheralTileEntity<ARControllerPeriphera
     }
 
     public int[] getVirtualScreenSize() {
-        if (virtualScreenSize.isPresent())
-            return virtualScreenSize.get();
-        else
-            return null;
+        return virtualScreenSize.orElse(null);
     }
 
     public void setRelativeMode(int virtualScreenWidth, int virtualScreenHeight) {

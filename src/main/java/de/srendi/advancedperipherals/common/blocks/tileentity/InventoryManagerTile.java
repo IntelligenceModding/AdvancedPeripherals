@@ -42,10 +42,11 @@ public class InventoryManagerTile extends PeripheralTileEntity<InventoryManagerP
     }
 
     @Override
-    public boolean canPlaceItemThroughFace(int index, ItemStack itemStackIn, @Nullable Direction direction) {
+    public boolean canPlaceItemThroughFace(int index, @NotNull ItemStack itemStackIn, @Nullable Direction direction) {
         return itemStackIn.getItem() instanceof MemoryCardItem;
     }
 
+    @NotNull
     @Override
     public Component getDisplayName() {
         return new TranslatableComponent("block.advancedperipherals.inventory_manager");

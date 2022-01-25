@@ -63,10 +63,9 @@ public class EnergyDetectorTile extends PeripheralTileEntity<EnergyDetectorPerip
     }
 
     @Override
-    public CompoundTag save(CompoundTag compound) {
-        super.save(compound);
+    public void saveAdditional(@NotNull CompoundTag compound) {
+        super.saveAdditional(compound);
         compound.putInt("rateLimit", storageProxy.getMaxTransferRate());
-        return compound;
     }
 
     @Override
@@ -88,7 +87,7 @@ public class EnergyDetectorTile extends PeripheralTileEntity<EnergyDetectorPerip
     @NotNull
     public Optional<IEnergyStorage> getOutputStorage() {
         // the documentation says that the value of the LazyOptional should be cached locally and invallidated using addListener
-        if (!outReceivingStorage.isPresent()) {
+        if (outReceivingStorage.isEmpty()) {
             BlockEntity teOut = level.getBlockEntity(worldPosition.relative(energyOutDirection));
             if (teOut == null) {
                 return Optional.empty();

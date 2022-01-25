@@ -1,6 +1,7 @@
 package de.srendi.advancedperipherals.common.blocks;
 
 import de.srendi.advancedperipherals.common.blocks.base.APTileEntityBlock;
+import de.srendi.advancedperipherals.common.blocks.base.BaseTileEntityBlock;
 import de.srendi.advancedperipherals.common.blocks.tileentity.RedstoneIntegratorTile;
 import de.srendi.advancedperipherals.common.setup.Blocks;
 import de.srendi.advancedperipherals.common.setup.TileEntityTypes;
@@ -27,7 +28,7 @@ public class RedstoneIntegratorBlock extends BaseTileEntityBlock {
 
     @Nullable
     @Override
-    public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+    public BlockEntity newBlockEntity(@NotNull BlockPos pos, @NotNull BlockState state) {
         return TileEntityTypes.REDSTONE_INTEGRATOR.get().create(pos, state);
     }
 

@@ -4,6 +4,7 @@ import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IVisitorData;
 import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.buildings.IBuildingWorker;
 import com.minecolonies.api.colony.managers.interfaces.IBuildingManager;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.colony.workorders.IWorkOrder;
@@ -72,7 +73,7 @@ public class MineColonies {
         map.put("saturation", citizen.getSaturation());
         map.put("happiness", citizen.getCitizenHappinessHandler().getHappiness(citizen.getColony()));
         map.put("skills", skillsToObject(citizen.getCitizenSkillHandler().getSkills()));
-        map.put("work", citizen.getWorkBuilding() == null ? null : jobToObject((IBuildingWorker) citizen.getWorkBuilding()));
+        map.put("work", citizen.getWorkBuilding() == null ? null : jobToObject(citizen.getWorkBuilding()));
         map.put("home", citizen.getHomeBuilding() == null ? null : homeToObject(citizen.getHomeBuilding()));
         map.put("betterFood", citizen.needsBetterFood());
         map.put("isAsleep", map.get("state").toString().toLowerCase().contains("sleeping"));
@@ -283,10 +284,8 @@ public class MineColonies {
      */
     public static Object builderResourcesToObject(IColony colony, BlockPos pos) {
         IBuilding building = colony.getBuildingManager().getBuilding(pos);
-        if (!(building instanceof AbstractBuildingStructureBuilder))
+        if (!(building instanceof AbstractBuildingStructureBuilder builderBuilding))
             return null;
-
-        AbstractBuildingStructureBuilder builderBuilding = (AbstractBuildingStructureBuilder) building;
 
         //We need to say the building that we want information about it
         FriendlyByteBuf buffer = new FriendlyByteBuf(Unpooled.buffer());

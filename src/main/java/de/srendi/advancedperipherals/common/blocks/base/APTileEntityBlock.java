@@ -12,41 +12,38 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.level.material.Material;
 import net.minecraftforge.registries.RegistryObject;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class APTileEntityBlock<T extends BlockEntity> extends BaseTileEntityBlock {
 
     public static final DirectionProperty FACING = DirectionalBlock.FACING;
     private final RegistryObject<BlockEntityType<T>> tileEntity;
-    private boolean hasTileEntity = true;
 
-    public APTileEntityBlock(RegistryObject<TileEntityType<T>> tileEntity, Properties properties) {
-        super(properties);
+    public APTileEntityBlock(RegistryObject<BlockEntityType<T>> tileEntity, Properties properties, boolean belongToTickingEntity) {
+        super(belongToTickingEntity, properties);
         this.tileEntity = tileEntity;
-        this.hasTileEntity = tileEntity != null;
         this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH));
     }
 
-    public APTileEntityBlock(RegistryObject<TileEntityType<T>> tileEntity) {
-        this(tileEntity, Properties.of(Material.METAL));
-    }
-
-    @Override
-    public boolean hasTileEntity(BlockState state) {
-        return hasTileEntity;
+    public APTileEntityBlock(RegistryObject<BlockEntityType<T>> tileEntity, boolean belongToTickingEntity) {
+        this(tileEntity, Properties.of(Material.METAL), belongToTickingEntity);
     }
 
     @Nullable
     @Override
-    public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
-        return tileEntity.get().create(pos, state);
+    public BlockEntity newBlockEntity(@NotNull BlockPos pos, @NotNull BlockState state) {
+        return tileEntity != null ? tileEntity.get().create(pos, state) : null;
     }
 
+    @NotNull
     public BlockState rotate(BlockState state, Rotation rot) {
         return state.setValue(FACING, rot.rotate(state.getValue(FACING)));
     }
 
+    @NotNull
     public BlockState mirror(BlockState state, Mirror mirrorIn) {
         return state.rotate(mirrorIn.getRotation(state.getValue(FACING)));
     }

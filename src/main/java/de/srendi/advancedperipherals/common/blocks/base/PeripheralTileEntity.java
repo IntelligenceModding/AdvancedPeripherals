@@ -109,16 +109,15 @@ public abstract class PeripheralTileEntity<T extends BasePeripheral<?>> extends 
     }*/
 
     @Override
-    public CompoundTag save(CompoundTag compound) {
-        super.save(compound);
+    public void saveAdditional(@NotNull CompoundTag compound) {
+        super.saveAdditional(compound);
         ContainerHelper.saveAllItems(compound, items);
         if (!peripheralSettings.isEmpty())
             compound.put(PERIPHERAL_SETTINGS_KEY, peripheralSettings);
-        return compound;
     }
 
     @Override
-    public void load(CompoundTag compound) {
+    public void load(@NotNull CompoundTag compound) {
         ContainerHelper.loadAllItems(compound, items);
         peripheralSettings = compound.getCompound(PERIPHERAL_SETTINGS_KEY);
         super.load(compound);
@@ -141,17 +140,17 @@ public abstract class PeripheralTileEntity<T extends BasePeripheral<?>> extends 
     }
 
     @Override
-    public int[] getSlotsForFace(Direction side) {
+    public int[] getSlotsForFace(@NotNull Direction side) {
         return new int[]{0};
     }
 
     @Override
-    public boolean canPlaceItemThroughFace(int index, ItemStack itemStackIn, @Nullable Direction direction) {
+    public boolean canPlaceItemThroughFace(int index, @NotNull ItemStack itemStackIn, @Nullable Direction direction) {
         return this instanceof IInventoryBlock;
     }
 
     @Override
-    public boolean canTakeItemThroughFace(int index, ItemStack stack, Direction direction) {
+    public boolean canTakeItemThroughFace(int index, @NotNull ItemStack stack, @NotNull Direction direction) {
         return this instanceof IInventoryBlock;
     }
 
@@ -192,7 +191,7 @@ public abstract class PeripheralTileEntity<T extends BasePeripheral<?>> extends 
     }
 
     @Override
-    public void setItem(int index, ItemStack stack) {
+    public void setItem(int index, @NotNull ItemStack stack) {
         items.set(index, stack);
         if (stack.getCount() > getMaxStackSize()) {
             stack.setCount(getMaxStackSize());
@@ -200,7 +199,7 @@ public abstract class PeripheralTileEntity<T extends BasePeripheral<?>> extends 
     }
 
     @Override
-    public boolean stillValid(Player player) {
+    public boolean stillValid(@NotNull Player player) {
         return true;
     }
 

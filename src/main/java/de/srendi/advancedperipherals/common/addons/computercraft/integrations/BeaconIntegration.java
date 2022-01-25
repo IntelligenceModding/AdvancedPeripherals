@@ -28,7 +28,7 @@ public class BeaconIntegration extends BlockEntityIntegrationPeripheral<BeaconBl
     @LuaFunction(mainThread = true)
     public final int getLevel() {
         // because levels are now protected field .... why?
-        CompoundTag savedData = blockEntity.save(new CompoundTag());
+        CompoundTag savedData = blockEntity.saveWithoutMetadata();
         return savedData.getInt("Levels");
     }
 

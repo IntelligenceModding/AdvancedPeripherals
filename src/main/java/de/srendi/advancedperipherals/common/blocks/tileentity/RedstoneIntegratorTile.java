@@ -51,7 +51,7 @@ public class RedstoneIntegratorTile extends PeripheralTileEntity<RedstoneIntegra
     }
 
     @Override
-    public void load(CompoundTag compound) {
+    public void load(@NotNull CompoundTag compound) {
         for (Direction direction : Direction.values()) {
             setRedstoneOutput(direction, compound.getInt(direction.name() + "Power"));
         }
@@ -59,14 +59,13 @@ public class RedstoneIntegratorTile extends PeripheralTileEntity<RedstoneIntegra
     }
 
     @Override
-    public CompoundTag save(CompoundTag compound) {
-        super.save(compound);
+    public void saveAdditional(@NotNull CompoundTag compound) {
+        super.saveAdditional(compound);
         int i = 0;
         for (Direction direction : Direction.values()) {
             compound.putInt(direction.name() + "Power", power[i]);
             i++;
         }
-        return compound;
     }
 
 }

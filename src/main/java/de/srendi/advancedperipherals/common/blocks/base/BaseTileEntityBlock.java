@@ -34,11 +34,12 @@ public abstract class BaseTileEntityBlock extends BaseEntityBlock implements IHa
 
     public BaseTileEntityBlock(boolean belongToTickingEntity, Properties properties) {
         super(properties);
-        this.belongToTickingEntity = true;
+        this.belongToTickingEntity = belongToTickingEntity;
     }
 
+    @NotNull
     @Override
-    public InteractionResult use(BlockState state, Level levelIn, BlockPos pos, Player player, InteractionHand handIn, BlockHitResult hit) {
+    public InteractionResult use(@NotNull BlockState state, Level levelIn, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand handIn, @NotNull BlockHitResult hit) {
         if (levelIn.isClientSide) return InteractionResult.SUCCESS;
         BlockEntity tileEntity = levelIn.getBlockEntity(pos);
         if (tileEntity != null && !(tileEntity instanceof IInventoryBlock)) return InteractionResult.PASS;
@@ -51,7 +52,7 @@ public abstract class BaseTileEntityBlock extends BaseEntityBlock implements IHa
     }
 
     @Override
-    public void onRemove(BlockState state, Level worldIn, BlockPos pos, BlockState newState, boolean isMoving) {
+    public void onRemove(BlockState state, @NotNull Level worldIn, @NotNull BlockPos pos, BlockState newState, boolean isMoving) {
         if (state.getBlock() != newState.getBlock()) {
             BlockEntity tileEntity = worldIn.getBlockEntity(pos);
             if (tileEntity instanceof IInventoryBlock)
@@ -61,7 +62,7 @@ public abstract class BaseTileEntityBlock extends BaseEntityBlock implements IHa
     }
 
     @Override
-    public void setPlacedBy(World worldIn, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
+    public void setPlacedBy(@NotNull Level worldIn, @NotNull BlockPos pos, @NotNull BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
         super.setPlacedBy(worldIn, pos, state, placer, stack);
         if (worldIn.getBlockEntity(pos) == null)
             return;

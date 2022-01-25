@@ -158,12 +158,12 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
             ServerPlayer player = getPlayer(playerName);
             if (player == null)
                 return MethodResult.of(null, "incorrect player name/uuid");
-            Mut component = ITextComponent.Serializer.fromJson(message);
+            MutableComponent component = Component.Serializer.fromJson(message);
             if (component == null)
                 return MethodResult.of(null, "incorrect json");
             if (checkBrackets(arguments.optString(3)))
                 return MethodResult.of(null, "incorrect bracket string (e.g. [], {}, <>, ...)");
-            IFormattableTextComponent preparedMessage = appendPrefix(
+            MutableComponent preparedMessage = appendPrefix(
                     arguments.optString(2, APConfig.PERIPHERALS_CONFIG.DEFAULT_CHAT_BOX_PREFIX.get()),
                     arguments.optString(3, "[]"),
                     arguments.optString(4, "")
@@ -178,12 +178,12 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
         return withChatOperation(ignored -> {
             String message = arguments.getString(0);
             String playerName = arguments.getString(1);
-            ServerPlayerEntity player = getPlayer(playerName);
+            ServerPlayer player = getPlayer(playerName);
             if (player == null)
                 return MethodResult.of(null, "incorrect player name/uuid");
             if (checkBrackets(arguments.optString(3)))
                 return MethodResult.of(null, "incorrect bracket string (e.g. [], {}, <>, ...)");
-            IFormattableTextComponent preparedMessage = appendPrefix(
+            MutableComponent preparedMessage = appendPrefix(
                     arguments.optString(2, APConfig.PERIPHERALS_CONFIG.DEFAULT_CHAT_BOX_PREFIX.get()),
                     arguments.optString(3, "[]"),
                     arguments.optString(4, "")

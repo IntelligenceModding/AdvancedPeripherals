@@ -31,19 +31,15 @@ public abstract class PoweredPeripheralTileEntity<T extends BasePeripheral<?>> e
     protected abstract int getMaxEnergyStored();
 
     @Override
-    public CompoundTag save(CompoundTag compound) {
-        lazyEnergyStorage.ifPresent(iEnergyStorage -> {
-            compound.putInt("energy", iEnergyStorage.getEnergyStored());
-        });
-        return super.save(compound);
+    public void saveAdditional(@NotNull CompoundTag compound) {
+        super.saveAdditional(compound);
+        lazyEnergyStorage.ifPresent(iEnergyStorage -> compound.putInt("energy", iEnergyStorage.getEnergyStored()));
     }
 
     @Override
-    public void load(CompoundTag compound) {
+    public void load(@NotNull CompoundTag compound) {
         super.load(compound);
-        lazyEnergyStorage.ifPresent(iEnergyStorage -> {
-            iEnergyStorage.receiveEnergy(compound.getInt("energy") - iEnergyStorage.getEnergyStored(), false);
-        });
+        lazyEnergyStorage.ifPresent(iEnergyStorage -> iEnergyStorage.receiveEnergy(compound.getInt("energy") - iEnergyStorage.getEnergyStored(), false));
     }
 
     @Override
