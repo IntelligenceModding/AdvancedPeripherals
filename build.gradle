@@ -67,8 +67,6 @@ sourceSets {
     testMod {}
 }
 
-
-
 minecraft {
 
     mappings channel: "${mappings_channel}", version: "${mappings_version}"
@@ -242,11 +240,12 @@ dependencies {
     runtimeOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}")
 
     // Minecolonies
-    compileOnly fg.deobf("com.ldtteam:minecolonies:${minecolonies_version}")
-    compileOnly fg.deobf("com.ldtteam:structurize:${structurize_version}")
-    compileOnly fg.deobf("com.ldtteam:multi-piston:${multipiston_version}")
-    compileOnly fg.deobf("com.ldtteam:domum_ornamentum:${domumornamentum_version}:universal")
-    compileOnly fg.deobf("com.ldtteam:blockui:${blockui_version}")
+    // Change to compileOnly when running `runData`
+    implementation fg.deobf("com.ldtteam:minecolonies:${minecolonies_version}")
+    implementation fg.deobf("com.ldtteam:structurize:${structurize_version}")
+    implementation fg.deobf("com.ldtteam:multi-piston:${multipiston_version}")
+    implementation fg.deobf("com.ldtteam:domum_ornamentum:${domumornamentum_version}:universal")
+    implementation fg.deobf("com.ldtteam:blockui:${blockui_version}")
 
     //Patchouli
     //runtimeOnly "vazkii.patchouli:Patchouli:${patchouli_version}"

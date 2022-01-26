@@ -7,22 +7,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
-### Fixed
-- Fixed `getBlockData` of the block reader peripheral
-- Fixed not dropping blocks
-- Fixed several recipes
+We'll start adding more mod integrations in the next major 1.18 version.
 
-## [1.16.5-0.7.7r] - 2022-01-20
-
-### Removed
-- Removed mekanism integration. The latest mekanism version does now support computercraft.
-- Removed draconic evolution integration.
-
-## [1.18.1-0.7.8.1r] - 2021-12-24
-
-### Fixed
-- Fixed incompatibility with ae2 10.0.0-beta.1
-- 
 ### Changed
 - [#247] We changed the textures of our blocks. Every block is now rotatable and the front texture of every block is now marked with a light aqua box.
 
@@ -37,6 +23,36 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - [#228] Typo of metaphysics config file. You may need to redo some configurations.
 - [#189] Fixed that the player detector ignores config values.
 - Fixed the key `status` of the table of the function `getResearch` from the minecolonies integration.
+- Fixed `getBlockData` of the block reader peripheral
+- Fixed not dropping blocks
+- Fixed several recipes
+- [#257] Incompatibility with newer forge versions
+
+## [1.16.5-0.7.7r] - 2022-01-20
+
+### Removed
+- Removed mekanism integration. The latest mekanism version does now support computercraft.
+- Removed draconic evolution integration.
+
+### Changed
+- [#247] We changed the textures of our blocks. Every block is now rotatable and the front texture of every block is now marked with a light aqua box.
+
+### Added
+- [#237] Added `sendFormattedMessageToPlayer` to the chat box
+- [#237] Added the ability to format prefixes with the chat box
+- [#237] UUID's can now be used for `ToPlayer` functions in the chat box.
+- [#237] Added a range parameter to the chat box(Parameter 5)
+- [#190] The shape and color of the brackets of the chat box can now be changed
+
+### Fixed
+- [#228] Typo of metaphysics config file. You may need to redo some configurations.
+- [#189] Fixed that the player detector ignores config values.
+- Fixed the key `status` of the table of the function `getResearch` from the minecolonies integration.
+
+## [1.18.1-0.7.8.1r] - 2021-12-24
+
+### Fixed
+- Fixed incompatibility with ae2 10.0.0-beta.1
 
 ## [1.18.1-0.7.8r] - 2021-12-18
 
