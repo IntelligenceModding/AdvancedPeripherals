@@ -16,7 +16,7 @@ Documentation: https://docs.srendi.de
 
 ## Translating
 
-All translating is done via crowdin. -> https://crowdin.com/translate/advanced-peripherals/
+All translating is done via crowdin. -> https://crowdin.com/project/advanced-peripherals
 
 We will close pull requests related to translations.
 
