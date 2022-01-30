@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+## [1.18.1-0.7.9r] - 2022-01-26
 
 We'll start adding more mod integrations in the next major 1.18 version.
 
