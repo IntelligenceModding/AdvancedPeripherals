@@ -27,6 +27,9 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.registries.ForgeRegistries;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwner<RsBridgeTile>> {
     public static final String TYPE = "rsBridge";
 
@@ -45,6 +48,13 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
     @LuaFunction(mainThread = true)
     public final Object listItems() { return RefinedStorage.listItems(getNetwork()); }
+
+    @LuaFunction(mainThread = true)
+    public final Object listCraftableItems() {
+        List<Object> items = new ArrayList<>();
+        RefinedStorage.getCraftableItems(getNetwork()).forEach(item -> items.add(RefinedStorage.getObjectFromStack(item)));
+        return items;
+    }
 
     @LuaFunction(mainThread = true)
     public final Integer getMaxItemDiskStorage() {

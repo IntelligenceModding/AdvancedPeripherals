@@ -215,14 +215,13 @@ repositories {
         }
     }
 
-//    JFrog needs to be renewed :P
-//    maven {
-//        name = "Srendis repo"
-//        url = "https://srendi.jfrog.io/artifactory/default-maven-local/"
-//        content {
-//            includeGroup "site.siredvin.ttoolkit"
-//        }
-//    }
+    maven {
+        name = "Srendis repo"
+        url = "https://srendi.jfrog.io/artifactory/default-maven-local/"
+        content {
+            includeGroup "site.siredvin.ttoolkit"
+        }
+    }
 }
 
 configurations {
