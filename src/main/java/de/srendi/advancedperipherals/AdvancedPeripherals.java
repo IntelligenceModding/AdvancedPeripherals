@@ -2,6 +2,7 @@ package de.srendi.advancedperipherals;
 
 import de.srendi.advancedperipherals.client.HudOverlayHandler;
 import de.srendi.advancedperipherals.common.addons.computercraft.turtles.TurtleCompassUpgrade;
+import de.srendi.advancedperipherals.common.addons.refinedstorage.RefinedStorage;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.setup.Blocks;
 import de.srendi.advancedperipherals.common.setup.Registration;
@@ -62,6 +63,10 @@ public class AdvancedPeripherals {
         Registration.register();
         MinecraftForge.EVENT_BUS.register(this);
         curiosLoaded = ModList.get().isLoaded("curios");
+        if (ModList.get().isLoaded("refinedstorage")) {
+            RefinedStorage.instance = new RefinedStorage();
+            RefinedStorage.instance.initiate();
+        }
     }
 
     public static void debug(String message) {

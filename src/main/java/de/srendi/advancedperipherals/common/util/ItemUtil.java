@@ -4,6 +4,7 @@ import appeng.api.storage.MEStorage;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.core.apis.TableHelper;
 import de.srendi.advancedperipherals.common.addons.appliedenergistics.AppEngApi;
+import de.srendi.advancedperipherals.common.addons.refinedstorage.RefinedStorage;
 import net.minecraft.ResourceLocationException;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.IntTag;
@@ -15,6 +16,7 @@ import net.minecraftforge.registries.ForgeRegistryEntry;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.ObjectHolder;
 
+import java.util.List;
 import java.util.Map;
 
 public class ItemUtil {
@@ -111,4 +113,55 @@ public class ItemUtil {
         return tag;
     }
 
+    //RS
+    public static ItemStack getItemStackRS(Map<?, ?> table, List<ItemStack> items) throws LuaException {
+        if (table == null || table.isEmpty())
+            return ItemStack.EMPTY;
+
+        if (table.containsKey("fingerprint")) {
+            ItemStack fingerprint = RefinedStorage.findMatchingFingerprint(TableHelper.getStringField(table, "fingerprint"), items);
+            if (table.containsKey("count"))
+                fingerprint.setCount(TableHelper.getIntField(table, "count"));
+            return fingerprint;
+        }
+        if (!table.containsKey("name"))
+            return ItemStack.EMPTY;
+
+        String name = TableHelper.getStringField(table, "name");
+
+        Item item = getRegistryEntry(name, ForgeRegistries.ITEMS);
+
+        ItemStack stack = new ItemStack(item, 1);
+
+        if (table.containsKey("count"))
+            stack.setCount(TableHelper.getIntField(table, "count"));
+
+        if (table.containsKey("nbt") || table.containsKey("json") || table.containsKey("tag"))
+            stack.setTag(getTagRS(stack, table, items));
+
+        return stack;
+    }
+
+    private static CompoundTag getTagRS(ItemStack stack, Map<?, ?> table, List<ItemStack> items) throws LuaException {
+        CompoundTag nbt = NBTUtil.fromText(TableHelper.optStringField(table, "json", null));
+        if (nbt == null) {
+            nbt = NBTUtil.fromBinary(TableHelper.optStringField(table, "tag", null));
+            if (nbt == null) {
+                nbt = parseNBTHashRS(stack, table, items);
+            }
+        }
+        return nbt;
+    }
+
+    private static CompoundTag parseNBTHashRS(ItemStack stack, Map<?, ?> table, List<ItemStack> items) throws LuaException {
+        String nbt = TableHelper.optStringField(table, "nbt", null);
+        if (nbt == null || nbt.isEmpty())
+            return null;
+        CompoundTag tag = RefinedStorage.findMatchingTag(stack, nbt, items);
+        if (tag != null)
+            return tag;
+
+        tag = new CompoundTag();
+        return tag;
+    }
 }

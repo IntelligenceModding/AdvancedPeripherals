@@ -207,12 +207,22 @@ repositories {
     }
 
     maven {
-        name = "Srendis repo"
-        url = "https://srendi.jfrog.io/artifactory/default-maven-local/"
-        content {
-            includeGroup "site.siredvin.ttoolkit"
+        name = "Refined Storage Repo"
+        url = uri("https://maven.pkg.github.com/refinedmods/refinedstorage")
+        credentials {
+            username = "anything"
+            password = "\u0067hp_pnP5hVDYXXhhXwe21IEkrUzGjquUJL0xjLzb"
         }
     }
+
+//    JFrog needs to be renewed :P
+//    maven {
+//        name = "Srendis repo"
+//        url = "https://srendi.jfrog.io/artifactory/default-maven-local/"
+//        content {
+//            includeGroup "site.siredvin.ttoolkit"
+//        }
+//    }
 }
 
 configurations {
@@ -238,6 +248,11 @@ dependencies {
     runtimeOnly fg.deobf("appeng:appliedenergistics2:${appliedenergistics_version}")
     // Curios
     runtimeOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}")
+
+    // Refined Storage
+    implementation fg.deobf("com.refinedmods:refinedstorage:${refinedstorage_version}") {
+        transitive false
+    }
 
     // Minecolonies
     // Change to compileOnly when running `runData`
