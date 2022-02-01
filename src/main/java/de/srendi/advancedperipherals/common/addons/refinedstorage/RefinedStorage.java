@@ -14,12 +14,12 @@ import com.refinedmods.refinedstorage.apiimpl.network.node.NetworkNode;
 import dan200.computercraft.shared.util.NBTUtil;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
+import de.srendi.advancedperipherals.common.util.StringUtil;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
-import org.apache.commons.codec.binary.Hex;
 
 import javax.annotation.Nullable;
 import java.nio.charset.StandardCharsets;
@@ -247,7 +247,7 @@ public class RefinedStorage {
         try {
             byte[] bytesOfHash = fingerprint.getBytes(StandardCharsets.UTF_8);
             MessageDigest md = MessageDigest.getInstance("MD5");
-            return new String(Hex.encodeHex(md.digest(bytesOfHash)));
+            return StringUtil.toHexString(md.digest(bytesOfHash));
         } catch (NoSuchAlgorithmException ex) {
             AdvancedPeripherals.debug("Could not parse fingerprint.");
             ex.printStackTrace();
