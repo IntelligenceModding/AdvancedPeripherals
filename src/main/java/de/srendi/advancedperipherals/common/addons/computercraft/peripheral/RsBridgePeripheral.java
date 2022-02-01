@@ -57,6 +57,13 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     }
 
     @LuaFunction(mainThread = true)
+    public final Object listCraftableFluids() {
+        List<Object> fluids = new ArrayList<>();
+        RefinedStorage.getCraftableFluids(getNetwork()).forEach(fluid -> fluids.add(RefinedStorage.getObjectFromFluid(fluid)));
+        return fluids;
+    }
+
+    @LuaFunction(mainThread = true)
     public final Integer getMaxItemDiskStorage() {
         return RefinedStorage.getMaxItemDiskStorage(getNetwork());
     }
