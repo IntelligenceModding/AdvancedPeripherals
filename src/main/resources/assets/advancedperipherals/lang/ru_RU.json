@@ -29,7 +29,7 @@
   "item.advancedperipherals.overpowered_husbandry_automata_core": "Более мощное Ядро автомата: Земледелие",
   "item.advancedperipherals.tooltip.computer_tool": "§7Ты можешь получить доступ к GUI наших блоков с этим магическим инструментом. Но пока, он бесполезен.",
   "item.advancedperipherals.tooltip.show_desc": "§b[§7%s§b] §7Для описания",
-  "item.advancedperipherals.tooltip.disabled": "§cЭтот предмет отключён в конфигурации, поэтому, ты можешь его создать, но логика переферии не работает",
+  "item.advancedperipherals.tooltip.disabled": "§cЭтот предмет отключён в конфигурации, поэтому, ты можешь его создать, но логика периферии не работает",
   "item.advancedperipherals.tooltip.energy_detector": "§7Может обнаружить поток энергии и действует как резистор.",
   "item.advancedperipherals.tooltip.chunk_controller": "§7Изготавливающийся ингредиент для Пухлой черепашки.",
   "item.advancedperipherals.tooltip.environment_detector": "§7Можно использовать для взаимодействия с Миром.",
