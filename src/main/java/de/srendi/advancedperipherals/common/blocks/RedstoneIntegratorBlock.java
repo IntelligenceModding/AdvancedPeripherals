@@ -5,6 +5,8 @@ import de.srendi.advancedperipherals.common.blocks.tileentity.RedstoneIntegrator
 import de.srendi.advancedperipherals.common.setup.Blocks;
 import de.srendi.advancedperipherals.common.setup.TileEntityTypes;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.LeverBlock;
+import net.minecraft.block.RedstoneBlock;
 import net.minecraft.block.material.Material;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
@@ -30,11 +32,10 @@ public class RedstoneIntegratorBlock extends APTileEntityBlock<RedstoneIntegrato
     }
 
     @Override
-    public int getDirectSignal(@NotNull BlockState blockState, IBlockReader blockAccess, @NotNull BlockPos pos, @NotNull Direction side) {
+    public int getSignal(@NotNull BlockState blockState, IBlockReader blockAccess, @NotNull BlockPos pos, @NotNull Direction side) {
         TileEntity te = blockAccess.getBlockEntity(pos);
         if (te instanceof RedstoneIntegratorTile)
             return ((RedstoneIntegratorTile) te).power[side.getOpposite().get3DDataValue()];
         return 0;
     }
-
 }

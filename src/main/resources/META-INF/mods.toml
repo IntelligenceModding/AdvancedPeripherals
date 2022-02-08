@@ -11,13 +11,14 @@ displayURL = "https://docs.srendi.de/"
 authors = "Srendi"
 description = '''
 Advanced Peripherals is a mod that adds many useful extensions for CC:Tweaked(Computercraft).
-You can communicate with Rerfined Storage, Applied Energistics 2 or with the whole Minecraft world.
+You can communicate with a lot of mods or with the whole Minecraft world.
 Adds things like the Me Bridge, various types of turtles, the Chat Box and more.
+Take a look at the documentation for more.
 '''
 [[dependencies.advancedperipherals]]
 modId = "forge"
 mandatory = true
-versionRange = "[36.2.0,)"
+versionRange = "[36.2.22,)"
 ordering = "NONE"
 side = "BOTH"
 [[dependencies.advancedperipherals]]
