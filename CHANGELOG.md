@@ -6,6 +6,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+Due to the high amount of minor bugs, AP is now marked as beta.
+
+### Changed
+- [#239] Decreased base energy consumption of ME and RS bridge
+
+### Added
+- [#261] Ported RsBridge peripheral from 1.16 to 1.18 (Thanks to CanadianBaconBoi)
+- [#261] Re-Added `listCraftableItems` (Thanks to CanadianBaconBoi)
+- [#263] Added ids to AR goggles (Thanks to ThatGravyBoat)
+- [#241] Added `getPlayerRotationZ` and `getPlayerRotationX` to the AR goggles
+
 ## [1.18.1-0.7.9r] - 2022-01-26
 
 We'll start adding more mod integrations in the next major 1.18 version.
@@ -14,7 +26,6 @@ We'll start adding more mod integrations in the next major 1.18 version.
 - [#247] We changed the textures of our blocks. Every block is now rotatable and the front texture of every block is now marked with a light aqua box.
 
 ### Added
-- Ported RsBridge peripheral from 1.16 to 1.18
 - [#237] Added `sendFormattedMessageToPlayer` to the chat box
 - [#237] Added the ability to format prefixes with the chat box
 - [#237] UUID's can now be used for `ToPlayer` functions in the chat box.

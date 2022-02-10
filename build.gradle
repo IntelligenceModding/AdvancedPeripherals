@@ -178,6 +178,14 @@ repositories {
         url = 'https://squiddev.cc/maven/'
     }
     maven {
+        // location of the maven that hosts JEI files
+        name = "Progwml6 maven"
+        url = "https://dvs1.progwml6.com/files/maven/"
+    }
+    maven {
+        url = "https://maven.theillusivec4.top/"
+    }
+    maven {
         name = "LDT Team"
         url = 'https://ldtteam.jfrog.io/ldtteam/modding'
     }
@@ -243,15 +251,10 @@ dependencies {
     // Minimal requirements end
 
     // Extended requirements
-    // Applied Energistics 2
     runtimeOnly fg.deobf("appeng:appliedenergistics2:${appliedenergistics_version}")
-    // Curios
-    runtimeOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}")
-
+   // runtimeOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}")
     // Refined Storage
-    implementation fg.deobf("com.refinedmods:refinedstorage:${refinedstorage_version}") {
-        transitive false
-    }
+    compileOnly fg.deobf("com.refinedmods:refinedstorage:${refinedstorage_version}")
 
     // Minecolonies
     // Change to compileOnly when running `runData`
@@ -263,7 +266,6 @@ dependencies {
 
     //Patchouli
     //runtimeOnly "vazkii.patchouli:Patchouli:${patchouli_version}"
-
     testModImplementation sourceSets.main.output
 
     //Removed until fully ported
@@ -277,7 +279,7 @@ dependencies {
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junit_version}"
     // Testing stuff
     // JEI
-    runtimeOnly fg.deobf("mezz.jei:jei-${jei_version}")
+    implementation fg.deobf("mezz.jei:jei-${jei_version}")
 }
 
 
@@ -376,7 +378,7 @@ curseforge {
 }
 
 
-task publishModrinth (type: TaskModrinthUpload) {
+task publishModrinth(type: TaskModrinthUpload) {
     dependsOn('assemble', 'reobfJar')
     onlyIf {
         modrinthKey

@@ -9,6 +9,12 @@ import de.srendi.advancedperipherals.common.argoggles.RenderActionType;
 import de.srendi.advancedperipherals.common.blocks.tileentity.ARControllerTile;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
+import net.minecraft.client.gui.components.DebugScreenOverlay;
+import net.minecraft.client.gui.screens.controls.KeyBindsList;
+import net.minecraft.client.renderer.debug.DebugRenderer;
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.player.Player;
+import net.minecraftforge.client.settings.KeyBindingMap;
 
 import java.util.Optional;
 
@@ -152,5 +158,15 @@ public class ARControllerPeripheral extends BasePeripheral<BlockEntityPeripheral
     @LuaFunction(mainThread = true)
     public final void clearElement(String id) {
         owner.tileEntity.clearElement(id);
+    }
+
+    @LuaFunction(mainThread = true)
+    public final float getPlayerRotationY() {
+        return Mth.wrapDegrees(owner.getOwner().getYRot());
+    }
+
+    @LuaFunction(mainThread = true)
+    public final float getPlayerRotationZ() {
+        return Mth.wrapDegrees(owner.getOwner().getYRot());
     }
 }
