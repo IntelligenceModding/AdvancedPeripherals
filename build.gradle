@@ -246,23 +246,30 @@ dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
     implementation fg.deobf("org.squiddev:cc-tweaked-${cc_version}")
     // Compile-time API required
+    //Ae2
     compileOnly fg.deobf("appeng:appliedenergistics2:${appliedenergistics_version}")
+    //Curios
     compileOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}:api")
     // Minimal requirements end
 
     // Extended requirements
+    // Applied Energistics 2
     runtimeOnly fg.deobf("appeng:appliedenergistics2:${appliedenergistics_version}")
-   // runtimeOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}")
+    // Curios
+    runtimeOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}")
+
     // Refined Storage
-    compileOnly fg.deobf("com.refinedmods:refinedstorage:${refinedstorage_version}")
+    implementation fg.deobf("com.refinedmods:refinedstorage:${refinedstorage_version}") {
+        transitive false
+    }
 
     // Minecolonies
     // Change to compileOnly when running `runData`
-    implementation fg.deobf("com.ldtteam:minecolonies:${minecolonies_version}")
-    implementation fg.deobf("com.ldtteam:structurize:${structurize_version}")
-    implementation fg.deobf("com.ldtteam:multi-piston:${multipiston_version}")
-    implementation fg.deobf("com.ldtteam:domum_ornamentum:${domumornamentum_version}:universal")
-    implementation fg.deobf("com.ldtteam:blockui:${blockui_version}")
+    compileOnly fg.deobf("com.ldtteam:minecolonies:${minecolonies_version}")
+    compileOnly fg.deobf("com.ldtteam:structurize:${structurize_version}")
+    compileOnly fg.deobf("com.ldtteam:multi-piston:${multipiston_version}")
+    compileOnly fg.deobf("com.ldtteam:domum_ornamentum:${domumornamentum_version}:universal")
+    compileOnly fg.deobf("com.ldtteam:blockui:${blockui_version}")
 
     //Patchouli
     //runtimeOnly "vazkii.patchouli:Patchouli:${patchouli_version}"

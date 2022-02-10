@@ -1,10 +1,13 @@
 package de.srendi.advancedperipherals.common.data;
 
+import appeng.core.AppEngBase;
+import appeng.core.definitions.AEBlocks;
 import com.refinedmods.refinedstorage.RSBlocks;
 import com.refinedmods.refinedstorage.RSItems;
 import com.refinedmods.refinedstorage.block.InterfaceBlock;
 import com.refinedmods.refinedstorage.item.QuartzEnrichedIronItem;
 import dan200.computercraft.shared.Registry;
+import de.srendi.advancedperipherals.common.addons.appliedenergistics.AppEngApi;
 import de.srendi.advancedperipherals.common.setup.Blocks;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.recipes.FinishedRecipe;
@@ -200,15 +203,6 @@ public class RecipesProvider extends RecipeProvider implements IConditionBuilder
                 .pattern("RAR")
                 .pattern("DSD")
                 .pattern("RLR")
-                .unlockedBy("has_item", has(CASING))
-                .save(consumer);
-        ShapedRecipeBuilder.shaped(Blocks.ME_BRIDGE.get())
-                .define('Q', RSItems.QUARTZ_ENRICHED_IRON.get())
-                .define('I', RSBlocks.INTERFACE.get())
-                .define('A', CASING)
-                .pattern("QIQ")
-                .pattern("IAI")
-                .pattern("QIQ")
                 .unlockedBy("has_item", has(CASING))
                 .save(consumer);
 

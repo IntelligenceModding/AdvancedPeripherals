@@ -5,6 +5,7 @@
     "advancedperipherals:chat_box",
     "advancedperipherals:player_detector",
     "advancedperipherals:me_bridge",
+    "advancedperipherals:rs_bridge",
     "advancedperipherals:energy_detector",
     "advancedperipherals:ar_controller",
     "advancedperipherals:inventory_manager",
@@ -12,7 +13,6 @@
     "advancedperipherals:block_reader",
     "advancedperipherals:geo_scanner",
     "advancedperipherals:colony_integrator",
-    "advancedperipherals:nbt_storage",
-    "advancedperipherals:rs_bridge"
+    "advancedperipherals:nbt_storage"
   ]
 }
