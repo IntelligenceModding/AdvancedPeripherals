@@ -13,6 +13,7 @@
     "advancedperipherals:block_reader",
     "advancedperipherals:geo_scanner",
     "advancedperipherals:colony_integrator",
-    "advancedperipherals:nbt_storage"
+    "advancedperipherals:nbt_storage",
+    "advancedperipherals:rs_bridge"
   ]
 }

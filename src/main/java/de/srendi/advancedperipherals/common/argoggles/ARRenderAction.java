@@ -16,6 +16,7 @@ public final class ARRenderAction implements INBTSerializable<CompoundTag> {
     private static final String INT_ARGS = "int_args";
     private static final String VIRTUAL_SCREEN_SIZE = "virtualScreenSize";
 
+    private String id;
     private RenderActionType type;
     private String stringArg = "";
     private int[] intArgs = new int[0];
@@ -25,15 +26,28 @@ public final class ARRenderAction implements INBTSerializable<CompoundTag> {
 
     }
 
-    public ARRenderAction(RenderActionType type, int... intArgs) {
+    public ARRenderAction(String id, RenderActionType type, int... intArgs) {
         this();
+        this.id = id;
         this.type = type;
         this.intArgs = intArgs;
     }
 
+    public ARRenderAction(RenderActionType type, int... intArgs) {
+        this(null, type, intArgs);
+    }
+
     public ARRenderAction(RenderActionType type, String stringArg, int... intArgs) {
-        this(type, intArgs);
+        this(null, type, stringArg, intArgs);
+    }
+
+    public ARRenderAction(String id, RenderActionType type, String stringArg, int... intArgs) {
+        this(id, type, intArgs);
         this.stringArg = stringArg;
+    }
+
+    public String getId() {
+        return id;
     }
 
     public static ARRenderAction deserialize(CompoundTag nbt) {

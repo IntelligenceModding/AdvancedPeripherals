@@ -37,12 +37,20 @@ public class ARControllerTile extends PeripheralTileEntity<ARControllerPeriphera
     public void addToCanvas(ARRenderAction action) {
         if (canvas.contains(action))
             return;
+        if (action.getId() != null) {
+            canvas.removeIf(old -> action.getId().equals(old.getId()));
+        }
         canvas.add(action);
         blockChanged();
     }
 
     public void clearCanvas() {
         canvas.clear();
+        blockChanged();
+    }
+
+    public void clearElement(String id) {
+        canvas.removeIf(old -> id.equals(old.getId()));
         blockChanged();
     }
 
