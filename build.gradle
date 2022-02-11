@@ -13,7 +13,6 @@ buildscript {
     }
 }
 
-
 plugins {
     id "maven-publish"
     id 'com.matthewprenger.cursegradle' version '1.4.0'

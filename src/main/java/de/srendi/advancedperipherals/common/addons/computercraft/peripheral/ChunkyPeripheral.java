@@ -59,11 +59,13 @@ public class ChunkyPeripheral extends BasePeripheral<TurtlePeripheralOwner> {
 
         if (loadedChunk != null) {
             manager.removeForceChunk(level, getUUID(), loadedChunk);
+            level.setChunkForced(loadedChunk.x, loadedChunk.z, false);
             loadedChunk = null;
         }
         if (newChunk != null) {
             loadedChunk = newChunk;
             manager.addForceChunk(level, getUUID(), loadedChunk);
+            level.setChunkForced(newChunk.x, newChunk.z, true);
         }
     }
 
