@@ -7,6 +7,16 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.18.1-0.7.11b] - 2022-02-15
+
+Small update but with a quite important fix.
+I'll fix the chat event in the next update.
+
+### Fixed
+- The chunky turtle does now work as intentional
+
+## [1.18.1-0.7.10b] - 2022-02-10
+
 Due to the high amount of minor bugs, AP is now marked as beta.
 
 ### Changed
