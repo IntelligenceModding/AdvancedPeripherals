@@ -77,6 +77,7 @@
   "turtle.advancedperipherals.player_turtle": "Player",
   "turtle.advancedperipherals.chunky_turtle": "Chunky",
   "turtle.advancedperipherals.geoscanner_turtle": "Geoscanning",
+  "turtle.advancedperipherals.compass_turtle": "Compass",
   "turtle.advancedperipherals.weak_automata": "Weak automata",
   "turtle.advancedperipherals.overpowered_weak_automata": "Overpowered weak automata",
   "turtle.advancedperipherals.husbandry_automata": "Husbandry automata",

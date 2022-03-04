@@ -12,10 +12,9 @@ import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.NotNull;
 
 public class TurtleCompassUpgrade extends PeripheralTurtleUpgrade<CompassPeripheral> {
-    public static final ResourceLocation ID = new ResourceLocation(AdvancedPeripherals.MOD_ID, "compass_turtle");
 
-    public TurtleCompassUpgrade() {
-        super(ID, new ItemStack(Items.COMPASS));
+    public TurtleCompassUpgrade(ResourceLocation id, ItemStack stack) {
+        super(id, stack);
     }
 
     @Override
