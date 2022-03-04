@@ -1,6 +1,6 @@
 {
   "advancements.advancedperipherals.root": "Advanced Peripherals",
-  "advancements.advancedperipherals.root.description": "Ogni viaggio inizia dal primo blocco ...",
+  "advancements.advancedperipherals.root.description": "Every journey starts from with the first block ...",
   "advancements.advancedperipherals.weak_automata_core": "Primo nucleo d'automa",
   "advancements.advancedperipherals.weak_automata_core.description": "Esiste l'aldilà in Minecraft?",
   "advancements.advancedperipherals.end_automata_core": "Nucleo d'automa end",
@@ -10,14 +10,13 @@
   "advancements.advancedperipherals.overpowered_automata_core": "Nucleo d'automa potente",
   "advancements.advancedperipherals.overpowered_automata_core.description": "Puoi maneggiare un tale potere?",
   "advancements.advancedperipherals.ar_toolkit": "Pronto per l'AR!",
-  "advancements.advancedperipherals.ar_toolkit.description": "Ottieni oggetti che richiedano l'uso della funzionalità AR. Ora sei tu a decidere come appare la realtà",
+  "advancements.advancedperipherals.ar_toolkit.description": "Collect items, that are required to use the AR features. Now you decide, how reality looks like",
   "advancements.advancedperipherals.base_toolkit": "Set da gentiluomo!",
   "advancements.advancedperipherals.base_toolkit.description": "Ottieni l'integratore per la redstone, il gestore dell'inventario e il rilevatore di energia. Come facevi a giocare senza queste cose?",
   "advancements.advancedperipherals.nbt_toolkit": "POTERE ILLIMITATO!!!",
   "advancements.advancedperipherals.nbt_toolkit.description": "Ottieni l'archivio NBT e il lettore di blocchi. Ora il mondo non ha più segreti!",
   "advancements.advancedperipherals.sense_toolkit": "La verità non può essere nascosta per sempre",
   "advancements.advancedperipherals.sense_toolkit.description": "Ottieni il geo scanner e il rilevatore ambientale. Non c'è limite all'osservazione!",
-
   "item.advancedperipherals.chunk_controller": "Pezzo del controller",
   "item.advancedperipherals.computer_tool": "Attrezzo da computer",
   "item.advancedperipherals.ar_goggles": "Visore AR",
@@ -56,7 +55,6 @@
   "item.advancedperipherals.tooltip.overpowered_end_automata_core": "§7Versione migliorata del nucleo d'automa end che fornisce funzionalità aggiuntive! Fai attenzione, l'aggiornamento è molto fragile.",
   "item.advancedperipherals.tooltip.husbandry_automata_core": "§7Aggiornamento per la tartaruga che consente l'interazione di base ed un'interazione avanzata con gli animali.",
   "item.advancedperipherals.tooltip.overpowered_husbandry_automata_core": "§7Versione migliorata del nucleo d'automa agricolo che fornisce funzionalità aggiuntive! Fai attenzione, l'aggiornamento è molto fragile.",
-
   "block.advancedperipherals.environment_detector": "Rilevatore Ambientale",
   "block.advancedperipherals.chat_box": "Scatola per la chat",
   "block.advancedperipherals.player_detector": "Rilevatore di giocatori",
@@ -71,36 +69,30 @@
   "block.advancedperipherals.geo_scanner": "Geo Scanner",
   "block.advancedperipherals.nbt_storage": "Archivio NBT",
   "block.advancedperipherals.colony_integrator": "Integratore di colonie",
-
-  "turtle.advancedperipherals.chat_box_turtle": "Chiacchierone",
-  "turtle.advancedperipherals.environment_turtle": "Ambiente",
-  "turtle.advancedperipherals.player_turtle": "Giocatore",
+  "turtle.advancedperipherals.chatty_turtle": "Chatty",
+  "turtle.advancedperipherals.environment_turtle": "Environment",
+  "turtle.advancedperipherals.player_turtle": "Player",
   "turtle.advancedperipherals.chunky_turtle": "Grosso",
   "turtle.advancedperipherals.geoscanner_turtle": "Geoscanning",
+  "turtle.advancedperipherals.compass_turtle": "Compass",
   "turtle.advancedperipherals.weak_automata": "Automa debole",
   "turtle.advancedperipherals.overpowered_weak_automata": "Automata debole potenziato",
   "turtle.advancedperipherals.husbandry_automata": "Automata agricolo",
   "turtle.advancedperipherals.overpowered_husbandry_automata": "Automa agricolo potenziato",
   "turtle.advancedperipherals.end_automata": "Automa end",
   "turtle.advancedperipherals.overpowered_end_automata": "Automa end potenziato",
-
   "pocket.advancedperipherals.environment_pocket": "Ambiente",
   "pocket.advancedperipherals.player_pocket": "Giocatore",
   "pocket.advancedperipherals.chatty_pocket": "Chiacchierone",
   "pocket.advancedperipherals.geoscanner_pocket": "Geoscanning",
   "pocket.advancedperipherals.colony_pocket": "Colonia",
-
   "curios.identifier.glasses": "Occhiali",
-
   "text.advancedperipherals.removed_player": "Carta di memoria cancellata",
   "text.advancedperipherals.added_player": "Sei stato aggiunto nella memoria della carta",
   "text.advancedperipherals.linked_goggles": "Visore AR collegato con successo!",
   "text.advancedperipherals.automata_core_feed_by_player": "Stai cercando di sfamare l'anima con l'entità, ma il tuo corpo si rifiuta. Forse qualcosa di più meccanico potrebbe farlo?",
-
   "entity.minecraft.villager.advancedperipherals.computer_scientist": "Informatico",
-
   "keybind.advancedperipherals.category": "Advanced Peripherals",
   "keybind.advancedperipherals.description": "Mostra descrizione",
-
   "itemGroup.advancedperipheralstab": "Advanced Peripherals"
 }
