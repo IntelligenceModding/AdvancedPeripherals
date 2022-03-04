@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+## [1.18.1-0.7.12b] - 2022-03-04
+
+Added language updates from crowdin
+
+### Fixed
+- Fixed `chat` event
+- Fixed compass turtle
+- Fixed and improved language files
 
 ## [1.18.1-0.7.11b] - 2022-02-15
 
