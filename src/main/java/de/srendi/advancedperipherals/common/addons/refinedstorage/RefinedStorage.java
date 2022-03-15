@@ -128,10 +128,13 @@ public class RefinedStorage {
 
             inputs.add(inputs1);
         }
-        List<ItemStack> byproductsList = pattern.getByproducts();
+
         List<Object> byproducts = new ArrayList<>();
-        for (ItemStack stack : byproductsList)
-            byproducts.add(getObjectFromStack(stack.copy()));
+        if(!pattern.isProcessing()) {
+            List<ItemStack> byproductsList = pattern.getByproducts();
+            for (ItemStack stack : byproductsList)
+                byproducts.add(getObjectFromStack(stack.copy()));
+        }
 
         map.put("inputs", inputs);
         map.put("outputs", outputs);
