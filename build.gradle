@@ -26,7 +26,7 @@ apply plugin: 'net.minecraftforge.gradle'
 java.toolchain.languageVersion = JavaLanguageVersion.of(8) // Mojang ships Java 8 to end users, so your mod should target Java 8.
 
 wrapper {
-    gradleVersion = '7.1'
+    gradleVersion = '7.4.1'
     distributionType = Wrapper.DistributionType.ALL
 }
 
@@ -98,7 +98,7 @@ minecraft {
         }
 
         server {
-            workingDirectory project.file('run')
+            workingDirectory project.file('server')
             args '--nogui'
 
             property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
@@ -218,7 +218,7 @@ dependencies {
     // Remove this from runtime when using `runData`
     // The latest minecolonies version is not uploaded on their repo.
     implementation fg.deobf("curse.maven:minecolonies-${minecolonies_version}")
-    implementation fg.deobf("com.ldtteam:structurize:${structurize_version}:universal")
+    implementation fg.deobf("com.ldtteam:structurize:${structurize_version}")
     // Botania with deps
     implementation fg.deobf("vazkii.botania:Botania:${botania_version}")
 
