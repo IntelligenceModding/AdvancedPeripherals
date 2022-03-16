@@ -95,7 +95,7 @@ public class RsBridgePeripheral extends BasePeripheral<TileEntityPeripheralOwner
 
     @LuaFunction(mainThread = true)
     public final Object getPattern(IArguments arguments) throws LuaException {
-        return RefinedStorage.getObjectFromPattern(getNetwork().getCraftingManager().getPattern(ItemUtil.getItemStackRS(arguments.getTable(0), RefinedStorage.getItems(getNetwork()))));
+        return RefinedStorage.getObjectFromPattern(getNetwork().getCraftingManager().getPattern(ItemUtil.getItemStackRS(arguments.getTable(0), RefinedStorage.getItems(getNetwork()))), getNetwork());
     }
 
     @LuaFunction(mainThread = true)
@@ -147,13 +147,13 @@ public class RsBridgePeripheral extends BasePeripheral<TileEntityPeripheralOwner
         for (int i = 0; i < inventory.getSlots(); i++) {
             if (inventory.getStackInSlot(i).sameItem(stack)) {
                 if (inventory.getStackInSlot(i).getCount() >= amount) {
-                    ItemStack insertedStack = getNetwork().insertItem(stack, amount, Action.PERFORM);
+                    ItemStack insertedStack = getNetwork().insertItem(inventory.getStackInSlot(i), amount, Action.PERFORM);
                     inventory.extractItem(i, amount - insertedStack.getCount(), false);
                     transferableAmount += amount - insertedStack.getCount();
                     break;
                 } else {
                     amount -= inventory.getStackInSlot(i).getCount();
-                    ItemStack insertedStack = getNetwork().insertItem(stack, inventory.getStackInSlot(i).getCount(),
+                    ItemStack insertedStack = getNetwork().insertItem(inventory.getStackInSlot(i), inventory.getStackInSlot(i).getCount(),
                             Action.PERFORM);
                     inventory.extractItem(i, inventory.getStackInSlot(i).getCount() - insertedStack.getCount(), false);
                     transferableAmount += inventory.getStackInSlot(i).getCount() - insertedStack.getCount();
@@ -218,13 +218,13 @@ public class RsBridgePeripheral extends BasePeripheral<TileEntityPeripheralOwner
         for (int i = 0; i < inventory.getSlots(); i++) {
             if (inventory.getStackInSlot(i).sameItem(stack)) {
                 if (inventory.getStackInSlot(i).getCount() >= amount) {
-                    ItemStack insertedStack = getNetwork().insertItem(stack, amount, Action.PERFORM);
+                    ItemStack insertedStack = getNetwork().insertItem(inventory.getStackInSlot(i), amount, Action.PERFORM);
                     inventory.extractItem(i, amount - insertedStack.getCount(), false);
                     transferableAmount += amount - insertedStack.getCount();
                     break;
                 } else {
                     amount = count - inventory.getStackInSlot(i).getCount();
-                    ItemStack insertedStack = getNetwork().insertItem(stack, inventory.getStackInSlot(i).getCount(),
+                    ItemStack insertedStack = getNetwork().insertItem(inventory.getStackInSlot(i), inventory.getStackInSlot(i).getCount(),
                             Action.PERFORM);
                     inventory.extractItem(i, inventory.getStackInSlot(i).getCount() - insertedStack.getCount(), false);
                     transferableAmount += inventory.getStackInSlot(i).getCount() - insertedStack.getCount();
@@ -266,9 +266,9 @@ public class RsBridgePeripheral extends BasePeripheral<TileEntityPeripheralOwner
         ItemStack stack = new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation(item)));
         for (ICraftingTask task : getNetwork().getCraftingManager().getTasks()) {
             ItemStack taskStack = task.getRequested().getItem();
-            if (taskStack.sameItem(stack)) {
+            if (taskStack.sameItem(stack))
                 return true;
-            }
+
         }
         return false;
     }
