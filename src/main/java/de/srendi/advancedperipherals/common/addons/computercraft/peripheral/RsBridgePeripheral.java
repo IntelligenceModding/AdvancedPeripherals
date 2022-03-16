@@ -109,7 +109,7 @@ public class RsBridgePeripheral extends BasePeripheral<TileEntityPeripheralOwner
         if (inventory == null)
             throw new LuaException("No valid inventory at " + arguments.getString(1));
 
-        ItemStack extracted = getNetwork().extractItem(stack, stack.getCount(), 1, Action.SIMULATE);
+        ItemStack extracted = getNetwork().extractItem(stack, stack.getCount(), stack.getOrCreateTag().isEmpty() ? 0 : 1, Action.SIMULATE);
         if (extracted.isEmpty())
             return 0;
         //throw new LuaException("Item " + item + " does not exists in the RS system or the system is offline");
@@ -120,7 +120,7 @@ public class RsBridgePeripheral extends BasePeripheral<TileEntityPeripheralOwner
         if (!remaining.isEmpty())
             transferableAmount -= remaining.getCount();
 
-        extracted = getNetwork().extractItem(stack, transferableAmount, 1, Action.PERFORM);
+        extracted = getNetwork().extractItem(stack, transferableAmount,  stack.getOrCreateTag().isEmpty() ? 0 : 1, Action.PERFORM);
         remaining = ItemHandlerHelper.insertItemStacked(inventory, extracted, false);
 
         if (!remaining.isEmpty()) {
@@ -176,10 +176,9 @@ public class RsBridgePeripheral extends BasePeripheral<TileEntityPeripheralOwner
         if (inventory == null)
             throw new LuaException("No valid inventory for " + arguments.getString(1));
 
-        ItemStack extracted = getNetwork().extractItem(stack, stack.getCount(), 1, Action.SIMULATE);
+        ItemStack extracted = getNetwork().extractItem(stack, stack.getCount(),  stack.getOrCreateTag().isEmpty() ? 0 : 1, Action.SIMULATE);
         if (extracted.isEmpty())
             return 0;
-        //throw new LuaException("Item " + item + " does not exists in the RS system or the system is offline");
 
         int transferableAmount = extracted.getCount();
 
@@ -187,12 +186,11 @@ public class RsBridgePeripheral extends BasePeripheral<TileEntityPeripheralOwner
         if (!remaining.isEmpty())
             transferableAmount -= remaining.getCount();
 
-        extracted = getNetwork().extractItem(stack, transferableAmount, 1, Action.PERFORM);
+        extracted = getNetwork().extractItem(stack, transferableAmount,  stack.getOrCreateTag().isEmpty() ? 0 : 1, Action.PERFORM);
         remaining = ItemHandlerHelper.insertItemStacked(inventory, extracted, false);
 
-        if (!remaining.isEmpty()) {
+        if (!remaining.isEmpty())
             getNetwork().insertItem(remaining, remaining.getCount(), Action.PERFORM);
-        }
 
         return transferableAmount;
     }
