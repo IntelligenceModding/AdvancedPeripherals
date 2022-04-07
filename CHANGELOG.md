@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+## [1.18.2-0.7.13a] - 2022-04-07
+
+### Added
+- 1.18.2 support
+
+### Fixed
+- ME Bridge does work again
+
 ## [1.18.1-0.7.12b] - 2022-03-04
 
 Added language updates from crowdin
