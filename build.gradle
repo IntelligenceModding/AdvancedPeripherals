@@ -27,7 +27,7 @@ apply from: 'https://raw.githubusercontent.com/SizableShrimp/Forge-Class-Remappe
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
 wrapper {
-    gradleVersion = '7.3'
+    gradleVersion = '7.4'
     distributionType = Wrapper.DistributionType.ALL
 }
 
@@ -68,7 +68,7 @@ sourceSets {
 
 minecraft {
 
-    mappings channel: "${mappings_channel}", version: "${mappings_version}"
+    mappings channel: "official", version: "1.18.2"
 
     accessTransformer file('src/main/resources/META-INF/accesstransformer.cfg')
     accessTransformer file('src/testMod/resources/META-INF/accesstransformer.cfg')
@@ -214,11 +214,10 @@ repositories {
     }
 
     maven {
-        name = "Refined Storage Repo"
         url = uri("https://maven.pkg.github.com/refinedmods/refinedstorage")
         credentials {
             username = "anything"
-            password = "\u0067hp_pnP5hVDYXXhhXwe21IEkrUzGjquUJL0xjLzb"
+            password = "\u0067hp_oGjcDFCn8jeTzIj4Ke9pLoEVtpnZMP4VQgaX"
         }
     }
 
@@ -264,15 +263,14 @@ dependencies {
 
     // Minecolonies
     // Change to compileOnly when running `runData`
-    compileOnly fg.deobf("com.ldtteam:minecolonies:${minecolonies_version}")
-    compileOnly fg.deobf("com.ldtteam:structurize:${structurize_version}")
-    compileOnly fg.deobf("com.ldtteam:multi-piston:${multipiston_version}")
-    compileOnly fg.deobf("com.ldtteam:domum_ornamentum:${domumornamentum_version}:universal")
-    compileOnly fg.deobf("com.ldtteam:blockui:${blockui_version}")
+    implementation fg.deobf("com.ldtteam:minecolonies:${minecolonies_version}")
+    implementation fg.deobf("com.ldtteam:structurize:${structurize_version}")
+    implementation fg.deobf("com.ldtteam:multi-piston:${multipiston_version}")
+    implementation fg.deobf("com.ldtteam:domum_ornamentum:${domumornamentum_version}:universal")
+    implementation fg.deobf("com.ldtteam:blockui:${blockui_version}")
 
     //Patchouli
     //runtimeOnly "vazkii.patchouli:Patchouli:${patchouli_version}"
-    testModImplementation sourceSets.main.output
 
     //Removed until fully ported
     //testImplementation fg.deobf("site.siredvin.ttoolkit:ttoolkit-${minecraft_version}:${ttoolkit_version}")
@@ -281,6 +279,7 @@ dependencies {
     testImplementation "org.hamcrest:hamcrest:${hamcrest_version}"
     testImplementation "org.jetbrains.kotlin:kotlin-reflect:${kotlin_version}"
     testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:${kotlinx_coroutines_version}"
+    testModImplementation sourceSets.main.output
 
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junit_version}"
     // Testing stuff

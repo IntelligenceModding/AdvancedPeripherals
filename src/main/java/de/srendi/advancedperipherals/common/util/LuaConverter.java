@@ -7,6 +7,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.item.Item;
@@ -16,6 +17,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class LuaConverter {
 
@@ -81,15 +83,15 @@ public class LuaConverter {
 
     public static Map<String, Object> itemToObject(@NotNull Item item) {
         Map<String, Object> map = new HashMap<>();
-        map.put("tags", tagsToList(item.getTags()));
+        map.put("tags", tagsToList(item.builtInRegistryHolder().tags()));
         map.put("name", item.getRegistryName().toString());
         return map;
     }
 
-    public static List<String> tagsToList(@NotNull Set<ResourceLocation> tags) {
-        if (tags.isEmpty())
+    public static <T> List<String> tagsToList(@NotNull Stream<T> tags) {
+        if (tags.findAny().isEmpty())
             return null;
-        return tags.stream().map(ResourceLocation::toString).collect(Collectors.toList());
+        return tags.map(Object::toString).collect(Collectors.toList());
     }
 
     public static Direction getDirection(Direction facing, String computerSide) throws LuaException {

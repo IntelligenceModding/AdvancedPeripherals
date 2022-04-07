@@ -82,7 +82,7 @@ public class EnvironmentDetectorPeripheral extends BasePeripheral<IPeripheralOwn
 
     @LuaFunction(mainThread = true)
     public final String getBiome() {
-        String biomeName = getLevel().getBiome(getPos()).getRegistryName().toString();
+        String biomeName = getLevel().getBiome(getPos()).value().getRegistryName().toString();
         String[] biome = biomeName.split(":");
         return biome[1];
     }

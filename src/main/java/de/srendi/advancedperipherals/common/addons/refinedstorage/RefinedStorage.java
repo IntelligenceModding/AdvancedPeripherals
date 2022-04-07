@@ -18,7 +18,10 @@ import de.srendi.advancedperipherals.common.util.StringUtil;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 
 import javax.annotation.Nullable;
@@ -26,6 +29,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
+import java.util.stream.Stream;
 
 public class RefinedStorage {
 
@@ -148,13 +152,13 @@ public class RefinedStorage {
             return null;
         Map<String, Object> map = new HashMap<>();
         CompoundTag nbt = itemStack.getOrCreateTag();
-        Set<ResourceLocation> tags = itemStack.getItem().getTags();
+        Stream<TagKey<Item>> tags = itemStack.getItem().builtInRegistryHolder().tags();
         map.put("fingerprint", getFingerpint(itemStack));
         map.put("name", itemStack.getItem().getRegistryName().toString());
         map.put("amount", itemStack.getCount());
         map.put("displayName", itemStack.getDisplayName().getString());
         map.put("nbt", nbt.isEmpty() ? null : NBTUtil.toLua(nbt));
-        map.put("tags", tags.isEmpty() ? null : LuaConverter.tagsToList(itemStack.getItem().getTags()));
+        map.put("tags", tags.findAny().isEmpty() ? null : LuaConverter.tagsToList(tags));
 
         return map;
     }
@@ -163,11 +167,11 @@ public class RefinedStorage {
         if (fluidStack == null)
             return null;
         Map<String, Object> map = new HashMap<>();
-        Set<ResourceLocation> tags = fluidStack.getFluid().getTags();
+        Stream<TagKey<Fluid>> tags = fluidStack.getFluid().builtInRegistryHolder().tags();
         map.put("name", fluidStack.getFluid().getRegistryName().toString());
         map.put("amount", fluidStack.getAmount());
         map.put("displayName", fluidStack.getDisplayName().getString());
-        map.put("tags", tags.isEmpty() ? null : LuaConverter.tagsToList(fluidStack.getFluid().getTags()));
+        map.put("tags", tags.findAny().isEmpty() ? null : LuaConverter.tagsToList(tags));
 
         return map;
     }

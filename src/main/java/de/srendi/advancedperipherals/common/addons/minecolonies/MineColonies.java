@@ -4,8 +4,7 @@ import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IVisitorData;
 import com.minecolonies.api.colony.buildings.IBuilding;
-import com.minecolonies.api.colony.buildings.IBuildingWorker;
-import com.minecolonies.api.colony.managers.interfaces.IBuildingManager;
+import com.minecolonies.api.colony.managers.interfaces.IRegisteredStructureManager;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.colony.workorders.IWorkOrder;
 import com.minecolonies.api.entity.citizen.Skill;
@@ -162,7 +161,7 @@ public class MineColonies {
      * @param pos             The location of the buildings block
      * @return information about the building
      */
-    public static Object buildingToObject(IBuildingManager buildingManager, IBuilding building, BlockPos pos) {
+    public static Object buildingToObject(IRegisteredStructureManager buildingManager, IBuilding building, BlockPos pos) {
         Map<String, Object> structureData = new HashMap<>();
         structureData.put("cornerA", building.getCorners().getA());
         structureData.put("cornerB", building.getCorners().getB());

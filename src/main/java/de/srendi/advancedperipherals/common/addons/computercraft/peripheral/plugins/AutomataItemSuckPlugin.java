@@ -5,6 +5,7 @@ import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.lua.MethodResult;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.TurtlePeripheralOwner;
+import de.srendi.advancedperipherals.common.util.LuaConverter;
 import de.srendi.advancedperipherals.lib.peripherals.AutomataCorePeripheral;
 import de.srendi.advancedperipherals.lib.peripherals.IPeripheralOperation;
 import net.minecraft.core.BlockPos;
@@ -13,6 +14,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.AABB;
+import org.squiddev.cobalt.compiler.LuaC;
 
 import javax.annotation.Nonnull;
 import java.util.HashMap;
@@ -92,7 +94,7 @@ public class AutomataItemSuckPlugin extends AutomataCorePlugin {
             if (itemName != null)
                 itemData.put("technicalName", itemName.toString());
             itemData.put("count", item.getItem().getCount());
-            itemData.put("tags", item.getItem().getItem().getTags().stream().map(ResourceLocation::toString).collect(Collectors.toList()));
+            itemData.put("tags", LuaConverter.tagsToList(item.getItem().getItem().builtInRegistryHolder().tags()));
             data.put(index, itemData);
             index++;
         }

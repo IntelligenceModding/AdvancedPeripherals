@@ -7,9 +7,8 @@ import net.minecraft.core.Registry;
 import net.minecraft.data.BuiltinRegistries;
 import net.minecraft.data.worldgen.*;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.level.levelgen.feature.structures.StructurePoolElement;
-import net.minecraft.world.level.levelgen.feature.structures.StructureTemplatePool;
-import net.minecraft.world.level.levelgen.feature.structures.StructureTemplatePool.Projection;
+import net.minecraft.world.level.levelgen.structure.pools.StructurePoolElement;
+import net.minecraft.world.level.levelgen.structure.pools.StructureTemplatePool;
 
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
@@ -42,7 +41,7 @@ public class VillageStructures {
         }
         List<StructurePoolElement> shuffled = old.getShuffledTemplates(ThreadLocalRandom.current());
         List<Pair<StructurePoolElement, Integer>> newPieces = shuffled.stream().map(p -> Pair.of(p, 1)).collect(Collectors.toList());
-        StructurePoolElement newPiece = StructurePoolElement.legacy(toAdd).apply(Projection.RIGID);
+        StructurePoolElement newPiece = StructurePoolElement.legacy(toAdd).apply(StructureTemplatePool.Projection.RIGID);
         newPieces.add(Pair.of(newPiece, weight));
         Registry.register(BuiltinRegistries.TEMPLATE_POOL, pool, new StructureTemplatePool(pool, old.getName(), newPieces));
         AdvancedPeripherals.debug("Finished registration for " + toAdd);
