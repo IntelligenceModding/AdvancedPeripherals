@@ -37,7 +37,7 @@ public class Registration {
         POCKET_SERIALIZER.register(modEventBus);
 
         Blocks.register();
-        TileEntityTypes.register();
+        BlockEntityTypes.register();
         Items.register();
         ContainerTypes.register();
         Villagers.register();

@@ -12,7 +12,7 @@ import de.srendi.advancedperipherals.common.addons.computercraft.owner.BlockEnti
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.IPeripheralOwner;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.PocketPeripheralOwner;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.TurtlePeripheralOwner;
-import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
+import de.srendi.advancedperipherals.common.blocks.base.PeripheralBlockEntity;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
 import de.srendi.advancedperipherals.common.util.ScanUtils;
@@ -46,7 +46,7 @@ public class GeoScannerPeripheral extends BasePeripheral<IPeripheralOwner> {
         owner.attachOperation(SCAN_BLOCKS);
     }
 
-    public GeoScannerPeripheral(PeripheralTileEntity<?> tileEntity) {
+    public GeoScannerPeripheral(PeripheralBlockEntity<?> tileEntity) {
         this(new BlockEntityPeripheralOwner<>(tileEntity).attachFuel());
     }
 

@@ -1,4 +1,4 @@
-package de.srendi.advancedperipherals.common.blocks.tileentity;
+package de.srendi.advancedperipherals.common.blocks.blockentities;
 
 import appeng.api.networking.*;
 import appeng.api.networking.crafting.ICraftingSimulationRequester;
@@ -9,10 +9,10 @@ import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.addons.appliedenergistics.CraftJob;
 import de.srendi.advancedperipherals.common.addons.appliedenergistics.MeBridgeEntityListener;
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.MeBridgePeripheral;
-import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
+import de.srendi.advancedperipherals.common.blocks.base.PeripheralBlockEntity;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.setup.Blocks;
-import de.srendi.advancedperipherals.common.setup.TileEntityTypes;
+import de.srendi.advancedperipherals.common.setup.BlockEntityTypes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.player.Player;
@@ -29,14 +29,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class MeBridgeTile extends PeripheralTileEntity<MeBridgePeripheral> implements IActionSource, IActionHost, IInWorldGridNodeHost, ICraftingSimulationRequester {
+public class MeBridgeEntity extends PeripheralBlockEntity<MeBridgePeripheral> implements IActionSource, IActionHost, IInWorldGridNodeHost, ICraftingSimulationRequester {
 
     private final List<CraftJob> jobs = new ArrayList<>();
     private boolean initialized = false;
     private IManagedGridNode mainNode = GridHelper.createManagedNode(this, MeBridgeEntityListener.INSTANCE);
 
-    public MeBridgeTile(BlockPos pos, BlockState state) {
-        super(TileEntityTypes.ME_BRIDGE.get(), pos, state);
+    public MeBridgeEntity(BlockPos pos, BlockState state) {
+        super(BlockEntityTypes.ME_BRIDGE.get(), pos, state);
     }
 
     @NotNull

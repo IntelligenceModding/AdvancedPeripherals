@@ -18,7 +18,7 @@ import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.pocket.IPocketAccess;
 import de.srendi.advancedperipherals.common.addons.minecolonies.MineColonies;
-import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
+import de.srendi.advancedperipherals.common.blocks.base.PeripheralBlockEntity;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
@@ -39,7 +39,7 @@ public class ColonyPeripheral extends BasePeripheral<IPeripheralOwner> {
 
     protected boolean hasPermission = true;
 
-    public ColonyPeripheral(PeripheralTileEntity<?> tileEntity) {
+    public ColonyPeripheral(PeripheralBlockEntity<?> tileEntity) {
         super(TYPE, new BlockEntityPeripheralOwner<>(tileEntity));
     }
 

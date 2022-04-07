@@ -1,4 +1,4 @@
-package de.srendi.advancedperipherals.common.blocks.tileentity;
+package de.srendi.advancedperipherals.common.blocks.blockentities;
 
 import com.refinedmods.refinedstorage.api.network.node.INetworkNodeProxy;
 import com.refinedmods.refinedstorage.blockentity.NetworkNodeBlockEntity;
@@ -7,7 +7,7 @@ import dan200.computercraft.api.peripheral.IPeripheral;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.RsBridgePeripheral;
 import de.srendi.advancedperipherals.common.addons.refinedstorage.RefinedStorageNode;
-import de.srendi.advancedperipherals.common.setup.TileEntityTypes;
+import de.srendi.advancedperipherals.common.setup.BlockEntityTypes;
 import de.srendi.advancedperipherals.lib.peripherals.IPeripheralTileEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -21,7 +21,7 @@ import org.jetbrains.annotations.Nullable;
 
 import static dan200.computercraft.shared.Capabilities.CAPABILITY_PERIPHERAL;
 
-public class RsBridgeTile extends NetworkNodeBlockEntity<RefinedStorageNode> implements INetworkNodeProxy<RefinedStorageNode>, IRedstoneConfigurable, IPeripheralTileEntity {
+public class RsBridgeEntity extends NetworkNodeBlockEntity<RefinedStorageNode> implements INetworkNodeProxy<RefinedStorageNode>, IRedstoneConfigurable, IPeripheralTileEntity {
 
     private static final String PERIPHERAL_SETTINGS = "AP_SETTINGS";
 
@@ -30,8 +30,8 @@ public class RsBridgeTile extends NetworkNodeBlockEntity<RefinedStorageNode> imp
     protected RsBridgePeripheral peripheral = new RsBridgePeripheral(this);
     private LazyOptional<IPeripheral> peripheralCap;
 
-    public RsBridgeTile(BlockPos pos, BlockState state) {
-        super(TileEntityTypes.RS_BRIDGE.get(), pos, state);
+    public RsBridgeEntity(BlockPos pos, BlockState state) {
+        super(BlockEntityTypes.RS_BRIDGE.get(), pos, state);
         peripheralSettings = new CompoundTag();
     }
 

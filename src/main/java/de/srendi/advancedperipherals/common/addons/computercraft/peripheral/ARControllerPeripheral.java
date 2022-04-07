@@ -6,22 +6,17 @@ import dan200.computercraft.api.lua.MethodResult;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.BlockEntityPeripheralOwner;
 import de.srendi.advancedperipherals.common.argoggles.ARRenderAction;
 import de.srendi.advancedperipherals.common.argoggles.RenderActionType;
-import de.srendi.advancedperipherals.common.blocks.tileentity.ARControllerTile;
+import de.srendi.advancedperipherals.common.blocks.blockentities.ARControllerEntity;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
-import net.minecraft.client.gui.components.DebugScreenOverlay;
-import net.minecraft.client.gui.screens.controls.KeyBindsList;
-import net.minecraft.client.renderer.debug.DebugRenderer;
 import net.minecraft.util.Mth;
-import net.minecraft.world.entity.player.Player;
-import net.minecraftforge.client.settings.KeyBindingMap;
 
 import java.util.Optional;
 
-public class ARControllerPeripheral extends BasePeripheral<BlockEntityPeripheralOwner<ARControllerTile>> {
+public class ARControllerPeripheral extends BasePeripheral<BlockEntityPeripheralOwner<ARControllerEntity>> {
     public static final String TYPE = "arController";
 
-    public ARControllerPeripheral(ARControllerTile tileEntity) {
+    public ARControllerPeripheral(ARControllerEntity tileEntity) {
         super(TYPE, new BlockEntityPeripheralOwner<>(tileEntity));
     }
 

@@ -13,7 +13,7 @@ import dan200.computercraft.api.peripheral.IPeripheral;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.BlockEntityPeripheralOwner;
 import de.srendi.advancedperipherals.common.addons.refinedstorage.RefinedStorage;
 import de.srendi.advancedperipherals.common.addons.refinedstorage.RefinedStorageNode;
-import de.srendi.advancedperipherals.common.blocks.tileentity.RsBridgeTile;
+import de.srendi.advancedperipherals.common.blocks.blockentities.RsBridgeEntity;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.util.ItemUtil;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
@@ -30,10 +30,10 @@ import net.minecraftforge.registries.ForgeRegistries;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwner<RsBridgeTile>> {
+public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwner<RsBridgeEntity>> {
     public static final String TYPE = "rsBridge";
 
-    public RsBridgePeripheral(RsBridgeTile tileEntity) {
+    public RsBridgePeripheral(RsBridgeEntity tileEntity) {
         super(TYPE, new BlockEntityPeripheralOwner<>(tileEntity));
     }
 

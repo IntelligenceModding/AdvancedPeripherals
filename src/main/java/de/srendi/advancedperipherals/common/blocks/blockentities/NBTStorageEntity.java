@@ -1,19 +1,19 @@
-package de.srendi.advancedperipherals.common.blocks.tileentity;
+package de.srendi.advancedperipherals.common.blocks.blockentities;
 
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.NBTStoragePeripheral;
-import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
-import de.srendi.advancedperipherals.common.setup.TileEntityTypes;
+import de.srendi.advancedperipherals.common.blocks.base.PeripheralBlockEntity;
+import de.srendi.advancedperipherals.common.setup.BlockEntityTypes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 
-public class NBTStorageTile extends PeripheralTileEntity<NBTStoragePeripheral> {
+public class NBTStorageEntity extends PeripheralBlockEntity<NBTStoragePeripheral> {
 
     private CompoundTag stored;
 
-    public NBTStorageTile(BlockPos pos, BlockState state) {
-        super(TileEntityTypes.NBT_STORAGE.get(), pos, state);
+    public NBTStorageEntity(BlockPos pos, BlockState state) {
+        super(BlockEntityTypes.NBT_STORAGE.get(), pos, state);
         stored = new CompoundTag();
     }
 

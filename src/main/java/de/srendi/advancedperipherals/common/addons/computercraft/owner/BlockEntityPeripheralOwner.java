@@ -1,7 +1,7 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.owner;
 
-import de.srendi.advancedperipherals.common.blocks.base.APTileEntityBlock;
-import de.srendi.advancedperipherals.common.blocks.tileentity.InventoryManagerTile;
+import de.srendi.advancedperipherals.common.blocks.base.APBlockEntityBlock;
+import de.srendi.advancedperipherals.common.blocks.blockentities.InventoryManagerEntity;
 import de.srendi.advancedperipherals.common.util.DataStorageUtil;
 import de.srendi.advancedperipherals.common.util.fakeplayer.APFakePlayer;
 import de.srendi.advancedperipherals.lib.peripherals.IPeripheralTileEntity;
@@ -48,14 +48,14 @@ public class BlockEntityPeripheralOwner<T extends BlockEntity & IPeripheralTileE
     @NotNull
     @Override
     public Direction getFacing() {
-        return tileEntity.getBlockState().getValue(APTileEntityBlock.FACING);
+        return tileEntity.getBlockState().getValue(APBlockEntityBlock.FACING);
     }
 
     @Nullable
     @Override
     public Player getOwner() {
-        if (tileEntity instanceof InventoryManagerTile)
-            return ((InventoryManagerTile) tileEntity).getOwnerPlayer();
+        if (tileEntity instanceof InventoryManagerEntity)
+            return ((InventoryManagerEntity) tileEntity).getOwnerPlayer();
         return null;
     }
 

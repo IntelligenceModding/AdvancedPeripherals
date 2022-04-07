@@ -1,10 +1,10 @@
 package de.srendi.advancedperipherals.common.blocks;
 
 import dan200.computercraft.api.peripheral.IComputerAccess;
-import de.srendi.advancedperipherals.common.blocks.base.APTileEntityBlock;
-import de.srendi.advancedperipherals.common.blocks.tileentity.PlayerDetectorTile;
+import de.srendi.advancedperipherals.common.blocks.base.APBlockEntityBlock;
+import de.srendi.advancedperipherals.common.blocks.blockentities.PlayerDetectorEntity;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
-import de.srendi.advancedperipherals.common.setup.TileEntityTypes;
+import de.srendi.advancedperipherals.common.setup.BlockEntityTypes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -16,23 +16,23 @@ import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class PlayerDetectorBlock extends APTileEntityBlock<PlayerDetectorTile> {
+public class PlayerDetectorBlock extends APBlockEntityBlock<PlayerDetectorEntity> {
 
     public PlayerDetectorBlock() {
-        super(TileEntityTypes.PLAYER_DETECTOR, false);
+        super(BlockEntityTypes.PLAYER_DETECTOR, false);
     }
 
     @Nullable
     @Override
     public BlockEntity newBlockEntity(@NotNull BlockPos pos, @NotNull BlockState state) {
-        return TileEntityTypes.PLAYER_DETECTOR.get().create(pos, state);
+        return BlockEntityTypes.PLAYER_DETECTOR.get().create(pos, state);
     }
 
     @Override
     public @NotNull InteractionResult use(@NotNull BlockState state, Level levelIn, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand handIn, @NotNull BlockHitResult hit) {
         if (APConfig.PERIPHERALS_CONFIG.ENABLE_PLAYER_DETECTOR.get()) {
             BlockEntity tileEntity = levelIn.getBlockEntity(pos);
-            if (tileEntity instanceof PlayerDetectorTile entity) {
+            if (tileEntity instanceof PlayerDetectorEntity entity) {
                 for (IComputerAccess computer : entity.getConnectedComputers()) {
                     computer.queueEvent("playerClick", player.getName().getString());
                     //Todo: Let the eyes glow when clicked on the detector.

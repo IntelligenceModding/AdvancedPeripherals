@@ -1,10 +1,10 @@
-package de.srendi.advancedperipherals.common.blocks.tileentity;
+package de.srendi.advancedperipherals.common.blocks.blockentities;
 
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.EnergyDetectorPeripheral;
-import de.srendi.advancedperipherals.common.blocks.base.APTileEntityBlock;
-import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
+import de.srendi.advancedperipherals.common.blocks.base.APBlockEntityBlock;
+import de.srendi.advancedperipherals.common.blocks.base.PeripheralBlockEntity;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
-import de.srendi.advancedperipherals.common.setup.TileEntityTypes;
+import de.srendi.advancedperipherals.common.setup.BlockEntityTypes;
 import de.srendi.advancedperipherals.common.util.EnergyStorageProxy;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -23,7 +23,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 
-public class EnergyDetectorTile extends PeripheralTileEntity<EnergyDetectorPeripheral> {
+public class EnergyDetectorEntity extends PeripheralBlockEntity<EnergyDetectorPeripheral> {
 
     //a zero size, zero transfer energy storage to ensure that cables connect
     private final EnergyStorage zeroStorage = new EnergyStorage(0, 0, 0);
@@ -37,8 +37,8 @@ public class EnergyDetectorTile extends PeripheralTileEntity<EnergyDetectorPerip
     @NotNull
     private Optional<IEnergyStorage> outReceivingStorage = Optional.empty();
 
-    public EnergyDetectorTile(BlockPos pos, BlockState state) {
-        super(TileEntityTypes.ENERGY_DETECTOR.get(), pos, state);
+    public EnergyDetectorEntity(BlockPos pos, BlockState state) {
+        super(BlockEntityTypes.ENERGY_DETECTOR.get(), pos, state);
     }
 
     @NotNull
@@ -50,8 +50,8 @@ public class EnergyDetectorTile extends PeripheralTileEntity<EnergyDetectorPerip
     @NotNull
     @Override
     public <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction direction) {
-        energyInDirection = getBlockState().getValue(APTileEntityBlock.FACING);
-        energyOutDirection = getBlockState().getValue(APTileEntityBlock.FACING).getOpposite();
+        energyInDirection = getBlockState().getValue(APBlockEntityBlock.FACING);
+        energyOutDirection = getBlockState().getValue(APBlockEntityBlock.FACING).getOpposite();
         if (cap == CapabilityEnergy.ENERGY) {
             if (direction == energyInDirection) {
                 return energyStorageCap.cast();

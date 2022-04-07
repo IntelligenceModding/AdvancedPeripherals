@@ -1,17 +1,17 @@
-package de.srendi.advancedperipherals.common.blocks.tileentity;
+package de.srendi.advancedperipherals.common.blocks.blockentities;
 
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.GeoScannerPeripheral;
-import de.srendi.advancedperipherals.common.blocks.base.PoweredPeripheralTileEntity;
+import de.srendi.advancedperipherals.common.blocks.base.PoweredPeripheralBlockEntity;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
-import de.srendi.advancedperipherals.common.setup.TileEntityTypes;
+import de.srendi.advancedperipherals.common.setup.BlockEntityTypes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 
-public class GeoScannerTile extends PoweredPeripheralTileEntity<GeoScannerPeripheral> {
+public class GeoScannerEntity extends PoweredPeripheralBlockEntity<GeoScannerPeripheral> {
 
-    public GeoScannerTile(BlockPos pos, BlockState state) {
-        super(TileEntityTypes.GEO_SCANNER.get(), pos, state);
+    public GeoScannerEntity(BlockPos pos, BlockState state) {
+        super(BlockEntityTypes.GEO_SCANNER.get(), pos, state);
     }
 
     @Override

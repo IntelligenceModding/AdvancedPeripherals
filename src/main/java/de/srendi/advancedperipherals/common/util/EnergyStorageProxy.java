@@ -1,17 +1,17 @@
 package de.srendi.advancedperipherals.common.util;
 
-import de.srendi.advancedperipherals.common.blocks.tileentity.EnergyDetectorTile;
+import de.srendi.advancedperipherals.common.blocks.blockentities.EnergyDetectorEntity;
 import net.minecraftforge.energy.IEnergyStorage;
 
 import java.util.Optional;
 
 public class EnergyStorageProxy implements IEnergyStorage {
 
-    private final EnergyDetectorTile energyDetectorTE;
+    private final EnergyDetectorEntity energyDetectorTE;
     private int maxTransferRate;
     private int transferedInThisTick = 0;
 
-    public EnergyStorageProxy(EnergyDetectorTile energyDetectorTE, int maxTransferRate) {
+    public EnergyStorageProxy(EnergyDetectorEntity energyDetectorTE, int maxTransferRate) {
         this.energyDetectorTE = energyDetectorTE;
         this.maxTransferRate = maxTransferRate;
     }

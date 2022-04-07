@@ -15,11 +15,11 @@ import net.minecraftforge.energy.IEnergyStorage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class PoweredPeripheralTileEntity<T extends BasePeripheral<?>> extends PeripheralTileEntity<T> {
+public abstract class PoweredPeripheralBlockEntity<T extends BasePeripheral<?>> extends PeripheralBlockEntity<T> {
 
     private final LazyOptional<IEnergyStorage> lazyEnergyStorage;
 
-    public PoweredPeripheralTileEntity(BlockEntityType<?> tileEntityTypeIn, BlockPos pos, BlockState state) {
+    public PoweredPeripheralBlockEntity(BlockEntityType<?> tileEntityTypeIn, BlockPos pos, BlockState state) {
         super(tileEntityTypeIn, pos, state);
         if (APConfig.PERIPHERALS_CONFIG.ENABLE_POWERED_PERIPHERALS.get()) {
             lazyEnergyStorage = LazyOptional.of(() -> new EnergyStorage(this.getMaxEnergyStored()));

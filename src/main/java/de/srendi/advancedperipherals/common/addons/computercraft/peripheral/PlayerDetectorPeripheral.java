@@ -9,17 +9,14 @@ import de.srendi.advancedperipherals.common.addons.computercraft.owner.BlockEnti
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.IPeripheralOwner;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.PocketPeripheralOwner;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.TurtlePeripheralOwner;
-import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
+import de.srendi.advancedperipherals.common.blocks.base.PeripheralBlockEntity;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.util.CoordUtil;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.AABB;
 import net.minecraftforge.server.ServerLifecycleHooks;
 
 import java.util.ArrayList;
@@ -31,7 +28,7 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
 
     public static final String TYPE = "playerDetector";
 
-    public PlayerDetectorPeripheral(PeripheralTileEntity<?> tileEntity) {
+    public PlayerDetectorPeripheral(PeripheralBlockEntity<?> tileEntity) {
         super(TYPE, new BlockEntityPeripheralOwner<>(tileEntity));
     }
 

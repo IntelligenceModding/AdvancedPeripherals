@@ -32,7 +32,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collections;
 import java.util.List;
 
-public abstract class PeripheralTileEntity<T extends BasePeripheral<?>> extends BaseContainerBlockEntity implements WorldlyContainer, MenuProvider, IPeripheralTileEntity {
+public abstract class PeripheralBlockEntity<T extends BasePeripheral<?>> extends BaseContainerBlockEntity implements WorldlyContainer, MenuProvider, IPeripheralTileEntity {
     // TODO: move inventory logic to another tile entity?
     private static final String PERIPHERAL_SETTINGS_KEY = "peripheralSettings";
     protected CompoundTag peripheralSettings;
@@ -42,7 +42,7 @@ public abstract class PeripheralTileEntity<T extends BasePeripheral<?>> extends 
     private LazyOptional<? extends IItemHandler> handler;
     private LazyOptional<IPeripheral> peripheralCap;
 
-    public PeripheralTileEntity(BlockEntityType<?> tileEntityTypeIn, BlockPos pos, BlockState state) {
+    public PeripheralBlockEntity(BlockEntityType<?> tileEntityTypeIn, BlockPos pos, BlockState state) {
         super(tileEntityTypeIn, pos, state);
         if (this instanceof IInventoryBlock) {
             items = NonNullList.withSize(((IInventoryBlock<?>) this).getInvSize(), ItemStack.EMPTY);

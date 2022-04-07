@@ -1,9 +1,9 @@
-package de.srendi.advancedperipherals.common.blocks.tileentity;
+package de.srendi.advancedperipherals.common.blocks.blockentities;
 
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.ARControllerPeripheral;
 import de.srendi.advancedperipherals.common.argoggles.ARRenderAction;
-import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
-import de.srendi.advancedperipherals.common.setup.TileEntityTypes;
+import de.srendi.advancedperipherals.common.blocks.base.PeripheralBlockEntity;
+import de.srendi.advancedperipherals.common.setup.BlockEntityTypes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -18,14 +18,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class ARControllerTile extends PeripheralTileEntity<ARControllerPeripheral> {
+public class ARControllerEntity extends PeripheralBlockEntity<ARControllerPeripheral> {
     private static final String CANVAS = "canvas";
     private static final String VIRTUAL_SCREEN_SIZE = "virtual_screen_size";
     private Optional<int[]> virtualScreenSize = Optional.empty();
     private final List<ARRenderAction> canvas = new ArrayList<>();
 
-    public ARControllerTile(BlockPos pos, BlockState state) {
-        super(TileEntityTypes.AR_CONTROLLER.get(), pos, state);
+    public ARControllerEntity(BlockPos pos, BlockState state) {
+        super(BlockEntityTypes.AR_CONTROLLER.get(), pos, state);
     }
 
     /**

@@ -1,9 +1,9 @@
-package de.srendi.advancedperipherals.common.blocks.tileentity;
+package de.srendi.advancedperipherals.common.blocks.blockentities;
 
 import dan200.computercraft.shared.util.RedstoneUtil;
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.RedstoneIntegratorPeripheral;
-import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
-import de.srendi.advancedperipherals.common.setup.TileEntityTypes;
+import de.srendi.advancedperipherals.common.blocks.base.PeripheralBlockEntity;
+import de.srendi.advancedperipherals.common.setup.BlockEntityTypes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -14,12 +14,12 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
-public class RedstoneIntegratorTile extends PeripheralTileEntity<RedstoneIntegratorPeripheral> {
+public class RedstoneIntegratorEntity extends PeripheralBlockEntity<RedstoneIntegratorPeripheral> {
 
     public int[] power = new int[Direction.values().length];
 
-    public RedstoneIntegratorTile(BlockPos pos, BlockState state) {
-        super(TileEntityTypes.REDSTONE_INTEGRATOR.get(), pos, state);
+    public RedstoneIntegratorEntity(BlockPos pos, BlockState state) {
+        super(BlockEntityTypes.REDSTONE_INTEGRATOR.get(), pos, state);
     }
 
     @NotNull

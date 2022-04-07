@@ -4,7 +4,6 @@ import de.srendi.advancedperipherals.lib.peripherals.IPeripheralTileEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.tags.Tag;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.*;
 import net.minecraft.world.entity.LivingEntity;
@@ -25,15 +24,15 @@ import net.minecraftforge.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class BaseTileEntityBlock extends BaseEntityBlock implements IHarvesterBlock {
+public abstract class BaseBlockEntityBlock extends BaseEntityBlock implements IHarvesterBlock {
 
     private final boolean belongToTickingEntity;
 
-    public BaseTileEntityBlock(boolean belongToTickingEntity) {
+    public BaseBlockEntityBlock(boolean belongToTickingEntity) {
         this(belongToTickingEntity, Properties.of(Material.METAL).strength(1, 5).sound(SoundType.METAL).noOcclusion().requiresCorrectToolForDrops());
     }
 
-    public BaseTileEntityBlock(boolean belongToTickingEntity, Properties properties) {
+    public BaseBlockEntityBlock(boolean belongToTickingEntity, Properties properties) {
         super(properties);
         this.belongToTickingEntity = belongToTickingEntity;
     }

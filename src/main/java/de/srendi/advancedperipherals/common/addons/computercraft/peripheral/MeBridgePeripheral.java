@@ -17,7 +17,7 @@ import dan200.computercraft.api.peripheral.IComputerAccess;
 import de.srendi.advancedperipherals.common.addons.appliedenergistics.AppEngApi;
 import de.srendi.advancedperipherals.common.addons.appliedenergistics.CraftJob;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.BlockEntityPeripheralOwner;
-import de.srendi.advancedperipherals.common.blocks.tileentity.MeBridgeTile;
+import de.srendi.advancedperipherals.common.blocks.blockentities.MeBridgeEntity;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.util.InventoryUtil;
 import de.srendi.advancedperipherals.common.util.ItemUtil;
@@ -35,14 +35,14 @@ import java.util.Iterator;
 import java.util.Map;
 
 //TODO: This is not finished, finish it
-public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwner<MeBridgeTile>> {
+public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwner<MeBridgeEntity>> {
 
     public static final String TYPE = "meBridge";
     private final ICraftingSimulationRequester requester;
-    private final MeBridgeTile tile;
+    private final MeBridgeEntity tile;
     private IGridNode node;
 
-    public MeBridgePeripheral(MeBridgeTile tileEntity) {
+    public MeBridgePeripheral(MeBridgeEntity tileEntity) {
         super(TYPE, new BlockEntityPeripheralOwner<>(tileEntity));
         this.tile = tileEntity;
         this.requester = tileEntity;

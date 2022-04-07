@@ -1,11 +1,11 @@
-package de.srendi.advancedperipherals.common.blocks.tileentity;
+package de.srendi.advancedperipherals.common.blocks.blockentities;
 
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.InventoryManagerPeripheral;
 import de.srendi.advancedperipherals.common.blocks.base.IInventoryBlock;
-import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
+import de.srendi.advancedperipherals.common.blocks.base.PeripheralBlockEntity;
 import de.srendi.advancedperipherals.common.container.InventoryManagerContainer;
 import de.srendi.advancedperipherals.common.items.MemoryCardItem;
-import de.srendi.advancedperipherals.common.setup.TileEntityTypes;
+import de.srendi.advancedperipherals.common.setup.BlockEntityTypes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
@@ -19,10 +19,10 @@ import net.minecraftforge.server.ServerLifecycleHooks;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class InventoryManagerTile extends PeripheralTileEntity<InventoryManagerPeripheral> implements IInventoryBlock<InventoryManagerContainer> {
+public class InventoryManagerEntity extends PeripheralBlockEntity<InventoryManagerPeripheral> implements IInventoryBlock<InventoryManagerContainer> {
 
-    public InventoryManagerTile(BlockPos pos, BlockState state) {
-        super(TileEntityTypes.INVENTORY_MANAGER.get(), pos, state);
+    public InventoryManagerEntity(BlockPos pos, BlockState state) {
+        super(BlockEntityTypes.INVENTORY_MANAGER.get(), pos, state);
     }
 
     @NotNull

@@ -17,18 +17,18 @@ import net.minecraftforge.registries.RegistryObject;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class APTileEntityBlock<T extends BlockEntity> extends BaseTileEntityBlock {
+public class APBlockEntityBlock<T extends BlockEntity> extends BaseBlockEntityBlock {
 
     public static final DirectionProperty FACING = DirectionalBlock.FACING;
     private final RegistryObject<BlockEntityType<T>> tileEntity;
 
-    public APTileEntityBlock(RegistryObject<BlockEntityType<T>> tileEntity, Properties properties, boolean belongToTickingEntity) {
+    public APBlockEntityBlock(RegistryObject<BlockEntityType<T>> tileEntity, Properties properties, boolean belongToTickingEntity) {
         super(belongToTickingEntity, properties);
         this.tileEntity = tileEntity;
         this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH));
     }
 
-    public APTileEntityBlock(RegistryObject<BlockEntityType<T>> tileEntity, boolean belongToTickingEntity) {
+    public APBlockEntityBlock(RegistryObject<BlockEntityType<T>> tileEntity, boolean belongToTickingEntity) {
         this(tileEntity, Properties.of(Material.METAL), belongToTickingEntity);
     }
 

@@ -4,7 +4,7 @@ import com.mojang.blaze3d.platform.InputConstants;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.client.HudOverlayHandler;
 import de.srendi.advancedperipherals.common.addons.curios.CuriosHelper;
-import de.srendi.advancedperipherals.common.blocks.tileentity.ARControllerTile;
+import de.srendi.advancedperipherals.common.blocks.blockentities.ARControllerEntity;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.setup.Blocks;
 import de.srendi.advancedperipherals.common.util.EnumColor;
@@ -59,13 +59,13 @@ public class ARGogglesItem extends ArmorItem {
                 return;
             }
             BlockEntity te = level.getBlockEntity(pos);
-            if (!(te instanceof ARControllerTile)) {
+            if (!(te instanceof ARControllerEntity)) {
                 //If distance to ARController is larger than view distance
                 MNetwork.sendToServer(new RequestHudCanvasMessage(pos, dimensionKey));
                 return;
             }
 
-            ARControllerTile controller = (ARControllerTile) te;
+            ARControllerEntity controller = (ARControllerEntity) te;
             HudOverlayHandler.updateCanvas(controller.getCanvas());
         }
     }
@@ -122,9 +122,9 @@ public class ARGogglesItem extends ArmorItem {
             return super.useOn(context);
         } else {
             BlockEntity entity = level.getBlockEntity(blockpos);
-            if (!(entity instanceof ARControllerTile))
+            if (!(entity instanceof ARControllerEntity))
                 return super.useOn(context);
-            ARControllerTile controller = (ARControllerTile) entity;
+            ARControllerEntity controller = (ARControllerEntity) entity;
             if (!context.getLevel().isClientSide) {
                 ItemStack item = context.getItemInHand();
                 if (!item.hasTag())

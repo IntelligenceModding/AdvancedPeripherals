@@ -13,7 +13,7 @@ import de.srendi.advancedperipherals.common.addons.computercraft.owner.BlockEnti
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.IPeripheralOwner;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.PocketPeripheralOwner;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.TurtlePeripheralOwner;
-import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
+import de.srendi.advancedperipherals.common.blocks.base.PeripheralBlockEntity;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.util.CoordUtil;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
@@ -22,7 +22,6 @@ import net.minecraft.Util;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.server.ServerLifecycleHooks;
 
@@ -41,7 +40,7 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
         owner.attachOperation(CHAT_MESSAGE);
     }
 
-    public ChatBoxPeripheral(PeripheralTileEntity<?> tileEntity) {
+    public ChatBoxPeripheral(PeripheralBlockEntity<?> tileEntity) {
         this(new BlockEntityPeripheralOwner<>(tileEntity));
     }
 

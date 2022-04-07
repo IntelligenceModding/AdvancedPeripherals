@@ -1,6 +1,6 @@
 package de.srendi.advancedperipherals.common.container.base;
 
-import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
+import de.srendi.advancedperipherals.common.blocks.base.PeripheralBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.player.Inventory;
@@ -18,13 +18,13 @@ import org.jetbrains.annotations.Nullable;
 public abstract class BaseContainer extends AbstractContainerMenu {
 
     private final IItemHandler inventory;
-    protected PeripheralTileEntity<?> tileEntity;
+    protected PeripheralBlockEntity<?> tileEntity;
 
     protected BaseContainer(@Nullable MenuType<?> type, int id, Inventory inventory, BlockPos pos, Level world) {
         super(type, id);
         this.inventory = new InvWrapper(inventory);
         if (world != null)
-            this.tileEntity = (PeripheralTileEntity<?>) world.getBlockEntity(pos);
+            this.tileEntity = (PeripheralBlockEntity<?>) world.getBlockEntity(pos);
     }
 
     @Override

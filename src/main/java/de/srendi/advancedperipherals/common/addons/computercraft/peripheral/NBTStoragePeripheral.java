@@ -5,7 +5,7 @@ import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.lua.MethodResult;
 import dan200.computercraft.shared.util.NBTUtil;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.BlockEntityPeripheralOwner;
-import de.srendi.advancedperipherals.common.blocks.tileentity.NBTStorageTile;
+import de.srendi.advancedperipherals.common.blocks.blockentities.NBTStorageEntity;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.util.CountingWipingStream;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
@@ -16,12 +16,12 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.util.Map;
 
-public class NBTStoragePeripheral extends BasePeripheral<BlockEntityPeripheralOwner<NBTStorageTile>> {
+public class NBTStoragePeripheral extends BasePeripheral<BlockEntityPeripheralOwner<NBTStorageEntity>> {
 
     public static final String TYPE = "nbtStorage";
 
 
-    public NBTStoragePeripheral(NBTStorageTile tileEntity) {
+    public NBTStoragePeripheral(NBTStorageEntity tileEntity) {
         super(TYPE, new BlockEntityPeripheralOwner<>(tileEntity));
     }
 

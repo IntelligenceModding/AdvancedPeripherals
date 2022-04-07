@@ -4,7 +4,7 @@ import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.BlockEntityPeripheralOwner;
-import de.srendi.advancedperipherals.common.blocks.tileentity.InventoryManagerTile;
+import de.srendi.advancedperipherals.common.blocks.blockentities.InventoryManagerEntity;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.util.InventoryUtil;
 import de.srendi.advancedperipherals.common.util.ItemUtil;
@@ -29,11 +29,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-public class InventoryManagerPeripheral extends BasePeripheral<BlockEntityPeripheralOwner<InventoryManagerTile>> {
+public class InventoryManagerPeripheral extends BasePeripheral<BlockEntityPeripheralOwner<InventoryManagerEntity>> {
 
     public static final String TYPE = "inventoryManager";
 
-    public InventoryManagerPeripheral(InventoryManagerTile tileEntity) {
+    public InventoryManagerPeripheral(InventoryManagerEntity tileEntity) {
         super(TYPE, new BlockEntityPeripheralOwner<>(tileEntity));
     }
 

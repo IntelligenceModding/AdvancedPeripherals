@@ -1,9 +1,9 @@
-package de.srendi.advancedperipherals.common.blocks.tileentity;
+package de.srendi.advancedperipherals.common.blocks.blockentities;
 
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.ChatBoxPeripheral;
-import de.srendi.advancedperipherals.common.blocks.base.PeripheralTileEntity;
+import de.srendi.advancedperipherals.common.blocks.base.PeripheralBlockEntity;
 import de.srendi.advancedperipherals.common.events.Events;
-import de.srendi.advancedperipherals.common.setup.TileEntityTypes;
+import de.srendi.advancedperipherals.common.setup.BlockEntityTypes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -11,12 +11,12 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 
-public class ChatBoxTile extends PeripheralTileEntity<ChatBoxPeripheral> {
+public class ChatBoxEnity extends PeripheralBlockEntity<ChatBoxPeripheral> {
 
     private Long lastConsumedMessage;
 
-    public ChatBoxTile(BlockPos pos, BlockState state) {
-        super(TileEntityTypes.CHAT_BOX.get(), pos, state);
+    public ChatBoxEnity(BlockPos pos, BlockState state) {
+        super(BlockEntityTypes.CHAT_BOX.get(), pos, state);
         lastConsumedMessage = Events.getLastChatMessageID() - 1;
     }
 
