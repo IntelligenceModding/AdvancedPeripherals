@@ -262,7 +262,7 @@ public class MineColonies {
                 map.put("id", researchName.toString());
                 map.put("name", research.getName().getString());
                 map.put("researchEffects", effects);
-                map.put("status", colonyResearch == null ? ResearchState.NOT_STARTED.toString() : colonyResearch.getState());
+                map.put("status", colonyResearch == null ? ResearchState.NOT_STARTED.toString() : colonyResearch.getState().toString());
 
                 List<Object> childrenResearch = getResearch(branch, research.getChildren(), colony);
                 if (!childrenResearch.isEmpty())
