@@ -30,6 +30,8 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
 import java.util.stream.Stream;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 public class RefinedStorage {
 
@@ -152,13 +154,13 @@ public class RefinedStorage {
             return null;
         Map<String, Object> map = new HashMap<>();
         CompoundTag nbt = itemStack.getOrCreateTag();
-        Stream<TagKey<Item>> tags = itemStack.getItem().builtInRegistryHolder().tags();
+        Supplier<Stream<TagKey<Item>>> tags = () -> itemStack.getItem().builtInRegistryHolder().tags();
         map.put("fingerprint", getFingerpint(itemStack));
         map.put("name", itemStack.getItem().getRegistryName().toString());
         map.put("amount", itemStack.getCount());
         map.put("displayName", itemStack.getDisplayName().getString());
         map.put("nbt", nbt.isEmpty() ? null : NBTUtil.toLua(nbt));
-        map.put("tags", tags.findAny().isEmpty() ? null : LuaConverter.tagsToList(tags));
+        map.put("tags", tags.get().findAny().isEmpty() ? null : LuaConverter.tagsToList(tags));
 
         return map;
     }
@@ -167,11 +169,11 @@ public class RefinedStorage {
         if (fluidStack == null)
             return null;
         Map<String, Object> map = new HashMap<>();
-        Stream<TagKey<Fluid>> tags = fluidStack.getFluid().builtInRegistryHolder().tags();
+        Supplier<Stream<TagKey<Fluid>>> tags = () -> fluidStack.getFluid().builtInRegistryHolder().tags();
         map.put("name", fluidStack.getFluid().getRegistryName().toString());
         map.put("amount", fluidStack.getAmount());
         map.put("displayName", fluidStack.getDisplayName().getString());
-        map.put("tags", tags.findAny().isEmpty() ? null : LuaConverter.tagsToList(tags));
+        map.put("tags", tags.get().findAny().isEmpty() ? null : LuaConverter.tagsToList(tags));
 
         return map;
     }
