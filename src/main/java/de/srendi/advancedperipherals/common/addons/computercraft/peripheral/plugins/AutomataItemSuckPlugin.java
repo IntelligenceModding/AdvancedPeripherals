@@ -94,7 +94,7 @@ public class AutomataItemSuckPlugin extends AutomataCorePlugin {
             if (itemName != null)
                 itemData.put("technicalName", itemName.toString());
             itemData.put("count", item.getItem().getCount());
-            itemData.put("tags", LuaConverter.tagsToList(item.getItem().getItem().builtInRegistryHolder().tags()));
+            itemData.put("tags", LuaConverter.tagsToList(() -> item.getItem().getItem().builtInRegistryHolder().tags()));
             data.put(index, itemData);
             index++;
         }

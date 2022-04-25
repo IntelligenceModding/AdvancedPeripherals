@@ -98,7 +98,7 @@ public class AppEngApi {
         map.put("amount", amount);
         map.put("displayName", displayName);
         map.put("nbt", NBTUtil.toLua(nbt));
-        map.put("tags", LuaConverter.tagsToList(stack.getRight().getItem().builtInRegistryHolder().tags()));
+        map.put("tags", LuaConverter.tagsToList(() -> stack.getRight().getItem().builtInRegistryHolder().tags()));
         map.put("isCraftable", craftingService.isCraftable(stack.getRight()));
         if (flag == 0) {
             return map;
@@ -118,7 +118,7 @@ public class AppEngApi {
         map.put("name", stack.getRight().getFluid().getRegistryName().toString());
         map.put("amount", amount);
         map.put("displayName", stack.getRight().getDisplayName());
-        map.put("tags", LuaConverter.tagsToList(stack.getRight().getFluid().builtInRegistryHolder().tags()));
+        map.put("tags", LuaConverter.tagsToList(() -> stack.getRight().getFluid().builtInRegistryHolder().tags()));
         if (flag == 0) {
             return map;
         } else if (flag == 1) {
