@@ -38,8 +38,9 @@ public class AppEngApi {
             }
         }
 
-        if (crafting == null)
+        if (crafting == null) {
             return null;
+        }
 
         for (var temp : crafting.getCraftables(param -> true)) {
             if(temp instanceof AEItemKey key) {
@@ -55,8 +56,6 @@ public class AppEngApi {
     public static Pair<Long, AEItemKey> findAEStackFromItemStack(MEStorage monitor, ItemStack item) {
         return findAEStackFromItemStack(monitor, null, item);
     }
-
-
 
     public static List<Object> listStacks(MEStorage monitor, ICraftingService service, int flag) {
         List<Object> items = new ArrayList<>();
