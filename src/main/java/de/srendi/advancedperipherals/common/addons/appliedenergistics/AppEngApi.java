@@ -29,18 +29,34 @@ import java.util.Map;
 
 public class AppEngApi {
 
-    public static Pair<Long, AEItemKey> findAEStackFromItemStack(MEStorage monitor, ItemStack item) {
-        Pair<Long, AEItemKey> stack = null;
+    public static Pair<Long, AEItemKey> findAEStackFromItemStack(MEStorage monitor, ICraftingService crafting, ItemStack item) {
         for (Object2LongMap.Entry<AEKey> temp : monitor.getAvailableStacks()) {
             if (temp.getKey() instanceof AEItemKey key) {
                 if (key.matches(item)) {
-                    stack = Pair.of(temp.getLongValue(), key);
-                    break;
+                    return Pair.of(temp.getLongValue(), key);
                 }
             }
         }
-        return stack;
+
+        if (crafting == null)
+            return null;
+
+        for (var temp : crafting.getCraftables(param -> true)) {
+            if(temp instanceof AEItemKey key) {
+                if (key.matches(item)) {
+                    return Pair.of(0L, key);
+                }
+            }
+        }
+
+        return null;
     }
+
+    public static Pair<Long, AEItemKey> findAEStackFromItemStack(MEStorage monitor, ItemStack item) {
+        return findAEStackFromItemStack(monitor, null, item);
+    }
+
+
 
     public static List<Object> listStacks(MEStorage monitor, ICraftingService service, int flag) {
         List<Object> items = new ArrayList<>();
