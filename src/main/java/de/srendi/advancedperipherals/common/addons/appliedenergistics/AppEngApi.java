@@ -75,6 +75,16 @@ public class AppEngApi {
         return items;
     }
 
+    public static List<Object> listCraftables(MEStorage monitor, ICraftingService service) {
+        List<Object> items = new ArrayList<>();
+        for (var temp : service.getCraftables(param -> true)) {
+            if (temp instanceof AEItemKey itemKey) {
+                items.add(getObjectFromStack(Pair.of(monitor.getAvailableStacks().get(temp), itemKey), service, 2));
+            }
+        }
+        return items;
+    }
+
     public static List<Object> listFluids(MEStorage monitor, ICraftingService service, int flag) {
         List<Object> items = new ArrayList<>();
         for (Object2LongMap.Entry<AEKey> aeKey : monitor.getAvailableStacks()) {

@@ -168,7 +168,8 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     @LuaFunction(mainThread = true)
     public final boolean isItemCraftable(IArguments arguments) throws LuaException {
         MEStorage monitor = AppEngApi.getMonitor(node);
-        return getCraftingService().isCraftable(AppEngApi.findAEStackFromItemStack(monitor, ItemUtil.getItemStack(arguments.getTable(0), monitor)).getRight());
+        ICraftingService crafting = node.getGrid().getService(ICraftingService.class);
+        return getCraftingService().isCraftable(AppEngApi.findAEStackFromItemStack(monitor, crafting, ItemUtil.getItemStack(arguments.getTable(0), monitor)).getRight());
     }
 
     @LuaFunction(mainThread = true)
@@ -217,7 +218,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
     @LuaFunction(mainThread = true)
     public final Object[] listCraftableItems() {
-        return new Object[]{AppEngApi.listStacks(AppEngApi.getMonitor(node), getCraftingService(), 2)};
+        return new Object[]{AppEngApi.listCraftables(AppEngApi.getMonitor(node), getCraftingService())};
     }
 
     @LuaFunction(mainThread = true)
