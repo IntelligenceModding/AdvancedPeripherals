@@ -162,14 +162,28 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     public final boolean isItemCrafting(IArguments arguments) throws LuaException {
         MEStorage monitor = AppEngApi.getMonitor(node);
         ICraftingService grid = node.getGrid().getService(ICraftingService.class);
-        return grid.isRequesting(AppEngApi.findAEStackFromItemStack(monitor, ItemUtil.getItemStack(arguments.getTable(0), monitor)).getRight());
+
+        Pair<Long, AEItemKey> stack = AppEngApi.findAEStackFromItemStack(monitor, grid, ItemUtil.getItemStack(arguments.getTable(0), monitor));
+        if (stack == null) {
+            // If the item stack does not exist, it cannot be crafting.
+            return false;
+        }
+
+        return grid.isRequesting(stack.getRight());
     }
 
     @LuaFunction(mainThread = true)
     public final boolean isItemCraftable(IArguments arguments) throws LuaException {
         MEStorage monitor = AppEngApi.getMonitor(node);
         ICraftingService crafting = node.getGrid().getService(ICraftingService.class);
-        return getCraftingService().isCraftable(AppEngApi.findAEStackFromItemStack(monitor, crafting, ItemUtil.getItemStack(arguments.getTable(0), monitor)).getRight());
+        Pair<Long, AEItemKey> stack = AppEngApi.findAEStackFromItemStack(monitor, crafting, ItemUtil.getItemStack(arguments.getTable(0), monitor));
+
+        if (stack == null) {
+            // If the item stack does not exist, it cannot be craftable.
+            return false;
+        }
+
+        return getCraftingService().isCraftable(stack.getRight());
     }
 
     @LuaFunction(mainThread = true)
