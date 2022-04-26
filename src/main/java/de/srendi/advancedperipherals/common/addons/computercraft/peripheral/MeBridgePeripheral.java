@@ -3,6 +3,7 @@ package de.srendi.advancedperipherals.common.addons.computercraft.peripheral;
 import appeng.api.config.Actionable;
 import appeng.api.networking.IGridNode;
 import appeng.api.networking.IManagedGridNode;
+import appeng.api.networking.crafting.CraftingJobStatus;
 import appeng.api.networking.crafting.ICraftingCPU;
 import appeng.api.networking.crafting.ICraftingService;
 import appeng.api.networking.crafting.ICraftingSimulationRequester;
@@ -169,7 +170,23 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
             return false;
         }
 
-        return grid.isRequesting(stack.getRight());
+        // Loop through all crafting cpus and check if the item is being crafted.
+        for (ICraftingCPU cpu : grid.getCpus()) {
+            if(cpu.isBusy()){
+                CraftingJobStatus jobStatus = cpu.getJobStatus();
+                // avoid null pointer exception
+                if(jobStatus == null){
+                    continue;
+                }
+
+                // If the item is being crafted, return true.
+                if(jobStatus.crafting().what().equals(stack.getRight())){
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     @LuaFunction(mainThread = true)
