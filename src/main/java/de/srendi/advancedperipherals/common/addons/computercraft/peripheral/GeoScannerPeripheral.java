@@ -108,7 +108,7 @@ public class GeoScannerPeripheral extends BasePeripheral<IPeripheralOwner> {
             HashMap<String, Integer> data = new HashMap<>();
             for (int x = chunkPos.getMinBlockX(); x <= chunkPos.getMaxBlockX(); x++) {
                 for (int z = chunkPos.getMinBlockZ(); z <= chunkPos.getMaxBlockZ(); z++) {
-                    for (int y = 0; y < 256; y++) {
+                    for (int y = level.dimensionType().minY(); y < level.dimensionType().height(); y++) {
                         BlockState block = chunk.getBlockState(new BlockPos(x, y, z));
                         ResourceLocation name = block.getBlock().getRegistryName();
                         if (name != null) {
