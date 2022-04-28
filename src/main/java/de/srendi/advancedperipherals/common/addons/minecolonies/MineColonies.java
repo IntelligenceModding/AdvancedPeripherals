@@ -16,7 +16,6 @@ import com.minecolonies.api.research.effects.IResearchEffect;
 import com.minecolonies.api.research.util.ResearchState;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingStructureBuilder;
 import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
-import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
 import io.netty.buffer.Unpooled;
 import net.minecraft.core.BlockPos;
@@ -118,7 +117,7 @@ public class MineColonies {
         map.put("location", LuaConverter.posToObject(work.getLocation().getInDimensionLocation()));
         map.put("type", work.getSchematicName());
         map.put("level", work.getBuildingLevel());
-        map.put("name", work.getCustomBuildingName());
+        map.put("name", work.getBuildingDisplayName());
         return map;
     }
 
@@ -182,7 +181,7 @@ public class MineColonies {
         map.put("style", building.getStyle());
         map.put("level", building.getBuildingLevel());
         map.put("maxLevel", building.getMaxBuildingLevel());
-        map.put("name", building.getCustomBuildingName());
+        map.put("name", building.getBuildingDisplayName());
         map.put("built", building.isBuilt());
         map.put("isWorkingOn", building.hasWorkOrder());
         map.put("priority", building.getPickUpPriority());
@@ -221,12 +220,11 @@ public class MineColonies {
         Map<String, Object> map = new HashMap<>();
 
         map.put("builder", LuaConverter.posToObject(workOrder.getClaimedBy()));
-        map.put("changed", workOrder.hasChanged());
+        map.put("changed", workOrder.isDirty());
         map.put("id", workOrder.getID());
         map.put("priority", workOrder.getPriority());
         map.put("isClaimed", workOrder.isClaimed());
-        map.put("location", workOrder instanceof WorkOrderBuildDecoration ?
-                LuaConverter.posToObject(((WorkOrderBuildDecoration) workOrder).getSchematicLocation()) : null);
+        map.put("location", workOrder.getLocation());
         map.put("type", workOrder.getClass().getSimpleName());
 
         return map;

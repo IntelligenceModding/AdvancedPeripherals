@@ -24,6 +24,7 @@ import de.srendi.advancedperipherals.common.util.ItemUtil;
 import de.srendi.advancedperipherals.common.util.Pair;
 import de.srendi.advancedperipherals.common.util.ServerWorker;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
+import it.unimi.dsi.fastutil.objects.Object2LongMap;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
