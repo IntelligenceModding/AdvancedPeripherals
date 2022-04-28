@@ -17,7 +17,7 @@ Adds things like the Me Bridge, various types of turtles, the Chat Box and more.
 [[dependencies.advancedperipherals]]
 modId = "forge"
 mandatory = true
-versionRange = "[40.0.41,)"
+versionRange = "[40.1.0,)"
 ordering = "NONE"
 side = "BOTH"
 [[dependencies.advancedperipherals]]
@@ -41,7 +41,7 @@ side = "BOTH"
 [[dependencies.advancedperipherals]]
 modId = "ae2"
 mandatory = false
-versionRange = "[11.0.0-alpha.4,)"
+versionRange = "[11.0.0-alpha.6,)"
 ordering = "NONE"
 side = "BOTH"
 [[dependencies.advancedperipherals]]
@@ -53,7 +53,7 @@ side = "BOTH"
 [[dependencies.advancedperipherals]]
 modId = "minecolonies"
 mandatory = false
-versionRange = "[1.18.2-1.0.578-ALPHA,)"
+versionRange = "[1.18.2-1.0.662-ALPHA,)"
 ordering = "NONE"
 side = "BOTH"
 [[dependencies.advancedperipherals]]

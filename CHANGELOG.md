@@ -6,6 +6,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+## [1.18.2-0.7.14b] - 2022-04-28
+
+### Fixed
+- [#294] `isRequests` does return also true when a sub-ingredient is being crafted (MeBridge, thanks to LauJosefsen!)
+- [#293] `isItemCraftable` Does not return true, if an item is craftable, but the amount in the ME system is 0 (MeBridge, thanks to LauJosefsen!)
+- [#293] `listCraftableItems` Does not return items that are indeed craftable, but the amount is 0 (MeBridge, thanks to LauJosefsen!)
+- [#293] `isItemCrafting` Gives lua error (Java null pointer exception) if amount is 0 (MeBridge, thanks to LauJosefsen!)
+- [#295] Fixed scanner height for new world heights (Thanks to JensenJ!)
+- [#287] Fixed crash with the chunky turtle throwing an IllegalArgumentException
+- [#283] Fixed several issues caused by tags and items (Thanks to AIUbi!)
+- Fixed Me Bridge *again*
+
 ## [1.18.2-0.7.13a] - 2022-04-07
 
 ### Added

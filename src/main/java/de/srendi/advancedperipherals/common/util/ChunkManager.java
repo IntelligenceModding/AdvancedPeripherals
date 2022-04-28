@@ -68,7 +68,7 @@ public class ChunkManager extends SavedData {
     public synchronized boolean addForceChunk(ServerLevel level, UUID owner, ChunkPos pos) {
         AdvancedPeripherals.debug("Trying to load forced chunk " + pos, Level.WARN);
         if (forcedChunks.containsKey(owner))
-            throw new IllegalArgumentException(String.format("You need to cleanup force loaded chunk for %s first", owner));
+            return true;
         forcedChunks.put(owner, new LoadChunkRecord(level.dimension().location().toString(), pos));
         setDirty();
         return ForgeChunkManager.forceChunk(level, AdvancedPeripherals.MOD_ID, owner, pos.x, pos.z, true, true);
