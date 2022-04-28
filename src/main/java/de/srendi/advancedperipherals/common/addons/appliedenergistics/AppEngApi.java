@@ -1,6 +1,7 @@
 package de.srendi.advancedperipherals.common.addons.appliedenergistics;
 
 import appeng.api.networking.IGridNode;
+import appeng.api.networking.crafting.CraftingJobStatus;
 import appeng.api.networking.crafting.ICraftingCPU;
 import appeng.api.networking.crafting.ICraftingPlan;
 import appeng.api.networking.crafting.ICraftingService;
@@ -14,10 +15,8 @@ import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
 import de.srendi.advancedperipherals.common.util.Pair;
 import de.srendi.advancedperipherals.common.util.StringUtil;
-import it.unimi.dsi.fastutil.objects.Object2LongMap;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
-import org.apache.logging.log4j.Level;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -218,6 +217,33 @@ public class AppEngApi {
 
     public static MEStorage getMonitor(IGridNode node) {
         return node.getGrid().getService(IStorageService.class).getInventory();
+    }
+
+    public static boolean isItemCrafting(MEStorage monitor, ICraftingService grid, ItemStack itemStack) {
+        Pair<Long, AEItemKey> stack = AppEngApi.findAEStackFromItemStack(monitor, grid, itemStack);
+
+        if (stack == null) {
+            // If the item stack does not exist, it cannot be crafting.
+            return false;
+        }
+
+        // Loop through all crafting cpus and check if the item is being crafted.
+        for (ICraftingCPU cpu : grid.getCpus()) {
+            if(cpu.isBusy()){
+                CraftingJobStatus jobStatus = cpu.getJobStatus();
+
+                // avoid null pointer exception
+                if(jobStatus == null){
+                    continue;
+                }
+
+                if(jobStatus.crafting().what().equals(stack.getRight())){
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
 

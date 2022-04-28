@@ -3,7 +3,6 @@ package de.srendi.advancedperipherals.common.addons.computercraft.peripheral;
 import appeng.api.config.Actionable;
 import appeng.api.networking.IGridNode;
 import appeng.api.networking.IManagedGridNode;
-import appeng.api.networking.crafting.CraftingJobStatus;
 import appeng.api.networking.crafting.ICraftingCPU;
 import appeng.api.networking.crafting.ICraftingService;
 import appeng.api.networking.crafting.ICraftingSimulationRequester;
@@ -25,7 +24,6 @@ import de.srendi.advancedperipherals.common.util.ItemUtil;
 import de.srendi.advancedperipherals.common.util.Pair;
 import de.srendi.advancedperipherals.common.util.ServerWorker;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
-import it.unimi.dsi.fastutil.objects.Object2LongMap;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
@@ -164,29 +162,8 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         MEStorage monitor = AppEngApi.getMonitor(node);
         ICraftingService grid = node.getGrid().getService(ICraftingService.class);
 
-        Pair<Long, AEItemKey> stack = AppEngApi.findAEStackFromItemStack(monitor, grid, ItemUtil.getItemStack(arguments.getTable(0), monitor));
-        if (stack == null) {
-            // If the item stack does not exist, it cannot be crafting.
-            return false;
-        }
-
-        // Loop through all crafting cpus and check if the item is being crafted.
-        for (ICraftingCPU cpu : grid.getCpus()) {
-            if(cpu.isBusy()){
-                CraftingJobStatus jobStatus = cpu.getJobStatus();
-                // avoid null pointer exception
-                if(jobStatus == null){
-                    continue;
-                }
-
-                // If the item is being crafted, return true.
-                if(jobStatus.crafting().what().equals(stack.getRight())){
-                    return true;
-                }
-            }
-        }
-
-        return false;
+        ItemStack itemStack = ItemUtil.getItemStack(arguments.getTable(0), monitor);
+        return AppEngApi.isItemCrafting(monitor, grid, itemStack);
     }
 
     @LuaFunction(mainThread = true)
