@@ -24,7 +24,6 @@ import de.srendi.advancedperipherals.common.util.ItemUtil;
 import de.srendi.advancedperipherals.common.util.Pair;
 import de.srendi.advancedperipherals.common.util.ServerWorker;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
-import it.unimi.dsi.fastutil.objects.Object2LongMap;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
@@ -162,13 +161,23 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     public final boolean isItemCrafting(IArguments arguments) throws LuaException {
         MEStorage monitor = AppEngApi.getMonitor(node);
         ICraftingService grid = node.getGrid().getService(ICraftingService.class);
-        return grid.isRequesting(AppEngApi.findAEStackFromItemStack(monitor, ItemUtil.getItemStack(arguments.getTable(0), monitor)).getRight());
+
+        ItemStack itemStack = ItemUtil.getItemStack(arguments.getTable(0), monitor);
+        return AppEngApi.isItemCrafting(monitor, grid, itemStack);
     }
 
     @LuaFunction(mainThread = true)
     public final boolean isItemCraftable(IArguments arguments) throws LuaException {
         MEStorage monitor = AppEngApi.getMonitor(node);
-        return getCraftingService().isCraftable(AppEngApi.findAEStackFromItemStack(monitor, ItemUtil.getItemStack(arguments.getTable(0), monitor)).getRight());
+        ICraftingService crafting = node.getGrid().getService(ICraftingService.class);
+        Pair<Long, AEItemKey> stack = AppEngApi.findAEStackFromItemStack(monitor, crafting, ItemUtil.getItemStack(arguments.getTable(0), monitor));
+
+        if (stack == null) {
+            // If the item stack does not exist, it cannot be craftable.
+            return false;
+        }
+
+        return getCraftingService().isCraftable(stack.getRight());
     }
 
     @LuaFunction(mainThread = true)
@@ -217,7 +226,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
     @LuaFunction(mainThread = true)
     public final Object[] listCraftableItems() {
-        return new Object[]{AppEngApi.listStacks(AppEngApi.getMonitor(node), getCraftingService(), 2)};
+        return new Object[]{AppEngApi.listCraftables(AppEngApi.getMonitor(node), getCraftingService())};
     }
 
     @LuaFunction(mainThread = true)
