@@ -59,7 +59,7 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
         BlockPos firstPos = LuaConverter.convertToBlockPos(firstCoord);
         BlockPos secondPos = LuaConverter.convertToBlockPos(secondCoord);
         for (ServerPlayerEntity player : getPlayers()) {
-            if (CoordUtil.isInRange(player, getWorld(), firstPos, secondPos))
+            if (CoordUtil.isInRange(this.getPos(), player, getWorld(), firstPos, secondPos))
                 playersName.add(player.getName().getString());
         }
         return playersName;
@@ -92,7 +92,7 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
         BlockPos firstPos = LuaConverter.convertToBlockPos(firstCoord);
         BlockPos secondPos = LuaConverter.convertToBlockPos(secondCoord);
         for (ServerPlayerEntity player : getPlayers()) {
-            if (CoordUtil.isInRange(player, getWorld(), firstPos, secondPos))
+            if (CoordUtil.isInRange(this.getPos(), player, getWorld(), firstPos, secondPos))
                 return true;
         }
         return false;
@@ -126,7 +126,7 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
         BlockPos firstPos = LuaConverter.convertToBlockPos(firstCoord);
         BlockPos secondPos = LuaConverter.convertToBlockPos(secondCoord);
         for (PlayerEntity player : getPlayers()) {
-            if (CoordUtil.isInRange(player, getWorld(), firstPos, secondPos)) {
+            if (CoordUtil.isInRange(this.getPos(), player, getWorld(), firstPos, secondPos)) {
                 playersName.add(player.getName().getString());
             }
         }
