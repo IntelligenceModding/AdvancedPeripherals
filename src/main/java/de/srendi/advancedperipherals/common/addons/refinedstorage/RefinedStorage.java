@@ -44,22 +44,26 @@ public class RefinedStorage {
 
     public static Object listFluids(INetwork network) {
         List<Object> fluids = new ArrayList<>();
-        getFluids(network).forEach(item -> fluids.add(getObjectFromFluid(item)));
+        getFluids(network).forEach(item -> fluids.add(getObjectFromFluid(item, network)));
         return fluids;
     }
 
     public static Object listItems(INetwork network) {
         List<Object> items = new ArrayList<>();
-        getItems(network).forEach(item -> items.add(getObjectFromStack(item)));
+        getItems(network).forEach(item -> items.add(getObjectFromStack(item, network)));
         return items;
     }
 
     public static boolean isItemCraftable(INetwork network, ItemStack stack) {
-        for (ItemStack craftableStack : getCraftableItems(network)) {
-            if (craftableStack.sameItem(stack))
-                return true;
-        }
-        return false;
+        ItemStack itemStack = stack.copy();
+        //RS does not like empty tag values. So we set it to null when it's empty.
+        //When we use an empty tag, RS will not find a valid pattern.
+        itemStack.setTag(itemStack.getOrCreateTag().isEmpty() ? null : itemStack.getTag());
+        return network.getCraftingManager().getPattern(itemStack) != null;
+    }
+
+    public static boolean isFluidCraftable(INetwork network, FluidStack stack) {
+        return network.getCraftingManager().getPattern(stack) != null;
     }
 
     public static int getMaxItemDiskStorage(INetwork network) {
@@ -108,14 +112,14 @@ public class RefinedStorage {
         return total;
     }
 
-    public static Object getObjectFromPattern(ICraftingPattern pattern) {
+    public static Object getObjectFromPattern(ICraftingPattern pattern, INetwork network) {
         if (pattern == null)
             return null;
         Map<String, Object> map = new HashMap<>();
         List<ItemStack> outputsList = pattern.getOutputs();
         List<Object> outputs = new ArrayList<>();
         for (ItemStack itemStack : outputsList)
-            outputs.add(getObjectFromStack(itemStack.copy()));
+            outputs.add(getObjectFromStack(itemStack.copy(), network));
 
         map.put("outputs", outputs);
 
@@ -124,14 +128,17 @@ public class RefinedStorage {
         for (List<ItemStack> singleInputList : inputList) {
             List<Object> inputs1 = new ArrayList<>();
             for (ItemStack stack : singleInputList)
-                inputs1.add(getObjectFromStack(stack.copy()));
+                inputs1.add(getObjectFromStack(stack.copy(), network));
 
             inputs.add(inputs1);
         }
-        List<ItemStack> byproductsList = pattern.getByproducts();
+
         List<Object> byproducts = new ArrayList<>();
-        for (ItemStack stack : byproductsList)
-            byproducts.add(getObjectFromStack(stack.copy()));
+        if(!pattern.isProcessing()) {
+            List<ItemStack> byproductsList = pattern.getByproducts();
+            for (ItemStack stack : byproductsList)
+                byproducts.add(getObjectFromStack(stack.copy(), network));
+        }
 
         map.put("inputs", inputs);
         map.put("outputs", outputs);
@@ -140,7 +147,7 @@ public class RefinedStorage {
         return map;
     }
 
-    public static Map<String, Object> getObjectFromStack(@Nullable ItemStack itemStack) {
+    public static Map<String, Object> getObjectFromStack(@Nullable ItemStack itemStack, INetwork network) {
         if (itemStack == null)
             return null;
         Map<String, Object> map = new HashMap<>();
@@ -150,13 +157,14 @@ public class RefinedStorage {
         map.put("name", itemStack.getItem().getRegistryName().toString());
         map.put("amount", itemStack.getCount());
         map.put("displayName", itemStack.getDisplayName().getString());
+        map.put("isCraftable", isItemCraftable(network, itemStack));
         map.put("nbt", nbt.isEmpty() ? null : NBTUtil.toLua(nbt));
         map.put("tags", tags.isEmpty() ? null : LuaConverter.tagsToList(itemStack.getItem().getTags()));
 
         return map;
     }
 
-    public static Map<String, Object> getObjectFromFluid(@Nullable FluidStack fluidStack) {
+    public static Map<String, Object> getObjectFromFluid(@Nullable FluidStack fluidStack, INetwork network) {
         if (fluidStack == null)
             return null;
         Map<String, Object> map = new HashMap<>();
@@ -164,6 +172,7 @@ public class RefinedStorage {
         map.put("name", fluidStack.getFluid().getRegistryName().toString());
         map.put("amount", fluidStack.getAmount());
         map.put("displayName", fluidStack.getDisplayName().getString());
+        map.put("isCraftable", isFluidCraftable(network, fluidStack));
         map.put("tags", tags.isEmpty() ? null : LuaConverter.tagsToList(fluidStack.getFluid().getTags()));
 
         return map;
@@ -172,7 +181,7 @@ public class RefinedStorage {
     public static Object getItem(INetwork network, ItemStack item) {
         for (ItemStack itemStack : getItems(network)) {
             if (itemStack.sameItem(item) && Objects.equals(itemStack.getOrCreateTag(), item.getOrCreateTag()))
-                return getObjectFromStack(itemStack);
+                return getObjectFromStack(itemStack, network);
 
         }
         return null;
