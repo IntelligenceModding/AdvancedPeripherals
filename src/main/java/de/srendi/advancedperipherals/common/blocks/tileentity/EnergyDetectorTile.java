@@ -69,6 +69,7 @@ public class EnergyDetectorTile extends PeripheralTileEntity<EnergyDetectorPerip
         }
     }
 
+    @NotNull
     @Override
     public CompoundNBT save(CompoundNBT compound) {
         super.save(compound);
@@ -77,9 +78,9 @@ public class EnergyDetectorTile extends PeripheralTileEntity<EnergyDetectorPerip
     }
 
     @Override
-    public void deserializeNBT(BlockState state, CompoundNBT nbt) {
-        storageProxy.setMaxTransferRate(nbt.getInt("rateLimit"));
-        super.deserializeNBT(state, nbt);
+    public void load(BlockState state, CompoundNBT compound) {
+        storageProxy.setMaxTransferRate(compound.getInt("rateLimit"));
+        super.load(state, compound);
     }
 
     // returns the cached output storage of the receiving block or refetches it if it has been invalidated
