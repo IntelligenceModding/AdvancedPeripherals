@@ -153,13 +153,13 @@ public class RefinedStorage {
         if (itemStack == null)
             return null;
         Map<String, Object> map = new HashMap<>();
-        CompoundTag nbt = itemStack.getOrCreateTag();
+        CompoundTag nbt = itemStack.getTag();
         Supplier<Stream<TagKey<Item>>> tags = () -> itemStack.getItem().builtInRegistryHolder().tags();
         map.put("fingerprint", getFingerpint(itemStack));
         map.put("name", itemStack.getItem().getRegistryName().toString());
         map.put("amount", itemStack.getCount());
         map.put("displayName", itemStack.getDisplayName().getString());
-        map.put("nbt", nbt.isEmpty() ? null : NBTUtil.toLua(nbt));
+        map.put("nbt", nbt == null ? null : NBTUtil.toLua(nbt));
         map.put("tags", tags.get().findAny().isEmpty() ? null : LuaConverter.tagsToList(tags));
 
         return map;
@@ -180,7 +180,7 @@ public class RefinedStorage {
 
     public static Object getItem(INetwork network, ItemStack item) {
         for (ItemStack itemStack : getItems(network)) {
-            if (itemStack.sameItem(item) && Objects.equals(itemStack.getOrCreateTag(), item.getOrCreateTag()))
+            if (itemStack.sameItem(item) && Objects.equals(itemStack.getTag(), item.getTag()))
                 return getObjectFromStack(itemStack);
 
         }
@@ -263,7 +263,8 @@ public class RefinedStorage {
     }
 
     public static String getFingerpint(ItemStack stack) {
-        String fingerprint = stack.getOrCreateTag() + stack.getItem().getRegistryName().toString() + stack.getDisplayName().getString();
+        CompoundTag nbt = stack.getTag();
+        String fingerprint = (nbt == null ? "null" : nbt.toString()) + stack.getItem().getRegistryName().toString() + stack.getDisplayName().getString();
         try {
             byte[] bytesOfHash = fingerprint.getBytes(StandardCharsets.UTF_8);
             MessageDigest md = MessageDigest.getInstance("MD5");
