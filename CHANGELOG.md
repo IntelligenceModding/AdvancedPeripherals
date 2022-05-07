@@ -6,6 +6,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+### Fixed
+- [#265] Redstone integrator does not output a redstone signal
+- [#258] Respect item tags for import items in rs bridge
+- [#202] Ignore tags for exporting items when tag argument is empty
+- [#285] Fixed energy detector not saving rate limit
+- [#280] Fixed `inCoords` functions of the player detector
+
+### Added
+- [#270] Add `isCraftable` to items from rs bridge - improves slightly the performance too
+
 ## [1.16.5-0.7.7r] - 2022-01-20
 
 ### Removed
