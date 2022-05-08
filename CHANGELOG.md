@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+## [1.16.5-0.7.8r] - 2022-05-08
 
 ### Fixed
 - [#265] Redstone integrator does not output a redstone signal
