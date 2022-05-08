@@ -13,6 +13,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - [#202] Ignore tags for exporting items when tag argument is empty
 - [#285] Fixed energy detector not saving rate limit
 - [#280] Fixed `inCoords` functions of the player detector
+- [#284] Improved village structures
 
 ### Added
 - [#270] Add `isCraftable` to items from rs bridge - improves slightly the performance too
