@@ -20,6 +20,7 @@ import de.srendi.advancedperipherals.common.util.LuaConverter;
 import io.netty.buffer.Unpooled;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.entity.Entity;
@@ -65,7 +66,7 @@ public class MineColonies {
         map.put("bedPos", LuaConverter.posToObject(citizen.getBedPos()));
         map.put("children", citizen.getChildren());
         map.put("location", LuaConverter.posToObject(citizen.getLastPosition()));
-        map.put("state", citizen.getStatus() == null ? "Idle" : citizen.getStatus().getTranslatedText());
+        map.put("state", citizen.getStatus() == null ? "Idle" : new TranslatableComponent(citizen.getStatus().getTranslationKey()).getString());
         map.put("age", citizen.isChild() ? "child" : "adult");
         map.put("gender", citizen.isFemale() ? "female" : "male");
         map.put("saturation", citizen.getSaturation());
