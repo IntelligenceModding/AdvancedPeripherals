@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+## [1.18.2-0.7.15b] - 2022-05-21
+
+### Fixed
+- Minecolonies integration for 1.0.754-ALPHA and newer
+- Village structures
+- [#297] Fixed tags to fix some RS Bridge functions (Thanks to rayrvg!)
+
 ## [1.18.2-0.7.14b] - 2022-04-28
 
 ### Fixed
