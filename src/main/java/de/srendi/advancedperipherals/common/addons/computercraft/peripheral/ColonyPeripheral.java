@@ -5,7 +5,7 @@ import com.minecolonies.api.colony.ICivilianData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IVisitorData;
 import com.minecolonies.api.colony.buildings.IBuilding;
-import com.minecolonies.api.colony.managers.interfaces.IBuildingManager;
+import com.minecolonies.api.colony.managers.interfaces.IRegisteredStructureManager;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
@@ -171,7 +171,7 @@ public class ColonyPeripheral extends BasePeripheral<IPeripheralOwner> {
     public final Object getBuildings() throws LuaException {
         IColony colony = getColony();
 
-        IBuildingManager manager = colony.getBuildingManager();
+        IRegisteredStructureManager manager = colony.getBuildingManager();
         List<Object> buildingData = new ArrayList<>();
         for (Map.Entry<BlockPos, IBuilding> building : manager.getBuildings().entrySet()) {
             buildingData.add(MineColonies.buildingToObject(manager, building.getValue(), building.getKey()));
@@ -243,7 +243,7 @@ public class ColonyPeripheral extends BasePeripheral<IPeripheralOwner> {
         List<IRequest<?>> requests = new ArrayList<>();
         for (IToken<?> token : tokens) {
             IRequest<?> request = requestManager.getRequestForToken(token);
-            if (request != null && !(request instanceof IDeliverable))
+            if (request instanceof IDeliverable)
                 requests.add(request);
         }
 

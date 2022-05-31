@@ -4,7 +4,7 @@ import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IVisitorData;
 import com.minecolonies.api.colony.buildings.IBuilding;
-import com.minecolonies.api.colony.managers.interfaces.IBuildingManager;
+import com.minecolonies.api.colony.managers.interfaces.IRegisteredStructureManager;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.colony.workorders.IWorkOrder;
 import com.minecolonies.api.entity.citizen.Skill;
@@ -16,7 +16,7 @@ import com.minecolonies.api.research.effects.IResearchEffect;
 import com.minecolonies.api.research.util.ResearchState;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingStructureBuilder;
 import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
-import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
+import com.minecolonies.coremod.colony.workorders.WorkOrderDecoration;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
 import io.netty.buffer.Unpooled;
 import net.minecraft.entity.Entity;
@@ -26,6 +26,7 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
@@ -66,7 +67,7 @@ public class MineColonies {
         map.put("bedPos", LuaConverter.posToObject(citizen.getBedPos()));
         map.put("children", citizen.getChildren());
         map.put("location", LuaConverter.posToObject(citizen.getLastPosition()));
-        map.put("state", citizen.getStatus() == null ? "Idle" : citizen.getStatus().getTranslatedText());
+        map.put("state", citizen.getStatus() == null ? "Idle" : new TranslationTextComponent(citizen.getStatus().getTranslationKey()).getString());
         map.put("age", citizen.isChild() ? "child" : "adult");
         map.put("gender", citizen.isFemale() ? "female" : "male");
         map.put("saturation", citizen.getSaturation());
@@ -119,7 +120,7 @@ public class MineColonies {
         map.put("location", LuaConverter.posToObject(work.getLocation().getInDimensionLocation()));
         map.put("type", work.getSchematicName());
         map.put("level", work.getBuildingLevel());
-        map.put("name", work.getCustomBuildingName());
+        map.put("name", work.getBuildingDisplayName());
         return map;
     }
 
@@ -162,7 +163,7 @@ public class MineColonies {
      * @param pos             The location of the buildings block
      * @return information about the building
      */
-    public static Object buildingToObject(IBuildingManager buildingManager, IBuilding building, BlockPos pos) {
+    public static Object buildingToObject(IRegisteredStructureManager buildingManager, IBuilding building, BlockPos pos) {
         Map<String, Object> structureData = new HashMap<>();
         structureData.put("cornerA", building.getCorners().getA());
         structureData.put("cornerB", building.getCorners().getB());
@@ -183,7 +184,7 @@ public class MineColonies {
         map.put("style", building.getStyle());
         map.put("level", building.getBuildingLevel());
         map.put("maxLevel", building.getMaxBuildingLevel());
-        map.put("name", building.getCustomBuildingName());
+        map.put("name", building.getBuildingDisplayName());
         map.put("built", building.isBuilt());
         map.put("isWorkingOn", building.hasWorkOrder());
         map.put("priority", building.getPickUpPriority());
@@ -222,12 +223,12 @@ public class MineColonies {
         Map<String, Object> map = new HashMap<>();
 
         map.put("builder", LuaConverter.posToObject(workOrder.getClaimedBy()));
-        map.put("changed", workOrder.hasChanged());
+        map.put("changed", workOrder.isDirty());
         map.put("id", workOrder.getID());
         map.put("priority", workOrder.getPriority());
         map.put("isClaimed", workOrder.isClaimed());
-        map.put("location", workOrder instanceof WorkOrderBuildDecoration ?
-                LuaConverter.posToObject(((WorkOrderBuildDecoration) workOrder).getSchematicLocation()) : null);
+        map.put("location", workOrder instanceof WorkOrderDecoration ?
+                LuaConverter.posToObject(((WorkOrderDecoration) workOrder).getLocation()) : null);
         map.put("type", workOrder.getClass().getSimpleName());
 
         return map;

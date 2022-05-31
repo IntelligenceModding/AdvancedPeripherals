@@ -54,13 +54,13 @@ side = "BOTH"
 [[dependencies.advancedperipherals]]
 modId = "minecolonies"
 mandatory = false
-versionRange = "[1.0.505-ALPHA,)"
+versionRange = "[1.16.5-1.0.779-ALPHA,)"
 ordnering = "NONE"
 side = "BOTH"
 [[dependencies.advancedperipherals]]
 modId = "mekanism"
 mandatory = false
-versionRange = "[10.0.21,)"
+versionRange = "[10.1.2,)"
 ordnering = "NONE"
 side = "BOTH"
 [[dependencies.advancedperipherals]]
