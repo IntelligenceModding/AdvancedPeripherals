@@ -227,8 +227,7 @@ public class MineColonies {
         map.put("id", workOrder.getID());
         map.put("priority", workOrder.getPriority());
         map.put("isClaimed", workOrder.isClaimed());
-        map.put("location", workOrder instanceof WorkOrderDecoration ?
-                LuaConverter.posToObject(((WorkOrderDecoration) workOrder).getLocation()) : null);
+        map.put("location", LuaConverter.posToObject(workOrder.getLocation()));
         map.put("type", workOrder.getClass().getSimpleName());
 
         return map;

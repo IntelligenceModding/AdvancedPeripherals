@@ -243,7 +243,7 @@ public class ColonyPeripheral extends BasePeripheral<IPeripheralOwner> {
         List<IRequest<?>> requests = new ArrayList<>();
         for (IToken<?> token : tokens) {
             IRequest<?> request = requestManager.getRequestForToken(token);
-            if (request instanceof IDeliverable)
+            if (request.getRequest() instanceof IDeliverable)
                 requests.add(request);
         }
 
