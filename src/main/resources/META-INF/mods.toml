@@ -18,7 +18,7 @@ Take a look at the documentation for more.
 [[dependencies.advancedperipherals]]
 modId = "forge"
 mandatory = true
-versionRange = "[36.2.22,)"
+versionRange = "[36.2.34,)"
 ordering = "NONE"
 side = "BOTH"
 [[dependencies.advancedperipherals]]
@@ -54,7 +54,7 @@ side = "BOTH"
 [[dependencies.advancedperipherals]]
 modId = "minecolonies"
 mandatory = false
-versionRange = "[1.16.5-1.0.779-ALPHA,)"
+versionRange = "[1.16.5-1.0.804-BETA,)"
 ordnering = "NONE"
 side = "BOTH"
 [[dependencies.advancedperipherals]]

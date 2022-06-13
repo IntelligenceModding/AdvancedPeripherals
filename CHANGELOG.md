@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+## [1.16.5-0.7.9r] - 2022-06-13
+
+### Fixed
+- Minecolonies integration for latest version
+
 ## [1.16.5-0.7.8r] - 2022-05-08
 
 ### Fixed

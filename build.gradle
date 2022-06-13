@@ -352,7 +352,7 @@ curseforge {
             }
         }
         try {
-            changelog = "${project.changelog.get(project.version).withHeader(false).toText()}"
+            changelog = "${project.changelog.get("${minecraft_version}-${project.version}").withHeader(false).toText()}"
             changelogType = "markdown"
         } catch (err) {
             System.out.println(err)
@@ -380,7 +380,7 @@ task publishModrinth(type: TaskModrinthUpload) {
     addLoader('forge')
 
     try {
-        changelog = "${project.changelog.get(project.version).withHeader(false).toText()}"
+        changelog = "${project.changelog.get("${minecraft_version}-${project.version}").withHeader(false).toText()}"
         changelogType = "markdown"
     } catch (err) {
         System.out.println(err)
