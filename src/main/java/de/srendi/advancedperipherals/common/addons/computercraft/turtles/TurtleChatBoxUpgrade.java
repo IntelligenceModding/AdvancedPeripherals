@@ -20,11 +20,9 @@ public class TurtleChatBoxUpgrade extends PeripheralTurtleUpgrade<ChatBoxPeriphe
 
     private static final ModelResourceLocation leftModel = new ModelResourceLocation("advancedperipherals:turtle_chat_box_upgrade_left", "inventory");
     private static final ModelResourceLocation rightModel = new ModelResourceLocation("advancedperipherals:turtle_chat_box_upgrade_right", "inventory");
-    private long lastConsumedMessage;
 
     public TurtleChatBoxUpgrade() {
         super(ID, new ItemStack(Blocks.CHAT_BOX.get()));
-        lastConsumedMessage = Events.counter - 1;
     }
 
     @Override
@@ -52,11 +50,22 @@ public class TurtleChatBoxUpgrade extends PeripheralTurtleUpgrade<ChatBoxPeriphe
             if (tile instanceof TileTurtle) {
                 TileTurtle tileTurtle = (TileTurtle) tile;
                 ServerComputer computer = tileTurtle.getServerComputer();
-                lastConsumedMessage = Events.traverseChatMessages(lastConsumedMessage, message -> {
+                setLastConsumedMessage(turtle, side, Events.traverseChatMessages(getLastConsumedMessage(turtle, side), message -> {
                     computer.queueEvent("chat", new Object[]{message.username, message.message,
                             message.uuid, message.isHidden});
-                });
+                }));
             }
         }
+    }
+
+    private long getLastConsumedMessage(ITurtleAccess turtle, TurtleSide side) {
+        if(turtle.getUpgradeNBTData(side).contains("lastConsumedMessage"))
+            return turtle.getUpgradeNBTData(side).getLong("lastConsumedMessage");
+        return -1;
+    }
+
+    private void setLastConsumedMessage(ITurtleAccess turtle, TurtleSide side, long message) {
+        turtle.getUpgradeNBTData(side).putLong("lastConsumedMessage", message);
+        turtle.updateUpgradeNBTData(side);
     }
 }

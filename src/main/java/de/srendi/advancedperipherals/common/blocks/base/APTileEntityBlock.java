@@ -20,7 +20,7 @@ public class APTileEntityBlock<T extends TileEntity> extends BaseTileEntityBlock
 
     public static final DirectionProperty FACING = DirectionalBlock.FACING;
     private final RegistryObject<TileEntityType<T>> tileEntity;
-    private boolean hasTileEntity = true;
+    private boolean hasTileEntity;
 
     public APTileEntityBlock(RegistryObject<TileEntityType<T>> tileEntity, Properties properties) {
         super(properties);
