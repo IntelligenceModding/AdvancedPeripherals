@@ -5,6 +5,7 @@ import de.srendi.advancedperipherals.common.items.base.BaseItem;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.text.ITextComponent;
@@ -39,14 +40,15 @@ public class MemoryCardItem extends BaseItem {
     public ActionResult<ItemStack> use(World worldIn, PlayerEntity playerIn, Hand handIn) {
         if (!worldIn.isClientSide) {
             ItemStack stack = playerIn.getItemInHand(handIn);
-            if (stack.getOrCreateTag().contains("owner")) {
+            CompoundNBT tag = stack.getOrCreateTag();
+            if (tag.contains("owner")) {
                 playerIn.displayClientMessage(new TranslationTextComponent("text.advancedperipherals.removed_player"),
                         true);
-                stack.getOrCreateTag().remove("owner");
+                tag.remove("owner");
             } else {
                 playerIn.displayClientMessage(new TranslationTextComponent("text.advancedperipherals.added_player"),
                         true);
-                stack.getOrCreateTag().putString("owner", playerIn.getName().getString());
+                tag.putString("owner", playerIn.getName().getString());
             }
         }
         return super.use(worldIn, playerIn, handIn);

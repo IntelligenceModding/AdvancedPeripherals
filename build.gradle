@@ -215,7 +215,7 @@ dependencies {
     runtimeOnly fg.deobf("vazkii.patchouli:Patchouli:${patchouli_version}")
 
     // Refined Storage
-    implementation fg.deobf("com.refinedmods:refinedstorage:1.9.18")
+    implementation fg.deobf("com.refinedmods:refinedstorage:${rs_version}")
     // AE2
     implementation fg.deobf("appeng:appliedenergistics2:${ae_version}")
 
