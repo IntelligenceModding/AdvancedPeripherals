@@ -6,6 +6,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+## [1.16.5-0.7.10r] - 2022-07-03
+
+This will be the last 1.16 version. 1.16 will not receive any new updates except for high priority bugs.
+I will now work on the last 0.7 batches for 1.18 and then work on 1.19 0.8 with a ton of new features!
+
+Have a great day.
+
+### Fixed
+- [#229]Fixed chat event for turtles
+- [#174]Fixed crash when shift-clicking items in the inventory manager
+
 ## [1.16.5-0.7.9r] - 2022-06-13
 
 ### Fixed
