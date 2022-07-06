@@ -14,7 +14,6 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.AABB;
-import org.squiddev.cobalt.compiler.LuaC;
 
 import javax.annotation.Nonnull;
 import java.util.HashMap;

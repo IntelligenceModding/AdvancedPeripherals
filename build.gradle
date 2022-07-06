@@ -4,12 +4,14 @@ import java.text.SimpleDateFormat
 
 buildscript {
     repositories {
-        maven { url = 'https://maven.minecraftforge.net/' }
+        maven { url = 'https://maven.minecraftforge.net' }
+        maven { url = 'https://maven.parchmentmc.org' }
         mavenCentral()
+        gradlePluginPortal()
     }
     dependencies {
         classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1+', changing: true
-        classpath 'com.android.tools.build:gradle:2.3.0'
+        classpath 'org.parchmentmc:librarian:1.+'
     }
 }
 
@@ -17,17 +19,18 @@ plugins {
     id "maven-publish"
     id 'com.matthewprenger.cursegradle' version '1.4.0'
     id 'org.jetbrains.changelog' version '1.2.1'
-    id "com.modrinth.minotaur" version "1.2.1"
+    id "com.modrinth.minotaur" version "2.+"
     id "org.jetbrains.kotlin.jvm" version "1.6.10"
 }
+
 apply plugin: 'net.minecraftforge.gradle'
-apply from: 'https://raw.githubusercontent.com/SizableShrimp/Forge-Class-Remapper/main/classremapper.gradle'
+apply plugin: 'org.parchmentmc.librarian.forgegradle'
 
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
 wrapper {
-    gradleVersion = '7.4'
+    gradleVersion = '7.4.2'
     distributionType = Wrapper.DistributionType.ALL
 }
 
@@ -68,7 +71,7 @@ sourceSets {
 
 minecraft {
 
-    mappings channel: "official", version: "1.18.2"
+    mappings channel: "${mappings_channel}", version: "${mappings_version}"
 
     accessTransformer file('src/main/resources/META-INF/accesstransformer.cfg')
     accessTransformer file('src/testMod/resources/META-INF/accesstransformer.cfg')
@@ -220,14 +223,6 @@ repositories {
             password = "\u0067hp_oGjcDFCn8jeTzIj4Ke9pLoEVtpnZMP4VQgaX"
         }
     }
-
-    maven {
-        name = "Srendis repo"
-        url = "https://srendi.jfrog.io/artifactory/default-maven-local/"
-        content {
-            includeGroup "site.siredvin.ttoolkit"
-        }
-    }
 }
 
 configurations {
@@ -235,8 +230,6 @@ configurations {
     testModImplementation.extendsFrom(implementation)
     testModImplementation.extendsFrom(testImplementation)
 }
-
-
 
 dependencies {
     // Minimal requirements
@@ -382,27 +375,17 @@ curseforge {
     }
 }
 
-
-task publishModrinth(type: TaskModrinthUpload) {
-    dependsOn('assemble', 'reobfJar')
-    onlyIf {
-        modrinthKey
-    }
-
-    token = modrinthKey
-    projectId = 'SOw6jD6x'
-    uploadFile = jar
-
+modrinth {
+    token = modrinthKey // This is the default. Remember to have the MODRINTH_TOKEN environment variable set or else this will fail, or set it to whatever you want - just make sure it stays private!
+    projectId = 'SOw6jD6x' // This can be the project ID or the slug. Either will work!
     versionNumber = "${minecraft_version}-${project.version}"
     versionName = "Advanced Peripherals ${minecraft_version} ${version}"
     versionType = release_type
-
-    addGameVersion(minecraft_version)
-    addLoader('forge')
-
+    uploadFile = jar // With Loom, this MUST be set to `remapJar` instead of `jar`!
+    gameVersions = [minecraft_version] // Must be an array, even with only one version
+    loaders = ["forge"] // Must also be an array - no need to specify this if you're using Loom or ForgeGradl
     try {
         changelog = "${project.changelog.get("${minecraft_version}-${project.version}").withHeader(false).toText()}"
-        changelogType = "markdown"
     } catch (err) {
         System.out.println(err)
         changelog = ""
@@ -410,19 +393,18 @@ task publishModrinth(type: TaskModrinthUpload) {
 }
 
 publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            artifactId archivesBaseName
-            artifact jar
-        }
-    }
     repositories {
         maven {
-            url "https://maven.pkg.github.com/Seniorendi/AdvancedPeripherals"
+            url "https://maven.pkg.jetbrains.space/intelligence/p/advancedperipherals/ap-repository"
             credentials {
-                username = secretEnv["USERNAME"] ?: System.getenv("USERNAME")
-                password = secretEnv["TOKEN"] ?: System.getenv("TOKEN")
+                username = spaceUsername
+                password = spacePassword
             }
+        }
+    }
+    publications {
+        gpr(MavenPublication) {
+            from(components.java)
         }
     }
 }

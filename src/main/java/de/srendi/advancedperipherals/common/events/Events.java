@@ -65,9 +65,9 @@ public class Events {
         if (!(livingEntity instanceof ServerPlayer))
             return;
         ServerPlayer player = (ServerPlayer) livingEntity;
-        if (event.getFrom().getItem() instanceof ARGogglesItem) {
+        if (event.getFrom().getItem() instanceof ARGogglesItem)
             MNetwork.sendTo(new ClearHudCanvasMessage(), player);
-        }
+
     }
 
     public static synchronized void putChatMessage(Pair<Long, ChatMessageObject> message) {
