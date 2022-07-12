@@ -252,7 +252,7 @@ public class RsBridgePeripheral extends BasePeripheral<TileEntityPeripheralOwner
     @LuaFunction(mainThread = true)
     public final boolean craftFluid(String fluid, int count) {
         ICalculationResult result = getNetwork().getCraftingManager()
-                .create(new FluidStack(ForgeRegistries.FLUIDS.getValue(new ResourceLocation(fluid)), 0), count);
+                .create(new FluidStack(ForgeRegistries.FLUIDS.getValue(new ResourceLocation(fluid)), count), count);
         CalculationResultType type = result.getType();
         if (result.getType() == CalculationResultType.OK)
             getNetwork().getCraftingManager().start(result.getTask());
