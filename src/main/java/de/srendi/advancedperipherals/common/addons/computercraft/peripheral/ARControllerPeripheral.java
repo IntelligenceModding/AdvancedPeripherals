@@ -155,13 +155,15 @@ public class ARControllerPeripheral extends BasePeripheral<BlockEntityPeripheral
         owner.tileEntity.clearElement(id);
     }
 
+    //TODO - 0.8r: These two functions do not work. This has several reasons. https://github.com/Seniorendi/AdvancedPeripherals/issues/307
+    //Returning 0 instead of crashing
     @LuaFunction(mainThread = true)
     public final float getPlayerRotationY() {
-        return Mth.wrapDegrees(owner.getOwner().getYRot());
+        return 0;
     }
 
     @LuaFunction(mainThread = true)
     public final float getPlayerRotationZ() {
-        return Mth.wrapDegrees(owner.getOwner().getYRot());
+        return 0;
     }
 }

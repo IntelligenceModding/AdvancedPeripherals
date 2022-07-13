@@ -53,7 +53,7 @@ side = "BOTH"
 [[dependencies.advancedperipherals]]
 modId = "minecolonies"
 mandatory = false
-versionRange = "[1.18.2-1.0.662-ALPHA,)"
+versionRange = "[1.18.2-1.0.877-BETA,)"
 ordering = "NONE"
 side = "BOTH"
 [[dependencies.advancedperipherals]]
