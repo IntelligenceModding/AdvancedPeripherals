@@ -60,7 +60,7 @@ public class LuaConverter {
         if (pos == null)
             return null;
 
-        Map<String, Object> map = new HashMap<>();
+        Map<String, Object> map = new HashMap<>(3);
         map.put("x", pos.getX());
         map.put("y", pos.getY());
         map.put("z", pos.getZ());
