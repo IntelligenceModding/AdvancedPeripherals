@@ -271,6 +271,10 @@ dependencies {
     //Patchouli
     runtimeOnly fg.deobf("vazkii.patchouli:Patchouli:${patchouli_version}")
 
+    // Create
+    implementation fg.deobf("com.simibubi.create:Create:${create_version}")
+    implementation fg.deobf("com.jozufozu.flywheel:Flywheel-Forge:${flywheel_version}")
+
     //Removed until fully ported
     //testImplementation fg.deobf("site.siredvin.ttoolkit:ttoolkit-${minecraft_version}:${ttoolkit_version}")
     testImplementation "org.junit.jupiter:junit-jupiter-api:${junit_version}"

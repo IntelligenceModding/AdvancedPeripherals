@@ -22,7 +22,7 @@ import java.util.function.Function;
 
 public class IntegrationPeripheralProvider implements IPeripheralProvider {
 
-    public static final String[] SUPPORTED_MODS = new String[]{"botania"};
+    public static final String[] SUPPORTED_MODS = new String[]{"botania", "create"};
 
     public static final PriorityQueue<IPeripheralIntegration> integrations = new PriorityQueue<>(Comparator.comparingInt(IPeripheralIntegration::getPriority));
 
