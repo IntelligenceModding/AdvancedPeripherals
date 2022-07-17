@@ -19,6 +19,7 @@ import java.util.Comparator;
 import java.util.Optional;
 import java.util.PriorityQueue;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 public class IntegrationPeripheralProvider implements IPeripheralProvider {
 
@@ -51,6 +52,20 @@ public class IntegrationPeripheralProvider implements IPeripheralProvider {
      */
     public static <T extends BlockEntity> void registerBlockEntityIntegration(Function<BlockEntity, BlockEntityIntegrationPeripheral<T>> integration, Class<T> tileClass, int priority) {
         registerIntegration(new BlockEntityIntegration(integration, tileClass::isInstance, priority));
+    }
+
+    /**
+     * Register tile entity integration, better use this method over manual TileEntityIntegration creation, because this method provides type check
+     * Provides a predicate for specific block entity checks
+     *
+     * @param integration integration generator
+     * @param tileClass   target integration class
+     * @param predicate   target block entity
+     * @param priority    Integration priority, lower is better
+     * @param <T>         target integration
+     */
+    public static <T extends BlockEntity> void registerBlockEntityIntegration(Function<BlockEntity, BlockEntityIntegrationPeripheral<T>> integration, Class<T> tileClass, Predicate<T> predicate, int priority) {
+        registerIntegration(new BlockEntityIntegration(integration, (t) -> tileClass.isInstance(t) && predicate.test((T) t), priority));
     }
 
     public static void load() {

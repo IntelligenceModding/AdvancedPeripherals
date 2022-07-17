@@ -1,33 +1,41 @@
 package de.srendi.advancedperipherals.common.addons.create;
 
-import com.simibubi.create.content.contraptions.relays.advanced.SpeedControllerTileEntity;
+import com.simibubi.create.content.contraptions.base.KineticTileEntity;
 import com.simibubi.create.foundation.tileEntity.behaviour.scrollvalue.ScrollValueBehaviour;
 import dan200.computercraft.api.lua.LuaFunction;
 import de.srendi.advancedperipherals.lib.peripherals.BlockEntityIntegrationPeripheral;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.NotNull;
 
-public class SpeedControllerIntegration extends BlockEntityIntegrationPeripheral<SpeedControllerTileEntity> {
+/**
+ * Integration for kinetic tile entities with scroll value behaviours like the speed controller or the creative motor
+ * to prevent code duplication
+ */
+public class ScrollValueBehaviourIntegration extends BlockEntityIntegrationPeripheral<KineticTileEntity> {
 
-    public SpeedControllerIntegration(BlockEntity entity) {
+    public ScrollValueBehaviourIntegration(BlockEntity entity) {
         super(entity);
     }
 
     @NotNull
     @Override
     public String getType() {
-        return "speedController";
+        return "scrollBehaviourEntity";
     }
 
     @LuaFunction(mainThread = true)
     public final int getTargetSpeed() {
         ScrollValueBehaviour scrollBehaviour = blockEntity.getBehaviour(ScrollValueBehaviour.TYPE);
+        if (scrollBehaviour == null)
+            return 0;
         return scrollBehaviour.getValue();
     }
 
     @LuaFunction(mainThread = true)
     public final boolean setTargetSpeed(int speed) {
         ScrollValueBehaviour scrollBehaviour = blockEntity.getBehaviour(ScrollValueBehaviour.TYPE);
+        if (scrollBehaviour == null)
+            return false;
         scrollBehaviour.setValue(speed);
         return true;
     }
