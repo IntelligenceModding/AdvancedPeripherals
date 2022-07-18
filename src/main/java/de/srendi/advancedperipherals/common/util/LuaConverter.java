@@ -89,11 +89,14 @@ public class LuaConverter {
         return map;
     }
 
-    public static <T> List<String> tagsToList(@NotNull Supplier<Stream<T>> tags) {
-
+    public static <T> List<String> tagsToList(@NotNull Supplier<Stream<TagKey<T>>> tags) {
     	if (tags.get().findAny().isEmpty())
             return null;
-        return tags.get().map(Object::toString).collect(Collectors.toList());
+        return tags.get().map(LuaConverter::tagToString).collect(Collectors.toList());
+    }
+
+    public static <T> String tagToString(@NotNull TagKey<T> tag) {
+        return tag.registry().location() + "/" + tag.location();
     }
 
     public static Direction getDirection(Direction facing, String computerSide) throws LuaException {

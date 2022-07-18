@@ -52,14 +52,14 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     @LuaFunction(mainThread = true)
     public final Object listCraftableItems() {
         List<Object> items = new ArrayList<>();
-        RefinedStorage.getCraftableItems(getNetwork()).forEach(item -> items.add(RefinedStorage.getObjectFromStack(item)));
+        RefinedStorage.getCraftableItems(getNetwork()).forEach(item -> items.add(RefinedStorage.getObjectFromStack(item, getNetwork())));
         return items;
     }
 
     @LuaFunction(mainThread = true)
     public final Object listCraftableFluids() {
         List<Object> fluids = new ArrayList<>();
-        RefinedStorage.getCraftableFluids(getNetwork()).forEach(fluid -> fluids.add(RefinedStorage.getObjectFromFluid(fluid)));
+        RefinedStorage.getCraftableFluids(getNetwork()).forEach(fluid -> fluids.add(RefinedStorage.getObjectFromFluid(fluid, getNetwork())));
         return fluids;
     }
 
@@ -105,7 +105,7 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
     @LuaFunction(mainThread = true)
     public final Object getPattern(IArguments arguments) throws LuaException {
-        return RefinedStorage.getObjectFromPattern(getNetwork().getCraftingManager().getPattern(ItemUtil.getItemStackRS(arguments.getTable(0), RefinedStorage.getItems(getNetwork()))));
+        return RefinedStorage.getObjectFromPattern(getNetwork().getCraftingManager().getPattern(ItemUtil.getItemStackRS(arguments.getTable(0), RefinedStorage.getItems(getNetwork()))), getNetwork());
     }
 
     @LuaFunction(mainThread = true)
