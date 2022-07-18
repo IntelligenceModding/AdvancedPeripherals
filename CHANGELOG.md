@@ -6,6 +6,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+## [1.18.2-0.7.16b] - 2022-07-18
+
+### Added
+- [#314] Added `getItemInOffHand` to the inventory manager
+- Added create integration
+- Added botania integration
+
+### Fixed
+- Village structures *again*
+- [#315] Improved performance for `isItemCraftable` - RS Bridge
+- [#304] Fix duplicated entries with `listItems` - RS Bridge
+- [#270] Added `isCraftable` to fluids and items - RS Bridge
+
 ## [1.18.2-0.7.15b] - 2022-05-21
 
 ### Fixed
