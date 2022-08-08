@@ -2,6 +2,8 @@ package de.srendi.advancedperipherals.common.addons.computercraft.peripheral;
 
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
+import dan200.computercraft.api.lua.IArguments;
+import dan200.computercraft.core.apis.TableHelper;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.BlockEntityPeripheralOwner;
 import de.srendi.advancedperipherals.common.blocks.blockentities.InventoryManagerEntity;
@@ -65,6 +67,33 @@ public class InventoryManagerPeripheral extends BasePeripheral<BlockEntityPeriph
             stack = new ItemStack(item1, count);
         }
 
+        return addItemCommon(invDirection, count, slot, stack);
+
+    }
+
+    //Add the specified item to the player
+    //The item is specified the same as with the RS/ME bridge:
+    //{name="minecraft:enchanted_book", count=1, nbt="ae70053c97f877de546b0248b9ddf525"}
+    //If a count is specified in the item it is silently IGNORED
+    @LuaFunction(mainThread = true)
+    public final int addItemToPlayerNBT(String invDirection, int count, Optional<Integer> slot, Optional<Map<?,?>> item) throws LuaException {
+        ItemStack stack = ItemStack.EMPTY;
+        if (item.isPresent()) {
+            Direction direction = validateSide(invDirection);
+
+            BlockEntity targetEntity = owner.getLevel().getBlockEntity(owner.getPos().relative(direction));
+            IItemHandler inventoryFrom = targetEntity != null ? targetEntity
+                    .getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, direction).resolve().orElse(null) : null;
+            
+            //We can use getItemStackRS, as it works with List<ItemStack>
+            //And doesn't use anything RS specific
+            stack = ItemUtil.getItemStackRS(item.get(), ItemUtil.getItemsFromItemHandler(inventoryFrom));
+        }
+
+        return addItemCommon(invDirection, count, slot, stack);
+    }
+
+    private final int addItemCommon(String invDirection, int count, Optional<Integer> slot, ItemStack stack) throws LuaException {
         Direction direction = validateSide(invDirection);
 
         BlockEntity targetEntity = owner.getLevel().getBlockEntity(owner.getPos().relative(direction));
@@ -121,6 +150,29 @@ public class InventoryManagerPeripheral extends BasePeripheral<BlockEntityPeriph
             Item item1 = ItemUtil.getRegistryEntry(item.get(), ForgeRegistries.ITEMS);
             stack = new ItemStack(item1, count);
         }
+
+        return removeItemCommon(invDirection, count, slot, stack);
+    }
+
+    @LuaFunction(mainThread = true)
+    public final int removeItemFromPlayerNBT(String invDirection, int count, Optional<Integer> slot, Optional<Map<?,?>> item) throws LuaException {
+        ItemStack stack = ItemStack.EMPTY;
+        if (item.isPresent()) {
+            Direction direction = validateSide(invDirection);
+
+            BlockEntity targetEntity = owner.getLevel().getBlockEntity(owner.getPos().relative(direction));
+            IItemHandler inventoryFrom = targetEntity != null ? targetEntity
+                    .getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, direction).resolve().orElse(null) : null;
+            
+            //We can use getItemStackRS, as it works with List<ItemStack>
+            //And doesn't use anything RS specific
+            stack = ItemUtil.getItemStackRS(item.get(), ItemUtil.getItemsFromItemHandler(inventoryFrom));
+        }
+
+        return removeItemCommon(invDirection, count, slot, stack);
+    }
+
+    private final int removeItemCommon(String invDirection, int count, Optional<Integer> slot, ItemStack stack) throws LuaException {
         //With this, we can use the item parameter without need to use the slot parameter. If we don't want to use
         //the slot parameter, we can use -1
         int invSlot = -1;

@@ -15,9 +15,11 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.ForgeRegistryEntry;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.ObjectHolder;
+import net.minecraftforge.items.IItemHandler;
 
 import java.util.List;
 import java.util.Map;
+import java.util.ArrayList;
 
 public class ItemUtil {
 
@@ -151,5 +153,15 @@ public class ItemUtil {
 
         tag = new CompoundTag();
         return tag;
+    }
+
+    //Gathers all items in handler and returns them
+    public static List<ItemStack> getItemsFromItemHandler(IItemHandler handler) {
+        List<ItemStack> items = new ArrayList<ItemStack>(handler.getSlots());
+        for(int slot=0; slot<handler.getSlots(); slot++) {
+            items.add(handler.getStackInSlot(slot).copy());
+        }
+
+        return items;
     }
 }
