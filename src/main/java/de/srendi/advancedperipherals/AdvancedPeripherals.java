@@ -29,11 +29,14 @@ import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import top.theillusivec4.curios.api.SlotTypeMessage;
 
+import java.util.Random;
+
 @Mod(AdvancedPeripherals.MOD_ID)
 public class AdvancedPeripherals {
 
     public static final String MOD_ID = "advancedperipherals";
     public static final Logger LOGGER = LogManager.getLogger("Advanced Peripherals");
+    public static final Random RANDOM = new Random();
     public static final CreativeModeTab TAB = new CreativeModeTab("advancedperipheralstab") {
 
         @Override

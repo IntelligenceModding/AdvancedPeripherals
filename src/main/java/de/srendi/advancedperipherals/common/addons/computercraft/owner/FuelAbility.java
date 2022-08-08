@@ -50,7 +50,7 @@ public abstract class FuelAbility<T extends IPeripheralOwner> implements IOwnerA
     public abstract void addFuel(int count);
 
     public int getFuelConsumptionMultiply() {
-        return (int) Math.pow(2, _getFuelConsumptionRate() - 1);
+        return (int) Math.pow(2, _getFuelConsumptionRate() - 1f);
     }
 
     public int reduceCooldownAccordingToConsumptionRate(int cooldown) {
