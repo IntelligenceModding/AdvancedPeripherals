@@ -34,8 +34,7 @@ public class APBlockItem extends BaseBlockItem {
     @Override
     public void fillItemCategory(CreativeModeTab group, NonNullList<ItemStack> items) {
         super.fillItemCategory(group, items);
-        if (!allowdedIn(group))
-            return;
+        if (!allowdedIn(group)) return;
         if (turtleID != null) {
             items.add(ItemUtil.makeTurtle(ItemUtil.TURTLE_ADVANCED, turtleID.toString()));
             items.add(ItemUtil.makeTurtle(ItemUtil.TURTLE_NORMAL, turtleID.toString()));

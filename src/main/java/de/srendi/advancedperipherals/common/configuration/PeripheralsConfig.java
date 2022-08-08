@@ -60,8 +60,7 @@ public class PeripheralsConfig implements IAPConfig {
         builder.push("Player_Detector");
 
         ENABLE_PLAYER_DETECTOR = builder.comment("Enable the Player Detector or not.").define("enablePlayerDetector", true);
-        PLAYER_DET_MAX_RANGE = builder.comment("The max range of the player detector functions. " +
-                "If anyone use a higher range, the detector will use this max range").defineInRange("playerDetMaxRange", 100000000, 0, 100000000);
+        PLAYER_DET_MAX_RANGE = builder.comment("The max range of the player detector functions. " + "If anyone use a higher range, the detector will use this max range").defineInRange("playerDetMaxRange", 100000000, 0, 100000000);
         PLAYER_SPY = builder.comment("Activates the \"getPlayerPos\" function of the Player Detector").define("enablePlayerPosFunction", true);
         MORE_PLAYER_INFORMATION = builder.comment("Adds more information to `getPlayerPos` of the Player Detector. Like rotation and dimension").define("morePlayerInformation", true);
 

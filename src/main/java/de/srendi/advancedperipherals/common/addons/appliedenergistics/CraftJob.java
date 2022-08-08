@@ -96,8 +96,7 @@ public class CraftJob implements ILuaCallback {
     }
 
     public void maybeCraft() {
-        if (startedCrafting || futureJob == null || !futureJob.isDone())
-            return;
+        if (startedCrafting || futureJob == null || !futureJob.isDone()) return;
         ICraftingPlan job;
         try {
             job = futureJob.get();
@@ -133,10 +132,8 @@ public class CraftJob implements ILuaCallback {
     @NotNull
     @Override
     public MethodResult resume(Object[] objects) {
-        if (result != null)
-            return result;
-        if (exception != null)
-            return MethodResult.of(exception);
+        if (result != null) return result;
+        if (exception != null) return MethodResult.of(exception);
         return MethodResult.of();
     }
 }

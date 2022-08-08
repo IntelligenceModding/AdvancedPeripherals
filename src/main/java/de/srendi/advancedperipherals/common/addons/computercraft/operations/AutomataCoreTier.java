@@ -21,26 +21,20 @@ public enum AutomataCoreTier implements IAutomataCoreTier {
 
     @Override
     public int getInteractionRadius() {
-        if (interactionRadius == null)
-            return 0;
+        if (interactionRadius == null) return 0;
         return interactionRadius.get();
     }
 
     @Override
     public int getMaxFuelConsumptionRate() {
-        if (maxFuelConsumptionRate == null)
-            return 0;
+        if (maxFuelConsumptionRate == null) return 0;
         return maxFuelConsumptionRate.get();
     }
 
     @Override
     public void addToConfig(ForgeConfigSpec.Builder builder) {
-        interactionRadius = builder.defineInRange(
-                settingsName() + "InteractionRadius", defaultInteractionRadius, 1, 64
-        );
-        maxFuelConsumptionRate = builder.defineInRange(
-                settingsName() + "MaxFuelConsumptionRate", defaultMaxFuelConsumptionRate, 1, 32
-        );
+        interactionRadius = builder.defineInRange(settingsName() + "InteractionRadius", defaultInteractionRadius, 1, 64);
+        maxFuelConsumptionRate = builder.defineInRange(settingsName() + "MaxFuelConsumptionRate", defaultMaxFuelConsumptionRate, 1, 32);
     }
 
     @Override

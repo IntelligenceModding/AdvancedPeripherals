@@ -17,14 +17,14 @@ import com.minecolonies.api.research.IGlobalResearchTree;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.pocket.IPocketAccess;
+import de.srendi.advancedperipherals.common.addons.computercraft.owner.BlockEntityPeripheralOwner;
+import de.srendi.advancedperipherals.common.addons.computercraft.owner.IPeripheralOwner;
+import de.srendi.advancedperipherals.common.addons.computercraft.owner.PocketPeripheralOwner;
 import de.srendi.advancedperipherals.common.addons.minecolonies.MineColonies;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralBlockEntity;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
-import de.srendi.advancedperipherals.common.addons.computercraft.owner.BlockEntityPeripheralOwner;
-import de.srendi.advancedperipherals.common.addons.computercraft.owner.IPeripheralOwner;
-import de.srendi.advancedperipherals.common.addons.computercraft.owner.PocketPeripheralOwner;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
@@ -161,8 +161,8 @@ public class ColonyPeripheral extends BasePeripheral<IPeripheralOwner> {
 
         List<Object> list = new ArrayList<>();
         for (ICivilianData civilian : colony.getVisitorManager().getCivilianDataMap().values()) {
-            if (!(civilian instanceof IVisitorData)) continue;
-            list.add(MineColonies.visitorToObject((IVisitorData) civilian));
+            if (!(civilian instanceof IVisitorData visitorData)) continue;
+            list.add(MineColonies.visitorToObject(visitorData));
         }
         return list;
     }
@@ -209,8 +209,7 @@ public class ColonyPeripheral extends BasePeripheral<IPeripheralOwner> {
         IColony colony = getColony();
 
         IWorkOrder workOrder = colony.getWorkManager().getWorkOrder(id);
-        if (workOrder == null)
-            return null;
+        if (workOrder == null) return null;
 
         return MineColonies.builderResourcesToObject(colony, workOrder.getClaimedBy());
     }
@@ -243,8 +242,7 @@ public class ColonyPeripheral extends BasePeripheral<IPeripheralOwner> {
         List<IRequest<?>> requests = new ArrayList<>();
         for (IToken<?> token : tokens) {
             IRequest<?> request = requestManager.getRequestForToken(token);
-            if (request != null && !(request instanceof IDeliverable))
-                requests.add(request);
+            if (request != null && !(request instanceof IDeliverable)) requests.add(request);
         }
 
         List<Object> result = new ArrayList<>();
@@ -257,8 +255,7 @@ public class ColonyPeripheral extends BasePeripheral<IPeripheralOwner> {
             map.put("state", request.getState().toString());
             map.put("count", deliverableRequest.getCount());
             map.put("minCount", deliverableRequest.getMinimumCount());
-            map.put("items", request.getDisplayStacks().stream().map(LuaConverter::stackToObject)
-                    .collect(Collectors.toList()));
+            map.put("items", request.getDisplayStacks().stream().map(LuaConverter::stackToObject).collect(Collectors.toList()));
             map.put("target", request.getRequester().getRequesterDisplayName(requestManager, request).getString());
             result.add(map);
         });

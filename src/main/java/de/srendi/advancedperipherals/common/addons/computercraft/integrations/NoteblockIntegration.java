@@ -35,8 +35,7 @@ public class NoteblockIntegration extends BlockIntegrationPeripheral<NoteBlock> 
     @LuaFunction(mainThread = true)
     public final int changeNoteBy(int note) throws LuaException {
         BlockState state = world.getBlockState(pos);
-        if (!(note >= 0 && note <= 24))
-            throw new LuaException("Note argument need to be in a range of 0 and 24");
+        if (!(note >= 0 && note <= 24)) throw new LuaException("Note argument need to be in a range of 0 and 24");
         state = state.setValue(NoteBlock.NOTE, note);
         world.setBlock(pos, state, 3);
         return note;

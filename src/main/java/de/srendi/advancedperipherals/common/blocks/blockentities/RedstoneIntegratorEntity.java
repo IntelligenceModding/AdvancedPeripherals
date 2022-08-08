@@ -35,16 +35,14 @@ public class RedstoneIntegratorEntity extends PeripheralBlockEntity<RedstoneInte
         if (power >= 15) return power;
 
         BlockState neighbourState = level.getBlockState(neighbourPos);
-        return neighbourState.getBlock() == Blocks.REDSTONE_WIRE
-                ? Math.max(power, neighbourState.getValue(RedStoneWireBlock.POWER)) : power;
+        return neighbourState.getBlock() == Blocks.REDSTONE_WIRE ? Math.max(power, neighbourState.getValue(RedStoneWireBlock.POWER)) : power;
     }
 
     public void setRedstoneOutput(Direction direction, int power) {
         int old = this.power[direction.get3DDataValue()];
         this.power[direction.get3DDataValue()] = power;
         if (old != power) {
-            if (level != null)
-                RedstoneUtil.propagateRedstoneOutput(level, getBlockPos(), direction);
+            if (level != null) RedstoneUtil.propagateRedstoneOutput(level, getBlockPos(), direction);
 
             this.setChanged();
         }

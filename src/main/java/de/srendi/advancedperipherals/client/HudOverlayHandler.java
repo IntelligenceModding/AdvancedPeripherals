@@ -5,7 +5,6 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import de.srendi.advancedperipherals.common.argoggles.ARRenderAction;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiComponent;
-import net.minecraft.client.player.inventory.Hotbar;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
@@ -31,15 +30,13 @@ public class HudOverlayHandler {
     }
 
     public static void updateCanvas(List<ARRenderAction> actions) {
-        if (instance == null)
-            return;
+        if (instance == null) return;
         instance.canvas.clear();
         instance.canvas.addAll(actions);
     }
 
     public static void clearCanvas() {
-        if (instance == null)
-            return;
+        if (instance == null) return;
         instance.canvas.clear();
     }
 

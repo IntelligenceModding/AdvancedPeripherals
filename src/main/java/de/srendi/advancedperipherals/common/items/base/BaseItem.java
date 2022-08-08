@@ -36,10 +36,10 @@ public abstract class BaseItem extends Item {
     public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn) {
         if (worldIn.isClientSide)
             return new InteractionResultHolder<>(InteractionResult.PASS, playerIn.getItemInHand(handIn));
-        if (this instanceof IInventoryItem) {
+        if (this instanceof IInventoryItem inventoryItem) {
             ServerPlayer serverPlayerEntity = (ServerPlayer) playerIn;
             ItemStack stack = playerIn.getItemInHand(handIn);
-            NetworkHooks.openGui(serverPlayerEntity, ((IInventoryItem) this).createContainer(playerIn, stack), buf -> buf.writeItem(stack));
+            NetworkHooks.openGui(serverPlayerEntity, inventoryItem.createContainer(playerIn, stack), buf -> buf.writeItem(stack));
         }
         return super.use(worldIn, playerIn, handIn);
     }
@@ -58,8 +58,7 @@ public abstract class BaseItem extends Item {
 
 
     public @NotNull Component getDescription() {
-        if (description == null)
-            description = TranslationUtil.itemTooltip(getDescriptionId());
+        if (description == null) description = TranslationUtil.itemTooltip(getDescriptionId());
         return description;
     }
 

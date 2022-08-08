@@ -37,7 +37,7 @@ public enum EnumColor {
     public static Component buildTextComponent(Component textComponent) {
         String text = textComponent.getString();
         for (EnumColor color : EnumColor.values()) {
-            text.replaceAll(color.alternativeCode, color.code);
+            text = text.replaceAll(color.alternativeCode, color.code);
         }
         return new TextComponent(text);
     }

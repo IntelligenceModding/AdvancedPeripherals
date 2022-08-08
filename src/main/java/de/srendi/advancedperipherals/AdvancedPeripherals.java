@@ -1,15 +1,12 @@
 package de.srendi.advancedperipherals;
 
 import de.srendi.advancedperipherals.client.HudOverlayHandler;
-import de.srendi.advancedperipherals.common.addons.computercraft.turtles.TurtleCompassUpgrade;
 import de.srendi.advancedperipherals.common.addons.refinedstorage.RefinedStorage;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.setup.Blocks;
 import de.srendi.advancedperipherals.common.setup.Registration;
-import de.srendi.advancedperipherals.common.util.ItemUtil;
 import de.srendi.advancedperipherals.common.village.VillageStructures;
 import de.srendi.advancedperipherals.network.MNetwork;
-import net.minecraft.core.NonNullList;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
@@ -68,13 +65,11 @@ public class AdvancedPeripherals {
     }
 
     public static void debug(String message) {
-        if (APConfig.GENERAL_CONFIG.ENABLE_DEBUG_MODE.get())
-            LOGGER.debug("[DEBUG] " + message);
+        if (APConfig.GENERAL_CONFIG.ENABLE_DEBUG_MODE.get()) LOGGER.debug("[DEBUG] " + message);
     }
 
     public static void debug(String message, Level level) {
-        if (APConfig.GENERAL_CONFIG.ENABLE_DEBUG_MODE.get())
-            LOGGER.log(level, "[DEBUG] " + message);
+        if (APConfig.GENERAL_CONFIG.ENABLE_DEBUG_MODE.get()) LOGGER.log(level, "[DEBUG] " + message);
     }
 
     public static boolean isCuriosLoaded() {
@@ -95,12 +90,10 @@ public class AdvancedPeripherals {
 
     @SubscribeEvent
     public void interModComms(InterModEnqueueEvent event) {
-        if (!curiosLoaded)
-            return;
+        if (!curiosLoaded) return;
         //InterModComms.sendTo("curios", SlotTypeMessage.REGISTER_TYPE, () -> new SlotTypeMessage.Builder("glasses")
         //		.size(1).icon(new ResourceLocation(MOD_ID, "textures/item/empty_glasses_slot.png")).build());
-        InterModComms.sendTo("curios", SlotTypeMessage.REGISTER_TYPE, () -> new SlotTypeMessage.Builder("glasses")
-                .size(1).build());
+        InterModComms.sendTo("curios", SlotTypeMessage.REGISTER_TYPE, () -> new SlotTypeMessage.Builder("glasses").size(1).build());
     }
 
 }

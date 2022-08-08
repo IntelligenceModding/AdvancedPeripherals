@@ -33,29 +33,25 @@ public class WeakAutomataCore extends APItem implements IFeedableAutomataCore {
     private static final String CONSUMED_ENTITY_COUNT = "consumed_entity_count";
     private static final String CONSUMED_ENTITY_NAME = "consumed_entity_name";
     private static final String CONSUMER_ENTITY_COMPOUND = "consumed_entity_compound";
-    private final static Map<String, WeakAutomataCoreRecord> AUTOMATA_CORE_REGISTRY = new HashMap<String, WeakAutomataCoreRecord>() {{
-        WeakAutomataCoreRecord endSoulRecord = new WeakAutomataCoreRecord(
-                new HashMap<>() {{
-                    put(EntityType.ENDERMAN.getRegistryName().toString(), 10);
-                }}, Items.END_AUTOMATA_CORE.get()
-        );
-        WeakAutomataCoreRecord husbandrySoulRecord = new WeakAutomataCoreRecord(
-                new HashMap<>() {{
-                    put(EntityType.COW.getRegistryName().toString(), 3);
-                    put(EntityType.SHEEP.getRegistryName().toString(), 3);
-                    put(EntityType.CHICKEN.getRegistryName().toString(), 3);
-                }}, Items.HUSBANDRY_AUTOMATA_CORE.get()
-        );
+    private final static Map<String, WeakAutomataCoreRecord> AUTOMATA_CORE_REGISTRY = new HashMap<>() {{
+        WeakAutomataCoreRecord endSoulRecord = new WeakAutomataCoreRecord(new HashMap<>() {{
+            put(EntityType.ENDERMAN.getRegistryName().toString(), 10);
+        }}, Items.END_AUTOMATA_CORE.get());
+        WeakAutomataCoreRecord husbandrySoulRecord = new WeakAutomataCoreRecord(new HashMap<>() {{
+            put(EntityType.COW.getRegistryName().toString(), 3);
+            put(EntityType.SHEEP.getRegistryName().toString(), 3);
+            put(EntityType.CHICKEN.getRegistryName().toString(), 3);
+        }}, Items.HUSBANDRY_AUTOMATA_CORE.get());
         endSoulRecord.ingredients.keySet().forEach(entityType -> put(entityType, endSoulRecord));
         husbandrySoulRecord.ingredients.keySet().forEach(entityType -> put(entityType, husbandrySoulRecord));
     }};
 
     public WeakAutomataCore(Properties properties, @Nullable ResourceLocation turtleID, @Nullable ResourceLocation pocketID) {
-        super(properties, turtleID, pocketID, APConfig.METAPHYSICS_CONFIG.ENABLE_WEAK_AUTOMATA_CORE::get);
+        super(properties, turtleID, pocketID, APConfig.METAPHYSICS_CONFIG.ENABLE_WEAK_AUTOMATA_CORE);
     }
 
     public WeakAutomataCore(@Nullable ResourceLocation turtleID, @Nullable ResourceLocation pocketID) {
-        super(turtleID, pocketID, APConfig.METAPHYSICS_CONFIG.ENABLE_WEAK_AUTOMATA_CORE::get);
+        super(turtleID, pocketID, APConfig.METAPHYSICS_CONFIG.ENABLE_WEAK_AUTOMATA_CORE);
     }
 
     @Override
@@ -66,9 +62,7 @@ public class WeakAutomataCore extends APItem implements IFeedableAutomataCore {
         consumedData.getAllKeys().forEach(key -> {
             WeakAutomataCoreRecord record = AUTOMATA_CORE_REGISTRY.get(key);
             CompoundTag recordData = consumedData.getCompound(key);
-            tooltip.add(EnumColor.buildTextComponent(new TextComponent(
-                    String.format("Consumed: %d/%d %s", recordData.getInt(CONSUMED_ENTITY_COUNT), record.getRequiredCount(key), recordData.getString(CONSUMED_ENTITY_NAME)))
-            ));
+            tooltip.add(EnumColor.buildTextComponent(new TextComponent(String.format("Consumed: %d/%d %s", recordData.getInt(CONSUMED_ENTITY_COUNT), record.getRequiredCount(key), recordData.getString(CONSUMED_ENTITY_NAME)))));
         });
     }
 
@@ -88,17 +82,13 @@ public class WeakAutomataCore extends APItem implements IFeedableAutomataCore {
                 record = AUTOMATA_CORE_REGISTRY.get(entityType);
             } else {
                 Optional<String> anyKey = consumedData.getAllKeys().stream().findAny();
-                if (!anyKey.isPresent())
-                    return InteractionResult.PASS;
+                if (!anyKey.isPresent()) return InteractionResult.PASS;
                 record = AUTOMATA_CORE_REGISTRY.get(anyKey.get());
             }
-            if (!record.isSuitable(entityType, consumedData))
-                return InteractionResult.PASS;
+            if (!record.isSuitable(entityType, consumedData)) return InteractionResult.PASS;
             entity.remove(Entity.RemovalReason.KILLED);
             CompoundTag entityCompound = consumedData.getCompound(entityType);
-            entityCompound.putInt(
-                    CONSUMED_ENTITY_COUNT, entityCompound.getInt(CONSUMED_ENTITY_COUNT) + 1
-            );
+            entityCompound.putInt(CONSUMED_ENTITY_COUNT, entityCompound.getInt(CONSUMED_ENTITY_COUNT) + 1);
             entityCompound.putString(CONSUMED_ENTITY_NAME, entity.getName().getString());
             consumedData.put(entityType, entityCompound);
             if (record.isFinished(consumedData)) {
@@ -110,16 +100,14 @@ public class WeakAutomataCore extends APItem implements IFeedableAutomataCore {
         return InteractionResult.PASS;
     }
 
-    public record WeakAutomataCoreRecord(Map<String, Integer> ingredients,
-                                         Item resultSoul) {
+    public record WeakAutomataCoreRecord(Map<String, Integer> ingredients, Item resultSoul) {
 
         public int getRequiredCount(String entityType) {
             return this.ingredients.getOrDefault(entityType, 0);
         }
 
         public boolean isSuitable(String entityType, CompoundTag consumedData) {
-            if (!ingredients.containsKey(entityType))
-                return false;
+            if (!ingredients.containsKey(entityType)) return false;
             int requiredCount = ingredients.get(entityType);
             int currentCount = consumedData.getCompound(entityType).getInt(CONSUMED_ENTITY_COUNT);
             return currentCount < requiredCount;

@@ -27,8 +27,7 @@ public class CuriosHelper {
 
                     @Override
                     public void curioTick(String identifier, int index, LivingEntity livingEntity) {
-                        if (!SideHelper.isClientPlayer(livingEntity))
-                            return;
+                        if (!SideHelper.isClientPlayer(livingEntity)) return;
                         ARGogglesItem.clientTick((LocalPlayer) livingEntity, stack);
                     }
 
@@ -39,9 +38,8 @@ public class CuriosHelper {
 
                     @Override
                     public void onUnequip(SlotContext slotContext, ItemStack newStack) {
-                        if (!(slotContext.getWearer() instanceof ServerPlayer))
-                            return;
-                        MNetwork.sendTo(new ClearHudCanvasMessage(), (ServerPlayer) slotContext.getWearer());
+                        if (!(slotContext.getWearer() instanceof ServerPlayer serverPlayer)) return;
+                        MNetwork.sendTo(new ClearHudCanvasMessage(), serverPlayer);
                     }
 
                     //TODO: add rendering if in Curio slot

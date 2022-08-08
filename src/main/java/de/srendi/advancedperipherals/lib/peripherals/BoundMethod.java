@@ -36,9 +36,8 @@ public class BoundMethod {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof BoundMethod)) return false;
-        BoundMethod that = (BoundMethod) o;
-        return target.equals(that.target) && name.equals(that.name) && method.equals(that.method);
+        if (!(o instanceof BoundMethod boundMethod)) return false;
+        return target.equals(boundMethod.target) && name.equals(boundMethod.name) && method.equals(boundMethod.method);
     }
 
     @Override

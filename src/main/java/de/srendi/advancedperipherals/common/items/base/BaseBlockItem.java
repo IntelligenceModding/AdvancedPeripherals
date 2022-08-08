@@ -40,8 +40,7 @@ public abstract class BaseBlockItem extends BlockItem {
     }
 
     public @NotNull Component getDescription() {
-        if (description == null)
-            description = TranslationUtil.itemTooltip(getDescriptionId());
+        if (description == null) description = TranslationUtil.itemTooltip(getDescriptionId());
         return description;
     }
 

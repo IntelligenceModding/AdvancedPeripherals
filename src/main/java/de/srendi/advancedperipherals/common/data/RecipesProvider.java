@@ -1,13 +1,6 @@
 package de.srendi.advancedperipherals.common.data;
 
-import appeng.core.AppEngBase;
-import appeng.core.definitions.AEBlocks;
-import com.refinedmods.refinedstorage.RSBlocks;
-import com.refinedmods.refinedstorage.RSItems;
-import com.refinedmods.refinedstorage.block.InterfaceBlock;
-import com.refinedmods.refinedstorage.item.QuartzEnrichedIronItem;
 import dan200.computercraft.shared.Registry;
-import de.srendi.advancedperipherals.common.addons.appliedenergistics.AppEngApi;
 import de.srendi.advancedperipherals.common.setup.Blocks;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.recipes.FinishedRecipe;

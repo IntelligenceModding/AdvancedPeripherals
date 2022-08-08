@@ -6,7 +6,6 @@ import dan200.computercraft.shared.util.NBTUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.animal.Animal;
@@ -15,7 +14,10 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.IForgeShearable;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -43,8 +45,7 @@ public class LuaConverter {
     }
 
     public static Map<String, Object> completeEntityToLua(Entity entity, ItemStack itemInHand) {
-        if (entity instanceof Animal)
-            return animalToLua((Animal) entity, itemInHand);
+        if (entity instanceof Animal animal) return animalToLua(animal, itemInHand);
         return entityToLua(entity);
     }
 
@@ -57,8 +58,7 @@ public class LuaConverter {
     }
 
     public static Object posToObject(BlockPos pos) {
-        if (pos == null)
-            return null;
+        if (pos == null) return null;
 
         Map<String, Object> map = new HashMap<>(3);
         map.put("x", pos.getX());
@@ -68,8 +68,7 @@ public class LuaConverter {
     }
 
     public static Map<String, Object> stackToObject(@NotNull ItemStack stack) {
-        if (stack.isEmpty())
-            return new HashMap<>();
+        if (stack.isEmpty()) return new HashMap<>();
         Map<String, Object> map = itemToObject(stack.getItem());
         CompoundTag nbt = stack.getTag();
         map.put("count", stack.getCount());
@@ -90,8 +89,7 @@ public class LuaConverter {
     }
 
     public static <T> List<String> tagsToList(@NotNull Supplier<Stream<TagKey<T>>> tags) {
-    	if (tags.get().findAny().isEmpty())
-            return null;
+        if (tags.get().findAny().isEmpty()) return null;
         return tags.get().map(LuaConverter::tagToString).collect(Collectors.toList());
     }
 
@@ -100,17 +98,13 @@ public class LuaConverter {
     }
 
     public static Direction getDirection(Direction facing, String computerSide) throws LuaException {
-        if (Direction.byName(computerSide) != null)
-            return Direction.byName(computerSide);
+        if (Direction.byName(computerSide) != null) return Direction.byName(computerSide);
         if (Objects.equals(computerSide, ComputerSide.FRONT.toString())) return facing;
-        if (Objects.equals(computerSide, ComputerSide.BACK.toString()))
-            return facing.getOpposite();
+        if (Objects.equals(computerSide, ComputerSide.BACK.toString())) return facing.getOpposite();
         if (Objects.equals(computerSide, ComputerSide.TOP.toString())) return Direction.UP;
         if (Objects.equals(computerSide, ComputerSide.BOTTOM.toString())) return Direction.DOWN;
-        if (Objects.equals(computerSide, ComputerSide.RIGHT.toString()))
-            return facing.getCounterClockWise();
-        if (Objects.equals(computerSide, ComputerSide.LEFT.toString()))
-            return facing.getClockWise();
+        if (Objects.equals(computerSide, ComputerSide.RIGHT.toString())) return facing.getCounterClockWise();
+        if (Objects.equals(computerSide, ComputerSide.LEFT.toString())) return facing.getClockWise();
 
         throw new LuaException(computerSide + " is not a valid side");
     }
@@ -119,12 +113,9 @@ public class LuaConverter {
     public static BlockPos convertToBlockPos(Map<?, ?> table) throws LuaException {
         if (!table.containsKey("x") || !table.containsKey("y") || !table.containsKey("z"))
             throw new LuaException("Table should be block position table");
-        Object x = table.get("x");
-        Object y = table.get("y");
-        Object z = table.get("z");
-        if (!(x instanceof Number) || !(y instanceof Number) || !(z instanceof Number))
+        if (!(table.get("x") instanceof Number x) || !(table.get("y") instanceof Number y) || !(table.get("z") instanceof Number z))
             throw new LuaException("Table should be block position table");
-        return new BlockPos(((Number) x).intValue(), ((Number) y).intValue(), ((Number) z).intValue());
+        return new BlockPos(x.intValue(), y.intValue(), z.intValue());
     }
 
     public static BlockPos convertToBlockPos(BlockPos center, Map<?, ?> table) throws LuaException {

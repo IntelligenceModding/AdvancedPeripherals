@@ -29,18 +29,15 @@ public abstract class IntegrationPeripheral implements IDynamicPeripheral {
         if (!initialized) {
             initialized = true;
             this.pluggedMethods.clear();
-            if (plugins != null)
-                plugins.forEach(plugin -> {
-                    if (plugin.isSuitable(this))
-                        pluggedMethods.addAll(plugin.getMethods());
-                });
+            if (plugins != null) plugins.forEach(plugin -> {
+                if (plugin.isSuitable(this)) pluggedMethods.addAll(plugin.getMethods());
+            });
             this.methodNames = pluggedMethods.stream().map(BoundMethod::getName).toArray(String[]::new);
         }
     }
 
     protected void addPlugin(@NotNull IPeripheralPlugin plugin) {
-        if (plugins == null)
-            plugins = new LinkedList<>();
+        if (plugins == null) plugins = new LinkedList<>();
         plugins.add(plugin);
         IPeripheralOperation<?>[] operations = plugin.getOperations();
         if (operations != null) {
@@ -70,16 +67,14 @@ public abstract class IntegrationPeripheral implements IDynamicPeripheral {
     @Override
     @NotNull
     public String @NotNull [] getMethodNames() {
-        if (!initialized)
-            buildPlugins();
+        if (!initialized) buildPlugins();
         return methodNames;
     }
 
     @Override
     @NotNull
     public MethodResult callMethod(@NotNull IComputerAccess access, @NotNull ILuaContext context, int index, @NotNull IArguments arguments) throws LuaException {
-        if (!initialized)
-            buildPlugins();
+        if (!initialized) buildPlugins();
         return pluggedMethods.get(index).apply(access, context, arguments);
     }
 }

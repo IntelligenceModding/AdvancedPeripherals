@@ -41,16 +41,14 @@ public class ARGogglesItem extends ArmorItem {
     private static final String CONTROLLER_LEVEL = "controller_level";
 
     public ARGogglesItem() {
-        super(ArmorMaterials.LEATHER, EquipmentSlot.HEAD,
-                new Properties().tab(AdvancedPeripherals.TAB).stacksTo(1));
+        super(ArmorMaterials.LEATHER, EquipmentSlot.HEAD, new Properties().tab(AdvancedPeripherals.TAB).stacksTo(1));
     }
 
     @OnlyIn(Dist.CLIENT)
     public static void clientTick(LocalPlayer player, ItemStack stack) {
         if (stack.hasTag() && stack.getTag().contains(CONTROLLER_POS) && stack.getTag().contains(CONTROLLER_LEVEL)) {
             int[] arr = stack.getTag().getIntArray(CONTROLLER_POS);
-            if (arr.length < 3)
-                return;
+            if (arr.length < 3) return;
             BlockPos pos = new BlockPos(arr[0], arr[1], arr[2]);
             String dimensionKey = stack.getTag().getString(CONTROLLER_LEVEL);
             Level level = player.level;
@@ -75,12 +73,10 @@ public class ARGogglesItem extends ArmorItem {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable Level levelIn, List<Component> tooltip,
-                                TooltipFlag flagIn) {
+    public void appendHoverText(ItemStack stack, @Nullable Level levelIn, List<Component> tooltip, TooltipFlag flagIn) {
         super.appendHoverText(stack, levelIn, tooltip, flagIn);
         if (!InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), GLFW.GLFW_KEY_LEFT_CONTROL)) {
-            tooltip.add(EnumColor
-                    .buildTextComponent(new TranslatableComponent("item.advancedperipherals.tooltip.show_desc")));
+            tooltip.add(EnumColor.buildTextComponent(new TranslatableComponent("item.advancedperipherals.tooltip.show_desc")));
         } else {
             tooltip.add(EnumColor.buildTextComponent(getDescription()));
         }
@@ -88,8 +84,7 @@ public class ARGogglesItem extends ArmorItem {
             tooltip.add(EnumColor.buildTextComponent(new TranslatableComponent("item.advancedperipherals.tooltip.disabled")));
         if (stack.hasTag() && stack.getTag().contains(CONTROLLER_POS, CompoundTag.TAG_INT_ARRAY)) {
             int[] pos = stack.getTag().getIntArray(CONTROLLER_POS);
-            tooltip.add(new TranslatableComponent("item.advancedperipherals.tooltip.ar_goggles.binding", pos[0],
-                    pos[1], pos[2]));
+            tooltip.add(new TranslatableComponent("item.advancedperipherals.tooltip.ar_goggles.binding", pos[0], pos[1], pos[2]));
         }
     }
 
@@ -109,8 +104,7 @@ public class ARGogglesItem extends ArmorItem {
     @Override
     public void onArmorTick(ItemStack stack, Level level, Player player) {
         // only need to tick client side, if client is wearing them himself
-        if (!SideHelper.isClientPlayer(player))
-            return;
+        if (!SideHelper.isClientPlayer(player)) return;
         clientTick((LocalPlayer) player, stack);
     }
 
@@ -122,13 +116,11 @@ public class ARGogglesItem extends ArmorItem {
             return super.useOn(context);
         } else {
             BlockEntity entity = level.getBlockEntity(blockpos);
-            if (!(entity instanceof ARControllerEntity))
-                return super.useOn(context);
+            if (!(entity instanceof ARControllerEntity)) return super.useOn(context);
             ARControllerEntity controller = (ARControllerEntity) entity;
             if (!context.getLevel().isClientSide) {
                 ItemStack item = context.getItemInHand();
-                if (!item.hasTag())
-                    item.setTag(new CompoundTag());
+                if (!item.hasTag()) item.setTag(new CompoundTag());
                 CompoundTag nbt = item.getTag();
                 BlockPos pos = controller.getBlockPos();
                 nbt.putIntArray(CONTROLLER_POS, new int[]{pos.getX(), pos.getY(), pos.getZ()});

@@ -12,8 +12,8 @@ import java.util.function.Supplier;
 
 public class RequestHudCanvasMessage {
 
-    private BlockPos blockPos;
-    private String dimensionKey;
+    private final BlockPos blockPos;
+    private final String dimensionKey;
 
     public RequestHudCanvasMessage(BlockPos blockPos, String dimensionKey) {
         this.blockPos = blockPos;
@@ -37,9 +37,7 @@ public class RequestHudCanvasMessage {
             for (ServerLevel world : worlds) {
                 if (world.dimension().toString().equals(mes.getDimensionKey())) {
                     BlockEntity te = world.getBlockEntity(mes.getBlockPos());
-                    if (!(te instanceof ARControllerEntity))
-                        return;
-                    ARControllerEntity controller = (ARControllerEntity) te;
+                    if (!(te instanceof ARControllerEntity controller)) return;
                     MNetwork.sendTo(new UpdateHudCanvasMessage(controller.getCanvas()), cont.get().getSender());
                     break;
                 }

@@ -78,8 +78,7 @@ public class IntegrationPeripheralProvider implements IPeripheralProvider {
                 AdvancedPeripherals.LOGGER.warn("Successfully loaded integration for {}", mod);
                 ((Runnable) obj).run();
             });
-            if (integration.isEmpty())
-                AdvancedPeripherals.LOGGER.warn("Failed to load integration for {}", mod);
+            if (integration.isEmpty()) AdvancedPeripherals.LOGGER.warn("Failed to load integration for {}", mod);
         }
     }
 

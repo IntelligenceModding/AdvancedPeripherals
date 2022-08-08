@@ -21,8 +21,8 @@ import java.util.Optional;
 public class ARControllerEntity extends PeripheralBlockEntity<ARControllerPeripheral> {
     private static final String CANVAS = "canvas";
     private static final String VIRTUAL_SCREEN_SIZE = "virtual_screen_size";
-    private Optional<int[]> virtualScreenSize = Optional.empty();
     private final List<ARRenderAction> canvas = new ArrayList<>();
+    private Optional<int[]> virtualScreenSize = Optional.empty();
 
     public ARControllerEntity(BlockPos pos, BlockState state) {
         super(BlockEntityTypes.AR_CONTROLLER.get(), pos, state);
@@ -35,8 +35,7 @@ public class ARControllerEntity extends PeripheralBlockEntity<ARControllerPeriph
      * @param action The action to add to the canvas.
      */
     public void addToCanvas(ARRenderAction action) {
-        if (canvas.contains(action))
-            return;
+        if (canvas.contains(action)) return;
         if (action.getId() != null) {
             canvas.removeIf(old -> action.getId().equals(old.getId()));
         }
@@ -69,8 +68,7 @@ public class ARControllerEntity extends PeripheralBlockEntity<ARControllerPeriph
     public void deserializeNBT(CompoundTag nbt) {
         if (nbt.getIntArray(VIRTUAL_SCREEN_SIZE).length > 0)
             virtualScreenSize = Optional.of(nbt.getIntArray(VIRTUAL_SCREEN_SIZE));
-        else
-            virtualScreenSize = Optional.empty();
+        else virtualScreenSize = Optional.empty();
         ListTag list = nbt.getList(CANVAS, Tag.TAG_COMPOUND);
         canvas.clear();
         for (int i = 0; i < list.size(); i++) {
@@ -83,10 +81,8 @@ public class ARControllerEntity extends PeripheralBlockEntity<ARControllerPeriph
 
     public void saveAdditional(@NotNull CompoundTag compound) {
         super.saveAdditional(compound);
-        if (virtualScreenSize.isPresent())
-            compound.putIntArray(VIRTUAL_SCREEN_SIZE, virtualScreenSize.get());
-        else if (compound.contains(VIRTUAL_SCREEN_SIZE))
-            compound.remove(VIRTUAL_SCREEN_SIZE);
+        if (virtualScreenSize.isPresent()) compound.putIntArray(VIRTUAL_SCREEN_SIZE, virtualScreenSize.get());
+        else if (compound.contains(VIRTUAL_SCREEN_SIZE)) compound.remove(VIRTUAL_SCREEN_SIZE);
         ListTag list = new ListTag();
         for (ARRenderAction action : new ArrayList<>(canvas)) {
             list.add(action.serializeNBT());

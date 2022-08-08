@@ -24,9 +24,7 @@ public enum SingleOperation implements IPeripheralOperation<SingleOperationConte
     private ForgeConfigSpec.IntValue cooldown;
     private ForgeConfigSpec.IntValue cost;
 
-    SingleOperation(
-            int defaultCooldown, DistancePolicy distanceCooldownPolicy, CountPolicy countCooldownPolicy,
-            int defaultCost, DistancePolicy distanceCostPolicy, CountPolicy countCostPolicy) {
+    SingleOperation(int defaultCooldown, DistancePolicy distanceCooldownPolicy, CountPolicy countCooldownPolicy, int defaultCost, DistancePolicy distanceCostPolicy, CountPolicy countCostPolicy) {
         this.defaultCooldown = defaultCooldown;
         this.defaultCost = defaultCost;
         this.distanceCooldownPolicy = distanceCooldownPolicy;
@@ -70,12 +68,8 @@ public enum SingleOperation implements IPeripheralOperation<SingleOperationConte
 
     @Override
     public void addToConfig(ForgeConfigSpec.Builder builder) {
-        cooldown = builder.defineInRange(
-                settingsName() + "Cooldown", defaultCooldown, 1_000, Integer.MAX_VALUE
-        );
-        cost = builder.defineInRange(
-                settingsName() + "Cost", defaultCost, 0, Integer.MAX_VALUE
-        );
+        cooldown = builder.defineInRange(settingsName() + "Cooldown", defaultCooldown, 1_000, Integer.MAX_VALUE);
+        cost = builder.defineInRange(settingsName() + "Cost", defaultCost, 0, Integer.MAX_VALUE);
     }
 
     public enum DistancePolicy {

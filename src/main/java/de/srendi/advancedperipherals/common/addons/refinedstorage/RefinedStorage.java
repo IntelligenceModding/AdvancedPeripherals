@@ -29,9 +29,8 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
-import java.util.stream.Stream;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class RefinedStorage {
 
@@ -73,8 +72,8 @@ public class RefinedStorage {
         int total = 0;
         boolean creative = false;
         for (IStorage<ItemStack> store : network.getItemStorageCache().getStorages()) {
-            if (store instanceof IStorageDisk) {
-                int cap = ((IStorageDisk<ItemStack>) store).getCapacity();
+            if (store instanceof IStorageDisk<ItemStack> storageDisk) {
+                int cap = storageDisk.getCapacity();
                 if (cap > 0) total += cap;
                 else creative = true;
             }
@@ -86,8 +85,8 @@ public class RefinedStorage {
         int total = 0;
         boolean creative = false;
         for (IStorage<FluidStack> store : network.getFluidStorageCache().getStorages()) {
-            if (store instanceof IStorageDisk) {
-                int cap = ((IStorageDisk<FluidStack>) store).getCapacity();
+            if (store instanceof IStorageDisk<FluidStack> storageDisk) {
+                int cap = storageDisk.getCapacity();
                 if (cap > 0) total += cap;
                 else creative = true;
             }
@@ -98,8 +97,8 @@ public class RefinedStorage {
     public static int getMaxItemExternalStorage(INetwork network) {
         int total = 0;
         for (IStorage<ItemStack> store : network.getItemStorageCache().getStorages()) {
-            if (store instanceof IExternalStorage) {
-                total += ((IExternalStorage<ItemStack>) store).getCapacity();
+            if (store instanceof IExternalStorage<ItemStack> externalStorage) {
+                total += externalStorage.getCapacity();
             }
         }
         return total;
@@ -108,16 +107,15 @@ public class RefinedStorage {
     public static int getMaxFluidExternalStorage(INetwork network) {
         int total = 0;
         for (IStorage<FluidStack> store : network.getFluidStorageCache().getStorages()) {
-            if (store instanceof IExternalStorage) {
-                total += ((IExternalStorage<FluidStack>) store).getCapacity();
+            if (store instanceof IExternalStorage<FluidStack> externalStorage) {
+                total += externalStorage.getCapacity();
             }
         }
         return total;
     }
 
     public static Object getObjectFromPattern(ICraftingPattern pattern, INetwork network) {
-        if (pattern == null)
-            return null;
+        if (pattern == null) return null;
         Map<String, Object> map = new HashMap<>();
         List<ItemStack> outputsList = pattern.getOutputs();
         List<Object> outputs = new ArrayList<>();
@@ -150,8 +148,7 @@ public class RefinedStorage {
     }
 
     public static Map<String, Object> getObjectFromStack(@Nullable ItemStack itemStack, INetwork network) {
-        if (itemStack == null)
-            return null;
+        if (itemStack == null) return null;
         Map<String, Object> map = new HashMap<>();
         CompoundTag nbt = itemStack.getTag();
         Supplier<Stream<TagKey<Item>>> tags = () -> itemStack.getItem().builtInRegistryHolder().tags();
@@ -167,8 +164,7 @@ public class RefinedStorage {
     }
 
     public static Map<String, Object> getObjectFromFluid(@Nullable FluidStack fluidStack, INetwork network) {
-        if (fluidStack == null)
-            return null;
+        if (fluidStack == null) return null;
         Map<String, Object> map = new HashMap<>();
         Supplier<Stream<TagKey<Fluid>>> tags = () -> fluidStack.getFluid().builtInRegistryHolder().tags();
         map.put("name", fluidStack.getFluid().getRegistryName().toString());
@@ -239,8 +235,7 @@ public class RefinedStorage {
             if (rsStack.getCount() > 0 && rsStack.getItem().equals(stack.getItem())) {
                 CompoundTag tag = rsStack.getTag();
                 String hash = NBTUtil.getNBTHash(tag);
-                if (nbtHash.equals(hash))
-                    return tag.copy();
+                if (nbtHash.equals(hash)) return tag.copy();
             }
         }
         return null;
@@ -249,8 +244,7 @@ public class RefinedStorage {
     public static ItemStack findMatchingFingerprint(String fingerprint, List<ItemStack> items) {
         for (ItemStack rsStack : items) {
             if (rsStack.getCount() > 0) {
-                if (fingerprint.equals(getFingerpint(rsStack)))
-                    return rsStack;
+                if (fingerprint.equals(getFingerpint(rsStack))) return rsStack;
 
             }
         }

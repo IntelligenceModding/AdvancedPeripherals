@@ -24,8 +24,7 @@ public interface IPeripheralCheck<T> {
         @Override
         public @Nullable MethodResult check(T1 context) {
             MethodResult firstCheck = first.check(context);
-            if (firstCheck != null)
-                return firstCheck;
+            if (firstCheck != null) return firstCheck;
             return second.check(context);
         }
     }

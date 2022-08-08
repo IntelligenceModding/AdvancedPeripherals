@@ -18,9 +18,7 @@ public enum SimpleFreeOperation implements IPeripheralOperation<Object> {
 
     @Override
     public void addToConfig(ForgeConfigSpec.Builder builder) {
-        cooldown = builder.defineInRange(
-                settingsName() + "Cooldown", defaultCooldown, 1_000, Integer.MAX_VALUE
-        );
+        cooldown = builder.defineInRange(settingsName() + "Cooldown", defaultCooldown, 1_000, Integer.MAX_VALUE);
     }
 
     @Override

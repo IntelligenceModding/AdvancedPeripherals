@@ -11,8 +11,8 @@ import de.srendi.advancedperipherals.common.addons.appliedenergistics.MeBridgeEn
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.MeBridgePeripheral;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralBlockEntity;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
-import de.srendi.advancedperipherals.common.setup.Blocks;
 import de.srendi.advancedperipherals.common.setup.BlockEntityTypes;
+import de.srendi.advancedperipherals.common.setup.Blocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.player.Player;
@@ -57,8 +57,7 @@ public class MeBridgeEntity extends PeripheralBlockEntity<MeBridgePeripheral> im
                 mainNode.create(level, getBlockPos());
 
                 //peripheral can be null if `getCapability` was not called before
-                if (peripheral == null)
-                    peripheral = createPeripheral();
+                if (peripheral == null) peripheral = createPeripheral();
                 peripheral.setNode(mainNode);
                 initialized = true;
                 AdvancedPeripherals.debug("DEBUG2 " + mainNode.isReady(), org.apache.logging.log4j.Level.ERROR);

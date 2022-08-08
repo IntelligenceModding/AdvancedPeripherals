@@ -7,8 +7,6 @@ import de.srendi.advancedperipherals.lib.peripherals.BlockEntityIntegrationPerip
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Optional;
-
 public class MechanicalMixerIntegration extends BlockEntityIntegrationPeripheral<MechanicalMixerTileEntity> {
 
     public MechanicalMixerIntegration(BlockEntity entity) {
@@ -28,8 +26,7 @@ public class MechanicalMixerIntegration extends BlockEntityIntegrationPeripheral
 
     @LuaFunction(mainThread = true)
     public final boolean hasBasin() {
-        if (blockEntity.getLevel() == null)
-            return false;
+        if (blockEntity.getLevel() == null) return false;
         BlockEntity basinTE = blockEntity.getLevel().getBlockEntity(blockEntity.getBlockPos().below(2));
         return basinTE instanceof BasinTileEntity;
     }

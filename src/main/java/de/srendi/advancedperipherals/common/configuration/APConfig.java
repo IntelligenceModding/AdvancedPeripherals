@@ -42,8 +42,7 @@ public class APConfig extends ModConfig {
     public static class ConfigFileHandler extends ConfigFileTypeHandler {
 
         public static Path getPath(Path path) {
-            if (path.endsWith("serverconfig"))
-                return FMLPaths.CONFIGDIR.get();
+            if (path.endsWith("serverconfig")) return FMLPaths.CONFIGDIR.get();
 
             return path;
         }

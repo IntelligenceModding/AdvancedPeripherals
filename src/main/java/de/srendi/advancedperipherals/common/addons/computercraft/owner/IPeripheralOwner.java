@@ -16,23 +16,17 @@ import java.util.function.Function;
 
 public interface IPeripheralOwner {
 
-    @Nullable
-    String getCustomName();
+    @Nullable String getCustomName();
 
-    @Nullable
-    Level getLevel();
+    @Nullable Level getLevel();
 
-    @NotNull
-    BlockPos getPos();
+    @NotNull BlockPos getPos();
 
-    @NotNull
-    Direction getFacing();
+    @NotNull Direction getFacing();
 
-    @Nullable
-    Player getOwner();
+    @Nullable Player getOwner();
 
-    @NotNull
-    CompoundTag getDataStorage();
+    @NotNull CompoundTag getDataStorage();
 
     void markDataStorageDirty();
 

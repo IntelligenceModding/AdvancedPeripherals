@@ -31,8 +31,7 @@ public class SpreaderIntegration extends BlockEntityIntegrationPeripheral<TileSp
 
     @LuaFunction(mainThread = true)
     public final Object getBounding() {
-        if (blockEntity.getBinding() == null)
-            return null;
+        if (blockEntity.getBinding() == null) return null;
         return LuaConverter.posToObject(blockEntity.getBinding());
     }
 

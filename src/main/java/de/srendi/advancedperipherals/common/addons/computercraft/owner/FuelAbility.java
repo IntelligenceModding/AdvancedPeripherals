@@ -33,11 +33,9 @@ public abstract class FuelAbility<T extends IPeripheralOwner> implements IOwnerA
     }
 
     protected void _setFuelConsumptionRate(int rate) {
-        if (rate < DEFAULT_FUEL_CONSUMING_RATE)
-            rate = DEFAULT_FUEL_CONSUMING_RATE;
+        if (rate < DEFAULT_FUEL_CONSUMING_RATE) rate = DEFAULT_FUEL_CONSUMING_RATE;
         int maxFuelRate = getMaxFuelConsumptionRate();
-        if (rate > maxFuelRate)
-            rate = maxFuelRate;
+        if (rate > maxFuelRate) rate = maxFuelRate;
         owner.getDataStorage().putInt(FUEL_CONSUMING_RATE_SETTING, rate);
     }
 
@@ -58,11 +56,9 @@ public abstract class FuelAbility<T extends IPeripheralOwner> implements IOwnerA
     }
 
     public boolean consumeFuel(int count, boolean simulate) {
-        if (isFuelConsumptionDisable())
-            return true;
+        if (isFuelConsumptionDisable()) return true;
         int realCount = count * getFuelConsumptionMultiply();
-        if (simulate)
-            return getFuelLevel() >= realCount;
+        if (simulate) return getFuelLevel() >= realCount;
         return _consumeFuel(realCount);
     }
 
@@ -83,10 +79,8 @@ public abstract class FuelAbility<T extends IPeripheralOwner> implements IOwnerA
 
     @LuaFunction(mainThread = true)
     public final MethodResult setFuelConsumptionRate(int rate) {
-        if (rate < 1)
-            return MethodResult.of(null, "Too small fuel consumption rate");
-        if (rate > getMaxFuelConsumptionRate())
-            return MethodResult.of(null, "Too big fuel consumption rate");
+        if (rate < 1) return MethodResult.of(null, "Too small fuel consumption rate");
+        if (rate > getMaxFuelConsumptionRate()) return MethodResult.of(null, "Too big fuel consumption rate");
         _setFuelConsumptionRate(rate);
         return MethodResult.of(true);
     }

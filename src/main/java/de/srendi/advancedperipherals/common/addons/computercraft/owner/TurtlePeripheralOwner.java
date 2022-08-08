@@ -59,8 +59,7 @@ public class TurtlePeripheralOwner extends BasePeripheralOwner {
     @Override
     public Player getOwner() {
         GameProfile owningPlayer = turtle.getOwningPlayer();
-        if (owningPlayer == null)
-            return null;
+        if (owningPlayer == null) return null;
         return turtle.getLevel().getPlayerByUUID(owningPlayer.getId());
     }
 
@@ -98,14 +97,11 @@ public class TurtlePeripheralOwner extends BasePeripheralOwner {
     @Override
     public boolean isMovementPossible(@Nonnull Level level, @Nonnull BlockPos pos) {
         return FakePlayerProviderTurtle.withPlayer(turtle, player -> {
-            if (level.isOutsideBuildHeight(pos))
-                return false;
-            if (!level.isInWorldBounds(pos))
-                return false;
+            if (level.isOutsideBuildHeight(pos)) return false;
+            if (!level.isInWorldBounds(pos)) return false;
             if (ComputerCraft.turtlesObeyBlockProtection && !TurtlePermissions.isBlockEnterable(level, pos, player))
                 return false;
-            if (!level.isAreaLoaded(pos, 0))
-                return false;
+            if (!level.isAreaLoaded(pos, 0)) return false;
             return level.getWorldBorder().isWithinBounds(pos);
         });
     }

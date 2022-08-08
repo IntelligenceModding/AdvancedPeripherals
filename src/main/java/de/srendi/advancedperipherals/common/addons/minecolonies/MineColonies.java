@@ -45,9 +45,9 @@ public class MineColonies {
      * @return true if the user has the appropriate rights
      */
     public static boolean hasAccess(Entity entity, IColony colony) {
-        if (entity instanceof Player) {
+        if (entity instanceof Player player) {
             if (colony != null) {
-                return colony.getPermissions().hasPermission((Player) entity, Action.ACCESS_HUTS);
+                return colony.getPermissions().hasPermission(player, Action.ACCESS_HUTS);
             }
         }
         return false;
@@ -203,16 +203,14 @@ public class MineColonies {
     public static int getStorageSize(IBuilding building) {
         LazyOptional<IItemHandler> capability = building.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY);
         IItemHandler handler = capability.resolve().orElse(null);
-        if (handler != null)
-            return handler.getSlots();
+        if (handler != null) return handler.getSlots();
         return 0;
     }
 
     public static int getAmountOfConstructionSites(IColony colony) {
         int constructionSites = 0;
         for (IBuilding building : colony.getBuildingManager().getBuildings().values()) {
-            if (building.hasWorkOrder())
-                constructionSites++;
+            if (building.hasWorkOrder()) constructionSites++;
         }
         return constructionSites;
     }
@@ -249,8 +247,7 @@ public class MineColonies {
                 ILocalResearchTree colonyTree = colony.getResearchManager().getResearchTree();
 
                 IGlobalResearch research = globalTree.getResearch(branch, researchName);
-                if (research == null)
-                    continue;
+                if (research == null) continue;
                 ILocalResearch colonyResearch = colonyTree.getResearch(branch, researchName);
 
                 List<String> effects = new ArrayList<>();
@@ -264,8 +261,7 @@ public class MineColonies {
                 map.put("status", colonyResearch == null ? ResearchState.NOT_STARTED.toString() : colonyResearch.getState().toString());
 
                 List<Object> childrenResearch = getResearch(branch, research.getChildren(), colony);
-                if (!childrenResearch.isEmpty())
-                    map.put("children", childrenResearch);
+                if (!childrenResearch.isEmpty()) map.put("children", childrenResearch);
 
                 result.add(map);
             }
@@ -282,8 +278,7 @@ public class MineColonies {
      */
     public static Object builderResourcesToObject(IColony colony, BlockPos pos) {
         IBuilding building = colony.getBuildingManager().getBuilding(pos);
-        if (!(building instanceof AbstractBuildingStructureBuilder builderBuilding))
-            return null;
+        if (!(building instanceof AbstractBuildingStructureBuilder builderBuilding)) return null;
 
         //We need to say the building that we want information about it
         FriendlyByteBuf buffer = new FriendlyByteBuf(Unpooled.buffer());

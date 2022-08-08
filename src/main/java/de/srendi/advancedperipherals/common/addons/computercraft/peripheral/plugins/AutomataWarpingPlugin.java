@@ -36,8 +36,8 @@ public class AutomataWarpingPlugin extends AutomataCorePlugin {
         return new IPeripheralOperation[]{WARP};
     }
 
-    protected @Nonnull
-    Pair<MethodResult, CompoundTag> getPointData() {
+    @Nonnull
+    protected Pair<MethodResult, CompoundTag> getPointData() {
         TurtlePeripheralOwner owner = automataCore.getPeripheralOwner();
         CompoundTag settings = owner.getDataStorage();
         if (!settings.contains(WORLD_DATA_MARK)) {
@@ -82,8 +82,7 @@ public class AutomataWarpingPlugin extends AutomataCorePlugin {
             return pairData.getLeft();
         }
         CompoundTag data = pairData.getRight();
-        if (!data.contains(name))
-            return MethodResult.of(null, "Cannot find point to delete");
+        if (!data.contains(name)) return MethodResult.of(null, "Cannot find point to delete");
         data.remove(name);
         return MethodResult.of(true);
     }
@@ -110,12 +109,10 @@ public class AutomataWarpingPlugin extends AutomataCorePlugin {
         BlockPos newPosition = NBTUtil.blockPosFromNBT(data.getCompound(name));
         return automataCore.withOperation(WARP, automataCore.toDistance(newPosition), context -> {
             boolean result = owner.move(level, newPosition);
-            if (!result)
-                return MethodResult.of(null, "Cannot teleport to location");
+            if (!result) return MethodResult.of(null, "Cannot teleport to location");
             return MethodResult.of(true);
         }, context -> {
-            if (!owner.isMovementPossible(level, newPosition))
-                return MethodResult.of(null, "Move forbidden");
+            if (!owner.isMovementPossible(level, newPosition)) return MethodResult.of(null, "Move forbidden");
             return null;
         });
     }

@@ -1,6 +1,5 @@
 package de.srendi.advancedperipherals.common.blocks.base;
 
-import net.minecraft.tags.Tag;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RenderShape;

@@ -9,17 +9,17 @@ import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.registries.ForgeRegistries;
+import org.jetbrains.annotations.NotNull;
 
 public class ARRenderHelper extends GuiComponent {
-    private static ARRenderHelper instance = new ARRenderHelper();
+    private static final ARRenderHelper INSTANCE = new ARRenderHelper();
 
-    public static void drawRightboundString(PoseStack matrixStack, Font fontRenderer, String text, int x,
-                                            int y, int color) {
+    public static void drawRightboundString(PoseStack matrixStack, Font fontRenderer, String text, int x, int y, int color) {
         drawString(matrixStack, fontRenderer, text, x - fontRenderer.width(text), y, color);
     }
 
     public static ARRenderHelper getInstance() {
-        return instance;
+        return INSTANCE;
     }
 
     public static int fixAlpha(int color) {
@@ -27,19 +27,19 @@ public class ARRenderHelper extends GuiComponent {
     }
 
     @Override
-    public void hLine(PoseStack matrixStack, int minX, int maxX, int y, int color) {
+    public void hLine(@NotNull PoseStack matrixStack, int minX, int maxX, int y, int color) {
         color = ARRenderHelper.fixAlpha(color);
         super.hLine(matrixStack, minX, maxX, y, color);
     }
 
     @Override
-    public void vLine(PoseStack matrixStack, int x, int minY, int maxY, int color) {
+    public void vLine(@NotNull PoseStack matrixStack, int x, int minY, int maxY, int color) {
         color = ARRenderHelper.fixAlpha(color);
         super.vLine(matrixStack, x, minY, maxY, color);
     }
 
     @Override
-    protected void fillGradient(PoseStack matrixStack, int x1, int y1, int x2, int y2, int colorFrom, int colorTo) {
+    protected void fillGradient(@NotNull PoseStack matrixStack, int x1, int y1, int x2, int y2, int colorFrom, int colorTo) {
         colorFrom = ARRenderHelper.fixAlpha(colorFrom);
         colorTo = ARRenderHelper.fixAlpha(colorTo);
         super.fillGradient(matrixStack, x1, y1, x2, y2, colorFrom, colorTo);

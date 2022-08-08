@@ -37,22 +37,19 @@ public abstract class BasePeripheral<O extends IPeripheralOwner> implements IBas
         if (!initialized) {
             initialized = true;
             this.pluggedMethods.clear();
-            if (plugins != null)
-                plugins.forEach(plugin -> {
-                    if (plugin.isSuitable(this))
-                        pluggedMethods.addAll(plugin.getMethods());
-                });
+            if (plugins != null) plugins.forEach(plugin -> {
+                if (plugin.isSuitable(this)) pluggedMethods.addAll(plugin.getMethods());
+            });
             owner.getAbilities().forEach(ability -> {
-                if (ability instanceof IPeripheralPlugin)
-                    pluggedMethods.addAll(((IPeripheralPlugin) ability).getMethods());
+                if (ability instanceof IPeripheralPlugin peripheralPlugin)
+                    pluggedMethods.addAll(peripheralPlugin.getMethods());
             });
             this.methodNames = pluggedMethods.stream().map(BoundMethod::getName).toArray(String[]::new);
         }
     }
 
     protected void addPlugin(@NotNull IPeripheralPlugin plugin) {
-        if (plugins == null)
-            plugins = new LinkedList<>();
+        if (plugins == null) plugins = new LinkedList<>();
         plugins.add(plugin);
         IPeripheralOperation<?>[] operations = plugin.getOperations();
         if (operations != null) {
@@ -134,31 +131,24 @@ public abstract class BasePeripheral<O extends IPeripheralOwner> implements IBas
     @Override
     @NotNull
     public String @NotNull [] getMethodNames() {
-        if (!initialized)
-            buildPlugins();
+        if (!initialized) buildPlugins();
         return methodNames;
     }
 
     @Override
     @NotNull
     public MethodResult callMethod(@NotNull IComputerAccess access, @NotNull ILuaContext context, int index, @NotNull IArguments arguments) throws LuaException {
-        if (!initialized)
-            buildPlugins();
+        if (!initialized) buildPlugins();
         return pluggedMethods.get(index).apply(access, context, arguments);
     }
 
-    protected <T> MethodResult withOperation(
-            IPeripheralOperation<T> operation, T context, @Nullable IPeripheralCheck<T> check, IPeripheralFunction<T, MethodResult> method,
-            @Nullable Consumer<T> successCallback) throws LuaException {
+    protected <T> MethodResult withOperation(IPeripheralOperation<T> operation, T context, @Nullable IPeripheralCheck<T> check, IPeripheralFunction<T, MethodResult> method, @Nullable Consumer<T> successCallback) throws LuaException {
         return withOperation(operation, context, check, method, successCallback, null);
     }
 
-    protected <T> MethodResult withOperation(
-            IPeripheralOperation<T> operation, T context, @Nullable IPeripheralCheck<T> check, IPeripheralFunction<T, MethodResult> method,
-            @Nullable Consumer<T> successCallback, @Nullable BiConsumer<MethodResult, OperationAbility.FailReason> failCallback) throws LuaException {
+    protected <T> MethodResult withOperation(IPeripheralOperation<T> operation, T context, @Nullable IPeripheralCheck<T> check, IPeripheralFunction<T, MethodResult> method, @Nullable Consumer<T> successCallback, @Nullable BiConsumer<MethodResult, OperationAbility.FailReason> failCallback) throws LuaException {
         OperationAbility operationAbility = owner.getAbility(PeripheralOwnerAbility.OPERATION);
-        if (operationAbility == null)
-            throw new IllegalArgumentException("This shouldn't happen at all");
+        if (operationAbility == null) throw new IllegalArgumentException("This shouldn't happen at all");
         return operationAbility.performOperation(operation, context, check, method, successCallback, failCallback);
     }
 }

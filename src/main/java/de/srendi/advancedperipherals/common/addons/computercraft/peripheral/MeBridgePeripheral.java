@@ -66,8 +66,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         MEStorage monitor = AppEngApi.getMonitor(node);
         ItemStack stack = ItemUtil.getItemStack(arguments.getTable(0), monitor);
         AEItemKey targetStack = AEItemKey.of(stack);
-        if (targetStack == null)
-            throw new LuaException("Illegal AE2 state ...");
+        if (targetStack == null) throw new LuaException("Illegal AE2 state ...");
 
         long extracted = monitor.extract(targetStack, stack.getCount(), Actionable.SIMULATE, tile.getActionSource());
         if (extracted == 0)
@@ -80,8 +79,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
             transferableAmount -= remaining.getCount();
         }
 
-        if (transferableAmount == 0)
-            return transferableAmount;
+        if (transferableAmount == 0) return transferableAmount;
 
         extracted = monitor.extract(targetStack, transferableAmount, Actionable.MODULATE, tile.getActionSource());
         stack.setCount((int) extracted);
@@ -99,11 +97,9 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         AEItemKey aeStack = AEItemKey.of(stack);
         int amount = stack.getCount();
 
-        if (aeStack == null)
-            throw new LuaException("Illegal AE2 state ...");
+        if (aeStack == null) throw new LuaException("Illegal AE2 state ...");
 
-        if (stack.getCount() == 0)
-            return 0;
+        if (stack.getCount() == 0) return 0;
 
         int transferableAmount = 0;
 
@@ -124,8 +120,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     public final MethodResult craftItem(IComputerAccess computer, IArguments arguments) throws LuaException {
         MEStorage monitor = AppEngApi.getMonitor(node);
         ItemStack itemToCraft = ItemUtil.getItemStack(arguments.getTable(0), monitor);
-        if (itemToCraft.isEmpty())
-            throw new LuaException("Item " + itemToCraft + " does not exists");
+        if (itemToCraft.isEmpty()) throw new LuaException("Item " + itemToCraft + " does not exists");
         CraftJob job = new CraftJob(owner.getLevel(), computer, node, itemToCraft, tile, tile);
         tile.addJob(job);
         ServerWorker.add(job::startCrafting);
@@ -209,8 +204,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     public final MethodResult getItem(IArguments arguments) throws LuaException {
         MEStorage monitor = AppEngApi.getMonitor(node);
         ItemStack stack = ItemUtil.getItemStack(arguments.getTable(0), monitor);
-        if (stack.isEmpty())
-            return MethodResult.of(null, "Cannot determinate item for search");
+        if (stack.isEmpty()) return MethodResult.of(null, "Cannot determinate item for search");
         for (Object2LongMap.Entry<AEKey> potentialStack : monitor.getAvailableStacks()) {
             if (potentialStack.getKey() instanceof AEItemKey itemKey) {
                 if (itemKey.matches(stack))
@@ -243,17 +237,14 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     @LuaFunction(mainThread = true)
     public final Object[] getCraftingCPUs() throws LuaException {
         ICraftingService grid = node.getGrid().getService(ICraftingService.class);
-        if (grid == null)
-            throw new LuaException("Not connected");
+        if (grid == null) throw new LuaException("Not connected");
         Map<Integer, Object> map = new HashMap<>();
         Iterator<ICraftingCPU> iterator = grid.getCpus().iterator();
-        if (!iterator.hasNext())
-            return null;
+        if (!iterator.hasNext()) return null;
         int i = 1;
         while (iterator.hasNext()) {
             Object o = AppEngApi.getObjectFromCPU(iterator.next());
-            if (o != null)
-                map.put(i++, o);
+            if (o != null) map.put(i++, o);
         }
         return new Object[]{map};
     }
