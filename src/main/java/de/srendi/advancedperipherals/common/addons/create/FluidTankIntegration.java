@@ -23,11 +23,11 @@ public class FluidTankIntegration extends BlockEntityIntegrationPeripheral<Fluid
 
     @LuaFunction(mainThread = true)
     public final Map<String, Object> getInfo() {
-        return new HashMap<>() {{
-            put("capacity", blockEntity.getTankInventory().getCapacity());
-            put("amount", blockEntity.getTankInventory().getFluidAmount());
-            put("fluid", blockEntity.getTankInventory().getFluid().getFluid().getRegistryName().toString());
-            put("isBoiler", blockEntity.boiler.isActive());
-        }};
+        Map<String, Object> data = new HashMap<>();
+        data.put("capacity", blockEntity.getTankInventory().getCapacity());
+        data.put("amount", blockEntity.getTankInventory().getFluidAmount());
+        data.put("fluid", blockEntity.getTankInventory().getFluid().getFluid().getRegistryName().toString());
+        data.put("isBoiler", blockEntity.boiler.isActive());
+        return data;
     }
 }

@@ -23,12 +23,12 @@ public class BlazeBurnerIntegration extends BlockEntityIntegrationPeripheral<Bla
 
     @LuaFunction(mainThread = true)
     public final Map<String, Object> getInfo() {
-        return new HashMap<>() {{
-            put("fuelType", blockEntity.getActiveFuel().toString().toLowerCase());
-            put("heatLevel", blockEntity.getHeatLevelFromBlock().getSerializedName());
-            put("remainingBurnTime", blockEntity.getRemainingBurnTime());
-            put("isCreative", blockEntity.isCreative());
-        }};
+        Map<String, Object> data = new HashMap<>();
+        data.put("fuelType", blockEntity.getActiveFuel().toString().toLowerCase());
+        data.put("heatLevel", blockEntity.getHeatLevelFromBlock().getSerializedName());
+        data.put("remainingBurnTime", blockEntity.getRemainingBurnTime());
+        data.put("isCreative", blockEntity.isCreative());
+        return data;
     }
 
 }

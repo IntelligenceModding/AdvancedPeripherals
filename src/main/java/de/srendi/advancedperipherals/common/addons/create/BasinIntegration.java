@@ -27,23 +27,27 @@ public class BasinIntegration extends BlockEntityIntegrationPeripheral<BasinTile
     }
 
     @LuaFunction(mainThread = true)
-    public final Map<String, Object> getInputFluids() {
-        return new HashMap<>() {{
-                for(SmartFluidTankBehaviour.TankSegment tank : blockEntity.getTanks().getFirst().getTanks()) {
-                    put("amount", tank.getRenderedFluid().getAmount());
-                    put("fluid", tank.getRenderedFluid().getFluid().getRegistryName().toString());
-                }
-        }};
+    public final List<Object> getInputFluids() {
+        List<Object> tanks = new ArrayList<>();
+        for (SmartFluidTankBehaviour.TankSegment tank : blockEntity.getTanks().getFirst().getTanks()) {
+            Map<String, Object> data = new HashMap<>();
+            data.put("amount", tank.getRenderedFluid().getAmount());
+            data.put("fluid", tank.getRenderedFluid().getFluid().getRegistryName().toString());
+            tanks.add(data);
+        }
+        return tanks;
     }
 
     @LuaFunction(mainThread = true)
-    public final Map<String, Object> getOutputFluids() {
-        return new HashMap<>() {{
-            for(SmartFluidTankBehaviour.TankSegment tank : blockEntity.getTanks().getSecond().getTanks()) {
-                put("amount", tank.getRenderedFluid().getAmount());
-                put("fluid", tank.getRenderedFluid().getFluid().getRegistryName().toString());
-            }
-        }};
+    public final List<Object> getOutputFluids() {
+        List<Object> tanks = new ArrayList<>();
+        for (SmartFluidTankBehaviour.TankSegment tank : blockEntity.getTanks().getSecond().getTanks()) {
+            Map<String, Object> data = new HashMap<>();
+            data.put("amount", tank.getRenderedFluid().getAmount());
+            data.put("fluid", tank.getRenderedFluid().getFluid().getRegistryName().toString());
+            tanks.add(data);
+        }
+        return tanks;
     }
 
     @LuaFunction(mainThread = true)
@@ -54,12 +58,10 @@ public class BasinIntegration extends BlockEntityIntegrationPeripheral<BasinTile
     @LuaFunction(mainThread = true)
     public final Object[] getInventory() {
         Optional<IItemHandler> handlerOptional = blockEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).resolve();
-        if(handlerOptional.isEmpty())
-            return null;
+        if (handlerOptional.isEmpty()) return null;
         IItemHandler handler = handlerOptional.get();
         Object[] items = new Object[handler.getSlots()];
-        for(int slot = 0; slot < handler.getSlots(); slot++)
-        {
+        for (int slot = 0; slot < handler.getSlots(); slot++) {
             items[slot] = LuaConverter.stackToObject(handler.getStackInSlot(slot));
         }
         return items;
