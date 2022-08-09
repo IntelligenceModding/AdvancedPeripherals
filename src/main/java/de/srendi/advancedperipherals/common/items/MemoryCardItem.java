@@ -26,12 +26,10 @@ public class MemoryCardItem extends BaseItem {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable Level levelIn, List<Component> tooltip,
-                                TooltipFlag flagIn) {
+    public void appendHoverText(ItemStack stack, @Nullable Level levelIn, List<Component> tooltip, TooltipFlag flagIn) {
         super.appendHoverText(stack, levelIn, tooltip, flagIn);
         if (stack.getOrCreateTag().contains("owner")) {
-            tooltip.add(new TranslatableComponent("item.advancedperipherals.tooltip.memory_card.bound",
-                    stack.getOrCreateTag().getString("owner")));
+            tooltip.add(new TranslatableComponent("item.advancedperipherals.tooltip.memory_card.bound", stack.getOrCreateTag().getString("owner")));
         }
     }
 
@@ -40,12 +38,10 @@ public class MemoryCardItem extends BaseItem {
         if (!worldIn.isClientSide) {
             ItemStack stack = playerIn.getItemInHand(handIn);
             if (stack.getOrCreateTag().contains("owner")) {
-                playerIn.displayClientMessage(new TranslatableComponent("text.advancedperipherals.removed_player"),
-                        true);
+                playerIn.displayClientMessage(new TranslatableComponent("text.advancedperipherals.removed_player"), true);
                 stack.getOrCreateTag().remove("owner");
             } else {
-                playerIn.displayClientMessage(new TranslatableComponent("text.advancedperipherals.added_player"),
-                        true);
+                playerIn.displayClientMessage(new TranslatableComponent("text.advancedperipherals.added_player"), true);
                 stack.getOrCreateTag().putString("owner", playerIn.getName().getString());
             }
         }

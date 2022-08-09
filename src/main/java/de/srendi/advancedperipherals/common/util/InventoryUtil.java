@@ -37,32 +37,27 @@ public class InventoryUtil {
     public static IItemHandler extractHandler(@Nullable Object object) {
 
         for (Pair<Predicate<Object>, Function<Object, IItemHandler>> extractor : EXTRACTORS) {
-            if (extractor.getLeft().test(object))
-                return extractor.getRight().apply(object);
+            if (extractor.getLeft().test(object)) return extractor.getRight().apply(object);
         }
 
-        if (object instanceof ICapabilityProvider) {
-            LazyOptional<IItemHandler> cap = ((ICapabilityProvider) object).getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY);
+        if (object instanceof ICapabilityProvider capabilityProvider) {
+            LazyOptional<IItemHandler> cap = capabilityProvider.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY);
             if (cap.isPresent()) return cap.orElseThrow(NullPointerException::new);
         }
-        if (object instanceof IItemHandler)
-            return (IItemHandler) object;
-        if (object instanceof Container)
-            return new InvWrapper((Container) object);
+        if (object instanceof IItemHandler itemHandler) return itemHandler;
+        if (object instanceof Container container) return new InvWrapper(container);
         return null;
     }
 
     public static int moveItem(IItemHandler from, int fromSlot, IItemHandler to, int toSlot, final int limit) {
         ItemStack extracted = from.extractItem(fromSlot, limit, true);
-        if (extracted.isEmpty())
-            return 0;
+        if (extracted.isEmpty()) return 0;
         int extractCount = Math.min(extracted.getCount(), limit);
         extracted.setCount(extractCount);
 
         ItemStack remainder = toSlot < 0 ? ItemHandlerHelper.insertItem(to, extracted, false) : to.insertItem(toSlot, extracted, false);
         int inserted = remainder.isEmpty() ? extractCount : extractCount - remainder.getCount();
-        if (inserted <= 0)
-            return 0;
+        if (inserted <= 0) return 0;
         from.extractItem(fromSlot, inserted, false);
         return inserted;
     }
@@ -72,15 +67,13 @@ public class InventoryUtil {
         int fromSlot = arguments.getInt(1);
         int limit = arguments.optInt(2, Integer.MAX_VALUE);
         int toSlot = arguments.optInt(3, -1);
-        if (fromSlot < 1 || fromSlot > source.getSlots())
-            return MethodResult.of(null, "From slot is incorrect");
+        if (fromSlot < 1 || fromSlot > source.getSlots()) return MethodResult.of(null, "From slot is incorrect");
         // Find location to transfer to
         IItemHandler to = getHandlerFromName(access, toName);
         if (toSlot != -1 && (toSlot < 1 || toSlot > to.getSlots()))
             return MethodResult.of(null, "To slot is incorrect");
 
-        if (limit <= 0)
-            return MethodResult.of(0);
+        if (limit <= 0) return MethodResult.of(0);
         return MethodResult.of(InventoryUtil.moveItem(source, fromSlot - 1, to, toSlot - 1, limit));
     }
 
@@ -95,21 +88,17 @@ public class InventoryUtil {
         // Find location to transfer to
 
         IItemHandler from = getHandlerFromName(access, fromName);
-        if (fromSlot < 1 || fromSlot > from.getSlots())
-            return MethodResult.of(null, "From slot is incorrect");
-        if (limit <= 0)
-            return MethodResult.of(0);
+        if (fromSlot < 1 || fromSlot > from.getSlots()) return MethodResult.of(null, "From slot is incorrect");
+        if (limit <= 0) return MethodResult.of(0);
         return MethodResult.of(InventoryUtil.moveItem(from, fromSlot - 1, source, toSlot - 1, limit));
     }
 
     public static @NotNull IItemHandler getHandlerFromName(@NotNull IComputerAccess access, String name) throws LuaException {
         IPeripheral location = access.getAvailablePeripheral(name);
-        if (location == null)
-            throw new LuaException("Target '" + name + "' does not exist");
+        if (location == null) throw new LuaException("Target '" + name + "' does not exist");
 
         IItemHandler handler = extractHandler(location.getTarget());
-        if (handler == null)
-            throw new LuaException("Target '" + name + "' is not an inventory");
+        if (handler == null) throw new LuaException("Target '" + name + "' is not an inventory");
         return handler;
     }
 
@@ -118,12 +107,10 @@ public class InventoryUtil {
         Objects.requireNonNull(level);
         Direction relativeDirection = LuaConverter.getDirection(owner.getFacing(), direction);
         BlockEntity target = level.getBlockEntity(owner.getPos().relative(relativeDirection));
-        if (target == null)
-            throw new LuaException("Target '" + direction + "' is empty or defenetly not inventory");
+        if (target == null) throw new LuaException("Target '" + direction + "' is empty or defenetly not inventory");
 
         IItemHandler handler = extractHandler(target);
-        if (handler == null)
-            throw new LuaException("Target '" + direction + "' is not an inventory");
+        if (handler == null) throw new LuaException("Target '" + direction + "' is not an inventory");
         return handler;
     }
 }

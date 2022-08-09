@@ -46,61 +46,50 @@ public final class ARRenderAction implements INBTSerializable<CompoundTag> {
         this.stringArg = stringArg;
     }
 
-    public String getId() {
-        return id;
-    }
-
     public static ARRenderAction deserialize(CompoundTag nbt) {
         ARRenderAction action = new ARRenderAction();
         action.deserializeNBT(nbt);
         return action;
     }
 
+    public String getId() {
+        return id;
+    }
+
     public void draw(Minecraft mc, PoseStack matrixStack, int w, int h) {
-        if (!type.ensureArgs(intArgs))
-            return;
+        if (!type.ensureArgs(intArgs)) return;
         int[] i = intArgs;
         switch (type) {
             case DrawCenteredString:
-                ARRenderHelper.drawCenteredString(matrixStack, mc.font, stringArg, relativeX(i[0], w),
-                        relativeY(i[1], h), i[2]);
+                ARRenderHelper.drawCenteredString(matrixStack, mc.font, stringArg, relativeX(i[0], w), relativeY(i[1], h), i[2]);
                 break;
             case DrawString:
-                ARRenderHelper.drawString(matrixStack, mc.font, stringArg, relativeX(i[0], w),
-                        relativeY(i[1], h), i[2]);
+                ARRenderHelper.drawString(matrixStack, mc.font, stringArg, relativeX(i[0], w), relativeY(i[1], h), i[2]);
                 break;
             case DrawRightboundString:
-                ARRenderHelper.drawRightboundString(matrixStack, mc.font, stringArg, relativeX(i[0], w),
-                        relativeY(i[1], h), i[2]);
+                ARRenderHelper.drawRightboundString(matrixStack, mc.font, stringArg, relativeX(i[0], w), relativeY(i[1], h), i[2]);
                 break;
             case Fill:
                 i[4] = ARRenderHelper.fixAlpha(i[4]);
-                ARRenderHelper.fill(matrixStack, relativeX(i[0], w), relativeY(i[1], h), relativeX(i[2], w),
-                        relativeY(i[3], h), i[4]);
+                ARRenderHelper.fill(matrixStack, relativeX(i[0], w), relativeY(i[1], h), relativeX(i[2], w), relativeY(i[3], h), i[4]);
                 break;
             case HorizontalLine:
-                ARRenderHelper.getInstance().hLine(matrixStack, relativeX(i[0], w), relativeX(i[1], w),
-                        relativeY(i[2], h), i[3]);
+                ARRenderHelper.getInstance().hLine(matrixStack, relativeX(i[0], w), relativeX(i[1], w), relativeY(i[2], h), i[3]);
                 break;
             case VerticalLine:
-                ARRenderHelper.getInstance().vLine(matrixStack, relativeX(i[0], w), relativeY(i[1], h),
-                        relativeY(i[2], h), i[3]);
+                ARRenderHelper.getInstance().vLine(matrixStack, relativeX(i[0], w), relativeY(i[1], h), relativeY(i[2], h), i[3]);
                 break;
             case FillGradient:
-                ARRenderHelper.getInstance().fillGradient(matrixStack, relativeX(i[0], w), relativeY(i[1], h),
-                        relativeX(i[2], w), relativeY(i[3], h), i[4], i[5]);
+                ARRenderHelper.getInstance().fillGradient(matrixStack, relativeX(i[0], w), relativeY(i[1], h), relativeX(i[2], w), relativeY(i[3], h), i[4], i[5]);
                 break;
             case DrawCircle:
-                ARRenderHelper.getInstance().drawCircle(matrixStack, relativeX(i[0], w), relativeY(i[1], h),
-                        relativeAverage(i[2], w, h), i[3]);
+                ARRenderHelper.getInstance().drawCircle(matrixStack, relativeX(i[0], w), relativeY(i[1], h), relativeAverage(i[2], w, h), i[3]);
                 break;
             case FillCircle:
-                ARRenderHelper.getInstance().fillCircle(matrixStack, relativeX(i[0], w), relativeY(i[1], h),
-                        relativeAverage(i[2], w, h), i[3]);
+                ARRenderHelper.getInstance().fillCircle(matrixStack, relativeX(i[0], w), relativeY(i[1], h), relativeAverage(i[2], w, h), i[3]);
                 break;
             case DrawItemIcon:
-                ARRenderHelper.getInstance().drawItemIcon(matrixStack, mc.getItemRenderer(), stringArg,
-                        relativeX(i[0], w), relativeY(i[1], h));
+                ARRenderHelper.getInstance().drawItemIcon(matrixStack, mc.getItemRenderer(), stringArg, relativeX(i[0], w), relativeY(i[1], h));
                 break;
             default:
                 AdvancedPeripherals.LOGGER.warn("Failed to execute AR render action of unimplemented type " + type);
@@ -112,16 +101,14 @@ public final class ARRenderAction implements INBTSerializable<CompoundTag> {
         if (virtualScreenSize.isPresent()) {
             x = x >= 0 ? x : virtualScreenSize.get()[0] + x;
             return (int) Math.round((double) x / virtualScreenSize.get()[0] * windowWidth);
-        } else
-            return x >= 0 ? x : windowWidth + x;
+        } else return x >= 0 ? x : windowWidth + x;
     }
 
     private int relativeY(int y, int windowHeight) {
         if (virtualScreenSize.isPresent()) {
             y = y >= 0 ? y : virtualScreenSize.get()[1] + y;
             return (int) Math.round((double) y / virtualScreenSize.get()[1] * windowHeight);
-        } else
-            return y >= 0 ? y : windowHeight;
+        } else return y >= 0 ? y : windowHeight;
     }
 
     private float relativeAverage(int i, int w, int h) {
@@ -129,15 +116,13 @@ public final class ARRenderAction implements INBTSerializable<CompoundTag> {
             float xfactor = (float) w / virtualScreenSize.get()[0];
             float yfactor = (float) h / virtualScreenSize.get()[1];
             return i * (xfactor + yfactor) / 2;
-        } else
-            return i;
+        } else return i;
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof ARRenderAction) {
-            ARRenderAction a = (ARRenderAction) obj;
-            return type.equals(a.type) && stringArg.equals(a.stringArg) && Arrays.equals(intArgs, a.intArgs);
+        if (obj instanceof ARRenderAction renderAction) {
+            return type.equals(renderAction.type) && stringArg.equals(renderAction.stringArg) && Arrays.equals(intArgs, renderAction.intArgs);
         }
         return super.equals(obj);
     }
@@ -163,10 +148,8 @@ public final class ARRenderAction implements INBTSerializable<CompoundTag> {
     }
 
     public int[] getVirtualScreenSize() {
-        if (virtualScreenSize.isPresent())
-            return virtualScreenSize.get();
-        else
-            return null;
+        if (virtualScreenSize.isPresent()) return virtualScreenSize.get();
+        else return null;
     }
 
     public void setRelativeMode(int virtualScreenWidth, int virtualScreenHeight) {

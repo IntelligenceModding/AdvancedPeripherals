@@ -26,16 +26,14 @@ public class ScrollValueBehaviourIntegration extends BlockEntityIntegrationPerip
     @LuaFunction(mainThread = true)
     public final int getTargetSpeed() {
         ScrollValueBehaviour scrollBehaviour = blockEntity.getBehaviour(ScrollValueBehaviour.TYPE);
-        if (scrollBehaviour == null)
-            return 0;
+        if (scrollBehaviour == null) return 0;
         return scrollBehaviour.getValue();
     }
 
     @LuaFunction(mainThread = true)
     public final boolean setTargetSpeed(int speed) {
         ScrollValueBehaviour scrollBehaviour = blockEntity.getBehaviour(ScrollValueBehaviour.TYPE);
-        if (scrollBehaviour == null)
-            return false;
+        if (scrollBehaviour == null) return false;
         scrollBehaviour.setValue(speed);
         return true;
     }

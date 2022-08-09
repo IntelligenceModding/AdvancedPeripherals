@@ -17,6 +17,5 @@ public class Integration implements Runnable {
         IntegrationPeripheralProvider.registerBlockEntityIntegration(ScrollValueBehaviourIntegration::new, KineticTileEntity.class, (t) -> t.getBehaviour(ScrollValueBehaviour.TYPE) != null, 10);
         IntegrationPeripheralProvider.registerBlockEntityIntegration(BasinIntegration::new, BasinTileEntity.class);
         IntegrationPeripheralProvider.registerBlockEntityIntegration(MechanicalMixerIntegration::new, MechanicalMixerTileEntity.class);
-
     }
 }

@@ -22,19 +22,18 @@ public class NBTUtil {
         // assuming that map keys are strings
         if (object == null) {
             return null;
-        } else if (object instanceof Boolean) {
-            return ByteTag.valueOf((byte) ((Boolean) object ? 1 : 0));
-        } else if (object instanceof Integer) {
-            return IntTag.valueOf((Integer) object);
-        } else if (object instanceof Number) {
-            return DoubleTag.valueOf(((Number) object).doubleValue());
+        } else if (object instanceof Boolean bool) {
+            return ByteTag.valueOf((byte) (bool ? 1 : 0));
+        } else if (object instanceof Integer integer) {
+            return IntTag.valueOf(integer);
+        } else if (object instanceof Number number) {
+            return DoubleTag.valueOf((number).doubleValue());
         } else if (object instanceof String) {
             return StringTag.valueOf(object.toString());
-        } else if (object instanceof Map) {
-            Map<?, ?> m = (Map<?, ?>) object;
+        } else if (object instanceof Map<?, ?> map) {
             CompoundTag nbt = new CompoundTag();
 
-            for (Map.Entry<?, ?> item : m.entrySet()) {
+            for (Map.Entry<?, ?> item : map.entrySet()) {
                 Tag value = toDirectNBT(item.getValue());
                 if (item.getKey() != null && value != null) {
                     nbt.put(item.getKey().toString(), value);
@@ -57,8 +56,7 @@ public class NBTUtil {
     }
 
     public static CompoundTag fromBinary(String base64) {
-        if (base64 == null)
-            return null;
+        if (base64 == null) return null;
 
         try (InputStream inputStream = Base64.getDecoder().wrap(new ByteArrayInputStream(base64.getBytes()))) {
             return NbtIo.readCompressed(inputStream);

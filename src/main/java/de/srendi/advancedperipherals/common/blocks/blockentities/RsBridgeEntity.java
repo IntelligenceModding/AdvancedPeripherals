@@ -57,8 +57,7 @@ public class RsBridgeEntity extends NetworkNodeBlockEntity<RefinedStorageNode> i
     @Override
     public @NotNull void saveAdditional(@NotNull CompoundTag compound) {
         super.saveAdditional(compound);
-        if (!peripheralSettings.isEmpty())
-            compound.put(PERIPHERAL_SETTINGS, peripheralSettings);
+        if (!peripheralSettings.isEmpty()) compound.put(PERIPHERAL_SETTINGS, peripheralSettings);
     }
 
     @Override

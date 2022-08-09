@@ -53,14 +53,13 @@ public class AutomataEntityTransferPlugin extends AutomataCorePlugin {
         automataCore.getPeripheralOwner().getDataStorage().remove(ENTITY_NBT_KEY);
     }
 
-    protected @Nullable
-    Entity extractEntity() {
+    @Nullable
+    protected Entity extractEntity() {
         CompoundTag data = getEntity();
         EntityType<?> type = EntityType.byString(data.getString("entity")).orElse(null);
         if (type != null) {
             Entity entity = type.create(automataCore.getPeripheralOwner().getLevel());
-            if (entity == null)
-                return null;
+            if (entity == null) return null;
             entity.load(data);
             return entity;
         }
@@ -71,8 +70,7 @@ public class AutomataEntityTransferPlugin extends AutomataCorePlugin {
     @LuaFunction(mainThread = true)
     public final MethodResult captureAnimal() throws LuaException {
         HitResult entityHit = automataCore.getPeripheralOwner().withPlayer(player -> player.findHit(false, true, suitableEntity));
-        if (entityHit.getType() == HitResult.Type.MISS)
-            return MethodResult.of(null, "Nothing found");
+        if (entityHit.getType() == HitResult.Type.MISS) return MethodResult.of(null, "Nothing found");
         return automataCore.withOperation(CAPTURE_ANIMAL, context -> {
             LivingEntity entity = (LivingEntity) ((EntityHitResult) entityHit).getEntity();
             if (entity instanceof Player || !entity.isAlive()) return MethodResult.of(null, "Unsuitable entity");
@@ -83,21 +81,18 @@ public class AutomataEntityTransferPlugin extends AutomataCorePlugin {
             saveEntity(nbt);
             return MethodResult.of(true);
         }, context -> {
-            if (isEntityInside())
-                return MethodResult.of(null, "Another entity already captured");
+            if (isEntityInside()) return MethodResult.of(null, "Another entity already captured");
             return null;
         });
     }
 
     @LuaFunction(mainThread = true)
     public final MethodResult releaseAnimal() {
-        if (!isEntityInside())
-            return MethodResult.of(null, "No entity is stored");
+        if (!isEntityInside()) return MethodResult.of(null, "No entity is stored");
         TurtlePeripheralOwner owner = automataCore.getPeripheralOwner();
         automataCore.addRotationCycle();
         Entity extractedEntity = extractEntity();
-        if (extractedEntity == null)
-            return MethodResult.of(null, "Problem with entity unpacking");
+        if (extractedEntity == null) return MethodResult.of(null, "Problem with entity unpacking");
         BlockPos blockPos = owner.getPos().offset(owner.getFacing().getNormal());
         extractedEntity.absMoveTo(blockPos.getX() + 0.5, blockPos.getY(), blockPos.getZ() + 0.5, 0, 0);
         removeEntity();

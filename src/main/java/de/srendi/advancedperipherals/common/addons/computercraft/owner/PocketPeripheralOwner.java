@@ -33,8 +33,7 @@ public class PocketPeripheralOwner extends BasePeripheralOwner {
     @Override
     public Level getLevel() {
         Entity owner = pocket.getEntity();
-        if (owner == null)
-            return null;
+        if (owner == null) return null;
         return owner.getCommandSenderWorld();
     }
 
@@ -42,8 +41,7 @@ public class PocketPeripheralOwner extends BasePeripheralOwner {
     @Override
     public BlockPos getPos() {
         Entity owner = pocket.getEntity();
-        if (owner == null)
-            return new BlockPos(0, 0, 0);
+        if (owner == null) return new BlockPos(0, 0, 0);
         return owner.blockPosition();
     }
 
@@ -51,8 +49,7 @@ public class PocketPeripheralOwner extends BasePeripheralOwner {
     @Override
     public Direction getFacing() {
         Entity owner = pocket.getEntity();
-        if (owner == null)
-            return Direction.NORTH;
+        if (owner == null) return Direction.NORTH;
         return owner.getDirection();
     }
 
@@ -60,8 +57,7 @@ public class PocketPeripheralOwner extends BasePeripheralOwner {
     @Override
     public Player getOwner() {
         Entity owner = pocket.getEntity();
-        if (owner instanceof Player)
-            return (Player) owner;
+        if (owner instanceof Player player) return player;
         return null;
     }
 

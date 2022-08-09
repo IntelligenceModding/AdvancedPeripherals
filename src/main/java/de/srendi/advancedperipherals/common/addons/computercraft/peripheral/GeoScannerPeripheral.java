@@ -79,8 +79,7 @@ public class GeoScannerPeripheral extends BasePeripheral<IPeripheralOwner> {
     }
 
     private static int estimateCost(int radius) {
-        if (radius > SCAN_BLOCKS.getMaxCostRadius())
-            return -1;
+        if (radius > SCAN_BLOCKS.getMaxCostRadius()) return -1;
 
         return SCAN_BLOCKS.getCost(SphereOperationContext.of(radius));
     }

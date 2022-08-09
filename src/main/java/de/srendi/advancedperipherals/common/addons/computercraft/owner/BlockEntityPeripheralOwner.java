@@ -54,8 +54,8 @@ public class BlockEntityPeripheralOwner<T extends BlockEntity & IPeripheralTileE
     @Nullable
     @Override
     public Player getOwner() {
-        if (tileEntity instanceof InventoryManagerEntity)
-            return ((InventoryManagerEntity) tileEntity).getOwnerPlayer();
+        if (tileEntity instanceof InventoryManagerEntity inventoryManagerEntity)
+            return inventoryManagerEntity.getOwnerPlayer();
         return null;
     }
 

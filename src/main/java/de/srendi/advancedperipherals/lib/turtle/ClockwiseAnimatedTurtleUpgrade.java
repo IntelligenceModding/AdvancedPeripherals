@@ -54,8 +54,6 @@ public abstract class ClockwiseAnimatedTurtleUpgrade<T extends IBasePeripheral<?
     @Override
     public void update(@NotNull ITurtleAccess turtle, @NotNull TurtleSide side) {
         super.update(turtle, side);
-        if (tick % 2 == 0)
-            if (DataStorageUtil.RotationCharge.consume(turtle, side))
-                chargeConsumingCallback();
+        if (tick % 2 == 0) if (DataStorageUtil.RotationCharge.consume(turtle, side)) chargeConsumingCallback();
     }
 }

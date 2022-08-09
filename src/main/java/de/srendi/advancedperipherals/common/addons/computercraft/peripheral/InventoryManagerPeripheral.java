@@ -2,6 +2,8 @@ package de.srendi.advancedperipherals.common.addons.computercraft.peripheral;
 
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
+import dan200.computercraft.api.lua.IArguments;
+import dan200.computercraft.core.apis.TableHelper;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.BlockEntityPeripheralOwner;
 import de.srendi.advancedperipherals.common.blocks.blockentities.InventoryManagerEntity;
@@ -53,8 +55,7 @@ public class InventoryManagerPeripheral extends BasePeripheral<BlockEntityPeriph
 
     @LuaFunction
     public final String getOwner() throws LuaException {
-        if (getOwnerPlayer() == null)
-            return null;
+        if (getOwnerPlayer() == null) return null;
         return getOwnerPlayer().getName().getString();
     }
 
@@ -66,11 +67,37 @@ public class InventoryManagerPeripheral extends BasePeripheral<BlockEntityPeriph
             stack = new ItemStack(item1, count);
         }
 
+        return addItemCommon(invDirection, count, slot, stack);
+
+    }
+
+    //Add the specified item to the player
+    //The item is specified the same as with the RS/ME bridge:
+    //{name="minecraft:enchanted_book", count=1, nbt="ae70053c97f877de546b0248b9ddf525"}
+    //If a count is specified in the item it is silently IGNORED
+    @LuaFunction(mainThread = true)
+    public final int addItemToPlayerNBT(String invDirection, int count, Optional<Integer> slot, Optional<Map<?,?>> item) throws LuaException {
+        ItemStack stack = ItemStack.EMPTY;
+        if (item.isPresent()) {
+            Direction direction = validateSide(invDirection);
+
+            BlockEntity targetEntity = owner.getLevel().getBlockEntity(owner.getPos().relative(direction));
+            IItemHandler inventoryFrom = targetEntity != null ? targetEntity
+                    .getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, direction).resolve().orElse(null) : null;
+            
+            //We can use getItemStackRS, as it works with List<ItemStack>
+            //And doesn't use anything RS specific
+            stack = ItemUtil.getItemStackRS(item.get(), ItemUtil.getItemsFromItemHandler(inventoryFrom));
+        }
+
+        return addItemCommon(invDirection, count, slot, stack);
+    }
+
+    private final int addItemCommon(String invDirection, int count, Optional<Integer> slot, ItemStack stack) throws LuaException {
         Direction direction = validateSide(invDirection);
 
         BlockEntity targetEntity = owner.getLevel().getBlockEntity(owner.getPos().relative(direction));
-        IItemHandler inventoryFrom = targetEntity != null ? targetEntity
-                .getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, direction).resolve().orElse(null) : null;
+        IItemHandler inventoryFrom = targetEntity != null ? targetEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, direction).resolve().orElse(null) : null;
         IItemHandler inventoryTo = new PlayerInvWrapper(getOwnerPlayer().getInventory());
 
         int invSlot = slot.orElse(0);
@@ -78,8 +105,7 @@ public class InventoryManagerPeripheral extends BasePeripheral<BlockEntityPeriph
         //if (invSlot >= inventoryTo.getSlots() || invSlot < 0)
         //  throw new LuaException("Inventory out of bounds " + invSlot + " (max: " + (inventoryTo.getSlots() - 1) + ")");
 
-        if (inventoryFrom == null)
-            return 0;
+        if (inventoryFrom == null) return 0;
 
         int amount = count;
         int transferableAmount = 0;
@@ -87,8 +113,7 @@ public class InventoryManagerPeripheral extends BasePeripheral<BlockEntityPeriph
         for (int i = 0; i < inventoryFrom.getSlots() && amount > 0; i++) {
             if (stack.isEmpty()) {
                 stack = inventoryFrom.getStackInSlot(i).copy();
-                if (stack.isEmpty())
-                    continue;
+                if (stack.isEmpty()) continue;
             }
 
             if (ItemHandlerHelper.canItemStacksStack(stack, inventoryFrom.getStackInSlot(i))) {
@@ -97,8 +122,7 @@ public class InventoryManagerPeripheral extends BasePeripheral<BlockEntityPeriph
                     if (!(stack.getItem() instanceof ArmorItem))
                         throw new LuaException(stack + "is not an armor item. Can't put it into the slot " + invSlot);
                     //When there is already an item in the slot, just continue
-                    if (!getOwnerPlayer().getInventory().armor.get(getArmorSlot(invSlot)).isEmpty())
-                        continue;
+                    if (!getOwnerPlayer().getInventory().armor.get(getArmorSlot(invSlot)).isEmpty()) continue;
                     getOwnerPlayer().getInventory().armor.set(getArmorSlot(invSlot), stack);
                     inventoryFrom.extractItem(i, 1, false);
                     //Armor can't be stacked, so we set this just to one
@@ -126,71 +150,75 @@ public class InventoryManagerPeripheral extends BasePeripheral<BlockEntityPeriph
             Item item1 = ItemUtil.getRegistryEntry(item.get(), ForgeRegistries.ITEMS);
             stack = new ItemStack(item1, count);
         }
+
+        return removeItemCommon(invDirection, count, slot, stack);
+    }
+
+    @LuaFunction(mainThread = true)
+    public final int removeItemFromPlayerNBT(String invDirection, int count, Optional<Integer> slot, Optional<Map<?,?>> item) throws LuaException {
+        ItemStack stack = ItemStack.EMPTY;
+        if (item.isPresent()) {
+            Direction direction = validateSide(invDirection);
+
+            BlockEntity targetEntity = owner.getLevel().getBlockEntity(owner.getPos().relative(direction));
+            IItemHandler inventoryFrom = targetEntity != null ? targetEntity
+                    .getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, direction).resolve().orElse(null) : null;
+            
+            //We can use getItemStackRS, as it works with List<ItemStack>
+            //And doesn't use anything RS specific
+            stack = ItemUtil.getItemStackRS(item.get(), ItemUtil.getItemsFromItemHandler(inventoryFrom));
+        }
+
+        return removeItemCommon(invDirection, count, slot, stack);
+    }
+
+    private final int removeItemCommon(String invDirection, int count, Optional<Integer> slot, ItemStack stack) throws LuaException {
         //With this, we can use the item parameter without need to use the slot parameter. If we don't want to use
         //the slot parameter, we can use -1
         int invSlot = -1;
-        if (slot.isPresent() && slot.get() > 0)
-            invSlot = slot.get();
+        if (slot.isPresent() && slot.get() > 0) invSlot = slot.get();
 
         Direction direction = validateSide(invDirection);
 
         BlockEntity targetEntity = owner.getLevel().getBlockEntity(owner.getPos().relative(direction));
         Inventory inventoryFrom = getOwnerPlayer().getInventory();
-        IItemHandler inventoryTo = targetEntity != null ? targetEntity
-                .getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, direction).resolve().orElse(null) : null;
+        IItemHandler inventoryTo = targetEntity != null ? targetEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, direction).resolve().orElse(null) : null;
 
         //invetoryFrom is checked via ensurePlayerIsLinked()
-        if (inventoryTo == null)
-            return 0;
+        if (inventoryTo == null) return 0;
 
         int amount = count;
         int transferableAmount = 0;
 
         ItemStack rest = ItemStack.EMPTY;
-        if (invSlot == -1)
-            for (int i = 0; i < inventoryFrom.getContainerSize(); i++) {
-                if (!stack.isEmpty())
-                    if (inventoryFrom.getItem(i).sameItem(stack)) {
-                        if (inventoryFrom.getItem(i).getCount() >= amount) {
-                            rest = insertItem(inventoryTo, inventoryFrom.removeItem(i, amount));
-                            transferableAmount += amount - rest.getCount();
-                            break;
-                        } else {
-                            int subcount = inventoryFrom.getItem(i).getCount();
-                            rest = insertItem(inventoryTo, inventoryFrom.removeItem(i, subcount));
-                            amount = count - subcount;
-                            transferableAmount += subcount - rest.getCount();
-                            if (!rest.isEmpty())
-                                break;
-                        }
-                    }
-                if (stack.isEmpty())
-                    if (inventoryFrom.getItem(i).getCount() >= amount) {
-                        rest = insertItem(inventoryTo, inventoryFrom.removeItem(i, amount));
-                        transferableAmount += amount - rest.getCount();
-                        break;
-                    } else {
-                        int subcount = inventoryFrom.getItem(i).getCount();
-                        rest = insertItem(inventoryTo, inventoryFrom.removeItem(i, subcount));
-                        amount = count - subcount;
-                        transferableAmount += subcount - rest.getCount();
-                        if (!rest.isEmpty())
-                            break;
-                    }
-            }
-        if (invSlot != -1) {
-            if (!stack.isEmpty())
-                if (inventoryFrom.getItem(slot.get()).sameItem(stack)) {
-                    if (inventoryFrom.getItem(slot.get()).getCount() >= amount) {
-                        rest = insertItem(inventoryTo, inventoryFrom.removeItem(slot.get(), amount));
-                        transferableAmount += amount - rest.getCount();
-                    } else {
-                        int subcount = inventoryFrom.getItem(slot.get()).getCount();
-                        rest = insertItem(inventoryTo, inventoryFrom.removeItem(slot.get(), subcount));
-                        transferableAmount += subcount - rest.getCount();
-                    }
+        if (invSlot == -1) for (int i = 0; i < inventoryFrom.getContainerSize(); i++) {
+            if (!stack.isEmpty()) if (inventoryFrom.getItem(i).sameItem(stack)) {
+                if (inventoryFrom.getItem(i).getCount() >= amount) {
+                    rest = insertItem(inventoryTo, inventoryFrom.removeItem(i, amount));
+                    transferableAmount += amount - rest.getCount();
+                    break;
+                } else {
+                    int subcount = inventoryFrom.getItem(i).getCount();
+                    rest = insertItem(inventoryTo, inventoryFrom.removeItem(i, subcount));
+                    amount = count - subcount;
+                    transferableAmount += subcount - rest.getCount();
+                    if (!rest.isEmpty()) break;
                 }
-            if (stack.isEmpty())
+            }
+            if (stack.isEmpty()) if (inventoryFrom.getItem(i).getCount() >= amount) {
+                rest = insertItem(inventoryTo, inventoryFrom.removeItem(i, amount));
+                transferableAmount += amount - rest.getCount();
+                break;
+            } else {
+                int subcount = inventoryFrom.getItem(i).getCount();
+                rest = insertItem(inventoryTo, inventoryFrom.removeItem(i, subcount));
+                amount = count - subcount;
+                transferableAmount += subcount - rest.getCount();
+                if (!rest.isEmpty()) break;
+            }
+        }
+        if (invSlot != -1) {
+            if (!stack.isEmpty()) if (inventoryFrom.getItem(slot.get()).sameItem(stack)) {
                 if (inventoryFrom.getItem(slot.get()).getCount() >= amount) {
                     rest = insertItem(inventoryTo, inventoryFrom.removeItem(slot.get(), amount));
                     transferableAmount += amount - rest.getCount();
@@ -199,9 +227,17 @@ public class InventoryManagerPeripheral extends BasePeripheral<BlockEntityPeriph
                     rest = insertItem(inventoryTo, inventoryFrom.removeItem(slot.get(), subcount));
                     transferableAmount += subcount - rest.getCount();
                 }
+            }
+            if (stack.isEmpty()) if (inventoryFrom.getItem(slot.get()).getCount() >= amount) {
+                rest = insertItem(inventoryTo, inventoryFrom.removeItem(slot.get(), amount));
+                transferableAmount += amount - rest.getCount();
+            } else {
+                int subcount = inventoryFrom.getItem(slot.get()).getCount();
+                rest = insertItem(inventoryTo, inventoryFrom.removeItem(slot.get(), subcount));
+                transferableAmount += subcount - rest.getCount();
+            }
         }
-        if (!rest.isEmpty())
-            inventoryFrom.add(rest);
+        if (!rest.isEmpty()) inventoryFrom.add(rest);
 
         return transferableAmount;
     }
@@ -248,8 +284,7 @@ public class InventoryManagerPeripheral extends BasePeripheral<BlockEntityPeriph
         int i = 0;
         for (ItemStack stack : getOwnerPlayer().getInventory().armor) {
             if (!stack.isEmpty()) {
-                if (index == i)
-                    return true;
+                if (index == i) return true;
                 i++;
             }
         }
@@ -260,8 +295,7 @@ public class InventoryManagerPeripheral extends BasePeripheral<BlockEntityPeriph
     public final int getEmptySpace() throws LuaException {
         int i = 0;
         for (ItemStack stack : getOwnerPlayer().getInventory().items) {
-            if (stack.isEmpty())
-                i++;
+            if (stack.isEmpty()) i++;
 
         }
         return i;
@@ -289,11 +323,9 @@ public class InventoryManagerPeripheral extends BasePeripheral<BlockEntityPeriph
 
     private ItemStack insertItem(IItemHandler inventoryTo, ItemStack stack) {
         for (int i = 0; i < inventoryTo.getSlots(); i++) {
-            if (stack.isEmpty())
-                break;
+            if (stack.isEmpty()) break;
             //Fixes https://github.com/Seniorendi/AdvancedPeripherals/issues/93
-            if (!stack.hasTag())
-                stack.setTag(null);
+            if (!stack.hasTag()) stack.setTag(null);
             stack = inventoryTo.insertItem(i, stack, false);
         }
         return stack;
@@ -326,9 +358,9 @@ public class InventoryManagerPeripheral extends BasePeripheral<BlockEntityPeriph
         }
 
         public static int getSlotForItem(ItemStack stack) {
-            if (stack.getItem() instanceof ArmorItem) {
+            if (stack.getItem() instanceof ArmorItem armorItem) {
                 for (ArmorSlot slot : values()) {
-                    if (((ArmorItem) stack.getItem()).getSlot() == slot.slotType) {
+                    if (armorItem.getSlot() == slot.slotType) {
                         return slot.slot;
                     }
                 }

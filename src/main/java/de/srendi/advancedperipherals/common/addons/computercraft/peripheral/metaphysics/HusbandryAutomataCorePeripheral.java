@@ -17,7 +17,7 @@ public class HusbandryAutomataCorePeripheral extends WeakAutomataCorePeripheral 
     public static final String TYPE = "husbandryAutomata";
 
     private static final Predicate<Entity> isAnimal = entity1 -> entity1.getType().getCategory().isFriendly();
-    private static final Predicate<Entity> isLivingEntity = entity1 -> entity1 instanceof LivingEntity;
+    private static final Predicate<Entity> isLivingEntity = LivingEntity.class::isInstance;
     private static final Predicate<Entity> isNotPlayer = entity1 -> !(entity1 instanceof Player);
     private static final Predicate<Entity> suitableEntity = isAnimal.and(isLivingEntity).and(isNotPlayer);
 

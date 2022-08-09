@@ -39,18 +39,9 @@ body:
       multiple: false
       options:
         - Own compiled build.
-        - 1.18.2-0.7.15b (Latest 1.18)
-        - 1.18.2-0.7.14b 
-        - 1.18.2-0.7.13a (Please use a newer version)
-        - 1.18.1-0.7.12b
-        - 1.18.1-0.7.11b
-        - 1.18.1-0.7.10b
-        - 1.18.1-0.7.9r
+        - 1.18.2-0.7.16b (Latest 1.18)
+        - 1.18.2-0.7.15b
         - 1.16.5-0.7.8r (Latest 1.16)
-        - 1.16.5-0.7.7.1r
-        - 1.16.5-0.7.7r
-        - 1.18.1-0.7.8.1r
-        - 1.18.1-0.7.8r
         - older
     validations:
       required: true

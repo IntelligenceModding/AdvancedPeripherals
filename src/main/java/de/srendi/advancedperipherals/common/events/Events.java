@@ -54,19 +54,16 @@ public class Events {
                 message = message.replace("$", "");
                 isHidden = true;
             }
-            putChatMessage(Pair.of(getLastChatMessageID(), new ChatMessageObject(event.getUsername(), message,
-                    event.getPlayer().getUUID().toString(), isHidden)));
+            putChatMessage(Pair.of(getLastChatMessageID(), new ChatMessageObject(event.getUsername(), message, event.getPlayer().getUUID().toString(), isHidden)));
         }
     }
 
     @SubscribeEvent
     public static void onEquipmentChange(LivingEquipmentChangeEvent event) {
         LivingEntity livingEntity = event.getEntityLiving();
-        if (!(livingEntity instanceof ServerPlayer))
-            return;
-        ServerPlayer player = (ServerPlayer) livingEntity;
+        if (!(livingEntity instanceof ServerPlayer serverPlayer)) return;
         if (event.getFrom().getItem() instanceof ARGogglesItem)
-            MNetwork.sendTo(new ClearHudCanvasMessage(), player);
+            MNetwork.sendTo(new ClearHudCanvasMessage(), serverPlayer);
 
     }
 
@@ -77,8 +74,7 @@ public class Events {
 
     public static synchronized long traverseChatMessages(long lastConsumedMessage, Consumer<ChatMessageObject> consumer) {
         for (Pair<Long, ChatMessageObject> message : messageQueue) {
-            if (message.getLeft() <= lastConsumedMessage)
-                continue;
+            if (message.getLeft() <= lastConsumedMessage) continue;
             consumer.accept(message.getRight());
             lastConsumedMessage = message.getLeft();
         }

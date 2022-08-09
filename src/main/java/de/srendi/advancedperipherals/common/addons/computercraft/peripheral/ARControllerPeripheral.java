@@ -9,7 +9,6 @@ import de.srendi.advancedperipherals.common.argoggles.RenderActionType;
 import de.srendi.advancedperipherals.common.blocks.blockentities.ARControllerEntity;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
-import net.minecraft.util.Mth;
 
 import java.util.Optional;
 
@@ -28,10 +27,11 @@ public class ARControllerPeripheral extends BasePeripheral<BlockEntityPeripheral
     @LuaFunction(mainThread = true)
     public final MethodResult isRelativeMode() {
         int[] virtualScreenSize = owner.tileEntity.getVirtualScreenSize();
-        if (virtualScreenSize != null)
+        if (virtualScreenSize != null) {
             return MethodResult.of(owner.tileEntity.isRelativeMode(), virtualScreenSize[0], virtualScreenSize[1]);
-        else
+        } else {
             return MethodResult.of(owner.tileEntity.isRelativeMode());
+        }
     }
 
     @LuaFunction(mainThread = true)

@@ -76,43 +76,36 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
     public final List<String> getPlayersInRange(int range) {
         List<String> playersName = new ArrayList<>();
         for (ServerPlayer player : getPlayers()) {
-            if (CoordUtil.isInRange(getPos(), getLevel(), player, range))
-                playersName.add(player.getName().getString());
+            if (CoordUtil.isInRange(getPos(), getLevel(), player, range)) playersName.add(player.getName().getString());
         }
         return playersName;
     }
 
     @LuaFunction(mainThread = true)
     public final boolean isPlayersInCoords(Map<?, ?> firstCoord, Map<?, ?> secondCoord) throws LuaException {
-        if (getPlayers().isEmpty())
-            return false;
+        if (getPlayers().isEmpty()) return false;
         BlockPos firstPos = LuaConverter.convertToBlockPos(firstCoord);
         BlockPos secondPos = LuaConverter.convertToBlockPos(secondCoord);
         for (ServerPlayer player : getPlayers()) {
-            if (CoordUtil.isInRange(player, getLevel(), firstPos, secondPos))
-                return true;
+            if (CoordUtil.isInRange(player, getLevel(), firstPos, secondPos)) return true;
         }
         return false;
     }
 
     @LuaFunction(mainThread = true)
     public final boolean isPlayersInCubic(int x, int y, int z) {
-        if (getPlayers().isEmpty())
-            return false;
+        if (getPlayers().isEmpty()) return false;
         for (ServerPlayer player : getPlayers()) {
-            if (CoordUtil.isInRange(getPos(), getLevel(), player, x, y, z))
-                return true;
+            if (CoordUtil.isInRange(getPos(), getLevel(), player, x, y, z)) return true;
         }
         return false;
     }
 
     @LuaFunction(mainThread = true)
     public final boolean isPlayersInRange(int range) {
-        if (getPlayers().isEmpty())
-            return false;
+        if (getPlayers().isEmpty()) return false;
         for (ServerPlayer player : getPlayers()) {
-            if (CoordUtil.isInRange(getPos(), getLevel(), player, range))
-                return true;
+            if (CoordUtil.isInRange(getPos(), getLevel(), player, range)) return true;
         }
         return false;
     }
@@ -165,8 +158,7 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
                 }
             }
         }
-        if (existingPlayer == null)
-            return null;
+        if (existingPlayer == null) return null;
 
         Map<String, Object> info = new HashMap<>();
         info.put("x", Math.floor(existingPlayer.getX()));

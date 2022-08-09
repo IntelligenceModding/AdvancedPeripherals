@@ -28,8 +28,7 @@ public class LibConfig {
 
     public static void build(final ForgeConfigSpec.Builder builder) {
         IS_INITIAL_COOLDOWN_ENABLED = builder.comment("Enables initial cooldown on peripheral initialization").define("isInitialCooldownEnabled", true);
-        INITIAL_COOLDOWN_SENSENTIVE_LEVEL = builder.comment("Determinates initial cooldown sensentive level, values lower then this value will not trigger initial cooldown")
-                .defineInRange("initialCooldownSensetiveLevel", 6_000, 0, Integer.MAX_VALUE);
+        INITIAL_COOLDOWN_SENSENTIVE_LEVEL = builder.comment("Determinates initial cooldown sensentive level, values lower then this value will not trigger initial cooldown").defineInRange("initialCooldownSensetiveLevel", 6_000, 0, Integer.MAX_VALUE);
     }
 
     public static void reloadConfig() {

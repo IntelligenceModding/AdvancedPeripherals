@@ -28,6 +28,7 @@ public class ChunkManager extends SavedData {
     private static int tickCounter = 0;
     private final Map<UUID, LoadChunkRecord> forcedChunks = new HashMap<>();
     private boolean initialized = false;
+
     public ChunkManager() {
         super();
     }
@@ -67,22 +68,19 @@ public class ChunkManager extends SavedData {
 
     public synchronized boolean addForceChunk(ServerLevel level, UUID owner, ChunkPos pos) {
         AdvancedPeripherals.debug("Trying to load forced chunk " + pos, Level.WARN);
-        if (forcedChunks.containsKey(owner))
-            return true;
+        if (forcedChunks.containsKey(owner)) return true;
         forcedChunks.put(owner, new LoadChunkRecord(level.dimension().location().toString(), pos));
         setDirty();
         return ForgeChunkManager.forceChunk(level, AdvancedPeripherals.MOD_ID, owner, pos.x, pos.z, true, true);
     }
 
     public synchronized void touch(UUID owner) {
-        if (forcedChunks.containsKey(owner))
-            forcedChunks.get(owner).touch();
+        if (forcedChunks.containsKey(owner)) forcedChunks.get(owner).touch();
     }
 
     public synchronized boolean removeForceChunk(ServerLevel level, UUID owner, ChunkPos pos) {
         AdvancedPeripherals.debug("Trying to unload forced chunk " + pos, Level.WARN);
-        if (!forcedChunks.containsKey(owner))
-            return true;
+        if (!forcedChunks.containsKey(owner)) return true;
         LoadChunkRecord record = forcedChunks.get(owner);
         String dimensionName = level.dimension().location().toString();
         if (!record.getDimensionName().equals(dimensionName))
@@ -100,8 +98,7 @@ public class ChunkManager extends SavedData {
             AdvancedPeripherals.debug("Schedule chunk manager init", Level.WARN);
             ServerLifecycleHooks.getCurrentServer().getAllLevels().forEach(level -> {
                 String dimensionName = level.dimension().location().toString();
-                forcedChunks.entrySet().stream().filter(entry -> entry.getValue().getDimensionName().equals(dimensionName))
-                        .forEach(entry -> ForgeChunkManager.forceChunk(level, AdvancedPeripherals.MOD_ID, entry.getKey(), entry.getValue().getPos().x, entry.getValue().getPos().z, true, true));
+                forcedChunks.entrySet().stream().filter(entry -> entry.getValue().getDimensionName().equals(dimensionName)).forEach(entry -> ForgeChunkManager.forceChunk(level, AdvancedPeripherals.MOD_ID, entry.getKey(), entry.getValue().getPos().x, entry.getValue().getPos().z, true, true));
             });
             initialized = true;
         }
@@ -112,8 +109,7 @@ public class ChunkManager extends SavedData {
             AdvancedPeripherals.debug("Schedule chunk manager stop", Level.WARN);
             ServerLifecycleHooks.getCurrentServer().getAllLevels().forEach(level -> {
                 String dimensionName = level.dimension().location().toString();
-                forcedChunks.entrySet().stream().filter(entry -> entry.getValue().getDimensionName().equals(dimensionName))
-                        .forEach(entry -> ForgeChunkManager.forceChunk(level, AdvancedPeripherals.MOD_ID, entry.getKey(), entry.getValue().getPos().x, entry.getValue().getPos().z, false, true));
+                forcedChunks.entrySet().stream().filter(entry -> entry.getValue().getDimensionName().equals(dimensionName)).forEach(entry -> ForgeChunkManager.forceChunk(level, AdvancedPeripherals.MOD_ID, entry.getKey(), entry.getValue().getPos().x, entry.getValue().getPos().z, false, true));
             });
             initialized = false;
         }
@@ -124,8 +120,7 @@ public class ChunkManager extends SavedData {
         ServerLifecycleHooks.getCurrentServer().getAllLevels().forEach(level -> {
             String dimensionName = level.dimension().location().toString();
             List<UUID> purgeList = new ArrayList<>();
-            forcedChunks.entrySet().stream().filter(entry -> entry.getValue().getDimensionName().equals(dimensionName) && !entry.getValue().isValid())
-                    .forEach(entry -> purgeList.add(entry.getKey()));
+            forcedChunks.entrySet().stream().filter(entry -> entry.getValue().getDimensionName().equals(dimensionName) && !entry.getValue().isValid()).forEach(entry -> purgeList.add(entry.getKey()));
             purgeList.forEach(uuid -> {
                 AdvancedPeripherals.debug(String.format("Purge forced chunk for %s", uuid), Level.WARN);
                 removeForceChunk(level, uuid, forcedChunks.get(uuid).getPos());

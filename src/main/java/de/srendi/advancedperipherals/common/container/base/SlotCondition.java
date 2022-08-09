@@ -1,6 +1,5 @@
 package de.srendi.advancedperipherals.common.container.base;
 
-import net.minecraft.tags.Tag;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -73,13 +72,11 @@ public class SlotCondition {
         boolean valid = true;
         if (!neededTags.isEmpty()) {
             for (TagKey<?> tag : neededTags) {
-                if (stack.getTags().noneMatch(tag::equals))
-                    valid = false;
+                if (stack.getTags().noneMatch(tag::equals)) valid = false;
             }
         }
         if (!neededItems.isEmpty()) {
-            if (!neededItems.contains(stack.getItem()))
-                valid = false;
+            if (!neededItems.contains(stack.getItem())) valid = false;
         }
         return valid;
     }

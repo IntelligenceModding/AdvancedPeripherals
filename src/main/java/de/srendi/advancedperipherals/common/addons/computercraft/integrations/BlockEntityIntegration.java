@@ -32,16 +32,14 @@ public class BlockEntityIntegration implements IPeripheralIntegration {
     @Override
     public boolean isSuitable(@NotNull Level level, @NotNull BlockPos blockPos, @NotNull Direction direction) {
         BlockEntity te = level.getBlockEntity(blockPos);
-        if (te == null)
-            return false;
+        if (te == null) return false;
         return predicate.test(te);
     }
 
     @Override
     public @NotNull IPeripheral buildPeripheral(@NotNull Level level, @NotNull BlockPos blockPos, @NotNull Direction direction) {
         BlockEntity te = level.getBlockEntity(blockPos);
-        if (te == null)
-            throw new IllegalArgumentException("This should not happen");
+        if (te == null) throw new IllegalArgumentException("This should not happen");
         return build.apply(te);
     }
 

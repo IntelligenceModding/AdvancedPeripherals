@@ -55,8 +55,7 @@ public abstract class BaseBlockEntityBlock extends BaseEntityBlock implements IH
     public void onRemove(BlockState state, @NotNull Level worldIn, @NotNull BlockPos pos, BlockState newState, boolean isMoving) {
         if (state.getBlock() != newState.getBlock()) {
             BlockEntity tileEntity = worldIn.getBlockEntity(pos);
-            if (tileEntity instanceof IInventoryBlock)
-                Containers.dropContents(worldIn, pos, (Container) tileEntity);
+            if (tileEntity instanceof Container container) Containers.dropContents(worldIn, pos, container);
             super.onRemove(state, worldIn, pos, newState, isMoving);
         }
     }
@@ -64,8 +63,7 @@ public abstract class BaseBlockEntityBlock extends BaseEntityBlock implements IH
     @Override
     public void setPlacedBy(@NotNull Level worldIn, @NotNull BlockPos pos, @NotNull BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
         super.setPlacedBy(worldIn, pos, state, placer, stack);
-        if (worldIn.getBlockEntity(pos) == null)
-            return;
+        if (worldIn.getBlockEntity(pos) == null) return;
         //Used for the lua function getName()
         worldIn.getBlockEntity(pos).getTileData().putString("CustomName", stack.getDisplayName().getString());
     }
@@ -73,8 +71,7 @@ public abstract class BaseBlockEntityBlock extends BaseEntityBlock implements IH
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
-        if (level.isClientSide || !belongToTickingEntity)
-            return null;
+        if (level.isClientSide || !belongToTickingEntity) return null;
         return (level1, blockPos, blockState, entity) -> {
             if (entity instanceof IPeripheralTileEntity blockEntity) {
                 blockEntity.handleTick(level, state, type);

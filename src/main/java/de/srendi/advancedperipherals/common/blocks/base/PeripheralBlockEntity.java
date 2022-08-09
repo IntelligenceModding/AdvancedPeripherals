@@ -44,8 +44,8 @@ public abstract class PeripheralBlockEntity<T extends BasePeripheral<?>> extends
 
     public PeripheralBlockEntity(BlockEntityType<?> tileEntityTypeIn, BlockPos pos, BlockState state) {
         super(tileEntityTypeIn, pos, state);
-        if (this instanceof IInventoryBlock) {
-            items = NonNullList.withSize(((IInventoryBlock<?>) this).getInvSize(), ItemStack.EMPTY);
+        if (this instanceof IInventoryBlock<?> inventoryBlock) {
+            items = NonNullList.withSize(inventoryBlock.getInvSize(), ItemStack.EMPTY);
         } else {
             items = NonNullList.withSize(0, ItemStack.EMPTY);
         }
@@ -88,10 +88,8 @@ public abstract class PeripheralBlockEntity<T extends BasePeripheral<?>> extends
     @Override
     public void invalidateCaps() {
         super.invalidateCaps();
-        if (peripheralCap != null)
-            peripheralCap.invalidate();
-        if (handler != null)
-            handler.invalidate();
+        if (peripheralCap != null) peripheralCap.invalidate();
+        if (handler != null) handler.invalidate();
     }
 
     @NotNull
@@ -112,8 +110,7 @@ public abstract class PeripheralBlockEntity<T extends BasePeripheral<?>> extends
     public void saveAdditional(@NotNull CompoundTag compound) {
         super.saveAdditional(compound);
         ContainerHelper.saveAllItems(compound, items);
-        if (!peripheralSettings.isEmpty())
-            compound.put(PERIPHERAL_SETTINGS_KEY, peripheralSettings);
+        if (!peripheralSettings.isEmpty()) compound.put(PERIPHERAL_SETTINGS_KEY, peripheralSettings);
     }
 
     @Override
@@ -125,7 +122,7 @@ public abstract class PeripheralBlockEntity<T extends BasePeripheral<?>> extends
 
     @Override
     protected Component getDefaultName() {
-        return this instanceof IInventoryBlock ? ((IInventoryBlock<?>) this).getDisplayName() : null;
+        return this instanceof IInventoryBlock<?> inventoryBlock ? inventoryBlock.getDisplayName() : null;
     }
 
     @Nullable
@@ -136,7 +133,7 @@ public abstract class PeripheralBlockEntity<T extends BasePeripheral<?>> extends
 
     @Override
     protected AbstractContainerMenu createMenu(int id, @NotNull Inventory player) {
-        return this instanceof IInventoryBlock ? ((IInventoryBlock<?>) this).createContainer(id, player, worldPosition, level) : null;
+        return this instanceof IInventoryBlock<?> inventoryBlock ? inventoryBlock.createContainer(id, player, worldPosition, level) : null;
     }
 
     @Override
@@ -162,8 +159,7 @@ public abstract class PeripheralBlockEntity<T extends BasePeripheral<?>> extends
     @Override
     public boolean isEmpty() {
         for (ItemStack itemStack : items) {
-            if (itemStack.isEmpty())
-                return true;
+            if (itemStack.isEmpty()) return true;
         }
         return false;
     }

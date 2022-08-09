@@ -15,9 +15,11 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.ForgeRegistryEntry;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.ObjectHolder;
+import net.minecraftforge.items.IItemHandler;
 
 import java.util.List;
 import java.util.Map;
+import java.util.ArrayList;
 
 public class ItemUtil {
 
@@ -61,18 +63,15 @@ public class ItemUtil {
 
     //AE2
     public static ItemStack getItemStack(Map<?, ?> table, MEStorage monitor) throws LuaException {
-        if (table == null || table.isEmpty())
-            return ItemStack.EMPTY;
+        if (table == null || table.isEmpty()) return ItemStack.EMPTY;
 
         if (table.containsKey("fingerprint")) {
             ItemStack fingerprint = AppEngApi.findMatchingFingerprint(TableHelper.getStringField(table, "fingerprint"), monitor);
-            if (table.containsKey("count"))
-                fingerprint.setCount(TableHelper.getIntField(table, "count"));
+            if (table.containsKey("count")) fingerprint.setCount(TableHelper.getIntField(table, "count"));
             return fingerprint;
         }
 
-        if (!table.containsKey("name"))
-            return ItemStack.EMPTY;
+        if (!table.containsKey("name")) return ItemStack.EMPTY;
 
         String name = TableHelper.getStringField(table, "name");
 
@@ -80,8 +79,7 @@ public class ItemUtil {
 
         ItemStack stack = new ItemStack(item, 1);
 
-        if (table.containsKey("count"))
-            stack.setCount(TableHelper.getIntField(table, "count"));
+        if (table.containsKey("count")) stack.setCount(TableHelper.getIntField(table, "count"));
 
         if (table.containsKey("nbt") || table.containsKey("json") || table.containsKey("tag"))
             stack.setTag(getTag(stack, table, monitor));
@@ -102,11 +100,9 @@ public class ItemUtil {
 
     private static CompoundTag parseNBTHash(ItemStack stack, Map<?, ?> table, MEStorage monitor) throws LuaException {
         String nbt = TableHelper.optStringField(table, "nbt", null);
-        if (nbt == null || nbt.isEmpty())
-            return null;
+        if (nbt == null || nbt.isEmpty()) return null;
         CompoundTag tag = AppEngApi.findMatchingTag(stack, nbt, monitor);
-        if (tag != null)
-            return tag;
+        if (tag != null) return tag;
 
         tag = new CompoundTag();
         tag.put("_apPlaceholder_", IntTag.valueOf(1));
@@ -115,17 +111,14 @@ public class ItemUtil {
 
     //RS
     public static ItemStack getItemStackRS(Map<?, ?> table, List<ItemStack> items) throws LuaException {
-        if (table == null || table.isEmpty())
-            return ItemStack.EMPTY;
+        if (table == null || table.isEmpty()) return ItemStack.EMPTY;
 
         if (table.containsKey("fingerprint")) {
             ItemStack fingerprint = RefinedStorage.findMatchingFingerprint(TableHelper.getStringField(table, "fingerprint"), items);
-            if (table.containsKey("count"))
-                fingerprint.setCount(TableHelper.getIntField(table, "count"));
+            if (table.containsKey("count")) fingerprint.setCount(TableHelper.getIntField(table, "count"));
             return fingerprint;
         }
-        if (!table.containsKey("name"))
-            return ItemStack.EMPTY;
+        if (!table.containsKey("name")) return ItemStack.EMPTY;
 
         String name = TableHelper.getStringField(table, "name");
 
@@ -133,8 +126,7 @@ public class ItemUtil {
 
         ItemStack stack = new ItemStack(item, 1);
 
-        if (table.containsKey("count"))
-            stack.setCount(TableHelper.getIntField(table, "count"));
+        if (table.containsKey("count")) stack.setCount(TableHelper.getIntField(table, "count"));
 
         if (table.containsKey("nbt") || table.containsKey("json") || table.containsKey("tag"))
             stack.setTag(getTagRS(stack, table, items));
@@ -155,13 +147,21 @@ public class ItemUtil {
 
     private static CompoundTag parseNBTHashRS(ItemStack stack, Map<?, ?> table, List<ItemStack> items) throws LuaException {
         String nbt = TableHelper.optStringField(table, "nbt", null);
-        if (nbt == null || nbt.isEmpty())
-            return null;
+        if (nbt == null || nbt.isEmpty()) return null;
         CompoundTag tag = RefinedStorage.findMatchingTag(stack, nbt, items);
-        if (tag != null)
-            return tag;
+        if (tag != null) return tag;
 
         tag = new CompoundTag();
         return tag;
+    }
+
+    //Gathers all items in handler and returns them
+    public static List<ItemStack> getItemsFromItemHandler(IItemHandler handler) {
+        List<ItemStack> items = new ArrayList<ItemStack>(handler.getSlots());
+        for(int slot=0; slot<handler.getSlots(); slot++) {
+            items.add(handler.getStackInSlot(slot).copy());
+        }
+
+        return items;
     }
 }

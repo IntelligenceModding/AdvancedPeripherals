@@ -56,12 +56,11 @@ public class AutomataEntityHandPlugin extends AutomataCorePlugin {
         automataCore.addRotationCycle();
         TurtlePeripheralOwner owner = automataCore.getPeripheralOwner();
         HitResult entityHit = owner.withPlayer(player -> player.findHit(false, true, suitableEntity));
-        if (entityHit.getType() == HitResult.Type.MISS)
-            return MethodResult.of(null, "Nothing found");
+        if (entityHit.getType() == HitResult.Type.MISS) return MethodResult.of(null, "Nothing found");
         Entity entity = ((EntityHitResult) entityHit).getEntity();
-        if (!(entity instanceof Animal))
+        if (!(entity instanceof Animal animal))
             return MethodResult.of(null, "Well, entity is not animal entity, but how?");
-        return MethodResult.of(LuaConverter.animalToLua((Animal) entity, owner.getToolInMainHand()));
+        return MethodResult.of(LuaConverter.animalToLua(animal, owner.getToolInMainHand()));
     }
 
     @LuaFunction(mainThread = true)

@@ -19,7 +19,6 @@ import javax.annotation.Nonnull;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import static de.srendi.advancedperipherals.common.addons.computercraft.operations.SingleOperation.SUCK;
 
@@ -37,10 +36,7 @@ public class AutomataItemSuckPlugin extends AutomataCorePlugin {
     protected AABB getBox(BlockPos pos) {
         int x = pos.getX(), y = pos.getY(), z = pos.getZ();
         int interactionRadius = automataCore.getInteractionRadius();
-        return new AABB(
-                x - interactionRadius, y - interactionRadius, z - interactionRadius,
-                x + interactionRadius, y + interactionRadius, z + interactionRadius
-        );
+        return new AABB(x - interactionRadius, y - interactionRadius, z - interactionRadius, x + interactionRadius, y + interactionRadius, z + interactionRadius);
     }
 
     protected List<ItemEntity> getItems() {
@@ -90,8 +86,7 @@ public class AutomataItemSuckPlugin extends AutomataCorePlugin {
             itemData.put("entity_id", item.getId());
             itemData.put("name", item.getItem().getDisplayName().getString());
             ResourceLocation itemName = item.getItem().getItem().getRegistryName();
-            if (itemName != null)
-                itemData.put("technicalName", itemName.toString());
+            if (itemName != null) itemData.put("technicalName", itemName.toString());
             itemData.put("count", item.getItem().getCount());
             itemData.put("tags", LuaConverter.tagsToList(() -> item.getItem().getItem().builtInRegistryHolder().tags()));
             data.put(index, itemData);
@@ -113,8 +108,7 @@ public class AutomataItemSuckPlugin extends AutomataCorePlugin {
                 if (itemName.toString().equals(technicalName)) {
                     requiredQuantity -= suckItem(item, requiredQuantity);
                 }
-                if (requiredQuantity <= 0)
-                    break;
+                if (requiredQuantity <= 0) break;
             }
             return MethodResult.of(true);
         });

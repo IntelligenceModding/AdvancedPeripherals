@@ -73,8 +73,7 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
                 prefixComponent = new TextComponent(prefix);
             }
         }
-        if (brackets.isEmpty())
-            brackets = "[]";
+        if (brackets.isEmpty()) brackets = "[]";
 
         return new TextComponent(color + brackets.charAt(0) + "\u00a7r").append(prefixComponent).append(color + brackets.charAt(1) + "\u00a7r ");
     }
@@ -105,8 +104,7 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
             String message = arguments.getString(0);
             int range = arguments.optInt(4, -1);
             MutableComponent component = Component.Serializer.fromJson(message);
-            if (component == null)
-                return MethodResult.of(null, "incorrect json");
+            if (component == null) return MethodResult.of(null, "incorrect json");
             if (checkBrackets(arguments.optString(2)))
                 return MethodResult.of(null, "incorrect bracket string (e.g. [], {}, <>, ...)");
             MutableComponent preparedMessage = appendPrefix(
@@ -142,8 +140,9 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
                 if (range != -1) {
                     if (CoordUtil.isInRange(getPos(), getLevel(), player, range))
                         player.sendMessage(preparedMessage, Util.NIL_UUID);
-                } else
+                } else {
                     player.sendMessage(preparedMessage, Util.NIL_UUID);
+                }
             }
             return MethodResult.of(true);
         });
@@ -155,11 +154,9 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
             String message = arguments.getString(0);
             String playerName = arguments.getString(1);
             ServerPlayer player = getPlayer(playerName);
-            if (player == null)
-                return MethodResult.of(null, "incorrect player name/uuid");
+            if (player == null) return MethodResult.of(null, "incorrect player name/uuid");
             MutableComponent component = Component.Serializer.fromJson(message);
-            if (component == null)
-                return MethodResult.of(null, "incorrect json");
+            if (component == null) return MethodResult.of(null, "incorrect json");
             if (checkBrackets(arguments.optString(3)))
                 return MethodResult.of(null, "incorrect bracket string (e.g. [], {}, <>, ...)");
             MutableComponent preparedMessage = appendPrefix(
@@ -178,8 +175,7 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
             String message = arguments.getString(0);
             String playerName = arguments.getString(1);
             ServerPlayer player = getPlayer(playerName);
-            if (player == null)
-                return MethodResult.of(null, "incorrect player name/uuid");
+            if (player == null) return MethodResult.of(null, "incorrect player name/uuid");
             if (checkBrackets(arguments.optString(3)))
                 return MethodResult.of(null, "incorrect bracket string (e.g. [], {}, <>, ...)");
             MutableComponent preparedMessage = appendPrefix(

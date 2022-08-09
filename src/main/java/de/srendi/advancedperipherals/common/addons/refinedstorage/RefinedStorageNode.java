@@ -17,10 +17,10 @@ public class RefinedStorageNode extends NetworkNode {
     }
 
     @Override
-    public int getEnergyUsage() { return APConfig.PERIPHERALS_CONFIG.RS_CONSUMPTION.get(); }
+    public int getEnergyUsage() {return APConfig.PERIPHERALS_CONFIG.RS_CONSUMPTION.get();}
 
     @Override
-    public ResourceLocation getId() { return new ResourceLocation(AdvancedPeripherals.MOD_ID, "rs_bridge"); }
+    public ResourceLocation getId() {return new ResourceLocation(AdvancedPeripherals.MOD_ID, "rs_bridge");}
 
     @NotNull
     @Override

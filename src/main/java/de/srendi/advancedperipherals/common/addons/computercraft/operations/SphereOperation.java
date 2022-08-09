@@ -29,18 +29,10 @@ public enum SphereOperation implements IPeripheralOperation<SphereOperationConte
 
     @Override
     public void addToConfig(ForgeConfigSpec.Builder builder) {
-        cooldown = builder.defineInRange(
-                settingsName() + "Cooldown", defaultCooldown, 1_000, Integer.MAX_VALUE
-        );
-        max_free_radius = builder.defineInRange(
-                settingsName() + "MaxFreeRadius", defaultMaxFreeRadius, 1, 64
-        );
-        max_cost_radius = builder.defineInRange(
-                settingsName() + "MaxCostRadius", defaultMaxCostRadius, 1, 64
-        );
-        extra_block_cost = builder.defineInRange(
-                settingsName() + "ExtraBlockCost", defaultExtraBlockCost, 0.1, Double.MAX_VALUE
-        );
+        cooldown = builder.defineInRange(settingsName() + "Cooldown", defaultCooldown, 1_000, Integer.MAX_VALUE);
+        max_free_radius = builder.defineInRange(settingsName() + "MaxFreeRadius", defaultMaxFreeRadius, 1, 64);
+        max_cost_radius = builder.defineInRange(settingsName() + "MaxCostRadius", defaultMaxCostRadius, 1, 64);
+        extra_block_cost = builder.defineInRange(settingsName() + "ExtraBlockCost", defaultExtraBlockCost, 0.1, Double.MAX_VALUE);
     }
 
     @Override
@@ -55,8 +47,7 @@ public enum SphereOperation implements IPeripheralOperation<SphereOperationConte
 
     @Override
     public int getCost(SphereOperationContext context) {
-        if (context.getRadius() <= max_free_radius.get())
-            return 0;
+        if (context.getRadius() <= max_free_radius.get()) return 0;
         int freeBlockCount = IntMath.pow(2 * max_free_radius.get() + 1, 3);
         int allBlockCount = IntMath.pow(2 * context.getRadius() + 1, 3);
         return (int) Math.floor((allBlockCount - freeBlockCount) * extra_block_cost.get());

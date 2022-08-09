@@ -2,11 +2,9 @@ package de.srendi.advancedperipherals.common.addons.computercraft.peripheral.met
 
 import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
+import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.addons.computercraft.operations.AutomataCoreTier;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
-
-import java.util.Random;
-
 
 public class OverpoweredEndAutomataCorePeripheral extends EndAutomataCorePeripheral {
 
@@ -19,7 +17,7 @@ public class OverpoweredEndAutomataCorePeripheral extends EndAutomataCorePeriphe
 
     public void addRotationCycle(int count) {
         super.addRotationCycle(count);
-        if (new Random().nextDouble() <= APConfig.METAPHYSICS_CONFIG.OVERPOWERED_AUTOMATA_BREAK_CHANCE.get())
+        if (AdvancedPeripherals.RANDOM.nextDouble() <= APConfig.METAPHYSICS_CONFIG.OVERPOWERED_AUTOMATA_BREAK_CHANCE.get())
             owner.destroyUpgrade();
     }
 }

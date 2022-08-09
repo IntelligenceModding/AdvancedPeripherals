@@ -28,9 +28,6 @@ public class ChatBoxEnity extends PeripheralBlockEntity<ChatBoxPeripheral> {
 
     @Override
     public <T extends BlockEntity> void handleTick(Level level, BlockState state, BlockEntityType<T> type) {
-        lastConsumedMessage = Events.traverseChatMessages(lastConsumedMessage, message ->
-                getConnectedComputers().forEach(computer -> computer.queueEvent(
-                "chat", message.username, message.message, message.uuid, message.isHidden)
-        ));
+        lastConsumedMessage = Events.traverseChatMessages(lastConsumedMessage, message -> getConnectedComputers().forEach(computer -> computer.queueEvent("chat", message.username, message.message, message.uuid, message.isHidden)));
     }
 }

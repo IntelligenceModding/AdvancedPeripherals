@@ -96,14 +96,14 @@ public class CraftJob implements ILuaCallback {
     }
 
     public void maybeCraft() {
-        if (startedCrafting || futureJob == null || !futureJob.isDone())
-            return;
-        ICraftingPlan job = null;
+        if (startedCrafting || futureJob == null || !futureJob.isDone()) return;
+        ICraftingPlan job;
         try {
             job = futureJob.get();
         } catch (ExecutionException | InterruptedException ex) {
             AdvancedPeripherals.debug("Tried to get job, but job calculation is not done. Should be done.", org.apache.logging.log4j.Level.FATAL);
             ex.printStackTrace();
+            return;
         }
 
         if (job == null) {
@@ -132,10 +132,8 @@ public class CraftJob implements ILuaCallback {
     @NotNull
     @Override
     public MethodResult resume(Object[] objects) {
-        if (result != null)
-            return result;
-        if (exception != null)
-            return MethodResult.of(exception);
+        if (result != null) return result;
+        if (exception != null) return MethodResult.of(exception);
         return MethodResult.of();
     }
 }

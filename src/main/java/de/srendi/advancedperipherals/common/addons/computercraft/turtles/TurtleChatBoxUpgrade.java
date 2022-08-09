@@ -49,8 +49,7 @@ public class TurtleChatBoxUpgrade extends PeripheralTurtleUpgrade<ChatBoxPeriphe
             if (tile instanceof TileTurtle tileTurtle) {
                 ServerComputer computer = tileTurtle.getServerComputer();
                 lastConsumedMessage = Events.traverseChatMessages(lastConsumedMessage, message -> {
-                    computer.queueEvent("chat", new Object[]{message.username, message.message,
-                            message.uuid, message.isHidden});
+                    computer.queueEvent("chat", new Object[]{message.username, message.message, message.uuid, message.isHidden});
                 });
             }
         }

@@ -22,8 +22,7 @@ public class APCommands {
 
     @SubscribeEvent
     public static void register(RegisterCommandsEvent event) {
-        event.getDispatcher().register(Commands.literal("advancedperipherals")
-                .then(Commands.literal("getHashItem").executes(context -> getHashItem(context.getSource()))));
+        event.getDispatcher().register(Commands.literal("advancedperipherals").then(Commands.literal("getHashItem").executes(context -> getHashItem(context.getSource()))));
     }
 
     private static int getHashItem(CommandSourceStack source) throws CommandSyntaxException {

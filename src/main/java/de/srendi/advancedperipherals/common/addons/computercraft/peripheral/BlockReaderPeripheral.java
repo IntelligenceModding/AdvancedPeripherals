@@ -27,23 +27,15 @@ public class BlockReaderPeripheral extends BasePeripheral<BlockEntityPeripheralO
 
     @LuaFunction(mainThread = true)
     public final String getBlockName() {
-        if (getBlockInFront().is(Blocks.AIR))
-            return "none";
+        if (getBlockInFront().is(Blocks.AIR)) return "none";
         return getBlockInFront().getBlock().getRegistryName().toString();
     }
 
     @LuaFunction(mainThread = true)
     public final Object getBlockData() {
-        if (getBlockInFront().is(Blocks.AIR) && !(getBlockInFront().getBlock() instanceof EntityBlock))
-            return null;
-        BlockEntity target = getLevel().getBlockEntity(
-                getPos().relative(
-                        getLevel().getBlockState(getPos()).getValue(
-                                APBlockEntityBlock.FACING
-                        )
-                )
-        );
-        return NBTUtil.toLua(target.saveWithFullMetadata());
+        if (getBlockInFront().is(Blocks.AIR) && !(getBlockInFront().getBlock() instanceof EntityBlock)) return null;
+        BlockEntity target = getLevel().getBlockEntity(getPos().relative(getLevel().getBlockState(getPos()).getValue(APBlockEntityBlock.FACING)));
+        return NBTUtil.toLua(target.saveWithoutMetadata());
     }
 
     private BlockState getBlockInFront() {
