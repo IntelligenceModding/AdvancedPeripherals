@@ -34,7 +34,7 @@ apply plugin: 'org.parchmentmc.librarian.forgegradle'
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
 wrapper {
-    gradleVersion = '7.4.2'
+    gradleVersion = '7.5'
     distributionType = Wrapper.DistributionType.ALL
 }
 

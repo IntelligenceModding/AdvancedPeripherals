@@ -68,7 +68,7 @@ public class RecipesProvider extends RecipeProvider implements IConditionBuilder
         ShapedRecipeBuilder.shaped(de.srendi.advancedperipherals.common.setup.Items.CHUNK_CONTROLLER.get())
                 .define('I', Tags.Items.INGOTS_IRON)
                 .define('R', Tags.Items.DUSTS_REDSTONE)
-                .define('A', Items.RESPAWN_ANCHOR)
+                .define('A', Items.ENDER_EYE)
                 .pattern("IRI")
                 .pattern("RAR")
                 .pattern("IRI")

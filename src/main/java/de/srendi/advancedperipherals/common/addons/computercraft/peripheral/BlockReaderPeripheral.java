@@ -43,7 +43,7 @@ public class BlockReaderPeripheral extends BasePeripheral<BlockEntityPeripheralO
                         )
                 )
         );
-        return NBTUtil.toLua(target.saveWithoutMetadata());
+        return NBTUtil.toLua(target.saveWithFullMetadata());
     }
 
     private BlockState getBlockInFront() {
