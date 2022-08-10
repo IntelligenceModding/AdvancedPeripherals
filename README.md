@@ -61,7 +61,7 @@ will close pull requests related to translations.
 
 <!----------------------------------------------------------------------------->
 
-[Documentation]: https://docs.srendi.de
+[Documentation]: https://peaceful-nobel-03befe.netlify.app/
 [Contributors]: https://github.com/Seniorendi/AdvancedPeripherals/graphs/contributors
 [CurseForge]: https://www.curseforge.com/minecraft/mc-mods/advanced-peripherals
 [Actions]: https://github.com/Seniorendi/AdvancedPeripherals/actions
