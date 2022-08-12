@@ -6,7 +6,7 @@ import net.minecraftforge.fml.config.ModConfig;
 
 public class GeneralConfig implements IAPConfig {
 
-    public final ForgeConfigSpec.BooleanValue ENABLE_DEBUG_MODE;
+    public final ForgeConfigSpec.BooleanValue enableDebugMode;
     private final ForgeConfigSpec configSpec;
 
     GeneralConfig() {
@@ -14,7 +14,7 @@ public class GeneralConfig implements IAPConfig {
 
         builder.comment("Config to adjust general mod settings").push("General");
 
-        ENABLE_DEBUG_MODE = builder.comment("Enable the debug mode. You should only enable it, if a developer says it or something does not work.").define("enableDebugMode", false);
+        enableDebugMode = builder.comment("Enables the debug mode. Only enable it if needed.").define("enableDebugMode", false);
 
         builder.pop();
         builder.push("Core");

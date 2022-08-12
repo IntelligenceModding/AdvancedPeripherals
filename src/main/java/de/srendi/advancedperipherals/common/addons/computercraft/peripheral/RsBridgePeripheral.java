@@ -37,17 +37,23 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         super(TYPE, new BlockEntityPeripheralOwner<>(tileEntity));
     }
 
-    private RefinedStorageNode getNode() {return owner.tileEntity.getNode();}
+    private RefinedStorageNode getNode() {
+        return owner.tileEntity.getNode();
+    }
 
-    private INetwork getNetwork() {return getNode().getNetwork();}
+    private INetwork getNetwork() {
+        return getNode().getNetwork();
+    }
 
     @Override
     public boolean isEnabled() {
-        return APConfig.PERIPHERALS_CONFIG.ENABLE_RS_BRIDGE.get();
+        return APConfig.PERIPHERALS_CONFIG.enableRSBridge.get();
     }
 
     @LuaFunction(mainThread = true)
-    public final Object listItems() {return RefinedStorage.listItems(getNetwork());}
+    public final Object listItems() {
+        return RefinedStorage.listItems(getNetwork());
+    }
 
     @LuaFunction(mainThread = true)
     public final Object listCraftableItems() {

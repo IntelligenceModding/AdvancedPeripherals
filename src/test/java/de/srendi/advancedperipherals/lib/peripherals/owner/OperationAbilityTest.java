@@ -1,17 +1,5 @@
 package de.srendi.advancedperipherals.lib.peripherals.owner;
 
-import de.srendi.advancedperipherals.common.addons.computercraft.owner.OperationAbility;
-import de.srendi.advancedperipherals.common.addons.computercraft.owner.PeripheralOwnerAbility;
-import de.srendi.advancedperipherals.lib.LibConfig;
-import de.srendi.advancedperipherals.lib.peripherals.IPeripheralOperation;
-import de.srendi.advancedperipherals.test.DummyPeripheralOwner;
-import org.junit.jupiter.api.Test;
-
-import java.util.HashMap;
-import java.util.Map;
-
-import static org.junit.jupiter.api.Assertions.*;
-
 public class OperationAbilityTest {
 
     //Commented out until we port ttoolkit to 1.18

@@ -30,11 +30,11 @@ public class DataStorageUtil {
      **/
 
     public static class RotationCharge {
-        public final static int ROTATION_STEPS = 36;
+        public static final int ROTATION_STEPS = 36;
         /**
          * Used for gear rotation animation
          */
-        private final static String ROTATION_CHARGE_SETTING = "rotationCharge";
+        private static final String ROTATION_CHARGE_SETTING = "rotationCharge";
 
         public static int get(@Nonnull ITurtleAccess access, @Nonnull TurtleSide side) {
             return getDataStorage(access, side).getInt(ROTATION_CHARGE_SETTING);

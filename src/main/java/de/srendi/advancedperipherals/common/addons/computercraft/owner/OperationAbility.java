@@ -21,7 +21,7 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 public class OperationAbility implements IOwnerAbility, IPeripheralPlugin {
-    private final static String COOLDOWNS_TAG = "cooldowns";
+    private static final String COOLDOWNS_TAG = "cooldowns";
 
     private final Map<String, IPeripheralOperation<?>> allowedOperations = new HashMap<>();
     private final IPeripheralOwner owner;
@@ -50,9 +50,9 @@ public class OperationAbility implements IOwnerAbility, IPeripheralPlugin {
 
     public void registerOperation(@NotNull IPeripheralOperation<?> operation) {
         allowedOperations.put(operation.settingsName(), operation);
-        if (LibConfig.isInitialCooldownEnabled) {
+        if (LibConfig.initialCooldownEnabled) {
             int initialCooldown = operation.getInitialCooldown();
-            if (initialCooldown >= LibConfig.initialCooldownSensetiveLevel) setCooldown(operation, initialCooldown);
+            if (initialCooldown >= LibConfig.initialCooldownSensitivity) setCooldown(operation, initialCooldown);
         }
     }
 
@@ -115,6 +115,6 @@ public class OperationAbility implements IOwnerAbility, IPeripheralPlugin {
     }
 
     public enum FailReason {
-        COOLDOWN, NOT_ENOUGH_FUEL, CHECK_FAILED;
+        COOLDOWN, NOT_ENOUGH_FUEL, CHECK_FAILED
     }
 }

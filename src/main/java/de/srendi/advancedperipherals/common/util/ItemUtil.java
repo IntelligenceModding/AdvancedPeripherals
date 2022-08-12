@@ -3,6 +3,7 @@ package de.srendi.advancedperipherals.common.util;
 import appeng.api.storage.MEStorage;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.core.apis.TableHelper;
+import dan200.computercraft.shared.Registry;
 import de.srendi.advancedperipherals.common.addons.appliedenergistics.AppEngApi;
 import de.srendi.advancedperipherals.common.addons.refinedstorage.RefinedStorage;
 import net.minecraft.ResourceLocationException;
@@ -11,27 +12,27 @@ import net.minecraft.nbt.IntTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.ForgeRegistryEntry;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.ObjectHolder;
-import net.minecraftforge.items.IItemHandler;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.ArrayList;
 
 public class ItemUtil {
 
     @ObjectHolder("computercraft:turtle_normal")
-    public static Item TURTLE_NORMAL;
+    public static final Item TURTLE_NORMAL = Registry.ModItems.TURTLE_NORMAL.get();
     @ObjectHolder("computercraft:turtle_advanced")
-    public static Item TURTLE_ADVANCED;
+    public static final Item TURTLE_ADVANCED = Registry.ModItems.TURTLE_ADVANCED.get();
 
     @ObjectHolder("computercraft:pocket_computer_normal")
-    public static Item POCKET_NORMAL;
+    public static final Item POCKET_NORMAL = Registry.ModItems.POCKET_COMPUTER_NORMAL.get();
     @ObjectHolder("computercraft:pocket_computer_advanced")
-    public static Item POCKET_ADVANCED;
+    public static final Item POCKET_ADVANCED = Registry.ModItems.POCKET_COMPUTER_ADVANCED.get();
 
     public static <T extends ForgeRegistryEntry<T>> T getRegistryEntry(String name, IForgeRegistry<T> forgeRegistry) {
         ResourceLocation location;
@@ -157,8 +158,8 @@ public class ItemUtil {
 
     //Gathers all items in handler and returns them
     public static List<ItemStack> getItemsFromItemHandler(IItemHandler handler) {
-        List<ItemStack> items = new ArrayList<ItemStack>(handler.getSlots());
-        for(int slot=0; slot<handler.getSlots(); slot++) {
+        List<ItemStack> items = new ArrayList<>(handler.getSlots());
+        for (int slot = 0; slot < handler.getSlots(); slot++) {
             items.add(handler.getStackInSlot(slot).copy());
         }
 

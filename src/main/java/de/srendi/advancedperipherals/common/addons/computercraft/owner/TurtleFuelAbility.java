@@ -12,7 +12,7 @@ public class TurtleFuelAbility extends FuelAbility<TurtlePeripheralOwner> {
     }
 
     @Override
-    protected boolean _consumeFuel(int count) {
+    protected boolean consumeFuel(int count) {
         return owner.turtle.consumeFuel(count);
     }
 

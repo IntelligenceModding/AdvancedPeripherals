@@ -48,7 +48,7 @@ public class ARRenderHelper extends GuiComponent {
     public void drawCircle(PoseStack matrixStack, int centerX, int centerY, float radius, int color) {
         color = fixAlpha(color);
 
-        final int n_segments = 360;
+        final int nSegments = 360;
         Matrix4f matrix = matrixStack.last().pose();
 
         float z = this.getBlitOffset();
@@ -61,8 +61,8 @@ public class ARRenderHelper extends GuiComponent {
         RenderSystem.disableTexture();
         RenderSystem.defaultBlendFunc();
         bufferbuilder.begin(VertexFormat.Mode.LINES, DefaultVertexFormat.POSITION_COLOR);
-        for (int i = 0; i < n_segments; i++) {
-            double angle = 2 * Math.PI * i / n_segments;
+        for (int i = 0; i < nSegments; i++) {
+            double angle = 2 * Math.PI * i / nSegments;
             float xd = (float) (radius * Math.sin(angle));
             float yd = (float) (radius * Math.cos(angle));
             bufferbuilder.vertex(matrix, centerX + xd, centerY + yd, z).color(r, g, b, a).endVertex();

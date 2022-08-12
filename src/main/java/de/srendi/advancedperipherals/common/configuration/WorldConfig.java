@@ -5,9 +5,9 @@ import net.minecraftforge.fml.config.ModConfig;
 
 public class WorldConfig implements IAPConfig {
 
-    public final ForgeConfigSpec.BooleanValue ENABLE_VILLAGER_STRUCTURES;
-    public final ForgeConfigSpec.BooleanValue GIVE_PLAYER_BOOK_ON_JOIN;
-    public final ForgeConfigSpec.IntValue VILLAGER_STRUCTURE_WEIGHT;
+    public final ForgeConfigSpec.BooleanValue enableVillagerStructures;
+    public final ForgeConfigSpec.BooleanValue givePlayerBookOnJoin;
+    public final ForgeConfigSpec.IntValue villagerStructureWeight;
     private final ForgeConfigSpec configSpec;
 
     public WorldConfig() {
@@ -15,9 +15,9 @@ public class WorldConfig implements IAPConfig {
 
         builder.comment("Config to adjust world settings").push("World");
 
-        ENABLE_VILLAGER_STRUCTURES = builder.comment("Enable the villager structures for the computer scientist.").define("enableVillagerStructures", true);
-        GIVE_PLAYER_BOOK_ON_JOIN = builder.comment("Gives the ap documentation to new players on a world.").define("givePlayerBookOnJoin", true);
-        VILLAGER_STRUCTURE_WEIGHT = builder.comment("The weight of the villager structures").defineInRange("villagerStructureWeight", 10, 0, 16000);
+        enableVillagerStructures = builder.comment("Enable the villager structures for the computer scientist.").define("enableVillagerStructures", true);
+        givePlayerBookOnJoin = builder.comment("Gives the ap documentation to new players.").define("givePlayerBookOnJoin", true);
+        villagerStructureWeight = builder.comment("The weight of the villager structures.").defineInRange("villagerStructureWeight", 10, 0, 16000);
 
         builder.pop();
         configSpec = builder.build();

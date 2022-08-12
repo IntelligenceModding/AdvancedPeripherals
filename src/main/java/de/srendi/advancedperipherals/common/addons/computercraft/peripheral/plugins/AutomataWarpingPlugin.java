@@ -24,8 +24,8 @@ import static de.srendi.advancedperipherals.common.addons.computercraft.operatio
 
 public class AutomataWarpingPlugin extends AutomataCorePlugin {
 
-    private final static String POINT_DATA_MARK = "warp_points";
-    private final static String WORLD_DATA_MARK = "warp_world";
+    private static final String POINT_DATA_MARK = "warp_points";
+    private static final String WORLD_DATA_MARK = "warp_world";
 
     public AutomataWarpingPlugin(AutomataCorePeripheral automataCore) {
         super(automataCore);
@@ -68,7 +68,7 @@ public class AutomataWarpingPlugin extends AutomataCorePlugin {
             return pairData.getLeft();
         }
         CompoundTag data = pairData.getRight();
-        if (data.getAllKeys().size() >= APConfig.METAPHYSICS_CONFIG.END_AUTOMATA_CORE_WARP_POINT_LIMIT.get())
+        if (data.getAllKeys().size() >= APConfig.METAPHYSICS_CONFIG.endAutomataCoreWarpPointLimit.get())
             return MethodResult.of(null, "Cannot add new point, limit reached");
         data.put(name, NBTUtil.toNBT(automataCore.getPeripheralOwner().getPos()));
         return MethodResult.of(true);

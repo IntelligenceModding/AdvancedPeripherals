@@ -90,12 +90,12 @@ public class APFakePlayer extends FakePlayer {
     }
 
     @Override
-    public boolean canAttack(@NotNull LivingEntity p_213336_1_) {
+    public boolean canAttack(@NotNull LivingEntity livingEntity) {
         return true;
     }
 
     @Override
-    public void openTextEdit(@NotNull SignBlockEntity p_175141_1_) {
+    public void openTextEdit(@NotNull SignBlockEntity sign) {
     }
 
 
@@ -268,7 +268,7 @@ public class APFakePlayer extends FakePlayer {
                     return null;
                 }
                 return new BlockHitResult(new Vec3(blockPos.getX(), blockPos.getY(), blockPos.getZ()), traceDirection, blockPos, false);
-            }, (rayTraceContext) -> BlockHitResult.miss(rayTraceContext.getTo(), traceDirection, new BlockPos(rayTraceContext.getTo())));
+            }, rayTraceContext -> BlockHitResult.miss(rayTraceContext.getTo(), traceDirection, new BlockPos(rayTraceContext.getTo())));
         }
 
         if (skipEntity) {

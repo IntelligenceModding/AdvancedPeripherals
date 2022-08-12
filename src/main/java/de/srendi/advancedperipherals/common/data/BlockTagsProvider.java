@@ -38,8 +38,8 @@ public class BlockTagsProvider extends TagsProvider<Block> {
     }
 
     @Override
-    protected Path getPath(ResourceLocation p_126561_) {
-        return this.generator.getOutputFolder().resolve("data/" + p_126561_.getNamespace() + "/tags/blocks/" + p_126561_.getPath() + ".json");
+    protected Path getPath(ResourceLocation block) {
+        return this.generator.getOutputFolder().resolve("data/" + block.getNamespace() + "/tags/blocks/" + block.getPath() + ".json");
     }
 
     @Override

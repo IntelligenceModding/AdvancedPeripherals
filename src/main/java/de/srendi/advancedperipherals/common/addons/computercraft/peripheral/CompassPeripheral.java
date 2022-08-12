@@ -17,7 +17,7 @@ public class CompassPeripheral extends BasePeripheral<TurtlePeripheralOwner> {
 
     @Override
     public boolean isEnabled() {
-        return APConfig.PERIPHERALS_CONFIG.ENABLE_COMPASS_TURTLE.get();
+        return APConfig.PERIPHERALS_CONFIG.enableCompassTurtle.get();
     }
 
     @LuaFunction(mainThread = true)

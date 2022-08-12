@@ -30,7 +30,7 @@ public class PlayerDetectorBlock extends APBlockEntityBlock<PlayerDetectorEntity
 
     @Override
     public @NotNull InteractionResult use(@NotNull BlockState state, Level levelIn, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand handIn, @NotNull BlockHitResult hit) {
-        if (APConfig.PERIPHERALS_CONFIG.ENABLE_PLAYER_DETECTOR.get()) {
+        if (APConfig.PERIPHERALS_CONFIG.enablePlayerDetector.get()) {
             BlockEntity tileEntity = levelIn.getBlockEntity(pos);
             if (tileEntity instanceof PlayerDetectorEntity entity) {
                 for (IComputerAccess computer : entity.getConnectedComputers()) {

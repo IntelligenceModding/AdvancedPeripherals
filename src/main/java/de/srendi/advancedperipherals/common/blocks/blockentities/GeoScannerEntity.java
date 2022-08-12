@@ -16,7 +16,7 @@ public class GeoScannerEntity extends PoweredPeripheralBlockEntity<GeoScannerPer
 
     @Override
     protected int getMaxEnergyStored() {
-        return APConfig.PERIPHERALS_CONFIG.POWERED_PERIPHERAL_MAX_ENERGY_STORAGE.get();
+        return APConfig.PERIPHERALS_CONFIG.poweredPeripheralMaxEnergyStorage.get();
     }
 
     @Override

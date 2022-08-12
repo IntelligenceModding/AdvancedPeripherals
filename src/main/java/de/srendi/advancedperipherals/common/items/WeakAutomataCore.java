@@ -33,25 +33,29 @@ public class WeakAutomataCore extends APItem implements IFeedableAutomataCore {
     private static final String CONSUMED_ENTITY_COUNT = "consumed_entity_count";
     private static final String CONSUMED_ENTITY_NAME = "consumed_entity_name";
     private static final String CONSUMER_ENTITY_COMPOUND = "consumed_entity_compound";
-    private final static Map<String, WeakAutomataCoreRecord> AUTOMATA_CORE_REGISTRY = new HashMap<>() {{
-        WeakAutomataCoreRecord endSoulRecord = new WeakAutomataCoreRecord(new HashMap<>() {{
-            put(EntityType.ENDERMAN.getRegistryName().toString(), 10);
-        }}, Items.END_AUTOMATA_CORE.get());
-        WeakAutomataCoreRecord husbandrySoulRecord = new WeakAutomataCoreRecord(new HashMap<>() {{
-            put(EntityType.COW.getRegistryName().toString(), 3);
-            put(EntityType.SHEEP.getRegistryName().toString(), 3);
-            put(EntityType.CHICKEN.getRegistryName().toString(), 3);
-        }}, Items.HUSBANDRY_AUTOMATA_CORE.get());
-        endSoulRecord.ingredients.keySet().forEach(entityType -> put(entityType, endSoulRecord));
-        husbandrySoulRecord.ingredients.keySet().forEach(entityType -> put(entityType, husbandrySoulRecord));
-    }};
+    private static final Map<String, WeakAutomataCoreRecord> AUTOMATA_CORE_REGISTRY = new HashMap<>();
+
+    static {
+        Map<String, Integer> endSouls = new HashMap<>();
+        endSouls.put(EntityType.ENDERMAN.getRegistryName().toString(), 10);
+        WeakAutomataCoreRecord endSoulRecord = new WeakAutomataCoreRecord(endSouls, Items.END_AUTOMATA_CORE.get());
+
+        Map<String, Integer> husbandrySouls = new HashMap<>();
+        husbandrySouls.put(EntityType.COW.getRegistryName().toString(), 3);
+        husbandrySouls.put(EntityType.SHEEP.getRegistryName().toString(), 3);
+        husbandrySouls.put(EntityType.CHICKEN.getRegistryName().toString(), 3);
+        WeakAutomataCoreRecord husbandrySoulRecord = new WeakAutomataCoreRecord(husbandrySouls, Items.HUSBANDRY_AUTOMATA_CORE.get());
+
+        endSoulRecord.ingredients.keySet().forEach(entityType -> AUTOMATA_CORE_REGISTRY.put(entityType, endSoulRecord));
+        husbandrySoulRecord.ingredients.keySet().forEach(entityType -> AUTOMATA_CORE_REGISTRY.put(entityType, husbandrySoulRecord));
+    }
 
     public WeakAutomataCore(Properties properties, @Nullable ResourceLocation turtleID, @Nullable ResourceLocation pocketID) {
-        super(properties, turtleID, pocketID, APConfig.METAPHYSICS_CONFIG.ENABLE_WEAK_AUTOMATA_CORE);
+        super(properties, turtleID, pocketID, APConfig.METAPHYSICS_CONFIG.enableWeakAutomataCore);
     }
 
     public WeakAutomataCore(@Nullable ResourceLocation turtleID, @Nullable ResourceLocation pocketID) {
-        super(turtleID, pocketID, APConfig.METAPHYSICS_CONFIG.ENABLE_WEAK_AUTOMATA_CORE);
+        super(turtleID, pocketID, APConfig.METAPHYSICS_CONFIG.enableWeakAutomataCore);
     }
 
     @Override

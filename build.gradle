@@ -25,6 +25,7 @@ plugins {
     id 'org.jetbrains.changelog' version '1.2.1'
     id "com.modrinth.minotaur" version "2.+"
     id "org.jetbrains.kotlin.jvm" version "1.6.10"
+    id 'checkstyle'
 }
 
 apply plugin: 'net.minecraftforge.gradle'
@@ -42,7 +43,6 @@ def isSnapshotVersion = Boolean.valueOf(System.getProperty("snapshot"))
 
 version = "${mod_version}" + (isSnapshotVersion ? "-SNAPSHOT" : "")
 group = 'de.srendi.advancedperipherals'
-archivesBaseName = "advancedperipherals-${minecraft_version}"
 
 def static getenv(path = ".env") {
     def env = [:]

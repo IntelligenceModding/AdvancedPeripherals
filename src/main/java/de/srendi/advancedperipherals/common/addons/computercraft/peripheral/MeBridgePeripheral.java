@@ -55,14 +55,22 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
     @Override
     public boolean isEnabled() {
-        return APConfig.PERIPHERALS_CONFIG.ENABLE_ME_BRIDGE.get();
+        return APConfig.PERIPHERALS_CONFIG.enableMEBridge.get();
     }
 
     private ICraftingService getCraftingService() {
         return node.getGrid().getCraftingService();
     }
 
-    protected long _exportItem(@NotNull IArguments arguments, @NotNull IItemHandler targetInventory) throws LuaException {
+    /**
+     * exports an item out of the system to a valid inventory
+     *
+     * @param arguments the arguments given by the computer
+     * @param targetInventory the give inventory
+     * @return the exportable amount
+     * @throws LuaException if stack does not exist or the system is offline - will be removed in 0.8
+     */
+    protected long exportToChest(@NotNull IArguments arguments, @NotNull IItemHandler targetInventory) throws LuaException {
         MEStorage monitor = AppEngApi.getMonitor(node);
         ItemStack stack = ItemUtil.getItemStack(arguments.getTable(0), monitor);
         AEItemKey targetStack = AEItemKey.of(stack);
@@ -91,7 +99,15 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         return transferableAmount;
     }
 
-    protected int _importItem(@NotNull IArguments arguments, @NotNull IItemHandler targetInventory) throws LuaException {
+    /**
+     * imports an item to the system from a valid inventory
+     *
+     * @param arguments the arguments given by the computer
+     * @param targetInventory the give inventory
+     * @return the imported amount
+     * @throws LuaException if system is offline - will be removed in 0.8
+     */
+    protected int importToME(@NotNull IArguments arguments, @NotNull IItemHandler targetInventory) throws LuaException {
         MEStorage monitor = AppEngApi.getMonitor(node);
         ItemStack stack = ItemUtil.getItemStack(arguments.getTable(0), monitor);
         AEItemKey aeStack = AEItemKey.of(stack);
@@ -179,25 +195,25 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     @LuaFunction(mainThread = true)
     public final long exportItem(@NotNull IArguments arguments) throws LuaException {
         IItemHandler inventory = InventoryUtil.getHandlerFromDirection(arguments.getString(1), owner);
-        return _exportItem(arguments, inventory);
+        return exportToChest(arguments, inventory);
     }
 
     @LuaFunction(mainThread = true)
     public final long exportItemToPeripheral(IComputerAccess computer, IArguments arguments) throws LuaException {
         IItemHandler inventory = InventoryUtil.getHandlerFromName(computer, arguments.getString(1));
-        return _exportItem(arguments, inventory);
+        return exportToChest(arguments, inventory);
     }
 
     @LuaFunction(mainThread = true)
     public final int importItem(IArguments arguments) throws LuaException {
         IItemHandler inventory = InventoryUtil.getHandlerFromDirection(arguments.getString(1), owner);
-        return _importItem(arguments, inventory);
+        return importToME(arguments, inventory);
     }
 
     @LuaFunction(mainThread = true)
     public final int importItemFromPeripheral(IComputerAccess computer, IArguments arguments) throws LuaException {
         IItemHandler inventory = InventoryUtil.getHandlerFromName(computer, arguments.getString(1));
-        return _importItem(arguments, inventory);
+        return importToME(arguments, inventory);
     }
 
     @LuaFunction(mainThread = true)
@@ -244,7 +260,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         int i = 1;
         while (iterator.hasNext()) {
             Object o = AppEngApi.getObjectFromCPU(iterator.next());
-            if (o != null) map.put(i++, o);
+            map.put(i++, o);
         }
         return new Object[]{map};
     }

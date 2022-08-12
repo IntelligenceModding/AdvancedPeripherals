@@ -23,6 +23,6 @@ public class EndAutomataCorePeripheral extends WeakAutomataCorePeripheral {
 
     @Override
     public boolean isEnabled() {
-        return APConfig.METAPHYSICS_CONFIG.ENABLE_END_AUTOMATA_CORE.get();
+        return APConfig.METAPHYSICS_CONFIG.enableEndAutomataCore.get();
     }
 }

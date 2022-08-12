@@ -18,7 +18,7 @@ public class RedstoneIntegratorPeripheral extends BasePeripheral<BlockEntityPeri
 
     @Override
     public boolean isEnabled() {
-        return APConfig.PERIPHERALS_CONFIG.ENABLE_REDSTONE_INTEGRATOR.get();
+        return APConfig.PERIPHERALS_CONFIG.enableRedstoneIntegrator.get();
     }
 
     @LuaFunction(mainThread = true)

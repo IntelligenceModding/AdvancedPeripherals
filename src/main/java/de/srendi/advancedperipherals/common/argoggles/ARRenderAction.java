@@ -7,6 +7,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraftforge.common.util.INBTSerializable;
 
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.Optional;
 
 public final class ARRenderAction implements INBTSerializable<CompoundTag> {
@@ -125,6 +126,13 @@ public final class ARRenderAction implements INBTSerializable<CompoundTag> {
             return type.equals(renderAction.type) && stringArg.equals(renderAction.stringArg) && Arrays.equals(intArgs, renderAction.intArgs);
         }
         return super.equals(obj);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Objects.hash(id, type, stringArg, virtualScreenSize);
+        result = 31 * result + Arrays.hashCode(intArgs);
+        return result;
     }
 
     @Override

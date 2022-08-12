@@ -51,7 +51,7 @@ public class MeBridgeEntity extends PeripheralBlockEntity<MeBridgePeripheral> im
             if (!initialized) {
 
                 mainNode.setFlags(GridFlags.REQUIRE_CHANNEL);
-                mainNode.setIdlePowerUsage(APConfig.PERIPHERALS_CONFIG.ME_CONSUMPTION.get());
+                mainNode.setIdlePowerUsage(APConfig.PERIPHERALS_CONFIG.meConsumption.get());
                 mainNode.setVisualRepresentation(new ItemStack(Blocks.ME_BRIDGE.get()));
                 mainNode.setInWorldNode(true);
                 mainNode.create(level, getBlockPos());

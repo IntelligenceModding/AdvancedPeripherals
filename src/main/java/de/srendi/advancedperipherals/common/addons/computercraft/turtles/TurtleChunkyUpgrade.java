@@ -37,7 +37,7 @@ public class TurtleChunkyUpgrade extends PeripheralTurtleUpgrade<ChunkyPeriphera
         //Add a chunk to the Chunk Manager every 10 ticks, if it's not already forced.
         //The turtle can move, so we need to do that.
         super.update(turtle, side);
-        if (APConfig.PERIPHERALS_CONFIG.ENABLE_CHUNKY_TURTLE.get()) {
+        if (APConfig.PERIPHERALS_CONFIG.enableChunkyTurtle.get()) {
             IPeripheral peripheral = turtle.getPeripheral(side);
             if (peripheral instanceof ChunkyPeripheral chunkyPeripheral) {
                 chunkyPeripheral.updateChunkState();

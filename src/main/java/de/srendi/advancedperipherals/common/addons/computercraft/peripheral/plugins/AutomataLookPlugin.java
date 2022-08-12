@@ -24,7 +24,7 @@ public class AutomataLookPlugin extends AutomataCorePlugin {
     public final MethodResult lookAtBlock() {
         automataCore.addRotationCycle();
         TurtlePeripheralOwner owner = automataCore.getPeripheralOwner();
-        HitResult result = owner.withPlayer(APFakePlayer -> APFakePlayer.findHit(true, false));
+        HitResult result = owner.withPlayer(apFakePlayer -> apFakePlayer.findHit(true, false));
         if (result.getType() == HitResult.Type.MISS) return MethodResult.of(null, "No block find");
         BlockHitResult blockHit = (BlockHitResult) result;
         BlockState state = owner.getLevel().getBlockState(blockHit.getBlockPos());
@@ -38,7 +38,7 @@ public class AutomataLookPlugin extends AutomataCorePlugin {
     @LuaFunction(mainThread = true)
     public final MethodResult lookAtEntity() {
         automataCore.addRotationCycle();
-        HitResult result = automataCore.getPeripheralOwner().withPlayer(APFakePlayer -> APFakePlayer.findHit(false, true));
+        HitResult result = automataCore.getPeripheralOwner().withPlayer(apFakePlayer -> apFakePlayer.findHit(false, true));
         if (result.getType() == HitResult.Type.MISS) {
             return MethodResult.of(null, "No entity find");
         }

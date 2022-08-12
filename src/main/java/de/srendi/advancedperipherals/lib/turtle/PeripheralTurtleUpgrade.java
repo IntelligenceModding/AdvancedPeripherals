@@ -40,10 +40,10 @@ public abstract class PeripheralTurtleUpgrade<T extends IBasePeripheral<?>> exte
         if (getLeftModel() == null) {
             float xOffset = turtleSide == TurtleSide.LEFT ? -0.40625f : 0.40625f;
             Matrix4f transform = new Matrix4f(new float[]{
-                    0.0f, 0.0f, -1.0f, 1.0f + xOffset,
-                    1.0f, 0.0f, 0.0f, 0.0f,
-                    0.0f, -1.0f, 0.0f, 1.0f,
-                    0.0f, 0.0f, 0.0f, 1.0f,
+                0.0f, 0.0f, -1.0f, 1.0f + xOffset,
+                1.0f, 0.0f, 0.0f, 0.0f,
+                0.0f, -1.0f, 0.0f, 1.0f,
+                0.0f, 0.0f, 0.0f, 1.0f,
             });
             return TransformedModel.of(getCraftingItem(), new Transformation(transform));
         }

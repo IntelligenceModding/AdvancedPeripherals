@@ -38,7 +38,7 @@ public class APCommands {
             return 0;
         }
         source.sendSuccess(new TextComponent("Hash of you main hand item: "), true);
-        source.sendSuccess(ComponentUtils.wrapInSquareBrackets(new TextComponent(hash).withStyle((style) -> style.applyFormat(ChatFormatting.GREEN).withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, hash)).withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponent("Copy"))))), true);
+        source.sendSuccess(ComponentUtils.wrapInSquareBrackets(new TextComponent(hash).withStyle(style -> style.applyFormat(ChatFormatting.GREEN).withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, hash)).withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponent("Copy"))))), true);
         return 1;
     }
 }

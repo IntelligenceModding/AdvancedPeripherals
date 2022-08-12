@@ -42,7 +42,7 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
 
     @Override
     public boolean isEnabled() {
-        return APConfig.PERIPHERALS_CONFIG.ENABLE_PLAYER_DETECTOR.get();
+        return APConfig.PERIPHERALS_CONFIG.enablePlayerDetector.get();
     }
 
     @LuaFunction(mainThread = true)
@@ -147,12 +147,12 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
 
     @LuaFunction(mainThread = true)
     public final Map<String, Object> getPlayerPos(String username) throws LuaException {
-        if (!APConfig.PERIPHERALS_CONFIG.PLAYER_SPY.get())
+        if (!APConfig.PERIPHERALS_CONFIG.playerSpy.get())
             throw new LuaException("This function is disabled in the config. Activate it or ask an admin if he can activate it.");
         ServerPlayer existingPlayer = null;
         for (ServerPlayer player : getPlayers()) {
             if (player.getName().getString().equals(username)) {
-                if (CoordUtil.isInRange(getPos(), getLevel(), player, APConfig.PERIPHERALS_CONFIG.PLAYER_DET_MAX_RANGE.get())) {
+                if (CoordUtil.isInRange(getPos(), getLevel(), player, APConfig.PERIPHERALS_CONFIG.playerDetMaxRange.get())) {
                     existingPlayer = player;
                     break;
                 }
@@ -164,7 +164,7 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
         info.put("x", Math.floor(existingPlayer.getX()));
         info.put("y", Math.floor(existingPlayer.getY()));
         info.put("z", Math.floor(existingPlayer.getZ()));
-        if (APConfig.PERIPHERALS_CONFIG.MORE_PLAYER_INFORMATION.get()) {
+        if (APConfig.PERIPHERALS_CONFIG.morePlayerInformation.get()) {
             info.put("yaw", existingPlayer.yRotO);
             info.put("pitch", existingPlayer.xRotO);
             info.put("dimension", existingPlayer.getLevel().dimension().location().toString());

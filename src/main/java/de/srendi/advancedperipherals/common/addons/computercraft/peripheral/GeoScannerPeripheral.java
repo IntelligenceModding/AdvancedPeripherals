@@ -35,9 +35,10 @@ import java.util.Map;
 import static de.srendi.advancedperipherals.common.addons.computercraft.operations.SphereOperation.SCAN_BLOCKS;
 
 public class GeoScannerPeripheral extends BasePeripheral<IPeripheralOwner> {
-	/*
-	Highly inspired by https://github.com/SquidDev-CC/plethora/ BlockScanner
-	*/
+
+    /*
+    Highly inspired by https://github.com/SquidDev-CC/plethora/ BlockScanner
+    */
 
     public static final String TYPE = "geoScanner";
 
@@ -62,7 +63,6 @@ public class GeoScannerPeripheral extends BasePeripheral<IPeripheralOwner> {
         List<Map<String, ?>> result = new ArrayList<>();
         ScanUtils.relativeTraverseBlocks(level, center, radius, (state, pos) -> {
             HashMap<String, Object> data = new HashMap<>(6);
-
             data.put("x", pos.getX());
             data.put("y", pos.getY());
             data.put("z", pos.getZ());
@@ -86,7 +86,7 @@ public class GeoScannerPeripheral extends BasePeripheral<IPeripheralOwner> {
 
     @Override
     public boolean isEnabled() {
-        return APConfig.PERIPHERALS_CONFIG.ENABLE_GEO_SCANNER.get();
+        return APConfig.PERIPHERALS_CONFIG.enableGeoScanner.get();
     }
 
     @LuaFunction

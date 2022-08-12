@@ -60,7 +60,7 @@ public class ChunkManager extends SavedData {
     public static void serverTick(TickEvent.ServerTickEvent event) {
         if (event.phase == TickEvent.Phase.END) {
             tickCounter++;
-            if (tickCounter % (APConfig.PERIPHERALS_CONFIG.CHUNK_LOAD_VALID_TIME.get() / 2) == 0) {
+            if (tickCounter % (APConfig.PERIPHERALS_CONFIG.chunkLoadValidTime.get() / 2) == 0) {
                 ChunkManager.get(ServerLifecycleHooks.getCurrentServer().overworld()).cleanup();
             }
         }
@@ -144,7 +144,7 @@ public class ChunkManager extends SavedData {
         private final @NotNull ChunkPos pos;
         private long lastTouch;
 
-        public LoadChunkRecord(@NotNull String dimensionName, @NotNull ChunkPos pos) {
+        LoadChunkRecord(@NotNull String dimensionName, @NotNull ChunkPos pos) {
             this.dimensionName = dimensionName;
             this.pos = pos;
             this.lastTouch = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC);
@@ -168,7 +168,7 @@ public class ChunkManager extends SavedData {
 
         public boolean isValid() {
             long currentEpoch = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC);
-            return lastTouch + APConfig.PERIPHERALS_CONFIG.CHUNK_LOAD_VALID_TIME.get() >= currentEpoch;
+            return lastTouch + APConfig.PERIPHERALS_CONFIG.chunkLoadValidTime.get() >= currentEpoch;
         }
 
         public @NotNull CompoundTag serialize() {

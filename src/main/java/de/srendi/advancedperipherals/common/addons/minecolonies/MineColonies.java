@@ -139,7 +139,7 @@ public class MineColonies {
     /**
      * Converts a skill {@link Skill} into a map
      *
-     * @param skills skills as list. Can be obtained via {@link ICitizenData#getCitizenSkillHandler#getSkills}
+     * @param skills skills as list. Can be obtained via {@link ICitizenData#getCitizenSkillHandler}
      * @return a map with information about the skill
      */
     public static Object skillsToObject(Map<Skill, Tuple<Integer, Double>> skills) {

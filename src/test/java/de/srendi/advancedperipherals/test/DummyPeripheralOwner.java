@@ -1,12 +1,5 @@
 package de.srendi.advancedperipherals.test;
 
-import de.srendi.advancedperipherals.common.addons.computercraft.owner.BasePeripheralOwner;
-import de.srendi.advancedperipherals.common.util.fakeplayer.APFakePlayer;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.function.Function;
-
 public class DummyPeripheralOwner /*extends BasePeripheralOwner*/ {
 
    /* private final CompoundTag dataStorage = new CompoundTag();

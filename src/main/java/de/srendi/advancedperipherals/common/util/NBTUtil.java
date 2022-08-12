@@ -27,7 +27,7 @@ public class NBTUtil {
         } else if (object instanceof Integer integer) {
             return IntTag.valueOf(integer);
         } else if (object instanceof Number number) {
-            return DoubleTag.valueOf((number).doubleValue());
+            return DoubleTag.valueOf(number.doubleValue());
         } else if (object instanceof String) {
             return StringTag.valueOf(object.toString());
         } else if (object instanceof Map<?, ?> map) {

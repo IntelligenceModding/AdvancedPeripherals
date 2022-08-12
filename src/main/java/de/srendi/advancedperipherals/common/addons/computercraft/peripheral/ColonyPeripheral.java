@@ -49,7 +49,7 @@ public class ColonyPeripheral extends BasePeripheral<IPeripheralOwner> {
 
     @Override
     public boolean isEnabled() {
-        return ModList.get().isLoaded("minecolonies") && APConfig.PERIPHERALS_CONFIG.ENABLE_COLONY_INTEGRATOR.get();
+        return ModList.get().isLoaded("minecolonies") && APConfig.PERIPHERALS_CONFIG.enableColonyIntegrator.get();
     }
 
     @LuaFunction(mainThread = true)

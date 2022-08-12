@@ -33,6 +33,6 @@ public class HusbandryAutomataCorePeripheral extends WeakAutomataCorePeripheral 
 
     @Override
     public boolean isEnabled() {
-        return APConfig.METAPHYSICS_CONFIG.ENABLE_HUSBANDRY_AUTOMATA_CORE.get();
+        return APConfig.METAPHYSICS_CONFIG.enableHusbandryAutomataCore.get();
     }
 }

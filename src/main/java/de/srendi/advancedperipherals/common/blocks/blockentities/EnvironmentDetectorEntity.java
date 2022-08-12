@@ -16,7 +16,7 @@ public class EnvironmentDetectorEntity extends PoweredPeripheralBlockEntity<Envi
 
     @Override
     protected int getMaxEnergyStored() {
-        return APConfig.PERIPHERALS_CONFIG.POWERED_PERIPHERAL_MAX_ENERGY_STORAGE.get();
+        return APConfig.PERIPHERALS_CONFIG.poweredPeripheralMaxEnergyStorage.get();
     }
 
     @NotNull

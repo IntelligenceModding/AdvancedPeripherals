@@ -13,7 +13,7 @@ import java.util.function.Predicate;
 
 public class BlockEntityIntegration implements IPeripheralIntegration {
 
-    private final static int DEFAULT_PRIORITY = 50;
+    private static final int DEFAULT_PRIORITY = 50;
 
     private final Function<BlockEntity, ? extends IPeripheral> build;
     private final Predicate<BlockEntity> predicate;

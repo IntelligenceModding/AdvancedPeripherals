@@ -77,7 +77,7 @@ public class EnvironmentDetectorPeripheral extends BasePeripheral<IPeripheralOwn
 
     @Override
     public boolean isEnabled() {
-        return APConfig.PERIPHERALS_CONFIG.ENABLE_ENERGY_DETECTOR.get();
+        return APConfig.PERIPHERALS_CONFIG.enableEnergyDetector.get();
     }
 
     @LuaFunction(mainThread = true)
@@ -119,7 +119,7 @@ public class EnvironmentDetectorPeripheral extends BasePeripheral<IPeripheralOwn
     @LuaFunction(mainThread = true)
     public final boolean isSlimeChunk() {
         ChunkPos chunkPos = new ChunkPos(getPos());
-        return (WorldgenRandom.seedSlimeChunk(chunkPos.x, chunkPos.z, ((WorldGenLevel) getLevel()).getSeed(), 987234911L).nextInt(10) == 0);
+        return WorldgenRandom.seedSlimeChunk(chunkPos.x, chunkPos.z, ((WorldGenLevel) getLevel()).getSeed(), 987234911L).nextInt(10) == 0;
     }
 
     @LuaFunction(mainThread = true)
@@ -154,7 +154,7 @@ public class EnvironmentDetectorPeripheral extends BasePeripheral<IPeripheralOwn
         return getCurrentMoonPhase().keySet().toArray(new Integer[0])[0];
     }
 
-   /* @LuaFunction(mainThread = true)
+    /* @LuaFunction(mainThread = true)
     public final boolean isMoon(int phase) {
         return getCurrentMoonPhase().containsKey(phase);
     }*/

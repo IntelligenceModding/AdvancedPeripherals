@@ -7,34 +7,34 @@ import net.minecraftforge.common.ForgeConfigSpec;
  */
 public class LibConfig {
 
-    public static boolean isInitialCooldownEnabled = true;
-    public static int initialCooldownSensetiveLevel = 6_000;
+    public static boolean initialCooldownEnabled = true;
+    public static int initialCooldownSensitivity = 6_000;
     private static boolean testMode = false;
-    private static ForgeConfigSpec.BooleanValue IS_INITIAL_COOLDOWN_ENABLED;
-    private static ForgeConfigSpec.IntValue INITIAL_COOLDOWN_SENSENTIVE_LEVEL;
+    private static ForgeConfigSpec.BooleanValue isInitialCooldownEnabled;
+    private static ForgeConfigSpec.IntValue initialCooldownSensitiveLevel;
 
     public static void setTestMode(boolean mode) {
         testMode = mode;
         if (mode) {
-            isInitialCooldownEnabled = false;
+            initialCooldownEnabled = false;
         } else {
-            if (IS_INITIAL_COOLDOWN_ENABLED != null) {
+            if (isInitialCooldownEnabled != null) {
                 reloadConfig();
             } else {
-                isInitialCooldownEnabled = true;
+                initialCooldownEnabled = true;
             }
         }
     }
 
     public static void build(final ForgeConfigSpec.Builder builder) {
-        IS_INITIAL_COOLDOWN_ENABLED = builder.comment("Enables initial cooldown on peripheral initialization").define("isInitialCooldownEnabled", true);
-        INITIAL_COOLDOWN_SENSENTIVE_LEVEL = builder.comment("Determinates initial cooldown sensentive level, values lower then this value will not trigger initial cooldown").defineInRange("initialCooldownSensetiveLevel", 6_000, 0, Integer.MAX_VALUE);
+        isInitialCooldownEnabled = builder.comment("Enables initial cooldown on peripheral initialization").define("isInitialCooldownEnabled", true);
+        initialCooldownSensitiveLevel = builder.comment("Determinates initial cooldown sensitive level, values lower then this value will not trigger initial cooldown").defineInRange("initialCooldownSensitiveLevel", 6_000, 0, Integer.MAX_VALUE);
     }
 
     public static void reloadConfig() {
         if (!testMode) {
-            isInitialCooldownEnabled = IS_INITIAL_COOLDOWN_ENABLED.get();
-            initialCooldownSensetiveLevel = INITIAL_COOLDOWN_SENSENTIVE_LEVEL.get();
+            initialCooldownEnabled = isInitialCooldownEnabled.get();
+            initialCooldownSensitivity = initialCooldownSensitiveLevel.get();
         }
     }
 }

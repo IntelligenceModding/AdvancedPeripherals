@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 public class VillageStructures {
     //Adapted from Pneumaticcraft
     public static void init() {
-        if (!APConfig.WORLD_CONFIG.ENABLE_VILLAGER_STRUCTURES.get()) return;
+        if (!APConfig.WORLD_CONFIG.enableVillagerStructures.get()) return;
         //Ensure the vanilla static init is done
         PlainVillagePools.bootstrap();
         SavannaVillagePools.bootstrap();
@@ -27,7 +27,7 @@ public class VillageStructures {
         //Add the scientist house to each village biome
         for (String biome : new String[]{"desert", "snowy", "plains", "savanna", "taiga"}) {
             AdvancedPeripherals.debug("Register generating scientist_" + biome + " village house");
-            addToPool(new ResourceLocation("village/" + biome + "/houses"), AdvancedPeripherals.MOD_ID + ":villages/scientist_" + biome, APConfig.WORLD_CONFIG.VILLAGER_STRUCTURE_WEIGHT.get());
+            addToPool(new ResourceLocation("village/" + biome + "/houses"), AdvancedPeripherals.MOD_ID + ":villages/scientist_" + biome, APConfig.WORLD_CONFIG.villagerStructureWeight.get());
         }
     }
 

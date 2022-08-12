@@ -34,12 +34,12 @@ public class AutomataChargingPlugin extends AutomataCorePlugin {
             int availableFuelSpace = fuelAbility.getFuelMaxCount() - fuelAbility.getFuelCount();
             int requestedRF;
             if (fuel != -1) {
-                requestedRF = fuel * APConfig.METAPHYSICS_CONFIG.ENERGY_TO_FUEL_RATE.get();
+                requestedRF = fuel * APConfig.METAPHYSICS_CONFIG.energyToFuelRate.get();
             } else {
                 requestedRF = storage.getEnergyStored();
             }
-            int realConsumedRF = storage.extractEnergy(Math.min(requestedRF, availableFuelSpace * APConfig.METAPHYSICS_CONFIG.ENERGY_TO_FUEL_RATE.get()), false);
-            int receivedFuel = realConsumedRF / APConfig.METAPHYSICS_CONFIG.ENERGY_TO_FUEL_RATE.get();
+            int realConsumedRF = storage.extractEnergy(Math.min(requestedRF, availableFuelSpace * APConfig.METAPHYSICS_CONFIG.energyToFuelRate.get()), false);
+            int receivedFuel = realConsumedRF / APConfig.METAPHYSICS_CONFIG.energyToFuelRate.get();
             fuelAbility.addFuel(receivedFuel);
             automataCore.addRotationCycle();
             return MethodResult.of(true, receivedFuel);

@@ -17,7 +17,7 @@ public class OverpoweredHusbandryAutomataCorePeripheral extends HusbandryAutomat
 
     public void addRotationCycle(int count) {
         super.addRotationCycle(count);
-        if (AdvancedPeripherals.RANDOM.nextDouble() <= APConfig.METAPHYSICS_CONFIG.OVERPOWERED_AUTOMATA_BREAK_CHANCE.get())
+        if (AdvancedPeripherals.RANDOM.nextDouble() <= APConfig.METAPHYSICS_CONFIG.overpoweredAutomataBreakChance.get())
             owner.destroyUpgrade();
     }
 }

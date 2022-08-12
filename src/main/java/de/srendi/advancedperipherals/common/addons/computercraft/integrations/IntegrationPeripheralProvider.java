@@ -65,7 +65,7 @@ public class IntegrationPeripheralProvider implements IPeripheralProvider {
      * @param <T>         target integration
      */
     public static <T extends BlockEntity> void registerBlockEntityIntegration(Function<BlockEntity, BlockEntityIntegrationPeripheral<T>> integration, Class<T> tileClass, Predicate<T> predicate, int priority) {
-        registerIntegration(new BlockEntityIntegration(integration, (t) -> tileClass.isInstance(t) && predicate.test((T) t), priority));
+        registerIntegration(new BlockEntityIntegration(integration, tile -> tileClass.isInstance(tile) && predicate.test((T) tile), priority));
     }
 
     public static void load() {

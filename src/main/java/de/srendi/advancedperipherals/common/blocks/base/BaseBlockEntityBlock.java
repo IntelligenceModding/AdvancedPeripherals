@@ -70,7 +70,7 @@ public abstract class BaseBlockEntityBlock extends BaseEntityBlock implements IH
 
     @Nullable
     @Override
-    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, @NotNull BlockState state, @NotNull BlockEntityType<T> type) {
         if (level.isClientSide || !belongToTickingEntity) return null;
         return (level1, blockPos, blockState, entity) -> {
             if (entity instanceof IPeripheralTileEntity blockEntity) {
@@ -79,7 +79,7 @@ public abstract class BaseBlockEntityBlock extends BaseEntityBlock implements IH
         };
     }
 
-    public @NotNull RenderShape getRenderShape(@NotNull BlockState p_49232_) {
+    public @NotNull RenderShape getRenderShape(@NotNull BlockState state) {
         return RenderShape.MODEL;
     }
 

@@ -21,7 +21,7 @@ public class Platform {
             Class<?> clazz = Class.forName(AdvancedPeripherals.class.getPackage().getName() + ".common.addons." + path);
             return Optional.of(clazz.newInstance());
         } catch (InstantiationException | IllegalAccessException | ClassNotFoundException loadException) {
-            if (APConfig.GENERAL_CONFIG.ENABLE_DEBUG_MODE.get()) loadException.printStackTrace();
+            if (APConfig.GENERAL_CONFIG.enableDebugMode.get()) loadException.printStackTrace();
             return Optional.empty();
         } catch (Exception e) {
             e.printStackTrace();

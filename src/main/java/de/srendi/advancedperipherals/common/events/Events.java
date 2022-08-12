@@ -32,7 +32,7 @@ public class Events {
 
     @SubscribeEvent
     public static void onWorldJoin(PlayerEvent.PlayerLoggedInEvent event) {
-        if (APConfig.WORLD_CONFIG.GIVE_PLAYER_BOOK_ON_JOIN.get()) {
+        if (APConfig.WORLD_CONFIG.givePlayerBookOnJoin.get()) {
             Player player = event.getPlayer();
             if (!hasPlayedBefore(player)) {
                 ItemStack book = new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation("patchouli", "guide_book")));
@@ -46,7 +46,7 @@ public class Events {
 
     @SubscribeEvent
     public static void onChatBox(ServerChatEvent event) {
-        if (APConfig.PERIPHERALS_CONFIG.ENABLE_CHAT_BOX.get()) {
+        if (APConfig.PERIPHERALS_CONFIG.enableChatBox.get()) {
             String message = event.getMessage();
             boolean isHidden = false;
             if (message.startsWith("$")) {

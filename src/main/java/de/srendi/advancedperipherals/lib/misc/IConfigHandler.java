@@ -6,7 +6,7 @@ import java.util.Arrays;
 import java.util.stream.Collectors;
 
 public interface IConfigHandler {
-    void addToConfig(final ForgeConfigSpec.Builder builder);
+    void addToConfig(ForgeConfigSpec.Builder builder);
 
     String name();
 

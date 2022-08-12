@@ -2,8 +2,6 @@ package de.srendi.advancedperipherals.common.addons.computercraft.peripheral;
 
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
-import dan200.computercraft.api.lua.IArguments;
-import dan200.computercraft.core.apis.TableHelper;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.BlockEntityPeripheralOwner;
 import de.srendi.advancedperipherals.common.blocks.blockentities.InventoryManagerEntity;
@@ -50,7 +48,7 @@ public class InventoryManagerPeripheral extends BasePeripheral<BlockEntityPeriph
 
     @Override
     public boolean isEnabled() {
-        return APConfig.PERIPHERALS_CONFIG.ENABLE_INVENTORY_MANAGER.get();
+        return APConfig.PERIPHERALS_CONFIG.enableInventoryManager.get();
     }
 
     @LuaFunction
@@ -76,15 +74,14 @@ public class InventoryManagerPeripheral extends BasePeripheral<BlockEntityPeriph
     //{name="minecraft:enchanted_book", count=1, nbt="ae70053c97f877de546b0248b9ddf525"}
     //If a count is specified in the item it is silently IGNORED
     @LuaFunction(mainThread = true)
-    public final int addItemToPlayerNBT(String invDirection, int count, Optional<Integer> slot, Optional<Map<?,?>> item) throws LuaException {
+    public final int addItemToPlayerNBT(String invDirection, int count, Optional<Integer> slot, Optional<Map<?, ?>> item) throws LuaException {
         ItemStack stack = ItemStack.EMPTY;
         if (item.isPresent()) {
             Direction direction = validateSide(invDirection);
 
             BlockEntity targetEntity = owner.getLevel().getBlockEntity(owner.getPos().relative(direction));
-            IItemHandler inventoryFrom = targetEntity != null ? targetEntity
-                    .getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, direction).resolve().orElse(null) : null;
-            
+            IItemHandler inventoryFrom = targetEntity != null ? targetEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, direction).resolve().orElse(null) : null;
+
             //We can use getItemStackRS, as it works with List<ItemStack>
             //And doesn't use anything RS specific
             stack = ItemUtil.getItemStackRS(item.get(), ItemUtil.getItemsFromItemHandler(inventoryFrom));
@@ -93,7 +90,7 @@ public class InventoryManagerPeripheral extends BasePeripheral<BlockEntityPeriph
         return addItemCommon(invDirection, count, slot, stack);
     }
 
-    private final int addItemCommon(String invDirection, int count, Optional<Integer> slot, ItemStack stack) throws LuaException {
+    private int addItemCommon(String invDirection, int count, Optional<Integer> slot, ItemStack stack) throws LuaException {
         Direction direction = validateSide(invDirection);
 
         BlockEntity targetEntity = owner.getLevel().getBlockEntity(owner.getPos().relative(direction));
@@ -155,15 +152,14 @@ public class InventoryManagerPeripheral extends BasePeripheral<BlockEntityPeriph
     }
 
     @LuaFunction(mainThread = true)
-    public final int removeItemFromPlayerNBT(String invDirection, int count, Optional<Integer> slot, Optional<Map<?,?>> item) throws LuaException {
+    public final int removeItemFromPlayerNBT(String invDirection, int count, Optional<Integer> slot, Optional<Map<?, ?>> item) throws LuaException {
         ItemStack stack = ItemStack.EMPTY;
         if (item.isPresent()) {
             Direction direction = validateSide(invDirection);
 
             BlockEntity targetEntity = owner.getLevel().getBlockEntity(owner.getPos().relative(direction));
-            IItemHandler inventoryFrom = targetEntity != null ? targetEntity
-                    .getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, direction).resolve().orElse(null) : null;
-            
+            IItemHandler inventoryFrom = targetEntity != null ? targetEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, direction).resolve().orElse(null) : null;
+
             //We can use getItemStackRS, as it works with List<ItemStack>
             //And doesn't use anything RS specific
             stack = ItemUtil.getItemStackRS(item.get(), ItemUtil.getItemsFromItemHandler(inventoryFrom));
@@ -172,7 +168,7 @@ public class InventoryManagerPeripheral extends BasePeripheral<BlockEntityPeriph
         return removeItemCommon(invDirection, count, slot, stack);
     }
 
-    private final int removeItemCommon(String invDirection, int count, Optional<Integer> slot, ItemStack stack) throws LuaException {
+    private int removeItemCommon(String invDirection, int count, Optional<Integer> slot, ItemStack stack) throws LuaException {
         //With this, we can use the item parameter without need to use the slot parameter. If we don't want to use
         //the slot parameter, we can use -1
         int invSlot = -1;
@@ -191,9 +187,22 @@ public class InventoryManagerPeripheral extends BasePeripheral<BlockEntityPeriph
         int transferableAmount = 0;
 
         ItemStack rest = ItemStack.EMPTY;
-        if (invSlot == -1) for (int i = 0; i < inventoryFrom.getContainerSize(); i++) {
-            if (!stack.isEmpty()) if (inventoryFrom.getItem(i).sameItem(stack)) {
-                if (inventoryFrom.getItem(i).getCount() >= amount) {
+        if (invSlot == -1) {
+            for (int i = 0; i < inventoryFrom.getContainerSize(); i++) {
+                if (!stack.isEmpty() && inventoryFrom.getItem(i).sameItem(stack)) {
+                    if (inventoryFrom.getItem(i).getCount() >= amount) {
+                        rest = insertItem(inventoryTo, inventoryFrom.removeItem(i, amount));
+                        transferableAmount += amount - rest.getCount();
+                        break;
+                    } else {
+                        int subcount = inventoryFrom.getItem(i).getCount();
+                        rest = insertItem(inventoryTo, inventoryFrom.removeItem(i, subcount));
+                        amount = count - subcount;
+                        transferableAmount += subcount - rest.getCount();
+                        if (!rest.isEmpty()) break;
+                    }
+                }
+                if (stack.isEmpty() && inventoryFrom.getItem(i).getCount() >= amount) {
                     rest = insertItem(inventoryTo, inventoryFrom.removeItem(i, amount));
                     transferableAmount += amount - rest.getCount();
                     break;
@@ -205,20 +214,9 @@ public class InventoryManagerPeripheral extends BasePeripheral<BlockEntityPeriph
                     if (!rest.isEmpty()) break;
                 }
             }
-            if (stack.isEmpty()) if (inventoryFrom.getItem(i).getCount() >= amount) {
-                rest = insertItem(inventoryTo, inventoryFrom.removeItem(i, amount));
-                transferableAmount += amount - rest.getCount();
-                break;
-            } else {
-                int subcount = inventoryFrom.getItem(i).getCount();
-                rest = insertItem(inventoryTo, inventoryFrom.removeItem(i, subcount));
-                amount = count - subcount;
-                transferableAmount += subcount - rest.getCount();
-                if (!rest.isEmpty()) break;
-            }
         }
         if (invSlot != -1) {
-            if (!stack.isEmpty()) if (inventoryFrom.getItem(slot.get()).sameItem(stack)) {
+            if (!stack.isEmpty() && inventoryFrom.getItem(slot.get()).sameItem(stack)) {
                 if (inventoryFrom.getItem(slot.get()).getCount() >= amount) {
                     rest = insertItem(inventoryTo, inventoryFrom.removeItem(slot.get(), amount));
                     transferableAmount += amount - rest.getCount();
@@ -228,7 +226,7 @@ public class InventoryManagerPeripheral extends BasePeripheral<BlockEntityPeriph
                     transferableAmount += subcount - rest.getCount();
                 }
             }
-            if (stack.isEmpty()) if (inventoryFrom.getItem(slot.get()).getCount() >= amount) {
+            if (stack.isEmpty() && inventoryFrom.getItem(slot.get()).getCount() >= amount) {
                 rest = insertItem(inventoryTo, inventoryFrom.removeItem(slot.get(), amount));
                 transferableAmount += amount - rest.getCount();
             } else {

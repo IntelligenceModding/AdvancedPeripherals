@@ -21,7 +21,7 @@ public abstract class PoweredPeripheralBlockEntity<T extends BasePeripheral<?>> 
 
     public PoweredPeripheralBlockEntity(BlockEntityType<?> tileEntityTypeIn, BlockPos pos, BlockState state) {
         super(tileEntityTypeIn, pos, state);
-        if (APConfig.PERIPHERALS_CONFIG.ENABLE_POWERED_PERIPHERALS.get()) {
+        if (APConfig.PERIPHERALS_CONFIG.enablePoweredPeripherals.get()) {
             lazyEnergyStorage = LazyOptional.of(() -> new EnergyStorage(this.getMaxEnergyStored()));
         } else {
             lazyEnergyStorage = LazyOptional.empty();

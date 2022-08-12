@@ -18,21 +18,29 @@ public abstract class FuelAbility<T extends IPeripheralOwner> implements IOwnerA
         this.owner = owner;
     }
 
-    protected abstract boolean _consumeFuel(int count);
+    protected abstract boolean consumeFuel(int count);
 
     protected abstract int getMaxFuelConsumptionRate();
 
-    protected int _getFuelConsumptionRate() {
+    /**
+     * @return the fuel consumption rate
+     */
+    protected int getConsumptionRate() {
         CompoundTag settings = owner.getDataStorage();
         int rate = settings.getInt(FUEL_CONSUMING_RATE_SETTING);
         if (rate == 0) {
-            _setFuelConsumptionRate(DEFAULT_FUEL_CONSUMING_RATE);
+            setConsumptionRate(DEFAULT_FUEL_CONSUMING_RATE);
             return DEFAULT_FUEL_CONSUMING_RATE;
         }
         return rate;
     }
 
-    protected void _setFuelConsumptionRate(int rate) {
+    /**
+     * Sets the fuel consumption rate
+     *
+     * @param rate the new fuel consumption rate
+     */
+    protected void setConsumptionRate(int rate) {
         if (rate < DEFAULT_FUEL_CONSUMING_RATE) rate = DEFAULT_FUEL_CONSUMING_RATE;
         int maxFuelRate = getMaxFuelConsumptionRate();
         if (rate > maxFuelRate) rate = maxFuelRate;
@@ -48,18 +56,18 @@ public abstract class FuelAbility<T extends IPeripheralOwner> implements IOwnerA
     public abstract void addFuel(int count);
 
     public int getFuelConsumptionMultiply() {
-        return (int) Math.pow(2, _getFuelConsumptionRate() - 1f);
+        return (int) Math.pow(2, getConsumptionRate() - 1f);
     }
 
     public int reduceCooldownAccordingToConsumptionRate(int cooldown) {
-        return cooldown / _getFuelConsumptionRate();
+        return cooldown / getConsumptionRate();
     }
 
     public boolean consumeFuel(int count, boolean simulate) {
         if (isFuelConsumptionDisable()) return true;
         int realCount = count * getFuelConsumptionMultiply();
         if (simulate) return getFuelLevel() >= realCount;
-        return _consumeFuel(realCount);
+        return consumeFuel(realCount);
     }
 
     @LuaFunction(mainThread = true)
@@ -74,14 +82,14 @@ public abstract class FuelAbility<T extends IPeripheralOwner> implements IOwnerA
 
     @LuaFunction(mainThread = true)
     public final int getFuelConsumptionRate() {
-        return _getFuelConsumptionRate();
+        return getConsumptionRate();
     }
 
     @LuaFunction(mainThread = true)
     public final MethodResult setFuelConsumptionRate(int rate) {
         if (rate < 1) return MethodResult.of(null, "Too small fuel consumption rate");
         if (rate > getMaxFuelConsumptionRate()) return MethodResult.of(null, "Too big fuel consumption rate");
-        _setFuelConsumptionRate(rate);
+        setConsumptionRate(rate);
         return MethodResult.of(true);
     }
 

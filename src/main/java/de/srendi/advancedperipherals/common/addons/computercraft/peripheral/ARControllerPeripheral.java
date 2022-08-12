@@ -21,7 +21,7 @@ public class ARControllerPeripheral extends BasePeripheral<BlockEntityPeripheral
 
     @Override
     public boolean isEnabled() {
-        return APConfig.PERIPHERALS_CONFIG.ENABLE_AR_GOGGLES.get();
+        return APConfig.PERIPHERALS_CONFIG.enableARGoggles.get();
     }
 
     @LuaFunction(mainThread = true)

@@ -16,9 +16,9 @@ public enum SphereOperation implements IPeripheralOperation<SphereOperationConte
     private final int defaultMaxCostRadius;
     private final double defaultExtraBlockCost;
     private ForgeConfigSpec.IntValue cooldown;
-    private ForgeConfigSpec.IntValue max_free_radius;
-    private ForgeConfigSpec.IntValue max_cost_radius;
-    private ForgeConfigSpec.DoubleValue extra_block_cost;
+    private ForgeConfigSpec.IntValue maxFreeRadius;
+    private ForgeConfigSpec.IntValue maxCostRadius;
+    private ForgeConfigSpec.DoubleValue extraBlockCost;
 
     SphereOperation(int defaultCooldown, int defaultMaxFreeRadius, int defaultMaxCostRadius, double defaultExtraBlockCost) {
         this.defaultCooldown = defaultCooldown;
@@ -30,9 +30,9 @@ public enum SphereOperation implements IPeripheralOperation<SphereOperationConte
     @Override
     public void addToConfig(ForgeConfigSpec.Builder builder) {
         cooldown = builder.defineInRange(settingsName() + "Cooldown", defaultCooldown, 1_000, Integer.MAX_VALUE);
-        max_free_radius = builder.defineInRange(settingsName() + "MaxFreeRadius", defaultMaxFreeRadius, 1, 64);
-        max_cost_radius = builder.defineInRange(settingsName() + "MaxCostRadius", defaultMaxCostRadius, 1, 64);
-        extra_block_cost = builder.defineInRange(settingsName() + "ExtraBlockCost", defaultExtraBlockCost, 0.1, Double.MAX_VALUE);
+        maxFreeRadius = builder.defineInRange(settingsName() + "MaxFreeRadius", defaultMaxFreeRadius, 1, 64);
+        maxCostRadius = builder.defineInRange(settingsName() + "MaxCostRadius", defaultMaxCostRadius, 1, 64);
+        extraBlockCost = builder.defineInRange(settingsName() + "ExtraBlockCost", defaultExtraBlockCost, 0.1, Double.MAX_VALUE);
     }
 
     @Override
@@ -47,18 +47,18 @@ public enum SphereOperation implements IPeripheralOperation<SphereOperationConte
 
     @Override
     public int getCost(SphereOperationContext context) {
-        if (context.getRadius() <= max_free_radius.get()) return 0;
-        int freeBlockCount = IntMath.pow(2 * max_free_radius.get() + 1, 3);
+        if (context.getRadius() <= maxFreeRadius.get()) return 0;
+        int freeBlockCount = IntMath.pow(2 * maxFreeRadius.get() + 1, 3);
         int allBlockCount = IntMath.pow(2 * context.getRadius() + 1, 3);
-        return (int) Math.floor((allBlockCount - freeBlockCount) * extra_block_cost.get());
+        return (int) Math.floor((allBlockCount - freeBlockCount) * extraBlockCost.get());
     }
 
     public int getMaxFreeRadius() {
-        return max_free_radius.get();
+        return maxFreeRadius.get();
     }
 
     public int getMaxCostRadius() {
-        return max_cost_radius.get();
+        return maxCostRadius.get();
     }
 
     @Override
@@ -67,9 +67,9 @@ public enum SphereOperation implements IPeripheralOperation<SphereOperationConte
         data.put("name", settingsName());
         data.put("type", getClass().getName());
         data.put("cooldown", cooldown.get());
-        data.put("maxFreeRadius", max_free_radius.get());
-        data.put("maxCostRadius", max_cost_radius.get());
-        data.put("extraBlockCost", extra_block_cost.get());
+        data.put("maxFreeRadius", maxFreeRadius.get());
+        data.put("maxCostRadius", maxCostRadius.get());
+        data.put("extraBlockCost", extraBlockCost.get());
         return data;
     }
 

@@ -31,7 +31,7 @@ public class AutomataBlockHandPlugin extends AutomataCorePlugin {
             TurtlePeripheralOwner owner = automataCore.getPeripheralOwner();
             ItemStack selectedTool = owner.getToolInMainHand();
             int previousDamageValue = selectedTool.getDamageValue();
-            Pair<Boolean, String> result = owner.withPlayer(APFakePlayer -> APFakePlayer.digBlock(owner.getFacing().getOpposite()));
+            Pair<Boolean, String> result = owner.withPlayer(apFakePlayer -> apFakePlayer.digBlock(owner.getFacing().getOpposite()));
             if (!result.getLeft()) {
                 return MethodResult.of(null, result.getRight());
             }

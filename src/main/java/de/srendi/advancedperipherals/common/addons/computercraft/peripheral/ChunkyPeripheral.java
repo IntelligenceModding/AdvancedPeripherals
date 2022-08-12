@@ -41,7 +41,7 @@ public class ChunkyPeripheral extends BasePeripheral<TurtlePeripheralOwner> {
 
     @Override
     public boolean isEnabled() {
-        return APConfig.PERIPHERALS_CONFIG.ENABLE_CHUNKY_TURTLE.get();
+        return APConfig.PERIPHERALS_CONFIG.enableChunkyTurtle.get();
     }
 
     public void updateChunkState() {

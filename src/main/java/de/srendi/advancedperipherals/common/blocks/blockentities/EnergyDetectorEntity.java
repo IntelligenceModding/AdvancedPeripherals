@@ -29,7 +29,7 @@ public class EnergyDetectorEntity extends PeripheralBlockEntity<EnergyDetectorPe
     private final EnergyStorage zeroStorage = new EnergyStorage(0, 0, 0);
     public int transferRate = 0;
     //storageProxy that will forward the energy to the output but limit it to maxTransferRate
-    public EnergyStorageProxy storageProxy = new EnergyStorageProxy(this, APConfig.PERIPHERALS_CONFIG.ENERGY_DETECTOR_MAX_FLOW.get());
+    public EnergyStorageProxy storageProxy = new EnergyStorageProxy(this, APConfig.PERIPHERALS_CONFIG.energyDetectorMaxFlow.get());
     LazyOptional<IEnergyStorage> energyStorageCap = LazyOptional.of(() -> storageProxy);
     Direction energyInDirection = Direction.NORTH;
     Direction energyOutDirection = Direction.SOUTH;

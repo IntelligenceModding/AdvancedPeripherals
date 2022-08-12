@@ -22,7 +22,7 @@ public class MemoryCardItem extends BaseItem {
 
     @Override
     public boolean isEnabled() {
-        return APConfig.PERIPHERALS_CONFIG.ENABLE_INVENTORY_MANAGER.get();
+        return APConfig.PERIPHERALS_CONFIG.enableInventoryManager.get();
     }
 
     @Override

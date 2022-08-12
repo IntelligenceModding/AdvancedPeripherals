@@ -54,7 +54,7 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
 
     @Override
     public boolean isEnabled() {
-        return APConfig.PERIPHERALS_CONFIG.ENABLE_CHAT_BOX.get();
+        return APConfig.PERIPHERALS_CONFIG.enableChatBox.get();
     }
 
     protected MethodResult withChatOperation(IPeripheralFunction<Object, MethodResult> function) throws LuaException {
@@ -62,7 +62,7 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
     }
 
     private MutableComponent appendPrefix(String prefix, String brackets, String color) {
-        TextComponent prefixComponent = new TextComponent(APConfig.PERIPHERALS_CONFIG.DEFAULT_CHAT_BOX_PREFIX.get());
+        TextComponent prefixComponent = new TextComponent(APConfig.PERIPHERALS_CONFIG.defaultChatBoxPrefix.get());
         if (!prefix.isEmpty()) {
             MutableComponent formattablePrefix;
             try {
@@ -108,7 +108,7 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
             if (checkBrackets(arguments.optString(2)))
                 return MethodResult.of(null, "incorrect bracket string (e.g. [], {}, <>, ...)");
             MutableComponent preparedMessage = appendPrefix(
-                    arguments.optString(1, APConfig.PERIPHERALS_CONFIG.DEFAULT_CHAT_BOX_PREFIX.get()),
+                    arguments.optString(1, APConfig.PERIPHERALS_CONFIG.defaultChatBoxPrefix.get()),
                     arguments.optString(2, "[]"),
                     arguments.optString(3, "")
             ).append(component);
@@ -132,7 +132,7 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
             if (checkBrackets(arguments.optString(2)))
                 return MethodResult.of(null, "incorrect bracket string (e.g. [], {}, <>, ...)");
             MutableComponent preparedMessage = appendPrefix(
-                    arguments.optString(1, APConfig.PERIPHERALS_CONFIG.DEFAULT_CHAT_BOX_PREFIX.get()),
+                    arguments.optString(1, APConfig.PERIPHERALS_CONFIG.defaultChatBoxPrefix.get()),
                     arguments.optString(2, "[]"),
                     arguments.optString(3, "")
             ).append(message);
@@ -160,7 +160,7 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
             if (checkBrackets(arguments.optString(3)))
                 return MethodResult.of(null, "incorrect bracket string (e.g. [], {}, <>, ...)");
             MutableComponent preparedMessage = appendPrefix(
-                    arguments.optString(2, APConfig.PERIPHERALS_CONFIG.DEFAULT_CHAT_BOX_PREFIX.get()),
+                    arguments.optString(2, APConfig.PERIPHERALS_CONFIG.defaultChatBoxPrefix.get()),
                     arguments.optString(3, "[]"),
                     arguments.optString(4, "")
             ).append(component);
@@ -179,7 +179,7 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
             if (checkBrackets(arguments.optString(3)))
                 return MethodResult.of(null, "incorrect bracket string (e.g. [], {}, <>, ...)");
             MutableComponent preparedMessage = appendPrefix(
-                    arguments.optString(2, APConfig.PERIPHERALS_CONFIG.DEFAULT_CHAT_BOX_PREFIX.get()),
+                    arguments.optString(2, APConfig.PERIPHERALS_CONFIG.defaultChatBoxPrefix.get()),
                     arguments.optString(3, "[]"),
                     arguments.optString(4, "")
             ).append(message);

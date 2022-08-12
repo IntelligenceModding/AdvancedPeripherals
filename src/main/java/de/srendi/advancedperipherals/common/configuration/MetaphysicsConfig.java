@@ -6,12 +6,12 @@ import net.minecraftforge.fml.config.ModConfig;
 
 public class MetaphysicsConfig implements IAPConfig {
 
-    public final ForgeConfigSpec.IntValue ENERGY_TO_FUEL_RATE;
-    public final ForgeConfigSpec.BooleanValue ENABLE_WEAK_AUTOMATA_CORE;
-    public final ForgeConfigSpec.BooleanValue ENABLE_END_AUTOMATA_CORE;
-    public final ForgeConfigSpec.BooleanValue ENABLE_HUSBANDRY_AUTOMATA_CORE;
-    public final ForgeConfigSpec.IntValue END_AUTOMATA_CORE_WARP_POINT_LIMIT;
-    public final ForgeConfigSpec.DoubleValue OVERPOWERED_AUTOMATA_BREAK_CHANCE;
+    public final ForgeConfigSpec.IntValue energyToFuelRate;
+    public final ForgeConfigSpec.BooleanValue enableWeakAutomataCore;
+    public final ForgeConfigSpec.BooleanValue enableEndAutomataCore;
+    public final ForgeConfigSpec.BooleanValue enableHusbandryAutomataCore;
+    public final ForgeConfigSpec.IntValue endAutomataCoreWarpPointLimit;
+    public final ForgeConfigSpec.DoubleValue overpoweredAutomataBreakChance;
     private final ForgeConfigSpec configSpec;
 
     public MetaphysicsConfig() {
@@ -19,12 +19,12 @@ public class MetaphysicsConfig implements IAPConfig {
 
         builder.comment("Config for metaphysics").push("Metaphysics");
 
-        ENERGY_TO_FUEL_RATE = builder.comment("Defines energy to fuel rate").defineInRange("energyToFuelRate", 575, 575, Integer.MAX_VALUE);
-        ENABLE_WEAK_AUTOMATA_CORE = builder.define("enableWeakAutomataCore", true);
-        ENABLE_END_AUTOMATA_CORE = builder.define("enableEndAutomataCore", true);
-        ENABLE_HUSBANDRY_AUTOMATA_CORE = builder.define("enableHusbandryAutomataCore", true);
-        END_AUTOMATA_CORE_WARP_POINT_LIMIT = builder.comment("Defines max warp point stored in warp core. Mostly need to not allow NBT overflow error").defineInRange("endAutomataCoreWarpPointLimit", 64, 1, Integer.MAX_VALUE);
-        OVERPOWERED_AUTOMATA_BREAK_CHANCE = builder.comment("Chance that overpowered automata will break after rotation cycle").defineInRange("overpoweredAutomataBreakChance", 0.002, 0, 1);
+        energyToFuelRate = builder.comment("Defines energy to fuel rate").defineInRange("energyToFuelRate", 575, 575, Integer.MAX_VALUE);
+        enableWeakAutomataCore = builder.define("enableWeakAutomataCore", true);
+        enableEndAutomataCore = builder.define("enableEndAutomataCore", true);
+        enableHusbandryAutomataCore = builder.define("enableHusbandryAutomataCore", true);
+        endAutomataCoreWarpPointLimit = builder.comment("Defines max warp point stored in warp core. Mostly need to not allow NBT overflow error").defineInRange("endAutomataCoreWarpPointLimit", 64, 1, Integer.MAX_VALUE);
+        overpoweredAutomataBreakChance = builder.comment("Chance that overpowered automata will break after rotation cycle").defineInRange("overpoweredAutomataBreakChance", 0.002, 0, 1);
 
         register(AutomataCoreTier.values(), builder);
 

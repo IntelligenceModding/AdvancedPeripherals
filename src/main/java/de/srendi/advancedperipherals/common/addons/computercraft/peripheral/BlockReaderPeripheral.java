@@ -22,7 +22,7 @@ public class BlockReaderPeripheral extends BasePeripheral<BlockEntityPeripheralO
 
     @Override
     public boolean isEnabled() {
-        return APConfig.PERIPHERALS_CONFIG.ENABLE_BLOCK_READER.get();
+        return APConfig.PERIPHERALS_CONFIG.enableBlockReader.get();
     }
 
     @LuaFunction(mainThread = true)
