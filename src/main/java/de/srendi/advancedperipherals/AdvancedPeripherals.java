@@ -9,6 +9,7 @@ import de.srendi.advancedperipherals.common.village.VillageStructures;
 import de.srendi.advancedperipherals.network.MNetwork;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.storage.loot.BuiltInLootTables;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -57,6 +58,8 @@ public class AdvancedPeripherals {
         modBus.addListener(this::clientSetup);
         Registration.register();
         MinecraftForge.EVENT_BUS.register(this);
+
+        //TODO: Refactor this to a dedicated class
         curiosLoaded = ModList.get().isLoaded("curios");
         if (ModList.get().isLoaded("refinedstorage")) {
             RefinedStorage.instance = new RefinedStorage();
