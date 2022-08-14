@@ -163,8 +163,8 @@ public class MineColonies {
      */
     public static Object buildingToObject(IRegisteredStructureManager buildingManager, IBuilding building, BlockPos pos) {
         Map<String, Object> structureData = new HashMap<>();
-        structureData.put("cornerA", building.getCorners().getA());
-        structureData.put("cornerB", building.getCorners().getB());
+        structureData.put("cornerA", LuaConverter.posToObject(building.getCorners().getA()));
+        structureData.put("cornerB", LuaConverter.posToObject(building.getCorners().getB()));
         structureData.put("rotation", building.getRotation());
         structureData.put("mirror", building.isMirrored());
 
