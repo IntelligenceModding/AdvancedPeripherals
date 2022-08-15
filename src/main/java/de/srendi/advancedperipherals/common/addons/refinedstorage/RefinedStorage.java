@@ -187,18 +187,6 @@ public class RefinedStorage {
         return null;
     }
 
-    public static List<ItemStack> getCraftableItems(INetwork network) {
-        IStorageCache<ItemStack> cache = network.getItemStorageCache();
-        Collection<StackListEntry<ItemStack>> craftableEntries = cache.getCraftablesList().getStacks();
-        List<ItemStack> result = new ArrayList<>(craftableEntries.size());
-
-        for (StackListEntry<ItemStack> entry : craftableEntries) {
-            result.add(entry.getStack());
-        }
-
-        return result;
-    }
-
     public static List<ItemStack> getItems(INetwork network) {
         IStorageCache<ItemStack> cache = network.getItemStorageCache();
         Collection<StackListEntry<ItemStack>> entries = cache.getList().getStacks();

@@ -26,7 +26,7 @@ apply plugin: 'net.minecraftforge.gradle'
 java.toolchain.languageVersion = JavaLanguageVersion.of(8)
 
 wrapper {
-    gradleVersion = '7.4.1'
+    gradleVersion = '7.5.1'
     distributionType = Wrapper.DistributionType.ALL
 }
 
