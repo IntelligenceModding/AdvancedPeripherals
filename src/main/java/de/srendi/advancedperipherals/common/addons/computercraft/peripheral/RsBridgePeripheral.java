@@ -29,6 +29,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwner<RsBridgeEntity>> {
     public static final String TYPE = "rsBridge";
@@ -64,8 +65,18 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     }
 
     @LuaFunction(mainThread = true)
+    public final List<Map<String, Object>> getAllDisks() {
+        return RefinedStorage.getDisks(getNetwork());
+    }
+
+    @LuaFunction(mainThread = true)
     public final Integer getMaxItemDiskStorage() {
         return RefinedStorage.getMaxItemDiskStorage(getNetwork());
+    }
+
+    @LuaFunction(mainThread = true)
+    public final Integer getUsedItemDiskStorage() {
+        return RefinedStorage.getUsedItemDiskStorage(getNetwork());
     }
 
     @LuaFunction(mainThread = true)
@@ -74,13 +85,28 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     }
 
     @LuaFunction(mainThread = true)
+    public final Integer getUsedFluidDiskStorage() {
+        return RefinedStorage.getUsedFluidDiskStorage(getNetwork());
+    }
+
+    @LuaFunction(mainThread = true)
     public final Integer getMaxItemExternalStorage() {
         return RefinedStorage.getMaxItemExternalStorage(getNetwork());
     }
 
     @LuaFunction(mainThread = true)
+    public final Integer getUsedItemExternalStorage() {
+        return RefinedStorage.getUsedItemExternalStorage(getNetwork());
+    }
+
+    @LuaFunction(mainThread = true)
     public final Integer getMaxFluidExternalStorage() {
         return RefinedStorage.getMaxFluidExternalStorage(getNetwork());
+    }
+
+    @LuaFunction(mainThread = true)
+    public final Integer getUsedFluidExternalStorage() {
+        return RefinedStorage.getUsedFluidExternalStorage(getNetwork());
     }
 
     @LuaFunction(mainThread = true)

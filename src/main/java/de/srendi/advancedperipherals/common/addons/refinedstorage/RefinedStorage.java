@@ -68,6 +68,60 @@ public class RefinedStorage {
         return network.getCraftingManager().getPattern(stack) != null;
     }
 
+    public static List<Map<String, Object>> getDisks(INetwork network) {
+        var disks = new ArrayList<Map<String, Object>>();
+
+        for (IStorage<ItemStack> store : network.getItemStorageCache().getStorages()) {
+            if (store instanceof IStorageDisk<ItemStack> itemDisk) {
+                var itemDiskInfo = new HashMap<String, Object>();
+                itemDiskInfo.put("diskType", "items");
+                itemDiskInfo.put("capacity", itemDisk.getCapacity());
+                itemDiskInfo.put("usedSpace", itemDisk.getStored());
+                itemDiskInfo.put("uuid", Objects.requireNonNull(itemDisk.getOwner()).toString());
+                itemDiskInfo.put("accessType", itemDisk.getAccessType().toString());
+
+                var items = itemDisk.getStacks().stream().map(itemStack -> {
+                    var itemStackInfo = new HashMap<String, Object>();
+
+                    itemStackInfo.put("name", itemStack.getDisplayName().getString());
+                    itemStackInfo.put("description", itemStack.getItem().getDescription());
+                    itemStackInfo.put("count", itemStack.getCount());
+                    itemStackInfo.put("damage", itemStack.getDamageValue());
+
+                    return itemStackInfo;
+                }).toList();
+                itemDiskInfo.put("items", items);
+
+                disks.add(itemDiskInfo);
+            }
+        }
+
+        for (IStorage<FluidStack> store : network.getFluidStorageCache().getStorages()) {
+            if (store instanceof IStorageDisk<FluidStack> fluidDisk) {
+                var fluidDiskInfo = new HashMap<String, Object>();
+                fluidDiskInfo.put("diskType", "fluid");
+                fluidDiskInfo.put("capacity", fluidDisk.getCapacity());
+                fluidDiskInfo.put("usedSpace", fluidDisk.getStored());
+                fluidDiskInfo.put("uuid", Objects.requireNonNull(fluidDisk.getOwner()).toString());
+                fluidDiskInfo.put("accessType", fluidDisk.getAccessType().toString());
+
+                var fluids = fluidDisk.getStacks().stream().map(fluidStack -> {
+                    var fluidStackInfo = new HashMap<String, Object>();
+
+                    fluidStackInfo.put("name", fluidStack.getDisplayName().getString());
+                    fluidStackInfo.put("count", fluidStack.getAmount());
+
+                    return fluidStackInfo;
+                }).toList();
+                fluidDiskInfo.put("fluids", fluids);
+
+                disks.add(fluidDiskInfo);
+            }
+        }
+
+        return disks;
+    }
+
     public static int getMaxItemDiskStorage(INetwork network) {
         int total = 0;
         boolean creative = false;
@@ -75,6 +129,19 @@ public class RefinedStorage {
             if (store instanceof IStorageDisk<ItemStack> storageDisk) {
                 int cap = storageDisk.getCapacity();
                 if (cap > 0) total += cap;
+                else creative = true;
+            }
+        }
+        return creative ? -1 : total;
+    }
+
+    public static int getUsedItemDiskStorage(INetwork network) {
+        int total = 0;
+        boolean creative = false;
+        for (IStorage<ItemStack> store : network.getItemStorageCache().getStorages()) {
+            if (store instanceof IStorageDisk<ItemStack> storageDisk) {
+                int usedSpace = storageDisk.getStored();
+                if (usedSpace > 0) total += usedSpace;
                 else creative = true;
             }
         }
@@ -94,6 +161,19 @@ public class RefinedStorage {
         return creative ? -1 : total;
     }
 
+    public static int getUsedFluidDiskStorage(INetwork network) {
+        int total = 0;
+        boolean creative = false;
+        for (IStorage<FluidStack> store : network.getFluidStorageCache().getStorages()) {
+            if (store instanceof IStorageDisk<FluidStack> storageDisk) {
+                int usedSpace = storageDisk.getStored();
+                if (usedSpace > 0) total += usedSpace;
+                else creative = true;
+            }
+        }
+        return creative ? -1 : total;
+    }
+
     public static int getMaxItemExternalStorage(INetwork network) {
         int total = 0;
         for (IStorage<ItemStack> store : network.getItemStorageCache().getStorages()) {
@@ -104,11 +184,31 @@ public class RefinedStorage {
         return total;
     }
 
+    public static int getUsedItemExternalStorage(INetwork network) {
+        int total = 0;
+        for (IStorage<ItemStack> store : network.getItemStorageCache().getStorages()) {
+            if (store instanceof IExternalStorage<ItemStack> externalStorage) {
+                total += externalStorage.getStored();
+            }
+        }
+        return total;
+    }
+
     public static int getMaxFluidExternalStorage(INetwork network) {
         int total = 0;
         for (IStorage<FluidStack> store : network.getFluidStorageCache().getStorages()) {
             if (store instanceof IExternalStorage<FluidStack> externalStorage) {
                 total += externalStorage.getCapacity();
+            }
+        }
+        return total;
+    }
+
+    public static int getUsedFluidExternalStorage(INetwork network) {
+        int total = 0;
+        for (IStorage<FluidStack> store : network.getFluidStorageCache().getStorages()) {
+            if (store instanceof IExternalStorage<FluidStack> externalStorage) {
+                total += externalStorage.getStored();
             }
         }
         return total;
