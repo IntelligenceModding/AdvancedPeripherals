@@ -110,9 +110,10 @@ public class MeBridgePeripheral extends BasePeripheral<TileEntityPeripheralOwner
 
         for (int i = 0; i < targetInventory.getSlots(); i++) {
             if (targetInventory.getStackInSlot(i).sameItem(stack)) {
+                IAEItemStack cStack =  AEItemStack.fromItemStack(targetInventory.getStackInSlot(i));
                 int countInSlot = targetInventory.getStackInSlot(i).getCount();
                 int extractCount = Math.min(countInSlot, amount);
-                IAEItemStack extractionStack = aeStack.copy();
+                IAEItemStack extractionStack = cStack.copy();
                 extractionStack.setStackSize(extractCount);
                 remaining = monitor.injectItems(extractionStack, Actionable.MODULATE, source);
                 if (remaining != null)
