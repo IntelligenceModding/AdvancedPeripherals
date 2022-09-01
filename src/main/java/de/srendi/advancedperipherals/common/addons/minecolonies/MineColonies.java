@@ -225,6 +225,9 @@ public class MineColonies {
         map.put("isClaimed", workOrder.isClaimed());
         map.put("location", LuaConverter.posToObject(workOrder.getLocation()));
         map.put("type", workOrder.getClass().getSimpleName());
+        map.put("buildingName", workOrder.getDisplayName().getString());
+        map.put("targetLevel", workOrder.getTargetLevel());
+        map.put("workOrderType", workOrder.getWorkOrderType().toString());
 
         return map;
     }

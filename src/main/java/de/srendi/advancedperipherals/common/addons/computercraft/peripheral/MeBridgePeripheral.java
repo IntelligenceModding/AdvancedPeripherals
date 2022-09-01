@@ -5,7 +5,6 @@ import appeng.api.networking.IGridNode;
 import appeng.api.networking.IManagedGridNode;
 import appeng.api.networking.crafting.ICraftingCPU;
 import appeng.api.networking.crafting.ICraftingService;
-import appeng.api.networking.crafting.ICraftingSimulationRequester;
 import appeng.api.stacks.AEItemKey;
 import appeng.api.stacks.AEKey;
 import appeng.api.storage.MEStorage;
@@ -38,14 +37,12 @@ import java.util.Map;
 public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwner<MeBridgeEntity>> {
 
     public static final String TYPE = "meBridge";
-    private final ICraftingSimulationRequester requester;
     private final MeBridgeEntity tile;
     private IGridNode node;
 
     public MeBridgePeripheral(MeBridgeEntity tileEntity) {
         super(TYPE, new BlockEntityPeripheralOwner<>(tileEntity));
         this.tile = tileEntity;
-        this.requester = tileEntity;
         this.node = tileEntity.getActionableNode();
     }
 
@@ -136,11 +133,13 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     public final MethodResult craftItem(IComputerAccess computer, IArguments arguments) throws LuaException {
         MEStorage monitor = AppEngApi.getMonitor(node);
         ItemStack itemToCraft = ItemUtil.getItemStack(arguments.getTable(0), monitor);
-        if (itemToCraft.isEmpty()) throw new LuaException("Item " + itemToCraft + " does not exists");
+        if (itemToCraft.isEmpty()) return MethodResult.of(false, "Item " + itemToCraft + " does not exists");
         CraftJob job = new CraftJob(owner.getLevel(), computer, node, itemToCraft, tile, tile);
         tile.addJob(job);
         ServerWorker.add(job::startCrafting);
-        return MethodResult.pullEvent("crafting", job);
+        return MethodResult.of(true);
+        //TODO - 0.8: This needs our attention. We need to return better and more useful data to the user. See https://github.com/Seniorendi/AdvancedPeripherals/issues/323
+        //return MethodResult.pullEvent("crafting", job);
     }
 
     @LuaFunction(mainThread = true)
