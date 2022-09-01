@@ -195,10 +195,10 @@ public class InventoryManagerPeripheral extends BasePeripheral<BlockEntityPeriph
                         transferableAmount += amount - rest.getCount();
                         break;
                     } else {
-                        int subcount = inventoryFrom.getItem(i).getCount();
-                        rest = insertItem(inventoryTo, inventoryFrom.removeItem(i, subcount));
-                        amount = count - subcount;
-                        transferableAmount += subcount - rest.getCount();
+                        int subCount = inventoryFrom.getItem(i).getCount();
+                        rest = insertItem(inventoryTo, inventoryFrom.removeItem(i, subCount));
+                        amount -= subCount;
+                        transferableAmount += subCount - rest.getCount();
                         if (!rest.isEmpty()) break;
                     }
                 }
@@ -207,10 +207,10 @@ public class InventoryManagerPeripheral extends BasePeripheral<BlockEntityPeriph
                     transferableAmount += amount - rest.getCount();
                     break;
                 } else {
-                    int subcount = inventoryFrom.getItem(i).getCount();
-                    rest = insertItem(inventoryTo, inventoryFrom.removeItem(i, subcount));
-                    amount = count - subcount;
-                    transferableAmount += subcount - rest.getCount();
+                    int subCount = inventoryFrom.getItem(i).getCount();
+                    rest = insertItem(inventoryTo, inventoryFrom.removeItem(i, subCount));
+                    amount -= subCount;
+                    transferableAmount += subCount - rest.getCount();
                     if (!rest.isEmpty()) break;
                 }
             }
@@ -221,18 +221,18 @@ public class InventoryManagerPeripheral extends BasePeripheral<BlockEntityPeriph
                     rest = insertItem(inventoryTo, inventoryFrom.removeItem(slot.get(), amount));
                     transferableAmount += amount - rest.getCount();
                 } else {
-                    int subcount = inventoryFrom.getItem(slot.get()).getCount();
-                    rest = insertItem(inventoryTo, inventoryFrom.removeItem(slot.get(), subcount));
-                    transferableAmount += subcount - rest.getCount();
+                    int subCount = inventoryFrom.getItem(slot.get()).getCount();
+                    rest = insertItem(inventoryTo, inventoryFrom.removeItem(slot.get(), subCount));
+                    transferableAmount += subCount - rest.getCount();
                 }
             }
             if (stack.isEmpty() && inventoryFrom.getItem(slot.get()).getCount() >= amount) {
                 rest = insertItem(inventoryTo, inventoryFrom.removeItem(slot.get(), amount));
                 transferableAmount += amount - rest.getCount();
             } else {
-                int subcount = inventoryFrom.getItem(slot.get()).getCount();
-                rest = insertItem(inventoryTo, inventoryFrom.removeItem(slot.get(), subcount));
-                transferableAmount += subcount - rest.getCount();
+                int subCount = inventoryFrom.getItem(slot.get()).getCount();
+                rest = insertItem(inventoryTo, inventoryFrom.removeItem(slot.get(), subCount));
+                transferableAmount += subCount - rest.getCount();
             }
         }
         if (!rest.isEmpty()) inventoryFrom.add(rest);
