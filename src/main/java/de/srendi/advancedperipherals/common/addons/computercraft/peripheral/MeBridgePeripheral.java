@@ -121,9 +121,9 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
                 int countInSlot = targetInventory.getStackInSlot(i).getCount();
                 int extractCount = Math.min(countInSlot, amount);
                 amount -= extractCount;
-                monitor.insert(aeStack, extractCount, Actionable.MODULATE, tile.getActionSource());
-                targetInventory.extractItem(i, extractCount, false);
-                transferableAmount += extractCount;
+                int extracted = (int) monitor.insert(aeStack, extractCount, Actionable.MODULATE, tile.getActionSource());
+                targetInventory.extractItem(i, extracted, false);
+                transferableAmount += extracted;
             }
         }
         return transferableAmount;

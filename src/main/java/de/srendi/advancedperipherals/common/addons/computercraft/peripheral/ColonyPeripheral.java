@@ -30,7 +30,12 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.fml.ModList;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class ColonyPeripheral extends BasePeripheral<IPeripheralOwner> {
@@ -242,7 +247,7 @@ public class ColonyPeripheral extends BasePeripheral<IPeripheralOwner> {
         List<IRequest<?>> requests = new ArrayList<>();
         for (IToken<?> token : tokens) {
             IRequest<?> request = requestManager.getRequestForToken(token);
-            if (request != null && !(request instanceof IDeliverable)) requests.add(request);
+            if (request.getRequest() instanceof IDeliverable) requests.add(request);
         }
 
         List<Object> result = new ArrayList<>();
