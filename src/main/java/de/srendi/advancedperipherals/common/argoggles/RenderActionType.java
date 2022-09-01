@@ -4,24 +4,24 @@ import de.srendi.advancedperipherals.AdvancedPeripherals;
 
 public enum RenderActionType {
 
-    DrawCenteredString(3),
-    DrawString(3),
-    Fill(5),
-    HorizontalLine(4),
-    VerticalLine(4),
-    FillGradient(6),
-    DrawRightboundString(3),
-    DrawCircle(4),
-    FillCircle(4),
-    DrawItemIcon(2);
+    DRAW_CENTERED_STRING(3),
+    DRAW_STRING(3),
+    FILL(5),
+    HORIZONTAL_LINE(4),
+    VERTICAL_LINE(4),
+    FILL_GRADIENT(6),
+    DRAW_RIGHTBOUND_STRING(3),
+    DRAW_CIRCLE(4),
+    FILL_CIRCLE(4),
+    DRAW_ITEM_ICON(2);
 
-    final int intArgCount;
+    private final int intArgCount;
 
     RenderActionType(int intArgCount) {
         this.intArgCount = intArgCount;
     }
 
-    boolean ensureArgs(int[] args) {
+    public boolean ensureArgs(int[] args) {
         boolean correct = args.length >= intArgCount;
         if (!correct)
             AdvancedPeripherals.LOGGER.warn("Got invalid number of arguments for AR render action {}: expected {}, got {}", this.toString(), intArgCount, args.length);

@@ -5,8 +5,6 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import de.srendi.advancedperipherals.common.argoggles.ARRenderAction;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiComponent;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.EventPriority;
@@ -15,7 +13,6 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import java.util.ArrayList;
 import java.util.List;
 
-@OnlyIn(Dist.CLIENT)
 public class HudOverlayHandler {
     private static HudOverlayHandler instance;
     private final List<ARRenderAction> canvas = new ArrayList<>();

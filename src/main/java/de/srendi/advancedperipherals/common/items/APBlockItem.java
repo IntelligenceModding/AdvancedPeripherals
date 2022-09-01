@@ -7,15 +7,18 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Supplier;
 
 public class APBlockItem extends BaseBlockItem {
 
-    @Nullable ResourceLocation turtleID;
-    @Nullable ResourceLocation pocketID;
-    Supplier<Boolean> enabledSup;
+    @Nullable
+    private final ResourceLocation turtleID;
+    @Nullable
+    private final ResourceLocation pocketID;
+    private final Supplier<Boolean> enabledSup;
 
     public APBlockItem(Block blockIn, Properties properties, @Nullable ResourceLocation turtleID, @Nullable ResourceLocation pocketID, Supplier<Boolean> enabledSup) {
         super(blockIn, properties);
@@ -32,17 +35,9 @@ public class APBlockItem extends BaseBlockItem {
     }
 
     @Override
-    public void fillItemCategory(CreativeModeTab group, NonNullList<ItemStack> items) {
+    public void fillItemCategory(@NotNull CreativeModeTab group, @NotNull NonNullList<ItemStack> items) {
         super.fillItemCategory(group, items);
-        if (!allowdedIn(group)) return;
-        if (turtleID != null) {
-            items.add(ItemUtil.makeTurtle(ItemUtil.TURTLE_ADVANCED, turtleID.toString()));
-            items.add(ItemUtil.makeTurtle(ItemUtil.TURTLE_NORMAL, turtleID.toString()));
-        }
-        if (pocketID != null) {
-            items.add(ItemUtil.makePocket(ItemUtil.POCKET_ADVANCED, pocketID.toString()));
-            items.add(ItemUtil.makePocket(ItemUtil.POCKET_NORMAL, pocketID.toString()));
-        }
+        ItemUtil.addCompuerItemToTab(turtleID, pocketID, items);
     }
 
     @Override

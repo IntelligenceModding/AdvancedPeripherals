@@ -28,8 +28,6 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
@@ -44,7 +42,6 @@ public class ARGogglesItem extends ArmorItem {
         super(ArmorMaterials.LEATHER, EquipmentSlot.HEAD, new Properties().tab(AdvancedPeripherals.TAB).stacksTo(1));
     }
 
-    @OnlyIn(Dist.CLIENT)
     public static void clientTick(LocalPlayer player, ItemStack stack) {
         if (stack.hasTag() && stack.getTag().contains(CONTROLLER_POS) && stack.getTag().contains(CONTROLLER_LEVEL)) {
             int[] arr = stack.getTag().getIntArray(CONTROLLER_POS);

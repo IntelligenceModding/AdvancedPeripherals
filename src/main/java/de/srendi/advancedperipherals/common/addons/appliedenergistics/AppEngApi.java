@@ -62,23 +62,13 @@ public class AppEngApi {
         List<Object> items = new ArrayList<>();
         for (Object2LongMap.Entry<AEKey> aeKey : monitor.getAvailableStacks()) {
             if (aeKey.getKey() instanceof AEItemKey itemKey) {
-                if (flag == 1) {
-                    if (aeKey.getLongValue() < 0) continue;
-                } else if (flag == 2) {
-                    if (!service.isCraftable(itemKey)) continue;
+                if (flag == 1 && aeKey.getLongValue() < 0) {
+                    continue;
+                } else if (flag == 2 && !service.isCraftable(itemKey)) {
+                    continue;
                 }
 
-                items.add(getObjectFromStack(Pair.of(aeKey.getLongValue(), itemKey), service, flag));
-            }
-        }
-        return items;
-    }
-
-    public static List<Object> listCraftables(MEStorage monitor, ICraftingService service) {
-        List<Object> items = new ArrayList<>();
-        for (var temp : service.getCraftables(param -> true)) {
-            if (temp instanceof AEItemKey itemKey) {
-                items.add(getObjectFromStack(Pair.of(monitor.getAvailableStacks().get(temp), itemKey), service, 2));
+                items.add(getObjectFromStack(Pair.of(aeKey.getLongValue(), itemKey), service));
             }
         }
         return items;
@@ -88,29 +78,29 @@ public class AppEngApi {
         List<Object> items = new ArrayList<>();
         for (Object2LongMap.Entry<AEKey> aeKey : monitor.getAvailableStacks()) {
             if (aeKey.getKey() instanceof AEFluidKey itemKey) {
-                if (flag == 1) {
-                    if (aeKey.getLongValue() < 0) continue;
-                } else if (flag == 2) {
-                    if (!service.isCraftable(itemKey)) continue;
+                if (flag == 1 && aeKey.getLongValue() < 0) {
+                    continue;
+                } else if (flag == 2 && !service.isCraftable(itemKey)) {
+                    continue;
                 }
 
-                items.add(getObjectFromStack(Pair.of(aeKey.getLongValue(), itemKey), service, flag));
+                items.add(getObjectFromStack(Pair.of(aeKey.getLongValue(), itemKey), service));
             }
         }
         return items;
     }
 
-    public static Map<String, Object> getObjectFromStack(Pair<Long, AEKey> stack, ICraftingService service, int flag) {
+    public static Map<String, Object> getObjectFromStack(Pair<Long, AEKey> stack, ICraftingService service) {
         if (stack.getRight() instanceof AEItemKey itemKey)
-            return getObjectFromItemStack(Pair.of(stack.getLeft(), itemKey), service, flag);
+            return getObjectFromItemStack(Pair.of(stack.getLeft(), itemKey), service);
         if (stack.getRight() instanceof AEFluidKey fluidKey)
-            return getObjectFromFluidStack(Pair.of(stack.getLeft(), fluidKey), service, flag);
+            return getObjectFromFluidStack(Pair.of(stack.getLeft(), fluidKey), service);
 
         AdvancedPeripherals.debug("Could not create table from unknown stack " + stack.getClass() + " - Report this to the owner", Level.ERROR);
         return null;
     }
 
-    private static Map<String, Object> getObjectFromItemStack(Pair<Long, AEItemKey> stack, ICraftingService craftingService, int flag) {
+    private static Map<String, Object> getObjectFromItemStack(Pair<Long, AEItemKey> stack, ICraftingService craftingService) {
         Map<String, Object> map = new HashMap<>();
         String displayName = stack.getRight().getDisplayName().getString();
         CompoundTag nbt = stack.getRight().toTag();
@@ -122,31 +112,20 @@ public class AppEngApi {
         map.put("nbt", NBTUtil.toLua(nbt));
         map.put("tags", LuaConverter.tagsToList(() -> stack.getRight().getItem().builtInRegistryHolder().tags()));
         map.put("isCraftable", craftingService.isCraftable(stack.getRight()));
-        if (flag == 0) {
-            return map;
-        } else if (flag == 1) {
-            if (amount > 0) return map;
-        } else if (flag == 2) {
-            if (craftingService.isCraftable(stack.getRight())) return map;
-        }
-        return null;
+
+        return map;
     }
 
-    private static Map<String, Object> getObjectFromFluidStack(Pair<Long, AEFluidKey> stack, ICraftingService craftingService, int flag) {
+    private static Map<String, Object> getObjectFromFluidStack(Pair<Long, AEFluidKey> stack, ICraftingService craftingService) {
         Map<String, Object> map = new HashMap<>();
         long amount = stack.getLeft();
         map.put("name", stack.getRight().getFluid().getRegistryName().toString());
         map.put("amount", amount);
         map.put("displayName", stack.getRight().getDisplayName());
         map.put("tags", LuaConverter.tagsToList(() -> stack.getRight().getFluid().builtInRegistryHolder().tags()));
-        if (flag == 0) {
-            return map;
-        } else if (flag == 1) {
-            if (amount > 0) return map;
-        } else if (flag == 2) {
-            if (craftingService.isCraftable(stack.getRight())) return map;
-        }
-        return null;
+        map.put("isCraftable", craftingService.isCraftable(stack.getRight()));
+
+        return map;
     }
 
     public static Map<String, Object> getObjectFromCPU(ICraftingCPU cpu) {
@@ -162,7 +141,7 @@ public class AppEngApi {
 
     public static Map<String, Object> getObjectFromJob(ICraftingPlan job, ICraftingService craftingService) {
         Map<String, Object> result = new HashMap<>();
-        result.put("item", getObjectFromStack(Pair.of(job.finalOutput().amount(), job.finalOutput().what()), craftingService, 0));
+        result.put("item", getObjectFromStack(Pair.of(job.finalOutput().amount(), job.finalOutput().what()), craftingService));
         result.put("bytes", job.bytes());
         return result;
     }
@@ -174,7 +153,6 @@ public class AppEngApi {
                     CompoundTag tag = itemKey.toStack().getTag();
                     String hash = NBTUtil.getNBTHash(tag);
                     if (nbtHash.equals(hash)) return tag.copy();
-
                 }
             }
         }
@@ -183,11 +161,10 @@ public class AppEngApi {
 
     public static ItemStack findMatchingFingerprint(String fingerprint, MEStorage monitor) {
         for (Object2LongMap.Entry<AEKey> aeKey : monitor.getAvailableStacks()) {
-            if (aeKey.getKey() instanceof AEItemKey itemKey) {
-                if (aeKey.getLongValue() > 0) {
-                    if (fingerprint.equals(getFingerpint(itemKey))) return itemKey.toStack((int) aeKey.getLongValue());
-
-                }
+            if (!(aeKey.getKey() instanceof AEItemKey itemKey))
+                continue;
+            if (aeKey.getLongValue() > 0 && fingerprint.equals(getFingerpint(itemKey))) {
+                return itemKey.toStack((int) aeKey.getLongValue());
             }
         }
         return null;

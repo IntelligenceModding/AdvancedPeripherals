@@ -223,7 +223,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         for (Object2LongMap.Entry<AEKey> potentialStack : monitor.getAvailableStacks()) {
             if (potentialStack.getKey() instanceof AEItemKey itemKey) {
                 if (itemKey.matches(stack))
-                    return MethodResult.of(AppEngApi.getObjectFromStack(new Pair<>(potentialStack.getLongValue(), itemKey), getCraftingService(), 0));
+                    return MethodResult.of(AppEngApi.getObjectFromStack(new Pair<>(potentialStack.getLongValue(), itemKey), getCraftingService()));
             }
         }
         return MethodResult.of((Object) null);
@@ -236,7 +236,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
     @LuaFunction(mainThread = true)
     public final Object[] listCraftableItems() {
-        return new Object[]{AppEngApi.listCraftables(AppEngApi.getMonitor(node), getCraftingService())};
+        return new Object[]{AppEngApi.listStacks(AppEngApi.getMonitor(node), getCraftingService(), 2)};
     }
 
     @LuaFunction(mainThread = true)

@@ -61,35 +61,35 @@ public final class ARRenderAction implements INBTSerializable<CompoundTag> {
         if (!type.ensureArgs(intArgs)) return;
         int[] i = intArgs;
         switch (type) {
-            case DrawCenteredString:
+            case DRAW_CENTERED_STRING:
                 ARRenderHelper.drawCenteredString(matrixStack, mc.font, stringArg, relativeX(i[0], w), relativeY(i[1], h), i[2]);
                 break;
-            case DrawString:
+            case DRAW_STRING:
                 ARRenderHelper.drawString(matrixStack, mc.font, stringArg, relativeX(i[0], w), relativeY(i[1], h), i[2]);
                 break;
-            case DrawRightboundString:
+            case DRAW_RIGHTBOUND_STRING:
                 ARRenderHelper.drawRightboundString(matrixStack, mc.font, stringArg, relativeX(i[0], w), relativeY(i[1], h), i[2]);
                 break;
-            case Fill:
+            case FILL:
                 i[4] = ARRenderHelper.fixAlpha(i[4]);
                 ARRenderHelper.fill(matrixStack, relativeX(i[0], w), relativeY(i[1], h), relativeX(i[2], w), relativeY(i[3], h), i[4]);
                 break;
-            case HorizontalLine:
+            case HORIZONTAL_LINE:
                 ARRenderHelper.getInstance().hLine(matrixStack, relativeX(i[0], w), relativeX(i[1], w), relativeY(i[2], h), i[3]);
                 break;
-            case VerticalLine:
+            case VERTICAL_LINE:
                 ARRenderHelper.getInstance().vLine(matrixStack, relativeX(i[0], w), relativeY(i[1], h), relativeY(i[2], h), i[3]);
                 break;
-            case FillGradient:
+            case FILL_GRADIENT:
                 ARRenderHelper.getInstance().fillGradient(matrixStack, relativeX(i[0], w), relativeY(i[1], h), relativeX(i[2], w), relativeY(i[3], h), i[4], i[5]);
                 break;
-            case DrawCircle:
+            case DRAW_CIRCLE:
                 ARRenderHelper.getInstance().drawCircle(matrixStack, relativeX(i[0], w), relativeY(i[1], h), relativeAverage(i[2], w, h), i[3]);
                 break;
-            case FillCircle:
+            case FILL_CIRCLE:
                 ARRenderHelper.getInstance().fillCircle(matrixStack, relativeX(i[0], w), relativeY(i[1], h), relativeAverage(i[2], w, h), i[3]);
                 break;
-            case DrawItemIcon:
+            case DRAW_ITEM_ICON:
                 ARRenderHelper.getInstance().drawItemIcon(matrixStack, mc.getItemRenderer(), stringArg, relativeX(i[0], w), relativeY(i[1], h));
                 break;
             default:

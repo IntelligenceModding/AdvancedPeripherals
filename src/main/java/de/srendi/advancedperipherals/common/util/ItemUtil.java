@@ -7,6 +7,7 @@ import dan200.computercraft.shared.Registry;
 import de.srendi.advancedperipherals.common.addons.appliedenergistics.AppEngApi;
 import de.srendi.advancedperipherals.common.addons.refinedstorage.RefinedStorage;
 import net.minecraft.ResourceLocationException;
+import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.IntTag;
 import net.minecraft.resources.ResourceLocation;
@@ -164,5 +165,16 @@ public class ItemUtil {
         }
 
         return items;
+    }
+
+    public static void addCompuerItemToTab(ResourceLocation turtleID, ResourceLocation pocketID, NonNullList<ItemStack> items) {
+        if (turtleID != null) {
+            items.add(makeTurtle(TURTLE_ADVANCED, turtleID.toString()));
+            items.add(makeTurtle(TURTLE_NORMAL, turtleID.toString()));
+        }
+        if (pocketID != null) {
+            items.add(makePocket(POCKET_ADVANCED, pocketID.toString()));
+            items.add(makePocket(POCKET_NORMAL, pocketID.toString()));
+        }
     }
 }
