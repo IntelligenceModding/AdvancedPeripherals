@@ -21,12 +21,14 @@ public class CoordUtil {
         return world.getNearbyPlayers(TargetingConditions.forNonCombat(), null, new AABB(pos.offset(x, y, z), pos.offset(-x, -y, -z))).contains(player);
     }
 
-    public static boolean isInRange(Player player, Level world, BlockPos firstPos, BlockPos secondPos) {
-        int xOffset = Math.min(Math.abs(firstPos.getX()) + Math.abs(secondPos.getX()), APConfig.PERIPHERALS_CONFIG.playerDetMaxRange.get());
-        int yOffset = Math.min(Math.abs(firstPos.getY()) + Math.abs(secondPos.getY()), APConfig.PERIPHERALS_CONFIG.playerDetMaxRange.get());
-        int zOffset = Math.min(Math.abs(firstPos.getZ()) + Math.abs(secondPos.getZ()), APConfig.PERIPHERALS_CONFIG.playerDetMaxRange.get());
+    public static boolean isInRange(BlockPos blockPos, Player player, Level world, BlockPos firstPos, BlockPos secondPos) {
+        double i = player.getX() - blockPos.getX();
+        double j = player.getZ() - blockPos.getZ();
+        // Check if the distance of the player is within the max range of the player detector
+        if (Math.sqrt(i * i + j * j) > APConfig.PERIPHERALS_CONFIG.playerDetMaxRange.get()) return false;
 
-        return world.getNearbyPlayers(TargetingConditions.forNonCombat(), null, new AABB(firstPos.offset(xOffset, yOffset, zOffset), secondPos)).contains(player);
+
+        return world.getNearbyPlayers(TargetingConditions.forNonCombat(), null, new AABB(firstPos, secondPos)).contains(player);
     }
 
 }
