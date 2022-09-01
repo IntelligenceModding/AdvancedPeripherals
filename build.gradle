@@ -203,12 +203,20 @@ repositories {
         name = "Modmaven"
         url = 'https://modmaven.dev/'
     }
-    maven {
+    /*maven {
         name = "Create maven"
         url = "https://maven.tterrag.com/"
         content {
             includeGroup "com.simibubi.create"
             includeGroup "com.jozufozu.flywheel"
+        }
+    }*/
+    maven {
+        name = "Srendi Space repository"
+        url = "https://maven.pkg.jetbrains.space/intelligence/p/advancedperipherals/ap-repository"
+        credentials {
+            username = spaceUsername
+            password = spacePassword
         }
     }
     maven {
@@ -219,13 +227,13 @@ repositories {
         }
     }
 
-    maven {
+    /*maven {
         url = uri("https://maven.pkg.github.com/refinedmods/refinedstorage")
         credentials {
             username = "anything"
             password = "\u0067hp_oGjcDFCn8jeTzIj4Ke9pLoEVtpnZMP4VQgaX"
         }
-    }
+    }*/
 }
 
 configurations {
@@ -272,8 +280,11 @@ dependencies {
     runtimeOnly fg.deobf("vazkii.patchouli:Patchouli:${patchouli_version}")
 
     // Create
-    implementation fg.deobf("com.simibubi.create:Create:${create_version}")
-    implementation fg.deobf("com.jozufozu.flywheel:Flywheel-Forge:${flywheel_version}")
+    // Currently self hosted since create isn't officially updated to 1.19
+    implementation fg.deobf("com.simibubi.create:Create:${create_version}") {
+        transitive false
+    }
+    implementation fg.deobf("com.jozufozu.flywheel:flywheel-forge-1.19.2:${flywheel_version}")
 
     //Removed until fully ported
     //testImplementation fg.deobf("site.siredvin.ttoolkit:ttoolkit-${minecraft_version}:${ttoolkit_version}")
