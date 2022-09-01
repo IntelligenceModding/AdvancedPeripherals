@@ -29,6 +29,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
 
 public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwner<RsBridgeEntity>> {
     public static final String TYPE = "rsBridge";
@@ -45,18 +46,37 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         return getNode().getNetwork();
     }
 
+    /**
+     * Used to avoid NPE throwing when system is not connected.
+     * Will be replaced with a better solution in 0.8r
+     *
+     * @param defaultValue return value if block is not connected
+     * @param returnValue  return value if block is connected
+     * @return defaultValue if system is not connected, returnValue if it is
+     */
+    private Object ensureIsConnected(Object defaultValue, Supplier<Object> returnValue) {
+        if (!isConnected() || !getNetwork().canRun()) return defaultValue;
+        return returnValue.get();
+    }
+
     @Override
     public boolean isEnabled() {
         return APConfig.PERIPHERALS_CONFIG.enableRSBridge.get();
     }
 
     @LuaFunction(mainThread = true)
+    public final boolean isConnected() {
+        return getNetwork() != null;
+    }
+
+    @LuaFunction(mainThread = true)
     public final Object listItems() {
-        return RefinedStorage.listItems(getNetwork());
+        return ensureIsConnected(null, () -> RefinedStorage.listItems(getNetwork()));
     }
 
     @LuaFunction(mainThread = true)
     public final Object listCraftableItems() {
+        if (!isConnected()) return null;
         List<Object> items = new ArrayList<>();
         RefinedStorage.getCraftableItems(getNetwork()).forEach(item -> items.add(RefinedStorage.getObjectFromStack(item, getNetwork())));
         return items;
@@ -64,58 +84,66 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
     @LuaFunction(mainThread = true)
     public final Object listCraftableFluids() {
+        if (!isConnected()) return null;
         List<Object> fluids = new ArrayList<>();
         RefinedStorage.getCraftableFluids(getNetwork()).forEach(fluid -> fluids.add(RefinedStorage.getObjectFromFluid(fluid, getNetwork())));
         return fluids;
     }
 
     @LuaFunction(mainThread = true)
-    public final Integer getMaxItemDiskStorage() {
-        return RefinedStorage.getMaxItemDiskStorage(getNetwork());
+    public final int getMaxItemDiskStorage() {
+        return (int) ensureIsConnected(0, () -> RefinedStorage.getMaxItemDiskStorage(getNetwork()));
     }
 
     @LuaFunction(mainThread = true)
-    public final Integer getMaxFluidDiskStorage() {
-        return RefinedStorage.getMaxFluidDiskStorage(getNetwork());
+    public final int getMaxFluidDiskStorage() {
+        return (int) ensureIsConnected(0, () -> RefinedStorage.getMaxFluidDiskStorage(getNetwork()));
     }
 
     @LuaFunction(mainThread = true)
-    public final Integer getMaxItemExternalStorage() {
-        return RefinedStorage.getMaxItemExternalStorage(getNetwork());
+    public final int getMaxItemExternalStorage() {
+        return (int) ensureIsConnected(0, () -> RefinedStorage.getMaxItemExternalStorage(getNetwork()));
     }
 
     @LuaFunction(mainThread = true)
-    public final Integer getMaxFluidExternalStorage() {
-        return RefinedStorage.getMaxFluidExternalStorage(getNetwork());
+    public final int getMaxFluidExternalStorage() {
+        return (int) ensureIsConnected(0, () -> RefinedStorage.getMaxFluidExternalStorage(getNetwork()));
     }
 
     @LuaFunction(mainThread = true)
     public final Object listFluids() {
-        return RefinedStorage.listFluids(getNetwork());
+        return ensureIsConnected(null, () -> RefinedStorage.listFluids(getNetwork()));
     }
 
     @LuaFunction(mainThread = true)
     public final int getEnergyUsage() {
-        return getNetwork().getEnergyUsage();
+        return (int) ensureIsConnected(0, () -> getNetwork().getEnergyUsage());
     }
 
     @LuaFunction(mainThread = true)
     public final int getMaxEnergyStorage() {
-        return getNetwork().getEnergyStorage().getMaxEnergyStored();
+        return (int) ensureIsConnected(0, () -> getNetwork().getEnergyStorage().getMaxEnergyStored());
     }
 
     @LuaFunction(mainThread = true)
     public final int getEnergyStorage() {
-        return getNetwork().getEnergyStorage().getEnergyStored();
+        return (int) ensureIsConnected(0, () -> getNetwork().getEnergyStorage().getEnergyStored());
     }
 
     @LuaFunction(mainThread = true)
-    public final Object getPattern(IArguments arguments) throws LuaException {
-        return RefinedStorage.getObjectFromPattern(getNetwork().getCraftingManager().getPattern(ItemUtil.getItemStackRS(arguments.getTable(0), RefinedStorage.getItems(getNetwork()))), getNetwork());
+    public final Object getPattern(IArguments arguments) {
+        return ensureIsConnected(null, () -> {
+            try {
+                return RefinedStorage.getObjectFromPattern(getNetwork().getCraftingManager().getPattern(ItemUtil.getItemStackRS(arguments.getTable(0), RefinedStorage.getItems(getNetwork()))), getNetwork());
+            } catch (LuaException e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 
     @LuaFunction(mainThread = true)
     public final int exportItem(IArguments arguments) throws LuaException {
+        if (!isConnected()) return 0;
         ItemStack stack = ItemUtil.getItemStackRS(arguments.getTable(0), RefinedStorage.getItems(getNetwork()));
         Direction direction = validateSide(arguments.getString(1));
 
@@ -144,6 +172,7 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
     @LuaFunction(mainThread = true)
     public final int importItem(IArguments arguments) throws LuaException {
+        if (!isConnected()) return 0;
         ItemStack stack = ItemUtil.getItemStackRS(arguments.getTable(0), RefinedStorage.getItems(getNetwork()));
         Direction direction = validateSide(arguments.getString(1));
 
@@ -174,6 +203,7 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
     @LuaFunction(mainThread = true)
     public final int exportItemToPeripheral(IComputerAccess computer, IArguments arguments) throws LuaException {
+        if (!isConnected()) return 0;
         ItemStack stack = ItemUtil.getItemStackRS(arguments.getTable(0), RefinedStorage.getItems(getNetwork()));
         IPeripheral chest = computer.getAvailablePeripheral(arguments.getString(1));
         if (chest == null) throw new LuaException("No valid inventory block for " + arguments.getString(1));
@@ -203,6 +233,7 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
     @LuaFunction(mainThread = true)
     public final int importItemFromPeripheral(IComputerAccess computer, IArguments arguments) throws LuaException {
+        if (!isConnected()) return 0;
         ItemStack stack = ItemUtil.getItemStackRS(arguments.getTable(0), RefinedStorage.getItems(getNetwork()));
         IPeripheral chest = computer.getAvailablePeripheral(arguments.getString(1));
         int count = stack.getCount();
@@ -236,11 +267,18 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
     @LuaFunction(mainThread = true)
     public final Object getItem(IArguments arguments) throws LuaException {
-        return RefinedStorage.getItem(getNetwork(), ItemUtil.getItemStackRS(arguments.getTable(0), RefinedStorage.getItems(getNetwork())));
+        return ensureIsConnected(null, () -> {
+            try {
+                return RefinedStorage.getItem(getNetwork(), ItemUtil.getItemStackRS(arguments.getTable(0), RefinedStorage.getItems(getNetwork())));
+            } catch (LuaException e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 
     @LuaFunction(mainThread = true)
     public final boolean craftItem(IArguments arguments) throws LuaException {
+        if (!isConnected()) return false;
         ItemStack stack = ItemUtil.getItemStackRS(arguments.getTable(0), RefinedStorage.getItems(getNetwork()));
         if (stack == null) throw new LuaException("The item " + arguments.getTable(0).get("name") + "is not craftable");
         ICalculationResult result = getNetwork().getCraftingManager().create(stack, stack.getCount());
@@ -251,6 +289,7 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
     @LuaFunction(mainThread = true)
     public final boolean craftFluid(String fluid, int count) {
+        if (!isConnected()) return false;
         ICalculationResult result = getNetwork().getCraftingManager().create(new FluidStack(ForgeRegistries.FLUIDS.getValue(new ResourceLocation(fluid)), 0), count);
         CalculationResultType type = result.getType();
         if (result.getType() == CalculationResultType.OK) getNetwork().getCraftingManager().start(result.getTask());
@@ -259,6 +298,7 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
     @LuaFunction(mainThread = true)
     public final boolean isItemCrafting(String item) {
+        if (!isConnected()) return false;
         ItemStack stack = new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation(item)));
         for (ICraftingTask task : getNetwork().getCraftingManager().getTasks()) {
             ItemStack taskStack = task.getRequested().getItem();
@@ -271,6 +311,7 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
     @LuaFunction(mainThread = true)
     public final boolean isItemCraftable(IArguments arguments) throws LuaException {
+        if (!isConnected()) return false;
         ItemStack stack = ItemUtil.getItemStackRS(arguments.getTable(0), RefinedStorage.getItems(getNetwork()));
         return RefinedStorage.isItemCraftable(getNetwork(), stack);
     }
