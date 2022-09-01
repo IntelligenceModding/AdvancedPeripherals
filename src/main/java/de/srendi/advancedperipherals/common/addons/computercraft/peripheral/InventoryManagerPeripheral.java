@@ -53,7 +53,7 @@ public class InventoryManagerPeripheral extends BasePeripheral<BlockEntityPeriph
 
     @LuaFunction
     public final String getOwner() throws LuaException {
-        if (getOwnerPlayer() == null) return null;
+        if (owner.getOwner() == null) return null;
         return getOwnerPlayer().getName().getString();
     }
 
