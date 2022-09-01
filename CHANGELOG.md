@@ -6,6 +6,29 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+## [1.18.2-0.7.17r] - 2022-09-01
+
+### Added
+- [#342] Added `buildingName`, `targetLevel` and `workOrderType` to `getWorkOrders` - colony integrator
+- Added `isCraftable` to fluid stacks - me bridge
+- [#313] The chat box `chat` event now listens for the `say` command
+- [#317] Added inventory manager nbt support
+- [#286] Language updates
+
+### Fixed
+- [#174] Fixed client crash when quick moving stacks in the inventory manager
+- [#308] Fixed NPE for `getOwner` - inventory manager
+- [#281] Fixed wrong amount of pulled items in the inventory manager
+- [#280] Fixed `inCoords` functions - player detector
+- [#221] Fixed NPE when rs bridge is not connected to a network
+- [#321] Fixed that items are voided when importing items into a full me system
+- [#319] Fixed `getRequests` - colony integrator
+- Fixed that work orders do not return a location
+- Fixed console spam and not working table values of buildings - colony integrator
+
+### Changed
+- [#323] Improved return values of `craftItem` - me bridge
+
 ## [1.18.2-0.7.16b] - 2022-07-18
 
 ### Added
