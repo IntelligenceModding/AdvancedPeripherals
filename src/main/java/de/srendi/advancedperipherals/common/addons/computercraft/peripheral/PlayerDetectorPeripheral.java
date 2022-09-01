@@ -116,7 +116,7 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
         BlockPos firstPos = LuaConverter.convertToBlockPos(firstCoord);
         BlockPos secondPos = LuaConverter.convertToBlockPos(secondCoord);
         for (Player player : getPlayers()) {
-            if (CoordUtil.isInRange(getPos(),player, getLevel(), firstPos, secondPos)) {
+            if (CoordUtil.isInRange(getPos(), player, getLevel(), firstPos, secondPos)) {
                 playersName.add(player.getName().getString());
             }
         }

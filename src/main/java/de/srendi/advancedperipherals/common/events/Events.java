@@ -1,18 +1,23 @@
 package de.srendi.advancedperipherals.common.events;
 
 import com.google.common.collect.EvictingQueue;
+import com.mojang.brigadier.context.CommandContextBuilder;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.items.ARGogglesItem;
 import de.srendi.advancedperipherals.common.util.Pair;
 import de.srendi.advancedperipherals.network.MNetwork;
 import de.srendi.advancedperipherals.network.messages.ClearHudCanvasMessage;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.arguments.MessageArgument;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.event.CommandEvent;
 import net.minecraftforge.event.ServerChatEvent;
 import net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
@@ -42,6 +47,30 @@ public class Events {
                 player.addItem(book);
             }
         }
+    }
+
+    @SubscribeEvent
+    public static void onCommand(CommandEvent event) throws CommandSyntaxException {
+        if (!getCommandName(event.getParseResults().getContext()).equals("say")) return;
+        String username = "sayCommand";
+        String uuid = null;
+        String message = MessageArgument.getMessage(event.getParseResults().getContext().build("apChatEvent"), "message").getString();
+        boolean isHidden = false;
+        CommandSourceStack source = event.getParseResults().getContext().getSource();
+        if (source.getEntity() != null) {
+            username = source.getEntity().getDisplayName().getString();
+            uuid = source.getEntity().getUUID().toString();
+        }
+        if (message.startsWith("$")) {
+            event.setCanceled(true);
+            message = message.replace("$", "");
+            isHidden = true;
+        }
+        putChatMessage(Pair.of(getLastChatMessageID(), new ChatMessageObject(username, message, uuid, isHidden)));
+    }
+
+    private static String getCommandName(CommandContextBuilder<?> context) {
+        return context.getNodes().get(0).getNode().getName();
     }
 
     @SubscribeEvent
