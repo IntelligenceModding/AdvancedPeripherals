@@ -3,6 +3,7 @@ package de.srendi.advancedperipherals.common.blocks.blockentities;
 import com.refinedmods.refinedstorage.api.network.node.INetworkNodeProxy;
 import com.refinedmods.refinedstorage.blockentity.NetworkNodeBlockEntity;
 import com.refinedmods.refinedstorage.blockentity.config.IRedstoneConfigurable;
+import com.refinedmods.refinedstorage.blockentity.data.BlockEntitySynchronizationSpec;
 import dan200.computercraft.api.peripheral.IPeripheral;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.RsBridgePeripheral;
@@ -24,14 +25,15 @@ import static dan200.computercraft.shared.Capabilities.CAPABILITY_PERIPHERAL;
 public class RsBridgeEntity extends NetworkNodeBlockEntity<RefinedStorageNode> implements INetworkNodeProxy<RefinedStorageNode>, IRedstoneConfigurable, IPeripheralTileEntity {
 
     private static final String PERIPHERAL_SETTINGS = "AP_SETTINGS";
-
     protected CompoundTag peripheralSettings;
-
     protected RsBridgePeripheral peripheral = new RsBridgePeripheral(this);
     private LazyOptional<IPeripheral> peripheralCap;
 
+    //I have no clue what this does, but it works
+    private final static BlockEntitySynchronizationSpec SPEC = BlockEntitySynchronizationSpec.builder().build();
+
     public RsBridgeEntity(BlockPos pos, BlockState state) {
-        super(BlockEntityTypes.RS_BRIDGE.get(), pos, state);
+        super(BlockEntityTypes.RS_BRIDGE.get(), pos, state, SPEC);
         peripheralSettings = new CompoundTag();
     }
 
@@ -74,5 +76,11 @@ public class RsBridgeEntity extends NetworkNodeBlockEntity<RefinedStorageNode> i
     @Override
     public void markSettingsChanged() {
         setChanged();
+    }
+
+    @NotNull
+    @Override
+    public RefinedStorageNode getNode() {
+        return null;
     }
 }

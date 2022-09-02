@@ -10,6 +10,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -29,7 +30,7 @@ public class AutomataLookPlugin extends AutomataCorePlugin {
         BlockHitResult blockHit = (BlockHitResult) result;
         BlockState state = owner.getLevel().getBlockState(blockHit.getBlockPos());
         Map<String, Object> data = new HashMap<>();
-        ResourceLocation blockName = state.getBlock().getRegistryName();
+        ResourceLocation blockName = ForgeRegistries.BLOCKS.getKey(state.getBlock());
         if (blockName != null) data.put("name", blockName.toString());
         data.put("tags", LuaConverter.tagsToList(() -> state.getBlock().builtInRegistryHolder().tags()));
         return MethodResult.of(data);

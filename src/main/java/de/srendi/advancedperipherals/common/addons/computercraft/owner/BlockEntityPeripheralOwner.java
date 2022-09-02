@@ -30,7 +30,7 @@ public class BlockEntityPeripheralOwner<T extends BlockEntity & IPeripheralTileE
     @Nullable
     @Override
     public String getCustomName() {
-        return tileEntity.getTileData().getString("CustomName");
+        return tileEntity.getPersistentData().getString("CustomName");
     }
 
     @NotNull

@@ -38,7 +38,7 @@ public class Events {
     @SubscribeEvent
     public static void onWorldJoin(PlayerEvent.PlayerLoggedInEvent event) {
         if (APConfig.WORLD_CONFIG.givePlayerBookOnJoin.get()) {
-            Player player = event.getPlayer();
+            Player player = event.getEntity();
             if (!hasPlayedBefore(player)) {
                 ItemStack book = new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation("patchouli", "guide_book")));
                 CompoundTag nbt = new CompoundTag();
@@ -76,7 +76,7 @@ public class Events {
     @SubscribeEvent
     public static void onChatBox(ServerChatEvent event) {
         if (APConfig.PERIPHERALS_CONFIG.enableChatBox.get()) {
-            String message = event.getMessage();
+            String message = event.getMessage().getString();
             boolean isHidden = false;
             if (message.startsWith("$")) {
                 event.setCanceled(true);
@@ -89,7 +89,7 @@ public class Events {
 
     @SubscribeEvent
     public static void onEquipmentChange(LivingEquipmentChangeEvent event) {
-        LivingEntity livingEntity = event.getEntityLiving();
+        LivingEntity livingEntity = event.getEntity();
         if (!(livingEntity instanceof ServerPlayer serverPlayer)) return;
         if (event.getFrom().getItem() instanceof ARGogglesItem)
             MNetwork.sendTo(new ClearHudCanvasMessage(), serverPlayer);

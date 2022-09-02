@@ -13,6 +13,7 @@ import com.refinedmods.refinedstorage.apiimpl.API;
 import com.refinedmods.refinedstorage.apiimpl.network.node.NetworkNode;
 import dan200.computercraft.shared.util.NBTUtil;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
+import de.srendi.advancedperipherals.common.util.ItemUtil;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
 import de.srendi.advancedperipherals.common.util.StringUtil;
 import net.minecraft.core.NonNullList;
@@ -23,6 +24,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nullable;
 import java.nio.charset.StandardCharsets;
@@ -153,7 +155,7 @@ public class RefinedStorage {
         CompoundTag nbt = itemStack.getTag();
         Supplier<Stream<TagKey<Item>>> tags = () -> itemStack.getItem().builtInRegistryHolder().tags();
         map.put("fingerprint", getFingerpint(itemStack));
-        map.put("name", itemStack.getItem().getRegistryName().toString());
+        map.put("name", ItemUtil.getRegistryKey(itemStack.getItem()).toString());
         map.put("amount", itemStack.getCount());
         map.put("displayName", itemStack.getDisplayName().getString());
         map.put("isCraftable", isItemCraftable(network, itemStack));
@@ -167,7 +169,7 @@ public class RefinedStorage {
         if (fluidStack == null) return null;
         Map<String, Object> map = new HashMap<>();
         Supplier<Stream<TagKey<Fluid>>> tags = () -> fluidStack.getFluid().builtInRegistryHolder().tags();
-        map.put("name", fluidStack.getFluid().getRegistryName().toString());
+        map.put("name", ForgeRegistries.FLUIDS.getKey(fluidStack.getFluid()).toString());
         map.put("amount", fluidStack.getAmount());
         map.put("displayName", fluidStack.getDisplayName().getString());
         map.put("isCraftable", isFluidCraftable(network, fluidStack));
@@ -253,7 +255,7 @@ public class RefinedStorage {
 
     public static String getFingerpint(ItemStack stack) {
         CompoundTag nbt = stack.getTag();
-        String fingerprint = (nbt == null ? "null" : nbt.toString()) + stack.getItem().getRegistryName().toString() + stack.getDisplayName().getString();
+        String fingerprint = (nbt == null ? "null" : nbt.toString()) + ItemUtil.getRegistryKey(stack).toString() + stack.getDisplayName().getString();
         try {
             byte[] bytesOfHash = fingerprint.getBytes(StandardCharsets.UTF_8);
             MessageDigest md = MessageDigest.getInstance("MD5");

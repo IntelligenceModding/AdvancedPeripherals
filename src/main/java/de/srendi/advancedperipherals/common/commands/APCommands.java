@@ -8,9 +8,9 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.ClickEvent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentUtils;
 import net.minecraft.network.chat.HoverEvent;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.event.RegisterCommandsEvent;
@@ -28,17 +28,17 @@ public class APCommands {
     private static int getHashItem(CommandSourceStack source) throws CommandSyntaxException {
         ServerPlayer playerEntity = source.getPlayerOrException();
         if (playerEntity.getMainHandItem() == ItemStack.EMPTY) {
-            source.sendFailure(new TextComponent("You need an item in your main hand."));
+            source.sendFailure(Component.literal("You need an item in your main hand."));
             return 0;
         }
         CompoundTag tag = playerEntity.getMainHandItem().getTag();
         String hash = NBTUtil.getNBTHash(tag);
         if (hash == null) {
-            source.sendFailure(new TextComponent("That item does not have NBT data"));
+            source.sendFailure(Component.literal("That item does not have NBT data"));
             return 0;
         }
-        source.sendSuccess(new TextComponent("Hash of you main hand item: "), true);
-        source.sendSuccess(ComponentUtils.wrapInSquareBrackets(new TextComponent(hash).withStyle(style -> style.applyFormat(ChatFormatting.GREEN).withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, hash)).withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponent("Copy"))))), true);
+        source.sendSuccess(Component.literal("Hash of you main hand item: "), true);
+        source.sendSuccess(ComponentUtils.wrapInSquareBrackets(Component.literal(hash).withStyle(style -> style.applyFormat(ChatFormatting.GREEN).withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, hash)).withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal("Copy"))))), true);
         return 1;
     }
 }

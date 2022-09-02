@@ -25,6 +25,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraftforge.common.Tags;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -68,7 +69,7 @@ public class GeoScannerPeripheral extends BasePeripheral<IPeripheralOwner> {
             data.put("z", pos.getZ());
 
             Block block = state.getBlock();
-            ResourceLocation name = block.getRegistryName();
+            ResourceLocation name = ForgeRegistries.BLOCKS.getKey(block);
             data.put("name", name == null ? "unknown" : name.toString());
             data.put("tags", LuaConverter.tagsToList(() -> block.builtInRegistryHolder().tags()));
 
@@ -109,7 +110,7 @@ public class GeoScannerPeripheral extends BasePeripheral<IPeripheralOwner> {
                 for (int z = chunkPos.getMinBlockZ(); z <= chunkPos.getMaxBlockZ(); z++) {
                     for (int y = level.dimensionType().minY(); y < level.dimensionType().height(); y++) {
                         BlockState block = chunk.getBlockState(new BlockPos(x, y, z));
-                        ResourceLocation name = block.getBlock().getRegistryName();
+                        ResourceLocation name = ForgeRegistries.BLOCKS.getKey(block.getBlock());
                         if (name != null) {
                             if (block.is(Tags.Blocks.ORES)) {
                                 data.put(name.toString(), data.getOrDefault(name.toString(), 0) + 1);

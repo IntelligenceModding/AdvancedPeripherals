@@ -14,6 +14,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.AABB;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nonnull;
 import java.util.HashMap;
@@ -82,13 +83,9 @@ public class AutomataItemSuckPlugin extends AutomataCorePlugin {
         Map<Integer, Map<String, Object>> data = new HashMap<>();
         int index = 1;
         for (ItemEntity item : items) {
-            Map<String, Object> itemData = new HashMap<>();
-            itemData.put("entity_id", item.getId());
-            itemData.put("name", item.getItem().getDisplayName().getString());
-            ResourceLocation itemName = item.getItem().getItem().getRegistryName();
-            if (itemName != null) itemData.put("technicalName", itemName.toString());
-            itemData.put("count", item.getItem().getCount());
-            itemData.put("tags", LuaConverter.tagsToList(() -> item.getItem().getItem().builtInRegistryHolder().tags()));
+            ItemStack stack = item.getItem();
+            Map<String, Object> itemData = LuaConverter.stackToObject(stack);
+            itemData.put("entityID", item.getId());
             data.put(index, itemData);
             index++;
         }
@@ -103,7 +100,7 @@ public class AutomataItemSuckPlugin extends AutomataCorePlugin {
             List<ItemEntity> items = getItems();
             int requiredQuantity = requiredQuantityArg;
             for (ItemEntity item : items) {
-                ResourceLocation itemName = item.getItem().getItem().getRegistryName();
+                ResourceLocation itemName = ForgeRegistries.ITEMS.getKey(item.getItem().getItem());
                 if (itemName == null) continue;
                 if (itemName.toString().equals(technicalName)) {
                     requiredQuantity -= suckItem(item, requiredQuantity);

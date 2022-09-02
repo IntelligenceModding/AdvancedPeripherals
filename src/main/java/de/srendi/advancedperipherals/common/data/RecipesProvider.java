@@ -14,6 +14,7 @@ import net.minecraft.world.item.alchemy.PotionUtils;
 import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.common.Tags;
+import net.minecraftforge.common.crafting.StrictNBTIngredient;
 import net.minecraftforge.common.crafting.conditions.IConditionBuilder;
 import org.jetbrains.annotations.NotNull;
 
@@ -192,7 +193,7 @@ public class RecipesProvider extends RecipeProvider implements IConditionBuilder
                 .define('R', Tags.Items.STORAGE_BLOCKS_REDSTONE)
                 .define('S', Items.SOUL_LANTERN)
                 .define('D', Tags.Items.GEMS_DIAMOND)
-                .define('L', new NBTIngredient(PotionUtils.setPotion(new ItemStack(Items.POTION), Potions.LONG_REGENERATION)))
+                .define('L', StrictNBTIngredient.of(PotionUtils.setPotion(new ItemStack(Items.POTION), Potions.LONG_REGENERATION)))
                 .pattern("RAR")
                 .pattern("DSD")
                 .pattern("RLR")
@@ -218,9 +219,4 @@ public class RecipesProvider extends RecipeProvider implements IConditionBuilder
                 .save(consumer);
     }
 
-    public static class NBTIngredient extends net.minecraftforge.common.crafting.NBTIngredient {
-        public NBTIngredient(ItemStack stack) {
-            super(stack);
-        }
-    }
 }

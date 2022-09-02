@@ -1,13 +1,13 @@
 package de.srendi.advancedperipherals.common.util;
 
 import de.srendi.advancedperipherals.AdvancedPeripherals;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 
 public class TranslationUtil {
 
-    public static TranslatableComponent itemTooltip(String descriptionId) {
+    public static Component itemTooltip(String descriptionId) {
         int lastIndex = descriptionId.lastIndexOf('.');
-        return new TranslatableComponent(String.format(
+        return Component.translatable(String.format(
                 "%s.tooltip.%s",
                 descriptionId.substring(0, lastIndex).replaceFirst("^block", "item"),
                 descriptionId.substring(lastIndex + 1)

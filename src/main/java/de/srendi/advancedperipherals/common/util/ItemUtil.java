@@ -15,9 +15,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.ForgeRegistryEntry;
 import net.minecraftforge.registries.IForgeRegistry;
-import net.minecraftforge.registries.ObjectHolder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,17 +23,13 @@ import java.util.Map;
 
 public class ItemUtil {
 
-    @ObjectHolder("computercraft:turtle_normal")
     public static final Item TURTLE_NORMAL = Registry.ModItems.TURTLE_NORMAL.get();
-    @ObjectHolder("computercraft:turtle_advanced")
     public static final Item TURTLE_ADVANCED = Registry.ModItems.TURTLE_ADVANCED.get();
 
-    @ObjectHolder("computercraft:pocket_computer_normal")
     public static final Item POCKET_NORMAL = Registry.ModItems.POCKET_COMPUTER_NORMAL.get();
-    @ObjectHolder("computercraft:pocket_computer_advanced")
     public static final Item POCKET_ADVANCED = Registry.ModItems.POCKET_COMPUTER_ADVANCED.get();
 
-    public static <T extends ForgeRegistryEntry<T>> T getRegistryEntry(String name, IForgeRegistry<T> forgeRegistry) {
+    public static <T> T getRegistryEntry(String name, IForgeRegistry<T> forgeRegistry) {
         ResourceLocation location;
         try {
             location = new ResourceLocation(name);
@@ -167,7 +161,7 @@ public class ItemUtil {
         return items;
     }
 
-    public static void addCompuerItemToTab(ResourceLocation turtleID, ResourceLocation pocketID, NonNullList<ItemStack> items) {
+    public static void addComputerItemToTab(ResourceLocation turtleID, ResourceLocation pocketID, NonNullList<ItemStack> items) {
         if (turtleID != null) {
             items.add(makeTurtle(TURTLE_ADVANCED, turtleID.toString()));
             items.add(makeTurtle(TURTLE_NORMAL, turtleID.toString()));
@@ -177,4 +171,13 @@ public class ItemUtil {
             items.add(makePocket(POCKET_NORMAL, pocketID.toString()));
         }
     }
+
+    public static ResourceLocation getRegistryKey(Item item) {
+        return ForgeRegistries.ITEMS.getKey(item);
+    }
+
+    public static ResourceLocation getRegistryKey(ItemStack item) {
+        return ForgeRegistries.ITEMS.getKey(item.copy().getItem());
+    }
+
 }

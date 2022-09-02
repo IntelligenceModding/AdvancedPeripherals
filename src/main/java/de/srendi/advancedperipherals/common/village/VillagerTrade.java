@@ -1,5 +1,6 @@
 package de.srendi.advancedperipherals.common.village;
 
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.npc.VillagerTrades;
 import net.minecraft.world.item.Item;
@@ -7,9 +8,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.trading.MerchantOffer;
 import net.minecraft.world.level.block.Block;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Random;
 
 public class VillagerTrade implements VillagerTrades.ItemListing {
 
@@ -66,7 +66,7 @@ public class VillagerTrade implements VillagerTrades.ItemListing {
 
     @Nullable
     @Override
-    public MerchantOffer getOffer(Entity trader, Random rand) {
+    public MerchantOffer getOffer(@NotNull Entity trader, @NotNull RandomSource rand) {
         if (type == Type.EmeraldForItem) {
             if (itemStack != null)
                 return new MerchantOffer(itemStack, new ItemStack(Items.EMERALD, emeraldPrice), maxUses, xp, 1);

@@ -1,8 +1,5 @@
 package de.srendi.advancedperipherals.common.argoggles;
 
-import com.mojang.blaze3d.vertex.PoseStack;
-import de.srendi.advancedperipherals.AdvancedPeripherals;
-import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraftforge.common.util.INBTSerializable;
 
@@ -57,7 +54,7 @@ public final class ARRenderAction implements INBTSerializable<CompoundTag> {
         return id;
     }
 
-    public void draw(Minecraft mc, PoseStack matrixStack, int w, int h) {
+    /*public void draw(Minecraft mc, PoseStack matrixStack, int w, int h) {
         if (!type.ensureArgs(intArgs)) return;
         int[] i = intArgs;
         switch (type) {
@@ -96,7 +93,7 @@ public final class ARRenderAction implements INBTSerializable<CompoundTag> {
                 AdvancedPeripherals.LOGGER.warn("Failed to execute AR render action of unimplemented type " + type);
                 break;
         }
-    }
+    }*/
 
     private int relativeX(int x, int windowWidth) {
         if (virtualScreenSize.isPresent()) {

@@ -3,7 +3,6 @@ package de.srendi.advancedperipherals.common.items;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.items.base.BaseItem;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
@@ -29,7 +28,7 @@ public class MemoryCardItem extends BaseItem {
     public void appendHoverText(ItemStack stack, @Nullable Level levelIn, List<Component> tooltip, TooltipFlag flagIn) {
         super.appendHoverText(stack, levelIn, tooltip, flagIn);
         if (stack.getOrCreateTag().contains("owner")) {
-            tooltip.add(new TranslatableComponent("item.advancedperipherals.tooltip.memory_card.bound", stack.getOrCreateTag().getString("owner")));
+            tooltip.add(Component.translatable("item.advancedperipherals.tooltip.memory_card.bound", stack.getOrCreateTag().getString("owner")));
         }
     }
 
@@ -38,10 +37,10 @@ public class MemoryCardItem extends BaseItem {
         if (!worldIn.isClientSide) {
             ItemStack stack = playerIn.getItemInHand(handIn);
             if (stack.getOrCreateTag().contains("owner")) {
-                playerIn.displayClientMessage(new TranslatableComponent("text.advancedperipherals.removed_player"), true);
+                playerIn.displayClientMessage(Component.translatable("text.advancedperipherals.removed_player"), true);
                 stack.getOrCreateTag().remove("owner");
             } else {
-                playerIn.displayClientMessage(new TranslatableComponent("text.advancedperipherals.added_player"), true);
+                playerIn.displayClientMessage(Component.translatable("text.advancedperipherals.added_player"), true);
                 stack.getOrCreateTag().putString("owner", playerIn.getName().getString());
             }
         }

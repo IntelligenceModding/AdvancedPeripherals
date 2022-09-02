@@ -20,11 +20,15 @@ public class BlockTagsProvider extends TagsProvider<Block> {
      * Just for note, this provider is designed also for external usage
      */
 
-    private final @NotNull DeferredRegister<Block> blockRegistry;
+    @NotNull
+    private final DeferredRegister<Block> blockRegistry;
+    @NotNull
+    private final DataGenerator generator;
 
     public BlockTagsProvider(DataGenerator generator, @Nullable ExistingFileHelper existingFileHelper, @NotNull DeferredRegister<Block> blockRegistry) {
         super(generator, Registry.BLOCK, AdvancedPeripherals.MOD_ID, existingFileHelper);
         this.blockRegistry = blockRegistry;
+        this.generator = generator;
     }
 
     @Override
@@ -42,6 +46,7 @@ public class BlockTagsProvider extends TagsProvider<Block> {
         return this.generator.getOutputFolder().resolve("data/" + block.getNamespace() + "/tags/blocks/" + block.getPath() + ".json");
     }
 
+    @NotNull
     @Override
     public String getName() {
         return "Block tags";

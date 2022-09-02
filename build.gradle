@@ -281,10 +281,10 @@ dependencies {
 
     // Create
     // Currently self hosted since create isn't officially updated to 1.19
-    implementation fg.deobf("com.simibubi.create:Create:${create_version}") {
+    compileOnly fg.deobf("com.simibubi.create:Create:${create_version}") {
         transitive false
     }
-    implementation fg.deobf("com.jozufozu.flywheel:flywheel-forge-1.19.2:${flywheel_version}")
+    compileOnly fg.deobf("com.jozufozu.flywheel:flywheel-forge-1.19.2:${flywheel_version}")
 
     //Removed until fully ported
     //testImplementation fg.deobf("site.siredvin.ttoolkit:ttoolkit-${minecraft_version}:${ttoolkit_version}")
@@ -353,6 +353,12 @@ test {
     useJUnitPlatform()
     testLogging {
         events "skipped", "failed"
+    }
+}
+
+afterEvaluate {
+    tasks.withType(JavaCompile) {
+        options.compilerArgs << "-Xmaxerrs" << "2000"
     }
 }
 

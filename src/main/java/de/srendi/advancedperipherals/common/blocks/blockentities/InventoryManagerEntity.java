@@ -9,7 +9,6 @@ import de.srendi.advancedperipherals.common.setup.BlockEntityTypes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -49,7 +48,7 @@ public class InventoryManagerEntity extends PeripheralBlockEntity<InventoryManag
     @NotNull
     @Override
     public Component getDisplayName() {
-        return new TranslatableComponent("block.advancedperipherals.inventory_manager");
+        return Component.translatable("block.advancedperipherals.inventory_manager");
     }
 
     public Player getOwnerPlayer() {

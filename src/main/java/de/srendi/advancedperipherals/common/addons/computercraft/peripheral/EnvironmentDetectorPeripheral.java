@@ -29,6 +29,7 @@ import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.levelgen.WorldgenRandom;
 import net.minecraft.world.phys.AABB;
+import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.server.ServerLifecycleHooks;
 
 import javax.annotation.Nonnull;
@@ -82,9 +83,7 @@ public class EnvironmentDetectorPeripheral extends BasePeripheral<IPeripheralOwn
 
     @LuaFunction(mainThread = true)
     public final String getBiome() {
-        String biomeName = getLevel().getBiome(getPos()).value().getRegistryName().toString();
-        String[] biome = biomeName.split(":");
-        return biome[1];
+        return ForgeRegistries.BIOMES.getKey(getLevel().getBiome(getPos()).value()).getPath();
     }
 
     @LuaFunction(mainThread = true)
@@ -124,28 +123,28 @@ public class EnvironmentDetectorPeripheral extends BasePeripheral<IPeripheralOwn
 
     @LuaFunction(mainThread = true)
     public final String getDimensionProvider() {
-        return getLevel().dimension().getRegistryName().getNamespace();
+        return getLevel().dimension().location().getNamespace();
     }
 
     @LuaFunction(mainThread = true)
     public final String getDimensionName() {
-        return getLevel().dimension().getRegistryName().getPath();
+        return getLevel().dimension().location().getPath();
     }
 
     @LuaFunction(mainThread = true)
     public final String getDimensionPaN() {
-        return getLevel().dimension().getRegistryName().toString();
+        return getLevel().dimension().location().toString();
     }
 
     @LuaFunction(mainThread = true)
     public final boolean isDimension(String dimension) {
-        return getLevel().dimension().getRegistryName().getPath().equals(dimension);
+        return getLevel().dimension().location().getPath().equals(dimension);
     }
 
     @LuaFunction(mainThread = true)
     public final Set<String> listDimensions() {
         Set<String> dimensions = new HashSet<>();
-        ServerLifecycleHooks.getCurrentServer().getAllLevels().forEach(serverWorld -> dimensions.add(serverWorld.dimension().getRegistryName().getPath()));
+        ServerLifecycleHooks.getCurrentServer().getAllLevels().forEach(serverWorld -> dimensions.add(serverWorld.dimension().location().getPath()));
         return dimensions;
     }
 
@@ -167,35 +166,19 @@ public class EnvironmentDetectorPeripheral extends BasePeripheral<IPeripheralOwn
 
     private Map<Integer, String> getCurrentMoonPhase() {
         Map<Integer, String> moon = new HashMap<>();
-        if (getLevel().dimension().getRegistryName().getPath().equals("overworld")) {
+        if (getLevel().dimension() == Level.OVERWORLD) {
             switch (getLevel().getMoonPhase()) {
-                case 0:
-                    moon.put(0, "Full moon");
-                    break;
-                case 1:
-                    moon.put(1, "Waning gibbous");
-                    break;
-                case 2:
-                    moon.put(2, "Third quarter");
-                    break;
-                case 3:
-                    moon.put(3, "Wanning crescent");
-                    break;
-                case 4:
-                    moon.put(4, "New moon");
-                    break;
-                case 5:
-                    moon.put(5, "Waxing crescent");
-                    break;
-                case 6:
-                    moon.put(6, "First quarter");
-                    break;
-                case 7:
-                    moon.put(7, "Waxing gibbous");
-                    break;
-                default:
+                case 0 -> moon.put(0, "Full moon");
+                case 1 -> moon.put(1, "Waning gibbous");
+                case 2 -> moon.put(2, "Third quarter");
+                case 3 -> moon.put(3, "Wanning crescent");
+                case 4 -> moon.put(4, "New moon");
+                case 5 -> moon.put(5, "Waxing crescent");
+                case 6 -> moon.put(6, "First quarter");
+                case 7 -> moon.put(7, "Waxing gibbous");
+                default ->
                     //should never happen
-                    moon.put(0, "What is a moon");
+                        moon.put(0, "What is a moon");
             }
         } else {
             //Yay, easter egg

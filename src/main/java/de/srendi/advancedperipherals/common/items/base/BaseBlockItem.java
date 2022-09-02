@@ -5,7 +5,6 @@ import de.srendi.advancedperipherals.client.KeyBindings;
 import de.srendi.advancedperipherals.common.util.EnumColor;
 import de.srendi.advancedperipherals.common.util.TranslationUtil;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -31,12 +30,12 @@ public abstract class BaseBlockItem extends BlockItem {
     public void appendHoverText(ItemStack stack, @Nullable Level levelIn, List<Component> tooltip, TooltipFlag flagIn) {
         super.appendHoverText(stack, levelIn, tooltip, flagIn);
         if (!KeyBindings.DESCRIPTION_KEYBINDING.isDown()) {
-            tooltip.add(EnumColor.buildTextComponent(new TranslatableComponent("item.advancedperipherals.tooltip.show_desc", KeyBindings.DESCRIPTION_KEYBINDING.getTranslatedKeyMessage())));
+            tooltip.add(EnumColor.buildTextComponent(Component.translatable("item.advancedperipherals.tooltip.show_desc", KeyBindings.DESCRIPTION_KEYBINDING.getTranslatedKeyMessage())));
         } else {
             tooltip.add(EnumColor.buildTextComponent(getDescription()));
         }
         if (!isEnabled())
-            tooltip.add(EnumColor.buildTextComponent(new TranslatableComponent("item.advancedperipherals.tooltip.disabled")));
+            tooltip.add(EnumColor.buildTextComponent(Component.translatable("item.advancedperipherals.tooltip.disabled")));
     }
 
     public @NotNull Component getDescription() {

@@ -16,18 +16,20 @@ import com.minecolonies.api.research.effects.IResearchEffect;
 import com.minecolonies.api.research.util.ResearchState;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingStructureBuilder;
 import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import de.srendi.advancedperipherals.common.util.ItemUtil;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
 import io.netty.buffer.Unpooled;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 
 import java.util.ArrayList;
@@ -66,7 +68,7 @@ public class MineColonies {
         map.put("bedPos", LuaConverter.posToObject(citizen.getBedPos()));
         map.put("children", citizen.getChildren());
         map.put("location", LuaConverter.posToObject(citizen.getLastPosition()));
-        map.put("state", citizen.getStatus() == null ? "Idle" : new TranslatableComponent(citizen.getStatus().getTranslationKey()).getString());
+        map.put("state", citizen.getStatus() == null ? "Idle" : Component.translatable(citizen.getStatus().getTranslationKey()).getString());
         map.put("age", citizen.isChild() ? "child" : "adult");
         map.put("gender", citizen.isFemale() ? "female" : "male");
         map.put("saturation", citizen.getSaturation());
@@ -103,7 +105,7 @@ public class MineColonies {
         map.put("saturation", visitor.getSaturation());
         map.put("happiness", visitor.getCitizenHappinessHandler().getHappiness(visitor.getColony()));
         map.put("skills", skillsToObject(visitor.getCitizenSkillHandler().getSkills()));
-        map.put("recruitCost", visitor.getRecruitCost().getItem().getRegistryName().toString());
+        map.put("recruitCost", ItemUtil.getRegistryKey(visitor.getRecruitCost().getItem()).toString());
         return map;
     }
 
@@ -179,7 +181,7 @@ public class MineColonies {
         Map<String, Object> map = new HashMap<>();
         map.put("location", LuaConverter.posToObject(pos));
         map.put("type", building.getSchematicName());
-        map.put("style", building.getStyle());
+        map.put("style", building.getStructurePack());
         map.put("level", building.getBuildingLevel());
         map.put("maxLevel", building.getMaxBuildingLevel());
         map.put("name", building.getBuildingDisplayName());
@@ -201,7 +203,7 @@ public class MineColonies {
      * @return the size of all inventories in this building
      */
     public static int getStorageSize(IBuilding building) {
-        LazyOptional<IItemHandler> capability = building.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY);
+        LazyOptional<IItemHandler> capability = building.getCapability(ForgeCapabilities.ITEM_HANDLER);
         IItemHandler handler = capability.resolve().orElse(null);
         if (handler != null) return handler.getSlots();
         return 0;
@@ -240,7 +242,7 @@ public class MineColonies {
      * @param colony     The colony
      * @return a map with all possible researches
      */
-    public static List<Object> getResearch(ResourceLocation branch, List<ResourceLocation> researches, IColony colony) {
+    public static List<Object> getResearch(ResourceLocation branch, List<ResourceLocation> researches, IColony colony) throws CommandSyntaxException {
         List<Object> result = new ArrayList<>();
         if (researches != null) {
             for (ResourceLocation researchName : researches) {
@@ -259,7 +261,7 @@ public class MineColonies {
 
                 Map<String, Object> map = new HashMap<>();
                 map.put("id", researchName.toString());
-                map.put("name", research.getName().getString());
+                map.put("name", research.getName().resolve(null, null, 100));
                 map.put("researchEffects", effects);
                 map.put("status", colonyResearch == null ? ResearchState.NOT_STARTED.toString() : colonyResearch.getState().toString());
 
@@ -295,7 +297,7 @@ public class MineColonies {
         for (BuildingBuilderResource resource : resources) {
             Map<String, Object> map = new HashMap<>();
 
-            map.put("item", resource.getItemStack().copy().getItem().getRegistryName().toString());
+            map.put("item", ItemUtil.getRegistryKey(resource.getItemStack()));
             map.put("displayName", resource.getName());
             map.put("available", resource.getAvailable());
             map.put("delivering", resource.getAmountInDelivery());

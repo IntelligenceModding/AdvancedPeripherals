@@ -14,6 +14,7 @@ import com.minecolonies.api.colony.requestsystem.resolver.retrying.IRetryingRequ
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.colony.workorders.IWorkOrder;
 import com.minecolonies.api.research.IGlobalResearchTree;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.pocket.IPocketAccess;
@@ -30,12 +31,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.fml.ModList;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class ColonyPeripheral extends BasePeripheral<IPeripheralOwner> {
@@ -108,7 +104,7 @@ public class ColonyPeripheral extends BasePeripheral<IPeripheralOwner> {
     public final String getColonyStyle() throws LuaException {
         IColony colony = getColony();
 
-        return colony.getStyle();
+        return colony.getStructurePack();
     }
 
     @LuaFunction(mainThread = true)
@@ -197,7 +193,7 @@ public class ColonyPeripheral extends BasePeripheral<IPeripheralOwner> {
     }
 
     @LuaFunction(mainThread = true)
-    public final Object getResearch() throws LuaException {
+    public final Object getResearch() throws LuaException, CommandSyntaxException {
         IColony colony = getColony();
 
         IGlobalResearchTree globalTree = IGlobalResearchTree.getInstance();

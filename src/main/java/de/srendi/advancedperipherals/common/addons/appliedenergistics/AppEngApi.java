@@ -12,12 +12,14 @@ import appeng.api.stacks.AEKey;
 import appeng.api.storage.MEStorage;
 import dan200.computercraft.shared.util.NBTUtil;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
+import de.srendi.advancedperipherals.common.util.ItemUtil;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
 import de.srendi.advancedperipherals.common.util.Pair;
 import de.srendi.advancedperipherals.common.util.StringUtil;
 import it.unimi.dsi.fastutil.objects.Object2LongMap;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.logging.log4j.Level;
 
 import java.nio.charset.StandardCharsets;
@@ -106,7 +108,7 @@ public class AppEngApi {
         CompoundTag nbt = stack.getRight().toTag();
         long amount = stack.getLeft();
         map.put("fingerprint", getFingerpint(stack.getRight()));
-        map.put("name", stack.getRight().getItem().getRegistryName().toString());
+        map.put("name", ItemUtil.getRegistryKey(stack.getRight().getItem()).toString());
         map.put("amount", amount);
         map.put("displayName", displayName);
         map.put("nbt", NBTUtil.toLua(nbt));
@@ -119,7 +121,7 @@ public class AppEngApi {
     private static Map<String, Object> getObjectFromFluidStack(Pair<Long, AEFluidKey> stack, ICraftingService craftingService) {
         Map<String, Object> map = new HashMap<>();
         long amount = stack.getLeft();
-        map.put("name", stack.getRight().getFluid().getRegistryName().toString());
+        map.put("name", ForgeRegistries.FLUIDS.getKey(stack.getRight().getFluid()).toString());
         map.put("amount", amount);
         map.put("displayName", stack.getRight().getDisplayName());
         map.put("tags", LuaConverter.tagsToList(() -> stack.getRight().getFluid().builtInRegistryHolder().tags()));
@@ -172,7 +174,7 @@ public class AppEngApi {
 
     public static String getFingerpint(AEItemKey itemStack) {
         ItemStack stack = itemStack.toStack();
-        String fingerprint = stack.getOrCreateTag() + stack.getItem().getRegistryName().toString() + stack.getDisplayName().getString();
+        String fingerprint = stack.getOrCreateTag() + ItemUtil.getRegistryKey(stack.getItem()).toString() + stack.getDisplayName().getString();
         try {
             byte[] bytesOfHash = fingerprint.getBytes(StandardCharsets.UTF_8);
             MessageDigest md = MessageDigest.getInstance("MD5");

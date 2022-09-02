@@ -1,6 +1,5 @@
 package de.srendi.advancedperipherals.client;
 
-import dan200.computercraft.client.render.TurtleModelLoader;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.container.InventoryManagerScreen;
 import de.srendi.advancedperipherals.common.setup.ContainerTypes;
@@ -8,9 +7,8 @@ import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.ModelRegistryEvent;
-import net.minecraftforge.client.model.ForgeModelBakery;
-import net.minecraftforge.client.model.ModelLoaderRegistry;
+import net.minecraftforge.client.event.ModelEvent;
+import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
@@ -30,19 +28,20 @@ public class ClientRegistry {
     };
 
     @SubscribeEvent
-    public static void onModelBakeEvent(ModelRegistryEvent event) {
-        //Loading turtle models
-        //Adapted from CC-Tweaked
-        ModelLoaderRegistry.registerLoader(new ResourceLocation(AdvancedPeripherals.MOD_ID, "turtle"), TurtleModelLoader.INSTANCE);
+    public static void registerModels(ModelEvent.RegisterAdditional event) {
         for (String model : TURTLE_MODELS) {
-            ForgeModelBakery.addSpecialModel(new ModelResourceLocation(new ResourceLocation(AdvancedPeripherals.MOD_ID, model), "inventory"));
+            event.register(new ModelResourceLocation(new ResourceLocation(AdvancedPeripherals.MOD_ID, model), "inventory"));
         }
     }
 
     @SubscribeEvent
     public static void onClientSetup(FMLClientSetupEvent event) {
         MenuScreens.register(ContainerTypes.INVENTORY_MANAGER_CONTAINER.get(), InventoryManagerScreen::new);
-        KeyBindings.register();
+    }
+
+    @SubscribeEvent
+    public static void onClientSetup(RegisterKeyMappingsEvent event) {
+        KeyBindings.register(event);
     }
 
     //TODO change the icon of the curio icon

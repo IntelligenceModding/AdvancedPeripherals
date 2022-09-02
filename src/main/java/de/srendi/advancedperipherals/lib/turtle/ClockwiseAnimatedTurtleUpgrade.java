@@ -1,9 +1,5 @@
 package de.srendi.advancedperipherals.lib.turtle;
 
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Transformation;
-import com.mojang.math.Vector3f;
-import dan200.computercraft.api.client.TransformedModel;
 import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
 import de.srendi.advancedperipherals.common.util.DataStorageUtil;
@@ -11,7 +7,6 @@ import de.srendi.advancedperipherals.lib.peripherals.IBasePeripheral;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public abstract class ClockwiseAnimatedTurtleUpgrade<T extends IBasePeripheral<?>> extends PeripheralTurtleUpgrade<T> {
 
@@ -23,7 +18,7 @@ public abstract class ClockwiseAnimatedTurtleUpgrade<T extends IBasePeripheral<?
         super(id, item);
     }
 
-    @NotNull
+    /*@NotNull
     @Override
     public TransformedModel getModel(@Nullable ITurtleAccess turtle, @NotNull TurtleSide side) {
         if (getLeftModel() == null) {
@@ -44,7 +39,7 @@ public abstract class ClockwiseAnimatedTurtleUpgrade<T extends IBasePeripheral<?
             return TransformedModel.of(getCraftingItem(), new Transformation(stack.last().pose()));
         }
         return TransformedModel.of(side == TurtleSide.LEFT ? getLeftModel() : getRightModel());
-    }
+    }*/
 
     // Optional callbacks for addons based on AP
     public void chargeConsumingCallback() {

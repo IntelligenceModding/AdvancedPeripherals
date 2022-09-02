@@ -7,11 +7,11 @@ import net.minecraft.core.Registry;
 import net.minecraft.data.BuiltinRegistries;
 import net.minecraft.data.worldgen.*;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.levelgen.structure.pools.StructurePoolElement;
 import net.minecraft.world.level.levelgen.structure.pools.StructureTemplatePool;
 
 import java.util.List;
-import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
 public class VillageStructures {
@@ -37,7 +37,7 @@ public class VillageStructures {
             AdvancedPeripherals.debug("no jigsaw pool for " + pool + "? skipping villager house generation for it");
             return;
         }
-        List<StructurePoolElement> shuffled = old.getShuffledTemplates(ThreadLocalRandom.current());
+        List<StructurePoolElement> shuffled = old.getShuffledTemplates(RandomSource.createNewThreadLocalInstance());
         List<Pair<StructurePoolElement, Integer>> newPieces = shuffled.stream().map(p -> Pair.of(p, 1)).collect(Collectors.toList());
         StructurePoolElement newPiece = StructurePoolElement.legacy(toAdd).apply(StructureTemplatePool.Projection.RIGID);
         newPieces.add(Pair.of(newPiece, weight));

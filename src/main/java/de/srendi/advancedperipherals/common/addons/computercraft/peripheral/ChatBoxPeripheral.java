@@ -18,10 +18,8 @@ import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.util.CoordUtil;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
 import de.srendi.advancedperipherals.lib.peripherals.IPeripheralFunction;
-import net.minecraft.Util;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.server.ServerLifecycleHooks;
 
@@ -62,20 +60,20 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
     }
 
     private MutableComponent appendPrefix(String prefix, String brackets, String color) {
-        TextComponent prefixComponent = new TextComponent(APConfig.PERIPHERALS_CONFIG.defaultChatBoxPrefix.get());
+        Component prefixComponent = Component.literal(APConfig.PERIPHERALS_CONFIG.defaultChatBoxPrefix.get());
         if (!prefix.isEmpty()) {
             MutableComponent formattablePrefix;
             try {
                 formattablePrefix = MutableComponent.Serializer.fromJson(prefix);
-                prefixComponent = (TextComponent) formattablePrefix;
+                prefixComponent = formattablePrefix;
             } catch (JsonSyntaxException exception) {
                 AdvancedPeripherals.debug("Non json prefix, using plain text instead.");
-                prefixComponent = new TextComponent(prefix);
+                prefixComponent = Component.literal(prefix);
             }
         }
         if (brackets.isEmpty()) brackets = "[]";
 
-        return new TextComponent(color + brackets.charAt(0) + "\u00a7r").append(prefixComponent).append(color + brackets.charAt(1) + "\u00a7r ");
+        return Component.literal(color + brackets.charAt(0) + "\u00a7r").append(prefixComponent).append(color + brackets.charAt(1) + "\u00a7r ");
     }
 
     /**
@@ -115,9 +113,9 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
             for (ServerPlayer player : ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers()) {
                 if (range != -1) {
                     if (CoordUtil.isInRange(getPos(), getLevel(), player, range))
-                        player.sendMessage(preparedMessage, Util.NIL_UUID);
+                        player.sendSystemMessage(preparedMessage);
                 } else {
-                    player.sendMessage(preparedMessage, Util.NIL_UUID);
+                    player.sendSystemMessage(preparedMessage);
                 }
             }
             return MethodResult.of(true);
@@ -139,9 +137,9 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
             for (ServerPlayer player : ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers()) {
                 if (range != -1) {
                     if (CoordUtil.isInRange(getPos(), getLevel(), player, range))
-                        player.sendMessage(preparedMessage, Util.NIL_UUID);
+                        player.sendSystemMessage(preparedMessage);
                 } else {
-                    player.sendMessage(preparedMessage, Util.NIL_UUID);
+                    player.sendSystemMessage(preparedMessage);
                 }
             }
             return MethodResult.of(true);
@@ -164,7 +162,7 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
                     arguments.optString(3, "[]"),
                     arguments.optString(4, "")
             ).append(component);
-            player.sendMessage(preparedMessage, Util.NIL_UUID);
+            player.sendSystemMessage(preparedMessage);
             return MethodResult.of(true);
         });
     }
@@ -183,7 +181,7 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
                     arguments.optString(3, "[]"),
                     arguments.optString(4, "")
             ).append(message);
-            player.sendMessage(preparedMessage, Util.NIL_UUID);
+            player.sendSystemMessage(preparedMessage);
             return MethodResult.of(true);
         });
     }

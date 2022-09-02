@@ -6,8 +6,9 @@ import dan200.computercraft.api.lua.LuaFunction;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
 import de.srendi.advancedperipherals.lib.peripherals.BlockEntityIntegrationPeripheral;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -30,7 +31,7 @@ public class BasinIntegration extends BlockEntityIntegrationPeripheral<BasinTile
         for (SmartFluidTankBehaviour.TankSegment tank : blockEntity.getTanks().getFirst().getTanks()) {
             Map<String, Object> data = new HashMap<>();
             data.put("amount", tank.getRenderedFluid().getAmount());
-            data.put("fluid", tank.getRenderedFluid().getFluid().getRegistryName().toString());
+            data.put("fluid", ForgeRegistries.FLUIDS.getKey(tank.getRenderedFluid().getFluid()).toString());
             tanks.add(data);
         }
         return tanks;
@@ -42,7 +43,7 @@ public class BasinIntegration extends BlockEntityIntegrationPeripheral<BasinTile
         for (SmartFluidTankBehaviour.TankSegment tank : blockEntity.getTanks().getSecond().getTanks()) {
             Map<String, Object> data = new HashMap<>();
             data.put("amount", tank.getRenderedFluid().getAmount());
-            data.put("fluid", tank.getRenderedFluid().getFluid().getRegistryName().toString());
+            data.put("fluid", ForgeRegistries.FLUIDS.getKey(tank.getRenderedFluid().getFluid()).toString());
             tanks.add(data);
         }
         return tanks;
@@ -55,7 +56,7 @@ public class BasinIntegration extends BlockEntityIntegrationPeripheral<BasinTile
 
     @LuaFunction(mainThread = true)
     public final Object[] getInventory() {
-        Optional<IItemHandler> handlerOptional = blockEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).resolve();
+        Optional<IItemHandler> handlerOptional = blockEntity.getCapability(ForgeCapabilities.ITEM_HANDLER).resolve();
         if (handlerOptional.isEmpty()) return null;
         IItemHandler handler = handlerOptional.get();
         Object[] items = new Object[handler.getSlots()];

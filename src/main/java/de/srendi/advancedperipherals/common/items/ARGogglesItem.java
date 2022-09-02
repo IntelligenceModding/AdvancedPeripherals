@@ -1,36 +1,14 @@
 package de.srendi.advancedperipherals.common.items;
 
-import com.mojang.blaze3d.platform.InputConstants;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
-import de.srendi.advancedperipherals.client.HudOverlayHandler;
-import de.srendi.advancedperipherals.common.addons.curios.CuriosHelper;
-import de.srendi.advancedperipherals.common.blocks.blockentities.ARControllerEntity;
-import de.srendi.advancedperipherals.common.configuration.APConfig;
-import de.srendi.advancedperipherals.common.setup.Blocks;
-import de.srendi.advancedperipherals.common.util.EnumColor;
-import de.srendi.advancedperipherals.common.util.SideHelper;
-import de.srendi.advancedperipherals.network.MNetwork;
-import de.srendi.advancedperipherals.network.messages.RequestHudCanvasMessage;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterials;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import org.jetbrains.annotations.Nullable;
-import org.lwjgl.glfw.GLFW;
 
 import java.util.List;
 
@@ -42,7 +20,13 @@ public class ARGogglesItem extends ArmorItem {
         super(ArmorMaterials.LEATHER, EquipmentSlot.HEAD, new Properties().tab(AdvancedPeripherals.TAB).stacksTo(1));
     }
 
-    public static void clientTick(LocalPlayer player, ItemStack stack) {
+    @Override
+    public void appendHoverText(ItemStack stack, @Nullable Level levelIn, List<Component> tooltip, TooltipFlag flagIn) {
+        super.appendHoverText(stack, levelIn, tooltip, flagIn);
+        tooltip.add(Component.literal("Temporarily disabled until rewrite"));
+    }
+
+    /*public static void clientTick(LocalPlayer player, ItemStack stack) {
         if (stack.hasTag() && stack.getTag().contains(CONTROLLER_POS) && stack.getTag().contains(CONTROLLER_LEVEL)) {
             int[] arr = stack.getTag().getIntArray(CONTROLLER_POS);
             if (arr.length < 3) return;
@@ -66,22 +50,22 @@ public class ARGogglesItem extends ArmorItem {
     }
 
     public Component getDescription() {
-        return new TranslatableComponent("item.advancedperipherals.tooltip.ar_goggles");
+        return Component.translatable("item.advancedperipherals.tooltip.ar_goggles");
     }
 
     @Override
     public void appendHoverText(ItemStack stack, @Nullable Level levelIn, List<Component> tooltip, TooltipFlag flagIn) {
         super.appendHoverText(stack, levelIn, tooltip, flagIn);
         if (!InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), GLFW.GLFW_KEY_LEFT_CONTROL)) {
-            tooltip.add(EnumColor.buildTextComponent(new TranslatableComponent("item.advancedperipherals.tooltip.show_desc")));
+            tooltip.add(EnumColor.buildTextComponent(Component.translatable("item.advancedperipherals.tooltip.show_desc")));
         } else {
             tooltip.add(EnumColor.buildTextComponent(getDescription()));
         }
         if (!APConfig.PERIPHERALS_CONFIG.enableARGoggles.get())
-            tooltip.add(EnumColor.buildTextComponent(new TranslatableComponent("item.advancedperipherals.tooltip.disabled")));
+            tooltip.add(EnumColor.buildTextComponent(Component.translatable("item.advancedperipherals.tooltip.disabled")));
         if (stack.hasTag() && stack.getTag().contains(CONTROLLER_POS, CompoundTag.TAG_INT_ARRAY)) {
             int[] pos = stack.getTag().getIntArray(CONTROLLER_POS);
-            tooltip.add(new TranslatableComponent("item.advancedperipherals.tooltip.ar_goggles.binding", pos[0], pos[1], pos[2]));
+            tooltip.add(Component.translatable("item.advancedperipherals.tooltip.ar_goggles.binding", pos[0], pos[1], pos[2]));
         }
     }
 
@@ -124,8 +108,8 @@ public class ARGogglesItem extends ArmorItem {
                 nbt.putString(CONTROLLER_LEVEL, controller.getLevel().dimension().toString());
                 item.setTag(nbt);
             }
-            context.getPlayer().displayClientMessage(new TranslatableComponent("text.advancedperipherals.linked_goggles"), true);
+            context.getPlayer().displayClientMessage(Component.translatable("text.advancedperipherals.linked_goggles"), true);
             return InteractionResult.SUCCESS;
         }
-    }
+    }*/
 }

@@ -46,7 +46,7 @@ public abstract class BaseBlockEntityBlock extends BaseEntityBlock implements IH
         MenuProvider namedContainerProvider = this.getMenuProvider(state, levelIn, pos);
         if (namedContainerProvider != null) {
             if (!(player instanceof ServerPlayer serverPlayerEntity)) return InteractionResult.PASS;
-            NetworkHooks.openGui(serverPlayerEntity, namedContainerProvider, pos);
+            NetworkHooks.openScreen(serverPlayerEntity, namedContainerProvider, pos);
         }
         return InteractionResult.SUCCESS;
     }
@@ -65,7 +65,7 @@ public abstract class BaseBlockEntityBlock extends BaseEntityBlock implements IH
         super.setPlacedBy(worldIn, pos, state, placer, stack);
         if (worldIn.getBlockEntity(pos) == null) return;
         //Used for the lua function getName()
-        worldIn.getBlockEntity(pos).getTileData().putString("CustomName", stack.getDisplayName().getString());
+        worldIn.getBlockEntity(pos).getPersistentData().putString("CustomName", stack.getDisplayName().getString());
     }
 
     @Nullable

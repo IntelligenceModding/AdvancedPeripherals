@@ -6,8 +6,6 @@ import de.srendi.advancedperipherals.common.util.EnumColor;
 import de.srendi.advancedperipherals.lib.metaphysics.IFeedableAutomataCore;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -20,6 +18,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.util.FakePlayer;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -37,13 +36,13 @@ public class WeakAutomataCore extends APItem implements IFeedableAutomataCore {
 
     static {
         Map<String, Integer> endSouls = new HashMap<>();
-        endSouls.put(EntityType.ENDERMAN.getRegistryName().toString(), 10);
+        endSouls.put(ForgeRegistries.ENTITY_TYPES.getKey(EntityType.ENDERMAN).toString(), 10);
         WeakAutomataCoreRecord endSoulRecord = new WeakAutomataCoreRecord(endSouls, Items.END_AUTOMATA_CORE.get());
 
         Map<String, Integer> husbandrySouls = new HashMap<>();
-        husbandrySouls.put(EntityType.COW.getRegistryName().toString(), 3);
-        husbandrySouls.put(EntityType.SHEEP.getRegistryName().toString(), 3);
-        husbandrySouls.put(EntityType.CHICKEN.getRegistryName().toString(), 3);
+        husbandrySouls.put(ForgeRegistries.ENTITY_TYPES.getKey(EntityType.COW).toString(), 3);
+        husbandrySouls.put(ForgeRegistries.ENTITY_TYPES.getKey(EntityType.SHEEP).toString(), 3);
+        husbandrySouls.put(ForgeRegistries.ENTITY_TYPES.getKey(EntityType.CHICKEN).toString(), 3);
         WeakAutomataCoreRecord husbandrySoulRecord = new WeakAutomataCoreRecord(husbandrySouls, Items.HUSBANDRY_AUTOMATA_CORE.get());
 
         endSoulRecord.ingredients.keySet().forEach(entityType -> AUTOMATA_CORE_REGISTRY.put(entityType, endSoulRecord));
@@ -66,7 +65,7 @@ public class WeakAutomataCore extends APItem implements IFeedableAutomataCore {
         consumedData.getAllKeys().forEach(key -> {
             WeakAutomataCoreRecord record = AUTOMATA_CORE_REGISTRY.get(key);
             CompoundTag recordData = consumedData.getCompound(key);
-            tooltip.add(EnumColor.buildTextComponent(new TextComponent(String.format("Consumed: %d/%d %s", recordData.getInt(CONSUMED_ENTITY_COUNT), record.getRequiredCount(key), recordData.getString(CONSUMED_ENTITY_NAME)))));
+            tooltip.add(EnumColor.buildTextComponent(Component.literal(String.format("Consumed: %d/%d %s", recordData.getInt(CONSUMED_ENTITY_COUNT), record.getRequiredCount(key), recordData.getString(CONSUMED_ENTITY_NAME)))));
         });
     }
 
@@ -74,7 +73,7 @@ public class WeakAutomataCore extends APItem implements IFeedableAutomataCore {
     @NotNull
     public InteractionResult interactLivingEntity(@NotNull ItemStack stack, @NotNull Player player, @NotNull LivingEntity entity, @NotNull InteractionHand hand) {
         if (!(player instanceof FakePlayer)) {
-            player.displayClientMessage(new TranslatableComponent("text.advancedperipherals.automata_core_feed_by_player"), true);
+            player.displayClientMessage(Component.translatable("text.advancedperipherals.automata_core_feed_by_player"), true);
             return InteractionResult.FAIL;
         }
         String entityType = EntityType.getKey(entity.getType()).toString();

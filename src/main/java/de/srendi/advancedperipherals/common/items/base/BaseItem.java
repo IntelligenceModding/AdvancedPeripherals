@@ -5,7 +5,6 @@ import de.srendi.advancedperipherals.client.KeyBindings;
 import de.srendi.advancedperipherals.common.util.EnumColor;
 import de.srendi.advancedperipherals.common.util.TranslationUtil;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -39,7 +38,7 @@ public abstract class BaseItem extends Item {
         if (this instanceof IInventoryItem inventoryItem) {
             ServerPlayer serverPlayerEntity = (ServerPlayer) playerIn;
             ItemStack stack = playerIn.getItemInHand(handIn);
-            NetworkHooks.openGui(serverPlayerEntity, inventoryItem.createContainer(playerIn, stack), buf -> buf.writeItem(stack));
+            NetworkHooks.openScreen(serverPlayerEntity, inventoryItem.createContainer(playerIn, stack), buf -> buf.writeItem(stack));
         }
         return super.use(worldIn, playerIn, handIn);
     }
@@ -48,12 +47,12 @@ public abstract class BaseItem extends Item {
     public void appendHoverText(ItemStack stack, @Nullable Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
         super.appendHoverText(stack, worldIn, tooltip, flagIn);
         if (!KeyBindings.DESCRIPTION_KEYBINDING.isDown()) {
-            tooltip.add(EnumColor.buildTextComponent(new TranslatableComponent("item.advancedperipherals.tooltip.show_desc", KeyBindings.DESCRIPTION_KEYBINDING.getTranslatedKeyMessage())));
+            tooltip.add(EnumColor.buildTextComponent(Component.translatable("item.advancedperipherals.tooltip.show_desc", KeyBindings.DESCRIPTION_KEYBINDING.getTranslatedKeyMessage())));
         } else {
             tooltip.add(EnumColor.buildTextComponent(getDescription()));
         }
         if (!isEnabled())
-            tooltip.add(EnumColor.buildTextComponent(new TranslatableComponent("item.advancedperipherals.tooltip.disabled")));
+            tooltip.add(EnumColor.buildTextComponent(Component.translatable("item.advancedperipherals.tooltip.disabled")));
     }
 
 

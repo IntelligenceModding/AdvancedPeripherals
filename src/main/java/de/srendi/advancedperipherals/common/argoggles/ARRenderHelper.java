@@ -1,15 +1,8 @@
 package de.srendi.advancedperipherals.common.argoggles;
 
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.*;
-import com.mojang.math.Matrix4f;
-import de.srendi.advancedperipherals.common.util.ItemUtil;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiComponent;
-import net.minecraft.client.renderer.entity.ItemRenderer;
-import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.registries.ForgeRegistries;
-import org.jetbrains.annotations.NotNull;
 
 public class ARRenderHelper extends GuiComponent {
     private static final ARRenderHelper INSTANCE = new ARRenderHelper();
@@ -22,7 +15,7 @@ public class ARRenderHelper extends GuiComponent {
         return INSTANCE;
     }
 
-    public static int fixAlpha(int color) {
+    /*public static int fixAlpha(int color) {
         return (color & 0xFF000000) == 0 ? color | 0xFF000000 : color;
     }
 
@@ -104,5 +97,5 @@ public class ARRenderHelper extends GuiComponent {
     public void drawItemIcon(PoseStack matrixStack, ItemRenderer itemRenderer, String item, int x, int y) {
         ItemStack stack = new ItemStack(ItemUtil.getRegistryEntry(item, ForgeRegistries.ITEMS));
         itemRenderer.renderGuiItem(stack, x, y);
-    }
+    }*/
 }

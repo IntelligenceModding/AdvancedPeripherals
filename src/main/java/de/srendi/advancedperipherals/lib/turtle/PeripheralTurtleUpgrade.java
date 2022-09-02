@@ -1,8 +1,5 @@
 package de.srendi.advancedperipherals.lib.turtle;
 
-import com.mojang.math.Matrix4f;
-import com.mojang.math.Transformation;
-import dan200.computercraft.api.client.TransformedModel;
 import dan200.computercraft.api.peripheral.IPeripheral;
 import dan200.computercraft.api.turtle.AbstractTurtleUpgrade;
 import dan200.computercraft.api.turtle.ITurtleAccess;
@@ -34,7 +31,7 @@ public abstract class PeripheralTurtleUpgrade<T extends IBasePeripheral<?>> exte
 
     protected abstract T buildPeripheral(@NotNull ITurtleAccess turtle, @NotNull TurtleSide side);
 
-    @NotNull
+    /*@NotNull
     @Override
     public TransformedModel getModel(@Nullable ITurtleAccess iTurtleAccess, @NotNull TurtleSide turtleSide) {
         if (getLeftModel() == null) {
@@ -48,7 +45,7 @@ public abstract class PeripheralTurtleUpgrade<T extends IBasePeripheral<?>> exte
             return TransformedModel.of(getCraftingItem(), new Transformation(transform));
         }
         return TransformedModel.of(turtleSide == TurtleSide.LEFT ? getLeftModel() : getRightModel());
-    }
+    }*/
 
     @Nullable
     @Override

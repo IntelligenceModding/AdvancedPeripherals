@@ -11,6 +11,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.registries.ForgeRegistries;
 
 public class BlockReaderPeripheral extends BasePeripheral<BlockEntityPeripheralOwner<BlockReaderEntity>> {
 
@@ -28,7 +29,7 @@ public class BlockReaderPeripheral extends BasePeripheral<BlockEntityPeripheralO
     @LuaFunction(mainThread = true)
     public final String getBlockName() {
         if (getBlockInFront().is(Blocks.AIR)) return "none";
-        return getBlockInFront().getBlock().getRegistryName().toString();
+        return ForgeRegistries.BLOCKS.getKey(getBlockInFront().getBlock()).toString();
     }
 
     @LuaFunction(mainThread = true)
