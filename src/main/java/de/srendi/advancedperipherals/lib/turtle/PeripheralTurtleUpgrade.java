@@ -25,27 +25,12 @@ public abstract class PeripheralTurtleUpgrade<T extends IBasePeripheral<?>> exte
         super(id, TurtleUpgradeType.PERIPHERAL, TranslationUtil.turtle(id.getPath()), item);
     }
 
-    protected abstract ModelResourceLocation getLeftModel();
+    //TODO: Do we still need this with the new modeller system?
+    public abstract ModelResourceLocation getLeftModel();
 
-    protected abstract ModelResourceLocation getRightModel();
+    public abstract ModelResourceLocation getRightModel();
 
     protected abstract T buildPeripheral(@NotNull ITurtleAccess turtle, @NotNull TurtleSide side);
-
-    /*@NotNull
-    @Override
-    public TransformedModel getModel(@Nullable ITurtleAccess iTurtleAccess, @NotNull TurtleSide turtleSide) {
-        if (getLeftModel() == null) {
-            float xOffset = turtleSide == TurtleSide.LEFT ? -0.40625f : 0.40625f;
-            Matrix4f transform = new Matrix4f(new float[]{
-                0.0f, 0.0f, -1.0f, 1.0f + xOffset,
-                1.0f, 0.0f, 0.0f, 0.0f,
-                0.0f, -1.0f, 0.0f, 1.0f,
-                0.0f, 0.0f, 0.0f, 1.0f,
-            });
-            return TransformedModel.of(getCraftingItem(), new Transformation(transform));
-        }
-        return TransformedModel.of(turtleSide == TurtleSide.LEFT ? getLeftModel() : getRightModel());
-    }*/
 
     @Nullable
     @Override

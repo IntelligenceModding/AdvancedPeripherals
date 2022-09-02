@@ -25,12 +25,12 @@ public class TurtleChatBoxUpgrade extends PeripheralTurtleUpgrade<ChatBoxPeriphe
     }
 
     @Override
-    protected ModelResourceLocation getLeftModel() {
+    public ModelResourceLocation getLeftModel() {
         return leftModel;
     }
 
     @Override
-    protected ModelResourceLocation getRightModel() {
+    public ModelResourceLocation getRightModel() {
         return rightModel;
     }
 

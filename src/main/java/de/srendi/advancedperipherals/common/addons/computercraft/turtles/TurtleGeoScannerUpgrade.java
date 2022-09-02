@@ -19,12 +19,12 @@ public class TurtleGeoScannerUpgrade extends PeripheralTurtleUpgrade<GeoScannerP
     }
 
     @Override
-    protected ModelResourceLocation getLeftModel() {
+    public ModelResourceLocation getLeftModel() {
         return leftModel;
     }
 
     @Override
-    protected ModelResourceLocation getRightModel() {
+    public ModelResourceLocation getRightModel() {
         return rightModel;
     }
 

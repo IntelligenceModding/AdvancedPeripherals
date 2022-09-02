@@ -16,12 +16,12 @@ public class OverpoweredHusbandryAutomata extends ClockwiseAnimatedTurtleUpgrade
     }
 
     @Override
-    protected ModelResourceLocation getLeftModel() {
+    public ModelResourceLocation getLeftModel() {
         return null;
     }
 
     @Override
-    protected ModelResourceLocation getRightModel() {
+    public ModelResourceLocation getRightModel() {
         return null;
     }
 

@@ -16,12 +16,12 @@ public class OverpoweredWeakAutomata extends ClockwiseAnimatedTurtleUpgrade<Over
     }
 
     @Override
-    protected ModelResourceLocation getLeftModel() {
+    public ModelResourceLocation getLeftModel() {
         return null;
     }
 
     @Override
-    protected ModelResourceLocation getRightModel() {
+    public ModelResourceLocation getRightModel() {
         return null;
     }
 

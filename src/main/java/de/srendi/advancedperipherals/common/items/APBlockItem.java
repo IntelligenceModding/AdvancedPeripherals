@@ -37,7 +37,8 @@ public class APBlockItem extends BaseBlockItem {
     @Override
     public void fillItemCategory(@NotNull CreativeModeTab group, @NotNull NonNullList<ItemStack> items) {
         super.fillItemCategory(group, items);
-        ItemUtil.addComputerItemToTab(turtleID, pocketID, items);
+        if(allowedIn(group))
+            ItemUtil.addComputerItemToTab(turtleID, pocketID, items);
     }
 
     @Override
