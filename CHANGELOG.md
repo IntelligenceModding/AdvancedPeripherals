@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+## [1.18.2-0.7.18r] - 2022-09-02
+
+### Fixed
+- [#334] Fixed AP turtles and pocket computers appearing in all creative tabs
+
 ## [1.18.2-0.7.17r] - 2022-09-01
 
 ### Added
