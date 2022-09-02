@@ -41,6 +41,7 @@ public class APItem extends BaseItem {
     @Override
     public void fillItemCategory(@NotNull CreativeModeTab group, @NotNull NonNullList<ItemStack> items) {
         super.fillItemCategory(group, items);
-        ItemUtil.addCompuerItemToTab(turtleID, pocketID, items);
+        if(allowdedIn(group))
+            ItemUtil.addCompuerItemToTab(turtleID, pocketID, items);
     }
 }
