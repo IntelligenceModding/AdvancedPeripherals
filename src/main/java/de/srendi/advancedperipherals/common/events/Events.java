@@ -70,7 +70,10 @@ public class Events {
     }
 
     private static String getCommandName(CommandContextBuilder<?> context) {
-        return context.getNodes().get(0).getNode().getName();
+        if (context != null && context.getNodes() != null && !context.getNodes().isEmpty()) {
+            return context.getNodes().get(0).getNode().getName();
+        }
+        return "";
     }
 
     @SubscribeEvent
