@@ -83,7 +83,9 @@ public class EnvironmentDetectorPeripheral extends BasePeripheral<IPeripheralOwn
 
     @LuaFunction(mainThread = true)
     public final String getBiome() {
-        return ForgeRegistries.BIOMES.getKey(getLevel().getBiome(getPos()).value()).getPath();
+        if(getLevel().getBiome(getPos()).unwrapKey().isEmpty())
+            return "Unknown";
+        return getLevel().getBiome(getPos()).unwrapKey().get().location().toString();
     }
 
     @LuaFunction(mainThread = true)
@@ -122,23 +124,13 @@ public class EnvironmentDetectorPeripheral extends BasePeripheral<IPeripheralOwn
     }
 
     @LuaFunction(mainThread = true)
-    public final String getDimensionProvider() {
-        return getLevel().dimension().location().getNamespace();
-    }
-
-    @LuaFunction(mainThread = true)
-    public final String getDimensionName() {
-        return getLevel().dimension().location().getPath();
-    }
-
-    @LuaFunction(mainThread = true)
-    public final String getDimensionPaN() {
+    public final String getDimension() {
         return getLevel().dimension().location().toString();
     }
 
     @LuaFunction(mainThread = true)
     public final boolean isDimension(String dimension) {
-        return getLevel().dimension().location().getPath().equals(dimension);
+        return getLevel().dimension().location().toString().equals(dimension);
     }
 
     @LuaFunction(mainThread = true)
