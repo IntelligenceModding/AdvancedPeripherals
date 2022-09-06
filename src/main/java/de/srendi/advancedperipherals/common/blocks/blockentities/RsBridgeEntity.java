@@ -30,7 +30,7 @@ public class RsBridgeEntity extends NetworkNodeBlockEntity<RefinedStorageNode> i
     private LazyOptional<IPeripheral> peripheralCap;
 
     //I have no clue what this does, but it works
-    private final static BlockEntitySynchronizationSpec SPEC = BlockEntitySynchronizationSpec.builder().build();
+    private static final BlockEntitySynchronizationSpec SPEC = BlockEntitySynchronizationSpec.builder().build();
 
     public RsBridgeEntity(BlockPos pos, BlockState state) {
         super(BlockEntityTypes.RS_BRIDGE.get(), pos, state, SPEC);

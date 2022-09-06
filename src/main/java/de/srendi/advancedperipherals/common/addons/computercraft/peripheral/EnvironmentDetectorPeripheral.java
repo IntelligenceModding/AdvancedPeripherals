@@ -29,7 +29,6 @@ import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.levelgen.WorldgenRandom;
 import net.minecraft.world.phys.AABB;
-import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.server.ServerLifecycleHooks;
 
 import javax.annotation.Nonnull;
@@ -83,7 +82,7 @@ public class EnvironmentDetectorPeripheral extends BasePeripheral<IPeripheralOwn
 
     @LuaFunction(mainThread = true)
     public final String getBiome() {
-        if(getLevel().getBiome(getPos()).unwrapKey().isEmpty())
+        if (getLevel().getBiome(getPos()).unwrapKey().isEmpty())
             return "Unknown";
         return getLevel().getBiome(getPos()).unwrapKey().get().location().toString();
     }
@@ -169,7 +168,7 @@ public class EnvironmentDetectorPeripheral extends BasePeripheral<IPeripheralOwn
                 case 6 -> moon.put(6, "First quarter");
                 case 7 -> moon.put(7, "Waxing gibbous");
                 default ->
-                    //should never happen
+                        //should never happen
                         moon.put(0, "What is a moon");
             }
         } else {

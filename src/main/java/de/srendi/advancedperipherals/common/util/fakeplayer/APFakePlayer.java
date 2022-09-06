@@ -111,7 +111,7 @@ public class APFakePlayer extends FakePlayer {
     private void setState(Block block, BlockPos pos) {
 
         if (digPosition != null) {
-            gameMode.handleBlockBreakAction(digPosition, ServerboundPlayerActionPacket.Action.ABORT_DESTROY_BLOCK, Direction.EAST,320, 1);
+            gameMode.handleBlockBreakAction(digPosition, ServerboundPlayerActionPacket.Action.ABORT_DESTROY_BLOCK, Direction.EAST, 320, 1);
         }
 
         digPosition = pos;
@@ -160,7 +160,7 @@ public class APFakePlayer extends FakePlayer {
 
                 if (currentDamage > 9) {
                     world.playSound(null, pos, state.getSoundType().getHitSound(), SoundSource.NEUTRAL, .25f, 1);
-                    manager.handleBlockBreakAction(pos, ServerboundPlayerActionPacket.Action.STOP_DESTROY_BLOCK, direction.getOpposite(), 320,1);
+                    manager.handleBlockBreakAction(pos, ServerboundPlayerActionPacket.Action.STOP_DESTROY_BLOCK, direction.getOpposite(), 320, 1);
                     manager.destroyBlock(pos);
                     world.destroyBlockProgress(getId(), pos, -1);
                     setState(null, null);
