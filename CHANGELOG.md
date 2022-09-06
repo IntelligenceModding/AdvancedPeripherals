@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+## [1.18.2-0.7.19r] - 2022-09-06
+
+Bump min forge version to 40.1.52
+
+### Fixed
+- [#339, #338] Fixed that commands that are being run in the console are throwing exceptions 
+
 ## [1.18.2-0.7.18r] - 2022-09-02
 
 ### Fixed
