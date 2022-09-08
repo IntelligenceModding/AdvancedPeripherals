@@ -17,22 +17,18 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.ForgeRegistryEntry;
 import net.minecraftforge.registries.IForgeRegistry;
-import net.minecraftforge.registries.ObjectHolder;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+//TODO: Clean this up, here is a lot of boilerplate and old code
 public class ItemUtil {
 
-    @ObjectHolder("computercraft:turtle_normal")
     public static final Item TURTLE_NORMAL = Registry.ModItems.TURTLE_NORMAL.get();
-    @ObjectHolder("computercraft:turtle_advanced")
     public static final Item TURTLE_ADVANCED = Registry.ModItems.TURTLE_ADVANCED.get();
 
-    @ObjectHolder("computercraft:pocket_computer_normal")
     public static final Item POCKET_NORMAL = Registry.ModItems.POCKET_COMPUTER_NORMAL.get();
-    @ObjectHolder("computercraft:pocket_computer_advanced")
     public static final Item POCKET_ADVANCED = Registry.ModItems.POCKET_COMPUTER_ADVANCED.get();
 
     public static <T extends ForgeRegistryEntry<T>> T getRegistryEntry(String name, IForgeRegistry<T> forgeRegistry) {

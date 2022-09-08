@@ -3,6 +3,7 @@ package de.srendi.advancedperipherals.common.util;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.core.computer.ComputerSide;
 import dan200.computercraft.shared.util.NBTUtil;
+import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.InventoryManagerPeripheral;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -78,6 +79,20 @@ public class LuaConverter {
             nbt = new CompoundTag();//ensure compatibility with lua programs relying on a non-nil value
         }
         map.put("nbt", NBTUtil.toLua(nbt));
+        return map;
+    }
+
+    /**
+     * Returns the stack but with a slot entry. Used to prevent zero indexed tables
+     * @param stack the item stack
+     * @param slot the slot of the item
+     * @return a Map containing proper item stack details
+     * @see InventoryManagerPeripheral#getItems()
+     */
+    public static Map<String, Object> stackToObjectWithSlot(@NotNull ItemStack stack, int slot) {
+        if (stack.isEmpty()) return new HashMap<>();
+        Map<String, Object> map = stackToObject(stack);
+        map.put("slot", slot);
         return map;
     }
 
