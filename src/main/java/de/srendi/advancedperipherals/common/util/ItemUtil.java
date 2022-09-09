@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+//TODO: Clean this up, here is a lot of boilerplate and old code
 public class ItemUtil {
 
     public static final Item TURTLE_NORMAL = Registry.ModItems.TURTLE_NORMAL.get();

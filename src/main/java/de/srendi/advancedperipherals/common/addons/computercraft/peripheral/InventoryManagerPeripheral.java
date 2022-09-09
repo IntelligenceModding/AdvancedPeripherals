@@ -25,7 +25,8 @@ import net.minecraftforge.items.wrapper.PlayerInvWrapper;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nonnull;
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -242,12 +243,12 @@ public class InventoryManagerPeripheral extends BasePeripheral<BlockEntityPeriph
 
     @Nonnull
     @LuaFunction(value = {"list", "getItems"}, mainThread = true)
-    public final Map<Integer, Object> getItems() throws LuaException {
-        Map<Integer, Object> items = new HashMap<>();
+    public final List<Object> getItems() throws LuaException {
+        List<Object> items = new ArrayList<>();
         int i = 0; //Used to let users easily sort the items by the slots. Also a better way for the user to see where a item actually is
         for (ItemStack stack : getOwnerPlayer().getInventory().items) {
             if (!stack.isEmpty()) {
-                items.put(i, LuaConverter.stackToObject(stack));
+                items.add(LuaConverter.stackToObjectWithSlot(stack, i));
             }
             i++;
         }
@@ -255,14 +256,12 @@ public class InventoryManagerPeripheral extends BasePeripheral<BlockEntityPeriph
     }
 
     @LuaFunction(mainThread = true)
-    public final Map<Integer, Object> getArmor() throws LuaException {
-        Map<Integer, Object> items = new HashMap<>();
-        int i = 0;
+    public final List<Object> getArmor() throws LuaException {
+        List<Object> items = new ArrayList<>();
         for (ItemStack stack : getOwnerPlayer().getInventory().armor) {
             if (!stack.isEmpty()) {
-                items.put(ArmorSlot.getSlotForItem(stack), LuaConverter.stackToObject(stack));
+                items.add(LuaConverter.stackToObjectWithSlot(stack, ArmorSlot.getSlotForItem(stack)));
             }
-            i++;
         }
         return items;
     }
@@ -282,7 +281,7 @@ public class InventoryManagerPeripheral extends BasePeripheral<BlockEntityPeriph
         int i = 0;
         for (ItemStack stack : getOwnerPlayer().getInventory().armor) {
             if (!stack.isEmpty()) {
-                if (index == i) return true;
+                if (index == getArmorSlot(i)) return true;
                 i++;
             }
         }
@@ -294,7 +293,6 @@ public class InventoryManagerPeripheral extends BasePeripheral<BlockEntityPeriph
         int i = 0;
         for (ItemStack stack : getOwnerPlayer().getInventory().items) {
             if (stack.isEmpty()) i++;
-
         }
         return i;
     }

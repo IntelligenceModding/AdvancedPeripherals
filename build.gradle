@@ -107,7 +107,6 @@ minecraft {
 
         server {
             workingDirectory project.file('server')
-            args '--nogui'
 
             property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
             property 'mixin.env.remapRefMap', 'true'
