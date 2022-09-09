@@ -29,11 +29,16 @@ import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.levelgen.WorldgenRandom;
 import net.minecraft.world.phys.AABB;
-import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.server.ServerLifecycleHooks;
 
 import javax.annotation.Nonnull;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 
 import static de.srendi.advancedperipherals.common.addons.computercraft.operations.SphereOperation.SCAN_ENTITIES;
@@ -170,7 +175,7 @@ public class EnvironmentDetectorPeripheral extends BasePeripheral<IPeripheralOwn
                 case 7 -> moon.put(7, "Waxing gibbous");
                 default ->
                     //should never happen
-                        moon.put(0, "What is a moon");
+                    moon.put(0, "What is a moon");
             }
         } else {
             //Yay, easter egg
