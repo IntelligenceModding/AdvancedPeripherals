@@ -168,8 +168,8 @@ public class EnvironmentDetectorPeripheral extends BasePeripheral<IPeripheralOwn
                 case 6 -> moon.put(6, "First quarter");
                 case 7 -> moon.put(7, "Waxing gibbous");
                 default ->
-                        //should never happen
-                        moon.put(0, "What is a moon");
+                    //should never happen
+                    moon.put(0, "What is a moon");
             }
         } else {
             //Yay, easter egg
