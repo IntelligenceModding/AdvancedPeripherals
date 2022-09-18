@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
-## [1.19.2-1.19.2-0.7.19a] - 2022-09-18
+## [1.19.2-0.7.19a] - 2022-09-18
 
 This version supports Create, AE2, Refined Storage, Minecolonies, Botania and Patchouli
 
