@@ -4,9 +4,9 @@ import dan200.computercraft.api.lua.LuaFunction;
 import de.srendi.advancedperipherals.lib.peripherals.BlockEntityIntegrationPeripheral;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.NotNull;
-import vazkii.botania.api.subtile.TileEntityGeneratingFlower;
+import vazkii.botania.api.block_entity.GeneratingFlowerBlockEntity;
 
-public class ManaFlowerIntegration extends BlockEntityIntegrationPeripheral<TileEntityGeneratingFlower> {
+public class ManaFlowerIntegration extends BlockEntityIntegrationPeripheral<GeneratingFlowerBlockEntity> {
 
     public ManaFlowerIntegration(BlockEntity entity) {
         super(entity);
