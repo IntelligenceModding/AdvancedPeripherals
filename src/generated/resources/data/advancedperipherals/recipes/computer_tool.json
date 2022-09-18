@@ -1,18 +1,18 @@
 {
   "type": "minecraft:crafting_shaped",
+  "key": {
+    "B": {
+      "item": "minecraft:blue_terracotta"
+    },
+    "I": {
+      "tag": "forge:ingots/iron"
+    }
+  },
   "pattern": [
     "I I",
     "IBI",
     " B "
   ],
-  "key": {
-    "I": {
-      "tag": "forge:ingots/iron"
-    },
-    "B": {
-      "item": "minecraft:blue_terracotta"
-    }
-  },
   "result": {
     "item": "advancedperipherals:computer_tool"
   }

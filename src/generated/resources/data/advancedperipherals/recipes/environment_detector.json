@@ -1,27 +1,27 @@
 {
   "type": "minecraft:crafting_shaped",
+  "key": {
+    "A": {
+      "item": "advancedperipherals:peripheral_casing"
+    },
+    "C": {
+      "tag": "forge:crops"
+    },
+    "L": {
+      "tag": "minecraft:leaves"
+    },
+    "S": {
+      "tag": "minecraft:saplings"
+    },
+    "W": {
+      "tag": "minecraft:wool"
+    }
+  },
   "pattern": [
     "WSW",
     "LAL",
     "WCW"
   ],
-  "key": {
-    "W": {
-      "tag": "minecraft:wool"
-    },
-    "S": {
-      "tag": "minecraft:saplings"
-    },
-    "C": {
-      "tag": "forge:crops"
-    },
-    "A": {
-      "item": "advancedperipherals:peripheral_casing"
-    },
-    "L": {
-      "tag": "minecraft:leaves"
-    }
-  },
   "result": {
     "item": "advancedperipherals:environment_detector"
   }

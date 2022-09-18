@@ -1,13 +1,8 @@
 {
   "type": "minecraft:crafting_shaped",
-  "pattern": [
-    "IRI",
-    "MAO",
-    "IRI"
-  ],
   "key": {
-    "O": {
-      "item": "minecraft:observer"
+    "A": {
+      "item": "advancedperipherals:peripheral_casing"
     },
     "I": {
       "tag": "forge:ingots/iron"
@@ -15,13 +10,18 @@
     "M": {
       "item": "computercraft:wired_modem_full"
     },
+    "O": {
+      "item": "minecraft:observer"
+    },
     "R": {
       "tag": "forge:storage_blocks/redstone"
-    },
-    "A": {
-      "item": "advancedperipherals:peripheral_casing"
     }
   },
+  "pattern": [
+    "IRI",
+    "MAO",
+    "IRI"
+  ],
   "result": {
     "item": "advancedperipherals:block_reader"
   }

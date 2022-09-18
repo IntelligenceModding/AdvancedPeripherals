@@ -1,24 +1,24 @@
 {
   "type": "minecraft:crafting_shaped",
+  "key": {
+    "G": {
+      "tag": "forge:ingots/gold"
+    },
+    "I": {
+      "tag": "forge:ingots/iron"
+    },
+    "O": {
+      "item": "minecraft:observer"
+    },
+    "W": {
+      "tag": "forge:glass/white"
+    }
+  },
   "pattern": [
     "IWI",
     "IOI",
     " G "
   ],
-  "key": {
-    "I": {
-      "tag": "forge:ingots/iron"
-    },
-    "W": {
-      "tag": "forge:glass/white"
-    },
-    "O": {
-      "item": "minecraft:observer"
-    },
-    "G": {
-      "tag": "forge:ingots/gold"
-    }
-  },
   "result": {
     "item": "advancedperipherals:memory_card"
   }

@@ -1,21 +1,21 @@
 {
   "type": "minecraft:crafting_shaped",
-  "pattern": [
-    "PPP",
-    "PAP",
-    "PGP"
-  ],
   "key": {
-    "P": {
-      "tag": "minecraft:logs"
-    },
     "A": {
       "item": "advancedperipherals:peripheral_casing"
     },
     "G": {
       "tag": "forge:ingots/gold"
+    },
+    "P": {
+      "tag": "minecraft:logs"
     }
   },
+  "pattern": [
+    "PPP",
+    "PAP",
+    "PGP"
+  ],
   "result": {
     "item": "advancedperipherals:chat_box"
   }

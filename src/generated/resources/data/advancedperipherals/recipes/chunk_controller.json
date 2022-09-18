@@ -1,21 +1,21 @@
 {
   "type": "minecraft:crafting_shaped",
-  "pattern": [
-    "IRI",
-    "RAR",
-    "IRI"
-  ],
   "key": {
+    "A": {
+      "item": "minecraft:ender_eye"
+    },
     "I": {
       "tag": "forge:ingots/iron"
     },
     "R": {
       "tag": "forge:dusts/redstone"
-    },
-    "A": {
-      "item": "minecraft:respawn_anchor"
     }
   },
+  "pattern": [
+    "IRI",
+    "RAR",
+    "IRI"
+  ],
   "result": {
     "item": "advancedperipherals:chunk_controller"
   }

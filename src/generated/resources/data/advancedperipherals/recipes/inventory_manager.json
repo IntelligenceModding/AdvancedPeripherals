@@ -1,21 +1,21 @@
 {
   "type": "minecraft:crafting_shaped",
+  "key": {
+    "A": {
+      "item": "advancedperipherals:peripheral_casing"
+    },
+    "C": {
+      "tag": "forge:chests"
+    },
+    "I": {
+      "tag": "forge:ingots/iron"
+    }
+  },
   "pattern": [
     "ICI",
     "CAC",
     "ICI"
   ],
-  "key": {
-    "I": {
-      "tag": "forge:ingots/iron"
-    },
-    "C": {
-      "tag": "forge:chests"
-    },
-    "A": {
-      "item": "advancedperipherals:peripheral_casing"
-    }
-  },
   "result": {
     "item": "advancedperipherals:inventory_manager"
   }

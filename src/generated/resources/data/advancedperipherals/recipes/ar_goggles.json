@@ -1,20 +1,20 @@
 {
   "type": "minecraft:crafting_shaped",
-  "pattern": [
-    "GSG",
-    " E "
-  ],
   "key": {
     "E": {
       "tag": "forge:ender_pearls"
     },
-    "S": {
-      "tag": "forge:rods/wooden"
-    },
     "G": {
       "tag": "forge:glass/black"
+    },
+    "S": {
+      "tag": "forge:rods/wooden"
     }
   },
+  "pattern": [
+    "GSG",
+    " E "
+  ],
   "result": {
     "item": "advancedperipherals:ar_goggles"
   }

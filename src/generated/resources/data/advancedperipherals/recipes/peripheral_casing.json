@@ -1,21 +1,21 @@
 {
   "type": "minecraft:crafting_shaped",
+  "key": {
+    "I": {
+      "tag": "forge:ingots/iron"
+    },
+    "R": {
+      "tag": "forge:storage_blocks/redstone"
+    },
+    "i": {
+      "item": "minecraft:iron_bars"
+    }
+  },
   "pattern": [
     "IiI",
     "iRi",
     "IiI"
   ],
-  "key": {
-    "I": {
-      "tag": "forge:ingots/iron"
-    },
-    "i": {
-      "item": "minecraft:iron_bars"
-    },
-    "R": {
-      "tag": "forge:storage_blocks/redstone"
-    }
-  },
   "result": {
     "item": "advancedperipherals:peripheral_casing"
   }

@@ -1,21 +1,21 @@
 {
   "type": "minecraft:crafting_shaped",
-  "pattern": [
-    "SSS",
-    "SAS",
-    "SRS"
-  ],
   "key": {
-    "S": {
-      "item": "minecraft:smooth_stone"
-    },
     "A": {
       "item": "advancedperipherals:peripheral_casing"
     },
     "R": {
       "tag": "forge:storage_blocks/redstone"
+    },
+    "S": {
+      "item": "minecraft:smooth_stone"
     }
   },
+  "pattern": [
+    "SSS",
+    "SAS",
+    "SRS"
+  ],
   "result": {
     "item": "advancedperipherals:player_detector"
   }

@@ -1,21 +1,21 @@
 {
   "type": "minecraft:crafting_shaped",
-  "pattern": [
-    "GEG",
-    "ECE",
-    "GEG"
-  ],
   "key": {
-    "E": {
-      "tag": "forge:ender_pearls"
-    },
     "C": {
       "item": "advancedperipherals:peripheral_casing"
+    },
+    "E": {
+      "tag": "forge:ender_pearls"
     },
     "G": {
       "item": "minecraft:smooth_stone"
     }
   },
+  "pattern": [
+    "GEG",
+    "ECE",
+    "GEG"
+  ],
   "result": {
     "item": "advancedperipherals:ar_controller"
   }

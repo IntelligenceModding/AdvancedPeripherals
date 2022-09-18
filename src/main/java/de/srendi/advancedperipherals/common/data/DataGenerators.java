@@ -24,6 +24,7 @@ public class DataGenerators {
         generator.addProvider(event.includeServer(), new BlockLootTablesProvider(generator));
         generator.addProvider(event.includeServer(), new TurtleUpgradesProvider(generator));
         generator.addProvider(event.includeServer(), new PocketUpgradesProvider(generator));
+        generator.addProvider(event.includeServer(), new PoiTypeProvider(generator, existingFileHelper));
     }
 
 }
