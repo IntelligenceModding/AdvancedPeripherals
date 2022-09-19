@@ -32,7 +32,13 @@ import net.minecraft.world.phys.AABB;
 import net.minecraftforge.server.ServerLifecycleHooks;
 
 import javax.annotation.Nonnull;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 
 import static de.srendi.advancedperipherals.common.addons.computercraft.operations.SphereOperation.SCAN_ENTITIES;
@@ -212,7 +218,7 @@ public class EnvironmentDetectorPeripheral extends BasePeripheral<IPeripheralOwn
 
     @LuaFunction(mainThread = true)
     public final boolean isThunder() {
-        return getLevel().getRainLevel(0) > 0;
+        return getLevel().getThunderLevel(0) > 0;
     }
 
     @LuaFunction(mainThread = true)
