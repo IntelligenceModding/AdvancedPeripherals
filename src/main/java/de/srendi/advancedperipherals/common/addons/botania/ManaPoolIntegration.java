@@ -4,9 +4,9 @@ import dan200.computercraft.api.lua.LuaFunction;
 import de.srendi.advancedperipherals.lib.peripherals.BlockEntityIntegrationPeripheral;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.NotNull;
-import vazkii.botania.common.block.tile.mana.TilePool;
+import vazkii.botania.common.block.block_entity.mana.ManaPoolBlockEntity;
 
-public class ManaPoolIntegration extends BlockEntityIntegrationPeripheral<TilePool> {
+public class ManaPoolIntegration extends BlockEntityIntegrationPeripheral<ManaPoolBlockEntity> {
 
     public ManaPoolIntegration(BlockEntity entity) {
         super(entity);

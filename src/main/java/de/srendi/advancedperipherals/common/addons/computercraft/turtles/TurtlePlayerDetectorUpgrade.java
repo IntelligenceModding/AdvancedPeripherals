@@ -11,21 +11,18 @@ import org.jetbrains.annotations.NotNull;
 
 public class TurtlePlayerDetectorUpgrade extends PeripheralTurtleUpgrade<PlayerDetectorPeripheral> {
 
-    private static final ModelResourceLocation leftModel = new ModelResourceLocation("advancedperipherals:turtle_player_upgrade_left", "inventory");
-    private static final ModelResourceLocation rightModel = new ModelResourceLocation("advancedperipherals:turtle_player_upgrade_right", "inventory");
-
     public TurtlePlayerDetectorUpgrade(ResourceLocation id, ItemStack stack) {
         super(id, stack);
     }
 
     @Override
     public ModelResourceLocation getLeftModel() {
-        return leftModel;
+        return new ModelResourceLocation("advancedperipherals:turtle_player_upgrade_left", "inventory");
     }
 
     @Override
     public ModelResourceLocation getRightModel() {
-        return rightModel;
+        return new ModelResourceLocation("advancedperipherals:turtle_player_upgrade_right", "inventory");
     }
 
     @Override

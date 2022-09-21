@@ -5,9 +5,9 @@ import de.srendi.advancedperipherals.common.util.LuaConverter;
 import de.srendi.advancedperipherals.lib.peripherals.BlockEntityIntegrationPeripheral;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.NotNull;
-import vazkii.botania.common.block.tile.mana.TileSpreader;
+import vazkii.botania.common.block.block_entity.mana.ManaSpreaderBlockEntity;
 
-public class SpreaderIntegration extends BlockEntityIntegrationPeripheral<TileSpreader> {
+public class SpreaderIntegration extends BlockEntityIntegrationPeripheral<ManaSpreaderBlockEntity> {
 
     public SpreaderIntegration(BlockEntity entity) {
         super(entity);
