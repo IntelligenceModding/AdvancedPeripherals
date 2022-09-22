@@ -1,12 +1,11 @@
 package de.srendi.advancedperipherals;
 
-import de.srendi.advancedperipherals.client.HudOverlayHandler;
 import de.srendi.advancedperipherals.common.addons.refinedstorage.RefinedStorage;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
-import de.srendi.advancedperipherals.common.setup.Blocks;
-import de.srendi.advancedperipherals.common.setup.Registration;
+import de.srendi.advancedperipherals.common.network.PacketHandler;
+import de.srendi.advancedperipherals.common.setup.APBlocks;
+import de.srendi.advancedperipherals.common.setup.APRegistration;
 import de.srendi.advancedperipherals.common.village.VillageStructures;
-import de.srendi.advancedperipherals.network.MNetwork;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
@@ -16,7 +15,6 @@ import net.minecraftforge.fml.InterModComms;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -39,7 +37,7 @@ public class AdvancedPeripherals {
         @Override
         @NotNull
         public ItemStack makeIcon() {
-            return new ItemStack(Blocks.CHAT_BOX.get());
+            return new ItemStack(APBlocks.CHAT_BOX.get());
         }
 
     };
@@ -54,8 +52,7 @@ public class AdvancedPeripherals {
 
         modBus.addListener(this::commonSetup);
         modBus.addListener(this::interModComms);
-        modBus.addListener(this::clientSetup);
-        Registration.register();
+        APRegistration.register();
         MinecraftForge.EVENT_BUS.register(this);
 
         //TODO: Refactor this to a dedicated class
@@ -82,12 +79,8 @@ public class AdvancedPeripherals {
     public void commonSetup(FMLCommonSetupEvent event) {
         event.enqueueWork(() -> {
             VillageStructures.init();
-            MNetwork.init();
+            PacketHandler.init();
         });
-    }
-
-    public void clientSetup(FMLClientSetupEvent event) {
-        HudOverlayHandler.init();
     }
 
     @SubscribeEvent

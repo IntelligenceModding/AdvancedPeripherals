@@ -1,6 +1,10 @@
 package de.srendi.advancedperipherals.common.blocks.blockentities;
 
-import appeng.api.networking.*;
+import appeng.api.networking.GridFlags;
+import appeng.api.networking.GridHelper;
+import appeng.api.networking.IGridNode;
+import appeng.api.networking.IInWorldGridNodeHost;
+import appeng.api.networking.IManagedGridNode;
 import appeng.api.networking.crafting.ICraftingSimulationRequester;
 import appeng.api.networking.security.IActionHost;
 import appeng.api.networking.security.IActionSource;
@@ -11,8 +15,8 @@ import de.srendi.advancedperipherals.common.addons.appliedenergistics.MeBridgeEn
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.MeBridgePeripheral;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralBlockEntity;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
-import de.srendi.advancedperipherals.common.setup.BlockEntityTypes;
-import de.srendi.advancedperipherals.common.setup.Blocks;
+import de.srendi.advancedperipherals.common.setup.APBlockEntityTypes;
+import de.srendi.advancedperipherals.common.setup.APBlocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.player.Player;
@@ -36,7 +40,7 @@ public class MeBridgeEntity extends PeripheralBlockEntity<MeBridgePeripheral> im
     private IManagedGridNode mainNode = GridHelper.createManagedNode(this, MeBridgeEntityListener.INSTANCE);
 
     public MeBridgeEntity(BlockPos pos, BlockState state) {
-        super(BlockEntityTypes.ME_BRIDGE.get(), pos, state);
+        super(APBlockEntityTypes.ME_BRIDGE.get(), pos, state);
     }
 
     @NotNull
@@ -52,7 +56,7 @@ public class MeBridgeEntity extends PeripheralBlockEntity<MeBridgePeripheral> im
 
                 mainNode.setFlags(GridFlags.REQUIRE_CHANNEL);
                 mainNode.setIdlePowerUsage(APConfig.PERIPHERALS_CONFIG.meConsumption.get());
-                mainNode.setVisualRepresentation(new ItemStack(Blocks.ME_BRIDGE.get()));
+                mainNode.setVisualRepresentation(new ItemStack(APBlocks.ME_BRIDGE.get()));
                 mainNode.setInWorldNode(true);
                 mainNode.create(level, getBlockPos());
 

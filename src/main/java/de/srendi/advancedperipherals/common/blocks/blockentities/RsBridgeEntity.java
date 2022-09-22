@@ -8,7 +8,7 @@ import dan200.computercraft.api.peripheral.IPeripheral;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.RsBridgePeripheral;
 import de.srendi.advancedperipherals.common.addons.refinedstorage.RefinedStorageNode;
-import de.srendi.advancedperipherals.common.setup.BlockEntityTypes;
+import de.srendi.advancedperipherals.common.setup.APBlockEntityTypes;
 import de.srendi.advancedperipherals.lib.peripherals.IPeripheralTileEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -33,7 +33,7 @@ public class RsBridgeEntity extends NetworkNodeBlockEntity<RefinedStorageNode> i
     private static final BlockEntitySynchronizationSpec SPEC = BlockEntitySynchronizationSpec.builder().build();
 
     public RsBridgeEntity(BlockPos pos, BlockState state) {
-        super(BlockEntityTypes.RS_BRIDGE.get(), pos, state, SPEC);
+        super(APBlockEntityTypes.RS_BRIDGE.get(), pos, state, SPEC);
         peripheralSettings = new CompoundTag();
     }
 

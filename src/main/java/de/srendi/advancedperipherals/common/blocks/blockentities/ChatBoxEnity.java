@@ -3,7 +3,7 @@ package de.srendi.advancedperipherals.common.blocks.blockentities;
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.ChatBoxPeripheral;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralBlockEntity;
 import de.srendi.advancedperipherals.common.events.Events;
-import de.srendi.advancedperipherals.common.setup.BlockEntityTypes;
+import de.srendi.advancedperipherals.common.setup.APBlockEntityTypes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -16,7 +16,7 @@ public class ChatBoxEnity extends PeripheralBlockEntity<ChatBoxPeripheral> {
     private Long lastConsumedMessage;
 
     public ChatBoxEnity(BlockPos pos, BlockState state) {
-        super(BlockEntityTypes.CHAT_BOX.get(), pos, state);
+        super(APBlockEntityTypes.CHAT_BOX.get(), pos, state);
         lastConsumedMessage = Events.getLastChatMessageID() - 1;
     }
 

@@ -4,7 +4,7 @@ import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.Ener
 import de.srendi.advancedperipherals.common.blocks.base.APBlockEntityBlock;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralBlockEntity;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
-import de.srendi.advancedperipherals.common.setup.BlockEntityTypes;
+import de.srendi.advancedperipherals.common.setup.APBlockEntityTypes;
 import de.srendi.advancedperipherals.common.util.EnergyStorageProxy;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -38,7 +38,7 @@ public class EnergyDetectorEntity extends PeripheralBlockEntity<EnergyDetectorPe
     private Optional<IEnergyStorage> outReceivingStorage = Optional.empty();
 
     public EnergyDetectorEntity(BlockPos pos, BlockState state) {
-        super(BlockEntityTypes.ENERGY_DETECTOR.get(), pos, state);
+        super(APBlockEntityTypes.ENERGY_DETECTOR.get(), pos, state);
     }
 
     @NotNull

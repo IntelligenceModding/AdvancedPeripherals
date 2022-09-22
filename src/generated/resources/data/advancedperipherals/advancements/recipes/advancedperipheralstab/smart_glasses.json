@@ -15,7 +15,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "advancedperipherals:ar_goggles"
+        "recipe": "advancedperipherals:smart_glasses"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
@@ -28,7 +28,7 @@
   ],
   "rewards": {
     "recipes": [
-      "advancedperipherals:ar_goggles"
+      "advancedperipherals:smart_glasses"
     ]
   }
 }

@@ -3,7 +3,7 @@ package de.srendi.advancedperipherals.common.blocks.blockentities;
 import dan200.computercraft.shared.util.RedstoneUtil;
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.RedstoneIntegratorPeripheral;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralBlockEntity;
-import de.srendi.advancedperipherals.common.setup.BlockEntityTypes;
+import de.srendi.advancedperipherals.common.setup.APBlockEntityTypes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -19,7 +19,7 @@ public class RedstoneIntegratorEntity extends PeripheralBlockEntity<RedstoneInte
     public int[] power = new int[Direction.values().length];
 
     public RedstoneIntegratorEntity(BlockPos pos, BlockState state) {
-        super(BlockEntityTypes.REDSTONE_INTEGRATOR.get(), pos, state);
+        super(APBlockEntityTypes.REDSTONE_INTEGRATOR.get(), pos, state);
     }
 
     @NotNull

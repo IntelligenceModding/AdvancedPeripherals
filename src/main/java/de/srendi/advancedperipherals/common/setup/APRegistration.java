@@ -14,7 +14,7 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 
-public class Registration {
+public class APRegistration {
 
     public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, AdvancedPeripherals.MOD_ID);
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, AdvancedPeripherals.MOD_ID);
@@ -36,11 +36,11 @@ public class Registration {
         TURTLE_SERIALIZER.register(modEventBus);
         POCKET_SERIALIZER.register(modEventBus);
 
-        Blocks.register();
-        BlockEntityTypes.register();
-        Items.register();
-        ContainerTypes.register();
-        Villagers.register();
+        APBlocks.register();
+        APBlockEntityTypes.register();
+        APItems.register();
+        APContainerTypes.register();
+        APVillagers.register();
         CCRegistration.register();
     }
 }

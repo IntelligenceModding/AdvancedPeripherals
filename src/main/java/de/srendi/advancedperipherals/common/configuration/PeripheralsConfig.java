@@ -34,7 +34,7 @@ public class PeripheralsConfig implements IAPConfig {
     //Environment Detector
     public final ForgeConfigSpec.BooleanValue enableEnvironmentDetector;
     //AR Controller
-    public final ForgeConfigSpec.BooleanValue enableARGoggles;
+    public final ForgeConfigSpec.BooleanValue enableSmartGlasses;
     //Inventory Manager
     public final ForgeConfigSpec.BooleanValue enableInventoryManager;
     //Redstone Integrator
@@ -99,7 +99,7 @@ public class PeripheralsConfig implements IAPConfig {
 
         pop("AR_Controller", builder);
 
-        enableARGoggles = builder.comment("Enable the AR goggles or not.").define("enableARGoggles", true);
+        enableSmartGlasses = builder.comment("Enable the smart glasses or not.").define("enableSmartGlasses", true);
 
         pop("Inventory_Manager", builder);
 
