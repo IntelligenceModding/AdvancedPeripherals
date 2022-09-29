@@ -1,12 +1,17 @@
 package de.srendi.advancedperipherals.common.data;
 
+import appeng.core.definitions.AEBlocks;
+import com.refinedmods.refinedstorage.RSBlocks;
+import com.refinedmods.refinedstorage.RSItems;
 import dan200.computercraft.shared.Registry;
+import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.setup.Blocks;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.data.recipes.RecipeProvider;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.data.recipes.ShapelessRecipeBuilder;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -14,6 +19,7 @@ import net.minecraft.world.item.alchemy.PotionUtils;
 import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.common.Tags;
+import net.minecraftforge.common.crafting.ConditionalRecipe;
 import net.minecraftforge.common.crafting.StrictNBTIngredient;
 import net.minecraftforge.common.crafting.conditions.IConditionBuilder;
 import org.jetbrains.annotations.NotNull;
@@ -187,6 +193,54 @@ public class RecipesProvider extends RecipeProvider implements IConditionBuilder
                 .pattern("RCR")
                 .unlockedBy("has_item", has(CASING))
                 .save(consumer);
+
+        /*ConditionalRecipe.builder()
+                .addCondition(
+                        modLoaded("minecolonies")
+                )
+                .addRecipe(
+                    ShapedRecipeBuilder.shaped(Blocks.COLONY_INTEGRATOR.get())
+                    .define('O', ItemTags.LOGS)
+                    .define('A', CASING)
+                    .define('R', ModBlocks.blockRack)
+                    .pattern("ORO")
+                    .pattern(" A ")
+                    .pattern("ORO")
+                    .unlockedBy("has_item", has(CASING))
+                    ::save
+                ).build(consumer, new ResourceLocation(AdvancedPeripherals.MOD_ID, "colony_integrator"));
+        */
+        ConditionalRecipe.builder()
+                .addCondition(
+                        modLoaded("ae2")
+                )
+                .addRecipe(
+                        ShapedRecipeBuilder.shaped(Blocks.ME_BRIDGE.get())
+                                .define('F', AEBlocks.FLUIX_BLOCK.asItem())
+                                .define('A', CASING)
+                                .define('I', AEBlocks.INTERFACE.asItem())
+                                .pattern("FIF")
+                                .pattern("IAI")
+                                .pattern("FIF")
+                                .unlockedBy("has_item", has(CASING))
+                                ::save
+                ).build(consumer, new ResourceLocation(AdvancedPeripherals.MOD_ID, "me_bridge"));
+
+        ConditionalRecipe.builder()
+                .addCondition(
+                        modLoaded("refinedstorage")
+                )
+                .addRecipe(
+                        ShapedRecipeBuilder.shaped(Blocks.COLONY_INTEGRATOR.get())
+                                .define('Q', RSItems.QUARTZ_ENRICHED_IRON.get())
+                                .define('A', CASING)
+                                .define('I', RSBlocks.INTERFACE.get())
+                                .pattern("QIQ")
+                                .pattern("IAI")
+                                .pattern("QIQ")
+                                .unlockedBy("has_item", has(CASING))
+                                ::save
+                ).build(consumer, new ResourceLocation(AdvancedPeripherals.MOD_ID, "rs_bridge"));
 
         ShapedRecipeBuilder.shaped(de.srendi.advancedperipherals.common.setup.Items.WEAK_AUTOMATA_CORE.get())
                 .define('A', CASING)
