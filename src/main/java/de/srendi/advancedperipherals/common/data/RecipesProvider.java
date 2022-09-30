@@ -22,6 +22,7 @@ import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.crafting.ConditionalRecipe;
 import net.minecraftforge.common.crafting.StrictNBTIngredient;
 import net.minecraftforge.common.crafting.conditions.IConditionBuilder;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
@@ -194,22 +195,21 @@ public class RecipesProvider extends RecipeProvider implements IConditionBuilder
                 .unlockedBy("has_item", has(CASING))
                 .save(consumer);
 
-        /*ConditionalRecipe.builder()
+        ConditionalRecipe.builder()
                 .addCondition(
                         modLoaded("minecolonies")
                 )
                 .addRecipe(
-                    ShapedRecipeBuilder.shaped(Blocks.COLONY_INTEGRATOR.get())
-                    .define('O', ItemTags.LOGS)
-                    .define('A', CASING)
-                    .define('R', ModBlocks.blockRack)
-                    .pattern("ORO")
-                    .pattern(" A ")
-                    .pattern("ORO")
-                    .unlockedBy("has_item", has(CASING))
-                    ::save
+                        ShapedRecipeBuilder.shaped(Blocks.COLONY_INTEGRATOR.get())
+                                .define('O', ItemTags.LOGS)
+                                .define('A', CASING)
+                                .define('R', ForgeRegistries.ITEMS.getValue(new ResourceLocation("minecolonies", "blockminecoloniesrack")))
+                                .pattern("ORO")
+                                .pattern(" A ")
+                                .pattern("ORO")
+                                .unlockedBy("has_item", has(CASING))::save
                 ).build(consumer, new ResourceLocation(AdvancedPeripherals.MOD_ID, "colony_integrator"));
-        */
+
         ConditionalRecipe.builder()
                 .addCondition(
                         modLoaded("ae2")
@@ -222,8 +222,7 @@ public class RecipesProvider extends RecipeProvider implements IConditionBuilder
                                 .pattern("FIF")
                                 .pattern("IAI")
                                 .pattern("FIF")
-                                .unlockedBy("has_item", has(CASING))
-                                ::save
+                                .unlockedBy("has_item", has(CASING))::save
                 ).build(consumer, new ResourceLocation(AdvancedPeripherals.MOD_ID, "me_bridge"));
 
         ConditionalRecipe.builder()
@@ -238,8 +237,7 @@ public class RecipesProvider extends RecipeProvider implements IConditionBuilder
                                 .pattern("QIQ")
                                 .pattern("IAI")
                                 .pattern("QIQ")
-                                .unlockedBy("has_item", has(CASING))
-                                ::save
+                                .unlockedBy("has_item", has(CASING))::save
                 ).build(consumer, new ResourceLocation(AdvancedPeripherals.MOD_ID, "rs_bridge"));
 
         ShapedRecipeBuilder.shaped(de.srendi.advancedperipherals.common.setup.Items.WEAK_AUTOMATA_CORE.get())

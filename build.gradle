@@ -275,16 +275,6 @@ dependencies {
     compileOnly fg.deobf("com.ldtteam:domum_ornamentum:${domumornamentum_version}:universal")
     compileOnly fg.deobf("com.ldtteam:blockui:${blockui_version}")
 
-    apiLibrary ("com.ldtteam:datagenerators:0.1.48-ALPHA") {
-        transitive = false
-    }
-    datagenLibrary ("com.ldtteam:datagenerators:0.1.48-ALPHA") {
-        transitive = false
-    }
-    library ("com.ldtteam:datagenerators:0.1.48-ALPHA") {
-        transitive = false
-    }
-
     //Patchouli
     runtimeOnly fg.deobf("vazkii.patchouli:Patchouli:${patchouli_version}")
 
