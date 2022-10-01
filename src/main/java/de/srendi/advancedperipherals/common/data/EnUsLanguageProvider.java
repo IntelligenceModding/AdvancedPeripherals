@@ -95,7 +95,7 @@ public class EnUsLanguageProvider extends LanguageProvider {
         addAdvancement("root", "Advanced Peripherals", "Every journey starts with the first block");
         addAdvancement("weak_automata_core", "First automata core", "Does the afterlife exist in minecraft?");
         addAdvancement("end_automata_core", "End automata core", "If you can code gps-free position location with this, you're a powerful human being");
-        addAdvancement("husbandry_automata_core", "Husbandry automata core","Is this core gluten-free?");
+        addAdvancement("husbandry_automata_core", "Husbandry automata core", "Is this core gluten-free?");
         addAdvancement("overpowered_automata_core", "Overpowered automata core", "Can you handle so much power?");
         addAdvancement("base_toolkit", "Gentleman's set!", "Collect a redstone integrator, inventory manager and energy detector. How did you even play without this?");
         addAdvancement("nbt_toolkit", "No secrets", "Collect a NBT storage and block reader. Now all of the world's secrets are open to you!");
@@ -131,9 +131,9 @@ public class EnUsLanguageProvider extends LanguageProvider {
     }
 
     private void addText() {
-        add("text."+AdvancedPeripherals.MOD_ID+".removed_player", "Cleared the memory card");
-        add("text."+AdvancedPeripherals.MOD_ID+".added_player", "Added you to the memory card");
-        add("text."+AdvancedPeripherals.MOD_ID+".automata_core_feed_by_player", "You trying to feed entity to soul, but your own body refuses to do this. Maybe something more mechanical can do this?");
+        add("text." + AdvancedPeripherals.MOD_ID + ".removed_player", "Cleared the memory card");
+        add("text." + AdvancedPeripherals.MOD_ID + ".added_player", "Added you to the memory card");
+        add("text." + AdvancedPeripherals.MOD_ID + ".automata_core_feed_by_player", "You trying to feed entity to soul, but your own body refuses to do this. Maybe something more mechanical can do this?");
     }
 
     private void addKeybinds() {
@@ -167,7 +167,7 @@ public class EnUsLanguageProvider extends LanguageProvider {
     }
 
     private void addTooltip(String tooltip, String name) {
-        add("item." + AdvancedPeripherals.MOD_ID + ".tooltip." + tooltip, name);;
+        add("item." + AdvancedPeripherals.MOD_ID + ".tooltip." + tooltip, name);
     }
 
     private void addKeybind(KeyMapping keybind, String name) {
