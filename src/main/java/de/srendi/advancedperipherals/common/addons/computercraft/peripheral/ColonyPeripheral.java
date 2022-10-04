@@ -140,6 +140,13 @@ public class ColonyPeripheral extends BasePeripheral<IPeripheralOwner> {
     }
 
     @LuaFunction(mainThread = true)
+    public final boolean isUnderRaid() throws LuaException {
+        IColony colony = getColony();
+
+        return colony.getRaiderManager().isRaided();
+    }
+
+    @LuaFunction(mainThread = true)
     public final int amountOfCitizens() throws LuaException {
         IColony colony = getColony();
 
