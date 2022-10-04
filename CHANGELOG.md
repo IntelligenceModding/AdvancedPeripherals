@@ -6,6 +6,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+## [1.19.2-0.7.21b] - 2022-10-04
+
+### Added
+- Added `isUnderRaid` to the colony integrator
+
+### Fixed
+- Fixed language entries
+- Fixed rs bridge and colony integrator recipe
+
 ## [1.19.2-0.7.20a] - 2022-09-26
 
 ### Known Issues
