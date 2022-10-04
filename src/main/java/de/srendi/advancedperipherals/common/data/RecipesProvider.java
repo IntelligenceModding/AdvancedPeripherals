@@ -6,6 +6,7 @@ import com.refinedmods.refinedstorage.RSItems;
 import dan200.computercraft.shared.Registry;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.setup.Blocks;
+import de.srendi.advancedperipherals.common.util.RawValue;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.data.recipes.RecipeProvider;
@@ -17,15 +18,16 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.alchemy.PotionUtils;
 import net.minecraft.world.item.alchemy.Potions;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.crafting.ConditionalRecipe;
 import net.minecraftforge.common.crafting.StrictNBTIngredient;
 import net.minecraftforge.common.crafting.conditions.IConditionBuilder;
-import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
+import java.util.stream.Stream;
 
 public class RecipesProvider extends RecipeProvider implements IConditionBuilder {
 
@@ -203,7 +205,7 @@ public class RecipesProvider extends RecipeProvider implements IConditionBuilder
                         ShapedRecipeBuilder.shaped(Blocks.COLONY_INTEGRATOR.get())
                                 .define('O', ItemTags.LOGS)
                                 .define('A', CASING)
-                                .define('R', ForgeRegistries.ITEMS.getValue(new ResourceLocation("minecolonies", "blockminecoloniesrack")))
+                                .define('R', Ingredient.fromValues(Stream.of(new RawValue(new ResourceLocation("minecolonies", "blockminecoloniesrack")))))
                                 .pattern("ORO")
                                 .pattern(" A ")
                                 .pattern("ORO")
@@ -230,7 +232,7 @@ public class RecipesProvider extends RecipeProvider implements IConditionBuilder
                         modLoaded("refinedstorage")
                 )
                 .addRecipe(
-                        ShapedRecipeBuilder.shaped(Blocks.COLONY_INTEGRATOR.get())
+                        ShapedRecipeBuilder.shaped(Blocks.RS_BRIDGE.get())
                                 .define('Q', RSItems.QUARTZ_ENRICHED_IRON.get())
                                 .define('A', CASING)
                                 .define('I', RSBlocks.INTERFACE.get())

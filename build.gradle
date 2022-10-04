@@ -202,14 +202,10 @@ repositories {
         name = "Modmaven"
         url = 'https://modmaven.dev/'
     }
-    /*maven {
+    maven {
         name = "Create maven"
         url = "https://maven.tterrag.com/"
-        content {
-            includeGroup "com.simibubi.create"
-            includeGroup "com.jozufozu.flywheel"
-        }
-    }*/
+    }
     maven {
         name = "Srendi Space repository"
         url = "https://maven.pkg.jetbrains.space/intelligence/p/advancedperipherals/ap-repository"
@@ -226,13 +222,13 @@ repositories {
         }
     }
 
-    /*maven {
+    maven {
         url = uri("https://maven.pkg.github.com/refinedmods/refinedstorage")
         credentials {
             username = "anything"
             password = "\u0067hp_oGjcDFCn8jeTzIj4Ke9pLoEVtpnZMP4VQgaX"
         }
-    }*/
+    }
 }
 
 configurations {
@@ -260,9 +256,7 @@ dependencies {
     runtimeOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}")
 
     // Refined Storage
-    implementation fg.deobf("com.refinedmods:refinedstorage:${refinedstorage_version}") {
-        transitive false
-    }
+    implementation fg.deobf("com.refinedmods:refinedstorage:${refinedstorage_version}")
 
     // Botania
     implementation fg.deobf("vazkii.botania:Botania:${botania_version}")
@@ -279,14 +273,12 @@ dependencies {
     runtimeOnly fg.deobf("vazkii.patchouli:Patchouli:${patchouli_version}")
 
     // Create
-    // Currently self hosted since create isn't officially updated to 1.19
-    compileOnly fg.deobf("com.simibubi.create:Create:${create_version}") {
-        transitive false
-    }
+    compileOnly fg.deobf("com.simibubi.create:create-1.19.2:${create_version}:all")
     compileOnly fg.deobf("com.jozufozu.flywheel:flywheel-forge-1.19.2:${flywheel_version}")
 
     //Removed until fully ported
     //testImplementation fg.deobf("site.siredvin.ttoolkit:ttoolkit-${minecraft_version}:${ttoolkit_version}")
+
     testImplementation "org.junit.jupiter:junit-jupiter-api:${junit_version}"
     testImplementation "org.junit.jupiter:junit-jupiter-params:${junit_version}"
     testImplementation "org.hamcrest:hamcrest:${hamcrest_version}"
