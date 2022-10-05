@@ -8,7 +8,7 @@ import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
 
 public class FluidDetectorPeripheral extends BasePeripheral<BlockEntityPeripheralOwner<FluidDetectorEntity>> {
 
-    public static final String TYPE = "energyDetector";
+    public static final String TYPE = "fluidDetector";
 
     public FluidDetectorPeripheral(FluidDetectorEntity tileEntity) {
         super(TYPE, new BlockEntityPeripheralOwner<>(tileEntity));
@@ -16,7 +16,7 @@ public class FluidDetectorPeripheral extends BasePeripheral<BlockEntityPeriphera
 
     @Override
     public boolean isEnabled() {
-        return APConfig.PERIPHERALS_CONFIG.enableEnergyDetector.get();
+        return APConfig.PERIPHERALS_CONFIG.enableFluidDetector.get();
     }
 
     @LuaFunction(mainThread = true)
@@ -31,7 +31,7 @@ public class FluidDetectorPeripheral extends BasePeripheral<BlockEntityPeriphera
 
     @LuaFunction(mainThread = true)
     public final void setTransferRateLimit(long transferRate) {
-        transferRate = Math.min(APConfig.PERIPHERALS_CONFIG.energyDetectorMaxFlow.get(), transferRate);
+        transferRate = Math.min(APConfig.PERIPHERALS_CONFIG.fluidDetectorMaxFlow.get(), transferRate);
         owner.tileEntity.storageProxy.setMaxTransferRate((int) transferRate);
     }
 

@@ -26,13 +26,13 @@ import java.util.Optional;
 
 public class FluidDetectorEntity extends PeripheralBlockEntity<FluidDetectorPeripheral> {
 
-    //a zero size, zero transfer energy storage to ensure that cables connect
+    //a zero size, zero transfer fluid storage to ensure that cables connect
     private final FluidTank zeroStorage = new FluidTank(0);
     public int transferRate = 0;
     public FluidStack lastFlowedLiquid = FluidStack.EMPTY;
-    //storageProxy that will forward the energy to the output but limit it to maxTransferRate
-    public FluidStorageProxy storageProxy = new FluidStorageProxy(this, APConfig.PERIPHERALS_CONFIG.energyDetectorMaxFlow.get());
-    LazyOptional<IFluidHandler> energyStorageCap = LazyOptional.of(() -> storageProxy);
+    //storageProxy that will forward the fluid to the output but limit it to maxTransferRate
+    public FluidStorageProxy storageProxy = new FluidStorageProxy(this, APConfig.PERIPHERALS_CONFIG.fluidDetectorMaxFlow.get());
+    LazyOptional<IFluidHandler> fluidStorageCap = LazyOptional.of(() -> storageProxy);
     Direction fluidInDetection = Direction.NORTH;
     Direction fluidOutDirection = Direction.SOUTH;
     LazyOptional<IFluidHandler> zeroStorageCap = LazyOptional.of(() -> zeroStorage);
@@ -40,7 +40,7 @@ public class FluidDetectorEntity extends PeripheralBlockEntity<FluidDetectorPeri
     private Optional<IFluidHandler> outReceivingStorage = Optional.empty();
 
     public FluidDetectorEntity(BlockPos pos, BlockState state) {
-        super(APBlockEntityTypes.ENERGY_DETECTOR.get(), pos, state);
+        super(APBlockEntityTypes.FLUID_DETECTOR.get(), pos, state);
     }
 
     @NotNull
@@ -56,7 +56,7 @@ public class FluidDetectorEntity extends PeripheralBlockEntity<FluidDetectorPeri
         fluidOutDirection = getBlockState().getValue(APBlockEntityBlock.FACING).getOpposite();
         if (cap == ForgeCapabilities.FLUID_HANDLER) {
             if (direction == fluidInDetection) {
-                return energyStorageCap.cast();
+                return fluidStorageCap.cast();
             } else if (direction == fluidOutDirection) {
                 return zeroStorageCap.cast();
             }
@@ -73,7 +73,7 @@ public class FluidDetectorEntity extends PeripheralBlockEntity<FluidDetectorPeri
     @Override
     public <T extends BlockEntity> void handleTick(Level level, BlockState state, BlockEntityType<T> type) {
         if (!level.isClientSide) {
-            // this handles the rare edge case that receiveEnergy is called multiple times in one tick
+            // this handles the rare edge case that receiveFluid is called multiple times in one tick
             transferRate = storageProxy.getTransferedInThisTick();
             storageProxy.resetTransferedInThisTick();
         }
