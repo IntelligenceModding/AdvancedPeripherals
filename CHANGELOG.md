@@ -6,6 +6,30 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+## [1.19.2-0.7.21b] - 2022-10-04
+
+### Added
+- Added `isUnderRaid` to the colony integrator
+
+### Fixed
+- Fixed language entries
+- Fixed rs bridge and colony integrator recipe
+
+## [1.19.2-0.7.20a] - 2022-09-26
+
+### Known Issues
+- Missing language entries
+
+### Fixed
+- [#341] Fixed `isThunder` - environment detector
+- [#347] Fixed crash on server startup
+
+## [1.19.2-0.7.20a] - 2022-09-24
+
+### Fixed
+- [#341] Fixed `isThunder` - environment detector
+- [#347] Fix crash on server startup due to client side classes
+
 ## [1.19.2-0.7.19a] - 2022-09-18
 
 This version supports Create, AE2, Refined Storage, Minecolonies, Botania and Patchouli

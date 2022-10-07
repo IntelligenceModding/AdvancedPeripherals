@@ -24,6 +24,7 @@ import net.minecraftforge.common.crafting.conditions.IConditionBuilder;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
+import java.util.stream.Stream;
 
 public class RecipesProvider extends RecipeProvider implements IConditionBuilder {
 
@@ -219,7 +220,52 @@ public class RecipesProvider extends RecipeProvider implements IConditionBuilder
                 .unlockedBy("has_item", has(CASING))
                 .save(consumer);
 
-        ShapedRecipeBuilder.shaped(APItems.WEAK_AUTOMATA_CORE.get())
+        ConditionalRecipe.builder()
+                .addCondition(
+                        modLoaded("minecolonies")
+                )
+                .addRecipe(
+                        ShapedRecipeBuilder.shaped(Blocks.COLONY_INTEGRATOR.get())
+                                .define('O', ItemTags.LOGS)
+                                .define('A', CASING)
+                                .define('R', Ingredient.fromValues(Stream.of(new RawValue(new ResourceLocation("minecolonies", "blockminecoloniesrack")))))
+                                .pattern("ORO")
+                                .pattern(" A ")
+                                .pattern("ORO")
+                                .unlockedBy("has_item", has(CASING))::save
+                ).build(consumer, new ResourceLocation(AdvancedPeripherals.MOD_ID, "colony_integrator"));
+
+        ConditionalRecipe.builder()
+                .addCondition(
+                        modLoaded("ae2")
+                )
+                .addRecipe(
+                        ShapedRecipeBuilder.shaped(Blocks.ME_BRIDGE.get())
+                                .define('F', AEBlocks.FLUIX_BLOCK.asItem())
+                                .define('A', CASING)
+                                .define('I', AEBlocks.INTERFACE.asItem())
+                                .pattern("FIF")
+                                .pattern("IAI")
+                                .pattern("FIF")
+                                .unlockedBy("has_item", has(CASING))::save
+                ).build(consumer, new ResourceLocation(AdvancedPeripherals.MOD_ID, "me_bridge"));
+
+        ConditionalRecipe.builder()
+                .addCondition(
+                        modLoaded("refinedstorage")
+                )
+                .addRecipe(
+                        ShapedRecipeBuilder.shaped(Blocks.RS_BRIDGE.get())
+                                .define('Q', RSItems.QUARTZ_ENRICHED_IRON.get())
+                                .define('A', CASING)
+                                .define('I', RSBlocks.INTERFACE.get())
+                                .pattern("QIQ")
+                                .pattern("IAI")
+                                .pattern("QIQ")
+                                .unlockedBy("has_item", has(CASING))::save
+                ).build(consumer, new ResourceLocation(AdvancedPeripherals.MOD_ID, "rs_bridge"));
+
+        ShapedRecipeBuilder.shaped(de.srendi.advancedperipherals.common.setup.Items.WEAK_AUTOMATA_CORE.get())
                 .define('A', CASING)
                 .define('R', Tags.Items.STORAGE_BLOCKS_REDSTONE)
                 .define('S', Items.SOUL_LANTERN)

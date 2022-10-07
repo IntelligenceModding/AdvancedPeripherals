@@ -41,7 +41,7 @@ wrapper {
 
 def isSnapshotVersion = Boolean.valueOf(System.getProperty("snapshot"))
 
-version = "${minecraft_version}" + "-" + "${mod_version}" + (isSnapshotVersion ? "-SNAPSHOT" : "")
+version = "${mod_version}" + (isSnapshotVersion ? "-SNAPSHOT" : "")
 group = 'de.srendi.advancedperipherals'
 
 def static getenv(path = ".env") {
@@ -202,14 +202,10 @@ repositories {
         name = "Modmaven"
         url = 'https://modmaven.dev/'
     }
-    /*maven {
+    maven {
         name = "Create maven"
         url = "https://maven.tterrag.com/"
-        content {
-            includeGroup "com.simibubi.create"
-            includeGroup "com.jozufozu.flywheel"
-        }
-    }*/
+    }
     maven {
         name = "Srendi Space repository"
         url = "https://maven.pkg.jetbrains.space/intelligence/p/advancedperipherals/ap-repository"
@@ -226,13 +222,13 @@ repositories {
         }
     }
 
-    /*maven {
+    maven {
         url = uri("https://maven.pkg.github.com/refinedmods/refinedstorage")
         credentials {
             username = "anything"
             password = "\u0067hp_oGjcDFCn8jeTzIj4Ke9pLoEVtpnZMP4VQgaX"
         }
-    }*/
+    }
 }
 
 configurations {
@@ -260,9 +256,7 @@ dependencies {
     runtimeOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}")
 
     // Refined Storage
-    implementation fg.deobf("com.refinedmods:refinedstorage:${refinedstorage_version}") {
-        transitive false
-    }
+    implementation fg.deobf("com.refinedmods:refinedstorage:${refinedstorage_version}")
 
     compileOnly "mekanism:Mekanism:${mekanism_version}:api"
 
@@ -276,24 +270,22 @@ dependencies {
 
     // Minecolonies
     // Change to compileOnly when running `runData`
-    compileOnly fg.deobf("com.ldtteam:minecolonies:${minecolonies_version}")
-    compileOnly fg.deobf("com.ldtteam:structurize:${structurize_version}")
-    compileOnly fg.deobf("com.ldtteam:multi-piston:${multipiston_version}")
-    compileOnly fg.deobf("com.ldtteam:domum_ornamentum:${domumornamentum_version}:universal")
-    compileOnly fg.deobf("com.ldtteam:blockui:${blockui_version}")
+    implementation fg.deobf("com.ldtteam:minecolonies:${minecolonies_version}")
+    implementation fg.deobf("com.ldtteam:structurize:${structurize_version}")
+    implementation fg.deobf("com.ldtteam:multi-piston:${multipiston_version}")
+    implementation fg.deobf("com.ldtteam:domum_ornamentum:${domumornamentum_version}:universal")
+    implementation fg.deobf("com.ldtteam:blockui:${blockui_version}")
 
     //Patchouli
     runtimeOnly fg.deobf("vazkii.patchouli:Patchouli:${patchouli_version}")
 
     // Create
-    // Currently self hosted since create isn't officially updated to 1.19
-    compileOnly fg.deobf("com.simibubi.create:Create:${create_version}") {
-        transitive false
-    }
+    compileOnly fg.deobf("com.simibubi.create:create-1.19.2:${create_version}:all")
     compileOnly fg.deobf("com.jozufozu.flywheel:flywheel-forge-1.19.2:${flywheel_version}")
 
     //Removed until fully ported
     //testImplementation fg.deobf("site.siredvin.ttoolkit:ttoolkit-${minecraft_version}:${ttoolkit_version}")
+
     testImplementation "org.junit.jupiter:junit-jupiter-api:${junit_version}"
     testImplementation "org.junit.jupiter:junit-jupiter-params:${junit_version}"
     testImplementation "org.hamcrest:hamcrest:${hamcrest_version}"

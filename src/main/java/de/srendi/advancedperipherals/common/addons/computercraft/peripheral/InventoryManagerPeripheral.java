@@ -245,7 +245,7 @@ public class InventoryManagerPeripheral extends BasePeripheral<BlockEntityPeriph
     @LuaFunction(value = {"list", "getItems"}, mainThread = true)
     public final List<Object> getItems() throws LuaException {
         List<Object> items = new ArrayList<>();
-        int i = 0; //Used to let users easily sort the items by the slots. Also a better way for the user to see where a item actually is
+        int i = 0; //Used to let users easily sort the items by the slots. Also, a better way for the user to see where an item actually is
         for (ItemStack stack : getOwnerPlayer().getInventory().items) {
             if (!stack.isEmpty()) {
                 items.add(LuaConverter.stackToObjectWithSlot(stack, i));
