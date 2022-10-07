@@ -7,6 +7,7 @@ import de.srendi.advancedperipherals.common.blocks.blockentities.ColonyIntegrato
 import de.srendi.advancedperipherals.common.blocks.blockentities.EnergyDetectorEntity;
 import de.srendi.advancedperipherals.common.blocks.blockentities.EnvironmentDetectorEntity;
 import de.srendi.advancedperipherals.common.blocks.blockentities.FluidDetectorEntity;
+import de.srendi.advancedperipherals.common.blocks.blockentities.GasDetectorEntity;
 import de.srendi.advancedperipherals.common.blocks.blockentities.GeoScannerEntity;
 import de.srendi.advancedperipherals.common.blocks.blockentities.InventoryManagerEntity;
 import de.srendi.advancedperipherals.common.blocks.blockentities.MeBridgeEntity;
@@ -31,6 +32,7 @@ public class APBlockEntityTypes {
     public static final RegistryObject<BlockEntityType<RsBridgeEntity>> RS_BRIDGE = ModList.get().isLoaded("refinedstorage") ? APRegistration.TILE_ENTITIES.register("rs_bridge", () -> new BlockEntityType<>(RsBridgeEntity::new, Sets.newHashSet(APBlocks.RS_BRIDGE.get()), null)) : null;
     public static final RegistryObject<BlockEntityType<EnergyDetectorEntity>> ENERGY_DETECTOR = APRegistration.TILE_ENTITIES.register("energy_detector", () -> new BlockEntityType<>(EnergyDetectorEntity::new, Sets.newHashSet(APBlocks.ENERGY_DETECTOR.get()), null));
     public static final RegistryObject<BlockEntityType<FluidDetectorEntity>> FLUID_DETECTOR = APRegistration.TILE_ENTITIES.register("fluid_detector", () -> new BlockEntityType<>(FluidDetectorEntity::new, Sets.newHashSet(APBlocks.FLUID_DETECTOR.get()), null));
+    public static final RegistryObject<BlockEntityType<GasDetectorEntity>> GAS_DETECTOR = APRegistration.TILE_ENTITIES.register("gas_detector", () -> new BlockEntityType<>(GasDetectorEntity::new, Sets.newHashSet(APBlocks.GAS_DETECTOR.get()), null));
     public static final RegistryObject<BlockEntityType<SmartGlassesControllerEntity>> AR_CONTROLLER = APRegistration.TILE_ENTITIES.register("ar_controller", () -> new BlockEntityType<>(SmartGlassesControllerEntity::new, Sets.newHashSet(APBlocks.AR_CONTROLLER.get()), null));
     public static final RegistryObject<BlockEntityType<InventoryManagerEntity>> INVENTORY_MANAGER = APRegistration.TILE_ENTITIES.register("inventory_manager", () -> new BlockEntityType<>(InventoryManagerEntity::new, Sets.newHashSet(APBlocks.INVENTORY_MANAGER.get()), null));
     public static final RegistryObject<BlockEntityType<RedstoneIntegratorEntity>> REDSTONE_INTEGRATOR = APRegistration.TILE_ENTITIES.register("redstone_integrator", () -> new BlockEntityType<>(RedstoneIntegratorEntity::new, Sets.newHashSet(APBlocks.REDSTONE_INTEGRATOR.get()), null));

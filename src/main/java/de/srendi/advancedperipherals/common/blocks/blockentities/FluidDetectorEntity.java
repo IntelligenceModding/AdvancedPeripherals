@@ -26,18 +26,19 @@ import java.util.Optional;
 
 public class FluidDetectorEntity extends PeripheralBlockEntity<FluidDetectorPeripheral> {
 
-    //a zero size, zero transfer fluid storage to ensure that cables connect
-    private final FluidTank zeroStorage = new FluidTank(0);
     public int transferRate = 0;
     public FluidStack lastFlowedLiquid = FluidStack.EMPTY;
+
     //storageProxy that will forward the fluid to the output but limit it to maxTransferRate
-    public FluidStorageProxy storageProxy = new FluidStorageProxy(this, APConfig.PERIPHERALS_CONFIG.fluidDetectorMaxFlow.get());
-    LazyOptional<IFluidHandler> fluidStorageCap = LazyOptional.of(() -> storageProxy);
-    Direction fluidInDetection = Direction.NORTH;
-    Direction fluidOutDirection = Direction.SOUTH;
-    LazyOptional<IFluidHandler> zeroStorageCap = LazyOptional.of(() -> zeroStorage);
-    @NotNull
+    public final FluidStorageProxy storageProxy = new FluidStorageProxy(this, APConfig.PERIPHERALS_CONFIG.fluidDetectorMaxFlow.get());
+    //a zero size, zero transfer fluid storage to ensure that cables connect
+    private final FluidTank zeroStorage = new FluidTank(0);
+    private final LazyOptional<IFluidHandler> fluidStorageCap = LazyOptional.of(() -> storageProxy);
+    private final LazyOptional<IFluidHandler> zeroStorageCap = LazyOptional.of(() -> zeroStorage);
     private Optional<IFluidHandler> outReceivingStorage = Optional.empty();
+
+    private Direction fluidInDetection = Direction.NORTH;
+    private Direction fluidOutDirection = Direction.SOUTH;
 
     public FluidDetectorEntity(BlockPos pos, BlockState state) {
         super(APBlockEntityTypes.FLUID_DETECTOR.get(), pos, state);
@@ -85,10 +86,10 @@ public class FluidDetectorEntity extends PeripheralBlockEntity<FluidDetectorPeri
         super.deserializeNBT(nbt);
     }
 
-    // returns the cached output storage of the receiving block or refetches it if it has been invalidated
+    // returns the cached output storage of the receiving block or fetches it if it has been invalidated
     @NotNull
     public Optional<IFluidHandler> getOutputStorage() {
-        // the documentation says that the value of the LazyOptional should be cached locally and invallidated using addListener
+        // the documentation says that the value of the LazyOptional should be cached locally and invalidated using addListener
         if (outReceivingStorage.isEmpty()) {
             BlockEntity teOut = level.getBlockEntity(worldPosition.relative(fluidOutDirection));
             if (teOut == null) {

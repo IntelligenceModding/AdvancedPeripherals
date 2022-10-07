@@ -68,7 +68,9 @@ public class FluidStorageProxy implements IFluidHandler {
     public int fill(FluidStack resource, IFluidHandler.FluidAction action) {
         Optional<IFluidHandler> out = fluidDetectorEntity.getOutputStorage();
         return out.map(outStorage -> {
-            int transferred = outStorage.fill(resource, action);
+            FluidStack transferring = resource.copy();
+            transferring.setAmount(Math.min(resource.getAmount(), maxTransferRate));
+            int transferred = outStorage.fill(transferring, action);
             if (!action.simulate()) {
                 transferedInThisTick += transferred;
                 fluidDetectorEntity.lastFlowedLiquid = resource.copy();

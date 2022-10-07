@@ -16,9 +16,12 @@ public class PeripheralsConfig implements IAPConfig {
     //Energy Detector
     public final ForgeConfigSpec.IntValue energyDetectorMaxFlow;
     public final ForgeConfigSpec.BooleanValue enableEnergyDetector;
-    //Energy Detector
+    //Fluid Detector
     public final ForgeConfigSpec.IntValue fluidDetectorMaxFlow;
     public final ForgeConfigSpec.BooleanValue enableFluidDetector;
+    //Gas Detector
+    public final ForgeConfigSpec.IntValue gasDetectorMaxFlow;
+    public final ForgeConfigSpec.BooleanValue enableGasDetector;
     //NBT Storage
     public final ForgeConfigSpec.IntValue nbtStorageMaxSize;
     public final ForgeConfigSpec.BooleanValue enableNBTStorage;
@@ -76,6 +79,11 @@ public class PeripheralsConfig implements IAPConfig {
 
         enableFluidDetector = builder.comment("Enable the Fluid Detector or not.").define("enableFluidDetector", true);
         fluidDetectorMaxFlow = builder.comment("Defines the maximum fluid flow of the fluid detector.").defineInRange("energyDetectorMaxFlow", Integer.MAX_VALUE, 0, Integer.MAX_VALUE);
+
+        pop("Gas_Detector", builder);
+
+        enableGasDetector = builder.comment("Enable the Gas Detector or not.").define("enableGasDetector", true);
+        gasDetectorMaxFlow = builder.comment("Defines the maximum gas flow of the gas detector.").defineInRange("gasDetectorMaxFlow", Integer.MAX_VALUE, 0, Integer.MAX_VALUE);
 
         pop("NBT_Storage", builder);
 

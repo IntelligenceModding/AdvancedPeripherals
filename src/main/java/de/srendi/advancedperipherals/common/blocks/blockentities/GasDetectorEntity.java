@@ -1,11 +1,15 @@
 package de.srendi.advancedperipherals.common.blocks.blockentities;
 
-import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.EnergyDetectorPeripheral;
+import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.GasDetectorPeripheral;
+import de.srendi.advancedperipherals.common.addons.mekanism.MekanismCapabilities;
 import de.srendi.advancedperipherals.common.blocks.base.APBlockEntityBlock;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralBlockEntity;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.setup.APBlockEntityTypes;
-import de.srendi.advancedperipherals.common.util.EnergyStorageProxy;
+import de.srendi.advancedperipherals.common.util.GasStorageProxy;
+import de.srendi.advancedperipherals.common.util.ZeroGasTank;
+import mekanism.api.chemical.gas.GasStack;
+import mekanism.api.chemical.gas.IGasHandler;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -14,49 +18,47 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.energy.EnergyStorage;
-import net.minecraftforge.energy.IEnergyStorage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 
-public class EnergyDetectorEntity extends PeripheralBlockEntity<EnergyDetectorPeripheral> {
+public class GasDetectorEntity extends PeripheralBlockEntity<GasDetectorPeripheral> {
 
     public int transferRate = 0;
-    //storageProxy that will forward the energy to the output but limit it to maxTransferRate
-    public final EnergyStorageProxy storageProxy = new EnergyStorageProxy(this, APConfig.PERIPHERALS_CONFIG.energyDetectorMaxFlow.get());
-    //a zero size, zero transfer energy storage to ensure that cables connect
-    private final EnergyStorage zeroStorage = new EnergyStorage(0, 0, 0);
-    private final LazyOptional<IEnergyStorage> energyStorageCap = LazyOptional.of(() -> storageProxy);
-    private final LazyOptional<IEnergyStorage> zeroStorageCap = LazyOptional.of(() -> zeroStorage);
-    @NotNull
-    private Optional<IEnergyStorage> outReceivingStorage = Optional.empty();
+    public GasStack lastFlowedGas = GasStack.EMPTY;
 
-    private Direction energyInDirection = Direction.NORTH;
-    private Direction energyOutDirection = Direction.SOUTH;
+    //storageProxy that will forward the gas to the output but limit it to maxTransferRate
+    public final GasStorageProxy storageProxy = new GasStorageProxy(this, APConfig.PERIPHERALS_CONFIG.gasDetectorMaxFlow.get());
+    //a zero size, zero transfer gas storage to ensure that cables connect
+    private final IGasHandler zeroStorage = new ZeroGasTank();
+    private final LazyOptional<IGasHandler> gasStorageCap = LazyOptional.of(() -> storageProxy);
+    private final LazyOptional<IGasHandler> zeroStorageCap = LazyOptional.of(() -> zeroStorage);
+    private Optional<IGasHandler> outReceivingStorage = Optional.empty();
 
-    public EnergyDetectorEntity(BlockPos pos, BlockState state) {
-        super(APBlockEntityTypes.ENERGY_DETECTOR.get(), pos, state);
+    private Direction gasInDirection = Direction.NORTH;
+    private Direction gasOutDirection = Direction.SOUTH;
+
+    public GasDetectorEntity(BlockPos pos, BlockState state) {
+        super(APBlockEntityTypes.GAS_DETECTOR.get(), pos, state);
     }
 
     @NotNull
     @Override
-    protected EnergyDetectorPeripheral createPeripheral() {
-        return new EnergyDetectorPeripheral(this);
+    protected GasDetectorPeripheral createPeripheral() {
+        return new GasDetectorPeripheral(this);
     }
 
     @NotNull
     @Override
     public <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction direction) {
-        energyInDirection = getBlockState().getValue(APBlockEntityBlock.FACING);
-        energyOutDirection = getBlockState().getValue(APBlockEntityBlock.FACING).getOpposite();
-        if (cap == ForgeCapabilities.ENERGY) {
-            if (direction == energyInDirection) {
-                return energyStorageCap.cast();
-            } else if (direction == energyOutDirection) {
+        gasInDirection = getBlockState().getValue(APBlockEntityBlock.FACING);
+        gasOutDirection = getBlockState().getValue(APBlockEntityBlock.FACING).getOpposite();
+        if (cap == MekanismCapabilities.GAS_HANDLER) {
+            if (direction == gasInDirection) {
+                return gasStorageCap.cast();
+            } else if (direction == gasOutDirection) {
                 return zeroStorageCap.cast();
             }
         }
@@ -72,7 +74,7 @@ public class EnergyDetectorEntity extends PeripheralBlockEntity<EnergyDetectorPe
     @Override
     public <T extends BlockEntity> void handleTick(Level level, BlockState state, BlockEntityType<T> type) {
         if (!level.isClientSide) {
-            // this handles the rare edge case that receiveEnergy is called multiple times in one tick
+            // this handles the rare edge case that receiveGas is called multiple times in one tick
             transferRate = storageProxy.getTransferedInThisTick();
             storageProxy.resetTransferedInThisTick();
         }
@@ -86,14 +88,14 @@ public class EnergyDetectorEntity extends PeripheralBlockEntity<EnergyDetectorPe
 
     // returns the cached output storage of the receiving block or fetches it if it has been invalidated
     @NotNull
-    public Optional<IEnergyStorage> getOutputStorage() {
+    public Optional<IGasHandler> getOutputStorage() {
         // the documentation says that the value of the LazyOptional should be cached locally and invalidated using addListener
         if (outReceivingStorage.isEmpty()) {
-            BlockEntity teOut = level.getBlockEntity(worldPosition.relative(energyOutDirection));
+            BlockEntity teOut = level.getBlockEntity(worldPosition.relative(gasOutDirection));
             if (teOut == null) {
                 return Optional.empty();
             }
-            LazyOptional<IEnergyStorage> lazyOptionalOutStorage = teOut.getCapability(ForgeCapabilities.ENERGY, energyOutDirection.getOpposite());
+            LazyOptional<IGasHandler> lazyOptionalOutStorage = teOut.getCapability(MekanismCapabilities.GAS_HANDLER, gasOutDirection.getOpposite());
             outReceivingStorage = lazyOptionalOutStorage.resolve();
             lazyOptionalOutStorage.addListener(l -> {
                 outReceivingStorage = Optional.empty();
