@@ -1,9 +1,13 @@
 package de.srendi.advancedperipherals.common.data;
 
+import appeng.core.definitions.AEBlocks;
+import com.refinedmods.refinedstorage.RSBlocks;
+import com.refinedmods.refinedstorage.RSItems;
 import dan200.computercraft.shared.Registry;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.setup.APBlocks;
 import de.srendi.advancedperipherals.common.setup.APItems;
+import de.srendi.advancedperipherals.common.util.RawValue;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.data.recipes.RecipeProvider;
@@ -19,6 +23,7 @@ import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.common.Tags;
+import net.minecraftforge.common.crafting.ConditionalRecipe;
 import net.minecraftforge.common.crafting.StrictNBTIngredient;
 import net.minecraftforge.common.crafting.conditions.IConditionBuilder;
 import org.jetbrains.annotations.NotNull;
@@ -225,7 +230,7 @@ public class RecipesProvider extends RecipeProvider implements IConditionBuilder
                         modLoaded("minecolonies")
                 )
                 .addRecipe(
-                        ShapedRecipeBuilder.shaped(Blocks.COLONY_INTEGRATOR.get())
+                        ShapedRecipeBuilder.shaped(APBlocks.COLONY_INTEGRATOR.get())
                                 .define('O', ItemTags.LOGS)
                                 .define('A', CASING)
                                 .define('R', Ingredient.fromValues(Stream.of(new RawValue(new ResourceLocation("minecolonies", "blockminecoloniesrack")))))
@@ -240,7 +245,7 @@ public class RecipesProvider extends RecipeProvider implements IConditionBuilder
                         modLoaded("ae2")
                 )
                 .addRecipe(
-                        ShapedRecipeBuilder.shaped(Blocks.ME_BRIDGE.get())
+                        ShapedRecipeBuilder.shaped(APBlocks.ME_BRIDGE.get())
                                 .define('F', AEBlocks.FLUIX_BLOCK.asItem())
                                 .define('A', CASING)
                                 .define('I', AEBlocks.INTERFACE.asItem())
@@ -255,7 +260,7 @@ public class RecipesProvider extends RecipeProvider implements IConditionBuilder
                         modLoaded("refinedstorage")
                 )
                 .addRecipe(
-                        ShapedRecipeBuilder.shaped(Blocks.RS_BRIDGE.get())
+                        ShapedRecipeBuilder.shaped(APBlocks.RS_BRIDGE.get())
                                 .define('Q', RSItems.QUARTZ_ENRICHED_IRON.get())
                                 .define('A', CASING)
                                 .define('I', RSBlocks.INTERFACE.get())
@@ -265,7 +270,7 @@ public class RecipesProvider extends RecipeProvider implements IConditionBuilder
                                 .unlockedBy("has_item", has(CASING))::save
                 ).build(consumer, new ResourceLocation(AdvancedPeripherals.MOD_ID, "rs_bridge"));
 
-        ShapedRecipeBuilder.shaped(de.srendi.advancedperipherals.common.setup.Items.WEAK_AUTOMATA_CORE.get())
+        ShapedRecipeBuilder.shaped(APItems.WEAK_AUTOMATA_CORE.get())
                 .define('A', CASING)
                 .define('R', Tags.Items.STORAGE_BLOCKS_REDSTONE)
                 .define('S', Items.SOUL_LANTERN)

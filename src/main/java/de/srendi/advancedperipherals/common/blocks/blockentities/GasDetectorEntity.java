@@ -81,9 +81,9 @@ public class GasDetectorEntity extends PeripheralBlockEntity<GasDetectorPeripher
     }
 
     @Override
-    public void deserializeNBT(CompoundTag nbt) {
+    public void load(CompoundTag nbt) {
         storageProxy.setMaxTransferRate(nbt.getInt("rateLimit"));
-        super.deserializeNBT(nbt);
+        super.load(nbt);
     }
 
     // returns the cached output storage of the receiving block or fetches it if it has been invalidated

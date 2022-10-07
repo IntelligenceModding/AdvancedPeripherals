@@ -1,10 +1,12 @@
-// 1.19.2	2022-09-18T21:59:59.2621294	LootTables
+// 1.19.2	2022-10-07T10:24:52.2412454	LootTables
 fecb8d92386c87945125ce5e4266faeb8275b540 data/advancedperipherals/loot_tables/blocks/ar_controller.json
 d865e8ac35302c486faf5c7122569c554186186d data/advancedperipherals/loot_tables/blocks/block_reader.json
 a6f896cc3dbd8da12737825ec71e32970f54025c data/advancedperipherals/loot_tables/blocks/chat_box.json
 f50f506ae1987537f76be4c05a81689b25798f91 data/advancedperipherals/loot_tables/blocks/colony_integrator.json
 1d1b858d09538dc66bab2c33a2f9c58361a9c472 data/advancedperipherals/loot_tables/blocks/energy_detector.json
 317004b1358ef9bf83957d2d6796529a226161c7 data/advancedperipherals/loot_tables/blocks/environment_detector.json
+df6186990887f77b7db37ebb8ee50a7e7f096b0a data/advancedperipherals/loot_tables/blocks/fluid_detector.json
+cea5a036d4ccdcc6ef026d1a226b5e13f1060676 data/advancedperipherals/loot_tables/blocks/gas_detector.json
 d5a3964f518b138cbd7305c819a36af3d9340e4a data/advancedperipherals/loot_tables/blocks/geo_scanner.json
 8aa1deea908fd02f049e047c8ca16679bbef68a2 data/advancedperipherals/loot_tables/blocks/inventory_manager.json
 9a2898a63e2e0c087ce8eba211c63d1c8b9fd4aa data/advancedperipherals/loot_tables/blocks/me_bridge.json
