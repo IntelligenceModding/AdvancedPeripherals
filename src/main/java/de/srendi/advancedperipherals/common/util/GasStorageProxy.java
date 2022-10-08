@@ -78,7 +78,7 @@ public class GasStorageProxy implements IGasHandler {
             transferring.setAmount(Math.min(stack.getAmount(), maxTransferRate));
             GasStack transferred = outStorage.insertChemical(transferring, action);
             if (!action.simulate()) {
-                transferedInThisTick += transferred.getAmount();
+                transferedInThisTick += transferring.getAmount() - transferred.getAmount();
                 fluidDetectorEntity.lastFlowedGas = stack.copy();
             }
             return transferred;
