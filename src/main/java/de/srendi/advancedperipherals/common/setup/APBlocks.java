@@ -38,6 +38,7 @@ public class APBlocks {
     public static final RegistryObject<Block> GEO_SCANNER = register("geo_scanner", () -> new APBlockEntityBlock<>(APBlockEntityTypes.GEO_SCANNER, false), () -> new APBlockItem(APBlocks.GEO_SCANNER.get(), CCRegistration.ID.GEOSCANNER_TURTLE, CCRegistration.ID.GEOSCANNER_POCKET, APConfig.PERIPHERALS_CONFIG.enableGeoScanner));
     public static final RegistryObject<Block> COLONY_INTEGRATOR = register("colony_integrator", () -> new APBlockEntityBlock<>(ModList.get().isLoaded("minecolonies") ? APBlockEntityTypes.COLONY_INTEGRATOR : null, false), () -> new APBlockItem(APBlocks.COLONY_INTEGRATOR.get(), null, CCRegistration.ID.COLONY_POCKET, APConfig.PERIPHERALS_CONFIG.enableColonyIntegrator));
     public static final RegistryObject<Block> NBT_STORAGE = register("nbt_storage", () -> new APBlockEntityBlock<>(APBlockEntityTypes.NBT_STORAGE, false), () -> new APBlockItem(APBlocks.NBT_STORAGE.get(), null, null, APConfig.PERIPHERALS_CONFIG.enableNBTStorage));
+    public static final RegistryObject<Block> DISTANCE_DETECTOR = register("distance_detector", () -> new APBlockEntityBlock<>(APBlockEntityTypes.DISTANCE_DETECTOR, false), () -> new APBlockItem(APBlocks.DISTANCE_DETECTOR.get(), null, null, APConfig.PERIPHERALS_CONFIG.enableNBTStorage));
 
     private static <T extends Block> RegistryObject<T> registerNoItem(String name, Supplier<T> block) {
         return APRegistration.BLOCKS.register(name, block);

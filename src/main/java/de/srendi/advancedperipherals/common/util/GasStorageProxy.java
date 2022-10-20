@@ -73,7 +73,7 @@ public class GasStorageProxy implements IGasHandler {
     @Override
     public GasStack insertChemical(@NotNull GasStack stack, @NotNull Action action) {
         Optional<IGasHandler> out = fluidDetectorEntity.getOutputStorage();
-        return out.map(outStorage ->  {
+        return out.map(outStorage -> {
             GasStack transferring = stack.copy();
             transferring.setAmount(Math.min(stack.getAmount(), maxTransferRate));
             GasStack transferred = outStorage.insertChemical(transferring, action);

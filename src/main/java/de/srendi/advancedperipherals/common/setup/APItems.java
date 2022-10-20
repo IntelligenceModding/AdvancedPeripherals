@@ -13,9 +13,9 @@ public class APItems {
 
     public static final RegistryObject<Item> CHUNK_CONTROLLER = APRegistration.ITEMS.register("chunk_controller", () -> new APItem(new Item.Properties().stacksTo(16), CCRegistration.ID.CHUNKY_TURTLE, null, APConfig.PERIPHERALS_CONFIG.enableChunkyTurtle::get));
 
-    public static final RegistryObject<SmartGlassesItem> SMART_GLASSES = APRegistration.ITEMS.register("smart_glasses", ()-> new SmartGlassesItem(ArmorMaterials.CHAIN));
+    public static final RegistryObject<SmartGlassesItem> SMART_GLASSES = APRegistration.ITEMS.register("smart_glasses", () -> new SmartGlassesItem(ArmorMaterials.CHAIN));
 
-    public static final RegistryObject<SmartGlassesItem> SMART_GLASSES_NETHERITE = APRegistration.ITEMS.register("smart_glasses_netherite", ()-> new SmartGlassesItem(ArmorMaterials.NETHERITE));
+    public static final RegistryObject<SmartGlassesItem> SMART_GLASSES_NETHERITE = APRegistration.ITEMS.register("smart_glasses_netherite", () -> new SmartGlassesItem(ArmorMaterials.NETHERITE));
 
     public static final RegistryObject<Item> COMPUTER_TOOL = APRegistration.ITEMS.register("computer_tool", () -> new APItem(new Item.Properties().stacksTo(1), null, null, () -> true));
 

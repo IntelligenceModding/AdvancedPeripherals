@@ -4,6 +4,7 @@ import com.google.common.collect.Sets;
 import de.srendi.advancedperipherals.common.blocks.blockentities.BlockReaderEntity;
 import de.srendi.advancedperipherals.common.blocks.blockentities.ChatBoxEnity;
 import de.srendi.advancedperipherals.common.blocks.blockentities.ColonyIntegratorEntity;
+import de.srendi.advancedperipherals.common.blocks.blockentities.DistanceDetectorEntity;
 import de.srendi.advancedperipherals.common.blocks.blockentities.EnergyDetectorEntity;
 import de.srendi.advancedperipherals.common.blocks.blockentities.EnvironmentDetectorEntity;
 import de.srendi.advancedperipherals.common.blocks.blockentities.FluidDetectorEntity;
@@ -40,5 +41,6 @@ public class APBlockEntityTypes {
     public static final RegistryObject<BlockEntityType<GeoScannerEntity>> GEO_SCANNER = APRegistration.TILE_ENTITIES.register("geo_scanner", () -> new BlockEntityType<>(GeoScannerEntity::new, Sets.newHashSet(APBlocks.GEO_SCANNER.get()), null));
     public static final RegistryObject<BlockEntityType<ColonyIntegratorEntity>> COLONY_INTEGRATOR = APRegistration.TILE_ENTITIES.register("colony_integrator", () -> new BlockEntityType<>(ColonyIntegratorEntity::new, Sets.newHashSet(APBlocks.COLONY_INTEGRATOR.get()), null));
     public static final RegistryObject<BlockEntityType<NBTStorageEntity>> NBT_STORAGE = APRegistration.TILE_ENTITIES.register("nbt_storage", () -> new BlockEntityType<>(NBTStorageEntity::new, Sets.newHashSet(APBlocks.NBT_STORAGE.get()), null));
+    public static final RegistryObject<BlockEntityType<DistanceDetectorEntity>> DISTANCE_DETECTOR = APRegistration.TILE_ENTITIES.register("distance_detector", () -> new BlockEntityType<>(DistanceDetectorEntity::new, Sets.newHashSet(APBlocks.DISTANCE_DETECTOR.get()), null));
 
 }
