@@ -78,9 +78,4 @@ public class RsBridgeEntity extends NetworkNodeBlockEntity<RefinedStorageNode> i
         setChanged();
     }
 
-    @NotNull
-    @Override
-    public RefinedStorageNode getNode() {
-        return null;
-    }
 }
