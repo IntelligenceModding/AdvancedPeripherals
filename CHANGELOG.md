@@ -6,6 +6,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+## [1.18.2-0.7.20r] - 2022-11-13
+
+### Added
+- Added `isUnderRaid` - Colony Integrator
+
+### Fixed
+- [#341] Fixed `isThunder` - Environment Detector
+- [#355] Don't allow negative numbers for the energy detector. Prevents weird behaviors and energy duping
+
+### Changed
+- The inventory manager now returns a table with a slot key for each item. Prevents zero indexed tables
+
 ## [1.18.2-0.7.19r] - 2022-09-06
 
 Bump min forge version to 40.1.52
