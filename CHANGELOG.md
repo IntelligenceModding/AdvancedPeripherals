@@ -6,6 +6,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+## [1.19.2-0.7.22b] - 2022-12-02
+
+### Added
+- Added `getRadiation` to the environment detector
+
+### Fixed
+- Fixed chat box event
+- [#352] Fixed RS bridge crashing the game when connecting it to a cable
+- [#355] Don't allow negative numbers for the energy detector
+
 ## [1.19.2-0.7.21b] - 2022-10-04
 
 ### Added

@@ -250,6 +250,13 @@ dependencies {
     // Minimal requirements end
 
     // Extended requirements
+    compileOnly "mekanism:Mekanism:${mekanism_version}:api"
+
+    runtimeOnly fg.deobf("mekanism:Mekanism:${mekanism_version}")// core
+    runtimeOnly fg.deobf("mekanism:Mekanism:${mekanism_version}:additions")// Mekanism: Additions
+    runtimeOnly fg.deobf("mekanism:Mekanism:${mekanism_version}:generators")// Mekanism: Generators
+    runtimeOnly fg.deobf("mekanism:Mekanism:${mekanism_version}:tools")// Mekanism: Tools
+
     // Applied Energistics 2
     runtimeOnly fg.deobf("appeng:appliedenergistics2:${appliedenergistics_version}")
     // Curios
