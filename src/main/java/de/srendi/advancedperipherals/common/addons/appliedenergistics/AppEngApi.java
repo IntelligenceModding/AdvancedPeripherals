@@ -9,6 +9,8 @@ import appeng.api.networking.storage.IStorageService;
 import appeng.api.stacks.AEFluidKey;
 import appeng.api.stacks.AEItemKey;
 import appeng.api.stacks.AEKey;
+import appeng.api.stacks.KeyCounter;
+import appeng.api.storage.AEKeyFilter;
 import appeng.api.storage.MEStorage;
 import dan200.computercraft.shared.util.NBTUtil;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
@@ -17,6 +19,7 @@ import de.srendi.advancedperipherals.common.util.Pair;
 import de.srendi.advancedperipherals.common.util.StringUtil;
 import it.unimi.dsi.fastutil.objects.Object2LongMap;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import org.apache.logging.log4j.Level;
 
@@ -60,8 +63,18 @@ public class AppEngApi {
 
     public static List<Object> listStacks(MEStorage monitor, ICraftingService service, int flag) {
         List<Object> items = new ArrayList<>();
-        for (Object2LongMap.Entry<AEKey> aeKey : monitor.getAvailableStacks()) {
+        List<AEKey> keyList = new ArrayList<>();
+        KeyCounter keyCounter = monitor.getAvailableStacks();
+        keyList.addAll(service.getCraftables(AEKeyFilter.none()));
+
+        for (Object2LongMap.Entry<AEKey> aeKey : keyCounter) {
             if (aeKey.getKey() instanceof AEItemKey itemKey) {
+                keyList.forEach(aeKey1 -> {
+                    Map<String, Object> itemObject = getObjectFromStack(Pair.of((long) 0, aeKey1), service);
+                    if (keyCounter.get(aeKey1) == 0 && !items.contains(itemObject))
+                        items.add(itemObject);
+                });
+
                 if (flag == 1 && aeKey.getLongValue() < 0) {
                     continue;
                 } else if (flag == 2 && !service.isCraftable(itemKey)) {
