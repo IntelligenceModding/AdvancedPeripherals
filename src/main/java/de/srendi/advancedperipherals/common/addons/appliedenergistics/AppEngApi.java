@@ -63,13 +63,10 @@ public class AppEngApi {
 
     public static List<Object> listStacks(MEStorage monitor, ICraftingService service, int flag) {
         List<Object> items = new ArrayList<>();
-        List<AEKey> keyList = new ArrayList<>();
         KeyCounter keyCounter = monitor.getAvailableStacks();
-        keyList.addAll(service.getCraftables(AEKeyFilter.none()));
-
         for (Object2LongMap.Entry<AEKey> aeKey : keyCounter) {
             if (aeKey.getKey() instanceof AEItemKey itemKey) {
-                keyList.forEach(aeKey1 -> {
+                service.getCraftables(AEKeyFilter.none()).forEach(aeKey1 -> {
                     Map<String, Object> itemObject = getObjectFromStack(Pair.of((long) 0, aeKey1), service);
                     if (keyCounter.get(aeKey1) == 0 && !items.contains(itemObject))
                         items.add(itemObject);
