@@ -1,13 +1,27 @@
 package de.srendi.advancedperipherals.common.setup;
 
-import dan200.computercraft.api.ComputerCraftAPI;
+import dan200.computercraft.api.ForgeComputerCraftAPI;
 import dan200.computercraft.api.pocket.PocketUpgradeSerialiser;
 import dan200.computercraft.api.turtle.TurtleUpgradeSerialiser;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.addons.computercraft.integrations.IntegrationPeripheralProvider;
-import de.srendi.advancedperipherals.common.addons.computercraft.pocket.*;
-import de.srendi.advancedperipherals.common.addons.computercraft.turtles.*;
-import de.srendi.advancedperipherals.common.addons.computercraft.turtles.metaphysics.*;
+import de.srendi.advancedperipherals.common.addons.computercraft.pocket.PocketChatBoxUpgrade;
+import de.srendi.advancedperipherals.common.addons.computercraft.pocket.PocketColonyIntegratorUpgrade;
+import de.srendi.advancedperipherals.common.addons.computercraft.pocket.PocketEnvironmentUpgrade;
+import de.srendi.advancedperipherals.common.addons.computercraft.pocket.PocketGeoScannerUpgrade;
+import de.srendi.advancedperipherals.common.addons.computercraft.pocket.PocketPlayerDetectorUpgrade;
+import de.srendi.advancedperipherals.common.addons.computercraft.turtles.TurtleChatBoxUpgrade;
+import de.srendi.advancedperipherals.common.addons.computercraft.turtles.TurtleChunkyUpgrade;
+import de.srendi.advancedperipherals.common.addons.computercraft.turtles.TurtleCompassUpgrade;
+import de.srendi.advancedperipherals.common.addons.computercraft.turtles.TurtleEnvironmentDetectorUpgrade;
+import de.srendi.advancedperipherals.common.addons.computercraft.turtles.TurtleGeoScannerUpgrade;
+import de.srendi.advancedperipherals.common.addons.computercraft.turtles.TurtlePlayerDetectorUpgrade;
+import de.srendi.advancedperipherals.common.addons.computercraft.turtles.metaphysics.EndAutomata;
+import de.srendi.advancedperipherals.common.addons.computercraft.turtles.metaphysics.HusbandryAutomata;
+import de.srendi.advancedperipherals.common.addons.computercraft.turtles.metaphysics.OverpoweredEndAutomata;
+import de.srendi.advancedperipherals.common.addons.computercraft.turtles.metaphysics.OverpoweredHusbandryAutomata;
+import de.srendi.advancedperipherals.common.addons.computercraft.turtles.metaphysics.OverpoweredWeakAutomata;
+import de.srendi.advancedperipherals.common.addons.computercraft.turtles.metaphysics.WeakAutomata;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.RegistryObject;
@@ -39,7 +53,7 @@ public class CCRegistration {
     public static void register() {
         IntegrationPeripheralProvider.load();
         integrationPeripheralProvider = new IntegrationPeripheralProvider();
-        ComputerCraftAPI.registerPeripheralProvider(integrationPeripheralProvider);
+        ForgeComputerCraftAPI.registerPeripheralProvider(integrationPeripheralProvider);
     }
 
     public static class ID {

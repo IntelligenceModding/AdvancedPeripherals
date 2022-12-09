@@ -5,7 +5,11 @@ import de.srendi.advancedperipherals.client.HudOverlayHandler;
 import de.srendi.advancedperipherals.common.argoggles.ARRenderAction;
 import io.netty.buffer.ByteBufInputStream;
 import io.netty.buffer.ByteBufOutputStream;
-import net.minecraft.nbt.*;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.NbtAccounter;
+import net.minecraft.nbt.NbtIo;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.network.NetworkEvent;
 
@@ -16,7 +20,7 @@ import java.util.function.Supplier;
 
 public class UpdateHudCanvasMessage {
     private static final String LIST = "list";
-    private List<ARRenderAction> canvas;
+    private final List<ARRenderAction> canvas;
 
     public UpdateHudCanvasMessage(List<ARRenderAction> canvas) {
         this.canvas = canvas;

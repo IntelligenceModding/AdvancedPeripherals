@@ -84,8 +84,9 @@ public class LuaConverter {
 
     /**
      * Returns the stack but with a slot entry. Used to prevent zero indexed tables
+     *
      * @param stack the item stack
-     * @param slot the slot of the item
+     * @param slot  the slot of the item
      * @return a Map containing proper item stack details
      * @see InventoryManagerPeripheral#getItems()
      */

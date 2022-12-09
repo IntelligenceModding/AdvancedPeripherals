@@ -14,6 +14,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.EnergyStorage;
@@ -92,7 +93,7 @@ public class EnergyDetectorEntity extends PeripheralBlockEntity<EnergyDetectorPe
             if (teOut == null) {
                 return Optional.empty();
             }
-            LazyOptional<IEnergyStorage> lazyOptionalOutStorage = teOut.getCapability(CapabilityEnergy.ENERGY, energyOutDirection.getOpposite());
+            LazyOptional<IEnergyStorage> lazyOptionalOutStorage = teOut.getCapability(ForgeCapabilities.ENERGY, energyOutDirection.getOpposite());
             outReceivingStorage = lazyOptionalOutStorage.resolve();
             lazyOptionalOutStorage.addListener(l -> {
                 outReceivingStorage = Optional.empty();

@@ -35,7 +35,7 @@ public class EnUsLanguageProvider extends LanguageProvider {
         addKeybinds();
         addText();
         add(Villagers.COMPUTER_SCIENTIST, "Computer Scientist");
-        add("itemGroup." + AdvancedPeripherals.TAB.getRecipeFolderName(), "Advanced Peripherals");
+        add("advancedperipherals.name", "Advanced Peripherals");
     }
 
     private void addItems() {

@@ -25,12 +25,11 @@ import static dan200.computercraft.shared.Capabilities.CAPABILITY_PERIPHERAL;
 public class RsBridgeEntity extends NetworkNodeBlockEntity<RefinedStorageNode> implements INetworkNodeProxy<RefinedStorageNode>, IRedstoneConfigurable, IPeripheralTileEntity {
 
     private static final String PERIPHERAL_SETTINGS = "AP_SETTINGS";
+    //I have no clue what this does, but it works
+    private static final BlockEntitySynchronizationSpec SPEC = BlockEntitySynchronizationSpec.builder().build();
     protected CompoundTag peripheralSettings;
     protected RsBridgePeripheral peripheral = new RsBridgePeripheral(this);
     private LazyOptional<IPeripheral> peripheralCap;
-
-    //I have no clue what this does, but it works
-    private static final BlockEntitySynchronizationSpec SPEC = BlockEntitySynchronizationSpec.builder().build();
 
     public RsBridgeEntity(BlockPos pos, BlockState state) {
         super(BlockEntityTypes.RS_BRIDGE.get(), pos, state, SPEC);

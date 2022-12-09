@@ -88,8 +88,7 @@ public class EnvironmentDetectorPeripheral extends BasePeripheral<IPeripheralOwn
 
     @LuaFunction(mainThread = true)
     public final String getBiome() {
-        if (getLevel().getBiome(getPos()).unwrapKey().isEmpty())
-            return "Unknown";
+        if (getLevel().getBiome(getPos()).unwrapKey().isEmpty()) return "Unknown";
         return getLevel().getBiome(getPos()).unwrapKey().get().location().toString();
     }
 

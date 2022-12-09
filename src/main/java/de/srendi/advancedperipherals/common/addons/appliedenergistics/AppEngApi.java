@@ -163,8 +163,7 @@ public class AppEngApi {
 
     public static ItemStack findMatchingFingerprint(String fingerprint, MEStorage monitor) {
         for (Object2LongMap.Entry<AEKey> aeKey : monitor.getAvailableStacks()) {
-            if (!(aeKey.getKey() instanceof AEItemKey itemKey))
-                continue;
+            if (!(aeKey.getKey() instanceof AEItemKey itemKey)) continue;
             if (aeKey.getLongValue() > 0 && fingerprint.equals(getFingerpint(itemKey))) {
                 return itemKey.toStack((int) aeKey.getLongValue());
             }

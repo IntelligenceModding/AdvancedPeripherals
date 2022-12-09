@@ -19,12 +19,12 @@ public class DataGenerators {
         DataGenerator generator = event.getGenerator();
         ExistingFileHelper existingFileHelper = event.getExistingFileHelper();
 
-        generator.addProvider(event.includeServer(), new BlockTagsProvider(generator, existingFileHelper, Registration.BLOCKS));
-        generator.addProvider(event.includeServer(), new RecipesProvider(generator));
-        generator.addProvider(event.includeServer(), new BlockLootTablesProvider(generator));
-        generator.addProvider(event.includeServer(), new TurtleUpgradesProvider(generator));
-        generator.addProvider(event.includeServer(), new PocketUpgradesProvider(generator));
-        generator.addProvider(event.includeServer(), new PoiTypeProvider(generator, existingFileHelper));
+        generator.addProvider(event.includeServer(), new BlockTagsProvider(generator.getPackOutput(), null, existingFileHelper, Registration.BLOCKS));
+        generator.addProvider(event.includeServer(), new RecipesProvider(generator.getPackOutput()));
+        generator.addProvider(event.includeServer(), new BlockLootTablesProvider(generator.getPackOutput()));
+        generator.addProvider(event.includeServer(), new TurtleUpgradesProvider(generator.getPackOutput()));
+        generator.addProvider(event.includeServer(), new PocketUpgradesProvider(generator.getPackOutput()));
+        generator.addProvider(event.includeServer(), new PoiTypeProvider(generator.getPackOutput(), null, existingFileHelper));
 
         generator.addProvider(event.includeClient(), new EnUsLanguageProvider(generator));
     }

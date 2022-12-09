@@ -7,6 +7,8 @@ import de.srendi.advancedperipherals.common.setup.Blocks;
 import de.srendi.advancedperipherals.common.setup.Registration;
 import de.srendi.advancedperipherals.common.village.VillageStructures;
 import de.srendi.advancedperipherals.network.MNetwork;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
@@ -18,10 +20,10 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.registries.RegistryObject;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Random;
 
@@ -31,17 +33,7 @@ public class AdvancedPeripherals {
     public static final String MOD_ID = "advancedperipherals";
     public static final Logger LOGGER = LogManager.getLogger("Advanced Peripherals");
     public static final Random RANDOM = new Random();
-    public static final CreativeModeTab TAB = new CreativeModeTab("advancedperipheralstab") {
-
-        @Override
-        @NotNull
-        public ItemStack makeIcon() {
-            return new ItemStack(Blocks.CHAT_BOX.get());
-        }
-
-    };
-
-    private static boolean curiosLoaded;
+    public static final CreativeModeTab TAB = createCreativeTab();
 
     public AdvancedPeripherals() {
         LOGGER.info("AdvancedPeripherals says hello!");
@@ -55,7 +47,6 @@ public class AdvancedPeripherals {
         MinecraftForge.EVENT_BUS.register(this);
 
         //TODO: Refactor this to a dedicated class
-        curiosLoaded = ModList.get().isLoaded("curios");
         if (ModList.get().isLoaded("refinedstorage")) {
             RefinedStorage.instance = new RefinedStorage();
             RefinedStorage.instance.initiate();
@@ -70,8 +61,19 @@ public class AdvancedPeripherals {
         if (APConfig.GENERAL_CONFIG.enableDebugMode.get()) LOGGER.log(level, "[DEBUG] " + message);
     }
 
-    public static boolean isCuriosLoaded() {
-        return curiosLoaded;
+    public static ResourceLocation getRL(String resource) {
+        return new ResourceLocation(MOD_ID, resource);
+    }
+
+    private static CreativeModeTab createCreativeTab() {
+        CreativeModeTab.Builder builder = CreativeModeTab.builder(CreativeModeTab.Row.TOP, 1);
+        builder.displayItems((set, out, unknownMagicBoolean) -> {
+            Registration.ITEMS.getEntries().stream().map(RegistryObject::get).forEach(out::accept);
+        });
+        builder.icon(() -> new ItemStack(Blocks.CHAT_BOX.get()));
+        builder.title(Component.translatable("advancedperipherals.name"));
+        builder.withSearchBar();
+        return builder.build();
     }
 
     @SubscribeEvent
@@ -85,13 +87,5 @@ public class AdvancedPeripherals {
     public void clientSetup(FMLClientSetupEvent event) {
         HudOverlayHandler.init();
     }
-
-    /*@SubscribeEvent
-    public void interModComms(InterModEnqueueEvent event) {
-        if (!curiosLoaded) return;
-        //InterModComms.sendTo("curios", SlotTypeMessage.REGISTER_TYPE, () -> new SlotTypeMessage.Builder("glasses")
-        //.size(1).icon(new ResourceLocation(MOD_ID, "textures/item/empty_glasses_slot.png")).build());
-        InterModComms.sendTo("curios", SlotTypeMessage.REGISTER_TYPE, () -> new SlotTypeMessage.Builder("glasses").size(1).build());
-    }*/
 
 }

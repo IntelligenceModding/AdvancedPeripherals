@@ -73,7 +73,8 @@ public enum SingleOperation implements IPeripheralOperation<SingleOperationConte
     }
 
     public enum DistancePolicy {
-        IGNORED(d -> 1), SQRT(d -> (int) Math.sqrt(d));
+        IGNORED(d -> 1),
+        SQRT(d -> (int) Math.sqrt(d));
 
         private final Function<Integer, Integer> factorFunction;
 

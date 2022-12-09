@@ -18,7 +18,7 @@ import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.items.wrapper.PlayerInvWrapper;
@@ -81,7 +81,7 @@ public class InventoryManagerPeripheral extends BasePeripheral<BlockEntityPeriph
             Direction direction = validateSide(invDirection);
 
             BlockEntity targetEntity = owner.getLevel().getBlockEntity(owner.getPos().relative(direction));
-            IItemHandler inventoryFrom = targetEntity != null ? targetEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, direction).resolve().orElse(null) : null;
+            IItemHandler inventoryFrom = targetEntity != null ? targetEntity.getCapability(ForgeCapabilities.ITEM_HANDLER, direction).resolve().orElse(null) : null;
 
             //We can use getItemStackRS, as it works with List<ItemStack>
             //And doesn't use anything RS specific
@@ -95,7 +95,7 @@ public class InventoryManagerPeripheral extends BasePeripheral<BlockEntityPeriph
         Direction direction = validateSide(invDirection);
 
         BlockEntity targetEntity = owner.getLevel().getBlockEntity(owner.getPos().relative(direction));
-        IItemHandler inventoryFrom = targetEntity != null ? targetEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, direction).resolve().orElse(null) : null;
+        IItemHandler inventoryFrom = targetEntity != null ? targetEntity.getCapability(ForgeCapabilities.ITEM_HANDLER, direction).resolve().orElse(null) : null;
         IItemHandler inventoryTo = new PlayerInvWrapper(getOwnerPlayer().getInventory());
 
         int invSlot = slot.orElse(0);
@@ -159,7 +159,7 @@ public class InventoryManagerPeripheral extends BasePeripheral<BlockEntityPeriph
             Direction direction = validateSide(invDirection);
 
             BlockEntity targetEntity = owner.getLevel().getBlockEntity(owner.getPos().relative(direction));
-            IItemHandler inventoryFrom = targetEntity != null ? targetEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, direction).resolve().orElse(null) : null;
+            IItemHandler inventoryFrom = targetEntity != null ? targetEntity.getCapability(ForgeCapabilities.ITEM_HANDLER, direction).resolve().orElse(null) : null;
 
             //We can use getItemStackRS, as it works with List<ItemStack>
             //And doesn't use anything RS specific
@@ -179,7 +179,7 @@ public class InventoryManagerPeripheral extends BasePeripheral<BlockEntityPeriph
 
         BlockEntity targetEntity = owner.getLevel().getBlockEntity(owner.getPos().relative(direction));
         Inventory inventoryFrom = getOwnerPlayer().getInventory();
-        IItemHandler inventoryTo = targetEntity != null ? targetEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, direction).resolve().orElse(null) : null;
+        IItemHandler inventoryTo = targetEntity != null ? targetEntity.getCapability(ForgeCapabilities.ITEM_HANDLER, direction).resolve().orElse(null) : null;
 
         //invetoryFrom is checked via ensurePlayerIsLinked()
         if (inventoryTo == null) return 0;

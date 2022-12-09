@@ -1,6 +1,10 @@
 package de.srendi.advancedperipherals.common.blocks.blockentities;
 
-import appeng.api.networking.*;
+import appeng.api.networking.GridFlags;
+import appeng.api.networking.GridHelper;
+import appeng.api.networking.IGridNode;
+import appeng.api.networking.IInWorldGridNodeHost;
+import appeng.api.networking.IManagedGridNode;
 import appeng.api.networking.crafting.ICraftingSimulationRequester;
 import appeng.api.networking.security.IActionHost;
 import appeng.api.networking.security.IActionSource;
@@ -33,7 +37,7 @@ public class MeBridgeEntity extends PeripheralBlockEntity<MeBridgePeripheral> im
 
     private final List<CraftJob> jobs = new ArrayList<>();
     private boolean initialized = false;
-    private IManagedGridNode mainNode = GridHelper.createManagedNode(this, MeBridgeEntityListener.INSTANCE);
+    private final IManagedGridNode mainNode = GridHelper.createManagedNode(this, MeBridgeEntityListener.INSTANCE);
 
     public MeBridgeEntity(BlockPos pos, BlockState state) {
         super(BlockEntityTypes.ME_BRIDGE.get(), pos, state);

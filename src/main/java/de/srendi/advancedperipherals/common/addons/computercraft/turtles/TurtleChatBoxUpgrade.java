@@ -3,7 +3,8 @@ package de.srendi.advancedperipherals.common.addons.computercraft.turtles;
 import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
 import dan200.computercraft.shared.computer.core.ServerComputer;
-import dan200.computercraft.shared.turtle.blocks.TileTurtle;
+import dan200.computercraft.shared.turtle.blocks.TurtleBlockEntity;
+import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.ChatBoxPeripheral;
 import de.srendi.advancedperipherals.common.events.Events;
 import de.srendi.advancedperipherals.lib.turtle.PeripheralTurtleUpgrade;
@@ -24,12 +25,12 @@ public class TurtleChatBoxUpgrade extends PeripheralTurtleUpgrade<ChatBoxPeriphe
 
     @Override
     public ModelResourceLocation getLeftModel() {
-        return new ModelResourceLocation("advancedperipherals:turtle_chat_box_upgrade_left", "inventory");
+        return new ModelResourceLocation(AdvancedPeripherals.getRL("turtle_chat_box_upgrade_left"), "inventory");
     }
 
     @Override
     public ModelResourceLocation getRightModel() {
-        return new ModelResourceLocation("advancedperipherals:turtle_chat_box_upgrade_right", "inventory");
+        return new ModelResourceLocation(AdvancedPeripherals.getRL("turtle_chat_box_upgrade_right"), "inventory");
     }
 
     @Override
@@ -44,7 +45,7 @@ public class TurtleChatBoxUpgrade extends PeripheralTurtleUpgrade<ChatBoxPeriphe
 
         if (turtle.getUpgrade(side) instanceof TurtleChatBoxUpgrade) {
             BlockEntity tile = turtle.getLevel().getBlockEntity(turtle.getPosition());
-            if (tile instanceof TileTurtle tileTurtle) {
+            if (tile instanceof TurtleBlockEntity tileTurtle) {
                 ServerComputer computer = tileTurtle.getServerComputer();
                 lastConsumedMessage = Events.traverseChatMessages(lastConsumedMessage, message -> {
                     computer.queueEvent("chat", new Object[]{message.username, message.message, message.uuid, message.isHidden});
