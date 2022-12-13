@@ -257,32 +257,32 @@ dependencies {
     // Extended requirements
     compileOnly "mekanism:Mekanism:${mekanism_version}:api"
 
-    runtimeOnly fg.deobf("mekanism:Mekanism:${mekanism_version}")// core
-    runtimeOnly fg.deobf("mekanism:Mekanism:${mekanism_version}:additions")// Mekanism: Additions
-    runtimeOnly fg.deobf("mekanism:Mekanism:${mekanism_version}:generators")// Mekanism: Generators
-    runtimeOnly fg.deobf("mekanism:Mekanism:${mekanism_version}:tools")// Mekanism: Tools
+    compileOnly fg.deobf("mekanism:Mekanism:${mekanism_version}")// core
+    compileOnly fg.deobf("mekanism:Mekanism:${mekanism_version}:additions")// Mekanism: Additions
+    compileOnly fg.deobf("mekanism:Mekanism:${mekanism_version}:generators")// Mekanism: Generators
+    compileOnly fg.deobf("mekanism:Mekanism:${mekanism_version}:tools")// Mekanism: Tools
 
     // Applied Energistics 2
-    runtimeOnly fg.deobf("appeng:appliedenergistics2:${appliedenergistics_version}")
+    //runtimeOnly fg.deobf("appeng:appliedenergistics2:${appliedenergistics_version}")
     // Curios
     runtimeOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}")
 
     // Refined Storage
-    implementation fg.deobf("com.refinedmods:refinedstorage:${refinedstorage_version}")
+    compileOnly fg.deobf("com.refinedmods:refinedstorage:${refinedstorage_version}")
 
     // Botania
-    implementation fg.deobf("vazkii.botania:Botania:${botania_version}")
+    compileOnly fg.deobf("vazkii.botania:Botania:${botania_version}")
 
     // Minecolonies
     // Change to compileOnly when running `runData`
-    implementation fg.deobf("com.ldtteam:minecolonies:${minecolonies_version}")
-    implementation fg.deobf("com.ldtteam:structurize:${structurize_version}")
-    implementation fg.deobf("com.ldtteam:multi-piston:${multipiston_version}")
-    implementation fg.deobf("com.ldtteam:domum_ornamentum:${domumornamentum_version}:universal")
-    implementation fg.deobf("com.ldtteam:blockui:${blockui_version}")
+    compileOnly fg.deobf("com.ldtteam:minecolonies:${minecolonies_version}")
+    compileOnly fg.deobf("com.ldtteam:structurize:${structurize_version}")
+    compileOnly fg.deobf("com.ldtteam:multi-piston:${multipiston_version}")
+    compileOnly fg.deobf("com.ldtteam:domum_ornamentum:${domumornamentum_version}:universal")
+    compileOnly fg.deobf("com.ldtteam:blockui:${blockui_version}")
 
     //Patchouli
-    runtimeOnly fg.deobf("vazkii.patchouli:Patchouli:${patchouli_version}")
+    //runtimeOnly fg.deobf("vazkii.patchouli:Patchouli:${patchouli_version}")
 
     // Create
     compileOnly fg.deobf("com.simibubi.create:create-1.19.2:${create_version}:all")
