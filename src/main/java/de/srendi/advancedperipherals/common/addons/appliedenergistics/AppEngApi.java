@@ -66,11 +66,12 @@ public class AppEngApi {
         KeyCounter keyCounter = monitor.getAvailableStacks();
         for (Object2LongMap.Entry<AEKey> aeKey : keyCounter) {
             if (aeKey.getKey() instanceof AEItemKey itemKey) {
-                service.getCraftables(AEKeyFilter.none()).forEach(aeKey1 -> {
-                    Map<String, Object> itemObject = getObjectFromStack(Pair.of((long) 0, aeKey1), service);
-                    if (keyCounter.get(aeKey1) == 0 && !items.contains(itemObject))
-                        items.add(itemObject);
-                });
+                if (flag == 2)
+                    service.getCraftables(AEKeyFilter.none()).forEach(aeKey1 -> {
+                        Map<String, Object> itemObject = getObjectFromStack(Pair.of((long) 0, aeKey1), service);
+                        if (keyCounter.get(aeKey1) == 0 && !items.contains(itemObject))
+                            items.add(itemObject);
+                    });
 
                 if (flag == 1 && aeKey.getLongValue() < 0) {
                     continue;
