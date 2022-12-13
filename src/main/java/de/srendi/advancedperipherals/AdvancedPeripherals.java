@@ -11,6 +11,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.common.CreativeModeTabRegistry;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -33,7 +34,6 @@ public class AdvancedPeripherals {
     public static final String MOD_ID = "advancedperipherals";
     public static final Logger LOGGER = LogManager.getLogger("Advanced Peripherals");
     public static final Random RANDOM = new Random();
-    public static final CreativeModeTab TAB = createCreativeTab();
 
     public AdvancedPeripherals() {
         LOGGER.info("AdvancedPeripherals says hello!");
@@ -65,18 +65,6 @@ public class AdvancedPeripherals {
         return new ResourceLocation(MOD_ID, resource);
     }
 
-    private static CreativeModeTab createCreativeTab() {
-        CreativeModeTab.Builder builder = CreativeModeTab.builder(CreativeModeTab.Row.TOP, 1);
-        builder.displayItems((set, out, unknownMagicBoolean) -> {
-            Registration.ITEMS.getEntries().stream().map(RegistryObject::get).forEach(out::accept);
-        });
-        builder.icon(() -> new ItemStack(Blocks.CHAT_BOX.get()));
-        builder.title(Component.translatable("advancedperipherals.name"));
-        builder.withSearchBar();
-        return builder.build();
-    }
-
-    @SubscribeEvent
     public void commonSetup(FMLCommonSetupEvent event) {
         event.enqueueWork(() -> {
             VillageStructures.init();
