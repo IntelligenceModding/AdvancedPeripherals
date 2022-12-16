@@ -12,7 +12,7 @@ import java.util.Map;
 public class Mekanism {
 
     public static Object getRadiation(Level world, BlockPos pos) {
-        if(!world.isClientSide) {
+        if (!world.isClientSide) {
             Map<String, Object> map = new HashMap<>();
             String[] radiation = UnitDisplayUtils.getDisplayShort(MekanismAPI.getRadiationManager().getRadiationLevel(new Coord4D(pos, world)), UnitDisplayUtils.RadiationUnit.SV, 4).getString().split(" ");
             map.put("radiation", radiation[0]);
@@ -24,8 +24,8 @@ public class Mekanism {
     }
 
     public static double getRadiationRaw(Level world, BlockPos pos) {
-        if(!world.isClientSide) {
-            return MekanismAPI.getRadiationManager().getRadiationLevel(new Coord4D(pos,world));
+        if (!world.isClientSide) {
+            return MekanismAPI.getRadiationManager().getRadiationLevel(new Coord4D(pos, world));
         }
         return 0;
     }
