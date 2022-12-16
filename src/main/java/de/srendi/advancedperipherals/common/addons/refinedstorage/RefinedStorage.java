@@ -148,7 +148,9 @@ public class RefinedStorage {
     }
 
     public static Map<String, Object> getObjectFromStack(@Nullable ItemStack itemStack, INetwork network) {
-        if (itemStack == null) return null;
+        if (itemStack == null)
+            return Collections.emptyMap();
+
         Map<String, Object> map = new HashMap<>();
         CompoundTag nbt = itemStack.getTag();
         Supplier<Stream<TagKey<Item>>> tags = () -> itemStack.getItem().builtInRegistryHolder().tags();
@@ -164,7 +166,9 @@ public class RefinedStorage {
     }
 
     public static Map<String, Object> getObjectFromFluid(@Nullable FluidStack fluidStack, INetwork network) {
-        if (fluidStack == null) return null;
+        if (fluidStack == null)
+            Collections.emptyMap();
+
         Map<String, Object> map = new HashMap<>();
         Supplier<Stream<TagKey<Fluid>>> tags = () -> fluidStack.getFluid().builtInRegistryHolder().tags();
         map.put("name", fluidStack.getFluid().getRegistryName().toString());
@@ -180,7 +184,6 @@ public class RefinedStorage {
         for (ItemStack itemStack : getItems(network)) {
             if (itemStack.sameItem(item) && Objects.equals(itemStack.getTag(), item.getTag()))
                 return getObjectFromStack(itemStack, network);
-
         }
         return null;
     }
@@ -243,9 +246,8 @@ public class RefinedStorage {
 
     public static ItemStack findMatchingFingerprint(String fingerprint, List<ItemStack> items) {
         for (ItemStack rsStack : items) {
-            if (rsStack.getCount() > 0) {
-                if (fingerprint.equals(getFingerpint(rsStack))) return rsStack;
-
+            if (rsStack.getCount() > 0 && fingerprint.equals(getFingerpint(rsStack))) {
+                return rsStack;
             }
         }
         return ItemStack.EMPTY;

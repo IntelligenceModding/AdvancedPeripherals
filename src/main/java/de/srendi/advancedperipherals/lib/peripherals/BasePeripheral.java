@@ -28,7 +28,7 @@ public abstract class BasePeripheral<O extends IPeripheralOwner> implements IBas
     protected List<IPeripheralPlugin> plugins = null;
     protected String[] methodNames = new String[0];
 
-    public BasePeripheral(String type, O owner) {
+    protected BasePeripheral(String type, O owner) {
         this.type = type;
         this.owner = owner;
     }

@@ -33,15 +33,14 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-//TODO: This is not finished, finish it
 public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwner<MeBridgeEntity>> {
 
-    public static final String TYPE = "meBridge";
+    public static final String PERIPHERAL_TYPE = "meBridge";
     private final MeBridgeEntity tile;
     private IGridNode node;
 
     public MeBridgePeripheral(MeBridgeEntity tileEntity) {
-        super(TYPE, new BlockEntityPeripheralOwner<>(tileEntity));
+        super(PERIPHERAL_TYPE, new BlockEntityPeripheralOwner<>(tileEntity));
         this.tile = tileEntity;
         this.node = tileEntity.getActionableNode();
     }

@@ -18,12 +18,12 @@ import java.util.UUID;
 
 public class ChunkyPeripheral extends BasePeripheral<TurtlePeripheralOwner> {
 
-    public static final String TYPE = "chunky";
+    public static final String PERIPHERAL_TYPE = "chunky";
     private static final String UUID_TAG = "uuid";
     private @Nullable ChunkPos loadedChunk;
 
     public ChunkyPeripheral(ITurtleAccess turtle, TurtleSide side) {
-        super(TYPE, new TurtlePeripheralOwner(turtle, side));
+        super(PERIPHERAL_TYPE, new TurtlePeripheralOwner(turtle, side));
     }
 
     protected UUID getUUID() {

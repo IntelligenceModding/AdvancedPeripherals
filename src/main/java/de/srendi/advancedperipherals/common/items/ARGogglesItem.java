@@ -65,6 +65,7 @@ public class ARGogglesItem extends ArmorItem {
         }
     }
 
+    @Override
     public Component getDescription() {
         return new TranslatableComponent("item.advancedperipherals.tooltip.ar_goggles");
     }
@@ -87,9 +88,9 @@ public class ARGogglesItem extends ArmorItem {
 
     @Override
     public ICapabilityProvider initCapabilities(ItemStack stack, CompoundTag nbt) {
-        if (!AdvancedPeripherals.isCuriosLoaded()) {
+        if (!AdvancedPeripherals.addons.curiosLoaded)
             return null;
-        }
+
         return CuriosHelper.createARGogglesProvider(stack);
     }
 
@@ -101,7 +102,8 @@ public class ARGogglesItem extends ArmorItem {
     @Override
     public void onArmorTick(ItemStack stack, Level level, Player player) {
         // only need to tick client side, if client is wearing them himself
-        if (!SideHelper.isClientPlayer(player)) return;
+        if (!SideHelper.isClientPlayer(player))
+            return;
         clientTick((LocalPlayer) player, stack);
     }
 
@@ -113,11 +115,13 @@ public class ARGogglesItem extends ArmorItem {
             return super.useOn(context);
         } else {
             BlockEntity entity = level.getBlockEntity(blockpos);
-            if (!(entity instanceof ARControllerEntity)) return super.useOn(context);
+            if (!(entity instanceof ARControllerEntity))
+                return super.useOn(context);
             ARControllerEntity controller = (ARControllerEntity) entity;
             if (!context.getLevel().isClientSide) {
                 ItemStack item = context.getItemInHand();
-                if (!item.hasTag()) item.setTag(new CompoundTag());
+                if (!item.hasTag())
+                    item.setTag(new CompoundTag());
                 CompoundTag nbt = item.getTag();
                 BlockPos pos = controller.getBlockPos();
                 nbt.putIntArray(CONTROLLER_POS, new int[]{pos.getX(), pos.getY(), pos.getZ()});

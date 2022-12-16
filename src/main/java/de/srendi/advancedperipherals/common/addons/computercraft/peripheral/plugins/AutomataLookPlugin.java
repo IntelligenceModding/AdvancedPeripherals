@@ -25,12 +25,16 @@ public class AutomataLookPlugin extends AutomataCorePlugin {
         automataCore.addRotationCycle();
         TurtlePeripheralOwner owner = automataCore.getPeripheralOwner();
         HitResult result = owner.withPlayer(apFakePlayer -> apFakePlayer.findHit(true, false));
-        if (result.getType() == HitResult.Type.MISS) return MethodResult.of(null, "No block find");
+        if (result.getType() == HitResult.Type.MISS)
+            return MethodResult.of(null, "No block find");
+
         BlockHitResult blockHit = (BlockHitResult) result;
         BlockState state = owner.getLevel().getBlockState(blockHit.getBlockPos());
         Map<String, Object> data = new HashMap<>();
         ResourceLocation blockName = state.getBlock().getRegistryName();
-        if (blockName != null) data.put("name", blockName.toString());
+        if (blockName != null)
+            data.put("name", blockName.toString());
+
         data.put("tags", LuaConverter.tagsToList(() -> state.getBlock().builtInRegistryHolder().tags()));
         return MethodResult.of(data);
     }
@@ -39,9 +43,9 @@ public class AutomataLookPlugin extends AutomataCorePlugin {
     public final MethodResult lookAtEntity() {
         automataCore.addRotationCycle();
         HitResult result = automataCore.getPeripheralOwner().withPlayer(apFakePlayer -> apFakePlayer.findHit(false, true));
-        if (result.getType() == HitResult.Type.MISS) {
+        if (result.getType() == HitResult.Type.MISS)
             return MethodResult.of(null, "No entity find");
-        }
+
         EntityHitResult entityHit = (EntityHitResult) result;
         return MethodResult.of(LuaConverter.entityToLua(entityHit.getEntity()));
     }

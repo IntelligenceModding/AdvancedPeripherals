@@ -86,7 +86,9 @@ public class AutomataItemSuckPlugin extends AutomataCorePlugin {
             itemData.put("entity_id", item.getId());
             itemData.put("name", item.getItem().getDisplayName().getString());
             ResourceLocation itemName = item.getItem().getItem().getRegistryName();
-            if (itemName != null) itemData.put("technicalName", itemName.toString());
+            if (itemName != null)
+                itemData.put("technicalName", itemName.toString());
+
             itemData.put("count", item.getItem().getCount());
             itemData.put("tags", LuaConverter.tagsToList(() -> item.getItem().getItem().builtInRegistryHolder().tags()));
             data.put(index, itemData);
@@ -104,11 +106,12 @@ public class AutomataItemSuckPlugin extends AutomataCorePlugin {
             int requiredQuantity = requiredQuantityArg;
             for (ItemEntity item : items) {
                 ResourceLocation itemName = item.getItem().getItem().getRegistryName();
-                if (itemName == null) continue;
-                if (itemName.toString().equals(technicalName)) {
+                if (itemName == null)
+                    continue;
+                if (itemName.toString().equals(technicalName))
                     requiredQuantity -= suckItem(item, requiredQuantity);
-                }
-                if (requiredQuantity <= 0) break;
+                if (requiredQuantity <= 0)
+                    break;
             }
             return MethodResult.of(true);
         });

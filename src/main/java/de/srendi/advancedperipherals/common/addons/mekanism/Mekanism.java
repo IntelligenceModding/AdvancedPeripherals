@@ -11,6 +11,10 @@ import java.util.Map;
 
 public class Mekanism {
 
+    private Mekanism() {
+        throw new IllegalStateException("Utility class");
+    }
+
     public static Object getRadiation(Level world, BlockPos pos) {
         if (!world.isClientSide) {
             Map<String, Object> map = new HashMap<>();

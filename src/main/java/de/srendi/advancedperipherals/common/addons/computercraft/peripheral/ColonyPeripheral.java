@@ -30,26 +30,21 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.fml.ModList;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class ColonyPeripheral extends BasePeripheral<IPeripheralOwner> {
 
-    public static final String TYPE = "colonyIntegrator";
+    public static final String PERIPHERAL_TYPE = "colonyIntegrator";
 
     protected boolean hasPermission = true;
 
     public ColonyPeripheral(PeripheralBlockEntity<?> tileEntity) {
-        super(TYPE, new BlockEntityPeripheralOwner<>(tileEntity));
+        super(PERIPHERAL_TYPE, new BlockEntityPeripheralOwner<>(tileEntity));
     }
 
     public ColonyPeripheral(IPocketAccess access) {
-        super(TYPE, new PocketPeripheralOwner(access));
+        super(PERIPHERAL_TYPE, new PocketPeripheralOwner(access));
     }
 
     @Override

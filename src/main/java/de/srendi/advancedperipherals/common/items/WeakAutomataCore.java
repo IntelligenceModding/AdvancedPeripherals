@@ -111,7 +111,8 @@ public class WeakAutomataCore extends APItem implements IFeedableAutomataCore {
         }
 
         public boolean isSuitable(String entityType, CompoundTag consumedData) {
-            if (!ingredients.containsKey(entityType)) return false;
+            if (!ingredients.containsKey(entityType))
+                return false;
             int requiredCount = ingredients.get(entityType);
             int currentCount = consumedData.getCompound(entityType).getInt(CONSUMED_ENTITY_COUNT);
             return currentCount < requiredCount;

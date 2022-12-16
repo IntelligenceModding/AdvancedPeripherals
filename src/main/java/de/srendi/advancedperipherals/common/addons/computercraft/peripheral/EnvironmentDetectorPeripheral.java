@@ -36,27 +36,20 @@ import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.server.ServerLifecycleHooks;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 
 import static de.srendi.advancedperipherals.common.addons.computercraft.operations.SphereOperation.SCAN_ENTITIES;
 
 public class EnvironmentDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
 
-    public static final String TYPE = "environmentDetector";
-    private static final List<Function<IPeripheralOwner, IPeripheralPlugin>> PLUGINS = new LinkedList<>();
+    public static final String PERIPHERAL_TYPE = "environmentDetector";
+    private static final List<Function<IPeripheralOwner, IPeripheralPlugin>> PERIPHERAL_PLUGINS = new LinkedList<>();
 
     protected EnvironmentDetectorPeripheral(IPeripheralOwner owner) {
-        super(TYPE, owner);
+        super(PERIPHERAL_TYPE, owner);
         owner.attachOperation(SCAN_ENTITIES);
-        for (Function<IPeripheralOwner, IPeripheralPlugin> plugin : PLUGINS)
+        for (Function<IPeripheralOwner, IPeripheralPlugin> plugin : PERIPHERAL_PLUGINS)
             addPlugin(plugin.apply(owner));
     }
 
@@ -83,7 +76,7 @@ public class EnvironmentDetectorPeripheral extends BasePeripheral<IPeripheralOwn
     }
 
     public static void addIntegrationPlugin(Function<IPeripheralOwner, IPeripheralPlugin> plugin) {
-        PLUGINS.add(plugin);
+        PERIPHERAL_PLUGINS.add(plugin);
     }
 
     @Override
@@ -116,7 +109,7 @@ public class EnvironmentDetectorPeripheral extends BasePeripheral<IPeripheralOwn
         if (i > 0) {
             float f1 = f < (float) Math.PI ? 0.0F : ((float) Math.PI * 2F);
             f = f + (f1 - f) * 0.2F;
-            i = Math.round((float) i * Mth.cos(f));
+            i = Math.round(i * Mth.cos(f));
         }
         i = Mth.clamp(i, 0, 15);
         return i;
@@ -165,10 +158,10 @@ public class EnvironmentDetectorPeripheral extends BasePeripheral<IPeripheralOwn
         return getCurrentMoonPhase().keySet().toArray(new Integer[0])[0];
     }
 
-    /* @LuaFunction(mainThread = true)
+    @LuaFunction(mainThread = true)
     public final boolean isMoon(int phase) {
         return getCurrentMoonPhase().containsKey(phase);
-    }*/
+    }
 
     @LuaFunction(mainThread = true)
     public final String getMoonName() {
@@ -180,31 +173,15 @@ public class EnvironmentDetectorPeripheral extends BasePeripheral<IPeripheralOwn
         Map<Integer, String> moon = new HashMap<>();
         if (getLevel().dimension().getRegistryName().getPath().equals("overworld")) {
             switch (getLevel().getMoonPhase()) {
-                case 0:
-                    moon.put(0, "Full moon");
-                    break;
-                case 1:
-                    moon.put(1, "Waning gibbous");
-                    break;
-                case 2:
-                    moon.put(2, "Third quarter");
-                    break;
-                case 3:
-                    moon.put(3, "Wanning crescent");
-                    break;
-                case 4:
-                    moon.put(4, "New moon");
-                    break;
-                case 5:
-                    moon.put(5, "Waxing crescent");
-                    break;
-                case 6:
-                    moon.put(6, "First quarter");
-                    break;
-                case 7:
-                    moon.put(7, "Waxing gibbous");
-                    break;
-                default:
+                case 0 -> moon.put(0, "Full moon");
+                case 1 -> moon.put(1, "Waning gibbous");
+                case 2 -> moon.put(2, "Third quarter");
+                case 3 -> moon.put(3, "Wanning crescent");
+                case 4 -> moon.put(4, "New moon");
+                case 5 -> moon.put(5, "Waxing crescent");
+                case 6 -> moon.put(6, "First quarter");
+                case 7 -> moon.put(7, "Waxing gibbous");
+                default ->
                     //should never happen
                     moon.put(0, "What is a moon");
             }

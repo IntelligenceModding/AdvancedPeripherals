@@ -104,6 +104,7 @@ public class MineColonies {
         map.put("happiness", visitor.getCitizenHappinessHandler().getHappiness(visitor.getColony()));
         map.put("skills", skillsToObject(visitor.getCitizenSkillHandler().getSkills()));
         map.put("recruitCost", visitor.getRecruitCost().getItem().getRegistryName().toString());
+
         return map;
     }
 
@@ -119,6 +120,7 @@ public class MineColonies {
         map.put("type", work.getSchematicName());
         map.put("level", work.getBuildingLevel());
         map.put("name", work.getBuildingDisplayName());
+
         return map;
     }
 
@@ -133,6 +135,7 @@ public class MineColonies {
         map.put("location", LuaConverter.posToObject(home.getLocation().getInDimensionLocation()));
         map.put("type", home.getSchematicName());
         map.put("level", home.getBuildingLevel());
+
         return map;
     }
 
@@ -150,6 +153,7 @@ public class MineColonies {
             skillData.put("xp", skills.get(skill).getB());
             map.put(skill.name(), skillData);
         }
+
         return map;
     }
 
@@ -191,6 +195,7 @@ public class MineColonies {
         map.put("storageBlocks", building.getContainers().size());
         map.put("storageSlots", getStorageSize(building));
         map.put("guarded", buildingManager.hasGuardBuildingNear(building));
+
         return map;
     }
 
@@ -203,7 +208,9 @@ public class MineColonies {
     public static int getStorageSize(IBuilding building) {
         LazyOptional<IItemHandler> capability = building.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY);
         IItemHandler handler = capability.resolve().orElse(null);
-        if (handler != null) return handler.getSlots();
+        if (handler != null)
+            return handler.getSlots();
+
         return 0;
     }
 
@@ -212,6 +219,7 @@ public class MineColonies {
         for (IBuilding building : colony.getBuildingManager().getBuildings().values()) {
             if (building.hasWorkOrder()) constructionSites++;
         }
+
         return constructionSites;
     }
 
@@ -250,7 +258,8 @@ public class MineColonies {
                 ILocalResearchTree colonyTree = colony.getResearchManager().getResearchTree();
 
                 IGlobalResearch research = globalTree.getResearch(branch, researchName);
-                if (research == null) continue;
+                if (research == null)
+                    continue;
                 ILocalResearch colonyResearch = colonyTree.getResearch(branch, researchName);
 
                 List<String> effects = new ArrayList<>();
@@ -264,7 +273,8 @@ public class MineColonies {
                 map.put("status", colonyResearch == null ? ResearchState.NOT_STARTED.toString() : colonyResearch.getState().toString());
 
                 List<Object> childrenResearch = getResearch(branch, research.getChildren(), colony);
-                if (!childrenResearch.isEmpty()) map.put("children", childrenResearch);
+                if (!childrenResearch.isEmpty())
+                    map.put("children", childrenResearch);
 
                 result.add(map);
             }
@@ -281,7 +291,8 @@ public class MineColonies {
      */
     public static Object builderResourcesToObject(IColony colony, BlockPos pos) {
         IBuilding building = colony.getBuildingManager().getBuilding(pos);
-        if (!(building instanceof AbstractBuildingStructureBuilder builderBuilding)) return null;
+        if (!(building instanceof AbstractBuildingStructureBuilder builderBuilding))
+            return null;
 
         //We need to say the building that we want information about it
         FriendlyByteBuf buffer = new FriendlyByteBuf(Unpooled.buffer());

@@ -67,7 +67,7 @@ public class VillagerTrade implements VillagerTrades.ItemListing {
     @Nullable
     @Override
     public MerchantOffer getOffer(Entity trader, Random rand) {
-        if (type == Type.EmeraldForItem) {
+        if (type == Type.EMERALD_FOR_ITEM) {
             if (itemStack != null)
                 return new MerchantOffer(itemStack, new ItemStack(Items.EMERALD, emeraldPrice), maxUses, xp, 1);
             if (item != null)
@@ -75,7 +75,7 @@ public class VillagerTrade implements VillagerTrades.ItemListing {
 
             return new MerchantOffer(new ItemStack(block, itemAmount), new ItemStack(Items.EMERALD, emeraldPrice), maxUses, xp, 1);
         }
-        if (type == Type.ItemForEmerald) {
+        if (type == Type.ITEM_FOR_EMERALD) {
             if (itemStack != null)
                 return new MerchantOffer(new ItemStack(Items.EMERALD, emeraldPrice), itemStack, maxUses, xp, 1);
             if (item != null)
@@ -87,8 +87,8 @@ public class VillagerTrade implements VillagerTrades.ItemListing {
     }
 
     public enum Type {
-        ItemForEmerald,
-        EmeraldForItem
+        ITEM_FOR_EMERALD,
+        EMERALD_FOR_ITEM
     }
 
 }

@@ -28,6 +28,7 @@ public class AutomataChargingPlugin extends AutomataCorePlugin {
         Objects.requireNonNull(fuelAbility);
         if (fuelAbility.isFuelConsumptionDisable())
             return MethodResult.of(null, "Fuel consumption is disabled, why do you even need this?");
+
         ItemStack stack = owner.getToolInMainHand();
         int fuel = arguments.optInt(0, -1);
         return stack.getCapability(CapabilityEnergy.ENERGY).map(storage -> {

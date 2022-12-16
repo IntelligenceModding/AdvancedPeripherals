@@ -19,6 +19,7 @@ import java.util.WeakHashMap;
 import java.util.function.Function;
 
 public final class FakePlayerProviderTurtle {
+
     /*
     Highly inspired by https://github.com/SquidDev-CC/plethora/blob/minecraft-1.12/src/main/java/org/squiddev/plethora/integration/computercraft/FakePlayerProviderTurtle.java
     */
@@ -28,13 +29,7 @@ public final class FakePlayerProviderTurtle {
     }
 
     public static APFakePlayer getPlayer(ITurtleAccess turtle, GameProfile profile) {
-        APFakePlayer fake = registeredPlayers.get(turtle);
-        if (fake == null) {
-            fake = new APFakePlayer((ServerLevel) turtle.getLevel(), null, profile);
-            registeredPlayers.put(turtle, fake);
-        }
-
-        return fake;
+        return registeredPlayers.computeIfAbsent(turtle, iTurtleAccess -> registeredPlayers.put(turtle, new APFakePlayer((ServerLevel) turtle.getLevel(), null, profile)));
     }
 
     public static void load(APFakePlayer player, ITurtleAccess turtle) {
@@ -69,9 +64,9 @@ public final class FakePlayerProviderTurtle {
 
         // Add properties
         ItemStack activeStack = player.getItemInHand(InteractionHand.MAIN_HAND);
-        if (!activeStack.isEmpty()) {
+        if (!activeStack.isEmpty())
             player.getAttributes().addTransientAttributeModifiers(activeStack.getAttributeModifiers(EquipmentSlot.MAINHAND));
-        }
+
     }
 
     public static void unload(APFakePlayer player, ITurtleAccess turtle) {

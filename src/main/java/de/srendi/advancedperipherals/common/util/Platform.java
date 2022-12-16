@@ -10,7 +10,7 @@ public class Platform {
 
     public static Optional<Object> maybeLoadIntegration(final String modid, final String path) {
         if (!ModList.get().isLoaded(modid)) {
-            AdvancedPeripherals.LOGGER.info(String.format("%s not loaded, skip integration loading", modid));
+            AdvancedPeripherals.LOGGER.info("{} not loaded, skip integration loading", modid);
             return Optional.empty();
         }
         return maybeLoadIntegration(path);
@@ -19,7 +19,7 @@ public class Platform {
     public static Optional<Object> maybeLoadIntegration(final String path) {
         try {
             Class<?> clazz = Class.forName(AdvancedPeripherals.class.getPackage().getName() + ".common.addons." + path);
-            return Optional.of(clazz.newInstance());
+            return Optional.of(clazz.getDeclaredConstructor().newInstance());
         } catch (InstantiationException | IllegalAccessException | ClassNotFoundException loadException) {
             if (APConfig.GENERAL_CONFIG.enableDebugMode.get()) loadException.printStackTrace();
             return Optional.empty();

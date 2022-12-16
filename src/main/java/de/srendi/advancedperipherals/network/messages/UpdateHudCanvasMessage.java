@@ -25,7 +25,7 @@ public class UpdateHudCanvasMessage {
     public static UpdateHudCanvasMessage decode(FriendlyByteBuf buf) {
         ByteBufInputStream streamin = new ByteBufInputStream(buf);
         CompoundTag nbt;
-        List<ARRenderAction> canvas = new ArrayList<ARRenderAction>();
+        List<ARRenderAction> canvas = new ArrayList<>();
         try {
             nbt = NbtIo.read(streamin, NbtAccounter.UNLIMITED);
             ListTag list = nbt.getList(LIST, Tag.TAG_COMPOUND);
@@ -52,9 +52,7 @@ public class UpdateHudCanvasMessage {
     }
 
     public static void handle(UpdateHudCanvasMessage mes, Supplier<NetworkEvent.Context> cont) {
-        cont.get().enqueueWork(() -> {
-            HudOverlayHandler.updateCanvas(mes.getCanvas());
-        });
+        cont.get().enqueueWork(() -> HudOverlayHandler.updateCanvas(mes.getCanvas()));
         cont.get().setPacketHandled(true);
     }
 

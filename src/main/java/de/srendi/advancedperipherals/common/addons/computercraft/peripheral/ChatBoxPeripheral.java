@@ -33,10 +33,10 @@ import static de.srendi.advancedperipherals.common.addons.computercraft.operatio
 
 public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
 
-    public static final String TYPE = "chatBox";
+    public static final String PERIPHERAL_TYPE = "chatBox";
 
     protected ChatBoxPeripheral(IPeripheralOwner owner) {
-        super(TYPE, owner);
+        super(PERIPHERAL_TYPE, owner);
         owner.attachOperation(CHAT_MESSAGE);
     }
 
