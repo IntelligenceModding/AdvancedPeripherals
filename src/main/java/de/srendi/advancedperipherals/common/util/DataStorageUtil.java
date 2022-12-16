@@ -25,8 +25,8 @@ public class DataStorageUtil {
 
     /**
      * This class is for persistent data sharing between peripherals and another part of systems
-     * Like, for example, for ModelTransformingTurtle logic, because it executed on client side where
-     * not peripheral is available!
+     * Like, for example, for ModelTransformingTurtle logic, because it's executed on the client where
+     * aren't any peripherals available
      **/
 
     public static class RotationCharge {
