@@ -19,9 +19,6 @@ import java.util.function.Supplier;
 
 public class Blocks {
 
-    static void register() {
-    }
-
     public static final RegistryObject<Block> ENVIRONMENT_DETECTOR = register("environment_detector", () -> new APBlockEntityBlock<>(BlockEntityTypes.ENVIRONMENT_DETECTOR, false), () -> new APBlockItem(Blocks.ENVIRONMENT_DETECTOR.get(), CCRegistration.ID.ENVIRONMENT_TURTLE, CCRegistration.ID.ENVIRONMENT_POCKET, APConfig.PERIPHERALS_CONFIG.enableEnvironmentDetector::get));
     public static final RegistryObject<Block> CHAT_BOX = register("chat_box", () -> new APBlockEntityBlock<>(BlockEntityTypes.CHAT_BOX, true), () -> new APBlockItem(Blocks.CHAT_BOX.get(), CCRegistration.ID.CHATTY_TURTLE, CCRegistration.ID.CHATTY_POCKET, APConfig.PERIPHERALS_CONFIG.enableChatBox::get));
     public static final RegistryObject<Block> PLAYER_DETECTOR = register("player_detector", PlayerDetectorBlock::new, () -> new APBlockItem(Blocks.PLAYER_DETECTOR.get(), CCRegistration.ID.PLAYER_TURTLE, CCRegistration.ID.PLAYER_POCKET, APConfig.PERIPHERALS_CONFIG.enablePlayerDetector::get));
@@ -36,6 +33,9 @@ public class Blocks {
     public static final RegistryObject<Block> GEO_SCANNER = register("geo_scanner", () -> new APBlockEntityBlock<>(BlockEntityTypes.GEO_SCANNER, false), () -> new APBlockItem(Blocks.GEO_SCANNER.get(), CCRegistration.ID.GEOSCANNER_TURTLE, CCRegistration.ID.GEOSCANNER_POCKET, APConfig.PERIPHERALS_CONFIG.enableGeoScanner::get));
     public static final RegistryObject<Block> COLONY_INTEGRATOR = register("colony_integrator", () -> new APBlockEntityBlock<>(ModList.get().isLoaded("minecolonies") ? BlockEntityTypes.COLONY_INTEGRATOR : null, false), () -> new APBlockItem(Blocks.COLONY_INTEGRATOR.get(), null, CCRegistration.ID.COLONY_POCKET, APConfig.PERIPHERALS_CONFIG.enableColonyIntegrator::get));
     public static final RegistryObject<Block> NBT_STORAGE = register("nbt_storage", () -> new APBlockEntityBlock<>(BlockEntityTypes.NBT_STORAGE, false), () -> new APBlockItem(Blocks.NBT_STORAGE.get(), null, null, APConfig.PERIPHERALS_CONFIG.enableNBTStorage::get));
+
+    public static void register() {
+    }
 
     private static <T extends Block> RegistryObject<T> registerNoItem(String name, Supplier<T> block) {
         return Registration.BLOCKS.register(name, block);

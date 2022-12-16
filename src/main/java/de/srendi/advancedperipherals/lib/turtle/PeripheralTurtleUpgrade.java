@@ -17,11 +17,7 @@ import org.jetbrains.annotations.Nullable;
 public abstract class PeripheralTurtleUpgrade<T extends IBasePeripheral<?>> extends AbstractTurtleUpgrade {
     protected int tick;
 
-    public PeripheralTurtleUpgrade(ResourceLocation id, String adjective, ItemStack item) {
-        super(id, TurtleUpgradeType.PERIPHERAL, adjective, item);
-    }
-
-    public PeripheralTurtleUpgrade(ResourceLocation id, ItemStack item) {
+    protected PeripheralTurtleUpgrade(ResourceLocation id, ItemStack item) {
         super(id, TurtleUpgradeType.PERIPHERAL, TranslationUtil.turtle(id.getPath()), item);
     }
 

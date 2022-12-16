@@ -16,6 +16,7 @@ import static de.srendi.advancedperipherals.common.addons.computercraft.operatio
 import static de.srendi.advancedperipherals.common.addons.computercraft.operations.SingleOperation.USE_ON_BLOCK;
 
 public class AutomataBlockHandPlugin extends AutomataCorePlugin {
+
     public AutomataBlockHandPlugin(AutomataCorePeripheral automataCore) {
         super(automataCore);
     }

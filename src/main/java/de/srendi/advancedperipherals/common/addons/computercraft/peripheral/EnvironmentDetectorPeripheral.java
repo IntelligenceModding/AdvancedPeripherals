@@ -22,6 +22,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
@@ -29,29 +30,26 @@ import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.levelgen.WorldgenRandom;
 import net.minecraft.world.phys.AABB;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.entity.player.SleepingTimeCheckEvent;
+import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.server.ServerLifecycleHooks;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 
 import static de.srendi.advancedperipherals.common.addons.computercraft.operations.SphereOperation.SCAN_ENTITIES;
 
 public class EnvironmentDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
 
-    public static final String TYPE = "environmentDetector";
-    private static final List<Function<IPeripheralOwner, IPeripheralPlugin>> PLUGINS = new LinkedList<>();
+    public static final String PERIPHERAL_TYPE = "environmentDetector";
+    private static final List<Function<IPeripheralOwner, IPeripheralPlugin>> PERIPHERAL_PLUGINS = new LinkedList<>();
 
     protected EnvironmentDetectorPeripheral(IPeripheralOwner owner) {
-        super(TYPE, owner);
+        super(PERIPHERAL_TYPE, owner);
         owner.attachOperation(SCAN_ENTITIES);
-        for (Function<IPeripheralOwner, IPeripheralPlugin> plugin : PLUGINS)
+        for (Function<IPeripheralOwner, IPeripheralPlugin> plugin : PERIPHERAL_PLUGINS)
             addPlugin(plugin.apply(owner));
     }
 
@@ -78,7 +76,7 @@ public class EnvironmentDetectorPeripheral extends BasePeripheral<IPeripheralOwn
     }
 
     public static void addIntegrationPlugin(Function<IPeripheralOwner, IPeripheralPlugin> plugin) {
-        PLUGINS.add(plugin);
+        PERIPHERAL_PLUGINS.add(plugin);
     }
 
     @Override
@@ -110,7 +108,7 @@ public class EnvironmentDetectorPeripheral extends BasePeripheral<IPeripheralOwn
         if (i > 0) {
             float f1 = f < (float) Math.PI ? 0.0F : ((float) Math.PI * 2F);
             f = f + (f1 - f) * 0.2F;
-            i = Math.round((float) i * Mth.cos(f));
+            i = Math.round(i * Mth.cos(f));
         }
         i = Mth.clamp(i, 0, 15);
         return i;
@@ -149,10 +147,10 @@ public class EnvironmentDetectorPeripheral extends BasePeripheral<IPeripheralOwn
         return getCurrentMoonPhase().keySet().toArray(new Integer[0])[0];
     }
 
-    /* @LuaFunction(mainThread = true)
+    @LuaFunction(mainThread = true)
     public final boolean isMoon(int phase) {
         return getCurrentMoonPhase().containsKey(phase);
-    }*/
+    }
 
     @LuaFunction(mainThread = true)
     public final String getMoonName() {
@@ -223,5 +221,30 @@ public class EnvironmentDetectorPeripheral extends BasePeripheral<IPeripheralOwn
             return MethodResult.of(null, "Radius is exceed max value");
         }
         return MethodResult.of(estimatedCost);
+    }
+
+    @LuaFunction(mainThread = true)
+    public final MethodResult canSleepHere() {
+        return MethodResult.of(!getLevel().isDay());
+    }
+
+    @LuaFunction(mainThread = true)
+    public final MethodResult canSleepPlayer(String playername) {
+        Player player = ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayerByName(playername);
+        if(player == null)
+            return MethodResult.of(false, "player_not_online");
+
+        if(!player.level.dimensionType().bedWorks())
+            return MethodResult.of(false, "not_allowed_in_dimension");
+
+        SleepingTimeCheckEvent evt = new SleepingTimeCheckEvent(player, Optional.empty());
+        MinecraftForge.EVENT_BUS.post(evt);
+
+        Event.Result canContinueSleep = evt.getResult();
+        if (canContinueSleep == Event.Result.DEFAULT) {
+            return MethodResult.of(!player.level.isDay());
+        } else {
+            return MethodResult.of(canContinueSleep == Event.Result.ALLOW);
+        }
     }
 }

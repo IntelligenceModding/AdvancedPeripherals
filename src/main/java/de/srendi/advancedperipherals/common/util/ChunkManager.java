@@ -84,11 +84,12 @@ public class ChunkManager extends SavedData {
 
     public synchronized boolean removeForceChunk(ServerLevel level, UUID owner, ChunkPos pos) {
         AdvancedPeripherals.debug("Trying to unload forced chunk " + pos, Level.WARN);
-        if (!forcedChunks.containsKey(owner)) return true;
-        LoadChunkRecord record = forcedChunks.get(owner);
+        if (!forcedChunks.containsKey(owner))
+            return true;
+        LoadChunkRecord chunkRecord = forcedChunks.get(owner);
         String dimensionName = level.dimension().location().toString();
-        if (!record.getDimensionName().equals(dimensionName))
-            throw new IllegalArgumentException(String.format("Incorrect dimension! Should be %s instead of %s", record.getDimensionName(), dimensionName));
+        if (!chunkRecord.getDimensionName().equals(dimensionName))
+            throw new IllegalArgumentException(String.format("Incorrect dimension! Should be %s instead of %s", chunkRecord.getDimensionName(), dimensionName));
         boolean result = ForgeChunkManager.forceChunk(level, AdvancedPeripherals.MOD_ID, owner, pos.x, pos.z, false, true);
         if (result) {
             forcedChunks.remove(owner);

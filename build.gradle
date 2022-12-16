@@ -210,6 +210,10 @@ repositories {
     maven {
         name = "Create maven"
         url = "https://maven.tterrag.com/"
+        content {
+            includeGroup "com.simibubi.create"
+            includeGroup "com.jozufozu.flywheel"
+        }
     }
     maven {
         name = "Srendi Space repository"

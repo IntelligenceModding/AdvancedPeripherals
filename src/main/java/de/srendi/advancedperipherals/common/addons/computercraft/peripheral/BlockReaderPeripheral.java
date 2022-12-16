@@ -15,10 +15,10 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 public class BlockReaderPeripheral extends BasePeripheral<BlockEntityPeripheralOwner<BlockReaderEntity>> {
 
-    public static final String TYPE = "blockReader";
+    public static final String PERIPHERAL_TYPE = "blockReader";
 
     public BlockReaderPeripheral(BlockReaderEntity tileEntity) {
-        super(TYPE, new BlockEntityPeripheralOwner<>(tileEntity));
+        super(PERIPHERAL_TYPE, new BlockEntityPeripheralOwner<>(tileEntity));
     }
 
     @Override

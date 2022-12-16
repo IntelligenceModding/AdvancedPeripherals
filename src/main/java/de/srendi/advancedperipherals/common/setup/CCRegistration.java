@@ -77,6 +77,5 @@ public class CCRegistration {
         public static final ResourceLocation GEOSCANNER_POCKET = new ResourceLocation(AdvancedPeripherals.MOD_ID, "geoscanner_pocket");
         public static final ResourceLocation COLONY_POCKET = new ResourceLocation(AdvancedPeripherals.MOD_ID, "colony_pocket");
 
-
     }
 }

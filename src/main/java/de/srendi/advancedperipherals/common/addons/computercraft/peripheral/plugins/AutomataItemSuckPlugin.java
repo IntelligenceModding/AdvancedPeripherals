@@ -101,11 +101,12 @@ public class AutomataItemSuckPlugin extends AutomataCorePlugin {
             int requiredQuantity = requiredQuantityArg;
             for (ItemEntity item : items) {
                 ResourceLocation itemName = ForgeRegistries.ITEMS.getKey(item.getItem().getItem());
-                if (itemName == null) continue;
-                if (itemName.toString().equals(technicalName)) {
+                if (itemName == null)
+                    continue;
+                if (itemName.toString().equals(technicalName))
                     requiredQuantity -= suckItem(item, requiredQuantity);
-                }
-                if (requiredQuantity <= 0) break;
+                if (requiredQuantity <= 0)
+                    break;
             }
             return MethodResult.of(true);
         });

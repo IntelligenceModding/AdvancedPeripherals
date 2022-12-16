@@ -25,9 +25,8 @@ public class CoordUtil {
         double i = player.getX() - blockPos.getX();
         double j = player.getZ() - blockPos.getZ();
         // Check if the distance of the player is within the max range of the player detector
-        if (Math.sqrt(i * i + j * j) > APConfig.PERIPHERALS_CONFIG.playerDetMaxRange.get()) return false;
-
-
+        if (Math.sqrt(i * i + j * j) > APConfig.PERIPHERALS_CONFIG.playerDetMaxRange.get())
+            return false;
         return world.getNearbyPlayers(TargetingConditions.forNonCombat(), null, new AABB(firstPos, secondPos)).contains(player);
     }
 

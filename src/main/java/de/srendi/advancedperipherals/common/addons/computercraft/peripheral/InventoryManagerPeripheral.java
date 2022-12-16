@@ -32,10 +32,10 @@ import java.util.Optional;
 
 public class InventoryManagerPeripheral extends BasePeripheral<BlockEntityPeripheralOwner<InventoryManagerEntity>> {
 
-    public static final String TYPE = "inventoryManager";
+    public static final String PERIPHERAL_TYPE = "inventoryManager";
 
     public InventoryManagerPeripheral(InventoryManagerEntity tileEntity) {
-        super(TYPE, new BlockEntityPeripheralOwner<>(tileEntity));
+        super(PERIPHERAL_TYPE, new BlockEntityPeripheralOwner<>(tileEntity));
     }
 
     private static int getArmorSlot(int index) {

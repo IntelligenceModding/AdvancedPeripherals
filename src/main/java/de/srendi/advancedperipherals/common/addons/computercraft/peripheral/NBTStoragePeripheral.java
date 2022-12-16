@@ -18,11 +18,10 @@ import java.util.Map;
 
 public class NBTStoragePeripheral extends BasePeripheral<BlockEntityPeripheralOwner<NBTStorageEntity>> {
 
-    public static final String TYPE = "nbtStorage";
-
+    public static final String PERIPHERAL_TYPE = "nbtStorage";
 
     public NBTStoragePeripheral(NBTStorageEntity tileEntity) {
-        super(TYPE, new BlockEntityPeripheralOwner<>(tileEntity));
+        super(PERIPHERAL_TYPE, new BlockEntityPeripheralOwner<>(tileEntity));
     }
 
     @Override
@@ -58,13 +57,12 @@ public class NBTStoragePeripheral extends BasePeripheral<BlockEntityPeripheralOw
     }
 
     @LuaFunction(mainThread = true)
-    public final MethodResult writeTable(Map<?, ?> data) {
+    public final MethodResult writeTable(Map<?, ?> data) throws IOException {
         CountingWipingStream countingStream = new CountingWipingStream();
-        try {
-            ObjectOutputStream objectOutputStream = new ObjectOutputStream(countingStream);
+        try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(countingStream)) {
             objectOutputStream.writeObject(data);
-            objectOutputStream.close();
         } catch (IOException e) {
+            countingStream.close();
             return MethodResult.of(null, String.format("No idea, how this happened, but java IO Exception appear %s", e.getMessage()));
         }
         if (countingStream.getWrittenBytes() > APConfig.PERIPHERALS_CONFIG.nbtStorageMaxSize.get())

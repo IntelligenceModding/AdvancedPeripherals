@@ -13,10 +13,11 @@ import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
 import java.util.Optional;
 
 public class ARControllerPeripheral extends BasePeripheral<BlockEntityPeripheralOwner<ARControllerEntity>> {
-    public static final String TYPE = "arController";
+
+    public static final String PERIPHERAL_TYPE = "arController";
 
     public ARControllerPeripheral(ARControllerEntity tileEntity) {
-        super(TYPE, new BlockEntityPeripheralOwner<>(tileEntity));
+        super(PERIPHERAL_TYPE, new BlockEntityPeripheralOwner<>(tileEntity));
     }
 
     @Override

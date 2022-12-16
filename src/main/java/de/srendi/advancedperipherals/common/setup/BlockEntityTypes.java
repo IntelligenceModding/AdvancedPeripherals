@@ -20,9 +20,6 @@ import net.minecraftforge.registries.RegistryObject;
 
 public class BlockEntityTypes {
 
-    static void register() {
-    }
-
     public static final RegistryObject<BlockEntityType<ChatBoxEnity>> CHAT_BOX = Registration.TILE_ENTITIES.register("chat_box", () -> new BlockEntityType<>(ChatBoxEnity::new, Sets.newHashSet(Blocks.CHAT_BOX.get()), null));
     public static final RegistryObject<BlockEntityType<EnvironmentDetectorEntity>> ENVIRONMENT_DETECTOR = Registration.TILE_ENTITIES.register("environment_detector", () -> new BlockEntityType<>(EnvironmentDetectorEntity::new, Sets.newHashSet(Blocks.ENVIRONMENT_DETECTOR.get()), null));
     public static final RegistryObject<BlockEntityType<PlayerDetectorEntity>> PLAYER_DETECTOR = Registration.TILE_ENTITIES.register("player_detector", () -> new BlockEntityType<>(PlayerDetectorEntity::new, Sets.newHashSet(Blocks.PLAYER_DETECTOR.get()), null));
@@ -36,5 +33,8 @@ public class BlockEntityTypes {
     public static final RegistryObject<BlockEntityType<GeoScannerEntity>> GEO_SCANNER = Registration.TILE_ENTITIES.register("geo_scanner", () -> new BlockEntityType<>(GeoScannerEntity::new, Sets.newHashSet(Blocks.GEO_SCANNER.get()), null));
     public static final RegistryObject<BlockEntityType<ColonyIntegratorEntity>> COLONY_INTEGRATOR = Registration.TILE_ENTITIES.register("colony_integrator", () -> new BlockEntityType<>(ColonyIntegratorEntity::new, Sets.newHashSet(Blocks.COLONY_INTEGRATOR.get()), null));
     public static final RegistryObject<BlockEntityType<NBTStorageEntity>> NBT_STORAGE = Registration.TILE_ENTITIES.register("nbt_storage", () -> new BlockEntityType<>(NBTStorageEntity::new, Sets.newHashSet(Blocks.NBT_STORAGE.get()), null));
+
+    public static void register() {
+    }
 
 }

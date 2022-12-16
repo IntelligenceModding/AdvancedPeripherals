@@ -7,22 +7,23 @@ public class CuriosHelper {
             @Override
             public <T> LazyOptional<T> getCapability(Capability<T> cap, Direction side) {
                 return CuriosCapability.ITEM.orEmpty(cap, LazyOptional.of(() -> new ICurio() {
-                    ItemStack stack = stackFor;
 
                     @Override
                     public void curioTick(String identifier, int index, LivingEntity livingEntity) {
-                        if (!SideHelper.isClientPlayer(livingEntity)) return;
-                        ARGogglesItem.clientTick((LocalPlayer) livingEntity, stack);
+                        if (!SideHelper.isClientPlayer(livingEntity))
+                            return;
+                        ARGogglesItem.clientTick((LocalPlayer) livingEntity, stackFor);
                     }
 
                     @Override
                     public ItemStack getStack() {
-                        return stack;
+                        return stackFor;
                     }
 
                     @Override
                     public void onUnequip(SlotContext slotContext, ItemStack newStack) {
-                        if (!(slotContext.getWearer() instanceof ServerPlayer serverPlayer)) return;
+                        if (!(slotContext.getWearer() instanceof ServerPlayer serverPlayer))
+                            return;
                         MNetwork.sendTo(new ClearHudCanvasMessage(), serverPlayer);
                     }
 

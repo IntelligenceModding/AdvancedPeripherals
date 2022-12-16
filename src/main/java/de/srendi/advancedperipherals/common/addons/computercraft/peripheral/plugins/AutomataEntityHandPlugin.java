@@ -47,6 +47,7 @@ public class AutomataEntityHandPlugin extends AutomataCorePlugin {
             InteractionResult result = owner.withPlayer(player -> player.useOnFilteredEntity(suitableEntity));
             if (automataCore.hasAttribute(AutomataCorePeripheral.ATTR_STORING_TOOL_DURABILITY))
                 selectedTool.setDamageValue(previousDamageValue);
+
             return MethodResult.of(true, result.toString());
         });
     }
@@ -56,10 +57,13 @@ public class AutomataEntityHandPlugin extends AutomataCorePlugin {
         automataCore.addRotationCycle();
         TurtlePeripheralOwner owner = automataCore.getPeripheralOwner();
         HitResult entityHit = owner.withPlayer(player -> player.findHit(false, true, suitableEntity));
-        if (entityHit.getType() == HitResult.Type.MISS) return MethodResult.of(null, "Nothing found");
+        if (entityHit.getType() == HitResult.Type.MISS)
+            return MethodResult.of(null, "Nothing found");
+
         Entity entity = ((EntityHitResult) entityHit).getEntity();
         if (!(entity instanceof Animal animal))
             return MethodResult.of(null, "Well, entity is not animal entity, but how?");
+
         return MethodResult.of(LuaConverter.animalToLua(animal, owner.getToolInMainHand()));
     }
 
