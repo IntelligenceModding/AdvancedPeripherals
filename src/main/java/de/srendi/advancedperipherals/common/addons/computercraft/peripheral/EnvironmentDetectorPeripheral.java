@@ -22,6 +22,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
@@ -29,6 +30,9 @@ import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.levelgen.WorldgenRandom;
 import net.minecraft.world.phys.AABB;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.entity.player.SleepingTimeCheckEvent;
+import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.server.ServerLifecycleHooks;
 
 import javax.annotation.Nonnull;
@@ -38,6 +42,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 
@@ -250,5 +255,30 @@ public class EnvironmentDetectorPeripheral extends BasePeripheral<IPeripheralOwn
             return MethodResult.of(null, "Radius is exceed max value");
         }
         return MethodResult.of(estimatedCost);
+    }
+
+    @LuaFunction(mainThread = true)
+    public final MethodResult canSleepHere() {
+        return MethodResult.of(!getLevel().isDay());
+    }
+
+    @LuaFunction(mainThread = true)
+    public final MethodResult canSleepPlayer(String playername) {
+        Player player = ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayerByName(playername);
+        if(player == null)
+            return MethodResult.of(false, "player_not_online");
+
+        if(!player.level.dimensionType().bedWorks())
+            return MethodResult.of(false, "not_allowed_in_dimension");
+
+        SleepingTimeCheckEvent evt = new SleepingTimeCheckEvent(player, Optional.empty());
+        MinecraftForge.EVENT_BUS.post(evt);
+
+        Event.Result canContinueSleep = evt.getResult();
+        if (canContinueSleep == Event.Result.DEFAULT) {
+            return MethodResult.of(!player.level.isDay());
+        } else {
+            return MethodResult.of(canContinueSleep == Event.Result.ALLOW);
+        }
     }
 }

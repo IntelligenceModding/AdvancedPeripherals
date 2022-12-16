@@ -18,15 +18,13 @@ public class Mekanism {
             map.put("radiation", radiation[0]);
             map.put("unit", radiation[1]);
             return map;
-
         }
         return null;
     }
 
     public static double getRadiationRaw(Level world, BlockPos pos) {
-        if (!world.isClientSide) {
+        if (!world.isClientSide)
             return MekanismAPI.getRadiationManager().getRadiationLevel(new Coord4D(pos, world));
-        }
         return 0;
     }
 
