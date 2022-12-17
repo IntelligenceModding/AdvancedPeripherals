@@ -3,8 +3,6 @@ package de.srendi.advancedperipherals.common.addons.mekanism;
 import dan200.computercraft.api.lua.LuaFunction;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.IPeripheralOwner;
 import de.srendi.advancedperipherals.lib.peripherals.IPeripheralPlugin;
-import mekanism.api.Coord4D;
-import mekanism.api.MekanismAPI;
 
 public class EnvironmentRadiationPlugin implements IPeripheralPlugin {
     private final IPeripheralOwner owner;
@@ -14,8 +12,13 @@ public class EnvironmentRadiationPlugin implements IPeripheralPlugin {
     }
 
     @LuaFunction(mainThread = true)
-    public final double getRadiation() {
-        return MekanismAPI.getRadiationManager().getRadiationLevel(new Coord4D(owner.getPos(), owner.getLevel()));
+    public final Object getRadiation() {
+        return Mekanism.getRadiation(owner.getLevel(), owner.getPos());
+    }
+
+    @LuaFunction(mainThread = true)
+    public final double getRadiationRaw() {
+        return Mekanism.getRadiationRaw(owner.getLevel(), owner.getPos());
     }
 
 }

@@ -259,12 +259,10 @@ dependencies {
     // Minimal requirements end
 
     // Extended requirements
-    compileOnly "mekanism:Mekanism:${mekanism_version}:api"
+    // We don't use the api since we need a specific class from mekanism
+    compileOnly "mekanism:Mekanism:${mekanism_version}"
 
-    compileOnly fg.deobf("mekanism:Mekanism:${mekanism_version}")// core
-    compileOnly fg.deobf("mekanism:Mekanism:${mekanism_version}:additions")// Mekanism: Additions
-    compileOnly fg.deobf("mekanism:Mekanism:${mekanism_version}:generators")// Mekanism: Generators
-    compileOnly fg.deobf("mekanism:Mekanism:${mekanism_version}:tools")// Mekanism: Tools
+    runtimeOnly fg.deobf("mekanism:Mekanism:${mekanism_version}")// core
 
     // Applied Energistics 2
     //runtimeOnly fg.deobf("appeng:appliedenergistics2:${appliedenergistics_version}")
@@ -272,7 +270,7 @@ dependencies {
     runtimeOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}")
 
     // Refined Storage
-    compileOnly fg.deobf("com.refinedmods:refinedstorage:${refinedstorage_version}")
+    //compileOnly fg.deobf("com.refinedmods:refinedstorage:${refinedstorage_version}")
 
     // Botania
     compileOnly fg.deobf("vazkii.botania:Botania:${botania_version}")
