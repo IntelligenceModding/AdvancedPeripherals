@@ -6,8 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+## [1.18.2-0.7.21r] - 2022-12-18
+
+### Fixed
+- [#362] `listCraftableItems` now also returns empty stacks - me bridge
 
 ### Added
+- [#367] Added `canSleepHere` and `canSleepPlayer(username)` to the environment detector
 - [#353] Added `getRadiation` and `getRadiationRaw` to the environment detector
 
 ## [1.18.2-0.7.20r] - 2022-11-13
