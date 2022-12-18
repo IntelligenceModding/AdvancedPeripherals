@@ -9,7 +9,7 @@ import top.theillusivec4.curios.api.SlotTypeMessage;
 public class APAddons {
 
     public static final String CURIOS_MODID = "curios";
-    public static final String REFINEDSTORAGE_MODID = "curios";
+    public static final String REFINEDSTORAGE_MODID = "refinedstorage";
 
     public boolean curiosLoaded;
     public boolean refinedStorageLoaded;
