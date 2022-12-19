@@ -32,6 +32,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -174,7 +175,7 @@ public class RefinedStorage {
 
     public static Map<String, Object> getObjectFromFluid(@Nullable FluidStack fluidStack, INetwork network) {
         if (fluidStack == null)
-            Collections.emptyMap();
+            return Collections.emptyMap();
 
         Map<String, Object> map = new HashMap<>();
         Supplier<Stream<TagKey<Fluid>>> tags = () -> fluidStack.getFluid().builtInRegistryHolder().tags();

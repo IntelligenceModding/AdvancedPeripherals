@@ -262,15 +262,17 @@ dependencies {
     // We don't use the api since we need a specific class from mekanism
     compileOnly "mekanism:Mekanism:${mekanism_version}"
 
-    runtimeOnly fg.deobf("mekanism:Mekanism:${mekanism_version}")// core
+   // runtimeOnly fg.deobf("mekanism:Mekanism:${mekanism_version}")// core
 
     // Applied Energistics 2
-    //runtimeOnly fg.deobf("appeng:appliedenergistics2:${appliedenergistics_version}")
+   // runtimeOnly fg.deobf("appeng:appliedenergistics2:${appliedenergistics_version}")
     // Curios
     runtimeOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}")
 
     // Refined Storage
-    //compileOnly fg.deobf("com.refinedmods:refinedstorage:${refinedstorage_version}")
+    compileOnly fg.deobf("com.refinedmods:refinedstorage:${refinedstorage_version}")  {
+        transitive false
+    }
 
     // Botania
     compileOnly fg.deobf("vazkii.botania:Botania:${botania_version}")
