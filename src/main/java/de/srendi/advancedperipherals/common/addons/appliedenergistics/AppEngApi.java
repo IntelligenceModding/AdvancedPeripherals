@@ -9,6 +9,8 @@ import appeng.api.networking.storage.IStorageService;
 import appeng.api.stacks.AEFluidKey;
 import appeng.api.stacks.AEItemKey;
 import appeng.api.stacks.AEKey;
+import appeng.api.stacks.KeyCounter;
+import appeng.api.storage.AEKeyFilter;
 import appeng.api.storage.MEStorage;
 import dan200.computercraft.shared.util.NBTUtil;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
@@ -25,32 +27,22 @@ import org.apache.logging.log4j.Level;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class AppEngApi {
 
     public static Pair<Long, AEItemKey> findAEStackFromItemStack(MEStorage monitor, ICraftingService crafting, ItemStack item) {
         for (Object2LongMap.Entry<AEKey> temp : monitor.getAvailableStacks()) {
-            if (temp.getKey() instanceof AEItemKey key) {
-                if (key.matches(item)) {
-                    return Pair.of(temp.getLongValue(), key);
-                }
-            }
+            if (temp.getKey() instanceof AEItemKey key && key.matches(item))
+                return Pair.of(temp.getLongValue(), key);
         }
 
-        if (crafting == null) {
+        if (crafting == null)
             return null;
-        }
 
         for (var temp : crafting.getCraftables(param -> true)) {
-            if (temp instanceof AEItemKey key) {
-                if (key.matches(item)) {
-                    return Pair.of(0L, key);
-                }
-            }
+            if (temp instanceof AEItemKey key && key.matches(item))
+                return Pair.of(0L, key);
         }
 
         return null;
@@ -62,11 +54,17 @@ public class AppEngApi {
 
     public static List<Object> listStacks(MEStorage monitor, ICraftingService service, int flag) {
         List<Object> items = new ArrayList<>();
-        for (Object2LongMap.Entry<AEKey> aeKey : monitor.getAvailableStacks()) {
+        KeyCounter keyCounter = monitor.getAvailableStacks();
+        for (Object2LongMap.Entry<AEKey> aeKey : keyCounter) {
             if (aeKey.getKey() instanceof AEItemKey itemKey) {
                 if (flag == 1 && aeKey.getLongValue() < 0) {
                     continue;
                 } else if (flag == 2 && !service.isCraftable(itemKey)) {
+                    service.getCraftables(AEKeyFilter.none()).forEach(aeKey1 -> {
+                        Map<String, Object> itemObject = getObjectFromStack(Pair.of((long) 0, aeKey1), service);
+                        if (keyCounter.get(aeKey1) == 0 && !items.contains(itemObject))
+                            items.add(itemObject);
+                    });
                     continue;
                 }
 
@@ -99,7 +97,7 @@ public class AppEngApi {
             return getObjectFromFluidStack(Pair.of(stack.getLeft(), fluidKey), service);
 
         AdvancedPeripherals.debug("Could not create table from unknown stack " + stack.getClass() + " - Report this to the owner", Level.ERROR);
-        return null;
+        return Collections.emptyMap();
     }
 
     private static Map<String, Object> getObjectFromItemStack(Pair<Long, AEItemKey> stack, ICraftingService craftingService) {
@@ -138,6 +136,7 @@ public class AppEngApi {
         map.put("storage", storage);
         map.put("coProcessors", coProcessors);
         map.put("isBusy", isBusy);
+
         return map;
     }
 
@@ -145,17 +144,18 @@ public class AppEngApi {
         Map<String, Object> result = new HashMap<>();
         result.put("item", getObjectFromStack(Pair.of(job.finalOutput().amount(), job.finalOutput().what()), craftingService));
         result.put("bytes", job.bytes());
+
         return result;
     }
 
     public static CompoundTag findMatchingTag(ItemStack stack, String nbtHash, MEStorage monitor) {
         for (Object2LongMap.Entry<AEKey> aeKey : monitor.getAvailableStacks()) {
-            if (aeKey.getKey() instanceof AEItemKey itemKey) {
-                if (aeKey.getLongValue() > 0 && itemKey.getItem() == stack.getItem()) {
-                    CompoundTag tag = itemKey.toStack().getTag();
-                    String hash = NBTUtil.getNBTHash(tag);
-                    if (nbtHash.equals(hash)) return tag.copy();
-                }
+            if (aeKey.getKey() instanceof AEItemKey itemKey && aeKey.getLongValue() > 0 && itemKey.getItem() == stack.getItem()) {
+                CompoundTag tag = itemKey.toStack().getTag();
+                String hash = NBTUtil.getNBTHash(tag);
+                if (nbtHash.equals(hash))
+                    return tag.copy();
+
             }
         }
         return null;
@@ -163,8 +163,7 @@ public class AppEngApi {
 
     public static ItemStack findMatchingFingerprint(String fingerprint, MEStorage monitor) {
         for (Object2LongMap.Entry<AEKey> aeKey : monitor.getAvailableStacks()) {
-            if (!(aeKey.getKey() instanceof AEItemKey itemKey))
-                continue;
+            if (!(aeKey.getKey() instanceof AEItemKey itemKey)) continue;
             if (aeKey.getLongValue() > 0 && fingerprint.equals(getFingerpint(itemKey))) {
                 return itemKey.toStack((int) aeKey.getLongValue());
             }
@@ -193,10 +192,9 @@ public class AppEngApi {
     public static boolean isItemCrafting(MEStorage monitor, ICraftingService grid, ItemStack itemStack) {
         Pair<Long, AEItemKey> stack = AppEngApi.findAEStackFromItemStack(monitor, grid, itemStack);
 
-        if (stack == null) {
+        if (stack == null)
             // If the item stack does not exist, it cannot be crafting.
             return false;
-        }
 
         // Loop through all crafting cpus and check if the item is being crafted.
         for (ICraftingCPU cpu : grid.getCpus()) {
@@ -204,13 +202,11 @@ public class AppEngApi {
                 CraftingJobStatus jobStatus = cpu.getJobStatus();
 
                 // avoid null pointer exception
-                if (jobStatus == null) {
+                if (jobStatus == null)
                     continue;
-                }
 
-                if (jobStatus.crafting().what().equals(stack.getRight())) {
+                if (jobStatus.crafting().what().equals(stack.getRight()))
                     return true;
-                }
             }
         }
 

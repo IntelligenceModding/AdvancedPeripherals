@@ -14,8 +14,13 @@ public class EnvironmentRadiationPlugin implements IPeripheralPlugin {
     }
 
     @LuaFunction(mainThread = true)
-    public final double getRadiation() {
-        return MekanismAPI.getRadiationManager().getRadiationLevel(new Coord4D(owner.getPos(), owner.getLevel()));
+    public final Object getRadiation() {
+        return Mekanism.getRadiation(owner.getLevel(), owner.getPos());
+    }
+
+    @LuaFunction(mainThread = true)
+    public final double getRadiationRaw() {
+        return Mekanism.getRadiationRaw(owner.getLevel(), owner.getPos());
     }
 
 }

@@ -19,9 +19,9 @@ public class AutomataSoulFeedingPlugin extends AutomataCorePlugin {
     @LuaFunction(mainThread = true)
     public final MethodResult feedSoul() {
         TurtlePeripheralOwner owner = automataCore.getPeripheralOwner();
-        if (!(owner.getToolInMainHand().getItem() instanceof IFeedableAutomataCore)) {
+        if (!(owner.getToolInMainHand().getItem() instanceof IFeedableAutomataCore))
             return MethodResult.of(null, "Well, you should feed correct mechanical soul!");
-        }
+
         InteractionResult result = owner.withPlayer(APFakePlayer::useOnEntity);
         automataCore.addRotationCycle(3);
         return MethodResult.of(true, result.toString());

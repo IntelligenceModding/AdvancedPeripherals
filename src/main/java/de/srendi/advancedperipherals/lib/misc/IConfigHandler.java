@@ -16,9 +16,7 @@ public interface IConfigHandler {
 
     default String settingsName() {
         String name = name();
-        String startName = Arrays.stream(name.toLowerCase().split("_"))
-                .map(s -> s.substring(0, 1).toUpperCase() + s.substring(1).toLowerCase())
-                .collect(Collectors.joining()) + settingsPostfix();
+        String startName = Arrays.stream(name.toLowerCase().split("_")).map(s -> s.substring(0, 1).toUpperCase() + s.substring(1).toLowerCase()).collect(Collectors.joining()) + settingsPostfix();
         return startName.substring(0, 1).toLowerCase() + startName.substring(1);
     }
 }

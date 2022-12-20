@@ -23,7 +23,7 @@ public abstract class AutomataCorePeripheral extends BasePeripheral<TurtlePeriph
     private final IAutomataCoreTier tier;
     private final Map<String, Boolean> attributes = new HashMap<>();
 
-    public AutomataCorePeripheral(String type, ITurtleAccess turtle, TurtleSide side, IAutomataCoreTier tier) {
+    protected AutomataCorePeripheral(String type, ITurtleAccess turtle, TurtleSide side, IAutomataCoreTier tier) {
         super(type, new TurtlePeripheralOwner(turtle, side));
         owner.attachFuel(tier.getMaxFuelConsumptionRate());
         owner.attachOperation(possibleOperations());

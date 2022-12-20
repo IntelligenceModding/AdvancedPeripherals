@@ -1,13 +1,11 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.integrations;
 
 import dan200.computercraft.api.lua.LuaFunction;
-import dan200.computercraft.api.peripheral.IPeripheral;
 import de.srendi.advancedperipherals.lib.peripherals.BlockEntityIntegrationPeripheral;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.entity.BeaconBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public class BeaconIntegration extends BlockEntityIntegrationPeripheral<BeaconBlockEntity> {
 
@@ -18,11 +16,6 @@ public class BeaconIntegration extends BlockEntityIntegrationPeripheral<BeaconBl
     @Override
     public @NotNull String getType() {
         return "beacon";
-    }
-
-    @Override
-    public boolean equals(@Nullable IPeripheral iPeripheral) {
-        return false;
     }
 
     @LuaFunction(mainThread = true)

@@ -13,7 +13,7 @@ import java.util.Collections;
 /**
  * Since Minecolonies/DO uses a library for data generation which we don't have implemented with which I really don't want to deal,
  * we need to generate our recipe without minecolonies in the runtime.
- *
+ * <p>
  * So we have an Ingredient value which can be parsed to json without the item being registered.
  */
 public class RawValue implements Ingredient.Value {

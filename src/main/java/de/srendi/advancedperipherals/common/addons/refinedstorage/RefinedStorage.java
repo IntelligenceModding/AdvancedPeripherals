@@ -30,7 +30,13 @@ import javax.annotation.Nullable;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
@@ -150,7 +156,9 @@ public class RefinedStorage {
     }
 
     public static Map<String, Object> getObjectFromStack(@Nullable ItemStack itemStack, INetwork network) {
-        if (itemStack == null) return null;
+        if (itemStack == null)
+            return Collections.emptyMap();
+
         Map<String, Object> map = new HashMap<>();
         CompoundTag nbt = itemStack.getTag();
         Supplier<Stream<TagKey<Item>>> tags = () -> itemStack.getItem().builtInRegistryHolder().tags();
@@ -166,7 +174,9 @@ public class RefinedStorage {
     }
 
     public static Map<String, Object> getObjectFromFluid(@Nullable FluidStack fluidStack, INetwork network) {
-        if (fluidStack == null) return null;
+        if (fluidStack == null)
+            return Collections.emptyMap();
+
         Map<String, Object> map = new HashMap<>();
         Supplier<Stream<TagKey<Fluid>>> tags = () -> fluidStack.getFluid().builtInRegistryHolder().tags();
         map.put("name", ForgeRegistries.FLUIDS.getKey(fluidStack.getFluid()).toString());
@@ -182,7 +192,6 @@ public class RefinedStorage {
         for (ItemStack itemStack : getItems(network)) {
             if (itemStack.sameItem(item) && Objects.equals(itemStack.getTag(), item.getTag()))
                 return getObjectFromStack(itemStack, network);
-
         }
         return null;
     }
@@ -245,9 +254,8 @@ public class RefinedStorage {
 
     public static ItemStack findMatchingFingerprint(String fingerprint, List<ItemStack> items) {
         for (ItemStack rsStack : items) {
-            if (rsStack.getCount() > 0) {
-                if (fingerprint.equals(getFingerpint(rsStack))) return rsStack;
-
+            if (rsStack.getCount() > 0 && fingerprint.equals(getFingerpint(rsStack))) {
+                return rsStack;
             }
         }
         return ItemStack.EMPTY;

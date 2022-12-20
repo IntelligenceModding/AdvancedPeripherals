@@ -10,7 +10,7 @@ public abstract class BlockIntegrationPeripheral<T extends Block> extends Integr
     protected final Level world;
     protected final BlockPos pos;
 
-    public BlockIntegrationPeripheral(Level world, BlockPos pos) {
+    protected BlockIntegrationPeripheral(Level world, BlockPos pos) {
         super();
         this.world = world;
         this.pos = pos;

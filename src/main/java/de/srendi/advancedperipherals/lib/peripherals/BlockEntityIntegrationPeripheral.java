@@ -7,7 +7,7 @@ public abstract class BlockEntityIntegrationPeripheral<T extends BlockEntity> ex
 
     protected final T blockEntity;
 
-    public BlockEntityIntegrationPeripheral(BlockEntity entity) {
+    protected BlockEntityIntegrationPeripheral(BlockEntity entity) {
         super();
         this.blockEntity = (T) entity;
     }

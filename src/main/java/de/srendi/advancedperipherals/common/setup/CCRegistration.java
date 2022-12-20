@@ -1,6 +1,6 @@
 package de.srendi.advancedperipherals.common.setup;
 
-import dan200.computercraft.api.ComputerCraftAPI;
+import dan200.computercraft.api.ForgeComputerCraftAPI;
 import dan200.computercraft.api.pocket.PocketUpgradeSerialiser;
 import dan200.computercraft.api.turtle.TurtleUpgradeSerialiser;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
@@ -53,7 +53,7 @@ public class CCRegistration {
     public static void register() {
         IntegrationPeripheralProvider.load();
         integrationPeripheralProvider = new IntegrationPeripheralProvider();
-        ComputerCraftAPI.registerPeripheralProvider(integrationPeripheralProvider);
+        ForgeComputerCraftAPI.registerPeripheralProvider(integrationPeripheralProvider);
     }
 
     public static class ID {
@@ -76,7 +76,6 @@ public class CCRegistration {
         public static final ResourceLocation ENVIRONMENT_POCKET = new ResourceLocation(AdvancedPeripherals.MOD_ID, "environment_pocket");
         public static final ResourceLocation GEOSCANNER_POCKET = new ResourceLocation(AdvancedPeripherals.MOD_ID, "geoscanner_pocket");
         public static final ResourceLocation COLONY_POCKET = new ResourceLocation(AdvancedPeripherals.MOD_ID, "colony_pocket");
-
 
     }
 }

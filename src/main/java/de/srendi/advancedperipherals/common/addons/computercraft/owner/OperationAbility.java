@@ -115,6 +115,8 @@ public class OperationAbility implements IOwnerAbility, IPeripheralPlugin {
     }
 
     public enum FailReason {
-        COOLDOWN, NOT_ENOUGH_FUEL, CHECK_FAILED
+        COOLDOWN,
+        NOT_ENOUGH_FUEL,
+        CHECK_FAILED
     }
 }

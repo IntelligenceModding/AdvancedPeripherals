@@ -37,7 +37,7 @@ public class MeBridgeEntity extends PeripheralBlockEntity<MeBridgePeripheral> im
 
     private final List<CraftJob> jobs = new ArrayList<>();
     private boolean initialized = false;
-    private IManagedGridNode mainNode = GridHelper.createManagedNode(this, MeBridgeEntityListener.INSTANCE);
+    private final IManagedGridNode mainNode = GridHelper.createManagedNode(this, MeBridgeEntityListener.INSTANCE);
 
     public MeBridgeEntity(BlockPos pos, BlockState state) {
         super(APBlockEntityTypes.ME_BRIDGE.get(), pos, state);

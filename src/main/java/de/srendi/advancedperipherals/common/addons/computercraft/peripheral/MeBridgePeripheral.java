@@ -33,15 +33,14 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-//TODO: This is not finished, finish it
 public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwner<MeBridgeEntity>> {
 
-    public static final String TYPE = "meBridge";
+    public static final String PERIPHERAL_TYPE = "meBridge";
     private final MeBridgeEntity tile;
     private IGridNode node;
 
     public MeBridgePeripheral(MeBridgeEntity tileEntity) {
-        super(TYPE, new BlockEntityPeripheralOwner<>(tileEntity));
+        super(PERIPHERAL_TYPE, new BlockEntityPeripheralOwner<>(tileEntity));
         this.tile = tileEntity;
         this.node = tileEntity.getActionableNode();
     }
@@ -62,7 +61,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     /**
      * exports an item out of the system to a valid inventory
      *
-     * @param arguments the arguments given by the computer
+     * @param arguments       the arguments given by the computer
      * @param targetInventory the give inventory
      * @return the exportable amount
      * @throws LuaException if stack does not exist or the system is offline - will be removed in 0.8
@@ -99,7 +98,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     /**
      * imports an item to the system from a valid inventory
      *
-     * @param arguments the arguments given by the computer
+     * @param arguments       the arguments given by the computer
      * @param targetInventory the give inventory
      * @return the imported amount
      * @throws LuaException if system is offline - will be removed in 0.8

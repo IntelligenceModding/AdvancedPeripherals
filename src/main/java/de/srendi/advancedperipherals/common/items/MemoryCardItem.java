@@ -27,9 +27,9 @@ public class MemoryCardItem extends BaseItem {
     @Override
     public void appendHoverText(ItemStack stack, @Nullable Level levelIn, List<Component> tooltip, TooltipFlag flagIn) {
         super.appendHoverText(stack, levelIn, tooltip, flagIn);
-        if (stack.getOrCreateTag().contains("owner")) {
+        if (stack.getOrCreateTag().contains("owner"))
             tooltip.add(Component.translatable("item.advancedperipherals.tooltip.memory_card.bound", stack.getOrCreateTag().getString("owner")));
-        }
+
     }
 
     @Override

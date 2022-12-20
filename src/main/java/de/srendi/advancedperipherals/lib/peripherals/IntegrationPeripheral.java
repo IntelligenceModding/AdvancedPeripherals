@@ -22,9 +22,6 @@ public abstract class IntegrationPeripheral implements IDynamicPeripheral {
     protected List<IPeripheralPlugin> plugins = null;
     protected String[] methodNames = new String[0];
 
-    public IntegrationPeripheral() {
-    }
-
     protected void buildPlugins() {
         if (!initialized) {
             initialized = true;

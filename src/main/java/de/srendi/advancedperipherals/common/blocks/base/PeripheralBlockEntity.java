@@ -22,8 +22,8 @@ import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.SidedInvWrapper;
 import org.jetbrains.annotations.NotNull;
@@ -77,7 +77,7 @@ public abstract class PeripheralBlockEntity<T extends BasePeripheral<?>> extends
             }
         }
 
-        if (cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && !remove && direction != null && this instanceof IInventoryBlock) {
+        if (cap == ForgeCapabilities.ITEM_HANDLER && !remove && direction != null && this instanceof IInventoryBlock) {
             if (handler == null || !handler.isPresent())
                 handler = LazyOptional.of(() -> new SidedInvWrapper(this, Direction.NORTH));
             return handler.cast();

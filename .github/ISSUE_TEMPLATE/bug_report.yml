@@ -39,9 +39,11 @@ body:
       multiple: false
       options:
         - Own compiled build.
-        - 1.19.2-0.7.19a (Latest 1.19)
-        - 1.18.2-0.7.19r (Latest 1.18)
-        - 1.18.2-0.7.18r
+        - 1.19.2-0.7.22b (Latest 1.19)
+        - 1.19.2-0.7.21b 
+        - 1.18.2-0.7.21r (Latest 1.18)
+        - 1.18.2-0.7.20r 
+        - 1.18.2-0.7.19r
         - 1.16.5-0.7.8r (Latest 1.16)
         - older
     validations:

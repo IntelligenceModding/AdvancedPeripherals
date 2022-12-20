@@ -7,11 +7,7 @@ public class TranslationUtil {
 
     public static Component itemTooltip(String descriptionId) {
         int lastIndex = descriptionId.lastIndexOf('.');
-        return Component.translatable(String.format(
-                "%s.tooltip.%s",
-                descriptionId.substring(0, lastIndex).replaceFirst("^block", "item"),
-                descriptionId.substring(lastIndex + 1)
-        ));
+        return Component.translatable(String.format("%s.tooltip.%s", descriptionId.substring(0, lastIndex).replaceFirst("^block", "item"), descriptionId.substring(lastIndex + 1)));
     }
 
     public static String turtle(String name) {

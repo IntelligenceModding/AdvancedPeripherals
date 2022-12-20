@@ -3,7 +3,7 @@ package de.srendi.advancedperipherals.common.util;
 import appeng.api.storage.MEStorage;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.core.apis.TableHelper;
-import dan200.computercraft.shared.Registry;
+import dan200.computercraft.shared.ModRegistry;
 import de.srendi.advancedperipherals.common.addons.appliedenergistics.AppEngApi;
 import de.srendi.advancedperipherals.common.addons.refinedstorage.RefinedStorage;
 import net.minecraft.ResourceLocationException;
@@ -24,11 +24,11 @@ import java.util.Map;
 //TODO: Clean this up, here is a lot of boilerplate and old code
 public class ItemUtil {
 
-    public static final Item TURTLE_NORMAL = Registry.ModItems.TURTLE_NORMAL.get();
-    public static final Item TURTLE_ADVANCED = Registry.ModItems.TURTLE_ADVANCED.get();
+    public static final Item TURTLE_NORMAL = ModRegistry.Items.TURTLE_NORMAL.get();
+    public static final Item TURTLE_ADVANCED = ModRegistry.Items.TURTLE_ADVANCED.get();
 
-    public static final Item POCKET_NORMAL = Registry.ModItems.POCKET_COMPUTER_NORMAL.get();
-    public static final Item POCKET_ADVANCED = Registry.ModItems.POCKET_COMPUTER_ADVANCED.get();
+    public static final Item POCKET_NORMAL = ModRegistry.Items.POCKET_COMPUTER_NORMAL.get();
+    public static final Item POCKET_ADVANCED = ModRegistry.Items.POCKET_COMPUTER_ADVANCED.get();
 
     public static <T> T getRegistryEntry(String name, IForgeRegistry<T> forgeRegistry) {
         ResourceLocation location;
@@ -162,6 +162,7 @@ public class ItemUtil {
         return items;
     }
 
+    //TODO: Need to be integrated to the new creative tab system
     public static void addComputerItemToTab(ResourceLocation turtleID, ResourceLocation pocketID, NonNullList<ItemStack> items) {
         if (turtleID != null) {
             items.add(makeTurtle(TURTLE_ADVANCED, turtleID.toString()));

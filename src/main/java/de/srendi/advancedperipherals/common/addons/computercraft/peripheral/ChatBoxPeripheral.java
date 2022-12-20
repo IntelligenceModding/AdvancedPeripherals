@@ -31,10 +31,10 @@ import static de.srendi.advancedperipherals.common.addons.computercraft.operatio
 
 public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
 
-    public static final String TYPE = "chatBox";
+    public static final String PERIPHERAL_TYPE = "chatBox";
 
     protected ChatBoxPeripheral(IPeripheralOwner owner) {
-        super(TYPE, owner);
+        super(PERIPHERAL_TYPE, owner);
         owner.attachOperation(CHAT_MESSAGE);
     }
 
@@ -105,11 +105,7 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
             if (component == null) return MethodResult.of(null, "incorrect json");
             if (checkBrackets(arguments.optString(2)))
                 return MethodResult.of(null, "incorrect bracket string (e.g. [], {}, <>, ...)");
-            MutableComponent preparedMessage = appendPrefix(
-                    arguments.optString(1, APConfig.PERIPHERALS_CONFIG.defaultChatBoxPrefix.get()),
-                    arguments.optString(2, "[]"),
-                    arguments.optString(3, "")
-            ).append(component);
+            MutableComponent preparedMessage = appendPrefix(arguments.optString(1, APConfig.PERIPHERALS_CONFIG.defaultChatBoxPrefix.get()), arguments.optString(2, "[]"), arguments.optString(3, "")).append(component);
             for (ServerPlayer player : ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers()) {
                 if (range != -1) {
                     if (CoordUtil.isInRange(getPos(), getLevel(), player, range))
@@ -129,11 +125,7 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
             int range = arguments.optInt(4, -1);
             if (checkBrackets(arguments.optString(2)))
                 return MethodResult.of(null, "incorrect bracket string (e.g. [], {}, <>, ...)");
-            MutableComponent preparedMessage = appendPrefix(
-                    arguments.optString(1, APConfig.PERIPHERALS_CONFIG.defaultChatBoxPrefix.get()),
-                    arguments.optString(2, "[]"),
-                    arguments.optString(3, "")
-            ).append(message);
+            MutableComponent preparedMessage = appendPrefix(arguments.optString(1, APConfig.PERIPHERALS_CONFIG.defaultChatBoxPrefix.get()), arguments.optString(2, "[]"), arguments.optString(3, "")).append(message);
             for (ServerPlayer player : ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers()) {
                 if (range != -1) {
                     if (CoordUtil.isInRange(getPos(), getLevel(), player, range))
@@ -157,11 +149,7 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
             if (component == null) return MethodResult.of(null, "incorrect json");
             if (checkBrackets(arguments.optString(3)))
                 return MethodResult.of(null, "incorrect bracket string (e.g. [], {}, <>, ...)");
-            MutableComponent preparedMessage = appendPrefix(
-                    arguments.optString(2, APConfig.PERIPHERALS_CONFIG.defaultChatBoxPrefix.get()),
-                    arguments.optString(3, "[]"),
-                    arguments.optString(4, "")
-            ).append(component);
+            MutableComponent preparedMessage = appendPrefix(arguments.optString(2, APConfig.PERIPHERALS_CONFIG.defaultChatBoxPrefix.get()), arguments.optString(3, "[]"), arguments.optString(4, "")).append(component);
             player.sendSystemMessage(preparedMessage);
             return MethodResult.of(true);
         });
@@ -176,11 +164,7 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
             if (player == null) return MethodResult.of(null, "incorrect player name/uuid");
             if (checkBrackets(arguments.optString(3)))
                 return MethodResult.of(null, "incorrect bracket string (e.g. [], {}, <>, ...)");
-            MutableComponent preparedMessage = appendPrefix(
-                    arguments.optString(2, APConfig.PERIPHERALS_CONFIG.defaultChatBoxPrefix.get()),
-                    arguments.optString(3, "[]"),
-                    arguments.optString(4, "")
-            ).append(message);
+            MutableComponent preparedMessage = appendPrefix(arguments.optString(2, APConfig.PERIPHERALS_CONFIG.defaultChatBoxPrefix.get()), arguments.optString(3, "[]"), arguments.optString(4, "")).append(message);
             player.sendSystemMessage(preparedMessage);
             return MethodResult.of(true);
         });
