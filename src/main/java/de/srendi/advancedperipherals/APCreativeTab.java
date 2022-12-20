@@ -1,7 +1,7 @@
 package de.srendi.advancedperipherals;
 
-import de.srendi.advancedperipherals.common.setup.Blocks;
-import de.srendi.advancedperipherals.common.setup.Registration;
+import de.srendi.advancedperipherals.common.setup.APBlocks;
+import de.srendi.advancedperipherals.common.setup.APRegistration;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
@@ -20,9 +20,9 @@ public class APCreativeTab {
 
     private static void populateCreativeTabBuilder(CreativeModeTab.Builder builder) {
         builder.displayItems((set, out, unknownMagicBoolean) -> {
-            Registration.ITEMS.getEntries().stream().map(RegistryObject::get).forEach(out::accept);
+            APRegistration.ITEMS.getEntries().stream().map(RegistryObject::get).forEach(out::accept);
         });
-        builder.icon(() -> new ItemStack(Blocks.CHAT_BOX.get()));
+        builder.icon(() -> new ItemStack(APBlocks.CHAT_BOX.get()));
         builder.title(Component.translatable("advancedperipherals.name"));
         builder.withSearchBar();
     }

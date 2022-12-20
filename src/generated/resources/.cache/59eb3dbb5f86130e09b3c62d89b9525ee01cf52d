@@ -1,8 +1,9 @@
-// 1.19.2	2022-10-07T10:24:52.2412454	LootTables
+// 1.19.3	2022-12-20T12:47:00.0739925	Loot Tables
 fecb8d92386c87945125ce5e4266faeb8275b540 data/advancedperipherals/loot_tables/blocks/ar_controller.json
 d865e8ac35302c486faf5c7122569c554186186d data/advancedperipherals/loot_tables/blocks/block_reader.json
 a6f896cc3dbd8da12737825ec71e32970f54025c data/advancedperipherals/loot_tables/blocks/chat_box.json
 f50f506ae1987537f76be4c05a81689b25798f91 data/advancedperipherals/loot_tables/blocks/colony_integrator.json
+4dcad851450e4ddd8d28a0017a417bf6e5579bda data/advancedperipherals/loot_tables/blocks/distance_detector.json
 1d1b858d09538dc66bab2c33a2f9c58361a9c472 data/advancedperipherals/loot_tables/blocks/energy_detector.json
 317004b1358ef9bf83957d2d6796529a226161c7 data/advancedperipherals/loot_tables/blocks/environment_detector.json
 df6186990887f77b7db37ebb8ee50a7e7f096b0a data/advancedperipherals/loot_tables/blocks/fluid_detector.json

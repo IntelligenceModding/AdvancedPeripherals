@@ -7,6 +7,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.LootTables;
 import net.minecraft.world.level.storage.loot.ValidationContext;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -16,12 +17,12 @@ import java.util.Set;
 public class BlockLootTablesProvider extends LootTableProvider {
 
     public BlockLootTablesProvider(PackOutput output) {
-        super(output, Set.of(), ImmutableList.of(new SubProviderEntry(BlockLootTables::new, null)));
+        super(output, Set.of(), ImmutableList.of(new SubProviderEntry(BlockLootTables::new, LootContextParamSets.BLOCK)));
     }
 
     @Override
     public @NotNull List<SubProviderEntry> getTables() {
-        return ImmutableList.of(new SubProviderEntry(BlockLootTables::new, null));
+        return ImmutableList.of(new SubProviderEntry(BlockLootTables::new, LootContextParamSets.BLOCK));
     }
 
     @Override

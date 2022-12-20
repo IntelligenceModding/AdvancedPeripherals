@@ -1,6 +1,5 @@
 package de.srendi.advancedperipherals.common.items;
 
-import de.srendi.advancedperipherals.AdvancedPeripherals;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ArmorItem;
@@ -16,7 +15,7 @@ import java.util.List;
 public class SmartGlassesItem extends ArmorItem {
 
     public SmartGlassesItem(ArmorMaterials material) {
-        super(material, EquipmentSlot.HEAD, new Properties().tab(AdvancedPeripherals.TAB).stacksTo(1));
+        super(material, EquipmentSlot.HEAD, new Properties().stacksTo(1));
     }
 
     @Override

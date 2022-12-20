@@ -274,13 +274,6 @@ dependencies {
         transitive false
     }
 
-    compileOnly "mekanism:Mekanism:${mekanism_version}:api"
-
-    runtimeOnly fg.deobf("mekanism:Mekanism:${mekanism_version}")// core
-    runtimeOnly fg.deobf("mekanism:Mekanism:${mekanism_version}:additions")// Mekanism: Additions
-    runtimeOnly fg.deobf("mekanism:Mekanism:${mekanism_version}:generators")// Mekanism: Generators
-    runtimeOnly fg.deobf("mekanism:Mekanism:${mekanism_version}:tools")// Mekanism: Tools
-
     // Botania
     compileOnly fg.deobf("vazkii.botania:Botania:${botania_version}")
 

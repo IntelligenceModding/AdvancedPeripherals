@@ -10,18 +10,24 @@ public class APAddons {
 
     public static final String CURIOS_MODID = "curios";
     public static final String REFINEDSTORAGE_MODID = "refinedstorage";
+    public static final String APPLIEDENERGISTICS_MODID = "ae2";
+    public static final String MEKANISM_MODID = "mekanism";
 
     public boolean curiosLoaded;
     public boolean refinedStorageLoaded;
+    public boolean appliedEnergisticsLoaded;
+    public boolean mekanismLoaded;
 
     public void commonSetup() {
         ModList modList = ModList.get();
         curiosLoaded = modList.isLoaded(CURIOS_MODID);
         refinedStorageLoaded = modList.isLoaded(REFINEDSTORAGE_MODID);
+        appliedEnergisticsLoaded = modList.isLoaded(APPLIEDENERGISTICS_MODID);
+        mekanismLoaded = modList.isLoaded(MEKANISM_MODID);
 
-        if (refinedStorageLoaded) {
+        if (refinedStorageLoaded)
             RefinedStorage.instance = new RefinedStorage();
-        }
+
     }
 
     public void interModComms(InterModEnqueueEvent event) {

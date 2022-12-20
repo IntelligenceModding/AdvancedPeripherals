@@ -1,7 +1,7 @@
 package de.srendi.advancedperipherals.common.data;
 
 import de.srendi.advancedperipherals.AdvancedPeripherals;
-import de.srendi.advancedperipherals.common.setup.Registration;
+import de.srendi.advancedperipherals.common.setup.APRegistration;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.PoiTypeTagsProvider;
@@ -24,9 +24,9 @@ public class PoiTypeProvider extends PoiTypeTagsProvider {
     }
 
     @Override
-    protected void addTags(HolderLookup.Provider provider) {
+    protected void addTags(HolderLookup.@NotNull Provider provider) {
         TagsProvider.TagAppender<PoiType> appender = tag(PoiTypeTags.ACQUIRABLE_JOB_SITE);
-        Registration.POI_TYPES.getEntries().stream().map(RegistryObject::getKey).filter(Objects::nonNull).forEach(appender::add);
+        APRegistration.POI_TYPES.getEntries().stream().map(RegistryObject::getKey).filter(Objects::nonNull).forEach(appender::add);
     }
 
     @NotNull

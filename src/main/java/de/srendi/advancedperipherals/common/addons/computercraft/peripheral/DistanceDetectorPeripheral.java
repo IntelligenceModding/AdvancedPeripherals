@@ -50,10 +50,8 @@ public class DistanceDetectorPeripheral extends BasePeripheral<BlockEntityPeriph
     }
 
     public final double setHeight(double height) {
-        if(height > 1)
-            this.height = 1;
-        if(height < 0)
-            this.height = 0;
+        if (height > 1) this.height = 1;
+        if (height < 0) this.height = 0;
         return this.height;
     }
 
@@ -69,7 +67,7 @@ public class DistanceDetectorPeripheral extends BasePeripheral<BlockEntityPeriph
         Vec3 to = from.add(direction.getNormal().getX() * 16, direction.getNormal().getY() * 16, direction.getNormal().getZ() * 16);
         BlockHitResult result = getLevel().clip(new ClipContext(from, to, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, null));
 
-        return result.getType() != HitResult.Type.MISS ? getPos().distManhattan(result.getBlockPos())-1 : -1;
+        return result.getType() != HitResult.Type.MISS ? getPos().distManhattan(result.getBlockPos()) - 1 : -1;
     }
 
 }

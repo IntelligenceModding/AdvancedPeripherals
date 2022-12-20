@@ -6,8 +6,6 @@ import de.srendi.advancedperipherals.common.setup.APBlocks;
 import de.srendi.advancedperipherals.common.setup.APItems;
 import de.srendi.advancedperipherals.common.setup.APVillagers;
 import de.srendi.advancedperipherals.common.setup.CCRegistration;
-import de.srendi.advancedperipherals.common.setup.Items;
-import de.srendi.advancedperipherals.common.setup.Villagers;
 import de.srendi.advancedperipherals.common.util.ItemUtil;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import net.minecraftforge.event.village.VillagerTradesEvent;

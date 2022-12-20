@@ -1,4 +1,4 @@
-// 1.19.2	2022-10-07T10:24:52.2564506	Block tags
+// 1.19.3	2022-12-20T12:47:00.0649699	Block tags
 e1f71dcb4f9e7e36e29b0ad09d6520dc3adfa4a6 data/forge/tags/blocks/needs_wood_tool.json
-a2af89cb645c94eccda0bca93ec0255f23602444 data/minecraft/tags/blocks/mineable/pickaxe.json
-b67fec361e71d5073cbcdfaf8a5f8dbdf1c56971 data/minecraft/tags/blocks/needs_iron_tool.json
+f397bc09e95d0258b5ba711d5e1fb0b7da8419db data/minecraft/tags/blocks/mineable/pickaxe.json
+055dd6291658fb34ab62ebf6e7223e11eb1aa052 data/minecraft/tags/blocks/needs_iron_tool.json

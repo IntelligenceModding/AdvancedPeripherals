@@ -1,6 +1,6 @@
 package de.srendi.advancedperipherals.common.data;
 
-import de.srendi.advancedperipherals.common.setup.Registration;
+import de.srendi.advancedperipherals.common.setup.APRegistration;
 import net.minecraft.data.loot.BlockLootSubProvider;
 import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.level.block.Block;
@@ -17,12 +17,12 @@ public class BlockLootTables extends BlockLootSubProvider {
 
     @Override
     protected void generate() {
-        Registration.BLOCKS.getEntries().stream().map(RegistryObject::get).forEach(this::dropSelf);
+        APRegistration.BLOCKS.getEntries().stream().map(RegistryObject::get).forEach(this::dropSelf);
     }
 
     @NotNull
     @Override
     protected Iterable<Block> getKnownBlocks() {
-        return Registration.BLOCKS.getEntries().stream().map(RegistryObject::get)::iterator;
+        return APRegistration.BLOCKS.getEntries().stream().map(RegistryObject::get)::iterator;
     }
 }
