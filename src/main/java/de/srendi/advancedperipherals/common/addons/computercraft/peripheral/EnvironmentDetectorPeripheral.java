@@ -19,6 +19,7 @@ import de.srendi.advancedperipherals.common.util.LuaConverter;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
 import de.srendi.advancedperipherals.lib.peripherals.IPeripheralPlugin;
 import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -28,6 +29,7 @@ import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.WorldGenLevel;
+import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.levelgen.WorldgenRandom;
 import net.minecraft.world.phys.AABB;
 import net.minecraftforge.common.MinecraftForge;
@@ -86,8 +88,8 @@ public class EnvironmentDetectorPeripheral extends BasePeripheral<IPeripheralOwn
 
     @LuaFunction(mainThread = true)
     public final String getBiome() {
-        if (getLevel().getBiome(getPos()).unwrapKey().isEmpty()) return "Unknown";
-        return getLevel().getBiome(getPos()).unwrapKey().get().location().toString();
+        Optional<ResourceKey<Biome>> biome = getLevel().getBiome(getPos()).unwrapKey();
+        return biome.map(biomeResourceKey -> biomeResourceKey.location().toString()).orElse("unknown");
     }
 
     @LuaFunction(mainThread = true)
@@ -201,9 +203,8 @@ public class EnvironmentDetectorPeripheral extends BasePeripheral<IPeripheralOwn
     public final MethodResult scanEntities(@Nonnull IComputerAccess access, @Nonnull IArguments arguments) throws LuaException {
         int radius = arguments.getInt(0);
         return withOperation(SCAN_ENTITIES, new SphereOperationContext(radius), context -> {
-            if (radius > SCAN_ENTITIES.getMaxCostRadius()) {
-                return MethodResult.of(null, "Radius is exceed max value");
-            }
+            if (radius > SCAN_ENTITIES.getMaxCostRadius())
+                return MethodResult.of(null, "Radius exceeds max value");
             return null;
         }, context -> {
             BlockPos pos = owner.getPos();
@@ -217,9 +218,8 @@ public class EnvironmentDetectorPeripheral extends BasePeripheral<IPeripheralOwn
     @LuaFunction
     public final MethodResult scanCost(int radius) {
         int estimatedCost = estimateCost(radius);
-        if (estimatedCost < 0) {
-            return MethodResult.of(null, "Radius is exceed max value");
-        }
+        if (estimatedCost < 0)
+            return MethodResult.of(null, "Radius exceeds max value");
         return MethodResult.of(estimatedCost);
     }
 

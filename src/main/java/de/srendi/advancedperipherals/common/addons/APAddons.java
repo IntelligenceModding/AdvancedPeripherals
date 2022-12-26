@@ -19,9 +19,9 @@ public class APAddons {
         curiosLoaded = modList.isLoaded(CURIOS_MODID);
         refinedStorageLoaded = modList.isLoaded(REFINEDSTORAGE_MODID);
 
-        if (refinedStorageLoaded) {
+        if (refinedStorageLoaded)
             RefinedStorage.instance = new RefinedStorage();
-        }
+
     }
 
     public void interModComms(InterModEnqueueEvent event) {

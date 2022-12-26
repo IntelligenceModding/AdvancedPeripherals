@@ -253,7 +253,7 @@ dependencies {
     implementation fg.deobf("cc.tweaked:cc-tweaked-${minecraft_version}-forge:${cc_version}")
     // Compile-time API required
     // Ae2
-    compileOnly fg.deobf("appeng:appliedenergistics2:${appliedenergistics_version}")
+    compileOnly fg.deobf("appeng:appliedenergistics2-forge:${appliedenergistics_version}")
     // Curios
     compileOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}:api")
     // Minimal requirements end
@@ -265,7 +265,7 @@ dependencies {
    // runtimeOnly fg.deobf("mekanism:Mekanism:${mekanism_version}")// core
 
     // Applied Energistics 2
-   // runtimeOnly fg.deobf("appeng:appliedenergistics2:${appliedenergistics_version}")
+    runtimeOnly fg.deobf("appeng:appliedenergistics2-forge:${appliedenergistics_version}")
     // Curios
     runtimeOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}")
 

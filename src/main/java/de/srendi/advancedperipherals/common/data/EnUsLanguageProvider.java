@@ -7,7 +7,7 @@ import de.srendi.advancedperipherals.common.setup.CCRegistration;
 import de.srendi.advancedperipherals.common.setup.Items;
 import de.srendi.advancedperipherals.common.setup.Villagers;
 import net.minecraft.client.KeyMapping;
-import net.minecraft.data.DataGenerator;
+import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.npc.VillagerProfession;
 import net.minecraft.world.item.Item;
@@ -20,7 +20,7 @@ import java.util.function.Supplier;
 
 public class EnUsLanguageProvider extends LanguageProvider {
 
-    public EnUsLanguageProvider(DataGenerator gen) {
+    public EnUsLanguageProvider(PackOutput gen) {
         super(gen, AdvancedPeripherals.MOD_ID, "en_us");
     }
 
@@ -35,7 +35,7 @@ public class EnUsLanguageProvider extends LanguageProvider {
         addKeybinds();
         addText();
         add(Villagers.COMPUTER_SCIENTIST, "Computer Scientist");
-        add("advancedperipherals.name", "Advanced Peripherals");
+        add("advancedperipherals.name", AdvancedPeripherals.NAME);
     }
 
     private void addItems() {
@@ -92,7 +92,7 @@ public class EnUsLanguageProvider extends LanguageProvider {
     }
 
     private void addAdvancements() {
-        addAdvancement("root", "Advanced Peripherals", "Every journey starts with the first block");
+        addAdvancement("root", AdvancedPeripherals.NAME, "Every journey starts with the first block");
         addAdvancement("weak_automata_core", "First automata core", "Does the afterlife exist in minecraft?");
         addAdvancement("end_automata_core", "End automata core", "If you can code gps-free position location with this, you're a powerful human being");
         addAdvancement("husbandry_automata_core", "Husbandry automata core", "Is this core gluten-free?");
@@ -137,7 +137,7 @@ public class EnUsLanguageProvider extends LanguageProvider {
     }
 
     private void addKeybinds() {
-        add("keybind.advancedperipherals.category", "Advanced Peripherals");
+        add("keybind.advancedperipherals.category", AdvancedPeripherals.NAME);
         addKeybind(KeyBindings.DESCRIPTION_KEYBINDING, "Show Description");
     }
 
@@ -147,7 +147,7 @@ public class EnUsLanguageProvider extends LanguageProvider {
     }
 
     private void add(@NotNull Supplier<VillagerProfession> key, @NotNull String name) {
-        add("entity.minecraft.villager." + AdvancedPeripherals.MOD_ID + "." + key.get().name(), name);
+        add("entity.minecraft.villager." + AdvancedPeripherals.MOD_ID + "." + key.get().name().split(":")[1], name);
     }
 
     private void addTurtle(@NotNull ResourceLocation key, @NotNull String name) {

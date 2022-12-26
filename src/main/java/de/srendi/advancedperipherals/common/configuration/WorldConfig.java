@@ -37,4 +37,7 @@ public class WorldConfig implements IAPConfig {
     public ModConfig.Type getType() {
         return ModConfig.Type.COMMON;
     }
+    /*
+    [
+     */
 }

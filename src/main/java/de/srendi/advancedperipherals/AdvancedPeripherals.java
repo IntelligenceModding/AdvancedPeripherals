@@ -24,7 +24,8 @@ import java.util.Random;
 public class AdvancedPeripherals {
 
     public static final String MOD_ID = "advancedperipherals";
-    public static final Logger LOGGER = LogManager.getLogger("Advanced Peripherals");
+    public static final String NAME = "Advanced Peripherals";
+    public static final Logger LOGGER = LogManager.getLogger(NAME);
     public static final Random RANDOM = new Random();
     public static final APAddons addons = new APAddons();
 
