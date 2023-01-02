@@ -53,7 +53,6 @@ public class CraftJob implements ILuaCallback {
         this.result = MethodResult.of(success, exception);
         this.exception = new LuaException(exception);
         this.computer.queueEvent(EVENT, success, exception);
-
     }
 
     protected void fireNotConnected() {

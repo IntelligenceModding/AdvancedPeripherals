@@ -1,10 +1,6 @@
 package de.srendi.advancedperipherals.common.blocks.blockentities;
 
-import appeng.api.networking.GridFlags;
-import appeng.api.networking.GridHelper;
-import appeng.api.networking.IGridNode;
-import appeng.api.networking.IInWorldGridNodeHost;
-import appeng.api.networking.IManagedGridNode;
+import appeng.api.networking.*;
 import appeng.api.networking.crafting.ICraftingSimulationRequester;
 import appeng.api.networking.security.IActionHost;
 import appeng.api.networking.security.IActionSource;
@@ -66,9 +62,9 @@ public class MeBridgeEntity extends PeripheralBlockEntity<MeBridgePeripheral> im
                 initialized = true;
                 AdvancedPeripherals.debug("DEBUG2 " + mainNode.isReady(), org.apache.logging.log4j.Level.ERROR);
             }
-            for (CraftJob job : jobs) {
+            for (CraftJob job : jobs)
                 job.maybeCraft();
-            }
+
             jobs.removeIf(CraftJob::isCraftingStarted);
         }
     }
