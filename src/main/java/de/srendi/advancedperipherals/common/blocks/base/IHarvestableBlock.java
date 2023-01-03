@@ -4,7 +4,7 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;
 
-public interface IHarvesterBlock {
+public interface IHarvestableBlock {
 
     TagKey<Block> getHarvestTag();
 

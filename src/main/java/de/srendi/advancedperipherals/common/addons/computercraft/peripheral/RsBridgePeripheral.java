@@ -283,7 +283,7 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     public final MethodResult getItem(IArguments arguments) {
         return (MethodResult) ensureIsConnected(null, () -> {
             try {
-                return RefinedStorage.getItem(getNetwork(), ItemUtil.getItemStackRS(arguments.getTable(0), RefinedStorage.getItems(getNetwork())));
+                return MethodResult.of(RefinedStorage.getItem(getNetwork(), ItemUtil.getItemStackRS(arguments.getTable(0), RefinedStorage.getItems(getNetwork()))));
             } catch (LuaException e) {
                 return MethodResult.of(null, "unknown: " + e.getMessage());
             }
