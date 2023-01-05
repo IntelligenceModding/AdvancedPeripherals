@@ -1,14 +1,26 @@
 package de.srendi.advancedperipherals.common.setup;
 
 import com.google.common.collect.Sets;
-import de.srendi.advancedperipherals.common.blocks.blockentities.*;
+import de.srendi.advancedperipherals.common.blocks.blockentities.ARControllerEntity;
+import de.srendi.advancedperipherals.common.blocks.blockentities.BlockReaderEntity;
+import de.srendi.advancedperipherals.common.blocks.blockentities.ChatBoxEntity;
+import de.srendi.advancedperipherals.common.blocks.blockentities.ColonyIntegratorEntity;
+import de.srendi.advancedperipherals.common.blocks.blockentities.EnergyDetectorEntity;
+import de.srendi.advancedperipherals.common.blocks.blockentities.EnvironmentDetectorEntity;
+import de.srendi.advancedperipherals.common.blocks.blockentities.GeoScannerEntity;
+import de.srendi.advancedperipherals.common.blocks.blockentities.InventoryManagerEntity;
+import de.srendi.advancedperipherals.common.blocks.blockentities.MeBridgeEntity;
+import de.srendi.advancedperipherals.common.blocks.blockentities.NBTStorageEntity;
+import de.srendi.advancedperipherals.common.blocks.blockentities.PlayerDetectorEntity;
+import de.srendi.advancedperipherals.common.blocks.blockentities.RedstoneIntegratorEntity;
+import de.srendi.advancedperipherals.common.blocks.blockentities.RsBridgeEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.registries.RegistryObject;
 
 public class BlockEntityTypes {
 
-    public static final RegistryObject<BlockEntityType<ChatBoxEnity>> CHAT_BOX = Registration.TILE_ENTITIES.register("chat_box", () -> new BlockEntityType<>(ChatBoxEnity::new, Sets.newHashSet(Blocks.CHAT_BOX.get()), null));
+    public static final RegistryObject<BlockEntityType<ChatBoxEntity>> CHAT_BOX = Registration.TILE_ENTITIES.register("chat_box", () -> new BlockEntityType<>(ChatBoxEntity::new, Sets.newHashSet(Blocks.CHAT_BOX.get()), null));
     public static final RegistryObject<BlockEntityType<EnvironmentDetectorEntity>> ENVIRONMENT_DETECTOR = Registration.TILE_ENTITIES.register("environment_detector", () -> new BlockEntityType<>(EnvironmentDetectorEntity::new, Sets.newHashSet(Blocks.ENVIRONMENT_DETECTOR.get()), null));
     public static final RegistryObject<BlockEntityType<PlayerDetectorEntity>> PLAYER_DETECTOR = Registration.TILE_ENTITIES.register("player_detector", () -> new BlockEntityType<>(PlayerDetectorEntity::new, Sets.newHashSet(Blocks.PLAYER_DETECTOR.get()), null));
     public static final RegistryObject<BlockEntityType<MeBridgeEntity>> ME_BRIDGE = ModList.get().isLoaded("ae2") ? Registration.TILE_ENTITIES.register("me_bridge", () -> new BlockEntityType<>(MeBridgeEntity::new, Sets.newHashSet(Blocks.ME_BRIDGE.get()), null)) : null;

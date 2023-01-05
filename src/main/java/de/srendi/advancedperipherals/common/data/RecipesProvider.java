@@ -14,6 +14,7 @@ import net.minecraft.world.item.alchemy.PotionUtils;
 import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.common.Tags;
+import net.minecraftforge.common.crafting.NBTIngredient;
 import net.minecraftforge.common.crafting.conditions.IConditionBuilder;
 import org.jetbrains.annotations.NotNull;
 
@@ -61,8 +62,8 @@ public class RecipesProvider extends RecipeProvider implements IConditionBuilder
 
         ShapedRecipeBuilder.shaped(de.srendi.advancedperipherals.common.setup.Items.CHUNK_CONTROLLER.get())
                 .define('I', Tags.Items.INGOTS_IRON)
-                .define('R', Tags.Items.DUSTS_REDSTONE)
-                .define('A', Items.ENDER_EYE)
+                .define('R', Items.ENDER_EYE)
+                .define('A', Items.NETHERITE_INGOT)
                 .pattern("IRI")
                 .pattern("RAR")
                 .pattern("IRI")
@@ -193,7 +194,7 @@ public class RecipesProvider extends RecipeProvider implements IConditionBuilder
                 .define('R', Tags.Items.STORAGE_BLOCKS_REDSTONE)
                 .define('S', Items.SOUL_LANTERN)
                 .define('D', Tags.Items.GEMS_DIAMOND)
-                .define('L', new NBTIngredient(PotionUtils.setPotion(new ItemStack(Items.POTION), Potions.LONG_REGENERATION)))
+                .define('L', NBTIngredient.of(PotionUtils.setPotion(new ItemStack(Items.POTION), Potions.LONG_REGENERATION)))
                 .pattern("RAR")
                 .pattern("DSD")
                 .pattern("RLR")
@@ -217,11 +218,5 @@ public class RecipesProvider extends RecipeProvider implements IConditionBuilder
                 .requires(Items.NETHER_STAR)
                 .unlockedBy(HAS_ITEM, has(de.srendi.advancedperipherals.common.setup.Items.HUSBANDRY_AUTOMATA_CORE.get()))
                 .save(consumer);
-    }
-
-    public static class NBTIngredient extends net.minecraftforge.common.crafting.NBTIngredient {
-        public NBTIngredient(ItemStack stack) {
-            super(stack);
-        }
     }
 }
