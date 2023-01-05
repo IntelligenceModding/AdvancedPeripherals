@@ -22,6 +22,7 @@ import java.util.function.Consumer;
 public class RecipesProvider extends RecipeProvider implements IConditionBuilder {
 
     private static final Block CASING = Blocks.PERIPHERAL_CASING.get();
+    private static final String HAS_ITEM = "has_item";
 
     public RecipesProvider(DataGenerator generatorIn) {
         super(generatorIn);
@@ -36,7 +37,7 @@ public class RecipesProvider extends RecipeProvider implements IConditionBuilder
                 .pattern("GEG")
                 .pattern("ECE")
                 .pattern("GEG")
-                .unlockedBy("has_item", has(CASING))
+                .unlockedBy(HAS_ITEM, has(CASING))
                 .save(consumer);
 
         ShapedRecipeBuilder.shaped(de.srendi.advancedperipherals.common.setup.Items.AR_GOGGLES.get())
@@ -45,7 +46,7 @@ public class RecipesProvider extends RecipeProvider implements IConditionBuilder
                 .define('G', Tags.Items.GLASS_BLACK)
                 .pattern("GSG")
                 .pattern(" E ")
-                .unlockedBy("has_item", has(Items.STICK))
+                .unlockedBy(HAS_ITEM, has(Items.STICK))
                 .save(consumer);
 
         ShapedRecipeBuilder.shaped(Blocks.CHAT_BOX.get())
@@ -55,7 +56,7 @@ public class RecipesProvider extends RecipeProvider implements IConditionBuilder
                 .pattern("PPP")
                 .pattern("PAP")
                 .pattern("PGP")
-                .unlockedBy("has_item", has(CASING))
+                .unlockedBy(HAS_ITEM, has(CASING))
                 .save(consumer);
 
         ShapedRecipeBuilder.shaped(de.srendi.advancedperipherals.common.setup.Items.CHUNK_CONTROLLER.get())
@@ -65,7 +66,7 @@ public class RecipesProvider extends RecipeProvider implements IConditionBuilder
                 .pattern("IRI")
                 .pattern("RAR")
                 .pattern("IRI")
-                .unlockedBy("has_item", has(Items.RESPAWN_ANCHOR))
+                .unlockedBy(HAS_ITEM, has(Items.RESPAWN_ANCHOR))
                 .save(consumer);
 
         ShapedRecipeBuilder.shaped(de.srendi.advancedperipherals.common.setup.Items.COMPUTER_TOOL.get())
@@ -74,7 +75,7 @@ public class RecipesProvider extends RecipeProvider implements IConditionBuilder
                 .pattern("I I")
                 .pattern("IBI")
                 .pattern(" B ")
-                .unlockedBy("has_item", has(Items.BLUE_TERRACOTTA))
+                .unlockedBy(HAS_ITEM, has(Items.BLUE_TERRACOTTA))
                 .save(consumer);
 
         ShapedRecipeBuilder.shaped(Blocks.ENERGY_DETECTOR.get())
@@ -86,7 +87,7 @@ public class RecipesProvider extends RecipeProvider implements IConditionBuilder
                 .pattern("BRB")
                 .pattern("CAC")
                 .pattern("BGB")
-                .unlockedBy("has_item", has(CASING))
+                .unlockedBy(HAS_ITEM, has(CASING))
                 .save(consumer);
 
         ShapedRecipeBuilder.shaped(Blocks.ENVIRONMENT_DETECTOR.get())
@@ -98,7 +99,7 @@ public class RecipesProvider extends RecipeProvider implements IConditionBuilder
                 .pattern("WSW")
                 .pattern("LAL")
                 .pattern("WCW")
-                .unlockedBy("has_item", has(CASING))
+                .unlockedBy(HAS_ITEM, has(CASING))
                 .save(consumer);
 
         ShapedRecipeBuilder.shaped(Blocks.INVENTORY_MANAGER.get())
@@ -108,7 +109,7 @@ public class RecipesProvider extends RecipeProvider implements IConditionBuilder
                 .pattern("ICI")
                 .pattern("CAC")
                 .pattern("ICI")
-                .unlockedBy("has_item", has(CASING))
+                .unlockedBy(HAS_ITEM, has(CASING))
                 .save(consumer);
 
         ShapedRecipeBuilder.shaped(de.srendi.advancedperipherals.common.setup.Items.MEMORY_CARD.get())
@@ -119,7 +120,7 @@ public class RecipesProvider extends RecipeProvider implements IConditionBuilder
                 .pattern("IWI")
                 .pattern("IOI")
                 .pattern(" G ")
-                .unlockedBy("has_item", has(Items.OBSERVER))
+                .unlockedBy(HAS_ITEM, has(Items.OBSERVER))
                 .save(consumer);
 
         ShapedRecipeBuilder.shaped(Blocks.PERIPHERAL_CASING.get())
@@ -129,7 +130,7 @@ public class RecipesProvider extends RecipeProvider implements IConditionBuilder
                 .pattern("IiI")
                 .pattern("iRi")
                 .pattern("IiI")
-                .unlockedBy("has_item", has(Items.REDSTONE_BLOCK))
+                .unlockedBy(HAS_ITEM, has(Items.REDSTONE_BLOCK))
                 .save(consumer);
 
         ShapedRecipeBuilder.shaped(Blocks.PLAYER_DETECTOR.get())
@@ -139,7 +140,7 @@ public class RecipesProvider extends RecipeProvider implements IConditionBuilder
                 .pattern("SSS")
                 .pattern("SAS")
                 .pattern("SRS")
-                .unlockedBy("has_item", has(CASING))
+                .unlockedBy(HAS_ITEM, has(CASING))
                 .save(consumer);
 
         ShapedRecipeBuilder.shaped(Blocks.REDSTONE_INTEGRATOR.get())
@@ -149,7 +150,7 @@ public class RecipesProvider extends RecipeProvider implements IConditionBuilder
                 .pattern("RCR")
                 .pattern("CAC")
                 .pattern("RCR")
-                .unlockedBy("has_item", has(CASING))
+                .unlockedBy(HAS_ITEM, has(CASING))
                 .save(consumer);
 
         ShapedRecipeBuilder.shaped(Blocks.BLOCK_READER.get())
@@ -161,7 +162,7 @@ public class RecipesProvider extends RecipeProvider implements IConditionBuilder
                 .pattern("IRI")
                 .pattern("MAO")
                 .pattern("IRI")
-                .unlockedBy("has_item", has(CASING))
+                .unlockedBy(HAS_ITEM, has(CASING))
                 .save(consumer);
 
         ShapedRecipeBuilder.shaped(Blocks.GEO_SCANNER.get())
@@ -173,7 +174,7 @@ public class RecipesProvider extends RecipeProvider implements IConditionBuilder
                 .pattern("DMD")
                 .pattern("DCD")
                 .pattern("ROR")
-                .unlockedBy("has_item", has(CASING))
+                .unlockedBy(HAS_ITEM, has(CASING))
                 .save(consumer);
 
         ShapedRecipeBuilder.shaped(Blocks.NBT_STORAGE.get())
@@ -184,7 +185,7 @@ public class RecipesProvider extends RecipeProvider implements IConditionBuilder
                 .pattern("ICI")
                 .pattern("CAC")
                 .pattern("RCR")
-                .unlockedBy("has_item", has(CASING))
+                .unlockedBy(HAS_ITEM, has(CASING))
                 .save(consumer);
 
         ShapedRecipeBuilder.shaped(de.srendi.advancedperipherals.common.setup.Items.WEAK_AUTOMATA_CORE.get())
@@ -196,25 +197,25 @@ public class RecipesProvider extends RecipeProvider implements IConditionBuilder
                 .pattern("RAR")
                 .pattern("DSD")
                 .pattern("RLR")
-                .unlockedBy("has_item", has(CASING))
+                .unlockedBy(HAS_ITEM, has(CASING))
                 .save(consumer);
 
         ShapelessRecipeBuilder.shapeless(de.srendi.advancedperipherals.common.setup.Items.OVERPOWERED_WEAK_AUTOMATA_CORE.get())
                 .requires(de.srendi.advancedperipherals.common.setup.Items.WEAK_AUTOMATA_CORE.get())
                 .requires(Items.NETHER_STAR)
-                .unlockedBy("has_item", has(de.srendi.advancedperipherals.common.setup.Items.WEAK_AUTOMATA_CORE.get()))
+                .unlockedBy(HAS_ITEM, has(de.srendi.advancedperipherals.common.setup.Items.WEAK_AUTOMATA_CORE.get()))
                 .save(consumer);
 
         ShapelessRecipeBuilder.shapeless(de.srendi.advancedperipherals.common.setup.Items.OVERPOWERED_END_AUTOMATA_CORE.get())
                 .requires(de.srendi.advancedperipherals.common.setup.Items.END_AUTOMATA_CORE.get())
                 .requires(Items.NETHER_STAR)
-                .unlockedBy("has_item", has(de.srendi.advancedperipherals.common.setup.Items.END_AUTOMATA_CORE.get()))
+                .unlockedBy(HAS_ITEM, has(de.srendi.advancedperipherals.common.setup.Items.END_AUTOMATA_CORE.get()))
                 .save(consumer);
 
         ShapelessRecipeBuilder.shapeless(de.srendi.advancedperipherals.common.setup.Items.OVERPOWERED_HUSBANDRY_AUTOMATA_CORE.get())
                 .requires(de.srendi.advancedperipherals.common.setup.Items.HUSBANDRY_AUTOMATA_CORE.get())
                 .requires(Items.NETHER_STAR)
-                .unlockedBy("has_item", has(de.srendi.advancedperipherals.common.setup.Items.HUSBANDRY_AUTOMATA_CORE.get()))
+                .unlockedBy(HAS_ITEM, has(de.srendi.advancedperipherals.common.setup.Items.HUSBANDRY_AUTOMATA_CORE.get()))
                 .save(consumer);
     }
 

@@ -167,7 +167,7 @@ public class RefinedStorage {
 
     public static Map<String, Object> getObjectFromFluid(@Nullable FluidStack fluidStack, INetwork network) {
         if (fluidStack == null)
-            Collections.emptyMap();
+            return Collections.emptyMap();
 
         Map<String, Object> map = new HashMap<>();
         Supplier<Stream<TagKey<Fluid>>> tags = () -> fluidStack.getFluid().builtInRegistryHolder().tags();
