@@ -5,6 +5,7 @@ import de.srendi.advancedperipherals.common.util.DataStorageUtil;
 import de.srendi.advancedperipherals.common.util.fakeplayer.APFakePlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.FrontAndTop;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
@@ -51,6 +52,16 @@ public class PocketPeripheralOwner extends BasePeripheralOwner {
         Entity owner = pocket.getEntity();
         if (owner == null) return Direction.NORTH;
         return owner.getDirection();
+    }
+
+
+    /**
+     * Not used for pockets
+     */
+    @NotNull
+    @Override
+    public FrontAndTop getOrientation() {
+        return FrontAndTop.NORTH_UP;
     }
 
     @Nullable

@@ -117,10 +117,10 @@ public class InventoryUtil {
     public static @NotNull IItemHandler getHandlerFromDirection(@NotNull String direction, @NotNull IPeripheralOwner owner) throws LuaException {
         Level level = owner.getLevel();
         Objects.requireNonNull(level);
-        Direction relativeDirection = LuaConverter.getDirection(owner.getFacing(), direction);
+        Direction relativeDirection = CoordUtil.getDirection(owner.getOrientation(), direction);
         BlockEntity target = level.getBlockEntity(owner.getPos().relative(relativeDirection));
         if (target == null)
-            throw new LuaException("Target '" + direction + "' is empty or defenetly not inventory");
+            throw new LuaException("Target '" + direction + "' is empty or not an inventory");
 
         IItemHandler handler = extractHandler(target);
         if (handler == null)

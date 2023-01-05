@@ -9,6 +9,7 @@ import de.srendi.advancedperipherals.common.util.fakeplayer.APFakePlayer;
 import de.srendi.advancedperipherals.common.util.fakeplayer.FakePlayerProviderTurtle;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.FrontAndTop;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -51,6 +52,15 @@ public class TurtlePeripheralOwner extends BasePeripheralOwner {
     @Override
     public Direction getFacing() {
         return turtle.getDirection();
+    }
+
+    /**
+     * Not used for turtles
+     */
+    @NotNull
+    @Override
+    public FrontAndTop getOrientation() {
+        return FrontAndTop.NORTH_UP;
     }
 
     @Nullable

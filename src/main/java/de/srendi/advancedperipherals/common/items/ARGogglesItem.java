@@ -71,7 +71,7 @@ public class ARGogglesItem extends ArmorItem {
 
     @Override
     public ICapabilityProvider initCapabilities(ItemStack stack, CompoundTag nbt) {
-        if (!AdvancedPeripherals.addons.curiosLoaded)
+        if (!AdvancedPeripherals.ADDONS.curiosLoaded)
             return null;
 
         return CuriosHelper.createARGogglesProvider(stack);

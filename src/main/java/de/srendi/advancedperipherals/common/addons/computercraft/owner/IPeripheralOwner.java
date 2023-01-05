@@ -4,6 +4,7 @@ import de.srendi.advancedperipherals.common.util.fakeplayer.APFakePlayer;
 import de.srendi.advancedperipherals.lib.peripherals.IPeripheralOperation;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.FrontAndTop;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -23,6 +24,8 @@ public interface IPeripheralOwner {
     @NotNull BlockPos getPos();
 
     @NotNull Direction getFacing();
+
+    @NotNull FrontAndTop getOrientation();
 
     @Nullable Player getOwner();
 

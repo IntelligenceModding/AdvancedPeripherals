@@ -4,7 +4,6 @@ import de.srendi.advancedperipherals.lib.peripherals.IPeripheralTileEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.tags.TagKey;
 import net.minecraft.world.Container;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
@@ -14,8 +13,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.BaseEntityBlock;
-import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -28,7 +26,7 @@ import net.minecraftforge.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class BaseBlockEntityBlock extends BaseEntityBlock implements IHarvesterBlock {
+public abstract class BaseBlockEntityBlock extends BaseBlock implements EntityBlock {
 
     private final boolean belongToTickingEntity;
 
@@ -37,7 +35,7 @@ public abstract class BaseBlockEntityBlock extends BaseEntityBlock implements IH
     }
 
     public BaseBlockEntityBlock(boolean belongToTickingEntity, Properties properties) {
-        super(properties);
+        super(properties, BlockTags.NEEDS_IRON_TOOL);
         this.belongToTickingEntity = belongToTickingEntity;
     }
 
@@ -85,10 +83,5 @@ public abstract class BaseBlockEntityBlock extends BaseEntityBlock implements IH
 
     public @NotNull RenderShape getRenderShape(@NotNull BlockState state) {
         return RenderShape.MODEL;
-    }
-
-    @Override
-    public TagKey<Block> getHarvestTag() {
-        return BlockTags.NEEDS_IRON_TOOL;
     }
 }
