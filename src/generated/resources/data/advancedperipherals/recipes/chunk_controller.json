@@ -10,10 +10,10 @@
       "tag": "forge:ingots/iron"
     },
     "R": {
-      "tag": "forge:dusts/redstone"
+      "item": "minecraft:ender_eye"
     },
     "A": {
-      "item": "minecraft:respawn_anchor"
+      "item": "minecraft:netherite_ingot"
     }
   },
   "result": {
