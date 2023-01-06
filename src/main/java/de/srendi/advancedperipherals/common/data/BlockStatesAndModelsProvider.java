@@ -33,7 +33,7 @@ public class BlockStatesAndModelsProvider extends BlockStateProvider {
         peripheralBlock(Blocks.AR_CONTROLLER.get(), "front");
         peripheralBlock(Blocks.INVENTORY_MANAGER.get(), "front");
         peripheralBlock(Blocks.REDSTONE_INTEGRATOR.get(), "front");
-        peripheralBlock(Blocks.BLOCK_READER.get(), generateModel(Blocks.BLOCK_READER.get(), false,"north", "south", "east", "west", "up", "down"));
+        peripheralBlock(Blocks.BLOCK_READER.get(), generateModel(Blocks.BLOCK_READER.get(), false, "north", "south", "east", "west", "up", "down"));
         peripheralBlock(Blocks.GEO_SCANNER.get(), "front");
         peripheralBlock(Blocks.NBT_STORAGE.get(), "front");
     }
@@ -43,11 +43,11 @@ public class BlockStatesAndModelsProvider extends BlockStateProvider {
             ConfiguredModel.Builder<?> builder = ConfiguredModel.builder().modelFile(file);
             FrontAndTop orientation = state.getValue(BaseBlock.ORIENTATION);
             int x = 0, y;
-            if(orientation.top().getAxis() == Direction.Axis.Y) {
-                y = (int) (orientation.front().toYRot()+180) % 360;
+            if (orientation.top().getAxis() == Direction.Axis.Y) {
+                y = (int) (orientation.front().toYRot() + 180) % 360;
             } else {
                 x = orientation.front() == Direction.DOWN ? 90 : 270;
-                y = (int) (orientation.top().toYRot()+180) % 360;
+                y = (int) (orientation.top().toYRot() + 180) % 360;
             }
             builder.rotationX(x);
             builder.rotationY(y);
@@ -61,19 +61,19 @@ public class BlockStatesAndModelsProvider extends BlockStateProvider {
 
     private BlockModelBuilder generateModel(Block block, boolean hasNormalSide, String... sides) {
         BlockModelBuilder builder;
-        if(hasNormalSide) {
+        if (hasNormalSide) {
             builder = generateModel(block);
         } else {
             builder = models().withExistingParent(name(block), mcLoc("block/cube_all"));
         }
-        for(String sideTexture : sides) {
+        for (String sideTexture : sides) {
             String side = sideTexture;
-            if(side.equals("side")) {
-                for(Direction direction : Direction.Plane.HORIZONTAL)
+            if (side.equals("side")) {
+                for (Direction direction : Direction.Plane.HORIZONTAL)
                     builder.texture(direction.toString(), blockTexture(block, sideTexture));
             }
-            if(side.equals("front")) side = "north";
-            if(side.equals("back")) side = "south";
+            if (side.equals("front")) side = "north";
+            if (side.equals("back")) side = "south";
             builder.texture(side, blockTexture(block, sideTexture));
         }
         return builder;
