@@ -8,10 +8,10 @@ import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
 
 public class EnergyDetectorPeripheral extends BasePeripheral<BlockEntityPeripheralOwner<EnergyDetectorEntity>> {
 
-    public static final String TYPE = "energyDetector";
+    public static final String PERIPHERAL_TYPE = "energyDetector";
 
     public EnergyDetectorPeripheral(EnergyDetectorEntity tileEntity) {
-        super(TYPE, new BlockEntityPeripheralOwner<>(tileEntity));
+        super(PERIPHERAL_TYPE, new BlockEntityPeripheralOwner<>(tileEntity));
     }
 
     @Override

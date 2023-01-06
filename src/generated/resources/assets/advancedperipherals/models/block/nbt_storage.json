@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/cube_all",
+  "textures": {
+    "all": "advancedperipherals:block/nbt_storage",
+    "north": "advancedperipherals:block/nbt_storage_front"
+  }
+}

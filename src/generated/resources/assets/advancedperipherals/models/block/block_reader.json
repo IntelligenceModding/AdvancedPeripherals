@@ -1,0 +1,11 @@
+{
+  "parent": "minecraft:block/cube_all",
+  "textures": {
+    "north": "advancedperipherals:block/block_reader_north",
+    "south": "advancedperipherals:block/block_reader_south",
+    "east": "advancedperipherals:block/block_reader_east",
+    "west": "advancedperipherals:block/block_reader_west",
+    "up": "advancedperipherals:block/block_reader_up",
+    "down": "advancedperipherals:block/block_reader_down"
+  }
+}

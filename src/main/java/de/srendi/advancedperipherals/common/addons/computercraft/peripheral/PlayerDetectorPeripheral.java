@@ -26,18 +26,18 @@ import java.util.Map;
 
 public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
 
-    public static final String TYPE = "playerDetector";
+    public static final String PERIPHERAL_TYPE = "playerDetector";
 
     public PlayerDetectorPeripheral(PeripheralBlockEntity<?> tileEntity) {
-        super(TYPE, new BlockEntityPeripheralOwner<>(tileEntity));
+        super(PERIPHERAL_TYPE, new BlockEntityPeripheralOwner<>(tileEntity));
     }
 
     public PlayerDetectorPeripheral(ITurtleAccess access, TurtleSide side) {
-        super(TYPE, new TurtlePeripheralOwner(access, side));
+        super(PERIPHERAL_TYPE, new TurtlePeripheralOwner(access, side));
     }
 
     public PlayerDetectorPeripheral(IPocketAccess pocket) {
-        super(TYPE, new PocketPeripheralOwner(pocket));
+        super(PERIPHERAL_TYPE, new PocketPeripheralOwner(pocket));
     }
 
     @Override

@@ -31,6 +31,7 @@ public class DataGenerators {
         generator.addProvider(event.includeServer(), new TurtleUpgradesProvider(generator.getPackOutput()));
         generator.addProvider(event.includeServer(), new PocketUpgradesProvider(generator.getPackOutput()));
         generator.addProvider(event.includeServer(), new PoiTypeProvider(generator.getPackOutput(), completablefuture, existingFileHelper));
+        generator.addProvider(event.includeServer(), new BlockStatesAndModelsProvider(generator.getPackOutput(), existingFileHelper));
 
         generator.addProvider(event.includeClient(), new EnUsLanguageProvider(generator.getPackOutput()));
     }

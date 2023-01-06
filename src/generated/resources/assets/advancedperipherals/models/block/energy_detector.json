@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/cube_all",
+  "textures": {
+    "all": "advancedperipherals:block/energy_detector",
+    "north": "advancedperipherals:block/energy_detector_front",
+    "south": "advancedperipherals:block/energy_detector_back"
+  }
+}
