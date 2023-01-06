@@ -1,19 +1,9 @@
 {
   "variants": {
-    "orientation=north_up": {
-      "model": "advancedperipherals:block/block_reader"
-    },
-    "orientation=south_up": {
+    "orientation=down_east": {
       "model": "advancedperipherals:block/block_reader",
-      "y": 180
-    },
-    "orientation=east_up": {
-      "model": "advancedperipherals:block/block_reader",
+      "x": 90,
       "y": 90
-    },
-    "orientation=west_up": {
-      "model": "advancedperipherals:block/block_reader",
-      "y": 270
     },
     "orientation=down_north": {
       "model": "advancedperipherals:block/block_reader",
@@ -24,15 +14,15 @@
       "x": 90,
       "y": 180
     },
-    "orientation=down_east": {
-      "model": "advancedperipherals:block/block_reader",
-      "x": 90,
-      "y": 90
-    },
     "orientation=down_west": {
       "model": "advancedperipherals:block/block_reader",
       "x": 90,
       "y": 270
+    },
+    "orientation=up_east": {
+      "model": "advancedperipherals:block/block_reader",
+      "x": 270,
+      "y": 90
     },
     "orientation=up_north": {
       "model": "advancedperipherals:block/block_reader",
@@ -43,15 +33,25 @@
       "x": 270,
       "y": 180
     },
-    "orientation=up_east": {
-      "model": "advancedperipherals:block/block_reader",
-      "x": 270,
-      "y": 90
-    },
     "orientation=up_west": {
       "model": "advancedperipherals:block/block_reader",
       "x": 270,
       "y": 270
+    },
+    "orientation=west_up": {
+      "model": "advancedperipherals:block/block_reader",
+      "y": 270
+    },
+    "orientation=east_up": {
+      "model": "advancedperipherals:block/block_reader",
+      "y": 90
+    },
+    "orientation=north_up": {
+      "model": "advancedperipherals:block/block_reader"
+    },
+    "orientation=south_up": {
+      "model": "advancedperipherals:block/block_reader",
+      "y": 180
     }
   }
 }

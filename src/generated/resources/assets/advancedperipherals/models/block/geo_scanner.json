@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/cube_all",
+  "textures": {
+    "all": "advancedperipherals:block/geo_scanner",
+    "north": "advancedperipherals:block/geo_scanner_front"
+  }
+}

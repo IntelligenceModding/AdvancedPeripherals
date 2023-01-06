@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/cube_all",
+  "textures": {
+    "all": "advancedperipherals:block/me_bridge",
+    "north": "advancedperipherals:block/me_bridge_front"
+  }
+}

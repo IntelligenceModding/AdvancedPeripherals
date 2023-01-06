@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/cube_all",
+  "textures": {
+    "all": "advancedperipherals:block/environment_detector",
+    "north": "advancedperipherals:block/environment_detector_front"
+  }
+}
