@@ -6,6 +6,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+## [1.18.2-0.7.22r] - 2023-01-08
+### Changed
+- Updated translations
+- Changed chunk controller recipe
+
+### Fixed
+- [#380] Removed ID from the computer in the village structures
+- [#390] Change the way we orient blocks. Fixes some issues with direction related functions. Some blocks may need to be replaced
+- [#394] Fixed `getPattern` and `getItem` - RS Bridge
+- [#391] Return nil if the target block of the block reader isn't a block entity
+
 ## [1.18.2-0.7.21r] - 2022-12-18
 
 ### Fixed
