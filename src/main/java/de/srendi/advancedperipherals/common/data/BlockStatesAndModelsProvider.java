@@ -8,11 +8,7 @@ import net.minecraft.core.FrontAndTop;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
-import net.minecraftforge.client.model.generators.BlockModelBuilder;
-import net.minecraftforge.client.model.generators.BlockStateProvider;
-import net.minecraftforge.client.model.generators.ConfiguredModel;
-import net.minecraftforge.client.model.generators.ModelFile;
-import net.minecraftforge.client.model.generators.ModelProvider;
+import net.minecraftforge.client.model.generators.*;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.registries.ForgeRegistries;
 
@@ -36,6 +32,9 @@ public class BlockStatesAndModelsProvider extends BlockStateProvider {
         peripheralBlock(Blocks.REDSTONE_INTEGRATOR.get(), "front");
         peripheralBlock(Blocks.BLOCK_READER.get(), generateModel(Blocks.BLOCK_READER.get(), false, "north", "south", "east", "west", "up", "down"));
         peripheralBlock(Blocks.GEO_SCANNER.get(), "front");
+        peripheralBlock(Blocks.COLONY_INTEGRATOR.get(), generateModel(Blocks.COLONY_INTEGRATOR.get())
+                .texture("up", blockTexture(net.minecraft.world.level.block.Blocks.OAK_LOG, "top"))
+                .texture("down", blockTexture(net.minecraft.world.level.block.Blocks.OAK_LOG, "top")));
         peripheralBlock(Blocks.NBT_STORAGE.get(), "front");
     }
 
