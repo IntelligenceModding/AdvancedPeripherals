@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+### Fixed
+- [#400] Fixed UI of the inventory manager
+- [#399] Fixed translations
+
 ## [1.18.2-0.7.22r] - 2023-01-08
 ### Changed
 - Updated translations
