@@ -152,13 +152,13 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
         ServerPlayer existingPlayer = null;
         for (ServerPlayer player : getPlayers()) {
             if (player.getName().getString().equals(username)) {
-                if (CoordUtil.isInRange(getPos(), getLevel(), player, APConfig.PERIPHERALS_CONFIG.playerDetMaxRange.get())) {
+                if (CoordUtil.isInRange(getPos(), getLevel(), player, APConfig.PERIPHERALS_CONFIG.playerDetMaxRange.get()))
                     existingPlayer = player;
-                    break;
-                }
+                break;
             }
         }
-        if (existingPlayer == null) return null;
+        if (existingPlayer == null)
+            return null;
 
         Map<String, Object> info = new HashMap<>();
         info.put("x", Math.floor(existingPlayer.getX()));
