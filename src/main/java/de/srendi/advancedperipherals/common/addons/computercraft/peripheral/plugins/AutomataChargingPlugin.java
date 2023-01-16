@@ -10,7 +10,7 @@ import de.srendi.advancedperipherals.common.addons.computercraft.owner.TurtlePer
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.lib.peripherals.AutomataCorePeripheral;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.energy.CapabilityEnergy;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 
 import javax.annotation.Nonnull;
 import java.util.Objects;
@@ -31,7 +31,7 @@ public class AutomataChargingPlugin extends AutomataCorePlugin {
 
         ItemStack stack = owner.getToolInMainHand();
         int fuel = arguments.optInt(0, -1);
-        return stack.getCapability(CapabilityEnergy.ENERGY).map(storage -> {
+        return stack.getCapability(ForgeCapabilities.ENERGY).map(storage -> {
             int availableFuelSpace = fuelAbility.getFuelMaxCount() - fuelAbility.getFuelCount();
             int requestedRF;
             if (fuel != -1) {

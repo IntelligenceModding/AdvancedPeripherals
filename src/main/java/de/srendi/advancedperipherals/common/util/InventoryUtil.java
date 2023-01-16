@@ -11,9 +11,9 @@ import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.items.wrapper.InvWrapper;
@@ -42,7 +42,7 @@ public class InventoryUtil {
         }
 
         if (object instanceof ICapabilityProvider capabilityProvider) {
-            LazyOptional<IItemHandler> cap = capabilityProvider.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY);
+            LazyOptional<IItemHandler> cap = capabilityProvider.getCapability(ForgeCapabilities.ITEM_HANDLER);
             if (cap.isPresent())
                 return cap.orElseThrow(NullPointerException::new);
         }

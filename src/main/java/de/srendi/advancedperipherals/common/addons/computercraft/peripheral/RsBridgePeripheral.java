@@ -22,8 +22,8 @@ import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -152,7 +152,7 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         Direction direction = validateSide(arguments.getString(1));
 
         BlockEntity targetEntity = owner.tileEntity.getLevel().getBlockEntity(owner.tileEntity.getBlockPos().relative(direction));
-        IItemHandler inventory = targetEntity != null ? targetEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, direction.getOpposite()).resolve().orElse(null) : null;
+        IItemHandler inventory = targetEntity != null ? targetEntity.getCapability(ForgeCapabilities.ITEM_HANDLER, direction.getOpposite()).resolve().orElse(null) : null;
         if (inventory == null)
             throw new LuaException("No valid inventory at " + arguments.getString(1));
 
@@ -183,7 +183,7 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         Direction direction = validateSide(arguments.getString(1));
 
         BlockEntity targetEntity = owner.tileEntity.getLevel().getBlockEntity(owner.tileEntity.getBlockPos().relative(direction));
-        IItemHandler inventory = targetEntity != null ? targetEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, direction.getOpposite()).resolve().orElse(null) : null;
+        IItemHandler inventory = targetEntity != null ? targetEntity.getCapability(ForgeCapabilities.ITEM_HANDLER, direction.getOpposite()).resolve().orElse(null) : null;
         if (inventory == null)
             throw new LuaException("No valid inventory at " + arguments.getString(1));
 
@@ -218,7 +218,7 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
             throw new LuaException("No valid inventory block for " + arguments.getString(1));
 
         BlockEntity targetEntity = (BlockEntity) chest.getTarget();
-        IItemHandler inventory = targetEntity != null ? targetEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).resolve().orElse(null) : null;
+        IItemHandler inventory = targetEntity != null ? targetEntity.getCapability(ForgeCapabilities.ITEM_HANDLER).resolve().orElse(null) : null;
         if (inventory == null)
             throw new LuaException("No valid inventory for " + arguments.getString(1));
 
@@ -253,7 +253,7 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
             throw new LuaException("No inventory block for " + arguments.getString(1));
 
         BlockEntity targetEntity = (BlockEntity) chest.getTarget();
-        IItemHandler inventory = targetEntity != null ? targetEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).resolve().orElse(null) : null;
+        IItemHandler inventory = targetEntity != null ? targetEntity.getCapability(ForgeCapabilities.ITEM_HANDLER).resolve().orElse(null) : null;
         if (inventory == null)
             throw new LuaException("No valid inventory for " + arguments.getString(1));
 

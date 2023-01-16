@@ -33,7 +33,7 @@ import java.util.stream.Stream;
 public class RecipesProvider extends RecipeProvider implements IConditionBuilder {
 
     private static final Block CASING = Blocks.PERIPHERAL_CASING.get();
-    private final String HAS_ITEM = "has_item";
+    private static final String HAS_ITEM = "has_item";
 
     public RecipesProvider(PackOutput output) {
         super(output);

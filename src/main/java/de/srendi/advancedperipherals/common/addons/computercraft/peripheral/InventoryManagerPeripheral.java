@@ -215,8 +215,7 @@ public class InventoryManagerPeripheral extends BasePeripheral<BlockEntityPeriph
                     if (!rest.isEmpty()) break;
                 }
             }
-        }
-        if (invSlot != -1) {
+        } else {
             if (!stack.isEmpty() && inventoryFrom.getItem(slot.get()).sameItem(stack)) {
                 if (inventoryFrom.getItem(slot.get()).getCount() >= amount) {
                     rest = insertItem(inventoryTo, inventoryFrom.removeItem(slot.get(), amount));
