@@ -10,7 +10,11 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 public class BasinIntegration extends BlockEntityIntegrationPeripheral<BasinTileEntity> {
 
@@ -54,13 +58,13 @@ public class BasinIntegration extends BlockEntityIntegrationPeripheral<BasinTile
     }
 
     @LuaFunction(mainThread = true)
-    public final Object[] getInventory() {
+    public final List<Object> getInventory() {
         Optional<IItemHandler> handlerOptional = blockEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).resolve();
         if (handlerOptional.isEmpty()) return null;
         IItemHandler handler = handlerOptional.get();
-        Object[] items = new Object[handler.getSlots()];
+        List<Object> items = new ArrayList<>();
         for (int slot = 0; slot < handler.getSlots(); slot++) {
-            items[slot] = LuaConverter.stackToObject(handler.getStackInSlot(slot));
+            items.add(LuaConverter.stackToObject(handler.getStackInSlot(slot)));
         }
         return items;
     }
