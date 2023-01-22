@@ -59,13 +59,13 @@ public class BasinIntegration extends BlockEntityIntegrationPeripheral<BasinTile
     }
 
     @LuaFunction(mainThread = true)
-    public final Object[] getInventory() {
+    public final List<Object> getInventory() {
         Optional<IItemHandler> handlerOptional = blockEntity.getCapability(ForgeCapabilities.ITEM_HANDLER).resolve();
         if (handlerOptional.isEmpty()) return null;
         IItemHandler handler = handlerOptional.get();
-        Object[] items = new Object[handler.getSlots()];
+        List<Object> items = new ArrayList<>();
         for (int slot = 0; slot < handler.getSlots(); slot++) {
-            items[slot] = LuaConverter.stackToObject(handler.getStackInSlot(slot));
+            items.add(LuaConverter.stackToObject(handler.getStackInSlot(slot)));
         }
         return items;
     }

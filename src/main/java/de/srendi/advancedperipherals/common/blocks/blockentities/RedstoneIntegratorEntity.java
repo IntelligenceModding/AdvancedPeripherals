@@ -4,6 +4,7 @@ import dan200.computercraft.shared.util.RedstoneUtil;
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.RedstoneIntegratorPeripheral;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralBlockEntity;
 import de.srendi.advancedperipherals.common.setup.BlockEntityTypes;
+import de.srendi.advancedperipherals.common.util.ServerWorker;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -38,14 +39,26 @@ public class RedstoneIntegratorEntity extends PeripheralBlockEntity<RedstoneInte
         return neighbourState.getBlock() == Blocks.REDSTONE_WIRE ? Math.max(power, neighbourState.getValue(RedStoneWireBlock.POWER)) : power;
     }
 
-    public void setRedstoneOutput(Direction direction, int power) {
+    private void setRedstoneOutput(Direction direction, int power) {
         int old = this.power[direction.get3DDataValue()];
         this.power[direction.get3DDataValue()] = power;
         if (old != power) {
-            if (level != null) RedstoneUtil.propagateRedstoneOutput(level, getBlockPos(), direction);
+            if (level != null)
+                RedstoneUtil.propagateRedstoneOutput(level, getBlockPos(), direction);
 
             this.setChanged();
         }
+    }
+
+    /**
+     * Used to run redstone integrator functions not on the main thread to prevent long execution times
+     * See <a href="https://github.com/SirEndii/AdvancedPeripherals/issues/384">#384</a>
+     *
+     * @param direction Cardinal direction
+     * @param power The redstone power from 0 to 15
+     */
+    public void setOutput(Direction direction, int power) {
+        ServerWorker.add(() -> setRedstoneOutput(direction, power));
     }
 
     @Override

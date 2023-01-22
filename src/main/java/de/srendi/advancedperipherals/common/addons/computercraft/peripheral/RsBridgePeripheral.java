@@ -263,16 +263,16 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
         for (int i = 0; i < inventory.getSlots(); i++) {
             if (inventory.getStackInSlot(i).sameItem(stack)) {
-                if (inventory.getStackInSlot(i).getCount() >= amount) {
-                    ItemStack insertedStack = getNetwork().insertItem(stack, amount, Action.PERFORM);
-                    inventory.extractItem(i, amount - insertedStack.getCount(), false);
-                    transferableAmount += amount - insertedStack.getCount();
+                if (inventory.getStackInSlot(i).getCount() >= (amount - transferableAmount)) {
+                    ItemStack extracted = inventory.extractItem(i, amount, false);
+                    getNetwork().insertItem(stack, extracted.getCount(), Action.PERFORM);
+                    transferableAmount += extracted.getCount();
                     break;
                 } else {
-                    amount = count - inventory.getStackInSlot(i).getCount();
-                    ItemStack insertedStack = getNetwork().insertItem(stack, inventory.getStackInSlot(i).getCount(), Action.PERFORM);
-                    inventory.extractItem(i, inventory.getStackInSlot(i).getCount() - insertedStack.getCount(), false);
-                    transferableAmount += inventory.getStackInSlot(i).getCount() - insertedStack.getCount();
+                    ItemStack extracted = inventory.extractItem(i, amount, false);
+                    amount -= extracted.getCount();
+                    getNetwork().insertItem(stack, extracted.getCount(), Action.PERFORM);
+                    transferableAmount += extracted.getCount();
                 }
             }
         }
