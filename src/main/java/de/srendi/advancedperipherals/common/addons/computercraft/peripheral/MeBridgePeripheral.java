@@ -32,6 +32,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Objects;
 
 public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwner<MeBridgeEntity>> {
 
@@ -138,7 +139,12 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         MEStorage monitor = AppEngApi.getMonitor(node);
         ItemStack itemToCraft = ItemUtil.getItemStack(arguments.getTable(0), monitor);
         if (itemToCraft.isEmpty()) return MethodResult.of(false, "Item " + itemToCraft + " does not exists");
-        CraftJob job = new CraftJob(owner.getLevel(), computer, node, itemToCraft, tile, tile);
+
+        String cpuName = arguments.optString(1, "");
+        ICraftingCPU target = getCraftingCPU(cpuName);
+        if(!cpuName.isEmpty() && target == null) return MethodResult.of(false, "CPU " + cpuName + " does not exists");
+
+        CraftJob job = new CraftJob(owner.getLevel(), computer, node, itemToCraft, tile, tile, target);
         tile.addJob(job);
         ServerWorker.add(job::startCrafting);
         return MethodResult.of(true);
@@ -178,7 +184,10 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         ICraftingService grid = node.getGrid().getService(ICraftingService.class);
 
         ItemStack itemStack = ItemUtil.getItemStack(arguments.getTable(0), monitor);
-        return AppEngApi.isItemCrafting(monitor, grid, itemStack);
+        String cpuName = arguments.optString(1, "");
+        ICraftingCPU craftingCPU = getCraftingCPU(cpuName);
+
+        return AppEngApi.isItemCrafting(monitor, grid, itemStack, craftingCPU);
     }
 
     @LuaFunction(mainThread = true)
@@ -266,5 +275,24 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
             map.put(i++, o);
         }
         return new Object[]{map};
+    }
+
+    public final ICraftingCPU getCraftingCPU(String cpuName)  {
+        if(cpuName.equals("")) return null;
+        ICraftingService grid = node.getGrid().getService(ICraftingService.class);
+        if (grid == null) return null;
+
+        Iterator<ICraftingCPU> iterator = grid.getCpus().iterator();
+        if (!iterator.hasNext()) return null;
+
+        while (iterator.hasNext()) {
+            ICraftingCPU cpu = iterator.next();
+
+            if(Objects.requireNonNull(cpu.getName()).getString().equals(cpuName)) {
+                return cpu;
+            }
+        }
+
+        return null;
     }
 }

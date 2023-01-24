@@ -2,10 +2,7 @@ package de.srendi.advancedperipherals.common.addons.appliedenergistics;
 
 import appeng.api.networking.IGrid;
 import appeng.api.networking.IGridNode;
-import appeng.api.networking.crafting.CalculationStrategy;
-import appeng.api.networking.crafting.ICraftingPlan;
-import appeng.api.networking.crafting.ICraftingService;
-import appeng.api.networking.crafting.ICraftingSimulationRequester;
+import appeng.api.networking.crafting.*;
 import appeng.api.networking.security.IActionSource;
 import appeng.api.networking.storage.IStorageService;
 import appeng.api.stacks.AEItemKey;
@@ -32,6 +29,7 @@ public class CraftJob implements ILuaCallback {
     private final IGridNode node;
     private final IActionSource source;
     private final ICraftingSimulationRequester requester;
+    private final ICraftingCPU target;
     private final ItemStack item;
     private final Level world;
     private Future<ICraftingPlan> futureJob;
@@ -40,13 +38,15 @@ public class CraftJob implements ILuaCallback {
     private MethodResult result;
     private LuaException exception;
 
-    public CraftJob(Level world, final IComputerAccess computer, IGridNode node, ItemStack item, IActionSource source, ICraftingSimulationRequester requester) {
+    public CraftJob(Level world, final IComputerAccess computer, IGridNode node, ItemStack item, IActionSource source,
+                    ICraftingSimulationRequester requester, ICraftingCPU target) {
         this.computer = computer;
         this.node = node;
         this.world = world;
         this.source = source;
         this.item = item;
         this.requester = requester;
+        this.target = target;
     }
 
     protected void fireEvent(boolean success, @Nullable String exception) {
@@ -124,7 +124,7 @@ public class CraftJob implements ILuaCallback {
 
         //TODO: Create events or methods like `isCraftingFinished` or `getCraftingJobState`
         ICraftingService crafting = grid.getService(ICraftingService.class);
-        crafting.submitJob(job, null, null, false, this.source);
+        crafting.submitJob(job, null, target, false, this.source);
 
         this.futureJob = null;
     }
