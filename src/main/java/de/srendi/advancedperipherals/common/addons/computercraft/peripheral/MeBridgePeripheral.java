@@ -29,10 +29,7 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwner<MeBridgeEntity>> {
 
@@ -277,7 +274,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         return new Object[]{map};
     }
 
-    public final ICraftingCPU getCraftingCPU(String cpuName)  {
+    public final ICraftingCPU getCraftingCPU(String cpuName) {
         if(cpuName.equals("")) return null;
         ICraftingService grid = node.getGrid().getService(ICraftingService.class);
         if (grid == null) return null;

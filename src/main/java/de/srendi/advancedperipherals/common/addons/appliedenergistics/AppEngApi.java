@@ -199,8 +199,7 @@ public class AppEngApi {
             return false;
 
         // If the passed cpu is null, check all cpus
-        if(craftingCPU == null)
-        {
+        if(craftingCPU == null) {
             // Loop through all crafting cpus and check if the item is being crafted.
             for (ICraftingCPU cpu : grid.getCpus()) {
                 if (cpu.isBusy()) {
@@ -214,9 +213,7 @@ public class AppEngApi {
                         return true;
                 }
             }
-        }
-        else
-        {
+        } else {
             if (craftingCPU.isBusy()) {
                 CraftingJobStatus jobStatus = craftingCPU.getJobStatus();
 
