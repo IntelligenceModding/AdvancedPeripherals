@@ -22,6 +22,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
 import org.apache.logging.log4j.Level;
 
+import javax.annotation.Nullable;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -189,24 +190,38 @@ public class AppEngApi {
         return node.getGrid().getService(IStorageService.class).getInventory();
     }
 
-    public static boolean isItemCrafting(MEStorage monitor, ICraftingService grid, ItemStack itemStack) {
+    public static boolean isItemCrafting(MEStorage monitor, ICraftingService grid, ItemStack itemStack,
+                                         @Nullable ICraftingCPU craftingCPU) {
         Pair<Long, AEItemKey> stack = AppEngApi.findAEStackFromItemStack(monitor, grid, itemStack);
 
         if (stack == null)
             // If the item stack does not exist, it cannot be crafting.
             return false;
 
-        // Loop through all crafting cpus and check if the item is being crafted.
-        for (ICraftingCPU cpu : grid.getCpus()) {
-            if (cpu.isBusy()) {
-                CraftingJobStatus jobStatus = cpu.getJobStatus();
+        // If the passed cpu is null, check all cpus
+        if(craftingCPU == null) {
+            // Loop through all crafting cpus and check if the item is being crafted.
+            for (ICraftingCPU cpu : grid.getCpus()) {
+                if (cpu.isBusy()) {
+                    CraftingJobStatus jobStatus = cpu.getJobStatus();
+
+                    // avoid null pointer exception
+                    if (jobStatus == null)
+                        continue;
+
+                    if (jobStatus.crafting().what().equals(stack.getRight()))
+                        return true;
+                }
+            }
+        } else {
+            if (craftingCPU.isBusy()) {
+                CraftingJobStatus jobStatus = craftingCPU.getJobStatus();
 
                 // avoid null pointer exception
                 if (jobStatus == null)
-                    continue;
+                    return false;
 
-                if (jobStatus.crafting().what().equals(stack.getRight()))
-                    return true;
+                return jobStatus.crafting().what().equals(stack.getRight());
             }
         }
 
