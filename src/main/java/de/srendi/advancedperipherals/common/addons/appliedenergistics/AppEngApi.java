@@ -16,6 +16,7 @@ import appeng.api.storage.IStorageProvider;
 import appeng.api.storage.MEStorage;
 import appeng.blockentity.storage.DriveBlockEntity;
 import appeng.items.storage.BasicStorageCell;
+import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.shared.util.NBTUtil;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
@@ -356,5 +357,52 @@ public class AppEngApi {
 
     public static long getAvailableFluidStorage(IGridNode node) {
         return getTotalFluidStorage(node) - getUsedFluidStorage(node);
+    }
+
+    public static List<Object> listCells(IGridNode node) {
+        List<Object> items = new ArrayList<>();
+
+        Iterator<IGridNode> iterator = node.getGrid().getMachineNodes(DriveBlockEntity.class).iterator();
+
+        if (!iterator.hasNext()) return items;
+        int index = 0;
+        while (iterator.hasNext()) {
+            DriveBlockEntity entity = (DriveBlockEntity) iterator.next().getService(IStorageProvider.class);
+            if(entity == null) continue;
+
+            InternalInventory inventory = entity.getInternalInventory();
+
+            for(int i = 0; i < inventory.size(); i++) {
+                ItemStack stack = inventory.getStackInSlot(i);
+
+                if(stack.getItem() instanceof BasicStorageCell) {
+                    BasicStorageCell cell = (BasicStorageCell) stack.getItem();
+
+                    items.add(index, getObjectFromCell(cell, stack));
+                    index++;
+                }
+            }
+        }
+
+        return items;
+    }
+
+    private static Map<String, Object> getObjectFromCell(BasicStorageCell cell, ItemStack stack) {
+        Map<String, Object> map = new HashMap<>();
+
+        String cellType = "";
+
+        if(cell.getKeyType().toString().equals("ae2:i")) {
+            cellType = "item";
+        }
+        else if(cell.getKeyType().toString().equals("ae2:f")) {
+            cellType = "fluid";
+        }
+
+        map.put("cellType", cellType);
+        map.put("bytesPerType", cell.getBytesPerType(null));
+        map.put("totalBytes", cell.getBytes(null));
+
+        return map;
     }
 }

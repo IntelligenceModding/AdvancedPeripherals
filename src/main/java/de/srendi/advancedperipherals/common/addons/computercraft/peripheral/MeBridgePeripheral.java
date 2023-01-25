@@ -293,6 +293,11 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     }
 
     @LuaFunction(mainThread = true)
+    public final Object[] listCells() {
+        return new Object[]{AppEngApi.listCells(node)};
+    }
+
+    @LuaFunction(mainThread = true)
     public final Object[] getCraftingCPUs() throws LuaException {
         ICraftingService grid = node.getGrid().getService(ICraftingService.class);
         if (grid == null) throw new LuaException("Not connected");
