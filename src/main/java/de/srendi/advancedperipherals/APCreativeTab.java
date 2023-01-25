@@ -50,7 +50,6 @@ public class APCreativeTab {
         });
         builder.icon(() -> new ItemStack(Blocks.CHAT_BOX.get()));
         builder.title(Component.translatable("advancedperipherals.name"));
-        builder.withSearchBar();
     }
 
     private static Collection<ItemStack> pocketUpgrade(ResourceLocation pocketId) {
