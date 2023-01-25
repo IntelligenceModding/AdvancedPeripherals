@@ -44,7 +44,7 @@ public class RedstoneIntegratorPeripheral extends BasePeripheral<BlockEntityPeri
         return owner.tileEntity.power[dir.get3DDataValue()];
     }
 
-    @LuaFunction()
+    @LuaFunction
     public final void setOutput(String direction, boolean power) throws LuaException {
         Direction dir = validateSide(direction);
         owner.tileEntity.setOutput(dir, power ? 15 : 0);

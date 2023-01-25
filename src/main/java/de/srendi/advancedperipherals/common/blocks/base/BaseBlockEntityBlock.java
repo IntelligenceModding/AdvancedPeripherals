@@ -82,12 +82,12 @@ public abstract class BaseBlockEntityBlock extends BaseBlock implements EntityBl
     }
 
 
+    @Deprecated
     @Nullable
     @Override
-    public MenuProvider getMenuProvider(BlockState pState, Level pLevel, BlockPos pPos) {
+    public MenuProvider getMenuProvider(@NotNull BlockState pState, Level pLevel, @NotNull BlockPos pPos) {
         BlockEntity blockentity = pLevel.getBlockEntity(pPos);
-        if (!(blockentity instanceof MenuProvider menuProvider))
-            return null;
+        if (!(blockentity instanceof MenuProvider menuProvider)) return null;
         return menuProvider;
     }
 

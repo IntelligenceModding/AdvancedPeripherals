@@ -64,7 +64,8 @@ public class ItemUtil {
 
         if (table.containsKey("fingerprint")) {
             ItemStack fingerprint = AppEngApi.findMatchingFingerprint(TableHelper.getStringField(table, "fingerprint"), monitor);
-            if (table.containsKey("count")) fingerprint.setCount(TableHelper.getIntField(table, "count"));
+            if (table.containsKey("count") && !fingerprint.isEmpty())
+                fingerprint.setCount(TableHelper.getIntField(table, "count"));
             return fingerprint;
         }
 
