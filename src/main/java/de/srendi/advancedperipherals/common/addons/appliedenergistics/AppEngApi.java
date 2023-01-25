@@ -169,7 +169,7 @@ public class AppEngApi {
                 return itemKey.toStack((int) aeKey.getLongValue());
             }
         }
-        return null;
+        return ItemStack.EMPTY;
     }
 
     public static String getFingerpint(AEItemKey itemStack) {
