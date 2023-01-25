@@ -1,5 +1,6 @@
 package de.srendi.advancedperipherals.common.addons.appliedenergistics;
 
+import appeng.api.inventories.InternalInventory;
 import appeng.api.networking.IGridNode;
 import appeng.api.networking.crafting.CraftingJobStatus;
 import appeng.api.networking.crafting.ICraftingCPU;
@@ -11,7 +12,10 @@ import appeng.api.stacks.AEItemKey;
 import appeng.api.stacks.AEKey;
 import appeng.api.stacks.KeyCounter;
 import appeng.api.storage.AEKeyFilter;
+import appeng.api.storage.IStorageProvider;
 import appeng.api.storage.MEStorage;
+import appeng.blockentity.storage.DriveBlockEntity;
+import appeng.items.storage.BasicStorageCell;
 import dan200.computercraft.shared.util.NBTUtil;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
@@ -26,11 +30,7 @@ import javax.annotation.Nullable;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class AppEngApi {
 
@@ -228,4 +228,133 @@ public class AppEngApi {
         return false;
     }
 
+    public static long getTotalItemStorage(IGridNode node) {
+        long total = 0;
+
+        Iterator<IGridNode> iterator = node.getGrid().getMachineNodes(DriveBlockEntity.class).iterator();
+
+        if (!iterator.hasNext()) return 0;
+        while (iterator.hasNext()) {
+            DriveBlockEntity entity = (DriveBlockEntity) iterator.next().getService(IStorageProvider.class);
+            if(entity == null) continue;
+
+            InternalInventory inventory = entity.getInternalInventory();
+
+            for(int i = 0; i < inventory.size(); i++) {
+                ItemStack stack = inventory.getStackInSlot(i);
+
+                if(stack.getItem() instanceof BasicStorageCell) {
+                    BasicStorageCell cell = (BasicStorageCell) stack.getItem();
+
+                    if(cell.getKeyType().toString().equals("ae2:i")) {
+                        total += cell.getBytes(null);
+                    }
+                }
+            }
+        }
+
+        return total;
+    }
+
+    public static long getTotalFluidStorage(IGridNode node) {
+        long total = 0;
+
+        Iterator<IGridNode> iterator = node.getGrid().getMachineNodes(DriveBlockEntity.class).iterator();
+
+        if (!iterator.hasNext()) return 0;
+        while (iterator.hasNext()) {
+            DriveBlockEntity entity = (DriveBlockEntity) iterator.next().getService(IStorageProvider.class);
+            if(entity == null) continue;
+
+            InternalInventory inventory = entity.getInternalInventory();
+
+            for(int i = 0; i < inventory.size(); i++) {
+                ItemStack stack = inventory.getStackInSlot(i);
+
+                if(stack.getItem() instanceof BasicStorageCell) {
+                    BasicStorageCell cell = (BasicStorageCell) stack.getItem();
+
+                    if(cell.getKeyType().toString().equals("ae2:f")) {
+                        total += cell.getBytes(null);
+                    }
+                }
+            }
+        }
+
+        return total;
+    }
+
+    public static long getUsedItemStorage(IGridNode node) {
+        long used = 0;
+
+        Iterator<IGridNode> iterator = node.getGrid().getMachineNodes(DriveBlockEntity.class).iterator();
+
+        if (!iterator.hasNext()) return 0;
+        while (iterator.hasNext()) {
+            DriveBlockEntity entity = (DriveBlockEntity) iterator.next().getService(IStorageProvider.class);
+            if(entity == null) continue;
+
+            InternalInventory inventory = entity.getInternalInventory();
+
+            for(int i = 0; i < inventory.size(); i++) {
+                ItemStack stack = inventory.getStackInSlot(i);
+
+                if(stack.getItem() instanceof BasicStorageCell) {
+                    BasicStorageCell cell = (BasicStorageCell) stack.getItem();
+                    int bytesPerType = cell.getBytesPerType(null);
+
+                    if(cell.getKeyType().toString().equals("ae2:i")) {
+                        if(stack.getTag() == null) continue;
+                        int numOfType = stack.getTag().getLongArray("amts").length;
+                        long numItemsInCell = stack.getTag().getLong("ic");
+
+                        used += ((int) Math.ceil(((double) numItemsInCell) / 8)) + ((long) bytesPerType * numOfType);
+                    }
+                }
+            }
+        }
+
+        return used;
+    }
+
+    public static long getUsedFluidStorage(IGridNode node) {
+        long used = 0;
+
+        Iterator<IGridNode> iterator = node.getGrid().getMachineNodes(DriveBlockEntity.class).iterator();
+
+        if (!iterator.hasNext()) return 0;
+        while (iterator.hasNext()) {
+            DriveBlockEntity entity = (DriveBlockEntity) iterator.next().getService(IStorageProvider.class);
+            if(entity == null) continue;
+
+            InternalInventory inventory = entity.getInternalInventory();
+
+            for(int i = 0; i < inventory.size(); i++) {
+                ItemStack stack = inventory.getStackInSlot(i);
+
+                if(stack.getItem() instanceof BasicStorageCell) {
+                    BasicStorageCell cell = (BasicStorageCell) stack.getItem();
+                    int bytesPerType = cell.getBytesPerType(null);
+
+                    if(cell.getKeyType().toString().equals("ae2:f")) {
+                        if(stack.getTag() == null) continue;
+                        int numOfType = stack.getTag().getLongArray("amts").length;
+                        long numBucketsInCell = stack.getTag().getLong("ic") / 1000;
+
+                        used += ((int) Math.ceil(((double) numBucketsInCell) / 8)) + ((long) bytesPerType * numOfType);
+                    }
+                }
+            }
+        }
+
+        return used;
+    }
+
+    public static long getAvailableItemStorage(IGridNode node) {
+        return getTotalItemStorage(node) - getUsedItemStorage(node);
+    }
+
+    public static long getAvailableFluidStorage(IGridNode node) {
+        return getTotalFluidStorage(node) - getUsedFluidStorage(node);
+    }
 }

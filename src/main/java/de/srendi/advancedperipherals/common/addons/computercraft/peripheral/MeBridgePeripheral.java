@@ -29,7 +29,10 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Objects;
 
 public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwner<MeBridgeEntity>> {
 
@@ -257,6 +260,36 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     @LuaFunction(mainThread = true)
     public final Object[] listCraftableFluid() {
         return new Object[]{AppEngApi.listFluids(AppEngApi.getMonitor(node), getCraftingService(), 2)};
+    }
+
+    @LuaFunction(mainThread = true)
+    public final long getTotalItemStorage() {
+        return AppEngApi.getTotalItemStorage(node);
+    }
+
+    @LuaFunction(mainThread = true)
+    public final long getTotalFluidStorage() {
+        return AppEngApi.getTotalFluidStorage(node);
+    }
+
+    @LuaFunction(mainThread = true)
+    public final long getUsedItemStorage() {
+        return AppEngApi.getUsedItemStorage(node);
+    }
+
+    @LuaFunction(mainThread = true)
+    public final long getUsedFluidStorage() {
+        return AppEngApi.getUsedFluidStorage(node);
+    }
+
+    @LuaFunction(mainThread = true)
+    public final long getAvailableItemStorage() {
+        return AppEngApi.getAvailableItemStorage(node);
+    }
+
+    @LuaFunction(mainThread = true)
+    public final long getAvailableFluidStorage() {
+        return AppEngApi.getAvailableFluidStorage(node);
     }
 
     @LuaFunction(mainThread = true)
