@@ -16,7 +16,6 @@ import appeng.api.storage.IStorageProvider;
 import appeng.api.storage.MEStorage;
 import appeng.blockentity.storage.DriveBlockEntity;
 import appeng.items.storage.BasicStorageCell;
-import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.shared.util.NBTUtil;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
@@ -394,8 +393,7 @@ public class AppEngApi {
 
         if(cell.getKeyType().toString().equals("ae2:i")) {
             cellType = "item";
-        }
-        else if(cell.getKeyType().toString().equals("ae2:f")) {
+        } else if(cell.getKeyType().toString().equals("ae2:f")) {
             cellType = "fluid";
         }
 
