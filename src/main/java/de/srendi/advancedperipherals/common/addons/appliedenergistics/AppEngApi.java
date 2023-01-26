@@ -21,6 +21,7 @@ import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
 import de.srendi.advancedperipherals.common.util.Pair;
 import de.srendi.advancedperipherals.common.util.StringUtil;
+import io.github.projectet.ae2things.item.DISKDrive;
 import it.unimi.dsi.fastutil.objects.Object2LongMap;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
@@ -243,11 +244,13 @@ public class AppEngApi {
             for(int i = 0; i < inventory.size(); i++) {
                 ItemStack stack = inventory.getStackInSlot(i);
 
-                if(stack.getItem() instanceof BasicStorageCell) {
-                    BasicStorageCell cell = (BasicStorageCell) stack.getItem();
-
+                if(stack.getItem() instanceof BasicStorageCell cell) {
                     if(cell.getKeyType().toString().equals("ae2:i")) {
                         total += cell.getBytes(null);
+                    }
+                } else if(stack.getItem() instanceof DISKDrive disk) {
+                    if(disk.getKeyType().toString().equals("ae2:i")) {
+                        total += disk.getBytes(null);
                     }
                 }
             }
@@ -271,9 +274,7 @@ public class AppEngApi {
             for(int i = 0; i < inventory.size(); i++) {
                 ItemStack stack = inventory.getStackInSlot(i);
 
-                if(stack.getItem() instanceof BasicStorageCell) {
-                    BasicStorageCell cell = (BasicStorageCell) stack.getItem();
-
+                if(stack.getItem() instanceof BasicStorageCell cell) {
                     if(cell.getKeyType().toString().equals("ae2:f")) {
                         total += cell.getBytes(null);
                     }
@@ -299,8 +300,7 @@ public class AppEngApi {
             for(int i = 0; i < inventory.size(); i++) {
                 ItemStack stack = inventory.getStackInSlot(i);
 
-                if(stack.getItem() instanceof BasicStorageCell) {
-                    BasicStorageCell cell = (BasicStorageCell) stack.getItem();
+                if(stack.getItem() instanceof BasicStorageCell cell) {
                     int bytesPerType = cell.getBytesPerType(null);
 
                     if(cell.getKeyType().toString().equals("ae2:i")) {
@@ -309,6 +309,12 @@ public class AppEngApi {
                         long numItemsInCell = stack.getTag().getLong("ic");
 
                         used += ((int) Math.ceil(((double) numItemsInCell) / 8)) + ((long) bytesPerType * numOfType);
+                    }
+                } else if(stack.getItem() instanceof DISKDrive disk) {
+                    if(disk.getKeyType().toString().equals("ae2:i")) {
+                        if(stack.getTag() == null) continue;
+                        long numItemsInCell = stack.getTag().getLong("ic");
+                        used += ((int) Math.ceil(((double) numItemsInCell) / 8));
                     }
                 }
             }
@@ -332,8 +338,7 @@ public class AppEngApi {
             for(int i = 0; i < inventory.size(); i++) {
                 ItemStack stack = inventory.getStackInSlot(i);
 
-                if(stack.getItem() instanceof BasicStorageCell) {
-                    BasicStorageCell cell = (BasicStorageCell) stack.getItem();
+                if(stack.getItem() instanceof BasicStorageCell cell) {
                     int bytesPerType = cell.getBytesPerType(null);
 
                     if(cell.getKeyType().toString().equals("ae2:f")) {
@@ -374,10 +379,11 @@ public class AppEngApi {
             for(int i = 0; i < inventory.size(); i++) {
                 ItemStack stack = inventory.getStackInSlot(i);
 
-                if(stack.getItem() instanceof BasicStorageCell) {
-                    BasicStorageCell cell = (BasicStorageCell) stack.getItem();
-
+                if(stack.getItem() instanceof BasicStorageCell cell) {
                     items.add(index, getObjectFromCell(cell, stack));
+                    index++;
+                } else if(stack.getItem() instanceof DISKDrive disk) {
+                    items.add(index, getObjectFromDisk(disk, stack));
                     index++;
                 }
             }
@@ -388,6 +394,8 @@ public class AppEngApi {
 
     private static Map<String, Object> getObjectFromCell(BasicStorageCell cell, ItemStack stack) {
         Map<String, Object> map = new HashMap<>();
+
+        map.put("item", stack.getItem().toString());
 
         String cellType = "";
 
@@ -400,6 +408,25 @@ public class AppEngApi {
         map.put("cellType", cellType);
         map.put("bytesPerType", cell.getBytesPerType(null));
         map.put("totalBytes", cell.getBytes(null));
+
+        return map;
+    }
+
+    private static Map<String, Object> getObjectFromDisk(DISKDrive drive, ItemStack stack) {
+        Map<String, Object> map = new HashMap<>();
+
+        map.put("item", stack.getItem().toString());
+
+        String cellType = "";
+
+        if(drive.getKeyType().toString().equals("ae2:i")) {
+            cellType = "item";
+        } else if(drive.getKeyType().toString().equals("ae2:f")) {
+            cellType = "fluid";
+        }
+
+        map.put("cellType", cellType);
+        map.put("totalBytes", drive.getBytes(null));
 
         return map;
     }
