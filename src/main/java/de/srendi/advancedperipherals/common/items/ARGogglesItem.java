@@ -3,6 +3,7 @@ package de.srendi.advancedperipherals.common.items;
 import com.mojang.blaze3d.platform.InputConstants;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.client.HudOverlayHandler;
+import de.srendi.advancedperipherals.common.addons.APAddons;
 import de.srendi.advancedperipherals.common.addons.curios.CuriosHelper;
 import de.srendi.advancedperipherals.common.blocks.blockentities.ARControllerEntity;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
@@ -88,7 +89,7 @@ public class ARGogglesItem extends ArmorItem {
 
     @Override
     public ICapabilityProvider initCapabilities(ItemStack stack, CompoundTag nbt) {
-        if (!AdvancedPeripherals.ADDONS.curiosLoaded)
+        if (!APAddons.curiosLoaded)
             return null;
 
         return CuriosHelper.createARGogglesProvider(stack);

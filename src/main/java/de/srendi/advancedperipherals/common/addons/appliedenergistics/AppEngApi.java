@@ -10,6 +10,7 @@ import appeng.api.networking.storage.IStorageService;
 import appeng.api.stacks.AEFluidKey;
 import appeng.api.stacks.AEItemKey;
 import appeng.api.stacks.AEKey;
+import appeng.api.stacks.AEKeyType;
 import appeng.api.stacks.KeyCounter;
 import appeng.api.storage.AEKeyFilter;
 import appeng.api.storage.IStorageProvider;
@@ -18,6 +19,7 @@ import appeng.blockentity.storage.DriveBlockEntity;
 import appeng.items.storage.BasicStorageCell;
 import dan200.computercraft.shared.util.NBTUtil;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
+import de.srendi.advancedperipherals.common.addons.APAddons;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
 import de.srendi.advancedperipherals.common.util.Pair;
 import de.srendi.advancedperipherals.common.util.StringUtil;
@@ -25,14 +27,18 @@ import io.github.projectet.ae2things.item.DISKDrive;
 import it.unimi.dsi.fastutil.objects.Object2LongMap;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.fml.ModList;
 import org.apache.logging.log4j.Level;
 
 import javax.annotation.Nullable;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 public class AppEngApi {
 
@@ -196,8 +202,8 @@ public class AppEngApi {
                                          @Nullable ICraftingCPU craftingCPU) {
         Pair<Long, AEItemKey> stack = AppEngApi.findAEStackFromItemStack(monitor, grid, itemStack);
 
+        // If the item stack does not exist, it cannot be crafted.
         if (stack == null)
-            // If the item stack does not exist, it cannot be crafting.
             return false;
 
         // If the passed cpu is null, check all cpus
@@ -231,8 +237,6 @@ public class AppEngApi {
     }
 
     public static long getTotalItemStorage(IGridNode node) {
-        boolean ae2ThingsEnabled = ModList.get().isLoaded("ae2things");
-
         long total = 0;
 
         Iterator<IGridNode> iterator = node.getGrid().getMachineNodes(DriveBlockEntity.class).iterator();
@@ -250,11 +254,11 @@ public class AppEngApi {
                 if(stack.isEmpty()) continue;
 
                 if(stack.getItem() instanceof BasicStorageCell cell) {
-                    if(cell.getKeyType().toString().equals("ae2:i")) {
+                    if(cell.getKeyType().getClass().isAssignableFrom(AEKeyType.items().getClass())) {
                         total += cell.getBytes(null);
                     }
-                } else if(ae2ThingsEnabled && stack.getItem() instanceof DISKDrive disk) {
-                    if(disk.getKeyType().toString().equals("ae2:i")) {
+                } else if(APAddons.aeThingsLoaded && stack.getItem() instanceof DISKDrive disk) {
+                    if(disk.getKeyType().getClass().isAssignableFrom(AEKeyType.items().getClass())) {
                         total += disk.getBytes(null);
                     }
                 }
@@ -282,7 +286,7 @@ public class AppEngApi {
                 if(stack.isEmpty()) continue;
 
                 if(stack.getItem() instanceof BasicStorageCell cell) {
-                    if(cell.getKeyType().toString().equals("ae2:f")) {
+                    if(cell.getKeyType().getClass().isAssignableFrom(AEKeyType.fluids().getClass())) {
                         total += cell.getBytes(null);
                     }
                 }
@@ -293,7 +297,6 @@ public class AppEngApi {
     }
 
     public static long getUsedItemStorage(IGridNode node) {
-        boolean ae2ThingsEnabled = ModList.get().isLoaded("ae2things");
         long used = 0;
 
         Iterator<IGridNode> iterator = node.getGrid().getMachineNodes(DriveBlockEntity.class).iterator();
@@ -313,15 +316,15 @@ public class AppEngApi {
                 if(stack.getItem() instanceof BasicStorageCell cell) {
                     int bytesPerType = cell.getBytesPerType(null);
 
-                    if(cell.getKeyType().toString().equals("ae2:i")) {
+                    if(cell.getKeyType().getClass().isAssignableFrom(AEKeyType.items().getClass())) {
                         if(stack.getTag() == null) continue;
                         int numOfType = stack.getTag().getLongArray("amts").length;
                         long numItemsInCell = stack.getTag().getLong("ic");
 
                         used += ((int) Math.ceil(((double) numItemsInCell) / 8)) + ((long) bytesPerType * numOfType);
                     }
-                } else if(ae2ThingsEnabled && stack.getItem() instanceof DISKDrive disk) {
-                    if(disk.getKeyType().toString().equals("ae2:i")) {
+                } else if(APAddons.aeThingsLoaded && stack.getItem() instanceof DISKDrive disk) {
+                    if(disk.getKeyType().getClass().isAssignableFrom(AEKeyType.items().getClass())) {
                         if(stack.getTag() == null) continue;
                         long numItemsInCell = stack.getTag().getLong("ic");
                         used += ((int) Math.ceil(((double) numItemsInCell) / 8));
@@ -351,7 +354,7 @@ public class AppEngApi {
                 if(stack.getItem() instanceof BasicStorageCell cell) {
                     int bytesPerType = cell.getBytesPerType(null);
 
-                    if(cell.getKeyType().toString().equals("ae2:f")) {
+                    if(cell.getKeyType().getClass().isAssignableFrom(AEKeyType.fluids().getClass())) {
                         if(stack.getTag() == null) continue;
                         int numOfType = stack.getTag().getLongArray("amts").length;
                         long numBucketsInCell = stack.getTag().getLong("ic") / 1000;
@@ -374,7 +377,6 @@ public class AppEngApi {
     }
 
     public static List<Object> listCells(IGridNode node) {
-        boolean ae2ThingsEnabled = ModList.get().isLoaded("ae2things");
         List<Object> items = new ArrayList<>();
 
         Iterator<IGridNode> iterator = node.getGrid().getMachineNodes(DriveBlockEntity.class).iterator();
@@ -393,7 +395,7 @@ public class AppEngApi {
 
                 if(stack.getItem() instanceof BasicStorageCell cell) {
                     items.add(getObjectFromCell(cell, stack));
-                } else if(ae2ThingsEnabled && stack.getItem() instanceof DISKDrive disk) {
+                } else if(APAddons.aeThingsLoaded && stack.getItem() instanceof DISKDrive disk) {
                     items.add(getObjectFromDisk(disk, stack));
                 }
             }
@@ -405,13 +407,13 @@ public class AppEngApi {
     private static Map<String, Object> getObjectFromCell(BasicStorageCell cell, ItemStack stack) {
         Map<String, Object> map = new HashMap<>();
 
-        map.put("item", stack.getItem().toString());
+        map.put("item", stack.getItem().getRegistryName().toString());
 
         String cellType = "";
 
-        if(cell.getKeyType().toString().equals("ae2:i")) {
+        if(cell.getKeyType().getClass().isAssignableFrom(AEKeyType.items().getClass())) {
             cellType = "item";
-        } else if(cell.getKeyType().toString().equals("ae2:f")) {
+        } else if(cell.getKeyType().getClass().isAssignableFrom(AEKeyType.fluids().getClass())) {
             cellType = "fluid";
         }
 
@@ -425,13 +427,13 @@ public class AppEngApi {
     private static Map<String, Object> getObjectFromDisk(DISKDrive drive, ItemStack stack) {
         Map<String, Object> map = new HashMap<>();
 
-        map.put("item", stack.getItem().toString());
+        map.put("item", stack.getItem().getRegistryName().toString());
 
         String cellType = "";
 
-        if(drive.getKeyType().toString().equals("ae2:i")) {
+        if(drive.getKeyType().getClass().isAssignableFrom(AEKeyType.items().getClass())) {
             cellType = "item";
-        } else if(drive.getKeyType().toString().equals("ae2:f")) {
+        } else if(drive.getKeyType().getClass().isAssignableFrom(AEKeyType.fluids().getClass())) {
             cellType = "fluid";
         }
 
