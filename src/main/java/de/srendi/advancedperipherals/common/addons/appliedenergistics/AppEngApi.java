@@ -25,6 +25,7 @@ import io.github.projectet.ae2things.item.DISKDrive;
 import it.unimi.dsi.fastutil.objects.Object2LongMap;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.fml.ModList;
 import org.apache.logging.log4j.Level;
 
 import javax.annotation.Nullable;
@@ -230,6 +231,8 @@ public class AppEngApi {
     }
 
     public static long getTotalItemStorage(IGridNode node) {
+        boolean ae2ThingsEnabled = ModList.get().isLoaded("ae2things");
+
         long total = 0;
 
         Iterator<IGridNode> iterator = node.getGrid().getMachineNodes(DriveBlockEntity.class).iterator();
@@ -244,11 +247,13 @@ public class AppEngApi {
             for(int i = 0; i < inventory.size(); i++) {
                 ItemStack stack = inventory.getStackInSlot(i);
 
+                if(stack.isEmpty()) continue;
+
                 if(stack.getItem() instanceof BasicStorageCell cell) {
                     if(cell.getKeyType().toString().equals("ae2:i")) {
                         total += cell.getBytes(null);
                     }
-                } else if(stack.getItem() instanceof DISKDrive disk) {
+                } else if(ae2ThingsEnabled && stack.getItem() instanceof DISKDrive disk) {
                     if(disk.getKeyType().toString().equals("ae2:i")) {
                         total += disk.getBytes(null);
                     }
@@ -274,6 +279,8 @@ public class AppEngApi {
             for(int i = 0; i < inventory.size(); i++) {
                 ItemStack stack = inventory.getStackInSlot(i);
 
+                if(stack.isEmpty()) continue;
+
                 if(stack.getItem() instanceof BasicStorageCell cell) {
                     if(cell.getKeyType().toString().equals("ae2:f")) {
                         total += cell.getBytes(null);
@@ -286,6 +293,7 @@ public class AppEngApi {
     }
 
     public static long getUsedItemStorage(IGridNode node) {
+        boolean ae2ThingsEnabled = ModList.get().isLoaded("ae2things");
         long used = 0;
 
         Iterator<IGridNode> iterator = node.getGrid().getMachineNodes(DriveBlockEntity.class).iterator();
@@ -300,6 +308,8 @@ public class AppEngApi {
             for(int i = 0; i < inventory.size(); i++) {
                 ItemStack stack = inventory.getStackInSlot(i);
 
+                if(stack.isEmpty()) continue;
+
                 if(stack.getItem() instanceof BasicStorageCell cell) {
                     int bytesPerType = cell.getBytesPerType(null);
 
@@ -310,7 +320,7 @@ public class AppEngApi {
 
                         used += ((int) Math.ceil(((double) numItemsInCell) / 8)) + ((long) bytesPerType * numOfType);
                     }
-                } else if(stack.getItem() instanceof DISKDrive disk) {
+                } else if(ae2ThingsEnabled && stack.getItem() instanceof DISKDrive disk) {
                     if(disk.getKeyType().toString().equals("ae2:i")) {
                         if(stack.getTag() == null) continue;
                         long numItemsInCell = stack.getTag().getLong("ic");
@@ -364,12 +374,12 @@ public class AppEngApi {
     }
 
     public static List<Object> listCells(IGridNode node) {
+        boolean ae2ThingsEnabled = ModList.get().isLoaded("ae2things");
         List<Object> items = new ArrayList<>();
 
         Iterator<IGridNode> iterator = node.getGrid().getMachineNodes(DriveBlockEntity.class).iterator();
 
         if (!iterator.hasNext()) return items;
-        int index = 0;
         while (iterator.hasNext()) {
             DriveBlockEntity entity = (DriveBlockEntity) iterator.next().getService(IStorageProvider.class);
             if(entity == null) continue;
@@ -379,12 +389,12 @@ public class AppEngApi {
             for(int i = 0; i < inventory.size(); i++) {
                 ItemStack stack = inventory.getStackInSlot(i);
 
+                if(stack.isEmpty()) continue;
+
                 if(stack.getItem() instanceof BasicStorageCell cell) {
-                    items.add(index, getObjectFromCell(cell, stack));
-                    index++;
-                } else if(stack.getItem() instanceof DISKDrive disk) {
-                    items.add(index, getObjectFromDisk(disk, stack));
-                    index++;
+                    items.add(getObjectFromCell(cell, stack));
+                } else if(ae2ThingsEnabled && stack.getItem() instanceof DISKDrive disk) {
+                    items.add(getObjectFromDisk(disk, stack));
                 }
             }
         }
