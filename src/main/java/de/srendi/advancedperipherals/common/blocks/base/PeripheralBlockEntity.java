@@ -26,6 +26,7 @@ import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.fluids.capability.templates.FluidTank;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.SidedInvWrapper;
@@ -89,7 +90,7 @@ public abstract class PeripheralBlockEntity<T extends BasePeripheral<?>> extends
 
         if (cap == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && !remove && direction != null) {
             if (fluidHandler == null || !fluidHandler.isPresent())
-                fluidHandler = FluidUtil.getFluidHandler(this.getLevel(), this.getBlockPos(), Direction.SOUTH);
+                fluidHandler = LazyOptional.of(() -> new FluidTank(1000));
             return fluidHandler.cast();
         }
         return super.getCapability(cap, direction);
