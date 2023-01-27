@@ -90,7 +90,7 @@ public abstract class PeripheralBlockEntity<T extends BasePeripheral<?>> extends
 
         if (cap == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && !remove && direction != null) {
             if (fluidHandler == null || !fluidHandler.isPresent())
-                fluidHandler = LazyOptional.of(() -> new FluidTank(1000));
+                fluidHandler = LazyOptional.of(() -> new FluidTank(0));
             return fluidHandler.cast();
         }
         return super.getCapability(cap, direction);
