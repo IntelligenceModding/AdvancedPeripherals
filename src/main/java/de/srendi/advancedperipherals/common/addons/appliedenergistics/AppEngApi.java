@@ -4,7 +4,6 @@ import appeng.api.inventories.InternalInventory;
 import appeng.api.networking.IGridNode;
 import appeng.api.networking.crafting.CraftingJobStatus;
 import appeng.api.networking.crafting.ICraftingCPU;
-import appeng.api.networking.crafting.ICraftingPlan;
 import appeng.api.networking.crafting.ICraftingService;
 import appeng.api.networking.storage.IStorageService;
 import appeng.api.stacks.AEFluidKey;
@@ -57,10 +56,6 @@ public class AppEngApi {
         }
 
         return null;
-    }
-
-    public static Pair<Long, AEItemKey> findAEStackFromItemStack(MEStorage monitor, ItemStack item) {
-        return findAEStackFromItemStack(monitor, null, item);
     }
 
     public static List<Object> listStacks(MEStorage monitor, ICraftingService service, int flag) {
@@ -146,14 +141,6 @@ public class AppEngApi {
         map.put("isBusy", isBusy);
 
         return map;
-    }
-
-    public static Map<String, Object> getObjectFromJob(ICraftingPlan job, ICraftingService craftingService) {
-        Map<String, Object> result = new HashMap<>();
-        result.put("item", getObjectFromStack(Pair.of(job.finalOutput().amount(), job.finalOutput().what()), craftingService));
-        result.put("bytes", job.bytes());
-
-        return result;
     }
 
     public static CompoundTag findMatchingTag(ItemStack stack, String nbtHash, MEStorage monitor) {

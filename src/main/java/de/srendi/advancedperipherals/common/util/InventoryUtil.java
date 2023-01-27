@@ -20,27 +20,11 @@ import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
-import java.util.function.Function;
-import java.util.function.Predicate;
 
 public class InventoryUtil {
 
-    private static final List<Pair<Predicate<Object>, Function<Object, IItemHandler>>> EXTRACTORS = new ArrayList<>();
-
-    public static void registerExtractor(Predicate<Object> predicate, Function<Object, IItemHandler> handlerGenerator) {
-        EXTRACTORS.add(Pair.of(predicate, handlerGenerator));
-    }
-
     public static IItemHandler extractHandler(@Nullable Object object) {
-
-        for (Pair<Predicate<Object>, Function<Object, IItemHandler>> extractor : EXTRACTORS) {
-            if (extractor.getLeft().test(object))
-                return extractor.getRight().apply(object);
-        }
-
         if (object instanceof ICapabilityProvider capabilityProvider) {
             LazyOptional<IItemHandler> cap = capabilityProvider.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY);
             if (cap.isPresent())
