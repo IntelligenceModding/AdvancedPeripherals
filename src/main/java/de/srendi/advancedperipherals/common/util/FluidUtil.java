@@ -26,26 +26,11 @@ import net.minecraftforge.registries.IForgeRegistry;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.function.Function;
-import java.util.function.Predicate;
 
 public class FluidUtil {
-    private static final List<Pair<Predicate<Object>, Function<Object, IFluidHandler>>> EXTRACTORS = new ArrayList<>();
-
-    public static void registerExtractor(Predicate<Object> predicate, Function<Object, IFluidHandler> handlerGenerator) {
-        EXTRACTORS.add(Pair.of(predicate, handlerGenerator));
-    }
-
     public static IFluidHandler extractHandler(@Nullable Object object) {
-        for (Pair<Predicate<Object>, Function<Object, IFluidHandler>> extractor : EXTRACTORS) {
-            if (extractor.getLeft().test(object))
-                return extractor.getRight().apply(object);
-        }
-
         if (object instanceof IFluidHandler fluidHandler)
             return fluidHandler;
 
