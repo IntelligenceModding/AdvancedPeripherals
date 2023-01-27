@@ -26,6 +26,8 @@ import io.github.projectet.ae2things.item.DISKDrive;
 import it.unimi.dsi.fastutil.objects.Object2LongMap;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fml.ModList;
 import org.apache.logging.log4j.Level;
 
 import javax.annotation.Nullable;
@@ -156,6 +158,19 @@ public class AppEngApi {
         return null;
     }
 
+    public static CompoundTag findMatchingTag(FluidStack stack, String nbtHash, MEStorage monitor) {
+        for (Object2LongMap.Entry<AEKey> aeKey : monitor.getAvailableStacks()) {
+            if (aeKey.getKey() instanceof AEFluidKey fluidKey && aeKey.getLongValue() > 0 && fluidKey.getFluid() == stack.getFluid()) {
+                CompoundTag tag = fluidKey.toStack(1).getTag();
+                String hash = NBTUtil.getNBTHash(tag);
+                if (nbtHash.equals(hash))
+                    return tag.copy();
+
+            }
+        }
+        return null;
+    }
+
     public static ItemStack findMatchingFingerprint(String fingerprint, MEStorage monitor) {
         for (Object2LongMap.Entry<AEKey> aeKey : monitor.getAvailableStacks()) {
             if (!(aeKey.getKey() instanceof AEItemKey itemKey))
@@ -167,9 +182,34 @@ public class AppEngApi {
         return ItemStack.EMPTY;
     }
 
+    public static FluidStack findMatchingFluidFingerprint(String fingerprint, MEStorage monitor) {
+        for (Object2LongMap.Entry<AEKey> aeKey : monitor.getAvailableStacks()) {
+            if (!(aeKey.getKey() instanceof AEFluidKey itemKey))
+                continue;
+            if (aeKey.getLongValue() > 0 && fingerprint.equals(getFingerpint(itemKey))) {
+                return itemKey.toStack((int) aeKey.getLongValue());
+            }
+        }
+        return null;
+    }
+
     public static String getFingerpint(AEItemKey itemStack) {
         ItemStack stack = itemStack.toStack();
         String fingerprint = stack.getOrCreateTag() + stack.getItem().getRegistryName().toString() + stack.getDisplayName().getString();
+        try {
+            byte[] bytesOfHash = fingerprint.getBytes(StandardCharsets.UTF_8);
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            return StringUtil.toHexString(md.digest(bytesOfHash));
+        } catch (NoSuchAlgorithmException ex) {
+            AdvancedPeripherals.debug("Could not parse fingerprint.", Level.ERROR);
+            ex.printStackTrace();
+        }
+        return "";
+    }
+
+    public static String getFingerpint(AEFluidKey fluidStack) {
+        FluidStack stack = fluidStack.toStack(1);
+        String fingerprint = stack.getOrCreateTag() + stack.getFluid().getRegistryName().toString() + stack.getDisplayName().getString();
         try {
             byte[] bytesOfHash = fingerprint.getBytes(StandardCharsets.UTF_8);
             MessageDigest md = MessageDigest.getInstance("MD5");
