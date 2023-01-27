@@ -4,7 +4,11 @@ import de.srendi.advancedperipherals.lib.peripherals.IPeripheralTileEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.world.*;
+import net.minecraft.world.Container;
+import net.minecraft.world.Containers;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -78,12 +82,12 @@ public abstract class BaseBlockEntityBlock extends BaseBlock implements EntityBl
     }
 
 
+    @Deprecated
     @Nullable
     @Override
-    public MenuProvider getMenuProvider(BlockState pState, Level pLevel, BlockPos pPos) {
+    public MenuProvider getMenuProvider(@NotNull BlockState pState, Level pLevel, @NotNull BlockPos pPos) {
         BlockEntity blockentity = pLevel.getBlockEntity(pPos);
-        if (!(blockentity instanceof MenuProvider menuProvider))
-            return null;
+        if (!(blockentity instanceof MenuProvider menuProvider)) return null;
         return menuProvider;
     }
 
