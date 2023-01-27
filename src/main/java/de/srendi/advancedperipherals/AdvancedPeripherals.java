@@ -30,7 +30,6 @@ public class AdvancedPeripherals {
     public static final String MOD_ID = "advancedperipherals";
     public static final Logger LOGGER = LogManager.getLogger("Advanced Peripherals");
     public static final Random RANDOM = new Random();
-    public static final APAddons ADDONS = new APAddons();
     public static final CreativeModeTab TAB = new CreativeModeTab("advancedperipheralstab") {
 
         @Override
@@ -49,7 +48,6 @@ public class AdvancedPeripherals {
 
         modBus.addListener(this::commonSetup);
         modBus.addListener(this::clientSetup);
-        modBus.addListener(ADDONS::interModComms);
         Registration.register();
         MinecraftForge.EVENT_BUS.register(this);
     }
@@ -66,7 +64,7 @@ public class AdvancedPeripherals {
 
     @SubscribeEvent
     public void commonSetup(FMLCommonSetupEvent event) {
-        ADDONS.commonSetup();
+        APAddons.commonSetup();
         event.enqueueWork(() -> {
             VillageStructures.init();
             MNetwork.init();
