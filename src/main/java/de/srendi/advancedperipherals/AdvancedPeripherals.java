@@ -27,7 +27,6 @@ public class AdvancedPeripherals {
     public static final String NAME = "Advanced Peripherals";
     public static final Logger LOGGER = LogManager.getLogger(NAME);
     public static final Random RANDOM = new Random();
-    public static final APAddons ADDONS = new APAddons();
 
     public AdvancedPeripherals() {
         LOGGER.info("AdvancedPeripherals says hello!");
@@ -37,7 +36,6 @@ public class AdvancedPeripherals {
 
         modBus.addListener(this::commonSetup);
         modBus.addListener(this::clientSetup);
-        modBus.addListener(ADDONS::interModComms);
         Registration.register();
         MinecraftForge.EVENT_BUS.register(this);
     }
@@ -57,7 +55,7 @@ public class AdvancedPeripherals {
     }
 
     public void commonSetup(FMLCommonSetupEvent event) {
-        ADDONS.commonSetup();
+        APAddons.commonSetup();
         event.enqueueWork(() -> {
             VillageStructures.init();
             MNetwork.init();

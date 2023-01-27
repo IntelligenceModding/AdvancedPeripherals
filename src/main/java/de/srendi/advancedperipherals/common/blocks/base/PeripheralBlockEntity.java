@@ -24,6 +24,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.fluids.capability.templates.FluidTank;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.SidedInvWrapper;
 import org.jetbrains.annotations.NotNull;
@@ -40,6 +42,7 @@ public abstract class PeripheralBlockEntity<T extends BasePeripheral<?>> extends
     @Nullable
     protected T peripheral = null;
     private LazyOptional<? extends IItemHandler> handler;
+    private LazyOptional<? extends IFluidHandler> fluidHandler;
     private LazyOptional<IPeripheral> peripheralCap;
 
     public PeripheralBlockEntity(BlockEntityType<?> tileEntityTypeIn, BlockPos pos, BlockState state) {
@@ -82,6 +85,12 @@ public abstract class PeripheralBlockEntity<T extends BasePeripheral<?>> extends
                 handler = LazyOptional.of(() -> new SidedInvWrapper(this, Direction.NORTH));
             return handler.cast();
         }
+
+        if (cap == ForgeCapabilities.FLUID_HANDLER && !remove && direction != null) {
+            if (fluidHandler == null || !fluidHandler.isPresent())
+                fluidHandler = LazyOptional.of(() -> new FluidTank(0));
+            return fluidHandler.cast();
+        }
         return super.getCapability(cap, direction);
     }
 
@@ -90,6 +99,7 @@ public abstract class PeripheralBlockEntity<T extends BasePeripheral<?>> extends
         super.invalidateCaps();
         if (peripheralCap != null) peripheralCap.invalidate();
         if (handler != null) handler.invalidate();
+        if (fluidHandler != null) fluidHandler.invalidate();
     }
 
     @NotNull

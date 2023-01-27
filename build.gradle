@@ -239,6 +239,13 @@ repositories {
             password = "\u0067hp_oGjcDFCn8jeTzIj4Ke9pLoEVtpnZMP4VQgaX"
         }
     }
+
+    maven {
+        url "https://cursemaven.com"
+        content {
+            includeGroup "curse.maven"
+        }
+    }
 }
 
 configurations {
@@ -274,6 +281,10 @@ dependencies {
     compileOnly fg.deobf("com.refinedmods:refinedstorage:${refinedstorage_version}")  {
         transitive false
     }
+
+    // AE2 Things - removed until updated
+    //compileOnly "curse.maven:ae2things-609977:${ae2things_version}-sources"
+    //runtimeOnly fg.deobf("curse.maven:ae2things-609977:${ae2things_version}-sources")
 
     // Botania
     compileOnly fg.deobf("vazkii.botania:Botania:${botania_version}")
