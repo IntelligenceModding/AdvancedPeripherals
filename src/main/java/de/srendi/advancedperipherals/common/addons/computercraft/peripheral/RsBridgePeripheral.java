@@ -1,31 +1,16 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.peripheral;
 
-import com.refinedmods.refinedstorage.api.autocrafting.task.CalculationResultType;
-import com.refinedmods.refinedstorage.api.autocrafting.task.ICalculationResult;
 import com.refinedmods.refinedstorage.api.autocrafting.task.ICraftingTask;
 import com.refinedmods.refinedstorage.api.network.INetwork;
-import com.refinedmods.refinedstorage.api.util.Action;
-import dan200.computercraft.api.lua.IArguments;
-import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
-import dan200.computercraft.api.lua.MethodResult;
-import dan200.computercraft.api.peripheral.IComputerAccess;
-import dan200.computercraft.api.peripheral.IPeripheral;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.BlockEntityPeripheralOwner;
 import de.srendi.advancedperipherals.common.addons.refinedstorage.RefinedStorage;
 import de.srendi.advancedperipherals.common.addons.refinedstorage.RefinedStorageNode;
 import de.srendi.advancedperipherals.common.blocks.blockentities.RsBridgeEntity;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
-import de.srendi.advancedperipherals.common.util.ItemUtil;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
-import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.items.CapabilityItemHandler;
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.ArrayList;
@@ -132,7 +117,7 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     public final int getEnergyStorage() {
         return (int) ensureIsConnected(0, () -> getNetwork().getEnergyStorage().getEnergyStored());
     }
-
+/*
     @LuaFunction(mainThread = true)
     public final MethodResult getPattern(IArguments arguments) {
         return (MethodResult) ensureIsConnected(null, () -> {
@@ -144,7 +129,7 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         });
     }
 
-    @LuaFunction(mainThread = true)
+     @LuaFunction(mainThread = true)
     public final int exportItem(IArguments arguments) throws LuaException {
         if (!isConnected())
             return 0;
@@ -313,7 +298,7 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (result.getType() == CalculationResultType.OK)
             getNetwork().getCraftingManager().start(result.getTask());
         return type == CalculationResultType.OK;
-    }
+    }*/
 
     @LuaFunction(mainThread = true)
     public final boolean isItemCrafting(String item) {
@@ -328,11 +313,11 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         return false;
     }
 
-    @LuaFunction(mainThread = true)
+/*    @LuaFunction(mainThread = true)
     public final boolean isItemCraftable(IArguments arguments) throws LuaException {
         if (!isConnected())
             return false;
         ItemStack stack = ItemUtil.getItemStackRS(arguments.getTable(0), RefinedStorage.getItems(getNetwork()));
         return RefinedStorage.isItemCraftable(getNetwork(), stack);
-    }
+    }*/
 }

@@ -2,27 +2,25 @@ package de.srendi.advancedperipherals.common.addons.computercraft.peripheral;
 
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
+import dan200.computercraft.api.lua.MethodResult;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.BlockEntityPeripheralOwner;
 import de.srendi.advancedperipherals.common.blocks.blockentities.InventoryManagerEntity;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
-import de.srendi.advancedperipherals.common.util.InventoryUtil;
-import de.srendi.advancedperipherals.common.util.ItemUtil;
+import de.srendi.advancedperipherals.common.util.ItemFilter;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
+import de.srendi.advancedperipherals.common.util.Pair;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ArmorItem;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.items.wrapper.PlayerInvWrapper;
-import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -58,15 +56,19 @@ public class InventoryManagerPeripheral extends BasePeripheral<BlockEntityPeriph
         return getOwnerPlayer().getName().getString();
     }
 
+    /**
+     * @deprecated Switch do the function with the item object
+     */
+    @Deprecated
     @LuaFunction(mainThread = true, value = {"pullItems", "addItemToPlayer"})
-    public final int addItemToPlayer(String invDirection, int count, Optional<Integer> slot, Optional<String> item) throws LuaException {
-        ItemStack stack = ItemStack.EMPTY;
+    public final MethodResult addItemToPlayer(String invDirection, int count, Optional<Integer> slot, Optional<String> item) throws LuaException {
+        Pair<ItemFilter, String> filter = Pair.of(ItemFilter.empty(), null);
         if (item.isPresent()) {
-            Item item1 = ItemUtil.getRegistryEntry(item.get(), ForgeRegistries.ITEMS);
-            stack = new ItemStack(item1, count);
+            filter = ItemFilter.of(Map.of("name", item.get()));
         }
-
-        return addItemCommon(invDirection, count, slot, stack);
+        if(filter.rightPresent())
+            return MethodResult.of(0, filter.getRight());
+        return MethodResult.of(addItemCommon(invDirection, count, slot, filter.getLeft()));
 
     }
 
@@ -75,23 +77,24 @@ public class InventoryManagerPeripheral extends BasePeripheral<BlockEntityPeriph
     //{name="minecraft:enchanted_book", count=1, nbt="ae70053c97f877de546b0248b9ddf525"}
     //If a count is specified in the item it is silently IGNORED
     @LuaFunction(mainThread = true)
-    public final int addItemToPlayerNBT(String invDirection, int count, Optional<Integer> slot, Optional<Map<?, ?>> item) throws LuaException {
-        ItemStack stack = ItemStack.EMPTY;
+    public final MethodResult addItemToPlayerNBT(String invDirection, int count, Optional<Integer> slot, Optional<Map<?, ?>> item) throws LuaException {
+        Pair<ItemFilter, String> filter = Pair.of(ItemFilter.empty(), null);
         if (item.isPresent()) {
             Direction direction = validateSide(invDirection);
 
             BlockEntity targetEntity = owner.getLevel().getBlockEntity(owner.getPos().relative(direction));
             IItemHandler inventoryFrom = targetEntity != null ? targetEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, direction).resolve().orElse(null) : null;
 
-            //We can use getItemStackRS, as it works with List<ItemStack>
-            //And doesn't use anything RS specific
-            stack = ItemUtil.getItemStackRS(item.get(), ItemUtil.getItemsFromItemHandler(inventoryFrom));
+            filter = ItemFilter.of(item.get());
+
+            if(filter.rightPresent())
+                return MethodResult.of(0, filter.getRight());
         }
 
-        return addItemCommon(invDirection, count, slot, stack);
+        return MethodResult.of(addItemCommon(invDirection, count, slot, filter.getLeft()), null);
     }
 
-    private int addItemCommon(String invDirection, int count, Optional<Integer> slot, ItemStack stack) throws LuaException {
+    private int addItemCommon(String invDirection, int count, Optional<Integer> slot, ItemFilter filter) throws LuaException {
         Direction direction = validateSide(invDirection);
 
         BlockEntity targetEntity = owner.getLevel().getBlockEntity(owner.getPos().relative(direction));
@@ -108,40 +111,26 @@ public class InventoryManagerPeripheral extends BasePeripheral<BlockEntityPeriph
         int amount = count;
         int transferableAmount = 0;
 
-        for (int i = 0; i < inventoryFrom.getSlots() && amount > 0; i++) {
-            if (stack.isEmpty()) {
-                stack = inventoryFrom.getStackInSlot(i).copy();
-                if (stack.isEmpty()) continue;
-            }
-
-            if (ItemHandlerHelper.canItemStacksStack(stack, inventoryFrom.getStackInSlot(i))) {
-                int inserted;
-                if (invSlot >= 100 && invSlot < 104) {
-                    if (!(stack.getItem() instanceof ArmorItem))
-                        throw new LuaException(stack + "is not an armor item. Can't put it into the slot " + invSlot);
-                    //When there is already an item in the slot, just continue
-                    if (!getOwnerPlayer().getInventory().armor.get(getArmorSlot(invSlot)).isEmpty()) continue;
-                    getOwnerPlayer().getInventory().armor.set(getArmorSlot(invSlot), stack);
-                    inventoryFrom.extractItem(i, 1, false);
-                    //Armor can't be stacked, so we set this just to one
-                    transferableAmount = 1;
-                    //Continue as we don't want to run the normal code for non armor items
-                    continue;
+        for (int i = 0; i < inventoryFrom.getSlots(); i++) {
+            if (filter.test(inventoryFrom.getStackInSlot(i), null)) {
+                if (inventoryFrom.getStackInSlot(i).getCount() >= (amount - transferableAmount)) {
+                    ItemStack extracted = inventoryFrom.extractItem(i, amount, true);
+                    ItemStack inserted = ItemHandlerHelper.insertItem(inventoryTo, extracted, false);
+                    transferableAmount += inventoryFrom.extractItem(i, extracted.getCount() - inserted.getCount(), false).getCount();
+                    break;
+                } else {
+                    ItemStack extracted = inventoryFrom.extractItem(i, amount, true);
+                    ItemStack inserted = ItemHandlerHelper.insertItem(inventoryTo, extracted, false);
+                    amount -= inserted.getCount();
+                    transferableAmount += inventoryFrom.extractItem(i, extracted.getCount() - inserted.getCount(), false).getCount();
                 }
-                inserted = InventoryUtil.moveItem(inventoryFrom, i, inventoryTo, invSlot, amount);
-                transferableAmount += inserted;
-                amount -= inserted;
-
-                inserted = InventoryUtil.moveItem(inventoryFrom, i, inventoryTo, -1, amount);
-                transferableAmount += inserted;
-                amount -= inserted;
             }
         }
 
         return transferableAmount;
     }
 
-    @LuaFunction(mainThread = true, value = {"pushItems", "removeItemFromPlayer"})
+   /* @LuaFunction(mainThread = true, value = {"pushItems", "removeItemFromPlayer"})
     public final int removeItemFromPlayer(String invDirection, int count, Optional<Integer> slot, Optional<String> item) throws LuaException {
         ItemStack stack = ItemStack.EMPTY;
         if (item.isPresent()) {
@@ -239,7 +228,7 @@ public class InventoryManagerPeripheral extends BasePeripheral<BlockEntityPeriph
         if (!rest.isEmpty()) inventoryFrom.add(rest);
 
         return transferableAmount;
-    }
+    }*/
 
     @Nonnull
     @LuaFunction(value = {"list", "getItems"}, mainThread = true)
