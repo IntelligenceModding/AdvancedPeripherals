@@ -1,8 +1,6 @@
 package de.srendi.advancedperipherals.common.util;
 
-import dan200.computercraft.api.lua.IArguments;
 import dan200.computercraft.api.lua.LuaException;
-import dan200.computercraft.api.lua.MethodResult;
 import dan200.computercraft.api.peripheral.IComputerAccess;
 import dan200.computercraft.api.peripheral.IPeripheral;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.IPeripheralOwner;
@@ -37,57 +35,27 @@ public class InventoryUtil {
         return null;
     }
 
-    public static int moveItem(IItemHandler from, int fromSlot, IItemHandler to, int toSlot, final int limit) {
-        ItemStack extracted = from.extractItem(fromSlot, limit, true);
-        if (extracted.isEmpty())
-            return 0;
-        int extractCount = Math.min(extracted.getCount(), limit);
-        extracted.setCount(extractCount);
+    public static int moveItem(IItemHandler inventoryFrom, int fromSlot, IItemHandler inventoryTo, int toSlot, ItemFilter filter) {
+        if (inventoryFrom == null) return 0;
 
-        ItemStack remainder = toSlot < 0 ? ItemHandlerHelper.insertItem(to, extracted, false) : to.insertItem(toSlot, extracted, false);
-        int inserted = remainder.isEmpty() ? extractCount : extractCount - remainder.getCount();
-        if (inserted <= 0)
-            return 0;
-        from.extractItem(fromSlot, inserted, false);
-        return inserted;
+        int amount = filter.getCount();
+        int transferableAmount = 0;
+
+        for (int i = 0; i < inventoryFrom.getSlots(); i++) {
+            if (filter.test(inventoryFrom.getStackInSlot(i))) {
+                ItemStack extracted = inventoryFrom.extractItem(i, amount - transferableAmount, true);
+                ItemStack inserted = ItemHandlerHelper.insertItem(inventoryTo, extracted, false);
+                amount -= inserted.getCount();
+                transferableAmount += inventoryFrom.extractItem(i, extracted.getCount() - inserted.getCount(), false).getCount();
+                if(transferableAmount >= filter.getCount())
+                    break;
+            }
+        }
+        return transferableAmount;
     }
 
-    public static MethodResult pushItems(@NotNull IArguments arguments, @NotNull IComputerAccess access, @NotNull IItemHandler source) throws LuaException {
-        String toName = arguments.getString(0);
-        int fromSlot = arguments.getInt(1);
-        int limit = arguments.optInt(2, Integer.MAX_VALUE);
-        int toSlot = arguments.optInt(3, -1);
-        if (fromSlot < 1 || fromSlot > source.getSlots())
-            return MethodResult.of(null, "From slot is incorrect");
-        // Find location to transfer to
-        IItemHandler to = getHandlerFromName(access, toName);
-        if (toSlot != -1 && (toSlot < 1 || toSlot > to.getSlots()))
-            return MethodResult.of(null, "To slot is incorrect");
-
-        if (limit <= 0)
-            return MethodResult.of(0);
-        return MethodResult.of(InventoryUtil.moveItem(source, fromSlot - 1, to, toSlot - 1, limit));
-    }
-
-    public static MethodResult pullItems(@NotNull IArguments arguments, @NotNull IComputerAccess access, @NotNull IItemHandler source) throws LuaException {
-        // Parsing arguments
-        String fromName = arguments.getString(0);
-        int fromSlot = arguments.getInt(1);
-        int limit = arguments.optInt(2, Integer.MAX_VALUE);
-        int toSlot = arguments.optInt(3, -1);
-        if (toSlot != -1 && (toSlot < 1 || toSlot > source.getSlots()))
-            return MethodResult.of(null, "To slot is incorrect");
-        // Find location to transfer to
-
-        IItemHandler from = getHandlerFromName(access, fromName);
-        if (fromSlot < 1 || fromSlot > from.getSlots())
-            return MethodResult.of(null, "From slot is incorrect");
-        if (limit <= 0)
-            return MethodResult.of(0);
-        return MethodResult.of(InventoryUtil.moveItem(from, fromSlot - 1, source, toSlot - 1, limit));
-    }
-
-    public static @NotNull IItemHandler getHandlerFromName(@NotNull IComputerAccess access, String name) throws LuaException {
+    @NotNull
+    public static IItemHandler getHandlerFromName(@NotNull IComputerAccess access, String name) throws LuaException {
         IPeripheral location = access.getAvailablePeripheral(name);
         if (location == null)
             throw new LuaException("Target '" + name + "' does not exist");
@@ -98,7 +66,8 @@ public class InventoryUtil {
         return handler;
     }
 
-    public static @NotNull IItemHandler getHandlerFromDirection(@NotNull String direction, @NotNull IPeripheralOwner owner) throws LuaException {
+    @NotNull
+    public static IItemHandler getHandlerFromDirection(@NotNull String direction, @NotNull IPeripheralOwner owner) throws LuaException {
         Level level = owner.getLevel();
         Objects.requireNonNull(level);
         Direction relativeDirection = CoordUtil.getDirection(owner.getOrientation(), direction);

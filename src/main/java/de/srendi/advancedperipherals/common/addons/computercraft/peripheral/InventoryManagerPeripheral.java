@@ -7,6 +7,7 @@ import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.BlockEntityPeripheralOwner;
 import de.srendi.advancedperipherals.common.blocks.blockentities.InventoryManagerEntity;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
+import de.srendi.advancedperipherals.common.util.InventoryUtil;
 import de.srendi.advancedperipherals.common.util.ItemFilter;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
 import de.srendi.advancedperipherals.common.util.Pair;
@@ -19,7 +20,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.items.wrapper.PlayerInvWrapper;
 
 import javax.annotation.Nonnull;
@@ -106,23 +106,7 @@ public class InventoryManagerPeripheral extends BasePeripheral<BlockEntityPeriph
         //if (invSlot >= inventoryTo.getSlots() || invSlot < 0)
         //  throw new LuaException("Inventory out of bounds " + invSlot + " (max: " + (inventoryTo.getSlots() - 1) + ")");
 
-        if (inventoryFrom == null) return 0;
-
-        int amount = count;
-        int transferableAmount = 0;
-
-        for (int i = 0; i < inventoryFrom.getSlots(); i++) {
-            if (filter.test(inventoryFrom.getStackInSlot(i))) {
-                ItemStack extracted = inventoryFrom.extractItem(i, amount - transferableAmount, true);
-                ItemStack inserted = ItemHandlerHelper.insertItem(inventoryTo, extracted, false);
-                amount -= inserted.getCount();
-                transferableAmount += inventoryFrom.extractItem(i, extracted.getCount() - inserted.getCount(), false).getCount();
-                if(transferableAmount >= count)
-                    break;
-            }
-        }
-
-        return transferableAmount;
+        return InventoryUtil.moveItem(inventoryFrom, -1, inventoryTo, -1, filter);
     }
 
    /* @LuaFunction(mainThread = true, value = {"pushItems", "removeItemFromPlayer"})
