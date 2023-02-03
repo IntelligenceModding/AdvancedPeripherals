@@ -13,8 +13,8 @@ import com.refinedmods.refinedstorage.apiimpl.API;
 import com.refinedmods.refinedstorage.apiimpl.network.node.NetworkNode;
 import dan200.computercraft.shared.util.NBTUtil;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
+import de.srendi.advancedperipherals.common.util.ItemUtil;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
-import de.srendi.advancedperipherals.common.util.StringUtil;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
@@ -25,9 +25,6 @@ import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 
 import javax.annotation.Nullable;
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.*;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
@@ -154,7 +151,7 @@ public class RefinedStorage {
         Map<String, Object> map = new HashMap<>();
         CompoundTag nbt = itemStack.getTag();
         Supplier<Stream<TagKey<Item>>> tags = () -> itemStack.getItem().builtInRegistryHolder().tags();
-        map.put("fingerprint", getFingerpint(itemStack));
+        map.put("fingerprint", ItemUtil.getFingerprint(itemStack));
         map.put("name", itemStack.getItem().getRegistryName().toString());
         map.put("amount", itemStack.getCount());
         map.put("displayName", itemStack.getDisplayName().getString());
@@ -231,40 +228,6 @@ public class RefinedStorage {
             result.add(entry.getStack().copy());
 
         return result;
-    }
-
-    public static CompoundTag findMatchingTag(ItemStack stack, String nbtHash, List<ItemStack> items) {
-        for (ItemStack rsStack : items) {
-            if (rsStack.getCount() > 0 && rsStack.getItem().equals(stack.getItem())) {
-                CompoundTag tag = rsStack.getTag();
-                String hash = NBTUtil.getNBTHash(tag);
-                if (nbtHash.equals(hash)) return tag.copy();
-            }
-        }
-        return null;
-    }
-
-    public static ItemStack findMatchingFingerprint(String fingerprint, List<ItemStack> items) {
-        for (ItemStack rsStack : items) {
-            if (rsStack.getCount() > 0 && fingerprint.equals(getFingerpint(rsStack))) {
-                return rsStack;
-            }
-        }
-        return ItemStack.EMPTY;
-    }
-
-    public static String getFingerpint(ItemStack stack) {
-        CompoundTag nbt = stack.getTag();
-        String fingerprint = (nbt == null ? "null" : nbt.toString()) + stack.getItem().getRegistryName().toString() + stack.getDisplayName().getString();
-        try {
-            byte[] bytesOfHash = fingerprint.getBytes(StandardCharsets.UTF_8);
-            MessageDigest md = MessageDigest.getInstance("MD5");
-            return StringUtil.toHexString(md.digest(bytesOfHash));
-        } catch (NoSuchAlgorithmException ex) {
-            AdvancedPeripherals.debug("Could not parse fingerprint.");
-            ex.printStackTrace();
-        }
-        return "";
     }
 
     public void initiate() {

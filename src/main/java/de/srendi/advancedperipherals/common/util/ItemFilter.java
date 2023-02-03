@@ -1,10 +1,9 @@
 package de.srendi.advancedperipherals.common.util;
 
-import appeng.api.storage.MEStorage;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.core.apis.TableHelper;
 import net.minecraft.core.Registry;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
@@ -18,9 +17,10 @@ public class ItemFilter {
 
     private Item item = Items.AIR;
     private TagKey<Item> tag = null;
-    private CompoundTag nbt = null;
+    private Tag nbt = null;
     private int count = -1;
     private String fingerprint = "";
+    private int slot;
 
     public static Pair<ItemFilter, String> of(Map<?, ?> item) {
         ItemFilter itemArgument = new ItemFilter();
@@ -30,13 +30,27 @@ public class ItemFilter {
         if (item.containsKey("name")) {
             try {
                 String name = TableHelper.getStringField(item, "name");
-                if(name.startsWith("#")) {
-                    itemArgument.tag = TagKey.create(Registry.ITEM_REGISTRY, new ResourceLocation(name));
+                if (name.startsWith("#")) {
+                    itemArgument.tag = TagKey.create(Registry.ITEM_REGISTRY, new ResourceLocation(name.substring(1)));
                 } else if ((itemArgument.item = ItemUtil.getRegistryEntry(name, ForgeRegistries.ITEMS)) == null) {
                     return Pair.of(null, "ITEM_NOT_FOUND");
                 }
             } catch (LuaException luaException) {
-                return Pair.of(null, "ITEM_NO_STRING");
+                return Pair.of(null, "NO_VALID_ITEM");
+            }
+        }
+        if (item.containsKey("nbt")) {
+            try {
+                itemArgument.nbt = NBTUtil.fromText(TableHelper.getStringField(item, "nbt"));
+            } catch (LuaException luaException) {
+                return Pair.of(null, "NO_VALID_NBT");
+            }
+        }
+        if (item.containsKey("fingerprint")) {
+            try {
+                itemArgument.fingerprint = TableHelper.getStringField(item, "fingerprint");
+            } catch (LuaException luaException) {
+                return Pair.of(null, "NO_VALID_FINGERPRINT");
             }
         }
 
@@ -47,15 +61,22 @@ public class ItemFilter {
         return new ItemFilter();
     }
 
-    public boolean test(ItemStack stack, MEStorage storageMonitor) {
+    public boolean test(ItemStack stack) {
         // If the filter does not have nbt values, a tag or a fingerprint, just test if the items are the same
-        if(item != Items.AIR) {
+        if (!fingerprint.isEmpty()) {
+            String testFingerprint = ItemUtil.getFingerprint(stack);
+            return fingerprint.equals(testFingerprint);
+        }
+        if (item != Items.AIR) {
             if (tag == null && nbt == null && fingerprint.isEmpty())
                 return stack.is(item);
-        } else {
-            return false;
         }
-        return false;
+        if (tag != null && !stack.is(tag))
+            return false;
+        if (nbt != null && !stack.getOrCreateTag().equals(nbt))
+            return false;
+
+        return true;
     }
 
     public int getCount() {
@@ -64,5 +85,9 @@ public class ItemFilter {
 
     public Item getItem() {
         return item;
+    }
+
+    public int getSlot() {
+        return slot;
     }
 }

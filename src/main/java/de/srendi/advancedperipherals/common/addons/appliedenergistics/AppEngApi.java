@@ -15,9 +15,10 @@ import appeng.items.storage.BasicStorageCell;
 import dan200.computercraft.shared.util.NBTUtil;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.addons.APAddons;
+import de.srendi.advancedperipherals.common.util.FluidUtil;
+import de.srendi.advancedperipherals.common.util.ItemUtil;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
 import de.srendi.advancedperipherals.common.util.Pair;
-import de.srendi.advancedperipherals.common.util.StringUtil;
 import io.github.projectet.ae2things.item.DISKDrive;
 import it.unimi.dsi.fastutil.objects.Object2LongMap;
 import net.minecraft.nbt.CompoundTag;
@@ -26,9 +27,6 @@ import net.minecraftforge.fluids.FluidStack;
 import org.apache.logging.log4j.Level;
 
 import javax.annotation.Nullable;
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.*;
 
 public class AppEngApi {
@@ -100,7 +98,7 @@ public class AppEngApi {
         String displayName = stack.getRight().getDisplayName().getString();
         CompoundTag nbt = stack.getRight().toTag();
         long amount = stack.getLeft();
-        map.put("fingerprint", getFingerpint(stack.getRight()));
+        map.put("fingerprint", ItemUtil.getFingerprint(stack.getRight().toStack()));
         map.put("name", stack.getRight().getItem().getRegistryName().toString());
         map.put("amount", amount);
         map.put("displayName", displayName);
@@ -165,7 +163,7 @@ public class AppEngApi {
         for (Object2LongMap.Entry<AEKey> aeKey : monitor.getAvailableStacks()) {
             if (!(aeKey.getKey() instanceof AEItemKey itemKey))
                 continue;
-            if (aeKey.getLongValue() > 0 && fingerprint.equals(getFingerpint(itemKey))) {
+            if (aeKey.getLongValue() > 0 && fingerprint.equals(ItemUtil.getFingerprint(itemKey.toStack()))) {
                 return itemKey.toStack((int) aeKey.getLongValue());
             }
         }
@@ -174,41 +172,13 @@ public class AppEngApi {
 
     public static FluidStack findMatchingFluidFingerprint(String fingerprint, MEStorage monitor) {
         for (Object2LongMap.Entry<AEKey> aeKey : monitor.getAvailableStacks()) {
-            if (!(aeKey.getKey() instanceof AEFluidKey itemKey))
+            if (!(aeKey.getKey() instanceof AEFluidKey fluidKey))
                 continue;
-            if (aeKey.getLongValue() > 0 && fingerprint.equals(getFingerpint(itemKey))) {
-                return itemKey.toStack((int) aeKey.getLongValue());
+            if (aeKey.getLongValue() > 0 && fingerprint.equals(FluidUtil.getFingerprint(fluidKey.toStack(1)))) {
+                return fluidKey.toStack((int) aeKey.getLongValue());
             }
         }
         return null;
-    }
-
-    public static String getFingerpint(AEItemKey itemStack) {
-        ItemStack stack = itemStack.toStack();
-        String fingerprint = stack.getOrCreateTag() + stack.getItem().getRegistryName().toString() + stack.getDisplayName().getString();
-        try {
-            byte[] bytesOfHash = fingerprint.getBytes(StandardCharsets.UTF_8);
-            MessageDigest md = MessageDigest.getInstance("MD5");
-            return StringUtil.toHexString(md.digest(bytesOfHash));
-        } catch (NoSuchAlgorithmException ex) {
-            AdvancedPeripherals.debug("Could not parse fingerprint.", Level.ERROR);
-            ex.printStackTrace();
-        }
-        return "";
-    }
-
-    public static String getFingerpint(AEFluidKey fluidStack) {
-        FluidStack stack = fluidStack.toStack(1);
-        String fingerprint = stack.getOrCreateTag() + stack.getFluid().getRegistryName().toString() + stack.getDisplayName().getString();
-        try {
-            byte[] bytesOfHash = fingerprint.getBytes(StandardCharsets.UTF_8);
-            MessageDigest md = MessageDigest.getInstance("MD5");
-            return StringUtil.toHexString(md.digest(bytesOfHash));
-        } catch (NoSuchAlgorithmException ex) {
-            AdvancedPeripherals.debug("Could not parse fingerprint.", Level.ERROR);
-            ex.printStackTrace();
-        }
-        return "";
     }
 
     public static MEStorage getMonitor(IGridNode node) {

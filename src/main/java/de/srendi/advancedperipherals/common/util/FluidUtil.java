@@ -5,6 +5,7 @@ import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.peripheral.IComputerAccess;
 import dan200.computercraft.api.peripheral.IPeripheral;
 import dan200.computercraft.core.apis.TableHelper;
+import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.addons.appliedenergistics.AppEngApi;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.IPeripheralOwner;
 import net.minecraft.ResourceLocationException;
@@ -26,6 +27,9 @@ import net.minecraftforge.registries.IForgeRegistry;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Map;
 import java.util.Objects;
 
@@ -67,6 +71,7 @@ public class FluidUtil {
         return handler;
     }
 
+    //TODO: This stuff here needs to go away too
     public static FluidStack getFluidStack(Map<?, ?> table, MEStorage monitor) throws LuaException {
         if (table == null || table.isEmpty()) return FluidStack.EMPTY;
 
@@ -128,5 +133,18 @@ public class FluidUtil {
         tag = new CompoundTag();
         tag.put("_apPlaceholder_", IntTag.valueOf(1));
         return tag;
+    }
+
+    public static String getFingerprint(FluidStack stack) {
+        String fingerprint = stack.getOrCreateTag() + stack.getFluid().getRegistryName().toString() + stack.getDisplayName().getString();
+        try {
+            byte[] bytesOfHash = fingerprint.getBytes(StandardCharsets.UTF_8);
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            return StringUtil.toHexString(md.digest(bytesOfHash));
+        } catch (NoSuchAlgorithmException ex) {
+            AdvancedPeripherals.debug("Could not parse fingerprint.", org.apache.logging.log4j.Level.ERROR);
+            ex.printStackTrace();
+        }
+        return "";
     }
 }

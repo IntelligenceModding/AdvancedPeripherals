@@ -1,6 +1,7 @@
 package de.srendi.advancedperipherals.common.util;
 
 import dan200.computercraft.shared.Registry;
+import de.srendi.advancedperipherals.AdvancedPeripherals;
 import net.minecraft.ResourceLocationException;
 import net.minecraft.core.NonNullList;
 import net.minecraft.resources.ResourceLocation;
@@ -9,7 +10,11 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.registries.ForgeRegistryEntry;
 import net.minecraftforge.registries.IForgeRegistry;
+import org.apache.logging.log4j.Level;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,6 +40,25 @@ public class ItemUtil {
         } else {
             return null;
         }
+    }
+
+    /**
+     * Fingerprints are MD5 hashes generated out of the nbt tag, the registry name and the display name from item stacks
+     * Used to filter inventory specific operations. {@link de.srendi.advancedperipherals.common.addons.computercraft.peripheral.InventoryManagerPeripheral}
+     *
+     * @return A generated MD5 hash from the item stack
+     */
+    public static String getFingerprint(ItemStack stack) {
+        String fingerprint = stack.getOrCreateTag() + stack.getItem().getRegistryName().toString() + stack.getDisplayName().getString();
+        try {
+            byte[] bytesOfHash = fingerprint.getBytes(StandardCharsets.UTF_8);
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            return StringUtil.toHexString(md.digest(bytesOfHash));
+        } catch (NoSuchAlgorithmException ex) {
+            AdvancedPeripherals.debug("Could not parse fingerprint.", Level.ERROR);
+            ex.printStackTrace();
+        }
+        return "";
     }
 
     public static ItemStack makeTurtle(Item turtle, String upgrade) {

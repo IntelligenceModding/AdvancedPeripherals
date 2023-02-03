@@ -66,7 +66,7 @@ public class InventoryManagerPeripheral extends BasePeripheral<BlockEntityPeriph
         if (item.isPresent()) {
             filter = ItemFilter.of(Map.of("name", item.get()));
         }
-        if(filter.rightPresent())
+        if (filter.rightPresent())
             return MethodResult.of(0, filter.getRight());
         return MethodResult.of(addItemCommon(invDirection, count, slot, filter.getLeft()));
 
@@ -87,7 +87,7 @@ public class InventoryManagerPeripheral extends BasePeripheral<BlockEntityPeriph
 
             filter = ItemFilter.of(item.get());
 
-            if(filter.rightPresent())
+            if (filter.rightPresent())
                 return MethodResult.of(0, filter.getRight());
         }
 
@@ -112,18 +112,13 @@ public class InventoryManagerPeripheral extends BasePeripheral<BlockEntityPeriph
         int transferableAmount = 0;
 
         for (int i = 0; i < inventoryFrom.getSlots(); i++) {
-            if (filter.test(inventoryFrom.getStackInSlot(i), null)) {
-                if (inventoryFrom.getStackInSlot(i).getCount() >= (amount - transferableAmount)) {
-                    ItemStack extracted = inventoryFrom.extractItem(i, amount, true);
-                    ItemStack inserted = ItemHandlerHelper.insertItem(inventoryTo, extracted, false);
-                    transferableAmount += inventoryFrom.extractItem(i, extracted.getCount() - inserted.getCount(), false).getCount();
+            if (filter.test(inventoryFrom.getStackInSlot(i))) {
+                ItemStack extracted = inventoryFrom.extractItem(i, amount - transferableAmount, true);
+                ItemStack inserted = ItemHandlerHelper.insertItem(inventoryTo, extracted, false);
+                amount -= inserted.getCount();
+                transferableAmount += inventoryFrom.extractItem(i, extracted.getCount() - inserted.getCount(), false).getCount();
+                if(transferableAmount >= count)
                     break;
-                } else {
-                    ItemStack extracted = inventoryFrom.extractItem(i, amount, true);
-                    ItemStack inserted = ItemHandlerHelper.insertItem(inventoryTo, extracted, false);
-                    amount -= inserted.getCount();
-                    transferableAmount += inventoryFrom.extractItem(i, extracted.getCount() - inserted.getCount(), false).getCount();
-                }
             }
         }
 
