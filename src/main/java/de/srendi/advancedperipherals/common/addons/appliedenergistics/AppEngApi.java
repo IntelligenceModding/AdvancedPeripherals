@@ -15,10 +15,7 @@ import appeng.items.storage.BasicStorageCell;
 import dan200.computercraft.shared.util.NBTUtil;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.addons.APAddons;
-import de.srendi.advancedperipherals.common.util.FluidUtil;
-import de.srendi.advancedperipherals.common.util.ItemUtil;
-import de.srendi.advancedperipherals.common.util.LuaConverter;
-import de.srendi.advancedperipherals.common.util.Pair;
+import de.srendi.advancedperipherals.common.util.*;
 import io.github.projectet.ae2things.item.DISKDrive;
 import it.unimi.dsi.fastutil.objects.Object2LongMap;
 import net.minecraft.nbt.CompoundTag;
@@ -32,8 +29,12 @@ import java.util.*;
 public class AppEngApi {
 
     public static Pair<Long, AEItemKey> findAEStackFromItemStack(MEStorage monitor, ICraftingService crafting, ItemStack item) {
+        return findAEStackFromItemStack(monitor, crafting, ItemFilter.fromStack(item));
+    }
+
+    public static Pair<Long, AEItemKey> findAEStackFromItemStack(MEStorage monitor, ICraftingService crafting, ItemFilter item) {
         for (Object2LongMap.Entry<AEKey> temp : monitor.getAvailableStacks()) {
-            if (temp.getKey() instanceof AEItemKey key && key.matches(item))
+            if (temp.getKey() instanceof AEItemKey key && item.test(key.toStack()))
                 return Pair.of(temp.getLongValue(), key);
         }
 
@@ -41,7 +42,7 @@ public class AppEngApi {
             return null;
 
         for (var temp : crafting.getCraftables(param -> true)) {
-            if (temp instanceof AEItemKey key && key.matches(item))
+            if (temp instanceof AEItemKey key && item.test(key.toStack()))
                 return Pair.of(0L, key);
         }
 

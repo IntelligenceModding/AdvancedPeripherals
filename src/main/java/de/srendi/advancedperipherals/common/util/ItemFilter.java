@@ -24,7 +24,7 @@ public class ItemFilter {
     private int toSlot = -1;
 
     public static Pair<ItemFilter, String> parse(Map<?, ?> item) {
-        ItemFilter itemArgument = new ItemFilter();
+        ItemFilter itemArgument = empty();
         // If the map is empty, return a filter without any filters
         if (item.size() == 0)
             return Pair.of(itemArgument, null);
@@ -79,16 +79,24 @@ public class ItemFilter {
         return Pair.of(itemArgument, null);
     }
 
+    public static ItemFilter fromStack(ItemStack stack) {
+        ItemFilter filter = empty();
+        filter.item = stack.getItem();
+        filter.nbt = stack.hasTag() ? stack.getTag() : null;
+        return filter;
+    }
+
     public static ItemFilter empty() {
         return new ItemFilter();
     }
 
     public boolean test(ItemStack stack) {
-        // If the filter does not have nbt values, a tag or a fingerprint, just test if the items are the same
         if (!fingerprint.isEmpty()) {
             String testFingerprint = ItemUtil.getFingerprint(stack);
             return fingerprint.equals(testFingerprint);
         }
+
+        // If the filter does not have nbt values, a tag or a fingerprint, just test if the items are the same
         if (item != Items.AIR) {
             if (tag == null && nbt == null && fingerprint.isEmpty())
                 return stack.is(item);

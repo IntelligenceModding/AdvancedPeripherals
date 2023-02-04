@@ -44,6 +44,22 @@ public class InventoryUtil {
         int amount = filter.getCount();
         int transferableAmount = 0;
 
+        if (inventoryFrom instanceof IStorageSystemItemHandler storageSystemHandler) {
+            for (int i = toSlot == -1 ? 0 : toSlot; i < (toSlot == -1 ? inventoryFrom.getSlots() : toSlot + 1); i++) {
+                ItemStack extracted = storageSystemHandler.extractItem(filter, true);
+                ItemStack inserted;
+                if (toSlot == -1) {
+                    inserted = ItemHandlerHelper.insertItem(inventoryTo, extracted, false);
+                } else {
+                    inserted = inventoryTo.insertItem(toSlot, extracted, false);
+                }
+                amount -= inserted.getCount();
+                transferableAmount += storageSystemHandler.extractItem(filter, false).getCount();
+                if (transferableAmount >= filter.getCount())
+                    break;
+            }
+        }
+
         for (int i = fromSlot == -1 ? 0 : fromSlot; i < (fromSlot == -1 ? inventoryFrom.getSlots() : fromSlot + 1); i++) {
             if (filter.test(inventoryFrom.getStackInSlot(i))) {
                 ItemStack extracted = inventoryFrom.extractItem(i, amount - transferableAmount, true);
