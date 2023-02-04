@@ -2,6 +2,7 @@
   "parent": "minecraft:block/cube_all",
   "textures": {
     "all": "advancedperipherals:block/chat_box",
-    "north": "advancedperipherals:block/chat_box_front"
+    "north": "advancedperipherals:block/chat_box_front",
+    "particle": "advancedperipherals:block/chat_box_front"
   }
 }
