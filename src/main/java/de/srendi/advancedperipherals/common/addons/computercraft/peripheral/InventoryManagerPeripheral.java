@@ -23,10 +23,7 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.PlayerInvWrapper;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 public class InventoryManagerPeripheral extends BasePeripheral<BlockEntityPeripheralOwner<InventoryManagerEntity>> {
 
@@ -57,18 +54,23 @@ public class InventoryManagerPeripheral extends BasePeripheral<BlockEntityPeriph
     }
 
     /**
-     * @deprecated Switch do the function with the item object
+     * @deprecated Switch to the function with the item filter object
      */
     @Deprecated
     @LuaFunction(mainThread = true, value = {"pullItems", "addItemToPlayer"})
     public final MethodResult addItemToPlayer(String invDirection, int count, Optional<Integer> slot, Optional<String> item) throws LuaException {
-        Pair<ItemFilter, String> filter = Pair.of(ItemFilter.empty(), null);
-        if (item.isPresent()) {
-            filter = ItemFilter.of(Map.of("name", item.get()));
-        }
+        Pair<ItemFilter, String> filter;
+        Map<Object, Object> filterMap = new HashMap<>();
+
+        // Deprecated! Will be removed in the future. This exists to maintain compatibility within the same mc version
+        item.ifPresent(s -> filterMap.put("name", s));
+        slot.ifPresent(integer -> filterMap.put("toSlot", integer));
+        filterMap.put("count", count);
+
+        filter = ItemFilter.parse(filterMap);
         if (filter.rightPresent())
             return MethodResult.of(0, filter.getRight());
-        return MethodResult.of(addItemCommon(invDirection, count, slot, filter.getLeft()));
+        return MethodResult.of(addItemCommon(invDirection, filter.getLeft()));
 
     }
 
@@ -78,35 +80,34 @@ public class InventoryManagerPeripheral extends BasePeripheral<BlockEntityPeriph
     //If a count is specified in the item it is silently IGNORED
     @LuaFunction(mainThread = true)
     public final MethodResult addItemToPlayerNBT(String invDirection, int count, Optional<Integer> slot, Optional<Map<?, ?>> item) throws LuaException {
-        Pair<ItemFilter, String> filter = Pair.of(ItemFilter.empty(), null);
-        if (item.isPresent()) {
-            Direction direction = validateSide(invDirection);
+        Pair<ItemFilter, String> filter;
+        Map<Object, Object> filterMap = new HashMap<>();
 
-            BlockEntity targetEntity = owner.getLevel().getBlockEntity(owner.getPos().relative(direction));
-            IItemHandler inventoryFrom = targetEntity != null ? targetEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, direction).resolve().orElse(null) : null;
+        // Deprecated! Will be removed in the future. This exists to maintain compatibility within the same mc version
+        slot.ifPresent(integer -> filterMap.put("toSlot", integer));
+        filterMap.put("count", count);
 
-            filter = ItemFilter.of(item.get());
+        item.ifPresent(filterMap::putAll);
 
-            if (filter.rightPresent())
-                return MethodResult.of(0, filter.getRight());
-        }
+        filter = ItemFilter.parse(filterMap);
+        if (filter.rightPresent())
+            return MethodResult.of(0, filter.getRight());
 
-        return MethodResult.of(addItemCommon(invDirection, count, slot, filter.getLeft()), null);
+        return MethodResult.of(addItemCommon(invDirection, filter.getLeft()), null);
     }
 
-    private int addItemCommon(String invDirection, int count, Optional<Integer> slot, ItemFilter filter) throws LuaException {
+    private int addItemCommon(String invDirection, ItemFilter filter) throws LuaException {
         Direction direction = validateSide(invDirection);
 
         BlockEntity targetEntity = owner.getLevel().getBlockEntity(owner.getPos().relative(direction));
         IItemHandler inventoryFrom = targetEntity != null ? targetEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, direction).resolve().orElse(null) : null;
         IItemHandler inventoryTo = new PlayerInvWrapper(getOwnerPlayer().getInventory());
 
-        int invSlot = slot.orElse(0);
 
         //if (invSlot >= inventoryTo.getSlots() || invSlot < 0)
         //  throw new LuaException("Inventory out of bounds " + invSlot + " (max: " + (inventoryTo.getSlots() - 1) + ")");
 
-        return InventoryUtil.moveItem(inventoryFrom, -1, inventoryTo, -1, filter);
+        return InventoryUtil.moveItem(inventoryFrom, inventoryTo, filter);
     }
 
    /* @LuaFunction(mainThread = true, value = {"pushItems", "removeItemFromPlayer"})

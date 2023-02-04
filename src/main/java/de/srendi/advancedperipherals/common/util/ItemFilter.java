@@ -20,9 +20,10 @@ public class ItemFilter {
     private Tag nbt = null;
     private int count = -1;
     private String fingerprint = "";
-    private int slot;
+    private int fromSlot = -1;
+    private int toSlot = -1;
 
-    public static Pair<ItemFilter, String> of(Map<?, ?> item) {
+    public static Pair<ItemFilter, String> parse(Map<?, ?> item) {
         ItemFilter itemArgument = new ItemFilter();
         // If the map is empty, return a filter without any filters
         if (item.size() == 0)
@@ -51,6 +52,27 @@ public class ItemFilter {
                 itemArgument.fingerprint = TableHelper.getStringField(item, "fingerprint");
             } catch (LuaException luaException) {
                 return Pair.of(null, "NO_VALID_FINGERPRINT");
+            }
+        }
+        if (item.containsKey("fromSlot")) {
+            try {
+                itemArgument.fromSlot = TableHelper.getIntField(item, "fromSlot");
+            } catch (LuaException luaException) {
+                return Pair.of(null, "NO_VALID_FROMSLOT");
+            }
+        }
+        if (item.containsKey("toSlot")) {
+            try {
+                itemArgument.toSlot = TableHelper.getIntField(item, "toSlot");
+            } catch (LuaException luaException) {
+                return Pair.of(null, "NO_VALID_TOSLOT");
+            }
+        }
+        if (item.containsKey("count")) {
+            try {
+                itemArgument.count = TableHelper.getIntField(item, "count");
+            } catch (LuaException luaException) {
+                return Pair.of(null, "NO_VALID_COUNT");
             }
         }
 
@@ -87,7 +109,11 @@ public class ItemFilter {
         return item;
     }
 
-    public int getSlot() {
-        return slot;
+    public int getFromSlot() {
+        return fromSlot;
+    }
+
+    public int getToSlot() {
+        return toSlot;
     }
 }

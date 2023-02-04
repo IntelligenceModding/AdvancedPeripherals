@@ -35,19 +35,27 @@ public class InventoryUtil {
         return null;
     }
 
-    public static int moveItem(IItemHandler inventoryFrom, int fromSlot, IItemHandler inventoryTo, int toSlot, ItemFilter filter) {
+    public static int moveItem(IItemHandler inventoryFrom, IItemHandler inventoryTo, ItemFilter filter) {
         if (inventoryFrom == null) return 0;
+
+        int fromSlot = filter.getFromSlot();
+        int toSlot = filter.getToSlot();
 
         int amount = filter.getCount();
         int transferableAmount = 0;
 
-        for (int i = 0; i < inventoryFrom.getSlots(); i++) {
+        for (int i = fromSlot == -1 ? 0 : fromSlot; i < (fromSlot == -1 ? inventoryFrom.getSlots() : fromSlot + 1); i++) {
             if (filter.test(inventoryFrom.getStackInSlot(i))) {
                 ItemStack extracted = inventoryFrom.extractItem(i, amount - transferableAmount, true);
-                ItemStack inserted = ItemHandlerHelper.insertItem(inventoryTo, extracted, false);
+                ItemStack inserted;
+                if (toSlot == -1) {
+                    inserted = ItemHandlerHelper.insertItem(inventoryTo, extracted, false);
+                } else {
+                    inserted = inventoryTo.insertItem(toSlot, extracted, false);
+                }
                 amount -= inserted.getCount();
                 transferableAmount += inventoryFrom.extractItem(i, extracted.getCount() - inserted.getCount(), false).getCount();
-                if(transferableAmount >= filter.getCount())
+                if (transferableAmount >= filter.getCount())
                     break;
             }
         }
