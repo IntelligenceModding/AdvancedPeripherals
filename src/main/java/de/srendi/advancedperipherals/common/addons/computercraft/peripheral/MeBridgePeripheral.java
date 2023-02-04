@@ -10,15 +10,21 @@ import appeng.api.storage.MEStorage;
 import dan200.computercraft.api.lua.IArguments;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
+import dan200.computercraft.api.lua.MethodResult;
 import dan200.computercraft.api.peripheral.IComputerAccess;
 import de.srendi.advancedperipherals.common.addons.appliedenergistics.AppEngApi;
+import de.srendi.advancedperipherals.common.addons.appliedenergistics.MeItemHandler;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.BlockEntityPeripheralOwner;
 import de.srendi.advancedperipherals.common.blocks.blockentities.MeBridgeEntity;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.util.FluidUtil;
+import de.srendi.advancedperipherals.common.util.InventoryUtil;
+import de.srendi.advancedperipherals.common.util.ItemFilter;
+import de.srendi.advancedperipherals.common.util.Pair;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -57,35 +63,16 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
      * @param arguments the arguments given by the computer
      * @param targetInventory the give inventory
      * @return the exportable amount
-     * @throws LuaException if stack does not exist or the system is offline - will be removed in 0.8
      */
-    /*protected long exportToChest(@NotNull IArguments arguments, @NotNull IItemHandler targetInventory) throws LuaException {
+    protected MethodResult exportToChest(@NotNull IArguments arguments, @NotNull IItemHandler targetInventory) throws LuaException {
         MEStorage monitor = AppEngApi.getMonitor(node);
-        ItemStack stack = ItemUtil.getItemStack(arguments.getTable(0), monitor);
-        AEItemKey targetStack = AEItemKey.of(stack);
-        if (targetStack == null) throw new LuaException("Illegal AE2 state ...");
+        MeItemHandler itemHandler = new MeItemHandler(monitor, getCraftingService(), tile);
+        Pair<ItemFilter, String> filter = ItemFilter.parse(arguments.getTable(0));
 
-        long extracted = monitor.extract(targetStack, stack.getCount(), Actionable.SIMULATE, tile.getActionSource());
-        if (extracted == 0)
-            throw new LuaException("Item " + stack + " does not exists in the ME system or the system is offline");
+        if(filter.rightPresent())
+            return MethodResult.of(0, filter.getRight());
 
-        long transferableAmount = extracted;
-
-        ItemStack remaining = ItemHandlerHelper.insertItemStacked(targetInventory, stack, true);
-        if (!remaining.isEmpty()) {
-            transferableAmount -= remaining.getCount();
-        }
-
-        if (transferableAmount == 0) return transferableAmount;
-
-        extracted = monitor.extract(targetStack, transferableAmount, Actionable.MODULATE, tile.getActionSource());
-        stack.setCount((int) extracted);
-        remaining = ItemHandlerHelper.insertItemStacked(targetInventory, stack, false);
-
-        if (!remaining.isEmpty()) {
-            monitor.insert(AEItemKey.of(remaining), remaining.getCount(), Actionable.MODULATE, tile.getActionSource());
-        }
-        return transferableAmount;
+        return MethodResult.of(InventoryUtil.moveItem(itemHandler, targetInventory, filter.getLeft()), null);
     }
 
     /**
@@ -136,32 +123,16 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
      * @return the imported amount
      * @throws LuaException if system is offline - will be removed in 0.8
      */
-    /*protected int importToME(@NotNull IArguments arguments, @NotNull IItemHandler targetInventory) throws LuaException {
+    protected MethodResult importToME(@NotNull IArguments arguments, @NotNull IItemHandler targetInventory) throws LuaException {
         MEStorage monitor = AppEngApi.getMonitor(node);
-        ItemStack stack = ItemUtil.getItemStack(arguments.getTable(0), monitor);
-        int amount = stack.getCount();
+        MeItemHandler itemHandler = new MeItemHandler(monitor, getCraftingService(), tile);
+        Pair<ItemFilter, String> filter = ItemFilter.parse(arguments.getTable(0));
 
-        if (stack.getCount() == 0) return 0;
+        if(filter.rightPresent())
+            return MethodResult.of(0, filter.getRight());
 
-        int transferableAmount = 0;
-
-        for (int i = 0; i < targetInventory.getSlots(); i++) {
-            if (targetInventory.getStackInSlot(i).sameItem(stack)) {
-                if (targetInventory.getStackInSlot(i).getCount() >= (amount - transferableAmount)) {
-                    ItemStack extracted = targetInventory.extractItem(i, amount, false);
-                    monitor.insert(AEItemKey.of(extracted), extracted.getCount(), Actionable.MODULATE, tile.getActionSource());
-                    transferableAmount += extracted.getCount();
-                    break;
-                } else {
-                    ItemStack extracted = targetInventory.extractItem(i, amount, false);
-                    amount -= extracted.getCount();
-                    monitor.insert(AEItemKey.of(extracted), extracted.getCount(), Actionable.MODULATE, tile.getActionSource());
-                    transferableAmount += extracted.getCount();
-                }
-            }
-        }
-        return transferableAmount;
-    }*/
+        return MethodResult.of(InventoryUtil.moveItem(targetInventory, itemHandler, filter.getLeft()), null);
+    }
 
     /**
      * imports a fluid to the system from a valid tank
@@ -271,7 +242,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         return getCraftingService().isCraftable(stack.getRight());
     }*/
 
-    @LuaFunction(mainThread = true)
+    /*@LuaFunction(mainThread = true)
     public final long exportFluid(@NotNull IArguments arguments) throws LuaException {
         IFluidHandler handler = FluidUtil.getHandlerFromDirection(arguments.getString(1), owner);
         return exportToTank(arguments, handler);
@@ -293,31 +264,31 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     public final int importFluidFromPeripheral(IComputerAccess computer, IArguments arguments) throws LuaException {
         IFluidHandler handler = FluidUtil.getHandlerFromName(computer, arguments.getString(1));
         return importToME(arguments, handler);
-    }
+    }*/
 
-    /*@LuaFunction(mainThread = true)
-    public final long exportItem(@NotNull IArguments arguments) throws LuaException {
+    @LuaFunction(mainThread = true)
+    public final MethodResult exportItem(@NotNull IArguments arguments) throws LuaException {
         IItemHandler inventory = InventoryUtil.getHandlerFromDirection(arguments.getString(1), owner);
         return exportToChest(arguments, inventory);
     }
 
     @LuaFunction(mainThread = true)
-    public final long exportItemToPeripheral(IComputerAccess computer, IArguments arguments) throws LuaException {
+    public final MethodResult exportItemToPeripheral(IComputerAccess computer, IArguments arguments) throws LuaException {
         IItemHandler inventory = InventoryUtil.getHandlerFromName(computer, arguments.getString(1));
         return exportToChest(arguments, inventory);
-    }*/
+    }
 
-    /*@LuaFunction(mainThread = true)
-    public final int importItem(IArguments arguments) throws LuaException {
+    @LuaFunction(mainThread = true)
+    public final MethodResult importItem(IArguments arguments) throws LuaException {
         IItemHandler inventory = InventoryUtil.getHandlerFromDirection(arguments.getString(1), owner);
         return importToME(arguments, inventory);
     }
 
     @LuaFunction(mainThread = true)
-    public final int importItemFromPeripheral(IComputerAccess computer, IArguments arguments) throws LuaException {
+    public final MethodResult importItemFromPeripheral(IComputerAccess computer, IArguments arguments) throws LuaException {
         IItemHandler inventory = InventoryUtil.getHandlerFromName(computer, arguments.getString(1));
         return importToME(arguments, inventory);
-    }*/
+    }
 
     /*@LuaFunction(mainThread = true)
     public final MethodResult getItem(IArguments arguments) throws LuaException {

@@ -18,7 +18,7 @@ public class ItemFilter {
     private Item item = Items.AIR;
     private TagKey<Item> tag = null;
     private Tag nbt = null;
-    private int count = -1;
+    private int count = 64;
     private String fingerprint = "";
     private int fromSlot = -1;
     private int toSlot = -1;

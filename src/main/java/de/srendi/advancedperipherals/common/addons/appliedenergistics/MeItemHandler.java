@@ -11,14 +11,18 @@ import de.srendi.advancedperipherals.common.util.Pair;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * Used to transfer item between an inventory and the ME system.
+ * @see de.srendi.advancedperipherals.common.addons.computercraft.peripheral.MeBridgePeripheral
+ */
 public class MeItemHandler implements IStorageSystemItemHandler {
 
     @NotNull
-    private MEStorage storageMonitor;
+    private final MEStorage storageMonitor;
     @NotNull
-    private ICraftingService craftingService;
+    private final ICraftingService craftingService;
     @NotNull
-    private IActionSource actionSource;
+    private final IActionSource actionSource;
 
     public MeItemHandler(@NotNull MEStorage storageMonitor, @NotNull ICraftingService craftingService, @NotNull IActionSource actionSource) {
         this.storageMonitor = storageMonitor;
@@ -26,44 +30,25 @@ public class MeItemHandler implements IStorageSystemItemHandler {
         this.actionSource = actionSource;
     }
 
-    @Override
-    public int getSlots() {
-        return 0;
-    }
-
-    @NotNull
-    @Override
-    public ItemStack getStackInSlot(int slot) {
-        return null;
-    }
-
     @NotNull
     @Override
     public ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
-        return null;
+        AEItemKey itemKey = AEItemKey.of(stack.getItem());
+        long inserted = storageMonitor.insert(itemKey, stack.getCount(),  simulate ? Actionable.SIMULATE : Actionable.MODULATE, actionSource);
+        ItemStack insertedStack = stack.copy();
+        // Safe to cast here, the amount will never be higher than 64
+        insertedStack.setCount(insertedStack.getCount() - (int) inserted);
+        return insertedStack;
     }
 
-    @NotNull
     @Override
-    public ItemStack extractItem(int slot, int amount, boolean simulate) {
-        return ItemStack.EMPTY;
-    }
-
     public ItemStack extractItem(ItemFilter filter, boolean simulate) {
         Pair<Long, AEItemKey> itemKey = AppEngApi.findAEStackFromItemStack(storageMonitor, craftingService, filter);
+        if(itemKey == null)
+            return ItemStack.EMPTY;
         long extracted = storageMonitor.extract(itemKey.getRight(), Math.max(64, filter.getCount()), simulate ? Actionable.SIMULATE : Actionable.MODULATE, actionSource);
         // Safe to cast here, the amount will never be higher than 64
         return new ItemStack(itemKey.getRight().getItem(), (int) extracted);
-    }
-
-    @Override
-    public int getSlotLimit(int slot) {
-        return 0;
-    }
-
-    @Override
-    public boolean isItemValid(int slot, @NotNull ItemStack stack) {
-        return false;
     }
 
 }
