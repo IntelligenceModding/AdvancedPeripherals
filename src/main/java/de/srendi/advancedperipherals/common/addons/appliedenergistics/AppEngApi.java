@@ -84,13 +84,13 @@ public class AppEngApi {
         return items;
     }
 
-    public static Map<String, Object> getObjectFromStack(Pair<Long, AEKey> stack, ICraftingService service) {
+    public static <T extends AEKey> Map<String, Object> getObjectFromStack(Pair<Long, T> stack, ICraftingService service) {
         if (stack.getRight() instanceof AEItemKey itemKey)
             return getObjectFromItemStack(Pair.of(stack.getLeft(), itemKey), service);
         if (stack.getRight() instanceof AEFluidKey fluidKey)
             return getObjectFromFluidStack(Pair.of(stack.getLeft(), fluidKey), service);
 
-        AdvancedPeripherals.debug("Could not create table from unknown stack " + stack.getClass() + " - Report this to the owner", Level.ERROR);
+        AdvancedPeripherals.debug("Could not create table from unknown stack " + stack.getRight().getClass() + " - Report this to the maintainer of ap", Level.ERROR);
         return Collections.emptyMap();
     }
 
@@ -134,19 +134,6 @@ public class AppEngApi {
         return map;
     }
 
-    public static CompoundTag findMatchingTag(ItemStack stack, String nbtHash, MEStorage monitor) {
-        for (Object2LongMap.Entry<AEKey> aeKey : monitor.getAvailableStacks()) {
-            if (aeKey.getKey() instanceof AEItemKey itemKey && aeKey.getLongValue() > 0 && itemKey.getItem() == stack.getItem()) {
-                CompoundTag tag = itemKey.toStack().getTag();
-                String hash = NBTUtil.getNBTHash(tag);
-                if (nbtHash.equals(hash))
-                    return tag.copy();
-
-            }
-        }
-        return null;
-    }
-
     public static CompoundTag findMatchingTag(FluidStack stack, String nbtHash, MEStorage monitor) {
         for (Object2LongMap.Entry<AEKey> aeKey : monitor.getAvailableStacks()) {
             if (aeKey.getKey() instanceof AEFluidKey fluidKey && aeKey.getLongValue() > 0 && fluidKey.getFluid() == stack.getFluid()) {
@@ -158,17 +145,6 @@ public class AppEngApi {
             }
         }
         return null;
-    }
-
-    public static ItemStack findMatchingFingerprint(String fingerprint, MEStorage monitor) {
-        for (Object2LongMap.Entry<AEKey> aeKey : monitor.getAvailableStacks()) {
-            if (!(aeKey.getKey() instanceof AEItemKey itemKey))
-                continue;
-            if (aeKey.getLongValue() > 0 && fingerprint.equals(ItemUtil.getFingerprint(itemKey.toStack()))) {
-                return itemKey.toStack((int) aeKey.getLongValue());
-            }
-        }
-        return ItemStack.EMPTY;
     }
 
     public static FluidStack findMatchingFluidFingerprint(String fingerprint, MEStorage monitor) {

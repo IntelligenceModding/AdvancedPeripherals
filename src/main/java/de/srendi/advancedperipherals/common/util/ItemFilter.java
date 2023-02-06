@@ -90,6 +90,10 @@ public class ItemFilter {
         return new ItemFilter();
     }
 
+    public boolean isEmpty() {
+        return fingerprint.isEmpty() && item == Items.AIR && tag == null && nbt == null;
+    }
+
     public boolean test(ItemStack stack) {
         if (!fingerprint.isEmpty()) {
             String testFingerprint = ItemUtil.getFingerprint(stack);

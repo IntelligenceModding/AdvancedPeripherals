@@ -6,6 +6,7 @@ import appeng.api.networking.IManagedGridNode;
 import appeng.api.networking.crafting.ICraftingCPU;
 import appeng.api.networking.crafting.ICraftingService;
 import appeng.api.stacks.AEFluidKey;
+import appeng.api.stacks.AEItemKey;
 import appeng.api.storage.MEStorage;
 import dan200.computercraft.api.lua.IArguments;
 import dan200.computercraft.api.lua.LuaException;
@@ -13,15 +14,14 @@ import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.lua.MethodResult;
 import dan200.computercraft.api.peripheral.IComputerAccess;
 import de.srendi.advancedperipherals.common.addons.appliedenergistics.AppEngApi;
+import de.srendi.advancedperipherals.common.addons.appliedenergistics.CraftJob;
 import de.srendi.advancedperipherals.common.addons.appliedenergistics.MeItemHandler;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.BlockEntityPeripheralOwner;
 import de.srendi.advancedperipherals.common.blocks.blockentities.MeBridgeEntity;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
-import de.srendi.advancedperipherals.common.util.FluidUtil;
-import de.srendi.advancedperipherals.common.util.InventoryUtil;
-import de.srendi.advancedperipherals.common.util.ItemFilter;
-import de.srendi.advancedperipherals.common.util.Pair;
+import de.srendi.advancedperipherals.common.util.*;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.IItemHandler;
@@ -172,23 +172,25 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         return transferableAmount;
     }
 
-    /*@LuaFunction
+    @LuaFunction
     public final MethodResult craftItem(IComputerAccess computer, IArguments arguments) throws LuaException {
-        MEStorage monitor = AppEngApi.getMonitor(node);
-        ItemStack itemToCraft = ItemUtil.getItemStack(arguments.getTable(0), monitor);
-        if (itemToCraft.isEmpty()) return MethodResult.of(false, "Item " + itemToCraft + " does not exists");
+        Pair<ItemFilter, String> filter = ItemFilter.parse(arguments.getTable(0));
+        if(filter.rightPresent())
+            return MethodResult.of(false, filter.getRight());
+
+        ItemFilter parsedFilter = filter.getLeft();
+        if (parsedFilter.isEmpty())
+            return MethodResult.of(false, "EMPTY_FILTER");
 
         String cpuName = arguments.optString(1, "");
         ICraftingCPU target = getCraftingCPU(cpuName);
         if(!cpuName.isEmpty() && target == null) return MethodResult.of(false, "CPU " + cpuName + " does not exists");
 
-        CraftJob job = new CraftJob(owner.getLevel(), computer, node, itemToCraft, tile, tile, target);
+        CraftJob job = new CraftJob(owner.getLevel(), computer, node, new ItemStack(parsedFilter.getItem(), parsedFilter.getCount()), tile, tile, target);
         tile.addJob(job);
         ServerWorker.add(job::startCrafting);
         return MethodResult.of(true);
-        //TODO - 0.8: This needs our attention. We need to return better and more useful data to the user. See https://github.com/Seniorendi/AdvancedPeripherals/issues/323
-        //return MethodResult.pullEvent("crafting", job);
-    }*/
+    }
 
     @LuaFunction(mainThread = true)
     public final double getEnergyUsage() {
@@ -216,31 +218,43 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         return node.getGrid().getEnergyService().getMaxStoredPower();
     }
 
-    /*@LuaFunction(mainThread = true)
-    public final boolean isItemCrafting(IArguments arguments) throws LuaException {
+    @LuaFunction(mainThread = true)
+    public final MethodResult isItemCrafting(IArguments arguments) throws LuaException {
         MEStorage monitor = AppEngApi.getMonitor(node);
         ICraftingService grid = node.getGrid().getService(ICraftingService.class);
 
-        ItemStack itemStack = ItemUtil.getItemStack(arguments.getTable(0), monitor);
+        Pair<ItemFilter, String> filter = ItemFilter.parse(arguments.getTable(0));
+        if(filter.rightPresent())
+            return MethodResult.of(false, filter.getRight());
+
+        ItemFilter parsedFilter = filter.getLeft();
+        if (parsedFilter.isEmpty())
+            return MethodResult.of(false, "EMPTY_FILTER");
         String cpuName = arguments.optString(1, "");
         ICraftingCPU craftingCPU = getCraftingCPU(cpuName);
 
-        return AppEngApi.isItemCrafting(monitor, grid, itemStack, craftingCPU);
+        // No need to search in the system for the item. That would just be a waste of time
+        // But we still use a filter here to maintain a better compatibility with older scripts
+        return MethodResult.of(AppEngApi.isItemCrafting(monitor, grid, new ItemStack(parsedFilter.getItem()), craftingCPU));
     }
 
     @LuaFunction(mainThread = true)
-    public final boolean isItemCraftable(IArguments arguments) throws LuaException {
+    public final MethodResult isItemCraftable(IArguments arguments) throws LuaException {
         MEStorage monitor = AppEngApi.getMonitor(node);
-        ICraftingService crafting = node.getGrid().getService(ICraftingService.class);
-        Pair<Long, AEItemKey> stack = AppEngApi.findAEStackFromItemStack(monitor, crafting, ItemUtil.getItemStack(arguments.getTable(0), monitor));
+        Pair<ItemFilter, String> filter = ItemFilter.parse(arguments.getTable(0));
+        if(filter.rightPresent())
+            return MethodResult.of(false, filter.getRight());
 
-        if (stack == null) {
-            // If the item stack does not exist, it cannot be craftable.
-            return false;
-        }
+        ItemFilter parsedFilter = filter.getLeft();
+        if (parsedFilter.isEmpty())
+            return MethodResult.of(false, "EMPTY_FILTER");
 
-        return getCraftingService().isCraftable(stack.getRight());
-    }*/
+        // No need to search in the system for the item. That would just be a waste of time
+        // But we still use a filter here to maintain a better compatibility with older scripts
+        AEItemKey item = AEItemKey.of(new ItemStack(parsedFilter.getItem()));
+
+        return MethodResult.of(getCraftingService().isCraftable(item));
+    }
 
     /*@LuaFunction(mainThread = true)
     public final long exportFluid(@NotNull IArguments arguments) throws LuaException {
@@ -290,19 +304,19 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         return importToME(arguments, inventory);
     }
 
-    /*@LuaFunction(mainThread = true)
+    @LuaFunction(mainThread = true)
     public final MethodResult getItem(IArguments arguments) throws LuaException {
         MEStorage monitor = AppEngApi.getMonitor(node);
-        ItemStack stack = ItemUtil.getItemStack(arguments.getTable(0), monitor);
-        if (stack.isEmpty()) return MethodResult.of(null, "Cannot determinate item for search");
-        for (Object2LongMap.Entry<AEKey> potentialStack : monitor.getAvailableStacks()) {
-            if (potentialStack.getKey() instanceof AEItemKey itemKey) {
-                if (itemKey.matches(stack))
-                    return MethodResult.of(AppEngApi.getObjectFromStack(new Pair<>(potentialStack.getLongValue(), itemKey), getCraftingService()));
-            }
-        }
-        return MethodResult.of((Object) null);
-    }*/
+        Pair<ItemFilter, String> filter = ItemFilter.parse(arguments.getTable(0));
+        if(filter.rightPresent())
+            return MethodResult.of(null, filter.getRight());
+
+        ItemFilter parsedFilter = filter.getLeft();
+        if (parsedFilter.isEmpty())
+            return MethodResult.of(null, "EMPTY_FILTER");
+
+        return MethodResult.of(AppEngApi.getObjectFromStack(AppEngApi.findAEStackFromItemStack(monitor, getCraftingService(), parsedFilter), getCraftingService()));
+    }
 
     @LuaFunction(mainThread = true)
     public final Object[] listItems() {
