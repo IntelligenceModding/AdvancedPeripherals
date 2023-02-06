@@ -20,7 +20,9 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.wrapper.PlayerArmorInvWrapper;
 import net.minecraftforge.items.wrapper.PlayerInvWrapper;
+import net.minecraftforge.items.wrapper.PlayerOffhandInvWrapper;
 
 import javax.annotation.Nonnull;
 import java.util.*;
@@ -38,7 +40,8 @@ public class InventoryManagerPeripheral extends BasePeripheral<BlockEntityPeriph
             case 103 -> 3;
             case 102 -> 2;
             case 101 -> 1;
-            default -> 0;
+            case 100 -> 0;
+            default -> index;
         };
     }
 
@@ -101,13 +104,14 @@ public class InventoryManagerPeripheral extends BasePeripheral<BlockEntityPeriph
 
         BlockEntity targetEntity = owner.getLevel().getBlockEntity(owner.getPos().relative(direction));
         IItemHandler inventoryFrom = targetEntity != null ? targetEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, direction).resolve().orElse(null) : null;
-        IItemHandler inventoryTo = new PlayerInvWrapper(getOwnerPlayer().getInventory());
+        Pair<IItemHandler, Integer> inventoryTo = getHandlerFromSlot(filter.getToSlot());
 
+        inventoryTo.ifRightPresent(slot -> filter.toSlot = slot);
 
         //if (invSlot >= inventoryTo.getSlots() || invSlot < 0)
         //  throw new LuaException("Inventory out of bounds " + invSlot + " (max: " + (inventoryTo.getSlots() - 1) + ")");
 
-        return InventoryUtil.moveItem(inventoryFrom, inventoryTo, filter);
+        return InventoryUtil.moveItem(inventoryFrom, inventoryTo.getLeft(), filter);
     }
 
     @LuaFunction(mainThread = true, value = {"pushItems", "removeItemFromPlayer"})
@@ -148,14 +152,12 @@ public class InventoryManagerPeripheral extends BasePeripheral<BlockEntityPeriph
         Direction direction = validateSide(invDirection);
 
         BlockEntity targetEntity = owner.getLevel().getBlockEntity(owner.getPos().relative(direction));
-        IItemHandler inventoryFrom = new PlayerInvWrapper(getOwnerPlayer().getInventory());
+        Pair<IItemHandler, Integer> inventoryFrom = getHandlerFromSlot(filter.getFromSlot());
         IItemHandler inventoryTo = targetEntity != null ? targetEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, direction).resolve().orElse(null) : null;
 
+        inventoryFrom.ifRightPresent(slot -> filter.fromSlot = slot);
 
-        //if (invSlot >= inventoryTo.getSlots() || invSlot < 0)
-        //  throw new LuaException("Inventory out of bounds " + invSlot + " (max: " + (inventoryTo.getSlots() - 1) + ")");
-
-        return InventoryUtil.moveItem(inventoryFrom, inventoryTo, filter);
+        return InventoryUtil.moveItem(inventoryFrom.getLeft(), inventoryTo, filter);
     }
 
     @Nonnull
@@ -234,24 +236,31 @@ public class InventoryManagerPeripheral extends BasePeripheral<BlockEntityPeriph
         return LuaConverter.stackToObject(getOwnerPlayer().getOffhandItem());
     }
 
-    private ItemStack insertItem(IItemHandler inventoryTo, ItemStack stack) {
-        for (int i = 0; i < inventoryTo.getSlots(); i++) {
-            if (stack.isEmpty()) break;
-            //Fixes https://github.com/Seniorendi/AdvancedPeripherals/issues/93
-            if (!stack.hasTag()) stack.setTag(null);
-            stack = inventoryTo.insertItem(i, stack, false);
-        }
-        return stack;
-    }
-
     private Player getOwnerPlayer() throws LuaException {
         if (owner.getOwner() == null)
             throw new LuaException("The Inventory Manager doesn't have a memory card or it isn't bound to a player.");
         return owner.getOwner();
     }
 
+    private Pair<IItemHandler, Integer> getHandlerFromSlot(int slot) throws LuaException {
+        IItemHandler handler;
+        if(slot >= 100 && slot <= 103) {
+            handler = new PlayerArmorInvWrapper(getOwnerPlayer().getInventory());
+            // If the slot is between 100 and 103, change the index a normal index between 0 and 3.
+            // This is necessary since the PlayerArmorInvWrapper does not work with these higher indexes
+            slot = getArmorSlot(slot);
+        } else if(slot == 36) {
+            handler = new PlayerOffhandInvWrapper(getOwnerPlayer().getInventory());
+            // Set the "from slot" to zero so the offhand wrapper can work with that
+            slot = 0;
+        } else {
+            handler = new PlayerInvWrapper(getOwnerPlayer().getInventory());
+        }
+        return Pair.of(handler, slot);
+    }
+
     /**
-     * Used to get the proper slot number for armor. See https://docs.srendi.de/ for the slot numbers
+     * Used to get the proper slot number for armor.
      *
      * @see InventoryManagerPeripheral#getArmor()
      */

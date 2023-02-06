@@ -20,8 +20,8 @@ public class ItemFilter {
     private Tag nbt = null;
     private int count = 64;
     private String fingerprint = "";
-    private int fromSlot = -1;
-    private int toSlot = -1;
+    public int fromSlot = -1;
+    public int toSlot = -1;
 
     public static Pair<ItemFilter, String> parse(Map<?, ?> item) {
         ItemFilter itemArgument = empty();
