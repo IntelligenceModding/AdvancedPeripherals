@@ -2,6 +2,7 @@
   "parent": "minecraft:block/cube_all",
   "textures": {
     "all": "advancedperipherals:block/rs_bridge",
-    "north": "advancedperipherals:block/rs_bridge_front"
+    "north": "advancedperipherals:block/rs_bridge_front",
+    "particle": "advancedperipherals:block/rs_bridge_front"
   }
 }

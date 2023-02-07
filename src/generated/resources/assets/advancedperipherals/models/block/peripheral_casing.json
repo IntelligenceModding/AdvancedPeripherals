@@ -1,6 +1,7 @@
 {
   "parent": "minecraft:block/cube_all",
   "textures": {
-    "all": "advancedperipherals:block/peripheral_casing"
+    "all": "advancedperipherals:block/peripheral_casing",
+    "particle": "advancedperipherals:block/peripheral_casing"
   }
 }

@@ -2,6 +2,7 @@
   "parent": "minecraft:block/cube_all",
   "textures": {
     "all": "advancedperipherals:block/redstone_integrator",
-    "north": "advancedperipherals:block/redstone_integrator_front"
+    "north": "advancedperipherals:block/redstone_integrator_front",
+    "particle": "advancedperipherals:block/redstone_integrator_front"
   }
 }
