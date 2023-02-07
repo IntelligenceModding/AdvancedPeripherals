@@ -1,6 +1,7 @@
 package de.srendi.advancedperipherals.common.addons.refinedstorage;
 
 import com.refinedmods.refinedstorage.api.IRSAPI;
+import com.refinedmods.refinedstorage.api.autocrafting.ICraftingManager;
 import com.refinedmods.refinedstorage.api.autocrafting.ICraftingPattern;
 import com.refinedmods.refinedstorage.api.network.INetwork;
 import com.refinedmods.refinedstorage.api.network.node.INetworkNode;
@@ -13,6 +14,7 @@ import com.refinedmods.refinedstorage.apiimpl.API;
 import com.refinedmods.refinedstorage.apiimpl.network.node.NetworkNode;
 import dan200.computercraft.shared.util.NBTUtil;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
+import de.srendi.advancedperipherals.common.util.ItemFilter;
 import de.srendi.advancedperipherals.common.util.ItemUtil;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
 import net.minecraft.core.NonNullList;
@@ -43,6 +45,27 @@ public class RefinedStorage {
     private static INetworkNode read(CompoundTag tag, NetworkNode node) {
         node.read(tag);
         return node;
+    }
+
+    public static ItemStack findStackFromStack(INetwork network, ICraftingManager crafting, ItemStack item) {
+        return findStackFromFilter(network, crafting, ItemFilter.fromStack(item));
+    }
+
+    public static ItemStack findStackFromFilter(INetwork network, ICraftingManager crafting, ItemFilter item) {
+        for (StackListEntry<ItemStack> temp : network.getItemStorageCache().getList().getStacks()) {
+            if (item.test(temp.getStack()))
+                return temp.getStack().copy();
+        }
+
+        if (crafting == null)
+            return null;
+
+        for (ICraftingPattern pattern : crafting.getPatterns()) {
+            if (item.test(pattern.getStack()))
+                return pattern.getStack().copy();
+        }
+
+        return null;
     }
 
     public static Object listFluids(INetwork network) {

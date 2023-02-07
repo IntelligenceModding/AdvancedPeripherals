@@ -81,7 +81,6 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
      * @param arguments the arguments given by the computer
      * @param targetTank the give tank
      * @return the exportable amount
-     * @throws LuaException if stack does not exist or the system is offline - will be removed in 0.8
      */
     protected long exportToTank(@NotNull IArguments arguments, @NotNull IFluidHandler targetTank) throws LuaException {
         MEStorage monitor = AppEngApi.getMonitor(node);
@@ -121,7 +120,6 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
      * @param arguments the arguments given by the computer
      * @param targetInventory the give inventory
      * @return the imported amount
-     * @throws LuaException if system is offline - will be removed in 0.8
      */
     protected MethodResult importToME(@NotNull IArguments arguments, @NotNull IItemHandler targetInventory) throws LuaException {
         MEStorage monitor = AppEngApi.getMonitor(node);
@@ -140,7 +138,6 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
      * @param arguments the arguments given by the computer
      * @param targetTank the give tank
      * @return the imported amount
-     * @throws LuaException if system is offline - will be removed in 0.8
      */
     protected int importToME(@NotNull IArguments arguments, @NotNull IFluidHandler targetTank) throws LuaException {
         MEStorage monitor = AppEngApi.getMonitor(node);

@@ -128,4 +128,8 @@ public class ItemFilter {
     public int getToSlot() {
         return toSlot;
     }
+
+    public Tag getNbt() {
+        return nbt;
+    }
 }
