@@ -11,8 +11,8 @@ import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.lib.peripherals.AutomataCorePeripheral;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.energy.CapabilityEnergy;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
 import java.util.Objects;
 
 public class AutomataChargingPlugin extends AutomataCorePlugin {
@@ -22,7 +22,7 @@ public class AutomataChargingPlugin extends AutomataCorePlugin {
     }
 
     @LuaFunction(mainThread = true)
-    public final MethodResult chargeTurtle(@Nonnull IArguments arguments) throws LuaException {
+    public final MethodResult chargeTurtle(@NotNull IArguments arguments) throws LuaException {
         TurtlePeripheralOwner owner = automataCore.getPeripheralOwner();
         FuelAbility<?> fuelAbility = owner.getAbility(PeripheralOwnerAbility.FUEL);
         Objects.requireNonNull(fuelAbility);

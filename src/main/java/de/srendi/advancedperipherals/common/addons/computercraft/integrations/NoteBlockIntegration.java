@@ -7,16 +7,15 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.NoteBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
+public class NoteBlockIntegration extends BlockIntegrationPeripheral<NoteBlock> {
 
-public class NoteblockIntegration extends BlockIntegrationPeripheral<NoteBlock> {
-
-    public NoteblockIntegration(Level world, BlockPos pos) {
+    public NoteBlockIntegration(Level world, BlockPos pos) {
         super(world, pos);
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public String getType() {
         return "noteBlock";

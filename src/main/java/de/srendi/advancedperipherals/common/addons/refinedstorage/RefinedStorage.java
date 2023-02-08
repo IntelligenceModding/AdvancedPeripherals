@@ -26,7 +26,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
@@ -52,6 +52,27 @@ public class RefinedStorage {
     }
 
     public static ItemStack findStackFromFilter(INetwork network, ICraftingManager crafting, ItemFilter item) {
+        for (StackListEntry<ItemStack> temp : network.getItemStorageCache().getList().getStacks()) {
+            if (item.test(temp.getStack()))
+                return temp.getStack().copy();
+        }
+
+        if (crafting == null)
+            return null;
+
+        for (ICraftingPattern pattern : crafting.getPatterns()) {
+            if (item.test(pattern.getStack()))
+                return pattern.getStack().copy();
+        }
+
+        return null;
+    }
+
+    public static ItemStack findFluidFromStack(INetwork network, ICraftingManager crafting, ItemStack item) {
+        return findFluidFromFilter(network, crafting, ItemFilter.fromStack(item));
+    }
+
+    public static ItemStack findFluidFromFilter(INetwork network, ICraftingManager crafting, ItemFilter item) {
         for (StackListEntry<ItemStack> temp : network.getItemStorageCache().getList().getStacks()) {
             if (item.test(temp.getStack()))
                 return temp.getStack().copy();

@@ -25,8 +25,8 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.ForgeRegistryEntry;
 import net.minecraftforge.registries.IForgeRegistry;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -34,6 +34,8 @@ import java.util.Map;
 import java.util.Objects;
 
 public class FluidUtil {
+
+    @Nullable
     public static IFluidHandler extractHandler(@Nullable Object object) {
         if (object instanceof IFluidHandler fluidHandler)
             return fluidHandler;
@@ -46,7 +48,8 @@ public class FluidUtil {
         return null;
     }
 
-    public static @NotNull IFluidHandler getHandlerFromDirection(@NotNull String direction, @NotNull IPeripheralOwner owner) throws LuaException {
+    @NotNull
+    public static IFluidHandler getHandlerFromDirection(@NotNull String direction, @NotNull IPeripheralOwner owner) throws LuaException {
         Level level = owner.getLevel();
         Objects.requireNonNull(level);
         Direction relativeDirection = CoordUtil.getDirection(owner.getOrientation(), direction);
@@ -60,7 +63,8 @@ public class FluidUtil {
         return handler;
     }
 
-    public static @NotNull IFluidHandler getHandlerFromName(@NotNull IComputerAccess access, String name) throws LuaException {
+    @NotNull
+    public static IFluidHandler getHandlerFromName(@NotNull IComputerAccess access, String name) throws LuaException {
         IPeripheral location = access.getAvailablePeripheral(name);
         if (location == null)
             throw new LuaException("Target '" + name + "' does not exist");
@@ -71,71 +75,8 @@ public class FluidUtil {
         return handler;
     }
 
-    //TODO: This stuff here needs to go away too
-    public static FluidStack getFluidStack(Map<?, ?> table, MEStorage monitor) throws LuaException {
-        if (table == null || table.isEmpty()) return FluidStack.EMPTY;
-
-        if (table.containsKey("fingerprint")) {
-            FluidStack fingerprint = AppEngApi.findMatchingFluidFingerprint(TableHelper.getStringField(table, "fingerprint"), monitor);
-            if (table.containsKey("amount")) fingerprint.setAmount(TableHelper.getIntField(table, "amount"));
-            return fingerprint;
-        }
-
-        if (!table.containsKey("name")) return FluidStack.EMPTY;
-
-        String name = TableHelper.getStringField(table, "name");
-
-        Fluid fluid = getRegistryEntry(name, ForgeRegistries.FLUIDS);
-
-        FluidStack stack = new FluidStack(fluid, 1);
-
-        if (table.containsKey("amount")) stack.setAmount(TableHelper.getIntField(table, "amount"));
-
-        if (table.containsKey("nbt") || table.containsKey("json") || table.containsKey("tag"))
-            stack.setTag(getTag(stack, table, monitor));
-
-        return stack;
-    }
-
-    public static <T extends ForgeRegistryEntry<T>> T getRegistryEntry(String name, IForgeRegistry<T> forgeRegistry) {
-        ResourceLocation location;
-        try {
-            location = new ResourceLocation(name);
-        } catch (ResourceLocationException ex) {
-            location = null;
-        }
-
-        T value;
-        if (location != null && forgeRegistry.containsKey(location) && (value = forgeRegistry.getValue(location)) != null) {
-            return value;
-        } else {
-            return null;
-        }
-    }
-
-    private static CompoundTag getTag(FluidStack stack, Map<?, ?> table, MEStorage monitor) throws LuaException {
-        CompoundTag nbt = NBTUtil.fromText(TableHelper.optStringField(table, "json", null));
-        if (nbt == null) {
-            nbt = NBTUtil.fromBinary(TableHelper.optStringField(table, "tag", null));
-            if (nbt == null) {
-                nbt = parseNBTHash(stack, table, monitor);
-            }
-        }
-        return nbt;
-    }
-
-    private static CompoundTag parseNBTHash(FluidStack stack, Map<?, ?> table, MEStorage monitor) throws LuaException {
-        String nbt = TableHelper.optStringField(table, "nbt", null);
-        if (nbt == null || nbt.isEmpty()) return null;
-        CompoundTag tag = AppEngApi.findMatchingTag(stack, nbt, monitor);
-        if (tag != null) return tag;
-
-        tag = new CompoundTag();
-        tag.put("_apPlaceholder_", IntTag.valueOf(1));
-        return tag;
-    }
-
-    public static String getFingerprint(FluidStack stack) {
+    @NotNull
+    public static String getFingerprint(@NotNull FluidStack stack) {
         String fingerprint = stack.getOrCreateTag() + stack.getFluid().getRegistryName().toString() + stack.getDisplayName().getString();
         try {
             byte[] bytesOfHash = fingerprint.getBytes(StandardCharsets.UTF_8);

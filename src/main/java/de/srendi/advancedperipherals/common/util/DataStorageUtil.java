@@ -6,20 +6,19 @@ import dan200.computercraft.api.turtle.TurtleSide;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.IPeripheralOwner;
 import de.srendi.advancedperipherals.lib.peripherals.IPeripheralTileEntity;
 import net.minecraft.nbt.CompoundTag;
-
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public class DataStorageUtil {
 
-    public static CompoundTag getDataStorage(@Nonnull ITurtleAccess access, @Nonnull TurtleSide side) {
+    public static CompoundTag getDataStorage(@NotNull ITurtleAccess access, @NotNull TurtleSide side) {
         return access.getUpgradeNBTData(side);
     }
 
-    public static CompoundTag getDataStorage(@Nonnull IPeripheralTileEntity tileEntity) {
+    public static CompoundTag getDataStorage(@NotNull IPeripheralTileEntity tileEntity) {
         return tileEntity.getPeripheralSettings();
     }
 
-    public static CompoundTag getDataStorage(@Nonnull IPocketAccess pocket) {
+    public static CompoundTag getDataStorage(@NotNull IPocketAccess pocket) {
         return pocket.getUpgradeNBTData();
     }
 
@@ -36,11 +35,11 @@ public class DataStorageUtil {
          */
         private static final String ROTATION_CHARGE_SETTING = "rotationCharge";
 
-        public static int get(@Nonnull ITurtleAccess access, @Nonnull TurtleSide side) {
+        public static int get(@NotNull ITurtleAccess access, @NotNull TurtleSide side) {
             return getDataStorage(access, side).getInt(ROTATION_CHARGE_SETTING);
         }
 
-        public static boolean consume(@Nonnull ITurtleAccess access, @Nonnull TurtleSide side) {
+        public static boolean consume(@NotNull ITurtleAccess access, @NotNull TurtleSide side) {
             CompoundTag data = getDataStorage(access, side);
             int currentCharge = data.getInt(ROTATION_CHARGE_SETTING);
             if (currentCharge > 0) {

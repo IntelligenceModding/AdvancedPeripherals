@@ -24,8 +24,8 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.server.ServerLifecycleHooks;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -99,7 +99,7 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
     }
 
     @LuaFunction(mainThread = true)
-    public final MethodResult sendFormattedMessage(@Nonnull IArguments arguments) throws LuaException {
+    public final MethodResult sendFormattedMessage(@NotNull IArguments arguments) throws LuaException {
         return withChatOperation(ignored -> {
             String message = arguments.getString(0);
             int range = arguments.optInt(4, -1);
@@ -125,7 +125,7 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
     }
 
     @LuaFunction(mainThread = true)
-    public final MethodResult sendMessage(@Nonnull IArguments arguments) throws LuaException {
+    public final MethodResult sendMessage(@NotNull IArguments arguments) throws LuaException {
         return withChatOperation(ignored -> {
             String message = arguments.getString(0);
             int range = arguments.optInt(4, -1);
@@ -149,7 +149,7 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
     }
 
     @LuaFunction(mainThread = true)
-    public final MethodResult sendFormattedMessageToPlayer(@Nonnull IArguments arguments) throws LuaException {
+    public final MethodResult sendFormattedMessageToPlayer(@NotNull IArguments arguments) throws LuaException {
         return withChatOperation(ignored -> {
             String message = arguments.getString(0);
             String playerName = arguments.getString(1);
@@ -170,7 +170,7 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
     }
 
     @LuaFunction(mainThread = true)
-    public final MethodResult sendMessageToPlayer(@Nonnull IArguments arguments) throws LuaException {
+    public final MethodResult sendMessageToPlayer(@NotNull IArguments arguments) throws LuaException {
         return withChatOperation(ignored -> {
             String message = arguments.getString(0);
             String playerName = arguments.getString(1);

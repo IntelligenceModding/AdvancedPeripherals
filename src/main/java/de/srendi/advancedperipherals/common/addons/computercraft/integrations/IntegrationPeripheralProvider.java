@@ -70,7 +70,7 @@ public class IntegrationPeripheralProvider implements IPeripheralProvider {
 
     public static void load() {
         registerIntegration(new BlockEntityIntegration(BeaconIntegration::new, BeaconBlockEntity.class::isInstance));
-        registerIntegration(new BlockIntegration(NoteblockIntegration::new, NoteBlock.class::isInstance));
+        registerIntegration(new BlockIntegration(NoteBlockIntegration::new, NoteBlock.class::isInstance));
 
         for (String mod : SUPPORTED_MODS) {
             Optional<Object> integration = Platform.maybeLoadIntegration(mod, mod + ".Integration");

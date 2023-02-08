@@ -24,7 +24,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -69,21 +68,21 @@ public class MeBridgeEntity extends PeripheralBlockEntity<MeBridgePeripheral> im
         }
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public Optional<Player> player() {
         return Optional.empty();
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public Optional<IActionHost> machine() {
         return Optional.of(this);
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public <T> Optional<T> context(@Nonnull Class<T> key) {
+    public <T> Optional<T> context(@NotNull Class<T> key) {
         return Optional.empty();
     }
 
@@ -107,13 +106,13 @@ public class MeBridgeEntity extends PeripheralBlockEntity<MeBridgePeripheral> im
 
     @Nullable
     @Override
-    public IGridNode getGridNode(@Nonnull Direction dir) {
+    public IGridNode getGridNode(@NotNull Direction dir) {
         return getActionableNode();
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public AECableType getCableConnectionType(@Nonnull Direction dir) {
+    public AECableType getCableConnectionType(@NotNull Direction dir) {
         return AECableType.SMART;
     }
 
