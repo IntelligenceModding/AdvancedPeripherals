@@ -6,6 +6,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+### Added
+- Added optional arguments to specify which crafting cpu you want to use - Thanks to Michele Grifa! - ME Bridge
+- Added `getTotalItemStorage`, `getTotalFluidStorage`, `getUsedItemStorage`, `getUsedFluidStorage`, `getAvailableItemStorage`, `getAvailableFluidStorage` - Thanks to Michele Grifa! - ME Bridge
+- Added `listCells` function - Thanks to Michele Grifa! - ME Bridge
+- Added methods to import/export fluid from/to the ME System - Thanks to Michele Grifa!
+- Added support for shears to the `digBlock` function of automata turtles
+
+### Fixed
+- [#398] Fix wrong return types of basin integration
+- [#384] Fix long execution times of some redstone integrator functions
+- [#393] Check if items can be extracted before inserting, fixes dupe bugs - RS and ME Bridge
+- Particles of our blocks
+
 ## [1.18.2-0.7.23r] - 2023-01-15
 
 ### Fixed

@@ -23,6 +23,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.DiggerItem;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ShearsItem;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.ClipContext;
@@ -140,9 +141,14 @@ public class APFakePlayer extends FakePlayer {
             if (block == Blocks.BEDROCK || state.getDestroySpeed(world, pos) <= -1)
                 return Pair.of(false, "Unbreakable block detected");
 
-            if (!(tool.getItem() instanceof DiggerItem toolItem)) return Pair.of(false, "Item should be digger tool");
+            if (!(tool.getItem() instanceof DiggerItem) && !(tool.getItem() instanceof ShearsItem))
+                return Pair.of(false, "Item should be digger tool");
 
-            if (!toolItem.isCorrectToolForDrops(tool, state)) return Pair.of(false, "Tool cannot mine this block");
+            if (tool.getItem() instanceof DiggerItem toolItem && !toolItem.isCorrectToolForDrops(tool, state))
+                return Pair.of(false, "Tool cannot mine this block");
+
+            if (tool.getItem() instanceof ShearsItem shearsItem && shearsItem.isCorrectToolForDrops(state))
+                return Pair.of(false, "Shear cannot mine this block");
 
             ServerPlayerGameMode manager = gameMode;
             float breakSpeed = 0.5f * tool.getDestroySpeed(state) / state.getDestroySpeed(level, pos) - 0.1f;
