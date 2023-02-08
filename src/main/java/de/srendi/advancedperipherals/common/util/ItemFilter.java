@@ -3,6 +3,7 @@ package de.srendi.advancedperipherals.common.util;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.core.apis.TableHelper;
 import net.minecraft.core.Registry;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
@@ -17,7 +18,7 @@ public class ItemFilter {
 
     private Item item = Items.AIR;
     private TagKey<Item> tag = null;
-    private Tag nbt = null;
+    private CompoundTag nbt = null;
     private int count = 64;
     private String fingerprint = "";
     public int fromSlot = -1;
@@ -92,6 +93,12 @@ public class ItemFilter {
 
     public boolean isEmpty() {
         return fingerprint.isEmpty() && item == Items.AIR && tag == null && nbt == null;
+    }
+
+    public ItemStack toItemStack() {
+        var result = new ItemStack(item, count);
+        result.setTag(nbt != null ? nbt.copy() : null);
+        return result;
     }
 
     public boolean test(ItemStack stack) {

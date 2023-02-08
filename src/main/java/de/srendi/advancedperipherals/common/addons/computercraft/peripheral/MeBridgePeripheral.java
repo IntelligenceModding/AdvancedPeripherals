@@ -169,8 +169,20 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         return transferableAmount;
     }
 
+    private MethodResult notConnected() {
+        return MethodResult.of(null, "NOT_CONNECTED");
+    }
+
+    @LuaFunction(mainThread = true)
+    public final boolean isConnected() {
+        return node.getGrid() != null && node.hasGridBooted();
+    }
+
     @LuaFunction
     public final MethodResult craftItem(IComputerAccess computer, IArguments arguments) throws LuaException {
+        if (!isConnected())
+            return notConnected();
+
         Pair<ItemFilter, String> filter = ItemFilter.parse(arguments.getTable(0));
         if(filter.rightPresent())
             return MethodResult.of(false, filter.getRight());
@@ -190,33 +202,51 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     }
 
     @LuaFunction(mainThread = true)
-    public final double getEnergyUsage() {
-        return node.getGrid().getEnergyService().getAvgPowerUsage();
+    public final MethodResult getEnergyUsage() {
+        if (!isConnected())
+            return notConnected();
+
+        return MethodResult.of(node.getGrid().getEnergyService().getAvgPowerUsage());
     }
 
     @LuaFunction(mainThread = true)
-    public final double getEnergyStorage() {
-        return node.getGrid().getEnergyService().getStoredPower();
+    public final MethodResult getEnergyStorage() {
+        if (!isConnected())
+            return notConnected();
+
+        return MethodResult.of(node.getGrid().getEnergyService().getStoredPower());
     }
 
     @LuaFunction(mainThread = true)
-    public final double getAvgPowerUsage() {
-        return node.getGrid().getEnergyService().getAvgPowerUsage();
+    public final MethodResult getAvgPowerUsage() {
+        if (!isConnected())
+            return notConnected();
+
+        return MethodResult.of(node.getGrid().getEnergyService().getAvgPowerUsage());
     }
 
     @LuaFunction(mainThread = true)
-    public final double getAvgPowerInjection() {
-        return node.getGrid().getEnergyService().getAvgPowerInjection();
+    public final MethodResult getAvgPowerInjection() {
+        if (!isConnected())
+            return notConnected();
+
+        return MethodResult.of(node.getGrid().getEnergyService().getAvgPowerInjection());
     }
 
 
     @LuaFunction(mainThread = true)
-    public final double getMaxEnergyStorage() {
-        return node.getGrid().getEnergyService().getMaxStoredPower();
+    public final MethodResult getMaxEnergyStorage() {
+        if (!isConnected())
+            return notConnected();
+
+        return MethodResult.of(node.getGrid().getEnergyService().getMaxStoredPower());
     }
 
     @LuaFunction(mainThread = true)
     public final MethodResult isItemCrafting(IArguments arguments) throws LuaException {
+        if (!isConnected())
+            return notConnected();
+
         MEStorage monitor = AppEngApi.getMonitor(node);
         ICraftingService grid = node.getGrid().getService(ICraftingService.class);
 
@@ -237,7 +267,9 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
     @LuaFunction(mainThread = true)
     public final MethodResult isItemCraftable(IArguments arguments) throws LuaException {
-        MEStorage monitor = AppEngApi.getMonitor(node);
+        if (!isConnected())
+            return notConnected();
+
         Pair<ItemFilter, String> filter = ItemFilter.parse(arguments.getTable(0));
         if(filter.rightPresent())
             return MethodResult.of(false, filter.getRight());
@@ -246,9 +278,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (parsedFilter.isEmpty())
             return MethodResult.of(false, "EMPTY_FILTER");
 
-        // No need to search in the system for the item. That would just be a waste of time
-        // But we still use a filter here to maintain a better compatibility with older scripts
-        AEItemKey item = AEItemKey.of(new ItemStack(parsedFilter.getItem()));
+        AEItemKey item = AEItemKey.of(parsedFilter.toItemStack());
 
         return MethodResult.of(getCraftingService().isCraftable(item));
     }
@@ -279,30 +309,45 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
     @LuaFunction(mainThread = true)
     public final MethodResult exportItem(@NotNull IArguments arguments) throws LuaException {
+        if (!isConnected())
+            return notConnected();
+
         IItemHandler inventory = InventoryUtil.getHandlerFromDirection(arguments.getString(1), owner);
         return exportToChest(arguments, inventory);
     }
 
     @LuaFunction(mainThread = true)
     public final MethodResult exportItemToPeripheral(IComputerAccess computer, IArguments arguments) throws LuaException {
+        if (!isConnected())
+            return notConnected();
+
         IItemHandler inventory = InventoryUtil.getHandlerFromName(computer, arguments.getString(1));
         return exportToChest(arguments, inventory);
     }
 
     @LuaFunction(mainThread = true)
     public final MethodResult importItem(IArguments arguments) throws LuaException {
+        if (!isConnected())
+            return notConnected();
+
         IItemHandler inventory = InventoryUtil.getHandlerFromDirection(arguments.getString(1), owner);
         return importToME(arguments, inventory);
     }
 
     @LuaFunction(mainThread = true)
     public final MethodResult importItemFromPeripheral(IComputerAccess computer, IArguments arguments) throws LuaException {
+        if (!isConnected())
+            return notConnected();
+
         IItemHandler inventory = InventoryUtil.getHandlerFromName(computer, arguments.getString(1));
         return importToME(arguments, inventory);
     }
 
     @LuaFunction(mainThread = true)
     public final MethodResult getItem(IArguments arguments) throws LuaException {
+        if (!isConnected())
+            return notConnected();
+
         MEStorage monitor = AppEngApi.getMonitor(node);
         Pair<ItemFilter, String> filter = ItemFilter.parse(arguments.getTable(0));
         if(filter.rightPresent())
@@ -316,77 +361,112 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     }
 
     @LuaFunction(mainThread = true)
-    public final Object[] listItems() {
-        return new Object[]{AppEngApi.listStacks(AppEngApi.getMonitor(node), getCraftingService(), 0)};
+    public final MethodResult listItems() {
+        if (!isConnected())
+            return notConnected();
+
+        return MethodResult.of(AppEngApi.listStacks(AppEngApi.getMonitor(node), getCraftingService(), 0));
     }
 
     @LuaFunction(mainThread = true)
-    public final Object[] listCraftableItems() {
-        return new Object[]{AppEngApi.listStacks(AppEngApi.getMonitor(node), getCraftingService(), 2)};
+    public final MethodResult listCraftableItems() {
+        if (!isConnected())
+            return notConnected();
+
+        return MethodResult.of(AppEngApi.listStacks(AppEngApi.getMonitor(node), getCraftingService(), 2));
     }
 
     @LuaFunction(mainThread = true)
-    public final Object[] listFluid() {
-        return new Object[]{AppEngApi.listFluids(AppEngApi.getMonitor(node), getCraftingService(), 0)};
+    public final MethodResult listFluid() {
+        if (!isConnected())
+            return notConnected();
+
+        return MethodResult.of(AppEngApi.listFluids(AppEngApi.getMonitor(node), getCraftingService(), 0));
     }
 
     @LuaFunction(mainThread = true)
-    public final Object[] listCraftableFluid() {
-        return new Object[]{AppEngApi.listFluids(AppEngApi.getMonitor(node), getCraftingService(), 2)};
+    public final MethodResult listCraftableFluid() {
+        if (!isConnected())
+            return notConnected();
+
+        return MethodResult.of(AppEngApi.listFluids(AppEngApi.getMonitor(node), getCraftingService(), 2));
     }
 
     @LuaFunction(mainThread = true)
-    public final long getTotalItemStorage() {
-        return AppEngApi.getTotalItemStorage(node);
+    public final MethodResult getTotalItemStorage() {
+        if (!isConnected())
+            return notConnected();
+
+        return MethodResult.of(AppEngApi.getTotalItemStorage(node));
     }
 
     @LuaFunction(mainThread = true)
-    public final long getTotalFluidStorage() {
-        return AppEngApi.getTotalFluidStorage(node);
+    public final MethodResult getTotalFluidStorage() {
+        if (!isConnected())
+            return notConnected();
+
+        return MethodResult.of(AppEngApi.getTotalFluidStorage(node));
     }
 
     @LuaFunction(mainThread = true)
-    public final long getUsedItemStorage() {
-        return AppEngApi.getUsedItemStorage(node);
+    public final MethodResult getUsedItemStorage() {
+        if (!isConnected())
+            return notConnected();
+
+        return MethodResult.of(AppEngApi.getUsedItemStorage(node));
     }
 
     @LuaFunction(mainThread = true)
-    public final long getUsedFluidStorage() {
-        return AppEngApi.getUsedFluidStorage(node);
+    public final MethodResult getUsedFluidStorage() {
+        if (!isConnected())
+            return notConnected();
+
+        return MethodResult.of(AppEngApi.getUsedFluidStorage(node));
     }
 
     @LuaFunction(mainThread = true)
-    public final long getAvailableItemStorage() {
-        return AppEngApi.getAvailableItemStorage(node);
+    public final MethodResult getAvailableItemStorage() {
+        if (!isConnected())
+            return notConnected();
+
+        return MethodResult.of(AppEngApi.getAvailableItemStorage(node));
     }
 
     @LuaFunction(mainThread = true)
-    public final long getAvailableFluidStorage() {
-        return AppEngApi.getAvailableFluidStorage(node);
+    public final MethodResult getAvailableFluidStorage() {
+        if (!isConnected())
+            return notConnected();
+
+        return MethodResult.of(AppEngApi.getAvailableFluidStorage(node));
     }
 
     @LuaFunction(mainThread = true)
-    public final Object[] listCells() {
-        return new Object[]{AppEngApi.listCells(node)};
+    public final MethodResult listCells() {
+        if (!isConnected())
+            return notConnected();
+
+        return MethodResult.of(AppEngApi.listCells(node));
     }
 
     @LuaFunction(mainThread = true)
-    public final Object[] getCraftingCPUs() throws LuaException {
+    public final MethodResult getCraftingCPUs() throws LuaException {
+        if (!isConnected())
+            return notConnected();
+
         ICraftingService grid = node.getGrid().getService(ICraftingService.class);
-        if (grid == null) throw new LuaException("Not connected");
         Map<Integer, Object> map = new HashMap<>();
+
         Iterator<ICraftingCPU> iterator = grid.getCpus().iterator();
-        if (!iterator.hasNext()) return null;
         int i = 1;
         while (iterator.hasNext()) {
             Object o = AppEngApi.getObjectFromCPU(iterator.next());
             map.put(i++, o);
         }
-        return new Object[]{map};
+        return MethodResult.of(map);
     }
 
     public final ICraftingCPU getCraftingCPU(String cpuName) {
-        if(cpuName.equals("")) return null;
+        if(cpuName.isEmpty()) return null;
         ICraftingService grid = node.getGrid().getService(ICraftingService.class);
         if (grid == null) return null;
 

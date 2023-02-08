@@ -16,8 +16,8 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.Objects;
 
 public class InventoryUtil {
@@ -95,30 +95,24 @@ public class InventoryUtil {
         return transferableAmount;
     }
 
-    @NotNull
+    @Nullable
     public static IItemHandler getHandlerFromName(@NotNull IComputerAccess access, String name) throws LuaException {
         IPeripheral location = access.getAvailablePeripheral(name);
         if (location == null)
-            throw new LuaException("Target '" + name + "' does not exist");
+            return null;
 
-        IItemHandler handler = extractHandler(location.getTarget());
-        if (handler == null)
-            throw new LuaException("Target '" + name + "' is not an inventory");
-        return handler;
+        return extractHandler(location.getTarget());
     }
 
-    @NotNull
+    @Nullable
     public static IItemHandler getHandlerFromDirection(@NotNull String direction, @NotNull IPeripheralOwner owner) throws LuaException {
         Level level = owner.getLevel();
         Objects.requireNonNull(level);
         Direction relativeDirection = CoordUtil.getDirection(owner.getOrientation(), direction);
         BlockEntity target = level.getBlockEntity(owner.getPos().relative(relativeDirection));
         if (target == null)
-            throw new LuaException("Target '" + direction + "' is empty or not an inventory");
+            return null;
 
-        IItemHandler handler = extractHandler(target);
-        if (handler == null)
-            throw new LuaException("Target '" + direction + "' is not an inventory");
-        return handler;
+        return extractHandler(target);
     }
 }
