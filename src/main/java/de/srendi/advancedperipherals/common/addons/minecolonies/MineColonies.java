@@ -103,7 +103,7 @@ public class MineColonies {
         map.put("saturation", visitor.getSaturation());
         map.put("happiness", visitor.getCitizenHappinessHandler().getHappiness(visitor.getColony()));
         map.put("skills", skillsToObject(visitor.getCitizenSkillHandler().getSkills()));
-        map.put("recruitCost", visitor.getRecruitCost().getItem().getRegistryName().toString());
+        map.put("recruitCost", LuaConverter.stackToObject(visitor.getRecruitCost()));
 
         return map;
     }
