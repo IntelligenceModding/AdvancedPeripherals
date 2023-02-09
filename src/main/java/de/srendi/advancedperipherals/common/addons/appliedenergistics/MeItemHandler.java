@@ -1,7 +1,6 @@
 package de.srendi.advancedperipherals.common.addons.appliedenergistics;
 
 import appeng.api.config.Actionable;
-import appeng.api.networking.crafting.ICraftingService;
 import appeng.api.networking.security.IActionSource;
 import appeng.api.stacks.AEItemKey;
 import appeng.api.storage.MEStorage;
@@ -20,13 +19,10 @@ public class MeItemHandler implements IStorageSystemItemHandler {
     @NotNull
     private final MEStorage storageMonitor;
     @NotNull
-    private final ICraftingService craftingService;
-    @NotNull
     private final IActionSource actionSource;
 
-    public MeItemHandler(@NotNull MEStorage storageMonitor, @NotNull ICraftingService craftingService, @NotNull IActionSource actionSource) {
+    public MeItemHandler(@NotNull MEStorage storageMonitor, @NotNull IActionSource actionSource) {
         this.storageMonitor = storageMonitor;
-        this.craftingService = craftingService;
         this.actionSource = actionSource;
     }
 
@@ -43,7 +39,7 @@ public class MeItemHandler implements IStorageSystemItemHandler {
 
     @Override
     public ItemStack extractItem(ItemFilter filter, boolean simulate) {
-        Pair<Long, AEItemKey> itemKey = AppEngApi.findAEStackFromItemStack(storageMonitor, craftingService, filter);
+        Pair<Long, AEItemKey> itemKey = AppEngApi.findAEStackFromFilter(storageMonitor, null, filter);
         if(itemKey == null)
             return ItemStack.EMPTY;
         long extracted = storageMonitor.extract(itemKey.getRight(), Math.max(64, filter.getCount()), simulate ? Actionable.SIMULATE : Actionable.MODULATE, actionSource);

@@ -79,7 +79,7 @@ public class CraftJob implements ILuaCallback {
         ICraftingService crafting = grid.getService(ICraftingService.class);
         MEStorage monitor = storage.getInventory();
         ItemStack itemstack = item;
-        Pair<Long, AEItemKey> aeItem = AppEngApi.findAEStackFromItemStack(monitor, crafting, itemstack);
+        Pair<Long, AEItemKey> aeItem = AppEngApi.findAEStackFromStack(monitor, crafting, itemstack);
 
         if (aeItem == null) {
             AdvancedPeripherals.debug("Could not get AEItem from monitor", org.apache.logging.log4j.Level.FATAL);

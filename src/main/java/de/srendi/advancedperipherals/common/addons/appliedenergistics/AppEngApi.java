@@ -17,6 +17,7 @@ import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.addons.APAddons;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
 import de.srendi.advancedperipherals.common.util.Pair;
+import de.srendi.advancedperipherals.common.util.inventory.FluidFilter;
 import de.srendi.advancedperipherals.common.util.inventory.FluidUtil;
 import de.srendi.advancedperipherals.common.util.inventory.ItemFilter;
 import de.srendi.advancedperipherals.common.util.inventory.ItemUtil;
@@ -32,13 +33,34 @@ import java.util.*;
 
 public class AppEngApi {
 
-    public static Pair<Long, AEItemKey> findAEStackFromItemStack(MEStorage monitor, ICraftingService crafting, ItemStack item) {
-        return findAEStackFromItemStack(monitor, crafting, ItemFilter.fromStack(item));
+    public static Pair<Long, AEItemKey> findAEStackFromStack(MEStorage monitor, @Nullable ICraftingService crafting, ItemStack item) {
+        return findAEStackFromFilter(monitor, crafting, ItemFilter.fromStack(item));
     }
 
-    public static Pair<Long, AEItemKey> findAEStackFromItemStack(MEStorage monitor, ICraftingService crafting, ItemFilter item) {
+    public static Pair<Long, AEItemKey> findAEStackFromFilter(MEStorage monitor, @Nullable ICraftingService crafting, ItemFilter item) {
         for (Object2LongMap.Entry<AEKey> temp : monitor.getAvailableStacks()) {
             if (temp.getKey() instanceof AEItemKey key && item.test(key.toStack()))
+                return Pair.of(temp.getLongValue(), key);
+        }
+
+        if (crafting == null)
+            return Pair.of(0L, AEItemKey.of(ItemStack.EMPTY));
+
+        for (var temp : crafting.getCraftables(param -> true)) {
+            if (temp instanceof AEItemKey key && item.test(key.toStack()))
+                return Pair.of(0L, key);
+        }
+
+        return Pair.of(0L, AEItemKey.of(ItemStack.EMPTY));
+    }
+
+    public static Pair<Long, AEFluidKey> findAEFluidFromStack(MEStorage monitor, @Nullable ICraftingService crafting, FluidStack item) {
+        return findAEFluidFromFilter(monitor, crafting, FluidFilter.fromStack(item));
+    }
+
+    public static Pair<Long, AEFluidKey> findAEFluidFromFilter(MEStorage monitor, @Nullable ICraftingService crafting, FluidFilter item) {
+        for (Object2LongMap.Entry<AEKey> temp : monitor.getAvailableStacks()) {
+            if (temp.getKey() instanceof AEFluidKey key && item.test(key.toStack(1)))
                 return Pair.of(temp.getLongValue(), key);
         }
 
@@ -46,7 +68,7 @@ public class AppEngApi {
             return null;
 
         for (var temp : crafting.getCraftables(param -> true)) {
-            if (temp instanceof AEItemKey key && item.test(key.toStack()))
+            if (temp instanceof AEFluidKey key && item.test(key.toStack(1)))
                 return Pair.of(0L, key);
         }
 
@@ -166,9 +188,9 @@ public class AppEngApi {
         return node.getGrid().getService(IStorageService.class).getInventory();
     }
 
-    public static boolean isItemCrafting(MEStorage monitor, ICraftingService grid, ItemStack itemStack,
+    public static boolean isItemCrafting(MEStorage monitor, ICraftingService grid, ItemFilter filter,
                                          @Nullable ICraftingCPU craftingCPU) {
-        Pair<Long, AEItemKey> stack = AppEngApi.findAEStackFromItemStack(monitor, grid, itemStack);
+        Pair<Long, AEItemKey> stack = AppEngApi.findAEStackFromFilter(monitor, grid, filter);
 
         // If the item stack does not exist, it cannot be crafted.
         if (stack == null)

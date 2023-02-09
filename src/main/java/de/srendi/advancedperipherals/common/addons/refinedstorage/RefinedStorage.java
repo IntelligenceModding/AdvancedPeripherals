@@ -15,6 +15,7 @@ import com.refinedmods.refinedstorage.apiimpl.network.node.NetworkNode;
 import dan200.computercraft.shared.util.NBTUtil;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
+import de.srendi.advancedperipherals.common.util.inventory.FluidFilter;
 import de.srendi.advancedperipherals.common.util.inventory.ItemFilter;
 import de.srendi.advancedperipherals.common.util.inventory.ItemUtil;
 import net.minecraft.core.NonNullList;
@@ -51,42 +52,42 @@ public class RefinedStorage {
         return findStackFromFilter(network, crafting, ItemFilter.fromStack(item));
     }
 
-    public static ItemStack findStackFromFilter(INetwork network, ICraftingManager crafting, ItemFilter item) {
+    public static ItemStack findStackFromFilter(INetwork network, ICraftingManager crafting, ItemFilter filter) {
         for (StackListEntry<ItemStack> temp : network.getItemStorageCache().getList().getStacks()) {
-            if (item.test(temp.getStack()))
+            if (filter.test(temp.getStack()))
                 return temp.getStack().copy();
         }
 
         if (crafting == null)
-            return null;
+            return ItemStack.EMPTY;
 
         for (ICraftingPattern pattern : crafting.getPatterns()) {
-            if (item.test(pattern.getStack()))
+            if (filter.test(pattern.getStack()))
                 return pattern.getStack().copy();
         }
 
-        return null;
+        return ItemStack.EMPTY;
     }
 
-    public static ItemStack findFluidFromStack(INetwork network, ICraftingManager crafting, ItemStack item) {
-        return findFluidFromFilter(network, crafting, ItemFilter.fromStack(item));
+    public static FluidStack findFluidFromStack(INetwork network, ICraftingManager crafting, FluidStack stack) {
+        return findFluidFromFilter(network, crafting, FluidFilter.fromStack(stack));
     }
 
-    public static ItemStack findFluidFromFilter(INetwork network, ICraftingManager crafting, ItemFilter item) {
-        for (StackListEntry<ItemStack> temp : network.getItemStorageCache().getList().getStacks()) {
-            if (item.test(temp.getStack()))
+    public static FluidStack findFluidFromFilter(INetwork network, ICraftingManager crafting, FluidFilter filter) {
+        for (StackListEntry<FluidStack> temp : network.getFluidStorageCache().getList().getStacks()) {
+            if (filter.test(temp.getStack()))
                 return temp.getStack().copy();
         }
 
         if (crafting == null)
-            return null;
+            return FluidStack.EMPTY;
 
         for (ICraftingPattern pattern : crafting.getPatterns()) {
-            if (item.test(pattern.getStack()))
-                return pattern.getStack().copy();
+            if (pattern.getFluidOutputs().stream().anyMatch(filter::test))
+                return pattern.getFluidOutputs().stream().filter(filter::test).findFirst().get();
         }
 
-        return null;
+        return FluidStack.EMPTY;
     }
 
     public static Object listFluids(INetwork network) {

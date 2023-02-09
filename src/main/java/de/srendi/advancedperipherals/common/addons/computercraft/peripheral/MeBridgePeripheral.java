@@ -1,11 +1,9 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.peripheral;
 
-import appeng.api.config.Actionable;
 import appeng.api.networking.IGridNode;
 import appeng.api.networking.IManagedGridNode;
 import appeng.api.networking.crafting.ICraftingCPU;
 import appeng.api.networking.crafting.ICraftingService;
-import appeng.api.stacks.AEFluidKey;
 import appeng.api.stacks.AEItemKey;
 import appeng.api.storage.MEStorage;
 import dan200.computercraft.api.lua.IArguments;
@@ -15,18 +13,19 @@ import dan200.computercraft.api.lua.MethodResult;
 import dan200.computercraft.api.peripheral.IComputerAccess;
 import de.srendi.advancedperipherals.common.addons.appliedenergistics.AppEngApi;
 import de.srendi.advancedperipherals.common.addons.appliedenergistics.CraftJob;
+import de.srendi.advancedperipherals.common.addons.appliedenergistics.MeFluidHandler;
 import de.srendi.advancedperipherals.common.addons.appliedenergistics.MeItemHandler;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.BlockEntityPeripheralOwner;
 import de.srendi.advancedperipherals.common.blocks.blockentities.MeBridgeEntity;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.util.Pair;
 import de.srendi.advancedperipherals.common.util.ServerWorker;
+import de.srendi.advancedperipherals.common.util.inventory.FluidFilter;
 import de.srendi.advancedperipherals.common.util.inventory.FluidUtil;
 import de.srendi.advancedperipherals.common.util.inventory.InventoryUtil;
 import de.srendi.advancedperipherals.common.util.inventory.ItemFilter;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
@@ -66,11 +65,11 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
      *
      * @param arguments the arguments given by the computer
      * @param targetInventory the give inventory
-     * @return the exportable amount
+     * @return the exportable amount or null with a string if something went wrong
      */
     protected MethodResult exportToChest(@NotNull IArguments arguments, @NotNull IItemHandler targetInventory) throws LuaException {
         MEStorage monitor = AppEngApi.getMonitor(node);
-        MeItemHandler itemHandler = new MeItemHandler(monitor, getCraftingService(), tile);
+        MeItemHandler itemHandler = new MeItemHandler(monitor, tile);
         Pair<ItemFilter, String> filter = ItemFilter.parse(arguments.getTable(0));
 
         if(filter.rightPresent())
@@ -84,38 +83,17 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
      *
      * @param arguments the arguments given by the computer
      * @param targetTank the give tank
-     * @return the exportable amount
+     * @return the exportable amount or null with a string if something went wrong
      */
-    protected long exportToTank(@NotNull IArguments arguments, @NotNull IFluidHandler targetTank) throws LuaException {
+    protected MethodResult exportToTank(@NotNull IArguments arguments, @NotNull IFluidHandler targetTank) throws LuaException {
         MEStorage monitor = AppEngApi.getMonitor(node);
-        FluidStack stack = FluidUtil.getFluidStack(arguments.getTable(0), monitor);
-        AEFluidKey targetStack = AEFluidKey.of(stack);
-        if (targetStack == null) throw new LuaException("Illegal AE2 state ...");
+        MeFluidHandler fluidHandler = new MeFluidHandler(monitor, tile);
+        Pair<FluidFilter, String> filter = FluidFilter.parse(arguments.getTable(0));
 
-        long extracted = monitor.extract(targetStack, stack.getAmount(), Actionable.SIMULATE, tile.getActionSource());
-        if (extracted == 0)
-            throw new LuaException("Fluid " + stack + " does not exists in the ME system or the system is offline");
+        if(filter.rightPresent())
+            return MethodResult.of(0, filter.getRight());
 
-        long transferableAmount = extracted;
-
-        int filled = targetTank.fill(stack, IFluidHandler.FluidAction.SIMULATE);
-        int remaining = ((int) extracted) - filled;
-
-        if (remaining > 0) {
-            transferableAmount -= remaining;
-        }
-
-        if (transferableAmount == 0) return transferableAmount;
-
-        extracted = monitor.extract(targetStack, transferableAmount, Actionable.MODULATE, tile.getActionSource());
-        stack.setAmount((int) extracted);
-        filled = targetTank.fill(stack, IFluidHandler.FluidAction.EXECUTE);
-        remaining = ((int) extracted) - filled;
-
-        if (remaining > 0) {
-            monitor.insert(AEFluidKey.of(new FluidStack(stack.getFluid(), remaining)), remaining, Actionable.MODULATE, tile.getActionSource());
-        }
-        return transferableAmount;
+        return MethodResult.of(InventoryUtil.moveFluid(fluidHandler, targetTank, filter.getLeft()), null);
     }
 
     /**
@@ -123,11 +101,11 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
      *
      * @param arguments the arguments given by the computer
      * @param targetInventory the give inventory
-     * @return the imported amount
+     * @return the imported amount or null with a string if something went wrong
      */
     protected MethodResult importToME(@NotNull IArguments arguments, @NotNull IItemHandler targetInventory) throws LuaException {
         MEStorage monitor = AppEngApi.getMonitor(node);
-        MeItemHandler itemHandler = new MeItemHandler(monitor, getCraftingService(), tile);
+        MeItemHandler itemHandler = new MeItemHandler(monitor, tile);
         Pair<ItemFilter, String> filter = ItemFilter.parse(arguments.getTable(0));
 
         if(filter.rightPresent())
@@ -141,36 +119,17 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
      *
      * @param arguments the arguments given by the computer
      * @param targetTank the give tank
-     * @return the imported amount
+     * @return the imported amount or null with a string if something went wrong
      */
-    protected int importToME(@NotNull IArguments arguments, @NotNull IFluidHandler targetTank) throws LuaException {
+    protected MethodResult importToME(@NotNull IArguments arguments, @NotNull IFluidHandler targetTank) throws LuaException {
         MEStorage monitor = AppEngApi.getMonitor(node);
-        FluidStack stack = FluidUtil.getFluidStack(arguments.getTable(0), monitor);
-        AEFluidKey aeStack = AEFluidKey.of(stack);
-        int amount = stack.getAmount();
+        MeFluidHandler fluidHandler = new MeFluidHandler(monitor, tile);
+        Pair<FluidFilter, String> filter = FluidFilter.parse(arguments.getTable(0));
 
-        if (aeStack == null) throw new LuaException("Illegal AE2 state ...");
+        if(filter.rightPresent())
+            return MethodResult.of(0, filter.getRight());
 
-        if (stack.getAmount() == 0) return 0;
-
-        int transferableAmount = 0;
-
-        for (int i = 0; i < targetTank.getTanks(); i++) {
-            if (targetTank.getFluidInTank(i).isFluidEqual(stack)) {
-                if (targetTank.getFluidInTank(i).getAmount() >= (amount - transferableAmount)) {
-                    FluidStack extracted = targetTank.drain(new FluidStack(targetTank.getFluidInTank(i), amount), IFluidHandler.FluidAction.EXECUTE);
-                    monitor.insert(aeStack, extracted.getAmount(), Actionable.MODULATE, tile.getActionSource());
-                    transferableAmount += extracted.getAmount();
-                    break;
-                } else {
-                    FluidStack extracted = targetTank.drain(new FluidStack(targetTank.getFluidInTank(i), amount), IFluidHandler.FluidAction.EXECUTE);
-                    amount -= extracted.getAmount();
-                    monitor.insert(aeStack, extracted.getAmount(), Actionable.MODULATE, tile.getActionSource());
-                    transferableAmount += extracted.getAmount();
-                }
-            }
-        }
-        return transferableAmount;
+        return MethodResult.of(InventoryUtil.moveFluid(targetTank, fluidHandler, filter.getLeft()), null);
     }
 
     private MethodResult notConnected() {
@@ -264,9 +223,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         String cpuName = arguments.optString(1, "");
         ICraftingCPU craftingCPU = getCraftingCPU(cpuName);
 
-        // No need to search in the system for the item. That would just be a waste of time
-        // But we still use a filter here to maintain a better compatibility with older scripts
-        return MethodResult.of(AppEngApi.isItemCrafting(monitor, grid, new ItemStack(parsedFilter.getItem()), craftingCPU));
+        return MethodResult.of(AppEngApi.isItemCrafting(monitor, grid, parsedFilter, craftingCPU));
     }
 
     @LuaFunction(mainThread = true)
@@ -288,25 +245,25 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     }
 
     @LuaFunction(mainThread = true)
-    public final long exportFluid(@NotNull IArguments arguments) throws LuaException {
+    public final MethodResult exportFluid(@NotNull IArguments arguments) throws LuaException {
         IFluidHandler handler = FluidUtil.getHandlerFromDirection(arguments.getString(1), owner);
         return exportToTank(arguments, handler);
     }
 
     @LuaFunction(mainThread = true)
-    public final long exportFluidToPeripheral(IComputerAccess computer, IArguments arguments) throws LuaException {
+    public final MethodResult exportFluidToPeripheral(IComputerAccess computer, IArguments arguments) throws LuaException {
         IFluidHandler handler = FluidUtil.getHandlerFromName(computer, arguments.getString(1));
         return exportToTank(arguments, handler);
     }
 
     @LuaFunction(mainThread = true)
-    public final int importFluid(IArguments arguments) throws LuaException {
+    public final MethodResult importFluid(IArguments arguments) throws LuaException {
         IFluidHandler handler = FluidUtil.getHandlerFromDirection(arguments.getString(1), owner);
         return importToME(arguments, handler);
     }
 
     @LuaFunction(mainThread = true)
-    public final int importFluidFromPeripheral(IComputerAccess computer, IArguments arguments) throws LuaException {
+    public final MethodResult importFluidFromPeripheral(IComputerAccess computer, IArguments arguments) throws LuaException {
         IFluidHandler handler = FluidUtil.getHandlerFromName(computer, arguments.getString(1));
         return importToME(arguments, handler);
     }
@@ -361,7 +318,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (parsedFilter.isEmpty())
             return MethodResult.of(null, "EMPTY_FILTER");
 
-        return MethodResult.of(AppEngApi.getObjectFromStack(AppEngApi.findAEStackFromItemStack(monitor, getCraftingService(), parsedFilter), getCraftingService()));
+        return MethodResult.of(AppEngApi.getObjectFromStack(AppEngApi.findAEStackFromFilter(monitor, getCraftingService(), parsedFilter), getCraftingService()));
     }
 
     @LuaFunction(mainThread = true)
