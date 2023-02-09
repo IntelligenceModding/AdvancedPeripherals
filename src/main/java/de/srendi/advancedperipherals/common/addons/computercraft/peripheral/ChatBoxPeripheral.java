@@ -80,7 +80,7 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
 
     /**
      * @param argument uuid/name of a player
-     * @return true if the name/uuid belongs to a player
+     * @return a player if the name/uuid belongs to a player
      */
     private ServerPlayer getPlayer(String argument) {
         if (argument.matches("\\b[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}\\b"))

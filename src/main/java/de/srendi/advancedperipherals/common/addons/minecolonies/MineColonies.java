@@ -246,7 +246,7 @@ public class MineColonies {
      * @param branch     The branch, there are only a few branches
      * @param researches The primary researches of the branch
      * @param colony     The colony
-     * @return a map with all possible researches
+     * @return a list with all possible researches
      */
     public static List<Object> getResearch(ResourceLocation branch, List<ResourceLocation> researches, IColony colony) {
         List<Object> result = new ArrayList<>();
