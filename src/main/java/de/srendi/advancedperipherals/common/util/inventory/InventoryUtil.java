@@ -1,9 +1,10 @@
-package de.srendi.advancedperipherals.common.util;
+package de.srendi.advancedperipherals.common.util.inventory;
 
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.peripheral.IComputerAccess;
 import dan200.computercraft.api.peripheral.IPeripheral;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.IPeripheralOwner;
+import de.srendi.advancedperipherals.common.util.CoordUtil;
 import net.minecraft.core.Direction;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
@@ -11,6 +12,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
@@ -94,6 +97,41 @@ public class InventoryUtil {
         }
         return transferableAmount;
     }
+
+    public static int moveFluid(IFluidHandler inventoryFrom, IFluidHandler inventoryTo, FluidFilter filter) {
+        if (inventoryFrom == null) return 0;
+
+        int amount = filter.getCount();
+        int transferableAmount = 0;
+
+        // The logic changes with storage systems since these systems do not have slots
+        if (inventoryFrom instanceof IStorageSystemFluidHandler storageSystemHandler) {
+            FluidStack extracted = storageSystemHandler.drain(filter, IFluidHandler.FluidAction.SIMULATE);
+            int inserted = inventoryTo.fill(extracted, IFluidHandler.FluidAction.EXECUTE);
+
+            extracted.setAmount(inserted);
+            transferableAmount += storageSystemHandler.drain(extracted, IFluidHandler.FluidAction.EXECUTE).getAmount();
+
+            return transferableAmount;
+        }
+
+        if (inventoryTo instanceof IStorageSystemFluidHandler storageSystemHandler) {
+            if (filter.test(inventoryFrom.getFluidInTank(0))) {
+                FluidStack toExtract = inventoryTo.getFluidInTank(0);
+                toExtract.setAmount(amount);
+                FluidStack extracted = inventoryFrom.drain(toExtract, IFluidHandler.FluidAction.SIMULATE);
+                int inserted = storageSystemHandler.fill(extracted, IFluidHandler.FluidAction.EXECUTE);
+
+                extracted.setAmount(inserted);
+                transferableAmount += inventoryFrom.drain(inserted, IFluidHandler.FluidAction.EXECUTE).getAmount();
+            }
+
+            return transferableAmount;
+        }
+
+        return transferableAmount;
+    }
+
 
     @Nullable
     public static IItemHandler getHandlerFromName(@NotNull IComputerAccess access, String name) throws LuaException {

@@ -5,9 +5,9 @@ import appeng.api.networking.crafting.ICraftingService;
 import appeng.api.networking.security.IActionSource;
 import appeng.api.stacks.AEItemKey;
 import appeng.api.storage.MEStorage;
-import de.srendi.advancedperipherals.common.util.IStorageSystemItemHandler;
-import de.srendi.advancedperipherals.common.util.ItemFilter;
 import de.srendi.advancedperipherals.common.util.Pair;
+import de.srendi.advancedperipherals.common.util.inventory.IStorageSystemItemHandler;
+import de.srendi.advancedperipherals.common.util.inventory.ItemFilter;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 

@@ -19,7 +19,11 @@ import de.srendi.advancedperipherals.common.addons.appliedenergistics.MeItemHand
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.BlockEntityPeripheralOwner;
 import de.srendi.advancedperipherals.common.blocks.blockentities.MeBridgeEntity;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
-import de.srendi.advancedperipherals.common.util.*;
+import de.srendi.advancedperipherals.common.util.Pair;
+import de.srendi.advancedperipherals.common.util.ServerWorker;
+import de.srendi.advancedperipherals.common.util.inventory.FluidUtil;
+import de.srendi.advancedperipherals.common.util.inventory.InventoryUtil;
+import de.srendi.advancedperipherals.common.util.inventory.ItemFilter;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
@@ -283,7 +287,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         return MethodResult.of(getCraftingService().isCraftable(item));
     }
 
-    /*@LuaFunction(mainThread = true)
+    @LuaFunction(mainThread = true)
     public final long exportFluid(@NotNull IArguments arguments) throws LuaException {
         IFluidHandler handler = FluidUtil.getHandlerFromDirection(arguments.getString(1), owner);
         return exportToTank(arguments, handler);
@@ -305,7 +309,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     public final int importFluidFromPeripheral(IComputerAccess computer, IArguments arguments) throws LuaException {
         IFluidHandler handler = FluidUtil.getHandlerFromName(computer, arguments.getString(1));
         return importToME(arguments, handler);
-    }*/
+    }
 
     @LuaFunction(mainThread = true)
     public final MethodResult exportItem(@NotNull IArguments arguments) throws LuaException {

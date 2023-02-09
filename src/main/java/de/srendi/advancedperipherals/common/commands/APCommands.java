@@ -2,7 +2,7 @@ package de.srendi.advancedperipherals.common.commands;
 
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
-import de.srendi.advancedperipherals.common.util.ItemUtil;
+import de.srendi.advancedperipherals.common.util.inventory.ItemUtil;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -31,7 +31,7 @@ public class APCommands {
         }
         String fingerprint = ItemUtil.getFingerprint(playerEntity.getMainHandItem());
         if (fingerprint.isEmpty()) {
-            source.sendFailure(new TextComponent("That item does not have NBT data"));
+            source.sendFailure(new TextComponent("There was an issue while generating the hash. Report to Author"));
             return 0;
         }
         source.sendSuccess(new TextComponent("Fingerprint of the item: "), true);

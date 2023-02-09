@@ -3,8 +3,8 @@ package de.srendi.advancedperipherals.common.addons.refinedstorage;
 import com.refinedmods.refinedstorage.api.network.INetwork;
 import com.refinedmods.refinedstorage.api.util.Action;
 import com.refinedmods.refinedstorage.api.util.IComparer;
-import de.srendi.advancedperipherals.common.util.IStorageSystemItemHandler;
-import de.srendi.advancedperipherals.common.util.ItemFilter;
+import de.srendi.advancedperipherals.common.util.inventory.IStorageSystemItemHandler;
+import de.srendi.advancedperipherals.common.util.inventory.ItemFilter;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
