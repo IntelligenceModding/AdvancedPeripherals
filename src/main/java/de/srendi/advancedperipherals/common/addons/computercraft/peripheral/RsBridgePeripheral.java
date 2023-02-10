@@ -4,33 +4,34 @@ import com.refinedmods.refinedstorage.api.autocrafting.task.CalculationResultTyp
 import com.refinedmods.refinedstorage.api.autocrafting.task.ICalculationResult;
 import com.refinedmods.refinedstorage.api.autocrafting.task.ICraftingTask;
 import com.refinedmods.refinedstorage.api.network.INetwork;
-import com.refinedmods.refinedstorage.api.util.Action;
 import dan200.computercraft.api.lua.IArguments;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.lua.MethodResult;
 import dan200.computercraft.api.peripheral.IComputerAccess;
-import dan200.computercraft.api.peripheral.IPeripheral;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.BlockEntityPeripheralOwner;
 import de.srendi.advancedperipherals.common.addons.refinedstorage.RefinedStorage;
 import de.srendi.advancedperipherals.common.addons.refinedstorage.RefinedStorageNode;
+import de.srendi.advancedperipherals.common.addons.refinedstorage.RsFluidHandler;
+import de.srendi.advancedperipherals.common.addons.refinedstorage.RsItemHandler;
 import de.srendi.advancedperipherals.common.blocks.blockentities.RsBridgeEntity;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
-import de.srendi.advancedperipherals.common.util.ItemUtil;
+import de.srendi.advancedperipherals.common.util.Pair;
+import de.srendi.advancedperipherals.common.util.inventory.FluidFilter;
+import de.srendi.advancedperipherals.common.util.inventory.FluidUtil;
+import de.srendi.advancedperipherals.common.util.inventory.InventoryUtil;
+import de.srendi.advancedperipherals.common.util.inventory.ItemFilter;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
-import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.registries.ForgeRegistries;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Supplier;
 
 public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwner<RsBridgeEntity>> {
 
@@ -48,16 +49,8 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         return getNode().getNetwork();
     }
 
-    /**
-     * Used to avoid NPE exceptions when the system is offline or the bridge not connected
-     *
-     * @param defaultValue return value if block is not connected
-     * @param returnValue  return value if block is connected
-     * @return defaultValue if system is not connected, returnValue if it is
-     */
-    private Object ensureIsConnected(Object defaultValue, Supplier<Object> returnValue) {
-        if (!isConnected() || !getNetwork().canRun()) return defaultValue;
-        return returnValue.get();
+    private MethodResult notConnected() {
+        return MethodResult.of(null, "NOT_CONNECTED");
     }
 
     @Override
@@ -71,268 +64,314 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     }
 
     @LuaFunction(mainThread = true)
-    public final Object listItems() {
-        return ensureIsConnected(null, () -> RefinedStorage.listItems(getNetwork()));
+    public final MethodResult listItems() {
+        if (!isConnected())
+            return notConnected();
+
+        return MethodResult.of(RefinedStorage.listItems(getNetwork()));
     }
 
     @LuaFunction(mainThread = true)
-    public final Object listCraftableItems() {
+    public final MethodResult listCraftableItems() {
         if (!isConnected())
-            return null;
+            return notConnected();
+
         List<Object> items = new ArrayList<>();
         RefinedStorage.getCraftableItems(getNetwork()).forEach(item -> items.add(RefinedStorage.getObjectFromStack(item, getNetwork())));
-        return items;
+        return MethodResult.of(items);
     }
 
     @LuaFunction(mainThread = true)
     public final Object listCraftableFluids() {
         if (!isConnected())
-            return null;
+            return notConnected();
+
         List<Object> fluids = new ArrayList<>();
         RefinedStorage.getCraftableFluids(getNetwork()).forEach(fluid -> fluids.add(RefinedStorage.getObjectFromFluid(fluid, getNetwork())));
-        return fluids;
+        return MethodResult.of(fluids);
     }
 
     @LuaFunction(mainThread = true)
-    public final int getMaxItemDiskStorage() {
-        return (int) ensureIsConnected(0, () -> RefinedStorage.getMaxItemDiskStorage(getNetwork()));
-    }
-
-    @LuaFunction(mainThread = true)
-    public final int getMaxFluidDiskStorage() {
-        return (int) ensureIsConnected(0, () -> RefinedStorage.getMaxFluidDiskStorage(getNetwork()));
-    }
-
-    @LuaFunction(mainThread = true)
-    public final int getMaxItemExternalStorage() {
-        return (int) ensureIsConnected(0, () -> RefinedStorage.getMaxItemExternalStorage(getNetwork()));
-    }
-
-    @LuaFunction(mainThread = true)
-    public final int getMaxFluidExternalStorage() {
-        return (int) ensureIsConnected(0, () -> RefinedStorage.getMaxFluidExternalStorage(getNetwork()));
-    }
-
-    @LuaFunction(mainThread = true)
-    public final Object listFluids() {
-        return ensureIsConnected(null, () -> RefinedStorage.listFluids(getNetwork()));
-    }
-
-    @LuaFunction(mainThread = true)
-    public final int getEnergyUsage() {
-        return (int) ensureIsConnected(0, () -> getNetwork().getEnergyUsage());
-    }
-
-    @LuaFunction(mainThread = true)
-    public final int getMaxEnergyStorage() {
-        return (int) ensureIsConnected(0, () -> getNetwork().getEnergyStorage().getMaxEnergyStored());
-    }
-
-    @LuaFunction(mainThread = true)
-    public final int getEnergyStorage() {
-        return (int) ensureIsConnected(0, () -> getNetwork().getEnergyStorage().getEnergyStored());
-    }
-
-    @LuaFunction(mainThread = true)
-    public final MethodResult getPattern(IArguments arguments) {
-        return (MethodResult) ensureIsConnected(null, () -> {
-            try {
-                return MethodResult.of(RefinedStorage.getObjectFromPattern(getNetwork().getCraftingManager().getPattern(ItemUtil.getItemStackRS(arguments.getTable(0), RefinedStorage.getItems(getNetwork()))), getNetwork()));
-            } catch (LuaException e) {
-                return MethodResult.of(null, "unknown: " + e.getMessage());
-            }
-        });
-    }
-
-    @LuaFunction(mainThread = true)
-    public final int exportItem(IArguments arguments) throws LuaException {
+    public final MethodResult getMaxItemDiskStorage() {
         if (!isConnected())
-            return 0;
-        ItemStack stack = ItemUtil.getItemStackRS(arguments.getTable(0), RefinedStorage.getItems(getNetwork()));
-        Direction direction = validateSide(arguments.getString(1));
+            return notConnected();
 
-        BlockEntity targetEntity = owner.tileEntity.getLevel().getBlockEntity(owner.tileEntity.getBlockPos().relative(direction));
-        IItemHandler inventory = targetEntity != null ? targetEntity.getCapability(ForgeCapabilities.ITEM_HANDLER, direction.getOpposite()).resolve().orElse(null) : null;
-        if (inventory == null)
-            throw new LuaException("No valid inventory at " + arguments.getString(1));
-
-        ItemStack extracted = getNetwork().extractItem(stack, stack.getCount(), 1, Action.SIMULATE);
-        if (extracted.isEmpty())
-            return 0;
-
-        int transferableAmount = extracted.getCount();
-
-        ItemStack remaining = ItemHandlerHelper.insertItemStacked(inventory, extracted, true);
-        if (!remaining.isEmpty()) transferableAmount -= remaining.getCount();
-
-        extracted = getNetwork().extractItem(stack, transferableAmount, 1, Action.PERFORM);
-        remaining = ItemHandlerHelper.insertItemStacked(inventory, extracted, false);
-
-        if (!remaining.isEmpty()) {
-            getNetwork().insertItem(remaining, remaining.getCount(), Action.PERFORM);
-        }
-
-        return transferableAmount;
+        return MethodResult.of(RefinedStorage.getMaxItemDiskStorage(getNetwork()));
     }
 
     @LuaFunction(mainThread = true)
-    public final int importItem(IArguments arguments) throws LuaException {
+    public final MethodResult getMaxFluidDiskStorage() {
         if (!isConnected())
-            return 0;
-        ItemStack stack = ItemUtil.getItemStackRS(arguments.getTable(0), RefinedStorage.getItems(getNetwork()));
-        Direction direction = validateSide(arguments.getString(1));
+            return notConnected();
 
-        BlockEntity targetEntity = owner.tileEntity.getLevel().getBlockEntity(owner.tileEntity.getBlockPos().relative(direction));
-        IItemHandler inventory = targetEntity != null ? targetEntity.getCapability(ForgeCapabilities.ITEM_HANDLER, direction.getOpposite()).resolve().orElse(null) : null;
-        if (inventory == null)
-            throw new LuaException("No valid inventory at " + arguments.getString(1));
-
-        int amount = stack.getCount();
-        int transferableAmount = 0;
-
-        for (int i = 0; i < inventory.getSlots(); i++) {
-            if (inventory.getStackInSlot(i).sameItem(stack)) {
-                if (inventory.getStackInSlot(i).getCount() >= amount) {
-                    ItemStack insertedStack = getNetwork().insertItem(stack, amount, Action.PERFORM);
-                    inventory.extractItem(i, amount - insertedStack.getCount(), false);
-                    transferableAmount += amount - insertedStack.getCount();
-                    break;
-                } else {
-                    amount -= inventory.getStackInSlot(i).getCount();
-                    ItemStack insertedStack = getNetwork().insertItem(stack, inventory.getStackInSlot(i).getCount(), Action.PERFORM);
-                    inventory.extractItem(i, inventory.getStackInSlot(i).getCount() - insertedStack.getCount(), false);
-                    transferableAmount += inventory.getStackInSlot(i).getCount() - insertedStack.getCount();
-                }
-            }
-        }
-        return transferableAmount;
+        return MethodResult.of(RefinedStorage.getMaxFluidDiskStorage(getNetwork()));
     }
 
     @LuaFunction(mainThread = true)
-    public final int exportItemToPeripheral(IComputerAccess computer, IArguments arguments) throws LuaException {
+    public final MethodResult getMaxItemExternalStorage() {
         if (!isConnected())
-            return 0;
-        ItemStack stack = ItemUtil.getItemStackRS(arguments.getTable(0), RefinedStorage.getItems(getNetwork()));
-        IPeripheral chest = computer.getAvailablePeripheral(arguments.getString(1));
-        if (chest == null)
-            throw new LuaException("No valid inventory block for " + arguments.getString(1));
+            return notConnected();
 
-        BlockEntity targetEntity = (BlockEntity) chest.getTarget();
-        IItemHandler inventory = targetEntity != null ? targetEntity.getCapability(ForgeCapabilities.ITEM_HANDLER).resolve().orElse(null) : null;
-        if (inventory == null)
-            throw new LuaException("No valid inventory for " + arguments.getString(1));
-
-        ItemStack extracted = getNetwork().extractItem(stack, stack.getCount(), 1, Action.SIMULATE);
-        if (extracted.isEmpty())
-            return 0;
-        //throw new LuaException("Item " + item + " does not exists in the RS system or the system is offline");
-
-        int transferableAmount = extracted.getCount();
-
-        ItemStack remaining = ItemHandlerHelper.insertItemStacked(inventory, extracted, true);
-        if (!remaining.isEmpty())
-            transferableAmount -= remaining.getCount();
-
-        extracted = getNetwork().extractItem(stack, transferableAmount, 1, Action.PERFORM);
-        remaining = ItemHandlerHelper.insertItemStacked(inventory, extracted, false);
-
-        if (!remaining.isEmpty())
-            getNetwork().insertItem(remaining, remaining.getCount(), Action.PERFORM);
-
-        return transferableAmount;
+        return MethodResult.of(RefinedStorage.getMaxItemExternalStorage(getNetwork()));
     }
 
     @LuaFunction(mainThread = true)
-    public final int importItemFromPeripheral(IComputerAccess computer, IArguments arguments) throws LuaException {
+    public final MethodResult getMaxFluidExternalStorage() {
         if (!isConnected())
-            return 0;
-        ItemStack stack = ItemUtil.getItemStackRS(arguments.getTable(0), RefinedStorage.getItems(getNetwork()));
-        IPeripheral chest = computer.getAvailablePeripheral(arguments.getString(1));
-        int count = stack.getCount();
-        if (chest == null)
-            throw new LuaException("No inventory block for " + arguments.getString(1));
+            return notConnected();
 
-        BlockEntity targetEntity = (BlockEntity) chest.getTarget();
-        IItemHandler inventory = targetEntity != null ? targetEntity.getCapability(ForgeCapabilities.ITEM_HANDLER).resolve().orElse(null) : null;
-        if (inventory == null)
-            throw new LuaException("No valid inventory for " + arguments.getString(1));
-
-        int amount = count;
-
-        int transferableAmount = 0;
-
-        for (int i = 0; i < inventory.getSlots(); i++) {
-            if (inventory.getStackInSlot(i).sameItem(stack)) {
-                if (inventory.getStackInSlot(i).getCount() >= (amount - transferableAmount)) {
-                    ItemStack extracted = inventory.extractItem(i, amount, false);
-                    getNetwork().insertItem(stack, extracted.getCount(), Action.PERFORM);
-                    transferableAmount += extracted.getCount();
-                    break;
-                } else {
-                    ItemStack extracted = inventory.extractItem(i, amount, false);
-                    amount -= extracted.getCount();
-                    getNetwork().insertItem(stack, extracted.getCount(), Action.PERFORM);
-                    transferableAmount += extracted.getCount();
-                }
-            }
-        }
-        return transferableAmount;
+        return MethodResult.of(RefinedStorage.getMaxFluidExternalStorage(getNetwork()));
     }
 
     @LuaFunction(mainThread = true)
-    public final MethodResult getItem(IArguments arguments) {
-        return (MethodResult) ensureIsConnected(null, () -> {
-            try {
-                return MethodResult.of(RefinedStorage.getItem(getNetwork(), ItemUtil.getItemStackRS(arguments.getTable(0), RefinedStorage.getItems(getNetwork()))));
-            } catch (LuaException e) {
-                return MethodResult.of(null, "unknown: " + e.getMessage());
-            }
-        });
-    }
-
-    @LuaFunction(mainThread = true)
-    public final boolean craftItem(IArguments arguments) throws LuaException {
+    public final MethodResult listFluids() {
         if (!isConnected())
-            return false;
-        ItemStack stack = ItemUtil.getItemStackRS(arguments.getTable(0), RefinedStorage.getItems(getNetwork()));
+            return notConnected();
+
+        return MethodResult.of(RefinedStorage.listFluids(getNetwork()));
+    }
+
+    @LuaFunction(mainThread = true)
+    public final MethodResult getEnergyUsage() {
+        if (!isConnected())
+            return notConnected();
+
+        return MethodResult.of(getNetwork().getEnergyUsage());
+    }
+
+    @LuaFunction(mainThread = true)
+    public final MethodResult getMaxEnergyStorage() {
+        if (!isConnected())
+            return notConnected();
+
+        return MethodResult.of(getNetwork().getEnergyStorage().getMaxEnergyStored());
+    }
+
+    @LuaFunction(mainThread = true)
+    public final MethodResult getEnergyStorage() {
+        if (!isConnected())
+            return notConnected();
+
+        return MethodResult.of(getNetwork().getEnergyStorage().getEnergyStored());
+    }
+
+    @LuaFunction(mainThread = true)
+    public final MethodResult getPattern(IArguments arguments) throws LuaException {
+        if (!isConnected())
+            return notConnected();
+
+        Pair<ItemFilter, String> filter = ItemFilter.parse(arguments.getTable(0));
+        if (filter.rightPresent())
+            return MethodResult.of(false, filter.getRight());
+
+        ItemFilter parsedFilter = filter.getLeft();
+        if (parsedFilter.isEmpty())
+            return MethodResult.of(false, "EMPTY_FILTER");
+
+        ItemStack patternItem = RefinedStorage.findStackFromFilter(getNetwork(), getNetwork().getCraftingManager(), parsedFilter);
+
+        return MethodResult.of(RefinedStorage.getObjectFromPattern(getNetwork().getCraftingManager().getPattern(patternItem), getNetwork()));
+    }
+
+    protected MethodResult exportToChest(@NotNull IArguments arguments, @NotNull IItemHandler targetInventory) throws LuaException {
+        RsItemHandler itemHandler = new RsItemHandler(getNetwork());
+        if (targetInventory == null)
+            return MethodResult.of(0, "INVALID_TARGET");
+
+        Pair<ItemFilter, String> filter = ItemFilter.parse(arguments.getTable(0));
+        if (filter.rightPresent())
+            return MethodResult.of(0, filter.getRight());
+
+        return MethodResult.of(InventoryUtil.moveItem(itemHandler, targetInventory, filter.getLeft()), null);
+    }
+
+    protected MethodResult importToSystem(@NotNull IArguments arguments, @NotNull IItemHandler targetInventory) throws LuaException {
+        RsItemHandler itemHandler = new RsItemHandler(getNetwork());
+        if (targetInventory == null)
+            return MethodResult.of(0, "INVALID_TARGET");
+
+        Pair<ItemFilter, String> filter = ItemFilter.parse(arguments.getTable(0));
+        if (filter.rightPresent())
+            return MethodResult.of(0, filter.getRight());
+
+        return MethodResult.of(InventoryUtil.moveItem(targetInventory, itemHandler, filter.getLeft()), null);
+    }
+
+    protected MethodResult exportToTank(@NotNull IArguments arguments, @NotNull IFluidHandler targetInventory) throws LuaException {
+        RsFluidHandler itemHandler = new RsFluidHandler(getNetwork());
+        if (targetInventory == null)
+            return MethodResult.of(0, "INVALID_TARGET");
+
+        Pair<FluidFilter, String> filter = FluidFilter.parse(arguments.getTable(0));
+        if (filter.rightPresent())
+            return MethodResult.of(0, filter.getRight());
+
+        return MethodResult.of(InventoryUtil.moveFluid(itemHandler, targetInventory, filter.getLeft()), null);
+    }
+
+    protected MethodResult importToSystem(@NotNull IArguments arguments, @NotNull IFluidHandler targetInventory) throws LuaException {
+        RsFluidHandler itemHandler = new RsFluidHandler(getNetwork());
+        if (targetInventory == null)
+            return MethodResult.of(0, "INVALID_TARGET");
+
+        Pair<FluidFilter, String> filter = FluidFilter.parse(arguments.getTable(0));
+        if (filter.rightPresent())
+            return MethodResult.of(0, filter.getRight());
+
+        return MethodResult.of(InventoryUtil.moveFluid(targetInventory, itemHandler, filter.getLeft()), null);
+    }
+
+    @LuaFunction(mainThread = true)
+    public final MethodResult exportItem(@NotNull IArguments arguments) throws LuaException {
+        if (!isConnected())
+            return notConnected();
+
+        IItemHandler inventory = InventoryUtil.getHandlerFromDirection(arguments.getString(1), owner);
+        return exportToChest(arguments, inventory);
+    }
+
+    @LuaFunction(mainThread = true)
+    public final MethodResult exportItemToPeripheral(IComputerAccess computer, IArguments arguments) throws LuaException {
+        if (!isConnected())
+            return notConnected();
+
+        IItemHandler inventory = InventoryUtil.getHandlerFromName(computer, arguments.getString(1));
+        return exportToChest(arguments, inventory);
+    }
+
+    @LuaFunction(mainThread = true)
+    public final MethodResult importItem(IArguments arguments) throws LuaException {
+        if (!isConnected())
+            return notConnected();
+
+        IItemHandler inventory = InventoryUtil.getHandlerFromDirection(arguments.getString(1), owner);
+        return importToSystem(arguments, inventory);
+    }
+
+    @LuaFunction(mainThread = true)
+    public final MethodResult importItemFromPeripheral(IComputerAccess computer, IArguments arguments) throws LuaException {
+        if (!isConnected())
+            return notConnected();
+
+        IItemHandler inventory = InventoryUtil.getHandlerFromName(computer, arguments.getString(1));
+        return importToSystem(arguments, inventory);
+    }
+
+    @LuaFunction(mainThread = true)
+    public final MethodResult exportFluid(@NotNull IArguments arguments) throws LuaException {
+        if (!isConnected())
+            return notConnected();
+
+        IFluidHandler inventory = FluidUtil.getHandlerFromDirection(arguments.getString(1), owner);
+        return exportToTank(arguments, inventory);
+    }
+
+    @LuaFunction(mainThread = true)
+    public final MethodResult exportFluidToPeripheral(IComputerAccess computer, IArguments arguments) throws LuaException {
+        if (!isConnected())
+            return notConnected();
+
+        IFluidHandler inventory = FluidUtil.getHandlerFromName(computer, arguments.getString(1));
+        return exportToTank(arguments, inventory);
+    }
+
+    @LuaFunction(mainThread = true)
+    public final MethodResult importFluid(IArguments arguments) throws LuaException {
+        if (!isConnected())
+            return notConnected();
+
+        IFluidHandler inventory = FluidUtil.getHandlerFromDirection(arguments.getString(1), owner);
+        return importToSystem(arguments, inventory);
+    }
+
+    @LuaFunction(mainThread = true)
+    public final MethodResult importFluidFromPeripheral(IComputerAccess computer, IArguments arguments) throws LuaException {
+        if (!isConnected())
+            return notConnected();
+
+        IFluidHandler inventory = FluidUtil.getHandlerFromName(computer, arguments.getString(1));
+        return importToSystem(arguments, inventory);
+    }
+
+    @LuaFunction(mainThread = true)
+    public final MethodResult getItem(IArguments arguments) throws LuaException {
+        if (!isConnected())
+            return notConnected();
+
+        Pair<ItemFilter, String> filter = ItemFilter.parse(arguments.getTable(0));
+        if (filter.rightPresent())
+            return MethodResult.of(null, filter.getRight());
+
+        return MethodResult.of(RefinedStorage.findStackFromFilter(getNetwork(), getNetwork().getCraftingManager(), filter.getLeft()));
+    }
+
+    @LuaFunction(mainThread = true)
+    public final MethodResult craftItem(IArguments arguments) throws LuaException {
+        if (!isConnected())
+            return notConnected();
+
+
+        Pair<ItemFilter, String> filter = ItemFilter.parse(arguments.getTable(0));
+        if (filter.rightPresent())
+            return MethodResult.of(null, filter.getRight());
+
+        ItemStack stack = RefinedStorage.findStackFromFilter(getNetwork(), null, filter.getLeft());
         if (stack == null)
-            throw new LuaException("The item " + arguments.getTable(0).get("name") + "is not craftable");
-        ICalculationResult result = getNetwork().getCraftingManager().create(stack, stack.getCount());
+            return MethodResult.of(null, "NOT_CRAFTABLE");
+
+        ICalculationResult result = getNetwork().getCraftingManager().create(stack, filter.getLeft().getCount());
         CalculationResultType type = result.getType();
         if (result.getType() == CalculationResultType.OK)
             getNetwork().getCraftingManager().start(result.getTask());
-        return type == CalculationResultType.OK;
+        return MethodResult.of(type == CalculationResultType.OK);
     }
 
     @LuaFunction(mainThread = true)
-    public final boolean craftFluid(String fluid, int count) {
+    public final MethodResult craftFluid(IArguments arguments, int count) throws LuaException {
         if (!isConnected())
-            return false;
-        ICalculationResult result = getNetwork().getCraftingManager().create(new FluidStack(ForgeRegistries.FLUIDS.getValue(new ResourceLocation(fluid)), 0), count);
+            return notConnected();
+
+        Pair<FluidFilter, String> filter = FluidFilter.parse(arguments.getTable(0));
+        if (filter.rightPresent())
+            return MethodResult.of(null, filter.getRight());
+
+        FluidStack stack = RefinedStorage.findFluidFromFilter(getNetwork(), null, filter.getLeft());
+        if (stack == null)
+            return MethodResult.of(null, "NOT_CRAFTABLE");
+
+        ICalculationResult result = getNetwork().getCraftingManager().create(stack, filter.getLeft().getCount());
         CalculationResultType type = result.getType();
         if (result.getType() == CalculationResultType.OK)
             getNetwork().getCraftingManager().start(result.getTask());
-        return type == CalculationResultType.OK;
+        return MethodResult.of(type == CalculationResultType.OK);
     }
 
     @LuaFunction(mainThread = true)
-    public final boolean isItemCrafting(String item) {
+    public final MethodResult isItemCrafting(String item) {
         if (!isConnected())
-            return false;
+            return notConnected();
+
         ItemStack stack = new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation(item)));
         for (ICraftingTask task : getNetwork().getCraftingManager().getTasks()) {
             ItemStack taskStack = task.getRequested().getItem();
             if (taskStack.sameItem(stack))
-                return true;
+                return MethodResult.of(true);
         }
-        return false;
+        return MethodResult.of(false);
     }
 
     @LuaFunction(mainThread = true)
-    public final boolean isItemCraftable(IArguments arguments) throws LuaException {
+    public final MethodResult isItemCraftable(IArguments arguments) throws LuaException {
         if (!isConnected())
-            return false;
-        ItemStack stack = ItemUtil.getItemStackRS(arguments.getTable(0), RefinedStorage.getItems(getNetwork()));
-        return RefinedStorage.isItemCraftable(getNetwork(), stack);
+            return notConnected();
+
+        Pair<ItemFilter, String> filter = ItemFilter.parse(arguments.getTable(0));
+        if (filter.rightPresent())
+            return MethodResult.of(false, filter.getRight());
+
+        ItemFilter parsedFilter = filter.getLeft();
+        if (parsedFilter.isEmpty())
+            return MethodResult.of(false, "EMPTY_FILTER");
+        return MethodResult.of(RefinedStorage.isItemCraftable(getNetwork(), parsedFilter.toItemStack()));
     }
 }

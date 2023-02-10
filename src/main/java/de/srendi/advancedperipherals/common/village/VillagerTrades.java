@@ -6,7 +6,7 @@ import de.srendi.advancedperipherals.common.setup.Blocks;
 import de.srendi.advancedperipherals.common.setup.CCRegistration;
 import de.srendi.advancedperipherals.common.setup.Items;
 import de.srendi.advancedperipherals.common.setup.Villagers;
-import de.srendi.advancedperipherals.common.util.ItemUtil;
+import de.srendi.advancedperipherals.common.util.inventory.ItemUtil;
 import net.minecraftforge.event.village.VillagerTradesEvent;
 import net.minecraftforge.event.village.WandererTradesEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;

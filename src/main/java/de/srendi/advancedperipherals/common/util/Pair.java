@@ -1,6 +1,7 @@
 package de.srendi.advancedperipherals.common.util;
 
 import java.util.function.BiFunction;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class Pair<T, V> {
@@ -38,6 +39,16 @@ public class Pair<T, V> {
 
     public boolean rightPresent() {
         return right != null;
+    }
+
+    public void ifRightPresent(Consumer<V> consumer) {
+        if(rightPresent())
+            consumer.accept(right);
+    }
+
+    public void ifLeftPresent(Consumer<T> consumer) {
+        if(leftPresent())
+            consumer.accept(left);
     }
 
     public <T1> Pair<T1, V> mapLeft(Function<T, T1> mapFunc) {

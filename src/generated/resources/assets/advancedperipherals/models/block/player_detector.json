@@ -6,6 +6,7 @@
     "east": "advancedperipherals:block/player_detector_side",
     "south": "advancedperipherals:block/player_detector_side",
     "west": "advancedperipherals:block/player_detector_side",
-    "side": "advancedperipherals:block/player_detector_side"
+    "side": "advancedperipherals:block/player_detector_side",
+    "particle": "advancedperipherals:block/player_detector_front"
   }
 }

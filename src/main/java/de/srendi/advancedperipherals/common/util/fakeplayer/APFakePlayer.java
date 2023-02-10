@@ -23,6 +23,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.DiggerItem;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ShearsItem;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.ClipContext;
@@ -46,8 +47,7 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.Event;
 import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 import java.lang.ref.WeakReference;
 import java.util.List;
 import java.util.Optional;
@@ -103,7 +103,7 @@ public class APFakePlayer extends FakePlayer {
     }
 
     @Override
-    public void playSound(@Nonnull SoundEvent soundIn, float volume, float pitch) {
+    public void playSound(@NotNull SoundEvent soundIn, float volume, float pitch) {
     }
 
     private void setState(Block block, BlockPos pos) {
@@ -144,9 +144,14 @@ public class APFakePlayer extends FakePlayer {
             if (block == Blocks.BEDROCK || state.getDestroySpeed(world, pos) <= -1)
                 return Pair.of(false, "Unbreakable block detected");
 
-            if (!(tool.getItem() instanceof DiggerItem toolItem)) return Pair.of(false, "Item should be digger tool");
+            if (!(tool.getItem() instanceof DiggerItem) && !(tool.getItem() instanceof ShearsItem))
+                return Pair.of(false, "Item should be digger tool");
 
-            if (!toolItem.isCorrectToolForDrops(tool, state)) return Pair.of(false, "Tool cannot mine this block");
+            if (tool.getItem() instanceof DiggerItem toolItem && !toolItem.isCorrectToolForDrops(tool, state))
+                return Pair.of(false, "Tool cannot mine this block");
+
+            if (tool.getItem() instanceof ShearsItem shearsItem && shearsItem.isCorrectToolForDrops(state))
+                return Pair.of(false, "Shear cannot mine this block");
 
             ServerPlayerGameMode manager = gameMode;
             float breakSpeed = 0.5f * tool.getDestroySpeed(state) / state.getDestroySpeed(level, pos) - 0.1f;
@@ -249,7 +254,7 @@ public class APFakePlayer extends FakePlayer {
         return findHit(skipEntity, skipBlock, null);
     }
 
-    @Nonnull
+    @NotNull
     public HitResult findHit(boolean skipEntity, boolean skipBlock, @Nullable Predicate<Entity> entityFilter) {
         AttributeInstance reachAttribute = getAttribute(ForgeMod.REACH_DISTANCE.get());
         if (reachAttribute == null)

@@ -17,8 +17,8 @@ import com.minecolonies.api.research.util.ResearchState;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingStructureBuilder;
 import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import de.srendi.advancedperipherals.common.util.ItemUtil;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
+import de.srendi.advancedperipherals.common.util.inventory.ItemUtil;
 import io.netty.buffer.Unpooled;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
@@ -105,7 +105,8 @@ public class MineColonies {
         map.put("saturation", visitor.getSaturation());
         map.put("happiness", visitor.getCitizenHappinessHandler().getHappiness(visitor.getColony()));
         map.put("skills", skillsToObject(visitor.getCitizenSkillHandler().getSkills()));
-        map.put("recruitCost", ItemUtil.getRegistryKey(visitor.getRecruitCost().getItem()).toString());
+        map.put("recruitCost", LuaConverter.stackToObject(visitor.getRecruitCost()));
+
         return map;
     }
 

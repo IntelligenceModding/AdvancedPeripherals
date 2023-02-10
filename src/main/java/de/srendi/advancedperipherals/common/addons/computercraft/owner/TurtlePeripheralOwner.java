@@ -17,7 +17,6 @@ import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nonnull;
 import java.util.function.Function;
 
 public class TurtlePeripheralOwner extends BasePeripheralOwner {
@@ -103,7 +102,7 @@ public class TurtlePeripheralOwner extends BasePeripheralOwner {
     }
 
     @Override
-    public boolean isMovementPossible(@Nonnull Level level, @Nonnull BlockPos pos) {
+    public boolean isMovementPossible(@NotNull Level level, @NotNull BlockPos pos) {
         return FakePlayerProviderTurtle.withPlayer(turtle, player -> {
             if (level.isOutsideBuildHeight(pos)) return false;
             if (!level.isInWorldBounds(pos)) return false;
@@ -115,7 +114,7 @@ public class TurtlePeripheralOwner extends BasePeripheralOwner {
     }
 
     @Override
-    public boolean move(@Nonnull Level level, @Nonnull BlockPos pos) {
+    public boolean move(@NotNull Level level, @NotNull BlockPos pos) {
         return turtle.teleportTo(level, pos);
     }
 

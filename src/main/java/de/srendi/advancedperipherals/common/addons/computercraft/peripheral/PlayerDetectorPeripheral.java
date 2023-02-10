@@ -19,10 +19,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.server.ServerLifecycleHooks;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
 
@@ -158,7 +155,7 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
             }
         }
         if (existingPlayer == null)
-            return null;
+            return Collections.emptyMap();
 
         Map<String, Object> info = new HashMap<>();
         info.put("x", Math.floor(existingPlayer.getX()));

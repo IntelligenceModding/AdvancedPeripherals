@@ -26,8 +26,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.registries.ForgeRegistries;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -124,7 +124,7 @@ public class GeoScannerPeripheral extends BasePeripheral<IPeripheralOwner> {
     }
 
     @LuaFunction(mainThread = true)
-    public final MethodResult scan(@Nonnull IArguments arguments) throws LuaException {
+    public final MethodResult scan(@NotNull IArguments arguments) throws LuaException {
         int radius = arguments.getInt(0);
         return withOperation(SCAN_BLOCKS, new SphereOperationContext(radius), context -> {
             if (context.getRadius() > SCAN_BLOCKS.getMaxCostRadius()) {

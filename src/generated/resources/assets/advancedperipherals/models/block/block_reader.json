@@ -6,6 +6,7 @@
     "east": "advancedperipherals:block/block_reader_east",
     "west": "advancedperipherals:block/block_reader_west",
     "up": "advancedperipherals:block/block_reader_up",
-    "down": "advancedperipherals:block/block_reader_down"
+    "down": "advancedperipherals:block/block_reader_down",
+    "particle": "advancedperipherals:block/block_reader_north"
   }
 }

@@ -9,7 +9,6 @@ import dan200.computercraft.core.asm.NamedMethod;
 import dan200.computercraft.core.asm.PeripheralMethod;
 import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
 import java.util.Objects;
 
 public class BoundMethod {
@@ -24,7 +23,7 @@ public class BoundMethod {
     }
 
     @NotNull
-    public MethodResult apply(@Nonnull IComputerAccess access, @Nonnull ILuaContext context, @Nonnull IArguments arguments) throws LuaException {
+    public MethodResult apply(@NotNull IComputerAccess access, @NotNull ILuaContext context, @NotNull IArguments arguments) throws LuaException {
         return method.apply(target, context, access, arguments);
     }
 
