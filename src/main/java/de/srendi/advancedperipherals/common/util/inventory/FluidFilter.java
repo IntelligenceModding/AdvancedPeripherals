@@ -87,6 +87,11 @@ public class FluidFilter {
         return result;
     }
 
+    public FluidFilter setCount(int count) {
+        this.count = count;
+        return this;
+    }
+
     public boolean test(FluidStack stack) {
         if (!fingerprint.isEmpty()) {
             String testFingerprint = FluidUtil.getFingerprint(stack);

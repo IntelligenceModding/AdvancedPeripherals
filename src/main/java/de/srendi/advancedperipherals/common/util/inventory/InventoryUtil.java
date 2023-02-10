@@ -109,21 +109,22 @@ public class InventoryUtil {
             FluidStack extracted = storageSystemHandler.drain(filter, IFluidHandler.FluidAction.SIMULATE);
             int inserted = inventoryTo.fill(extracted, IFluidHandler.FluidAction.EXECUTE);
 
-            extracted.setAmount(inserted);
-            transferableAmount += storageSystemHandler.drain(extracted, IFluidHandler.FluidAction.EXECUTE).getAmount();
+            transferableAmount += storageSystemHandler.drain(filter.setCount(inserted), IFluidHandler.FluidAction.EXECUTE).getAmount();
 
             return transferableAmount;
         }
 
         if (inventoryTo instanceof IStorageSystemFluidHandler storageSystemHandler) {
             if (filter.test(inventoryFrom.getFluidInTank(0))) {
-                FluidStack toExtract = inventoryTo.getFluidInTank(0);
+                FluidStack toExtract = inventoryFrom.getFluidInTank(0).copy();
                 toExtract.setAmount(amount);
                 FluidStack extracted = inventoryFrom.drain(toExtract, IFluidHandler.FluidAction.SIMULATE);
+                if(extracted.isEmpty())
+                    return 0;
                 int inserted = storageSystemHandler.fill(extracted, IFluidHandler.FluidAction.EXECUTE);
 
                 extracted.setAmount(inserted);
-                transferableAmount += inventoryFrom.drain(inserted, IFluidHandler.FluidAction.EXECUTE).getAmount();
+                transferableAmount += inventoryFrom.drain(extracted, IFluidHandler.FluidAction.EXECUTE).getAmount();
             }
 
             return transferableAmount;

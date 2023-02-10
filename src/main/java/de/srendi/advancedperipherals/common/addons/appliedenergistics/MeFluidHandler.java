@@ -28,10 +28,12 @@ public class MeFluidHandler implements IStorageSystemFluidHandler {
 
     @Override
     public int fill(FluidStack resource, FluidAction action) {
+        if(resource.isEmpty())
+            return 0;
         AEFluidKey itemKey = AEFluidKey.of(resource.getFluid());
         long inserted = storageMonitor.insert(itemKey, resource.getAmount(), action == FluidAction.SIMULATE ? Actionable.SIMULATE : Actionable.MODULATE, actionSource);
 
-        return resource.getAmount() - (int) Math.min(inserted, Integer.MAX_VALUE);
+        return (int) Math.min(inserted, Integer.MAX_VALUE);
     }
 
     @Override
