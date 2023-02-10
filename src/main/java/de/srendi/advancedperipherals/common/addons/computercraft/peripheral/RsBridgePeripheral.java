@@ -1,5 +1,7 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.peripheral;
 
+import com.refinedmods.refinedstorage.api.autocrafting.task.CalculationResultType;
+import com.refinedmods.refinedstorage.api.autocrafting.task.ICalculationResult;
 import com.refinedmods.refinedstorage.api.autocrafting.task.ICraftingTask;
 import com.refinedmods.refinedstorage.api.network.INetwork;
 import dan200.computercraft.api.lua.IArguments;
@@ -10,15 +12,20 @@ import dan200.computercraft.api.peripheral.IComputerAccess;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.BlockEntityPeripheralOwner;
 import de.srendi.advancedperipherals.common.addons.refinedstorage.RefinedStorage;
 import de.srendi.advancedperipherals.common.addons.refinedstorage.RefinedStorageNode;
+import de.srendi.advancedperipherals.common.addons.refinedstorage.RsFluidHandler;
 import de.srendi.advancedperipherals.common.addons.refinedstorage.RsItemHandler;
 import de.srendi.advancedperipherals.common.blocks.blockentities.RsBridgeEntity;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.util.Pair;
+import de.srendi.advancedperipherals.common.util.inventory.FluidFilter;
+import de.srendi.advancedperipherals.common.util.inventory.FluidUtil;
 import de.srendi.advancedperipherals.common.util.inventory.InventoryUtil;
 import de.srendi.advancedperipherals.common.util.inventory.ItemFilter;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
@@ -168,7 +175,7 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
     protected MethodResult exportToChest(@NotNull IArguments arguments, @NotNull IItemHandler targetInventory) throws LuaException {
         RsItemHandler itemHandler = new RsItemHandler(getNetwork());
-        if(targetInventory == null)
+        if (targetInventory == null)
             return MethodResult.of(0, "INVALID_TARGET");
 
         Pair<ItemFilter, String> filter = ItemFilter.parse(arguments.getTable(0));
@@ -180,7 +187,7 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
     protected MethodResult importToSystem(@NotNull IArguments arguments, @NotNull IItemHandler targetInventory) throws LuaException {
         RsItemHandler itemHandler = new RsItemHandler(getNetwork());
-        if(targetInventory == null)
+        if (targetInventory == null)
             return MethodResult.of(0, "INVALID_TARGET");
 
         Pair<ItemFilter, String> filter = ItemFilter.parse(arguments.getTable(0));
@@ -188,6 +195,30 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
             return MethodResult.of(0, filter.getRight());
 
         return MethodResult.of(InventoryUtil.moveItem(targetInventory, itemHandler, filter.getLeft()), null);
+    }
+
+    protected MethodResult exportToTank(@NotNull IArguments arguments, @NotNull IFluidHandler targetInventory) throws LuaException {
+        RsFluidHandler itemHandler = new RsFluidHandler(getNetwork());
+        if (targetInventory == null)
+            return MethodResult.of(0, "INVALID_TARGET");
+
+        Pair<FluidFilter, String> filter = FluidFilter.parse(arguments.getTable(0));
+        if (filter.rightPresent())
+            return MethodResult.of(0, filter.getRight());
+
+        return MethodResult.of(InventoryUtil.moveFluid(itemHandler, targetInventory, filter.getLeft()), null);
+    }
+
+    protected MethodResult importToSystem(@NotNull IArguments arguments, @NotNull IFluidHandler targetInventory) throws LuaException {
+        RsFluidHandler itemHandler = new RsFluidHandler(getNetwork());
+        if (targetInventory == null)
+            return MethodResult.of(0, "INVALID_TARGET");
+
+        Pair<FluidFilter, String> filter = FluidFilter.parse(arguments.getTable(0));
+        if (filter.rightPresent())
+            return MethodResult.of(0, filter.getRight());
+
+        return MethodResult.of(InventoryUtil.moveFluid(targetInventory, itemHandler, filter.getLeft()), null);
     }
 
     @LuaFunction(mainThread = true)
@@ -227,6 +258,42 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     }
 
     @LuaFunction(mainThread = true)
+    public final MethodResult exportFluid(@NotNull IArguments arguments) throws LuaException {
+        if (!isConnected())
+            return notConnected();
+
+        IFluidHandler inventory = FluidUtil.getHandlerFromDirection(arguments.getString(1), owner);
+        return exportToTank(arguments, inventory);
+    }
+
+    @LuaFunction(mainThread = true)
+    public final MethodResult exportFluidToPeripheral(IComputerAccess computer, IArguments arguments) throws LuaException {
+        if (!isConnected())
+            return notConnected();
+
+        IFluidHandler inventory = FluidUtil.getHandlerFromName(computer, arguments.getString(1));
+        return exportToTank(arguments, inventory);
+    }
+
+    @LuaFunction(mainThread = true)
+    public final MethodResult importFluid(IArguments arguments) throws LuaException {
+        if (!isConnected())
+            return notConnected();
+
+        IFluidHandler inventory = FluidUtil.getHandlerFromDirection(arguments.getString(1), owner);
+        return importToSystem(arguments, inventory);
+    }
+
+    @LuaFunction(mainThread = true)
+    public final MethodResult importFluidFromPeripheral(IComputerAccess computer, IArguments arguments) throws LuaException {
+        if (!isConnected())
+            return notConnected();
+
+        IFluidHandler inventory = FluidUtil.getHandlerFromName(computer, arguments.getString(1));
+        return importToSystem(arguments, inventory);
+    }
+
+    @LuaFunction(mainThread = true)
     public final MethodResult getItem(IArguments arguments) throws LuaException {
         if (!isConnected())
             return notConnected();
@@ -238,30 +305,46 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         return MethodResult.of(RefinedStorage.findStackFromFilter(getNetwork(), getNetwork().getCraftingManager(), filter.getLeft()));
     }
 
-    /*@LuaFunction(mainThread = true)
-    public final boolean craftItem(IArguments arguments) throws LuaException {
+    @LuaFunction(mainThread = true)
+    public final MethodResult craftItem(IArguments arguments) throws LuaException {
         if (!isConnected())
-            return false;
-        ItemStack stack = ItemUtil.getItemStackRS(arguments.getTable(0), RefinedStorage.getItems(getNetwork()));
+            return notConnected();
+
+
+        Pair<ItemFilter, String> filter = ItemFilter.parse(arguments.getTable(0));
+        if (filter.rightPresent())
+            return MethodResult.of(null, filter.getRight());
+
+        ItemStack stack = RefinedStorage.findStackFromFilter(getNetwork(), null, filter.getLeft());
         if (stack == null)
-            throw new LuaException("The item " + arguments.getTable(0).get("name") + "is not craftable");
-        ICalculationResult result = getNetwork().getCraftingManager().create(stack, stack.getCount());
+            return MethodResult.of(null, "NOT_CRAFTABLE");
+
+        ICalculationResult result = getNetwork().getCraftingManager().create(stack, filter.getLeft().getCount());
         CalculationResultType type = result.getType();
         if (result.getType() == CalculationResultType.OK)
             getNetwork().getCraftingManager().start(result.getTask());
-        return type == CalculationResultType.OK;
+        return MethodResult.of(type == CalculationResultType.OK);
     }
 
-   /* @LuaFunction(mainThread = true)
-    public final boolean craftFluid(String fluid, int count) {
+    @LuaFunction(mainThread = true)
+    public final MethodResult craftFluid(IArguments arguments, int count) throws LuaException {
         if (!isConnected())
-            return false;
-        ICalculationResult result = getNetwork().getCraftingManager().create(new FluidStack(ForgeRegistries.FLUIDS.getValue(new ResourceLocation(fluid)), 0), count);
+            return notConnected();
+
+        Pair<FluidFilter, String> filter = FluidFilter.parse(arguments.getTable(0));
+        if (filter.rightPresent())
+            return MethodResult.of(null, filter.getRight());
+
+        FluidStack stack = RefinedStorage.findFluidFromFilter(getNetwork(), null, filter.getLeft());
+        if (stack == null)
+            return MethodResult.of(null, "NOT_CRAFTABLE");
+
+        ICalculationResult result = getNetwork().getCraftingManager().create(stack, filter.getLeft().getCount());
         CalculationResultType type = result.getType();
         if (result.getType() == CalculationResultType.OK)
             getNetwork().getCraftingManager().start(result.getTask());
-        return type == CalculationResultType.OK;
-    }*/
+        return MethodResult.of(type == CalculationResultType.OK);
+    }
 
     @LuaFunction(mainThread = true)
     public final MethodResult isItemCrafting(String item) {
@@ -283,7 +366,7 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
             return notConnected();
 
         Pair<ItemFilter, String> filter = ItemFilter.parse(arguments.getTable(0));
-        if(filter.rightPresent())
+        if (filter.rightPresent())
             return MethodResult.of(false, filter.getRight());
 
         ItemFilter parsedFilter = filter.getLeft();
