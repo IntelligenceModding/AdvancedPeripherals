@@ -7,6 +7,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiComponent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
@@ -47,5 +48,11 @@ public class HudOverlayHandler {
             action.draw(mc, matrixStack, event.getWindow().getScreenWidth(), event.getWindow().getScreenHeight());
         }
         RenderSystem.setShaderTexture(0, GuiComponent.GUI_ICONS_LOCATION);
+    }
+
+    @SubscribeEvent
+    public void onWorldJoin(PlayerEvent.PlayerLoggedInEvent event) {
+        // Clear the canvas when the player joins a world to prevent old renders from other worlds/servers
+        clearCanvas();
     }
 }
