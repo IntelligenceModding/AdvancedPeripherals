@@ -15,9 +15,9 @@ import de.srendi.advancedperipherals.lib.peripherals.IPeripheralOperation;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.Level;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nonnull;
 import java.util.Objects;
 
 import static de.srendi.advancedperipherals.common.addons.computercraft.operations.SingleOperation.WARP;
@@ -36,7 +36,7 @@ public class AutomataWarpingPlugin extends AutomataCorePlugin {
         return new IPeripheralOperation[]{WARP};
     }
 
-    @Nonnull
+    @NotNull
     protected Pair<MethodResult, CompoundTag> getPointData() {
         TurtlePeripheralOwner owner = automataCore.getPeripheralOwner();
         CompoundTag settings = owner.getDataStorage();

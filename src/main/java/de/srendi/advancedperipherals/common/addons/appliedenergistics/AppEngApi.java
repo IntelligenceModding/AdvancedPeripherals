@@ -17,25 +17,50 @@ import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.addons.APAddons;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
 import de.srendi.advancedperipherals.common.util.Pair;
-import de.srendi.advancedperipherals.common.util.StringUtil;
+import de.srendi.advancedperipherals.common.util.inventory.FluidFilter;
+import de.srendi.advancedperipherals.common.util.inventory.FluidUtil;
+import de.srendi.advancedperipherals.common.util.inventory.ItemFilter;
+import de.srendi.advancedperipherals.common.util.inventory.ItemUtil;
 import io.github.projectet.ae2things.item.DISKDrive;
 import it.unimi.dsi.fastutil.objects.Object2LongMap;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 import org.apache.logging.log4j.Level;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.*;
 
 public class AppEngApi {
 
-    public static Pair<Long, AEItemKey> findAEStackFromItemStack(MEStorage monitor, ICraftingService crafting, ItemStack item) {
+    public static Pair<Long, AEItemKey> findAEStackFromStack(MEStorage monitor, @Nullable ICraftingService crafting, ItemStack item) {
+        return findAEStackFromFilter(monitor, crafting, ItemFilter.fromStack(item));
+    }
+
+    public static Pair<Long, AEItemKey> findAEStackFromFilter(MEStorage monitor, @Nullable ICraftingService crafting, ItemFilter item) {
         for (Object2LongMap.Entry<AEKey> temp : monitor.getAvailableStacks()) {
-            if (temp.getKey() instanceof AEItemKey key && key.matches(item))
+            if (temp.getKey() instanceof AEItemKey key && item.test(key.toStack()))
+                return Pair.of(temp.getLongValue(), key);
+        }
+
+        if (crafting == null)
+            return Pair.of(0L, AEItemKey.of(ItemStack.EMPTY));
+
+        for (var temp : crafting.getCraftables(param -> true)) {
+            if (temp instanceof AEItemKey key && item.test(key.toStack()))
+                return Pair.of(0L, key);
+        }
+
+        return Pair.of(0L, AEItemKey.of(ItemStack.EMPTY));
+    }
+
+    public static Pair<Long, AEFluidKey> findAEFluidFromStack(MEStorage monitor, @Nullable ICraftingService crafting, FluidStack item) {
+        return findAEFluidFromFilter(monitor, crafting, FluidFilter.fromStack(item));
+    }
+
+    public static Pair<Long, AEFluidKey> findAEFluidFromFilter(MEStorage monitor, @Nullable ICraftingService crafting, FluidFilter item) {
+        for (Object2LongMap.Entry<AEKey> temp : monitor.getAvailableStacks()) {
+            if (temp.getKey() instanceof AEFluidKey key && item.test(key.toStack(1)))
                 return Pair.of(temp.getLongValue(), key);
         }
 
@@ -43,7 +68,7 @@ public class AppEngApi {
             return null;
 
         for (var temp : crafting.getCraftables(param -> true)) {
-            if (temp instanceof AEItemKey key && key.matches(item))
+            if (temp instanceof AEFluidKey key && item.test(key.toStack(1)))
                 return Pair.of(0L, key);
         }
 
@@ -85,13 +110,13 @@ public class AppEngApi {
         return items;
     }
 
-    public static Map<String, Object> getObjectFromStack(Pair<Long, AEKey> stack, ICraftingService service) {
+    public static <T extends AEKey> Map<String, Object> getObjectFromStack(Pair<Long, T> stack, ICraftingService service) {
         if (stack.getRight() instanceof AEItemKey itemKey)
             return getObjectFromItemStack(Pair.of(stack.getLeft(), itemKey), service);
         if (stack.getRight() instanceof AEFluidKey fluidKey)
             return getObjectFromFluidStack(Pair.of(stack.getLeft(), fluidKey), service);
 
-        AdvancedPeripherals.debug("Could not create table from unknown stack " + stack.getClass() + " - Report this to the owner", Level.ERROR);
+        AdvancedPeripherals.debug("Could not create table from unknown stack " + stack.getRight().getClass() + " - Report this to the maintainer of ap", Level.ERROR);
         return Collections.emptyMap();
     }
 
@@ -100,7 +125,7 @@ public class AppEngApi {
         String displayName = stack.getRight().getDisplayName().getString();
         CompoundTag nbt = stack.getRight().toTag();
         long amount = stack.getLeft();
-        map.put("fingerprint", getFingerpint(stack.getRight()));
+        map.put("fingerprint", ItemUtil.getFingerprint(stack.getRight().toStack()));
         map.put("name", stack.getRight().getItem().getRegistryName().toString());
         map.put("amount", amount);
         map.put("displayName", displayName);
@@ -135,19 +160,6 @@ public class AppEngApi {
         return map;
     }
 
-    public static CompoundTag findMatchingTag(ItemStack stack, String nbtHash, MEStorage monitor) {
-        for (Object2LongMap.Entry<AEKey> aeKey : monitor.getAvailableStacks()) {
-            if (aeKey.getKey() instanceof AEItemKey itemKey && aeKey.getLongValue() > 0 && itemKey.getItem() == stack.getItem()) {
-                CompoundTag tag = itemKey.toStack().getTag();
-                String hash = NBTUtil.getNBTHash(tag);
-                if (nbtHash.equals(hash))
-                    return tag.copy();
-
-            }
-        }
-        return null;
-    }
-
     public static CompoundTag findMatchingTag(FluidStack stack, String nbtHash, MEStorage monitor) {
         for (Object2LongMap.Entry<AEKey> aeKey : monitor.getAvailableStacks()) {
             if (aeKey.getKey() instanceof AEFluidKey fluidKey && aeKey.getLongValue() > 0 && fluidKey.getFluid() == stack.getFluid()) {
@@ -161,63 +173,24 @@ public class AppEngApi {
         return null;
     }
 
-    public static ItemStack findMatchingFingerprint(String fingerprint, MEStorage monitor) {
-        for (Object2LongMap.Entry<AEKey> aeKey : monitor.getAvailableStacks()) {
-            if (!(aeKey.getKey() instanceof AEItemKey itemKey))
-                continue;
-            if (aeKey.getLongValue() > 0 && fingerprint.equals(getFingerpint(itemKey))) {
-                return itemKey.toStack((int) aeKey.getLongValue());
-            }
-        }
-        return ItemStack.EMPTY;
-    }
-
     public static FluidStack findMatchingFluidFingerprint(String fingerprint, MEStorage monitor) {
         for (Object2LongMap.Entry<AEKey> aeKey : monitor.getAvailableStacks()) {
-            if (!(aeKey.getKey() instanceof AEFluidKey itemKey))
+            if (!(aeKey.getKey() instanceof AEFluidKey fluidKey))
                 continue;
-            if (aeKey.getLongValue() > 0 && fingerprint.equals(getFingerpint(itemKey))) {
-                return itemKey.toStack((int) aeKey.getLongValue());
+            if (aeKey.getLongValue() > 0 && fingerprint.equals(FluidUtil.getFingerprint(fluidKey.toStack(1)))) {
+                return fluidKey.toStack((int) aeKey.getLongValue());
             }
         }
         return null;
-    }
-
-    public static String getFingerpint(AEItemKey itemStack) {
-        ItemStack stack = itemStack.toStack();
-        String fingerprint = stack.getOrCreateTag() + stack.getItem().getRegistryName().toString() + stack.getDisplayName().getString();
-        try {
-            byte[] bytesOfHash = fingerprint.getBytes(StandardCharsets.UTF_8);
-            MessageDigest md = MessageDigest.getInstance("MD5");
-            return StringUtil.toHexString(md.digest(bytesOfHash));
-        } catch (NoSuchAlgorithmException ex) {
-            AdvancedPeripherals.debug("Could not parse fingerprint.", Level.ERROR);
-            ex.printStackTrace();
-        }
-        return "";
-    }
-
-    public static String getFingerpint(AEFluidKey fluidStack) {
-        FluidStack stack = fluidStack.toStack(1);
-        String fingerprint = stack.getOrCreateTag() + stack.getFluid().getRegistryName().toString() + stack.getDisplayName().getString();
-        try {
-            byte[] bytesOfHash = fingerprint.getBytes(StandardCharsets.UTF_8);
-            MessageDigest md = MessageDigest.getInstance("MD5");
-            return StringUtil.toHexString(md.digest(bytesOfHash));
-        } catch (NoSuchAlgorithmException ex) {
-            AdvancedPeripherals.debug("Could not parse fingerprint.", Level.ERROR);
-            ex.printStackTrace();
-        }
-        return "";
     }
 
     public static MEStorage getMonitor(IGridNode node) {
         return node.getGrid().getService(IStorageService.class).getInventory();
     }
 
-    public static boolean isItemCrafting(MEStorage monitor, ICraftingService grid, ItemStack itemStack,
+    public static boolean isItemCrafting(MEStorage monitor, ICraftingService grid, ItemFilter filter,
                                          @Nullable ICraftingCPU craftingCPU) {
-        Pair<Long, AEItemKey> stack = AppEngApi.findAEStackFromItemStack(monitor, grid, itemStack);
+        Pair<Long, AEItemKey> stack = AppEngApi.findAEStackFromFilter(monitor, grid, filter);
 
         // If the item stack does not exist, it cannot be crafted.
         if (stack == null)

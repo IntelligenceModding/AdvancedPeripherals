@@ -3,7 +3,7 @@ package de.srendi.advancedperipherals.common.argoggles;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import com.mojang.math.Matrix4f;
-import de.srendi.advancedperipherals.common.util.ItemUtil;
+import de.srendi.advancedperipherals.common.util.inventory.ItemUtil;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.renderer.entity.ItemRenderer;

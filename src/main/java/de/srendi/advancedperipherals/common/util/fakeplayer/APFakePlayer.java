@@ -43,8 +43,7 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.Event;
 import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 import java.lang.ref.WeakReference;
 import java.util.List;
 import java.util.Optional;
@@ -100,7 +99,7 @@ public class APFakePlayer extends FakePlayer {
     }
 
     @Override
-    public void playSound(@Nonnull SoundEvent soundIn, float volume, float pitch) {
+    public void playSound(@NotNull SoundEvent soundIn, float volume, float pitch) {
     }
 
     private void setState(Block block, BlockPos pos) {
@@ -251,7 +250,7 @@ public class APFakePlayer extends FakePlayer {
         return findHit(skipEntity, skipBlock, null);
     }
 
-    @Nonnull
+    @NotNull
     public HitResult findHit(boolean skipEntity, boolean skipBlock, @Nullable Predicate<Entity> entityFilter) {
         AttributeInstance reachAttribute = getAttribute(ForgeMod.REACH_DISTANCE.get());
         if (reachAttribute == null)

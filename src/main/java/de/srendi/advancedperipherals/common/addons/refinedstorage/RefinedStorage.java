@@ -1,6 +1,7 @@
 package de.srendi.advancedperipherals.common.addons.refinedstorage;
 
 import com.refinedmods.refinedstorage.api.IRSAPI;
+import com.refinedmods.refinedstorage.api.autocrafting.ICraftingManager;
 import com.refinedmods.refinedstorage.api.autocrafting.ICraftingPattern;
 import com.refinedmods.refinedstorage.api.network.INetwork;
 import com.refinedmods.refinedstorage.api.network.node.INetworkNode;
@@ -14,7 +15,9 @@ import com.refinedmods.refinedstorage.apiimpl.network.node.NetworkNode;
 import dan200.computercraft.shared.util.NBTUtil;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
-import de.srendi.advancedperipherals.common.util.StringUtil;
+import de.srendi.advancedperipherals.common.util.inventory.FluidFilter;
+import de.srendi.advancedperipherals.common.util.inventory.ItemFilter;
+import de.srendi.advancedperipherals.common.util.inventory.ItemUtil;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
@@ -23,11 +26,8 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.fluids.FluidStack;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.*;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
@@ -46,6 +46,48 @@ public class RefinedStorage {
     private static INetworkNode read(CompoundTag tag, NetworkNode node) {
         node.read(tag);
         return node;
+    }
+
+    public static ItemStack findStackFromStack(INetwork network, ICraftingManager crafting, ItemStack item) {
+        return findStackFromFilter(network, crafting, ItemFilter.fromStack(item));
+    }
+
+    public static ItemStack findStackFromFilter(INetwork network, ICraftingManager crafting, ItemFilter filter) {
+        for (StackListEntry<ItemStack> temp : network.getItemStorageCache().getList().getStacks()) {
+            if (filter.test(temp.getStack()))
+                return temp.getStack().copy();
+        }
+
+        if (crafting == null)
+            return ItemStack.EMPTY;
+
+        for (ICraftingPattern pattern : crafting.getPatterns()) {
+            if (filter.test(pattern.getStack()))
+                return pattern.getStack().copy();
+        }
+
+        return ItemStack.EMPTY;
+    }
+
+    public static FluidStack findFluidFromStack(INetwork network, ICraftingManager crafting, FluidStack stack) {
+        return findFluidFromFilter(network, crafting, FluidFilter.fromStack(stack));
+    }
+
+    public static FluidStack findFluidFromFilter(INetwork network, ICraftingManager crafting, FluidFilter filter) {
+        for (StackListEntry<FluidStack> temp : network.getFluidStorageCache().getList().getStacks()) {
+            if (filter.test(temp.getStack()))
+                return temp.getStack().copy();
+        }
+
+        if (crafting == null)
+            return FluidStack.EMPTY;
+
+        for (ICraftingPattern pattern : crafting.getPatterns()) {
+            if (pattern.getFluidOutputs().stream().anyMatch(filter::test))
+                return pattern.getFluidOutputs().stream().filter(filter::test).findFirst().get();
+        }
+
+        return FluidStack.EMPTY;
     }
 
     public static Object listFluids(INetwork network) {
@@ -154,7 +196,7 @@ public class RefinedStorage {
         Map<String, Object> map = new HashMap<>();
         CompoundTag nbt = itemStack.getTag();
         Supplier<Stream<TagKey<Item>>> tags = () -> itemStack.getItem().builtInRegistryHolder().tags();
-        map.put("fingerprint", getFingerpint(itemStack));
+        map.put("fingerprint", ItemUtil.getFingerprint(itemStack));
         map.put("name", itemStack.getItem().getRegistryName().toString());
         map.put("amount", itemStack.getCount());
         map.put("displayName", itemStack.getDisplayName().getString());
@@ -231,40 +273,6 @@ public class RefinedStorage {
             result.add(entry.getStack().copy());
 
         return result;
-    }
-
-    public static CompoundTag findMatchingTag(ItemStack stack, String nbtHash, List<ItemStack> items) {
-        for (ItemStack rsStack : items) {
-            if (rsStack.getCount() > 0 && rsStack.getItem().equals(stack.getItem())) {
-                CompoundTag tag = rsStack.getTag();
-                String hash = NBTUtil.getNBTHash(tag);
-                if (nbtHash.equals(hash)) return tag.copy();
-            }
-        }
-        return null;
-    }
-
-    public static ItemStack findMatchingFingerprint(String fingerprint, List<ItemStack> items) {
-        for (ItemStack rsStack : items) {
-            if (rsStack.getCount() > 0 && fingerprint.equals(getFingerpint(rsStack))) {
-                return rsStack;
-            }
-        }
-        return ItemStack.EMPTY;
-    }
-
-    public static String getFingerpint(ItemStack stack) {
-        CompoundTag nbt = stack.getTag();
-        String fingerprint = (nbt == null ? "null" : nbt.toString()) + stack.getItem().getRegistryName().toString() + stack.getDisplayName().getString();
-        try {
-            byte[] bytesOfHash = fingerprint.getBytes(StandardCharsets.UTF_8);
-            MessageDigest md = MessageDigest.getInstance("MD5");
-            return StringUtil.toHexString(md.digest(bytesOfHash));
-        } catch (NoSuchAlgorithmException ex) {
-            AdvancedPeripherals.debug("Could not parse fingerprint.");
-            ex.printStackTrace();
-        }
-        return "";
     }
 
     public void initiate() {
