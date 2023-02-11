@@ -57,7 +57,6 @@ public class AdvancedPeripherals {
     public void commonSetup(FMLCommonSetupEvent event) {
         APAddons.commonSetup();
         event.enqueueWork(() -> {
-            VillageStructures.init();
             MNetwork.init();
         });
     }
