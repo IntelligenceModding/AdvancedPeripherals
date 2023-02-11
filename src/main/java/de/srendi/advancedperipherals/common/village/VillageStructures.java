@@ -6,10 +6,8 @@ import de.srendi.advancedperipherals.common.configuration.APConfig;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.data.worldgen.*;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.levelgen.structure.pools.SinglePoolElement;
 import net.minecraft.world.level.levelgen.structure.pools.StructurePoolElement;
 import net.minecraft.world.level.levelgen.structure.pools.StructureTemplatePool;
@@ -20,10 +18,11 @@ import net.minecraftforge.fml.common.Mod;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Mod.EventBusSubscriber(modid = AdvancedPeripherals.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class VillageStructures {
+
+    // Adapted from Pneumaticcraft
     private static void addPieceToPool(Registry<StructureTemplatePool> templatePoolRegistry, Holder<StructureProcessorList> emptyProcessor, ResourceLocation poolRL, String nbtPieceRL, StructureTemplatePool.Projection projection, int weight) {
         // Grab the pool we want to add to
         StructureTemplatePool pool = templatePoolRegistry.get(poolRL);
@@ -35,16 +34,14 @@ public class VillageStructures {
                 SinglePoolElement.legacy(nbtPieceRL, emptyProcessor).apply(projection) :
                 SinglePoolElement.single(nbtPieceRL, emptyProcessor).apply(projection);
 
-        // Mixin to make JigsawPattern's templates field public for us to see.
         // Weight is handled by how many times the entry appears in this list.
         // We do not need to worry about immutability as this field is created using Lists.newArrayList(); which makes a mutable list.
         for (int i = 0; i < weight; i++) {
             pool.templates.add(piece);
         }
 
-        // Mixin to make JigsawPattern's rawTemplates field public for us to see.
         // This list of pairs of pieces and weights is not used by vanilla by default but another mod may need it for efficiency.
-        // So lets add to this list for completeness. We need to make a copy of the array as it can be an immutable list.
+        // So let's add to this list for completeness. We need to make a copy of the array as it can be an immutable list.
         List<Pair<StructurePoolElement, Integer>> listOfPieceEntries = new ArrayList<>(pool.rawTemplates);
         listOfPieceEntries.add(new Pair<>(piece, weight));
         pool.rawTemplates = listOfPieceEntries;
