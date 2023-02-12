@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+## [1.18.2-0.7.25r] - 2023-02-12
+
+### Fixed
+- [#411] Fixed nil return values of `getItem` - RS Bridge
+
 ## [1.18.2-0.7.24r] - 2023-02-11
 
 ### Breaking Changes
