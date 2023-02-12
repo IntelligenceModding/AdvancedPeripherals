@@ -10,10 +10,10 @@ import net.minecraft.core.Direction;
 
 public class RedstoneIntegratorPeripheral extends BasePeripheral<BlockEntityPeripheralOwner<RedstoneIntegratorEntity>> {
 
-    public static final String TYPE = "redstoneIntegrator";
+    public static final String PERIPHERAL_TYPE = "redstoneIntegrator";
 
     public RedstoneIntegratorPeripheral(RedstoneIntegratorEntity tileEntity) {
-        super(TYPE, new BlockEntityPeripheralOwner<>(tileEntity));
+        super(PERIPHERAL_TYPE, new BlockEntityPeripheralOwner<>(tileEntity));
     }
 
     @Override
@@ -44,15 +44,15 @@ public class RedstoneIntegratorPeripheral extends BasePeripheral<BlockEntityPeri
         return owner.tileEntity.power[dir.get3DDataValue()];
     }
 
-    @LuaFunction(mainThread = true)
+    @LuaFunction
     public final void setOutput(String direction, boolean power) throws LuaException {
         Direction dir = validateSide(direction);
-        owner.tileEntity.setRedstoneOutput(dir, power ? 15 : 0);
+        owner.tileEntity.setOutput(dir, power ? 15 : 0);
     }
 
-    @LuaFunction(value = {"setAnalogueOutput", "setAnalogOutput"}, mainThread = true)
+    @LuaFunction(value = {"setAnalogueOutput", "setAnalogOutput"})
     public final void setAnalogOutput(String direction, int power) throws LuaException {
         Direction dir = validateSide(direction);
-        owner.tileEntity.setRedstoneOutput(dir, power);
+        owner.tileEntity.setOutput(dir, power);
     }
 }

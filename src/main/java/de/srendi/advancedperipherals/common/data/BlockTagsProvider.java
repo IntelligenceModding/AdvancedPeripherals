@@ -1,7 +1,7 @@
 package de.srendi.advancedperipherals.common.data;
 
 import de.srendi.advancedperipherals.AdvancedPeripherals;
-import de.srendi.advancedperipherals.common.blocks.base.IHarvesterBlock;
+import de.srendi.advancedperipherals.common.blocks.base.IHarvestableBlock;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.TagsProvider;
@@ -36,7 +36,7 @@ public class BlockTagsProvider extends TagsProvider<Block> {
     @Override
     protected void addTags(@NotNull HolderLookup.Provider provider) {
         blockRegistry.getEntries().stream().map(RegistryObject::get).forEach(block -> {
-            if (!(block instanceof IHarvesterBlock harvesterBlock))
+            if (!(block instanceof IHarvestableBlock harvesterBlock))
                 throw new IllegalArgumentException("For any block you should define harvester logic!");
             tag(harvesterBlock.getHarvestTag()).add(ForgeRegistries.BLOCKS.getResourceKey(block).get());
             tag(harvesterBlock.getToolTag()).add(ForgeRegistries.BLOCKS.getResourceKey(block).get());

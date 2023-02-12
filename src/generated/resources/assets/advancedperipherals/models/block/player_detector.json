@@ -1,0 +1,12 @@
+{
+  "parent": "minecraft:block/cube_all",
+  "textures": {
+    "all": "advancedperipherals:block/player_detector",
+    "north": "advancedperipherals:block/player_detector_front",
+    "east": "advancedperipherals:block/player_detector_side",
+    "south": "advancedperipherals:block/player_detector_side",
+    "west": "advancedperipherals:block/player_detector_side",
+    "side": "advancedperipherals:block/player_detector_side",
+    "particle": "advancedperipherals:block/player_detector_front"
+  }
+}

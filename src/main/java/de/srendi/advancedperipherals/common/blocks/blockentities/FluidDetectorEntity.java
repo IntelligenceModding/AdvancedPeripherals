@@ -2,6 +2,7 @@ package de.srendi.advancedperipherals.common.blocks.blockentities;
 
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.FluidDetectorPeripheral;
 import de.srendi.advancedperipherals.common.blocks.base.APBlockEntityBlock;
+import de.srendi.advancedperipherals.common.blocks.base.BaseBlock;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralBlockEntity;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.setup.APBlockEntityTypes;
@@ -53,8 +54,8 @@ public class FluidDetectorEntity extends PeripheralBlockEntity<FluidDetectorPeri
     @NotNull
     @Override
     public <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction direction) {
-        fluidInDetection = getBlockState().getValue(APBlockEntityBlock.FACING);
-        fluidOutDirection = getBlockState().getValue(APBlockEntityBlock.FACING).getOpposite();
+        fluidInDetection = getBlockState().getValue(BaseBlock.ORIENTATION).front();
+        fluidOutDirection = getBlockState().getValue(BaseBlock.ORIENTATION).front().getOpposite();
         if (cap == ForgeCapabilities.FLUID_HANDLER) {
             if (direction == fluidInDetection) {
                 return fluidStorageCap.cast();

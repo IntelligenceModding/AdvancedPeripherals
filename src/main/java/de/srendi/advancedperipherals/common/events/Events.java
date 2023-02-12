@@ -113,20 +113,5 @@ public class Events {
         }
     }
 
-    public static class ChatMessageObject {
-
-        public String username;
-        public String message;
-        public String uuid;
-        public boolean isHidden;
-
-        public ChatMessageObject(String username, String message, String uuid, boolean isHidden) {
-            this.username = username;
-            this.message = message;
-            this.uuid = uuid;
-            this.isHidden = isHidden;
-        }
-    }
-
-
+    public record ChatMessageObject(String username, String message, String uuid, boolean isHidden) {}
 }

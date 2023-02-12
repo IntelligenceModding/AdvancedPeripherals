@@ -1,39 +1,70 @@
 package de.srendi.advancedperipherals.common.addons.appliedenergistics;
 
+import appeng.api.inventories.InternalInventory;
 import appeng.api.networking.IGridNode;
 import appeng.api.networking.crafting.CraftingJobStatus;
 import appeng.api.networking.crafting.ICraftingCPU;
-import appeng.api.networking.crafting.ICraftingPlan;
 import appeng.api.networking.crafting.ICraftingService;
 import appeng.api.networking.storage.IStorageService;
-import appeng.api.stacks.AEFluidKey;
-import appeng.api.stacks.AEItemKey;
-import appeng.api.stacks.AEKey;
-import appeng.api.stacks.KeyCounter;
+import appeng.api.stacks.*;
 import appeng.api.storage.AEKeyFilter;
+import appeng.api.storage.IStorageProvider;
 import appeng.api.storage.MEStorage;
+import appeng.blockentity.storage.DriveBlockEntity;
+import appeng.items.storage.BasicStorageCell;
 import dan200.computercraft.shared.util.NBTUtil;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
-import de.srendi.advancedperipherals.common.util.ItemUtil;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
 import de.srendi.advancedperipherals.common.util.Pair;
-import de.srendi.advancedperipherals.common.util.StringUtil;
+import de.srendi.advancedperipherals.common.util.inventory.FluidFilter;
+import de.srendi.advancedperipherals.common.util.inventory.FluidUtil;
+import de.srendi.advancedperipherals.common.util.inventory.ItemFilter;
+import de.srendi.advancedperipherals.common.util.inventory.ItemUtil;
 import it.unimi.dsi.fastutil.objects.Object2LongMap;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.logging.log4j.Level;
+import org.jetbrains.annotations.Nullable;
 
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 public class AppEngApi {
 
-    public static Pair<Long, AEItemKey> findAEStackFromItemStack(MEStorage monitor, ICraftingService crafting, ItemStack item) {
+    public static Pair<Long, AEItemKey> findAEStackFromStack(MEStorage monitor, @Nullable ICraftingService crafting, ItemStack item) {
+        return findAEStackFromFilter(monitor, crafting, ItemFilter.fromStack(item));
+    }
+
+    public static Pair<Long, AEItemKey> findAEStackFromFilter(MEStorage monitor, @Nullable ICraftingService crafting, ItemFilter item) {
         for (Object2LongMap.Entry<AEKey> temp : monitor.getAvailableStacks()) {
-            if (temp.getKey() instanceof AEItemKey key && key.matches(item))
+            if (temp.getKey() instanceof AEItemKey key && item.test(key.toStack()))
+                return Pair.of(temp.getLongValue(), key);
+        }
+
+        if (crafting == null)
+            return Pair.of(0L, AEItemKey.of(ItemStack.EMPTY));
+
+        for (var temp : crafting.getCraftables(param -> true)) {
+            if (temp instanceof AEItemKey key && item.test(key.toStack()))
+                return Pair.of(0L, key);
+        }
+
+        return Pair.of(0L, AEItemKey.of(ItemStack.EMPTY));
+    }
+
+    public static Pair<Long, AEFluidKey> findAEFluidFromStack(MEStorage monitor, @Nullable ICraftingService crafting, FluidStack item) {
+        return findAEFluidFromFilter(monitor, crafting, FluidFilter.fromStack(item));
+    }
+
+    public static Pair<Long, AEFluidKey> findAEFluidFromFilter(MEStorage monitor, @Nullable ICraftingService crafting, FluidFilter item) {
+        for (Object2LongMap.Entry<AEKey> temp : monitor.getAvailableStacks()) {
+            if (temp.getKey() instanceof AEFluidKey key && item.test(key.toStack(1)))
                 return Pair.of(temp.getLongValue(), key);
         }
 
@@ -41,15 +72,11 @@ public class AppEngApi {
             return null;
 
         for (var temp : crafting.getCraftables(param -> true)) {
-            if (temp instanceof AEItemKey key && key.matches(item))
+            if (temp instanceof AEFluidKey key && item.test(key.toStack(1)))
                 return Pair.of(0L, key);
         }
 
         return null;
-    }
-
-    public static Pair<Long, AEItemKey> findAEStackFromItemStack(MEStorage monitor, ItemStack item) {
-        return findAEStackFromItemStack(monitor, null, item);
     }
 
     public static List<Object> listStacks(MEStorage monitor, ICraftingService service, int flag) {
@@ -78,11 +105,8 @@ public class AppEngApi {
         List<Object> items = new ArrayList<>();
         for (Object2LongMap.Entry<AEKey> aeKey : monitor.getAvailableStacks()) {
             if (aeKey.getKey() instanceof AEFluidKey itemKey) {
-                if (flag == 1 && aeKey.getLongValue() < 0) {
+                if ((flag == 1 && aeKey.getLongValue() < 0) || (flag == 2 && !service.isCraftable(itemKey)))
                     continue;
-                } else if (flag == 2 && !service.isCraftable(itemKey)) {
-                    continue;
-                }
 
                 items.add(getObjectFromStack(Pair.of(aeKey.getLongValue(), itemKey), service));
             }
@@ -90,13 +114,13 @@ public class AppEngApi {
         return items;
     }
 
-    public static Map<String, Object> getObjectFromStack(Pair<Long, AEKey> stack, ICraftingService service) {
+    public static <T extends AEKey> Map<String, Object> getObjectFromStack(Pair<Long, T> stack, ICraftingService service) {
         if (stack.getRight() instanceof AEItemKey itemKey)
             return getObjectFromItemStack(Pair.of(stack.getLeft(), itemKey), service);
         if (stack.getRight() instanceof AEFluidKey fluidKey)
             return getObjectFromFluidStack(Pair.of(stack.getLeft(), fluidKey), service);
 
-        AdvancedPeripherals.debug("Could not create table from unknown stack " + stack.getClass() + " - Report this to the owner", Level.ERROR);
+        AdvancedPeripherals.debug("Could not create table from unknown stack " + stack.getRight().getClass() + " - Report this to the maintainer of ap", Level.ERROR);
         return Collections.emptyMap();
     }
 
@@ -105,7 +129,7 @@ public class AppEngApi {
         String displayName = stack.getRight().getDisplayName().getString();
         CompoundTag nbt = stack.getRight().toTag();
         long amount = stack.getLeft();
-        map.put("fingerprint", getFingerpint(stack.getRight()));
+        map.put("fingerprint", ItemUtil.getFingerprint(stack.getRight().toStack()));
         map.put("name", ItemUtil.getRegistryKey(stack.getRight().getItem()).toString());
         map.put("amount", amount);
         map.put("displayName", displayName);
@@ -140,18 +164,10 @@ public class AppEngApi {
         return map;
     }
 
-    public static Map<String, Object> getObjectFromJob(ICraftingPlan job, ICraftingService craftingService) {
-        Map<String, Object> result = new HashMap<>();
-        result.put("item", getObjectFromStack(Pair.of(job.finalOutput().amount(), job.finalOutput().what()), craftingService));
-        result.put("bytes", job.bytes());
-
-        return result;
-    }
-
-    public static CompoundTag findMatchingTag(ItemStack stack, String nbtHash, MEStorage monitor) {
+    public static CompoundTag findMatchingTag(FluidStack stack, String nbtHash, MEStorage monitor) {
         for (Object2LongMap.Entry<AEKey> aeKey : monitor.getAvailableStacks()) {
-            if (aeKey.getKey() instanceof AEItemKey itemKey && aeKey.getLongValue() > 0 && itemKey.getItem() == stack.getItem()) {
-                CompoundTag tag = itemKey.toStack().getTag();
+            if (aeKey.getKey() instanceof AEFluidKey fluidKey && aeKey.getLongValue() > 0 && fluidKey.getFluid() == stack.getFluid()) {
+                CompoundTag tag = fluidKey.toStack(1).getTag();
                 String hash = NBTUtil.getNBTHash(tag);
                 if (nbtHash.equals(hash))
                     return tag.copy();
@@ -161,56 +177,232 @@ public class AppEngApi {
         return null;
     }
 
-    public static ItemStack findMatchingFingerprint(String fingerprint, MEStorage monitor) {
+    public static FluidStack findMatchingFluidFingerprint(String fingerprint, MEStorage monitor) {
         for (Object2LongMap.Entry<AEKey> aeKey : monitor.getAvailableStacks()) {
-            if (!(aeKey.getKey() instanceof AEItemKey itemKey)) continue;
-            if (aeKey.getLongValue() > 0 && fingerprint.equals(getFingerpint(itemKey))) {
-                return itemKey.toStack((int) aeKey.getLongValue());
+            if (!(aeKey.getKey() instanceof AEFluidKey fluidKey))
+                continue;
+            if (aeKey.getLongValue() > 0 && fingerprint.equals(FluidUtil.getFingerprint(fluidKey.toStack(1)))) {
+                return fluidKey.toStack((int) aeKey.getLongValue());
             }
         }
         return null;
-    }
-
-    public static String getFingerpint(AEItemKey itemStack) {
-        ItemStack stack = itemStack.toStack();
-        String fingerprint = stack.getOrCreateTag() + ItemUtil.getRegistryKey(stack.getItem()).toString() + stack.getDisplayName().getString();
-        try {
-            byte[] bytesOfHash = fingerprint.getBytes(StandardCharsets.UTF_8);
-            MessageDigest md = MessageDigest.getInstance("MD5");
-            return StringUtil.toHexString(md.digest(bytesOfHash));
-        } catch (NoSuchAlgorithmException ex) {
-            AdvancedPeripherals.debug("Could not parse fingerprint.", Level.ERROR);
-            ex.printStackTrace();
-        }
-        return "";
     }
 
     public static MEStorage getMonitor(IGridNode node) {
         return node.getGrid().getService(IStorageService.class).getInventory();
     }
 
-    public static boolean isItemCrafting(MEStorage monitor, ICraftingService grid, ItemStack itemStack) {
-        Pair<Long, AEItemKey> stack = AppEngApi.findAEStackFromItemStack(monitor, grid, itemStack);
+    public static boolean isItemCrafting(MEStorage monitor, ICraftingService grid, ItemFilter filter,
+                                         @Nullable ICraftingCPU craftingCPU) {
+        Pair<Long, AEItemKey> stack = AppEngApi.findAEStackFromFilter(monitor, grid, filter);
 
+        // If the item stack does not exist, it cannot be crafted.
         if (stack == null)
-            // If the item stack does not exist, it cannot be crafting.
             return false;
 
-        // Loop through all crafting cpus and check if the item is being crafted.
-        for (ICraftingCPU cpu : grid.getCpus()) {
-            if (cpu.isBusy()) {
-                CraftingJobStatus jobStatus = cpu.getJobStatus();
+        // If the passed cpu is null, check all cpus
+        if(craftingCPU == null) {
+            // Loop through all crafting cpus and check if the item is being crafted.
+            for (ICraftingCPU cpu : grid.getCpus()) {
+                if (cpu.isBusy()) {
+                    CraftingJobStatus jobStatus = cpu.getJobStatus();
+
+                    // avoid null pointer exception
+                    if (jobStatus == null)
+                        continue;
+
+                    if (jobStatus.crafting().what().equals(stack.getRight()))
+                        return true;
+                }
+            }
+        } else {
+            if (craftingCPU.isBusy()) {
+                CraftingJobStatus jobStatus = craftingCPU.getJobStatus();
 
                 // avoid null pointer exception
                 if (jobStatus == null)
-                    continue;
+                    return false;
 
-                if (jobStatus.crafting().what().equals(stack.getRight()))
-                    return true;
+                return jobStatus.crafting().what().equals(stack.getRight());
             }
         }
 
         return false;
     }
 
+    public static long getTotalItemStorage(IGridNode node) {
+        long total = 0;
+
+        Iterator<IGridNode> iterator = node.getGrid().getMachineNodes(DriveBlockEntity.class).iterator();
+
+        if (!iterator.hasNext()) return 0;
+        while (iterator.hasNext()) {
+            DriveBlockEntity entity = (DriveBlockEntity) iterator.next().getService(IStorageProvider.class);
+            if(entity == null) continue;
+
+            InternalInventory inventory = entity.getInternalInventory();
+
+            for(int i = 0; i < inventory.size(); i++) {
+                ItemStack stack = inventory.getStackInSlot(i);
+
+                if(stack.isEmpty()) continue;
+
+                if(stack.getItem() instanceof BasicStorageCell cell) {
+                    if(cell.getKeyType().getClass().isAssignableFrom(AEKeyType.items().getClass())) {
+                        total += cell.getBytes(null);
+                    }
+                }
+            }
+        }
+
+        return total;
+    }
+
+    public static long getTotalFluidStorage(IGridNode node) {
+        long total = 0;
+
+        Iterator<IGridNode> iterator = node.getGrid().getMachineNodes(DriveBlockEntity.class).iterator();
+
+        if (!iterator.hasNext()) return 0;
+        while (iterator.hasNext()) {
+            DriveBlockEntity entity = (DriveBlockEntity) iterator.next().getService(IStorageProvider.class);
+            if(entity == null) continue;
+
+            InternalInventory inventory = entity.getInternalInventory();
+
+            for(int i = 0; i < inventory.size(); i++) {
+                ItemStack stack = inventory.getStackInSlot(i);
+
+                if(stack.isEmpty()) continue;
+
+                if(stack.getItem() instanceof BasicStorageCell cell) {
+                    if(cell.getKeyType().getClass().isAssignableFrom(AEKeyType.fluids().getClass())) {
+                        total += cell.getBytes(null);
+                    }
+                }
+            }
+        }
+
+        return total;
+    }
+
+    public static long getUsedItemStorage(IGridNode node) {
+        long used = 0;
+
+        Iterator<IGridNode> iterator = node.getGrid().getMachineNodes(DriveBlockEntity.class).iterator();
+
+        if (!iterator.hasNext()) return 0;
+        while (iterator.hasNext()) {
+            DriveBlockEntity entity = (DriveBlockEntity) iterator.next().getService(IStorageProvider.class);
+            if(entity == null) continue;
+
+            InternalInventory inventory = entity.getInternalInventory();
+
+            for(int i = 0; i < inventory.size(); i++) {
+                ItemStack stack = inventory.getStackInSlot(i);
+
+                if(stack.isEmpty()) continue;
+
+                if(stack.getItem() instanceof BasicStorageCell cell) {
+                    int bytesPerType = cell.getBytesPerType(null);
+
+                    if(cell.getKeyType().getClass().isAssignableFrom(AEKeyType.items().getClass())) {
+                        if(stack.getTag() == null) continue;
+                        int numOfType = stack.getTag().getLongArray("amts").length;
+                        long numItemsInCell = stack.getTag().getLong("ic");
+
+                        used += ((int) Math.ceil(((double) numItemsInCell) / 8)) + ((long) bytesPerType * numOfType);
+                    }
+                }
+            }
+        }
+
+        return used;
+    }
+
+    public static long getUsedFluidStorage(IGridNode node) {
+        long used = 0;
+
+        Iterator<IGridNode> iterator = node.getGrid().getMachineNodes(DriveBlockEntity.class).iterator();
+
+        if (!iterator.hasNext()) return 0;
+        while (iterator.hasNext()) {
+            DriveBlockEntity entity = (DriveBlockEntity) iterator.next().getService(IStorageProvider.class);
+            if(entity == null) continue;
+
+            InternalInventory inventory = entity.getInternalInventory();
+
+            for(int i = 0; i < inventory.size(); i++) {
+                ItemStack stack = inventory.getStackInSlot(i);
+
+                if(stack.getItem() instanceof BasicStorageCell cell) {
+                    int bytesPerType = cell.getBytesPerType(null);
+
+                    if(cell.getKeyType().getClass().isAssignableFrom(AEKeyType.fluids().getClass())) {
+                        if(stack.getTag() == null) continue;
+                        int numOfType = stack.getTag().getLongArray("amts").length;
+                        long numBucketsInCell = stack.getTag().getLong("ic") / 1000;
+
+                        used += ((int) Math.ceil(((double) numBucketsInCell) / 8)) + ((long) bytesPerType * numOfType);
+                    }
+                }
+            }
+        }
+
+        return used;
+    }
+
+    public static long getAvailableItemStorage(IGridNode node) {
+        return getTotalItemStorage(node) - getUsedItemStorage(node);
+    }
+
+    public static long getAvailableFluidStorage(IGridNode node) {
+        return getTotalFluidStorage(node) - getUsedFluidStorage(node);
+    }
+
+    public static List<Object> listCells(IGridNode node) {
+        List<Object> items = new ArrayList<>();
+
+        Iterator<IGridNode> iterator = node.getGrid().getMachineNodes(DriveBlockEntity.class).iterator();
+
+        if (!iterator.hasNext()) return items;
+        while (iterator.hasNext()) {
+            DriveBlockEntity entity = (DriveBlockEntity) iterator.next().getService(IStorageProvider.class);
+            if(entity == null) continue;
+
+            InternalInventory inventory = entity.getInternalInventory();
+
+            for(int i = 0; i < inventory.size(); i++) {
+                ItemStack stack = inventory.getStackInSlot(i);
+
+                if(stack.isEmpty()) continue;
+
+                if(stack.getItem() instanceof BasicStorageCell cell) {
+                    items.add(getObjectFromCell(cell, stack));
+                }
+            }
+        }
+
+        return items;
+    }
+
+    private static Map<String, Object> getObjectFromCell(BasicStorageCell cell, ItemStack stack) {
+        Map<String, Object> map = new HashMap<>();
+
+        map.put("item", ItemUtil.getRegistryKey(stack.getItem()).toString());
+
+        String cellType = "";
+
+        if(cell.getKeyType().getClass().isAssignableFrom(AEKeyType.items().getClass())) {
+            cellType = "item";
+        } else if(cell.getKeyType().getClass().isAssignableFrom(AEKeyType.fluids().getClass())) {
+            cellType = "fluid";
+        }
+
+        map.put("cellType", cellType);
+        map.put("bytesPerType", cell.getBytesPerType(null));
+        map.put("totalBytes", cell.getBytes(null));
+
+        return map;
+    }
 }

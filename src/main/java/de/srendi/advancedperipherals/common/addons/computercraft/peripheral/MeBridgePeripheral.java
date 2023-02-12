@@ -1,12 +1,10 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.peripheral;
 
-import appeng.api.config.Actionable;
 import appeng.api.networking.IGridNode;
 import appeng.api.networking.IManagedGridNode;
 import appeng.api.networking.crafting.ICraftingCPU;
 import appeng.api.networking.crafting.ICraftingService;
 import appeng.api.stacks.AEItemKey;
-import appeng.api.stacks.AEKey;
 import appeng.api.storage.MEStorage;
 import dan200.computercraft.api.lua.IArguments;
 import dan200.computercraft.api.lua.LuaException;
@@ -15,26 +13,29 @@ import dan200.computercraft.api.lua.MethodResult;
 import dan200.computercraft.api.peripheral.IComputerAccess;
 import de.srendi.advancedperipherals.common.addons.appliedenergistics.AppEngApi;
 import de.srendi.advancedperipherals.common.addons.appliedenergistics.CraftJob;
-import de.srendi.advancedperipherals.common.addons.base.IStoragePeripheral;
+import de.srendi.advancedperipherals.common.addons.appliedenergistics.MeFluidHandler;
+import de.srendi.advancedperipherals.common.addons.appliedenergistics.MeItemHandler;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.BlockEntityPeripheralOwner;
 import de.srendi.advancedperipherals.common.blocks.blockentities.MeBridgeEntity;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
-import de.srendi.advancedperipherals.common.util.InventoryUtil;
-import de.srendi.advancedperipherals.common.util.ItemUtil;
 import de.srendi.advancedperipherals.common.util.Pair;
 import de.srendi.advancedperipherals.common.util.ServerWorker;
+import de.srendi.advancedperipherals.common.util.inventory.FluidFilter;
+import de.srendi.advancedperipherals.common.util.inventory.FluidUtil;
+import de.srendi.advancedperipherals.common.util.inventory.InventoryUtil;
+import de.srendi.advancedperipherals.common.util.inventory.ItemFilter;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
-import it.unimi.dsi.fastutil.objects.Object2LongMap;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.ItemHandlerHelper;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
-public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwner<MeBridgeEntity>> implements IStoragePeripheral {
+public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwner<MeBridgeEntity>> {
 
     public static final String PERIPHERAL_TYPE = "meBridge";
     private final MeBridgeEntity tile;
@@ -59,46 +60,40 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         return node.getGrid().getCraftingService();
     }
 
-    private boolean canRun() {
-        return node.isActive();
-    }
-
     /**
      * exports an item out of the system to a valid inventory
      *
      * @param arguments       the arguments given by the computer
      * @param targetInventory the give inventory
-     * @return the exportable amount
-     * @throws LuaException if stack does not exist or the system is offline - will be removed in 0.8
+     * @return the exportable amount or null with a string if something went wrong
      */
     protected MethodResult exportToChest(@NotNull IArguments arguments, @NotNull IItemHandler targetInventory) throws LuaException {
         MEStorage monitor = AppEngApi.getMonitor(node);
-        ItemStack stack = ItemUtil.getItemStack(arguments.getTable(0), monitor);
-        if (stack.isEmpty())
-            return MethodResult.of(0, "Could not find item");
-        AEItemKey targetStack = AEItemKey.of(stack);
+        MeItemHandler itemHandler = new MeItemHandler(monitor, tile);
+        Pair<ItemFilter, String> filter = ItemFilter.parse(arguments.getTable(0));
 
-        long extracted = monitor.extract(targetStack, stack.getCount(), Actionable.SIMULATE, tile.getActionSource());
-        if (extracted == 0)
-            return MethodResult.of(0, "Item " + stack + " does not exists in the ME system");
+        if(filter.rightPresent())
+            return MethodResult.of(0, filter.getRight());
 
-        long transferableAmount = extracted;
+        return MethodResult.of(InventoryUtil.moveItem(itemHandler, targetInventory, filter.getLeft()), null);
+    }
 
-        ItemStack remaining = ItemHandlerHelper.insertItemStacked(targetInventory, stack, true);
-        if (!remaining.isEmpty())
-            transferableAmount -= remaining.getCount();
+    /**
+     * exports a fluid out of the system to a valid tank
+     *
+     * @param arguments the arguments given by the computer
+     * @param targetTank the give tank
+     * @return the exportable amount or null with a string if something went wrong
+     */
+    protected MethodResult exportToTank(@NotNull IArguments arguments, @NotNull IFluidHandler targetTank) throws LuaException {
+        MEStorage monitor = AppEngApi.getMonitor(node);
+        MeFluidHandler fluidHandler = new MeFluidHandler(monitor, tile);
+        Pair<FluidFilter, String> filter = FluidFilter.parse(arguments.getTable(0));
 
-        if (transferableAmount == 0)
-            return MethodResult.of(transferableAmount);
+        if(filter.rightPresent())
+            return MethodResult.of(0, filter.getRight());
 
-        extracted = monitor.extract(targetStack, transferableAmount, Actionable.MODULATE, tile.getActionSource());
-        stack.setCount((int) extracted);
-        remaining = ItemHandlerHelper.insertItemStacked(targetInventory, stack, false);
-
-        if (!remaining.isEmpty())
-            monitor.insert(AEItemKey.of(remaining), remaining.getCount(), Actionable.MODULATE, tile.getActionSource());
-
-        return MethodResult.of(transferableAmount);
+        return MethodResult.of(InventoryUtil.moveFluid(fluidHandler, targetTank, filter.getLeft()), null);
     }
 
     /**
@@ -106,263 +101,347 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
      *
      * @param arguments       the arguments given by the computer
      * @param targetInventory the give inventory
-     * @return the imported amount
-     * @throws LuaException if system is offline - will be removed in 0.8
+     * @return the imported amount or null with a string if something went wrong
      */
     protected MethodResult importToME(@NotNull IArguments arguments, @NotNull IItemHandler targetInventory) throws LuaException {
         MEStorage monitor = AppEngApi.getMonitor(node);
-        ItemStack stack = ItemUtil.getItemStack(arguments.getTable(0), monitor);
-        if (stack.isEmpty())
-            return MethodResult.of(0, "Could not find item");
-        AEItemKey targetStack = AEItemKey.of(stack);
-        int amount = stack.getCount();
+        MeItemHandler itemHandler = new MeItemHandler(monitor, tile);
+        Pair<ItemFilter, String> filter = ItemFilter.parse(arguments.getTable(0));
 
-        if (stack.getCount() == 0)
-            return MethodResult.of(0);
+        if(filter.rightPresent())
+            return MethodResult.of(0, filter.getRight());
 
-        int transferableAmount = 0;
-
-        for (int i = 0; i < targetInventory.getSlots(); i++) {
-            if (targetInventory.getStackInSlot(i).sameItem(stack)) {
-                int countInSlot = targetInventory.getStackInSlot(i).getCount();
-                int extractCount = Math.min(countInSlot, amount);
-                amount -= extractCount;
-                int extracted = (int) monitor.insert(targetStack, extractCount, Actionable.MODULATE, tile.getActionSource());
-                targetInventory.extractItem(i, extracted, false);
-                transferableAmount += extracted;
-            }
-        }
-        return MethodResult.of(transferableAmount);
+        return MethodResult.of(InventoryUtil.moveItem(targetInventory, itemHandler, filter.getLeft()), null);
     }
 
-    @Override
-    public final MethodResult isConnected() {
-        return MethodResult.of(node.isOnline());
-    }
-
-    @Override
-    public MethodResult isOnline() {
-        if (!node.isOnline())
-            return MethodResult.of(false, "Not connected");
-        return MethodResult.of(canRun());
-    }
-
-    @Override
-    public final MethodResult getItem(IArguments arguments) throws LuaException {
-        if (!canRun())
-            return MethodResult.of(null, "System not connected or offline");
-
+    /**
+     * imports a fluid to the system from a valid tank
+     *
+     * @param arguments the arguments given by the computer
+     * @param targetTank the give tank
+     * @return the imported amount or null with a string if something went wrong
+     */
+    protected MethodResult importToME(@NotNull IArguments arguments, @NotNull IFluidHandler targetTank) throws LuaException {
         MEStorage monitor = AppEngApi.getMonitor(node);
-        ItemStack stack = ItemUtil.getItemStack(arguments.getTable(0), monitor);
-        if (stack.isEmpty())
-            return MethodResult.of(null, "Could not find item");
-        //TODO: We already do something like this when retrieving the stack. Check if we still need this before next release
-        for (Object2LongMap.Entry<AEKey> potentialStack : monitor.getAvailableStacks()) {
-            if (potentialStack.getKey() instanceof AEItemKey itemKey && itemKey.matches(stack)) {
-                return MethodResult.of(AppEngApi.getObjectFromStack(Pair.of(potentialStack.getLongValue(), itemKey), getCraftingService()));
-            }
-        }
-        return MethodResult.of(null, "Could not find item");
+        MeFluidHandler fluidHandler = new MeFluidHandler(monitor, tile);
+        Pair<FluidFilter, String> filter = FluidFilter.parse(arguments.getTable(0));
+
+        if(filter.rightPresent())
+            return MethodResult.of(0, filter.getRight());
+
+        return MethodResult.of(InventoryUtil.moveFluid(targetTank, fluidHandler, filter.getLeft()), null);
     }
 
-    @Override
-    public MethodResult getFluid(IArguments arguments) throws LuaException {
-        return null;
-    }
-
-    @Override
-    public final MethodResult listItems() {
-        if (!canRun())
-            return MethodResult.of(null, "System not connected or offline");
-
-        return MethodResult.of(AppEngApi.listStacks(AppEngApi.getMonitor(node), getCraftingService(), 0));
-    }
-
-    @Override
-    public final MethodResult listCraftableItems() {
-        if (!canRun())
-            return MethodResult.of(null, "System not connected or offline");
-
-        return MethodResult.of(AppEngApi.listStacks(AppEngApi.getMonitor(node), getCraftingService(), 2));
-    }
-
-    @Override
-    public final MethodResult listFluids() {
-        if (!canRun())
-            return MethodResult.of(null, "System not connected or offline");
-
-        return MethodResult.of(AppEngApi.listFluids(AppEngApi.getMonitor(node), getCraftingService(), 0));
-    }
-
-    @Override
-    public final MethodResult listCraftableFluids() {
-        if (!canRun())
-            return MethodResult.of(null, "System not connected or offline");
-
-        return MethodResult.of(AppEngApi.listFluids(AppEngApi.getMonitor(node), getCraftingService(), 2));
+    private MethodResult notConnected() {
+        return MethodResult.of(null, "NOT_CONNECTED");
     }
 
     @LuaFunction(mainThread = true)
-    public final MethodResult getCraftingCPUs() throws LuaException {
-        if (!canRun())
-            return MethodResult.of(null, "System not connected or offline");
-
-        ICraftingService grid = node.getGrid().getService(ICraftingService.class);
-        List<Object> list = new ArrayList<>();
-        Iterator<ICraftingCPU> iterator = grid.getCpus().iterator();
-        if (!iterator.hasNext())
-            return null;
-        int i = 1;
-        while (iterator.hasNext()) {
-            list.add(i++, AppEngApi.getObjectFromCPU(iterator.next()));
-        }
-
-        return MethodResult.of(list);
+    public final boolean isConnected() {
+        return node.getGrid() != null && node.hasGridBooted();
     }
 
-    @Override
-    public final MethodResult importItem(IArguments arguments) throws LuaException {
-        if (!canRun())
-            return MethodResult.of(0, "System not connected or offline");
-        IItemHandler inventory = InventoryUtil.getHandlerFromDirection(arguments.getString(1), owner);
-        return importToME(arguments, inventory);
+    @LuaFunction
+    public final MethodResult craftItem(IComputerAccess computer, IArguments arguments) throws LuaException {
+        if (!isConnected())
+            return notConnected();
+
+        Pair<ItemFilter, String> filter = ItemFilter.parse(arguments.getTable(0));
+        if(filter.rightPresent())
+            return MethodResult.of(false, filter.getRight());
+
+        ItemFilter parsedFilter = filter.getLeft();
+        if (parsedFilter.isEmpty())
+            return MethodResult.of(false, "EMPTY_FILTER");
+
+        String cpuName = arguments.optString(1, "");
+        ICraftingCPU target = getCraftingCPU(cpuName);
+        if(!cpuName.isEmpty() && target == null) return MethodResult.of(false, "CPU " + cpuName + " does not exists");
+
+        CraftJob job = new CraftJob(owner.getLevel(), computer, node, new ItemStack(parsedFilter.getItem(), parsedFilter.getCount()), tile, tile, target);
+        tile.addJob(job);
+        ServerWorker.add(job::startCrafting);
+        return MethodResult.of(true);
     }
 
-    @Override
-    public final MethodResult exportItem(@NotNull IArguments arguments) throws LuaException {
-        if (!canRun())
-            return MethodResult.of(0, "System not connected or offline");
-        IItemHandler inventory = InventoryUtil.getHandlerFromDirection(arguments.getString(1), owner);
-        return exportToChest(arguments, inventory);
-    }
-
-    @Override
-    public final MethodResult importItemFromPeripheral(IComputerAccess computer, IArguments arguments) throws LuaException {
-        if (!canRun())
-            return MethodResult.of(0, "System not connected or offline");
-
-        IItemHandler inventory = InventoryUtil.getHandlerFromName(computer, arguments.getString(1));
-        return importToME(arguments, inventory);
-    }
-
-    @Override
-    public final MethodResult exportItemToPeripheral(IComputerAccess computer, IArguments arguments) throws LuaException {
-        if (!canRun())
-            return MethodResult.of(0, "System not connected or offline");
-        IItemHandler inventory = InventoryUtil.getHandlerFromName(computer, arguments.getString(1));
-        return exportToChest(arguments, inventory);
-    }
-
-    @Override
-    public MethodResult getPattern(IArguments arguments) throws LuaException {
-        return null;
-    }
-
-    @Override
-    public MethodResult getPatterns() {
-        return null;
-    }
-
-    @Override
+    @LuaFunction(mainThread = true)
     public final MethodResult getEnergyUsage() {
-        if (!canRun())
-            return MethodResult.of(0, "System not connected or offline");
-        return MethodResult.of(node.getGrid().getEnergyService().getIdlePowerUsage());
+        if (!isConnected())
+            return notConnected();
+
+        return MethodResult.of(node.getGrid().getEnergyService().getAvgPowerUsage());
     }
 
-    @Override
-    public final MethodResult getStoredEnergy() {
-        if (!canRun())
-            return MethodResult.of(0, "System not connected or offline");
+    @LuaFunction(mainThread = true)
+    public final MethodResult getEnergyStorage() {
+        if (!isConnected())
+            return notConnected();
+
         return MethodResult.of(node.getGrid().getEnergyService().getStoredPower());
     }
 
     @LuaFunction(mainThread = true)
     public final MethodResult getAvgPowerUsage() {
-        if (!canRun())
-            return MethodResult.of(0, "System not connected or offline");
+        if (!isConnected())
+            return notConnected();
+
         return MethodResult.of(node.getGrid().getEnergyService().getAvgPowerUsage());
     }
 
     @LuaFunction(mainThread = true)
     public final MethodResult getAvgPowerInjection() {
-        if (!canRun())
-            return MethodResult.of(0, "System not connected or offline");
+        if (!isConnected())
+            return notConnected();
+
         return MethodResult.of(node.getGrid().getEnergyService().getAvgPowerInjection());
     }
 
-    @Override
-    public final MethodResult getEnergyCapacity() {
-        if (!canRun())
-            return MethodResult.of(0, "System not connected or offline");
+
+    @LuaFunction(mainThread = true)
+    public final MethodResult getMaxEnergyStorage() {
+        if (!isConnected())
+            return notConnected();
+
         return MethodResult.of(node.getGrid().getEnergyService().getMaxStoredPower());
     }
 
-    @Override
-    public MethodResult getMaxItemExternalStorage() {
-        return null;
-    }
-
-    @Override
-    public MethodResult getMaxFluidExternalStorage() {
-        return null;
-    }
-
-    @Override
-    public MethodResult getMaxItemDiskStorage() {
-        return null;
-    }
-
-    @Override
-    public MethodResult getMaxFluidDiskStorage() {
-        return null;
-    }
-
-    @Override
-    public final MethodResult craftItem(IComputerAccess computer, IArguments arguments) throws LuaException {
-        if (!canRun())
-            return MethodResult.of(false, "System not connected or offline");
-
-        MEStorage monitor = AppEngApi.getMonitor(node);
-        ItemStack itemToCraft = ItemUtil.getItemStack(arguments.getTable(0), monitor);
-        if (itemToCraft.isEmpty())
-            return MethodResult.of(false, "Item " + itemToCraft + " does not exists");
-        CraftJob job = new CraftJob(owner.getLevel(), computer, node, itemToCraft, tile, tile);
-        tile.addJob(job);
-        ServerWorker.add(job::startCrafting);
-        return MethodResult.of(job);
-    }
-
-    @Override
-    public MethodResult craftFluid(IComputerAccess computer, IArguments arguments) throws LuaException {
-        return null;
-    }
-
-    @Override
-    public final MethodResult isItemCraftable(IArguments arguments) throws LuaException {
-        if (!canRun())
-            return MethodResult.of(false, "System not connected or offline");
-        MEStorage monitor = AppEngApi.getMonitor(node);
-        ICraftingService crafting = node.getGrid().getService(ICraftingService.class);
-        Pair<Long, AEItemKey> stack = AppEngApi.findAEStackFromItemStack(monitor, crafting, ItemUtil.getItemStack(arguments.getTable(0), monitor));
-
-        if (stack == null)
-            return MethodResult.of(false, "Could not find item");
-
-        return MethodResult.of(getCraftingService().isCraftable(stack.getRight()));
-    }
-
-    @Override
+    @LuaFunction(mainThread = true)
     public final MethodResult isItemCrafting(IArguments arguments) throws LuaException {
-        if (!canRun())
-            return MethodResult.of(0, "System not connected or offline");
+        if (!isConnected())
+            return notConnected();
+
         MEStorage monitor = AppEngApi.getMonitor(node);
         ICraftingService grid = node.getGrid().getService(ICraftingService.class);
 
-        ItemStack itemStack = ItemUtil.getItemStack(arguments.getTable(0), monitor);
-        if (itemStack.isEmpty())
-            return MethodResult.of(false, "Could not find item");
-        return MethodResult.of(AppEngApi.isItemCrafting(monitor, grid, itemStack));
+        Pair<ItemFilter, String> filter = ItemFilter.parse(arguments.getTable(0));
+        if(filter.rightPresent())
+            return MethodResult.of(false, filter.getRight());
+
+        ItemFilter parsedFilter = filter.getLeft();
+        if (parsedFilter.isEmpty())
+            return MethodResult.of(false, "EMPTY_FILTER");
+        String cpuName = arguments.optString(1, "");
+        ICraftingCPU craftingCPU = getCraftingCPU(cpuName);
+
+        return MethodResult.of(AppEngApi.isItemCrafting(monitor, grid, parsedFilter, craftingCPU));
     }
 
+    @LuaFunction(mainThread = true)
+    public final MethodResult isItemCraftable(IArguments arguments) throws LuaException {
+        if (!isConnected())
+            return notConnected();
+
+        Pair<ItemFilter, String> filter = ItemFilter.parse(arguments.getTable(0));
+        if(filter.rightPresent())
+            return MethodResult.of(false, filter.getRight());
+
+        ItemFilter parsedFilter = filter.getLeft();
+        if (parsedFilter.isEmpty())
+            return MethodResult.of(false, "EMPTY_FILTER");
+
+        AEItemKey item = AEItemKey.of(parsedFilter.toItemStack());
+
+        return MethodResult.of(getCraftingService().isCraftable(item));
+    }
+
+    @LuaFunction(mainThread = true)
+    public final MethodResult exportFluid(@NotNull IArguments arguments) throws LuaException {
+        IFluidHandler handler = FluidUtil.getHandlerFromDirection(arguments.getString(1), owner);
+        return exportToTank(arguments, handler);
+    }
+
+    @LuaFunction(mainThread = true)
+    public final MethodResult exportFluidToPeripheral(IComputerAccess computer, IArguments arguments) throws LuaException {
+        IFluidHandler handler = FluidUtil.getHandlerFromName(computer, arguments.getString(1));
+        return exportToTank(arguments, handler);
+    }
+
+    @LuaFunction(mainThread = true)
+    public final MethodResult importFluid(IArguments arguments) throws LuaException {
+        IFluidHandler handler = FluidUtil.getHandlerFromDirection(arguments.getString(1), owner);
+        return importToME(arguments, handler);
+    }
+
+    @LuaFunction(mainThread = true)
+    public final MethodResult importFluidFromPeripheral(IComputerAccess computer, IArguments arguments) throws LuaException {
+        IFluidHandler handler = FluidUtil.getHandlerFromName(computer, arguments.getString(1));
+        return importToME(arguments, handler);
+    }
+
+    @LuaFunction(mainThread = true)
+    public final MethodResult exportItem(@NotNull IArguments arguments) throws LuaException {
+        if (!isConnected())
+            return notConnected();
+
+        IItemHandler inventory = InventoryUtil.getHandlerFromDirection(arguments.getString(1), owner);
+        return exportToChest(arguments, inventory);
+    }
+
+    @LuaFunction(mainThread = true)
+    public final MethodResult exportItemToPeripheral(IComputerAccess computer, IArguments arguments) throws LuaException {
+        if (!isConnected())
+            return notConnected();
+
+        IItemHandler inventory = InventoryUtil.getHandlerFromName(computer, arguments.getString(1));
+        return exportToChest(arguments, inventory);
+    }
+
+    @LuaFunction(mainThread = true)
+    public final MethodResult importItem(IArguments arguments) throws LuaException {
+        if (!isConnected())
+            return notConnected();
+
+        IItemHandler inventory = InventoryUtil.getHandlerFromDirection(arguments.getString(1), owner);
+        return importToME(arguments, inventory);
+    }
+
+    @LuaFunction(mainThread = true)
+    public final MethodResult importItemFromPeripheral(IComputerAccess computer, IArguments arguments) throws LuaException {
+        if (!isConnected())
+            return notConnected();
+
+        IItemHandler inventory = InventoryUtil.getHandlerFromName(computer, arguments.getString(1));
+        return importToME(arguments, inventory);
+    }
+
+    @LuaFunction(mainThread = true)
+    public final MethodResult getItem(IArguments arguments) throws LuaException {
+        if (!isConnected())
+            return notConnected();
+
+        MEStorage monitor = AppEngApi.getMonitor(node);
+        Pair<ItemFilter, String> filter = ItemFilter.parse(arguments.getTable(0));
+        if(filter.rightPresent())
+            return MethodResult.of(null, filter.getRight());
+
+        ItemFilter parsedFilter = filter.getLeft();
+        if (parsedFilter.isEmpty())
+            return MethodResult.of(null, "EMPTY_FILTER");
+
+        return MethodResult.of(AppEngApi.getObjectFromStack(AppEngApi.findAEStackFromFilter(monitor, getCraftingService(), parsedFilter), getCraftingService()));
+    }
+
+    @LuaFunction(mainThread = true)
+    public final MethodResult listItems() {
+        if (!isConnected())
+            return notConnected();
+
+        return MethodResult.of(AppEngApi.listStacks(AppEngApi.getMonitor(node), getCraftingService(), 0));
+    }
+
+    @LuaFunction(mainThread = true)
+    public final MethodResult listCraftableItems() {
+        if (!isConnected())
+            return notConnected();
+
+        return MethodResult.of(AppEngApi.listStacks(AppEngApi.getMonitor(node), getCraftingService(), 2));
+    }
+
+    @LuaFunction(mainThread = true)
+    public final MethodResult listFluid() {
+        if (!isConnected())
+            return notConnected();
+
+        return MethodResult.of(AppEngApi.listFluids(AppEngApi.getMonitor(node), getCraftingService(), 0));
+    }
+
+    @LuaFunction(mainThread = true)
+    public final MethodResult listCraftableFluid() {
+        if (!isConnected())
+            return notConnected();
+
+        return MethodResult.of(AppEngApi.listFluids(AppEngApi.getMonitor(node), getCraftingService(), 2));
+    }
+
+    @LuaFunction(mainThread = true)
+    public final MethodResult getTotalItemStorage() {
+        if (!isConnected())
+            return notConnected();
+
+        return MethodResult.of(AppEngApi.getTotalItemStorage(node));
+    }
+
+    @LuaFunction(mainThread = true)
+    public final MethodResult getTotalFluidStorage() {
+        if (!isConnected())
+            return notConnected();
+
+        return MethodResult.of(AppEngApi.getTotalFluidStorage(node));
+    }
+
+    @LuaFunction(mainThread = true)
+    public final MethodResult getUsedItemStorage() {
+        if (!isConnected())
+            return notConnected();
+
+        return MethodResult.of(AppEngApi.getUsedItemStorage(node));
+    }
+
+    @LuaFunction(mainThread = true)
+    public final MethodResult getUsedFluidStorage() {
+        if (!isConnected())
+            return notConnected();
+
+        return MethodResult.of(AppEngApi.getUsedFluidStorage(node));
+    }
+
+    @LuaFunction(mainThread = true)
+    public final MethodResult getAvailableItemStorage() {
+        if (!isConnected())
+            return notConnected();
+
+        return MethodResult.of(AppEngApi.getAvailableItemStorage(node));
+    }
+
+    @LuaFunction(mainThread = true)
+    public final MethodResult getAvailableFluidStorage() {
+        if (!isConnected())
+            return notConnected();
+
+        return MethodResult.of(AppEngApi.getAvailableFluidStorage(node));
+    }
+
+    @LuaFunction(mainThread = true)
+    public final MethodResult listCells() {
+        if (!isConnected())
+            return notConnected();
+
+        return MethodResult.of(AppEngApi.listCells(node));
+    }
+
+    @LuaFunction(mainThread = true)
+    public final MethodResult getCraftingCPUs() throws LuaException {
+        if (!isConnected())
+            return notConnected();
+
+        ICraftingService grid = node.getGrid().getService(ICraftingService.class);
+        Map<Integer, Object> map = new HashMap<>();
+
+        Iterator<ICraftingCPU> iterator = grid.getCpus().iterator();
+        int i = 1;
+        while (iterator.hasNext()) {
+            Object o = AppEngApi.getObjectFromCPU(iterator.next());
+            map.put(i++, o);
+        }
+        return MethodResult.of(map);
+    }
+
+    public final ICraftingCPU getCraftingCPU(String cpuName) {
+        if(cpuName.isEmpty()) return null;
+        ICraftingService grid = node.getGrid().getService(ICraftingService.class);
+        if (grid == null) return null;
+
+        Iterator<ICraftingCPU> iterator = grid.getCpus().iterator();
+        if (!iterator.hasNext()) return null;
+
+        while (iterator.hasNext()) {
+            ICraftingCPU cpu = iterator.next();
+
+            if(Objects.requireNonNull(cpu.getName()).getString().equals(cpuName)) {
+                return cpu;
+            }
+        }
+
+        return null;
+    }
 }

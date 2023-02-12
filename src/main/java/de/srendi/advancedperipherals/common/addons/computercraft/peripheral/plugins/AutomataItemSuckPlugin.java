@@ -15,8 +15,8 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.AABB;
 import net.minecraftforge.registries.ForgeRegistries;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -93,7 +93,7 @@ public class AutomataItemSuckPlugin extends AutomataCorePlugin {
     }
 
     @LuaFunction(mainThread = true)
-    public final MethodResult collectSpecificItem(@Nonnull IArguments arguments) throws LuaException {
+    public final MethodResult collectSpecificItem(@NotNull IArguments arguments) throws LuaException {
         String technicalName = arguments.getString(0);
         int requiredQuantityArg = arguments.optInt(1, Integer.MAX_VALUE);
         return automataCore.withOperation(SUCK, context -> {
@@ -113,7 +113,7 @@ public class AutomataItemSuckPlugin extends AutomataCorePlugin {
     }
 
     @LuaFunction(mainThread = true)
-    public final MethodResult collectItems(@Nonnull IArguments arguments) throws LuaException {
+    public final MethodResult collectItems(@NotNull IArguments arguments) throws LuaException {
         int requiredQuantityArg = arguments.optInt(0, Integer.MAX_VALUE);
         return automataCore.withOperation(SUCK, context -> {
             if (requiredQuantityArg == 0) {

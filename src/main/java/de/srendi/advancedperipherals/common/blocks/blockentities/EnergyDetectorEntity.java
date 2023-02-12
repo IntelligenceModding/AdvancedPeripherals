@@ -2,6 +2,7 @@ package de.srendi.advancedperipherals.common.blocks.blockentities;
 
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.EnergyDetectorPeripheral;
 import de.srendi.advancedperipherals.common.blocks.base.APBlockEntityBlock;
+import de.srendi.advancedperipherals.common.blocks.base.BaseBlock;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralBlockEntity;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.setup.APBlockEntityTypes;
@@ -51,8 +52,8 @@ public class EnergyDetectorEntity extends PeripheralBlockEntity<EnergyDetectorPe
     @NotNull
     @Override
     public <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction direction) {
-        energyInDirection = getBlockState().getValue(APBlockEntityBlock.FACING);
-        energyOutDirection = getBlockState().getValue(APBlockEntityBlock.FACING).getOpposite();
+        energyInDirection = getBlockState().getValue(BaseBlock.ORIENTATION).front();
+        energyOutDirection = getBlockState().getValue(BaseBlock.ORIENTATION).front().getOpposite();
         if (cap == ForgeCapabilities.ENERGY) {
             if (direction == energyInDirection) {
                 return energyStorageCap.cast();

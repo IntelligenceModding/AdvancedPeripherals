@@ -30,15 +30,15 @@ public class PlayerDetectorBlock extends APBlockEntityBlock<PlayerDetectorEntity
 
     @Override
     public @NotNull InteractionResult use(@NotNull BlockState state, Level levelIn, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand handIn, @NotNull BlockHitResult hit) {
-        if (APConfig.PERIPHERALS_CONFIG.enablePlayerDetector.get()) {
-            BlockEntity tileEntity = levelIn.getBlockEntity(pos);
-            if (tileEntity instanceof PlayerDetectorEntity entity) {
-                for (IComputerAccess computer : entity.getConnectedComputers()) {
-                    computer.queueEvent("playerClick", player.getName().getString());
-                    //Todo: Let the eyes glow when clicked on the detector.
-                }
+        if (!APConfig.PERIPHERALS_CONFIG.enablePlayerDetector.get())
+            return super.use(state, levelIn, pos, player, handIn, hit);
+        BlockEntity tileEntity = levelIn.getBlockEntity(pos);
+        if (tileEntity instanceof PlayerDetectorEntity entity) {
+            for (IComputerAccess computer : entity.getConnectedComputers()) {
+                computer.queueEvent("playerClick", player.getName().getString());
             }
         }
+
         return super.use(state, levelIn, pos, player, handIn, hit);
     }
 

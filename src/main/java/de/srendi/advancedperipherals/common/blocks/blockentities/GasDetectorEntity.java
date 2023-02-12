@@ -3,6 +3,7 @@ package de.srendi.advancedperipherals.common.blocks.blockentities;
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.GasDetectorPeripheral;
 import de.srendi.advancedperipherals.common.addons.mekanism.MekanismCapabilities;
 import de.srendi.advancedperipherals.common.blocks.base.APBlockEntityBlock;
+import de.srendi.advancedperipherals.common.blocks.base.BaseBlock;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralBlockEntity;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.setup.APBlockEntityTypes;
@@ -53,8 +54,8 @@ public class GasDetectorEntity extends PeripheralBlockEntity<GasDetectorPeripher
     @NotNull
     @Override
     public <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction direction) {
-        gasInDirection = getBlockState().getValue(APBlockEntityBlock.FACING);
-        gasOutDirection = getBlockState().getValue(APBlockEntityBlock.FACING).getOpposite();
+        gasInDirection = getBlockState().getValue(BaseBlock.ORIENTATION).front();
+        gasOutDirection = getBlockState().getValue(BaseBlock.ORIENTATION).front().getOpposite();
         if (cap == MekanismCapabilities.GAS_HANDLER) {
             if (direction == gasInDirection) {
                 return gasStorageCap.cast();

@@ -8,8 +8,8 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.EnergyStorage;
 import net.minecraftforge.energy.IEnergyStorage;
 import org.jetbrains.annotations.NotNull;
@@ -44,7 +44,7 @@ public abstract class PoweredPeripheralBlockEntity<T extends BasePeripheral<?>> 
 
     @Override
     public <T1> @NotNull LazyOptional<T1> getCapability(@NotNull Capability<T1> cap, @Nullable Direction direction) {
-        if (cap == CapabilityEnergy.ENERGY && lazyEnergyStorage.isPresent()) {
+        if (cap == ForgeCapabilities.ENERGY && lazyEnergyStorage.isPresent()) {
             return lazyEnergyStorage.cast();
         }
         return super.getCapability(cap, direction);

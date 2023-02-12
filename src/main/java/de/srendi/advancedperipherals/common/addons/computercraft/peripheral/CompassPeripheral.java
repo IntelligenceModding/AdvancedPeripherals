@@ -9,10 +9,10 @@ import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
 
 public class CompassPeripheral extends BasePeripheral<TurtlePeripheralOwner> {
 
-    public static final String TYPE = "compass";
+    public static final String PERIPHERAL_TYPE = "compass";
 
     public CompassPeripheral(ITurtleAccess turtle, TurtleSide side) {
-        super(TYPE, new TurtlePeripheralOwner(turtle, side));
+        super(PERIPHERAL_TYPE, new TurtlePeripheralOwner(turtle, side));
     }
 
     @Override

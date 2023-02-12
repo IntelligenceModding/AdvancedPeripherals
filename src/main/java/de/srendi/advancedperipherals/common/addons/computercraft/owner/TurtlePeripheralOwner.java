@@ -9,6 +9,7 @@ import de.srendi.advancedperipherals.common.util.fakeplayer.APFakePlayer;
 import de.srendi.advancedperipherals.common.util.fakeplayer.FakePlayerProviderTurtle;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.FrontAndTop;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -16,7 +17,6 @@ import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nonnull;
 import java.util.function.Function;
 
 public class TurtlePeripheralOwner extends BasePeripheralOwner {
@@ -51,6 +51,15 @@ public class TurtlePeripheralOwner extends BasePeripheralOwner {
     @Override
     public Direction getFacing() {
         return turtle.getDirection();
+    }
+
+    /**
+     * Not used for turtles
+     */
+    @NotNull
+    @Override
+    public FrontAndTop getOrientation() {
+        return FrontAndTop.NORTH_UP;
     }
 
     @Nullable
@@ -93,7 +102,7 @@ public class TurtlePeripheralOwner extends BasePeripheralOwner {
     }
 
     @Override
-    public boolean isMovementPossible(@Nonnull Level level, @Nonnull BlockPos pos) {
+    public boolean isMovementPossible(@NotNull Level level, @NotNull BlockPos pos) {
         return FakePlayerProviderTurtle.withPlayer(turtle, player -> {
             if (level.isOutsideBuildHeight(pos)) return false;
             if (!level.isInWorldBounds(pos)) return false;
@@ -105,7 +114,7 @@ public class TurtlePeripheralOwner extends BasePeripheralOwner {
     }
 
     @Override
-    public boolean move(@Nonnull Level level, @Nonnull BlockPos pos) {
+    public boolean move(@NotNull Level level, @NotNull BlockPos pos) {
         return turtle.teleportTo(level, pos);
     }
 

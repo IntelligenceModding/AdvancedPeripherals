@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/cube_all",
+  "textures": {
+    "all": "advancedperipherals:block/inventory_manager",
+    "north": "advancedperipherals:block/inventory_manager_front",
+    "particle": "advancedperipherals:block/inventory_manager_front"
+  }
+}

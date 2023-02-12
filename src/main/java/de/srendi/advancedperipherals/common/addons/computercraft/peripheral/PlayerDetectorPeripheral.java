@@ -19,25 +19,22 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.server.ServerLifecycleHooks;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
 
-    public static final String TYPE = "playerDetector";
+    public static final String PERIPHERAL_TYPE = "playerDetector";
 
     public PlayerDetectorPeripheral(PeripheralBlockEntity<?> tileEntity) {
-        super(TYPE, new BlockEntityPeripheralOwner<>(tileEntity));
+        super(PERIPHERAL_TYPE, new BlockEntityPeripheralOwner<>(tileEntity));
     }
 
     public PlayerDetectorPeripheral(ITurtleAccess access, TurtleSide side) {
-        super(TYPE, new TurtlePeripheralOwner(access, side));
+        super(PERIPHERAL_TYPE, new TurtlePeripheralOwner(access, side));
     }
 
     public PlayerDetectorPeripheral(IPocketAccess pocket) {
-        super(TYPE, new PocketPeripheralOwner(pocket));
+        super(PERIPHERAL_TYPE, new PocketPeripheralOwner(pocket));
     }
 
     @Override
@@ -152,13 +149,13 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
         ServerPlayer existingPlayer = null;
         for (ServerPlayer player : getPlayers()) {
             if (player.getName().getString().equals(username)) {
-                if (CoordUtil.isInRange(getPos(), getLevel(), player, APConfig.PERIPHERALS_CONFIG.playerDetMaxRange.get())) {
+                if (CoordUtil.isInRange(getPos(), getLevel(), player, APConfig.PERIPHERALS_CONFIG.playerDetMaxRange.get()))
                     existingPlayer = player;
-                    break;
-                }
+                break;
             }
         }
-        if (existingPlayer == null) return null;
+        if (existingPlayer == null)
+            return Collections.emptyMap();
 
         Map<String, Object> info = new HashMap<>();
         info.put("x", Math.floor(existingPlayer.getX()));

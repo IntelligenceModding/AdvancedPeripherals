@@ -17,8 +17,8 @@ import com.minecolonies.api.research.util.ResearchState;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingStructureBuilder;
 import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import de.srendi.advancedperipherals.common.util.ItemUtil;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
+import de.srendi.advancedperipherals.common.util.inventory.ItemUtil;
 import io.netty.buffer.Unpooled;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
@@ -105,7 +105,8 @@ public class MineColonies {
         map.put("saturation", visitor.getSaturation());
         map.put("happiness", visitor.getCitizenHappinessHandler().getHappiness(visitor.getColony()));
         map.put("skills", skillsToObject(visitor.getCitizenSkillHandler().getSkills()));
-        map.put("recruitCost", ItemUtil.getRegistryKey(visitor.getRecruitCost().getItem()).toString());
+        map.put("recruitCost", LuaConverter.stackToObject(visitor.getRecruitCost()));
+
         return map;
     }
 
@@ -242,12 +243,12 @@ public class MineColonies {
     }
 
     /**
-     * Returns a map with all possible researches
+     * Returns a list with all possible researches
      *
      * @param branch     The branch, there are only a few branches
      * @param researches The primary researches of the branch
      * @param colony     The colony
-     * @return a map with all possible researches
+     * @return a list including maps with all possible researches
      */
     public static List<Object> getResearch(ResourceLocation branch, List<ResourceLocation> researches, IColony colony) throws CommandSyntaxException {
         List<Object> result = new ArrayList<>();
@@ -295,7 +296,7 @@ public class MineColonies {
         if (!(building instanceof AbstractBuildingStructureBuilder builderBuilding))
             return null;
 
-        //We need to say the building that we want information about it
+        //We need to tell the building that we want information about it
         FriendlyByteBuf buffer = new FriendlyByteBuf(Unpooled.buffer());
         builderBuilding.serializeToView(buffer);
         buffer.release();
@@ -307,7 +308,7 @@ public class MineColonies {
         for (BuildingBuilderResource resource : resources) {
             Map<String, Object> map = new HashMap<>();
 
-            map.put("item", ItemUtil.getRegistryKey(resource.getItemStack()));
+            map.put("item", ItemUtil.getRegistryKey(resource.getItemStack()).toString());
             map.put("displayName", resource.getName());
             map.put("available", resource.getAvailable());
             map.put("delivering", resource.getAmountInDelivery());

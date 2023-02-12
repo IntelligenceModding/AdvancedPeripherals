@@ -41,4 +41,5 @@ public enum AutomataCoreTier implements IAutomataCoreTier {
     public String settingsPostfix() {
         return "AutomataCore";
     }
+
 }
