@@ -9,6 +9,7 @@ import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.lua.MethodResult;
 import dan200.computercraft.api.peripheral.IComputerAccess;
+import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.BlockEntityPeripheralOwner;
 import de.srendi.advancedperipherals.common.addons.refinedstorage.RefinedStorage;
 import de.srendi.advancedperipherals.common.addons.refinedstorage.RefinedStorageNode;
@@ -321,8 +322,9 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
         ICalculationResult result = getNetwork().getCraftingManager().create(stack, filter.getLeft().getCount());
         CalculationResultType type = result.getType();
-        if (result.getType() == CalculationResultType.OK)
+        if (type == CalculationResultType.OK)
             getNetwork().getCraftingManager().start(result.getTask());
+        AdvancedPeripherals.debug("Crafting Result of '" + stack.getItem().getRegistryName().toString() + "':" + type);
         return MethodResult.of(type == CalculationResultType.OK);
     }
 
@@ -343,6 +345,7 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         CalculationResultType type = result.getType();
         if (result.getType() == CalculationResultType.OK)
             getNetwork().getCraftingManager().start(result.getTask());
+        AdvancedPeripherals.debug("Crafting Result of '" + stack.getFluid().getRegistryName().toString() + "':" + type);
         return MethodResult.of(type == CalculationResultType.OK);
     }
 
