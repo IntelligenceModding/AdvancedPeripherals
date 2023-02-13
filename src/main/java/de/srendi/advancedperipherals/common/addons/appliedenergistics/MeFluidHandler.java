@@ -36,8 +36,9 @@ public class MeFluidHandler implements IStorageSystemFluidHandler {
         return (int) Math.min(inserted, Integer.MAX_VALUE);
     }
 
+    @NotNull
     @Override
-    public @NotNull FluidStack drain(FluidFilter filter, FluidAction simulate) {
+    public FluidStack drain(FluidFilter filter, FluidAction simulate) {
         Pair<Long, AEFluidKey> itemKey = AppEngApi.findAEFluidFromFilter(storageMonitor, null, filter);
         if(itemKey == null)
             return FluidStack.EMPTY;

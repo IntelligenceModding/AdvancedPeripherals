@@ -6,6 +6,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+## [1.18.2-0.7.25r] - 2023-02-12
+
+### Fixed
+- [#411] Fixed nil return values of `getItem` - RS Bridge
+
+## [1.18.2-0.7.24r] - 2023-02-11
+
+### Breaking Changes
+- This update changes the way how we transfer items. This fixes a lot of bugs but also changes some functions. This can break some scripts you might use. Please refer to the [changelog](https://docs.intelligence-modding.de/changelogs/0.7.24r/)
 
 ### Added
 - Added optional arguments to specify which crafting cpu you want to use - Thanks to Michele Grifa! - ME Bridge
@@ -13,12 +22,17 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Added `listCells` function - Thanks to Michele Grifa! - ME Bridge
 - Added methods to import/export fluid from/to the ME System - Thanks to Michele Grifa!
 - Added support for shears to the `digBlock` function of automata turtles
+- [#397] The RS, ME Bridge and the inventory manager are now able to ignore NBT values if none is specified
+- Added support for offhand items to the inventory manager, the slot is 36.
 
 ### Fixed
+- [#356] Fixed LuaException if the player detector is moved around in the inventory
 - [#398] Fix wrong return types of basin integration
 - [#384] Fix long execution times of some redstone integrator functions
 - [#393] Check if items can be extracted before inserting, fixes dupe bugs - RS and ME Bridge
 - Particles of our blocks
+- [#378] Clear canvas if a player switches worlds/servers
+- [#393, #361, #371. #407, #406, #408] Fixed several issues with the inventory system. Like ignored NBT values, deleted NBT values, ignored armor, dupe bugs or wrong transmitted items.
 
 ## [1.18.2-0.7.23r] - 2023-01-15
 
