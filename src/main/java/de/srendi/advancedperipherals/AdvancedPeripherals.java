@@ -42,7 +42,7 @@ public class AdvancedPeripherals {
 
     public static void debug(String message) {
         if (APConfig.GENERAL_CONFIG.enableDebugMode.get())
-            LOGGER.debug("[DEBUG] {}", message);
+            LOGGER.info("[DEBUG] {}", message);
     }
 
     public static void debug(String message, Level level) {

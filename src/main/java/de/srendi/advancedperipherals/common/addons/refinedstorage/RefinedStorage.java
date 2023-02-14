@@ -69,8 +69,10 @@ public class RefinedStorage {
             return ItemStack.EMPTY;
 
         for (ICraftingPattern pattern : crafting.getPatterns()) {
-            if (filter.test(pattern.getStack()))
-                return pattern.getStack().copy();
+            for(ItemStack stack : pattern.getOutputs()) {
+                if (filter.test(stack.copy()))
+                    return stack.copy();
+            }
         }
 
         return ItemStack.EMPTY;
