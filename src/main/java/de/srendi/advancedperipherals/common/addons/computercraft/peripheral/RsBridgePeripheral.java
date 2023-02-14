@@ -316,7 +316,7 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (filter.rightPresent())
             return MethodResult.of(null, filter.getRight());
 
-        ItemStack stack = RefinedStorage.findStackFromFilter(getNetwork(), null, filter.getLeft());
+        ItemStack stack = RefinedStorage.findStackFromFilter(getNetwork(), getNetwork().getCraftingManager(), filter.getLeft());
         if (stack == null)
             return MethodResult.of(null, "NOT_CRAFTABLE");
 
