@@ -23,7 +23,6 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.PlayerArmorInvWrapper;
 import net.minecraftforge.items.wrapper.PlayerInvWrapper;
 import net.minecraftforge.items.wrapper.PlayerOffhandInvWrapper;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
@@ -120,8 +119,8 @@ public class InventoryManagerPeripheral extends BasePeripheral<BlockEntityPeriph
         Map<Object, Object> filterMap = new HashMap<>();
 
         // Deprecated! Will be removed in the future. This exists to maintain compatibility within the same mc version
-        item.ifPresent(s -> filterMap.put("name", s));
-        slot.ifPresent(integer -> filterMap.put("toSlot", integer));
+        item.ifPresent(itemName -> filterMap.put("name", itemName));
+        slot.ifPresent(toSlot -> filterMap.put("toSlot", toSlot));
         filterMap.put("count", count);
 
         filter = ItemFilter.parse(filterMap);
@@ -136,7 +135,7 @@ public class InventoryManagerPeripheral extends BasePeripheral<BlockEntityPeriph
         Map<Object, Object> filterMap = new HashMap<>();
 
         // Deprecated! Will be removed in the future. This exists to maintain compatibility within the same mc version
-        slot.ifPresent(integer -> filterMap.put("toSlot", integer));
+        slot.ifPresent(toSlot -> filterMap.put("toSlot", toSlot));
         filterMap.put("count", count);
 
         item.ifPresent(filterMap::putAll);
@@ -160,7 +159,6 @@ public class InventoryManagerPeripheral extends BasePeripheral<BlockEntityPeriph
         return InventoryUtil.moveItem(inventoryFrom.getLeft(), inventoryTo, filter);
     }
 
-    @NotNull
     @LuaFunction(value = {"list", "getItems"}, mainThread = true)
     public final List<Object> getItems() throws LuaException {
         List<Object> items = new ArrayList<>();
@@ -170,6 +168,22 @@ public class InventoryManagerPeripheral extends BasePeripheral<BlockEntityPeriph
                 items.add(LuaConverter.stackToObjectWithSlot(stack, i));
             }
             i++;
+        }
+        return items;
+    }
+
+    @LuaFunction(value = {"listChest", "getItemsChest"}, mainThread = true)
+    public final List<Object> getItemsChest(String target) throws LuaException {
+        Direction direction = validateSide(target);
+
+        BlockEntity targetEntity = owner.getLevel().getBlockEntity(owner.getPos().relative(direction));
+        IItemHandler inventoryTo = targetEntity != null ? targetEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, direction).resolve().orElse(null) : null;
+
+        List<Object> items = new ArrayList<>();
+        for (int slot = 0; slot < inventoryTo.getSlots(); slot++) {
+            if (!inventoryTo.getStackInSlot(slot).isEmpty()) {
+                items.add(LuaConverter.stackToObjectWithSlot(inventoryTo.getStackInSlot(slot), slot));
+            }
         }
         return items;
     }
@@ -246,7 +260,7 @@ public class InventoryManagerPeripheral extends BasePeripheral<BlockEntityPeriph
         IItemHandler handler;
         if(slot >= 100 && slot <= 103) {
             handler = new PlayerArmorInvWrapper(getOwnerPlayer().getInventory());
-            // If the slot is between 100 and 103, change the index a normal index between 0 and 3.
+            // If the slot is between 100 and 103, change the index to a normal index between 0 and 3.
             // This is necessary since the PlayerArmorInvWrapper does not work with these higher indexes
             slot = getArmorSlot(slot);
         } else if(slot == 36) {
