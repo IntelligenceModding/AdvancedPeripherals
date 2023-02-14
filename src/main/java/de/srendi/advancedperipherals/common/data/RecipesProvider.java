@@ -1,25 +1,17 @@
 package de.srendi.advancedperipherals.common.data;
 
 import appeng.core.definitions.AEBlocks;
-import com.refinedmods.refinedstorage.RSBlocks;
-import com.refinedmods.refinedstorage.RSItems;
 import dan200.computercraft.shared.ModRegistry;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.setup.Blocks;
-import de.srendi.advancedperipherals.common.util.RawValue;
 import net.minecraft.data.PackOutput;
-import net.minecraft.data.recipes.FinishedRecipe;
-import net.minecraft.data.recipes.RecipeCategory;
-import net.minecraft.data.recipes.RecipeProvider;
-import net.minecraft.data.recipes.ShapedRecipeBuilder;
-import net.minecraft.data.recipes.ShapelessRecipeBuilder;
+import net.minecraft.data.recipes.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.alchemy.PotionUtils;
 import net.minecraft.world.item.alchemy.Potions;
-import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.crafting.ConditionalRecipe;
@@ -28,7 +20,6 @@ import net.minecraftforge.common.crafting.conditions.IConditionBuilder;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
-import java.util.stream.Stream;
 
 public class RecipesProvider extends RecipeProvider implements IConditionBuilder {
 
@@ -71,11 +62,11 @@ public class RecipesProvider extends RecipeProvider implements IConditionBuilder
 
         ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, Blocks.NBT_STORAGE.get()).define('C', Tags.Items.CHESTS).define('A', CASING).define('R', Tags.Items.STORAGE_BLOCKS_REDSTONE).define('I', Tags.Items.INGOTS_IRON).pattern("ICI").pattern("CAC").pattern("RCR").unlockedBy(HAS_ITEM, has(CASING)).save(consumer);
 
-        ConditionalRecipe.builder().addCondition(modLoaded("minecolonies")).addRecipe(ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, Blocks.COLONY_INTEGRATOR.get()).define('O', ItemTags.LOGS).define('A', CASING).define('R', Ingredient.fromValues(Stream.of(new RawValue(new ResourceLocation("minecolonies", "blockminecoloniesrack"))))).pattern("ORO").pattern(" A ").pattern("ORO").unlockedBy(HAS_ITEM, has(CASING))::save).build(consumer, new ResourceLocation(AdvancedPeripherals.MOD_ID, "colony_integrator"));
+        //ConditionalRecipe.builder().addCondition(modLoaded("minecolonies")).addRecipe(ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, Blocks.COLONY_INTEGRATOR.get()).define('O', ItemTags.LOGS).define('A', CASING).define('R', Ingredient.fromValues(Stream.of(new RawValue(new ResourceLocation("minecolonies", "blockminecoloniesrack"))))).pattern("ORO").pattern(" A ").pattern("ORO").unlockedBy(HAS_ITEM, has(CASING))::save).build(consumer, new ResourceLocation(AdvancedPeripherals.MOD_ID, "colony_integrator"));
 
         ConditionalRecipe.builder().addCondition(modLoaded("ae2")).addRecipe(ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, Blocks.ME_BRIDGE.get()).define('F', AEBlocks.FLUIX_BLOCK.asItem()).define('A', CASING).define('I', AEBlocks.INTERFACE.asItem()).pattern("FIF").pattern("IAI").pattern("FIF").unlockedBy(HAS_ITEM, has(CASING))::save).build(consumer, new ResourceLocation(AdvancedPeripherals.MOD_ID, "me_bridge"));
 
-        ConditionalRecipe.builder().addCondition(modLoaded("refinedstorage")).addRecipe(ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, Blocks.RS_BRIDGE.get()).define('Q', RSItems.QUARTZ_ENRICHED_IRON.get()).define('A', CASING).define('I', RSBlocks.INTERFACE.get()).pattern("QIQ").pattern("IAI").pattern("QIQ").unlockedBy(HAS_ITEM, has(CASING))::save).build(consumer, new ResourceLocation(AdvancedPeripherals.MOD_ID, "rs_bridge"));
+        //ConditionalRecipe.builder().addCondition(modLoaded("refinedstorage")).addRecipe(ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, Blocks.RS_BRIDGE.get()).define('Q', RSItems.QUARTZ_ENRICHED_IRON.get()).define('A', CASING).define('I', RSBlocks.INTERFACE.get()).pattern("QIQ").pattern("IAI").pattern("QIQ").unlockedBy(HAS_ITEM, has(CASING))::save).build(consumer, new ResourceLocation(AdvancedPeripherals.MOD_ID, "rs_bridge"));
 
         ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, de.srendi.advancedperipherals.common.setup.Items.WEAK_AUTOMATA_CORE.get()).define('A', CASING).define('R', Tags.Items.STORAGE_BLOCKS_REDSTONE).define('S', Items.SOUL_LANTERN).define('D', Tags.Items.GEMS_DIAMOND).define('L', StrictNBTIngredient.of(PotionUtils.setPotion(new ItemStack(Items.POTION), Potions.LONG_REGENERATION))).pattern("RAR").pattern("DSD").pattern("RLR").unlockedBy(HAS_ITEM, has(CASING)).save(consumer);
 

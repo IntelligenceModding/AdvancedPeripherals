@@ -1,0 +1,32 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "A": {
+      "item": "advancedperipherals:peripheral_casing"
+    },
+    "D": {
+      "tag": "forge:gems/diamond"
+    },
+    "L": {
+      "type": "forge:nbt",
+      "count": 1,
+      "item": "minecraft:potion",
+      "nbt": "{Potion:\"minecraft:long_regeneration\"}"
+    },
+    "R": {
+      "tag": "forge:storage_blocks/redstone"
+    },
+    "S": {
+      "item": "minecraft:soul_lantern"
+    }
+  },
+  "pattern": [
+    "RAR",
+    "DSD",
+    "RLR"
+  ],
+  "result": {
+    "item": "advancedperipherals:weak_automata_core"
+  }
+}

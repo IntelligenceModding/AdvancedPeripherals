@@ -1,0 +1,29 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "C": {
+      "item": "advancedperipherals:peripheral_casing"
+    },
+    "D": {
+      "tag": "forge:gems/diamond"
+    },
+    "M": {
+      "item": "computercraft:wired_modem_full"
+    },
+    "O": {
+      "item": "minecraft:observer"
+    },
+    "R": {
+      "tag": "forge:storage_blocks/redstone"
+    }
+  },
+  "pattern": [
+    "DMD",
+    "DCD",
+    "ROR"
+  ],
+  "result": {
+    "item": "advancedperipherals:geo_scanner"
+  }
+}
