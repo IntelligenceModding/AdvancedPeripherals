@@ -12,8 +12,7 @@ import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.MethodResult;
 import dan200.computercraft.api.peripheral.IComputerAccess;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
-import de.srendi.advancedperipherals.common.util.Pair;
-import net.minecraft.world.item.ItemStack;
+import de.srendi.advancedperipherals.common.util.inventory.ItemUtil;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -88,7 +87,7 @@ public class CraftJob implements ILuaCallback {
         }
 
         if (!crafting.isCraftable(item)) {
-            fireEvent(false, item.getItem().getRegistryName().toString() + " is not craftable");
+            fireEvent(false, ItemUtil.getRegistryKey(item.getItem()) + " is not craftable");
             return;
         }
 

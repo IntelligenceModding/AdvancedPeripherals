@@ -18,10 +18,7 @@ import de.srendi.advancedperipherals.common.addons.refinedstorage.RsItemHandler;
 import de.srendi.advancedperipherals.common.blocks.blockentities.RsBridgeEntity;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.util.Pair;
-import de.srendi.advancedperipherals.common.util.inventory.FluidFilter;
-import de.srendi.advancedperipherals.common.util.inventory.FluidUtil;
-import de.srendi.advancedperipherals.common.util.inventory.InventoryUtil;
-import de.srendi.advancedperipherals.common.util.inventory.ItemFilter;
+import de.srendi.advancedperipherals.common.util.inventory.*;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
@@ -324,7 +321,7 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         CalculationResultType type = result.getType();
         if (type == CalculationResultType.OK)
             getNetwork().getCraftingManager().start(result.getTask());
-        AdvancedPeripherals.debug("Crafting Result of '" + stack.getItem().getRegistryName().toString() + "':" + type);
+        AdvancedPeripherals.debug("Crafting Result of '" + ItemUtil.getRegistryKey(stack).toString() + "':" + type);
         return MethodResult.of(type == CalculationResultType.OK);
     }
 
@@ -345,7 +342,7 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         CalculationResultType type = result.getType();
         if (result.getType() == CalculationResultType.OK)
             getNetwork().getCraftingManager().start(result.getTask());
-        AdvancedPeripherals.debug("Crafting Result of '" + stack.getFluid().getRegistryName().toString() + "':" + type);
+        AdvancedPeripherals.debug("Crafting Result of '" + FluidUtil.getRegistryKey(stack).toString() + "':" + type);
         return MethodResult.of(type == CalculationResultType.OK);
     }
 

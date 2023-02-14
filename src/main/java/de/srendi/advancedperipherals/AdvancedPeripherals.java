@@ -4,7 +4,6 @@ import de.srendi.advancedperipherals.client.HudOverlayHandler;
 import de.srendi.advancedperipherals.common.addons.APAddons;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.setup.Registration;
-import de.srendi.advancedperipherals.common.village.VillageStructures;
 import de.srendi.advancedperipherals.network.MNetwork;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
