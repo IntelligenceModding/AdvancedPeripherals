@@ -9,6 +9,7 @@ import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.lua.MethodResult;
 import dan200.computercraft.api.peripheral.IComputerAccess;
+import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.BlockEntityPeripheralOwner;
 import de.srendi.advancedperipherals.common.addons.refinedstorage.RefinedStorage;
 import de.srendi.advancedperipherals.common.addons.refinedstorage.RefinedStorageNode;
@@ -17,10 +18,7 @@ import de.srendi.advancedperipherals.common.addons.refinedstorage.RsItemHandler;
 import de.srendi.advancedperipherals.common.blocks.blockentities.RsBridgeEntity;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.util.Pair;
-import de.srendi.advancedperipherals.common.util.inventory.FluidFilter;
-import de.srendi.advancedperipherals.common.util.inventory.FluidUtil;
-import de.srendi.advancedperipherals.common.util.inventory.InventoryUtil;
-import de.srendi.advancedperipherals.common.util.inventory.ItemFilter;
+import de.srendi.advancedperipherals.common.util.inventory.*;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
@@ -302,7 +300,7 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (filter.rightPresent())
             return MethodResult.of(null, filter.getRight());
 
-        return MethodResult.of(RefinedStorage.findStackFromFilter(getNetwork(), getNetwork().getCraftingManager(), filter.getLeft()));
+        return MethodResult.of(RefinedStorage.getObjectFromStack(RefinedStorage.findStackFromFilter(getNetwork(), getNetwork().getCraftingManager(), filter.getLeft()), getNetwork()));
     }
 
     @LuaFunction(mainThread = true)
@@ -315,14 +313,15 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (filter.rightPresent())
             return MethodResult.of(null, filter.getRight());
 
-        ItemStack stack = RefinedStorage.findStackFromFilter(getNetwork(), null, filter.getLeft());
+        ItemStack stack = RefinedStorage.findStackFromFilter(getNetwork(), getNetwork().getCraftingManager(), filter.getLeft());
         if (stack == null)
             return MethodResult.of(null, "NOT_CRAFTABLE");
 
         ICalculationResult result = getNetwork().getCraftingManager().create(stack, filter.getLeft().getCount());
         CalculationResultType type = result.getType();
-        if (result.getType() == CalculationResultType.OK)
+        if (type == CalculationResultType.OK)
             getNetwork().getCraftingManager().start(result.getTask());
+        AdvancedPeripherals.debug("Crafting Result of '" + ItemUtil.getRegistryKey(stack).toString() + "':" + type);
         return MethodResult.of(type == CalculationResultType.OK);
     }
 
@@ -343,6 +342,7 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         CalculationResultType type = result.getType();
         if (result.getType() == CalculationResultType.OK)
             getNetwork().getCraftingManager().start(result.getTask());
+        AdvancedPeripherals.debug("Crafting Result of '" + FluidUtil.getRegistryKey(stack).toString() + "':" + type);
         return MethodResult.of(type == CalculationResultType.OK);
     }
 

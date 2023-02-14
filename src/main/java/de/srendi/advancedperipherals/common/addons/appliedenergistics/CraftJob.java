@@ -6,14 +6,12 @@ import appeng.api.networking.crafting.*;
 import appeng.api.networking.security.IActionSource;
 import appeng.api.networking.storage.IStorageService;
 import appeng.api.stacks.AEItemKey;
-import appeng.api.storage.MEStorage;
 import dan200.computercraft.api.lua.ILuaCallback;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.MethodResult;
 import dan200.computercraft.api.peripheral.IComputerAccess;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
-import de.srendi.advancedperipherals.common.util.Pair;
-import net.minecraft.world.item.ItemStack;
+import de.srendi.advancedperipherals.common.util.inventory.ItemUtil;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -30,7 +28,9 @@ public class CraftJob implements ILuaCallback {
     private final IActionSource source;
     private final ICraftingSimulationRequester requester;
     private final ICraftingCPU target;
-    private final ItemStack item;
+    private final AEItemKey item;
+
+    private final long amount;
     private final Level world;
     private Future<ICraftingPlan> futureJob;
     private boolean startedCrafting = false;
@@ -38,13 +38,14 @@ public class CraftJob implements ILuaCallback {
     private MethodResult result;
     private LuaException exception;
 
-    public CraftJob(Level world, final IComputerAccess computer, IGridNode node, ItemStack item, IActionSource source,
+    public CraftJob(Level world, final IComputerAccess computer, IGridNode node, AEItemKey item, long amount, IActionSource source,
                     ICraftingSimulationRequester requester, ICraftingCPU target) {
         this.computer = computer;
         this.node = node;
         this.world = world;
         this.source = source;
         this.item = item;
+        this.amount = amount;
         this.requester = requester;
         this.target = target;
     }
@@ -76,21 +77,18 @@ public class CraftJob implements ILuaCallback {
 
         IStorageService storage = grid.getService(IStorageService.class);
         ICraftingService crafting = grid.getService(ICraftingService.class);
-        MEStorage monitor = storage.getInventory();
-        ItemStack itemstack = item;
-        Pair<Long, AEItemKey> aeItem = AppEngApi.findAEStackFromStack(monitor, crafting, itemstack);
 
-        if (aeItem == null) {
+        if (item == null) {
             AdvancedPeripherals.debug("Could not get AEItem from monitor", org.apache.logging.log4j.Level.FATAL);
             return;
         }
 
-        if (!crafting.isCraftable(aeItem.getRight())) {
-            fireEvent(false, item.getDescriptionId() + " is not craftable");
+        if (!crafting.isCraftable(item)) {
+            fireEvent(false, ItemUtil.getRegistryKey(item.getItem()) + " is not craftable");
             return;
         }
 
-        futureJob = crafting.beginCraftingCalculation(world, this.requester, aeItem.getRight(), itemstack.getCount(), CalculationStrategy.REPORT_MISSING_ITEMS);
+        futureJob = crafting.beginCraftingCalculation(world, this.requester, item, amount, CalculationStrategy.REPORT_MISSING_ITEMS);
         fireEvent(true, "Started calculation of the recipe. After it's finished, the system will start crafting the item.");
     }
 

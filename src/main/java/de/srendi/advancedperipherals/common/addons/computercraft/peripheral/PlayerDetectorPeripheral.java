@@ -109,37 +109,36 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
 
     @LuaFunction(mainThread = true)
     public final boolean isPlayerInCoords(Map<?, ?> firstCoord, Map<?, ?> secondCoord, String username) throws LuaException {
-        List<String> playersName = new ArrayList<>();
         BlockPos firstPos = LuaConverter.convertToBlockPos(firstCoord);
         BlockPos secondPos = LuaConverter.convertToBlockPos(secondCoord);
         for (Player player : getPlayers()) {
-            if (CoordUtil.isInRange(getPos(), player, getLevel(), firstPos, secondPos)) {
-                playersName.add(player.getName().getString());
-            }
+            if (CoordUtil.isInRange(getPos(), player, getLevel(), firstPos, secondPos))
+                if(player.getName().getString().equals(username))
+                    return true;
         }
-        return playersName.contains(username);
+        return false;
     }
 
     @LuaFunction(mainThread = true)
     public final boolean isPlayerInCubic(int x, int y, int z, String username) {
-        List<String> playersName = new ArrayList<>();
         for (Player player : getPlayers()) {
             if (CoordUtil.isInRange(getPos(), getLevel(), player, x, y, z)) {
-                playersName.add(player.getName().getString());
+                if(player.getName().getString().equals(username))
+                    return true;
             }
         }
-        return playersName.contains(username);
+        return false;
     }
 
     @LuaFunction(mainThread = true)
     public final boolean isPlayerInRange(int range, String username) {
-        List<String> playersName = new ArrayList<>();
         for (Player player : getPlayers()) {
             if (CoordUtil.isInRange(getPos(), getLevel(), player, range)) {
-                playersName.add(player.getName().getString());
+                if(player.getName().getString().equals(username))
+                    return true;
             }
         }
-        return playersName.contains(username);
+        return false;
     }
 
     @LuaFunction(mainThread = true)

@@ -19,6 +19,17 @@
       "x": 90,
       "y": 270
     },
+    "orientation=east_up": {
+      "model": "advancedperipherals:block/ar_controller",
+      "y": 90
+    },
+    "orientation=north_up": {
+      "model": "advancedperipherals:block/ar_controller"
+    },
+    "orientation=south_up": {
+      "model": "advancedperipherals:block/ar_controller",
+      "y": 180
+    },
     "orientation=up_east": {
       "model": "advancedperipherals:block/ar_controller",
       "x": 270,
@@ -41,17 +52,6 @@
     "orientation=west_up": {
       "model": "advancedperipherals:block/ar_controller",
       "y": 270
-    },
-    "orientation=east_up": {
-      "model": "advancedperipherals:block/ar_controller",
-      "y": 90
-    },
-    "orientation=north_up": {
-      "model": "advancedperipherals:block/ar_controller"
-    },
-    "orientation=south_up": {
-      "model": "advancedperipherals:block/ar_controller",
-      "y": 180
     }
   }
 }

@@ -318,7 +318,7 @@ dependencies {
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junit_version}"
     // Testing stuff
     // JEI
-    //implementation fg.deobf("mezz.jei:jei-${jei_version}")
+    implementation fg.deobf("mezz.jei:jei-${jei_version}")
 }
 
 

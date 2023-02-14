@@ -25,7 +25,6 @@ import de.srendi.advancedperipherals.common.util.inventory.FluidUtil;
 import de.srendi.advancedperipherals.common.util.inventory.InventoryUtil;
 import de.srendi.advancedperipherals.common.util.inventory.ItemFilter;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
-import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
@@ -156,9 +155,15 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
         String cpuName = arguments.optString(1, "");
         ICraftingCPU target = getCraftingCPU(cpuName);
-        if(!cpuName.isEmpty() && target == null) return MethodResult.of(false, "CPU " + cpuName + " does not exists");
+        if(!cpuName.isEmpty() && target == null)
+            return MethodResult.of(false, "CPU " + cpuName + " does not exists");
 
-        CraftJob job = new CraftJob(owner.getLevel(), computer, node, new ItemStack(parsedFilter.getItem(), parsedFilter.getCount()), tile, tile, target);
+        ICraftingService craftingGrid = node.getGrid().getService(ICraftingService.class);
+        Pair<Long, AEItemKey> stack = AppEngApi.findAEStackFromFilter(AppEngApi.getMonitor(tile.getGridNode()), craftingGrid, filter.getLeft());
+        if (stack.getRight() == null && stack.getLeft() == 0)
+            return MethodResult.of(null, "NOT_CRAFTABLE");
+
+        CraftJob job = new CraftJob(owner.getLevel(), computer, node, stack.getRight(), parsedFilter.getCount(), tile, tile, target);
         tile.addJob(job);
         ServerWorker.add(job::startCrafting);
         return MethodResult.of(true);

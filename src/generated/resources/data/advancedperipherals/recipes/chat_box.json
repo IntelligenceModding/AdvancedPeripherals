@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "A": {
+      "item": "advancedperipherals:peripheral_casing"
+    },
+    "G": {
+      "tag": "forge:ingots/gold"
+    },
+    "P": {
+      "tag": "minecraft:logs"
+    }
+  },
+  "pattern": [
+    "PPP",
+    "PAP",
+    "PGP"
+  ],
+  "result": {
+    "item": "advancedperipherals:chat_box"
+  }
+}
