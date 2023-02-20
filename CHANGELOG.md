@@ -6,6 +6,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+## [1.18.2-0.7.26r] - 2023-02-20
+
+### Fixed
+- [#412] Fix `craftItem` for the rs bridge. 
+- Respect item filters for the me bridge's `craftItem` function
+
+### Added
+- [#413] Added `listChest` to the inventory manager
+
 ## [1.18.2-0.7.25r] - 2023-02-12
 
 ### Fixed
