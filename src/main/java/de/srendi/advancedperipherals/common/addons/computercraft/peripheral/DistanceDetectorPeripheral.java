@@ -6,6 +6,9 @@ import de.srendi.advancedperipherals.common.blocks.blockentities.DistanceDetecto
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.ClipContext;
+import net.minecraft.world.level.block.SlabBlock;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.SlabType;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
@@ -62,12 +65,25 @@ public class DistanceDetectorPeripheral extends BasePeripheral<BlockEntityPeriph
     @LuaFunction(mainThread = true)
     public final double getDistance() {
         //Just testing, will be the direction of the block later
-        Direction direction = Direction.UP;
+        Direction direction = getPeripheralOwner().getOrientation().front();
         Vec3 from = Vec3.atCenterOf(getPos()).add(direction.getNormal().getX() * 0.501, direction.getNormal().getY() * 0.501, direction.getNormal().getZ() * 0.501);
-        Vec3 to = from.add(direction.getNormal().getX() * 16, direction.getNormal().getY() * 16, direction.getNormal().getZ() * 16);
+        Vec3 to = from.add(direction.getNormal().getX() * 256, direction.getNormal().getY() * 256, direction.getNormal().getZ() * 256);
         BlockHitResult result = getLevel().clip(new ClipContext(from, to, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, null));
 
-        return result.getType() != HitResult.Type.MISS ? getPos().distManhattan(result.getBlockPos()) - 1 : -1;
+        float distance = 0;
+        BlockState resultBlock;
+        if (result.getType() != HitResult.Type.MISS) {
+            resultBlock = getLevel().getBlockState(result.getBlockPos());
+            distance = getPos().distManhattan(result.getBlockPos());
+
+            if(resultBlock.getBlock() instanceof SlabBlock && direction.getAxis() == Direction.Axis.Y) {
+                if(resultBlock.getValue(SlabBlock.TYPE) == SlabType.TOP && direction == Direction.UP)
+                    distance = distance + 0.5f;
+                if(resultBlock.getValue(SlabBlock.TYPE) == SlabType.BOTTOM && direction == Direction.DOWN)
+                    distance = distance - 0.5f;
+            }
+        }
+        return distance - 1;
     }
 
 }
