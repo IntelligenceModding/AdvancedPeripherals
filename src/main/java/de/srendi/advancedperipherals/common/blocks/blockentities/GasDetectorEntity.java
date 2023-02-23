@@ -2,7 +2,6 @@ package de.srendi.advancedperipherals.common.blocks.blockentities;
 
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.GasDetectorPeripheral;
 import de.srendi.advancedperipherals.common.addons.mekanism.MekanismCapabilities;
-import de.srendi.advancedperipherals.common.blocks.base.APBlockEntityBlock;
 import de.srendi.advancedperipherals.common.blocks.base.BaseBlock;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralBlockEntity;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
