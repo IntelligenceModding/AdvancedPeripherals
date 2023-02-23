@@ -3,13 +3,15 @@ package de.srendi.advancedperipherals.common.addons.computercraft.peripheral;
 import dan200.computercraft.api.lua.LuaFunction;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.BlockEntityPeripheralOwner;
 import de.srendi.advancedperipherals.common.blocks.blockentities.DistanceDetectorEntity;
+import de.srendi.advancedperipherals.common.util.HitResultUtil;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
 import net.minecraft.core.Direction;
-import net.minecraft.world.level.ClipContext;
+import net.minecraft.core.Vec3i;
 import net.minecraft.world.level.block.SlabBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.SlabType;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 
@@ -68,19 +70,24 @@ public class DistanceDetectorPeripheral extends BasePeripheral<BlockEntityPeriph
         Direction direction = getPeripheralOwner().getOrientation().front();
         Vec3 from = Vec3.atCenterOf(getPos()).add(direction.getNormal().getX() * 0.501, direction.getNormal().getY() * 0.501, direction.getNormal().getZ() * 0.501);
         Vec3 to = from.add(direction.getNormal().getX() * 256, direction.getNormal().getY() * 256, direction.getNormal().getZ() * 256);
-        BlockHitResult result = getLevel().clip(new ClipContext(from, to, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, null));
+        HitResult result = HitResultUtil.getHitResult(to, from, getLevel());
 
         float distance = 0;
         BlockState resultBlock;
         if (result.getType() != HitResult.Type.MISS) {
-            resultBlock = getLevel().getBlockState(result.getBlockPos());
-            distance = getPos().distManhattan(result.getBlockPos());
+            if (result instanceof BlockHitResult blockHitResult) {
+                resultBlock = getLevel().getBlockState(blockHitResult.getBlockPos());
+                distance = getPos().distManhattan(blockHitResult.getBlockPos());
 
-            if(resultBlock.getBlock() instanceof SlabBlock && direction.getAxis() == Direction.Axis.Y) {
-                if(resultBlock.getValue(SlabBlock.TYPE) == SlabType.TOP && direction == Direction.UP)
-                    distance = distance + 0.5f;
-                if(resultBlock.getValue(SlabBlock.TYPE) == SlabType.BOTTOM && direction == Direction.DOWN)
-                    distance = distance - 0.5f;
+                if (resultBlock.getBlock() instanceof SlabBlock && direction.getAxis() == Direction.Axis.Y) {
+                    if (resultBlock.getValue(SlabBlock.TYPE) == SlabType.TOP && direction == Direction.UP)
+                        distance = distance + 0.5f;
+                    if (resultBlock.getValue(SlabBlock.TYPE) == SlabType.BOTTOM && direction == Direction.DOWN)
+                        distance = distance - 0.5f;
+                }
+            }
+            if (result instanceof EntityHitResult entityHitResult) {
+                distance = getPos().distManhattan(new Vec3i(entityHitResult.getLocation().x, entityHitResult.getLocation().y, entityHitResult.getLocation().z));
             }
         }
         return distance - 1;

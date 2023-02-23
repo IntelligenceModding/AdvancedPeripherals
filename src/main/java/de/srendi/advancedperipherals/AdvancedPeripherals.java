@@ -4,7 +4,6 @@ import de.srendi.advancedperipherals.common.addons.APAddons;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.network.PacketHandler;
 import de.srendi.advancedperipherals.common.setup.APRegistration;
-import de.srendi.advancedperipherals.common.village.VillageStructures;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
