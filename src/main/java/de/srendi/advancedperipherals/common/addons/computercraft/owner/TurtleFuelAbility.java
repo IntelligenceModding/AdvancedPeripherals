@@ -1,6 +1,6 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.owner;
 
-import dan200.computercraft.shared.config.Config;
+import dan200.computercraft.ComputerCraft;
 import org.jetbrains.annotations.NotNull;
 
 public class TurtleFuelAbility extends FuelAbility<TurtlePeripheralOwner> {
@@ -23,7 +23,7 @@ public class TurtleFuelAbility extends FuelAbility<TurtlePeripheralOwner> {
 
     @Override
     public boolean isFuelConsumptionDisable() {
-        return !Config.turtlesNeedFuel;
+        return !ComputerCraft.turtlesNeedFuel;
     }
 
     @Override

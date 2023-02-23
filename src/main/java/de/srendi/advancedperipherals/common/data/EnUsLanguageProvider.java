@@ -7,7 +7,7 @@ import de.srendi.advancedperipherals.common.setup.CCRegistration;
 import de.srendi.advancedperipherals.common.setup.Items;
 import de.srendi.advancedperipherals.common.setup.Villagers;
 import net.minecraft.client.KeyMapping;
-import net.minecraft.data.PackOutput;
+import net.minecraft.data.DataGenerator;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.npc.VillagerProfession;
 import net.minecraft.world.item.Item;
@@ -20,7 +20,7 @@ import java.util.function.Supplier;
 
 public class EnUsLanguageProvider extends LanguageProvider {
 
-    public EnUsLanguageProvider(PackOutput gen) {
+    public EnUsLanguageProvider(DataGenerator gen) {
         super(gen, AdvancedPeripherals.MOD_ID, "en_us");
     }
 

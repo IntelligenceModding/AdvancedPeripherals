@@ -4,14 +4,14 @@ import dan200.computercraft.api.pocket.PocketUpgradeDataProvider;
 import dan200.computercraft.api.pocket.PocketUpgradeSerialiser;
 import de.srendi.advancedperipherals.common.setup.Blocks;
 import de.srendi.advancedperipherals.common.setup.CCRegistration;
-import net.minecraft.data.PackOutput;
+import net.minecraft.data.DataGenerator;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
 
 public class PocketUpgradesProvider extends PocketUpgradeDataProvider {
 
-    public PocketUpgradesProvider(PackOutput output) {
+    public PocketUpgradesProvider(DataGenerator output) {
         super(output);
     }
 

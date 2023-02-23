@@ -2,8 +2,7 @@ package de.srendi.advancedperipherals.common.data;
 
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.setup.Registration;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.data.PackOutput;
+import net.minecraft.data.DataGenerator;
 import net.minecraft.data.tags.PoiTypeTagsProvider;
 import net.minecraft.data.tags.TagsProvider;
 import net.minecraft.tags.PoiTypeTags;
@@ -13,20 +12,17 @@ import net.minecraftforge.registries.RegistryObject;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Objects;
-import java.util.concurrent.CompletableFuture;
-
 public class PoiTypeProvider extends PoiTypeTagsProvider {
 
 
-    public PoiTypeProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> future, @Nullable ExistingFileHelper existingFileHelper) {
-        super(output, future, AdvancedPeripherals.MOD_ID, existingFileHelper);
+    public PoiTypeProvider(DataGenerator pGenerator, @Nullable ExistingFileHelper existingFileHelper) {
+        super(pGenerator, AdvancedPeripherals.MOD_ID, existingFileHelper);
     }
 
     @Override
-    protected void addTags(HolderLookup.Provider provider) {
+    protected void addTags() {
         TagsProvider.TagAppender<PoiType> appender = tag(PoiTypeTags.ACQUIRABLE_JOB_SITE);
-        Registration.POI_TYPES.getEntries().stream().map(RegistryObject::getKey).filter(Objects::nonNull).forEach(appender::add);
+        Registration.POI_TYPES.getEntries().stream().map(RegistryObject::getKey).forEach(appender::add);
     }
 
     @NotNull

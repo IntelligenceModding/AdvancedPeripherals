@@ -1,8 +1,10 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.owner;
 
 import com.mojang.authlib.GameProfile;
+import dan200.computercraft.ComputerCraft;
 import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
+import dan200.computercraft.shared.TurtlePermissions;
 import dan200.computercraft.shared.util.InventoryUtil;
 import de.srendi.advancedperipherals.common.util.DataStorageUtil;
 import de.srendi.advancedperipherals.common.util.fakeplayer.APFakePlayer;
@@ -93,7 +95,7 @@ public class TurtlePeripheralOwner extends BasePeripheralOwner {
 
     @Override
     public ItemStack storeItem(ItemStack stored) {
-        return InventoryUtil.storeItemsIntoSlot(turtle.getInventory(), stored, turtle.getSelectedSlot());
+        return InventoryUtil.storeItems(stored, turtle.getItemHandler(), turtle.getSelectedSlot());
     }
 
     @Override
@@ -106,8 +108,8 @@ public class TurtlePeripheralOwner extends BasePeripheralOwner {
         return FakePlayerProviderTurtle.withPlayer(turtle, player -> {
             if (level.isOutsideBuildHeight(pos)) return false;
             if (!level.isInWorldBounds(pos)) return false;
-            //if (Config.turtlesObeyBlockProtection && !TurtlePermissions.isBlockEnterable(level, pos, player))
-            //  return false;
+            if (ComputerCraft.turtlesObeyBlockProtection && !TurtlePermissions.isBlockEnterable(level, pos, player))
+                return false;
             if (!level.isAreaLoaded(pos, 0)) return false;
             return level.getWorldBorder().isWithinBounds(pos);
         });
