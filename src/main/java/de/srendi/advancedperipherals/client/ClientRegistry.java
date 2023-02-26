@@ -3,13 +3,16 @@ package de.srendi.advancedperipherals.client;
 import dan200.computercraft.api.client.ComputerCraftAPIClient;
 import dan200.computercraft.api.client.turtle.TurtleUpgradeModeller;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
+import de.srendi.advancedperipherals.client.renderer.DistanceDetectorRenderer;
 import de.srendi.advancedperipherals.common.container.InventoryManagerScreen;
+import de.srendi.advancedperipherals.common.setup.APBlockEntityTypes;
 import de.srendi.advancedperipherals.common.setup.APContainerTypes;
 import de.srendi.advancedperipherals.common.setup.CCRegistration;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.client.event.ModelEvent;
 import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -47,8 +50,13 @@ public class ClientRegistry {
     }
 
     @SubscribeEvent
-    public static void onClientSetup(RegisterKeyMappingsEvent event) {
+    public static void registeringKeymappings(RegisterKeyMappingsEvent event) {
         KeyBindings.register(event);
+    }
+
+    @SubscribeEvent
+    public static void registeringRenderers(EntityRenderersEvent.RegisterRenderers event) {
+        event.registerBlockEntityRenderer(APBlockEntityTypes.DISTANCE_DETECTOR.get(), DistanceDetectorRenderer::new);
     }
 
     //TODO change the icon of the curio icon

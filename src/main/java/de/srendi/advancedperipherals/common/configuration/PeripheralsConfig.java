@@ -53,6 +53,10 @@ public class PeripheralsConfig implements IAPConfig {
     public final ForgeConfigSpec.BooleanValue enableColonyIntegrator;
     //Compass turtle
     public final ForgeConfigSpec.BooleanValue enableCompassTurtle;
+    //Compass turtle
+    public final ForgeConfigSpec.BooleanValue enableDistanceDetector;
+    public final ForgeConfigSpec.DoubleValue distanceDetectorRange;
+
     //Powered Peripherals
     public final ForgeConfigSpec.BooleanValue enablePoweredPeripherals;
     public final ForgeConfigSpec.IntValue poweredPeripheralMaxEnergyStorage;
@@ -140,6 +144,11 @@ public class PeripheralsConfig implements IAPConfig {
         pop("Compass_Turtle", builder);
 
         enableCompassTurtle = builder.comment("Enable the compass turtle or not.").define("enableCompassTurtle", true);
+
+        pop("Distance_Detector", builder);
+
+        enableDistanceDetector = builder.comment("Enable the distance detector or not.").define("enableDistanceDetector", true);
+        distanceDetectorRange = builder.comment("Maximum range of the distance detector").defineInRange("distanceDetectorRange", 64D, 0D, Integer.MAX_VALUE);
 
         pop("Powered_Peripherals", builder);
 

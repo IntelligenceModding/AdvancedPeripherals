@@ -1,6 +1,8 @@
 package de.srendi.advancedperipherals.common.util;
 
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.DistanceDetectorPeripheral;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Vec3i;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
@@ -13,12 +15,22 @@ public class HitResultUtil {
 
     @NotNull
     public static HitResult getHitResult(Vec3 to, Vec3 from, Level level) {
+        EntityHitResult entityResult = getEntityHitResult(to, from, level);
         BlockHitResult blockResult = getBlockHitResult(to, from, level);
 
-        if(blockResult.getType() != HitResult.Type.MISS)
+        if(entityResult.getType() != HitResult.Type.MISS && blockResult.getType() == HitResult.Type.MISS)
+            return entityResult;
+
+        if(entityResult.getType() == HitResult.Type.MISS && blockResult.getType() != HitResult.Type.MISS)
             return blockResult;
 
-        return getEntityHitResult(to, from, level);
+        double blockDistance = new BlockPos(from).distManhattan(blockResult.getBlockPos());
+        double entityDistance = new BlockPos(from).distManhattan(new Vec3i(entityResult.getLocation().x, entityResult.getLocation().y, entityResult.getLocation().z));
+
+        if(blockDistance < entityDistance)
+            return blockResult;
+
+        return entityResult;
     }
 
     /**
@@ -57,7 +69,7 @@ public class HitResultUtil {
          * The super constructor is a NotNull argument but since this result is empty, we'll just return null
          */
         public EmptyEntityHitResult() {
-            super(null);
+            super(null, null);
         }
 
         @NotNull

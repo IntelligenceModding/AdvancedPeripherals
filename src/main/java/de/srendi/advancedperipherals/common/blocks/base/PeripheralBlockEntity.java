@@ -111,6 +111,11 @@ public abstract class PeripheralBlockEntity<T extends BasePeripheral<?>> extends
         return peripheral.getConnectedComputers();
     }
 
+    @Nullable
+    public T getPeripheral() {
+        return peripheral;
+    }
+
     /*@Override
     public ITextComponent getDisplayName() {
         return this instanceof IInventoryBlock ? ((IInventoryBlock) this).getDisplayName() : null;
