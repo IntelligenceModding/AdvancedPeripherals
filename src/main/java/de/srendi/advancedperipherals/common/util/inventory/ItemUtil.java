@@ -4,6 +4,7 @@ import dan200.computercraft.shared.Registry;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.util.StringUtil;
 import net.minecraft.ResourceLocationException;
+import net.minecraft.core.NonNullList;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -81,6 +82,17 @@ public class ItemUtil {
         }
 
         return items;
+    }
+
+    public static void addComputerItemToTab(ResourceLocation turtleID, ResourceLocation pocketID, NonNullList<ItemStack> items) {
+        if (turtleID != null) {
+            items.add(makeTurtle(TURTLE_ADVANCED, turtleID.toString()));
+            items.add(makeTurtle(TURTLE_NORMAL, turtleID.toString()));
+        }
+        if (pocketID != null) {
+            items.add(makePocket(POCKET_ADVANCED, pocketID.toString()));
+            items.add(makePocket(POCKET_NORMAL, pocketID.toString()));
+        }
     }
 
     public static ResourceLocation getRegistryKey(Item item) {
