@@ -27,6 +27,9 @@ public class ItemUtil {
     public static final Item POCKET_NORMAL = Registry.ModItems.POCKET_COMPUTER_NORMAL.get();
     public static final Item POCKET_ADVANCED = Registry.ModItems.POCKET_COMPUTER_ADVANCED.get();
 
+    private ItemUtil() {
+    }
+
     public static <T extends ForgeRegistryEntry<T>> T getRegistryEntry(String name, IForgeRegistry<T> forgeRegistry) {
         ResourceLocation location;
         try {

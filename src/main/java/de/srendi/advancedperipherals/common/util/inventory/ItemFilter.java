@@ -26,6 +26,9 @@ public class ItemFilter {
     public int fromSlot = -1;
     public int toSlot = -1;
 
+    private ItemFilter() {
+    }
+
     public static Pair<ItemFilter, String> parse(Map<?, ?> item) {
         ItemFilter itemArgument = empty();
         // If the map is empty, return a filter without any filters

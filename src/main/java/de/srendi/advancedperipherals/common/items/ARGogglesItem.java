@@ -16,6 +16,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.InteractionResult;
@@ -81,7 +82,7 @@ public class ARGogglesItem extends ArmorItem {
         }
         if (!APConfig.PERIPHERALS_CONFIG.enableARGoggles.get())
             tooltip.add(EnumColor.buildTextComponent(new TranslatableComponent("item.advancedperipherals.tooltip.disabled")));
-        if (stack.hasTag() && stack.getTag().contains(CONTROLLER_POS, CompoundTag.TAG_INT_ARRAY)) {
+        if (stack.hasTag() && stack.getTag().contains(CONTROLLER_POS, Tag.TAG_INT_ARRAY)) {
             int[] pos = stack.getTag().getIntArray(CONTROLLER_POS);
             tooltip.add(new TranslatableComponent("item.advancedperipherals.tooltip.ar_goggles.binding", pos[0], pos[1], pos[2]));
         }
