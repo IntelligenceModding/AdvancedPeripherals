@@ -47,14 +47,14 @@ public class RecipesProvider extends RecipeProvider implements IConditionBuilder
                 .unlockedBy(HAS_ITEM, has(CASING))
                 .save(consumer);
 
-        ShapedRecipeBuilder.shaped(de.srendi.advancedperipherals.common.setup.Items.AR_GOGGLES.get())
+        /*ShapedRecipeBuilder.shaped(de.srendi.advancedperipherals.common.setup.Items.AR_GOGGLES.get())
                 .define('E', Tags.Items.ENDER_PEARLS)
                 .define('S', Tags.Items.RODS_WOODEN)
                 .define('G', Tags.Items.GLASS_BLACK)
                 .pattern("GSG")
                 .pattern(" E ")
                 .unlockedBy(HAS_ITEM, has(Items.STICK))
-                .save(consumer);
+                .save(consumer);*/
 
         ShapedRecipeBuilder.shaped(Blocks.CHAT_BOX.get())
                 .define('P', ItemTags.LOGS)

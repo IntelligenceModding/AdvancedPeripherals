@@ -1,6 +1,5 @@
 {
   "type": "minecraft:crafting_shapeless",
-  "category": "redstone",
   "ingredients": [
     {
       "item": "advancedperipherals:end_automata_core"

@@ -36,6 +36,7 @@ public class EnUsLanguageProvider extends LanguageProvider {
         addText();
         add(Villagers.COMPUTER_SCIENTIST, "Computer Scientist");
         add("advancedperipherals.name", AdvancedPeripherals.NAME);
+        add("itemGroup.advancedperipheralstab", AdvancedPeripherals.NAME);
     }
 
     private void addItems() {

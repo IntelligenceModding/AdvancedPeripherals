@@ -269,17 +269,15 @@ dependencies {
 
     // Extended requirements
     // We don't use the api since we need a specific class from mekanism
-    compileOnly "mekanism:Mekanism:${mekanism_version}"
-
-   // runtimeOnly fg.deobf("mekanism:Mekanism:${mekanism_version}")// core
+    implementation fg.deobf("mekanism:Mekanism:${mekanism_version}")
 
     // Applied Energistics 2
-    runtimeOnly fg.deobf("appeng:appliedenergistics2-forge:${appliedenergistics_version}")
+    implementation fg.deobf("appeng:appliedenergistics2-forge:${appliedenergistics_version}")
     // Curios
-    runtimeOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}")
+    implementation fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}")
 
     // Refined Storage
-    compileOnly fg.deobf("com.refinedmods:refinedstorage:${refinedstorage_version}")  {
+    implementation fg.deobf("com.refinedmods:refinedstorage:${refinedstorage_version}")  {
         transitive false
     }
 
@@ -288,7 +286,7 @@ dependencies {
     //runtimeOnly fg.deobf("curse.maven:ae2things-609977:${ae2things_version}-sources")
 
     // Botania
-    compileOnly fg.deobf("vazkii.botania:Botania:${botania_version}")
+    implementation fg.deobf("vazkii.botania:Botania:${botania_version}")
 
     // Minecolonies
     // Change to compileOnly when running `runData`
@@ -299,7 +297,7 @@ dependencies {
     compileOnly fg.deobf("com.ldtteam:blockui:${blockui_version}")
 
     //Patchouli
-    //runtimeOnly fg.deobf("vazkii.patchouli:Patchouli:${patchouli_version}")
+    runtimeOnly fg.deobf("vazkii.patchouli:Patchouli:${patchouli_version}")
 
     // Create
     compileOnly fg.deobf("com.simibubi.create:create-1.19.2:${create_version}:all")
