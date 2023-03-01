@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+## [1.19.2-0.7.24b] - 2023-03-01
+
+### This is the backport of the latest 1.19.3 version to 1.19.2. To see what everything changed, check the [changelog](https://docs.intelligence-modding.de/changelogs/0.7.24r/)
+
 ## [1.19.3-0.7.24b] - 2023-02-12
 
 ### Fixed
