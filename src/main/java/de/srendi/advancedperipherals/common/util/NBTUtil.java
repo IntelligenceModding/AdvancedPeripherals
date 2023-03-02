@@ -55,18 +55,6 @@ public class NBTUtil {
         }
     }
 
-    public static CompoundTag fromBinary(String base64) {
-        if (base64 == null) return null;
-
-        try (InputStream inputStream = Base64.getDecoder().wrap(new ByteArrayInputStream(base64.getBytes()))) {
-            return NbtIo.readCompressed(inputStream);
-        } catch (IOException ex) {
-            AdvancedPeripherals.debug("Could not parse binary data to NBT", Level.ERROR);
-            ex.printStackTrace();
-            return null;
-        }
-    }
-
     public static CompoundTag toNBT(BlockPos pos) {
         CompoundTag data = new CompoundTag();
         data.putInt("x", pos.getX());
