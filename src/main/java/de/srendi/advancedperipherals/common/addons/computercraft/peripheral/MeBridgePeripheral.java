@@ -29,10 +29,7 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwner<MeBridgeEntity>> {
 
@@ -420,13 +417,11 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
             return notConnected();
 
         ICraftingService grid = node.getGrid().getService(ICraftingService.class);
-        Map<Integer, Object> map = new HashMap<>();
+        List<Object> map = new ArrayList<>();
 
-        Iterator<ICraftingCPU> iterator = grid.getCpus().iterator();
-        int i = 1;
-        while (iterator.hasNext()) {
-            Object o = AppEngApi.getObjectFromCPU(iterator.next());
-            map.put(i++, o);
+        for (ICraftingCPU iCraftingCPU : grid.getCpus()) {
+            Object cpu = AppEngApi.getObjectFromCPU(iCraftingCPU);
+            map.add(cpu);
         }
         return MethodResult.of(map);
     }
