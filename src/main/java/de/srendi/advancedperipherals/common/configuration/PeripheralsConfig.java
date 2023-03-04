@@ -3,9 +3,11 @@ package de.srendi.advancedperipherals.common.configuration;
 import de.srendi.advancedperipherals.common.addons.computercraft.operations.SimpleFreeOperation;
 import de.srendi.advancedperipherals.common.addons.computercraft.operations.SingleOperation;
 import de.srendi.advancedperipherals.common.addons.computercraft.operations.SphereOperation;
+import net.minecraft.FieldsAreNonnullByDefault;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.fml.config.ModConfig;
 
+@FieldsAreNonnullByDefault
 public class PeripheralsConfig implements IAPConfig {
 
     //Player Detector

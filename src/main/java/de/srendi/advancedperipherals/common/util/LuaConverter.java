@@ -69,13 +69,10 @@ public class LuaConverter {
     public static Map<String, Object> stackToObject(@NotNull ItemStack stack) {
         if (stack.isEmpty()) return new HashMap<>();
         Map<String, Object> map = itemToObject(stack.getItem());
-        CompoundTag nbt = stack.getTag();
+        CompoundTag nbt = stack.getOrCreateTag();
         map.put("count", stack.getCount());
         map.put("displayName", stack.getDisplayName().getString());
         map.put("maxStackSize", stack.getMaxStackSize());
-        if (nbt == null) {
-            nbt = new CompoundTag();//ensure compatibility with lua programs relying on a non-nil value
-        }
         map.put("nbt", NBTUtil.toLua(nbt));
         return map;
     }

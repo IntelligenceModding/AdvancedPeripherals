@@ -24,6 +24,9 @@ public class FluidFilter {
     private int count = 1000;
     private String fingerprint = "";
 
+    private FluidFilter() {
+    }
+
     public static Pair<FluidFilter, String> parse(Map<?, ?> item) {
         FluidFilter itemArgument = empty();
         // If the map is empty, return a filter without any filters

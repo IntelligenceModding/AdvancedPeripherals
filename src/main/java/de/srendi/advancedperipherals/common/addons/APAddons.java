@@ -20,6 +20,9 @@ public class APAddons {
     public static boolean refinedStorageLoaded;
     public static boolean aeThingsLoaded;
 
+    private APAddons() {
+    }
+
     public static void commonSetup() {
         ModList modList = ModList.get();
         curiosLoaded = modList.isLoaded(CURIOS_MODID);
