@@ -35,7 +35,7 @@ import java.util.Collections;
 import java.util.List;
 
 public abstract class PeripheralBlockEntity<T extends BasePeripheral<?>> extends BaseContainerBlockEntity implements WorldlyContainer, MenuProvider, IPeripheralTileEntity {
-    // TODO: move inventory logic to another tile entity!
+
     private static final String PERIPHERAL_SETTINGS_KEY = "peripheralSettings";
     protected CompoundTag peripheralSettings;
     protected NonNullList<ItemStack> items;
