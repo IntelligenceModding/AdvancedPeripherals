@@ -94,7 +94,7 @@ public final class FakePlayerProviderTurtle {
                 remaining = InventoryUtil.storeItemsFromOffset(turtleInventory, remaining, 0);
                 if (!remaining.isEmpty()) {
                     BlockPos position = turtle.getPosition();
-                    WorldUtil.dropItemStack(remaining, turtle.getLevel(), position, turtle.getDirection().getOpposite());
+                    WorldUtil.dropItemStack(turtle.getLevel(), position, turtle.getDirection().getOpposite(), remaining);
                 }
             }
 
