@@ -1,9 +1,6 @@
 package de.srendi.advancedperipherals.common.smartglasses;
 
-import dan200.computercraft.shared.ModRegistry;
 import dan200.computercraft.shared.computer.core.ServerComputer;
-import dan200.computercraft.shared.computer.inventory.ComputerMenuWithoutInventory;
-import dan200.computercraft.shared.pocket.items.PocketComputerItem;
 import de.srendi.advancedperipherals.common.container.SmartGlassesContainer;
 import de.srendi.advancedperipherals.common.items.SmartGlassesItem;
 import net.minecraft.network.chat.Component;

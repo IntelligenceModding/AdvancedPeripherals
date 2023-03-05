@@ -3,14 +3,9 @@ package de.srendi.advancedperipherals.common.smartglasses;
 import dan200.computercraft.api.peripheral.IPeripheral;
 import dan200.computercraft.api.pocket.IPocketAccess;
 import dan200.computercraft.api.pocket.IPocketUpgrade;
-import dan200.computercraft.core.computer.ComputerSide;
 import dan200.computercraft.shared.common.IColouredItem;
 import dan200.computercraft.shared.computer.core.ComputerFamily;
 import dan200.computercraft.shared.computer.core.ServerComputer;
-import dan200.computercraft.shared.config.Config;
-import dan200.computercraft.shared.network.client.PocketComputerDataMessage;
-import dan200.computercraft.shared.network.client.PocketComputerDeletedClientMessage;
-import dan200.computercraft.shared.platform.PlatformHelper;
 import dan200.computercraft.shared.pocket.items.PocketComputerItem;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -141,8 +136,7 @@ public class SmartGlassesComputer extends ServerComputer implements IPocketAcces
             for (var player : getLevel().players()) {
                 if (tracking.add(player)) added.add(player);
             }
-            if (!added.isEmpty()) {
-            }
+
         }
     }
 
@@ -150,9 +144,9 @@ public class SmartGlassesComputer extends ServerComputer implements IPocketAcces
     protected void onTerminalChanged() {
         super.onTerminalChanged();
 
-        if (entity instanceof ServerPlayer player && entity.isAlive()) {
+        /*if (entity instanceof ServerPlayer player && entity.isAlive()) {
             // Broadcast the terminal to the current player.
-        }
+        }*/
     }
 
     @Override
