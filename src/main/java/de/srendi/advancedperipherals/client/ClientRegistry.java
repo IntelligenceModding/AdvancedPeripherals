@@ -2,9 +2,11 @@ package de.srendi.advancedperipherals.client;
 
 import dan200.computercraft.api.client.ComputerCraftAPIClient;
 import dan200.computercraft.api.client.turtle.TurtleUpgradeModeller;
+import dan200.computercraft.client.gui.ComputerScreen;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.client.renderer.DistanceDetectorRenderer;
 import de.srendi.advancedperipherals.common.container.InventoryManagerScreen;
+import de.srendi.advancedperipherals.common.container.SmartGlassesContainer;
 import de.srendi.advancedperipherals.common.setup.APBlockEntityTypes;
 import de.srendi.advancedperipherals.common.setup.APContainerTypes;
 import de.srendi.advancedperipherals.common.setup.CCRegistration;
@@ -34,6 +36,7 @@ public class ClientRegistry {
     @SubscribeEvent
     public static void onClientSetup(FMLClientSetupEvent event) {
         MenuScreens.register(APContainerTypes.INVENTORY_MANAGER_CONTAINER.get(), InventoryManagerScreen::new);
+        MenuScreens.register(APContainerTypes.SMART_GLASSES_CONTAINER.get(), ComputerScreen<SmartGlassesContainer>::new);
 
         ComputerCraftAPIClient.registerTurtleUpgradeModeller(CCRegistration.CHUNKY_TURTLE.get(), TurtleUpgradeModeller.flatItem());
         ComputerCraftAPIClient.registerTurtleUpgradeModeller(CCRegistration.COMPASS_TURTLE.get(), TurtleUpgradeModeller.flatItem());
