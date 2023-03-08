@@ -19,13 +19,16 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.*;
+import net.minecraft.world.Container;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ArmorItem;
-import net.minecraft.world.item.ArmorMaterials;
+import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
@@ -44,11 +47,9 @@ public class SmartGlassesItem extends ArmorItem implements IComputerItem, IMedia
     private static final String NBT_INSTANCE = "InstanceId";
     private static final String NBT_SESSION = "SessionId";
 
-
-    public SmartGlassesItem(ArmorMaterials material) {
+    public SmartGlassesItem(ArmorMaterial material) {
         super(material, EquipmentSlot.HEAD, new Properties().stacksTo(1));
     }
-
 
     private boolean tick(ItemStack stack, Level world, Entity entity, SmartGlassesComputer computer) {
         computer.setLevel((ServerLevel) world);
@@ -79,7 +80,7 @@ public class SmartGlassesItem extends ArmorItem implements IComputerItem, IMedia
     }
 
     @Override
-    public void inventoryTick(ItemStack stack, Level world, Entity entity, int slotNum, boolean selected) {
+    public void inventoryTick(@NotNull ItemStack stack, Level world, @NotNull Entity entity, int slotNum, boolean selected) {
         if (world.isClientSide) return;
         Container inventory = entity instanceof Player player ? player.getInventory() : null;
         var computer = createServerComputer((ServerLevel) world, entity, inventory, stack);
@@ -100,7 +101,7 @@ public class SmartGlassesItem extends ArmorItem implements IComputerItem, IMedia
 
     @NotNull
     @Override
-    public InteractionResultHolder<ItemStack> use(Level world, Player player, InteractionHand hand) {
+    public InteractionResultHolder<ItemStack> use(Level world, Player player, @NotNull InteractionHand hand) {
         var stack = player.getItemInHand(hand);
         if (!world.isClientSide) {
             var computer = createServerComputer((ServerLevel) world, player, player.getInventory(), stack);
@@ -133,7 +134,7 @@ public class SmartGlassesItem extends ArmorItem implements IComputerItem, IMedia
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, @javax.annotation.Nullable Level world, List<Component> list, TooltipFlag flag) {
+    public void appendHoverText(@NotNull ItemStack stack, @javax.annotation.Nullable Level world, @NotNull List<Component> list, TooltipFlag flag) {
         if (flag.isAdvanced() || getLabel(stack) == null) {
             var id = getComputerID(stack);
             if (id >= 0) {
@@ -181,7 +182,6 @@ public class SmartGlassesItem extends ArmorItem implements IComputerItem, IMedia
     }
 
     // IComputerItem implementation
-
     private static void setComputerID(ItemStack stack, int computerID) {
         stack.getOrCreateTag().putInt(NBT_ID, computerID);
     }
@@ -201,8 +201,9 @@ public class SmartGlassesItem extends ArmorItem implements IComputerItem, IMedia
         return true;
     }
 
+    @Nullable
     @Override
-    public @Nullable Mount createDataMount(ItemStack stack, ServerLevel level) {
+    public Mount createDataMount(ItemStack stack, ServerLevel level) {
         var id = getComputerID(stack);
         if (id >= 0) {
             return ComputerCraftAPI.createSaveDirMount(level.getServer(), "computer/" + id, Config.computerSpaceLimit);
