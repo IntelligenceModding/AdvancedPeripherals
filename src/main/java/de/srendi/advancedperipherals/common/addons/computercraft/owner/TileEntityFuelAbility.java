@@ -32,7 +32,7 @@ public class TileEntityFuelAbility<T extends BlockEntity & IPeripheralTileEntity
 
     @Override
     public boolean isFuelConsumptionDisable() {
-        return false;
+        return !APConfig.PERIPHERALS_CONFIG.enablePoweredPeripherals.get();
     }
 
     @Override
