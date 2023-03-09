@@ -114,7 +114,7 @@ public class AppEngApi {
         return items;
     }
 
-    public static <T extends AEKey> Map<String, Object> getObjectFromStack(Pair<Long, T> stack, ICraftingService service) {
+    public static <T extends AEKey> Map<String, Object> getObjectFromStack(Pair<Long, T> stack, @Nullable ICraftingService service) {
         if (stack.getRight() instanceof AEItemKey itemKey)
             return getObjectFromItemStack(Pair.of(stack.getLeft(), itemKey), service);
         if (stack.getRight() instanceof AEFluidKey fluidKey)
@@ -124,7 +124,7 @@ public class AppEngApi {
         return Collections.emptyMap();
     }
 
-    private static Map<String, Object> getObjectFromItemStack(Pair<Long, AEItemKey> stack, ICraftingService craftingService) {
+    private static Map<String, Object> getObjectFromItemStack(Pair<Long, AEItemKey> stack, @Nullable ICraftingService craftingService) {
         Map<String, Object> map = new HashMap<>();
         String displayName = stack.getRight().getDisplayName().getString();
         CompoundTag nbt = stack.getRight().toTag();
@@ -135,19 +135,19 @@ public class AppEngApi {
         map.put("displayName", displayName);
         map.put("nbt", NBTUtil.toLua(nbt));
         map.put("tags", LuaConverter.tagsToList(() -> stack.getRight().getItem().builtInRegistryHolder().tags()));
-        map.put("isCraftable", craftingService.isCraftable(stack.getRight()));
+        map.put("isCraftable", craftingService != null && craftingService.isCraftable(stack.getRight()));
 
         return map;
     }
 
-    private static Map<String, Object> getObjectFromFluidStack(Pair<Long, AEFluidKey> stack, ICraftingService craftingService) {
+    private static Map<String, Object> getObjectFromFluidStack(Pair<Long, AEFluidKey> stack, @Nullable ICraftingService craftingService) {
         Map<String, Object> map = new HashMap<>();
         long amount = stack.getLeft();
         map.put("name", ForgeRegistries.FLUIDS.getKey(stack.getRight().getFluid()).toString());
         map.put("amount", amount);
         map.put("displayName", stack.getRight().getDisplayName());
         map.put("tags", LuaConverter.tagsToList(() -> stack.getRight().getFluid().builtInRegistryHolder().tags()));
-        map.put("isCraftable", craftingService.isCraftable(stack.getRight()));
+        map.put("isCraftable", craftingService != null && craftingService.isCraftable(stack.getRight()));
 
         return map;
     }
@@ -160,8 +160,27 @@ public class AppEngApi {
         map.put("storage", storage);
         map.put("coProcessors", coProcessors);
         map.put("isBusy", isBusy);
+        map.put("craftingJob", cpu.getJobStatus() != null ? getObjectFromJob(cpu.getJobStatus()) : null);
 
         return map;
+    }
+
+    public static Map<String, Object> getObjectFromJob(CraftingJobStatus job) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("storage", getObjectFromGenericStack(job.crafting()));
+        map.put("elapsedTimeNanos", job.elapsedTimeNanos());
+        map.put("totalItem", job.totalItems());
+        map.put("progress", job.progress());
+
+        return map;
+    }
+
+    public static Map<String, Object> getObjectFromGenericStack(GenericStack stack) {
+        if(stack.what() instanceof AEItemKey aeItemKey)
+            return getObjectFromItemStack(Pair.of(stack.amount(), aeItemKey), null);
+        if(stack.what() instanceof AEFluidKey aeFluidKey)
+            return getObjectFromFluidStack(Pair.of(stack.amount(), aeFluidKey), null);
+        return Collections.emptyMap();
     }
 
     public static CompoundTag findMatchingTag(FluidStack stack, String nbtHash, MEStorage monitor) {

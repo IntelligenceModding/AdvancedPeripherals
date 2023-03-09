@@ -3,21 +3,10 @@ package de.srendi.advancedperipherals.common.util;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.ByteTag;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.DoubleTag;
-import net.minecraft.nbt.IntTag;
-import net.minecraft.nbt.NbtIo;
-import net.minecraft.nbt.StringTag;
-import net.minecraft.nbt.Tag;
-import net.minecraft.nbt.TagParser;
+import net.minecraft.nbt.*;
 import net.minecraft.world.level.ChunkPos;
 import org.apache.logging.log4j.Level;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Base64;
 import java.util.Map;
 
 public class NBTUtil {
@@ -57,18 +46,6 @@ public class NBTUtil {
             return json == null ? null : TagParser.parseTag(json);
         } catch (CommandSyntaxException ex) {
             AdvancedPeripherals.debug("Could not parse json data to NBT", Level.ERROR);
-            ex.printStackTrace();
-            return null;
-        }
-    }
-
-    public static CompoundTag fromBinary(String base64) {
-        if (base64 == null) return null;
-
-        try (InputStream inputStream = Base64.getDecoder().wrap(new ByteArrayInputStream(base64.getBytes()))) {
-            return NbtIo.readCompressed(inputStream);
-        } catch (IOException ex) {
-            AdvancedPeripherals.debug("Could not parse binary data to NBT", Level.ERROR);
             ex.printStackTrace();
             return null;
         }

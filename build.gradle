@@ -290,6 +290,7 @@ dependencies {
     // Botania
     compileOnly fg.deobf("vazkii.botania:Botania:${botania_version}")
 
+
     // Minecolonies
     // Change to compileOnly when running `runData`
     compileOnly fg.deobf("com.ldtteam:minecolonies:${minecolonies_version}")
@@ -299,7 +300,7 @@ dependencies {
     compileOnly fg.deobf("com.ldtteam:blockui:${blockui_version}")
 
     //Patchouli
-    //runtimeOnly fg.deobf("vazkii.patchouli:Patchouli:${patchouli_version}")
+    runtimeOnly fg.deobf("vazkii.patchouli:Patchouli:${patchouli_version}")
 
     // Create
     compileOnly fg.deobf("com.simibubi.create:create-1.19.2:${create_version}:all")

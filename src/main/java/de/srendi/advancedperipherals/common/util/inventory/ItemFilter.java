@@ -47,7 +47,11 @@ public class ItemFilter {
             try {
                 itemArgument.nbt = NBTUtil.fromText(TableHelper.getStringField(item, "nbt"));
             } catch (LuaException luaException) {
-                return Pair.of(null, "NO_VALID_NBT");
+                try {
+                    itemArgument.nbt = NBTUtil.fromText(TableHelper.getTableField(item, "nbt").toString());
+                } catch (LuaException e) {
+                    return Pair.of(null, "NO_VALID_NBT");
+                }
             }
         }
         if (item.containsKey("fingerprint")) {
