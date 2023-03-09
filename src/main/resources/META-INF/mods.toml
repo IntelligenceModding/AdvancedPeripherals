@@ -1,5 +1,5 @@
 modLoader = "javafml"
-loaderVersion = "[40,)"
+loaderVersion = "[43,)"
 license = "All rights reserved"
 issueTrackerURL = "https://github.com/Seniorendi/AdvancedPeripherals/issues"
 logoFile = "pack.png"
@@ -17,7 +17,7 @@ Adds things like the Me Bridge, various types of turtles, the Chat Box and more.
 [[dependencies.advancedperipherals]]
 modId = "forge"
 mandatory = true
-versionRange = "[43.1.43,)"
+versionRange = "[43.2.4,)"
 ordering = "NONE"
 side = "BOTH"
 [[dependencies.advancedperipherals]]
@@ -29,7 +29,7 @@ side = "BOTH"
 [[dependencies.advancedperipherals]]
 modId = "computercraft"
 mandatory = true
-versionRange = "[1.100.9,)"
+versionRange = "[1.101.2,)"
 ordering = "NONE"
 side = "BOTH"
 [[dependencies.advancedperipherals]]

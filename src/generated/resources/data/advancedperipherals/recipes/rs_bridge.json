@@ -5,7 +5,7 @@
       "conditions": [
         {
           "type": "forge:mod_loaded",
-          "modid": "ae2"
+          "modid": "refinedstorage"
         }
       ],
       "recipe": {
@@ -14,20 +14,20 @@
           "A": {
             "item": "advancedperipherals:peripheral_casing"
           },
-          "F": {
-            "item": "ae2:fluix_block"
-          },
           "I": {
-            "item": "ae2:interface"
+            "item": "refinedstorage:interface"
+          },
+          "Q": {
+            "item": "refinedstorage:quartz_enriched_iron"
           }
         },
         "pattern": [
-          "FIF",
+          "QIQ",
           "IAI",
-          "FIF"
+          "QIQ"
         ],
         "result": {
-          "item": "advancedperipherals:me_bridge"
+          "item": "advancedperipherals:rs_bridge"
         }
       }
     }
