@@ -19,7 +19,7 @@ public class APContainerTypes {
     }));
 
     public static final RegistryObject<MenuType<SmartGlassesContainer>> SMART_GLASSES_CONTAINER = APRegistration.CONTAINER_TYPES.register("smart_glasses_container", () -> ContainerData.toType(ComputerContainerData::new,
-            (id, inv, data) -> new SmartGlassesContainer(id, player -> true, null, data)
+            (id, inv, data) -> new SmartGlassesContainer(id, player -> true, null, data, inv)
     ));
 
     public static void register() {

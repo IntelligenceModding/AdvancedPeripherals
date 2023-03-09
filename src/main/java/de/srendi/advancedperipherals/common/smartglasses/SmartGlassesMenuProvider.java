@@ -10,6 +10,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -19,17 +20,19 @@ public class SmartGlassesMenuProvider implements MenuProvider {
     private final Component name;
     private final SmartGlassesItem item;
     private final InteractionHand hand;
-    private final boolean isTypingOnly;
 
-    public SmartGlassesMenuProvider(ServerComputer computer, ItemStack stack, SmartGlassesItem item, InteractionHand hand, boolean isTypingOnly) {
+    private final IItemHandler glassesContainer;
+
+    public SmartGlassesMenuProvider(ServerComputer computer, ItemStack stack, SmartGlassesItem item, InteractionHand hand, IItemHandler glassesContainer) {
         this.computer = computer;
         name = stack.getHoverName();
         this.item = item;
         this.hand = hand;
-        this.isTypingOnly = isTypingOnly;
+        this.glassesContainer = glassesContainer;
     }
 
 
+    @NotNull
     @Override
     public Component getDisplayName() {
         return name;
@@ -42,7 +45,7 @@ public class SmartGlassesMenuProvider implements MenuProvider {
                 p -> {
                 return true;
             },
-                computer
+                computer, inventory, glassesContainer, null
         );
     }
 }

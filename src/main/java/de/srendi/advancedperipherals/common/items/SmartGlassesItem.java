@@ -14,8 +14,11 @@ import dan200.computercraft.shared.util.IDAssigner;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesAPI;
 import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesComputer;
+import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesItemHandler;
 import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesMenuProvider;
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
@@ -32,6 +35,11 @@ import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
+import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -49,6 +57,20 @@ public class SmartGlassesItem extends ArmorItem implements IComputerItem, IMedia
 
     public SmartGlassesItem(ArmorMaterial material) {
         super(material, EquipmentSlot.HEAD, new Properties().stacksTo(1));
+    }
+
+    @Nullable
+    @Override
+    public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundTag nbt) {
+        return new ICapabilityProvider() {
+            @NotNull
+            @Override
+            public <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
+                if(cap == ForgeCapabilities.ITEM_HANDLER)
+                    return LazyOptional.of(() -> new SmartGlassesItemHandler(stack)).cast();
+                return LazyOptional.empty();
+            }
+        };
     }
 
     private boolean tick(ItemStack stack, Level world, Entity entity, SmartGlassesComputer computer) {
@@ -110,7 +132,8 @@ public class SmartGlassesItem extends ArmorItem implements IComputerItem, IMedia
             var stop = false;
             if (!stop) {
                 var isTypingOnly = hand == InteractionHand.OFF_HAND;
-                new ComputerContainerData(computer, stack).open(player, new SmartGlassesMenuProvider(computer, stack, this, hand, isTypingOnly));
+                LazyOptional<IItemHandler> itemHandler = stack.getCapability(ForgeCapabilities.ITEM_HANDLER);
+                new ComputerContainerData(computer, stack).open(player, new SmartGlassesMenuProvider(computer, stack, this, hand, itemHandler.resolve().get()));
             }
         }
         return new InteractionResultHolder<>(InteractionResult.sidedSuccess(world.isClientSide), stack);

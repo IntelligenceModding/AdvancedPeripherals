@@ -35,7 +35,7 @@ public class SmartGlassesComputer extends ServerComputer implements IPocketAcces
     private final Set<ServerPlayer> tracking = new HashSet<>();
 
     public SmartGlassesComputer(ServerLevel world, BlockPos position, int computerID, @Nullable String label, ComputerFamily family) {
-        super(world, position, computerID, label, family, 48, 48);
+        super(world, position, computerID, label, family, 39, 13);
     }
 
     @Nullable
