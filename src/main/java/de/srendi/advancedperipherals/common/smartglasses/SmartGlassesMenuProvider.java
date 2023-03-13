@@ -2,9 +2,7 @@ package de.srendi.advancedperipherals.common.smartglasses;
 
 import dan200.computercraft.shared.computer.core.ServerComputer;
 import de.srendi.advancedperipherals.common.container.SmartGlassesContainer;
-import de.srendi.advancedperipherals.common.items.SmartGlassesItem;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -18,19 +16,13 @@ import javax.annotation.Nullable;
 public class SmartGlassesMenuProvider implements MenuProvider {
     private final ServerComputer computer;
     private final Component name;
-    private final SmartGlassesItem item;
-    private final InteractionHand hand;
-
     private final IItemHandler glassesContainer;
 
-    public SmartGlassesMenuProvider(ServerComputer computer, ItemStack stack, SmartGlassesItem item, InteractionHand hand, IItemHandler glassesContainer) {
+    public SmartGlassesMenuProvider(ServerComputer computer, ItemStack stack, IItemHandler glassesContainer) {
         this.computer = computer;
         name = stack.getHoverName();
-        this.item = item;
-        this.hand = hand;
         this.glassesContainer = glassesContainer;
     }
-
 
     @NotNull
     @Override

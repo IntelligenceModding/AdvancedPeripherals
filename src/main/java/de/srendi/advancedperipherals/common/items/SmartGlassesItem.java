@@ -6,6 +6,7 @@ import dan200.computercraft.api.ComputerCraftAPI;
 import dan200.computercraft.api.filesystem.Mount;
 import dan200.computercraft.api.media.IMedia;
 import dan200.computercraft.shared.computer.core.ComputerFamily;
+import dan200.computercraft.shared.computer.core.ServerComputerRegistry;
 import dan200.computercraft.shared.computer.core.ServerContext;
 import dan200.computercraft.shared.computer.items.IComputerItem;
 import dan200.computercraft.shared.config.Config;
@@ -24,7 +25,6 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.Container;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -66,7 +66,7 @@ public class SmartGlassesItem extends ArmorItem implements IComputerItem, IMedia
             @NotNull
             @Override
             public <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
-                if(cap == ForgeCapabilities.ITEM_HANDLER)
+                if (cap == ForgeCapabilities.ITEM_HANDLER)
                     return LazyOptional.of(() -> new SmartGlassesItemHandler(stack)).cast();
                 return LazyOptional.empty();
             }
@@ -76,23 +76,23 @@ public class SmartGlassesItem extends ArmorItem implements IComputerItem, IMedia
     private boolean tick(ItemStack stack, Level world, Entity entity, SmartGlassesComputer computer) {
         computer.setLevel((ServerLevel) world);
 
-        var changed = false;
+        boolean changed = false;
 
         // Sync ID
-        var id = computer.getID();
+        int id = computer.getID();
         if (id != getComputerID(stack)) {
             changed = true;
             setComputerID(stack, id);
         }
 
         // Sync label
-        var label = computer.getLabel();
+        String label = computer.getLabel();
         if (!Objects.equal(label, getLabel(stack))) {
             changed = true;
             setLabel(stack, label);
         }
 
-        var on = computer.isOn();
+        boolean on = computer.isOn();
         if (on != isMarkedOn(stack)) {
             changed = true;
             stack.getOrCreateTag().putBoolean(NBT_ON, on);
@@ -105,7 +105,7 @@ public class SmartGlassesItem extends ArmorItem implements IComputerItem, IMedia
     public void inventoryTick(@NotNull ItemStack stack, Level world, @NotNull Entity entity, int slotNum, boolean selected) {
         if (world.isClientSide) return;
         Container inventory = entity instanceof Player player ? player.getInventory() : null;
-        var computer = createServerComputer((ServerLevel) world, entity, inventory, stack);
+        SmartGlassesComputer computer = createServerComputer((ServerLevel) world, entity, inventory, stack);
         computer.keepAlive();
 
         var changed = tick(stack, world, entity, computer);
@@ -116,7 +116,7 @@ public class SmartGlassesItem extends ArmorItem implements IComputerItem, IMedia
     public boolean onEntityItemUpdate(ItemStack stack, ItemEntity entity) {
         if (entity.level.isClientSide || entity.level.getServer() == null) return false;
 
-        var computer = getServerComputer(entity.level.getServer(), stack);
+        SmartGlassesComputer computer = getServerComputer(entity.level.getServer(), stack);
         if (computer != null && tick(stack, entity.level, entity, computer)) entity.setItem(stack.copy());
         return false;
     }
@@ -124,23 +124,24 @@ public class SmartGlassesItem extends ArmorItem implements IComputerItem, IMedia
     @NotNull
     @Override
     public InteractionResultHolder<ItemStack> use(Level world, Player player, @NotNull InteractionHand hand) {
-        var stack = player.getItemInHand(hand);
+        ItemStack glasses = player.getItemInHand(hand);
+
         if (!world.isClientSide) {
-            var computer = createServerComputer((ServerLevel) world, player, player.getInventory(), stack);
+            SmartGlassesComputer computer = createServerComputer((ServerLevel) world, player, player.getInventory(), glasses);
             computer.turnOn();
 
-            var stop = false;
-            if (!stop) {
-                var isTypingOnly = hand == InteractionHand.OFF_HAND;
-                LazyOptional<IItemHandler> itemHandler = stack.getCapability(ForgeCapabilities.ITEM_HANDLER);
-                new ComputerContainerData(computer, stack).open(player, new SmartGlassesMenuProvider(computer, stack, this, hand, itemHandler.resolve().get()));
+            LazyOptional<IItemHandler> itemHandler = glasses.getCapability(ForgeCapabilities.ITEM_HANDLER);
+            if (itemHandler.resolve().isEmpty()) {
+                AdvancedPeripherals.debug("There was an issue with the item handler of the glasses while trying to open the gui");
+                return InteractionResultHolder.sidedSuccess(player.getItemInHand(hand), world.isClientSide);
             }
+            new ComputerContainerData(computer, glasses).open(player, new SmartGlassesMenuProvider(computer, glasses, itemHandler.resolve().get()));
         }
-        return new InteractionResultHolder<>(InteractionResult.sidedSuccess(world.isClientSide), stack);
+        return super.use(world, player, hand);
     }
 
     public ItemStack create(int id, @Nullable String label) {
-        var result = new ItemStack(this);
+        ItemStack result = new ItemStack(this);
         if (id >= 0) result.getOrCreateTag().putInt(NBT_ID, id);
         if (label != null) result.setHoverName(Component.literal(label));
         return result;
@@ -157,12 +158,11 @@ public class SmartGlassesItem extends ArmorItem implements IComputerItem, IMedia
     }
 
     @Override
-    public void appendHoverText(@NotNull ItemStack stack, @javax.annotation.Nullable Level world, @NotNull List<Component> list, TooltipFlag flag) {
+    public void appendHoverText(@NotNull ItemStack stack, @Nullable Level world, @NotNull List<Component> list, TooltipFlag flag) {
         if (flag.isAdvanced() || getLabel(stack) == null) {
-            var id = getComputerID(stack);
+            int id = getComputerID(stack);
             if (id >= 0) {
-                list.add(Component.translatable("gui.computercraft.tooltip.computer_id", id)
-                        .withStyle(ChatFormatting.GRAY));
+                list.add(Component.translatable("gui.computercraft.tooltip.computer_id", id).withStyle(ChatFormatting.GRAY));
             }
         }
     }
@@ -171,13 +171,13 @@ public class SmartGlassesItem extends ArmorItem implements IComputerItem, IMedia
         return AdvancedPeripherals.MOD_ID;
     }
 
-    public SmartGlassesComputer createServerComputer(ServerLevel level, Entity entity, @javax.annotation.Nullable Container inventory, ItemStack stack) {
-        var sessionID = getSessionID(stack);
+    public SmartGlassesComputer createServerComputer(ServerLevel level, Entity entity, @Nullable Container inventory, ItemStack stack) {
+        int sessionID = getSessionID(stack);
 
-        var registry = ServerContext.get(level.getServer()).registry();
-        var computer = (SmartGlassesComputer) registry.get(sessionID, getInstanceID(stack));
+        ServerComputerRegistry registry = ServerContext.get(level.getServer()).registry();
+        SmartGlassesComputer computer = (SmartGlassesComputer) registry.get(sessionID, getInstanceID(stack));
         if (computer == null) {
-            var computerID = getComputerID(stack);
+            int computerID = getComputerID(stack);
             if (computerID < 0) {
                 computerID = ComputerCraftAPI.createUniqueNumberedSaveDir(level.getServer(), IDAssigner.COMPUTER);
                 setComputerID(stack, computerID);
@@ -205,12 +205,13 @@ public class SmartGlassesItem extends ArmorItem implements IComputerItem, IMedia
     }
 
     // IComputerItem implementation
-    private static void setComputerID(ItemStack stack, int computerID) {
+    protected static void setComputerID(ItemStack stack, int computerID) {
         stack.getOrCreateTag().putInt(NBT_ID, computerID);
     }
 
+    @Nullable
     @Override
-    public @javax.annotation.Nullable String getLabel(ItemStack stack) {
+    public String getLabel(ItemStack stack) {
         return IComputerItem.super.getLabel(stack);
     }
 
@@ -227,7 +228,7 @@ public class SmartGlassesItem extends ArmorItem implements IComputerItem, IMedia
     @Nullable
     @Override
     public Mount createDataMount(ItemStack stack, ServerLevel level) {
-        var id = getComputerID(stack);
+        int id = getComputerID(stack);
         if (id >= 0) {
             return ComputerCraftAPI.createSaveDirMount(level.getServer(), "computer/" + id, Config.computerSpaceLimit);
         }
@@ -235,25 +236,25 @@ public class SmartGlassesItem extends ArmorItem implements IComputerItem, IMedia
     }
 
     public static int getInstanceID(ItemStack stack) {
-        var nbt = stack.getTag();
+        CompoundTag nbt = stack.getTag();
         return nbt != null && nbt.contains(NBT_INSTANCE) ? nbt.getInt(NBT_INSTANCE) : -1;
     }
 
-    private static void setInstanceID(ItemStack stack, int instanceID) {
+    protected static void setInstanceID(ItemStack stack, int instanceID) {
         stack.getOrCreateTag().putInt(NBT_INSTANCE, instanceID);
     }
 
-    private static int getSessionID(ItemStack stack) {
-        var nbt = stack.getTag();
+    protected static int getSessionID(ItemStack stack) {
+        CompoundTag nbt = stack.getTag();
         return nbt != null && nbt.contains(NBT_SESSION) ? nbt.getInt(NBT_SESSION) : -1;
     }
 
-    private static void setSessionID(ItemStack stack, int sessionID) {
+    protected static void setSessionID(ItemStack stack, int sessionID) {
         stack.getOrCreateTag().putInt(NBT_SESSION, sessionID);
     }
 
-    private static boolean isMarkedOn(ItemStack stack) {
-        var nbt = stack.getTag();
+    protected static boolean isMarkedOn(ItemStack stack) {
+        CompoundTag nbt = stack.getTag();
         return nbt != null && nbt.getBoolean(NBT_ON);
     }
 

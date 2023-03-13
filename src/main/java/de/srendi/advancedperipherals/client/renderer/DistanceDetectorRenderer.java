@@ -34,7 +34,7 @@ public class DistanceDetectorRenderer implements BlockEntityRenderer<DistanceDet
         renderBeaconBeam(pBlockEntity, pPoseStack, pBufferSource, BeaconRenderer.BEAM_LOCATION, pPartialTick, 1, i, 2, 1, EnumColor.DARK_RED.getRgb(), 0.05f, 0.09f);
     }
 
-    public boolean shouldRenderOffScreen(DistanceDetectorEntity pBlockEntity) {
+    public boolean shouldRenderOffScreen(@NotNull DistanceDetectorEntity pBlockEntity) {
         return true;
     }
 

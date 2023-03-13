@@ -6,12 +6,7 @@ import de.srendi.advancedperipherals.common.setup.APBlocks;
 import de.srendi.advancedperipherals.common.setup.APItems;
 import de.srendi.advancedperipherals.common.util.RawValue;
 import net.minecraft.data.PackOutput;
-import net.minecraft.data.recipes.FinishedRecipe;
-import net.minecraft.data.recipes.RecipeCategory;
-import net.minecraft.data.recipes.RecipeProvider;
-import net.minecraft.data.recipes.ShapedRecipeBuilder;
-import net.minecraft.data.recipes.ShapelessRecipeBuilder;
-import net.minecraft.data.recipes.UpgradeRecipeBuilder;
+import net.minecraft.data.recipes.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.ItemStack;
@@ -79,8 +74,10 @@ public class RecipesProvider extends RecipeProvider implements IConditionBuilder
                 .define('E', Tags.Items.ENDER_PEARLS)
                 .define('S', Tags.Items.RODS_WOODEN)
                 .define('G', Tags.Items.GLASS_BLACK)
-                .pattern("GSG")
-                .pattern(" E ")
+                .define('C', ModRegistry.Items.COMPUTER_ADVANCED.get())
+                .define('M', ModRegistry.Items.WIRELESS_MODEM_ADVANCED.get())
+                .pattern("GEG")
+                .pattern("M C")
                 .unlockedBy("has_item", has(Items.STICK))
                 .save(consumer);
 

@@ -1,10 +1,7 @@
 package de.srendi.advancedperipherals.common.setup;
 
 import de.srendi.advancedperipherals.common.configuration.APConfig;
-import de.srendi.advancedperipherals.common.items.APItem;
-import de.srendi.advancedperipherals.common.items.MemoryCardItem;
-import de.srendi.advancedperipherals.common.items.SmartGlassesItem;
-import de.srendi.advancedperipherals.common.items.WeakAutomataCore;
+import de.srendi.advancedperipherals.common.items.*;
 import de.srendi.advancedperipherals.common.items.base.SmartGlassesMaterials;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.registries.RegistryObject;
@@ -16,6 +13,8 @@ public class APItems {
     public static final RegistryObject<SmartGlassesItem> SMART_GLASSES = APRegistration.ITEMS.register("smart_glasses", () -> new SmartGlassesItem(SmartGlassesMaterials.CHAIN));
 
     public static final RegistryObject<SmartGlassesItem> SMART_GLASSES_NETHERITE = APRegistration.ITEMS.register("smart_glasses_netherite", () -> new SmartGlassesItem(SmartGlassesMaterials.NETHERITE));
+
+    public static final RegistryObject<SmartGlassesInterfaceItem> SMART_GLASSES_INTERFACE = APRegistration.ITEMS.register("smart_glasses_interface", SmartGlassesInterfaceItem::new);
 
     public static final RegistryObject<Item> COMPUTER_TOOL = APRegistration.ITEMS.register("computer_tool", () -> new APItem(new Item.Properties().stacksTo(1), () -> true));
 

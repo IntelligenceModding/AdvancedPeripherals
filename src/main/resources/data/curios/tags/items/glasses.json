@@ -1,5 +1,6 @@
 {
   "values": [
-    "advancedperipherals:ar_goggles"
+    "advancedperipherals:smart_glasses",
+    "advancedperipherals:smart_glasses_netherite"
   ]
 }

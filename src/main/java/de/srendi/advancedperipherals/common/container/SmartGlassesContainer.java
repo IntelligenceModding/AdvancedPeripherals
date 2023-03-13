@@ -45,8 +45,8 @@ public class SmartGlassesContainer extends AbstractComputerMenu {
         }
     }
 
-    public SmartGlassesContainer(int id, Predicate<Player> predicate, ServerComputer computer, ComputerContainerData data, Inventory player) {
-        this( id, predicate, computer, player, player.getSelected().getCapability(ForgeCapabilities.ITEM_HANDLER).resolve().get(), data);
+    public SmartGlassesContainer(int id, Predicate<Player> predicate, ServerComputer computer, ComputerContainerData data, Inventory player, ItemStack glasses) {
+        this( id, predicate, computer, player, glasses.getCapability(ForgeCapabilities.ITEM_HANDLER).resolve().get(), data);
 
         //getTerminal().resize(48, 48);
     }
