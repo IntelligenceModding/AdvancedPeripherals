@@ -12,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * Used to transfer item between an inventory and the ME system.
+ *
  * @see de.srendi.advancedperipherals.common.addons.computercraft.peripheral.MeBridgePeripheral
  */
 public class MeItemHandler implements IStorageSystemItemHandler {
@@ -40,9 +41,9 @@ public class MeItemHandler implements IStorageSystemItemHandler {
     @Override
     public ItemStack extractItem(ItemFilter filter, boolean simulate) {
         Pair<Long, AEItemKey> itemKey = AppEngApi.findAEStackFromFilter(storageMonitor, null, filter);
-        if(itemKey == null)
+        if (itemKey.getRight() == null)
             return ItemStack.EMPTY;
-        long extracted = storageMonitor.extract(itemKey.getRight(), Math.max(64, filter.getCount()), simulate ? Actionable.SIMULATE : Actionable.MODULATE, actionSource);
+        long extracted = storageMonitor.extract(itemKey.getRight(), filter.getCount(), simulate ? Actionable.SIMULATE : Actionable.MODULATE, actionSource);
         // Safe to cast here, the amount will never be higher than 64
         return new ItemStack(itemKey.getRight().getItem(), (int) extracted);
     }
