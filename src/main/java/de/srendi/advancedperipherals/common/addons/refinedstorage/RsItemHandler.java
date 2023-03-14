@@ -9,7 +9,7 @@ import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Used to transfer item between an inventory and the ME system.
+ * Used to transfer item between an inventory and the RS system.
  * @see de.srendi.advancedperipherals.common.addons.computercraft.peripheral.RsBridgePeripheral
  */
 public class RsItemHandler implements IStorageSystemItemHandler {
