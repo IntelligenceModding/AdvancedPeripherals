@@ -1,4 +1,4 @@
-package de.srendi.advancedperipherals.common.container;
+package de.srendi.advancedperipherals.client.screens;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -7,11 +7,12 @@ import dan200.computercraft.client.gui.widgets.ComputerSidebar;
 import dan200.computercraft.client.gui.widgets.TerminalWidget;
 import dan200.computercraft.shared.computer.inventory.AbstractComputerMenu;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
+import de.srendi.advancedperipherals.common.container.SmartGlassesContainer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 
-import static dan200.computercraft.shared.turtle.inventory.TurtleMenu.*;
+import static dan200.computercraft.shared.turtle.inventory.TurtleMenu.BORDER;
 
 public class SmartGlassesScreen extends AbstractComputerScreen<SmartGlassesContainer> {
 

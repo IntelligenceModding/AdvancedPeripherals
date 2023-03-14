@@ -12,6 +12,7 @@ import java.util.Queue;
 public class ServerWorker {
 
     private static final Queue<Runnable> callQueue = new ArrayDeque<>();
+    private static int tasksRan = 0;
 
     public static void add(final Runnable call) {
         callQueue.add(call);
@@ -22,6 +23,8 @@ public class ServerWorker {
         if (event.phase == TickEvent.Phase.END) {
             while (!callQueue.isEmpty()) {
                 final Runnable runnable = callQueue.poll();
+                tasksRan++;
+                AdvancedPeripherals.debug("Running task #" + tasksRan + ". Running " + runnable.getClass());
                 runnable.run();
             }
         }

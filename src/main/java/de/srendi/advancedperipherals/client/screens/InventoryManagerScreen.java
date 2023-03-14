@@ -1,7 +1,8 @@
-package de.srendi.advancedperipherals.common.container;
+package de.srendi.advancedperipherals.client.screens;
 
 import de.srendi.advancedperipherals.AdvancedPeripherals;
-import de.srendi.advancedperipherals.common.container.base.BaseScreen;
+import de.srendi.advancedperipherals.client.screens.base.BaseScreen;
+import de.srendi.advancedperipherals.common.container.InventoryManagerContainer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
