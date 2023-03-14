@@ -32,7 +32,7 @@ public class RsItemHandler implements IStorageSystemItemHandler {
         ItemStack item = RefinedStorage.findStackFromFilter(network, network.getCraftingManager(), filter);
         if(item == null)
             return ItemStack.EMPTY;
-        return network.extractItem(item, Math.max(64, filter.getCount()), filter.getNbt() != null ? IComparer.COMPARE_NBT : IComparer.COMPARE_QUANTITY, simulate ? Action.SIMULATE : Action.PERFORM);
+        return network.extractItem(item, filter.getCount(), filter.getNbt() != null ? IComparer.COMPARE_NBT : IComparer.COMPARE_QUANTITY, simulate ? Action.SIMULATE : Action.PERFORM);
     }
 
 }
