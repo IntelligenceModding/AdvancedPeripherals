@@ -7,10 +7,6 @@ import net.minecraft.nbt.*;
 import net.minecraft.world.level.ChunkPos;
 import org.apache.logging.log4j.Level;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Base64;
 import java.util.Map;
 
 public class NBTUtil {
