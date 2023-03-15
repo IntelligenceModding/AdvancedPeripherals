@@ -7,10 +7,13 @@ import dan200.computercraft.client.gui.widgets.ComputerSidebar;
 import dan200.computercraft.client.gui.widgets.TerminalWidget;
 import dan200.computercraft.shared.computer.inventory.AbstractComputerMenu;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
+import de.srendi.advancedperipherals.client.widgets.SmartGlassesSettingsSwitch;
 import de.srendi.advancedperipherals.common.container.SmartGlassesContainer;
+import de.srendi.advancedperipherals.common.smartglasses.SlotType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
+import org.jetbrains.annotations.NotNull;
 
 import static dan200.computercraft.shared.turtle.inventory.TurtleMenu.BORDER;
 
@@ -27,6 +30,14 @@ public class SmartGlassesScreen extends AbstractComputerScreen<SmartGlassesConta
 
         imageWidth = TEX_WIDTH + AbstractComputerMenu.SIDEBAR_WIDTH;
         imageHeight = TEX_HEIGHT;
+
+    }
+
+    @Override
+    protected void init() {
+        super.init();
+        addRenderableWidget(new SmartGlassesSettingsSwitch(0, 0, SlotType.PERIPHERALS, this));
+        addRenderableWidget(new SmartGlassesSettingsSwitch(0, 0, SlotType.MODULES, this));
     }
 
     @Override
@@ -35,7 +46,7 @@ public class SmartGlassesScreen extends AbstractComputerScreen<SmartGlassesConta
     }
 
     @Override
-    protected void renderBg(PoseStack transform, float partialTicks, int mouseX, int mouseY) {
+    protected void renderBg(@NotNull PoseStack transform, float partialTicks, int mouseX, int mouseY) {
         RenderSystem.setShaderTexture(0, BACKGROUND);
         blit(transform, leftPos + AbstractComputerMenu.SIDEBAR_WIDTH, topPos, 0, 0, TEX_WIDTH, TEX_HEIGHT);
 
