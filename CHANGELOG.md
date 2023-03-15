@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
-## [1.19.3-0.7.25r] - 2023-03-15
+## [1.19.3-0.7.26r] - 2023-03-15
 
 ### Added
 - [#416]Add the crafting job to the crafting cpu object - me bridge
