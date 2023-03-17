@@ -1,4 +1,4 @@
-// 1.19.3	2022-12-20T12:49:29.6915309	Recipes
+// 1.19.3	2023-03-17T14:14:31.5938615	Recipes
 045608027e4a5ea2d7dee7f402346b8e69f21675 data/advancedperipherals/advancements/recipes/redstone/armor/smart_glasses_netherite.json
 f472724394edd655a415d4af08c9a63509cc5098 data/advancedperipherals/advancements/recipes/redstone/ar_controller.json
 db2dada2fdf42ca1bbf47f1eb075d1f9de89dfa8 data/advancedperipherals/advancements/recipes/redstone/block_reader.json
@@ -38,5 +38,5 @@ afb8673c5643adbbf69a469776ac4cd908ab17e8 data/advancedperipherals/recipes/overpo
 346dd97a088087077c157c29cb1ac7b25b0a0cef data/advancedperipherals/recipes/peripheral_casing.json
 cba141d36a134a03ae91869abb91c9695bd92898 data/advancedperipherals/recipes/player_detector.json
 d5a72afad727dd9814f4c8ef6b177a0db0bc9989 data/advancedperipherals/recipes/redstone_integrator.json
-a56e462fe4cee2298e4a71e1072b1d66c649604d data/advancedperipherals/recipes/smart_glasses.json
+00937671ea7c33badf81e3f7a83350b41f5dc0f1 data/advancedperipherals/recipes/smart_glasses.json
 a5cd6136f9d7f6271820656343f41a6ebb9cb9f0 data/advancedperipherals/recipes/weak_automata_core.json

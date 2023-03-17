@@ -98,6 +98,7 @@ public class SmartGlassesItem extends ArmorItem implements IComputerItem, IMedia
             stack.getOrCreateTag().putBoolean(NBT_ON, on);
         }
 
+
         return changed;
     }
 
@@ -110,6 +111,12 @@ public class SmartGlassesItem extends ArmorItem implements IComputerItem, IMedia
 
         var changed = tick(stack, world, entity, computer);
         if (changed && inventory != null) inventory.setChanged();
+
+        LazyOptional<IItemHandler> itemHandler = stack.getCapability(ForgeCapabilities.ITEM_HANDLER);
+        if (itemHandler.isPresent() && itemHandler.resolve().isPresent()) {
+            IItemHandler glassesItemHandler = itemHandler.resolve().get();
+            computer.updatePeripherals(stack, glassesItemHandler);
+        }
     }
 
     @ForgeOverride
@@ -216,7 +223,7 @@ public class SmartGlassesItem extends ArmorItem implements IComputerItem, IMedia
     }
 
     @Override
-    public boolean setLabel(ItemStack stack, @javax.annotation.Nullable String label) {
+    public boolean setLabel(ItemStack stack, @Nullable String label) {
         if (label != null) {
             stack.setHoverName(Component.literal(label));
         } else {

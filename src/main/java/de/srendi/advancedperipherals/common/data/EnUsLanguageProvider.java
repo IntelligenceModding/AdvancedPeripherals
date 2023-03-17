@@ -36,6 +36,7 @@ public class EnUsLanguageProvider extends LanguageProvider {
         addText();
         add(APVillagers.COMPUTER_SCIENTIST, "Computer Scientist");
         add("advancedperipherals.name", "Advanced Peripherals");
+        add("curios.identifier.glasses", "Glasses");
     }
 
     private void addItems() {
@@ -48,6 +49,9 @@ public class EnUsLanguageProvider extends LanguageProvider {
         addItem(APItems.OVERPOWERED_HUSBANDRY_AUTOMATA_CORE, "Overpowered Husbandry Automata Core");
         addItem(APItems.OVERPOWERED_END_AUTOMATA_CORE, "Overpowered End Automata Core");
         addItem(APItems.MEMORY_CARD, "Memory Card");
+        addItem(APItems.SMART_GLASSES, "Smart Glasses");
+        addItem(APItems.SMART_GLASSES_NETHERITE, "Netherite reinforced Smart Glasses");
+        addItem(APItems.SMART_GLASSES_INTERFACE, "Smart Glasses Interface");
     }
 
     private void addBlocks() {
@@ -80,7 +84,6 @@ public class EnUsLanguageProvider extends LanguageProvider {
         addTurtle(CCRegistration.ID.OP_WEAK_AUTOMATA, "Overpowered weak automata");
         addTurtle(CCRegistration.ID.OP_HUSBANDRY_AUTOMATA, "Overpowered husbandry automata");
         addTurtle(CCRegistration.ID.OP_END_AUTOMATA, "Overpowered end automata");
-
     }
 
     private void addPockets() {
@@ -134,6 +137,8 @@ public class EnUsLanguageProvider extends LanguageProvider {
         add("text." + AdvancedPeripherals.MOD_ID + ".removed_player", "Cleared the memory card");
         add("text." + AdvancedPeripherals.MOD_ID + ".added_player", "Added you to the memory card");
         add("text." + AdvancedPeripherals.MOD_ID + ".automata_core_feed_by_player", "You trying to feed entity to soul, but your own body refuses to do this. Maybe something more mechanical can do this?");
+        add("text." + AdvancedPeripherals.MOD_ID + ".smart_glasses.peripherals", "Peripherals");
+        add("text." + AdvancedPeripherals.MOD_ID + ".smart_glasses.modules", "Modules");
     }
 
     private void addKeybinds() {

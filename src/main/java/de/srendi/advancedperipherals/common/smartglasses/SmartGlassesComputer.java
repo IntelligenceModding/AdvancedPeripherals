@@ -3,10 +3,10 @@ package de.srendi.advancedperipherals.common.smartglasses;
 import dan200.computercraft.api.peripheral.IPeripheral;
 import dan200.computercraft.api.pocket.IPocketAccess;
 import dan200.computercraft.api.pocket.IPocketUpgrade;
+import dan200.computercraft.impl.PocketUpgrades;
 import dan200.computercraft.shared.common.IColouredItem;
 import dan200.computercraft.shared.computer.core.ComputerFamily;
 import dan200.computercraft.shared.computer.core.ServerComputer;
-import dan200.computercraft.shared.pocket.items.PocketComputerItem;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
@@ -17,6 +17,8 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.items.IItemHandler;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -28,6 +30,7 @@ public class SmartGlassesComputer extends ServerComputer implements IPocketAcces
 
     private @Nullable Entity entity;
     private ItemStack stack = ItemStack.EMPTY;
+    private final SmartGlassesAccess smartGlassesAccess = new SmartGlassesAccess(this);
 
     private int lightColour = -1;
     private boolean lightChanged = false;
@@ -83,7 +86,7 @@ public class SmartGlassesComputer extends ServerComputer implements IPocketAcces
 
     @Override
     public CompoundTag getUpgradeNBTData() {
-        return PocketComputerItem.getUpgradeInfo(stack);
+        return new CompoundTag();
     }
 
     @Override
@@ -100,6 +103,19 @@ public class SmartGlassesComputer extends ServerComputer implements IPocketAcces
         return Collections.emptyMap();
     }
 
+    public void updatePeripherals(@NotNull ItemStack glasses, IItemHandler itemHandler) {
+        for (int slot = 0; slot < 6; slot++) {
+            ItemStack peripheralItem = itemHandler.getStackInSlot(slot);
+            if (!peripheralItem.isEmpty()) {
+                IPocketUpgrade upgrade = PocketUpgrades.instance().get(peripheralItem);
+                if (upgrade != null) {
+                    IPeripheral peripheral = upgrade.createPeripheral(smartGlassesAccess);
+                    if (peripheral != null)
+                        setPeripheral(SmartGlassesSlot.indexToSide(slot), peripheral);
+                }
+            }
+        }
+    }
 
     public synchronized void updateValues(@Nullable Entity entity, ItemStack stack, @Nullable IPocketUpgrade upgrade) {
         if (entity != null) {
@@ -136,7 +152,6 @@ public class SmartGlassesComputer extends ServerComputer implements IPocketAcces
             for (var player : getLevel().players()) {
                 if (tracking.add(player)) added.add(player);
             }
-
         }
     }
 

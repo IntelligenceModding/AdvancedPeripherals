@@ -12,6 +12,7 @@ import de.srendi.advancedperipherals.common.container.SmartGlassesContainer;
 import de.srendi.advancedperipherals.common.smartglasses.SlotType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.entity.player.Inventory;
 import org.jetbrains.annotations.NotNull;
 
@@ -24,20 +25,20 @@ public class SmartGlassesScreen extends AbstractComputerScreen<SmartGlassesConta
 
     private static final int TEX_WIDTH = 254;
     private static final int TEX_HEIGHT = 217;
+    public SlotType currentType = SlotType.defaultType();
 
     public SmartGlassesScreen(SmartGlassesContainer container, Inventory player, Component title) {
         super(container, player, title, BORDER);
 
         imageWidth = TEX_WIDTH + AbstractComputerMenu.SIDEBAR_WIDTH;
         imageHeight = TEX_HEIGHT;
-
     }
 
     @Override
     protected void init() {
         super.init();
-        addRenderableWidget(new SmartGlassesSettingsSwitch(0, 0, SlotType.PERIPHERALS, this));
-        addRenderableWidget(new SmartGlassesSettingsSwitch(0, 0, SlotType.MODULES, this));
+        addRenderableWidget(new SmartGlassesSettingsSwitch(254, 147, SlotType.PERIPHERALS, this));
+        addRenderableWidget(new SmartGlassesSettingsSwitch(254, 170, SlotType.MODULES, this));
     }
 
     @Override
@@ -52,5 +53,25 @@ public class SmartGlassesScreen extends AbstractComputerScreen<SmartGlassesConta
 
         RenderSystem.setShaderTexture(0, SIDEBAR);
         ComputerSidebar.renderBackground(transform, leftPos, topPos + sidebarYOffset);
+    }
+
+    @Override
+    protected void renderTooltip(@NotNull PoseStack poseStack, int x, int y) {
+        super.renderTooltip(poseStack, x, y);
+        renderables.forEach(renderable -> {
+            if (renderable instanceof SmartGlassesSettingsSwitch smartGlassesSettingsSwitch) {
+                smartGlassesSettingsSwitch.renderTooltip(poseStack, x, y);
+            }
+        });
+    }
+
+    @Override
+    protected void renderLabels(PoseStack poseStack, int x, int y) {
+        FormattedCharSequence formattedcharsequence = currentType.getName().getVisualOrderText();
+        this.font.draw(poseStack, formattedcharsequence, (float)(212 + AbstractComputerMenu.SIDEBAR_WIDTH - this.font.width(formattedcharsequence) / 2), (float)133, 4210752);
+    }
+
+    public void setCurrentType(SlotType currentType) {
+        this.currentType = currentType;
     }
 }

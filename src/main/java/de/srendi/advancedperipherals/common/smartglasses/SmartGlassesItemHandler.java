@@ -14,7 +14,7 @@ import javax.annotation.Nonnull;
 
 public class SmartGlassesItemHandler implements IItemHandlerModifiable, INBTSerializable<CompoundTag> {
 
-    private static final int SLOTS = 16;
+    private static final int SLOTS = 12;
 
     private final NonNullList<ItemStack> items = NonNullList.withSize(SLOTS, ItemStack.EMPTY);
     private final ItemStack stack;

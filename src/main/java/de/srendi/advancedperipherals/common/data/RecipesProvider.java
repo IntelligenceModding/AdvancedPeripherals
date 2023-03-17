@@ -76,6 +76,7 @@ public class RecipesProvider extends RecipeProvider implements IConditionBuilder
                 .define('G', Tags.Items.GLASS_BLACK)
                 .define('C', ModRegistry.Items.COMPUTER_ADVANCED.get())
                 .define('M', ModRegistry.Items.WIRELESS_MODEM_ADVANCED.get())
+                .pattern("S S")
                 .pattern("GEG")
                 .pattern("M C")
                 .unlockedBy("has_item", has(Items.STICK))
