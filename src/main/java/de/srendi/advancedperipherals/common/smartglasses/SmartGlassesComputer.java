@@ -4,7 +4,6 @@ import dan200.computercraft.api.peripheral.IPeripheral;
 import dan200.computercraft.api.pocket.IPocketAccess;
 import dan200.computercraft.api.pocket.IPocketUpgrade;
 import dan200.computercraft.impl.PocketUpgrades;
-import dan200.computercraft.shared.common.IColouredItem;
 import dan200.computercraft.shared.computer.core.ComputerFamily;
 import dan200.computercraft.shared.computer.core.ServerComputer;
 import net.minecraft.core.BlockPos;
@@ -61,13 +60,12 @@ public class SmartGlassesComputer extends ServerComputer implements IPocketAcces
 
     @Override
     public int getColour() {
-        return IColouredItem.getColourBasic(stack);
+        return 0;
     }
 
     @Override
     public void setColour(int colour) {
-        IColouredItem.setColourBasic(stack, colour);
-        updateUpgradeNBTData();
+
     }
 
     @Override
