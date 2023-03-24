@@ -56,7 +56,7 @@ public class SmartGlassesContainer extends AbstractComputerMenu {
     }
 
     public SmartGlassesContainer(int id, Predicate<Player> predicate, ServerComputer computer, ComputerContainerData data, Inventory player, ItemStack glasses) {
-        this( id, predicate, computer, player, glasses.getCapability(ForgeCapabilities.ITEM_HANDLER).resolve().get(), data);
+        this( id, predicate, computer, player, glasses.getCapability(ForgeCapabilities.ITEM_HANDLER).resolve().orElseThrow(), data);
     }
 
     @NotNull

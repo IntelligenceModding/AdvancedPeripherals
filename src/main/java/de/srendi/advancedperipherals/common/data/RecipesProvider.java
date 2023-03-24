@@ -60,16 +60,6 @@ public class RecipesProvider extends RecipeProvider implements IConditionBuilder
     }
 
     private void addShaped(@NotNull Consumer<FinishedRecipe> consumer) {
-        ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, APBlocks.AR_CONTROLLER.get())
-                .define('E', Tags.Items.ENDER_PEARLS)
-                .define('C', CASING)
-                .define('G', Items.SMOOTH_STONE)
-                .pattern("GEG")
-                .pattern("ECE")
-                .pattern("GEG")
-                .unlockedBy("has_item", has(CASING))
-                .save(consumer);
-
         ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, APItems.SMART_GLASSES.get())
                 .define('E', Tags.Items.ENDER_PEARLS)
                 .define('S', Tags.Items.RODS_WOODEN)
