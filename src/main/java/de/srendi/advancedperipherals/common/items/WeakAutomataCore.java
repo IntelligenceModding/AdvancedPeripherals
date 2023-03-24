@@ -1,6 +1,7 @@
 package de.srendi.advancedperipherals.common.items;
 
 import de.srendi.advancedperipherals.common.configuration.APConfig;
+import de.srendi.advancedperipherals.common.items.base.BaseItem;
 import de.srendi.advancedperipherals.common.setup.APItems;
 import de.srendi.advancedperipherals.common.util.EnumColor;
 import de.srendi.advancedperipherals.lib.metaphysics.IFeedableAutomataCore;
@@ -26,7 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-public class WeakAutomataCore extends APItem implements IFeedableAutomataCore {
+public class WeakAutomataCore extends BaseItem implements IFeedableAutomataCore {
 
     private static final String CONSUMED_ENTITY_COUNT = "consumed_entity_count";
     private static final String CONSUMED_ENTITY_NAME = "consumed_entity_name";
@@ -49,11 +50,12 @@ public class WeakAutomataCore extends APItem implements IFeedableAutomataCore {
     }
 
     public WeakAutomataCore(Properties properties) {
-        super(properties, APConfig.METAPHYSICS_CONFIG.enableWeakAutomataCore);
+        super(properties);
     }
 
-    public WeakAutomataCore() {
-        super(APConfig.METAPHYSICS_CONFIG.enableWeakAutomataCore);
+    @Override
+    public boolean isEnabled() {
+        return APConfig.METAPHYSICS_CONFIG.enableWeakAutomataCore.get();
     }
 
     @Override

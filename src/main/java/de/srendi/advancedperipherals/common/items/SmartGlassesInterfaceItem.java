@@ -51,7 +51,7 @@ public class SmartGlassesInterfaceItem extends BaseItem {
 
         SmartGlassesItem smartGlasses = (SmartGlassesItem) glasses.getItem();
 
-        SmartGlassesComputer computer = smartGlasses.createServerComputer((ServerLevel) world, player, player.getInventory(), glasses);
+        SmartGlassesComputer computer = smartGlasses.getOrCreateComputer((ServerLevel) world, player, player.getInventory(), glasses);
         computer.turnOn();
 
         LazyOptional<IItemHandler> itemHandler = glasses.getCapability(ForgeCapabilities.ITEM_HANDLER);

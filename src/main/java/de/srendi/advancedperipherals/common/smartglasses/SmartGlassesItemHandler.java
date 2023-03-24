@@ -18,9 +18,11 @@ public class SmartGlassesItemHandler implements IItemHandlerModifiable, INBTSeri
 
     private final NonNullList<ItemStack> items = NonNullList.withSize(SLOTS, ItemStack.EMPTY);
     private final ItemStack stack;
+    private final SmartGlassesComputer computer;
 
-    public SmartGlassesItemHandler(ItemStack stack) {
+    public SmartGlassesItemHandler(ItemStack stack, SmartGlassesComputer computer) {
         this.stack = stack;
+        this.computer = computer;
         deserializeNBT(stack.getOrCreateTagElement("Items"));
     }
 
@@ -122,6 +124,7 @@ public class SmartGlassesItemHandler implements IItemHandlerModifiable, INBTSeri
 
     public void setChanged() {
         stack.getOrCreateTag().put("Items", serializeNBT());
+        computer.updatePeripheralsAndModules(this);
     }
 
     @Override

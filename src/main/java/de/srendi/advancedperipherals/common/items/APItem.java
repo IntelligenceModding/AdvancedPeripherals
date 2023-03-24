@@ -4,7 +4,7 @@ import de.srendi.advancedperipherals.common.items.base.BaseItem;
 
 import java.util.function.Supplier;
 
-public class APItem extends BaseItem {
+public final class APItem extends BaseItem {
 
     private final Supplier<Boolean> enabledSup;
 

@@ -30,8 +30,7 @@ public class SmartGlassesSlot extends SlotItemHandler {
             case 1 -> ComputerSide.LEFT;
             case 2 -> ComputerSide.FRONT;
             case 3 -> ComputerSide.RIGHT;
-            case 4 -> ComputerSide.BOTTOM;
-            default -> ComputerSide.BACK;
+            default -> ComputerSide.BOTTOM;
         };
     }
 

@@ -37,7 +37,6 @@
         </module>
 
         <!-- Class design. As if we've ever followed good practice here. -->
-        <module name="InterfaceIsType" />
         <module name="MutableException" />
         <module name="OneTopLevelClass" />
 

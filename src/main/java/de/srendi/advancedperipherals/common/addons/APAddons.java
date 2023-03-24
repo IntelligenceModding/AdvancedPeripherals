@@ -57,10 +57,10 @@ public class APAddons {
     }
 
     public static ItemStack getCurioGlasses(Player player) {
-        if(!curiosLoaded)
+        if (!curiosLoaded)
             return ItemStack.EMPTY;
-        List<SlotResult> curioSlots = CuriosApi.getCuriosHelper().findCurios(player,"glasses");
-        if(curioSlots.isEmpty())
+        List<SlotResult> curioSlots = CuriosApi.getCuriosHelper().findCurios(player, "glasses");
+        if (curioSlots.isEmpty())
             return ItemStack.EMPTY;
 
         return curioSlots.get(0).stack();

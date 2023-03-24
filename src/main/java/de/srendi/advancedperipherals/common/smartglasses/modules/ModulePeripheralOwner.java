@@ -1,91 +1,104 @@
 package de.srendi.advancedperipherals.common.smartglasses.modules;
 
-import dan200.computercraft.api.pocket.IPocketAccess;
-import de.srendi.advancedperipherals.common.addons.computercraft.owner.IOwnerAbility;
-import de.srendi.advancedperipherals.common.addons.computercraft.owner.IPeripheralOwner;
-import de.srendi.advancedperipherals.common.addons.computercraft.owner.PeripheralOwnerAbility;
+import de.srendi.advancedperipherals.common.addons.computercraft.owner.BasePeripheralOwner;
+import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesComputer;
 import de.srendi.advancedperipherals.common.util.fakeplayer.APFakePlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.FrontAndTop;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import org.apache.commons.lang3.NotImplementedException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
 import java.util.function.Function;
 
-public class ModulePeripheralOwner implements IPeripheralOwner {
+public class ModulePeripheralOwner extends BasePeripheralOwner {
 
     //TODO: Think about making our own smart glasses access so we don't have the not used stuff like the color or the light
     // We would need to remove the pocket stuff from the SmartGlassesComputer
-    private IPocketAccess access;
+    private final SmartGlassesComputer computer;
 
-    public ModulePeripheralOwner(IPocketAccess access) {
-        this.access = access;
+    public ModulePeripheralOwner(SmartGlassesComputer computer) {
+        this.computer = computer;
     }
 
+    @Nullable
     @Override
-    public @Nullable String getCustomName() {
+    public String getCustomName() {
+        return "smartglasses";
+    }
+
+    @Nullable
+    @Override
+    public Level getLevel() {
+        return computer.getEntity().getLevel();
+    }
+
+    @NotNull
+    @Override
+    public BlockPos getPos() {
+        return computer.getEntity().getOnPos();
+    }
+
+    @NotNull
+    @Override
+    public Direction getFacing() {
+        return Direction.NORTH;
+    }
+
+    @NotNull
+    @Override
+    public FrontAndTop getOrientation() {
+        return FrontAndTop.NORTH_UP;
+    }
+
+    @NotNull
+    public SmartGlassesComputer getComputer() {
+        return computer;
+    }
+
+    @Nullable
+    @Override
+    public Player getOwner() {
+        Entity owner = computer.getEntity();
+        if (owner instanceof Player player) return player;
         return null;
     }
 
+    @NotNull
     @Override
-    public @Nullable Level getLevel() {
-        return access.getEntity().getLevel();
-    }
-
-    @Override
-    public @NotNull BlockPos getPos() {
-        return access.getEntity().getOnPos();
-    }
-
-    @Override
-    public @NotNull Direction getFacing() {
-        return null;
-    }
-
-    @Override
-    public @NotNull FrontAndTop getOrientation() {
-        return null;
-    }
-
-    @Override
-    public @Nullable Player getOwner() {
-        return null;
-    }
-
-    @Override
-    public @NotNull CompoundTag getDataStorage() {
-        return null;
+    public CompoundTag getDataStorage() {
+        return computer.getUpgradeNBTData();
     }
 
     @Override
     public void markDataStorageDirty() {
-
+        computer.updateUpgradeNBTData();
     }
 
     @Override
     public <T> T withPlayer(Function<APFakePlayer, T> function) {
-        return null;
+        throw new NotImplementedException();
     }
 
     @Override
     public ItemStack getToolInMainHand() {
-        return null;
+        return ItemStack.EMPTY;
     }
 
     @Override
     public ItemStack storeItem(ItemStack stored) {
-        return null;
+        throw new NotImplementedException();
     }
 
     @Override
     public void destroyUpgrade() {
-
+        throw new NotImplementedException();
     }
 
     @Override
@@ -98,18 +111,4 @@ public class ModulePeripheralOwner implements IPeripheralOwner {
         return false;
     }
 
-    @Override
-    public <T extends IOwnerAbility> void attachAbility(PeripheralOwnerAbility<T> ability, T abilityImplementation) {
-
-    }
-
-    @Override
-    public <T extends IOwnerAbility> @Nullable T getAbility(PeripheralOwnerAbility<T> ability) {
-        return null;
-    }
-
-    @Override
-    public Collection<IOwnerAbility> getAbilities() {
-        return null;
-    }
 }

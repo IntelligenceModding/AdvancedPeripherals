@@ -32,15 +32,14 @@ public class SmartGlassesContainer extends AbstractComputerMenu {
         addSlot(new SmartGlassesSlot(inventory, 2, 222, 166, SlotType.PERIPHERALS));
         addSlot(new SmartGlassesSlot(inventory, 3, 240, 166, SlotType.PERIPHERALS));
         addSlot(new SmartGlassesSlot(inventory, 4, 222, 184, SlotType.PERIPHERALS));
-        addSlot(new SmartGlassesSlot(inventory, 5, 240, 184, SlotType.PERIPHERALS));
 
         // Glasses Modules
-        addSlot(new SmartGlassesSlot(inventory, 6, 222, 148, SlotType.MODULES));
-        addSlot(new SmartGlassesSlot(inventory, 7, 204, 166, SlotType.MODULES));
-        addSlot(new SmartGlassesSlot(inventory, 8, 222, 166, SlotType.MODULES));
-        addSlot(new SmartGlassesSlot(inventory, 9, 240, 166, SlotType.MODULES));
-        addSlot(new SmartGlassesSlot(inventory, 10, 222, 184, SlotType.MODULES));
-        addSlot(new SmartGlassesSlot(inventory, 11, 240, 184, SlotType.MODULES));
+        addSlot(new SmartGlassesSlot(inventory, 5, 222, 148, SlotType.MODULES));
+        addSlot(new SmartGlassesSlot(inventory, 6, 204, 166, SlotType.MODULES));
+        addSlot(new SmartGlassesSlot(inventory, 7, 222, 166, SlotType.MODULES));
+        addSlot(new SmartGlassesSlot(inventory, 8, 240, 166, SlotType.MODULES));
+        addSlot(new SmartGlassesSlot(inventory, 9, 222, 184, SlotType.MODULES));
+        addSlot(new SmartGlassesSlot(inventory, 10, 240, 184, SlotType.MODULES));
 
         // Player inventory
         for (var y = 0; y < 3; y++) {
