@@ -25,7 +25,7 @@ public class SmartGlassesScreen extends AbstractComputerScreen<SmartGlassesConta
 
     private static final int TEX_WIDTH = 254;
     private static final int TEX_HEIGHT = 217;
-    public SlotType currentType = SlotType.defaultType();
+    private SlotType currentType = SlotType.defaultType();
 
     public SmartGlassesScreen(SmartGlassesContainer container, Inventory player, Component title) {
         super(container, player, title, BORDER);
@@ -68,7 +68,7 @@ public class SmartGlassesScreen extends AbstractComputerScreen<SmartGlassesConta
     @Override
     protected void renderLabels(PoseStack poseStack, int x, int y) {
         FormattedCharSequence formattedcharsequence = currentType.getName().getVisualOrderText();
-        this.font.draw(poseStack, formattedcharsequence, (float)(212 + AbstractComputerMenu.SIDEBAR_WIDTH - this.font.width(formattedcharsequence) / 2), (float)133, 4210752);
+        this.font.draw(poseStack, formattedcharsequence, (212 + AbstractComputerMenu.SIDEBAR_WIDTH - (float) this.font.width(formattedcharsequence) / 2), 133, 4210752);
     }
 
     public void setCurrentType(SlotType currentType) {

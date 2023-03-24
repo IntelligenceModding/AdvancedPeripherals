@@ -24,6 +24,11 @@ public class SmartGlassesSlot extends SlotItemHandler {
         return isEnabled;
     }
 
+    @Override
+    public int getMaxStackSize() {
+        return 1;
+    }
+
     public static ComputerSide indexToSide(int slot) {
         return switch (slot) {
             case 0 -> ComputerSide.TOP;

@@ -5,7 +5,6 @@ import dan200.computercraft.shared.computer.core.ServerComputer;
 import dan200.computercraft.shared.computer.inventory.AbstractComputerMenu;
 import dan200.computercraft.shared.network.container.ComputerContainerData;
 import de.srendi.advancedperipherals.common.setup.APContainerTypes;
-import de.srendi.advancedperipherals.common.setup.APItems;
 import de.srendi.advancedperipherals.common.smartglasses.SlotType;
 import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesSlot;
 import net.minecraft.world.entity.player.Inventory;
@@ -56,7 +55,7 @@ public class SmartGlassesContainer extends AbstractComputerMenu {
     }
 
     public SmartGlassesContainer(int id, Predicate<Player> predicate, ServerComputer computer, ComputerContainerData data, Inventory player, ItemStack glasses) {
-        this( id, predicate, computer, player, glasses.getCapability(ForgeCapabilities.ITEM_HANDLER).resolve().orElseThrow(), data);
+        this(id, predicate, computer, player, glasses.getCapability(ForgeCapabilities.ITEM_HANDLER).resolve().orElseThrow(), data);
     }
 
     @NotNull
@@ -71,14 +70,10 @@ public class SmartGlassesContainer extends AbstractComputerMenu {
                 if (!this.moveItemStackTo(itemstack1, 0, 36, true)) {
                     return ItemStack.EMPTY;
                 }
-            } else if (index <= 35) {
-                if (itemstack1.getItem().equals(APItems.MEMORY_CARD.get())) {
-                    if (!this.moveItemStackTo(itemstack1, 36, 37, true)) {
-                        return ItemStack.EMPTY;
-                    }
+            } else {
+                if (!this.moveItemStackTo(itemstack1, 36, 37, true)) {
+                    return ItemStack.EMPTY;
                 }
-            } else if (!this.moveItemStackTo(itemstack1, 0, 36, false)) {
-                return ItemStack.EMPTY;
             }
 
             if (itemstack1.isEmpty()) {

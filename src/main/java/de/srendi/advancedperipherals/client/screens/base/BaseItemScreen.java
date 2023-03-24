@@ -8,6 +8,7 @@ import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
+import org.jetbrains.annotations.NotNull;
 
 public abstract class BaseItemScreen<T extends BaseItemContainer> extends AbstractContainerScreen<T> {
 
@@ -19,14 +20,14 @@ public abstract class BaseItemScreen<T extends BaseItemContainer> extends Abstra
     }
 
     @Override
-    public void render(PoseStack matrixStack, int x, int y, float partialTicks) {
+    public void render(@NotNull PoseStack matrixStack, int x, int y, float partialTicks) {
         renderBackground(matrixStack);
         super.render(matrixStack, x, y, partialTicks);
         renderTooltip(matrixStack, x, y);
     }
 
     @Override
-    protected void renderBg(PoseStack matrixStack, float partialTicks, int x, int y) {
+    protected void renderBg(@NotNull PoseStack matrixStack, float partialTicks, int x, int y) {
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.setShaderTexture(0, getTexture());

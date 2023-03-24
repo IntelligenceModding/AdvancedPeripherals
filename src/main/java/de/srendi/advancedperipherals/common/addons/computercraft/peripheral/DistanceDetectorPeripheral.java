@@ -18,14 +18,14 @@ import net.minecraft.world.phys.Vec3;
 
 public class DistanceDetectorPeripheral extends BasePeripheral<BlockEntityPeripheralOwner<DistanceDetectorEntity>> {
 
-    public static final String TYPE = "distanceDetector";
+    public static final String PERIPHERAL_TYPE = "distanceDetector";
     private double height = 0.5;
     private DetectionType detectionType = DetectionType.BOTH;
     private boolean ignoreTransparent = true;
     private boolean laserVisible = true;
 
     public DistanceDetectorPeripheral(DistanceDetectorEntity tileEntity) {
-        super(TYPE, new BlockEntityPeripheralOwner<>(tileEntity));
+        super(PERIPHERAL_TYPE, new BlockEntityPeripheralOwner<>(tileEntity));
     }
 
     @Override
@@ -35,6 +35,7 @@ public class DistanceDetectorPeripheral extends BasePeripheral<BlockEntityPeriph
 
     @LuaFunction
     public final boolean setLaserVisibility(boolean laser) {
+        getPeripheralOwner().tileEntity.setShowLaser(laser);
         return laserVisible = laser;
     }
 
@@ -111,6 +112,7 @@ public class DistanceDetectorPeripheral extends BasePeripheral<BlockEntityPeriph
                 distance = getPos().distManhattan(new Vec3i(entityHitResult.getLocation().x, entityHitResult.getLocation().y, entityHitResult.getLocation().z));
             }
         }
+        getPeripheralOwner().tileEntity.setDistance(distance -1);
         return distance - 1;
     }
 
