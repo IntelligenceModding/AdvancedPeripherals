@@ -56,6 +56,7 @@ public class PeripheralsConfig implements IAPConfig {
     //Compass turtle
     public final ForgeConfigSpec.BooleanValue enableDistanceDetector;
     public final ForgeConfigSpec.DoubleValue distanceDetectorRange;
+    public final ForgeConfigSpec.IntValue distanceDetectorUpdateRate;
 
     //Powered Peripherals
     public final ForgeConfigSpec.BooleanValue enablePoweredPeripherals;
@@ -149,6 +150,8 @@ public class PeripheralsConfig implements IAPConfig {
 
         enableDistanceDetector = builder.comment("Enable the distance detector or not.").define("enableDistanceDetector", true);
         distanceDetectorRange = builder.comment("Maximum range of the distance detector").defineInRange("distanceDetectorRange", 64D, 0D, Integer.MAX_VALUE);
+        distanceDetectorUpdateRate = builder.comment("Defines how often the distance detector updates it's distance if periodically updates are enabled. \n" +
+                "Periodically updates exists so we do not need to run \"getDistance\" on the main thread which eliminates the 1 tick yield of the lua function").defineInRange("maxUpdateRate", 2, 1, 100);
 
         pop("Powered_Peripherals", builder);
 

@@ -16,13 +16,13 @@ import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 
+import java.util.List;
+
 public class DistanceDetectorPeripheral extends BasePeripheral<BlockEntityPeripheralOwner<DistanceDetectorEntity>> {
 
     public static final String PERIPHERAL_TYPE = "distanceDetector";
     private double height = 0.5;
     private DetectionType detectionType = DetectionType.BOTH;
-    private boolean ignoreTransparent = true;
-    private boolean laserVisible = true;
 
     public DistanceDetectorPeripheral(DistanceDetectorEntity tileEntity) {
         super(PERIPHERAL_TYPE, new BlockEntityPeripheralOwner<>(tileEntity));
@@ -34,24 +34,23 @@ public class DistanceDetectorPeripheral extends BasePeripheral<BlockEntityPeriph
     }
 
     @LuaFunction
-    public final boolean setLaserVisibility(boolean laser) {
+    public final void setLaserVisibility(boolean laser) {
         getPeripheralOwner().tileEntity.setShowLaser(laser);
-        return laserVisible = laser;
     }
 
     @LuaFunction
     public final boolean getLaserVisibility() {
-        return laserVisible;
+        return getPeripheralOwner().tileEntity.getLaserVisibility();
     }
 
     @LuaFunction
-    public final boolean setTransparencyDetection(boolean enable) {
-        return ignoreTransparent = enable;
+    public final void setIgnoreTransparency(boolean enable) {
+        getPeripheralOwner().tileEntity.setIgnoreTransparent(enable);
     }
 
     @LuaFunction
-    public final boolean getTransparencyDetection() {
-        return ignoreTransparent;
+    public final boolean ignoresTransparency() {
+        return getPeripheralOwner().tileEntity.ignoreTransparent();
     }
 
     @LuaFunction
@@ -77,46 +76,48 @@ public class DistanceDetectorPeripheral extends BasePeripheral<BlockEntityPeriph
         return detectionType.toString();
     }
 
+    @LuaFunction
     public final double setHeight(double height) {
-        if (height > 1) this.height = 1;
-        if (height < 0) this.height = 0;
+        this.height = Math.max(0, Math.min(1, height));
         return this.height;
     }
 
+    @LuaFunction
     public final double getHeight() {
         return this.height;
     }
 
-    @LuaFunction(mainThread = true)
+    @LuaFunction
     public final double getDistance() {
-        Direction direction = getPeripheralOwner().getOrientation().front();
-        Vec3 from = Vec3.atCenterOf(getPos()).add(direction.getNormal().getX() * 0.501, direction.getNormal().getY() * 0.501, direction.getNormal().getZ() * 0.501);
-        Vec3 to = from.add(direction.getNormal().getX() * 256, direction.getNormal().getY() * 256, direction.getNormal().getZ() * 256);
-        HitResult result = detectionType == DetectionType.BOTH ? HitResultUtil.getHitResult(to, from, getLevel()) : detectionType == DetectionType.BLOCK ? HitResultUtil.getBlockHitResult(to, from, getLevel()) : HitResultUtil.getEntityHitResult(to, from, getLevel());
-
-        float distance = 0;
-        BlockState resultBlock;
-        if (result.getType() != HitResult.Type.MISS) {
-            if (result instanceof BlockHitResult blockHitResult) {
-                resultBlock = getLevel().getBlockState(blockHitResult.getBlockPos());
-                distance = getPos().distManhattan(blockHitResult.getBlockPos());
-
-                if (resultBlock.getBlock() instanceof SlabBlock && direction.getAxis() == Direction.Axis.Y) {
-                    if (resultBlock.getValue(SlabBlock.TYPE) == SlabType.TOP && direction == Direction.UP)
-                        distance = distance + 0.5f;
-                    if (resultBlock.getValue(SlabBlock.TYPE) == SlabType.BOTTOM && direction == Direction.DOWN)
-                        distance = distance - 0.5f;
-                }
-            }
-            if (result instanceof EntityHitResult entityHitResult) {
-                distance = getPos().distManhattan(new Vec3i(entityHitResult.getLocation().x, entityHitResult.getLocation().y, entityHitResult.getLocation().z));
-            }
-        }
-        getPeripheralOwner().tileEntity.setDistance(distance -1);
-        return distance - 1;
+        return getPeripheralOwner().tileEntity.getDistance() - 1;
     }
 
-    private enum DetectionType {
+    @LuaFunction
+    public final double calculateDistance() {
+        return getPeripheralOwner().tileEntity.calculateDistance() - 1;
+    }
+
+    @LuaFunction
+    public final boolean shouldCalculatePeriodically() {
+        return getPeripheralOwner().tileEntity.shouldCalculatePeriodically();
+    }
+
+    @LuaFunction
+    public final void setCalculatePeriodically(boolean shouldRenderPeriodically) {
+        getPeripheralOwner().tileEntity.setShouldCalculatePeriodically(shouldRenderPeriodically);
+    }
+
+    @LuaFunction
+    public final void setMaxRange(double maxDistance) {
+        getPeripheralOwner().tileEntity.setMaxRange(Math.max(0, Math.min(APConfig.PERIPHERALS_CONFIG.distanceDetectorRange.get(), maxDistance)));
+    }
+
+    @LuaFunction
+    public final double getMaxRange() {
+        return getPeripheralOwner().tileEntity.getMaxDistance();
+    }
+
+    public enum DetectionType {
         BLOCK,
         ENTITIES,
         BOTH

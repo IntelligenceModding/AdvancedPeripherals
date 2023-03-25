@@ -29,7 +29,7 @@ public class DistanceDetectorRenderer implements BlockEntityRenderer<DistanceDet
     @Override
     public void render(@NotNull DistanceDetectorEntity pBlockEntity, float pPartialTick, @NotNull PoseStack pPoseStack, MultiBufferSource pBufferSource, int pPackedLight, int pPackedOverlay) {
         if(pBlockEntity.getLaserVisibility())
-            renderBeaconBeam(pBlockEntity, pPoseStack, pBufferSource, BeaconRenderer.BEAM_LOCATION, pPartialTick, 1, 0, pBlockEntity.getDistance() + 0.5f, EnumColor.DARK_RED.getRgb(), 0.05f, 0.09f);
+            renderBeaconBeam(pBlockEntity, pPoseStack, pBufferSource, BeaconRenderer.BEAM_LOCATION, pPartialTick, 1, 0, pBlockEntity.getDistance() - 0.5f, EnumColor.RED.getRgb(), 0.05f, 0.09f);
     }
 
     @Override
@@ -42,7 +42,8 @@ public class DistanceDetectorRenderer implements BlockEntityRenderer<DistanceDet
         return 256;
     }
 
-    public boolean shouldRender(DistanceDetectorEntity pBlockEntity, Vec3 pCameraPos) {
+    @Override
+    public boolean shouldRender(@NotNull DistanceDetectorEntity pBlockEntity, @NotNull Vec3 pCameraPos) {
         return true;
     }
 

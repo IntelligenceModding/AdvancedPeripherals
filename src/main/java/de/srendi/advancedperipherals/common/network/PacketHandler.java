@@ -5,6 +5,7 @@ import de.srendi.advancedperipherals.common.network.base.IPacket;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.ChunkPos;
@@ -15,6 +16,7 @@ import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.network.simple.SimpleChannel;
+import net.minecraftforge.server.ServerLifecycleHooks;
 
 import java.util.Optional;
 import java.util.function.Function;
@@ -28,7 +30,7 @@ public class PacketHandler {
     private static int index = 0;
 
     public static void init() {
-
+        registerServerToClient(DistanceDetectorSyncPacket.class, DistanceDetectorSyncPacket::decode);
     }
 
     public static <MSG extends IPacket> void registerServerToClient(Class<MSG> packet, Function<FriendlyByteBuf, MSG> decode) {
@@ -40,7 +42,6 @@ public class PacketHandler {
     }
 
     public static void sendToClient(Object packet, ServerPlayer player) {
-
         CHANNEL.sendTo(packet, player.connection.getConnection(), NetworkDirection.PLAY_TO_CLIENT);
     }
 
@@ -54,9 +55,13 @@ public class PacketHandler {
         }
     }
 
+    public static void sendToAll(Object packet) {
+        MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
+        server.getPlayerList().getPlayers().forEach(player -> sendTo(packet, player));
+    }
+
     public static void sendToAllTracking(Object packet, Level world, BlockPos pos) {
         if (world instanceof ServerLevel) {
-
             ((ServerLevel) world).getChunkSource().chunkMap.getPlayers(new ChunkPos(pos), false).forEach(p -> sendTo(packet, p));
         } else {
             CHANNEL.send(PacketDistributor.TRACKING_CHUNK.with(() -> world.getChunk(pos.getX() >> 4, pos.getZ() >> 4)), packet);
