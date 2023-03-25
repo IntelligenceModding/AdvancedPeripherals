@@ -6,17 +6,12 @@ import de.srendi.advancedperipherals.common.network.base.IPacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.network.NetworkEvent;
-import net.minecraftforge.server.ServerLifecycleHooks;
 
 public class DistanceDetectorSyncPacket implements IPacket {
 
@@ -35,11 +30,11 @@ public class DistanceDetectorSyncPacket implements IPacket {
     @Override
     public void handle(NetworkEvent.Context context) {
         ClientLevel level = Minecraft.getInstance().level;
-        if(!level.dimension().equals(world))
+        if (!level.dimension().equals(world))
             return;
 
         BlockEntity tileEntity = level.getBlockEntity(position);
-        if(tileEntity == null) {
+        if (tileEntity == null) {
             AdvancedPeripherals.debug("Could not update distance detector at " + position + " in world " + world.location()
                     + " because the world or the tile entity couldn't be found. Ignoring it");
             return;
@@ -59,6 +54,6 @@ public class DistanceDetectorSyncPacket implements IPacket {
     }
 
     public static DistanceDetectorSyncPacket decode(FriendlyByteBuf buffer) {
-        return new DistanceDetectorSyncPacket(buffer.readBlockPos(), buffer.readResourceKey(Registries.DIMENSION),buffer.readFloat(), buffer.readBoolean());
+        return new DistanceDetectorSyncPacket(buffer.readBlockPos(), buffer.readResourceKey(Registries.DIMENSION), buffer.readFloat(), buffer.readBoolean());
     }
 }
