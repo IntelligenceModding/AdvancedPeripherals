@@ -9,8 +9,6 @@ import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
 public class DistanceDetectorPeripheral extends BasePeripheral<BlockEntityPeripheralOwner<DistanceDetectorEntity>> {
 
     public static final String PERIPHERAL_TYPE = "distanceDetector";
-    private double height = 0.5;
-    private DetectionType detectionType = DetectionType.BOTH;
 
     public DistanceDetectorPeripheral(DistanceDetectorEntity tileEntity) {
         super(PERIPHERAL_TYPE, new BlockEntityPeripheralOwner<>(tileEntity));
@@ -42,37 +40,28 @@ public class DistanceDetectorPeripheral extends BasePeripheral<BlockEntityPeriph
     }
 
     @LuaFunction
-    public final String setDetectionMode(int mode) {
+    public final void setDetectionMode(int mode) {
         if (mode > 2) mode = 2;
         if (mode < 0) mode = 0;
-        detectionType = DetectionType.values()[mode];
-        return detectionType.toString();
+        getPeripheralOwner().tileEntity.setDetectionType(DetectionType.values()[mode]);
     }
 
     @LuaFunction
     public final boolean detectsEntities() {
+        DetectionType detectionType = getPeripheralOwner().tileEntity.getDetectionType();
         return detectionType == DetectionType.ENTITIES || detectionType == DetectionType.BOTH;
     }
 
     @LuaFunction
     public final boolean detectsBlocks() {
+        DetectionType detectionType = getPeripheralOwner().tileEntity.getDetectionType();
         return detectionType == DetectionType.BLOCK || detectionType == DetectionType.BOTH;
     }
 
     @LuaFunction
     public final String getDetectionMode() {
+        DetectionType detectionType = getPeripheralOwner().tileEntity.getDetectionType();
         return detectionType.toString();
-    }
-
-    @LuaFunction
-    public final double setHeight(double height) {
-        this.height = Math.max(0, Math.min(1, height));
-        return this.height;
-    }
-
-    @LuaFunction
-    public final double getHeight() {
-        return this.height;
     }
 
     @LuaFunction

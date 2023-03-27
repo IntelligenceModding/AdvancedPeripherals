@@ -21,12 +21,12 @@ import org.jetbrains.annotations.NotNull;
 
 public class DistanceDetectorEntity extends PeripheralBlockEntity<DistanceDetectorPeripheral> {
 
-    private final DistanceDetectorPeripheral.DetectionType detectionType = DistanceDetectorPeripheral.DetectionType.BOTH;
-    private float currentDistance = 0;
     private double maxRange = APConfig.PERIPHERALS_CONFIG.distanceDetectorRange.get();
+    private float currentDistance = 0;
     private boolean showLaser = true;
     private boolean shouldCalculatePeriodically = false;
     private boolean ignoreTransparent = true;
+    private DistanceDetectorPeripheral.DetectionType detectionType = DistanceDetectorPeripheral.DetectionType.BOTH;
 
     public DistanceDetectorEntity(BlockPos pos, BlockState state) {
         super(APBlockEntityTypes.DISTANCE_DETECTOR.get(), pos, state);
@@ -54,6 +54,10 @@ public class DistanceDetectorEntity extends PeripheralBlockEntity<DistanceDetect
         this.shouldCalculatePeriodically = shouldCalculatePeriodically;
     }
 
+    public double getMaxDistance() {
+        return maxRange;
+    }
+
     public void setMaxRange(double maxRange) {
         this.maxRange = maxRange;
     }
@@ -70,16 +74,20 @@ public class DistanceDetectorEntity extends PeripheralBlockEntity<DistanceDetect
         return shouldCalculatePeriodically;
     }
 
-    public void setIgnoreTransparent(boolean ignoreTransparent) {
-        this.ignoreTransparent = ignoreTransparent;
-    }
-
     public boolean ignoreTransparent() {
         return ignoreTransparent;
     }
 
-    public double getMaxDistance() {
-        return maxRange;
+    public void setIgnoreTransparent(boolean ignoreTransparent) {
+        this.ignoreTransparent = ignoreTransparent;
+    }
+
+    public DistanceDetectorPeripheral.DetectionType getDetectionType() {
+        return detectionType;
+    }
+
+    public void setDetectionType(DistanceDetectorPeripheral.DetectionType detectionType) {
+        this.detectionType = detectionType;
     }
 
     @Override
