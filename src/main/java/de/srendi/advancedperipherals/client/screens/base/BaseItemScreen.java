@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 
 public abstract class BaseItemScreen<T extends BaseItemContainer> extends AbstractContainerScreen<T> {
 
-    public BaseItemScreen(T screenContainer, Inventory inv, Component titleIn) {
+    protected BaseItemScreen(T screenContainer, Inventory inv, Component titleIn) {
         super(screenContainer, inv, titleIn);
 
         imageWidth = getSizeX();

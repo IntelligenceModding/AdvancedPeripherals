@@ -59,7 +59,7 @@ public class SmartGlassesInterfaceItem extends BaseItem {
             AdvancedPeripherals.debug("There was an issue with the item handler of the glasses while trying to open the gui");
             return InteractionResultHolder.fail(player.getItemInHand(hand));
         }
-        NetworkHooks.openScreen((ServerPlayer) player, new SmartGlassesMenuProvider(computer, glasses, itemHandler.resolve().get()), (bytes) -> new ComputerContainerData(computer, glasses).toBytes(bytes));
+        NetworkHooks.openScreen((ServerPlayer) player, new SmartGlassesMenuProvider(computer, glasses, itemHandler.resolve().get()), bytes -> new ComputerContainerData(computer, glasses).toBytes(bytes));
 
         return super.use(world, player, hand);
     }

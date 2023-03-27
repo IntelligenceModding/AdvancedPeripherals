@@ -62,10 +62,4 @@ public class ClientRegistry {
     public static void registeringRenderers(EntityRenderersEvent.RegisterRenderers event) {
         event.registerBlockEntityRenderer(APBlockEntityTypes.DISTANCE_DETECTOR.get(), DistanceDetectorRenderer::new);
     }
-
-    //TODO change the icon of the curio icon
-    /*@SubscribeEvent
-    public static void onTextureStitching(TextureStitchEvent.Pre event) {
-        event.addSprite(new ResourceLocation(AdvancedPeripherals.MOD_ID, "item/empty_glasses_slot"));
-    }*/
 }

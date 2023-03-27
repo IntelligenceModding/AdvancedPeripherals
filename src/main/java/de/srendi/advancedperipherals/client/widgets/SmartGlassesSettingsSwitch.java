@@ -9,6 +9,7 @@ import de.srendi.advancedperipherals.common.smartglasses.SlotType;
 import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesSlot;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.gui.narration.NarratedElementType;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.Slot;
@@ -33,7 +34,7 @@ public class SmartGlassesSettingsSwitch extends AbstractWidget {
 
     @Override
     protected void updateWidgetNarration(@NotNull NarrationElementOutput pNarrationElementOutput) {
-
+        pNarrationElementOutput.add(NarratedElementType.TITLE, type.getName());
     }
 
     @Override
@@ -43,6 +44,7 @@ public class SmartGlassesSettingsSwitch extends AbstractWidget {
 
     @Override
     public void renderButton(@NotNull PoseStack pPoseStack, int pMouseX, int pMouseY, float pPartialTick) {
+        // Disable rendering of default buttons
     }
 
     @Override

@@ -1,7 +1,6 @@
 package de.srendi.advancedperipherals.common.items;
 
 import com.google.common.base.Objects;
-import dan200.computercraft.annotations.ForgeOverride;
 import dan200.computercraft.api.ComputerCraftAPI;
 import dan200.computercraft.api.filesystem.Mount;
 import dan200.computercraft.api.media.IMedia;
@@ -100,6 +99,12 @@ public class SmartGlassesItem extends ArmorItem implements IComputerItem, IMedia
             changed = true;
             stack.getOrCreateTag().putBoolean(NBT_ON, on);
         }
+
+        Entity computerEntity = computer.getEntity();
+        if (computerEntity != entity) {
+            changed = true;
+            computer.setEntity(entity);
+        }
         return changed;
     }
 
@@ -114,12 +119,13 @@ public class SmartGlassesItem extends ArmorItem implements IComputerItem, IMedia
         if (changed && inventory != null) inventory.setChanged();
     }
 
-    @ForgeOverride
+    @Override
     public boolean onEntityItemUpdate(ItemStack stack, ItemEntity entity) {
         if (entity.level.isClientSide || entity.level.getServer() == null) return false;
 
         SmartGlassesComputer computer = getServerComputer(entity.level.getServer(), stack);
-        if (computer != null && tick(stack, entity.level, entity, computer)) entity.setItem(stack.copy());
+        if (computer != null && tick(stack, entity.level, entity, computer))
+            entity.setItem(stack.copy());
         return false;
     }
 
@@ -169,6 +175,7 @@ public class SmartGlassesItem extends ArmorItem implements IComputerItem, IMedia
         }
     }
 
+    @Override
     public String getCreatorModId(ItemStack stack) {
         return AdvancedPeripherals.MOD_ID;
     }

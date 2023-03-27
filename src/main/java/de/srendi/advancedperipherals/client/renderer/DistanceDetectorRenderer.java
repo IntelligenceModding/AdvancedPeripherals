@@ -28,8 +28,8 @@ public class DistanceDetectorRenderer implements BlockEntityRenderer<DistanceDet
 
     @Override
     public void render(@NotNull DistanceDetectorEntity pBlockEntity, float pPartialTick, @NotNull PoseStack pPoseStack, MultiBufferSource pBufferSource, int pPackedLight, int pPackedOverlay) {
-        if(pBlockEntity.getLaserVisibility())
-            renderBeaconBeam(pBlockEntity, pPoseStack, pBufferSource, BeaconRenderer.BEAM_LOCATION, pPartialTick, 1, 0, pBlockEntity.getDistance() - 0.5f, EnumColor.RED.getRgb(), 0.05f, 0.09f);
+        if (pBlockEntity.getLaserVisibility())
+            renderBeaconBeam(pBlockEntity, pPoseStack, pBufferSource, BeaconRenderer.BEAM_LOCATION, pPartialTick, 1, 0, pBlockEntity.getCurrentDistance() - 0.5f, EnumColor.RED.getRgb(), 0.05f, 0.09f);
     }
 
     @Override

@@ -29,7 +29,7 @@ import java.util.*;
 public class SmartGlassesComputer extends ServerComputer implements IPocketAccess {
 
     private @Nullable Entity entity;
-    private ItemStack stack = ItemStack.EMPTY;
+    private final ItemStack stack = ItemStack.EMPTY;
     private final SmartGlassesAccess smartGlassesAccess = new SmartGlassesAccess(this);
 
     private int lightColour = -1;
@@ -45,11 +45,10 @@ public class SmartGlassesComputer extends ServerComputer implements IPocketAcces
     @Nullable
     @Override
     public Entity getEntity() {
-        var entity = this.entity;
         if (entity == null || stack.isEmpty() || !entity.isAlive()) return null;
 
-        if (entity instanceof Player) {
-            var inventory = ((Player) entity).getInventory();
+        if (entity instanceof Player player) {
+            var inventory = player.getInventory();
             return inventory.items.contains(stack) || inventory.offhand.contains(stack) ? entity : null;
         } else if (entity instanceof LivingEntity living) {
             return living.getMainHandItem() == stack || living.getOffhandItem() == stack ? entity : null;
@@ -67,7 +66,7 @@ public class SmartGlassesComputer extends ServerComputer implements IPocketAcces
 
     @Override
     public void setColour(int colour) {
-
+        // We don't have a color.
     }
 
     @Override
@@ -124,21 +123,6 @@ public class SmartGlassesComputer extends ServerComputer implements IPocketAcces
         }
     }
 
-    public synchronized void updateValues(@Nullable Entity entity, ItemStack stack, @Nullable IPocketUpgrade upgrade) {
-        if (entity != null) {
-            setLevel((ServerLevel) entity.getCommandSenderWorld());
-            setPosition(entity.blockPosition());
-        }
-
-        // If a new entity has picked it up then rebroadcast the terminal to them
-        if (entity != this.entity && entity instanceof ServerPlayer) markTerminalChanged();
-
-        this.entity = entity;
-        this.stack = stack;
-
-        invalidatePeripheral();
-    }
-
     @Override
     public void tickServer() {
         super.tickServer();
@@ -161,6 +145,10 @@ public class SmartGlassesComputer extends ServerComputer implements IPocketAcces
         }
 
         modules.forEach(module -> module.tick(smartGlassesAccess));
+    }
+
+    public void setEntity(@Nullable Entity entity) {
+        this.entity = entity;
     }
 
     public Set<IModule> getModules() {

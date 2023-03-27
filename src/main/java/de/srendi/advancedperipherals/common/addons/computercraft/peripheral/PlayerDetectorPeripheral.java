@@ -113,7 +113,7 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
         BlockPos secondPos = LuaConverter.convertToBlockPos(secondCoord);
         for (Player player : getPlayers()) {
             if (CoordUtil.isInRange(getPos(), player, getLevel(), firstPos, secondPos))
-                if(player.getName().getString().equals(username))
+                if (player.getName().getString().equals(username))
                     return true;
         }
         return false;
@@ -123,7 +123,7 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
     public final boolean isPlayerInCubic(int x, int y, int z, String username) {
         for (Player player : getPlayers()) {
             if (CoordUtil.isInRange(getPos(), getLevel(), player, x, y, z)) {
-                if(player.getName().getString().equals(username))
+                if (player.getName().getString().equals(username))
                     return true;
             }
         }
@@ -134,7 +134,7 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
     public final boolean isPlayerInRange(int range, String username) {
         for (Player player : getPlayers()) {
             if (CoordUtil.isInRange(getPos(), getLevel(), player, range)) {
-                if(player.getName().getString().equals(username))
+                if (player.getName().getString().equals(username))
                     return true;
             }
         }

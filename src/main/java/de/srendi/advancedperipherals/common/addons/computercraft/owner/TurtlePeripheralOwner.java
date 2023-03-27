@@ -106,8 +106,6 @@ public class TurtlePeripheralOwner extends BasePeripheralOwner {
         return FakePlayerProviderTurtle.withPlayer(turtle, player -> {
             if (level.isOutsideBuildHeight(pos)) return false;
             if (!level.isInWorldBounds(pos)) return false;
-            //if (Config.turtlesObeyBlockProtection && !TurtlePermissions.isBlockEnterable(level, pos, player))
-            //  return false;
             if (!level.isAreaLoaded(pos, 0)) return false;
             return level.getWorldBorder().isWithinBounds(pos);
         });

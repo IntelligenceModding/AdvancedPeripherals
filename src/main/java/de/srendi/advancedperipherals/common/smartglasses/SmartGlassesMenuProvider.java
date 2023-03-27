@@ -35,8 +35,8 @@ public class SmartGlassesMenuProvider implements MenuProvider {
     public AbstractContainerMenu createMenu(int id, @NotNull Inventory inventory, @NotNull Player entity) {
         return new SmartGlassesContainer(id,
                 p -> {
-                return true;
-            },
+                    return true;
+                },
                 computer, inventory, glassesContainer, null
         );
     }

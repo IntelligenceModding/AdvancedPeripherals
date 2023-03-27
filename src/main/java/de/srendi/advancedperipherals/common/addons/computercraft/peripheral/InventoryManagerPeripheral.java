@@ -258,12 +258,12 @@ public class InventoryManagerPeripheral extends BasePeripheral<BlockEntityPeriph
 
     private Pair<IItemHandler, Integer> getHandlerFromSlot(int slot) throws LuaException {
         IItemHandler handler;
-        if(slot >= 100 && slot <= 103) {
+        if (slot >= 100 && slot <= 103) {
             handler = new PlayerArmorInvWrapper(getOwnerPlayer().getInventory());
             // If the slot is between 100 and 103, change the index to a normal index between 0 and 3.
             // This is necessary since the PlayerArmorInvWrapper does not work with these higher indexes
             slot = getArmorSlot(slot);
-        } else if(slot == 36) {
+        } else if (slot == 36) {
             handler = new PlayerOffhandInvWrapper(getOwnerPlayer().getInventory());
             // Set the "from slot" to zero so the offhand wrapper can work with that
             slot = 0;

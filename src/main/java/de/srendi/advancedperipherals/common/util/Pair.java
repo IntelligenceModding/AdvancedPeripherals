@@ -42,12 +42,12 @@ public class Pair<T, V> {
     }
 
     public void ifRightPresent(Consumer<V> consumer) {
-        if(rightPresent())
+        if (rightPresent())
             consumer.accept(right);
     }
 
     public void ifLeftPresent(Consumer<T> consumer) {
-        if(leftPresent())
+        if (leftPresent())
             consumer.accept(left);
     }
 

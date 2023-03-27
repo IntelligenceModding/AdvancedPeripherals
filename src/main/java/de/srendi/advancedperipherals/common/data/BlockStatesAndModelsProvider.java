@@ -42,7 +42,8 @@ public class BlockStatesAndModelsProvider extends BlockStateProvider {
         getVariantBuilder(block).forAllStates(state -> {
             ConfiguredModel.Builder<?> builder = ConfiguredModel.builder().modelFile(file);
             FrontAndTop orientation = state.getValue(BaseBlock.ORIENTATION);
-            int x = 0, y;
+            int x = 0;
+            int y;
             if (orientation.top().getAxis() == Direction.Axis.Y) {
                 y = (int) (orientation.front().toYRot() + 180) % 360;
             } else {
@@ -73,7 +74,7 @@ public class BlockStatesAndModelsProvider extends BlockStateProvider {
                 for (Direction direction : Direction.Plane.HORIZONTAL)
                     builder.texture(direction.toString(), blockTexture(block, sideTexture));
             }
-            if(side.equals("north"))
+            if (side.equals("north"))
                 particleTexture = blockTexture(block, "north");
 
             if (side.equals("front")) {

@@ -29,13 +29,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
@@ -69,7 +63,7 @@ public class RefinedStorage {
             return ItemStack.EMPTY;
 
         for (ICraftingPattern pattern : crafting.getPatterns()) {
-            for(ItemStack stack : pattern.getOutputs()) {
+            for (ItemStack stack : pattern.getOutputs()) {
                 if (filter.test(stack.copy()))
                     return stack.copy();
             }

@@ -119,7 +119,7 @@ public class InventoryUtil {
                 FluidStack toExtract = inventoryFrom.getFluidInTank(0).copy();
                 toExtract.setAmount(amount);
                 FluidStack extracted = inventoryFrom.drain(toExtract, IFluidHandler.FluidAction.SIMULATE);
-                if(extracted.isEmpty())
+                if (extracted.isEmpty())
                     return 0;
                 int inserted = storageSystemHandler.fill(extracted, IFluidHandler.FluidAction.EXECUTE);
 

@@ -22,9 +22,10 @@ public class HitResultUtil {
 
     /**
      * This method is used to get the hit result of an entity from the start position of a block
-     * @param to the target position/max position
-     * @param from the source position like a block
-     * @param level the level
+     *
+     * @param to                the target position/max position
+     * @param from              the source position like a block
+     * @param level             the level
      * @param ignoreTransparent if transparent blocks should be ignored
      * @return the hit result {@link BlockHitResult#miss(Vec3, Direction, BlockPos)} if nothing found
      */
@@ -94,9 +95,9 @@ public class HitResultUtil {
     /**
      * This method is used to get the hit result of a block from the start position of a block
      *
-     * @param to the target position/max position
-     * @param from the source position
-     * @param level the world
+     * @param to               the target position/max position
+     * @param from             the source position
+     * @param level            the world
      * @param ignoreNoOccluded if true, the method will ignore blocks which are not occluding like glass
      * @return the block hit result. {@link BlockHitResult#miss(Vec3, Direction, BlockPos)} if nothing found
      */
@@ -148,8 +149,9 @@ public class HitResultUtil {
             this.blockShapeGetter = blockShapeGetter;
         }
 
+        @NotNull
         @Override
-        public VoxelShape getBlockShape(BlockState pBlockState, BlockGetter pLevel, BlockPos pPos) {
+        public VoxelShape getBlockShape(@NotNull BlockState pBlockState, @NotNull BlockGetter pLevel, @NotNull BlockPos pPos) {
             return blockShapeGetter.get(pBlockState, pLevel, pPos, this.collisionContext);
         }
     }

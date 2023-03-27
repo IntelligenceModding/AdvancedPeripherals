@@ -11,7 +11,7 @@ import java.util.Map;
 
 public class SmartGlassesAccess implements IPocketAccess {
 
-    private SmartGlassesComputer computer;
+    private final SmartGlassesComputer computer;
 
     public SmartGlassesAccess(SmartGlassesComputer computer) {
         this.computer = computer;

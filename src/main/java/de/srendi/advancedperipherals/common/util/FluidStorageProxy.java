@@ -14,7 +14,7 @@ public class FluidStorageProxy implements IFluidHandler {
     private final FluidDetectorEntity fluidDetectorEntity;
     private int maxTransferRate;
     private int transferedInThisTick = 0;
-    private Fluid fluid = Fluids.EMPTY;
+    private final Fluid fluid = Fluids.EMPTY;
 
     public FluidStorageProxy(FluidDetectorEntity fluidDetectorEntity, int maxTransferRate) {
         this.fluidDetectorEntity = fluidDetectorEntity;

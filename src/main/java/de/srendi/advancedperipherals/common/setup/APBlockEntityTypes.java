@@ -8,7 +8,7 @@ import net.minecraftforge.registries.RegistryObject;
 
 public class APBlockEntityTypes {
 
-    static void register() {
+    protected static void register() {
     }
 
     public static final RegistryObject<BlockEntityType<ChatBoxEntity>> CHAT_BOX = APRegistration.TILE_ENTITIES.register("chat_box", () -> new BlockEntityType<>(ChatBoxEntity::new, Sets.newHashSet(APBlocks.CHAT_BOX.get()), null));

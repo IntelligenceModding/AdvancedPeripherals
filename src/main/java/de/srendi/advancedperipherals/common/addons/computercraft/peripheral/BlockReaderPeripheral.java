@@ -35,7 +35,7 @@ public class BlockReaderPeripheral extends BasePeripheral<BlockEntityPeripheralO
         if (getBlockInFront().is(Blocks.AIR))
             return null;
         BlockEntity target = getLevel().getBlockEntity(getPos().relative(owner.getFacing()));
-        if(target == null)
+        if (target == null)
             return null;
         return NBTUtil.toLua(target.saveWithoutMetadata());
     }

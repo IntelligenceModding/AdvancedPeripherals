@@ -28,12 +28,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.logging.log4j.Level;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class AppEngApi {
 
@@ -176,9 +171,9 @@ public class AppEngApi {
     }
 
     public static Map<String, Object> getObjectFromGenericStack(GenericStack stack) {
-        if(stack.what() instanceof AEItemKey aeItemKey)
+        if (stack.what() instanceof AEItemKey aeItemKey)
             return getObjectFromItemStack(Pair.of(stack.amount(), aeItemKey), null);
-        if(stack.what() instanceof AEFluidKey aeFluidKey)
+        if (stack.what() instanceof AEFluidKey aeFluidKey)
             return getObjectFromFluidStack(Pair.of(stack.amount(), aeFluidKey), null);
         return Collections.emptyMap();
     }
@@ -220,7 +215,7 @@ public class AppEngApi {
             return false;
 
         // If the passed cpu is null, check all cpus
-        if(craftingCPU == null) {
+        if (craftingCPU == null) {
             // Loop through all crafting cpus and check if the item is being crafted.
             for (ICraftingCPU cpu : grid.getCpus()) {
                 if (cpu.isBusy()) {
@@ -257,17 +252,17 @@ public class AppEngApi {
         if (!iterator.hasNext()) return 0;
         while (iterator.hasNext()) {
             DriveBlockEntity entity = (DriveBlockEntity) iterator.next().getService(IStorageProvider.class);
-            if(entity == null) continue;
+            if (entity == null) continue;
 
             InternalInventory inventory = entity.getInternalInventory();
 
-            for(int i = 0; i < inventory.size(); i++) {
+            for (int i = 0; i < inventory.size(); i++) {
                 ItemStack stack = inventory.getStackInSlot(i);
 
-                if(stack.isEmpty()) continue;
+                if (stack.isEmpty()) continue;
 
-                if(stack.getItem() instanceof BasicStorageCell cell) {
-                    if(cell.getKeyType().getClass().isAssignableFrom(AEKeyType.items().getClass())) {
+                if (stack.getItem() instanceof BasicStorageCell cell) {
+                    if (cell.getKeyType().getClass().isAssignableFrom(AEKeyType.items().getClass())) {
                         total += cell.getBytes(null);
                     }
                 }
@@ -285,17 +280,17 @@ public class AppEngApi {
         if (!iterator.hasNext()) return 0;
         while (iterator.hasNext()) {
             DriveBlockEntity entity = (DriveBlockEntity) iterator.next().getService(IStorageProvider.class);
-            if(entity == null) continue;
+            if (entity == null) continue;
 
             InternalInventory inventory = entity.getInternalInventory();
 
-            for(int i = 0; i < inventory.size(); i++) {
+            for (int i = 0; i < inventory.size(); i++) {
                 ItemStack stack = inventory.getStackInSlot(i);
 
-                if(stack.isEmpty()) continue;
+                if (stack.isEmpty()) continue;
 
-                if(stack.getItem() instanceof BasicStorageCell cell) {
-                    if(cell.getKeyType().getClass().isAssignableFrom(AEKeyType.fluids().getClass())) {
+                if (stack.getItem() instanceof BasicStorageCell cell) {
+                    if (cell.getKeyType().getClass().isAssignableFrom(AEKeyType.fluids().getClass())) {
                         total += cell.getBytes(null);
                     }
                 }
@@ -313,20 +308,20 @@ public class AppEngApi {
         if (!iterator.hasNext()) return 0;
         while (iterator.hasNext()) {
             DriveBlockEntity entity = (DriveBlockEntity) iterator.next().getService(IStorageProvider.class);
-            if(entity == null) continue;
+            if (entity == null) continue;
 
             InternalInventory inventory = entity.getInternalInventory();
 
-            for(int i = 0; i < inventory.size(); i++) {
+            for (int i = 0; i < inventory.size(); i++) {
                 ItemStack stack = inventory.getStackInSlot(i);
 
-                if(stack.isEmpty()) continue;
+                if (stack.isEmpty()) continue;
 
-                if(stack.getItem() instanceof BasicStorageCell cell) {
+                if (stack.getItem() instanceof BasicStorageCell cell) {
                     int bytesPerType = cell.getBytesPerType(null);
 
-                    if(cell.getKeyType().getClass().isAssignableFrom(AEKeyType.items().getClass())) {
-                        if(stack.getTag() == null) continue;
+                    if (cell.getKeyType().getClass().isAssignableFrom(AEKeyType.items().getClass())) {
+                        if (stack.getTag() == null) continue;
                         int numOfType = stack.getTag().getLongArray("amts").length;
                         long numItemsInCell = stack.getTag().getLong("ic");
 
@@ -347,18 +342,18 @@ public class AppEngApi {
         if (!iterator.hasNext()) return 0;
         while (iterator.hasNext()) {
             DriveBlockEntity entity = (DriveBlockEntity) iterator.next().getService(IStorageProvider.class);
-            if(entity == null) continue;
+            if (entity == null) continue;
 
             InternalInventory inventory = entity.getInternalInventory();
 
-            for(int i = 0; i < inventory.size(); i++) {
+            for (int i = 0; i < inventory.size(); i++) {
                 ItemStack stack = inventory.getStackInSlot(i);
 
-                if(stack.getItem() instanceof BasicStorageCell cell) {
+                if (stack.getItem() instanceof BasicStorageCell cell) {
                     int bytesPerType = cell.getBytesPerType(null);
 
-                    if(cell.getKeyType().getClass().isAssignableFrom(AEKeyType.fluids().getClass())) {
-                        if(stack.getTag() == null) continue;
+                    if (cell.getKeyType().getClass().isAssignableFrom(AEKeyType.fluids().getClass())) {
+                        if (stack.getTag() == null) continue;
                         int numOfType = stack.getTag().getLongArray("amts").length;
                         long numBucketsInCell = stack.getTag().getLong("ic") / 1000;
 
@@ -387,16 +382,16 @@ public class AppEngApi {
         if (!iterator.hasNext()) return items;
         while (iterator.hasNext()) {
             DriveBlockEntity entity = (DriveBlockEntity) iterator.next().getService(IStorageProvider.class);
-            if(entity == null) continue;
+            if (entity == null) continue;
 
             InternalInventory inventory = entity.getInternalInventory();
 
-            for(int i = 0; i < inventory.size(); i++) {
+            for (int i = 0; i < inventory.size(); i++) {
                 ItemStack stack = inventory.getStackInSlot(i);
 
-                if(stack.isEmpty()) continue;
+                if (stack.isEmpty()) continue;
 
-                if(stack.getItem() instanceof BasicStorageCell cell) {
+                if (stack.getItem() instanceof BasicStorageCell cell) {
                     items.add(getObjectFromCell(cell, stack));
                 }
             }
@@ -412,9 +407,9 @@ public class AppEngApi {
 
         String cellType = "";
 
-        if(cell.getKeyType().getClass().isAssignableFrom(AEKeyType.items().getClass())) {
+        if (cell.getKeyType().getClass().isAssignableFrom(AEKeyType.items().getClass())) {
             cellType = "item";
-        } else if(cell.getKeyType().getClass().isAssignableFrom(AEKeyType.fluids().getClass())) {
+        } else if (cell.getKeyType().getClass().isAssignableFrom(AEKeyType.fluids().getClass())) {
             cellType = "fluid";
         }
 

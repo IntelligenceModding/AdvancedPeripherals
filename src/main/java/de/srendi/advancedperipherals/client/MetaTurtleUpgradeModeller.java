@@ -23,7 +23,7 @@ public class MetaTurtleUpgradeModeller<T extends ClockwiseAnimatedTurtleUpgrade<
             stack.translate(0.0f, 0.5f, 0.5f);
             if (turtle != null) {
                 int rotationStep = DataStorageUtil.RotationCharge.get(turtle, side);
-                stack.mulPose(Axis.XN.rotationDegrees(-10 * rotationStep));
+                stack.mulPose(Axis.XN.rotationDegrees(-10f * rotationStep));
             }
             stack.translate(0.0f, -0.5f, -0.5f);
             stack.mulPose(Axis.YN.rotationDegrees(90));

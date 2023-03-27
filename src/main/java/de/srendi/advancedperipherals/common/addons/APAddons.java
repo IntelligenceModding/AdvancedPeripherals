@@ -49,7 +49,7 @@ public class APAddons {
         if (!curiosLoaded)
             return;
 
-        InterModComms.sendTo("curios", SlotTypeMessage.REGISTER_TYPE,
+        InterModComms.sendTo(CURIOS_MODID, SlotTypeMessage.REGISTER_TYPE,
                 () -> new SlotTypeMessage.Builder("glasses")
                         .size(1)
                         .icon(new ResourceLocation(AdvancedPeripherals.MOD_ID, "slot/empty_glasses_slot"))

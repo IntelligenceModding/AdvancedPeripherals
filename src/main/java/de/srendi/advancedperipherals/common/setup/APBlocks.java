@@ -21,7 +21,7 @@ import java.util.function.Supplier;
 
 public class APBlocks {
 
-    static void register() {
+    protected static void register() {
     }
 
     public static final RegistryObject<Block> ENVIRONMENT_DETECTOR = register("environment_detector", () -> new APBlockEntityBlock<>(APBlockEntityTypes.ENVIRONMENT_DETECTOR, false), () -> new APBlockItem(APBlocks.ENVIRONMENT_DETECTOR.get(), APConfig.PERIPHERALS_CONFIG.enableEnvironmentDetector));

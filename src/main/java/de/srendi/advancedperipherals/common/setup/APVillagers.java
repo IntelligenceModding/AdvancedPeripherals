@@ -14,7 +14,7 @@ public class APVillagers {
 
     public static final RegistryObject<VillagerProfession> COMPUTER_SCIENTIST = APRegistration.VILLAGER_PROFESSIONS.register("computer_scientist", () -> new VillagerProfession(AdvancedPeripherals.MOD_ID + ":computer_scientist", holder -> holder.is(COMPUTER_SCIENTIST_POI.getKey()), holder -> holder.is(COMPUTER_SCIENTIST_POI.getKey()), ImmutableSet.of(), ImmutableSet.of(ModRegistry.Blocks.COMPUTER_ADVANCED.get()), SoundEvents.VILLAGER_WORK_TOOLSMITH));
 
-    public static void register() {
+    protected static void register() {
     }
 
 }

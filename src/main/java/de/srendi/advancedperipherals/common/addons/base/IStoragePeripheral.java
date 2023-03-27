@@ -9,7 +9,7 @@ import dan200.computercraft.api.peripheral.IComputerAccess;
 /**
  * Implementation for common storage peripheral functions. Used for AE2 {@link de.srendi.advancedperipherals.common.addons.computercraft.peripheral.MeBridgePeripheral}
  * and RS {@link de.srendi.advancedperipherals.common.addons.computercraft.peripheral.RsBridgePeripheral}
- *
+ * <p>
  * This ensures that these both bridges use the same methods. This makes it easier to support both in the same script
  * In case there is a new mod which adds new ways to store and craft items, this ensures that the new peripheral
  * has the same functions as the other ones

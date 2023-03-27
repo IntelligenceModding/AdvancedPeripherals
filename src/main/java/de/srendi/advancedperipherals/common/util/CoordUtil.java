@@ -19,7 +19,7 @@ public class CoordUtil {
     public static boolean isInRange(@NotNull BlockPos pos, @NotNull Level world, @NotNull Player player, int range) {
         // There are rare cases where these are null. For example if a player detector pocket computer runs while not in a player inventory
         // Fixes https://github.com/SirEndii/AdvancedPeripherals/issues/356
-        if(pos == null || world == null || player == null)
+        if (pos == null || world == null || player == null)
             return false;
 
         range = Math.min(range, APConfig.PERIPHERALS_CONFIG.playerDetMaxRange.get());
@@ -27,7 +27,7 @@ public class CoordUtil {
     }
 
     public static boolean isInRange(@NotNull BlockPos pos, @NotNull Level world, @NotNull Player player, int x, int y, int z) {
-        if(pos == null || world == null || player == null)
+        if (pos == null || world == null || player == null)
             return false;
 
         x = Math.min(x * 2, APConfig.PERIPHERALS_CONFIG.playerDetMaxRange.get());
@@ -37,7 +37,7 @@ public class CoordUtil {
     }
 
     public static boolean isInRange(@NotNull BlockPos blockPos, @NotNull Player player, @NotNull Level world, @NotNull BlockPos firstPos, @NotNull BlockPos secondPos) {
-        if(blockPos == null || world == null || player == null)
+        if (blockPos == null || world == null || player == null)
             return false;
 
         double i = player.getX() - blockPos.getX();

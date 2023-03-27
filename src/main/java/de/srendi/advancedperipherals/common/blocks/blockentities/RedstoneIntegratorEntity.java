@@ -3,8 +3,8 @@ package de.srendi.advancedperipherals.common.blocks.blockentities;
 import dan200.computercraft.shared.util.RedstoneUtil;
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.RedstoneIntegratorPeripheral;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralBlockEntity;
-import de.srendi.advancedperipherals.common.util.ServerWorker;
 import de.srendi.advancedperipherals.common.setup.APBlockEntityTypes;
+import de.srendi.advancedperipherals.common.util.ServerWorker;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -55,7 +55,7 @@ public class RedstoneIntegratorEntity extends PeripheralBlockEntity<RedstoneInte
      * See <a href="https://github.com/SirEndii/AdvancedPeripherals/issues/384">#384</a>
      *
      * @param direction Cardinal direction
-     * @param power The redstone power from 0 to 15
+     * @param power     The redstone power from 0 to 15
      */
     public void setOutput(Direction direction, int power) {
         ServerWorker.add(() -> setRedstoneOutput(direction, power));

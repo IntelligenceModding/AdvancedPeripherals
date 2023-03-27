@@ -13,6 +13,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import org.apache.commons.lang3.NotImplementedException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -79,7 +80,7 @@ public class BlockEntityPeripheralOwner<T extends BlockEntity & IPeripheralTileE
 
     @Override
     public <T1> T1 withPlayer(Function<APFakePlayer, T1> function) {
-        throw new RuntimeException("Not implemented yet");
+        throw new NotImplementedException();
     }
 
     @Override
@@ -90,7 +91,7 @@ public class BlockEntityPeripheralOwner<T extends BlockEntity & IPeripheralTileE
     @Override
     public ItemStack storeItem(ItemStack stored) {
         // TODO: tricks with capability needed
-        throw new RuntimeException("Not implemented yet");
+        throw new NotImplementedException();
     }
 
     @Override

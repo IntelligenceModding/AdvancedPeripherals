@@ -27,6 +27,7 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -171,7 +172,7 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         return MethodResult.of(RefinedStorage.getObjectFromPattern(getNetwork().getCraftingManager().getPattern(patternItem), getNetwork()));
     }
 
-    protected MethodResult exportToChest(@NotNull IArguments arguments, @NotNull IItemHandler targetInventory) throws LuaException {
+    protected MethodResult exportToChest(@NotNull IArguments arguments, @Nullable IItemHandler targetInventory) throws LuaException {
         RsItemHandler itemHandler = new RsItemHandler(getNetwork());
         if (targetInventory == null)
             return MethodResult.of(0, "INVALID_TARGET");
@@ -183,7 +184,7 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         return MethodResult.of(InventoryUtil.moveItem(itemHandler, targetInventory, filter.getLeft()), null);
     }
 
-    protected MethodResult importToSystem(@NotNull IArguments arguments, @NotNull IItemHandler targetInventory) throws LuaException {
+    protected MethodResult importToSystem(@NotNull IArguments arguments, @Nullable IItemHandler targetInventory) throws LuaException {
         RsItemHandler itemHandler = new RsItemHandler(getNetwork());
         if (targetInventory == null)
             return MethodResult.of(0, "INVALID_TARGET");
@@ -195,7 +196,7 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         return MethodResult.of(InventoryUtil.moveItem(targetInventory, itemHandler, filter.getLeft()), null);
     }
 
-    protected MethodResult exportToTank(@NotNull IArguments arguments, @NotNull IFluidHandler targetInventory) throws LuaException {
+    protected MethodResult exportToTank(@NotNull IArguments arguments, @Nullable IFluidHandler targetInventory) throws LuaException {
         RsFluidHandler itemHandler = new RsFluidHandler(getNetwork());
         if (targetInventory == null)
             return MethodResult.of(0, "INVALID_TARGET");
@@ -207,7 +208,7 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         return MethodResult.of(InventoryUtil.moveFluid(itemHandler, targetInventory, filter.getLeft()), null);
     }
 
-    protected MethodResult importToSystem(@NotNull IArguments arguments, @NotNull IFluidHandler targetInventory) throws LuaException {
+    protected MethodResult importToSystem(@NotNull IArguments arguments, @Nullable IFluidHandler targetInventory) throws LuaException {
         RsFluidHandler itemHandler = new RsFluidHandler(getNetwork());
         if (targetInventory == null)
             return MethodResult.of(0, "INVALID_TARGET");

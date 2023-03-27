@@ -29,7 +29,10 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Objects;
 
 public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwner<MeBridgeEntity>> {
 
@@ -68,7 +71,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         MeItemHandler itemHandler = new MeItemHandler(monitor, tile);
         Pair<ItemFilter, String> filter = ItemFilter.parse(arguments.getTable(0));
 
-        if(filter.rightPresent())
+        if (filter.rightPresent())
             return MethodResult.of(0, filter.getRight());
 
         return MethodResult.of(InventoryUtil.moveItem(itemHandler, targetInventory, filter.getLeft()), null);
@@ -77,7 +80,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     /**
      * exports a fluid out of the system to a valid tank
      *
-     * @param arguments the arguments given by the computer
+     * @param arguments  the arguments given by the computer
      * @param targetTank the give tank
      * @return the exportable amount or null with a string if something went wrong
      */
@@ -86,7 +89,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         MeFluidHandler fluidHandler = new MeFluidHandler(monitor, tile);
         Pair<FluidFilter, String> filter = FluidFilter.parse(arguments.getTable(0));
 
-        if(filter.rightPresent())
+        if (filter.rightPresent())
             return MethodResult.of(0, filter.getRight());
 
         return MethodResult.of(InventoryUtil.moveFluid(fluidHandler, targetTank, filter.getLeft()), null);
@@ -104,7 +107,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         MeItemHandler itemHandler = new MeItemHandler(monitor, tile);
         Pair<ItemFilter, String> filter = ItemFilter.parse(arguments.getTable(0));
 
-        if(filter.rightPresent())
+        if (filter.rightPresent())
             return MethodResult.of(0, filter.getRight());
 
         return MethodResult.of(InventoryUtil.moveItem(targetInventory, itemHandler, filter.getLeft()), null);
@@ -113,7 +116,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     /**
      * imports a fluid to the system from a valid tank
      *
-     * @param arguments the arguments given by the computer
+     * @param arguments  the arguments given by the computer
      * @param targetTank the give tank
      * @return the imported amount or null with a string if something went wrong
      */
@@ -122,7 +125,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         MeFluidHandler fluidHandler = new MeFluidHandler(monitor, tile);
         Pair<FluidFilter, String> filter = FluidFilter.parse(arguments.getTable(0));
 
-        if(filter.rightPresent())
+        if (filter.rightPresent())
             return MethodResult.of(0, filter.getRight());
 
         return MethodResult.of(InventoryUtil.moveFluid(targetTank, fluidHandler, filter.getLeft()), null);
@@ -143,7 +146,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
             return notConnected();
 
         Pair<ItemFilter, String> filter = ItemFilter.parse(arguments.getTable(0));
-        if(filter.rightPresent())
+        if (filter.rightPresent())
             return MethodResult.of(false, filter.getRight());
 
         ItemFilter parsedFilter = filter.getLeft();
@@ -152,7 +155,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
         String cpuName = arguments.optString(1, "");
         ICraftingCPU target = getCraftingCPU(cpuName);
-        if(!cpuName.isEmpty() && target == null)
+        if (!cpuName.isEmpty() && target == null)
             return MethodResult.of(false, "CPU " + cpuName + " does not exists");
 
         ICraftingService craftingGrid = node.getGrid().getService(ICraftingService.class);
@@ -216,7 +219,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         ICraftingService grid = node.getGrid().getService(ICraftingService.class);
 
         Pair<ItemFilter, String> filter = ItemFilter.parse(arguments.getTable(0));
-        if(filter.rightPresent())
+        if (filter.rightPresent())
             return MethodResult.of(false, filter.getRight());
 
         ItemFilter parsedFilter = filter.getLeft();
@@ -234,7 +237,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
             return notConnected();
 
         Pair<ItemFilter, String> filter = ItemFilter.parse(arguments.getTable(0));
-        if(filter.rightPresent())
+        if (filter.rightPresent())
             return MethodResult.of(false, filter.getRight());
 
         ItemFilter parsedFilter = filter.getLeft();
@@ -313,7 +316,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
         MEStorage monitor = AppEngApi.getMonitor(node);
         Pair<ItemFilter, String> filter = ItemFilter.parse(arguments.getTable(0));
-        if(filter.rightPresent())
+        if (filter.rightPresent())
             return MethodResult.of(null, filter.getRight());
 
         ItemFilter parsedFilter = filter.getLeft();
@@ -427,7 +430,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     }
 
     public final ICraftingCPU getCraftingCPU(String cpuName) {
-        if(cpuName.isEmpty()) return null;
+        if (cpuName.isEmpty()) return null;
         ICraftingService grid = node.getGrid().getService(ICraftingService.class);
         if (grid == null) return null;
 
@@ -437,7 +440,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         while (iterator.hasNext()) {
             ICraftingCPU cpu = iterator.next();
 
-            if(Objects.requireNonNull(cpu.getName()).getString().equals(cpuName)) {
+            if (Objects.requireNonNull(cpu.getName()).getString().equals(cpuName)) {
                 return cpu;
             }
         }

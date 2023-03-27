@@ -8,6 +8,7 @@ import static net.minecraftforge.common.capabilities.CapabilityManager.get;
 
 public class MekanismCapabilities {
 
-    public static final Capability<IGasHandler> GAS_HANDLER = get(new CapabilityToken<>(){});
+    public static final Capability<IGasHandler> GAS_HANDLER = get(new CapabilityToken<>() {
+    });
 
 }

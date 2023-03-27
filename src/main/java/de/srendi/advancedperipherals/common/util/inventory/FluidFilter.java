@@ -105,10 +105,7 @@ public class FluidFilter {
         }
         if (tag != null && !stack.getFluid().is(tag))
             return false;
-        if (nbt != null && !stack.getOrCreateTag().equals(nbt))
-            return false;
-
-        return true;
+        return nbt == null || stack.getOrCreateTag().equals(nbt);
     }
 
     public int getCount() {

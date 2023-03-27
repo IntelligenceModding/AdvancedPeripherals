@@ -77,7 +77,7 @@ public class DistanceDetectorPeripheral extends BasePeripheral<BlockEntityPeriph
 
     @LuaFunction
     public final double getDistance() {
-        return getPeripheralOwner().tileEntity.getDistance() - 1;
+        return getPeripheralOwner().tileEntity.getCurrentDistance() - 1;
     }
 
     @LuaFunction

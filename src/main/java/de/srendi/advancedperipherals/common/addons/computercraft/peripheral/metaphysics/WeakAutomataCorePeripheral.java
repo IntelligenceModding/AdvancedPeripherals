@@ -3,11 +3,7 @@ package de.srendi.advancedperipherals.common.addons.computercraft.peripheral.met
 import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
 import de.srendi.advancedperipherals.common.addons.computercraft.operations.AutomataCoreTier;
-import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.plugins.AutomataBlockHandPlugin;
-import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.plugins.AutomataChargingPlugin;
-import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.plugins.AutomataItemSuckPlugin;
-import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.plugins.AutomataLookPlugin;
-import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.plugins.AutomataSoulFeedingPlugin;
+import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.plugins.*;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.lib.metaphysics.IAutomataCoreTier;
 import de.srendi.advancedperipherals.lib.peripherals.AutomataCorePeripheral;

@@ -15,6 +15,7 @@ public class OverpoweredHusbandryAutomataCorePeripheral extends HusbandryAutomat
         setAttribute(ATTR_STORING_TOOL_DURABILITY);
     }
 
+    @Override
     public void addRotationCycle(int count) {
         super.addRotationCycle(count);
         if (AdvancedPeripherals.RANDOM.nextDouble() <= APConfig.METAPHYSICS_CONFIG.overpoweredAutomataBreakChance.get())

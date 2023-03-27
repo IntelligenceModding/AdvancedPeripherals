@@ -40,7 +40,7 @@ public class DistanceDetectorSyncPacket implements IPacket {
             return;
         }
         if (tileEntity instanceof DistanceDetectorEntity detector) {
-            detector.setDistance(distance);
+            detector.setCurrentDistance(distance);
             detector.setShowLaser(showLaser);
         }
     }

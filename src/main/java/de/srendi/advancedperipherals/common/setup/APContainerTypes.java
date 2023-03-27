@@ -22,6 +22,7 @@ public class APContainerTypes {
             (id, inv, data) -> new SmartGlassesContainer(id, player -> true, null, data, inv, data.displayStack())
     ));
 
-    public static void register() {
+    protected static void register() {
     }
+
 }
