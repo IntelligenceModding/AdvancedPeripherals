@@ -51,7 +51,6 @@ public class AdvancedPeripherals {
     }
 
     public void commonSetup(FMLCommonSetupEvent event) {
-        APAddons.commonSetup();
         event.enqueueWork(() -> {
             PacketHandler.init();
         });

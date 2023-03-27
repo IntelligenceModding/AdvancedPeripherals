@@ -31,7 +31,7 @@ public class APAddons {
     public static boolean appliedEnergisticsLoaded;
     public static boolean mekanismLoaded;
 
-    public static void commonSetup() {
+    static {
         ModList modList = ModList.get();
         curiosLoaded = modList.isLoaded(CURIOS_MODID);
         refinedStorageLoaded = modList.isLoaded(REFINEDSTORAGE_MODID);
@@ -41,7 +41,6 @@ public class APAddons {
 
         if (refinedStorageLoaded)
             RefinedStorage.instance = new RefinedStorage();
-
     }
 
     @SubscribeEvent
