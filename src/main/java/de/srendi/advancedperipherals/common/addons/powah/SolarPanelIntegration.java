@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import owmii.powah.block.solar.SolarTile;
 
 public class SolarPanelIntegration extends BlockEntityIntegrationPeripheral<SolarTile> {
-    protected SolarPanelIntegration(BlockEntity entity){
+    protected SolarPanelIntegration(BlockEntity entity) {
         super(entity);
     }
 
@@ -15,6 +15,11 @@ public class SolarPanelIntegration extends BlockEntityIntegrationPeripheral<Sola
     @Override
     public String getType() {
         return "solarPanel";
+    }
+
+    @LuaFunction(mainThread = true)
+    public final String getName() {
+        return "Solar Panel";
     }
 
     @LuaFunction(mainThread = true)
