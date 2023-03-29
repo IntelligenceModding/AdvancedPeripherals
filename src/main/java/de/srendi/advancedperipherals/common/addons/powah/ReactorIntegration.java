@@ -2,6 +2,7 @@ package de.srendi.advancedperipherals.common.addons.powah;
 
 import dan200.computercraft.api.lua.LuaFunction;
 import de.srendi.advancedperipherals.lib.peripherals.BlockEntityIntegrationPeripheral;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import owmii.powah.block.reactor.ReactorPartTile;
 
@@ -53,5 +54,20 @@ public class ReactorIntegration extends BlockEntityIntegrationPeripheral<Reactor
     @LuaFunction(mainThread = true)
     public final double getTemperature() {
         return blockEntity.core().get().temp.perCent();
+    }
+
+    @LuaFunction(mainThread = true)
+    public final ItemStack getInventoryUraninite() {
+        return blockEntity.core().get().getInventory().getStackInSlot(1);
+    }
+
+    @LuaFunction(mainThread = true)
+    public final ItemStack getInventoryRedstone() {
+        return blockEntity.core().get().getInventory().getStackInSlot(3);
+    }
+
+    @LuaFunction(mainThread = true)
+    public final ItemStack getInventoryCarbon() {
+        return blockEntity.core().get().getInventory().getStackInSlot(2);
     }
 }
