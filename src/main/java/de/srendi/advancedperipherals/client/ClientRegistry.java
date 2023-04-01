@@ -3,6 +3,7 @@ package de.srendi.advancedperipherals.client;
 import dan200.computercraft.api.client.ComputerCraftAPIClient;
 import dan200.computercraft.api.client.turtle.TurtleUpgradeModeller;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
+import de.srendi.advancedperipherals.client.renderer.BaseBlockRenderer;
 import de.srendi.advancedperipherals.client.renderer.DistanceDetectorRenderer;
 import de.srendi.advancedperipherals.client.screens.InventoryManagerScreen;
 import de.srendi.advancedperipherals.client.screens.SmartGlassesScreen;
@@ -61,5 +62,6 @@ public class ClientRegistry {
     @SubscribeEvent
     public static void registeringRenderers(EntityRenderersEvent.RegisterRenderers event) {
         event.registerBlockEntityRenderer(APBlockEntityTypes.DISTANCE_DETECTOR.get(), DistanceDetectorRenderer::new);
+        event.registerBlockEntityRenderer(APBlockEntityTypes.REDSTONE_INTEGRATOR.get(), BaseBlockRenderer::new);
     }
 }

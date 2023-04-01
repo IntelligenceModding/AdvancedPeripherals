@@ -7,6 +7,7 @@ import de.srendi.advancedperipherals.common.setup.APBlocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Material;
@@ -41,5 +42,11 @@ public class RedstoneIntegratorBlock extends BaseBlockEntityBlock {
     @Override
     public int getSignal(@NotNull BlockState blockState, @NotNull BlockGetter blockGetter, @NotNull BlockPos pos, @NotNull Direction side) {
         return getDirectSignal(blockState, blockGetter, pos, side);
+    }
+
+    @NotNull
+    @Override
+    public RenderShape getRenderShape(@NotNull BlockState state) {
+        return RenderShape.MODEL;
     }
 }
