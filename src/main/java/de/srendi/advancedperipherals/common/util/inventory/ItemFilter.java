@@ -2,6 +2,7 @@ package de.srendi.advancedperipherals.common.util.inventory;
 
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.core.apis.TableHelper;
+import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.util.NBTUtil;
 import de.srendi.advancedperipherals.common.util.Pair;
 import net.minecraft.core.registries.Registries;
@@ -26,17 +27,20 @@ public class ItemFilter {
     public int fromSlot = -1;
     public int toSlot = -1;
 
+    private ItemFilter() {
+    }
+
     public static Pair<ItemFilter, String> parse(Map<?, ?> item) {
-        ItemFilter itemArgument = empty();
+        ItemFilter itemFilter = empty();
         // If the map is empty, return a filter without any filters
         if (item.size() == 0)
-            return Pair.of(itemArgument, null);
+            return Pair.of(itemFilter, null);
         if (item.containsKey("name")) {
             try {
                 String name = TableHelper.getStringField(item, "name");
                 if (name.startsWith("#")) {
-                    itemArgument.tag = TagKey.create(Registries.ITEM, new ResourceLocation(name.substring(1)));
-                } else if ((itemArgument.item = ItemUtil.getRegistryEntry(name, ForgeRegistries.ITEMS)) == null) {
+                    itemFilter.tag = TagKey.create(Registries.ITEM, new ResourceLocation(name.substring(1)));
+                } else if ((itemFilter.item = ItemUtil.getRegistryEntry(name, ForgeRegistries.ITEMS)) == null) {
                     return Pair.of(null, "ITEM_NOT_FOUND");
                 }
             } catch (LuaException luaException) {
@@ -45,10 +49,10 @@ public class ItemFilter {
         }
         if (item.containsKey("nbt")) {
             try {
-                itemArgument.nbt = NBTUtil.fromText(TableHelper.getStringField(item, "nbt"));
+                itemFilter.nbt = NBTUtil.fromText(TableHelper.getStringField(item, "nbt"));
             } catch (LuaException luaException) {
                 try {
-                    itemArgument.nbt = NBTUtil.fromText(TableHelper.getTableField(item, "nbt").toString());
+                    itemFilter.nbt = NBTUtil.fromText(TableHelper.getTableField(item, "nbt").toString());
                 } catch (LuaException e) {
                     return Pair.of(null, "NO_VALID_NBT");
                 }
@@ -56,34 +60,35 @@ public class ItemFilter {
         }
         if (item.containsKey("fingerprint")) {
             try {
-                itemArgument.fingerprint = TableHelper.getStringField(item, "fingerprint");
+                itemFilter.fingerprint = TableHelper.getStringField(item, "fingerprint");
             } catch (LuaException luaException) {
                 return Pair.of(null, "NO_VALID_FINGERPRINT");
             }
         }
         if (item.containsKey("fromSlot")) {
             try {
-                itemArgument.fromSlot = TableHelper.getIntField(item, "fromSlot");
+                itemFilter.fromSlot = TableHelper.getIntField(item, "fromSlot");
             } catch (LuaException luaException) {
                 return Pair.of(null, "NO_VALID_FROMSLOT");
             }
         }
         if (item.containsKey("toSlot")) {
             try {
-                itemArgument.toSlot = TableHelper.getIntField(item, "toSlot");
+                itemFilter.toSlot = TableHelper.getIntField(item, "toSlot");
             } catch (LuaException luaException) {
                 return Pair.of(null, "NO_VALID_TOSLOT");
             }
         }
         if (item.containsKey("count")) {
             try {
-                itemArgument.count = TableHelper.getIntField(item, "count");
+                itemFilter.count = TableHelper.getIntField(item, "count");
             } catch (LuaException luaException) {
                 return Pair.of(null, "NO_VALID_COUNT");
             }
         }
 
-        return Pair.of(itemArgument, null);
+        AdvancedPeripherals.debug("Parsed item filter: " + itemFilter);
+        return Pair.of(itemFilter, null);
     }
 
     public static ItemFilter fromStack(ItemStack stack) {
@@ -141,5 +146,18 @@ public class ItemFilter {
 
     public Tag getNbt() {
         return nbt;
+    }
+
+    @Override
+    public String toString() {
+        return "ItemFilter{" +
+                "item=" + item +
+                ", tag=" + tag +
+                ", nbt=" + nbt +
+                ", count=" + count +
+                ", fingerprint='" + fingerprint + '\'' +
+                ", fromSlot=" + fromSlot +
+                ", toSlot=" + toSlot +
+                '}';
     }
 }

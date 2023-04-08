@@ -6,13 +6,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
-
-### Fixed
-- [#412] Fix `craftItem` for the rs bridge.
-- Respect item filters for the me bridge's `craftItem` function
+## [1.19.3-0.7.26r] - 2023-03-15
 
 ### Added
-- [#413] Added `listChest` to the inventory manager
+- [#416]Add the crafting job to the crafting cpu object - me bridge
+
+### Fixed
+- [#416]Try to parse the `nbt` argument as a table if parsing it as a string fails. Adds the ability to use the output of our functions like `listItems` or `getItem` as item filter argument.
+- [#417]Disable power consumption if powered peripherals are disabled in the configuration
+- [#423]Fixed that some functions of the me and rs bridge ignore or increasing the count they want to export
 
 ## [1.19.3-0.7.24b] - 2023-02-12
 
