@@ -283,9 +283,8 @@ dependencies {
         transitive false
     }
 
-    // AE2 Things - removed until updated
-    //compileOnly "curse.maven:ae2things-609977:${ae2things_version}-sources"
-    //runtimeOnly fg.deobf("curse.maven:ae2things-609977:${ae2things_version}-sources")
+    compileOnly "curse.maven:ae2things-609977:${ae2things_version}-sources"
+    runtimeOnly fg.deobf("curse.maven:ae2things-609977:${ae2things_version}-sources")
 
     // Botania
     compileOnly fg.deobf("vazkii.botania:Botania:${botania_version}")
