@@ -3,7 +3,8 @@ on:
   push:
     branches:
       - dev/0.8
-      - 1.19
+      - 1.19.3
+      - 1.19.2
       - 1.18
   pull_request:
     types: [opened, synchronize, reopened]
