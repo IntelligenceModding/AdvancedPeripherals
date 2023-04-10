@@ -194,10 +194,6 @@ repositories {
         url = 'https://squiddev.cc/maven/'
     }
     maven {
-        name = "Progwml6 maven jei"
-        url = "https://dvs1.progwml6.com/files/maven/"
-    }
-    maven {
         name = "Theillusivec4 maven curios"
         url = "https://maven.theillusivec4.top/"
     }
@@ -206,7 +202,7 @@ repositories {
         url = 'https://ldtteam.jfrog.io/ldtteam/modding'
     }
     maven {
-        name = "Modmaven"
+        name = "Modmaven jei"
         url = 'https://modmaven.dev/'
     }
     maven {
@@ -283,8 +279,9 @@ dependencies {
         transitive false
     }
 
-    compileOnly "curse.maven:ae2things-609977:${ae2things_version}-sources"
-    runtimeOnly fg.deobf("curse.maven:ae2things-609977:${ae2things_version}-sources")
+    // AE2 Things - removed until ported
+    // compileOnly "curse.maven:ae2things-609977:${ae2things_version}-sources"
+    // runtimeOnly fg.deobf("curse.maven:ae2things-609977:${ae2things_version}-sources")
 
     // Botania
     compileOnly fg.deobf("vazkii.botania:Botania:${botania_version}")
@@ -294,7 +291,7 @@ dependencies {
     // Change to compileOnly when running `runData`
     compileOnly fg.deobf("com.ldtteam:minecolonies:${minecolonies_version}")
     compileOnly fg.deobf("com.ldtteam:structurize:${structurize_version}")
-    compileOnly fg.deobf("com.ldtteam:multi-piston:${multipiston_version}")
+    compileOnly fg.deobf("com.ldtteam:multipiston:${multipiston_version}")
     compileOnly fg.deobf("com.ldtteam:domum_ornamentum:${domumornamentum_version}:universal")
     compileOnly fg.deobf("com.ldtteam:blockui:${blockui_version}")
 
