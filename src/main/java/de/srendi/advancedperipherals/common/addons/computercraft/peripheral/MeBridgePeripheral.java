@@ -4,6 +4,7 @@ import appeng.api.networking.IGridNode;
 import appeng.api.networking.IManagedGridNode;
 import appeng.api.networking.crafting.ICraftingCPU;
 import appeng.api.networking.crafting.ICraftingService;
+import appeng.api.stacks.AEFluidKey;
 import appeng.api.stacks.AEItemKey;
 import appeng.api.storage.MEStorage;
 import dan200.computercraft.api.lua.IArguments;
@@ -157,6 +158,35 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
         ICraftingService craftingGrid = node.getGrid().getService(ICraftingService.class);
         Pair<Long, AEItemKey> stack = AppEngApi.findAEStackFromFilter(AppEngApi.getMonitor(tile.getGridNode()), craftingGrid, filter.getLeft());
+        if (stack.getRight() == null && stack.getLeft() == 0)
+            return MethodResult.of(null, "NOT_CRAFTABLE");
+
+        CraftJob job = new CraftJob(owner.getLevel(), computer, node, stack.getRight(), parsedFilter.getCount(), tile, tile, target);
+        tile.addJob(job);
+        ServerWorker.add(job::startCrafting);
+        return MethodResult.of(true);
+    }
+
+    @LuaFunction
+    public final MethodResult craftFluid(IComputerAccess computer, IArguments arguments) throws LuaException {
+        if (!isConnected())
+            return notConnected();
+
+        Pair<FluidFilter, String> filter = FluidFilter.parse(arguments.getTable(0));
+        if(filter.rightPresent())
+            return MethodResult.of(false, filter.getRight());
+
+        FluidFilter parsedFilter = filter.getLeft();
+        if (parsedFilter.isEmpty())
+            return MethodResult.of(false, "EMPTY_FILTER");
+
+        String cpuName = arguments.optString(1, "");
+        ICraftingCPU target = getCraftingCPU(cpuName);
+        if(!cpuName.isEmpty() && target == null)
+            return MethodResult.of(false, "CPU " + cpuName + " does not exists");
+
+        ICraftingService craftingGrid = node.getGrid().getService(ICraftingService.class);
+        Pair<Long, AEFluidKey> stack = AppEngApi.findAEFluidFromFilter(AppEngApi.getMonitor(tile.getGridNode()), craftingGrid, filter.getLeft());
         if (stack.getRight() == null && stack.getLeft() == 0)
             return MethodResult.of(null, "NOT_CRAFTABLE");
 
