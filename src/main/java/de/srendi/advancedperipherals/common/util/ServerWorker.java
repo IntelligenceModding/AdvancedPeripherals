@@ -22,6 +22,7 @@ public class ServerWorker {
         if (event.phase == TickEvent.Phase.END) {
             while (!callQueue.isEmpty()) {
                 final Runnable runnable = callQueue.poll();
+                AdvancedPeripherals.debug("Running queued server worker call: " + runnable);
                 runnable.run();
             }
         }
