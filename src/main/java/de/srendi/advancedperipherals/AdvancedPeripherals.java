@@ -1,6 +1,5 @@
 package de.srendi.advancedperipherals;
 
-import de.srendi.advancedperipherals.common.addons.APAddons;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.network.PacketHandler;
 import de.srendi.advancedperipherals.common.setup.APRegistration;

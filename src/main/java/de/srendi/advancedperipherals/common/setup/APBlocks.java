@@ -1,6 +1,5 @@
 package de.srendi.advancedperipherals.common.setup;
 
-import de.srendi.advancedperipherals.common.addons.APAddons;
 import de.srendi.advancedperipherals.common.blocks.PlayerDetectorBlock;
 import de.srendi.advancedperipherals.common.blocks.RedstoneIntegratorBlock;
 import de.srendi.advancedperipherals.common.blocks.base.APBlockEntityBlock;
