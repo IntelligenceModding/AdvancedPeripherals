@@ -12,7 +12,7 @@ public interface IModule {
      *
      * @return an object containing lua functions {@link dan200.computercraft.api.lua.LuaFunction}
      */
-    IModuleFunctions getMethods();
+    IModuleFunctions getMethods(SmartGlassesAccess smartGlassesAccess);
 
     void tick(SmartGlassesAccess smartGlassesAccess);
 
