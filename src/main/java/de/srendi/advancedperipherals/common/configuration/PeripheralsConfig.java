@@ -3,9 +3,11 @@ package de.srendi.advancedperipherals.common.configuration;
 import de.srendi.advancedperipherals.common.addons.computercraft.operations.SimpleFreeOperation;
 import de.srendi.advancedperipherals.common.addons.computercraft.operations.SingleOperation;
 import de.srendi.advancedperipherals.common.addons.computercraft.operations.SphereOperation;
+import net.minecraft.FieldsAreNonnullByDefault;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.fml.config.ModConfig;
 
+@FieldsAreNonnullByDefault
 public class PeripheralsConfig implements IAPConfig {
 
     //Player Detector
@@ -49,6 +51,7 @@ public class PeripheralsConfig implements IAPConfig {
     public final ForgeConfigSpec.BooleanValue enableCompassTurtle;
     //Powered Peripherals
     public final ForgeConfigSpec.BooleanValue enablePoweredPeripherals;
+    public final ForgeConfigSpec.BooleanValue disablePocketFuelConsumption;
     public final ForgeConfigSpec.IntValue poweredPeripheralMaxEnergyStorage;
     private final ForgeConfigSpec configSpec;
 
@@ -129,6 +132,10 @@ public class PeripheralsConfig implements IAPConfig {
 
         enablePoweredPeripherals = builder.comment("Enable RF storage for peripherals, that could use it").define("enablePoweredPeripherals", false);
         poweredPeripheralMaxEnergyStorage = builder.comment("Defines max energy storage in any powered peripheral").defineInRange("poweredPeripheralMaxEnergyStored", 100_000_000, 1_000_000, Integer.MAX_VALUE);
+
+        pop("Pocket_Peripherals", builder);
+
+        disablePocketFuelConsumption = builder.comment("If true, pockets will have infinite fuel").define("disablePocketFuelConsumption", true);
 
         pop("Operations", builder);
 

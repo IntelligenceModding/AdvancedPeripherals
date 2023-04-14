@@ -6,6 +6,22 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+## [1.19.3-0.7.27r] - 2023-04-14
+
+### Added
+- [#429]Add back support for ae2 things
+- Added some checks to the inventory manager
+
+### Fixed
+- Fixed that the rs bridge does not export items if the item is distributed between multiple storages - thanks to Rudy Gambelini!
+- [#427]Fixed that nbt values of items that are moved get deleted in the me bridge.
+- [#430]Add `craftFluid` to the me bridge
+- Fixed chatbox event calling when typing
+
+### Changed
+- [#432]Disable curio slot
+- Disable fuel consumption of the pocket computer - can be enabled in the config
+
 ## [1.19.3-0.7.26r] - 2023-03-15
 
 ### Added
