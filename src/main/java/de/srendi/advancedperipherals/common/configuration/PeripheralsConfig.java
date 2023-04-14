@@ -51,6 +51,8 @@ public class PeripheralsConfig implements IAPConfig {
     public final ForgeConfigSpec.BooleanValue enableCompassTurtle;
     //Powered Peripherals
     public final ForgeConfigSpec.BooleanValue enablePoweredPeripherals;
+    public final ForgeConfigSpec.BooleanValue disablePocketFuelConsumption;
+
     public final ForgeConfigSpec.IntValue poweredPeripheralMaxEnergyStorage;
     private final ForgeConfigSpec configSpec;
 
@@ -131,6 +133,10 @@ public class PeripheralsConfig implements IAPConfig {
 
         enablePoweredPeripherals = builder.comment("Enable RF storage for peripherals, that could use it").define("enablePoweredPeripherals", false);
         poweredPeripheralMaxEnergyStorage = builder.comment("Defines max energy storage in any powered peripheral").defineInRange("poweredPeripheralMaxEnergyStored", 100_000_000, 1_000_000, Integer.MAX_VALUE);
+
+        pop("Pocket_Peripherals", builder);
+
+        disablePocketFuelConsumption = builder.comment("If true, pockets will have infinite fuel").define("disablePocketFuelConsumption", true);
 
         pop("Operations", builder);
 

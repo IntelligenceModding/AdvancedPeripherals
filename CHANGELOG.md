@@ -6,6 +6,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+## [1.18.2-0.7.28r] - 2023-04-14
+
+### Fixed
+- [#427] Fixed that nbt values of items that are moved get deleted in the me bridge. 
+- [#430] Add `craftFluid` to the me bridge
+
+### Changed
+- Disable fuel consumption of the pocket computer - can be enabled in the config
+
 ## [1.18.2-0.7.27r] - 2023-03-15
 
 ### Added
