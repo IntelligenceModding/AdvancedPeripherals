@@ -22,6 +22,7 @@ public class PocketPeripheralOwner extends BasePeripheralOwner {
     public PocketPeripheralOwner(IPocketAccess pocket) {
         super();
         this.pocket = pocket;
+        attachAbility(PeripheralOwnerAbility.FUEL, new InfinitePocketFuelAbility(this));
     }
 
     @Nullable
