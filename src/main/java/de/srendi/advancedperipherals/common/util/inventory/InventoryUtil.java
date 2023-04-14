@@ -53,15 +53,16 @@ public class InventoryUtil {
         // The logic changes with storage systems since these systems do not have slots
         if (inventoryFrom instanceof IStorageSystemItemHandler storageSystemHandler) {
             for (int i = toSlot == -1 ? 0 : toSlot; i < (toSlot == -1 ? inventoryTo.getSlots() : toSlot + 1); i++) {
-                ItemStack extracted = storageSystemHandler.extractItem(filter, true);
-                ItemStack inserted;
+                ItemStack extracted = storageSystemHandler.extractItem(filter, filter.getCount(), true);
+                ItemStack inserted = extracted.copy();
+                inserted.setCount(0);
                 if (toSlot == -1) {
                     inserted = ItemHandlerHelper.insertItem(inventoryTo, extracted, false);
                 } else {
                     inserted = inventoryTo.insertItem(toSlot, extracted, false);
                 }
-                amount -= inserted.getCount();
-                transferableAmount += storageSystemHandler.extractItem(filter, false).getCount();
+                amount -= extracted.getCount() - inserted.getCount();
+                transferableAmount += storageSystemHandler.extractItem(filter, extracted.getCount() - inserted.getCount(), false).getCount();
                 if (transferableAmount >= filter.getCount())
                     break;
             }
@@ -122,7 +123,7 @@ public class InventoryUtil {
                 FluidStack toExtract = inventoryFrom.getFluidInTank(0).copy();
                 toExtract.setAmount(amount);
                 FluidStack extracted = inventoryFrom.drain(toExtract, IFluidHandler.FluidAction.SIMULATE);
-                if(extracted.isEmpty())
+                if (extracted.isEmpty())
                     return 0;
                 int inserted = storageSystemHandler.fill(extracted, IFluidHandler.FluidAction.EXECUTE);
 
