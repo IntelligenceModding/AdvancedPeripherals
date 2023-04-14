@@ -71,7 +71,7 @@ public class Events {
     }
 
     @SubscribeEvent
-    public static void onChatBox(ServerChatEvent.Submitted event) {
+    public static void onChatBox(ServerChatEvent event) {
         if (APConfig.PERIPHERALS_CONFIG.enableChatBox.get()) {
             String message = event.getMessage().getString();
             boolean isHidden = false;

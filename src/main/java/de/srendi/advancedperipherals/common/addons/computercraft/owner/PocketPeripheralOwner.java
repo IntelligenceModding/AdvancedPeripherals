@@ -1,6 +1,7 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.owner;
 
 import dan200.computercraft.api.pocket.IPocketAccess;
+import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.util.DataStorageUtil;
 import de.srendi.advancedperipherals.common.util.fakeplayer.APFakePlayer;
 import net.minecraft.core.BlockPos;
@@ -23,6 +24,8 @@ public class PocketPeripheralOwner extends BasePeripheralOwner {
     public PocketPeripheralOwner(IPocketAccess pocket) {
         super();
         this.pocket = pocket;
+        if(APConfig.PERIPHERALS_CONFIG.disablePocketFuelConsumption.get())
+            attachAbility(PeripheralOwnerAbility.FUEL, new InfinitePocketFuelAbility(this));
     }
 
     @Nullable
