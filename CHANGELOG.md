@@ -9,6 +9,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ## [1.18.2-0.7.28r] - 2023-04-14
 
 ### Fixed
+- Fixed that the rs bridge does not export items if the item is distributed between multiple storages - thanks to Rudy Gambelini!
 - [#427] Fixed that nbt values of items that are moved get deleted in the me bridge. 
 - [#430] Add `craftFluid` to the me bridge
 
