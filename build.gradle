@@ -232,7 +232,10 @@ repositories {
             includeGroup "site.siredvin.ttoolkit"
         }
     }
-
+    maven {
+        name = "Shedaniel cloth"
+        url = "https://maven.shedaniel.me/"
+    }
     maven {
         url = uri("https://maven.pkg.github.com/refinedmods/refinedstorage")
         credentials {
@@ -240,7 +243,6 @@ repositories {
             password = "\u0067hp_oGjcDFCn8jeTzIj4Ke9pLoEVtpnZMP4VQgaX"
         }
     }
-
     maven {
         url "https://cursemaven.com"
         content {
@@ -277,7 +279,7 @@ dependencies {
     implementation fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}")
 
     // Refined Storage
-    implementation fg.deobf("com.refinedmods:refinedstorage:${refinedstorage_version}")  {
+    implementation fg.deobf("com.refinedmods:refinedstorage:${refinedstorage_version}") {
         transitive false
     }
 
@@ -307,6 +309,8 @@ dependencies {
 
     //Powah
     implementation fg.deobf("curse.maven:powah-633483:${powah_version}")
+    implementation fg.deobf("me.shedaniel.cloth:cloth-config-forge:8.2.88")
+    implementation fg.deobf("dev.architectury:architectury-forge:6.2.43")
 
     testImplementation "org.junit.jupiter:junit-jupiter-api:${junit_version}"
     testImplementation "org.junit.jupiter:junit-jupiter-params:${junit_version}"
@@ -384,15 +388,13 @@ afterEvaluate {
 
 jar {
     manifest({
-        attributes([
-                "Specification-Title"     : "advancedperipherals",
-                "Specification-Vendor"    : "Srendi",
-                "Specification-Version"   : "${version}",
-                "Implementation-Title"    : "advancedperipherals",
-                "Implementation-Version"  : "${version}",
-                "Implementation-Vendor"   : "Srendi",
-                "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
-        ])
+        attributes(["Specification-Title"     : "advancedperipherals",
+                    "Specification-Vendor"    : "Srendi",
+                    "Specification-Version"   : "${version}",
+                    "Implementation-Title"    : "advancedperipherals",
+                    "Implementation-Version"  : "${version}",
+                    "Implementation-Vendor"   : "Srendi",
+                    "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")])
     })
 }
 
@@ -423,7 +425,8 @@ curseforge {
 }
 
 modrinth {
-    token = modrinthKey // This is the default. Remember to have the MODRINTH_TOKEN environment variable set or else this will fail, or set it to whatever you want - just make sure it stays private!
+    token = modrinthKey
+    // This is the default. Remember to have the MODRINTH_TOKEN environment variable set or else this will fail, or set it to whatever you want - just make sure it stays private!
     projectId = 'SOw6jD6x' // This can be the project ID or the slug. Either will work!
     versionNumber = "${minecraft_version}-${project.version}"
     versionName = "Advanced Peripherals ${minecraft_version} ${version}"
