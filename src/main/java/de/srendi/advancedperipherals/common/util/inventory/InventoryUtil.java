@@ -51,8 +51,7 @@ public class InventoryUtil {
         if (inventoryFrom instanceof IStorageSystemItemHandler storageSystemHandler) {
             for (int i = toSlot == -1 ? 0 : toSlot; i < (toSlot == -1 ? inventoryTo.getSlots() : toSlot + 1); i++) {
                 ItemStack extracted = storageSystemHandler.extractItem(filter, filter.getCount(), true);
-                ItemStack inserted = extracted.copy();
-                inserted.setCount(0);
+                ItemStack inserted;
                 if (toSlot == -1) {
                     inserted = ItemHandlerHelper.insertItem(inventoryTo, extracted, false);
                 } else {
