@@ -3,6 +3,7 @@ package de.srendi.advancedperipherals.common.addons.refinedstorage;
 import com.refinedmods.refinedstorage.api.network.INetwork;
 import com.refinedmods.refinedstorage.api.util.Action;
 import com.refinedmods.refinedstorage.api.util.IComparer;
+import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.util.inventory.IStorageSystemItemHandler;
 import de.srendi.advancedperipherals.common.util.inventory.ItemFilter;
 import net.minecraft.world.item.ItemStack;
@@ -28,11 +29,14 @@ public class RsItemHandler implements IStorageSystemItemHandler {
     }
 
     @Override
-    public ItemStack extractItem(ItemFilter filter, boolean simulate) {
+    public ItemStack extractItem(ItemFilter filter, int count, boolean simulate) {
         ItemStack item = RefinedStorage.findStackFromFilter(network, network.getCraftingManager(), filter);
+        AdvancedPeripherals.debug("Trying to extract item: " + item + " from filter: " + filter);
         if(item == null)
             return ItemStack.EMPTY;
-        return network.extractItem(item, filter.getCount(), IComparer.COMPARE_QUANTITY, simulate ? Action.SIMULATE : Action.PERFORM);
+        ItemStack extracted = network.extractItem(item, count, IComparer.COMPARE_NBT, simulate ? Action.SIMULATE : Action.PERFORM);
+        AdvancedPeripherals.debug("Extracted item: " + extracted + " from filter: " + filter);
+        return extracted;
     }
 
 }

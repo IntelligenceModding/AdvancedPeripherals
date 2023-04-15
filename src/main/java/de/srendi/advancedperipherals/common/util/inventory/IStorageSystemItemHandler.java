@@ -12,10 +12,11 @@ public interface IStorageSystemItemHandler extends IItemHandler {
      * stack sizes greater than 64.
      *
      * @param filter The parsed filter
+     * @param count The amount to extract
      * @param simulate Should this action be simulated
      * @return extracted from the slot, must be empty if nothing can be extracted. The returned ItemStack can be safely modified after, so item handlers should return a new or copied stack.
      */
-    ItemStack extractItem(ItemFilter filter, boolean simulate);
+    ItemStack extractItem(ItemFilter filter, int count, boolean simulate);
 
     /*
     These 5 methods are ignored in our transferring logic. Storage Systems do not respect slots and to extract we need a filter
