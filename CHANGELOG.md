@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+## [1.19.3-0.7.28r] - 2023-04-15
+
+### Fixed
+- [#433] Fixed that items will be exported regardless if the target can accept the items - RS and ME Bridge
+- Fixed return type of `removeItem` in the inventory manager
+
 ## [1.19.3-0.7.27r] - 2023-04-14
 
 ### Added
