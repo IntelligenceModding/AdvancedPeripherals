@@ -115,6 +115,8 @@ public class AppEngApi {
     }
 
     public static <T extends AEKey> Map<String, Object> getObjectFromStack(Pair<Long, T> stack, @Nullable ICraftingService service) {
+        if (stack.getRight() == null)
+            return Collections.emptyMap();
         if (stack.getRight() instanceof AEItemKey itemKey)
             return getObjectFromItemStack(Pair.of(stack.getLeft(), itemKey), service);
         if (stack.getRight() instanceof AEFluidKey fluidKey)
