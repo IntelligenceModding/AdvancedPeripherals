@@ -5,7 +5,7 @@
   "pages": [
     {
       "type": "text",
-      "text": "The Inventory Manager can communicate with the player's inventory. You need to right click a Memory Card and put the card into the manager to use it.$(p)For the full documentation please see the $(9)$(l:https://docs.srendi.de/peripherals/inventory_manager/)official wiki page$(/l)$()!"
+      "text": "The Inventory Manager can communicate with the player's inventory. You need to right click a Memory Card and put the card into the manager to use it.$(p)For the full documentation please see the $(9)$(l:https://docs.intelligence-modding.de/peripherals/inventory_manager/)official wiki page$(/l)$()!"
     },
     {
       "type": "crafting",
