@@ -16,6 +16,7 @@ import dan200.computercraft.shared.util.NBTUtil;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
 import de.srendi.advancedperipherals.common.util.inventory.FluidFilter;
+import de.srendi.advancedperipherals.common.util.inventory.FluidUtil;
 import de.srendi.advancedperipherals.common.util.inventory.ItemFilter;
 import de.srendi.advancedperipherals.common.util.inventory.ItemUtil;
 import net.minecraft.core.NonNullList;
@@ -215,11 +216,13 @@ public class RefinedStorage {
 
         Map<String, Object> map = new HashMap<>();
         Supplier<Stream<TagKey<Fluid>>> tags = () -> fluidStack.getFluid().builtInRegistryHolder().tags();
+        map.put("fingerprint", FluidUtil.getFingerprint(fluidStack));
         map.put("name", fluidStack.getFluid().getRegistryName().toString());
         map.put("amount", fluidStack.getAmount());
         map.put("displayName", fluidStack.getDisplayName().getString());
-        map.put("isCraftable", isFluidCraftable(network, fluidStack));
+        map.put("nbt", NBTUtil.toLua(fluidStack.getTag()));
         map.put("tags", tags.get().findAny().isEmpty() ? null : LuaConverter.tagsToList(tags));
+        map.put("isCraftable", isFluidCraftable(network, fluidStack));
 
         return map;
     }

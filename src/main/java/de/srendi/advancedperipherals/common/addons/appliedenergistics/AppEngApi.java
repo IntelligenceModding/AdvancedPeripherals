@@ -139,9 +139,11 @@ public class AppEngApi {
     private static Map<String, Object> getObjectFromFluidStack(Pair<Long, AEFluidKey> stack, @Nullable ICraftingService craftingService) {
         Map<String, Object> map = new HashMap<>();
         long amount = stack.getLeft();
+        map.put("fingerprint", FluidUtil.getFingerprint(stack.getRight().toStack(1)));
         map.put("name", stack.getRight().getFluid().getRegistryName().toString());
         map.put("amount", amount);
-        map.put("displayName", stack.getRight().getDisplayName());
+        map.put("displayName", stack.getRight().getDisplayName().getString());
+        map.put("nbt", NBTUtil.toLua(stack.getRight().getTag()));
         map.put("tags", LuaConverter.tagsToList(() -> stack.getRight().getFluid().builtInRegistryHolder().tags()));
         map.put("isCraftable", craftingService != null && craftingService.isCraftable(stack.getRight()));
 
