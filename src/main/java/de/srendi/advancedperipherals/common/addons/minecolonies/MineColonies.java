@@ -294,7 +294,7 @@ public class MineColonies {
         if (!(building instanceof AbstractBuildingStructureBuilder builderBuilding))
             return null;
 
-        //We need to say the building that we want information about it
+        // We need to tell the building that we want information about it
         FriendlyByteBuf buffer = new FriendlyByteBuf(Unpooled.buffer());
         builderBuilding.serializeToView(buffer);
         buffer.release();
