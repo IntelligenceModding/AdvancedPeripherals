@@ -14,7 +14,7 @@ buildscript {
         gradlePluginPortal()
     }
     dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1+', changing: true
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '6.0+', changing: true
         classpath 'org.parchmentmc:librarian:1.+'
     }
 }
@@ -194,10 +194,10 @@ repositories {
         name = "Squiddev maven cct"
         url = 'https://squiddev.cc/maven/'
     }
-    maven {
+    /*maven {
         name = "Progwml6 maven jei"
         url = "https://dvs1.progwml6.com/files/maven/"
-    }
+    }*/
     maven {
         name = "Theillusivec4 maven curios"
         url = "https://maven.theillusivec4.top/"
