@@ -1,4 +1,4 @@
-package de.srendi.advancedperipherals.common.addons.base;
+package de.srendi.advancedperipherals.common.util.inventory;
 
 import dan200.computercraft.api.lua.IArguments;
 import dan200.computercraft.api.lua.LuaException;
@@ -40,6 +40,9 @@ public interface IStoragePeripheral {
     @LuaFunction(mainThread = true)
     MethodResult listCraftableFluids();
 
+    @LuaFunction
+    MethodResult listCells();
+
     @LuaFunction(mainThread = true)
     MethodResult importItem(IArguments arguments) throws LuaException;
 
@@ -51,6 +54,18 @@ public interface IStoragePeripheral {
 
     @LuaFunction(mainThread = true)
     MethodResult exportItemToPeripheral(IComputerAccess computer, IArguments arguments) throws LuaException;
+
+    @LuaFunction(mainThread = true)
+    MethodResult importFluid(IArguments arguments) throws LuaException;
+
+    @LuaFunction(mainThread = true)
+    MethodResult exportFluid(IArguments arguments) throws LuaException;
+
+    @LuaFunction(mainThread = true)
+    MethodResult importFluidFromPeripheral(IComputerAccess computer, IArguments arguments) throws LuaException;
+
+    @LuaFunction(mainThread = true)
+    MethodResult exportFluidToPeripheral(IComputerAccess computer, IArguments arguments) throws LuaException;
 
     @LuaFunction(mainThread = true)
     MethodResult getPattern(IArguments arguments) throws LuaException;
@@ -68,16 +83,40 @@ public interface IStoragePeripheral {
     MethodResult getEnergyUsage();
 
     @LuaFunction(mainThread = true)
-    MethodResult getMaxItemExternalStorage();
+    MethodResult getTotalExternItemStorage();
 
     @LuaFunction(mainThread = true)
-    MethodResult getMaxFluidExternalStorage();
+    MethodResult getTotalExternFluidStorage();
 
     @LuaFunction(mainThread = true)
-    MethodResult getMaxItemDiskStorage();
+    MethodResult getTotalItemStorage();
 
     @LuaFunction(mainThread = true)
-    MethodResult getMaxFluidDiskStorage();
+    MethodResult getTotalFluidStorage();
+
+    @LuaFunction(mainThread = true)
+    MethodResult getUsedExternItemStorage();
+
+    @LuaFunction(mainThread = true)
+    MethodResult getUsedExternFluidStorage();
+
+    @LuaFunction(mainThread = true)
+    MethodResult getUsedItemStorage();
+
+    @LuaFunction(mainThread = true)
+    MethodResult getUsedFluidStorage();
+
+    @LuaFunction(mainThread = true)
+    MethodResult getAvailableExternItemStorage();
+
+    @LuaFunction(mainThread = true)
+    MethodResult getAvailableExternFluidStorage();
+
+    @LuaFunction(mainThread = true)
+    MethodResult getAvailableItemStorage();
+
+    @LuaFunction(mainThread = true)
+    MethodResult getAvailableFluidStorage();
 
     @LuaFunction(mainThread = true)
     MethodResult craftItem(IComputerAccess computer, IArguments arguments) throws LuaException;
@@ -90,5 +129,11 @@ public interface IStoragePeripheral {
 
     @LuaFunction(mainThread = true)
     MethodResult isItemCrafting(IArguments arguments) throws LuaException;
+
+    @LuaFunction(mainThread = true)
+    MethodResult isFluidCraftable(IArguments arguments) throws LuaException;
+
+    @LuaFunction(mainThread = true)
+    MethodResult isFluidCrafting(IArguments arguments) throws LuaException;
 
 }
