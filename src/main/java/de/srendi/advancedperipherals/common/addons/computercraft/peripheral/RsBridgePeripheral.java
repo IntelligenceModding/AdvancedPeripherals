@@ -2,11 +2,9 @@ package de.srendi.advancedperipherals.common.addons.computercraft.peripheral;
 
 import com.refinedmods.refinedstorage.api.autocrafting.task.CalculationResultType;
 import com.refinedmods.refinedstorage.api.autocrafting.task.ICalculationResult;
-import com.refinedmods.refinedstorage.api.autocrafting.task.ICraftingTask;
 import com.refinedmods.refinedstorage.api.network.INetwork;
 import dan200.computercraft.api.lua.IArguments;
 import dan200.computercraft.api.lua.LuaException;
-import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.lua.MethodResult;
 import dan200.computercraft.api.peripheral.IComputerAccess;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
@@ -20,19 +18,17 @@ import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.util.Pair;
 import de.srendi.advancedperipherals.common.util.inventory.*;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwner<RsBridgeEntity>> {
+public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwner<RsBridgeEntity>> implements IStoragePeripheral {
 
     public static final String PERIPHERAL_TYPE = "rsBridge";
 
@@ -52,27 +48,37 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         return MethodResult.of(null, "NOT_CONNECTED");
     }
 
+    private boolean isAvailable() {
+        return getNetwork() != null;
+    }
+
+    @Override
+    public final MethodResult isConnected() {
+        return MethodResult.of(isAvailable());
+    }
+
+    @Override
+    public MethodResult isOnline() {
+        // Is there a more proper method?
+        return MethodResult.of(getNode().isActive());
+    }
     @Override
     public boolean isEnabled() {
         return APConfig.PERIPHERALS_CONFIG.enableRSBridge.get();
     }
 
-    @LuaFunction(mainThread = true)
-    public final boolean isConnected() {
-        return getNetwork() != null;
-    }
 
-    @LuaFunction(mainThread = true)
+    @Override
     public final MethodResult listItems() {
-        if (!isConnected())
+        if (!isAvailable())
             return notConnected();
 
         return MethodResult.of(RefinedStorage.listItems(getNetwork()));
     }
 
-    @LuaFunction(mainThread = true)
+    @Override
     public final MethodResult listCraftableItems() {
-        if (!isConnected())
+        if (!isAvailable())
             return notConnected();
 
         List<Object> items = new ArrayList<>();
@@ -80,9 +86,9 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         return MethodResult.of(items);
     }
 
-    @LuaFunction(mainThread = true)
-    public final Object listCraftableFluids() {
-        if (!isConnected())
+    @Override
+    public final MethodResult listCraftableFluids() {
+        if (!isAvailable())
             return notConnected();
 
         List<Object> fluids = new ArrayList<>();
@@ -90,73 +96,118 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         return MethodResult.of(fluids);
     }
 
-    @LuaFunction(mainThread = true)
-    public final MethodResult getMaxItemDiskStorage() {
-        if (!isConnected())
+    @Override
+    public MethodResult listCells() {
+        return null;
+    }
+
+    @Override
+    public final MethodResult getTotalItemStorage() {
+        if (!isAvailable())
             return notConnected();
 
         return MethodResult.of(RefinedStorage.getMaxItemDiskStorage(getNetwork()));
     }
 
-    @LuaFunction(mainThread = true)
-    public final MethodResult getMaxFluidDiskStorage() {
-        if (!isConnected())
+    @Override
+    public final MethodResult getTotalFluidStorage() {
+        if (!isAvailable())
             return notConnected();
 
         return MethodResult.of(RefinedStorage.getMaxFluidDiskStorage(getNetwork()));
     }
 
-    @LuaFunction(mainThread = true)
-    public final MethodResult getMaxItemExternalStorage() {
-        if (!isConnected())
+    @Override
+    public MethodResult getUsedExternItemStorage() {
+        return null;
+    }
+
+    @Override
+    public MethodResult getUsedExternFluidStorage() {
+        return null;
+    }
+
+    @Override
+    public MethodResult getUsedItemStorage() {
+        return null;
+    }
+
+    @Override
+    public MethodResult getUsedFluidStorage() {
+        return null;
+    }
+
+    @Override
+    public MethodResult getAvailableExternItemStorage() {
+        return null;
+    }
+
+    @Override
+    public MethodResult getAvailableExternFluidStorage() {
+        return null;
+    }
+
+    @Override
+    public MethodResult getAvailableItemStorage() {
+        return null;
+    }
+
+    @Override
+    public MethodResult getAvailableFluidStorage() {
+        return null;
+    }
+
+    @Override
+    public final MethodResult getTotalExternItemStorage() {
+        if (!isAvailable())
             return notConnected();
 
         return MethodResult.of(RefinedStorage.getMaxItemExternalStorage(getNetwork()));
     }
 
-    @LuaFunction(mainThread = true)
-    public final MethodResult getMaxFluidExternalStorage() {
-        if (!isConnected())
+    @Override
+    public final MethodResult getTotalExternFluidStorage() {
+        if (!isAvailable())
             return notConnected();
 
         return MethodResult.of(RefinedStorage.getMaxFluidExternalStorage(getNetwork()));
     }
 
-    @LuaFunction(mainThread = true)
+    @Override
     public final MethodResult listFluids() {
-        if (!isConnected())
+        if (!isAvailable())
             return notConnected();
 
         return MethodResult.of(RefinedStorage.listFluids(getNetwork()));
     }
 
-    @LuaFunction(mainThread = true)
+    @Override
     public final MethodResult getEnergyUsage() {
-        if (!isConnected())
+        if (!isAvailable())
             return notConnected();
 
         return MethodResult.of(getNetwork().getEnergyUsage());
     }
 
-    @LuaFunction(mainThread = true)
-    public final MethodResult getMaxEnergyStorage() {
-        if (!isConnected())
+    @Override
+    public final MethodResult getEnergyCapacity() {
+        if (!isAvailable())
             return notConnected();
 
         return MethodResult.of(getNetwork().getEnergyStorage().getMaxEnergyStored());
     }
 
-    @LuaFunction(mainThread = true)
-    public final MethodResult getEnergyStorage() {
-        if (!isConnected())
+    @Override
+    public final MethodResult getStoredEnergy() {
+        if (!isAvailable())
             return notConnected();
 
         return MethodResult.of(getNetwork().getEnergyStorage().getEnergyStored());
     }
 
-    @LuaFunction(mainThread = true)
+    @Override
     public final MethodResult getPattern(IArguments arguments) throws LuaException {
-        if (!isConnected())
+        if (!isAvailable())
             return notConnected();
 
         Pair<ItemFilter, String> filter = ItemFilter.parse(arguments.getTable(0));
@@ -170,6 +221,11 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         ItemStack patternItem = RefinedStorage.findStackFromFilter(getNetwork(), getNetwork().getCraftingManager(), parsedFilter);
 
         return MethodResult.of(RefinedStorage.getObjectFromPattern(getNetwork().getCraftingManager().getPattern(patternItem), getNetwork()));
+    }
+
+    @Override
+    public MethodResult getPatterns() {
+        return null;
     }
 
     protected MethodResult exportToChest(@NotNull IArguments arguments, @Nullable IItemHandler targetInventory) throws LuaException {
@@ -220,81 +276,81 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         return MethodResult.of(InventoryUtil.moveFluid(targetInventory, itemHandler, filter.getLeft()), null);
     }
 
-    @LuaFunction(mainThread = true)
+    @Override
     public final MethodResult exportItem(@NotNull IArguments arguments) throws LuaException {
-        if (!isConnected())
+        if (!isAvailable())
             return notConnected();
 
         IItemHandler inventory = InventoryUtil.getHandlerFromDirection(arguments.getString(1), owner);
         return exportToChest(arguments, inventory);
     }
 
-    @LuaFunction(mainThread = true)
+    @Override
     public final MethodResult exportItemToPeripheral(IComputerAccess computer, IArguments arguments) throws LuaException {
-        if (!isConnected())
+        if (!isAvailable())
             return notConnected();
 
         IItemHandler inventory = InventoryUtil.getHandlerFromName(computer, arguments.getString(1));
         return exportToChest(arguments, inventory);
     }
 
-    @LuaFunction(mainThread = true)
+    @Override
     public final MethodResult importItem(IArguments arguments) throws LuaException {
-        if (!isConnected())
+        if (!isAvailable())
             return notConnected();
 
         IItemHandler inventory = InventoryUtil.getHandlerFromDirection(arguments.getString(1), owner);
         return importToSystem(arguments, inventory);
     }
 
-    @LuaFunction(mainThread = true)
+    @Override
     public final MethodResult importItemFromPeripheral(IComputerAccess computer, IArguments arguments) throws LuaException {
-        if (!isConnected())
+        if (!isAvailable())
             return notConnected();
 
         IItemHandler inventory = InventoryUtil.getHandlerFromName(computer, arguments.getString(1));
         return importToSystem(arguments, inventory);
     }
 
-    @LuaFunction(mainThread = true)
+    @Override
     public final MethodResult exportFluid(@NotNull IArguments arguments) throws LuaException {
-        if (!isConnected())
+        if (!isAvailable())
             return notConnected();
 
         IFluidHandler inventory = FluidUtil.getHandlerFromDirection(arguments.getString(1), owner);
         return exportToTank(arguments, inventory);
     }
 
-    @LuaFunction(mainThread = true)
+    @Override
     public final MethodResult exportFluidToPeripheral(IComputerAccess computer, IArguments arguments) throws LuaException {
-        if (!isConnected())
+        if (!isAvailable())
             return notConnected();
 
         IFluidHandler inventory = FluidUtil.getHandlerFromName(computer, arguments.getString(1));
         return exportToTank(arguments, inventory);
     }
 
-    @LuaFunction(mainThread = true)
+    @Override
     public final MethodResult importFluid(IArguments arguments) throws LuaException {
-        if (!isConnected())
+        if (!isAvailable())
             return notConnected();
 
         IFluidHandler inventory = FluidUtil.getHandlerFromDirection(arguments.getString(1), owner);
         return importToSystem(arguments, inventory);
     }
 
-    @LuaFunction(mainThread = true)
+    @Override
     public final MethodResult importFluidFromPeripheral(IComputerAccess computer, IArguments arguments) throws LuaException {
-        if (!isConnected())
+        if (!isAvailable())
             return notConnected();
 
         IFluidHandler inventory = FluidUtil.getHandlerFromName(computer, arguments.getString(1));
         return importToSystem(arguments, inventory);
     }
 
-    @LuaFunction(mainThread = true)
+    @Override
     public final MethodResult getItem(IArguments arguments) throws LuaException {
-        if (!isConnected())
+        if (!isAvailable())
             return notConnected();
 
         Pair<ItemFilter, String> filter = ItemFilter.parse(arguments.getTable(0));
@@ -304,9 +360,14 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         return MethodResult.of(RefinedStorage.getObjectFromStack(RefinedStorage.findStackFromFilter(getNetwork(), getNetwork().getCraftingManager(), filter.getLeft()), getNetwork()));
     }
 
-    @LuaFunction(mainThread = true)
-    public final MethodResult craftItem(IArguments arguments) throws LuaException {
-        if (!isConnected())
+    @Override
+    public MethodResult getFluid(IArguments arguments) throws LuaException {
+        return null;
+    }
+
+    @Override
+    public final MethodResult craftItem(IComputerAccess computerAccess, IArguments arguments) throws LuaException {
+        if (!isAvailable())
             return notConnected();
 
 
@@ -326,9 +387,9 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         return MethodResult.of(type == CalculationResultType.OK);
     }
 
-    @LuaFunction(mainThread = true)
-    public final MethodResult craftFluid(IArguments arguments, int count) throws LuaException {
-        if (!isConnected())
+    @Override
+    public final MethodResult craftFluid(IComputerAccess computerAccess, IArguments arguments) throws LuaException {
+        if (!isAvailable())
             return notConnected();
 
         Pair<FluidFilter, String> filter = FluidFilter.parse(arguments.getTable(0));
@@ -347,23 +408,33 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         return MethodResult.of(type == CalculationResultType.OK);
     }
 
-    @LuaFunction(mainThread = true)
-    public final MethodResult isItemCrafting(String item) {
-        if (!isConnected())
+    @Override
+    public final MethodResult isItemCrafting(IArguments arguments) {
+        if (!isAvailable())
             return notConnected();
-
+/*
         ItemStack stack = new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation(item)));
         for (ICraftingTask task : getNetwork().getCraftingManager().getTasks()) {
             ItemStack taskStack = task.getRequested().getItem();
             if (taskStack.sameItem(stack))
                 return MethodResult.of(true);
-        }
+        }*/
         return MethodResult.of(false);
     }
 
-    @LuaFunction(mainThread = true)
+    @Override
+    public MethodResult isFluidCraftable(IArguments arguments) throws LuaException {
+        return null;
+    }
+
+    @Override
+    public MethodResult isFluidCrafting(IArguments arguments) throws LuaException {
+        return null;
+    }
+
+    @Override
     public final MethodResult isItemCraftable(IArguments arguments) throws LuaException {
-        if (!isConnected())
+        if (!isAvailable())
             return notConnected();
 
         Pair<ItemFilter, String> filter = ItemFilter.parse(arguments.getTable(0));
