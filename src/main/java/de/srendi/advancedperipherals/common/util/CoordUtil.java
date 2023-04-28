@@ -32,14 +32,14 @@ public class CoordUtil {
             return false;
 
         double x = player.getX(), y = player.getY(), ey = player.getEyeY(), z = player.getZ();
-        if(ey > y){ // Ensure following code will work when eye position are lower than feet position
+        if(ey > y){ // Ensure following code will work when eye position is lower than feet position
             double tmp = ey;
             ey = y;
             y = tmp;
         }
         double bx = (double)(pos.getX() + 0.5), by = (double)(pos.getY() + 0.5), bz = (double)(pos.getZ() + 0.5);
         return Math.abs(x - bx) <= range && Math.abs(z - bz) <= range &&
-            // check both feet position and eye position, and ensure it will work if player are higher than 2 blocks
+            // check both feet position and eye position, and ensure it will work if player is higher than 2 blocks
             ((y <= by && by <= ey) || Math.min(Math.abs(y - by), Math.abs(ey - by)) <= range);
     }
 
