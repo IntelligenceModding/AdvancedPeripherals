@@ -22,8 +22,24 @@ public class CoordUtil {
         if(pos == null || world == null || player == null)
             return false;
 
-        range = Math.min(range, APConfig.PERIPHERALS_CONFIG.playerDetMaxRange.get());
-        return world.getNearbyPlayers(TargetingConditions.forNonCombat(), null, new AABB(pos.offset(range, range, range), pos.offset(-range, -range, -range))).contains(player);
+        return isPlayerInBlockRange(pos, world, player, (double) range);
+    }
+
+    // To fix issue #439
+    public static boolean isPlayerInBlockRange(@NotNull BlockPos pos, @NotNull Level world, @NotNull Player player, double range) {
+        if(player.getLevel() != world)
+            return false;
+
+        double x = player.getX(), y = player.getY(), ey = player.getEyeY(), z = player.getZ();
+        if(ey > y){ // Ensure following code will work when eye position are lower than feet position
+            double tmp = ey;
+            ey = y;
+            y = tmp;
+        }
+        double bx = (double)(pos.getX() + 0.5), by = (double)(pos.getY() + 0.5), bz = (double)(pos.getZ() + 0.5);
+        return Math.abs(x - bx) <= range && Math.abs(z - bz) <= range &&
+            // check both feet position and eye position, and ensure it will work if player are higher than 2 blocks
+            ((y <= by && by <= ey) || Math.min(Math.abs(y - by), Math.abs(ey - by)) <= range);
     }
 
     public static boolean isInRange(@NotNull BlockPos pos, @NotNull Level world, @NotNull Player player, int x, int y, int z) {
