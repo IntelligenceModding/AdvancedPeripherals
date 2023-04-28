@@ -22,6 +22,7 @@ public class CoordUtil {
         if(pos == null || world == null || player == null)
             return false;
 
+        range = Math.min(range, APConfig.PERIPHERALS_CONFIG.playerDetMaxRange.get());
         return isPlayerInBlockRange(pos, world, player, (double) range);
     }
 
