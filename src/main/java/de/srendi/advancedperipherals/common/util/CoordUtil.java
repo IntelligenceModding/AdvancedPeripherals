@@ -47,10 +47,26 @@ public class CoordUtil {
         if(pos == null || world == null || player == null)
             return false;
 
-        x = Math.min(x * 2, APConfig.PERIPHERALS_CONFIG.playerDetMaxRange.get());
-        y = Math.min(y * 2, APConfig.PERIPHERALS_CONFIG.playerDetMaxRange.get());
-        z = Math.min(z * 2, APConfig.PERIPHERALS_CONFIG.playerDetMaxRange.get());
-        return world.getNearbyPlayers(TargetingConditions.forNonCombat(), null, new AABB(pos.offset(x, y, z), pos.offset(-x, -y, -z))).contains(player);
+        // It shouldn't multiply by 2 here, but it should have the same behavior as isInRange when x == y == z == range
+        x = Math.min(x, APConfig.PERIPHERALS_CONFIG.playerDetMaxRange.get());
+        y = Math.min(y, APConfig.PERIPHERALS_CONFIG.playerDetMaxRange.get());
+        z = Math.min(z, APConfig.PERIPHERALS_CONFIG.playerDetMaxRange.get());
+        return isPlayerInBlockRangeXYZ(pos, world, player, (double) x, (double) y, (double) z);
+    }
+
+    public static boolean isPlayerInBlockRangeXYZ(@NotNull BlockPos pos, @NotNull Level world, @NotNull Player player, double dx, double dy, double dz) {
+        if(player.getLevel() != world)
+            return false;
+
+        double x = player.getX(), y = player.getY(), ey = player.getEyeY(), z = player.getZ();
+        if(ey > y){
+            double tmp = ey;
+            ey = y;
+            y = tmp;
+        }
+        double bx = (double)(pos.getX() + 0.5), by = (double)(pos.getY() + 0.5), bz = (double)(pos.getZ() + 0.5);
+        return Math.abs(x - bx) <= dx && Math.abs(z - bz) <= dz &&
+            ((y <= by && by <= ey) || Math.min(Math.abs(y - by), Math.abs(ey - by)) <= dy);
     }
 
     public static boolean isInRange(@NotNull BlockPos blockPos, @NotNull Player player, @NotNull Level world, @NotNull BlockPos firstPos, @NotNull BlockPos secondPos) {
