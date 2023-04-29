@@ -19,7 +19,7 @@ public class CoordUtil {
     public static boolean isInRange(@NotNull BlockPos pos, @NotNull Level world, @NotNull Player player, int range) {
         // There are rare cases where these are null. For example if a player detector pocket computer runs while not in a player inventory
         // Fixes https://github.com/SirEndii/AdvancedPeripherals/issues/356
-        if(pos == null || world == null || player == null)
+        if (pos == null || world == null || player == null)
             return false;
 
         range = Math.min(range, APConfig.PERIPHERALS_CONFIG.playerDetMaxRange.get());
@@ -28,11 +28,11 @@ public class CoordUtil {
 
     // To fix issue #439
     public static boolean isPlayerInBlockRange(@NotNull BlockPos pos, @NotNull Level world, @NotNull Player player, double range) {
-        if(player.getLevel() != world)
+        if (player.getLevel() != world)
             return false;
 
         double x = player.getX(), y = player.getY(), ey = player.getEyeY(), z = player.getZ();
-        if(ey > y){ // Ensure following code will work when eye position is lower than feet position
+        if (ey > y) { // Ensure following code will work when eye position is lower than feet position
             double tmp = ey;
             ey = y;
             y = tmp;
@@ -44,7 +44,7 @@ public class CoordUtil {
     }
 
     public static boolean isInRange(@NotNull BlockPos pos, @NotNull Level world, @NotNull Player player, int x, int y, int z) {
-        if(pos == null || world == null || player == null)
+        if (pos == null || world == null || player == null)
             return false;
 
         // It shouldn't multiply by 2 here, but it should have the same behavior as isInRange when x == y == z == range
@@ -55,11 +55,11 @@ public class CoordUtil {
     }
 
     public static boolean isPlayerInBlockRangeXYZ(@NotNull BlockPos pos, @NotNull Level world, @NotNull Player player, double dx, double dy, double dz) {
-        if(player.getLevel() != world)
+        if (player.getLevel() != world)
             return false;
 
         double x = player.getX(), y = player.getY(), ey = player.getEyeY(), z = player.getZ();
-        if(ey > y){
+        if (ey > y) {
             double tmp = ey;
             ey = y;
             y = tmp;
@@ -70,13 +70,14 @@ public class CoordUtil {
     }
 
     public static boolean isInRange(@NotNull BlockPos blockPos, @NotNull Player player, @NotNull Level world, @NotNull BlockPos firstPos, @NotNull BlockPos secondPos) {
-        if(blockPos == null || world == null || player == null)
+        if (blockPos == null || world == null || player == null)
             return false;
 
         double i = player.getX() - blockPos.getX();
         double j = player.getZ() - blockPos.getZ();
         // Check if the distance of the player is within the max range of the player detector
-        if (Math.sqrt(i * i + j * j) > APConfig.PERIPHERALS_CONFIG.playerDetMaxRange.get())
+        // Use manhattan distance, not euclidean distance to keep same behavior than other `isInRange` functions
+        if (i + j > 2 * APConfig.PERIPHERALS_CONFIG.playerDetMaxRange.get())
             return false;
         return world.getNearbyPlayers(TargetingConditions.forNonCombat(), null, new AABB(firstPos, secondPos)).contains(player);
     }
