@@ -54,7 +54,7 @@ public class CoordUtil {
         }
 
         computerSide = computerSide.toLowerCase(Locale.ROOT);
-        Direction dir = Direction.byName(side);
+        Direction dir = Direction.byName(computerSide);
         if (dir != null)
             return dir;
         Direction top = orientation.top();
@@ -62,23 +62,23 @@ public class CoordUtil {
 
         if (front.getAxis() == Direction.Axis.Y) {
             if (front == Direction.UP) {
-                if (side.equals(ComputerSide.FRONT.toString())) return Direction.UP;
-                if (side.equals(ComputerSide.BACK.toString())) return Direction.DOWN;
+                if (computerSide.equals(ComputerSide.FRONT.toString())) return Direction.UP;
+                if (computerSide.equals(ComputerSide.BACK.toString())) return Direction.DOWN;
             } else if (front == Direction.DOWN) {
-                if (side.equals(ComputerSide.FRONT.toString())) return Direction.DOWN;
-                if (side.equals(ComputerSide.BACK.toString())) return Direction.UP;
+                if (computerSide.equals(ComputerSide.FRONT.toString())) return Direction.DOWN;
+                if (computerSide.equals(ComputerSide.BACK.toString())) return Direction.UP;
             }
-            if (side.equals(ComputerSide.TOP.toString())) return top;
-            if (side.equals(ComputerSide.BOTTOM.toString())) return top.getOpposite();
-            if (side.equals(ComputerSide.RIGHT.toString())) return top.getClockWise();
-            if (side.equals(ComputerSide.LEFT.toString())) return top.getCounterClockWise();
+            if (computerSide.equals(ComputerSide.TOP.toString())) return top;
+            if (computerSide.equals(ComputerSide.BOTTOM.toString())) return top.getOpposite();
+            if (computerSide.equals(ComputerSide.RIGHT.toString())) return top.getClockWise();
+            if (computerSide.equals(ComputerSide.LEFT.toString())) return top.getCounterClockWise();
         }
-        if (side.equals(ComputerSide.FRONT.toString())) return front;
-        if (side.equals(ComputerSide.BACK.toString())) return front.getOpposite();
-        if (side.equals(ComputerSide.TOP.toString())) return Direction.UP;
-        if (side.equals(ComputerSide.BOTTOM.toString())) return Direction.DOWN;
-        if (side.equals(ComputerSide.RIGHT.toString())) return front.getCounterClockWise();
-        if (side.equals(ComputerSide.LEFT.toString())) return front.getClockWise();
+        if (computerSide.equals(ComputerSide.FRONT.toString())) return front;
+        if (computerSide.equals(ComputerSide.BACK.toString())) return front.getOpposite();
+        if (computerSide.equals(ComputerSide.TOP.toString())) return Direction.UP;
+        if (computerSide.equals(ComputerSide.BOTTOM.toString())) return Direction.DOWN;
+        if (computerSide.equals(ComputerSide.RIGHT.toString())) return front.getCounterClockWise();
+        if (computerSide.equals(ComputerSide.LEFT.toString())) return front.getClockWise();
 
         throw new LuaException(computerSide + " is not a valid side");
     }
