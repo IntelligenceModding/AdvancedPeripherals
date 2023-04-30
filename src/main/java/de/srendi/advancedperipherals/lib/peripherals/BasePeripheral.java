@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -132,9 +131,7 @@ public abstract class BasePeripheral<O extends IPeripheralOwner> implements IBas
     }
 
     protected Direction validateSide(String direction) throws LuaException {
-        String dir = direction.toUpperCase(Locale.ROOT);
-
-        return CoordUtil.getDirection(owner.getOrientation(), dir);
+        return CoordUtil.getDirection(owner.getOrientation(), direction);
     }
 
     @Override

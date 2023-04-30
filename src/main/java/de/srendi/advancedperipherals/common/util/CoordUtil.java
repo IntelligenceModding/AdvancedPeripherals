@@ -12,7 +12,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Objects;
+import java.util.Locale;
 
 public class CoordUtil {
 
@@ -53,7 +53,7 @@ public class CoordUtil {
             throw new LuaException("null is not a valid side");
         }
 
-        final String side = computerSide.toLowerCase();
+        final String side = computerSide.toLowerCase(Locale.ROOT);
         Direction dir = Direction.byName(side);
         if (dir != null)
             return dir;
