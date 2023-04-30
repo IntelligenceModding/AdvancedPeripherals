@@ -48,31 +48,37 @@ public class CoordUtil {
         return world.getNearbyPlayers(TargetingConditions.forNonCombat(), null, new AABB(firstPos, secondPos)).contains(player);
     }
 
-    public static Direction getDirection(FrontAndTop orientation, String computerSide) throws LuaException {
-        if (Direction.byName(computerSide) != null) return Direction.byName(computerSide);
+    public static Direction getDirection(FrontAndTop orientation, final String computerSide) throws LuaException {
+        if (computerSide == null) {
+            throw new LuaException("null is not a valid side");
+        }
+
+        final String side = computerSide.toLowerCase();
+        Direction dir = Direction.byName(side);
+        if (dir != null)
+            return dir;
         Direction top = orientation.top();
         Direction front = orientation.front();
 
         if (front.getAxis() == Direction.Axis.Y) {
             if (front == Direction.UP) {
-                if (Objects.equals(computerSide, ComputerSide.FRONT.toString())) return Direction.UP;
-                if (Objects.equals(computerSide, ComputerSide.BACK.toString())) return Direction.DOWN;
+                if (side.equals(ComputerSide.FRONT.toString())) return Direction.UP;
+                if (side.equals(ComputerSide.BACK.toString())) return Direction.DOWN;
+            } else if (front == Direction.DOWN) {
+                if (side.equals(ComputerSide.FRONT.toString())) return Direction.DOWN;
+                if (side.equals(ComputerSide.BACK.toString())) return Direction.UP;
             }
-            if (front == Direction.DOWN) {
-                if (Objects.equals(computerSide, ComputerSide.FRONT.toString())) return Direction.DOWN;
-                if (Objects.equals(computerSide, ComputerSide.BACK.toString())) return Direction.UP;
-            }
-            if (Objects.equals(computerSide, ComputerSide.TOP.toString())) return top;
-            if (Objects.equals(computerSide, ComputerSide.BOTTOM.toString())) return top.getOpposite();
-            if (Objects.equals(computerSide, ComputerSide.RIGHT.toString())) return top.getClockWise();
-            if (Objects.equals(computerSide, ComputerSide.LEFT.toString())) return top.getCounterClockWise();
+            if (side.equals(ComputerSide.TOP.toString())) return top;
+            if (side.equals(ComputerSide.BOTTOM.toString())) return top.getOpposite();
+            if (side.equals(ComputerSide.RIGHT.toString())) return top.getClockWise();
+            if (side.equals(ComputerSide.LEFT.toString())) return top.getCounterClockWise();
         }
-        if (Objects.equals(computerSide, ComputerSide.FRONT.toString())) return front;
-        if (Objects.equals(computerSide, ComputerSide.BACK.toString())) return front.getOpposite();
-        if (Objects.equals(computerSide, ComputerSide.TOP.toString())) return Direction.UP;
-        if (Objects.equals(computerSide, ComputerSide.BOTTOM.toString())) return Direction.DOWN;
-        if (Objects.equals(computerSide, ComputerSide.RIGHT.toString())) return front.getCounterClockWise();
-        if (Objects.equals(computerSide, ComputerSide.LEFT.toString())) return front.getClockWise();
+        if (side.equals(ComputerSide.FRONT.toString())) return front;
+        if (side.equals(ComputerSide.BACK.toString())) return front.getOpposite();
+        if (side.equals(ComputerSide.TOP.toString())) return Direction.UP;
+        if (side.equals(ComputerSide.BOTTOM.toString())) return Direction.DOWN;
+        if (side.equals(ComputerSide.RIGHT.toString())) return front.getCounterClockWise();
+        if (side.equals(ComputerSide.LEFT.toString())) return front.getClockWise();
 
         throw new LuaException(computerSide + " is not a valid side");
     }
