@@ -60,27 +60,32 @@ public class CoordUtil {
         Direction top = orientation.top();
         Direction front = orientation.front();
 
-        if (front.getAxis() == Direction.Axis.Y) {
-            if (front == Direction.UP) {
-                if (computerSide.equals(ComputerSide.FRONT.toString())) return Direction.UP;
-                if (computerSide.equals(ComputerSide.BACK.toString())) return Direction.DOWN;
-            } else if (front == Direction.DOWN) {
-                if (computerSide.equals(ComputerSide.FRONT.toString())) return Direction.DOWN;
-                if (computerSide.equals(ComputerSide.BACK.toString())) return Direction.UP;
-            }
-            if (computerSide.equals(ComputerSide.TOP.toString())) return top;
-            if (computerSide.equals(ComputerSide.BOTTOM.toString())) return top.getOpposite();
-            if (computerSide.equals(ComputerSide.RIGHT.toString())) return top.getClockWise();
-            if (computerSide.equals(ComputerSide.LEFT.toString())) return top.getCounterClockWise();
+        final ComputerSide side = ComputerSide.valueOfInsensitive(computerSide);
+        if (side == null) {
+            throw new LuaException(computerSide + " is not a valid side");
         }
-        if (computerSide.equals(ComputerSide.FRONT.toString())) return front;
-        if (computerSide.equals(ComputerSide.BACK.toString())) return front.getOpposite();
-        if (computerSide.equals(ComputerSide.TOP.toString())) return Direction.UP;
-        if (computerSide.equals(ComputerSide.BOTTOM.toString())) return Direction.DOWN;
-        if (computerSide.equals(ComputerSide.RIGHT.toString())) return front.getCounterClockWise();
-        if (computerSide.equals(ComputerSide.LEFT.toString())) return front.getClockWise();
 
-        throw new LuaException(computerSide + " is not a valid side");
+        if (front.getAxis() == Direction.Axis.Y) {
+            switch (side) {
+                case FRONT: return front;
+                case BACK: return front.getOpposite();
+                case TOP: return top;
+                case BOTTOM: return top.getOpposite();
+                case RIGHT: return top.getClockWise();
+                case LEFT: return top.getCounterClockWise();
+            }
+        } else {
+            switch (side) {
+                case FRONT: return front;
+                case BACK: return front.getOpposite();
+                case TOP: return Direction.UP;
+                case BOTTOM: return Direction.DOWN;
+                case RIGHT: return front.getCounterClockWise();
+                case LEFT: return front.getClockWise();
+            }
+        }
+
+        throw new LuaException(computerSide + " is not a expected side");
     }
 
 }
