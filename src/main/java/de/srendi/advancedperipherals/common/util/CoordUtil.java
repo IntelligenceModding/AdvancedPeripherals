@@ -48,12 +48,12 @@ public class CoordUtil {
         return world.getNearbyPlayers(TargetingConditions.forNonCombat(), null, new AABB(firstPos, secondPos)).contains(player);
     }
 
-    public static Direction getDirection(FrontAndTop orientation, final String computerSide) throws LuaException {
+    public static Direction getDirection(FrontAndTop orientation, String computerSide) throws LuaException {
         if (computerSide == null) {
             throw new LuaException("null is not a valid side");
         }
 
-        final String side = computerSide.toLowerCase(Locale.ROOT);
+        computerSide = computerSide.toLowerCase(Locale.ROOT);
         Direction dir = Direction.byName(side);
         if (dir != null)
             return dir;
