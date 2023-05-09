@@ -57,12 +57,11 @@ public class NBTStoragePeripheral extends BasePeripheral<BlockEntityPeripheralOw
     }
 
     @LuaFunction(mainThread = true)
-    public final MethodResult writeTable(Map<?, ?> data) throws IOException {
+    public final MethodResult writeTable(Map<?, ?> data) {
         CountingWipingStream countingStream = new CountingWipingStream();
         try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(countingStream)) {
             objectOutputStream.writeObject(data);
         } catch (IOException e) {
-            countingStream.close();
             return MethodResult.of(null, String.format("No idea, how this happened, but java IO Exception appear %s", e.getMessage()));
         }
         if (countingStream.getWrittenBytes() > APConfig.PERIPHERALS_CONFIG.nbtStorageMaxSize.get())
