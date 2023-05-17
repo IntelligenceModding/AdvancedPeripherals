@@ -72,7 +72,7 @@ public class MineColonies {
         map.put("age", citizen.isChild() ? "child" : "adult");
         map.put("gender", citizen.isFemale() ? "female" : "male");
         map.put("saturation", citizen.getSaturation());
-        map.put("happiness", citizen.getCitizenHappinessHandler().getHappiness(citizen.getColony()));
+        map.put("happiness", citizen.getCitizenHappinessHandler().getHappiness(citizen.getColony(), citizen));
         map.put("skills", skillsToObject(citizen.getCitizenSkillHandler().getSkills()));
         map.put("work", citizen.getWorkBuilding() == null ? null : jobToObject(citizen.getWorkBuilding()));
         map.put("home", citizen.getHomeBuilding() == null ? null : homeToObject(citizen.getHomeBuilding()));
@@ -103,7 +103,7 @@ public class MineColonies {
         map.put("age", visitor.isChild() ? "child" : "adult");
         map.put("gender", visitor.isFemale() ? "female" : "male");
         map.put("saturation", visitor.getSaturation());
-        map.put("happiness", visitor.getCitizenHappinessHandler().getHappiness(visitor.getColony()));
+        map.put("happiness", visitor.getCitizenHappinessHandler().getHappiness(visitor.getColony(), visitor));
         map.put("skills", skillsToObject(visitor.getCitizenSkillHandler().getSkills()));
         map.put("recruitCost", LuaConverter.stackToObject(visitor.getRecruitCost()));
 
