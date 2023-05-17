@@ -35,7 +35,7 @@ public class PlayerDetectorBlock extends APBlockEntityBlock<PlayerDetectorEntity
         BlockEntity tileEntity = levelIn.getBlockEntity(pos);
         if (tileEntity instanceof PlayerDetectorEntity entity) {
             for (IComputerAccess computer : entity.getConnectedComputers()) {
-                computer.queueEvent("playerClick", player.getName().getString());
+                computer.queueEvent("playerClick", player.getName().getString(), computer.getAttachmentName());
             }
         }
 
