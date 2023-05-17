@@ -2,6 +2,7 @@ package de.srendi.advancedperipherals.common.util;
 
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.core.computer.ComputerSide;
+import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -11,12 +12,13 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Locale;
 
 public class CoordUtil {
 
-    public static boolean isInRange(@NotNull BlockPos pos, @NotNull Level world, @NotNull Player player, int range) {
+    public static boolean isInRange(@Nullable BlockPos pos, @Nullable Level world, @Nullable Player player, int range) {
         // There are rare cases where these are null. For example if a player detector pocket computer runs while not in a player inventory
         // Fixes https://github.com/SirEndii/AdvancedPeripherals/issues/356
         if (pos == null || world == null || player == null)
@@ -43,7 +45,7 @@ public class CoordUtil {
             ((y <= by && by <= ey) || Math.min(Math.abs(y - by), Math.abs(ey - by)) <= range);
     }
 
-    public static boolean isInRange(@NotNull BlockPos pos, @NotNull Level world, @NotNull Player player, int x, int y, int z) {
+    public static boolean isInRange(@Nullable BlockPos pos, @Nullable Level world, @Nullable Player player, int x, int y, int z) {
         if (pos == null || world == null || player == null)
             return false;
 
@@ -69,7 +71,7 @@ public class CoordUtil {
             ((y <= by && by <= ey) || Math.min(Math.abs(y - by), Math.abs(ey - by)) <= dy);
     }
 
-    public static boolean isInRange(@NotNull BlockPos blockPos, @NotNull Player player, @NotNull Level world, @NotNull BlockPos firstPos, @NotNull BlockPos secondPos) {
+    public static boolean isInRange(@Nullable BlockPos blockPos, @Nullable Player player, @Nullable Level world, @NotNull BlockPos firstPos, @NotNull BlockPos secondPos) {
         if (blockPos == null || world == null || player == null)
             return false;
 
