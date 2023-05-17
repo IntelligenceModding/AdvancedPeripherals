@@ -396,6 +396,7 @@ jar {
                     "Implementation-Vendor"   : "Srendi",
                     "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")])
     })
+    archiveFileName = "AdvancedPeripherals-${minecraft_version}-${mod_version}.jar"
 }
 
 jar.finalizedBy('reobfJar')
@@ -445,15 +446,25 @@ modrinth {
 publishing {
     repositories {
         maven {
-            url "https://maven.pkg.jetbrains.space/intelligence/p/advancedperipherals/ap-repository"
+            name="space"
+            url "https://packages.intelligence-modding.de/maven/p/advanced-peripherals/ap-repository"
             credentials {
                 username = spaceUsername
                 password = spacePassword
             }
         }
+        maven {
+            name="github"
+            url "https://maven.pkg.github.com/SirEndii/AdvancedPeripherals"
+            credentials {
+                username = "${GITHUB_ACTOR}"
+                password = "${GITHUB_TOKEN}"
+            }
+        }
     }
     publications {
         gpr(MavenPublication) {
+            artifactId = "advancedperipherals"
             from(components.java)
         }
     }
