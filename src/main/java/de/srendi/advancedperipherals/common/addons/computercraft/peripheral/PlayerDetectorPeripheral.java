@@ -73,7 +73,8 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
     public final List<String> getPlayersInRange(int range) {
         List<String> playersName = new ArrayList<>();
         for (ServerPlayer player : getPlayers()) {
-            if (CoordUtil.isInRange(getPos(), getLevel(), player, range)) playersName.add(player.getName().getString());
+            if (CoordUtil.isInRange(getPos(), getLevel(), player, range))
+                playersName.add(player.getName().getString());
         }
         return playersName;
     }
