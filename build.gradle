@@ -457,8 +457,8 @@ publishing {
             name="github"
             url "https://maven.pkg.github.com/SirEndii/AdvancedPeripherals"
             credentials {
-                username = "${GITHUB_ACTOR}"
-                password = "${GITHUB_TOKEN}"
+                username = "${GH_ACTOR}"
+                password = "${GH_TOKEN}"
             }
         }
     }
