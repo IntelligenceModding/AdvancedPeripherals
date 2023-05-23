@@ -219,7 +219,7 @@ repositories {
     }
     maven {
         name = "Srendi Space repository"
-        url = "https://maven.pkg.jetbrains.space/intelligence/p/advancedperipherals/ap-repository"
+        url "https://packages.intelligence-modding.de/maven/p/advanced-peripherals/ap-repository"
         credentials {
             username = spaceUsername
             password = spacePassword
@@ -456,8 +456,8 @@ publishing {
             name="github"
             url "https://maven.pkg.github.com/SirEndii/AdvancedPeripherals"
             credentials {
-                username = "${GH_ACTOR}"
-                password = "${GH_TOKEN}"
+                username = secretEnv["GH_ACTOR"] ?: System.getenv("GH_ACTOR") ?: ''
+                password = secretEnv["GH_TOKEN"] ?: System.getenv("GH_TOKEN") ?: ''
             }
         }
     }
