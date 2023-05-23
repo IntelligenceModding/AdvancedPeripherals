@@ -298,7 +298,6 @@ dependencies {
 
     // Create
     implementation fg.deobf("com.simibubi.create:create-${minecraft_version}:${create_version}:all")
-    implementation fg.deobf("com.jozufozu.flywheel:flywheel-forge-${minecraft_version}:${flywheel_version}")
 
     //Removed until fully ported
     //testImplementation fg.deobf("site.siredvin.ttoolkit:ttoolkit-${minecraft_version}:${ttoolkit_version}")

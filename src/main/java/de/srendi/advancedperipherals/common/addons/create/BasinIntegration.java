@@ -1,7 +1,7 @@
 package de.srendi.advancedperipherals.common.addons.create;
 
-import com.simibubi.create.content.contraptions.processing.BasinTileEntity;
-import com.simibubi.create.foundation.tileEntity.behaviour.fluid.SmartFluidTankBehaviour;
+import com.simibubi.create.content.processing.basin.BasinBlockEntity;
+import com.simibubi.create.foundation.blockEntity.behaviour.fluid.SmartFluidTankBehaviour;
 import dan200.computercraft.api.lua.LuaFunction;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
 import de.srendi.advancedperipherals.lib.peripherals.BlockEntityIntegrationPeripheral;
@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-public class BasinIntegration extends BlockEntityIntegrationPeripheral<BasinTileEntity> {
+public class BasinIntegration extends BlockEntityIntegrationPeripheral<BasinBlockEntity> {
 
     public BasinIntegration(BlockEntity entity) {
         super(entity);
