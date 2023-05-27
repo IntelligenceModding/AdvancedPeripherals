@@ -5,7 +5,7 @@
   "pages": [
     {
       "type": "text",
-      "text": "The AR Controller is used to control your AR Goggles wirelessly. You can draw anything you wish into an overlay that will be visible as long as you're wearing the goggles.$(p)For the full documentation please see the $(9)$(l:https://docs.srendi.de/peripherals/ar_controller/)official wiki page$(/l)$()!"
+      "text": "The AR Controller is used to control your AR Goggles wirelessly. You can draw anything you wish into an overlay that will be visible as long as you're wearing the goggles.$(p)For the full documentation please see the $(9)$(l:https://docs.intelligence-modding.de/peripherals/ar_controller/)official wiki page$(/l)$()!"
     },
     {
       "type": "crafting",

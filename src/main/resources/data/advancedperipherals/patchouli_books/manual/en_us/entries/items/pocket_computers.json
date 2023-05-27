@@ -5,7 +5,7 @@
   "pages": [
     {
       "type": "text",
-      "text": "We provide Pocket Computer upgrades for the following peripherals:$(li)$(9)$(l:peripherals/environment_detector)Environment Detector$(/l)$()$(li)$(9)$(l:peripherals/player_detector)Player Detector$(/l)$()$(li)$(9)$(l:peripherals/chat_box)Chat Box$(/l)$()$(p)For the full documentation please see the $(9)$(l:https://docs.srendi.de/items/pocket_computer/)official wiki page$(/l)$()!"
+      "text": "We provide Pocket Computer upgrades for the following peripherals:$(li)$(9)$(l:peripherals/environment_detector)Environment Detector$(/l)$()$(li)$(9)$(l:peripherals/player_detector)Player Detector$(/l)$()$(li)$(9)$(l:peripherals/chat_box)Chat Box$(/l)$()$(p)For the full documentation please see the $(9)$(l:https://docs.intelligence-modding.de/items/pocket_computer/)official wiki page$(/l)$()!"
     },
     {
       "type": "text",
