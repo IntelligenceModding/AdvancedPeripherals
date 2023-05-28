@@ -461,7 +461,6 @@ publishing {
     }
     publications {
         gpr(MavenPublication) {
-            artifactId = "advancedperipherals"
             from(components.java)
         }
     }

@@ -1,24 +1,20 @@
 package de.srendi.advancedperipherals.common.addons.create;
 
-import com.simibubi.create.content.processing.basin.BasinBlockEntity;
+import com.simibubi.create.content.contraptions.processing.BasinTileEntity;
 import dan200.computercraft.api.lua.LuaFunction;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
 import de.srendi.advancedperipherals.lib.peripherals.BlockEntityIntegrationPeripheral;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
-public class BasinIntegration extends BlockEntityIntegrationPeripheral<BasinBlockEntity> {
+public class BasinIntegration extends BlockEntityIntegrationPeripheral<BasinTileEntity> {
 
     public BasinIntegration(BlockEntity entity) {
         super(entity);
