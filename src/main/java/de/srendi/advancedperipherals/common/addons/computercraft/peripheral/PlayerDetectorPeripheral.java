@@ -189,11 +189,11 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
     }
 
     private void onPlayerJoin(PlayerEvent.PlayerLoggedInEvent event) {
-        getConnectedComputers().forEach(computer -> computer.queueEvent("playerJoin", event.getEntity().getDisplayName()));
+        getConnectedComputers().forEach(computer -> computer.queueEvent("playerJoin", event.getEntity().getDisplayName().toString()));
     }
 
     private void onPlayerLeave(PlayerEvent.PlayerLoggedOutEvent event) {
-        getConnectedComputers().forEach(computer -> computer.queueEvent("playerLeave", event.getEntity().getDisplayName()));
+        getConnectedComputers().forEach(computer -> computer.queueEvent("playerLeave", event.getEntity().getDisplayName().toString()));
     }
 
     private void onPlayerChangedDimension(PlayerEvent.PlayerChangedDimensionEvent event) {
