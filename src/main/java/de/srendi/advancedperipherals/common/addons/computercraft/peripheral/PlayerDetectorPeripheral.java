@@ -17,6 +17,8 @@ import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.server.ServerLifecycleHooks;
 
 import java.util.*;
@@ -27,14 +29,26 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
 
     public PlayerDetectorPeripheral(PeripheralBlockEntity<?> tileEntity) {
         super(PERIPHERAL_TYPE, new BlockEntityPeripheralOwner<>(tileEntity));
+
+        registerListeners();
     }
 
     public PlayerDetectorPeripheral(ITurtleAccess access, TurtleSide side) {
         super(PERIPHERAL_TYPE, new TurtlePeripheralOwner(access, side));
+
+        registerListeners();
     }
 
     public PlayerDetectorPeripheral(IPocketAccess pocket) {
         super(PERIPHERAL_TYPE, new PocketPeripheralOwner(pocket));
+
+        registerListeners();
+    }
+
+    private void registerListeners() {
+        MinecraftForge.EVENT_BUS.addListener(this::onPlayerJoin);
+        MinecraftForge.EVENT_BUS.addListener(this::onPlayerLeave);
+        MinecraftForge.EVENT_BUS.addListener(this::onPlayerChangedDimension);
     }
 
     @Override
@@ -174,4 +188,19 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
         return ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers();
     }
 
+    private void onPlayerJoin(PlayerEvent.PlayerLoggedInEvent event) {
+        getConnectedComputers().forEach(computer -> computer.queueEvent("playerJoin", event.getEntity().getDisplayName()));
+    }
+
+    private void onPlayerLeave(PlayerEvent.PlayerLoggedOutEvent event) {
+        getConnectedComputers().forEach(computer -> computer.queueEvent("playerLeave", event.getEntity().getDisplayName()));
+    }
+
+    private void onPlayerChangedDimension(PlayerEvent.PlayerChangedDimensionEvent event) {
+        Player player = event.getEntity();
+        String fromDim = event.getFrom().location().toString();
+        String toDim = event.getTo().location().toString();
+
+        getConnectedComputers().forEach(computer -> computer.queueEvent("playerChangedDimension", player.getDisplayName().toString(), fromDim, toDim));
+    }
 }
