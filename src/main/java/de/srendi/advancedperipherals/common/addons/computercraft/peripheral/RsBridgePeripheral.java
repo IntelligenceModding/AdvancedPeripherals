@@ -23,12 +23,10 @@ import de.srendi.advancedperipherals.common.util.inventory.FluidUtil;
 import de.srendi.advancedperipherals.common.util.inventory.InventoryUtil;
 import de.srendi.advancedperipherals.common.util.inventory.ItemFilter;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -350,14 +348,20 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     }
 
     @LuaFunction(mainThread = true)
-    public final MethodResult isItemCrafting(String item) {
+    public final MethodResult isItemCrafting(IArguments arguments) throws LuaException {
         if (!isConnected())
             return notConnected();
+        Pair<ItemFilter, String> filter = ItemFilter.parse(arguments.getTable(0));
+        if (filter.rightPresent())
+            return MethodResult.of(null, filter.getRight());
 
-        ItemStack stack = new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation(item)));
+        ItemStack stack = RefinedStorage.findStackFromFilter(getNetwork(), null, filter.getLeft());
+        if (stack == null)
+            return MethodResult.of(null, "NOT_CRAFTABLE");
+
         for (ICraftingTask task : getNetwork().getCraftingManager().getTasks()) {
             ItemStack taskStack = task.getRequested().getItem();
-            if (taskStack.sameItem(stack))
+            if (taskStack != null && taskStack.sameItem(stack))
                 return MethodResult.of(true);
         }
         return MethodResult.of(false);
