@@ -30,8 +30,7 @@ public class PlayerDetectorEntity extends PeripheralBlockEntity<PlayerDetectorPe
         lastConsumedMessage = Events.traversePlayerMessages(lastConsumedMessage, message -> getConnectedComputers().forEach(computer -> {
             if(message.eventName().equals("playerChangedDimension")) {
                 computer.queueEvent(message.eventName(), message.playerName(), message.fromDimension(), message.toDimension());
-            }
-            else computer.queueEvent(message.eventName(), message.playerName(), message.fromDimension());
+            } else computer.queueEvent(message.eventName(), message.playerName(), message.fromDimension());
         }));
     }
 }
