@@ -19,7 +19,7 @@ import org.jetbrains.annotations.Nullable;
 public class PlayerDetectorBlock extends APBlockEntityBlock<PlayerDetectorEntity> {
 
     public PlayerDetectorBlock() {
-        super(BlockEntityTypes.PLAYER_DETECTOR, false);
+        super(BlockEntityTypes.PLAYER_DETECTOR, true);
     }
 
     @Nullable
