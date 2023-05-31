@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+## [1.19.3-0.7.29r] - 2023-06-01
 
 ### Changed
 - Change the argument of `isItemCrafting` to an item filter table
