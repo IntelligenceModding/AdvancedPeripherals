@@ -6,6 +6,29 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+### Changed
+- Change the argument of `isItemCrafting` to an item filter table
+
+### Fixed
+- [#434] `getItem` throwing NullPointerException if the item does not exist in the me system
+- [#444] Cardinal directions aren't working for some of our peripherals - Thanks to @zyxkad !
+- [#436] fluid stacks returned by the me or rs bridge are missing some information like the display name, fingerprint or nbt values
+- [#448] Wrong return values of the `getInputFluid/getOutputFluid` functions of the create basin integration - Thanks to @zyxkad
+- [#439] Fixed wrong calculation of the player position which leads to false results of some functions of the player detector - Thanks to @zyxkad
+- [#454] Fixed cache blocking of the rs bridge which leads to a disability to remove items from the rs system
+- [#456] Fixed a bug which leads to crashes when trying to get the happiness of the citizens - Thanks to @Einhornyordle!
+- Fixed `writeTable` function of the storage peripheral
+- Fixed a bug where the item of a filter gets ignored if nbt values are defined
+- [#425] Fixed patchouli urls
+- [#463] Fix create integration for create 0.5.1a
+- [#464] Fixed that the inventory manager causes items to stop stacking
+
+### Added
+- [#445] Added the peripheral name to the `playerClick` event of the player detector - Thanks to @zyxkad!
+- [#467] Added playerJoin, playerLeave, playerChangedDimension events on Player Detector - Thanks to @michele-grifa!
+- Increase max range of the radius of sphere operations
+
 ## [1.19.2-0.7.27r] - 2023-04-15
 
 ### Fixed
