@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+## [1.18.2-0.7.30r] - 2023-06-01
 
 ### Changed
 - [#436] Add `nbt`, `displayName` and `fingerprint` to the fluid stacks of the rs and me bridge
