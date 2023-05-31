@@ -15,6 +15,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - [#425] Fixed patchouli urls
 - [#463] Fix create integration for create 0.5.1a
 - [#434] Fixed NullPointerException when trying to get items with an invalid item name
+- [#464] Fixed that the inventory manager causes items to stop stacking
 
 ## [1.18.2-0.7.29r] - 2023-04-15
 
