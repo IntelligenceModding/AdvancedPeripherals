@@ -173,5 +173,4 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
     private List<ServerPlayer> getPlayers() {
         return ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers();
     }
-
 }
