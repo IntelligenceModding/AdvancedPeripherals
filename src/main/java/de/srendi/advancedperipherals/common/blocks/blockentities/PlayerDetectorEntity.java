@@ -31,7 +31,7 @@ public class PlayerDetectorEntity extends PeripheralBlockEntity<PlayerDetectorPe
             if(message.eventName().equals("playerChangedDimension")) {
                 computer.queueEvent(message.eventName(), message.playerName(), message.fromDimension(), message.toDimension());
             }
-            else computer.queueEvent(message.eventName(), message.playerName());
+            else computer.queueEvent(message.eventName(), message.playerName(), message.fromDimension());
         }));
     }
 }
