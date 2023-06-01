@@ -2,6 +2,7 @@ package de.srendi.advancedperipherals.common.util;
 
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
+import de.srendi.advancedperipherals.common.configuration.APConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.*;
 import net.minecraft.world.level.ChunkPos;
@@ -46,7 +47,8 @@ public class NBTUtil {
             return json == null ? null : TagParser.parseTag(json);
         } catch (CommandSyntaxException ex) {
             AdvancedPeripherals.debug("Could not parse json data to NBT", Level.ERROR);
-            ex.printStackTrace();
+            if(APConfig.GENERAL_CONFIG.enableDebugMode.get())
+                ex.printStackTrace();
             return null;
         }
     }

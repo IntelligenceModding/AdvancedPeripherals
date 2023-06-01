@@ -14,7 +14,7 @@ buildscript {
         gradlePluginPortal()
     }
     dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1+', changing: true
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '6.0+', changing: true
         classpath 'org.parchmentmc:librarian:1.+'
     }
 }
@@ -35,7 +35,7 @@ apply plugin: 'org.parchmentmc.librarian.forgegradle'
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
 wrapper {
-    gradleVersion = '7.5'
+    gradleVersion = '8.1.1'
     distributionType = Wrapper.DistributionType.ALL
 }
 
@@ -193,6 +193,10 @@ repositories {
         name = "Squiddev maven cct"
         url = 'https://squiddev.cc/maven/'
     }
+    /*maven {
+        name = "Progwml6 maven jei"
+        url = "https://dvs1.progwml6.com/files/maven/"
+    }*/
     maven {
         name = "Theillusivec4 maven curios"
         url = "https://maven.theillusivec4.top/"
@@ -215,7 +219,7 @@ repositories {
     }
     maven {
         name = "Srendi Space repository"
-        url = "https://maven.pkg.jetbrains.space/intelligence/p/advancedperipherals/ap-repository"
+        url "https://packages.intelligence-modding.de/maven/p/advanced-peripherals/ap-repository"
         credentials {
             username = spaceUsername
             password = spacePassword
@@ -228,7 +232,10 @@ repositories {
             includeGroup "site.siredvin.ttoolkit"
         }
     }
-
+    maven {
+        name = "Shedaniel cloth"
+        url = "https://maven.shedaniel.me/"
+    }
     maven {
         url = uri("https://maven.pkg.github.com/refinedmods/refinedstorage")
         credentials {
@@ -236,7 +243,6 @@ repositories {
             password = "\u0067hp_oGjcDFCn8jeTzIj4Ke9pLoEVtpnZMP4VQgaX"
         }
     }
-
     maven {
         url "https://cursemaven.com"
         content {
@@ -275,7 +281,7 @@ dependencies {
     runtimeOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}")
 
     // Refined Storage
-    compileOnly fg.deobf("com.refinedmods:refinedstorage:${refinedstorage_version}")  {
+    compileOnly fg.deobf("com.refinedmods:refinedstorage:${refinedstorage_version}") {
         transitive false
     }
 
@@ -284,23 +290,22 @@ dependencies {
     // runtimeOnly fg.deobf("curse.maven:ae2things-609977:${ae2things_version}-sources")
 
     // Botania
-    compileOnly fg.deobf("vazkii.botania:Botania:${botania_version}")
+    //compileOnly fg.deobf("vazkii.botania:Botania:${botania_version}")
 
 
     // Minecolonies
     // Change to compileOnly when running `runData`
-    compileOnly fg.deobf("com.ldtteam:minecolonies:${minecolonies_version}")
-    compileOnly fg.deobf("com.ldtteam:structurize:${structurize_version}")
-    compileOnly fg.deobf("com.ldtteam:multipiston:${multipiston_version}")
-    compileOnly fg.deobf("com.ldtteam:domum_ornamentum:${domumornamentum_version}:universal")
-    compileOnly fg.deobf("com.ldtteam:blockui:${blockui_version}")
+    //compileOnly fg.deobf("com.ldtteam:minecolonies:${minecolonies_version}")
+    //compileOnly fg.deobf("com.ldtteam:structurize:${structurize_version}")
+    //compileOnly fg.deobf("com.ldtteam:multipiston:${multipiston_version}")
+    //compileOnly fg.deobf("com.ldtteam:domum_ornamentum:${domumornamentum_version}:universal")
+    //compileOnly fg.deobf("com.ldtteam:blockui:${blockui_version}")
 
     //Patchouli
     runtimeOnly fg.deobf("vazkii.patchouli:Patchouli:${patchouli_version}")
 
     // Create
-    compileOnly fg.deobf("com.simibubi.create:create-1.19.2:${create_version}:all")
-    compileOnly fg.deobf("com.jozufozu.flywheel:flywheel-forge-${minecraft_version}:${flywheel_version}")
+    implementation fg.deobf("com.simibubi.create:create-${minecraft_version}:${create_version}:all")
 
     //Removed until fully ported
     //testImplementation fg.deobf("site.siredvin.ttoolkit:ttoolkit-${minecraft_version}:${ttoolkit_version}")
@@ -381,16 +386,15 @@ afterEvaluate {
 
 jar {
     manifest({
-        attributes([
-                "Specification-Title"     : "advancedperipherals",
-                "Specification-Vendor"    : "Srendi",
-                "Specification-Version"   : "${version}",
-                "Implementation-Title"    : "advancedperipherals",
-                "Implementation-Version"  : "${version}",
-                "Implementation-Vendor"   : "Srendi",
-                "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
-        ])
+        attributes(["Specification-Title"     : "advancedperipherals",
+                    "Specification-Vendor"    : "Srendi",
+                    "Specification-Version"   : "${version}",
+                    "Implementation-Title"    : "advancedperipherals",
+                    "Implementation-Version"  : "${version}",
+                    "Implementation-Vendor"   : "Srendi",
+                    "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")])
     })
+    archiveFileName = "AdvancedPeripherals-${minecraft_version}-${mod_version}.jar"
 }
 
 jar.finalizedBy('reobfJar')
@@ -439,10 +443,19 @@ modrinth {
 publishing {
     repositories {
         maven {
-            url "https://maven.pkg.jetbrains.space/intelligence/p/advancedperipherals/ap-repository"
+            name="space"
+            url "https://packages.intelligence-modding.de/maven/p/advanced-peripherals/ap-repository"
             credentials {
                 username = spaceUsername
                 password = spacePassword
+            }
+        }
+        maven {
+            name="github"
+            url "https://maven.pkg.github.com/SirEndii/AdvancedPeripherals"
+            credentials {
+                username = secretEnv["GH_ACTOR"] ?: System.getenv("GH_ACTOR") ?: ''
+                password = secretEnv["GH_TOKEN"] ?: System.getenv("GH_TOKEN") ?: ''
             }
         }
     }
