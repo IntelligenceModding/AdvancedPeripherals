@@ -26,13 +26,17 @@ public class Events {
 
     private static final String PLAYED_BEFORE = "ap_played_before";
     private static final int CHAT_QUEUE_MAX_SIZE = 50;
+    private static final int PLAYER_QUEUE_MAX_SIZE = 50;
     public static final EvictingQueue<Pair<Long, ChatMessageObject>> messageQueue = EvictingQueue.create(CHAT_QUEUE_MAX_SIZE);
+    public static final EvictingQueue<Pair<Long, PlayerMessageObject>> playerMessageQueue = EvictingQueue.create(PLAYER_QUEUE_MAX_SIZE);
     private static long lastChatMessageID = 0;
+    private static long lastPlayerMessageID = 0;
 
     @SubscribeEvent
     public static void onWorldJoin(PlayerEvent.PlayerLoggedInEvent event) {
+        Player player = event.getEntity();
+
         if (APConfig.WORLD_CONFIG.givePlayerBookOnJoin.get()) {
-            Player player = event.getEntity();
             if (!hasPlayedBefore(player)) {
                 ItemStack book = new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation("patchouli", "guide_book")));
                 CompoundTag nbt = new CompoundTag();
@@ -41,6 +45,23 @@ public class Events {
                 player.addItem(book);
             }
         }
+
+        putPlayerMessage(Pair.of(getLastPlayerMessageID(), new PlayerMessageObject("playerJoin", player.getName().getString(), player.getLevel().dimension().location().toString(), "")));
+    }
+
+    @SubscribeEvent
+    public static void onWorldLeave(PlayerEvent.PlayerLoggedOutEvent event) {
+        Player player = event.getEntity();
+        putPlayerMessage(Pair.of(getLastPlayerMessageID(), new PlayerMessageObject("playerLeave", player.getName().getString(), player.getLevel().dimension().location().toString(), "")));
+    }
+
+    @SubscribeEvent
+    public static void onPlayerChangeDimension(PlayerEvent.PlayerChangedDimensionEvent event) {
+        Player player = event.getEntity();
+        String fromDim = event.getFrom().location().toString();
+        String toDim = event.getTo().location().toString();
+
+        putPlayerMessage(Pair.of(getLastPlayerMessageID(), new PlayerMessageObject("playerChangedDimension", player.getName().getString(), fromDim, toDim)));
     }
 
     @SubscribeEvent
@@ -89,6 +110,11 @@ public class Events {
         lastChatMessageID++;
     }
 
+    public static synchronized void putPlayerMessage(Pair<Long, PlayerMessageObject> message) {
+        playerMessageQueue.add(message);
+        lastPlayerMessageID++;
+    }
+
     public static synchronized long traverseChatMessages(long lastConsumedMessage, Consumer<ChatMessageObject> consumer) {
         for (Pair<Long, ChatMessageObject> message : messageQueue) {
             if (message.getLeft() <= lastConsumedMessage) continue;
@@ -98,8 +124,21 @@ public class Events {
         return lastConsumedMessage;
     }
 
+    public static synchronized long traversePlayerMessages(long lastConsumedMessage, Consumer<PlayerMessageObject> consumer) {
+        for (Pair<Long, PlayerMessageObject> message : playerMessageQueue) {
+            if (message.getLeft() <= lastConsumedMessage) continue;
+            consumer.accept(message.getRight());
+            lastConsumedMessage = message.getLeft();
+        }
+        return lastConsumedMessage;
+    }
+
     public static synchronized long getLastChatMessageID() {
         return lastChatMessageID;
+    }
+
+    public static synchronized long getLastPlayerMessageID() {
+        return lastPlayerMessageID;
     }
 
     private static boolean hasPlayedBefore(Player player) {
@@ -114,4 +153,5 @@ public class Events {
     }
 
     public record ChatMessageObject(String username, String message, String uuid, boolean isHidden) {}
+    public record PlayerMessageObject(String eventName, String playerName, String fromDimension, String toDimension) {}
 }

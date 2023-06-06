@@ -4,7 +4,6 @@ import com.simibubi.create.content.contraptions.fluids.tank.FluidTankTileEntity;
 import dan200.computercraft.api.lua.LuaFunction;
 import de.srendi.advancedperipherals.lib.peripherals.BlockEntityIntegrationPeripheral;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -27,7 +26,7 @@ public class FluidTankIntegration extends BlockEntityIntegrationPeripheral<Fluid
         Map<String, Object> data = new HashMap<>();
         data.put("capacity", blockEntity.getControllerTE().getTankInventory().getCapacity());
         data.put("amount", blockEntity.getControllerTE().getTankInventory().getFluidAmount());
-        data.put("fluid", ForgeRegistries.FLUIDS.getKey(blockEntity.getControllerTE().getTankInventory().getFluid().getFluid()).toString());
+        data.put("fluid", blockEntity.getControllerTE().getTankInventory().getFluid().getFluid().builtInRegistryHolder().key().location().toString());
         data.put("isBoiler", blockEntity.getControllerTE().boiler.isActive());
         return data;
     }

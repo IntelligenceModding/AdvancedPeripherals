@@ -83,8 +83,6 @@ public class BlockStatesAndModelsProvider extends BlockStateProvider {
             }
             if (side.equals("back")) side = "south";
             builder.texture(side, blockTexture(block, sideTexture));
-
-
         }
         builder.texture("particle", particleTexture);
         return builder;

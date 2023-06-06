@@ -55,7 +55,7 @@ public class RefinedStorage {
 
     public static ItemStack findStackFromFilter(INetwork network, ICraftingManager crafting, ItemFilter filter) {
         for (StackListEntry<ItemStack> temp : network.getItemStorageCache().getList().getStacks()) {
-            if (filter.test(temp.getStack()))
+            if (filter.test(temp.getStack().copy()))
                 return temp.getStack().copy();
         }
 
@@ -78,7 +78,7 @@ public class RefinedStorage {
 
     public static FluidStack findFluidFromFilter(INetwork network, ICraftingManager crafting, FluidFilter filter) {
         for (StackListEntry<FluidStack> temp : network.getFluidStorageCache().getList().getStacks()) {
-            if (filter.test(temp.getStack()))
+            if (filter.test(temp.getStack().copy()))
                 return temp.getStack().copy();
         }
 
@@ -87,7 +87,7 @@ public class RefinedStorage {
 
         for (ICraftingPattern pattern : crafting.getPatterns()) {
             if (pattern.getFluidOutputs().stream().anyMatch(filter::test))
-                return pattern.getFluidOutputs().stream().filter(filter::test).findFirst().get();
+                return pattern.getFluidOutputs().stream().filter(filter::test).findFirst().get().copy();
         }
 
         return FluidStack.EMPTY;
@@ -228,7 +228,7 @@ public class RefinedStorage {
     public static Object getItem(INetwork network, ItemStack item) {
         for (ItemStack itemStack : getItems(network)) {
             if (itemStack.sameItem(item) && Objects.equals(itemStack.getTag(), item.getTag()))
-                return getObjectFromStack(itemStack, network);
+                return getObjectFromStack(itemStack.copy(), network);
         }
         return null;
     }
@@ -239,7 +239,7 @@ public class RefinedStorage {
         List<ItemStack> result = new ArrayList<>(craftableEntries.size());
 
         for (StackListEntry<ItemStack> entry : craftableEntries) {
-            result.add(entry.getStack());
+            result.add(entry.getStack().copy());
         }
 
         return result;
@@ -251,7 +251,7 @@ public class RefinedStorage {
         List<FluidStack> result = new ArrayList<>(craftableEntries.size());
 
         for (StackListEntry<FluidStack> entry : craftableEntries)
-            result.add(entry.getStack());
+            result.add(entry.getStack().copy());
 
         return result;
     }

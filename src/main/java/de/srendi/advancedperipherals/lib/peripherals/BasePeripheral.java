@@ -123,9 +123,7 @@ public abstract class BasePeripheral<O extends IPeripheralOwner> implements IBas
     }
 
     protected Direction validateSide(String direction) throws LuaException {
-        String dir = direction.toUpperCase(Locale.ROOT);
-
-        return CoordUtil.getDirection(owner.getOrientation(), dir);
+        return CoordUtil.getDirection(owner.getOrientation(), direction);
     }
 
     @Override

@@ -117,7 +117,7 @@ public class InventoryManagerPeripheral extends BasePeripheral<BlockEntityPeriph
         filter = ItemFilter.parse(filterMap);
         if (filter.rightPresent())
             return MethodResult.of(0, filter.getRight());
-        return MethodResult.of(removeItemCommon(invDirection, filter.getLeft()));
+        return removeItemCommon(invDirection, filter.getLeft());
     }
 
     @LuaFunction(mainThread = true)
@@ -135,7 +135,7 @@ public class InventoryManagerPeripheral extends BasePeripheral<BlockEntityPeriph
         if (filter.rightPresent())
             return MethodResult.of(0, filter.getRight());
 
-        return MethodResult.of(removeItemCommon(invDirection, filter.getLeft()));
+        return removeItemCommon(invDirection, filter.getLeft());
     }
 
     private MethodResult removeItemCommon(String invDirection, ItemFilter filter) throws LuaException {

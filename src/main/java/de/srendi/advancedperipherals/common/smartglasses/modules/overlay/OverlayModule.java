@@ -18,7 +18,7 @@ public class OverlayModule implements IModule {
     }
 
     @Override
-    public IModuleFunctions getMethods() {
+    public IModuleFunctions getMethods(SmartGlassesAccess smartGlassesAccess) {
         return IModuleFunctions.EMPTY;
     }
 

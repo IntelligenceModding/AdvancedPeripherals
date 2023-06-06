@@ -125,7 +125,10 @@ public class ItemFilter {
         }
         if (tag != null && !stack.is(tag))
             return false;
-        return nbt == null || stack.getOrCreateTag().equals(nbt);
+        if (nbt != null && !stack.getOrCreateTag().equals(nbt) && (item == Items.AIR || stack.is(item)))
+            return false;
+
+        return true;
     }
 
     public int getCount() {

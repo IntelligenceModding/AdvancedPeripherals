@@ -14,6 +14,7 @@ public class Integration implements Runnable {
     public void run() {
         IntegrationPeripheralProvider.registerBlockEntityIntegration(BlazeBurnerIntegration::new, BlazeBurnerTileEntity.class);
         IntegrationPeripheralProvider.registerBlockEntityIntegration(FluidTankIntegration::new, FluidTankTileEntity.class);
+        // Disable until verified that it does not clash with the existing create CC integration
         IntegrationPeripheralProvider.registerBlockEntityIntegration(ScrollValueBehaviourIntegration::new, KineticTileEntity.class, tile -> tile.getBehaviour(ScrollValueBehaviour.TYPE) != null, 10);
         IntegrationPeripheralProvider.registerBlockEntityIntegration(BasinIntegration::new, BasinTileEntity.class);
         IntegrationPeripheralProvider.registerBlockEntityIntegration(MechanicalMixerIntegration::new, MechanicalMixerTileEntity.class);

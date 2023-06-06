@@ -9,7 +9,6 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * Integration for kinetic tile entities with scroll value behaviours like the speed controller or the creative motor
- * to prevent code duplication
  */
 public class ScrollValueBehaviourIntegration extends BlockEntityIntegrationPeripheral<KineticTileEntity> {
 
