@@ -24,7 +24,7 @@ public class CoordUtil {
             return false;
 
         range = Math.min(Math.abs(range), APConfig.PERIPHERALS_CONFIG.playerDetMaxRange.get());
-        return isPlayerInBlockRange(pos, world, player, (double) range);
+        return isPlayerInBlockRange(pos, world, player, range);
     }
 
     // To fix issue #439
@@ -38,7 +38,7 @@ public class CoordUtil {
             ey = y;
             y = tmp;
         }
-        double bx = (double)(pos.getX() + 0.5), by = (double)(pos.getY() + 0.5), bz = (double)(pos.getZ() + 0.5);
+        double bx = pos.getX() + 0.5, by = pos.getY() + 0.5, bz = pos.getZ() + 0.5;
         return Math.abs(x - bx) <= range && Math.abs(z - bz) <= range &&
             // check both feet position and eye position, and ensure it will work if player is higher than 2 blocks
             ((y <= by && by <= ey) || Math.min(Math.abs(y - by), Math.abs(ey - by)) <= range);
@@ -52,7 +52,7 @@ public class CoordUtil {
         x = Math.min(Math.abs(x), APConfig.PERIPHERALS_CONFIG.playerDetMaxRange.get());
         y = Math.min(Math.abs(y), APConfig.PERIPHERALS_CONFIG.playerDetMaxRange.get());
         z = Math.min(Math.abs(z), APConfig.PERIPHERALS_CONFIG.playerDetMaxRange.get());
-        return isPlayerInBlockRangeXYZ(pos, world, player, (double) x, (double) y, (double) z);
+        return isPlayerInBlockRangeXYZ(pos, world, player, x, y, z);
     }
 
     private static boolean isPlayerInBlockRangeXYZ(@NotNull BlockPos pos, @NotNull Level world, @NotNull Player player, double dx, double dy, double dz) {
@@ -65,7 +65,7 @@ public class CoordUtil {
             ey = y;
             y = tmp;
         }
-        double bx = (double)(pos.getX() + 0.5), by = (double)(pos.getY() + 0.5), bz = (double)(pos.getZ() + 0.5);
+        double bx = pos.getX() + 0.5, by = pos.getY() + 0.5, bz = pos.getZ() + 0.5;
         return Math.abs(x - bx) <= dx && Math.abs(z - bz) <= dz &&
             ((y <= by && by <= ey) || Math.min(Math.abs(y - by), Math.abs(ey - by)) <= dy);
     }
