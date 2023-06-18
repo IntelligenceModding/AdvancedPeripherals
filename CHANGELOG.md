@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
-## [1.20.1-0.7.30r] - 2023-06-18
+## [1.20.1-0.7.30a] - 2023-06-18
 
 Initial port to 1.20.1. Could and probably will include bugs, please report them on our [issue tracker](https://github.com/SirEndii/AdvancedPeripherals/issues/).
 Currently disabled integrations are botania, create, mekanism and powah
