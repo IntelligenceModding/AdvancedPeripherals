@@ -38,7 +38,7 @@ public class LuaConverter {
         data.put("inLove", animal.isInLove());
         data.put("aggressive", animal.isAggressive());
         if (animal instanceof IForgeShearable shareable && !itemInHand.isEmpty()) {
-            data.put("shareable", shareable.isShearable(itemInHand, animal.level, animal.blockPosition()));
+            data.put("shareable", shareable.isShearable(itemInHand, animal.level(), animal.blockPosition()));
         }
         return data;
     }

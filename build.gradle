@@ -276,7 +276,7 @@ dependencies {
     // runtimeOnly fg.deobf("mekanism:Mekanism:${mekanism_version}")// core
 
     // Applied Energistics 2
-    runtimeOnly fg.deobf("appeng:appliedenergistics2-forge:${appliedenergistics_version}")
+    compileOnly fg.deobf("appeng:appliedenergistics2-forge:${appliedenergistics_version}")
     // Curios
     runtimeOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}")
 
@@ -302,10 +302,10 @@ dependencies {
     //compileOnly fg.deobf("com.ldtteam:blockui:${blockui_version}")
 
     //Patchouli
-    runtimeOnly fg.deobf("vazkii.patchouli:Patchouli:${patchouli_version}")
+    //runtimeOnly fg.deobf("vazkii.patchouli:Patchouli:${patchouli_version}")
 
     // Create
-    implementation fg.deobf("com.simibubi.create:create-${minecraft_version}:${create_version}:all")
+    compileOnly fg.deobf("com.simibubi.create:create-1.19.3:${create_version}:all")
 
     //Removed until fully ported
     //testImplementation fg.deobf("site.siredvin.ttoolkit:ttoolkit-${minecraft_version}:${ttoolkit_version}")

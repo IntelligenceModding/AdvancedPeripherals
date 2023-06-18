@@ -164,7 +164,7 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
         if (APConfig.PERIPHERALS_CONFIG.morePlayerInformation.get()) {
             info.put("yaw", existingPlayer.yRotO);
             info.put("pitch", existingPlayer.xRotO);
-            info.put("dimension", existingPlayer.getLevel().dimension().location().toString());
+            info.put("dimension", existingPlayer.level().dimension().location().toString());
             info.put("eyeHeight", existingPlayer.getEyeHeight());
         }
         return info;

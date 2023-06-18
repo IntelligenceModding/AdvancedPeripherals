@@ -10,11 +10,6 @@ public class MeBridgeEntityListener implements IGridNodeListener<MeBridgeEntity>
     public static final MeBridgeEntityListener INSTANCE = new MeBridgeEntityListener();
 
     @Override
-    public void onSecurityBreak(MeBridgeEntity nodeOwner, IGridNode node) {
-
-    }
-
-    @Override
     public void onSaveChanges(MeBridgeEntity nodeOwner, IGridNode node) {
 
     }

@@ -5,7 +5,6 @@ import net.minecraft.data.PackOutput;
 import net.minecraft.data.loot.LootTableProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.storage.loot.LootTable;
-import net.minecraft.world.level.storage.loot.LootTables;
 import net.minecraft.world.level.storage.loot.ValidationContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import org.jetbrains.annotations.NotNull;
@@ -27,6 +26,6 @@ public class BlockLootTablesProvider extends LootTableProvider {
 
     @Override
     protected void validate(Map<ResourceLocation, LootTable> map, @NotNull ValidationContext validationtracker) {
-        map.forEach((id, table) -> LootTables.validate(validationtracker, id, table));
+        map.forEach((id, table) -> table.validate(validationtracker));
     }
 }

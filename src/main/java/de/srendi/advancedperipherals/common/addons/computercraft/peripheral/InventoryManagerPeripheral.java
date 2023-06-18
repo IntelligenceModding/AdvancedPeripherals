@@ -294,7 +294,7 @@ public class InventoryManagerPeripheral extends BasePeripheral<BlockEntityPeriph
         public static int getSlotForItem(ItemStack stack) {
             if (stack.getItem() instanceof ArmorItem armorItem) {
                 for (ArmorSlot slot : values()) {
-                    if (armorItem.getSlot() == slot.slotType) {
+                    if (armorItem.getEquipmentSlot() == slot.slotType) {
                         return slot.slot;
                     }
                 }

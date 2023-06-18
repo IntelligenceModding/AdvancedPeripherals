@@ -1,7 +1,6 @@
 package de.srendi.advancedperipherals.common.items;
 
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterials;
 import net.minecraft.world.item.ItemStack;
@@ -16,7 +15,7 @@ public class ARGogglesItem extends ArmorItem {
     private static final String CONTROLLER_LEVEL = "controller_level";
 
     public ARGogglesItem() {
-        super(ArmorMaterials.LEATHER, EquipmentSlot.HEAD, new Properties().stacksTo(1));
+        super(ArmorMaterials.LEATHER, Type.HELMET, new Properties().stacksTo(1));
     }
 
     @Override

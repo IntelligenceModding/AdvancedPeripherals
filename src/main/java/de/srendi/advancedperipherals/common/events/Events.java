@@ -52,13 +52,13 @@ public class Events {
             }
         }
 
-        putPlayerMessage(Pair.of(getLastPlayerMessageID(), new PlayerMessageObject("playerJoin", player.getName().getString(), player.getLevel().dimension().location().toString(), "")));
+        putPlayerMessage(Pair.of(getLastPlayerMessageID(), new PlayerMessageObject("playerJoin", player.getName().getString(), player.level().dimension().location().toString(), "")));
     }
 
     @SubscribeEvent
     public static void onWorldLeave(PlayerEvent.PlayerLoggedOutEvent event) {
         Player player = event.getEntity();
-        putPlayerMessage(Pair.of(getLastPlayerMessageID(), new PlayerMessageObject("playerLeave", player.getName().getString(), player.getLevel().dimension().location().toString(), "")));
+        putPlayerMessage(Pair.of(getLastPlayerMessageID(), new PlayerMessageObject("playerLeave", player.getName().getString(), player.level().dimension().location().toString(), "")));
     }
 
     @SubscribeEvent

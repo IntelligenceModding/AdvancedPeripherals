@@ -8,24 +8,16 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.event.CreativeModeTabEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.RegistryObject;
 
 import java.util.Collection;
 import java.util.Set;
 
-@Mod.EventBusSubscriber(modid = AdvancedPeripherals.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class APCreativeTab {
 
-    @SubscribeEvent
-    public static void registerCreativeTab(CreativeModeTabEvent.Register event) {
-        event.registerCreativeModeTab(AdvancedPeripherals.getRL("creativetab"), APCreativeTab::populateCreativeTabBuilder);
-    }
 
-    private static void populateCreativeTabBuilder(CreativeModeTab.Builder builder) {
-        builder.displayItems((set, out, unknownMagicBoolean) -> {
+    public static void populateCreativeTabBuilder(CreativeModeTab.Builder builder) {
+        builder.displayItems((set, out) -> {
             Registration.ITEMS.getEntries().stream().map(RegistryObject::get).forEach(out::accept);
             out.acceptAll(pocketUpgrade(CCRegistration.ID.COLONY_POCKET));
             out.acceptAll(pocketUpgrade(CCRegistration.ID.CHATTY_POCKET));
@@ -46,7 +38,6 @@ public class APCreativeTab {
             out.acceptAll(turtleUpgrade(CCRegistration.ID.OP_HUSBANDRY_AUTOMATA));
             out.acceptAll(turtleUpgrade(CCRegistration.ID.END_AUTOMATA));
             out.acceptAll(turtleUpgrade(CCRegistration.ID.OP_END_AUTOMATA));
-
         });
         builder.icon(() -> new ItemStack(Blocks.CHAT_BOX.get()));
         builder.title(Component.translatable("advancedperipherals.name"));
