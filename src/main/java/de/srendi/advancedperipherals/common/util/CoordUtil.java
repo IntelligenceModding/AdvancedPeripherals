@@ -29,7 +29,7 @@ public class CoordUtil {
 
     // To fix issue #439
     private static boolean isPlayerInBlockRange(@NotNull BlockPos pos, @NotNull Level world, @NotNull Player player, double range) {
-        if (player.getLevel() != world)
+        if (player.level() != world)
             return false;
 
         double x = player.getX(), y = player.getY(), ey = player.getEyeY(), z = player.getZ();
@@ -56,7 +56,7 @@ public class CoordUtil {
     }
 
     private static boolean isPlayerInBlockRangeXYZ(@NotNull BlockPos pos, @NotNull Level world, @NotNull Player player, double dx, double dy, double dz) {
-        if (player.getLevel() != world)
+        if (player.level() != world)
             return false;
 
         double x = player.getX(), y = player.getY(), ey = player.getEyeY(), z = player.getZ();

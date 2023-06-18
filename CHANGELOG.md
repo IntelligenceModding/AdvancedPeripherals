@@ -6,27 +6,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
-## [1.19.2-0.7.29r] - 2023-06-30
+## [1.20.1-0.7.30r] - 2023-06-18
 
-### Fixed
-- [#478] Fixed a game crash when trying to call some functions of the ME Bridge while AE2 Things is not installed
+Initial port to 1.20.1. Could and probably will include bugs, please report them on our [issue tracker](https://github.com/SirEndii/AdvancedPeripherals/issues/).
+Currently disabled integrations are botania, create, mekanism and powah
 
-### Added/Fixed
-- [#476] There a multiple additions and fixes to `getResearch` of the colony integrator:
-  * `getResearch` function is callable again (was not available because it was throwing a non-lua exception)
-  * will not return hidden research items
-  * fix text properties of research: `name` and `researchEffects`
-  * add properties to research:
-    * `requirements`: list of requirements:
-      * `desc`: requirement description text
-      *  `type`: type of requirement, only `building` type shows additional information (`building` and `level`)
-    * `cost`: list of research cost
-    * `progress`: integer value
-
-## [1.19.2-0.7.28r] - 2023-06-01
+## [1.19.3-0.7.29r] - 2023-06-01
 
 ### Changed
 - Change the argument of `isItemCrafting` to an item filter table
+- Removed minecolonies integration without removing the block since minecolonies does not exist for 1.19.3
+- Removed botania integration since botania does not exist for 1.19.3
 
 ### Fixed
 - [#434] `getItem` throwing NullPointerException if the item does not exist in the me system
@@ -47,17 +37,17 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - [#467] Added playerJoin, playerLeave, playerChangedDimension events on Player Detector - Thanks to @michele-grifa!
 - Increase max range of the radius of sphere operations
 
-## [1.19.2-0.7.27r] - 2023-04-15
+
+## [1.19.3-0.7.28r] - 2023-04-15
 
 ### Fixed
 - [#433] Fixed that items will be exported regardless if the target can accept the items - RS and ME Bridge
 - Fixed return type of `removeItem` in the inventory manager
 
-## [1.19.2-0.7.26r] - 2023-04-14
+## [1.19.3-0.7.27r] - 2023-04-14
 
 ### Added
 - [#429]Add back support for ae2 things
-- Added powah integration - thanks to Sabry Chasseray!
 - Added some checks to the inventory manager
 
 ### Fixed
@@ -70,7 +60,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - [#432]Disable curio slot
 - Disable fuel consumption of the pocket computer - can be enabled in the config
 
-## [1.19.2-0.7.25r] - 2023-03-15
+## [1.19.3-0.7.26r] - 2023-03-15
 
 ### Added
 - [#416]Add the crafting job to the crafting cpu object - me bridge
@@ -79,10 +69,6 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - [#416]Try to parse the `nbt` argument as a table if parsing it as a string fails. Adds the ability to use the output of our functions like `listItems` or `getItem` as item filter argument.
 - [#417]Disable power consumption if powered peripherals are disabled in the configuration
 - [#423]Fixed that some functions of the me and rs bridge ignore or increasing the count they want to export
-
-## [1.19.2-0.7.24b] - 2023-03-01
-
-### This is the backport of the latest 1.19.3 version to 1.19.2. To see what everything changed, check the [changelog](https://docs.intelligence-modding.de/changelogs/0.7.24r/)
 
 ## [1.19.3-0.7.24b] - 2023-02-12
 

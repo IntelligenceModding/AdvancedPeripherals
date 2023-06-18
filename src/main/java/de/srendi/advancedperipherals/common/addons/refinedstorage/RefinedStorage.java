@@ -227,7 +227,7 @@ public class RefinedStorage {
 
     public static Object getItem(INetwork network, ItemStack item) {
         for (ItemStack itemStack : getItems(network)) {
-            if (itemStack.sameItem(item) && Objects.equals(itemStack.getTag(), item.getTag()))
+            if (itemStack.is(item.getItem()) && Objects.equals(itemStack.getTag(), item.getTag()))
                 return getObjectFromStack(itemStack.copy(), network);
         }
         return null;

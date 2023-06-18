@@ -34,8 +34,8 @@ public class APCommands {
             source.sendFailure(Component.literal("There was an issue while generating the hash. Report to Author"));
             return 0;
         }
-        source.sendSuccess(Component.literal("Fingerprint of the item: "), true);
-        source.sendSuccess(ComponentUtils.wrapInSquareBrackets(
+        source.sendSuccess(() -> Component.literal("Fingerprint of the item: "), true);
+        source.sendSuccess(() -> ComponentUtils.wrapInSquareBrackets(
                 Component.literal(fingerprint)
                         .withStyle(style -> style.applyFormat(ChatFormatting.GREEN)
                                 .withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, fingerprint))

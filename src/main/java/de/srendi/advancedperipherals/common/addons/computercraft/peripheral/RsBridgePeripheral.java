@@ -358,7 +358,7 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
         for (ICraftingTask task : getNetwork().getCraftingManager().getTasks()) {
             ItemStack taskStack = task.getRequested().getItem();
-            if (taskStack != null && taskStack.sameItem(stack))
+            if (taskStack != null && taskStack.is(stack.getItem()))
                 return MethodResult.of(true);
         }
         return MethodResult.of(false);

@@ -34,7 +34,7 @@ public final class FakePlayerProviderTurtle {
 
     public static void load(APFakePlayer player, ITurtleAccess turtle) {
         Direction direction = turtle.getDirection();
-        player.setLevel((ServerLevel) turtle.getLevel());
+        player.setServerLevel((ServerLevel) turtle.getLevel());
         BlockPos position = turtle.getPosition();
         // Player position
         float pitch = direction == Direction.UP ? -90 : direction == Direction.DOWN ? 90 : 0;
@@ -95,7 +95,7 @@ public final class FakePlayerProviderTurtle {
                 remaining = ItemHandlerHelper.insertItem(turtleInventory, remaining, false);
                 if (!remaining.isEmpty()) {
                     BlockPos position = turtle.getPosition();
-                    WorldUtil.dropItemStack(remaining, turtle.getLevel(), position, turtle.getDirection().getOpposite());
+                    WorldUtil.dropItemStack(turtle.getLevel(), position, turtle.getDirection().getOpposite(), remaining);
                 }
             }
 

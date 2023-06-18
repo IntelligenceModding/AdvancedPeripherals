@@ -6,17 +6,18 @@ import de.srendi.advancedperipherals.common.setup.BlockEntityTypes;
 import de.srendi.advancedperipherals.common.setup.Blocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.material.Material;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class RedstoneIntegratorBlock extends BaseBlockEntityBlock {
 
     public RedstoneIntegratorBlock() {
-        super(false, Properties.of(Material.METAL).isRedstoneConductor(Blocks::never));
+        super(false, Properties.of().sound(SoundType.METAL).mapColor(DyeColor.GRAY).isRedstoneConductor(Blocks::never));
     }
 
     @Nullable

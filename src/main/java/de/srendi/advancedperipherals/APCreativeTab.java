@@ -4,44 +4,43 @@ import de.srendi.advancedperipherals.common.setup.Blocks;
 import de.srendi.advancedperipherals.common.setup.CCRegistration;
 import de.srendi.advancedperipherals.common.setup.Registration;
 import de.srendi.advancedperipherals.common.util.inventory.ItemUtil;
-import net.minecraft.core.NonNullList;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.registries.RegistryObject;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.Set;
 
-public class APCreativeTab extends CreativeModeTab {
+public class APCreativeTab {
 
-    public APCreativeTab() {
-        super("advancedperipheralstab");
-    }
 
-    @Override
-    public void fillItemList(NonNullList<ItemStack> items) {
-        Registration.ITEMS.getEntries().stream().map(RegistryObject::get).forEach(item -> items.add(new ItemStack(item)));
-        items.addAll(pocketUpgrade(CCRegistration.ID.COLONY_POCKET));
-        items.addAll(pocketUpgrade(CCRegistration.ID.CHATTY_POCKET));
-        items.addAll(pocketUpgrade(CCRegistration.ID.PLAYER_POCKET));
-        items.addAll(pocketUpgrade(CCRegistration.ID.ENVIRONMENT_POCKET));
-        items.addAll(pocketUpgrade(CCRegistration.ID.GEOSCANNER_POCKET));
+    public static void populateCreativeTabBuilder(CreativeModeTab.Builder builder) {
+        builder.displayItems((set, out) -> {
+            Registration.ITEMS.getEntries().stream().map(RegistryObject::get).forEach(out::accept);
+            out.acceptAll(pocketUpgrade(CCRegistration.ID.COLONY_POCKET));
+            out.acceptAll(pocketUpgrade(CCRegistration.ID.CHATTY_POCKET));
+            out.acceptAll(pocketUpgrade(CCRegistration.ID.PLAYER_POCKET));
+            out.acceptAll(pocketUpgrade(CCRegistration.ID.ENVIRONMENT_POCKET));
+            out.acceptAll(pocketUpgrade(CCRegistration.ID.GEOSCANNER_POCKET));
 
-        items.addAll(turtleUpgrade(CCRegistration.ID.CHATTY_TURTLE));
-        items.addAll(turtleUpgrade(CCRegistration.ID.CHUNKY_TURTLE));
-        items.addAll(turtleUpgrade(CCRegistration.ID.COMPASS_TURTLE));
-        items.addAll(turtleUpgrade(CCRegistration.ID.PLAYER_TURTLE));
-        items.addAll(turtleUpgrade(CCRegistration.ID.ENVIRONMENT_TURTLE));
-        items.addAll(turtleUpgrade(CCRegistration.ID.GEOSCANNER_TURTLE));
+            out.acceptAll(turtleUpgrade(CCRegistration.ID.CHATTY_TURTLE));
+            out.acceptAll(turtleUpgrade(CCRegistration.ID.CHUNKY_TURTLE));
+            out.acceptAll(turtleUpgrade(CCRegistration.ID.COMPASS_TURTLE));
+            out.acceptAll(turtleUpgrade(CCRegistration.ID.PLAYER_TURTLE));
+            out.acceptAll(turtleUpgrade(CCRegistration.ID.ENVIRONMENT_TURTLE));
+            out.acceptAll(turtleUpgrade(CCRegistration.ID.GEOSCANNER_TURTLE));
 
-        items.addAll(turtleUpgrade(CCRegistration.ID.WEAK_AUTOMATA));
-        items.addAll(turtleUpgrade(CCRegistration.ID.OP_WEAK_AUTOMATA));
-        items.addAll(turtleUpgrade(CCRegistration.ID.HUSBANDRY_AUTOMATA));
-        items.addAll(turtleUpgrade(CCRegistration.ID.OP_HUSBANDRY_AUTOMATA));
-        items.addAll(turtleUpgrade(CCRegistration.ID.END_AUTOMATA));
-        items.addAll(turtleUpgrade(CCRegistration.ID.OP_END_AUTOMATA));
+            out.acceptAll(turtleUpgrade(CCRegistration.ID.WEAK_AUTOMATA));
+            out.acceptAll(turtleUpgrade(CCRegistration.ID.OP_WEAK_AUTOMATA));
+            out.acceptAll(turtleUpgrade(CCRegistration.ID.HUSBANDRY_AUTOMATA));
+            out.acceptAll(turtleUpgrade(CCRegistration.ID.OP_HUSBANDRY_AUTOMATA));
+            out.acceptAll(turtleUpgrade(CCRegistration.ID.END_AUTOMATA));
+            out.acceptAll(turtleUpgrade(CCRegistration.ID.OP_END_AUTOMATA));
+        });
+        builder.icon(() -> new ItemStack(Blocks.CHAT_BOX.get()));
+        builder.title(Component.translatable("advancedperipherals.name"));
     }
 
     private static Collection<ItemStack> pocketUpgrade(ResourceLocation pocketId) {
@@ -54,9 +53,4 @@ public class APCreativeTab extends CreativeModeTab {
                 ItemUtil.makeTurtle(ItemUtil.TURTLE_ADVANCED, pocketId.toString()));
     }
 
-    @Override
-    @NotNull
-    public ItemStack makeIcon() {
-        return new ItemStack(Blocks.CHAT_BOX.get());
-    }
 }

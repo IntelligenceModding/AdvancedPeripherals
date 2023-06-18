@@ -2,13 +2,11 @@ package de.srendi.advancedperipherals.common.argoggles;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiComponent;
 
-public class ARRenderHelper extends GuiComponent {
+public class ARRenderHelper {
     private static final ARRenderHelper INSTANCE = new ARRenderHelper();
 
     public static void drawRightboundString(PoseStack matrixStack, Font fontRenderer, String text, int x, int y, int color) {
-        drawString(matrixStack, fontRenderer, text, x - fontRenderer.width(text), y, color);
     }
 
     public static ARRenderHelper getInstance() {

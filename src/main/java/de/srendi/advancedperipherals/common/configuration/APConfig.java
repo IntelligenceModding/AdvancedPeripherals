@@ -25,7 +25,7 @@ public class APConfig extends ModConfig {
 
     public static void register(ModLoadingContext context) {
         //Creates the config folder
-        FMLPaths.getOrCreateGameRelativePath(FMLPaths.CONFIGDIR.get().resolve("Advancedperipherals"), "Advancedperipherals");
+        FMLPaths.getOrCreateGameRelativePath(FMLPaths.CONFIGDIR.get().resolve("Advancedperipherals"));
 
         ModContainer modContainer = context.getActiveContainer();
         modContainer.addConfig(new APConfig(GENERAL_CONFIG, modContainer));

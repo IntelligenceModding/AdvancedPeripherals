@@ -36,7 +36,6 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.SleepingTimeCheckEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.server.ServerLifecycleHooks;
-
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -235,7 +234,7 @@ public class EnvironmentDetectorPeripheral extends BasePeripheral<IPeripheralOwn
         if(player == null)
             return MethodResult.of(false, "player_not_online");
 
-        if(!player.level.dimensionType().bedWorks())
+        if(!player.level().dimensionType().bedWorks())
             return MethodResult.of(false, "not_allowed_in_dimension");
 
         SleepingTimeCheckEvent evt = new SleepingTimeCheckEvent(player, Optional.empty());
@@ -243,7 +242,7 @@ public class EnvironmentDetectorPeripheral extends BasePeripheral<IPeripheralOwn
 
         Event.Result canContinueSleep = evt.getResult();
         if (canContinueSleep == Event.Result.DEFAULT) {
-            return MethodResult.of(!player.level.isDay());
+            return MethodResult.of(!player.level().isDay());
         } else {
             return MethodResult.of(canContinueSleep == Event.Result.ALLOW);
         }
