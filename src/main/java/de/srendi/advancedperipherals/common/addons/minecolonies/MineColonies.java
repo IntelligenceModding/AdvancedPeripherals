@@ -4,6 +4,7 @@ import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IVisitorData;
 import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.managers.interfaces.IRegisteredStructureManager;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.colony.workorders.IWorkOrder;
@@ -74,7 +75,7 @@ public class MineColonies {
         map.put("saturation", citizen.getSaturation());
         map.put("happiness", citizen.getCitizenHappinessHandler().getHappiness(citizen.getColony(), citizen));
         map.put("skills", skillsToObject(citizen.getCitizenSkillHandler().getSkills()));
-        map.put("work", citizen.getWorkBuilding() == null ? null : jobToObject(citizen.getWorkBuilding()));
+        map.put("work", citizen.getWorkBuilding() == null ? null : jobToObject(citizen.getWorkBuilding(), citizen.getJob()));
         map.put("home", citizen.getHomeBuilding() == null ? null : homeToObject(citizen.getHomeBuilding()));
         map.put("betterFood", citizen.needsBetterFood());
         map.put("isAsleep", map.get("state").toString().toLowerCase().contains("sleeping"));
@@ -111,17 +112,19 @@ public class MineColonies {
     }
 
     /**
-     * Converts a job {@link IBuilding} to a map
+     * Converts a building {@link IBuilding} and job {@link IJob} to a map
      *
      * @param work the home building
-     * @return a map with information about the job building
+     * @param job the job
+     * @return a map with information about the building and job
      */
-    public static Object jobToObject(IBuilding work) {
+    public static Object jobToObject(IBuilding work, IJob<?> job) {
         Map<String, Object> map = new HashMap<>();
         map.put("location", LuaConverter.posToObject(work.getLocation().getInDimensionLocation()));
         map.put("type", work.getSchematicName());
         map.put("level", work.getBuildingLevel());
         map.put("name", work.getBuildingDisplayName());
+        map.put("job", job.getJobRegistryEntry().getTranslationKey());
 
         return map;
     }
