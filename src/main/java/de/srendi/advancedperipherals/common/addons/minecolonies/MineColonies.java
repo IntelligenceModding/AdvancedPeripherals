@@ -8,15 +8,18 @@ import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.managers.interfaces.IRegisteredStructureManager;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.colony.workorders.IWorkOrder;
+import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.research.IGlobalResearch;
 import com.minecolonies.api.research.IGlobalResearchTree;
 import com.minecolonies.api.research.ILocalResearch;
 import com.minecolonies.api.research.ILocalResearchTree;
+import com.minecolonies.api.research.IResearchRequirement;
 import com.minecolonies.api.research.effects.IResearchEffect;
 import com.minecolonies.api.research.util.ResearchState;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingStructureBuilder;
 import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
+import com.minecolonies.coremod.research.BuildingResearchRequirement;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
 import de.srendi.advancedperipherals.common.util.inventory.ItemUtil;
@@ -32,6 +35,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.server.command.TextComponentHelper;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -265,17 +269,42 @@ public class MineColonies {
                 IGlobalResearch research = globalTree.getResearch(branch, researchName);
                 if (research == null)
                     continue;
+                if (research.isHidden())
+                    continue;
                 ILocalResearch colonyResearch = colonyTree.getResearch(branch, researchName);
 
                 List<String> effects = new ArrayList<>();
                 for (IResearchEffect<?> researchEffect : research.getEffects())
-                    effects.add(researchEffect.getDesc().toString());
+                    effects.add(TextComponentHelper.createComponentTranslation(null, researchEffect.getDesc().getKey(), researchEffect.getDesc().getArgs()).getString());
+
+                List<Map<String, Object>> cost = new ArrayList<>();
+                for (ItemStorage item : research.getCostList())
+                    cost.add(LuaConverter.stackToObject(item.getItemStack()));
+
+                List<Map<String, Object>> requirements = new ArrayList<>();
+                for (IResearchRequirement requirement : research.getResearchRequirement()) {
+                    Map<String, Object> requirementItem = new HashMap<>();
+                    requirementItem.put("fulfilled", requirement.isFulfilled(colony));
+                    if (requirement instanceof BuildingResearchRequirement) {
+                        BuildingResearchRequirement buildingRequirement = (BuildingResearchRequirement)requirement;
+                        requirementItem.put("type", "building");
+                        requirementItem.put("building", buildingRequirement.getBuilding());
+                        requirementItem.put("level", buildingRequirement.getBuildingLevel());
+                    } else {
+                        requirementItem.put("type", requirement.getClass().getCanonicalName());
+                    }
+                    requirementItem.put("desc", requirement.getDesc().getString());
+                    requirements.add(requirementItem);
+                }
 
                 Map<String, Object> map = new HashMap<>();
                 map.put("id", researchName.toString());
-                map.put("name", research.getName().resolve(null, null, 100));
+                map.put("name", TextComponentHelper.createComponentTranslation(null, research.getName().getKey(), research.getName().getArgs()).getString());
+                map.put("requirements", requirements);
+                map.put("cost", cost);
                 map.put("researchEffects", effects);
                 map.put("status", colonyResearch == null ? ResearchState.NOT_STARTED.toString() : colonyResearch.getState().toString());
+                map.put("progress", colonyResearch == null ? 0 : colonyResearch.getProgress());
 
                 List<Object> childrenResearch = getResearch(branch, research.getChildren(), colony);
                 if (!childrenResearch.isEmpty())
