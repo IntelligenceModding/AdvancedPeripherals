@@ -6,7 +6,7 @@
         "items": [
           {
             "items": [
-              "advancedperipherals:husbandry_automata_core"
+              "minecraft:blue_terracotta"
             ]
           }
         ]
@@ -15,7 +15,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "advancedperipherals:overpowered_husbandry_automata_core"
+        "recipe": "advancedperipherals:computer_tool"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
@@ -28,7 +28,8 @@
   ],
   "rewards": {
     "recipes": [
-      "advancedperipherals:overpowered_husbandry_automata_core"
+      "advancedperipherals:computer_tool"
     ]
-  }
+  },
+  "sends_telemetry_event": false
 }

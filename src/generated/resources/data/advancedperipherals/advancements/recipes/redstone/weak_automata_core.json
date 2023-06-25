@@ -6,7 +6,7 @@
         "items": [
           {
             "items": [
-              "minecraft:respawn_anchor"
+              "advancedperipherals:peripheral_casing"
             ]
           }
         ]
@@ -15,7 +15,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "advancedperipherals:chunk_controller"
+        "recipe": "advancedperipherals:weak_automata_core"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
@@ -28,7 +28,8 @@
   ],
   "rewards": {
     "recipes": [
-      "advancedperipherals:chunk_controller"
+      "advancedperipherals:weak_automata_core"
     ]
-  }
+  },
+  "sends_telemetry_event": false
 }

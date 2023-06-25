@@ -65,7 +65,6 @@
   "item.advancedperipherals.tooltip.show_desc": "&b[&7%s&b] &7For Description",
   "item.advancedperipherals.tooltip.weak_automata_core": "&7Upgrade for turtles, which makes turtles more useful.",
   "item.advancedperipherals.weak_automata_core": "Weak Automata Core",
-  "itemGroup.advancedperipheralstab": "Advanced Peripherals",
   "keybind.advancedperipherals.category": "Advanced Peripherals",
   "keybind.advancedperipherals.description": "Show Description",
   "pocket.advancedperipherals.chatty_pocket": "Chatty",

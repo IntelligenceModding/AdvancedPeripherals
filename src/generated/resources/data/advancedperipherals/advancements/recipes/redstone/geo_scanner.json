@@ -30,5 +30,6 @@
     "recipes": [
       "advancedperipherals:geo_scanner"
     ]
-  }
+  },
+  "sends_telemetry_event": false
 }

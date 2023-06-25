@@ -1,5 +1,6 @@
 {
   "type": "minecraft:crafting_shaped",
+  "category": "redstone",
   "key": {
     "C": {
       "item": "advancedperipherals:peripheral_casing"
@@ -24,5 +25,6 @@
   ],
   "result": {
     "item": "advancedperipherals:geo_scanner"
-  }
+  },
+  "show_notification": true
 }

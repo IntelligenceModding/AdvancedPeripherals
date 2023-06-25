@@ -6,7 +6,7 @@
         "items": [
           {
             "items": [
-              "advancedperipherals:peripheral_casing"
+              "advancedperipherals:husbandry_automata_core"
             ]
           }
         ]
@@ -15,7 +15,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "advancedperipherals:weak_automata_core"
+        "recipe": "advancedperipherals:overpowered_husbandry_automata_core"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
@@ -28,7 +28,8 @@
   ],
   "rewards": {
     "recipes": [
-      "advancedperipherals:weak_automata_core"
+      "advancedperipherals:overpowered_husbandry_automata_core"
     ]
-  }
+  },
+  "sends_telemetry_event": false
 }

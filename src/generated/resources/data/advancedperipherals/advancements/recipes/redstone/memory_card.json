@@ -6,7 +6,7 @@
         "items": [
           {
             "items": [
-              "advancedperipherals:peripheral_casing"
+              "minecraft:observer"
             ]
           }
         ]
@@ -15,7 +15,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "advancedperipherals:energy_detector"
+        "recipe": "advancedperipherals:memory_card"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
@@ -28,7 +28,8 @@
   ],
   "rewards": {
     "recipes": [
-      "advancedperipherals:energy_detector"
+      "advancedperipherals:memory_card"
     ]
-  }
+  },
+  "sends_telemetry_event": false
 }

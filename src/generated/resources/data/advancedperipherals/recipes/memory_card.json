@@ -1,5 +1,6 @@
 {
   "type": "minecraft:crafting_shaped",
+  "category": "redstone",
   "key": {
     "G": {
       "tag": "forge:ingots/gold"
@@ -21,5 +22,6 @@
   ],
   "result": {
     "item": "advancedperipherals:memory_card"
-  }
+  },
+  "show_notification": true
 }

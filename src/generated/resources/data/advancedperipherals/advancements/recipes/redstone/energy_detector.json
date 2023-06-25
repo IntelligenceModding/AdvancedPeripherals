@@ -15,7 +15,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "advancedperipherals:block_reader"
+        "recipe": "advancedperipherals:energy_detector"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
@@ -28,7 +28,8 @@
   ],
   "rewards": {
     "recipes": [
-      "advancedperipherals:block_reader"
+      "advancedperipherals:energy_detector"
     ]
-  }
+  },
+  "sends_telemetry_event": false
 }

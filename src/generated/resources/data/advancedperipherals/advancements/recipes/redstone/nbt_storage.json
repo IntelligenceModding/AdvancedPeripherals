@@ -6,7 +6,7 @@
         "items": [
           {
             "items": [
-              "minecraft:blue_terracotta"
+              "advancedperipherals:peripheral_casing"
             ]
           }
         ]
@@ -15,7 +15,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "advancedperipherals:computer_tool"
+        "recipe": "advancedperipherals:nbt_storage"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
@@ -28,7 +28,8 @@
   ],
   "rewards": {
     "recipes": [
-      "advancedperipherals:computer_tool"
+      "advancedperipherals:nbt_storage"
     ]
-  }
+  },
+  "sends_telemetry_event": false
 }

@@ -1,5 +1,6 @@
 {
   "type": "minecraft:crafting_shaped",
+  "category": "redstone",
   "key": {
     "I": {
       "tag": "forge:ingots/iron"
@@ -18,5 +19,6 @@
   ],
   "result": {
     "item": "advancedperipherals:peripheral_casing"
-  }
+  },
+  "show_notification": true
 }
