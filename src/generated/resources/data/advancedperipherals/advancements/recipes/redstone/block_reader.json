@@ -6,7 +6,7 @@
         "items": [
           {
             "items": [
-              "minecraft:redstone_block"
+              "advancedperipherals:peripheral_casing"
             ]
           }
         ]
@@ -15,7 +15,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "advancedperipherals:peripheral_casing"
+        "recipe": "advancedperipherals:block_reader"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
@@ -28,7 +28,8 @@
   ],
   "rewards": {
     "recipes": [
-      "advancedperipherals:peripheral_casing"
+      "advancedperipherals:block_reader"
     ]
-  }
+  },
+  "sends_telemetry_event": false
 }

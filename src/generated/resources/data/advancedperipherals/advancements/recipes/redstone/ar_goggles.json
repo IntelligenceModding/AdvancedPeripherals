@@ -6,7 +6,7 @@
         "items": [
           {
             "items": [
-              "advancedperipherals:peripheral_casing"
+              "minecraft:stick"
             ]
           }
         ]
@@ -15,7 +15,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "advancedperipherals:chat_box"
+        "recipe": "advancedperipherals:ar_goggles"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
@@ -28,7 +28,8 @@
   ],
   "rewards": {
     "recipes": [
-      "advancedperipherals:chat_box"
+      "advancedperipherals:ar_goggles"
     ]
-  }
+  },
+  "sends_telemetry_event": false
 }

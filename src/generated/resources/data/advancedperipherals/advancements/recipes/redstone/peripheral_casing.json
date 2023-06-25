@@ -6,7 +6,7 @@
         "items": [
           {
             "items": [
-              "minecraft:observer"
+              "minecraft:redstone_block"
             ]
           }
         ]
@@ -15,7 +15,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "advancedperipherals:memory_card"
+        "recipe": "advancedperipherals:peripheral_casing"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
@@ -28,7 +28,8 @@
   ],
   "rewards": {
     "recipes": [
-      "advancedperipherals:memory_card"
+      "advancedperipherals:peripheral_casing"
     ]
-  }
+  },
+  "sends_telemetry_event": false
 }

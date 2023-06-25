@@ -15,7 +15,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "advancedperipherals:player_detector"
+        "recipe": "advancedperipherals:redstone_integrator"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
@@ -28,7 +28,8 @@
   ],
   "rewards": {
     "recipes": [
-      "advancedperipherals:player_detector"
+      "advancedperipherals:redstone_integrator"
     ]
-  }
+  },
+  "sends_telemetry_event": false
 }

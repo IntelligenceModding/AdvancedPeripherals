@@ -15,7 +15,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "advancedperipherals:redstone_integrator"
+        "recipe": "advancedperipherals:inventory_manager"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
@@ -28,7 +28,8 @@
   ],
   "rewards": {
     "recipes": [
-      "advancedperipherals:redstone_integrator"
+      "advancedperipherals:inventory_manager"
     ]
-  }
+  },
+  "sends_telemetry_event": false
 }

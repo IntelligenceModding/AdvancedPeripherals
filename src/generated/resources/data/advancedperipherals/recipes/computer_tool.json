@@ -1,5 +1,6 @@
 {
   "type": "minecraft:crafting_shaped",
+  "category": "redstone",
   "key": {
     "B": {
       "item": "minecraft:blue_terracotta"
@@ -15,5 +16,6 @@
   ],
   "result": {
     "item": "advancedperipherals:computer_tool"
-  }
+  },
+  "show_notification": true
 }

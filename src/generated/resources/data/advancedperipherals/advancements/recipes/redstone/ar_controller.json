@@ -15,7 +15,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "advancedperipherals:environment_detector"
+        "recipe": "advancedperipherals:ar_controller"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
@@ -28,7 +28,8 @@
   ],
   "rewards": {
     "recipes": [
-      "advancedperipherals:environment_detector"
+      "advancedperipherals:ar_controller"
     ]
-  }
+  },
+  "sends_telemetry_event": false
 }
