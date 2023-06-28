@@ -39,6 +39,8 @@ body:
       multiple: false
       options:
         - Own compiled build.
+        - 1.20.1-0.7.31a (Latest 1.20.1)
+        - 1.20.1-0.7.30a
         - 1.19.3-0.7.29r (Latest 1.19.3)
         - 1.19.3-0.7.28r
         - 1.19.3-0.7.27r
