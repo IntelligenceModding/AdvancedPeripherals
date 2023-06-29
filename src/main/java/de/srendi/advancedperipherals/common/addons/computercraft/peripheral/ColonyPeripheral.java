@@ -63,6 +63,9 @@ public class ColonyPeripheral extends BasePeripheral<IPeripheralOwner> {
     public final boolean isWithin(Map<?, ?> pos) throws LuaException {
         IColony colony = getColonyWithoutPermission();
 
+        if(colony == null)
+            return false;
+
         if (!(pos.containsKey("x") && pos.containsKey("y") && pos.containsKey("z")))
             throw new LuaException("Coordinates expected");
         BlockPos p = new BlockPos(((Number) pos.get("x")).intValue(), ((Number) pos.get("y")).intValue(), ((Number) pos.get("z")).intValue());

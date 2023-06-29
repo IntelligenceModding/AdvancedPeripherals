@@ -219,13 +219,18 @@ repositories {
             includeGroup "com.jozufozu.flywheel"
         }
     }
-    maven {
+
+    /*maven {
         name = "Srendi Space repository"
-        url "https://packages.intelligence-modding.de/maven/p/advanced-peripherals/ap-repository"
+        url = "https://packages.intelligence-modding.de/maven/p/advanced-peripherals/ap-repository"
         credentials {
             username = spaceUsername
             password = spacePassword
         }
+    }*/
+    maven {
+        name = "Intelligence repository"
+        url "https://mvn.intelligence-modding.de/intelligence"
     }
     maven {
         name = "SirEdvin's private repository"
@@ -274,7 +279,7 @@ dependencies {
 
     // Extended requirements
     // We don't use the api since we need a specific class from mekanism
-    compileOnly "mekanism:Mekanism:${mekanism_version}"
+    compileOnly fg.deobf("mekanism:Mekanism:${mekanism_version}")
 
     // runtimeOnly fg.deobf("mekanism:Mekanism:${mekanism_version}")// core
 
@@ -298,11 +303,11 @@ dependencies {
 
     // Minecolonies
     // Change to compileOnly when running `runData`
-    //compileOnly fg.deobf("com.ldtteam:minecolonies:${minecolonies_version}")
-    //compileOnly fg.deobf("com.ldtteam:structurize:${structurize_version}")
+    implementation fg.deobf("com.ldtteam:minecolonies:${minecolonies_version}")
+    implementation fg.deobf("com.ldtteam:structurize:${structurize_version}")
     //compileOnly fg.deobf("com.ldtteam:multipiston:${multipiston_version}")
-    //compileOnly fg.deobf("com.ldtteam:domum_ornamentum:${domumornamentum_version}:universal")
-    //compileOnly fg.deobf("com.ldtteam:blockui:${blockui_version}")
+    implementation fg.deobf("com.ldtteam:domum_ornamentum:${domumornamentum_version}:universal")
+    implementation fg.deobf("com.ldtteam:blockui:${blockui_version}")
 
     //Patchouli
     //runtimeOnly fg.deobf("vazkii.patchouli:Patchouli:${patchouli_version}")
@@ -439,7 +444,8 @@ tasks.register('publishCurseForge', TaskPublishCurseForge, { task ->
 })
 
 modrinth {
-    token = modrinthKey // This is the default. Remember to have the MODRINTH_TOKEN environment variable set or else this will fail, or set it to whatever you want - just make sure it stays private!
+    token = modrinthKey
+    // This is the default. Remember to have the MODRINTH_TOKEN environment variable set or else this will fail, or set it to whatever you want - just make sure it stays private!
     projectId = 'SOw6jD6x' // This can be the project ID or the slug. Either will work!
     versionNumber = "${minecraft_version}-${project.version}"
     versionName = "Advanced Peripherals ${minecraft_version} ${version}"
@@ -458,7 +464,7 @@ modrinth {
 publishing {
     repositories {
         maven {
-            name="space"
+            name = "space"
             url "https://packages.intelligence-modding.de/maven/p/advanced-peripherals/ap-repository"
             credentials {
                 username = spaceUsername
@@ -466,7 +472,7 @@ publishing {
             }
         }
         maven {
-            name="github"
+            name = "github"
             url "https://maven.pkg.github.com/SirEndii/AdvancedPeripherals"
             credentials {
                 username = secretEnv["GH_ACTOR"] ?: System.getenv("GH_ACTOR") ?: ''
