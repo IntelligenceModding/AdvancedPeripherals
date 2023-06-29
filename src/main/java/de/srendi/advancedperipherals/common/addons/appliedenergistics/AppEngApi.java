@@ -14,6 +14,7 @@ import appeng.blockentity.storage.DriveBlockEntity;
 import appeng.items.storage.BasicStorageCell;
 import dan200.computercraft.shared.util.NBTUtil;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
+import de.srendi.advancedperipherals.common.addons.APAddons;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
 import de.srendi.advancedperipherals.common.util.Pair;
 import de.srendi.advancedperipherals.common.util.inventory.FluidFilter;
@@ -245,7 +246,7 @@ public class AppEngApi {
                     if (cell.getKeyType().getClass().isAssignableFrom(AEKeyType.items().getClass())) {
                         total += cell.getBytes(null);
                     }
-                } else if (stack.getItem() instanceof DISKDrive disk) {
+                } else if (APAddons.aeThingsLoaded && stack.getItem() instanceof DISKDrive disk) {
                     if (disk.getKeyType().toString().equals("ae2:i")) {
                         total += disk.getBytes(null);
                     }
@@ -342,7 +343,7 @@ public class AppEngApi {
                         long numBucketsInCell = stack.getTag().getLong("ic") / 1000;
 
                         used += ((int) Math.ceil(((double) numBucketsInCell) / 8)) + ((long) bytesPerType * numOfType);
-                    } else if (stack.getItem() instanceof DISKDrive disk) {
+                    } else if (APAddons.aeThingsLoaded && stack.getItem() instanceof DISKDrive disk) {
                         if (disk.getKeyType().toString().equals("ae2:i")) {
                             if (stack.getTag() == null) continue;
                             long numItemsInCell = stack.getTag().getLong("ic");
@@ -383,7 +384,7 @@ public class AppEngApi {
 
                 if (stack.getItem() instanceof BasicStorageCell cell) {
                     items.add(getObjectFromCell(cell, stack));
-                } else if (stack.getItem() instanceof DISKDrive disk) {
+                } else if (APAddons.aeThingsLoaded && stack.getItem() instanceof DISKDrive disk) {
                     items.add(getObjectFromDisk(disk, stack));
                 }
             }
