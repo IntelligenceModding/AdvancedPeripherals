@@ -87,7 +87,8 @@ public class RefinedStorage {
 
         for (ICraftingPattern pattern : crafting.getPatterns()) {
             Optional<FluidStack> stack = pattern.getFluidOutputs().stream().filter(filter::test).findFirst();
-            return stack.orElse(FluidStack.EMPTY);
+            if (stack.isPresent())
+                return stack.get().copy();
         }
 
         return FluidStack.EMPTY;
