@@ -11,6 +11,18 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Fixed
 - [#478] Fixed a game crash when trying to call some functions of the ME Bridge while AE2 Things is not installed
 
+### Added/Fixed
+- [#476] There a multiple additions and fixes to `getResearch` of the colony integrator:
+  * `getResearch` function is callable again (was not available because it was throwing a non-lua exception)
+  * will not return hidden research items
+  * fix text properties of research: `name` and `researchEffects`
+  * add properties to research:
+    * `requirements`: list of requirements:
+      * `desc`: requirement description text
+      *  `type`: type of requirement, only `building` type shows additional information (`building` and `level`)
+    * `cost`: list of research cost
+    * `progress`: integer value
+
 ## [1.19.2-0.7.28r] - 2023-06-01
 
 ### Changed
