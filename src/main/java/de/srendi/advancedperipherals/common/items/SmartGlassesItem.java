@@ -139,7 +139,7 @@ public class SmartGlassesItem extends ArmorItem implements IComputerItem, IMedia
             computer.turnOn();
 
             LazyOptional<IItemHandler> itemHandler = glasses.getCapability(ForgeCapabilities.ITEM_HANDLER);
-            if (itemHandler.resolve().isEmpty()) {
+            if (!itemHandler.isPresent() || itemHandler.resolve().isEmpty()) {
                 AdvancedPeripherals.debug("There was an issue with the item handler of the glasses while trying to open the gui");
                 return InteractionResultHolder.sidedSuccess(player.getItemInHand(hand), world.isClientSide);
             }
