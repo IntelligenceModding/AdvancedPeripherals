@@ -6,7 +6,7 @@ import de.srendi.advancedperipherals.common.network.base.IPacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.registries.Registries;
+import net.minecraft.core.Registry;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.Level;
@@ -54,6 +54,6 @@ public class DistanceDetectorSyncPacket implements IPacket {
     }
 
     public static DistanceDetectorSyncPacket decode(FriendlyByteBuf buffer) {
-        return new DistanceDetectorSyncPacket(buffer.readBlockPos(), buffer.readResourceKey(Registries.DIMENSION), buffer.readFloat(), buffer.readBoolean());
+        return new DistanceDetectorSyncPacket(buffer.readBlockPos(), buffer.readResourceKey(Registry.DIMENSION_REGISTRY), buffer.readFloat(), buffer.readBoolean());
     }
 }

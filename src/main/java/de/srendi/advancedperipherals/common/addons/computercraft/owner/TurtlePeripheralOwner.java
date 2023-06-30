@@ -93,7 +93,7 @@ public class TurtlePeripheralOwner extends BasePeripheralOwner {
 
     @Override
     public ItemStack storeItem(ItemStack stored) {
-        return InventoryUtil.storeItemsIntoSlot(turtle.getInventory(), stored, turtle.getSelectedSlot());
+        return InventoryUtil.storeItems(stored, turtle.getItemHandler(), turtle.getSelectedSlot());
     }
 
     @Override

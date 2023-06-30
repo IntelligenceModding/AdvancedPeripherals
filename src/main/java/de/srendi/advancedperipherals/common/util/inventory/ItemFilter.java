@@ -5,7 +5,7 @@ import dan200.computercraft.core.apis.TableHelper;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.util.NBTUtil;
 import de.srendi.advancedperipherals.common.util.Pair;
-import net.minecraft.core.registries.Registries;
+import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
@@ -33,13 +33,13 @@ public class ItemFilter {
     public static Pair<ItemFilter, String> parse(Map<?, ?> item) {
         ItemFilter itemFilter = empty();
         // If the map is empty, return a filter without any filters
-        if (item.size() == 0)
+        if (item.isEmpty())
             return Pair.of(itemFilter, null);
         if (item.containsKey("name")) {
             try {
                 String name = TableHelper.getStringField(item, "name");
                 if (name.startsWith("#")) {
-                    itemFilter.tag = TagKey.create(Registries.ITEM, new ResourceLocation(name.substring(1)));
+                    itemFilter.tag = TagKey.create(Registry.ITEM_REGISTRY, new ResourceLocation(name.substring(1)));
                 } else if ((itemFilter.item = ItemUtil.getRegistryEntry(name, ForgeRegistries.ITEMS)) == null) {
                     return Pair.of(null, "ITEM_NOT_FOUND");
                 }

@@ -2,7 +2,6 @@ package de.srendi.advancedperipherals.common.util.fakeplayer;
 
 import com.mojang.authlib.GameProfile;
 import dan200.computercraft.api.turtle.ITurtleAccess;
-import dan200.computercraft.shared.util.InventoryUtil;
 import dan200.computercraft.shared.util.WorldUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -13,6 +12,8 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.items.IItemHandlerModifiable;
+import net.minecraftforge.items.ItemHandlerHelper;
 
 import java.util.WeakHashMap;
 import java.util.function.Function;
@@ -79,19 +80,19 @@ public final class FakePlayerProviderTurtle {
         }
 
         // Copy primary items into turtle inventory and then insert/drop the rest
-        Container turtleInventory = turtle.getInventory();
-        int size = turtleInventory.getContainerSize();
+        IItemHandlerModifiable turtleInventory = turtle.getItemHandler();
+        int size = turtleInventory.getSlots();
         int largerSize = playerInventory.getContainerSize();
         playerInventory.selected = turtle.getSelectedSlot();
         for (int i = 0; i < size; i++) {
-            turtleInventory.setItem(i, playerInventory.getItem(i));
+            turtleInventory.setStackInSlot(i, playerInventory.getItem(i));
             playerInventory.setItem(i, ItemStack.EMPTY);
         }
 
         for (int i = size; i < largerSize; i++) {
             ItemStack remaining = playerInventory.getItem(i);
             if (!remaining.isEmpty()) {
-                remaining = InventoryUtil.storeItemsFromOffset(turtleInventory, remaining, 0);
+                remaining = ItemHandlerHelper.insertItem(turtleInventory, remaining, false);
                 if (!remaining.isEmpty()) {
                     BlockPos position = turtle.getPosition();
                     WorldUtil.dropItemStack(remaining, turtle.getLevel(), position, turtle.getDirection().getOpposite());

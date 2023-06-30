@@ -2,7 +2,9 @@ package de.srendi.advancedperipherals.client.renderer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Axis;
+import com.mojang.math.Matrix3f;
+import com.mojang.math.Matrix4f;
+import com.mojang.math.Vector3f;
 import de.srendi.advancedperipherals.common.blocks.base.BaseBlock;
 import de.srendi.advancedperipherals.common.blocks.blockentities.DistanceDetectorEntity;
 import de.srendi.advancedperipherals.common.util.EnumColor;
@@ -17,8 +19,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
-import org.joml.Matrix3f;
-import org.joml.Matrix4f;
 
 public class DistanceDetectorRenderer implements BlockEntityRenderer<DistanceDetectorEntity> {
 
@@ -61,7 +61,7 @@ public class DistanceDetectorRenderer implements BlockEntityRenderer<DistanceDet
         float b = pColors[2];
         pPoseStack.pushPose();
         pPoseStack.mulPose(direction.getRotation());
-        pPoseStack.mulPose(Axis.YP.rotationDegrees(degrees * 2.25F - 45.0F));
+        pPoseStack.mulPose(Vector3f.YP.rotationDegrees(degrees * 2.25F - 45.0F));
         float f15 = -1.0F + time;
         float f16 = pHeight * pTextureScale * (0.5F / pBeamRadius) + f15;
         renderPart(pPoseStack, pBufferSource.getBuffer(RenderType.beaconBeam(pBeamLocation, false)), r, g, b, 1.0F, pYOffset, maxX, 0.0F, pBeamRadius, pBeamRadius, 0.0F, -pBeamRadius, 0.0F, 0.0F, -pBeamRadius, 0.0F, 1.0F, f16, f15);

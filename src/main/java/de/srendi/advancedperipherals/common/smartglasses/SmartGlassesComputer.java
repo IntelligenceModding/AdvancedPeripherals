@@ -3,12 +3,11 @@ package de.srendi.advancedperipherals.common.smartglasses;
 import dan200.computercraft.api.peripheral.IPeripheral;
 import dan200.computercraft.api.pocket.IPocketAccess;
 import dan200.computercraft.api.pocket.IPocketUpgrade;
-import dan200.computercraft.impl.PocketUpgrades;
+import dan200.computercraft.shared.PocketUpgrades;
 import dan200.computercraft.shared.computer.core.ComputerFamily;
 import dan200.computercraft.shared.computer.core.ServerComputer;
 import de.srendi.advancedperipherals.common.smartglasses.modules.IModule;
 import de.srendi.advancedperipherals.common.smartglasses.modules.IModuleItem;
-import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -38,8 +37,8 @@ public class SmartGlassesComputer extends ServerComputer implements IPocketAcces
     private final Set<ServerPlayer> tracking = new HashSet<>();
     private final Set<IModule> modules = new HashSet<>();
 
-    public SmartGlassesComputer(ServerLevel world, BlockPos position, int computerID, @Nullable String label, ComputerFamily family) {
-        super(world, position, computerID, label, family, 39, 13);
+    public SmartGlassesComputer(ServerLevel world, int computerID, @Nullable String label, ComputerFamily family) {
+        super(world, computerID, label, family, 39, 13);
     }
 
     @Nullable

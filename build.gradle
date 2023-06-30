@@ -257,7 +257,7 @@ dependencies {
     // Minimal requirements
     compileOnly "org.jetbrains:annotations:${jb_annotations}"
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
-    implementation fg.deobf("cc.tweaked:cc-tweaked-${minecraft_version}-forge:${cc_version}")
+    implementation fg.deobf("org.squiddev:cc-tweaked-${minecraft_version}:${cc_version}")
     // Compile-time API required
     // Ae2
     compileOnly fg.deobf("appeng:appliedenergistics2-forge:${appliedenergistics_version}")
@@ -267,35 +267,32 @@ dependencies {
 
     // Extended requirements
     // We don't use the api since we need a specific class from mekanism
-    compileOnly "mekanism:Mekanism:${mekanism_version}"
-
-    // runtimeOnly fg.deobf("mekanism:Mekanism:${mekanism_version}")// core
+    implementation fg.deobf("mekanism:Mekanism:${mekanism_version}")
 
     // Applied Energistics 2
-    runtimeOnly fg.deobf("appeng:appliedenergistics2-forge:${appliedenergistics_version}")
+    implementation fg.deobf("appeng:appliedenergistics2-forge:${appliedenergistics_version}")
     // Curios
-    runtimeOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}")
+    implementation fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}")
 
     // Refined Storage
-    compileOnly fg.deobf("com.refinedmods:refinedstorage:${refinedstorage_version}") {
+    implementation fg.deobf("com.refinedmods:refinedstorage:${refinedstorage_version}") {
         transitive false
     }
 
-    // AE2 Things - removed until ported
-    // compileOnly "curse.maven:ae2things-609977:${ae2things_version}-sources"
-    // runtimeOnly fg.deobf("curse.maven:ae2things-609977:${ae2things_version}-sources")
+    //AE2 Things
+    compileOnly fg.deobf("curse.maven:ae2things-609977:${ae2things_version}-sources")
+    //runtimeOnly fg.deobf("curse.maven:ae2things-609977:${ae2things_version}-sources")
 
     // Botania
-    //compileOnly fg.deobf("vazkii.botania:Botania:${botania_version}")
-
+    implementation fg.deobf("vazkii.botania:Botania:${botania_version}")
 
     // Minecolonies
     // Change to compileOnly when running `runData`
-    //compileOnly fg.deobf("com.ldtteam:minecolonies:${minecolonies_version}")
-    //compileOnly fg.deobf("com.ldtteam:structurize:${structurize_version}")
-    //compileOnly fg.deobf("com.ldtteam:multipiston:${multipiston_version}")
-    //compileOnly fg.deobf("com.ldtteam:domum_ornamentum:${domumornamentum_version}:universal")
-    //compileOnly fg.deobf("com.ldtteam:blockui:${blockui_version}")
+    implementation fg.deobf("com.ldtteam:minecolonies:${minecolonies_version}")
+    implementation fg.deobf("com.ldtteam:structurize:${structurize_version}")
+    implementation fg.deobf("com.ldtteam:multi-piston:${multipiston_version}")
+    implementation fg.deobf("com.ldtteam:domum_ornamentum:${domumornamentum_version}:universal")
+    implementation fg.deobf("com.ldtteam:blockui:${blockui_version}")
 
     //Patchouli
     runtimeOnly fg.deobf("vazkii.patchouli:Patchouli:${patchouli_version}")
@@ -306,8 +303,10 @@ dependencies {
     //Removed until fully ported
     //testImplementation fg.deobf("site.siredvin.ttoolkit:ttoolkit-${minecraft_version}:${ttoolkit_version}")
 
-    // Worldedit
-    runtimeOnly fg.deobf("curse.maven:worldedit-225608:4162208")
+    //Powah
+    implementation fg.deobf("curse.maven:powah-633483:${powah_version}")
+    implementation fg.deobf("me.shedaniel.cloth:cloth-config-forge:8.2.88")
+    implementation fg.deobf("dev.architectury:architectury-forge:6.2.43")
 
     testImplementation "org.junit.jupiter:junit-jupiter-api:${junit_version}"
     testImplementation "org.junit.jupiter:junit-jupiter-params:${junit_version}"

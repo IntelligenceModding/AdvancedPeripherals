@@ -1,6 +1,6 @@
 package de.srendi.advancedperipherals.common.addons.create;
 
-import com.simibubi.create.content.contraptions.processing.BasinTileEntity;
+import com.simibubi.create.content.processing.basin.BasinBlockEntity;
 import dan200.computercraft.api.lua.LuaFunction;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
 import de.srendi.advancedperipherals.lib.peripherals.BlockEntityIntegrationPeripheral;
@@ -14,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
-public class BasinIntegration extends BlockEntityIntegrationPeripheral<BasinTileEntity> {
+public class BasinIntegration extends BlockEntityIntegrationPeripheral<BasinBlockEntity> {
 
     public BasinIntegration(BlockEntity entity) {
         super(entity);

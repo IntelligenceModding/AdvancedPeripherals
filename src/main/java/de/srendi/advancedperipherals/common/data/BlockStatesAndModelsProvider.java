@@ -5,7 +5,7 @@ import de.srendi.advancedperipherals.common.blocks.base.BaseBlock;
 import de.srendi.advancedperipherals.common.setup.APBlocks;
 import net.minecraft.core.Direction;
 import net.minecraft.core.FrontAndTop;
-import net.minecraft.data.PackOutput;
+import net.minecraft.data.DataGenerator;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.client.model.generators.*;
@@ -14,7 +14,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 public class BlockStatesAndModelsProvider extends BlockStateProvider {
 
-    public BlockStatesAndModelsProvider(PackOutput packOutput, ExistingFileHelper exFileHelper) {
+    public BlockStatesAndModelsProvider(DataGenerator packOutput, ExistingFileHelper exFileHelper) {
         super(packOutput, AdvancedPeripherals.MOD_ID, exFileHelper);
     }
 
