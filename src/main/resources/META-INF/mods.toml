@@ -65,7 +65,7 @@ side = "BOTH"
 [[dependencies.advancedperipherals]]
 modId = "create"
 mandatory = false
-versionRange = "[0.5.0.f,)"
+versionRange = "[0.5.1.a,)"
 ordering = "NONE"
 side = "BOTH"
 [[dependencies.advancedperipherals]]
