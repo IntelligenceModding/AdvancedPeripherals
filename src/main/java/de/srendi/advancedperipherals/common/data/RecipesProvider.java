@@ -60,17 +60,19 @@ public class RecipesProvider extends RecipeProvider implements IConditionBuilder
                 .requires(APItems.HUSBANDRY_AUTOMATA_CORE.get())
                 .requires(Items.NETHER_STAR)
                 .unlockedBy(HAS_ITEM, has(APItems.HUSBANDRY_AUTOMATA_CORE.get()))
-                .save(consumer);    }
+                .save(consumer);
+    }
 
     private void addShaped(@NotNull Consumer<FinishedRecipe> consumer) {
-                /*ShapedRecipeBuilder.shaped(APItems.AR_GOGGLES.get())
+        /*ShapedRecipeBuilder.shaped(APItems.AR_GOGGLES.get())
                 .define('E', Tags.Items.ENDER_PEARLS)
                 .define('S', Tags.Items.RODS_WOODEN)
                 .define('G', Tags.Items.GLASS_BLACK)
                 .pattern("GSG")
                 .pattern(" E ")
                 .unlockedBy(HAS_ITEM, has(Items.STICK))
-                .save(consumer);*/
+                .save(consumer);
+        */
 
         ShapedRecipeBuilder.shaped(APBlocks.CHAT_BOX.get())
                 .define('P', ItemTags.LOGS)
