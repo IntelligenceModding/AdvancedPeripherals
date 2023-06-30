@@ -260,9 +260,9 @@ dependencies {
     implementation fg.deobf("org.squiddev:cc-tweaked-${minecraft_version}:${cc_version}")
     // Compile-time API required
     // Ae2
-    compileOnly fg.deobf("appeng:appliedenergistics2-forge:${appliedenergistics_version}")
+    implementation fg.deobf("appeng:appliedenergistics2-forge:${appliedenergistics_version}")
     // Curios
-    compileOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}:api")
+    implementation fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}:api")
     // Minimal requirements end
 
     // Extended requirements
@@ -284,7 +284,7 @@ dependencies {
     //runtimeOnly fg.deobf("curse.maven:ae2things-609977:${ae2things_version}-sources")
 
     // Botania
-    implementation fg.deobf("vazkii.botania:Botania:${botania_version}")
+    compileOnly fg.deobf("vazkii.botania:Botania:${botania_version}")
 
     // Minecolonies
     // Change to compileOnly when running `runData`
@@ -298,15 +298,15 @@ dependencies {
     runtimeOnly fg.deobf("vazkii.patchouli:Patchouli:${patchouli_version}")
 
     // Create
-    implementation fg.deobf("com.simibubi.create:create-${minecraft_version}:${create_version}:all")
+    compileOnly fg.deobf("com.simibubi.create:create-${minecraft_version}:${create_version}:all")
 
     //Removed until fully ported
     //testImplementation fg.deobf("site.siredvin.ttoolkit:ttoolkit-${minecraft_version}:${ttoolkit_version}")
 
     //Powah
-    implementation fg.deobf("curse.maven:powah-633483:${powah_version}")
-    implementation fg.deobf("me.shedaniel.cloth:cloth-config-forge:8.2.88")
-    implementation fg.deobf("dev.architectury:architectury-forge:6.2.43")
+    compileOnly fg.deobf("curse.maven:powah-633483:${powah_version}")
+    compileOnly fg.deobf("me.shedaniel.cloth:cloth-config-forge:8.2.88")
+    compileOnly fg.deobf("dev.architectury:architectury-forge:6.2.43")
 
     testImplementation "org.junit.jupiter:junit-jupiter-api:${junit_version}"
     testImplementation "org.junit.jupiter:junit-jupiter-params:${junit_version}"
@@ -318,7 +318,7 @@ dependencies {
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junit_version}"
     // Testing stuff
     // JEI
-    implementation fg.deobf("mezz.jei:jei-${jei_version}")
+    compileOnly fg.deobf("mezz.jei:jei-${jei_version}")
 }
 
 
@@ -341,7 +341,7 @@ compileTestModJava {
     dependsOn(compileJava)
 }
 
-tasks.register('setupServer', Copy) {
+task setupServer(type: Copy) {
     group "test server"
     description "Sets up the environment for the test server."
 
@@ -377,10 +377,8 @@ test {
 }
 
 afterEvaluate {
-    tasks.withType(JavaCompile).tap {
-        configureEach {
-            options.compilerArgs << "-Xmaxerrs" << "2000"
-        }
+    tasks.withType(JavaCompile) {
+        options.compilerArgs << "-Xmaxerrs" << "2000"
     }
 }
 
@@ -424,7 +422,8 @@ curseforge {
 }
 
 modrinth {
-    token = modrinthKey // This is the default. Remember to have the MODRINTH_TOKEN environment variable set or else this will fail, or set it to whatever you want - just make sure it stays private!
+    token = modrinthKey
+    // This is the default. Remember to have the MODRINTH_TOKEN environment variable set or else this will fail, or set it to whatever you want - just make sure it stays private!
     projectId = 'SOw6jD6x' // This can be the project ID or the slug. Either will work!
     versionNumber = "${minecraft_version}-${project.version}"
     versionName = "Advanced Peripherals ${minecraft_version} ${version}"
@@ -461,6 +460,7 @@ publishing {
     }
     publications {
         gpr(MavenPublication) {
+            artifactId = "advancedperipherals"
             from(components.java)
         }
     }

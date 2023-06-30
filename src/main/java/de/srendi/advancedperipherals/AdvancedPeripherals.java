@@ -2,11 +2,8 @@ package de.srendi.advancedperipherals;
 
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.network.PacketHandler;
-import de.srendi.advancedperipherals.common.setup.APBlocks;
 import de.srendi.advancedperipherals.common.setup.APRegistration;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.ModLoadingContext;
@@ -16,7 +13,6 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Random;
 
@@ -27,15 +23,9 @@ public class AdvancedPeripherals {
     public static final String NAME = "Advanced Peripherals";
     public static final Logger LOGGER = LogManager.getLogger(NAME);
     public static final Random RANDOM = new Random();
-    public static final CreativeModeTab TAB = new CreativeModeTab("advancedperipheralstab") {
 
-        @Override
-        @NotNull
-        public ItemStack makeIcon() {
-            return new ItemStack(APBlocks.CHAT_BOX.get());
-        }
+    public static final APCreativeTab TAB = new APCreativeTab();
 
-    };
     public AdvancedPeripherals() {
         LOGGER.info("AdvancedPeripherals says hello!");
         IEventBus modBus = FMLJavaModLoadingContext.get().getModEventBus();

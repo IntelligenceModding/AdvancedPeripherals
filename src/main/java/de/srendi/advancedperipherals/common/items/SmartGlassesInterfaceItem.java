@@ -42,7 +42,7 @@ public class SmartGlassesInterfaceItem extends BaseItem {
             if (APAddons.curiosLoaded) findGlasses = APAddons.getCurioGlasses(player);
             if (!findGlasses.is(APItems.SMART_GLASSES.get())) {
                 player.displayClientMessage(Component.translatable("item.advancedperipherals.smartglasses.dontwear"), false);
-                return InteractionResultHolder.fail(findGlasses);
+                return super.use(world, player, hand);
             }
         }
 
@@ -57,7 +57,7 @@ public class SmartGlassesInterfaceItem extends BaseItem {
         LazyOptional<IItemHandler> itemHandler = glasses.getCapability(ForgeCapabilities.ITEM_HANDLER);
         if (!itemHandler.isPresent() || itemHandler.resolve().isEmpty()) {
             AdvancedPeripherals.debug("There was an issue with the item handler of the glasses while trying to open the gui");
-            return InteractionResultHolder.fail(player.getItemInHand(hand));
+            return super.use(world, player, hand);
         }
         NetworkHooks.openScreen((ServerPlayer) player, new SmartGlassesMenuProvider(computer, glasses, itemHandler.resolve().get()), bytes -> new ComputerContainerData(computer, glasses).toBytes(bytes));
 
