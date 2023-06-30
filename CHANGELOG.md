@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+## [1.19.2-0.7.29r] - 2023-06-30
+
+### Fixed
+- [#478] Fixed a game crash when trying to call some functions of the ME Bridge while AE2 Things is not installed
+
 ## [1.19.2-0.7.28r] - 2023-06-01
 
 ### Changed
