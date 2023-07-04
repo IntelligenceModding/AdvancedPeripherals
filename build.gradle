@@ -312,6 +312,8 @@ dependencies {
     implementation fg.deobf("me.shedaniel.cloth:cloth-config-forge:8.2.88")
     implementation fg.deobf("dev.architectury:architectury-forge:6.2.43")
 
+    implementation fg.deobf("curse.maven:crash-utilities-371813:4406293")
+
     testImplementation "org.junit.jupiter:junit-jupiter-api:${junit_version}"
     testImplementation "org.junit.jupiter:junit-jupiter-params:${junit_version}"
     testImplementation "org.hamcrest:hamcrest:${hamcrest_version}"
