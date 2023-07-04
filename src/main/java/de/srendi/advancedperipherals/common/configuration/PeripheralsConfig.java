@@ -23,6 +23,8 @@ public class PeripheralsConfig implements IAPConfig {
     public final ForgeConfigSpec.BooleanValue enableNBTStorage;
     //Chunky turtle
     public final ForgeConfigSpec.IntValue chunkLoadValidTime;
+
+    public final ForgeConfigSpec.IntValue chunkyTurtleRadius;
     public final ForgeConfigSpec.BooleanValue enableChunkyTurtle;
     //Chat box
     public final ForgeConfigSpec.BooleanValue enableChatBox;
@@ -81,6 +83,7 @@ public class PeripheralsConfig implements IAPConfig {
 
         enableChunkyTurtle = builder.comment("Enable the Chunky Turtle or not.").define("enableChunkyTurtle", true);
         chunkLoadValidTime = builder.comment("Time in seconds, while loaded chunk can be consider as valid without touch").defineInRange("chunkLoadValidTime", 600, 60, Integer.MAX_VALUE);
+        chunkyTurtleRadius = builder.comment("Radius in chunks a single chunky turtle will load. The default value (0) only loads the chunk the turtle is in, 1 would also load the 8 surrounding chunks (9 in total) and so on").defineInRange("chunkyTurtleRadius", 0, 0, 16);
 
         pop("Chat_Box", builder);
 

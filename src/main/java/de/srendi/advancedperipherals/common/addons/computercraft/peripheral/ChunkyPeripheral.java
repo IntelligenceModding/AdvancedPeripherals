@@ -20,7 +20,7 @@ public class ChunkyPeripheral extends BasePeripheral<TurtlePeripheralOwner> {
 
     public static final String PERIPHERAL_TYPE = "chunky";
     private static final String UUID_TAG = "uuid";
-    private @Nullable ChunkPos loadedChunk;
+    private @Nullable ChunkPos loadedCentralChunk;
 
     public ChunkyPeripheral(ITurtleAccess turtle, TurtleSide side) {
         super(PERIPHERAL_TYPE, new TurtlePeripheralOwner(turtle, side));
@@ -48,7 +48,7 @@ public class ChunkyPeripheral extends BasePeripheral<TurtlePeripheralOwner> {
         ServerLevel level = (ServerLevel) getLevel();
         ChunkManager manager = ChunkManager.get(level);
         ChunkPos currentChunk = getChunkPos();
-        if (loadedChunk == null || !loadedChunk.equals(currentChunk)) {
+        if (loadedCentralChunk == null || !loadedCentralChunk.equals(currentChunk)) {
             setLoadedChunk(currentChunk, manager, level);
         } else {
             manager.touch(getUUID());
@@ -56,16 +56,17 @@ public class ChunkyPeripheral extends BasePeripheral<TurtlePeripheralOwner> {
     }
 
     protected void setLoadedChunk(@Nullable ChunkPos newChunk, ChunkManager manager, ServerLevel level) {
-
-        if (loadedChunk != null) {
-            manager.removeForceChunk(level, getUUID(), loadedChunk);
-            level.setChunkForced(loadedChunk.x, loadedChunk.z, false);
-            loadedChunk = null;
+        if (loadedCentralChunk != null) {
+            manager.removeForceChunk(level, getUUID(), loadedCentralChunk);
+            //Should not be used
+            //level.setChunkForced(loadedChunk.x, loadedChunk.z, false);
+            loadedCentralChunk = null;
         }
         if (newChunk != null) {
-            loadedChunk = newChunk;
-            manager.addForceChunk(level, getUUID(), loadedChunk);
-            level.setChunkForced(newChunk.x, newChunk.z, true);
+            loadedCentralChunk = newChunk;
+            manager.addForceChunk(level, getUUID(), loadedCentralChunk);
+            //Should not be used
+            //level.setChunkForced(newChunk.x, newChunk.z, true);
         }
     }
 
