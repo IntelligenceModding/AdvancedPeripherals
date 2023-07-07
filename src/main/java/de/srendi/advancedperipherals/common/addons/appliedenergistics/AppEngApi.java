@@ -225,6 +225,44 @@ public class AppEngApi {
         return false;
     }
 
+    public static boolean isFluidrafting(MEStorage monitor, ICraftingService grid, FluidFilter filter,
+                                         @Nullable ICraftingCPU craftingCPU) {
+        Pair<Long, AEFluidKey> stack = AppEngApi.findAEFluidFromFilter(monitor, grid, filter);
+
+        // If the fluid stack does not exist, it cannot be crafted.
+        if (stack == null)
+            return false;
+
+        // If the passed cpu is null, check all cpus
+        if (craftingCPU == null) {
+            // Loop through all crafting cpus and check if the fluid is being crafted.
+            for (ICraftingCPU cpu : grid.getCpus()) {
+                if (cpu.isBusy()) {
+                    CraftingJobStatus jobStatus = cpu.getJobStatus();
+
+                    // avoid null pointer exception
+                    if (jobStatus == null)
+                        continue;
+
+                    if (jobStatus.crafting().what().equals(stack.getRight()))
+                        return true;
+                }
+            }
+        } else {
+            if (craftingCPU.isBusy()) {
+                CraftingJobStatus jobStatus = craftingCPU.getJobStatus();
+
+                // avoid null pointer exception
+                if (jobStatus == null)
+                    return false;
+
+                return jobStatus.crafting().what().equals(stack.getRight());
+            }
+        }
+
+        return false;
+    }
+
     public static long getTotalItemStorage(IGridNode node) {
         long total = 0;
 
