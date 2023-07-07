@@ -20,7 +20,9 @@ import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
 import de.srendi.advancedperipherals.lib.peripherals.IPeripheralFunction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.server.ServerLifecycleHooks;
 import org.jetbrains.annotations.NotNull;
 
@@ -100,19 +102,23 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
     public final MethodResult sendFormattedMessage(@NotNull IArguments arguments) throws LuaException {
         return withChatOperation(ignored -> {
             String message = arguments.getString(0);
-            int range = arguments.optInt(4, -1);
+            int maxRange = APConfig.PERIPHERALS_CONFIG.chatBoxMaxRange.get();
+            int range = arguments.optInt(4, maxRange);
+            range = maxRange == -1 ? range : Math.min(range, APConfig.PERIPHERALS_CONFIG.chatBoxMaxRange.get());
+            ResourceKey<Level> dimension = getLevel().dimension();
             MutableComponent component = Component.Serializer.fromJson(message);
-            if (component == null) return MethodResult.of(null, "incorrect json");
+            if (component == null)
+                return MethodResult.of(null, "incorrect json");
+
             if (checkBrackets(arguments.optString(2)))
                 return MethodResult.of(null, "incorrect bracket string (e.g. [], {}, <>, ...)");
+
             MutableComponent preparedMessage = appendPrefix(arguments.optString(1, APConfig.PERIPHERALS_CONFIG.defaultChatBoxPrefix.get()), arguments.optString(2, "[]"), arguments.optString(3, "")).append(component);
             for (ServerPlayer player : ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers()) {
-                if (range != -1) {
-                    if (CoordUtil.isInRange(getPos(), getLevel(), player, range))
-                        player.sendSystemMessage(preparedMessage);
-                } else {
+                if(!APConfig.PERIPHERALS_CONFIG.chatBoxMultiDimensional.get() && player.getLevel().dimension() != dimension)
+                    continue;
+                if (range == -1 || CoordUtil.isInRange(getPos(), getLevel(), player, range))
                     player.sendSystemMessage(preparedMessage);
-                }
             }
             return MethodResult.of(true);
         });
@@ -122,17 +128,19 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
     public final MethodResult sendMessage(@NotNull IArguments arguments) throws LuaException {
         return withChatOperation(ignored -> {
             String message = arguments.getString(0);
-            int range = arguments.optInt(4, -1);
+            int maxRange = APConfig.PERIPHERALS_CONFIG.chatBoxMaxRange.get();
+            int range = arguments.optInt(4, maxRange);
+            range = maxRange == -1 ? range : Math.min(range, APConfig.PERIPHERALS_CONFIG.chatBoxMaxRange.get());
+            ResourceKey<Level> dimension = getLevel().dimension();
             if (checkBrackets(arguments.optString(2)))
                 return MethodResult.of(null, "incorrect bracket string (e.g. [], {}, <>, ...)");
+
             MutableComponent preparedMessage = appendPrefix(arguments.optString(1, APConfig.PERIPHERALS_CONFIG.defaultChatBoxPrefix.get()), arguments.optString(2, "[]"), arguments.optString(3, "")).append(message);
             for (ServerPlayer player : ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers()) {
-                if (range != -1) {
-                    if (CoordUtil.isInRange(getPos(), getLevel(), player, range))
-                        player.sendSystemMessage(preparedMessage);
-                } else {
+                if(!APConfig.PERIPHERALS_CONFIG.chatBoxMultiDimensional.get() && player.getLevel().dimension() != dimension)
+                    continue;
+                if (range == -1 || CoordUtil.isInRange(getPos(), getLevel(), player, range))
                     player.sendSystemMessage(preparedMessage);
-                }
             }
             return MethodResult.of(true);
         });
@@ -143,14 +151,27 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
         return withChatOperation(ignored -> {
             String message = arguments.getString(0);
             String playerName = arguments.getString(1);
+            int maxRange = APConfig.PERIPHERALS_CONFIG.chatBoxMaxRange.get();
+            int range = arguments.optInt(4, maxRange);
+            range = maxRange == -1 ? range : Math.min(range, APConfig.PERIPHERALS_CONFIG.chatBoxMaxRange.get());
+            ResourceKey<Level> dimension = getLevel().dimension();
             ServerPlayer player = getPlayer(playerName);
-            if (player == null) return MethodResult.of(null, "incorrect player name/uuid");
+            if (player == null)
+                return MethodResult.of(null, "incorrect player name/uuid");
+
             MutableComponent component = Component.Serializer.fromJson(message);
-            if (component == null) return MethodResult.of(null, "incorrect json");
+            if (component == null)
+                return MethodResult.of(null, "incorrect json");
+
             if (checkBrackets(arguments.optString(3)))
                 return MethodResult.of(null, "incorrect bracket string (e.g. [], {}, <>, ...)");
+
             MutableComponent preparedMessage = appendPrefix(arguments.optString(2, APConfig.PERIPHERALS_CONFIG.defaultChatBoxPrefix.get()), arguments.optString(3, "[]"), arguments.optString(4, "")).append(component);
-            player.sendSystemMessage(preparedMessage);
+            if(!APConfig.PERIPHERALS_CONFIG.chatBoxMultiDimensional.get() && player.getLevel().dimension() != dimension)
+                return MethodResult.of(false, "NOT_SAME_DIMENSION");
+
+            if (range == -1 || CoordUtil.isInRange(getPos(), getLevel(), player, range))
+                player.sendSystemMessage(preparedMessage);
             return MethodResult.of(true);
         });
     }
@@ -160,12 +181,23 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
         return withChatOperation(ignored -> {
             String message = arguments.getString(0);
             String playerName = arguments.getString(1);
+            int maxRange = APConfig.PERIPHERALS_CONFIG.chatBoxMaxRange.get();
+            int range = arguments.optInt(4, maxRange);
+            range = maxRange == -1 ? range : Math.min(range, APConfig.PERIPHERALS_CONFIG.chatBoxMaxRange.get());
+            ResourceKey<Level> dimension = getLevel().dimension();
             ServerPlayer player = getPlayer(playerName);
-            if (player == null) return MethodResult.of(null, "incorrect player name/uuid");
+            if (player == null)
+                return MethodResult.of(null, "incorrect player name/uuid");
+
             if (checkBrackets(arguments.optString(3)))
                 return MethodResult.of(null, "incorrect bracket string (e.g. [], {}, <>, ...)");
+
             MutableComponent preparedMessage = appendPrefix(arguments.optString(2, APConfig.PERIPHERALS_CONFIG.defaultChatBoxPrefix.get()), arguments.optString(3, "[]"), arguments.optString(4, "")).append(message);
-            player.sendSystemMessage(preparedMessage);
+            if(!APConfig.PERIPHERALS_CONFIG.chatBoxMultiDimensional.get() && player.getLevel().dimension() != dimension)
+                return MethodResult.of(false, "NOT_SAME_DIMENSION");
+
+            if (range == -1 || CoordUtil.isInRange(getPos(), getLevel(), player, range))
+                player.sendSystemMessage(preparedMessage,false);
             return MethodResult.of(true);
         });
     }

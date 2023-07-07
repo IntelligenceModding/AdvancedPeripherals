@@ -29,6 +29,9 @@ public class PeripheralsConfig implements IAPConfig {
     //Chat box
     public final ForgeConfigSpec.BooleanValue enableChatBox;
     public final ForgeConfigSpec.ConfigValue<String> defaultChatBoxPrefix;
+    public final ForgeConfigSpec.IntValue chatBoxMaxRange;
+    public final ForgeConfigSpec.BooleanValue chatBoxMultiDimensional;
+
     //ME Bridge
     public final ForgeConfigSpec.BooleanValue enableMEBridge;
     public final ForgeConfigSpec.IntValue meConsumption;
@@ -89,6 +92,8 @@ public class PeripheralsConfig implements IAPConfig {
 
         enableChatBox = builder.comment("Enable the Chat Box or not.").define("enableChatBox", true);
         defaultChatBoxPrefix = builder.comment("Defines default chatbox prefix").define("defaultChatBoxPrefix", "AP");
+        chatBoxMaxRange = builder.comment("Defines the maximal range of the chat box in blocks. -1 for infinite. If the range is not -1, players in other dimensions won't able to receive messages").defineInRange("chatBoxMaxRange", -1, -1, 30000000);
+        chatBoxMultiDimensional = builder.comment("If true, the chat box is able to send messages to other dimensions than its own").define("chatBoxMultiDimensional", true);
 
         pop("ME_Bridge", builder);
 
