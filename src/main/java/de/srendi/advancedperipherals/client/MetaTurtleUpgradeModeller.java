@@ -1,7 +1,6 @@
 package de.srendi.advancedperipherals.client;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-
 import com.mojang.math.Transformation;
 import com.mojang.math.Vector3f;
 import dan200.computercraft.api.client.TransformedModel;
@@ -24,7 +23,7 @@ public class MetaTurtleUpgradeModeller<T extends ClockwiseAnimatedTurtleUpgrade<
             stack.translate(0.0f, 0.5f, 0.5f);
             if (turtle != null) {
                 int rotationStep = DataStorageUtil.RotationCharge.get(turtle, side);
-                stack.mulPose(Vector3f.XN.rotationDegrees(-10 * rotationStep));
+                stack.mulPose(Vector3f.XN.rotationDegrees(-10f * rotationStep));
             }
             stack.translate(0.0f, -0.5f, -0.5f);
             stack.mulPose(Vector3f.YN.rotationDegrees(90));
