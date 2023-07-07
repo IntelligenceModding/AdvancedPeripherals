@@ -29,7 +29,7 @@ public final class FakePlayerProviderTurtle {
     }
 
     public static APFakePlayer getPlayer(ITurtleAccess turtle, GameProfile profile) {
-        return registeredPlayers.computeIfAbsent(turtle, iTurtleAccess -> registeredPlayers.put(turtle, new APFakePlayer((ServerLevel) turtle.getLevel(), null, profile)));
+        return registeredPlayers.computeIfAbsent(turtle, iTurtleAccess -> new APFakePlayer((ServerLevel) turtle.getLevel(), null, profile));
     }
 
     public static void load(APFakePlayer player, ITurtleAccess turtle) {
