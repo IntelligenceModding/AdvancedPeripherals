@@ -49,6 +49,9 @@ public class SmartGlassesScreen extends ComputerScreenBase<SmartGlassesContainer
         RenderSystem.setShaderTexture(0, BACKGROUND);
         blit(transform, leftPos + ComputerSidebar.WIDTH, topPos, 0, 0, TEX_WIDTH, TEX_HEIGHT);
 
+        if (currentType == SlotType.PERIPHERALS)
+            blit(transform, leftPos + ComputerSidebar.WIDTH + 222, topPos + 183, 186, 183, 18, 18);
+
         RenderSystem.setShaderTexture(0, SIDEBAR);
         ComputerSidebar.renderBackground(transform, leftPos, topPos + sidebarYOffset);
     }

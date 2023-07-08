@@ -24,6 +24,7 @@ public class SmartGlassesItemHandler implements IItemHandlerModifiable, INBTSeri
         this.stack = stack;
         this.computer = computer;
         deserializeNBT(stack.getOrCreateTagElement("Items"));
+        computer.setItemHandler(this);
     }
 
     @Override
@@ -124,7 +125,7 @@ public class SmartGlassesItemHandler implements IItemHandlerModifiable, INBTSeri
 
     public void setChanged() {
         stack.getOrCreateTag().put("Items", serializeNBT());
-        computer.updatePeripheralsAndModules(this);
+        computer.markDirty();
     }
 
     @Override
