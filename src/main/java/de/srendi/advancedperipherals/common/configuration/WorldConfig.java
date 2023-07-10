@@ -1,8 +1,10 @@
 package de.srendi.advancedperipherals.common.configuration;
 
+import net.minecraft.FieldsAreNonnullByDefault;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.fml.config.ModConfig;
 
+@FieldsAreNonnullByDefault
 public class WorldConfig implements IAPConfig {
 
     public final ForgeConfigSpec.BooleanValue enableVillagerStructures;

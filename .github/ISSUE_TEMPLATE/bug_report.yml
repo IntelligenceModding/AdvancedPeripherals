@@ -39,16 +39,14 @@ body:
       multiple: false
       options:
         - Own compiled build.
-        - 1.19.3-0.7.29r (Latest 1.19.3)
-        - 1.19.3-0.7.28r
-        - 1.19.3-0.7.27r
-        - 1.19.2-0.7.28r (Latest 1.19.2)
-        - 1.19.2-0.7.27r
-        - 1.19.2-0.7.26r
-        - 1.18.2-0.7.30r (Latest 1.18.2)
-        - 1.18.2-0.7.29r
-        - 1.18.2-0.7.28r
-        - older (probably unsupported)
+        - 1.19.2-0.7.23b (Latest 1.19)
+        - 1.19.2-0.7.22b 
+        - 1.19.2-0.7.21b 
+        - 1.18.2-0.7.24r (Latest 1.18)
+        - 1.18.2-0.7.23r
+        - 1.18.2-0.7.22r
+        - 1.16.5-0.7.8r (Latest 1.16)
+        - older
     validations:
       required: true
   - type: input

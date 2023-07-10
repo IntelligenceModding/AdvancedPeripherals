@@ -28,6 +28,9 @@ import java.util.Objects;
 
 public class FluidUtil {
 
+    private FluidUtil() {
+    }
+
     @Nullable
     public static IFluidHandler extractHandler(@Nullable Object object) {
         if (object instanceof IFluidHandler fluidHandler)

@@ -7,11 +7,11 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.Container;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemHandlerHelper;
 
@@ -29,7 +29,7 @@ public final class FakePlayerProviderTurtle {
     }
 
     public static APFakePlayer getPlayer(ITurtleAccess turtle, GameProfile profile) {
-        return registeredPlayers.computeIfAbsent(turtle, iTurtleAccess -> registeredPlayers.put(turtle, new APFakePlayer((ServerLevel) turtle.getLevel(), null, profile)));
+        return registeredPlayers.computeIfAbsent(turtle, iTurtleAccess -> new APFakePlayer((ServerLevel) turtle.getLevel(), null, profile));
     }
 
     public static void load(APFakePlayer player, ITurtleAccess turtle) {
@@ -51,12 +51,12 @@ public final class FakePlayerProviderTurtle {
         playerInventory.selected = 0;
 
         // Copy primary items into player inventory and empty the rest
-        Container turtleInventory = turtle.getInventory();
-        int size = turtleInventory.getContainerSize();
+        IItemHandler turtleInventory = turtle.getItemHandler();
+        int size = turtleInventory.getSlots();
         int largerSize = playerInventory.getContainerSize();
         playerInventory.selected = turtle.getSelectedSlot();
         for (int i = 0; i < size; i++) {
-            playerInventory.setItem(i, turtleInventory.getItem(i));
+            playerInventory.setItem(i, turtleInventory.getStackInSlot(i));
         }
         for (int i = size; i < largerSize; i++) {
             playerInventory.setItem(i, ItemStack.EMPTY);

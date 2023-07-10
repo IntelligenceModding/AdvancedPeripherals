@@ -67,11 +67,21 @@ public class ChunkManager extends SavedData {
     }
 
     public synchronized boolean addForceChunk(ServerLevel level, UUID owner, ChunkPos pos) {
-        AdvancedPeripherals.debug("Trying to load forced chunk " + pos, Level.WARN);
+        AdvancedPeripherals.debug("Trying to load forced chunk cluster" + pos, Level.WARN);
         if (forcedChunks.containsKey(owner)) return true;
         forcedChunks.put(owner, new LoadChunkRecord(level.dimension().location().toString(), pos));
         setDirty();
-        return ForgeChunkManager.forceChunk(level, AdvancedPeripherals.MOD_ID, owner, pos.x, pos.z, true, true);
+        int chunkRadius = APConfig.PERIPHERALS_CONFIG.chunkyTurtleRadius.get();
+        if (chunkRadius == 0) {
+            return ForgeChunkManager.forceChunk(level, AdvancedPeripherals.MOD_ID, owner, pos.x, pos.z, true, true);
+        }
+        boolean result = true;
+        for (int x = chunkRadius * -1; x < chunkRadius; x++) {
+            for (int z = chunkRadius * -1; z < chunkRadius; z++) {
+                result &= ForgeChunkManager.forceChunk(level, AdvancedPeripherals.MOD_ID, owner, pos.x + x, pos.z + z, true, true);
+            }
+        }
+        return result;
     }
 
     public synchronized void touch(UUID owner) {
@@ -79,14 +89,24 @@ public class ChunkManager extends SavedData {
     }
 
     public synchronized boolean removeForceChunk(ServerLevel level, UUID owner, ChunkPos pos) {
-        AdvancedPeripherals.debug("Trying to unload forced chunk " + pos, Level.WARN);
+        AdvancedPeripherals.debug("Trying to unload forced chunk cluster" + pos, Level.WARN);
         if (!forcedChunks.containsKey(owner))
             return true;
         LoadChunkRecord chunkRecord = forcedChunks.get(owner);
         String dimensionName = level.dimension().location().toString();
         if (!chunkRecord.getDimensionName().equals(dimensionName))
             throw new IllegalArgumentException(String.format("Incorrect dimension! Should be %s instead of %s", chunkRecord.getDimensionName(), dimensionName));
-        boolean result = ForgeChunkManager.forceChunk(level, AdvancedPeripherals.MOD_ID, owner, pos.x, pos.z, false, true);
+        boolean result = true;
+        int chunkRadius = APConfig.PERIPHERALS_CONFIG.chunkyTurtleRadius.get();
+        if (chunkRadius == 0) {
+            result = ForgeChunkManager.forceChunk(level, AdvancedPeripherals.MOD_ID, owner, pos.x, pos.z, false, true);
+        } else {
+            for (int x = chunkRadius * -1; x < chunkRadius; x++) {
+                for (int z = chunkRadius * -1; z < chunkRadius; z++) {
+                    result &= ForgeChunkManager.forceChunk(level, AdvancedPeripherals.MOD_ID, owner, pos.x + x, pos.z + z, true, true);
+                }
+            }
+        }
         if (result) {
             forcedChunks.remove(owner);
             setDirty();
@@ -97,9 +117,19 @@ public class ChunkManager extends SavedData {
     public synchronized void init() {
         if (!initialized) {
             AdvancedPeripherals.debug("Schedule chunk manager init", Level.WARN);
+            int chunkRadius = APConfig.PERIPHERALS_CONFIG.chunkyTurtleRadius.get();
             ServerLifecycleHooks.getCurrentServer().getAllLevels().forEach(level -> {
                 String dimensionName = level.dimension().location().toString();
-                forcedChunks.entrySet().stream().filter(entry -> entry.getValue().getDimensionName().equals(dimensionName)).forEach(entry -> ForgeChunkManager.forceChunk(level, AdvancedPeripherals.MOD_ID, entry.getKey(), entry.getValue().getPos().x, entry.getValue().getPos().z, true, true));
+                forcedChunks.entrySet().stream().filter(entry -> entry.getValue().getDimensionName().equals(dimensionName)).forEach(entry -> {
+                    if (chunkRadius == 0) {
+                        ForgeChunkManager.forceChunk(level, AdvancedPeripherals.MOD_ID, entry.getKey(), entry.getValue().getPos().x, entry.getValue().getPos().z, true, true);
+                    }
+                    for (int x = chunkRadius * -1; x < chunkRadius; x++) {
+                        for (int z = chunkRadius * -1; z < chunkRadius; z++) {
+                            ForgeChunkManager.forceChunk(level, AdvancedPeripherals.MOD_ID, entry.getKey(), entry.getValue().getPos().x + x, entry.getValue().getPos().z + z, true, true);
+                        }
+                    }
+                });
             });
             initialized = true;
         }
@@ -108,9 +138,19 @@ public class ChunkManager extends SavedData {
     public synchronized void stop() {
         if (initialized) {
             AdvancedPeripherals.debug("Schedule chunk manager stop", Level.WARN);
+            int chunkRadius = APConfig.PERIPHERALS_CONFIG.chunkyTurtleRadius.get();
             ServerLifecycleHooks.getCurrentServer().getAllLevels().forEach(level -> {
                 String dimensionName = level.dimension().location().toString();
-                forcedChunks.entrySet().stream().filter(entry -> entry.getValue().getDimensionName().equals(dimensionName)).forEach(entry -> ForgeChunkManager.forceChunk(level, AdvancedPeripherals.MOD_ID, entry.getKey(), entry.getValue().getPos().x, entry.getValue().getPos().z, false, true));
+                forcedChunks.entrySet().stream().filter(entry -> entry.getValue().getDimensionName().equals(dimensionName)).forEach(entry -> {
+                    if (chunkRadius == 0) {
+                        ForgeChunkManager.forceChunk(level, AdvancedPeripherals.MOD_ID, entry.getKey(), entry.getValue().getPos().x, entry.getValue().getPos().z, false, true);
+                    }
+                    for (int x = chunkRadius * -1; x < chunkRadius; x++) {
+                        for (int z = chunkRadius * -1; z < chunkRadius; z++) {
+                            ForgeChunkManager.forceChunk(level, AdvancedPeripherals.MOD_ID, entry.getKey(), entry.getValue().getPos().x + x, entry.getValue().getPos().z + z, false, true);
+                        }
+                    }
+                });
             });
             initialized = false;
         }

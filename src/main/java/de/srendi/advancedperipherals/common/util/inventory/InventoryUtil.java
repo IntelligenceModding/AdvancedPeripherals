@@ -25,6 +25,9 @@ import java.util.Objects;
 
 public class InventoryUtil {
 
+    private InventoryUtil() {
+    }
+
     public static IItemHandler extractHandler(@Nullable Object object) {
         if (object instanceof ICapabilityProvider capabilityProvider) {
             LazyOptional<IItemHandler> cap = capabilityProvider.getCapability(ForgeCapabilities.ITEM_HANDLER);

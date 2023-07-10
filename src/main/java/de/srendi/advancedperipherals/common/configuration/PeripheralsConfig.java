@@ -29,10 +29,15 @@ public class PeripheralsConfig implements IAPConfig {
     public final ForgeConfigSpec.BooleanValue enableNBTStorage;
     //Chunky turtle
     public final ForgeConfigSpec.IntValue chunkLoadValidTime;
+
+    public final ForgeConfigSpec.IntValue chunkyTurtleRadius;
     public final ForgeConfigSpec.BooleanValue enableChunkyTurtle;
     //Chat box
     public final ForgeConfigSpec.BooleanValue enableChatBox;
     public final ForgeConfigSpec.ConfigValue<String> defaultChatBoxPrefix;
+    public final ForgeConfigSpec.IntValue chatBoxMaxRange;
+    public final ForgeConfigSpec.BooleanValue chatBoxMultiDimensional;
+
     //ME Bridge
     public final ForgeConfigSpec.BooleanValue enableMEBridge;
     public final ForgeConfigSpec.IntValue meConsumption;
@@ -102,11 +107,14 @@ public class PeripheralsConfig implements IAPConfig {
 
         enableChunkyTurtle = builder.comment("Enable the Chunky Turtle or not.").define("enableChunkyTurtle", true);
         chunkLoadValidTime = builder.comment("Time in seconds, while loaded chunk can be consider as valid without touch").defineInRange("chunkLoadValidTime", 600, 60, Integer.MAX_VALUE);
+        chunkyTurtleRadius = builder.comment("Radius in chunks a single chunky turtle will load. The default value (0) only loads the chunk the turtle is in, 1 would also load the 8 surrounding chunks (9 in total) and so on").defineInRange("chunkyTurtleRadius", 0, 0, 16);
 
         pop("Chat_Box", builder);
 
         enableChatBox = builder.comment("Enable the Chat Box or not.").define("enableChatBox", true);
         defaultChatBoxPrefix = builder.comment("Defines default chatbox prefix").define("defaultChatBoxPrefix", "AP");
+        chatBoxMaxRange = builder.comment("Defines the maximal range of the chat box in blocks. -1 for infinite. If the range is not -1, players in other dimensions won't able to receive messages").defineInRange("chatBoxMaxRange", -1, -1, 30000000);
+        chatBoxMultiDimensional = builder.comment("If true, the chat box is able to send messages to other dimensions than its own").define("chatBoxMultiDimensional", true);
 
         pop("ME_Bridge", builder);
 
