@@ -1,6 +1,6 @@
 package de.srendi.advancedperipherals.common.village;
 
-import dan200.computercraft.shared.ModRegistry;
+import dan200.computercraft.shared.Registry;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.setup.APBlocks;
 import de.srendi.advancedperipherals.common.setup.APItems;
@@ -22,7 +22,7 @@ public class VillagerTrades {
         TradeBuilder.createTrade(event, APBlocks.PERIPHERAL_CASING.get(), VillagerTrade.Type.ITEM_FOR_EMERALD, 1, 1)
                 .setMaxUses(8)
                 .build();
-        TradeBuilder.createTrade(event, ModRegistry.Blocks.TURTLE_ADVANCED.get(), VillagerTrade.Type.ITEM_FOR_EMERALD, 2, 1)
+        TradeBuilder.createTrade(event, Registry.ModBlocks.TURTLE_ADVANCED.get(), VillagerTrade.Type.ITEM_FOR_EMERALD, 2, 1)
                 .setMaxUses(8)
                 .build();
     }
@@ -36,7 +36,7 @@ public class VillagerTrades {
                     .build();
             TradeBuilder.createTrade(event, APBlocks.CHAT_BOX.get(), VillagerTrade.Type.ITEM_FOR_EMERALD, 2, 1)
                     .build();
-            TradeBuilder.createTrade(event, ModRegistry.Blocks.MONITOR_NORMAL.get(), VillagerTrade.Type.ITEM_FOR_EMERALD, 2, 1)
+            TradeBuilder.createTrade(event, Registry.ModBlocks.MONITOR_NORMAL.get(), VillagerTrade.Type.ITEM_FOR_EMERALD, 2, 1)
                     .setItemAmount(2)
                     .build();
             TradeBuilder.createTrade(event, APBlocks.PERIPHERAL_CASING.get(), VillagerTrade.Type.EMERALD_FOR_ITEM, 1, 1)
@@ -49,7 +49,7 @@ public class VillagerTrades {
             TradeBuilder.createTrade(event, APBlocks.REDSTONE_INTEGRATOR.get(), VillagerTrade.Type.ITEM_FOR_EMERALD, 2, 2)
                     .setXp(3)
                     .build();
-            TradeBuilder.createTrade(event, ModRegistry.Blocks.COMPUTER_ADVANCED.get(), VillagerTrade.Type.ITEM_FOR_EMERALD, 3, 2)
+            TradeBuilder.createTrade(event, Registry.ModBlocks.COMPUTER_ADVANCED.get(), VillagerTrade.Type.ITEM_FOR_EMERALD, 3, 2)
                     .setXp(4)
                     .build();
 
@@ -69,7 +69,7 @@ public class VillagerTrades {
                     .setMaxUses(1)
                     .setXp(16)
                     .build();
-            TradeBuilder.createTrade(event, ModRegistry.Blocks.MONITOR_ADVANCED.get(), VillagerTrade.Type.ITEM_FOR_EMERALD, 6, 3)
+            TradeBuilder.createTrade(event, Registry.ModBlocks.MONITOR_ADVANCED.get(), VillagerTrade.Type.ITEM_FOR_EMERALD, 6, 3)
                     .setXp(7)
                     .setItemAmount(4)
                     .build();
@@ -77,7 +77,7 @@ public class VillagerTrades {
             TradeBuilder.createTrade(event, APBlocks.ENERGY_DETECTOR.get(), VillagerTrade.Type.ITEM_FOR_EMERALD, 4, 4)
                     .setXp(6)
                     .build();
-            TradeBuilder.createTrade(event, ModRegistry.Blocks.COMPUTER_ADVANCED.get(), VillagerTrade.Type.ITEM_FOR_EMERALD, 4, 4)
+            TradeBuilder.createTrade(event, Registry.ModBlocks.COMPUTER_ADVANCED.get(), VillagerTrade.Type.ITEM_FOR_EMERALD, 4, 4)
                     .setXp(5)
                     .setMaxUses(3)
                     .build();
@@ -96,10 +96,10 @@ public class VillagerTrades {
                     .setItemAmount(2)
                     .setXp(4)
                     .build();
-            TradeBuilder.createTrade(event, ModRegistry.Blocks.SPEAKER.get(), VillagerTrade.Type.ITEM_FOR_EMERALD, 3, 5)
+            TradeBuilder.createTrade(event, Registry.ModBlocks.SPEAKER.get(), VillagerTrade.Type.ITEM_FOR_EMERALD, 3, 5)
                     .setXp(6)
                     .build();
-            TradeBuilder.createTrade(event, ModRegistry.Blocks.WIRELESS_MODEM_ADVANCED.get(), VillagerTrade.Type.ITEM_FOR_EMERALD, 4, 5)
+            TradeBuilder.createTrade(event, Registry.ModBlocks.WIRELESS_MODEM_ADVANCED.get(), VillagerTrade.Type.ITEM_FOR_EMERALD, 4, 5)
                     .setXp(8)
                     .build();
 

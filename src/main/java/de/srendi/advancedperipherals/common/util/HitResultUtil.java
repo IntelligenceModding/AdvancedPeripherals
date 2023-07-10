@@ -27,7 +27,7 @@ public class HitResultUtil {
      * @param from              the source position like a block
      * @param level             the level
      * @param ignoreTransparent if transparent blocks should be ignored
-     * @return the hit result {@link BlockHitResult#miss(Vec3, Direction, BlockPos)} if nothing found
+     * @return the hit result. {@link BlockHitResult#miss(Vec3, Direction, BlockPos)} if nothing found
      */
     @NotNull
     public static HitResult getHitResult(Vec3 to, Vec3 from, Level level, boolean ignoreTransparent) {
@@ -41,7 +41,7 @@ public class HitResultUtil {
             return blockResult;
 
         if (entityResult.getType() == HitResult.Type.MISS && blockResult.getType() == HitResult.Type.MISS)
-            return BlockHitResult.miss(from, null, new BlockPos(to));
+            return BlockHitResult.miss(from, blockResult.getDirection(), new BlockPos(to));
 
         double blockDistance = new BlockPos(from).distManhattan(blockResult.getBlockPos());
         double entityDistance = new BlockPos(from).distManhattan(new Vec3i(entityResult.getLocation().x, entityResult.getLocation().y, entityResult.getLocation().z));
@@ -103,8 +103,7 @@ public class HitResultUtil {
      */
     @NotNull
     public static BlockHitResult getBlockHitResult(Vec3 to, Vec3 from, Level level, boolean ignoreNoOccluded) {
-        BlockHitResult result = level.clip(new AdvancecClipContext(from, to, ignoreNoOccluded ? IgnoreNoOccludedContext.INSTANCE : ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, null));
-        return result;
+        return level.clip(new AdvancecClipContext(from, to, ignoreNoOccluded ? IgnoreNoOccludedContext.INSTANCE : ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, null));
     }
 
     public static class EmptyEntityHitResult extends EntityHitResult {

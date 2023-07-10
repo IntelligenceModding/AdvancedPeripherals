@@ -5,7 +5,10 @@ import dan200.computercraft.api.pocket.PocketUpgradeSerialiser;
 import dan200.computercraft.api.turtle.TurtleUpgradeSerialiser;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.addons.computercraft.integrations.IntegrationPeripheralProvider;
-import de.srendi.advancedperipherals.common.addons.computercraft.pocket.*;
+import de.srendi.advancedperipherals.common.addons.computercraft.pocket.PocketChatBoxUpgrade;
+import de.srendi.advancedperipherals.common.addons.computercraft.pocket.PocketEnvironmentUpgrade;
+import de.srendi.advancedperipherals.common.addons.computercraft.pocket.PocketGeoScannerUpgrade;
+import de.srendi.advancedperipherals.common.addons.computercraft.pocket.PocketPlayerDetectorUpgrade;
 import de.srendi.advancedperipherals.common.addons.computercraft.turtles.*;
 import de.srendi.advancedperipherals.common.addons.computercraft.turtles.metaphysics.*;
 import net.minecraft.resources.ResourceLocation;
@@ -32,7 +35,6 @@ public class CCRegistration {
     public static final RegistryObject<PocketUpgradeSerialiser<PocketPlayerDetectorUpgrade>> PLAYER_DETECTOR_POCKET = APRegistration.POCKET_SERIALIZER.register(ID.PLAYER_POCKET.getPath(), () -> PocketUpgradeSerialiser.simpleWithCustomItem(PocketPlayerDetectorUpgrade::new));
     public static final RegistryObject<PocketUpgradeSerialiser<PocketEnvironmentUpgrade>> ENVIRONMENT_POCKET = APRegistration.POCKET_SERIALIZER.register(ID.ENVIRONMENT_POCKET.getPath(), () -> PocketUpgradeSerialiser.simpleWithCustomItem(PocketEnvironmentUpgrade::new));
     public static final RegistryObject<PocketUpgradeSerialiser<PocketGeoScannerUpgrade>> GEO_SCANNER_POCKET = APRegistration.POCKET_SERIALIZER.register(ID.GEOSCANNER_POCKET.getPath(), () -> PocketUpgradeSerialiser.simpleWithCustomItem(PocketGeoScannerUpgrade::new));
-    public static final RegistryObject<PocketUpgradeSerialiser<PocketColonyIntegratorUpgrade>> COLONY_POCKET = APRegistration.POCKET_SERIALIZER.register(ID.COLONY_POCKET.getPath(), () -> PocketUpgradeSerialiser.simpleWithCustomItem(PocketColonyIntegratorUpgrade::new));
 
     public static IntegrationPeripheralProvider integrationPeripheralProvider;
 

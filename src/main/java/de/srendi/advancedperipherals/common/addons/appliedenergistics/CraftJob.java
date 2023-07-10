@@ -4,14 +4,12 @@ import appeng.api.networking.IGrid;
 import appeng.api.networking.IGridNode;
 import appeng.api.networking.crafting.*;
 import appeng.api.networking.security.IActionSource;
-import appeng.api.networking.storage.IStorageService;
-import appeng.api.stacks.AEItemKey;
+import appeng.api.stacks.AEKey;
 import dan200.computercraft.api.lua.ILuaCallback;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.MethodResult;
 import dan200.computercraft.api.peripheral.IComputerAccess;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
-import de.srendi.advancedperipherals.common.util.inventory.ItemUtil;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -28,7 +26,7 @@ public class CraftJob implements ILuaCallback {
     private final IActionSource source;
     private final ICraftingSimulationRequester requester;
     private final ICraftingCPU target;
-    private final AEItemKey item;
+    private final AEKey item;
 
     private final long amount;
     private final Level world;
@@ -38,7 +36,7 @@ public class CraftJob implements ILuaCallback {
     private MethodResult result;
     private LuaException exception;
 
-    public CraftJob(Level world, final IComputerAccess computer, IGridNode node, AEItemKey item, long amount, IActionSource source,
+    public CraftJob(Level world, final IComputerAccess computer, IGridNode node, AEKey item, long amount, IActionSource source,
                     ICraftingSimulationRequester requester, ICraftingCPU target) {
         this.computer = computer;
         this.node = node;
@@ -75,7 +73,6 @@ public class CraftJob implements ILuaCallback {
             return;
         }
 
-        IStorageService storage = grid.getService(IStorageService.class);
         ICraftingService crafting = grid.getService(ICraftingService.class);
 
         if (item == null) {
@@ -84,7 +81,7 @@ public class CraftJob implements ILuaCallback {
         }
 
         if (!crafting.isCraftable(item)) {
-            fireEvent(false, ItemUtil.getRegistryKey(item.getItem()) + " is not craftable");
+            fireEvent(false, item.getId().toString() + " is not craftable");
             return;
         }
 

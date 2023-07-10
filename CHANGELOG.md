@@ -6,13 +6,83 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+## [1.19.2-0.7.29r] - 2023-06-30
 
 ### Fixed
-- [#412] Fix `craftItem` for the rs bridge.
-- Respect item filters for the me bridge's `craftItem` function
+- [#478] Fixed a game crash when trying to call some functions of the ME Bridge while AE2 Things is not installed
+
+### Added/Fixed
+- [#476] There a multiple additions and fixes to `getResearch` of the colony integrator:
+  * `getResearch` function is callable again (was not available because it was throwing a non-lua exception)
+  * will not return hidden research items
+  * fix text properties of research: `name` and `researchEffects`
+  * add properties to research:
+    * `requirements`: list of requirements:
+      * `desc`: requirement description text
+      *  `type`: type of requirement, only `building` type shows additional information (`building` and `level`)
+    * `cost`: list of research cost
+    * `progress`: integer value
+
+## [1.19.2-0.7.28r] - 2023-06-01
+
+### Changed
+- Change the argument of `isItemCrafting` to an item filter table
+
+### Fixed
+- [#434] `getItem` throwing NullPointerException if the item does not exist in the me system
+- [#444] Cardinal directions aren't working for some of our peripherals - Thanks to @zyxkad !
+- [#436] fluid stacks returned by the me or rs bridge are missing some information like the display name, fingerprint or nbt values
+- [#448] Wrong return values of the `getInputFluid/getOutputFluid` functions of the create basin integration - Thanks to @zyxkad
+- [#439] Fixed wrong calculation of the player position which leads to false results of some functions of the player detector - Thanks to @zyxkad
+- [#454] Fixed cache blocking of the rs bridge which leads to a disability to remove items from the rs system
+- [#456] Fixed a bug which leads to crashes when trying to get the happiness of the citizens - Thanks to @Einhornyordle!
+- Fixed `writeTable` function of the storage peripheral
+- Fixed a bug where the item of a filter gets ignored if nbt values are defined
+- [#425] Fixed patchouli urls
+- [#463] Fix create integration for create 0.5.1a
+- [#464] Fixed that the inventory manager causes items to stop stacking
 
 ### Added
-- [#413] Added `listChest` to the inventory manager
+- [#445] Added the peripheral name to the `playerClick` event of the player detector - Thanks to @zyxkad!
+- [#467] Added playerJoin, playerLeave, playerChangedDimension events on Player Detector - Thanks to @michele-grifa!
+- Increase max range of the radius of sphere operations
+
+## [1.19.2-0.7.27r] - 2023-04-15
+
+### Fixed
+- [#433] Fixed that items will be exported regardless if the target can accept the items - RS and ME Bridge
+- Fixed return type of `removeItem` in the inventory manager
+
+## [1.19.2-0.7.26r] - 2023-04-14
+
+### Added
+- [#429]Add back support for ae2 things
+- Added powah integration - thanks to Sabry Chasseray!
+- Added some checks to the inventory manager
+
+### Fixed
+- Fixed that the rs bridge does not export items if the item is distributed between multiple storages - thanks to Rudy Gambelini!
+- [#427]Fixed that nbt values of items that are moved get deleted in the me bridge.
+- [#430]Add `craftFluid` to the me bridge
+- Fixed chatbox event calling when typing
+
+### Changed
+- [#432]Disable curio slot
+- Disable fuel consumption of the pocket computer - can be enabled in the config
+
+## [1.19.2-0.7.25r] - 2023-03-15
+
+### Added
+- [#416]Add the crafting job to the crafting cpu object - me bridge
+
+### Fixed
+- [#416]Try to parse the `nbt` argument as a table if parsing it as a string fails. Adds the ability to use the output of our functions like `listItems` or `getItem` as item filter argument.
+- [#417]Disable power consumption if powered peripherals are disabled in the configuration
+- [#423]Fixed that some functions of the me and rs bridge ignore or increasing the count they want to export
+
+## [1.19.2-0.7.24b] - 2023-03-01
+
+### This is the backport of the latest 1.19.3 version to 1.19.2. To see what everything changed, check the [changelog](https://docs.intelligence-modding.de/changelogs/0.7.24r/)
 
 ## [1.19.3-0.7.24b] - 2023-02-12
 

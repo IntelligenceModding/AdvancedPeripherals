@@ -14,7 +14,7 @@ buildscript {
         gradlePluginPortal()
     }
     dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1+', changing: true
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '6.0+', changing: true
         classpath 'org.parchmentmc:librarian:1.+'
     }
 }
@@ -25,7 +25,7 @@ plugins {
     id 'org.jetbrains.changelog' version '1.2.1'
     id "com.modrinth.minotaur" version "2.+"
     id "org.jetbrains.kotlin.jvm" version "1.6.10"
-    id "org.sonarqube" version "3.5.0.2730"
+    id "org.sonarqube" version "4.2.1.3168"
     id 'checkstyle'
 }
 
@@ -35,7 +35,7 @@ apply plugin: 'org.parchmentmc.librarian.forgegradle'
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
 wrapper {
-    gradleVersion = '7.6.1'
+    gradleVersion = '8.1.1'
     distributionType = Wrapper.DistributionType.ALL
 }
 
@@ -194,10 +194,6 @@ repositories {
         url = 'https://squiddev.cc/maven/'
     }
     maven {
-        name = "Progwml6 maven jei"
-        url = "https://dvs1.progwml6.com/files/maven/"
-    }
-    maven {
         name = "Theillusivec4 maven curios"
         url = "https://maven.theillusivec4.top/"
     }
@@ -206,7 +202,7 @@ repositories {
         url = 'https://ldtteam.jfrog.io/ldtteam/modding'
     }
     maven {
-        name = "Modmaven"
+        name = "Modmaven jei"
         url = 'https://modmaven.dev/'
     }
     maven {
@@ -219,7 +215,7 @@ repositories {
     }
     maven {
         name = "Srendi Space repository"
-        url = "https://maven.pkg.jetbrains.space/intelligence/p/advancedperipherals/ap-repository"
+        url "https://packages.intelligence-modding.de/maven/p/advanced-peripherals/ap-repository"
         credentials {
             username = spaceUsername
             password = spacePassword
@@ -232,7 +228,10 @@ repositories {
             includeGroup "site.siredvin.ttoolkit"
         }
     }
-
+    maven {
+        name = "Shedaniel cloth"
+        url = "https://maven.shedaniel.me/"
+    }
     maven {
         url = uri("https://maven.pkg.github.com/refinedmods/refinedstorage")
         credentials {
@@ -240,7 +239,6 @@ repositories {
             password = "\u0067hp_oGjcDFCn8jeTzIj4Ke9pLoEVtpnZMP4VQgaX"
         }
     }
-
     maven {
         url "https://cursemaven.com"
         content {
@@ -259,58 +257,56 @@ dependencies {
     // Minimal requirements
     compileOnly "org.jetbrains:annotations:${jb_annotations}"
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
-    implementation fg.deobf("cc.tweaked:cc-tweaked-${minecraft_version}-forge:${cc_version}")
+    implementation fg.deobf("org.squiddev:cc-tweaked-${minecraft_version}:${cc_version}")
     // Compile-time API required
     // Ae2
-    compileOnly fg.deobf("appeng:appliedenergistics2-forge:${appliedenergistics_version}")
+    implementation fg.deobf("appeng:appliedenergistics2-forge:${appliedenergistics_version}")
     // Curios
-    compileOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}:api")
+    implementation fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}:api")
     // Minimal requirements end
 
     // Extended requirements
     // We don't use the api since we need a specific class from mekanism
-    compileOnly "mekanism:Mekanism:${mekanism_version}"
-
-    // runtimeOnly fg.deobf("mekanism:Mekanism:${mekanism_version}")// core
+    implementation fg.deobf("mekanism:Mekanism:${mekanism_version}")
 
     // Applied Energistics 2
-    runtimeOnly fg.deobf("appeng:appliedenergistics2-forge:${appliedenergistics_version}")
+    implementation fg.deobf("appeng:appliedenergistics2-forge:${appliedenergistics_version}")
     // Curios
-    runtimeOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}")
+    implementation fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}")
 
     // Refined Storage
-    compileOnly fg.deobf("com.refinedmods:refinedstorage:${refinedstorage_version}")  {
+    implementation fg.deobf("com.refinedmods:refinedstorage:${refinedstorage_version}") {
         transitive false
     }
 
-    // AE2 Things - removed until updated
-    //compileOnly "curse.maven:ae2things-609977:${ae2things_version}-sources"
+    //AE2 Things
+    compileOnly fg.deobf("curse.maven:ae2things-609977:${ae2things_version}-sources")
     //runtimeOnly fg.deobf("curse.maven:ae2things-609977:${ae2things_version}-sources")
 
     // Botania
     compileOnly fg.deobf("vazkii.botania:Botania:${botania_version}")
 
-
     // Minecolonies
     // Change to compileOnly when running `runData`
-    compileOnly fg.deobf("com.ldtteam:minecolonies:${minecolonies_version}")
-    compileOnly fg.deobf("com.ldtteam:structurize:${structurize_version}")
-    compileOnly fg.deobf("com.ldtteam:multipiston:${multipiston_version}")
-    compileOnly fg.deobf("com.ldtteam:domum_ornamentum:${domumornamentum_version}:universal")
-    compileOnly fg.deobf("com.ldtteam:blockui:${blockui_version}")
+    implementation fg.deobf("com.ldtteam:minecolonies:${minecolonies_version}")
+    implementation fg.deobf("com.ldtteam:structurize:${structurize_version}")
+    implementation fg.deobf("com.ldtteam:multi-piston:${multipiston_version}")
+    implementation fg.deobf("com.ldtteam:domum_ornamentum:${domumornamentum_version}:universal")
+    implementation fg.deobf("com.ldtteam:blockui:${blockui_version}")
 
     //Patchouli
     runtimeOnly fg.deobf("vazkii.patchouli:Patchouli:${patchouli_version}")
 
     // Create
-    compileOnly fg.deobf("com.simibubi.create:create-1.19.2:${create_version}:all")
-    compileOnly fg.deobf("com.jozufozu.flywheel:flywheel-forge-${minecraft_version}:${flywheel_version}")
+    compileOnly fg.deobf("com.simibubi.create:create-${minecraft_version}:${create_version}:all")
 
     //Removed until fully ported
     //testImplementation fg.deobf("site.siredvin.ttoolkit:ttoolkit-${minecraft_version}:${ttoolkit_version}")
 
-    // Worldedit
-    runtimeOnly fg.deobf("curse.maven:worldedit-225608:4162208")
+    //Powah
+    compileOnly fg.deobf("curse.maven:powah-633483:${powah_version}")
+    compileOnly fg.deobf("me.shedaniel.cloth:cloth-config-forge:8.2.88")
+    compileOnly fg.deobf("dev.architectury:architectury-forge:6.2.43")
 
     testImplementation "org.junit.jupiter:junit-jupiter-api:${junit_version}"
     testImplementation "org.junit.jupiter:junit-jupiter-params:${junit_version}"
@@ -322,7 +318,7 @@ dependencies {
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junit_version}"
     // Testing stuff
     // JEI
-    implementation fg.deobf("mezz.jei:jei-${jei_version}")
+    compileOnly fg.deobf("mezz.jei:jei-${jei_version}")
 }
 
 
@@ -334,7 +330,7 @@ changelog {
     //1.16.5-1.1.1.1b
     //1.18-1.0r
     //1.19-1.0.0a
-    headerParserRegex = ~/^\d{1,2}\.\d{1,2}(\.\d{1,2})?-\d{1,2}(\.\d{1,2}){0,3}[a-zA-Z]$/
+    headerParserRegex = ~/\d+(\.\d+){1,2}-\d+(\.\d+){1,3}\w/
     itemPrefix = "-"
     keepUnreleasedSection = true
     unreleasedTerm = "[Unreleased]"
@@ -345,7 +341,7 @@ compileTestModJava {
     dependsOn(compileJava)
 }
 
-tasks.register('setupServer', Copy) {
+task setupServer(type: Copy) {
     group "test server"
     description "Sets up the environment for the test server."
 
@@ -381,25 +377,22 @@ test {
 }
 
 afterEvaluate {
-    tasks.withType(JavaCompile).tap {
-        configureEach {
-            options.compilerArgs << "-Xmaxerrs" << "2000"
-        }
+    tasks.withType(JavaCompile) {
+        options.compilerArgs << "-Xmaxerrs" << "2000"
     }
 }
 
 jar {
     manifest({
-        attributes([
-                "Specification-Title"     : "advancedperipherals",
-                "Specification-Vendor"    : "Srendi",
-                "Specification-Version"   : "${version}",
-                "Implementation-Title"    : "advancedperipherals",
-                "Implementation-Version"  : "${version}",
-                "Implementation-Vendor"   : "Srendi",
-                "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
-        ])
+        attributes(["Specification-Title"     : "advancedperipherals",
+                    "Specification-Vendor"    : "Srendi",
+                    "Specification-Version"   : "${version}",
+                    "Implementation-Title"    : "advancedperipherals",
+                    "Implementation-Version"  : "${version}",
+                    "Implementation-Vendor"   : "Srendi",
+                    "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")])
     })
+    archiveFileName = "AdvancedPeripherals-${minecraft_version}-${mod_version}.jar"
 }
 
 jar.finalizedBy('reobfJar')
@@ -429,7 +422,8 @@ curseforge {
 }
 
 modrinth {
-    token = modrinthKey // This is the default. Remember to have the MODRINTH_TOKEN environment variable set or else this will fail, or set it to whatever you want - just make sure it stays private!
+    token = modrinthKey
+    // This is the default. Remember to have the MODRINTH_TOKEN environment variable set or else this will fail, or set it to whatever you want - just make sure it stays private!
     projectId = 'SOw6jD6x' // This can be the project ID or the slug. Either will work!
     versionNumber = "${minecraft_version}-${project.version}"
     versionName = "Advanced Peripherals ${minecraft_version} ${version}"
@@ -448,15 +442,25 @@ modrinth {
 publishing {
     repositories {
         maven {
-            url "https://maven.pkg.jetbrains.space/intelligence/p/advancedperipherals/ap-repository"
+            name="space"
+            url "https://packages.intelligence-modding.de/maven/p/advanced-peripherals/ap-repository"
             credentials {
                 username = spaceUsername
                 password = spacePassword
             }
         }
+        maven {
+            name="github"
+            url "https://maven.pkg.github.com/SirEndii/AdvancedPeripherals"
+            credentials {
+                username = secretEnv["GH_ACTOR"] ?: System.getenv("GH_ACTOR") ?: ''
+                password = secretEnv["GH_TOKEN"] ?: System.getenv("GH_TOKEN") ?: ''
+            }
+        }
     }
     publications {
         gpr(MavenPublication) {
+            artifactId = "advancedperipherals"
             from(components.java)
         }
     }

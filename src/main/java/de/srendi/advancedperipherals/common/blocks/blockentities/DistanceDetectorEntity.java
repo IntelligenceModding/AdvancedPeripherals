@@ -104,13 +104,13 @@ public class DistanceDetectorEntity extends PeripheralBlockEntity<DistanceDetect
     @Override
     public AABB getRenderBoundingBox() {
         Direction direction = getBlockState().getValue(BaseBlock.ORIENTATION).front();
-        return AABB.ofSize(getBlockPos().getCenter(), direction.getStepX() * currentDistance + 1, direction.getStepY() * currentDistance + 1, direction.getStepZ() * currentDistance + 1)
+        return AABB.ofSize(Vec3.atCenterOf(getBlockPos()), direction.getStepX() * currentDistance + 1, direction.getStepY() * currentDistance + 1, direction.getStepZ() * currentDistance + 1)
                 .move(direction.getStepX() * currentDistance / 2, direction.getStepY() * currentDistance / 2, direction.getStepZ() * currentDistance / 2);
     }
 
     public double calculateDistance() {
         Direction direction = getBlockState().getValue(BaseBlock.ORIENTATION).front();
-        Vec3 center = getBlockPos().getCenter();
+        Vec3 center = Vec3.atCenterOf(getBlockPos());
         Vec3 from = center.add(direction.getStepX() * 0.501, direction.getStepY() * 0.501, direction.getStepZ() * 0.501);
         Vec3 to = from.add(direction.getStepX() * maxRange, direction.getStepY() * maxRange, direction.getStepZ() * maxRange);
         HitResult result = getResult(to, from);
@@ -133,7 +133,7 @@ public class DistanceDetectorEntity extends PeripheralBlockEntity<DistanceDetect
         if (result.getType() != HitResult.Type.MISS) {
             if (result instanceof BlockHitResult blockHitResult) {
                 BlockState resultBlock = getLevel().getBlockState(blockHitResult.getBlockPos());
-                distance = distManhattan(blockHitResult.getBlockPos().getCenter(), center);
+                distance = distManhattan(Vec3.atCenterOf(blockHitResult.getBlockPos()), center);
 
                 distance = amendDistance(resultBlock, direction, distance);
             }

@@ -1,15 +1,15 @@
 package de.srendi.advancedperipherals.common.items;
 
 import com.google.common.base.Objects;
+import dan200.computercraft.ComputerCraft;
 import dan200.computercraft.api.ComputerCraftAPI;
-import dan200.computercraft.api.filesystem.Mount;
+import dan200.computercraft.api.filesystem.IWritableMount;
 import dan200.computercraft.api.media.IMedia;
 import dan200.computercraft.core.computer.ComputerSide;
 import dan200.computercraft.shared.computer.core.ComputerFamily;
 import dan200.computercraft.shared.computer.core.ServerComputerRegistry;
 import dan200.computercraft.shared.computer.core.ServerContext;
 import dan200.computercraft.shared.computer.items.IComputerItem;
-import dan200.computercraft.shared.config.Config;
 import dan200.computercraft.shared.network.container.ComputerContainerData;
 import dan200.computercraft.shared.util.IDAssigner;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
@@ -105,6 +105,13 @@ public class SmartGlassesItem extends ArmorItem implements IComputerItem, IMedia
             changed = true;
             computer.setEntity(entity);
         }
+
+        ItemStack computerStack = computer.getStack();
+        if (computerStack != stack) {
+            changed = true;
+            computer.setStack(stack);
+        }
+
         return changed;
     }
 
@@ -139,7 +146,7 @@ public class SmartGlassesItem extends ArmorItem implements IComputerItem, IMedia
             computer.turnOn();
 
             LazyOptional<IItemHandler> itemHandler = glasses.getCapability(ForgeCapabilities.ITEM_HANDLER);
-            if (itemHandler.resolve().isEmpty()) {
+            if (!itemHandler.isPresent() || itemHandler.resolve().isEmpty()) {
                 AdvancedPeripherals.debug("There was an issue with the item handler of the glasses while trying to open the gui");
                 return InteractionResultHolder.sidedSuccess(player.getItemInHand(hand), world.isClientSide);
             }
@@ -188,11 +195,11 @@ public class SmartGlassesItem extends ArmorItem implements IComputerItem, IMedia
         if (computer == null) {
             int computerID = getComputerID(stack);
             if (computerID < 0) {
-                computerID = ComputerCraftAPI.createUniqueNumberedSaveDir(level.getServer(), IDAssigner.COMPUTER);
+                computerID = ComputerCraftAPI.createUniqueNumberedSaveDir(level, IDAssigner.COMPUTER);
                 setComputerID(stack, computerID);
             }
 
-            computer = new SmartGlassesComputer(level, entity.blockPosition(), getComputerID(stack), getLabel(stack), getFamily());
+            computer = new SmartGlassesComputer(level, getComputerID(stack), getLabel(stack), getFamily());
 
             setInstanceID(stack, computer.register());
             setSessionID(stack, registry.getSessionID());
@@ -237,10 +244,10 @@ public class SmartGlassesItem extends ArmorItem implements IComputerItem, IMedia
 
     @Nullable
     @Override
-    public Mount createDataMount(ItemStack stack, ServerLevel level) {
+    public IWritableMount createDataMount(@NotNull ItemStack stack, @NotNull Level level) {
         int id = getComputerID(stack);
         if (id >= 0) {
-            return ComputerCraftAPI.createSaveDirMount(level.getServer(), "computer/" + id, Config.computerSpaceLimit);
+            return ComputerCraftAPI.createSaveDirMount(level, "computer/" + id, ComputerCraft.computerSpaceLimit);
         }
         return null;
     }

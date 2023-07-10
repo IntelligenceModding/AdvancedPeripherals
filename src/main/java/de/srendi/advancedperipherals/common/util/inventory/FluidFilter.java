@@ -2,9 +2,10 @@ package de.srendi.advancedperipherals.common.util.inventory;
 
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.core.apis.TableHelper;
+import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.util.NBTUtil;
 import de.srendi.advancedperipherals.common.util.Pair;
-import net.minecraft.core.registries.Registries;
+import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
@@ -24,17 +25,20 @@ public class FluidFilter {
     private int count = 1000;
     private String fingerprint = "";
 
+    private FluidFilter() {
+    }
+
     public static Pair<FluidFilter, String> parse(Map<?, ?> item) {
-        FluidFilter itemArgument = empty();
+        FluidFilter fluidFilter = empty();
         // If the map is empty, return a filter without any filters
         if (item.size() == 0)
-            return Pair.of(itemArgument, null);
+            return Pair.of(fluidFilter, null);
         if (item.containsKey("name")) {
             try {
                 String name = TableHelper.getStringField(item, "name");
                 if (name.startsWith("#")) {
-                    itemArgument.tag = TagKey.create(Registries.FLUID, new ResourceLocation(name.substring(1)));
-                } else if ((itemArgument.fluid = ItemUtil.getRegistryEntry(name, ForgeRegistries.FLUIDS)) == null) {
+                    fluidFilter.tag = TagKey.create(Registry.FLUID_REGISTRY, new ResourceLocation(name.substring(1)));
+                } else if ((fluidFilter.fluid = ItemUtil.getRegistryEntry(name, ForgeRegistries.FLUIDS)) == null) {
                     return Pair.of(null, "FLUID_NOT_FOUND");
                 }
             } catch (LuaException luaException) {
@@ -43,27 +47,28 @@ public class FluidFilter {
         }
         if (item.containsKey("nbt")) {
             try {
-                itemArgument.nbt = NBTUtil.fromText(TableHelper.getStringField(item, "nbt"));
+                fluidFilter.nbt = NBTUtil.fromText(TableHelper.getStringField(item, "nbt"));
             } catch (LuaException luaException) {
                 return Pair.of(null, "NO_VALID_NBT");
             }
         }
         if (item.containsKey("fingerprint")) {
             try {
-                itemArgument.fingerprint = TableHelper.getStringField(item, "fingerprint");
+                fluidFilter.fingerprint = TableHelper.getStringField(item, "fingerprint");
             } catch (LuaException luaException) {
                 return Pair.of(null, "NO_VALID_FINGERPRINT");
             }
         }
         if (item.containsKey("count")) {
             try {
-                itemArgument.count = TableHelper.getIntField(item, "count");
+                fluidFilter.count = TableHelper.getIntField(item, "count");
             } catch (LuaException luaException) {
                 return Pair.of(null, "NO_VALID_COUNT");
             }
         }
+        AdvancedPeripherals.debug("Parsed fluid filter: " + fluidFilter);
 
-        return Pair.of(itemArgument, null);
+        return Pair.of(fluidFilter, null);
     }
 
     public static FluidFilter fromStack(FluidStack stack) {
@@ -105,7 +110,10 @@ public class FluidFilter {
         }
         if (tag != null && !stack.getFluid().is(tag))
             return false;
-        return nbt == null || stack.getOrCreateTag().equals(nbt);
+        if (nbt != null && !stack.getOrCreateTag().equals(nbt) && (fluid == Fluids.EMPTY || stack.getFluid().isSame(fluid)))
+            return false;
+
+        return true;
     }
 
     public int getCount() {
@@ -118,5 +126,16 @@ public class FluidFilter {
 
     public Tag getNbt() {
         return nbt;
+    }
+
+    @Override
+    public String toString() {
+        return "FluidFilter{" +
+                "fluid=" + fluid +
+                ", tag=" + tag +
+                ", nbt=" + nbt +
+                ", count=" + count +
+                ", fingerprint='" + fingerprint + '\'' +
+                '}';
     }
 }

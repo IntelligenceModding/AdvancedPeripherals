@@ -5,14 +5,14 @@ import dan200.computercraft.api.turtle.TurtleUpgradeSerialiser;
 import de.srendi.advancedperipherals.common.setup.APBlocks;
 import de.srendi.advancedperipherals.common.setup.APItems;
 import de.srendi.advancedperipherals.common.setup.CCRegistration;
-import net.minecraft.data.PackOutput;
+import net.minecraft.data.DataGenerator;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
 
 public class TurtleUpgradesProvider extends TurtleUpgradeDataProvider {
 
-    public TurtleUpgradesProvider(PackOutput generator) {
+    public TurtleUpgradesProvider(DataGenerator generator) {
         super(generator);
     }
 

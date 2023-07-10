@@ -19,7 +19,7 @@ import org.jetbrains.annotations.Nullable;
 public class PlayerDetectorBlock extends APBlockEntityBlock<PlayerDetectorEntity> {
 
     public PlayerDetectorBlock() {
-        super(APBlockEntityTypes.PLAYER_DETECTOR, false);
+        super(APBlockEntityTypes.PLAYER_DETECTOR, true);
     }
 
     @Nullable
@@ -35,7 +35,7 @@ public class PlayerDetectorBlock extends APBlockEntityBlock<PlayerDetectorEntity
         BlockEntity tileEntity = levelIn.getBlockEntity(pos);
         if (tileEntity instanceof PlayerDetectorEntity entity) {
             for (IComputerAccess computer : entity.getConnectedComputers()) {
-                computer.queueEvent("playerClick", player.getName().getString());
+                computer.queueEvent("playerClick", player.getName().getString(), computer.getAttachmentName());
             }
         }
 

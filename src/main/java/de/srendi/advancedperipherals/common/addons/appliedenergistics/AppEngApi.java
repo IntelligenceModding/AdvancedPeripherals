@@ -14,12 +14,13 @@ import appeng.blockentity.storage.DriveBlockEntity;
 import appeng.items.storage.BasicStorageCell;
 import dan200.computercraft.shared.util.NBTUtil;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
+import de.srendi.advancedperipherals.common.addons.APAddons;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
 import de.srendi.advancedperipherals.common.util.Pair;
 import de.srendi.advancedperipherals.common.util.inventory.FluidFilter;
-import de.srendi.advancedperipherals.common.util.inventory.FluidUtil;
 import de.srendi.advancedperipherals.common.util.inventory.ItemFilter;
 import de.srendi.advancedperipherals.common.util.inventory.ItemUtil;
+import io.github.projectet.ae2things.item.DISKDrive;
 import it.unimi.dsi.fastutil.objects.Object2LongMap;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
@@ -110,6 +111,8 @@ public class AppEngApi {
     }
 
     public static <T extends AEKey> Map<String, Object> getObjectFromStack(Pair<Long, T> stack, @Nullable ICraftingService service) {
+        if (stack.getRight() == null)
+            return Collections.emptyMap();
         if (stack.getRight() instanceof AEItemKey itemKey)
             return getObjectFromItemStack(Pair.of(stack.getLeft(), itemKey), service);
         if (stack.getRight() instanceof AEFluidKey fluidKey)
@@ -171,35 +174,13 @@ public class AppEngApi {
     }
 
     public static Map<String, Object> getObjectFromGenericStack(GenericStack stack) {
+        if (stack.what() == null)
+            return Collections.emptyMap();
         if (stack.what() instanceof AEItemKey aeItemKey)
             return getObjectFromItemStack(Pair.of(stack.amount(), aeItemKey), null);
         if (stack.what() instanceof AEFluidKey aeFluidKey)
             return getObjectFromFluidStack(Pair.of(stack.amount(), aeFluidKey), null);
         return Collections.emptyMap();
-    }
-
-    public static CompoundTag findMatchingTag(FluidStack stack, String nbtHash, MEStorage monitor) {
-        for (Object2LongMap.Entry<AEKey> aeKey : monitor.getAvailableStacks()) {
-            if (aeKey.getKey() instanceof AEFluidKey fluidKey && aeKey.getLongValue() > 0 && fluidKey.getFluid() == stack.getFluid()) {
-                CompoundTag tag = fluidKey.toStack(1).getTag();
-                String hash = NBTUtil.getNBTHash(tag);
-                if (nbtHash.equals(hash))
-                    return tag.copy();
-
-            }
-        }
-        return null;
-    }
-
-    public static FluidStack findMatchingFluidFingerprint(String fingerprint, MEStorage monitor) {
-        for (Object2LongMap.Entry<AEKey> aeKey : monitor.getAvailableStacks()) {
-            if (!(aeKey.getKey() instanceof AEFluidKey fluidKey))
-                continue;
-            if (aeKey.getLongValue() > 0 && fingerprint.equals(FluidUtil.getFingerprint(fluidKey.toStack(1)))) {
-                return fluidKey.toStack((int) aeKey.getLongValue());
-            }
-        }
-        return null;
     }
 
     public static MEStorage getMonitor(IGridNode node) {
@@ -264,6 +245,10 @@ public class AppEngApi {
                 if (stack.getItem() instanceof BasicStorageCell cell) {
                     if (cell.getKeyType().getClass().isAssignableFrom(AEKeyType.items().getClass())) {
                         total += cell.getBytes(null);
+                    }
+                } else if (APAddons.aeThingsLoaded && stack.getItem() instanceof DISKDrive disk) {
+                    if (disk.getKeyType().toString().equals("ae2:i")) {
+                        total += disk.getBytes(null);
                     }
                 }
             }
@@ -358,6 +343,12 @@ public class AppEngApi {
                         long numBucketsInCell = stack.getTag().getLong("ic") / 1000;
 
                         used += ((int) Math.ceil(((double) numBucketsInCell) / 8)) + ((long) bytesPerType * numOfType);
+                    } else if (APAddons.aeThingsLoaded && stack.getItem() instanceof DISKDrive disk) {
+                        if (disk.getKeyType().toString().equals("ae2:i")) {
+                            if (stack.getTag() == null) continue;
+                            long numItemsInCell = stack.getTag().getLong("ic");
+                            used += ((int) Math.ceil(((double) numItemsInCell) / 8));
+                        }
                     }
                 }
             }
@@ -393,6 +384,8 @@ public class AppEngApi {
 
                 if (stack.getItem() instanceof BasicStorageCell cell) {
                     items.add(getObjectFromCell(cell, stack));
+                } else if (APAddons.aeThingsLoaded && stack.getItem() instanceof DISKDrive disk) {
+                    items.add(getObjectFromDisk(disk, stack));
                 }
             }
         }
@@ -416,6 +409,25 @@ public class AppEngApi {
         map.put("cellType", cellType);
         map.put("bytesPerType", cell.getBytesPerType(null));
         map.put("totalBytes", cell.getBytes(null));
+
+        return map;
+    }
+
+    private static Map<String, Object> getObjectFromDisk(DISKDrive drive, ItemStack stack) {
+        Map<String, Object> map = new HashMap<>();
+
+        map.put("item", stack.getItem().toString());
+
+        String cellType = "";
+
+        if (drive.getKeyType().toString().equals("ae2:i")) {
+            cellType = "item";
+        } else if (drive.getKeyType().toString().equals("ae2:f")) {
+            cellType = "fluid";
+        }
+
+        map.put("cellType", cellType);
+        map.put("totalBytes", drive.getBytes(null));
 
         return map;
     }

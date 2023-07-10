@@ -50,15 +50,15 @@ public class InventoryUtil {
         // The logic changes with storage systems since these systems do not have slots
         if (inventoryFrom instanceof IStorageSystemItemHandler storageSystemHandler) {
             for (int i = toSlot == -1 ? 0 : toSlot; i < (toSlot == -1 ? inventoryTo.getSlots() : toSlot + 1); i++) {
-                ItemStack extracted = storageSystemHandler.extractItem(filter, true);
+                ItemStack extracted = storageSystemHandler.extractItem(filter, filter.getCount(), true);
                 ItemStack inserted;
                 if (toSlot == -1) {
                     inserted = ItemHandlerHelper.insertItem(inventoryTo, extracted, false);
                 } else {
                     inserted = inventoryTo.insertItem(toSlot, extracted, false);
                 }
-                amount -= inserted.getCount();
-                transferableAmount += storageSystemHandler.extractItem(filter, false).getCount();
+                amount -= extracted.getCount() - inserted.getCount();
+                transferableAmount += storageSystemHandler.extractItem(filter, extracted.getCount() - inserted.getCount(), false).getCount();
                 if (transferableAmount >= filter.getCount())
                     break;
             }

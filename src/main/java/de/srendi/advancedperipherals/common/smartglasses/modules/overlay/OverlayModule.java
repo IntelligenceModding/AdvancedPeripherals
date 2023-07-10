@@ -18,12 +18,13 @@ public class OverlayModule implements IModule {
     }
 
     @Override
-    public IModuleFunctions getMethods() {
+    public IModuleFunctions getFunctions(SmartGlassesAccess smartGlassesAccess) {
         return IModuleFunctions.EMPTY;
     }
 
     @Override
     public void tick(SmartGlassesAccess smartGlassesAccess) {
-
+        if(smartGlassesAccess.getEntity().getLevel().getGameTime() % 20 == 0)
+            AdvancedPeripherals.LOGGER.info("I'm an overlay module! And I'm alive!");
     }
 }

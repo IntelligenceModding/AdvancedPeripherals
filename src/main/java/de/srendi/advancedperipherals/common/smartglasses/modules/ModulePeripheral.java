@@ -13,6 +13,9 @@ public class ModulePeripheral extends BasePeripheral<ModulePeripheralOwner> {
 
     public ModulePeripheral(SmartGlassesComputer computer) {
         super(PERIPHERAL_TYPE, new ModulePeripheralOwner(computer));
+        getPeripheralOwner().getComputer().getModules().forEach(module ->
+                addPlugin(module.getFunctions(computer.getSmartGlassesAccess()))
+        );
     }
 
     @Override
@@ -20,7 +23,7 @@ public class ModulePeripheral extends BasePeripheral<ModulePeripheralOwner> {
         return true;
     }
 
-    @LuaFunction
+    @LuaFunction(mainThread = true)
     public final String[] getModules() {
         List<String> modules = new ArrayList<>(getPeripheralOwner().getComputer().getModules().size());
         getPeripheralOwner().getComputer().getModules().forEach(module -> modules.add(module.getName().toString()));
