@@ -468,7 +468,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
     @LuaFunction(mainThread = true)
     public final MethodResult isFluidCrafting(IArguments arguments) throws LuaException {
-        if (!isConnected())
+        if (!isAvailable())
             return notConnected();
 
         MEStorage monitor = AppEngApi.getMonitor(node);
@@ -489,7 +489,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
     @LuaFunction(mainThread = true)
     public final MethodResult isFluidCraftable(IArguments arguments) throws LuaException {
-        if (!isConnected())
+        if (!isAvailable())
             return notConnected();
 
         Pair<FluidFilter, String> filter = FluidFilter.parse(arguments.getTable(0));
@@ -524,16 +524,6 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         ICraftingCPU craftingCPU = getCraftingCPU(cpuName);
 
         return MethodResult.of(AppEngApi.isItemCrafting(monitor, grid, parsedFilter, craftingCPU));
-    }
-
-    @Override
-    public MethodResult isFluidCraftable(IArguments arguments) throws LuaException {
-        return null;
-    }
-
-    @Override
-    public MethodResult isFluidCrafting(IArguments arguments) throws LuaException {
-        return null;
     }
 
     @LuaFunction(mainThread = true)

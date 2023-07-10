@@ -6,8 +6,6 @@ import de.srendi.advancedperipherals.common.setup.APBlocks;
 import de.srendi.advancedperipherals.common.setup.APItems;
 import de.srendi.advancedperipherals.common.setup.CCRegistration;
 import net.minecraft.data.DataGenerator;
-import de.srendi.advancedperipherals.common.setup.Items;
-import net.minecraft.data.DataGenerator;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;

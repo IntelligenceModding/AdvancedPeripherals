@@ -1,12 +1,10 @@
 package de.srendi.advancedperipherals;
 
-import de.srendi.advancedperipherals.client.HudOverlayHandler;
-import de.srendi.advancedperipherals.common.addons.APAddons;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
-import de.srendi.advancedperipherals.common.setup.Blocks;
-import de.srendi.advancedperipherals.common.setup.Registration;
+import de.srendi.advancedperipherals.common.network.PacketHandler;
+import de.srendi.advancedperipherals.common.setup.APBlocks;
+import de.srendi.advancedperipherals.common.setup.APRegistration;
 import de.srendi.advancedperipherals.common.village.VillageStructures;
-import de.srendi.advancedperipherals.network.MNetwork;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
@@ -14,7 +12,6 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.Level;
@@ -36,7 +33,7 @@ public class AdvancedPeripherals {
         @Override
         @NotNull
         public ItemStack makeIcon() {
-            return new ItemStack(Blocks.CHAT_BOX.get());
+            return new ItemStack(APBlocks.CHAT_BOX.get());
         }
 
     };
