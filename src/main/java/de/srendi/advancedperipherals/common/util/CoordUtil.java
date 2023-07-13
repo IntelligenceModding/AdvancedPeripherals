@@ -18,7 +18,7 @@ import java.util.Locale;
 public class CoordUtil {
 
     public static boolean isInRange(@Nullable BlockPos pos, @Nullable Level world, @Nullable Player player, int range) {
-        // There are rare cases where these are null. For example if a player detector pocket computer runs while not in a player inventory
+        // There are rare cases where these can be null. For example if a player detector pocket computer runs while not in a player inventory
         // Fixes https://github.com/SirEndii/AdvancedPeripherals/issues/356
         if (pos == null || world == null || player == null)
             return false;
