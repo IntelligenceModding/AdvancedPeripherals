@@ -4,11 +4,14 @@ import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
 import de.srendi.advancedperipherals.common.util.DataStorageUtil;
 import de.srendi.advancedperipherals.lib.peripherals.IBasePeripheral;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 public abstract class ClockwiseAnimatedTurtleUpgrade<T extends IBasePeripheral<?>> extends PeripheralTurtleUpgrade<T> {
+
+    public static final String STORED_DATA_TAG = "storedData";
 
     protected ClockwiseAnimatedTurtleUpgrade(ResourceLocation id, ItemStack item) {
         super(id, item);
@@ -40,6 +43,30 @@ public abstract class ClockwiseAnimatedTurtleUpgrade<T extends IBasePeripheral<?
     // Optional callbacks for addons based on AP
     public void chargeConsumingCallback() {
 
+    }
+
+    @Override
+    public ItemStack getUpgradeItem(CompoundTag upgradeData) {
+        if (upgradeData.isEmpty()) return getCraftingItem();
+        var baseItem = getCraftingItem().copy();
+        baseItem.addTagElement(STORED_DATA_TAG, upgradeData);
+        return baseItem;
+    }
+
+    @Override
+    public CompoundTag getUpgradeData(ItemStack stack) {
+        var storedData = stack.getTagElement(STORED_DATA_TAG);
+        if (storedData == null)
+            return new CompoundTag();
+        return storedData;
+    }
+
+    @Override
+    public boolean isItemSuitable(ItemStack stack) {
+        if (stack.getTagElement(STORED_DATA_TAG) == null) return super.isItemSuitable(stack);
+        var tweakedStack = stack.copy();
+        tweakedStack.getOrCreateTag().remove(STORED_DATA_TAG);
+        return super.isItemSuitable(tweakedStack);
     }
 
     @Override
