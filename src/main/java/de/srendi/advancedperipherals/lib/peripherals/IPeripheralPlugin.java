@@ -1,7 +1,8 @@
 package de.srendi.advancedperipherals.lib.peripherals;
 
 import dan200.computercraft.api.peripheral.IPeripheral;
-import dan200.computercraft.core.asm.PeripheralMethod;
+import dan200.computercraft.shared.computer.core.ServerContext;
+import net.minecraftforge.server.ServerLifecycleHooks;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -9,7 +10,9 @@ import java.util.stream.Collectors;
 
 public interface IPeripheralPlugin {
     default List<BoundMethod> getMethods() {
-        return PeripheralMethod.GENERATOR.getMethods(this.getClass()).stream().map(named -> new BoundMethod(this, named)).collect(Collectors.toList());
+        return ServerContext.get(ServerLifecycleHooks.getCurrentServer()).peripheralMethods().getSelfMethods(this).entrySet().stream().map(
+                entry -> new BoundMethod(this, entry.getKey(), entry.getValue())
+        ).collect(Collectors.toList());
     }
 
     default @Nullable IPeripheralOperation<?>[] getOperations() {

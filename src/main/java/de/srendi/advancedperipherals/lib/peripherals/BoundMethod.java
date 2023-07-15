@@ -5,8 +5,7 @@ import dan200.computercraft.api.lua.ILuaContext;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.MethodResult;
 import dan200.computercraft.api.peripheral.IComputerAccess;
-import dan200.computercraft.core.asm.NamedMethod;
-import dan200.computercraft.core.asm.PeripheralMethod;
+import dan200.computercraft.core.methods.PeripheralMethod;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
@@ -16,10 +15,10 @@ public class BoundMethod {
     private final String name;
     private final PeripheralMethod method;
 
-    public BoundMethod(@NotNull Object target, @NotNull NamedMethod<PeripheralMethod> method) {
+    public BoundMethod(@NotNull Object target, @NotNull String name, @NotNull PeripheralMethod method) {
         this.target = target;
-        this.name = method.getName();
-        this.method = method.getMethod();
+        this.name = name;
+        this.method = method;
     }
 
     @NotNull
