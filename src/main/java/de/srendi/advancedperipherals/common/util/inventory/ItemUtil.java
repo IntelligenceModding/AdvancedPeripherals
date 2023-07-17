@@ -1,6 +1,6 @@
 package de.srendi.advancedperipherals.common.util.inventory;
 
-import dan200.computercraft.shared.Registry;
+import dan200.computercraft.shared.ModRegistry;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.util.StringUtil;
 import net.minecraft.ResourceLocationException;
@@ -21,11 +21,11 @@ import java.util.List;
 
 public class ItemUtil {
 
-    public static final Item TURTLE_NORMAL = Registry.ModItems.TURTLE_NORMAL.get();
-    public static final Item TURTLE_ADVANCED = Registry.ModItems.TURTLE_ADVANCED.get();
+    public static final Item TURTLE_NORMAL = ModRegistry.Items.TURTLE_NORMAL.get();
+    public static final Item TURTLE_ADVANCED = ModRegistry.Items.TURTLE_ADVANCED.get();
 
-    public static final Item POCKET_NORMAL = Registry.ModItems.POCKET_COMPUTER_NORMAL.get();
-    public static final Item POCKET_ADVANCED = Registry.ModItems.POCKET_COMPUTER_ADVANCED.get();
+    public static final Item POCKET_NORMAL = ModRegistry.Items.POCKET_COMPUTER_NORMAL.get();
+    public static final Item POCKET_ADVANCED = ModRegistry.Items.POCKET_COMPUTER_ADVANCED.get();
 
     private ItemUtil() {
     }

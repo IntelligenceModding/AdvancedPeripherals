@@ -1,6 +1,5 @@
 package de.srendi.advancedperipherals.common.items.base;
 
-import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.client.KeyBindings;
 import de.srendi.advancedperipherals.common.util.EnumColor;
 import de.srendi.advancedperipherals.common.util.TranslationUtil;
@@ -24,11 +23,11 @@ public abstract class BaseItem extends Item {
     private Component description;
 
     public BaseItem(Properties properties) {
-        super(properties.tab(AdvancedPeripherals.TAB));
+        super(properties);
     }
 
     public BaseItem() {
-        super(new Properties().tab(AdvancedPeripherals.TAB));
+        super(new Properties());
     }
 
     @Override

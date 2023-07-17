@@ -2,11 +2,17 @@ package de.srendi.advancedperipherals.common.data;
 
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.setup.Registration;
+import net.minecraft.Util;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.data.DataGenerator;
+import net.minecraft.data.PackOutput;
+import net.minecraft.data.registries.VanillaRegistries;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.data.event.GatherDataEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+
+import java.util.concurrent.CompletableFuture;
 
 @Mod.EventBusSubscriber(modid = AdvancedPeripherals.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class DataGenerators {
@@ -17,17 +23,19 @@ public class DataGenerators {
     @SubscribeEvent
     public static void genData(GatherDataEvent event) {
         DataGenerator generator = event.getGenerator();
+        PackOutput packOutput = event.getGenerator().getPackOutput();
         ExistingFileHelper existingFileHelper = event.getExistingFileHelper();
 
-        generator.addProvider(event.includeServer(), new BlockTagsProvider(generator, existingFileHelper, Registration.BLOCKS));
-        generator.addProvider(event.includeServer(), new RecipesProvider(generator));
-        generator.addProvider(event.includeServer(), new BlockLootTablesProvider(generator));
-        generator.addProvider(event.includeServer(), new TurtleUpgradesProvider(generator));
-        generator.addProvider(event.includeServer(), new PocketUpgradesProvider(generator));
-        generator.addProvider(event.includeServer(), new PoiTypeProvider(generator, existingFileHelper));
-        generator.addProvider(event.includeServer(), new BlockStatesAndModelsProvider(generator, existingFileHelper));
+        CompletableFuture<HolderLookup.Provider> completablefuture = CompletableFuture.supplyAsync(VanillaRegistries::createLookup, Util.backgroundExecutor());
+        generator.addProvider(event.includeServer(), new BlockTagsProvider(packOutput, completablefuture, existingFileHelper, Registration.BLOCKS));
+        generator.addProvider(event.includeServer(), new RecipesProvider(packOutput));
+        generator.addProvider(event.includeServer(), new BlockLootTablesProvider(packOutput));
+        generator.addProvider(event.includeServer(), new TurtleUpgradesProvider(packOutput));
+        generator.addProvider(event.includeServer(), new PocketUpgradesProvider(packOutput));
+        generator.addProvider(event.includeServer(), new PoiTypeProvider(packOutput, completablefuture, existingFileHelper));
+        generator.addProvider(event.includeServer(), new BlockStatesAndModelsProvider(packOutput, existingFileHelper));
 
-        generator.addProvider(event.includeClient(), new EnUsLanguageProvider(generator));
+        generator.addProvider(event.includeClient(), new EnUsLanguageProvider(packOutput));
     }
 
 }

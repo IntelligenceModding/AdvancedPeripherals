@@ -204,17 +204,17 @@ public class ColonyPeripheral extends BasePeripheral<IPeripheralOwner> {
     }
 
     @LuaFunction(mainThread = true)
-    public final Object getResearch() throws LuaException, CommandSyntaxException {
+    public final Object getResearch() throws LuaException {
         IColony colony = getColony();
 
         IGlobalResearchTree globalTree = IGlobalResearchTree.getInstance();
 
         Map<String, Object> result = new HashMap<>();
-       for (ResourceLocation branch : globalTree.getBranches()) {
+        for (ResourceLocation branch : globalTree.getBranches()) {
             try {
                 result.put(branch.toString(), MineColonies.getResearch(branch, globalTree.getPrimaryResearch(branch), colony));
             } catch (CommandSyntaxException ex) {
-                AdvancedPeripherals.debug("Error getting research for branch " + branch.toString() + ": " + ex.getMessage(), org.apache.logging.log4j.Level.WARN);
+                AdvancedPeripherals.debug("Error getting research for branch " + branch + ": " + ex.getMessage(), org.apache.logging.log4j.Level.WARN);
                 ex.printStackTrace();
             }
         }

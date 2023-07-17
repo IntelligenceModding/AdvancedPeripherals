@@ -115,7 +115,7 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
 
             MutableComponent preparedMessage = appendPrefix(arguments.optString(1, APConfig.PERIPHERALS_CONFIG.defaultChatBoxPrefix.get()), arguments.optString(2, "[]"), arguments.optString(3, "")).append(component);
             for (ServerPlayer player : ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers()) {
-                if (!APConfig.PERIPHERALS_CONFIG.chatBoxMultiDimensional.get() && player.getLevel().dimension() != dimension)
+                if (!APConfig.PERIPHERALS_CONFIG.chatBoxMultiDimensional.get() && player.level().dimension() != dimension)
                     continue;
                 if (range == -1 || CoordUtil.isInRange(getPos(), getLevel(), player, range))
                     player.sendSystemMessage(preparedMessage);
@@ -137,7 +137,7 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
 
             MutableComponent preparedMessage = appendPrefix(arguments.optString(1, APConfig.PERIPHERALS_CONFIG.defaultChatBoxPrefix.get()), arguments.optString(2, "[]"), arguments.optString(3, "")).append(message);
             for (ServerPlayer player : ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers()) {
-                if (!APConfig.PERIPHERALS_CONFIG.chatBoxMultiDimensional.get() && player.getLevel().dimension() != dimension)
+                if (!APConfig.PERIPHERALS_CONFIG.chatBoxMultiDimensional.get() && player.level().dimension() != dimension)
                     continue;
                 if (range == -1 || CoordUtil.isInRange(getPos(), getLevel(), player, range))
                     player.sendSystemMessage(preparedMessage);
@@ -167,7 +167,7 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
                 return MethodResult.of(null, "incorrect bracket string (e.g. [], {}, <>, ...)");
 
             MutableComponent preparedMessage = appendPrefix(arguments.optString(2, APConfig.PERIPHERALS_CONFIG.defaultChatBoxPrefix.get()), arguments.optString(3, "[]"), arguments.optString(4, "")).append(component);
-            if (!APConfig.PERIPHERALS_CONFIG.chatBoxMultiDimensional.get() && player.getLevel().dimension() != dimension)
+            if (!APConfig.PERIPHERALS_CONFIG.chatBoxMultiDimensional.get() && player.level().dimension() != dimension)
                 return MethodResult.of(false, "NOT_SAME_DIMENSION");
 
             if (range == -1 || CoordUtil.isInRange(getPos(), getLevel(), player, range))
@@ -193,7 +193,7 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
                 return MethodResult.of(null, "incorrect bracket string (e.g. [], {}, <>, ...)");
 
             MutableComponent preparedMessage = appendPrefix(arguments.optString(2, APConfig.PERIPHERALS_CONFIG.defaultChatBoxPrefix.get()), arguments.optString(3, "[]"), arguments.optString(4, "")).append(message);
-            if (!APConfig.PERIPHERALS_CONFIG.chatBoxMultiDimensional.get() && player.getLevel().dimension() != dimension)
+            if (!APConfig.PERIPHERALS_CONFIG.chatBoxMultiDimensional.get() && player.level().dimension() != dimension)
                 return MethodResult.of(false, "NOT_SAME_DIMENSION");
 
             if (range == -1 || CoordUtil.isInRange(getPos(), getLevel(), player, range))

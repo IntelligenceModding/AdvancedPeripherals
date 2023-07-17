@@ -1,6 +1,5 @@
 package de.srendi.advancedperipherals.common.items.base;
 
-import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.client.KeyBindings;
 import de.srendi.advancedperipherals.common.util.EnumColor;
 import de.srendi.advancedperipherals.common.util.TranslationUtil;
@@ -19,11 +18,11 @@ public abstract class BaseBlockItem extends BlockItem {
     private Component description;
 
     public BaseBlockItem(Block blockIn, Properties properties) {
-        super(blockIn, properties.tab(AdvancedPeripherals.TAB));
+        super(blockIn, properties);
     }
 
     public BaseBlockItem(Block blockIn) {
-        super(blockIn, new Properties().tab(AdvancedPeripherals.TAB));
+        super(blockIn, new Properties());
     }
 
     @Override

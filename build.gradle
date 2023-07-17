@@ -208,7 +208,7 @@ repositories {
         url = 'https://ldtteam.jfrog.io/ldtteam/modding'
     }
     maven {
-        name = "Modmaven"
+        name = "Modmaven Jei"
         url = 'https://modmaven.dev/'
     }
     maven {
@@ -294,11 +294,10 @@ dependencies {
     }
 
     // AE2 Things - removed until ported
-    // compileOnly "curse.maven:ae2things-609977:${ae2things_version}-sources"
-    // runtimeOnly fg.deobf("curse.maven:ae2things-609977:${ae2things_version}-sources")
+    implementation fg.deobf("curse.maven:ae2things-609977:${ae2things_version}-sources")
 
     // Botania
-    //compileOnly fg.deobf("vazkii.botania:Botania:${botania_version}")
+    compileOnly fg.deobf("vazkii.botania:Botania:${botania_version}")
 
 
     // Minecolonies
@@ -313,7 +312,12 @@ dependencies {
     //runtimeOnly fg.deobf("vazkii.patchouli:Patchouli:${patchouli_version}")
 
     // Create
-    compileOnly fg.deobf("com.simibubi.create:create-1.19.3:${create_version}:all")
+    compileOnly fg.deobf("com.simibubi.create:create-1.20.1:${create_version}:all")
+
+    //Powah
+    implementation fg.deobf("curse.maven:powah-633483:${powah_version}")
+    implementation fg.deobf("me.shedaniel.cloth:cloth-config-forge:11.1.106")
+    implementation fg.deobf("dev.architectury:architectury-forge:9.1.10")
 
     //Removed until fully ported
     //testImplementation fg.deobf("site.siredvin.ttoolkit:ttoolkit-${minecraft_version}:${ttoolkit_version}")

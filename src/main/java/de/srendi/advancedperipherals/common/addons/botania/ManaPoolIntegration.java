@@ -25,7 +25,8 @@ public class ManaPoolIntegration extends BlockEntityIntegrationPeripheral<ManaPo
 
     @LuaFunction(mainThread = true)
     public final int getMaxMana() {
-        return blockEntity.getMaxMana();
+        //TODO
+        return 0;
     }
 
     @LuaFunction(mainThread = true)

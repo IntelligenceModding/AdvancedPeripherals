@@ -6,7 +6,6 @@ import de.srendi.advancedperipherals.common.util.EnumColor;
 import de.srendi.advancedperipherals.lib.metaphysics.IFeedableAutomataCore;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
@@ -49,12 +48,12 @@ public class WeakAutomataCore extends APItem implements IFeedableAutomataCore {
         husbandrySoulRecord.ingredients.keySet().forEach(entityType -> AUTOMATA_CORE_REGISTRY.put(entityType, husbandrySoulRecord));
     }
 
-    public WeakAutomataCore(Properties properties, @Nullable ResourceLocation turtleID, @Nullable ResourceLocation pocketID) {
-        super(properties, turtleID, pocketID, APConfig.METAPHYSICS_CONFIG.enableWeakAutomataCore);
+    public WeakAutomataCore(Properties properties) {
+        super(properties, APConfig.METAPHYSICS_CONFIG.enableWeakAutomataCore);
     }
 
-    public WeakAutomataCore(@Nullable ResourceLocation turtleID, @Nullable ResourceLocation pocketID) {
-        super(turtleID, pocketID, APConfig.METAPHYSICS_CONFIG.enableWeakAutomataCore);
+    public WeakAutomataCore() {
+        super(APConfig.METAPHYSICS_CONFIG.enableWeakAutomataCore);
     }
 
     @Override
