@@ -1,3 +1,5 @@
+import net.darkhax.curseforgegradle.TaskPublishCurseForge
+
 import java.text.SimpleDateFormat
 
 buildscript {
@@ -21,7 +23,7 @@ buildscript {
 
 plugins {
     id "maven-publish"
-    id 'com.matthewprenger.cursegradle' version '1.4.0'
+    id 'net.darkhax.curseforgegradle' version '1.1.15'
     id 'org.jetbrains.changelog' version '1.2.1'
     id "com.modrinth.minotaur" version "2.+"
     id "org.jetbrains.kotlin.jvm" version "1.6.10"
@@ -397,29 +399,41 @@ jar {
 
 jar.finalizedBy('reobfJar')
 
-curseforge {
-    apiKey = curseforgeKey
+tasks.register('publishCurseForge', TaskPublishCurseForge, { task ->
+    setGroup("publishing")
+    setDescription("Upload Advabced Oeruogeraks to CurseForge")
 
-    project {
-        id = "431725"
-        releaseType = "${release_type}"
-        mainArtifact(jar) {
-            displayName = "Advanced Peripherals ${minecraft_version} ${version}"
-            relations {
-                requiredDependency 'cc-tweaked'
-                tool 'curios'
-            }
-        }
-        addGameVersion "${minecraft_version}"
+    // This token is used to authenticate with CurseForge. It should be handled
+    // with the same level of care and security as your actual password. You
+    // should never share your token with an untrusted source or publish it
+    // publicly to GitHub or embed it within a project. The best practice is to
+    // store this token in an environment variable or a build secret.
+    apiToken = curseforgeKey
+
+    // Tells CurseForgeGradle to publish the output of the jar task. This will
+    // return a UploadArtifact object that can be used to further configure the
+    // file.
+    task.upload(431725, jar) { file ->
         try {
-            changelog = "${project.changelog.get("${minecraft_version}-${project.version}").withHeader(false).toText()}"
-            changelogType = "markdown"
+            file.changelog = "${project.changelog.get("${minecraft_version}-${project.version}").withHeader(false).toText()}"
+            file.changelogType = "markdown"
         } catch (err) {
             System.out.println(err)
-            changelog = ""
+            file.changelog = ""
         }
+
+        addOptional(
+                'applied-energistics-2', 'curios', 'mekanism', 'refined-storage'
+        )
+
+        addRequirement(
+                'cc-tweaked'
+        )
+
+        releaseType = "${release_type}"
     }
-}
+    debugMode = true
+})
 
 modrinth {
     token = modrinthKey
