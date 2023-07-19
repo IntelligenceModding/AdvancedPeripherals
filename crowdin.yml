@@ -1,0 +1,3 @@
+files:
+  - source: /src/generated/resources/assets/advancedperipherals/lang/en_us.json
+    translation: /src/main/resources/assets/advancedperipherals/lang/%two_letters_code%.json
