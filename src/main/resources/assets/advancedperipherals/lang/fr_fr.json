@@ -39,7 +39,6 @@
   "item.advancedperipherals.tooltip.geo_scanner": "§7This block is able to scan the area around it",
   "item.advancedperipherals.tooltip.colony_integrator": "§7Ce bloc est capable d'interagir avec Mine Colonies",
   "item.advancedperipherals.tooltip.nbt_storage": "§7Ce bloc est capable de stocker des données nbt",
-  "item.advancedperipherals.tooltip.weak_automata_core": "§7Upgrade for turtle, that makes the turtle useful again",
   "item.advancedperipherals.tooltip.overpowered_weak_automata_core": "§7Version améliorée du noyau d'automates faible, qui fournit des utilisations surpuissantes ! Attention, la mise à niveau est très fragile.",
   "item.advancedperipherals.tooltip.overpowered_end_automata_core": "§7Version améliorée du noyau d'automates de l'End, qui offre des utilisations surpuissantes ! Attention, la mise à niveau est très fragile.",
   "item.advancedperipherals.tooltip.overpowered_husbandry_automata_core": "§7Version améliorée du noyau d'automates d'élevage, qui offre des utilisations maîtrisées ! Attention, la mise à niveau est très fragile.",
