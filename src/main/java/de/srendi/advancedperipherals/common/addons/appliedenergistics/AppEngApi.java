@@ -12,6 +12,7 @@ import appeng.api.storage.IStorageProvider;
 import appeng.api.storage.MEStorage;
 import appeng.blockentity.storage.DriveBlockEntity;
 import appeng.items.storage.BasicStorageCell;
+import appeng.parts.storagebus.StorageBusPart;
 import dan200.computercraft.shared.util.NBTUtil;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.addons.APAddons;
@@ -328,7 +329,6 @@ public class AppEngApi {
 
         Iterator<IGridNode> iterator = node.getGrid().getMachineNodes(DriveBlockEntity.class).iterator();
 
-        if (!iterator.hasNext()) return 0;
         while (iterator.hasNext()) {
             DriveBlockEntity entity = (DriveBlockEntity) iterator.next().getService(IStorageProvider.class);
             if (entity == null) continue;
@@ -354,6 +354,19 @@ public class AppEngApi {
             }
         }
 
+        iterator = node.getGrid().getMachineNodes(StorageBusPart.class).iterator();
+
+        while (iterator.hasNext()) {
+            StorageBusPart bus = (StorageBusPart) iterator.next().getService(IStorageProvider.class);
+            KeyCounter keyCounter = bus.getInternalHandler().getAvailableStacks();
+
+            for (Object2LongMap.Entry<AEKey> aeKey : keyCounter) {
+                if (aeKey.getKey() instanceof AEItemKey itemKey) {
+                    used += aeKey.getLongValue();
+                }
+            }
+        }
+
         return used;
     }
 
@@ -362,7 +375,6 @@ public class AppEngApi {
 
         Iterator<IGridNode> iterator = node.getGrid().getMachineNodes(DriveBlockEntity.class).iterator();
 
-        if (!iterator.hasNext()) return 0;
         while (iterator.hasNext()) {
             DriveBlockEntity entity = (DriveBlockEntity) iterator.next().getService(IStorageProvider.class);
             if (entity == null) continue;
@@ -388,6 +400,19 @@ public class AppEngApi {
                             used += ((int) Math.ceil(((double) numItemsInCell) / 8));
                         }
                     }
+                }
+            }
+        }
+
+        iterator = node.getGrid().getMachineNodes(StorageBusPart.class).iterator();
+
+        while (iterator.hasNext()) {
+            StorageBusPart bus = (StorageBusPart) iterator.next().getService(IStorageProvider.class);
+            KeyCounter keyCounter = bus.getInternalHandler().getAvailableStacks();
+
+            for (Object2LongMap.Entry<AEKey> aeKey : keyCounter) {
+                if (aeKey.getKey() instanceof AEFluidKey fluidKey) {
+                    used += aeKey.getLongValue();
                 }
             }
         }
