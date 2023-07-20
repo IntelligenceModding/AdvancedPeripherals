@@ -289,7 +289,7 @@ dependencies {
 
     //AE2 Things
     compileOnly fg.deobf("curse.maven:ae2things-609977:${ae2things_version}-sources")
-    //runtimeOnly fg.deobf("curse.maven:ae2things-609977:${ae2things_version}-sources")
+    runtimeOnly fg.deobf("curse.maven:ae2things-609977:${ae2things_version}-sources")
 
     // Botania
     implementation fg.deobf("vazkii.botania:Botania:${botania_version}")
