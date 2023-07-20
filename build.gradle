@@ -65,6 +65,8 @@ def static getenv(path = ".env") {
 def secretEnv = getenv()
 def curseforgeKey = secretEnv["CURSEFORGE_KEY"] ?: System.getenv("CURSEFORGE_KEY") ?: ''
 def modrinthKey = secretEnv["MODRINTH_KEY"] ?: System.getenv("MODRINTH_KEY")
+def repositoryName = secretEnv["PUBLIC_REP_NAME"] ?: System.getenv("PUBLIC_REP_NAME")
+def repositoryKey = secretEnv["PUBLIC_REP_KEY"] ?: System.getenv("PUBLIC_REP_KEY")
 
 sonarqube {
     properties {
@@ -287,18 +289,18 @@ dependencies {
 
     //AE2 Things
     compileOnly fg.deobf("curse.maven:ae2things-609977:${ae2things_version}-sources")
-    //runtimeOnly fg.deobf("curse.maven:ae2things-609977:${ae2things_version}-sources")
+    runtimeOnly fg.deobf("curse.maven:ae2things-609977:${ae2things_version}-sources")
 
     // Botania
     implementation fg.deobf("vazkii.botania:Botania:${botania_version}")
 
     // Minecolonies
     // Change to compileOnly when running `runData`
-    implementation fg.deobf("com.ldtteam:minecolonies:${minecolonies_version}")
-    implementation fg.deobf("com.ldtteam:structurize:${structurize_version}")
-    implementation fg.deobf("com.ldtteam:multi-piston:${multipiston_version}")
-    implementation fg.deobf("com.ldtteam:domum_ornamentum:${domumornamentum_version}:universal")
-    implementation fg.deobf("com.ldtteam:blockui:${blockui_version}")
+    compileOnly fg.deobf("com.ldtteam:minecolonies:${minecolonies_version}")
+    compileOnly fg.deobf("com.ldtteam:structurize:${structurize_version}")
+    compileOnly fg.deobf("com.ldtteam:multi-piston:${multipiston_version}")
+    compileOnly fg.deobf("com.ldtteam:domum_ornamentum:${domumornamentum_version}:universal")
+    compileOnly fg.deobf("com.ldtteam:blockui:${blockui_version}")
 
     //Patchouli
     runtimeOnly fg.deobf("vazkii.patchouli:Patchouli:${patchouli_version}")
@@ -462,24 +464,25 @@ publishing {
     repositories {
         maven {
             name="space"
-            url "https://packages.intelligence-modding.de/maven/p/advanced-peripherals/ap-repository"
+            url = "https://packages.intelligence-modding.de/maven/p/advanced-peripherals/ap-repository"
             credentials {
                 username = spaceUsername
                 password = spacePassword
             }
         }
         maven {
-            name="github"
-            url "https://maven.pkg.github.com/SirEndii/AdvancedPeripherals"
+            name = "public"
+            url = "https://mvn.intelligence-modding.de/intelligence"
             credentials {
-                username = secretEnv["GH_ACTOR"] ?: System.getenv("GH_ACTOR") ?: ''
-                password = secretEnv["GH_TOKEN"] ?: System.getenv("GH_TOKEN") ?: ''
+                username = repositoryName
+                password = repositoryKey
             }
         }
     }
     publications {
         gpr(MavenPublication) {
             artifactId = "advancedperipherals"
+            version = project.hasProperty('teamcityVersion') ? "${minecraft_version}-${mod_version}-DEV_${project.teamcityVersion}" : "${minecraft_version}-${mod_version}"
             from(components.java)
         }
     }

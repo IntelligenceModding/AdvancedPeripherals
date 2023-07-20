@@ -350,6 +350,12 @@ public class AppEngApi {
 
                         used += ((int) Math.ceil(((double) numItemsInCell) / 8)) + ((long) bytesPerType * numOfType);
                     }
+                } else if (APAddons.aeThingsLoaded && stack.getItem() instanceof DISKDrive disk) {
+                    if (disk.getKeyType().toString().equals("ae2:i")) {
+                        if (stack.getTag() == null) continue;
+                        long numItemsInCell = stack.getTag().getLong("ic");
+                        used += ((int) Math.ceil(((double) numItemsInCell) / 8));
+                    }
                 }
             }
         }
@@ -393,12 +399,6 @@ public class AppEngApi {
                         long numBucketsInCell = stack.getTag().getLong("ic") / 1000;
 
                         used += ((int) Math.ceil(((double) numBucketsInCell) / 8)) + ((long) bytesPerType * numOfType);
-                    } else if (APAddons.aeThingsLoaded && stack.getItem() instanceof DISKDrive disk) {
-                        if (disk.getKeyType().toString().equals("ae2:i")) {
-                            if (stack.getTag() == null) continue;
-                            long numItemsInCell = stack.getTag().getLong("ic");
-                            used += ((int) Math.ceil(((double) numItemsInCell) / 8));
-                        }
                     }
                 }
             }
