@@ -1,15 +1,10 @@
 package de.srendi.advancedperipherals.common.blocks.blockentities;
 
-import appeng.api.networking.GridFlags;
-import appeng.api.networking.GridHelper;
-import appeng.api.networking.IGridNode;
-import appeng.api.networking.IInWorldGridNodeHost;
-import appeng.api.networking.IManagedGridNode;
+import appeng.api.networking.*;
 import appeng.api.networking.crafting.ICraftingSimulationRequester;
 import appeng.api.networking.security.IActionHost;
 import appeng.api.networking.security.IActionSource;
 import appeng.api.util.AECableType;
-import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.addons.appliedenergistics.CraftJob;
 import de.srendi.advancedperipherals.common.addons.appliedenergistics.MeBridgeEntityListener;
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.MeBridgePeripheral;
@@ -28,13 +23,13 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class MeBridgeEntity extends PeripheralBlockEntity<MeBridgePeripheral> implements IActionSource, IActionHost, IInWorldGridNodeHost, ICraftingSimulationRequester {
 
-    private final List<CraftJob> jobs = new ArrayList<>();
+    private final List<CraftJob> jobs = new CopyOnWriteArrayList<>();
     private boolean initialized = false;
     private final IManagedGridNode mainNode = GridHelper.createManagedNode(this, MeBridgeEntityListener.INSTANCE);
 
@@ -60,14 +55,16 @@ public class MeBridgeEntity extends PeripheralBlockEntity<MeBridgePeripheral> im
                 mainNode.create(level, getBlockPos());
 
                 //peripheral can be null if `getCapability` was not called before
-                if (peripheral == null) peripheral = createPeripheral();
+                if (peripheral == null)
+                    peripheral = createPeripheral();
                 peripheral.setNode(mainNode);
                 initialized = true;
-                AdvancedPeripherals.debug("DEBUG2 " + mainNode.isReady(), org.apache.logging.log4j.Level.ERROR);
             }
-            for (CraftJob job : jobs) {
-                job.maybeCraft();
-            }
+
+            // Try to start the job if the job calculation finished
+            jobs.forEach(CraftJob::maybeCraft);
+
+            // Remove the job if the crafting started, we can't do anything with it anymore
             jobs.removeIf(CraftJob::isCraftingStarted);
         }
     }

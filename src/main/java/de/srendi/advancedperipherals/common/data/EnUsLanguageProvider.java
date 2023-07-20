@@ -99,22 +99,22 @@ public class EnUsLanguageProvider extends LanguageProvider {
         addAdvancement("husbandry_automata_core", "Husbandry automata core", "Is this core gluten-free?");
         addAdvancement("overpowered_automata_core", "Overpowered automata core", "Can you handle so much power?");
         addAdvancement("base_toolkit", "Gentleman's set!", "Collect a redstone integrator, inventory manager and energy detector. How did you even play without this?");
-        addAdvancement("nbt_toolkit", "No secrets", "Collect a NBT storage and block reader. Now all of the world's secrets are open to you!");
+        addAdvancement("nbt_toolkit", "No secrets", "Collect a NBT storage and block reader. Now, all the world's secrets are open to you!");
         addAdvancement("sense_toolkit", "The truth can't hide forever", "Collect a geo scanner and environmental detector. There are no limits for observability!");
     }
 
     private void addTooltips() {
         addTooltip("show_desc", "&b[&7%s&b] &7For Description");
-        addTooltip("disabled", "&cThis item is disabled in config, so you can craft it, but it'll not have any functionality.");
+        addTooltip("disabled", "&cThis item is disabled in the config, so you can craft it, but it'll not have any functionality.");
         addTooltip(Items.COMPUTER_TOOL.get(), "&7This tool was made to tune our blocks. But for now, it's just a blue useless wrench.");
         addTooltip(Blocks.ENERGY_DETECTOR.get(), "&7Can detect energy flow and acts as a resistor.");
         addTooltip(Items.CHUNK_CONTROLLER.get(), "&7A crafting ingredient for the Chunky Turtle.");
         addTooltip(Blocks.ENVIRONMENT_DETECTOR.get(), "&7This peripheral interacts with the minecraft world.");
         addTooltip(Blocks.PLAYER_DETECTOR.get(), "&7This peripheral can be used to interact with players, but don't be a stalker.");
-        addTooltip(Blocks.RS_BRIDGE.get(), "&7This wonderful block interacts with Refined Storage to read and craft items.");
-        addTooltip(Blocks.ME_BRIDGE.get(), "&7This peripheral interacts with Applied Energistics 2 to read and craft items.");
+        addTooltip(Blocks.RS_BRIDGE.get(), "&7The RS Bridge interacts with Refined Storage to manage your items.");
+        addTooltip(Blocks.ME_BRIDGE.get(), "&7The ME Bridge interacts with Applied Energistics to manage your items.");
         addTooltip(Blocks.CHAT_BOX.get(), "&7Interacts with the ingame chat, can read and write messages.");
-        addTooltip(Blocks.PERIPHERAL_CASING.get(), "&7An empty hull without the love it deserves. Used as crafting ingredient");
+        addTooltip(Blocks.PERIPHERAL_CASING.get(), "&7An empty hull without the love it deserves. Used as a crafting ingredient");
         addTooltip(Items.MEMORY_CARD.get(), "&7Can save the rights of a player to use it in an inventory manager.");
         addTooltip("memory_card.bound", "&7Bound to &b%s&7.");
         addTooltip(Blocks.INVENTORY_MANAGER.get(), "&7This block is able to send or receive specific items from a player inventory.");
@@ -122,10 +122,10 @@ public class EnUsLanguageProvider extends LanguageProvider {
         addTooltip(Blocks.BLOCK_READER.get(), "&7Reads nbt data of blocks to interact with blocks which do not have computer support.");
         addTooltip(Blocks.GEO_SCANNER.get(), "&7Scans the area around it to find some shiny ores.");
         addTooltip(Blocks.COLONY_INTEGRATOR.get(), "&7Interacts with Minecolonies to read data about your colony and citizens.");
-        addTooltip(Blocks.NBT_STORAGE.get(), "&7Acts like a storage disk. Can store nbt based data like.");
+        addTooltip(Blocks.NBT_STORAGE.get(), "&7Acts like a storage disk. Can store nbt based data.");
         addTooltip(Items.WEAK_AUTOMATA_CORE.get(), "&7Upgrade for turtles, which makes turtles more useful.");
-        addTooltip(Items.OVERPOWERED_WEAK_AUTOMATA_CORE.get(), "&7Improved version of the weak automata core, that provide some overpowered uses! Be careful, the upgrade is very fragile.");
-        addTooltip(Items.HUSBANDRY_AUTOMATA_CORE.get(), "&7Upgrade for turtles, that allows basic and advanced interaction with animals.");
+        addTooltip(Items.OVERPOWERED_WEAK_AUTOMATA_CORE.get(), "&7Improved version of the weak automata core, that provides some overpowered uses! Be careful, the upgrade is very fragile.");
+        addTooltip(Items.HUSBANDRY_AUTOMATA_CORE.get(), "&7Upgrade for turtles, that allows basic and advanced interactions with animals.");
         addTooltip(Items.OVERPOWERED_HUSBANDRY_AUTOMATA_CORE.get(), "&7Improved version of the husbandry automata core, that provides some overpowered uses! Be careful, the upgrade is very fragile.");
         addTooltip(Items.END_AUTOMATA_CORE.get(), "&7Upgrade for turtles, that allows basic interaction with the world and teleportation in one dimension.");
         addTooltip(Items.OVERPOWERED_END_AUTOMATA_CORE.get(), "&7Improved version of the end automata core, that provides some overpowered uses! Be careful, the upgrade is very fragile.");
@@ -134,7 +134,7 @@ public class EnUsLanguageProvider extends LanguageProvider {
     private void addText() {
         add("text." + AdvancedPeripherals.MOD_ID + ".removed_player", "Cleared the memory card");
         add("text." + AdvancedPeripherals.MOD_ID + ".added_player", "Added you to the memory card");
-        add("text." + AdvancedPeripherals.MOD_ID + ".automata_core_feed_by_player", "You trying to feed entity to soul, but your own body refuses to do this. Maybe something more mechanical can do this?");
+        add("text." + AdvancedPeripherals.MOD_ID + ".automata_core_feed_by_player", "You're trying to feed an entity to a soul, but your own body refuses to do this. Maybe something more mechanical can do this?");
     }
 
     private void addKeybinds() {
