@@ -353,8 +353,8 @@ public class AppEngApi {
                 } else if (APAddons.aeThingsLoaded && stack.getItem() instanceof DISKDrive disk) {
                     if (disk.getKeyType().toString().equals("ae2:i")) {
                         if (stack.getTag() == null) continue;
-                        long numItemsInCell = stack.getTag().getLong("ic");
-                        used += ((int) Math.ceil(((double) numItemsInCell) / 8));
+                        long numBytesInCell = stack.getTag().getLong("ic");
+                        used += numBytesInCell;
                     }
                 }
             }
