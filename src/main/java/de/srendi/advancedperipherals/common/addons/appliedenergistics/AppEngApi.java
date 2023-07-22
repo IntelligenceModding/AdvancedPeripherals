@@ -160,7 +160,7 @@ public class AppEngApi {
         map.put("coProcessors", coProcessors);
         map.put("isBusy", isBusy);
         map.put("craftingJob", cpu.getJobStatus() != null ? getObjectFromJob(cpu.getJobStatus()) : null);
-
+        map.put("name", cpu.getName() != null ? cpu.getName().getString() : "Unnamed");
         return map;
     }
 
@@ -353,8 +353,8 @@ public class AppEngApi {
                 } else if (APAddons.aeThingsLoaded && stack.getItem() instanceof DISKDrive disk) {
                     if (disk.getKeyType().toString().equals("ae2:i")) {
                         if (stack.getTag() == null) continue;
-                        long numItemsInCell = stack.getTag().getLong("ic");
-                        used += ((int) Math.ceil(((double) numItemsInCell) / 8));
+                        long numBytesInCell = stack.getTag().getLong("ic");
+                        used += numBytesInCell;
                     }
                 }
             }
