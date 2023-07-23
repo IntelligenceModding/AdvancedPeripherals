@@ -31,10 +31,8 @@ public class APAddons {
     public static boolean appliedEnergisticsLoaded;
     public static boolean mekanismLoaded;
 
-    private APAddons() {
-    }
-
-    public static void commonSetup() {
+    // Use static so these checks run as early as possible, so we can use them for our registries
+    static {
         ModList modList = ModList.get();
         curiosLoaded = modList.isLoaded(CURIOS_MODID);
         refinedStorageLoaded = modList.isLoaded(REFINEDSTORAGE_MODID);
