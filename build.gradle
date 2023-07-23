@@ -401,9 +401,35 @@ jar {
 
 jar.finalizedBy('reobfJar')
 
+tasks.named('processResources', ProcessResources).configure {
+    var replaceProperties = [
+            minecraft_version: minecraft_version,
+            forge_version: forge_version,
+            loader_version: loader_version,
+            mod_id: mod_id, mod_version: mod_version,
+            cc_version: cc_version,
+            curios_version: curios_version,
+            minecolonies_version: minecolonies_version,
+            appliedenergistics_version: appliedenergistics_version,
+            patchouli_version: patchouli_version,
+            refinedstorage_version: refinedstorage_version,
+            botania_version: botania_version,
+            create_version: create_version,
+            mekanism_version: mekanism_version,
+            ae2things_version: ae2things_version,
+            powah_version: powah_version,
+    ]
+
+    inputs.properties replaceProperties
+
+    filesMatching(['META-INF/mods.toml', 'pack.mcmeta']) {
+        expand replaceProperties + [project: project]
+    }
+}
+
 tasks.register('publishCurseForge', TaskPublishCurseForge, { task ->
     setGroup("publishing")
-    setDescription("Upload Advabced Oeruogeraks to CurseForge")
+    setDescription("Upload Advanced Peripherals to CurseForge")
 
     // This token is used to authenticate with CurseForge. It should be handled
     // with the same level of care and security as your actual password. You
@@ -476,7 +502,7 @@ publishing {
     }
     publications {
         gpr(MavenPublication) {
-            artifactId = "advancedperipherals"
+            artifactId = project.hasProperty('teamcityVersion') ? "advancedperipherals-snapshots" : "advancedperipherals"
             version = project.hasProperty('teamcityVersion') ? "${minecraft_version}-${mod_version}-DEV_${project.teamcityVersion}" : "${minecraft_version}-${mod_version}"
             from(components.java)
         }
