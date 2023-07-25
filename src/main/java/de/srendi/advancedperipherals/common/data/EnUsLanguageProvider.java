@@ -81,7 +81,6 @@ public class EnUsLanguageProvider extends LanguageProvider {
         addTurtle(CCRegistration.ID.OP_WEAK_AUTOMATA, "Overpowered weak automata");
         addTurtle(CCRegistration.ID.OP_HUSBANDRY_AUTOMATA, "Overpowered husbandry automata");
         addTurtle(CCRegistration.ID.OP_END_AUTOMATA, "Overpowered end automata");
-
     }
 
     private void addPockets() {
@@ -171,7 +170,7 @@ public class EnUsLanguageProvider extends LanguageProvider {
         add("item." + AdvancedPeripherals.MOD_ID + ".tooltip." + tooltip, name);
     }
 
-    private void addKeybind(KeyMapping keybind, String name) {
+    private void addKeybind(@NotNull KeyMapping keybind, String name) {
         add(keybind.getName(), name);
     }
 

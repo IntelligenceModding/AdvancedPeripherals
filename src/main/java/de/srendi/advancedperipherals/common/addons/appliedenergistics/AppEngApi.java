@@ -226,7 +226,7 @@ public class AppEngApi {
         return false;
     }
 
-    public static boolean isFluidrafting(MEStorage monitor, ICraftingService grid, FluidFilter filter,
+    public static boolean isFluidCrafting(MEStorage monitor, ICraftingService grid, FluidFilter filter,
                                          @Nullable ICraftingCPU craftingCPU) {
         Pair<Long, AEFluidKey> stack = AppEngApi.findAEFluidFromFilter(monitor, grid, filter);
 
