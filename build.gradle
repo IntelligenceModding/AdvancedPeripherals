@@ -401,6 +401,16 @@ jar {
 
 jar.finalizedBy('reobfJar')
 
+tasks.withType(Checkstyle) {
+    reports {
+        xml.required = false
+        html.required = false
+    }
+    // Checkstyle is compatible with the configuration cache, however we need to disable it to prevent a build issue with teamcity
+    notCompatibleWithConfigurationCache()
+    outputs.upToDateWhen { false }
+}
+
 tasks.named('processResources', ProcessResources).configure {
     var replaceProperties = [
             minecraft_version: minecraft_version,

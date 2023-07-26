@@ -65,7 +65,6 @@
         <module name="UnusedImports" />
 
         <!-- Javadoc -->
-        <!-- TODO: Missing* checks for the dan200.computercraft.api package? -->
         <module name="AtclauseOrder" />
         <module name="InvalidJavadocPosition" />
         <module name="JavadocBlockTagLocation" />
@@ -124,17 +123,17 @@
         </module>
         <module name="NoWhitespaceBefore" />
         <module name="SeparatorWrap">
-            <property name="option" value="eol" />
+            <property name="option" value="EOL" />
             <property name="tokens" value="COMMA,SEMI,ELLIPSIS,ARRAY_DECLARATOR,RBRACK,METHOD_REF" />
         </module>
         <module name="SeparatorWrap">
-            <property name="option" value="nl" />
+            <property name="option" value="NL" />
             <property name="tokens" value="DOT,AT" />
         </module>
         <module name="SingleSpaceSeparator" />
         <module name="TypecastParenPad" />
         <module name="WhitespaceAfter">
-            <property name="tokens" value="COMMA" />
+            <property name="tokens" value="COMMA,SEMI" />
         </module>
         <module name="WhitespaceAround">
             <property name="ignoreEnhancedForColon" value="false" />
