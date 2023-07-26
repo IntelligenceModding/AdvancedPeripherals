@@ -309,7 +309,7 @@ public class AppEngApi {
             LazyOptional<IItemHandler> itemHandler = connectedInventoryEntity.getCapability(ForgeCapabilities.ITEM_HANDLER);
             if(itemHandler.isPresent()) {
                 IItemHandler handler = itemHandler.orElse(null);
-                for(int i = 0;i < handler.getSlots();i++) {
+                for(int i = 0; i < handler.getSlots(); i++) {
                     total += handler.getSlotLimit(i);
                 }
             }
@@ -353,7 +353,7 @@ public class AppEngApi {
             LazyOptional<IFluidHandler> fluidHandler = connectedInventoryEntity.getCapability(ForgeCapabilities.FLUID_HANDLER);
             if(fluidHandler.isPresent()) {
                 IFluidHandler handler = fluidHandler.orElse(null);
-                for(int i = 0;i < handler.getTanks();i++) {
+                for(int i = 0; i < handler.getTanks(); i++) {
                     total += handler.getTankCapacity(i);
                 }
             }
