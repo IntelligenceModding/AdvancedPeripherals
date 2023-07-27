@@ -33,7 +33,7 @@ apply plugin: 'org.parchmentmc.librarian.forgegradle'
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
 wrapper {
-    gradleVersion = '7.5'
+    gradleVersion = '8.1.1'
     distributionType = Wrapper.DistributionType.ALL
 }
 
@@ -496,8 +496,8 @@ publishing {
     }
     publications {
         gpr(MavenPublication) {
-            artifactId = project.hasProperty('teamcityVersion') ? "advancedperipherals-snapshots" : "advancedperipherals"
-            version = project.hasProperty('teamcityVersion') ? "${minecraft_version}-${mod_version}-DEV_${project.teamcityVersion}" : "${minecraft_version}-${mod_version}"
+            artifactId = project.hasProperty('teamcityBuild') ? "advancedperipherals-snapshots" : "advancedperipherals"
+            version = project.hasProperty('teamcityBuild') ? "${minecraft_version}-${version}-${project.teamcityBuild}" : "${minecraft_version}-${version}"
             from(components.java)
         }
     }
