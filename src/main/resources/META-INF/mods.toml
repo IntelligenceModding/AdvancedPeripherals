@@ -1,82 +1,81 @@
 modLoader = "javafml"
-loaderVersion = "[43,)"
+loaderVersion = "[${loader_version},)"
 license = "All rights reserved"
 issueTrackerURL = "https://github.com/Seniorendi/AdvancedPeripherals/issues"
 logoFile = "pack.png"
 [[mods]]
-modId = "advancedperipherals"
-version = "${file.jarVersion}"
+modId = "${mod_id}"
+version = "${mod_version}"
 displayName = "Advanced Peripherals"
 displayURL = "https://docs.srendi.de/"
 authors = "Srendi"
 description = '''
-Advanced Peripherals is a mod that adds many useful extensions for CC:Tweaked(Computercraft).
-You can communicate with Rerfined Storage, Applied Energistics 2 or with the whole Minecraft world.
-Adds things like the Me Bridge, various types of turtles, the Chat Box and more.
+Advanced Peripherals provied multiple extensions for ComputerCraft in form of Peripherals, Pocket Upgrades, Turtles or new gear.
+It also integrates with multiple third party mods.
 '''
-[[dependencies.advancedperipherals]]
+[[dependencies.${mod_id}]]
 modId = "forge"
 mandatory = true
-versionRange = "[43.2.4,)"
+versionRange = "[${forge_version},)"
 ordering = "NONE"
 side = "BOTH"
-[[dependencies.advancedperipherals]]
+[[dependencies.${mod_id}]]
 modId = "minecraft"
 mandatory = true
-versionRange = "[1.19.2,)"
+versionRange = "[${minecraft_version},)"
 ordering = "NONE"
 side = "BOTH"
-[[dependencies.advancedperipherals]]
+[[dependencies.${mod_id}]]
 modId = "computercraft"
 mandatory = true
-versionRange = "[1.101.2,)"
+versionRange = "[${cc_version},)"
 ordering = "NONE"
 side = "BOTH"
-[[dependencies.advancedperipherals]]
+[[dependencies.${mod_id}]]
 modId = "curios"
 mandatory = false
-versionRange = "[1.19.2-5.1.1.0,)"
+versionRange = "[${curios_version},)"
 ordering = "NONE"
 side = "BOTH"
-[[dependencies.advancedperipherals]]
+[[dependencies.${mod_id}]]
 modId = "ae2"
 mandatory = false
-versionRange = "[11.0.0-alpha.6,)"
+versionRange = "[${appliedenergistics_version},)"
 ordering = "NONE"
 side = "BOTH"
-[[dependencies.advancedperipherals]]
+[[dependencies.${mod_id}]]
 modId = "refinedstorage"
 mandatory = false
-versionRange = "[1.11.0,)"
+versionRange = "[${refinedstorage_version},)"
 ordnering = "NONE"
 side = "BOTH"
-[[dependencies.advancedperipherals]]
+[[dependencies.${mod_id}]]
 modId = "minecolonies"
 mandatory = false
-versionRange = "[1.19.2-1.0.1410-ALPHA,)"
+versionRange = "[${minecolonies_version},)"
 ordering = "NONE"
 side = "BOTH"
-[[dependencies.advancedperipherals]]
+[[dependencies.${mod_id}]]
 modId = "patchouli"
 mandatory = false
-versionRange = "[1.19.2-76,)"
+versionRange = "[${patchouli_version},)"
 ordering = "NONE"
 side = "BOTH"
-[[dependencies.advancedperipherals]]
+[[dependencies.${mod_id}]]
 modId = "create"
 mandatory = false
-versionRange = "[0.5.1.a,)"
+versionRange = "[${create_version},)"
 ordering = "NONE"
 side = "BOTH"
-[[dependencies.advancedperipherals]]
+[[dependencies.${mod_id}]]
 modId = "botania"
 mandatory = false
-versionRange = "[1.19.2-436-SNAPSHOT,)"
+versionRange = "[${botania_version},)"
 ordering = "NONE"
 side = "BOTH"
-[[dependencies.advancedperipherals]]
+[[dependencies.${mod_id}]]
 modId = "mekanism"
 mandatory = false
-versionRange = "[1.19.2-10.3.5.474,)"
+versionRange = "[${mekanism_version},)"
 ordering = "NONE"
 side = "BOTH"

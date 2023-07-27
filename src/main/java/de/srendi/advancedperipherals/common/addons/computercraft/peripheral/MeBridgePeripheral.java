@@ -287,17 +287,17 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         MEStorage monitor = AppEngApi.getMonitor(node);
         ICraftingService grid = node.getGrid().getService(ICraftingService.class);
 
-        Pair<ItemFilter, String> filter = ItemFilter.parse(arguments.getTable(0));
+        Pair<FluidFilter, String> filter = FluidFilter.parse(arguments.getTable(0));
         if(filter.rightPresent())
             return MethodResult.of(false, filter.getRight());
 
-        ItemFilter parsedFilter = filter.getLeft();
+        FluidFilter parsedFilter = filter.getLeft();
         if (parsedFilter.isEmpty())
             return MethodResult.of(false, "EMPTY_FILTER");
         String cpuName = arguments.optString(1, "");
         ICraftingCPU craftingCPU = getCraftingCPU(cpuName);
 
-        return MethodResult.of(AppEngApi.isItemCrafting(monitor, grid, parsedFilter, craftingCPU));
+        return MethodResult.of(AppEngApi.isFluidCrafting(monitor, grid, parsedFilter, craftingCPU));
     }
 
     @LuaFunction(mainThread = true)
@@ -313,9 +313,9 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (parsedFilter.isEmpty())
             return MethodResult.of(false, "EMPTY_FILTER");
 
-        AEFluidKey item = AEFluidKey.of(parsedFilter.toFluidStack());
+        AEFluidKey fluid = AEFluidKey.of(parsedFilter.toFluidStack());
 
-        return MethodResult.of(getCraftingService().isCraftable(item));
+        return MethodResult.of(getCraftingService().isCraftable(fluid));
     }
 
     @LuaFunction(mainThread = true)
