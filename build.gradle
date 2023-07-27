@@ -40,7 +40,7 @@ wrapper {
     distributionType = Wrapper.DistributionType.ALL
 }
 
-def isSnapshotVersion = Boolean.valueOf(System.getProperty("snapshot"))
+def isSnapshotVersion = project.hasProperty('teamcityBuild')
 
 version = "${mod_version}" + (isSnapshotVersion ? "-SNAPSHOT" : "")
 group = 'de.srendi.advancedperipherals'
