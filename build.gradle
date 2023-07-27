@@ -5,12 +5,8 @@ import java.text.SimpleDateFormat
 buildscript {
     repositories {
         maven {
-            name = "Minecraft Forge maven"
-            url = "https://maven.minecraftforge.net"
-        }
-        maven {
-            name = "Parchment maven"
-            url = "https://maven.parchmentmc.org"
+            name = "Intelligence Minecraft"
+            url = "https://mvn.intelligence-modding.de/Minecraft"
         }
         mavenCentral()
         gradlePluginPortal()
@@ -41,7 +37,7 @@ wrapper {
     distributionType = Wrapper.DistributionType.ALL
 }
 
-def isSnapshotVersion = Boolean.valueOf(System.getProperty("snapshot"))
+def isSnapshotVersion = project.hasProperty('teamcityBuild')
 
 version = "${mod_version}" + (isSnapshotVersion ? "-SNAPSHOT" : "")
 group = 'de.srendi.advancedperipherals'
@@ -190,6 +186,14 @@ minecraft {
 repositories {
     mavenCentral()
     maven {
+        name = "Intelligence repository"
+        url = "https://mvn.intelligence-modding.de/Intelligence"
+    }
+    maven {
+        name = "Intelligence Minecraft repository"
+        url = "https://mvn.intelligence-modding.de/Minecraft"
+    }
+    maven {
         name = "Blamejared maven botania patchouli"
         url = 'https://maven.blamejared.com'
     }
@@ -218,14 +222,6 @@ repositories {
         }
     }
     maven {
-        name = "Srendi Space repository"
-        url "https://packages.intelligence-modding.de/maven/p/advanced-peripherals/ap-repository"
-        credentials {
-            username = spaceUsername
-            password = spacePassword
-        }
-    }
-    maven {
         name = "SirEdvin's private repository"
         url = "https://repo.repsy.io/mvn/siredvin/default"
         content {
@@ -244,7 +240,7 @@ repositories {
         }
     }
     maven {
-        url "https://cursemaven.com"
+        url = "https://cursemaven.com"
         content {
             includeGroup "curse.maven"
         }
@@ -412,23 +408,21 @@ tasks.withType(Checkstyle) {
 }
 
 tasks.named('processResources', ProcessResources).configure {
-    var replaceProperties = [
-            minecraft_version: minecraft_version,
-            forge_version: forge_version,
-            loader_version: loader_version,
-            mod_id: mod_id, mod_version: mod_version,
-            cc_version: cc_version,
-            curios_version: curios_version,
-            minecolonies_version: minecolonies_version,
-            appliedenergistics_version: appliedenergistics_version,
-            patchouli_version: patchouli_version,
-            refinedstorage_version: refinedstorage_version,
-            botania_version: botania_version,
-            create_version: create_version,
-            mekanism_version: mekanism_version,
-            ae2things_version: ae2things_version,
-            powah_version: powah_version,
-    ]
+    var replaceProperties = [minecraft_version         : minecraft_version,
+                             forge_version             : forge_version,
+                             loader_version            : loader_version,
+                             mod_id                    : mod_id, mod_version: mod_version,
+                             cc_version                : cc_version,
+                             curios_version            : curios_version,
+                             minecolonies_version      : minecolonies_version,
+                             appliedenergistics_version: appliedenergistics_version,
+                             patchouli_version         : patchouli_version,
+                             refinedstorage_version    : refinedstorage_version,
+                             botania_version           : botania_version,
+                             create_version            : create_version,
+                             mekanism_version          : mekanism_version,
+                             ae2things_version         : ae2things_version,
+                             powah_version             : powah_version,]
 
     inputs.properties replaceProperties
 
@@ -460,13 +454,9 @@ tasks.register('publishCurseForge', TaskPublishCurseForge, { task ->
             file.changelog = ""
         }
 
-        addOptional(
-                'applied-energistics-2', 'curios', 'mekanism', 'refined-storage'
-        )
+        addOptional('applied-energistics-2', 'curios', 'mekanism', 'refined-storage')
 
-        addRequirement(
-                'cc-tweaked'
-        )
+        addRequirement('cc-tweaked')
 
         releaseType = "${release_type}"
     }
@@ -494,16 +484,8 @@ modrinth {
 publishing {
     repositories {
         maven {
-            name="space"
-            url = "https://packages.intelligence-modding.de/maven/p/advanced-peripherals/ap-repository"
-            credentials {
-                username = spaceUsername
-                password = spacePassword
-            }
-        }
-        maven {
             name = "public"
-            url = "https://mvn.intelligence-modding.de/intelligence"
+            url = "https://mvn.intelligence-modding.de/Intelligence"
             credentials {
                 username = repositoryName
                 password = repositoryKey
@@ -512,8 +494,8 @@ publishing {
     }
     publications {
         gpr(MavenPublication) {
-            artifactId = project.hasProperty('teamcityVersion') ? "advancedperipherals-snapshots" : "advancedperipherals"
-            version = project.hasProperty('teamcityVersion') ? "${minecraft_version}-${mod_version}-DEV_${project.teamcityVersion}" : "${minecraft_version}-${mod_version}"
+            artifactId = project.hasProperty('teamcityBuild') ? "advancedperipherals-snapshots" : "advancedperipherals"
+            version = project.hasProperty('teamcityBuild') ? "${minecraft_version}-${version}-${project.teamcityBuild}" : "${minecraft_version}-${version}"
             from(components.java)
         }
     }
