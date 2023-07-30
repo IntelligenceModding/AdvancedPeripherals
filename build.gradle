@@ -23,7 +23,7 @@ plugins {
     id 'org.jetbrains.changelog' version '1.2.1'
     id "com.modrinth.minotaur" version "2.+"
     id "org.jetbrains.kotlin.jvm" version "1.6.10"
-    id "org.sonarqube" version "4.2.1.3168"
+    id "org.sonarqube" version "4.3.+"
     id 'checkstyle'
 }
 
@@ -290,7 +290,7 @@ dependencies {
     // Change to compileOnly when running `runData`
     compileOnly fg.deobf("com.ldtteam:minecolonies:${minecolonies_version}")
     compileOnly fg.deobf("com.ldtteam:structurize:${structurize_version}")
-    compileOnly fg.deobf("com.ldtteam:multi-piston:${multipiston_version}")
+    compileOnly fg.deobf("com.ldtteam:multipiston:${multipiston_version}")
     compileOnly fg.deobf("com.ldtteam:domum_ornamentum:${domumornamentum_version}:universal")
     compileOnly fg.deobf("com.ldtteam:blockui:${blockui_version}")
 
