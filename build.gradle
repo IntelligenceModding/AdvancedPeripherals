@@ -432,14 +432,6 @@ modrinth {
 publishing {
     repositories {
         maven {
-            name="space"
-            url = "https://packages.intelligence-modding.de/maven/p/advanced-peripherals/ap-repository"
-            credentials {
-                username = spaceUsername
-                password = spacePassword
-            }
-        }
-        maven {
             name = "public"
             url = "https://mvn.intelligence-modding.de/intelligence"
             credentials {
@@ -450,7 +442,7 @@ publishing {
     }
     publications {
         gpr(MavenPublication) {
-            artifactId = "advancedperipherals"
+            artifactId = project.hasProperty('teamcityVersion') ? "advancedperipherals-snapshots" : "advancedperipherals"
             version = project.hasProperty('teamcityVersion') ? "${minecraft_version}-${mod_version}-DEV_${project.teamcityVersion}" : "${minecraft_version}-${mod_version}"
             from(components.java)
         }
