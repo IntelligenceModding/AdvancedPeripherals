@@ -433,7 +433,7 @@ publishing {
     repositories {
         maven {
             name = "public"
-            url = "https://mvn.intelligence-modding.de/intelligence"
+            url = "https://mvn.intelligence-modding.de/Intelligence"
             credentials {
                 username = repositoryName
                 password = repositoryKey
