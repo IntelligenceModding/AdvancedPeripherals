@@ -114,12 +114,12 @@ public class RefinedStorage {
         return network.getCraftingManager().getPattern(stack) != null;
     }
 
-    public static int getMaxItemDiskStorage(INetwork network) {
-        int total = 0;
+    public static long getMaxItemDiskStorage(INetwork network) {
+        long total = 0L;
         boolean creative = false;
         for (IStorage<ItemStack> store : network.getItemStorageCache().getStorages()) {
             if (store instanceof IStorageDisk<ItemStack> storageDisk) {
-                int cap = storageDisk.getCapacity();
+                long cap = storageDisk.getCapacity();
                 if (cap > 0) total += cap;
                 else creative = true;
             }
@@ -127,12 +127,12 @@ public class RefinedStorage {
         return creative ? -1 : total;
     }
 
-    public static int getMaxFluidDiskStorage(INetwork network) {
-        int total = 0;
+    public static long getMaxFluidDiskStorage(INetwork network) {
+        long total = 0L;
         boolean creative = false;
         for (IStorage<FluidStack> store : network.getFluidStorageCache().getStorages()) {
             if (store instanceof IStorageDisk<FluidStack> storageDisk) {
-                int cap = storageDisk.getCapacity();
+                long cap = storageDisk.getCapacity();
                 if (cap > 0) total += cap;
                 else creative = true;
             }
@@ -140,8 +140,8 @@ public class RefinedStorage {
         return creative ? -1 : total;
     }
 
-    public static int getMaxItemExternalStorage(INetwork network) {
-        int total = 0;
+    public static long getMaxItemExternalStorage(INetwork network) {
+        long total = 0;
         for (IStorage<ItemStack> store : network.getItemStorageCache().getStorages()) {
             if (store instanceof IExternalStorage<ItemStack> externalStorage) {
                 total += externalStorage.getCapacity();
@@ -150,8 +150,8 @@ public class RefinedStorage {
         return total;
     }
 
-    public static int getMaxFluidExternalStorage(INetwork network) {
-        int total = 0;
+    public static long getMaxFluidExternalStorage(INetwork network) {
+        long total = 0;
         for (IStorage<FluidStack> store : network.getFluidStorageCache().getStorages()) {
             if (store instanceof IExternalStorage<FluidStack> externalStorage) {
                 total += externalStorage.getCapacity();
