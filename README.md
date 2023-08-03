@@ -28,6 +28,10 @@ mods like **[PeripheralsPlusOne]**.*
 <br>
 <br>
 
+## Contributing
+Contributions to the project are always welcome! <br>
+Read our [Contribution](CONTRIBUTING.md) Guidelines to get started.
+
 ## Translating
 
 All translation is done via **[Crowdin]**, as such we <br>
