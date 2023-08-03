@@ -185,10 +185,10 @@ minecraft {
 
 repositories {
     mavenCentral()
-    maven {
+    /*maven {
         name = "Intelligence repository"
         url = "https://mvn.intelligence-modding.de/Intelligence"
-    }
+    }*/
     maven {
         name = "Intelligence Minecraft repository"
         url = "https://mvn.intelligence-modding.de/Minecraft"
@@ -240,6 +240,10 @@ repositories {
         }
     }
     maven {
+        name = 'Kotlin for Forge'
+        url = 'https://thedarkcolour.github.io/KotlinForForge/'
+    }
+    maven {
         url = "https://cursemaven.com"
         content {
             includeGroup "curse.maven"
@@ -272,16 +276,22 @@ dependencies {
     // Applied Energistics 2
     implementation fg.deobf("appeng:appliedenergistics2-forge:${appliedenergistics_version}")
     // Curios
-    implementation fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}")
+    runtimeOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}")
 
     // Refined Storage
     implementation fg.deobf("com.refinedmods:refinedstorage:${refinedstorage_version}") {
         transitive false
     }
 
-    //AE2 Things
+    // AE2 Things
     compileOnly fg.deobf("curse.maven:ae2things-609977:${ae2things_version}-sources")
     runtimeOnly fg.deobf("curse.maven:ae2things-609977:${ae2things_version}-sources")
+
+    // AE2 Additions
+    compileOnly fg.deobf("curse.maven:ae-additions-493962:${ae2additions_version}")
+    runtimeOnly fg.deobf("curse.maven:ae-additions-493962:${ae2additions_version}")
+
+    implementation 'thedarkcolour:kotlinforforge:3.12.0'
 
     // Botania
     implementation fg.deobf("vazkii.botania:Botania:${botania_version}")
@@ -421,7 +431,6 @@ tasks.named('processResources', ProcessResources).configure {
                              patchouli_version         : patchouli_version,
                              refinedstorage_version    : refinedstorage_version,
                              botania_version           : botania_version,
-                             create_version            : create_version,
                              mekanism_version          : mekanism_version,
                              ae2things_version         : ae2things_version,
                              powah_version             : powah_version,]
