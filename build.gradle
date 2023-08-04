@@ -442,8 +442,8 @@ publishing {
     }
     publications {
         gpr(MavenPublication) {
-            artifactId = project.hasProperty('teamcityVersion') ? "advancedperipherals-snapshots" : "advancedperipherals"
-            version = project.hasProperty('teamcityVersion') ? "${minecraft_version}-${mod_version}-DEV_${project.teamcityVersion}" : "${minecraft_version}-${mod_version}"
+            artifactId = isSnapshotVersion ? "advancedperipherals-snapshots" : "advancedperipherals"
+            version = isSnapshotVersion ? "${minecraft_version}-${version}-${project.teamcityBuild}" : "${minecraft_version}-${version}"
             from(components.java)
         }
     }
