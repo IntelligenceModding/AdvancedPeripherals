@@ -7,7 +7,7 @@ logoFile = "pack.png"
 modId = "advancedperipherals"
 version = "${file.jarVersion}"
 displayName = "Advanced Peripherals"
-displayURL = "https://docs.srendi.de/"
+displayURL = "https://docs.intelligence-modding.de/"
 authors = "Srendi"
 description = '''
 Advanced Peripherals is a mod that adds many useful extensions for CC:Tweaked(Computercraft).
