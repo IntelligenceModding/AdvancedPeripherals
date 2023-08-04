@@ -98,8 +98,10 @@ public class BlockStatesAndModelsProvider extends BlockStateProvider {
         return new ResourceLocation(name.getNamespace(), ModelProvider.BLOCK_FOLDER + "/" + name.getPath() + "_" + offset);
     }
 
+
     private String name(Block block) {
         return block.getRegistryName().getPath();
     }
+
 
 }

@@ -90,7 +90,7 @@ public abstract class BasePeripheral<O extends IPeripheralOwner> implements IBas
 
     @Override
     public boolean equals(@Nullable IPeripheral iPeripheral) {
-        return iPeripheral == this;
+        return Objects.equals(this, iPeripheral);
     }
 
     @Override
