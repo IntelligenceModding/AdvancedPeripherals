@@ -13,6 +13,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 public abstract class IntegrationPeripheral implements IDynamicPeripheral {
 
@@ -58,7 +59,7 @@ public abstract class IntegrationPeripheral implements IDynamicPeripheral {
 
     @Override
     public boolean equals(@Nullable IPeripheral iPeripheral) {
-        return iPeripheral == this;
+        return Objects.equals(this, iPeripheral);
     }
 
     @Override
