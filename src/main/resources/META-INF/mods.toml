@@ -7,7 +7,7 @@ logoFile = "pack.png"
 modId = "${mod_id}"
 version = "${version}"
 displayName = "Advanced Peripherals"
-displayURL = "https://docs.intelligence-modding.de.de/"
+displayURL = "https://docs.intelligence-modding.de/"
 authors = "Srendi"
 description = '''
 Advanced Peripherals provied multiple extensions for ComputerCraft in form of Peripherals, Pocket Upgrades, Turtles or new gear.
