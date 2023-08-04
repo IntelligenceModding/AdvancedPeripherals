@@ -234,7 +234,7 @@ public class AppEngApi {
     }
 
     public static boolean isFluidCrafting(MEStorage monitor, ICraftingService grid, FluidFilter filter,
-                                         @Nullable ICraftingCPU craftingCPU) {
+                                          @Nullable ICraftingCPU craftingCPU) {
         Pair<Long, AEFluidKey> stack = AppEngApi.findAEFluidFromFilter(monitor, grid, filter);
 
         // If the fluid stack does not exist, it cannot be crafted.
@@ -296,7 +296,7 @@ public class AppEngApi {
                         total += disk.getBytes(null);
                     }
                 } else if (APAddons.aeAdditionsLoaded && (stack.getItem() instanceof SuperStorageCell superStorageCell)) {
-                    total += superStorageCell.getKiloBytes()*1024;
+                    total += superStorageCell.getKiloBytes() * 1024;
                 }
             }
         }
@@ -310,9 +310,9 @@ public class AppEngApi {
             BlockEntity connectedInventoryEntity = level.getBlockEntity(connectedInventoryPos);
 
             LazyOptional<IItemHandler> itemHandler = connectedInventoryEntity.getCapability(ForgeCapabilities.ITEM_HANDLER);
-            if(itemHandler.isPresent()) {
+            if (itemHandler.isPresent()) {
                 IItemHandler handler = itemHandler.orElse(null);
-                for(int i = 0; i < handler.getSlots(); i++) {
+                for (int i = 0; i < handler.getSlots(); i++) {
                     total += handler.getSlotLimit(i);
                 }
             }
@@ -342,7 +342,7 @@ public class AppEngApi {
                         total += cell.getBytes(null);
                     }
                 } else if (APAddons.aeAdditionsLoaded && stack.getItem() instanceof SuperStorageCell superStorageCell) {
-                    total += superStorageCell.getKiloBytes()*1024;
+                    total += superStorageCell.getKiloBytes() * 1024;
                 }
             }
         }
@@ -356,9 +356,9 @@ public class AppEngApi {
             BlockEntity connectedInventoryEntity = level.getBlockEntity(connectedInventoryPos);
 
             LazyOptional<IFluidHandler> fluidHandler = connectedInventoryEntity.getCapability(ForgeCapabilities.FLUID_HANDLER);
-            if(fluidHandler.isPresent()) {
+            if (fluidHandler.isPresent()) {
                 IFluidHandler handler = fluidHandler.orElse(null);
-                for(int i = 0; i < handler.getTanks(); i++) {
+                for (int i = 0; i < handler.getTanks(); i++) {
                     total += handler.getTankCapacity(i);
                 }
             }
@@ -399,7 +399,7 @@ public class AppEngApi {
                         long numBytesInCell = stack.getTag().getLong("ic");
                         used += numBytesInCell;
                     }
-                }  else if (APAddons.aeAdditionsLoaded && stack.getItem() instanceof SuperStorageCell) {
+                } else if (APAddons.aeAdditionsLoaded && stack.getItem() instanceof SuperStorageCell) {
                     if (stack.getTag() == null) continue;
                     long numItemsInCell = stack.getTag().getLong("ic");
 
