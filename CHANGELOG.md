@@ -8,7 +8,6 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ## [Unreleased]
 ## [1.19.2-0.7.30r] - 2023-08-06
 
-
 ### Changed
 - Changed sorting of our creative tab
 

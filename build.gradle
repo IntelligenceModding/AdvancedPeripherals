@@ -472,7 +472,6 @@ tasks.register('publishCurseForge', TaskPublishCurseForge, { task ->
 
         releaseType = "${release_type}"
     }
-    debugMode = true
 })
 
 modrinth {
