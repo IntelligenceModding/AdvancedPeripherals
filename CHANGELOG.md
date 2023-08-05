@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+## [1.18.2-0.7.31r] - 2023-08-05
+
+### Fixed
+- [#497] Fixed 32 signed integer overflow with RS Bridge functions when too many  external storages(Or high sized storages) or too many disks were used.
+
 ## [1.18.2-0.7.30r] - 2023-06-01
 
 ### Changed
