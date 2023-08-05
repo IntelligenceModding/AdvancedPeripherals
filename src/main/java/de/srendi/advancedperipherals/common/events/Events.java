@@ -72,7 +72,8 @@ public class Events {
 
     @SubscribeEvent
     public static void onCommand(CommandEvent event) throws CommandSyntaxException {
-        if (!getCommandName(event.getParseResults().getContext()).equals("say")) return;
+        if (!getCommandName(event.getParseResults().getContext()).equals("say"))
+            return;
         String username = "sayCommand";
         String uuid = null;
         String message = MessageArgument.getMessage(event.getParseResults().getContext().build("apChatEvent"), "message").getString();
@@ -114,7 +115,8 @@ public class Events {
     @SubscribeEvent
     public static void onEquipmentChange(LivingEquipmentChangeEvent event) {
         LivingEntity livingEntity = event.getEntity();
-        if (!(livingEntity instanceof ServerPlayer serverPlayer)) return;
+        if (!(livingEntity instanceof ServerPlayer serverPlayer))
+            return;
         if (event.getFrom().getItem() instanceof ARGogglesItem)
             MNetwork.sendTo(new ClearHudCanvasMessage(), serverPlayer);
 
@@ -132,7 +134,8 @@ public class Events {
 
     public static synchronized long traverseChatMessages(long lastConsumedMessage, Consumer<ChatMessageObject> consumer) {
         for (Pair<Long, ChatMessageObject> message : messageQueue) {
-            if (message.getLeft() <= lastConsumedMessage) continue;
+            if (message.getLeft() <= lastConsumedMessage)
+                continue;
             consumer.accept(message.getRight());
             lastConsumedMessage = message.getLeft();
         }
@@ -141,7 +144,8 @@ public class Events {
 
     public static synchronized long traversePlayerMessages(long lastConsumedMessage, Consumer<PlayerMessageObject> consumer) {
         for (Pair<Long, PlayerMessageObject> message : playerMessageQueue) {
-            if (message.getLeft() <= lastConsumedMessage) continue;
+            if (message.getLeft() <= lastConsumedMessage)
+                continue;
             consumer.accept(message.getRight());
             lastConsumedMessage = message.getLeft();
         }

@@ -97,9 +97,12 @@ public abstract class PeripheralBlockEntity<T extends BasePeripheral<?>> extends
     @Override
     public void invalidateCaps() {
         super.invalidateCaps();
-        if (peripheralCap != null) peripheralCap.invalidate();
-        if (handler != null) handler.invalidate();
-        if (fluidHandler != null) fluidHandler.invalidate();
+        if (peripheralCap != null)
+            peripheralCap.invalidate();
+        if (handler != null)
+            handler.invalidate();
+        if (fluidHandler != null)
+            fluidHandler.invalidate();
     }
 
     @NotNull

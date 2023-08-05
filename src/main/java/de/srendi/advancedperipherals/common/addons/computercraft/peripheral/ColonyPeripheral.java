@@ -173,7 +173,8 @@ public class ColonyPeripheral extends BasePeripheral<IPeripheralOwner> {
 
         List<Object> list = new ArrayList<>();
         for (ICivilianData civilian : colony.getVisitorManager().getCivilianDataMap().values()) {
-            if (!(civilian instanceof IVisitorData visitorData)) continue;
+            if (!(civilian instanceof IVisitorData visitorData))
+                continue;
             list.add(MineColonies.visitorToObject(visitorData));
         }
         return list;
@@ -260,7 +261,8 @@ public class ColonyPeripheral extends BasePeripheral<IPeripheralOwner> {
         List<IRequest<?>> requests = new ArrayList<>();
         for (IToken<?> token : tokens) {
             IRequest<?> request = requestManager.getRequestForToken(token);
-            if (request.getRequest() instanceof IDeliverable) requests.add(request);
+            if (request.getRequest() instanceof IDeliverable)
+                requests.add(request);
         }
 
         List<Object> result = new ArrayList<>();

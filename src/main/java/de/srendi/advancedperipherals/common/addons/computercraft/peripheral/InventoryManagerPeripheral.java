@@ -222,7 +222,8 @@ public class InventoryManagerPeripheral extends BasePeripheral<BlockEntityPeriph
     public final int getEmptySpace() throws LuaException {
         int i = 0;
         for (ItemStack stack : getOwnerPlayer().getInventory().items) {
-            if (stack.isEmpty()) i++;
+            if (stack.isEmpty())
+                i++;
         }
         return i;
     }
