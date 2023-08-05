@@ -87,7 +87,8 @@ public class OperationAbility implements IOwnerAbility, IPeripheralPlugin {
             cooldown = fuelAbility.reduceCooldownAccordingToConsumptionRate(cooldown);
         }
         MethodResult result = method.apply(context);
-        if (successCallback != null) successCallback.accept(context);
+        if (successCallback != null)
+            successCallback.accept(context);
         setCooldown(operation, cooldown);
         return result;
     }

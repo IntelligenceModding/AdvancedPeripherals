@@ -55,7 +55,8 @@ public final class ARRenderAction implements INBTSerializable<CompoundTag> {
     }
 
     /*public void draw(Minecraft mc, PoseStack matrixStack, int w, int h) {
-        if (!type.ensureArgs(intArgs)) return;
+        if (!type.ensureArgs(intArgs))
+        return;
         int[] i = intArgs;
         switch (type) {
             case DRAW_CENTERED_STRING:
