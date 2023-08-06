@@ -24,7 +24,8 @@ public class VillageStructures {
     private static void addPieceToPool(Registry<StructureTemplatePool> templatePoolRegistry, Holder<StructureProcessorList> emptyProcessor, ResourceLocation poolRL, String nbtPieceRL, StructureTemplatePool.Projection projection, int weight) {
         // Grab the pool we want to add to
         StructureTemplatePool pool = templatePoolRegistry.get(poolRL);
-        if (pool == null) return;
+        if (pool == null)
+            return;
 
         // Grabs the nbt piece and creates a SingleJigsawPiece of it that we can add to a structure's pool.
         // Note: street pieces are a legacy_single_pool_piece type, houses are single_pool_piece
@@ -47,7 +48,8 @@ public class VillageStructures {
 
     @SubscribeEvent
     public static void addStructures(ServerAboutToStartEvent event) {
-        if (!APConfig.WORLD_CONFIG.enableVillagerStructures.get()) return;
+        if (!APConfig.WORLD_CONFIG.enableVillagerStructures.get())
+            return;
 
         Holder<StructureProcessorList> emptyProcessor = event.getServer().registryAccess().registryOrThrow(Registries.PROCESSOR_LIST)
                 .getHolderOrThrow(ResourceKey.create(Registries.PROCESSOR_LIST, new ResourceLocation("minecraft:empty")));
