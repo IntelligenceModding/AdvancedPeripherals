@@ -131,7 +131,7 @@ public class FluidFilter {
     @Override
     public String toString() {
         return "FluidFilter{" +
-                "fluid=" + fluid +
+                "fluid=" + FluidUtil.getRegistryKey(fluid) +
                 ", tag=" + tag +
                 ", nbt=" + nbt +
                 ", count=" + count +
