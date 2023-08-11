@@ -13,10 +13,12 @@ public class APAddons {
     public static final String CURIOS_MODID = "curios";
     public static final String REFINEDSTORAGE_MODID = "refinedstorage";
     public static final String AE_THINGS_MODID = "ae2things";
+    public static final String AE_ADDITIONS_MODID = "ae2additions";
 
     public static boolean curiosLoaded;
     public static boolean refinedStorageLoaded;
     public static boolean aeThingsLoaded;
+    public static boolean aeAdditionsLoaded;
 
     private APAddons() {
     }
@@ -26,6 +28,7 @@ public class APAddons {
         curiosLoaded = modList.isLoaded(CURIOS_MODID);
         refinedStorageLoaded = modList.isLoaded(REFINEDSTORAGE_MODID);
         aeThingsLoaded = modList.isLoaded(AE_THINGS_MODID);
+        aeAdditionsLoaded = modList.isLoaded(AE_ADDITIONS_MODID);
 
         if (refinedStorageLoaded)
             RefinedStorage.instance = new RefinedStorage();

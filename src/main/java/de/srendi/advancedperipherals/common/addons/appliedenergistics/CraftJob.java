@@ -91,7 +91,8 @@ public class CraftJob implements ILuaCallback {
     }
 
     public void maybeCraft() {
-        if (startedCrafting || futureJob == null || !futureJob.isDone()) return;
+        if (startedCrafting || futureJob == null || !futureJob.isDone())
+            return;
         ICraftingPlan job;
         try {
             job = futureJob.get();

@@ -18,7 +18,8 @@ public class VillageStructures {
 
     // Adapted from Pneumaticcraft
     public static void init() {
-        if (!APConfig.WORLD_CONFIG.enableVillagerStructures.get()) return;
+        if (!APConfig.WORLD_CONFIG.enableVillagerStructures.get())
+            return;
         //Ensure the vanilla static init is done
         PlainVillagePools.bootstrap();
         SavannaVillagePools.bootstrap();

@@ -37,7 +37,8 @@ public class RequestHudCanvasMessage {
             for (ServerLevel world : worlds) {
                 if (world.dimension().toString().equals(mes.getDimensionKey())) {
                     BlockEntity te = world.getBlockEntity(mes.getBlockPos());
-                    if (!(te instanceof ARControllerEntity controller)) return;
+                    if (!(te instanceof ARControllerEntity controller))
+                        return;
                     MNetwork.sendTo(new UpdateHudCanvasMessage(controller.getCanvas()), cont.get().getSender());
                     break;
                 }
