@@ -8,21 +8,21 @@ public class Pair<T, V> {
     private final T left;
     private final V right;
 
-    public Pair(T t, V v) {
-        left = t;
-        right = v;
+    public Pair(T left, V right) {
+        this.left = left;
+        this.right = right;
     }
 
-    public static <T, V> Pair<T, V> onlyRight(V v) {
-        return new Pair<>(null, v);
+    public static <T, V> Pair<T, V> onlyRight(V right) {
+        return new Pair<>(null, right);
     }
 
-    public static <T, V> Pair<T, V> onlyLeft(T t) {
-        return new Pair<>(t, null);
+    public static <T, V> Pair<T, V> onlyLeft(T left) {
+        return new Pair<>(left, null);
     }
 
-    public static <T, V> Pair<T, V> of(T t, V v) {
-        return new Pair<>(t, v);
+    public static <T, V> Pair<T, V> of(T left, V right) {
+        return new Pair<>(left, right);
     }
 
     public T getLeft() {
