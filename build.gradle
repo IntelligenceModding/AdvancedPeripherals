@@ -185,10 +185,10 @@ minecraft {
 
 repositories {
     mavenCentral()
-    maven {
+    /*maven {
         name = "Intelligence repository"
         url = "https://mvn.intelligence-modding.de/Intelligence"
-    }
+    }*/
     maven {
         name = "Intelligence Minecraft repository"
         url = "https://mvn.intelligence-modding.de/Minecraft"
@@ -240,6 +240,10 @@ repositories {
         }
     }
     maven {
+        name = 'Kotlin for Forge'
+        url = 'https://thedarkcolour.github.io/KotlinForForge/'
+    }
+    maven {
         url = "https://cursemaven.com"
         content {
             includeGroup "curse.maven"
@@ -279,12 +283,18 @@ dependencies {
         transitive false
     }
 
-    //AE2 Things
+    // AE2 Things
     compileOnly fg.deobf("curse.maven:ae2things-609977:${ae2things_version}-sources")
-    runtimeOnly fg.deobf("curse.maven:ae2things-609977:${ae2things_version}-sources")
+    //runtimeOnly fg.deobf("curse.maven:ae2things-609977:${ae2things_version}-sources")
+
+    // AE2 Additions
+    compileOnly fg.deobf("curse.maven:ae-additions-493962:${ae2additions_version}")
+    //runtimeOnly fg.deobf("curse.maven:ae-additions-493962:${ae2additions_version}")
+
+    implementation 'thedarkcolour:kotlinforforge:3.12.0'
 
     // Botania
-    compileOnly fg.deobf("vazkii.botania:Botania:${botania_version}")
+    implementation fg.deobf("vazkii.botania:Botania:${botania_version}")
 
     // Minecolonies
     // Change to compileOnly when running `runData`
@@ -307,6 +317,8 @@ dependencies {
     compileOnly fg.deobf("curse.maven:powah-633483:${powah_version}")
     compileOnly fg.deobf("me.shedaniel.cloth:cloth-config-forge:8.2.88")
     compileOnly fg.deobf("dev.architectury:architectury-forge:6.2.43")
+
+    compileOnly fg.deobf("curse.maven:crash-utilities-371813:4406293")
 
     testImplementation "org.junit.jupiter:junit-jupiter-api:${junit_version}"
     testImplementation "org.junit.jupiter:junit-jupiter-params:${junit_version}"
@@ -411,7 +423,8 @@ tasks.named('processResources', ProcessResources).configure {
     var replaceProperties = [minecraft_version         : minecraft_version,
                              forge_version             : forge_version,
                              loader_version            : loader_version,
-                             mod_id                    : mod_id, mod_version: mod_version,
+                             mod_id                    : mod_id,
+                             version                   : version,
                              cc_version                : cc_version,
                              curios_version            : curios_version,
                              minecolonies_version      : minecolonies_version,
@@ -419,7 +432,6 @@ tasks.named('processResources', ProcessResources).configure {
                              patchouli_version         : patchouli_version,
                              refinedstorage_version    : refinedstorage_version,
                              botania_version           : botania_version,
-                             create_version            : create_version,
                              mekanism_version          : mekanism_version,
                              ae2things_version         : ae2things_version,
                              powah_version             : powah_version,]
@@ -460,7 +472,6 @@ tasks.register('publishCurseForge', TaskPublishCurseForge, { task ->
 
         releaseType = "${release_type}"
     }
-    debugMode = true
 })
 
 modrinth {
@@ -494,8 +505,8 @@ publishing {
     }
     publications {
         gpr(MavenPublication) {
-            artifactId = project.hasProperty('teamcityBuild') ? "advancedperipherals-snapshots" : "advancedperipherals"
-            version = project.hasProperty('teamcityBuild') ? "${minecraft_version}-${version}-${project.teamcityBuild}" : "${minecraft_version}-${version}"
+            artifactId = isSnapshotVersion ? "advancedperipherals-snapshots" : "advancedperipherals"
+            version = isSnapshotVersion ? "${minecraft_version}-${version}-${project.teamcityBuild}" : "${minecraft_version}-${version}"
             from(components.java)
         }
     }

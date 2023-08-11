@@ -85,7 +85,8 @@ public class ChunkManager extends SavedData {
     }
 
     public synchronized void touch(UUID owner) {
-        if (forcedChunks.containsKey(owner)) forcedChunks.get(owner).touch();
+        if (forcedChunks.containsKey(owner))
+            forcedChunks.get(owner).touch();
     }
 
     public synchronized boolean removeForceChunk(ServerLevel level, UUID owner, ChunkPos pos) {

@@ -54,6 +54,8 @@ public class InventoryUtil {
         if (inventoryFrom instanceof IStorageSystemItemHandler storageSystemHandler) {
             for (int i = toSlot == -1 ? 0 : toSlot; i < (toSlot == -1 ? inventoryTo.getSlots() : toSlot + 1); i++) {
                 ItemStack extracted = storageSystemHandler.extractItem(filter, filter.getCount(), true);
+                if (extracted.isEmpty())
+                    continue;
                 ItemStack inserted;
                 if (toSlot == -1) {
                     inserted = ItemHandlerHelper.insertItem(inventoryTo, extracted, false);
@@ -72,6 +74,8 @@ public class InventoryUtil {
             for (int i = fromSlot == -1 ? 0 : fromSlot; i < (fromSlot == -1 ? inventoryFrom.getSlots() : fromSlot + 1); i++) {
                 if (filter.test(inventoryFrom.getStackInSlot(i))) {
                     ItemStack extracted = inventoryFrom.extractItem(i, amount - transferableAmount, true);
+                    if (extracted.isEmpty())
+                        continue;
                     ItemStack inserted = storageSystemHandler.insertItem(toSlot, extracted, false);
 
                     amount -= inserted.getCount();
@@ -86,6 +90,8 @@ public class InventoryUtil {
         for (int i = fromSlot == -1 ? 0 : fromSlot; i < (fromSlot == -1 ? inventoryFrom.getSlots() : fromSlot + 1); i++) {
             if (filter.test(inventoryFrom.getStackInSlot(i))) {
                 ItemStack extracted = inventoryFrom.extractItem(i, amount - transferableAmount, true);
+                if (extracted.isEmpty())
+                    continue;
                 ItemStack inserted;
                 if (toSlot == -1) {
                     inserted = ItemHandlerHelper.insertItem(inventoryTo, extracted, false);

@@ -41,7 +41,8 @@ public class TurtleChatBoxUpgrade extends PeripheralTurtleUpgrade<ChatBoxPeriphe
     @Override
     public void update(@NotNull ITurtleAccess turtle, @NotNull TurtleSide side) {
         super.update(turtle, side);
-        if (turtle.getLevel().isClientSide) return;
+        if (turtle.getLevel().isClientSide)
+            return;
 
         if (turtle.getUpgrade(side) instanceof TurtleChatBoxUpgrade) {
             BlockEntity tile = turtle.getLevel().getBlockEntity(turtle.getPosition());

@@ -135,6 +135,10 @@
         <module name="WhitespaceAfter">
             <property name="tokens" value="COMMA,SEMI" />
         </module>
+        <module name="RegexpSinglelineJava">
+            <property name="format" value="if \(.*\) \S+;"/>
+            <property name="message" value="Single-line if statements without braces must have a newline after the condition."/>
+        </module>
         <module name="WhitespaceAround">
             <property name="ignoreEnhancedForColon" value="false" />
             <!-- Allow empty functions -->

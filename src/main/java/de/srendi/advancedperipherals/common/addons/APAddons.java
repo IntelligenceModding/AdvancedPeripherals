@@ -24,12 +24,14 @@ public class APAddons {
     public static final String AE_THINGS_MODID = "ae2things";
     public static final String APPLIEDENERGISTICS_MODID = "ae2";
     public static final String MEKANISM_MODID = "mekanism";
+    public static final String AE_ADDITIONS_MODID = "ae2additions";
 
     public static boolean curiosLoaded;
     public static boolean refinedStorageLoaded;
     public static boolean aeThingsLoaded;
     public static boolean appliedEnergisticsLoaded;
     public static boolean mekanismLoaded;
+    public static boolean aeAdditionsLoaded;
 
     // Use static so these checks run as early as possible, so we can use them for our registries
     static {
@@ -39,6 +41,7 @@ public class APAddons {
         appliedEnergisticsLoaded = modList.isLoaded(APPLIEDENERGISTICS_MODID);
         mekanismLoaded = modList.isLoaded(MEKANISM_MODID);
         aeThingsLoaded = modList.isLoaded(AE_THINGS_MODID);
+        aeAdditionsLoaded = modList.isLoaded(AE_ADDITIONS_MODID);
 
         if (refinedStorageLoaded)
             RefinedStorage.instance = new RefinedStorage();

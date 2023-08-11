@@ -79,7 +79,8 @@ public class APFakePlayer extends FakePlayer {
         MinecraftServer server = level.getServer();
         if (server != null && getGameProfile() != PROFILE) {
             Player player = server.getPlayerList().getPlayer(getUUID());
-            if (player != null) player.awardStat(stat);
+            if (player != null)
+                player.awardStat(stat);
         }
     }
 

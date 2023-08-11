@@ -38,7 +38,8 @@ public abstract class BasePeripheral<O extends IPeripheralOwner> implements IBas
             initialized = true;
             this.pluggedMethods.clear();
             if (plugins != null) plugins.forEach(plugin -> {
-                if (plugin.isSuitable(this)) pluggedMethods.addAll(plugin.getMethods());
+                if (plugin.isSuitable(this))
+                    pluggedMethods.addAll(plugin.getMethods());
             });
             owner.getAbilities().forEach(ability -> {
                 if (ability instanceof IPeripheralPlugin peripheralPlugin)
@@ -90,7 +91,7 @@ public abstract class BasePeripheral<O extends IPeripheralOwner> implements IBas
 
     @Override
     public boolean equals(@Nullable IPeripheral iPeripheral) {
-        return iPeripheral == this;
+        return Objects.equals(this, iPeripheral);
     }
 
     @Override
@@ -129,14 +130,16 @@ public abstract class BasePeripheral<O extends IPeripheralOwner> implements IBas
     @Override
     @NotNull
     public String @NotNull [] getMethodNames() {
-        if (!initialized) buildPlugins();
+        if (!initialized)
+            buildPlugins();
         return methodNames;
     }
 
     @Override
     @NotNull
     public MethodResult callMethod(@NotNull IComputerAccess access, @NotNull ILuaContext context, int index, @NotNull IArguments arguments) throws LuaException {
-        if (!initialized) buildPlugins();
+        if (!initialized)
+            buildPlugins();
         return pluggedMethods.get(index).apply(access, context, arguments);
     }
 

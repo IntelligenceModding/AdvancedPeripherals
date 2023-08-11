@@ -61,7 +61,8 @@ public abstract class BaseBlockEntityBlock extends BaseBlock implements EntityBl
     @Override
     public void setPlacedBy(@NotNull Level worldIn, @NotNull BlockPos pos, @NotNull BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
         super.setPlacedBy(worldIn, pos, state, placer, stack);
-        if (worldIn.getBlockEntity(pos) == null) return;
+        if (worldIn.getBlockEntity(pos) == null)
+            return;
         //Used for the lua function getName()
         worldIn.getBlockEntity(pos).getPersistentData().putString("CustomName", stack.getDisplayName().getString());
     }

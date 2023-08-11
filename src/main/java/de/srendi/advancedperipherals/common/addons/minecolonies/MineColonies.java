@@ -10,11 +10,7 @@ import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.colony.workorders.IWorkOrder;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.citizen.Skill;
-import com.minecolonies.api.research.IGlobalResearch;
-import com.minecolonies.api.research.IGlobalResearchTree;
-import com.minecolonies.api.research.ILocalResearch;
-import com.minecolonies.api.research.ILocalResearchTree;
-import com.minecolonies.api.research.IResearchRequirement;
+import com.minecolonies.api.research.*;
 import com.minecolonies.api.research.effects.IResearchEffect;
 import com.minecolonies.api.research.util.ResearchState;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingStructureBuilder;
@@ -226,7 +222,8 @@ public class MineColonies {
     public static int getAmountOfConstructionSites(IColony colony) {
         int constructionSites = 0;
         for (IBuilding building : colony.getBuildingManager().getBuildings().values()) {
-            if (building.hasWorkOrder()) constructionSites++;
+            if (building.hasWorkOrder())
+                constructionSites++;
         }
 
         return constructionSites;

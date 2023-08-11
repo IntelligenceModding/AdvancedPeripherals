@@ -154,7 +154,7 @@ public class ItemFilter {
     @Override
     public String toString() {
         return "ItemFilter{" +
-                "item=" + item +
+                "item=" + ItemUtil.getRegistryKey(item) +
                 ", tag=" + tag +
                 ", nbt=" + nbt +
                 ", count=" + count +
