@@ -33,7 +33,7 @@ public class ItemFilter {
     public static Pair<ItemFilter, String> parse(Map<?, ?> item) {
         ItemFilter itemFilter = empty();
         // If the map is empty, return a filter without any filters
-        if (item.size() == 0)
+        if (item.isEmpty())
             return Pair.of(itemFilter, null);
         if (item.containsKey("name")) {
             try {
@@ -154,7 +154,7 @@ public class ItemFilter {
     @Override
     public String toString() {
         return "ItemFilter{" +
-                "item=" + item +
+                "item=" + ItemUtil.getRegistryKey(item) +
                 ", tag=" + tag +
                 ", nbt=" + nbt +
                 ", count=" + count +
