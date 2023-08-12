@@ -117,13 +117,15 @@ public class SmartGlassesItem extends ArmorItem implements IComputerItem, IMedia
 
     @Override
     public void inventoryTick(@NotNull ItemStack stack, Level world, @NotNull Entity entity, int slotNum, boolean selected) {
-        if (world.isClientSide) return;
+        if (world.isClientSide)
+            return;
         Container inventory = entity instanceof Player player ? player.getInventory() : null;
         SmartGlassesComputer computer = getOrCreateComputer((ServerLevel) world, entity, inventory, stack);
         computer.keepAlive();
 
         var changed = tick(stack, world, entity, computer);
-        if (changed && inventory != null) inventory.setChanged();
+        if (changed && inventory != null)
+            inventory.setChanged();
     }
 
     @Override
@@ -157,8 +159,10 @@ public class SmartGlassesItem extends ArmorItem implements IComputerItem, IMedia
 
     public ItemStack create(int id, @Nullable String label) {
         ItemStack result = new ItemStack(this);
-        if (id >= 0) result.getOrCreateTag().putInt(NBT_ID, id);
-        if (label != null) result.setHoverName(Component.literal(label));
+        if (id >= 0)
+            result.getOrCreateTag().putInt(NBT_ID, id);
+        if (label != null)
+            result.setHoverName(Component.literal(label));
         return result;
     }
 
@@ -208,9 +212,11 @@ public class SmartGlassesItem extends ArmorItem implements IComputerItem, IMedia
             computer.addAPI(new SmartGlassesAPI());
 
             // Only turn on when initially creating the computer, rather than each tick.
-            if (isMarkedOn(stack) && entity instanceof Player) computer.turnOn();
+            if (isMarkedOn(stack) && entity instanceof Player)
+                computer.turnOn();
 
-            if (inventory != null) inventory.setChanged();
+            if (inventory != null)
+                inventory.setChanged();
         }
         computer.setLevel(level);
         return computer;

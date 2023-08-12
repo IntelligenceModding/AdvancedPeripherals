@@ -88,7 +88,8 @@ public class SmartGlassesComputer extends ServerComputer implements IPocketAcces
     public void setLight(int colour) {
         if (colour < 0 || colour > 0xFFFFFF) colour = -1;
 
-        if (lightColour == colour) return;
+        if (lightColour == colour)
+            return;
         lightColour = colour;
         lightChanged = true;
     }
@@ -113,7 +114,8 @@ public class SmartGlassesComputer extends ServerComputer implements IPocketAcces
 
     @Override
     public void updateUpgradeNBTData() {
-        if (entity instanceof Player player) player.getInventory().setChanged();
+        if (entity instanceof Player player)
+            player.getInventory().setChanged();
     }
 
     @Override
@@ -164,7 +166,8 @@ public class SmartGlassesComputer extends ServerComputer implements IPocketAcces
             // Broadcast the state to new players.
             List<ServerPlayer> added = new ArrayList<>();
             for (var player : getLevel().players()) {
-                if (tracking.add(player)) added.add(player);
+                if (tracking.add(player))
+                    added.add(player);
             }
         }
 
