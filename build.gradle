@@ -5,12 +5,8 @@ import java.text.SimpleDateFormat
 buildscript {
     repositories {
         maven {
-            name = "Minecraft Forge maven"
-            url = "https://maven.minecraftforge.net"
-        }
-        maven {
-            name = "Parchment maven"
-            url = "https://maven.parchmentmc.org"
+            name = "Intelligence Minecraft"
+            url = "https://mvn.intelligence-modding.de/Minecraft"
         }
         mavenCentral()
         gradlePluginPortal()
@@ -192,11 +188,11 @@ repositories {
     /*maven {
         name = "Intelligence repository"
         url = "https://mvn.intelligence-modding.de/Intelligence"
-    }
+    }*/
     maven {
         name = "Intelligence Minecraft repository"
         url = "https://mvn.intelligence-modding.de/Minecraft"
-    }*/
+    }
     maven {
         name = "Blamejared maven botania patchouli"
         url = 'https://maven.blamejared.com'
