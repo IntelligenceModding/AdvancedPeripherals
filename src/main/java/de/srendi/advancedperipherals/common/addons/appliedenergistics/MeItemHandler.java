@@ -30,7 +30,7 @@ public class MeItemHandler implements IStorageSystemItemHandler {
     @NotNull
     @Override
     public ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
-        AEItemKey itemKey = AEItemKey.of(stack.getItem());
+        AEItemKey itemKey = AEItemKey.of(stack.getItem(), stack.getOrCreateTag());
         long inserted = storageMonitor.insert(itemKey, stack.getCount(), simulate ? Actionable.SIMULATE : Actionable.MODULATE, actionSource);
         ItemStack insertedStack = stack.copy();
         // Safe to cast here, the amount will never be higher than 64
