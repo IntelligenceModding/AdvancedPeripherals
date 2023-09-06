@@ -509,7 +509,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         while (iterator.hasNext()) {
             ICraftingCPU cpu = iterator.next();
 
-            if(Objects.requireNonNull(cpu.getName()).getString().equals(cpuName)) {
+            if(cpu.getName() != null && cpu.getName().getString().equals(cpuName)) {
                 return cpu;
             }
         }
