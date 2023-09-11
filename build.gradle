@@ -178,14 +178,6 @@ minecraft {
 repositories {
     mavenCentral()
     maven {
-        name = "Intelligence repository"
-        url = "https://mvn.intelligence-modding.de/Intelligence"
-    }
-    maven {
-        name = "Intelligence Minecraft repository"
-        url = "https://mvn.intelligence-modding.de/Minecraft"
-    }
-    maven {
         name = "Blamejared maven botania patchouli"
         url = 'https://maven.blamejared.com'
     }
@@ -240,6 +232,10 @@ repositories {
         content {
             includeGroup "curse.maven"
         }
+    }
+    maven {
+        name = "Intelligence repository"
+        url = "https://mvn.intelligence-modding.de/Intelligence"
     }
 }
 
