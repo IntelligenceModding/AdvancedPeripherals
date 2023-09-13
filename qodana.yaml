@@ -21,5 +21,3 @@ exclude:
 
 #Execute shell command before Qodana execution (Applied in CI/CD pipeline)
 #bootstrap: sh ./prepare-qodana.sh
-
-linter: jetbrains/qodana-jvm:latest
