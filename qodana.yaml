@@ -16,8 +16,3 @@ exclude:
       - src/test/resources/*
       - src/testMod/resources/*
       - src/server-files/resources/*
-
-projectJDK: temurin-17 #(Applied in CI/CD pipeline)
-
-#Execute shell command before Qodana execution (Applied in CI/CD pipeline)
-#bootstrap: sh ./prepare-qodana.sh
