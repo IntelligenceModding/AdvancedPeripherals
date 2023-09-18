@@ -54,7 +54,7 @@
   "item.advancedperipherals.tooltip.me_bridge": "&7ME网关可以与您的Applied Energistics系统交互",
   "item.advancedperipherals.tooltip.memory_card": "&7可以保存并给予库存管理器玩家背包的交互权限。",
   "item.advancedperipherals.tooltip.memory_card.bound": "&7已绑定到 &b%s&7.",
-  "item.advancedperipherals.tooltip.nbt_storage": "§7NBT版存储硬盘, 可以存储基于NBT的数据",
+  "item.advancedperipherals.tooltip.nbt_storage": "&7NBT版存储硬盘, 可以存储基于NBT的数据",
   "item.advancedperipherals.tooltip.overpowered_end_automata_core": "&7改进的末地自动核心版本，提供了一些强大的用途！小心，升级非常脆弱。",
   "item.advancedperipherals.tooltip.overpowered_husbandry_automata_core": "&7改进的畜牧业自动核心版本，提供了一些强大的用途！小心，升级非常脆弱。",
   "item.advancedperipherals.tooltip.overpowered_weak_automata_core": "&7改进的弱自动核心版本，提供了一些强大的用途！小心，升级非常脆弱。",
