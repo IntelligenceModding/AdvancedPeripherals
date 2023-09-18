@@ -258,30 +258,6 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     }
 
     @Override
-    public final MethodResult importFluid(IArguments arguments) throws LuaException {
-        IFluidHandler handler = FluidUtil.getHandlerFromDirection(arguments.getString(1), owner);
-        return importToME(arguments, handler);
-    }
-
-    @Override
-    public final MethodResult exportFluid(@NotNull IArguments arguments) throws LuaException {
-        IFluidHandler handler = FluidUtil.getHandlerFromDirection(arguments.getString(1), owner);
-        return exportToTank(arguments, handler);
-    }
-
-    @Override
-    public final MethodResult importFluidFromPeripheral(IComputerAccess computer, IArguments arguments) throws LuaException {
-        IFluidHandler handler = FluidUtil.getHandlerFromName(computer, arguments.getString(1));
-        return importToME(arguments, handler);
-    }
-
-    @Override
-    public final MethodResult exportFluidToPeripheral(IComputerAccess computer, IArguments arguments) throws LuaException {
-        IFluidHandler handler = FluidUtil.getHandlerFromName(computer, arguments.getString(1));
-        return exportToTank(arguments, handler);
-    }
-
-    @Override
     public MethodResult getPattern(IArguments arguments) throws LuaException {
         return null;
     }
@@ -547,50 +523,6 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
             return MethodResult.of(0, "The target tank does not exist. Make sure the bridge is exposed in the computer network. Reach out to our discord or our documentation for help.");
 
         return importToME(arguments, handler);
-    }
-
-    @LuaFunction(mainThread = true)
-    public final MethodResult exportItem(@NotNull IArguments arguments) throws LuaException {
-        if (!isConnected())
-            return notConnected();
-
-        IItemHandler inventory = InventoryUtil.getHandlerFromDirection(arguments.getString(1), owner);
-        return exportToChest(arguments, inventory);
-    }
-
-    @LuaFunction(mainThread = true)
-    public final MethodResult exportItemToPeripheral(IComputerAccess computer, IArguments arguments) throws LuaException {
-        if (!isConnected())
-            return notConnected();
-
-        IItemHandler inventory = InventoryUtil.getHandlerFromName(computer, arguments.getString(1));
-
-        if (inventory == null)
-            return MethodResult.of(0, "The target inventory does not exist. Make sure the bridge is exposed in the computer network. Reach out to our discord or our documentation for help.");
-
-        return exportToChest(arguments, inventory);
-    }
-
-    @LuaFunction(mainThread = true)
-    public final MethodResult importItem(IArguments arguments) throws LuaException {
-        if (!isConnected())
-            return notConnected();
-
-        IItemHandler inventory = InventoryUtil.getHandlerFromDirection(arguments.getString(1), owner);
-        return importToME(arguments, inventory);
-    }
-
-    @LuaFunction(mainThread = true)
-    public final MethodResult importItemFromPeripheral(IComputerAccess computer, IArguments arguments) throws LuaException {
-        if (!isConnected())
-            return notConnected();
-
-        IItemHandler inventory = InventoryUtil.getHandlerFromName(computer, arguments.getString(1));
-
-        if (inventory == null)
-            return MethodResult.of(0, "The target inventory does not exist. Make sure the bridge is exposed in the computer network. Reach out to our discord or our documentation for help.");
-
-        return importToME(arguments, inventory);
     }
 
     @Override
