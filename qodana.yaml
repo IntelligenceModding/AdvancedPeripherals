@@ -1,0 +1,18 @@
+#-------------------------------------------------------------------------------#
+#               Qodana analysis is configured by qodana.yaml file               #
+#             https://www.jetbrains.com/help/qodana/qodana-yaml.html            #
+#-------------------------------------------------------------------------------#
+version: "1.0"
+
+profile:
+  name: qodana.starter
+
+#Disable inspections
+exclude:
+  - name: Exclude assets
+    paths:
+      - src/generated/*
+      - src/main/resources/*
+      - src/test/resources/*
+      - src/testMod/resources/*
+      - src/server-files/resources/*
