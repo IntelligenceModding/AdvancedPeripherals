@@ -22,7 +22,7 @@ Translations are managed through [crowdin], a service which allows anyone to con
 
 ## Setting up a development environment
 
-**PLEASE READ If you want to add features or fix bugs which exist on multiple versions, please make the changes for the oldest fully supported versions which you can find [here](https://docs.intelligence-modding.de/#version-support). That would be 1.19.2 at the time the article was written.**
+**PLEASE READ If you want to add features or fix bugs that exist in multiple versions, please make the changes for the oldest fully supported versions, which you can find [here](https://docs.intelligence-modding.de/#version-support). That would be 1.19.2 at the time the article was written.**
 
 If you want to contribute to Advanced Peripherals, you'll need to set up a development environment. This can be a tedious process for first-time contributors, but it's worth it in the long run. This guide will walk you through the process of setting up a development environment.
 
