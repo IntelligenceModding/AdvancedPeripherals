@@ -1,0 +1,37 @@
+{
+  "type": "forge:conditional",
+  "recipes": [
+    {
+      "conditions": [
+        {
+          "type": "forge:mod_loaded",
+          "modid": "refinedstorage"
+        }
+      ],
+      "recipe": {
+        "type": "minecraft:crafting_shaped",
+        "category": "redstone",
+        "key": {
+          "A": {
+            "item": "advancedperipherals:peripheral_casing"
+          },
+          "I": {
+            "item": "refinedstorage:interface"
+          },
+          "Q": {
+            "item": "refinedstorage:quartz_enriched_iron"
+          }
+        },
+        "pattern": [
+          "QIQ",
+          "IAI",
+          "QIQ"
+        ],
+        "result": {
+          "item": "advancedperipherals:rs_bridge"
+        },
+        "show_notification": true
+      }
+    }
+  ]
+}

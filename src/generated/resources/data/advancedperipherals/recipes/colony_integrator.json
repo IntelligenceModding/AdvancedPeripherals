@@ -1,0 +1,43 @@
+{
+  "type": "forge:conditional",
+  "recipes": [
+    {
+      "conditions": [
+        {
+          "type": "forge:mod_loaded",
+          "modid": "minecolonies"
+        }
+      ],
+      "recipe": {
+        "type": "minecraft:crafting_shaped",
+        "category": "redstone",
+        "key": {
+          "A": {
+            "item": "advancedperipherals:peripheral_casing"
+          },
+          "B": {
+            "item": "minecolonies:build_goggles"
+          },
+          "O": {
+            "tag": "minecraft:logs"
+          },
+          "R": {
+            "item": "minecolonies:blockminecoloniesrack"
+          },
+          "S": {
+            "item": "structurize:sceptergold"
+          }
+        },
+        "pattern": [
+          "ORO",
+          "BAS",
+          "ORO"
+        ],
+        "result": {
+          "item": "advancedperipherals:colony_integrator"
+        },
+        "show_notification": true
+      }
+    }
+  ]
+}
