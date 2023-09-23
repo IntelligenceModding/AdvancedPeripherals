@@ -42,6 +42,9 @@ public class Events {
     public static void onWorldJoin(PlayerEvent.PlayerLoggedInEvent event) {
         Player player = event.getEntity();
 
+        // We could switch to the advancement way to give new players the book. However, that would not allow us to create
+        // a config option for that. So we will stick with the custom solution here.
+        // See https://vazkiimods.github.io/Patchouli/docs/patchouli-basics/giving-new
         if (APConfig.WORLD_CONFIG.givePlayerBookOnJoin.get()) {
             if (!hasPlayedBefore(player)) {
                 ItemStack book = new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation("patchouli", "guide_book")));

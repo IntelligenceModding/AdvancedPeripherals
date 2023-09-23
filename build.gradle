@@ -300,7 +300,7 @@ dependencies {
     compileOnly fg.deobf("com.ldtteam:blockui:${blockui_version}")
 
     //Patchouli
-    //runtimeOnly fg.deobf("vazkii.patchouli:Patchouli:${patchouli_version}")
+    runtimeOnly fg.deobf("vazkii.patchouli:Patchouli:${patchouli_version}-FORGE")
 
     // Create
     compileOnly fg.deobf("com.simibubi.create:create-1.20.1:${create_version}:all")

@@ -15,12 +15,15 @@ If you've any other questions, [ask the community via discord][discord] or [open
 - [Writing documentation](#writing-documentation)
 
 ## Reporting issues
-Reporting issues is the easiest way to contribute to Advanced Peripherals. If you've found a bug, or have a suggestion for a new feature, feel free to [open an issue][new-issue] on GitHub. Please make sure to include as much information as possible and to follow the issue template.
+Reporting issues is the easiest way to contribute to Advanced Peripherals. Please read our [guideline](https://docs.intelligence-modding.de/guides/how_to_report/) on how to report issues
 
 ## Translations
 Translations are managed through [crowdin], a service which allows anyone to contribute translations to Advanced Peripherals.
 
 ## Setting up a development environment
+
+**PLEASE READ If you want to add features or fix bugs that exist in multiple versions, please make the changes for the oldest fully supported versions, which you can find [here](https://docs.intelligence-modding.de/#version-support). That would be 1.19.2 at the time the article was written.**
+
 If you want to contribute to Advanced Peripherals, you'll need to set up a development environment. This can be a tedious process for first-time contributors, but it's worth it in the long run. This guide will walk you through the process of setting up a development environment.
 
 - Make sure you have the following installed:
