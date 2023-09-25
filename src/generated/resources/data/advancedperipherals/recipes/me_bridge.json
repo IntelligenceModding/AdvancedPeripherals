@@ -5,7 +5,7 @@
       "conditions": [
         {
           "type": "forge:mod_loaded",
-          "modid": "minecolonies"
+          "modid": "ae2"
         }
       ],
       "recipe": {
@@ -14,20 +14,20 @@
           "A": {
             "item": "advancedperipherals:peripheral_casing"
           },
-          "O": {
-            "tag": "minecraft:logs"
+          "F": {
+            "item": "ae2:fluix_block"
           },
-          "R": {
-            "item": "minecolonies:blockminecoloniesrack"
+          "I": {
+            "item": "ae2:interface"
           }
         },
         "pattern": [
-          "ORO",
-          " A ",
-          "ORO"
+          "FIF",
+          "IAI",
+          "FIF"
         ],
         "result": {
-          "item": "advancedperipherals:colony_integrator"
+          "item": "advancedperipherals:me_bridge"
         }
       }
     }

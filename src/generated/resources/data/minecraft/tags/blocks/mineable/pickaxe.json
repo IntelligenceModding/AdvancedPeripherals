@@ -9,7 +9,6 @@
     "advancedperipherals:fluid_detector",
     "advancedperipherals:gas_detector",
     "advancedperipherals:peripheral_casing",
-    "advancedperipherals:ar_controller",
     "advancedperipherals:inventory_manager",
     "advancedperipherals:redstone_integrator",
     "advancedperipherals:block_reader",
