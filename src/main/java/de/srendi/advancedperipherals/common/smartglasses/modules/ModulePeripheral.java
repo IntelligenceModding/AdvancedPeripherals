@@ -4,9 +4,6 @@ import dan200.computercraft.api.lua.LuaFunction;
 import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesComputer;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class ModulePeripheral extends BasePeripheral<ModulePeripheralOwner> {
 
     public static final String PERIPHERAL_TYPE = "smartGlasses";
@@ -25,8 +22,6 @@ public class ModulePeripheral extends BasePeripheral<ModulePeripheralOwner> {
 
     @LuaFunction(mainThread = true)
     public final String[] getModules() {
-        List<String> modules = new ArrayList<>(getPeripheralOwner().getComputer().getModules().size());
-        getPeripheralOwner().getComputer().getModules().forEach(module -> modules.add(module.getName().toString()));
-        return modules.toArray(new String[0]);
+        return getPeripheralOwner().getComputer().getModules().stream().map(module -> module.getName().toString()).toArray(String[]::new);
     }
 }

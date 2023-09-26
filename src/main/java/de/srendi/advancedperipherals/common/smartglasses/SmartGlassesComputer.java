@@ -135,10 +135,13 @@ public class SmartGlassesComputer extends ServerComputer implements IPocketAcces
                 IPocketUpgrade upgrade = PocketUpgrades.instance().get(peripheralItem);
                 if (upgrade != null) {
                     IPeripheral peripheral = upgrade.createPeripheral(smartGlassesAccess);
-                    if (peripheral != null)
+                    if (peripheral != null) {
                         setPeripheral(SmartGlassesSlot.indexToSide(slot), peripheral);
+                        continue;
+                    }
                 }
             }
+            setPeripheral(SmartGlassesSlot.indexToSide(slot), null);
         }
         modules.clear();
         for (int slot = 4; slot < 11; slot++) {
