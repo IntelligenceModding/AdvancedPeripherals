@@ -5,6 +5,8 @@ import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesAccess;
 import de.srendi.advancedperipherals.common.smartglasses.modules.IModule;
 import de.srendi.advancedperipherals.common.smartglasses.modules.IModuleFunctions;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.Entity;
+
 
 /**
  * We want to support scripts which were made for the plethora classes. So we call this item the same as the overlay item from plethora
@@ -24,7 +26,8 @@ public class OverlayModule implements IModule {
 
     @Override
     public void tick(SmartGlassesAccess smartGlassesAccess) {
-        if(smartGlassesAccess.getEntity().getLevel().getGameTime() % 20 == 0)
+        Entity entity = smartGlassesAccess.getEntity();
+        if(entity != null && entity.getLevel().getGameTime() % 20 == 0)
             AdvancedPeripherals.LOGGER.info("I'm an overlay module! And I'm alive!");
     }
 }

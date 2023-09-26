@@ -14,6 +14,12 @@ public interface IModule {
      */
     IModuleFunctions getFunctions(SmartGlassesAccess smartGlassesAccess);
 
+    /**
+     * Classic tick function.
+     * <p>
+     * Implementations should check if the entity is not null since the glasses can still tick without belonging to an entity
+     * @param smartGlassesAccess Contains access to the entity, the computer, the level or the upgrades
+     */
     void tick(SmartGlassesAccess smartGlassesAccess);
 
 }

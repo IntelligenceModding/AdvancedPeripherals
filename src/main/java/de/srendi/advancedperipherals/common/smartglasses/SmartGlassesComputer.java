@@ -20,7 +20,10 @@ import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Basically just a {@link dan200.computercraft.shared.pocket.core.PocketServerComputer} but with some changes
@@ -167,16 +170,14 @@ public class SmartGlassesComputer extends ServerComputer implements IPocketAcces
             tracking.addAll(getLevel().players());
         } else {
             // Broadcast the state to new players.
-            List<ServerPlayer> added = new ArrayList<>();
             for (var player : getLevel().players()) {
-                if (tracking.add(player))
-                    added.add(player);
+                tracking.add(player);
             }
         }
 
         modules.forEach(module -> module.tick(smartGlassesAccess));
 
-        if(isDirty())
+        if (isDirty())
             updatePeripheralsAndModules(itemHandler);
 
         isDirty = false;

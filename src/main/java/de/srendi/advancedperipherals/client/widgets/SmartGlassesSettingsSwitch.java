@@ -45,7 +45,7 @@ public class SmartGlassesSettingsSwitch extends AbstractWidget {
     protected void renderBg(@NotNull PoseStack pPoseStack, @NotNull Minecraft pMinecraft, int pMouseX, int pMouseY) {
         RenderSystem.setShaderTexture(0, BACKGROUND);
         if (isEnabled) {
-            blit(pPoseStack, this.x - 3, this.y, 45, 217, 23, 22);
+            blit(pPoseStack, this.x - 3, this.y, 45, 217, 24, 22);
         } else {
             blit(pPoseStack, this.x, this.y, 23, 217, 21, 22);
         }
