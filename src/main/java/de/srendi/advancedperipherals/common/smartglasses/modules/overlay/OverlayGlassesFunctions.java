@@ -1,6 +1,7 @@
 package de.srendi.advancedperipherals.common.smartglasses.modules.overlay;
 
 import dan200.computercraft.api.lua.IArguments;
+import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.lua.MethodResult;
 import de.srendi.advancedperipherals.common.smartglasses.modules.IModule;
@@ -21,8 +22,8 @@ public class OverlayGlassesFunctions implements IModuleFunctions {
     }
 
     @LuaFunction
-    public final MethodResult createPanel(String id, IArguments arguments) {
-        Panel panel = new Panel(id, overlayModule);
+    public final MethodResult createPanel(String id, IArguments arguments) throws LuaException {
+        Panel panel = new Panel(id, overlayModule, arguments);
         Pair<OverlayObject, Boolean> success = overlayModule.addObject(panel);
         if(!success.getRight())
             return MethodResult.of(success.getLeft(), IModule.ErrorConstants.ALREADY_EXISTS);
