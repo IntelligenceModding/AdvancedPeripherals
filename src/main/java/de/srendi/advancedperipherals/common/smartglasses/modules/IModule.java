@@ -22,4 +22,11 @@ public interface IModule {
      */
     void tick(SmartGlassesAccess smartGlassesAccess);
 
+    /**
+     * ErrorConstants class contains constants for error messages. This is used for easier error handling for users.
+     */
+    class ErrorConstants {
+        public static final String ALREADY_EXISTS = "ID_ALREADY_EXISTS";
+    }
+
 }

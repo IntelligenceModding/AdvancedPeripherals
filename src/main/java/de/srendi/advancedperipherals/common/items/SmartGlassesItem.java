@@ -208,7 +208,6 @@ public class SmartGlassesItem extends ArmorItem implements IComputerItem, IMedia
             setInstanceID(stack, computer.register());
             setSessionID(stack, registry.getSessionID());
 
-            computer.setPeripheral(ComputerSide.BACK, new ModulePeripheral(computer));
             computer.addAPI(new SmartGlassesAPI());
 
             // Only turn on when initially creating the computer, rather than each tick.
@@ -218,6 +217,7 @@ public class SmartGlassesItem extends ArmorItem implements IComputerItem, IMedia
             if (inventory != null)
                 inventory.setChanged();
         }
+        computer.setPeripheral(ComputerSide.BACK, new ModulePeripheral(computer));
         computer.setLevel(level);
         return computer;
     }

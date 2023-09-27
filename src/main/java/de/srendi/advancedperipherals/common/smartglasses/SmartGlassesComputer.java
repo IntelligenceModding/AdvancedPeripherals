@@ -3,11 +3,13 @@ package de.srendi.advancedperipherals.common.smartglasses;
 import dan200.computercraft.api.peripheral.IPeripheral;
 import dan200.computercraft.api.pocket.IPocketAccess;
 import dan200.computercraft.api.pocket.IPocketUpgrade;
+import dan200.computercraft.core.computer.ComputerSide;
 import dan200.computercraft.shared.PocketUpgrades;
 import dan200.computercraft.shared.computer.core.ComputerFamily;
 import dan200.computercraft.shared.computer.core.ServerComputer;
 import de.srendi.advancedperipherals.common.smartglasses.modules.IModule;
 import de.srendi.advancedperipherals.common.smartglasses.modules.IModuleItem;
+import de.srendi.advancedperipherals.common.smartglasses.modules.ModulePeripheral;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -153,6 +155,7 @@ public class SmartGlassesComputer extends ServerComputer implements IPocketAcces
                 modules.add(module.getModule());
             }
         }
+        setPeripheral(ComputerSide.BACK, new ModulePeripheral(this));
     }
 
     @Override
@@ -166,13 +169,7 @@ public class SmartGlassesComputer extends ServerComputer implements IPocketAcces
         var sendState = hasOutputChanged() || lightChanged;
         lightChanged = false;
         if (sendState) {
-            // Broadcast the state to all players
             tracking.addAll(getLevel().players());
-        } else {
-            // Broadcast the state to new players.
-            for (var player : getLevel().players()) {
-                tracking.add(player);
-            }
         }
 
         modules.forEach(module -> module.tick(smartGlassesAccess));
