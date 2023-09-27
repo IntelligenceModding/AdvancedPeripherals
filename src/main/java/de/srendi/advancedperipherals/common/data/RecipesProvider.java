@@ -40,7 +40,7 @@ public class RecipesProvider extends RecipeProvider implements IConditionBuilder
     protected void buildCraftingRecipes(@NotNull Consumer<FinishedRecipe> consumer) {
         addShapeless(consumer);
         addShaped(consumer);
-        //addSmithing(consumer);
+        addSmithing(consumer);
     }
 
     private void addShapeless(@NotNull Consumer<FinishedRecipe> consumer) {

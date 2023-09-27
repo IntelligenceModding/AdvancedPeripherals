@@ -58,7 +58,7 @@ public class SmartGlassesItem extends ArmorItem implements IComputerItem, IMedia
     private static final String NBT_SESSION = "SessionId";
 
     public SmartGlassesItem(ArmorMaterial material) {
-        super(material, EquipmentSlot.HEAD, new Properties().stacksTo(1));
+        super(material, EquipmentSlot.HEAD, new Properties().stacksTo(1).tab(AdvancedPeripherals.TAB));
     }
 
     @Nullable

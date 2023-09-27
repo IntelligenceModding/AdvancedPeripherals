@@ -10,7 +10,7 @@ import net.minecraft.world.entity.Entity;
 
 /**
  * We want to support scripts which were made for the plethora classes. So we call this item the same as the overlay item from plethora
- * We'll also add the same functions
+ * We'll first add our own implementation for a rendering system and then add the API endpoints for plethora scripts
  */
 public class OverlayModule implements IModule {
 
