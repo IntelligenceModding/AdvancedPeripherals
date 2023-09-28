@@ -2,6 +2,7 @@ package de.srendi.advancedperipherals.common.network;
 
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.network.base.IPacket;
+import de.srendi.advancedperipherals.common.network.toclient.DistanceDetectorSyncPacket;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;

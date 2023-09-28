@@ -1,4 +1,4 @@
-package de.srendi.advancedperipherals.common.network;
+package de.srendi.advancedperipherals.common.network.toclient;
 
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.blocks.blockentities.DistanceDetectorEntity;

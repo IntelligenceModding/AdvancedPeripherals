@@ -4,8 +4,8 @@ import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.Dist
 import de.srendi.advancedperipherals.common.blocks.base.BaseBlock;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralBlockEntity;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
-import de.srendi.advancedperipherals.common.network.DistanceDetectorSyncPacket;
 import de.srendi.advancedperipherals.common.network.PacketHandler;
+import de.srendi.advancedperipherals.common.network.toclient.DistanceDetectorSyncPacket;
 import de.srendi.advancedperipherals.common.setup.APBlockEntityTypes;
 import de.srendi.advancedperipherals.common.util.HitResultUtil;
 import net.minecraft.core.BlockPos;
