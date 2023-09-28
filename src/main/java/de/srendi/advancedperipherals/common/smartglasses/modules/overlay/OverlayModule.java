@@ -6,7 +6,6 @@ import de.srendi.advancedperipherals.common.smartglasses.modules.IModule;
 import de.srendi.advancedperipherals.common.smartglasses.modules.IModuleFunctions;
 import de.srendi.advancedperipherals.common.util.Pair;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.Entity;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.CopyOnWriteArraySet;
@@ -32,9 +31,11 @@ public class OverlayModule implements IModule {
 
     @Override
     public void tick(@NotNull SmartGlassesAccess smartGlassesAccess) {
+        /*
         Entity entity = smartGlassesAccess.getEntity();
         if (entity != null && entity.getLevel().getGameTime() % 20 == 0)
             AdvancedPeripherals.LOGGER.info("I'm an overlay module! And I'm alive!");
+        */
     }
 
     public CopyOnWriteArraySet<OverlayObject> getObjects() {

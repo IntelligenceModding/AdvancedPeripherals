@@ -3,13 +3,15 @@ package de.srendi.advancedperipherals.common.smartglasses.modules.overlay;
 import dan200.computercraft.api.lua.IArguments;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
+import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertyTypes.FixedPointNumberProperty;
+import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertyTypes.FloatingNumberProperty;
 
 public abstract class RenderableObject extends OverlayObject {
 
-    @ObjectProperty(minDecimal = 0, maxDecimal = 1)
+    @FloatingNumberProperty(min = 0, max = 1)
     public double opacity = 1;
 
-    @ObjectProperty(minInt = 0, maxInt = 0xFFFFFF)
+    @FixedPointNumberProperty(min = 0, max = 0xFFFFFF)
     public int color = 0xFFFFFF;
 
     @LuaFunction
@@ -34,5 +36,6 @@ public abstract class RenderableObject extends OverlayObject {
 
     public RenderableObject(String id, OverlayModule module, IArguments arguments) throws LuaException {
         super(id, module, arguments);
+        reflectivelyMapProperties(arguments);
     }
 }
