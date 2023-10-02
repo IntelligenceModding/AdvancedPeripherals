@@ -8,7 +8,7 @@ import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
 
 public class GasDetectorPeripheral extends BasePeripheral<BlockEntityPeripheralOwner<GasDetectorEntity>> {
 
-    public static final String TYPE = "gasDetector";
+    public static final String TYPE = "gas_detector";
 
     public GasDetectorPeripheral(GasDetectorEntity tileEntity) {
         super(TYPE, new BlockEntityPeripheralOwner<>(tileEntity));

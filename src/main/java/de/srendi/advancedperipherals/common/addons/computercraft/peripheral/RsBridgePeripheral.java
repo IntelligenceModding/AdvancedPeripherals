@@ -31,7 +31,7 @@ import java.util.List;
 
 public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwner<RsBridgeEntity>> implements IStoragePeripheral {
 
-    public static final String PERIPHERAL_TYPE = "rsBridge";
+    public static final String PERIPHERAL_TYPE = "rs_bridge";
 
     public RsBridgePeripheral(RsBridgeEntity tileEntity) {
         super(PERIPHERAL_TYPE, new BlockEntityPeripheralOwner<>(tileEntity));

@@ -8,7 +8,7 @@ import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
 
 public class DistanceDetectorPeripheral extends BasePeripheral<BlockEntityPeripheralOwner<DistanceDetectorEntity>> {
 
-    public static final String PERIPHERAL_TYPE = "distanceDetector";
+    public static final String PERIPHERAL_TYPE = "distance_detector";
 
     public DistanceDetectorPeripheral(DistanceDetectorEntity tileEntity) {
         super(PERIPHERAL_TYPE, new BlockEntityPeripheralOwner<>(tileEntity));

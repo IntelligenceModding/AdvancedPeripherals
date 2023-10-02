@@ -10,7 +10,7 @@ import de.srendi.advancedperipherals.lib.metaphysics.IAutomataCoreTier;
 
 public class EndAutomataCorePeripheral extends WeakAutomataCorePeripheral {
 
-    public static final String TYPE = "endAutomata";
+    public static final String TYPE = "end_automata";
 
     public EndAutomataCorePeripheral(ITurtleAccess turtle, TurtleSide side) {
         this(TYPE, turtle, side, AutomataCoreTier.TIER2);
