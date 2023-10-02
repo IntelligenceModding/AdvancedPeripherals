@@ -50,8 +50,9 @@ public class AdvancedPeripherals {
     }
 
     public static void exception(String message, Exception exception) {
-        if (APConfig.GENERAL_CONFIG.enableDebugMode.get())
+        if (APConfig.GENERAL_CONFIG.enableDebugMode.get()) {
             LOGGER.error("[DEBUG]", exception);
+        }
     }
 
     public static ResourceLocation getRL(String resource) {

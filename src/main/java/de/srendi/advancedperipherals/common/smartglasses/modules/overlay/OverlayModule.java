@@ -17,7 +17,12 @@ import java.util.concurrent.CopyOnWriteArraySet;
  */
 public class OverlayModule implements IModule {
 
-    private final CopyOnWriteArraySet<OverlayObject> objects = new CopyOnWriteArraySet<>();
+    public final CopyOnWriteArraySet<OverlayObject> objects = new CopyOnWriteArraySet<>();
+    public final SmartGlassesAccess access;
+
+    public OverlayModule(SmartGlassesAccess access) {
+        this.access = access;
+    }
 
     @Override
     public ResourceLocation getName() {
@@ -36,6 +41,10 @@ public class OverlayModule implements IModule {
         if (entity != null && entity.getLevel().getGameTime() % 20 == 0)
             AdvancedPeripherals.LOGGER.info("I'm an overlay module! And I'm alive!");
         */
+    }
+
+    public SmartGlassesAccess getAccess() {
+        return access;
     }
 
     public CopyOnWriteArraySet<OverlayObject> getObjects() {

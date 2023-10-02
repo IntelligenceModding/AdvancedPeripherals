@@ -4,16 +4,20 @@ import dan200.computercraft.api.lua.IArguments;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
-import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertyTypes.BooleanProperty;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertyTypes.PropertyType;
 import de.srendi.advancedperipherals.common.util.StringUtil;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraftforge.network.NetworkEvent;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.logging.log4j.Level;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 
@@ -23,11 +27,20 @@ public abstract class OverlayObject {
     private boolean enabled = true;
 
     private final String id;
-    private final OverlayModule module;
+    private OverlayModule module;
+    private UUID player;
 
     public OverlayObject(String id, OverlayModule module, IArguments arguments) {
         this.id = id;
         this.module = module;
+    }
+
+    /**
+     * For clientside initialization
+     */
+    public OverlayObject(String id, UUID player) {
+        this.id = id;
+        this.player = player;
     }
 
     @LuaFunction
@@ -37,6 +50,10 @@ public abstract class OverlayObject {
 
     public OverlayModule getModule() {
         return module;
+    }
+
+    public UUID getPlayer() {
+        return player;
     }
 
     @LuaFunction
@@ -120,8 +137,7 @@ public abstract class OverlayObject {
                 }
             }
         } catch (LuaException | IllegalAccessException exception) {
-            if (APConfig.GENERAL_CONFIG.enableDebugMode.get())
-                AdvancedPeripherals.exception("An error occurred while mapping properties.", exception);
+            AdvancedPeripherals.exception("An error occurred while mapping properties.", exception);
             throw new LuaException("An error occurred while mapping properties.");
         }
     }
@@ -157,6 +173,22 @@ public abstract class OverlayObject {
             AdvancedPeripherals.debug("The field type " + fieldType.getName() + " is not supported for the value " + value + ".", Level.WARN);
         }
         return value;
+    }
+
+    protected void handle(NetworkEvent.Context context) {
+
+    }
+
+    protected void encode(FriendlyByteBuf buffer) {
+        buffer.writeUtf(id);
+        Entity entity = module.getAccess().getEntity();
+        if(entity instanceof Player player) {
+            buffer.writeBoolean(true);
+            buffer.writeUUID(player.getUUID());
+        } else {
+            // Should theoretically never happen. But better safe than sorry
+            buffer.writeBoolean(false);
+        }
     }
 
 }
