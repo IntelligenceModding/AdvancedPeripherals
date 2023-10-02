@@ -152,7 +152,7 @@ public class SmartGlassesComputer extends ServerComputer implements IPocketAcces
         for (int slot = 4; slot < 11; slot++) {
             ItemStack peripheralItem = itemHandler.getStackInSlot(slot);
             if (!peripheralItem.isEmpty() && peripheralItem.getItem() instanceof IModuleItem module) {
-                modules.add(module.getModule());
+                modules.add(module.getModule(smartGlassesAccess));
             }
         }
         setPeripheral(ComputerSide.BACK, new ModulePeripheral(this));

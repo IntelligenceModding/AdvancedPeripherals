@@ -4,6 +4,7 @@ import dan200.computercraft.api.lua.IArguments;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.lua.MethodResult;
+import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesAccess;
 import de.srendi.advancedperipherals.common.smartglasses.modules.IModule;
 import de.srendi.advancedperipherals.common.smartglasses.modules.IModuleFunctions;
 import de.srendi.advancedperipherals.common.util.Pair;
@@ -11,9 +12,11 @@ import de.srendi.advancedperipherals.common.util.Pair;
 public class OverlayGlassesFunctions implements IModuleFunctions {
 
     private final OverlayModule overlayModule;
+    private final SmartGlassesAccess access;
 
     public OverlayGlassesFunctions(OverlayModule overlayModule) {
         this.overlayModule = overlayModule;
+        this.access = overlayModule.access;
     }
 
     @LuaFunction
