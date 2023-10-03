@@ -325,7 +325,7 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     }
 
     @LuaFunction(mainThread = true)
-    public final MethodResult craftFluid(IArguments arguments, int count) throws LuaException {
+    public final MethodResult craftFluid(IArguments arguments) throws LuaException {
         if (!isConnected())
             return notConnected();
 
