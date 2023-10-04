@@ -12,6 +12,7 @@ import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.lua.MethodResult;
 import dan200.computercraft.api.peripheral.IComputerAccess;
+import dan200.computercraft.core.computer.ComputerSide;
 import de.srendi.advancedperipherals.common.addons.appliedenergistics.AppEngApi;
 import de.srendi.advancedperipherals.common.addons.appliedenergistics.CraftJob;
 import de.srendi.advancedperipherals.common.addons.appliedenergistics.MeFluidHandler;
@@ -23,6 +24,7 @@ import de.srendi.advancedperipherals.common.util.Pair;
 import de.srendi.advancedperipherals.common.util.ServerWorker;
 import de.srendi.advancedperipherals.common.util.inventory.*;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
+import net.minecraft.core.Direction;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
@@ -31,8 +33,9 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 
-public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwner<MeBridgeEntity>> implements IStoragePeripheral {
+public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwner<MeBridgeEntity>> implements IStorageSystemPeripheral {
 
     public static final String PERIPHERAL_TYPE = "me_bridge";
     private final MeBridgeEntity tile;
@@ -222,38 +225,36 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     }
 
     @Override
-    public final MethodResult importItem(IArguments arguments) throws LuaException {
+    public final MethodResult importItem(IComputerAccess computer, IArguments arguments) throws LuaException {
         if (!isAvailable())
             return notConnected();
 
-        IItemHandler inventory = InventoryUtil.getHandlerFromDirection(arguments.getString(1), owner);
+        String side = arguments.getString(1);
+        IItemHandler inventory;
+
+        if (Direction.byName(side.toUpperCase(Locale.ROOT)) == null && ComputerSide.valueOfInsensitive(side.toUpperCase(Locale.ROOT)) == null) {
+            inventory = InventoryUtil.getHandlerFromDirection(arguments.getString(1), owner);
+        } else {
+            inventory = InventoryUtil.getHandlerFromName(computer, arguments.getString(1));
+        }
+
         return importToME(arguments, inventory);
     }
 
     @Override
-    public final MethodResult exportItem(@NotNull IArguments arguments) throws LuaException {
+    public final MethodResult exportItem(IComputerAccess computer, @NotNull IArguments arguments) throws LuaException {
         if (!isAvailable())
             return notConnected();
 
-        IItemHandler inventory = InventoryUtil.getHandlerFromDirection(arguments.getString(1), owner);
-        return exportToChest(arguments, inventory);
-    }
+        String side = arguments.getString(1);
+        IItemHandler inventory;
 
-    @Override
-    public final MethodResult importItemFromPeripheral(IComputerAccess computer, IArguments arguments) throws LuaException {
-        if (!isAvailable())
-            return notConnected();
+        if (Direction.byName(side.toUpperCase(Locale.ROOT)) == null && ComputerSide.valueOfInsensitive(side.toUpperCase(Locale.ROOT)) == null) {
+            inventory = InventoryUtil.getHandlerFromDirection(arguments.getString(1), owner);
+        } else {
+            inventory = InventoryUtil.getHandlerFromName(computer, arguments.getString(1));
+        }
 
-        IItemHandler inventory = InventoryUtil.getHandlerFromName(computer, arguments.getString(1));
-        return importToME(arguments, inventory);
-    }
-
-    @Override
-    public final MethodResult exportItemToPeripheral(IComputerAccess computer, IArguments arguments) throws LuaException {
-        if (!isAvailable())
-            return notConnected();
-
-        IItemHandler inventory = InventoryUtil.getHandlerFromName(computer, arguments.getString(1));
         return exportToChest(arguments, inventory);
     }
 
@@ -493,36 +494,38 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         return MethodResult.of(getCraftingService().isCraftable(fluid));
     }
 
-    @LuaFunction(mainThread = true)
-    public final MethodResult exportFluid(@NotNull IArguments arguments) throws LuaException {
-        IFluidHandler handler = FluidUtil.getHandlerFromDirection(arguments.getString(1), owner);
-        return exportToTank(arguments, handler);
-    }
+    @Override
+    public final MethodResult exportFluid(IComputerAccess computer, IArguments arguments) throws LuaException {
+        String side = arguments.getString(1);
+        IFluidHandler fluidHandler;
 
-    @LuaFunction(mainThread = true)
-    public final MethodResult exportFluidToPeripheral(IComputerAccess computer, IArguments arguments) throws LuaException {
-        IFluidHandler handler = FluidUtil.getHandlerFromName(computer, arguments.getString(1));
+        if (Direction.byName(side.toUpperCase(Locale.ROOT)) == null && ComputerSide.valueOfInsensitive(side.toUpperCase(Locale.ROOT)) == null) {
+            fluidHandler = FluidUtil.getHandlerFromDirection(arguments.getString(1), owner);
+        } else {
+            fluidHandler = FluidUtil.getHandlerFromName(computer, arguments.getString(1));
+        }
 
-        if (handler == null)
+        if (fluidHandler == null)
             return MethodResult.of(0, "The target tank does not exist. Make sure the bridge is exposed in the computer network. Reach out to our discord or our documentation for help.");
 
-        return exportToTank(arguments, handler);
+        return exportToTank(arguments, fluidHandler);
     }
 
-    @LuaFunction(mainThread = true)
-    public final MethodResult importFluid(IArguments arguments) throws LuaException {
-        IFluidHandler handler = FluidUtil.getHandlerFromDirection(arguments.getString(1), owner);
-        return importToME(arguments, handler);
-    }
+    @Override
+    public final MethodResult importFluid(IComputerAccess computer, IArguments arguments) throws LuaException {
+        String side = arguments.getString(1);
+        IFluidHandler fluidHandler;
 
-    @LuaFunction(mainThread = true)
-    public final MethodResult importFluidFromPeripheral(IComputerAccess computer, IArguments arguments) throws LuaException {
-        IFluidHandler handler = FluidUtil.getHandlerFromName(computer, arguments.getString(1));
+        if (Direction.byName(side.toUpperCase(Locale.ROOT)) == null && ComputerSide.valueOfInsensitive(side.toUpperCase(Locale.ROOT)) == null) {
+            fluidHandler = FluidUtil.getHandlerFromDirection(arguments.getString(1), owner);
+        } else {
+            fluidHandler = FluidUtil.getHandlerFromName(computer, arguments.getString(1));
+        }
 
-        if (handler == null)
+        if (fluidHandler == null)
             return MethodResult.of(0, "The target tank does not exist. Make sure the bridge is exposed in the computer network. Reach out to our discord or our documentation for help.");
 
-        return importToME(arguments, handler);
+        return importToME(arguments, fluidHandler);
     }
 
     @Override

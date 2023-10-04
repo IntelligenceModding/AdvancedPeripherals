@@ -14,7 +14,7 @@ import dan200.computercraft.api.peripheral.IComputerAccess;
  * In case there is a new mod which adds new ways to store and craft items, this ensures that the new peripheral
  * has the same functions as the other ones
  */
-public interface IStoragePeripheral {
+public interface IStorageSystemPeripheral {
 
     @LuaFunction(mainThread = true)
     MethodResult isConnected();
@@ -44,28 +44,16 @@ public interface IStoragePeripheral {
     MethodResult listCells();
 
     @LuaFunction(mainThread = true)
-    MethodResult importItem(IArguments arguments) throws LuaException;
+    MethodResult importItem(IComputerAccess computer, IArguments arguments) throws LuaException;
 
     @LuaFunction(mainThread = true)
-    MethodResult exportItem(IArguments arguments) throws LuaException;
+    MethodResult exportItem(IComputerAccess computer, IArguments arguments) throws LuaException;
 
     @LuaFunction(mainThread = true)
-    MethodResult importItemFromPeripheral(IComputerAccess computer, IArguments arguments) throws LuaException;
+    MethodResult importFluid(IComputerAccess computer, IArguments arguments) throws LuaException;
 
     @LuaFunction(mainThread = true)
-    MethodResult exportItemToPeripheral(IComputerAccess computer, IArguments arguments) throws LuaException;
-
-    @LuaFunction(mainThread = true)
-    MethodResult importFluid(IArguments arguments) throws LuaException;
-
-    @LuaFunction(mainThread = true)
-    MethodResult exportFluid(IArguments arguments) throws LuaException;
-
-    @LuaFunction(mainThread = true)
-    MethodResult importFluidFromPeripheral(IComputerAccess computer, IArguments arguments) throws LuaException;
-
-    @LuaFunction(mainThread = true)
-    MethodResult exportFluidToPeripheral(IComputerAccess computer, IArguments arguments) throws LuaException;
+    MethodResult exportFluid(IComputerAccess computer, IArguments arguments) throws LuaException;
 
     @LuaFunction(mainThread = true)
     MethodResult getPattern(IArguments arguments) throws LuaException;
