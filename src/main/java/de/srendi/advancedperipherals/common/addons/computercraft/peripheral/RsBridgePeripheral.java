@@ -333,13 +333,14 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (filter.rightPresent())
             return MethodResult.of(null, filter.getRight());
 
-        FluidStack stack = RefinedStorage.findFluidFromFilter(getNetwork(), null, filter.getLeft());
+        FluidStack stack = RefinedStorage.findFluidFromFilter(getNetwork(), getNetwork().getCraftingManager(), filter.getLeft());
         if (stack == null)
             return MethodResult.of(null, "NOT_CRAFTABLE");
 
         ICalculationResult result = getNetwork().getCraftingManager().create(stack, filter.getLeft().getCount());
+        getNetwork().getCraftingManager().getPatterns();
         CalculationResultType type = result.getType();
-        if (result.getType() == CalculationResultType.OK)
+        if (type == CalculationResultType.OK)
             getNetwork().getCraftingManager().start(result.getTask());
         AdvancedPeripherals.debug("Crafting Result of '" + FluidUtil.getRegistryKey(stack).toString() + "':" + type);
         return MethodResult.of(type == CalculationResultType.OK);

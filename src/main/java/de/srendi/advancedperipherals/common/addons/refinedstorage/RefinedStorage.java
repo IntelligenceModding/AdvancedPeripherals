@@ -49,11 +49,11 @@ public class RefinedStorage {
         return node;
     }
 
-    public static ItemStack findStackFromStack(INetwork network, ICraftingManager crafting, ItemStack item) {
+    public static ItemStack findStackFromStack(INetwork network, @Nullable ICraftingManager crafting, ItemStack item) {
         return findStackFromFilter(network, crafting, ItemFilter.fromStack(item));
     }
 
-    public static ItemStack findStackFromFilter(INetwork network, ICraftingManager crafting, ItemFilter filter) {
+    public static ItemStack findStackFromFilter(INetwork network, @Nullable ICraftingManager crafting, ItemFilter filter) {
         for (StackListEntry<ItemStack> temp : network.getItemStorageCache().getList().getStacks()) {
             if (filter.test(temp.getStack().copy()))
                 return temp.getStack().copy();
@@ -72,11 +72,11 @@ public class RefinedStorage {
         return ItemStack.EMPTY;
     }
 
-    public static FluidStack findFluidFromStack(INetwork network, ICraftingManager crafting, FluidStack stack) {
+    public static FluidStack findFluidFromStack(INetwork network, @Nullable ICraftingManager crafting, FluidStack stack) {
         return findFluidFromFilter(network, crafting, FluidFilter.fromStack(stack));
     }
 
-    public static FluidStack findFluidFromFilter(INetwork network, ICraftingManager crafting, FluidFilter filter) {
+    public static FluidStack findFluidFromFilter(INetwork network, @Nullable ICraftingManager crafting, FluidFilter filter) {
         for (StackListEntry<FluidStack> temp : network.getFluidStorageCache().getList().getStacks()) {
             if (filter.test(temp.getStack().copy()))
                 return temp.getStack().copy();
