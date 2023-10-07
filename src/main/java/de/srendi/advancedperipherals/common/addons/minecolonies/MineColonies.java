@@ -300,6 +300,7 @@ public class MineColonies {
                 map.put("cost", cost);
                 map.put("researchEffects", effects);
                 map.put("status", colonyResearch == null ? ResearchState.NOT_STARTED.toString() : colonyResearch.getState().toString());
+                map.put("neededTime", colonyResearch == null ? 0 : IGlobalResearchTree.getInstance().getBranchData(colonyResearch.getBranch()).getBaseTime(colonyResearch.getDepth()));
                 map.put("progress", colonyResearch == null ? 0 : colonyResearch.getProgress());
 
                 List<Object> childrenResearch = getResearch(branch, research.getChildren(), colony);
