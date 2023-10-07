@@ -5,10 +5,7 @@ import com.mojang.brigadier.context.CommandContextBuilder;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
-import de.srendi.advancedperipherals.common.items.ARGogglesItem;
 import de.srendi.advancedperipherals.common.util.Pair;
-import de.srendi.advancedperipherals.network.MNetwork;
-import de.srendi.advancedperipherals.network.messages.ClearHudCanvasMessage;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.arguments.MessageArgument;
 import net.minecraft.nbt.CompoundTag;
@@ -120,8 +117,6 @@ public class Events {
         LivingEntity livingEntity = event.getEntity();
         if (!(livingEntity instanceof ServerPlayer serverPlayer))
             return;
-        if (event.getFrom().getItem() instanceof ARGogglesItem)
-            MNetwork.sendTo(new ClearHudCanvasMessage(), serverPlayer);
 
     }
 

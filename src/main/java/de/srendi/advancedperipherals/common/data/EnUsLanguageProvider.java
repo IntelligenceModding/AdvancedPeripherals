@@ -54,7 +54,6 @@ public class EnUsLanguageProvider extends LanguageProvider {
     private void addBlocks() {
         addBlock(Blocks.BLOCK_READER, "Block Reader");
         addBlock(Blocks.CHAT_BOX, "Chat Box");
-        addBlock(Blocks.AR_CONTROLLER, "Ar Controller");
         addBlock(Blocks.COLONY_INTEGRATOR, "Colony Integrator");
         addBlock(Blocks.ENERGY_DETECTOR, "Energy Detector");
         addBlock(Blocks.ENVIRONMENT_DETECTOR, "Environment Detector");

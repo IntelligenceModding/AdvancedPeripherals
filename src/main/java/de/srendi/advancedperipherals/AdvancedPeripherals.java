@@ -4,7 +4,6 @@ import de.srendi.advancedperipherals.client.HudOverlayHandler;
 import de.srendi.advancedperipherals.common.addons.APAddons;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.setup.Registration;
-import de.srendi.advancedperipherals.network.MNetwork;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -56,9 +55,6 @@ public class AdvancedPeripherals {
 
     public void commonSetup(FMLCommonSetupEvent event) {
         APAddons.commonSetup();
-        event.enqueueWork(() -> {
-            MNetwork.init();
-        });
     }
 
     public void clientSetup(FMLClientSetupEvent event) {
