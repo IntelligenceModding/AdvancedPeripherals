@@ -276,14 +276,13 @@ public class MineColonies {
 
                 List<Map<String, Object>> cost = new ArrayList<>();
                 for (ItemStorage item : research.getCostList())
-                    cost.add(LuaConverter.stackToObject(item.getItemStack()));
+                    cost.add(LuaConverter.stackToObject(item.getItemStack(), item.getAmount()));
 
                 List<Map<String, Object>> requirements = new ArrayList<>();
                 for (IResearchRequirement requirement : research.getResearchRequirement()) {
                     Map<String, Object> requirementItem = new HashMap<>();
                     requirementItem.put("fulfilled", requirement.isFulfilled(colony));
-                    if (requirement instanceof BuildingResearchRequirement) {
-                        BuildingResearchRequirement buildingRequirement = (BuildingResearchRequirement)requirement;
+                    if (requirement instanceof BuildingResearchRequirement buildingRequirement) {
                         requirementItem.put("type", "building");
                         requirementItem.put("building", buildingRequirement.getBuilding());
                         requirementItem.put("level", buildingRequirement.getBuildingLevel());
