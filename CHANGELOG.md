@@ -6,6 +6,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+## [1.20.1-0.7.33b] - 2023-10-07
+### Fixed
+- Fixed that `craftFluid` of the RS Bridge will not work when the target fluid stack is empty
+- Fixed the amount of the costs of researches in the colony integrator
+- [#505] Fixed a NullPointerException when calling `craftItem` with the ME Bridge while using the CPU argument
+- [#503],[#509] Fixed a bug where the imported items to a ME System are imported without the NBT tag(Thanks to @michele-grifa!)
+- [#501] Fixed some stack overflow exceptions when moving items around(Independent of the periphal)
+- [#511] Fixed the patchouli book
+
+### Changed
+- [#512] Changed some debug messages of the ME and RS Bridge
+
+### Added
+- [#514] Added a `neededTime` property to the research table of the colony integrator
+
 ## [1.20.1-0.7.32b] - 2023-08-06
 
 ### Changed
