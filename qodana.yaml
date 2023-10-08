@@ -16,7 +16,8 @@ exclude:
       - src/test/resources/*
       - src/testMod/resources/*
       - src/server-files/resources/*
-include:
   - name: CheckDependencyLicenses
+
+include:
   - name: TrivialIf
   - name: NullableProblems
