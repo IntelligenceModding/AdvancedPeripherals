@@ -264,6 +264,9 @@ dependencies {
     compileOnly fg.deobf("appeng:appliedenergistics2-forge:${appliedenergistics_version}")
     runtimeOnly fg.deobf("appeng:appliedenergistics2-forge:${appliedenergistics_version}")
 
+    // Applied Mekanistics
+    implementation fg.deobf("curse.maven:applied-mekanistics-574300:${appliedmekanistics_version}")
+
     // Curios
     compileOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}:api")
     compileOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}")
