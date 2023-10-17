@@ -35,10 +35,11 @@ public class ARControllerEntity extends PeripheralBlockEntity<ARControllerPeriph
      * @param action The action to add to the canvas.
      */
     public void addToCanvas(ARRenderAction action) {
-        if (canvas.contains(action)) return;
-        if (action.getId() != null) {
+        if (canvas.contains(action))
+            return;
+        if (action.getId() != null)
             canvas.removeIf(old -> action.getId().equals(old.getId()));
-        }
+
         canvas.add(action);
         blockChanged();
     }
@@ -81,8 +82,10 @@ public class ARControllerEntity extends PeripheralBlockEntity<ARControllerPeriph
 
     public void saveAdditional(@NotNull CompoundTag compound) {
         super.saveAdditional(compound);
-        if (virtualScreenSize.isPresent()) compound.putIntArray(VIRTUAL_SCREEN_SIZE, virtualScreenSize.get());
-        else if (compound.contains(VIRTUAL_SCREEN_SIZE)) compound.remove(VIRTUAL_SCREEN_SIZE);
+        if (virtualScreenSize.isPresent())
+            compound.putIntArray(VIRTUAL_SCREEN_SIZE, virtualScreenSize.get());
+        else if (compound.contains(VIRTUAL_SCREEN_SIZE))
+            compound.remove(VIRTUAL_SCREEN_SIZE);
         ListTag list = new ListTag();
         for (ARRenderAction action : new ArrayList<>(canvas)) {
             list.add(action.serializeNBT());

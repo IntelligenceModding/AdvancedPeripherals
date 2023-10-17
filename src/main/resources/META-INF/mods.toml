@@ -5,12 +5,12 @@ issueTrackerURL = "https://github.com/Seniorendi/AdvancedPeripherals/issues"
 logoFile = "pack.png"
 [[mods]]
 modId = "${mod_id}"
-version = "${mod_version}"
+version = "${version}"
 displayName = "Advanced Peripherals"
-displayURL = "https://docs.srendi.de/"
+displayURL = "https://docs.intelligence-modding.de/"
 authors = "Srendi"
 description = '''
-Advanced Peripherals provied multiple extensions for ComputerCraft in form of Peripherals, Pocket Upgrades, Turtles or new gear.
+Advanced Peripherals provides multiple extensions for ComputerCraft in form of Peripherals, Pocket Upgrades, Turtles or new gear.
 It also integrates with multiple third party mods.
 '''
 [[dependencies.${mod_id}]]
@@ -64,7 +64,7 @@ side = "BOTH"
 [[dependencies.${mod_id}]]
 modId = "create"
 mandatory = false
-versionRange = "[${create_version},)"
+versionRange = "[0.5.1,)"
 ordering = "NONE"
 side = "BOTH"
 [[dependencies.${mod_id}]]

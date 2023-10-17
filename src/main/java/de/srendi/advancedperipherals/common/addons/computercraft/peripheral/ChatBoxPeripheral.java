@@ -121,7 +121,7 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
             for (ServerPlayer player : ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers()) {
                 if (!APConfig.PERIPHERALS_CONFIG.chatBoxMultiDimensional.get() && player.getLevel().dimension() != dimension)
                     continue;
-                if (range == -1 || CoordUtil.isInRange(getPos(), getLevel(), player, range))
+                if (range == -1 || CoordUtil.isInRange(getPos(), getLevel(), player, range, maxRange))
                     player.sendSystemMessage(preparedMessage);
             }
             return MethodResult.of(true);
@@ -147,7 +147,7 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
             for (ServerPlayer player : ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers()) {
                 if (!APConfig.PERIPHERALS_CONFIG.chatBoxMultiDimensional.get() && player.getLevel().dimension() != dimension)
                     continue;
-                if (range == -1 || CoordUtil.isInRange(getPos(), getLevel(), player, range))
+                if (range == -1 || CoordUtil.isInRange(getPos(), getLevel(), player, range, maxRange))
                     player.sendSystemMessage(preparedMessage);
             }
             return MethodResult.of(true);
@@ -182,7 +182,7 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
             if (!APConfig.PERIPHERALS_CONFIG.chatBoxMultiDimensional.get() && player.getLevel().dimension() != dimension)
                 return MethodResult.of(false, "NOT_SAME_DIMENSION");
 
-            if (range == -1 || CoordUtil.isInRange(getPos(), getLevel(), player, range))
+            if (range == -1 || CoordUtil.isInRange(getPos(), getLevel(), player, range, maxRange))
                 player.sendSystemMessage(preparedMessage);
             return MethodResult.of(true);
         });
@@ -212,7 +212,7 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
             if (!APConfig.PERIPHERALS_CONFIG.chatBoxMultiDimensional.get() && player.getLevel().dimension() != dimension)
                 return MethodResult.of(false, "NOT_SAME_DIMENSION");
 
-            if (range == -1 || CoordUtil.isInRange(getPos(), getLevel(), player, range))
+            if (range == -1 || CoordUtil.isInRange(getPos(), getLevel(), player, range, maxRange))
                 player.sendSystemMessage(preparedMessage, false);
             return MethodResult.of(true);
         });

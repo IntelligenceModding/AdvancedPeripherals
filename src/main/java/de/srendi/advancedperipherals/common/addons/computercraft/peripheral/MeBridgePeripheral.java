@@ -29,11 +29,11 @@ import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Objects;
 
 public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwner<MeBridgeEntity>> {
 
@@ -67,13 +67,16 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
      * @param targetInventory the give inventory
      * @return the exportable amount or null with a string if something went wrong
      */
-    protected MethodResult exportToChest(@NotNull IArguments arguments, @NotNull IItemHandler targetInventory) throws LuaException {
+    protected MethodResult exportToChest(@NotNull IArguments arguments, @Nullable IItemHandler targetInventory) throws LuaException {
         MEStorage monitor = AppEngApi.getMonitor(node);
         MeItemHandler itemHandler = new MeItemHandler(monitor, tile);
         Pair<ItemFilter, String> filter = ItemFilter.parse(arguments.getTable(0));
 
-        if(filter.rightPresent())
+        if (filter.rightPresent())
             return MethodResult.of(0, filter.getRight());
+
+        if (targetInventory == null)
+            return MethodResult.of(0, "Target Inventory does not exist");
 
         return MethodResult.of(InventoryUtil.moveItem(itemHandler, targetInventory, filter.getLeft()), null);
     }
@@ -81,17 +84,20 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     /**
      * exports a fluid out of the system to a valid tank
      *
-     * @param arguments the arguments given by the computer
+     * @param arguments  the arguments given by the computer
      * @param targetTank the give tank
      * @return the exportable amount or null with a string if something went wrong
      */
-    protected MethodResult exportToTank(@NotNull IArguments arguments, @NotNull IFluidHandler targetTank) throws LuaException {
+    protected MethodResult exportToTank(@NotNull IArguments arguments, @Nullable IFluidHandler targetTank) throws LuaException {
         MEStorage monitor = AppEngApi.getMonitor(node);
         MeFluidHandler fluidHandler = new MeFluidHandler(monitor, tile);
         Pair<FluidFilter, String> filter = FluidFilter.parse(arguments.getTable(0));
 
-        if(filter.rightPresent())
+        if (filter.rightPresent())
             return MethodResult.of(0, filter.getRight());
+
+        if (targetTank == null)
+            return MethodResult.of(0, "Target Tank does not exist");
 
         return MethodResult.of(InventoryUtil.moveFluid(fluidHandler, targetTank, filter.getLeft()), null);
     }
@@ -103,13 +109,16 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
      * @param targetInventory the give inventory
      * @return the imported amount or null with a string if something went wrong
      */
-    protected MethodResult importToME(@NotNull IArguments arguments, @NotNull IItemHandler targetInventory) throws LuaException {
+    protected MethodResult importToME(@NotNull IArguments arguments, @Nullable IItemHandler targetInventory) throws LuaException {
         MEStorage monitor = AppEngApi.getMonitor(node);
         MeItemHandler itemHandler = new MeItemHandler(monitor, tile);
         Pair<ItemFilter, String> filter = ItemFilter.parse(arguments.getTable(0));
 
-        if(filter.rightPresent())
+        if (filter.rightPresent())
             return MethodResult.of(0, filter.getRight());
+
+        if (targetInventory == null)
+            return MethodResult.of(0, "Target Inventory does not exist");
 
         return MethodResult.of(InventoryUtil.moveItem(targetInventory, itemHandler, filter.getLeft()), null);
     }
@@ -117,17 +126,20 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     /**
      * imports a fluid to the system from a valid tank
      *
-     * @param arguments the arguments given by the computer
+     * @param arguments  the arguments given by the computer
      * @param targetTank the give tank
      * @return the imported amount or null with a string if something went wrong
      */
-    protected MethodResult importToME(@NotNull IArguments arguments, @NotNull IFluidHandler targetTank) throws LuaException {
+    protected MethodResult importToME(@NotNull IArguments arguments, @Nullable IFluidHandler targetTank) throws LuaException {
         MEStorage monitor = AppEngApi.getMonitor(node);
         MeFluidHandler fluidHandler = new MeFluidHandler(monitor, tile);
         Pair<FluidFilter, String> filter = FluidFilter.parse(arguments.getTable(0));
 
-        if(filter.rightPresent())
+        if (filter.rightPresent())
             return MethodResult.of(0, filter.getRight());
+
+        if (targetTank == null)
+            return MethodResult.of(0, "Target Tank does not exist");
 
         return MethodResult.of(InventoryUtil.moveFluid(targetTank, fluidHandler, filter.getLeft()), null);
     }
@@ -147,7 +159,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
             return notConnected();
 
         Pair<ItemFilter, String> filter = ItemFilter.parse(arguments.getTable(0));
-        if(filter.rightPresent())
+        if (filter.rightPresent())
             return MethodResult.of(false, filter.getRight());
 
         ItemFilter parsedFilter = filter.getLeft();
@@ -156,7 +168,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
         String cpuName = arguments.optString(1, "");
         ICraftingCPU target = getCraftingCPU(cpuName);
-        if(!cpuName.isEmpty() && target == null)
+        if (!cpuName.isEmpty() && target == null)
             return MethodResult.of(false, "CPU " + cpuName + " does not exists");
 
         ICraftingService craftingGrid = node.getGrid().getService(ICraftingService.class);
@@ -176,7 +188,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
             return notConnected();
 
         Pair<FluidFilter, String> filter = FluidFilter.parse(arguments.getTable(0));
-        if(filter.rightPresent())
+        if (filter.rightPresent())
             return MethodResult.of(false, filter.getRight());
 
         FluidFilter parsedFilter = filter.getLeft();
@@ -185,7 +197,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
         String cpuName = arguments.optString(1, "");
         ICraftingCPU target = getCraftingCPU(cpuName);
-        if(!cpuName.isEmpty() && target == null)
+        if (!cpuName.isEmpty() && target == null)
             return MethodResult.of(false, "CPU " + cpuName + " does not exists");
 
         ICraftingService craftingGrid = node.getGrid().getService(ICraftingService.class);
@@ -249,7 +261,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         ICraftingService grid = node.getGrid().getService(ICraftingService.class);
 
         Pair<ItemFilter, String> filter = ItemFilter.parse(arguments.getTable(0));
-        if(filter.rightPresent())
+        if (filter.rightPresent())
             return MethodResult.of(false, filter.getRight());
 
         ItemFilter parsedFilter = filter.getLeft();
@@ -267,7 +279,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
             return notConnected();
 
         Pair<ItemFilter, String> filter = ItemFilter.parse(arguments.getTable(0));
-        if(filter.rightPresent())
+        if (filter.rightPresent())
             return MethodResult.of(false, filter.getRight());
 
         ItemFilter parsedFilter = filter.getLeft();
@@ -287,17 +299,17 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         MEStorage monitor = AppEngApi.getMonitor(node);
         ICraftingService grid = node.getGrid().getService(ICraftingService.class);
 
-        Pair<ItemFilter, String> filter = ItemFilter.parse(arguments.getTable(0));
-        if(filter.rightPresent())
+        Pair<FluidFilter, String> filter = FluidFilter.parse(arguments.getTable(0));
+        if (filter.rightPresent())
             return MethodResult.of(false, filter.getRight());
 
-        ItemFilter parsedFilter = filter.getLeft();
+        FluidFilter parsedFilter = filter.getLeft();
         if (parsedFilter.isEmpty())
             return MethodResult.of(false, "EMPTY_FILTER");
         String cpuName = arguments.optString(1, "");
         ICraftingCPU craftingCPU = getCraftingCPU(cpuName);
 
-        return MethodResult.of(AppEngApi.isItemCrafting(monitor, grid, parsedFilter, craftingCPU));
+        return MethodResult.of(AppEngApi.isFluidCrafting(monitor, grid, parsedFilter, craftingCPU));
     }
 
     @LuaFunction(mainThread = true)
@@ -306,16 +318,16 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
             return notConnected();
 
         Pair<FluidFilter, String> filter = FluidFilter.parse(arguments.getTable(0));
-        if(filter.rightPresent())
+        if (filter.rightPresent())
             return MethodResult.of(false, filter.getRight());
 
         FluidFilter parsedFilter = filter.getLeft();
         if (parsedFilter.isEmpty())
             return MethodResult.of(false, "EMPTY_FILTER");
 
-        AEFluidKey item = AEFluidKey.of(parsedFilter.toFluidStack());
+        AEFluidKey fluid = AEFluidKey.of(parsedFilter.toFluidStack());
 
-        return MethodResult.of(getCraftingService().isCraftable(item));
+        return MethodResult.of(getCraftingService().isCraftable(fluid));
     }
 
     @LuaFunction(mainThread = true)
@@ -327,6 +339,10 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     @LuaFunction(mainThread = true)
     public final MethodResult exportFluidToPeripheral(IComputerAccess computer, IArguments arguments) throws LuaException {
         IFluidHandler handler = FluidUtil.getHandlerFromName(computer, arguments.getString(1));
+
+        if (handler == null)
+            return MethodResult.of(0, "The target tank does not exist. Make sure the bridge is exposed in the computer network. Reach out to our discord or our documentation for help.");
+
         return exportToTank(arguments, handler);
     }
 
@@ -339,6 +355,10 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     @LuaFunction(mainThread = true)
     public final MethodResult importFluidFromPeripheral(IComputerAccess computer, IArguments arguments) throws LuaException {
         IFluidHandler handler = FluidUtil.getHandlerFromName(computer, arguments.getString(1));
+
+        if (handler == null)
+            return MethodResult.of(0, "The target tank does not exist. Make sure the bridge is exposed in the computer network. Reach out to our discord or our documentation for help.");
+
         return importToME(arguments, handler);
     }
 
@@ -357,6 +377,10 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
             return notConnected();
 
         IItemHandler inventory = InventoryUtil.getHandlerFromName(computer, arguments.getString(1));
+
+        if (inventory == null)
+            return MethodResult.of(0, "The target inventory does not exist. Make sure the bridge is exposed in the computer network. Reach out to our discord or our documentation for help.");
+
         return exportToChest(arguments, inventory);
     }
 
@@ -375,6 +399,10 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
             return notConnected();
 
         IItemHandler inventory = InventoryUtil.getHandlerFromName(computer, arguments.getString(1));
+
+        if (inventory == null)
+            return MethodResult.of(0, "The target inventory does not exist. Make sure the bridge is exposed in the computer network. Reach out to our discord or our documentation for help.");
+
         return importToME(arguments, inventory);
     }
 
@@ -385,7 +413,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
         MEStorage monitor = AppEngApi.getMonitor(node);
         Pair<ItemFilter, String> filter = ItemFilter.parse(arguments.getTable(0));
-        if(filter.rightPresent())
+        if (filter.rightPresent())
             return MethodResult.of(null, filter.getRight());
 
         ItemFilter parsedFilter = filter.getLeft();
@@ -499,7 +527,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     }
 
     public final ICraftingCPU getCraftingCPU(String cpuName) {
-        if(cpuName.isEmpty()) return null;
+        if (cpuName.isEmpty()) return null;
         ICraftingService grid = node.getGrid().getService(ICraftingService.class);
         if (grid == null) return null;
 
@@ -509,7 +537,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         while (iterator.hasNext()) {
             ICraftingCPU cpu = iterator.next();
 
-            if(Objects.requireNonNull(cpu.getName()).getString().equals(cpuName)) {
+            if (cpu.getName() != null && cpu.getName().getString().equals(cpuName)) {
                 return cpu;
             }
         }

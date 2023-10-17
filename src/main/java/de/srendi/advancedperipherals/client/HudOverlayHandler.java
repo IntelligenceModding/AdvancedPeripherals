@@ -20,20 +20,23 @@ public class HudOverlayHandler {
     }
 
     public static void updateCanvas(List<ARRenderAction> actions) {
-        if (instance == null) return;
+        if (instance == null)
+            return;
         instance.canvas.clear();
         instance.canvas.addAll(actions);
     }
 
     public static void clearCanvas() {
-        if (instance == null) return;
+        if (instance == null)
+            return;
         instance.canvas.clear();
     }
 
     //TODO: Use the forge Overlay System instead
     /*@SubscribeEvent(priority = EventPriority.LOWEST)
     public void onRender(RenderGuiEvent.Post event) {
-        if (event.getWindow() == null) return;
+        if (event.getWindow() == null)
+            return;
         Minecraft mc = Minecraft.getInstance();
         PoseStack matrixStack = event.getMatrixStack();
         for (ARRenderAction action : canvas) {

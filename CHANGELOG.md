@@ -6,6 +6,42 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+## [1.19.2-0.7.31r] - 2023-10-07
+
+### Fixed
+- Fixed that `craftFluid` of the RS Bridge will not work when the target fluid stack is empty
+- Fixed the amount of the costs of researches in the colony integrator
+- [#505] Fixed a NullPointerException when calling `craftItem` with the ME Bridge while using the CPU argument
+- [#503],[#509] Fixed a bug where the imported items to a ME System are imported without the NBT tag(Thanks to @michele-grifa!)
+- [#501] Fixed some stack overflow exceptions when moving items around(Independent of the periphal)
+
+### Changed
+- [#512] Changed some debug messages of the ME and RS Bridge
+
+### Added
+- [#514] Added a `neededTime` property to the research table of the colony integrator
+
+## [1.19.2-0.7.30r] - 2023-08-06
+
+### Changed
+- Changed sorting of our creative tab
+
+### Added
+- [#481] Add configurable chunk loading radius to chunky turtle. Thanks to @Einhornyordle!
+- [#483] Add Powah's Ender Cell support. Thanks to @Apeopex!
+- [#435] Add a `isFluidCrafting` and `isFluidCraftable` function to the ME Bridge
+- [#477] Add two configuration values for the chat box. One for a maximum range and one to disallow multidimensional message sending
+- [#491] Added support for Storage Busses in calculation of used storage space for the ME Bridge. Thanks to @Michele Grifa!
+- [#494] Add the name to `getCraftingCPUs()`
+- [#490] Don't divide the amount of the bytes of the DISK drives
+- [#485] Add AE2 Addtions support to the ME Bridge
+
+### Fixed
+- [#482] Fixed that some of the functions of automata turtles throw NPEs if the functions were called for the first time
+- [#487] Fixed a server crash when two ME Bridges are connected to one ME System while items are scheduled for crafting
+- [#490] Fixed that `getUsedItemStorage` does not respect AE2Things DISK drives
+- [#486] Fixed that the player detector will not detect players in different dimensions
+
 ## [1.19.2-0.7.29r] - 2023-06-30
 
 ### Fixed

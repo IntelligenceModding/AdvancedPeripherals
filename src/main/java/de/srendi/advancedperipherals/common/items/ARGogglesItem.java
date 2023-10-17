@@ -28,7 +28,8 @@ public class ARGogglesItem extends ArmorItem {
     /*public static void clientTick(LocalPlayer player, ItemStack stack) {
         if (stack.hasTag() && stack.getTag().contains(CONTROLLER_POS) && stack.getTag().contains(CONTROLLER_LEVEL)) {
             int[] arr = stack.getTag().getIntArray(CONTROLLER_POS);
-            if (arr.length < 3) return;
+            if (arr.length < 3)
+            return;
             BlockPos pos = new BlockPos(arr[0], arr[1], arr[2]);
             String dimensionKey = stack.getTag().getString(CONTROLLER_LEVEL);
             Level level = player.level;

@@ -10,11 +10,11 @@ import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.items.wrapper.InvWrapper;
@@ -30,7 +30,7 @@ public class InventoryUtil {
 
     public static IItemHandler extractHandler(@Nullable Object object) {
         if (object instanceof ICapabilityProvider capabilityProvider) {
-            LazyOptional<IItemHandler> cap = capabilityProvider.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY);
+            LazyOptional<IItemHandler> cap = capabilityProvider.getCapability(ForgeCapabilities.ITEM_HANDLER);
             if (cap.isPresent())
                 return cap.orElseThrow(NullPointerException::new);
         }
@@ -54,6 +54,8 @@ public class InventoryUtil {
         if (inventoryFrom instanceof IStorageSystemItemHandler storageSystemHandler) {
             for (int i = toSlot == -1 ? 0 : toSlot; i < (toSlot == -1 ? inventoryTo.getSlots() : toSlot + 1); i++) {
                 ItemStack extracted = storageSystemHandler.extractItem(filter, filter.getCount(), true);
+                if (extracted.isEmpty())
+                    continue;
                 ItemStack inserted;
                 if (toSlot == -1) {
                     inserted = ItemHandlerHelper.insertItem(inventoryTo, extracted, false);
@@ -72,6 +74,8 @@ public class InventoryUtil {
             for (int i = fromSlot == -1 ? 0 : fromSlot; i < (fromSlot == -1 ? inventoryFrom.getSlots() : fromSlot + 1); i++) {
                 if (filter.test(inventoryFrom.getStackInSlot(i))) {
                     ItemStack extracted = inventoryFrom.extractItem(i, amount - transferableAmount, true);
+                    if (extracted.isEmpty())
+                        continue;
                     ItemStack inserted = storageSystemHandler.insertItem(toSlot, extracted, false);
 
                     amount -= inserted.getCount();
@@ -86,6 +90,8 @@ public class InventoryUtil {
         for (int i = fromSlot == -1 ? 0 : fromSlot; i < (fromSlot == -1 ? inventoryFrom.getSlots() : fromSlot + 1); i++) {
             if (filter.test(inventoryFrom.getStackInSlot(i))) {
                 ItemStack extracted = inventoryFrom.extractItem(i, amount - transferableAmount, true);
+                if (extracted.isEmpty())
+                    continue;
                 ItemStack inserted;
                 if (toSlot == -1) {
                     inserted = ItemHandlerHelper.insertItem(inventoryTo, extracted, false);

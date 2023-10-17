@@ -3,7 +3,6 @@ package de.srendi.advancedperipherals.common.addons.computercraft.turtles;
 import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
 import dan200.computercraft.shared.computer.core.ServerComputer;
-
 import dan200.computercraft.shared.turtle.blocks.TileTurtle;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.ChatBoxPeripheral;
@@ -42,7 +41,8 @@ public class TurtleChatBoxUpgrade extends PeripheralTurtleUpgrade<ChatBoxPeriphe
     @Override
     public void update(@NotNull ITurtleAccess turtle, @NotNull TurtleSide side) {
         super.update(turtle, side);
-        if (turtle.getLevel().isClientSide) return;
+        if (turtle.getLevel().isClientSide)
+            return;
 
         if (turtle.getUpgrade(side) instanceof TurtleChatBoxUpgrade) {
             BlockEntity tile = turtle.getLevel().getBlockEntity(turtle.getPosition());

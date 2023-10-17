@@ -1,10 +1,6 @@
 package de.srendi.advancedperipherals.lib.peripherals;
 
-import dan200.computercraft.api.lua.IArguments;
-import dan200.computercraft.api.lua.ILuaContext;
-import dan200.computercraft.api.lua.LuaException;
-import dan200.computercraft.api.lua.LuaFunction;
-import dan200.computercraft.api.lua.MethodResult;
+import dan200.computercraft.api.lua.*;
 import dan200.computercraft.api.peripheral.IComputerAccess;
 import dan200.computercraft.api.peripheral.IDynamicPeripheral;
 import dan200.computercraft.api.peripheral.IPeripheral;
@@ -18,11 +14,7 @@ import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
@@ -46,7 +38,8 @@ public abstract class BasePeripheral<O extends IPeripheralOwner> implements IBas
             initialized = true;
             this.pluggedMethods.clear();
             if (plugins != null) plugins.forEach(plugin -> {
-                if (plugin.isSuitable(this)) pluggedMethods.addAll(plugin.getMethods());
+                if (plugin.isSuitable(this))
+                    pluggedMethods.addAll(plugin.getMethods());
             });
             owner.getAbilities().forEach(ability -> {
                 if (ability instanceof IPeripheralPlugin peripheralPlugin)
@@ -98,7 +91,7 @@ public abstract class BasePeripheral<O extends IPeripheralOwner> implements IBas
 
     @Override
     public boolean equals(@Nullable IPeripheral iPeripheral) {
-        return iPeripheral == this;
+        return Objects.equals(this, iPeripheral);
     }
 
     @Override
@@ -137,14 +130,16 @@ public abstract class BasePeripheral<O extends IPeripheralOwner> implements IBas
     @Override
     @NotNull
     public String @NotNull [] getMethodNames() {
-        if (!initialized) buildPlugins();
+        if (!initialized)
+            buildPlugins();
         return methodNames;
     }
 
     @Override
     @NotNull
     public MethodResult callMethod(@NotNull IComputerAccess access, @NotNull ILuaContext context, int index, @NotNull IArguments arguments) throws LuaException {
-        if (!initialized) buildPlugins();
+        if (!initialized)
+            buildPlugins();
         return pluggedMethods.get(index).apply(access, context, arguments);
     }
 

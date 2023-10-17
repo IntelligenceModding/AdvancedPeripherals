@@ -77,6 +77,12 @@ public class LuaConverter {
         return map;
     }
 
+    public static Map<String, Object> stackToObject(@NotNull ItemStack itemStack, int amount) {
+        ItemStack stack = itemStack.copy();
+        stack.setCount(amount);
+        return stackToObject(stack);
+    }
+
     /**
      * Returns the stack but with a slot entry. Used to prevent zero indexed tables
      *

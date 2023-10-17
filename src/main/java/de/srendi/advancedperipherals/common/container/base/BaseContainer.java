@@ -23,7 +23,8 @@ public abstract class BaseContainer extends AbstractContainerMenu {
     protected BaseContainer(@Nullable MenuType<?> type, int id, Inventory inventory, BlockPos pos, Level world) {
         super(type, id);
         this.inventory = new InvWrapper(inventory);
-        if (world != null) this.tileEntity = (PeripheralBlockEntity<?>) world.getBlockEntity(pos);
+        if (world != null)
+            this.tileEntity = (PeripheralBlockEntity<?>) world.getBlockEntity(pos);
     }
 
     @Override

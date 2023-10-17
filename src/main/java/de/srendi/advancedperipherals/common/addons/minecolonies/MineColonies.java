@@ -10,11 +10,7 @@ import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.colony.workorders.IWorkOrder;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.citizen.Skill;
-import com.minecolonies.api.research.IGlobalResearch;
-import com.minecolonies.api.research.IGlobalResearchTree;
-import com.minecolonies.api.research.ILocalResearch;
-import com.minecolonies.api.research.ILocalResearchTree;
-import com.minecolonies.api.research.IResearchRequirement;
+import com.minecolonies.api.research.*;
 import com.minecolonies.api.research.effects.IResearchEffect;
 import com.minecolonies.api.research.util.ResearchState;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingStructureBuilder;
@@ -226,7 +222,8 @@ public class MineColonies {
     public static int getAmountOfConstructionSites(IColony colony) {
         int constructionSites = 0;
         for (IBuilding building : colony.getBuildingManager().getBuildings().values()) {
-            if (building.hasWorkOrder()) constructionSites++;
+            if (building.hasWorkOrder())
+                constructionSites++;
         }
 
         return constructionSites;
@@ -279,14 +276,13 @@ public class MineColonies {
 
                 List<Map<String, Object>> cost = new ArrayList<>();
                 for (ItemStorage item : research.getCostList())
-                    cost.add(LuaConverter.stackToObject(item.getItemStack()));
+                    cost.add(LuaConverter.stackToObject(item.getItemStack(), item.getAmount()));
 
                 List<Map<String, Object>> requirements = new ArrayList<>();
                 for (IResearchRequirement requirement : research.getResearchRequirement()) {
                     Map<String, Object> requirementItem = new HashMap<>();
                     requirementItem.put("fulfilled", requirement.isFulfilled(colony));
-                    if (requirement instanceof BuildingResearchRequirement) {
-                        BuildingResearchRequirement buildingRequirement = (BuildingResearchRequirement)requirement;
+                    if (requirement instanceof BuildingResearchRequirement buildingRequirement) {
                         requirementItem.put("type", "building");
                         requirementItem.put("building", buildingRequirement.getBuilding());
                         requirementItem.put("level", buildingRequirement.getBuildingLevel());
@@ -304,6 +300,7 @@ public class MineColonies {
                 map.put("cost", cost);
                 map.put("researchEffects", effects);
                 map.put("status", colonyResearch == null ? ResearchState.NOT_STARTED.toString() : colonyResearch.getState().toString());
+                map.put("neededTime", colonyResearch == null ? 0 : IGlobalResearchTree.getInstance().getBranchData(colonyResearch.getBranch()).getBaseTime(colonyResearch.getDepth()));
                 map.put("progress", colonyResearch == null ? 0 : colonyResearch.getProgress());
 
                 List<Object> childrenResearch = getResearch(branch, research.getChildren(), colony);

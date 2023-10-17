@@ -49,11 +49,11 @@ public class RefinedStorage {
         return node;
     }
 
-    public static ItemStack findStackFromStack(INetwork network, ICraftingManager crafting, ItemStack item) {
+    public static ItemStack findStackFromStack(INetwork network, @Nullable ICraftingManager crafting, ItemStack item) {
         return findStackFromFilter(network, crafting, ItemFilter.fromStack(item));
     }
 
-    public static ItemStack findStackFromFilter(INetwork network, ICraftingManager crafting, ItemFilter filter) {
+    public static ItemStack findStackFromFilter(INetwork network, @Nullable ICraftingManager crafting, ItemFilter filter) {
         for (StackListEntry<ItemStack> temp : network.getItemStorageCache().getList().getStacks()) {
             if (filter.test(temp.getStack().copy()))
                 return temp.getStack().copy();
@@ -72,11 +72,11 @@ public class RefinedStorage {
         return ItemStack.EMPTY;
     }
 
-    public static FluidStack findFluidFromStack(INetwork network, ICraftingManager crafting, FluidStack stack) {
+    public static FluidStack findFluidFromStack(INetwork network, @Nullable ICraftingManager crafting, FluidStack stack) {
         return findFluidFromFilter(network, crafting, FluidFilter.fromStack(stack));
     }
 
-    public static FluidStack findFluidFromFilter(INetwork network, ICraftingManager crafting, FluidFilter filter) {
+    public static FluidStack findFluidFromFilter(INetwork network, @Nullable ICraftingManager crafting, FluidFilter filter) {
         for (StackListEntry<FluidStack> temp : network.getFluidStorageCache().getList().getStacks()) {
             if (filter.test(temp.getStack().copy()))
                 return temp.getStack().copy();
@@ -87,7 +87,7 @@ public class RefinedStorage {
 
         for (ICraftingPattern pattern : crafting.getPatterns()) {
             if (pattern.getFluidOutputs().stream().anyMatch(filter::test))
-                return pattern.getFluidOutputs().stream().filter(filter::test).findFirst().get().copy();
+                return pattern.getFluidOutputs().stream().filter(filter::test).findFirst().orElse(FluidStack.EMPTY).copy();
         }
 
         return FluidStack.EMPTY;
@@ -113,8 +113,8 @@ public class RefinedStorage {
         return network.getCraftingManager().getPattern(stack) != null;
     }
 
-    public static int getMaxItemDiskStorage(INetwork network) {
-        int total = 0;
+    public static long getMaxItemDiskStorage(INetwork network) {
+        long total = 0;
         boolean creative = false;
         for (IStorage<ItemStack> store : network.getItemStorageCache().getStorages()) {
             if (store instanceof IStorageDisk<ItemStack> storageDisk) {
@@ -126,8 +126,8 @@ public class RefinedStorage {
         return creative ? -1 : total;
     }
 
-    public static int getMaxFluidDiskStorage(INetwork network) {
-        int total = 0;
+    public static long getMaxFluidDiskStorage(INetwork network) {
+        long total = 0;
         boolean creative = false;
         for (IStorage<FluidStack> store : network.getFluidStorageCache().getStorages()) {
             if (store instanceof IStorageDisk<FluidStack> storageDisk) {
@@ -139,8 +139,8 @@ public class RefinedStorage {
         return creative ? -1 : total;
     }
 
-    public static int getMaxItemExternalStorage(INetwork network) {
-        int total = 0;
+    public static long getMaxItemExternalStorage(INetwork network) {
+        long total = 0;
         for (IStorage<ItemStack> store : network.getItemStorageCache().getStorages()) {
             if (store instanceof IExternalStorage<ItemStack> externalStorage) {
                 total += externalStorage.getCapacity();
@@ -149,8 +149,8 @@ public class RefinedStorage {
         return total;
     }
 
-    public static int getMaxFluidExternalStorage(INetwork network) {
-        int total = 0;
+    public static long getMaxFluidExternalStorage(INetwork network) {
+        long total = 0;
         for (IStorage<FluidStack> store : network.getFluidStorageCache().getStorages()) {
             if (store instanceof IExternalStorage<FluidStack> externalStorage) {
                 total += externalStorage.getCapacity();

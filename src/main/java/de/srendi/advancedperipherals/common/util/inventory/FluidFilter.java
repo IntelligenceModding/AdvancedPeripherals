@@ -31,7 +31,7 @@ public class FluidFilter {
     public static Pair<FluidFilter, String> parse(Map<?, ?> item) {
         FluidFilter fluidFilter = empty();
         // If the map is empty, return a filter without any filters
-        if (item.size() == 0)
+        if (item.isEmpty())
             return Pair.of(fluidFilter, null);
         if (item.containsKey("name")) {
             try {
@@ -131,7 +131,7 @@ public class FluidFilter {
     @Override
     public String toString() {
         return "FluidFilter{" +
-                "fluid=" + fluid +
+                "fluid=" + FluidUtil.getRegistryKey(fluid) +
                 ", tag=" + tag +
                 ", nbt=" + nbt +
                 ", count=" + count +

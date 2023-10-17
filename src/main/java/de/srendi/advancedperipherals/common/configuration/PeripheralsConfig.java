@@ -15,9 +15,12 @@ public class PeripheralsConfig implements IAPConfig {
     public final ForgeConfigSpec.BooleanValue playerSpy;
     public final ForgeConfigSpec.BooleanValue morePlayerInformation;
     public final ForgeConfigSpec.BooleanValue enablePlayerDetector;
+    public final ForgeConfigSpec.BooleanValue playerDetMultiDimensional;
+
     //Energy Detector
     public final ForgeConfigSpec.IntValue energyDetectorMaxFlow;
     public final ForgeConfigSpec.BooleanValue enableEnergyDetector;
+
     //NBT Storage
     public final ForgeConfigSpec.IntValue nbtStorageMaxSize;
     public final ForgeConfigSpec.BooleanValue enableNBTStorage;
@@ -35,25 +38,35 @@ public class PeripheralsConfig implements IAPConfig {
     //ME Bridge
     public final ForgeConfigSpec.BooleanValue enableMEBridge;
     public final ForgeConfigSpec.IntValue meConsumption;
+
     //Rs Bridge
     public final ForgeConfigSpec.BooleanValue enableRSBridge;
     public final ForgeConfigSpec.IntValue rsConsumption;
+
     //Environment Detector
     public final ForgeConfigSpec.BooleanValue enableEnvironmentDetector;
+
     //AR Controller
     public final ForgeConfigSpec.BooleanValue enableARGoggles;
+
     //Inventory Manager
     public final ForgeConfigSpec.BooleanValue enableInventoryManager;
+
     //Redstone Integrator
     public final ForgeConfigSpec.BooleanValue enableRedstoneIntegrator;
+
     //Block reader
     public final ForgeConfigSpec.BooleanValue enableBlockReader;
+
     //Geo Scanner
     public final ForgeConfigSpec.BooleanValue enableGeoScanner;
+
     //Colony integrator
     public final ForgeConfigSpec.BooleanValue enableColonyIntegrator;
+
     //Compass turtle
     public final ForgeConfigSpec.BooleanValue enableCompassTurtle;
+
     //Powered Peripherals
     public final ForgeConfigSpec.BooleanValue enablePoweredPeripherals;
     public final ForgeConfigSpec.BooleanValue disablePocketFuelConsumption;
@@ -68,9 +81,10 @@ public class PeripheralsConfig implements IAPConfig {
         builder.push("Player_Detector");
 
         enablePlayerDetector = builder.comment("Enable the Player Detector or not.").define("enablePlayerDetector", true);
-        playerDetMaxRange = builder.comment("The max range of the player detector functions. " + "If anyone use a higher range, the detector will use this max range").defineInRange("playerDetMaxRange", 100000000, 0, 100000000);
+        playerDetMaxRange = builder.comment("The max range of the player detector functions. If anyone use a higher range, the detector will use this max range. -1 for unlimited").defineInRange("playerDetMaxRange", -1, -1, Integer.MAX_VALUE);
         playerSpy = builder.comment("Activates the \"getPlayerPos\" function of the Player Detector").define("enablePlayerPosFunction", true);
         morePlayerInformation = builder.comment("Adds more information to `getPlayerPos` of the Player Detector. Like rotation and dimension").define("morePlayerInformation", true);
+        playerDetMultiDimensional = builder.comment("If true, the player detector can observe players which aren't in the same dimension as the detector itself. `playerDetMaxRange` needs to be infinite(-1) for it to work.").define("chatBoxMultiDimensional", true);
 
         pop("Energy_Detector", builder);
 
