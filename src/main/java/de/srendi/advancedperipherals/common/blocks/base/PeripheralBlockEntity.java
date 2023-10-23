@@ -108,7 +108,7 @@ public abstract class PeripheralBlockEntity<T extends BasePeripheral<?>> extends
     @NotNull
     protected abstract T createPeripheral();
 
-    public List<IComputerAccess> getConnectedComputers() {
+    public Iterable<IComputerAccess> getConnectedComputers() {
         if (peripheral == null) // just avoid some NPE in strange cases
             return Collections.emptyList();
         return peripheral.getConnectedComputers();
