@@ -36,6 +36,8 @@ public class TurtleChatBoxUpgrade extends PeripheralTurtleUpgrade<ChatBoxPeriphe
         if (turtle.getLevel().isClientSide)
             return;
 
-        if (turtle.getPeripheral(side) instanceof ChatBoxPeripheral chatBox) chatBox.update();
+        if (turtle.getPeripheral(side) instanceof ChatBoxPeripheral chatBox) {
+            chatBox.update();
+        }
     }
 }
