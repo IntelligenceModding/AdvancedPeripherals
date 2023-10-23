@@ -1,11 +1,9 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.turtles;
 
-import dan200.computercraft.api.peripheral.IComputerAccess;
 import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.ChatBoxPeripheral;
-import de.srendi.advancedperipherals.common.events.Events;
 import de.srendi.advancedperipherals.lib.turtle.PeripheralTurtleUpgrade;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.resources.ResourceLocation;
@@ -38,6 +36,8 @@ public class TurtleChatBoxUpgrade extends PeripheralTurtleUpgrade<ChatBoxPeriphe
         if (turtle.getLevel().isClientSide)
             return;
 
-        if (turtle.getPeripheral(side) instanceof ChatBoxPeripheral chatBox) chatBox.update();
+        if (turtle.getPeripheral(side) instanceof ChatBoxPeripheral chatBox) {
+            chatBox.update();
+        }
     }
 }
