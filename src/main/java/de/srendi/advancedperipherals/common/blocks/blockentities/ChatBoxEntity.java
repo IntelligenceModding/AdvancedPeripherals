@@ -12,12 +12,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 
 public class ChatBoxEntity extends PeripheralBlockEntity<ChatBoxPeripheral> {
-
-    private Long lastConsumedMessage;
-
     public ChatBoxEntity(BlockPos pos, BlockState state) {
         super(BlockEntityTypes.CHAT_BOX.get(), pos, state);
-        lastConsumedMessage = Events.getLastChatMessageID() - 1;
     }
 
     @NotNull
@@ -28,6 +24,6 @@ public class ChatBoxEntity extends PeripheralBlockEntity<ChatBoxPeripheral> {
 
     @Override
     public <T extends BlockEntity> void handleTick(Level level, BlockState state, BlockEntityType<T> type) {
-        lastConsumedMessage = Events.traverseChatMessages(lastConsumedMessage, message -> getConnectedComputers().forEach(computer -> computer.queueEvent("chat", message.username(), message.message(), message.uuid(), message.isHidden())));
+        if (peripheral != null) peripheral.update();
     }
 }
