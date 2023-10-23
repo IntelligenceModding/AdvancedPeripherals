@@ -5,6 +5,7 @@ import dan200.computercraft.api.lua.IArguments;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.lua.MethodResult;
+import dan200.computercraft.api.peripheral.IComputerAccess;
 import dan200.computercraft.api.pocket.IPocketAccess;
 import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
@@ -15,6 +16,7 @@ import de.srendi.advancedperipherals.common.addons.computercraft.owner.PocketPer
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.TurtlePeripheralOwner;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralBlockEntity;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
+import de.srendi.advancedperipherals.common.events.Events;
 import de.srendi.advancedperipherals.common.util.CoordUtil;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
 import de.srendi.advancedperipherals.lib.peripherals.IPeripheralFunction;
@@ -35,9 +37,12 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
 
     public static final String PERIPHERAL_TYPE = "chatBox";
 
+    private long lastConsumedMessage;
+
     protected ChatBoxPeripheral(IPeripheralOwner owner) {
         super(PERIPHERAL_TYPE, owner);
         owner.attachOperation(CHAT_MESSAGE);
+        lastConsumedMessage = Events.getLastChatMessageID() - 1;
     }
 
     public ChatBoxPeripheral(PeripheralBlockEntity<?> tileEntity) {
@@ -215,6 +220,14 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
             if (range == -1 || CoordUtil.isInRange(getPos(), getLevel(), player, range, maxRange))
                 player.sendSystemMessage(preparedMessage, false);
             return MethodResult.of(true);
+        });
+    }
+
+    public void update() {
+        lastConsumedMessage = Events.traverseChatMessages(lastConsumedMessage, message -> {
+            for (IComputerAccess computer : getConnectedComputers()) {
+                computer.queueEvent("chat", message.username(), message.message(), message.uuid(), message.isHidden());
+            }
         });
     }
 }
