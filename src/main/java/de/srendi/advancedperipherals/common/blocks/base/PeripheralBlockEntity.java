@@ -32,7 +32,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
-import java.util.List;
 
 public abstract class PeripheralBlockEntity<T extends BasePeripheral<?>> extends BaseContainerBlockEntity implements WorldlyContainer, MenuProvider, IPeripheralTileEntity {
     // TODO: move inventory logic to another tile entity!
@@ -108,7 +107,7 @@ public abstract class PeripheralBlockEntity<T extends BasePeripheral<?>> extends
     @NotNull
     protected abstract T createPeripheral();
 
-    public List<IComputerAccess> getConnectedComputers() {
+    public Iterable<IComputerAccess> getConnectedComputers() {
         if (peripheral == null) // just avoid some NPE in strange cases
             return Collections.emptyList();
         return peripheral.getConnectedComputers();
