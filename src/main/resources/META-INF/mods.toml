@@ -16,7 +16,7 @@ It also integrates with multiple third party mods.
 [[dependencies.${mod_id}]]
 modId = "forge"
 mandatory = true
-versionRange = "[${forge_version},)"
+versionRange = "[${neo_version},)"
 ordering = "NONE"
 side = "BOTH"
 [[dependencies.${mod_id}]]
