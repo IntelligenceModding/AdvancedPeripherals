@@ -15,12 +15,13 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 public abstract class BasePeripheral<O extends IPeripheralOwner> implements IBasePeripheral<O>, IDynamicPeripheral {
 
-    protected final List<IComputerAccess> connectedComputers = new ArrayList<>();
+    protected final Set<IComputerAccess> connectedComputers = Collections.newSetFromMap(new ConcurrentHashMap<>());
     protected final String type;
     protected final O owner;
     protected final List<BoundMethod> pluggedMethods = new ArrayList<>();
@@ -63,7 +64,7 @@ public abstract class BasePeripheral<O extends IPeripheralOwner> implements IBas
     }
 
     @Override
-    public List<IComputerAccess> getConnectedComputers() {
+    public Iterable<IComputerAccess> getConnectedComputers() {
         return connectedComputers;
     }
 

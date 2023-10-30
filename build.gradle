@@ -168,6 +168,10 @@ repositories {
     maven {
         name = "Squiddev maven cct"
         url = 'https://squiddev.cc/maven/'
+        content {
+            includeGroup("cc.tweaked")
+            includeModule("org.squiddev", "Cobalt")
+        }
     }
     maven {
         name = "Theillusivec4 maven curios"
