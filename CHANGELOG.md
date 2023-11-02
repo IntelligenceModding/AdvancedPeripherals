@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+## [1.20.1-0.7.34b] - 2023-11-03
+
+This is the neoforge port for 1.20.1. This version works for Minecraft Forge and for NeoForge.
+
+### Fixed
+- Fixed integration for Mekanism 10.4
+
 ## [1.20.1-0.7.33b] - 2023-10-07
 ### Fixed
 - Fixed that `craftFluid` of the RS Bridge will not work when the target fluid stack is empty
