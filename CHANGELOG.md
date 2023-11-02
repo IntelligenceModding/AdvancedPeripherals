@@ -8,7 +8,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ## [Unreleased]
 ## [1.20.1-0.7.34b] - 2023-11-03
 
-This is the neoforge port for 1.20.1. This version works for Minecraft Forge and for NeoForge.
+#### This is the neoforge port for 1.20.1. This version works for Minecraft Forge and for NeoForge.
 
 ### Fixed
 - Fixed integration for Mekanism 10.4
