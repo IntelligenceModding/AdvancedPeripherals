@@ -454,6 +454,8 @@ tasks.register('publishCurseForge', TaskPublishCurseForge, { task ->
 
         addRequirement('cc-tweaked')
 
+        addModLoader("forge", "neoforge")
+
         releaseType = "${release_type}"
     }
 })
@@ -466,7 +468,7 @@ modrinth {
     versionType = release_type
     uploadFile = jar // With Loom, this MUST be set to `remapJar` instead of `jar`!
     gameVersions = [minecraft_version] // Must be an array, even with only one version
-    loaders = ["forge"] // Must also be an array - no need to specify this if you're using Loom or ForgeGradle
+    loaders = ["forge", "neoforge"] // Must also be an array - no need to specify this if you're using Loom or ForgeGradle
     dependencies {
         required.project "cc-tweaked"
     }
