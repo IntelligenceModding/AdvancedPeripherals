@@ -251,11 +251,16 @@ dependencies {
     // Extended requirements
     // We don't use the api since we need a specific class from mekanism
     compileOnly fg.deobf("mekanism:Mekanism:${mekanism_version}")
+    runtimeOnly fg.deobf("mekanism:Mekanism:${mekanism_version}")
 
     // runtimeOnly fg.deobf("mekanism:Mekanism:${mekanism_version}")// core
 
     // Applied Energistics 2
     runtimeOnly fg.deobf("appeng:appliedenergistics2-forge:${appliedenergistics_version}")
+
+    // Applied Mekanistics
+    implementation fg.deobf("curse.maven:applied-mekanistics-574300:${appliedmekanistics_version}")
+
     // Curios
     runtimeOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}")
 

@@ -24,6 +24,7 @@ import de.srendi.advancedperipherals.common.util.inventory.ItemFilter;
 import de.srendi.advancedperipherals.common.util.inventory.ItemUtil;
 import io.github.projectet.ae2things.item.DISKDrive;
 import it.unimi.dsi.fastutil.objects.Object2LongMap;
+import me.ramidzkh.mekae2.ae2.MekanismKey;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
@@ -118,6 +119,16 @@ public class AppEngApi {
         return items;
     }
 
+    public static List<Object> listGases(MEStorage monitor, ICraftingService service, int flag) {
+        List<Object> items = new ArrayList<>();
+        for (Object2LongMap.Entry<AEKey> aeKey : monitor.getAvailableStacks()) {
+            if (APAddons.appMekLoaded && aeKey.getKey() instanceof MekanismKey itemKey) {
+                items.add(getObjectFromStack(Pair.of(aeKey.getLongValue(), itemKey), service));
+            }
+        }
+        return items;
+    }
+
     public static <T extends AEKey> Map<String, Object> getObjectFromStack(Pair<Long, T> stack, @Nullable ICraftingService service) {
         if (stack.getRight() == null)
             return Collections.emptyMap();
@@ -125,6 +136,8 @@ public class AppEngApi {
             return getObjectFromItemStack(Pair.of(stack.getLeft(), itemKey), service);
         if (stack.getRight() instanceof AEFluidKey fluidKey)
             return getObjectFromFluidStack(Pair.of(stack.getLeft(), fluidKey), service);
+        if (APAddons.appMekLoaded && (stack.getRight() instanceof MekanismKey gasKey))
+            return getObjectFromGasStack(Pair.of(stack.getLeft(), gasKey), service);
 
         AdvancedPeripherals.debug("Could not create table from unknown stack " + stack.getRight().getClass() + " - Report this to the maintainer of ap", Level.ERROR);
         return Collections.emptyMap();
@@ -151,9 +164,20 @@ public class AppEngApi {
         long amount = stack.getLeft();
         map.put("name", ForgeRegistries.FLUIDS.getKey(stack.getRight().getFluid()).toString());
         map.put("amount", amount);
-        map.put("displayName", stack.getRight().getDisplayName());
+        map.put("displayName", stack.getRight().getDisplayName().getString());
         map.put("tags", LuaConverter.tagsToList(() -> stack.getRight().getFluid().builtInRegistryHolder().tags()));
         map.put("isCraftable", craftingService != null && craftingService.isCraftable(stack.getRight()));
+
+        return map;
+    }
+
+    private static Map<String, Object> getObjectFromGasStack(Pair<Long, MekanismKey> stack, @Nullable ICraftingService craftingService) {
+        Map<String, Object> map = new HashMap<>();
+        long amount = stack.getLeft();
+        map.put("name", stack.getRight().getStack().getTypeRegistryName().toString());
+        map.put("amount", amount);
+        map.put("displayName", stack.getRight().getDisplayName().getString());
+        map.put("tags", LuaConverter.tagsToList(() -> stack.getRight().getStack().getType().getTags()));
 
         return map;
     }
