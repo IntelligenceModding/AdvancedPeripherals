@@ -448,6 +448,14 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     }
 
     @LuaFunction(mainThread = true)
+    public final MethodResult listGas() {
+        if (!isConnected())
+            return notConnected();
+
+        return MethodResult.of(AppEngApi.listGases(AppEngApi.getMonitor(node), getCraftingService(), 0));
+    }
+
+    @LuaFunction(mainThread = true)
     public final MethodResult listCraftableFluid() {
         if (!isConnected())
             return notConnected();
