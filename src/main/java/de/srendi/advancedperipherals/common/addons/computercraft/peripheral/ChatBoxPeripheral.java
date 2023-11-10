@@ -150,7 +150,7 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
                 arguments.optString(3, "").replaceAll("&", "\u00a7")
             ).append(message);
             for (ServerPlayer player : ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers()) {
-                if (!APConfig.PERIPHERALS_CONFIG.chatBoxMultiDimensional.get() && player.getLevel().dimension() != dimension)
+                if (!APConfig.PERIPHERALS_CONFIG.chatBoxMultiDimensional.get() && player.level().dimension() != dimension)
                     continue;
                 if (range == -1 || CoordUtil.isInRange(getPos(), getLevel(), player, range, maxRange))
                     player.sendSystemMessage(preparedMessage);
