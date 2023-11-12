@@ -46,43 +46,13 @@ public class InventoryManagerPeripheral extends BasePeripheral<BlockEntityPeriph
         return getOwnerPlayer().getName().getString();
     }
 
-    /**
-     * @deprecated Switch to the function with the item filter object
-     */
-    @Deprecated
-    @LuaFunction(mainThread = true, value = {"pullItems", "addItemToPlayer"})
-    public final MethodResult addItemToPlayer(String invDirection, int count, Optional<Integer> slot, Optional<String> item) throws LuaException {
-        Pair<ItemFilter, String> filter;
-        Map<Object, Object> filterMap = new HashMap<>();
-
-        // Deprecated! Will be removed in the future. This exists to maintain compatibility within the same mc version
-        item.ifPresent(s -> filterMap.put("name", s));
-        slot.ifPresent(integer -> filterMap.put("toSlot", integer));
-        filterMap.put("count", count);
-
-        filter = ItemFilter.parse(filterMap);
-        if (filter.rightPresent())
-            return MethodResult.of(0, filter.getRight());
-        return MethodResult.of(addItemCommon(invDirection, filter.getLeft()));
-
-    }
 
     //Add the specified item to the player
     //The item is specified the same as with the RS/ME bridge:
     //{name="minecraft:enchanted_book", count=1, nbt="ae70053c97f877de546b0248b9ddf525"}
-    //If a count is specified in the item it is silently IGNORED
     @LuaFunction(mainThread = true)
-    public final MethodResult addItemToPlayerNBT(String invDirection, int count, Optional<Integer> slot, Optional<Map<?, ?>> item) throws LuaException {
-        Pair<ItemFilter, String> filter;
-        Map<Object, Object> filterMap = new HashMap<>();
-
-        // Deprecated! Will be removed in the future. This exists to maintain compatibility within the same mc version
-        slot.ifPresent(integer -> filterMap.put("toSlot", integer));
-        filterMap.put("count", count);
-
-        item.ifPresent(filterMap::putAll);
-
-        filter = ItemFilter.parse(filterMap);
+    public final MethodResult addItemToPlayer(String invDirection, Map<?, ?> item) throws LuaException {
+        Pair<ItemFilter, String> filter = ItemFilter.parse(item);
         if (filter.rightPresent())
             return MethodResult.of(0, filter.getRight());
 
@@ -104,34 +74,9 @@ public class InventoryManagerPeripheral extends BasePeripheral<BlockEntityPeriph
         return InventoryUtil.moveItem(inventoryFrom, inventoryTo.getLeft(), filter);
     }
 
-    @LuaFunction(mainThread = true, value = {"pushItems", "removeItemFromPlayer"})
-    public final MethodResult removeItemFromPlayer(String invDirection, int count, Optional<Integer> slot, Optional<String> item) throws LuaException {
-        Pair<ItemFilter, String> filter;
-        Map<Object, Object> filterMap = new HashMap<>();
-
-        // Deprecated! Will be removed in the future. This exists to maintain compatibility within the same mc version
-        item.ifPresent(itemName -> filterMap.put("name", itemName));
-        slot.ifPresent(toSlot -> filterMap.put("toSlot", toSlot));
-        filterMap.put("count", count);
-
-        filter = ItemFilter.parse(filterMap);
-        if (filter.rightPresent())
-            return MethodResult.of(0, filter.getRight());
-        return removeItemCommon(invDirection, filter.getLeft());
-    }
-
     @LuaFunction(mainThread = true)
-    public final MethodResult removeItemFromPlayerNBT(String invDirection, int count, Optional<Integer> slot, Optional<Map<?, ?>> item) throws LuaException {
-        Pair<ItemFilter, String> filter;
-        Map<Object, Object> filterMap = new HashMap<>();
-
-        // Deprecated! Will be removed in the future. This exists to maintain compatibility within the same mc version
-        slot.ifPresent(toSlot -> filterMap.put("toSlot", toSlot));
-        filterMap.put("count", count);
-
-        item.ifPresent(filterMap::putAll);
-
-        filter = ItemFilter.parse(filterMap);
+    public final MethodResult removeItemFromPlayer(String invDirection, Map<?, ?> item) throws LuaException {
+        Pair<ItemFilter, String> filter = ItemFilter.parse(item);
         if (filter.rightPresent())
             return MethodResult.of(0, filter.getRight());
 
@@ -145,7 +90,7 @@ public class InventoryManagerPeripheral extends BasePeripheral<BlockEntityPeriph
         Pair<IItemHandler, Integer> inventoryFrom = getHandlerFromSlot(filter.getFromSlot());
         IItemHandler inventoryTo = targetEntity != null ? targetEntity.getCapability(ForgeCapabilities.ITEM_HANDLER, direction).resolve().orElse(null) : null;
 
-        if(inventoryTo == null)
+        if (inventoryTo == null)
             return MethodResult.of(0, "INVENTORY_TO_INVALID");
 
         inventoryFrom.ifRightPresent(slot -> filter.fromSlot = slot);
@@ -173,7 +118,7 @@ public class InventoryManagerPeripheral extends BasePeripheral<BlockEntityPeriph
         BlockEntity targetEntity = owner.getLevel().getBlockEntity(owner.getPos().relative(direction));
         IItemHandler inventoryTo = targetEntity != null ? targetEntity.getCapability(ForgeCapabilities.ITEM_HANDLER, direction).resolve().orElse(null) : null;
 
-        if(inventoryTo == null)
+        if (inventoryTo == null)
             return MethodResult.of(null, "INVENTORY_TO_INVALID");
 
         List<Object> items = new ArrayList<>();
@@ -257,12 +202,12 @@ public class InventoryManagerPeripheral extends BasePeripheral<BlockEntityPeriph
     @NotNull
     private Pair<IItemHandler, Integer> getHandlerFromSlot(int slot) throws LuaException {
         IItemHandler handler;
-        if(slot >= 100 && slot <= 103) {
+        if (slot >= 100 && slot <= 103) {
             handler = new PlayerArmorInvWrapper(getOwnerPlayer().getInventory());
             // If the slot is between 100 and 103, change the index to a normal index between 0 and 3.
             // This is necessary since the PlayerArmorInvWrapper does not work with these higher indexes
             slot = slot - 100;
-        } else if(slot == 36) {
+        } else if (slot == 36) {
             handler = new PlayerOffhandInvWrapper(getOwnerPlayer().getInventory());
             // Set the "from slot" to zero so the offhand wrapper can work with that
             slot = 0;
