@@ -6,6 +6,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+### Fixed
+- [#530] Fixed stray pixel in inventory_manager_gui.png
+- Fixed Memory Card tooltip color
+- [#524] Fixed not working brackets color change of the Chat Box - Thanks to @zyxkad!
+- [#522] Fixed that the index of the argument `range` for the functions `sendMessageToPlayer` and `sendFormattedMessageToPlayer` in the Chat Box is incorrect - Thanks to @zyxkad!
+
+### Added
+- [#519] Added Applied Mekanistics support to the ME Bridge - Thanks to @starcatmeow!
+
+### Changed
+- [#474] Changed the inventory manager. Merged the NBT and normal variants of the removeItem and addItem functions to one. See documentation for more info
+- [#441] Let the ME bridges `isConnected` function only return true when the ME bridge is actually connected to an active ME system
+
 ## [1.19.2-0.7.31r] - 2023-10-07
 
 ### Fixed
