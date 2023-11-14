@@ -150,7 +150,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
     @LuaFunction(mainThread = true)
     public final boolean isConnected() {
-        return node.getGrid() != null && node.hasGridBooted();
+        return node.getGrid() != null && node.hasGridBooted() && node.isActive();
     }
 
     @LuaFunction
