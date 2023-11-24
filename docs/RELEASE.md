@@ -18,11 +18,11 @@ CURSEFORGE_KEY=<your_api_key>
 MODRINTH_KEY=<your_api_key>
 ```
 
-If you also want to do manual upload to AdvancedPeripheral maven repository, you can add next variables
+If you also want to do manual upload to [AdvancedPeripheral maven repository](https://mvn.intelligence-modding.de/), you can add next variables
 
 ```
-USERNAME=<github username>
-TOKEN=<github token with access to packages API>
+PUBLIC_REP_NAME=<Reposilite Username>
+PUBLIC_REP_KEY=<Reposilite Access Token>
 ```
 
 ### Before release
