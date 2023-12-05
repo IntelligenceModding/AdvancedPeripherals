@@ -5,7 +5,7 @@
   "pages": [
     {
       "type": "text",
-      "text": "The Redstone Integrator is able to interact with redstone. You can use the same code you would use for a computer on a Redstone Integrator.$(p)You may need this peripheral for cases where you need to output redstone signals on more sides than a regular computer has to offer.$(p)For the full documentation please see the $(9)$(l:https://docs.intelligence-modding.de/peripherals/redstone_integrator/)official wiki page$(/l)$()!"
+      "text": "The Redstone Integrator is able to interact with redstone. You can use the same code you would use for a computer on a Redstone Integrator.$(p)You may need this peripheral for cases where you need to output redstone signals on more sides than a regular computer has to offer.$(p)For the full documentation please see the $(9)$(l:https://docs.advanced-peripherals.de/peripherals/redstone_integrator/)official wiki page$(/l)$()!"
     },
     {
       "type": "crafting",

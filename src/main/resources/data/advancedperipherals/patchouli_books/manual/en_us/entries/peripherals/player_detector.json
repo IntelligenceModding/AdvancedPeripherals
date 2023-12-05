@@ -5,7 +5,7 @@
   "pages": [
     {
       "type": "text",
-      "text": "The Player Detector is able to recognize players within a certain range. In addition, it recognizes the player who clicks on him.$(p)For the full documentation please see the $(9)$(l:https://docs.intelligence-modding.de/peripherals/player_detector/)official wiki page$(/l)$()!"
+      "text": "The Player Detector is able to recognize players within a certain range. In addition, it recognizes the player who clicks on him.$(p)For the full documentation please see the $(9)$(l:https://docs.advanced-peripherals.de/peripherals/player_detector/)official wiki page$(/l)$()!"
     },
     {
       "type": "crafting",

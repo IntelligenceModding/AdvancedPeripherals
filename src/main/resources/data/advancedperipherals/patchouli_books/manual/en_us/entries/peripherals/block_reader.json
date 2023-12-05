@@ -5,7 +5,7 @@
   "pages": [
     {
       "type": "text",
-      "text": "This block is able to read data of blocks and tile entities in front of it.$(p)For the full documentation please see the $(9)$(l:https://docs.intelligence-modding.de/peripherals/block_reader/)official wiki page$(/l)$()!"
+      "text": "This block is able to read data of blocks and tile entities in front of it.$(p)For the full documentation please see the $(9)$(l:https://docs.advanced-peripherals.de/peripherals/block_reader/)official wiki page$(/l)$()!"
     },
     {
       "type": "crafting",

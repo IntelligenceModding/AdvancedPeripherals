@@ -5,7 +5,7 @@
   "pages": [
     {
       "type": "text",
-      "text": "The Computer Tool is a tool to open GUI's from our blocks. Currently, the Computer Tool is useless, it's just a wonderful item.$(p)For the full documentation please see the $(9)$(l:https://docs.intelligence-modding.de/items/computer_tool/)official wiki page$(/l)$()!"
+      "text": "The Computer Tool is a tool to open GUI's from our blocks. Currently, the Computer Tool is useless, it's just a wonderful item.$(p)For the full documentation please see the $(9)$(l:https://docs.advanced-peripherals.de/items/computer_tool/)official wiki page$(/l)$()!"
     },
     {
       "type": "crafting",

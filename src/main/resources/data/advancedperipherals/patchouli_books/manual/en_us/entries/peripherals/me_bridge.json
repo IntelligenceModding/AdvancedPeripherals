@@ -5,7 +5,7 @@
   "pages": [
     {
       "type": "text",
-      "text": "The ME Bridge is able to interact with Applied Energistics 2. You can retrieve items, craft items, get all items as a list and more. The Me Bridge uses one channel.$(p)For the full documentation please see the $(9)$(l:https://docs.intelligence-modding.de/peripherals/me_bridge/)official wiki page$(/l)$()!"
+      "text": "The ME Bridge is able to interact with Applied Energistics 2. You can retrieve items, craft items, get all items as a list and more. The Me Bridge uses one channel.$(p)For the full documentation please see the $(9)$(l:https://docs.advanced-peripherals.de/peripherals/me_bridge/)official wiki page$(/l)$()!"
     },
     {
       "type": "crafting",
