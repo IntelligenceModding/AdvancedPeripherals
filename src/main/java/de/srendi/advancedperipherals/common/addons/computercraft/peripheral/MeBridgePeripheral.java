@@ -37,7 +37,7 @@ import java.util.Locale;
 
 public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwner<MeBridgeEntity>> implements IStorageSystemPeripheral {
 
-    public static final String PERIPHERAL_TYPE = "me_bridge";
+    public static final String PERIPHERAL_TYPE = "meBridge";
     private final MeBridgeEntity tile;
     private IGridNode node;
 

@@ -1,5 +1,6 @@
 package de.srendi.advancedperipherals.common.setup;
 
+import de.srendi.advancedperipherals.common.addons.APAddons;
 import de.srendi.advancedperipherals.common.blocks.PlayerDetectorBlock;
 import de.srendi.advancedperipherals.common.blocks.RedstoneIntegratorBlock;
 import de.srendi.advancedperipherals.common.blocks.base.APBlockEntityBlock;
@@ -37,7 +38,7 @@ public class APBlocks {
     public static final RegistryObject<Block> REDSTONE_INTEGRATOR = register("redstone_integrator", RedstoneIntegratorBlock::new, () -> new APBlockItem(APBlocks.REDSTONE_INTEGRATOR.get(), APConfig.PERIPHERALS_CONFIG.enableRedstoneIntegrator));
     public static final RegistryObject<Block> BLOCK_READER = register("block_reader", () -> new APBlockEntityBlock<>(APBlockEntityTypes.BLOCK_READER, true), () -> new APBlockItem(APBlocks.BLOCK_READER.get(), APConfig.PERIPHERALS_CONFIG.enableBlockReader));
     public static final RegistryObject<Block> GEO_SCANNER = register("geo_scanner", () -> new APBlockEntityBlock<>(APBlockEntityTypes.GEO_SCANNER, false), () -> new APBlockItem(APBlocks.GEO_SCANNER.get(), APConfig.PERIPHERALS_CONFIG.enableGeoScanner));
-    public static final RegistryObject<Block> COLONY_INTEGRATOR = register("colony_integrator", BaseBlock::new, () -> new APBlockItem(APBlocks.COLONY_INTEGRATOR.get(), APConfig.PERIPHERALS_CONFIG.enableColonyIntegrator));
+    public static final RegistryObject<Block> COLONY_INTEGRATOR = register("colony_integrator", () -> new APBlockEntityBlock<>(APBlockEntityTypes.COLONY_INTEGRATOR, false), () -> new APBlockItem(APBlocks.COLONY_INTEGRATOR.get(), APConfig.PERIPHERALS_CONFIG.enableColonyIntegrator));
     public static final RegistryObject<Block> NBT_STORAGE = register("nbt_storage", () -> new APBlockEntityBlock<>(APBlockEntityTypes.NBT_STORAGE, false), () -> new APBlockItem(APBlocks.NBT_STORAGE.get(), APConfig.PERIPHERALS_CONFIG.enableNBTStorage));
     public static final RegistryObject<Block> DISTANCE_DETECTOR = register("distance_detector", () -> new APBlockEntityBlock<>(APBlockEntityTypes.DISTANCE_DETECTOR, BlockBehaviour.Properties.of(Material.METAL).noOcclusion(), true), () -> new APBlockItem(APBlocks.DISTANCE_DETECTOR.get(), APConfig.PERIPHERALS_CONFIG.enableNBTStorage));
 

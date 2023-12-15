@@ -257,6 +257,10 @@ dependencies {
     // Compile-time API required
     // Ae2
     implementation fg.deobf("appeng:appliedenergistics2-forge:${appliedenergistics_version}")
+
+    // Applied Mekanistics
+    implementation fg.deobf("curse.maven:applied-mekanistics-574300:${appliedmekanistics_version}")
+
     // Curios
     implementation fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}:api")
     // Minimal requirements end
@@ -268,9 +272,6 @@ dependencies {
     // Applied Energistics 2
     compileOnly fg.deobf("appeng:appliedenergistics2-forge:${appliedenergistics_version}")
     runtimeOnly fg.deobf("appeng:appliedenergistics2-forge:${appliedenergistics_version}")
-
-    // Applied Mekanistics
-    implementation fg.deobf("curse.maven:applied-mekanistics-574300:${appliedmekanistics_version}")
 
     // Curios
     implementation fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}")
@@ -300,6 +301,12 @@ dependencies {
     compileOnly fg.deobf("com.ldtteam:multipiston:${multipiston_version}")
     compileOnly fg.deobf("com.ldtteam:domum_ornamentum:${domumornamentum_version}:universal")
     compileOnly fg.deobf("com.ldtteam:blockui:${blockui_version}")
+    // Uncomment the next 5 lines when using `runData`
+    runtimeOnly fg.deobf("com.ldtteam:minecolonies:${minecolonies_version}")
+    runtimeOnly fg.deobf("com.ldtteam:structurize:${structurize_version}")
+    runtimeOnly fg.deobf("com.ldtteam:multipiston:${multipiston_version}")
+    runtimeOnly fg.deobf("com.ldtteam:domum_ornamentum:${domumornamentum_version}:universal")
+    runtimeOnly fg.deobf("com.ldtteam:blockui:${blockui_version}")
 
     //Patchouli
     runtimeOnly fg.deobf("vazkii.patchouli:Patchouli:${patchouli_version}")
