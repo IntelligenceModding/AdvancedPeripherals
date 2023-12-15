@@ -3,6 +3,7 @@ package de.srendi.advancedperipherals.common.addons.computercraft.peripheral;
 import appeng.api.networking.IGridNode;
 import appeng.api.networking.IManagedGridNode;
 import appeng.api.networking.crafting.ICraftingCPU;
+import appeng.api.networking.crafting.ICraftingProvider;
 import appeng.api.networking.crafting.ICraftingService;
 import appeng.api.stacks.AEFluidKey;
 import appeng.api.stacks.AEItemKey;
@@ -30,10 +31,7 @@ import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
 public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwner<MeBridgeEntity>> implements IStorageSystemPeripheral {
 
@@ -181,7 +179,18 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
     @Override
     public MethodResult getFluid(IArguments arguments) throws LuaException {
-        return null;
+        if (!isAvailable())
+            return notConnected();
+
+        Pair<FluidFilter, String> filter = FluidFilter.parse(arguments.getTable(0));
+        if (filter.rightPresent())
+            return MethodResult.of(null, filter.getRight());
+
+        FluidFilter parsedFilter = filter.getLeft();
+        if (parsedFilter.isEmpty())
+            return MethodResult.of(null, "EMPTY_FILTER");
+
+        return MethodResult.of(AppEngApi.findAEFluidFromFilter(AppEngApi.getMonitor(node), getCraftingService(), parsedFilter));
     }
 
     @Override
@@ -258,14 +267,44 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         return exportToChest(arguments, inventory);
     }
 
+    //TODO: How do we want to filter? By inputs or outputs, or maybe both? What if there are multiple patterns with the same output/input
     @Override
-    public MethodResult getPattern(IArguments arguments) throws LuaException {
+    public MethodResult getFilteredPatterns(IArguments arguments) throws LuaException {
+        if (!isAvailable())
+            return notConnected();
+
+        Map<?, ?> filterTable;
+        try {
+            Optional<Map<?, ?>> optionalTable = arguments.optTable(0);
+            if (optionalTable.isEmpty())
+                return MethodResult.of(null, "EMPTY_INPUT");
+            // Expected input is a table with either an input table, an output table or both to filter for both
+            filterTable = optionalTable.get();
+        } catch (LuaException e) {
+            return MethodResult.of(null, "NO_TABLE");
+        }
+
+        boolean hasInputFilter = filterTable.containsKey("input");
+        boolean hasOutputFilter = filterTable.containsKey("output");
+
+
+        if (hasInputFilter)
+            return null;
+
         return null;
     }
 
     @Override
     public MethodResult getPatterns() {
-        return null;
+        if (!isAvailable())
+            return notConnected();
+
+        ICraftingProvider provider = node.getService(ICraftingProvider.class);
+
+        if (provider == null)
+            return MethodResult.of(null, "NO_CRAFTING_PROVIDER");
+
+        return MethodResult.of(AppEngApi.listPatterns(provider));
     }
 
     @Override
@@ -455,7 +494,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         return MethodResult.of(getCraftingService().isCraftable(item));
     }
 
-    @LuaFunction(mainThread = true)
+    @Override
     public final MethodResult isFluidCrafting(IArguments arguments) throws LuaException {
         if (!isAvailable())
             return notConnected();
@@ -476,7 +515,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         return MethodResult.of(AppEngApi.isFluidCrafting(monitor, grid, parsedFilter, craftingCPU));
     }
 
-    @LuaFunction(mainThread = true)
+    @Override
     public final MethodResult isFluidCraftable(IArguments arguments) throws LuaException {
         if (!isAvailable())
             return notConnected();

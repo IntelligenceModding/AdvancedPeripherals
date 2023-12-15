@@ -56,7 +56,7 @@ public interface IStorageSystemPeripheral {
     MethodResult exportFluid(IComputerAccess computer, IArguments arguments) throws LuaException;
 
     @LuaFunction(mainThread = true)
-    MethodResult getPattern(IArguments arguments) throws LuaException;
+    MethodResult getFilteredPatterns(IArguments arguments) throws LuaException;
 
     @LuaFunction(mainThread = true)
     MethodResult getPatterns();

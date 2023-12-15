@@ -1,9 +1,11 @@
 package de.srendi.advancedperipherals.common.addons.appliedenergistics;
 
+import appeng.api.crafting.IPatternDetails;
 import appeng.api.inventories.InternalInventory;
 import appeng.api.networking.IGridNode;
 import appeng.api.networking.crafting.CraftingJobStatus;
 import appeng.api.networking.crafting.ICraftingCPU;
+import appeng.api.networking.crafting.ICraftingProvider;
 import appeng.api.networking.crafting.ICraftingService;
 import appeng.api.networking.storage.IStorageService;
 import appeng.api.stacks.*;
@@ -39,6 +41,7 @@ import org.apache.logging.log4j.Level;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class AppEngApi {
 
@@ -119,7 +122,7 @@ public class AppEngApi {
         return items;
     }
 
-    public static List<Object> listGases(MEStorage monitor, ICraftingService service, int flag) {
+    public static List<Object> listGases(MEStorage monitor, ICraftingService service) {
         List<Object> items = new ArrayList<>();
         for (Object2LongMap.Entry<AEKey> aeKey : monitor.getAvailableStacks()) {
             if (APAddons.appMekLoaded && aeKey.getKey() instanceof MekanismKey itemKey) {
@@ -127,6 +130,10 @@ public class AppEngApi {
             }
         }
         return items;
+    }
+
+    public static List<Object> listPatterns(ICraftingProvider manager) {
+        return manager.getAvailablePatterns().stream().map(AppEngApi::getObjectFromPattern).collect(Collectors.toList());
     }
 
     public static <T extends AEKey> Map<String, Object> getObjectFromStack(Pair<Long, T> stack, @Nullable ICraftingService service) {
@@ -179,6 +186,26 @@ public class AppEngApi {
         map.put("displayName", stack.getRight().getDisplayName().getString());
         map.put("tags", LuaConverter.tagsToList(() -> stack.getRight().getStack().getType().getTags()));
 
+        return map;
+    }
+
+    public static Map<String, Object> getObjectFromPattern(IPatternDetails pattern) {
+        Map<String, Object> map = new HashMap<>();
+
+        map.put("inputs", Arrays.stream(pattern.getInputs()).map(AppEngApi::getObjectFromPatternInput));
+        map.put("outputs", Arrays.stream(pattern.getOutputs()).map(AppEngApi::getObjectFromGenericStack));
+        map.put("primaryOutput", getObjectFromGenericStack(pattern.getPrimaryOutput()));
+        return map;
+    }
+
+    public static Map<String, Object> getObjectFromPatternInput(IPatternDetails.IInput patternInput) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("primaryInput", getObjectFromGenericStack(patternInput.getPossibleInputs()[0]));
+        map.put("possibleInputs",
+                Arrays.stream(Arrays.copyOfRange(patternInput.getPossibleInputs(), 1, patternInput.getPossibleInputs().length))
+                        .map(AppEngApi::getObjectFromGenericStack));
+        map.put("multiplier", patternInput.getMultiplier());
+        map.put("remaining", patternInput.getRemainingKey(patternInput.getPossibleInputs()[0].what()));
         return map;
     }
 
@@ -500,7 +527,7 @@ public class AppEngApi {
             KeyCounter keyCounter = bus.getInternalHandler().getAvailableStacks();
 
             for (Object2LongMap.Entry<AEKey> aeKey : keyCounter) {
-                if (aeKey.getKey() instanceof AEFluidKey fluidKey) {
+                if (aeKey.getKey() instanceof AEFluidKey) {
                     used += aeKey.getLongValue();
                 }
             }

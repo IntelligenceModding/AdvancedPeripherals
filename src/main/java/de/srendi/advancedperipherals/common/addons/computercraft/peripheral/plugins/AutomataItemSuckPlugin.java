@@ -84,7 +84,7 @@ public class AutomataItemSuckPlugin extends AutomataCorePlugin {
         int index = 1;
         for (ItemEntity item : items) {
             ItemStack stack = item.getItem();
-            Map<String, Object> itemData = LuaConverter.stackToObject(stack);
+            Map<String, Object> itemData = LuaConverter.itemStackToObject(stack);
             itemData.put("entityID", item.getId());
             data.put(index, itemData);
             index++;

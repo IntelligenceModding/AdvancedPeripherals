@@ -17,7 +17,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.Map;
 
-public class FluidFilter {
+public class FluidFilter extends GenericFilter {
 
     private Fluid fluid = Fluids.EMPTY;
     private TagKey<Fluid> tag = null;

@@ -210,7 +210,7 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     }
 
     @Override
-    public final MethodResult getPattern(IArguments arguments) throws LuaException {
+    public final MethodResult getFilteredPatterns(IArguments arguments) throws LuaException {
         if (!isAvailable())
             return notConnected();
 

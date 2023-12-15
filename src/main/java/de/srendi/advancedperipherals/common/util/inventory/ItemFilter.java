@@ -17,7 +17,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.Map;
 
-public class ItemFilter {
+public class ItemFilter extends GenericFilter {
 
     private Item item = Items.AIR;
     private TagKey<Item> tag = null;
