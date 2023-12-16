@@ -1,5 +1,6 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.peripheral;
 
+import appeng.api.crafting.IPatternDetails;
 import appeng.api.networking.IGridNode;
 import appeng.api.networking.IManagedGridNode;
 import appeng.api.networking.crafting.ICraftingCPU;
@@ -13,6 +14,7 @@ import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.lua.MethodResult;
 import dan200.computercraft.api.peripheral.IComputerAccess;
+import dan200.computercraft.core.apis.TableHelper;
 import dan200.computercraft.core.computer.ComputerSide;
 import de.srendi.advancedperipherals.common.addons.appliedenergistics.AppEngApi;
 import de.srendi.advancedperipherals.common.addons.appliedenergistics.CraftJob;
@@ -273,12 +275,12 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (!isAvailable())
             return notConnected();
 
+        // Expected input is a table with either an input table, an output table or both to filter for both
         Map<?, ?> filterTable;
         try {
             Optional<Map<?, ?>> optionalTable = arguments.optTable(0);
             if (optionalTable.isEmpty())
                 return MethodResult.of(null, "EMPTY_INPUT");
-            // Expected input is a table with either an input table, an output table or both to filter for both
             filterTable = optionalTable.get();
         } catch (LuaException e) {
             return MethodResult.of(null, "NO_TABLE");
@@ -286,12 +288,37 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
         boolean hasInputFilter = filterTable.containsKey("input");
         boolean hasOutputFilter = filterTable.containsKey("output");
+        boolean hasAnyFilter = hasInputFilter || hasOutputFilter;
 
+        // If the player tries to filter for nothing, return nothing.
+        if (!hasAnyFilter)
+            return MethodResult.of(null, "NO_FILTER");
 
-        if (hasInputFilter)
-            return null;
+        GenericFilter inputFilter = GenericFilter.empty();
+        GenericFilter outputFilter = GenericFilter.empty();
 
-        return null;
+        if (hasInputFilter) {
+            Map<?, ?> inputFilterTable = TableHelper.getTableField(filterTable, "input");
+
+            inputFilter = GenericFilter.parseGeneric(inputFilterTable).getLeft();
+        }
+        if (hasOutputFilter) {
+            Map<?, ?> outputFilterTable = TableHelper.getTableField(filterTable, "output");
+
+            outputFilter = GenericFilter.parseGeneric(outputFilterTable).getLeft();
+        }
+
+        ICraftingProvider provider = node.getService(ICraftingProvider.class);
+
+        if (provider == null)
+            return MethodResult.of(null, "NO_CRAFTING_PROVIDER");
+
+        Pair<IPatternDetails, String> pattern = AppEngApi.findPatternFromFilters(provider, inputFilter, outputFilter);
+
+        if (pattern.getRight() != null)
+            return MethodResult.of(null, pattern.getRight());
+
+        return MethodResult.of(AppEngApi.getObjectFromPattern(pattern.getLeft()));
     }
 
     @Override

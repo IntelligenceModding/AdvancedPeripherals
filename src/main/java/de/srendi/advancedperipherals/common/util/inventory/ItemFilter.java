@@ -1,5 +1,7 @@
 package de.srendi.advancedperipherals.common.util.inventory;
 
+import appeng.api.stacks.AEItemKey;
+import appeng.api.stacks.GenericStack;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.core.apis.TableHelper;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
@@ -110,6 +112,14 @@ public class ItemFilter extends GenericFilter {
         var result = new ItemStack(item, count);
         result.setTag(nbt != null ? nbt.copy() : null);
         return result;
+    }
+
+    @Override
+    public boolean test(GenericStack genericStack) {
+        if (genericStack.what() instanceof AEItemKey aeItemKey) {
+            return test(aeItemKey.toStack());
+        }
+        return false;
     }
 
     public boolean test(ItemStack stack) {

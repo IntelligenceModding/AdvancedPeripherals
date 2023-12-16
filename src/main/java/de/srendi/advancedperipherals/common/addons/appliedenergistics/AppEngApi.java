@@ -22,6 +22,7 @@ import de.srendi.advancedperipherals.common.addons.APAddons;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
 import de.srendi.advancedperipherals.common.util.Pair;
 import de.srendi.advancedperipherals.common.util.inventory.FluidFilter;
+import de.srendi.advancedperipherals.common.util.inventory.GenericFilter;
 import de.srendi.advancedperipherals.common.util.inventory.ItemFilter;
 import de.srendi.advancedperipherals.common.util.inventory.ItemUtil;
 import io.github.projectet.ae2things.item.DISKDrive;
@@ -85,6 +86,45 @@ public class AppEngApi {
         }
 
         return null;
+    }
+
+    public static Pair<IPatternDetails, String> findPatternFromFilters(ICraftingProvider provider, GenericFilter inputFilter, GenericFilter outputFilter) {
+        for (IPatternDetails pattern : provider.getAvailablePatterns()) {
+            if (pattern.getInputs().length == 0)
+                continue;
+            if (pattern.getOutputs().length == 0)
+                continue;
+
+            boolean inputMatch = false;
+            boolean outputMatch = false;
+
+            if(!inputFilter.isEmpty()) {
+                for (IPatternDetails.IInput input : pattern.getInputs()) {
+                    if (inputFilter.test(input.getPossibleInputs()[0])) {
+                        inputMatch = true;
+                        break;
+                    }
+                }
+            } else {
+                inputMatch = true;
+            }
+
+            if(!outputFilter.isEmpty()) {
+                for (GenericStack output : pattern.getOutputs()) {
+                    if (outputFilter.test(output)) {
+                        outputMatch = true;
+                        break;
+                    }
+                }
+            } else {
+                outputMatch = true;
+            }
+
+            if (inputMatch && outputMatch)
+                return Pair.of(pattern, null);
+        }
+
+        return Pair.of(null, "NO_PATTERN_FOUND");
     }
 
     public static List<Object> listStacks(MEStorage monitor, ICraftingService service, int flag) {
