@@ -2,10 +2,10 @@ package de.srendi.advancedperipherals.common.addons.appliedenergistics;
 
 import appeng.api.crafting.IPatternDetails;
 import appeng.api.inventories.InternalInventory;
+import appeng.api.networking.IGrid;
 import appeng.api.networking.IGridNode;
 import appeng.api.networking.crafting.CraftingJobStatus;
 import appeng.api.networking.crafting.ICraftingCPU;
-import appeng.api.networking.crafting.ICraftingProvider;
 import appeng.api.networking.crafting.ICraftingService;
 import appeng.api.networking.storage.IStorageService;
 import appeng.api.stacks.*;
@@ -13,6 +13,8 @@ import appeng.api.storage.AEKeyFilter;
 import appeng.api.storage.IStorageProvider;
 import appeng.api.storage.MEStorage;
 import appeng.blockentity.storage.DriveBlockEntity;
+import appeng.crafting.pattern.EncodedPatternItem;
+import appeng.helpers.iface.PatternContainer;
 import appeng.items.storage.BasicStorageCell;
 import appeng.parts.storagebus.StorageBusPart;
 import com.the9grounds.aeadditions.item.storage.SuperStorageCell;
@@ -31,6 +33,7 @@ import me.ramidzkh.mekae2.ae2.MekanismKey;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
@@ -38,7 +41,6 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.registries.ForgeRegistries;
-import org.apache.logging.log4j.Level;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
@@ -88,8 +90,8 @@ public class AppEngApi {
         return null;
     }
 
-    public static Pair<IPatternDetails, String> findPatternFromFilters(ICraftingProvider provider, GenericFilter inputFilter, GenericFilter outputFilter) {
-        for (IPatternDetails pattern : provider.getAvailablePatterns()) {
+    public static Pair<IPatternDetails, String> findPatternFromFilters(IGrid grid, Level level, GenericFilter inputFilter, GenericFilter outputFilter) {
+        for (IPatternDetails pattern : getPatterns(grid, level)) {
             if (pattern.getInputs().length == 0)
                 continue;
             if (pattern.getOutputs().length == 0)
@@ -98,7 +100,7 @@ public class AppEngApi {
             boolean inputMatch = false;
             boolean outputMatch = false;
 
-            if(!inputFilter.isEmpty()) {
+            if (inputFilter != null) {
                 for (IPatternDetails.IInput input : pattern.getInputs()) {
                     if (inputFilter.test(input.getPossibleInputs()[0])) {
                         inputMatch = true;
@@ -109,7 +111,7 @@ public class AppEngApi {
                 inputMatch = true;
             }
 
-            if(!outputFilter.isEmpty()) {
+            if (outputFilter != null) {
                 for (GenericStack output : pattern.getOutputs()) {
                     if (outputFilter.test(output)) {
                         outputMatch = true;
@@ -172,8 +174,37 @@ public class AppEngApi {
         return items;
     }
 
-    public static List<Object> listPatterns(ICraftingProvider manager) {
-        return manager.getAvailablePatterns().stream().map(AppEngApi::getObjectFromPattern).collect(Collectors.toList());
+    public static List<IPatternDetails> getPatterns(IGrid grid, Level level) {
+        List<IPatternDetails> patterns = new ArrayList<>();
+        for (var machineClass : grid.getMachineClasses()) {
+            var containerClass = tryCastMachineToContainer(machineClass);
+            if (containerClass == null)
+                continue;
+
+            for (var container : grid.getActiveMachines(containerClass)) {
+                for (ItemStack patternItem : container.getTerminalPatternInventory()) {
+                    if (patternItem.getItem() instanceof EncodedPatternItem item) {
+                        IPatternDetails patternDetails = item.decode(patternItem, level, false);
+                        if (patternDetails == null)
+                            continue;
+
+                        patterns.add(patternDetails);
+                    }
+                }
+            }
+        }
+        return patterns;
+    }
+
+    public static List<Object> listPatterns(IGrid grid, Level level) {
+        return getPatterns(grid, level).stream().map(AppEngApi::getObjectFromPattern).collect(Collectors.toList());
+    }
+
+    private static Class<? extends PatternContainer> tryCastMachineToContainer(Class<?> machineClass) {
+        if (PatternContainer.class.isAssignableFrom(machineClass)) {
+            return machineClass.asSubclass(PatternContainer.class);
+        }
+        return null;
     }
 
     public static <T extends AEKey> Map<String, Object> getObjectFromStack(Pair<Long, T> stack, @Nullable ICraftingService service) {
@@ -186,7 +217,7 @@ public class AppEngApi {
         if (APAddons.appMekLoaded && (stack.getRight() instanceof MekanismKey gasKey))
             return getObjectFromGasStack(Pair.of(stack.getLeft(), gasKey), service);
 
-        AdvancedPeripherals.debug("Could not create table from unknown stack " + stack.getRight().getClass() + " - Report this to the maintainer of ap", Level.ERROR);
+        AdvancedPeripherals.debug("Could not create table from unknown stack " + stack.getRight().getClass() + " - Report this to the maintainer of ap", org.apache.logging.log4j.Level.ERROR);
         return Collections.emptyMap();
     }
 

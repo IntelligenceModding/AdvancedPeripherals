@@ -4,7 +4,6 @@ import appeng.api.crafting.IPatternDetails;
 import appeng.api.networking.IGridNode;
 import appeng.api.networking.IManagedGridNode;
 import appeng.api.networking.crafting.ICraftingCPU;
-import appeng.api.networking.crafting.ICraftingProvider;
 import appeng.api.networking.crafting.ICraftingService;
 import appeng.api.stacks.AEFluidKey;
 import appeng.api.stacks.AEItemKey;
@@ -153,16 +152,19 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     }
 
     @Override
+    @LuaFunction(mainThread = true)
     public final MethodResult isConnected() {
         return MethodResult.of(isAvailable());
     }
 
     @Override
+    @LuaFunction(mainThread = true)
     public MethodResult isOnline() {
         return MethodResult.of(node.isOnline());
     }
 
     @Override
+    @LuaFunction(mainThread = true)
     public final MethodResult getItem(IArguments arguments) throws LuaException {
         if (!isAvailable())
             return notConnected();
@@ -180,6 +182,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     }
 
     @Override
+    @LuaFunction(mainThread = true)
     public MethodResult getFluid(IArguments arguments) throws LuaException {
         if (!isAvailable())
             return notConnected();
@@ -196,6 +199,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     }
 
     @Override
+    @LuaFunction(mainThread = true)
     public final MethodResult listItems() {
         if (!isAvailable())
             return notConnected();
@@ -204,6 +208,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     }
 
     @Override
+    @LuaFunction(mainThread = true)
     public final MethodResult listFluids() {
         if (!isAvailable())
             return notConnected();
@@ -212,6 +217,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     }
 
     @Override
+    @LuaFunction(mainThread = true)
     public final MethodResult listCraftableItems() {
         if (!isAvailable())
             return notConnected();
@@ -220,6 +226,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     }
 
     @Override
+    @LuaFunction(mainThread = true)
     public final MethodResult listCraftableFluids() {
         if (!isAvailable())
             return notConnected();
@@ -228,6 +235,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     }
 
     @Override
+    @LuaFunction(mainThread = true)
     public final MethodResult listCells() {
         if (!isAvailable())
             return notConnected();
@@ -236,6 +244,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     }
 
     @Override
+    @LuaFunction(mainThread = true)
     public final MethodResult importItem(IComputerAccess computer, IArguments arguments) throws LuaException {
         if (!isAvailable())
             return notConnected();
@@ -253,6 +262,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     }
 
     @Override
+    @LuaFunction(mainThread = true)
     public final MethodResult exportItem(IComputerAccess computer, @NotNull IArguments arguments) throws LuaException {
         if (!isAvailable())
             return notConnected();
@@ -271,6 +281,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
     //TODO: How do we want to filter? By inputs or outputs, or maybe both? What if there are multiple patterns with the same output/input
     @Override
+    @LuaFunction(mainThread = true)
     public MethodResult getFilteredPatterns(IArguments arguments) throws LuaException {
         if (!isAvailable())
             return notConnected();
@@ -294,8 +305,8 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (!hasAnyFilter)
             return MethodResult.of(null, "NO_FILTER");
 
-        GenericFilter inputFilter = GenericFilter.empty();
-        GenericFilter outputFilter = GenericFilter.empty();
+        GenericFilter inputFilter = null;
+        GenericFilter outputFilter = null;
 
         if (hasInputFilter) {
             Map<?, ?> inputFilterTable = TableHelper.getTableField(filterTable, "input");
@@ -308,12 +319,8 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
             outputFilter = GenericFilter.parseGeneric(outputFilterTable).getLeft();
         }
 
-        ICraftingProvider provider = node.getService(ICraftingProvider.class);
 
-        if (provider == null)
-            return MethodResult.of(null, "NO_CRAFTING_PROVIDER");
-
-        Pair<IPatternDetails, String> pattern = AppEngApi.findPatternFromFilters(provider, inputFilter, outputFilter);
+        Pair<IPatternDetails, String> pattern = AppEngApi.findPatternFromFilters(node.getGrid(), getLevel(), inputFilter, outputFilter);
 
         if (pattern.getRight() != null)
             return MethodResult.of(null, pattern.getRight());
@@ -322,19 +329,16 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     }
 
     @Override
+    @LuaFunction(mainThread = true)
     public MethodResult getPatterns() {
         if (!isAvailable())
             return notConnected();
 
-        ICraftingProvider provider = node.getService(ICraftingProvider.class);
-
-        if (provider == null)
-            return MethodResult.of(null, "NO_CRAFTING_PROVIDER");
-
-        return MethodResult.of(AppEngApi.listPatterns(provider));
+        return MethodResult.of(AppEngApi.listPatterns(node.getGrid(), getLevel()));
     }
 
     @Override
+    @LuaFunction(mainThread = true)
     public final MethodResult getStoredEnergy() {
         if (!isAvailable())
             return notConnected();
@@ -343,6 +347,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     }
 
     @Override
+    @LuaFunction(mainThread = true)
     public final MethodResult getEnergyCapacity() {
         if (!isAvailable())
             return notConnected();
@@ -351,6 +356,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     }
 
     @Override
+    @LuaFunction(mainThread = true)
     public final MethodResult getEnergyUsage() {
         if (!isAvailable())
             return notConnected();
@@ -358,6 +364,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         return MethodResult.of(node.getGrid().getEnergyService().getAvgPowerUsage());
     }
 
+    @Override
     @LuaFunction(mainThread = true)
     public final MethodResult getAvgPowerInjection() {
         if (!isAvailable())
@@ -367,17 +374,20 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     }
 
     @Override
+    @LuaFunction(mainThread = true)
     public MethodResult getTotalExternItemStorage() {
         return null;
     }
 
     @Override
+    @LuaFunction(mainThread = true)
     public MethodResult getTotalExternFluidStorage() {
         return null;
     }
 
 
     @Override
+    @LuaFunction(mainThread = true)
     public final MethodResult getTotalItemStorage() {
         if (!isAvailable())
             return notConnected();
@@ -386,6 +396,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     }
 
     @Override
+    @LuaFunction(mainThread = true)
     public final MethodResult getTotalFluidStorage() {
         if (!isAvailable())
             return notConnected();
@@ -394,16 +405,19 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     }
 
     @Override
+    @LuaFunction(mainThread = true)
     public MethodResult getUsedExternItemStorage() {
         return null;
     }
 
     @Override
+    @LuaFunction(mainThread = true)
     public MethodResult getUsedExternFluidStorage() {
         return null;
     }
 
     @Override
+    @LuaFunction(mainThread = true)
     public final MethodResult getUsedItemStorage() {
         if (!isAvailable())
             return notConnected();
@@ -412,6 +426,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     }
 
     @Override
+    @LuaFunction(mainThread = true)
     public final MethodResult getUsedFluidStorage() {
         if (!isAvailable())
             return notConnected();
@@ -420,16 +435,19 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     }
 
     @Override
+    @LuaFunction(mainThread = true)
     public MethodResult getAvailableExternItemStorage() {
         return null;
     }
 
     @Override
+    @LuaFunction(mainThread = true)
     public MethodResult getAvailableExternFluidStorage() {
         return null;
     }
 
     @Override
+    @LuaFunction(mainThread = true)
     public final MethodResult getAvailableItemStorage() {
         if (!isAvailable())
             return notConnected();
@@ -438,6 +456,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     }
 
     @Override
+    @LuaFunction(mainThread = true)
     public final MethodResult getAvailableFluidStorage() {
         if (!isAvailable())
             return notConnected();
@@ -446,6 +465,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     }
 
     @Override
+    @LuaFunction(mainThread = true)
     public final MethodResult craftItem(IComputerAccess computer, IArguments arguments) throws LuaException {
         if (!isAvailable())
             return notConnected();
@@ -475,6 +495,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     }
 
     @Override
+    @LuaFunction(mainThread = true)
     public final MethodResult craftFluid(IComputerAccess computer, IArguments arguments) throws LuaException {
         if (!isAvailable())
             return notConnected();
@@ -504,6 +525,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     }
 
     @Override
+    @LuaFunction(mainThread = true)
     public final MethodResult isItemCraftable(IArguments arguments) throws LuaException {
         if (!isAvailable())
             return notConnected();
@@ -522,6 +544,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     }
 
     @Override
+    @LuaFunction(mainThread = true)
     public final MethodResult isFluidCrafting(IArguments arguments) throws LuaException {
         if (!isAvailable())
             return notConnected();
@@ -543,6 +566,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     }
 
     @Override
+    @LuaFunction(mainThread = true)
     public final MethodResult isFluidCraftable(IArguments arguments) throws LuaException {
         if (!isAvailable())
             return notConnected();
@@ -561,6 +585,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     }
 
     @Override
+    @LuaFunction(mainThread = true)
     public final MethodResult exportFluid(IComputerAccess computer, IArguments arguments) throws LuaException {
         String side = arguments.getString(1);
         IFluidHandler fluidHandler;
@@ -578,6 +603,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     }
 
     @Override
+    @LuaFunction(mainThread = true)
     public final MethodResult importFluid(IComputerAccess computer, IArguments arguments) throws LuaException {
         String side = arguments.getString(1);
         IFluidHandler fluidHandler;
@@ -595,6 +621,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     }
 
     @Override
+    @LuaFunction(mainThread = true)
     public final MethodResult isItemCrafting(IArguments arguments) throws LuaException {
         if (!isAvailable())
             return notConnected();

@@ -19,8 +19,18 @@ public abstract class GenericFilter {
      * @return A pair of the parsed filter and an error message, if there is one
      */
     public static Pair<? extends GenericFilter, String> parseGeneric(Map<?, ?> rawFilter) {
+        // TODO: Add chemical filter support
+
         if (!rawFilter.containsKey("name")) {
-            // If the filter does not contain a name, which should never happen, but players are players, we will just
+            if (rawFilter.containsKey("type") && rawFilter.get("type") instanceof String type) {
+                switch (type) {
+                    case "item":
+                        return ItemFilter.parse(rawFilter);
+                    case "fluid":
+                        return FluidFilter.parse(rawFilter);
+                }
+            }
+            // If the filter does not contain a name or a type, which should never happen, but players are players, we will just
             // give the ItemFilter the task to parse the filter
             return ItemFilter.parse(rawFilter);
         }
@@ -31,7 +41,6 @@ public abstract class GenericFilter {
             return ItemFilter.parse(rawFilter);
         } else if (ItemUtil.getRegistryEntry(name, ForgeRegistries.FLUIDS) != null) {
             return FluidFilter.parse(rawFilter);
-            // TODO: Add chemical filter support
         } else {
             // If the name is in neither of the registries, we will just return an empty filter
             return Pair.of(empty(), "NO_VALID_FILTER_TYPE");

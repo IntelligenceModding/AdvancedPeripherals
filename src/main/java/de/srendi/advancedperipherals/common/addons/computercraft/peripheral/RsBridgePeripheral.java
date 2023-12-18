@@ -210,6 +210,11 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     }
 
     @Override
+    public MethodResult getAvgPowerInjection() {
+        return null;
+    }
+
+    @Override
     public final MethodResult getFilteredPatterns(IArguments arguments) throws LuaException {
         if (!isAvailable())
             return notConnected();
