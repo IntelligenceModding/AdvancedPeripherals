@@ -306,6 +306,12 @@ dependencies {
     implementation fg.deobf("me.shedaniel.cloth:cloth-config-forge:11.1.106")
     implementation fg.deobf("dev.architectury:architectury-forge:9.1.10")
 
+    //DimStorage
+    compileOnly fg.deobf("curse.maven:dimstorage-353882:${dimstorage_version}")
+    runtimeOnly fg.deobf("curse.maven:dimstorage-353882:${dimstorage_version}")
+    compileOnly fg.deobf("curse.maven:edivadlib-638508:${edivadlib_version}")
+    runtimeOnly fg.deobf("curse.maven:edivadlib-638508:${edivadlib_version}")
+
     //Removed until fully ported
     //testImplementation fg.deobf("site.siredvin.ttoolkit:ttoolkit-${minecraft_version}:${ttoolkit_version}")
 
@@ -320,6 +326,8 @@ dependencies {
     // Testing stuff
     // JEI
     implementation fg.deobf("mezz.jei:jei-${jei_version}")
+    // Jade
+    implementation fg.deobf("curse.maven:jade-324717:${jade_version}")
 }
 
 
