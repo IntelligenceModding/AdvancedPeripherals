@@ -29,94 +29,94 @@ public interface IStorageSystemPeripheral {
 
     MethodResult listFluids();
 
-    
+
     MethodResult listCraftableItems();
 
-    
+
     MethodResult listCraftableFluids();
 
     MethodResult listCells();
 
-    
+
     MethodResult importItem(IComputerAccess computer, IArguments arguments) throws LuaException;
 
-    
+
     MethodResult exportItem(IComputerAccess computer, IArguments arguments) throws LuaException;
 
-    
+
     MethodResult importFluid(IComputerAccess computer, IArguments arguments) throws LuaException;
 
-    
+
     MethodResult exportFluid(IComputerAccess computer, IArguments arguments) throws LuaException;
 
-    
+
     MethodResult getFilteredPatterns(IArguments arguments) throws LuaException;
 
-    
+
     MethodResult getPatterns();
 
-    
+
     MethodResult getStoredEnergy();
 
-    
+
     MethodResult getEnergyCapacity();
 
-    
+
     MethodResult getEnergyUsage();
 
     MethodResult getAvgPowerInjection();
 
     MethodResult getTotalExternItemStorage();
 
-    
+
     MethodResult getTotalExternFluidStorage();
 
-    
+
     MethodResult getTotalItemStorage();
 
-    
+
     MethodResult getTotalFluidStorage();
 
-    
+
     MethodResult getUsedExternItemStorage();
 
-    
+
     MethodResult getUsedExternFluidStorage();
 
-    
+
     MethodResult getUsedItemStorage();
 
-    
+
     MethodResult getUsedFluidStorage();
 
-    
+
     MethodResult getAvailableExternItemStorage();
 
-    
+
     MethodResult getAvailableExternFluidStorage();
 
-    
+
     MethodResult getAvailableItemStorage();
 
-    
+
     MethodResult getAvailableFluidStorage();
 
-    
+
     MethodResult craftItem(IComputerAccess computer, IArguments arguments) throws LuaException;
 
-    
+
     MethodResult craftFluid(IComputerAccess computer, IArguments arguments) throws LuaException;
 
-    
+
     MethodResult isItemCraftable(IArguments arguments) throws LuaException;
 
-    
+
     MethodResult isItemCrafting(IArguments arguments) throws LuaException;
 
-    
+
     MethodResult isFluidCraftable(IArguments arguments) throws LuaException;
 
-    
+
     MethodResult isFluidCrafting(IArguments arguments) throws LuaException;
 
 }

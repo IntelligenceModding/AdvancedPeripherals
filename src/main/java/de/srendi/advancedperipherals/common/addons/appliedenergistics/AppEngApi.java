@@ -23,7 +23,6 @@ import com.the9grounds.aeadditions.item.storage.SuperStorageCell;
 import dan200.computercraft.shared.util.NBTUtil;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.addons.APAddons;
-import de.srendi.advancedperipherals.common.addons.mekanism.MekanismCapabilities;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
 import de.srendi.advancedperipherals.common.util.Pair;
 import de.srendi.advancedperipherals.common.util.inventory.FluidFilter;
@@ -35,11 +34,6 @@ import it.unimi.dsi.fastutil.objects.Object2LongMap;
 import me.ramidzkh.mekae2.ae2.MekanismKey;
 import me.ramidzkh.mekae2.ae2.MekanismKeyType;
 import me.ramidzkh.mekae2.item.ChemicalStorageCell;
-import mekanism.api.chemical.IChemicalHandler;
-import mekanism.api.chemical.gas.IGasHandler;
-import mekanism.api.chemical.infuse.IInfusionHandler;
-import mekanism.api.chemical.pigment.IPigmentHandler;
-import mekanism.api.chemical.slurry.ISlurryHandler;
 import mekanism.common.tile.TileEntityChemicalTank;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -746,7 +740,7 @@ public class AppEngApi {
             for (int i = 0; i < inventory.size(); i++) {
                 ItemStack stack = inventory.getStackInSlot(i);
 
-                if (stack.getItem() instanceof ChemicalStorageCell ) {
+                if (stack.getItem() instanceof ChemicalStorageCell) {
                     BasicCellInventory cellInventory = BasicCellHandler.INSTANCE.getCellInventory(stack, null);
 
                     used = cellInventory.getUsedBytes() / MekanismKeyType.TYPE.getAmountPerByte();
