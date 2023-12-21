@@ -376,13 +376,19 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     @Override
     @LuaFunction(mainThread = true)
     public MethodResult getTotalExternItemStorage() {
-        return null;
+        if (!isAvailable())
+            return notConnected();
+
+        return MethodResult.of(AppEngApi.getTotalExternalItemStorage(node));
     }
 
     @Override
     @LuaFunction(mainThread = true)
     public MethodResult getTotalExternFluidStorage() {
-        return null;
+        if (!isAvailable())
+            return notConnected();
+
+        return MethodResult.of(AppEngApi.getTotalExternalFluidStorage(node));
     }
 
 
@@ -407,13 +413,19 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     @Override
     @LuaFunction(mainThread = true)
     public MethodResult getUsedExternItemStorage() {
-        return null;
+        if (!isAvailable())
+            return notConnected();
+
+        return MethodResult.of(AppEngApi.getUsedExternalFluidStorage(node));
     }
 
     @Override
     @LuaFunction(mainThread = true)
     public MethodResult getUsedExternFluidStorage() {
-        return null;
+        if (!isAvailable())
+            return notConnected();
+
+        return MethodResult.of(AppEngApi.getUsedExternalFluidStorage(node));
     }
 
     @Override
@@ -437,13 +449,18 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     @Override
     @LuaFunction(mainThread = true)
     public MethodResult getAvailableExternItemStorage() {
-        return null;
-    }
+        if (!isAvailable())
+            return notConnected();
 
+        return MethodResult.of(AppEngApi.getAvailableExternalItemStorage(node));
+    }
     @Override
     @LuaFunction(mainThread = true)
     public MethodResult getAvailableExternFluidStorage() {
-        return null;
+        if (!isAvailable())
+            return notConnected();
+
+        return MethodResult.of(AppEngApi.getAvailableExternalFluidStorage(node));
     }
 
     @Override

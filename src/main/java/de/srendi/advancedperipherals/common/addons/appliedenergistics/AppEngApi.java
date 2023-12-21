@@ -90,7 +90,18 @@ public class AppEngApi {
         return null;
     }
 
-    public static Pair<IPatternDetails, String> findPatternFromFilters(IGrid grid, Level level, GenericFilter inputFilter, GenericFilter outputFilter) {
+    /**
+     * Finds a pattern from filters.
+     *
+     * @param grid         The grid to search patterns from.
+     * @param level        The level of the grid.
+     * @param inputFilter  The input filter to apply, can be null to ignore input filter.
+     * @param outputFilter The output filter to apply, can be null to ignore output filter.
+     * @return A Pair object containing the matched pattern and an error message if no pattern is found.
+     * The pattern can be null if no pattern is found.
+     * The error message is "NO_PATTERN_FOUND" if no pattern is found.
+     */
+    public static Pair<IPatternDetails, String> findPatternFromFilters(IGrid grid, Level level, @Nullable GenericFilter inputFilter, @Nullable GenericFilter outputFilter) {
         for (IPatternDetails pattern : getPatterns(grid, level)) {
             if (pattern.getInputs().length == 0)
                 continue;
@@ -101,10 +112,13 @@ public class AppEngApi {
             boolean outputMatch = false;
 
             if (inputFilter != null) {
+                outerLoop:
                 for (IPatternDetails.IInput input : pattern.getInputs()) {
-                    if (inputFilter.test(input.getPossibleInputs()[0])) {
-                        inputMatch = true;
-                        break;
+                    for (GenericStack possibleInput : input.getPossibleInputs()) {
+                        if (inputFilter.test(possibleInput)) {
+                            inputMatch = true;
+                            break outerLoop;
+                        }
                     }
                 }
             } else {
@@ -263,8 +277,8 @@ public class AppEngApi {
     public static Map<String, Object> getObjectFromPattern(IPatternDetails pattern) {
         Map<String, Object> map = new HashMap<>();
 
-        map.put("inputs", Arrays.stream(pattern.getInputs()).map(AppEngApi::getObjectFromPatternInput));
-        map.put("outputs", Arrays.stream(pattern.getOutputs()).map(AppEngApi::getObjectFromGenericStack));
+        map.put("inputs", Arrays.stream(pattern.getInputs()).map(AppEngApi::getObjectFromPatternInput).collect(Collectors.toList()));
+        map.put("outputs", Arrays.stream(pattern.getOutputs()).map(AppEngApi::getObjectFromGenericStack).collect(Collectors.toList()));
         map.put("primaryOutput", getObjectFromGenericStack(pattern.getPrimaryOutput()));
         return map;
     }
@@ -393,13 +407,35 @@ public class AppEngApi {
         return false;
     }
 
+    public static long getTotalExternalItemStorage(IGridNode node) {
+        long total = 0;
+
+        for (IGridNode iGridNode : node.getGrid().getMachineNodes(StorageBusPart.class)) {
+            StorageBusPart bus = (StorageBusPart) iGridNode.getService(IStorageProvider.class);
+            Level level = bus.getLevel();
+            BlockPos connectedInventoryPos = bus.getHost().getBlockEntity().getBlockPos().relative(bus.getSide());
+            BlockEntity connectedInventoryEntity = level.getBlockEntity(connectedInventoryPos);
+
+            if (connectedInventoryEntity == null)
+                continue;
+
+            LazyOptional<IItemHandler> itemHandler = connectedInventoryEntity.getCapability(ForgeCapabilities.ITEM_HANDLER);
+            if (itemHandler.isPresent()) {
+                IItemHandler handler = itemHandler.orElse(null);
+                for (int i = 0; i < handler.getSlots(); i++) {
+                    total += handler.getSlotLimit(i);
+                }
+            }
+        }
+
+        return total;
+    }
+
     public static long getTotalItemStorage(IGridNode node) {
         long total = 0;
 
-        Iterator<IGridNode> iterator = node.getGrid().getMachineNodes(DriveBlockEntity.class).iterator();
-
-        while (iterator.hasNext()) {
-            DriveBlockEntity entity = (DriveBlockEntity) iterator.next().getService(IStorageProvider.class);
+        for (IGridNode iGridNode : node.getGrid().getMachineNodes(DriveBlockEntity.class)) {
+            DriveBlockEntity entity = (DriveBlockEntity) iGridNode.getService(IStorageProvider.class);
             if (entity == null)
                 continue;
 
@@ -420,24 +456,33 @@ public class AppEngApi {
                         total += disk.getBytes(null);
                     }
                 } else if (APAddons.aeAdditionsLoaded && (stack.getItem() instanceof SuperStorageCell superStorageCell)) {
-                    total += superStorageCell.getKiloBytes() * 1024;
+                    total += superStorageCell.getKiloBytes() * 1024L;
                 }
             }
         }
 
-        iterator = node.getGrid().getMachineNodes(StorageBusPart.class).iterator();
+        total += getTotalExternalItemStorage(node);
 
-        while (iterator.hasNext()) {
-            StorageBusPart bus = (StorageBusPart) iterator.next().getService(IStorageProvider.class);
-            net.minecraft.world.level.Level level = bus.getLevel();
+        return total;
+    }
+
+    public static long getTotalExternalFluidStorage(IGridNode node) {
+        long total = 0;
+
+        for (IGridNode iGridNode : node.getGrid().getMachineNodes(StorageBusPart.class)) {
+            StorageBusPart bus = (StorageBusPart) iGridNode.getService(IStorageProvider.class);
+            Level level = bus.getLevel();
             BlockPos connectedInventoryPos = bus.getHost().getBlockEntity().getBlockPos().relative(bus.getSide());
             BlockEntity connectedInventoryEntity = level.getBlockEntity(connectedInventoryPos);
 
-            LazyOptional<IItemHandler> itemHandler = connectedInventoryEntity.getCapability(ForgeCapabilities.ITEM_HANDLER);
-            if (itemHandler.isPresent()) {
-                IItemHandler handler = itemHandler.orElse(null);
-                for (int i = 0; i < handler.getSlots(); i++) {
-                    total += handler.getSlotLimit(i);
+            if (connectedInventoryEntity == null)
+                continue;
+
+            LazyOptional<IFluidHandler> fluidHandler = connectedInventoryEntity.getCapability(ForgeCapabilities.FLUID_HANDLER);
+            if (fluidHandler.isPresent()) {
+                IFluidHandler handler = fluidHandler.orElse(null);
+                for (int i = 0; i < handler.getTanks(); i++) {
+                    total += handler.getTankCapacity(i);
                 }
             }
         }
@@ -448,10 +493,8 @@ public class AppEngApi {
     public static long getTotalFluidStorage(IGridNode node) {
         long total = 0;
 
-        Iterator<IGridNode> iterator = node.getGrid().getMachineNodes(DriveBlockEntity.class).iterator();
-
-        while (iterator.hasNext()) {
-            DriveBlockEntity entity = (DriveBlockEntity) iterator.next().getService(IStorageProvider.class);
+        for (IGridNode iGridNode : node.getGrid().getMachineNodes(DriveBlockEntity.class)) {
+            DriveBlockEntity entity = (DriveBlockEntity) iGridNode.getService(IStorageProvider.class);
             if (entity == null)
                 continue;
 
@@ -468,38 +511,38 @@ public class AppEngApi {
                         total += cell.getBytes(null);
                     }
                 } else if (APAddons.aeAdditionsLoaded && stack.getItem() instanceof SuperStorageCell superStorageCell) {
-                    total += superStorageCell.getKiloBytes() * 1024;
+                    total += superStorageCell.getKiloBytes() * 1024L;
                 }
             }
         }
 
-        iterator = node.getGrid().getMachineNodes(StorageBusPart.class).iterator();
-
-        while (iterator.hasNext()) {
-            StorageBusPart bus = (StorageBusPart) iterator.next().getService(IStorageProvider.class);
-            net.minecraft.world.level.Level level = bus.getLevel();
-            BlockPos connectedInventoryPos = bus.getHost().getBlockEntity().getBlockPos().relative(bus.getSide());
-            BlockEntity connectedInventoryEntity = level.getBlockEntity(connectedInventoryPos);
-
-            LazyOptional<IFluidHandler> fluidHandler = connectedInventoryEntity.getCapability(ForgeCapabilities.FLUID_HANDLER);
-            if (fluidHandler.isPresent()) {
-                IFluidHandler handler = fluidHandler.orElse(null);
-                for (int i = 0; i < handler.getTanks(); i++) {
-                    total += handler.getTankCapacity(i);
-                }
-            }
-        }
+        total += getTotalExternalFluidStorage(node);
 
         return total;
+    }
+
+    public static long getUsedExternalItemStorage(IGridNode node) {
+        long used = 0;
+
+        for (IGridNode iGridNode : node.getGrid().getMachineNodes(StorageBusPart.class)) {
+            StorageBusPart bus = (StorageBusPart) iGridNode.getService(IStorageProvider.class);
+            KeyCounter keyCounter = bus.getInternalHandler().getAvailableStacks();
+
+            for (Object2LongMap.Entry<AEKey> aeKey : keyCounter) {
+                if (aeKey.getKey() instanceof AEItemKey) {
+                    used += aeKey.getLongValue();
+                }
+            }
+        }
+
+        return used;
     }
 
     public static long getUsedItemStorage(IGridNode node) {
         long used = 0;
 
-        Iterator<IGridNode> iterator = node.getGrid().getMachineNodes(DriveBlockEntity.class).iterator();
-
-        while (iterator.hasNext()) {
-            DriveBlockEntity entity = (DriveBlockEntity) iterator.next().getService(IStorageProvider.class);
+        for (IGridNode iGridNode : node.getGrid().getMachineNodes(DriveBlockEntity.class)) {
+            DriveBlockEntity entity = (DriveBlockEntity) iGridNode.getService(IStorageProvider.class);
             if (entity == null)
                 continue;
 
@@ -539,14 +582,20 @@ public class AppEngApi {
             }
         }
 
-        iterator = node.getGrid().getMachineNodes(StorageBusPart.class).iterator();
+        used += getUsedExternalItemStorage(node);
 
-        while (iterator.hasNext()) {
-            StorageBusPart bus = (StorageBusPart) iterator.next().getService(IStorageProvider.class);
+        return used;
+    }
+
+    public static long getUsedExternalFluidStorage(IGridNode node) {
+        long used = 0;
+
+        for (IGridNode iGridNode : node.getGrid().getMachineNodes(StorageBusPart.class)) {
+            StorageBusPart bus = (StorageBusPart) iGridNode.getService(IStorageProvider.class);
             KeyCounter keyCounter = bus.getInternalHandler().getAvailableStacks();
 
             for (Object2LongMap.Entry<AEKey> aeKey : keyCounter) {
-                if (aeKey.getKey() instanceof AEItemKey) {
+                if (aeKey.getKey() instanceof AEFluidKey) {
                     used += aeKey.getLongValue();
                 }
             }
@@ -558,10 +607,8 @@ public class AppEngApi {
     public static long getUsedFluidStorage(IGridNode node) {
         long used = 0;
 
-        Iterator<IGridNode> iterator = node.getGrid().getMachineNodes(DriveBlockEntity.class).iterator();
-
-        while (iterator.hasNext()) {
-            DriveBlockEntity entity = (DriveBlockEntity) iterator.next().getService(IStorageProvider.class);
+        for (IGridNode iGridNode : node.getGrid().getMachineNodes(DriveBlockEntity.class)) {
+            DriveBlockEntity entity = (DriveBlockEntity) iGridNode.getService(IStorageProvider.class);
             if (entity == null)
                 continue;
 
@@ -591,18 +638,7 @@ public class AppEngApi {
             }
         }
 
-        iterator = node.getGrid().getMachineNodes(StorageBusPart.class).iterator();
-
-        while (iterator.hasNext()) {
-            StorageBusPart bus = (StorageBusPart) iterator.next().getService(IStorageProvider.class);
-            KeyCounter keyCounter = bus.getInternalHandler().getAvailableStacks();
-
-            for (Object2LongMap.Entry<AEKey> aeKey : keyCounter) {
-                if (aeKey.getKey() instanceof AEFluidKey) {
-                    used += aeKey.getLongValue();
-                }
-            }
-        }
+        used += getUsedExternalFluidStorage(node);
 
         return used;
     }
@@ -613,6 +649,14 @@ public class AppEngApi {
 
     public static long getAvailableFluidStorage(IGridNode node) {
         return getTotalFluidStorage(node) - getUsedFluidStorage(node);
+    }
+
+    public static long getAvailableExternalItemStorage(IGridNode node) {
+        return getTotalExternalItemStorage(node) - getUsedExternalItemStorage(node);
+    }
+
+    public static long getAvailableExternalFluidStorage(IGridNode node) {
+        return getTotalExternalFluidStorage(node) - getUsedExternalFluidStorage(node);
     }
 
     public static List<Object> listCells(IGridNode node) {
