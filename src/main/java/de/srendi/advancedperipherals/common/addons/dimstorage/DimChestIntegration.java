@@ -21,7 +21,7 @@ public class DimChestIntegration extends BlockEntityIntegrationPeripheral<BlockE
         return "dimChest";
     }
 
-    @LuaFunction
+    @LuaFunction(mainThread = true)
     public final String getOwnerUUID() {
         UUID uuid = blockEntity.getFrequency().getOwnerUUID();
         if (uuid == null)
@@ -29,22 +29,22 @@ public class DimChestIntegration extends BlockEntityIntegrationPeripheral<BlockE
         return uuid.toString();
     }
 
-    @LuaFunction
+    @LuaFunction(mainThread = true)
     public final String getOwner() {
         return blockEntity.getFrequency().getOwner();
     }
 
-    @LuaFunction
+    @LuaFunction(mainThread = true)
     public final boolean hasOwner() {
         return blockEntity.getFrequency().hasOwner();
     }
 
-    @LuaFunction
+    @LuaFunction(mainThread = true)
     public final int getChannel() {
         return blockEntity.getFrequency().getChannel();
     }
 
-    @LuaFunction
+    @LuaFunction(mainThread = true)
     public final boolean setChannel(int channel) {
         Frequency fre = blockEntity.getFrequency();
         if (fre.hasOwner()) return false;
