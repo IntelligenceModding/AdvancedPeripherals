@@ -16,11 +16,14 @@ import appeng.blockentity.storage.DriveBlockEntity;
 import appeng.crafting.pattern.EncodedPatternItem;
 import appeng.helpers.iface.PatternContainer;
 import appeng.items.storage.BasicStorageCell;
+import appeng.me.cells.BasicCellHandler;
+import appeng.me.cells.BasicCellInventory;
 import appeng.parts.storagebus.StorageBusPart;
 import com.the9grounds.aeadditions.item.storage.SuperStorageCell;
 import dan200.computercraft.shared.util.NBTUtil;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.addons.APAddons;
+import de.srendi.advancedperipherals.common.addons.mekanism.MekanismCapabilities;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
 import de.srendi.advancedperipherals.common.util.Pair;
 import de.srendi.advancedperipherals.common.util.inventory.FluidFilter;
@@ -30,6 +33,14 @@ import de.srendi.advancedperipherals.common.util.inventory.ItemUtil;
 import io.github.projectet.ae2things.item.DISKDrive;
 import it.unimi.dsi.fastutil.objects.Object2LongMap;
 import me.ramidzkh.mekae2.ae2.MekanismKey;
+import me.ramidzkh.mekae2.ae2.MekanismKeyType;
+import me.ramidzkh.mekae2.item.ChemicalStorageCell;
+import mekanism.api.chemical.IChemicalHandler;
+import mekanism.api.chemical.gas.IGasHandler;
+import mekanism.api.chemical.infuse.IInfusionHandler;
+import mekanism.api.chemical.pigment.IPigmentHandler;
+import mekanism.api.chemical.slurry.ISlurryHandler;
+import mekanism.common.tile.TileEntityChemicalTank;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
@@ -407,6 +418,9 @@ public class AppEngApi {
         return false;
     }
 
+    /// External Storage
+    /// Total
+
     public static long getTotalExternalItemStorage(IGridNode node) {
         long total = 0;
 
@@ -430,6 +444,109 @@ public class AppEngApi {
 
         return total;
     }
+
+    public static long getTotalExternalFluidStorage(IGridNode node) {
+        long total = 0;
+
+        for (IGridNode iGridNode : node.getGrid().getMachineNodes(StorageBusPart.class)) {
+            StorageBusPart bus = (StorageBusPart) iGridNode.getService(IStorageProvider.class);
+            Level level = bus.getLevel();
+            BlockPos connectedInventoryPos = bus.getHost().getBlockEntity().getBlockPos().relative(bus.getSide());
+            BlockEntity connectedInventoryEntity = level.getBlockEntity(connectedInventoryPos);
+
+            if (connectedInventoryEntity == null)
+                continue;
+
+            LazyOptional<IFluidHandler> fluidHandler = connectedInventoryEntity.getCapability(ForgeCapabilities.FLUID_HANDLER);
+            if (fluidHandler.isPresent()) {
+                IFluidHandler handler = fluidHandler.orElse(null);
+                for (int i = 0; i < handler.getTanks(); i++) {
+                    total += handler.getTankCapacity(i);
+                }
+            }
+        }
+
+        return total;
+    }
+
+    public static long getTotalExternalChemicalStorage(IGridNode node) {
+        long total = 0;
+
+        if (!APAddons.appMekLoaded)
+            return 0;
+
+        for (IGridNode iGridNode : node.getGrid().getMachineNodes(StorageBusPart.class)) {
+            StorageBusPart bus = (StorageBusPart) iGridNode.getService(IStorageProvider.class);
+            Level level = bus.getLevel();
+            BlockPos connectedInventoryPos = bus.getHost().getBlockEntity().getBlockPos().relative(bus.getSide());
+            BlockEntity connectedInventoryEntity = level.getBlockEntity(connectedInventoryPos);
+
+            if (connectedInventoryEntity == null)
+                continue;
+
+            if (connectedInventoryEntity instanceof TileEntityChemicalTank tank) {
+                total += tank.getChemicalTank().getTankFromCurrent(tank.getChemicalTank().getCurrent()).getCapacity();
+            }
+        }
+
+        return total;
+    }
+
+    /// Used
+
+    public static long getUsedExternalItemStorage(IGridNode node) {
+        long used = 0;
+
+        for (IGridNode iGridNode : node.getGrid().getMachineNodes(StorageBusPart.class)) {
+            StorageBusPart bus = (StorageBusPart) iGridNode.getService(IStorageProvider.class);
+            KeyCounter keyCounter = bus.getInternalHandler().getAvailableStacks();
+
+            for (Object2LongMap.Entry<AEKey> aeKey : keyCounter) {
+                if (aeKey.getKey() instanceof AEItemKey) {
+                    used += aeKey.getLongValue();
+                }
+            }
+        }
+
+        return used;
+    }
+
+    public static long getUsedExternalFluidStorage(IGridNode node) {
+        long used = 0;
+
+        for (IGridNode iGridNode : node.getGrid().getMachineNodes(StorageBusPart.class)) {
+            StorageBusPart bus = (StorageBusPart) iGridNode.getService(IStorageProvider.class);
+            KeyCounter keyCounter = bus.getInternalHandler().getAvailableStacks();
+
+            for (Object2LongMap.Entry<AEKey> aeKey : keyCounter) {
+                if (aeKey.getKey() instanceof AEFluidKey) {
+                    used += aeKey.getLongValue();
+                }
+            }
+        }
+
+        return used;
+    }
+
+    public static long getUsedExternalChemicalStorage(IGridNode node) {
+        long used = 0;
+
+        for (IGridNode iGridNode : node.getGrid().getMachineNodes(StorageBusPart.class)) {
+            StorageBusPart bus = (StorageBusPart) iGridNode.getService(IStorageProvider.class);
+            KeyCounter keyCounter = bus.getInternalHandler().getAvailableStacks();
+
+            for (Object2LongMap.Entry<AEKey> aeKey : keyCounter) {
+                if (aeKey.getKey() instanceof MekanismKey) {
+                    used += aeKey.getLongValue();
+                }
+            }
+        }
+
+        return used;
+    }
+
+    /// Internal Storage
+    /// Total
 
     public static long getTotalItemStorage(IGridNode node) {
         long total = 0;
@@ -466,30 +583,6 @@ public class AppEngApi {
         return total;
     }
 
-    public static long getTotalExternalFluidStorage(IGridNode node) {
-        long total = 0;
-
-        for (IGridNode iGridNode : node.getGrid().getMachineNodes(StorageBusPart.class)) {
-            StorageBusPart bus = (StorageBusPart) iGridNode.getService(IStorageProvider.class);
-            Level level = bus.getLevel();
-            BlockPos connectedInventoryPos = bus.getHost().getBlockEntity().getBlockPos().relative(bus.getSide());
-            BlockEntity connectedInventoryEntity = level.getBlockEntity(connectedInventoryPos);
-
-            if (connectedInventoryEntity == null)
-                continue;
-
-            LazyOptional<IFluidHandler> fluidHandler = connectedInventoryEntity.getCapability(ForgeCapabilities.FLUID_HANDLER);
-            if (fluidHandler.isPresent()) {
-                IFluidHandler handler = fluidHandler.orElse(null);
-                for (int i = 0; i < handler.getTanks(); i++) {
-                    total += handler.getTankCapacity(i);
-                }
-            }
-        }
-
-        return total;
-    }
-
     public static long getTotalFluidStorage(IGridNode node) {
         long total = 0;
 
@@ -521,22 +614,36 @@ public class AppEngApi {
         return total;
     }
 
-    public static long getUsedExternalItemStorage(IGridNode node) {
-        long used = 0;
+    public static long getTotalChemicalStorage(IGridNode node) {
+        long total = 0;
 
-        for (IGridNode iGridNode : node.getGrid().getMachineNodes(StorageBusPart.class)) {
-            StorageBusPart bus = (StorageBusPart) iGridNode.getService(IStorageProvider.class);
-            KeyCounter keyCounter = bus.getInternalHandler().getAvailableStacks();
+        for (IGridNode iGridNode : node.getGrid().getMachineNodes(DriveBlockEntity.class)) {
+            DriveBlockEntity entity = (DriveBlockEntity) iGridNode.getService(IStorageProvider.class);
+            if (entity == null)
+                continue;
 
-            for (Object2LongMap.Entry<AEKey> aeKey : keyCounter) {
-                if (aeKey.getKey() instanceof AEItemKey) {
-                    used += aeKey.getLongValue();
+            InternalInventory inventory = entity.getInternalInventory();
+
+            for (int i = 0; i < inventory.size(); i++) {
+                ItemStack stack = inventory.getStackInSlot(i);
+
+                if (stack.isEmpty())
+                    continue;
+
+                if (stack.getItem() instanceof ChemicalStorageCell cell) {
+                    if (cell.getKeyType() instanceof MekanismKeyType) {
+                        total += (long) cell.getBytes(null) * MekanismKeyType.TYPE.getAmountPerByte();
+                    }
                 }
             }
         }
 
-        return used;
+        total += getTotalExternalChemicalStorage(node);
+
+        return total;
     }
+
+    /// Used
 
     public static long getUsedItemStorage(IGridNode node) {
         long used = 0;
@@ -587,23 +694,6 @@ public class AppEngApi {
         return used;
     }
 
-    public static long getUsedExternalFluidStorage(IGridNode node) {
-        long used = 0;
-
-        for (IGridNode iGridNode : node.getGrid().getMachineNodes(StorageBusPart.class)) {
-            StorageBusPart bus = (StorageBusPart) iGridNode.getService(IStorageProvider.class);
-            KeyCounter keyCounter = bus.getInternalHandler().getAvailableStacks();
-
-            for (Object2LongMap.Entry<AEKey> aeKey : keyCounter) {
-                if (aeKey.getKey() instanceof AEFluidKey) {
-                    used += aeKey.getLongValue();
-                }
-            }
-        }
-
-        return used;
-    }
-
     public static long getUsedFluidStorage(IGridNode node) {
         long used = 0;
 
@@ -643,20 +733,82 @@ public class AppEngApi {
         return used;
     }
 
+    public static long getUsedChemicalStorage(IGridNode node) {
+        long used = 0;
+
+        for (IGridNode iGridNode : node.getGrid().getMachineNodes(DriveBlockEntity.class)) {
+            DriveBlockEntity entity = (DriveBlockEntity) iGridNode.getService(IStorageProvider.class);
+            if (entity == null)
+                continue;
+
+            InternalInventory inventory = entity.getInternalInventory();
+
+            for (int i = 0; i < inventory.size(); i++) {
+                ItemStack stack = inventory.getStackInSlot(i);
+
+                if (stack.getItem() instanceof ChemicalStorageCell ) {
+                    BasicCellInventory cellInventory = BasicCellHandler.INSTANCE.getCellInventory(stack, null);
+
+                    used = cellInventory.getUsedBytes() / MekanismKeyType.TYPE.getAmountPerByte();
+                }
+            }
+        }
+
+        used += getUsedExternalChemicalStorage(node);
+
+        return used;
+    }
+
+    /// Available Storage
+
+    /**
+     * Calculates the available item storage on a given grid node.
+     * It subtracts the used item storage from the total item storage.
+     *
+     * @param node The grid node to calculate the available item storage for.
+     * @return The available item storage in bytes.
+     */
     public static long getAvailableItemStorage(IGridNode node) {
         return getTotalItemStorage(node) - getUsedItemStorage(node);
     }
 
+    /**
+     * Calculates the available fluid storage in a given grid node.
+     *
+     * @param node The grid node to calculate the available fluid storage for.
+     * @return The available fluid storage in bytes.
+     */
     public static long getAvailableFluidStorage(IGridNode node) {
         return getTotalFluidStorage(node) - getUsedFluidStorage(node);
     }
 
+    public static long getAvailableChemicalStorage(IGridNode node) {
+        return getTotalChemicalStorage(node) - getUsedChemicalStorage(node);
+    }
+
+    /**
+     * Calculates the available external item storage of a given grid node.
+     *
+     * @param node The grid node for which to calculate the available external item storage.
+     * @return The available external item storage.
+     */
     public static long getAvailableExternalItemStorage(IGridNode node) {
         return getTotalExternalItemStorage(node) - getUsedExternalItemStorage(node);
     }
 
+    /**
+     * Calculates the available external fluid storage on a given grid node by subtracting the used external fluid storage
+     * from the total external fluid storage.
+     *
+     * @param node The grid node on which to calculate the available external fluid storage.
+     * @return The available external fluid storage on the grid node.
+     */
     public static long getAvailableExternalFluidStorage(IGridNode node) {
         return getTotalExternalFluidStorage(node) - getUsedExternalFluidStorage(node);
+    }
+
+    public static long getAvailableExternalChemicalStorage(IGridNode node) {
+        return getTotalExternalChemicalStorage(node) - getUsedExternalChemicalStorage(node);
     }
 
     public static List<Object> listCells(IGridNode node) {

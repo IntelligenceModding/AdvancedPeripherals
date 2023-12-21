@@ -391,6 +391,13 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         return MethodResult.of(AppEngApi.getTotalExternalFluidStorage(node));
     }
 
+    @LuaFunction(mainThread = true)
+    public MethodResult getTotalExternChemicalStorage() {
+        if (!isAvailable())
+            return notConnected();
+
+        return MethodResult.of(AppEngApi.getTotalExternalChemicalStorage(node));
+    }
 
     @Override
     @LuaFunction(mainThread = true)
@@ -408,6 +415,14 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
             return notConnected();
 
         return MethodResult.of(AppEngApi.getTotalFluidStorage(node));
+    }
+
+    @LuaFunction(mainThread = true)
+    public MethodResult getTotalChemicalStorage() {
+        if (!isAvailable())
+            return notConnected();
+
+        return MethodResult.of(AppEngApi.getTotalChemicalStorage(node));
     }
 
     @Override
@@ -428,6 +443,14 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         return MethodResult.of(AppEngApi.getUsedExternalFluidStorage(node));
     }
 
+    @LuaFunction(mainThread = true)
+    public MethodResult getUsedExternChemicalStorage() {
+        if (!isAvailable())
+            return notConnected();
+
+        return MethodResult.of(AppEngApi.getUsedExternalChemicalStorage(node));
+    }
+
     @Override
     @LuaFunction(mainThread = true)
     public final MethodResult getUsedItemStorage() {
@@ -446,6 +469,14 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         return MethodResult.of(AppEngApi.getUsedFluidStorage(node));
     }
 
+    @LuaFunction(mainThread = true)
+    public MethodResult getUsedChemicalStorage() {
+        if (!isAvailable())
+            return notConnected();
+
+        return MethodResult.of(AppEngApi.getUsedChemicalStorage(node));
+    }
+
     @Override
     @LuaFunction(mainThread = true)
     public MethodResult getAvailableExternItemStorage() {
@@ -454,6 +485,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
         return MethodResult.of(AppEngApi.getAvailableExternalItemStorage(node));
     }
+
     @Override
     @LuaFunction(mainThread = true)
     public MethodResult getAvailableExternFluidStorage() {
@@ -461,6 +493,14 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
             return notConnected();
 
         return MethodResult.of(AppEngApi.getAvailableExternalFluidStorage(node));
+    }
+
+    @LuaFunction(mainThread = true)
+    public MethodResult getAvailableExternChemicalStorage() {
+        if (!isAvailable())
+            return notConnected();
+
+        return MethodResult.of(AppEngApi.getAvailableExternalChemicalStorage(node));
     }
 
     @Override
@@ -479,6 +519,14 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
             return notConnected();
 
         return MethodResult.of(AppEngApi.getAvailableFluidStorage(node));
+    }
+
+    @LuaFunction(mainThread = true)
+    public MethodResult getAvailableChemicalStorage() {
+        if (!isAvailable())
+            return notConnected();
+
+        return MethodResult.of(AppEngApi.getAvailableChemicalStorage(node));
     }
 
     @Override
