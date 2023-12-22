@@ -431,7 +431,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (!isAvailable())
             return notConnected();
 
-        return MethodResult.of(AppEngApi.getUsedExternalFluidStorage(node));
+        return MethodResult.of(AppEngApi.getUsedExternalItemStorage(node));
     }
 
     @Override

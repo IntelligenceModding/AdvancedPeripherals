@@ -34,6 +34,7 @@ import it.unimi.dsi.fastutil.objects.Object2LongMap;
 import me.ramidzkh.mekae2.ae2.MekanismKey;
 import me.ramidzkh.mekae2.ae2.MekanismKeyType;
 import me.ramidzkh.mekae2.item.ChemicalStorageCell;
+import mekanism.api.chemical.merged.MergedChemicalTank;
 import mekanism.common.tile.TileEntityChemicalTank;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -479,7 +480,8 @@ public class AppEngApi {
                 continue;
 
             if (connectedInventoryEntity instanceof TileEntityChemicalTank tank) {
-                total += tank.getChemicalTank().getTankFromCurrent(tank.getChemicalTank().getCurrent()).getCapacity();
+                MergedChemicalTank.Current current = tank.getChemicalTank().getCurrent() == MergedChemicalTank.Current.EMPTY ? MergedChemicalTank.Current.GAS : tank.getChemicalTank().getCurrent();
+                total += tank.getChemicalTank().getTankFromCurrent(current).getCapacity();
             }
         }
 
@@ -496,9 +498,8 @@ public class AppEngApi {
             KeyCounter keyCounter = bus.getInternalHandler().getAvailableStacks();
 
             for (Object2LongMap.Entry<AEKey> aeKey : keyCounter) {
-                if (aeKey.getKey() instanceof AEItemKey) {
+                if (aeKey.getKey() instanceof AEItemKey)
                     used += aeKey.getLongValue();
-                }
             }
         }
 
@@ -513,9 +514,8 @@ public class AppEngApi {
             KeyCounter keyCounter = bus.getInternalHandler().getAvailableStacks();
 
             for (Object2LongMap.Entry<AEKey> aeKey : keyCounter) {
-                if (aeKey.getKey() instanceof AEFluidKey) {
+                if (aeKey.getKey() instanceof AEFluidKey)
                     used += aeKey.getLongValue();
-                }
             }
         }
 
@@ -525,14 +525,16 @@ public class AppEngApi {
     public static long getUsedExternalChemicalStorage(IGridNode node) {
         long used = 0;
 
+        if (!APAddons.appMekLoaded)
+            return 0;
+
         for (IGridNode iGridNode : node.getGrid().getMachineNodes(StorageBusPart.class)) {
             StorageBusPart bus = (StorageBusPart) iGridNode.getService(IStorageProvider.class);
             KeyCounter keyCounter = bus.getInternalHandler().getAvailableStacks();
 
             for (Object2LongMap.Entry<AEKey> aeKey : keyCounter) {
-                if (aeKey.getKey() instanceof MekanismKey) {
+                if (aeKey.getKey() instanceof MekanismKey)
                     used += aeKey.getLongValue();
-                }
             }
         }
 
@@ -571,9 +573,6 @@ public class AppEngApi {
                 }
             }
         }
-
-        total += getTotalExternalItemStorage(node);
-
         return total;
     }
 
@@ -603,13 +602,14 @@ public class AppEngApi {
             }
         }
 
-        total += getTotalExternalFluidStorage(node);
-
         return total;
     }
 
     public static long getTotalChemicalStorage(IGridNode node) {
         long total = 0;
+
+        if (!APAddons.appMekLoaded)
+            return 0;
 
         for (IGridNode iGridNode : node.getGrid().getMachineNodes(DriveBlockEntity.class)) {
             DriveBlockEntity entity = (DriveBlockEntity) iGridNode.getService(IStorageProvider.class);
@@ -626,13 +626,11 @@ public class AppEngApi {
 
                 if (stack.getItem() instanceof ChemicalStorageCell cell) {
                     if (cell.getKeyType() instanceof MekanismKeyType) {
-                        total += (long) cell.getBytes(null) * MekanismKeyType.TYPE.getAmountPerByte();
+                        total += cell.getBytes(null);
                     }
                 }
             }
         }
-
-        total += getTotalExternalChemicalStorage(node);
 
         return total;
     }
@@ -683,8 +681,6 @@ public class AppEngApi {
             }
         }
 
-        used += getUsedExternalItemStorage(node);
-
         return used;
     }
 
@@ -722,13 +718,14 @@ public class AppEngApi {
             }
         }
 
-        used += getUsedExternalFluidStorage(node);
-
         return used;
     }
 
     public static long getUsedChemicalStorage(IGridNode node) {
         long used = 0;
+
+        if (!APAddons.appMekLoaded)
+            return 0;
 
         for (IGridNode iGridNode : node.getGrid().getMachineNodes(DriveBlockEntity.class)) {
             DriveBlockEntity entity = (DriveBlockEntity) iGridNode.getService(IStorageProvider.class);
@@ -747,8 +744,6 @@ public class AppEngApi {
                 }
             }
         }
-
-        used += getUsedExternalChemicalStorage(node);
 
         return used;
     }
