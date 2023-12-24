@@ -223,11 +223,11 @@ public class AppEngApi {
     public static List<Object> listDrives(IGrid grid) {
         List<Object> drives = new ArrayList<>();
 
-        for(IGridNode node : grid.getMachineNodes(DriveBlockEntity.class)) {
+        for (IGridNode node : grid.getMachineNodes(DriveBlockEntity.class)) {
             DriveBlockEntity drive = (DriveBlockEntity) node.getService(IStorageProvider.class);
 
             // A normal drive has a cellCount of 10
-            if(drive == null || drive.getCellCount() != 10)
+            if (drive == null || drive.getCellCount() != 10)
                 continue;
 
             drives.add(getObjectFromDrive(drive));
@@ -237,9 +237,9 @@ public class AppEngApi {
     }
 
     private static Class<? extends PatternContainer> tryCastMachineToContainer(Class<?> machineClass) {
-        if (PatternContainer.class.isAssignableFrom(machineClass)) {
+        if (PatternContainer.class.isAssignableFrom(machineClass))
             return machineClass.asSubclass(PatternContainer.class);
-        }
+
         return null;
     }
 
@@ -262,16 +262,25 @@ public class AppEngApi {
 
         map.put("powered", drive.isPowered());
 
-        if(drive.getCellCount() != 10)
+        long totalBytes = 0;
+        long usedBytes = 0;
+
+        if (drive.getCellCount() != 10)
             return map;
 
         List<Object> driveCells = new ArrayList<>();
         for (ItemStack item : drive.getInternalInventory()) {
             if (item.getItem() instanceof BasicStorageCell cell) {
+                BasicCellInventory cellInventory = BasicCellHandler.INSTANCE.getCellInventory(item, null);
+                totalBytes += cellInventory.getTotalBytes();
+                usedBytes += cellInventory.getUsedBytes();
+
                 driveCells.add(getObjectFromCell(cell, item));
             }
         }
 
+        map.put("usedBytes", usedBytes);
+        map.put("totalBytes", totalBytes);
         map.put("cells", driveCells);
         map.put("priority", drive.getPriority());
         map.put("menuIcon", LuaConverter.itemToObject(drive.getMainMenuIcon().getItem()));
@@ -283,24 +292,13 @@ public class AppEngApi {
 
     public static Map<Object, Object> getObjectFromCell(BasicStorageCell cell, ItemStack cellItem) {
         Map<Object, Object> map = new HashMap<>();
+        BasicCellInventory cellInventory = BasicCellHandler.INSTANCE.getCellInventory(cellItem, null);
 
         map.put("item", LuaConverter.itemToObject(cellItem.getItem()));
         map.put("type", cell.getKeyType().toString());
         map.put("bytes", cell.getBytes(cellItem));
-        long numItemsInCell = cellItem.getTag().getLong("ic");
-
-        if (cellItem.getTag().contains("amts")) {
-            int bytesPerType = cell.getBytesPerType(null);
-
-            int numOfType = cellItem.getTag().getLongArray("amts").length;
-
-            map.put("bytesPerType", bytesPerType);
-            map.put("usedBytes", ((int) Math.ceil(((double) numItemsInCell) / 8)) + ((long) bytesPerType * numOfType));
-
-        } else {
-            map.put("usedBytes", numItemsInCell);
-        }
-
+        map.put("bytesPerType", cell.getBytesPerType(cellItem));
+        map.put("usedBytes", cellInventory.getUsedBytes());
         map.put("totalTypes", cell.getTotalTypes(cellItem));
         map.put("fuzzyMode", cell.getFuzzyMode(cellItem));
 
@@ -720,15 +718,10 @@ public class AppEngApi {
                     continue;
 
                 if (stack.getItem() instanceof BasicStorageCell cell) {
-                    int bytesPerType = cell.getBytesPerType(null);
-
                     if (cell.getKeyType().getClass().isAssignableFrom(AEKeyType.items().getClass())) {
-                        if (stack.getTag() == null)
-                            continue;
-                        int numOfType = stack.getTag().getLongArray("amts").length;
-                        long numItemsInCell = stack.getTag().getLong("ic");
+                        BasicCellInventory cellInventory = BasicCellHandler.INSTANCE.getCellInventory(stack, null);
 
-                        used += ((int) Math.ceil(((double) numItemsInCell) / 8)) + ((long) bytesPerType * numOfType);
+                        used += cellInventory.getUsedBytes();
                     }
                 } else if (APAddons.aeThingsLoaded && stack.getItem() instanceof DISKDrive disk) {
                     if (disk.getKeyType().toString().equals("ae2:i")) {
@@ -764,15 +757,10 @@ public class AppEngApi {
                 ItemStack stack = inventory.getStackInSlot(i);
 
                 if (stack.getItem() instanceof BasicStorageCell cell) {
-                    int bytesPerType = cell.getBytesPerType(null);
-
                     if (cell.getKeyType().getClass().isAssignableFrom(AEKeyType.fluids().getClass())) {
-                        if (stack.getTag() == null)
-                            continue;
-                        int numOfType = stack.getTag().getLongArray("amts").length;
-                        long numBucketsInCell = stack.getTag().getLong("ic") / 1000;
+                        BasicCellInventory cellInventory = BasicCellHandler.INSTANCE.getCellInventory(stack, null);
 
-                        used += ((int) Math.ceil(((double) numBucketsInCell) / 8)) + ((long) bytesPerType * numOfType);
+                        used += cellInventory.getUsedBytes();
                     }
                 } else if (APAddons.aeAdditionsLoaded && stack.getItem() instanceof SuperStorageCell superStorageCell) {
                     if (stack.getTag() == null)
