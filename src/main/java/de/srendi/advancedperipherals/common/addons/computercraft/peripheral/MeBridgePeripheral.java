@@ -245,6 +245,15 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
     @Override
     @LuaFunction(mainThread = true)
+    public MethodResult listDrives() {
+        if (!isAvailable())
+            return notConnected();
+
+        return MethodResult.of(AppEngApi.listDrives(node.getGrid()));
+    }
+
+    @Override
+    @LuaFunction(mainThread = true)
     public final MethodResult importItem(IComputerAccess computer, IArguments arguments) throws LuaException {
         if (!isAvailable())
             return notConnected();

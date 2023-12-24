@@ -220,6 +220,22 @@ public class AppEngApi {
         return getPatterns(grid, level).stream().map(AppEngApi::getObjectFromPattern).collect(Collectors.toList());
     }
 
+    public static List<Object> listDrives(IGrid grid) {
+        List<Object> drives = new ArrayList<>();
+
+        for(IGridNode node : grid.getMachineNodes(DriveBlockEntity.class)) {
+            DriveBlockEntity drive = (DriveBlockEntity) node.getService(IStorageProvider.class);
+
+            // A normal drive has a cellCount of 10
+            if(drive == null || drive.getCellCount() != 10)
+                continue;
+
+            drives.add(getObjectFromDrive(drive));
+        }
+
+        return drives;
+    }
+
     private static Class<? extends PatternContainer> tryCastMachineToContainer(Class<?> machineClass) {
         if (PatternContainer.class.isAssignableFrom(machineClass)) {
             return machineClass.asSubclass(PatternContainer.class);
@@ -239,6 +255,56 @@ public class AppEngApi {
 
         AdvancedPeripherals.debug("Could not create table from unknown stack " + stack.getRight().getClass() + " - Report this to the maintainer of ap", org.apache.logging.log4j.Level.ERROR);
         return Collections.emptyMap();
+    }
+
+    public static Map<Object, Object> getObjectFromDrive(DriveBlockEntity drive) {
+        Map<Object, Object> map = new HashMap<>();
+
+        map.put("powered", drive.isPowered());
+
+        if(drive.getCellCount() != 10)
+            return map;
+
+        List<Object> driveCells = new ArrayList<>();
+        for (ItemStack item : drive.getInternalInventory()) {
+            if (item.getItem() instanceof BasicStorageCell cell) {
+                driveCells.add(getObjectFromCell(cell, item));
+            }
+        }
+
+        map.put("cells", driveCells);
+        map.put("priority", drive.getPriority());
+        map.put("menuIcon", LuaConverter.itemToObject(drive.getMainMenuIcon().getItem()));
+        map.put("position", LuaConverter.posToObject(drive.getBlockPos()));
+        map.put("name", drive.getCustomInventoryName().getString());
+
+        return map;
+    }
+
+    public static Map<Object, Object> getObjectFromCell(BasicStorageCell cell, ItemStack cellItem) {
+        Map<Object, Object> map = new HashMap<>();
+
+        map.put("item", LuaConverter.itemToObject(cellItem.getItem()));
+        map.put("type", cell.getKeyType().toString());
+        map.put("bytes", cell.getBytes(cellItem));
+        long numItemsInCell = cellItem.getTag().getLong("ic");
+
+        if (cellItem.getTag().contains("amts")) {
+            int bytesPerType = cell.getBytesPerType(null);
+
+            int numOfType = cellItem.getTag().getLongArray("amts").length;
+
+            map.put("bytesPerType", bytesPerType);
+            map.put("usedBytes", ((int) Math.ceil(((double) numItemsInCell) / 8)) + ((long) bytesPerType * numOfType));
+
+        } else {
+            map.put("usedBytes", numItemsInCell);
+        }
+
+        map.put("totalTypes", cell.getTotalTypes(cellItem));
+        map.put("fuzzyMode", cell.getFuzzyMode(cellItem));
+
+        return map;
     }
 
     private static Map<String, Object> getObjectFromItemStack(Pair<Long, AEItemKey> stack, @Nullable ICraftingService craftingService) {
@@ -830,26 +896,6 @@ public class AppEngApi {
         }
 
         return items;
-    }
-
-    private static Map<String, Object> getObjectFromCell(BasicStorageCell cell, ItemStack stack) {
-        Map<String, Object> map = new HashMap<>();
-
-        map.put("item", ItemUtil.getRegistryKey(stack.getItem()).toString());
-
-        String cellType = "";
-
-        if (cell.getKeyType().getClass().isAssignableFrom(AEKeyType.items().getClass())) {
-            cellType = "item";
-        } else if (cell.getKeyType().getClass().isAssignableFrom(AEKeyType.fluids().getClass())) {
-            cellType = "fluid";
-        }
-
-        map.put("cellType", cellType);
-        map.put("bytesPerType", cell.getBytesPerType(null));
-        map.put("totalBytes", cell.getBytes(null));
-
-        return map;
     }
 
     private static Map<String, Object> getObjectFromDisk(DISKDrive drive, ItemStack stack) {

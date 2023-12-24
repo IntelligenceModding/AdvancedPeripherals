@@ -35,6 +35,8 @@ public interface IStorageSystemPeripheral {
 
     MethodResult listCells();
 
+    MethodResult listDrives();
+
     MethodResult importItem(IComputerAccess computer, IArguments arguments) throws LuaException;
 
     MethodResult exportItem(IComputerAccess computer, IArguments arguments) throws LuaException;
