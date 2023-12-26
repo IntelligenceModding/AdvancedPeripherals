@@ -599,6 +599,16 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     }
 
     @Override
+    public MethodResult getCraftingTasks() {
+        return null;
+    }
+
+    @Override
+    public MethodResult cancelCraftingTasks(IArguments arguments) throws LuaException {
+        return null;
+    }
+
+    @Override
     @LuaFunction(mainThread = true)
     public final MethodResult isItemCraftable(IArguments arguments) throws LuaException {
         if (!isAvailable())
