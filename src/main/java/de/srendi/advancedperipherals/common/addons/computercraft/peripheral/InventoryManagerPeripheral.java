@@ -18,11 +18,15 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.wrapper.PlayerArmorInvWrapper;
 import net.minecraftforge.items.wrapper.PlayerInvWrapper;
 import net.minecraftforge.items.wrapper.PlayerOffhandInvWrapper;
+import top.theillusivec4.curios.api.CuriosApi;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -166,6 +170,96 @@ public class InventoryManagerPeripheral extends BasePeripheral<BlockEntityPeriph
         return items;
     }
 
+    @LuaFunction(value = { "listCurios", "getItemsCurios" }, mainThread = true)
+    public final List<Object> getCuriosItems() throws LuaException {
+        List<Object> items = new ArrayList<>();
+        // not sure how to handle slots, since Curios slots can change depending on config, advancements, etc.
+        CuriosApi.getCuriosHelper().getEquippedCurios(getOwnerPlayer()).ifPresent(handler -> {
+            for (int slot = 0; slot < handler.getSlots(); slot++) {
+                ItemStack stack = handler.getStackInSlot(slot);
+                if (!stack.isEmpty()) {
+                    items.add(LuaConverter.stackToObjectWithSlot(stack, slot));
+                }
+            }
+        });
+        return items;
+    }
+
+    private int addCuriosToPlayerCommon(String invDirection, ItemFilter filter) throws LuaException {
+        Direction direction = validateSide(invDirection);
+
+        BlockEntity targetEntity = owner.getLevel().getBlockEntity(owner.getPos().relative(direction));
+        IItemHandler inventoryFrom = targetEntity != null
+                ? targetEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, direction).resolve()
+                        .orElse(null)
+                : null;
+
+        Optional<IItemHandler> maybeInventoryTo = getCuriosHandler();
+        if (maybeInventoryTo.isEmpty())
+            return 0;
+
+        IItemHandler inventoryTo = maybeInventoryTo.get();
+
+        return InventoryUtil.moveItem(inventoryFrom, inventoryTo, filter);
+
+    }
+
+    private MethodResult removeCuriosFromPlayerCommon(String invDirection, ItemFilter filter) throws LuaException {
+        Direction direction = validateSide(invDirection);
+
+        BlockEntity targetEntity = owner.getLevel().getBlockEntity(owner.getPos().relative(direction));
+        IItemHandler inventoryTo = targetEntity != null
+                ? targetEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, direction).resolve()
+                        .orElse(null)
+                : null;
+
+        Optional<IItemHandler> maybeInventoryFrom = getCuriosHandler();
+        if (maybeInventoryFrom.isEmpty())
+            return MethodResult.of(0, "INVENTORY_FROM_INVALID");
+
+        IItemHandler inventoryFrom = maybeInventoryFrom.get();
+
+        return MethodResult.of(InventoryUtil.moveItem(inventoryFrom, inventoryTo, filter));
+    }
+
+    @LuaFunction(mainThread = true, value = { "addCuriosToPlayer", "addCurios" })
+    public final MethodResult addCuriosToPlayer(String invDirection, int count, Optional<Integer> slot,
+            Optional<String> item)
+            throws LuaException {
+        Pair<ItemFilter, String> filter;
+        Map<Object, Object> filterMap = new HashMap<>();
+
+        // Deprecated! Will be removed in the future. This exists to maintain
+        // compatibility within the same mc version
+        item.ifPresent(itemName -> filterMap.put("name", itemName));
+        slot.ifPresent(toSlot -> filterMap.put("toSlot", toSlot));
+        filterMap.put("count", count);
+
+        filter = ItemFilter.parse(filterMap);
+        if (filter.rightPresent()) // right contains the error message
+            return MethodResult.of(0, filter.getRight());
+
+        // filter is good, try to add the item
+        return MethodResult.of(addCuriosToPlayerCommon(invDirection, filter.getLeft()));
+    }
+
+    @LuaFunction(mainThread = true, value = {"removeCuriosFromPlayer", "removeCurios"})
+    public final MethodResult removeCuriosFromPlayer(String invDirection, int count, Optional<Integer> slot, Optional<String> item) throws LuaException {
+        Pair<ItemFilter, String> filter;
+        Map<Object, Object> filterMap = new HashMap<>();
+
+        // Deprecated! Will be removed in the future. This exists to maintain compatibility within the same mc version
+        item.ifPresent(itemName -> filterMap.put("name", itemName));
+        slot.ifPresent(toSlot -> filterMap.put("toSlot", toSlot));
+        filterMap.put("count", count);
+
+        filter = ItemFilter.parse(filterMap);
+        if (filter.rightPresent())
+            return MethodResult.of(0, filter.getRight());
+
+        return MethodResult.of(removeCuriosFromPlayerCommon(invDirection, filter.getLeft()));
+    }
+
     @LuaFunction(value = {"listChest", "getItemsChest"}, mainThread = true)
     public final MethodResult getItemsChest(String target) throws LuaException {
         Direction direction = validateSide(target);
@@ -256,12 +350,12 @@ public class InventoryManagerPeripheral extends BasePeripheral<BlockEntityPeriph
     @NotNull
     private Pair<IItemHandler, Integer> getHandlerFromSlot(int slot) throws LuaException {
         IItemHandler handler;
-        if(slot >= 100 && slot <= 103) {
+        if (slot >= 100 && slot <= 103) {
             handler = new PlayerArmorInvWrapper(getOwnerPlayer().getInventory());
             // If the slot is between 100 and 103, change the index to a normal index between 0 and 3.
             // This is necessary since the PlayerArmorInvWrapper does not work with these higher indexes
             slot = slot - 100;
-        } else if(slot == 36) {
+        } else if (slot == 36) {
             handler = new PlayerOffhandInvWrapper(getOwnerPlayer().getInventory());
             // Set the "from slot" to zero so the offhand wrapper can work with that
             slot = 0;
@@ -269,6 +363,15 @@ public class InventoryManagerPeripheral extends BasePeripheral<BlockEntityPeriph
             handler = new PlayerInvWrapper(getOwnerPlayer().getInventory());
         }
         return Pair.of(handler, slot);
+    }
+
+    private Optional<IItemHandler> getCuriosHandler() throws LuaException {
+        LazyOptional<IItemHandlerModifiable> handler = CuriosApi.getCuriosHelper().getEquippedCurios(getOwnerPlayer());
+        if (handler.isPresent()) {
+            return Optional.of(handler.orElse(null));
+        } else {
+            return Optional.empty();
+        }
     }
 
     /**
