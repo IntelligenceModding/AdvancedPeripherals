@@ -59,7 +59,7 @@ public class LuaConverter {
         if (livingEntity.isUsingItem()) {
             data.put("blocking", livingEntity.isBlocking());
             Map<String, Object> useItemData = new HashMap<>();
-            useItemData.put("useItem", stackToObject(livingEntity.getUseItem()));
+            useItemData.put("useItem", itemStackToObject(livingEntity.getUseItem()));
             useItemData.put("usedItemHand", livingEntity.getUsedItemHand().name());
             useItemData.put("useItemRemainingTicks", livingEntity.getUseItemRemainingTicks());
             useItemData.put("ticksUsingItem", livingEntity.getTicksUsingItem());
