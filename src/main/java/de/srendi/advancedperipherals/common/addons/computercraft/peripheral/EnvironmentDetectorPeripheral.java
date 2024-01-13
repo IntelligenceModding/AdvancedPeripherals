@@ -24,7 +24,6 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LightLayer;
@@ -210,9 +209,10 @@ public class EnvironmentDetectorPeripheral extends BasePeripheral<IPeripheralOwn
         }, context -> {
             BlockPos pos = owner.getPos();
             AABB box = new AABB(pos);
-            List<Map<String, Object>> entities = new ArrayList<>();
-            getLevel().getEntities((Entity) null, box.inflate(radius), LivingEntity.class::isInstance).forEach(entity -> entities.add(LuaConverter.completeEntityWithPositionToLua(entity, ItemStack.EMPTY, pos)));
-            return MethodResult.of(entities);
+            List<Map<Integer, Object>> entityUUIDs = new ArrayList<>();
+            getLevel().getEntities((Entity) null, box.inflate(radius), LivingEntity.class::isInstance)
+                    .forEach(entity -> entityUUIDs.add(LuaConverter.uuidToLua(entity.getUUID())));
+            return MethodResult.of(entityUUIDs);
         }, null);
     }
 

@@ -5,6 +5,7 @@ import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.lua.MethodResult;
 import dan200.computercraft.core.apis.TableHelper;
+import de.srendi.advancedperipherals.common.addons.computercraft.owner.IPeripheralOwner;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.TurtlePeripheralOwner;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
 import de.srendi.advancedperipherals.common.util.fakeplayer.APFakePlayer;
@@ -18,6 +19,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
+import net.minecraftforge.common.IForgeShearable;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -76,7 +78,7 @@ public class AutomataEntityHandPlugin extends AutomataCorePlugin {
         if (!(entity instanceof Animal animal))
             return MethodResult.of(null, "Well, entity is not animal entity, but how?");
 
-        return MethodResult.of(LuaConverter.animalToLua(animal, owner.getToolInMainHand()));
+        return MethodResult.of(completeEntityToLuaWithShearable(animal, owner));
     }
 
     @LuaFunction(mainThread = true)
@@ -86,7 +88,22 @@ public class AutomataEntityHandPlugin extends AutomataCorePlugin {
         BlockPos currentPos = owner.getPos();
         AABB box = new AABB(currentPos);
         ItemStack itemInHand = owner.getToolInMainHand();
-        List<Map<String, Object>> entities = owner.getLevel().getEntities((Entity) null, box.inflate(automataCore.getInteractionRadius()), suitableEntity).stream().map(entity -> LuaConverter.completeEntityWithPositionToLua(entity, itemInHand, currentPos)).toList();
+        List<Map<String, Object>> entities = owner.getLevel().getEntities((Entity) null, box.inflate(automataCore.getInteractionRadius()), suitableEntity).stream()
+                .map(entity -> {
+                    Map<String, Object> entityTable = completeEntityToLuaWithShearable(entity, owner);
+                    entityTable.put("relativePos", LuaConverter.relativePositionToLua(entity, currentPos));
+                    return entityTable;
+                })
+                .toList();
         return MethodResult.of(entities);
+    }
+
+    protected static Map<String, Object> completeEntityToLuaWithShearable(Entity entity, IPeripheralOwner owner) {
+        Map<String, Object> entityTable = LuaConverter.completeEntityToLua(entity);
+        ItemStack toolInHand = owner.getToolInMainHand();
+        if (entity instanceof IForgeShearable shearable && !toolInHand.isEmpty()) {
+            entityTable.put("shearable", shearable.isShearable(toolInHand, entity.level, entity.blockPosition()));
+        }
+        return entityTable;
     }
 }
