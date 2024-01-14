@@ -284,7 +284,7 @@ public class AppEngApi {
         map.put("cells", driveCells);
         map.put("priority", drive.getPriority());
         map.put("menuIcon", LuaConverter.itemToObject(drive.getMainMenuIcon().getItem()));
-        map.put("position", LuaConverter.posToObject(drive.getBlockPos()));
+        map.put("position", LuaConverter.blockPosToLua(drive.getBlockPos()));
         map.put("name", drive.getCustomInventoryName().getString());
 
         return map;

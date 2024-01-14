@@ -186,7 +186,7 @@ public class RefinedStorage {
         map.put("processing", pattern.isProcessing());
         Map<String, Object> container = new HashMap<>();
         map.put("name", pattern.getContainer().getName().getString());
-        map.put("position", LuaConverter.posToObject(pattern.getContainer().getPosition()));
+        map.put("position", LuaConverter.blockPosToLua(pattern.getContainer().getPosition()));
 
         map.put("container", container);
         map.put("isValid", pattern.isValid());
