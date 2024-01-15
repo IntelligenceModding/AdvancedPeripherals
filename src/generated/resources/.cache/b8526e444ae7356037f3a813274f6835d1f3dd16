@@ -1,5 +1,4 @@
-// 1.19.2	2023-07-19T14:31:39.6542779	Block States: advancedperipherals
-eedcacd50d047b9172b7ac55fd67d09beeca2704 assets/advancedperipherals/blockstates/ar_controller.json
+// 1.19.2	2024-01-15T20:01:57.5177444	Block States: advancedperipherals
 5e28ce1be9a6996d982641e5df1fa7162090b8cc assets/advancedperipherals/blockstates/block_reader.json
 f42bdde60f84fdb312f7cf3b2be461d9c11ebdc8 assets/advancedperipherals/blockstates/chat_box.json
 1227aa092fcf1327547ace6ccc9db230e45891b0 assets/advancedperipherals/blockstates/colony_integrator.json
@@ -13,7 +12,6 @@ d1fe6188b0b0ce8779cb9795a746177858cbaa41 assets/advancedperipherals/blockstates/
 ff12c7217911184266589813a2c8f9b0d46cfd65 assets/advancedperipherals/blockstates/player_detector.json
 726cf2599b0c765bcfacda88a1943be74f985877 assets/advancedperipherals/blockstates/redstone_integrator.json
 6b176e8fdb048f7b6678bfbc1c4baf2bcfa67a1f assets/advancedperipherals/blockstates/rs_bridge.json
-70a808a7b7b85897702622d682f3bf097e9f213a assets/advancedperipherals/models/block/ar_controller.json
 544ff1ecb58622350b58940036b4b1908e1146da assets/advancedperipherals/models/block/block_reader.json
 b28693973b6bbbb61e0c1ffc59e8ca98d8bb7e97 assets/advancedperipherals/models/block/chat_box.json
 8361da86b709e26f17374dfd46637940894a2212 assets/advancedperipherals/models/block/colony_integrator.json

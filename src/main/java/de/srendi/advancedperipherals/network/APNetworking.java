@@ -1,9 +1,6 @@
 package de.srendi.advancedperipherals.network;
 
 import de.srendi.advancedperipherals.AdvancedPeripherals;
-import de.srendi.advancedperipherals.network.messages.ClearHudCanvasMessage;
-import de.srendi.advancedperipherals.network.messages.RequestHudCanvasMessage;
-import de.srendi.advancedperipherals.network.messages.UpdateHudCanvasMessage;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.resources.ResourceKey;
@@ -18,15 +15,12 @@ import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.network.simple.SimpleChannel;
 
-public class MNetwork {
+public class APNetworking {
     private static final String PROTOCOL_VERSION = ModLoadingContext.get().getActiveContainer().getModInfo().getVersion().toString();
     private static final SimpleChannel NETWORK_CHANNEL = NetworkRegistry.newSimpleChannel(new ResourceLocation(AdvancedPeripherals.MOD_ID, "main_channel"), () -> PROTOCOL_VERSION, PROTOCOL_VERSION::equals, PROTOCOL_VERSION::equals);
     private static int id = 0;
 
     public static void init() {
-        NETWORK_CHANNEL.registerMessage(++id, ClearHudCanvasMessage.class, ClearHudCanvasMessage::encode, ClearHudCanvasMessage::decode, ClearHudCanvasMessage::handle);
-        NETWORK_CHANNEL.registerMessage(++id, RequestHudCanvasMessage.class, RequestHudCanvasMessage::encode, RequestHudCanvasMessage::decode, RequestHudCanvasMessage::handle);
-        NETWORK_CHANNEL.registerMessage(++id, UpdateHudCanvasMessage.class, UpdateHudCanvasMessage::encode, UpdateHudCanvasMessage::decode, UpdateHudCanvasMessage::handle);
     }
 
     /**
