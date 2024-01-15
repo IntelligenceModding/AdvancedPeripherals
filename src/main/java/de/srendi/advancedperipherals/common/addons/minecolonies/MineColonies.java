@@ -18,7 +18,6 @@ import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
 import com.minecolonies.coremod.research.BuildingResearchRequirement;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
-import de.srendi.advancedperipherals.common.util.inventory.ItemUtil;
 import io.netty.buffer.Unpooled;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
@@ -28,6 +27,7 @@ import net.minecraft.util.Tuple;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.IItemHandler;
@@ -336,8 +336,9 @@ public class MineColonies {
         List<Object> result = new ArrayList<>();
         for (BuildingBuilderResource resource : resources) {
             Map<String, Object> map = new HashMap<>();
+            ItemStack stack = resource.getItemStack().copy();
 
-            map.put("item", ItemUtil.getRegistryKey(resource.getItemStack()).toString());
+            map.put("item", LuaConverter.stackToObject(stack));
             map.put("displayName", resource.getName());
             map.put("available", resource.getAvailable());
             map.put("delivering", resource.getAmountInDelivery());

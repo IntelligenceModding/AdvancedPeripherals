@@ -74,6 +74,7 @@ public class LuaConverter {
         map.put("displayName", stack.getDisplayName().getString());
         map.put("maxStackSize", stack.getMaxStackSize());
         map.put("nbt", NBTUtil.toLua(nbt));
+        map.put("fingerprint", ItemUtil.getFingerprint(stack));
         return map;
     }
 

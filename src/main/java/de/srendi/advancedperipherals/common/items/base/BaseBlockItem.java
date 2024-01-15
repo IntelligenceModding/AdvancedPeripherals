@@ -2,6 +2,7 @@ package de.srendi.advancedperipherals.common.items.base;
 
 import de.srendi.advancedperipherals.client.KeyBindings;
 import de.srendi.advancedperipherals.common.util.EnumColor;
+import de.srendi.advancedperipherals.common.util.KeybindUtil;
 import de.srendi.advancedperipherals.common.util.TranslationUtil;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.BlockItem;
@@ -28,7 +29,7 @@ public abstract class BaseBlockItem extends BlockItem {
     @Override
     public void appendHoverText(ItemStack stack, @Nullable Level levelIn, List<Component> tooltip, TooltipFlag flagIn) {
         super.appendHoverText(stack, levelIn, tooltip, flagIn);
-        if (!KeyBindings.DESCRIPTION_KEYBINDING.isDown()) {
+        if (!KeybindUtil.isKeyPressed(KeyBindings.DESCRIPTION_KEYBINDING)) {
             tooltip.add(EnumColor.buildTextComponent(Component.translatable("item.advancedperipherals.tooltip.show_desc", KeyBindings.DESCRIPTION_KEYBINDING.getTranslatedKeyMessage())));
         } else {
             tooltip.add(EnumColor.buildTextComponent(getDescription()));
