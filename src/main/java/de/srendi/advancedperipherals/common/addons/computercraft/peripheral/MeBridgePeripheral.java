@@ -288,7 +288,6 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         return exportToChest(arguments, inventory);
     }
 
-    //TODO: How do we want to filter? By inputs or outputs, or maybe both? What if there are multiple patterns with the same output/input
     @Override
     @LuaFunction(mainThread = true)
     public MethodResult getFilteredPatterns(IArguments arguments) throws LuaException {
@@ -553,7 +552,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
             return MethodResult.of(false, "EMPTY_FILTER");
 
         String cpuName = arguments.optString(1, "");
-        ICraftingCPU target = getCraftingCPU(cpuName);
+        ICraftingCPU target = AppEngApi.getCraftingCPU(node, cpuName);
         if (!cpuName.isEmpty() && target == null)
             return MethodResult.of(false, "CPU " + cpuName + " does not exists");
 
@@ -583,7 +582,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
             return MethodResult.of(false, "EMPTY_FILTER");
 
         String cpuName = arguments.optString(1, "");
-        ICraftingCPU target = getCraftingCPU(cpuName);
+        ICraftingCPU target = AppEngApi.getCraftingCPU(node, cpuName);
         if (!cpuName.isEmpty() && target == null)
             return MethodResult.of(false, "CPU " + cpuName + " does not exists");
 
@@ -600,11 +599,48 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
     @Override
     public MethodResult getCraftingTasks() {
-        return null;
+        if (!isAvailable())
+            return notConnected();
+
+        ICraftingService craftingGrid = node.getGrid().getService(ICraftingService.class);
+
+        List<Object> jobs = new ArrayList<>();
+
+        for (ICraftingCPU cpu : craftingGrid.getCpus()) {
+            if (cpu.getJobStatus() != null)
+                jobs.add(AppEngApi.getObjectFromJob(cpu.getJobStatus(), cpu));
+        }
+        return MethodResult.of(jobs);
     }
 
     @Override
     public MethodResult cancelCraftingTasks(IArguments arguments) throws LuaException {
+        if (!isAvailable())
+            return notConnected();
+
+        ICraftingService craftingGrid = node.getGrid().getService(ICraftingService.class);
+
+        Map<?, ?> filterTable;
+        try {
+            Optional<Map<?, ?>> optionalTable = arguments.optTable(0);
+            if (optionalTable.isEmpty())
+                return MethodResult.of(null, "EMPTY_INPUT");
+            filterTable = optionalTable.get();
+        } catch (LuaException e) {
+            return MethodResult.of(null, "NO_TABLE");
+        }
+
+        Pair<? extends GenericFilter, String> filter = GenericFilter.parseGeneric(filterTable);
+        if (filter.getRight() != null)
+            return MethodResult.of(null, filter.getRight());
+
+        //TODO: See https://github.com/AppliedEnergistics/Applied-Energistics-2/issues/7560
+        /*
+        for (ICraftingCPU cpu : craftingGrid.getCpus()) {
+            if (cpu.getJobStatus() != null) {
+            }
+        }
+         */
         return null;
     }
 
@@ -644,7 +680,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (parsedFilter.isEmpty())
             return MethodResult.of(false, "EMPTY_FILTER");
         String cpuName = arguments.optString(1, "");
-        ICraftingCPU craftingCPU = getCraftingCPU(cpuName);
+        ICraftingCPU craftingCPU = AppEngApi.getCraftingCPU(node, cpuName);
 
         return MethodResult.of(AppEngApi.isFluidCrafting(monitor, grid, parsedFilter, craftingCPU));
     }
@@ -721,7 +757,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (parsedFilter.isEmpty())
             return MethodResult.of(false, "EMPTY_FILTER");
         String cpuName = arguments.optString(1, "");
-        ICraftingCPU craftingCPU = getCraftingCPU(cpuName);
+        ICraftingCPU craftingCPU = AppEngApi.getCraftingCPU(node, cpuName);
 
         return MethodResult.of(AppEngApi.isItemCrafting(monitor, grid, parsedFilter, craftingCPU));
     }
@@ -735,28 +771,9 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         List<Object> map = new ArrayList<>();
 
         for (ICraftingCPU iCraftingCPU : grid.getCpus()) {
-            Object cpu = AppEngApi.getObjectFromCPU(iCraftingCPU);
+            Object cpu = AppEngApi.getObjectFromCPU(iCraftingCPU, false);
             map.add(cpu);
         }
         return MethodResult.of(map);
-    }
-
-    public final ICraftingCPU getCraftingCPU(String cpuName) {
-        if (cpuName.isEmpty()) return null;
-        ICraftingService grid = node.getGrid().getService(ICraftingService.class);
-        if (grid == null) return null;
-
-        Iterator<ICraftingCPU> iterator = grid.getCpus().iterator();
-        if (!iterator.hasNext()) return null;
-
-        while (iterator.hasNext()) {
-            ICraftingCPU cpu = iterator.next();
-
-            if (cpu.getName() != null && cpu.getName().getString().equals(cpuName)) {
-                return cpu;
-            }
-        }
-
-        return null;
     }
 }

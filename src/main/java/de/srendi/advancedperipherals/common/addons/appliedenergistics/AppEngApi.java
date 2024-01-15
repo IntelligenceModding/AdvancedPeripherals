@@ -149,6 +149,7 @@ public class AppEngApi {
         return Pair.of(null, "NO_PATTERN_FOUND");
     }
 
+
     public static List<Object> listStacks(MEStorage monitor, ICraftingService service, int flag) {
         List<Object> items = new ArrayList<>();
         KeyCounter keyCounter = monitor.getAvailableStacks();
@@ -300,7 +301,7 @@ public class AppEngApi {
         map.put("bytesPerType", cell.getBytesPerType(cellItem));
         map.put("usedBytes", cellInventory.getUsedBytes());
         map.put("totalTypes", cell.getTotalTypes(cellItem));
-        map.put("fuzzyMode", cell.getFuzzyMode(cellItem));
+        map.put("fuzzyMode", cell.getFuzzyMode(cellItem).toString());
 
         return map;
     }
@@ -364,7 +365,7 @@ public class AppEngApi {
         return map;
     }
 
-    public static Map<String, Object> getObjectFromCPU(ICraftingCPU cpu) {
+    public static Map<String, Object> getObjectFromCPU(ICraftingCPU cpu, boolean recursive) {
         Map<String, Object> map = new HashMap<>();
         long storage = cpu.getAvailableStorage();
         int coProcessors = cpu.getCoProcessors();
@@ -372,17 +373,21 @@ public class AppEngApi {
         map.put("storage", storage);
         map.put("coProcessors", coProcessors);
         map.put("isBusy", isBusy);
-        map.put("craftingJob", cpu.getJobStatus() != null ? getObjectFromJob(cpu.getJobStatus()) : null);
+        if (!recursive)
+            map.put("craftingJob", cpu.getJobStatus() != null ? getObjectFromJob(cpu.getJobStatus(), null) : null);
         map.put("name", cpu.getName() != null ? cpu.getName().getString() : "Unnamed");
         return map;
     }
 
-    public static Map<String, Object> getObjectFromJob(CraftingJobStatus job) {
+    public static Map<String, Object> getObjectFromJob(CraftingJobStatus job, @Nullable ICraftingCPU cpu) {
         Map<String, Object> map = new HashMap<>();
         map.put("storage", getObjectFromGenericStack(job.crafting()));
         map.put("elapsedTimeNanos", job.elapsedTimeNanos());
         map.put("totalItem", job.totalItems());
         map.put("progress", job.progress());
+
+        if (cpu != null)
+            map.put("cpu", getObjectFromCPU(cpu, true));
 
         return map;
     }
@@ -852,6 +857,25 @@ public class AppEngApi {
 
     public static long getAvailableExternalChemicalStorage(IGridNode node) {
         return getTotalExternalChemicalStorage(node) - getUsedExternalChemicalStorage(node);
+    }
+
+    public static ICraftingCPU getCraftingCPU(IGridNode node, String cpuName) {
+        if (cpuName.isEmpty()) return null;
+        ICraftingService grid = node.getGrid().getService(ICraftingService.class);
+        if (grid == null) return null;
+
+        Iterator<ICraftingCPU> iterator = grid.getCpus().iterator();
+        if (!iterator.hasNext()) return null;
+
+        while (iterator.hasNext()) {
+            ICraftingCPU cpu = iterator.next();
+
+            if (cpu.getName() != null && cpu.getName().getString().equals(cpuName)) {
+                return cpu;
+            }
+        }
+
+        return null;
     }
 
     public static List<Object> listCells(IGridNode node) {
