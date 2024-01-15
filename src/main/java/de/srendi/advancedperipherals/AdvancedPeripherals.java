@@ -3,8 +3,7 @@ package de.srendi.advancedperipherals;
 import de.srendi.advancedperipherals.common.addons.APAddons;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.setup.Registration;
-import de.srendi.advancedperipherals.common.village.VillageStructures;
-import de.srendi.advancedperipherals.network.APNetworking;
+
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
