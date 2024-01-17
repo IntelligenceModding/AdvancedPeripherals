@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+## [1.20.1-0.7.36r] - 2024-01-17
 
 ### Fixed
 - [#542] Fixed that our description key bind does not work in specific cases and other windows than the vanilla inventory.
