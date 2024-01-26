@@ -121,7 +121,7 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
                 return MethodResult.of(null, "incorrect bracket string (e.g. [], {}, <>, ...)");
 
             MutableComponent preparedMessage = appendPrefix(
-                    arguments.optString(1, APConfig.PERIPHERALS_CONFIG.defaultChatBoxPrefix.get()),
+                    arguments.optString(1, APConfig.PERIPHERALS_CONFIG.defaultChatBoxPrefix.get()).replaceAll("&", "\u00a7"),
                     arguments.optString(2, "[]"),
                     arguments.optString(3, "").replaceAll("&", "\u00a7")
             ).append(component);
@@ -147,7 +147,7 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
                 return MethodResult.of(null, "incorrect bracket string (e.g. [], {}, <>, ...)");
 
             MutableComponent preparedMessage = appendPrefix(
-                    arguments.optString(1, APConfig.PERIPHERALS_CONFIG.defaultChatBoxPrefix.get()),
+                    arguments.optString(1, APConfig.PERIPHERALS_CONFIG.defaultChatBoxPrefix.get()).replaceAll("&", "\u00a7"),
                     arguments.optString(2, "[]"),
                     arguments.optString(3, "").replaceAll("&", "\u00a7")
             ).append(message);
@@ -182,7 +182,7 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
                 return MethodResult.of(null, "incorrect bracket string (e.g. [], {}, <>, ...)");
 
             MutableComponent preparedMessage = appendPrefix(
-                    arguments.optString(2, APConfig.PERIPHERALS_CONFIG.defaultChatBoxPrefix.get()),
+                    arguments.optString(2, APConfig.PERIPHERALS_CONFIG.defaultChatBoxPrefix.get()).replaceAll("&", "\u00a7"),
                     arguments.optString(3, "[]"),
                     arguments.optString(4, "").replaceAll("&", "\u00a7")
             ).append(component);
@@ -222,7 +222,7 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
                 return MethodResult.of(null, "incorrect bracket string (e.g. [], {}, <>, ,,,)");
 
             MutableComponent preparedMessage = appendPrefix(
-                    arguments.optString(3, APConfig.PERIPHERALS_CONFIG.defaultChatBoxPrefix.get()),
+                    arguments.optString(3, APConfig.PERIPHERALS_CONFIG.defaultChatBoxPrefix.get()).replaceAll("&", "\u00a7"),
                     arguments.optString(4, "[]"),
                     arguments.optString(5, "").replaceAll("&", "\u00a7")
             ).append(messageComponent);
@@ -256,7 +256,7 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
                 return MethodResult.of(null, "incorrect bracket string (e.g. [], {}, <>, ...)");
 
             MutableComponent preparedMessage = appendPrefix(
-                    arguments.optString(2, APConfig.PERIPHERALS_CONFIG.defaultChatBoxPrefix.get()),
+                    arguments.optString(2, APConfig.PERIPHERALS_CONFIG.defaultChatBoxPrefix.get()).replaceAll("&", "\u00a7"),
                     arguments.optString(3, "[]"),
                     arguments.optString(4, "").replaceAll("&", "\u00a7")
             ).append(message);
@@ -287,7 +287,7 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
                 return MethodResult.of(null, "incorrect bracket string (e.g. [], {}, <>, ...)");
 
             MutableComponent preparedMessage = appendPrefix(
-                    arguments.optString(3, APConfig.PERIPHERALS_CONFIG.defaultChatBoxPrefix.get()),
+                    arguments.optString(3, APConfig.PERIPHERALS_CONFIG.defaultChatBoxPrefix.get()).replaceAll("&", "\u00a7"),
                     arguments.optString(4, "[]"),
                     arguments.optString(5, "").replaceAll("&", "\u00a7")
             ).append(message);
