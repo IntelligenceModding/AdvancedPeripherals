@@ -212,9 +212,30 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
             return Collections.emptyMap();
 
         Map<String, Object> info = new HashMap<>();
-        info.put("x", Math.floor(existingPlayer.getX()));
-        info.put("y", Math.floor(existingPlayer.getY()));
-        info.put("z", Math.floor(existingPlayer.getZ()));
+
+        double x = existingPlayer.getX();
+        double y = existingPlayer.getY();
+        double z = existingPlayer.getZ();
+
+        if (APConfig.PERIPHERALS_CONFIG.playerSpyRandError.get()) {
+            double distance = Math.sqrt(Math.pow(x - getPos().getX(), 2) + Math.pow(y - getPos().getY(), 2) + Math.pow(z - getPos().getZ(), 2));
+
+            final int minDistance = 50;
+            final int maxDistance = 10000;
+            final int maxError = 2500;
+
+            distance -= minDistance;
+            if (distance > 0) {
+                double error = maxError * Math.min(Math.pow(distance / maxDistance, 0.5), 1);
+                x += Math.random() * error;
+                y += Math.random() * (error / 4);
+                z += Math.random() * error;
+            }
+        }
+
+        info.put("x", Math.floor(x));
+        info.put("y", Math.floor(y));
+        info.put("z", Math.floor(z));
         if (APConfig.PERIPHERALS_CONFIG.morePlayerInformation.get()) {
             info.put("yaw", existingPlayer.yRotO);
             info.put("pitch", existingPlayer.xRotO);
