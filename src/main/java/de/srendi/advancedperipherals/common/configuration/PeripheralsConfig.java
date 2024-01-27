@@ -16,6 +16,7 @@ public class PeripheralsConfig implements IAPConfig {
     public final ForgeConfigSpec.BooleanValue morePlayerInformation;
     public final ForgeConfigSpec.BooleanValue enablePlayerDetector;
     public final ForgeConfigSpec.BooleanValue playerDetMultiDimensional;
+    public final ForgeConfigSpec.BooleanValue playerSpyRandError;
 
     //Energy Detector
     public final ForgeConfigSpec.IntValue energyDetectorMaxFlow;
@@ -85,6 +86,7 @@ public class PeripheralsConfig implements IAPConfig {
         playerSpy = builder.comment("Activates the \"getPlayerPos\" function of the Player Detector").define("enablePlayerPosFunction", true);
         morePlayerInformation = builder.comment("Adds more information to `getPlayerPos` of the Player Detector. Like rotation and dimension").define("morePlayerInformation", true);
         playerDetMultiDimensional = builder.comment("If true, the player detector can observe players which aren't in the same dimension as the detector itself. `playerDetMaxRange` needs to be infinite(-1) for it to work.").define("chatBoxMultiDimensional", true);
+        playerSpyRandError = builder.comment("If true, add random error to `getPlayerPos` player position that varies based on how far the player is from the detector. Prevents getting the exact position of players far from the detector.").define("enablePlayerPosRandomError", false);
 
         pop("Energy_Detector", builder);
 
