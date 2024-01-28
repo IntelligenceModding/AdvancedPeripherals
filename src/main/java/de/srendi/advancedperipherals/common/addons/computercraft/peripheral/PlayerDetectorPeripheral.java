@@ -213,23 +213,37 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
 
         Map<String, Object> info = new HashMap<>();
 
-        double x = existingPlayer.getX();
-        double y = existingPlayer.getY();
-        double z = existingPlayer.getZ();
+        double x = existingPlayer.getX(), y = existingPlayer.getY(), z = existingPlayer.getZ();
 
         if (APConfig.PERIPHERALS_CONFIG.playerSpyRandError.get()) {
-            double distance = Math.sqrt(Math.pow(x - getPos().getX(), 2) + Math.pow(y - getPos().getY(), 2) + Math.pow(z - getPos().getZ(), 2));
+            // We apply random error to the returned player position if so enabled in the configuration.
 
-            final int minDistance = 50;
-            final int maxDistance = 10000;
-            final int maxError = 2500;
+            // minDistance: Below this distance, the player's exact position is returned
+            int minDistance = APConfig.PERIPHERALS_CONFIG.playerSpyPreciseMaxRange.get();
+            // maxError: The maximum amount of blocks that the player's position can be off by (on each axis) at the max distance
+            int maxError = APConfig.PERIPHERALS_CONFIG.playerSpyRandErrorAmount.get();
+            // maxDistance: At this distance, maximum error is applied. Hard-coded to the minimum of MAX_RANGE and 10000, or just 10000 if MAX_RANGE is unlimited
+            int maxDistance = MAX_RANGE == -1 ? 10000 : Math.min(MAX_RANGE, 10000);
+            // sublinearFactor: We apply exponent to the calculations so that error increases quickly at first before leveling out
+            // This is hard-coded so as not to overwhelm the player with configuration options, but this can probably be changed
+            double sublinearFactor = 0.8;
+            // yAxisWeight: Since the Y-axis obviously has a much smaller range than X- and Z- axes
+            // (which can theoretically be infinite) in the Minecraft world, we should apply less error to it
+            double yAxisWeight = (double) 1 / 4;
 
-            distance -= minDistance;
-            if (distance > 0) {
-                double error = maxError * Math.min(Math.pow(distance / maxDistance, 0.8), 1);
-                x += (Math.random()-0.5)*2 * error;
-                y += (Math.random()-0.5)*2 * (error / 4);
-                z += (Math.random()-0.5)*2 * error;
+            maxDistance = Math.max(minDistance, maxDistance);
+
+            // Calculate Euclidean distance between the player locator and the player in question
+            double distanceFromPlayer = Math.sqrt(Math.pow(x - getPos().getX(), 2) + Math.pow(y - getPos().getY(), 2) + Math.pow(z - getPos().getZ(), 2));
+
+            distanceFromPlayer -= minDistance;
+            if (distanceFromPlayer > 0) {
+                // We calculate error as the fraction of the player's distance and the max distance defined in the configuration
+                // then we raise it to sublinearFactor to make it somewhat exponential
+                double error = maxError * Math.min(Math.pow(distanceFromPlayer / maxDistance, sublinearFactor), 1);
+                x += (Math.random() - 0.5) * 2 * error;
+                y += (Math.random() - 0.5) * 2 * error * yAxisWeight;
+                z += (Math.random() - 0.5) * 2 * error;
             }
         }
 
