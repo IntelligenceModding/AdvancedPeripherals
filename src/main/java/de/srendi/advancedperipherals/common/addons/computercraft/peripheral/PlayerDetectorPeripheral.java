@@ -226,7 +226,7 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
 
             distance -= minDistance;
             if (distance > 0) {
-                double error = maxError * Math.min(Math.pow(distance / maxDistance, 0.5), 1);
+                double error = maxError * Math.min(Math.pow(distance / maxDistance, 0.8), 1);
                 x += (Math.random()-0.5)*2 * error;
                 y += (Math.random()-0.5)*2 * (error / 4);
                 z += (Math.random()-0.5)*2 * error;
