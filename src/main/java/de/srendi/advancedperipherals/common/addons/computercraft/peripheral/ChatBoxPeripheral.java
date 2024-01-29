@@ -227,7 +227,7 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
                     arguments.optString(5, "").replaceAll("&", "\u00a7")
             ).append(messageComponent);
 
-            if (!APConfig.PERIPHERALS_CONFIG.chatBoxMultiDimensional.get() && player.getLevel().dimension() != dimension)
+            if (!APConfig.PERIPHERALS_CONFIG.chatBoxMultiDimensional.get() && player.level().dimension() != dimension)
                 return MethodResult.of(false, "NOT_SAME_DIMENSION");
 
             if (range == -1 || CoordUtil.isInRange(getPos(), getLevel(), player, range, maxRange)) {
@@ -292,7 +292,7 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
                     arguments.optString(5, "").replaceAll("&", "\u00a7")
             ).append(message);
 
-            if (!APConfig.PERIPHERALS_CONFIG.chatBoxMultiDimensional.get() && player.getLevel().dimension() != dimension)
+            if (!APConfig.PERIPHERALS_CONFIG.chatBoxMultiDimensional.get() && player.level().dimension() != dimension)
                 return MethodResult.of(false, "NOT_SAME_DIMENSION");
 
             if (range == -1 || CoordUtil.isInRange(getPos(), getLevel(), player, range, maxRange)) {
