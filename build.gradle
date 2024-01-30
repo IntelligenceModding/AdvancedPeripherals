@@ -17,7 +17,7 @@ plugins {
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
 wrapper {
-    gradleVersion = '8.1.1'
+    gradleVersion = '8.4'
     distributionType = Wrapper.DistributionType.ALL
 }
 
@@ -180,6 +180,9 @@ repositories {
     maven {
         name = "LDT Team minecolonies"
         url = 'https://ldtteam.jfrog.io/ldtteam/modding'
+        content {
+            includeGroup "com.ldtteam"
+        }
     }
     maven {
         name = "Modmaven Jei"
@@ -189,15 +192,15 @@ repositories {
         name = "Create maven"
         url = "https://maven.tterrag.com/"
         content {
-            includeGroup "com.simibubi.create"
-            includeGroup "com.jozufozu.flywheel"
+            includeGroup("com.simibubi.create")
+            includeGroup("com.jozufozu.flywheel")
         }
     }
     maven {
         name = "SirEdvin's private repository"
         url = "https://repo.repsy.io/mvn/siredvin/default"
         content {
-            includeGroup "site.siredvin.ttoolkit"
+            includeGroup("site.siredvin.ttoolkit")
         }
     }
     maven {

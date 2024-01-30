@@ -15,7 +15,6 @@ import java.util.Set;
 
 public class APCreativeTab {
 
-
     public static void populateCreativeTabBuilder(CreativeModeTab.Builder builder) {
         builder.displayItems((set, out) -> {
             Registration.ITEMS.getEntries().stream().map(RegistryObject::get).forEach(out::accept);

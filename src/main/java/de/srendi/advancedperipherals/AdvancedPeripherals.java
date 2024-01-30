@@ -25,7 +25,6 @@ public class AdvancedPeripherals {
     public static final String NAME = "Advanced Peripherals";
     public static final Logger LOGGER = LogManager.getLogger(NAME);
     public static final Random RANDOM = new Random();
-    public static final APCreativeTab TAB = new APCreativeTab();
 
     public AdvancedPeripherals() {
         LOGGER.info("AdvancedPeripherals says hello!");
