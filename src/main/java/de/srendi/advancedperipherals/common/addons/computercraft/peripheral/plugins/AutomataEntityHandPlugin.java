@@ -20,6 +20,7 @@ import net.minecraftforge.common.IForgeShearable;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
@@ -66,7 +67,7 @@ public class AutomataEntityHandPlugin extends AutomataCorePlugin {
         if (!(entity instanceof Animal animal))
             return MethodResult.of(null, "Well, entity is not animal entity, but how?");
 
-        return MethodResult.of(completeEntityToLuaWithShearable(animal, owner));
+        return MethodResult.of(shearableEntityDataToLua(animal, owner));
     }
 
     @LuaFunction(mainThread = true)
@@ -76,22 +77,22 @@ public class AutomataEntityHandPlugin extends AutomataCorePlugin {
         BlockPos currentPos = owner.getPos();
         AABB box = new AABB(currentPos);
         List<Map<String, Object>> entities = new ArrayList<>();
-        ItemStack itemInHand = owner.getToolInMainHand();
         owner.getLevel().getEntities((Entity) null, box.inflate(automataCore.getInteractionRadius()), suitableEntity)
                 .forEach(entity -> {
-                    Map<String, Object> entityTable = completeEntityToLuaWithShearable(entity, owner);
+                    Map<String, Object> entityTable = shearableEntityDataToLua(entity, owner);
                     entityTable.put("relativePos", LuaConverter.relativePositionToLua(entity, currentPos));
                     entities.add(entityTable);
                 });
         return MethodResult.of(entities);
     }
 
-    protected static Map<String, Object> completeEntityToLuaWithShearable(Entity entity, IPeripheralOwner owner) {
-        Map<String, Object> entityTable = LuaConverter.completeEntityToLua(entity);
+    protected static Map<String, Object> shearableEntityDataToLua(Entity entity, IPeripheralOwner owner) {
+        Map<String, Object> entityTable = new HashMap<>();
+        entityTable.put("uuid", LuaConverter.uuidToLua(entity.getUUID()));
         ItemStack toolInHand = owner.getToolInMainHand();
-        if (entity instanceof IForgeShearable shearable && !toolInHand.isEmpty()) {
-            entityTable.put("shearable", shearable.isShearable(toolInHand, entity.level, entity.blockPosition()));
-        }
+        entityTable.put("shearable", entity instanceof IForgeShearable shearable
+                && !toolInHand.isEmpty()
+                && shearable.isShearable(toolInHand, entity.level, entity.blockPosition()));
         return entityTable;
     }
 }
