@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.function.Predicate;
 
 import static de.srendi.advancedperipherals.common.addons.computercraft.operations.SingleOperation.CAPTURE_ANIMAL;
+import static de.srendi.advancedperipherals.common.addons.computercraft.peripheral.plugins.AutomataEntityHandPlugin.shearableEntityDataToLua;
 
 public class AutomataEntityTransferPlugin extends AutomataCorePlugin {
 
@@ -121,6 +122,6 @@ public class AutomataEntityTransferPlugin extends AutomataCorePlugin {
     @LuaFunction(mainThread = true)
     public final MethodResult getCapturedAnimal() {
         Entity extractedEntity = extractEntity();
-        return MethodResult.of(AutomataEntityHandPlugin.completeEntityToLuaWithShearable(extractedEntity, automataCore.getPeripheralOwner()));
+        return MethodResult.of(shearableEntityDataToLua(extractedEntity, automataCore.getPeripheralOwner()));
     }
 }
