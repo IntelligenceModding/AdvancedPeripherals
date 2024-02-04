@@ -66,9 +66,9 @@ public class MineColonies {
         Map<String, Object> map = new HashMap<>();
         map.put("id", citizen.getId());
         map.put("name", citizen.getName());
-        map.put("bedPos", LuaConverter.posToObject(citizen.getBedPos()));
+        map.put("bedPos", LuaConverter.blockPosToLua(citizen.getBedPos()));
         map.put("children", citizen.getChildren());
-        map.put("location", LuaConverter.posToObject(citizen.getLastPosition()));
+        map.put("location", LuaConverter.blockPosToLua(citizen.getLastPosition()));
         map.put("state", citizen.getStatus() == null ? "Idle" : Component.translatable(citizen.getStatus().getTranslationKey()).getString());
         map.put("age", citizen.isChild() ? "child" : "adult");
         map.put("gender", citizen.isFemale() ? "female" : "male");
@@ -100,7 +100,7 @@ public class MineColonies {
         Map<String, Object> map = new HashMap<>();
         map.put("id", visitor.getId());
         map.put("name", visitor.getName());
-        map.put("location", LuaConverter.posToObject(visitor.getSittingPosition()));
+        map.put("location", LuaConverter.blockPosToLua(visitor.getSittingPosition()));
         map.put("age", visitor.isChild() ? "child" : "adult");
         map.put("gender", visitor.isFemale() ? "female" : "male");
         map.put("saturation", visitor.getSaturation());
@@ -120,7 +120,7 @@ public class MineColonies {
      */
     public static Object jobToObject(IBuilding work, IJob<?> job) {
         Map<String, Object> map = new HashMap<>();
-        map.put("location", LuaConverter.posToObject(work.getLocation().getInDimensionLocation()));
+        map.put("location", LuaConverter.blockPosToLua(work.getLocation().getInDimensionLocation()));
         map.put("type", work.getSchematicName());
         map.put("level", work.getBuildingLevel());
         map.put("name", work.getBuildingDisplayName());
@@ -137,7 +137,7 @@ public class MineColonies {
      */
     public static Object homeToObject(IBuilding home) {
         Map<String, Object> map = new HashMap<>();
-        map.put("location", LuaConverter.posToObject(home.getLocation().getInDimensionLocation()));
+        map.put("location", LuaConverter.blockPosToLua(home.getLocation().getInDimensionLocation()));
         map.put("type", home.getSchematicName());
         map.put("level", home.getBuildingLevel());
 
@@ -172,8 +172,8 @@ public class MineColonies {
      */
     public static Object buildingToObject(IRegisteredStructureManager buildingManager, IBuilding building, BlockPos pos) {
         Map<String, Object> structureData = new HashMap<>();
-        structureData.put("cornerA", LuaConverter.posToObject(building.getCorners().getA()));
-        structureData.put("cornerB", LuaConverter.posToObject(building.getCorners().getB()));
+        structureData.put("cornerA", LuaConverter.blockPosToLua(building.getCorners().getA()));
+        structureData.put("cornerB", LuaConverter.blockPosToLua(building.getCorners().getB()));
         structureData.put("rotation", building.getRotation());
         structureData.put("mirror", building.isMirrored());
 
@@ -186,7 +186,7 @@ public class MineColonies {
         }
 
         Map<String, Object> map = new HashMap<>();
-        map.put("location", LuaConverter.posToObject(pos));
+        map.put("location", LuaConverter.blockPosToLua(pos));
         map.put("type", building.getSchematicName());
         map.put("style", building.getStructurePack());
         map.put("level", building.getBuildingLevel());
@@ -232,12 +232,12 @@ public class MineColonies {
     public static Object workOrderToObject(IWorkOrder workOrder) {
         Map<String, Object> map = new HashMap<>();
 
-        map.put("builder", LuaConverter.posToObject(workOrder.getClaimedBy()));
+        map.put("builder", LuaConverter.blockPosToLua(workOrder.getClaimedBy()));
         map.put("changed", workOrder.isDirty());
         map.put("id", workOrder.getID());
         map.put("priority", workOrder.getPriority());
         map.put("isClaimed", workOrder.isClaimed());
-        map.put("location", LuaConverter.posToObject(workOrder.getLocation()));
+        map.put("location", LuaConverter.blockPosToLua(workOrder.getLocation()));
         map.put("type", workOrder.getClass().getSimpleName());
         map.put("buildingName", workOrder.getDisplayName().getString());
         map.put("targetLevel", workOrder.getTargetLevel());

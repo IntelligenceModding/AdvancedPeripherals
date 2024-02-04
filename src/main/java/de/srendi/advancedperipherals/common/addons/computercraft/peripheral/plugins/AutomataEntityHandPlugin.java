@@ -3,6 +3,7 @@ package de.srendi.advancedperipherals.common.addons.computercraft.peripheral.plu
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.lua.MethodResult;
+import de.srendi.advancedperipherals.common.addons.computercraft.owner.IPeripheralOwner;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.TurtlePeripheralOwner;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
 import de.srendi.advancedperipherals.lib.peripherals.AutomataCorePeripheral;
@@ -15,9 +16,11 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
+import net.minecraftforge.common.IForgeShearable;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
@@ -64,7 +67,7 @@ public class AutomataEntityHandPlugin extends AutomataCorePlugin {
         if (!(entity instanceof Animal animal))
             return MethodResult.of(null, "Well, entity is not animal entity, but how?");
 
-        return MethodResult.of(LuaConverter.animalToLua(animal, owner.getToolInMainHand()));
+        return MethodResult.of(shearableEntityDataToLua(animal, owner));
     }
 
     @LuaFunction(mainThread = true)
@@ -74,8 +77,22 @@ public class AutomataEntityHandPlugin extends AutomataCorePlugin {
         BlockPos currentPos = owner.getPos();
         AABB box = new AABB(currentPos);
         List<Map<String, Object>> entities = new ArrayList<>();
-        ItemStack itemInHand = owner.getToolInMainHand();
-        owner.getLevel().getEntities((Entity) null, box.inflate(automataCore.getInteractionRadius()), suitableEntity).forEach(entity -> entities.add(LuaConverter.completeEntityWithPositionToLua(entity, itemInHand, currentPos)));
+        owner.getLevel().getEntities((Entity) null, box.inflate(automataCore.getInteractionRadius()), suitableEntity)
+                .forEach(entity -> {
+                    Map<String, Object> entityTable = shearableEntityDataToLua(entity, owner);
+                    entityTable.put("relativePos", LuaConverter.relativePositionToLua(entity, currentPos));
+                    entities.add(entityTable);
+                });
         return MethodResult.of(entities);
+    }
+
+    protected static Map<String, Object> shearableEntityDataToLua(Entity entity, IPeripheralOwner owner) {
+        Map<String, Object> entityTable = new HashMap<>();
+        entityTable.put("uuid", LuaConverter.uuidToLua(entity.getUUID()));
+        ItemStack toolInHand = owner.getToolInMainHand();
+        entityTable.put("shearable", entity instanceof IForgeShearable shearable
+                && !toolInHand.isEmpty()
+                && shearable.isShearable(toolInHand, entity.level, entity.blockPosition()));
+        return entityTable;
     }
 }

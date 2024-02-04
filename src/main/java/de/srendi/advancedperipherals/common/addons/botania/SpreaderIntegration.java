@@ -32,7 +32,7 @@ public class SpreaderIntegration extends BlockEntityIntegrationPeripheral<ManaSp
     @LuaFunction(mainThread = true)
     public final Object getBounding() {
         if (blockEntity.getBinding() == null) return null;
-        return LuaConverter.posToObject(blockEntity.getBinding());
+        return LuaConverter.blockPosToLua(blockEntity.getBinding());
     }
 
     @LuaFunction(mainThread = true)
