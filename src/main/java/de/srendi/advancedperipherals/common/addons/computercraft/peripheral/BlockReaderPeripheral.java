@@ -57,6 +57,15 @@ public class BlockReaderPeripheral extends BasePeripheral<BlockEntityPeripheralO
         return states;
     }
 
+    @LuaFunction(mainThread = true)
+    public final boolean isTileEntity() {
+        if (getBlockInFront().is(Blocks.AIR))
+            return false;
+
+        BlockEntity target = getLevel().getBlockEntity(getPos().relative(owner.getFacing()));
+        return target != null;
+    }
+
     private BlockState getBlockInFront() {
         return getLevel().getBlockState(getPos().relative(owner.getFacing()));
     }
