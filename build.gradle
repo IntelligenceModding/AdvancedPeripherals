@@ -470,7 +470,8 @@ tasks.register('publishCurseForge', TaskPublishCurseForge, { task ->
 githubRelease {
     releaseAssets = jar.archiveFile
 
-    token = githubKey
+    if (githubKey != null)
+        token = githubKey
     owner = "IntelligenceModding"
     repo = "AdvancedPeripherals"
     tagName = "${minecraft_version}-${version}"
@@ -488,14 +489,14 @@ githubRelease {
 }
 
 modrinth {
-    token = modrinthKey // This is the default. Remember to have the MODRINTH_TOKEN environment variable set or else this will fail, or set it to whatever you want - just make sure it stays private!
-    projectId = 'SOw6jD6x' // This can be the project ID or the slug. Either will work!
+    token = modrinthKey
+    projectId = 'SOw6jD6x'
     versionNumber = "${minecraft_version}-${project.version}"
     versionName = "Advanced Peripherals ${minecraft_version} ${version}"
     versionType = release_type
-    uploadFile = jar // With Loom, this MUST be set to `remapJar` instead of `jar`!
-    gameVersions = [minecraft_version] // Must be an array, even with only one version
-    loaders = ["forge", "neoforge"] // Must also be an array - no need to specify this if you're using Loom or ForgeGradle
+    uploadFile = jar
+    gameVersions = [minecraft_version]
+    loaders = ["forge", "neoforge"]
     dependencies {
         required.project "cc-tweaked"
     }
