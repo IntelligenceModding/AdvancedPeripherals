@@ -438,7 +438,7 @@ tasks.named('processResources', ProcessResources).configure {
 task commitAndPush() {
     doLast {
         def baseMessage = project.hasProperty('commitMessage') ? commitMessage : 'No commit message provided'
-        def message = baseMessage.replace("%version%", "${minecraft_version}-${version}")
+        def message = baseMessage.replace("{version}", "${minecraft_version}-${version}")
 
         exec {
             commandLine 'git', 'add', '.'
