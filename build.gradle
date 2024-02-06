@@ -467,6 +467,24 @@ tasks.register('publishCurseForge', TaskPublishCurseForge, { task ->
     }
 })
 
+task commitAndPush() {
+    doLast {
+        def message = project.hasProperty('commitMessage') ? commitMessage : 'No commit message provided'
+
+        exec {
+            commandLine 'git', 'add', '.'
+        }
+
+        exec {
+            commandLine 'git', 'commit', '-m', message
+        }
+
+        exec {
+            commandLine 'git', 'push', 'origin'
+        }
+    }
+}
+
 githubRelease {
     releaseAssets = jar.archiveFile
 
