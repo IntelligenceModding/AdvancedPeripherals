@@ -480,7 +480,7 @@ task commitAndPush() {
         }
 
         exec {
-            commandLine 'git', 'push', 'origin'
+            commandLine 'git', 'push'
         }
     }
 }
