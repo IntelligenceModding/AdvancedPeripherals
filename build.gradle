@@ -434,6 +434,26 @@ tasks.named('processResources', ProcessResources).configure {
     }
 }
 
+// Used to do some magic with teamcity
+task commitAndPush() {
+    doLast {
+        def baseMessage = project.hasProperty('commitMessage') ? commitMessage : 'No commit message provided'
+        def message = baseMessage.replace("%version%", "${minecraft_version}-${version}")
+
+        exec {
+            commandLine 'git', 'add', '.'
+        }
+
+        exec {
+            commandLine 'git', 'commit', '-m', message
+        }
+
+        exec {
+            commandLine 'git', 'push', 'origin'
+        }
+    }
+}
+
 tasks.register('publishCurseForge', TaskPublishCurseForge, { task ->
     setGroup("publishing")
     setDescription("Upload Advanced Peripherals to CurseForge")
@@ -466,24 +486,6 @@ tasks.register('publishCurseForge', TaskPublishCurseForge, { task ->
         releaseType = "${release_type}"
     }
 })
-
-task commitAndPush() {
-    doLast {
-        def message = project.hasProperty('commitMessage') ? commitMessage : 'No commit message provided'
-
-        exec {
-            commandLine 'git', 'add', '.'
-        }
-
-        exec {
-            commandLine 'git', 'commit', '-m', message
-        }
-
-        exec {
-            commandLine 'git', 'push', 'origin'
-        }
-    }
-}
 
 githubRelease {
     releaseAssets = jar.archiveFile
