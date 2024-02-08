@@ -6,12 +6,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+## [1.19.2-0.7.33r] - 2024-02-08
+
+### Added
+- Added `isTileEntity` and `getBlockStates` to the Block Reader
+- Added `sendToastToPlayer` and `sendFormattedToastToPlayer` to the Chat Box
+- Added the health, the respawn position and the air supply to the player of the player detector.
 
 ### Fixed
 - [#542] Fixed that our description key bind does not work in specific cases and other windows than the vanilla inventory.
+- [#553] Changed the priority of our chat event to prevent `chat message validation failure` issues
 
 ### Changed
 - Added the Stack to the resource order of the Colony Integrator and add the fingerprint to common item stacks
+- Added random error to `getPlayerPos`. That is by default deactivated. Thanks to @eitan3085!
 
 ## [1.19.2-0.7.32r] - 2023-11-12
 
