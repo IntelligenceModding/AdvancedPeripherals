@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+### Fixed
+- [#542] Fixed that our description key bind does not work in specific cases and other windows than the vanilla inventory.
+
+### Changed
+- Added the Stack to the resource order of the Colony Integrator and add the fingerprint to common item stacks
+
 ## [1.19.2-0.7.32r] - 2023-11-12
 
 ### Fixed
