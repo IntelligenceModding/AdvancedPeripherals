@@ -4,6 +4,7 @@ import de.srendi.advancedperipherals.common.addons.APAddons;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.setup.Registration;
 
+import de.srendi.advancedperipherals.network.APNetworking;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -24,7 +25,6 @@ public class AdvancedPeripherals {
     public static final String NAME = "Advanced Peripherals";
     public static final Logger LOGGER = LogManager.getLogger(NAME);
     public static final Random RANDOM = new Random();
-    public static final APCreativeTab TAB = new APCreativeTab();
 
     public AdvancedPeripherals() {
         LOGGER.info("AdvancedPeripherals says hello!");
@@ -53,6 +53,7 @@ public class AdvancedPeripherals {
 
     public void commonSetup(FMLCommonSetupEvent event) {
         APAddons.commonSetup();
+        APNetworking.init();
     }
 
 }
