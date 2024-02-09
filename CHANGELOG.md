@@ -6,6 +6,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+## [1.20.1-0.7.37r] - 2024-02-09
+
+### Added
+- Added `isTileEntity` and `getBlockStates` to the Block Reader
+- Added `sendToastToPlayer` and `sendFormattedToastToPlayer` to the Chat Box
+- Added the health, the respawn position and the air supply to the player of the player detector.
+
+### Fixed
+- [#553] Changed the priority of our chat event to prevent `chat message validation failure` issues
+
+### Changed
+- Added random error to `getPlayerPos`. That is by default deactivated. Thanks to @eitan3085!
+- Make the prefix of chat box messages dyeable with `&` chars
+
 ## [1.20.1-0.7.36r] - 2024-01-17
 
 ### Fixed
