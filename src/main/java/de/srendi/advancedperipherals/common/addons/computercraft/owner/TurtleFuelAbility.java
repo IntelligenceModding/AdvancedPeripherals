@@ -22,7 +22,7 @@ public class TurtleFuelAbility extends FuelAbility<TurtlePeripheralOwner> {
 
     @Override
     public boolean isFuelConsumptionDisable() {
-        return owner.getTurtle().isFuelNeeded();
+        return !owner.getTurtle().isFuelNeeded();
     }
 
     @Override
