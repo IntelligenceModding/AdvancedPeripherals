@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+## [1.19.2-0.7.34r] - 2024-02-13
+
+### Fixed
+- [#556] Fixed a server crash when the toast packet got loaded on the server side
+- [#558] Fixed support for the latest minecolonies version
+- [#552] Fixed that our automata turtles don't allow charging when `need_fuel` in the CC config is set to true
+- [#538] Delete old ar goggles curios tag
+
 ## [1.19.2-0.7.33r] - 2024-02-08
 
 ### Added
