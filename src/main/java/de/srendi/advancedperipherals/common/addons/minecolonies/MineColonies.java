@@ -289,6 +289,7 @@ public class MineColonies {
 
                     cost.add(researchCost);
                 }
+
                 List<Map<String, Object>> requirements = new ArrayList<>();
                 for (IResearchRequirement requirement : research.getResearchRequirement()) {
                     Map<String, Object> requirementItem = new HashMap<>();
@@ -338,7 +339,7 @@ public class MineColonies {
 
         //We need to tell the building that we want information about it
         FriendlyByteBuf buffer = new FriendlyByteBuf(Unpooled.buffer());
-        builderBuilding.serializeToView(buffer);
+        builderBuilding.serializeToView(buffer, false);
         buffer.release();
 
         List<BuildingBuilderResource> resources = new ArrayList<>(builderBuilding.getNeededResources().values());
