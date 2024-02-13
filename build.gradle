@@ -437,6 +437,22 @@ tasks.named('processResources', ProcessResources).configure {
     }
 }
 
+// Used to do some magic with teamcity
+task commitAndPush() {
+    doLast {
+        def baseMessage = project.hasProperty('commitMessage') ? commitMessage : 'No commit message provided'
+        def message = baseMessage.replace("{version}", "${minecraft_version}-${version}")
+
+        exec {
+            commandLine 'git', 'add', '.'
+        }
+
+        exec {
+            commandLine 'git', 'commit', '-m', message
+        }
+    }
+}
+
 tasks.register('publishCurseForge', TaskPublishCurseForge, { task ->
     setGroup("publishing")
     setDescription("Upload Advanced Peripherals to CurseForge")
