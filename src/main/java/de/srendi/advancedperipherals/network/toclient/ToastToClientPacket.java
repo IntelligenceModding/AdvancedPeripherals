@@ -1,10 +1,11 @@
 package de.srendi.advancedperipherals.network.toclient;
 
+import de.srendi.advancedperipherals.AdvancedPeripherals;
+import de.srendi.advancedperipherals.common.util.ToastUtil;
 import de.srendi.advancedperipherals.network.base.IPacket;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.components.toasts.SystemToast;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
+import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.network.NetworkEvent;
 
 public class ToastToClientPacket implements IPacket {
@@ -19,10 +20,12 @@ public class ToastToClientPacket implements IPacket {
 
     @Override
     public void handle(NetworkEvent.Context context) {
-        Minecraft minecraft = Minecraft.getInstance();
-
-        minecraft.getToasts().addToast(SystemToast.multiline(minecraft,
-                SystemToast.SystemToastIds.PERIODIC_NOTIFICATION, title, component));
+        // Should in the theory not happen, but safe is safe.
+        if (!FMLEnvironment.dist.isClient()) {
+            AdvancedPeripherals.debug("Tried to display toasts on the server, aborting.");
+            return;
+        }
+        ToastUtil.displayToast(title, component);
     }
 
     @Override
