@@ -5,7 +5,6 @@
 <div align = center>
 
 [![Badge License]][License]   
-[![Badge Gradle]][Actions]   
 [![Badge Crowdin]][Crowdin]
 
 ![Banner]
@@ -89,8 +88,6 @@ will close pull requests related to translations.
 [Badge Localized]: https://badges.crowdin.net/advanced-peripherals/localized.svg
 [Badge Crowdin]: https://img.shields.io/badge/Localized_On-Crowdin-373d4c?style=for-the-badge&labelColor=464e62&logoColor=white&logo=Crowdin
 [Badge License]: https://img.shields.io/badge/License-Apache_2.0-961b1f?style=for-the-badge&labelColor=D22128&logoColor=white&logo=Apache
-[Badge Gradle]: https://img.shields.io/github/workflow/status/Seniorendi/AdvancedPeripherals/Gradle%20Snapshot?style=for-the-badge&labelColor=034654&color=023741&logoColor=white&logo=Gradle
-
 
 <!---------------------------------[ Buttons ]--------------------------------->
 
