@@ -290,10 +290,10 @@ dependencies {
 
     // Minecolonies
     // Remove/Comment this section if you want to use runData.
-    runtimeOnly fg.deobf("com.ldtteam:minecolonies:${minecolonies_version}")
-    runtimeOnly fg.deobf("com.ldtteam:structurize:${structurize_version}")
-    runtimeOnly fg.deobf("com.ldtteam:domum_ornamentum:${domumornamentum_version}:universal")
-    runtimeOnly fg.deobf("com.ldtteam:blockui:${blockui_version}")
+    //runtimeOnly fg.deobf("com.ldtteam:minecolonies:${minecolonies_version}")
+    //runtimeOnly fg.deobf("com.ldtteam:structurize:${structurize_version}")
+    //runtimeOnly fg.deobf("com.ldtteam:domum_ornamentum:${domumornamentum_version}:universal")
+    //runtimeOnly fg.deobf("com.ldtteam:blockui:${blockui_version}")
 
     compileOnly fg.deobf("com.ldtteam:minecolonies:${minecolonies_version}")
     compileOnly fg.deobf("com.ldtteam:structurize:${structurize_version}")
