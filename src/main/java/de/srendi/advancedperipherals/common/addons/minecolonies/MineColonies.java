@@ -8,14 +8,14 @@ import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.managers.interfaces.IRegisteredStructureManager;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.colony.workorders.IWorkOrder;
-import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.research.*;
+import com.minecolonies.api.research.costs.IResearchCost;
 import com.minecolonies.api.research.effects.IResearchEffect;
 import com.minecolonies.api.research.util.ResearchState;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingStructureBuilder;
-import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
-import com.minecolonies.coremod.research.BuildingResearchRequirement;
+import com.minecolonies.core.colony.buildings.AbstractBuildingStructureBuilder;
+import com.minecolonies.core.colony.buildings.utils.BuildingBuilderResource;
+import com.minecolonies.core.research.BuildingResearchRequirement;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
 import io.netty.buffer.Unpooled;
@@ -27,6 +27,7 @@ import net.minecraft.util.Tuple;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
@@ -275,9 +276,19 @@ public class MineColonies {
                     effects.add(TextComponentHelper.createComponentTranslation(null, researchEffect.getDesc().getKey(), researchEffect.getDesc().getArgs()).getString());
 
                 List<Map<String, Object>> cost = new ArrayList<>();
-                for (ItemStorage item : research.getCostList())
-                    cost.add(LuaConverter.itemStackToObject(item.getItemStack(), item.getAmount()));
+                for (IResearchCost item : research.getCostList()) {
+                    Map<String, Object> researchCost = new HashMap<>();
+                    List<Map<String, Object>> researchCostItems = new ArrayList<>();
 
+                    for (Item costItem : item.getItems())
+                        researchCostItems.add(LuaConverter.itemToObject(costItem));
+
+                    researchCost.put("validItems", researchCostItems);
+                    researchCost.put("count", item.getCount());
+                    researchCost.put("", item.getType().getId().toString());
+
+                    cost.add(researchCost);
+                }
                 List<Map<String, Object>> requirements = new ArrayList<>();
                 for (IResearchRequirement requirement : research.getResearchRequirement()) {
                     Map<String, Object> requirementItem = new HashMap<>();

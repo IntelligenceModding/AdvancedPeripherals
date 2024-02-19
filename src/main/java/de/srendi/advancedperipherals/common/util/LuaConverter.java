@@ -8,10 +8,13 @@ import de.srendi.advancedperipherals.common.util.inventory.ItemUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.tags.TagKey;
+import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.common.IForgeShearable;
 import net.minecraftforge.fluids.FluidStack;
@@ -33,6 +36,17 @@ public class LuaConverter {
         data.put("uuid", entity.getStringUUID());
         data.put("name", entity.getName().getString());
         data.put("tags", entity.getTags());
+        data.put("canFreeze", entity.canFreeze());
+        data.put("isGlowing", entity.isCurrentlyGlowing());
+        data.put("isInWall", entity.isInWall());
+        return data;
+    }
+
+    public static Map<String, Object> livingEntityToLua(LivingEntity entity) {
+        Map<String, Object> data = entityToLua(entity);
+        data.put("health", entity.getHealth());
+        data.put("maxHealth", entity.getMaxHealth());
+        data.put("lastDamageSource", entity.getLastDamageSource() == null ? null : entity.getLastDamageSource().toString());
         return data;
     }
 
@@ -49,6 +63,7 @@ public class LuaConverter {
 
     public static Map<String, Object> completeEntityToLua(Entity entity, ItemStack itemInHand) {
         if (entity instanceof Animal animal) return animalToLua(animal, itemInHand);
+        if (entity instanceof LivingEntity livingEntity) return livingEntityToLua(livingEntity);
         return entityToLua(entity);
     }
 
@@ -58,6 +73,25 @@ public class LuaConverter {
         data.put("y", entity.getY() - pos.getY());
         data.put("z", entity.getZ() - pos.getZ());
         return data;
+    }
+
+    /**
+     * Block states to a lua representable object
+     *
+     * @param blockStateValue block state see {@link net.minecraft.world.level.block.state.BlockState#getValue(Property)}
+     * @return the state cast to a lua representable object
+     */
+    public static Object stateToObject(Comparable<?> blockStateValue) {
+        if (blockStateValue == null) {
+            return null;
+        } else if (blockStateValue instanceof Boolean || blockStateValue instanceof Number || blockStateValue instanceof String) {
+            // Just return the value since lua can represent them just fine
+            return blockStateValue;
+        } else if (blockStateValue instanceof StringRepresentable stringRepresentable) {
+            return stringRepresentable.getSerializedName();
+        } else {
+            return null;
+        }
     }
 
     public static Object posToObject(BlockPos pos) {

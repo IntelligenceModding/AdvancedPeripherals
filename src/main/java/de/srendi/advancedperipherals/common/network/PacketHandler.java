@@ -3,6 +3,7 @@ package de.srendi.advancedperipherals.common.network;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.network.base.IPacket;
 import de.srendi.advancedperipherals.common.network.toclient.DistanceDetectorSyncPacket;
+import de.srendi.advancedperipherals.common.network.toclient.ToastToClientPacket;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
@@ -32,6 +33,7 @@ public class PacketHandler {
 
     public static void init() {
         registerServerToClient(DistanceDetectorSyncPacket.class, DistanceDetectorSyncPacket::decode);
+        registerServerToClient(ToastToClientPacket.class, ToastToClientPacket::decode);
     }
 
     public static <MSG extends IPacket> void registerServerToClient(Class<MSG> packet, Function<FriendlyByteBuf, MSG> decode) {
