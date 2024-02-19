@@ -60,4 +60,8 @@ public class SmartGlassesAccess implements IPocketAccess {
     public Map<ResourceLocation, IPeripheral> getUpgrades() {
         return computer.getUpgrades();
     }
+
+    public SmartGlassesComputer getComputer() {
+        return computer;
+    }
 }

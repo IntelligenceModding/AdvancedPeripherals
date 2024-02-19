@@ -2,6 +2,7 @@ package de.srendi.advancedperipherals.common.smartglasses.modules;
 
 import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesAccess;
 import net.minecraft.resources.ResourceLocation;
+import org.jetbrains.annotations.Nullable;
 
 public interface IModule {
 
@@ -9,9 +10,12 @@ public interface IModule {
 
     /**
      * Used to define the available functions of the module. This method only gets called once when indexing the modules
+     * <p>
+     * Return null if the module does not have any functions
      *
      * @return an object containing lua functions {@link dan200.computercraft.api.lua.LuaFunction}
      */
+    @Nullable
     IModuleFunctions getFunctions(SmartGlassesAccess smartGlassesAccess);
 
     /**

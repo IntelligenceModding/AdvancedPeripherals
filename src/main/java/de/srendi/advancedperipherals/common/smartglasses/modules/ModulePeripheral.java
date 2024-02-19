@@ -10,9 +10,12 @@ public class ModulePeripheral extends BasePeripheral<ModulePeripheralOwner> {
 
     public ModulePeripheral(SmartGlassesComputer computer) {
         super(PERIPHERAL_TYPE, new ModulePeripheralOwner(computer));
-        getPeripheralOwner().getComputer().getModules().forEach(module ->
-                addPlugin(module.getFunctions(computer.getSmartGlassesAccess()))
-        );
+        getPeripheralOwner().getComputer().getModules().forEach(module -> {
+            IModuleFunctions functions = module.getFunctions(computer.getSmartGlassesAccess());
+            
+            if (functions != null)
+                addPlugin(functions);
+        });
     }
 
     @Override
