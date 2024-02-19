@@ -1,5 +1,7 @@
 name: Bug Report
 description: Report bugs and problems
+labels: ["bug", "needs review"]
+projects: ["IntelligenceModding/2"]
 body:
   - type: markdown
     attributes:
