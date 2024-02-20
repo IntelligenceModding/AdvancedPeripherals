@@ -1,5 +1,7 @@
 name: Bug Report
 description: Report bugs and problems
+labels: ["bug", "needs review"]
+projects: ["IntelligenceModding/2"]
 body:
   - type: markdown
     attributes:
@@ -39,10 +41,12 @@ body:
       multiple: false
       options:
         - Own compiled build.
-        - 1.20.1-0.7.37r (Latest 1.20.1)
+        - 1.20.1-0.7.38r (Latest 1.20.1)
+        - 1.20.1-0.7.37r
         - 1.20.1-0.7.36r
         - 1.20.1-0.7.35b
-        - 1.19.2-0.7.33r (Latest 1.19.2)
+        - 1.19.2-0.7.34r (Latest 1.19.2)
+        - 1.19.2-0.7.33r 
         - 1.19.2-0.7.32r 
         - 1.19.2-0.7.31r
         - 1.18.2-0.7.31r (Latest 1.18.2)
