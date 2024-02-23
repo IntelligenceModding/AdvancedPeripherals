@@ -224,6 +224,8 @@ public class SmartGlassesItem extends ArmorItem implements IComputerItem, IMedia
 
     @Nullable
     public static SmartGlassesComputer getServerComputer(MinecraftServer server, ItemStack stack) {
+        if (server == null)
+            return null;
         return (SmartGlassesComputer) ServerContext.get(server).registry().get(getSessionID(stack), getInstanceID(stack));
     }
 

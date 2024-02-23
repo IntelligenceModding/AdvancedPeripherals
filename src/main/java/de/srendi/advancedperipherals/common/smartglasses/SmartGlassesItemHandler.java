@@ -9,6 +9,7 @@ import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemHandlerHelper;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
 
@@ -18,13 +19,16 @@ public class SmartGlassesItemHandler implements IItemHandlerModifiable, INBTSeri
 
     private final NonNullList<ItemStack> items = NonNullList.withSize(SLOTS, ItemStack.EMPTY);
     private final ItemStack stack;
+    @Nullable
     private final SmartGlassesComputer computer;
 
-    public SmartGlassesItemHandler(ItemStack stack, SmartGlassesComputer computer) {
+    public SmartGlassesItemHandler(ItemStack stack,@Nullable SmartGlassesComputer computer) {
         this.stack = stack;
         this.computer = computer;
         deserializeNBT(stack.getOrCreateTagElement("Items"));
-        computer.setItemHandler(this);
+
+        if(computer != null)
+            computer.setItemHandler(this);
     }
 
     @Override
@@ -125,7 +129,8 @@ public class SmartGlassesItemHandler implements IItemHandlerModifiable, INBTSeri
 
     public void setChanged() {
         stack.getOrCreateTag().put("Items", serializeNBT());
-        computer.markDirty();
+        if (computer != null)
+            computer.markDirty();
     }
 
     @Override
