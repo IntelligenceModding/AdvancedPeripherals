@@ -22,7 +22,6 @@ plugins {
     id 'net.darkhax.curseforgegradle' version '1.1.16'
     id 'org.jetbrains.changelog' version '1.2.1'
     id "com.modrinth.minotaur" version "2.+"
-    id "org.jetbrains.kotlin.jvm" version "1.6.10"
     id "com.github.breadmoirai.github-release" version "2.5.2"
     id 'checkstyle'
     id 'java'
@@ -141,12 +140,15 @@ minecraft {
             }
         }
 
-        testClient {
+        gameTestClient {
             workingDirectory project.file('test-files/client')
             parent runs.client
+            property 'forge.logging.markers', 'REGISTRIES'
+            property 'forge.logging.console.level', 'debug'
+            property 'forge.enabledGameTestNamespaces', 'advancedperipherals,advancedperipheralstest'
 
             mods {
-                aptest {
+                advancedperipheralstest {
                     source sourceSets.testMod
                 }
             }
@@ -158,20 +160,18 @@ minecraft {
             }
         }
 
-        testServer {
+        gameTestServer {
             workingDirectory project.file('test-files/server')
+            property 'forge.logging.markers', 'REGISTRIES'
+            property 'forge.logging.console.level', 'debug'
+            property 'forge.enabledGameTestNamespaces', 'advancedperipherals,advancedperipheralstest'
+
             parent runs.server
 
             mods {
-                aptest {
+                advancedperipheralstest {
                     source sourceSets.testMod
                 }
-            }
-
-            lazyToken('minecraft_classpath') {
-                (configurations.implementationExtra.copyRecursive().resolve())
-                        .collect { it.absolutePath }
-                        .join(File.pathSeparator)
             }
         }
     }
@@ -259,6 +259,7 @@ dependencies {
     compileOnly "org.jetbrains:annotations:${jb_annotations}"
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
     implementation fg.deobf("org.squiddev:cc-tweaked-${minecraft_version}:${cc_version}")
+    implementation fg.deobf("org.squiddev:cc-tweaked-${minecraft_version}:${cc_version}:api")
     // Minimal requirements end
 
     // Extended requirements
@@ -337,8 +338,6 @@ dependencies {
     testImplementation "org.junit.jupiter:junit-jupiter-api:${junit_version}"
     testImplementation "org.junit.jupiter:junit-jupiter-params:${junit_version}"
     testImplementation "org.hamcrest:hamcrest:${hamcrest_version}"
-    testImplementation "org.jetbrains.kotlin:kotlin-reflect:${kotlin_version}"
-    testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:${kotlinx_coroutines_version}"
     testModImplementation sourceSets.main.output
 
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junit_version}"
@@ -378,28 +377,12 @@ task setupServer(type: Copy) {
     into "test-files/server"
 }
 
-["Client", "Server"].forEach { name ->
-    tasks.register("test$name", JavaExec.class).configure {
-        it.group('In-game tests')
-        it.description("Runs tests on a temporary Minecraft instance.")
-        it.dependsOn(setupServer, "prepareRunTest$name", "cleanTest$name", 'compileTestModJava')
-
-        JavaExec exec = tasks.getByName("runTest$name")
-        exec.copyTo(it)
-        it.setClasspath(exec.getClasspath())
-        it.mainClass = exec.mainClass
-        it.setArgs(exec.getArgs())
-
-        it.systemProperty('forge.logging.console.level', 'debug')
-        it.systemProperty('ttoolkit.run', 'true')
-    }
-}
-
 test {
     useJUnitPlatform()
     testLogging {
         events "skipped", "failed"
     }
+    finalizedBy('runGameTestServer')
 }
 
 afterEvaluate {
