@@ -2,6 +2,7 @@ package de.srendi.advancedperipherals.common.items;
 
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.items.base.BaseItem;
+import de.srendi.advancedperipherals.common.util.EnumColor;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
@@ -29,7 +30,7 @@ public class MemoryCardItem extends BaseItem {
     public void appendHoverText(@NotNull ItemStack stack, @Nullable Level levelIn, @NotNull List<Component> tooltip, @NotNull TooltipFlag flagIn) {
         super.appendHoverText(stack, levelIn, tooltip, flagIn);
         if (stack.getOrCreateTag().contains("owner"))
-            tooltip.add(Component.translatable("item.advancedperipherals.tooltip.memory_card.bound", stack.getOrCreateTag().getString("owner")));
+            tooltip.add(EnumColor.buildTextComponent(Component.translatable("item.advancedperipherals.tooltip.memory_card.bound", stack.getOrCreateTag().getString("owner"))));
 
     }
 

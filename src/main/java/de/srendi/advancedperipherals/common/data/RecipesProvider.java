@@ -37,25 +37,6 @@ public class RecipesProvider extends RecipeProvider implements IConditionBuilder
 
     @Override
     protected void buildCraftingRecipes(@NotNull Consumer<FinishedRecipe> consumer) {
-        ShapedRecipeBuilder.shaped(Blocks.AR_CONTROLLER.get())
-                .define('E', Tags.Items.ENDER_PEARLS)
-                .define('C', CASING)
-                .define('G', Items.SMOOTH_STONE)
-                .pattern("GEG")
-                .pattern("ECE")
-                .pattern("GEG")
-                .unlockedBy(HAS_ITEM, has(CASING))
-                .save(consumer);
-
-        /*ShapedRecipeBuilder.shaped(de.srendi.advancedperipherals.common.setup.Items.AR_GOGGLES.get())
-                .define('E', Tags.Items.ENDER_PEARLS)
-                .define('S', Tags.Items.RODS_WOODEN)
-                .define('G', Tags.Items.GLASS_BLACK)
-                .pattern("GSG")
-                .pattern(" E ")
-                .unlockedBy(HAS_ITEM, has(Items.STICK))
-                .save(consumer);*/
-
         ShapedRecipeBuilder.shaped(Blocks.CHAT_BOX.get())
                 .define('P', ItemTags.LOGS)
                 .define('A', CASING)

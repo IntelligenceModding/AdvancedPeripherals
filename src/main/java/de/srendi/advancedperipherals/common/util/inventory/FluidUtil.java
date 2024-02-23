@@ -59,11 +59,14 @@ public class FluidUtil {
         return handler;
     }
 
-    @NotNull
+    @Nullable
     public static IFluidHandler getHandlerFromName(@NotNull IComputerAccess access, String name) throws LuaException {
         IPeripheral location = access.getAvailablePeripheral(name);
+
+        // Tanks/Block Entities can't be accessed if the bridge is not exposed to the same network as the target tank/block entity
+        // This can occur when the bridge was wrapped via a side and not via modems
         if (location == null)
-            throw new LuaException("Target '" + name + "' does not exist");
+            return null;
 
         IFluidHandler handler = extractHandler(location.getTarget());
         if (handler == null)

@@ -1,8 +1,0 @@
-{
-  "parent": "minecraft:block/cube_all",
-  "textures": {
-    "all": "advancedperipherals:block/ar_controller",
-    "north": "advancedperipherals:block/ar_controller_front",
-    "particle": "advancedperipherals:block/ar_controller_front"
-  }
-}

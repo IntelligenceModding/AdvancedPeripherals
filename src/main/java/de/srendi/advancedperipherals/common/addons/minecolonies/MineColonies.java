@@ -8,17 +8,16 @@ import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.managers.interfaces.IRegisteredStructureManager;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.colony.workorders.IWorkOrder;
-import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.research.*;
+import com.minecolonies.api.research.costs.IResearchCost;
 import com.minecolonies.api.research.effects.IResearchEffect;
 import com.minecolonies.api.research.util.ResearchState;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingStructureBuilder;
-import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
-import com.minecolonies.coremod.research.BuildingResearchRequirement;
+import com.minecolonies.core.colony.buildings.AbstractBuildingStructureBuilder;
+import com.minecolonies.core.colony.buildings.utils.BuildingBuilderResource;
+import com.minecolonies.core.research.BuildingResearchRequirement;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
-import de.srendi.advancedperipherals.common.util.inventory.ItemUtil;
 import io.netty.buffer.Unpooled;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
@@ -28,6 +27,8 @@ import net.minecraft.util.Tuple;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.IItemHandler;
@@ -275,15 +276,24 @@ public class MineColonies {
                     effects.add(TextComponentHelper.createComponentTranslation(null, researchEffect.getDesc().getKey(), researchEffect.getDesc().getArgs()).getString());
 
                 List<Map<String, Object>> cost = new ArrayList<>();
-                for (ItemStorage item : research.getCostList())
-                    cost.add(LuaConverter.stackToObject(item.getItemStack()));
+                for (IResearchCost item : research.getCostList()) {
+                    Map<String, Object> researchCost = new HashMap<>();
+                    List<Map<String, Object>> researchCostItems = new ArrayList<>();
 
+                    for (Item costItem : item.getItems())
+                        researchCostItems.add(LuaConverter.itemToObject(costItem));
+
+                    researchCost.put("validItems", researchCostItems);
+                    researchCost.put("count", item.getCount());
+                    researchCost.put("", item.getType().getId().toString());
+
+                    cost.add(researchCost);
+                }
                 List<Map<String, Object>> requirements = new ArrayList<>();
                 for (IResearchRequirement requirement : research.getResearchRequirement()) {
                     Map<String, Object> requirementItem = new HashMap<>();
                     requirementItem.put("fulfilled", requirement.isFulfilled(colony));
-                    if (requirement instanceof BuildingResearchRequirement) {
-                        BuildingResearchRequirement buildingRequirement = (BuildingResearchRequirement)requirement;
+                    if (requirement instanceof BuildingResearchRequirement buildingRequirement) {
                         requirementItem.put("type", "building");
                         requirementItem.put("building", buildingRequirement.getBuilding());
                         requirementItem.put("level", buildingRequirement.getBuildingLevel());
@@ -301,6 +311,7 @@ public class MineColonies {
                 map.put("cost", cost);
                 map.put("researchEffects", effects);
                 map.put("status", colonyResearch == null ? ResearchState.NOT_STARTED.toString() : colonyResearch.getState().toString());
+                map.put("neededTime", colonyResearch == null ? 0 : IGlobalResearchTree.getInstance().getBranchData(colonyResearch.getBranch()).getBaseTime(colonyResearch.getDepth()));
                 map.put("progress", colonyResearch == null ? 0 : colonyResearch.getProgress());
 
                 List<Object> childrenResearch = getResearch(branch, research.getChildren(), colony);
@@ -336,8 +347,9 @@ public class MineColonies {
         List<Object> result = new ArrayList<>();
         for (BuildingBuilderResource resource : resources) {
             Map<String, Object> map = new HashMap<>();
+            ItemStack stack = resource.getItemStack().copy();
 
-            map.put("item", ItemUtil.getRegistryKey(resource.getItemStack()).toString());
+            map.put("item", LuaConverter.stackToObject(stack));
             map.put("displayName", resource.getName());
             map.put("available", resource.getAvailable());
             map.put("delivering", resource.getAmountInDelivery());

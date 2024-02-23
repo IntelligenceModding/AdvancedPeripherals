@@ -27,7 +27,6 @@ public class BlockStatesAndModelsProvider extends BlockStateProvider {
         peripheralBlock(Blocks.RS_BRIDGE.get(), "front");
         peripheralBlock(Blocks.ENERGY_DETECTOR.get(), "front", "back");
         peripheralBlock(Blocks.PERIPHERAL_CASING.get());
-        peripheralBlock(Blocks.AR_CONTROLLER.get(), "front");
         peripheralBlock(Blocks.INVENTORY_MANAGER.get(), "front");
         peripheralBlock(Blocks.REDSTONE_INTEGRATOR.get(), "front");
         peripheralBlock(Blocks.BLOCK_READER.get(), generateModel(Blocks.BLOCK_READER.get(), false, "north", "south", "east", "west", "up", "down"));

@@ -7,7 +7,6 @@
     "advancedperipherals:rs_bridge",
     "advancedperipherals:energy_detector",
     "advancedperipherals:peripheral_casing",
-    "advancedperipherals:ar_controller",
     "advancedperipherals:inventory_manager",
     "advancedperipherals:redstone_integrator",
     "advancedperipherals:block_reader",

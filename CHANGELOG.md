@@ -6,6 +6,59 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+## [1.19.2-0.7.34r] - 2024-02-13
+
+### Fixed
+- [#556] Fixed a server crash when the toast packet got loaded on the server side
+- [#558] Fixed support for the latest minecolonies version
+- [#552] Fixed that our automata turtles don't allow charging when `need_fuel` in the CC config is set to true
+- [#538] Delete old ar goggles curios tag
+
+## [1.19.2-0.7.33r] - 2024-02-08
+
+### Added
+- Added `isTileEntity` and `getBlockStates` to the Block Reader
+- Added `sendToastToPlayer` and `sendFormattedToastToPlayer` to the Chat Box
+- Added the health, the respawn position and the air supply to the player of the player detector.
+
+### Fixed
+- [#542] Fixed that our description key bind does not work in specific cases and other windows than the vanilla inventory.
+- [#553] Changed the priority of our chat event to prevent `chat message validation failure` issues
+
+### Changed
+- Added the Stack to the resource order of the Colony Integrator and add the fingerprint to common item stacks
+- Added random error to `getPlayerPos`. That is by default deactivated. Thanks to @eitan3085!
+
+## [1.19.2-0.7.32r] - 2023-11-12
+
+### Fixed
+- [#530] Fixed stray pixel in inventory_manager_gui.png
+- Fixed Memory Card tooltip color
+- [#524] Fixed not working brackets color change of the Chat Box - Thanks to @zyxkad!
+- [#522] Fixed that the index of the argument `range` for the functions `sendMessageToPlayer` and `sendFormattedMessageToPlayer` in the Chat Box is incorrect - Thanks to @zyxkad!
+
+### Added
+- [#519] Added Applied Mekanistics support to the ME Bridge - Thanks to @starcatmeow!
+
+### Changed
+- [#474] Changed the inventory manager. Merged the NBT and normal variants of the removeItem and addItem functions to one. See documentation for more info
+- [#441] Let the ME bridges `isConnected` function only return true when the ME bridge is actually connected to an active ME system
+
+## [1.19.2-0.7.31r] - 2023-10-07
+
+### Fixed
+- Fixed that `craftFluid` of the RS Bridge will not work when the target fluid stack is empty
+- Fixed the amount of the costs of researches in the colony integrator
+- [#505] Fixed a NullPointerException when calling `craftItem` with the ME Bridge while using the CPU argument
+- [#503],[#509] Fixed a bug where the imported items to a ME System are imported without the NBT tag(Thanks to @michele-grifa!)
+- [#501] Fixed some stack overflow exceptions when moving items around(Independent of the periphal)
+
+### Changed
+- [#512] Changed some debug messages of the ME and RS Bridge
+
+### Added
+- [#514] Added a `neededTime` property to the research table of the colony integrator
+
 ## [1.19.2-0.7.30r] - 2023-08-06
 
 ### Changed
