@@ -146,6 +146,9 @@ minecraft {
             property 'forge.logging.markers', 'REGISTRIES'
             property 'forge.logging.console.level', 'debug'
             property 'forge.enabledGameTestNamespaces', 'advancedperipherals,advancedperipheralstest'
+            property 'advancedperipheralstest.sources', file("src/testMod/resources/data/advancedperipheralstest").absolutePath
+
+            args "--mixin.config=advancedperipheralstest.mixins.json"
 
             mods {
                 advancedperipheralstest {
@@ -165,7 +168,9 @@ minecraft {
             property 'forge.logging.markers', 'REGISTRIES'
             property 'forge.logging.console.level', 'debug'
             property 'forge.enabledGameTestNamespaces', 'advancedperipherals,advancedperipheralstest'
+            property 'advancedperipheralstest.sources', file("src/testMod/resources/data/advancedperipheralstest").absolutePath
 
+            args "--mixin.config=advancedperipheralstest.mixins.json"
             parent runs.server
 
             mods {
