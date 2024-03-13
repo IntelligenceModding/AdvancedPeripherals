@@ -1,5 +1,6 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.peripheral;
 
+import dan200.computercraft.api.lua.IArguments;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.lua.MethodResult;
@@ -193,7 +194,7 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
     }
 
     @LuaFunction(value = {"getPlayerPos", "getPlayer"}, mainThread = true)
-    public final Map<String, Object> getPlayerPos(String username) throws LuaException {
+    public final Map<String, Object> getPlayerPos(IArguments arguments) throws LuaException {
         if (!APConfig.PERIPHERALS_CONFIG.playerSpy.get())
             throw new LuaException("This function is disabled in the config. Activate it or ask an admin if he can activate it.");
         ResourceKey<Level> dimension = getLevel().dimension();
@@ -202,7 +203,7 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
         for (ServerPlayer player : getPlayers()) {
             if (!isAllowedMultiDimensional() && player.level().dimension() != dimension)
                 continue;
-            if (player.getName().getString().equals(username)) {
+            if (player.getName().getString().equals(arguments.getString(0))) {
                 if (MAX_RANGE == -1 || CoordUtil.isInRange(getPos(), getLevel(), player, MAX_RANGE, MAX_RANGE))
                     existingPlayer = player;
                 break;
@@ -247,9 +248,11 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
             }
         }
 
-        info.put("x", Math.floor(x));
-        info.put("y", Math.floor(y));
-        info.put("z", Math.floor(z));
+        int decimals = Math.min(arguments.optInt(1, 0), 4);
+
+        info.put("x", Math.floor(x * Math.pow(10, decimals)) / Math.pow(10, decimals));
+        info.put("y", Math.floor(y * Math.pow(10, decimals)) / Math.pow(10, decimals));
+        info.put("z", Math.floor(z * Math.pow(10, decimals)) / Math.pow(10, decimals));
         if (APConfig.PERIPHERALS_CONFIG.morePlayerInformation.get()) {
             info.put("yaw", existingPlayer.yRotO);
             info.put("pitch", existingPlayer.xRotO);
