@@ -345,6 +345,10 @@ dependencies {
     // Testing stuff
     // JEI
     implementation fg.deobf("mezz.jei:jei-${jei_version}")
+
+    // Create Crafts & Additions
+    compileOnly fg.deobf("curse.maven:createaddition-439890:5099757")
+    // runtimeOnly fg.deobf("curse.maven:createaddition-439890:5099757")
 }
 
 

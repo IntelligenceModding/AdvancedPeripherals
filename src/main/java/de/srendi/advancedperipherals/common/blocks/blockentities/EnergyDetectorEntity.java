@@ -83,6 +83,10 @@ public class EnergyDetectorEntity extends PeripheralBlockEntity<EnergyDetectorPe
         super.deserializeNBT(nbt);
     }
 
+    public void invalidateStorages() {
+        outReceivingStorage = Optional.empty();
+    }
+
     // returns the cached output storage of the receiving block or refetches it if it has been invalidated
     @NotNull
     public Optional<IEnergyStorage> getOutputStorage() {
