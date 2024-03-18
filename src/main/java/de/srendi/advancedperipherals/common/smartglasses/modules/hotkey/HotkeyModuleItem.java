@@ -30,7 +30,7 @@ public class HotkeyModuleItem extends BaseItem implements IModuleItem {
 
     @Override
     public void inventoryTick(@NotNull ItemStack stack, @NotNull Level level, @NotNull Entity entity, int slot, boolean isSelected) {
-        if (level.isClientSide() || !(entity instanceof Player player))
+        if (!level.isClientSide() || !(entity instanceof Player player))
             return;
 
         if (KeybindUtil.isKeyPressed(KeyBindings.GLASSES_HOTKEY_KEYBINDING)) {
