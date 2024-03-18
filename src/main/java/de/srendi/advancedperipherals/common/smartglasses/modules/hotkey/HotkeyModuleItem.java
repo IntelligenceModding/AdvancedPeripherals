@@ -16,6 +16,8 @@ import org.jetbrains.annotations.NotNull;
 
 public class HotkeyModuleItem extends BaseItem implements IModuleItem {
 
+    private static final String KEY_PRESS_DURATION_NBT = "KeyPressDuration";
+
     @Override
     public boolean isEnabled() {
         return true;
@@ -27,11 +29,8 @@ public class HotkeyModuleItem extends BaseItem implements IModuleItem {
     }
 
     @Override
-    public void inventoryTick(@NotNull ItemStack stack, Level level, @NotNull Entity entity, int slot, boolean isSelected) {
-        if (!level.isClientSide)
-            return;
-
-        if (!(entity instanceof Player player))
+    public void inventoryTick(@NotNull ItemStack stack, @NotNull Level level, @NotNull Entity entity, int slot, boolean isSelected) {
+        if (level.isClientSide() || !(entity instanceof Player player))
             return;
 
         if (KeybindUtil.isKeyPressed(KeyBindings.GLASSES_HOTKEY_KEYBINDING)) {
@@ -40,17 +39,20 @@ public class HotkeyModuleItem extends BaseItem implements IModuleItem {
         } else if(getKeyPressDuration(stack) > 0) {
             // If the key is not pressed, but the duration is greater than 0, we can assume that the key was pressed
             // We can now post the event
-            String keyBind = KeyBindings.GLASSES_HOTKEY_KEYBINDING.getKey().getName();
-            PacketHandler.sendToServer(new GlassesHotkeyPacket(player.getUUID(), keyBind, getKeyPressDuration(stack)));
+
+            int duration = getKeyPressDuration(stack);
             setKeyPressDuration(stack, 0);
+
+            String keyBind = KeyBindings.GLASSES_HOTKEY_KEYBINDING.getKey().getName();
+            PacketHandler.sendToServer(new GlassesHotkeyPacket(player.getUUID(), keyBind, duration));
         }
     }
 
     public static int getKeyPressDuration(ItemStack stack) {
-        return stack.copy().getOrCreateTag().getInt("KEY_PRESS_DURATION");
+        return stack.copy().getOrCreateTag().getInt(KEY_PRESS_DURATION_NBT);
     }
 
     public static void setKeyPressDuration(ItemStack stack, int keyPressDuration) {
-        stack.getOrCreateTag().putInt("KEY_PRESS_DURATION", keyPressDuration);
+        stack.getOrCreateTag().putInt(KEY_PRESS_DURATION_NBT, keyPressDuration);
     }
 }

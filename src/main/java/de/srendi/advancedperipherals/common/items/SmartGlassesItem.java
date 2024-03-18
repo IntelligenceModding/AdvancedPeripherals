@@ -17,6 +17,7 @@ import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesAPI;
 import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesComputer;
 import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesItemHandler;
 import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesMenuProvider;
+import de.srendi.advancedperipherals.common.smartglasses.modules.IModuleItem;
 import de.srendi.advancedperipherals.common.smartglasses.modules.ModulePeripheral;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.Direction;
@@ -116,7 +117,19 @@ public class SmartGlassesItem extends ArmorItem implements IComputerItem, IMedia
     }
 
     @Override
-    public void inventoryTick(@NotNull ItemStack stack, Level world, @NotNull Entity entity, int slotNum, boolean selected) {
+    public void inventoryTick(@NotNull ItemStack stack, @NotNull Level world, @NotNull Entity entity, int slotNum, boolean selected) {
+        LazyOptional<IItemHandler> itemHandler = stack.getCapability(ForgeCapabilities.ITEM_HANDLER);
+        if(itemHandler.isPresent()) {
+            itemHandler.resolve().ifPresent(iItemHandler -> {
+                for(int slot = 0; slot < iItemHandler.getSlots(); slot++) {
+                    ItemStack itemStack = iItemHandler.getStackInSlot(slot);
+                    if(itemStack.getItem() instanceof IModuleItem) {
+                        itemStack.inventoryTick(world, entity, slot, selected);
+                    }
+                }
+            });
+        }
+
         if (world.isClientSide)
             return;
         Container inventory = entity instanceof Player player ? player.getInventory() : null;

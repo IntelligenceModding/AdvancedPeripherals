@@ -8,8 +8,6 @@ import net.minecraft.resources.ResourceLocation;
 
 public class HotkeyModule implements IModule {
 
-    private int keyPressDuration = 0;
-
     @Override
     public ResourceLocation getName() {
         return new ResourceLocation(AdvancedPeripherals.MOD_ID, "hotkey");
