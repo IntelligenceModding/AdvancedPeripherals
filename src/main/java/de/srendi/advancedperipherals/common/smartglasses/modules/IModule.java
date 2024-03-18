@@ -26,6 +26,8 @@ public interface IModule {
      */
     default void tick(SmartGlassesAccess smartGlassesAccess) {};
 
+    default void onUnequipped(SmartGlassesAccess smartGlassesAccess) {};
+
     /**
      * ErrorConstants class contains constants for error messages. This is used for easier error handling for users.
      */

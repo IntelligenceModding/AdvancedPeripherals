@@ -13,7 +13,7 @@ public class OverlayGlassesItem extends BaseItem implements IModuleItem {
     }
 
     @Override
-    public IModule getModule(SmartGlassesAccess smartGlassesAccess) {
+    public IModule createModule(SmartGlassesAccess smartGlassesAccess) {
         return new OverlayModule(smartGlassesAccess);
     }
 }

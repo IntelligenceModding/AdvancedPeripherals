@@ -22,10 +22,7 @@ import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Basically just a {@link dan200.computercraft.shared.pocket.core.PocketServerComputer} but with some changes
@@ -44,7 +41,7 @@ public class SmartGlassesComputer extends ServerComputer implements IPocketAcces
     private boolean isDirty = false;
 
     private final Set<ServerPlayer> tracking = new HashSet<>();
-    private final Set<IModule> modules = new HashSet<>();
+    private final Map<Integer, IModule> modules = new HashMap<>();
 
     public SmartGlassesComputer(ServerLevel world, int computerID, @Nullable String label, ComputerFamily family) {
         super(world, computerID, label, family, 39, 13);
@@ -148,11 +145,18 @@ public class SmartGlassesComputer extends ServerComputer implements IPocketAcces
             }
             setPeripheral(SmartGlassesSlot.indexToSide(slot), null);
         }
-        modules.clear();
         for (int slot = 4; slot < 11; slot++) {
             ItemStack peripheralItem = itemHandler.getStackInSlot(slot);
             if (!peripheralItem.isEmpty() && peripheralItem.getItem() instanceof IModuleItem module) {
-                modules.add(module.getModule(smartGlassesAccess));
+                if (modules.get(slot) != null && modules.get(slot).getName().equals(module.createModule(smartGlassesAccess).getName()))
+                    continue;
+
+                modules.put(slot, module.createModule(smartGlassesAccess));
+            } else {
+                if (modules.get(slot) != null) {
+                    modules.get(slot).onUnequipped(smartGlassesAccess);
+                    modules.remove(slot);
+                }
             }
         }
         setPeripheral(ComputerSide.BACK, new ModulePeripheral(this));
@@ -172,7 +176,7 @@ public class SmartGlassesComputer extends ServerComputer implements IPocketAcces
             tracking.addAll(getLevel().players());
         }
 
-        modules.forEach(module -> module.tick(smartGlassesAccess));
+        modules.values().forEach(module -> module.tick(smartGlassesAccess));
 
         if (isDirty())
             updatePeripheralsAndModules(itemHandler);
@@ -184,7 +188,7 @@ public class SmartGlassesComputer extends ServerComputer implements IPocketAcces
         this.entity = entity;
     }
 
-    public Set<IModule> getModules() {
+    public Map<Integer, IModule> getModules() {
         return modules;
     }
 

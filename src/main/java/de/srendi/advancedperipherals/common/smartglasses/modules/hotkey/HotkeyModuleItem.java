@@ -24,7 +24,7 @@ public class HotkeyModuleItem extends BaseItem implements IModuleItem {
     }
 
     @Override
-    public IModule getModule(SmartGlassesAccess access) {
+    public IModule createModule(SmartGlassesAccess access) {
         return new HotkeyModule();
     }
 

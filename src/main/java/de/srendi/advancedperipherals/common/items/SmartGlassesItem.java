@@ -13,10 +13,8 @@ import dan200.computercraft.shared.computer.items.IComputerItem;
 import dan200.computercraft.shared.network.container.ComputerContainerData;
 import dan200.computercraft.shared.util.IDAssigner;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
-import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesAPI;
-import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesComputer;
-import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesItemHandler;
-import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesMenuProvider;
+import de.srendi.advancedperipherals.common.smartglasses.*;
+import de.srendi.advancedperipherals.common.smartglasses.modules.IModule;
 import de.srendi.advancedperipherals.common.smartglasses.modules.IModuleItem;
 import de.srendi.advancedperipherals.common.smartglasses.modules.ModulePeripheral;
 import net.minecraft.ChatFormatting;
@@ -123,8 +121,15 @@ public class SmartGlassesItem extends ArmorItem implements IComputerItem, IMedia
             itemHandler.resolve().ifPresent(iItemHandler -> {
                 for(int slot = 0; slot < iItemHandler.getSlots(); slot++) {
                     ItemStack itemStack = iItemHandler.getStackInSlot(slot);
-                    if(itemStack.getItem() instanceof IModuleItem) {
-                        itemStack.inventoryTick(world, entity, slot, selected);
+                    if(itemStack.getItem() instanceof IModuleItem iModuleItem) {
+                        SmartGlassesAccess glassesAccess = null;
+                        IModule module = null;
+                        if (!world.isClientSide) {
+                            SmartGlassesComputer computer = getOrCreateComputer((ServerLevel) world, entity, entity instanceof Player player ? player.getInventory() : null, stack);
+                            module = computer.getModules().get(slot);
+                            glassesAccess = computer.getSmartGlassesAccess();
+                        }
+                        iModuleItem.inventoryTick(itemStack, world, entity, slot, selected, glassesAccess, module);
                     }
                 }
             });

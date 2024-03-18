@@ -26,7 +26,7 @@ public class OverlayModule implements IModule {
 
     @Override
     public ResourceLocation getName() {
-        return new ResourceLocation(AdvancedPeripherals.MOD_ID, "glasses");
+        return AdvancedPeripherals.getRL("glasses");
     }
 
     @Override

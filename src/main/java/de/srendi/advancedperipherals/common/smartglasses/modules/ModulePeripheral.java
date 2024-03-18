@@ -10,7 +10,7 @@ public class ModulePeripheral extends BasePeripheral<ModulePeripheralOwner> {
 
     public ModulePeripheral(SmartGlassesComputer computer) {
         super(PERIPHERAL_TYPE, new ModulePeripheralOwner(computer));
-        getPeripheralOwner().getComputer().getModules().forEach(module -> {
+        getPeripheralOwner().getComputer().getModules().values().forEach(module -> {
             IModuleFunctions functions = module.getFunctions(computer.getSmartGlassesAccess());
             
             if (functions != null)
@@ -25,6 +25,6 @@ public class ModulePeripheral extends BasePeripheral<ModulePeripheralOwner> {
 
     @LuaFunction(mainThread = true)
     public final String[] getModules() {
-        return getPeripheralOwner().getComputer().getModules().stream().map(module -> module.getName().toString()).toArray(String[]::new);
+        return getPeripheralOwner().getComputer().getModules().values().stream().map(module -> module.getName().toString()).toArray(String[]::new);
     }
 }

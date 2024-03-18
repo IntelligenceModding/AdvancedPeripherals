@@ -10,7 +10,7 @@ public class HotkeyModule implements IModule {
 
     @Override
     public ResourceLocation getName() {
-        return new ResourceLocation(AdvancedPeripherals.MOD_ID, "hotkey");
+        return AdvancedPeripherals.getRL("hotkey");
     }
 
     @Override
