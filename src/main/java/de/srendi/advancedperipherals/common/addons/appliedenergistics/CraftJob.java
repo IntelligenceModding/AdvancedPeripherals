@@ -4,7 +4,6 @@ import appeng.api.networking.IGrid;
 import appeng.api.networking.IGridNode;
 import appeng.api.networking.crafting.*;
 import appeng.api.networking.security.IActionSource;
-import appeng.api.networking.storage.IStorageService;
 import appeng.api.stacks.AEKey;
 import dan200.computercraft.api.lua.ILuaCallback;
 import dan200.computercraft.api.lua.LuaException;
@@ -75,7 +74,6 @@ public class CraftJob implements ILuaCallback {
             return;
         }
 
-        IStorageService storage = grid.getService(IStorageService.class);
         ICraftingService crafting = grid.getService(ICraftingService.class);
 
         if (item == null) {
@@ -108,8 +106,6 @@ public class CraftJob implements ILuaCallback {
             return;
         }
 
-        setStartedCrafting(true);
-
         if (job.simulation()) {
             return;
         }
@@ -122,6 +118,8 @@ public class CraftJob implements ILuaCallback {
         //TODO: Create events or methods like `isCraftingFinished` or `getCraftingJobState`
         ICraftingService crafting = grid.getService(ICraftingService.class);
         crafting.submitJob(job, null, target, false, this.source);
+
+        setStartedCrafting(true);
 
         this.futureJob = null;
     }
