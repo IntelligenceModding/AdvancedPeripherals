@@ -75,36 +75,46 @@ public class AppEngApi {
         return null;
     }
 
-    public static List<Object> listStacks(MEStorage monitor, ICraftingService service, int flag) {
+    public static List<Object> listStacks(MEStorage monitor, ICraftingService service) {
         List<Object> items = new ArrayList<>();
         KeyCounter keyCounter = monitor.getAvailableStacks();
         for (Object2LongMap.Entry<AEKey> aeKey : keyCounter) {
             if (aeKey.getKey() instanceof AEItemKey itemKey) {
-                if (flag == 1 && aeKey.getLongValue() < 0) {
-                    continue;
-                } else if (flag == 2 && !service.isCraftable(itemKey)) {
-                    service.getCraftables(AEKeyFilter.none()).forEach(aeKey1 -> {
-                        Map<String, Object> itemObject = getObjectFromStack(Pair.of((long) 0, aeKey1), service);
-                        if (keyCounter.get(aeKey1) == 0 && !items.contains(itemObject))
-                            items.add(itemObject);
-                    });
-                    continue;
-                }
-
                 items.add(getObjectFromStack(Pair.of(aeKey.getLongValue(), itemKey), service));
             }
         }
         return items;
     }
 
-    public static List<Object> listFluids(MEStorage monitor, ICraftingService service, int flag) {
+    public static List<Object> listCraftableStacks(MEStorage monitor, ICraftingService service) {
+        List<Object> items = new ArrayList<>();
+        KeyCounter keyCounter = monitor.getAvailableStacks();
+        Set<AEKey> craftables = service.getCraftables(AEKeyFilter.none());
+        for (AEKey aeKey : craftables) {
+            if (aeKey instanceof AEItemKey) {
+                items.add(getObjectFromStack(Pair.of(keyCounter.get(aeKey), aeKey), service));
+            }
+        }
+        return items;
+    }
+
+    public static List<Object> listFluids(MEStorage monitor, ICraftingService service) {
         List<Object> items = new ArrayList<>();
         for (Object2LongMap.Entry<AEKey> aeKey : monitor.getAvailableStacks()) {
             if (aeKey.getKey() instanceof AEFluidKey itemKey) {
-                if ((flag == 1 && aeKey.getLongValue() < 0) || (flag == 2 && !service.isCraftable(itemKey)))
-                    continue;
-
                 items.add(getObjectFromStack(Pair.of(aeKey.getLongValue(), itemKey), service));
+            }
+        }
+        return items;
+    }
+
+    public static List<Object> listCraftableFluids(MEStorage monitor, ICraftingService service) {
+        List<Object> items = new ArrayList<>();
+        KeyCounter keyCounter = monitor.getAvailableStacks();
+        Set<AEKey> craftables = service.getCraftables(AEKeyFilter.none());
+        for (AEKey aeKey : craftables) {
+            if (aeKey instanceof AEFluidKey) {
+                items.add(getObjectFromStack(Pair.of(keyCounter.get(aeKey), aeKey), service));
             }
         }
         return items;
