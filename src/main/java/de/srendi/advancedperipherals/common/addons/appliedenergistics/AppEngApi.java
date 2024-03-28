@@ -161,6 +161,7 @@ public class AppEngApi {
         map.put("coProcessors", coProcessors);
         map.put("isBusy", isBusy);
         map.put("craftingJob", cpu.getJobStatus() != null ? getObjectFromJob(cpu.getJobStatus()) : null);
+        map.put("selectionMode", cpu.getSelectionMode().toString());
 
         return map;
     }
