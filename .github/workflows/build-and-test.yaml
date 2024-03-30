@@ -1,6 +1,6 @@
 name: build-and-test
 run-name: Build and test the changes
-on: [push]
+on: [push, pull_request, workflow_dispatch]
 jobs:
   build:
     name: Build
