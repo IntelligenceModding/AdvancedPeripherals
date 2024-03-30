@@ -105,9 +105,10 @@ public class InventoryManagerPeripheral extends BasePeripheral<BlockEntityPeriph
         List<Object> items = new ArrayList<>();
         int i = 0; //Used to let users easily sort the items by the slots. Also, a better way for the user to see where an item actually is
         for (ItemStack stack : getOwnerPlayer().getInventory().items) {
-            if (!stack.isEmpty()) {
-                items.add(LuaConverter.stackToObjectWithSlot(stack, i));
-            }
+            ItemStack copiedStack = stack.copy();
+            if (!copiedStack.isEmpty())
+                items.add(LuaConverter.stackToObjectWithSlot(copiedStack, i));
+
             i++;
         }
         return items;
@@ -126,7 +127,7 @@ public class InventoryManagerPeripheral extends BasePeripheral<BlockEntityPeriph
         List<Object> items = new ArrayList<>();
         for (int slot = 0; slot < inventoryTo.getSlots(); slot++) {
             if (!inventoryTo.getStackInSlot(slot).isEmpty()) {
-                items.add(LuaConverter.stackToObjectWithSlot(inventoryTo.getStackInSlot(slot), slot));
+                items.add(LuaConverter.stackToObjectWithSlot(inventoryTo.getStackInSlot(slot).copy(), slot));
             }
         }
         return MethodResult.of(items);
@@ -136,8 +137,9 @@ public class InventoryManagerPeripheral extends BasePeripheral<BlockEntityPeriph
     public final List<Object> getArmor() throws LuaException {
         List<Object> items = new ArrayList<>();
         for (ItemStack stack : getOwnerPlayer().getInventory().armor) {
-            if (!stack.isEmpty()) {
-                items.add(LuaConverter.stackToObjectWithSlot(stack, ArmorSlot.getSlotForItem(stack)));
+            ItemStack copiedStack = stack.copy();
+            if (!copiedStack.isEmpty()) {
+                items.add(LuaConverter.stackToObjectWithSlot(copiedStack, ArmorSlot.getSlotForItem(copiedStack)));
             }
         }
         return items;
