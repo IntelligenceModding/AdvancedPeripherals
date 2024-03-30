@@ -13,6 +13,7 @@ import appeng.api.storage.MEStorage;
 import appeng.blockentity.storage.DriveBlockEntity;
 import appeng.items.storage.BasicStorageCell;
 import appeng.parts.storagebus.StorageBusPart;
+import com.the9grounds.aeadditions.item.storage.SuperStorageCell;
 import dan200.computercraft.shared.util.NBTUtil;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.addons.APAddons;
