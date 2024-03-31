@@ -14,6 +14,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           status: pending
           context: Building AP
+          sha: ${{ github.sha }}
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v3
       - name: Build with Gradle
@@ -25,3 +26,4 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           status: ${{ job.status }}
           context: Building AP
+          sha: ${{ github.sha }}
