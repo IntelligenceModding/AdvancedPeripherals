@@ -9,6 +9,7 @@ jobs:
       - name: Set start commit status
         uses: myrotvorets/set-commit-status-action@v2.0.1
         with:
+          token: ${{ secrets.AP_TOKEN }}
           context: Building AP
   build:
     name: Build
@@ -28,5 +29,6 @@ jobs:
       - name: Set final commit status
         uses: myrotvorets/set-commit-status-action@v2.0.1
         with:
+          token: ${{ secrets.AP_TOKEN }}
           status: ${{ needs.build.result }}
           context: Building AP
