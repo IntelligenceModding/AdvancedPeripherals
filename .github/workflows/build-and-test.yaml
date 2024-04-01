@@ -15,6 +15,7 @@ jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
+    needs: test
     steps:
       - name: Checkout sources
         uses: actions/checkout@v4
