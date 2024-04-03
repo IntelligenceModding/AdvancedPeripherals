@@ -24,9 +24,9 @@ public interface IModule {
      * Implementations should check if the entity is not null since the glasses can still tick without belonging to an entity
      * @param smartGlassesAccess Contains access to the entity, the computer, the level or the upgrades
      */
-    default void tick(SmartGlassesAccess smartGlassesAccess) {};
+    default void tick(SmartGlassesAccess smartGlassesAccess) {}
 
-    default void onUnequipped(SmartGlassesAccess smartGlassesAccess) {};
+    default void onUnequipped(SmartGlassesAccess smartGlassesAccess) {}
 
     /**
      * ErrorConstants class contains constants for error messages. This is used for easier error handling for users.

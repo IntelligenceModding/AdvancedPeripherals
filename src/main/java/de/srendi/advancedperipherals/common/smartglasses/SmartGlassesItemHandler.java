@@ -22,7 +22,7 @@ public class SmartGlassesItemHandler implements IItemHandlerModifiable, INBTSeri
     @Nullable
     private final SmartGlassesComputer computer;
 
-    public SmartGlassesItemHandler(ItemStack stack,@Nullable SmartGlassesComputer computer) {
+    public SmartGlassesItemHandler(ItemStack stack, @Nullable SmartGlassesComputer computer) {
         this.stack = stack;
         this.computer = computer;
         deserializeNBT(stack.getOrCreateTagElement("Items"));

@@ -1,6 +1,5 @@
 package de.srendi.advancedperipherals.common.setup;
 
-import appeng.client.Hotkeys;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.items.*;
 import de.srendi.advancedperipherals.common.items.base.SmartGlassesMaterials;
