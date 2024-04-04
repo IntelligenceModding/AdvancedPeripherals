@@ -1,5 +1,6 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.integrations;
 
+import dan200.computercraft.api.ComputerCraftAPI;
 import dan200.computercraft.api.peripheral.IPeripheral;
 import dan200.computercraft.api.peripheral.IPeripheralProvider;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
@@ -10,7 +11,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.NoteBlock;
-import net.minecraft.world.level.block.entity.BeaconBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.common.util.LazyOptional;
 import org.jetbrains.annotations.NotNull;
@@ -70,7 +70,7 @@ public class IntegrationPeripheralProvider implements IPeripheralProvider {
     }
 
     public static void load() {
-        registerIntegration(new BlockEntityIntegration(BeaconIntegration::new, BeaconBlockEntity.class::isInstance));
+        ComputerCraftAPI.registerGenericSource(new BeaconIntegration());
         registerIntegration(new BlockIntegration(NoteBlockIntegration::new, NoteBlock.class::isInstance));
 
         for (String mod : SUPPORTED_MODS) {
