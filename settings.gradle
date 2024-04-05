@@ -5,10 +5,14 @@ pluginManagement {
         maven {
             name = 'NeoForged'
             url = 'https://maven.neoforged.net/releases'
-        }
-        maven {
-            name = "Intelligence Minecraft"
-            url = "https://mvn.intelligence-modding.de/Minecraft"
+
+            content {
+                includeGroup("net.minecraftforge")
+                includeGroup("net.neoforged.gradle")
+                includeGroup("net.neoforged")
+                includeGroup("org.spongepowered.mixin")
+                includeGroup("org.spongepowered")
+            }
         }
     }
 }
