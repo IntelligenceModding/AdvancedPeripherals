@@ -2,39 +2,24 @@ import net.darkhax.curseforgegradle.TaskPublishCurseForge
 
 import java.text.SimpleDateFormat
 
-buildscript {
-    repositories {
-        maven {
-            name = "Intelligence Minecraft"
-            url = "https://mvn.intelligence-modding.de/Minecraft"
-        }
-        mavenCentral()
-        gradlePluginPortal()
-    }
-    dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '6.0+', changing: true
-        classpath 'org.parchmentmc:librarian:1.+'
-    }
-}
-
 plugins {
     id "maven-publish"
     id 'net.darkhax.curseforgegradle' version '1.1.16'
     id 'org.jetbrains.changelog' version '1.2.1'
     id "com.modrinth.minotaur" version "2.+"
     id "org.jetbrains.kotlin.jvm" version "1.6.10"
+    id 'net.minecraftforge.gradle' version '[6.0.18,6.2)'
+    id 'org.parchmentmc.librarian.forgegradle' version '1.+'
+    id 'org.spongepowered.mixin' version '0.7.+'
     id "com.github.breadmoirai.github-release" version "2.5.2"
     id 'checkstyle'
     id 'java'
 }
 
-apply plugin: 'net.minecraftforge.gradle'
-apply plugin: 'org.parchmentmc.librarian.forgegradle'
-
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
 wrapper {
-    gradleVersion = '8.1.1'
+    gradleVersion = '8.4'
     distributionType = Wrapper.DistributionType.ALL
 }
 
@@ -182,45 +167,59 @@ repositories {
     maven {
         name = "Blamejared maven botania patchouli"
         url = 'https://maven.blamejared.com'
+        content {
+            includeGroup("vazkii.botania")
+            includeGroup("vazkii.patchouli")
+        }
     }
     maven {
         name = "Squiddev maven cct"
         url = 'https://squiddev.cc/maven/'
         content {
             includeGroup("org.squiddev")
+            includeGroup("cc.tweaked")
             includeModule("org.squiddev", "Cobalt")
         }
     }
     maven {
         name = "Theillusivec4 maven curios"
         url = "https://maven.theillusivec4.top/"
+        content {
+            includeGroup("top.theillusivec4.curios")
+        }
     }
     maven {
         name = "LDT Team minecolonies"
         url = 'https://ldtteam.jfrog.io/ldtteam/modding'
+        content {
+            includeGroup("com.ldtteam")
+        }
     }
     maven {
         name = "Modmaven Jei"
         url = 'https://modmaven.dev/'
+        content {
+            includeGroup("mezz.jei")
+            includeGroup("appeng")
+            includeGroup("mekanism")
+        }
     }
     maven {
         name = "Create maven"
         url = "https://maven.tterrag.com/"
         content {
-            includeGroup "com.simibubi.create"
-            includeGroup "com.jozufozu.flywheel"
-        }
-    }
-    maven {
-        name = "SirEdvin's private repository"
-        url = "https://repo.repsy.io/mvn/siredvin/default"
-        content {
-            includeGroup "site.siredvin.ttoolkit"
+            includeGroup("com.simibubi.create")
+            includeGroup("com.jozufozu.flywheel")
+            includeGroup("com.tterrag.registrate")
         }
     }
     maven {
         name = "Shedaniel cloth"
         url = "https://maven.shedaniel.me/"
+        content {
+            includeGroup("dev.architectury")
+            includeGroup("me.shedaniel.cloth")
+        }
     }
     maven {
         url = uri("https://maven.pkg.github.com/refinedmods/refinedstorage")
@@ -228,20 +227,22 @@ repositories {
             username = "anything"
             password = "\u0067hp_oGjcDFCn8jeTzIj4Ke9pLoEVtpnZMP4VQgaX"
         }
+        content {
+            includeModule("com.refinedmods", "refinedstorage")
+        }
     }
     maven {
         name = 'Kotlin for Forge'
         url = 'https://thedarkcolour.github.io/KotlinForForge/'
+        content {
+            includeModule("thedarkcolour", "kotlinforforge")
+        }
     }
     maven {
         url = "https://cursemaven.com"
         content {
             includeGroup "curse.maven"
         }
-    }
-    maven {
-        name = "Intelligence repository"
-        url = "https://mvn.intelligence-modding.de/Intelligence"
     }
 }
 
@@ -488,6 +489,8 @@ tasks.register('publishCurseForge', TaskPublishCurseForge, { task ->
 
         addRequirement('cc-tweaked')
 
+        addModLoader("forge", "neoforge")
+
         releaseType = "${release_type}"
     }
 })
@@ -521,7 +524,7 @@ modrinth {
     versionType = release_type
     uploadFile = jar
     gameVersions = [minecraft_version]
-    loaders = ["forge"]
+    loaders = ["forge", "neoforge"]
     dependencies {
         required.project "cc-tweaked"
     }
