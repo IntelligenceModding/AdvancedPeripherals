@@ -13,6 +13,7 @@ import appeng.api.storage.MEStorage;
 import appeng.api.storage.cells.IBasicCellItem;
 import appeng.blockentity.storage.DriveBlockEntity;
 import appeng.parts.storagebus.StorageBusPart;
+import com.the9grounds.aeadditions.item.storage.StorageCell;
 import com.the9grounds.aeadditions.item.storage.SuperStorageCell;
 import dan200.computercraft.shared.util.NBTUtil;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
@@ -335,6 +336,8 @@ public class AppEngApi {
                     }
                 } else if (APAddons.aeAdditionsLoaded && (stack.getItem() instanceof SuperStorageCell superStorageCell)) {
                     total += superStorageCell.getKiloBytes() * 1024;
+                } else if (APAddons.aeAdditionsLoaded && (stack.getItem() instanceof StorageCell storageCell)) {
+                    total += storageCell.getKiloBytes() * 1024;
                 }
             }
         }
@@ -382,6 +385,8 @@ public class AppEngApi {
                     }
                 } else if (APAddons.aeAdditionsLoaded && stack.getItem() instanceof SuperStorageCell superStorageCell) {
                     total += superStorageCell.getKiloBytes() * 1024;
+                } else if (APAddons.aeAdditionsLoaded && (stack.getItem() instanceof StorageCell storageCell)) {
+                    total += storageCell.getKiloBytes() * 1024;
                 }
             }
         }
@@ -447,6 +452,12 @@ public class AppEngApi {
                     long numItemsInCell = stack.getTag().getLong("ic");
 
                     used += numItemsInCell;
+                } else if (APAddons.aeAdditionsLoaded && stack.getItem() instanceof StorageCell) {
+                    if (stack.getTag() == null)
+                        continue;
+                    long numItemsInCell = stack.getTag().getLong("ic");
+
+                    used += numItemsInCell;
                 }
             }
         }
@@ -492,7 +503,13 @@ public class AppEngApi {
 
                         used += ((int) Math.ceil(((double) numBucketsInCell) / 8)) + ((long) bytesPerType * numOfType);
                     }
-                } else if (APAddons.aeAdditionsLoaded && stack.getItem() instanceof SuperStorageCell superStorageCell) {
+                } else if (APAddons.aeAdditionsLoaded && stack.getItem() instanceof SuperStorageCell) {
+                    if (stack.getTag() == null)
+                        continue;
+                    long numItemsInCell = stack.getTag().getLong("ic");
+
+                    used += numItemsInCell;
+                } else if (APAddons.aeAdditionsLoaded && stack.getItem() instanceof StorageCell) {
                     if (stack.getTag() == null)
                         continue;
                     long numItemsInCell = stack.getTag().getLong("ic");
