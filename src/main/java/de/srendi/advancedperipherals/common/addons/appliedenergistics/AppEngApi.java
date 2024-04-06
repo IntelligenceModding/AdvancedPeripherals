@@ -337,6 +337,8 @@ public class AppEngApi {
                 } else if (APAddons.aeAdditionsLoaded && (stack.getItem() instanceof SuperStorageCell superStorageCell)) {
                     total += superStorageCell.getKiloBytes() * 1024;
                 } else if (APAddons.aeAdditionsLoaded && (stack.getItem() instanceof StorageCell storageCell)) {
+                    if (storageCell.getKeyType() != AEKeyType.items())
+                        continue;
                     total += storageCell.getKiloBytes() * 1024;
                 }
             }
@@ -386,6 +388,8 @@ public class AppEngApi {
                 } else if (APAddons.aeAdditionsLoaded && stack.getItem() instanceof SuperStorageCell superStorageCell) {
                     total += superStorageCell.getKiloBytes() * 1024;
                 } else if (APAddons.aeAdditionsLoaded && (stack.getItem() instanceof StorageCell storageCell)) {
+                    if (storageCell.getKeyType() != AEKeyType.fluids())
+                        continue;
                     total += storageCell.getKiloBytes() * 1024;
                 }
             }
@@ -452,7 +456,9 @@ public class AppEngApi {
                     long numItemsInCell = stack.getTag().getLong("ic");
 
                     used += numItemsInCell;
-                } else if (APAddons.aeAdditionsLoaded && stack.getItem() instanceof StorageCell) {
+                } else if (APAddons.aeAdditionsLoaded && stack.getItem() instanceof StorageCell storageCell) {
+                    if (storageCell.getKeyType() != AEKeyType.items())
+                        continue;
                     if (stack.getTag() == null)
                         continue;
                     long numItemsInCell = stack.getTag().getLong("ic");
@@ -509,7 +515,9 @@ public class AppEngApi {
                     long numItemsInCell = stack.getTag().getLong("ic");
 
                     used += numItemsInCell;
-                } else if (APAddons.aeAdditionsLoaded && stack.getItem() instanceof StorageCell) {
+                } else if (APAddons.aeAdditionsLoaded && stack.getItem() instanceof StorageCell storageCell) {
+                    if (storageCell.getKeyType() != AEKeyType.fluids())
+                        continue;
                     if (stack.getTag() == null)
                         continue;
                     long numItemsInCell = stack.getTag().getLong("ic");
