@@ -310,11 +310,11 @@ public class AppEngApi {
     public static long getTotalItemStorage(IGridNode node) {
         long total = 0;
 
-        Iterator<IGridNode> iterator = node.getGrid().getMachineNodes(DriveBlockEntity.class).iterator();
+        // note: do not query DriveBlockEntity.class specifically here, because it will avoid subclasses, e.g. the ME Extended Drive from ExtendedAE
+        Iterator<IGridNode> iterator = node.getGrid().getNodes().iterator();
 
         while (iterator.hasNext()) {
-            DriveBlockEntity entity = (DriveBlockEntity) iterator.next().getService(IStorageProvider.class);
-            if (entity == null)
+            if (!(iterator.next().getService(IStorageProvider.class) instanceof DriveBlockEntity entity))
                 continue;
 
             InternalInventory inventory = entity.getInternalInventory();
@@ -362,11 +362,10 @@ public class AppEngApi {
     public static long getTotalFluidStorage(IGridNode node) {
         long total = 0;
 
-        Iterator<IGridNode> iterator = node.getGrid().getMachineNodes(DriveBlockEntity.class).iterator();
+        Iterator<IGridNode> iterator = node.getGrid().getNodes().iterator();
 
         while (iterator.hasNext()) {
-            DriveBlockEntity entity = (DriveBlockEntity) iterator.next().getService(IStorageProvider.class);
-            if (entity == null)
+            if (!(iterator.next().getService(IStorageProvider.class) instanceof DriveBlockEntity entity))
                 continue;
 
             InternalInventory inventory = entity.getInternalInventory();
@@ -410,11 +409,10 @@ public class AppEngApi {
     public static long getUsedItemStorage(IGridNode node) {
         long used = 0;
 
-        Iterator<IGridNode> iterator = node.getGrid().getMachineNodes(DriveBlockEntity.class).iterator();
+        Iterator<IGridNode> iterator = node.getGrid().getNodes().iterator();
 
         while (iterator.hasNext()) {
-            DriveBlockEntity entity = (DriveBlockEntity) iterator.next().getService(IStorageProvider.class);
-            if (entity == null)
+            if (!(iterator.next().getService(IStorageProvider.class) instanceof DriveBlockEntity entity))
                 continue;
 
             InternalInventory inventory = entity.getInternalInventory();
@@ -472,11 +470,10 @@ public class AppEngApi {
     public static long getUsedFluidStorage(IGridNode node) {
         long used = 0;
 
-        Iterator<IGridNode> iterator = node.getGrid().getMachineNodes(DriveBlockEntity.class).iterator();
+        Iterator<IGridNode> iterator = node.getGrid().getNodes().iterator();
 
         while (iterator.hasNext()) {
-            DriveBlockEntity entity = (DriveBlockEntity) iterator.next().getService(IStorageProvider.class);
-            if (entity == null)
+            if (!(iterator.next().getService(IStorageProvider.class) instanceof DriveBlockEntity entity))
                 continue;
 
             InternalInventory inventory = entity.getInternalInventory();
