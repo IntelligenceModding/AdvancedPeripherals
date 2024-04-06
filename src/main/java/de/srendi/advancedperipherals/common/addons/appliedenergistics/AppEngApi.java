@@ -10,6 +10,7 @@ import appeng.api.stacks.*;
 import appeng.api.storage.AEKeyFilter;
 import appeng.api.storage.IStorageProvider;
 import appeng.api.storage.MEStorage;
+import appeng.api.storage.cells.IBasicCellItem;
 import appeng.blockentity.storage.DriveBlockEntity;
 import appeng.items.storage.BasicStorageCell;
 import appeng.parts.storagebus.StorageBusPart;
@@ -325,7 +326,7 @@ public class AppEngApi {
                 if (stack.isEmpty())
                     continue;
 
-                if (stack.getItem() instanceof BasicStorageCell cell) {
+                if (stack.getItem() instanceof IBasicCellItem cell) {
                     if (cell.getKeyType().getClass().isAssignableFrom(AEKeyType.items().getClass())) {
                         total += cell.getBytes(null);
                     }
@@ -377,7 +378,7 @@ public class AppEngApi {
                 if (stack.isEmpty())
                     continue;
 
-                if (stack.getItem() instanceof BasicStorageCell cell) {
+                if (stack.getItem() instanceof IBasicCellItem cell) {
                     if (cell.getKeyType().getClass().isAssignableFrom(AEKeyType.fluids().getClass())) {
                         total += cell.getBytes(null);
                     }
@@ -425,7 +426,7 @@ public class AppEngApi {
                 if (stack.isEmpty())
                     continue;
 
-                if (stack.getItem() instanceof BasicStorageCell cell) {
+                if (stack.getItem() instanceof IBasicCellItem cell) {
                     int bytesPerType = cell.getBytesPerType(null);
 
                     if (cell.getKeyType().getClass().isAssignableFrom(AEKeyType.items().getClass())) {
@@ -484,7 +485,7 @@ public class AppEngApi {
             for (int i = 0; i < inventory.size(); i++) {
                 ItemStack stack = inventory.getStackInSlot(i);
 
-                if (stack.getItem() instanceof BasicStorageCell cell) {
+                if (stack.getItem() instanceof IBasicCellItem cell) {
                     int bytesPerType = cell.getBytesPerType(null);
 
                     if (cell.getKeyType().getClass().isAssignableFrom(AEKeyType.fluids().getClass())) {
