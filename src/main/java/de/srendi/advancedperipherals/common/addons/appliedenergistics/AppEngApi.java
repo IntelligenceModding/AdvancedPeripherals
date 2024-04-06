@@ -12,7 +12,6 @@ import appeng.api.storage.IStorageProvider;
 import appeng.api.storage.MEStorage;
 import appeng.api.storage.cells.IBasicCellItem;
 import appeng.blockentity.storage.DriveBlockEntity;
-import appeng.items.storage.BasicStorageCell;
 import appeng.parts.storagebus.StorageBusPart;
 import com.the9grounds.aeadditions.item.storage.SuperStorageCell;
 import dan200.computercraft.shared.util.NBTUtil;
@@ -549,7 +548,7 @@ public class AppEngApi {
                 if (stack.isEmpty())
                     continue;
 
-                if (stack.getItem() instanceof BasicStorageCell cell) {
+                if (stack.getItem() instanceof IBasicCellItem cell) {
                     items.add(getObjectFromCell(cell, stack));
                 } else if (APAddons.aeThingsLoaded && stack.getItem() instanceof DISKDrive disk) {
                     items.add(getObjectFromDisk(disk, stack));
@@ -562,7 +561,7 @@ public class AppEngApi {
         return items;
     }
 
-    private static Map<String, Object> getObjectFromCell(BasicStorageCell cell, ItemStack stack) {
+    private static Map<String, Object> getObjectFromCell(IBasicCellItem cell, ItemStack stack) {
         Map<String, Object> map = new HashMap<>();
 
         map.put("item", ItemUtil.getRegistryKey(stack.getItem()).toString());
