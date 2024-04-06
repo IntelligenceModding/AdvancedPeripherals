@@ -61,6 +61,14 @@ public class ChunkManager extends SavedData {
         }
     }
 
+    private static boolean forceChunk(ServerLevel level, UUID owner, ChunkPos pos) {
+        return ForgeChunkManager.forceChunk(level, AdvancedPeripherals.MOD_ID, owner, pos.x, pos.z, true, true);
+    }
+
+    private static boolean unforceChunk(ServerLevel level, UUID owner, ChunkPos pos) {
+        return ForgeChunkManager.forceChunk(level, AdvancedPeripherals.MOD_ID, owner, pos.x, pos.z, false, true);
+    }
+
     public synchronized boolean addForceChunk(ServerLevel level, UUID owner, ChunkPos pos) {
         AdvancedPeripherals.debug("Trying to load forced chunk cluster" + pos, Level.WARN);
         if (forcedChunks.containsKey(owner))
@@ -71,7 +79,7 @@ public class ChunkManager extends SavedData {
         boolean result = true;
         for (int x = -chunkRadius; x <= chunkRadius; x++) {
             for (int z = -chunkRadius; z <= chunkRadius; z++) {
-                result &= ForgeChunkManager.forceChunk(level, AdvancedPeripherals.MOD_ID, owner, pos.x + x, pos.z + z, true, true);
+                result &= forceChunk(level, owner, new ChunkPos(pos.x + x, pos.z + z));
             }
         }
         return result;
@@ -96,16 +104,14 @@ public class ChunkManager extends SavedData {
         if (chunkRecord == null)
             return true;
         String dimensionName = level.dimension().location().toString();
-        if (!chunkRecord.getDimensionName().equals(dimensionName)) 
+        if (!chunkRecord.getDimensionName().equals(dimensionName))
             throw new IllegalArgumentException(String.format("Incorrect dimension! Should be %s instead of %s", chunkRecord.getDimensionName(), dimensionName));
         boolean result = true;
         final ChunkPos pos = chunkRecord.getPos();
         final int chunkRadius = chunkRecord.getRadius();
         for (int x = -chunkRadius; x <= chunkRadius; x++) {
             for (int z = -chunkRadius; z <= chunkRadius; z++) {
-                // TODO: Must save chunk mark in a map or sth else.
-                // Because technically the chunk will be unforced anyway when two chunky turtle in the same chunk, and one left the other stay.
-                result &= ForgeChunkManager.forceChunk(level, AdvancedPeripherals.MOD_ID, owner, pos.x + x, pos.z + z, false, true);
+                result &= unforceChunk(level, owner, new ChunkPos(pos.x + x, pos.z + z));
             }
         }
         if (result) {
@@ -136,17 +142,17 @@ public class ChunkManager extends SavedData {
                 // clean overflowed load radius
                 for (int x = chunkRadius + 1; x <= loadedRadius; x++) {
                     for (int z = chunkRadius + 1; z <= loadedRadius; z++) {
-                        ForgeChunkManager.forceChunk(level, AdvancedPeripherals.MOD_ID, uuid, pos.x + x, pos.z + z, false, true);
-                        ForgeChunkManager.forceChunk(level, AdvancedPeripherals.MOD_ID, uuid, pos.x + x, pos.z - z, false, true);
-                        ForgeChunkManager.forceChunk(level, AdvancedPeripherals.MOD_ID, uuid, pos.x - x, pos.z + z, false, true);
-                        ForgeChunkManager.forceChunk(level, AdvancedPeripherals.MOD_ID, uuid, pos.x - x, pos.z - z, false, true);
+                        unforceChunk(level, owner, new ChunkPos(pos.x + x, pos.z + z));
+                        unforceChunk(level, owner, new ChunkPos(pos.x + x, pos.z - z));
+                        unforceChunk(level, owner, new ChunkPos(pos.x - x, pos.z + z));
+                        unforceChunk(level, owner, new ChunkPos(pos.x - x, pos.z - z));
                     }
                 }
                 value.setRadius(chunkRadius);
             }
             for (int x = -chunkRadius; x <= chunkRadius; x++) {
                 for (int z = -chunkRadius; z <= chunkRadius; z++) {
-                    ForgeChunkManager.forceChunk(level, AdvancedPeripherals.MOD_ID, uuid, pos.x + x, pos.z + z, true, true);
+                    forceChunk(level, uuid, new ChunkPos(pos.x + x, pos.z + z));
                 }
             }
         });
@@ -222,7 +228,7 @@ public class ChunkManager extends SavedData {
         }
 
         public void setRadius(int radius) {
-            this.radius = radius
+            this.radius = radius;
         }
 
         public void touch() {
