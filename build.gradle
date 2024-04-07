@@ -166,6 +166,10 @@ repositories {
     maven {
         name = "Blamejared maven botania patchouli"
         url = 'https://maven.blamejared.com'
+        content {
+            includeGroup("vazkii.botania")
+            includeGroup("vazkii.patchouli")
+        }
     }
     maven {
         name = "Squiddev maven cct"
@@ -178,6 +182,9 @@ repositories {
     maven {
         name = "Theillusivec4 maven curios"
         url = "https://maven.theillusivec4.top/"
+        content {
+            includeGroup("top.theillusivec4.curios")
+        }
     }
     maven {
         name = "LDT Team minecolonies"
@@ -189,6 +196,11 @@ repositories {
     maven {
         name = "Modmaven Jei"
         url = 'https://modmaven.dev/'
+        content {
+            includeGroup("mezz.jei")
+            includeGroup("appeng")
+            includeGroup("mekanism")
+        }
     }
     maven {
         name = "Create maven"
@@ -196,6 +208,7 @@ repositories {
         content {
             includeGroup("com.simibubi.create")
             includeGroup("com.jozufozu.flywheel")
+            includeGroup("com.tterrag.registrate")
         }
     }
     maven {
@@ -208,6 +221,10 @@ repositories {
     maven {
         name = "Shedaniel cloth"
         url = "https://maven.shedaniel.me/"
+        content {
+            includeGroup("dev.architectury")
+            includeGroup("me.shedaniel.cloth")
+        }
     }
     maven {
         url = uri("https://maven.pkg.github.com/refinedmods/refinedstorage")
@@ -215,20 +232,22 @@ repositories {
             username = "anything"
             password = "\u0067hp_oGjcDFCn8jeTzIj4Ke9pLoEVtpnZMP4VQgaX"
         }
+        content {
+            includeModule("com.refinedmods", "refinedstorage")
+        }
     }
     maven {
         name = 'Kotlin for Forge'
         url = 'https://thedarkcolour.github.io/KotlinForForge/'
+        content {
+            includeModule("thedarkcolour", "kotlinforforge")
+        }
     }
     maven {
         url = "https://cursemaven.com"
         content {
             includeGroup "curse.maven"
         }
-    }
-    maven {
-        name = "Intelligence repository"
-        url = "https://mvn.intelligence-modding.de/Intelligence"
     }
 }
 
