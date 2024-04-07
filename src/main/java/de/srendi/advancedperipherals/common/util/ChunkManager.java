@@ -87,7 +87,7 @@ public class ChunkManager extends SavedData {
 
     public synchronized void touch(UUID owner) {
         LoadChunkRecord forcedChunk = forcedChunks.get(owner);
-        if (forcedChunk) {
+        if (forcedChunk != null) {
             forcedChunk.touch();
         }
     }
@@ -99,7 +99,7 @@ public class ChunkManager extends SavedData {
     }
 
     public synchronized boolean removeForceChunk(ServerLevel level, UUID owner) {
-        AdvancedPeripherals.debug("Trying to unload forced chunk cluster" + pos, Level.WARN);
+        AdvancedPeripherals.debug("Attempting to unload forced chunk cluster" + owner, Level.WARN);
         LoadChunkRecord chunkRecord = forcedChunks.get(owner);
         if (chunkRecord == null)
             return true;
@@ -109,6 +109,7 @@ public class ChunkManager extends SavedData {
         boolean result = true;
         final ChunkPos pos = chunkRecord.getPos();
         final int chunkRadius = chunkRecord.getRadius();
+        AdvancedPeripherals.debug("Trying to unload forced chunk cluster" + owner + " at " + pos + " with radius " + chunkRadius, Level.WARN);
         for (int x = -chunkRadius; x <= chunkRadius; x++) {
             for (int z = -chunkRadius; z <= chunkRadius; z++) {
                 result &= unforceChunk(level, owner, new ChunkPos(pos.x + x, pos.z + z));
@@ -136,16 +137,16 @@ public class ChunkManager extends SavedData {
             if (level == null) {
                 return;
             }
-            final ChunkPos pos = chunkRecord.getPos();
+            final ChunkPos pos = value.getPos();
             final int loadedRadius = value.getRadius();
             if (loadedRadius > chunkRadius) {
                 // clean overflowed load radius
                 for (int x = chunkRadius + 1; x <= loadedRadius; x++) {
                     for (int z = chunkRadius + 1; z <= loadedRadius; z++) {
-                        unforceChunk(level, owner, new ChunkPos(pos.x + x, pos.z + z));
-                        unforceChunk(level, owner, new ChunkPos(pos.x + x, pos.z - z));
-                        unforceChunk(level, owner, new ChunkPos(pos.x - x, pos.z + z));
-                        unforceChunk(level, owner, new ChunkPos(pos.x - x, pos.z - z));
+                        unforceChunk(level, uuid, new ChunkPos(pos.x + x, pos.z + z));
+                        unforceChunk(level, uuid, new ChunkPos(pos.x + x, pos.z - z));
+                        unforceChunk(level, uuid, new ChunkPos(pos.x - x, pos.z + z));
+                        unforceChunk(level, uuid, new ChunkPos(pos.x - x, pos.z - z));
                     }
                 }
                 value.setRadius(chunkRadius);
