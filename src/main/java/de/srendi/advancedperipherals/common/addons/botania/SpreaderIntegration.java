@@ -3,6 +3,7 @@ package de.srendi.advancedperipherals.common.addons.botania;
 import dan200.computercraft.api.lua.LuaFunction;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
 import de.srendi.advancedperipherals.lib.peripherals.BlockEntityIntegrationPeripheral;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.NotNull;
 import vazkii.botania.common.block.block_entity.mana.ManaSpreaderBlockEntity;
@@ -47,7 +48,19 @@ public class SpreaderIntegration extends BlockEntityIntegrationPeripheral<ManaSp
 
     @LuaFunction(mainThread = true)
     public final boolean isEmpty() {
-        return blockEntity.isEmpty();
+        return getMana() == 0;
+    }
+
+    @LuaFunction(mainThread = true)
+    public final boolean hasLens() {
+        return blockEntity.getItem(0) != ItemStack.EMPTY;
+    }
+
+    @LuaFunction(mainThread = true)
+    public final Object getLens() {
+        if(blockEntity.getItem(0) == ItemStack.EMPTY)
+            return null;
+        return LuaConverter.stackToObject(blockEntity.getItem(0));
     }
 
 }
