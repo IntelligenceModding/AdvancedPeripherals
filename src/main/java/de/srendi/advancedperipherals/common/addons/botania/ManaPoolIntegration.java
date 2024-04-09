@@ -63,9 +63,9 @@ public class ManaPoolIntegration extends BlockEntityIntegrationPeripheral<ManaPo
 
     @LuaFunction(mainThread = true)
     public final Object getItems() {
-        if(getPoolItems().isEmpty())
-            return null;
         List<ItemStack> items = getPoolItems();
+        if(items.isEmpty())
+            return null;
         Object[] luaStacks = new Object[items.size()];
 
         for (int item = 0; item < items.size(); item++) {
