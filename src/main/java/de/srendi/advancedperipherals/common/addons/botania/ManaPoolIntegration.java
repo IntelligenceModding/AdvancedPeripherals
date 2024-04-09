@@ -48,7 +48,7 @@ public class ManaPoolIntegration extends BlockEntityIntegrationPeripheral<ManaPo
 
     @LuaFunction(mainThread = true)
     public final boolean isEmpty() {
-        return getMana() == 0;
+        return blockEntity.getMana() == 0;
     }
 
     @LuaFunction(mainThread = true)
