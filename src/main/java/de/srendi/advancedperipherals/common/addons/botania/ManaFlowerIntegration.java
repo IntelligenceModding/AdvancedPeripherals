@@ -37,4 +37,15 @@ public class ManaFlowerIntegration extends BlockEntityIntegrationPeripheral<Gene
     public final boolean isOnEnchantedSoil() {
         return blockEntity.overgrowth;
     }
+
+    @LuaFunction(mainThread = true)
+    public final boolean isFull() {
+        return blockEntity.getMana() >= blockEntity.getMaxMana();
+    }
+
+    @LuaFunction(mainThread = true)
+    public final boolean isEmpty() {
+        return getMana() == 0;
+    }
+
 }
