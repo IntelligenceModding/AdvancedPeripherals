@@ -48,7 +48,7 @@ public class SpreaderIntegration extends BlockEntityIntegrationPeripheral<ManaSp
 
     @LuaFunction(mainThread = true)
     public final boolean isEmpty() {
-        return blockEntity.getMana() == 0;
+        return blockEntity.getCurrentMana() == 0;
     }
 
     @LuaFunction(mainThread = true)
