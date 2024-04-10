@@ -305,7 +305,7 @@ dependencies {
 
     // Botania
     compileOnly fg.deobf("vazkii.botania:Botania:${botania_version}")
-
+    runtimeOnly fg.deobf("vazkii.botania:Botania:${botania_version}")
 
     // Minecolonies
     // Remove/Comment this section if you want to use runData.
@@ -324,6 +324,7 @@ dependencies {
 
     // Create
     compileOnly fg.deobf("com.simibubi.create:create-1.20.1:${create_version}:all")
+    runtimeOnly fg.deobf("com.simibubi.create:create-1.20.1:${create_version}:all")
 
     //Powah
     implementation fg.deobf("curse.maven:powah-633483:${powah_version}")
@@ -346,8 +347,8 @@ dependencies {
     implementation fg.deobf("mezz.jei:jei-${jei_version}")
 
     // Create Crafts & Additions
-    compileOnly fg.deobf("curse.maven:createaddition-439890:5099757")
-    // runtimeOnly fg.deobf("curse.maven:createaddition-439890:5099757")
+    compileOnly fg.deobf("curse.maven:createaddition-439890:${createadditions_version}")
+    runtimeOnly fg.deobf("curse.maven:createaddition-439890:${createadditions_version}")
 }
 
 
