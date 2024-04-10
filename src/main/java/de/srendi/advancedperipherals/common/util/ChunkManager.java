@@ -129,7 +129,7 @@ public class ChunkManager extends SavedData {
         }
         initialized = true;
 
-        AdvancedPeripherals.debug("Schedule chunk manager init", Level.WARN); 
+        AdvancedPeripherals.debug("Schedule chunk manager init", Level.WARN);
         final int chunkRadius = APConfig.PERIPHERALS_CONFIG.chunkyTurtleRadius.get();
         final Map<String, ServerLevel> levels = getServerLevels();
         forcedChunks.forEach((uuid, value) -> {
@@ -197,7 +197,7 @@ public class ChunkManager extends SavedData {
         return data;
     }
 
-    private static final Map<String, ServerLevel> getServerLevels() {
+    private static Map<String, ServerLevel> getServerLevels() {
         Map<String, ServerLevel> levels = new HashMap<>();
         ServerLifecycleHooks.getCurrentServer().getAllLevels().forEach(level -> {
             String dimensionName = level.dimension().location().toString();
