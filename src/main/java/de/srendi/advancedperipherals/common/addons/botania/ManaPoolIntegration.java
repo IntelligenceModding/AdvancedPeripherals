@@ -2,68 +2,61 @@ package de.srendi.advancedperipherals.common.addons.botania;
 
 import dan200.computercraft.api.lua.LuaFunction;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
-import de.srendi.advancedperipherals.lib.peripherals.BlockEntityIntegrationPeripheral;
+import de.srendi.advancedperipherals.lib.peripherals.APGenericPeripheral;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.AABB;
-import org.jetbrains.annotations.NotNull;
 import vazkii.botania.common.block.block_entity.mana.ManaPoolBlockEntity;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class ManaPoolIntegration extends BlockEntityIntegrationPeripheral<ManaPoolBlockEntity> {
+public class ManaPoolIntegration implements APGenericPeripheral {
 
-    public ManaPoolIntegration(BlockEntity entity) {
-        super(entity);
-    }
-
-    @NotNull
     @Override
-    public String getType() {
+    public String getPeripheralType() {
         return "manaPool";
     }
 
     @LuaFunction(mainThread = true)
-    public final int getMana() {
+    public final int getMana(ManaPoolBlockEntity blockEntity) {
         return blockEntity.getCurrentMana();
     }
 
     @LuaFunction(mainThread = true)
-    public final int getMaxMana() {
+    public final int getMaxMana(ManaPoolBlockEntity blockEntity) {
         return blockEntity.getMaxMana();
     }
 
     @LuaFunction(mainThread = true)
-    public final int getManaNeeded() {
+    public final int getManaNeeded(ManaPoolBlockEntity blockEntity) {
         return blockEntity.getAvailableSpaceForMana();
     }
 
     @LuaFunction(mainThread = true)
-    public final boolean isFull() {
+    public final boolean isFull(ManaPoolBlockEntity blockEntity) {
         return blockEntity.isFull();
     }
 
     @LuaFunction(mainThread = true)
-    public final boolean isEmpty() {
+    public final boolean isEmpty(ManaPoolBlockEntity blockEntity) {
         return blockEntity.getCurrentMana() == 0;
     }
 
     @LuaFunction(mainThread = true)
-    public final boolean canChargeItem() {
+    public final boolean canChargeItem(ManaPoolBlockEntity blockEntity) {
         return blockEntity.isOutputtingPower();
     }
 
     @LuaFunction(mainThread = true)
-    public final boolean hasItems() {
-        return !getPoolItems().isEmpty();
+    public final boolean hasItems(ManaPoolBlockEntity blockEntity) {
+        return !getPoolItems(blockEntity).isEmpty();
     }
 
     @LuaFunction(mainThread = true)
-    public final Object getItems() {
-        List<ItemStack> items = getPoolItems();
+    public final Object getItems(ManaPoolBlockEntity blockEntity) {
+        List<ItemStack> items = getPoolItems(blockEntity);
         if(items.isEmpty())
             return null;
         Object[] luaStacks = new Object[items.size()];
@@ -75,7 +68,7 @@ public class ManaPoolIntegration extends BlockEntityIntegrationPeripheral<ManaPo
         return luaStacks;
     }
 
-    private List<ItemStack> getPoolItems() {
+    private List<ItemStack> getPoolItems(ManaPoolBlockEntity blockEntity) {
         BlockPos position = blockEntity.getBlockPos();
         return blockEntity.getLevel().getEntitiesOfClass(ItemEntity.class, new AABB(position, position.offset(1, 1, 1)))
                 .stream()

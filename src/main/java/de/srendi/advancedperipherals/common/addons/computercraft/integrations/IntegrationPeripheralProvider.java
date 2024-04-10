@@ -1,5 +1,6 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.integrations;
 
+import dan200.computercraft.api.ComputerCraftAPI;
 import dan200.computercraft.api.peripheral.IPeripheral;
 import dan200.computercraft.api.peripheral.IPeripheralProvider;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
@@ -10,7 +11,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.NoteBlock;
-import net.minecraft.world.level.block.entity.BeaconBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.common.util.LazyOptional;
 import org.jetbrains.annotations.NotNull;
@@ -37,7 +37,10 @@ public class IntegrationPeripheralProvider implements IPeripheralProvider {
      * @param integration integration generator
      * @param tileClass   target integration class
      * @param <T>         target integration
+     *
+     * @deprecated will be removed in 1.21. Use generics instead, see existing integrations
      */
+    @Deprecated(forRemoval = true, since = "1.20.1-0.7.39")
     public static <T extends BlockEntity> void registerBlockEntityIntegration(Function<BlockEntity, BlockEntityIntegrationPeripheral<T>> integration, Class<T> tileClass) {
         registerIntegration(new BlockEntityIntegration(integration, tileClass::isInstance));
     }
@@ -49,7 +52,10 @@ public class IntegrationPeripheralProvider implements IPeripheralProvider {
      * @param tileClass   target integration class
      * @param priority    Integration priority, lower is better
      * @param <T>         target integration
+     *
+     * @deprecated will be removed in 1.21. Use generics instead, see existing integrations
      */
+    @Deprecated(forRemoval = true, since = "1.20.1-0.7.39")
     public static <T extends BlockEntity> void registerBlockEntityIntegration(Function<BlockEntity, BlockEntityIntegrationPeripheral<T>> integration, Class<T> tileClass, int priority) {
         registerIntegration(new BlockEntityIntegration(integration, tileClass::isInstance, priority));
     }
@@ -63,13 +69,16 @@ public class IntegrationPeripheralProvider implements IPeripheralProvider {
      * @param predicate   target block entity
      * @param priority    Integration priority, lower is better
      * @param <T>         target integration
+     *
+     * @deprecated will be removed in 1.21. Use generics instead, see existing integrations
      */
+    @Deprecated(forRemoval = true, since = "1.20.1-0.7.39")
     public static <T extends BlockEntity> void registerBlockEntityIntegration(Function<BlockEntity, BlockEntityIntegrationPeripheral<T>> integration, Class<T> tileClass, Predicate<T> predicate, int priority) {
         registerIntegration(new BlockEntityIntegration(integration, tile -> tileClass.isInstance(tile) && predicate.test((T) tile), priority));
     }
 
     public static void load() {
-        registerIntegration(new BlockEntityIntegration(BeaconIntegration::new, BeaconBlockEntity.class::isInstance));
+        ComputerCraftAPI.registerGenericSource(new BeaconIntegration());
         registerIntegration(new BlockIntegration(NoteBlockIntegration::new, NoteBlock.class::isInstance));
 
         for (String mod : SUPPORTED_MODS) {

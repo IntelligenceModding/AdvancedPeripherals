@@ -334,7 +334,7 @@ public class AppEngApi {
                         total += disk.getBytes(null);
                     }
                 } else if (APAddons.aeAdditionsLoaded && (stack.getItem() instanceof SuperStorageCell superStorageCell)) {
-                    total += superStorageCell.getKiloBytes() * 1024;
+                    total += superStorageCell.getKiloBytes() * 1024L;
                 }
             }
         }
@@ -382,7 +382,7 @@ public class AppEngApi {
                         total += cell.getBytes(null);
                     }
                 } else if (APAddons.aeAdditionsLoaded && stack.getItem() instanceof SuperStorageCell superStorageCell) {
-                    total += superStorageCell.getKiloBytes() * 1024;
+                    total += superStorageCell.getKiloBytes() * 1024L;
                 }
             }
         }
