@@ -2,11 +2,7 @@ package de.srendi.advancedperipherals.common.addons.botania;
 
 import dan200.computercraft.api.lua.LuaFunction;
 import de.srendi.advancedperipherals.lib.peripherals.APGenericPeripheral;
-import de.srendi.advancedperipherals.lib.peripherals.BlockEntityIntegrationPeripheral;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import org.jetbrains.annotations.NotNull;
 import vazkii.botania.api.block_entity.GeneratingFlowerBlockEntity;
-import vazkii.botania.common.block.block_entity.mana.ManaPoolBlockEntity;
 
 public class ManaFlowerIntegration implements APGenericPeripheral {
 
