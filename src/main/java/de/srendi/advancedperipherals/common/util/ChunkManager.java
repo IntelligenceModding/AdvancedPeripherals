@@ -61,11 +61,11 @@ public class ChunkManager extends SavedData {
         }
     }
 
-    private static boolean forceChunk(ServerLevel level, UUID owner, ChunkPos pos) {
+    private static boolean forceChunk(UUID owner, ServerLevel level, ChunkPos pos) {
         return ForgeChunkManager.forceChunk(level, AdvancedPeripherals.MOD_ID, owner, pos.x, pos.z, true, true);
     }
 
-    private static boolean unforceChunk(ServerLevel level, UUID owner, ChunkPos pos) {
+    private static boolean unforceChunk(UUID owner, ServerLevel level, ChunkPos pos) {
         return ForgeChunkManager.forceChunk(level, AdvancedPeripherals.MOD_ID, owner, pos.x, pos.z, false, true);
     }
 
@@ -79,7 +79,7 @@ public class ChunkManager extends SavedData {
         boolean result = true;
         for (int x = -chunkRadius; x <= chunkRadius; x++) {
             for (int z = -chunkRadius; z <= chunkRadius; z++) {
-                result &= forceChunk(level, owner, new ChunkPos(pos.x + x, pos.z + z));
+                result &= forceChunk(owner, level, new ChunkPos(pos.x + x, pos.z + z));
             }
         }
         return result;
@@ -94,7 +94,8 @@ public class ChunkManager extends SavedData {
 
     // This method is kept for backward compatibility
     // TODO: remove in next major version
-    public synchronized boolean removeForceChunk(ServerLevel level, UUID owner, ChunkPos pos) {
+    @Deprecated
+    public synchronized boolean removeForceChunk(ServerLevel level, UUID owner, ChunkPos _) {
         return removeForceChunk(level, owner);
     }
 
@@ -109,10 +110,10 @@ public class ChunkManager extends SavedData {
         boolean result = true;
         final ChunkPos pos = chunkRecord.getPos();
         final int chunkRadius = chunkRecord.getRadius();
-        AdvancedPeripherals.debug("Trying to unload forced chunk cluster" + owner + " at " + pos + " with radius " + chunkRadius, Level.WARN);
+        AdvancedPeripherals.debug(String.format("Trying to unload forced chunk cluster %s at %s with radius %d", owner, pos, chunkRadius), Level.WARN);
         for (int x = -chunkRadius; x <= chunkRadius; x++) {
             for (int z = -chunkRadius; z <= chunkRadius; z++) {
-                result &= unforceChunk(level, owner, new ChunkPos(pos.x + x, pos.z + z));
+                result &= unforceChunk(owner, level, new ChunkPos(pos.x + x, pos.z + z));
             }
         }
         if (result) {
@@ -143,17 +144,30 @@ public class ChunkManager extends SavedData {
                 // clean overflowed load radius
                 for (int x = chunkRadius + 1; x <= loadedRadius; x++) {
                     for (int z = chunkRadius + 1; z <= loadedRadius; z++) {
-                        unforceChunk(level, uuid, new ChunkPos(pos.x + x, pos.z + z));
-                        unforceChunk(level, uuid, new ChunkPos(pos.x + x, pos.z - z));
-                        unforceChunk(level, uuid, new ChunkPos(pos.x - x, pos.z + z));
-                        unforceChunk(level, uuid, new ChunkPos(pos.x - x, pos.z - z));
+                        unforceChunk(uuid, level, new ChunkPos(pos.x + x, pos.z + z));
+                        unforceChunk(uuid, level, new ChunkPos(pos.x + x, pos.z - z));
+                        unforceChunk(uuid, level, new ChunkPos(pos.x - x, pos.z + z));
+                        unforceChunk(uuid, level, new ChunkPos(pos.x - x, pos.z - z));
                     }
                 }
-                value.setRadius(chunkRadius);
             }
-            for (int x = -chunkRadius; x <= chunkRadius; x++) {
-                for (int z = -chunkRadius; z <= chunkRadius; z++) {
-                    forceChunk(level, uuid, new ChunkPos(pos.x + x, pos.z + z));
+            value.setRadius(chunkRadius);
+            if (loadedRadius == -1) { // if it's coming from old version
+                // just force all
+                for (int x = -chunkRadius; x <= chunkRadius; x++) {
+                    for (int z = -chunkRadius; z <= chunkRadius; z++) {
+                        forceChunk(uuid, level, new ChunkPos(pos.x + x, pos.z + z));
+                    }
+                }
+            } else if (loadedRadius < chunkRadius) {
+                // otherwise, only do the changed part to save startup time (in case we have a lot chunky turtle)
+                for (int x = loadedRadius + 1; x <= chunkRadius; x++) {
+                    for (int z = loadedRadius + 1; z <= chunkRadius; z++) {
+                        forceChunk(uuid, level, new ChunkPos(pos.x + x, pos.z + z));
+                        forceChunk(uuid, level, new ChunkPos(pos.x + x, pos.z - z));
+                        forceChunk(uuid, level, new ChunkPos(pos.x - x, pos.z + z));
+                        forceChunk(uuid, level, new ChunkPos(pos.x - x, pos.z - z));
+                    }
                 }
             }
         });
@@ -212,7 +226,7 @@ public class ChunkManager extends SavedData {
 
         public static LoadChunkRecord deserialize(@NotNull CompoundTag tag) {
             Set<String> keys = tag.getAllKeys();
-            int radius = keys.contains(RADIUS_TAG) ? tag.getInt(RADIUS_TAG) : APConfig.PERIPHERALS_CONFIG.chunkyTurtleRadius.get();
+            int radius = keys.contains(RADIUS_TAG) ? tag.getInt(RADIUS_TAG) : -1;
             return new LoadChunkRecord(tag.getString(DIMENSION_NAME_TAG), NBTUtil.chunkPosFromNBT(tag.getCompound(POS_TAG)), radius);
         }
 
