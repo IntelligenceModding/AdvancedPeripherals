@@ -40,9 +40,10 @@ public class TurtleChunkyUpgrade extends PeripheralTurtleUpgrade<ChunkyPeriphera
         super.update(turtle, side);
         if (APConfig.PERIPHERALS_CONFIG.enableChunkyTurtle.get()) {
             updateTick++;
-            if (false && updateTick < 10) {
-                return; // TODO: turtle will stop work when crossing chunks if update every 10 ticks
-            }
+            // TODO: turtle will stop work when crossing chunks if update every 10 ticks
+            // if (updateTick < 10) {
+            //     return;
+            // }
             updateTick = 0;
             IPeripheral peripheral = turtle.getPeripheral(side);
             if (peripheral instanceof ChunkyPeripheral chunkyPeripheral) {
