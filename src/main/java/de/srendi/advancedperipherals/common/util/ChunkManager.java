@@ -95,7 +95,7 @@ public class ChunkManager extends SavedData {
     // This method is kept for backward compatibility
     // TODO: remove in next major version
     @Deprecated
-    public synchronized boolean removeForceChunk(ServerLevel level, UUID owner, ChunkPos _) {
+    public synchronized boolean removeForceChunk(ServerLevel level, UUID owner, ChunkPos pos) {
         return removeForceChunk(level, owner);
     }
 
