@@ -37,7 +37,10 @@ public class IntegrationPeripheralProvider implements IPeripheralProvider {
      * @param integration integration generator
      * @param tileClass   target integration class
      * @param <T>         target integration
+     *
+     * @deprecated will be removed in 1.21. Use generics instead, see existing integrations
      */
+    @Deprecated(forRemoval = true, since = "1.20.1-0.7.39")
     public static <T extends BlockEntity> void registerBlockEntityIntegration(Function<BlockEntity, BlockEntityIntegrationPeripheral<T>> integration, Class<T> tileClass) {
         registerIntegration(new BlockEntityIntegration(integration, tileClass::isInstance));
     }
@@ -49,7 +52,10 @@ public class IntegrationPeripheralProvider implements IPeripheralProvider {
      * @param tileClass   target integration class
      * @param priority    Integration priority, lower is better
      * @param <T>         target integration
+     *
+     * @deprecated will be removed in 1.21. Use generics instead, see existing integrations
      */
+    @Deprecated(forRemoval = true, since = "1.20.1-0.7.39")
     public static <T extends BlockEntity> void registerBlockEntityIntegration(Function<BlockEntity, BlockEntityIntegrationPeripheral<T>> integration, Class<T> tileClass, int priority) {
         registerIntegration(new BlockEntityIntegration(integration, tileClass::isInstance, priority));
     }
@@ -63,7 +69,10 @@ public class IntegrationPeripheralProvider implements IPeripheralProvider {
      * @param predicate   target block entity
      * @param priority    Integration priority, lower is better
      * @param <T>         target integration
+     *
+     * @deprecated will be removed in 1.21. Use generics instead, see existing integrations
      */
+    @Deprecated(forRemoval = true, since = "1.20.1-0.7.39")
     public static <T extends BlockEntity> void registerBlockEntityIntegration(Function<BlockEntity, BlockEntityIntegrationPeripheral<T>> integration, Class<T> tileClass, Predicate<T> predicate, int priority) {
         registerIntegration(new BlockEntityIntegration(integration, tile -> tileClass.isInstance(tile) && predicate.test((T) tile), priority));
     }
