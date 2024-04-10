@@ -27,9 +27,9 @@ public class BasinIntegration implements APGenericPeripheral {
     @LuaFunction(mainThread = true)
     public final List<Object> getInputFluids(BasinBlockEntity blockEntity) {
         IFluidHandler handler = blockEntity.getTanks().getFirst().getCapability().orElse(null);
-        if (handler == null) {
+        if (handler == null)
             return null;
-        }
+
         int size = handler.getTanks();
         List<Object> tanks = new ArrayList<>(size);
         for (int i = 0; i < size; i++) {
