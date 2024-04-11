@@ -93,8 +93,9 @@ public class ChunkManager extends SavedData {
     }
 
     // This method is kept for backward compatibility
+    // use removeForceChunk without the position argument instead
     // TODO: remove in next major version
-    @Deprecated
+    @Deprecated(forRemoval = true, since = "1.20.1-0.7.39")
     public synchronized boolean removeForceChunk(ServerLevel level, UUID owner, ChunkPos pos) {
         return removeForceChunk(level, owner);
     }
@@ -160,7 +161,7 @@ public class ChunkManager extends SavedData {
                     }
                 }
             } else if (loadedRadius < chunkRadius) {
-                // otherwise, only do the changed part to save startup time (in case we have a lot chunky turtle)
+                // otherwise, only do the changed part to reduce startup time (in case we have a lot chunky turtle)
                 for (int x = loadedRadius + 1; x <= chunkRadius; x++) {
                     for (int z = loadedRadius + 1; z <= chunkRadius; z++) {
                         forceChunk(uuid, level, new ChunkPos(pos.x + x, pos.z + z));
@@ -191,7 +192,7 @@ public class ChunkManager extends SavedData {
     }
 
     @Override
-    public @NotNull CompoundTag save(@NotNull CompoundTag data) {
+    public synchronized @NotNull CompoundTag save(@NotNull CompoundTag data) {
         CompoundTag forcedChunksTag = new CompoundTag();
         forcedChunks.forEach((key, value) -> forcedChunksTag.put(key.toString(), value.serialize()));
         return data;
