@@ -1,3 +1,4 @@
+import de.srendi.advancedperipherals.JustPlayingAroundStep
 import net.darkhax.curseforgegradle.TaskPublishCurseForge
 
 import java.text.SimpleDateFormat
@@ -12,7 +13,7 @@ plugins {
     id 'org.parchmentmc.librarian.forgegradle' version '1.+'
     id 'org.spongepowered.mixin' version '0.7.+'
     id "com.github.breadmoirai.github-release" version "2.5.2"
-    id 'checkstyle'
+    id "com.diffplug.spotless" version "6.25.0"
     id 'java'
 }
 
@@ -366,6 +367,49 @@ dependencies {
     // runtimeOnly fg.deobf("curse.maven:createaddition-439890:5099757")
 }
 
+spotless {
+    // optional: limit format enforcement to just the files changed by this feature branch
+    format 'misc', {
+        // define the files to apply `misc` to
+        target '*.gradle', '.gitattributes', '.gitignore'
+
+        // define the steps to apply to those files
+        trimTrailingWhitespace()
+        indentWithSpaces() // or spaces. Takes an integer argument if you don't like 4
+        endWithNewline()
+    }
+    java {
+        // don't need to set target, it is inferred from java
+        // apply a specific flavor of google-java-format
+        eclipse('4.26')
+        formatAnnotations()
+        indentWithSpaces()
+        // fix formatting of type annotations
+        //formatAnnotations()
+        // make sure every file has the following copyright header.
+        // optionally, Spotless can set copyright years by digging
+        // through git history (see "license" section below)
+        licenseHeader '''/*
+ *     Copyright $YEAR Intelligence Modding @ https://intelligence-modding.de
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *          https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+'''
+        // Needs to be placed after the eclipse formatter does its thing
+        addStep(JustPlayingAroundStep.create())
+
+    }
+}
 
 changelog {
     version = "${project.version}"
@@ -454,20 +498,20 @@ tasks.withType(Checkstyle) {
 
 tasks.named('processResources', ProcessResources).configure {
     var replaceProperties = [minecraft_version         : minecraft_version,
-                             forge_version             : forge_version,
-                             loader_version            : loader_version,
-                             mod_id                    : mod_id,
-                             version                   : version,
-                             cc_version                : cc_version,
-                             curios_version            : curios_version,
-                             minecolonies_version      : minecolonies_version,
-                             appliedenergistics_version: appliedenergistics_version,
-                             patchouli_version         : patchouli_version,
-                             refinedstorage_version    : refinedstorage_version,
-                             botania_version           : botania_version,
-                             mekanism_version          : mekanism_version,
-                             ae2things_version         : ae2things_version,
-                             powah_version             : powah_version,]
+                            forge_version             : forge_version,
+                            loader_version            : loader_version,
+                            mod_id                    : mod_id,
+                            version                   : version,
+                            cc_version                : cc_version,
+                            curios_version            : curios_version,
+                            minecolonies_version      : minecolonies_version,
+                            appliedenergistics_version: appliedenergistics_version,
+                            patchouli_version         : patchouli_version,
+                            refinedstorage_version    : refinedstorage_version,
+                            botania_version           : botania_version,
+                            mekanism_version          : mekanism_version,
+                            ae2things_version         : ae2things_version,
+                            powah_version             : powah_version,]
 
     inputs.properties replaceProperties
 
