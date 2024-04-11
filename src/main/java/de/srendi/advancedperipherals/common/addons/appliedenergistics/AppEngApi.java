@@ -339,7 +339,7 @@ public class AppEngApi {
                 } else if (APAddons.aeAdditionsLoaded && (stack.getItem() instanceof StorageCell storageCell)) {
                     if (storageCell.getKeyType() != AEKeyType.items())
                         continue;
-                    total += storageCell.getKiloBytes() * 1024;
+                    total += storageCell.getKiloBytes() * 1024L;
                 }
             }
         }
