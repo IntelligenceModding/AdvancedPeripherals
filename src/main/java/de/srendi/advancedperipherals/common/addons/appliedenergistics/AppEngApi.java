@@ -12,6 +12,7 @@ import appeng.api.stacks.*;
 import appeng.api.storage.AEKeyFilter;
 import appeng.api.storage.IStorageProvider;
 import appeng.api.storage.MEStorage;
+import appeng.api.storage.cells.IBasicCellItem;
 import appeng.blockentity.storage.DriveBlockEntity;
 import appeng.crafting.pattern.EncodedPatternItem;
 import appeng.helpers.iface.PatternContainer;
@@ -19,6 +20,7 @@ import appeng.items.storage.BasicStorageCell;
 import appeng.me.cells.BasicCellHandler;
 import appeng.me.cells.BasicCellInventory;
 import appeng.parts.storagebus.StorageBusPart;
+import com.the9grounds.aeadditions.item.storage.StorageCell;
 import com.the9grounds.aeadditions.item.storage.SuperStorageCell;
 import dan200.computercraft.shared.util.NBTUtil;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
@@ -628,9 +630,11 @@ public class AppEngApi {
     public static long getTotalItemStorage(IGridNode node) {
         long total = 0;
 
-        for (IGridNode iGridNode : node.getGrid().getMachineNodes(DriveBlockEntity.class)) {
-            DriveBlockEntity entity = (DriveBlockEntity) iGridNode.getService(IStorageProvider.class);
-            if (entity == null)
+        // note: do not query DriveBlockEntity.class specifically here, because it will avoid subclasses, e.g. the ME Extended Drive from ExtendedAE
+        Iterator<IGridNode> iterator = node.getGrid().getNodes().iterator();
+
+        while (iterator.hasNext()) {
+            if (!(iterator.next().getService(IStorageProvider.class) instanceof DriveBlockEntity entity))
                 continue;
 
             InternalInventory inventory = entity.getInternalInventory();
@@ -641,7 +645,7 @@ public class AppEngApi {
                 if (stack.isEmpty())
                     continue;
 
-                if (stack.getItem() instanceof BasicStorageCell cell) {
+                if (stack.getItem() instanceof IBasicCellItem cell) {
                     if (cell.getKeyType().getClass().isAssignableFrom(AEKeyType.items().getClass())) {
                         total += cell.getBytes(null);
                     }
@@ -651,6 +655,10 @@ public class AppEngApi {
                     }
                 } else if (APAddons.aeAdditionsLoaded && (stack.getItem() instanceof SuperStorageCell superStorageCell)) {
                     total += superStorageCell.getKiloBytes() * 1024L;
+                } else if (APAddons.aeAdditionsLoaded && (stack.getItem() instanceof StorageCell storageCell)) {
+                    if (storageCell.getKeyType() != AEKeyType.items())
+                        continue;
+                    total += storageCell.getKiloBytes() * 1024;
                 }
             }
         }
@@ -660,9 +668,10 @@ public class AppEngApi {
     public static long getTotalFluidStorage(IGridNode node) {
         long total = 0;
 
-        for (IGridNode iGridNode : node.getGrid().getMachineNodes(DriveBlockEntity.class)) {
-            DriveBlockEntity entity = (DriveBlockEntity) iGridNode.getService(IStorageProvider.class);
-            if (entity == null)
+        Iterator<IGridNode> iterator = node.getGrid().getNodes().iterator();
+
+        while (iterator.hasNext()) {
+            if (!(iterator.next().getService(IStorageProvider.class) instanceof DriveBlockEntity entity))
                 continue;
 
             InternalInventory inventory = entity.getInternalInventory();
@@ -673,12 +682,16 @@ public class AppEngApi {
                 if (stack.isEmpty())
                     continue;
 
-                if (stack.getItem() instanceof BasicStorageCell cell) {
+                if (stack.getItem() instanceof IBasicCellItem cell) {
                     if (cell.getKeyType().getClass().isAssignableFrom(AEKeyType.fluids().getClass())) {
                         total += cell.getBytes(null);
                     }
                 } else if (APAddons.aeAdditionsLoaded && stack.getItem() instanceof SuperStorageCell superStorageCell) {
                     total += superStorageCell.getKiloBytes() * 1024L;
+                } else if (APAddons.aeAdditionsLoaded && (stack.getItem() instanceof StorageCell storageCell)) {
+                    if (storageCell.getKeyType() != AEKeyType.fluids())
+                        continue;
+                    total += storageCell.getKiloBytes() * 1024;
                 }
             }
         }
@@ -721,9 +734,10 @@ public class AppEngApi {
     public static long getUsedItemStorage(IGridNode node) {
         long used = 0;
 
-        for (IGridNode iGridNode : node.getGrid().getMachineNodes(DriveBlockEntity.class)) {
-            DriveBlockEntity entity = (DriveBlockEntity) iGridNode.getService(IStorageProvider.class);
-            if (entity == null)
+        Iterator<IGridNode> iterator = node.getGrid().getNodes().iterator();
+
+        while (iterator.hasNext()) {
+            if (!(iterator.next().getService(IStorageProvider.class) instanceof DriveBlockEntity entity))
                 continue;
 
             InternalInventory inventory = entity.getInternalInventory();
@@ -734,7 +748,7 @@ public class AppEngApi {
                 if (stack.isEmpty())
                     continue;
 
-                if (stack.getItem() instanceof BasicStorageCell cell) {
+                if (stack.getItem() instanceof IBasicCellItem cell) {
                     if (cell.getKeyType().getClass().isAssignableFrom(AEKeyType.items().getClass())) {
                         BasicCellInventory cellInventory = BasicCellHandler.INSTANCE.getCellInventory(stack, null);
 
@@ -753,6 +767,14 @@ public class AppEngApi {
                     long numItemsInCell = stack.getTag().getLong("ic");
 
                     used += numItemsInCell;
+                } else if (APAddons.aeAdditionsLoaded && stack.getItem() instanceof StorageCell storageCell) {
+                    if (storageCell.getKeyType() != AEKeyType.items())
+                        continue;
+                    if (stack.getTag() == null)
+                        continue;
+                    long numItemsInCell = stack.getTag().getLong("ic");
+
+                    used += numItemsInCell;
                 }
             }
         }
@@ -763,9 +785,10 @@ public class AppEngApi {
     public static long getUsedFluidStorage(IGridNode node) {
         long used = 0;
 
-        for (IGridNode iGridNode : node.getGrid().getMachineNodes(DriveBlockEntity.class)) {
-            DriveBlockEntity entity = (DriveBlockEntity) iGridNode.getService(IStorageProvider.class);
-            if (entity == null)
+        Iterator<IGridNode> iterator = node.getGrid().getNodes().iterator();
+
+        while (iterator.hasNext()) {
+            if (!(iterator.next().getService(IStorageProvider.class) instanceof DriveBlockEntity entity))
                 continue;
 
             InternalInventory inventory = entity.getInternalInventory();
@@ -773,13 +796,21 @@ public class AppEngApi {
             for (int i = 0; i < inventory.size(); i++) {
                 ItemStack stack = inventory.getStackInSlot(i);
 
-                if (stack.getItem() instanceof BasicStorageCell cell) {
+                if (stack.getItem() instanceof IBasicCellItem cell) {
                     if (cell.getKeyType().getClass().isAssignableFrom(AEKeyType.fluids().getClass())) {
                         BasicCellInventory cellInventory = BasicCellHandler.INSTANCE.getCellInventory(stack, null);
 
                         used += cellInventory.getUsedBytes();
                     }
-                } else if (APAddons.aeAdditionsLoaded && stack.getItem() instanceof SuperStorageCell superStorageCell) {
+                } else if (APAddons.aeAdditionsLoaded && stack.getItem() instanceof SuperStorageCell) {
+                    if (stack.getTag() == null)
+                        continue;
+                    long numItemsInCell = stack.getTag().getLong("ic");
+
+                    used += numItemsInCell;
+                } else if (APAddons.aeAdditionsLoaded && stack.getItem() instanceof StorageCell storageCell) {
+                    if (storageCell.getKeyType() != AEKeyType.fluids())
+                        continue;
                     if (stack.getTag() == null)
                         continue;
                     long numItemsInCell = stack.getTag().getLong("ic");
@@ -909,7 +940,7 @@ public class AppEngApi {
                 if (stack.isEmpty())
                     continue;
 
-                if (stack.getItem() instanceof BasicStorageCell cell) {
+                if (stack.getItem() instanceof IBasicCellItem cell) {
                     items.add(getObjectFromCell(cell, stack));
                 } else if (APAddons.aeThingsLoaded && stack.getItem() instanceof DISKDrive disk) {
                     items.add(getObjectFromDisk(disk, stack));
@@ -920,6 +951,26 @@ public class AppEngApi {
         }
 
         return items;
+    }
+
+    private static Map<String, Object> getObjectFromCell(IBasicCellItem cell, ItemStack stack) {
+        Map<String, Object> map = new HashMap<>();
+
+        map.put("item", ItemUtil.getRegistryKey(stack.getItem()).toString());
+
+        String cellType = "";
+
+        if (cell.getKeyType().getClass().isAssignableFrom(AEKeyType.items().getClass())) {
+            cellType = "item";
+        } else if (cell.getKeyType().getClass().isAssignableFrom(AEKeyType.fluids().getClass())) {
+            cellType = "fluid";
+        }
+
+        map.put("cellType", cellType);
+        map.put("bytesPerType", cell.getBytesPerType(null));
+        map.put("totalBytes", cell.getBytes(null));
+
+        return map;
     }
 
     private static Map<String, Object> getObjectFromDisk(DISKDrive drive, ItemStack stack) {
