@@ -3,13 +3,12 @@ package de.srendi.advancedperipherals.common.addons.create;
 import com.simibubi.create.content.processing.basin.BasinBlockEntity;
 import dan200.computercraft.api.lua.LuaFunction;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
-import de.srendi.advancedperipherals.lib.peripherals.BlockEntityIntegrationPeripheral;
-import net.minecraft.world.level.block.entity.BlockEntity;
+import de.srendi.advancedperipherals.lib.peripherals.APGenericPeripheral;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -18,24 +17,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-public class BasinIntegration extends BlockEntityIntegrationPeripheral<BasinBlockEntity> {
-
-    public BasinIntegration(BlockEntity entity) {
-        super(entity);
-    }
-
+public class BasinIntegration implements APGenericPeripheral {
     @NotNull
     @Override
-    public String getType() {
+    public String getPeripheralType() {
         return "basin";
     }
 
     @LuaFunction(mainThread = true)
-    public final List<Object> getInputFluids() {
+    public final List<Object> getInputFluids(BasinBlockEntity blockEntity) {
         IFluidHandler handler = blockEntity.getTanks().getFirst().getCapability().orElse(null);
-        if (handler == null) {
+        if (handler == null)
             return null;
-        }
+
         int size = handler.getTanks();
         List<Object> tanks = new ArrayList<>(size);
         for (int i = 0; i < size; i++) {
@@ -49,7 +43,7 @@ public class BasinIntegration extends BlockEntityIntegrationPeripheral<BasinBloc
     }
 
     @LuaFunction(mainThread = true)
-    public final List<Object> getOutputFluids() {
+    public final List<Object> getOutputFluids(BasinBlockEntity blockEntity) {
         IFluidHandler handler = blockEntity.getTanks().getSecond().getCapability().orElse(null);
         if (handler == null) {
             return null;
@@ -67,12 +61,12 @@ public class BasinIntegration extends BlockEntityIntegrationPeripheral<BasinBloc
     }
 
     @LuaFunction(mainThread = true)
-    public final Map<String, Object> getFilter() {
+    public final Map<String, Object> getFilter(BasinBlockEntity blockEntity) {
         return LuaConverter.stackToObject(blockEntity.getFilter().getFilter());
     }
 
     @LuaFunction(mainThread = true)
-    public final List<Object> getInventory() {
+    public final List<Object> getInventory(BasinBlockEntity blockEntity) {
         Optional<IItemHandler> handlerOptional = blockEntity.getCapability(ForgeCapabilities.ITEM_HANDLER).resolve();
         if (handlerOptional.isEmpty()) return null;
         IItemHandler handler = handlerOptional.get();

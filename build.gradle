@@ -166,6 +166,10 @@ repositories {
     maven {
         name = "Blamejared maven botania patchouli"
         url = 'https://maven.blamejared.com'
+        content {
+            includeGroup("vazkii.botania")
+            includeGroup("vazkii.patchouli")
+        }
     }
     maven {
         name = "Squiddev maven cct"
@@ -178,6 +182,9 @@ repositories {
     maven {
         name = "Theillusivec4 maven curios"
         url = "https://maven.theillusivec4.top/"
+        content {
+            includeGroup("top.theillusivec4.curios")
+        }
     }
     maven {
         name = "LDT Team minecolonies"
@@ -189,6 +196,11 @@ repositories {
     maven {
         name = "Modmaven Jei"
         url = 'https://modmaven.dev/'
+        content {
+            includeGroup("mezz.jei")
+            includeGroup("appeng")
+            includeGroup("mekanism")
+        }
     }
     maven {
         name = "Create maven"
@@ -196,6 +208,7 @@ repositories {
         content {
             includeGroup("com.simibubi.create")
             includeGroup("com.jozufozu.flywheel")
+            includeGroup("com.tterrag.registrate")
         }
     }
     maven {
@@ -208,6 +221,10 @@ repositories {
     maven {
         name = "Shedaniel cloth"
         url = "https://maven.shedaniel.me/"
+        content {
+            includeGroup("dev.architectury")
+            includeGroup("me.shedaniel.cloth")
+        }
     }
     maven {
         url = uri("https://maven.pkg.github.com/refinedmods/refinedstorage")
@@ -215,20 +232,22 @@ repositories {
             username = "anything"
             password = "\u0067hp_oGjcDFCn8jeTzIj4Ke9pLoEVtpnZMP4VQgaX"
         }
+        content {
+            includeModule("com.refinedmods", "refinedstorage")
+        }
     }
     maven {
         name = 'Kotlin for Forge'
         url = 'https://thedarkcolour.github.io/KotlinForForge/'
+        content {
+            includeModule("thedarkcolour", "kotlinforforge")
+        }
     }
     maven {
         url = "https://cursemaven.com"
         content {
             includeGroup "curse.maven"
         }
-    }
-    maven {
-        name = "Intelligence repository"
-        url = "https://mvn.intelligence-modding.de/Intelligence"
     }
 }
 
@@ -286,7 +305,7 @@ dependencies {
 
     // Botania
     compileOnly fg.deobf("vazkii.botania:Botania:${botania_version}")
-
+    runtimeOnly fg.deobf("vazkii.botania:Botania:${botania_version}")
 
     // Minecolonies
     // Remove/Comment this section if you want to use runData.
@@ -305,6 +324,7 @@ dependencies {
 
     // Create
     compileOnly fg.deobf("com.simibubi.create:create-1.20.1:${create_version}:all")
+    runtimeOnly fg.deobf("com.simibubi.create:create-1.20.1:${create_version}:all")
 
     //Powah
     implementation fg.deobf("curse.maven:powah-633483:${powah_version}")
@@ -327,8 +347,8 @@ dependencies {
     implementation fg.deobf("mezz.jei:jei-${jei_version}")
 
     // Create Crafts & Additions
-    compileOnly fg.deobf("curse.maven:createaddition-439890:5099757")
-    // runtimeOnly fg.deobf("curse.maven:createaddition-439890:5099757")
+    compileOnly fg.deobf("curse.maven:createaddition-439890:${createadditions_version}")
+    runtimeOnly fg.deobf("curse.maven:createaddition-439890:${createadditions_version}")
 }
 
 

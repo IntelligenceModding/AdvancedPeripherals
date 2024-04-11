@@ -335,7 +335,7 @@ public class AppEngApi {
                         total += disk.getBytes(null);
                     }
                 } else if (APAddons.aeAdditionsLoaded && (stack.getItem() instanceof SuperStorageCell superStorageCell)) {
-                    total += superStorageCell.getKiloBytes() * 1024;
+                    total += superStorageCell.getKiloBytes() * 1024L;
                 } else if (APAddons.aeAdditionsLoaded && (stack.getItem() instanceof StorageCell storageCell)) {
                     if (storageCell.getKeyType() != AEKeyType.items())
                         continue;
@@ -386,7 +386,7 @@ public class AppEngApi {
                         total += cell.getBytes(null);
                     }
                 } else if (APAddons.aeAdditionsLoaded && stack.getItem() instanceof SuperStorageCell superStorageCell) {
-                    total += superStorageCell.getKiloBytes() * 1024;
+                    total += superStorageCell.getKiloBytes() * 1024L;
                 } else if (APAddons.aeAdditionsLoaded && (stack.getItem() instanceof StorageCell storageCell)) {
                     if (storageCell.getKeyType() != AEKeyType.fluids())
                         continue;

@@ -1,19 +1,13 @@
 package de.srendi.advancedperipherals.common.addons.powah;
 
 import dan200.computercraft.api.lua.LuaFunction;
-import de.srendi.advancedperipherals.lib.peripherals.BlockEntityIntegrationPeripheral;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import org.jetbrains.annotations.NotNull;
+import de.srendi.advancedperipherals.lib.peripherals.APGenericPeripheral;
 import owmii.powah.block.energycell.EnergyCellTile;
 
-public class EnergyCellIntegration extends BlockEntityIntegrationPeripheral<EnergyCellTile> {
-    protected EnergyCellIntegration(BlockEntity entity) {
-        super(entity);
-    }
+public class EnergyCellIntegration implements APGenericPeripheral {
 
-    @NotNull
     @Override
-    public String getType() {
+    public String getPeripheralType() {
         return "energyCell";
     }
 
@@ -23,12 +17,12 @@ public class EnergyCellIntegration extends BlockEntityIntegrationPeripheral<Ener
     }
 
     @LuaFunction(mainThread = true)
-    public final double getEnergy() {
+    public final double getEnergy(EnergyCellTile blockEntity) {
         return blockEntity.getEnergy().getEnergyStored();
     }
 
     @LuaFunction(mainThread = true)
-    public final double getMaxEnergy() {
+    public final double getMaxEnergy(EnergyCellTile blockEntity) {
         return blockEntity.getEnergy().getMaxEnergyStored();
     }
 }

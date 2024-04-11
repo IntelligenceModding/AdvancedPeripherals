@@ -40,9 +40,11 @@ public class APAddons {
 
     @SubscribeEvent
     public static void interModComms(InterModEnqueueEvent event) {
-        if (!curiosLoaded)
-            return;
+        /*
+        if (!curiosLoaded) {
+        }
 
-        // InterModComms.sendTo("curios", SlotTypeMessage.REGISTER_TYPE, () -> new SlotTypeMessage.Builder("glasses").size(1).build());
+        InterModComms.sendTo("curios", SlotTypeMessage.REGISTER_TYPE, () -> new SlotTypeMessage.Builder("glasses").size(1).build());
+        */
     }
 }
