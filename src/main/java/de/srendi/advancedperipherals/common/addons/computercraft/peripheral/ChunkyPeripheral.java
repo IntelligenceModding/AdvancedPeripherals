@@ -58,7 +58,7 @@ public class ChunkyPeripheral extends BasePeripheral<TurtlePeripheralOwner> {
             if (loadedCentralChunk.equals(newChunk)) {
                 return;
             }
-            manager.removeForceChunk(level, getUUID(), loadedCentralChunk);
+            manager.removeForceChunk(level, getUUID());
             // Should not be used
             // level.setChunkForced(loadedChunk.x, loadedChunk.z, false);
             loadedCentralChunk = null;
@@ -83,8 +83,13 @@ public class ChunkyPeripheral extends BasePeripheral<TurtlePeripheralOwner> {
     @Override
     public void detach(@NotNull IComputerAccess computer) {
         super.detach(computer);
-        ServerLevel level = (ServerLevel) owner.getLevel();
-        ChunkManager manager = ChunkManager.get(Objects.requireNonNull(level));
-        setLoadedChunk(null, manager, level);
+        // Should not remove the loaded chunk when detaching,
+        // because CC:T will detach all peripherals before server stopped.
+        // So the chunk record will never be saved if we removed the chunk record when detaching.
+        // The records will be automatically removed by the ChunkManager if they have not been touched a while ago.
+
+        // ServerLevel level = (ServerLevel) owner.getLevel();
+        // ChunkManager manager = ChunkManager.get(Objects.requireNonNull(level));
+        // setLoadedChunk(null, manager, level);
     }
 }
