@@ -6,6 +6,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+## [1.20.1-0.7.39r] - 2024-04-12
+### Fixed
+- [#578] Re-Added botania integration with a few new functions
+- [#559] Fixed the creation of empty nbt tags when inserting items into the ME System - @Thanks to michele-grifa!
+- [#577,#570] Fixed that the RS bridge does not show `isCraftable` in `getItem` or `getPattern` - Thanks to @tomprince!
+- [#570] Improved performance of ME Bridge's iterating functions by making the functions not quadratic - Thanks to @tomprince!
+- [#560] Fixed stacking problems when using `getItems` from the inventory manager
+- [#551] Fixed that RS Bridge's `isItemCrafting` is false when the item is not in the system
+- [#536] Invalidate the energy detectors in and output energy providers to prevent the energy detector from stopping to transfer energy
+- [#575] Added support for more disk cells and portable cells for the ME Bridge - Thanks to @iTrooz
+
+### Added
+- [#571] Added `selectionMode` to the output of ME Bridge's `getCraftingCPUs` function - Thanks to @tomprince!
+- [#564] Added optional parameter to `getPlayerPos` to specify the amount of decimal places to retrieve the position of - Thanks to @minecraf7771
+
 ## [1.20.1-0.7.38r] - 2024-02-13
 
 ### Fixed
