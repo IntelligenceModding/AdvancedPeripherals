@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+## [1.19.2-0.7.35r] - 2024-04-12
 
 ### Fixed
 - [#559] Fixed the creation of empty nbt tags when inserting items into the ME System - @Thanks to michele-grifa!
