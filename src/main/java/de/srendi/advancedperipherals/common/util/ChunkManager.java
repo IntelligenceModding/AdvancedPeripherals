@@ -2,7 +2,10 @@ package de.srendi.advancedperipherals.common.util;
 
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.saveddata.SavedData;
@@ -72,8 +75,14 @@ public class ChunkManager extends SavedData {
 
     public synchronized boolean addForceChunk(ServerLevel level, UUID owner, ChunkPos pos) {
         AdvancedPeripherals.debug("Trying to load forced chunk cluster " + pos, Level.WARN);
-        if (forcedChunks.containsKey(owner))
-            return true;
+        LoadChunkRecord oldRecord = forcedChunks.get(owner);
+        if (oldRecord != null) {
+            ServerLevel oldLevel = getServerLevel(oldRecord.getDimensionName());
+            if (oldLevel == level && pos.equals(oldRecord.getPos())) {
+                return true;
+            }
+            unforceChunkRecord(owner, oldRecord, oldLevel);
+        }
         final int chunkRadius = APConfig.PERIPHERALS_CONFIG.chunkyTurtleRadius.get();
         forcedChunks.put(owner, new LoadChunkRecord(level.dimension().location().toString(), pos, chunkRadius));
         setDirty();
@@ -109,7 +118,7 @@ public class ChunkManager extends SavedData {
         String dimensionName = level.dimension().location().toString();
         if (!chunkRecord.getDimensionName().equals(dimensionName))
             throw new IllegalArgumentException(String.format("Incorrect dimension! Should be %s instead of %s", chunkRecord.getDimensionName(), dimensionName));
-        boolean result = unforceChunkRecord(level, owner, chunkRecord);
+        boolean result = unforceChunkRecord(owner, chunkRecord, level);
         if (result) {
             forcedChunks.remove(owner);
             setDirty();
@@ -117,7 +126,7 @@ public class ChunkManager extends SavedData {
         return result;
     }
 
-    public synchronized boolean unforceChunkRecord(ServerLevel level, UUID owner, LoadChunkRecord chunkRecord) {
+    private synchronized boolean unforceChunkRecord(UUID owner, LoadChunkRecord chunkRecord, ServerLevel level) {
         boolean result = true;
         final ChunkPos pos = chunkRecord.getPos();
         final int chunkRadius = chunkRecord.getRadius();
@@ -199,7 +208,7 @@ public class ChunkManager extends SavedData {
                 continue;
             }
             AdvancedPeripherals.debug(String.format("Purge forced chunk for %s", uuid), Level.WARN);
-            unforceChunkRecord(level, uuid, chunkRecord);
+            unforceChunkRecord(uuid, chunkRecord, level);
             iterator.remove();
         }
     }
@@ -222,6 +231,11 @@ public class ChunkManager extends SavedData {
             levels.put(dimensionName, level);
         });
         return levels;
+    }
+
+    private static ServerLevel getServerLevel(String name) {
+        ResourceKey<net.minecraft.world.level.Level> key = ResourceKey.create(Registries.DIMENSION, new ResourceLocation(name));
+        return ServerLifecycleHooks.getCurrentServer().getLevel(key);
     }
 
     private static class LoadChunkRecord {
