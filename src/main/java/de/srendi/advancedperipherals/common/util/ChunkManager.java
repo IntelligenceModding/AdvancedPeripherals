@@ -158,7 +158,17 @@ public class ChunkManager extends SavedData {
             final ChunkPos pos = value.getPos();
             final int loadedRadius = value.getRadius();
             AdvancedPeripherals.debug(String.format("Recorded chunk in %s at %s with radius %d", dimensionName, pos, loadedRadius), Level.INFO);
-            if (loadedRadius > chunkRadius) {
+            if (loadedRadius == chunkRadius) {
+                return;
+            }
+            if (loadedRadius == -1) {
+                // if it's coming from old version, just force all
+                for (int x = -chunkRadius; x <= chunkRadius; x++) {
+                    for (int z = -chunkRadius; z <= chunkRadius; z++) {
+                        forceChunk(uuid, level, new ChunkPos(pos.x + x, pos.z + z));
+                    }
+                }
+            } else if (loadedRadius > chunkRadius) {
                 // clean overflowed load radius
                 for (int x = chunkRadius + 1; x <= loadedRadius; x++) {
                     for (int z = chunkRadius + 1; z <= loadedRadius; z++) {
@@ -166,15 +176,6 @@ public class ChunkManager extends SavedData {
                         unforceChunk(uuid, level, new ChunkPos(pos.x + x, pos.z - z));
                         unforceChunk(uuid, level, new ChunkPos(pos.x - x, pos.z + z));
                         unforceChunk(uuid, level, new ChunkPos(pos.x - x, pos.z - z));
-                    }
-                }
-            }
-            value.setRadius(chunkRadius);
-            if (loadedRadius == -1) { // if it's coming from old version
-                // just force all
-                for (int x = -chunkRadius; x <= chunkRadius; x++) {
-                    for (int z = -chunkRadius; z <= chunkRadius; z++) {
-                        forceChunk(uuid, level, new ChunkPos(pos.x + x, pos.z + z));
                     }
                 }
             } else if (loadedRadius < chunkRadius) {
@@ -188,6 +189,8 @@ public class ChunkManager extends SavedData {
                     }
                 }
             }
+            value.setRadius(chunkRadius);
+            setDirty();
         });
     }
 
