@@ -2,14 +2,15 @@ package de.srendi.advancedperipherals.common.commands;
 
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
-import dan200.computercraft.core.computer.Environment;
 import dan200.computercraft.core.computer.ComputerSide;
+import dan200.computercraft.core.computer.Environment;
 import dan200.computercraft.shared.ModRegistry;
-import dan200.computercraft.shared.command.text.TableBuilder;
 import dan200.computercraft.shared.command.text.ChatHelpers;
+import dan200.computercraft.shared.command.text.TableBuilder;
+import dan200.computercraft.shared.computer.core.ServerComputer;
+import dan200.computercraft.shared.computer.core.ServerContext;
 
 import de.srendi.advancedperipherals.AdvancedPeripherals;
-import de.srendi.advancedperipherals.common.addons.computercraft.turtles.TurtleChunkyUpgrade;
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.ChunkyPeripheral;
 import de.srendi.advancedperipherals.common.util.inventory.ItemUtil;
 
@@ -38,12 +39,12 @@ public class APCommands {
         event.getDispatcher().register(Commands.literal(ROOT_LITERAL)
             .then(Commands.literal("getHashItem").executes(context -> getHashItem(context.getSource())))
             .then(Commands.literal(FORCELOAD_LITERAL)
-                .executes(context -> context.getSource().sendSuccess(() -> Component.literal(FORCELOAD_HELP), true))
+                .executes(context -> forceloadHelp(context.getSource()))
                 .then(Commands.literal("help")
-                    .executes(context -> context.getSource().sendSuccess(() -> Component.literal(FORCELOAD_HELP), true)))
+                    .executes(context -> forceloadHelp(context.getSource())))
                 .then(Commands.literal("dump")
                     .requires(ModRegistry.Permissions.PERMISSION_DUMP)
-                    .executes(context -> forceloadDump(context.getSource()))
+                    .executes(context -> forceloadDump(context.getSource())))
             )
         );
     }
@@ -68,27 +69,41 @@ public class APCommands {
         return 1;
     }
 
+    private static int forceloadHelp(CommandSourceStack source) throws CommandSyntaxException {
+        source.sendSuccess(() -> Component.literal(FORCELOAD_HELP), true);
+        return 1;
+    }
+
     private static int forceloadDump(CommandSourceStack source) throws CommandSyntaxException {
         TableBuilder table = new TableBuilder("All Chunky Turtles", "Computer", "Position");
 
-        List<ServerComputer> computers = new ArrayList<>(ServerContext.get(source.getServer()).registry().getComputers().stream().filter((computer) -> {
-            Environment env = computer.getComputer().getEnvionment();
+        ServerComputer[] computers = ServerContext.get(source.getServer()).registry().getComputers().stream().filter((computer) -> {
+            Environment env = computer.getComputer().getEnvironment();
             for (ComputerSide side : ComputerSide.values()) {
                 if (env.getPeripheral(side) instanceof ChunkyPeripheral) {
                     return true;
                 }
             }
             return false;
-        }).sorted((a, b) -> a.getID() - b.getID()));
+        }).sorted((a, b) -> a.getID() - b.getID()).toArray(size -> new ServerComputer[size]);
 
         for (ServerComputer computer : computers) {
             table.row(
-                computer.getID(),
+                makeComputerDumpCommand(computer),
                 ChatHelpers.position(computer.getPosition())
             );
         }
 
         table.display(source);
-        return computers.size();
+        return computers.length;
+    }
+
+
+    private static Component makeComputerDumpCommand(ServerComputer computer) {
+        return ChatHelpers.link(
+            Component.literal("#" + computer.getID()),
+            String.format("/computercraft dump %d", computer.getID()),
+            Component.translatable("commands.computercraft.dump.action")
+        );
     }
 }
