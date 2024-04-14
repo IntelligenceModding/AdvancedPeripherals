@@ -14,14 +14,19 @@ public class ServerWorker {
     private static final Queue<Runnable> callQueue = new ArrayDeque<>();
 
     public static void add(final Runnable call) {
-        callQueue.add(call);
+        if (call != null) {
+            callQueue.add(call);
+        }
     }
 
     @SubscribeEvent
     public static void serverTick(TickEvent.ServerTickEvent event) {
         if (event.phase == TickEvent.Phase.END) {
-            while (!callQueue.isEmpty()) {
+            while (true) {
                 final Runnable runnable = callQueue.poll();
+                if (runnable == null) {
+                    return;
+                }
                 AdvancedPeripherals.debug("Running queued server worker call: " + runnable);
                 runnable.run();
             }
