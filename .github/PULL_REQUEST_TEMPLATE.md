@@ -1,4 +1,4 @@
-**PLEASE READ THE [GUIDELINES](https://github.com/SirEndii/AdvancedPeripherals/blob/1.20.1/CONTRIBUTING.md) BEFORE MAKING A CONTRIBUTION**
+**PLEASE READ THE [GUIDELINES](https://github.com/SirEndii/AdvancedPeripherals/blob/dev/1.20.1/CONTRIBUTING.md) BEFORE MAKING A CONTRIBUTION**
 
 
 * **Please check if the PR fulfills these requirements**
