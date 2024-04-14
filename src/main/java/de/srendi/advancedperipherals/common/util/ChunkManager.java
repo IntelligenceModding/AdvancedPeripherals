@@ -105,7 +105,7 @@ public class ChunkManager extends SavedData {
     // This method is kept for backward compatibility
     // use removeForceChunk without the position argument instead
     // TODO: remove in next major version
-    @Deprecated(forRemoval = true, since = "1.20.1-0.7.39")
+    @Deprecated(forRemoval = true, since = "1.19.2-0.7.36")
     public synchronized boolean removeForceChunk(ServerLevel level, UUID owner, ChunkPos pos) {
         return removeForceChunk(level, owner);
     }
