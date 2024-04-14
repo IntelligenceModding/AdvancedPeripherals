@@ -4,7 +4,7 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
 import dan200.computercraft.core.computer.ComputerSide;
 import dan200.computercraft.core.computer.Environment;
-import dan200.computercraft.shared.ModRegistry;
+import dan200.computercraft.shared.command.UserLevel;
 import dan200.computercraft.shared.command.text.ChatHelpers;
 import dan200.computercraft.shared.command.text.TableBuilder;
 import dan200.computercraft.shared.computer.core.ServerComputer;
@@ -43,7 +43,7 @@ public class APCommands {
                 .then(Commands.literal("help")
                     .executes(context -> forceloadHelp(context.getSource())))
                 .then(Commands.literal("dump")
-                    .requires(ModRegistry.Permissions.PERMISSION_DUMP)
+                    .requires(UserLevel.OWNER_OP)
                     .executes(context -> forceloadDump(context.getSource())))
             )
         );
@@ -70,7 +70,7 @@ public class APCommands {
     }
 
     private static int forceloadHelp(CommandSourceStack source) throws CommandSyntaxException {
-        source.sendSuccess(() -> Component.literal(FORCELOAD_HELP), true);
+        source.sendSuccess(Component.literal(FORCELOAD_HELP), true);
         return 1;
     }
 

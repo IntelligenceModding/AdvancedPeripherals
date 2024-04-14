@@ -2,7 +2,7 @@ package de.srendi.advancedperipherals.common.util;
 
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
-import net.minecraft.core.registries.Registries;
+import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -237,7 +237,7 @@ public class ChunkManager extends SavedData {
     }
 
     private static ServerLevel getServerLevel(String name) {
-        ResourceKey<net.minecraft.world.level.Level> key = ResourceKey.create(Registries.DIMENSION, new ResourceLocation(name));
+        ResourceKey<net.minecraft.world.level.Level> key = ResourceKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(name));
         return ServerLifecycleHooks.getCurrentServer().getLevel(key);
     }
 
