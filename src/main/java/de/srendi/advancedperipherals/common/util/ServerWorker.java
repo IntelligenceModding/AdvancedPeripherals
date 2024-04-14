@@ -5,13 +5,13 @@ import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
-import java.util.ArrayDeque;
 import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 @Mod.EventBusSubscriber(modid = AdvancedPeripherals.MOD_ID)
 public class ServerWorker {
 
-    private static final Queue<Runnable> callQueue = new ArrayDeque<>();
+    private static final Queue<Runnable> callQueue = new ConcurrentLinkedQueue<>();
 
     public static void add(final Runnable call) {
         if (call != null) {
