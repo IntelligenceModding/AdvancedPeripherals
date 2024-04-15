@@ -1,7 +1,7 @@
 package de.srendi.advancedperipherals.common.util.inventory;
 
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.items.IItemHandler;
+import net.neoforged.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 
 public interface IStorageSystemItemHandler extends IItemHandler {

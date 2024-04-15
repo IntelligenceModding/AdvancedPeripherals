@@ -12,12 +12,12 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.common.util.FakePlayer;
-import net.minecraftforge.fml.ModLoadingContext;
-import net.minecraftforge.network.NetworkDirection;
-import net.minecraftforge.network.NetworkRegistry;
-import net.minecraftforge.network.PacketDistributor;
-import net.minecraftforge.network.simple.SimpleChannel;
+import net.neoforged.common.util.FakePlayer;
+import net.neoforged.fml.ModLoadingContext;
+import net.neoforged.network.NetworkDirection;
+import net.neoforged.network.NetworkRegistry;
+import net.neoforged.network.PacketDistributor;
+import net.neoforged.network.simple.SimpleChannel;
 
 import java.util.Optional;
 import java.util.function.Function;

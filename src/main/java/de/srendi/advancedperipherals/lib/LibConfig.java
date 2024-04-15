@@ -1,6 +1,6 @@
 package de.srendi.advancedperipherals.lib;
 
-import net.minecraftforge.common.ForgeConfigSpec;
+import net.neoforged.common.ForgeConfigSpec;
 
 /**
  * Configuration class for tweaks of library

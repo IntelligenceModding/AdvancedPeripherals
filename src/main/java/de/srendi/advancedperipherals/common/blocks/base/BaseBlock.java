@@ -10,7 +10,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
-import net.minecraftforge.common.Tags;
+import net.neoforged.common.Tags;
 import org.jetbrains.annotations.NotNull;
 
 public class BaseBlock extends Block implements IHarvestableBlock {

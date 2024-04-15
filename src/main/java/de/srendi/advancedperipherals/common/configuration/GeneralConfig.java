@@ -2,8 +2,7 @@ package de.srendi.advancedperipherals.common.configuration;
 
 import de.srendi.advancedperipherals.lib.LibConfig;
 import net.minecraft.FieldsAreNonnullByDefault;
-import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.fml.config.ModConfig;
+import net.neoforged.fml.config.ModConfig;
 
 @FieldsAreNonnullByDefault
 public class GeneralConfig implements IAPConfig {

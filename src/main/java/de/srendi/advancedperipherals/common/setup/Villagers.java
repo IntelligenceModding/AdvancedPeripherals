@@ -6,7 +6,7 @@ import de.srendi.advancedperipherals.AdvancedPeripherals;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.ai.village.poi.PoiType;
 import net.minecraft.world.entity.npc.VillagerProfession;
-import net.minecraftforge.registries.RegistryObject;
+import net.neoforged.registries.RegistryObject;
 
 public class Villagers {
 

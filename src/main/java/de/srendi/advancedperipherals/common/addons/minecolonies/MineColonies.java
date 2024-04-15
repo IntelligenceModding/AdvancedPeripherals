@@ -29,10 +29,10 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.server.command.TextComponentHelper;
+import net.neoforged.common.capabilities.ForgeCapabilities;
+import net.neoforged.common.util.LazyOptional;
+import net.neoforged.items.IItemHandler;
+import net.neoforged.server.command.TextComponentHelper;
 
 import java.util.ArrayList;
 import java.util.HashMap;

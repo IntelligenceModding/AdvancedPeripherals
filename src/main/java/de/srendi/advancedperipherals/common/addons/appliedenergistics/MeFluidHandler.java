@@ -7,7 +7,7 @@ import appeng.api.storage.MEStorage;
 import de.srendi.advancedperipherals.common.util.Pair;
 import de.srendi.advancedperipherals.common.util.inventory.FluidFilter;
 import de.srendi.advancedperipherals.common.util.inventory.IStorageSystemFluidHandler;
-import net.minecraftforge.fluids.FluidStack;
+import net.neoforged.fluids.FluidStack;
 import org.jetbrains.annotations.NotNull;
 
 /**

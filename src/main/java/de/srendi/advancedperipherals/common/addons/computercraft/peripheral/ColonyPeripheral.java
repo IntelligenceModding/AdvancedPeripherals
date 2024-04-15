@@ -30,7 +30,7 @@ import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.fml.ModList;
+import net.neoforged.fml.ModList;
 
 import java.util.*;
 import java.util.stream.Collectors;

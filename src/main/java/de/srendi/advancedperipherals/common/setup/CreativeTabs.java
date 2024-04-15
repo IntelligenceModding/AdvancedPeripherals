@@ -3,7 +3,7 @@ package de.srendi.advancedperipherals.common.setup;
 import de.srendi.advancedperipherals.APCreativeTab;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import net.minecraft.world.item.CreativeModeTab;
-import net.minecraftforge.registries.RegistryObject;
+import net.neoforged.registries.RegistryObject;
 
 public class CreativeTabs {
 

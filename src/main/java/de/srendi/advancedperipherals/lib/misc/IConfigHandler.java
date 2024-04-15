@@ -1,6 +1,6 @@
 package de.srendi.advancedperipherals.lib.misc;
 
-import net.minecraftforge.common.ForgeConfigSpec;
+import net.neoforged.common.ForgeConfigSpec;
 
 import java.util.Arrays;
 import java.util.stream.Collectors;

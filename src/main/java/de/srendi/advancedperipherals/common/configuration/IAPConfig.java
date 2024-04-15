@@ -1,8 +1,8 @@
 package de.srendi.advancedperipherals.common.configuration;
 
 import de.srendi.advancedperipherals.lib.misc.IConfigHandler;
-import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.fml.config.ModConfig;
+import net.neoforged.common.ForgeConfigSpec;
+import net.neoforged.fml.config.ModConfig;
 
 public interface IAPConfig {
 

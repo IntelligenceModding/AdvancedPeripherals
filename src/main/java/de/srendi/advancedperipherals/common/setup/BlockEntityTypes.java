@@ -3,8 +3,8 @@ package de.srendi.advancedperipherals.common.setup;
 import com.google.common.collect.Sets;
 import de.srendi.advancedperipherals.common.blocks.blockentities.*;
 import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraftforge.fml.ModList;
-import net.minecraftforge.registries.RegistryObject;
+import net.neoforged.fml.ModList;
+import net.neoforged.registries.RegistryObject;
 
 public class BlockEntityTypes {
 
