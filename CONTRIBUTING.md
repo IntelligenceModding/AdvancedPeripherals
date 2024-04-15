@@ -35,11 +35,11 @@ You can also download the [IntelliJ IDEA][idea] IDE, which is what we recommend 
 
 - Download AP's source code:
   ```
-  git clone https://github.com/SirEndii/AdvancedPeripherals
+  git clone https://github.com/IntelligenceModding/AdvancedPeripherals
   cd AdvancedPeripherals
   ```
   - If you're using IntelliJ IDEA, you can import the project by selecting `Get from version control` and then typing
-    in the github repository url `https://github.com/SirEndii/AdvancedPeripherals/`.
+    in the github repository url `https://github.com/IntelligenceModding/AdvancedPeripherals/`.
 
 - Build AP with `./gradlew build` (or double clicking the build button in Intellij IDEA). This will be very slow the first time it runs, as it needs to download all the dependencies. 
 - Subsequent builds will be much faster.
@@ -53,7 +53,7 @@ If you're having trouble setting up a development environment, [ask the communit
 
 ### Testing
 We currently do not have code tests for Advanced Peripherals.
-However, we currently work on adding tests to Advanced Peripherals. You can contribute to this by adding tests to the project on the [dev/tests](https://github.com/SirEndii/AdvancedPeripherals/tree/dev/tests) branch. If you want to contribute to this, please contact us on [discord][discord].
+However, we currently work on adding tests to Advanced Peripherals. You can contribute to this by adding tests to the project on the [dev/tests](https://github.com/IntelligenceModding/AdvancedPeripherals/tree/dev/tests) branch. If you want to contribute to this, please contact us on [discord][discord].
 
 
 ## Writing documentation
@@ -63,10 +63,10 @@ Everything you need to know is stated in the readme of the documentation reposit
 
 
 
-[new-issue]: https://github.com/SirEndii/AdvancedPeripherals/issues/new/choose "Create a new issue"
+[new-issue]: https://github.com/IntelligenceModding/AdvancedPeripherals/issues/new/choose "Create a new issue"
 [Adoptium]: https://adoptium.net/temurin/releases?version=17 "Download OpenJDK 17"
 [vsc]: https://code.visualstudio.com/ "Visual Studio Code"
-[docs-repo]: https://github.com/SirEndii/Advanced-Peripherals-Documentation "Advanced Peripherals Documentation Repository"
+[docs-repo]: https://github.com/IntelligenceModding/Advanced-Peripherals-Documentation "Advanced Peripherals Documentation Repository"
 [checkstyle]: https://checkstyle.org/
 [idea]: https://www.jetbrains.com/de-de/products/compare/?product=idea&product=idea-ce "IntelliJ IDEA Community Edition"
 [discord]: https://discord.intelligence-modding.de/ "Join the Discord"
