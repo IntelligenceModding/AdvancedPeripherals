@@ -31,8 +31,8 @@ public class APCommands {
     public static final String ROOT_LITERAL = "advancedperipherals";
     public static final String FORCELOAD_LITERAL = "forceload";
     static final String FORCELOAD_HELP =
-        "/" + ROOT_LITERAL + " " + FORCELOAD_LITERAL + " help" + " : show this help message\n" +
-        "/" + ROOT_LITERAL + " " + FORCELOAD_LITERAL + " dump" + " : show all chunky turtles\n";
+        "/" + ROOT_LITERAL + " " + FORCELOAD_LITERAL + " help" + " - show this help message\n" +
+        "/" + ROOT_LITERAL + " " + FORCELOAD_LITERAL + " dump" + " - show all chunky turtles\n";
 
     @SubscribeEvent
     public static void register(RegisterCommandsEvent event) {
@@ -75,7 +75,7 @@ public class APCommands {
     }
 
     private static int forceloadDump(CommandSourceStack source) throws CommandSyntaxException {
-        TableBuilder table = new TableBuilder("All Chunky Turtles", "Computer", "Position");
+        TableBuilder table = new TableBuilder("ChunkyTurtles", "Computer", "Position");
 
         ServerComputer[] computers = ServerContext.get(source.getServer()).registry().getComputers().stream().filter((computer) -> {
             Environment env = computer.getComputer().getEnvironment();
@@ -90,7 +90,7 @@ public class APCommands {
         for (ServerComputer computer : computers) {
             table.row(
                 makeComputerDumpCommand(computer),
-                ChatHelpers.position(computer.getPosition())
+                makeComputerPosCommand(computer)
             );
         }
 
@@ -102,8 +102,16 @@ public class APCommands {
     private static Component makeComputerDumpCommand(ServerComputer computer) {
         return ChatHelpers.link(
             Component.literal("#" + computer.getID()),
-            String.format("/computercraft dump %d", computer.getID()),
+            "/computercraft dump " + computer.getInstanceID(),
             Component.translatable("commands.computercraft.dump.action")
+        );
+    }
+
+    private static Component makeComputerPosCommand(ServerComputer computer) {
+        return ChatHelpers.link(
+            ChatHelpers.position(computer.getPosition()),
+            "/computercraft tp " + computer.getInstanceID(),
+            Component.translatable("commands.computercraft.tp.action")
         );
     }
 }
