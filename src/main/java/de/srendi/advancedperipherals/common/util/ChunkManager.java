@@ -213,6 +213,7 @@ public class ChunkManager extends SavedData {
             AdvancedPeripherals.debug(String.format("Purge forced chunk for %s", uuid), Level.WARN);
             unforceChunkRecord(uuid, chunkRecord, level);
             iterator.remove();
+            setDirty();
         }
     }
 
