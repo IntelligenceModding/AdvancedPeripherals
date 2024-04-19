@@ -57,8 +57,10 @@ public class ChunkManager extends SavedData {
     @SubscribeEvent
     public static void serverTick(TickEvent.ServerTickEvent event) {
         if (event.phase == TickEvent.Phase.END) {
-            tickCounter += 2;
-            if (tickCounter >= APConfig.PERIPHERALS_CONFIG.chunkLoadValidTime.get()) {
+            tickCounter++;
+            // run cleanup per chunkLoadValidTime / 10
+            final int checkIntervalInTick = APConfig.PERIPHERALS_CONFIG.chunkLoadValidTime.get() * 20 / 10;
+            if (tickCounter >= checkIntervalInTick) {
                 tickCounter = 0;
                 ChunkManager.get(ServerLifecycleHooks.getCurrentServer().overworld()).cleanup();
             }
@@ -66,10 +68,12 @@ public class ChunkManager extends SavedData {
     }
 
     private static boolean forceChunk(UUID owner, ServerLevel level, ChunkPos pos) {
+        AdvancedPeripherals.debug("Forcing chunk " + pos, Level.WARN);
         return ForgeChunkManager.forceChunk(level, AdvancedPeripherals.MOD_ID, owner, pos.x, pos.z, true, true);
     }
 
     private static boolean unforceChunk(UUID owner, ServerLevel level, ChunkPos pos) {
+        AdvancedPeripherals.debug("Unforcing chunk " + pos, Level.WARN);
         return ForgeChunkManager.forceChunk(level, AdvancedPeripherals.MOD_ID, owner, pos.x, pos.z, false, true);
     }
 
@@ -145,7 +149,7 @@ public class ChunkManager extends SavedData {
         }
         initialized = true;
 
-        AdvancedPeripherals.debug("Schedule chunk manager init, forcedChunks = " + forcedChunks.size(), Level.WARN);
+        AdvancedPeripherals.debug(String.format("Schedule chunk manager init, forcedChunks = %d", forcedChunks.size()), Level.WARN);
         final int chunkRadius = APConfig.PERIPHERALS_CONFIG.chunkyTurtleRadius.get();
         final Map<String, ServerLevel> levels = getServerLevels();
         forcedChunks.forEach((uuid, value) -> {
@@ -170,22 +174,20 @@ public class ChunkManager extends SavedData {
                 }
             } else if (loadedRadius > chunkRadius) {
                 // clean overflowed load radius
-                for (int x = chunkRadius + 1; x <= loadedRadius; x++) {
-                    for (int z = chunkRadius + 1; z <= loadedRadius; z++) {
-                        unforceChunk(uuid, level, new ChunkPos(pos.x + x, pos.z + z));
-                        unforceChunk(uuid, level, new ChunkPos(pos.x + x, pos.z - z));
-                        unforceChunk(uuid, level, new ChunkPos(pos.x - x, pos.z + z));
-                        unforceChunk(uuid, level, new ChunkPos(pos.x - x, pos.z - z));
+                for (int x = -loadedRadius; x <= loadedRadius; x++) {
+                    for (int z = -loadedRadius; z <= loadedRadius; z++) {
+                        if (Math.abs(x) > chunkRadius || Math.abs(z) > chunkRadius) {
+                            unforceChunk(uuid, level, new ChunkPos(pos.x + x, pos.z + z));
+                        }
                     }
                 }
             } else if (loadedRadius < chunkRadius) {
                 // otherwise, only do the changed part to reduce startup time (in case we have a lot chunky turtle)
-                for (int x = loadedRadius + 1; x <= chunkRadius; x++) {
-                    for (int z = loadedRadius + 1; z <= chunkRadius; z++) {
-                        forceChunk(uuid, level, new ChunkPos(pos.x + x, pos.z + z));
-                        forceChunk(uuid, level, new ChunkPos(pos.x + x, pos.z - z));
-                        forceChunk(uuid, level, new ChunkPos(pos.x - x, pos.z + z));
-                        forceChunk(uuid, level, new ChunkPos(pos.x - x, pos.z - z));
+                for (int x = -chunkRadius; x <= chunkRadius; x++) {
+                    for (int z = -chunkRadius; z <= chunkRadius; z++) {
+                        if (Math.abs(x) > loadedRadius || Math.abs(z) > loadedRadius) {
+                            forceChunk(uuid, level, new ChunkPos(pos.x + x, pos.z + z));
+                        }
                     }
                 }
             }
