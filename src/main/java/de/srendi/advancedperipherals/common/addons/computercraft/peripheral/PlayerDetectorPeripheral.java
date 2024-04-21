@@ -250,9 +250,10 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
 
         int decimals = Math.min(arguments.optInt(1, 0), 4);
 
-        info.put("x", Math.floor(x * Math.pow(10, decimals)) / Math.pow(10, decimals));
-        info.put("y", Math.floor(y * Math.pow(10, decimals)) / Math.pow(10, decimals));
-        info.put("z", Math.floor(z * Math.pow(10, decimals)) / Math.pow(10, decimals));
+        final double unit = Math.pow(10, decimals);
+        info.put("x", Math.floor(x * unit) / unit);
+        info.put("y", Math.floor(y * unit) / unit);
+        info.put("z", Math.floor(z * unit) / unit);
         if (APConfig.PERIPHERALS_CONFIG.morePlayerInformation.get()) {
             info.put("yaw", existingPlayer.yRotO);
             info.put("pitch", existingPlayer.xRotO);
