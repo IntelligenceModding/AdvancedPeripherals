@@ -53,7 +53,7 @@ public class APConfig extends ModConfig {
         }
 
         @Override
-        public void unload(Path configBasePath, ModConfig config) {
+        public void unload(ModConfig config) {
             super.unload(getPath(configBasePath), config);
         }
     }
