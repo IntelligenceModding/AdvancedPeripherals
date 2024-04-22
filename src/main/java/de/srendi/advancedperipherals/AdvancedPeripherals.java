@@ -31,7 +31,7 @@ public class AdvancedPeripherals {
         APConfig.register(ModLoadingContext.get());
 
         modBus.addListener(this::commonSetup);
-        Registration.register();
+        Registration.register(modBus);
     }
 
     public static void debug(String message) {
