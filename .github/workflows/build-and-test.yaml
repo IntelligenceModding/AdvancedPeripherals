@@ -1,25 +1,13 @@
-name: build-and-test
-run-name: Build and test the changes
-on: [push, pull_request, workflow_dispatch]
+name: Build and Test
+
+on:
+  workflow_dispatch:
+  push:
+  pull_request_target:
+    types:
+      - opened
+      - synchronize
+
 jobs:
-  test:
-    name: Test
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout sources
-        uses: actions/checkout@v4
-      - name: Setup Gradle
-        uses: gradle/gradle-build-action@v3
-      - name: Build with Gradle
-        run: ./gradlew check
-  build:
-    name: Build
-    runs-on: ubuntu-latest
-    needs: test
-    steps:
-      - name: Checkout sources
-        uses: actions/checkout@v4
-      - name: Setup Gradle
-        uses: gradle/gradle-build-action@v3
-      - name: Build with Gradle
-        run: ./gradlew build
+  build-and-test:
+    uses: IntelligenceModding/actions/.github/workflows/build-and-test.yaml@master
