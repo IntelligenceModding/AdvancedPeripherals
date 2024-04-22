@@ -7,9 +7,8 @@ plugins {
     id 'net.darkhax.curseforgegradle' version '1.1.16'
     id 'org.jetbrains.changelog' version '1.2.1'
     id "com.modrinth.minotaur" version "2.+"
-    id "org.jetbrains.kotlin.jvm" version "1.6.10"
-    id 'net.neoforged.gradle' version '[6.0.18,6.2)'
-    id 'org.spongepowered.mixin' version '0.7.+'
+    //id "org.jetbrains.kotlin.jvm" version "1.6.10"
+    id 'net.neoforged.gradle.userdev' version '7.0.105'
     id "com.github.breadmoirai.github-release" version "2.5.2"
     id 'checkstyle'
     id 'java'
@@ -18,8 +17,8 @@ plugins {
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
 wrapper {
-    gradleVersion = '8.4'
-    distributionType = Wrapper.DistributionType.ALL
+    gradleVersion = '8.7'
+    distributionType = Wrapper.DistributionType.BIN
 }
 
 def isSnapshotVersion = project.hasProperty('teamcityBuild')
@@ -55,109 +54,54 @@ sourceSets {
     main.resources {
         srcDir 'src/generated/resources'
     }
-    testMod {}
 }
 
-minecraft {
+minecraft.accessTransformers.file rootProject.file('src/main/resources/META-INF/accesstransformer.cfg')
 
-    mappings channel: "${mappings_channel}", version: "${mappings_version}"
 
-    accessTransformer file('src/main/resources/META-INF/accesstransformer.cfg')
-    accessTransformer file('src/testMod/resources/META-INF/accesstransformer.cfg')
+// Default run configurations.
+// These can be tweaked, removed, or duplicated as needed.
+runs {
+    // applies to all the run configs below
+    configureEach {
+        // Recommended logging data for a userdev environment
+        // The markers can be added/remove as needed separated by commas.
+        // "SCAN": For mods scan.
+        // "REGISTRIES": For firing of registry events.
+        // "REGISTRYDUMP": For getting the contents of all registries.
+        systemProperty 'forge.logging.markers', 'REGISTRIES'
 
-    runs {
-        client {
-            workingDirectory project.file('run')
+        // Recommended logging level for the console
+        // You can set various levels here.
+        // Please read: https://stackoverflow.com/questions/2031163/when-to-use-the-different-log-levels
+        systemProperty 'forge.logging.console.level', 'debug'
 
-            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-            property 'mixin.env.remapRefMap', 'true'
-            property 'mixin.env.refMapRemappingFile', "${buildDir}/createSrgToMcp/output.srg"
-            properties 'forge.logging.console.level': 'debug'
+        modSource project.sourceSets.main
+    }
 
-            mods {
-                advancedperipherals {
-                    source sourceSets.main
-                }
-            }
-            if (project.hasProperty('mc_uuid')) {
-                args '--uuid', project.getProperty('mc_uuid')
-            }
-            if (project.hasProperty('mc_username')) {
-                args '--username', project.getProperty('mc_username')
-            }
-            if (project.hasProperty('mc_accessToken')) {
-                args '--accessToken', project.getProperty('mc_accessToken')
-            }
-        }
+    client {
+        // Comma-separated list of namespaces to load gametests from. Empty = all namespaces.
+        systemProperty 'forge.enabledGameTestNamespaces', project.mod_id
+    }
 
-        server {
-            workingDirectory project.file('server')
+    server {
+        systemProperty 'forge.enabledGameTestNamespaces', project.mod_id
+        programArgument '--nogui'
+    }
 
-            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-            property 'mixin.env.remapRefMap', 'true'
-            property 'mixin.env.refMapRemappingFile', "${buildDir}/createSrgToMcp/output.srg"
-            property 'forge.logging.console.level', 'info'
+    // This run config launches GameTestServer and runs all registered gametests, then exits.
+    // By default, the server will crash when no gametests are provided.
+    // The gametest system is also enabled by default for other run configs under the /test command.
+    gameTestServer {
+        systemProperty 'forge.enabledGameTestNamespaces', project.mod_id
+    }
 
-            mods {
-                advancedperipherals {
-                    source sourceSets.main
-                }
-            }
-        }
+    data {
+        // example of overriding the workingDirectory set in configureEach above, uncomment if you want to use it
+        // workingDirectory project.file('run-data')
 
-        data {
-            workingDirectory project.file('run')
-
-            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-            property 'mixin.env.remapRefMap', 'true'
-            property 'mixin.env.refMapRemappingFile', "${buildDir}/createSrgToMcp/output.srg"
-            property 'forge.logging.console.level', 'debug'
-
-            args '--mod', 'advancedperipherals', '--all',
-                    '--existing', file('src/main/resources').toString(),
-                    '--existing', file('src/generated/resources').toString(),
-                    '--output', file('src/generated/resources/')
-
-            mods {
-                advancedperipherals {
-                    source sourceSets.main
-                }
-            }
-        }
-
-        testClient {
-            workingDirectory project.file('test-files/client')
-            parent runs.client
-
-            mods {
-                aptest {
-                    source sourceSets.testMod
-                }
-            }
-
-            lazyToken('minecraft_classpath') {
-                (configurations.implementationExtra.copyRecursive().resolve())
-                        .collect { it.absolutePath }
-                        .join(File.pathSeparator)
-            }
-        }
-
-        testServer {
-            workingDirectory project.file('test-files/server')
-            parent runs.server
-
-            mods {
-                aptest {
-                    source sourceSets.testMod
-                }
-            }
-
-            lazyToken('minecraft_classpath') {
-                (configurations.implementationExtra.copyRecursive().resolve())
-                        .collect { it.absolutePath }
-                        .join(File.pathSeparator)
-            }
-        }
+        // Specify the modid for data generation, where to output the resulting resource, and where to look for existing resources.
+        programArguments.addAll '--mod', project.mod_id, '--all', '--output', file('src/generated/resources/').getAbsolutePath(), '--existing', file('src/main/resources/').getAbsolutePath()
     }
 }
 
@@ -263,76 +207,74 @@ dependencies {
 
     // Minimal requirements
     compileOnly "org.jetbrains:annotations:${jb_annotations}"
-    minecraft "net.neoforged:forge:${minecraft_version}-${neo_version}"
-    implementation fg.deobf("cc.tweaked:cc-tweaked-${minecraft_version}-forge:${cc_version}")
+    implementation "net.neoforged:neoforge:${neo_version}"
+    implementation "cc.tweaked:cc-tweaked-${minecraft_version}-forge:${cc_version}"
     // Compile-time API required
     // Ae2
-    compileOnly fg.deobf("appeng:appliedenergistics2-forge:${appliedenergistics_version}")
+    compileOnly "appeng:appliedenergistics2-forge:${appliedenergistics_version}"
     // Curios
-    compileOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}:api")
+    compileOnly "top.theillusivec4.curios:curios-forge:${curios_version}:api"
     // Minimal requirements end
 
     // Extended requirements
     // We don't use the api since we need a specific class from mekanism
-    compileOnly fg.deobf("mekanism:Mekanism:${mekanism_version}")
-    runtimeOnly fg.deobf("mekanism:Mekanism:${mekanism_version}")
+    compileOnly "mekanism:Mekanism:${mekanism_version}"
+    runtimeOnly "mekanism:Mekanism:${mekanism_version}"
 
-    // runtimeOnly fg.deobf("mekanism:Mekanism:${mekanism_version}")// core
+    // runtimeOnly "mekanism:Mekanism:${mekanism_version}"// core
 
     // Applied Energistics 2
-    runtimeOnly fg.deobf("appeng:appliedenergistics2-forge:${appliedenergistics_version}")
+    runtimeOnly "appeng:appliedenergistics2-forge:${appliedenergistics_version}"
 
     // Applied Mekanistics
-    implementation fg.deobf("curse.maven:applied-mekanistics-574300:${appliedmekanistics_version}")
+    implementation "curse.maven:applied-mekanistics-574300:${appliedmekanistics_version}"
 
     // Curios
-    runtimeOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}")
+    runtimeOnly "top.theillusivec4.curios:curios-forge:${curios_version}"
 
     // Refined Storage
-    implementation fg.deobf("com.refinedmods:refinedstorage:${refinedstorage_version}") {
-        transitive false
-    }
+    implementation "com.refinedmods:refinedstorage:${refinedstorage_version}"
 
     // AE2 Things
-    compileOnly fg.deobf("curse.maven:ae2things-609977:${ae2things_version}-sources")
-    runtimeOnly fg.deobf("curse.maven:ae2things-609977:${ae2things_version}-sources")
+    compileOnly "curse.maven:ae2things-609977:${ae2things_version}-sources"
+    runtimeOnly "curse.maven:ae2things-609977:${ae2things_version}-sources"
 
     // AE2 Additions
-    compileOnly fg.deobf("curse.maven:ae-additions-493962:${ae2additions_version}")
-    runtimeOnly fg.deobf("curse.maven:ae-additions-493962:${ae2additions_version}")
+    compileOnly "curse.maven:ae-additions-493962:${ae2additions_version}"
+    runtimeOnly "curse.maven:ae-additions-493962:${ae2additions_version}"
 
-    implementation fg.deobf("thedarkcolour:kotlinforforge:${kotlinforforge_version}")
+    //implementation "thedarkcolour:kotlinforforge:${kotlinforforge_version}"
 
     // Botania
-    compileOnly fg.deobf("vazkii.botania:Botania:${botania_version}")
-    runtimeOnly fg.deobf("vazkii.botania:Botania:${botania_version}")
+    compileOnly "vazkii.botania:Botania:${botania_version}"
+    runtimeOnly "vazkii.botania:Botania:${botania_version}"
 
     // Minecolonies
     // Remove/Comment this section if you want to use runData.
-    //runtimeOnly fg.deobf("com.ldtteam:minecolonies:${minecolonies_version}")
-    //runtimeOnly fg.deobf("com.ldtteam:structurize:${structurize_version}")
-    //runtimeOnly fg.deobf("com.ldtteam:domum_ornamentum:${domumornamentum_version}:universal")
-    //runtimeOnly fg.deobf("com.ldtteam:blockui:${blockui_version}")
+    //runtimeOnly "com.ldtteam:minecolonies:${minecolonies_version}"
+    //runtimeOnly "com.ldtteam:structurize:${structurize_version}"
+    //runtimeOnly "com.ldtteam:domum_ornamentum:${domumornamentum_version}:universal"
+    //runtimeOnly "com.ldtteam:blockui:${blockui_version}"
 
-    compileOnly fg.deobf("com.ldtteam:minecolonies:${minecolonies_version}")
-    compileOnly fg.deobf("com.ldtteam:structurize:${structurize_version}")
-    compileOnly fg.deobf("com.ldtteam:domum_ornamentum:${domumornamentum_version}:universal")
-    compileOnly fg.deobf("com.ldtteam:blockui:${blockui_version}")
+    compileOnly "com.ldtteam:minecolonies:${minecolonies_version}"
+    compileOnly "com.ldtteam:structurize:${structurize_version}"
+    compileOnly "com.ldtteam:domum_ornamentum:${domumornamentum_version}:universal"
+    compileOnly "com.ldtteam:blockui:${blockui_version}"
 
     //Patchouli
-    runtimeOnly fg.deobf("vazkii.patchouli:Patchouli:${patchouli_version}-FORGE")
+    runtimeOnly "vazkii.patchouli:Patchouli:${patchouli_version}-FORGE"
 
     // Create
-    compileOnly fg.deobf("com.simibubi.create:create-1.20.1:${create_version}:all")
-    runtimeOnly fg.deobf("com.simibubi.create:create-1.20.1:${create_version}:all")
+    compileOnly "com.simibubi.create:create-1.20.1:${create_version}:all"
+    runtimeOnly "com.simibubi.create:create-1.20.1:${create_version}:all"
 
     //Powah
-    implementation fg.deobf("curse.maven:powah-633483:${powah_version}")
-    implementation fg.deobf("me.shedaniel.cloth:cloth-config-forge:11.1.106")
-    implementation fg.deobf("dev.architectury:architectury-forge:9.1.10")
+    implementation "curse.maven:powah-633483:${powah_version}"
+    implementation "me.shedaniel.cloth:cloth-config-forge:11.1.106"
+    implementation "dev.architectury:architectury-forge:9.1.10"
 
     //Removed until fully ported
-    //testImplementation fg.deobf("site.siredvin.ttoolkit:ttoolkit-${minecraft_version}:${ttoolkit_version}")
+    //testImplementation "site.siredvin.ttoolkit:ttoolkit-${minecraft_version}:${ttoolkit_version}"
 
     testImplementation "org.junit.jupiter:junit-jupiter-api:${junit_version}"
     testImplementation "org.junit.jupiter:junit-jupiter-params:${junit_version}"
@@ -344,11 +286,11 @@ dependencies {
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junit_version}"
     // Testing stuff
     // JEI
-    implementation fg.deobf("mezz.jei:jei-${jei_version}")
+    //implementation "mezz.jei:jei-${jei_version}"
 
     // Create Crafts & Additions
-    compileOnly fg.deobf("curse.maven:createaddition-439890:${createadditions_version}")
-    runtimeOnly fg.deobf("curse.maven:createaddition-439890:${createadditions_version}")
+    compileOnly "curse.maven:createaddition-439890:${createadditions_version}"
+    runtimeOnly "curse.maven:createaddition-439890:${createadditions_version}"
 }
 
 
@@ -365,45 +307,6 @@ changelog {
     keepUnreleasedSection = true
     unreleasedTerm = "[Unreleased]"
     groups = []
-}
-
-compileTestModJava {
-    dependsOn(compileJava)
-}
-
-task setupServer(type: Copy) {
-    group "test server"
-    description "Sets up the environment for the test server."
-
-    from("src/testMod/server-files") {
-        include "eula.txt"
-        include "server.properties"
-    }
-    into "test-files/server"
-}
-
-["Client", "Server"].forEach { name ->
-    tasks.register("test$name", JavaExec.class).configure {
-        it.group('In-game tests')
-        it.description("Runs tests on a temporary Minecraft instance.")
-        it.dependsOn(setupServer, "prepareRunTest$name", "cleanTest$name", 'compileTestModJava')
-
-        JavaExec exec = tasks.getByName("runTest$name")
-        exec.copyTo(it)
-        it.setClasspath(exec.getClasspath())
-        it.mainClass = exec.mainClass
-        it.setArgs(exec.getArgs())
-
-        it.systemProperty('forge.logging.console.level', 'debug')
-        it.systemProperty('ttoolkit.run', 'true')
-    }
-}
-
-test {
-    useJUnitPlatform()
-    testLogging {
-        events "skipped", "failed"
-    }
 }
 
 afterEvaluate {
@@ -424,8 +327,6 @@ jar {
     })
     archiveFileName = "AdvancedPeripherals-${minecraft_version}-${mod_version}.jar"
 }
-
-jar.finalizedBy('reobfJar')
 
 tasks.withType(Checkstyle) {
     reports {
@@ -461,22 +362,6 @@ tasks.named('processResources', ProcessResources).configure {
     }
 }
 
-// Used to do some magic with teamcity
-task commitAndPush() {
-    doLast {
-        def baseMessage = project.hasProperty('commitMessage') ? commitMessage : 'No commit message provided'
-        def message = baseMessage.replace("{version}", "${minecraft_version}-${version}")
-
-        exec {
-            commandLine 'git', 'add', '.'
-        }
-
-        exec {
-            commandLine 'git', 'commit', '-m', message
-        }
-    }
-}
-
 tasks.register('publishCurseForge', TaskPublishCurseForge, { task ->
     setGroup("publishing")
     setDescription("Upload Advanced Peripherals to CurseForge")
@@ -504,7 +389,7 @@ tasks.register('publishCurseForge', TaskPublishCurseForge, { task ->
 
         addRequirement('cc-tweaked')
 
-        addModLoader("forge", "neoforge")
+        addModLoader("neoforge")
 
         releaseType = "${release_type}"
     }
@@ -539,7 +424,7 @@ modrinth {
     versionType = release_type
     uploadFile = jar
     gameVersions = [minecraft_version]
-    loaders = ["forge", "neoforge"]
+    loaders = ["neoforge"]
     dependencies {
         required.project "cc-tweaked"
     }
@@ -583,10 +468,8 @@ publishing {
                     NodeList dependencies = asNode().dependencies
                     NodeList allDeps = dependencies.'*'
 
-                    //TODO: Needs to be changed in 1.20.2 since neoforge then changes the packages names.
-                    // Remove forge deps
                     allDeps.<Node> findAll() { Node el ->
-                        el.artifactId.text() == 'forge' && el.groupId.text() == 'net.minecraftforge'
+                        el.artifactId.text() == 'forge' && el.groupId.text() == 'net.neoforged'
                     }.forEach() { Node el ->
                         el.parent().remove(el)
                     }

@@ -17,10 +17,10 @@ import net.minecraft.world.item.alchemy.PotionUtils;
 import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.block.Block;
-import net.minecraftforge.common.Tags;
-import net.minecraftforge.common.crafting.ConditionalRecipe;
-import net.minecraftforge.common.crafting.StrictNBTIngredient;
-import net.minecraftforge.common.crafting.conditions.IConditionBuilder;
+import net.neoforged.common.Tags;
+import net.neoforged.common.crafting.ConditionalRecipe;
+import net.neoforged.common.crafting.StrictNBTIngredient;
+import net.neoforged.common.crafting.conditions.IConditionBuilder;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;

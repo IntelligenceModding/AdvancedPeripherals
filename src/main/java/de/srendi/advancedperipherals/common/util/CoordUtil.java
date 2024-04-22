@@ -100,26 +100,24 @@ public class CoordUtil {
         }
 
         if (front.getAxis() == Direction.Axis.Y) {
-            switch (side) {
-                case FRONT: return front;
-                case BACK: return front.getOpposite();
-                case TOP: return top;
-                case BOTTOM: return top.getOpposite();
-                case RIGHT: return top.getClockWise();
-                case LEFT: return top.getCounterClockWise();
-            }
+            return switch (side) {
+                case FRONT -> front;
+                case BACK -> front.getOpposite();
+                case TOP -> top;
+                case BOTTOM -> top.getOpposite();
+                case RIGHT -> top.getClockWise();
+                case LEFT -> top.getCounterClockWise();
+            };
         } else {
-            switch (side) {
-                case FRONT: return front;
-                case BACK: return front.getOpposite();
-                case TOP: return Direction.UP;
-                case BOTTOM: return Direction.DOWN;
-                case RIGHT: return front.getCounterClockWise();
-                case LEFT: return front.getClockWise();
-            }
+            return switch (side) {
+                case FRONT -> front;
+                case BACK -> front.getOpposite();
+                case TOP -> Direction.UP;
+                case BOTTOM -> Direction.DOWN;
+                case RIGHT -> front.getCounterClockWise();
+                case LEFT -> front.getClockWise();
+            };
         }
-
-        throw new LuaException(computerSide + " is not a expected side");
     }
 
 }

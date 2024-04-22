@@ -8,9 +8,9 @@ import net.minecraft.core.FrontAndTop;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
-import net.minecraftforge.client.model.generators.*;
-import net.minecraftforge.common.data.ExistingFileHelper;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.neoforged.client.model.generators.*;
+import net.neoforged.common.data.ExistingFileHelper;
+import net.neoforged.registries.ForgeRegistries;
 
 public class BlockStatesAndModelsProvider extends BlockStateProvider {
 

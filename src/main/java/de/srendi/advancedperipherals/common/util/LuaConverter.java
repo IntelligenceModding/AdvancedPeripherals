@@ -14,7 +14,7 @@ import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.properties.Property;
-import net.minecraftforge.common.IForgeShearable;
+import net.neoforged.common.IForgeShearable;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;

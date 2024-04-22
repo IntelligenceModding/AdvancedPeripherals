@@ -5,8 +5,8 @@ import de.srendi.advancedperipherals.common.util.ToastUtil;
 import de.srendi.advancedperipherals.network.base.IPacket;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
-import net.minecraftforge.fml.loading.FMLEnvironment;
-import net.minecraftforge.network.NetworkEvent;
+import net.neoforged.fml.loading.FMLEnvironment;
+import net.neoforged.network.NetworkEvent;
 
 public class ToastToClientPacket implements IPacket {
 

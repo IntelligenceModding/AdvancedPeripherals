@@ -8,9 +8,9 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.IForgeRegistry;
+import net.neoforged.items.IItemHandler;
+import net.neoforged.registries.ForgeRegistries;
+import net.neoforged.registries.IForgeRegistry;
 import org.apache.logging.log4j.Level;
 
 import java.nio.charset.StandardCharsets;

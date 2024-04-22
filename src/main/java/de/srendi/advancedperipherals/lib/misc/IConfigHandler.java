@@ -1,12 +1,12 @@
 package de.srendi.advancedperipherals.lib.misc;
 
-import net.minecraftforge.common.ForgeConfigSpec;
+import net.neoforged.neoforge.common.ModConfigSpec;
 
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
 public interface IConfigHandler {
-    void addToConfig(ForgeConfigSpec.Builder builder);
+    void addToConfig(ModConfigSpec.Builder builder);
 
     String name();
 

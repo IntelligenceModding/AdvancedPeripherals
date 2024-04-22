@@ -3,7 +3,7 @@ package de.srendi.advancedperipherals.common.addons.create;
 import com.simibubi.create.content.fluids.tank.FluidTankBlockEntity;
 import dan200.computercraft.api.lua.LuaFunction;
 import de.srendi.advancedperipherals.lib.peripherals.APGenericPeripheral;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.neoforged.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;

@@ -6,17 +6,10 @@ pluginManagement {
             name = 'NeoForged'
             url = 'https://maven.neoforged.net/releases'
 
-            content {
-                includeGroup("net.minecraftforge")
-                includeGroup("net.neoforged.gradle")
-                includeGroup("net.neoforged")
-                includeGroup("org.spongepowered.mixin")
-                includeGroup("org.spongepowered")
-            }
         }
     }
 }
 
 plugins {
-    id 'org.gradle.toolchains.foojay-resolver-convention' version '0.7.0'
+    id 'org.gradle.toolchains.foojay-resolver-convention' version '0.8.0'
 }

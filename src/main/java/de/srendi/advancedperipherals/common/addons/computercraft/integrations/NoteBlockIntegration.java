@@ -24,7 +24,7 @@ public class NoteBlockIntegration extends BlockIntegrationPeripheral<NoteBlock> 
     @LuaFunction(mainThread = true)
     public final int changeNote() {
         BlockState state = world.getBlockState(pos);
-        int newNote = net.minecraftforge.common.ForgeHooks.onNoteChange(world, pos, state, state.getValue(NoteBlock.NOTE), state.cycle(NoteBlock.NOTE).getValue(NoteBlock.NOTE));
+        int newNote = net.neoforged.common.ForgeHooks.onNoteChange(world, pos, state, state.getValue(NoteBlock.NOTE), state.cycle(NoteBlock.NOTE).getValue(NoteBlock.NOTE));
         if (newNote == -1) return -1;
         state = state.setValue(NoteBlock.NOTE, newNote);
         world.setBlock(pos, state, 3);
