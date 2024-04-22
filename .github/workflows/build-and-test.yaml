@@ -10,4 +10,4 @@ on:
 
 jobs:
   build-and-test:
-    uses: IntelligenceModding/actions/.github/workflows/build-and-test.yaml@main
+    uses: IntelligenceModding/actions/.github/workflows/build-and-test.yaml@master
