@@ -39,12 +39,12 @@ public class TurtleChunkyUpgrade extends PeripheralTurtleUpgrade<ChunkyPeriphera
         // The turtle can move, so we need to do that.
         super.update(turtle, side);
         if (APConfig.PERIPHERALS_CONFIG.enableChunkyTurtle.get()) {
-            updateTick++;
             // TODO: turtle will stop work when crossing chunks if update every 10 ticks
+            // updateTick++;
             // if (updateTick < 10) {
             //     return;
             // }
-            updateTick = 0;
+            // updateTick = 0;
             IPeripheral peripheral = turtle.getPeripheral(side);
             if (peripheral instanceof ChunkyPeripheral chunkyPeripheral) {
                 chunkyPeripheral.updateChunkState();
