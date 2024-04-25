@@ -10,7 +10,7 @@ import net.minecraftforge.fml.config.ModConfig;
 @FieldsAreNonnullByDefault
 public class PeripheralsConfig implements IAPConfig {
 
-    //Player Detector
+    // Player Detector
     public final ForgeConfigSpec.IntValue playerDetMaxRange;
     public final ForgeConfigSpec.BooleanValue playerSpy;
     public final ForgeConfigSpec.BooleanValue morePlayerInformation;
@@ -20,57 +20,59 @@ public class PeripheralsConfig implements IAPConfig {
     public final ForgeConfigSpec.IntValue playerSpyRandErrorAmount;
     public final ForgeConfigSpec.IntValue playerSpyPreciseMaxRange;
 
-    //Energy Detector
+    // Energy Detector
     public final ForgeConfigSpec.IntValue energyDetectorMaxFlow;
     public final ForgeConfigSpec.BooleanValue enableEnergyDetector;
 
-    //NBT Storage
+    // NBT Storage
     public final ForgeConfigSpec.IntValue nbtStorageMaxSize;
     public final ForgeConfigSpec.BooleanValue enableNBTStorage;
-    //Chunky turtle
-    public final ForgeConfigSpec.IntValue chunkLoadValidTime;
 
+    // Chunky turtle
+    public final ForgeConfigSpec.IntValue chunkLoadValidTime;
     public final ForgeConfigSpec.IntValue chunkyTurtleRadius;
     public final ForgeConfigSpec.BooleanValue enableChunkyTurtle;
-    //Chat box
+
+    // Chat box
     public final ForgeConfigSpec.BooleanValue enableChatBox;
     public final ForgeConfigSpec.ConfigValue<String> defaultChatBoxPrefix;
     public final ForgeConfigSpec.IntValue chatBoxMaxRange;
     public final ForgeConfigSpec.BooleanValue chatBoxMultiDimensional;
 
-    //ME Bridge
+    // ME Bridge
     public final ForgeConfigSpec.BooleanValue enableMEBridge;
     public final ForgeConfigSpec.IntValue meConsumption;
 
-    //Rs Bridge
+    // Rs Bridge
     public final ForgeConfigSpec.BooleanValue enableRSBridge;
     public final ForgeConfigSpec.IntValue rsConsumption;
 
-    //Environment Detector
+    // Environment Detector
     public final ForgeConfigSpec.BooleanValue enableEnvironmentDetector;
 
-    //AR Controller
+    // AR Controller
     public final ForgeConfigSpec.BooleanValue enableARGoggles;
 
-    //Inventory Manager
+    // Inventory Manager
     public final ForgeConfigSpec.BooleanValue enableInventoryManager;
 
-    //Redstone Integrator
+    // Redstone Integrator
     public final ForgeConfigSpec.BooleanValue enableRedstoneIntegrator;
 
-    //Block reader
+    // Block reader
     public final ForgeConfigSpec.BooleanValue enableBlockReader;
 
-    //Geo Scanner
+    // Geo Scanner
     public final ForgeConfigSpec.BooleanValue enableGeoScanner;
 
-    //Colony integrator
+    // Colony integrator
     public final ForgeConfigSpec.BooleanValue enableColonyIntegrator;
 
-    //Compass turtle
+    // Compass turtle
     public final ForgeConfigSpec.BooleanValue enableCompassTurtle;
+    public final ForgeConfigSpec.IntValue compassTurtleRadius;
 
-    //Powered Peripherals
+    // Powered Peripherals
     public final ForgeConfigSpec.BooleanValue enablePoweredPeripherals;
     public final ForgeConfigSpec.BooleanValue disablePocketFuelConsumption;
     public final ForgeConfigSpec.IntValue poweredPeripheralMaxEnergyStorage;
@@ -155,6 +157,7 @@ public class PeripheralsConfig implements IAPConfig {
         pop("Compass_Turtle", builder);
 
         enableCompassTurtle = builder.comment("Enable the compass turtle or not.").define("enableCompassTurtle", true);
+        compassTurtleRadius = builder.comment("The maximum distance the compass turtle can reach in each axis.").defineInRange("compassTurtleRadius", 1, 0, 8);
 
         pop("Powered_Peripherals", builder);
 
