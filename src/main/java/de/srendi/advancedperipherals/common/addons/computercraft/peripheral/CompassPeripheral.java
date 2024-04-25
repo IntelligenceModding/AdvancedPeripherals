@@ -169,30 +169,30 @@ public class CompassPeripheral extends BasePeripheral<TurtlePeripheralOwner> {
         sign.setChanged();
         world.sendBlockUpdated(sign.getBlockPos(), sign.getBlockState(), sign.getBlockState(), Block.UPDATE_ALL);
     }
-}
 
-class AdvanceDirectionalPlaceContext extends DirectionalPlaceContext {
-    private final Direction anchor;
+    private class AdvanceDirectionalPlaceContext extends DirectionalPlaceContext {
+        private final Direction anchor;
 
-    public AdvanceDirectionalPlaceContext(Level world, BlockPos pos, Direction anchor, Direction forward, ItemStack stack, Direction top) {
-        super(world, pos, forward, stack, top);
-        this.anchor = anchor;
-    }
+        AdvanceDirectionalPlaceContext(Level world, BlockPos pos, Direction anchor, Direction forward, ItemStack stack, Direction top) {
+            super(world, pos, forward, stack, top);
+            this.anchor = anchor;
+        }
 
-    @Override
-    public Direction getNearestLookingDirection() {
-        return this.anchor;
-    }
+        @Override
+        public Direction getNearestLookingDirection() {
+            return this.anchor;
+        }
 
-    @Override
-    public Direction[] getNearestLookingDirections() {
-        return switch (this.anchor) {
-            case DOWN -> new Direction[]{Direction.DOWN, Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST, Direction.UP};
-            case UP -> new Direction[]{Direction.UP, Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST, Direction.DOWN};
-            case NORTH -> new Direction[]{Direction.NORTH, Direction.EAST, Direction.WEST, Direction.UP, Direction.DOWN, Direction.SOUTH};
-            case SOUTH -> new Direction[]{Direction.SOUTH, Direction.EAST, Direction.WEST, Direction.UP, Direction.DOWN, Direction.NORTH};
-            case WEST -> new Direction[]{Direction.WEST, Direction.SOUTH, Direction.UP, Direction.NORTH, Direction.DOWN, Direction.EAST};
-            case EAST -> new Direction[]{Direction.EAST, Direction.SOUTH, Direction.UP, Direction.NORTH, Direction.DOWN, Direction.WEST};
-        };
+        @Override
+        public Direction[] getNearestLookingDirections() {
+            return switch (this.anchor) {
+                case DOWN -> new Direction[]{Direction.DOWN, Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST, Direction.UP};
+                case UP -> new Direction[]{Direction.UP, Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST, Direction.DOWN};
+                case NORTH -> new Direction[]{Direction.NORTH, Direction.EAST, Direction.WEST, Direction.UP, Direction.DOWN, Direction.SOUTH};
+                case SOUTH -> new Direction[]{Direction.SOUTH, Direction.EAST, Direction.WEST, Direction.UP, Direction.DOWN, Direction.NORTH};
+                case WEST -> new Direction[]{Direction.WEST, Direction.SOUTH, Direction.UP, Direction.NORTH, Direction.DOWN, Direction.EAST};
+                case EAST -> new Direction[]{Direction.EAST, Direction.SOUTH, Direction.UP, Direction.NORTH, Direction.DOWN, Direction.WEST};
+            };
+        }
     }
 }
