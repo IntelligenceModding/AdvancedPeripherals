@@ -18,6 +18,7 @@ import de.srendi.advancedperipherals.common.blocks.base.PeripheralBlockEntity;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.events.Events;
 import de.srendi.advancedperipherals.common.util.CoordUtil;
+import de.srendi.advancedperipherals.common.util.StringUtil;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
 import de.srendi.advancedperipherals.lib.peripherals.IPeripheralFunction;
 import de.srendi.advancedperipherals.network.APNetworking;
@@ -121,9 +122,9 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
                 return MethodResult.of(null, "incorrect bracket string (e.g. [], {}, <>, ...)");
 
             MutableComponent preparedMessage = appendPrefix(
-                    arguments.optString(1, APConfig.PERIPHERALS_CONFIG.defaultChatBoxPrefix.get()).replaceAll("&", "\u00a7"),
+                    StringUtil.convertAndToSectionMark(arguments.optString(1, APConfig.PERIPHERALS_CONFIG.defaultChatBoxPrefix.get())),
                     arguments.optString(2, "[]"),
-                    arguments.optString(3, "").replaceAll("&", "\u00a7")
+                    StringUtil.convertAndToSectionMark(arguments.optString(3, ""))
             ).append(component);
             for (ServerPlayer player : ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers()) {
                 if (!APConfig.PERIPHERALS_CONFIG.chatBoxMultiDimensional.get() && player.getLevel().dimension() != dimension)
@@ -147,9 +148,9 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
                 return MethodResult.of(null, "incorrect bracket string (e.g. [], {}, <>, ...)");
 
             MutableComponent preparedMessage = appendPrefix(
-                    arguments.optString(1, APConfig.PERIPHERALS_CONFIG.defaultChatBoxPrefix.get()).replaceAll("&", "\u00a7"),
+                    StringUtil.convertAndToSectionMark(arguments.optString(1, APConfig.PERIPHERALS_CONFIG.defaultChatBoxPrefix.get())),
                     arguments.optString(2, "[]"),
-                    arguments.optString(3, "").replaceAll("&", "\u00a7")
+                    StringUtil.convertAndToSectionMark(arguments.optString(3, ""))
             ).append(message);
             for (ServerPlayer player : ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers()) {
                 if (!APConfig.PERIPHERALS_CONFIG.chatBoxMultiDimensional.get() && player.getLevel().dimension() != dimension)
@@ -182,9 +183,9 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
                 return MethodResult.of(null, "incorrect bracket string (e.g. [], {}, <>, ...)");
 
             MutableComponent preparedMessage = appendPrefix(
-                    arguments.optString(2, APConfig.PERIPHERALS_CONFIG.defaultChatBoxPrefix.get()).replaceAll("&", "\u00a7"),
+                    StringUtil.convertAndToSectionMark(arguments.optString(2, APConfig.PERIPHERALS_CONFIG.defaultChatBoxPrefix.get())),
                     arguments.optString(3, "[]"),
-                    arguments.optString(4, "").replaceAll("&", "\u00a7")
+                    StringUtil.convertAndToSectionMark(arguments.optString(4, ""))
             ).append(component);
             if (!APConfig.PERIPHERALS_CONFIG.chatBoxMultiDimensional.get() && player.getLevel().dimension() != dimension)
                 return MethodResult.of(false, "NOT_SAME_DIMENSION");
@@ -222,9 +223,9 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
                 return MethodResult.of(null, "incorrect bracket string (e.g. [], {}, <>, ,,,)");
 
             MutableComponent preparedMessage = appendPrefix(
-                    arguments.optString(3, APConfig.PERIPHERALS_CONFIG.defaultChatBoxPrefix.get()).replaceAll("&", "\u00a7"),
+                    StringUtil.convertAndToSectionMark(arguments.optString(3, APConfig.PERIPHERALS_CONFIG.defaultChatBoxPrefix.get())),
                     arguments.optString(4, "[]"),
-                    arguments.optString(5, "").replaceAll("&", "\u00a7")
+                    StringUtil.convertAndToSectionMark(arguments.optString(5, ""))
             ).append(messageComponent);
 
             if (!APConfig.PERIPHERALS_CONFIG.chatBoxMultiDimensional.get() && player.getLevel().dimension() != dimension)
@@ -256,9 +257,9 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
                 return MethodResult.of(null, "incorrect bracket string (e.g. [], {}, <>, ...)");
 
             MutableComponent preparedMessage = appendPrefix(
-                    arguments.optString(2, APConfig.PERIPHERALS_CONFIG.defaultChatBoxPrefix.get()).replaceAll("&", "\u00a7"),
+                    StringUtil.convertAndToSectionMark(arguments.optString(2, APConfig.PERIPHERALS_CONFIG.defaultChatBoxPrefix.get())),
                     arguments.optString(3, "[]"),
-                    arguments.optString(4, "").replaceAll("&", "\u00a7")
+                    StringUtil.convertAndToSectionMark(arguments.optString(4, ""))
             ).append(message);
             if (!APConfig.PERIPHERALS_CONFIG.chatBoxMultiDimensional.get() && player.getLevel().dimension() != dimension)
                 return MethodResult.of(false, "NOT_SAME_DIMENSION");
@@ -287,9 +288,9 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
                 return MethodResult.of(null, "incorrect bracket string (e.g. [], {}, <>, ...)");
 
             MutableComponent preparedMessage = appendPrefix(
-                    arguments.optString(3, APConfig.PERIPHERALS_CONFIG.defaultChatBoxPrefix.get()).replaceAll("&", "\u00a7"),
+                    StringUtil.convertAndToSectionMark(arguments.optString(3, APConfig.PERIPHERALS_CONFIG.defaultChatBoxPrefix.get())),
                     arguments.optString(4, "[]"),
-                    arguments.optString(5, "").replaceAll("&", "\u00a7")
+                    StringUtil.convertAndToSectionMark(arguments.optString(5, ""))
             ).append(message);
 
             if (!APConfig.PERIPHERALS_CONFIG.chatBoxMultiDimensional.get() && player.getLevel().dimension() != dimension)

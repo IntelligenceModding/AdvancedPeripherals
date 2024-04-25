@@ -71,6 +71,7 @@ public class PeripheralsConfig implements IAPConfig {
     // Compass turtle
     public final ForgeConfigSpec.BooleanValue enableCompassTurtle;
     public final ForgeConfigSpec.IntValue compassTurtleRadius;
+    public final ForgeConfigSpec.IntValue compassTurtleFreeRadius;
 
     // Powered Peripherals
     public final ForgeConfigSpec.BooleanValue enablePoweredPeripherals;
@@ -157,7 +158,8 @@ public class PeripheralsConfig implements IAPConfig {
         pop("Compass_Turtle", builder);
 
         enableCompassTurtle = builder.comment("Enable the compass turtle or not.").define("enableCompassTurtle", true);
-        compassTurtleRadius = builder.comment("The maximum distance the compass turtle can reach in each axis.").defineInRange("compassTurtleRadius", 1, 0, 8);
+        compassTurtleRadius = builder.comment("The maximum distance the compass turtle can reach in each axis.").defineInRange("compassTurtleRadius", 3, 0, 8);
+        compassTurtleFreeRadius = builder.comment("The free distance the compass turtle can reach in each axis.").defineInRange("compassTurtleFreeRadius", 1, 0, 4);
 
         pop("Powered_Peripherals", builder);
 
