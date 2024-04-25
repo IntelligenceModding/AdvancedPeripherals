@@ -76,7 +76,7 @@ public class CompassPeripheral extends BasePeripheral<TurtlePeripheralOwner> {
         final int maxDist = APConfig.PERIPHERALS_CONFIG.compassTurtleRadius.get();
         final int freeDist = APConfig.PERIPHERALS_CONFIG.compassTurtleFreeRadius.get();
         if (Math.abs(x) > maxDist || Math.abs(y) > maxDist || Math.abs(z) > maxDist) {
-            return MethodResult.of(false, "OUT_OF_RANGE");
+            return MethodResult.of(null, "OUT_OF_RANGE");
         }
         String anchor = TableHelper.optStringField(options, "anchor", null);
         String forward = TableHelper.optStringField(options, "forward", null);
@@ -102,12 +102,12 @@ public class CompassPeripheral extends BasePeripheral<TurtlePeripheralOwner> {
             ITurtleAccess turtle = owner.getTurtle();
             ItemStack stack = turtle.getInventory().getItem(turtle.getSelectedSlot());
             if (stack.isEmpty()) {
-                return MethodResult.of(false, "EMPTY_SLOT");
+                return MethodResult.of(null, "EMPTY_SLOT");
             }
             BlockPos position = turtle.getPosition().offset(x, y, z);
             String err = deployOn(stack, position, anchorDirF, forwardDirF, topDirF, options);
             if (err != null) {
-                return MethodResult.of(false, err);
+                return MethodResult.of(null, err);
             }
             return MethodResult.of(true);
         }, null, null);
