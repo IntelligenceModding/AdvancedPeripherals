@@ -81,19 +81,10 @@ public class CompassPeripheral extends BasePeripheral<TurtlePeripheralOwner> {
         String anchor = TableHelper.optStringField(options, "anchor", null);
         String forward = TableHelper.optStringField(options, "forward", null);
         String top = TableHelper.optStringField(options, "top", null);
-        Direction anchorDir = null, forwardDir = null, topDir = null;
-        if (anchor != null && (anchorDir = Direction.byName(anchor.toLowerCase())) == null) {
-            throw new LuaException(anchor + " is not a valid direction");
-        }
-        if (forward != null && (forwardDir = Direction.byName(forward.toLowerCase())) == null) {
-            throw new LuaException(forward + " is not a valid direction");
-        }
-        if (top != null && (topDir = Direction.byName(top.toLowerCase())) == null) {
-            throw new LuaException(top + " is not a valid direction");
-        }
+        Direction anchorDir = anchor != null ? validateSide(anchor) : null;
+        Direction forwardDir = forward != null ? validateSide(forward) : null;
+        Direction topDir = top != null ? validateSide(top) : null;
 
-        // variable must be final to be used in lambda
-        final Direction anchorDirF = anchorDir, forwardDirF = forwardDir, topDirF = topDir;
         int distance =
             Math.max(0, Math.abs(x) - freeDist) +
             Math.max(0, Math.abs(y) - freeDist) +
@@ -105,7 +96,7 @@ public class CompassPeripheral extends BasePeripheral<TurtlePeripheralOwner> {
                 return MethodResult.of(null, "EMPTY_SLOT");
             }
             BlockPos position = turtle.getPosition().offset(x, y, z);
-            String err = deployOn(stack, position, anchorDirF, forwardDirF, topDirF, options);
+            String err = deployOn(stack, position, anchorDir, forwardDir, topDir, options);
             if (err != null) {
                 return MethodResult.of(null, err);
             }
