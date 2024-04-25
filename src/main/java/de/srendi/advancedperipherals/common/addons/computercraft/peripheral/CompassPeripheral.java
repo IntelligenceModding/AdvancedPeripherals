@@ -58,17 +58,17 @@ public class CompassPeripheral extends BasePeripheral<TurtlePeripheralOwner> {
         return owner.getFacing().toString();
     }
 
-    @LuaFunction(mainThread = true)
     /**
-     * 
      * @param options A table contains how to place the block:
      *   x: the x offset relative to the turtle. Default 0
      *   y: the y offset relative to the turtle. Default 0
      *   z: the z offset relative to the turtle. Default 0
      *   forward: the direction the block is going to facing. Default is the facing direction of the turtle
      *   top: the direction the block's top is going to facing. Default is TOP
+     *   wall: the direction the block is going to hanging on. Default is same as forward
      *   text: the text going to write on the sign. Default is null
      */
+    @LuaFunction(mainThread = true)
     public MethodResult place(Map<?, ?> options) throws LuaException {
         int x = TableHelper.optIntField(options, "x", 0);
         int y = TableHelper.optIntField(options, "y", 0);
@@ -78,18 +78,22 @@ public class CompassPeripheral extends BasePeripheral<TurtlePeripheralOwner> {
         if (Math.abs(x) > maxDist || Math.abs(y) > maxDist || Math.abs(z) > maxDist) {
             return MethodResult.of(false, "OUT_OF_RANGE");
         }
+        String wall = TableHelper.optStringField(options, "wall", null);
         String forward = TableHelper.optStringField(options, "forward", null);
         String top = TableHelper.optStringField(options, "top", null);
-        Direction forwardDir = null, topDir = null;
+        Direction wallDir = null, forwardDir = null, topDir = null;
+        if (wall != null && (wallDir = Direction.byName(wall.toLowerCase())) == null) {
+            throw new LuaException(wall + " is not a valid direction");
+        }
         if (forward != null && (forwardDir = Direction.byName(forward.toLowerCase())) == null) {
-            throw new LuaException(forward + "is not a valid direction");
+            throw new LuaException(forward + " is not a valid direction");
         }
         if (top != null && (topDir = Direction.byName(top.toLowerCase())) == null) {
-            throw new LuaException(top + "is not a valid direction");
+            throw new LuaException(top + " is not a valid direction");
         }
 
         // variable must be final to be used in lambda
-        final Direction forwardDirF = forwardDir, topDirF = topDir;
+        final Direction wallDirF = wallDir, forwardDirF = forwardDir, topDirF = topDir;
         int distance =
             Math.max(0, Math.abs(x) - freeDist) +
             Math.max(0, Math.abs(y) - freeDist) +
@@ -101,7 +105,7 @@ public class CompassPeripheral extends BasePeripheral<TurtlePeripheralOwner> {
                 return MethodResult.of(false, "EMPTY_SLOT");
             }
             BlockPos position = turtle.getPosition().offset(x, y, z);
-            String err = deployOn(stack, position, forwardDirF, topDirF, options);
+            String err = deployOn(stack, position, wallDirF, forwardDirF, topDirF, options);
             if (err != null) {
                 return MethodResult.of(false, err);
             }
@@ -113,7 +117,7 @@ public class CompassPeripheral extends BasePeripheral<TurtlePeripheralOwner> {
      * @return A nullable string of the error. <code>null</code> means the operation is successful
      */
     @Nullable
-    private String deployOn(ItemStack stack, BlockPos position, Direction forward, Direction top, Map<?, ?> options) throws LuaException {
+    private String deployOn(ItemStack stack, BlockPos position, Direction wall, Direction forward, Direction top, Map<?, ?> options) throws LuaException {
         ITurtleAccess turtle = owner.getTurtle();
         Level world = turtle.getLevel();
         if (forward == null) {
@@ -122,9 +126,12 @@ public class CompassPeripheral extends BasePeripheral<TurtlePeripheralOwner> {
         if (top == null) {
             top = Direction.UP;
         }
+        if (wall == null) {
+            wall = forward;
+        }
         TurtlePlayer turtlePlayer = TurtlePlayer.getWithPosition(turtle, position, forward.getOpposite());
         BlockHitResult hit = BlockHitResult.miss(Vec3.atCenterOf(position), top, position);
-        DirectionalPlaceContext context = new DirectionalPlaceContext(world, position, forward, stack, top);
+        AdvanceDirectionalPlaceContext context = new AdvanceDirectionalPlaceContext(world, position, wall, forward, stack, top);
         PlayerInteractEvent.RightClickBlock event = ForgeHooks.onRightClickBlock(turtlePlayer, InteractionHand.MAIN_HAND, position, hit);
         if (event.isCanceled()) {
             return "EVENT_CANCELED";
@@ -161,5 +168,31 @@ public class CompassPeripheral extends BasePeripheral<TurtlePeripheralOwner> {
         }
         sign.setChanged();
         world.sendBlockUpdated(sign.getBlockPos(), sign.getBlockState(), sign.getBlockState(), Block.UPDATE_ALL);
+    }
+}
+
+class AdvanceDirectionalPlaceContext extends DirectionalPlaceContext {
+    private final Direction wall;
+
+    public AdvanceDirectionalPlaceContext(Level world, BlockPos pos, Direction wall, Direction forward, ItemStack stack, Direction top) {
+        super(world, pos, forward, stack, top);
+        this.wall = wall;
+    }
+
+    @Override
+    public Direction getNearestLookingDirection() {
+        return this.wall;
+    }
+
+    @Override
+    public Direction[] getNearestLookingDirections() {
+        return switch (this.wall) {
+            case DOWN -> new Direction[]{Direction.DOWN, Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST, Direction.UP};
+            case UP -> new Direction[]{Direction.UP, Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST, Direction.DOWN};
+            case NORTH -> new Direction[]{Direction.NORTH, Direction.EAST, Direction.WEST, Direction.UP, Direction.DOWN, Direction.SOUTH};
+            case SOUTH -> new Direction[]{Direction.SOUTH, Direction.EAST, Direction.WEST, Direction.UP, Direction.DOWN, Direction.NORTH};
+            case WEST -> new Direction[]{Direction.WEST, Direction.SOUTH, Direction.UP, Direction.NORTH, Direction.DOWN, Direction.EAST};
+            case EAST -> new Direction[]{Direction.EAST, Direction.SOUTH, Direction.UP, Direction.NORTH, Direction.DOWN, Direction.WEST};
+        };
     }
 }

@@ -18,7 +18,7 @@ public class StringUtil {
      * If a '&' is behind reverse slash '\', it will be ignored.
      *   Note: In CC, you need to use <code>"\\&"</code> to get an unescaped '&' character
      * If the character after '&' is not a digital number or lowercase letter, the & operator will not be escaped as well.
-     * 
+     *
      * Some convert example:
      *  "&a" -> "§a"
      *  "&" -> "&"
