@@ -95,6 +95,9 @@ public class ItemFilter extends GenericFilter {
 
     public static ItemFilter fromStack(ItemStack stack) {
         ItemFilter filter = empty();
+        if (stack == null || stack == ItemStack.EMPTY) {
+            return filter;
+        }
         filter.item = stack.getItem();
         filter.nbt = stack.hasTag() ? stack.getTag() : null;
         return filter;

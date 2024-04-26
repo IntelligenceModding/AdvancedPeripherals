@@ -25,7 +25,7 @@ import net.minecraftforge.fluids.FluidStack;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
-import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class RefinedStorage {
 
@@ -43,60 +43,77 @@ public class RefinedStorage {
         return node;
     }
 
-    public static ItemStack findStackFromStack(INetwork network, @Nullable ICraftingManager crafting, ItemStack item) {
-        return findStackFromFilter(network, crafting, ItemFilter.fromStack(item));
+    public static ItemStack findStackFromStack(INetwork network, ItemStack item) {
+        return findStackFromFilter(network, ItemFilter.fromStack(item));
     }
 
-    public static ItemStack findStackFromFilter(INetwork network, @Nullable ICraftingManager crafting, ItemFilter filter) {
+    public static ItemStack findPatternFromStack(ICraftingManager crafting, ItemStack item) {
+        return findPatternFromFilter(crafting, ItemFilter.fromStack(item));
+    }
+
+    public static ItemStack findStackFromFilter(INetwork network, ItemFilter filter) {
         for (StackListEntry<ItemStack> temp : network.getItemStorageCache().getList().getStacks()) {
-            if (filter.test(temp.getStack().copy()))
-                return temp.getStack().copy();
-        }
-
-        if (crafting == null)
-            return ItemStack.EMPTY;
-
-        for (ICraftingPattern pattern : crafting.getPatterns()) {
-            for (ItemStack stack : pattern.getOutputs()) {
-                if (filter.test(stack.copy()))
-                    return stack.copy();
+            ItemStack stack = temp.getStack();
+            if (filter.test(stack)) {
+                return stack.copy();
             }
         }
 
         return ItemStack.EMPTY;
     }
 
-    public static FluidStack findFluidFromStack(INetwork network, @Nullable ICraftingManager crafting, FluidStack stack) {
-        return findFluidFromFilter(network, crafting, FluidFilter.fromStack(stack));
-    }
-
-    public static FluidStack findFluidFromFilter(INetwork network, @Nullable ICraftingManager crafting, FluidFilter filter) {
-        for (StackListEntry<FluidStack> temp : network.getFluidStorageCache().getList().getStacks()) {
-            if (filter.test(temp.getStack().copy()))
-                return temp.getStack().copy();
+    public static ItemStack findPatternFromFilter(ICraftingManager crafting, ItemFilter filter) {
+        for (ICraftingPattern pattern : crafting.getPatterns()) {
+            for (ItemStack stack : pattern.getOutputs()) {
+                if (filter.test(stack)) {
+                    return stack.copy();
+                }
+            }
         }
 
-        if (crafting == null)
-            return FluidStack.EMPTY;
+        return ItemStack.EMPTY;
+    }
 
-        for (ICraftingPattern pattern : crafting.getPatterns()) {
-            if (pattern.getFluidOutputs().stream().anyMatch(filter::test))
-                return pattern.getFluidOutputs().stream().filter(filter::test).findFirst().orElse(FluidStack.EMPTY).copy();
+    public static FluidStack findFluidFromStack(INetwork network, FluidStack stack) {
+        return findFluidFromFilter(network, FluidFilter.fromStack(stack));
+    }
+
+    public static FluidStack findFluidPatternFromStack(ICraftingManager crafting, FluidStack stack) {
+        return findFluidPatternFromFilter(crafting, FluidFilter.fromStack(stack));
+    }
+
+    public static FluidStack findFluidFromFilter(INetwork network, FluidFilter filter) {
+        for (StackListEntry<FluidStack> temp : network.getFluidStorageCache().getList().getStacks()) {
+            FluidStack stack = temp.getStack();
+            if (filter.test(stack)) {
+                return stack.copy();
+            }
         }
 
         return FluidStack.EMPTY;
     }
 
-    public static Object listFluids(INetwork network) {
-        List<Object> fluids = new ArrayList<>();
-        getFluids(network).forEach(item -> fluids.add(getObjectFromFluid(item, network)));
-        return fluids;
+    public static FluidStack findFluidPatternFromFilter(ICraftingManager crafting, FluidFilter filter) {
+        for (ICraftingPattern pattern : crafting.getPatterns()) {
+            FluidStack stack = pattern.getFluidOutputs().stream().filter(filter::test).findFirst().orElse(FluidStack.EMPTY);
+            if (stack != FluidStack.EMPTY) {
+                return stack.copy();
+            }
+        }
+
+        return FluidStack.EMPTY;
     }
 
     public static Object listItems(INetwork network) {
-        List<Object> items = new ArrayList<>();
-        getItems(network).forEach(item -> items.add(getObjectFromStack(item, network)));
-        return items;
+        Map<Object, ItemStack> craftables = new HashMap<>();
+        getCraftableItemsStream(network).forEach(stack -> craftables.put(ItemUtil.asMapKey(stack), stack));
+        return getItemsStream(network).map(item -> getObjectFromStack(item, craftables.get(ItemUtil.asMapKey(item)))).toList();
+    }
+
+    public static Object listFluids(INetwork network) {
+        Map<Object, FluidStack> craftables = new HashMap<>();
+        getCraftableFluidsStream(network).forEach(stack -> craftables.put(ItemUtil.fluidAsMapKey(stack), stack));
+        return getFluidsStream(network).map(item -> getObjectFromFluid(item, craftables.get(ItemUtil.fluidAsMapKey(item)))).toList();
     }
 
     public static boolean isItemCraftable(INetwork network, ItemStack stack) {
@@ -158,26 +175,18 @@ public class RefinedStorage {
             return null;
 
         Map<String, Object> map = new HashMap<>();
-        map.put("outputs", pattern.getOutputs().stream().map(stack -> getObjectFromStack(stack.copy(), network)).toList());
-        map.put("fluidOutputs", pattern.getFluidOutputs().stream().map(stack -> getObjectFromFluid(stack.copy(), network)).toList());
+        map.put("outputs", pattern.getOutputs().stream().map(RefinedStorage::getObjectFromStack).toList());
+        map.put("fluidOutputs", pattern.getFluidOutputs().stream().map(RefinedStorage::getObjectFromFluid).toList());
 
-        List<List<Map<String, Object>>> inputs = pattern.getInputs().stream()
-                .map(singleInputList -> singleInputList.stream()
-                        .map(stack -> getObjectFromStack(stack.copy(), network))
-                        .collect(Collectors.toList()))
-                .collect(Collectors.toList());
+        List<List<Map<String, Object>>> inputs = pattern.getInputs().stream().map(singleInputList ->
+            singleInputList.stream().map(RefinedStorage::getObjectFromStack).toList()).toList();
 
-        List<List<Map<String, Object>>> fluidInputs = pattern.getInputs().stream()
-                .map(singleInputList -> singleInputList.stream()
-                        .map(stack -> getObjectFromStack(stack.copy(), network))
-                        .collect(Collectors.toList()))
-                .collect(Collectors.toList());
+        List<List<Map<String, Object>>> fluidInputs = pattern.getInputs().stream().map(singleInputList ->
+            singleInputList.stream().map(RefinedStorage::getObjectFromStack).toList()).toList();
 
-        List<Object> byproducts = new ArrayList<>();
+        List<Map<String, Object>> byproducts = new ArrayList<>();
         if (!pattern.isProcessing()) {
-            byproducts = pattern.getByproducts().stream()
-                    .map(stack -> getObjectFromStack(stack.copy(), network))
-                    .collect(Collectors.toList());
+            byproducts = pattern.getByproducts().stream().map(RefinedStorage::getObjectFromStack).toList();
         }
 
         map.put("fluidInputs", fluidInputs);
@@ -194,84 +203,138 @@ public class RefinedStorage {
         return map;
     }
 
-    public static Map<String, Object> getObjectFromStack(@Nullable ItemStack itemStack, INetwork network) {
-        if (itemStack == null)
-            return Collections.emptyMap();
-
-        Map<String, Object> map = LuaConverter.itemToObject(itemStack.getItem());
-        CompoundTag nbt = itemStack.getTag();
-        map.put("fingerprint", ItemUtil.getFingerprint(itemStack));
-        map.put("amount", itemStack.getCount());
-        map.put("displayName", itemStack.getDisplayName().getString());
-        map.put("isCraftable", isItemCraftable(network, itemStack));
+    @Nullable
+    public static Map<String, Object> getObjectFromStack(@Nullable ItemStack item) {
+        if (item == null) {
+            return null;
+        }
+        Map<String, Object> map = LuaConverter.itemToObject(item.getItem());
+        map.put("amount", item.getCount());
+        map.put("fingerprint", ItemUtil.getFingerprint(item));
+        map.put("displayName", item.getDisplayName().getString());
+        CompoundTag nbt = item.getTag();
         map.put("nbt", nbt == null ? null : NBTUtil.toLua(nbt));
+        return map;
+    }
+
+    @Nullable
+    public static Map<String, Object> getObjectFromStack(@Nullable ItemStack stored, @Nullable ItemStack craftable) {
+        Map<String, Object> map;
+        if (stored == null || stored == ItemStack.EMPTY) {
+            if (craftable == null || craftable == ItemStack.EMPTY) {
+                return null;
+            }
+            map = LuaConverter.itemToObject(craftable.getItem());
+            map.put("amount", 0);
+            stored = craftable;
+        } else {
+            map = LuaConverter.itemToObject(stored.getItem());
+            map.put("amount", stored.getCount());
+        }
+
+        map.put("fingerprint", ItemUtil.getFingerprint(stored));
+        map.put("displayName", stored.getDisplayName().getString());
+        CompoundTag nbt = stored.getTag();
+        map.put("nbt", nbt == null ? null : NBTUtil.toLua(nbt));
+
+        if (craftable == null) {
+            map.put("isCraftable", false);
+        } else {
+            map.put("isCraftable", true);
+            map.put("craftAmount", craftable.getCount());
+        }
 
         return map;
     }
 
-    public static Map<String, Object> getObjectFromFluid(@Nullable FluidStack fluidStack, INetwork network) {
-        if (fluidStack == null)
-            return Collections.emptyMap();
+    @Nullable
+    public static Map<String, Object> getObjectFromFluid(@Nullable FluidStack item) {
+        if (item == null) {
+            return null;
+        }
+        Map<String, Object> map = LuaConverter.fluidToObject(item.getFluid());
+        map.put("amount", item.getAmount());
+        map.put("displayName", item.getDisplayName().getString());
+        CompoundTag nbt = item.getTag();
+        map.put("nbt", nbt == null ? null : NBTUtil.toLua(nbt));
+        return map;
+    }
 
-        Map<String, Object> map = LuaConverter.fluidToObject(fluidStack.getFluid());
-        map.put("amount", fluidStack.getAmount());
-        map.put("displayName", fluidStack.getDisplayName().getString());
-        map.put("isCraftable", isFluidCraftable(network, fluidStack));
+    @Nullable
+    public static Map<String, Object> getObjectFromFluid(@Nullable FluidStack stored, @Nullable FluidStack craftable) {
+        Map<String, Object> map;
+        if (stored == null) {
+            if (craftable == null) {
+                return null;
+            }
+            map = LuaConverter.fluidToObject(craftable.getFluid());
+            map.put("amount", 0);
+            stored = craftable;
+        } else {
+            map = LuaConverter.fluidToObject(stored.getFluid());
+            map.put("amount", stored.getAmount());
+        }
+
+        map.put("displayName", stored.getDisplayName().getString());
+
+        if (craftable == null) {
+            map.put("isCraftable", false);
+        } else {
+            map.put("isCraftable", true);
+            map.put("craftAmount", craftable.getAmount());
+        }
 
         return map;
     }
 
     public static Object getItem(INetwork network, ItemStack item) {
-        for (ItemStack itemStack : getItems(network)) {
-            if (itemStack.sameItem(item) && Objects.equals(itemStack.getTag(), item.getTag()))
-                return getObjectFromStack(itemStack.copy(), network);
-        }
-        return null;
+        ItemFilter filter = ItemFilter.fromStack(item);
+        ItemStack stored = findStackFromFilter(network, filter);
+        ItemStack craftable = findPatternFromFilter(network.getCraftingManager(), filter);
+        return getObjectFromStack(stored, craftable);
+    }
+
+    public static Object getFluid(INetwork network, FluidStack fluid) {
+        FluidFilter filter = FluidFilter.fromStack(fluid);
+        FluidStack stored = findFluidFromFilter(network, filter);
+        FluidStack craftable = findFluidPatternFromFilter(network.getCraftingManager(), filter);
+        return getObjectFromFluid(stored, craftable);
+    }
+
+    public static Stream<ItemStack> getCraftableItemsStream(INetwork network) {
+        IStorageCache<ItemStack> cache = network.getItemStorageCache();
+        return cache.getCraftablesList().getStacks().stream().map(entry -> entry.getStack().copy());
     }
 
     public static List<ItemStack> getCraftableItems(INetwork network) {
-        IStorageCache<ItemStack> cache = network.getItemStorageCache();
-        Collection<StackListEntry<ItemStack>> craftableEntries = cache.getCraftablesList().getStacks();
-        List<ItemStack> result = new ArrayList<>(craftableEntries.size());
+        return getCraftableItemsStream(network).toList();
+    }
 
-        for (StackListEntry<ItemStack> entry : craftableEntries) {
-            result.add(entry.getStack().copy());
-        }
-
-        return result;
+    public static Stream<FluidStack> getCraftableFluidsStream(INetwork network) {
+        IStorageCache<FluidStack> cache = network.getFluidStorageCache();
+        return cache.getCraftablesList().getStacks().stream().map(entry -> entry.getStack().copy());
     }
 
     public static List<FluidStack> getCraftableFluids(INetwork network) {
-        IStorageCache<FluidStack> cache = network.getFluidStorageCache();
-        Collection<StackListEntry<FluidStack>> craftableEntries = cache.getCraftablesList().getStacks();
-        List<FluidStack> result = new ArrayList<>(craftableEntries.size());
+        return getCraftableFluidsStream(network).toList();
+    }
 
-        for (StackListEntry<FluidStack> entry : craftableEntries)
-            result.add(entry.getStack().copy());
-
-        return result;
+    public static Stream<ItemStack> getItemsStream(INetwork network) {
+        IStorageCache<ItemStack> cache = network.getItemStorageCache();
+        return cache.getList().getStacks().stream().map(entry -> entry.getStack().copy());
     }
 
     public static List<ItemStack> getItems(INetwork network) {
-        IStorageCache<ItemStack> cache = network.getItemStorageCache();
-        Collection<StackListEntry<ItemStack>> entries = cache.getList().getStacks();
-        List<ItemStack> result = new ArrayList<>(entries.size());
+        return getItemsStream(network).toList();
+    }
 
-        for (StackListEntry<ItemStack> entry : entries)
-            result.add(entry.getStack().copy());
-
-        return result;
+    public static Stream<FluidStack> getFluidsStream(INetwork network) {
+        IStorageCache<FluidStack> cache = network.getFluidStorageCache();
+        return cache.getList().getStacks().stream().map(entry -> entry.getStack().copy());
     }
 
     public static List<FluidStack> getFluids(INetwork network) {
-        IStorageCache<FluidStack> cache = network.getFluidStorageCache();
-        Collection<StackListEntry<FluidStack>> entries = cache.getList().getStacks();
-        List<FluidStack> result = new ArrayList<>(entries.size());
-
-        for (StackListEntry<FluidStack> entry : entries)
-            result.add(entry.getStack().copy());
-
-        return result;
+        return getFluidsStream(network).toList();
     }
 
     public void initiate() {

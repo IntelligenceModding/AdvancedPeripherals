@@ -2,12 +2,14 @@ package de.srendi.advancedperipherals.common.util.inventory;
 
 import dan200.computercraft.shared.Registry;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
+import de.srendi.advancedperipherals.common.util.Pair;
 import de.srendi.advancedperipherals.common.util.StringUtil;
 import net.minecraft.ResourceLocationException;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.IForgeRegistry;
 import org.apache.logging.log4j.Level;
@@ -49,16 +51,25 @@ public class ItemUtil {
      * @return A generated MD5 hash from the item stack
      */
     public static String getFingerprint(ItemStack stack) {
-        String fingerprint = stack.getOrCreateTag() + getRegistryKey(stack).toString() + stack.getDisplayName().getString();
         try {
-            byte[] bytesOfHash = fingerprint.getBytes(StandardCharsets.UTF_8);
             MessageDigest md = MessageDigest.getInstance("MD5");
-            return StringUtil.toHexString(md.digest(bytesOfHash));
+            md.update(stack.getOrCreateTag().toString().getBytes(StandardCharsets.UTF_8));
+            md.update(getRegistryKey(stack).toString().getBytes(StandardCharsets.UTF_8));
+            md.update(stack.getDisplayName().getString().getBytes(StandardCharsets.UTF_8));
+            return StringUtil.toHexString(md.digest());
         } catch (NoSuchAlgorithmException ex) {
             AdvancedPeripherals.debug("Could not parse fingerprint.", Level.ERROR);
             ex.printStackTrace();
         }
         return "";
+    }
+
+    public static Object asMapKey(ItemStack stack) {
+        return new Pair(stack.getItem(), stack.hasTag() ? stack.getTag() : null);
+    }
+
+    public static Object fluidAsMapKey(FluidStack stack) {
+        return new Pair(stack.getFluid(), stack.hasTag() ? stack.getTag() : null);
     }
 
     public static ItemStack makeTurtle(Item turtle, String upgrade) {

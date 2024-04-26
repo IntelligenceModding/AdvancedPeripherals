@@ -31,11 +31,11 @@ public class RsItemHandler implements IStorageSystemItemHandler {
 
     @Override
     public ItemStack extractItem(ItemFilter filter, int count, boolean simulate) {
-        ItemStack item = RefinedStorage.findStackFromFilter(network, network.getCraftingManager(), filter);
-        if (item == null)
+        ItemStack item = RefinedStorage.findStackFromFilter(network, filter);
+        if (item == null || item == ItemStack.EMPTY) {
             AdvancedPeripherals.debug("Trying to extract item: " + item + " from filter: " + filter);
-        if(item == null)
             return ItemStack.EMPTY;
+        }
         ItemStack extracted = network.extractItem(item, count, IComparer.COMPARE_NBT, simulate ? Action.SIMULATE : Action.PERFORM);
         AdvancedPeripherals.debug("Extracted item: " + extracted + " from filter: " + filter);
         return extracted;

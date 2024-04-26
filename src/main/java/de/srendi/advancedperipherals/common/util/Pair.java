@@ -1,5 +1,6 @@
 package de.srendi.advancedperipherals.common.util;
 
+import java.util.Objects;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -73,5 +74,15 @@ public class Pair<T, V> {
 
     public <R> R reduce(BiFunction<T, V, R> reduceFunc) {
         return reduceFunc.apply(left, right);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getLeft(), getRight());
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        return this == other || (other instanceof Pair pair && Objects.equals(this.getLeft(), pair.getLeft()) && Objects.equals(this.getRight(), pair.getRight()));
     }
 }
