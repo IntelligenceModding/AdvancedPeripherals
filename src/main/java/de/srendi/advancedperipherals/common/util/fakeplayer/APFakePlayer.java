@@ -119,7 +119,7 @@ public class APFakePlayer extends FakePlayer {
         return 0;
     }
 
-    public T doActionWithRot<T>(float yaw, float pitch, Function<APFakePlayer, T> action) {
+    public <T> T doActionWithRot(float yaw, float pitch, Function<APFakePlayer, T> action) {
         final float oldRot = this.getYRot();
         this.setRot(oldRot + yaw, pitch);
         try {

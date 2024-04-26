@@ -3,6 +3,7 @@ package de.srendi.advancedperipherals.common.addons.computercraft.peripheral.plu
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.lua.MethodResult;
+import dan200.computercraft.core.apis.TableHelper;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.TurtlePeripheralOwner;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
 import de.srendi.advancedperipherals.lib.peripherals.AutomataCorePeripheral;
@@ -47,7 +48,7 @@ public class AutomataEntityHandPlugin extends AutomataCorePlugin {
             TurtlePeripheralOwner owner = automataCore.getPeripheralOwner();
             ItemStack selectedTool = owner.getToolInMainHand();
             int previousDamageValue = selectedTool.getDamageValue();
-            InteractionResult result = owner.withPlayer(player -> player.doActionWithRot(yaw, pitch, player -> player.useOnFilteredEntity(suitableEntity)));
+            InteractionResult result = owner.withPlayer(player -> player.doActionWithRot(yaw, pitch, p -> p.useOnFilteredEntity(suitableEntity)));
             if (automataCore.hasAttribute(AutomataCorePeripheral.ATTR_STORING_TOOL_DURABILITY))
                 selectedTool.setDamageValue(previousDamageValue);
 
@@ -63,7 +64,7 @@ public class AutomataEntityHandPlugin extends AutomataCorePlugin {
 
         automataCore.addRotationCycle();
         TurtlePeripheralOwner owner = automataCore.getPeripheralOwner();
-        HitResult entityHit = owner.withPlayer(player -> player.doActionWithRot(yaw, pitch, player -> player.findHit(false, true, suitableEntity)));
+        HitResult entityHit = owner.withPlayer(player -> player.doActionWithRot(yaw, pitch, p -> p.findHit(false, true, suitableEntity)));
         if (entityHit.getType() == HitResult.Type.MISS)
             return MethodResult.of(null, "Nothing found");
 
