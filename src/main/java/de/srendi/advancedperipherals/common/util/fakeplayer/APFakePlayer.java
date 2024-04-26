@@ -119,30 +119,22 @@ public class APFakePlayer extends FakePlayer {
         return 0;
     }
 
+    public T doActionWithRot<T>(float yaw, float pitch, Function<APFakePlayer, T> action) {
+        final float oldRot = this.getYRot();
+        this.setRot(oldRot + yaw, pitch);
+        try {
+            return action.apply(this);
+        } finally {
+            this.setRot(oldRot, 0);
+        }
+    }
+
     @Deprecated(forRemoval = true)
     public Pair<Boolean, String> digBlock(Direction direction) {
         return digBlock(direction.toYRot() - this.getYRot(), direction == Direction.DOWN ? 90 : direction == Direction.UP ? -90 : 0);
     }
 
     public Pair<Boolean, String> digBlock() {
-        return digBlock(0, 0);
-    }
-
-    /**
-     * @param yaw The Y axis rotation relative to turtle's heading
-     * @param pitch The pitch
-     */
-    public Pair<Boolean, String> digBlock(float yaw, float pitch) {
-        final float oldRot = this.getYRot();
-        this.setRot((oldRot + yaw % 360 + 360) % 360, pitch % 360);
-        try {
-            return this.digBlockAction();
-        } finally {
-            this.setRot(oldRot, 0);
-        }
-    }
-
-    private Pair<Boolean, String> digBlockAction() {
         Level world = getLevel();
         HitResult hit = findHit(true, false);
         if (hit.getType() == HitResult.Type.MISS)
@@ -203,24 +195,12 @@ public class APFakePlayer extends FakePlayer {
         return use(true, false);
     }
 
-    public InteractionResult useOnBlock(float yaw, float pitch) {
-        return use(true, false, yaw, pitch);
-    }
-
     public InteractionResult useOnEntity() {
         return use(false, true);
     }
 
-    public InteractionResult useOnEntity(float yaw, float pitch) {
-        return use(false, true, yaw, pitch);
-    }
-
     public InteractionResult useOnFilteredEntity(Predicate<Entity> filter) {
         return use(false, true, filter);
-    }
-
-    public InteractionResult useOnFilteredEntity(Predicate<Entity> filter, float yaw, float pitch) {
-        return use(false, true, filter, yaw, pitch);
     }
 
     public InteractionResult useOnSpecificEntity(@NotNull Entity entity, HitResult result) {
@@ -236,25 +216,7 @@ public class APFakePlayer extends FakePlayer {
         return use(skipEntity, skipBlock, null);
     }
 
-    public InteractionResult use(boolean skipEntity, boolean skipBlock, float yaw, float pitch) {
-        return use(skipEntity, skipBlock, null, yaw, pitch);
-    }
-
     public InteractionResult use(boolean skipEntity, boolean skipBlock, @Nullable Predicate<Entity> entityFilter) {
-        return use(skipEntity, skipBlock, entityFilter, 0, 0);
-    }
-
-    public InteractionResult use(boolean skipEntity, boolean skipBlock, @Nullable Predicate<Entity> entityFilter, float yaw, float pitch) {
-        final float oldRot = this.getYRot();
-        this.setRot((oldRot + yaw % 360 + 360) % 360, pitch % 360);
-        try {
-            return this.useAction(skipEntity, skipBlock, entityFilter);
-        } finally {
-            this.setRot(oldRot, 0);
-        }
-    }
-
-    private InteractionResult useAction(boolean skipEntity, boolean skipBlock, @Nullable Predicate<Entity> entityFilter) {
         HitResult hit = findHit(skipEntity, skipBlock, entityFilter);
 
         if (hit instanceof BlockHitResult blockHit) {

@@ -69,8 +69,12 @@ public class AutomataEntityTransferPlugin extends AutomataCorePlugin {
 
 
     @LuaFunction(mainThread = true)
-    public final MethodResult captureAnimal() throws LuaException {
-        HitResult entityHit = automataCore.getPeripheralOwner().withPlayer(player -> player.findHit(false, true, suitableEntity));
+    public final MethodResult captureAnimal(@NotNull IArguments arguments) throws LuaException {
+        Map<?, ?> opts = arguments.count() > 0 ? arguments.getTable(0) : null;
+        float yaw = opts != null ? (float) TableHelper.optNumberField(opts, "yaw", 0) : 0;
+        float pitch = opts != null ? (float) TableHelper.optNumberField(opts, "pitch", 0) : 0;
+
+        HitResult entityHit = automataCore.getPeripheralOwner().withPlayer(player -> player.doActionWithRot(yaw, pitch, player -> player.findHit(false, true, suitableEntity)));
         if (entityHit.getType() == HitResult.Type.MISS)
             return MethodResult.of(null, "Nothing found");
         return automataCore.withOperation(CAPTURE_ANIMAL, context -> {

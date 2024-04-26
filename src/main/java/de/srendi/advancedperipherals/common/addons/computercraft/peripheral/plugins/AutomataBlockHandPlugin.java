@@ -40,7 +40,7 @@ public class AutomataBlockHandPlugin extends AutomataCorePlugin {
             TurtlePeripheralOwner owner = automataCore.getPeripheralOwner();
             ItemStack selectedTool = owner.getToolInMainHand();
             int previousDamageValue = selectedTool.getDamageValue();
-            Pair<Boolean, String> result = owner.withPlayer(apFakePlayer -> apFakePlayer.digBlock(yaw, pitch));
+            Pair<Boolean, String> result = owner.withPlayer(apFakePlayer -> apFakePlayer.doActionWithRot(yaw, pitch, APFakePlayer::digBlock));
             if (!result.getLeft()) {
                 return MethodResult.of(null, result.getRight());
             }
@@ -59,7 +59,7 @@ public class AutomataBlockHandPlugin extends AutomataCorePlugin {
             TurtlePeripheralOwner owner = automataCore.getPeripheralOwner();
             ItemStack selectedTool = owner.getToolInMainHand();
             int previousDamageValue = selectedTool.getDamageValue();
-            InteractionResult result = owner.withPlayer(apFakePlayer -> apFakePlayer.useOnBlock(yaw, pitch));
+            InteractionResult result = owner.withPlayer(apFakePlayer -> apFakePlayer.doActionWithRot(yaw, pitch, APFakePlayer::useOnBlock));
             if (automataCore.hasAttribute(AutomataCorePeripheral.ATTR_STORING_TOOL_DURABILITY))
                 selectedTool.setDamageValue(previousDamageValue);
             return MethodResult.of(true, result.toString());

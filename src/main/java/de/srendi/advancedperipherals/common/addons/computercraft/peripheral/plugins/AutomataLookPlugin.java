@@ -22,10 +22,14 @@ public class AutomataLookPlugin extends AutomataCorePlugin {
     }
 
     @LuaFunction(mainThread = true)
-    public final MethodResult lookAtBlock() {
+    public final MethodResult lookAtBlock(@NotNull IArguments arguments) throws LuaException {
+        Map<?, ?> opts = arguments.count() > 0 ? arguments.getTable(0) : null;
+        float yaw = opts != null ? (float) TableHelper.optNumberField(opts, "yaw", 0) : 0;
+        float pitch = opts != null ? (float) TableHelper.optNumberField(opts, "pitch", 0) : 0;
+
         automataCore.addRotationCycle();
         TurtlePeripheralOwner owner = automataCore.getPeripheralOwner();
-        HitResult result = owner.withPlayer(apFakePlayer -> apFakePlayer.findHit(true, false));
+        HitResult result = owner.withPlayer(apFakePlayer -> apFakePlayer.doActionWithRot(yaw, pitch, apFakePlayer -> apFakePlayer.findHit(true, false)));
         if (result.getType() == HitResult.Type.MISS)
             return MethodResult.of(null, "No block find");
 
@@ -40,9 +44,13 @@ public class AutomataLookPlugin extends AutomataCorePlugin {
     }
 
     @LuaFunction(mainThread = true)
-    public final MethodResult lookAtEntity() {
+    public final MethodResult lookAtEntity(@NotNull IArguments arguments) throws LuaException {
+        Map<?, ?> opts = arguments.count() > 0 ? arguments.getTable(0) : null;
+        float yaw = opts != null ? (float) TableHelper.optNumberField(opts, "yaw", 0) : 0;
+        float pitch = opts != null ? (float) TableHelper.optNumberField(opts, "pitch", 0) : 0;
+
         automataCore.addRotationCycle();
-        HitResult result = automataCore.getPeripheralOwner().withPlayer(apFakePlayer -> apFakePlayer.findHit(false, true));
+        HitResult result = automataCore.getPeripheralOwner().withPlayer(apFakePlayer -> apFakePlayer.doActionWithRot(yaw, pitch, apFakePlayer -> apFakePlayer.findHit(false, true)));
         if (result.getType() == HitResult.Type.MISS)
             return MethodResult.of(null, "No entity find");
 

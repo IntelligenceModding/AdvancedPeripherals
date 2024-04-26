@@ -39,12 +39,15 @@ public class AutomataEntityHandPlugin extends AutomataCorePlugin {
     }
 
     @LuaFunction(mainThread = true)
-    public final MethodResult useOnAnimal() throws LuaException {
+    public final MethodResult useOnAnimal(@NotNull IArguments arguments) throws LuaException {
+        Map<?, ?> opts = arguments.count() > 0 ? arguments.getTable(0) : null;
+        float yaw = opts != null ? (float) TableHelper.optNumberField(opts, "yaw", 0) : 0;
+        float pitch = opts != null ? (float) TableHelper.optNumberField(opts, "pitch", 0) : 0;
         return automataCore.withOperation(USE_ON_ANIMAL, context -> {
             TurtlePeripheralOwner owner = automataCore.getPeripheralOwner();
             ItemStack selectedTool = owner.getToolInMainHand();
             int previousDamageValue = selectedTool.getDamageValue();
-            InteractionResult result = owner.withPlayer(player -> player.useOnFilteredEntity(suitableEntity));
+            InteractionResult result = owner.withPlayer(player -> player.doActionWithRot(yaw, pitch, player -> player.useOnFilteredEntity(suitableEntity)));
             if (automataCore.hasAttribute(AutomataCorePeripheral.ATTR_STORING_TOOL_DURABILITY))
                 selectedTool.setDamageValue(previousDamageValue);
 
@@ -53,10 +56,14 @@ public class AutomataEntityHandPlugin extends AutomataCorePlugin {
     }
 
     @LuaFunction(mainThread = true)
-    public final MethodResult inspectAnimal() {
+    public final MethodResult inspectAnimal(@NotNull IArguments arguments) throws LuaException {
+        Map<?, ?> opts = arguments.count() > 0 ? arguments.getTable(0) : null;
+        float yaw = opts != null ? (float) TableHelper.optNumberField(opts, "yaw", 0) : 0;
+        float pitch = opts != null ? (float) TableHelper.optNumberField(opts, "pitch", 0) : 0;
+
         automataCore.addRotationCycle();
         TurtlePeripheralOwner owner = automataCore.getPeripheralOwner();
-        HitResult entityHit = owner.withPlayer(player -> player.findHit(false, true, suitableEntity));
+        HitResult entityHit = owner.withPlayer(player -> player.doActionWithRot(yaw, pitch, player -> player.findHit(false, true, suitableEntity)));
         if (entityHit.getType() == HitResult.Type.MISS)
             return MethodResult.of(null, "Nothing found");
 
