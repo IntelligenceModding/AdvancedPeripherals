@@ -87,6 +87,10 @@ public class PeripheralsConfig implements IAPConfig {
     public final ForgeConfigSpec.IntValue poweredPeripheralMaxEnergyStorage;
     private final ForgeConfigSpec configSpec;
 
+    // Saddle turtle (it's tamed)
+    public final ForgeConfigSpec.BooleanValue enableSaddleTurtle;
+    public final ForgeConfigSpec.BooleanValue allowSaddleTurtleCapturePlayer;
+
     public PeripheralsConfig() {
         ForgeConfigSpec.Builder builder = new ForgeConfigSpec.Builder();
 
@@ -192,6 +196,11 @@ public class PeripheralsConfig implements IAPConfig {
         pop("Pocket_Peripherals", builder);
 
         disablePocketFuelConsumption = builder.comment("If true, pockets will have infinite fuel").define("disablePocketFuelConsumption", true);
+
+        pop("Saddle_Turtle", builder);
+
+        enableSaddleTurtle = builder.comment("Enable saddle turtle").define("enableSaddleTurtle", true);
+        allowSaddleTurtleCapturePlayer = builder.comment("Allow saddle turtle to capture player").define("allowSaddleTurtleCapturePlayer", true);
 
         pop("Operations", builder);
 

@@ -71,12 +71,13 @@ public class EnUsLanguageProvider extends LanguageProvider {
     }
 
     private void addTurtles() {
-        addTurtle(CCRegistration.ID.CHUNKY_TURTLE, "Chunky");
         addTurtle(CCRegistration.ID.CHATTY_TURTLE, "Chatty");
+        addTurtle(CCRegistration.ID.CHUNKY_TURTLE, "Chunky");
+        addTurtle(CCRegistration.ID.COMPASS_TURTLE, "Compass");
+        addTurtle(CCRegistration.ID.SADDLE_TURTLE, "Saddle");
         addTurtle(CCRegistration.ID.ENVIRONMENT_TURTLE, "Environment");
         addTurtle(CCRegistration.ID.PLAYER_TURTLE, "Player Detector");
         addTurtle(CCRegistration.ID.GEOSCANNER_TURTLE, "Geo");
-        addTurtle(CCRegistration.ID.COMPASS_TURTLE, "Compass");
         addTurtle(CCRegistration.ID.WEAK_AUTOMATA, "Weak automata");
         addTurtle(CCRegistration.ID.HUSBANDRY_AUTOMATA, "Husbandry automata");
         addTurtle(CCRegistration.ID.END_AUTOMATA, "End automata");
