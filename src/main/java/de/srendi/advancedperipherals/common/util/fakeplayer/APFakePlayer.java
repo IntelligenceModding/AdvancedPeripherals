@@ -119,7 +119,30 @@ public class APFakePlayer extends FakePlayer {
         return 0;
     }
 
+    @Deprecated(forRemoval = true)
     public Pair<Boolean, String> digBlock(Direction direction) {
+        return digBlock(direction.toYRot() - this.getYRot(), direction == Direction.DOWN ? 90 : direction == Direction.UP ? -90 : 0);
+    }
+
+    public Pair<Boolean, String> digBlock() {
+        return digBlock(0, 0);
+    }
+
+    /**
+     * @param yaw The Y axis rotation relative to turtle's heading
+     * @param pitch The pitch
+     */
+    public Pair<Boolean, String> digBlock(float yaw, float pitch) {
+        final float oldRot = this.getYRot();
+        this.setRot((oldRot + yaw % 360 + 360) % 360, pitch % 360);
+        try {
+            return this.digBlockAction();
+        } finally {
+            this.setRot(oldRot, 0);
+        }
+    }
+
+    private Pair<Boolean, String> digBlockAction() {
         Level world = getLevel();
         HitResult hit = findHit(true, false);
         if (hit.getType() == HitResult.Type.MISS)
@@ -136,6 +159,9 @@ public class APFakePlayer extends FakePlayer {
 
         if (block != digBlock || !pos.equals(digPosition))
             setState(block, pos);
+
+        Vec3 look = getLookAngle();
+        Direction direction = Direction.getNearest(look.x, look.y, look.z).getOpposite();
 
         if (!world.isEmptyBlock(pos) && !state.getMaterial().isLiquid()) {
             if (block == Blocks.BEDROCK || state.getDestroySpeed(world, pos) <= -1)
@@ -159,7 +185,7 @@ public class APFakePlayer extends FakePlayer {
 
                 if (currentDamage > 9) {
                     world.playSound(null, pos, state.getSoundType().getHitSound(), SoundSource.NEUTRAL, .25f, 1);
-                    manager.handleBlockBreakAction(pos, ServerboundPlayerActionPacket.Action.STOP_DESTROY_BLOCK, direction.getOpposite(), 320, 1);
+                    manager.handleBlockBreakAction(pos, ServerboundPlayerActionPacket.Action.STOP_DESTROY_BLOCK, direction, 320, 1);
                     manager.destroyBlock(pos);
                     world.destroyBlockProgress(getId(), pos, -1);
                     setState(null, null);
@@ -177,12 +203,24 @@ public class APFakePlayer extends FakePlayer {
         return use(true, false);
     }
 
+    public InteractionResult useOnBlock(float yaw, float pitch) {
+        return use(true, false, yaw, pitch);
+    }
+
     public InteractionResult useOnEntity() {
         return use(false, true);
     }
 
+    public InteractionResult useOnEntity(float yaw, float pitch) {
+        return use(false, true, yaw, pitch);
+    }
+
     public InteractionResult useOnFilteredEntity(Predicate<Entity> filter) {
         return use(false, true, filter);
+    }
+
+    public InteractionResult useOnFilteredEntity(Predicate<Entity> filter, float yaw, float pitch) {
+        return use(false, true, filter, yaw, pitch);
     }
 
     public InteractionResult useOnSpecificEntity(@NotNull Entity entity, HitResult result) {
@@ -198,7 +236,25 @@ public class APFakePlayer extends FakePlayer {
         return use(skipEntity, skipBlock, null);
     }
 
+    public InteractionResult use(boolean skipEntity, boolean skipBlock, float yaw, float pitch) {
+        return use(skipEntity, skipBlock, null, yaw, pitch);
+    }
+
     public InteractionResult use(boolean skipEntity, boolean skipBlock, @Nullable Predicate<Entity> entityFilter) {
+        return use(skipEntity, skipBlock, entityFilter, 0, 0);
+    }
+
+    public InteractionResult use(boolean skipEntity, boolean skipBlock, @Nullable Predicate<Entity> entityFilter, float yaw, float pitch) {
+        final float oldRot = this.getYRot();
+        this.setRot((oldRot + yaw % 360 + 360) % 360, pitch % 360);
+        try {
+            return this.useAction(skipEntity, skipBlock, entityFilter);
+        } finally {
+            this.setRot(oldRot, 0);
+        }
+    }
+
+    private InteractionResult useAction(boolean skipEntity, boolean skipBlock, @Nullable Predicate<Entity> entityFilter) {
         HitResult hit = findHit(skipEntity, skipBlock, entityFilter);
 
         if (hit instanceof BlockHitResult blockHit) {
@@ -269,7 +325,7 @@ public class APFakePlayer extends FakePlayer {
             blockHit = BlockHitResult.miss(traceContext.getTo(), traceDirection, new BlockPos(traceContext.getTo()));
         } else {
             blockHit = BlockGetter.traverseBlocks(traceContext.getFrom(), traceContext.getTo(), traceContext, (rayTraceContext, blockPos) -> {
-                if (level.isEmptyBlock(blockPos)) {
+                if (level.isEmptyBlock(blockPos) || blockPos.equals(blockPosition())) {
                     return null;
                 }
                 return new BlockHitResult(new Vec3(blockPos.getX(), blockPos.getY(), blockPos.getZ()), traceDirection, blockPos, false);
