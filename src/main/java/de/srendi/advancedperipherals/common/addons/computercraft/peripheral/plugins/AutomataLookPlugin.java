@@ -1,5 +1,7 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.peripheral.plugins;
 
+import dan200.computercraft.api.lua.IArguments;
+import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.lua.MethodResult;
 import dan200.computercraft.core.apis.TableHelper;
@@ -13,6 +15,7 @@ import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraftforge.registries.ForgeRegistries;
 
+import org.jetbrains.annotations.NotNull;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,7 +33,7 @@ public class AutomataLookPlugin extends AutomataCorePlugin {
 
         automataCore.addRotationCycle();
         TurtlePeripheralOwner owner = automataCore.getPeripheralOwner();
-        HitResult result = owner.withPlayer(apFakePlayer -> apFakePlayer.doActionWithRot(yaw, pitch, apFakePlayer -> apFakePlayer.findHit(true, false)));
+        HitResult result = owner.withPlayer(apFakePlayer -> apFakePlayer.doActionWithRot(yaw, pitch, p -> p.findHit(true, false)));
         if (result.getType() == HitResult.Type.MISS)
             return MethodResult.of(null, "No block find");
 

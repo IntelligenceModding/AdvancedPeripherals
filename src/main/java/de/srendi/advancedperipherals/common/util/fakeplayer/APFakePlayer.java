@@ -48,6 +48,7 @@ import java.lang.ref.WeakReference;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Function;
 import java.util.function.Predicate;
 
 public class APFakePlayer extends FakePlayer {
@@ -131,7 +132,7 @@ public class APFakePlayer extends FakePlayer {
 
     @Deprecated(forRemoval = true)
     public Pair<Boolean, String> digBlock(Direction direction) {
-        return digBlock(direction.toYRot() - this.getYRot(), direction == Direction.DOWN ? 90 : direction == Direction.UP ? -90 : 0);
+        return doActionWithRot(direction.toYRot() - this.getYRot(), direction == Direction.DOWN ? 90 : direction == Direction.UP ? -90 : 0, APFakePlayer::digBlock);
     }
 
     public Pair<Boolean, String> digBlock() {
