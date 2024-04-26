@@ -20,7 +20,7 @@ public class ChunkyPeripheral extends BasePeripheral<TurtlePeripheralOwner> {
 
     public static final String PERIPHERAL_TYPE = "chunky";
     private static final String UUID_TAG = "uuid";
-    private @Nullable ChunkPos loadedCentralChunk;
+    private @Nullable ChunkPos loadedCentralChunk = null;
 
     public ChunkyPeripheral(ITurtleAccess turtle, TurtleSide side) {
         super(PERIPHERAL_TYPE, new TurtlePeripheralOwner(turtle, side));
@@ -45,36 +45,51 @@ public class ChunkyPeripheral extends BasePeripheral<TurtlePeripheralOwner> {
     }
 
     public void updateChunkState() {
+        // TODO: should find someway to update after turtle moved or while moving, but not every tick
         ServerLevel level = (ServerLevel) getLevel();
         ChunkManager manager = ChunkManager.get(level);
         ChunkPos currentChunk = getChunkPos();
-        if (loadedCentralChunk == null || !loadedCentralChunk.equals(currentChunk)) {
-            setLoadedChunk(currentChunk, manager, level);
-        } else {
-            manager.touch(getUUID());
-        }
+        setLoadedChunk(currentChunk, manager, level);
+        manager.touch(getUUID());
     }
 
     protected void setLoadedChunk(@Nullable ChunkPos newChunk, ChunkManager manager, ServerLevel level) {
         if (loadedCentralChunk != null) {
-            manager.removeForceChunk(level, getUUID(), loadedCentralChunk);
-            //Should not be used
-            //level.setChunkForced(loadedChunk.x, loadedChunk.z, false);
+            if (loadedCentralChunk.equals(newChunk)) {
+                return;
+            }
+            manager.removeForceChunk(level, getUUID());
+            // Should not be used
+            // level.setChunkForced(loadedChunk.x, loadedChunk.z, false);
             loadedCentralChunk = null;
         }
         if (newChunk != null) {
             loadedCentralChunk = newChunk;
             manager.addForceChunk(level, getUUID(), loadedCentralChunk);
-            //Should not be used
-            //level.setChunkForced(newChunk.x, newChunk.z, true);
+            // Should not be used
+            // level.setChunkForced(newChunk.x, newChunk.z, true);
         }
+    }
+
+    @Override
+    public void attach(IComputerAccess computer) {
+        super.attach(computer);
+        ServerLevel level = (ServerLevel) owner.getLevel();
+        ChunkManager manager = ChunkManager.get(Objects.requireNonNull(level));
+        ChunkPos currentChunk = getChunkPos();
+        setLoadedChunk(currentChunk, manager, level);
     }
 
     @Override
     public void detach(@NotNull IComputerAccess computer) {
         super.detach(computer);
-        ServerLevel level = (ServerLevel) owner.getLevel();
-        ChunkManager manager = ChunkManager.get(Objects.requireNonNull(level));
-        setLoadedChunk(null, manager, level);
+        // Should not remove the loaded chunk when detaching,
+        // because CC:T will detach all peripherals before server stopped.
+        // So the chunk record will never be saved if we removed the chunk record when detaching.
+        // The records will be automatically removed by the ChunkManager if they have not been touched a while ago.
+
+        // ServerLevel level = (ServerLevel) owner.getLevel();
+        // ChunkManager manager = ChunkManager.get(Objects.requireNonNull(level));
+        // setLoadedChunk(null, manager, level);
     }
 }
