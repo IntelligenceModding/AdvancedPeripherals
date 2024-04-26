@@ -1,0 +1,20 @@
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        maven {
+            name = 'MinecraftForge'
+            url = 'https://maven.minecraftforge.net/'
+            content {
+                includeGroup("net.minecraftforge")
+                includeGroup("net.minecraftforge.gradle")
+                includeGroup("org.spongepowered.mixin")
+                includeGroup("org.spongepowered")
+            }
+        }
+        maven { url = 'https://maven.parchmentmc.org' }
+    }
+}
+
+plugins {
+    id 'org.gradle.toolchains.foojay-resolver-convention' version '0.7.0'
+}

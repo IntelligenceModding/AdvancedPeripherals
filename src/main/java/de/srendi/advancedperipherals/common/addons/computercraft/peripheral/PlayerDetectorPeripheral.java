@@ -1,5 +1,6 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.peripheral;
 
+import dan200.computercraft.api.lua.IArguments;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.lua.MethodResult;
@@ -193,7 +194,7 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
     }
 
     @LuaFunction(value = {"getPlayerPos", "getPlayer"}, mainThread = true)
-    public final Map<String, Object> getPlayerPos(String username) throws LuaException {
+    public final Map<String, Object> getPlayerPos(IArguments arguments) throws LuaException {
         if (!APConfig.PERIPHERALS_CONFIG.playerSpy.get())
             throw new LuaException("This function is disabled in the config. Activate it or ask an admin if he can activate it.");
         ResourceKey<Level> dimension = getLevel().dimension();
@@ -202,7 +203,7 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
         for (ServerPlayer player : getPlayers()) {
             if (!isAllowedMultiDimensional() && player.getLevel().dimension() != dimension)
                 continue;
-            if (player.getName().getString().equals(username)) {
+            if (player.getName().getString().equals(arguments.getString(0))) {
                 if (MAX_RANGE == -1 || CoordUtil.isInRange(getPos(), getLevel(), player, MAX_RANGE, MAX_RANGE))
                     existingPlayer = player;
                 break;
@@ -247,16 +248,21 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
             }
         }
 
-        info.put("x", Math.floor(x));
-        info.put("y", Math.floor(y));
-        info.put("z", Math.floor(z));
+        int decimals = Math.min(arguments.optInt(1, 0), 4);
+
+        final double unit = Math.pow(10, decimals);
+        info.put("x", Math.floor(x * unit) / unit);
+        info.put("y", Math.floor(y * unit) / unit);
+        info.put("z", Math.floor(z * unit) / unit);
         if (APConfig.PERIPHERALS_CONFIG.morePlayerInformation.get()) {
             info.put("yaw", existingPlayer.yRotO);
             info.put("pitch", existingPlayer.xRotO);
             info.put("dimension", existingPlayer.getLevel().dimension().location().toString());
             info.put("eyeHeight", existingPlayer.getEyeHeight());
             info.put("health", existingPlayer.getHealth());
-            info.put("maxHeatlh", existingPlayer.getMaxHealth());
+            // TODO: remove the next line in next major version
+            info.put("maxHeatlh", existingPlayer.getMaxHealth()); // keep this for backward compatibility
+            info.put("maxHealth", existingPlayer.getMaxHealth());
             info.put("airSupply", existingPlayer.getAirSupply());
             info.put("respawnPosition", LuaConverter.posToObject(existingPlayer.getRespawnPosition()));
             info.put("respawnDimension", existingPlayer.getRespawnDimension().location().toString());

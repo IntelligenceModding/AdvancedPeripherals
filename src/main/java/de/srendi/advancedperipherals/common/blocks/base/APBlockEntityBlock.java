@@ -1,6 +1,8 @@
 package de.srendi.advancedperipherals.common.blocks.base;
 
+import de.srendi.advancedperipherals.common.blocks.blockentities.EnergyDetectorEntity;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -28,4 +30,14 @@ public class APBlockEntityBlock<T extends BlockEntity> extends BaseBlockEntityBl
         return tileEntity != null ? tileEntity.get().create(pos, state) : null;
     }
 
+    @Override
+    public void onNeighborChange(BlockState state, LevelReader level, BlockPos pos, BlockPos neighbor) {
+        super.onNeighborChange(state, level, pos, neighbor);
+
+        BlockEntity blockEntity = level.getBlockEntity(pos);
+
+        if(blockEntity instanceof EnergyDetectorEntity energyDetector)
+            energyDetector.invalidateStorages();
+
+    }
 }
