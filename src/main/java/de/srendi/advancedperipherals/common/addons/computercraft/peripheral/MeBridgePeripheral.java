@@ -8,6 +8,7 @@ import appeng.api.networking.crafting.ICraftingService;
 import appeng.api.stacks.AEFluidKey;
 import appeng.api.stacks.AEItemKey;
 import appeng.api.storage.MEStorage;
+import appeng.me.cluster.implementations.CraftingCPUCluster;
 import dan200.computercraft.api.lua.IArguments;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
@@ -598,6 +599,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     }
 
     @Override
+    @LuaFunction(mainThread = true)
     public MethodResult getCraftingTasks() {
         if (!isAvailable())
             return notConnected();
@@ -614,7 +616,8 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     }
 
     @Override
-    public MethodResult cancelCraftingTasks(IArguments arguments) throws LuaException {
+    @LuaFunction(mainThread = true)
+    public MethodResult cancelCraftingTasks(IArguments arguments) {
         if (!isAvailable())
             return notConnected();
 
@@ -634,14 +637,16 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (filter.getRight() != null)
             return MethodResult.of(null, filter.getRight());
 
-        //TODO: See https://github.com/AppliedEnergistics/Applied-Energistics-2/issues/7560
-        /*
+        int jobsCanceled = 0;
         for (ICraftingCPU cpu : craftingGrid.getCpus()) {
-            if (cpu.getJobStatus() != null) {
+            if (cpu.getJobStatus() != null && filter.getLeft().test(cpu.getJobStatus().crafting())) {
+                if (cpu instanceof CraftingCPUCluster cpuCluster) {
+                    cpuCluster.cancel();
+                    jobsCanceled++;
+                }
             }
         }
-         */
-        return null;
+        return MethodResult.of(jobsCanceled, "SUCCESSFUL");
     }
 
     @Override
