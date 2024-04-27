@@ -23,8 +23,8 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.PlayerArmorInvWrapper;
 import net.minecraftforge.items.wrapper.PlayerInvWrapper;
 import net.minecraftforge.items.wrapper.PlayerOffhandInvWrapper;
-import org.jetbrains.annotations.NotNull;
 
+import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -188,8 +188,13 @@ public class InventoryManagerPeripheral extends BasePeripheral<BlockEntityPeriph
     }
 
     @LuaFunction(mainThread = true)
+    public final int getHandSlot() throws LuaException {
+        return getOwnerPlayer().getInventory().selected;
+    }
+
+    @LuaFunction(mainThread = true)
     public final Map<String, Object> getItemInHand() throws LuaException {
-        return LuaConverter.stackToObjectWithSlot(getOwnerPlayer().getMainHandItem(), getOwnerPlayer().getInventory().selected);
+        return LuaConverter.itemStackToObject(getOwnerPlayer().getMainHandItem(), getOwnerPlayer().getInventory().selected);
     }
 
     @LuaFunction(mainThread = true)
