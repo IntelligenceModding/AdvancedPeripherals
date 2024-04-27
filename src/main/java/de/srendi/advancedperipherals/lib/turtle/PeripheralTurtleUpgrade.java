@@ -5,6 +5,7 @@ import dan200.computercraft.api.turtle.AbstractTurtleUpgrade;
 import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
 import dan200.computercraft.api.turtle.TurtleUpgradeType;
+import de.srendi.advancedperipherals.common.configuration.UnsafeConfig;
 import de.srendi.advancedperipherals.common.util.TranslationUtil;
 import de.srendi.advancedperipherals.lib.peripherals.DisabledPeripheral;
 import de.srendi.advancedperipherals.lib.peripherals.IBasePeripheral;
@@ -39,8 +40,11 @@ public abstract class PeripheralTurtleUpgrade<T extends IBasePeripheral<?>> exte
     }
 
     @Override
-    public boolean isItemSuitable(@NotNull ItemStack stack ) {
-        // always accept NBTed items
-        return true;
+    public boolean isItemSuitable(@NotNull ItemStack stack) {
+        if (UnsafeConfig.getIgnoreTurtlePeripheralItemNBT()) {
+            // always accept NBTed items
+            return true;
+        }
+        return super.isItemSuitable(stack);
     }
 }

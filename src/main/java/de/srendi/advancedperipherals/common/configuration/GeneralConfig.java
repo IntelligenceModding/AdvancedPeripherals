@@ -24,6 +24,11 @@ public class GeneralConfig implements IAPConfig {
         LibConfig.build(builder);
 
         builder.pop();
+        builder.push("Unsafe");
+
+        UnsafeConfig.build(builder);
+
+        builder.pop();
 
         configSpec = builder.build();
     }
