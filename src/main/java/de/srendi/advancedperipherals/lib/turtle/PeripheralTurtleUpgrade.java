@@ -21,7 +21,7 @@ public abstract class PeripheralTurtleUpgrade<T extends IBasePeripheral<?>> exte
         super(id, TurtleUpgradeType.PERIPHERAL, TranslationUtil.turtle(id.getPath()), item);
     }
 
-    //TODO: Do we still need this with the new modeller system?
+    // TODO: Do we still need this with the new modeller system?
     public abstract ModelResourceLocation getLeftModel();
 
     public abstract ModelResourceLocation getRightModel();
@@ -36,5 +36,11 @@ public abstract class PeripheralTurtleUpgrade<T extends IBasePeripheral<?>> exte
             return DisabledPeripheral.INSTANCE;
         }
         return peripheral;
+    }
+
+    @Override
+    public boolean isItemSuitable(@NotNull ItemStack stack ) {
+        // always accept NBTed items
+        return true;
     }
 }
