@@ -2,7 +2,6 @@ package de.srendi.advancedperipherals.common.entity;
 
 import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.shared.computer.core.ServerComputer;
-import dan200.computercraft.shared.turtle.blocks.BlockTurtle;
 import dan200.computercraft.shared.turtle.blocks.TileTurtle;
 import dan200.computercraft.shared.turtle.core.TurtleBrain;
 import dan200.computercraft.shared.turtle.items.TurtleItemFactory;
@@ -132,12 +131,12 @@ public class TurtleSeatEntity extends Entity implements HasCustomInventoryScreen
         }
 
         @Override
-        public boolean shouldRender(TurtleSeatEntity $$0, Frustum $$1, double $$2, double $$3, double $$4) {
+        public boolean shouldRender(TurtleSeatEntity a0, Frustum a1, double a2, double a3, double a4) {
             return false;
         }
 
         @Override
-        public ResourceLocation getTextureLocation(TurtleSeatEntity $$0) {
+        public ResourceLocation getTextureLocation(TurtleSeatEntity a0) {
             return null;
         }
     }

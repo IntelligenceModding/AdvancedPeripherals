@@ -3,7 +3,6 @@ package de.srendi.advancedperipherals.common.setup;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.entity.TurtleSeatEntity;
 import net.minecraft.client.renderer.entity.EntityRenderer;
-import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraftforge.registries.RegistryObject;
@@ -27,7 +26,7 @@ public class APEntities {
     }
 
     @SubscribeEvent
-    public static void livingRender(EntityRenderersEvent.RegisterRenderers event){
+    public static void livingRender(EntityRenderersEvent.RegisterRenderers event) {
         event.registerEntityRenderer(TURTLE_SEAT.get(), TurtleSeatEntity.Renderer::new);
     }
 }
