@@ -28,7 +28,7 @@ public class SaddlePeripheral extends BasePeripheral<TurtlePeripheralOwner> {
     private static final int ANIM_DURATION = 8; // Should be same as TurtleBrain.ANIM_DURATION
 
     public static final String PERIPHERAL_TYPE = "saddle";
-    private TurtleSeatEntity seat = null;
+    private volatile TurtleSeatEntity seat = null;
     private int moveProg = 0;
     private BlockPos moveDir = null;
 
@@ -43,7 +43,7 @@ public class SaddlePeripheral extends BasePeripheral<TurtlePeripheralOwner> {
 
     @Nullable
     public Entity getRidingEntity() {
-        return this.seat;
+        return this.seat != null ? this.seat.getFirstPassenger() : null;
     }
 
     public boolean isEntityRiding() {
@@ -57,11 +57,8 @@ public class SaddlePeripheral extends BasePeripheral<TurtlePeripheralOwner> {
 
     @Override
     public void detach(@NotNull IComputerAccess computer) {
+        standUp();
         super.detach(computer);
-        if (this.seat != null) {
-            this.seat.discard();
-            this.seat = null;
-        }
     }
 
     public void update() {
@@ -114,6 +111,16 @@ public class SaddlePeripheral extends BasePeripheral<TurtlePeripheralOwner> {
         return true;
     }
 
+    private boolean standUp() {
+        if (this.seat == null) {
+            return false;
+        }
+        boolean isVehicle = this.seat.isVehicle();
+        this.seat.discard();
+        this.seat = null;
+        return isVehicle;
+    }
+
     @LuaFunction(mainThread = true)
     public MethodResult capture() {
         if (isEntityRiding()) {
@@ -134,5 +141,27 @@ public class SaddlePeripheral extends BasePeripheral<TurtlePeripheralOwner> {
             return MethodResult.of(null, "Entity cannot sit");
         }
         return MethodResult.of(true);
+    }
+
+    @LuaFunction(mainThread = true)
+    public MethodResult release() {
+        if (!standUp()) {
+            return MethodResult.of(null, "No entity is riding");
+        }
+        return MethodResult.of(true);
+    }
+
+    @LuaFunction(mainThread = true)
+    public boolean hasRider() {
+        return this.isEntityRiding();
+    }
+
+    @LuaFunction(mainThread = true)
+    public MethodResult getRider() {
+        Entity entity = getRidingEntity();
+        if (entity == null) {
+            return MethodResult.of(null);
+        }
+        return MethodResult.of(LuaConverter.completeEntityToLua(entity));
     }
 }
