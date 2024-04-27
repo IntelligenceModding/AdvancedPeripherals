@@ -32,7 +32,7 @@ import java.util.function.Predicate;
 
 public class SaddlePeripheral extends BasePeripheral<TurtlePeripheralOwner> {
 
-    private static final int ANIM_DURATION = 8; // Should be same as TurtleBrain.ANIM_DURATION
+    private static final int ANIM_DURATION = 8 - 1; // Should be same as TurtleBrain.ANIM_DURATION
 
     public static final String PERIPHERAL_TYPE = "saddle";
     private TurtleSeatEntity seat = null;

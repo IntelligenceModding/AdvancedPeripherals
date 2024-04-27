@@ -1,14 +1,24 @@
 package de.srendi.advancedperipherals.common.entity;
 
 import dan200.computercraft.api.turtle.ITurtleAccess;
+import dan200.computercraft.shared.computer.core.ServerComputer;
+import dan200.computercraft.shared.turtle.blocks.BlockTurtle;
+import dan200.computercraft.shared.turtle.blocks.TileTurtle;
+import dan200.computercraft.shared.turtle.core.TurtleBrain;
+import dan200.computercraft.shared.turtle.items.TurtleItemFactory;
+import dan200.computercraft.shared.network.container.ComputerContainerData;
 import de.srendi.advancedperipherals.common.setup.APEntities;
 import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.HasCustomInventoryScreen;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.PlayerRideableJumping;
 import net.minecraft.world.entity.TamableAnimal;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -17,7 +27,7 @@ import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import net.minecraft.resources.ResourceLocation;
 
-public class TurtleSeatEntity extends Entity {
+public class TurtleSeatEntity extends Entity implements HasCustomInventoryScreen, PlayerRideableJumping {
 
     private ITurtleAccess turtle;
     private int life;
@@ -83,6 +93,37 @@ public class TurtleSeatEntity extends Entity {
             }
         }
         this.discard();
+    }
+
+    @Override
+    public void openCustomInventoryScreen(Player player) {
+        if (!this.level.isClientSide && this.hasPassenger(player)) {
+            if (this.turtle instanceof TurtleBrain turtle) {
+                TileTurtle tile = turtle.getOwner();
+                if (!tile.isUsable(player)) {
+                    return;
+                }
+                ServerComputer computer = tile.createServerComputer();
+                ItemStack stack = TurtleItemFactory.create(tile);
+                new ComputerContainerData(computer, stack).open(player, tile);
+            }
+        }
+    }
+
+    public void onPlayerJump(int power) {
+        //
+    }
+
+    public boolean canJump() {
+        return true;
+    }
+
+    public void handleStartJump(int power) {
+        //
+    }
+
+    public void handleStopJump() {
+        //
     }
 
     public static class Renderer extends EntityRenderer<TurtleSeatEntity> {
