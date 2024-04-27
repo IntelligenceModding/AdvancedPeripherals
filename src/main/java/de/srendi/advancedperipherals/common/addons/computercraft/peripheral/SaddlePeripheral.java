@@ -7,7 +7,6 @@ import dan200.computercraft.api.peripheral.IComputerAccess;
 import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.TurtlePeripheralOwner;
-// import de.srendi.advancedperipherals.common.addons.computercraft.turtles.TurtleSaddleUpgrade;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.entity.TurtleSeatEntity;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
@@ -27,12 +26,11 @@ import net.minecraft.world.phys.Vec3;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-// import java.util.List;
 import java.util.function.Predicate;
 
 public class SaddlePeripheral extends BasePeripheral<TurtlePeripheralOwner> {
 
-    private static final int ANIM_DURATION = 8 - 1; // Should be same as TurtleBrain.ANIM_DURATION
+    private static final int ANIM_DURATION = 8; // Should be same as TurtleBrain.ANIM_DURATION
 
     public static final String PERIPHERAL_TYPE = "saddle";
     private TurtleSeatEntity seat = null;
