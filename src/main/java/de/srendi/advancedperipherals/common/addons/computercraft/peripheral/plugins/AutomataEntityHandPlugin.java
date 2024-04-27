@@ -21,6 +21,7 @@ import net.minecraft.world.phys.HitResult;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
@@ -43,14 +44,15 @@ public class AutomataEntityHandPlugin extends AutomataCorePlugin {
 
     @LuaFunction(mainThread = true)
     public final MethodResult useOnAnimal(@NotNull IArguments arguments) throws LuaException {
-        Map<?, ?> opts = arguments.count() > 0 ? arguments.getTable(0) : null;
+        Map<?, ?> opts = arguments.count() > 0 ? arguments.getTable(0) : Collections.emptyMap();
+        boolean sneak = TableHelper.optBooleanField(opts, "sneak", false);
         float yaw = opts != null ? (float) TableHelper.optNumberField(opts, "yaw", 0) : 0;
         float pitch = opts != null ? (float) TableHelper.optNumberField(opts, "pitch", 0) : 0;
         return automataCore.withOperation(USE_ON_ANIMAL, context -> {
             TurtlePeripheralOwner owner = automataCore.getPeripheralOwner();
             ItemStack selectedTool = owner.getToolInMainHand();
             int previousDamageValue = selectedTool.getDamageValue();
-            InteractionResult result = owner.withPlayer(player -> player.doActionWithRot(yaw, pitch, p -> p.useOnFilteredEntity(suitableEntity)));
+            InteractionResult result = owner.withPlayer(apFakePlayer -> apFakePlayer.doActionWithShiftKey(sneak, player -> player.doActionWithRot(yaw, pitch, p -> p.useOnFilteredEntity(suitableEntity))));
             if (automataCore.hasAttribute(AutomataCorePeripheral.ATTR_STORING_TOOL_DURABILITY))
                 selectedTool.setDamageValue(previousDamageValue);
 
@@ -60,7 +62,7 @@ public class AutomataEntityHandPlugin extends AutomataCorePlugin {
 
     @LuaFunction(mainThread = true)
     public final MethodResult inspectAnimal(@NotNull IArguments arguments) throws LuaException {
-        Map<?, ?> opts = arguments.count() > 0 ? arguments.getTable(0) : null;
+        Map<?, ?> opts = arguments.count() > 0 ? arguments.getTable(0) : Collections.emptyMap();
         float yaw = opts != null ? (float) TableHelper.optNumberField(opts, "yaw", 0) : 0;
         float pitch = opts != null ? (float) TableHelper.optNumberField(opts, "pitch", 0) : 0;
 

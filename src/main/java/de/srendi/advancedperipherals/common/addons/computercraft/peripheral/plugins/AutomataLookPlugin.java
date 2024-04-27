@@ -16,6 +16,7 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import org.jetbrains.annotations.NotNull;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -27,7 +28,7 @@ public class AutomataLookPlugin extends AutomataCorePlugin {
 
     @LuaFunction(mainThread = true)
     public final MethodResult lookAtBlock(@NotNull IArguments arguments) throws LuaException {
-        Map<?, ?> opts = arguments.count() > 0 ? arguments.getTable(0) : null;
+        Map<?, ?> opts = arguments.count() > 0 ? arguments.getTable(0) : Collections.emptyMap();
         float yaw = opts != null ? (float) TableHelper.optNumberField(opts, "yaw", 0) : 0;
         float pitch = opts != null ? (float) TableHelper.optNumberField(opts, "pitch", 0) : 0;
 
@@ -49,7 +50,7 @@ public class AutomataLookPlugin extends AutomataCorePlugin {
 
     @LuaFunction(mainThread = true)
     public final MethodResult lookAtEntity(@NotNull IArguments arguments) throws LuaException {
-        Map<?, ?> opts = arguments.count() > 0 ? arguments.getTable(0) : null;
+        Map<?, ?> opts = arguments.count() > 0 ? arguments.getTable(0) : Collections.emptyMap();
         float yaw = opts != null ? (float) TableHelper.optNumberField(opts, "yaw", 0) : 0;
         float pitch = opts != null ? (float) TableHelper.optNumberField(opts, "pitch", 0) : 0;
 

@@ -130,6 +130,16 @@ public class APFakePlayer extends FakePlayer {
         }
     }
 
+    public <T> T doActionWithShiftKey(boolean shift, Function<APFakePlayer, T> action) {
+        boolean old = this.isShiftKeyDown();
+        this.setShiftKeyDown(shift);
+        try {
+            return action.apply(this);
+        } finally {
+            this.setShiftKeyDown(old);
+        }
+    }
+
     @Deprecated(forRemoval = true)
     public Pair<Boolean, String> digBlock(Direction direction) {
         return doActionWithRot(direction.toYRot() - this.getYRot(), direction == Direction.DOWN ? 90 : direction == Direction.UP ? -90 : 0, APFakePlayer::digBlock);

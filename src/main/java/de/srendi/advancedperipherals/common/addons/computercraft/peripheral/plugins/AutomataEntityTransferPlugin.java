@@ -20,6 +20,7 @@ import net.minecraft.world.phys.HitResult;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import java.util.Collections;
 import java.util.Map;
 import java.util.function.Predicate;
 
@@ -74,7 +75,7 @@ public class AutomataEntityTransferPlugin extends AutomataCorePlugin {
 
     @LuaFunction(mainThread = true)
     public final MethodResult captureAnimal(@NotNull IArguments arguments) throws LuaException {
-        Map<?, ?> opts = arguments.count() > 0 ? arguments.getTable(0) : null;
+        Map<?, ?> opts = arguments.count() > 0 ? arguments.getTable(0) : Collections.emptyMap();
         float yaw = opts != null ? (float) TableHelper.optNumberField(opts, "yaw", 0) : 0;
         float pitch = opts != null ? (float) TableHelper.optNumberField(opts, "pitch", 0) : 0;
 
