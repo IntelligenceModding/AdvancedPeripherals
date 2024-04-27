@@ -47,7 +47,7 @@ public class AutomataLookPlugin extends AutomataCorePlugin {
             return MethodResult.of(null, "No entity find");
 
         EntityHitResult entityHit = (EntityHitResult) result;
-        return MethodResult.of(LuaConverter.entityToLua(entityHit.getEntity()));
+        return MethodResult.of(LuaConverter.entityToLua(entityHit.getEntity(), true));
     }
 
 }

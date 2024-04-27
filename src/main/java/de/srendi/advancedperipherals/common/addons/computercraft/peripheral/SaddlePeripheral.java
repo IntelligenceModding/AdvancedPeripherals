@@ -1,5 +1,7 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.peripheral;
 
+import dan200.computercraft.api.lua.IArguments;
+import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.lua.MethodResult;
 import dan200.computercraft.api.peripheral.IComputerAccess;
@@ -22,6 +24,7 @@ import net.minecraft.world.phys.Vec3;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Predicate;
 
 public class SaddlePeripheral extends BasePeripheral<TurtlePeripheralOwner> {
@@ -29,7 +32,8 @@ public class SaddlePeripheral extends BasePeripheral<TurtlePeripheralOwner> {
     private static final int ANIM_DURATION = 8; // Should be same as TurtleBrain.ANIM_DURATION
 
     public static final String PERIPHERAL_TYPE = "saddle";
-    private volatile TurtleSeatEntity seat = null;
+    private TurtleSeatEntity seat = null;
+    private AtomicBoolean hasRiderFlag = new AtomicBoolean();
     private int moveProg = 0;
     private BlockPos moveDir = null;
 
@@ -66,6 +70,7 @@ public class SaddlePeripheral extends BasePeripheral<TurtlePeripheralOwner> {
         if (this.seat != null) {
             if (!this.seat.isAlive()) {
                 this.seat = null;
+                this.hasRiderFlag.set(false);
                 return;
             }
             this.seat.keepAlive();
@@ -109,6 +114,7 @@ public class SaddlePeripheral extends BasePeripheral<TurtlePeripheralOwner> {
             tamable.setInSittingPose(true);
         }
         this.seat.keepAlive();
+        this.hasRiderFlag.set(true);
         return true;
     }
 
@@ -119,6 +125,7 @@ public class SaddlePeripheral extends BasePeripheral<TurtlePeripheralOwner> {
         boolean isVehicle = this.seat.isVehicle();
         this.seat.discard();
         this.seat = null;
+        this.hasRiderFlag.set(false);
         return isVehicle;
     }
 
@@ -152,17 +159,18 @@ public class SaddlePeripheral extends BasePeripheral<TurtlePeripheralOwner> {
         return MethodResult.of(true);
     }
 
-    @LuaFunction(mainThread = true)
+    @LuaFunction
     public boolean hasRider() {
-        return this.isEntityRiding();
+        return this.hasRiderFlag.get();
     }
 
     @LuaFunction(mainThread = true)
-    public MethodResult getRider() {
+    public MethodResult getRider(IArguments args) throws LuaException {
+        boolean detailed = args.count() > 0 ? args.getBoolean(0) : false;
         Entity entity = getRidingEntity();
         if (entity == null) {
             return MethodResult.of(null, "No entity is riding");
         }
-        return MethodResult.of(LuaConverter.completeEntityToLua(entity));
+        return MethodResult.of(LuaConverter.completeEntityToLua(entity, getPeripheralOwner().getToolInMainHand(), detailed));
     }
 }

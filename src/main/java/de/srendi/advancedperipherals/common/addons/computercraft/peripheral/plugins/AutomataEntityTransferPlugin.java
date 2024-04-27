@@ -1,5 +1,6 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.peripheral.plugins;
 
+import dan200.computercraft.api.lua.IArguments;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.lua.MethodResult;
@@ -110,8 +111,12 @@ public class AutomataEntityTransferPlugin extends AutomataCorePlugin {
     }
 
     @LuaFunction(mainThread = true)
-    public final MethodResult getCapturedAnimal() {
+    public final MethodResult getCapturedAnimal(IArguments args) throws LuaException {
+        boolean detailed = args.count() > 0 ? args.getBoolean(0) : false;
         Entity extractedEntity = extractEntity();
-        return MethodResult.of(LuaConverter.completeEntityToLua(extractedEntity, automataCore.getPeripheralOwner().getToolInMainHand()));
+        if (extractedEntity == null) {
+            return MethodResult.of(null, "No entity is stored");
+        }
+        return MethodResult.of(LuaConverter.completeEntityToLua(extractedEntity, automataCore.getPeripheralOwner().getToolInMainHand(), detailed));
     }
 }

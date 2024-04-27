@@ -1,5 +1,6 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.peripheral.plugins;
 
+import dan200.computercraft.api.lua.IArguments;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.lua.MethodResult;
@@ -64,18 +65,19 @@ public class AutomataEntityHandPlugin extends AutomataCorePlugin {
         if (!(entity instanceof Animal animal))
             return MethodResult.of(null, "Well, entity is not animal entity, but how?");
 
-        return MethodResult.of(LuaConverter.animalToLua(animal, owner.getToolInMainHand()));
+        return MethodResult.of(LuaConverter.animalToLua(animal, owner.getToolInMainHand(), true));
     }
 
     @LuaFunction(mainThread = true)
-    public final MethodResult searchAnimals() {
+    public final MethodResult searchAnimals(IArguments args) throws LuaException {
+        boolean detailed = args.count() > 0 ? args.getBoolean(0) : false;
         automataCore.addRotationCycle();
         TurtlePeripheralOwner owner = automataCore.getPeripheralOwner();
         BlockPos currentPos = owner.getPos();
         AABB box = new AABB(currentPos);
         List<Map<String, Object>> entities = new ArrayList<>();
         ItemStack itemInHand = owner.getToolInMainHand();
-        owner.getLevel().getEntities((Entity) null, box.inflate(automataCore.getInteractionRadius()), suitableEntity).forEach(entity -> entities.add(LuaConverter.completeEntityWithPositionToLua(entity, itemInHand, currentPos)));
+        owner.getLevel().getEntities((Entity) null, box.inflate(automataCore.getInteractionRadius()), suitableEntity).forEach(entity -> entities.add(LuaConverter.completeEntityWithPositionToLua(entity, itemInHand, currentPos, detailed)));
         return MethodResult.of(entities);
     }
 }

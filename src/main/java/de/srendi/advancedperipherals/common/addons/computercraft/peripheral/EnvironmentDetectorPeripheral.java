@@ -199,6 +199,7 @@ public class EnvironmentDetectorPeripheral extends BasePeripheral<IPeripheralOwn
     @LuaFunction(mainThread = true)
     public final MethodResult scanEntities(@NotNull IComputerAccess access, @NotNull IArguments arguments) throws LuaException {
         int radius = arguments.getInt(0);
+        boolean detailed = arguments.count() > 1 ? arguments.getBoolean(1) : false;
         return withOperation(SCAN_ENTITIES, new SphereOperationContext(radius), context -> {
             if (radius > SCAN_ENTITIES.getMaxCostRadius())
                 return MethodResult.of(null, "Radius exceeds max value");
@@ -207,7 +208,7 @@ public class EnvironmentDetectorPeripheral extends BasePeripheral<IPeripheralOwn
             BlockPos pos = owner.getPos();
             AABB box = new AABB(pos);
             List<Map<String, Object>> entities = new ArrayList<>();
-            getLevel().getEntities((Entity) null, box.inflate(radius), LivingEntity.class::isInstance).forEach(entity -> entities.add(LuaConverter.completeEntityWithPositionToLua(entity, ItemStack.EMPTY, pos)));
+            getLevel().getEntities((Entity) null, box.inflate(radius), LivingEntity.class::isInstance).forEach(entity -> entities.add(LuaConverter.completeEntityWithPositionToLua(entity, pos, detailed)));
             return MethodResult.of(entities);
         }, null);
     }
