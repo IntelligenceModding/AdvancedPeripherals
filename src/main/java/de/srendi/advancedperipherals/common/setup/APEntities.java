@@ -14,7 +14,7 @@ import net.minecraftforge.fml.common.Mod;
 @Mod.EventBusSubscriber(modid = AdvancedPeripherals.MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class APEntities {
 
-    public static final RegistryObject<EntityType<TurtleSeatEntity>> TURTLE_SEAT = Registration.ENTITIES.register("turtle_seat",
+    public static final RegistryObject<EntityType<TurtleSeatEntity>> TURTLE_SEAT = APRegistration.ENTITIES.register("turtle_seat",
         () -> EntityType.Builder.<TurtleSeatEntity>of(TurtleSeatEntity::new, MobCategory.MISC)
             .sized(0.1F, 0.1F)
             .clientTrackingRange(5)

@@ -45,11 +45,6 @@ public class APRegistration {
         APEntities.register();
         APContainerTypes.register();
         APVillagers.register();
-        Blocks.register();
-        BlockEntityTypes.register();
-        Items.register();
-        ContainerTypes.register();
-        Villagers.register();
         CCRegistration.register();
     }
 }

@@ -8,6 +8,7 @@ import dan200.computercraft.api.turtle.TurtleSide;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.TurtlePeripheralOwner;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.entity.TurtleSeatEntity;
+import de.srendi.advancedperipherals.common.util.LuaConverter;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
@@ -160,7 +161,7 @@ public class SaddlePeripheral extends BasePeripheral<TurtlePeripheralOwner> {
     public MethodResult getRider() {
         Entity entity = getRidingEntity();
         if (entity == null) {
-            return MethodResult.of(null);
+            return MethodResult.of(null, "No entity is riding");
         }
         return MethodResult.of(LuaConverter.completeEntityToLua(entity));
     }

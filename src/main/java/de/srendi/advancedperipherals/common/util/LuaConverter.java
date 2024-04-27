@@ -10,9 +10,12 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.animal.Animal;
+import net.minecraft.world.entity.npc.InventoryCarrier;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -21,8 +24,8 @@ import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.common.IForgeShearable;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidType;
-import org.jetbrains.annotations.NotNull;
 
+import org.jetbrains.annotations.NotNull;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -42,7 +45,15 @@ public class LuaConverter {
         data.put("isGlowing", entity.isCurrentlyGlowing());
         data.put("isInWall", entity.isInWall());
         if (entity instanceof InventoryCarrier carrier) {
+            Map<Integer, Object> invMap = new HashMap<>();
             SimpleContainer inv = carrier.getInventory();
+            for (int slot = 0; slot < inv.getContainerSize(); slot++) {
+                ItemStack item = inv.getItem(slot);
+                if (!item.isEmpty()) {
+                    invMap.put(slot, itemStackToObject(item));
+                }
+            }
+            data.put("inventory", invMap);
         }
         return data;
     }
@@ -53,6 +64,11 @@ public class LuaConverter {
         data.put("health", entity.getHealth());
         data.put("maxHealth", entity.getMaxHealth());
         data.put("lastDamageSource", entity.getLastDamageSource() == null ? null : entity.getLastDamageSource().toString());
+        Map<String, Object> effMap = new HashMap<>();
+        entity.getActiveEffectsMap().forEach((key, value) -> {
+            effMap.put(key.getDescriptionId(), effectToObject(value));
+        });
+        data.put("effects", effMap);
         return data;
     }
 
@@ -67,10 +83,23 @@ public class LuaConverter {
     }
 
     public static Map<String, Object> playerToLua(Player player) {
-        Map<String, Object> data = livingEntityToLua(animal);
+        Map<String, Object> data = livingEntityToLua(player);
         data.put("score", player.getScore());
         data.put("luck", player.getLuck());
+        Map<Integer, Object> invMap = new HashMap<>();
+        Inventory inv = player.getInventory();
+        for (int slot = 0; slot < inv.getContainerSize(); slot++) {
+            ItemStack item = inv.getItem(slot);
+            if (!item.isEmpty()) {
+                invMap.put(slot, itemStackToObject(item));
+            }
+        }
+        data.put("inventory", invMap);
         return data;
+    }
+
+    public static Map<String, Object> completeEntityToLua(Entity entity) {
+        return completeEntityToLua(entity, ItemStack.EMPTY);
     }
 
     public static Map<String, Object> completeEntityToLua(Entity entity, ItemStack itemInHand) {
@@ -78,6 +107,10 @@ public class LuaConverter {
         if (entity instanceof Animal animal) return animalToLua(animal, itemInHand);
         if (entity instanceof LivingEntity livingEntity) return livingEntityToLua(livingEntity);
         return entityToLua(entity);
+    }
+
+    public static Map<String, Object> completeEntityWithPositionToLua(Entity entity, BlockPos pos) {
+        return completeEntityWithPositionToLua(entity, ItemStack.EMPTY, pos);
     }
 
     public static Map<String, Object> completeEntityWithPositionToLua(Entity entity, ItemStack itemInHand, BlockPos pos) {
@@ -201,5 +234,13 @@ public class LuaConverter {
     public static BlockPos convertToBlockPos(BlockPos center, Map<?, ?> table) throws LuaException {
         BlockPos relative = convertToBlockPos(table);
         return new BlockPos(center.getX() + relative.getX(), center.getY() + relative.getY(), center.getZ() + relative.getZ());
+    }
+
+    public static Object effectToObject(MobEffectInstance effect) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("name", effect.getDescriptionId());
+        map.put("duration", effect.getDuration());
+        map.put("amplifier", effect.getAmplifier());
+        return map;
     }
 }
