@@ -151,7 +151,7 @@ public class LuaConverter {
             return null;
         }
         Map<String, Object> map = itemStackToObject(stack);
-        map.put("slot", slot);
+        map.put("slot", slot + 1);
         return map;
     }
 
