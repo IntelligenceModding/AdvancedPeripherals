@@ -6,32 +6,38 @@ import dan200.computercraft.api.lua.MethodResult;
 import dan200.computercraft.api.peripheral.IComputerAccess;
 import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
-import dan200.computercraft.shared.turtle.blocks.TileTurtle;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.TurtlePeripheralOwner;
-import de.srendi.advancedperipherals.common.addons.computercraft.turtles.TurtleSaddleUpgrade;
+// import de.srendi.advancedperipherals.common.addons.computercraft.turtles.TurtleSaddleUpgrade;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
+import de.srendi.advancedperipherals.common.entity.TurtleSeatEntity;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Registry;
+import net.minecraft.server.level.ServerEntity;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.TamableAnimal;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
+// import java.util.List;
 import java.util.function.Predicate;
 
 public class SaddlePeripheral extends BasePeripheral<TurtlePeripheralOwner> {
 
+    private static final int ANIM_DURATION = 8; // Should be same as TurtleBrain.ANIM_DURATION
+
     public static final String PERIPHERAL_TYPE = "saddle";
     private TurtleSeatEntity seat = null;
+    private int moveProg = 0;
+    private BlockPos moveDir = null;
 
     public SaddlePeripheral(ITurtleAccess turtle, TurtleSide side) {
         super(PERIPHERAL_TYPE, new TurtlePeripheralOwner(turtle, side));
@@ -74,9 +80,25 @@ public class SaddlePeripheral extends BasePeripheral<TurtlePeripheralOwner> {
             this.seat.keepAlive();
             BlockPos pos = owner.getPos();
             Vec3 newPos = new Vec3(pos.getX() + 0.5, pos.getY() + 0.4, pos.getZ() + 0.5);
+            BlockPos dir = pos.subtract(this.seat.blockPosition());
+            int dist = Math.abs(dir.getX()) + Math.abs(dir.getY()) + Math.abs(dir.getZ());
+            if (dist > 1) {
+                this.moveDir = null;
+            } else if (dist == 1) {
+                this.moveDir = dir;
+            }
+            if (this.moveDir != null) {
+                this.moveProg++;
+                if (this.moveProg > ANIM_DURATION) {
+                    this.moveProg = 0;
+                    this.moveDir = null;
+                } else {
+                    float step = ((float) this.moveProg) / ANIM_DURATION;
+                    newPos = newPos.add(Vec3.atLowerCornerOf(moveDir).scale(step - 1));
+                }
+            }
             if (!this.seat.position().equals(newPos)) {
-                // TODO: for some reason the client position will not sync here
-                this.seat.moveTo(newPos);
+                this.seat.moveTo(newPos.x(), newPos.y(), newPos.z());
             }
         }
     }
@@ -119,39 +141,5 @@ public class SaddlePeripheral extends BasePeripheral<TurtlePeripheralOwner> {
             return MethodResult.of(null, "Entity cannot sit");
         }
         return MethodResult.of(true);
-    }
-
-    private static class TurtleSeatEntity extends SeatEntity {
-        private ITurtleAccess turtle;
-        private int life;
-
-        public TurtleSeatEntity(ITurtleAccess turtle) {
-            super(turtle.getLevel(), turtle.getPosition());
-            this.turtle = turtle;
-            this.life = 1;
-        }
-
-        public ITurtleAccess getOwner() {
-            return turtle;
-        }
-
-        public void keepAlive() {
-            this.life = 3;
-        }
-
-        @Override
-        public void tick() {
-            if (this.level.isClientSide) {
-                return;
-            }
-            BlockEntity block = this.level.getBlockEntity(this.blockPosition());
-            if (this.isVehicle()) {
-                this.life--;
-                if (this.life > 0) {
-                    return;
-                }
-            }
-            this.discard();
-        }
     }
 }
