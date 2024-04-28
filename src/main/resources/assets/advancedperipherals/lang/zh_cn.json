@@ -72,7 +72,7 @@
   "pocket.advancedperipherals.colony_pocket": "殖民地",
   "pocket.advancedperipherals.environment_pocket": "环境监测",
   "pocket.advancedperipherals.geoscanner_pocket": "地理",
-  "pocket.advancedperipherals.player_pocket": "玩家侦测器",
+  "pocket.advancedperipherals.player_pocket": "玩家侦测",
   "text.advancedperipherals.added_player": "已将您添加到记忆卡中",
   "text.advancedperipherals.automata_core_feed_by_player": "你正试图把一个生物喂给魂器，但你的身体拒绝这么做。也许可以试试更机械化的东西？",
   "text.advancedperipherals.removed_player": "记忆卡已重置",
@@ -87,5 +87,6 @@
   "turtle.advancedperipherals.overpowered_husbandry_automata": "过载的自动畜牧",
   "turtle.advancedperipherals.overpowered_weak_automata": "过载的弱自动化",
   "turtle.advancedperipherals.player_turtle": "玩家侦测",
+  "turtle.advancedperipherals.saddle_turtle": "驯服的",
   "turtle.advancedperipherals.weak_automata": "弱自动化"
 }
