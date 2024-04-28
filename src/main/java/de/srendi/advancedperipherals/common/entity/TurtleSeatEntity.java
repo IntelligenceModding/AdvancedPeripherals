@@ -14,7 +14,6 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.HasCustomInventoryScreen;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.PlayerRideableJumping;
 import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -26,7 +25,7 @@ import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import net.minecraft.resources.ResourceLocation;
 
-public class TurtleSeatEntity extends Entity implements HasCustomInventoryScreen, PlayerRideableJumping {
+public class TurtleSeatEntity extends Entity implements HasCustomInventoryScreen {
 
     private ITurtleAccess turtle;
     private int life;
@@ -107,22 +106,6 @@ public class TurtleSeatEntity extends Entity implements HasCustomInventoryScreen
                 new ComputerContainerData(computer, stack).open(player, tile);
             }
         }
-    }
-
-    public void onPlayerJump(int power) {
-        //
-    }
-
-    public boolean canJump() {
-        return true;
-    }
-
-    public void handleStartJump(int power) {
-        //
-    }
-
-    public void handleStopJump() {
-        //
     }
 
     public static class Renderer extends EntityRenderer<TurtleSeatEntity> {

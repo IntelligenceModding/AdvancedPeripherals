@@ -69,8 +69,7 @@ public class SaddlePeripheral extends BasePeripheral<TurtlePeripheralOwner> {
     public void update() {
         if (this.seat != null) {
             if (!this.seat.isAlive()) {
-                this.seat = null;
-                this.hasRiderFlag.set(false);
+                this.standUp();
                 return;
             }
             this.seat.keepAlive();
@@ -126,6 +125,9 @@ public class SaddlePeripheral extends BasePeripheral<TurtlePeripheralOwner> {
         this.seat.discard();
         this.seat = null;
         this.hasRiderFlag.set(false);
+        if (owner.getTurtle() instanceof TurtleBrain brain) {
+            brain.getOwner().createServerComputer().queueEvent("saddle_release");
+        }
         return isVehicle;
     }
 
@@ -147,6 +149,9 @@ public class SaddlePeripheral extends BasePeripheral<TurtlePeripheralOwner> {
         LivingEntity entity = (LivingEntity) ((EntityHitResult) entityHit).getEntity();
         if (!sitDown(entity)) {
             return MethodResult.of(null, "Entity cannot sit");
+        }
+        if (owner.getTurtle() instanceof TurtleBrain brain) {
+            brain.getOwner().createServerComputer().queueEvent("saddle_capture");
         }
         return MethodResult.of(true);
     }
