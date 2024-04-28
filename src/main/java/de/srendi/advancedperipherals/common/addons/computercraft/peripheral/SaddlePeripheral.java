@@ -30,6 +30,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.util.function.Predicate;
 
+import static de.srendi.advancedperipherals.common.addons.computercraft.operations.SimpleFreeOperation.SADDLE_CAPTURE;
+
 public class SaddlePeripheral extends BasePeripheral<TurtlePeripheralOwner> {
 
     private static final int ANIM_DURATION = 8; // Should be same as TurtleBrain.ANIM_DURATION
@@ -45,6 +47,7 @@ public class SaddlePeripheral extends BasePeripheral<TurtlePeripheralOwner> {
 
     public SaddlePeripheral(ITurtleAccess turtle, TurtleSide side) {
         super(PERIPHERAL_TYPE, new TurtlePeripheralOwner(turtle, side));
+        owner.attachOperation(SADDLE_CAPTURE);
     }
 
     @Override
@@ -152,27 +155,29 @@ public class SaddlePeripheral extends BasePeripheral<TurtlePeripheralOwner> {
     }
 
     @LuaFunction(mainThread = true)
-    public MethodResult capture() {
+    public MethodResult capture() throws LuaException {
         if (isEntityRiding()) {
             return MethodResult.of(null, "Another entity is riding");
         }
-        Predicate<Entity> suitableEntity = (entity) -> entity.isAlive();
-        if (!APConfig.PERIPHERALS_CONFIG.allowSaddleTurtleCapturePlayer.get()) {
-            suitableEntity = suitableEntity.and((entity) -> !(entity instanceof Player));
-        }
-        final Predicate<Entity> finalSuitableEntity = suitableEntity;
-        HitResult entityHit = owner.withPlayer(player -> player.findHit(false, true, finalSuitableEntity));
-        if (entityHit.getType() == HitResult.Type.MISS) {
-            return MethodResult.of(null, "Nothing found");
-        }
-        LivingEntity entity = (LivingEntity) ((EntityHitResult) entityHit).getEntity();
-        if (!sitDown(entity)) {
-            return MethodResult.of(null, "Entity cannot sit");
-        }
-        if (owner.getTurtle() instanceof TurtleBrain brain) {
-            brain.getOwner().createServerComputer().queueEvent("saddle_capture");
-        }
-        return MethodResult.of(true);
+        return withOperation(SADDLE_CAPTURE, null, null, context -> {
+            Predicate<Entity> suitableEntity = (entity) -> entity.isAlive();
+            if (!APConfig.PERIPHERALS_CONFIG.allowSaddleTurtleCapturePlayer.get()) {
+                suitableEntity = suitableEntity.and((entity) -> !(entity instanceof Player));
+            }
+            final Predicate<Entity> finalSuitableEntity = suitableEntity;
+            HitResult entityHit = owner.withPlayer(player -> player.findHit(false, true, finalSuitableEntity));
+            if (entityHit.getType() == HitResult.Type.MISS) {
+                return MethodResult.of(null, "Nothing found");
+            }
+            LivingEntity entity = (LivingEntity) ((EntityHitResult) entityHit).getEntity();
+            if (!sitDown(entity)) {
+                return MethodResult.of(null, "Entity cannot sit");
+            }
+            if (owner.getTurtle() instanceof TurtleBrain brain) {
+                brain.getOwner().createServerComputer().queueEvent("saddle_capture");
+            }
+            return MethodResult.of(true);
+        }, null);
     }
 
     @LuaFunction(mainThread = true)
