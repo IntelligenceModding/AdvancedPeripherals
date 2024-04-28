@@ -28,7 +28,6 @@ import net.minecraft.world.phys.Vec3;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Predicate;
 
 public class SaddlePeripheral extends BasePeripheral<TurtlePeripheralOwner> {

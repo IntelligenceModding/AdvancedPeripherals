@@ -11,9 +11,9 @@ import net.minecraftforge.fml.common.Mod;
 public class ClientEventSubscriber {
     @SubscribeEvent
     public static void renderingHuds(RenderGuiOverlayEvent.Pre event) {
-    	if (ClientRegistry.SADDLE_TURTLE_HUD.shouldRender() && event.getOverlay().id().equals(VanillaGuiOverlay.EXPERIENCE_BAR.id())) {
-    		event.setCanceled(true);
-    		return;
-    	}
+        if (ClientRegistry.SADDLE_TURTLE_HUD.shouldRender() && event.getOverlay().id().equals(VanillaGuiOverlay.EXPERIENCE_BAR.id())) {
+            event.setCanceled(true);
+            return;
+        }
     }
 }
