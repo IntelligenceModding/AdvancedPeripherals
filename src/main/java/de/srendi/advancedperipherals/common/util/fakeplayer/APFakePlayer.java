@@ -120,6 +120,10 @@ public class APFakePlayer extends FakePlayer {
         return 0;
     }
 
+    public static <T> Function<APFakePlayer, T> wrapActionWithRot(float yaw, float pitch, Function<APFakePlayer, T> action) {
+        return player -> player.<T>doActionWithRot(yaw, pitch, action);
+    }
+
     public <T> T doActionWithRot(float yaw, float pitch, Function<APFakePlayer, T> action) {
         final float oldRot = this.getYRot();
         this.setRot(oldRot + yaw, pitch);
@@ -128,6 +132,10 @@ public class APFakePlayer extends FakePlayer {
         } finally {
             this.setRot(oldRot, 0);
         }
+    }
+
+    public static <T> Function<APFakePlayer, T> wrapActionWithShiftKey(boolean shift, Function<APFakePlayer, T> action) {
+        return player -> player.<T>doActionWithShiftKey(shift, action);
     }
 
     public <T> T doActionWithShiftKey(boolean shift, Function<APFakePlayer, T> action) {
@@ -148,58 +156,56 @@ public class APFakePlayer extends FakePlayer {
     public Pair<Boolean, String> digBlock() {
         Level world = getLevel();
         HitResult hit = findHit(true, false);
-        if (hit.getType() == HitResult.Type.MISS)
+        if (hit.getType() == HitResult.Type.MISS) {
             return Pair.of(false, "Nothing to break");
-        BlockPos pos = new BlockPos(hit.getLocation().x, hit.getLocation().y, hit.getLocation().z);
+        }
+        BlockPos pos = new BlockPos(hit.getLocation());
         BlockState state = world.getBlockState(pos);
         Block block = state.getBlock();
 
         ItemStack tool = getInventory().getSelected();
-
-        if (tool.isEmpty())
+        if (tool.isEmpty()) {
             return Pair.of(false, "Cannot dig without tool");
+        }
 
-
-        if (block != digBlock || !pos.equals(digPosition))
+        if (block != digBlock || !pos.equals(digPosition)) {
             setState(block, pos);
+        }
 
         Vec3 look = getLookAngle();
         Direction direction = Direction.getNearest(look.x, look.y, look.z).getOpposite();
 
-        if (!world.isEmptyBlock(pos) && !state.getMaterial().isLiquid()) {
-            if (block == Blocks.BEDROCK || state.getDestroySpeed(world, pos) <= -1)
-                return Pair.of(false, "Unbreakable block detected");
-
-            if (!(tool.getItem() instanceof DiggerItem) && !(tool.getItem() instanceof ShearsItem))
-                return Pair.of(false, "Item should be digger tool");
-
-            if (tool.getItem() instanceof DiggerItem toolItem && !toolItem.isCorrectToolForDrops(tool, state))
-                return Pair.of(false, "Tool cannot mine this block");
-
-            if (tool.getItem() instanceof ShearsItem shearsItem && shearsItem.isCorrectToolForDrops(state))
-                return Pair.of(false, "Shear cannot mine this block");
-
-            ServerPlayerGameMode manager = gameMode;
-            float breakSpeed = 0.5f * tool.getDestroySpeed(state) / state.getDestroySpeed(level, pos) - 0.1f;
-            for (int i = 0; i < 10; i++) {
-                currentDamage += breakSpeed;
-
-                world.destroyBlockProgress(getId(), pos, i);
-
-                if (currentDamage > 9) {
-                    world.playSound(null, pos, state.getSoundType().getHitSound(), SoundSource.NEUTRAL, .25f, 1);
-                    manager.handleBlockBreakAction(pos, ServerboundPlayerActionPacket.Action.STOP_DESTROY_BLOCK, direction, 320, 1);
-                    manager.destroyBlock(pos);
-                    world.destroyBlockProgress(getId(), pos, -1);
-                    setState(null, null);
-                    break;
-                }
-            }
-
-            return Pair.of(true, "block");
+        if (world.isEmptyBlock(pos) || state.getMaterial().isLiquid()) {
+            return Pair.of(false, "Nothing to dig here");
         }
 
-        return Pair.of(false, "Nothing to dig here");
+        if (block == Blocks.BEDROCK || state.getDestroySpeed(world, pos) <= -1) {
+            return Pair.of(false, "Unbreakable block detected");
+        }
+
+        if (!tool.isCorrectToolForDrops(state)) {
+            return Pair.of(false, "Tool cannot mine this block");
+        }
+
+        ServerPlayerGameMode manager = gameMode;
+        float breakSpeed = 0.5f * tool.getDestroySpeed(state) / state.getDestroySpeed(level, pos) - 0.1f;
+        for (int i = 0; i < 10; i++) {
+            currentDamage += breakSpeed;
+
+            world.destroyBlockProgress(getId(), pos, i);
+
+            if (currentDamage > 9) {
+                world.playSound(null, pos, state.getSoundType().getHitSound(), SoundSource.NEUTRAL, .25f, 1);
+                manager.handleBlockBreakAction(pos, ServerboundPlayerActionPacket.Action.STOP_DESTROY_BLOCK, direction, 320, 1);
+                manager.destroyBlock(pos);
+                world.destroyBlockProgress(getId(), pos, -1);
+                setState(null, null);
+                break;
+            }
+        }
+
+        return Pair.of(true, "block");
+
     }
 
     public InteractionResult useOnBlock() {
@@ -217,8 +223,9 @@ public class APFakePlayer extends FakePlayer {
     public InteractionResult useOnSpecificEntity(@NotNull Entity entity, HitResult result) {
         InteractionResult simpleInteraction = interactOn(entity, InteractionHand.MAIN_HAND);
         if (simpleInteraction == InteractionResult.SUCCESS) return simpleInteraction;
-        if (ForgeHooks.onInteractEntityAt(this, entity, result.getLocation(), InteractionHand.MAIN_HAND) != null)
+        if (ForgeHooks.onInteractEntityAt(this, entity, result.getLocation(), InteractionHand.MAIN_HAND) != null) {
             return InteractionResult.FAIL;
+        }
 
         return entity.interactAt(this, result.getLocation(), InteractionHand.MAIN_HAND);
     }
@@ -231,44 +238,49 @@ public class APFakePlayer extends FakePlayer {
         HitResult hit = findHit(skipEntity, skipBlock, entityFilter);
 
         if (hit instanceof BlockHitResult blockHit) {
-
             ItemStack stack = getMainHandItem();
             BlockPos pos = blockHit.getBlockPos();
             PlayerInteractEvent.RightClickBlock event = ForgeHooks.onRightClickBlock(this, InteractionHand.MAIN_HAND, pos, blockHit);
-            if (event.isCanceled())
+            if (event.isCanceled()) {
                 return event.getCancellationResult();
-
-            if (event.getUseItem() != Event.Result.DENY) {
+            }
+            boolean denied = event.getUseItem() == Event.Result.DENY;
+            if (!denied) {
                 InteractionResult result = stack.onItemUseFirst(new UseOnContext(level, this, InteractionHand.MAIN_HAND, stack, blockHit));
-                if (result != InteractionResult.PASS)
+                if (result != InteractionResult.PASS) {
                     return result;
+                }
+
+                boolean bypass = getMainHandItem().doesSneakBypassUse(level, pos, this);
+                if (isShiftKeyDown() || bypass || event.getUseBlock() == Event.Result.ALLOW) {
+                    InteractionResult useType = gameMode.useItemOn(this, level, stack, InteractionHand.MAIN_HAND, blockHit);
+                    if (useType == InteractionResult.SUCCESS) {
+                        return InteractionResult.SUCCESS;
+                    }
+                }
             }
 
-            boolean bypass = getMainHandItem().doesSneakBypassUse(level, pos, this);
-            if (getPose() != Pose.CROUCHING || bypass || event.getUseBlock() == Event.Result.ALLOW) {
-                InteractionResult useType = gameMode.useItemOn(this, level, stack, InteractionHand.MAIN_HAND, blockHit);
-                if (event.getUseBlock() != Event.Result.DENY && useType == InteractionResult.SUCCESS)
-                    return InteractionResult.SUCCESS;
-
-            }
-
-            if (stack.isEmpty() || getCooldowns().isOnCooldown(stack.getItem()))
+            if (stack.isEmpty() || getCooldowns().isOnCooldown(stack.getItem())) {
                 return InteractionResult.PASS;
+            }
 
 
             if (stack.getItem() instanceof BlockItem blockItem) {
                 Block block = blockItem.getBlock();
-                if (block instanceof CommandBlock || block instanceof StructureBlock)
+                if (block instanceof CommandBlock || block instanceof StructureBlock) {
                     return InteractionResult.FAIL;
+                }
             }
 
-            if (event.getUseItem() == Event.Result.DENY)
+            if (denied) {
                 return InteractionResult.PASS;
+            }
 
             ItemStack copyBeforeUse = stack.copy();
             InteractionResult result = stack.useOn(new UseOnContext(level, this, InteractionHand.MAIN_HAND, copyBeforeUse, blockHit));
-            if (stack.isEmpty())
+            if (stack.isEmpty()) {
                 ForgeEventFactory.onPlayerDestroyItem(this, copyBeforeUse, InteractionHand.MAIN_HAND);
+            }
             return result;
         } else if (hit instanceof EntityHitResult entityHit) {
             return useOnSpecificEntity(entityHit.getEntity(), entityHit);

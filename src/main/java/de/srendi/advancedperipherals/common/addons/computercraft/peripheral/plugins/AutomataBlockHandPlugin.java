@@ -42,12 +42,13 @@ public class AutomataBlockHandPlugin extends AutomataCorePlugin {
             TurtlePeripheralOwner owner = automataCore.getPeripheralOwner();
             ItemStack selectedTool = owner.getToolInMainHand();
             int previousDamageValue = selectedTool.getDamageValue();
-            Pair<Boolean, String> result = owner.withPlayer(apFakePlayer -> apFakePlayer.doActionWithShiftKey(sneak, p -> p.doActionWithRot(yaw, pitch, APFakePlayer::digBlock)));
+            Pair<Boolean, String> result = owner.withPlayer(APFakePlayer.wrapActionWithShiftKey(sneak, APFakePlayer.wrapActionWithRot(yaw, pitch, APFakePlayer::digBlock)));
             if (!result.getLeft()) {
                 return MethodResult.of(null, result.getRight());
             }
-            if (automataCore.hasAttribute(AutomataCorePeripheral.ATTR_STORING_TOOL_DURABILITY))
+            if (automataCore.hasAttribute(AutomataCorePeripheral.ATTR_STORING_TOOL_DURABILITY)) {
                 selectedTool.setDamageValue(previousDamageValue);
+            }
             return MethodResult.of(true);
         });
     }
@@ -62,10 +63,11 @@ public class AutomataBlockHandPlugin extends AutomataCorePlugin {
             TurtlePeripheralOwner owner = automataCore.getPeripheralOwner();
             ItemStack selectedTool = owner.getToolInMainHand();
             int previousDamageValue = selectedTool.getDamageValue();
-            InteractionResult result = owner.withPlayer(apFakePlayer -> apFakePlayer.doActionWithShiftKey(sneak, p -> p.doActionWithRot(yaw, pitch, APFakePlayer::useOnBlock)));
-            if (automataCore.hasAttribute(AutomataCorePeripheral.ATTR_STORING_TOOL_DURABILITY))
+            InteractionResult result = owner.withPlayer(APFakePlayer.wrapActionWithShiftKey(sneak, APFakePlayer.wrapActionWithRot(yaw, pitch, APFakePlayer::useOnBlock)));
+            if (automataCore.hasAttribute(AutomataCorePeripheral.ATTR_STORING_TOOL_DURABILITY)) {
                 selectedTool.setDamageValue(previousDamageValue);
-            return MethodResult.of(true, result.toString());
+            }
+            return MethodResult.of(result.consumesAction(), result.toString());
         });
     }
 

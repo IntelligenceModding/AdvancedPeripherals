@@ -7,6 +7,7 @@ import dan200.computercraft.api.lua.MethodResult;
 import dan200.computercraft.core.apis.TableHelper;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.TurtlePeripheralOwner;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
+import de.srendi.advancedperipherals.common.util.fakeplayer.APFakePlayer;
 import de.srendi.advancedperipherals.lib.peripherals.AutomataCorePeripheral;
 import de.srendi.advancedperipherals.lib.peripherals.IPeripheralOperation;
 import net.minecraft.core.BlockPos;
@@ -79,7 +80,7 @@ public class AutomataEntityTransferPlugin extends AutomataCorePlugin {
         float yaw = opts != null ? (float) TableHelper.optNumberField(opts, "yaw", 0) : 0;
         float pitch = opts != null ? (float) TableHelper.optNumberField(opts, "pitch", 0) : 0;
 
-        HitResult entityHit = automataCore.getPeripheralOwner().withPlayer(player -> player.doActionWithRot(yaw, pitch, p -> p.findHit(false, true, suitableEntity)));
+        HitResult entityHit = automataCore.getPeripheralOwner().withPlayer(APFakePlayer.wrapActionWithRot(yaw, pitch, p -> p.findHit(false, true, suitableEntity)));
         if (entityHit.getType() == HitResult.Type.MISS)
             return MethodResult.of(null, "Nothing found");
         return automataCore.withOperation(CAPTURE_ANIMAL, context -> {
