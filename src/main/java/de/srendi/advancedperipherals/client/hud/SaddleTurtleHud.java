@@ -39,9 +39,6 @@ public class SaddleTurtleHud extends GuiComponent implements IGuiOverlay {
             this.hide();
             return false;
         }
-        if (this.fuelLimit <= 0) {
-            return false;
-        }
         return this.lastActived + ACTIVE_TIMEOUT > System.currentTimeMillis();
     }
 
@@ -91,12 +88,12 @@ public class SaddleTurtleHud extends GuiComponent implements IGuiOverlay {
         int width = 182;
         int top = this.screenHeight - 32 + 3;
         this.blit(stack, left, top, 0, 64, width, 5);
-        if (fuelLevel > 0) {
+        if (fuelLevel > 0 && fuelLimit > 0) {
             int progWidth = fuelLevel * width / fuelLimit;
             this.blit(stack, left, top, 0, 69, progWidth, 5);
         }
 
-        String text = String.format("%d / %d", fuelLevel, fuelLimit);
+        String text = fuelLimit > 0 ? String.format("%d / %d", fuelLevel, fuelLimit) : "Infinity";
         int x = (this.screenWidth - getFont().width(text)) / 2;
         int y = this.screenHeight - 31;
         getFont().draw(stack, text, (float)(x + 1), (float) y, 0);

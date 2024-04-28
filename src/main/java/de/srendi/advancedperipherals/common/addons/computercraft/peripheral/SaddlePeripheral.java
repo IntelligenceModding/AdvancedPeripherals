@@ -28,6 +28,7 @@ import net.minecraft.world.phys.Vec3;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import java.util.Map;
 import java.util.function.Predicate;
 
 import static de.srendi.advancedperipherals.common.addons.computercraft.operations.SimpleFreeOperation.SADDLE_CAPTURE;
@@ -193,6 +194,10 @@ public class SaddlePeripheral extends BasePeripheral<TurtlePeripheralOwner> {
         if (entity == null) {
             return MethodResult.of(null, "No entity is riding");
         }
-        return MethodResult.of(LuaConverter.completeEntityToLua(entity, getPeripheralOwner().getToolInMainHand(), detailed));
+        Map<String, Object> data = LuaConverter.completeEntityToLua(entity, getPeripheralOwner().getToolInMainHand(), detailed);
+        if (data.get("pitch") instanceof Float pitch) {
+            data.put("pitch", (pitch.floatValue() - owner.getTurtle().getDirection().toYRot() + 360 + 180) % 360 - 180);
+        }
+        return MethodResult.of(data);
     }
 }

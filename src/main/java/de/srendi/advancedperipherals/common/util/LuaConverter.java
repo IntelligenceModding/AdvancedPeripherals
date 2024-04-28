@@ -12,6 +12,7 @@ import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.npc.InventoryCarrier;
@@ -21,6 +22,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.scores.Team;
 import net.minecraftforge.common.IForgeShearable;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidType;
@@ -39,12 +41,29 @@ public class LuaConverter {
         Map<String, Object> data = new HashMap<>();
         data.put("id", entity.getId());
         data.put("uuid", entity.getStringUUID());
-        data.put("name", entity.getName().getString());
-        data.put("tags", entity.getTags());
+        EntityType<?> type = entity.getType();
+        data.put("type", type.getDescriptionId());
+        data.put("category", type.getCategory());
+        data.put("canBurn", entity.fireImmune());
         data.put("canFreeze", entity.canFreeze());
         data.put("isGlowing", entity.isCurrentlyGlowing());
+        data.put("isUnderWater", entity.isUnderWater());
+        data.put("isInLava", entity.isInLava());
         data.put("isInWall", entity.isInWall());
-        if (detailed && entity instanceof InventoryCarrier carrier) {
+        data.put("pitch", entity.getYRot());
+        data.put("yaw", entity.getXRot());
+        if (!detailed) {
+            return data;
+        }
+        Team team = entity.getTeam();
+        data.put("team", team != null ? team.getName() : null);
+        data.put("name", entity.getName().getString());
+        data.put("air", entity.getAirSupply());
+        data.put("maxAir", entity.getMaxAirSupply());
+        data.put("frozen", entity.getTicksFrozen());
+        data.put("freezeTicks", entity.getTicksRequiredToFreeze());
+        data.put("tags", entity.getTags());
+        if (entity instanceof InventoryCarrier carrier) {
             Map<Integer, Object> invMap = new HashMap<>();
             SimpleContainer inv = carrier.getInventory();
             for (int slot = 0; slot < inv.getContainerSize(); slot++) {

@@ -206,8 +206,7 @@ public class EnvironmentDetectorPeripheral extends BasePeripheral<IPeripheralOwn
         }, context -> {
             BlockPos pos = owner.getPos();
             AABB box = new AABB(pos);
-            List<Map<String, Object>> entities = new ArrayList<>();
-            getLevel().getEntities((Entity) null, box.inflate(radius), LivingEntity.class::isInstance).forEach(entity -> entities.add(LuaConverter.completeEntityWithPositionToLua(entity, pos, detailed)));
+            List<Map<String, Object>> entities = getLevel().getEntities((Entity) null, box.inflate(radius), entity -> entity instanceof LivingEntity && entity.isAlive()).stream().map(entity -> LuaConverter.completeEntityWithPositionToLua(entity, pos, detailed)).toList();
             return MethodResult.of(entities);
         }, null);
     }
