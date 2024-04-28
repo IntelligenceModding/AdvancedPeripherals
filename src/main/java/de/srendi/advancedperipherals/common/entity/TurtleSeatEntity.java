@@ -49,14 +49,18 @@ public class TurtleSeatEntity extends Entity implements HasCustomInventoryScreen
         this.life = 2;
     }
 
+    @Override
     public Packet<?> getAddEntityPacket() {
         return new ClientboundAddEntityPacket(this);
     }
 
+    @Override
     public void readAdditionalSaveData(CompoundTag storage) {}
 
+    @Override
     public void addAdditionalSaveData(CompoundTag storage) {}
 
+    @Override
     protected void defineSynchedData() {}
 
     @Override
