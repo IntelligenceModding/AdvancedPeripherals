@@ -38,7 +38,7 @@ public class TurtleSeatEntity extends Entity implements HasCustomInventoryScreen
     public TurtleSeatEntity(ITurtleAccess turtle) {
         this(APEntities.TURTLE_SEAT.get(), turtle.getLevel());
         this.turtle = turtle;
-        this.life = 1;
+        this.life = 0;
     }
 
     public ITurtleAccess getOwner() {
@@ -46,7 +46,7 @@ public class TurtleSeatEntity extends Entity implements HasCustomInventoryScreen
     }
 
     public void keepAlive() {
-        this.life = 3;
+        this.life = 2;
     }
 
     public Packet<?> getAddEntityPacket() {
@@ -84,13 +84,12 @@ public class TurtleSeatEntity extends Entity implements HasCustomInventoryScreen
         if (this.level.isClientSide) {
             return;
         }
-        if (this.isVehicle()) {
-            this.life--;
-            if (this.life > 0) {
-                return;
-            }
+        this.life--;
+        if (this.life < 0) {
+            this.discard();
+            return;
         }
-        this.discard();
+        // TODO: better rendering
     }
 
     @Override

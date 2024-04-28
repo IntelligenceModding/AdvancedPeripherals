@@ -3,6 +3,7 @@ package de.srendi.advancedperipherals.common.network;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.network.base.IPacket;
 import de.srendi.advancedperipherals.common.network.toclient.DistanceDetectorSyncPacket;
+import de.srendi.advancedperipherals.common.network.toclient.RidingTurtleInfoPacket;
 import de.srendi.advancedperipherals.common.network.toclient.ToastToClientPacket;
 import de.srendi.advancedperipherals.common.network.toserver.GlassesHotkeyPacket;
 import net.minecraft.core.BlockPos;
@@ -34,6 +35,7 @@ public class PacketHandler {
 
     public static void init() {
         registerServerToClient(DistanceDetectorSyncPacket.class, DistanceDetectorSyncPacket::decode);
+        registerServerToClient(RidingTurtleInfoPacket.class, RidingTurtleInfoPacket::decode);
         registerServerToClient(ToastToClientPacket.class, ToastToClientPacket::decode);
         registerClientToServer(GlassesHotkeyPacket.class, GlassesHotkeyPacket::decode);
     }

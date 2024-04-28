@@ -3,6 +3,7 @@ package de.srendi.advancedperipherals.client;
 import dan200.computercraft.api.client.ComputerCraftAPIClient;
 import dan200.computercraft.api.client.turtle.TurtleUpgradeModeller;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
+import de.srendi.advancedperipherals.client.hud.SaddleTurtleHud;
 import de.srendi.advancedperipherals.client.renderer.DistanceDetectorRenderer;
 import de.srendi.advancedperipherals.client.screens.InventoryManagerScreen;
 import de.srendi.advancedperipherals.client.screens.SmartGlassesScreen;
@@ -15,6 +16,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.client.event.ModelEvent;
+import net.minecraftforge.client.event.RegisterGuiOverlaysEvent;
 import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -24,6 +26,8 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 public class ClientRegistry {
 
     private static final String[] TURTLE_MODELS = new String[]{"turtle_chat_box_upgrade_left", "turtle_chat_box_upgrade_right", "turtle_environment_upgrade_left", "turtle_environment_upgrade_right", "turtle_player_upgrade_left", "turtle_player_upgrade_right", "turtle_geoscanner_upgrade_left", "turtle_geoscanner_upgrade_right"};
+
+    public static final SaddleTurtleHud SADDLE_TURTLE_HUD = new SaddleTurtleHud();
 
     @SubscribeEvent
     public static void registerModels(ModelEvent.RegisterAdditional event) {
@@ -62,5 +66,10 @@ public class ClientRegistry {
     @SubscribeEvent
     public static void registeringRenderers(EntityRenderersEvent.RegisterRenderers event) {
         event.registerBlockEntityRenderer(APBlockEntityTypes.DISTANCE_DETECTOR.get(), DistanceDetectorRenderer::new);
+    }
+
+    @SubscribeEvent
+    public static void registeringHuds(RegisterGuiOverlaysEvent event) {
+        event.registerAboveAll(SaddleTurtleHud.ID, SADDLE_TURTLE_HUD);
     }
 }
