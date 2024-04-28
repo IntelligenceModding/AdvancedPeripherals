@@ -27,7 +27,6 @@ public class RidingTurtleInfoPacket implements IPacket {
         SADDLE_TURTLE_HUD.setFuelLevel(this.fuelLevel);
         SADDLE_TURTLE_HUD.setFuelLimit(this.fuelLimit);
         SADDLE_TURTLE_HUD.setBarColor(this.barColor);
-        SADDLE_TURTLE_HUD.keepAlive();
     }
 
     @Override

@@ -31,8 +31,12 @@ public class SaddleTurtleHud extends GuiComponent implements IGuiOverlay {
     }
 
     public boolean shouldRender() {
+        if (this.lastActived == 0) {
+            return false;
+        }
         LocalPlayer player = Minecraft.getInstance().player;
         if (player == null || !(player.getVehicle() instanceof TurtleSeatEntity)) {
+            this.hide();
             return false;
         }
         if (this.fuelLimit <= 0) {
@@ -56,15 +60,24 @@ public class SaddleTurtleHud extends GuiComponent implements IGuiOverlay {
         if (level < 0) {
             level = 0;
         }
-        this.fuelLevel = level;
+        if (this.fuelLevel != level) {
+            this.fuelLevel = level;
+            this.keepAlive();
+        }
     }
 
     public void setFuelLimit(int limit) {
-        this.fuelLimit = limit;
+        if (this.fuelLimit != limit) {
+            this.fuelLimit = limit;
+            this.keepAlive();
+        }
     }
 
     public void setBarColor(int color) {
-        this.barColor = color;
+        if (this.barColor != color) {
+            this.barColor = color;
+            this.keepAlive();
+        }
     }
 
     private void renderFuelBar(PoseStack stack, int left) {
