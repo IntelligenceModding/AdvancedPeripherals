@@ -158,8 +158,7 @@ public class SaddlePeripheral extends BasePeripheral<TurtlePeripheralOwner> {
         }
         Predicate<Entity> suitableEntity = (entity) -> entity.isAlive();
         if (!APConfig.PERIPHERALS_CONFIG.allowSaddleTurtleCapturePlayer.get()) {
-            Predicate<Entity> oldSuitableEntity = suitableEntity;
-            suitableEntity = (entity) -> oldSuitableEntity.test(entity) && !(entity instanceof Player);
+            suitableEntity = suitableEntity.and((entity) -> !(entity instanceof Player));
         }
         final Predicate<Entity> finalSuitableEntity = suitableEntity;
         HitResult entityHit = owner.withPlayer(player -> player.findHit(false, true, finalSuitableEntity));
