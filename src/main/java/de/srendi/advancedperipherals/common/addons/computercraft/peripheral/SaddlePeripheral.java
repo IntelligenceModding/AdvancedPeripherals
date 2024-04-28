@@ -113,12 +113,6 @@ public class SaddlePeripheral extends BasePeripheral<TurtlePeripheralOwner> {
         }
     }
 
-    private void clearHUD() {
-        if (this.rider instanceof ServerPlayer player) {
-            PacketHandler.sendTo(new RidingTurtleInfoPacket(-1, -1, 0), player);
-        }
-    }
-
     private boolean sitDown(@NotNull Entity entity) {
         Level world = owner.getLevel();
         BlockPos pos = owner.getPos();
@@ -143,7 +137,6 @@ public class SaddlePeripheral extends BasePeripheral<TurtlePeripheralOwner> {
         if (this.seat == null) {
             return false;
         }
-        this.clearHUD();
         boolean isVehicle = this.seat.isVehicle();
         this.seat.discard();
         this.seat = null;
