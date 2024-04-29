@@ -31,7 +31,6 @@
   "block.advancedperipherals.redstone_integrator": "Redstone Integrator",
   "block.advancedperipherals.rs_bridge": "RS Bridge",
   "entity.minecraft.villager.advancedperipherals.computer_scientist": "Computer Scientist",
-  "gui.advancedperipherals.hint.saddle_turtle_dismount": "Controlling saddle turtle. Press %1$s and %2$s to dismount.",
   "item.advancedperipherals.chunk_controller": "Chunk Controller",
   "item.advancedperipherals.computer_tool": "Computer Tool",
   "item.advancedperipherals.end_automata_core": "End Automata Core",
@@ -88,6 +87,5 @@
   "turtle.advancedperipherals.overpowered_husbandry_automata": "Overpowered husbandry automata",
   "turtle.advancedperipherals.overpowered_weak_automata": "Overpowered weak automata",
   "turtle.advancedperipherals.player_turtle": "Player Detector",
-  "turtle.advancedperipherals.saddle_turtle": "Tamed",
   "turtle.advancedperipherals.weak_automata": "Weak automata"
 }
