@@ -31,7 +31,6 @@ public class ClientEventSubscriber {
     @SubscribeEvent
     public static void playerTryDismount(InputEvent.Key event) {
         Minecraft minecraft = Minecraft.getInstance();
-        System.out.println("key press: " + event.getKey() + " action:" + event.getAction());
         if (!minecraft.options.keyShift.matches(event.getKey(), event.getScanCode())) {
             return;
         }
