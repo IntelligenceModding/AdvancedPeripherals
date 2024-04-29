@@ -36,15 +36,15 @@ public class ClientEventSubscriber {
             return;
         }
         switch (event.getAction()) {
-        case InputConstants.PRESS:
-            sneaking = true;
-            if (ClientRegistry.SADDLE_TURTLE_OVERLAY.isPlayerMountedOnTurtle()) {
-                minecraft.options.keyShift.setDown(false);
-            }
-            break;
-        case InputConstants.RELEASE:
-            sneaking = false;
-            break;
+            case InputConstants.PRESS:
+                sneaking = true;
+                if (ClientRegistry.SADDLE_TURTLE_OVERLAY.isPlayerMountedOnTurtle()) {
+                    minecraft.options.keyShift.setDown(false);
+                }
+                break;
+            case InputConstants.RELEASE:
+                sneaking = false;
+                break;
         }
     }
 

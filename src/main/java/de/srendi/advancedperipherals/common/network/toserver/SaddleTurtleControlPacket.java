@@ -4,7 +4,6 @@ import de.srendi.advancedperipherals.common.entity.TurtleSeatEntity;
 import de.srendi.advancedperipherals.common.network.base.IPacket;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.network.NetworkEvent;
 
 public class SaddleTurtleControlPacket implements IPacket {
@@ -33,7 +32,7 @@ public class SaddleTurtleControlPacket implements IPacket {
     }
 
     private SaddleTurtleControlPacket(byte bits) {
-        this((bits&FORWARD_BIT) != 0, (bits&BACK_BIT) != 0, (bits&LEFT_BIT) != 0, (bits&RIGHT_BIT) != 0, (bits&UP_BIT) != 0, (bits&DOWN_BIT) != 0);
+        this((bits & FORWARD_BIT) != 0, (bits & BACK_BIT) != 0, (bits & LEFT_BIT) != 0, (bits & RIGHT_BIT) != 0, (bits & UP_BIT) != 0, (bits & DOWN_BIT) != 0);
     }
 
     @Override
