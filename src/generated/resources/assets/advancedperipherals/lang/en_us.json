@@ -78,6 +78,7 @@
   "text.advancedperipherals.added_player": "Added you to the memory card",
   "text.advancedperipherals.automata_core_feed_by_player": "You're trying to feed an entity to a soul, but your own body refuses to do this. Maybe something more mechanical can do this?",
   "text.advancedperipherals.removed_player": "Cleared the memory card",
+  "text.advancedperipherals.saddle_turtle_dismount_hint": "Controlling %1$s. Press %2$s and %3$s to dismount.",
   "text.advancedperipherals.smart_glasses.modules": "Modules",
   "text.advancedperipherals.smart_glasses.peripherals": "Peripherals",
   "turtle.advancedperipherals.chatty_turtle": "Chatty",

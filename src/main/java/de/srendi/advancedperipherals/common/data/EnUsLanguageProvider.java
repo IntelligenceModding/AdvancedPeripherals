@@ -33,7 +33,7 @@ public class EnUsLanguageProvider extends LanguageProvider {
         addAdvancements();
         addTooltips();
         addKeybinds();
-        addText();
+        addTexts();
         add(APVillagers.COMPUTER_SCIENTIST, "Computer Scientist");
         add("advancedperipherals.name", "Advanced Peripherals");
         add("curios.identifier.glasses", "Glasses");
@@ -133,12 +133,13 @@ public class EnUsLanguageProvider extends LanguageProvider {
         addTooltip(APItems.OVERPOWERED_END_AUTOMATA_CORE.get(), "&7Improved version of the end automata core, that provides some overpowered uses! Be careful, the upgrade is very fragile.");
     }
 
-    private void addText() {
-        add("text." + AdvancedPeripherals.MOD_ID + ".removed_player", "Cleared the memory card");
-        add("text." + AdvancedPeripherals.MOD_ID + ".added_player", "Added you to the memory card");
-        add("text." + AdvancedPeripherals.MOD_ID + ".automata_core_feed_by_player", "You're trying to feed an entity to a soul, but your own body refuses to do this. Maybe something more mechanical can do this?");
-        add("text." + AdvancedPeripherals.MOD_ID + ".smart_glasses.peripherals", "Peripherals");
-        add("text." + AdvancedPeripherals.MOD_ID + ".smart_glasses.modules", "Modules");
+    private void addTexts() {
+        addText("removed_player", "Cleared the memory card");
+        addText("added_player", "Added you to the memory card");
+        addText("automata_core_feed_by_player", "You're trying to feed an entity to a soul, but your own body refuses to do this. Maybe something more mechanical can do this?");
+        addText("smart_glasses.peripherals", "Peripherals");
+        addText("smart_glasses.modules", "Modules");
+        addText("saddle_turtle_dismount_hint", "Controlling %1$s. Press %2$s and %3$s to dismount.");
     }
 
     private void addKeybinds() {
@@ -153,6 +154,10 @@ public class EnUsLanguageProvider extends LanguageProvider {
 
     private void add(@NotNull Supplier<VillagerProfession> key, @NotNull String name) {
         add("entity.minecraft.villager." + AdvancedPeripherals.MOD_ID + "." + key.get().name(), name);
+    }
+
+    private void addText(String key, String value) {
+        add("text." + AdvancedPeripherals.MOD_ID + "." + key, value);
     }
 
     private void addTurtle(@NotNull ResourceLocation key, @NotNull String name) {
