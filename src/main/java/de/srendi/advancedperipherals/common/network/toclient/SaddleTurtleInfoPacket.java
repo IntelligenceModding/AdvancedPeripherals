@@ -5,15 +5,15 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.network.NetworkEvent;
 
-import static de.srendi.advancedperipherals.client.ClientRegistry.SADDLE_TURTLE_HUD;
+import static de.srendi.advancedperipherals.client.ClientRegistry.SADDLE_TURTLE_OVERLAY;
 
-public class RidingTurtleInfoPacket implements IPacket {
+public class SaddleTurtleInfoPacket implements IPacket {
 
     private final int fuelLevel;
     private final int fuelLimit;
     private final int barColor;
 
-    public RidingTurtleInfoPacket(int fuelLevel, int fuelLimit, int barColor) {
+    public SaddleTurtleInfoPacket(int fuelLevel, int fuelLimit, int barColor) {
         this.fuelLevel = fuelLevel;
         this.fuelLimit = fuelLimit;
         this.barColor = barColor;
@@ -24,9 +24,9 @@ public class RidingTurtleInfoPacket implements IPacket {
         if (!FMLEnvironment.dist.isClient()) {
             return;
         }
-        SADDLE_TURTLE_HUD.setFuelLevel(this.fuelLevel);
-        SADDLE_TURTLE_HUD.setFuelLimit(this.fuelLimit);
-        SADDLE_TURTLE_HUD.setBarColor(this.barColor);
+        SADDLE_TURTLE_OVERLAY.setFuelLevel(this.fuelLevel);
+        SADDLE_TURTLE_OVERLAY.setFuelLimit(this.fuelLimit);
+        SADDLE_TURTLE_OVERLAY.setBarColor(this.barColor);
     }
 
     @Override
@@ -36,10 +36,10 @@ public class RidingTurtleInfoPacket implements IPacket {
         buffer.writeInt(this.barColor);
     }
 
-    public static RidingTurtleInfoPacket decode(FriendlyByteBuf buffer) {
+    public static SaddleTurtleInfoPacket decode(FriendlyByteBuf buffer) {
         int fuelLevel = buffer.readInt();
         int fuelLimit = buffer.readInt();
         int barColor = buffer.readInt();
-        return new RidingTurtleInfoPacket(fuelLevel, fuelLimit, barColor);
+        return new SaddleTurtleInfoPacket(fuelLevel, fuelLimit, barColor);
     }
 }

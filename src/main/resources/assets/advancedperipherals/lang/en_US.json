@@ -31,6 +31,7 @@
   "block.advancedperipherals.redstone_integrator": "Redstone Integrator",
   "block.advancedperipherals.rs_bridge": "RS Bridge",
   "entity.minecraft.villager.advancedperipherals.computer_scientist": "Computer Scientist",
+  "gui.advancedperipherals.hint.saddle_turtle_dismount": "Controlling saddle turtle. Press %1$s and %2$s to dismount.",
   "item.advancedperipherals.chunk_controller": "Chunk Controller",
   "item.advancedperipherals.computer_tool": "Computer Tool",
   "item.advancedperipherals.end_automata_core": "End Automata Core",

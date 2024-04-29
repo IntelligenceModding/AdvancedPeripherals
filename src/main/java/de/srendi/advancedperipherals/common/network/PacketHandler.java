@@ -3,9 +3,10 @@ package de.srendi.advancedperipherals.common.network;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.network.base.IPacket;
 import de.srendi.advancedperipherals.common.network.toclient.DistanceDetectorSyncPacket;
-import de.srendi.advancedperipherals.common.network.toclient.RidingTurtleInfoPacket;
+import de.srendi.advancedperipherals.common.network.toclient.SaddleTurtleInfoPacket;
 import de.srendi.advancedperipherals.common.network.toclient.ToastToClientPacket;
 import de.srendi.advancedperipherals.common.network.toserver.GlassesHotkeyPacket;
+import de.srendi.advancedperipherals.common.network.toserver.SaddleTurtleControlPacket;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
@@ -35,9 +36,10 @@ public class PacketHandler {
 
     public static void init() {
         registerServerToClient(DistanceDetectorSyncPacket.class, DistanceDetectorSyncPacket::decode);
-        registerServerToClient(RidingTurtleInfoPacket.class, RidingTurtleInfoPacket::decode);
+        registerServerToClient(SaddleTurtleInfoPacket.class, SaddleTurtleInfoPacket::decode);
         registerServerToClient(ToastToClientPacket.class, ToastToClientPacket::decode);
         registerClientToServer(GlassesHotkeyPacket.class, GlassesHotkeyPacket::decode);
+        registerClientToServer(SaddleTurtleControlPacket.class, SaddleTurtleControlPacket::decode);
     }
 
     public static <MSG extends IPacket> void registerServerToClient(Class<MSG> packet, Function<FriendlyByteBuf, MSG> decode) {

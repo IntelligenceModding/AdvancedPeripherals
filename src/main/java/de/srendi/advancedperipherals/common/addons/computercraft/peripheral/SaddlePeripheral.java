@@ -12,7 +12,7 @@ import de.srendi.advancedperipherals.common.addons.computercraft.owner.TurtlePer
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.entity.TurtleSeatEntity;
 import de.srendi.advancedperipherals.common.network.PacketHandler;
-import de.srendi.advancedperipherals.common.network.toclient.RidingTurtleInfoPacket;
+import de.srendi.advancedperipherals.common.network.toclient.SaddleTurtleInfoPacket;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
 import net.minecraft.core.BlockPos;
@@ -109,7 +109,7 @@ public class SaddlePeripheral extends BasePeripheral<TurtlePeripheralOwner> {
     private void sendHUD() {
         if (this.rider instanceof ServerPlayer player) {
             ITurtleAccess turtle = owner.getTurtle();
-            RidingTurtleInfoPacket packet = new RidingTurtleInfoPacket(turtle.getFuelLevel(), turtle.getFuelLimit(), barColor);
+            SaddleTurtleInfoPacket packet = new SaddleTurtleInfoPacket(turtle.getFuelLevel(), turtle.getFuelLimit(), barColor);
             PacketHandler.sendTo(packet, player);
         }
     }
