@@ -97,7 +97,7 @@ public class AutomataBlockHandPlugin extends AutomataCorePlugin {
     }
 
     /**
-     * placeBlock method will make turtle place a block with more details when compass has equipped.
+     * placeBlock method will let turtle place a block with more details when compass has equipped.
      * It should not able to place fluids / use any item, because compass do not recognize them.
      *
      * @param options A table contains how to place the block:
@@ -206,7 +206,7 @@ public class AutomataBlockHandPlugin extends AutomataCorePlugin {
         world.sendBlockUpdated(sign.getBlockPos(), sign.getBlockState(), sign.getBlockState(), Block.UPDATE_ALL);
     }
 
-    private class AdvanceDirectionalPlaceContext extends DirectionalPlaceContext {
+    private static class AdvanceDirectionalPlaceContext extends DirectionalPlaceContext {
         private final Direction anchor;
 
         AdvanceDirectionalPlaceContext(Level world, BlockPos pos, Direction anchor, Direction forward, ItemStack stack, Direction top) {
