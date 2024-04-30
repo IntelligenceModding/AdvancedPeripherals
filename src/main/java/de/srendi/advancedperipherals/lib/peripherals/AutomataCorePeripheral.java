@@ -10,7 +10,7 @@ import de.srendi.advancedperipherals.common.addons.computercraft.owner.TurtlePer
 import de.srendi.advancedperipherals.common.util.DataStorageUtil;
 import de.srendi.advancedperipherals.lib.metaphysics.IAutomataCoreTier;
 import net.minecraft.core.BlockPos;
-
+import net.minecraft.core.Direction;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -79,5 +79,9 @@ public abstract class AutomataCorePeripheral extends BasePeripheral<TurtlePeriph
 
     public void setAttribute(String attribute) {
         attributes.put(attribute, true);
+    }
+
+    public Direction validateSide(String direction) throws LuaException {
+        return super.validateSide(direction);
     }
 }
