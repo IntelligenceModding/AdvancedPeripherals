@@ -97,6 +97,9 @@ public class AutomataBlockHandPlugin extends AutomataCorePlugin {
     }
 
     /**
+     * placeBlock method will make turtle place a block with more details when compass has equipped.
+     * It should not able to place fluids / use any item, because compass do not recognize them.
+     *
      * @param options A table contains how to place the block:
      *   x: the x offset relative to the turtle. Default 0
      *   y: the y offset relative to the turtle. Default 0
