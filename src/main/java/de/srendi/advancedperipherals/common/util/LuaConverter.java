@@ -177,8 +177,11 @@ public class LuaConverter {
         }
     }
 
+    @Nullable
     public static Object posToObject(BlockPos pos) {
-        if (pos == null) return null;
+        if (pos == null) {
+            return null;
+        }
 
         Map<String, Object> map = new HashMap<>(3);
         map.put("x", pos.getX());
@@ -202,8 +205,11 @@ public class LuaConverter {
         return map;
     }
 
+    @Nullable
     public static Map<String, Object> fluidStackToObject(@NotNull FluidStack stack) {
-        if (stack.isEmpty()) return new HashMap<>();
+        if (stack.isEmpty()) {
+            return null;
+        }
         Map<String, Object> map = fluidToObject(stack.getFluid());
         CompoundTag nbt = stack.copy().getOrCreateTag();
         map.put("count", stack.getAmount());
@@ -267,10 +273,12 @@ public class LuaConverter {
 
     // BlockPos tricks
     public static BlockPos convertToBlockPos(Map<?, ?> table) throws LuaException {
-        if (!table.containsKey("x") || !table.containsKey("y") || !table.containsKey("z"))
-            throw new LuaException("Table should be block position table");
-        if (!(table.get("x") instanceof Number x) || !(table.get("y") instanceof Number y) || !(table.get("z") instanceof Number z))
-            throw new LuaException("Table should be block position table");
+        if (!table.containsKey("x") || !table.containsKey("y") || !table.containsKey("z")) {
+            throw new LuaException("Table should contains key 'x', 'y' and 'z'");
+        }
+        if (!(table.get("x") instanceof Number x) || !(table.get("y") instanceof Number y) || !(table.get("z") instanceof Number z)) {
+            throw new LuaException("Position should be numbers");
+        }
         return new BlockPos(x.intValue(), y.intValue(), z.intValue());
     }
 

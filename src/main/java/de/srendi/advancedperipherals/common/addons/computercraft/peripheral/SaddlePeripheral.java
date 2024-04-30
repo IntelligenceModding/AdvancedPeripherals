@@ -195,7 +195,7 @@ public class SaddlePeripheral extends BasePeripheral<TurtlePeripheralOwner> {
             return MethodResult.of(null, "No entity is riding");
         }
         Map<String, Object> data = LuaConverter.completeEntityToLua(entity, getPeripheralOwner().getToolInMainHand(), detailed);
-        if (data.get("pitch") instanceof Float pitch) {
+        if (data.get("pitch") instanceof Number pitch) {
             data.put("pitch", (pitch.floatValue() - owner.getTurtle().getDirection().toYRot() + 360 + 180) % 360 - 180);
         }
         return MethodResult.of(data);
