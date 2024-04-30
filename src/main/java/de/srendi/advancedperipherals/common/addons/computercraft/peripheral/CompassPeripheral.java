@@ -7,7 +7,6 @@ import de.srendi.advancedperipherals.common.addons.computercraft.owner.TurtlePer
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
 
-
 public class CompassPeripheral extends BasePeripheral<TurtlePeripheralOwner> {
 
     public static final String PERIPHERAL_TYPE = "compass";
@@ -29,5 +28,4 @@ public class CompassPeripheral extends BasePeripheral<TurtlePeripheralOwner> {
     public String getFacing() {
         return owner.getFacing().toString();
     }
-
 }
