@@ -69,14 +69,14 @@ public class ItemFilter extends GenericFilter {
         }
         if (item.containsKey("fromSlot")) {
             try {
-                itemFilter.fromSlot = TableHelper.getIntField(item, "fromSlot");
+                itemFilter.fromSlot = TableHelper.getIntField(item, "fromSlot") - 1;
             } catch (LuaException luaException) {
                 return Pair.of(null, "NO_VALID_FROMSLOT");
             }
         }
         if (item.containsKey("toSlot")) {
             try {
-                itemFilter.toSlot = TableHelper.getIntField(item, "toSlot");
+                itemFilter.toSlot = TableHelper.getIntField(item, "toSlot") - 1;
             } catch (LuaException luaException) {
                 return Pair.of(null, "NO_VALID_TOSLOT");
             }

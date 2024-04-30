@@ -28,6 +28,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidType;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -186,8 +187,11 @@ public class LuaConverter {
         return map;
     }
 
+    @Nullable
     public static Map<String, Object> itemStackToObject(@NotNull ItemStack stack) {
-        if (stack.isEmpty()) return new HashMap<>();
+        if (stack.isEmpty()) {
+            return null;
+        }
         Map<String, Object> map = itemToObject(stack.getItem());
         CompoundTag nbt = stack.copy().getOrCreateTag();
         map.put("count", stack.getCount());
@@ -223,10 +227,13 @@ public class LuaConverter {
      * @return a Map containing proper item stack details
      * @see InventoryManagerPeripheral#getItems()
      */
+    @Nullable
     public static Map<String, Object> stackToObjectWithSlot(@NotNull ItemStack stack, int slot) {
-        if (stack.isEmpty()) return new HashMap<>();
+        if (stack.isEmpty()) {
+            return null;
+        }
         Map<String, Object> map = itemStackToObject(stack);
-        map.put("slot", slot);
+        map.put("slot", slot + 1);
         return map;
     }
 
