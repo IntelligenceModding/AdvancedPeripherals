@@ -104,9 +104,9 @@ public class AutomataBlockHandPlugin extends AutomataCorePlugin {
      *   x: the x offset relative to the turtle. Default 0
      *   y: the y offset relative to the turtle. Default 0
      *   z: the z offset relative to the turtle. Default 0
-     *   forward: the direction the block is going to facing. Default is the facing direction of the turtle
+     *   front: the direction the block is going to facing. Default is the facing direction of the turtle
      *   top: the direction the block's top is going to facing. Default is TOP
-     *   anchor: the direction the block is going to hanging on. Default is same as forward
+     *   anchor: the direction the block is going to hanging on. Default is same as front
      *   text: the text going to write on the sign. Default is null
      */
     @LuaFunction(mainThread = true)
@@ -125,10 +125,10 @@ public class AutomataBlockHandPlugin extends AutomataCorePlugin {
             return MethodResult.of(null, "OUT_OF_RANGE");
         }
         String anchor = TableHelper.optStringField(options, "anchor", null);
-        String forward = TableHelper.optStringField(options, "forward", null);
+        String front = TableHelper.optStringField(options, "front", null);
         String top = TableHelper.optStringField(options, "top", null);
         Direction anchorDir = anchor != null ? automataCore.validateSide(anchor) : null;
-        Direction forwardDir = forward != null ? automataCore.validateSide(forward) : null;
+        Direction frontDir = front != null ? automataCore.validateSide(front) : null;
         Direction topDir = top != null ? automataCore.validateSide(top) : null;
 
         int distance =
@@ -141,7 +141,7 @@ public class AutomataBlockHandPlugin extends AutomataCorePlugin {
                 return MethodResult.of(null, "EMPTY_SLOT");
             }
             BlockPos position = turtle.getPosition().offset(x, y, z);
-            String err = deployOn(stack, position, anchorDir, forwardDir, topDir, options);
+            String err = deployOn(stack, position, anchorDir, frontDir, topDir, options);
             if (err != null) {
                 return MethodResult.of(null, err);
             }
@@ -153,21 +153,21 @@ public class AutomataBlockHandPlugin extends AutomataCorePlugin {
      * @return A nullable string of the error. <code>null</code> means the operation is successful
      */
     @Nullable
-    private String deployOn(ItemStack stack, BlockPos position, Direction anchor, Direction forward, Direction top, Map<?, ?> options) throws LuaException {
+    private String deployOn(ItemStack stack, BlockPos position, Direction anchor, Direction front, Direction top, Map<?, ?> options) throws LuaException {
         ITurtleAccess turtle = automataCore.getPeripheralOwner().getTurtle();
         Level world = turtle.getLevel();
-        if (forward == null) {
-            forward = turtle.getDirection();
+        if (front == null) {
+            front = turtle.getDirection();
         }
         if (top == null) {
             top = Direction.UP;
         }
         if (anchor == null) {
-            anchor = forward;
+            anchor = front;
         }
-        TurtlePlayer turtlePlayer = TurtlePlayer.getWithPosition(turtle, position, forward.getOpposite());
+        TurtlePlayer turtlePlayer = TurtlePlayer.getWithPosition(turtle, position, front.getOpposite());
         BlockHitResult hit = BlockHitResult.miss(Vec3.atCenterOf(position), top, position);
-        AdvanceDirectionalPlaceContext context = new AdvanceDirectionalPlaceContext(world, position, anchor, forward, stack, top);
+        AdvanceDirectionalPlaceContext context = new AdvanceDirectionalPlaceContext(world, position, anchor, front, stack, top);
         PlayerInteractEvent.RightClickBlock event = ForgeHooks.onRightClickBlock(turtlePlayer, InteractionHand.MAIN_HAND, position, hit);
         if (event.isCanceled()) {
             return "EVENT_CANCELED";
@@ -209,8 +209,8 @@ public class AutomataBlockHandPlugin extends AutomataCorePlugin {
     private static class AdvanceDirectionalPlaceContext extends DirectionalPlaceContext {
         private final Direction anchor;
 
-        AdvanceDirectionalPlaceContext(Level world, BlockPos pos, Direction anchor, Direction forward, ItemStack stack, Direction top) {
-            super(world, pos, forward, stack, top);
+        AdvanceDirectionalPlaceContext(Level world, BlockPos pos, Direction anchor, Direction front, ItemStack stack, Direction top) {
+            super(world, pos, front, stack, top);
             this.anchor = anchor;
         }
 
