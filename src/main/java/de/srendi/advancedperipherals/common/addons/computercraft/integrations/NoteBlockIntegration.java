@@ -7,6 +7,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.NoteBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.gameevent.GameEvent;
 import org.jetbrains.annotations.NotNull;
 
 public class NoteBlockIntegration extends BlockIntegrationPeripheral<NoteBlock> {
@@ -50,6 +51,7 @@ public class NoteBlockIntegration extends BlockIntegrationPeripheral<NoteBlock> 
     public final void playNote() {
         if (world.isEmptyBlock(pos.above())) {
             world.blockEvent(pos, getBlock(), 0, 0);
+            world.gameEvent(null, GameEvent.NOTE_BLOCK_PLAY, pos);
         }
     }
 }
