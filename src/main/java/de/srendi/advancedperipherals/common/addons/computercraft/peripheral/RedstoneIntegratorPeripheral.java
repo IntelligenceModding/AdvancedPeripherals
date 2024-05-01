@@ -2,6 +2,7 @@ package de.srendi.advancedperipherals.common.addons.computercraft.peripheral;
 
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
+import dan200.computercraft.core.computer.ComputerSide;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.BlockEntityPeripheralOwner;
 import de.srendi.advancedperipherals.common.blocks.blockentities.RedstoneIntegratorEntity;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
@@ -21,27 +22,28 @@ public class RedstoneIntegratorPeripheral extends BasePeripheral<BlockEntityPeri
         return APConfig.PERIPHERALS_CONFIG.enableRedstoneIntegrator.get();
     }
 
-    @LuaFunction(mainThread = true)
+    @LuaFunction
     public final boolean getInput(String direction) throws LuaException {
-        Direction dir = validateSide(direction);
-        return owner.tileEntity.getRedstoneInput(dir) > 0;
+        ComputerSide dir = ComputerSide.valueOfInsensitive(direction);
+        return owner.tileEntity.getInput(dir) > 0;
     }
 
-    @LuaFunction(mainThread = true)
+    @LuaFunction
     public final boolean getOutput(String direction) throws LuaException {
-        return owner.tileEntity.power[validateSide(direction).get3DDataValue()] > 0;
-    }
-
-    @LuaFunction(value = {"getAnalogueInput", "getAnalogInput"}, mainThread = true)
-    public final int getAnalogInput(String direction) throws LuaException {
         Direction dir = validateSide(direction);
-        return owner.tileEntity.getRedstoneInput(dir);
+        return owner.tileEntity.getOutput(dir) > 0;
     }
 
-    @LuaFunction(value = {"getAnalogueOutput", "getAnalogOutput"}, mainThread = true)
+    @LuaFunction(value = {"getAnalogueInput", "getAnalogInput"})
+    public final int getAnalogInput(String direction) throws LuaException {
+        ComputerSide dir = ComputerSide.valueOfInsensitive(direction);
+        return owner.tileEntity.getInput(dir);
+    }
+
+    @LuaFunction(value = {"getAnalogueOutput", "getAnalogOutput"})
     public final int getAnalogOutput(String direction) throws LuaException {
         Direction dir = validateSide(direction);
-        return owner.tileEntity.power[dir.get3DDataValue()];
+        return owner.tileEntity.getOutput(dir);
     }
 
     @LuaFunction
