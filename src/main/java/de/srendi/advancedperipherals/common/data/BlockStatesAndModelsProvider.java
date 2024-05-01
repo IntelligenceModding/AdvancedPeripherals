@@ -28,7 +28,7 @@ public class BlockStatesAndModelsProvider extends BlockStateProvider {
         peripheralBlock(APBlocks.ENERGY_DETECTOR.get(), "front", "back", "top", "east");
         peripheralBlock(APBlocks.PERIPHERAL_CASING.get());
         peripheralBlock(APBlocks.INVENTORY_MANAGER.get(), "front", "top");
-        peripheralBlock(APBlocks.REDSTONE_INTEGRATOR.get(), generateModel(APBlocks.REDSTONE_INTEGRATOR.get(), false,"side", "front", "top", "bottom"));
+        peripheralBlock(APBlocks.REDSTONE_INTEGRATOR.get(), generateModel(APBlocks.REDSTONE_INTEGRATOR.get(), false, "side", "front", "top", "bottom"));
         peripheralBlock(APBlocks.BLOCK_READER.get(), generateModel(APBlocks.BLOCK_READER.get(), false, "north", "south", "east", "west", "up", "down"));
         peripheralBlock(APBlocks.GEO_SCANNER.get(), "front", "top");
         peripheralBlock(APBlocks.COLONY_INTEGRATOR.get(), "front", "top");
