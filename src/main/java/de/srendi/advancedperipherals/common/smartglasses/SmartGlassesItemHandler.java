@@ -1,3 +1,18 @@
+/*
+ *     Copyright 2024 Intelligence Modding @ https://intelligence-modding.de
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *          https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.srendi.advancedperipherals.common.smartglasses;
 
 import de.srendi.advancedperipherals.common.setup.APItems;
@@ -19,15 +34,14 @@ public class SmartGlassesItemHandler implements IItemHandlerModifiable, INBTSeri
 
     private final NonNullList<ItemStack> items = NonNullList.withSize(SLOTS, ItemStack.EMPTY);
     private final ItemStack stack;
-    @Nullable
-    private final SmartGlassesComputer computer;
+    @Nullable private final SmartGlassesComputer computer;
 
     public SmartGlassesItemHandler(ItemStack stack, @Nullable SmartGlassesComputer computer) {
         this.stack = stack;
         this.computer = computer;
         deserializeNBT(stack.getOrCreateTagElement("Items"));
 
-        if(computer != null)
+        if (computer != null)
             computer.setItemHandler(this);
     }
 
@@ -36,8 +50,7 @@ public class SmartGlassesItemHandler implements IItemHandlerModifiable, INBTSeri
         return items.size();
     }
 
-    @NotNull
-    @Override
+    @NotNull @Override
     public ItemStack getStackInSlot(int slot) {
         return items.get(slot);
     }

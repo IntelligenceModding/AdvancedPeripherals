@@ -1,3 +1,18 @@
+/*
+ *     Copyright 2024 Intelligence Modding @ https://intelligence-modding.de
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *          https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.srendi.advancedperipherals.common.util;
 
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.DistanceDetectorPeripheral;
@@ -9,7 +24,11 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.*;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -21,16 +40,22 @@ import java.util.List;
 public class HitResultUtil {
 
     /**
-     * This method is used to get the hit result of an entity from the start position of a block
+     * This method is used to get the hit result of an entity from the start
+     * position of a block
      *
-     * @param to                the target position/max position
-     * @param from              the source position like a block
-     * @param level             the level
-     * @param ignoreTransparent if transparent blocks should be ignored
-     * @return the hit result. {@link BlockHitResult#miss(Vec3, Direction, BlockPos)} if nothing found
+     * @param to
+     *            the target position/max position
+     * @param from
+     *            the source position like a block
+     * @param level
+     *            the level
+     * @param ignoreTransparent
+     *            if transparent blocks should be ignored
+     * @return the hit result.
+     *         {@link BlockHitResult#miss(Vec3, Direction, BlockPos)} if nothing
+     *         found
      */
-    @NotNull
-    public static HitResult getHitResult(Vec3 to, Vec3 from, Level level, boolean ignoreTransparent) {
+    @NotNull public static HitResult getHitResult(Vec3 to, Vec3 from, Level level, boolean ignoreTransparent) {
         EntityHitResult entityResult = getEntityHitResult(to, from, level);
         BlockHitResult blockResult = getBlockHitResult(to, from, level, ignoreTransparent);
 
@@ -44,7 +69,8 @@ public class HitResultUtil {
             return BlockHitResult.miss(from, blockResult.getDirection(), new BlockPos(to));
 
         double blockDistance = new BlockPos(from).distManhattan(blockResult.getBlockPos());
-        double entityDistance = new BlockPos(from).distManhattan(new Vec3i(entityResult.getLocation().x, entityResult.getLocation().y, entityResult.getLocation().z));
+        double entityDistance = new BlockPos(from).distManhattan(
+                new Vec3i(entityResult.getLocation().x, entityResult.getLocation().y, entityResult.getLocation().z));
 
         if (blockDistance < entityDistance)
             return blockResult;
@@ -53,18 +79,22 @@ public class HitResultUtil {
     }
 
     /**
-     * This method is used to get the hit result of an entity from the start position of a block
-     * This could be used to find an entity from the eyes position of another entity but since
-     * this method uses one AABB made out of the two coordinates, this would also find any entities
-     * which are not located in the ray you might want. {@link DistanceDetectorPeripheral#getDistance()}
+     * This method is used to get the hit result of an entity from the start
+     * position of a block This could be used to find an entity from the eyes
+     * position of another entity but since this method uses one AABB made out of
+     * the two coordinates, this would also find any entities which are not located
+     * in the ray you might want. {@link DistanceDetectorPeripheral#getDistance()}
      *
-     * @param to    the target position/max position
-     * @param from  the source position like a block
-     * @param level the world
-     * @return the entity hit result. An empty HitResult with {@link HitResult.Type#MISS} as type if nothing found
+     * @param to
+     *            the target position/max position
+     * @param from
+     *            the source position like a block
+     * @param level
+     *            the world
+     * @return the entity hit result. An empty HitResult with
+     *         {@link HitResult.Type#MISS} as type if nothing found
      */
-    @NotNull
-    public static EntityHitResult getEntityHitResult(Vec3 to, Vec3 from, Level level) {
+    @NotNull public static EntityHitResult getEntityHitResult(Vec3 to, Vec3 from, Level level) {
         AABB checkingBox = new AABB(to, from);
 
         List<Entity> entities = level.getEntities((Entity) null, checkingBox, (entity) -> true);
@@ -82,7 +112,8 @@ public class HitResultUtil {
             }
 
             double distance = new BlockPos(from).distManhattan(new Vec3i(entity.getX(), entity.getY(), entity.getZ()));
-            double nearestDistance = new BlockPos(from).distManhattan(new Vec3i(nearestEntity.getX(), nearestEntity.getY(), nearestEntity.getZ()));
+            double nearestDistance = new BlockPos(from)
+                    .distManhattan(new Vec3i(nearestEntity.getX(), nearestEntity.getY(), nearestEntity.getZ()));
 
             // If it's closer, set it as the nearest entity
             if (distance < nearestDistance)
@@ -93,30 +124,39 @@ public class HitResultUtil {
     }
 
     /**
-     * This method is used to get the hit result of a block from the start position of a block
+     * This method is used to get the hit result of a block from the start position
+     * of a block
      *
-     * @param to               the target position/max position
-     * @param from             the source position
-     * @param level            the world
-     * @param ignoreNoOccluded if true, the method will ignore blocks which are not occluding like glass
-     * @return the block hit result. {@link BlockHitResult#miss(Vec3, Direction, BlockPos)} if nothing found
+     * @param to
+     *            the target position/max position
+     * @param from
+     *            the source position
+     * @param level
+     *            the world
+     * @param ignoreNoOccluded
+     *            if true, the method will ignore blocks which are not occluding
+     *            like glass
+     * @return the block hit result.
+     *         {@link BlockHitResult#miss(Vec3, Direction, BlockPos)} if nothing
+     *         found
      */
-    @NotNull
-    public static BlockHitResult getBlockHitResult(Vec3 to, Vec3 from, Level level, boolean ignoreNoOccluded) {
-        return level.clip(new AdvancecClipContext(from, to, ignoreNoOccluded ? IgnoreNoOccludedContext.INSTANCE : ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, null));
+    @NotNull public static BlockHitResult getBlockHitResult(Vec3 to, Vec3 from, Level level, boolean ignoreNoOccluded) {
+        return level.clip(new AdvancecClipContext(from, to,
+                ignoreNoOccluded ? IgnoreNoOccludedContext.INSTANCE : ClipContext.Block.COLLIDER,
+                ClipContext.Fluid.NONE, null));
     }
 
     public static class EmptyEntityHitResult extends EntityHitResult {
 
         /**
-         * The super constructor is a NotNull argument but since this result is empty, we'll just return null
+         * The super constructor is a NotNull argument but since this result is empty,
+         * we'll just return null
          */
         public EmptyEntityHitResult() {
             super(null, null);
         }
 
-        @NotNull
-        @Override
+        @NotNull @Override
         public Type getType() {
             return Type.MISS;
         }
@@ -129,28 +169,30 @@ public class HitResultUtil {
 
         INSTANCE;
 
-        @NotNull
-        @Override
-        public VoxelShape get(BlockState pState, @NotNull BlockGetter pBlock, @NotNull BlockPos pPos, @NotNull CollisionContext pCollisionContext) {
+        @NotNull @Override
+        public VoxelShape get(BlockState pState, @NotNull BlockGetter pBlock, @NotNull BlockPos pPos,
+                @NotNull CollisionContext pCollisionContext) {
             return !pState.canOcclude() ? Shapes.empty() : pState.getCollisionShape(pBlock, pPos, pCollisionContext);
         }
     }
 
     /**
-     * A clip context but with a custom shape getter. Used to define another shape getter for the block like {@link IgnoreNoOccludedContext}
+     * A clip context but with a custom shape getter. Used to define another shape
+     * getter for the block like {@link IgnoreNoOccludedContext}
      */
     private static class AdvancecClipContext extends ClipContext {
 
         private final ShapeGetter blockShapeGetter;
 
-        protected AdvancecClipContext(Vec3 from, Vec3 to, ShapeGetter blockShapeGetter, Fluid fluidShapeGetter, @Nullable Entity entity) {
+        protected AdvancecClipContext(Vec3 from, Vec3 to, ShapeGetter blockShapeGetter, Fluid fluidShapeGetter,
+                @Nullable Entity entity) {
             super(from, to, Block.COLLIDER, fluidShapeGetter, entity);
             this.blockShapeGetter = blockShapeGetter;
         }
 
-        @NotNull
-        @Override
-        public VoxelShape getBlockShape(@NotNull BlockState pBlockState, @NotNull BlockGetter pLevel, @NotNull BlockPos pPos) {
+        @NotNull @Override
+        public VoxelShape getBlockShape(@NotNull BlockState pBlockState, @NotNull BlockGetter pLevel,
+                @NotNull BlockPos pPos) {
             return blockShapeGetter.get(pBlockState, pLevel, pPos, this.collisionContext);
         }
     }

@@ -1,3 +1,18 @@
+/*
+ *     Copyright 2024 Intelligence Modding @ https://intelligence-modding.de
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *          https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.srendi.advancedperipherals.common.addons.minecolonies;
 
 import com.minecolonies.api.colony.ICitizenData;
@@ -9,7 +24,11 @@ import com.minecolonies.api.colony.managers.interfaces.IRegisteredStructureManag
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.colony.workorders.IWorkOrder;
 import com.minecolonies.api.entity.citizen.Skill;
-import com.minecolonies.api.research.*;
+import com.minecolonies.api.research.IGlobalResearch;
+import com.minecolonies.api.research.IGlobalResearchTree;
+import com.minecolonies.api.research.ILocalResearch;
+import com.minecolonies.api.research.ILocalResearchTree;
+import com.minecolonies.api.research.IResearchRequirement;
 import com.minecolonies.api.research.costs.IResearchCost;
 import com.minecolonies.api.research.effects.IResearchEffect;
 import com.minecolonies.api.research.util.ResearchState;
@@ -44,8 +63,10 @@ public class MineColonies {
     /**
      * To ensure that the user of a pocket computer has the appropriate rights.
      *
-     * @param entity the user of the pocket computer
-     * @param colony the colony where the user is in it
+     * @param entity
+     *            the user of the pocket computer
+     * @param colony
+     *            the colony where the user is in it
      * @return true if the user has the appropriate rights
      */
     public static boolean hasAccess(Entity entity, IColony colony) {
@@ -60,7 +81,8 @@ public class MineColonies {
     /**
      * Converts a citizen to a map
      *
-     * @param citizen the citizen
+     * @param citizen
+     *            the citizen
      * @return a map with information about the citizen
      */
     public static Object citizenToObject(ICitizenData citizen) {
@@ -70,13 +92,17 @@ public class MineColonies {
         map.put("bedPos", LuaConverter.posToObject(citizen.getBedPos()));
         map.put("children", citizen.getChildren());
         map.put("location", LuaConverter.posToObject(citizen.getLastPosition()));
-        map.put("state", citizen.getStatus() == null ? "Idle" : Component.translatable(citizen.getStatus().getTranslationKey()).getString());
+        map.put("state",
+                citizen.getStatus() == null
+                        ? "Idle"
+                        : Component.translatable(citizen.getStatus().getTranslationKey()).getString());
         map.put("age", citizen.isChild() ? "child" : "adult");
         map.put("gender", citizen.isFemale() ? "female" : "male");
         map.put("saturation", citizen.getSaturation());
         map.put("happiness", citizen.getCitizenHappinessHandler().getHappiness(citizen.getColony(), citizen));
         map.put("skills", skillsToObject(citizen.getCitizenSkillHandler().getSkills()));
-        map.put("work", citizen.getWorkBuilding() == null ? null : jobToObject(citizen.getWorkBuilding(), citizen.getJob()));
+        map.put("work",
+                citizen.getWorkBuilding() == null ? null : jobToObject(citizen.getWorkBuilding(), citizen.getJob()));
         map.put("home", citizen.getHomeBuilding() == null ? null : homeToObject(citizen.getHomeBuilding()));
         map.put("betterFood", citizen.needsBetterFood());
         map.put("isAsleep", map.get("state").toString().toLowerCase().contains("sleeping"));
@@ -94,7 +120,8 @@ public class MineColonies {
     /**
      * Converts a visitor {@link IVisitorData} to a map
      *
-     * @param visitor the visitor
+     * @param visitor
+     *            the visitor
      * @return a map with information about the visitor
      */
     public static Object visitorToObject(IVisitorData visitor) {
@@ -115,8 +142,10 @@ public class MineColonies {
     /**
      * Converts a building {@link IBuilding} and job {@link IJob} to a map
      *
-     * @param work the home building
-     * @param job the job
+     * @param work
+     *            the home building
+     * @param job
+     *            the job
      * @return a map with information about the building and job
      */
     public static Object jobToObject(IBuilding work, IJob<?> job) {
@@ -133,7 +162,8 @@ public class MineColonies {
     /**
      * Converts a home {@link IBuilding} to a map
      *
-     * @param home the home building
+     * @param home
+     *            the home building
      * @return a map with information about the home building
      */
     public static Object homeToObject(IBuilding home) {
@@ -148,7 +178,9 @@ public class MineColonies {
     /**
      * Converts a skill {@link Skill} into a map
      *
-     * @param skills skills as list. Can be obtained via {@link ICitizenData#getCitizenSkillHandler}
+     * @param skills
+     *            skills as list. Can be obtained via
+     *            {@link ICitizenData#getCitizenSkillHandler}
      * @return a map with information about the skill
      */
     public static Object skillsToObject(Map<Skill, Tuple<Integer, Double>> skills) {
@@ -164,14 +196,19 @@ public class MineColonies {
     }
 
     /**
-     * Returns information about the building like structure data, the citizens and some other values
+     * Returns information about the building like structure data, the citizens and
+     * some other values
      *
-     * @param buildingManager The building manager of the colony
-     * @param building        The building as instance
-     * @param pos             The location of the buildings block
+     * @param buildingManager
+     *            The building manager of the colony
+     * @param building
+     *            The building as instance
+     * @param pos
+     *            The location of the buildings block
      * @return information about the building
      */
-    public static Object buildingToObject(IRegisteredStructureManager buildingManager, IBuilding building, BlockPos pos) {
+    public static Object buildingToObject(IRegisteredStructureManager buildingManager, IBuilding building,
+            BlockPos pos) {
         Map<String, Object> structureData = new HashMap<>();
         structureData.put("cornerA", LuaConverter.posToObject(building.getCorners().getA()));
         structureData.put("cornerB", LuaConverter.posToObject(building.getCorners().getB()));
@@ -208,7 +245,8 @@ public class MineColonies {
     /**
      * Returns the size of all inventories in this building
      *
-     * @param building the proper building with racks(Or other inventories)
+     * @param building
+     *            the proper building with racks(Or other inventories)
      * @return the size of all inventories in this building
      */
     public static int getStorageSize(IBuilding building) {
@@ -250,18 +288,22 @@ public class MineColonies {
     /**
      * Returns a list with all possible researches
      *
-     * @param branch     The branch, there are only a few branches
-     * @param researches The primary researches of the branch
-     * @param colony     The colony
+     * @param branch
+     *            The branch, there are only a few branches
+     * @param researches
+     *            The primary researches of the branch
+     * @param colony
+     *            The colony
      * @return a list including maps with all possible researches
      */
-    public static List<Object> getResearch(ResourceLocation branch, List<ResourceLocation> researches, IColony colony) throws CommandSyntaxException {
+    public static List<Object> getResearch(ResourceLocation branch, List<ResourceLocation> researches, IColony colony)
+            throws CommandSyntaxException {
         List<Object> result = new ArrayList<>();
         if (researches != null) {
             for (ResourceLocation researchName : researches) {
-                //All global possible researches
+                // All global possible researches
                 IGlobalResearchTree globalTree = IGlobalResearchTree.getInstance();
-                //The research tree of the colony
+                // The research tree of the colony
                 ILocalResearchTree colonyTree = colony.getResearchManager().getResearchTree();
 
                 IGlobalResearch research = globalTree.getResearch(branch, researchName);
@@ -273,7 +315,8 @@ public class MineColonies {
 
                 List<String> effects = new ArrayList<>();
                 for (IResearchEffect<?> researchEffect : research.getEffects())
-                    effects.add(TextComponentHelper.createComponentTranslation(null, researchEffect.getDesc().getKey(), researchEffect.getDesc().getArgs()).getString());
+                    effects.add(TextComponentHelper.createComponentTranslation(null, researchEffect.getDesc().getKey(),
+                            researchEffect.getDesc().getArgs()).getString());
 
                 List<Map<String, Object>> cost = new ArrayList<>();
                 for (IResearchCost item : research.getCostList()) {
@@ -306,12 +349,21 @@ public class MineColonies {
 
                 Map<String, Object> map = new HashMap<>();
                 map.put("id", researchName.toString());
-                map.put("name", TextComponentHelper.createComponentTranslation(null, research.getName().getKey(), research.getName().getArgs()).getString());
+                map.put("name", TextComponentHelper
+                        .createComponentTranslation(null, research.getName().getKey(), research.getName().getArgs())
+                        .getString());
                 map.put("requirements", requirements);
                 map.put("cost", cost);
                 map.put("researchEffects", effects);
-                map.put("status", colonyResearch == null ? ResearchState.NOT_STARTED.toString() : colonyResearch.getState().toString());
-                map.put("neededTime", colonyResearch == null ? 0 : IGlobalResearchTree.getInstance().getBranchData(colonyResearch.getBranch()).getBaseTime(colonyResearch.getDepth()));
+                map.put("status",
+                        colonyResearch == null
+                                ? ResearchState.NOT_STARTED.toString()
+                                : colonyResearch.getState().toString());
+                map.put("neededTime",
+                        colonyResearch == null
+                                ? 0
+                                : IGlobalResearchTree.getInstance().getBranchData(colonyResearch.getBranch())
+                                        .getBaseTime(colonyResearch.getDepth()));
                 map.put("progress", colonyResearch == null ? 0 : colonyResearch.getProgress());
 
                 List<Object> childrenResearch = getResearch(branch, research.getChildren(), colony);
@@ -327,8 +379,10 @@ public class MineColonies {
     /**
      * Returns the resources(As items) which the builder needs
      *
-     * @param colony The colony
-     * @param pos    The position of the builder's hut block
+     * @param colony
+     *            The colony
+     * @param pos
+     *            The position of the builder's hut block
      * @return a map with all needed resources
      */
     public static Object builderResourcesToObject(IColony colony, BlockPos pos) {
@@ -336,7 +390,7 @@ public class MineColonies {
         if (!(building instanceof AbstractBuildingStructureBuilder builderBuilding))
             return null;
 
-        //We need to tell the building that we want information about it
+        // We need to tell the building that we want information about it
         FriendlyByteBuf buffer = new FriendlyByteBuf(Unpooled.buffer());
         builderBuilding.serializeToView(buffer);
         buffer.release();

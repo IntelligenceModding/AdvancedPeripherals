@@ -1,3 +1,18 @@
+/*
+ *     Copyright 2024 Intelligence Modding @ https://intelligence-modding.de
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *          https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.srendi.advancedperipherals.common.addons.refinedstorage;
 
 import com.refinedmods.refinedstorage.api.IRSAPI;
@@ -24,7 +39,13 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class RefinedStorage {
@@ -47,7 +68,8 @@ public class RefinedStorage {
         return findStackFromFilter(network, crafting, ItemFilter.fromStack(item));
     }
 
-    public static ItemStack findStackFromFilter(INetwork network, @Nullable ICraftingManager crafting, ItemFilter filter) {
+    public static ItemStack findStackFromFilter(INetwork network, @Nullable ICraftingManager crafting,
+            ItemFilter filter) {
         for (StackListEntry<ItemStack> temp : network.getItemStorageCache().getList().getStacks()) {
             if (filter.test(temp.getStack().copy()))
                 return temp.getStack().copy();
@@ -66,11 +88,13 @@ public class RefinedStorage {
         return ItemStack.EMPTY;
     }
 
-    public static FluidStack findFluidFromStack(INetwork network, @Nullable ICraftingManager crafting, FluidStack stack) {
+    public static FluidStack findFluidFromStack(INetwork network, @Nullable ICraftingManager crafting,
+            FluidStack stack) {
         return findFluidFromFilter(network, crafting, FluidFilter.fromStack(stack));
     }
 
-    public static FluidStack findFluidFromFilter(INetwork network, @Nullable ICraftingManager crafting, FluidFilter filter) {
+    public static FluidStack findFluidFromFilter(INetwork network, @Nullable ICraftingManager crafting,
+            FluidFilter filter) {
         for (StackListEntry<FluidStack> temp : network.getFluidStorageCache().getList().getStacks()) {
             if (filter.test(temp.getStack().copy()))
                 return temp.getStack().copy();
@@ -81,7 +105,8 @@ public class RefinedStorage {
 
         for (ICraftingPattern pattern : crafting.getPatterns()) {
             if (pattern.getFluidOutputs().stream().anyMatch(filter::test))
-                return pattern.getFluidOutputs().stream().filter(filter::test).findFirst().orElse(FluidStack.EMPTY).copy();
+                return pattern.getFluidOutputs().stream().filter(filter::test).findFirst().orElse(FluidStack.EMPTY)
+                        .copy();
         }
 
         return FluidStack.EMPTY;
@@ -113,8 +138,10 @@ public class RefinedStorage {
         for (IStorage<ItemStack> store : network.getItemStorageCache().getStorages()) {
             if (store instanceof IStorageDisk<ItemStack> storageDisk) {
                 int cap = storageDisk.getCapacity();
-                if (cap > 0) total += cap;
-                else creative = true;
+                if (cap > 0)
+                    total += cap;
+                else
+                    creative = true;
             }
         }
         return creative ? -1 : total;
@@ -126,8 +153,10 @@ public class RefinedStorage {
         for (IStorage<FluidStack> store : network.getFluidStorageCache().getStorages()) {
             if (store instanceof IStorageDisk<FluidStack> storageDisk) {
                 int cap = storageDisk.getCapacity();
-                if (cap > 0) total += cap;
-                else creative = true;
+                if (cap > 0)
+                    total += cap;
+                else
+                    creative = true;
             }
         }
         return creative ? -1 : total;
@@ -158,25 +187,24 @@ public class RefinedStorage {
             return null;
 
         Map<String, Object> map = new HashMap<>();
-        map.put("outputs", pattern.getOutputs().stream().map(stack -> getObjectFromStack(stack.copy(), network)).toList());
-        map.put("fluidOutputs", pattern.getFluidOutputs().stream().map(stack -> getObjectFromFluid(stack.copy(), network)).toList());
+        map.put("outputs",
+                pattern.getOutputs().stream().map(stack -> getObjectFromStack(stack.copy(), network)).toList());
+        map.put("fluidOutputs",
+                pattern.getFluidOutputs().stream().map(stack -> getObjectFromFluid(stack.copy(), network)).toList());
 
-        List<List<Map<String, Object>>> inputs = pattern.getInputs().stream()
-                .map(singleInputList -> singleInputList.stream()
-                        .map(stack -> getObjectFromStack(stack.copy(), network))
-                        .collect(Collectors.toList()))
+        List<List<Map<String, Object>>> inputs = pattern
+                .getInputs().stream().map(singleInputList -> singleInputList.stream()
+                        .map(stack -> getObjectFromStack(stack.copy(), network)).collect(Collectors.toList()))
                 .collect(Collectors.toList());
 
-        List<List<Map<String, Object>>> fluidInputs = pattern.getInputs().stream()
-                .map(singleInputList -> singleInputList.stream()
-                        .map(stack -> getObjectFromStack(stack.copy(), network))
-                        .collect(Collectors.toList()))
+        List<List<Map<String, Object>>> fluidInputs = pattern
+                .getInputs().stream().map(singleInputList -> singleInputList.stream()
+                        .map(stack -> getObjectFromStack(stack.copy(), network)).collect(Collectors.toList()))
                 .collect(Collectors.toList());
 
         List<Object> byproducts = new ArrayList<>();
         if (!pattern.isProcessing()) {
-            byproducts = pattern.getByproducts().stream()
-                    .map(stack -> getObjectFromStack(stack.copy(), network))
+            byproducts = pattern.getByproducts().stream().map(stack -> getObjectFromStack(stack.copy(), network))
                     .collect(Collectors.toList());
         }
 
@@ -275,7 +303,8 @@ public class RefinedStorage {
     }
 
     public void initiate() {
-        api.getNetworkNodeRegistry().add(new ResourceLocation(AdvancedPeripherals.MOD_ID, "rs_bridge"), (tag, world, pos) -> read(tag, new RefinedStorageNode(world, pos)));
+        api.getNetworkNodeRegistry().add(new ResourceLocation(AdvancedPeripherals.MOD_ID, "rs_bridge"),
+                (tag, world, pos) -> read(tag, new RefinedStorageNode(world, pos)));
     }
 
     public IRSAPI getApi() {

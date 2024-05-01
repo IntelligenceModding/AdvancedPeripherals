@@ -1,3 +1,18 @@
+/*
+ *     Copyright 2024 Intelligence Modding @ https://intelligence-modding.de
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *          https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.srendi.advancedperipherals.common.addons.computercraft.peripheral;
 
 import appeng.api.crafting.IPatternDetails;
@@ -25,7 +40,12 @@ import de.srendi.advancedperipherals.common.blocks.blockentities.MeBridgeEntity;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.util.Pair;
 import de.srendi.advancedperipherals.common.util.ServerWorker;
-import de.srendi.advancedperipherals.common.util.inventory.*;
+import de.srendi.advancedperipherals.common.util.inventory.FluidFilter;
+import de.srendi.advancedperipherals.common.util.inventory.FluidUtil;
+import de.srendi.advancedperipherals.common.util.inventory.GenericFilter;
+import de.srendi.advancedperipherals.common.util.inventory.IStorageSystemPeripheral;
+import de.srendi.advancedperipherals.common.util.inventory.InventoryUtil;
+import de.srendi.advancedperipherals.common.util.inventory.ItemFilter;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
 import net.minecraft.core.Direction;
 import net.minecraftforge.fluids.capability.IFluidHandler;
@@ -33,9 +53,15 @@ import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Optional;
 
-public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwner<MeBridgeEntity>> implements IStorageSystemPeripheral {
+public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwner<MeBridgeEntity>>
+        implements
+            IStorageSystemPeripheral {
 
     public static final String PERIPHERAL_TYPE = "meBridge";
     private final MeBridgeEntity tile;
@@ -63,11 +89,14 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     /**
      * exports an item out of the system to a valid inventory
      *
-     * @param arguments       the arguments given by the computer
-     * @param targetInventory the give inventory
+     * @param arguments
+     *            the arguments given by the computer
+     * @param targetInventory
+     *            the give inventory
      * @return the exportable amount or null with a string if something went wrong
      */
-    protected MethodResult exportToChest(@NotNull IArguments arguments, @Nullable IItemHandler targetInventory) throws LuaException {
+    protected MethodResult exportToChest(@NotNull IArguments arguments, @Nullable IItemHandler targetInventory)
+            throws LuaException {
         MEStorage monitor = AppEngApi.getMonitor(node);
         MeItemHandler itemHandler = new MeItemHandler(monitor, tile);
         Pair<ItemFilter, String> filter = ItemFilter.parse(arguments.getTable(0));
@@ -84,11 +113,14 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     /**
      * exports a fluid out of the system to a valid tank
      *
-     * @param arguments  the arguments given by the computer
-     * @param targetTank the give tank
+     * @param arguments
+     *            the arguments given by the computer
+     * @param targetTank
+     *            the give tank
      * @return the exportable amount or null with a string if something went wrong
      */
-    protected MethodResult exportToTank(@NotNull IArguments arguments, @Nullable IFluidHandler targetTank) throws LuaException {
+    protected MethodResult exportToTank(@NotNull IArguments arguments, @Nullable IFluidHandler targetTank)
+            throws LuaException {
         MEStorage monitor = AppEngApi.getMonitor(node);
         MeFluidHandler fluidHandler = new MeFluidHandler(monitor, tile);
         Pair<FluidFilter, String> filter = FluidFilter.parse(arguments.getTable(0));
@@ -105,11 +137,14 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     /**
      * imports an item to the system from a valid inventory
      *
-     * @param arguments       the arguments given by the computer
-     * @param targetInventory the give inventory
+     * @param arguments
+     *            the arguments given by the computer
+     * @param targetInventory
+     *            the give inventory
      * @return the imported amount or null with a string if something went wrong
      */
-    protected MethodResult importToME(@NotNull IArguments arguments, @Nullable IItemHandler targetInventory) throws LuaException {
+    protected MethodResult importToME(@NotNull IArguments arguments, @Nullable IItemHandler targetInventory)
+            throws LuaException {
         MEStorage monitor = AppEngApi.getMonitor(node);
         MeItemHandler itemHandler = new MeItemHandler(monitor, tile);
         Pair<ItemFilter, String> filter = ItemFilter.parse(arguments.getTable(0));
@@ -126,11 +161,14 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     /**
      * imports a fluid to the system from a valid tank
      *
-     * @param arguments  the arguments given by the computer
-     * @param targetTank the give tank
+     * @param arguments
+     *            the arguments given by the computer
+     * @param targetTank
+     *            the give tank
      * @return the imported amount or null with a string if something went wrong
      */
-    protected MethodResult importToME(@NotNull IArguments arguments, @Nullable IFluidHandler targetTank) throws LuaException {
+    protected MethodResult importToME(@NotNull IArguments arguments, @Nullable IFluidHandler targetTank)
+            throws LuaException {
         MEStorage monitor = AppEngApi.getMonitor(node);
         MeFluidHandler fluidHandler = new MeFluidHandler(monitor, tile);
         Pair<FluidFilter, String> filter = FluidFilter.parse(arguments.getTable(0));
@@ -179,7 +217,8 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (parsedFilter.isEmpty())
             return MethodResult.of(null, "EMPTY_FILTER");
 
-        return MethodResult.of(AppEngApi.getObjectFromStack(AppEngApi.findAEStackFromFilter(monitor, getCraftingService(), parsedFilter), getCraftingService()));
+        return MethodResult.of(AppEngApi.getObjectFromStack(
+                AppEngApi.findAEStackFromFilter(monitor, getCraftingService(), parsedFilter), getCraftingService()));
     }
 
     @Override
@@ -196,7 +235,8 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (parsedFilter.isEmpty())
             return MethodResult.of(null, "EMPTY_FILTER");
 
-        return MethodResult.of(AppEngApi.findAEFluidFromFilter(AppEngApi.getMonitor(node), getCraftingService(), parsedFilter));
+        return MethodResult
+                .of(AppEngApi.findAEFluidFromFilter(AppEngApi.getMonitor(node), getCraftingService(), parsedFilter));
     }
 
     @Override
@@ -262,7 +302,8 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         String side = arguments.getString(1);
         IItemHandler inventory;
 
-        if (Direction.byName(side.toUpperCase(Locale.ROOT)) == null && ComputerSide.valueOfInsensitive(side.toUpperCase(Locale.ROOT)) == null) {
+        if (Direction.byName(side.toUpperCase(Locale.ROOT)) == null
+                && ComputerSide.valueOfInsensitive(side.toUpperCase(Locale.ROOT)) == null) {
             inventory = InventoryUtil.getHandlerFromDirection(arguments.getString(1), owner);
         } else {
             inventory = InventoryUtil.getHandlerFromName(computer, arguments.getString(1));
@@ -280,7 +321,8 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         String side = arguments.getString(1);
         IItemHandler inventory;
 
-        if (Direction.byName(side.toUpperCase(Locale.ROOT)) == null && ComputerSide.valueOfInsensitive(side.toUpperCase(Locale.ROOT)) == null) {
+        if (Direction.byName(side.toUpperCase(Locale.ROOT)) == null
+                && ComputerSide.valueOfInsensitive(side.toUpperCase(Locale.ROOT)) == null) {
             inventory = InventoryUtil.getHandlerFromDirection(arguments.getString(1), owner);
         } else {
             inventory = InventoryUtil.getHandlerFromName(computer, arguments.getString(1));
@@ -295,7 +337,8 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (!isAvailable())
             return notConnected();
 
-        // Expected input is a table with either an input table, an output table or both to filter for both
+        // Expected input is a table with either an input table, an output table or both
+        // to filter for both
         Map<?, ?> filterTable;
         try {
             Optional<Map<?, ?>> optionalTable = arguments.optTable(0);
@@ -328,8 +371,8 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
             outputFilter = GenericFilter.parseGeneric(outputFilterTable).getLeft();
         }
 
-
-        Pair<IPatternDetails, String> pattern = AppEngApi.findPatternFromFilters(node.getGrid(), getLevel(), inputFilter, outputFilter);
+        Pair<IPatternDetails, String> pattern = AppEngApi.findPatternFromFilters(node.getGrid(), getLevel(),
+                inputFilter, outputFilter);
 
         if (pattern.getRight() != null)
             return MethodResult.of(null, pattern.getRight());
@@ -558,11 +601,13 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
             return MethodResult.of(false, "CPU " + cpuName + " does not exists");
 
         ICraftingService craftingGrid = node.getGrid().getService(ICraftingService.class);
-        Pair<Long, AEItemKey> stack = AppEngApi.findAEStackFromFilter(AppEngApi.getMonitor(tile.getGridNode()), craftingGrid, filter.getLeft());
+        Pair<Long, AEItemKey> stack = AppEngApi.findAEStackFromFilter(AppEngApi.getMonitor(tile.getGridNode()),
+                craftingGrid, filter.getLeft());
         if (stack.getRight() == null && stack.getLeft() == 0)
             return MethodResult.of(null, "NOT_CRAFTABLE");
 
-        CraftJob job = new CraftJob(owner.getLevel(), computer, node, stack.getRight(), parsedFilter.getCount(), tile, tile, target);
+        CraftJob job = new CraftJob(owner.getLevel(), computer, node, stack.getRight(), parsedFilter.getCount(), tile,
+                tile, target);
         tile.addJob(job);
         ServerWorker.add(job::startCrafting);
         return MethodResult.of(true);
@@ -588,11 +633,13 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
             return MethodResult.of(false, "CPU " + cpuName + " does not exists");
 
         ICraftingService craftingGrid = node.getGrid().getService(ICraftingService.class);
-        Pair<Long, AEFluidKey> stack = AppEngApi.findAEFluidFromFilter(AppEngApi.getMonitor(tile.getGridNode()), craftingGrid, filter.getLeft());
+        Pair<Long, AEFluidKey> stack = AppEngApi.findAEFluidFromFilter(AppEngApi.getMonitor(tile.getGridNode()),
+                craftingGrid, filter.getLeft());
         if (stack.getRight() == null && stack.getLeft() == 0)
             return MethodResult.of(null, "NOT_CRAFTABLE");
 
-        CraftJob job = new CraftJob(owner.getLevel(), computer, node, stack.getRight(), parsedFilter.getCount(), tile, tile, target);
+        CraftJob job = new CraftJob(owner.getLevel(), computer, node, stack.getRight(), parsedFilter.getCount(), tile,
+                tile, target);
         tile.addJob(job);
         ServerWorker.add(job::startCrafting);
         return MethodResult.of(true);
@@ -715,14 +762,16 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         String side = arguments.getString(1);
         IFluidHandler fluidHandler;
 
-        if (Direction.byName(side.toUpperCase(Locale.ROOT)) == null && ComputerSide.valueOfInsensitive(side.toUpperCase(Locale.ROOT)) == null) {
+        if (Direction.byName(side.toUpperCase(Locale.ROOT)) == null
+                && ComputerSide.valueOfInsensitive(side.toUpperCase(Locale.ROOT)) == null) {
             fluidHandler = FluidUtil.getHandlerFromDirection(arguments.getString(1), owner);
         } else {
             fluidHandler = FluidUtil.getHandlerFromName(computer, arguments.getString(1));
         }
 
         if (fluidHandler == null)
-            return MethodResult.of(0, "The target tank does not exist. Make sure the bridge is exposed in the computer network. Reach out to our discord or our documentation for help.");
+            return MethodResult.of(0,
+                    "The target tank does not exist. Make sure the bridge is exposed in the computer network. Reach out to our discord or our documentation for help.");
 
         return exportToTank(arguments, fluidHandler);
     }
@@ -733,14 +782,16 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         String side = arguments.getString(1);
         IFluidHandler fluidHandler;
 
-        if (Direction.byName(side.toUpperCase(Locale.ROOT)) == null && ComputerSide.valueOfInsensitive(side.toUpperCase(Locale.ROOT)) == null) {
+        if (Direction.byName(side.toUpperCase(Locale.ROOT)) == null
+                && ComputerSide.valueOfInsensitive(side.toUpperCase(Locale.ROOT)) == null) {
             fluidHandler = FluidUtil.getHandlerFromDirection(arguments.getString(1), owner);
         } else {
             fluidHandler = FluidUtil.getHandlerFromName(computer, arguments.getString(1));
         }
 
         if (fluidHandler == null)
-            return MethodResult.of(0, "The target tank does not exist. Make sure the bridge is exposed in the computer network. Reach out to our discord or our documentation for help.");
+            return MethodResult.of(0,
+                    "The target tank does not exist. Make sure the bridge is exposed in the computer network. Reach out to our discord or our documentation for help.");
 
         return importToME(arguments, fluidHandler);
     }

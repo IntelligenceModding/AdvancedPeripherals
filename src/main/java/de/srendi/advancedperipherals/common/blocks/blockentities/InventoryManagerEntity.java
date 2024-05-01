@@ -1,3 +1,18 @@
+/*
+ *     Copyright 2024 Intelligence Modding @ https://intelligence-modding.de
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *          https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.srendi.advancedperipherals.common.blocks.blockentities;
 
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.InventoryManagerPeripheral;
@@ -18,14 +33,15 @@ import net.minecraftforge.server.ServerLifecycleHooks;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class InventoryManagerEntity extends PeripheralBlockEntity<InventoryManagerPeripheral> implements IInventoryBlock<InventoryManagerContainer> {
+public class InventoryManagerEntity extends PeripheralBlockEntity<InventoryManagerPeripheral>
+        implements
+            IInventoryBlock<InventoryManagerContainer> {
 
     public InventoryManagerEntity(BlockPos pos, BlockState state) {
         super(APBlockEntityTypes.INVENTORY_MANAGER.get(), pos, state);
     }
 
-    @NotNull
-    @Override
+    @NotNull @Override
     protected InventoryManagerPeripheral createPeripheral() {
         return new InventoryManagerPeripheral(this);
     }
@@ -45,21 +61,23 @@ public class InventoryManagerEntity extends PeripheralBlockEntity<InventoryManag
         return itemStackIn.getItem() instanceof MemoryCardItem;
     }
 
-    @NotNull
-    @Override
+    @NotNull @Override
     public Component getDisplayName() {
         return Component.translatable("block.advancedperipherals.inventory_manager");
     }
 
     public Player getOwnerPlayer() {
-        //Checks if the tile entity has an item in his inventory
-        if (items.get(0).isEmpty()) return null;
+        // Checks if the tile entity has an item in his inventory
+        if (items.get(0).isEmpty())
+            return null;
         ItemStack stack = items.get(0);
-        //Checks if the item contains the owner name
-        if (!stack.getOrCreateTag().contains("owner")) return null;
-        //Loop through all players and check if the player is online
+        // Checks if the item contains the owner name
+        if (!stack.getOrCreateTag().contains("owner"))
+            return null;
+        // Loop through all players and check if the player is online
         for (Player entity : ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers()) {
-            if (entity.getName().getString().equals(stack.getOrCreateTag().getString("owner"))) return entity;
+            if (entity.getName().getString().equals(stack.getOrCreateTag().getString("owner")))
+                return entity;
         }
         return null;
     }

@@ -1,3 +1,18 @@
+/*
+ *     Copyright 2024 Intelligence Modding @ https://intelligence-modding.de
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *          https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.srendi.advancedperipherals.common.blocks.blockentities;
 
 import dan200.computercraft.shared.util.RedstoneUtil;
@@ -23,8 +38,7 @@ public class RedstoneIntegratorEntity extends PeripheralBlockEntity<RedstoneInte
         super(APBlockEntityTypes.REDSTONE_INTEGRATOR.get(), pos, state);
     }
 
-    @NotNull
-    @Override
+    @NotNull @Override
     protected RedstoneIntegratorPeripheral createPeripheral() {
         return new RedstoneIntegratorPeripheral(this);
     }
@@ -33,10 +47,13 @@ public class RedstoneIntegratorEntity extends PeripheralBlockEntity<RedstoneInte
         Objects.requireNonNull(level);
         BlockPos neighbourPos = getBlockPos().relative(direction);
         int power = level.getSignal(neighbourPos, direction);
-        if (power >= 15) return power;
+        if (power >= 15)
+            return power;
 
         BlockState neighbourState = level.getBlockState(neighbourPos);
-        return neighbourState.getBlock() == Blocks.REDSTONE_WIRE ? Math.max(power, neighbourState.getValue(RedStoneWireBlock.POWER)) : power;
+        return neighbourState.getBlock() == Blocks.REDSTONE_WIRE
+                ? Math.max(power, neighbourState.getValue(RedStoneWireBlock.POWER))
+                : power;
     }
 
     private void setRedstoneOutput(Direction direction, int power) {
@@ -51,11 +68,14 @@ public class RedstoneIntegratorEntity extends PeripheralBlockEntity<RedstoneInte
     }
 
     /**
-     * Used to run redstone integrator functions not on the main thread to prevent long execution times
-     * See <a href="https://github.com/SirEndii/AdvancedPeripherals/issues/384">#384</a>
+     * Used to run redstone integrator functions not on the main thread to prevent
+     * long execution times See
+     * <a href="https://github.com/SirEndii/AdvancedPeripherals/issues/384">#384</a>
      *
-     * @param direction Cardinal direction
-     * @param power     The redstone power from 0 to 15
+     * @param direction
+     *            Cardinal direction
+     * @param power
+     *            The redstone power from 0 to 15
      */
     public void setOutput(Direction direction, int power) {
         ServerWorker.add(() -> setRedstoneOutput(direction, power));

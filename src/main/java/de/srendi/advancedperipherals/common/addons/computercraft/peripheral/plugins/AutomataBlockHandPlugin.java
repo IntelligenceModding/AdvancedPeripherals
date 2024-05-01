@@ -1,3 +1,18 @@
+/*
+ *     Copyright 2024 Intelligence Modding @ https://intelligence-modding.de
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *          https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.srendi.advancedperipherals.common.addons.computercraft.peripheral.plugins;
 
 import dan200.computercraft.api.lua.IArguments;
@@ -12,9 +27,9 @@ import de.srendi.advancedperipherals.lib.peripherals.AutomataCorePeripheral;
 import de.srendi.advancedperipherals.lib.peripherals.IPeripheralOperation;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.ItemStack;
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
 import java.util.Collections;
 import java.util.Map;
 
@@ -42,7 +57,8 @@ public class AutomataBlockHandPlugin extends AutomataCorePlugin {
             TurtlePeripheralOwner owner = automataCore.getPeripheralOwner();
             ItemStack selectedTool = owner.getToolInMainHand();
             int previousDamageValue = selectedTool.getDamageValue();
-            Pair<Boolean, String> result = owner.withPlayer(APFakePlayer.wrapActionWithShiftKey(sneak, APFakePlayer.wrapActionWithRot(yaw, pitch, APFakePlayer::digBlock)));
+            Pair<Boolean, String> result = owner.withPlayer(APFakePlayer.wrapActionWithShiftKey(sneak,
+                    APFakePlayer.wrapActionWithRot(yaw, pitch, APFakePlayer::digBlock)));
             if (!result.getLeft()) {
                 return MethodResult.of(false, result.getRight());
             }
@@ -63,7 +79,8 @@ public class AutomataBlockHandPlugin extends AutomataCorePlugin {
             TurtlePeripheralOwner owner = automataCore.getPeripheralOwner();
             ItemStack selectedTool = owner.getToolInMainHand();
             int previousDamageValue = selectedTool.getDamageValue();
-            InteractionResult result = owner.withPlayer(APFakePlayer.wrapActionWithShiftKey(sneak, APFakePlayer.wrapActionWithRot(yaw, pitch, APFakePlayer::useOnBlock)));
+            InteractionResult result = owner.withPlayer(APFakePlayer.wrapActionWithShiftKey(sneak,
+                    APFakePlayer.wrapActionWithRot(yaw, pitch, APFakePlayer::useOnBlock)));
             if (automataCore.hasAttribute(AutomataCorePeripheral.ATTR_STORING_TOOL_DURABILITY)) {
                 selectedTool.setDamageValue(previousDamageValue);
             }

@@ -1,3 +1,18 @@
+/*
+ *     Copyright 2024 Intelligence Modding @ https://intelligence-modding.de
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *          https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.srendi.advancedperipherals.common.addons.computercraft.operations;
 
 import com.google.common.math.IntMath;
@@ -8,8 +23,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public enum SphereOperation implements IPeripheralOperation<SphereOperationContext> {
-    SCAN_BLOCKS(2_000, 8, 16, 0.17),
-    SCAN_ENTITIES(2_000, 8, 16, 0.17);
+    SCAN_BLOCKS(2_000, 8, 16, 0.17), SCAN_ENTITIES(2_000, 8, 16, 0.17);
 
     private final int defaultCooldown;
     private final int defaultMaxFreeRadius;
@@ -20,7 +34,8 @@ public enum SphereOperation implements IPeripheralOperation<SphereOperationConte
     private ForgeConfigSpec.IntValue maxCostRadius;
     private ForgeConfigSpec.DoubleValue extraBlockCost;
 
-    SphereOperation(int defaultCooldown, int defaultMaxFreeRadius, int defaultMaxCostRadius, double defaultExtraBlockCost) {
+    SphereOperation(int defaultCooldown, int defaultMaxFreeRadius, int defaultMaxCostRadius,
+            double defaultExtraBlockCost) {
         this.defaultCooldown = defaultCooldown;
         this.defaultMaxFreeRadius = defaultMaxFreeRadius;
         this.defaultMaxCostRadius = defaultMaxCostRadius;
@@ -30,9 +45,12 @@ public enum SphereOperation implements IPeripheralOperation<SphereOperationConte
     @Override
     public void addToConfig(ForgeConfigSpec.Builder builder) {
         cooldown = builder.defineInRange(settingsName() + "Cooldown", defaultCooldown, 1_000, Integer.MAX_VALUE);
-        maxFreeRadius = builder.defineInRange(settingsName() + "MaxFreeRadius", defaultMaxFreeRadius, 1, Integer.MAX_VALUE);
-        maxCostRadius = builder.defineInRange(settingsName() + "MaxCostRadius", defaultMaxCostRadius, 1, Integer.MAX_VALUE);
-        extraBlockCost = builder.defineInRange(settingsName() + "ExtraBlockCost", defaultExtraBlockCost, 0.1, Double.MAX_VALUE);
+        maxFreeRadius = builder.defineInRange(settingsName() + "MaxFreeRadius", defaultMaxFreeRadius, 1,
+                Integer.MAX_VALUE);
+        maxCostRadius = builder.defineInRange(settingsName() + "MaxCostRadius", defaultMaxCostRadius, 1,
+                Integer.MAX_VALUE);
+        extraBlockCost = builder.defineInRange(settingsName() + "ExtraBlockCost", defaultExtraBlockCost, 0.1,
+                Double.MAX_VALUE);
     }
 
     @Override
@@ -47,7 +65,8 @@ public enum SphereOperation implements IPeripheralOperation<SphereOperationConte
 
     @Override
     public int getCost(SphereOperationContext context) {
-        if (context.getRadius() <= maxFreeRadius.get()) return 0;
+        if (context.getRadius() <= maxFreeRadius.get())
+            return 0;
         int freeBlockCount = IntMath.pow(2 * maxFreeRadius.get() + 1, 3);
         int allBlockCount = IntMath.pow(2 * context.getRadius() + 1, 3);
         return (int) Math.floor((allBlockCount - freeBlockCount) * extraBlockCost.get());

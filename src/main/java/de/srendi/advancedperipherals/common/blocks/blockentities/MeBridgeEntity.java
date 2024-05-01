@@ -1,6 +1,25 @@
+/*
+ *     Copyright 2024 Intelligence Modding @ https://intelligence-modding.de
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *          https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.srendi.advancedperipherals.common.blocks.blockentities;
 
-import appeng.api.networking.*;
+import appeng.api.networking.GridFlags;
+import appeng.api.networking.GridHelper;
+import appeng.api.networking.IGridNode;
+import appeng.api.networking.IInWorldGridNodeHost;
+import appeng.api.networking.IManagedGridNode;
 import appeng.api.networking.crafting.ICraftingSimulationRequester;
 import appeng.api.networking.security.IActionHost;
 import appeng.api.networking.security.IActionSource;
@@ -27,7 +46,12 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public class MeBridgeEntity extends PeripheralBlockEntity<MeBridgePeripheral> implements IActionSource, IActionHost, IInWorldGridNodeHost, ICraftingSimulationRequester {
+public class MeBridgeEntity extends PeripheralBlockEntity<MeBridgePeripheral>
+        implements
+            IActionSource,
+            IActionHost,
+            IInWorldGridNodeHost,
+            ICraftingSimulationRequester {
 
     private final List<CraftJob> jobs = new CopyOnWriteArrayList<>();
     private boolean initialized = false;
@@ -37,8 +61,7 @@ public class MeBridgeEntity extends PeripheralBlockEntity<MeBridgePeripheral> im
         super(APBlockEntityTypes.ME_BRIDGE.get(), pos, state);
     }
 
-    @NotNull
-    @Override
+    @NotNull @Override
     protected MeBridgePeripheral createPeripheral() {
         return new MeBridgePeripheral(this);
     }
@@ -54,7 +77,7 @@ public class MeBridgeEntity extends PeripheralBlockEntity<MeBridgePeripheral> im
                 mainNode.setInWorldNode(true);
                 mainNode.create(level, getBlockPos());
 
-                //peripheral can be null if `getCapability` was not called before
+                // peripheral can be null if `getCapability` was not called before
                 if (peripheral == null)
                     peripheral = createPeripheral();
                 peripheral.setNode(mainNode);
@@ -69,26 +92,22 @@ public class MeBridgeEntity extends PeripheralBlockEntity<MeBridgePeripheral> im
         }
     }
 
-    @NotNull
-    @Override
+    @NotNull @Override
     public Optional<Player> player() {
         return Optional.empty();
     }
 
-    @NotNull
-    @Override
+    @NotNull @Override
     public Optional<IActionHost> machine() {
         return Optional.of(this);
     }
 
-    @NotNull
-    @Override
+    @NotNull @Override
     public <T> Optional<T> context(@NotNull Class<T> key) {
         return Optional.empty();
     }
 
-    @Nullable
-    @Override
+    @Nullable @Override
     public IGridNode getActionableNode() {
         return mainNode.getNode();
     }
@@ -105,14 +124,12 @@ public class MeBridgeEntity extends PeripheralBlockEntity<MeBridgePeripheral> im
         mainNode.destroy();
     }
 
-    @Nullable
-    @Override
+    @Nullable @Override
     public IGridNode getGridNode(@NotNull Direction dir) {
         return getActionableNode();
     }
 
-    @NotNull
-    @Override
+    @NotNull @Override
     public AECableType getCableConnectionType(@NotNull Direction dir) {
         return AECableType.SMART;
     }
@@ -120,8 +137,7 @@ public class MeBridgeEntity extends PeripheralBlockEntity<MeBridgePeripheral> im
     /**
      * Return the current action source, used to extract items.
      */
-    @Nullable
-    @Override
+    @Nullable @Override
     public IActionSource getActionSource() {
         return this;
     }

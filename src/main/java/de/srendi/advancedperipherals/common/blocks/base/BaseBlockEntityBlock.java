@@ -1,10 +1,29 @@
+/*
+ *     Copyright 2024 Intelligence Modding @ https://intelligence-modding.de
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *          https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.srendi.advancedperipherals.common.blocks.base;
 
 import de.srendi.advancedperipherals.lib.peripherals.IPeripheralTileEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.world.*;
+import net.minecraft.world.Container;
+import net.minecraft.world.Containers;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -27,7 +46,8 @@ public abstract class BaseBlockEntityBlock extends BaseBlock implements EntityBl
     private final boolean belongToTickingEntity;
 
     public BaseBlockEntityBlock(boolean belongToTickingEntity) {
-        this(belongToTickingEntity, Properties.of(Material.METAL).strength(1, 5).sound(SoundType.METAL).noOcclusion().requiresCorrectToolForDrops());
+        this(belongToTickingEntity, Properties.of(Material.METAL).strength(1, 5).sound(SoundType.METAL).noOcclusion()
+                .requiresCorrectToolForDrops());
     }
 
     public BaseBlockEntityBlock(boolean belongToTickingEntity, Properties properties) {
@@ -35,42 +55,49 @@ public abstract class BaseBlockEntityBlock extends BaseBlock implements EntityBl
         this.belongToTickingEntity = belongToTickingEntity;
     }
 
-    @NotNull
-    @Override
-    public InteractionResult use(@NotNull BlockState state, Level levelIn, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand handIn, @NotNull BlockHitResult hit) {
-        if (levelIn.isClientSide) return InteractionResult.SUCCESS;
+    @NotNull @Override
+    public InteractionResult use(@NotNull BlockState state, Level levelIn, @NotNull BlockPos pos,
+            @NotNull Player player, @NotNull InteractionHand handIn, @NotNull BlockHitResult hit) {
+        if (levelIn.isClientSide)
+            return InteractionResult.SUCCESS;
         BlockEntity tileEntity = levelIn.getBlockEntity(pos);
-        if (tileEntity != null && !(tileEntity instanceof IInventoryBlock)) return InteractionResult.PASS;
+        if (tileEntity != null && !(tileEntity instanceof IInventoryBlock))
+            return InteractionResult.PASS;
         MenuProvider namedContainerProvider = this.getMenuProvider(state, levelIn, pos);
         if (namedContainerProvider != null) {
-            if (!(player instanceof ServerPlayer serverPlayerEntity)) return InteractionResult.PASS;
+            if (!(player instanceof ServerPlayer serverPlayerEntity))
+                return InteractionResult.PASS;
             NetworkHooks.openScreen(serverPlayerEntity, namedContainerProvider, pos);
         }
         return InteractionResult.SUCCESS;
     }
 
     @Override
-    public void onRemove(BlockState state, @NotNull Level worldIn, @NotNull BlockPos pos, BlockState newState, boolean isMoving) {
+    public void onRemove(BlockState state, @NotNull Level worldIn, @NotNull BlockPos pos, BlockState newState,
+            boolean isMoving) {
         if (state.getBlock() != newState.getBlock()) {
             BlockEntity tileEntity = worldIn.getBlockEntity(pos);
-            if (tileEntity instanceof Container container) Containers.dropContents(worldIn, pos, container);
+            if (tileEntity instanceof Container container)
+                Containers.dropContents(worldIn, pos, container);
             super.onRemove(state, worldIn, pos, newState, isMoving);
         }
     }
 
     @Override
-    public void setPlacedBy(@NotNull Level worldIn, @NotNull BlockPos pos, @NotNull BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
+    public void setPlacedBy(@NotNull Level worldIn, @NotNull BlockPos pos, @NotNull BlockState state,
+            @Nullable LivingEntity placer, ItemStack stack) {
         super.setPlacedBy(worldIn, pos, state, placer, stack);
         if (worldIn.getBlockEntity(pos) == null)
             return;
-        //Used for the lua function getName()
+        // Used for the lua function getName()
         worldIn.getBlockEntity(pos).getPersistentData().putString("CustomName", stack.getDisplayName().getString());
     }
 
-    @Nullable
-    @Override
-    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, @NotNull BlockState state, @NotNull BlockEntityType<T> type) {
-        if (level.isClientSide || !belongToTickingEntity) return null;
+    @Nullable @Override
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, @NotNull BlockState state,
+            @NotNull BlockEntityType<T> type) {
+        if (level.isClientSide || !belongToTickingEntity)
+            return null;
         return (level1, blockPos, blockState, entity) -> {
             if (entity instanceof IPeripheralTileEntity blockEntity) {
                 blockEntity.handleTick(level, state, type);
@@ -78,18 +105,16 @@ public abstract class BaseBlockEntityBlock extends BaseBlock implements EntityBl
         };
     }
 
-
     @Deprecated
-    @Nullable
-    @Override
+    @Nullable @Override
     public MenuProvider getMenuProvider(@NotNull BlockState pState, Level pLevel, @NotNull BlockPos pPos) {
         BlockEntity blockentity = pLevel.getBlockEntity(pPos);
-        if (!(blockentity instanceof MenuProvider menuProvider)) return null;
+        if (!(blockentity instanceof MenuProvider menuProvider))
+            return null;
         return menuProvider;
     }
 
-    @NotNull
-    public RenderShape getRenderShape(@NotNull BlockState state) {
+    @NotNull public RenderShape getRenderShape(@NotNull BlockState state) {
         return RenderShape.MODEL;
     }
 }

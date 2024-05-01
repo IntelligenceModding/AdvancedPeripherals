@@ -1,3 +1,18 @@
+/*
+ *     Copyright 2024 Intelligence Modding @ https://intelligence-modding.de
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *          https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.srendi.advancedperipherals.common.addons.computercraft.owner;
 
 import com.mojang.authlib.GameProfile;
@@ -31,26 +46,22 @@ public class TurtlePeripheralOwner extends BasePeripheralOwner {
         this.side = side;
     }
 
-    @Nullable
-    @Override
+    @Nullable @Override
     public String getCustomName() {
         return null;
     }
 
-    @NotNull
-    @Override
+    @NotNull @Override
     public Level getLevel() {
         return turtle.getLevel();
     }
 
-    @NotNull
-    @Override
+    @NotNull @Override
     public BlockPos getPos() {
         return turtle.getPosition();
     }
 
-    @NotNull
-    @Override
+    @NotNull @Override
     public Direction getFacing() {
         return turtle.getDirection();
     }
@@ -58,22 +69,20 @@ public class TurtlePeripheralOwner extends BasePeripheralOwner {
     /**
      * Not used for turtles
      */
-    @NotNull
-    @Override
+    @NotNull @Override
     public FrontAndTop getOrientation() {
         return FrontAndTop.NORTH_UP;
     }
 
-    @Nullable
-    @Override
+    @Nullable @Override
     public Player getOwner() {
         GameProfile owningPlayer = turtle.getOwningPlayer();
-        if (owningPlayer == null) return null;
+        if (owningPlayer == null)
+            return null;
         return turtle.getLevel().getPlayerByUUID(owningPlayer.getId());
     }
 
-    @NotNull
-    @Override
+    @NotNull @Override
     public CompoundTag getDataStorage() {
         return DataStorageUtil.getDataStorage(turtle, side);
     }
@@ -106,11 +115,14 @@ public class TurtlePeripheralOwner extends BasePeripheralOwner {
     @Override
     public boolean isMovementPossible(@NotNull Level level, @NotNull BlockPos pos) {
         return FakePlayerProviderTurtle.withPlayer(turtle, player -> {
-            if (level.isOutsideBuildHeight(pos)) return false;
-            if (!level.isInWorldBounds(pos)) return false;
+            if (level.isOutsideBuildHeight(pos))
+                return false;
+            if (!level.isInWorldBounds(pos))
+                return false;
             if (ComputerCraft.turtlesObeyBlockProtection && !TurtlePermissions.isBlockEnterable(level, pos, player))
                 return false;
-            if (!level.isAreaLoaded(pos, 0)) return false;
+            if (!level.isAreaLoaded(pos, 0))
+                return false;
             return level.getWorldBorder().isWithinBounds(pos);
         });
     }
@@ -120,13 +132,11 @@ public class TurtlePeripheralOwner extends BasePeripheralOwner {
         return turtle.teleportTo(level, pos);
     }
 
-    @NotNull
-    public ITurtleAccess getTurtle() {
+    @NotNull public ITurtleAccess getTurtle() {
         return turtle;
     }
 
-    @NotNull
-    public TurtleSide getSide() {
+    @NotNull public TurtleSide getSide() {
         return side;
     }
 

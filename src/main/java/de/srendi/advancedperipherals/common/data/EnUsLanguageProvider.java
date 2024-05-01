@@ -1,3 +1,18 @@
+/*
+ *     Copyright 2024 Intelligence Modding @ https://intelligence-modding.de
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *          https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.srendi.advancedperipherals.common.data;
 
 import de.srendi.advancedperipherals.AdvancedPeripherals;
@@ -96,46 +111,65 @@ public class EnUsLanguageProvider extends LanguageProvider {
     private void addAdvancements() {
         addAdvancement("root", AdvancedPeripherals.NAME, "Every journey starts with the first block");
         addAdvancement("weak_automata_core", "First automata core", "Does the afterlife exist in minecraft?");
-        addAdvancement("end_automata_core", "End automata core", "If you can code gps-free position location with this, you're a powerful human being");
+        addAdvancement("end_automata_core", "End automata core",
+                "If you can code gps-free position location with this, you're a powerful human being");
         addAdvancement("husbandry_automata_core", "Husbandry automata core", "Is this core gluten-free?");
         addAdvancement("overpowered_automata_core", "Overpowered automata core", "Can you handle so much power?");
-        addAdvancement("base_toolkit", "Gentleman's set!", "Collect a redstone integrator, inventory manager and energy detector. How did you even play without this?");
-        addAdvancement("nbt_toolkit", "No secrets", "Collect a NBT storage and block reader. Now, all the world's secrets are open to you!");
-        addAdvancement("sense_toolkit", "The truth can't hide forever", "Collect a geo scanner and environmental detector. There are no limits for observability!");
+        addAdvancement("base_toolkit", "Gentleman's set!",
+                "Collect a redstone integrator, inventory manager and energy detector. How did you even play without this?");
+        addAdvancement("nbt_toolkit", "No secrets",
+                "Collect a NBT storage and block reader. Now, all the world's secrets are open to you!");
+        addAdvancement("sense_toolkit", "The truth can't hide forever",
+                "Collect a geo scanner and environmental detector. There are no limits for observability!");
     }
 
     private void addTooltips() {
         addTooltip("show_desc", "&b[&7%s&b] &7For Description");
-        addTooltip("disabled", "&cThis item is disabled in config, so you can craft it, but it'll not have any functionality.");
-        addTooltip(APItems.COMPUTER_TOOL.get(), "&7This tool was made to tune our blocks. But for now, it's just a blue useless wrench.");
+        addTooltip("disabled",
+                "&cThis item is disabled in config, so you can craft it, but it'll not have any functionality.");
+        addTooltip(APItems.COMPUTER_TOOL.get(),
+                "&7This tool was made to tune our blocks. But for now, it's just a blue useless wrench.");
         addTooltip(APBlocks.ENERGY_DETECTOR.get(), "&7Can detect energy flow and acts as a resistor.");
         addTooltip(APItems.CHUNK_CONTROLLER.get(), "&7A crafting ingredient for the Chunky Turtle.");
         addTooltip(APBlocks.ENVIRONMENT_DETECTOR.get(), "&7This peripheral interacts with the minecraft world.");
-        addTooltip(APBlocks.PLAYER_DETECTOR.get(), "&7This peripheral can be used to interact with players, but don't be a stalker.");
+        addTooltip(APBlocks.PLAYER_DETECTOR.get(),
+                "&7This peripheral can be used to interact with players, but don't be a stalker.");
         addTooltip(APBlocks.RS_BRIDGE.get(), "&7The RS Bridge interacts with Refined Storage to manage your items.");
-        addTooltip(APBlocks.ME_BRIDGE.get(), "&7The ME Bridge interacts with Applied Energistics to manage your items.");
+        addTooltip(APBlocks.ME_BRIDGE.get(),
+                "&7The ME Bridge interacts with Applied Energistics to manage your items.");
         addTooltip(APBlocks.CHAT_BOX.get(), "&7Interacts with the ingame chat, can read and write messages.");
-        addTooltip(APBlocks.PERIPHERAL_CASING.get(), "&7An empty hull without the love it deserves. Used as crafting ingredient");
+        addTooltip(APBlocks.PERIPHERAL_CASING.get(),
+                "&7An empty hull without the love it deserves. Used as crafting ingredient");
         addTooltip(APItems.MEMORY_CARD.get(), "&7Can save the rights of a player to use it in an inventory manager.");
         addTooltip("memory_card.bound", "&7Bound to &b%s&7.");
-        addTooltip(APBlocks.INVENTORY_MANAGER.get(), "&7This block is able to send or receive specific items from a player inventory.");
-        addTooltip(APBlocks.REDSTONE_INTEGRATOR.get(), "&7This block is able to interact with redstone. Works exactly like the redstone api of an computer.");
-        addTooltip(APBlocks.BLOCK_READER.get(), "&7Reads nbt data of blocks to interact with blocks which do not have computer support.");
+        addTooltip(APBlocks.INVENTORY_MANAGER.get(),
+                "&7This block is able to send or receive specific items from a player inventory.");
+        addTooltip(APBlocks.REDSTONE_INTEGRATOR.get(),
+                "&7This block is able to interact with redstone. Works exactly like the redstone api of an computer.");
+        addTooltip(APBlocks.BLOCK_READER.get(),
+                "&7Reads nbt data of blocks to interact with blocks which do not have computer support.");
         addTooltip(APBlocks.GEO_SCANNER.get(), "&7Scans the area around it to find some shiny ores.");
-        addTooltip(APBlocks.COLONY_INTEGRATOR.get(), "&7Interacts with Minecolonies to read data about your colony and citizens.");
+        addTooltip(APBlocks.COLONY_INTEGRATOR.get(),
+                "&7Interacts with Minecolonies to read data about your colony and citizens.");
         addTooltip(APBlocks.NBT_STORAGE.get(), "&7Acts like a storage disk. Can store nbt based data.");
         addTooltip(APItems.WEAK_AUTOMATA_CORE.get(), "&7Upgrade for turtles, which makes turtles more useful.");
-        addTooltip(APItems.OVERPOWERED_WEAK_AUTOMATA_CORE.get(), "&7Improved version of the weak automata core, that provides some overpowered uses! Be careful, the upgrade is very fragile.");
-        addTooltip(APItems.HUSBANDRY_AUTOMATA_CORE.get(), "&7Upgrade for turtles, that allows basic and advanced interactions with animals.");
-        addTooltip(APItems.OVERPOWERED_HUSBANDRY_AUTOMATA_CORE.get(), "&7Improved version of the husbandry automata core, that provides some overpowered uses! Be careful, the upgrade is very fragile.");
-        addTooltip(APItems.END_AUTOMATA_CORE.get(), "&7Upgrade for turtles, that allows basic interaction with the world and teleportation in one dimension.");
-        addTooltip(APItems.OVERPOWERED_END_AUTOMATA_CORE.get(), "&7Improved version of the end automata core, that provides some overpowered uses! Be careful, the upgrade is very fragile.");
+        addTooltip(APItems.OVERPOWERED_WEAK_AUTOMATA_CORE.get(),
+                "&7Improved version of the weak automata core, that provides some overpowered uses! Be careful, the upgrade is very fragile.");
+        addTooltip(APItems.HUSBANDRY_AUTOMATA_CORE.get(),
+                "&7Upgrade for turtles, that allows basic and advanced interactions with animals.");
+        addTooltip(APItems.OVERPOWERED_HUSBANDRY_AUTOMATA_CORE.get(),
+                "&7Improved version of the husbandry automata core, that provides some overpowered uses! Be careful, the upgrade is very fragile.");
+        addTooltip(APItems.END_AUTOMATA_CORE.get(),
+                "&7Upgrade for turtles, that allows basic interaction with the world and teleportation in one dimension.");
+        addTooltip(APItems.OVERPOWERED_END_AUTOMATA_CORE.get(),
+                "&7Improved version of the end automata core, that provides some overpowered uses! Be careful, the upgrade is very fragile.");
     }
 
     private void addText() {
         add("text." + AdvancedPeripherals.MOD_ID + ".removed_player", "Cleared the memory card");
         add("text." + AdvancedPeripherals.MOD_ID + ".added_player", "Added you to the memory card");
-        add("text." + AdvancedPeripherals.MOD_ID + ".automata_core_feed_by_player", "You're trying to feed an entity to a soul, but your own body refuses to do this. Maybe something more mechanical can do this?");
+        add("text." + AdvancedPeripherals.MOD_ID + ".automata_core_feed_by_player",
+                "You're trying to feed an entity to a soul, but your own body refuses to do this. Maybe something more mechanical can do this?");
         add("text." + AdvancedPeripherals.MOD_ID + ".smart_glasses.peripherals", "Peripherals");
         add("text." + AdvancedPeripherals.MOD_ID + ".smart_glasses.modules", "Modules");
     }

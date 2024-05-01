@@ -1,3 +1,18 @@
+/*
+ *     Copyright 2024 Intelligence Modding @ https://intelligence-modding.de
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *          https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.srendi.advancedperipherals.common.items.base;
 
 import de.srendi.advancedperipherals.AdvancedPeripherals;
@@ -12,8 +27,9 @@ import org.jetbrains.annotations.NotNull;
 public enum SmartGlassesMaterials implements ArmorMaterial {
 
     // We use the same name, so they use the same model texture
-    CHAIN("smart_glasses", 15, new int[]{1, 4, 5, 2}, 12, SoundEvents.ARMOR_EQUIP_CHAIN, 0.0F, 0.0F, Ingredient.of(Items.IRON_INGOT)),
-    NETHERITE("smart_glasses", 37, new int[]{3, 6, 8, 3}, 15, SoundEvents.ARMOR_EQUIP_NETHERITE, 3.0F, 0.1F, Ingredient.of(Items.NETHERITE_INGOT));
+    CHAIN("smart_glasses", 15, new int[]{1, 4, 5, 2}, 12, SoundEvents.ARMOR_EQUIP_CHAIN, 0.0F, 0.0F,
+            Ingredient.of(Items.IRON_INGOT)), NETHERITE("smart_glasses", 37, new int[]{3, 6, 8, 3}, 15,
+                    SoundEvents.ARMOR_EQUIP_NETHERITE, 3.0F, 0.1F, Ingredient.of(Items.NETHERITE_INGOT));
 
     private static final int[] HEALTH_PER_SLOT = new int[]{13, 15, 16, 11};
     private final String name;
@@ -25,7 +41,8 @@ public enum SmartGlassesMaterials implements ArmorMaterial {
     private final float knockbackResistance;
     private final Ingredient repairIngredient;
 
-    SmartGlassesMaterials(String pName, int pDurabilityMultiplier, int[] pSlotProtections, int pEnchantmentValue, SoundEvent pSound, float pToughness, float pKnockbackResistance, Ingredient pRepairIngredient) {
+    SmartGlassesMaterials(String pName, int pDurabilityMultiplier, int[] pSlotProtections, int pEnchantmentValue,
+            SoundEvent pSound, float pToughness, float pKnockbackResistance, Ingredient pRepairIngredient) {
         this.name = pName;
         this.durabilityMultiplier = pDurabilityMultiplier;
         this.slotProtections = pSlotProtections;
@@ -48,18 +65,15 @@ public enum SmartGlassesMaterials implements ArmorMaterial {
         return this.enchantmentValue;
     }
 
-    @NotNull
-    public SoundEvent getEquipSound() {
+    @NotNull public SoundEvent getEquipSound() {
         return this.sound;
     }
 
-    @NotNull
-    public Ingredient getRepairIngredient() {
+    @NotNull public Ingredient getRepairIngredient() {
         return this.repairIngredient;
     }
 
-    @NotNull
-    public String getName() {
+    @NotNull public String getName() {
         return AdvancedPeripherals.MOD_ID + ":" + this.name;
     }
 

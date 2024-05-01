@@ -1,3 +1,18 @@
+/*
+ *     Copyright 2024 Intelligence Modding @ https://intelligence-modding.de
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *          https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.srendi.advancedperipherals.common.items;
 
 import de.srendi.advancedperipherals.common.configuration.APConfig;
@@ -43,10 +58,12 @@ public class WeakAutomataCore extends BaseItem implements IFeedableAutomataCore 
         husbandrySouls.put(ForgeRegistries.ENTITY_TYPES.getKey(EntityType.COW).toString(), 3);
         husbandrySouls.put(ForgeRegistries.ENTITY_TYPES.getKey(EntityType.SHEEP).toString(), 3);
         husbandrySouls.put(ForgeRegistries.ENTITY_TYPES.getKey(EntityType.CHICKEN).toString(), 3);
-        WeakAutomataCoreRecord husbandrySoulRecord = new WeakAutomataCoreRecord(husbandrySouls, APItems.HUSBANDRY_AUTOMATA_CORE.get());
+        WeakAutomataCoreRecord husbandrySoulRecord = new WeakAutomataCoreRecord(husbandrySouls,
+                APItems.HUSBANDRY_AUTOMATA_CORE.get());
 
         endSoulRecord.ingredients.keySet().forEach(entityType -> AUTOMATA_CORE_REGISTRY.put(entityType, endSoulRecord));
-        husbandrySoulRecord.ingredients.keySet().forEach(entityType -> AUTOMATA_CORE_REGISTRY.put(entityType, husbandrySoulRecord));
+        husbandrySoulRecord.ingredients.keySet()
+                .forEach(entityType -> AUTOMATA_CORE_REGISTRY.put(entityType, husbandrySoulRecord));
     }
 
     public WeakAutomataCore(Properties properties) {
@@ -66,15 +83,18 @@ public class WeakAutomataCore extends BaseItem implements IFeedableAutomataCore 
         consumedData.getAllKeys().forEach(key -> {
             WeakAutomataCoreRecord record = AUTOMATA_CORE_REGISTRY.get(key);
             CompoundTag recordData = consumedData.getCompound(key);
-            tooltip.add(EnumColor.buildTextComponent(Component.literal(String.format("Consumed: %d/%d %s", recordData.getInt(CONSUMED_ENTITY_COUNT), record.getRequiredCount(key), recordData.getString(CONSUMED_ENTITY_NAME)))));
+            tooltip.add(EnumColor.buildTextComponent(
+                    Component.literal(String.format("Consumed: %d/%d %s", recordData.getInt(CONSUMED_ENTITY_COUNT),
+                            record.getRequiredCount(key), recordData.getString(CONSUMED_ENTITY_NAME)))));
         });
     }
 
     @Override
-    @NotNull
-    public InteractionResult interactLivingEntity(@NotNull ItemStack stack, @NotNull Player player, @NotNull LivingEntity entity, @NotNull InteractionHand hand) {
+    @NotNull public InteractionResult interactLivingEntity(@NotNull ItemStack stack, @NotNull Player player,
+            @NotNull LivingEntity entity, @NotNull InteractionHand hand) {
         if (!(player instanceof FakePlayer)) {
-            player.displayClientMessage(Component.translatable("text.advancedperipherals.automata_core_feed_by_player"), true);
+            player.displayClientMessage(Component.translatable("text.advancedperipherals.automata_core_feed_by_player"),
+                    true);
             return InteractionResult.FAIL;
         }
         String entityType = EntityType.getKey(entity.getType()).toString();
@@ -86,10 +106,12 @@ public class WeakAutomataCore extends BaseItem implements IFeedableAutomataCore 
                 record = AUTOMATA_CORE_REGISTRY.get(entityType);
             } else {
                 Optional<String> anyKey = consumedData.getAllKeys().stream().findAny();
-                if (!anyKey.isPresent()) return InteractionResult.PASS;
+                if (!anyKey.isPresent())
+                    return InteractionResult.PASS;
                 record = AUTOMATA_CORE_REGISTRY.get(anyKey.get());
             }
-            if (!record.isSuitable(entityType, consumedData)) return InteractionResult.PASS;
+            if (!record.isSuitable(entityType, consumedData))
+                return InteractionResult.PASS;
             entity.remove(Entity.RemovalReason.KILLED);
             CompoundTag entityCompound = consumedData.getCompound(entityType);
             entityCompound.putInt(CONSUMED_ENTITY_COUNT, entityCompound.getInt(CONSUMED_ENTITY_COUNT) + 1);
@@ -119,7 +141,9 @@ public class WeakAutomataCore extends BaseItem implements IFeedableAutomataCore 
         }
 
         public boolean isFinished(CompoundTag consumedData) {
-            return ingredients.entrySet().stream().map(entry -> entry.getValue() == consumedData.getCompound(entry.getKey()).getInt(CONSUMED_ENTITY_COUNT)).reduce((a, b) -> a && b).orElse(true);
+            return ingredients.entrySet().stream().map(
+                    entry -> entry.getValue() == consumedData.getCompound(entry.getKey()).getInt(CONSUMED_ENTITY_COUNT))
+                    .reduce((a, b) -> a && b).orElse(true);
         }
     }
 }

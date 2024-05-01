@@ -1,3 +1,18 @@
+/*
+ *     Copyright 2024 Intelligence Modding @ https://intelligence-modding.de
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *          https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.srendi.advancedperipherals.common.addons.computercraft.peripheral;
 
 import com.google.gson.JsonSyntaxException;
@@ -18,10 +33,10 @@ import de.srendi.advancedperipherals.common.blocks.base.PeripheralBlockEntity;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.events.Events;
 import de.srendi.advancedperipherals.common.network.PacketHandler;
+import de.srendi.advancedperipherals.common.network.toclient.ToastToClientPacket;
 import de.srendi.advancedperipherals.common.util.CoordUtil;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
 import de.srendi.advancedperipherals.lib.peripherals.IPeripheralFunction;
-import de.srendi.advancedperipherals.common.network.toclient.ToastToClientPacket;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceKey;
@@ -80,13 +95,16 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
                 prefixComponent = Component.literal(prefix);
             }
         }
-        if (brackets.isEmpty()) brackets = "[]";
+        if (brackets.isEmpty())
+            brackets = "[]";
 
-        return Component.literal(color + brackets.charAt(0) + "\u00a7r").append(prefixComponent).append(color + brackets.charAt(1) + "\u00a7r ");
+        return Component.literal(color + brackets.charAt(0) + "\u00a7r").append(prefixComponent)
+                .append(color + brackets.charAt(1) + "\u00a7r ");
     }
 
     /**
-     * @param argument uuid/name of a player
+     * @param argument
+     *            uuid/name of a player
      * @return a player if the name/uuid belongs to a player
      */
     private ServerPlayer getPlayer(String argument) {
@@ -98,7 +116,8 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
     /**
      * Checks if brackets are in correct format if present
      *
-     * @param brackets {@link IArguments#optString(int) IArguments.optString()} to check
+     * @param brackets
+     *            {@link IArguments#optString(int) IArguments.optString()} to check
      * @return true if brackets are in the right format
      */
     private boolean checkBrackets(Optional<String> brackets) {
@@ -121,12 +140,13 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
                 return MethodResult.of(null, "incorrect bracket string (e.g. [], {}, <>, ...)");
 
             MutableComponent preparedMessage = appendPrefix(
-                    arguments.optString(1, APConfig.PERIPHERALS_CONFIG.defaultChatBoxPrefix.get()).replaceAll("&", "\u00a7"),
-                    arguments.optString(2, "[]"),
-                    arguments.optString(3, "").replaceAll("&", "\u00a7")
-            ).append(component);
+                    arguments.optString(1, APConfig.PERIPHERALS_CONFIG.defaultChatBoxPrefix.get()).replaceAll("&",
+                            "\u00a7"),
+                    arguments.optString(2, "[]"), arguments.optString(3, "").replaceAll("&", "\u00a7"))
+                    .append(component);
             for (ServerPlayer player : ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers()) {
-                if (!APConfig.PERIPHERALS_CONFIG.chatBoxMultiDimensional.get() && player.getLevel().dimension() != dimension)
+                if (!APConfig.PERIPHERALS_CONFIG.chatBoxMultiDimensional.get()
+                        && player.getLevel().dimension() != dimension)
                     continue;
                 if (range == -1 || CoordUtil.isInRange(getPos(), getLevel(), player, range, maxRange))
                     player.sendSystemMessage(preparedMessage);
@@ -147,12 +167,12 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
                 return MethodResult.of(null, "incorrect bracket string (e.g. [], {}, <>, ...)");
 
             MutableComponent preparedMessage = appendPrefix(
-                    arguments.optString(1, APConfig.PERIPHERALS_CONFIG.defaultChatBoxPrefix.get()).replaceAll("&", "\u00a7"),
-                    arguments.optString(2, "[]"),
-                    arguments.optString(3, "").replaceAll("&", "\u00a7")
-            ).append(message);
+                    arguments.optString(1, APConfig.PERIPHERALS_CONFIG.defaultChatBoxPrefix.get()).replaceAll("&",
+                            "\u00a7"),
+                    arguments.optString(2, "[]"), arguments.optString(3, "").replaceAll("&", "\u00a7")).append(message);
             for (ServerPlayer player : ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers()) {
-                if (!APConfig.PERIPHERALS_CONFIG.chatBoxMultiDimensional.get() && player.getLevel().dimension() != dimension)
+                if (!APConfig.PERIPHERALS_CONFIG.chatBoxMultiDimensional.get()
+                        && player.getLevel().dimension() != dimension)
                     continue;
                 if (range == -1 || CoordUtil.isInRange(getPos(), getLevel(), player, range, maxRange))
                     player.sendSystemMessage(preparedMessage);
@@ -182,11 +202,12 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
                 return MethodResult.of(null, "incorrect bracket string (e.g. [], {}, <>, ...)");
 
             MutableComponent preparedMessage = appendPrefix(
-                    arguments.optString(2, APConfig.PERIPHERALS_CONFIG.defaultChatBoxPrefix.get()).replaceAll("&", "\u00a7"),
-                    arguments.optString(3, "[]"),
-                    arguments.optString(4, "").replaceAll("&", "\u00a7")
-            ).append(component);
-            if (!APConfig.PERIPHERALS_CONFIG.chatBoxMultiDimensional.get() && player.getLevel().dimension() != dimension)
+                    arguments.optString(2, APConfig.PERIPHERALS_CONFIG.defaultChatBoxPrefix.get()).replaceAll("&",
+                            "\u00a7"),
+                    arguments.optString(3, "[]"), arguments.optString(4, "").replaceAll("&", "\u00a7"))
+                    .append(component);
+            if (!APConfig.PERIPHERALS_CONFIG.chatBoxMultiDimensional.get()
+                    && player.getLevel().dimension() != dimension)
                 return MethodResult.of(false, "NOT_SAME_DIMENSION");
 
             if (range == -1 || CoordUtil.isInRange(getPos(), getLevel(), player, range, maxRange))
@@ -194,7 +215,6 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
             return MethodResult.of(true);
         });
     }
-
 
     @LuaFunction(mainThread = true)
     public final MethodResult sendFormattedToastToPlayer(@NotNull IArguments arguments) throws LuaException {
@@ -222,12 +242,13 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
                 return MethodResult.of(null, "incorrect bracket string (e.g. [], {}, <>, ,,,)");
 
             MutableComponent preparedMessage = appendPrefix(
-                    arguments.optString(3, APConfig.PERIPHERALS_CONFIG.defaultChatBoxPrefix.get()).replaceAll("&", "\u00a7"),
-                    arguments.optString(4, "[]"),
-                    arguments.optString(5, "").replaceAll("&", "\u00a7")
-            ).append(messageComponent);
+                    arguments.optString(3, APConfig.PERIPHERALS_CONFIG.defaultChatBoxPrefix.get()).replaceAll("&",
+                            "\u00a7"),
+                    arguments.optString(4, "[]"), arguments.optString(5, "").replaceAll("&", "\u00a7"))
+                    .append(messageComponent);
 
-            if (!APConfig.PERIPHERALS_CONFIG.chatBoxMultiDimensional.get() && player.getLevel().dimension() != dimension)
+            if (!APConfig.PERIPHERALS_CONFIG.chatBoxMultiDimensional.get()
+                    && player.getLevel().dimension() != dimension)
                 return MethodResult.of(false, "NOT_SAME_DIMENSION");
 
             if (range == -1 || CoordUtil.isInRange(getPos(), getLevel(), player, range, maxRange)) {
@@ -256,11 +277,11 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
                 return MethodResult.of(null, "incorrect bracket string (e.g. [], {}, <>, ...)");
 
             MutableComponent preparedMessage = appendPrefix(
-                    arguments.optString(2, APConfig.PERIPHERALS_CONFIG.defaultChatBoxPrefix.get()).replaceAll("&", "\u00a7"),
-                    arguments.optString(3, "[]"),
-                    arguments.optString(4, "").replaceAll("&", "\u00a7")
-            ).append(message);
-            if (!APConfig.PERIPHERALS_CONFIG.chatBoxMultiDimensional.get() && player.getLevel().dimension() != dimension)
+                    arguments.optString(2, APConfig.PERIPHERALS_CONFIG.defaultChatBoxPrefix.get()).replaceAll("&",
+                            "\u00a7"),
+                    arguments.optString(3, "[]"), arguments.optString(4, "").replaceAll("&", "\u00a7")).append(message);
+            if (!APConfig.PERIPHERALS_CONFIG.chatBoxMultiDimensional.get()
+                    && player.getLevel().dimension() != dimension)
                 return MethodResult.of(false, "NOT_SAME_DIMENSION");
 
             if (range == -1 || CoordUtil.isInRange(getPos(), getLevel(), player, range, maxRange))
@@ -287,12 +308,12 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
                 return MethodResult.of(null, "incorrect bracket string (e.g. [], {}, <>, ...)");
 
             MutableComponent preparedMessage = appendPrefix(
-                    arguments.optString(3, APConfig.PERIPHERALS_CONFIG.defaultChatBoxPrefix.get()).replaceAll("&", "\u00a7"),
-                    arguments.optString(4, "[]"),
-                    arguments.optString(5, "").replaceAll("&", "\u00a7")
-            ).append(message);
+                    arguments.optString(3, APConfig.PERIPHERALS_CONFIG.defaultChatBoxPrefix.get()).replaceAll("&",
+                            "\u00a7"),
+                    arguments.optString(4, "[]"), arguments.optString(5, "").replaceAll("&", "\u00a7")).append(message);
 
-            if (!APConfig.PERIPHERALS_CONFIG.chatBoxMultiDimensional.get() && player.getLevel().dimension() != dimension)
+            if (!APConfig.PERIPHERALS_CONFIG.chatBoxMultiDimensional.get()
+                    && player.getLevel().dimension() != dimension)
                 return MethodResult.of(false, "NOT_SAME_DIMENSION");
 
             if (range == -1 || CoordUtil.isInRange(getPos(), getLevel(), player, range, maxRange)) {

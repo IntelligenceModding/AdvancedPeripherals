@@ -1,3 +1,18 @@
+/*
+ *     Copyright 2024 Intelligence Modding @ https://intelligence-modding.de
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *          https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.srendi.advancedperipherals.lib.peripherals;
 
 import dan200.computercraft.api.lua.IArguments;
@@ -27,20 +42,23 @@ public abstract class IntegrationPeripheral implements IDynamicPeripheral {
         if (!initialized) {
             initialized = true;
             this.pluggedMethods.clear();
-            if (plugins != null) plugins.forEach(plugin -> {
-                if (plugin.isSuitable(this))
-                    pluggedMethods.addAll(plugin.getMethods());
-            });
+            if (plugins != null)
+                plugins.forEach(plugin -> {
+                    if (plugin.isSuitable(this))
+                        pluggedMethods.addAll(plugin.getMethods());
+                });
             this.methodNames = pluggedMethods.stream().map(BoundMethod::getName).toArray(String[]::new);
         }
     }
 
     protected void addPlugin(@NotNull IPeripheralPlugin plugin) {
-        if (plugins == null) plugins = new LinkedList<>();
+        if (plugins == null)
+            plugins = new LinkedList<>();
         plugins.add(plugin);
         IPeripheralOperation<?>[] operations = plugin.getOperations();
         if (operations != null) {
-            throw new IllegalArgumentException("This is not possible to attach plugin with operations to not operationable owner");
+            throw new IllegalArgumentException(
+                    "This is not possible to attach plugin with operations to not operationable owner");
         }
     }
 
@@ -64,16 +82,15 @@ public abstract class IntegrationPeripheral implements IDynamicPeripheral {
     }
 
     @Override
-    @NotNull
-    public String @NotNull [] getMethodNames() {
+    @NotNull public String @NotNull [] getMethodNames() {
         if (!initialized)
             buildPlugins();
         return methodNames;
     }
 
     @Override
-    @NotNull
-    public MethodResult callMethod(@NotNull IComputerAccess access, @NotNull ILuaContext context, int index, @NotNull IArguments arguments) throws LuaException {
+    @NotNull public MethodResult callMethod(@NotNull IComputerAccess access, @NotNull ILuaContext context, int index,
+            @NotNull IArguments arguments) throws LuaException {
         if (!initialized)
             buildPlugins();
         return pluggedMethods.get(index).apply(access, context, arguments);

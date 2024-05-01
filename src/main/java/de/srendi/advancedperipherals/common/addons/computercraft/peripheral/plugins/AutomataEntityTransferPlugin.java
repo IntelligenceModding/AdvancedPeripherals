@@ -1,3 +1,18 @@
+/*
+ *     Copyright 2024 Intelligence Modding @ https://intelligence-modding.de
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *          https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.srendi.advancedperipherals.common.addons.computercraft.peripheral.plugins;
 
 import dan200.computercraft.api.lua.IArguments;
@@ -18,9 +33,9 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
 import java.util.Collections;
 import java.util.Map;
 import java.util.function.Predicate;
@@ -59,8 +74,7 @@ public class AutomataEntityTransferPlugin extends AutomataCorePlugin {
         automataCore.getPeripheralOwner().getDataStorage().remove(ENTITY_NBT_KEY);
     }
 
-    @Nullable
-    protected Entity extractEntity() {
+    @Nullable protected Entity extractEntity() {
         CompoundTag data = getEntity();
         EntityType<?> type = EntityType.byString(data.getString("entity")).orElse(null);
         if (type != null) {
@@ -73,14 +87,14 @@ public class AutomataEntityTransferPlugin extends AutomataCorePlugin {
         return null;
     }
 
-
     @LuaFunction(mainThread = true)
     public final MethodResult captureAnimal(@NotNull IArguments arguments) throws LuaException {
         Map<?, ?> opts = arguments.count() > 0 ? arguments.getTable(0) : Collections.emptyMap();
         float yaw = opts != null ? (float) TableHelper.optNumberField(opts, "yaw", 0) : 0;
         float pitch = opts != null ? (float) TableHelper.optNumberField(opts, "pitch", 0) : 0;
 
-        HitResult entityHit = automataCore.getPeripheralOwner().withPlayer(APFakePlayer.wrapActionWithRot(yaw, pitch, p -> p.findHit(false, true, suitableEntity)));
+        HitResult entityHit = automataCore.getPeripheralOwner()
+                .withPlayer(APFakePlayer.wrapActionWithRot(yaw, pitch, p -> p.findHit(false, true, suitableEntity)));
         if (entityHit.getType() == HitResult.Type.MISS)
             return MethodResult.of(null, "Nothing found");
         return automataCore.withOperation(CAPTURE_ANIMAL, context -> {
@@ -122,6 +136,7 @@ public class AutomataEntityTransferPlugin extends AutomataCorePlugin {
     @LuaFunction(mainThread = true)
     public final MethodResult getCapturedAnimal() {
         Entity extractedEntity = extractEntity();
-        return MethodResult.of(LuaConverter.completeEntityToLua(extractedEntity, automataCore.getPeripheralOwner().getToolInMainHand()));
+        return MethodResult.of(LuaConverter.completeEntityToLua(extractedEntity,
+                automataCore.getPeripheralOwner().getToolInMainHand()));
     }
 }

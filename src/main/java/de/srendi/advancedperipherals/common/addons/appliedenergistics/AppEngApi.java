@@ -1,3 +1,18 @@
+/*
+ *     Copyright 2024 Intelligence Modding @ https://intelligence-modding.de
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *          https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.srendi.advancedperipherals.common.addons.appliedenergistics;
 
 import appeng.api.crafting.IPatternDetails;
@@ -8,7 +23,12 @@ import appeng.api.networking.crafting.CraftingJobStatus;
 import appeng.api.networking.crafting.ICraftingCPU;
 import appeng.api.networking.crafting.ICraftingService;
 import appeng.api.networking.storage.IStorageService;
-import appeng.api.stacks.*;
+import appeng.api.stacks.AEFluidKey;
+import appeng.api.stacks.AEItemKey;
+import appeng.api.stacks.AEKey;
+import appeng.api.stacks.AEKeyType;
+import appeng.api.stacks.GenericStack;
+import appeng.api.stacks.KeyCounter;
 import appeng.api.storage.AEKeyFilter;
 import appeng.api.storage.IStorageProvider;
 import appeng.api.storage.MEStorage;
@@ -51,16 +71,25 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class AppEngApi {
 
-    public static Pair<Long, AEItemKey> findAEStackFromStack(MEStorage monitor, @Nullable ICraftingService crafting, ItemStack item) {
+    public static Pair<Long, AEItemKey> findAEStackFromStack(MEStorage monitor, @Nullable ICraftingService crafting,
+            ItemStack item) {
         return findAEStackFromFilter(monitor, crafting, ItemFilter.fromStack(item));
     }
 
-    public static Pair<Long, AEItemKey> findAEStackFromFilter(MEStorage monitor, @Nullable ICraftingService crafting, ItemFilter item) {
+    public static Pair<Long, AEItemKey> findAEStackFromFilter(MEStorage monitor, @Nullable ICraftingService crafting,
+            ItemFilter item) {
         for (Object2LongMap.Entry<AEKey> temp : monitor.getAvailableStacks()) {
             if (temp.getKey() instanceof AEItemKey key && item.test(key.toStack()))
                 return Pair.of(temp.getLongValue(), key);
@@ -77,11 +106,13 @@ public class AppEngApi {
         return Pair.of(0L, AEItemKey.of(ItemStack.EMPTY));
     }
 
-    public static Pair<Long, AEFluidKey> findAEFluidFromStack(MEStorage monitor, @Nullable ICraftingService crafting, FluidStack item) {
+    public static Pair<Long, AEFluidKey> findAEFluidFromStack(MEStorage monitor, @Nullable ICraftingService crafting,
+            FluidStack item) {
         return findAEFluidFromFilter(monitor, crafting, FluidFilter.fromStack(item));
     }
 
-    public static Pair<Long, AEFluidKey> findAEFluidFromFilter(MEStorage monitor, @Nullable ICraftingService crafting, FluidFilter item) {
+    public static Pair<Long, AEFluidKey> findAEFluidFromFilter(MEStorage monitor, @Nullable ICraftingService crafting,
+            FluidFilter item) {
         for (Object2LongMap.Entry<AEKey> temp : monitor.getAvailableStacks()) {
             if (temp.getKey() instanceof AEFluidKey key && item.test(key.toStack(1)))
                 return Pair.of(temp.getLongValue(), key);
@@ -101,15 +132,20 @@ public class AppEngApi {
     /**
      * Finds a pattern from filters.
      *
-     * @param grid         The grid to search patterns from.
-     * @param level        The level of the grid.
-     * @param inputFilter  The input filter to apply, can be null to ignore input filter.
-     * @param outputFilter The output filter to apply, can be null to ignore output filter.
-     * @return A Pair object containing the matched pattern and an error message if no pattern is found.
-     * The pattern can be null if no pattern is found.
-     * The error message is "NO_PATTERN_FOUND" if no pattern is found.
+     * @param grid
+     *            The grid to search patterns from.
+     * @param level
+     *            The level of the grid.
+     * @param inputFilter
+     *            The input filter to apply, can be null to ignore input filter.
+     * @param outputFilter
+     *            The output filter to apply, can be null to ignore output filter.
+     * @return A Pair object containing the matched pattern and an error message if
+     *         no pattern is found. The pattern can be null if no pattern is found.
+     *         The error message is "NO_PATTERN_FOUND" if no pattern is found.
      */
-    public static Pair<IPatternDetails, String> findPatternFromFilters(IGrid grid, Level level, @Nullable GenericFilter inputFilter, @Nullable GenericFilter outputFilter) {
+    public static Pair<IPatternDetails, String> findPatternFromFilters(IGrid grid, Level level,
+            @Nullable GenericFilter inputFilter, @Nullable GenericFilter outputFilter) {
         for (IPatternDetails pattern : getPatterns(grid, level)) {
             if (pattern.getInputs().length == 0)
                 continue;
@@ -120,8 +156,7 @@ public class AppEngApi {
             boolean outputMatch = false;
 
             if (inputFilter != null) {
-                outerLoop:
-                for (IPatternDetails.IInput input : pattern.getInputs()) {
+                outerLoop : for (IPatternDetails.IInput input : pattern.getInputs()) {
                     for (GenericStack possibleInput : input.getPossibleInputs()) {
                         if (inputFilter.test(possibleInput)) {
                             inputMatch = true;
@@ -150,7 +185,6 @@ public class AppEngApi {
 
         return Pair.of(null, "NO_PATTERN_FOUND");
     }
-
 
     public static List<Object> listStacks(MEStorage monitor, ICraftingService service) {
         List<Object> items = new ArrayList<>();
@@ -256,7 +290,8 @@ public class AppEngApi {
         return null;
     }
 
-    public static <T extends AEKey> Map<String, Object> getObjectFromStack(Pair<Long, T> stack, @Nullable ICraftingService service) {
+    public static <T extends AEKey> Map<String, Object> getObjectFromStack(Pair<Long, T> stack,
+            @Nullable ICraftingService service) {
         if (stack.getRight() == null)
             return Collections.emptyMap();
         if (stack.getRight() instanceof AEItemKey itemKey)
@@ -266,7 +301,8 @@ public class AppEngApi {
         if (APAddons.appMekLoaded && (stack.getRight() instanceof MekanismKey gasKey))
             return getObjectFromGasStack(Pair.of(stack.getLeft(), gasKey), service);
 
-        AdvancedPeripherals.debug("Could not create table from unknown stack " + stack.getRight().getClass() + " - Report this to the maintainer of ap", org.apache.logging.log4j.Level.ERROR);
+        AdvancedPeripherals.debug("Could not create table from unknown stack " + stack.getRight().getClass()
+                + " - Report this to the maintainer of ap", org.apache.logging.log4j.Level.ERROR);
         return Collections.emptyMap();
     }
 
@@ -318,7 +354,8 @@ public class AppEngApi {
         return map;
     }
 
-    private static Map<String, Object> getObjectFromItemStack(Pair<Long, AEItemKey> stack, @Nullable ICraftingService craftingService) {
+    private static Map<String, Object> getObjectFromItemStack(Pair<Long, AEItemKey> stack,
+            @Nullable ICraftingService craftingService) {
         Map<String, Object> map = new HashMap<>();
         String displayName = stack.getRight().getDisplayName().getString();
         CompoundTag nbt = stack.getRight().toTag();
@@ -334,7 +371,8 @@ public class AppEngApi {
         return map;
     }
 
-    private static Map<String, Object> getObjectFromFluidStack(Pair<Long, AEFluidKey> stack, @Nullable ICraftingService craftingService) {
+    private static Map<String, Object> getObjectFromFluidStack(Pair<Long, AEFluidKey> stack,
+            @Nullable ICraftingService craftingService) {
         Map<String, Object> map = new HashMap<>();
         long amount = stack.getLeft();
         map.put("name", ForgeRegistries.FLUIDS.getKey(stack.getRight().getFluid()).toString());
@@ -346,7 +384,8 @@ public class AppEngApi {
         return map;
     }
 
-    private static Map<String, Object> getObjectFromGasStack(Pair<Long, MekanismKey> stack, @Nullable ICraftingService craftingService) {
+    private static Map<String, Object> getObjectFromGasStack(Pair<Long, MekanismKey> stack,
+            @Nullable ICraftingService craftingService) {
         Map<String, Object> map = new HashMap<>();
         long amount = stack.getLeft();
         map.put("name", stack.getRight().getStack().getTypeRegistryName().toString());
@@ -360,8 +399,10 @@ public class AppEngApi {
     public static Map<String, Object> getObjectFromPattern(IPatternDetails pattern) {
         Map<String, Object> map = new HashMap<>();
 
-        map.put("inputs", Arrays.stream(pattern.getInputs()).map(AppEngApi::getObjectFromPatternInput).collect(Collectors.toList()));
-        map.put("outputs", Arrays.stream(pattern.getOutputs()).map(AppEngApi::getObjectFromGenericStack).collect(Collectors.toList()));
+        map.put("inputs", Arrays.stream(pattern.getInputs()).map(AppEngApi::getObjectFromPatternInput)
+                .collect(Collectors.toList()));
+        map.put("outputs", Arrays.stream(pattern.getOutputs()).map(AppEngApi::getObjectFromGenericStack)
+                .collect(Collectors.toList()));
         map.put("primaryOutput", getObjectFromGenericStack(pattern.getPrimaryOutput()));
         return map;
     }
@@ -369,9 +410,9 @@ public class AppEngApi {
     public static Map<String, Object> getObjectFromPatternInput(IPatternDetails.IInput patternInput) {
         Map<String, Object> map = new HashMap<>();
         map.put("primaryInput", getObjectFromGenericStack(patternInput.getPossibleInputs()[0]));
-        map.put("possibleInputs",
-                Arrays.stream(Arrays.copyOfRange(patternInput.getPossibleInputs(), 1, patternInput.getPossibleInputs().length))
-                        .map(AppEngApi::getObjectFromGenericStack));
+        map.put("possibleInputs", Arrays.stream(
+                Arrays.copyOfRange(patternInput.getPossibleInputs(), 1, patternInput.getPossibleInputs().length))
+                .map(AppEngApi::getObjectFromGenericStack));
         map.put("multiplier", patternInput.getMultiplier());
         map.put("remaining", patternInput.getRemainingKey(patternInput.getPossibleInputs()[0].what()));
         return map;
@@ -421,7 +462,7 @@ public class AppEngApi {
     }
 
     public static boolean isItemCrafting(MEStorage monitor, ICraftingService grid, ItemFilter filter,
-                                         @Nullable ICraftingCPU craftingCPU) {
+            @Nullable ICraftingCPU craftingCPU) {
         Pair<Long, AEItemKey> stack = AppEngApi.findAEStackFromFilter(monitor, grid, filter);
 
         // If the item stack does not exist, it cannot be crafted.
@@ -459,7 +500,7 @@ public class AppEngApi {
     }
 
     public static boolean isFluidCrafting(MEStorage monitor, ICraftingService grid, FluidFilter filter,
-                                          @Nullable ICraftingCPU craftingCPU) {
+            @Nullable ICraftingCPU craftingCPU) {
         Pair<Long, AEFluidKey> stack = AppEngApi.findAEFluidFromFilter(monitor, grid, filter);
 
         // If the fluid stack does not exist, it cannot be crafted.
@@ -511,7 +552,8 @@ public class AppEngApi {
             if (connectedInventoryEntity == null)
                 continue;
 
-            LazyOptional<IItemHandler> itemHandler = connectedInventoryEntity.getCapability(ForgeCapabilities.ITEM_HANDLER);
+            LazyOptional<IItemHandler> itemHandler = connectedInventoryEntity
+                    .getCapability(ForgeCapabilities.ITEM_HANDLER);
             if (itemHandler.isPresent()) {
                 IItemHandler handler = itemHandler.orElse(null);
                 for (int i = 0; i < handler.getSlots(); i++) {
@@ -535,7 +577,8 @@ public class AppEngApi {
             if (connectedInventoryEntity == null)
                 continue;
 
-            LazyOptional<IFluidHandler> fluidHandler = connectedInventoryEntity.getCapability(ForgeCapabilities.FLUID_HANDLER);
+            LazyOptional<IFluidHandler> fluidHandler = connectedInventoryEntity
+                    .getCapability(ForgeCapabilities.FLUID_HANDLER);
             if (fluidHandler.isPresent()) {
                 IFluidHandler handler = fluidHandler.orElse(null);
                 for (int i = 0; i < handler.getTanks(); i++) {
@@ -563,7 +606,10 @@ public class AppEngApi {
                 continue;
 
             if (connectedInventoryEntity instanceof TileEntityChemicalTank tank) {
-                MergedChemicalTank.Current current = tank.getChemicalTank().getCurrent() == MergedChemicalTank.Current.EMPTY ? MergedChemicalTank.Current.GAS : tank.getChemicalTank().getCurrent();
+                MergedChemicalTank.Current current = tank.getChemicalTank()
+                        .getCurrent() == MergedChemicalTank.Current.EMPTY
+                                ? MergedChemicalTank.Current.GAS
+                                : tank.getChemicalTank().getCurrent();
                 total += tank.getChemicalTank().getTankFromCurrent(current).getCapacity();
             }
         }
@@ -630,7 +676,8 @@ public class AppEngApi {
     public static long getTotalItemStorage(IGridNode node) {
         long total = 0;
 
-        // note: do not query DriveBlockEntity.class specifically here, because it will avoid subclasses, e.g. the ME Extended Drive from ExtendedAE
+        // note: do not query DriveBlockEntity.class specifically here, because it will
+        // avoid subclasses, e.g. the ME Extended Drive from ExtendedAE
         Iterator<IGridNode> iterator = node.getGrid().getNodes().iterator();
 
         while (iterator.hasNext()) {
@@ -653,7 +700,8 @@ public class AppEngApi {
                     if (disk.getKeyType().toString().equals("ae2:i")) {
                         total += disk.getBytes(null);
                     }
-                } else if (APAddons.aeAdditionsLoaded && (stack.getItem() instanceof SuperStorageCell superStorageCell)) {
+                } else if (APAddons.aeAdditionsLoaded
+                        && (stack.getItem() instanceof SuperStorageCell superStorageCell)) {
                     total += superStorageCell.getKiloBytes() * 1024L;
                 } else if (APAddons.aeAdditionsLoaded && (stack.getItem() instanceof StorageCell storageCell)) {
                     if (storageCell.getKeyType() != AEKeyType.items())
@@ -853,10 +901,11 @@ public class AppEngApi {
     /// Available Storage
 
     /**
-     * Calculates the available item storage on a given grid node.
-     * It subtracts the used item storage from the total item storage.
+     * Calculates the available item storage on a given grid node. It subtracts the
+     * used item storage from the total item storage.
      *
-     * @param node The grid node to calculate the available item storage for.
+     * @param node
+     *            The grid node to calculate the available item storage for.
      * @return The available item storage in bytes.
      */
     public static long getAvailableItemStorage(IGridNode node) {
@@ -866,7 +915,8 @@ public class AppEngApi {
     /**
      * Calculates the available fluid storage in a given grid node.
      *
-     * @param node The grid node to calculate the available fluid storage for.
+     * @param node
+     *            The grid node to calculate the available fluid storage for.
      * @return The available fluid storage in bytes.
      */
     public static long getAvailableFluidStorage(IGridNode node) {
@@ -880,7 +930,9 @@ public class AppEngApi {
     /**
      * Calculates the available external item storage of a given grid node.
      *
-     * @param node The grid node for which to calculate the available external item storage.
+     * @param node
+     *            The grid node for which to calculate the available external item
+     *            storage.
      * @return The available external item storage.
      */
     public static long getAvailableExternalItemStorage(IGridNode node) {
@@ -888,10 +940,13 @@ public class AppEngApi {
     }
 
     /**
-     * Calculates the available external fluid storage on a given grid node by subtracting the used external fluid storage
-     * from the total external fluid storage.
+     * Calculates the available external fluid storage on a given grid node by
+     * subtracting the used external fluid storage from the total external fluid
+     * storage.
      *
-     * @param node The grid node on which to calculate the available external fluid storage.
+     * @param node
+     *            The grid node on which to calculate the available external fluid
+     *            storage.
      * @return The available external fluid storage on the grid node.
      */
     public static long getAvailableExternalFluidStorage(IGridNode node) {
@@ -903,12 +958,15 @@ public class AppEngApi {
     }
 
     public static ICraftingCPU getCraftingCPU(IGridNode node, String cpuName) {
-        if (cpuName.isEmpty()) return null;
+        if (cpuName.isEmpty())
+            return null;
         ICraftingService grid = node.getGrid().getService(ICraftingService.class);
-        if (grid == null) return null;
+        if (grid == null)
+            return null;
 
         Iterator<ICraftingCPU> iterator = grid.getCpus().iterator();
-        if (!iterator.hasNext()) return null;
+        if (!iterator.hasNext())
+            return null;
 
         while (iterator.hasNext()) {
             ICraftingCPU cpu = iterator.next();
@@ -926,7 +984,8 @@ public class AppEngApi {
 
         Iterator<IGridNode> iterator = node.getGrid().getMachineNodes(DriveBlockEntity.class).iterator();
 
-        if (!iterator.hasNext()) return items;
+        if (!iterator.hasNext())
+            return items;
         while (iterator.hasNext()) {
             DriveBlockEntity entity = (DriveBlockEntity) iterator.next().getService(IStorageProvider.class);
             if (entity == null)

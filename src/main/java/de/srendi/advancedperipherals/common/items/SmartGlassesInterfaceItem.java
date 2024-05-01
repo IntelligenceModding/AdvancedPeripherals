@@ -1,3 +1,18 @@
+/*
+ *     Copyright 2024 Intelligence Modding @ https://intelligence-modding.de
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *          https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.srendi.advancedperipherals.common.items;
 
 import dan200.computercraft.shared.network.container.ComputerContainerData;
@@ -36,30 +51,38 @@ public class SmartGlassesInterfaceItem extends BaseItem {
 
         ItemStack findGlasses = player.getItemBySlot(EquipmentSlot.HEAD);
 
-        // In case this method gets executed by the smart glasses interface, we need to check if the glasses may be in the
+        // In case this method gets executed by the smart glasses interface, we need to
+        // check if the glasses may be in the
         // curio slot or on the head
         if (!findGlasses.is(APItems.SMART_GLASSES.get())) {
-            if (APAddons.curiosLoaded) findGlasses = APAddons.getCurioGlasses(player);
+            if (APAddons.curiosLoaded)
+                findGlasses = APAddons.getCurioGlasses(player);
             if (!findGlasses.is(APItems.SMART_GLASSES.get())) {
-                player.displayClientMessage(Component.translatable("item.advancedperipherals.smartglasses.dontwear"), false);
+                player.displayClientMessage(Component.translatable("item.advancedperipherals.smartglasses.dontwear"),
+                        false);
                 return super.use(world, player, hand);
             }
         }
 
-        // The constructor of the ComputerContainerData in the lambda wants a final version of this var
+        // The constructor of the ComputerContainerData in the lambda wants a final
+        // version of this var
         ItemStack glasses = findGlasses;
 
         SmartGlassesItem smartGlasses = (SmartGlassesItem) glasses.getItem();
 
-        SmartGlassesComputer computer = smartGlasses.getOrCreateComputer((ServerLevel) world, player, player.getInventory(), glasses);
+        SmartGlassesComputer computer = smartGlasses.getOrCreateComputer((ServerLevel) world, player,
+                player.getInventory(), glasses);
         computer.turnOn();
 
         LazyOptional<IItemHandler> itemHandler = glasses.getCapability(ForgeCapabilities.ITEM_HANDLER);
         if (!itemHandler.isPresent() || itemHandler.resolve().isEmpty()) {
-            AdvancedPeripherals.debug("There was an issue with the item handler of the glasses while trying to open the gui");
+            AdvancedPeripherals
+                    .debug("There was an issue with the item handler of the glasses while trying to open the gui");
             return super.use(world, player, hand);
         }
-        NetworkHooks.openScreen((ServerPlayer) player, new SmartGlassesMenuProvider(computer, glasses, itemHandler.resolve().get()), bytes -> new ComputerContainerData(computer, glasses).toBytes(bytes));
+        NetworkHooks.openScreen((ServerPlayer) player,
+                new SmartGlassesMenuProvider(computer, glasses, itemHandler.resolve().get()),
+                bytes -> new ComputerContainerData(computer, glasses).toBytes(bytes));
 
         return super.use(world, player, hand);
     }

@@ -1,3 +1,18 @@
+/*
+ *     Copyright 2024 Intelligence Modding @ https://intelligence-modding.de
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *          https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.srendi.advancedperipherals.common.addons.computercraft.owner;
 
 import dan200.computercraft.api.lua.LuaFunction;
@@ -38,12 +53,15 @@ public abstract class FuelAbility<T extends IPeripheralOwner> implements IOwnerA
     /**
      * Sets the fuel consumption rate
      *
-     * @param rate the new fuel consumption rate
+     * @param rate
+     *            the new fuel consumption rate
      */
     protected void setConsumptionRate(int rate) {
-        if (rate < DEFAULT_FUEL_CONSUMING_RATE) rate = DEFAULT_FUEL_CONSUMING_RATE;
+        if (rate < DEFAULT_FUEL_CONSUMING_RATE)
+            rate = DEFAULT_FUEL_CONSUMING_RATE;
         int maxFuelRate = getMaxFuelConsumptionRate();
-        if (rate > maxFuelRate) rate = maxFuelRate;
+        if (rate > maxFuelRate)
+            rate = maxFuelRate;
         owner.getDataStorage().putInt(FUEL_CONSUMING_RATE_SETTING, rate);
     }
 
@@ -64,9 +82,11 @@ public abstract class FuelAbility<T extends IPeripheralOwner> implements IOwnerA
     }
 
     public boolean consumeFuel(int count, boolean simulate) {
-        if (isFuelConsumptionDisable()) return true;
+        if (isFuelConsumptionDisable())
+            return true;
         int realCount = count * getFuelConsumptionMultiply();
-        if (simulate) return getFuelLevel() >= realCount;
+        if (simulate)
+            return getFuelLevel() >= realCount;
         return consumeFuel(realCount);
     }
 
@@ -87,8 +107,10 @@ public abstract class FuelAbility<T extends IPeripheralOwner> implements IOwnerA
 
     @LuaFunction(mainThread = true)
     public final MethodResult setFuelConsumptionRate(int rate) {
-        if (rate < 1) return MethodResult.of(null, "Too small fuel consumption rate");
-        if (rate > getMaxFuelConsumptionRate()) return MethodResult.of(null, "Too big fuel consumption rate");
+        if (rate < 1)
+            return MethodResult.of(null, "Too small fuel consumption rate");
+        if (rate > getMaxFuelConsumptionRate())
+            return MethodResult.of(null, "Too big fuel consumption rate");
         setConsumptionRate(rate);
         return MethodResult.of(true);
     }

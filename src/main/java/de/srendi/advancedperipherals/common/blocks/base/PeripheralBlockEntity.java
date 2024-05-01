@@ -1,3 +1,18 @@
+/*
+ *     Copyright 2024 Intelligence Modding @ https://intelligence-modding.de
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *          https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.srendi.advancedperipherals.common.blocks.base;
 
 import dan200.computercraft.api.peripheral.IComputerAccess;
@@ -33,13 +48,16 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 
-public abstract class PeripheralBlockEntity<T extends BasePeripheral<?>> extends BaseContainerBlockEntity implements WorldlyContainer, MenuProvider, IPeripheralTileEntity {
+public abstract class PeripheralBlockEntity<T extends BasePeripheral<?>> extends BaseContainerBlockEntity
+        implements
+            WorldlyContainer,
+            MenuProvider,
+            IPeripheralTileEntity {
 
     private static final String PERIPHERAL_SETTINGS_KEY = "peripheralSettings";
     protected CompoundTag peripheralSettings;
     protected NonNullList<ItemStack> items;
-    @Nullable
-    protected T peripheral = null;
+    @Nullable protected T peripheral = null;
     private LazyOptional<? extends IItemHandler> handler;
     private LazyOptional<? extends IFluidHandler> fluidHandler;
     private LazyOptional<IPeripheral> peripheralCap;
@@ -54,8 +72,7 @@ public abstract class PeripheralBlockEntity<T extends BasePeripheral<?>> extends
         peripheralSettings = new CompoundTag();
     }
 
-    @NotNull
-    @Override
+    @NotNull @Override
     public <T1> LazyOptional<T1> getCapability(@NotNull Capability<T1> cap, @Nullable Direction direction) {
         if (cap == Capabilities.CAPABILITY_PERIPHERAL) {
             if (peripheral == null)
@@ -75,7 +92,8 @@ public abstract class PeripheralBlockEntity<T extends BasePeripheral<?>> extends
                 }
                 return peripheralCap.cast();
             } else {
-                AdvancedPeripherals.debug(peripheral.getType() + " is disabled, you can enable it in the Configuration.");
+                AdvancedPeripherals
+                        .debug(peripheral.getType() + " is disabled, you can enable it in the Configuration.");
             }
         }
 
@@ -104,8 +122,7 @@ public abstract class PeripheralBlockEntity<T extends BasePeripheral<?>> extends
             fluidHandler.invalidate();
     }
 
-    @NotNull
-    protected abstract T createPeripheral();
+    @NotNull protected abstract T createPeripheral();
 
     public Iterable<IComputerAccess> getConnectedComputers() {
         if (peripheral == null) // just avoid some NPE in strange cases
@@ -113,21 +130,21 @@ public abstract class PeripheralBlockEntity<T extends BasePeripheral<?>> extends
         return peripheral.getConnectedComputers();
     }
 
-    @Nullable
-    public T getPeripheral() {
+    @Nullable public T getPeripheral() {
         return peripheral;
     }
 
-    /*@Override
-    public ITextComponent getDisplayName() {
-        return this instanceof IInventoryBlock ? ((IInventoryBlock) this).getDisplayName() : null;
-    }*/
+    /*
+     * @Override public ITextComponent getDisplayName() { return this instanceof
+     * IInventoryBlock ? ((IInventoryBlock) this).getDisplayName() : null; }
+     */
 
     @Override
     public void saveAdditional(@NotNull CompoundTag compound) {
         super.saveAdditional(compound);
         ContainerHelper.saveAllItems(compound, items);
-        if (!peripheralSettings.isEmpty()) compound.put(PERIPHERAL_SETTINGS_KEY, peripheralSettings);
+        if (!peripheralSettings.isEmpty())
+            compound.put(PERIPHERAL_SETTINGS_KEY, peripheralSettings);
     }
 
     @Override
@@ -142,15 +159,16 @@ public abstract class PeripheralBlockEntity<T extends BasePeripheral<?>> extends
         return this instanceof IInventoryBlock<?> inventoryBlock ? inventoryBlock.getDisplayName() : null;
     }
 
-    @Nullable
-    @Override
+    @Nullable @Override
     public AbstractContainerMenu createMenu(int id, @NotNull Inventory inventory, @NotNull Player playerEntity) {
         return createMenu(id, inventory);
     }
 
     @Override
     protected AbstractContainerMenu createMenu(int id, @NotNull Inventory player) {
-        return this instanceof IInventoryBlock<?> inventoryBlock ? inventoryBlock.createContainer(id, player, worldPosition, level) : null;
+        return this instanceof IInventoryBlock<?> inventoryBlock
+                ? inventoryBlock.createContainer(id, player, worldPosition, level)
+                : null;
     }
 
     @Override
@@ -176,14 +194,13 @@ public abstract class PeripheralBlockEntity<T extends BasePeripheral<?>> extends
     @Override
     public boolean isEmpty() {
         for (ItemStack itemStack : items) {
-            if (itemStack.isEmpty()) return true;
+            if (itemStack.isEmpty())
+                return true;
         }
         return false;
     }
 
-
-    @NotNull
-    @Override
+    @NotNull @Override
     public ItemStack getItem(int index) {
         if (index < 0 || index >= items.size()) {
             return ItemStack.EMPTY;
@@ -191,14 +208,12 @@ public abstract class PeripheralBlockEntity<T extends BasePeripheral<?>> extends
         return items.get(index);
     }
 
-    @NotNull
-    @Override
+    @NotNull @Override
     public ItemStack removeItem(int index, int count) {
         return ContainerHelper.removeItem(items, index, count);
     }
 
-    @NotNull
-    @Override
+    @NotNull @Override
     public ItemStack removeItemNoUpdate(int index) {
         return ContainerHelper.takeItem(items, index);
     }
@@ -230,4 +245,3 @@ public abstract class PeripheralBlockEntity<T extends BasePeripheral<?>> extends
         setChanged();
     }
 }
-

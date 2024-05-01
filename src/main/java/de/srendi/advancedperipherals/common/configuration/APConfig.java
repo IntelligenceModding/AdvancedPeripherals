@@ -1,3 +1,18 @@
+/*
+ *     Copyright 2024 Intelligence Modding @ https://intelligence-modding.de
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *          https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.srendi.advancedperipherals.common.configuration;
 
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
@@ -20,12 +35,14 @@ public class APConfig extends ModConfig {
     public static final WorldConfig WORLD_CONFIG = new WorldConfig();
 
     public APConfig(IAPConfig config, ModContainer container) {
-        super(config.getType(), config.getConfigSpec(), container, "Advancedperipherals/" + config.getFileName() + ".toml");
+        super(config.getType(), config.getConfigSpec(), container,
+                "Advancedperipherals/" + config.getFileName() + ".toml");
     }
 
     public static void register(ModLoadingContext context) {
-        //Creates the config folder
-        FMLPaths.getOrCreateGameRelativePath(FMLPaths.CONFIGDIR.get().resolve("Advancedperipherals"), "Advancedperipherals");
+        // Creates the config folder
+        FMLPaths.getOrCreateGameRelativePath(FMLPaths.CONFIGDIR.get().resolve("Advancedperipherals"),
+                "Advancedperipherals");
 
         ModContainer modContainer = context.getActiveContainer();
         modContainer.addConfig(new APConfig(GENERAL_CONFIG, modContainer));
@@ -42,7 +59,8 @@ public class APConfig extends ModConfig {
     public static class ConfigFileHandler extends ConfigFileTypeHandler {
 
         public static Path getPath(Path path) {
-            if (path.endsWith("serverconfig")) return FMLPaths.CONFIGDIR.get();
+            if (path.endsWith("serverconfig"))
+                return FMLPaths.CONFIGDIR.get();
 
             return path;
         }

@@ -1,7 +1,21 @@
+/*
+ *     Copyright 2024 Intelligence Modding @ https://intelligence-modding.de
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *          https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.srendi.advancedperipherals.common.commands;
 
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-
 import dan200.computercraft.core.computer.ComputerSide;
 import dan200.computercraft.core.computer.Environment;
 import dan200.computercraft.shared.command.UserLevel;
@@ -9,11 +23,9 @@ import dan200.computercraft.shared.command.text.ChatHelpers;
 import dan200.computercraft.shared.command.text.TableBuilder;
 import dan200.computercraft.shared.computer.core.ServerComputer;
 import dan200.computercraft.shared.computer.core.ServerContext;
-
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.ChunkyPeripheral;
 import de.srendi.advancedperipherals.common.util.inventory.ItemUtil;
-
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -30,23 +42,18 @@ import net.minecraftforge.fml.common.Mod;
 public class APCommands {
     public static final String ROOT_LITERAL = "advancedperipherals";
     public static final String FORCELOAD_LITERAL = "forceload";
-    static final String FORCELOAD_HELP =
-        "/" + ROOT_LITERAL + " " + FORCELOAD_LITERAL + " help" + " - show this help message\n" +
-        "/" + ROOT_LITERAL + " " + FORCELOAD_LITERAL + " dump" + " - show all chunky turtles\n";
+    static final String FORCELOAD_HELP = "/" + ROOT_LITERAL + " " + FORCELOAD_LITERAL + " help"
+            + " - show this help message\n" + "/" + ROOT_LITERAL + " " + FORCELOAD_LITERAL + " dump"
+            + " - show all chunky turtles\n";
 
     @SubscribeEvent
     public static void register(RegisterCommandsEvent event) {
         event.getDispatcher().register(Commands.literal(ROOT_LITERAL)
-                .then(Commands.literal("getHashItem")
-                        .executes(context -> getHashItem(context.getSource()))).then(Commands.literal(FORCELOAD_LITERAL)
-                .executes(context -> forceloadHelp(context.getSource()))
-                .then(Commands.literal("help")
-                    .executes(context -> forceloadHelp(context.getSource())))
-                .then(Commands.literal("dump")
-                    .requires(UserLevel.OWNER_OP)
-                    .executes(context -> forceloadDump(context.getSource())))
-            )
-        );
+                .then(Commands.literal("getHashItem").executes(context -> getHashItem(context.getSource())))
+                .then(Commands.literal(FORCELOAD_LITERAL).executes(context -> forceloadHelp(context.getSource()))
+                        .then(Commands.literal("help").executes(context -> forceloadHelp(context.getSource())))
+                        .then(Commands.literal("dump").requires(UserLevel.OWNER_OP)
+                                .executes(context -> forceloadDump(context.getSource())))));
     }
 
     private static int getHashItem(CommandSourceStack source) throws CommandSyntaxException {
@@ -61,11 +68,11 @@ public class APCommands {
             return 0;
         }
         source.sendSuccess(Component.literal("Fingerprint of the item: "), true);
-        source.sendSuccess(ComponentUtils.wrapInSquareBrackets(
-                Component.literal(fingerprint)
-                        .withStyle(style -> style.applyFormat(ChatFormatting.GREEN)
-                                .withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, fingerprint))
-                                .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal("Copy"))))), true);
+        source.sendSuccess(ComponentUtils.wrapInSquareBrackets(Component.literal(fingerprint)
+                .withStyle(style -> style.applyFormat(ChatFormatting.GREEN)
+                        .withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, fingerprint))
+                        .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal("Copy"))))),
+                true);
         return 1;
     }
 
@@ -77,41 +84,34 @@ public class APCommands {
     private static int forceloadDump(CommandSourceStack source) throws CommandSyntaxException {
         TableBuilder table = new TableBuilder("ChunkyTurtles", "Computer", "Position");
 
-        ServerComputer[] computers = ServerContext.get(source.getServer()).registry().getComputers().stream().filter((computer) -> {
-            Environment env = computer.getComputer().getEnvironment();
-            for (ComputerSide side : ComputerSide.values()) {
-                if (env.getPeripheral(side) instanceof ChunkyPeripheral) {
-                    return true;
-                }
-            }
-            return false;
-        }).sorted((a, b) -> a.getID() - b.getID()).toArray(size -> new ServerComputer[size]);
+        ServerComputer[] computers = ServerContext.get(source.getServer()).registry().getComputers().stream()
+                .filter((computer) -> {
+                    Environment env = computer.getComputer().getEnvironment();
+                    for (ComputerSide side : ComputerSide.values()) {
+                        if (env.getPeripheral(side) instanceof ChunkyPeripheral) {
+                            return true;
+                        }
+                    }
+                    return false;
+                }).sorted((a, b) -> a.getID() - b.getID()).toArray(size -> new ServerComputer[size]);
 
         for (ServerComputer computer : computers) {
-            table.row(
-                makeComputerDumpCommand(computer),
-                makeComputerPosCommand(computer)
-            );
+            table.row(makeComputerDumpCommand(computer), makeComputerPosCommand(computer));
         }
 
         table.display(source);
         return computers.length;
     }
 
-
     private static Component makeComputerDumpCommand(ServerComputer computer) {
-        return ChatHelpers.link(
-            Component.literal("#" + computer.getID()),
-            "/computercraft dump " + computer.getInstanceID(),
-            Component.translatable("commands.computercraft.dump.action")
-        );
+        return ChatHelpers.link(Component.literal("#" + computer.getID()),
+                "/computercraft dump " + computer.getInstanceID(),
+                Component.translatable("commands.computercraft.dump.action"));
     }
 
     private static Component makeComputerPosCommand(ServerComputer computer) {
-        return ChatHelpers.link(
-            ChatHelpers.position(computer.getPosition()),
-            "/computercraft tp " + computer.getInstanceID(),
-            Component.translatable("commands.computercraft.tp.action")
-        );
+        return ChatHelpers.link(ChatHelpers.position(computer.getPosition()),
+                "/computercraft tp " + computer.getInstanceID(),
+                Component.translatable("commands.computercraft.tp.action"));
     }
 }
