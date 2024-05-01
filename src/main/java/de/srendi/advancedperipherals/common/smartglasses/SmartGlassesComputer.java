@@ -1,3 +1,18 @@
+/*
+ *     Copyright 2024 Intelligence Modding @ https://intelligence-modding.de
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *          https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.srendi.advancedperipherals.common.smartglasses;
 
 import dan200.computercraft.api.peripheral.IPeripheral;
@@ -22,19 +37,23 @@ import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
- * Basically just a {@link dan200.computercraft.shared.pocket.core.PocketServerComputer} but with some changes
+ * Basically just a
+ * {@link dan200.computercraft.shared.pocket.core.PocketServerComputer} but with
+ * some changes
  */
 public class SmartGlassesComputer extends ServerComputer implements IPocketAccess {
 
-    @Nullable
-    private Entity entity;
+    @Nullable private Entity entity;
     private ItemStack stack = ItemStack.EMPTY;
     private final SmartGlassesAccess smartGlassesAccess = new SmartGlassesAccess(this);
-    @Nullable
-    private SmartGlassesItemHandler itemHandler;
+    @Nullable private SmartGlassesItemHandler itemHandler;
 
     private int lightColour = -1;
     private boolean lightChanged = false;
@@ -47,15 +66,15 @@ public class SmartGlassesComputer extends ServerComputer implements IPocketAcces
         super(world, computerID, label, family, 39, 13);
     }
 
-    @Nullable
-    @Override
+    @Nullable @Override
     public Entity getEntity() {
         if (entity == null || stack.isEmpty() || !entity.isAlive())
             return null;
 
         if (entity instanceof Player player) {
             var inventory = player.getInventory();
-            return inventory.items.contains(stack) || inventory.armor.contains(stack) || inventory.offhand.contains(stack) ? entity : null;
+            return inventory.items.contains(stack) || inventory.armor.contains(stack)
+                    || inventory.offhand.contains(stack) ? entity : null;
         } else if (entity instanceof ItemEntity itemEntity) {
             return itemEntity.getItem() == stack ? entity : null;
         } else {
@@ -88,7 +107,8 @@ public class SmartGlassesComputer extends ServerComputer implements IPocketAcces
 
     @Override
     public void setLight(int colour) {
-        if (colour < 0 || colour > 0xFFFFFF) colour = -1;
+        if (colour < 0 || colour > 0xFFFFFF)
+            colour = -1;
 
         if (lightColour == colour)
             return;
@@ -109,8 +129,7 @@ public class SmartGlassesComputer extends ServerComputer implements IPocketAcces
     }
 
     @Override
-    @NotNull
-    public CompoundTag getUpgradeNBTData() {
+    @NotNull public CompoundTag getUpgradeNBTData() {
         return new CompoundTag();
     }
 
@@ -125,8 +144,7 @@ public class SmartGlassesComputer extends ServerComputer implements IPocketAcces
     }
 
     @Override
-    @NotNull
-    public Map<ResourceLocation, IPeripheral> getUpgrades() {
+    @NotNull public Map<ResourceLocation, IPeripheral> getUpgrades() {
         return Collections.emptyMap();
     }
 
@@ -148,7 +166,8 @@ public class SmartGlassesComputer extends ServerComputer implements IPocketAcces
         for (int slot = 4; slot < 11; slot++) {
             ItemStack peripheralItem = itemHandler.getStackInSlot(slot);
             if (!peripheralItem.isEmpty() && peripheralItem.getItem() instanceof IModuleItem module) {
-                if (modules.get(slot) != null && modules.get(slot).getName().equals(module.createModule(smartGlassesAccess).getName()))
+                if (modules.get(slot) != null
+                        && modules.get(slot).getName().equals(module.createModule(smartGlassesAccess).getName()))
                     continue;
 
                 modules.put(slot, module.createModule(smartGlassesAccess));
@@ -166,10 +185,12 @@ public class SmartGlassesComputer extends ServerComputer implements IPocketAcces
     public void tickServer() {
         super.tickServer();
 
-        // Find any players which have gone missing and remove them from the tracking list.
+        // Find any players which have gone missing and remove them from the tracking
+        // list.
         tracking.removeIf(player -> !player.isAlive() || player.level != getLevel());
 
-        // And now find any new players, add them to the tracking list, and broadcast state where appropriate.
+        // And now find any new players, add them to the tracking list, and broadcast
+        // state where appropriate.
         var sendState = hasOutputChanged() || lightChanged;
         lightChanged = false;
         if (sendState) {
@@ -196,9 +217,10 @@ public class SmartGlassesComputer extends ServerComputer implements IPocketAcces
     protected void onTerminalChanged() {
         super.onTerminalChanged();
 
-        /*if (entity instanceof ServerPlayer player && entity.isAlive()) {
-            // Broadcast the terminal to the current player.
-        }*/
+        /*
+         * if (entity instanceof ServerPlayer player && entity.isAlive()) { // Broadcast
+         * the terminal to the current player. }
+         */
     }
 
     @Override
@@ -206,8 +228,7 @@ public class SmartGlassesComputer extends ServerComputer implements IPocketAcces
         super.onRemoved();
     }
 
-    @NotNull
-    public SmartGlassesAccess getSmartGlassesAccess() {
+    @NotNull public SmartGlassesAccess getSmartGlassesAccess() {
         return smartGlassesAccess;
     }
 }

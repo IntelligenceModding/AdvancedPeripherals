@@ -1,3 +1,18 @@
+/*
+ *     Copyright 2024 Intelligence Modding @ https://intelligence-modding.de
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *          https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.srendi.advancedperipherals.common.blocks.blockentities;
 
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.DistanceDetectorPeripheral;
@@ -16,7 +31,11 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.SlabType;
-import net.minecraft.world.phys.*;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 
 public class DistanceDetectorEntity extends PeripheralBlockEntity<DistanceDetectorPeripheral> {
@@ -32,21 +51,22 @@ public class DistanceDetectorEntity extends PeripheralBlockEntity<DistanceDetect
         super(APBlockEntityTypes.DISTANCE_DETECTOR.get(), pos, state);
     }
 
-    @NotNull
-    @Override
+    @NotNull @Override
     protected DistanceDetectorPeripheral createPeripheral() {
         return new DistanceDetectorPeripheral(this);
     }
 
     public void setShowLaser(boolean showLaser) {
         if (this.showLaser != showLaser)
-            PacketHandler.sendToAll(new DistanceDetectorSyncPacket(getBlockPos(), getLevel().dimension(), currentDistance, showLaser));
+            PacketHandler.sendToAll(
+                    new DistanceDetectorSyncPacket(getBlockPos(), getLevel().dimension(), currentDistance, showLaser));
         this.showLaser = showLaser;
     }
 
     public void setCurrentDistance(float currentDistance) {
         if (this.currentDistance != currentDistance)
-            PacketHandler.sendToAll(new DistanceDetectorSyncPacket(getBlockPos(), getLevel().dimension(), currentDistance, showLaser));
+            PacketHandler.sendToAll(
+                    new DistanceDetectorSyncPacket(getBlockPos(), getLevel().dimension(), currentDistance, showLaser));
         this.currentDistance = currentDistance;
     }
 
@@ -92,11 +112,15 @@ public class DistanceDetectorEntity extends PeripheralBlockEntity<DistanceDetect
 
     @Override
     public <T extends BlockEntity> void handleTick(Level level, BlockState state, BlockEntityType<T> type) {
-        if (level.getGameTime() % APConfig.PERIPHERALS_CONFIG.distanceDetectorUpdateRate.get() == 0 && shouldCalculatePeriodically) {
-            // We calculate the distance every 2 ticks, so we do not have to run the getDistance function of the peripheral
+        if (level.getGameTime() % APConfig.PERIPHERALS_CONFIG.distanceDetectorUpdateRate.get() == 0
+                && shouldCalculatePeriodically) {
+            // We calculate the distance every 2 ticks, so we do not have to run the
+            // getDistance function of the peripheral
             // on the main thread which prevents the 1 tick yield time of the function.
-            // The calculateDistance function is not thread safe, so we have to run it on the main thread.
-            // It should be okay to run that function every 2 ticks, calculating it does not take too much time.
+            // The calculateDistance function is not thread safe, so we have to run it on
+            // the main thread.
+            // It should be okay to run that function every 2 ticks, calculating it does not
+            // take too much time.
             calculateDistance();
         }
     }
@@ -104,15 +128,20 @@ public class DistanceDetectorEntity extends PeripheralBlockEntity<DistanceDetect
     @Override
     public AABB getRenderBoundingBox() {
         Direction direction = getBlockState().getValue(BaseBlock.ORIENTATION).front();
-        return AABB.ofSize(Vec3.atCenterOf(getBlockPos()), direction.getStepX() * currentDistance + 1, direction.getStepY() * currentDistance + 1, direction.getStepZ() * currentDistance + 1)
-                .move(direction.getStepX() * currentDistance / 2, direction.getStepY() * currentDistance / 2, direction.getStepZ() * currentDistance / 2);
+        return AABB
+                .ofSize(Vec3.atCenterOf(getBlockPos()), direction.getStepX() * currentDistance + 1,
+                        direction.getStepY() * currentDistance + 1, direction.getStepZ() * currentDistance + 1)
+                .move(direction.getStepX() * currentDistance / 2, direction.getStepY() * currentDistance / 2,
+                        direction.getStepZ() * currentDistance / 2);
     }
 
     public double calculateDistance() {
         Direction direction = getBlockState().getValue(BaseBlock.ORIENTATION).front();
         Vec3 center = Vec3.atCenterOf(getBlockPos());
-        Vec3 from = center.add(direction.getStepX() * 0.501, direction.getStepY() * 0.501, direction.getStepZ() * 0.501);
-        Vec3 to = from.add(direction.getStepX() * maxRange, direction.getStepY() * maxRange, direction.getStepZ() * maxRange);
+        Vec3 from = center.add(direction.getStepX() * 0.501, direction.getStepY() * 0.501,
+                direction.getStepZ() * 0.501);
+        Vec3 to = from.add(direction.getStepX() * maxRange, direction.getStepY() * maxRange,
+                direction.getStepZ() * maxRange);
         HitResult result = getResult(to, from);
 
         float distance = calculateDistance(result, center, direction);

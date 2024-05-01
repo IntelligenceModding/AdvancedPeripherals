@@ -1,3 +1,18 @@
+/*
+ *     Copyright 2024 Intelligence Modding @ https://intelligence-modding.de
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *          https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.srendi.advancedperipherals.common.util.inventory;
 
 import appeng.api.stacks.GenericStack;
@@ -9,13 +24,14 @@ import java.util.Map;
 public abstract class GenericFilter {
 
     /**
-     * Try to parse a raw filter table to any existing filter type. Could be a fluid filter, an item filter, maybe something else
-     * in the future.
+     * Try to parse a raw filter table to any existing filter type. Could be a fluid
+     * filter, an item filter, maybe something else in the future.
      * <p>
-     * If the function can't find a valid type for the given name/resource location, it will return an empty filter with
-     * a proper error message.
+     * If the function can't find a valid type for the given name/resource location,
+     * it will return an empty filter with a proper error message.
      *
-     * @param rawFilter The raw filter, which is a map of strings and objects
+     * @param rawFilter
+     *            The raw filter, which is a map of strings and objects
      * @return A pair of the parsed filter and an error message, if there is one
      */
     public static Pair<? extends GenericFilter, String> parseGeneric(Map<?, ?> rawFilter) {
@@ -24,13 +40,14 @@ public abstract class GenericFilter {
         if (!rawFilter.containsKey("name")) {
             if (rawFilter.containsKey("type") && rawFilter.get("type") instanceof String type) {
                 switch (type) {
-                    case "item":
+                    case "item" :
                         return ItemFilter.parse(rawFilter);
-                    case "fluid":
+                    case "fluid" :
                         return FluidFilter.parse(rawFilter);
                 }
             }
-            // If the filter does not contain a name or a type, which should never happen, but players are players, we will just
+            // If the filter does not contain a name or a type, which should never happen,
+            // but players are players, we will just
             // give the ItemFilter the task to parse the filter
             return ItemFilter.parse(rawFilter);
         }
@@ -42,7 +59,8 @@ public abstract class GenericFilter {
         } else if (ItemUtil.getRegistryEntry(name, ForgeRegistries.FLUIDS) != null) {
             return FluidFilter.parse(rawFilter);
         } else {
-            // If the name is in neither of the registries, we will just return an empty filter
+            // If the name is in neither of the registries, we will just return an empty
+            // filter
             return Pair.of(empty(), "NO_VALID_FILTER_TYPE");
         }
 

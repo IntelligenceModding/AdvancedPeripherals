@@ -1,3 +1,18 @@
+/*
+ *     Copyright 2024 Intelligence Modding @ https://intelligence-modding.de
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *          https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.srendi.advancedperipherals.common.addons.computercraft.integrations;
 
 import dan200.computercraft.api.peripheral.IPeripheral;
@@ -25,47 +40,68 @@ public class IntegrationPeripheralProvider implements IPeripheralProvider {
 
     private static final String[] SUPPORTED_MODS = new String[]{"botania", "create", "mekanism", "powah", "dimstorage"};
 
-    private static final PriorityQueue<IPeripheralIntegration> integrations = new PriorityQueue<>(Comparator.comparingInt(IPeripheralIntegration::getPriority));
+    private static final PriorityQueue<IPeripheralIntegration> integrations = new PriorityQueue<>(
+            Comparator.comparingInt(IPeripheralIntegration::getPriority));
 
     private static void registerIntegration(IPeripheralIntegration integration) {
         integrations.add(integration);
     }
 
     /**
-     * Register tile entity integration, better use this method over manual TileEntityIntegration creation, because this method provides type check
+     * Register tile entity integration, better use this method over manual
+     * TileEntityIntegration creation, because this method provides type check
      *
-     * @param integration integration generator
-     * @param tileClass   target integration class
-     * @param <T>         target integration
+     * @param integration
+     *            integration generator
+     * @param tileClass
+     *            target integration class
+     * @param <T>
+     *            target integration
      */
-    public static <T extends BlockEntity> void registerBlockEntityIntegration(Function<BlockEntity, BlockEntityIntegrationPeripheral<T>> integration, Class<T> tileClass) {
+    public static <T extends BlockEntity> void registerBlockEntityIntegration(
+            Function<BlockEntity, BlockEntityIntegrationPeripheral<T>> integration, Class<T> tileClass) {
         registerIntegration(new BlockEntityIntegration(integration, tileClass::isInstance));
     }
 
     /**
-     * Register tile entity integration, better use this method over manual TileEntityIntegration creation, because this method provides type check
+     * Register tile entity integration, better use this method over manual
+     * TileEntityIntegration creation, because this method provides type check
      *
-     * @param integration integration generator
-     * @param tileClass   target integration class
-     * @param priority    Integration priority, lower is better
-     * @param <T>         target integration
+     * @param integration
+     *            integration generator
+     * @param tileClass
+     *            target integration class
+     * @param priority
+     *            Integration priority, lower is better
+     * @param <T>
+     *            target integration
      */
-    public static <T extends BlockEntity> void registerBlockEntityIntegration(Function<BlockEntity, BlockEntityIntegrationPeripheral<T>> integration, Class<T> tileClass, int priority) {
+    public static <T extends BlockEntity> void registerBlockEntityIntegration(
+            Function<BlockEntity, BlockEntityIntegrationPeripheral<T>> integration, Class<T> tileClass, int priority) {
         registerIntegration(new BlockEntityIntegration(integration, tileClass::isInstance, priority));
     }
 
     /**
-     * Register tile entity integration, better use this method over manual TileEntityIntegration creation, because this method provides type check
+     * Register tile entity integration, better use this method over manual
+     * TileEntityIntegration creation, because this method provides type check
      * Provides a predicate for specific block entity checks
      *
-     * @param integration integration generator
-     * @param tileClass   target integration class
-     * @param predicate   target block entity
-     * @param priority    Integration priority, lower is better
-     * @param <T>         target integration
+     * @param integration
+     *            integration generator
+     * @param tileClass
+     *            target integration class
+     * @param predicate
+     *            target block entity
+     * @param priority
+     *            Integration priority, lower is better
+     * @param <T>
+     *            target integration
      */
-    public static <T extends BlockEntity> void registerBlockEntityIntegration(Function<BlockEntity, BlockEntityIntegrationPeripheral<T>> integration, Class<T> tileClass, Predicate<T> predicate, int priority) {
-        registerIntegration(new BlockEntityIntegration(integration, tile -> tileClass.isInstance(tile) && predicate.test((T) tile), priority));
+    public static <T extends BlockEntity> void registerBlockEntityIntegration(
+            Function<BlockEntity, BlockEntityIntegrationPeripheral<T>> integration, Class<T> tileClass,
+            Predicate<T> predicate, int priority) {
+        registerIntegration(new BlockEntityIntegration(integration,
+                tile -> tileClass.isInstance(tile) && predicate.test((T) tile), priority));
     }
 
     public static void load() {
@@ -78,13 +114,14 @@ public class IntegrationPeripheralProvider implements IPeripheralProvider {
                 AdvancedPeripherals.LOGGER.warn("Successfully loaded integration for {}", mod);
                 ((Runnable) obj).run();
             });
-            if (integration.isEmpty()) AdvancedPeripherals.LOGGER.warn("Failed to load integration for {}", mod);
+            if (integration.isEmpty())
+                AdvancedPeripherals.LOGGER.warn("Failed to load integration for {}", mod);
         }
     }
 
-    @NotNull
-    @Override
-    public LazyOptional<IPeripheral> getPeripheral(@NotNull Level level, @NotNull BlockPos blockPos, @NotNull Direction direction) {
+    @NotNull @Override
+    public LazyOptional<IPeripheral> getPeripheral(@NotNull Level level, @NotNull BlockPos blockPos,
+            @NotNull Direction direction) {
         for (IPeripheralIntegration integration : integrations) {
             if (integration.isSuitable(level, blockPos, direction))
                 return LazyOptional.of(() -> integration.buildPeripheral(level, blockPos, direction));

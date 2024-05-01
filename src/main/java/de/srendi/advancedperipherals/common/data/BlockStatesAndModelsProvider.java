@@ -1,3 +1,18 @@
+/*
+ *     Copyright 2024 Intelligence Modding @ https://intelligence-modding.de
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *          https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.srendi.advancedperipherals.common.data;
 
 import de.srendi.advancedperipherals.AdvancedPeripherals;
@@ -8,7 +23,11 @@ import net.minecraft.core.FrontAndTop;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
-import net.minecraftforge.client.model.generators.*;
+import net.minecraftforge.client.model.generators.BlockModelBuilder;
+import net.minecraftforge.client.model.generators.BlockStateProvider;
+import net.minecraftforge.client.model.generators.ConfiguredModel;
+import net.minecraftforge.client.model.generators.ModelFile;
+import net.minecraftforge.client.model.generators.ModelProvider;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.registries.ForgeRegistries;
 
@@ -29,12 +48,14 @@ public class BlockStatesAndModelsProvider extends BlockStateProvider {
         peripheralBlock(APBlocks.PERIPHERAL_CASING.get());
         peripheralBlock(APBlocks.INVENTORY_MANAGER.get(), "front");
         peripheralBlock(APBlocks.REDSTONE_INTEGRATOR.get(), "front");
-        peripheralBlock(APBlocks.BLOCK_READER.get(), generateModel(APBlocks.BLOCK_READER.get(), false, "north", "south", "east", "west", "up", "down"));
+        peripheralBlock(APBlocks.BLOCK_READER.get(),
+                generateModel(APBlocks.BLOCK_READER.get(), false, "north", "south", "east", "west", "up", "down"));
         peripheralBlock(APBlocks.GEO_SCANNER.get(), "front");
-        peripheralBlock(APBlocks.COLONY_INTEGRATOR.get(), generateModel(APBlocks.COLONY_INTEGRATOR.get())
-                .texture("particle", blockTexture(APBlocks.COLONY_INTEGRATOR.get()))
-                .texture("up", blockTexture(net.minecraft.world.level.block.Blocks.OAK_LOG, "top"))
-                .texture("down", blockTexture(net.minecraft.world.level.block.Blocks.OAK_LOG, "top")));
+        peripheralBlock(APBlocks.COLONY_INTEGRATOR.get(),
+                generateModel(APBlocks.COLONY_INTEGRATOR.get())
+                        .texture("particle", blockTexture(APBlocks.COLONY_INTEGRATOR.get()))
+                        .texture("up", blockTexture(net.minecraft.world.level.block.Blocks.OAK_LOG, "top"))
+                        .texture("down", blockTexture(net.minecraft.world.level.block.Blocks.OAK_LOG, "top")));
         peripheralBlock(APBlocks.NBT_STORAGE.get(), "front");
     }
 
@@ -81,9 +102,9 @@ public class BlockStatesAndModelsProvider extends BlockStateProvider {
                 side = "north";
                 particleTexture = blockTexture(block, "front");
             }
-            if (side.equals("back")) side = "south";
+            if (side.equals("back"))
+                side = "south";
             builder.texture(side, blockTexture(block, sideTexture));
-
 
         }
         builder.texture("particle", particleTexture);
@@ -96,7 +117,8 @@ public class BlockStatesAndModelsProvider extends BlockStateProvider {
 
     private ResourceLocation blockTexture(Block block, String offset) {
         ResourceLocation name = key(block);
-        return new ResourceLocation(name.getNamespace(), ModelProvider.BLOCK_FOLDER + "/" + name.getPath() + "_" + offset);
+        return new ResourceLocation(name.getNamespace(),
+                ModelProvider.BLOCK_FOLDER + "/" + name.getPath() + "_" + offset);
     }
 
     private ResourceLocation key(Block block) {

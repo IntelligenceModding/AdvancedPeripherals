@@ -1,3 +1,18 @@
+/*
+ *     Copyright 2024 Intelligence Modding @ https://intelligence-modding.de
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *          https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.srendi.advancedperipherals.common.addons.computercraft.operations;
 
 import de.srendi.advancedperipherals.lib.peripherals.IPeripheralOperation;
@@ -8,12 +23,8 @@ import java.util.Map;
 import java.util.function.UnaryOperator;
 
 public enum SingleOperation implements IPeripheralOperation<SingleOperationContext> {
-    DIG(1000, 1),
-    USE_ON_BLOCK(5000, 1),
-    SUCK(1000, 1),
-    USE_ON_ANIMAL(2500, 10),
-    CAPTURE_ANIMAL(50_000, 100),
-    WARP(1000, DistancePolicy.IGNORED, CountPolicy.MULTIPLY, 1, DistancePolicy.SQRT, CountPolicy.MULTIPLY);
+    DIG(1000, 1), USE_ON_BLOCK(5000, 1), SUCK(1000, 1), USE_ON_ANIMAL(2500, 10), CAPTURE_ANIMAL(50_000, 100), WARP(1000,
+            DistancePolicy.IGNORED, CountPolicy.MULTIPLY, 1, DistancePolicy.SQRT, CountPolicy.MULTIPLY);
 
     private final int defaultCooldown;
     private final DistancePolicy distanceCooldownPolicy;
@@ -24,7 +35,8 @@ public enum SingleOperation implements IPeripheralOperation<SingleOperationConte
     private ForgeConfigSpec.IntValue cooldown;
     private ForgeConfigSpec.IntValue cost;
 
-    SingleOperation(int defaultCooldown, DistancePolicy distanceCooldownPolicy, CountPolicy countCooldownPolicy, int defaultCost, DistancePolicy distanceCostPolicy, CountPolicy countCostPolicy) {
+    SingleOperation(int defaultCooldown, DistancePolicy distanceCooldownPolicy, CountPolicy countCooldownPolicy,
+            int defaultCost, DistancePolicy distanceCostPolicy, CountPolicy countCostPolicy) {
         this.defaultCooldown = defaultCooldown;
         this.defaultCost = defaultCost;
         this.distanceCooldownPolicy = distanceCooldownPolicy;
@@ -34,7 +46,8 @@ public enum SingleOperation implements IPeripheralOperation<SingleOperationConte
     }
 
     SingleOperation(int defaultCooldown, int defaultCost) {
-        this(defaultCooldown, DistancePolicy.IGNORED, CountPolicy.MULTIPLY, defaultCost, DistancePolicy.IGNORED, CountPolicy.MULTIPLY);
+        this(defaultCooldown, DistancePolicy.IGNORED, CountPolicy.MULTIPLY, defaultCost, DistancePolicy.IGNORED,
+                CountPolicy.MULTIPLY);
     }
 
     @Override
@@ -44,12 +57,14 @@ public enum SingleOperation implements IPeripheralOperation<SingleOperationConte
 
     @Override
     public int getCooldown(SingleOperationContext context) {
-        return cooldown.get() * countCooldownPolicy.getFactor(context.getCount()) * distanceCooldownPolicy.getFactor(context.getDistance());
+        return cooldown.get() * countCooldownPolicy.getFactor(context.getCount())
+                * distanceCooldownPolicy.getFactor(context.getDistance());
     }
 
     @Override
     public int getCost(SingleOperationContext context) {
-        return cost.get() * countCostPolicy.getFactor(context.getCount()) * distanceCostPolicy.getFactor(context.getDistance());
+        return cost.get() * countCostPolicy.getFactor(context.getCount())
+                * distanceCostPolicy.getFactor(context.getDistance());
     }
 
     @Override
@@ -73,8 +88,7 @@ public enum SingleOperation implements IPeripheralOperation<SingleOperationConte
     }
 
     public enum DistancePolicy {
-        IGNORED(d -> 1),
-        SQRT(d -> (int) Math.sqrt(d));
+        IGNORED(d -> 1), SQRT(d -> (int) Math.sqrt(d));
 
         private final UnaryOperator<Integer> factorFunction;
 

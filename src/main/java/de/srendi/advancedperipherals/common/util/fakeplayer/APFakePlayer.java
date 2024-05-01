@@ -1,3 +1,18 @@
+/*
+ *     Copyright 2024 Intelligence Modding @ https://intelligence-modding.de
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *          https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.srendi.advancedperipherals.common.util.fakeplayer;
 
 import com.mojang.authlib.GameProfile;
@@ -32,7 +47,11 @@ import net.minecraft.world.level.block.CommandBlock;
 import net.minecraft.world.level.block.StructureBlock;
 import net.minecraft.world.level.block.entity.SignBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.*;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.util.FakePlayer;
@@ -51,9 +70,12 @@ import java.util.function.Predicate;
 
 public class APFakePlayer extends FakePlayer {
     /*
-    Highly inspired by https://github.com/SquidDev-CC/plethora/blob/minecraft-1.12/src/main/java/org/squiddev/plethora/gameplay/PlethoraFakePlayer.java
-    */
-    public static final GameProfile PROFILE = new GameProfile(UUID.fromString("6e483f02-30db-4454-b612-3a167614b276"), "[" + AdvancedPeripherals.MOD_ID + "]");
+     * Highly inspired by
+     * https://github.com/SquidDev-CC/plethora/blob/minecraft-1.12/src/main/java/org
+     * /squiddev/plethora/gameplay/PlethoraFakePlayer.java
+     */
+    public static final GameProfile PROFILE = new GameProfile(UUID.fromString("6e483f02-30db-4454-b612-3a167614b276"),
+            "[" + AdvancedPeripherals.MOD_ID + "]");
     private static final Predicate<Entity> collidablePredicate = EntitySelector.NO_SPECTATORS;
 
     private final WeakReference<Entity> owner;
@@ -92,7 +114,6 @@ public class APFakePlayer extends FakePlayer {
     public void openTextEdit(@NotNull SignBlockEntity sign) {
     }
 
-
     @Override
     public boolean isSilent() {
         return true;
@@ -105,7 +126,8 @@ public class APFakePlayer extends FakePlayer {
     private void setState(Block block, BlockPos pos) {
 
         if (digPosition != null) {
-            gameMode.handleBlockBreakAction(digPosition, ServerboundPlayerActionPacket.Action.ABORT_DESTROY_BLOCK, Direction.EAST, 320, 1);
+            gameMode.handleBlockBreakAction(digPosition, ServerboundPlayerActionPacket.Action.ABORT_DESTROY_BLOCK,
+                    Direction.EAST, 320, 1);
         }
 
         digPosition = pos;
@@ -118,7 +140,8 @@ public class APFakePlayer extends FakePlayer {
         return 0;
     }
 
-    public static <T> Function<APFakePlayer, T> wrapActionWithRot(float yaw, float pitch, Function<APFakePlayer, T> action) {
+    public static <T> Function<APFakePlayer, T> wrapActionWithRot(float yaw, float pitch,
+            Function<APFakePlayer, T> action) {
         return player -> player.<T>doActionWithRot(yaw, pitch, action);
     }
 
@@ -132,7 +155,8 @@ public class APFakePlayer extends FakePlayer {
         }
     }
 
-    public static <T> Function<APFakePlayer, T> wrapActionWithShiftKey(boolean shift, Function<APFakePlayer, T> action) {
+    public static <T> Function<APFakePlayer, T> wrapActionWithShiftKey(boolean shift,
+            Function<APFakePlayer, T> action) {
         return player -> player.<T>doActionWithShiftKey(shift, action);
     }
 
@@ -148,7 +172,8 @@ public class APFakePlayer extends FakePlayer {
 
     @Deprecated(forRemoval = true)
     public Pair<Boolean, String> digBlock(Direction direction) {
-        return doActionWithRot(direction.toYRot() - this.getYRot(), direction == Direction.DOWN ? 90 : direction == Direction.UP ? -90 : 0, APFakePlayer::digBlock);
+        return doActionWithRot(direction.toYRot() - this.getYRot(),
+                direction == Direction.DOWN ? 90 : direction == Direction.UP ? -90 : 0, APFakePlayer::digBlock);
     }
 
     public Pair<Boolean, String> digBlock() {
@@ -194,7 +219,8 @@ public class APFakePlayer extends FakePlayer {
 
             if (currentDamage > 9) {
                 world.playSound(null, pos, state.getSoundType().getHitSound(), SoundSource.NEUTRAL, .25f, 1);
-                manager.handleBlockBreakAction(pos, ServerboundPlayerActionPacket.Action.STOP_DESTROY_BLOCK, direction, 320, 1);
+                manager.handleBlockBreakAction(pos, ServerboundPlayerActionPacket.Action.STOP_DESTROY_BLOCK, direction,
+                        320, 1);
                 manager.destroyBlock(pos);
                 world.destroyBlockProgress(getId(), pos, -1);
                 setState(null, null);
@@ -220,7 +246,8 @@ public class APFakePlayer extends FakePlayer {
 
     public InteractionResult useOnSpecificEntity(@NotNull Entity entity, HitResult result) {
         InteractionResult simpleInteraction = interactOn(entity, InteractionHand.MAIN_HAND);
-        if (simpleInteraction == InteractionResult.SUCCESS) return simpleInteraction;
+        if (simpleInteraction == InteractionResult.SUCCESS)
+            return simpleInteraction;
         if (ForgeHooks.onInteractEntityAt(this, entity, result.getLocation(), InteractionHand.MAIN_HAND) != null) {
             return InteractionResult.FAIL;
         }
@@ -238,20 +265,23 @@ public class APFakePlayer extends FakePlayer {
         if (hit instanceof BlockHitResult blockHit) {
             ItemStack stack = getMainHandItem();
             BlockPos pos = blockHit.getBlockPos();
-            PlayerInteractEvent.RightClickBlock event = ForgeHooks.onRightClickBlock(this, InteractionHand.MAIN_HAND, pos, blockHit);
+            PlayerInteractEvent.RightClickBlock event = ForgeHooks.onRightClickBlock(this, InteractionHand.MAIN_HAND,
+                    pos, blockHit);
             if (event.isCanceled()) {
                 return event.getCancellationResult();
             }
             boolean denied = event.getUseItem() == Event.Result.DENY;
             if (!denied) {
-                InteractionResult result = stack.onItemUseFirst(new UseOnContext(level, this, InteractionHand.MAIN_HAND, stack, blockHit));
+                InteractionResult result = stack
+                        .onItemUseFirst(new UseOnContext(level, this, InteractionHand.MAIN_HAND, stack, blockHit));
                 if (result != InteractionResult.PASS) {
                     return result;
                 }
 
                 boolean bypass = getMainHandItem().doesSneakBypassUse(level, pos, this);
                 if (isShiftKeyDown() || bypass || event.getUseBlock() == Event.Result.ALLOW) {
-                    InteractionResult useType = gameMode.useItemOn(this, level, stack, InteractionHand.MAIN_HAND, blockHit);
+                    InteractionResult useType = gameMode.useItemOn(this, level, stack, InteractionHand.MAIN_HAND,
+                            blockHit);
                     if (useType == InteractionResult.SUCCESS) {
                         return InteractionResult.SUCCESS;
                     }
@@ -261,7 +291,6 @@ public class APFakePlayer extends FakePlayer {
             if (stack.isEmpty() || getCooldowns().isOnCooldown(stack.getItem())) {
                 return InteractionResult.PASS;
             }
-
 
             if (stack.getItem() instanceof BlockItem blockItem) {
                 Block block = blockItem.getBlock();
@@ -275,7 +304,8 @@ public class APFakePlayer extends FakePlayer {
             }
 
             ItemStack copyBeforeUse = stack.copy();
-            InteractionResult result = stack.useOn(new UseOnContext(level, this, InteractionHand.MAIN_HAND, copyBeforeUse, blockHit));
+            InteractionResult result = stack
+                    .useOn(new UseOnContext(level, this, InteractionHand.MAIN_HAND, copyBeforeUse, blockHit));
             if (stack.isEmpty()) {
                 ForgeEventFactory.onPlayerDestroyItem(this, copyBeforeUse, InteractionHand.MAIN_HAND);
             }
@@ -290,8 +320,7 @@ public class APFakePlayer extends FakePlayer {
         return findHit(skipEntity, skipBlock, null);
     }
 
-    @NotNull
-    public HitResult findHit(boolean skipEntity, boolean skipBlock, @Nullable Predicate<Entity> entityFilter) {
+    @NotNull public HitResult findHit(boolean skipEntity, boolean skipBlock, @Nullable Predicate<Entity> entityFilter) {
         AttributeInstance reachAttribute = getAttribute(ForgeMod.REACH_DISTANCE.get());
         if (reachAttribute == null)
             throw new IllegalArgumentException("How did this happened?");
@@ -300,25 +329,31 @@ public class APFakePlayer extends FakePlayer {
         Vec3 origin = new Vec3(getX(), getY(), getZ());
         Vec3 look = getLookAngle();
         Vec3 target = new Vec3(origin.x + look.x * range, origin.y + look.y * range, origin.z + look.z * range);
-        ClipContext traceContext = new ClipContext(origin, target, ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, this);
+        ClipContext traceContext = new ClipContext(origin, target, ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE,
+                this);
         Vec3 directionVec = traceContext.getFrom().subtract(traceContext.getTo());
         Direction traceDirection = Direction.getNearest(directionVec.x, directionVec.y, directionVec.z);
         HitResult blockHit;
         if (skipBlock) {
             blockHit = BlockHitResult.miss(traceContext.getTo(), traceDirection, new BlockPos(traceContext.getTo()));
         } else {
-            blockHit = BlockGetter.traverseBlocks(traceContext.getFrom(), traceContext.getTo(), traceContext, (rayTraceContext, blockPos) -> {
-                if (level.isEmptyBlock(blockPos) || blockPos.equals(blockPosition())) {
-                    return null;
-                }
-                return new BlockHitResult(new Vec3(blockPos.getX(), blockPos.getY(), blockPos.getZ()), traceDirection, blockPos, false);
-            }, rayTraceContext -> BlockHitResult.miss(rayTraceContext.getTo(), traceDirection, new BlockPos(rayTraceContext.getTo())));
+            blockHit = BlockGetter.traverseBlocks(traceContext.getFrom(), traceContext.getTo(), traceContext,
+                    (rayTraceContext, blockPos) -> {
+                        if (level.isEmptyBlock(blockPos) || blockPos.equals(blockPosition())) {
+                            return null;
+                        }
+                        return new BlockHitResult(new Vec3(blockPos.getX(), blockPos.getY(), blockPos.getZ()),
+                                traceDirection, blockPos, false);
+                    }, rayTraceContext -> BlockHitResult.miss(rayTraceContext.getTo(), traceDirection,
+                            new BlockPos(rayTraceContext.getTo())));
         }
 
         if (skipEntity)
             return blockHit;
 
-        List<Entity> entities = level.getEntities(this, getBoundingBox().expandTowards(look.x * range, look.y * range, look.z * range).inflate(1, 1, 1), collidablePredicate);
+        List<Entity> entities = level.getEntities(this,
+                getBoundingBox().expandTowards(look.x * range, look.y * range, look.z * range).inflate(1, 1, 1),
+                collidablePredicate);
 
         LivingEntity closestEntity = null;
         Vec3 closestVec = null;
@@ -354,7 +389,8 @@ public class APFakePlayer extends FakePlayer {
                 }
             }
         }
-        if (closestEntity != null && closestDistance <= range && (blockHit.getType() == HitResult.Type.MISS || distanceToSqr(blockHit.getLocation()) > closestDistance * closestDistance)) {
+        if (closestEntity != null && closestDistance <= range && (blockHit.getType() == HitResult.Type.MISS
+                || distanceToSqr(blockHit.getLocation()) > closestDistance * closestDistance)) {
             return new EntityHitResult(closestEntity, closestVec);
         } else {
             return blockHit;

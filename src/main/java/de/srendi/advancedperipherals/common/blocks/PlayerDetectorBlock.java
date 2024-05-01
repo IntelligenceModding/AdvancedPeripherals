@@ -1,3 +1,18 @@
+/*
+ *     Copyright 2024 Intelligence Modding @ https://intelligence-modding.de
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *          https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.srendi.advancedperipherals.common.blocks;
 
 import dan200.computercraft.api.peripheral.IComputerAccess;
@@ -22,14 +37,14 @@ public class PlayerDetectorBlock extends APBlockEntityBlock<PlayerDetectorEntity
         super(APBlockEntityTypes.PLAYER_DETECTOR, true);
     }
 
-    @Nullable
-    @Override
+    @Nullable @Override
     public BlockEntity newBlockEntity(@NotNull BlockPos pos, @NotNull BlockState state) {
         return APBlockEntityTypes.PLAYER_DETECTOR.get().create(pos, state);
     }
 
     @Override
-    public @NotNull InteractionResult use(@NotNull BlockState state, Level levelIn, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand handIn, @NotNull BlockHitResult hit) {
+    public @NotNull InteractionResult use(@NotNull BlockState state, Level levelIn, @NotNull BlockPos pos,
+            @NotNull Player player, @NotNull InteractionHand handIn, @NotNull BlockHitResult hit) {
         if (!APConfig.PERIPHERALS_CONFIG.enablePlayerDetector.get())
             return super.use(state, levelIn, pos, player, handIn, hit);
         BlockEntity tileEntity = levelIn.getBlockEntity(pos);

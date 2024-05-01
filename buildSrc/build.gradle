@@ -1,0 +1,7 @@
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'com.diffplug.spotless:spotless-lib-extra:2.45.0'
+}

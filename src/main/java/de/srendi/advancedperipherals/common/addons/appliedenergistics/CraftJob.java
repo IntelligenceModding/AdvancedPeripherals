@@ -1,8 +1,27 @@
+/*
+ *     Copyright 2024 Intelligence Modding @ https://intelligence-modding.de
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *          https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.srendi.advancedperipherals.common.addons.appliedenergistics;
 
 import appeng.api.networking.IGrid;
 import appeng.api.networking.IGridNode;
-import appeng.api.networking.crafting.*;
+import appeng.api.networking.crafting.CalculationStrategy;
+import appeng.api.networking.crafting.ICraftingCPU;
+import appeng.api.networking.crafting.ICraftingPlan;
+import appeng.api.networking.crafting.ICraftingService;
+import appeng.api.networking.crafting.ICraftingSimulationRequester;
 import appeng.api.networking.security.IActionSource;
 import appeng.api.stacks.AEKey;
 import dan200.computercraft.api.lua.ILuaCallback;
@@ -36,8 +55,8 @@ public class CraftJob implements ILuaCallback {
     private MethodResult result;
     private LuaException exception;
 
-    public CraftJob(Level world, final IComputerAccess computer, IGridNode node, AEKey item, long amount, IActionSource source,
-                    ICraftingSimulationRequester requester, ICraftingCPU target) {
+    public CraftJob(Level world, final IComputerAccess computer, IGridNode node, AEKey item, long amount,
+            IActionSource source, ICraftingSimulationRequester requester, ICraftingCPU target) {
         this.computer = computer;
         this.node = node;
         this.world = world;
@@ -68,7 +87,7 @@ public class CraftJob implements ILuaCallback {
 
     public void startCrafting() {
         IGrid grid = node.getGrid();
-        if (grid == null) { //true when the block is not connected
+        if (grid == null) { // true when the block is not connected
             fireNotConnected();
             return;
         }
@@ -85,8 +104,10 @@ public class CraftJob implements ILuaCallback {
             return;
         }
 
-        futureJob = crafting.beginCraftingCalculation(world, this.requester, item, amount, CalculationStrategy.REPORT_MISSING_ITEMS);
-        fireEvent(true, "Started calculation of the recipe. After it's finished, the system will start crafting the item.");
+        futureJob = crafting.beginCraftingCalculation(world, this.requester, item, amount,
+                CalculationStrategy.REPORT_MISSING_ITEMS);
+        fireEvent(true,
+                "Started calculation of the recipe. After it's finished, the system will start crafting the item.");
     }
 
     public void maybeCraft() {
@@ -96,7 +117,8 @@ public class CraftJob implements ILuaCallback {
         try {
             job = futureJob.get();
         } catch (ExecutionException | InterruptedException ex) {
-            AdvancedPeripherals.debug("Tried to get job, but job calculation is not done. Should be done.", org.apache.logging.log4j.Level.FATAL);
+            AdvancedPeripherals.debug("Tried to get job, but job calculation is not done. Should be done.",
+                    org.apache.logging.log4j.Level.FATAL);
             ex.printStackTrace();
             return;
         }
@@ -115,7 +137,8 @@ public class CraftJob implements ILuaCallback {
             return;
         }
 
-        //TODO: Create events or methods like `isCraftingFinished` or `getCraftingJobState`
+        // TODO: Create events or methods like `isCraftingFinished` or
+        // `getCraftingJobState`
         ICraftingService crafting = grid.getService(ICraftingService.class);
         crafting.submitJob(job, null, target, false, this.source);
 
@@ -124,11 +147,12 @@ public class CraftJob implements ILuaCallback {
         this.futureJob = null;
     }
 
-    @NotNull
-    @Override
+    @NotNull @Override
     public MethodResult resume(Object[] objects) {
-        if (result != null) return result;
-        if (exception != null) return MethodResult.of(exception);
+        if (result != null)
+            return result;
+        if (exception != null)
+            return MethodResult.of(exception);
         return MethodResult.of();
     }
 }

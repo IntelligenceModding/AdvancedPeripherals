@@ -1,3 +1,18 @@
+/*
+ *     Copyright 2024 Intelligence Modding @ https://intelligence-modding.de
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *          https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.srendi.advancedperipherals.client.screens;
 
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -18,8 +33,10 @@ import org.jetbrains.annotations.NotNull;
 
 public class SmartGlassesScreen extends ComputerScreenBase<SmartGlassesContainer> {
 
-    private static final ResourceLocation BACKGROUND = new ResourceLocation(AdvancedPeripherals.MOD_ID, "textures/gui/smart_glasses_gui.png");
-    public static final ResourceLocation SIDEBAR = new ResourceLocation(AdvancedPeripherals.MOD_ID, "textures/gui/corners_glasses.png");
+    private static final ResourceLocation BACKGROUND = new ResourceLocation(AdvancedPeripherals.MOD_ID,
+            "textures/gui/smart_glasses_gui.png");
+    public static final ResourceLocation SIDEBAR = new ResourceLocation(AdvancedPeripherals.MOD_ID,
+            "textures/gui/corners_glasses.png");
 
     private static final int TEX_WIDTH = 254;
     private static final int TEX_HEIGHT = 217;
@@ -41,7 +58,8 @@ public class SmartGlassesScreen extends ComputerScreenBase<SmartGlassesContainer
 
     @Override
     protected WidgetTerminal createTerminal() {
-        return new WidgetTerminal(terminalData, input, leftPos + ContainerTurtle.BORDER + ComputerSidebar.WIDTH, topPos + ContainerTurtle.BORDER);
+        return new WidgetTerminal(terminalData, input, leftPos + ContainerTurtle.BORDER + ComputerSidebar.WIDTH,
+                topPos + ContainerTurtle.BORDER);
     }
 
     @Override
@@ -69,7 +87,8 @@ public class SmartGlassesScreen extends ComputerScreenBase<SmartGlassesContainer
     @Override
     protected void renderLabels(PoseStack poseStack, int x, int y) {
         FormattedCharSequence formattedcharsequence = currentType.getName().getVisualOrderText();
-        this.font.draw(poseStack, formattedcharsequence, (212 + ComputerSidebar.WIDTH - (float) this.font.width(formattedcharsequence) / 2), 133, 4210752);
+        this.font.draw(poseStack, formattedcharsequence,
+                (212 + ComputerSidebar.WIDTH - (float) this.font.width(formattedcharsequence) / 2), 133, 4210752);
     }
 
     public void setCurrentType(SlotType currentType) {

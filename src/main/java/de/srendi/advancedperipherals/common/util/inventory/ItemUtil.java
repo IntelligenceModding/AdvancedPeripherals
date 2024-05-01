@@ -1,3 +1,18 @@
+/*
+ *     Copyright 2024 Intelligence Modding @ https://intelligence-modding.de
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *          https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.srendi.advancedperipherals.common.util.inventory;
 
 import dan200.computercraft.shared.Registry;
@@ -35,7 +50,8 @@ public class ItemUtil {
         }
 
         T value;
-        if (location != null && forgeRegistry.containsKey(location) && (value = forgeRegistry.getValue(location)) != null) {
+        if (location != null && forgeRegistry.containsKey(location)
+                && (value = forgeRegistry.getValue(location)) != null) {
             return value;
         } else {
             return null;
@@ -43,13 +59,16 @@ public class ItemUtil {
     }
 
     /**
-     * Fingerprints are MD5 hashes generated out of the nbt tag, the registry name and the display name from item stacks
-     * Used to filter inventory specific operations. {@link de.srendi.advancedperipherals.common.addons.computercraft.peripheral.InventoryManagerPeripheral}
+     * Fingerprints are MD5 hashes generated out of the nbt tag, the registry name
+     * and the display name from item stacks Used to filter inventory specific
+     * operations.
+     * {@link de.srendi.advancedperipherals.common.addons.computercraft.peripheral.InventoryManagerPeripheral}
      *
      * @return A generated MD5 hash from the item stack
      */
     public static String getFingerprint(ItemStack stack) {
-        String fingerprint = stack.getOrCreateTag() + getRegistryKey(stack).toString() + stack.getDisplayName().getString();
+        String fingerprint = stack.getOrCreateTag() + getRegistryKey(stack).toString()
+                + stack.getDisplayName().getString();
         try {
             byte[] bytesOfHash = fingerprint.getBytes(StandardCharsets.UTF_8);
             MessageDigest md = MessageDigest.getInstance("MD5");
@@ -73,7 +92,7 @@ public class ItemUtil {
         return stack;
     }
 
-    //Gathers all items in handler and returns them
+    // Gathers all items in handler and returns them
     public static List<ItemStack> getItemsFromItemHandler(IItemHandler handler) {
         List<ItemStack> items = new ArrayList<>(handler.getSlots());
         for (int slot = 0; slot < handler.getSlots(); slot++) {

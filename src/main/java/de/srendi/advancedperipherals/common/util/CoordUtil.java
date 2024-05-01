@@ -1,3 +1,18 @@
+/*
+ *     Copyright 2024 Intelligence Modding @ https://intelligence-modding.de
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *          https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.srendi.advancedperipherals.common.util;
 
 import dan200.computercraft.api.lua.LuaException;
@@ -16,8 +31,10 @@ import java.util.Locale;
 
 public class CoordUtil {
 
-    public static boolean isInRange(@Nullable BlockPos pos, @Nullable Level world, @Nullable Player player, int range, int maxRange) {
-        // There are rare cases where these can be null. For example if a player detector pocket computer runs while not in a player inventory
+    public static boolean isInRange(@Nullable BlockPos pos, @Nullable Level world, @Nullable Player player, int range,
+            int maxRange) {
+        // There are rare cases where these can be null. For example if a player
+        // detector pocket computer runs while not in a player inventory
         // Fixes https://github.com/SirEndii/AdvancedPeripherals/issues/356
         if (pos == null || world == null || player == null)
             return false;
@@ -27,7 +44,8 @@ public class CoordUtil {
     }
 
     // To fix issue #439
-    private static boolean isPlayerInBlockRange(@NotNull BlockPos pos, @NotNull Level world, @NotNull Player player, double range) {
+    private static boolean isPlayerInBlockRange(@NotNull BlockPos pos, @NotNull Level world, @NotNull Player player,
+            double range) {
         if (range != -1 && player.getLevel() != world)
             return false;
 
@@ -37,24 +55,28 @@ public class CoordUtil {
             ey = y;
             y = tmp;
         }
-        double bx = (double)(pos.getX() + 0.5), by = (double)(pos.getY() + 0.5), bz = (double)(pos.getZ() + 0.5);
+        double bx = (double) (pos.getX() + 0.5), by = (double) (pos.getY() + 0.5), bz = (double) (pos.getZ() + 0.5);
         return Math.abs(x - bx) <= range && Math.abs(z - bz) <= range &&
-            // check both feet position and eye position, and ensure it will work if player is higher than 2 blocks
-            ((y <= by && by <= ey) || Math.min(Math.abs(y - by), Math.abs(ey - by)) <= range);
+        // check both feet position and eye position, and ensure it will work if player
+        // is higher than 2 blocks
+                ((y <= by && by <= ey) || Math.min(Math.abs(y - by), Math.abs(ey - by)) <= range);
     }
 
-    public static boolean isInRange(@Nullable BlockPos pos, @Nullable Level world, @Nullable Player player, int x, int y, int z, int maxRange) {
+    public static boolean isInRange(@Nullable BlockPos pos, @Nullable Level world, @Nullable Player player, int x,
+            int y, int z, int maxRange) {
         if (pos == null || world == null || player == null)
             return false;
 
-        // It shouldn't multiply by 2 here, but it should have the same behavior as isInRange when x == y == z == range
+        // It shouldn't multiply by 2 here, but it should have the same behavior as
+        // isInRange when x == y == z == range
         x = Math.min(Math.abs(x), maxRange != -1 ? maxRange : Integer.MAX_VALUE);
         y = Math.min(Math.abs(y), maxRange != -1 ? maxRange : Integer.MAX_VALUE);
         z = Math.min(Math.abs(z), maxRange != -1 ? maxRange : Integer.MAX_VALUE);
         return isPlayerInBlockRangeXYZ(pos, world, player, (double) x, (double) y, (double) z, maxRange);
     }
 
-    private static boolean isPlayerInBlockRangeXYZ(@NotNull BlockPos pos, @NotNull Level world, @NotNull Player player, double dx, double dy, double dz, int maxRange) {
+    private static boolean isPlayerInBlockRangeXYZ(@NotNull BlockPos pos, @NotNull Level world, @NotNull Player player,
+            double dx, double dy, double dz, int maxRange) {
         if (maxRange != -1 && player.getLevel() != world)
             return false;
 
@@ -64,22 +86,26 @@ public class CoordUtil {
             ey = y;
             y = tmp;
         }
-        double bx = (double)(pos.getX() + 0.5), by = (double)(pos.getY() + 0.5), bz = (double)(pos.getZ() + 0.5);
-        return Math.abs(x - bx) <= dx && Math.abs(z - bz) <= dz &&
-            ((y <= by && by <= ey) || Math.min(Math.abs(y - by), Math.abs(ey - by)) <= dy);
+        double bx = (double) (pos.getX() + 0.5), by = (double) (pos.getY() + 0.5), bz = (double) (pos.getZ() + 0.5);
+        return Math.abs(x - bx) <= dx && Math.abs(z - bz) <= dz
+                && ((y <= by && by <= ey) || Math.min(Math.abs(y - by), Math.abs(ey - by)) <= dy);
     }
 
-    public static boolean isInRange(@Nullable BlockPos blockPos, @Nullable Player player, @Nullable Level world, @NotNull BlockPos firstPos, @NotNull BlockPos secondPos, int maxRange) {
+    public static boolean isInRange(@Nullable BlockPos blockPos, @Nullable Player player, @Nullable Level world,
+            @NotNull BlockPos firstPos, @NotNull BlockPos secondPos, int maxRange) {
         if (blockPos == null || world == null || player == null)
             return false;
 
         double i = Math.abs(player.getX() - blockPos.getX());
         double j = Math.abs(player.getZ() - blockPos.getZ());
-        // Check if the distance of the player is within the max range of the player detector
-        // Use manhattan distance, not euclidean distance to keep same behavior than other `isInRange` functions
+        // Check if the distance of the player is within the max range of the player
+        // detector
+        // Use manhattan distance, not euclidean distance to keep same behavior than
+        // other `isInRange` functions
         if (i + j > (maxRange != -1 ? maxRange : Integer.MAX_VALUE))
             return false;
-        return world.getNearbyPlayers(TargetingConditions.forNonCombat(), null, new AABB(firstPos, secondPos)).contains(player);
+        return world.getNearbyPlayers(TargetingConditions.forNonCombat(), null, new AABB(firstPos, secondPos))
+                .contains(player);
     }
 
     public static Direction getDirection(FrontAndTop orientation, String computerSide) throws LuaException {

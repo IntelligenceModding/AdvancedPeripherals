@@ -1,3 +1,18 @@
+/*
+ *     Copyright 2024 Intelligence Modding @ https://intelligence-modding.de
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *          https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.srendi.advancedperipherals.common.addons.computercraft.peripheral;
 
 import com.refinedmods.refinedstorage.api.autocrafting.task.CalculationResultType;
@@ -19,7 +34,12 @@ import de.srendi.advancedperipherals.common.addons.refinedstorage.RsItemHandler;
 import de.srendi.advancedperipherals.common.blocks.blockentities.RsBridgeEntity;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.util.Pair;
-import de.srendi.advancedperipherals.common.util.inventory.*;
+import de.srendi.advancedperipherals.common.util.inventory.FluidFilter;
+import de.srendi.advancedperipherals.common.util.inventory.FluidUtil;
+import de.srendi.advancedperipherals.common.util.inventory.IStorageSystemPeripheral;
+import de.srendi.advancedperipherals.common.util.inventory.InventoryUtil;
+import de.srendi.advancedperipherals.common.util.inventory.ItemFilter;
+import de.srendi.advancedperipherals.common.util.inventory.ItemUtil;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.ItemStack;
@@ -33,7 +53,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwner<RsBridgeEntity>> implements IStorageSystemPeripheral {
+public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwner<RsBridgeEntity>>
+        implements
+            IStorageSystemPeripheral {
 
     public static final String PERIPHERAL_TYPE = "rs_bridge";
 
@@ -75,7 +97,6 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         return MethodResult.of(getNode().isActive());
     }
 
-
     @Override
     @LuaFunction(mainThread = true)
     public final MethodResult listItems() {
@@ -92,7 +113,8 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
             return notConnected();
 
         List<Object> items = new ArrayList<>();
-        RefinedStorage.getCraftableItems(getNetwork()).forEach(item -> items.add(RefinedStorage.getObjectFromStack(item.copy(), getNetwork())));
+        RefinedStorage.getCraftableItems(getNetwork())
+                .forEach(item -> items.add(RefinedStorage.getObjectFromStack(item.copy(), getNetwork())));
         return MethodResult.of(items);
     }
 
@@ -103,7 +125,8 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
             return notConnected();
 
         List<Object> fluids = new ArrayList<>();
-        RefinedStorage.getCraftableFluids(getNetwork()).forEach(fluid -> fluids.add(RefinedStorage.getObjectFromFluid(fluid, getNetwork())));
+        RefinedStorage.getCraftableFluids(getNetwork())
+                .forEach(fluid -> fluids.add(RefinedStorage.getObjectFromFluid(fluid, getNetwork())));
         return MethodResult.of(fluids);
     }
 
@@ -259,9 +282,11 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (parsedFilter.isEmpty())
             return MethodResult.of(false, "EMPTY_FILTER");
 
-        ItemStack patternItem = RefinedStorage.findStackFromFilter(getNetwork(), getNetwork().getCraftingManager(), parsedFilter);
+        ItemStack patternItem = RefinedStorage.findStackFromFilter(getNetwork(), getNetwork().getCraftingManager(),
+                parsedFilter);
 
-        return MethodResult.of(RefinedStorage.getObjectFromPattern(getNetwork().getCraftingManager().getPattern(patternItem), getNetwork()));
+        return MethodResult.of(RefinedStorage
+                .getObjectFromPattern(getNetwork().getCraftingManager().getPattern(patternItem), getNetwork()));
     }
 
     @Override
@@ -270,7 +295,8 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         return null;
     }
 
-    protected MethodResult exportToChest(@NotNull IArguments arguments, @Nullable IItemHandler targetInventory) throws LuaException {
+    protected MethodResult exportToChest(@NotNull IArguments arguments, @Nullable IItemHandler targetInventory)
+            throws LuaException {
         RsItemHandler itemHandler = new RsItemHandler(getNetwork());
         if (targetInventory == null)
             return MethodResult.of(0, "INVALID_TARGET");
@@ -282,7 +308,8 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         return MethodResult.of(InventoryUtil.moveItem(itemHandler, targetInventory, filter.getLeft()), null);
     }
 
-    protected MethodResult importToSystem(@NotNull IArguments arguments, @Nullable IItemHandler targetInventory) throws LuaException {
+    protected MethodResult importToSystem(@NotNull IArguments arguments, @Nullable IItemHandler targetInventory)
+            throws LuaException {
         RsItemHandler itemHandler = new RsItemHandler(getNetwork());
         if (targetInventory == null)
             return MethodResult.of(0, "INVALID_TARGET");
@@ -294,7 +321,8 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         return MethodResult.of(InventoryUtil.moveItem(targetInventory, itemHandler, filter.getLeft()), null);
     }
 
-    protected MethodResult exportToTank(@NotNull IArguments arguments, @Nullable IFluidHandler targetInventory) throws LuaException {
+    protected MethodResult exportToTank(@NotNull IArguments arguments, @Nullable IFluidHandler targetInventory)
+            throws LuaException {
         RsFluidHandler itemHandler = new RsFluidHandler(getNetwork());
         if (targetInventory == null)
             return MethodResult.of(0, "INVALID_TARGET");
@@ -306,7 +334,8 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         return MethodResult.of(InventoryUtil.moveFluid(itemHandler, targetInventory, filter.getLeft()), null);
     }
 
-    protected MethodResult importToSystem(@NotNull IArguments arguments, @Nullable IFluidHandler targetInventory) throws LuaException {
+    protected MethodResult importToSystem(@NotNull IArguments arguments, @Nullable IFluidHandler targetInventory)
+            throws LuaException {
         RsFluidHandler itemHandler = new RsFluidHandler(getNetwork());
         if (targetInventory == null)
             return MethodResult.of(0, "INVALID_TARGET");
@@ -327,7 +356,8 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         String side = arguments.getString(1);
         IItemHandler inventory;
 
-        if (Direction.byName(side.toUpperCase(Locale.ROOT)) == null && ComputerSide.valueOfInsensitive(side.toUpperCase(Locale.ROOT)) == null) {
+        if (Direction.byName(side.toUpperCase(Locale.ROOT)) == null
+                && ComputerSide.valueOfInsensitive(side.toUpperCase(Locale.ROOT)) == null) {
             inventory = InventoryUtil.getHandlerFromDirection(arguments.getString(1), owner);
         } else {
             inventory = InventoryUtil.getHandlerFromName(computer, arguments.getString(1));
@@ -345,7 +375,8 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         String side = arguments.getString(1);
         IItemHandler inventory;
 
-        if (Direction.byName(side.toUpperCase(Locale.ROOT)) == null && ComputerSide.valueOfInsensitive(side.toUpperCase(Locale.ROOT)) == null) {
+        if (Direction.byName(side.toUpperCase(Locale.ROOT)) == null
+                && ComputerSide.valueOfInsensitive(side.toUpperCase(Locale.ROOT)) == null) {
             inventory = InventoryUtil.getHandlerFromDirection(arguments.getString(1), owner);
         } else {
             inventory = InventoryUtil.getHandlerFromName(computer, arguments.getString(1));
@@ -363,14 +394,16 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         String side = arguments.getString(1);
         IFluidHandler fluidHandler;
 
-        if (Direction.byName(side.toUpperCase(Locale.ROOT)) == null && ComputerSide.valueOfInsensitive(side.toUpperCase(Locale.ROOT)) == null) {
+        if (Direction.byName(side.toUpperCase(Locale.ROOT)) == null
+                && ComputerSide.valueOfInsensitive(side.toUpperCase(Locale.ROOT)) == null) {
             fluidHandler = FluidUtil.getHandlerFromDirection(arguments.getString(1), owner);
         } else {
             fluidHandler = FluidUtil.getHandlerFromName(computer, arguments.getString(1));
         }
 
         if (fluidHandler == null)
-            return MethodResult.of(0, "The target tank does not exist. Make sure the bridge is exposed in the computer network. Reach out to our discord or our documentation for help.");
+            return MethodResult.of(0,
+                    "The target tank does not exist. Make sure the bridge is exposed in the computer network. Reach out to our discord or our documentation for help.");
 
         return exportToTank(arguments, fluidHandler);
     }
@@ -384,14 +417,16 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         String side = arguments.getString(1);
         IFluidHandler fluidHandler;
 
-        if (Direction.byName(side.toUpperCase(Locale.ROOT)) == null && ComputerSide.valueOfInsensitive(side.toUpperCase(Locale.ROOT)) == null) {
+        if (Direction.byName(side.toUpperCase(Locale.ROOT)) == null
+                && ComputerSide.valueOfInsensitive(side.toUpperCase(Locale.ROOT)) == null) {
             fluidHandler = FluidUtil.getHandlerFromDirection(arguments.getString(1), owner);
         } else {
             fluidHandler = FluidUtil.getHandlerFromName(computer, arguments.getString(1));
         }
 
         if (fluidHandler == null)
-            return MethodResult.of(0, "The target tank does not exist. Make sure the bridge is exposed in the computer network. Reach out to our discord or our documentation for help.");
+            return MethodResult.of(0,
+                    "The target tank does not exist. Make sure the bridge is exposed in the computer network. Reach out to our discord or our documentation for help.");
 
         return importToSystem(arguments, fluidHandler);
     }
@@ -406,7 +441,9 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (filter.rightPresent())
             return MethodResult.of(null, filter.getRight());
 
-        return MethodResult.of(RefinedStorage.getObjectFromStack(RefinedStorage.findStackFromFilter(getNetwork(), getNetwork().getCraftingManager(), filter.getLeft()), getNetwork()));
+        return MethodResult.of(RefinedStorage.getObjectFromStack(
+                RefinedStorage.findStackFromFilter(getNetwork(), getNetwork().getCraftingManager(), filter.getLeft()),
+                getNetwork()));
     }
 
     @Override
@@ -421,12 +458,12 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (!isAvailable())
             return notConnected();
 
-
         Pair<ItemFilter, String> filter = ItemFilter.parse(arguments.getTable(0));
         if (filter.rightPresent())
             return MethodResult.of(null, filter.getRight());
 
-        ItemStack stack = RefinedStorage.findStackFromFilter(getNetwork(), getNetwork().getCraftingManager(), filter.getLeft());
+        ItemStack stack = RefinedStorage.findStackFromFilter(getNetwork(), getNetwork().getCraftingManager(),
+                filter.getLeft());
         if (stack == null)
             return MethodResult.of(null, "NOT_CRAFTABLE");
 
@@ -448,7 +485,8 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (filter.rightPresent())
             return MethodResult.of(null, filter.getRight());
 
-        FluidStack stack = RefinedStorage.findFluidFromFilter(getNetwork(), getNetwork().getCraftingManager(), filter.getLeft());
+        FluidStack stack = RefinedStorage.findFluidFromFilter(getNetwork(), getNetwork().getCraftingManager(),
+                filter.getLeft());
         if (stack == null)
             return MethodResult.of(null, "NOT_CRAFTABLE");
 
@@ -479,7 +517,8 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (filter.rightPresent())
             return MethodResult.of(null, filter.getRight());
 
-        ItemStack stack = RefinedStorage.findStackFromFilter(getNetwork(), getNetwork().getCraftingManager(), filter.getLeft());
+        ItemStack stack = RefinedStorage.findStackFromFilter(getNetwork(), getNetwork().getCraftingManager(),
+                filter.getLeft());
         if (stack == null)
             return MethodResult.of(null, "NOT_CRAFTABLE");
 

@@ -1,3 +1,18 @@
+/*
+ *     Copyright 2024 Intelligence Modding @ https://intelligence-modding.de
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *          https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.srendi.advancedperipherals.common.util.inventory;
 
 import dan200.computercraft.api.lua.LuaException;
@@ -31,8 +46,7 @@ public class FluidUtil {
     private FluidUtil() {
     }
 
-    @Nullable
-    public static IFluidHandler extractHandler(@Nullable Object object) {
+    @Nullable public static IFluidHandler extractHandler(@Nullable Object object) {
         if (object instanceof IFluidHandler fluidHandler)
             return fluidHandler;
 
@@ -44,8 +58,8 @@ public class FluidUtil {
         return null;
     }
 
-    @NotNull
-    public static IFluidHandler getHandlerFromDirection(@NotNull String direction, @NotNull IPeripheralOwner owner) throws LuaException {
+    @NotNull public static IFluidHandler getHandlerFromDirection(@NotNull String direction, @NotNull IPeripheralOwner owner)
+            throws LuaException {
         Level level = owner.getLevel();
         Objects.requireNonNull(level);
         Direction relativeDirection = CoordUtil.getDirection(owner.getOrientation(), direction);
@@ -59,11 +73,11 @@ public class FluidUtil {
         return handler;
     }
 
-    @Nullable
-    public static IFluidHandler getHandlerFromName(@NotNull IComputerAccess access, String name) throws LuaException {
+    @Nullable public static IFluidHandler getHandlerFromName(@NotNull IComputerAccess access, String name) throws LuaException {
         IPeripheral location = access.getAvailablePeripheral(name);
 
-        // Tanks/Block Entities can't be accessed if the bridge is not exposed to the same network as the target tank/block entity
+        // Tanks/Block Entities can't be accessed if the bridge is not exposed to the
+        // same network as the target tank/block entity
         // This can occur when the bridge was wrapped via a side and not via modems
         if (location == null)
             return null;
@@ -74,9 +88,9 @@ public class FluidUtil {
         return handler;
     }
 
-    @NotNull
-    public static String getFingerprint(@NotNull FluidStack stack) {
-        String fingerprint = stack.getOrCreateTag() + getRegistryKey(stack).toString() + stack.getDisplayName().getString();
+    @NotNull public static String getFingerprint(@NotNull FluidStack stack) {
+        String fingerprint = stack.getOrCreateTag() + getRegistryKey(stack).toString()
+                + stack.getDisplayName().getString();
         try {
             byte[] bytesOfHash = fingerprint.getBytes(StandardCharsets.UTF_8);
             MessageDigest md = MessageDigest.getInstance("MD5");

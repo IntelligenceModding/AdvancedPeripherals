@@ -1,3 +1,18 @@
+/*
+ *     Copyright 2024 Intelligence Modding @ https://intelligence-modding.de
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *          https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.srendi.advancedperipherals.common.addons.computercraft.peripheral;
 
 import dan200.computercraft.api.lua.IArguments;
@@ -38,7 +53,14 @@ import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.server.ServerLifecycleHooks;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.function.Function;
 
 import static de.srendi.advancedperipherals.common.addons.computercraft.operations.SphereOperation.SCAN_ENTITIES;
@@ -124,7 +146,8 @@ public class EnvironmentDetectorPeripheral extends BasePeripheral<IPeripheralOwn
     @LuaFunction(mainThread = true)
     public final boolean isSlimeChunk() {
         ChunkPos chunkPos = new ChunkPos(getPos());
-        return WorldgenRandom.seedSlimeChunk(chunkPos.x, chunkPos.z, ((WorldGenLevel) getLevel()).getSeed(), 987234911L).nextInt(10) == 0;
+        return WorldgenRandom.seedSlimeChunk(chunkPos.x, chunkPos.z, ((WorldGenLevel) getLevel()).getSeed(), 987234911L)
+                .nextInt(10) == 0;
     }
 
     @LuaFunction(mainThread = true)
@@ -140,7 +163,8 @@ public class EnvironmentDetectorPeripheral extends BasePeripheral<IPeripheralOwn
     @LuaFunction(mainThread = true)
     public final Set<String> listDimensions() {
         Set<String> dimensions = new HashSet<>();
-        ServerLifecycleHooks.getCurrentServer().getAllLevels().forEach(serverWorld -> dimensions.add(serverWorld.dimension().location().getPath()));
+        ServerLifecycleHooks.getCurrentServer().getAllLevels()
+                .forEach(serverWorld -> dimensions.add(serverWorld.dimension().location().getPath()));
         return dimensions;
     }
 
@@ -197,7 +221,8 @@ public class EnvironmentDetectorPeripheral extends BasePeripheral<IPeripheralOwn
     }
 
     @LuaFunction(mainThread = true)
-    public final MethodResult scanEntities(@NotNull IComputerAccess access, @NotNull IArguments arguments) throws LuaException {
+    public final MethodResult scanEntities(@NotNull IComputerAccess access, @NotNull IArguments arguments)
+            throws LuaException {
         int radius = arguments.getInt(0);
         return withOperation(SCAN_ENTITIES, new SphereOperationContext(radius), context -> {
             if (radius > SCAN_ENTITIES.getMaxCostRadius())
@@ -207,7 +232,8 @@ public class EnvironmentDetectorPeripheral extends BasePeripheral<IPeripheralOwn
             BlockPos pos = owner.getPos();
             AABB box = new AABB(pos);
             List<Map<String, Object>> entities = new ArrayList<>();
-            getLevel().getEntities((Entity) null, box.inflate(radius), LivingEntity.class::isInstance).forEach(entity -> entities.add(LuaConverter.completeEntityWithPositionToLua(entity, ItemStack.EMPTY, pos)));
+            getLevel().getEntities((Entity) null, box.inflate(radius), LivingEntity.class::isInstance).forEach(
+                    entity -> entities.add(LuaConverter.completeEntityWithPositionToLua(entity, ItemStack.EMPTY, pos)));
             return MethodResult.of(entities);
         }, null);
     }

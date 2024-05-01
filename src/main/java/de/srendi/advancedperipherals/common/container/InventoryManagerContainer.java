@@ -1,3 +1,18 @@
+/*
+ *     Copyright 2024 Intelligence Modding @ https://intelligence-modding.de
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *          https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.srendi.advancedperipherals.common.container;
 
 import de.srendi.advancedperipherals.common.container.base.BaseContainer;
@@ -21,7 +36,8 @@ public class InventoryManagerContainer extends BaseContainer {
         layoutPlayerInventorySlots(7, 84);
         if (tileEntity != null) {
             tileEntity.getCapability(ForgeCapabilities.ITEM_HANDLER).ifPresent(handler -> {
-                addSlot(new SlotInputHandler(handler, 0, 79, 29, new SlotCondition().setNeededItem(APItems.MEMORY_CARD.get()))); //Input
+                addSlot(new SlotInputHandler(handler, 0, 79, 29,
+                        new SlotCondition().setNeededItem(APItems.MEMORY_CARD.get()))); // Input
             });
         }
     }
@@ -31,8 +47,7 @@ public class InventoryManagerContainer extends BaseContainer {
         return true;
     }
 
-    @NotNull
-    @Override
+    @NotNull @Override
     public ItemStack quickMoveStack(@NotNull Player player, int index) {
         ItemStack itemstack = ItemStack.EMPTY;
         Slot slot = this.slots.get(index);

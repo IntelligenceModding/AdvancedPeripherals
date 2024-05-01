@@ -1,3 +1,18 @@
+/*
+ *     Copyright 2024 Intelligence Modding @ https://intelligence-modding.de
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *          https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.srendi.advancedperipherals.common.addons.computercraft.owner;
 
 import de.srendi.advancedperipherals.common.configuration.APConfig;
@@ -6,7 +21,9 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import org.jetbrains.annotations.NotNull;
 
-public class TileEntityFuelAbility<T extends BlockEntity & IPeripheralTileEntity> extends FuelAbility<BlockEntityPeripheralOwner<T>> {
+public class TileEntityFuelAbility<T extends BlockEntity & IPeripheralTileEntity>
+        extends
+            FuelAbility<BlockEntityPeripheralOwner<T>> {
 
     public TileEntityFuelAbility(@NotNull BlockEntityPeripheralOwner<T> owner) {
         super(owner);
@@ -37,12 +54,16 @@ public class TileEntityFuelAbility<T extends BlockEntity & IPeripheralTileEntity
 
     @Override
     public int getFuelCount() {
-        return owner.tileEntity.getCapability(ForgeCapabilities.ENERGY).map(storage -> storage.getEnergyStored() / APConfig.METAPHYSICS_CONFIG.energyToFuelRate.get()).orElse(0);
+        return owner.tileEntity.getCapability(ForgeCapabilities.ENERGY)
+                .map(storage -> storage.getEnergyStored() / APConfig.METAPHYSICS_CONFIG.energyToFuelRate.get())
+                .orElse(0);
     }
 
     @Override
     public int getFuelMaxCount() {
-        return owner.tileEntity.getCapability(ForgeCapabilities.ENERGY).map(storage -> storage.getMaxEnergyStored() / APConfig.METAPHYSICS_CONFIG.energyToFuelRate.get()).orElse(0);
+        return owner.tileEntity.getCapability(ForgeCapabilities.ENERGY)
+                .map(storage -> storage.getMaxEnergyStored() / APConfig.METAPHYSICS_CONFIG.energyToFuelRate.get())
+                .orElse(0);
     }
 
     @Override

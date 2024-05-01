@@ -1,3 +1,18 @@
+/*
+ *     Copyright 2024 Intelligence Modding @ https://intelligence-modding.de
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *          https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.srendi.advancedperipherals.common.addons.computercraft.peripheral;
 
 import dan200.computercraft.api.lua.LuaException;
@@ -23,8 +38,8 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.PlayerArmorInvWrapper;
 import net.minecraftforge.items.wrapper.PlayerInvWrapper;
 import net.minecraftforge.items.wrapper.PlayerOffhandInvWrapper;
-
 import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -44,14 +59,15 @@ public class InventoryManagerPeripheral extends BasePeripheral<BlockEntityPeriph
 
     @LuaFunction
     public final String getOwner() throws LuaException {
-        if (owner.getOwner() == null) return null;
+        if (owner.getOwner() == null)
+            return null;
         return getOwnerPlayer().getName().getString();
     }
 
-
-    //Add the specified item to the player
-    //The item is specified the same as with the RS/ME bridge:
-    //{name="minecraft:enchanted_book", count=1, nbt="ae70053c97f877de546b0248b9ddf525"}
+    // Add the specified item to the player
+    // The item is specified the same as with the RS/ME bridge:
+    // {name="minecraft:enchanted_book", count=1,
+    // nbt="ae70053c97f877de546b0248b9ddf525"}
     @LuaFunction(mainThread = true)
     public final MethodResult addItemToPlayer(String invDirection, Map<?, ?> item) throws LuaException {
         Pair<ItemFilter, String> filter = ItemFilter.parse(item);
@@ -65,13 +81,16 @@ public class InventoryManagerPeripheral extends BasePeripheral<BlockEntityPeriph
         Direction direction = validateSide(invDirection);
 
         BlockEntity targetEntity = owner.getLevel().getBlockEntity(owner.getPos().relative(direction));
-        IItemHandler inventoryFrom = targetEntity != null ? targetEntity.getCapability(ForgeCapabilities.ITEM_HANDLER, direction).resolve().orElse(null) : null;
+        IItemHandler inventoryFrom = targetEntity != null
+                ? targetEntity.getCapability(ForgeCapabilities.ITEM_HANDLER, direction).resolve().orElse(null)
+                : null;
         Pair<IItemHandler, Integer> inventoryTo = getHandlerFromSlot(filter.getToSlot());
 
         inventoryTo.ifRightPresent(slot -> filter.toSlot = slot);
 
-        //if (invSlot >= inventoryTo.getSlots() || invSlot < 0)
-        //  throw new LuaException("Inventory out of bounds " + invSlot + " (max: " + (inventoryTo.getSlots() - 1) + ")");
+        // if (invSlot >= inventoryTo.getSlots() || invSlot < 0)
+        // throw new LuaException("Inventory out of bounds " + invSlot + " (max: " +
+        // (inventoryTo.getSlots() - 1) + ")");
 
         return InventoryUtil.moveItem(inventoryFrom, inventoryTo.getLeft(), filter);
     }
@@ -90,7 +109,9 @@ public class InventoryManagerPeripheral extends BasePeripheral<BlockEntityPeriph
 
         BlockEntity targetEntity = owner.getLevel().getBlockEntity(owner.getPos().relative(direction));
         Pair<IItemHandler, Integer> inventoryFrom = getHandlerFromSlot(filter.getFromSlot());
-        IItemHandler inventoryTo = targetEntity != null ? targetEntity.getCapability(ForgeCapabilities.ITEM_HANDLER, direction).resolve().orElse(null) : null;
+        IItemHandler inventoryTo = targetEntity != null
+                ? targetEntity.getCapability(ForgeCapabilities.ITEM_HANDLER, direction).resolve().orElse(null)
+                : null;
 
         if (inventoryTo == null)
             return MethodResult.of(0, "INVENTORY_TO_INVALID");
@@ -103,7 +124,8 @@ public class InventoryManagerPeripheral extends BasePeripheral<BlockEntityPeriph
     @LuaFunction(value = {"list", "getItems"}, mainThread = true)
     public final List<Object> getItems() throws LuaException {
         List<Object> items = new ArrayList<>();
-        int i = 0; //Used to let users easily sort the items by the slots. Also, a better way for the user to see where an item actually is
+        int i = 0; // Used to let users easily sort the items by the slots. Also, a better way for
+                    // the user to see where an item actually is
         for (ItemStack stack : getOwnerPlayer().getInventory().items) {
             ItemStack copiedStack = stack.copy();
             if (!copiedStack.isEmpty())
@@ -119,7 +141,9 @@ public class InventoryManagerPeripheral extends BasePeripheral<BlockEntityPeriph
         Direction direction = validateSide(target);
 
         BlockEntity targetEntity = owner.getLevel().getBlockEntity(owner.getPos().relative(direction));
-        IItemHandler inventoryTo = targetEntity != null ? targetEntity.getCapability(ForgeCapabilities.ITEM_HANDLER, direction).resolve().orElse(null) : null;
+        IItemHandler inventoryTo = targetEntity != null
+                ? targetEntity.getCapability(ForgeCapabilities.ITEM_HANDLER, direction).resolve().orElse(null)
+                : null;
 
         if (inventoryTo == null)
             return MethodResult.of(null, "INVENTORY_TO_INVALID");
@@ -160,7 +184,8 @@ public class InventoryManagerPeripheral extends BasePeripheral<BlockEntityPeriph
         int i = 0;
         for (ItemStack stack : getOwnerPlayer().getInventory().armor) {
             if (!stack.isEmpty()) {
-                if (index == i - 100) return true;
+                if (index == i - 100)
+                    return true;
                 i++;
             }
         }
@@ -194,7 +219,8 @@ public class InventoryManagerPeripheral extends BasePeripheral<BlockEntityPeriph
 
     @LuaFunction(mainThread = true)
     public final Map<String, Object> getItemInHand() throws LuaException {
-        return LuaConverter.itemStackToObject(getOwnerPlayer().getMainHandItem(), getOwnerPlayer().getInventory().selected);
+        return LuaConverter.itemStackToObject(getOwnerPlayer().getMainHandItem(),
+                getOwnerPlayer().getInventory().selected);
     }
 
     @LuaFunction(mainThread = true)
@@ -208,13 +234,14 @@ public class InventoryManagerPeripheral extends BasePeripheral<BlockEntityPeriph
         return owner.getOwner();
     }
 
-    @NotNull
-    private Pair<IItemHandler, Integer> getHandlerFromSlot(int slot) throws LuaException {
+    @NotNull private Pair<IItemHandler, Integer> getHandlerFromSlot(int slot) throws LuaException {
         IItemHandler handler;
         if (slot >= 100 && slot <= 103) {
             handler = new PlayerArmorInvWrapper(getOwnerPlayer().getInventory());
-            // If the slot is between 100 and 103, change the index to a normal index between 0 and 3.
-            // This is necessary since the PlayerArmorInvWrapper does not work with these higher indexes
+            // If the slot is between 100 and 103, change the index to a normal index
+            // between 0 and 3.
+            // This is necessary since the PlayerArmorInvWrapper does not work with these
+            // higher indexes
             slot = slot - 100;
         } else if (slot == 36) {
             handler = new PlayerOffhandInvWrapper(getOwnerPlayer().getInventory());
@@ -233,10 +260,8 @@ public class InventoryManagerPeripheral extends BasePeripheral<BlockEntityPeriph
      */
     private enum ArmorSlot {
 
-        HELMET_SLOT(103, EquipmentSlot.HEAD),
-        CHEST_SLOT(102, EquipmentSlot.CHEST),
-        LEGGINGS_SLOT(101, EquipmentSlot.LEGS),
-        BOOTS_SLOT(100, EquipmentSlot.FEET);
+        HELMET_SLOT(103, EquipmentSlot.HEAD), CHEST_SLOT(102, EquipmentSlot.CHEST), LEGGINGS_SLOT(101,
+                EquipmentSlot.LEGS), BOOTS_SLOT(100, EquipmentSlot.FEET);
 
         private final int slot;
         private final EquipmentSlot slotType;
@@ -254,7 +279,8 @@ public class InventoryManagerPeripheral extends BasePeripheral<BlockEntityPeriph
                     }
                 }
             }
-            AdvancedPeripherals.LOGGER.warn("Tried to get armor item slot for non armor item " + stack + ". Returning 0");
+            AdvancedPeripherals.LOGGER
+                    .warn("Tried to get armor item slot for non armor item " + stack + ". Returning 0");
             return 0;
         }
 

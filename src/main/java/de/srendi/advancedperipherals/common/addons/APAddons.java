@@ -1,3 +1,18 @@
+/*
+ *     Copyright 2024 Intelligence Modding @ https://intelligence-modding.de
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *          https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.srendi.advancedperipherals.common.addons;
 
 import de.srendi.advancedperipherals.AdvancedPeripherals;
@@ -35,7 +50,8 @@ public class APAddons {
     public static boolean aeAdditionsLoaded;
     public static boolean appMekLoaded;
 
-    // Use static so these checks run as early as possible, so we can use them for our registries
+    // Use static so these checks run as early as possible, so we can use them for
+    // our registries
     static {
         ModList modList = ModList.get();
         curiosLoaded = modList.isLoaded(CURIOS_MODID);
@@ -55,11 +71,8 @@ public class APAddons {
         if (!curiosLoaded)
             return;
 
-        InterModComms.sendTo(CURIOS_MODID, SlotTypeMessage.REGISTER_TYPE,
-                () -> new SlotTypeMessage.Builder("glasses")
-                        .size(1)
-                        .icon(new ResourceLocation(AdvancedPeripherals.MOD_ID, "slot/empty_glasses_slot"))
-                        .build());
+        InterModComms.sendTo(CURIOS_MODID, SlotTypeMessage.REGISTER_TYPE, () -> new SlotTypeMessage.Builder("glasses")
+                .size(1).icon(new ResourceLocation(AdvancedPeripherals.MOD_ID, "slot/empty_glasses_slot")).build());
     }
 
     public static ItemStack getCurioGlasses(Player player) {

@@ -1,3 +1,18 @@
+/*
+ *     Copyright 2024 Intelligence Modding @ https://intelligence-modding.de
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *          https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.srendi.advancedperipherals.common.smartglasses.modules.overlay;
 
 import de.srendi.advancedperipherals.AdvancedPeripherals;
@@ -10,10 +25,11 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.CopyOnWriteArraySet;
 
-
 /**
- * We want to support scripts which were made for the plethora classes. So we call this item the same as the overlay item from plethora
- * We'll first add our own implementation for a rendering system and then add the API endpoints for plethora scripts
+ * We want to support scripts which were made for the plethora classes. So we
+ * call this item the same as the overlay item from plethora We'll first add our
+ * own implementation for a rendering system and then add the API endpoints for
+ * plethora scripts
  */
 public class OverlayModule implements IModule {
 
@@ -37,10 +53,10 @@ public class OverlayModule implements IModule {
     @Override
     public void tick(@NotNull SmartGlassesAccess smartGlassesAccess) {
         /*
-        Entity entity = smartGlassesAccess.getEntity();
-        if (entity != null && entity.getLevel().getGameTime() % 20 == 0)
-            AdvancedPeripherals.LOGGER.info("I'm an overlay module! And I'm alive!");
-        */
+         * Entity entity = smartGlassesAccess.getEntity(); if (entity != null &&
+         * entity.getLevel().getGameTime() % 20 == 0)
+         * AdvancedPeripherals.LOGGER.info("I'm an overlay module! And I'm alive!");
+         */
     }
 
     public SmartGlassesAccess getAccess() {
@@ -52,11 +68,15 @@ public class OverlayModule implements IModule {
     }
 
     /**
-     * Adds an object to the module. If the object already exists, it will return the object and stop proceeding
+     * Adds an object to the module. If the object already exists, it will return
+     * the object and stop proceeding
      *
-     * @param object The object which should be added
-     * @return A pair of the object and a boolean. The boolean is true if the object was added successfully and false if not.
-     * The object is the object which was added or the object which already exists(When not successful).
+     * @param object
+     *            The object which should be added
+     * @return A pair of the object and a boolean. The boolean is true if the object
+     *         was added successfully and false if not. The object is the object
+     *         which was added or the object which already exists(When not
+     *         successful).
      */
     public Pair<OverlayObject, Boolean> addObject(OverlayObject object) {
         for (OverlayObject overlayObject : objects) {

@@ -1,3 +1,18 @@
+/*
+ *     Copyright 2024 Intelligence Modding @ https://intelligence-modding.de
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *          https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.srendi.advancedperipherals.common.addons.computercraft.peripheral.plugins;
 
 import dan200.computercraft.api.lua.IArguments;
@@ -18,9 +33,9 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -52,7 +67,8 @@ public class AutomataEntityHandPlugin extends AutomataCorePlugin {
             TurtlePeripheralOwner owner = automataCore.getPeripheralOwner();
             ItemStack selectedTool = owner.getToolInMainHand();
             int previousDamageValue = selectedTool.getDamageValue();
-            InteractionResult result = owner.withPlayer(APFakePlayer.wrapActionWithShiftKey(sneak, APFakePlayer.wrapActionWithRot(yaw, pitch, p -> p.useOnFilteredEntity(suitableEntity))));
+            InteractionResult result = owner.withPlayer(APFakePlayer.wrapActionWithShiftKey(sneak,
+                    APFakePlayer.wrapActionWithRot(yaw, pitch, p -> p.useOnFilteredEntity(suitableEntity))));
             if (automataCore.hasAttribute(AutomataCorePeripheral.ATTR_STORING_TOOL_DURABILITY))
                 selectedTool.setDamageValue(previousDamageValue);
 
@@ -68,7 +84,8 @@ public class AutomataEntityHandPlugin extends AutomataCorePlugin {
 
         automataCore.addRotationCycle();
         TurtlePeripheralOwner owner = automataCore.getPeripheralOwner();
-        HitResult entityHit = owner.withPlayer(APFakePlayer.wrapActionWithRot(yaw, pitch, p -> p.findHit(false, true, suitableEntity)));
+        HitResult entityHit = owner
+                .withPlayer(APFakePlayer.wrapActionWithRot(yaw, pitch, p -> p.findHit(false, true, suitableEntity)));
         if (entityHit.getType() == HitResult.Type.MISS)
             return MethodResult.of(null, "Nothing found");
 
@@ -86,7 +103,9 @@ public class AutomataEntityHandPlugin extends AutomataCorePlugin {
         BlockPos currentPos = owner.getPos();
         AABB box = new AABB(currentPos);
         ItemStack itemInHand = owner.getToolInMainHand();
-        List<Map<String, Object>> entities = owner.getLevel().getEntities((Entity) null, box.inflate(automataCore.getInteractionRadius()), suitableEntity).stream().map(entity -> LuaConverter.completeEntityWithPositionToLua(entity, itemInHand, currentPos)).toList();
+        List<Map<String, Object>> entities = owner.getLevel()
+                .getEntities((Entity) null, box.inflate(automataCore.getInteractionRadius()), suitableEntity).stream()
+                .map(entity -> LuaConverter.completeEntityWithPositionToLua(entity, itemInHand, currentPos)).toList();
         return MethodResult.of(entities);
     }
 }

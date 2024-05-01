@@ -1,3 +1,18 @@
+/*
+ *     Copyright 2024 Intelligence Modding @ https://intelligence-modding.de
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *          https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.srendi.advancedperipherals.common.village;
 
 import dan200.computercraft.shared.Registry;
@@ -20,11 +35,10 @@ public class VillagerTrades {
     @SubscribeEvent
     public static void registerWanderingTrade(WandererTradesEvent event) {
         TradeBuilder.createTrade(event, APBlocks.PERIPHERAL_CASING.get(), VillagerTrade.Type.ITEM_FOR_EMERALD, 1, 1)
-                .setMaxUses(8)
-                .build();
-        TradeBuilder.createTrade(event, Registry.ModBlocks.TURTLE_ADVANCED.get(), VillagerTrade.Type.ITEM_FOR_EMERALD, 2, 1)
-                .setMaxUses(8)
-                .build();
+                .setMaxUses(8).build();
+        TradeBuilder
+                .createTrade(event, Registry.ModBlocks.TURTLE_ADVANCED.get(), VillagerTrade.Type.ITEM_FOR_EMERALD, 2, 1)
+                .setMaxUses(8).build();
     }
 
     @SubscribeEvent
@@ -32,76 +46,52 @@ public class VillagerTrades {
         if (event.getType() == APVillagers.COMPUTER_SCIENTIST.get()) {
 
             TradeBuilder.createTrade(event, APBlocks.PERIPHERAL_CASING.get(), VillagerTrade.Type.ITEM_FOR_EMERALD, 1, 1)
-                    .setXp(1)
-                    .build();
-            TradeBuilder.createTrade(event, APBlocks.CHAT_BOX.get(), VillagerTrade.Type.ITEM_FOR_EMERALD, 2, 1)
-                    .build();
-            TradeBuilder.createTrade(event, Registry.ModBlocks.MONITOR_NORMAL.get(), VillagerTrade.Type.ITEM_FOR_EMERALD, 2, 1)
-                    .setItemAmount(2)
-                    .build();
+                    .setXp(1).build();
+            TradeBuilder.createTrade(event, APBlocks.CHAT_BOX.get(), VillagerTrade.Type.ITEM_FOR_EMERALD, 2, 1).build();
+            TradeBuilder.createTrade(event, Registry.ModBlocks.MONITOR_NORMAL.get(),
+                    VillagerTrade.Type.ITEM_FOR_EMERALD, 2, 1).setItemAmount(2).build();
             TradeBuilder.createTrade(event, APBlocks.PERIPHERAL_CASING.get(), VillagerTrade.Type.EMERALD_FOR_ITEM, 1, 1)
-                    .setMaxUses(5)
-                    .build();
+                    .setMaxUses(5).build();
 
             TradeBuilder.createTrade(event, APBlocks.INVENTORY_MANAGER.get(), VillagerTrade.Type.ITEM_FOR_EMERALD, 2, 2)
-                    .setXp(4)
-                    .build();
-            TradeBuilder.createTrade(event, APBlocks.REDSTONE_INTEGRATOR.get(), VillagerTrade.Type.ITEM_FOR_EMERALD, 2, 2)
-                    .setXp(3)
-                    .build();
-            TradeBuilder.createTrade(event, Registry.ModBlocks.COMPUTER_ADVANCED.get(), VillagerTrade.Type.ITEM_FOR_EMERALD, 3, 2)
-                    .setXp(4)
-                    .build();
+                    .setXp(4).build();
+            TradeBuilder
+                    .createTrade(event, APBlocks.REDSTONE_INTEGRATOR.get(), VillagerTrade.Type.ITEM_FOR_EMERALD, 2, 2)
+                    .setXp(3).build();
+            TradeBuilder.createTrade(event, Registry.ModBlocks.COMPUTER_ADVANCED.get(),
+                    VillagerTrade.Type.ITEM_FOR_EMERALD, 3, 2).setXp(4).build();
 
-            TradeBuilder.createTrade(event, ItemUtil.makeTurtle(ItemUtil.TURTLE_NORMAL, CCRegistration.ID.ENVIRONMENT_TURTLE.toString()), VillagerTrade.Type.ITEM_FOR_EMERALD, 4, 3)
-                    .setMaxUses(4)
-                    .setXp(5)
-                    .build();
-            TradeBuilder.createTrade(event, ItemUtil.makePocket(ItemUtil.POCKET_ADVANCED, CCRegistration.ID.PLAYER_POCKET.toString()), VillagerTrade.Type.ITEM_FOR_EMERALD, 4, 3)
-                    .setMaxUses(4)
-                    .setXp(7)
-                    .build();
+            TradeBuilder.createTrade(event,
+                    ItemUtil.makeTurtle(ItemUtil.TURTLE_NORMAL, CCRegistration.ID.ENVIRONMENT_TURTLE.toString()),
+                    VillagerTrade.Type.ITEM_FOR_EMERALD, 4, 3).setMaxUses(4).setXp(5).build();
+            TradeBuilder.createTrade(event,
+                    ItemUtil.makePocket(ItemUtil.POCKET_ADVANCED, CCRegistration.ID.PLAYER_POCKET.toString()),
+                    VillagerTrade.Type.ITEM_FOR_EMERALD, 4, 3).setMaxUses(4).setXp(7).build();
             TradeBuilder.createTrade(event, APItems.CHUNK_CONTROLLER.get(), VillagerTrade.Type.EMERALD_FOR_ITEM, 5, 3)
-                    .setMaxUses(6)
-                    .setXp(8)
-                    .build();
+                    .setMaxUses(6).setXp(8).build();
             TradeBuilder.createTrade(event, APItems.COMPUTER_TOOL.get(), VillagerTrade.Type.ITEM_FOR_EMERALD, 1, 3)
-                    .setMaxUses(1)
-                    .setXp(16)
-                    .build();
-            TradeBuilder.createTrade(event, Registry.ModBlocks.MONITOR_ADVANCED.get(), VillagerTrade.Type.ITEM_FOR_EMERALD, 6, 3)
-                    .setXp(7)
-                    .setItemAmount(4)
-                    .build();
+                    .setMaxUses(1).setXp(16).build();
+            TradeBuilder.createTrade(event, Registry.ModBlocks.MONITOR_ADVANCED.get(),
+                    VillagerTrade.Type.ITEM_FOR_EMERALD, 6, 3).setXp(7).setItemAmount(4).build();
 
             TradeBuilder.createTrade(event, APBlocks.ENERGY_DETECTOR.get(), VillagerTrade.Type.ITEM_FOR_EMERALD, 4, 4)
-                    .setXp(6)
-                    .build();
-            TradeBuilder.createTrade(event, Registry.ModBlocks.COMPUTER_ADVANCED.get(), VillagerTrade.Type.ITEM_FOR_EMERALD, 4, 4)
-                    .setXp(5)
-                    .setMaxUses(3)
-                    .build();
+                    .setXp(6).build();
+            TradeBuilder.createTrade(event, Registry.ModBlocks.COMPUTER_ADVANCED.get(),
+                    VillagerTrade.Type.ITEM_FOR_EMERALD, 4, 4).setXp(5).setMaxUses(3).build();
             TradeBuilder.createTrade(event, APItems.MEMORY_CARD.get(), VillagerTrade.Type.EMERALD_FOR_ITEM, 2, 4)
-                    .setXp(4)
-                    .build();
-            TradeBuilder.createTrade(event, ItemUtil.makeTurtle(ItemUtil.TURTLE_ADVANCED, CCRegistration.ID.CHUNKY_TURTLE.toString()), VillagerTrade.Type.ITEM_FOR_EMERALD, 8, 4)
-                    .setXp(7)
-                    .build();
+                    .setXp(4).build();
+            TradeBuilder.createTrade(event,
+                    ItemUtil.makeTurtle(ItemUtil.TURTLE_ADVANCED, CCRegistration.ID.CHUNKY_TURTLE.toString()),
+                    VillagerTrade.Type.ITEM_FOR_EMERALD, 8, 4).setXp(7).build();
             TradeBuilder.createTrade(event, APItems.CHUNK_CONTROLLER.get(), VillagerTrade.Type.ITEM_FOR_EMERALD, 6, 4)
-                    .setMaxUses(6)
-                    .setXp(6)
-                    .build();
+                    .setMaxUses(6).setXp(6).build();
 
             TradeBuilder.createTrade(event, APBlocks.ME_BRIDGE.get(), VillagerTrade.Type.ITEM_FOR_EMERALD, 4, 5)
-                    .setItemAmount(2)
-                    .setXp(4)
-                    .build();
+                    .setItemAmount(2).setXp(4).build();
             TradeBuilder.createTrade(event, Registry.ModBlocks.SPEAKER.get(), VillagerTrade.Type.ITEM_FOR_EMERALD, 3, 5)
-                    .setXp(6)
-                    .build();
-            TradeBuilder.createTrade(event, Registry.ModBlocks.WIRELESS_MODEM_ADVANCED.get(), VillagerTrade.Type.ITEM_FOR_EMERALD, 4, 5)
-                    .setXp(8)
-                    .build();
+                    .setXp(6).build();
+            TradeBuilder.createTrade(event, Registry.ModBlocks.WIRELESS_MODEM_ADVANCED.get(),
+                    VillagerTrade.Type.ITEM_FOR_EMERALD, 4, 5).setXp(8).build();
 
         }
     }

@@ -1,6 +1,25 @@
+/*
+ *     Copyright 2024 Intelligence Modding @ https://intelligence-modding.de
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *          https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.srendi.advancedperipherals.lib.peripherals;
 
-import dan200.computercraft.api.lua.*;
+import dan200.computercraft.api.lua.IArguments;
+import dan200.computercraft.api.lua.ILuaContext;
+import dan200.computercraft.api.lua.LuaException;
+import dan200.computercraft.api.lua.LuaFunction;
+import dan200.computercraft.api.lua.MethodResult;
 import dan200.computercraft.api.peripheral.IComputerAccess;
 import dan200.computercraft.api.peripheral.IDynamicPeripheral;
 import dan200.computercraft.api.peripheral.IPeripheral;
@@ -14,7 +33,14 @@ import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -38,10 +64,11 @@ public abstract class BasePeripheral<O extends IPeripheralOwner> implements IBas
         if (!initialized) {
             initialized = true;
             this.pluggedMethods.clear();
-            if (plugins != null) plugins.forEach(plugin -> {
-                if (plugin.isSuitable(this))
-                    pluggedMethods.addAll(plugin.getMethods());
-            });
+            if (plugins != null)
+                plugins.forEach(plugin -> {
+                    if (plugin.isSuitable(this))
+                        pluggedMethods.addAll(plugin.getMethods());
+                });
             owner.getAbilities().forEach(ability -> {
                 if (ability instanceof IPeripheralPlugin peripheralPlugin)
                     pluggedMethods.addAll(peripheralPlugin.getMethods());
@@ -51,13 +78,15 @@ public abstract class BasePeripheral<O extends IPeripheralOwner> implements IBas
     }
 
     protected void addPlugin(@NotNull IPeripheralPlugin plugin) {
-        if (plugins == null) plugins = new LinkedList<>();
+        if (plugins == null)
+            plugins = new LinkedList<>();
         plugins.add(plugin);
         IPeripheralOperation<?>[] operations = plugin.getOperations();
         if (operations != null) {
             OperationAbility operationAbility = owner.getAbility(PeripheralOwnerAbility.OPERATION);
             if (operationAbility == null)
-                throw new IllegalArgumentException("This is not possible to attach plugin with operations to not operationable owner");
+                throw new IllegalArgumentException(
+                        "This is not possible to attach plugin with operations to not operationable owner");
             for (IPeripheralOperation<?> operation : operations)
                 operationAbility.registerOperation(operation);
         }
@@ -68,14 +97,12 @@ public abstract class BasePeripheral<O extends IPeripheralOwner> implements IBas
         return connectedComputers;
     }
 
-    @Nullable
-    @Override
+    @Nullable @Override
     public Object getTarget() {
         return owner;
     }
 
-    @NotNull
-    @Override
+    @NotNull @Override
     public String getType() {
         return type;
     }
@@ -129,28 +156,33 @@ public abstract class BasePeripheral<O extends IPeripheralOwner> implements IBas
     }
 
     @Override
-    @NotNull
-    public String @NotNull [] getMethodNames() {
+    @NotNull public String @NotNull [] getMethodNames() {
         if (!initialized)
             buildPlugins();
         return methodNames;
     }
 
     @Override
-    @NotNull
-    public MethodResult callMethod(@NotNull IComputerAccess access, @NotNull ILuaContext context, int index, @NotNull IArguments arguments) throws LuaException {
+    @NotNull public MethodResult callMethod(@NotNull IComputerAccess access, @NotNull ILuaContext context, int index,
+            @NotNull IArguments arguments) throws LuaException {
         if (!initialized)
             buildPlugins();
         return pluggedMethods.get(index).apply(access, context, arguments);
     }
 
-    protected <T> MethodResult withOperation(IPeripheralOperation<T> operation, T context, @Nullable IPeripheralCheck<T> check, IPeripheralFunction<T, MethodResult> method, @Nullable Consumer<T> successCallback) throws LuaException {
+    protected <T> MethodResult withOperation(IPeripheralOperation<T> operation, T context,
+            @Nullable IPeripheralCheck<T> check, IPeripheralFunction<T, MethodResult> method,
+            @Nullable Consumer<T> successCallback) throws LuaException {
         return withOperation(operation, context, check, method, successCallback, null);
     }
 
-    protected <T> MethodResult withOperation(IPeripheralOperation<T> operation, T context, @Nullable IPeripheralCheck<T> check, IPeripheralFunction<T, MethodResult> method, @Nullable Consumer<T> successCallback, @Nullable BiConsumer<MethodResult, OperationAbility.FailReason> failCallback) throws LuaException {
+    protected <T> MethodResult withOperation(IPeripheralOperation<T> operation, T context,
+            @Nullable IPeripheralCheck<T> check, IPeripheralFunction<T, MethodResult> method,
+            @Nullable Consumer<T> successCallback,
+            @Nullable BiConsumer<MethodResult, OperationAbility.FailReason> failCallback) throws LuaException {
         OperationAbility operationAbility = owner.getAbility(PeripheralOwnerAbility.OPERATION);
-        if (operationAbility == null) throw new IllegalArgumentException("This shouldn't happen at all");
+        if (operationAbility == null)
+            throw new IllegalArgumentException("This shouldn't happen at all");
         return operationAbility.performOperation(operation, context, check, method, successCallback, failCallback);
     }
 }

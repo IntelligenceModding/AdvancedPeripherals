@@ -1,3 +1,18 @@
+/*
+ *     Copyright 2024 Intelligence Modding @ https://intelligence-modding.de
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *          https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.srendi.advancedperipherals.common.blocks.blockentities;
 
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.FluidDetectorPeripheral;
@@ -29,9 +44,11 @@ public class FluidDetectorEntity extends PeripheralBlockEntity<FluidDetectorPeri
     public int transferRate = 0;
     public FluidStack lastFlowedLiquid = FluidStack.EMPTY;
 
-    //storageProxy that will forward the fluid to the output but limit it to maxTransferRate
-    public final FluidStorageProxy storageProxy = new FluidStorageProxy(this, APConfig.PERIPHERALS_CONFIG.fluidDetectorMaxFlow.get());
-    //a zero size, zero transfer fluid storage to ensure that cables connect
+    // storageProxy that will forward the fluid to the output but limit it to
+    // maxTransferRate
+    public final FluidStorageProxy storageProxy = new FluidStorageProxy(this,
+            APConfig.PERIPHERALS_CONFIG.fluidDetectorMaxFlow.get());
+    // a zero size, zero transfer fluid storage to ensure that cables connect
     private final FluidTank zeroStorage = new FluidTank(0);
     private final LazyOptional<IFluidHandler> fluidStorageCap = LazyOptional.of(() -> storageProxy);
     private final LazyOptional<IFluidHandler> zeroStorageCap = LazyOptional.of(() -> zeroStorage);
@@ -44,14 +61,12 @@ public class FluidDetectorEntity extends PeripheralBlockEntity<FluidDetectorPeri
         super(APBlockEntityTypes.FLUID_DETECTOR.get(), pos, state);
     }
 
-    @NotNull
-    @Override
+    @NotNull @Override
     protected FluidDetectorPeripheral createPeripheral() {
         return new FluidDetectorPeripheral(this);
     }
 
-    @NotNull
-    @Override
+    @NotNull @Override
     public <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction direction) {
         fluidInDetection = getBlockState().getValue(BaseBlock.ORIENTATION).front();
         fluidOutDirection = getBlockState().getValue(BaseBlock.ORIENTATION).front().getOpposite();
@@ -74,7 +89,8 @@ public class FluidDetectorEntity extends PeripheralBlockEntity<FluidDetectorPeri
     @Override
     public <T extends BlockEntity> void handleTick(Level level, BlockState state, BlockEntityType<T> type) {
         if (!level.isClientSide) {
-            // this handles the rare edge case that receiveFluid is called multiple times in one tick
+            // this handles the rare edge case that receiveFluid is called multiple times in
+            // one tick
             transferRate = storageProxy.getTransferedInThisTick();
             storageProxy.resetTransferedInThisTick();
         }
@@ -86,16 +102,18 @@ public class FluidDetectorEntity extends PeripheralBlockEntity<FluidDetectorPeri
         super.load(nbt);
     }
 
-    // returns the cached output storage of the receiving block or fetches it if it has been invalidated
-    @NotNull
-    public Optional<IFluidHandler> getOutputStorage() {
-        // the documentation says that the value of the LazyOptional should be cached locally and invalidated using addListener
+    // returns the cached output storage of the receiving block or fetches it if it
+    // has been invalidated
+    @NotNull public Optional<IFluidHandler> getOutputStorage() {
+        // the documentation says that the value of the LazyOptional should be cached
+        // locally and invalidated using addListener
         if (outReceivingStorage.isEmpty()) {
             BlockEntity teOut = level.getBlockEntity(worldPosition.relative(fluidOutDirection));
             if (teOut == null) {
                 return Optional.empty();
             }
-            LazyOptional<IFluidHandler> lazyOptionalOutStorage = teOut.getCapability(ForgeCapabilities.FLUID_HANDLER, fluidOutDirection.getOpposite());
+            LazyOptional<IFluidHandler> lazyOptionalOutStorage = teOut.getCapability(ForgeCapabilities.FLUID_HANDLER,
+                    fluidOutDirection.getOpposite());
             outReceivingStorage = lazyOptionalOutStorage.resolve();
             lazyOptionalOutStorage.addListener(l -> {
                 outReceivingStorage = Optional.empty();

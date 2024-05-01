@@ -1,3 +1,18 @@
+/*
+ *     Copyright 2024 Intelligence Modding @ https://intelligence-modding.de
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *          https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.srendi.advancedperipherals.common.smartglasses.modules.overlay;
 
 import dan200.computercraft.api.lua.IArguments;
@@ -19,7 +34,6 @@ import java.lang.reflect.Field;
 import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
-
 
 public abstract class OverlayObject {
 
@@ -69,17 +83,22 @@ public abstract class OverlayObject {
     /**
      * Maps properties from the provided arguments to the fields of this class.
      * <p>
-     * This method uses Java Reflection to map properties from IArguments to the fields of the classes.
-     * It only maps properties that have the annotation {@link ObjectProperty}. If a field does not have this annotation,
-     * a warning message is logged and the method returns.
+     * This method uses Java Reflection to map properties from IArguments to the
+     * fields of the classes. It only maps properties that have the annotation
+     * {@link ObjectProperty}. If a field does not have this annotation, a warning
+     * message is logged and the method returns.
      * <p>
-     * If a property is valid, its value is cast to the field type and set as the new value of the field.
-     * If a property is not valid, a warning message is logged and the method returns.
+     * If a property is valid, its value is cast to the field type and set as the
+     * new value of the field. If a property is not valid, a warning message is
+     * logged and the method returns.
      * <p>
-     * If an error occurs during the mapping of properties, an exception message is logged and a LuaException is thrown.
+     * If an error occurs during the mapping of properties, an exception message is
+     * logged and a LuaException is thrown.
      *
-     * @param arguments the IArguments containing properties to be mapped
-     * @throws LuaException if an error occurs during the mapping of properties
+     * @param arguments
+     *            the IArguments containing properties to be mapped
+     * @throws LuaException
+     *             if an error occurs during the mapping of properties
      * @see IArguments
      * @see ObjectProperty
      * @see PropertyType
@@ -112,7 +131,8 @@ public abstract class OverlayObject {
                     }
 
                     if (objectProperty == null) {
-                        AdvancedPeripherals.debug("The field " + field.getName() + " has no ObjectProperty annotation and can't be changed.", Level.WARN);
+                        AdvancedPeripherals.debug("The field " + field.getName()
+                                + " has no ObjectProperty annotation and can't be changed.", Level.WARN);
                         return;
                     }
 
@@ -130,7 +150,9 @@ public abstract class OverlayObject {
                             field.set(this, castValueToFieldType(field, value));
 
                         } else {
-                            AdvancedPeripherals.debug("The value " + value + " is not valid for the field " + field.getName() + ".", Level.WARN);
+                            AdvancedPeripherals.debug(
+                                    "The value " + value + " is not valid for the field " + field.getName() + ".",
+                                    Level.WARN);
                             return;
                         }
                     }
@@ -143,11 +165,13 @@ public abstract class OverlayObject {
     }
 
     /**
-     * Casts the given value to the type of the provided field.
-     * Can be overwritten if the desired casting is not supported.
+     * Casts the given value to the type of the provided field. Can be overwritten
+     * if the desired casting is not supported.
      *
-     * @param field the field object representing the type to cast to
-     * @param value the value to be casted
+     * @param field
+     *            the field object representing the type to cast to
+     * @param value
+     *            the value to be casted
      * @return the casted value
      */
     public Object castValueToFieldType(Field field, Object value) {
@@ -170,7 +194,9 @@ public abstract class OverlayObject {
         } else if (fieldType.equals(Float.TYPE)) {
             return Float.valueOf(value.toString());
         } else {
-            AdvancedPeripherals.debug("The field type " + fieldType.getName() + " is not supported for the value " + value + ".", Level.WARN);
+            AdvancedPeripherals.debug(
+                    "The field type " + fieldType.getName() + " is not supported for the value " + value + ".",
+                    Level.WARN);
         }
         return value;
     }
@@ -182,7 +208,7 @@ public abstract class OverlayObject {
     protected void encode(FriendlyByteBuf buffer) {
         buffer.writeUtf(id);
         Entity entity = module.getAccess().getEntity();
-        if(entity instanceof Player player) {
+        if (entity instanceof Player player) {
             buffer.writeBoolean(true);
             buffer.writeUUID(player.getUUID());
         } else {

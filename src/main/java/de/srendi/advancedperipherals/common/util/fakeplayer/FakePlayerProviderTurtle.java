@@ -1,3 +1,18 @@
+/*
+ *     Copyright 2024 Intelligence Modding @ https://intelligence-modding.de
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *          https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.srendi.advancedperipherals.common.util.fakeplayer;
 
 import com.mojang.authlib.GameProfile;
@@ -20,15 +35,18 @@ import java.util.function.Function;
 public final class FakePlayerProviderTurtle {
 
     /*
-    Highly inspired by https://github.com/SquidDev-CC/plethora/blob/minecraft-1.12/src/main/java/org/squiddev/plethora/integration/computercraft/FakePlayerProviderTurtle.java
-    */
+     * Highly inspired by
+     * https://github.com/SquidDev-CC/plethora/blob/minecraft-1.12/src/main/java/org
+     * /squiddev/plethora/integration/computercraft/FakePlayerProviderTurtle.java
+     */
     private static final WeakHashMap<ITurtleAccess, APFakePlayer> registeredPlayers = new WeakHashMap<>();
 
     private FakePlayerProviderTurtle() {
     }
 
     public static APFakePlayer getPlayer(ITurtleAccess turtle, GameProfile profile) {
-        return registeredPlayers.computeIfAbsent(turtle, iTurtleAccess -> new APFakePlayer((ServerLevel) turtle.getLevel(), null, profile));
+        return registeredPlayers.computeIfAbsent(turtle,
+                iTurtleAccess -> new APFakePlayer((ServerLevel) turtle.getLevel(), null, profile));
     }
 
     public static void load(APFakePlayer player, ITurtleAccess turtle) {
@@ -56,7 +74,8 @@ public final class FakePlayerProviderTurtle {
         // Add properties
         ItemStack activeStack = player.getItemInHand(InteractionHand.MAIN_HAND);
         if (!activeStack.isEmpty())
-            player.getAttributes().addTransientAttributeModifiers(activeStack.getAttributeModifiers(EquipmentSlot.MAINHAND));
+            player.getAttributes()
+                    .addTransientAttributeModifiers(activeStack.getAttributeModifiers(EquipmentSlot.MAINHAND));
 
     }
 
@@ -86,7 +105,8 @@ public final class FakePlayerProviderTurtle {
                 remaining = ItemHandlerHelper.insertItem(turtleInventory, remaining, false);
                 if (!remaining.isEmpty()) {
                     BlockPos position = turtle.getPosition();
-                    WorldUtil.dropItemStack(remaining, turtle.getLevel(), position, turtle.getDirection().getOpposite());
+                    WorldUtil.dropItemStack(remaining, turtle.getLevel(), position,
+                            turtle.getDirection().getOpposite());
                 }
             }
 

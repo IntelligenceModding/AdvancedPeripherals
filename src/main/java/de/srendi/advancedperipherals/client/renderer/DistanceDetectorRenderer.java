@@ -1,3 +1,18 @@
+/*
+ *     Copyright 2024 Intelligence Modding @ https://intelligence-modding.de
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *          https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.srendi.advancedperipherals.client.renderer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -27,9 +42,11 @@ public class DistanceDetectorRenderer implements BlockEntityRenderer<DistanceDet
     }
 
     @Override
-    public void render(@NotNull DistanceDetectorEntity pBlockEntity, float pPartialTick, @NotNull PoseStack pPoseStack, MultiBufferSource pBufferSource, int pPackedLight, int pPackedOverlay) {
+    public void render(@NotNull DistanceDetectorEntity pBlockEntity, float pPartialTick, @NotNull PoseStack pPoseStack,
+            MultiBufferSource pBufferSource, int pPackedLight, int pPackedOverlay) {
         if (pBlockEntity.getLaserVisibility())
-            renderBeaconBeam(pBlockEntity, pPoseStack, pBufferSource, BeaconRenderer.BEAM_LOCATION, pPartialTick, 1, 0, pBlockEntity.getCurrentDistance() - 0.5f, EnumColor.RED.getRgb(), 0.05f, 0.09f);
+            renderBeaconBeam(pBlockEntity, pPoseStack, pBufferSource, BeaconRenderer.BEAM_LOCATION, pPartialTick, 1, 0,
+                    pBlockEntity.getCurrentDistance() - 0.5f, EnumColor.RED.getRgb(), 0.05f, 0.09f);
     }
 
     @Override
@@ -47,7 +64,9 @@ public class DistanceDetectorRenderer implements BlockEntityRenderer<DistanceDet
         return true;
     }
 
-    public static void renderBeaconBeam(DistanceDetectorEntity detectorEntity, PoseStack pPoseStack, MultiBufferSource pBufferSource, ResourceLocation pBeamLocation, float pPartialTick, float pTextureScale, int pYOffset, float pHeight, float[] pColors, float pBeamRadius, float pGlowRadius) {
+    public static void renderBeaconBeam(DistanceDetectorEntity detectorEntity, PoseStack pPoseStack,
+            MultiBufferSource pBufferSource, ResourceLocation pBeamLocation, float pPartialTick, float pTextureScale,
+            int pYOffset, float pHeight, float[] pColors, float pBeamRadius, float pGlowRadius) {
         long pGameTime = detectorEntity.getLevel().getGameTime();
         float maxX = pYOffset + pHeight;
         Direction direction = detectorEntity.getBlockState().getValue(BaseBlock.ORIENTATION).front();
@@ -64,34 +83,48 @@ public class DistanceDetectorRenderer implements BlockEntityRenderer<DistanceDet
         pPoseStack.mulPose(Vector3f.YP.rotationDegrees(degrees * 2.25F - 45.0F));
         float f15 = -1.0F + time;
         float f16 = pHeight * pTextureScale * (0.5F / pBeamRadius) + f15;
-        renderPart(pPoseStack, pBufferSource.getBuffer(RenderType.beaconBeam(pBeamLocation, false)), r, g, b, 1.0F, pYOffset, maxX, 0.0F, pBeamRadius, pBeamRadius, 0.0F, -pBeamRadius, 0.0F, 0.0F, -pBeamRadius, 0.0F, 1.0F, f16, f15);
+        renderPart(pPoseStack, pBufferSource.getBuffer(RenderType.beaconBeam(pBeamLocation, false)), r, g, b, 1.0F,
+                pYOffset, maxX, 0.0F, pBeamRadius, pBeamRadius, 0.0F, -pBeamRadius, 0.0F, 0.0F, -pBeamRadius, 0.0F,
+                1.0F, f16, f15);
         pPoseStack.popPose();
         pPoseStack.mulPose(direction.getRotation());
         f15 = -1.0F + time;
         f16 = pHeight * pTextureScale + f15;
-        renderPart(pPoseStack, pBufferSource.getBuffer(RenderType.beaconBeam(pBeamLocation, true)), r, g, b, 0.225F, pYOffset, maxX, -pGlowRadius, -pGlowRadius, pGlowRadius, -pGlowRadius, -pBeamRadius, pGlowRadius, pGlowRadius, pGlowRadius, 0.0F, 1.0F, f16, f15);
+        renderPart(pPoseStack, pBufferSource.getBuffer(RenderType.beaconBeam(pBeamLocation, true)), r, g, b, 0.225F,
+                pYOffset, maxX, -pGlowRadius, -pGlowRadius, pGlowRadius, -pGlowRadius, -pBeamRadius, pGlowRadius,
+                pGlowRadius, pGlowRadius, 0.0F, 1.0F, f16, f15);
         pPoseStack.popPose();
     }
 
-    private static void renderPart(PoseStack pPoseStack, VertexConsumer pConsumer, float pRed, float pGreen, float pBlue, float pAlpha, int pMinY, float pMaxY, float pX0, float pZ0, float pX1, float pZ1, float pX2, float pZ2, float pX3, float pZ3, float pMinU, float pMaxU, float pMinV, float pMaxV) {
+    private static void renderPart(PoseStack pPoseStack, VertexConsumer pConsumer, float pRed, float pGreen,
+            float pBlue, float pAlpha, int pMinY, float pMaxY, float pX0, float pZ0, float pX1, float pZ1, float pX2,
+            float pZ2, float pX3, float pZ3, float pMinU, float pMaxU, float pMinV, float pMaxV) {
         PoseStack.Pose posestackPose = pPoseStack.last();
         Matrix4f matrix4f = posestackPose.pose();
         Matrix3f matrix3f = posestackPose.normal();
-        renderQuad(matrix4f, matrix3f, pConsumer, pRed, pGreen, pBlue, pAlpha, pMinY, pMaxY, pX0, pZ0, pX1, pZ1, pMinU, pMaxU, pMinV, pMaxV);
-        renderQuad(matrix4f, matrix3f, pConsumer, pRed, pGreen, pBlue, pAlpha, pMinY, pMaxY, pX3, pZ3, pX2, pZ2, pMinU, pMaxU, pMinV, pMaxV);
-        renderQuad(matrix4f, matrix3f, pConsumer, pRed, pGreen, pBlue, pAlpha, pMinY, pMaxY, pX1, pZ1, pX3, pZ3, pMinU, pMaxU, pMinV, pMaxV);
-        renderQuad(matrix4f, matrix3f, pConsumer, pRed, pGreen, pBlue, pAlpha, pMinY, pMaxY, pX2, pZ2, pX0, pZ0, pMinU, pMaxU, pMinV, pMaxV);
+        renderQuad(matrix4f, matrix3f, pConsumer, pRed, pGreen, pBlue, pAlpha, pMinY, pMaxY, pX0, pZ0, pX1, pZ1, pMinU,
+                pMaxU, pMinV, pMaxV);
+        renderQuad(matrix4f, matrix3f, pConsumer, pRed, pGreen, pBlue, pAlpha, pMinY, pMaxY, pX3, pZ3, pX2, pZ2, pMinU,
+                pMaxU, pMinV, pMaxV);
+        renderQuad(matrix4f, matrix3f, pConsumer, pRed, pGreen, pBlue, pAlpha, pMinY, pMaxY, pX1, pZ1, pX3, pZ3, pMinU,
+                pMaxU, pMinV, pMaxV);
+        renderQuad(matrix4f, matrix3f, pConsumer, pRed, pGreen, pBlue, pAlpha, pMinY, pMaxY, pX2, pZ2, pX0, pZ0, pMinU,
+                pMaxU, pMinV, pMaxV);
     }
 
-    private static void renderQuad(Matrix4f pPose, Matrix3f pNormal, VertexConsumer pConsumer, float pRed, float pGreen, float pBlue, float pAlpha, int pMinY, float pMaxY, float pMinX, float pMinZ, float pMaxX, float pMaxZ, float pMinU, float pMaxU, float pMinV, float pMaxV) {
+    private static void renderQuad(Matrix4f pPose, Matrix3f pNormal, VertexConsumer pConsumer, float pRed, float pGreen,
+            float pBlue, float pAlpha, int pMinY, float pMaxY, float pMinX, float pMinZ, float pMaxX, float pMaxZ,
+            float pMinU, float pMaxU, float pMinV, float pMaxV) {
         addVertex(pPose, pNormal, pConsumer, pRed, pGreen, pBlue, pAlpha, pMaxY, pMinX, pMinZ, pMaxU, pMinV);
         addVertex(pPose, pNormal, pConsumer, pRed, pGreen, pBlue, pAlpha, pMinY, pMinX, pMinZ, pMaxU, pMaxV);
         addVertex(pPose, pNormal, pConsumer, pRed, pGreen, pBlue, pAlpha, pMinY, pMaxX, pMaxZ, pMinU, pMaxV);
         addVertex(pPose, pNormal, pConsumer, pRed, pGreen, pBlue, pAlpha, pMaxY, pMaxX, pMaxZ, pMinU, pMinV);
     }
 
-    private static void addVertex(Matrix4f pPose, Matrix3f pNormal, VertexConsumer pConsumer, float pRed, float pGreen, float pBlue, float pAlpha, float pY, float pX, float pZ, float pU, float pV) {
-        pConsumer.vertex(pPose, pX, pY, pZ).color(pRed, pGreen, pBlue, pAlpha).uv(pU, pV).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(15728880).normal(pNormal, 0.0F, 1.0F, 0.0F).endVertex();
+    private static void addVertex(Matrix4f pPose, Matrix3f pNormal, VertexConsumer pConsumer, float pRed, float pGreen,
+            float pBlue, float pAlpha, float pY, float pX, float pZ, float pU, float pV) {
+        pConsumer.vertex(pPose, pX, pY, pZ).color(pRed, pGreen, pBlue, pAlpha).uv(pU, pV)
+                .overlayCoords(OverlayTexture.NO_OVERLAY).uv2(15728880).normal(pNormal, 0.0F, 1.0F, 0.0F).endVertex();
     }
 
 }

@@ -1,3 +1,18 @@
+/*
+ *     Copyright 2024 Intelligence Modding @ https://intelligence-modding.de
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *          https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.srendi.advancedperipherals.common.util;
 
 import de.srendi.advancedperipherals.AdvancedPeripherals;
@@ -20,7 +35,11 @@ import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 
 @Mod.EventBusSubscriber(modid = AdvancedPeripherals.MOD_ID)
 public class ChunkManager extends SavedData {
@@ -121,7 +140,8 @@ public class ChunkManager extends SavedData {
             return true;
         String dimensionName = level.dimension().location().toString();
         if (!chunkRecord.getDimensionName().equals(dimensionName))
-            throw new IllegalArgumentException(String.format("Incorrect dimension! Should be %s instead of %s", chunkRecord.getDimensionName(), dimensionName));
+            throw new IllegalArgumentException(String.format("Incorrect dimension! Should be %s instead of %s",
+                    chunkRecord.getDimensionName(), dimensionName));
         boolean result = unforceChunkRecord(owner, chunkRecord, level);
         if (result) {
             forcedChunks.remove(owner);
@@ -134,7 +154,9 @@ public class ChunkManager extends SavedData {
         boolean result = true;
         final ChunkPos pos = chunkRecord.getPos();
         final int chunkRadius = chunkRecord.getRadius();
-        AdvancedPeripherals.debug(String.format("Trying to unload forced chunk cluster %s at %s with radius %d", owner, pos, chunkRadius), Level.WARN);
+        AdvancedPeripherals.debug(
+                String.format("Trying to unload forced chunk cluster %s at %s with radius %d", owner, pos, chunkRadius),
+                Level.WARN);
         for (int x = -chunkRadius; x <= chunkRadius; x++) {
             for (int z = -chunkRadius; z <= chunkRadius; z++) {
                 result &= unforceChunk(owner, level, new ChunkPos(pos.x + x, pos.z + z));
@@ -149,7 +171,8 @@ public class ChunkManager extends SavedData {
         }
         initialized = true;
 
-        AdvancedPeripherals.debug(String.format("Schedule chunk manager init, forcedChunks = %d", forcedChunks.size()), Level.WARN);
+        AdvancedPeripherals.debug(String.format("Schedule chunk manager init, forcedChunks = %d", forcedChunks.size()),
+                Level.WARN);
         final int chunkRadius = APConfig.PERIPHERALS_CONFIG.chunkyTurtleRadius.get();
         final Map<String, ServerLevel> levels = getServerLevels();
         forcedChunks.forEach((uuid, value) -> {
@@ -161,7 +184,9 @@ public class ChunkManager extends SavedData {
             }
             final ChunkPos pos = value.getPos();
             final int loadedRadius = value.getRadius();
-            AdvancedPeripherals.debug(String.format("Recorded chunk in %s at %s with radius %d", dimensionName, pos, loadedRadius), Level.INFO);
+            AdvancedPeripherals.debug(
+                    String.format("Recorded chunk in %s at %s with radius %d", dimensionName, pos, loadedRadius),
+                    Level.INFO);
             if (loadedRadius == chunkRadius) {
                 return;
             }
@@ -182,7 +207,8 @@ public class ChunkManager extends SavedData {
                     }
                 }
             } else if (loadedRadius < chunkRadius) {
-                // otherwise, only do the changed part to reduce startup time (in case we have a lot chunky turtle)
+                // otherwise, only do the changed part to reduce startup time (in case we have a
+                // lot chunky turtle)
                 for (int x = -chunkRadius; x <= chunkRadius; x++) {
                     for (int z = -chunkRadius; z <= chunkRadius; z++) {
                         if (Math.abs(x) > loadedRadius || Math.abs(z) > loadedRadius) {
@@ -240,7 +266,8 @@ public class ChunkManager extends SavedData {
     }
 
     private static ServerLevel getServerLevel(String name) {
-        ResourceKey<net.minecraft.world.level.Level> key = ResourceKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(name));
+        ResourceKey<net.minecraft.world.level.Level> key = ResourceKey.create(Registry.DIMENSION_REGISTRY,
+                new ResourceLocation(name));
         return ServerLifecycleHooks.getCurrentServer().getLevel(key);
     }
 
@@ -265,7 +292,8 @@ public class ChunkManager extends SavedData {
         public static LoadChunkRecord deserialize(@NotNull CompoundTag tag) {
             Set<String> keys = tag.getAllKeys();
             int radius = keys.contains(RADIUS_TAG) ? tag.getInt(RADIUS_TAG) : -1;
-            return new LoadChunkRecord(tag.getString(DIMENSION_NAME_TAG), NBTUtil.chunkPosFromNBT(tag.getCompound(POS_TAG)), radius);
+            return new LoadChunkRecord(tag.getString(DIMENSION_NAME_TAG),
+                    NBTUtil.chunkPosFromNBT(tag.getCompound(POS_TAG)), radius);
         }
 
         public @NotNull ChunkPos getPos() {

@@ -1,3 +1,18 @@
+/*
+ *     Copyright 2024 Intelligence Modding @ https://intelligence-modding.de
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *          https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.srendi.advancedperipherals.common.util;
 
 import dan200.computercraft.api.lua.LuaException;
@@ -19,9 +34,9 @@ import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.common.IForgeShearable;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidType;
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -47,7 +62,8 @@ public class LuaConverter {
         Map<String, Object> data = entityToLua(entity);
         data.put("health", entity.getHealth());
         data.put("maxHealth", entity.getMaxHealth());
-        data.put("lastDamageSource", entity.getLastDamageSource() == null ? null : entity.getLastDamageSource().toString());
+        data.put("lastDamageSource",
+                entity.getLastDamageSource() == null ? null : entity.getLastDamageSource().toString());
         return data;
     }
 
@@ -63,12 +79,15 @@ public class LuaConverter {
     }
 
     public static Map<String, Object> completeEntityToLua(Entity entity, ItemStack itemInHand) {
-        if (entity instanceof Animal animal) return animalToLua(animal, itemInHand);
-        if (entity instanceof LivingEntity livingEntity) return livingEntityToLua(livingEntity);
+        if (entity instanceof Animal animal)
+            return animalToLua(animal, itemInHand);
+        if (entity instanceof LivingEntity livingEntity)
+            return livingEntityToLua(livingEntity);
         return entityToLua(entity);
     }
 
-    public static Map<String, Object> completeEntityWithPositionToLua(Entity entity, ItemStack itemInHand, BlockPos pos) {
+    public static Map<String, Object> completeEntityWithPositionToLua(Entity entity, ItemStack itemInHand,
+            BlockPos pos) {
         Map<String, Object> data = completeEntityToLua(entity, itemInHand);
         data.put("x", entity.getX() - pos.getX());
         data.put("y", entity.getY() - pos.getY());
@@ -79,13 +98,16 @@ public class LuaConverter {
     /**
      * Block states to a lua representable object
      *
-     * @param blockStateValue block state see {@link net.minecraft.world.level.block.state.BlockState#getValue(Property)}
+     * @param blockStateValue
+     *            block state see
+     *            {@link net.minecraft.world.level.block.state.BlockState#getValue(Property)}
      * @return the state cast to a lua representable object
      */
     public static Object stateToObject(Comparable<?> blockStateValue) {
         if (blockStateValue == null) {
             return null;
-        } else if (blockStateValue instanceof Boolean || blockStateValue instanceof Number || blockStateValue instanceof String) {
+        } else if (blockStateValue instanceof Boolean || blockStateValue instanceof Number
+                || blockStateValue instanceof String) {
             // Just return the value since lua can represent them just fine
             return blockStateValue;
         } else if (blockStateValue instanceof StringRepresentable stringRepresentable) {
@@ -96,7 +118,8 @@ public class LuaConverter {
     }
 
     public static Object posToObject(BlockPos pos) {
-        if (pos == null) return null;
+        if (pos == null)
+            return null;
 
         Map<String, Object> map = new HashMap<>(3);
         map.put("x", pos.getX());
@@ -105,8 +128,7 @@ public class LuaConverter {
         return map;
     }
 
-    @Nullable
-    public static Map<String, Object> itemStackToObject(@NotNull ItemStack stack) {
+    @Nullable public static Map<String, Object> itemStackToObject(@NotNull ItemStack stack) {
         if (stack.isEmpty()) {
             return null;
         }
@@ -121,7 +143,8 @@ public class LuaConverter {
     }
 
     public static Map<String, Object> fluidStackToObject(@NotNull FluidStack stack) {
-        if (stack.isEmpty()) return new HashMap<>();
+        if (stack.isEmpty())
+            return new HashMap<>();
         Map<String, Object> map = fluidToObject(stack.getFluid());
         CompoundTag nbt = stack.copy().getOrCreateTag();
         map.put("count", stack.getAmount());
@@ -140,13 +163,14 @@ public class LuaConverter {
     /**
      * Returns the stack but with a slot entry. Used to prevent zero indexed tables
      *
-     * @param stack the item stack
-     * @param slot  the slot of the item
+     * @param stack
+     *            the item stack
+     * @param slot
+     *            the slot of the item
      * @return a Map containing proper item stack details
      * @see InventoryManagerPeripheral#getItems()
      */
-    @Nullable
-    public static Map<String, Object> stackToObjectWithSlot(@NotNull ItemStack stack, int slot) {
+    @Nullable public static Map<String, Object> stackToObjectWithSlot(@NotNull ItemStack stack, int slot) {
         if (stack.isEmpty()) {
             return null;
         }
@@ -175,7 +199,8 @@ public class LuaConverter {
     }
 
     public static <T> List<String> tagsToList(@NotNull Supplier<Stream<TagKey<T>>> tags) {
-        if (tags.get().findAny().isEmpty()) return Collections.emptyList();
+        if (tags.get().findAny().isEmpty())
+            return Collections.emptyList();
         return tags.get().map(LuaConverter::tagToString).toList();
     }
 
@@ -187,13 +212,15 @@ public class LuaConverter {
     public static BlockPos convertToBlockPos(Map<?, ?> table) throws LuaException {
         if (!table.containsKey("x") || !table.containsKey("y") || !table.containsKey("z"))
             throw new LuaException("Table should be block position table");
-        if (!(table.get("x") instanceof Number x) || !(table.get("y") instanceof Number y) || !(table.get("z") instanceof Number z))
+        if (!(table.get("x") instanceof Number x) || !(table.get("y") instanceof Number y)
+                || !(table.get("z") instanceof Number z))
             throw new LuaException("Table should be block position table");
         return new BlockPos(x.intValue(), y.intValue(), z.intValue());
     }
 
     public static BlockPos convertToBlockPos(BlockPos center, Map<?, ?> table) throws LuaException {
         BlockPos relative = convertToBlockPos(table);
-        return new BlockPos(center.getX() + relative.getX(), center.getY() + relative.getY(), center.getZ() + relative.getZ());
+        return new BlockPos(center.getX() + relative.getX(), center.getY() + relative.getY(),
+                center.getZ() + relative.getZ());
     }
 }

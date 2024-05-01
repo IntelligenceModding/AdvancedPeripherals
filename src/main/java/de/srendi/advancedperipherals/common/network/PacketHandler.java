@@ -1,3 +1,18 @@
+/*
+ *     Copyright 2024 Intelligence Modding @ https://intelligence-modding.de
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *          https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.srendi.advancedperipherals.common.network;
 
 import de.srendi.advancedperipherals.AdvancedPeripherals;
@@ -26,9 +41,12 @@ import java.util.function.Function;
 
 public class PacketHandler {
 
-    private static final String PROTOCOL_VERSION = ModLoadingContext.get().getActiveContainer().getModInfo().getVersion().toString();
+    private static final String PROTOCOL_VERSION = ModLoadingContext.get().getActiveContainer().getModInfo()
+            .getVersion().toString();
 
-    public static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(new ResourceLocation(AdvancedPeripherals.MOD_ID, "main_channel"), () -> PROTOCOL_VERSION, PROTOCOL_VERSION::equals, PROTOCOL_VERSION::equals);
+    public static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(
+            new ResourceLocation(AdvancedPeripherals.MOD_ID, "main_channel"), () -> PROTOCOL_VERSION,
+            PROTOCOL_VERSION::equals, PROTOCOL_VERSION::equals);
 
     private static int index = 0;
 
@@ -38,12 +56,16 @@ public class PacketHandler {
         registerClientToServer(GlassesHotkeyPacket.class, GlassesHotkeyPacket::decode);
     }
 
-    public static <MSG extends IPacket> void registerServerToClient(Class<MSG> packet, Function<FriendlyByteBuf, MSG> decode) {
-        CHANNEL.registerMessage(index++, packet, IPacket::encode, decode, IPacket::handle, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
+    public static <MSG extends IPacket> void registerServerToClient(Class<MSG> packet,
+            Function<FriendlyByteBuf, MSG> decode) {
+        CHANNEL.registerMessage(index++, packet, IPacket::encode, decode, IPacket::handle,
+                Optional.of(NetworkDirection.PLAY_TO_CLIENT));
     }
 
-    public static <MSG extends IPacket> void registerClientToServer(Class<MSG> packet, Function<FriendlyByteBuf, MSG> decode) {
-        CHANNEL.registerMessage(index++, packet, IPacket::encode, decode, IPacket::handle, Optional.of(NetworkDirection.PLAY_TO_SERVER));
+    public static <MSG extends IPacket> void registerClientToServer(Class<MSG> packet,
+            Function<FriendlyByteBuf, MSG> decode) {
+        CHANNEL.registerMessage(index++, packet, IPacket::encode, decode, IPacket::handle,
+                Optional.of(NetworkDirection.PLAY_TO_SERVER));
     }
 
     public static void sendToClient(Object packet, ServerPlayer player) {
@@ -67,9 +89,11 @@ public class PacketHandler {
 
     public static void sendToAllTracking(Object packet, Level world, BlockPos pos) {
         if (world instanceof ServerLevel) {
-            ((ServerLevel) world).getChunkSource().chunkMap.getPlayers(new ChunkPos(pos), false).forEach(p -> sendTo(packet, p));
+            ((ServerLevel) world).getChunkSource().chunkMap.getPlayers(new ChunkPos(pos), false)
+                    .forEach(p -> sendTo(packet, p));
         } else {
-            CHANNEL.send(PacketDistributor.TRACKING_CHUNK.with(() -> world.getChunk(pos.getX() >> 4, pos.getZ() >> 4)), packet);
+            CHANNEL.send(PacketDistributor.TRACKING_CHUNK.with(() -> world.getChunk(pos.getX() >> 4, pos.getZ() >> 4)),
+                    packet);
         }
     }
 }

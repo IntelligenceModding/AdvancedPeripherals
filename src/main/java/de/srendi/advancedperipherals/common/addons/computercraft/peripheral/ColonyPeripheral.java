@@ -1,3 +1,18 @@
+/*
+ *     Copyright 2024 Intelligence Modding @ https://intelligence-modding.de
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *          https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.srendi.advancedperipherals.common.addons.computercraft.peripheral;
 
 import com.minecolonies.api.IMinecoloniesAPI;
@@ -32,7 +47,12 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.fml.ModList;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class ColonyPeripheral extends BasePeripheral<IPeripheralOwner> {
@@ -65,7 +85,8 @@ public class ColonyPeripheral extends BasePeripheral<IPeripheralOwner> {
 
         if (!(pos.containsKey("x") && pos.containsKey("y") && pos.containsKey("z")))
             throw new LuaException("Coordinates expected");
-        BlockPos p = new BlockPos(((Number) pos.get("x")).intValue(), ((Number) pos.get("y")).intValue(), ((Number) pos.get("z")).intValue());
+        BlockPos p = new BlockPos(((Number) pos.get("x")).intValue(), ((Number) pos.get("y")).intValue(),
+                ((Number) pos.get("z")).intValue());
 
         return colony.isCoordInColony(this.getLevel(), p);
     }
@@ -210,9 +231,12 @@ public class ColonyPeripheral extends BasePeripheral<IPeripheralOwner> {
         Map<String, Object> result = new HashMap<>();
         for (ResourceLocation branch : globalTree.getBranches()) {
             try {
-                result.put(branch.toString(), MineColonies.getResearch(branch, globalTree.getPrimaryResearch(branch), colony));
+                result.put(branch.toString(),
+                        MineColonies.getResearch(branch, globalTree.getPrimaryResearch(branch), colony));
             } catch (CommandSyntaxException ex) {
-                AdvancedPeripherals.debug("Error getting research for branch " + branch.toString() + ": " + ex.getMessage(), org.apache.logging.log4j.Level.WARN);
+                AdvancedPeripherals.debug(
+                        "Error getting research for branch " + branch.toString() + ": " + ex.getMessage(),
+                        org.apache.logging.log4j.Level.WARN);
                 ex.printStackTrace();
             }
         }
@@ -225,7 +249,8 @@ public class ColonyPeripheral extends BasePeripheral<IPeripheralOwner> {
         IColony colony = getColony();
 
         IWorkOrder workOrder = colony.getWorkManager().getWorkOrder(id);
-        if (workOrder == null) return null;
+        if (workOrder == null)
+            return null;
 
         return MineColonies.builderResourcesToObject(colony, workOrder.getClaimedBy());
     }
@@ -246,9 +271,9 @@ public class ColonyPeripheral extends BasePeripheral<IPeripheralOwner> {
         IColony colony = getColony();
 
         IRequestManager requestManager = colony.getRequestManager();
-        //All requests assigned to players
+        // All requests assigned to players
         IPlayerRequestResolver playerResolver = requestManager.getPlayerResolver();
-        //All requests not assigned to players
+        // All requests not assigned to players
         IRetryingRequestResolver requestResolver = requestManager.getRetryingRequestResolver();
 
         Set<IToken<?>> tokens = new HashSet<>();
@@ -272,7 +297,8 @@ public class ColonyPeripheral extends BasePeripheral<IPeripheralOwner> {
             map.put("state", request.getState().toString());
             map.put("count", deliverableRequest.getCount());
             map.put("minCount", deliverableRequest.getMinimumCount());
-            map.put("items", request.getDisplayStacks().stream().map(LuaConverter::itemStackToObject).collect(Collectors.toList()));
+            map.put("items", request.getDisplayStacks().stream().map(LuaConverter::itemStackToObject)
+                    .collect(Collectors.toList()));
             map.put("target", request.getRequester().getRequesterDisplayName(requestManager, request).getString());
             result.add(map);
         });
@@ -282,7 +308,8 @@ public class ColonyPeripheral extends BasePeripheral<IPeripheralOwner> {
     private IColony getColony() throws LuaException {
         IMinecoloniesAPI api = IMinecoloniesAPI.getInstance();
         IColony colony = api.getColonyManager().getColonyByPosFromWorld(getLevel(), getPos());
-        this.hasPermission = !(owner instanceof PocketPeripheralOwner) || MineColonies.hasAccess(owner.getOwner(), colony);
+        this.hasPermission = !(owner instanceof PocketPeripheralOwner)
+                || MineColonies.hasAccess(owner.getOwner(), colony);
         if (colony == null || !this.hasPermission)
             throw new LuaException("Here is no colony or you don't have the right permissions");
         return colony;
