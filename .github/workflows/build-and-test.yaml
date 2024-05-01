@@ -1,0 +1,13 @@
+name: Build and Test
+
+on:
+  workflow_dispatch:
+  push:
+  pull_request_target:
+    types:
+      - opened
+      - synchronize
+
+jobs:
+  build-and-test:
+    uses: IntelligenceModding/actions/.github/workflows/build-and-test.yaml@master
