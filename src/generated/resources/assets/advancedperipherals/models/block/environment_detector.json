@@ -3,6 +3,7 @@
   "textures": {
     "all": "advancedperipherals:block/environment_detector",
     "north": "advancedperipherals:block/environment_detector_front",
-    "particle": "advancedperipherals:block/environment_detector_front"
+    "particle": "advancedperipherals:block/environment_detector_front",
+    "up": "advancedperipherals:block/environment_detector_top"
   }
 }

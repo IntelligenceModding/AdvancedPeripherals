@@ -3,6 +3,7 @@
   "textures": {
     "all": "advancedperipherals:block/nbt_storage",
     "north": "advancedperipherals:block/nbt_storage_front",
-    "particle": "advancedperipherals:block/nbt_storage_front"
+    "particle": "advancedperipherals:block/nbt_storage_front",
+    "up": "advancedperipherals:block/nbt_storage_top"
   }
 }

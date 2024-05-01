@@ -3,6 +3,7 @@
   "textures": {
     "all": "advancedperipherals:block/inventory_manager",
     "north": "advancedperipherals:block/inventory_manager_front",
-    "particle": "advancedperipherals:block/inventory_manager_front"
+    "particle": "advancedperipherals:block/inventory_manager_front",
+    "up": "advancedperipherals:block/inventory_manager_top"
   }
 }

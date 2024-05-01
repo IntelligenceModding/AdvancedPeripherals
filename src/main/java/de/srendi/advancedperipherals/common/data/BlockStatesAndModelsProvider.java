@@ -20,22 +20,19 @@ public class BlockStatesAndModelsProvider extends BlockStateProvider {
 
     @Override
     protected void registerStatesAndModels() {
-        peripheralBlock(APBlocks.ENVIRONMENT_DETECTOR.get(), "front");
-        peripheralBlock(APBlocks.CHAT_BOX.get(), "front");
-        peripheralBlock(APBlocks.PLAYER_DETECTOR.get(), "side", "front");
-        peripheralBlock(APBlocks.ME_BRIDGE.get(), "front");
-        peripheralBlock(APBlocks.RS_BRIDGE.get(), "front");
-        peripheralBlock(APBlocks.ENERGY_DETECTOR.get(), "front", "back");
+        peripheralBlock(APBlocks.ENVIRONMENT_DETECTOR.get(), "front", "top");
+        peripheralBlock(APBlocks.CHAT_BOX.get(), "front", "top");
+        peripheralBlock(APBlocks.PLAYER_DETECTOR.get(), generateModel(APBlocks.PLAYER_DETECTOR.get(), false, "side", "front", "top"));
+        peripheralBlock(APBlocks.ME_BRIDGE.get(), "front", "top");
+        peripheralBlock(APBlocks.RS_BRIDGE.get(), "front", "top");
+        peripheralBlock(APBlocks.ENERGY_DETECTOR.get(), "front", "back", "top", "east");
         peripheralBlock(APBlocks.PERIPHERAL_CASING.get());
-        peripheralBlock(APBlocks.INVENTORY_MANAGER.get(), "front");
-        peripheralBlock(APBlocks.REDSTONE_INTEGRATOR.get(), "front");
+        peripheralBlock(APBlocks.INVENTORY_MANAGER.get(), "front", "top");
+        peripheralBlock(APBlocks.REDSTONE_INTEGRATOR.get(), generateModel(APBlocks.REDSTONE_INTEGRATOR.get(), false,"side", "front", "top", "bottom"));
         peripheralBlock(APBlocks.BLOCK_READER.get(), generateModel(APBlocks.BLOCK_READER.get(), false, "north", "south", "east", "west", "up", "down"));
-        peripheralBlock(APBlocks.GEO_SCANNER.get(), "front");
-        peripheralBlock(APBlocks.COLONY_INTEGRATOR.get(), generateModel(APBlocks.COLONY_INTEGRATOR.get())
-                .texture("particle", blockTexture(APBlocks.COLONY_INTEGRATOR.get()))
-                .texture("up", blockTexture(net.minecraft.world.level.block.Blocks.OAK_LOG, "top"))
-                .texture("down", blockTexture(net.minecraft.world.level.block.Blocks.OAK_LOG, "top")));
-        peripheralBlock(APBlocks.NBT_STORAGE.get(), "front");
+        peripheralBlock(APBlocks.GEO_SCANNER.get(), "front", "top");
+        peripheralBlock(APBlocks.COLONY_INTEGRATOR.get(), "front", "top");
+        peripheralBlock(APBlocks.NBT_STORAGE.get(), "front", "top");
     }
 
     private void peripheralBlock(Block block, ModelFile file) {
@@ -81,9 +78,13 @@ public class BlockStatesAndModelsProvider extends BlockStateProvider {
                 side = "north";
                 particleTexture = blockTexture(block, "front");
             }
-            if (side.equals("back")) side = "south";
+            if (side.equals("top"))
+                side = "up";
+            if (side.equals("bottom"))
+                side = "down";
+            if (side.equals("back"))
+                side = "south";
             builder.texture(side, blockTexture(block, sideTexture));
-
 
         }
         builder.texture("particle", particleTexture);
