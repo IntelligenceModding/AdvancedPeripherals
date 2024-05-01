@@ -104,9 +104,9 @@ public class AutomataBlockHandPlugin extends AutomataCorePlugin {
      *   x: the x offset relative to the turtle. Default 0
      *   y: the y offset relative to the turtle. Default 0
      *   z: the z offset relative to the turtle. Default 0
-     *   front: the direction the block is going to facing. Default is the facing direction of the turtle
+     *   anchor: the direction the block is going to hanging on. Default is the direction of the turtle
+     *   front: the direction the block is going to facing. Default is same as anchor
      *   top: the direction the block's top is going to facing. Default is TOP
-     *   anchor: the direction the block is going to hanging on. Default is same as front
      *   text: the text going to write on the sign. Default is null
      */
     @LuaFunction(mainThread = true)
@@ -156,14 +156,14 @@ public class AutomataBlockHandPlugin extends AutomataCorePlugin {
     private String deployOn(ItemStack stack, BlockPos position, Direction anchor, Direction front, Direction top, Map<?, ?> options) throws LuaException {
         ITurtleAccess turtle = automataCore.getPeripheralOwner().getTurtle();
         Level world = turtle.getLevel();
+        if (anchor == null) {
+            anchor = turtle.getDirection();
+        }
         if (front == null) {
-            front = turtle.getDirection();
+            front = anchor;
         }
         if (top == null) {
             top = Direction.UP;
-        }
-        if (anchor == null) {
-            anchor = front;
         }
         TurtlePlayer turtlePlayer = TurtlePlayer.getWithPosition(turtle, position, front.getOpposite());
         BlockHitResult hit = BlockHitResult.miss(Vec3.atCenterOf(position), top, position);
