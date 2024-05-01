@@ -3,7 +3,7 @@ package de.srendi.advancedperipherals.common.blocks.blockentities;
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.PlayerDetectorPeripheral;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralBlockEntity;
 import de.srendi.advancedperipherals.common.events.Events;
-import de.srendi.advancedperipherals.common.setup.BlockEntityTypes;
+import de.srendi.advancedperipherals.common.setup.APBlockEntityTypes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -15,7 +15,7 @@ public class PlayerDetectorEntity extends PeripheralBlockEntity<PlayerDetectorPe
     private Long lastConsumedMessage;
 
     public PlayerDetectorEntity(BlockPos pos, BlockState state) {
-        super(BlockEntityTypes.PLAYER_DETECTOR.get(), pos, state);
+        super(APBlockEntityTypes.PLAYER_DETECTOR.get(), pos, state);
         lastConsumedMessage = Events.getLastPlayerMessageID() - 1;
     }
 

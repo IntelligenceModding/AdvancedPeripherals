@@ -11,6 +11,7 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * Used to transfer item between an inventory and the RS system.
+ *
  * @see de.srendi.advancedperipherals.common.addons.computercraft.peripheral.RsBridgePeripheral
  */
 public class RsItemHandler implements IStorageSystemItemHandler {
@@ -31,7 +32,8 @@ public class RsItemHandler implements IStorageSystemItemHandler {
     @Override
     public ItemStack extractItem(ItemFilter filter, int count, boolean simulate) {
         ItemStack item = RefinedStorage.findStackFromFilter(network, network.getCraftingManager(), filter);
-        AdvancedPeripherals.debug("Trying to extract item: " + item + " from filter: " + filter);
+        if (item == null)
+            AdvancedPeripherals.debug("Trying to extract item: " + item + " from filter: " + filter);
         if(item == null)
             return ItemStack.EMPTY;
         ItemStack extracted = network.extractItem(item, count, IComparer.COMPARE_NBT, simulate ? Action.SIMULATE : Action.PERFORM);

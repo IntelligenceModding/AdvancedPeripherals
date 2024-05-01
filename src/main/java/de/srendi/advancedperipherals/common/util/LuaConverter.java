@@ -3,6 +3,7 @@ package de.srendi.advancedperipherals.common.util;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.shared.util.NBTUtil;
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.InventoryManagerPeripheral;
+import de.srendi.advancedperipherals.common.util.inventory.FluidUtil;
 import de.srendi.advancedperipherals.common.util.inventory.ItemUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -14,9 +15,13 @@ import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.properties.Property;
+import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.common.IForgeShearable;
-import org.jetbrains.annotations.NotNull;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidType;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -100,8 +105,11 @@ public class LuaConverter {
         return map;
     }
 
-    public static Map<String, Object> stackToObject(@NotNull ItemStack stack) {
-        if (stack.isEmpty()) return new HashMap<>();
+    @Nullable
+    public static Map<String, Object> itemStackToObject(@NotNull ItemStack stack) {
+        if (stack.isEmpty()) {
+            return null;
+        }
         Map<String, Object> map = itemToObject(stack.getItem());
         CompoundTag nbt = stack.copy().getOrCreateTag();
         map.put("count", stack.getCount());
@@ -112,10 +120,21 @@ public class LuaConverter {
         return map;
     }
 
-    public static Map<String, Object> stackToObject(@NotNull ItemStack itemStack, int amount) {
+    public static Map<String, Object> fluidStackToObject(@NotNull FluidStack stack) {
+        if (stack.isEmpty()) return new HashMap<>();
+        Map<String, Object> map = fluidToObject(stack.getFluid());
+        CompoundTag nbt = stack.copy().getOrCreateTag();
+        map.put("count", stack.getAmount());
+        map.put("displayName", stack.getDisplayName().getString());
+        map.put("nbt", NBTUtil.toLua(nbt));
+        map.put("fingerprint", FluidUtil.getFingerprint(stack));
+        return map;
+    }
+
+    public static Map<String, Object> itemStackToObject(@NotNull ItemStack itemStack, int amount) {
         ItemStack stack = itemStack.copy();
         stack.setCount(amount);
-        return stackToObject(stack);
+        return itemStackToObject(stack);
     }
 
     /**
@@ -126,10 +145,13 @@ public class LuaConverter {
      * @return a Map containing proper item stack details
      * @see InventoryManagerPeripheral#getItems()
      */
+    @Nullable
     public static Map<String, Object> stackToObjectWithSlot(@NotNull ItemStack stack, int slot) {
-        if (stack.isEmpty()) return new HashMap<>();
-        Map<String, Object> map = stackToObject(stack);
-        map.put("slot", slot);
+        if (stack.isEmpty()) {
+            return null;
+        }
+        Map<String, Object> map = itemStackToObject(stack);
+        map.put("slot", slot + 1);
         return map;
     }
 
@@ -137,6 +159,18 @@ public class LuaConverter {
         Map<String, Object> map = new HashMap<>();
         map.put("tags", tagsToList(() -> item.builtInRegistryHolder().tags()));
         map.put("name", ItemUtil.getRegistryKey(item).toString());
+        return map;
+    }
+
+    public static Map<String, Object> fluidToObject(@NotNull Fluid fluid) {
+        Map<String, Object> map = new HashMap<>();
+        FluidType fluidType = fluid.getFluidType();
+        map.put("tags", tagsToList(() -> fluid.builtInRegistryHolder().tags()));
+        map.put("name", FluidUtil.getRegistryKey(fluid).toString());
+        map.put("density", fluidType.getDensity());
+        map.put("lightLevel", fluidType.getLightLevel());
+        map.put("temperature", fluidType.getTemperature());
+        map.put("viscosity", fluidType.getViscosity());
         return map;
     }
 

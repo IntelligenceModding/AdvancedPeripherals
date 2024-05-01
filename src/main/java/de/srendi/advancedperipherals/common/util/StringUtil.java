@@ -12,4 +12,11 @@ public class StringUtil {
         }
         return new String(hexChars);
     }
+
+    public static String removeFloatingPoints(String number) {
+        if (number.contains(".")) {
+            return number.substring(0, number.indexOf("."));
+        }
+        return number;
+    }
 }

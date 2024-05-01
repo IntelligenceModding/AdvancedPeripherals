@@ -14,7 +14,7 @@ public class EnderCellIntegration extends BlockEntityIntegrationPeripheral<Ender
     @NotNull
     @Override
     public String getType() {
-        return "enderCell";
+        return "ender_cell";
     }
 
     @LuaFunction(mainThread = true)

@@ -12,6 +12,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 public class ServerWorker {
 
     private static final Queue<Runnable> callQueue = new ConcurrentLinkedQueue<>();
+    private static int tasksRan = 0;
 
     public static void add(final Runnable call) {
         callQueue.add(call);
@@ -22,7 +23,8 @@ public class ServerWorker {
         if (event.phase == TickEvent.Phase.END) {
             while (!callQueue.isEmpty()) {
                 final Runnable runnable = callQueue.poll();
-                AdvancedPeripherals.debug("Running queued server worker call: " + runnable);
+                tasksRan++;
+                AdvancedPeripherals.debug("Running task #" + tasksRan + ". Running " + runnable.getClass());
                 runnable.run();
             }
         }

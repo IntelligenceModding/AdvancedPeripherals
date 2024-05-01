@@ -18,20 +18,14 @@ import de.srendi.advancedperipherals.common.util.LuaConverter;
 import de.srendi.advancedperipherals.common.util.inventory.FluidFilter;
 import de.srendi.advancedperipherals.common.util.inventory.ItemFilter;
 import de.srendi.advancedperipherals.common.util.inventory.ItemUtil;
-import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.TagKey;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
-import java.util.function.Supplier;
-import java.util.stream.Stream;
+import java.util.stream.Collectors;
 
 public class RefinedStorage {
 
@@ -63,7 +57,7 @@ public class RefinedStorage {
             return ItemStack.EMPTY;
 
         for (ICraftingPattern pattern : crafting.getPatterns()) {
-            for(ItemStack stack : pattern.getOutputs()) {
+            for (ItemStack stack : pattern.getOutputs()) {
                 if (filter.test(stack.copy()))
                     return stack.copy();
             }
@@ -160,35 +154,43 @@ public class RefinedStorage {
     }
 
     public static Object getObjectFromPattern(ICraftingPattern pattern, INetwork network) {
-        if (pattern == null) return null;
+        if (pattern == null)
+            return null;
+
         Map<String, Object> map = new HashMap<>();
-        List<ItemStack> outputsList = pattern.getOutputs();
-        List<Object> outputs = new ArrayList<>();
-        for (ItemStack itemStack : outputsList)
-            outputs.add(getObjectFromStack(itemStack.copy(), network));
+        map.put("outputs", pattern.getOutputs().stream().map(stack -> getObjectFromStack(stack.copy(), network)).toList());
+        map.put("fluidOutputs", pattern.getFluidOutputs().stream().map(stack -> getObjectFromFluid(stack.copy(), network)).toList());
 
-        map.put("outputs", outputs);
+        List<List<Map<String, Object>>> inputs = pattern.getInputs().stream()
+                .map(singleInputList -> singleInputList.stream()
+                        .map(stack -> getObjectFromStack(stack.copy(), network))
+                        .collect(Collectors.toList()))
+                .collect(Collectors.toList());
 
-        List<NonNullList<ItemStack>> inputList = pattern.getInputs();
-        List<Object> inputs = new ArrayList<>();
-        for (List<ItemStack> singleInputList : inputList) {
-            List<Object> inputs1 = new ArrayList<>();
-            for (ItemStack stack : singleInputList)
-                inputs1.add(getObjectFromStack(stack.copy(), network));
-            inputs.add(inputs1);
-        }
+        List<List<Map<String, Object>>> fluidInputs = pattern.getInputs().stream()
+                .map(singleInputList -> singleInputList.stream()
+                        .map(stack -> getObjectFromStack(stack.copy(), network))
+                        .collect(Collectors.toList()))
+                .collect(Collectors.toList());
 
         List<Object> byproducts = new ArrayList<>();
         if (!pattern.isProcessing()) {
-            List<ItemStack> byproductsList = pattern.getByproducts();
-            for (ItemStack stack : byproductsList)
-                byproducts.add(getObjectFromStack(stack.copy(), network));
+            byproducts = pattern.getByproducts().stream()
+                    .map(stack -> getObjectFromStack(stack.copy(), network))
+                    .collect(Collectors.toList());
         }
 
+        map.put("fluidInputs", fluidInputs);
         map.put("inputs", inputs);
-        map.put("outputs", outputs);
         map.put("byproducts", byproducts);
         map.put("processing", pattern.isProcessing());
+        Map<String, Object> container = new HashMap<>();
+        map.put("name", pattern.getContainer().getName().getString());
+        map.put("position", LuaConverter.posToObject(pattern.getContainer().getPosition()));
+
+        map.put("container", container);
+        map.put("isValid", pattern.isValid());
+        map.put("errorMessage", pattern.getErrorMessage() == null ? "" : pattern.getErrorMessage().getString());
         return map;
     }
 
@@ -196,16 +198,13 @@ public class RefinedStorage {
         if (itemStack == null)
             return Collections.emptyMap();
 
-        Map<String, Object> map = new HashMap<>();
+        Map<String, Object> map = LuaConverter.itemToObject(itemStack.getItem());
         CompoundTag nbt = itemStack.getTag();
-        Supplier<Stream<TagKey<Item>>> tags = () -> itemStack.getItem().builtInRegistryHolder().tags();
         map.put("fingerprint", ItemUtil.getFingerprint(itemStack));
-        map.put("name", ItemUtil.getRegistryKey(itemStack.getItem()).toString());
         map.put("amount", itemStack.getCount());
         map.put("displayName", itemStack.getDisplayName().getString());
         map.put("isCraftable", isItemCraftable(network, itemStack));
         map.put("nbt", nbt == null ? null : NBTUtil.toLua(nbt));
-        map.put("tags", tags.get().findAny().isEmpty() ? null : LuaConverter.tagsToList(tags));
 
         return map;
     }
@@ -214,13 +213,10 @@ public class RefinedStorage {
         if (fluidStack == null)
             return Collections.emptyMap();
 
-        Map<String, Object> map = new HashMap<>();
-        Supplier<Stream<TagKey<Fluid>>> tags = () -> fluidStack.getFluid().builtInRegistryHolder().tags();
-        map.put("name", ForgeRegistries.FLUIDS.getKey(fluidStack.getFluid()).toString());
+        Map<String, Object> map = LuaConverter.fluidToObject(fluidStack.getFluid());
         map.put("amount", fluidStack.getAmount());
         map.put("displayName", fluidStack.getDisplayName().getString());
         map.put("isCraftable", isFluidCraftable(network, fluidStack));
-        map.put("tags", tags.get().findAny().isEmpty() ? null : LuaConverter.tagsToList(tags));
 
         return map;
     }
