@@ -1,6 +1,7 @@
 {
   "parent": "minecraft:block/cube_all",
   "textures": {
+    "down": "advancedperipherals:block/bottom",
     "east": "advancedperipherals:block/player_detector_side",
     "north": "advancedperipherals:block/player_detector_front",
     "particle": "advancedperipherals:block/player_detector_front",

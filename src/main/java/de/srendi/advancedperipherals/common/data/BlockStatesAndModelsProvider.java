@@ -12,6 +12,9 @@ import net.minecraftforge.client.model.generators.*;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.registries.ForgeRegistries;
 
+import java.lang.reflect.Array;
+import java.util.Arrays;
+
 public class BlockStatesAndModelsProvider extends BlockStateProvider {
 
     public BlockStatesAndModelsProvider(DataGenerator packOutput, ExistingFileHelper exFileHelper) {
@@ -89,6 +92,12 @@ public class BlockStatesAndModelsProvider extends BlockStateProvider {
             builder.texture(side, blockTexture(block, sideTexture));
 
         }
+
+        // Add our default bottom texture if there is no other defined
+        if (!Arrays.asList(sides).contains("down") && !Arrays.asList(sides).contains("bottom")) {
+            builder.texture("down", AdvancedPeripherals.getRL(ModelProvider.BLOCK_FOLDER + "/" + "bottom"));
+        }
+
         builder.texture("particle", particleTexture);
         return builder;
     }
