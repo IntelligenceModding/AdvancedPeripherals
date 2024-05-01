@@ -52,7 +52,7 @@ public class RedstoneIntegratorEntity extends PeripheralBlockEntity<RedstoneInte
      * This method should only be called from main thread
      */
     public void setInput(ComputerSide side, int input) {
-        Integer old = this.inputs.getOrDefault(side, Integer.ZERO);
+        Integer old = this.inputs.getOrDefault(side, 0);
         if (old.intValue() == input) {
             return;
         }
