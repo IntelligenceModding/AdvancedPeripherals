@@ -2,8 +2,8 @@ package de.srendi.advancedperipherals.common.blocks;
 
 import de.srendi.advancedperipherals.common.blocks.base.BaseBlockEntityBlock;
 import de.srendi.advancedperipherals.common.blocks.blockentities.RedstoneIntegratorEntity;
-import de.srendi.advancedperipherals.common.setup.APBlockEntityTypes;
-import de.srendi.advancedperipherals.common.setup.APBlocks;
+import de.srendi.advancedperipherals.common.setup.BlockEntityTypes;
+import de.srendi.advancedperipherals.common.setup.Blocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.BlockGetter;
@@ -16,13 +16,13 @@ import org.jetbrains.annotations.Nullable;
 public class RedstoneIntegratorBlock extends BaseBlockEntityBlock {
 
     public RedstoneIntegratorBlock() {
-        super(false, Properties.of(Material.METAL).isRedstoneConductor(APBlocks::never));
+        super(false, Properties.of(Material.METAL).isRedstoneConductor(Blocks::never));
     }
 
     @Nullable
     @Override
     public BlockEntity newBlockEntity(@NotNull BlockPos pos, @NotNull BlockState state) {
-        return APBlockEntityTypes.REDSTONE_INTEGRATOR.get().create(pos, state);
+        return BlockEntityTypes.REDSTONE_INTEGRATOR.get().create(pos, state);
     }
 
     @Override

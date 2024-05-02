@@ -2,7 +2,7 @@ package de.srendi.advancedperipherals.common.data;
 
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.blocks.base.BaseBlock;
-import de.srendi.advancedperipherals.common.setup.APBlocks;
+import de.srendi.advancedperipherals.common.setup.Blocks;
 import net.minecraft.core.Direction;
 import net.minecraft.core.FrontAndTop;
 import net.minecraft.data.DataGenerator;
@@ -20,30 +20,29 @@ public class BlockStatesAndModelsProvider extends BlockStateProvider {
 
     @Override
     protected void registerStatesAndModels() {
-        peripheralBlock(APBlocks.ENVIRONMENT_DETECTOR.get(), "front");
-        peripheralBlock(APBlocks.CHAT_BOX.get(), "front");
-        peripheralBlock(APBlocks.PLAYER_DETECTOR.get(), "side", "front");
-        peripheralBlock(APBlocks.ME_BRIDGE.get(), "front");
-        peripheralBlock(APBlocks.RS_BRIDGE.get(), "front");
-        peripheralBlock(APBlocks.ENERGY_DETECTOR.get(), "front", "back");
-        peripheralBlock(APBlocks.PERIPHERAL_CASING.get());
-        peripheralBlock(APBlocks.INVENTORY_MANAGER.get(), "front");
-        peripheralBlock(APBlocks.REDSTONE_INTEGRATOR.get(), "front");
-        peripheralBlock(APBlocks.BLOCK_READER.get(), generateModel(APBlocks.BLOCK_READER.get(), false, "north", "south", "east", "west", "up", "down"));
-        peripheralBlock(APBlocks.GEO_SCANNER.get(), "front");
-        peripheralBlock(APBlocks.COLONY_INTEGRATOR.get(), generateModel(APBlocks.COLONY_INTEGRATOR.get())
-                .texture("particle", blockTexture(APBlocks.COLONY_INTEGRATOR.get()))
+        peripheralBlock(Blocks.ENVIRONMENT_DETECTOR.get(), "front");
+        peripheralBlock(Blocks.CHAT_BOX.get(), "front");
+        peripheralBlock(Blocks.PLAYER_DETECTOR.get(), "side", "front");
+        peripheralBlock(Blocks.ME_BRIDGE.get(), "front");
+        peripheralBlock(Blocks.RS_BRIDGE.get(), "front");
+        peripheralBlock(Blocks.ENERGY_DETECTOR.get(), "front", "back");
+        peripheralBlock(Blocks.PERIPHERAL_CASING.get());
+        peripheralBlock(Blocks.INVENTORY_MANAGER.get(), "front");
+        peripheralBlock(Blocks.REDSTONE_INTEGRATOR.get(), "front");
+        peripheralBlock(Blocks.BLOCK_READER.get(), generateModel(Blocks.BLOCK_READER.get(), false, "north", "south", "east", "west", "up", "down"));
+        peripheralBlock(Blocks.GEO_SCANNER.get(), "front");
+        peripheralBlock(Blocks.COLONY_INTEGRATOR.get(), generateModel(Blocks.COLONY_INTEGRATOR.get())
+                .texture("particle", blockTexture(Blocks.COLONY_INTEGRATOR.get()))
                 .texture("up", blockTexture(net.minecraft.world.level.block.Blocks.OAK_LOG, "top"))
                 .texture("down", blockTexture(net.minecraft.world.level.block.Blocks.OAK_LOG, "top")));
-        peripheralBlock(APBlocks.NBT_STORAGE.get(), "front");
+        peripheralBlock(Blocks.NBT_STORAGE.get(), "front");
     }
 
     private void peripheralBlock(Block block, ModelFile file) {
         getVariantBuilder(block).forAllStates(state -> {
             ConfiguredModel.Builder<?> builder = ConfiguredModel.builder().modelFile(file);
             FrontAndTop orientation = state.getValue(BaseBlock.ORIENTATION);
-            int x = 0;
-            int y;
+            int x = 0, y;
             if (orientation.top().getAxis() == Direction.Axis.Y) {
                 y = (int) (orientation.front().toYRot() + 180) % 360;
             } else {
@@ -74,7 +73,7 @@ public class BlockStatesAndModelsProvider extends BlockStateProvider {
                 for (Direction direction : Direction.Plane.HORIZONTAL)
                     builder.texture(direction.toString(), blockTexture(block, sideTexture));
             }
-            if (side.equals("north"))
+            if(side.equals("north"))
                 particleTexture = blockTexture(block, "north");
 
             if (side.equals("front")) {

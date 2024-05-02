@@ -16,7 +16,7 @@ public class MechanicalMixerIntegration extends BlockEntityIntegrationPeripheral
     @NotNull
     @Override
     public String getType() {
-        return "mechanical_mixer";
+        return "mechanicalMixer";
     }
 
     @LuaFunction(mainThread = true)

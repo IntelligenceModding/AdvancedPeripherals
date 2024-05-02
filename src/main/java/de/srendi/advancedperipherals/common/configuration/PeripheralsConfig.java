@@ -24,13 +24,6 @@ public class PeripheralsConfig implements IAPConfig {
     public final ForgeConfigSpec.IntValue energyDetectorMaxFlow;
     public final ForgeConfigSpec.BooleanValue enableEnergyDetector;
 
-    //Fluid Detector
-    public final ForgeConfigSpec.IntValue fluidDetectorMaxFlow;
-    public final ForgeConfigSpec.BooleanValue enableFluidDetector;
-
-    //Gas Detector
-    public final ForgeConfigSpec.IntValue gasDetectorMaxFlow;
-    public final ForgeConfigSpec.BooleanValue enableGasDetector;
     //NBT Storage
     public final ForgeConfigSpec.IntValue nbtStorageMaxSize;
     public final ForgeConfigSpec.BooleanValue enableNBTStorage;
@@ -57,7 +50,8 @@ public class PeripheralsConfig implements IAPConfig {
     public final ForgeConfigSpec.BooleanValue enableEnvironmentDetector;
 
     //AR Controller
-    public final ForgeConfigSpec.BooleanValue enableSmartGlasses;
+    public final ForgeConfigSpec.BooleanValue enableARGoggles;
+
     //Inventory Manager
     public final ForgeConfigSpec.BooleanValue enableInventoryManager;
 
@@ -75,11 +69,6 @@ public class PeripheralsConfig implements IAPConfig {
 
     //Compass turtle
     public final ForgeConfigSpec.BooleanValue enableCompassTurtle;
-
-    //Compass turtle
-    public final ForgeConfigSpec.BooleanValue enableDistanceDetector;
-    public final ForgeConfigSpec.DoubleValue distanceDetectorRange;
-    public final ForgeConfigSpec.IntValue distanceDetectorUpdateRate;
 
     //Powered Peripherals
     public final ForgeConfigSpec.BooleanValue enablePoweredPeripherals;
@@ -106,17 +95,7 @@ public class PeripheralsConfig implements IAPConfig {
         pop("Energy_Detector", builder);
 
         enableEnergyDetector = builder.comment("Enable the Energy Detector or not.").define("enableEnergyDetector", true);
-        energyDetectorMaxFlow = builder.comment("Defines the maximum energy flow of the energy detector.").defineInRange("energyDetectorMaxFlow", Integer.MAX_VALUE, 0, Integer.MAX_VALUE);
-
-        pop("Fluid_Detector", builder);
-
-        enableFluidDetector = builder.comment("Enable the Fluid Detector or not.").define("enableFluidDetector", true);
-        fluidDetectorMaxFlow = builder.comment("Defines the maximum fluid flow of the fluid detector.").defineInRange("energyDetectorMaxFlow", Integer.MAX_VALUE, 0, Integer.MAX_VALUE);
-
-        pop("Gas_Detector", builder);
-
-        enableGasDetector = builder.comment("Enable the Gas Detector or not.").define("enableGasDetector", true);
-        gasDetectorMaxFlow = builder.comment("Defines the maximum gas flow of the gas detector.").defineInRange("gasDetectorMaxFlow", Integer.MAX_VALUE, 0, Integer.MAX_VALUE);
+        energyDetectorMaxFlow = builder.comment("Defines the maximum energy flow of the energy detector.").defineInRange("energyDetectorMaxFlow", Integer.MAX_VALUE, 1, Integer.MAX_VALUE);
 
         pop("NBT_Storage", builder);
 
@@ -151,7 +130,7 @@ public class PeripheralsConfig implements IAPConfig {
 
         pop("AR_Controller", builder);
 
-        enableSmartGlasses = builder.comment("Enable the smart glasses or not.").define("enableSmartGlasses", true);
+        enableARGoggles = builder.comment("Enable the AR goggles or not.").define("enableARGoggles", true);
 
         pop("Inventory_Manager", builder);
 
@@ -176,13 +155,6 @@ public class PeripheralsConfig implements IAPConfig {
         pop("Compass_Turtle", builder);
 
         enableCompassTurtle = builder.comment("Enable the compass turtle or not.").define("enableCompassTurtle", true);
-
-        pop("Distance_Detector", builder);
-
-        enableDistanceDetector = builder.comment("Enable the distance detector or not.").define("enableDistanceDetector", true);
-        distanceDetectorRange = builder.comment("Maximum range of the distance detector").defineInRange("distanceDetectorRange", 64D, 0D, Integer.MAX_VALUE);
-        distanceDetectorUpdateRate = builder.comment("Defines how often the distance detector updates it's distance if periodically updates are enabled. \n" +
-                "Periodically updates exists so we do not need to run \"getDistance\" on the main thread which eliminates the 1 tick yield of the lua function").defineInRange("maxUpdateRate", 2, 1, 100);
 
         pop("Powered_Peripherals", builder);
 

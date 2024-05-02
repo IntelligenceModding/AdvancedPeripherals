@@ -3,17 +3,13 @@ package de.srendi.advancedperipherals.client;
 import dan200.computercraft.api.client.ComputerCraftAPIClient;
 import dan200.computercraft.api.client.turtle.TurtleUpgradeModeller;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
-import de.srendi.advancedperipherals.client.renderer.DistanceDetectorRenderer;
-import de.srendi.advancedperipherals.client.screens.InventoryManagerScreen;
-import de.srendi.advancedperipherals.client.screens.SmartGlassesScreen;
-import de.srendi.advancedperipherals.common.setup.APBlockEntityTypes;
-import de.srendi.advancedperipherals.common.setup.APContainerTypes;
+import de.srendi.advancedperipherals.common.container.InventoryManagerScreen;
 import de.srendi.advancedperipherals.common.setup.CCRegistration;
+import de.srendi.advancedperipherals.common.setup.ContainerTypes;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.client.event.ModelEvent;
 import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -34,8 +30,7 @@ public class ClientRegistry {
 
     @SubscribeEvent
     public static void onClientSetup(FMLClientSetupEvent event) {
-        MenuScreens.register(APContainerTypes.INVENTORY_MANAGER_CONTAINER.get(), InventoryManagerScreen::new);
-        MenuScreens.register(APContainerTypes.SMART_GLASSES_CONTAINER.get(), SmartGlassesScreen::new);
+        MenuScreens.register(ContainerTypes.INVENTORY_MANAGER_CONTAINER.get(), InventoryManagerScreen::new);
 
         ComputerCraftAPIClient.registerTurtleUpgradeModeller(CCRegistration.CHUNKY_TURTLE.get(), TurtleUpgradeModeller.flatItem());
         ComputerCraftAPIClient.registerTurtleUpgradeModeller(CCRegistration.COMPASS_TURTLE.get(), TurtleUpgradeModeller.flatItem());
@@ -49,17 +44,16 @@ public class ClientRegistry {
         ComputerCraftAPIClient.registerTurtleUpgradeModeller(CCRegistration.HUSBANDRY_TURTLE.get(), new MetaTurtleUpgradeModeller<>());
         ComputerCraftAPIClient.registerTurtleUpgradeModeller(CCRegistration.END_TURTLE.get(), new MetaTurtleUpgradeModeller<>());
         ComputerCraftAPIClient.registerTurtleUpgradeModeller(CCRegistration.WEAK_TURTLE.get(), new MetaTurtleUpgradeModeller<>());
-
-        ItemPropertiesRegistry.register();
     }
 
     @SubscribeEvent
-    public static void registeringKeymappings(RegisterKeyMappingsEvent event) {
+    public static void onClientSetup(RegisterKeyMappingsEvent event) {
         KeyBindings.register(event);
     }
 
-    @SubscribeEvent
-    public static void registeringRenderers(EntityRenderersEvent.RegisterRenderers event) {
-        event.registerBlockEntityRenderer(APBlockEntityTypes.DISTANCE_DETECTOR.get(), DistanceDetectorRenderer::new);
-    }
+    //TODO change the icon of the curio icon
+    /*@SubscribeEvent
+    public static void onTextureStitching(TextureStitchEvent.Pre event) {
+        event.addSprite(new ResourceLocation(AdvancedPeripherals.MOD_ID, "item/empty_glasses_slot"));
+    }*/
 }

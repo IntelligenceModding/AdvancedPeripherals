@@ -10,8 +10,10 @@ import net.minecraft.world.level.Level;
  * Used to assign a container to a TileEntity
  *
  * @param <T> The container related to this inventory
+ * @deprecated Will be merged with the APBlock in 0.9
  */
 
+@Deprecated(since = "0.7.16", forRemoval = true)
 public interface IInventoryBlock<T extends BaseContainer> {
 
     Component getDisplayName();

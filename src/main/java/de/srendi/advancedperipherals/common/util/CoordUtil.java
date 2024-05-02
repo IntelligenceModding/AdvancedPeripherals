@@ -17,7 +17,7 @@ import java.util.Locale;
 public class CoordUtil {
 
     public static boolean isInRange(@Nullable BlockPos pos, @Nullable Level world, @Nullable Player player, int range, int maxRange) {
-        // There are rare cases where these can be null. For example if a player detector pocket computer runs while not in a player inventory
+        // There are rare cases where these are null. For example if a player detector pocket computer runs while not in a player inventory
         // Fixes https://github.com/SirEndii/AdvancedPeripherals/issues/356
         if (pos == null || world == null || player == null)
             return false;
@@ -83,20 +83,21 @@ public class CoordUtil {
     }
 
     public static Direction getDirection(FrontAndTop orientation, String computerSide) throws LuaException {
-        if (computerSide == null)
+        if (computerSide == null) {
             throw new LuaException("null is not a valid side");
+        }
 
         computerSide = computerSide.toLowerCase(Locale.ROOT);
         Direction dir = Direction.byName(computerSide);
         if (dir != null)
             return dir;
-
         Direction top = orientation.top();
         Direction front = orientation.front();
 
         final ComputerSide side = ComputerSide.valueOfInsensitive(computerSide);
-        if (side == null)
+        if (side == null) {
             throw new LuaException(computerSide + " is not a valid side");
+        }
 
         if (front.getAxis() == Direction.Axis.Y) {
             return switch (side) {
@@ -117,7 +118,6 @@ public class CoordUtil {
                 case LEFT -> front.getClockWise();
             };
         }
-
     }
 
 }

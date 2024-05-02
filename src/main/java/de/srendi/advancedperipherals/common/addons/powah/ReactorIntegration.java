@@ -15,7 +15,7 @@ public class ReactorIntegration extends BlockEntityIntegrationPeripheral<Reactor
     @Override
     @NotNull
     public String getType() {
-        return "uraninite_reactor";
+        return "uraniniteReactor";
     }
 
     @LuaFunction(mainThread = true)

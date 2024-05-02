@@ -10,8 +10,8 @@ import de.srendi.advancedperipherals.common.addons.appliedenergistics.MeBridgeEn
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.MeBridgePeripheral;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralBlockEntity;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
-import de.srendi.advancedperipherals.common.setup.APBlockEntityTypes;
-import de.srendi.advancedperipherals.common.setup.APBlocks;
+import de.srendi.advancedperipherals.common.setup.BlockEntityTypes;
+import de.srendi.advancedperipherals.common.setup.Blocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.player.Player;
@@ -34,7 +34,7 @@ public class MeBridgeEntity extends PeripheralBlockEntity<MeBridgePeripheral> im
     private final IManagedGridNode mainNode = GridHelper.createManagedNode(this, MeBridgeEntityListener.INSTANCE);
 
     public MeBridgeEntity(BlockPos pos, BlockState state) {
-        super(APBlockEntityTypes.ME_BRIDGE.get(), pos, state);
+        super(BlockEntityTypes.ME_BRIDGE.get(), pos, state);
     }
 
     @NotNull
@@ -50,7 +50,7 @@ public class MeBridgeEntity extends PeripheralBlockEntity<MeBridgePeripheral> im
 
                 mainNode.setFlags(GridFlags.REQUIRE_CHANNEL);
                 mainNode.setIdlePowerUsage(APConfig.PERIPHERALS_CONFIG.meConsumption.get());
-                mainNode.setVisualRepresentation(new ItemStack(APBlocks.ME_BRIDGE.get()));
+                mainNode.setVisualRepresentation(new ItemStack(Blocks.ME_BRIDGE.get()));
                 mainNode.setInWorldNode(true);
                 mainNode.create(level, getBlockPos());
 

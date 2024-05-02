@@ -37,8 +37,8 @@ public class APCommands {
     @SubscribeEvent
     public static void register(RegisterCommandsEvent event) {
         event.getDispatcher().register(Commands.literal(ROOT_LITERAL)
-                .then(Commands.literal("getHashItem")
-                        .executes(context -> getHashItem(context.getSource()))).then(Commands.literal(FORCELOAD_LITERAL)
+            .then(Commands.literal("getHashItem").executes(context -> getHashItem(context.getSource())))
+            .then(Commands.literal(FORCELOAD_LITERAL)
                 .executes(context -> forceloadHelp(context.getSource()))
                 .then(Commands.literal("help")
                     .executes(context -> forceloadHelp(context.getSource())))

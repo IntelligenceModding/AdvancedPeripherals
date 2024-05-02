@@ -5,7 +5,7 @@ import de.srendi.advancedperipherals.common.blocks.base.IInventoryBlock;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralBlockEntity;
 import de.srendi.advancedperipherals.common.container.InventoryManagerContainer;
 import de.srendi.advancedperipherals.common.items.MemoryCardItem;
-import de.srendi.advancedperipherals.common.setup.APBlockEntityTypes;
+import de.srendi.advancedperipherals.common.setup.BlockEntityTypes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
@@ -21,7 +21,7 @@ import org.jetbrains.annotations.Nullable;
 public class InventoryManagerEntity extends PeripheralBlockEntity<InventoryManagerPeripheral> implements IInventoryBlock<InventoryManagerContainer> {
 
     public InventoryManagerEntity(BlockPos pos, BlockState state) {
-        super(APBlockEntityTypes.INVENTORY_MANAGER.get(), pos, state);
+        super(BlockEntityTypes.INVENTORY_MANAGER.get(), pos, state);
     }
 
     @NotNull

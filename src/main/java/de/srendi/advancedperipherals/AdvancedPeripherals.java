@@ -2,9 +2,9 @@ package de.srendi.advancedperipherals;
 
 import de.srendi.advancedperipherals.common.addons.APAddons;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
-import de.srendi.advancedperipherals.common.network.PacketHandler;
-import de.srendi.advancedperipherals.common.setup.APRegistration;
+import de.srendi.advancedperipherals.common.setup.Registration;
 import de.srendi.advancedperipherals.common.village.VillageStructures;
+import de.srendi.advancedperipherals.network.APNetworking;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -26,7 +26,6 @@ public class AdvancedPeripherals {
     public static final Logger LOGGER = LogManager.getLogger(NAME);
     public static final Random RANDOM = new Random();
     public static final APCreativeTab TAB = new APCreativeTab();
-    public static final APAddons ADDONS = new APAddons();
 
     public AdvancedPeripherals() {
         LOGGER.info("AdvancedPeripherals says hello!");
@@ -35,7 +34,7 @@ public class AdvancedPeripherals {
         APConfig.register(ModLoadingContext.get());
 
         modBus.addListener(this::commonSetup);
-        APRegistration.register();
+        Registration.register();
         MinecraftForge.EVENT_BUS.register(this);
     }
 
@@ -49,19 +48,14 @@ public class AdvancedPeripherals {
             LOGGER.log(level, "[DEBUG] {}", message);
     }
 
-    public static void exception(String message, Exception exception) {
-        if (APConfig.GENERAL_CONFIG.enableDebugMode.get()) {
-            LOGGER.error("[DEBUG]", exception);
-        }
-    }
-
     public static ResourceLocation getRL(String resource) {
         return new ResourceLocation(MOD_ID, resource);
     }
 
     public void commonSetup(FMLCommonSetupEvent event) {
+        APAddons.commonSetup();
         event.enqueueWork(() -> {
-            PacketHandler.init();
+            APNetworking.init();
             VillageStructures.init();
         });
     }

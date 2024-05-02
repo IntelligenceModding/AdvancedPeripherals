@@ -18,7 +18,7 @@ import java.util.Map;
 
 public class NBTStoragePeripheral extends BasePeripheral<BlockEntityPeripheralOwner<NBTStorageEntity>> {
 
-    public static final String PERIPHERAL_TYPE = "nbt_storage";
+    public static final String PERIPHERAL_TYPE = "nbtStorage";
 
     public NBTStoragePeripheral(NBTStorageEntity tileEntity) {
         super(PERIPHERAL_TYPE, new BlockEntityPeripheralOwner<>(tileEntity));

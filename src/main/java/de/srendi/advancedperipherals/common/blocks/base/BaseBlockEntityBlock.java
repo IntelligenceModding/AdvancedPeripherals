@@ -88,8 +88,7 @@ public abstract class BaseBlockEntityBlock extends BaseBlock implements EntityBl
         return menuProvider;
     }
 
-    @NotNull
-    public RenderShape getRenderShape(@NotNull BlockState state) {
+    public @NotNull RenderShape getRenderShape(@NotNull BlockState state) {
         return RenderShape.MODEL;
     }
 }

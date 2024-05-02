@@ -28,6 +28,7 @@ public class GeneralConfig implements IAPConfig {
         configSpec = builder.build();
     }
 
+
     @Override
     public ForgeConfigSpec getConfigSpec() {
         return configSpec;

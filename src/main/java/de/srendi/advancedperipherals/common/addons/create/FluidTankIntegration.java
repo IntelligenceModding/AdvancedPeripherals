@@ -19,7 +19,7 @@ public class FluidTankIntegration extends BlockEntityIntegrationPeripheral<Fluid
     @NotNull
     @Override
     public String getType() {
-        return "fluid_tank";
+        return "fluidTank";
     }
 
     @LuaFunction(mainThread = true)

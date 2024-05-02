@@ -260,20 +260,12 @@ dependencies {
     compileOnly "org.jetbrains:annotations:${jb_annotations}"
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
     implementation fg.deobf("org.squiddev:cc-tweaked-${minecraft_version}:${cc_version}")
-    // Compile-time API required
-    // Ae2
-    implementation fg.deobf("appeng:appliedenergistics2-forge:${appliedenergistics_version}")
-
-    // Applied Mekanistics
-    implementation fg.deobf("curse.maven:applied-mekanistics-574300:${appliedmekanistics_version}")
-
-    // Curios
-    implementation fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}:api")
     // Minimal requirements end
 
     // Extended requirements
     // We don't use the api since we need a specific class from mekanism
-    implementation fg.deobf("mekanism:Mekanism:${mekanism_version}")
+    compileOnly fg.deobf("mekanism:Mekanism:${mekanism_version}")
+    runtimeOnly fg.deobf("mekanism:Mekanism:${mekanism_version}")
 
     // Applied Energistics 2
     compileOnly fg.deobf("appeng:appliedenergistics2-forge:${appliedenergistics_version}")
@@ -324,27 +316,24 @@ dependencies {
     runtimeOnly fg.deobf("com.ldtteam:blockui:${blockui_version}")
 
     //Patchouli
+    compileOnly fg.deobf("vazkii.patchouli:Patchouli:${patchouli_version}")
     runtimeOnly fg.deobf("vazkii.patchouli:Patchouli:${patchouli_version}")
 
     // Create
     compileOnly fg.deobf("com.simibubi.create:create-${minecraft_version}:${create_version}:all")
-    //    runtimeOnly fg.deobf("com.simibubi.create:create-${minecraft_version}:${create_version}:all")
-
-    //DimStorage
-    compileOnly fg.deobf("curse.maven:dimstorage-353882:${dimstorage_version}")
-    runtimeOnly fg.deobf("curse.maven:dimstorage-353882:${dimstorage_version}")
-    compileOnly fg.deobf("curse.maven:edivadlib-638508:${edivadlib_version}")
-    runtimeOnly fg.deobf("curse.maven:edivadlib-638508:${edivadlib_version}")
+    runtimeOnly fg.deobf("com.simibubi.create:create-${minecraft_version}:${create_version}:all")
 
     //Removed until fully ported
     //testImplementation fg.deobf("site.siredvin.ttoolkit:ttoolkit-${minecraft_version}:${ttoolkit_version}")
 
     //Powah
     compileOnly fg.deobf("curse.maven:powah-633483:${powah_version}")
-    compileOnly fg.deobf("me.shedaniel.cloth:cloth-config-forge:8.2.88")
-    compileOnly fg.deobf("dev.architectury:architectury-forge:6.2.43")
+    runtimeOnly fg.deobf("curse.maven:powah-633483:${powah_version}")
+    runtimeOnly fg.deobf("me.shedaniel.cloth:cloth-config-forge:8.2.88")
+    runtimeOnly fg.deobf("dev.architectury:architectury-forge:6.2.43")
 
-    compileOnly fg.deobf("curse.maven:crash-utilities-371813:4406293")
+    // Crash utilities. Used to debug the chunky turtle. Can be uncommented if not needed
+    runtimeOnly fg.deobf("curse.maven:crash-utilities-371813:4406293")
 
     testImplementation "org.junit.jupiter:junit-jupiter-api:${junit_version}"
     testImplementation "org.junit.jupiter:junit-jupiter-params:${junit_version}"
@@ -357,9 +346,6 @@ dependencies {
     // Testing stuff
     // JEI
     implementation fg.deobf("mezz.jei:jei-${jei_version}")
-
-    // Jade
-    implementation fg.deobf("curse.maven:jade-324717:${jade_version}")
 
     // Create Crafts & Additions
     compileOnly fg.deobf("curse.maven:createaddition-439890:5099757")
@@ -503,7 +489,7 @@ tasks.register('publishCurseForge', TaskPublishCurseForge, { task ->
 
         addRequirement('cc-tweaked')
 
-        addModLoader("forge")
+        addModLoader("forge", "neoforge")
 
         releaseType = "${release_type}"
     }
@@ -538,7 +524,7 @@ modrinth {
     versionType = release_type
     uploadFile = jar
     gameVersions = [minecraft_version]
-    loaders = ["forge"]
+    loaders = ["forge", "neoforge"]
     dependencies {
         required.project "cc-tweaked"
     }

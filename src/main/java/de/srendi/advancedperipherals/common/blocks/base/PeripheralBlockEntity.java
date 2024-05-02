@@ -34,7 +34,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collections;
 
 public abstract class PeripheralBlockEntity<T extends BasePeripheral<?>> extends BaseContainerBlockEntity implements WorldlyContainer, MenuProvider, IPeripheralTileEntity {
-
+    // TODO: move inventory logic to another tile entity!
     private static final String PERIPHERAL_SETTINGS_KEY = "peripheralSettings";
     protected CompoundTag peripheralSettings;
     protected NonNullList<ItemStack> items;
@@ -44,7 +44,7 @@ public abstract class PeripheralBlockEntity<T extends BasePeripheral<?>> extends
     private LazyOptional<? extends IFluidHandler> fluidHandler;
     private LazyOptional<IPeripheral> peripheralCap;
 
-    protected PeripheralBlockEntity(BlockEntityType<?> tileEntityTypeIn, BlockPos pos, BlockState state) {
+    public PeripheralBlockEntity(BlockEntityType<?> tileEntityTypeIn, BlockPos pos, BlockState state) {
         super(tileEntityTypeIn, pos, state);
         if (this instanceof IInventoryBlock<?> inventoryBlock) {
             items = NonNullList.withSize(inventoryBlock.getInvSize(), ItemStack.EMPTY);
@@ -111,11 +111,6 @@ public abstract class PeripheralBlockEntity<T extends BasePeripheral<?>> extends
         if (peripheral == null) // just avoid some NPE in strange cases
             return Collections.emptyList();
         return peripheral.getConnectedComputers();
-    }
-
-    @Nullable
-    public T getPeripheral() {
-        return peripheral;
     }
 
     /*@Override

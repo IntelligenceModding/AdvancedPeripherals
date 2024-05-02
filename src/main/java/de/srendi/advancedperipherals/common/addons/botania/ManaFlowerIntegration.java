@@ -15,7 +15,7 @@ public class ManaFlowerIntegration extends BlockEntityIntegrationPeripheral<Gene
     @NotNull
     @Override
     public String getType() {
-        return "mana_flower";
+        return "manaFlower";
     }
 
     @LuaFunction(mainThread = true)

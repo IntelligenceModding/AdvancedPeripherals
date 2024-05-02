@@ -36,6 +36,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.SleepingTimeCheckEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.server.ServerLifecycleHooks;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -45,7 +46,7 @@ import static de.srendi.advancedperipherals.common.addons.computercraft.operatio
 
 public class EnvironmentDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
 
-    public static final String PERIPHERAL_TYPE = "environment_detector";
+    public static final String PERIPHERAL_TYPE = "environmentDetector";
     private static final List<Function<IPeripheralOwner, IPeripheralPlugin>> PERIPHERAL_PLUGINS = new LinkedList<>();
 
     protected EnvironmentDetectorPeripheral(IPeripheralOwner owner) {
@@ -172,10 +173,13 @@ public class EnvironmentDetectorPeripheral extends BasePeripheral<IPeripheralOwn
                 case 5 -> moon.put(5, "Waxing crescent");
                 case 6 -> moon.put(6, "First quarter");
                 case 7 -> moon.put(7, "Waxing gibbous");
-                default -> moon.put(0, "What is a moon");
+                default ->
+                    //should never happen
+                    moon.put(0, "What is a moon");
             }
         } else {
-            // aren't we in the overworld?
+            //Yay, easter egg
+            //Returns when the function is not used in the overworld
             moon.put(0, "Moon.exe not found...");
         }
         return moon;
@@ -228,10 +232,10 @@ public class EnvironmentDetectorPeripheral extends BasePeripheral<IPeripheralOwn
     @LuaFunction(mainThread = true)
     public final MethodResult canSleepPlayer(String playername) {
         Player player = ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayerByName(playername);
-        if (player == null)
+        if(player == null)
             return MethodResult.of(false, "player_not_online");
 
-        if (!player.level.dimensionType().bedWorks())
+        if(!player.level.dimensionType().bedWorks())
             return MethodResult.of(false, "not_allowed_in_dimension");
 
         SleepingTimeCheckEvent evt = new SleepingTimeCheckEvent(player, Optional.empty());

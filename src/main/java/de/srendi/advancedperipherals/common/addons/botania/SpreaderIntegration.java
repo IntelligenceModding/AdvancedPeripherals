@@ -16,7 +16,7 @@ public class SpreaderIntegration extends BlockEntityIntegrationPeripheral<ManaSp
     @NotNull
     @Override
     public String getType() {
-        return "mana_spreader";
+        return "manaSpreader";
     }
 
     @LuaFunction(mainThread = true)

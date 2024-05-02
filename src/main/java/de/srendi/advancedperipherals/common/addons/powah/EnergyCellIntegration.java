@@ -14,7 +14,7 @@ public class EnergyCellIntegration extends BlockEntityIntegrationPeripheral<Ener
     @NotNull
     @Override
     public String getType() {
-        return "energy_cell";
+        return "energyCell";
     }
 
     @LuaFunction(mainThread = true)
