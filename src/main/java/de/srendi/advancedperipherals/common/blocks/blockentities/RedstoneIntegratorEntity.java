@@ -10,14 +10,14 @@ import de.srendi.advancedperipherals.common.util.SwarmEventDispatcher;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.RedStoneWireBlock;
 import net.minecraft.world.level.block.state.BlockState;
-import org.jetbrains.annotations.NotNull;
 
-import java.util.EnumMap;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
+import org.jetbrains.annotations.NotNull;
 
 public class RedstoneIntegratorEntity extends PeripheralBlockEntity<RedstoneIntegratorPeripheral> {
     private static final String REDSTONE_EVENT_ID = "redstone_integrator";
@@ -25,7 +25,7 @@ public class RedstoneIntegratorEntity extends PeripheralBlockEntity<RedstoneInte
     private final int[] outputs = new int[Direction.values().length];
     private final AtomicInteger outputStatus = new AtomicInteger(0);
     private final int[] outputing = new int[Direction.values().length];
-    private final EnumMap<ComputerSide, Integer> inputs = new EnumMap<>(ComputerSide.class);
+    private final int[] inputs = new int[Direction.values().length];
 
     public RedstoneIntegratorEntity(BlockPos pos, BlockState state) {
         super(APBlockEntityTypes.REDSTONE_INTEGRATOR.get(), pos, state);
@@ -43,21 +43,24 @@ public class RedstoneIntegratorEntity extends PeripheralBlockEntity<RedstoneInte
     /**
      * This method is safely to be called from multiple threads at any time.
      */
-    public int getInput(ComputerSide side) {
+    public int getInput(Direction direction) {
         // no need to lock because JVM promise the int will never be half-updated
-        return this.inputs.getOrDefault(side, 0);
+        return this.inputs[direction.get3DDataValue()];
     }
 
     /**
      * This method should only be called from main thread
      */
-    public void setInput(ComputerSide side, int input) {
-        Integer old = this.inputs.getOrDefault(side, 0);
-        if (old.intValue() == input) {
+    public void setInput(Direction direction, int input) {
+        if (this.inputs[direction.get3DDataValue()] == input) {
             return;
         }
-        this.inputs.put(side, input);
-        SwarmEventDispatcher.dispatch(REDSTONE_EVENT_ID, this.getPeripheral(), side.getName());
+        this.inputs[direction.get3DDataValue()] = input;
+        ComputerSide side = this.getComputerSide(direction);
+        RedstoneIntegratorPeripheral peripheral = this.getPeripheral();
+        if (peripheral != null) {
+            SwarmEventDispatcher.dispatch(REDSTONE_EVENT_ID, peripheral, side.getName());
+        }
     }
 
     private void updateRedstoneOutputs() {
@@ -96,22 +99,34 @@ public class RedstoneIntegratorEntity extends PeripheralBlockEntity<RedstoneInte
         return this.outputs[direction.get3DDataValue()];
     }
 
+    public void initSignals() {
+        for (Direction direction : Direction.values()) {
+            this.setInput(direction, RedstoneUtil.getRedstoneInput(this.level, this.getBlockPos().relative(direction), direction));
+            RedstoneUtil.propagateRedstoneOutput(this.level, this.getBlockPos(), direction);
+            this.outputing[direction.get3DDataValue()] = this.outputs[direction.get3DDataValue()];
+        }
+        this.setChanged();
+    }
+
+    @Override
+    public void setLevel(Level level) {
+        super.setLevel(level);
+        ServerWorker.addToNextTick(this::initSignals);
+    }
+
     @Override
     public void load(@NotNull CompoundTag compound) {
         for (Direction direction : Direction.values()) {
             this.outputs[direction.get3DDataValue()] = compound.getInt(direction.getName() + "Power");
         }
-        this.updateRedstoneOutputs();
         super.load(compound);
     }
 
     @Override
     public void saveAdditional(@NotNull CompoundTag compound) {
         super.saveAdditional(compound);
-        int i = 0;
         for (Direction direction : Direction.values()) {
-            compound.putInt(direction.getName() + "Power", this.outputs[i]);
-            i++;
+            compound.putInt(direction.getName() + "Power", this.outputs[direction.get3DDataValue()]);
         }
     }
 

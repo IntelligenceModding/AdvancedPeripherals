@@ -24,7 +24,7 @@ public class RedstoneIntegratorPeripheral extends BasePeripheral<BlockEntityPeri
 
     @LuaFunction
     public final boolean getInput(String direction) throws LuaException {
-        ComputerSide dir = ComputerSide.valueOfInsensitive(direction);
+        Direction dir = validateSide(direction);
         return owner.tileEntity.getInput(dir) > 0;
     }
 
@@ -36,7 +36,7 @@ public class RedstoneIntegratorPeripheral extends BasePeripheral<BlockEntityPeri
 
     @LuaFunction(value = {"getAnalogueInput", "getAnalogInput"})
     public final int getAnalogInput(String direction) throws LuaException {
-        ComputerSide dir = ComputerSide.valueOfInsensitive(direction);
+        Direction dir = validateSide(direction);
         return owner.tileEntity.getInput(dir);
     }
 

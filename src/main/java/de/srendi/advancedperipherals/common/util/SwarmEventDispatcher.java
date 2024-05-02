@@ -17,6 +17,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
+import org.jetbrains.annotations.NotNull;
 
 @Mod.EventBusSubscriber(modid = AdvancedPeripherals.MOD_ID)
 public final class SwarmEventDispatcher {
@@ -25,7 +26,7 @@ public final class SwarmEventDispatcher {
 
 	private SwarmEventDispatcher(){}
 
-	public static void dispatch(String event, BasePeripheral peripheral, Object data) {
+	public static void dispatch(@NotNull String event, @NotNull BasePeripheral peripheral, Object data) {
 		boolean set = false;
 		ConcurrentMap<Integer, ConcurrentMap<String, Set<Object>>> computers = events.computeIfAbsent(event, (k) -> new ConcurrentHashMap<>());
 		Iterable<IComputerAccess> computerIter = peripheral.getConnectedComputers();

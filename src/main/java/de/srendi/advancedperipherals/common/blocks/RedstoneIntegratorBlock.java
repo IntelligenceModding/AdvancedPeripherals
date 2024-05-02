@@ -9,7 +9,6 @@ import de.srendi.advancedperipherals.common.setup.APBlocks;
 import de.srendi.advancedperipherals.common.util.CoordUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.FrontAndTop;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -17,7 +16,6 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Material;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public class RedstoneIntegratorBlock extends BaseBlockEntityBlock {
 
@@ -25,7 +23,7 @@ public class RedstoneIntegratorBlock extends BaseBlockEntityBlock {
         super(false, Properties.of(Material.METAL).isRedstoneConductor(APBlocks::never));
     }
 
-    @Nullable
+    @NotNull
     @Override
     public BlockEntity newBlockEntity(@NotNull BlockPos pos, @NotNull BlockState state) {
         return APBlockEntityTypes.REDSTONE_INTEGRATOR.get().create(pos, state);
@@ -56,9 +54,7 @@ public class RedstoneIntegratorBlock extends BaseBlockEntityBlock {
         if (te instanceof RedstoneIntegratorEntity redstoneIntegratorTile) {
             for (Direction direction : Direction.values()) {
                 if (pos.relative(direction).equals(neighborPos)) {
-                    FrontAndTop orientation = redstoneIntegratorTile.getBlockState().getValue(ORIENTATION);
-                    ComputerSide side = CoordUtil.getComputerSide(orientation, direction);
-                    redstoneIntegratorTile.setInput(side, RedstoneUtil.getRedstoneInput(world, neighborPos, direction));
+                    redstoneIntegratorTile.setInput(direction, RedstoneUtil.getRedstoneInput(world, neighborPos, direction));
                     return;
                 }
             }
