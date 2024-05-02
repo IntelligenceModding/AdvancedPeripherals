@@ -83,7 +83,13 @@ minecraft {
     accessTransformer file('src/main/resources/META-INF/accesstransformer.cfg')
     accessTransformer file('src/testMod/resources/META-INF/accesstransformer.cfg')
 
+
     runs {
+        all {
+            lazyToken('minecraft_classpath') {
+                configurations.library.copyRecursive().resolve().collect { it.absolutePath }.join(File.pathSeparator)
+            }
+        }
         client {
             workingDirectory project.file('run')
 
@@ -168,6 +174,20 @@ minecraft {
         }
 
         gameTestServer {
+            def old = lazyTokens["minecraft_classpath"]
+            lazyToken("minecraft_classpath") {
+                // Add all files in testMinecraftLibrary to the classpath.
+                def allFiles = new HashSet<String>();
+
+                def oldVal = old?.get()
+                if (!oldVal != null && !oldVal.isEmpty()) allFiles.addAll(oldVal.split(File.pathSeparatorChar))
+
+                for (file in configurations["testMinecraftLibrary"]) allFiles.add(file.absolutePath)
+
+                println("New classpath $allFiles")
+                allFiles.join(File.pathSeparator)
+            }
+
             workingDirectory project.file('test-files/server')
             property 'forge.logging.markers', 'REGISTRIES'
             property 'forge.logging.console.level', 'debug'
@@ -272,6 +292,25 @@ repositories {
 }
 
 configurations {
+        named("testModCompileClasspath") {
+            shouldResolveConsistentlyWith compileClasspath
+        }
+
+        named("testModRuntimeClasspath") {
+            shouldResolveConsistentlyWith runtimeClasspath
+        }
+
+    munecraftLibrary { extendsFrom(minecraftEmbed) }
+
+    testMinecraftLibrary {
+        canBeResolved = true
+        canBeConsumed = false
+        // Prevent ending up with multiple versions of libraries on the classpath.
+        shouldResolveConsistentlyWith(minecraftLibrary)
+    }
+
+    library
+    implementation.extendsFrom library
     implementationExtra
     testImplementation.extendsFrom(implementation)
     testModImplementation.extendsFrom(implementation)
@@ -368,6 +407,10 @@ dependencies {
     testImplementation "org.hamcrest:hamcrest:${hamcrest_version}"
     testModImplementation sourceSets.main.output
     testModImplementation sourceSets.testFixtures.output
+
+    testMinecraftLibrary("org.junit.jupiter:junit-jupiter-api:${junit_version}")
+    testMinecraftLibrary("org.junit.jupiter:junit-jupiter-params:${junit_version}")
+    testMinecraftLibrary("org.hamcrest:hamcrest:${hamcrest_version}")
 
     // Testing stuff
     // JEI
