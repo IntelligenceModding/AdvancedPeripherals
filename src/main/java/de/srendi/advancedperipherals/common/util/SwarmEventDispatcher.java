@@ -21,56 +21,56 @@ import org.jetbrains.annotations.NotNull;
 
 @Mod.EventBusSubscriber(modid = AdvancedPeripherals.MOD_ID)
 public final class SwarmEventDispatcher {
-	private static final ConcurrentMap<String, ConcurrentMap<Integer, ConcurrentMap<String, Set<Object>>>> events = new ConcurrentHashMap<>();
-	private static final AtomicBoolean updated = new AtomicBoolean();
+    private static final ConcurrentMap<String, ConcurrentMap<Integer, ConcurrentMap<String, Set<Object>>>> events = new ConcurrentHashMap<>();
+    private static final AtomicBoolean updated = new AtomicBoolean();
 
-	private SwarmEventDispatcher(){}
+    private SwarmEventDispatcher() {}
 
-	public static void dispatch(@NotNull String event, @NotNull BasePeripheral peripheral, Object data) {
-		boolean set = false;
-		ConcurrentMap<Integer, ConcurrentMap<String, Set<Object>>> computers = events.computeIfAbsent(event, (k) -> new ConcurrentHashMap<>());
-		Iterable<IComputerAccess> computerIter = peripheral.getConnectedComputers();
-		for (IComputerAccess computer : computerIter) {
-			computers.computeIfAbsent(computer.getID(), (k) -> new ConcurrentHashMap<>()).compute(computer.getAttachmentName(), (name, datas) -> {
-				if (datas == null) {
-					datas = new HashSet<>();
-				}
-				datas.add(data);
-				return datas;
-			});
-			set = true;
-		}
-		if (set) {
-			updated.set(true);
-		}
-	}
+    public static void dispatch(@NotNull String event, @NotNull BasePeripheral peripheral, Object data) {
+        boolean set = false;
+        ConcurrentMap<Integer, ConcurrentMap<String, Set<Object>>> computers = events.computeIfAbsent(event, (k) -> new ConcurrentHashMap<>());
+        Iterable<IComputerAccess> computerIter = peripheral.getConnectedComputers();
+        for (IComputerAccess computer : computerIter) {
+            computers.computeIfAbsent(computer.getID(), (k) -> new ConcurrentHashMap<>()).compute(computer.getAttachmentName(), (name, datas) -> {
+                if (datas == null) {
+                    datas = new HashSet<>();
+                }
+                datas.add(data);
+                return datas;
+            });
+            set = true;
+        }
+        if (set) {
+            updated.set(true);
+        }
+    }
 
-	private static Map<Integer, ServerComputer> getComputers(MinecraftServer server) {
-		Map<Integer, ServerComputer> computers = new HashMap<>();
-		ServerContext.get(server).registry().getComputers().forEach(computer -> computers.put(computer.getID(), computer));
-		return computers;
-	}
+    private static Map<Integer, ServerComputer> getComputers(MinecraftServer server) {
+        Map<Integer, ServerComputer> computers = new HashMap<>();
+        ServerContext.get(server).registry().getComputers().forEach(computer -> computers.put(computer.getID(), computer));
+        return computers;
+    }
 
-	@SubscribeEvent
-	public static void serverTick(TickEvent.ServerTickEvent tickEvent) {
-		if (tickEvent.phase != TickEvent.Phase.END) {
-			return;
-		}
-		if (!updated.compareAndSet(true, false)) {
-			return;
-		}
-		Map<Integer, ServerComputer> computerMap = getComputers(tickEvent.getServer());
-		events.forEach((event, computers) -> {
-			for (int id : computers.keySet()) {
-				ConcurrentMap<String, Set<Object>> peripherals = computers.remove(id);
-				if (peripherals == null || peripherals.isEmpty()) {
-					continue;
-				}
-				ServerComputer computer = computerMap.get(id);
-				if (computer != null) {
-					computer.queueEvent(event, new Object[]{peripherals});
-				}
-			}
-		});
-	}
+    @SubscribeEvent
+    public static void serverTick(TickEvent.ServerTickEvent tickEvent) {
+        if (tickEvent.phase != TickEvent.Phase.END) {
+            return;
+        }
+        if (!updated.compareAndSet(true, false)) {
+            return;
+        }
+        Map<Integer, ServerComputer> computerMap = getComputers(tickEvent.getServer());
+        events.forEach((event, computers) -> {
+            for (int id : computers.keySet()) {
+                ConcurrentMap<String, Set<Object>> peripherals = computers.remove(id);
+                if (peripherals == null || peripherals.isEmpty()) {
+                    continue;
+                }
+                ServerComputer computer = computerMap.get(id);
+                if (computer != null) {
+                    computer.queueEvent(event, new Object[]{peripherals});
+                }
+            }
+        });
+    }
 }
