@@ -1,5 +1,6 @@
 package de.srendi.advancedperipherals.common.blocks.blockentities;
 
+import dan200.computercraft.core.computer.ComputerSide;
 import dan200.computercraft.shared.util.RedstoneUtil;
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.RedstoneIntegratorPeripheral;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralBlockEntity;
@@ -95,7 +96,7 @@ public class RedstoneIntegratorEntity extends PeripheralBlockEntity<RedstoneInte
         return this.outputs[direction.get3DDataValue()];
     }
 
-    public void initSignals() {
+    private void initSignals() {
         for (Direction direction : Direction.values()) {
             this.setInput(direction, RedstoneUtil.getRedstoneInput(this.level, this.getBlockPos().relative(direction), direction));
             RedstoneUtil.propagateRedstoneOutput(this.level, this.getBlockPos(), direction);
