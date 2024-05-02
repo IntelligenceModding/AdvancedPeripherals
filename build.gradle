@@ -7,7 +7,7 @@ plugins {
     id 'net.darkhax.curseforgegradle' version '1.1.16'
     id 'org.jetbrains.changelog' version '1.2.1'
     id "com.modrinth.minotaur" version "2.+"
-    id "org.jetbrains.kotlin.jvm" version "1.6.10"
+    id "org.jetbrains.kotlin.jvm" version "1.9.23"
     id 'net.minecraftforge.gradle' version '[6.0.18,6.2)'
     id 'org.parchmentmc.librarian.forgegradle' version '1.+'
     id 'org.spongepowered.mixin' version '0.7.+'
@@ -56,8 +56,25 @@ sourceSets {
     main.resources {
         srcDir 'src/generated/resources'
     }
-    testMod {}
+    testMod {
+        java.srcDir 'src/testMod/java'
+        kotlin.srcDir 'src/testMod/kotlin'
+        resources.srcDir 'src/testMod/resources'
+        compileClasspath += main.compileClasspath + test.compileClasspath
+        runtimeClasspath += main.runtimeClasspath + test.runtimeClasspath
+    }
+    testFixtures {
+        java.srcDir 'src/testFixtures/java'
+        kotlin.srcDir 'src/testFixtures/kotlin'
+        resources.srcDir 'src/testFixtures/resources'
+    }
 }
+
+java.registerFeature("testFixtures") {
+    usingSourceSet(sourceSets.testFixtures)
+    disablePublication()
+}
+
 
 minecraft {
 
@@ -139,6 +156,7 @@ minecraft {
             mods {
                 advancedperipheralstest {
                     source sourceSets.testMod
+                    source sourceSets.testFixtures
                 }
             }
 
@@ -162,6 +180,7 @@ minecraft {
             mods {
                 advancedperipheralstest {
                     source sourceSets.testMod
+                    source sourceSets.testFixtures
                 }
             }
         }
@@ -254,8 +273,11 @@ repositories {
 
 configurations {
     implementationExtra
+    testImplementation.extendsFrom(implementation)
     testModImplementation.extendsFrom(implementation)
     testModImplementation.extendsFrom(testImplementation)
+    testFixturesImplementation.extendsFrom(implementation)
+    testFixturesImplementation.extendsFrom(testImplementation)
 }
 
 dependencies {
@@ -330,9 +352,6 @@ dependencies {
     compileOnly fg.deobf("com.simibubi.create:create-${minecraft_version}:${create_version}:all")
     runtimeOnly fg.deobf("com.simibubi.create:create-${minecraft_version}:${create_version}:all")
 
-    //Removed until fully ported
-    //testImplementation fg.deobf("site.siredvin.ttoolkit:ttoolkit-${minecraft_version}:${ttoolkit_version}")
-
     //Powah
     compileOnly fg.deobf("curse.maven:powah-633483:${powah_version}")
     runtimeOnly fg.deobf("curse.maven:powah-633483:${powah_version}")
@@ -344,10 +363,12 @@ dependencies {
 
     testImplementation "org.junit.jupiter:junit-jupiter-api:${junit_version}"
     testImplementation "org.junit.jupiter:junit-jupiter-params:${junit_version}"
+    testImplementation "org.junit.jupiter:junit-jupiter-engine:${junit_version}"
+    testImplementation "net.jqwik:jqwik:${jqwikVersion}"
     testImplementation "org.hamcrest:hamcrest:${hamcrest_version}"
     testModImplementation sourceSets.main.output
+    testModImplementation sourceSets.testFixtures.output
 
-    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junit_version}"
     // Testing stuff
     // JEI
     implementation fg.deobf("mezz.jei:jei-${jei_version}")
@@ -375,6 +396,11 @@ changelog {
 
 compileTestModJava {
     dependsOn(compileJava)
+    dependsOn(compileKotlin)
+    dependsOn(compileTestJava)
+    dependsOn(compileTestKotlin)
+    dependsOn(compileTestFixturesJava)
+    dependsOn(compileTestFixturesKotlin)
 }
 
 task setupServer(type: Copy) {
