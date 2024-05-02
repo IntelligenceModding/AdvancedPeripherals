@@ -43,9 +43,9 @@ public class RedstoneIntegratorEntity extends PeripheralBlockEntity<RedstoneInte
     /**
      * This method is safely to be called from multiple threads at any time.
      */
-    public int getInput(ComputerSide direction) {
+    public int getInput(ComputerSide side) {
         // no need to lock because JVM promise the int will never be half-updated
-        return this.inputs.getOrDefault(direction, 0);
+        return this.inputs.getOrDefault(side, 0);
     }
 
     /**
@@ -61,7 +61,7 @@ public class RedstoneIntegratorEntity extends PeripheralBlockEntity<RedstoneInte
     }
 
     private void updateRedstoneOutputs() {
-        if (this.level != null) {
+        if (this.level == null) {
             return;
         }
         for (Direction direction : Direction.values()) {
