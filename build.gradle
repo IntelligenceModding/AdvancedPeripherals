@@ -319,6 +319,10 @@ configurations {
     testFixturesImplementation.extendsFrom(testImplementation)
 }
 
+processTestModResources {
+    duplicatesStrategy = 'exclude'
+}
+
 dependencies {
     // If some of the dependencies are not needed in the dev environment, you can comment the `runtimeOnly` line so it
     // will not be included in the client.
