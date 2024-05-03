@@ -152,13 +152,13 @@ minecraft {
             workingDirectory project.file('test-files/client')
             parent runs.client
 
-            def old = lazyTokens["minecraft_classpath"]
+            def oldClasspath = lazyTokens["minecraft_classpath"]
             lazyToken("minecraft_classpath") {
                 // Add all files in testMinecraftLibrary to the classpath.
                 def allFiles = new HashSet<String>();
 
-                def oldVal = old?.get()
-                if (!oldVal != null && !oldVal.isEmpty()) allFiles.addAll(oldVal.split(File.pathSeparatorChar))
+                def minecraftClasspath = oldClasspath?.get()
+                if (!minecraftClasspath != null && !minecraftClasspath.isEmpty()) allFiles.addAll(minecraftClasspath.split(File.pathSeparatorChar))
 
                 for (file in configurations["testMinecraftLibrary"]) allFiles.add(file.absolutePath)
 
@@ -182,13 +182,13 @@ minecraft {
         }
 
         gameTestServer {
-            def old = lazyTokens["minecraft_classpath"]
+            def oldClasspath = lazyTokens["minecraft_classpath"]
             lazyToken("minecraft_classpath") {
                 // Add all files in testMinecraftLibrary to the classpath.
                 def allFiles = new HashSet<String>();
 
-                def oldVal = old?.get()
-                if (!oldVal != null && !oldVal.isEmpty()) allFiles.addAll(oldVal.split(File.pathSeparatorChar))
+                def minecraftClasspath = oldClasspath?.get()
+                if (!minecraftClasspath != null && !minecraftClasspath.isEmpty()) allFiles.addAll(minecraftClasspath.split(File.pathSeparatorChar))
 
                 for (file in configurations["testMinecraftLibrary"]) allFiles.add(file.absolutePath)
 
