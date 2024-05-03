@@ -300,15 +300,7 @@ repositories {
 }
 
 configurations {
-        named("testModCompileClasspath") {
-            shouldResolveConsistentlyWith compileClasspath
-        }
-
-        named("testModRuntimeClasspath") {
-            shouldResolveConsistentlyWith runtimeClasspath
-        }
-
-    munecraftLibrary { extendsFrom(minecraftEmbed) }
+    minecraftLibrary { extendsFrom(minecraftEmbed) }
 
     testMinecraftLibrary {
         canBeResolved = true
