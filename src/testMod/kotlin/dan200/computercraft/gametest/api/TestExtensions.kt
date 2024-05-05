@@ -77,7 +77,10 @@ fun GameTestSequence.thenComputerOk(name: String? = null, marker: String = Compu
 /**
  * Run a task on a computer but don't wait for it to finish.
  */
-fun GameTestSequence.thenStartComputer(name: String? = null, action: suspend LuaTaskContext.() -> Unit): GameTestSequence {
+fun GameTestSequence.thenStartComputer(
+    name: String? = null,
+    action: suspend LuaTaskContext.() -> Unit
+): GameTestSequence {
     val test = (this as GameTestSequenceAccessor).parent
     val label = test.testName + (if (name == null) "" else ".$name")
     return thenExecuteFailFast { ManagedComputers.enqueue(test, label, action) }
@@ -108,7 +111,12 @@ fun GameTestHelper.sequence(run: GameTestSequence.() -> Unit) {
 /**
  * A custom instance of [GameTestAssertPosException] which allows for longer error messages.
  */
-private class VerboseGameTestAssertPosException(message: String, absolutePos: BlockPos, relativePos: BlockPos, tick: Long) :
+private class VerboseGameTestAssertPosException(
+    message: String,
+    absolutePos: BlockPos,
+    relativePos: BlockPos,
+    tick: Long
+) :
     GameTestAssertPosException(message, absolutePos, relativePos, tick) {
     override fun getMessageToShowAtBlock(): String = message!!.lineSequence().first()
 }
@@ -136,7 +144,12 @@ fun GameTestHelper.assertBlockIs(pos: BlockPos, predicate: (BlockState) -> Boole
 /**
  * A version of [GameTestHelper.assertBlockProperty] which includes the current block state in the error message.
  */
-fun <T : Comparable<T>> GameTestHelper.assertBlockHas(pos: BlockPos, property: Property<T>, value: T, message: String = "") {
+fun <T : Comparable<T>> GameTestHelper.assertBlockHas(
+    pos: BlockPos,
+    property: Property<T>,
+    value: T,
+    message: String = ""
+) {
     val state = getBlockState(pos)
     if (!state.hasProperty(property)) {
         val id = ForgeRegistries.BLOCKS.getKey(state.block)

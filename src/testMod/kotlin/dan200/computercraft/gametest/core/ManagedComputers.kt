@@ -106,7 +106,8 @@ object ManagedComputers : ILuaMachine.Factory {
         }
     }
 
-    private class KotlinMachine(environment: MachineEnvironment, private val label: String) : KotlinLuaMachine(environment) {
+    private class KotlinMachine(environment: MachineEnvironment, private val label: String) :
+        KotlinLuaMachine(environment) {
         override fun getTask(): (suspend KotlinLuaMachine.() -> Unit)? = computers[label]?.poll()
     }
 
@@ -130,7 +131,12 @@ object ManagedComputers : ILuaMachine.Factory {
             } else {
                 val pos = computer.position
                 val relativePos = pos.subtract(test.structureBlockPos)
-                throw GameTestAssertPosException(message, pos, relativePos, (test as GameTestInfoAccessor).`computercraft$getTick`())
+                throw GameTestAssertPosException(
+                    message,
+                    pos,
+                    relativePos,
+                    (test as GameTestInfoAccessor).`computercraft$getTick`()
+                )
             }
         }
     }

@@ -34,99 +34,84 @@ import static net.minecraft.commands.Commands.literal;
 /**
  * Helper commands for importing/exporting the computer directory.
  */
-class CCTestCommand
-{
-    public static final LevelResource LOCATION = new LevelResource( ComputerCraft.MOD_ID );
+class CCTestCommand {
+    public static final LevelResource LOCATION = new LevelResource(ComputerCraft.MOD_ID);
 
-    public static void register( CommandDispatcher<CommandSourceStack> dispatcher )
-    {
-        dispatcher.register( choice( "cctest" )
-            .then( literal( "import" ).executes( context -> {
-                importFiles( context.getSource().getServer() );
-                return 0;
-            } ) )
-            .then( literal( "export" ).executes( context -> {
-                exportFiles( context.getSource().getServer() );
+    public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
+        dispatcher.register(choice("cctest")
+                .then(literal("import").executes(context -> {
+                    importFiles(context.getSource().getServer());
+                    return 0;
+                }))
+                .then(literal("export").executes(context -> {
+                    exportFiles(context.getSource().getServer());
 
-                for( TestFunction function : GameTestRegistry.getAllTestFunctions() )
-                {
-                    TestCommandAccessor.callExportTestStructure( context.getSource(), function.getStructureName() );
-                }
-                return 0;
-            } ) )
-            .then( literal( "regen-structures" ).executes( context -> {
-                for( TestFunction function : GameTestRegistry.getAllTestFunctions() )
-                {
-                    dispatcher.execute( "test import " + function.getTestName(), context.getSource() );
-                    TestCommandAccessor.callExportTestStructure( context.getSource(), function.getStructureName() );
-                }
-                return 0;
-            } ) )
+                    for (TestFunction function : GameTestRegistry.getAllTestFunctions()) {
+                        TestCommandAccessor.callExportTestStructure(context.getSource(), function.getStructureName());
+                    }
+                    return 0;
+                }))
+                .then(literal("regen-structures").executes(context -> {
+                    for (TestFunction function : GameTestRegistry.getAllTestFunctions()) {
+                        dispatcher.execute("test import " + function.getTestName(), context.getSource());
+                        TestCommandAccessor.callExportTestStructure(context.getSource(), function.getStructureName());
+                    }
+                    return 0;
+                }))
 
-            .then( literal( "marker" ).executes( context -> {
-                ServerPlayer player = context.getSource().getPlayerOrException();
-                BlockPos pos = StructureUtils.findNearestStructureBlock( player.blockPosition(), 15, player.getLevel() );
-                if( pos == null ) return error( context.getSource(), "No nearby test" );
+                .then(literal("marker").executes(context -> {
+                    ServerPlayer player = context.getSource().getPlayerOrException();
+                    BlockPos pos = StructureUtils.findNearestStructureBlock(player.blockPosition(), 15, player.getLevel());
+                    if (pos == null) return error(context.getSource(), "No nearby test");
 
-                StructureBlockEntity structureBlock = (StructureBlockEntity) player.getLevel().getBlockEntity( pos );
-                TestFunction info = GameTestRegistry.getTestFunction( structureBlock.getStructurePath() );
+                    StructureBlockEntity structureBlock = (StructureBlockEntity) player.getLevel().getBlockEntity(pos);
+                    TestFunction info = GameTestRegistry.getTestFunction(structureBlock.getStructurePath());
 
-                // Kill the existing armor stand
-                player
-                    .getLevel().getEntities( EntityType.ARMOR_STAND, x -> x.isAlive() && x.getName().getString().equals( info.getTestName() ) )
-                    .forEach( Entity::kill );
+                    // Kill the existing armor stand
+                    player
+                            .getLevel().getEntities(EntityType.ARMOR_STAND, x -> x.isAlive() && x.getName().getString().equals(info.getTestName()))
+                            .forEach(Entity::kill);
 
-                // And create a new one
-                CompoundTag nbt = new CompoundTag();
-                nbt.putBoolean( "Marker", true );
-                nbt.putBoolean( "Invisible", true );
-                ArmorStand armorStand = EntityType.ARMOR_STAND.create( player.getLevel() );
-                armorStand.readAdditionalSaveData( nbt );
-                armorStand.copyPosition( player );
-                armorStand.setCustomName( Component.literal( info.getTestName() ) );
-                player.getLevel().addFreshEntity( armorStand );
-                return 0;
-            } ) )
+                    // And create a new one
+                    CompoundTag nbt = new CompoundTag();
+                    nbt.putBoolean("Marker", true);
+                    nbt.putBoolean("Invisible", true);
+                    ArmorStand armorStand = EntityType.ARMOR_STAND.create(player.getLevel());
+                    armorStand.readAdditionalSaveData(nbt);
+                    armorStand.copyPosition(player);
+                    armorStand.setCustomName(Component.literal(info.getTestName()));
+                    player.getLevel().addFreshEntity(armorStand);
+                    return 0;
+                }))
         );
     }
 
-    public static void importFiles( MinecraftServer server )
-    {
-        try
-        {
-            Copier.replicate( getSourceComputerPath(), getWorldComputerPath( server ) );
-        }
-        catch( IOException e )
-        {
-            throw new UncheckedIOException( e );
+    public static void importFiles(MinecraftServer server) {
+        try {
+            Copier.replicate(getSourceComputerPath(), getWorldComputerPath(server));
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
         }
     }
 
-    static void exportFiles( MinecraftServer server )
-    {
-        try
-        {
-            Copier.replicate( getWorldComputerPath( server ), getSourceComputerPath() );
-        }
-        catch( IOException e )
-        {
-            throw new UncheckedIOException( e );
+    static void exportFiles(MinecraftServer server) {
+        try {
+            Copier.replicate(getWorldComputerPath(server), getSourceComputerPath());
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
         }
     }
 
-    private static Path getWorldComputerPath( MinecraftServer server )
-    {
-        return server.getWorldPath( LOCATION ).resolve( "computer" ).resolve( "0" );
+    private static Path getWorldComputerPath(MinecraftServer server) {
+        return server.getWorldPath(LOCATION).resolve("computer").resolve("0");
     }
 
-    private static Path getSourceComputerPath()
-    {
-        return TestHooks.sourceDir.resolve( "computer" );
+    private static Path getSourceComputerPath() {
+        return TestHooks.sourceDir.resolve("computer");
     }
 
-    private static int error( CommandSourceStack source, String message )
-    {
-        source.sendFailure( Component.literal( message ).withStyle( ChatFormatting.RED ) );
+    private static int error(CommandSourceStack source, String message) {
+        source.sendFailure(Component.literal(message).withStyle(ChatFormatting.RED));
         return 0;
     }
 }

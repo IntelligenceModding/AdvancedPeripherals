@@ -21,8 +21,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @see TestAPI For the Lua interface for this.
  * @see TestExtensionsKt#thenComputerOk(GameTestSequence, String, String)
  */
-public class ComputerState
-{
+public class ComputerState {
     public static final String DONE = "DONE";
 
     protected static final Map<String, ComputerState> lookup = new ConcurrentHashMap<>();
@@ -30,19 +29,16 @@ public class ComputerState
     protected final Set<String> markers = new HashSet<>();
     protected String error;
 
-    public boolean isDone( @Nonnull String marker )
-    {
-        return markers.contains( marker );
+    public static ComputerState get(String label) {
+        return lookup.get(label);
     }
 
-    public void check( @Nonnull String marker )
-    {
-        if( !markers.contains( marker ) ) throw new IllegalStateException( "Not yet at " + marker );
-        if( error != null ) throw new GameTestAssertException( error );
+    public boolean isDone(@Nonnull String marker) {
+        return markers.contains(marker);
     }
 
-    public static ComputerState get( String label )
-    {
-        return lookup.get( label );
+    public void check(@Nonnull String marker) {
+        if (!markers.contains(marker)) throw new IllegalStateException("Not yet at " + marker);
+        if (error != null) throw new GameTestAssertException(error);
     }
 }

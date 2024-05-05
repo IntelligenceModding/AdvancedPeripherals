@@ -11,56 +11,55 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraftforge.registries.ForgeRegistries;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
 
-public class JsonDump
-{
+public class JsonDump {
     public Map<String, String> itemNames = new TreeMap<>();
     public Map<String, Recipe> recipes = new TreeMap<>();
 
-    public static class Recipe
-    {
+    public static class Recipe {
+        private static final Set<Item> canonicalItem = new HashSet<>(Arrays.asList(
+                Items.GLASS_PANE, Items.STONE, Items.CHEST
+        ));
         public final String[][] inputs = new String[9][];
         public String output;
         public int count;
 
-        public Recipe( ItemStack output )
-        {
-            this.output = ForgeRegistries.ITEMS.getKey( output.getItem() ).toString();
+        public Recipe(ItemStack output) {
+            this.output = ForgeRegistries.ITEMS.getKey(output.getItem()).toString();
             count = output.getCount();
         }
 
-        public void setInput( int pos, Ingredient ingredient, Set<Item> trackedItems )
-        {
-            if( ingredient.isEmpty() ) return;
+        public void setInput(int pos, Ingredient ingredient, Set<Item> trackedItems) {
+            if (ingredient.isEmpty())
+                return;
 
             ItemStack[] items = ingredient.getItems();
 
             // First try to simplify some tags to something easier.
-            for( ItemStack stack : items )
-            {
+            for (ItemStack stack : items) {
                 Item item = stack.getItem();
-                if( !canonicalItem.contains( item ) ) continue;
+                if (!canonicalItem.contains(item))
+                    continue;
 
-                trackedItems.add( item );
-                inputs[pos] = new String[] { ForgeRegistries.ITEMS.getKey( item ).toString() };
+                trackedItems.add(item);
+                inputs[pos] = new String[]{ForgeRegistries.ITEMS.getKey(item).toString()};
                 return;
             }
 
             String[] itemIds = new String[items.length];
-            for( int i = 0; i < items.length; i++ )
-            {
+            for (int i = 0; i < items.length; i++) {
                 Item item = items[i].getItem();
-                trackedItems.add( item );
-                itemIds[i] = ForgeRegistries.ITEMS.getKey( item ).toString();
+                trackedItems.add(item);
+                itemIds[i] = ForgeRegistries.ITEMS.getKey(item).toString();
             }
-            Arrays.sort( itemIds );
+            Arrays.sort(itemIds);
 
             inputs[pos] = itemIds;
         }
-
-        private static final Set<Item> canonicalItem = new HashSet<>( Arrays.asList(
-            Items.GLASS_PANE, Items.STONE, Items.CHEST
-        ) );
     }
 }

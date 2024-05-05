@@ -28,7 +28,8 @@ typealias FakeComputerTask = (state: TimeoutState) -> MachineResult
 class KotlinComputerManager : AutoCloseable {
 
     private val machines: MutableMap<Computer, Queue<FakeComputerTask>> = HashMap()
-    private val context = ComputerContext(BasicEnvironment(), ComputerThread(1), NoWorkMainThreadScheduler()) { DummyLuaMachine(it) }
+    private val context =
+        ComputerContext(BasicEnvironment(), ComputerThread(1), NoWorkMainThreadScheduler()) { DummyLuaMachine(it) }
     private val errorLock: Lock = ReentrantLock()
     private val hasError = errorLock.newCondition()
 

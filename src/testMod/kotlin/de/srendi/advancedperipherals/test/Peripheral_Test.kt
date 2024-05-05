@@ -3,7 +3,6 @@ package de.srendi.advancedperipherals.test
 import dan200.computercraft.gametest.api.GameTestHolder
 import dan200.computercraft.gametest.api.sequence
 import dan200.computercraft.gametest.api.thenComputerOk
-import de.srendi.advancedperipherals.common.setup.Blocks
 import net.minecraft.core.BlockPos
 import net.minecraft.gametest.framework.GameTest
 import net.minecraft.gametest.framework.GameTestHelper
