@@ -158,7 +158,7 @@ minecraft {
                 def allFiles = new HashSet<String>();
 
                 def minecraftClasspath = oldClasspath?.get()
-                if (!minecraftClasspath != null && !minecraftClasspath.isEmpty()) allFiles.addAll(minecraftClasspath.split(File.pathSeparatorChar))
+                if (minecraftClasspath != null && !minecraftClasspath.isEmpty()) allFiles.addAll(minecraftClasspath.split(File.pathSeparatorChar))
 
                 for (file in configurations["testMinecraftLibrary"]) allFiles.add(file.absolutePath)
 
@@ -188,7 +188,7 @@ minecraft {
                 def allFiles = new HashSet<String>();
 
                 def minecraftClasspath = oldClasspath?.get()
-                if (!minecraftClasspath != null && !minecraftClasspath.isEmpty()) allFiles.addAll(minecraftClasspath.split(File.pathSeparatorChar))
+                if (minecraftClasspath != null && !minecraftClasspath.isEmpty()) allFiles.addAll(minecraftClasspath.split(File.pathSeparatorChar))
 
                 for (file in configurations["testMinecraftLibrary"]) allFiles.add(file.absolutePath)
 
