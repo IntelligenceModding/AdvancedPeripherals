@@ -34,7 +34,7 @@
         {pos: [0, 1, 4], state: "minecraft:air"},
         {pos: [1, 1, 0], state: "minecraft:air"},
         {pos: [1, 1, 1], state: "minecraft:air"},
-        {pos: [1, 1, 2], state: "computercraft:computer_advanced{facing:north,state:blinking}", nbt: {ComputerId: 0, ForgeCaps: {}, Label: "peripheral_test.environment", On: 1b, id: "computercraft:computer_advanced"}},
+        {pos: [1, 1, 2], state: "computercraft:computer_advanced{facing:north,state:blinking}", nbt: {ComputerId: 0, ForgeCaps: {}, Label: "peripheraltest.environment", On: 1b, id: "computercraft:computer_advanced"}},
         {pos: [1, 1, 3], state: "minecraft:air"},
         {pos: [1, 1, 4], state: "minecraft:air"},
         {pos: [2, 1, 0], state: "minecraft:air"},

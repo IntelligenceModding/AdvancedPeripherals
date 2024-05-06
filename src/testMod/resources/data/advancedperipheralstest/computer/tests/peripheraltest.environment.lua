@@ -1,7 +1,5 @@
 detector = peripheral.find("environmentDetector")
-if (detector == nil) then
-    test.fail("Peripheral not found")
-end
+test.eq(detector ~= nil, true, "Peripheral not found")
 
 isRaining = detector.isRaining()
 test.eq(false,isRaining, "It should not rain")
