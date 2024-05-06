@@ -13,7 +13,9 @@ public enum SingleOperation implements IPeripheralOperation<SingleOperationConte
     SUCK(1000, 1),
     USE_ON_ANIMAL(2500, 10),
     CAPTURE_ANIMAL(50_000, 100),
-    WARP(1000, DistancePolicy.IGNORED, CountPolicy.MULTIPLY, 1, DistancePolicy.SQRT, CountPolicy.MULTIPLY);
+    WARP(1000, DistancePolicy.IGNORED, CountPolicy.MULTIPLY, 1, DistancePolicy.SQRT, CountPolicy.MULTIPLY),
+    PREPARE_PORTAL(3_000, 600),
+    ACTIVE_PORTAL(60_000, 1);
 
     private final int defaultCooldown;
     private final DistancePolicy distanceCooldownPolicy;
@@ -34,7 +36,7 @@ public enum SingleOperation implements IPeripheralOperation<SingleOperationConte
     }
 
     SingleOperation(int defaultCooldown, int defaultCost) {
-        this(defaultCooldown, DistancePolicy.IGNORED, CountPolicy.MULTIPLY, defaultCost, DistancePolicy.IGNORED, CountPolicy.MULTIPLY);
+        this(defaultCooldown, DistancePolicy.IGNORED, CountPolicy.IGNORED, defaultCost, DistancePolicy.IGNORED, CountPolicy.IGNORED);
     }
 
     @Override
@@ -88,6 +90,7 @@ public enum SingleOperation implements IPeripheralOperation<SingleOperationConte
     }
 
     public enum CountPolicy {
+        IGNORED(c -> 1),
         MULTIPLY(c -> c);
 
         private final UnaryOperator<Integer> factorFunction;
