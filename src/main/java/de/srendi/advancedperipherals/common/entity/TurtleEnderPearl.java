@@ -87,7 +87,6 @@ public class TurtleEnderPearl extends ThrowableProjectile {
             this.discard();
             return;
         }
-        System.out.println("this.life: " + this.life + " pos = " + this.position());
         if (this.life < 0) {
             this.life--;
             // clean after 5s
@@ -118,12 +117,21 @@ public class TurtleEnderPearl extends ThrowableProjectile {
 
         @Override
         public boolean shouldRender(TurtleEnderPearl entity, Frustum view, double x, double y, double z) {
-            return super.shouldRender(entity, view, x, y, z);
+            return entity.turtle != null && super.shouldRender(entity, view, x, y, z);
         }
 
         @Override
         public ResourceLocation getTextureLocation(TurtleEnderPearl entity) {
             return null;
+        }
+    }
+
+    @Override
+    public void remove(Entity.RemovalReason reason) {
+        if (reason.shouldDestroy()) {
+            if (this.callback != null) {
+                this.callback.accept(null);
+            }
         }
     }
 
@@ -162,9 +170,7 @@ public class TurtleEnderPearl extends ThrowableProjectile {
         if (hit.getType() == HitResult.Type.BLOCK) {
             BlockHitResult blockHit = (BlockHitResult) hit;
             if (this.spawnPos == null || !this.spawnPos.equals(blockHit.getBlockPos())) {
-                if (this.life > 0) {
-                    this.life = 0;
-                }
+                this.discard();
             }
         }
     }

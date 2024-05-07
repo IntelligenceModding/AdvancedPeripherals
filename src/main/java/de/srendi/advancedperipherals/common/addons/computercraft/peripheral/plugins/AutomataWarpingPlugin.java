@@ -203,6 +203,13 @@ public class AutomataWarpingPlugin extends AutomataCorePlugin {
             try {
                 res = automataCore.withOperation(PREPARE_PORTAL, new SingleOperationContext(1, 1), context -> {
                     shipPearl.setCallback(pearl -> {
+                        if (pearl == null || pearl.isRemoved()) {
+                            for (IComputerAccess computer : automataCore.getConnectedComputers()) {
+                                computer.queueEvent(PortalPrepareCallback.FAILED_EVENT_ID, shipId, "PEARL_GONE");
+                            }
+                            shipPearls.remove(shipId);
+                            return;
+                        }
                         Level level = pearl.getLevel();
                         if (level == turtle.getLevel()) {
                             for (IComputerAccess computer : automataCore.getConnectedComputers()) {
