@@ -224,32 +224,26 @@ public class AutomataWarpingPlugin extends AutomataCorePlugin {
                 res = automataCore.withOperation(PREPARE_PORTAL, new SingleOperationContext(1, 1), context -> {
                     shipPearl.setCallback(pearl -> {
                         if (pearl == null || pearl.isRemoved()) {
-                            for (IComputerAccess computer : automataCore.getConnectedComputers()) {
-                                computer.queueEvent(PortalPrepareCallback.FAILED_EVENT_ID, shipId, "PEARL_GONE");
-                            }
+                            automataCore.queueEvent(PortalPrepareCallback.FAILED_EVENT_ID, shipId, "PEARL_GONE");
                             shipPearls.remove(shipId);
                             return;
                         }
                         Level level = pearl.getLevel();
                         if (level == turtle.getLevel()) {
-                            for (IComputerAccess computer : automataCore.getConnectedComputers()) {
-                                computer.queueEvent(PortalPrepareCallback.FAILED_EVENT_ID, shipId, "NO_PORTAL_FOUND");
-                            }
+                            automataCore.queueEvent(PortalPrepareCallback.FAILED_EVENT_ID, shipId, "NO_PORTAL_FOUND");
                             pearl.discard();
                             return;
                         }
                         BlockPos pos = pearl.blockPosition();
                         Map<String, Object> data = new HashMap<>();
-                        data.put("level", level);
+                        data.put("name", level.dimension().location().toString());
                         data.put("pos", LuaConverter.posToObject(pos));
                         data.put("facing", pearl.getDirection().getName());
                         data.put("costs", getCostsToLevel(level));
                         data.put("canSpawn", owner.isMovementPossible(level, pos));
                         data.put("shipId", shipId);
                         shipPearls.put(shipId, pearl);
-                        for (IComputerAccess computer : automataCore.getConnectedComputers()) {
-                            computer.queueEvent(PortalPrepareCallback.EVENT_ID, data);
-                        }
+                        automataCore.queueEvent(PortalPrepareCallback.EVENT_ID, data);
                     });
                     turtle.getLevel().addFreshEntity(shipPearl);
                     return null;
@@ -259,9 +253,7 @@ public class AutomataWarpingPlugin extends AutomataCorePlugin {
             }
             if (res != null) {
                 Object err = res.getResult()[1];
-                for (IComputerAccess computer : automataCore.getConnectedComputers()) {
-                    computer.queueEvent(PortalPrepareCallback.FAILED_EVENT_ID, shipId, err);
-                }
+                automataCore.queueEvent(PortalPrepareCallback.FAILED_EVENT_ID, shipId, err);
             }
         });
         return new PortalPrepareCallback(shipId).pull;
@@ -301,7 +293,7 @@ public class AutomataWarpingPlugin extends AutomataCorePlugin {
     }
 
     private static int getCostsToLevel(Level level) {
-        String dimension = level.dimension().toString();
+        String dimension = level.dimension().location().toString();
         // TODO: load fuel costs from config
         switch (dimension) {
             case "minecraft:overworld":

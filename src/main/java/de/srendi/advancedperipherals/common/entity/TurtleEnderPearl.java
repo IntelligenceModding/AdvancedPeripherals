@@ -3,7 +3,9 @@ package de.srendi.advancedperipherals.common.entity;
 import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.shared.computer.core.ServerComputer;
 import dan200.computercraft.shared.turtle.core.TurtleBrain;
+import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.setup.APEntities;
+import de.srendi.advancedperipherals.common.util.ChunkManager;
 import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
@@ -104,6 +106,7 @@ public class TurtleEnderPearl extends ThrowableProjectile {
             this.life = -1;
             this.setDeltaMovement(Vec3.ZERO);
             this.moveTo(Vec3.atCenterOf(this.blockPosition()));
+            AdvancedPeripherals.debug("Turtle Ender Pearl stabled: " + this.toString());
             if (this.callback != null) {
                 this.callback.accept(this);
             }
@@ -132,6 +135,7 @@ public class TurtleEnderPearl extends ThrowableProjectile {
 
     @Override
     public void remove(Entity.RemovalReason reason) {
+        super.remove(reason);
         if (reason.shouldDestroy()) {
             if (this.callback != null) {
                 this.callback.accept(null);
@@ -164,7 +168,9 @@ public class TurtleEnderPearl extends ThrowableProjectile {
         Entity newEntity = super.changeDimension(newWorld);
         this.changedDim = newEntity != null;
         if (newEntity instanceof TurtleEnderPearl newPearl) {
+            AdvancedPeripherals.debug("Turtle Ender Pearl crossed to dimension " + newWorld.dimension().toString());
             newPearl.spawnPos = newPearl.blockPosition();
+            ChunkManager.get(newWorld).addForceChunk(newWorld, newPearl.getUUID(), newPearl.chunkPosition());
         }
         return newEntity;
     }
