@@ -8,6 +8,7 @@ import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.projectile.ThrowableProjectile;
@@ -38,12 +39,15 @@ public class TurtleEnderPearl extends ThrowableProjectile {
         this.setNoGravity(true);
     }
 
-    public TurtleEnderPearl(ITurtleAccess turtle) {
+    public TurtleEnderPearl(ITurtleAccess turtle, @Nullable Direction direction) {
         this(APEntities.TURTLE_ENDER_PEARL.get(), turtle.getLevel());
         this.turtle = turtle;
         this.spawnPos = turtle.getPosition();
         this.setPos(Vec3.atCenterOf(this.spawnPos));
-        this.setDeltaMovement(Vec3.atLowerCornerOf(turtle.getDirection().getNormal()).scale(1 / 20.0));
+        if (direction == null) {
+            direction = turtle.getDirection();
+        }
+        this.setDeltaMovement(Vec3.atLowerCornerOf(direction.getNormal()).scale(1 / 20.0));
     }
 
     @Nullable

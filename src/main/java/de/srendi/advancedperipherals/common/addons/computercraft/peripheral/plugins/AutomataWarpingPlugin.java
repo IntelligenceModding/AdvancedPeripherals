@@ -1,5 +1,6 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.peripheral.plugins;
 
+import dan200.computercraft.api.lua.IArguments;
 import dan200.computercraft.api.lua.ILuaCallback;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
@@ -19,6 +20,7 @@ import de.srendi.advancedperipherals.common.entity.TurtleEnderPearl;
 import de.srendi.advancedperipherals.lib.peripherals.AutomataCorePeripheral;
 import de.srendi.advancedperipherals.lib.peripherals.IPeripheralOperation;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
@@ -193,10 +195,28 @@ public class AutomataWarpingPlugin extends AutomataCorePlugin {
      * </pre>
      */
     @LuaFunction
-    public final MethodResult portalShipPrepare() throws LuaException {
+    public final MethodResult portalShipPrepare(IArguments arguments) throws LuaException {
+        Direction direction;
+        switch (arguments.optString(0).orElse("").toLowerCase()) {
+            case "up":
+            case "top":
+                direction = Direction.UP;
+                break;
+            case "down":
+            case "bottom":
+                direction = Direction.DOWN;
+                break;
+            case "front":
+            case "":
+                direction = null;
+                break;
+            default:
+                return MethodResult.of(null, "Direction can only be 'up', 'top', 'down', 'bottom', or 'front'");
+        }
+
         TurtlePeripheralOwner owner = automataCore.getPeripheralOwner();
         ITurtleAccess turtle = owner.getTurtle();
-        TurtleEnderPearl shipPearl = new TurtleEnderPearl(turtle);
+        TurtleEnderPearl shipPearl = new TurtleEnderPearl(turtle, direction);
         String shipId = shipPearl.getStringUUID();
         ServerWorker.add(() -> {
             MethodResult res;
