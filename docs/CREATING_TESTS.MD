@@ -14,7 +14,7 @@ To test a single test, you can also use `/test run <test_name>` in the testing e
 
 ### Building your test structure
 
-Tests should have a base plate made out of andesite.
+Tests should have a base plate made out of polished andesite. This is not a standardized design, it is just the way it is done everywhere else.
 Every test needs one computer and the peripheral you want to test. For example the environment detector.
 
 ![assets/img.png](assets/img.png)
