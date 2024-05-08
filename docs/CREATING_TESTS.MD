@@ -60,10 +60,10 @@ The script should be placed in the `src/testMod/resources/data/advancedperiphera
 
 ```lua
 detector = peripheral.find("environmentDetector")
-test.eq(detector ~= nil, true, "Peripheral not found")
+test.assert(detectorl, true, "Peripheral not found")
 
 isRaining = detector.isRaining()
-test.eq(false,isRaining, "It should not rain")
+test.eq(false, isRaining, "It should not rain")
 ```
 
 Last but not least, import the script to the computer. You need to do that when you're currently in the test world, and you want to write the script in your IDE.
