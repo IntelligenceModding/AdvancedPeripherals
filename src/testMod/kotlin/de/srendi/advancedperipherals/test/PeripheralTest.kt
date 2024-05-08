@@ -22,4 +22,9 @@ class PeripheralTest {
         thenComputerOk();
     }
 
+    @GameTest(timeoutTicks = 300)
+    fun meStorage(context: GameTestHelper) = context.sequence {
+        thenComputerOk();
+    }
+
 }
