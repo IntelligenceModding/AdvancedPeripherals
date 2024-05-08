@@ -15,6 +15,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.projectile.ThrowableProjectile;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
@@ -24,6 +25,7 @@ import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 
+import java.util.List;
 import java.util.function.Consumer;
 import org.jetbrains.annotations.Nullable;
 
@@ -137,6 +139,7 @@ public class TurtleEnderPearl extends ThrowableProjectile {
     public void remove(Entity.RemovalReason reason) {
         super.remove(reason);
         if (reason.shouldDestroy()) {
+            ChunkManager.get(newWorld).removeForceChunk(newWorld, this.getUUID());
             if (this.callback != null) {
                 this.callback.accept(null);
             }
@@ -171,6 +174,27 @@ public class TurtleEnderPearl extends ThrowableProjectile {
             AdvancedPeripherals.debug("Turtle Ender Pearl crossed to dimension " + newWorld.dimension().toString());
             newPearl.spawnPos = newPearl.blockPosition();
             ChunkManager.get(newWorld).addForceChunk(newWorld, newPearl.getUUID(), newPearl.chunkPosition());
+            if (newWorld.dimension() == Level.END) {
+                newPearl.life = 0;
+                // do not spawn turtle on the obsidian platform
+                final int maxHeight = newWorld.getMaxBuildHeight();
+                int lowestY = maxHeight;
+                for (; lowestY > newPearl.spawnPos.getY() + 2; lowestY--) {
+                    if (!newWorld.getBlockState(newPearl.spawnPos.atY(lowestY - 1)).isAir()) {
+                        break;
+                    }
+                }
+                AdvancedPeripherals.debug("Turtle Ender Pearl lowest Y: " + lowestY);
+                for (int y = lowestY; y <= maxHeight; y++) {
+                    BlockPos pos = newPearl.spawnPos.atY(y);
+                    List<TurtleEnderPearl> pearlList = newWorld.<TurtleEnderPearl>getEntities(APEntities.TURTLE_ENDER_PEARL.get(), new AABB(pos), entity -> true);
+                    if (pearlList.isEmpty()) {
+                        AdvancedPeripherals.debug("Turtle Ender Pearl moved to " + pos);
+                        newPearl.moveTo(Vec3.atCenterOf(pos));
+                        break;
+                    }
+                }
+            }
         }
         return newEntity;
     }
