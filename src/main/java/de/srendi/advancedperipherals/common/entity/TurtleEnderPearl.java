@@ -139,7 +139,6 @@ public class TurtleEnderPearl extends ThrowableProjectile {
     public void remove(Entity.RemovalReason reason) {
         super.remove(reason);
         if (reason.shouldDestroy()) {
-            ChunkManager.get(newWorld).removeForceChunk(newWorld, this.getUUID());
             if (this.callback != null) {
                 this.callback.accept(null);
             }

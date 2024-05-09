@@ -4,7 +4,7 @@ import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-public class Pair<T, V> {
+public final class Pair<T, V> {
     private final T left;
     private final V right;
 
