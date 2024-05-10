@@ -27,4 +27,9 @@ class PeripheralTest {
         thenComputerOk();
     }
 
+    @GameTest(timeoutTicks = 300)
+    fun meTransfer(context: GameTestHelper) = context.sequence {
+        thenComputerOk();
+    }
+
 }

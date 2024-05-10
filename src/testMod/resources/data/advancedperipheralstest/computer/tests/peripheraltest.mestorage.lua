@@ -1,3 +1,10 @@
+---
+--- Advanced Peripherals ME Bridge storage tests
+--- Covers `isConnected`, `getEnergyUsage`, `getMaxEnergyStorage`, `getEnergyStorage`,
+--- `getTotalItemStorage`, `getTotalFluidStorage`, `getUsedItemStorage`, `getUsedFluidStorage`,
+--- `getAvailableItemStorage`, `getAvailableFluidStorage`, `listCells`,
+---
+
 sleep(4)
 bridge = peripheral.wrap("bottom")
 test.assert(bridge, "Peripheral not found")

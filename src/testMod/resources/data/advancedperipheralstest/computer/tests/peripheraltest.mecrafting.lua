@@ -1,3 +1,9 @@
+---
+--- Advanced Peripherals ME Bridge crafting tests
+--- Covers `isConnected`, `getEnergyUsage`, `isItemCrafting`, `isItemCraftable`,
+--- `getItem`, `craftItem`, `listCraftableFluid`, `craftFluid`, `getCraftingCPUs`,
+---
+
 sleep(4)
 bridge = peripheral.wrap("bottom")
 test.assert(bridge, "Peripheral not found")
