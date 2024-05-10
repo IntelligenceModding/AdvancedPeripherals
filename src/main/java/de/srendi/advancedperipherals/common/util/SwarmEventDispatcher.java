@@ -19,6 +19,11 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * SwarmEventDispatcher will combine multiple same events which fired from different peripherals into one event as a table.
+ * Then we can save ComputerCraft's event queue space.
+ * 
+ */
 @Mod.EventBusSubscriber(modid = AdvancedPeripherals.MOD_ID)
 public final class SwarmEventDispatcher {
     private static final ConcurrentMap<String, ConcurrentMap<Integer, ConcurrentMap<String, Set<Object>>>> events = new ConcurrentHashMap<>();
@@ -26,6 +31,20 @@ public final class SwarmEventDispatcher {
 
     private SwarmEventDispatcher() {}
 
+    /**
+     * dispatch will put periperal and event data into queue.
+     * The events will be fired together at the end of the tick.
+     * 
+     * For example,
+     *  if you invoke {@code dispatch("a_event", peripheral1, "random data1")} and {@code dispatch("a_event", peripheral2, "random data2")}
+     *  the event will be pushed at the end of the tick with form of
+     * {@code
+     * "a_event", {
+     *   ["peripheral1_name"] = {"random data1"},
+     *   ["peripheral2_name"] = {"random data2"},
+     * }
+     * }
+     */
     public static void dispatch(@NotNull String event, @NotNull BasePeripheral peripheral, Object data) {
         boolean set = false;
         ConcurrentMap<Integer, ConcurrentMap<String, Set<Object>>> computers = events.computeIfAbsent(event, (k) -> new ConcurrentHashMap<>());
