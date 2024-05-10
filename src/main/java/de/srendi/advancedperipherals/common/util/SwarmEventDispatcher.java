@@ -32,18 +32,31 @@ public final class SwarmEventDispatcher {
     private SwarmEventDispatcher() {}
 
     /**
-     * dispatch will put periperal and event data into queue.
+     * {@code dispatch} will put periperal and event data into queue.
      * The events will be fired together at the end of the tick.
      * 
-     * For example,
-     *  if you invoke {@code dispatch("a_event", peripheral1, "random data1")} and {@code dispatch("a_event", peripheral2, "random data2")}
-     *  the event will be pushed at the end of the tick with form of
-     * {@code
+     * For example, if you invoke
+     * <pre>
+     * <code>
+     * dispatch("a_event", peripheral1, "random data1")
+     * dispatch("a_event", peripheral1, "data2")
+     * dispatch("a_event", peripheral2, "random data3")
+     * dispatch("another_event", peripheral1, "random data4")
+     * </code>
+     * <pre/>
+     * the events will be pushed at the end of the tick with form of
+     * <pre>
+     * <code>
      * "a_event", {
-     *   ["peripheral1_name"] = {"random data1"},
-     *   ["peripheral2_name"] = {"random data2"},
+     *   ["peripheral1_name"] = {"random data1", "data2"},
+     *   ["peripheral2_name"] = {"random data3"},
      * }
+     * 
+     * "another_event", {
+     *   ["peripheral1_name"] = {"random data4"},
      * }
+     * </code>
+     * </pre>
      */
     public static void dispatch(@NotNull String event, @NotNull BasePeripheral peripheral, Object data) {
         boolean set = false;
