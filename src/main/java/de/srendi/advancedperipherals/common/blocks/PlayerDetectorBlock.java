@@ -14,7 +14,6 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public class PlayerDetectorBlock extends APBlockEntityBlock<PlayerDetectorEntity> {
 
@@ -22,7 +21,7 @@ public class PlayerDetectorBlock extends APBlockEntityBlock<PlayerDetectorEntity
         super(APBlockEntityTypes.PLAYER_DETECTOR, true);
     }
 
-    @Nullable
+    @NotNull
     @Override
     public BlockEntity newBlockEntity(@NotNull BlockPos pos, @NotNull BlockState state) {
         return APBlockEntityTypes.PLAYER_DETECTOR.get().create(pos, state);
