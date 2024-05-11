@@ -32,4 +32,9 @@ class PeripheralTest {
         thenComputerOk();
     }
 
+    @GameTest
+    fun blockReader(context: GameTestHelper) = context.sequence {
+        thenComputerOk();
+    }
+
 }
