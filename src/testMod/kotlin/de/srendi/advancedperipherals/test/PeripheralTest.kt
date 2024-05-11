@@ -47,4 +47,9 @@ class PeripheralTest {
         thenComputerOk();
     }
 
+    @GameTest(timeoutTicks = 300)
+    fun geoScanner(context: GameTestHelper) = context.sequence {
+        thenComputerOk();
+    }
+
 }
