@@ -16,7 +16,7 @@ test.assert(simpleReader, "Peripheral not found")
 
 test.eq("minecraft:polished_andesite", simpleReader.getBlockName(), "Block Name should be polished_andesite")
 test.eq(nil, simpleReader.getBlockData(), "Block Data should be nil")
-test.eq(false, simpleReader.isTileEntity(), "Block should not be a TileEntity")
+test.assert(not simpleReader.isTileEntity(), "Block should not be a TileEntity")
 test.eq(0, tablelength(simpleReader.getBlockStates()), "Block State should be empty")
 
 -- Test Block Reader functions on a stair block
