@@ -42,4 +42,9 @@ class PeripheralTest {
         thenComputerOk();
     }
 
+    @GameTest
+    fun rsIntegrator(context: GameTestHelper) = context.sequence {
+        thenComputerOk();
+    }
+
 }
