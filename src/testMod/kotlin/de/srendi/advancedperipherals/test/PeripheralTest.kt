@@ -37,4 +37,9 @@ class PeripheralTest {
         thenComputerOk();
     }
 
+    @GameTest
+    fun nbtStorage(context: GameTestHelper) = context.sequence {
+        thenComputerOk();
+    }
+
 }
