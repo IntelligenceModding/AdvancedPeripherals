@@ -73,6 +73,7 @@ while scanner.getOperationCooldown("scanBlocks") > 0 do
     sleep(0.25)
 end
 
+-- Test fuel consumption
 if fuelEnabled then
     scanResult = scanner.scan(config["scanBlocks"]["maxFreeRadius"] + 1)
     test.assert(scanResult, "Scan result should not be nil")
