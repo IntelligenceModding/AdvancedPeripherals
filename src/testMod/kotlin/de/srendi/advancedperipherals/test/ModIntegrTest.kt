@@ -14,4 +14,9 @@ class ModIntegrTest {
         thenComputerOk();
     }
 
+    @GameTest
+    fun botaniaManaPool(context: GameTestHelper) = context.sequence {
+        thenComputerOk();
+    }
+
 }
