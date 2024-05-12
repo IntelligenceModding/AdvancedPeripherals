@@ -4,6 +4,8 @@
 --- `scan`, `chunkAnalyze`, `getOperationCooldown`
 ---
 
+-- TODO: replace getOperationCooldown with getScanCooldown once the function is implemented
+
 function testBlockAt(result, x, y, z, expectedName, expectedTag)
     local blockEntry = nil
     for _, entry in ipairs(result) do
