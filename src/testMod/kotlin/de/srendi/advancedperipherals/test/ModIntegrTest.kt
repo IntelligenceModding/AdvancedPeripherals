@@ -24,4 +24,9 @@ class ModIntegrTest {
         thenComputerOk();
     }
 
+    @GameTest(timeoutTicks = 300)
+    fun minecraftBeacon(context: GameTestHelper) = context.sequence {
+        thenComputerOk();
+    }
+
 }
