@@ -55,6 +55,9 @@ public class RedstoneIntegratorPeripheral extends BasePeripheral<BlockEntityPeri
     @LuaFunction(value = {"setAnalogueOutput", "setAnalogOutput"})
     public final void setAnalogOutput(String direction, int power) throws LuaException {
         Direction dir = validateSide(direction);
+        if (power > 15 || power < 0) {
+            throw new LuaException("redstone power exceeds the range [0,15]");
+        }
         owner.tileEntity.setOutput(dir, power);
     }
 }
