@@ -19,4 +19,9 @@ class ModIntegrTest {
         thenComputerOk();
     }
 
+    @GameTest
+    fun botaniaSpreader(context: GameTestHelper) = context.sequence {
+        thenComputerOk();
+    }
+
 }
