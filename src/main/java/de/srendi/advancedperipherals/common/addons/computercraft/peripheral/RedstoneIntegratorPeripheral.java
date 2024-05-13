@@ -2,7 +2,6 @@ package de.srendi.advancedperipherals.common.addons.computercraft.peripheral;
 
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
-import dan200.computercraft.core.computer.ComputerSide;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.BlockEntityPeripheralOwner;
 import de.srendi.advancedperipherals.common.blocks.blockentities.RedstoneIntegratorEntity;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
