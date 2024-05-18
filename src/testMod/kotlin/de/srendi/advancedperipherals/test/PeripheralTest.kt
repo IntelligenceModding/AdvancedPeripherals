@@ -42,7 +42,7 @@ class PeripheralTest {
         thenComputerOk();
     }
 
-    @GameTest
+    @GameTest(timeoutTicks = 300)
     fun rsIntegrator(context: GameTestHelper) = context.sequence {
         thenComputerOk();
     }

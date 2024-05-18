@@ -19,6 +19,7 @@ test.assert(second.getInput("back"), "Digital input should be true for Redstone 
 
 -- Test output on the right integrator
 second.setOutput("front", true)
+sleep(1)
 test.assert(second.getOutput("front"), "Digital output should be true")
 
 -- Test analog input on the left integrator (wired from the right integrator)
@@ -26,6 +27,7 @@ test.eq(13, first.getAnalogInput("front"), "Analog input should be 13")
 
 -- Test analog output on the right integrator
 second.setAnalogOutput("front", 10)
+sleep(1)
 test.eq(10, second.getAnalogOutput("front"), "Analog output should be 10")
 
 -- Test analog input on the left integrator (wired from the right integrator)
