@@ -9,7 +9,7 @@
 function testBlockAt(result, x, y, z, expectedName, expectedTag)
     local blockEntry = nil
     for _, entry in ipairs(result) do
-        if entry["x"] == x and entry["y"] == y and entry["z"] == z then
+        if entry.x == x and entry.y == y and entry.z == z then
             blockEntry = entry
             break
         end
