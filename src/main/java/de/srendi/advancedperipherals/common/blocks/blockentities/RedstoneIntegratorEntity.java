@@ -82,11 +82,7 @@ public class RedstoneIntegratorEntity extends PeripheralBlockEntity<RedstoneInte
      * @param power     The redstone power from 0 to 15
      */
     public void setOutput(Direction direction, int power) {
-        if (power > 15) {
-            power = 15;
-        } else if (power < 0) {
-            power = 0;
-        }
+        power = Math.min(Math.max(power, 0), 15);
         this.outputs[direction.get3DDataValue()] = power;
         if (this.outputStatus.compareAndSet(0, 1)) {
             ServerWorker.add(() -> {
