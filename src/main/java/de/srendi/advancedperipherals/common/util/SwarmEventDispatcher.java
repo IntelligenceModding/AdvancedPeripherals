@@ -22,7 +22,6 @@ import org.jetbrains.annotations.NotNull;
 /**
  * SwarmEventDispatcher will combine multiple same events which fired from different peripherals into one event as a table.
  * Then we can save ComputerCraft's event queue space.
- * 
  */
 @Mod.EventBusSubscriber(modid = AdvancedPeripherals.MOD_ID)
 public final class SwarmEventDispatcher {
@@ -34,7 +33,7 @@ public final class SwarmEventDispatcher {
     /**
      * {@code dispatch} will put periperal and event data into queue.
      * The events will be fired together at the end of the tick.
-     * 
+     *
      * For example, if you invoke
      * <pre>
      * <code>
@@ -43,7 +42,7 @@ public final class SwarmEventDispatcher {
      * dispatch("a_event", peripheral2, "random data3")
      * dispatch("another_event", peripheral1, "random data4")
      * </code>
-     * <pre/>
+     * </pre>
      * the events will be pushed at the end of the tick with form of
      * <pre>
      * <code>
@@ -51,7 +50,7 @@ public final class SwarmEventDispatcher {
      *   ["peripheral1_name"] = {"random data1", "data2"},
      *   ["peripheral2_name"] = {"random data3"},
      * }
-     * 
+     *
      * "another_event", {
      *   ["peripheral1_name"] = {"random data4"},
      * }

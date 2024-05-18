@@ -2,7 +2,6 @@ package de.srendi.advancedperipherals.common.addons.computercraft.peripheral;
 
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
-import dan200.computercraft.core.computer.ComputerSide;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.BlockEntityPeripheralOwner;
 import de.srendi.advancedperipherals.common.blocks.blockentities.RedstoneIntegratorEntity;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
@@ -55,6 +54,9 @@ public class RedstoneIntegratorPeripheral extends BasePeripheral<BlockEntityPeri
     @LuaFunction(value = {"setAnalogueOutput", "setAnalogOutput"})
     public final void setAnalogOutput(String direction, int power) throws LuaException {
         Direction dir = validateSide(direction);
+        if (power > 15 || power < 0) {
+            throw new LuaException("redstone power exceeds the range [0,15]");
+        }
         owner.tileEntity.setOutput(dir, power);
     }
 }
