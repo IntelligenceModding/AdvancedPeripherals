@@ -43,7 +43,7 @@ public class ManaFlowerIntegration extends BlockEntityIntegrationPeripheral<Gene
         if (blockEntity.isFloating()) {
             return false;
         } else {
-            return  blockEntity.getLevel().getBlockState(blockEntity.getBlockPos().below()).is(BotaniaBlocks.enchantedSoil);
+            return blockEntity.getLevel().getBlockState(blockEntity.getBlockPos().below()).is(BotaniaBlocks.enchantedSoil);
         }
     }
 }
