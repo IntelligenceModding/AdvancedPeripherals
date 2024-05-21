@@ -37,4 +37,19 @@ class PeripheralTest {
         thenComputerOk();
     }
 
+    @GameTest
+    fun nbtStorage(context: GameTestHelper) = context.sequence {
+        thenComputerOk();
+    }
+
+    @GameTest(timeoutTicks = 300)
+    fun rsIntegrator(context: GameTestHelper) = context.sequence {
+        thenComputerOk();
+    }
+
+    @GameTest(timeoutTicks = 300)
+    fun geoScanner(context: GameTestHelper) = context.sequence {
+        thenComputerOk();
+    }
+
 }

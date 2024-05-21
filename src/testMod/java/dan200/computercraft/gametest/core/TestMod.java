@@ -32,8 +32,11 @@ import java.util.Collection;
 import java.util.Locale;
 import java.util.function.Consumer;
 
-@Mod("advancedperipheralstest")
+@Mod(TestMod.MOD_ID)
 public class TestMod {
+
+    public static final String MOD_ID = "advancedperipheralstest";
+
     public TestMod() {
         TestHooks.init();
 
