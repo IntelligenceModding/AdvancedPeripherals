@@ -42,7 +42,7 @@ test.assert(stickCount == 0, "We should not have sticks")
 craftingSuccessful = bridge.craftItem(stickFilter)
 test.assert(craftingSuccessful, "Crafting failed")
 
-sleep(0.1)
+sleep(0.15)
 
 isItemCrafting = bridge.isItemCrafting(stickFilter)
 test.assert(isItemCrafting, "There should be a crafting job")
