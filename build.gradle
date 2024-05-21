@@ -323,7 +323,7 @@ dependencies {
     runtimeOnly fg.deobf("com.ldtteam:domum_ornamentum:${domumornamentum_version}:universal")
     runtimeOnly fg.deobf("com.ldtteam:blockui:${blockui_version}")
 
-    //Patchouli
+    // Patchouli
     runtimeOnly fg.deobf("vazkii.patchouli:Patchouli:${patchouli_version}")
 
     // Create

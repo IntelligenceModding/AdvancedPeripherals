@@ -15,9 +15,9 @@ public class APItems {
     public static final RegistryObject<SmartGlassesItem> SMART_GLASSES = APRegistration.ITEMS.register("smart_glasses", () -> new SmartGlassesItem(SmartGlassesMaterials.CHAIN));
     public static final RegistryObject<SmartGlassesItem> SMART_GLASSES_NETHERITE = APRegistration.ITEMS.register("smart_glasses_netherite", () -> new SmartGlassesItem(SmartGlassesMaterials.NETHERITE));
     public static final RegistryObject<SmartGlassesInterfaceItem> SMART_GLASSES_INTERFACE = APRegistration.ITEMS.register("smart_glasses_interface", SmartGlassesInterfaceItem::new);
-    public static final RegistryObject<OverlayGlassesItem> OVERLAY_GLASSES = APRegistration.ITEMS.register("overlayglasses", OverlayGlassesItem::new);
-    public static final RegistryObject<HotkeyModuleItem> HOTKEY_MODULE = APRegistration.ITEMS.register("hotkeymodule", HotkeyModuleItem::new);
-    public static final RegistryObject<NightVisionModuleItem> NIGHT_VISION_MODULE = APRegistration.ITEMS.register("nightvisionmodule", NightVisionModuleItem::new);
+    public static final RegistryObject<OverlayGlassesItem> OVERLAY_MODULE = APRegistration.ITEMS.register("overlay_module", OverlayGlassesItem::new);
+    public static final RegistryObject<HotkeyModuleItem> HOTKEY_MODULE = APRegistration.ITEMS.register("hotkey_module", HotkeyModuleItem::new);
+    public static final RegistryObject<NightVisionModuleItem> NIGHT_VISION_MODULE = APRegistration.ITEMS.register("nightvision_module", NightVisionModuleItem::new);
     public static final RegistryObject<Item> COMPUTER_TOOL = APRegistration.ITEMS.register("computer_tool", () -> new APItem(new Item.Properties().stacksTo(1), () -> true));
     public static final RegistryObject<Item> MEMORY_CARD = APRegistration.ITEMS.register("memory_card", MemoryCardItem::new);
     public static final RegistryObject<Item> END_AUTOMATA_CORE = APRegistration.ITEMS.register("end_automata_core", () -> new APItem(new Item.Properties().stacksTo(1), APConfig.METAPHYSICS_CONFIG.enableEndAutomataCore));
