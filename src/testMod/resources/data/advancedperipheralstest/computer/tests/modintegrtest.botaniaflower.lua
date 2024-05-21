@@ -11,7 +11,7 @@ test.assert(entropinnyum, "Peripheral not found")
 
 test.eq(entropinnyum.getMaxMana(), entropinnyum.getMana(), "Entropinnyum should have full mana")
 test.eq(6500, entropinnyum.getMaxMana(), "Entropinnyum should have a max mana of 6500")
--- test.assert(entropinnyum.isOnEnchantedSoil(), "Entropinnyum should be on enchanted soil") TODO: the function is currently broken
+test.assert(entropinnyum.isOnEnchantedSoil(), "Entropinnyum should be on enchanted soil")
 test.assert(not entropinnyum.isFloating(), "Entropinnyum should not be floating")
 -- test.assert(entropinnyum.isFull(), "Entropinnyum should be full") TODO: uncomment for 1.20.1 AP versions
 -- test.assert(not entropinnyum.isEmpty(), "Entropinnyum should not be empty") TODO: uncomment for 1.20.1 AP versions
@@ -23,7 +23,7 @@ test.assert(endoflame, "Peripheral not found")
 
 test.eq(0, endoflame.getMana(), "Endoflame should have no mana")
 test.eq(300, endoflame.getMaxMana(), "Endoflame should have a max mana of 300")
--- test.assert(not endoflame.isOnEnchantedSoil(), "Endoflame should not be on enchanted soil") TODO: the function is currently broken
+test.assert(not endoflame.isOnEnchantedSoil(), "Endoflame should not be on enchanted soil")
 test.assert(not endoflame.isFloating(), "Endoflame should not be floating")
 -- test.assert(not endoflame.isFull(), "Endoflame should not be full") TODO: uncomment for 1.20.1 AP versions
 -- test.assert(endoflame.isEmpty(), "Endoflame should be empty") TODO: uncomment for 1.20.1 AP versions
@@ -35,7 +35,7 @@ test.assert(kekimurus, "Peripheral not found")
 
 test.eq(1800, kekimurus.getMana(), "Kekimurus should have 1800 mana")
 test.eq(9001, kekimurus.getMaxMana(), "Kekimurus should have a max mana of 9001")
--- test.assert(not kekimurus.isOnEnchantedSoil(), "Kekimurus should not be on enchanted soil") TODO: the function is currently broken
+test.assert(not kekimurus.isOnEnchantedSoil(), "Kekimurus should not be on enchanted soil")
 test.assert(kekimurus.isFloating(), "Kekimurus should be floating")
 -- test.assert(not kekimurus.isFull(), "Kekimurus should not be full") TODO: uncomment for 1.20.1 AP versions
 -- test.assert(not kekimurus.isEmpty(), "Kekimurus should not be empty") TODO: uncomment for 1.20.1 AP versions
