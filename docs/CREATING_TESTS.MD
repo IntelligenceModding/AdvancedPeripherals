@@ -24,7 +24,10 @@ Now you need to set a label to the computer, so it can run the lua test script.
 For example, peripheraltest as the test type. The test type is the name of the `@GameTestHolder` class. PeripheralTest.kt for this type.
 `environment` would be our test name. So the label would be `peripheraltest.environment`.
 
-The computer needs the id 0 so it can load the default startup.lua and the tests scripts from the resources folder.
+The computer can either have the id 0 or 1. It depends what you want to do later.
+It is possible to either run a test script on the computer which is explained in "Writing the test" and you can run
+code on the computer using the kotlin game tests.
+Use id 0 if you want to run a lua script on the computer and id 1 if you only want to run code using kotlin game tests.
 
 Now to save your test, get a structure block, place it in the lower right corner of the test structure and set the mode to save.
 Use the command `/give @p minecraft:structure_block` to get a structure block.
@@ -43,6 +46,10 @@ To write a test, you need to create a new class in the `src/testMod/kotlin/advan
 The class should be annotated with `@GameTestHolder`.
 The class should have a function annotated with `@GameTest` that will be executed by the game test server later.
 The function needs to have the parameter `GameTestContext` that will be used to interact with the game world.
+
+There are two ways to test things on a computer. You can either run a lua script or run code on the computer using kotlin.
+
+#### Lua Tests
 
 A simple game test would look like this. You can see that the context can be used to interact with the world.
 You can then use one of the helper functions to interact with the computer. For example, `thenComputerOk()` to check if the script on the computer was executed without any fails.
@@ -70,3 +77,47 @@ Last but not least, import the script to the computer. You need to do that when 
 Luckily, the test framework provides a command for that.
 `/cctest import` imports the scripts from the resources folder to the world folder.
 You can then find the script in the computer's folder using `ls tests/`.
+
+
+#### Kotlin Tests
+
+To run tests on a computer, the computer needs to have the id 1
+
+```kt
+thenOnComputer { callPeripheral("left", "playNote") }
+```
+
+This would run `callPeripheral("left", "playNote")` on the computer which just calls a function on the peripheral on the left
+
+Here is an example with our note block test
+
+```kt
+    @GameTest(timeoutTicks = 300)
+    fun minecraftNoteBlock_Triggering_Allay(context: GameTestHelper) = context.sequence {
+        // test if playNote triggers an allay
+        // related issue: https://github.com/IntelligenceModding/AdvancedPeripherals/issues/603
+
+        val item = Items.DIAMOND
+        var allay: Allay? = null
+        thenExecute {
+            allay = context.spawn(EntityType.ALLAY, 2, 3, 2)
+            allay?.setItemInHand(InteractionHand.MAIN_HAND, ItemStack(item))
+
+            context.spawnItem(item, 2f, 3f, 2f)
+        }
+
+        thenWaitUntil { context.assertEntityNotPresent(EntityType.ITEM) }
+        thenWaitUntil {
+            if (allay?.inventory?.getItem(0)?.count != 1)
+                context.fail("Expected Allay to pick up item")
+        }
+        thenOnComputer { callPeripheral("left", "playNote") }
+        thenWaitUntil { context.assertEntityPresent(EntityType.ITEM) }
+        thenWaitUntil {
+            if (allay?.inventory?.getItem(0)?.count != 0)
+                context.fail("Expected Allay to drop item")
+        }
+    }
+```
+
+For more examples, you can also check how the tests from CC work [here](https://github.com/cc-tweaked/CC-Tweaked/tree/mc-1.19.2/src/testMod/kotlin/dan200/computercraft/gametest).
