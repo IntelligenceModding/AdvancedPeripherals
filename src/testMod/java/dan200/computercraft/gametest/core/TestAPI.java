@@ -12,7 +12,10 @@ import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.gametest.api.ComputerState;
 import dan200.computercraft.gametest.api.TestExtensionsKt;
+import dan200.computercraft.shared.computer.core.ServerContext;
+import de.srendi.advancedperipherals.common.util.LuaConverter;
 import net.minecraft.gametest.framework.GameTestSequence;
+import net.minecraftforge.server.ServerLifecycleHooks;
 
 import java.util.Optional;
 
@@ -80,4 +83,14 @@ public class TestAPI extends ComputerState implements ILuaAPI {
     public final void log(String message) {
         ComputerCraft.log.info("[Computer '{}'] {}", label, message);
     }
+
+    @LuaFunction
+    public final Object getComputerPosition() {
+        return ServerContext.get(ServerLifecycleHooks.getCurrentServer()).registry().getComputers().stream()
+                .filter(computer -> computer.getLabel() != null && computer.getLabel().equals(label))
+                .findFirst()
+                .map(computer -> LuaConverter.posToObject(computer.getPosition()))
+                .orElse(null);
+    }
+
 }
