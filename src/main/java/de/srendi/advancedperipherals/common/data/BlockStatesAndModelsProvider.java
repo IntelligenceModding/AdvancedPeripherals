@@ -85,23 +85,32 @@ public class BlockStatesAndModelsProvider extends BlockStateProvider {
 
         for (String sideTexture : sides) {
             String side = sideTexture;
-            if (side.equals("side")) {
-                for (Direction direction : Direction.Plane.HORIZONTAL)
-                    builder.texture(direction.toString(), blockTexture(block, sideTexture));
+
+            switch (side) {
+                case "side":
+                    for (Direction direction : Direction.Plane.HORIZONTAL) {
+                        builder.texture(direction.toString(), blockTexture(block, sideTexture));
+                    }
+                    break;
+                case "north":
+                    particleTexture = blockTexture(block, side);
+                    break;
+                case "front":
+                    particleTexture = blockTexture(block, side);
+                    side = "north";
+                    break;
+                case "top":
+                    side = "up";
+                    break;
+                case "bottom":
+                    side = "down";
+                    break;
+                case "back":
+                    side = "south";
+                    break;
+                default:
+                    break;
             }
-            // Handle special side names and particle texture
-            if (side.equals("north"))
-                particleTexture = blockTexture(block, "north");
-            if (side.equals("front")) {
-                side = "north";
-                particleTexture = blockTexture(block, "front");
-            }
-            if (side.equals("top"))
-                side = "up";
-            if (side.equals("bottom"))
-                side = "down";
-            if (side.equals("back"))
-                side = "south";
 
             builder.texture(side, blockTexture(block, sideTexture));
         }
