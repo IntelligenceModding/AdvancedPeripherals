@@ -26,7 +26,7 @@ public class DataGenerators {
         generator.addProvider(event.includeServer(), new PocketUpgradesProvider(generator));
         generator.addProvider(event.includeServer(), new PoiTypeProvider(generator, existingFileHelper));
         generator.addProvider(event.includeServer(), new BlockStatesAndModelsProvider(generator, existingFileHelper));
-
+        generator.addProvider(event.includeServer(), new ItemTagsProvider(generator, existingFileHelper));
         generator.addProvider(event.includeClient(), new EnUsLanguageProvider(generator));
     }
 }

@@ -26,7 +26,6 @@ public class AdvancedPeripherals {
     public static final Logger LOGGER = LogManager.getLogger(NAME);
     public static final Random RANDOM = new Random();
     public static final APCreativeTab TAB = new APCreativeTab();
-    public static final APAddons ADDONS = new APAddons();
 
     public AdvancedPeripherals() {
         LOGGER.info("AdvancedPeripherals says hello!");
@@ -37,6 +36,7 @@ public class AdvancedPeripherals {
         modBus.addListener(this::commonSetup);
         APRegistration.register();
         MinecraftForge.EVENT_BUS.register(this);
+        new APAddons();
     }
 
     public static void debug(String message) {

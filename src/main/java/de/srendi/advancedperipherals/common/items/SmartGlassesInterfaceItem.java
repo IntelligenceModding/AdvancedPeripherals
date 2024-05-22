@@ -4,7 +4,7 @@ import dan200.computercraft.shared.network.container.ComputerContainerData;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.addons.APAddons;
 import de.srendi.advancedperipherals.common.items.base.BaseItem;
-import de.srendi.advancedperipherals.common.setup.APItems;
+import de.srendi.advancedperipherals.common.setup.APTags;
 import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesComputer;
 import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesMenuProvider;
 import net.minecraft.network.chat.Component;
@@ -34,16 +34,16 @@ public class SmartGlassesInterfaceItem extends BaseItem {
         if (world.isClientSide)
             return new InteractionResultHolder<>(InteractionResult.PASS, player.getItemInHand(hand));
 
-        ItemStack findGlasses = player.getItemBySlot(EquipmentSlot.HEAD);
-
         // In case this method gets executed by the smart glasses interface, we need to check if the glasses may be in the
         // curio slot or on the head
-        if (!findGlasses.is(APItems.SMART_GLASSES.get())) {
-            if (APAddons.curiosLoaded) findGlasses = APAddons.getCurioGlasses(player);
-            if (!findGlasses.is(APItems.SMART_GLASSES.get())) {
-                player.displayClientMessage(Component.translatable("item.advancedperipherals.smartglasses.dontwear"), false);
-                return super.use(world, player, hand);
-            }
+        ItemStack findGlasses = player.getItemBySlot(EquipmentSlot.HEAD);
+        if (!findGlasses.is(APTags.Items.SMART_GLASSES))
+            if (APAddons.curiosLoaded)
+                findGlasses = APAddons.getCurioGlasses(player);
+
+        if (!findGlasses.is(APTags.Items.SMART_GLASSES)) {
+            player.displayClientMessage(Component.translatable("item.advancedperipherals.smartglasses.dontwear"), false);
+            return super.use(world, player, hand);
         }
 
         // The constructor of the ComputerContainerData in the lambda wants a final version of this var
