@@ -26,6 +26,7 @@ import de.srendi.advancedperipherals.network.toclient.ToastToClientPacket;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentContents;
+import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
@@ -37,6 +38,7 @@ import net.minecraftforge.server.ServerLifecycleHooks;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -80,8 +82,30 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
         return content;
     }
 
+    private List<Predicate<String>> getChatBoxCommandFilters() {
+        return APConfig.PERIPHERALS_CONFIG.getChatBoxCommandFilters();
+    }
+
+    private boolean isCommandBanned(String command) {
+        for (Predicate<String> pattern : getChatBoxCommandFilters()) {
+            if (pattern.test(command)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     @Nullable
     protected Style filterComponentStyle(@NonNull Style style) {
+        ClickEvent click = style.getClickEvent();
+        if (click != null) {
+            if (click.getAction() == ClickEvent.Action.RUN_COMMAND || click.getAction() == ClickEvent.Action.SUGGEST_COMMAND) {
+                String command = click.getValue();
+                if (isCommandBanned(command)) {
+                    return null;
+                }
+            }
+        }
         HoverEvent hover = style.getHoverEvent();
         if (hover != null) {
             HoverEvent.ItemStackInfo itemInfo = hover.getValue(HoverEvent.Action.SHOW_ITEM);
@@ -89,7 +113,7 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
                 try {
                     itemInfo.getItemStack().getTooltipLines(null, TooltipFlag.Default.ADVANCED);
                 } catch (RuntimeException e) {
-                    MutableComponent errorMessage = Component.literal("Invalid item").setStyle(ChatFormatting.RED, ChatFormatting.BOLD);
+                    MutableComponent errorMessage = Component.literal("[AP] Invalid item").setStyle(ChatFormatting.RED, ChatFormatting.BOLD);
                     style = style.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, errorMessage));
                 }
             }
