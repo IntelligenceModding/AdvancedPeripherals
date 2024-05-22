@@ -82,6 +82,10 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
         return content;
     }
 
+    private boolean getChatBoxNoRunCommand() {
+        return APConfig.PERIPHERALS_CONFIG.chatBoxNoRunCommand.get();
+    }
+
     private List<Predicate<String>> getChatBoxCommandFilters() {
         return APConfig.PERIPHERALS_CONFIG.getChatBoxCommandFilters();
     }
@@ -95,14 +99,24 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
         return false;
     }
 
+    private static MutableComponent createFormattedError(String message) {
+        return Component.literal("[AP] " + message).setStyle(ChatFormatting.RED, ChatFormatting.BOLD);
+    }
+
     @Nullable
     protected Style filterComponentStyle(@NonNull Style style) {
         ClickEvent click = style.getClickEvent();
         if (click != null) {
-            if (click.getAction() == ClickEvent.Action.RUN_COMMAND || click.getAction() == ClickEvent.Action.SUGGEST_COMMAND) {
+            if (getChatBoxNoRunCommand() && click.getAction() == ClickEvent.Action.RUN_COMMAND) {
+                style = style.
+                    withClickEvent(null).
+                    withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, createFormattedError("'run_command' action is banned")));
+            } else if (click.getAction() == ClickEvent.Action.RUN_COMMAND || click.getAction() == ClickEvent.Action.SUGGEST_COMMAND) {
                 String command = click.getValue();
                 if (isCommandBanned(command)) {
-                    return null;
+                    style = style.
+                        withClickEvent(null).
+                        withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, createFormattedError("Command `" + command + "` is banned")));
                 }
             }
         }
@@ -113,8 +127,7 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
                 try {
                     itemInfo.getItemStack().getTooltipLines(null, TooltipFlag.Default.ADVANCED);
                 } catch (RuntimeException e) {
-                    MutableComponent errorMessage = Component.literal("[AP] Invalid item").setStyle(ChatFormatting.RED, ChatFormatting.BOLD);
-                    style = style.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, errorMessage));
+                    style = style.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, createFormattedError("Invalid item")));
                 }
             }
         }
