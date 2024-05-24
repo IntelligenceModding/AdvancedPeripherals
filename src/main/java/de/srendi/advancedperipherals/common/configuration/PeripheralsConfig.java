@@ -224,7 +224,7 @@ public class PeripheralsConfig implements IAPConfig {
                     filters.add((v) -> v.startsWith(prefix) && (v.length() == prefix.length() || " \t".indexOf(v.charAt(prefix.length())) != -1));
                     continue;
                 }
-                p = "^" + p + "\\\\s*";
+                p = "^" + p + "\\s*";
             }
             filters.add(Pattern.compile(p).asPredicate());
         }
