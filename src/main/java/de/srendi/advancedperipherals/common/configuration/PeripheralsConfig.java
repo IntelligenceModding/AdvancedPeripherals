@@ -133,7 +133,7 @@ public class PeripheralsConfig implements IAPConfig {
         chatBoxMaxRange = builder.comment("Defines the maximal range of the chat box in blocks. -1 for infinite. If the range is not -1, players in other dimensions won't able to receive messages").defineInRange("chatBoxMaxRange", -1, -1, 30000000);
         chatBoxMultiDimensional = builder.comment("If true, the chat box is able to send messages to other dimensions than its own").define("chatBoxMultiDimensional", true);
         chatBoxPreventRunCommand = builder.comment("If true, the chat box cannot use 'run_command' action").define("chatBoxPreventRunCommand", false);
-        chatBoxBannedCommands = builder.comment("These commands below will not be able to send by 'run_command' or 'suggest_command' action. Use regex pattern").defineList("chatBoxBannedCommands", chatBoxDefaultBannedCommands, (o) -> o instanceof String value && value.length() > 0);
+        chatBoxBannedCommands = builder.comment("These commands below will not be able to send by 'run_command' or 'suggest_command' action. It will match as prefix if starts with '/', other wise use regex pattern").defineList("chatBoxBannedCommands", chatBoxDefaultBannedCommands, (o) -> o instanceof String value && value.length() > 0);
 
         pop("ME_Bridge", builder);
 
