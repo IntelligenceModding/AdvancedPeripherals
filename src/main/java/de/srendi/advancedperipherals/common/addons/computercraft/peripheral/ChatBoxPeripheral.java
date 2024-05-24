@@ -84,8 +84,8 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
         return content;
     }
 
-    private boolean getChatBoxNoRunCommand() {
-        return APConfig.PERIPHERALS_CONFIG.chatBoxNoRunCommand.get();
+    private boolean isChatBoxPreventingRunCommand() {
+        return APConfig.PERIPHERALS_CONFIG.chatBoxPreventRunCommand.get();
     }
 
     private List<Predicate<String>> getChatBoxCommandFilters() {
@@ -109,7 +109,7 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
     protected Style filterComponentStyle(@NotNull Style style) {
         ClickEvent click = style.getClickEvent();
         if (click != null) {
-            if (getChatBoxNoRunCommand() && click.getAction() == ClickEvent.Action.RUN_COMMAND) {
+            if (isChatBoxPreventingRunCommand() && click.getAction() == ClickEvent.Action.RUN_COMMAND) {
                 style = style
                     .withClickEvent(null)
                     .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, createFormattedError("'run_command' action is banned")));
