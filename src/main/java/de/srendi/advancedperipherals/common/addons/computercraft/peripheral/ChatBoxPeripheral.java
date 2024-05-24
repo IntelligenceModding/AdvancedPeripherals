@@ -110,15 +110,15 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
         ClickEvent click = style.getClickEvent();
         if (click != null) {
             if (getChatBoxNoRunCommand() && click.getAction() == ClickEvent.Action.RUN_COMMAND) {
-                style = style.
-                    withClickEvent(null).
-                    withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, createFormattedError("'run_command' action is banned")));
+                style = style
+                    .withClickEvent(null)
+                    .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, createFormattedError("'run_command' action is banned")));
             } else if (click.getAction() == ClickEvent.Action.RUN_COMMAND || click.getAction() == ClickEvent.Action.SUGGEST_COMMAND) {
                 String command = click.getValue();
                 if (isCommandBanned(command)) {
-                    style = style.
-                        withClickEvent(null).
-                        withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, createFormattedError("Command `" + command + "` is banned")));
+                    style = style
+                        .withClickEvent(null)
+                        .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, createFormattedError("Command `" + command + "` is banned")));
                 }
             }
         }
@@ -166,7 +166,7 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
         if (!prefix.isEmpty()) {
             MutableComponent formattablePrefix;
             try {
-                formattablePrefix = MutableComponent.Serializer.fromJson(prefix);
+                formattablePrefix = Component.Serializer.fromJson(prefix);
                 prefixComponent = formattablePrefix;
             } catch (JsonSyntaxException exception) {
                 AdvancedPeripherals.debug("Non json prefix, using plain text instead.");

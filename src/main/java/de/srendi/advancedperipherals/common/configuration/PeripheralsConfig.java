@@ -215,17 +215,18 @@ public class PeripheralsConfig implements IAPConfig {
 
     private List<Predicate<String>> parseChatBoxCommandFilters() {
         List<Predicate<String>> filters = new ArrayList<>();
-        for (String s : chatBoxBannedCommands.get()) {
-            if (s.charAt(0) == '/') {
-                String p = s.replaceAll("\\s+", "\\\\s+");
+        for (final String s : chatBoxBannedCommands.get()) {
+            String p = s;
+            if (p.charAt(0) == '/') {
+                p.replaceAll("\\s+", "\\\\s+");
                 if (p.equals(s)) {
                     final String prefix = s;
                     filters.add((v) -> v.startsWith(prefix) && (v.length() == prefix.length() || " \t".indexOf(v.charAt(prefix.length())) != -1));
                     continue;
                 }
-                s = "^" + p + "\\\\s*";
+                p = "^" + p + "\\\\s*";
             }
-            filters.add(Pattern.compile(s).asPredicate());
+            filters.add(Pattern.compile(p).asPredicate());
         }
         return filters;
     }
