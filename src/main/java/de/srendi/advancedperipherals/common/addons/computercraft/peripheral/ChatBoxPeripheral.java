@@ -32,6 +32,7 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.server.ServerLifecycleHooks;
 
@@ -41,6 +42,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Predicate;
 
 import static de.srendi.advancedperipherals.common.addons.computercraft.operations.SimpleFreeOperation.CHAT_MESSAGE;
 
@@ -78,7 +80,7 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
     }
 
     @Nullable
-    protected ComponentContents filterComponentContents(@NonNull ComponentContents content) {
+    protected ComponentContents filterComponentContents(@NotNull ComponentContents content) {
         return content;
     }
 
@@ -100,11 +102,11 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
     }
 
     private static MutableComponent createFormattedError(String message) {
-        return Component.literal("[AP] " + message).setStyle(ChatFormatting.RED, ChatFormatting.BOLD);
+        return Component.literal("[AP] " + message).setStyle(Style.EMPTY.withColor(ChatFormatting.RED).withBold(true));
     }
 
     @Nullable
-    protected Style filterComponentStyle(@NonNull Style style) {
+    protected Style filterComponentStyle(@NotNull Style style) {
         ClickEvent click = style.getClickEvent();
         if (click != null) {
             if (getChatBoxNoRunCommand() && click.getAction() == ClickEvent.Action.RUN_COMMAND) {
@@ -135,7 +137,7 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
     }
 
     @Nullable
-    protected MutableComponent filterMessage(@NonNull Component message) {
+    protected MutableComponent filterMessage(@NotNull Component message) {
         ComponentContents content = filterComponentContents(message.getContents());
         if (content == null) {
             return null;
@@ -221,7 +223,7 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
                     StringUtil.convertAndToSectionMark(arguments.optString(1, APConfig.PERIPHERALS_CONFIG.defaultChatBoxPrefix.get())),
                     arguments.optString(2, "[]"),
                     StringUtil.convertAndToSectionMark(arguments.optString(3, ""))
-            )
+            );
             if (preparedMessage == null) {
                 return MethodResult.of(null, "illegal prefix");
             }
@@ -254,7 +256,7 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
                     StringUtil.convertAndToSectionMark(arguments.optString(1, APConfig.PERIPHERALS_CONFIG.defaultChatBoxPrefix.get())),
                     arguments.optString(2, "[]"),
                     StringUtil.convertAndToSectionMark(arguments.optString(3, ""))
-            )
+            );
             if (preparedMessage == null) {
                 return MethodResult.of(null, "illegal prefix");
             }
@@ -302,7 +304,7 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
                     StringUtil.convertAndToSectionMark(arguments.optString(2, APConfig.PERIPHERALS_CONFIG.defaultChatBoxPrefix.get())),
                     arguments.optString(3, "[]"),
                     StringUtil.convertAndToSectionMark(arguments.optString(4, ""))
-            )
+            );
             if (preparedMessage == null) {
                 return MethodResult.of(null, "illegal prefix");
             }
@@ -360,7 +362,7 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
                     StringUtil.convertAndToSectionMark(arguments.optString(3, APConfig.PERIPHERALS_CONFIG.defaultChatBoxPrefix.get())),
                     arguments.optString(4, "[]"),
                     StringUtil.convertAndToSectionMark(arguments.optString(5, ""))
-            )
+            );
             if (preparedMessage == null) {
                 return MethodResult.of(null, "illegal prefix");
             }
@@ -401,7 +403,7 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
                     StringUtil.convertAndToSectionMark(arguments.optString(2, APConfig.PERIPHERALS_CONFIG.defaultChatBoxPrefix.get())),
                     arguments.optString(3, "[]"),
                     StringUtil.convertAndToSectionMark(arguments.optString(4, ""))
-            )
+            );
             if (preparedMessage == null) {
                 return MethodResult.of(null, "illegal prefix");
             }
@@ -440,7 +442,7 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
                     StringUtil.convertAndToSectionMark(arguments.optString(3, APConfig.PERIPHERALS_CONFIG.defaultChatBoxPrefix.get())),
                     arguments.optString(4, "[]"),
                     StringUtil.convertAndToSectionMark(arguments.optString(5, ""))
-            )
+            );
             if (preparedMessage == null) {
                 return MethodResult.of(null, "illegal prefix");
             }

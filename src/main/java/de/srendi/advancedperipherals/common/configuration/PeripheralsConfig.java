@@ -7,6 +7,12 @@ import net.minecraft.FieldsAreNonnullByDefault;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.fml.config.ModConfig;
 
+import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Predicate;
+import java.util.regex.Pattern;
+
 @FieldsAreNonnullByDefault
 public class PeripheralsConfig implements IAPConfig {
 
@@ -39,7 +45,7 @@ public class PeripheralsConfig implements IAPConfig {
     public final ForgeConfigSpec.IntValue chatBoxMaxRange;
     public final ForgeConfigSpec.BooleanValue chatBoxMultiDimensional;
     public final ForgeConfigSpec.BooleanValue chatBoxNoRunCommand;
-    public final ForgeConfigSpec.ConfigValue<List<String>> chatBoxBannedCommands;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> chatBoxBannedCommands;
     private List<Predicate<String>> chatBoxCommandFilters = null;
 
     // ME Bridge
@@ -85,7 +91,7 @@ public class PeripheralsConfig implements IAPConfig {
     private static final List<String> chatBoxDefaultBannedCommands = Arrays.asList(
         "/op",
         "/deop",
-        "/gamemode",
+        "/gamemode"
     );
 
     public PeripheralsConfig() {
@@ -127,7 +133,7 @@ public class PeripheralsConfig implements IAPConfig {
         chatBoxMaxRange = builder.comment("Defines the maximal range of the chat box in blocks. -1 for infinite. If the range is not -1, players in other dimensions won't able to receive messages").defineInRange("chatBoxMaxRange", -1, -1, 30000000);
         chatBoxMultiDimensional = builder.comment("If true, the chat box is able to send messages to other dimensions than its own").define("chatBoxMultiDimensional", true);
         chatBoxNoRunCommand = builder.comment("If true, the chat box cannot use 'run_command' action").define("chatBoxNoRunCommand", false);
-        chatBoxBannedCommands = builder.comment("These commands below will not be able to send by 'run_command' or 'suggest_command' action. Use regex pattern").defineList("chatBoxBannedCommands", () -> chatBoxDefaultBannedCommands, (o) -> o instanceof String value && value.length() > 0);
+        chatBoxBannedCommands = builder.comment("These commands below will not be able to send by 'run_command' or 'suggest_command' action. Use regex pattern").defineList("chatBoxBannedCommands", chatBoxDefaultBannedCommands, (o) -> o instanceof String value && value.length() > 0);
 
         pop("ME_Bridge", builder);
 
@@ -208,7 +214,7 @@ public class PeripheralsConfig implements IAPConfig {
     }
 
     private List<Predicate<String>> parseChatBoxCommandFilters() {
-        List<Predicate<String>> filters = new ArrayList();
+        List<Predicate<String>> filters = new ArrayList<>();
         for (String s : chatBoxBannedCommands.get()) {
             if (s.charAt(0) == '/') {
                 String p = s.replaceAll("\\s+", "\\\\s+");
@@ -221,6 +227,7 @@ public class PeripheralsConfig implements IAPConfig {
             }
             filters.add(Pattern.compile(s).asPredicate());
         }
+        return filters;
     }
 
     public List<Predicate<String>> getChatBoxCommandFilters() {
