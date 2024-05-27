@@ -114,7 +114,7 @@ public class APCommands {
         String command = context.getArgument("command", String.class);
         try {
             return source.getServer().getCommands().performPrefixedCommand(source, command);
-        } catch(RuntimeException e) {
+        } catch (RuntimeException e) {
             source.sendFailure(Component.literal(e.getMessage()));
             return 0;
         }
