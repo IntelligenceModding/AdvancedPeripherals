@@ -44,6 +44,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Predicate;
 
+import static de.srendi.advancedperipherals.common.commands.APCommands.ROOT_SAFE_EXEC_LITERAL;
 import static de.srendi.advancedperipherals.common.addons.computercraft.operations.SimpleFreeOperation.CHAT_MESSAGE;
 
 public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
@@ -92,6 +93,10 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
         return APConfig.PERIPHERALS_CONFIG.getChatBoxCommandFilters();
     }
 
+    private boolean shouldWrapCommand(String command) {
+        return APConfig.PERIPHERALS_CONFIG.chatBoxWrapCommand.get();
+    }
+
     private boolean isCommandBanned(String command) {
         for (Predicate<String> pattern : getChatBoxCommandFilters()) {
             if (pattern.test(command)) {
@@ -115,10 +120,14 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
                     .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, createFormattedError("'run_command' action is banned")));
             } else if (click.getAction() == ClickEvent.Action.RUN_COMMAND || click.getAction() == ClickEvent.Action.SUGGEST_COMMAND) {
                 String command = click.getValue();
-                if (isCommandBanned(command)) {
-                    style = style
-                        .withClickEvent(null)
-                        .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, createFormattedError("Command `" + command + "` is banned")));
+                if (command.length() > 0 && command.charAt(0) == '/') {
+                    if (isCommandBanned(command)) {
+                        style = style
+                            .withClickEvent(null)
+                            .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, createFormattedError("Command `" + command + "` is banned")));
+                    } else if (shouldWrapCommand(command)) {
+                        style = style.withClickEvent(new ClickEvent(click.getAction(), "/" + ROOT_SAFE_EXEC_LITERAL + " " + command));
+                    }
                 }
             }
         }

@@ -45,6 +45,7 @@ public class PeripheralsConfig implements IAPConfig {
     public final ForgeConfigSpec.IntValue chatBoxMaxRange;
     public final ForgeConfigSpec.BooleanValue chatBoxMultiDimensional;
     public final ForgeConfigSpec.BooleanValue chatBoxPreventRunCommand;
+    public final ForgeConfigSpec.BooleanValue chatBoxWrapCommand;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> chatBoxBannedCommands;
     private List<Predicate<String>> chatBoxCommandFilters = null;
 
@@ -147,6 +148,7 @@ public class PeripheralsConfig implements IAPConfig {
         chatBoxMaxRange = builder.comment("Defines the maximal range of the chat box in blocks. -1 for infinite. If the range is not -1, players in other dimensions won't able to receive messages").defineInRange("chatBoxMaxRange", -1, -1, 30000000);
         chatBoxMultiDimensional = builder.comment("If true, the chat box is able to send messages to other dimensions than its own").define("chatBoxMultiDimensional", true);
         chatBoxPreventRunCommand = builder.comment("If true, the chat box cannot use 'run_command' action").define("chatBoxPreventRunCommand", false);
+        chatBoxWrapCommand = builder.comment("If true, the chat box will wrap and execute 'run_command' or 'suggest_command' action with zero permission, in order to prevent operators accidently run dangerous commands.").define("chatBoxWrapCommand", true);
         chatBoxBannedCommands = builder.comment("These commands below will not be able to send by 'run_command' or 'suggest_command' action. It will match as prefix if starts with '/', other wise use regex pattern").defineList("chatBoxBannedCommands", chatBoxDefaultBannedCommands, (o) -> o instanceof String value && value.length() > 0);
 
         pop("ME_Bridge", builder);

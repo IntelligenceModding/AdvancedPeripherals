@@ -1,6 +1,9 @@
 package de.srendi.advancedperipherals.common.commands;
 
+import com.mojang.brigadier.arguments.StringArgumentType;
+import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.mojang.brigadier.tree.LiteralCommandNode;
 
 import dan200.computercraft.core.computer.ComputerSide;
 import dan200.computercraft.core.computer.Environment;
@@ -33,9 +36,15 @@ public class APCommands {
     static final String FORCELOAD_HELP =
         "/" + ROOT_LITERAL + " " + FORCELOAD_LITERAL + " help" + " - show this help message\n" +
         "/" + ROOT_LITERAL + " " + FORCELOAD_LITERAL + " dump" + " - show all chunky turtles\n";
+    public static final String EXEC_LITERAL = "safe-exec";
+    public static final String ROOT_SAFE_EXEC_LITERAL = "ap-safe-exec";
 
     @SubscribeEvent
     public static void register(RegisterCommandsEvent event) {
+        LiteralCommandNode<CommandSourceStack> safeExecNode = Commands.literal(EXEC_LITERAL)
+            .then(Commands.argument("command", StringArgumentType.greedyString())
+                .executes(APCommands::safeExecute))
+            .build();
         event.getDispatcher().register(Commands.literal(ROOT_LITERAL)
             .then(Commands.literal("getHashItem").executes(context -> getHashItem(context.getSource())))
             .then(Commands.literal(FORCELOAD_LITERAL)
@@ -46,7 +55,9 @@ public class APCommands {
                     .requires(UserLevel.OWNER_OP)
                     .executes(context -> forceloadDump(context.getSource())))
             )
+            .then(safeExecNode)
         );
+        event.getDispatcher().register(Commands.literal(ROOT_SAFE_EXEC_LITERAL).redirect(safeExecNode));
     }
 
     private static int getHashItem(CommandSourceStack source) throws CommandSyntaxException {
@@ -96,6 +107,17 @@ public class APCommands {
 
         table.display(source);
         return computers.length;
+    }
+
+    private static int safeExecute(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+        CommandSourceStack source = context.getSource().withPermission(0);
+        String command = context.getArgument("command", String.class);
+        try {
+            return source.getServer().getCommands().performPrefixedCommand(source, command);
+        } catch(RuntimeException e) {
+            source.sendFailure(Component.literal(e.getMessage()));
+            return 0;
+        }
     }
 
 
