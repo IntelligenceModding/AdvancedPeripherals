@@ -234,7 +234,7 @@ public class PeripheralsConfig implements IAPConfig {
         for (final String s : chatBoxBannedCommands.get()) {
             String p = s;
             if (p.charAt(0) == '/') {
-                p.replaceAll("\\s+", "\\\\s+");
+                p = p.replaceAll("\\s+", "\\\\s+");
                 if (p.equals(s)) {
                     final String prefix = s;
                     filters.add((v) -> v.startsWith(prefix) && (v.length() == prefix.length() || " \t".indexOf(v.charAt(prefix.length())) != -1));
