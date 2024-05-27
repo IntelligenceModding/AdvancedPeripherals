@@ -89,9 +89,23 @@ public class PeripheralsConfig implements IAPConfig {
     private final ForgeConfigSpec configSpec;
 
     private static final List<String> chatBoxDefaultBannedCommands = Arrays.asList(
+        "/execute",
         "/op",
         "/deop",
-        "/gamemode"
+        "/gamemode",
+        "/gamerule",
+        "/stop",
+
+        "/give",
+        "/fill",
+        "/setblock",
+        "/summon",
+
+        "/whitelist",
+        "^/ban-(?:ip)?\\s*",
+        "^/pardon-(?:ip)?\\s*",
+
+        "^/save-(?:on|off)\\s*"
     );
 
     public PeripheralsConfig() {
