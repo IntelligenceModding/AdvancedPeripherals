@@ -111,7 +111,7 @@ public class APCommands {
 
     private static int safeExecute(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         CommandSourceStack source = context.getSource().withPermission(0);
-        String command = context.getArgument("command", String.class);
+        String command = StringArgumentType.getString(context, "command");
         try {
             return source.getServer().getCommands().performPrefixedCommand(source, command);
         } catch (RuntimeException e) {
