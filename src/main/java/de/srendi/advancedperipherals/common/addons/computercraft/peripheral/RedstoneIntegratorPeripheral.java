@@ -21,27 +21,28 @@ public class RedstoneIntegratorPeripheral extends BasePeripheral<BlockEntityPeri
         return APConfig.PERIPHERALS_CONFIG.enableRedstoneIntegrator.get();
     }
 
-    @LuaFunction(mainThread = true)
+    @LuaFunction
     public final boolean getInput(String direction) throws LuaException {
         Direction dir = validateSide(direction);
-        return owner.tileEntity.getRedstoneInput(dir) > 0;
+        return owner.tileEntity.getInput(dir) > 0;
     }
 
-    @LuaFunction(mainThread = true)
+    @LuaFunction
     public final boolean getOutput(String direction) throws LuaException {
-        return owner.tileEntity.power[validateSide(direction).get3DDataValue()] > 0;
+        Direction dir = validateSide(direction);
+        return owner.tileEntity.getOutput(dir) > 0;
     }
 
-    @LuaFunction(value = {"getAnalogueInput", "getAnalogInput"}, mainThread = true)
+    @LuaFunction(value = {"getAnalogueInput", "getAnalogInput"})
     public final int getAnalogInput(String direction) throws LuaException {
         Direction dir = validateSide(direction);
-        return owner.tileEntity.getRedstoneInput(dir);
+        return owner.tileEntity.getInput(dir);
     }
 
-    @LuaFunction(value = {"getAnalogueOutput", "getAnalogOutput"}, mainThread = true)
+    @LuaFunction(value = {"getAnalogueOutput", "getAnalogOutput"})
     public final int getAnalogOutput(String direction) throws LuaException {
         Direction dir = validateSide(direction);
-        return owner.tileEntity.power[dir.get3DDataValue()];
+        return owner.tileEntity.getOutput(dir);
     }
 
     @LuaFunction
@@ -53,6 +54,9 @@ public class RedstoneIntegratorPeripheral extends BasePeripheral<BlockEntityPeri
     @LuaFunction(value = {"setAnalogueOutput", "setAnalogOutput"})
     public final void setAnalogOutput(String direction, int power) throws LuaException {
         Direction dir = validateSide(direction);
+        if (power > 15 || power < 0) {
+            throw new LuaException("redstone power exceeds the range [0,15]");
+        }
         owner.tileEntity.setOutput(dir, power);
     }
 }

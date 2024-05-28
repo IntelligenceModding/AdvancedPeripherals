@@ -35,8 +35,9 @@ public class EnUsLanguageProvider extends LanguageProvider {
         addKeybinds();
         addTexts();
         add(APVillagers.COMPUTER_SCIENTIST, "Computer Scientist");
-        add("advancedperipherals.name", "Advanced Peripherals");
+        add("advancedperipherals.name", AdvancedPeripherals.NAME);
         add("curios.identifier.glasses", "Glasses");
+        add("itemGroup.advancedperipheralstab", AdvancedPeripherals.NAME);
     }
 
     private void addItems() {
@@ -52,6 +53,9 @@ public class EnUsLanguageProvider extends LanguageProvider {
         addItem(APItems.SMART_GLASSES, "Smart Glasses");
         addItem(APItems.SMART_GLASSES_NETHERITE, "Netherite reinforced Smart Glasses");
         addItem(APItems.SMART_GLASSES_INTERFACE, "Smart Glasses Interface");
+        addItem(APItems.OVERLAY_MODULE, "Overlay Module");
+        addItem(APItems.NIGHT_VISION_MODULE, "Night Vision Module");
+        addItem(APItems.HOTKEY_MODULE, "Hotkey Module");
     }
 
     private void addBlocks() {
@@ -59,6 +63,8 @@ public class EnUsLanguageProvider extends LanguageProvider {
         addBlock(APBlocks.CHAT_BOX, "Chat Box");
         addBlock(APBlocks.COLONY_INTEGRATOR, "Colony Integrator");
         addBlock(APBlocks.ENERGY_DETECTOR, "Energy Detector");
+        addBlock(APBlocks.FLUID_DETECTOR, "Fluid Detector");
+        addBlock(APBlocks.GAS_DETECTOR, "Gas Detector");
         addBlock(APBlocks.ENVIRONMENT_DETECTOR, "Environment Detector");
         addBlock(APBlocks.GEO_SCANNER, "Geo Scanner");
         addBlock(APBlocks.INVENTORY_MANAGER, "Inventory Manager");
@@ -68,6 +74,7 @@ public class EnUsLanguageProvider extends LanguageProvider {
         addBlock(APBlocks.PERIPHERAL_CASING, "Peripheral Casing");
         addBlock(APBlocks.PLAYER_DETECTOR, "Player Detector");
         addBlock(APBlocks.REDSTONE_INTEGRATOR, "Redstone Integrator");
+        addBlock(APBlocks.DISTANCE_DETECTOR, "Distance Detector");
     }
 
     private void addTurtles() {
@@ -143,7 +150,7 @@ public class EnUsLanguageProvider extends LanguageProvider {
     }
 
     private void addKeybinds() {
-        add("keybind.advancedperipherals.category", "Advanced Peripherals");
+        add("keybind.advancedperipherals.category", AdvancedPeripherals.NAME);
         addKeybind(KeyBindings.DESCRIPTION_KEYBINDING, "Show Description");
     }
 

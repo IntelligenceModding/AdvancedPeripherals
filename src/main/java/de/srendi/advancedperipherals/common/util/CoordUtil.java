@@ -120,4 +120,39 @@ public class CoordUtil {
 
     }
 
+    public static ComputerSide getComputerSide(FrontAndTop orientation, Direction direction) {
+        Direction top = orientation.top();
+        Direction front = orientation.front();
+
+        if (direction == front) {
+            return ComputerSide.FRONT;
+        }
+        if (direction == front.getOpposite()) {
+            return ComputerSide.BACK;
+        }
+        if (front.getAxis() == Direction.Axis.Y) {
+            if (direction == top) {
+                return ComputerSide.TOP;
+            }
+            if (direction == top.getOpposite()) {
+                return ComputerSide.BOTTOM;
+            }
+            if (direction == top.getClockWise()) {
+                return ComputerSide.RIGHT;
+            }
+            if (direction == top.getCounterClockWise()) {
+                return ComputerSide.LEFT;
+            }
+        }
+        if (direction == front.getClockWise()) {
+            return ComputerSide.RIGHT;
+        }
+        if (direction == front.getCounterClockWise()) {
+            return ComputerSide.LEFT;
+        }
+        if (direction == Direction.UP) {
+            return ComputerSide.TOP;
+        }
+        return ComputerSide.BOTTOM;
+    }
 }

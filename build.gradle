@@ -317,13 +317,13 @@ dependencies {
     compileOnly fg.deobf("com.ldtteam:domum_ornamentum:${domumornamentum_version}:universal")
     compileOnly fg.deobf("com.ldtteam:blockui:${blockui_version}")
     // IMPORTANT. This should be removed/commented when running `runData`
-    runtimeOnly fg.deobf("com.ldtteam:minecolonies:${minecolonies_version}")
-    runtimeOnly fg.deobf("com.ldtteam:structurize:${structurize_version}")
-    runtimeOnly fg.deobf("com.ldtteam:multipiston:${multipiston_version}")
-    runtimeOnly fg.deobf("com.ldtteam:domum_ornamentum:${domumornamentum_version}:universal")
-    runtimeOnly fg.deobf("com.ldtteam:blockui:${blockui_version}")
+    // runtimeOnly fg.deobf("com.ldtteam:minecolonies:${minecolonies_version}")
+    // runtimeOnly fg.deobf("com.ldtteam:structurize:${structurize_version}")
+    // runtimeOnly fg.deobf("com.ldtteam:multipiston:${multipiston_version}")
+    // runtimeOnly fg.deobf("com.ldtteam:domum_ornamentum:${domumornamentum_version}:universal")
+    // runtimeOnly fg.deobf("com.ldtteam:blockui:${blockui_version}")
 
-    //Patchouli
+    // Patchouli
     runtimeOnly fg.deobf("vazkii.patchouli:Patchouli:${patchouli_version}")
 
     // Create
