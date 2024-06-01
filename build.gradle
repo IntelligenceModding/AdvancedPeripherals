@@ -1,3 +1,4 @@
+import cc.tweaked.gradle.ClientJavaExec
 import net.darkhax.curseforgegradle.TaskPublishCurseForge
 
 import java.text.SimpleDateFormat
@@ -8,7 +9,7 @@ plugins {
     id 'org.jetbrains.changelog' version '1.2.1'
     id "com.modrinth.minotaur" version "2.+"
     id "org.jetbrains.kotlin.jvm" version "${kotlin_version}"
-    id 'net.minecraftforge.gradle' version '[6.0.18,6.2)'
+    id 'net.minecraftforge.gradle'
     id 'org.parchmentmc.librarian.forgegradle' version '1.+'
     id 'org.spongepowered.mixin' version '0.7.+'
     id "com.github.breadmoirai.github-release" version "2.5.2"
@@ -148,7 +149,7 @@ minecraft {
             }
         }
 
-        gameTestClient {
+        testClient {
             workingDirectory project.file('test-files/client')
             parent runs.client
 
@@ -664,3 +665,9 @@ publishing {
         }
     }
 }
+
+tasks.register('runGameTestClient', ClientJavaExec, { task ->
+    description "Runs client-side gametests with no mods"
+    setRunConfig(minecraft.runs["testClient"])
+    tags("client")
+})
