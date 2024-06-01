@@ -16,7 +16,10 @@ import dan200.computercraft.shared.computer.core.ServerContext;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
 import net.minecraft.gametest.framework.GameTestSequence;
 import net.minecraftforge.server.ServerLifecycleHooks;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nullable;
 import java.util.Optional;
 
 /**
@@ -27,8 +30,10 @@ import java.util.Optional;
  * @see TestExtensionsKt#thenComputerOk(GameTestSequence, String, String)   To check tests on the computer have passed.
  */
 public class TestAPI extends ComputerState implements ILuaAPI {
+    private static final Logger LOG = LoggerFactory.getLogger(TestAPI.class);
+
     private final IComputerSystem system;
-    private String label;
+    private @Nullable String label;
 
     TestAPI(IComputerSystem system) {
         this.system = system;
@@ -39,10 +44,10 @@ public class TestAPI extends ComputerState implements ILuaAPI {
         if (label == null) label = system.getLabel();
         if (label == null) {
             label = "#" + system.getID();
-            ComputerCraft.log.warn("Computer {} has no label", label);
+            LOG.warn("Computer {} has no label", label);
         }
 
-        ComputerCraft.log.info("Computer '{}' has turned on.", label);
+        LOG.info("Computer '{}' has turned on.", label);
         markers.clear();
         error = null;
         lookup.put(label, this);
@@ -50,19 +55,18 @@ public class TestAPI extends ComputerState implements ILuaAPI {
 
     @Override
     public void shutdown() {
-        ComputerCraft.log.info("Computer '{}' has shut down.", label);
-        if (lookup.get(label) == this)
-            lookup.remove(label);
+        LOG.info("Computer '{}' has shut down.", label);
+        if (lookup.get(label) == this) lookup.remove(label);
     }
 
     @Override
     public String[] getNames() {
-        return new String[]{"test"};
+        return new String[]{ "test" };
     }
 
     @LuaFunction
     public final void fail(String message) throws LuaException {
-        ComputerCraft.log.error("Computer '{}' failed with {}", label, message);
+        LOG.error("Computer '{}' failed with {}", label, message);
         if (markers.contains(ComputerState.DONE)) throw new LuaException("Cannot call fail/ok multiple times.");
         markers.add(ComputerState.DONE);
         error = message;
@@ -71,7 +75,7 @@ public class TestAPI extends ComputerState implements ILuaAPI {
 
     @LuaFunction
     public final void ok(Optional<String> marker) throws LuaException {
-        String actualMarker = marker.orElse(ComputerState.DONE);
+        var actualMarker = marker.orElse(ComputerState.DONE);
         if (markers.contains(ComputerState.DONE) || markers.contains(actualMarker)) {
             throw new LuaException("Cannot call fail/ok multiple times.");
         }
@@ -81,7 +85,7 @@ public class TestAPI extends ComputerState implements ILuaAPI {
 
     @LuaFunction
     public final void log(String message) {
-        ComputerCraft.log.info("[Computer '{}'] {}", label, message);
+        LOG.info("[Computer '{}'] {}", label, message);
     }
 
     @LuaFunction

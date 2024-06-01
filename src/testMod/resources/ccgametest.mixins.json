@@ -12,5 +12,10 @@
         "GameTestSequenceAccessor",
         "GameTestSequenceMixin",
         "TestCommandAccessor"
+    ],
+    "client": [
+        "client.MinecraftMixin",
+        "client.WorldOpenFlowsMixin",
+        "client.LevelSummaryMixin"
     ]
 }
