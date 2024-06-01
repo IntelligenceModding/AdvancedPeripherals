@@ -171,6 +171,7 @@ minecraft {
             property 'forge.enabledGameTestNamespaces', 'advancedperipherals,advancedperipheralstest'
             property 'advancedperipheralstest.sources', file("src/testMod/resources/data/advancedperipheralstest").absolutePath
 
+            args "--mixin.config=ccgametest.mixins.json"
             args "--mixin.config=advancedperipheralstest.mixins.json"
 
             mods {
@@ -202,6 +203,7 @@ minecraft {
             property 'forge.enabledGameTestNamespaces', 'advancedperipherals,advancedperipheralstest'
             property 'advancedperipheralstest.sources', file("src/testMod/resources/data/advancedperipheralstest").absolutePath
 
+            args "--mixin.config=ccgametest.mixins.json"
             args "--mixin.config=advancedperipheralstest.mixins.json"
             parent runs.server
 

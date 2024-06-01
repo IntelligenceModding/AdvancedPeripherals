@@ -1,0 +1,106 @@
+diff --git a/build.gradle b/build.gradle
+index c66075c7..d2d3e930 100644
+--- a/build.gradle
++++ b/build.gradle
+@@ -171,6 +171,7 @@ minecraft {
+             property 'forge.enabledGameTestNamespaces', 'advancedperipherals,advancedperipheralstest'
+             property 'advancedperipheralstest.sources', file("src/testMod/resources/data/advancedperipheralstest").absolutePath
+ 
++            args "--mixin.config=ccgametest.mixins.json"
+             args "--mixin.config=advancedperipheralstest.mixins.json"
+ 
+             mods {
+@@ -202,6 +203,7 @@ minecraft {
+             property 'forge.enabledGameTestNamespaces', 'advancedperipherals,advancedperipheralstest'
+             property 'advancedperipheralstest.sources', file("src/testMod/resources/data/advancedperipheralstest").absolutePath
+ 
++            args "--mixin.config=ccgametest.mixins.json"
+             args "--mixin.config=advancedperipheralstest.mixins.json"
+             parent runs.server
+ 
+diff --git a/src/testMod/java/de/srendi/advancedperipherals/test/mixin/RsBaseBlockMixin.java b/src/testMod/java/de/srendi/advancedperipherals/test/mixin/RsBaseBlockMixin.java
+new file mode 100644
+index 00000000..eaef15c4
+--- /dev/null
++++ b/src/testMod/java/de/srendi/advancedperipherals/test/mixin/RsBaseBlockMixin.java
+@@ -0,0 +1,35 @@
++package de.srendi.advancedperipherals.test.mixin;
++
++import com.refinedmods.refinedstorage.block.BaseBlock;
++import com.refinedmods.refinedstorage.block.BlockDirection;
++import net.minecraft.core.Direction;
++import net.minecraft.world.level.block.Rotation;
++import net.minecraft.world.level.block.state.BlockState;
++import org.spongepowered.asm.mixin.Mixin;
++import org.spongepowered.asm.mixin.Overwrite;
++import org.spongepowered.asm.mixin.Shadow;
++
++@Mixin(BaseBlock.class)
++public class RsBaseBlockMixin {
++
++    @Shadow
++    public BlockDirection getDirection() {
++        return null;
++    }
++
++    @Overwrite
++    public BlockState rotate(BlockState state, Rotation rot) {
++        BlockDirection dir = this.getDirection();
++        if (dir == BlockDirection.NONE) return state;
++
++        Direction newDirection = switch (rot) {
++            case NONE -> state.getValue(dir.getProperty());
++            case CLOCKWISE_90 -> dir.cycle(state.getValue(dir.getProperty()).getClockWise().getClockWise());
++            case CLOCKWISE_180 -> dir.cycle(state.getValue(dir.getProperty()).getClockWise().getClockWise().getClockWise());
++            case COUNTERCLOCKWISE_90 -> dir.cycle(state.getValue(dir.getProperty()));
++        };
++
++        return state.setValue(dir.getProperty(), newDirection);
++    }
++
++}
+diff --git a/src/testMod/resources/advancedperipheralstest.mixins.json b/src/testMod/resources/advancedperipheralstest.mixins.json
+index 76ac7799..782eaa71 100644
+--- a/src/testMod/resources/advancedperipheralstest.mixins.json
++++ b/src/testMod/resources/advancedperipheralstest.mixins.json
+@@ -1,16 +1,12 @@
+ {
+     "required": true,
+-    "package": "dan200.computercraft.mixin.gametest",
++    "package": "de.srendi.advancedperipherals.test.mixin",
+     "minVersion": "0.8",
+     "compatibilityLevel": "JAVA_17",
+     "injectors": {
+         "defaultRequire": 1
+     },
+     "mixins": [
+-        "GameTestHelperAccessor",
+-        "GameTestInfoAccessor",
+-        "GameTestSequenceAccessor",
+-        "GameTestSequenceMixin",
+-        "TestCommandAccessor"
++        "RsBaseBlockMixin"
+     ]
+ }
+diff --git a/src/testMod/resources/ccgametest.mixins.json b/src/testMod/resources/ccgametest.mixins.json
+new file mode 100644
+index 00000000..76ac7799
+--- /dev/null
++++ b/src/testMod/resources/ccgametest.mixins.json
+@@ -0,0 +1,16 @@
++{
++    "required": true,
++    "package": "dan200.computercraft.mixin.gametest",
++    "minVersion": "0.8",
++    "compatibilityLevel": "JAVA_17",
++    "injectors": {
++        "defaultRequire": 1
++    },
++    "mixins": [
++        "GameTestHelperAccessor",
++        "GameTestInfoAccessor",
++        "GameTestSequenceAccessor",
++        "GameTestSequenceMixin",
++        "TestCommandAccessor"
++    ]
++}
