@@ -9,7 +9,7 @@ To write a test, you need to have a test world. But this needs to be done in the
 To run the testing environment, run the gradle task `runTestClient`. This will start a new instance of Minecraft with the testing environment.
 That includes the ability to run tests, import and export tests using the `/cctest` and the `/test` command.
 
-After the tests are created, you can use the gradle task `runTestServer` to start the game test server which then runs all the test.
+After the tests are created, you can use the gradle task `runGameTestServer` to start the game test server which then runs all the test.
 To test a single test, you can also use `/test run <test_name>` in the testing environment.
 
 ### Building your test structure
@@ -119,5 +119,15 @@ Here is an example with our note block test
         }
     }
 ```
+
+### Client Tests
+
+Similar to the common game tests described above, you can also write tests that will be executed on the client.
+To define a client test, use the annotation `@ClientGameTest` instead of `@GameTest`. The rest of the process is the same.
+In the test function, you can then use `thenOnClient { ... }` to run code on the client.
+
+To run the client tests automatically, use the gradle task `runGameTestClient`.
+
+---
 
 For more examples, you can also check how the tests from CC work [here](https://github.com/cc-tweaked/CC-Tweaked/tree/mc-1.19.2/src/testMod/kotlin/dan200/computercraft/gametest).
