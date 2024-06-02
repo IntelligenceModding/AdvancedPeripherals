@@ -76,17 +76,18 @@ public class AutomataEntityHandPlugin extends AutomataCorePlugin {
         if (!(entity instanceof Animal animal))
             return MethodResult.of(null, "Well, entity is not animal entity, but how?");
 
-        return MethodResult.of(LuaConverter.animalToLua(animal, owner.getToolInMainHand()));
+        return MethodResult.of(LuaConverter.animalToLua(animal, owner.getToolInMainHand(), true));
     }
 
     @LuaFunction(mainThread = true)
-    public final MethodResult searchAnimals() {
+    public final MethodResult searchAnimals(IArguments args) throws LuaException {
+        boolean detailed = args.count() > 0 ? args.getBoolean(0) : false;
         automataCore.addRotationCycle();
         TurtlePeripheralOwner owner = automataCore.getPeripheralOwner();
         BlockPos currentPos = owner.getPos();
         AABB box = new AABB(currentPos);
         ItemStack itemInHand = owner.getToolInMainHand();
-        List<Map<String, Object>> entities = owner.getLevel().getEntities((Entity) null, box.inflate(automataCore.getInteractionRadius()), suitableEntity).stream().map(entity -> LuaConverter.completeEntityWithPositionToLua(entity, itemInHand, currentPos)).toList();
+        List<Map<String, Object>> entities = owner.getLevel().getEntities((Entity) null, box.inflate(automataCore.getInteractionRadius()), suitableEntity).stream().map(entity -> LuaConverter.completeEntityWithPositionToLua(entity, itemInHand, currentPos, detailed)).toList();
         return MethodResult.of(entities);
     }
 }

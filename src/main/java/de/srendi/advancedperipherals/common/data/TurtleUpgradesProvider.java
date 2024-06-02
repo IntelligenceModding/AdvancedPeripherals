@@ -24,6 +24,7 @@ public class TurtleUpgradesProvider extends TurtleUpgradeDataProvider {
         simpleWithCustomItem(CCRegistration.ID.CHUNKY_TURTLE, CCRegistration.CHUNKY_TURTLE.get(), APItems.CHUNK_CONTROLLER.get()).add(addUpgrade);
         simpleWithCustomItem(CCRegistration.ID.GEOSCANNER_TURTLE, CCRegistration.GEO_SCANNER_TURTLE.get(), APBlocks.GEO_SCANNER.get().asItem()).add(addUpgrade);
         simpleWithCustomItem(CCRegistration.ID.COMPASS_TURTLE, CCRegistration.COMPASS_TURTLE.get(), net.minecraft.world.item.Items.COMPASS).add(addUpgrade);
+        simpleWithCustomItem(CCRegistration.ID.SADDLE_TURTLE, CCRegistration.SADDLE_TURTLE.get(), net.minecraft.world.item.Items.SADDLE).add(addUpgrade);
         simpleWithCustomItem(CCRegistration.ID.WEAK_AUTOMATA, CCRegistration.WEAK_TURTLE.get(), APItems.WEAK_AUTOMATA_CORE.get()).add(addUpgrade);
         simpleWithCustomItem(CCRegistration.ID.END_AUTOMATA, CCRegistration.END_TURTLE.get(), APItems.END_AUTOMATA_CORE.get()).add(addUpgrade);
         simpleWithCustomItem(CCRegistration.ID.HUSBANDRY_AUTOMATA, CCRegistration.HUSBANDRY_TURTLE.get(), APItems.HUSBANDRY_AUTOMATA_CORE.get()).add(addUpgrade);

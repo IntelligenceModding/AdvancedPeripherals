@@ -2,6 +2,7 @@ package de.srendi.advancedperipherals.common.setup;
 
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.entity.TurtleEnderPearl;
+import de.srendi.advancedperipherals.common.entity.TurtleSeatEntity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraftforge.registries.RegistryObject;
@@ -20,6 +21,13 @@ public class APEntities {
             .updateInterval(5)
             .fireImmune()
             .build("turtle_ender_pearl"));
+    public static final RegistryObject<EntityType<TurtleSeatEntity>> TURTLE_SEAT = APRegistration.ENTITIES.register("turtle_seat",
+        () -> EntityType.Builder.<TurtleSeatEntity>of(TurtleSeatEntity::new, MobCategory.MISC)
+            .sized(0.8F, 0.2F)
+            .clientTrackingRange(4)
+            .updateInterval(4)
+            .fireImmune()
+            .build("turtle_seat"));
 
     public static void register() {
     }
@@ -27,5 +35,6 @@ public class APEntities {
     @SubscribeEvent
     public static void livingRender(EntityRenderersEvent.RegisterRenderers event) {
         event.registerEntityRenderer(TURTLE_ENDER_PEARL.get(), TurtleEnderPearl.Renderer::new);
+        event.registerEntityRenderer(TURTLE_SEAT.get(), TurtleSeatEntity.Renderer::new);
     }
 }

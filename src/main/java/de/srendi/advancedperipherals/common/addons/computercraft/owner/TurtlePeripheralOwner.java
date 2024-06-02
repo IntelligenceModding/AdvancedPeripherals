@@ -16,6 +16,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -95,7 +96,7 @@ public class TurtlePeripheralOwner extends BasePeripheralOwner {
 
     @Override
     public ItemStack storeItem(ItemStack stored) {
-        return InventoryUtil.storeItems(stored, turtle.getItemHandler(), turtle.getSelectedSlot());
+        return InventoryUtil.storeItems(stored, new InvWrapper(turtle.getInventory()), turtle.getSelectedSlot());
     }
 
     @Override

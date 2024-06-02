@@ -29,7 +29,7 @@ public enum SphereOperation implements IPeripheralOperation<SphereOperationConte
 
     @Override
     public void addToConfig(ForgeConfigSpec.Builder builder) {
-        cooldown = builder.defineInRange(settingsName() + "Cooldown", defaultCooldown, 1_000, Integer.MAX_VALUE);
+        cooldown = builder.defineInRange(settingsName() + "Cooldown", defaultCooldown, 100, Integer.MAX_VALUE);
         maxFreeRadius = builder.defineInRange(settingsName() + "MaxFreeRadius", defaultMaxFreeRadius, 1, Integer.MAX_VALUE);
         maxCostRadius = builder.defineInRange(settingsName() + "MaxCostRadius", defaultMaxCostRadius, 1, Integer.MAX_VALUE);
         extraBlockCost = builder.defineInRange(settingsName() + "ExtraBlockCost", defaultExtraBlockCost, 0.1, Double.MAX_VALUE);

@@ -32,6 +32,7 @@ public class APCreativeTab extends CreativeModeTab {
         items.addAll(turtleUpgrade(CCRegistration.ID.CHATTY_TURTLE));
         items.addAll(turtleUpgrade(CCRegistration.ID.CHUNKY_TURTLE));
         items.addAll(turtleUpgrade(CCRegistration.ID.COMPASS_TURTLE));
+        items.addAll(turtleUpgrade(CCRegistration.ID.SADDLE_TURTLE));
         items.addAll(turtleUpgrade(CCRegistration.ID.PLAYER_TURTLE));
         items.addAll(turtleUpgrade(CCRegistration.ID.ENVIRONMENT_TURTLE));
         items.addAll(turtleUpgrade(CCRegistration.ID.GEOSCANNER_TURTLE));

@@ -24,7 +24,6 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LightLayer;
@@ -199,6 +198,7 @@ public class EnvironmentDetectorPeripheral extends BasePeripheral<IPeripheralOwn
     @LuaFunction(mainThread = true)
     public final MethodResult scanEntities(@NotNull IComputerAccess access, @NotNull IArguments arguments) throws LuaException {
         int radius = arguments.getInt(0);
+        boolean detailed = arguments.count() > 1 ? arguments.getBoolean(1) : false;
         return withOperation(SCAN_ENTITIES, new SphereOperationContext(radius), context -> {
             if (radius > SCAN_ENTITIES.getMaxCostRadius())
                 return MethodResult.of(null, "Radius exceeds max value");
@@ -206,8 +206,7 @@ public class EnvironmentDetectorPeripheral extends BasePeripheral<IPeripheralOwn
         }, context -> {
             BlockPos pos = owner.getPos();
             AABB box = new AABB(pos);
-            List<Map<String, Object>> entities = new ArrayList<>();
-            getLevel().getEntities((Entity) null, box.inflate(radius), LivingEntity.class::isInstance).forEach(entity -> entities.add(LuaConverter.completeEntityWithPositionToLua(entity, ItemStack.EMPTY, pos)));
+            List<Map<String, Object>> entities = getLevel().getEntities((Entity) null, box.inflate(radius), entity -> entity instanceof LivingEntity && entity.isAlive()).stream().map(entity -> LuaConverter.completeEntityWithPositionToLua(entity, pos, detailed)).toList();
             return MethodResult.of(entities);
         }, null);
     }

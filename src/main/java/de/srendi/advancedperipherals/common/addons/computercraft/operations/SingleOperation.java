@@ -70,7 +70,7 @@ public enum SingleOperation implements IPeripheralOperation<SingleOperationConte
 
     @Override
     public void addToConfig(ForgeConfigSpec.Builder builder) {
-        cooldown = builder.defineInRange(settingsName() + "Cooldown", defaultCooldown, 1_000, Integer.MAX_VALUE);
+        cooldown = builder.defineInRange(settingsName() + "Cooldown", defaultCooldown, 100, Integer.MAX_VALUE);
         cost = builder.defineInRange(settingsName() + "Cost", defaultCost, 0, Integer.MAX_VALUE);
     }
 

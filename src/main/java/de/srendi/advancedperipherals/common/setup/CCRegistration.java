@@ -21,6 +21,7 @@ public class CCRegistration {
     public static final RegistryObject<TurtleUpgradeSerialiser<TurtleChunkyUpgrade>> CHUNKY_TURTLE = APRegistration.TURTLE_SERIALIZER.register(ID.CHUNKY_TURTLE.getPath(), () -> TurtleUpgradeSerialiser.simpleWithCustomItem(TurtleChunkyUpgrade::new));
     public static final RegistryObject<TurtleUpgradeSerialiser<TurtleGeoScannerUpgrade>> GEO_SCANNER_TURTLE = APRegistration.TURTLE_SERIALIZER.register(ID.GEOSCANNER_TURTLE.getPath(), () -> TurtleUpgradeSerialiser.simpleWithCustomItem(TurtleGeoScannerUpgrade::new));
     public static final RegistryObject<TurtleUpgradeSerialiser<TurtleCompassUpgrade>> COMPASS_TURTLE = APRegistration.TURTLE_SERIALIZER.register(ID.COMPASS_TURTLE.getPath(), () -> TurtleUpgradeSerialiser.simpleWithCustomItem(TurtleCompassUpgrade::new));
+    public static final RegistryObject<TurtleUpgradeSerialiser<TurtleSaddleUpgrade>> SADDLE_TURTLE = APRegistration.TURTLE_SERIALIZER.register(ID.SADDLE_TURTLE.getPath(), () -> TurtleUpgradeSerialiser.simpleWithCustomItem(TurtleSaddleUpgrade::new));
     public static final RegistryObject<TurtleUpgradeSerialiser<WeakAutomata>> WEAK_TURTLE = APRegistration.TURTLE_SERIALIZER.register(ID.WEAK_AUTOMATA.getPath(), () -> TurtleUpgradeSerialiser.simpleWithCustomItem(WeakAutomata::new));
     public static final RegistryObject<TurtleUpgradeSerialiser<EndAutomata>> END_TURTLE = APRegistration.TURTLE_SERIALIZER.register(ID.END_AUTOMATA.getPath(), () -> TurtleUpgradeSerialiser.simpleWithCustomItem(EndAutomata::new));
     public static final RegistryObject<TurtleUpgradeSerialiser<HusbandryAutomata>> HUSBANDRY_TURTLE = APRegistration.TURTLE_SERIALIZER.register(ID.HUSBANDRY_AUTOMATA.getPath(), () -> TurtleUpgradeSerialiser.simpleWithCustomItem(HusbandryAutomata::new));
@@ -50,6 +51,7 @@ public class CCRegistration {
         public static final ResourceLocation CHUNKY_TURTLE = new ResourceLocation(AdvancedPeripherals.MOD_ID, "chunky_turtle");
         public static final ResourceLocation GEOSCANNER_TURTLE = new ResourceLocation(AdvancedPeripherals.MOD_ID, "geoscanner_turtle");
         public static final ResourceLocation COMPASS_TURTLE = new ResourceLocation(AdvancedPeripherals.MOD_ID, "compass_turtle");
+        public static final ResourceLocation SADDLE_TURTLE = new ResourceLocation(AdvancedPeripherals.MOD_ID, "saddle_turtle");
         public static final ResourceLocation WEAK_AUTOMATA = new ResourceLocation(AdvancedPeripherals.MOD_ID, "weak_automata");
         public static final ResourceLocation END_AUTOMATA = new ResourceLocation(AdvancedPeripherals.MOD_ID, "end_automata");
         public static final ResourceLocation HUSBANDRY_AUTOMATA = new ResourceLocation(AdvancedPeripherals.MOD_ID, "husbandry_automata");
