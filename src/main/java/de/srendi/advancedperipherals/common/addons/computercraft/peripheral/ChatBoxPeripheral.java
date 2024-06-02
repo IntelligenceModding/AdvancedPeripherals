@@ -166,7 +166,7 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
             String message = arguments.getString(0);
             String playerName = arguments.getString(1);
             int maxRange = APConfig.PERIPHERALS_CONFIG.chatBoxMaxRange.get();
-            int range = Math.min(arguments.optInt(5, -1), maxRange);
+            int range = arguments.optInt(5, -1);
             ResourceKey<Level> dimension = getLevel().dimension();
             ServerPlayer player = getPlayer(playerName);
             if (player == null)
