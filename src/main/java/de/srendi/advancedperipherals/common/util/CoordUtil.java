@@ -19,8 +19,9 @@ public class CoordUtil {
     public static boolean isInRange(@Nullable BlockPos pos, @Nullable Level world, @Nullable Player player, int range, int maxRange) {
         // There are rare cases where these are null. For example if a player detector pocket computer runs while not in a player inventory
         // Fixes https://github.com/SirEndii/AdvancedPeripherals/issues/356
-        if (pos == null || world == null || player == null)
+        if (pos == null || world == null || player == null) {
             return false;
+        }
 
         range = maxRange == -1 ? range : Math.min(Math.abs(range), maxRange);
         return isPlayerInBlockRange(pos, world, player, (double) range);

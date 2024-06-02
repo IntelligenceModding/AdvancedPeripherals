@@ -111,8 +111,10 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
         return withChatOperation(ignored -> {
             String message = arguments.getString(0);
             int maxRange = APConfig.PERIPHERALS_CONFIG.chatBoxMaxRange.get();
-            int range = arguments.optInt(4, maxRange);
-            range = maxRange == -1 ? range : Math.min(range, APConfig.PERIPHERALS_CONFIG.chatBoxMaxRange.get());
+            int range = Math.min(arguments.optInt(4, -1), maxRange);
+            if (range < 0) {
+                range = maxRange;
+            }
             ResourceKey<Level> dimension = getLevel().dimension();
             MutableComponent component = Component.Serializer.fromJson(message);
             if (component == null)
@@ -141,8 +143,10 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
         return withChatOperation(ignored -> {
             String message = arguments.getString(0);
             int maxRange = APConfig.PERIPHERALS_CONFIG.chatBoxMaxRange.get();
-            int range = arguments.optInt(4, maxRange);
-            range = maxRange == -1 ? range : Math.min(range, APConfig.PERIPHERALS_CONFIG.chatBoxMaxRange.get());
+            int range = Math.min(arguments.optInt(4, -1), maxRange);
+            if (range < 0) {
+                range = maxRange;
+            }
             ResourceKey<Level> dimension = getLevel().dimension();
             if (checkBrackets(arguments.optString(2)))
                 return MethodResult.of(null, "incorrect bracket string (e.g. [], {}, <>, ...)");
@@ -168,8 +172,10 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
             String message = arguments.getString(0);
             String playerName = arguments.getString(1);
             int maxRange = APConfig.PERIPHERALS_CONFIG.chatBoxMaxRange.get();
-            int range = arguments.optInt(5, maxRange);
-            range = maxRange == -1 ? range : Math.min(range, APConfig.PERIPHERALS_CONFIG.chatBoxMaxRange.get());
+            int range = Math.min(arguments.optInt(5, -1), maxRange);
+            if (range < 0) {
+                range = maxRange;
+            }
             ResourceKey<Level> dimension = getLevel().dimension();
             ServerPlayer player = getPlayer(playerName);
             if (player == null)
@@ -204,8 +210,10 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
             String title = arguments.getString(1);
             String playerName = arguments.getString(2);
             int maxRange = APConfig.PERIPHERALS_CONFIG.chatBoxMaxRange.get();
-            int range = arguments.optInt(6, maxRange);
-            range = maxRange == -1 ? range : Math.min(range, APConfig.PERIPHERALS_CONFIG.chatBoxMaxRange.get());
+            int range = Math.min(arguments.optInt(6, -1), maxRange);
+            if (range < 0) {
+                range = maxRange;
+            }
             ResourceKey<Level> dimension = getLevel().dimension();
             ServerPlayer player = getPlayer(playerName);
             if (player == null)
@@ -246,8 +254,10 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
             String message = arguments.getString(0);
             String playerName = arguments.getString(1);
             int maxRange = APConfig.PERIPHERALS_CONFIG.chatBoxMaxRange.get();
-            int range = arguments.optInt(5, maxRange);
-            range = maxRange == -1 ? range : Math.min(range, APConfig.PERIPHERALS_CONFIG.chatBoxMaxRange.get());
+            int range = Math.min(arguments.optInt(5, -1), maxRange);
+            if (range < 0) {
+                range = maxRange;
+            }
             ResourceKey<Level> dimension = getLevel().dimension();
             ServerPlayer player = getPlayer(playerName);
             if (player == null)
@@ -277,8 +287,10 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
             String title = arguments.getString(1);
             String playerName = arguments.getString(2);
             int maxRange = APConfig.PERIPHERALS_CONFIG.chatBoxMaxRange.get();
-            int range = arguments.optInt(6, maxRange);
-            range = maxRange == -1 ? range : Math.min(range, APConfig.PERIPHERALS_CONFIG.chatBoxMaxRange.get());
+            int range = Math.min(arguments.optInt(6, -1), maxRange);
+            if (range < 0) {
+                range = maxRange;
+            }
             ResourceKey<Level> dimension = getLevel().dimension();
             ServerPlayer player = getPlayer(playerName);
             if (player == null)
