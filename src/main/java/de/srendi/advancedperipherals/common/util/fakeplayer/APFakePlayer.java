@@ -28,6 +28,7 @@ import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.CommandBlock;
 import net.minecraft.world.level.block.StructureBlock;
 import net.minecraft.world.level.block.state.BlockState;
@@ -70,6 +71,12 @@ public class APFakePlayer extends FakePlayer {
         } else {
             this.owner = null;
         }
+    }
+
+    // public protected method
+    @Override
+    public void setLevel(Level level) {
+        super.setLevel(level);
     }
 
     @Override
@@ -146,12 +153,12 @@ public class APFakePlayer extends FakePlayer {
     }
 
     public Pair<Boolean, String> digBlock() {
-        Level world = getLevel();
+        Level world = this.level();
         HitResult hit = findHit(true, false);
         if (hit.getType() == HitResult.Type.MISS) {
             return Pair.of(false, "Nothing to break");
         }
-        BlockPos pos = new BlockPos(hit.getLocation());
+        BlockPos pos = ((BlockHitResult) hit).getBlockPos();
         BlockState state = world.getBlockState(pos);
         Block block = state.getBlock();
 
@@ -167,7 +174,7 @@ public class APFakePlayer extends FakePlayer {
         Vec3 look = getLookAngle();
         Direction direction = Direction.getNearest(look.x, look.y, look.z).getOpposite();
 
-        if (world.isEmptyBlock(pos) || state.getMaterial().isLiquid()) {
+        if (world.isEmptyBlock(pos) || state.getBlock() instanceof LiquidBlock) {
             return Pair.of(false, "Nothing to dig here");
         }
 
@@ -180,7 +187,7 @@ public class APFakePlayer extends FakePlayer {
         }
 
         ServerPlayerGameMode manager = gameMode;
-        float breakSpeed = 0.5f * tool.getDestroySpeed(state) / state.getDestroySpeed(level, pos) - 0.1f;
+        float breakSpeed = 0.5f * tool.getDestroySpeed(state) / state.getDestroySpeed(world, pos) - 0.1f;
         for (int i = 0; i < 10; i++) {
             currentDamage += breakSpeed;
 
@@ -312,7 +319,7 @@ public class APFakePlayer extends FakePlayer {
         if (skipEntity)
             return blockHit;
 
-        List<Entity> entities = level().getEntities(this, getBoundingBox().expandTowards(look.x * range, look.y * range, look.z * range).inflate(1, 1, 1), collidablePredicate);
+        List<Entity> entities = this.level().getEntities(this, getBoundingBox().expandTowards(look.x * range, look.y * range, look.z * range).inflate(1, 1, 1), collidablePredicate);
 
         LivingEntity closestEntity = null;
         Vec3 closestVec = null;

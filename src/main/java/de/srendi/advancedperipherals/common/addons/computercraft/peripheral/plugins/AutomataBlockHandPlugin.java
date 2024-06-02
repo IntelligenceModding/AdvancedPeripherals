@@ -30,6 +30,7 @@ import net.minecraft.world.item.context.DirectionalPlaceContext;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.SignBlockEntity;
+import net.minecraft.world.level.block.entity.SignText;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
@@ -107,7 +108,8 @@ public class AutomataBlockHandPlugin extends AutomataCorePlugin {
      *   anchor: the direction the block is going to hanging on. Default is the direction of the turtle
      *   front: the direction the block is going to facing. Default is same as anchor
      *   top: the direction the block's top is going to facing. Default is TOP
-     *   text: the text going to write on the sign. Default is null
+     *   text: the text going to write on the sign's front side. Default is null
+     *   backText: the text going to write on the sign's back side. Default is null
      */
     @LuaFunction(mainThread = true)
     public MethodResult placeBlock(@NotNull Map<?, ?> options) throws LuaException {
@@ -168,7 +170,7 @@ public class AutomataBlockHandPlugin extends AutomataCorePlugin {
         TurtlePlayer turtlePlayer = TurtlePlayer.getWithPosition(turtle, position, front.getOpposite());
         BlockHitResult hit = BlockHitResult.miss(Vec3.atCenterOf(position), top, position);
         AdvanceDirectionalPlaceContext context = new AdvanceDirectionalPlaceContext(world, position, anchor, front, stack, top);
-        PlayerInteractEvent.RightClickBlock event = ForgeHooks.onRightClickBlock(turtlePlayer, InteractionHand.MAIN_HAND, position, hit);
+        PlayerInteractEvent.RightClickBlock event = ForgeHooks.onRightClickBlock(turtlePlayer.player(), InteractionHand.MAIN_HAND, position, hit);
         if (event.isCanceled()) {
             return "EVENT_CANCELED";
         }
@@ -185,25 +187,28 @@ public class AutomataBlockHandPlugin extends AutomataCorePlugin {
             BlockEntity blockEntity = world.getBlockEntity(position);
             if (blockEntity instanceof SignBlockEntity sign) {
                 String text = StringUtil.convertAndToSectionMark(TableHelper.optStringField(options, "text", null));
-                setSignText(world, sign, text);
+                setSignText(world, sign, text, true);
+                String backText = StringUtil.convertAndToSectionMark(TableHelper.optStringField(options, "backText", null));
+                setSignText(world, sign, backText, false);
             }
         }
         return null;
     }
 
-    private static void setSignText(Level world, SignBlockEntity sign, String text) {
+    private static void setSignText(Level world, SignBlockEntity block, String text, boolean front) {
+        SignText sign = block.getText(front);
         if (text == null) {
-            for (int i = 0; i < SignBlockEntity.LINES; i++) {
+            for (int i = 0; i < SignText.LINES; i++) {
                 sign.setMessage(i, Component.literal(""));
             }
         } else {
             String[] lines = text.split("\n");
-            for (int i = 0; i < SignBlockEntity.LINES; i++) {
+            for (int i = 0; i < SignText.LINES; i++) {
                 sign.setMessage(i, Component.literal(i < lines.length ? lines[i] : ""));
             }
         }
-        sign.setChanged();
-        world.sendBlockUpdated(sign.getBlockPos(), sign.getBlockState(), sign.getBlockState(), Block.UPDATE_ALL);
+        block.setChanged();
+        world.sendBlockUpdated(block.getBlockPos(), block.getBlockState(), block.getBlockState(), Block.UPDATE_ALL);
     }
 
     private static class AdvanceDirectionalPlaceContext extends DirectionalPlaceContext {
