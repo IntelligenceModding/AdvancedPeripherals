@@ -46,7 +46,9 @@ object Times {
  * @see GameTest.timeoutTicks
  */
 object Timeouts {
-    private const val SECOND: Int = 20
+    const val SECOND: Int = 20
+
+    const val DEFAULT: Int = SECOND * 5
 
     const val COMPUTER_TIMEOUT: Int = SECOND * 15
 }
