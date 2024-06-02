@@ -151,7 +151,7 @@ public class APFakePlayer extends FakePlayer {
         if (hit.getType() == HitResult.Type.MISS) {
             return Pair.of(false, "Nothing to break");
         }
-        BlockPos pos = new BlockPos(hit.getLocation())
+        BlockPos pos = new BlockPos(hit.getLocation());
         BlockState state = world.getBlockState(pos);
         Block block = state.getBlock();
 
