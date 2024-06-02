@@ -53,13 +53,10 @@ public class TurtlePeripheralOwner extends BasePeripheralOwner {
         return turtle.getDirection();
     }
 
-    /**
-     * Not used for turtles
-     */
     @NotNull
     @Override
     public FrontAndTop getOrientation() {
-        return FrontAndTop.NORTH_UP;
+        return FrontAndTop.fromFrontAndTop(getFacing(), Direction.UP);
     }
 
     @Nullable

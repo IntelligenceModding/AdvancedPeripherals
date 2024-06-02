@@ -6,7 +6,6 @@ import dan200.computercraft.shared.util.InventoryUtil;
 import dan200.computercraft.shared.util.WorldUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.Vec3i;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.Container;
 import net.minecraft.world.InteractionHand;
@@ -33,18 +32,10 @@ public final class FakePlayerProviderTurtle {
 
     public static void load(APFakePlayer player, ITurtleAccess turtle) {
         Direction direction = turtle.getDirection();
-        player.setServerLevel((ServerLevel) turtle.getLevel());
-        BlockPos position = turtle.getPosition();
+        player.setLevel((ServerLevel) turtle.getLevel());
         // Player position
-        float pitch = direction == Direction.UP ? -90 : direction == Direction.DOWN ? 90 : 0;
-        float yaw = direction == Direction.SOUTH ? 0 : direction == Direction.WEST ? 90 : direction == Direction.NORTH ? 180 : -90;
-        Vec3i sideVec = direction.getNormal();
-        Direction.Axis a = direction.getAxis();
-        Direction.AxisDirection ad = direction.getAxisDirection();
-        double x = a == Direction.Axis.X && ad == Direction.AxisDirection.NEGATIVE ? -.5 : .5 + sideVec.getX() / 1.9D;
-        double y = 0.5 + sideVec.getY() / 1.9D;
-        double z = a == Direction.Axis.Z && ad == Direction.AxisDirection.NEGATIVE ? -.5 : .5 + sideVec.getZ() / 1.9D;
-        player.moveTo(position.getX() + x, position.getY() + y, position.getZ() + z, yaw, pitch);
+        BlockPos position = turtle.getPosition();
+        player.moveTo(position.getX() + 0.5, position.getY() + 0.5, position.getZ() + 0.5, direction.toYRot(), 0);
         // Player inventory
         Inventory playerInventory = player.getInventory();
         playerInventory.selected = 0;

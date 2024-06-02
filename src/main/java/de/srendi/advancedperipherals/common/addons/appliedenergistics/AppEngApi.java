@@ -355,6 +355,8 @@ public class AppEngApi {
             net.minecraft.world.level.Level level = bus.getLevel();
             BlockPos connectedInventoryPos = bus.getHost().getBlockEntity().getBlockPos().relative(bus.getSide());
             BlockEntity connectedInventoryEntity = level.getBlockEntity(connectedInventoryPos);
+            if (connectedInventoryEntity == null)
+                continue;
 
             LazyOptional<IItemHandler> itemHandler = connectedInventoryEntity.getCapability(ForgeCapabilities.ITEM_HANDLER);
             if (itemHandler.isPresent()) {
@@ -410,6 +412,8 @@ public class AppEngApi {
             net.minecraft.world.level.Level level = bus.getLevel();
             BlockPos connectedInventoryPos = bus.getHost().getBlockEntity().getBlockPos().relative(bus.getSide());
             BlockEntity connectedInventoryEntity = level.getBlockEntity(connectedInventoryPos);
+            if (connectedInventoryEntity == null)
+                continue;
 
             LazyOptional<IFluidHandler> fluidHandler = connectedInventoryEntity.getCapability(ForgeCapabilities.FLUID_HANDLER);
             if (fluidHandler.isPresent()) {
