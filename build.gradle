@@ -171,6 +171,7 @@ minecraft {
             property 'forge.logging.console.level', 'debug'
             property 'forge.enabledGameTestNamespaces', 'advancedperipherals,advancedperipheralstest'
             property 'advancedperipheralstest.sources', file("src/testMod/resources/data/advancedperipheralstest").absolutePath
+            property 'advancedperipheralstest.tags', 'common,client'
 
             args "--mixin.config=ccgametest.mixins.json"
             args "--mixin.config=advancedperipheralstest.mixins.json"
