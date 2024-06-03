@@ -5,6 +5,7 @@ import dan200.computercraft.api.turtle.AbstractTurtleUpgrade;
 import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
 import dan200.computercraft.api.turtle.TurtleUpgradeType;
+import de.srendi.advancedperipherals.common.configuration.UnsafeConfig;
 import de.srendi.advancedperipherals.common.util.TranslationUtil;
 import de.srendi.advancedperipherals.lib.peripherals.DisabledPeripheral;
 import de.srendi.advancedperipherals.lib.peripherals.IBasePeripheral;
@@ -21,7 +22,7 @@ public abstract class PeripheralTurtleUpgrade<T extends IBasePeripheral<?>> exte
         super(id, TurtleUpgradeType.PERIPHERAL, TranslationUtil.turtle(id.getPath()), item);
     }
 
-    //TODO: Do we still need this with the new modeller system?
+    // TODO: Do we still need this with the new modeller system?
     public abstract ModelResourceLocation getLeftModel();
 
     public abstract ModelResourceLocation getRightModel();
@@ -36,5 +37,14 @@ public abstract class PeripheralTurtleUpgrade<T extends IBasePeripheral<?>> exte
             return DisabledPeripheral.INSTANCE;
         }
         return peripheral;
+    }
+
+    @Override
+    public boolean isItemSuitable(@NotNull ItemStack stack) {
+        if (UnsafeConfig.getIgnoreTurtlePeripheralItemNBT()) {
+            // always accept NBTed items
+            return true;
+        }
+        return super.isItemSuitable(stack);
     }
 }

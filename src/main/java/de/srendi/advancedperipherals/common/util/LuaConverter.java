@@ -47,7 +47,7 @@ public class LuaConverter {
     }
 
     public static Map<String, Object> animalToLua(Animal animal, ItemStack itemInHand) {
-        Map<String, Object> data = entityToLua(animal);
+        Map<String, Object> data = livingEntityToLua(animal);
         data.put("baby", animal.isBaby());
         data.put("inLove", animal.isInLove());
         data.put("aggressive", animal.isAggressive());

@@ -65,9 +65,9 @@ will close pull requests related to translations.
 <!----------------------------------------------------------------------------->
 
 [Documentation]: https://advancedperipherals.madefor.cc/
-[Contributors]: https://github.com/Seniorendi/AdvancedPeripherals/graphs/contributors
+[Contributors]: https://github.com/IntelligenceModding/AdvancedPeripherals/graphs/contributors
 [CurseForge]: https://www.curseforge.com/minecraft/mc-mods/advanced-peripherals
-[Actions]: https://github.com/Seniorendi/AdvancedPeripherals/actions
+[Actions]: https://github.com/IntelligenceModding/AdvancedPeripherals/actions
 [Crowdin]: https://crowdin.com/project/advanced-peripherals
 [Discord]: https://discord.intelligence-modding.de
 [Banner]: https://www.bisecthosting.com/images/CF/Advanced_Peripherals/BH_AP_Header.png 'Advanced Peripherals'
@@ -77,7 +77,7 @@ will close pull requests related to translations.
 
 [@FatalMerlin]: https://github.com/FatalMerlin
 [@SirEdvin]: https://github.com/SirEdvin
-[@Srendi]: https://github.com/Seniorendi
+[@Srendi]: https://github.com/IntelligenceModding
 [@Olfi01]: https://github.com/Olfi01
 
 [License]: LICENSE
