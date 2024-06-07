@@ -558,7 +558,7 @@ public class AppEngApi {
     public static List<Object> listCells(IGridNode node) {
         List<Object> items = new ArrayList<>();
 
-        Iterator<IGridNode> iterator = node.getGrid().getMachineNodes(DriveBlockEntity.class).iterator();
+        Iterator<IGridNode> iterator = node.getGrid().getNodes().iterator();
 
         if (!iterator.hasNext()) return items;
         while (iterator.hasNext()) {
