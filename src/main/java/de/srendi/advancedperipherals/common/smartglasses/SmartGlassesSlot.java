@@ -35,7 +35,8 @@ public class SmartGlassesSlot extends SlotItemHandler {
             case 1 -> ComputerSide.LEFT;
             case 2 -> ComputerSide.FRONT;
             case 3 -> ComputerSide.RIGHT;
-            default -> ComputerSide.BOTTOM;
+            case 4 -> ComputerSide.BOTTOM;
+            default -> throw new IllegalArgumentException("slot must in range [0,4]");
         };
     }
 

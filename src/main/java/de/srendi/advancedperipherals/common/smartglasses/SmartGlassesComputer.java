@@ -16,6 +16,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
@@ -34,7 +35,7 @@ public class SmartGlassesComputer extends ServerComputer implements IPocketAcces
     private ItemStack stack = ItemStack.EMPTY;
     private final SmartGlassesAccess smartGlassesAccess = new SmartGlassesAccess(this);
     @Nullable
-    private SmartGlassesItemHandler itemHandler;
+    private SmartGlassesItemHandler itemHandler = null;
 
     private int lightColour = -1;
     private boolean lightChanged = false;
@@ -45,22 +46,28 @@ public class SmartGlassesComputer extends ServerComputer implements IPocketAcces
 
     public SmartGlassesComputer(ServerLevel world, int computerID, @Nullable String label, ComputerFamily family) {
         super(world, computerID, label, family, 39, 13);
+        this.addAPI(new SmartGlassesAPI());
+        this.setPeripheral(ComputerSide.BACK, new ModulePeripheral(this));
     }
 
     @Nullable
     @Override
     public Entity getEntity() {
-        if (entity == null || stack.isEmpty() || !entity.isAlive())
-            return null;
-
-        if (entity instanceof Player player) {
-            var inventory = player.getInventory();
-            return inventory.items.contains(stack) || inventory.armor.contains(stack) || inventory.offhand.contains(stack) ? entity : null;
-        } else if (entity instanceof ItemEntity itemEntity) {
-            return itemEntity.getItem() == stack ? entity : null;
-        } else {
+        if (stack.isEmpty() || entity == null || !entity.isAlive()) {
             return null;
         }
+
+        if (entity instanceof Player player) {
+            Inventory inventory = player.getInventory();
+            if (inventory.items.contains(stack) || inventory.armor.contains(stack) || inventory.offhand.contains(stack)) {
+                return player;
+            }
+            return null;
+        }
+        if (entity instanceof ItemEntity itemEntity) {
+            return itemEntity.getItem() == stack ? entity : null;
+        }
+        return null;
     }
 
     @Override
@@ -88,16 +95,23 @@ public class SmartGlassesComputer extends ServerComputer implements IPocketAcces
 
     @Override
     public void setLight(int colour) {
-        if (colour < 0 || colour > 0xFFFFFF) colour = -1;
+        if (colour < 0 || colour > 0xFFFFFF) {
+            colour = -1;
+        }
 
-        if (lightColour == colour)
+        if (lightColour == colour) {
             return;
+        }
         lightColour = colour;
         lightChanged = true;
     }
 
     public void setItemHandler(@Nullable SmartGlassesItemHandler itemHandler) {
         this.itemHandler = itemHandler;
+    }
+
+    public SmartGlassesItemHandler getItemHandler() {
+        return this.itemHandler;
     }
 
     public void markDirty() {
@@ -116,8 +130,9 @@ public class SmartGlassesComputer extends ServerComputer implements IPocketAcces
 
     @Override
     public void updateUpgradeNBTData() {
-        if (entity instanceof Player player)
+        if (entity instanceof Player player) {
             player.getInventory().setChanged();
+        }
     }
 
     @Override
@@ -130,8 +145,12 @@ public class SmartGlassesComputer extends ServerComputer implements IPocketAcces
         return Collections.emptyMap();
     }
 
+    public void setPeripheral(ComputerSide side, IPeripheral peripheral) {
+        super.setPeripheral(side, peripheral);
+    }
+
     public void updatePeripheralsAndModules(IItemHandler itemHandler) {
-        for (int slot = 0; slot < 4; slot++) {
+        for (int slot = 0; slot < 5; slot++) {
             ItemStack peripheralItem = itemHandler.getStackInSlot(slot);
             if (!peripheralItem.isEmpty()) {
                 IPocketUpgrade upgrade = PocketUpgrades.instance().get(peripheralItem);
@@ -145,21 +164,20 @@ public class SmartGlassesComputer extends ServerComputer implements IPocketAcces
             }
             setPeripheral(SmartGlassesSlot.indexToSide(slot), null);
         }
-        for (int slot = 4; slot < 11; slot++) {
+        for (int slot = 5; slot < 11; slot++) {
             ItemStack peripheralItem = itemHandler.getStackInSlot(slot);
+            IModule oldModule = modules.get(slot);
             if (!peripheralItem.isEmpty() && peripheralItem.getItem() instanceof IModuleItem module) {
-                if (modules.get(slot) != null && modules.get(slot).getName().equals(module.createModule(smartGlassesAccess).getName()))
+                IModule newModule = module.createModule(smartGlassesAccess);
+                if (oldModule != null && oldModule.getName().equals(newModule.getName())) {
                     continue;
-
-                modules.put(slot, module.createModule(smartGlassesAccess));
-            } else {
-                if (modules.get(slot) != null) {
-                    modules.get(slot).onUnequipped(smartGlassesAccess);
-                    modules.remove(slot);
                 }
+                modules.put(slot, newModule);
+            } else if (oldModule != null) {
+                oldModule.onUnequipped(smartGlassesAccess);
+                modules.remove(slot);
             }
         }
-        setPeripheral(ComputerSide.BACK, new ModulePeripheral(this));
     }
 
     @Override
@@ -170,18 +188,20 @@ public class SmartGlassesComputer extends ServerComputer implements IPocketAcces
         tracking.removeIf(player -> !player.isAlive() || player.level != getLevel());
 
         // And now find any new players, add them to the tracking list, and broadcast state where appropriate.
-        var sendState = hasOutputChanged() || lightChanged;
+        boolean sendState = hasOutputChanged() || lightChanged;
         lightChanged = false;
         if (sendState) {
             tracking.addAll(getLevel().players());
         }
 
-        modules.values().forEach(module -> module.tick(smartGlassesAccess));
+        if (isDirty()) {
+            updatePeripheralsAndModules(this.itemHandler);
+            isDirty = false;
+        }
 
-        if (isDirty())
-            updatePeripheralsAndModules(itemHandler);
-
-        isDirty = false;
+        modules.values().forEach(module -> {
+            module.tick(smartGlassesAccess);
+        });
     }
 
     public void setEntity(@Nullable Entity entity) {
