@@ -71,9 +71,6 @@ public class SmartGlassesItem extends ArmorItem implements IComputerItem, IMedia
                     return LazyOptional.of(() -> {
                         SmartGlassesComputer computer = getServerComputer(ServerLifecycleHooks.getCurrentServer(), stack);
                         SmartGlassesItemHandler handler = new SmartGlassesItemHandler(stack, computer);
-                        if (computer != null) {
-                            computer.setItemHandler(handler);
-                        }
                         return handler;
                     }).cast();
                 }
@@ -124,22 +121,21 @@ public class SmartGlassesItem extends ArmorItem implements IComputerItem, IMedia
 
     @Override
     public void inventoryTick(@NotNull ItemStack stack, @NotNull Level world, @NotNull Entity entity, int slotNum, boolean selected) {
-        LazyOptional<IItemHandler> itemHandler = stack.getCapability(ForgeCapabilities.ITEM_HANDLER);
-        itemHandler.ifPresent(iItemHandler -> {
-            for(int slot = 0; slot < iItemHandler.getSlots(); slot++) {
-                ItemStack itemStack = iItemHandler.getStackInSlot(slot);
-                if(itemStack.getItem() instanceof IModuleItem iModuleItem) {
-                    SmartGlassesAccess glassesAccess = null;
-                    IModule module = null;
-                    if (!world.isClientSide) {
-                        SmartGlassesComputer computer = getOrCreateComputer((ServerLevel) world, entity, entity instanceof Player player ? player.getInventory() : null, stack);
-                        module = computer.getModules().get(slot);
-                        glassesAccess = computer.getSmartGlassesAccess();
-                    }
-                    iModuleItem.inventoryTick(itemStack, world, entity, slot, selected, glassesAccess, module);
+        LazyOptional<IItemHandler> optItemHandler = stack.getCapability(ForgeCapabilities.ITEM_HANDLER);
+        SmartGlassesItemHandler itemHandler = (SmartGlassesItemHandler) optItemHandler.orElse(null);
+        for(int slot = 0; slot < itemHandler.getSlots(); slot++) {
+            ItemStack itemStack = itemHandler.getStackInSlot(slot);
+            if(itemStack.getItem() instanceof IModuleItem iModuleItem) {
+                SmartGlassesAccess glassesAccess = null;
+                IModule module = null;
+                if (!world.isClientSide) {
+                    SmartGlassesComputer computer = getOrCreateComputer((ServerLevel) world, entity, entity instanceof Player player ? player.getInventory() : null, stack);
+                    module = computer.getModules().get(slot);
+                    glassesAccess = computer.getSmartGlassesAccess();
                 }
+                iModuleItem.inventoryTick(itemStack, world, entity, slot, selected, glassesAccess, module);
             }
-        });
+        }
 
         if (world.isClientSide) {
             return;
@@ -147,6 +143,7 @@ public class SmartGlassesItem extends ArmorItem implements IComputerItem, IMedia
         Container inventory = entity instanceof Player player ? player.getInventory() : null;
         SmartGlassesComputer computer = getOrCreateComputer((ServerLevel) world, entity, inventory, stack);
         computer.keepAlive();
+        computer.setItemHandler(itemHandler);
 
         boolean changed = tick(stack, world, entity, computer);
         if (changed && inventory != null) {
@@ -186,10 +183,12 @@ public class SmartGlassesItem extends ArmorItem implements IComputerItem, IMedia
 
     public ItemStack create(int id, @Nullable String label) {
         ItemStack result = new ItemStack(this);
-        if (id >= 0)
+        if (id >= 0) {
             result.getOrCreateTag().putInt(NBT_ID, id);
-        if (label != null)
+        }
+        if (label != null) {
             result.setHoverName(Component.literal(label));
+        }
         return result;
     }
 
@@ -251,8 +250,9 @@ public class SmartGlassesItem extends ArmorItem implements IComputerItem, IMedia
 
     @Nullable
     public static SmartGlassesComputer getServerComputer(MinecraftServer server, ItemStack stack) {
-        if (server == null)
+        if (server == null) {
             return null;
+        }
         return (SmartGlassesComputer) ServerContext.get(server).registry().get(getSessionID(stack), getInstanceID(stack));
     }
 

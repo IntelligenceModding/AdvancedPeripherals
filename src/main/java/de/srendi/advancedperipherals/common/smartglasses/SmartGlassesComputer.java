@@ -149,7 +149,7 @@ public class SmartGlassesComputer extends ServerComputer implements IPocketAcces
         super.setPeripheral(side, peripheral);
     }
 
-    public void updatePeripheralsAndModules(IItemHandler itemHandler) {
+    public void updatePeripheralsAndModules(SmartGlassesItemHandler itemHandler) {
         for (int slot = 0; slot < 5; slot++) {
             ItemStack peripheralItem = itemHandler.getStackInSlot(slot);
             if (!peripheralItem.isEmpty()) {

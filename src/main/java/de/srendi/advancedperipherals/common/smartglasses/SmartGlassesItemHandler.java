@@ -1,5 +1,6 @@
 package de.srendi.advancedperipherals.common.smartglasses;
 
+import de.srendi.advancedperipherals.common.items.SmartGlassesItem;
 import de.srendi.advancedperipherals.common.setup.APItems;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
@@ -25,9 +26,23 @@ public class SmartGlassesItemHandler implements IItemHandlerModifiable {
         this.computer = computer;
     }
 
+    public ItemStack getGlasses() {
+        return glasses;
+    }
+
     @Override
     public int getSlots() {
         return SLOTS;
+    }
+
+    @Override
+    public int getSlotLimit(int slot) {
+        return 1;
+    }
+
+    @Override
+    public boolean isItemValid(int slot, @NotNull ItemStack stack) {
+        return !(stack.getItem() instanceof SmartGlassesItem);
     }
 
     @Override
@@ -93,16 +108,6 @@ public class SmartGlassesItemHandler implements IItemHandlerModifiable {
             setStackInSlot(slot, ItemHandlerHelper.copyStackWithSize(existing, existing.getCount() - toExtract));
         }
         return ItemHandlerHelper.copyStackWithSize(existing, toExtract);
-    }
-
-    @Override
-    public int getSlotLimit(int slot) {
-        return 1;
-    }
-
-    @Override
-    public boolean isItemValid(int slot, @NotNull ItemStack stack) {
-        return !stack.is(APItems.SMART_GLASSES.get());
     }
 
     @NotNull
