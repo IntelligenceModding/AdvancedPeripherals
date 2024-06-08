@@ -9,6 +9,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.FrontAndTop;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.Nameable;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -32,7 +33,14 @@ public class BlockEntityPeripheralOwner<T extends BlockEntity & IPeripheralTileE
     @Nullable
     @Override
     public String getCustomName() {
-        return tileEntity.getPersistentData().getString("CustomName");
+        String result = "";
+        
+        if (tileEntity instanceof Nameable nameableEntity)
+        {
+            result = nameableEntity.getCustomName().getString();
+        }
+        
+        return result;
     }
 
     @NotNull
