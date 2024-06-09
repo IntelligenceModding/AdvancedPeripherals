@@ -65,9 +65,8 @@ public abstract class BaseBlockEntityBlock extends BaseBlock implements EntityBl
         if (worldIn.getBlockEntity(pos) == null)
             return;
         //Used for the lua function getName()
-        BlockEntity blockEntity;
-        if (stack.hasCustomHoverName() && (blockEntity = worldIn.getBlockEntity(pos)) instanceof BaseContainerBlockEntity) {
-            ((BaseContainerBlockEntity)blockEntity).setCustomName(stack.getHoverName());
+        if (stack.hasCustomHoverName() && worldIn.getBlockEntity(pos) instanceof BaseContainerBlockEntity blockEntity) {
+            blockEntity.setCustomName(stack.getHoverName());
         }
     }
 

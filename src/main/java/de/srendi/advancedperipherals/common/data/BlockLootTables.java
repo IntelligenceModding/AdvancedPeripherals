@@ -19,7 +19,7 @@ public class BlockLootTables extends BlockLootSubProvider {
     protected void generate() {
         Registration.BLOCKS.getEntries().stream().map(RegistryObject::get).forEach(registeredBlock -> {
             //Allow blocks to transfer their name to the dropped block when broken
-            this.add(registeredBlock, (Block block) -> this.createNameableBlockEntityTable((Block)block));
+            this.add(registeredBlock, (block) -> this.createNameableBlockEntityTable(block));
         });
     }
 

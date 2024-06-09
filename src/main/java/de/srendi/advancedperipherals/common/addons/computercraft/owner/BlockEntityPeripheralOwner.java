@@ -35,8 +35,7 @@ public class BlockEntityPeripheralOwner<T extends BlockEntity & IPeripheralTileE
     public String getCustomName() {
         String result = "";
         
-        if (tileEntity instanceof Nameable nameableEntity)
-        {
+        if (tileEntity instanceof Nameable nameableEntity) {
             result = nameableEntity.getCustomName().getString();
         }
         
