@@ -9,7 +9,10 @@ public class BlockLootTables extends net.minecraft.data.loot.BlockLoot {
 
     @Override
     protected void addTables() {
-        Registration.BLOCKS.getEntries().stream().map(RegistryObject::get).forEach(this::dropSelf);
+        Registration.BLOCKS.getEntries().stream().map(RegistryObject::get).forEach(registeredBlock -> {
+            //Allow blocks to transfer their name to the dropped block when broken
+            this.add(registeredBlock, (block) -> this.createNameableBlockEntityTable(block));
+        });
     }
 
     @NotNull
