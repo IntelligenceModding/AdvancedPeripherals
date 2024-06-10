@@ -1,11 +1,11 @@
 package de.srendi.advancedperipherals.common.smartglasses;
 
+import de.srendi.advancedperipherals.common.items.SmartGlassesItem;
 import de.srendi.advancedperipherals.common.setup.APItems;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemHandlerHelper;
 import org.jetbrains.annotations.NotNull;
@@ -13,57 +13,60 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
 
-public class SmartGlassesItemHandler implements IItemHandlerModifiable, INBTSerializable<CompoundTag> {
+public class SmartGlassesItemHandler implements IItemHandlerModifiable {
 
     private static final int SLOTS = 12;
 
-    private final NonNullList<ItemStack> items = NonNullList.withSize(SLOTS, ItemStack.EMPTY);
-    private final ItemStack stack;
+    private final ItemStack glasses;
     @Nullable
     private final SmartGlassesComputer computer;
 
-    public SmartGlassesItemHandler(ItemStack stack, @Nullable SmartGlassesComputer computer) {
-        this.stack = stack;
+    public SmartGlassesItemHandler(ItemStack glasses, @Nullable SmartGlassesComputer computer) {
+        this.glasses = glasses;
         this.computer = computer;
-        deserializeNBT(stack.getOrCreateTagElement("Items"));
+    }
 
-        if(computer != null)
-            computer.setItemHandler(this);
+    public ItemStack getGlasses() {
+        return glasses;
     }
 
     @Override
     public int getSlots() {
-        return items.size();
+        return SLOTS;
     }
 
-    @NotNull
     @Override
-    public ItemStack getStackInSlot(int slot) {
-        return items.get(slot);
+    public int getSlotLimit(int slot) {
+        return 1;
+    }
+
+    @Override
+    public boolean isItemValid(int slot, @NotNull ItemStack stack) {
+        return !(stack.getItem() instanceof SmartGlassesItem);
     }
 
     @Override
     @Nonnull
     public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
-        if (stack.isEmpty())
+        if (stack.isEmpty()) {
             return ItemStack.EMPTY;
-
-        if (!isItemValid(slot, stack))
+        }
+        if (!isItemValid(slot, stack)) {
             return stack;
-
+        }
         ItemStack existing = getStackInSlot(slot);
-
         int limit = getSlotLimit(slot);
 
         if (!existing.isEmpty()) {
-            if (!ItemHandlerHelper.canItemStacksStack(stack, existing))
+            if (!ItemHandlerHelper.canItemStacksStack(stack, existing)) {
                 return stack;
-
+            }
             limit -= existing.getCount();
         }
 
-        if (limit <= 0)
+        if (limit <= 0) {
             return stack;
+        }
 
         boolean reachedLimit = stack.getCount() > limit;
 
@@ -73,7 +76,6 @@ public class SmartGlassesItemHandler implements IItemHandlerModifiable, INBTSeri
             } else {
                 existing.grow(reachedLimit ? limit : stack.getCount());
             }
-
             setChanged();
         }
 
@@ -83,65 +85,61 @@ public class SmartGlassesItemHandler implements IItemHandlerModifiable, INBTSeri
     @Override
     @Nonnull
     public ItemStack extractItem(int slot, int amount, boolean simulate) {
-        if (amount == 0)
+        if (amount == 0) {
             return ItemStack.EMPTY;
+        }
 
         ItemStack existing = getStackInSlot(slot);
-
-        if (existing.isEmpty())
+        if (existing.isEmpty()) {
             return ItemStack.EMPTY;
+        }
 
         int toExtract = Math.min(amount, existing.getMaxStackSize());
 
         if (existing.getCount() <= toExtract) {
-            if (!simulate) {
-                setStackInSlot(slot, ItemStack.EMPTY);
-                return existing;
-            } else {
+            if (simulate) {
                 return existing.copy();
             }
-        } else {
-            if (!simulate) {
-                setStackInSlot(slot, ItemHandlerHelper.copyStackWithSize(existing, existing.getCount() - toExtract));
-                setChanged();
-            }
-
-            return ItemHandlerHelper.copyStackWithSize(existing, toExtract);
+            setStackInSlot(slot, ItemStack.EMPTY);
+            return existing;
         }
 
+        if (!simulate) {
+            setStackInSlot(slot, ItemHandlerHelper.copyStackWithSize(existing, existing.getCount() - toExtract));
+        }
+        return ItemHandlerHelper.copyStackWithSize(existing, toExtract);
     }
 
+    @NotNull
     @Override
-    public int getSlotLimit(int slot) {
-        return 64;
-    }
-
-    @Override
-    public boolean isItemValid(int slot, @NotNull ItemStack stack) {
-        return !stack.is(APItems.SMART_GLASSES.get());
+    public ItemStack getStackInSlot(int slot) {
+        return loadItems().get(slot);
     }
 
     @Override
     public void setStackInSlot(int slot, @NotNull ItemStack stack) {
+        NonNullList<ItemStack> items = loadItems();
+        if (stack.equals(items.get(slot))) {
+            return;
+        }
         items.set(slot, stack);
+        saveItems(items);
         setChanged();
     }
 
     public void setChanged() {
-        stack.getOrCreateTag().put("Items", serializeNBT());
-        if (computer != null)
-            computer.markDirty();
+        if (this.computer != null) {
+            this.computer.markDirty();
+        }
     }
 
-    @Override
-    public CompoundTag serializeNBT() {
-        CompoundTag itemNBT = new CompoundTag();
-        ContainerHelper.saveAllItems(itemNBT, items);
-        return itemNBT;
+    public void saveItems(NonNullList<ItemStack> items) {
+        ContainerHelper.saveAllItems(this.glasses.getOrCreateTag(), items);
     }
 
-    @Override
-    public void deserializeNBT(CompoundTag nbt) {
-        ContainerHelper.loadAllItems(nbt, items);
+    public NonNullList<ItemStack> loadItems() {
+        NonNullList<ItemStack> items = NonNullList.withSize(SLOTS, ItemStack.EMPTY);
+        ContainerHelper.loadAllItems(this.glasses.getOrCreateTag(), items);
+        return items;
     }
 }

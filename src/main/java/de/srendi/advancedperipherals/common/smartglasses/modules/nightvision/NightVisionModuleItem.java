@@ -26,12 +26,13 @@ public class NightVisionModuleItem extends BaseItem implements IModuleItem {
 
     @Override
     public void inventoryTick(ItemStack itemStack, Level level, Entity entity, int inventorySlot, boolean isCurrentItem, @Nullable SmartGlassesAccess access, @Nullable IModule module) {
-        if (level.isClientSide() || !(entity instanceof Player player))
+        if (level.isClientSide() || !(entity instanceof Player player)) {
             return;
+        }
 
         if (module instanceof NightVisionModule nightVisionModule) {
             if (nightVisionModule.nightVisionEnabled) {
-                player.addEffect(new MobEffectInstance(MobEffects.NIGHT_VISION, Integer.MAX_VALUE));
+                player.addEffect(new MobEffectInstance(MobEffects.NIGHT_VISION, 20 * 13 - 1 /* minus 1 tick then the client timing won't flash */));
             } else {
                 player.removeEffect(MobEffects.NIGHT_VISION);
             }

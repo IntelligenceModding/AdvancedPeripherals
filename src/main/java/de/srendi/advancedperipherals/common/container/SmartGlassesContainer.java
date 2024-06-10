@@ -26,6 +26,22 @@ public class SmartGlassesContainer extends ContainerComputerBase {
     public SmartGlassesContainer(int id, Predicate<Player> canUse, ServerComputer computer, Inventory playerInventory, IItemHandler inventory, ComputerContainerData data) {
         super(APContainerTypes.SMART_GLASSES_CONTAINER.get(), id, canUse, ComputerFamily.ADVANCED, computer, data);
 
+        /**
+         * Do player inventory before peripheral slots then quick move won't mixup
+         */
+
+        // Player hotbar
+        for (var x = 0; x < 9; x++) {
+            addSlot(new Slot(playerInventory, x, PLAYER_START_X + x * 18, PLAYER_START_Y + 3 * 18 + 5));
+        }
+
+        // Player inventory
+        for (var y = 0; y < 3; y++) {
+            for (var x = 0; x < 9; x++) {
+                addSlot(new Slot(playerInventory, x + y * 9 + 9, PLAYER_START_X + x * 18, PLAYER_START_Y + 1 + y * 18));
+            }
+        }
+
         // Glasses Peripherals
         addSlot(new SmartGlassesSlot(inventory, 0, 222, 148, SlotType.PERIPHERALS));
         addSlot(new SmartGlassesSlot(inventory, 1, 204, 166, SlotType.PERIPHERALS));
@@ -40,23 +56,10 @@ public class SmartGlassesContainer extends ContainerComputerBase {
         addSlot(new SmartGlassesSlot(inventory, 8, 240, 166, SlotType.MODULES));
         addSlot(new SmartGlassesSlot(inventory, 9, 222, 184, SlotType.MODULES));
         addSlot(new SmartGlassesSlot(inventory, 10, 240, 184, SlotType.MODULES));
-
-        // Player inventory
-        for (var y = 0; y < 3; y++) {
-            for (var x = 0; x < 9; x++) {
-                addSlot(new Slot(playerInventory, x + y * 9 + 9, PLAYER_START_X + x * 18, PLAYER_START_Y + 1 + y * 18));
-            }
-        }
-
-        // Player hotbar
-        for (var x = 0; x < 9; x++) {
-            addSlot(new Slot(playerInventory, x, PLAYER_START_X + x * 18, PLAYER_START_Y + 3 * 18 + 5));
-        }
-
     }
 
     public SmartGlassesContainer(int id, Predicate<Player> predicate, ServerComputer computer, ComputerContainerData data, Inventory player, ItemStack glasses) {
-        this(id, predicate, computer, player, glasses.getCapability(ForgeCapabilities.ITEM_HANDLER).resolve().orElseThrow(), data);
+        this(id, predicate, computer, player, glasses.getCapability(ForgeCapabilities.ITEM_HANDLER).orElseThrow(), data);
     }
 
     @NotNull
@@ -72,7 +75,7 @@ public class SmartGlassesContainer extends ContainerComputerBase {
                     return ItemStack.EMPTY;
                 }
             } else {
-                if (!this.moveItemStackTo(itemstack1, 36, 37, true)) {
+                if (!this.moveItemStackTo(itemstack1, 36, 36 + 11, true)) {
                     return ItemStack.EMPTY;
                 }
             }

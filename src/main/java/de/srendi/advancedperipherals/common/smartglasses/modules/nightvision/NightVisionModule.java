@@ -38,10 +38,16 @@ public class NightVisionModule implements IModule {
 
     }
 
+    /**
+     * isNightVisionEnabled is safety to be called concurrently
+     */
     public boolean isNightVisionEnabled() {
         return nightVisionEnabled;
     }
 
+    /**
+     * enableNightVision is safety to be called concurrently
+     */
     public void enableNightVision(boolean enable) {
         nightVisionEnabled = enable;
     }

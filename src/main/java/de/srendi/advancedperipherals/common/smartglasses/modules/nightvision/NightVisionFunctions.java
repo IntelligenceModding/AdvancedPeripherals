@@ -11,12 +11,12 @@ public class NightVisionFunctions implements IModuleFunctions {
         this.nightVisionModule = nightVisionModule;
     }
 
-    @LuaFunction(mainThread = true)
+    @LuaFunction
     public final boolean isNightVisionEnabled() {
         return nightVisionModule.isNightVisionEnabled();
     }
 
-    @LuaFunction(mainThread = true)
+    @LuaFunction
     public final void enableNightVision(boolean enable) {
         nightVisionModule.enableNightVision(enable);
     }
