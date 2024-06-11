@@ -59,7 +59,7 @@ public class SmartGlassesContainer extends ContainerComputerBase {
     }
 
     public SmartGlassesContainer(int id, Predicate<Player> predicate, ServerComputer computer, ComputerContainerData data, Inventory player, ItemStack glasses) {
-        this(id, predicate, computer, player, glasses.getCapability(ForgeCapabilities.ITEM_HANDLER).orElseThrow(), data);
+        this(id, predicate, computer, player, glasses.getCapability(ForgeCapabilities.ITEM_HANDLER).orElseThrow(NullPointerException::new), data);
     }
 
     @NotNull
