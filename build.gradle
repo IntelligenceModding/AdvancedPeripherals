@@ -15,7 +15,12 @@ plugins {
     id 'java'
 }
 
-java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+    withSourcesJar()
+}
 
 wrapper {
     gradleVersion = '8.4'
@@ -559,7 +564,7 @@ publishing {
             publication.groupId = project.group
             publication.version = isSnapshotVersion ? "${minecraft_version}-${version}-${project.teamcityBuild}" : "${minecraft_version}-${version}"
             publication.artifactId =  isSnapshotVersion ? "advancedperipherals-snapshots" : "advancedperipherals"
-            publication.artifacts = [jar]
+            publication.artifacts = [jar, sourcesJar]
             publication.pom {
                 name.set("AdvancedPeripherals")
                 packaging = 'jar'
