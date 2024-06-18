@@ -30,7 +30,7 @@ public class MemoryCardItem extends BaseItem {
     public void appendHoverText(ItemStack stack, @Nullable Level levelIn, List<Component> tooltip, TooltipFlag flagIn) {
         super.appendHoverText(stack, levelIn, tooltip, flagIn);
         CompoundTag data = stack.getOrCreateTag();
-        // TODO: remove the owner name field
+        // TODO <0.8>: remove the owner name field
         if (data.contains("ownerId") && data.contains("owner")) {
             tooltip.add(EnumColor.buildTextComponent(Component.translatable("item.advancedperipherals.tooltip.memory_card.bound", data.getString("owner"))));
         }
@@ -41,7 +41,7 @@ public class MemoryCardItem extends BaseItem {
         if (!worldIn.isClientSide) {
             ItemStack stack = playerIn.getItemInHand(handIn);
             CompoundTag data = stack.getOrCreateTag();
-            // TODO: remove the owner name field
+            // TODO <0.8>: remove the owner name field
             if (data.contains("ownerId") || data.contains("owner")) {
                 playerIn.displayClientMessage(Component.translatable("text.advancedperipherals.removed_player"), true);
                 data.remove("ownerId");

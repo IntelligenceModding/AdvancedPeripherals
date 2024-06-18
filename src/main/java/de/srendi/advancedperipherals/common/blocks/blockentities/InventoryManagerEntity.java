@@ -91,12 +91,7 @@ public class InventoryManagerEntity extends PeripheralBlockEntity<InventoryManag
         if (this.owner == null) {
             return null;
         }
-        // Loop through all players and check if the player is online
-        for (Player player : ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers()) {
-            if (player.getUUID().equals(this.owner)) {
-                return player;
-            }
-        }
-        return null;
+        Player player = ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayer(this.owner);
+        return player;
     }
 }
