@@ -704,8 +704,6 @@ public class AppEngApi {
 
         if (!APAddons.appMekLoaded)
             return 0;
-            if (connectedInventoryEntity == null)
-                continue;
 
         for (IGridNode iGridNode : node.getGrid().getMachineNodes(DriveBlockEntity.class)) {
             DriveBlockEntity entity = (DriveBlockEntity) iGridNode.getService(IStorageProvider.class);

@@ -4,7 +4,7 @@ import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.Dist
 import de.srendi.advancedperipherals.common.blocks.base.BaseBlock;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralBlockEntity;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
-import de.srendi.advancedperipherals.common.network.PacketHandler;
+import de.srendi.advancedperipherals.common.network.APNetworking;
 import de.srendi.advancedperipherals.common.network.toclient.DistanceDetectorSyncPacket;
 import de.srendi.advancedperipherals.common.setup.APBlockEntityTypes;
 import de.srendi.advancedperipherals.common.util.HitResultUtil;
@@ -40,13 +40,13 @@ public class DistanceDetectorEntity extends PeripheralBlockEntity<DistanceDetect
 
     public void setShowLaser(boolean showLaser) {
         if (this.showLaser != showLaser)
-            PacketHandler.sendToAll(new DistanceDetectorSyncPacket(getBlockPos(), getLevel().dimension(), currentDistance, showLaser));
+            APNetworking.sendToAll(new DistanceDetectorSyncPacket(getBlockPos(), getLevel().dimension(), currentDistance, showLaser));
         this.showLaser = showLaser;
     }
 
     public void setCurrentDistance(float currentDistance) {
         if (this.currentDistance != currentDistance)
-            PacketHandler.sendToAll(new DistanceDetectorSyncPacket(getBlockPos(), getLevel().dimension(), currentDistance, showLaser));
+            APNetworking.sendToAll(new DistanceDetectorSyncPacket(getBlockPos(), getLevel().dimension(), currentDistance, showLaser));
         this.currentDistance = currentDistance;
     }
 

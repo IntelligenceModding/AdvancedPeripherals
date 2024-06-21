@@ -16,6 +16,7 @@ import de.srendi.advancedperipherals.common.addons.computercraft.turtles.TurtleC
 import de.srendi.advancedperipherals.common.addons.computercraft.turtles.TurtleEnvironmentDetectorUpgrade;
 import de.srendi.advancedperipherals.common.addons.computercraft.turtles.TurtleGeoScannerUpgrade;
 import de.srendi.advancedperipherals.common.addons.computercraft.turtles.TurtlePlayerDetectorUpgrade;
+import de.srendi.advancedperipherals.common.addons.computercraft.turtles.TurtleSaddleUpgrade;
 import de.srendi.advancedperipherals.common.addons.computercraft.turtles.metaphysics.EndAutomata;
 import de.srendi.advancedperipherals.common.addons.computercraft.turtles.metaphysics.HusbandryAutomata;
 import de.srendi.advancedperipherals.common.addons.computercraft.turtles.metaphysics.OverpoweredEndAutomata;

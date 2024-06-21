@@ -2,7 +2,7 @@ package de.srendi.advancedperipherals;
 
 import de.srendi.advancedperipherals.common.addons.APAddons;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
-import de.srendi.advancedperipherals.common.network.PacketHandler;
+import de.srendi.advancedperipherals.common.network.APNetworking;
 import de.srendi.advancedperipherals.common.setup.APRegistration;
 import de.srendi.advancedperipherals.common.village.VillageStructures;
 import net.minecraft.resources.ResourceLocation;
@@ -62,7 +62,7 @@ public class AdvancedPeripherals {
 
     public void commonSetup(FMLCommonSetupEvent event) {
         event.enqueueWork(() -> {
-            PacketHandler.init();
+            APNetworking.init();
             VillageStructures.init();
         });
     }

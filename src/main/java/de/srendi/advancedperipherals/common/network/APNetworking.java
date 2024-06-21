@@ -26,7 +26,7 @@ import net.minecraftforge.server.ServerLifecycleHooks;
 import java.util.Optional;
 import java.util.function.Function;
 
-public class PacketHandler {
+public class APNetworking {
 
     private static final String PROTOCOL_VERSION = ModLoadingContext.get().getActiveContainer().getModInfo().getVersion().toString();
 

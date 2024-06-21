@@ -2,7 +2,7 @@ package de.srendi.advancedperipherals.common.smartglasses.modules.hotkey;
 
 import de.srendi.advancedperipherals.client.KeyBindings;
 import de.srendi.advancedperipherals.common.items.base.BaseItem;
-import de.srendi.advancedperipherals.common.network.PacketHandler;
+import de.srendi.advancedperipherals.common.network.APNetworking;
 import de.srendi.advancedperipherals.common.network.toserver.GlassesHotkeyPacket;
 import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesAccess;
 import de.srendi.advancedperipherals.common.smartglasses.modules.IModule;
@@ -44,7 +44,7 @@ public class HotkeyModuleItem extends BaseItem implements IModuleItem {
             setKeyPressDuration(stack, 0);
 
             String keyBind = KeyBindings.GLASSES_HOTKEY_KEYBINDING.getKey().getName();
-            PacketHandler.sendToServer(new GlassesHotkeyPacket(player.getUUID(), keyBind, duration));
+            APNetworking.sendToServer(new GlassesHotkeyPacket(player.getUUID(), keyBind, duration));
         }
     }
 
