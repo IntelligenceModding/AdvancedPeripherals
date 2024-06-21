@@ -328,14 +328,11 @@ dependencies {
     compileOnly fg.deobf("com.simibubi.create:create-${minecraft_version}:${create_version}:all")
     runtimeOnly fg.deobf("com.simibubi.create:create-${minecraft_version}:${create_version}:all")
 
-    //DimStorage
+    // DimStorage
     compileOnly fg.deobf("curse.maven:dimstorage-353882:${dimstorage_version}")
     compileOnly fg.deobf("curse.maven:edivadlib-638508:${edivadlib_version}")
     runtimeOnly fg.deobf("curse.maven:dimstorage-353882:${dimstorage_version}")
     runtimeOnly fg.deobf("curse.maven:edivadlib-638508:${edivadlib_version}")
-
-    //Removed until fully ported
-    //testImplementation fg.deobf("site.siredvin.ttoolkit:ttoolkit-${minecraft_version}:${ttoolkit_version}")
 
     //Powah
     compileOnly fg.deobf("curse.maven:powah-633483:${powah_version}")

@@ -55,9 +55,9 @@ public final class FakePlayerProviderTurtle {
 
         // Add properties
         ItemStack activeStack = player.getItemInHand(InteractionHand.MAIN_HAND);
-        if (!activeStack.isEmpty()) {
+        if (!activeStack.isEmpty())
             player.getAttributes().addTransientAttributeModifiers(activeStack.getAttributeModifiers(EquipmentSlot.MAINHAND));
-        }
+
     }
 
     public static void unload(APFakePlayer player, ITurtleAccess turtle) {
@@ -93,7 +93,6 @@ public final class FakePlayerProviderTurtle {
             playerInventory.setItem(i, ItemStack.EMPTY);
         }
     }
-
 
     public static <T> T withPlayer(ITurtleAccess turtle, Function<APFakePlayer, T> function) {
         APFakePlayer player = getPlayer(turtle, turtle.getOwningPlayer());

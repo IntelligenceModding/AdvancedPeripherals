@@ -44,6 +44,7 @@ public class PeripheralsConfig implements IAPConfig {
 
     // Chunky turtle
     public final ForgeConfigSpec.IntValue chunkLoadValidTime;
+
     public final ForgeConfigSpec.IntValue chunkyTurtleRadius;
     public final ForgeConfigSpec.BooleanValue enableChunkyTurtle;
 
@@ -88,13 +89,13 @@ public class PeripheralsConfig implements IAPConfig {
 
     // Compass turtle
     public final ForgeConfigSpec.BooleanValue enableCompassTurtle;
+    public final ForgeConfigSpec.IntValue compassAccurePlaceRadius;
+    public final ForgeConfigSpec.IntValue compassAccurePlaceFreeRadius;
 
-    //Compass turtle
+    // Distance Detector
     public final ForgeConfigSpec.BooleanValue enableDistanceDetector;
     public final ForgeConfigSpec.DoubleValue distanceDetectorRange;
     public final ForgeConfigSpec.IntValue distanceDetectorUpdateRate;
-    public final ForgeConfigSpec.IntValue compassAccurePlaceRadius;
-    public final ForgeConfigSpec.IntValue compassAccurePlaceFreeRadius;
 
     // Powered Peripherals
     public final ForgeConfigSpec.BooleanValue enablePoweredPeripherals;

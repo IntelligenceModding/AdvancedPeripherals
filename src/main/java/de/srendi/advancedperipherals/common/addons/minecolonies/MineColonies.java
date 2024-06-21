@@ -107,7 +107,7 @@ public class MineColonies {
         map.put("saturation", visitor.getSaturation());
         map.put("happiness", visitor.getCitizenHappinessHandler().getHappiness(visitor.getColony(), visitor));
         map.put("skills", skillsToObject(visitor.getCitizenSkillHandler().getSkills()));
-        map.put("recruitCost", LuaConverter.stackToObject(visitor.getRecruitCost()));
+        map.put("recruitCost", LuaConverter.itemStackToObject(visitor.getRecruitCost()));
 
         return map;
     }
@@ -349,7 +349,7 @@ public class MineColonies {
             Map<String, Object> map = new HashMap<>();
             ItemStack stack = resource.getItemStack().copy();
 
-            map.put("item", LuaConverter.stackToObject(stack));
+            map.put("item", LuaConverter.itemStackToObject(stack));
             map.put("displayName", resource.getName());
             map.put("available", resource.getAvailable());
             map.put("delivering", resource.getAmountInDelivery());

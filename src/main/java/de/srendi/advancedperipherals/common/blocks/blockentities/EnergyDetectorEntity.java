@@ -1,15 +1,15 @@
 package de.srendi.advancedperipherals.common.blocks.blockentities;
 
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.EnergyDetectorPeripheral;
+import de.srendi.advancedperipherals.common.blocks.base.BaseBlock;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralBlockEntity;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
-import de.srendi.advancedperipherals.common.setup.BlockEntityTypes;
+import de.srendi.advancedperipherals.common.setup.APBlockEntityTypes;
 import de.srendi.advancedperipherals.common.util.EnergyStorageProxy;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.JigsawBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -25,20 +25,21 @@ import java.util.Optional;
 
 public class EnergyDetectorEntity extends PeripheralBlockEntity<EnergyDetectorPeripheral> {
 
-    //a zero size, zero transfer energy storage to ensure that cables connect
-    private final EnergyStorage zeroStorage = new EnergyStorage(0, 0, 0);
     public int transferRate = 0;
     //storageProxy that will forward the energy to the output but limit it to maxTransferRate
-    public EnergyStorageProxy storageProxy = new EnergyStorageProxy(this, APConfig.PERIPHERALS_CONFIG.energyDetectorMaxFlow.get());
-    LazyOptional<IEnergyStorage> energyStorageCap = LazyOptional.of(() -> storageProxy);
-    Direction energyInDirection = Direction.NORTH;
-    Direction energyOutDirection = Direction.SOUTH;
-    LazyOptional<IEnergyStorage> zeroStorageCap = LazyOptional.of(() -> zeroStorage);
+    public final EnergyStorageProxy storageProxy = new EnergyStorageProxy(this, APConfig.PERIPHERALS_CONFIG.energyDetectorMaxFlow.get());
+    //a zero size, zero transfer energy storage to ensure that cables connect
+    private final EnergyStorage zeroStorage = new EnergyStorage(0, 0, 0);
+    private final LazyOptional<IEnergyStorage> energyStorageCap = LazyOptional.of(() -> storageProxy);
+    private final LazyOptional<IEnergyStorage> zeroStorageCap = LazyOptional.of(() -> zeroStorage);
     @NotNull
     private Optional<IEnergyStorage> outReceivingStorage = Optional.empty();
 
+    private Direction energyInDirection = Direction.NORTH;
+    private Direction energyOutDirection = Direction.SOUTH;
+
     public EnergyDetectorEntity(BlockPos pos, BlockState state) {
-        super(BlockEntityTypes.ENERGY_DETECTOR.get(), pos, state);
+        super(APBlockEntityTypes.ENERGY_DETECTOR.get(), pos, state);
     }
 
     @NotNull
@@ -50,8 +51,8 @@ public class EnergyDetectorEntity extends PeripheralBlockEntity<EnergyDetectorPe
     @NotNull
     @Override
     public <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction direction) {
-        energyInDirection = getBlockState().getValue(JigsawBlock.ORIENTATION).front();
-        energyOutDirection = getBlockState().getValue(JigsawBlock.ORIENTATION).front().getOpposite();
+        energyInDirection = getBlockState().getValue(BaseBlock.ORIENTATION).front();
+        energyOutDirection = getBlockState().getValue(BaseBlock.ORIENTATION).front().getOpposite();
         if (cap == ForgeCapabilities.ENERGY) {
             if (direction == energyInDirection) {
                 return energyStorageCap.cast();
@@ -78,19 +79,19 @@ public class EnergyDetectorEntity extends PeripheralBlockEntity<EnergyDetectorPe
     }
 
     @Override
-    public void deserializeNBT(CompoundTag nbt) {
+    public void load(CompoundTag nbt) {
         storageProxy.setMaxTransferRate(nbt.getInt("rateLimit"));
-        super.deserializeNBT(nbt);
+        super.load(nbt);
     }
 
     public void invalidateStorages() {
         outReceivingStorage = Optional.empty();
     }
 
-    // returns the cached output storage of the receiving block or refetches it if it has been invalidated
+    // returns the cached output storage of the receiving block or fetches it if it has been invalidated
     @NotNull
     public Optional<IEnergyStorage> getOutputStorage() {
-        // the documentation says that the value of the LazyOptional should be cached locally and invallidated using addListener
+        // the documentation says that the value of the LazyOptional should be cached locally and invalidated using addListener
         if (outReceivingStorage.isEmpty()) {
             BlockEntity teOut = level.getBlockEntity(worldPosition.relative(energyOutDirection));
             if (teOut == null) {

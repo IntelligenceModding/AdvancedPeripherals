@@ -1,8 +1,8 @@
 package de.srendi.advancedperipherals;
 
-import de.srendi.advancedperipherals.common.setup.Blocks;
+import de.srendi.advancedperipherals.common.setup.APBlocks;
+import de.srendi.advancedperipherals.common.setup.APRegistration;
 import de.srendi.advancedperipherals.common.setup.CCRegistration;
-import de.srendi.advancedperipherals.common.setup.Registration;
 import de.srendi.advancedperipherals.common.util.inventory.ItemUtil;
 import net.minecraft.core.NonNullList;
 import net.minecraft.resources.ResourceLocation;
@@ -22,7 +22,7 @@ public class APCreativeTab extends CreativeModeTab {
 
     @Override
     public void fillItemList(NonNullList<ItemStack> items) {
-        Registration.ITEMS.getEntries().stream().map(RegistryObject::get).forEach(item -> items.add(new ItemStack(item)));
+        APRegistration.ITEMS.getEntries().stream().map(RegistryObject::get).forEach(item -> items.add(new ItemStack(item)));
         items.addAll(pocketUpgrade(CCRegistration.ID.COLONY_POCKET));
         items.addAll(pocketUpgrade(CCRegistration.ID.CHATTY_POCKET));
         items.addAll(pocketUpgrade(CCRegistration.ID.PLAYER_POCKET));
@@ -58,6 +58,6 @@ public class APCreativeTab extends CreativeModeTab {
     @Override
     @NotNull
     public ItemStack makeIcon() {
-        return new ItemStack(Blocks.CHAT_BOX.get());
+        return new ItemStack(APBlocks.CHAT_BOX.get());
     }
 }

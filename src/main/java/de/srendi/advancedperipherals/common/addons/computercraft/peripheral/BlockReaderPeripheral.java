@@ -18,7 +18,7 @@ import java.util.Map;
 
 public class BlockReaderPeripheral extends BasePeripheral<BlockEntityPeripheralOwner<BlockReaderEntity>> {
 
-    public static final String PERIPHERAL_TYPE = "blockReader";
+    public static final String PERIPHERAL_TYPE = "block_reader";
 
     public BlockReaderPeripheral(BlockReaderEntity tileEntity) {
         super(PERIPHERAL_TYPE, new BlockEntityPeripheralOwner<>(tileEntity));

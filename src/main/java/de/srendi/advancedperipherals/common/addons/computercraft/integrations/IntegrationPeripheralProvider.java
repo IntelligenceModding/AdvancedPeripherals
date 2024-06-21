@@ -23,7 +23,7 @@ import java.util.function.Predicate;
 
 public class IntegrationPeripheralProvider implements IPeripheralProvider {
 
-    private static final String[] SUPPORTED_MODS = new String[]{"botania", "create", "mekanism", "powah"};
+    private static final String[] SUPPORTED_MODS = new String[]{"botania", "create", "mekanism", "powah", "dimstorage"};
 
     private static final PriorityQueue<IPeripheralIntegration> integrations = new PriorityQueue<>(Comparator.comparingInt(IPeripheralIntegration::getPriority));
 

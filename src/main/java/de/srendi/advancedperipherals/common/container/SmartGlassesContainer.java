@@ -26,7 +26,7 @@ public class SmartGlassesContainer extends ContainerComputerBase {
     public SmartGlassesContainer(int id, Predicate<Player> canUse, ServerComputer computer, Inventory playerInventory, IItemHandler inventory, ComputerContainerData data) {
         super(APContainerTypes.SMART_GLASSES_CONTAINER.get(), id, canUse, ComputerFamily.ADVANCED, computer, data);
 
-        /**
+        /*
          * Do player inventory before peripheral slots then quick move won't mixup
          */
 
@@ -56,6 +56,19 @@ public class SmartGlassesContainer extends ContainerComputerBase {
         addSlot(new SmartGlassesSlot(inventory, 8, 240, 166, SlotType.MODULES));
         addSlot(new SmartGlassesSlot(inventory, 9, 222, 184, SlotType.MODULES));
         addSlot(new SmartGlassesSlot(inventory, 10, 240, 184, SlotType.MODULES));
+
+        // Player inventory
+        for (var y = 0; y < 3; y++) {
+            for (var x = 0; x < 9; x++) {
+                addSlot(new Slot(playerInventory, x + y * 9 + 9, PLAYER_START_X + x * 18, PLAYER_START_Y + 1 + y * 18));
+            }
+        }
+
+        // Player hotbar
+        for (var x = 0; x < 9; x++) {
+            addSlot(new Slot(playerInventory, x, PLAYER_START_X + x * 18, PLAYER_START_Y + 3 * 18 + 5));
+        }
+
     }
 
     public SmartGlassesContainer(int id, Predicate<Player> predicate, ServerComputer computer, ComputerContainerData data, Inventory player, ItemStack glasses) {

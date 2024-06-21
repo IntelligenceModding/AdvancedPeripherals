@@ -1,7 +1,8 @@
 package de.srendi.advancedperipherals.common.data;
 
 import de.srendi.advancedperipherals.AdvancedPeripherals;
-import de.srendi.advancedperipherals.common.setup.Registration;
+
+import de.srendi.advancedperipherals.common.setup.APRegistration;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.tags.PoiTypeTagsProvider;
 import net.minecraft.data.tags.TagsProvider;
@@ -14,7 +15,6 @@ import org.jetbrains.annotations.Nullable;
 
 public class PoiTypeProvider extends PoiTypeTagsProvider {
 
-
     public PoiTypeProvider(DataGenerator pGenerator, @Nullable ExistingFileHelper existingFileHelper) {
         super(pGenerator, AdvancedPeripherals.MOD_ID, existingFileHelper);
     }
@@ -22,7 +22,7 @@ public class PoiTypeProvider extends PoiTypeTagsProvider {
     @Override
     protected void addTags() {
         TagsProvider.TagAppender<PoiType> appender = tag(PoiTypeTags.ACQUIRABLE_JOB_SITE);
-        Registration.POI_TYPES.getEntries().stream().map(RegistryObject::getKey).forEach(appender::add);
+        APRegistration.POI_TYPES.getEntries().stream().map(RegistryObject::getKey).forEach(appender::add);
     }
 
     @NotNull

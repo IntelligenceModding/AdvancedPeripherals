@@ -8,13 +8,14 @@ import de.srendi.advancedperipherals.common.configuration.APConfig;
 
 public class OverpoweredWeakAutomataCorePeripheral extends WeakAutomataCorePeripheral {
 
-    public static final String TYPE = "overpoweredWeakAutomata";
+    public static final String TYPE = "overpowered_weak_automata";
 
     public OverpoweredWeakAutomataCorePeripheral(ITurtleAccess turtle, TurtleSide side) {
         super(TYPE, turtle, side, AutomataCoreTier.OVERPOWERED_TIER1);
         setAttribute(ATTR_STORING_TOOL_DURABILITY);
     }
 
+    @Override
     public void addRotationCycle(int count) {
         super.addRotationCycle(count);
         if (AdvancedPeripherals.RANDOM.nextDouble() <= APConfig.METAPHYSICS_CONFIG.overpoweredAutomataBreakChance.get())

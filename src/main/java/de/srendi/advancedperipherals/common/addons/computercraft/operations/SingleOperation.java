@@ -5,7 +5,7 @@ import net.minecraftforge.common.ForgeConfigSpec;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Function;
+import java.util.function.UnaryOperator;
 
 public enum SingleOperation implements IPeripheralOperation<SingleOperationContext> {
     DIG(1000, 1),
@@ -80,9 +80,9 @@ public enum SingleOperation implements IPeripheralOperation<SingleOperationConte
         LINEAR(d -> d),
         SQRT(d -> (int) Math.sqrt(d));
 
-        private final Function<Integer, Integer> factorFunction;
+        private final UnaryOperator<Integer> factorFunction;
 
-        DistancePolicy(Function<Integer, Integer> factorFunction) {
+        DistancePolicy(UnaryOperator<Integer> factorFunction) {
             this.factorFunction = factorFunction;
         }
 
@@ -95,9 +95,9 @@ public enum SingleOperation implements IPeripheralOperation<SingleOperationConte
         IGNORED(c -> 1),
         MULTIPLY(c -> c);
 
-        private final Function<Integer, Integer> factorFunction;
+        private final UnaryOperator<Integer> factorFunction;
 
-        CountPolicy(Function<Integer, Integer> factorFunction) {
+        CountPolicy(UnaryOperator<Integer> factorFunction) {
             this.factorFunction = factorFunction;
         }
 

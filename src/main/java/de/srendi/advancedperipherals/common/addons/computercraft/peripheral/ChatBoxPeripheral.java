@@ -49,7 +49,7 @@ import static de.srendi.advancedperipherals.common.addons.computercraft.operatio
 
 public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
 
-    public static final String PERIPHERAL_TYPE = "chatBox";
+    public static final String PERIPHERAL_TYPE = "chat_box";
 
     private long lastConsumedMessage;
 

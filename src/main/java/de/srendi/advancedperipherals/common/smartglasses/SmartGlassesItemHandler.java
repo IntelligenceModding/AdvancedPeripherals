@@ -1,9 +1,7 @@
 package de.srendi.advancedperipherals.common.smartglasses;
 
 import de.srendi.advancedperipherals.common.items.SmartGlassesItem;
-import de.srendi.advancedperipherals.common.setup.APItems;
 import net.minecraft.core.NonNullList;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.IItemHandlerModifiable;
@@ -76,6 +74,7 @@ public class SmartGlassesItemHandler implements IItemHandlerModifiable {
             } else {
                 existing.grow(reachedLimit ? limit : stack.getCount());
             }
+
             setChanged();
         }
 
@@ -110,7 +109,6 @@ public class SmartGlassesItemHandler implements IItemHandlerModifiable {
         return ItemHandlerHelper.copyStackWithSize(existing, toExtract);
     }
 
-    @NotNull
     @Override
     public ItemStack getStackInSlot(int slot) {
         return loadItems().get(slot);

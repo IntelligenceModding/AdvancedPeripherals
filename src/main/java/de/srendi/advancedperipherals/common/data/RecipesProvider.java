@@ -5,7 +5,8 @@ import com.refinedmods.refinedstorage.RSBlocks;
 import com.refinedmods.refinedstorage.RSItems;
 import dan200.computercraft.shared.Registry;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
-import de.srendi.advancedperipherals.common.setup.Blocks;
+import de.srendi.advancedperipherals.common.setup.APBlocks;
+import de.srendi.advancedperipherals.common.setup.APItems;
 import de.srendi.advancedperipherals.common.util.RawValue;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.recipes.*;
@@ -28,16 +29,52 @@ import java.util.stream.Stream;
 
 public class RecipesProvider extends RecipeProvider implements IConditionBuilder {
 
-    private static final Block CASING = Blocks.PERIPHERAL_CASING.get();
+    private static final Block CASING = APBlocks.PERIPHERAL_CASING.get();
     private static final String HAS_ITEM = "has_item";
 
-    public RecipesProvider(DataGenerator pGenerator) {
-        super(pGenerator);
+    public RecipesProvider(DataGenerator packOutput) {
+        super(packOutput);
     }
 
     @Override
     protected void buildCraftingRecipes(@NotNull Consumer<FinishedRecipe> consumer) {
-        ShapedRecipeBuilder.shaped(Blocks.CHAT_BOX.get())
+        addShapeless(consumer);
+        addShaped(consumer);
+        addSmithing(consumer);
+    }
+
+    private void addShapeless(@NotNull Consumer<FinishedRecipe> consumer) {
+        ShapelessRecipeBuilder.shapeless(APItems.OVERPOWERED_WEAK_AUTOMATA_CORE.get())
+                .requires(APItems.WEAK_AUTOMATA_CORE.get())
+                .requires(Items.NETHER_STAR)
+                .unlockedBy(HAS_ITEM, has(APItems.WEAK_AUTOMATA_CORE.get()))
+                .save(consumer);
+
+        ShapelessRecipeBuilder.shapeless(APItems.OVERPOWERED_END_AUTOMATA_CORE.get())
+                .requires(APItems.END_AUTOMATA_CORE.get())
+                .requires(Items.NETHER_STAR)
+                .unlockedBy(HAS_ITEM, has(APItems.END_AUTOMATA_CORE.get()))
+                .save(consumer);
+
+        ShapelessRecipeBuilder.shapeless(APItems.OVERPOWERED_HUSBANDRY_AUTOMATA_CORE.get())
+                .requires(APItems.HUSBANDRY_AUTOMATA_CORE.get())
+                .requires(Items.NETHER_STAR)
+                .unlockedBy(HAS_ITEM, has(APItems.HUSBANDRY_AUTOMATA_CORE.get()))
+                .save(consumer);
+    }
+
+    private void addShaped(@NotNull Consumer<FinishedRecipe> consumer) {
+        /*ShapedRecipeBuilder.shaped(APItems.AR_GOGGLES.get())
+                .define('E', Tags.Items.ENDER_PEARLS)
+                .define('S', Tags.Items.RODS_WOODEN)
+                .define('G', Tags.Items.GLASS_BLACK)
+                .pattern("GSG")
+                .pattern(" E ")
+                .unlockedBy(HAS_ITEM, has(Items.STICK))
+                .save(consumer);
+        */
+
+        ShapedRecipeBuilder.shaped(APBlocks.CHAT_BOX.get())
                 .define('P', ItemTags.LOGS)
                 .define('A', CASING)
                 .define('G', Tags.Items.INGOTS_GOLD)
@@ -47,7 +84,7 @@ public class RecipesProvider extends RecipeProvider implements IConditionBuilder
                 .unlockedBy(HAS_ITEM, has(CASING))
                 .save(consumer);
 
-        ShapedRecipeBuilder.shaped(de.srendi.advancedperipherals.common.setup.Items.CHUNK_CONTROLLER.get())
+        ShapedRecipeBuilder.shaped(APItems.CHUNK_CONTROLLER.get())
                 .define('I', Tags.Items.INGOTS_IRON)
                 .define('R', Tags.Items.DUSTS_REDSTONE)
                 .define('A', Items.ENDER_EYE)
@@ -57,7 +94,7 @@ public class RecipesProvider extends RecipeProvider implements IConditionBuilder
                 .unlockedBy(HAS_ITEM, has(Items.RESPAWN_ANCHOR))
                 .save(consumer);
 
-        ShapedRecipeBuilder.shaped(de.srendi.advancedperipherals.common.setup.Items.COMPUTER_TOOL.get())
+        ShapedRecipeBuilder.shaped(APItems.COMPUTER_TOOL.get())
                 .define('I', Tags.Items.INGOTS_IRON)
                 .define('B', Items.BLUE_TERRACOTTA)
                 .pattern("I I")
@@ -66,7 +103,7 @@ public class RecipesProvider extends RecipeProvider implements IConditionBuilder
                 .unlockedBy(HAS_ITEM, has(Items.BLUE_TERRACOTTA))
                 .save(consumer);
 
-        ShapedRecipeBuilder.shaped(Blocks.ENERGY_DETECTOR.get())
+        ShapedRecipeBuilder.shaped(APBlocks.ENERGY_DETECTOR.get())
                 .define('B', Tags.Items.STORAGE_BLOCKS_REDSTONE)
                 .define('R', Items.REDSTONE_TORCH)
                 .define('C', Items.COMPARATOR)
@@ -78,7 +115,7 @@ public class RecipesProvider extends RecipeProvider implements IConditionBuilder
                 .unlockedBy(HAS_ITEM, has(CASING))
                 .save(consumer);
 
-        ShapedRecipeBuilder.shaped(Blocks.ENVIRONMENT_DETECTOR.get())
+        ShapedRecipeBuilder.shaped(APBlocks.ENVIRONMENT_DETECTOR.get())
                 .define('W', ItemTags.WOOL)
                 .define('S', ItemTags.SAPLINGS)
                 .define('C', Tags.Items.CROPS)
@@ -90,7 +127,7 @@ public class RecipesProvider extends RecipeProvider implements IConditionBuilder
                 .unlockedBy(HAS_ITEM, has(CASING))
                 .save(consumer);
 
-        ShapedRecipeBuilder.shaped(Blocks.INVENTORY_MANAGER.get())
+        ShapedRecipeBuilder.shaped(APBlocks.INVENTORY_MANAGER.get())
                 .define('I', Tags.Items.INGOTS_IRON)
                 .define('C', Tags.Items.CHESTS)
                 .define('A', CASING)
@@ -100,7 +137,7 @@ public class RecipesProvider extends RecipeProvider implements IConditionBuilder
                 .unlockedBy(HAS_ITEM, has(CASING))
                 .save(consumer);
 
-        ShapedRecipeBuilder.shaped(de.srendi.advancedperipherals.common.setup.Items.MEMORY_CARD.get())
+        ShapedRecipeBuilder.shaped(APItems.MEMORY_CARD.get())
                 .define('I', Tags.Items.INGOTS_IRON)
                 .define('W', Tags.Items.GLASS_WHITE)
                 .define('O', Items.OBSERVER)
@@ -111,7 +148,7 @@ public class RecipesProvider extends RecipeProvider implements IConditionBuilder
                 .unlockedBy(HAS_ITEM, has(Items.OBSERVER))
                 .save(consumer);
 
-        ShapedRecipeBuilder.shaped(Blocks.PERIPHERAL_CASING.get())
+        ShapedRecipeBuilder.shaped(APBlocks.PERIPHERAL_CASING.get())
                 .define('I', Tags.Items.INGOTS_IRON)
                 .define('i', Items.IRON_BARS)
                 .define('R', Tags.Items.STORAGE_BLOCKS_REDSTONE)
@@ -121,7 +158,7 @@ public class RecipesProvider extends RecipeProvider implements IConditionBuilder
                 .unlockedBy(HAS_ITEM, has(Items.REDSTONE_BLOCK))
                 .save(consumer);
 
-        ShapedRecipeBuilder.shaped(Blocks.PLAYER_DETECTOR.get())
+        ShapedRecipeBuilder.shaped(APBlocks.PLAYER_DETECTOR.get())
                 .define('S', Items.SMOOTH_STONE)
                 .define('A', CASING)
                 .define('R', Tags.Items.STORAGE_BLOCKS_REDSTONE)
@@ -131,7 +168,7 @@ public class RecipesProvider extends RecipeProvider implements IConditionBuilder
                 .unlockedBy(HAS_ITEM, has(CASING))
                 .save(consumer);
 
-        ShapedRecipeBuilder.shaped(Blocks.REDSTONE_INTEGRATOR.get())
+        ShapedRecipeBuilder.shaped(APBlocks.REDSTONE_INTEGRATOR.get())
                 .define('R', Tags.Items.STORAGE_BLOCKS_REDSTONE)
                 .define('A', CASING)
                 .define('C', Items.COMPARATOR)
@@ -141,7 +178,7 @@ public class RecipesProvider extends RecipeProvider implements IConditionBuilder
                 .unlockedBy(HAS_ITEM, has(CASING))
                 .save(consumer);
 
-        ShapedRecipeBuilder.shaped(Blocks.BLOCK_READER.get())
+        ShapedRecipeBuilder.shaped(APBlocks.BLOCK_READER.get())
                 .define('O', Items.OBSERVER)
                 .define('I', Tags.Items.INGOTS_IRON)
                 .define('M', Registry.ModBlocks.WIRED_MODEM_FULL.get())
@@ -153,7 +190,7 @@ public class RecipesProvider extends RecipeProvider implements IConditionBuilder
                 .unlockedBy(HAS_ITEM, has(CASING))
                 .save(consumer);
 
-        ShapedRecipeBuilder.shaped(Blocks.GEO_SCANNER.get())
+        ShapedRecipeBuilder.shaped(APBlocks.GEO_SCANNER.get())
                 .define('O', Items.OBSERVER)
                 .define('D', Tags.Items.GEMS_DIAMOND)
                 .define('C', CASING)
@@ -165,7 +202,7 @@ public class RecipesProvider extends RecipeProvider implements IConditionBuilder
                 .unlockedBy(HAS_ITEM, has(CASING))
                 .save(consumer);
 
-        ShapedRecipeBuilder.shaped(Blocks.NBT_STORAGE.get())
+        ShapedRecipeBuilder.shaped(APBlocks.NBT_STORAGE.get())
                 .define('C', Tags.Items.CHESTS)
                 .define('A', CASING)
                 .define('R', Tags.Items.STORAGE_BLOCKS_REDSTONE)
@@ -181,7 +218,7 @@ public class RecipesProvider extends RecipeProvider implements IConditionBuilder
                         modLoaded("minecolonies")
                 )
                 .addRecipe(
-                        ShapedRecipeBuilder.shaped(Blocks.COLONY_INTEGRATOR.get())
+                        ShapedRecipeBuilder.shaped(APBlocks.COLONY_INTEGRATOR.get())
                                 .define('O', ItemTags.LOGS)
                                 .define('A', CASING)
                                 .define('R', Ingredient.fromValues(Stream.of(new RawValue(new ResourceLocation("minecolonies", "blockminecoloniesrack")))))
@@ -196,7 +233,7 @@ public class RecipesProvider extends RecipeProvider implements IConditionBuilder
                         modLoaded("ae2")
                 )
                 .addRecipe(
-                        ShapedRecipeBuilder.shaped(Blocks.ME_BRIDGE.get())
+                        ShapedRecipeBuilder.shaped(APBlocks.ME_BRIDGE.get())
                                 .define('F', AEBlocks.FLUIX_BLOCK.asItem())
                                 .define('A', CASING)
                                 .define('I', AEBlocks.INTERFACE.asItem())
@@ -211,7 +248,7 @@ public class RecipesProvider extends RecipeProvider implements IConditionBuilder
                         modLoaded("refinedstorage")
                 )
                 .addRecipe(
-                        ShapedRecipeBuilder.shaped(Blocks.RS_BRIDGE.get())
+                        ShapedRecipeBuilder.shaped(APBlocks.RS_BRIDGE.get())
                                 .define('Q', RSItems.QUARTZ_ENRICHED_IRON.get())
                                 .define('A', CASING)
                                 .define('I', RSBlocks.INTERFACE.get())
@@ -221,7 +258,7 @@ public class RecipesProvider extends RecipeProvider implements IConditionBuilder
                                 .unlockedBy(HAS_ITEM, has(CASING))::save
                 ).build(consumer, new ResourceLocation(AdvancedPeripherals.MOD_ID, "rs_bridge"));
 
-        ShapedRecipeBuilder.shaped(de.srendi.advancedperipherals.common.setup.Items.WEAK_AUTOMATA_CORE.get())
+        ShapedRecipeBuilder.shaped(APItems.WEAK_AUTOMATA_CORE.get())
                 .define('A', CASING)
                 .define('R', Tags.Items.STORAGE_BLOCKS_REDSTONE)
                 .define('S', Items.SOUL_LANTERN)
@@ -233,23 +270,13 @@ public class RecipesProvider extends RecipeProvider implements IConditionBuilder
                 .unlockedBy(HAS_ITEM, has(CASING))
                 .save(consumer);
 
-        ShapelessRecipeBuilder.shapeless(de.srendi.advancedperipherals.common.setup.Items.OVERPOWERED_WEAK_AUTOMATA_CORE.get())
-                .requires(de.srendi.advancedperipherals.common.setup.Items.WEAK_AUTOMATA_CORE.get())
-                .requires(Items.NETHER_STAR)
-                .unlockedBy(HAS_ITEM, has(de.srendi.advancedperipherals.common.setup.Items.WEAK_AUTOMATA_CORE.get()))
-                .save(consumer);
+    }
 
-        ShapelessRecipeBuilder.shapeless(de.srendi.advancedperipherals.common.setup.Items.OVERPOWERED_END_AUTOMATA_CORE.get())
-                .requires(de.srendi.advancedperipherals.common.setup.Items.END_AUTOMATA_CORE.get())
-                .requires(Items.NETHER_STAR)
-                .unlockedBy(HAS_ITEM, has(de.srendi.advancedperipherals.common.setup.Items.END_AUTOMATA_CORE.get()))
-                .save(consumer);
-
-        ShapelessRecipeBuilder.shapeless(de.srendi.advancedperipherals.common.setup.Items.OVERPOWERED_HUSBANDRY_AUTOMATA_CORE.get())
-                .requires(de.srendi.advancedperipherals.common.setup.Items.HUSBANDRY_AUTOMATA_CORE.get())
-                .requires(Items.NETHER_STAR)
-                .unlockedBy(HAS_ITEM, has(de.srendi.advancedperipherals.common.setup.Items.HUSBANDRY_AUTOMATA_CORE.get()))
-                .save(consumer);
+    private void addSmithing(@NotNull Consumer<FinishedRecipe> consumer) {
+        UpgradeRecipeBuilder
+                .smithing(Ingredient.of(APItems.SMART_GLASSES.get()), Ingredient.of(Items.NETHERITE_INGOT), APItems.SMART_GLASSES_NETHERITE.get())
+                .unlocks("has_item", has(Items.NETHERITE_INGOT))
+                .save(consumer, new ResourceLocation(AdvancedPeripherals.MOD_ID, "armor/" + APItems.SMART_GLASSES_NETHERITE.getKey().location().getPath()));
     }
 
 }

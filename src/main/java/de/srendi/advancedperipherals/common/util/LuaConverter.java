@@ -23,6 +23,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.scores.Team;
+import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.common.IForgeShearable;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidType;
@@ -51,30 +52,6 @@ public class LuaConverter {
         data.put("isUnderWater", entity.isUnderWater());
         data.put("isInLava", entity.isInLava());
         data.put("isInWall", entity.isInWall());
-        data.put("pitch", entity.getYRot());
-        data.put("yaw", entity.getXRot());
-        if (!detailed) {
-            return data;
-        }
-        Team team = entity.getTeam();
-        data.put("team", team != null ? team.getName() : null);
-        data.put("name", entity.getName().getString());
-        data.put("air", entity.getAirSupply());
-        data.put("maxAir", entity.getMaxAirSupply());
-        data.put("frozen", entity.getTicksFrozen());
-        data.put("freezeTicks", entity.getTicksRequiredToFreeze());
-        data.put("tags", entity.getTags());
-        if (entity instanceof InventoryCarrier carrier) {
-            Map<Integer, Object> invMap = new HashMap<>();
-            SimpleContainer inv = carrier.getInventory();
-            for (int slot = 0; slot < inv.getContainerSize(); slot++) {
-                ItemStack item = inv.getItem(slot);
-                if (!item.isEmpty()) {
-                    invMap.put(slot, itemStackToObject(item));
-                }
-            }
-            data.put("inventory", invMap);
-        }
         return data;
     }
 

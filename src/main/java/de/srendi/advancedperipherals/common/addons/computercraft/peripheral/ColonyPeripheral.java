@@ -37,7 +37,7 @@ import java.util.stream.Collectors;
 
 public class ColonyPeripheral extends BasePeripheral<IPeripheralOwner> {
 
-    public static final String PERIPHERAL_TYPE = "colonyIntegrator";
+    public static final String PERIPHERAL_TYPE = "colony_integrator";
 
     protected boolean hasPermission = true;
 
@@ -272,7 +272,7 @@ public class ColonyPeripheral extends BasePeripheral<IPeripheralOwner> {
             map.put("state", request.getState().toString());
             map.put("count", deliverableRequest.getCount());
             map.put("minCount", deliverableRequest.getMinimumCount());
-            map.put("items", request.getDisplayStacks().stream().map(LuaConverter::stackToObject).collect(Collectors.toList()));
+            map.put("items", request.getDisplayStacks().stream().map(LuaConverter::itemStackToObject).collect(Collectors.toList()));
             map.put("target", request.getRequester().getRequesterDisplayName(requestManager, request).getString());
             result.add(map);
         });
