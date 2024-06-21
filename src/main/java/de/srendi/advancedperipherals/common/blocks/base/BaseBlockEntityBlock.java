@@ -12,6 +12,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -68,7 +69,9 @@ public abstract class BaseBlockEntityBlock extends BaseBlock implements EntityBl
         if (worldIn.getBlockEntity(pos) == null)
             return;
         //Used for the lua function getName()
-        worldIn.getBlockEntity(pos).getPersistentData().putString("CustomName", stack.getDisplayName().getString());
+        if (stack.hasCustomHoverName() && worldIn.getBlockEntity(pos) instanceof BaseContainerBlockEntity blockEntity) {
+            blockEntity.setCustomName(stack.getHoverName());
+        }
     }
 
     @Nullable
@@ -92,8 +95,7 @@ public abstract class BaseBlockEntityBlock extends BaseBlock implements EntityBl
         return menuProvider;
     }
 
-    @NotNull
-    public RenderShape getRenderShape(@NotNull BlockState state) {
+    public @NotNull RenderShape getRenderShape(@NotNull BlockState state) {
         return RenderShape.MODEL;
     }
 }

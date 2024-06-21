@@ -19,7 +19,7 @@ public class RsFluidHandler implements IStorageSystemFluidHandler {
 
     @Override
     public int fill(FluidStack resource, FluidAction action) {
-        if (resource.isEmpty())
+        if(resource.isEmpty())
             return 0;
         return resource.getAmount() - network.insertFluid(resource, resource.getAmount(), action == FluidAction.SIMULATE ? Action.SIMULATE : Action.PERFORM).getAmount();
     }
@@ -28,7 +28,7 @@ public class RsFluidHandler implements IStorageSystemFluidHandler {
     @Override
     public FluidStack drain(FluidFilter filter, FluidAction simulate) {
         FluidStack fluid = RefinedStorage.findFluidFromFilter(network, null, filter);
-        if (fluid == null)
+        if(fluid == null)
             return FluidStack.EMPTY;
         return network.extractFluid(fluid, filter.getCount(), IComparer.COMPARE_QUANTITY, simulate == FluidAction.SIMULATE ? Action.SIMULATE : Action.PERFORM);
     }

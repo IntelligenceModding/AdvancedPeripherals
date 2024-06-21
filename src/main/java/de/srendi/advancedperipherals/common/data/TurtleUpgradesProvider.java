@@ -5,6 +5,7 @@ import dan200.computercraft.api.turtle.TurtleUpgradeSerialiser;
 import de.srendi.advancedperipherals.common.setup.APBlocks;
 import de.srendi.advancedperipherals.common.setup.APItems;
 import de.srendi.advancedperipherals.common.setup.CCRegistration;
+import de.srendi.advancedperipherals.common.setup.Items;
 import net.minecraft.data.DataGenerator;
 import org.jetbrains.annotations.NotNull;
 
@@ -25,12 +26,12 @@ public class TurtleUpgradesProvider extends TurtleUpgradeDataProvider {
         simpleWithCustomItem(CCRegistration.ID.GEOSCANNER_TURTLE, CCRegistration.GEO_SCANNER_TURTLE.get(), APBlocks.GEO_SCANNER.get().asItem()).add(addUpgrade);
         simpleWithCustomItem(CCRegistration.ID.COMPASS_TURTLE, CCRegistration.COMPASS_TURTLE.get(), net.minecraft.world.item.Items.COMPASS).add(addUpgrade);
         simpleWithCustomItem(CCRegistration.ID.SADDLE_TURTLE, CCRegistration.SADDLE_TURTLE.get(), net.minecraft.world.item.Items.SADDLE).add(addUpgrade);
-        simpleWithCustomItem(CCRegistration.ID.WEAK_AUTOMATA, CCRegistration.WEAK_TURTLE.get(), APItems.WEAK_AUTOMATA_CORE.get()).add(addUpgrade);
-        simpleWithCustomItem(CCRegistration.ID.END_AUTOMATA, CCRegistration.END_TURTLE.get(), APItems.END_AUTOMATA_CORE.get()).add(addUpgrade);
-        simpleWithCustomItem(CCRegistration.ID.HUSBANDRY_AUTOMATA, CCRegistration.HUSBANDRY_TURTLE.get(), APItems.HUSBANDRY_AUTOMATA_CORE.get()).add(addUpgrade);
-        simpleWithCustomItem(CCRegistration.ID.OP_WEAK_AUTOMATA, CCRegistration.OP_WEAK_TURTLE.get(), APItems.OVERPOWERED_WEAK_AUTOMATA_CORE.get()).add(addUpgrade);
-        simpleWithCustomItem(CCRegistration.ID.OP_END_AUTOMATA, CCRegistration.OP_END_TURTLE.get(), APItems.OVERPOWERED_END_AUTOMATA_CORE.get()).add(addUpgrade);
-        simpleWithCustomItem(CCRegistration.ID.OP_HUSBANDRY_AUTOMATA, CCRegistration.OP_HUSBANDRY_TURTLE.get(), APItems.OVERPOWERED_HUSBANDRY_AUTOMATA_CORE.get()).add(addUpgrade);
+        simpleWithCustomItem(CCRegistration.ID.WEAK_AUTOMATA, CCRegistration.WEAK_TURTLE.get(), Items.WEAK_AUTOMATA_CORE.get()).add(addUpgrade);
+        simpleWithCustomItem(CCRegistration.ID.END_AUTOMATA, CCRegistration.END_TURTLE.get(), Items.END_AUTOMATA_CORE.get()).add(addUpgrade);
+        simpleWithCustomItem(CCRegistration.ID.HUSBANDRY_AUTOMATA, CCRegistration.HUSBANDRY_TURTLE.get(), Items.HUSBANDRY_AUTOMATA_CORE.get()).add(addUpgrade);
+        simpleWithCustomItem(CCRegistration.ID.OP_WEAK_AUTOMATA, CCRegistration.OP_WEAK_TURTLE.get(), Items.OVERPOWERED_WEAK_AUTOMATA_CORE.get()).add(addUpgrade);
+        simpleWithCustomItem(CCRegistration.ID.OP_END_AUTOMATA, CCRegistration.OP_END_TURTLE.get(), Items.OVERPOWERED_END_AUTOMATA_CORE.get()).add(addUpgrade);
+        simpleWithCustomItem(CCRegistration.ID.OP_HUSBANDRY_AUTOMATA, CCRegistration.OP_HUSBANDRY_TURTLE.get(), Items.OVERPOWERED_HUSBANDRY_AUTOMATA_CORE.get()).add(addUpgrade);
 
     }
 }

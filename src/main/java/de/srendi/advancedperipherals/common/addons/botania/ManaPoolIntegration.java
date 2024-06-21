@@ -15,7 +15,7 @@ public class ManaPoolIntegration extends BlockEntityIntegrationPeripheral<ManaPo
     @NotNull
     @Override
     public String getType() {
-        return "mana_pool";
+        return "manaPool";
     }
 
     @LuaFunction(mainThread = true)

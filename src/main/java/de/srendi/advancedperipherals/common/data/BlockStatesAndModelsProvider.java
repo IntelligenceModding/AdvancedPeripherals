@@ -59,8 +59,7 @@ public class BlockStatesAndModelsProvider extends BlockStateProvider {
         getVariantBuilder(block).forAllStates(state -> {
             ConfiguredModel.Builder<?> builder = ConfiguredModel.builder().modelFile(file);
             FrontAndTop orientation = state.getValue(BaseBlock.ORIENTATION);
-            int x = 0;
-            int y;
+            int x = 0, y;
             if (orientation.top().getAxis() == Direction.Axis.Y) {
                 y = (int) (orientation.front().toYRot() + 180) % 360;
             } else {

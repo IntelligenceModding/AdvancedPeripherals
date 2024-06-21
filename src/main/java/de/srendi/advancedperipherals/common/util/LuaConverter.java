@@ -96,6 +96,7 @@ public class LuaConverter {
 
     public static Map<String, Object> animalToLua(Animal animal, ItemStack itemInHand, boolean detailed) {
         Map<String, Object> data = livingEntityToLua(animal, detailed);
+        data.put("baby", animal.isBaby());
         data.put("inLove", animal.isInLove());
         data.put("aggressive", animal.isAggressive());
         if (animal instanceof IForgeShearable shareable && !itemInHand.isEmpty()) {

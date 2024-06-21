@@ -18,7 +18,7 @@ public class BlazeBurnerIntegration extends BlockEntityIntegrationPeripheral<Bla
     @NotNull
     @Override
     public String getType() {
-        return "blaze_burner";
+        return "blazeBurner";
     }
 
     @LuaFunction(mainThread = true)

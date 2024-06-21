@@ -1,7 +1,5 @@
 package de.srendi.advancedperipherals.common.util.inventory;
 
-import appeng.api.stacks.AEItemKey;
-import appeng.api.stacks.GenericStack;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.core.apis.TableHelper;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
@@ -19,7 +17,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.Map;
 
-public class ItemFilter extends GenericFilter {
+public class ItemFilter {
 
     private Item item = Items.AIR;
     private TagKey<Item> tag = null;
@@ -69,14 +67,14 @@ public class ItemFilter extends GenericFilter {
         }
         if (item.containsKey("fromSlot")) {
             try {
-                itemFilter.fromSlot = TableHelper.getIntField(item, "fromSlot") - 1;
+                itemFilter.fromSlot = TableHelper.getIntField(item, "fromSlot");
             } catch (LuaException luaException) {
                 return Pair.of(null, "NO_VALID_FROMSLOT");
             }
         }
         if (item.containsKey("toSlot")) {
             try {
-                itemFilter.toSlot = TableHelper.getIntField(item, "toSlot") - 1;
+                itemFilter.toSlot = TableHelper.getIntField(item, "toSlot");
             } catch (LuaException luaException) {
                 return Pair.of(null, "NO_VALID_TOSLOT");
             }
@@ -112,14 +110,6 @@ public class ItemFilter extends GenericFilter {
         var result = new ItemStack(item, count);
         result.setTag(nbt != null ? nbt.copy() : null);
         return result;
-    }
-
-    @Override
-    public boolean test(GenericStack genericStack) {
-        if (genericStack.what() instanceof AEItemKey aeItemKey) {
-            return test(aeItemKey.toStack());
-        }
-        return false;
     }
 
     public boolean test(ItemStack stack) {

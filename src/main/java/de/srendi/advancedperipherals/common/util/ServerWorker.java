@@ -33,12 +33,11 @@ public class ServerWorker {
     @SubscribeEvent
     public static void serverTick(TickEvent.ServerTickEvent event) {
         if (event.phase == TickEvent.Phase.END) {
-            int size = callQueue.size();
-            for (int i = 0; i < size; i++) {
-                final Runnable task = callQueue.poll();
+            while (!callQueue.isEmpty()) {
+                final Runnable runnable = callQueue.poll();
                 tasksRan++;
-                AdvancedPeripherals.debug("Running task #" + tasksRan + ". Running " + task.getClass());
-                task.run();
+                AdvancedPeripherals.debug("Running task #" + tasksRan + ". Running " + runnable.getClass());
+                runnable.run();
             }
         }
     }

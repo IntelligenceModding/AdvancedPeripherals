@@ -19,7 +19,7 @@ public class ScrollValueBehaviourIntegration extends BlockEntityIntegrationPerip
     @NotNull
     @Override
     public String getType() {
-        return "scroll_behaviour_entity";
+        return "scrollBehaviourEntity";
     }
 
     @LuaFunction(mainThread = true)

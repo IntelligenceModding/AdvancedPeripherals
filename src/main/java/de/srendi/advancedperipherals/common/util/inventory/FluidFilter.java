@@ -1,7 +1,5 @@
 package de.srendi.advancedperipherals.common.util.inventory;
 
-import appeng.api.stacks.AEFluidKey;
-import appeng.api.stacks.GenericStack;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.core.apis.TableHelper;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
@@ -19,7 +17,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.Map;
 
-public class FluidFilter extends GenericFilter {
+public class FluidFilter {
 
     private Fluid fluid = Fluids.EMPTY;
     private TagKey<Fluid> tag = null;
@@ -97,14 +95,6 @@ public class FluidFilter extends GenericFilter {
     public FluidFilter setCount(int count) {
         this.count = count;
         return this;
-    }
-
-    @Override
-    public boolean test(GenericStack genericStack) {
-        if (genericStack.what() instanceof AEFluidKey aeFluidKey) {
-            return test(aeFluidKey.toStack(1));
-        }
-        return false;
     }
 
     public boolean test(FluidStack stack) {

@@ -14,7 +14,7 @@ public class SolarPanelIntegration extends BlockEntityIntegrationPeripheral<Sola
     @NotNull
     @Override
     public String getType() {
-        return "solar_panel";
+        return "solarPanel";
     }
 
     @LuaFunction(mainThread = true)

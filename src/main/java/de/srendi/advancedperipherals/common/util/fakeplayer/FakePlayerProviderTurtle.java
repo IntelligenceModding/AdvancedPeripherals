@@ -94,6 +94,7 @@ public final class FakePlayerProviderTurtle {
         }
     }
 
+
     public static <T> T withPlayer(ITurtleAccess turtle, Function<APFakePlayer, T> function) {
         APFakePlayer player = getPlayer(turtle, turtle.getOwningPlayer());
         load(player, turtle);

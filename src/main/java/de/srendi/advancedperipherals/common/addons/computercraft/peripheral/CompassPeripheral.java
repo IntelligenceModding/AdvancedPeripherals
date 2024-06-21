@@ -11,8 +11,12 @@ public class CompassPeripheral extends BasePeripheral<TurtlePeripheralOwner> {
 
     public static final String PERIPHERAL_TYPE = "compass";
 
+    protected CompassPeripheral(TurtlePeripheralOwner owner) {
+        super(PERIPHERAL_TYPE, owner);
+    }
+
     public CompassPeripheral(ITurtleAccess turtle, TurtleSide side) {
-        super(PERIPHERAL_TYPE, new TurtlePeripheralOwner(turtle, side));
+        this(new TurtlePeripheralOwner(turtle, side));
     }
 
     @Override

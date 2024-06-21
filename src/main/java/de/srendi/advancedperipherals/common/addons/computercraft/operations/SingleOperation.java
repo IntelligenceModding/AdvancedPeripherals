@@ -5,7 +5,7 @@ import net.minecraftforge.common.ForgeConfigSpec;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.UnaryOperator;
+import java.util.function.Function;
 
 public enum SingleOperation implements IPeripheralOperation<SingleOperationContext> {
     DIG(1000, 1),
@@ -14,6 +14,7 @@ public enum SingleOperation implements IPeripheralOperation<SingleOperationConte
     USE_ON_ANIMAL(2500, 10),
     CAPTURE_ANIMAL(50_000, 100),
     WARP(1000, DistancePolicy.IGNORED, CountPolicy.MULTIPLY, 1, DistancePolicy.SQRT, CountPolicy.MULTIPLY),
+    ACCURE_PLACE(1000, DistancePolicy.IGNORED, CountPolicy.MULTIPLY, 1, DistancePolicy.LINEAR, CountPolicy.MULTIPLY),
     PREPARE_PORTAL(3_000, 600),
     ACTIVE_PORTAL(60_000, 1);
 
@@ -70,17 +71,18 @@ public enum SingleOperation implements IPeripheralOperation<SingleOperationConte
 
     @Override
     public void addToConfig(ForgeConfigSpec.Builder builder) {
-        cooldown = builder.defineInRange(settingsName() + "Cooldown", defaultCooldown, 100, Integer.MAX_VALUE);
+        cooldown = builder.defineInRange(settingsName() + "Cooldown", defaultCooldown, 1_000, Integer.MAX_VALUE);
         cost = builder.defineInRange(settingsName() + "Cost", defaultCost, 0, Integer.MAX_VALUE);
     }
 
     public enum DistancePolicy {
         IGNORED(d -> 1),
+        LINEAR(d -> d),
         SQRT(d -> (int) Math.sqrt(d));
 
-        private final UnaryOperator<Integer> factorFunction;
+        private final Function<Integer, Integer> factorFunction;
 
-        DistancePolicy(UnaryOperator<Integer> factorFunction) {
+        DistancePolicy(Function<Integer, Integer> factorFunction) {
             this.factorFunction = factorFunction;
         }
 
@@ -93,9 +95,9 @@ public enum SingleOperation implements IPeripheralOperation<SingleOperationConte
         IGNORED(c -> 1),
         MULTIPLY(c -> c);
 
-        private final UnaryOperator<Integer> factorFunction;
+        private final Function<Integer, Integer> factorFunction;
 
-        CountPolicy(UnaryOperator<Integer> factorFunction) {
+        CountPolicy(Function<Integer, Integer> factorFunction) {
             this.factorFunction = factorFunction;
         }
 

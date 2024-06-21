@@ -5,6 +5,7 @@ import de.srendi.advancedperipherals.lib.peripherals.BlockEntityIntegrationPerip
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.NotNull;
 import vazkii.botania.api.block_entity.GeneratingFlowerBlockEntity;
+import vazkii.botania.common.block.BotaniaBlocks;
 
 public class ManaFlowerIntegration extends BlockEntityIntegrationPeripheral<GeneratingFlowerBlockEntity> {
 
@@ -15,7 +16,7 @@ public class ManaFlowerIntegration extends BlockEntityIntegrationPeripheral<Gene
     @NotNull
     @Override
     public String getType() {
-        return "mana_flower";
+        return "manaFlower";
     }
 
     @LuaFunction(mainThread = true)
@@ -35,6 +36,14 @@ public class ManaFlowerIntegration extends BlockEntityIntegrationPeripheral<Gene
 
     @LuaFunction(mainThread = true)
     public final boolean isOnEnchantedSoil() {
-        return blockEntity.overgrowth;
+        return isOnSpecialSoil();
+    }
+
+    private boolean isOnSpecialSoil() {
+        if (blockEntity.isFloating()) {
+            return false;
+        } else {
+            return blockEntity.getLevel().getBlockState(blockEntity.getBlockPos().below()).is(BotaniaBlocks.enchantedSoil);
+        }
     }
 }
