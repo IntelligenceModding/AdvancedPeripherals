@@ -66,7 +66,7 @@ will close pull requests related to translations.
 [CurseForge]: https://www.curseforge.com/minecraft/mc-mods/advanced-peripherals
 [Actions]: https://github.com/Seniorendi/AdvancedPeripherals/actions
 [Crowdin]: https://crowdin.com/project/advanced-peripherals
-[Discord]: https://discord.com/invite/QuF3hWDtWC
+[Discord]: https://discord.intelligence-modding.de
 [Banner]: https://www.bisecthosting.com/images/CF/Advanced_Peripherals/BH_AP_Header.png 'Advanced Peripherals'
 
 [PeripheralsPlusOne]: https://github.com/rolandoislas/PeripheralsPlusOne

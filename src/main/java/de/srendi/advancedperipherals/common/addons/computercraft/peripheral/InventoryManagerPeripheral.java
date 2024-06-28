@@ -23,15 +23,15 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.PlayerArmorInvWrapper;
 import net.minecraftforge.items.wrapper.PlayerInvWrapper;
 import net.minecraftforge.items.wrapper.PlayerOffhandInvWrapper;
-import org.jetbrains.annotations.NotNull;
 
+import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 public class InventoryManagerPeripheral extends BasePeripheral<BlockEntityPeripheralOwner<InventoryManagerEntity>> {
 
-    public static final String PERIPHERAL_TYPE = "inventoryManager";
+    public static final String PERIPHERAL_TYPE = "inventory_manager";
 
     public InventoryManagerPeripheral(InventoryManagerEntity tileEntity) {
         super(PERIPHERAL_TYPE, new BlockEntityPeripheralOwner<>(tileEntity));
@@ -188,13 +188,18 @@ public class InventoryManagerPeripheral extends BasePeripheral<BlockEntityPeriph
     }
 
     @LuaFunction(mainThread = true)
+    public final int getHandSlot() throws LuaException {
+        return getOwnerPlayer().getInventory().selected;
+    }
+
+    @LuaFunction(mainThread = true)
     public final Map<String, Object> getItemInHand() throws LuaException {
-        return LuaConverter.stackToObject(getOwnerPlayer().getMainHandItem());
+        return LuaConverter.itemStackToObject(getOwnerPlayer().getMainHandItem(), getOwnerPlayer().getInventory().selected);
     }
 
     @LuaFunction(mainThread = true)
     public final Map<String, Object> getItemInOffHand() throws LuaException {
-        return LuaConverter.stackToObject(getOwnerPlayer().getOffhandItem());
+        return LuaConverter.itemStackToObject(getOwnerPlayer().getOffhandItem());
     }
 
     private Player getOwnerPlayer() throws LuaException {

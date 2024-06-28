@@ -38,6 +38,10 @@ public abstract class BaseBlockEntityBlock extends BaseBlock implements EntityBl
 
     @NotNull
     @Override
+    public abstract BlockEntity newBlockEntity(@NotNull BlockPos pos, @NotNull BlockState state);
+
+    @NotNull
+    @Override
     public InteractionResult use(@NotNull BlockState state, Level levelIn, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand handIn, @NotNull BlockHitResult hit) {
         if (levelIn.isClientSide) return InteractionResult.SUCCESS;
         BlockEntity tileEntity = levelIn.getBlockEntity(pos);
@@ -91,7 +95,8 @@ public abstract class BaseBlockEntityBlock extends BaseBlock implements EntityBl
         return menuProvider;
     }
 
-    public @NotNull RenderShape getRenderShape(@NotNull BlockState state) {
+    @NotNull
+    public RenderShape getRenderShape(@NotNull BlockState state) {
         return RenderShape.MODEL;
     }
 }

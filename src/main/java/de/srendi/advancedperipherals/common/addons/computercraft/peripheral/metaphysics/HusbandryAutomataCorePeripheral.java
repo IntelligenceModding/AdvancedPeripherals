@@ -14,7 +14,7 @@ import net.minecraft.world.entity.player.Player;
 import java.util.function.Predicate;
 
 public class HusbandryAutomataCorePeripheral extends WeakAutomataCorePeripheral {
-    public static final String TYPE = "husbandryAutomata";
+    public static final String TYPE = "husbandry_automata";
 
     private static final Predicate<Entity> isAnimal = entity1 -> entity1.getType().getCategory().isFriendly();
     private static final Predicate<Entity> isLivingEntity = LivingEntity.class::isInstance;

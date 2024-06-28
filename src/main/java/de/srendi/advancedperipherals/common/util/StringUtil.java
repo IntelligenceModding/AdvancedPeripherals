@@ -31,4 +31,11 @@ public class StringUtil {
     public static String convertAndToSectionMark(String str) {
         return str == null ? null : str.replaceAll("(?<!\\\\)&(?=[0-9a-z])", "\u00a7").replaceAll("\\\\&", "&");
     }
+
+    public static String removeFloatingPoints(String number) {
+        if (number.contains(".")) {
+            return number.substring(0, number.indexOf("."));
+        }
+        return number;
+    }
 }

@@ -36,7 +36,6 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.SleepingTimeCheckEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.server.ServerLifecycleHooks;
-
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -47,7 +46,7 @@ import static de.srendi.advancedperipherals.common.addons.computercraft.operatio
 
 public class EnvironmentDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
 
-    public static final String PERIPHERAL_TYPE = "environmentDetector";
+    public static final String PERIPHERAL_TYPE = "environment_detector";
     private static final List<Function<IPeripheralOwner, IPeripheralPlugin>> PERIPHERAL_PLUGINS = new LinkedList<>();
 
     protected EnvironmentDetectorPeripheral(IPeripheralOwner owner) {
@@ -174,13 +173,10 @@ public class EnvironmentDetectorPeripheral extends BasePeripheral<IPeripheralOwn
                 case 5 -> moon.put(5, "Waxing crescent");
                 case 6 -> moon.put(6, "First quarter");
                 case 7 -> moon.put(7, "Waxing gibbous");
-                default ->
-                    //should never happen
-                    moon.put(0, "What is a moon");
+                default -> moon.put(0, "What is a moon");
             }
         } else {
-            //Yay, easter egg
-            //Returns when the function is not used in the overworld
+            // aren't we in the overworld?
             moon.put(0, "Moon.exe not found...");
         }
         return moon;
@@ -211,9 +207,9 @@ public class EnvironmentDetectorPeripheral extends BasePeripheral<IPeripheralOwn
         }, context -> {
             BlockPos pos = owner.getPos();
             AABB box = new AABB(pos);
-            List<Map<Integer, Object>> entityUUIDs = new ArrayList<>();
-            getLevel().getEntities((Entity) null, box.inflate(radius), LivingEntity.class::isInstance)
-                    .forEach(entity -> entityUUIDs.add(LuaConverter.uuidToLua(entity.getUUID())));
+            List<Map<Integer, Object>> entityUUIDs = getLevel().getEntities((Entity) null, box.inflate(radius), LivingEntity.class::isInstance).stream()
+                    .map(entity -> LuaConverter.uuidToLua(entity.getUUID()))
+                    .toList();
             return MethodResult.of(entityUUIDs);
         }, null);
     }
@@ -234,10 +230,10 @@ public class EnvironmentDetectorPeripheral extends BasePeripheral<IPeripheralOwn
     @LuaFunction(mainThread = true)
     public final MethodResult canSleepPlayer(String playername) {
         Player player = ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayerByName(playername);
-        if(player == null)
+        if (player == null)
             return MethodResult.of(false, "player_not_online");
 
-        if(!player.level.dimensionType().bedWorks())
+        if (!player.level.dimensionType().bedWorks())
             return MethodResult.of(false, "not_allowed_in_dimension");
 
         SleepingTimeCheckEvent evt = new SleepingTimeCheckEvent(player, Optional.empty());

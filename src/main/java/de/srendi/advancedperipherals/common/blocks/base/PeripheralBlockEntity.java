@@ -2,12 +2,15 @@ package de.srendi.advancedperipherals.common.blocks.base;
 
 import dan200.computercraft.api.peripheral.IComputerAccess;
 import dan200.computercraft.api.peripheral.IPeripheral;
+import dan200.computercraft.core.computer.ComputerSide;
 import dan200.computercraft.shared.Capabilities;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
+import de.srendi.advancedperipherals.common.util.CoordUtil;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
 import de.srendi.advancedperipherals.lib.peripherals.IPeripheralTileEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.FrontAndTop;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -34,7 +37,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collections;
 
 public abstract class PeripheralBlockEntity<T extends BasePeripheral<?>> extends BaseContainerBlockEntity implements WorldlyContainer, MenuProvider, IPeripheralTileEntity {
-    // TODO: move inventory logic to another tile entity!
+
     private static final String PERIPHERAL_SETTINGS_KEY = "peripheralSettings";
     protected CompoundTag peripheralSettings;
     protected NonNullList<ItemStack> items;
@@ -44,7 +47,7 @@ public abstract class PeripheralBlockEntity<T extends BasePeripheral<?>> extends
     private LazyOptional<? extends IFluidHandler> fluidHandler;
     private LazyOptional<IPeripheral> peripheralCap;
 
-    public PeripheralBlockEntity(BlockEntityType<?> tileEntityTypeIn, BlockPos pos, BlockState state) {
+    protected PeripheralBlockEntity(BlockEntityType<?> tileEntityTypeIn, BlockPos pos, BlockState state) {
         super(tileEntityTypeIn, pos, state);
         if (this instanceof IInventoryBlock<?> inventoryBlock) {
             items = NonNullList.withSize(inventoryBlock.getInvSize(), ItemStack.EMPTY);
@@ -111,6 +114,11 @@ public abstract class PeripheralBlockEntity<T extends BasePeripheral<?>> extends
         if (peripheral == null) // just avoid some NPE in strange cases
             return Collections.emptyList();
         return peripheral.getConnectedComputers();
+    }
+
+    @Nullable
+    public T getPeripheral() {
+        return peripheral;
     }
 
     /*@Override
@@ -224,5 +232,9 @@ public abstract class PeripheralBlockEntity<T extends BasePeripheral<?>> extends
     public void markSettingsChanged() {
         setChanged();
     }
-}
 
+    public ComputerSide getComputerSide(Direction direction) {
+        FrontAndTop orientation = getBlockState().getValue(BaseBlock.ORIENTATION);
+        return CoordUtil.getComputerSide(orientation, direction);
+    }
+}

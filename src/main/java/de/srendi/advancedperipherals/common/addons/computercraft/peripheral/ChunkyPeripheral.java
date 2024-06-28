@@ -72,7 +72,7 @@ public class ChunkyPeripheral extends BasePeripheral<TurtlePeripheralOwner> {
     }
 
     @Override
-    public void attach(IComputerAccess computer) {
+    public void attach(@NotNull IComputerAccess computer) {
         super.attach(computer);
         ServerLevel level = (ServerLevel) owner.getLevel();
         ChunkManager manager = ChunkManager.get(Objects.requireNonNull(level));

@@ -17,12 +17,12 @@ import de.srendi.advancedperipherals.common.addons.computercraft.owner.TurtlePer
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralBlockEntity;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.events.Events;
+import de.srendi.advancedperipherals.common.network.APNetworking;
+import de.srendi.advancedperipherals.common.network.toclient.ToastToClientPacket;
 import de.srendi.advancedperipherals.common.util.CoordUtil;
 import de.srendi.advancedperipherals.common.util.StringUtil;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
 import de.srendi.advancedperipherals.lib.peripherals.IPeripheralFunction;
-import de.srendi.advancedperipherals.network.APNetworking;
-import de.srendi.advancedperipherals.network.toclient.ToastToClientPacket;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentContents;
@@ -49,7 +49,7 @@ import static de.srendi.advancedperipherals.common.addons.computercraft.operatio
 
 public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
 
-    public static final String PERIPHERAL_TYPE = "chatBox";
+    public static final String PERIPHERAL_TYPE = "chat_box";
 
     private long lastConsumedMessage;
 

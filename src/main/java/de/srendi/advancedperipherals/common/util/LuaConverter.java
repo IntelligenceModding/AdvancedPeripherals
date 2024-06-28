@@ -3,6 +3,7 @@ package de.srendi.advancedperipherals.common.util;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.shared.util.NBTUtil;
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.InventoryManagerPeripheral;
+import de.srendi.advancedperipherals.common.util.inventory.FluidUtil;
 import de.srendi.advancedperipherals.common.util.inventory.ItemUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Position;
@@ -12,16 +13,26 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.scores.Team;
 import net.minecraft.world.level.block.state.properties.Property;
-import org.jetbrains.annotations.NotNull;
+import net.minecraft.world.level.material.Fluid;
+import net.minecraftforge.common.IForgeShearable;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidType;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -37,50 +48,82 @@ public class LuaConverter {
         data.put("teamName", ObjectUtil.nullableValue(entity.getTeam(), Team::getName));
         data.put("inFluid", entity.isInFluidType());
         data.put("dimension", entity.getLevel().dimension().location().toString());
+        EntityType<?> type = entity.getType();
+        data.put("type", type.getDescriptionId());
+        data.put("category", type.getCategory());
+        data.put("canBurn", entity.fireImmune());
+        data.put("canFreeze", entity.canFreeze());
+        data.put("isGlowing", entity.isCurrentlyGlowing());
+        data.put("isUnderWater", entity.isUnderWater());
+        data.put("isInLava", entity.isInLava());
+        data.put("isInWall", entity.isInWall());
         return data;
     }
 
-    public static Map<String, Object> livingEntityToLua(LivingEntity livingEntity) {
-        Map<String, Object> data = entityToLua(livingEntity);
-        data.put("scale", livingEntity.getScale());
-        data.put("experienceReward", livingEntity.getExperienceReward());
-        data.put("noActionTime", livingEntity.getNoActionTime());
-        data.put("lastHurtMob", entityToLuaUUID(livingEntity.getLastHurtMob()));
-        data.put("lastHurtByMob", entityToLuaUUID(livingEntity.getLastHurtByMob()));
-        data.put("armorValue", livingEntity.getArmorValue());
-        data.put("lastDamageSource", ObjectUtil.nullableValue(livingEntity.getLastDamageSource(), LuaConverter::damageSourceToObject));
-        data.put("killCredit", entityToLuaUUID(livingEntity.getKillCredit()));
-        data.put("arrowCount", livingEntity.getArrowCount());
-        data.put("stingerCount", livingEntity.getStingerCount());
-        data.put("mobType", mobTypeToString(livingEntity.getMobType()));
-        data.put("yHeadRot", livingEntity.getYHeadRot());
-        data.put("fallFlyingTicks", livingEntity.getFallFlyingTicks());
-        data.put("baby", livingEntity.isBaby());
-        data.put("sensitiveToWater", livingEntity.isSensitiveToWater());
-        data.put("sleeping", livingEntity.isSleeping());
-        if (livingEntity.isUsingItem()) {
-            data.put("blocking", livingEntity.isBlocking());
+    public static Map<String, Object> livingEntityToLua(LivingEntity entity, boolean detailed) {
+        Map<String, Object> data = entityToLua(entity);
+        data.put("baby", entity.isBaby());
+        data.put("health", entity.getHealth());
+        data.put("maxHealth", entity.getMaxHealth());
+        data.put("scale", entity.getScale());
+        data.put("experienceReward", entity.getExperienceReward());
+        data.put("noActionTime", entity.getNoActionTime());
+        data.put("lastHurtMob", entityToLuaUUID(entity.getLastHurtMob()));
+        data.put("lastHurtByMob", entityToLuaUUID(entity.getLastHurtByMob()));
+        data.put("armorValue", entity.getArmorValue());
+        data.put("lastDamageSource", ObjectUtil.nullableValue(entity.getLastDamageSource(), LuaConverter::damageSourceToObject));
+        data.put("killCredit", entityToLuaUUID(entity.getKillCredit()));
+        data.put("arrowCount", entity.getArrowCount());
+        data.put("stingerCount", entity.getStingerCount());
+        data.put("mobType", mobTypeToString(entity.getMobType()));
+        data.put("yHeadRot", entity.getYHeadRot());
+        data.put("fallFlyingTicks", entity.getFallFlyingTicks());
+        data.put("sensitiveToWater", entity.isSensitiveToWater());
+        data.put("sleeping", entity.isSleeping());
+        if (entity.isUsingItem()) {
+            data.put("blocking", entity.isBlocking());
             Map<String, Object> useItemData = new HashMap<>();
-            useItemData.put("useItem", stackToObject(livingEntity.getUseItem()));
-            useItemData.put("usedItemHand", livingEntity.getUsedItemHand().name());
-            useItemData.put("useItemRemainingTicks", livingEntity.getUseItemRemainingTicks());
-            useItemData.put("ticksUsingItem", livingEntity.getTicksUsingItem());
+            useItemData.put("useItem", itemStackToObject(entity.getUseItem()));
+            useItemData.put("usedItemHand", entity.getUsedItemHand().name());
+            useItemData.put("useItemRemainingTicks", entity.getUseItemRemainingTicks());
+            useItemData.put("ticksUsingItem", entity.getTicksUsingItem());
             data.put("useItemData", useItemData);
+        }
+        if (detailed) {
+            Map<String, Object> effMap = new HashMap<>();
+            entity.getActiveEffectsMap().forEach((key, value) -> {
+                effMap.put(key.getDescriptionId(), effectToObject(value));
+            });
+            data.put("effects", effMap);
         }
         return data;
     }
 
-    public static Map<String, Object> playerToLua(Player player) {
-        Map<String, Object> data = livingEntityToLua(player);
+    public static Map<String, Object> playerToLua(Player player, boolean detailed) {
+        Map<String, Object> data = livingEntityToLua(player, detailed);
         data.put("secondaryUseActive", player.isSecondaryUseActive());
         data.put("hasContainerOpen", player.hasContainerOpen());
         data.put("xpNeededForNextLevel", player.getXpNeededForNextLevel());
         data.put("creative", player.isCreative());
+        data.put("score", player.getScore());
+        data.put("luck", player.getLuck());
+        Inventory inv = player.getInventory();
+        data.put("handSlot", inv.selected);
+        if (detailed) {
+            Map<Integer, Object> invMap = new HashMap<>();
+            for (int slot = 0; slot < inv.getContainerSize(); slot++) {
+                ItemStack item = inv.getItem(slot);
+                if (!item.isEmpty()) {
+                    invMap.put(slot, itemStackToObject(item));
+                }
+            }
+            data.put("inventory", invMap);
+        }
         return data;
     }
 
-    public static Map<String, Object> mobToLua(Mob mob) {
-        Map<String, Object> data = livingEntityToLua(mob);
+    public static Map<String, Object> mobToLua(Mob mob, boolean detailed) {
+        Map<String, Object> data = livingEntityToLua(mob, detailed);
         data.put("noAI", mob.isNoAi());
         data.put("leftHanded", mob.isLeftHanded());
         data.put("aggressive", mob.isAggressive());
@@ -90,34 +133,63 @@ public class LuaConverter {
         return data;
     }
 
-    public static Map<String, Object> ageableMobToLua(AgeableMob ageableMob) {
-        Map<String, Object> data = mobToLua(ageableMob);
+    public static Map<String, Object> ageableMobToLua(AgeableMob ageableMob, boolean detailed) {
+        Map<String, Object> data = mobToLua(ageableMob, detailed);
         data.put("canBreed", ageableMob.canBreed());
         data.put("baby", ageableMob.isBaby());
         return data;
     }
 
-    public static Map<String, Object> animalToLua(Animal animal) {
-        Map<String, Object> data = ageableMobToLua(animal);
+    public static Map<String, Object> animalToLua(Animal animal, ItemStack itemInHand, boolean detailed) {
+        Map<String, Object> data = ageableMobToLua(animal, detailed);
         data.put("canFallInLove", animal.canFallInLove());
         data.put("inLove", animal.isInLove());
+        data.put("shearable", animal instanceof IForgeShearable shearable
+                && !itemInHand.isEmpty()
+                && shearable.isShearable(itemInHand, animal.level, animal.blockPosition()));
         return data;
     }
 
     public static Map<String, Object> completeEntityToLua(Entity entity) {
-        if (entity instanceof Animal animal) return animalToLua(animal);
-        if (entity instanceof AgeableMob ageableMob) return ageableMobToLua(ageableMob);
-        if (entity instanceof Mob mob) return mobToLua(mob);
-        if (entity instanceof Player player) return playerToLua(player);
-        if (entity instanceof LivingEntity livingEntity) return livingEntityToLua(livingEntity);
+        return completeEntityToLua(entity, false);
+    }
+
+    public static Map<String, Object> completeEntityToLua(Entity entity, boolean detailed) {
+        return completeEntityToLua(entity, ItemStack.EMPTY, detailed);
+    }
+
+    public static Map<String, Object> completeEntityToLua(Entity entity, ItemStack itemInHand) {
+        return completeEntityToLua(entity, itemInHand, false);
+    }
+
+    public static Map<String, Object> completeEntityToLua(Entity entity, ItemStack itemInHand, boolean detailed) {
+        if (entity instanceof Animal animal) return animalToLua(animal, itemInHand, detailed);
+        if (entity instanceof AgeableMob ageableMob) return ageableMobToLua(ageableMob, detailed);
+        if (entity instanceof Mob mob) return mobToLua(mob, detailed);
+        if (entity instanceof Player player) return playerToLua(player, detailed);
+        if (entity instanceof LivingEntity livingEntity) return livingEntityToLua(livingEntity, detailed);
         return entityToLua(entity);
+    }
+
+    public static Map<String, Object> completeEntityWithRelativePositionToLua(Entity entity, BlockPos pos) {
+        return completeEntityWithRelativePositionToLua(entity, pos, false);
+    }
+
+    public static Map<String, Object> completeEntityWithRelativePositionToLua(Entity entity, BlockPos pos, boolean detailed) {
+        return completeEntityWithRelativePositionToLua(entity, ItemStack.EMPTY, pos, detailed);
+    }
+
+    public static Map<String, Object> completeEntityWithRelativePositionToLua(Entity entity, ItemStack itemInHand, BlockPos pos, boolean detailed) {
+        Map<String, Object> data = completeEntityToLua(entity, itemInHand, detailed);
+        data.put("relativePos", relativePositionToLua(entity, pos));
+        return data;
     }
 
     public static Map<String, Object> relativePositionToLua(Entity entity, BlockPos pos) {
         Map<String, Object> data = new HashMap<>();
-        data.put("relativeX", entity.getX() - pos.getX());
-        data.put("relativeY", entity.getY() - pos.getY());
-        data.put("relativeZ", entity.getZ() - pos.getZ());
+        data.put("x", entity.getX() - pos.getX());
+        data.put("y", entity.getY() - pos.getY());
+        data.put("z", entity.getZ() - pos.getZ());
         return data;
     }
 
@@ -148,8 +220,11 @@ public class LuaConverter {
         }
     }
 
+    @Nullable
     public static Map<String, Object> posToObject(BlockPos pos) {
-        if (pos == null) return null;
+        if (pos == null) {
+            return null;
+        }
 
         Map<String, Object> map = new HashMap<>(3);
         map.put("x", pos.getX());
@@ -158,8 +233,11 @@ public class LuaConverter {
         return map;
     }
 
-    public static Map<String, Object> stackToObject(@NotNull ItemStack stack) {
-        if (stack.isEmpty()) return new HashMap<>();
+    @Nullable
+    public static Map<String, Object> itemStackToObject(@NotNull ItemStack stack) {
+        if (stack.isEmpty()) {
+            return null;
+        }
         Map<String, Object> map = itemToObject(stack.getItem());
         CompoundTag nbt = stack.copy().getOrCreateTag();
         map.put("count", stack.getCount());
@@ -170,10 +248,24 @@ public class LuaConverter {
         return map;
     }
 
-    public static Map<String, Object> stackToObject(@NotNull ItemStack itemStack, int amount) {
+    public static Map<String, Object> itemStackToObject(@NotNull ItemStack itemStack, int amount) {
         ItemStack stack = itemStack.copy();
         stack.setCount(amount);
-        return stackToObject(stack);
+        return itemStackToObject(stack);
+    }
+
+    @Nullable
+    public static Map<String, Object> fluidStackToObject(@NotNull FluidStack stack) {
+        if (stack.isEmpty()) {
+            return null;
+        }
+        Map<String, Object> map = fluidToObject(stack.getFluid());
+        CompoundTag nbt = stack.copy().getOrCreateTag();
+        map.put("count", stack.getAmount());
+        map.put("displayName", stack.getDisplayName().getString());
+        map.put("nbt", NBTUtil.toLua(nbt));
+        map.put("fingerprint", FluidUtil.getFingerprint(stack));
+        return map;
     }
 
     /**
@@ -184,10 +276,13 @@ public class LuaConverter {
      * @return a Map containing proper item stack details
      * @see InventoryManagerPeripheral#getItems()
      */
+    @Nullable
     public static Map<String, Object> stackToObjectWithSlot(@NotNull ItemStack stack, int slot) {
-        if (stack.isEmpty()) return new HashMap<>();
-        Map<String, Object> map = stackToObject(stack);
-        map.put("slot", slot);
+        if (stack.isEmpty()) {
+            return null;
+        }
+        Map<String, Object> map = itemStackToObject(stack);
+        map.put("slot", slot + 1);
         return map;
     }
 
@@ -195,6 +290,18 @@ public class LuaConverter {
         Map<String, Object> map = new HashMap<>();
         map.put("tags", tagsToList(() -> item.builtInRegistryHolder().tags()));
         map.put("name", ItemUtil.getRegistryKey(item).toString());
+        return map;
+    }
+
+    public static Map<String, Object> fluidToObject(@NotNull Fluid fluid) {
+        Map<String, Object> map = new HashMap<>();
+        FluidType fluidType = fluid.getFluidType();
+        map.put("tags", tagsToList(() -> fluid.builtInRegistryHolder().tags()));
+        map.put("name", FluidUtil.getRegistryKey(fluid).toString());
+        map.put("density", fluidType.getDensity());
+        map.put("lightLevel", fluidType.getLightLevel());
+        map.put("temperature", fluidType.getTemperature());
+        map.put("viscosity", fluidType.getViscosity());
         return map;
     }
 
@@ -272,16 +379,26 @@ public class LuaConverter {
 
     // BlockPos tricks
     public static BlockPos convertToBlockPos(Map<?, ?> table) throws LuaException {
-        if (!table.containsKey("x") || !table.containsKey("y") || !table.containsKey("z"))
-            throw new LuaException("Table should be block position table");
-        if (!(table.get("x") instanceof Number x) || !(table.get("y") instanceof Number y) || !(table.get("z") instanceof Number z))
-            throw new LuaException("Table should be block position table");
+        if (!table.containsKey("x") || !table.containsKey("y") || !table.containsKey("z")) {
+            throw new LuaException("Table should contains key 'x', 'y' and 'z'");
+        }
+        if (!(table.get("x") instanceof Number x) || !(table.get("y") instanceof Number y) || !(table.get("z") instanceof Number z)) {
+            throw new LuaException("Position should be numbers");
+        }
         return new BlockPos(x.intValue(), y.intValue(), z.intValue());
     }
 
     public static BlockPos convertToBlockPos(BlockPos center, Map<?, ?> table) throws LuaException {
         BlockPos relative = convertToBlockPos(table);
         return new BlockPos(center.getX() + relative.getX(), center.getY() + relative.getY(), center.getZ() + relative.getZ());
+    }
+
+    public static Object effectToObject(MobEffectInstance effect) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("name", effect.getDescriptionId());
+        map.put("duration", effect.getDuration());
+        map.put("amplifier", effect.getAmplifier());
+        return map;
     }
 
     private static Map<Integer, Object> entityToLuaUUID(Entity entity) {

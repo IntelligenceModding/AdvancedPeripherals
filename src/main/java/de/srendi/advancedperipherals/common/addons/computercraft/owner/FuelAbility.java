@@ -14,7 +14,7 @@ public abstract class FuelAbility<T extends IPeripheralOwner> implements IOwnerA
 
     protected @NotNull T owner;
 
-    public FuelAbility(@NotNull T owner) {
+    protected FuelAbility(@NotNull T owner) {
         this.owner = owner;
     }
 

@@ -6,6 +6,7 @@ import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.lua.MethodResult;
 import dan200.computercraft.core.apis.TableHelper;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.TurtlePeripheralOwner;
+import de.srendi.advancedperipherals.common.util.LuaConverter;
 import de.srendi.advancedperipherals.common.util.fakeplayer.APFakePlayer;
 import de.srendi.advancedperipherals.lib.peripherals.AutomataCorePeripheral;
 import de.srendi.advancedperipherals.lib.peripherals.IPeripheralOperation;
@@ -25,7 +26,6 @@ import java.util.Map;
 import java.util.function.Predicate;
 
 import static de.srendi.advancedperipherals.common.addons.computercraft.operations.SingleOperation.CAPTURE_ANIMAL;
-import static de.srendi.advancedperipherals.common.addons.computercraft.peripheral.plugins.AutomataEntityHandPlugin.shearableEntityDataToLua;
 
 public class AutomataEntityTransferPlugin extends AutomataCorePlugin {
 
@@ -120,8 +120,12 @@ public class AutomataEntityTransferPlugin extends AutomataCorePlugin {
     }
 
     @LuaFunction(mainThread = true)
-    public final MethodResult getCapturedAnimal() {
+    public final MethodResult getCapturedAnimal(IArguments args) throws LuaException {
+        boolean detailed = args.count() > 0 ? args.getBoolean(0) : false;
         Entity extractedEntity = extractEntity();
-        return MethodResult.of(shearableEntityDataToLua(extractedEntity, automataCore.getPeripheralOwner()));
+        if (extractedEntity == null) {
+            return MethodResult.of(null, "No entity is stored");
+        }
+        return MethodResult.of(LuaConverter.completeEntityToLua(extractedEntity, automataCore.getPeripheralOwner().getToolInMainHand(), detailed));
     }
 }
