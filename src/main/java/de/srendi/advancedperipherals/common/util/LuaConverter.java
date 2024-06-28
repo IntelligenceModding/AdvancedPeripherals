@@ -46,6 +46,7 @@ public class LuaConverter {
         data.put("experienceReward", livingEntity.getExperienceReward());
         data.put("noActionTime", livingEntity.getNoActionTime());
         data.put("lastHurtMob", entityToLuaUUID(livingEntity.getLastHurtMob()));
+        data.put("lastHurtByMob", entityToLuaUUID(livingEntity.getLastHurtByMob()));
         data.put("armorValue", livingEntity.getArmorValue());
         data.put("lastDamageSource", ObjectUtil.nullableValue(livingEntity.getLastDamageSource(), LuaConverter::damageSourceToObject));
         data.put("killCredit", entityToLuaUUID(livingEntity.getKillCredit()));
