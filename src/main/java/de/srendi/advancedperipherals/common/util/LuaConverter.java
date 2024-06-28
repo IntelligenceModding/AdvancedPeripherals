@@ -7,7 +7,6 @@ import de.srendi.advancedperipherals.common.util.inventory.FluidUtil;
 import de.srendi.advancedperipherals.common.util.inventory.ItemUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Position;
-import net.minecraft.core.UUIDUtil;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.StringRepresentable;
@@ -37,7 +36,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
