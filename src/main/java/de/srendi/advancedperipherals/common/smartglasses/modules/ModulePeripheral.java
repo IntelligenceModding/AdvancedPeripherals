@@ -14,7 +14,7 @@ public class ModulePeripheral extends BasePeripheral<ModulePeripheralOwner> {
     }
 
     public void updateModules() {
-        // We need to set the initialisation to false to the dynamic peripheral re-builds the plugins
+        // We need to set the initialisation to false so the dynamic peripheral re-builds the plugins
         initialized = false;
         if (plugins != null)
             plugins.clear();
