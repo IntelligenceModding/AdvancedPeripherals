@@ -10,23 +10,6 @@ import java.util.UUID;
 
 public class EntityUtil {
     /**
-     * A version of {@link EntityUtil#getEntityFromUUID} designed to be called from a
-     * {@link dan200.computercraft.api.lua.LuaFunction LuaFunction}.
-     * @param uuidList list containing 4 integers that together make a {@code UUID}
-     * @return an {@code Entity} that has the given {@code UUID} if one is found
-     * @throws LuaException throws if {@code uuidList} is incorrectly formatted or no {@code Entity} exists with the
-     * given {@code UUID}
-     */
-    public static Entity getEntityFromUUIDLua(Map<?, ?> uuidList) throws LuaException {
-        try {
-            UUID uuid = LuaConverter.luaToUUID(uuidList);
-            return getEntityFromUUID(uuid);
-        } catch (IllegalArgumentException e) {
-            throw new LuaException(e.getMessage());
-        }
-    }
-
-    /**
      * Searches all levels for an {@link Entity} with the given {@link UUID}.
      * @param uuid the unique identifier of the {@code Entity}
      * @return an {@code Entity} that has the given {@code UUID} if one is found

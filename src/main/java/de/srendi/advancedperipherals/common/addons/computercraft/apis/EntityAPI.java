@@ -8,6 +8,7 @@ import de.srendi.advancedperipherals.common.util.LuaConverter;
 import net.minecraft.world.entity.Entity;
 
 import java.util.Map;
+import java.util.UUID;
 
 public class EntityAPI {
 
@@ -17,13 +18,13 @@ public class EntityAPI {
     public final Object getNBT(IArguments arguments) throws LuaException {
         if (!APConfig.API_CONFIG.enableGetNBT.get())
             throw new LuaException("This function is disabled in the config. Activate it or ask an admin if they can activate it.");
-        Entity entity = EntityUtil.getEntityFromUUIDLua(arguments.getTable(0));
+        Entity entity = EntityUtil.getEntityFromUUID(UUID.fromString(arguments.getString(0)));
         return NBTUtil.toLua(entity.serializeNBT());
     }
 
     @LuaFunction(mainThread = true)
     public final Object getName(IArguments arguments) throws LuaException {
-        Entity entity = EntityUtil.getEntityFromUUIDLua(arguments.getTable(0));
+        Entity entity = EntityUtil.getEntityFromUUID(UUID.fromString(arguments.getString(0)));
         return entity.getName().getString();
     }
 
@@ -31,7 +32,7 @@ public class EntityAPI {
     public final Map<String, Object> getBoundingBox(IArguments arguments) throws LuaException {
         if (!APConfig.API_CONFIG.enableGetBoundingBox.get())
             throw new LuaException("This function is disabled in the config. Activate it or ask an admin if they can activate it.");
-        Entity entity = EntityUtil.getEntityFromUUIDLua(arguments.getTable(0));
+        Entity entity = EntityUtil.getEntityFromUUID(UUID.fromString(arguments.getString(0)));
         return LuaConverter.aabbToObject(entity.getBoundingBox());
     }
 
@@ -39,7 +40,7 @@ public class EntityAPI {
     public final Map<String, Object> getPos(IArguments arguments) throws LuaException {
         if (!APConfig.API_CONFIG.enableGetPos.get())
             throw new LuaException("This function is disabled in the config. Activate it or ask an admin if they can activate it.");
-        Entity entity = EntityUtil.getEntityFromUUIDLua(arguments.getTable(0));
+        Entity entity = EntityUtil.getEntityFromUUID(UUID.fromString(arguments.getString(0)));
         return LuaConverter.vec3ToLua(entity.getPosition(1));
     }
 
@@ -52,7 +53,7 @@ public class EntityAPI {
     public final Map<String, Object> getData(IArguments arguments) throws LuaException {
         if (!APConfig.API_CONFIG.enableGetData.get())
             throw new LuaException("This function is disabled in the config. Activate it or ask an admin if they can activate it.");
-        Entity entity = EntityUtil.getEntityFromUUIDLua(arguments.getTable(0));
+        Entity entity = EntityUtil.getEntityFromUUID(UUID.fromString(arguments.getString(0)));
         return LuaConverter.completeEntityToLua(entity);
     }
 
@@ -63,7 +64,7 @@ public class EntityAPI {
     public final Object getPersistentData(IArguments arguments) throws LuaException {
         if (!APConfig.API_CONFIG.enableGetPersistentData.get())
             throw new LuaException("This function is disabled in the config. Activate it or ask an admin if they can activate it.");
-        Entity entity = EntityUtil.getEntityFromUUIDLua(arguments.getTable(0));
+        Entity entity = EntityUtil.getEntityFromUUID(UUID.fromString(arguments.getString(0)));
         return NBTUtil.toLua(entity.getPersistentData());
     }
 }

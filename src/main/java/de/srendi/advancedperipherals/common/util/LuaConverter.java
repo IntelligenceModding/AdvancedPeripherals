@@ -74,9 +74,9 @@ public class LuaConverter {
         data.put("sensitiveToWater", entity.isSensitiveToWater());
         if (detailed) {
             data.put("noActionTime", entity.getNoActionTime());
-            data.put("lastHurtMob", entityToLuaUUID(entity.getLastHurtMob()));
-            data.put("lastHurtByMob", entityToLuaUUID(entity.getLastHurtByMob()));
-            data.put("killCredit", entityToLuaUUID(entity.getKillCredit()));
+            data.put("lastHurtMob", entityToUUIDString(entity.getLastHurtMob()));
+            data.put("lastHurtByMob", entityToUUIDString(entity.getLastHurtByMob()));
+            data.put("killCredit", entityToUUIDString(entity.getKillCredit()));
             data.put("lastDamageSource", ObjectUtil.nullableValue(entity.getLastDamageSource(), LuaConverter::damageSourceToObject));
             data.put("arrowCount", entity.getArrowCount());
             data.put("stingerCount", entity.getStingerCount());
@@ -129,8 +129,8 @@ public class LuaConverter {
         data.put("noAI", mob.isNoAi());
         data.put("leftHanded", mob.isLeftHanded());
         data.put("aggressive", mob.isAggressive());
-        data.put("target", entityToLuaUUID(mob.getTarget()));
-        data.put("leashHolder", entityToLuaUUID(mob.getLeashHolder()));
+        data.put("target", entityToUUIDString(mob.getTarget()));
+        data.put("leashHolder", entityToUUIDString(mob.getLeashHolder()));
         data.put("spawnType", ObjectUtil.nullableValue(mob.getSpawnType(), Enum::name));
         return data;
     }
@@ -318,8 +318,8 @@ public class LuaConverter {
     public static Map<String, Object> damageSourceToObject(@NotNull DamageSource damageSource) {
         Map<String, Object> map = new HashMap<>();
         map.put("msgId", damageSource.getMsgId());
-        map.put("entity", entityToLuaUUID(damageSource.getEntity()));
-        map.put("directEntity", entityToLuaUUID(damageSource.getDirectEntity()));
+        map.put("entity", entityToUUIDString(damageSource.getEntity()));
+        map.put("directEntity", entityToUUIDString(damageSource.getDirectEntity()));
         map.put("foodExhaustion", damageSource.getFoodExhaustion());
         map.put("sourcePosition", ObjectUtil.nullableValue(damageSource.getSourcePosition(), LuaConverter::positionToObject));
         return map;
@@ -349,25 +349,6 @@ public class LuaConverter {
         map.put("maxY", aabb.maxY);
         map.put("maxZ", aabb.maxZ);
         return map;
-    }
-
-    public static Map<Integer, Object> uuidToLua(UUID uuid) {
-        int[] ints = UUIDUtil.uuidToIntArray(uuid);
-        Map<Integer, Object> data = new HashMap<>();
-        for (int i = 0; i < ints.length; i++) {
-            data.put(i + 1, ints[i]);
-        }
-        return data;
-    }
-
-    public static UUID luaToUUID(Map<?, ?> uuidList) {
-        int msb1 = (int) (double) uuidList.get(1.);
-        int msb2 = (int) (double) uuidList.get(2.);
-        int lsb1 = (int) (double) uuidList.get(3.);
-        int lsb2 = (int) (double) uuidList.get(4.);
-        long msb = (((long) msb1) << 32) | (msb2 & 0xffffffffL);
-        long lsb = (((long) lsb1) << 32) | (lsb2 & 0xffffffffL);
-        return new UUID(msb, lsb);
     }
 
     public static <T> List<String> tagsToList(@NotNull Supplier<Stream<TagKey<T>>> tags) {
@@ -403,7 +384,8 @@ public class LuaConverter {
         return map;
     }
 
-    private static Map<Integer, Object> entityToLuaUUID(Entity entity) {
-        return ObjectUtil.nullableValue(entity, e -> LuaConverter.uuidToLua(e.getUUID()));
+    @Nullable
+    private static String entityToUUIDString(@Nullable Entity entity) {
+        return ObjectUtil.nullableValue(entity, e -> e.getUUID().toString());
     }
 }

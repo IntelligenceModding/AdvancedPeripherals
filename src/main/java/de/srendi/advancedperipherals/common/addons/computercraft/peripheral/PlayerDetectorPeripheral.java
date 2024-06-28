@@ -272,7 +272,7 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
     }
 
     @LuaFunction(mainThread = true)
-    public final Map<Integer, Object> getPlayerUUID(String username) throws LuaException {
+    public final String getPlayerUUID(String username) throws LuaException {
         if (!APConfig.PERIPHERALS_CONFIG.enablePlayerUUIDFunction.get())
             throw new LuaException("This function is disabled in the config. Activate it or ask an admin if they can activate it.");
         ResourceKey<Level> dimension = getLevel().dimension();
@@ -281,9 +281,9 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
             if (!isAllowedMultiDimensional() && player.getLevel().dimension() != dimension)
                 continue;
             if(player.getName().getString().equals(username))
-                return LuaConverter.uuidToLua(player.getUUID());
+                return player.getUUID().toString();
         }
-        return Collections.emptyMap();
+        return null;
     }
 
     private List<ServerPlayer> getPlayers() {
