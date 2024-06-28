@@ -13,9 +13,10 @@ public class ObjectUtil {
      * @param modifier  function to apply to {@code value} if {@code value} isn't null
      * @param onNotNull runnable to be run if {@code value} isn't null
      * @param <T>       nullable value type
+     * @param <U>       returned type after modification of value
      * @return {@code value} with {@code modifier} applied to it if {@code value} isn't null, null otherwise
      */
-    public static <T> Object nullableValue(T value, @NotNull Function<T, Object> modifier, @NotNull Runnable onNotNull) {
+    public static <T, U> U nullableValue(T value, @NotNull Function<T, U> modifier, @NotNull Runnable onNotNull) {
         if (value != null) {
             onNotNull.run();
             return modifier.apply(value);
@@ -51,9 +52,10 @@ public class ObjectUtil {
      * @param value    nullable object to attempt to use
      * @param modifier function to apply to {@code value} if {@code value} isn't null
      * @param <T>      nullable value type
+     * @param <U>      returned type after modification of value
      * @return {@code value} with {@code modifier} applied to it if {@code value} isn't null, null otherwise
      */
-    public static <T> Object nullableValue(T value, @NotNull Function<T, Object> modifier) {
+    public static <T, U> U nullableValue(T value, @NotNull Function<T, U> modifier) {
         if (value != null) {
             return modifier.apply(value);
         }
