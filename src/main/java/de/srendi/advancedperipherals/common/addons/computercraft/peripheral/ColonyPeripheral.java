@@ -126,7 +126,7 @@ public class ColonyPeripheral extends BasePeripheral<IPeripheralOwner> {
     public final Object getLocation() throws LuaException {
         IColony colony = getColony();
 
-        return LuaConverter.blockPosToLua(colony.getCenter());
+        return LuaConverter.posToObject(colony.getCenter());
     }
 
     @LuaFunction(mainThread = true)
