@@ -6,6 +6,7 @@ import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.util.EntityUtil;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
 
 import java.util.Map;
 import java.util.UUID;
@@ -19,6 +20,8 @@ public class EntityAPI {
         if (!APConfig.API_CONFIG.enableGetNBT.get())
             throw new LuaException("This function is disabled in the config. Activate it or ask an admin if they can activate it.");
         Entity entity = EntityUtil.getEntityFromUUID(UUID.fromString(arguments.getString(0)));
+        if (!APConfig.API_CONFIG.enablePlayerAccess.get() && entity instanceof Player)
+            throw new LuaException("Using players in EntityAPI is disabled in the config. Activate it or ask an admin if they can activate it.");
         return NBTUtil.toLua(entity.serializeNBT());
     }
 
@@ -33,6 +36,8 @@ public class EntityAPI {
         if (!APConfig.API_CONFIG.enableGetBoundingBox.get())
             throw new LuaException("This function is disabled in the config. Activate it or ask an admin if they can activate it.");
         Entity entity = EntityUtil.getEntityFromUUID(UUID.fromString(arguments.getString(0)));
+        if (!APConfig.API_CONFIG.enablePlayerAccess.get() && entity instanceof Player)
+            throw new LuaException("Using players in EntityAPI is disabled in the config. Activate it or ask an admin if they can activate it.");
         return LuaConverter.aabbToObject(entity.getBoundingBox());
     }
 
@@ -41,6 +46,8 @@ public class EntityAPI {
         if (!APConfig.API_CONFIG.enableGetPos.get())
             throw new LuaException("This function is disabled in the config. Activate it or ask an admin if they can activate it.");
         Entity entity = EntityUtil.getEntityFromUUID(UUID.fromString(arguments.getString(0)));
+        if (!APConfig.API_CONFIG.enablePlayerAccess.get() && entity instanceof Player)
+            throw new LuaException("Using players in EntityAPI is disabled in the config. Activate it or ask an admin if they can activate it.");
         return LuaConverter.vec3ToLua(entity.getPosition(1));
     }
 
@@ -54,6 +61,8 @@ public class EntityAPI {
         if (!APConfig.API_CONFIG.enableGetData.get())
             throw new LuaException("This function is disabled in the config. Activate it or ask an admin if they can activate it.");
         Entity entity = EntityUtil.getEntityFromUUID(UUID.fromString(arguments.getString(0)));
+        if (!APConfig.API_CONFIG.enablePlayerAccess.get() && entity instanceof Player)
+            throw new LuaException("Using players in EntityAPI is disabled in the config. Activate it or ask an admin if they can activate it.");
         return LuaConverter.completeEntityToLua(entity);
     }
 
@@ -65,6 +74,8 @@ public class EntityAPI {
         if (!APConfig.API_CONFIG.enableGetPersistentData.get())
             throw new LuaException("This function is disabled in the config. Activate it or ask an admin if they can activate it.");
         Entity entity = EntityUtil.getEntityFromUUID(UUID.fromString(arguments.getString(0)));
+        if (!APConfig.API_CONFIG.enablePlayerAccess.get() && entity instanceof Player)
+            throw new LuaException("Using players in EntityAPI is disabled in the config. Activate it or ask an admin if they can activate it.");
         return NBTUtil.toLua(entity.getPersistentData());
     }
 }

@@ -11,6 +11,7 @@ public class APIConfig implements IAPConfig {
     public final ForgeConfigSpec.BooleanValue enableGetPos;
     public final ForgeConfigSpec.BooleanValue enableGetData;
     public final ForgeConfigSpec.BooleanValue enableGetPersistentData;
+    public final ForgeConfigSpec.BooleanValue enablePlayerAccess;
     private final ForgeConfigSpec configSpec;
 
     public APIConfig() {
@@ -26,6 +27,7 @@ public class APIConfig implements IAPConfig {
         enableGetPos = builder.comment("Activates the \"getPos\" function of the entity API").define("enableGetPos", true);
         enableGetData = builder.comment("Activates the \"getData\" function of the entity API").define("enableGetData", true);
         enableGetPersistentData = builder.comment("Activates the \"getPersistentData\" function of the entity API").define("enableGetPersistentData", true);
+        enablePlayerAccess = builder.comment("Allows player entities to be used with the EntityAPI.").define("enablePlayerAccess", true);
 
         builder.pop();
 
