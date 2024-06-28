@@ -35,6 +35,8 @@ public class SmartGlassesComputer extends ServerComputer implements IPocketAcces
     private final SmartGlassesAccess smartGlassesAccess = new SmartGlassesAccess(this);
     @Nullable
     private SmartGlassesItemHandler itemHandler = null;
+    @NotNull
+    private final ModulePeripheral peripheral;
 
     private int lightColour = -1;
     private boolean lightChanged = false;
@@ -46,7 +48,8 @@ public class SmartGlassesComputer extends ServerComputer implements IPocketAcces
     public SmartGlassesComputer(ServerLevel world, int computerID, @Nullable String label, ComputerFamily family) {
         super(world, computerID, label, family, 39, 13);
         this.addAPI(new SmartGlassesAPI());
-        this.setPeripheral(ComputerSide.BACK, new ModulePeripheral(this));
+        peripheral = new ModulePeripheral(this);
+        this.setPeripheral(ComputerSide.BACK, peripheral);
     }
 
     @Nullable
@@ -172,6 +175,9 @@ public class SmartGlassesComputer extends ServerComputer implements IPocketAcces
                     continue;
                 }
                 modules.put(slot, newModule);
+                peripheral.updateModules();
+                setPeripheral(ComputerSide.BACK, null);
+                setPeripheral(ComputerSide.BACK, peripheral);
             } else if (oldModule != null) {
                 oldModule.onUnequipped(smartGlassesAccess);
                 modules.remove(slot);

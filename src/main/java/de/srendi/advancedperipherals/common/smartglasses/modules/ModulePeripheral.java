@@ -10,11 +10,19 @@ public class ModulePeripheral extends BasePeripheral<ModulePeripheralOwner> {
 
     public ModulePeripheral(SmartGlassesComputer computer) {
         super(PERIPHERAL_TYPE, new ModulePeripheralOwner(computer));
+
+    }
+
+    public void updateModules() {
+        // We need to set the initialisation to false to the dynamic peripheral re-builds the plugins
+        initialized = false;
+        if (plugins != null)
+            plugins.clear();
+
         getPeripheralOwner().getComputer().getModules().values().forEach(module -> {
-            IModuleFunctions functions = module.getFunctions(computer.getSmartGlassesAccess());
-            if (functions != null) {
+            IModuleFunctions functions = module.getFunctions(getPeripheralOwner().getComputer().getSmartGlassesAccess());
+            if (functions != null)
                 addPlugin(functions);
-            }
         });
     }
 
