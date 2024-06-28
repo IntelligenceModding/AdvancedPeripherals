@@ -63,7 +63,7 @@ public class LuaConverter {
     }
 
     public static Map<String, Object> livingEntityToLua(LivingEntity entity, boolean detailed) {
-        Map<String, Object> data = entityToLua(entity);
+        Map<String, Object> data = entityToLua(entity, detailed);
         data.put("baby", entity.isBaby());
         data.put("health", entity.getHealth());
         data.put("maxHealth", entity.getMaxHealth());
@@ -170,7 +170,7 @@ public class LuaConverter {
         if (entity instanceof Mob mob) return mobToLua(mob, detailed);
         if (entity instanceof Player player) return playerToLua(player, detailed);
         if (entity instanceof LivingEntity livingEntity) return livingEntityToLua(livingEntity, detailed);
-        return entityToLua(entity);
+        return entityToLua(entity, detailed);
     }
 
     public static Map<String, Object> completeEntityWithRelativePositionToLua(Entity entity, BlockPos pos) {
