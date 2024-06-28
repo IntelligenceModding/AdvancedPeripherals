@@ -142,13 +142,15 @@ public class LuaConverter {
         return data;
     }
 
-    public static Map<String, Object> animalToLua(Animal animal, ItemStack itemInHand, boolean detailed) {
+    public static Map<String, Object> animalToLua(Animal animal, @Nullable ItemStack itemInHand, boolean detailed) {
         Map<String, Object> data = ageableMobToLua(animal, detailed);
         data.put("canFallInLove", animal.canFallInLove());
         data.put("inLove", animal.isInLove());
-        data.put("shearable", animal instanceof IForgeShearable shearable
-                && !itemInHand.isEmpty()
-                && shearable.isShearable(itemInHand, animal.level, animal.blockPosition()));
+        if (itemInHand != null) {
+            data.put("shearable", animal instanceof IForgeShearable shearable
+                    && !itemInHand.isEmpty()
+                    && shearable.isShearable(itemInHand, animal.level, animal.blockPosition()));
+        }
         return data;
     }
 
@@ -157,7 +159,7 @@ public class LuaConverter {
     }
 
     public static Map<String, Object> completeEntityToLua(Entity entity, boolean detailed) {
-        return completeEntityToLua(entity, ItemStack.EMPTY, detailed);
+        return completeEntityToLua(entity, null, detailed);
     }
 
     public static Map<String, Object> completeEntityToLua(Entity entity, ItemStack itemInHand) {
@@ -178,7 +180,7 @@ public class LuaConverter {
     }
 
     public static Map<String, Object> completeEntityWithRelativePositionToLua(Entity entity, BlockPos pos, boolean detailed) {
-        return completeEntityWithRelativePositionToLua(entity, ItemStack.EMPTY, pos, detailed);
+        return completeEntityWithRelativePositionToLua(entity, null, pos, detailed);
     }
 
     public static Map<String, Object> completeEntityWithRelativePositionToLua(Entity entity, ItemStack itemInHand, BlockPos pos, boolean detailed) {
