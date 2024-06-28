@@ -67,29 +67,29 @@ public class LuaConverter {
         data.put("maxHealth", entity.getMaxHealth());
         data.put("scale", entity.getScale());
         data.put("experienceReward", entity.getExperienceReward());
-        data.put("noActionTime", entity.getNoActionTime());
-        data.put("lastHurtMob", entityToLuaUUID(entity.getLastHurtMob()));
-        data.put("lastHurtByMob", entityToLuaUUID(entity.getLastHurtByMob()));
         data.put("armorValue", entity.getArmorValue());
-        data.put("lastDamageSource", ObjectUtil.nullableValue(entity.getLastDamageSource(), LuaConverter::damageSourceToObject));
-        data.put("killCredit", entityToLuaUUID(entity.getKillCredit()));
-        data.put("arrowCount", entity.getArrowCount());
-        data.put("stingerCount", entity.getStingerCount());
         data.put("mobType", mobTypeToString(entity.getMobType()));
-        data.put("yHeadRot", entity.getYHeadRot());
-        data.put("fallFlyingTicks", entity.getFallFlyingTicks());
         data.put("sensitiveToWater", entity.isSensitiveToWater());
-        data.put("sleeping", entity.isSleeping());
-        if (entity.isUsingItem()) {
-            data.put("blocking", entity.isBlocking());
-            Map<String, Object> useItemData = new HashMap<>();
-            useItemData.put("useItem", itemStackToObject(entity.getUseItem()));
-            useItemData.put("usedItemHand", entity.getUsedItemHand().name());
-            useItemData.put("useItemRemainingTicks", entity.getUseItemRemainingTicks());
-            useItemData.put("ticksUsingItem", entity.getTicksUsingItem());
-            data.put("useItemData", useItemData);
-        }
         if (detailed) {
+            data.put("noActionTime", entity.getNoActionTime());
+            data.put("lastHurtMob", entityToLuaUUID(entity.getLastHurtMob()));
+            data.put("lastHurtByMob", entityToLuaUUID(entity.getLastHurtByMob()));
+            data.put("killCredit", entityToLuaUUID(entity.getKillCredit()));
+            data.put("lastDamageSource", ObjectUtil.nullableValue(entity.getLastDamageSource(), LuaConverter::damageSourceToObject));
+            data.put("arrowCount", entity.getArrowCount());
+            data.put("stingerCount", entity.getStingerCount());
+            data.put("yHeadRot", entity.getYHeadRot());
+            data.put("fallFlyingTicks", entity.getFallFlyingTicks());
+            data.put("sleeping", entity.isSleeping());
+            if (entity.isUsingItem()) {
+                data.put("blocking", entity.isBlocking());
+                Map<String, Object> useItemData = new HashMap<>();
+                useItemData.put("useItem", itemStackToObject(entity.getUseItem()));
+                useItemData.put("usedItemHand", entity.getUsedItemHand().name());
+                useItemData.put("useItemRemainingTicks", entity.getUseItemRemainingTicks());
+                useItemData.put("ticksUsingItem", entity.getTicksUsingItem());
+                data.put("useItemData", useItemData);
+            }
             Map<String, Object> effMap = new HashMap<>();
             entity.getActiveEffectsMap().forEach((key, value) -> {
                 effMap.put(key.getDescriptionId(), effectToObject(value));
