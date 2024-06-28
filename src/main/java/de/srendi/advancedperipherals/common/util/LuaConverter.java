@@ -43,20 +43,22 @@ import java.util.stream.Stream;
 
 public class LuaConverter {
 
-    public static Map<String, Object> entityToLua(Entity entity) {
+    public static Map<String, Object> entityToLua(Entity entity, boolean detailed) {
         Map<String, Object> data = new HashMap<>();
-        data.put("teamName", ObjectUtil.nullableValue(entity.getTeam(), Team::getName));
-        data.put("inFluid", entity.isInFluidType());
-        data.put("dimension", entity.getLevel().dimension().location().toString());
         EntityType<?> type = entity.getType();
         data.put("type", type.getDescriptionId());
         data.put("category", type.getCategory());
         data.put("canBurn", entity.fireImmune());
         data.put("canFreeze", entity.canFreeze());
-        data.put("isGlowing", entity.isCurrentlyGlowing());
-        data.put("isUnderWater", entity.isUnderWater());
-        data.put("isInLava", entity.isInLava());
-        data.put("isInWall", entity.isInWall());
+        if (detailed) {
+            data.put("teamName", ObjectUtil.nullableValue(entity.getTeam(), Team::getName));
+            data.put("inFluid", entity.isInFluidType());
+            data.put("dimension", entity.getLevel().dimension().location().toString());
+            data.put("isGlowing", entity.isCurrentlyGlowing());
+            data.put("isUnderWater", entity.isUnderWater());
+            data.put("isInLava", entity.isInLava());
+            data.put("isInWall", entity.isInWall());
+        }
         return data;
     }
 
