@@ -1,11 +1,9 @@
 package de.srendi.advancedperipherals.common.setup;
 
-import dan200.computercraft.api.ComputerCraftAPI;
 import dan200.computercraft.api.ForgeComputerCraftAPI;
 import dan200.computercraft.api.pocket.PocketUpgradeSerialiser;
 import dan200.computercraft.api.turtle.TurtleUpgradeSerialiser;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
-import de.srendi.advancedperipherals.common.addons.computercraft.apis.EntityAPI;
 import de.srendi.advancedperipherals.common.addons.computercraft.integrations.IntegrationPeripheralProvider;
 import de.srendi.advancedperipherals.common.addons.computercraft.pocket.PocketChatBoxUpgrade;
 import de.srendi.advancedperipherals.common.addons.computercraft.pocket.PocketColonyIntegratorUpgrade;
@@ -56,7 +54,6 @@ public class CCRegistration {
         IntegrationPeripheralProvider.load();
         integrationPeripheralProvider = new IntegrationPeripheralProvider();
         ForgeComputerCraftAPI.registerPeripheralProvider(integrationPeripheralProvider);
-        ComputerCraftAPI.registerAPIFactory(EntityAPI::create);
     }
 
     public static class ID {

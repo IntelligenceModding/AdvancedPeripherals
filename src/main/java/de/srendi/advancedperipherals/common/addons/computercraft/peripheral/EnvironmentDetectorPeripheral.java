@@ -8,6 +8,7 @@ import dan200.computercraft.api.peripheral.IComputerAccess;
 import dan200.computercraft.api.pocket.IPocketAccess;
 import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
+import de.srendi.advancedperipherals.common.addons.computercraft.apis.EntityAPI;
 import de.srendi.advancedperipherals.common.addons.computercraft.operations.SphereOperationContext;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.BlockEntityPeripheralOwner;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.IPeripheralOwner;
@@ -41,6 +42,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 import java.util.function.Function;
 
+import static de.srendi.advancedperipherals.common.addons.computercraft.apis.EntityAPI.ENTITY_API;
 import static de.srendi.advancedperipherals.common.addons.computercraft.operations.SphereOperation.SCAN_ENTITIES;
 
 public class EnvironmentDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
@@ -247,5 +249,10 @@ public class EnvironmentDetectorPeripheral extends BasePeripheral<IPeripheralOwn
         } else {
             return MethodResult.of(canContinueSleep == Event.Result.ALLOW);
         }
+    }
+
+    @LuaFunction
+    public final EntityAPI getEntityAPI() {
+        return ENTITY_API;
     }
 }

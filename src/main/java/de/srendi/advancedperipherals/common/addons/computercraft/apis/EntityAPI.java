@@ -6,24 +6,12 @@ import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.util.EntityUtil;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
 import net.minecraft.world.entity.Entity;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
-public class EntityAPI implements ILuaAPI {
+public class EntityAPI {
 
-    private static EntityAPI entityAPI;
-
-    @Override
-    public String[] getNames() {
-        return new String[]{"entity"};
-    }
-
-    public static EntityAPI create(@NotNull IComputerSystem computer) {
-        if (entityAPI == null && APConfig.API_CONFIG.enableEntityAPI.get())
-            entityAPI = new EntityAPI();
-        return entityAPI;
-    }
+    public static final EntityAPI ENTITY_API = new EntityAPI();
 
     @LuaFunction(mainThread = true)
     public final Object getNBT(IArguments arguments) throws LuaException {
