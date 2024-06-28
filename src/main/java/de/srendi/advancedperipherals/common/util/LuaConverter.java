@@ -104,7 +104,6 @@ public class LuaConverter {
     public static Map<String, Object> playerToLua(Player player, boolean detailed) {
         Map<String, Object> data = livingEntityToLua(player, detailed);
         data.put("secondaryUseActive", player.isSecondaryUseActive());
-        data.put("hasContainerOpen", player.hasContainerOpen());
         data.put("xpNeededForNextLevel", player.getXpNeededForNextLevel());
         data.put("creative", player.isCreative());
         data.put("score", player.getScore());
@@ -112,6 +111,7 @@ public class LuaConverter {
         Inventory inv = player.getInventory();
         data.put("handSlot", inv.selected);
         if (detailed) {
+            data.put("hasContainerOpen", player.hasContainerOpen());
             Map<Integer, Object> invMap = new HashMap<>();
             for (int slot = 0; slot < inv.getContainerSize(); slot++) {
                 ItemStack item = inv.getItem(slot);
