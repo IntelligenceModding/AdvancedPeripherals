@@ -91,6 +91,7 @@ class ChatBoxTest {
             ClientTestEvents.toasts.clear()
         }
         thenComputerOk()
+
         thenOnClient {
             // sendMessage
             context.assertChatContains(Component.literal("[§r").append("AP").append("]§r ").append("Default message"))
@@ -156,6 +157,16 @@ class ChatBoxTest {
             assertNotContainsToast { title, components -> title == formattedToastTitle && components.any { it.toString().contains("Formatted toast with invalid brackets to player") } }
             assertNotContainsToast(formattedToastTitle, getFormattedToast(null, '[', ']', "AP", "Default formatted toast to invalid player"))
         }
+    }
+
+    @ClientGameTest
+    fun chatBox_Events(context: GameTestHelper) = context.sequence {
+        thenIdle(20)
+        thenOnClient { Minecraft.getInstance().player!!.chatSigned("This is a normal chat message", null) }
+        thenIdle(20)
+        thenOnClient { Minecraft.getInstance().player!!.chatSigned("\$This is a hidden chat message", null) }
+        thenIdle(20)
+        thenComputerOk()
     }
 
 }
