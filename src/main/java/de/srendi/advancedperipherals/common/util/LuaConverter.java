@@ -49,7 +49,8 @@ public class LuaConverter {
         data.put("canBurn", entity.fireImmune());
         data.put("canFreeze", entity.canFreeze());
         if (detailed) {
-            data.put("teamName", ObjectUtil.nullableValue(entity.getTeam(), Team::getName));
+            Team team = entity.getTeam();
+            data.put("teamName", team == null ? null : team.getName());
             data.put("inFluid", entity.isInFluidType());
             data.put("dimension", entity.getLevel().dimension().location().toString());
             data.put("isGlowing", entity.isCurrentlyGlowing());
@@ -75,7 +76,8 @@ public class LuaConverter {
             data.put("lastHurtMob", entityToUUIDString(entity.getLastHurtMob()));
             data.put("lastHurtByMob", entityToUUIDString(entity.getLastHurtByMob()));
             data.put("killCredit", entityToUUIDString(entity.getKillCredit()));
-            data.put("lastDamageSource", ObjectUtil.nullableValue(entity.getLastDamageSource(), LuaConverter::damageSourceToObject));
+            DamageSource lastDamageSource = entity.getLastDamageSource();
+            data.put("lastDamageSource", lastDamageSource == null ? null : LuaConverter.damageSourceToObject(lastDamageSource));
             data.put("arrowCount", entity.getArrowCount());
             data.put("stingerCount", entity.getStingerCount());
             data.put("yHeadRot", entity.getYHeadRot());
@@ -129,7 +131,8 @@ public class LuaConverter {
         data.put("aggressive", mob.isAggressive());
         data.put("target", entityToUUIDString(mob.getTarget()));
         data.put("leashHolder", entityToUUIDString(mob.getLeashHolder()));
-        data.put("spawnType", ObjectUtil.nullableValue(mob.getSpawnType(), Enum::name));
+        MobSpawnType mobSpawnType = mob.getSpawnType();
+        data.put("spawnType", mobSpawnType == null ? null : mobSpawnType.name());
         return data;
     }
 
@@ -321,7 +324,8 @@ public class LuaConverter {
         map.put("entity", entityToUUIDString(damageSource.getEntity()));
         map.put("directEntity", entityToUUIDString(damageSource.getDirectEntity()));
         map.put("foodExhaustion", damageSource.getFoodExhaustion());
-        map.put("sourcePosition", ObjectUtil.nullableValue(damageSource.getSourcePosition(), LuaConverter::positionToObject));
+        Vec3 damageSourcePosition = damageSource.getSourcePosition();
+        map.put("sourcePosition", damageSourcePosition == null ? null : LuaConverter.positionToObject(damageSourcePosition));
         return map;
     }
 
@@ -386,6 +390,6 @@ public class LuaConverter {
 
     @Nullable
     private static String entityToUUIDString(@Nullable Entity entity) {
-        return ObjectUtil.nullableValue(entity, e -> e.getUUID().toString());
+        return entity == null ? null : entity.getUUID().toString();
     }
 }
