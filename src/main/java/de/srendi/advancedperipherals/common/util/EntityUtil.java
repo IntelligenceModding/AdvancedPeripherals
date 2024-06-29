@@ -1,11 +1,9 @@
 package de.srendi.advancedperipherals.common.util;
 
-import dan200.computercraft.api.lua.LuaException;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraftforge.server.ServerLifecycleHooks;
 
-import java.util.Map;
 import java.util.UUID;
 
 public class EntityUtil {

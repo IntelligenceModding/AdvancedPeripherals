@@ -8,7 +8,6 @@ import de.srendi.advancedperipherals.common.util.LuaConverter;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 
-import java.util.Map;
 import java.util.UUID;
 
 public class EntityAPI {
