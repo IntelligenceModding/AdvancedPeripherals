@@ -184,6 +184,15 @@ minecraft {
             }
         }
 
+        // internal run config to automatically run the client-side gametests with the runGameTestClient task
+        runGameTestClientInternal {
+            parent runs.testClient
+
+            lazyToken("minecraft_classpath", lazyTokens["minecraft_classpath"])
+
+            property 'advancedperipheralstest.tags', 'client'
+        }
+
         gameTestServer {
             def oldClasspath = lazyTokens["minecraft_classpath"]
             lazyToken("minecraft_classpath") {
@@ -669,6 +678,5 @@ publishing {
 
 tasks.register('runGameTestClient', ClientJavaExec, { task ->
     description "Runs client-side gametests with no mods"
-    setRunConfig(minecraft.runs["testClient"])
-    tags("client")
+    setRunConfig(minecraft.runs.runGameTestClientInternal)
 })
