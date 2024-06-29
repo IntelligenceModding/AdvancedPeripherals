@@ -56,7 +56,7 @@ object ClientTestHooks {
     fun onOpenScreen(screen: Screen): Boolean = when {
         enabled && !loadedWorld && (screen is TitleScreen || screen is AccessibilityOptionsScreen) -> {
             loadedWorld = true
-            openWorld()
+            openWorld(screen)
             true
         }
 
@@ -66,7 +66,7 @@ object ClientTestHooks {
     /**
      * Open or create our test world immediately on game launch.
      */
-    private fun openWorld() {
+    private fun openWorld(screen: Screen) {
         val minecraft = Minecraft.getInstance()
 
         // Clear some options before we get any further.
@@ -81,7 +81,7 @@ object ClientTestHooks {
 
         if (minecraft.levelSource.levelExists(LEVEL_NAME)) {
             LOG.info("World already exists, opening.")
-            minecraft.createWorldOpenFlows().loadLevel(minecraft.screen!!, LEVEL_NAME)
+            minecraft.createWorldOpenFlows().loadLevel(screen, LEVEL_NAME)
         } else {
             LOG.info("World does not exist, creating it.")
             val rules = GameRules()
