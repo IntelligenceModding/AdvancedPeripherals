@@ -5,6 +5,7 @@ import dan200.computercraft.shared.util.NBTUtil;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.util.EntityUtil;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
+import de.srendi.advancedperipherals.common.util.Pair;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 
@@ -18,19 +19,22 @@ public class EntityAPI {
     public final Object getNBT(IArguments arguments) throws LuaException {
         if (!APConfig.API_CONFIG.enableGetNBT.get())
             throw new LuaException("This function is disabled in the config. Activate it or ask an admin if they can activate it.");
-        try {
-            Entity entity = EntityUtil.getEntityFromUUID(UUID.fromString(arguments.getString(0)));
-            if (!APConfig.API_CONFIG.enablePlayerAccess.get() && entity instanceof Player)
-                return MethodResult.of(null, "Using players in EntityAPI is disabled in the config. Activate it or ask an admin if they can activate it.");
-            return NBTUtil.toLua(entity.serializeNBT());
-        } catch (IllegalArgumentException e) {
-            return MethodResult.of(null, "ENTITY_DOESNT_EXIST");
-        }
+
+        Pair<Entity, MethodResult> result = validateAPICall(arguments.getString(0));
+        if (result.rightPresent())
+            return result.getRight();
+        Entity entity = result.getLeft();
+
+        return NBTUtil.toLua(entity.serializeNBT());
     }
 
     @LuaFunction(mainThread = true)
     public final Object getName(IArguments arguments) throws LuaException {
-        Entity entity = EntityUtil.getEntityFromUUID(UUID.fromString(arguments.getString(0)));
+        Pair<Entity, MethodResult> result = validateAPICall(arguments.getString(0));
+        if (result.rightPresent())
+            return result.getRight();
+        Entity entity = result.getLeft();
+
         return entity.getName().getString();
     }
 
@@ -38,28 +42,26 @@ public class EntityAPI {
     public final Object getBoundingBox(IArguments arguments) throws LuaException {
         if (!APConfig.API_CONFIG.enableGetBoundingBox.get())
             throw new LuaException("This function is disabled in the config. Activate it or ask an admin if they can activate it.");
-        try {
-            Entity entity = EntityUtil.getEntityFromUUID(UUID.fromString(arguments.getString(0)));
-            if (!APConfig.API_CONFIG.enablePlayerAccess.get() && entity instanceof Player)
-                return MethodResult.of(null, "Using players in EntityAPI is disabled in the config. Activate it or ask an admin if they can activate it.");
-            return LuaConverter.aabbToObject(entity.getBoundingBox());
-        } catch (IllegalArgumentException e) {
-            return MethodResult.of(null, "ENTITY_DOESNT_EXIST");
-        }
+
+        Pair<Entity, MethodResult> result = validateAPICall(arguments.getString(0));
+        if (result.rightPresent())
+            return result.getRight();
+        Entity entity = result.getLeft();
+
+        return LuaConverter.aabbToObject(entity.getBoundingBox());
     }
 
     @LuaFunction(mainThread = true)
     public final Object getPos(IArguments arguments) throws LuaException {
         if (!APConfig.API_CONFIG.enableGetPos.get())
             throw new LuaException("This function is disabled in the config. Activate it or ask an admin if they can activate it.");
-        try {
-            Entity entity = EntityUtil.getEntityFromUUID(UUID.fromString(arguments.getString(0)));
-            if (!APConfig.API_CONFIG.enablePlayerAccess.get() && entity instanceof Player)
-                return MethodResult.of(null, "Using players in EntityAPI is disabled in the config. Activate it or ask an admin if they can activate it.");
-            return LuaConverter.vec3ToLua(entity.position());
-        } catch (IllegalArgumentException e) {
-            return MethodResult.of(null, "ENTITY_DOESNT_EXIST");
-        }
+
+        Pair<Entity, MethodResult> result = validateAPICall(arguments.getString(0));
+        if (result.rightPresent())
+            return result.getRight();
+        Entity entity = result.getLeft();
+
+        return LuaConverter.vec3ToLua(entity.position());
     }
 
     /**
@@ -71,15 +73,14 @@ public class EntityAPI {
     public final Object getData(IArguments arguments) throws LuaException {
         if (!APConfig.API_CONFIG.enableGetData.get())
             throw new LuaException("This function is disabled in the config. Activate it or ask an admin if they can activate it.");
-        try {
-            Entity entity = EntityUtil.getEntityFromUUID(UUID.fromString(arguments.getString(0)));
-            boolean detailed = arguments.count() > 1 && arguments.getBoolean(1);
-            if (!APConfig.API_CONFIG.enablePlayerAccess.get() && entity instanceof Player)
-                return MethodResult.of(null, "Using players in EntityAPI is disabled in the config. Activate it or ask an admin if they can activate it.");
-            return LuaConverter.completeEntityToLua(entity, detailed);
-        } catch (IllegalArgumentException e) {
-            return MethodResult.of(null, "ENTITY_DOESNT_EXIST");
-        }
+
+        Pair<Entity, MethodResult> result = validateAPICall(arguments.getString(0));
+        if (result.rightPresent())
+            return result.getRight();
+        Entity entity = result.getLeft();
+
+        boolean detailed = arguments.count() > 1 && arguments.getBoolean(1);
+        return LuaConverter.completeEntityToLua(entity, detailed);
     }
 
     /**
@@ -89,13 +90,27 @@ public class EntityAPI {
     public final Object getPersistentData(IArguments arguments) throws LuaException {
         if (!APConfig.API_CONFIG.enableGetPersistentData.get())
             throw new LuaException("This function is disabled in the config. Activate it or ask an admin if they can activate it.");
-        try {
-            Entity entity = EntityUtil.getEntityFromUUID(UUID.fromString(arguments.getString(0)));
-            if (!APConfig.API_CONFIG.enablePlayerAccess.get() && entity instanceof Player)
-                return MethodResult.of(null, "Using players in EntityAPI is disabled in the config. Activate it or ask an admin if they can activate it.");
-            return NBTUtil.toLua(entity.getPersistentData());
-        } catch (IllegalArgumentException e) {
-            return MethodResult.of(null, "ENTITY_DOESNT_EXIST");
-        }
+
+        Pair<Entity, MethodResult> result = validateAPICall(arguments.getString(0));
+        if (result.rightPresent())
+            return result.getRight();
+        Entity entity = result.getLeft();
+
+        return NBTUtil.toLua(entity.getPersistentData());
+    }
+
+    /**
+     * Returns a Pair which either contains the valid Entity from the given uuidString, or an error in the form
+     * of a MethodResult. The other value in the Pair will always be null.
+     * @param uuidString The UUID in the form of a string to get an entity from.
+     */
+    private static Pair<Entity, MethodResult> validateAPICall(String uuidString) {
+        UUID uuid = UUID.fromString(uuidString);
+        Entity entity = EntityUtil.getEntityFromUUID(uuid);
+        if (entity == null)
+            return new Pair<>(null, MethodResult.of(null, "ENTITY_DOESNT_EXIST"));
+        if (!APConfig.API_CONFIG.enablePlayerAccess.get() && entity instanceof Player)
+            return new Pair<>(null, MethodResult.of(null, "Using players in EntityAPI is disabled in the config. Activate it or ask an admin if they can activate it."));
+        return new Pair<>(entity, null);
     }
 }
