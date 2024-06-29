@@ -48,7 +48,7 @@ public class EntityAPI {
         Entity entity = EntityUtil.getEntityFromUUID(UUID.fromString(arguments.getString(0)));
         if (!APConfig.API_CONFIG.enablePlayerAccess.get() && entity instanceof Player)
             return MethodResult.of(null, "Using players in EntityAPI is disabled in the config. Activate it or ask an admin if they can activate it.");
-        return LuaConverter.vec3ToLua(entity.getPosition(1));
+        return LuaConverter.vec3ToLua(entity.position());
     }
 
     /**
