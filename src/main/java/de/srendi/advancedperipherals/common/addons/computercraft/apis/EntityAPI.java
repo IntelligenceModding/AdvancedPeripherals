@@ -63,7 +63,7 @@ public class EntityAPI {
         Entity entity = EntityUtil.getEntityFromUUID(UUID.fromString(arguments.getString(0)));
         boolean detailed = args.count() > 1 ? args.getBoolean(1) : false;
         if (!APConfig.API_CONFIG.enablePlayerAccess.get() && entity instanceof Player)
-            throw new LuaException("Using players in EntityAPI is disabled in the config. Activate it or ask an admin if they can activate it.");
+            return MethodResult.of(null, "Using players in EntityAPI is disabled in the config. Activate it or ask an admin if they can activate it.");
         return LuaConverter.completeEntityToLua(entity, detailed);
     }
 
