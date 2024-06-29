@@ -43,6 +43,8 @@ public class LuaConverter {
 
     public static Map<String, Object> entityToLua(Entity entity, boolean detailed) {
         Map<String, Object> data = new HashMap<>();
+        data.put("id", entity.getId());
+        data.put("uuid", entity.getStringUUID());
         EntityType<?> type = entity.getType();
         data.put("type", type.getDescriptionId());
         data.put("category", type.getCategory());
