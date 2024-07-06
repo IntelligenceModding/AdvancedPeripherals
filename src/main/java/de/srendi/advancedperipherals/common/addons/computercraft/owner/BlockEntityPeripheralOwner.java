@@ -33,13 +33,14 @@ public class BlockEntityPeripheralOwner<T extends BlockEntity & IPeripheralTileE
     @Nullable
     @Override
     public String getCustomName() {
-        String result = "";
-        
         if (tileEntity instanceof Nameable nameableEntity) {
-            result = nameableEntity.getCustomName().getString();
+            Component name = nameableEntity.getCustomName();
+            if (name != null) {
+                return name.getString();
+            }
         }
         
-        return result;
+        return "";
     }
 
     @NotNull
