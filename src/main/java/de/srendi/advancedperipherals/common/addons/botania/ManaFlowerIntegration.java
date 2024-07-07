@@ -3,7 +3,6 @@ package de.srendi.advancedperipherals.common.addons.botania;
 import dan200.computercraft.api.lua.LuaFunction;
 import de.srendi.advancedperipherals.lib.peripherals.APGenericPeripheral;
 import vazkii.botania.api.block_entity.GeneratingFlowerBlockEntity;
-import vazkii.botania.common.block.BotaniaBlocks;
 
 public class ManaFlowerIntegration implements APGenericPeripheral {
 
