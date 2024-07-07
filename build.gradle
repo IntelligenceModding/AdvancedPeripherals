@@ -171,6 +171,7 @@ minecraft {
             property 'forge.logging.console.level', 'debug'
             property 'forge.enabledGameTestNamespaces', 'advancedperipherals,advancedperipheralstest'
             property 'advancedperipheralstest.sources', file("src/testMod/resources/data/advancedperipheralstest").absolutePath
+            property 'advancedperipheralstest.tags', 'common,client'
 
             args "--mixin.config=ccgametest.mixins.json"
             args "--mixin.config=advancedperipheralstest.mixins.json"
@@ -667,7 +668,9 @@ publishing {
 }
 
 tasks.register('runGameTestClient', ClientJavaExec, { task ->
+    task.outputs.upToDateWhen { false }
+
     description "Runs client-side gametests with no mods"
-    setRunConfig(minecraft.runs["testClient"])
+    setRunConfig(minecraft.runs.testClient)
     tags("client")
 })

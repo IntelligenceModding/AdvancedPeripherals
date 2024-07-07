@@ -14,6 +14,7 @@ import org.gradle.api.services.BuildServiceParameters
 import org.gradle.api.tasks.*
 import org.gradle.kotlin.dsl.getByName
 import org.gradle.language.base.plugins.LifecycleBasePlugin
+import org.gradle.process.CommandLineArgumentProvider
 import java.io.File
 import java.nio.file.Files
 import java.util.concurrent.TimeUnit
@@ -91,7 +92,11 @@ abstract class ClientJavaExec : JavaExec() {
      * Only run tests with the given tags.
      */
     fun tags(vararg tags: String) {
-        systemProperty("advancedperipheralstest.tags", tags.joinToString(","))
+        jvmArgumentProviders.add(
+            CommandLineArgumentProvider {
+                listOf("-Dadvancedperipheralstest.tags=${tags.joinToString(",")}")
+            }
+        )
     }
 
     /**
