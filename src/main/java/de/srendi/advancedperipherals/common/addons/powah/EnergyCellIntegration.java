@@ -22,6 +22,7 @@ public class EnergyCellIntegration implements APGenericPeripheral {
     public final double getEnergy(EnergyCellTile blockEntity) {
         return blockEntity.getEnergy().getEnergyStored();
     }
+
     @LuaFunction(mainThread = true)
     public final double getStoredEnergy(EnergyCellTile blockEntity) {
         return blockEntity.getEnergy().getEnergyStored();
