@@ -40,8 +40,17 @@ public class ReactorIntegration implements APGenericPeripheral {
         return blockEntity.core().get().redstone.perCent();
     }
 
+    // TODO: remove in the next major version
+    @Deprecated(forRemoval = true, since = "1.20.1-0.7.41r")
     @LuaFunction(mainThread = true)
     public final double getEnergy(ReactorPartTile blockEntity) {
+        if (blockEntity.core().isEmpty())
+            return 0.0d;
+        return blockEntity.core().get().getEnergy().getEnergyStored();
+    }
+
+    @LuaFunction(mainThread = true)
+    public final double getStoredEnergy(ReactorPartTile blockEntity) {
         if (blockEntity.core().isEmpty())
             return 0.0d;
         return blockEntity.core().get().getEnergy().getEnergyStored();
