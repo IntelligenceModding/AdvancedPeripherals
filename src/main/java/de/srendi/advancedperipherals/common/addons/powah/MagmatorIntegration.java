@@ -13,8 +13,15 @@ public class MagmatorIntegration implements APGenericPeripheral {
         return "magmator";
     }
 
+    // TODO: remove in the next major version
+    @Deprecated(forRemoval = true, since = "1.20.1-0.7.41r")
     @LuaFunction(mainThread = true)
     public final double getEnergy(MagmatorTile blockEntity) {
+        return blockEntity.getEnergy().getEnergyStored();
+    }
+
+    @LuaFunction(mainThread = true)
+    public final double getStoredEnergy(MagmatorTile blockEntity) {
         return blockEntity.getEnergy().getEnergyStored();
     }
 
