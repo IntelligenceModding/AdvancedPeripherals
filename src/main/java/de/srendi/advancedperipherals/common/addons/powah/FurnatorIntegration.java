@@ -2,6 +2,7 @@ package de.srendi.advancedperipherals.common.addons.powah;
 
 import dan200.computercraft.api.lua.LuaFunction;
 import de.srendi.advancedperipherals.lib.peripherals.BlockEntityIntegrationPeripheral;
+import de.srendi.advancedperipherals.common.util.LuaConverter;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.NotNull;
@@ -44,7 +45,11 @@ public class FurnatorIntegration extends BlockEntityIntegrationPeripheral<Furnat
     }
 
     @LuaFunction(mainThread = true)
-    public final ItemStack getInventory() {
-        return blockEntity.getInventory().getStackInSlot(1);
+    public final Object getInventory() {
+        ItemStack stack = blockEntity.getInventory().getStackInSlot(1);
+        if (stack.isEmpty()) {
+            return null;
+        }
+        return LuaConverter.stackToObject(stack);
     }
 }
