@@ -1,7 +1,9 @@
 package de.srendi.advancedperipherals.common.data;
 
+import dan200.computercraft.api.ComputerCraftTags;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.blocks.base.IHarvestableBlock;
+import de.srendi.advancedperipherals.common.setup.APBlocks;
 import net.minecraft.core.Registry;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.tags.TagsProvider;
@@ -33,6 +35,7 @@ public class BlockTagsProvider extends TagsProvider<Block> {
 
     @Override
     protected void addTags() {
+        tag(ComputerCraftTags.Blocks.MONITOR).add(APBlocks.ULTIMATE_MONITOR.get());
         blockRegistry.getEntries().stream().map(RegistryObject::get).forEach(block -> {
             if (!(block instanceof IHarvestableBlock harvesterBlock))
                 throw new IllegalArgumentException("For any block you should define harvester logic!");

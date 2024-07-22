@@ -2,6 +2,7 @@ package de.srendi.advancedperipherals.common.setup;
 
 import com.google.common.collect.Sets;
 import de.srendi.advancedperipherals.common.addons.APAddons;
+import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.monitor.UltimateMonitorEntity;
 import de.srendi.advancedperipherals.common.blocks.blockentities.*;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraftforge.registries.RegistryObject;

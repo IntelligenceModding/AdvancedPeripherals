@@ -9,15 +9,12 @@ public class UltimateNetworkedTerminal extends NetworkedTerminal {
     private final int[] transparencies = new int[]{0xff, 0, 0, 0};
     private final int[][] sideColors = new int[3][3];
 
-    public UltimateNetworkedTerminal(int width, int height, int[] transparencies) {
-        this(width, height, transparencies, null);
+    public UltimateNetworkedTerminal(int width, int height) {
+        this(width, height, null);
     }
 
-    public UltimateNetworkedTerminal(int width, int height, int[] transparencies, Runnable changedCallback) {
+    public UltimateNetworkedTerminal(int width, int height, Runnable changedCallback) {
         super(width, height, true, changedCallback);
-        if (transparencies != null) {
-            System.arraycopy(transparencies, 0, this.transparencies, 0, 4);
-        }
     }
 
     public int getTransparency() {

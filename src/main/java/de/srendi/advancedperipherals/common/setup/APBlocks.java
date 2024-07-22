@@ -1,5 +1,6 @@
 package de.srendi.advancedperipherals.common.setup;
 
+import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.monitor.UltimateBlockMonitor;
 import de.srendi.advancedperipherals.common.blocks.PlayerDetectorBlock;
 import de.srendi.advancedperipherals.common.blocks.RedstoneIntegratorBlock;
 import de.srendi.advancedperipherals.common.blocks.base.APBlockEntityBlock;
@@ -40,7 +41,7 @@ public class APBlocks {
     public static final RegistryObject<Block> COLONY_INTEGRATOR = register("colony_integrator", () -> new APBlockEntityBlock<>(APBlockEntityTypes.COLONY_INTEGRATOR, false), () -> new APBlockItem(APBlocks.COLONY_INTEGRATOR.get(), APConfig.PERIPHERALS_CONFIG.enableColonyIntegrator));
     public static final RegistryObject<Block> NBT_STORAGE = register("nbt_storage", () -> new APBlockEntityBlock<>(APBlockEntityTypes.NBT_STORAGE, false), () -> new APBlockItem(APBlocks.NBT_STORAGE.get(), APConfig.PERIPHERALS_CONFIG.enableNBTStorage));
     public static final RegistryObject<Block> DISTANCE_DETECTOR = register("distance_detector", () -> new APBlockEntityBlock<>(APBlockEntityTypes.DISTANCE_DETECTOR, BlockBehaviour.Properties.of(Material.METAL).noOcclusion(), true), () -> new APBlockItem(APBlocks.DISTANCE_DETECTOR.get(), APConfig.PERIPHERALS_CONFIG.enableDistanceDetector));
-    public static final RegistryObject<Block> ULTIMATE_MONITOR = register("ultimate_monitor", () -> new APBlockEntityBlock<>(APBlockEntityTypes.ULTIMATE_MONITOR, true), () -> new APBlockItem(APBlocks.ULTIMATE_MONITOR.get(), APConfig.PERIPHERALS_CONFIG.enableUltimateMonitor));
+    public static final RegistryObject<Block> ULTIMATE_MONITOR = register("ultimate_monitor", () -> new UltimateBlockMonitor(BlockBehaviour.Properties.of(Material.BUILDABLE_GLASS).strength(4, 2).noOcclusion(), APBlockEntityTypes.ULTIMATE_MONITOR), () -> new APBlockItem(APBlocks.ULTIMATE_MONITOR.get(), APConfig.PERIPHERALS_CONFIG.enableUltimateMonitor));
 
     private static <T extends Block> RegistryObject<T> registerNoItem(String name, Supplier<T> block) {
         return APRegistration.BLOCKS.register(name, block);
