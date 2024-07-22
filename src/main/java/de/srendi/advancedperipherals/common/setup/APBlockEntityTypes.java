@@ -26,5 +26,6 @@ public class APBlockEntityTypes {
     public static final RegistryObject<BlockEntityType<ColonyIntegratorEntity>> COLONY_INTEGRATOR = APRegistration.TILE_ENTITIES.register("colony_integrator", () -> new BlockEntityType<>(ColonyIntegratorEntity::new, Sets.newHashSet(APBlocks.COLONY_INTEGRATOR.get()), null));
     public static final RegistryObject<BlockEntityType<NBTStorageEntity>> NBT_STORAGE = APRegistration.TILE_ENTITIES.register("nbt_storage", () -> new BlockEntityType<>(NBTStorageEntity::new, Sets.newHashSet(APBlocks.NBT_STORAGE.get()), null));
     public static final RegistryObject<BlockEntityType<DistanceDetectorEntity>> DISTANCE_DETECTOR = APRegistration.TILE_ENTITIES.register("distance_detector", () -> new BlockEntityType<>(DistanceDetectorEntity::new, Sets.newHashSet(APBlocks.DISTANCE_DETECTOR.get()), null));
+    public static final RegistryObject<BlockEntityType<UltimateMonitorEntity>> ULTIMATE_MONITOR = APRegistration.TILE_ENTITIES.register("ultimate_monitor", () -> new BlockEntityType<UltimateMonitorEntity>(UltimateMonitorEntity::new, Sets.newHashSet(APBlocks.ULTIMATE_MONITOR.get()), null));
 
 }
