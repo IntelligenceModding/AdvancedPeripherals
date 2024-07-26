@@ -9,13 +9,13 @@ import com.google.common.annotations.VisibleForTesting;
 import dan200.computercraft.ComputerCraft;
 import dan200.computercraft.api.peripheral.IComputerAccess;
 import dan200.computercraft.api.peripheral.IPeripheral;
-import dan200.computercraft.core.terminal.Terminal;
 import dan200.computercraft.shared.common.TileGeneric;
-import dan200.computercraft.shared.computer.terminal.TerminalState;
 import dan200.computercraft.shared.peripheral.monitor.MonitorEdgeState;
 import dan200.computercraft.shared.peripheral.monitor.XYPair;
 import dan200.computercraft.shared.util.CapabilityUtil;
 import dan200.computercraft.shared.util.TickScheduler;
+import de.srendi.advancedperipherals.common.addons.computercraft.terminal.UltimateNetworkedTerminal;
+import de.srendi.advancedperipherals.common.addons.computercraft.terminal.UltimateTerminalState;
 import de.srendi.advancedperipherals.common.setup.APBlockEntityTypes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -63,7 +63,7 @@ public class UltimateMonitorEntity extends TileGeneric {
 
     // MonitorWatcher state.
     boolean enqueued;
-    TerminalState cached;
+    UltimateTerminalState cached;
 
     private int width = 1;
     private int height = 1;
@@ -264,6 +264,13 @@ public class UltimateMonitorEntity extends TileGeneric {
 
     @Nonnull
     @Override
+    public final ClientboundBlockEntityDataPacket getUpdatePacket()
+    {
+        return ClientboundBlockEntityDataPacket.create( this );
+    }
+
+    @Nonnull
+    @Override
     public final CompoundTag getUpdateTag()
     {
         CompoundTag nbt = super.getUpdateTag();
@@ -302,7 +309,7 @@ public class UltimateMonitorEntity extends TileGeneric {
         }
     }
 
-    public final void read( TerminalState state )
+    public final void read( UltimateTerminalState state )
     {
         if( xIndex != 0 || yIndex != 0 )
         {
@@ -379,7 +386,7 @@ public class UltimateMonitorEntity extends TileGeneric {
 
     boolean isCompatible( UltimateMonitorEntity other )
     {
-        return other instanceof UltimateMonitorEntity && getOrientation() == other.getOrientation() && getDirection() == other.getDirection();
+        return !other.destroyed && getOrientation() == other.getOrientation() && getDirection() == other.getDirection();
     }
 
     /**
@@ -429,6 +436,7 @@ public class UltimateMonitorEntity extends TileGeneric {
 
         xIndex = 0;
         yIndex = 0;
+        System.out.println("resizing: " + this + " " + width + ", " + height);
         this.width = width;
         this.height = height;
 
@@ -579,7 +587,7 @@ public class UltimateMonitorEntity extends TileGeneric {
         UltimateServerMonitor serverTerminal = getServerMonitor();
         if( serverTerminal == null ) return;
 
-        Terminal originTerminal = serverTerminal.getTerminal();
+        UltimateNetworkedTerminal originTerminal = serverTerminal.getTerminal();
         if( originTerminal == null ) return;
 
         double xCharWidth = (width - (RENDER_BORDER + RENDER_MARGIN) * 2.0) / originTerminal.getWidth();

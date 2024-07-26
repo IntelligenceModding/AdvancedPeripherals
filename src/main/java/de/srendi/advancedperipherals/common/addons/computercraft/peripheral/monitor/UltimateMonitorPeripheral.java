@@ -40,13 +40,33 @@ public class UltimateMonitorPeripheral extends TermMethods implements IPeriphera
     }
 
     @LuaFunction
-    public double getTransparency() throws LuaException {
-        return (double)(this.getTerminal().getTransparency()) / 0xff;
+    public double getPanelDepth() throws LuaException {
+        return (double)(this.getTerminal().getPanelDepth());
     }
 
     @LuaFunction
-    public void setTransparency(double transparency) throws LuaException {
-        this.getTerminal().setTransparency((int)(transparency * 0xff));
+    public void setPanelDepth(double panelDepth) throws LuaException {
+        this.getTerminal().setPanelDepth((float)(panelDepth));
+    }
+
+    @LuaFunction
+    public double getTextTransparency() throws LuaException {
+        return (double)(this.getTerminal().getTextTransparency()) / 0xff;
+    }
+
+    @LuaFunction
+    public void setTextTransparency(double transparency) throws LuaException {
+        this.getTerminal().setTextTransparency((int)(transparency * 0xff));
+    }
+
+    @LuaFunction
+    public double getBackgroundTransparency() throws LuaException {
+        return (double)(this.getTerminal().getBackgroundTransparency()) / 0xff;
+    }
+
+    @LuaFunction
+    public void setBackgroundTransparency(double transparency) throws LuaException {
+        this.getTerminal().setBackgroundTransparency((int)(transparency * 0xff));
     }
 
     @LuaFunction

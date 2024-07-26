@@ -7,14 +7,17 @@ package de.srendi.advancedperipherals.common.addons.computercraft.peripheral.mon
 
 import dan200.computercraft.shared.common.BlockGeneric;
 import dan200.computercraft.shared.peripheral.monitor.MonitorEdgeState;
+import de.srendi.advancedperipherals.common.blocks.base.IHarvestableBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Mirror;
+import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -23,14 +26,14 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
+import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.registries.RegistryObject;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class UltimateBlockMonitor extends BlockGeneric
-{
+public class UltimateBlockMonitor extends BlockGeneric implements IHarvestableBlock {
     public static final DirectionProperty ORIENTATION = DirectionProperty.create( "orientation",
         Direction.UP, Direction.DOWN, Direction.NORTH );
 
@@ -46,6 +49,11 @@ public class UltimateBlockMonitor extends BlockGeneric
             .setValue( ORIENTATION, Direction.NORTH )
             .setValue( FACING, Direction.NORTH )
             .setValue( STATE, MonitorEdgeState.NONE ) );
+    }
+
+    @Override
+    public TagKey<Block> getHarvestTag() {
+        return Tags.Blocks.NEEDS_GOLD_TOOL;
     }
 
     @Override

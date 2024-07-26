@@ -9,10 +9,10 @@ import com.mojang.blaze3d.platform.GlStateManager;
 import dan200.computercraft.client.util.DirectBuffers;
 import dan200.computercraft.client.util.DirectVertexBuffer;
 import dan200.computercraft.core.terminal.Terminal;
-import dan200.computercraft.shared.computer.terminal.TerminalState;
 import dan200.computercraft.shared.peripheral.monitor.MonitorRenderer;
 import dan200.computercraft.shared.peripheral.monitor.XYPair;
 import de.srendi.advancedperipherals.common.addons.computercraft.terminal.UltimateNetworkedTerminal;
+import de.srendi.advancedperipherals.common.addons.computercraft.terminal.UltimateTerminalState;
 import net.minecraft.core.BlockPos;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -181,7 +181,7 @@ public final class UltimateClientMonitor
         return terminal;
     }
 
-    void read( TerminalState state )
+    void read( UltimateTerminalState state )
     {
         if( state.hasTerminal() )
         {

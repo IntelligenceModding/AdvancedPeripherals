@@ -6,9 +6,9 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.peripheral.monitor;
 
 import dan200.computercraft.ComputerCraft;
-import dan200.computercraft.shared.network.NetworkHandler;
-import dan200.computercraft.shared.network.client.MonitorClientMessage;
-import dan200.computercraft.shared.computer.terminal.TerminalState;
+import de.srendi.advancedperipherals.common.network.APNetworking;
+import de.srendi.advancedperipherals.common.network.toclient.UltimateMonitorClientPacket;
+import de.srendi.advancedperipherals.common.addons.computercraft.terminal.UltimateTerminalState;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -53,8 +53,8 @@ public final class UltimateMonitorWatcher
             UltimateServerMonitor serverMonitor = getMonitor( monitor );
             if( serverMonitor == null || monitor.enqueued ) continue;
 
-            TerminalState state = getState( monitor, serverMonitor );
-            NetworkHandler.sendToPlayer( event.getPlayer(), new MonitorClientMessage( monitor.getBlockPos(), state ) );
+            UltimateTerminalState state = getState( monitor, serverMonitor );
+            APNetworking.sendToClient( new UltimateMonitorClientPacket( monitor.getBlockPos(), state ), event.getPlayer() );
         }
     }
 
@@ -79,14 +79,8 @@ public final class UltimateMonitorWatcher
             Level world = tile.getLevel();
             if( !(world instanceof ServerLevel) ) continue;
 
-            LevelChunk chunk = world.getChunkAt( pos );
-            if( ((ServerLevel) world).getChunkSource().chunkMap.getPlayers( chunk.getPos(), false ).isEmpty() )
-            {
-                continue;
-            }
-
-            TerminalState state = getState( tile, monitor );
-            NetworkHandler.sendToAllTracking( new MonitorClientMessage( pos, state ), chunk );
+            UltimateTerminalState state = getState( tile, monitor );
+            APNetworking.sendToAllTracking( new UltimateMonitorClientPacket( pos, state ), world, pos );
 
             limit -= state.size();
         }
@@ -97,10 +91,11 @@ public final class UltimateMonitorWatcher
         return !monitor.isRemoved() && monitor.getXIndex() == 0 && monitor.getYIndex() == 0 ? monitor.getCachedServerMonitor() : null;
     }
 
-    private static TerminalState getState( UltimateMonitorEntity tile, UltimateServerMonitor monitor )
-    {
-        TerminalState state = tile.cached;
-        if( state == null ) state = tile.cached = new TerminalState( monitor.getTerminal() );
+    private static UltimateTerminalState getState( UltimateMonitorEntity tile, UltimateServerMonitor monitor ) {
+        UltimateTerminalState state = tile.cached;
+        if (state == null) {
+            state = tile.cached = new UltimateTerminalState(monitor.getTerminal());
+        }
         return state;
     }
 }

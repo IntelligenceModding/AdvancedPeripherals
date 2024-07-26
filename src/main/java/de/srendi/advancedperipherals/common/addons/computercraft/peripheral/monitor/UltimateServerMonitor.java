@@ -61,13 +61,13 @@ public class UltimateServerMonitor
         }
     }
 
-    private void markChanged()
-    {
-        if( !changed.getAndSet( true ) ) TickScheduler.schedule( origin.tickToken );
+    private void markChanged() {
+        if (!changed.getAndSet(true)) {
+            TickScheduler.schedule(origin.tickToken);
+        }
     }
 
-    int getTextScale()
-    {
+    int getTextScale() {
         return textScale;
     }
 
@@ -78,14 +78,12 @@ public class UltimateServerMonitor
         rebuild();
     }
 
-    boolean pollResized()
-    {
-        return resized.getAndSet( false );
+    boolean pollResized() {
+        return resized.getAndSet(false);
     }
 
-    boolean pollTerminalChanged()
-    {
-        return changed.getAndSet( false );
+    boolean pollTerminalChanged() {
+        return changed.getAndSet(false);
     }
 
     @Nullable

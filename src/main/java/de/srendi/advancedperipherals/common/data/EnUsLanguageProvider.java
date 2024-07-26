@@ -75,6 +75,7 @@ public class EnUsLanguageProvider extends LanguageProvider {
         addBlock(APBlocks.PLAYER_DETECTOR, "Player Detector");
         addBlock(APBlocks.REDSTONE_INTEGRATOR, "Redstone Integrator");
         addBlock(APBlocks.DISTANCE_DETECTOR, "Distance Detector");
+        addBlock(APBlocks.ULTIMATE_MONITOR, "Ultimate Monitor");
     }
 
     private void addTurtles() {
@@ -85,7 +86,6 @@ public class EnUsLanguageProvider extends LanguageProvider {
         addTurtle(CCRegistration.ID.ENVIRONMENT_TURTLE, "Environment");
         addTurtle(CCRegistration.ID.PLAYER_TURTLE, "Player Detector");
         addTurtle(CCRegistration.ID.GEOSCANNER_TURTLE, "Geo");
-        addTurtle(CCRegistration.ID.COMPASS_TURTLE, "Compass");
         addTurtle(CCRegistration.ID.WEAK_AUTOMATA, "Weak automata");
         addTurtle(CCRegistration.ID.HUSBANDRY_AUTOMATA, "Husbandry automata");
         addTurtle(CCRegistration.ID.END_AUTOMATA, "End automata");
@@ -139,6 +139,7 @@ public class EnUsLanguageProvider extends LanguageProvider {
         addTooltip(APItems.OVERPOWERED_HUSBANDRY_AUTOMATA_CORE.get(), "&7Improved version of the husbandry automata core, that provides some overpowered uses! Be careful, the upgrade is very fragile.");
         addTooltip(APItems.END_AUTOMATA_CORE.get(), "&7Upgrade for turtles, that allows basic interaction with the world and teleportation in one dimension.");
         addTooltip(APItems.OVERPOWERED_END_AUTOMATA_CORE.get(), "&7Improved version of the end automata core, that provides some overpowered uses! Be careful, the upgrade is very fragile.");
+        addTooltip(APBlocks.ULTIMATE_MONITOR.get(), "&7A more advanced monitor. Can identify the operator and allow lights to pass through.");
     }
 
     private void addTexts() {
