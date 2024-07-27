@@ -9,13 +9,11 @@ uniform sampler2D Sampler0; // Font
 uniform usamplerBuffer Tbo;
 
 layout(std140) uniform MonitorData {
-    vec3 Palette[16];
+    vec4 Palette[16];
     int Width;
     int Height;
     ivec2 CursorPos;
     int CursorColour;
-    float TextTransparency;
-    float BackgroundTransparency;
 };
 uniform int CursorBlink;
 
@@ -36,7 +34,7 @@ vec2 texture_corner(int index) {
 }
 
 vec4 recolour(vec4 texture, int colour) {
-    return vec4(texture.rgb * Palette[colour], texture.rgba);
+    return vec4(texture.rgb * Palette[colour].rgb, texture.rgba);
 }
 
 void main() {
@@ -56,14 +54,15 @@ void main() {
 
     vec2 pos = (term_pos - corner) * vec2(FONT_WIDTH, FONT_HEIGHT);
     vec4 charTex = recolour(texture(Sampler0, (texture_corner(character) + pos) / 256.0), fg);
+    float textTransparency = Palette[fg].a;
 
     // Applies the cursor on top of the current character if we're blinking and in the current cursor's cell. We do it
     // this funky way to avoid branches.
     vec4 cursorTex = recolour(texture(Sampler0, (texture_corner(95) + pos) / 256.0), CursorColour); // 95 = '_'
     vec4 img = mix(charTex, cursorTex, cursorTex.a * float(CursorBlink) * (CursorPos == cell ? 1.0 : 0.0));
-    float textAlpha = img.a * mult * TextTransparency;
+    float textAlpha = img.a * mult * textTransparency;
 
-    vec4 colour = (img.a * mult > 0 ? vec4(img.rgb, textAlpha) : vec4(Palette[bg], BackgroundTransparency)) * ColorModulator;
+    vec4 colour = (img.a * mult > 0 ? vec4(img.rgb, textAlpha) : Palette[bg]) * ColorModulator;
 
-    fragColor = colour;//linear_fog(colour, vertexDistance, FogStart, FogEnd, FogColor);
+    fragColor = linear_fog(colour, vertexDistance, FogStart, FogEnd, FogColor);
 }

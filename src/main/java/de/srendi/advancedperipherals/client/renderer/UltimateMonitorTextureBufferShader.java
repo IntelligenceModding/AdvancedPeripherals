@@ -26,9 +26,8 @@ import java.nio.ByteBuffer;
 
 import static dan200.computercraft.client.render.text.FixedWidthFontRenderer.getColour;
 
-public class UltimateMonitorTextureBufferShader extends ShaderInstance
-{
-    public static final int UNIFORM_SIZE = 4 * 4 * 16 + 4 + 4 + 2 * 4 + 4 + 4 + 4;
+public class UltimateMonitorTextureBufferShader extends ShaderInstance {
+    public static final int UNIFORM_SIZE = 4 * 4 * 16 + 4 + 4 + 2 * 4 + 4;
 
     static final int TEXTURE_INDEX = GL13.GL_TEXTURE3;
 
@@ -78,8 +77,7 @@ public class UltimateMonitorTextureBufferShader extends ShaderInstance
         return uniform;
     }
 
-    public static void setTerminalData( ByteBuffer buffer, UltimateNetworkedTerminal terminal )
-    {
+    public static void setTerminalData(ByteBuffer buffer, UltimateNetworkedTerminal terminal) {
         int width = terminal.getWidth(), height = terminal.getHeight();
 
         int pos = 0;
@@ -98,27 +96,28 @@ public class UltimateMonitorTextureBufferShader extends ShaderInstance
         buffer.limit( pos );
     }
 
-    public static void setUniformData( ByteBuffer buffer, UltimateNetworkedTerminal terminal )
-    {
+    public static void setUniformData(ByteBuffer buffer, UltimateNetworkedTerminal terminal) {
         int pos = 0;
         var palette = terminal.getPalette();
-        for( int i = 0; i < 16; i++ )
-        {
-            double[] colour = palette.getColour( i );
-            buffer.putFloat( pos, (float) colour[0] ).putFloat( pos + 4, (float) colour[1] ).putFloat( pos + 8, (float) colour[2] )
-                .putFloat(pos + 12, 0.5f);
+        for (int i = 0; i < 16; i++) {
+            double[] colour = palette.getColour(i);
+            float alpha = terminal.getPaletteTransparency(i);
+            buffer
+                .putFloat(pos, (float) colour[0])
+                .putFloat(pos + 4, (float) colour[1])
+                .putFloat(pos + 8, (float) colour[2])
+                .putFloat(pos + 12, alpha);
 
             pos += 4 * 4; // std140 requires these are 4-wide
         }
 
-        boolean showCursor = FixedWidthFontRenderer.isCursorVisible( terminal );
+        boolean showCursor = FixedWidthFontRenderer.isCursorVisible(terminal);
         buffer
-            .putInt( pos, terminal.getWidth() ).putInt( pos + 4, terminal.getHeight() )
-            .putInt( pos + 8, showCursor ? terminal.getCursorX() : -2 )
-            .putInt( pos + 12, showCursor ? terminal.getCursorY() : -2 )
-            .putInt( pos + 16, 15 - terminal.getTextColour() )
-            .putFloat(pos + 20, terminal.getTextTransparency() / 255.0f)
-            .putFloat(pos + 24, terminal.getBackgroundTransparency() / 255.0f);
+            .putInt(pos, terminal.getWidth())
+            .putInt(pos + 4, terminal.getHeight())
+            .putInt(pos + 8, showCursor ? terminal.getCursorX() : -2)
+            .putInt(pos + 12, showCursor ? terminal.getCursorY() : -2)
+            .putInt(pos + 16, 15 - terminal.getTextColour());
 
         buffer.limit( UNIFORM_SIZE );
     }

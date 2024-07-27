@@ -13,27 +13,24 @@ import de.srendi.advancedperipherals.common.addons.computercraft.terminal.Ultima
 import javax.annotation.Nullable;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class UltimateServerMonitor
-{
+public class UltimateServerMonitor {
     private final UltimateMonitorEntity origin;
 
-    private int textScale = 2;
+    private int textScale = 10;
     private @Nullable UltimateNetworkedTerminal terminal;
     private final AtomicBoolean resized = new AtomicBoolean( false );
     private final AtomicBoolean changed = new AtomicBoolean( false );
 
-    UltimateServerMonitor( UltimateMonitorEntity origin )
-    {
+    UltimateServerMonitor(UltimateMonitorEntity origin) {
         this.origin = origin;
     }
 
-    synchronized void rebuild()
-    {
+    synchronized void rebuild() {
         Terminal oldTerm = getTerminal();
         int oldWidth = oldTerm == null ? -1 : oldTerm.getWidth();
         int oldHeight = oldTerm == null ? -1 : oldTerm.getHeight();
 
-        double textScale = this.textScale * 0.5;
+        double textScale = this.textScale * 0.1;
         int termWidth = (int) Math.max(
             Math.round( (origin.getWidth() - 2.0 * (UltimateMonitorEntity.RENDER_BORDER + UltimateMonitorEntity.RENDER_MARGIN)) / (textScale * 6.0 * UltimateMonitorEntity.RENDER_PIXEL_SCALE) ),
             1.0
@@ -43,20 +40,16 @@ public class UltimateServerMonitor
             1.0
         );
 
-        if( terminal == null )
-        {
-            terminal = new UltimateNetworkedTerminal( termWidth, termHeight, this::markChanged );
+        if (terminal == null) {
+            terminal = new UltimateNetworkedTerminal(termWidth, termHeight, this::markChanged);
             markChanged();
-        }
-        else
-        {
-            terminal.resize( termWidth, termHeight );
+        } else {
+            terminal.resize(termWidth, termHeight);
         }
 
-        if( oldWidth != termWidth || oldHeight != termHeight )
-        {
+        if (oldWidth != termWidth || oldHeight != termHeight) {
             terminal.clear();
-            resized.set( true );
+            resized.set(true);
             markChanged();
         }
     }
@@ -71,9 +64,10 @@ public class UltimateServerMonitor
         return textScale;
     }
 
-    synchronized void setTextScale( int textScale )
-    {
-        if( this.textScale == textScale ) return;
+    synchronized void setTextScale(int textScale) {
+        if (this.textScale == textScale) {
+            return;
+        }
         this.textScale = textScale;
         rebuild();
     }
@@ -88,8 +82,7 @@ public class UltimateServerMonitor
 
     @Nullable
     @VisibleForTesting
-    public UltimateNetworkedTerminal getTerminal()
-    {
+    public UltimateNetworkedTerminal getTerminal() {
         return terminal;
     }
 }

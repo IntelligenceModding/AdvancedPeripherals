@@ -11,10 +11,10 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import dan200.computercraft.client.render.RenderTypes;
 import dan200.computercraft.client.render.text.FixedWidthFontRenderer;
-import dan200.computercraft.core.terminal.Terminal;
 import dan200.computercraft.core.terminal.TextBuffer;
 import dan200.computercraft.shared.util.Colour;
 import dan200.computercraft.shared.util.Palette;
+import de.srendi.advancedperipherals.common.addons.computercraft.terminal.UltimateNetworkedTerminal;
 import org.lwjgl.system.MemoryUtil;
 
 import javax.annotation.Nonnull;
@@ -64,140 +64,126 @@ public final class DirectFixedWidthFontRenderer
         quad(
             emitter, x, y, x + FONT_WIDTH, y + FONT_HEIGHT, 0, colour,
             xStart / WIDTH, yStart / WIDTH, (xStart + FONT_WIDTH) / WIDTH, (yStart + FONT_HEIGHT) / WIDTH,
-            (byte) alpha
+            alpha
         );
     }
 
-    private static void drawQuad( QuadEmitter emitter, float x, float y, float width, float height, Palette palette, char colourIndex, int alpha )
-    {
-        byte[] colour = palette.getRenderColours( getColour( colourIndex, Colour.BLACK ) );
-        quad( emitter, x, y, x + width, y + height, 0f, colour, BACKGROUND_START, BACKGROUND_START, BACKGROUND_END, BACKGROUND_END, alpha );
+    private static void drawQuad(QuadEmitter emitter, float x, float y, float width, float height, UltimateNetworkedTerminal terminal, char colourIndex) {
+        int color = getColour(colourIndex, Colour.BLACK);
+        byte[] colour = terminal.getPalette().getRenderColours(color);
+        int alpha = terminal.getPaletteTransparencyByte(color);
+        quad(emitter, x, y, x + width, y + height, 0f, colour, BACKGROUND_START, BACKGROUND_START, BACKGROUND_END, BACKGROUND_END, alpha);
     }
 
     private static void drawBackground(
-        @Nonnull QuadEmitter emitter, float x, float y, @Nonnull TextBuffer backgroundColour, @Nonnull Palette palette,
-        float leftMarginSize, float rightMarginSize, float height, int alpha
-    )
-    {
-        if( leftMarginSize > 0 )
-        {
-            drawQuad( emitter, x - leftMarginSize, y, leftMarginSize, height, palette, backgroundColour.charAt( 0 ), alpha );
+        @Nonnull QuadEmitter emitter, float x, float y, @Nonnull TextBuffer backgroundColour, @Nonnull UltimateNetworkedTerminal terminal,
+        float leftMarginSize, float rightMarginSize, float height
+    ) {
+        if (leftMarginSize > 0) {
+            drawQuad(emitter, x - leftMarginSize, y, leftMarginSize, height, terminal, backgroundColour.charAt(0));
         }
 
-        if( rightMarginSize > 0 )
-        {
-            drawQuad( emitter, x + backgroundColour.length() * FONT_WIDTH, y, rightMarginSize, height, palette, backgroundColour.charAt( backgroundColour.length() - 1 ), alpha );
+        if (rightMarginSize > 0) {
+            drawQuad(emitter, x + backgroundColour.length() * FONT_WIDTH, y, rightMarginSize, height, terminal, backgroundColour.charAt(backgroundColour.length() - 1));
         }
 
         // Batch together runs of identical background cells.
         int blockStart = 0;
         char blockColour = '\0';
-        for( int i = 0; i < backgroundColour.length(); i++ )
-        {
-            char colourIndex = backgroundColour.charAt( i );
-            if( colourIndex == blockColour ) continue;
+        for (int i = 0; i < backgroundColour.length(); i++) {
+            char colourIndex = backgroundColour.charAt(i);
+            if (colourIndex == blockColour) {
+                continue;
+            }
 
-            if( blockColour != '\0' )
-            {
-                drawQuad( emitter, x + blockStart * FONT_WIDTH, y, FONT_WIDTH * (i - blockStart), height, palette, blockColour, alpha );
+            if (blockColour != '\0') {
+                drawQuad(emitter, x + blockStart * FONT_WIDTH, y, FONT_WIDTH * (i - blockStart), height, terminal, blockColour);
             }
 
             blockColour = colourIndex;
             blockStart = i;
         }
 
-        if( blockColour != '\0' )
-        {
-            drawQuad( emitter, x + blockStart * FONT_WIDTH, y, FONT_WIDTH * (backgroundColour.length() - blockStart), height, palette, blockColour, alpha );
+        if (blockColour != '\0') {
+            drawQuad(emitter, x + blockStart * FONT_WIDTH, y, FONT_WIDTH * (backgroundColour.length() - blockStart), height, terminal, blockColour);
         }
     }
 
-    public static void drawString( @Nonnull QuadEmitter emitter, float x, float y, @Nonnull TextBuffer text, @Nonnull TextBuffer textColour, @Nonnull Palette palette, int alpha )
-    {
-        for( int i = 0; i < text.length(); i++ )
-        {
-            byte[] colour = palette.getRenderColours( getColour( textColour.charAt( i ), Colour.BLACK ) );
+    public static void drawString(@Nonnull QuadEmitter emitter, float x, float y, @Nonnull TextBuffer text, @Nonnull TextBuffer textColour, @Nonnull UltimateNetworkedTerminal terminal) {
+        for (int i = 0; i < text.length(); i++) {
+            int color = getColour(textColour.charAt(i), Colour.BLACK);
+            byte[] colour = terminal.getPalette().getRenderColours(color);
+            int alpha = terminal.getPaletteTransparencyByte(color);
 
-            int index = text.charAt( i );
-            if( index > 255 ) index = '?';
-            drawChar( emitter, x + i * FONT_WIDTH, y, index, colour, alpha );
+            int index = text.charAt(i);
+            if (index > 255) {
+                index = '?';
+            }
+            drawChar(emitter, x + i * FONT_WIDTH, y, index, colour, alpha);
         }
 
     }
 
-    public static void drawTerminalForeground( @Nonnull QuadEmitter emitter, float x, float y, @Nonnull Terminal terminal, int alpha )
-    {
-        Palette palette = terminal.getPalette();
+    public static void drawTerminalForeground(@Nonnull QuadEmitter emitter, float x, float y, @Nonnull UltimateNetworkedTerminal terminal) {
         int height = terminal.getHeight();
 
         // The main text
-        for( int i = 0; i < height; i++ )
-        {
+        for (int i = 0; i < height; i++) {
             float rowY = y + FONT_HEIGHT * i;
-            drawString(
-                emitter, x, rowY, terminal.getLine( i ), terminal.getTextColourLine( i ),
-                palette, alpha
-            );
+            drawString(emitter, x, rowY, terminal.getLine(i), terminal.getTextColourLine(i), terminal);
         }
     }
 
     public static void drawTerminalBackground(
-        @Nonnull QuadEmitter emitter, float x, float y, @Nonnull Terminal terminal,
-        float topMarginSize, float bottomMarginSize, float leftMarginSize, float rightMarginSize,
-        int alpha
-    )
-    {
-        Palette palette = terminal.getPalette();
+        @Nonnull QuadEmitter emitter, float x, float y, @Nonnull UltimateNetworkedTerminal terminal,
+        float topMarginSize, float bottomMarginSize, float leftMarginSize, float rightMarginSize
+    ) {
         int height = terminal.getHeight();
 
         // Top and bottom margins
         drawBackground(
-            emitter, x, y - topMarginSize, terminal.getBackgroundColourLine( 0 ), palette,
-            leftMarginSize, rightMarginSize, topMarginSize, alpha
+            emitter, x, y - topMarginSize, terminal.getBackgroundColourLine(0), terminal,
+            leftMarginSize, rightMarginSize, topMarginSize
         );
 
         drawBackground(
-            emitter, x, y + height * FONT_HEIGHT, terminal.getBackgroundColourLine( height - 1 ), palette,
-            leftMarginSize, rightMarginSize, bottomMarginSize, alpha
+            emitter, x, y + height * FONT_HEIGHT, terminal.getBackgroundColourLine(height - 1), terminal,
+            leftMarginSize, rightMarginSize, bottomMarginSize
         );
 
         // The main text
-        for( int i = 0; i < height; i++ )
-        {
+        for (int i = 0; i < height; i++) {
             float rowY = y + FONT_HEIGHT * i;
             drawBackground(
-                emitter, x, rowY, terminal.getBackgroundColourLine( i ), palette,
-                leftMarginSize, rightMarginSize, FONT_HEIGHT, alpha
+                emitter, x, rowY, terminal.getBackgroundColourLine(i), terminal,
+                leftMarginSize, rightMarginSize, FONT_HEIGHT
             );
         }
     }
 
-    public static void drawCursor( @Nonnull QuadEmitter emitter, float x, float y, @Nonnull Terminal terminal, int alpha )
-    {
-        if( isCursorVisible( terminal ) )
-        {
-            byte[] colour = terminal.getPalette().getRenderColours( 15 - terminal.getTextColour() );
-            drawChar( emitter, x + terminal.getCursorX() * FONT_WIDTH, y + terminal.getCursorY() * FONT_HEIGHT, '_', colour, alpha );
+    public static void drawCursor(@Nonnull QuadEmitter emitter, float x, float y, @Nonnull UltimateNetworkedTerminal terminal) {
+        if (isCursorVisible(terminal)) {
+            int color = 15 - terminal.getTextColour();
+            byte[] colour = terminal.getPalette().getRenderColours(color);
+            int alpha = terminal.getPaletteTransparencyByte(color);
+            drawChar(emitter, x + terminal.getCursorX() * FONT_WIDTH, y + terminal.getCursorY() * FONT_HEIGHT, '_', colour, alpha);
         }
     }
 
-    public static int getVertexCount( Terminal terminal )
-    {
+    public static int getVertexCount(UltimateNetworkedTerminal terminal) {
         return (terminal.getHeight() + 2) * (terminal.getWidth() + 2) * 2;
     }
 
-    private static void quad( QuadEmitter buffer, float x1, float y1, float x2, float y2, float z, byte[] rgba, float u1, float v1, float u2, float v2, int alpha )
-    {
-        buffer.quad( x1, y1, x2, y2, z, rgba, u1, v1, u2, v2, alpha );
+    private static void quad(QuadEmitter buffer, float x1, float y1, float x2, float y2, float z, byte[] rgba, float u1, float v1, float u2, float v2, int alpha) {
+        buffer.quad(x1, y1, x2, y2, z, rgba, u1, v1, u2, v2, alpha);
     }
 
-    public interface QuadEmitter
-    {
+    public interface QuadEmitter {
         VertexFormat format();
 
         ByteBuffer buffer();
 
-        void quad( float x1, float y1, float x2, float y2, float z, byte[] rgba, float u1, float v1, float u2, float v2, int alpha );
+        void quad(float x1, float y1, float x2, float y2, float z, byte[] rgba, float u1, float v1, float u2, float v2, int alpha);
     }
 
     public record ByteBufferEmitter(ByteBuffer buffer) implements QuadEmitter
@@ -209,14 +195,13 @@ public final class DirectFixedWidthFontRenderer
         }
 
         @Override
-        public void quad( float x1, float y1, float x2, float y2, float z, byte[] rgba, float u1, float v1, float u2, float v2, int alpha )
+        public void quad( float x1, float y1, float x2, float y2, float z, byte[] rgba, float u1, float v1, float u2, float v2, int alpha)
         {
             DirectFixedWidthFontRenderer.quad( buffer, x1, y1, x2, y2, z, rgba, u1, v1, u2, v2, alpha );
         }
     }
 
-    static void quad( ByteBuffer buffer, float x1, float y1, float x2, float y2, float z, byte[] rgba, float u1, float v1, float u2, float v2, int alpha )
-    {
+    static void quad(ByteBuffer buffer, float x1, float y1, float x2, float y2, float z, byte[] rgba, float u1, float v1, float u2, float v2, int alpha) {
         // Emit a single quad to our buffer. This uses Unsafe (well, LWJGL's MemoryUtil) to directly blit bytes to the
         // underlying buffer. This allows us to have a single bounds check up-front, rather than one for every write.
         // This provides significant performance gains, at the cost of well, using Unsafe.
@@ -239,7 +224,7 @@ public final class DirectFixedWidthFontRenderer
         memPutByte( addr + 12, rgba[0] );
         memPutByte( addr + 13, rgba[1] );
         memPutByte( addr + 14, rgba[2] );
-        memPutByte( addr + 15, (byte) alpha );
+        memPutByte( addr + 15, (byte)(alpha) );
         memPutFloat( addr + 16, u1 );
         memPutFloat( addr + 20, v1 );
         memPutShort( addr + 24, (short) 0xF0 );
@@ -251,7 +236,7 @@ public final class DirectFixedWidthFontRenderer
         memPutByte( addr + 40, rgba[0] );
         memPutByte( addr + 41, rgba[1] );
         memPutByte( addr + 42, rgba[2] );
-        memPutByte( addr + 43, (byte) alpha );
+        memPutByte( addr + 43, (byte)(alpha) );
         memPutFloat( addr + 44, u1 );
         memPutFloat( addr + 48, v2 );
         memPutShort( addr + 52, (short) 0xF0 );
@@ -263,7 +248,7 @@ public final class DirectFixedWidthFontRenderer
         memPutByte( addr + 68, rgba[0] );
         memPutByte( addr + 69, rgba[1] );
         memPutByte( addr + 70, rgba[2] );
-        memPutByte( addr + 71, (byte) alpha );
+        memPutByte( addr + 71, (byte)(alpha) );
         memPutFloat( addr + 72, u2 );
         memPutFloat( addr + 76, v2 );
         memPutShort( addr + 80, (short) 0xF0 );
@@ -275,7 +260,7 @@ public final class DirectFixedWidthFontRenderer
         memPutByte( addr + 96, rgba[0] );
         memPutByte( addr + 97, rgba[1] );
         memPutByte( addr + 98, rgba[2] );
-        memPutByte( addr + 99, (byte) alpha );
+        memPutByte( addr + 99, (byte)(alpha) );
         memPutFloat( addr + 100, u2 );
         memPutFloat( addr + 104, v1 );
         memPutShort( addr + 108, (short) 0xF0 );

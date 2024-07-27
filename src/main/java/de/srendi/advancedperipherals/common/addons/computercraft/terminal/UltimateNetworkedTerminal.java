@@ -7,11 +7,10 @@ import net.minecraft.network.FriendlyByteBuf;
 import java.util.Arrays;
 
 public class UltimateNetworkedTerminal extends NetworkedTerminal {
+    private static final int PALETTE_SIZE = 16; // sync with dan200.computercraft.shared.util.Palette
+
     private float panelDepth = 0;
-    private int textTransparency = 0xff;
-    private int backgroundTransparency = 0xff;
-    private final int[] transparencies = new int[]{0, 0, 0};
-    private final int[][] sideColors = new int[3][3];
+    private final byte[] transparencies = new byte[PALETTE_SIZE];
 
     public UltimateNetworkedTerminal(int width, int height) {
         this(width, height, null);
@@ -19,6 +18,9 @@ public class UltimateNetworkedTerminal extends NetworkedTerminal {
 
     public UltimateNetworkedTerminal(int width, int height, Runnable changedCallback) {
         super(width, height, true, changedCallback);
+        for (int i = 0; i < this.transparencies.length; i++) {
+            this.transparencies[i] = (byte)(0xff);
+        }
     }
 
     public float getPanelDepth() {
@@ -34,72 +36,32 @@ public class UltimateNetworkedTerminal extends NetworkedTerminal {
         setChanged();
     }
 
-    public int getTextTransparency() {
-        return this.textTransparency;
+    public int getPaletteTransparencyByte(int color) {
+        return (int)(this.transparencies[color]) & 0xff;
     }
 
-    public void setTextTransparency(int transparency) {
-        transparency = Math.min(Math.max(transparency, 0), 0xff);
-        if (this.textTransparency == transparency) {
+    public float getPaletteTransparency(int color) {
+        if (color < 0 || color >= this.transparencies.length) {
+            return 1;
+        }
+        return (float)((int)(this.transparencies[color]) & 0xff) / 255.0f;
+    }
+
+    public void setPaletteTransparency(int color, float a) {
+        if (color < 0 || color >= this.transparencies.length) {
             return;
         }
-        this.textTransparency = transparency;
-        setChanged();
-    }
-
-    public int getBackgroundTransparency() {
-        return this.backgroundTransparency;
-    }
-
-    public void setBackgroundTransparency(int transparency) {
-        transparency = Math.min(Math.max(transparency, 0), 0xff);
-        if (this.backgroundTransparency == transparency) {
-            return;
-        }
-        this.backgroundTransparency = transparency;
-        setChanged();
-    }
-
-    public int getSideTransparency(MonitorSide side) {
-        return this.transparencies[side.getIndex()];
-    }
-
-    public void setSideTransparency(MonitorSide side, int transparency) {
-        transparency = Math.min(Math.max(transparency, 0), 0xff);
-        if (this.transparencies[side.getIndex()] == transparency) {
-            return;
-        }
-        this.transparencies[side.getIndex()] = transparency;
-        setChanged();
-    }
-
-    public int[] getSideColor(MonitorSide side) {
-        return this.sideColors[side.getIndex()];
-    }
-
-    public void setSideColor(MonitorSide side, int[] color) {
-        if (color.length != 3) {
-            throw new IllegalArgumentException("color.length must be 3");
-        }
-        color[0] = Math.min(Math.max(color[0], 0), 0xff);
-        color[1] = Math.min(Math.max(color[1], 0), 0xff);
-        color[2] = Math.min(Math.max(color[2], 0), 0xff);
-        if (Arrays.equals(this.sideColors[side.getIndex()], color)) {
-            return;
-        }
-        this.sideColors[side.getIndex()] = color;
-        setChanged();
+        a = Math.min(Math.max(a, 0), 1);
+        this.transparencies[color] = (byte)((int)(a * 0xff));
     }
 
     @Override
     public synchronized void reset() {
         super.reset();
         this.panelDepth = 0;
-        this.textTransparency = 0xff;
-        this.backgroundTransparency = 0xff;
-        this.transparencies[0] = 0;
-        this.transparencies[1] = 0;
-        this.transparencies[2] = 0;
+        for (int i = 0; i < this.transparencies.length; i++) {
+            this.transparencies[i] = (byte)(0xff);
+        }
         setChanged();
     }
 
@@ -107,22 +69,14 @@ public class UltimateNetworkedTerminal extends NetworkedTerminal {
     public synchronized void write(FriendlyByteBuf buffer) {
         super.write(buffer);
         buffer.writeFloat(this.panelDepth);
-        buffer.writeByte(this.textTransparency);
-        buffer.writeByte(this.backgroundTransparency);
-        buffer.writeByte(this.transparencies[0]);
-        buffer.writeByte(this.transparencies[1]);
-        buffer.writeByte(this.transparencies[2]);
+        buffer.writeBytes(this.transparencies);
     }
 
     @Override
     public synchronized void read(FriendlyByteBuf buffer) {
         super.read(buffer);
         this.panelDepth = buffer.readFloat();
-        this.textTransparency = (int)(buffer.readByte()) & 0xff;
-        this.backgroundTransparency = (int)(buffer.readByte()) & 0xff;
-        this.transparencies[0] = (int)(buffer.readByte()) & 0xff;
-        this.transparencies[1] = (int)(buffer.readByte()) & 0xff;
-        this.transparencies[2] = (int)(buffer.readByte()) & 0xff;
+        buffer.readBytes(this.transparencies);
         setChanged();
     }
 
@@ -130,13 +84,7 @@ public class UltimateNetworkedTerminal extends NetworkedTerminal {
     public synchronized CompoundTag writeToNBT(CompoundTag nbt) {
         super.writeToNBT(nbt);
         nbt.putFloat("term_panelDepth", this.panelDepth);
-        nbt.putByte("term_textTransparency", (byte) this.textTransparency);
-        nbt.putByte("term_backgroundTransparency", (byte) this.backgroundTransparency);
-        nbt.putByteArray("term_sideTransparencies", new byte[]{
-            (byte) this.transparencies[0],
-            (byte) this.transparencies[1],
-            (byte) this.transparencies[2],
-        });
+        nbt.putByteArray("term_paletteTransparencies", this.transparencies);
         return nbt;
     }
 
@@ -144,39 +92,8 @@ public class UltimateNetworkedTerminal extends NetworkedTerminal {
     public synchronized void readFromNBT(CompoundTag nbt) {
         super.readFromNBT(nbt);
         this.panelDepth = nbt.getFloat("term_panelDepth");
-        this.textTransparency = (int)(nbt.getByte("term_textTransparency")) & 0xff;
-        this.backgroundTransparency = (int)(nbt.getByte("term_backgroundTransparency")) & 0xff;
-        byte[] transparencies = nbt.getByteArray("term_sideTransparencies");
-        if (transparencies.length == 3) {
-            this.transparencies[0] = (int)(transparencies[0]) & 0xff;
-            this.transparencies[1] = (int)(transparencies[1]) & 0xff;
-            this.transparencies[2] = (int)(transparencies[2]) & 0xff;
-        }
+        byte[] transparencies = nbt.getByteArray("term_paletteTransparencies");
+        System.arraycopy(transparencies, 0, this.transparencies, 0, Math.min(transparencies.length, this.transparencies.length));
         setChanged();
-    }
-
-    public static enum MonitorSide {
-        FRONT(0),
-        LEFT(1),
-        TOP(2);
-
-        private final int index;
-
-        private MonitorSide(int index){
-            this.index = index;
-        }
-
-        public int getIndex() {
-            return index;
-        }
-
-        public static MonitorSide fromString(String s) {
-            return switch (s.toLowerCase()) {
-                case "front", "back", "z" -> FRONT;
-                case "left", "right", "x" -> LEFT;
-                case "top", "bottom", "y" -> TOP;
-                default -> null;
-            };
-        }
     }
 }

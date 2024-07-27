@@ -187,21 +187,20 @@ public class UltimateMonitorRenderer implements BlockEntityRenderer<UltimateMoni
                 var backgroundBuffer = monitor.backgroundBuffer;
                 var foregroundBuffer = monitor.foregroundBuffer;
                 if (redraw) {
-                    int size = DirectFixedWidthFontRenderer.getVertexCount( terminal );
+                    int size = DirectFixedWidthFontRenderer.getVertexCount(terminal);
 
                     // In an ideal world we could upload these both into one buffer. However, we can't render VBOs with
                     // and starting and ending offset, and so need to use two buffers instead.
 
-                    renderToBuffer( backgroundBuffer, size, sink ->
-                        DirectFixedWidthFontRenderer.drawTerminalBackground( sink, 0, 0, terminal, yMargin, yMargin, xMargin, xMargin,
-                            terminal.getBackgroundTransparency() ) );
+                    renderToBuffer(backgroundBuffer, size, sink ->
+                        DirectFixedWidthFontRenderer.drawTerminalBackground(sink, 0, 0, terminal, yMargin, yMargin, xMargin, xMargin));
 
-                    renderToBuffer( foregroundBuffer, size, sink -> {
-                        DirectFixedWidthFontRenderer.drawTerminalForeground( sink, 0, 0, terminal, terminal.getTextTransparency() );
+                    renderToBuffer(foregroundBuffer, size, sink -> {
+                        DirectFixedWidthFontRenderer.drawTerminalForeground(sink, 0, 0, terminal);
                         // If the cursor is visible, we append it to the end of our buffer. When rendering, we can either
                         // render n or n+1 quads and so toggle the cursor on and off.
-                        DirectFixedWidthFontRenderer.drawCursor( sink, 0, 0, terminal, terminal.getTextTransparency() );
-                    } );
+                        DirectFixedWidthFontRenderer.drawCursor(sink, 0, 0, terminal);
+                    });
                 }
 
                 // Our VBO doesn't transform its vertices with the provided pose stack, which means that the inverse view
