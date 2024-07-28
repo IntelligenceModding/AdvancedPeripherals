@@ -1,0 +1,964 @@
+{
+  "variants": {
+    "facing=east,orientation=down,state=d": {
+      "model": "advancedperipherals:block/ultimate_monitor_d",
+      "x": 90,
+      "y": 90
+    },
+    "facing=east,orientation=down,state=l": {
+      "model": "advancedperipherals:block/ultimate_monitor_l",
+      "x": 90,
+      "y": 90
+    },
+    "facing=east,orientation=down,state=ld": {
+      "model": "advancedperipherals:block/ultimate_monitor_ld",
+      "x": 90,
+      "y": 90
+    },
+    "facing=east,orientation=down,state=lr": {
+      "model": "advancedperipherals:block/ultimate_monitor_lr",
+      "x": 90,
+      "y": 90
+    },
+    "facing=east,orientation=down,state=lrd": {
+      "model": "advancedperipherals:block/ultimate_monitor_lrd",
+      "x": 90,
+      "y": 90
+    },
+    "facing=east,orientation=down,state=lru": {
+      "model": "advancedperipherals:block/ultimate_monitor_lru",
+      "x": 90,
+      "y": 90
+    },
+    "facing=east,orientation=down,state=lrud": {
+      "model": "advancedperipherals:block/ultimate_monitor_lrud",
+      "x": 90,
+      "y": 90
+    },
+    "facing=east,orientation=down,state=lu": {
+      "model": "advancedperipherals:block/ultimate_monitor_lu",
+      "x": 90,
+      "y": 90
+    },
+    "facing=east,orientation=down,state=lud": {
+      "model": "advancedperipherals:block/ultimate_monitor_lud",
+      "x": 90,
+      "y": 90
+    },
+    "facing=east,orientation=down,state=none": {
+      "model": "advancedperipherals:block/ultimate_monitor",
+      "x": 90,
+      "y": 90
+    },
+    "facing=east,orientation=down,state=r": {
+      "model": "advancedperipherals:block/ultimate_monitor_r",
+      "x": 90,
+      "y": 90
+    },
+    "facing=east,orientation=down,state=rd": {
+      "model": "advancedperipherals:block/ultimate_monitor_rd",
+      "x": 90,
+      "y": 90
+    },
+    "facing=east,orientation=down,state=ru": {
+      "model": "advancedperipherals:block/ultimate_monitor_ru",
+      "x": 90,
+      "y": 90
+    },
+    "facing=east,orientation=down,state=rud": {
+      "model": "advancedperipherals:block/ultimate_monitor_rud",
+      "x": 90,
+      "y": 90
+    },
+    "facing=east,orientation=down,state=u": {
+      "model": "advancedperipherals:block/ultimate_monitor_u",
+      "x": 90,
+      "y": 90
+    },
+    "facing=east,orientation=down,state=ud": {
+      "model": "advancedperipherals:block/ultimate_monitor_ud",
+      "x": 90,
+      "y": 90
+    },
+    "facing=east,orientation=north,state=d": {
+      "model": "advancedperipherals:block/ultimate_monitor_d",
+      "x": 0,
+      "y": 90
+    },
+    "facing=east,orientation=north,state=l": {
+      "model": "advancedperipherals:block/ultimate_monitor_l",
+      "x": 0,
+      "y": 90
+    },
+    "facing=east,orientation=north,state=ld": {
+      "model": "advancedperipherals:block/ultimate_monitor_ld",
+      "x": 0,
+      "y": 90
+    },
+    "facing=east,orientation=north,state=lr": {
+      "model": "advancedperipherals:block/ultimate_monitor_lr",
+      "x": 0,
+      "y": 90
+    },
+    "facing=east,orientation=north,state=lrd": {
+      "model": "advancedperipherals:block/ultimate_monitor_lrd",
+      "x": 0,
+      "y": 90
+    },
+    "facing=east,orientation=north,state=lru": {
+      "model": "advancedperipherals:block/ultimate_monitor_lru",
+      "x": 0,
+      "y": 90
+    },
+    "facing=east,orientation=north,state=lrud": {
+      "model": "advancedperipherals:block/ultimate_monitor_lrud",
+      "x": 0,
+      "y": 90
+    },
+    "facing=east,orientation=north,state=lu": {
+      "model": "advancedperipherals:block/ultimate_monitor_lu",
+      "x": 0,
+      "y": 90
+    },
+    "facing=east,orientation=north,state=lud": {
+      "model": "advancedperipherals:block/ultimate_monitor_lud",
+      "x": 0,
+      "y": 90
+    },
+    "facing=east,orientation=north,state=none": {
+      "model": "advancedperipherals:block/ultimate_monitor",
+      "x": 0,
+      "y": 90
+    },
+    "facing=east,orientation=north,state=r": {
+      "model": "advancedperipherals:block/ultimate_monitor_r",
+      "x": 0,
+      "y": 90
+    },
+    "facing=east,orientation=north,state=rd": {
+      "model": "advancedperipherals:block/ultimate_monitor_rd",
+      "x": 0,
+      "y": 90
+    },
+    "facing=east,orientation=north,state=ru": {
+      "model": "advancedperipherals:block/ultimate_monitor_ru",
+      "x": 0,
+      "y": 90
+    },
+    "facing=east,orientation=north,state=rud": {
+      "model": "advancedperipherals:block/ultimate_monitor_rud",
+      "x": 0,
+      "y": 90
+    },
+    "facing=east,orientation=north,state=u": {
+      "model": "advancedperipherals:block/ultimate_monitor_u",
+      "x": 0,
+      "y": 90
+    },
+    "facing=east,orientation=north,state=ud": {
+      "model": "advancedperipherals:block/ultimate_monitor_ud",
+      "x": 0,
+      "y": 90
+    },
+    "facing=east,orientation=up,state=d": {
+      "model": "advancedperipherals:block/ultimate_monitor_d",
+      "x": 270,
+      "y": 90
+    },
+    "facing=east,orientation=up,state=l": {
+      "model": "advancedperipherals:block/ultimate_monitor_l",
+      "x": 270,
+      "y": 90
+    },
+    "facing=east,orientation=up,state=ld": {
+      "model": "advancedperipherals:block/ultimate_monitor_ld",
+      "x": 270,
+      "y": 90
+    },
+    "facing=east,orientation=up,state=lr": {
+      "model": "advancedperipherals:block/ultimate_monitor_lr",
+      "x": 270,
+      "y": 90
+    },
+    "facing=east,orientation=up,state=lrd": {
+      "model": "advancedperipherals:block/ultimate_monitor_lrd",
+      "x": 270,
+      "y": 90
+    },
+    "facing=east,orientation=up,state=lru": {
+      "model": "advancedperipherals:block/ultimate_monitor_lru",
+      "x": 270,
+      "y": 90
+    },
+    "facing=east,orientation=up,state=lrud": {
+      "model": "advancedperipherals:block/ultimate_monitor_lrud",
+      "x": 270,
+      "y": 90
+    },
+    "facing=east,orientation=up,state=lu": {
+      "model": "advancedperipherals:block/ultimate_monitor_lu",
+      "x": 270,
+      "y": 90
+    },
+    "facing=east,orientation=up,state=lud": {
+      "model": "advancedperipherals:block/ultimate_monitor_lud",
+      "x": 270,
+      "y": 90
+    },
+    "facing=east,orientation=up,state=none": {
+      "model": "advancedperipherals:block/ultimate_monitor",
+      "x": 270,
+      "y": 90
+    },
+    "facing=east,orientation=up,state=r": {
+      "model": "advancedperipherals:block/ultimate_monitor_r",
+      "x": 270,
+      "y": 90
+    },
+    "facing=east,orientation=up,state=rd": {
+      "model": "advancedperipherals:block/ultimate_monitor_rd",
+      "x": 270,
+      "y": 90
+    },
+    "facing=east,orientation=up,state=ru": {
+      "model": "advancedperipherals:block/ultimate_monitor_ru",
+      "x": 270,
+      "y": 90
+    },
+    "facing=east,orientation=up,state=rud": {
+      "model": "advancedperipherals:block/ultimate_monitor_rud",
+      "x": 270,
+      "y": 90
+    },
+    "facing=east,orientation=up,state=u": {
+      "model": "advancedperipherals:block/ultimate_monitor_u",
+      "x": 270,
+      "y": 90
+    },
+    "facing=east,orientation=up,state=ud": {
+      "model": "advancedperipherals:block/ultimate_monitor_ud",
+      "x": 270,
+      "y": 90
+    },
+    "facing=north,orientation=down,state=d": {
+      "model": "advancedperipherals:block/ultimate_monitor_d",
+      "x": 90,
+      "y": 0
+    },
+    "facing=north,orientation=down,state=l": {
+      "model": "advancedperipherals:block/ultimate_monitor_l",
+      "x": 90,
+      "y": 0
+    },
+    "facing=north,orientation=down,state=ld": {
+      "model": "advancedperipherals:block/ultimate_monitor_ld",
+      "x": 90,
+      "y": 0
+    },
+    "facing=north,orientation=down,state=lr": {
+      "model": "advancedperipherals:block/ultimate_monitor_lr",
+      "x": 90,
+      "y": 0
+    },
+    "facing=north,orientation=down,state=lrd": {
+      "model": "advancedperipherals:block/ultimate_monitor_lrd",
+      "x": 90,
+      "y": 0
+    },
+    "facing=north,orientation=down,state=lru": {
+      "model": "advancedperipherals:block/ultimate_monitor_lru",
+      "x": 90,
+      "y": 0
+    },
+    "facing=north,orientation=down,state=lrud": {
+      "model": "advancedperipherals:block/ultimate_monitor_lrud",
+      "x": 90,
+      "y": 0
+    },
+    "facing=north,orientation=down,state=lu": {
+      "model": "advancedperipherals:block/ultimate_monitor_lu",
+      "x": 90,
+      "y": 0
+    },
+    "facing=north,orientation=down,state=lud": {
+      "model": "advancedperipherals:block/ultimate_monitor_lud",
+      "x": 90,
+      "y": 0
+    },
+    "facing=north,orientation=down,state=none": {
+      "model": "advancedperipherals:block/ultimate_monitor",
+      "x": 90,
+      "y": 0
+    },
+    "facing=north,orientation=down,state=r": {
+      "model": "advancedperipherals:block/ultimate_monitor_r",
+      "x": 90,
+      "y": 0
+    },
+    "facing=north,orientation=down,state=rd": {
+      "model": "advancedperipherals:block/ultimate_monitor_rd",
+      "x": 90,
+      "y": 0
+    },
+    "facing=north,orientation=down,state=ru": {
+      "model": "advancedperipherals:block/ultimate_monitor_ru",
+      "x": 90,
+      "y": 0
+    },
+    "facing=north,orientation=down,state=rud": {
+      "model": "advancedperipherals:block/ultimate_monitor_rud",
+      "x": 90,
+      "y": 0
+    },
+    "facing=north,orientation=down,state=u": {
+      "model": "advancedperipherals:block/ultimate_monitor_u",
+      "x": 90,
+      "y": 0
+    },
+    "facing=north,orientation=down,state=ud": {
+      "model": "advancedperipherals:block/ultimate_monitor_ud",
+      "x": 90,
+      "y": 0
+    },
+    "facing=north,orientation=north,state=d": {
+      "model": "advancedperipherals:block/ultimate_monitor_d",
+      "x": 0,
+      "y": 0
+    },
+    "facing=north,orientation=north,state=l": {
+      "model": "advancedperipherals:block/ultimate_monitor_l",
+      "x": 0,
+      "y": 0
+    },
+    "facing=north,orientation=north,state=ld": {
+      "model": "advancedperipherals:block/ultimate_monitor_ld",
+      "x": 0,
+      "y": 0
+    },
+    "facing=north,orientation=north,state=lr": {
+      "model": "advancedperipherals:block/ultimate_monitor_lr",
+      "x": 0,
+      "y": 0
+    },
+    "facing=north,orientation=north,state=lrd": {
+      "model": "advancedperipherals:block/ultimate_monitor_lrd",
+      "x": 0,
+      "y": 0
+    },
+    "facing=north,orientation=north,state=lru": {
+      "model": "advancedperipherals:block/ultimate_monitor_lru",
+      "x": 0,
+      "y": 0
+    },
+    "facing=north,orientation=north,state=lrud": {
+      "model": "advancedperipherals:block/ultimate_monitor_lrud",
+      "x": 0,
+      "y": 0
+    },
+    "facing=north,orientation=north,state=lu": {
+      "model": "advancedperipherals:block/ultimate_monitor_lu",
+      "x": 0,
+      "y": 0
+    },
+    "facing=north,orientation=north,state=lud": {
+      "model": "advancedperipherals:block/ultimate_monitor_lud",
+      "x": 0,
+      "y": 0
+    },
+    "facing=north,orientation=north,state=none": {
+      "model": "advancedperipherals:block/ultimate_monitor",
+      "x": 0,
+      "y": 0
+    },
+    "facing=north,orientation=north,state=r": {
+      "model": "advancedperipherals:block/ultimate_monitor_r",
+      "x": 0,
+      "y": 0
+    },
+    "facing=north,orientation=north,state=rd": {
+      "model": "advancedperipherals:block/ultimate_monitor_rd",
+      "x": 0,
+      "y": 0
+    },
+    "facing=north,orientation=north,state=ru": {
+      "model": "advancedperipherals:block/ultimate_monitor_ru",
+      "x": 0,
+      "y": 0
+    },
+    "facing=north,orientation=north,state=rud": {
+      "model": "advancedperipherals:block/ultimate_monitor_rud",
+      "x": 0,
+      "y": 0
+    },
+    "facing=north,orientation=north,state=u": {
+      "model": "advancedperipherals:block/ultimate_monitor_u",
+      "x": 0,
+      "y": 0
+    },
+    "facing=north,orientation=north,state=ud": {
+      "model": "advancedperipherals:block/ultimate_monitor_ud",
+      "x": 0,
+      "y": 0
+    },
+    "facing=north,orientation=up,state=d": {
+      "model": "advancedperipherals:block/ultimate_monitor_d",
+      "x": 270,
+      "y": 0
+    },
+    "facing=north,orientation=up,state=l": {
+      "model": "advancedperipherals:block/ultimate_monitor_l",
+      "x": 270,
+      "y": 0
+    },
+    "facing=north,orientation=up,state=ld": {
+      "model": "advancedperipherals:block/ultimate_monitor_ld",
+      "x": 270,
+      "y": 0
+    },
+    "facing=north,orientation=up,state=lr": {
+      "model": "advancedperipherals:block/ultimate_monitor_lr",
+      "x": 270,
+      "y": 0
+    },
+    "facing=north,orientation=up,state=lrd": {
+      "model": "advancedperipherals:block/ultimate_monitor_lrd",
+      "x": 270,
+      "y": 0
+    },
+    "facing=north,orientation=up,state=lru": {
+      "model": "advancedperipherals:block/ultimate_monitor_lru",
+      "x": 270,
+      "y": 0
+    },
+    "facing=north,orientation=up,state=lrud": {
+      "model": "advancedperipherals:block/ultimate_monitor_lrud",
+      "x": 270,
+      "y": 0
+    },
+    "facing=north,orientation=up,state=lu": {
+      "model": "advancedperipherals:block/ultimate_monitor_lu",
+      "x": 270,
+      "y": 0
+    },
+    "facing=north,orientation=up,state=lud": {
+      "model": "advancedperipherals:block/ultimate_monitor_lud",
+      "x": 270,
+      "y": 0
+    },
+    "facing=north,orientation=up,state=none": {
+      "model": "advancedperipherals:block/ultimate_monitor",
+      "x": 270,
+      "y": 0
+    },
+    "facing=north,orientation=up,state=r": {
+      "model": "advancedperipherals:block/ultimate_monitor_r",
+      "x": 270,
+      "y": 0
+    },
+    "facing=north,orientation=up,state=rd": {
+      "model": "advancedperipherals:block/ultimate_monitor_rd",
+      "x": 270,
+      "y": 0
+    },
+    "facing=north,orientation=up,state=ru": {
+      "model": "advancedperipherals:block/ultimate_monitor_ru",
+      "x": 270,
+      "y": 0
+    },
+    "facing=north,orientation=up,state=rud": {
+      "model": "advancedperipherals:block/ultimate_monitor_rud",
+      "x": 270,
+      "y": 0
+    },
+    "facing=north,orientation=up,state=u": {
+      "model": "advancedperipherals:block/ultimate_monitor_u",
+      "x": 270,
+      "y": 0
+    },
+    "facing=north,orientation=up,state=ud": {
+      "model": "advancedperipherals:block/ultimate_monitor_ud",
+      "x": 270,
+      "y": 0
+    },
+    "facing=south,orientation=down,state=d": {
+      "model": "advancedperipherals:block/ultimate_monitor_d",
+      "x": 90,
+      "y": 180
+    },
+    "facing=south,orientation=down,state=l": {
+      "model": "advancedperipherals:block/ultimate_monitor_l",
+      "x": 90,
+      "y": 180
+    },
+    "facing=south,orientation=down,state=ld": {
+      "model": "advancedperipherals:block/ultimate_monitor_ld",
+      "x": 90,
+      "y": 180
+    },
+    "facing=south,orientation=down,state=lr": {
+      "model": "advancedperipherals:block/ultimate_monitor_lr",
+      "x": 90,
+      "y": 180
+    },
+    "facing=south,orientation=down,state=lrd": {
+      "model": "advancedperipherals:block/ultimate_monitor_lrd",
+      "x": 90,
+      "y": 180
+    },
+    "facing=south,orientation=down,state=lru": {
+      "model": "advancedperipherals:block/ultimate_monitor_lru",
+      "x": 90,
+      "y": 180
+    },
+    "facing=south,orientation=down,state=lrud": {
+      "model": "advancedperipherals:block/ultimate_monitor_lrud",
+      "x": 90,
+      "y": 180
+    },
+    "facing=south,orientation=down,state=lu": {
+      "model": "advancedperipherals:block/ultimate_monitor_lu",
+      "x": 90,
+      "y": 180
+    },
+    "facing=south,orientation=down,state=lud": {
+      "model": "advancedperipherals:block/ultimate_monitor_lud",
+      "x": 90,
+      "y": 180
+    },
+    "facing=south,orientation=down,state=none": {
+      "model": "advancedperipherals:block/ultimate_monitor",
+      "x": 90,
+      "y": 180
+    },
+    "facing=south,orientation=down,state=r": {
+      "model": "advancedperipherals:block/ultimate_monitor_r",
+      "x": 90,
+      "y": 180
+    },
+    "facing=south,orientation=down,state=rd": {
+      "model": "advancedperipherals:block/ultimate_monitor_rd",
+      "x": 90,
+      "y": 180
+    },
+    "facing=south,orientation=down,state=ru": {
+      "model": "advancedperipherals:block/ultimate_monitor_ru",
+      "x": 90,
+      "y": 180
+    },
+    "facing=south,orientation=down,state=rud": {
+      "model": "advancedperipherals:block/ultimate_monitor_rud",
+      "x": 90,
+      "y": 180
+    },
+    "facing=south,orientation=down,state=u": {
+      "model": "advancedperipherals:block/ultimate_monitor_u",
+      "x": 90,
+      "y": 180
+    },
+    "facing=south,orientation=down,state=ud": {
+      "model": "advancedperipherals:block/ultimate_monitor_ud",
+      "x": 90,
+      "y": 180
+    },
+    "facing=south,orientation=north,state=d": {
+      "model": "advancedperipherals:block/ultimate_monitor_d",
+      "x": 0,
+      "y": 180
+    },
+    "facing=south,orientation=north,state=l": {
+      "model": "advancedperipherals:block/ultimate_monitor_l",
+      "x": 0,
+      "y": 180
+    },
+    "facing=south,orientation=north,state=ld": {
+      "model": "advancedperipherals:block/ultimate_monitor_ld",
+      "x": 0,
+      "y": 180
+    },
+    "facing=south,orientation=north,state=lr": {
+      "model": "advancedperipherals:block/ultimate_monitor_lr",
+      "x": 0,
+      "y": 180
+    },
+    "facing=south,orientation=north,state=lrd": {
+      "model": "advancedperipherals:block/ultimate_monitor_lrd",
+      "x": 0,
+      "y": 180
+    },
+    "facing=south,orientation=north,state=lru": {
+      "model": "advancedperipherals:block/ultimate_monitor_lru",
+      "x": 0,
+      "y": 180
+    },
+    "facing=south,orientation=north,state=lrud": {
+      "model": "advancedperipherals:block/ultimate_monitor_lrud",
+      "x": 0,
+      "y": 180
+    },
+    "facing=south,orientation=north,state=lu": {
+      "model": "advancedperipherals:block/ultimate_monitor_lu",
+      "x": 0,
+      "y": 180
+    },
+    "facing=south,orientation=north,state=lud": {
+      "model": "advancedperipherals:block/ultimate_monitor_lud",
+      "x": 0,
+      "y": 180
+    },
+    "facing=south,orientation=north,state=none": {
+      "model": "advancedperipherals:block/ultimate_monitor",
+      "x": 0,
+      "y": 180
+    },
+    "facing=south,orientation=north,state=r": {
+      "model": "advancedperipherals:block/ultimate_monitor_r",
+      "x": 0,
+      "y": 180
+    },
+    "facing=south,orientation=north,state=rd": {
+      "model": "advancedperipherals:block/ultimate_monitor_rd",
+      "x": 0,
+      "y": 180
+    },
+    "facing=south,orientation=north,state=ru": {
+      "model": "advancedperipherals:block/ultimate_monitor_ru",
+      "x": 0,
+      "y": 180
+    },
+    "facing=south,orientation=north,state=rud": {
+      "model": "advancedperipherals:block/ultimate_monitor_rud",
+      "x": 0,
+      "y": 180
+    },
+    "facing=south,orientation=north,state=u": {
+      "model": "advancedperipherals:block/ultimate_monitor_u",
+      "x": 0,
+      "y": 180
+    },
+    "facing=south,orientation=north,state=ud": {
+      "model": "advancedperipherals:block/ultimate_monitor_ud",
+      "x": 0,
+      "y": 180
+    },
+    "facing=south,orientation=up,state=d": {
+      "model": "advancedperipherals:block/ultimate_monitor_d",
+      "x": 270,
+      "y": 180
+    },
+    "facing=south,orientation=up,state=l": {
+      "model": "advancedperipherals:block/ultimate_monitor_l",
+      "x": 270,
+      "y": 180
+    },
+    "facing=south,orientation=up,state=ld": {
+      "model": "advancedperipherals:block/ultimate_monitor_ld",
+      "x": 270,
+      "y": 180
+    },
+    "facing=south,orientation=up,state=lr": {
+      "model": "advancedperipherals:block/ultimate_monitor_lr",
+      "x": 270,
+      "y": 180
+    },
+    "facing=south,orientation=up,state=lrd": {
+      "model": "advancedperipherals:block/ultimate_monitor_lrd",
+      "x": 270,
+      "y": 180
+    },
+    "facing=south,orientation=up,state=lru": {
+      "model": "advancedperipherals:block/ultimate_monitor_lru",
+      "x": 270,
+      "y": 180
+    },
+    "facing=south,orientation=up,state=lrud": {
+      "model": "advancedperipherals:block/ultimate_monitor_lrud",
+      "x": 270,
+      "y": 180
+    },
+    "facing=south,orientation=up,state=lu": {
+      "model": "advancedperipherals:block/ultimate_monitor_lu",
+      "x": 270,
+      "y": 180
+    },
+    "facing=south,orientation=up,state=lud": {
+      "model": "advancedperipherals:block/ultimate_monitor_lud",
+      "x": 270,
+      "y": 180
+    },
+    "facing=south,orientation=up,state=none": {
+      "model": "advancedperipherals:block/ultimate_monitor",
+      "x": 270,
+      "y": 180
+    },
+    "facing=south,orientation=up,state=r": {
+      "model": "advancedperipherals:block/ultimate_monitor_r",
+      "x": 270,
+      "y": 180
+    },
+    "facing=south,orientation=up,state=rd": {
+      "model": "advancedperipherals:block/ultimate_monitor_rd",
+      "x": 270,
+      "y": 180
+    },
+    "facing=south,orientation=up,state=ru": {
+      "model": "advancedperipherals:block/ultimate_monitor_ru",
+      "x": 270,
+      "y": 180
+    },
+    "facing=south,orientation=up,state=rud": {
+      "model": "advancedperipherals:block/ultimate_monitor_rud",
+      "x": 270,
+      "y": 180
+    },
+    "facing=south,orientation=up,state=u": {
+      "model": "advancedperipherals:block/ultimate_monitor_u",
+      "x": 270,
+      "y": 180
+    },
+    "facing=south,orientation=up,state=ud": {
+      "model": "advancedperipherals:block/ultimate_monitor_ud",
+      "x": 270,
+      "y": 180
+    },
+    "facing=west,orientation=down,state=d": {
+      "model": "advancedperipherals:block/ultimate_monitor_d",
+      "x": 90,
+      "y": 270
+    },
+    "facing=west,orientation=down,state=l": {
+      "model": "advancedperipherals:block/ultimate_monitor_l",
+      "x": 90,
+      "y": 270
+    },
+    "facing=west,orientation=down,state=ld": {
+      "model": "advancedperipherals:block/ultimate_monitor_ld",
+      "x": 90,
+      "y": 270
+    },
+    "facing=west,orientation=down,state=lr": {
+      "model": "advancedperipherals:block/ultimate_monitor_lr",
+      "x": 90,
+      "y": 270
+    },
+    "facing=west,orientation=down,state=lrd": {
+      "model": "advancedperipherals:block/ultimate_monitor_lrd",
+      "x": 90,
+      "y": 270
+    },
+    "facing=west,orientation=down,state=lru": {
+      "model": "advancedperipherals:block/ultimate_monitor_lru",
+      "x": 90,
+      "y": 270
+    },
+    "facing=west,orientation=down,state=lrud": {
+      "model": "advancedperipherals:block/ultimate_monitor_lrud",
+      "x": 90,
+      "y": 270
+    },
+    "facing=west,orientation=down,state=lu": {
+      "model": "advancedperipherals:block/ultimate_monitor_lu",
+      "x": 90,
+      "y": 270
+    },
+    "facing=west,orientation=down,state=lud": {
+      "model": "advancedperipherals:block/ultimate_monitor_lud",
+      "x": 90,
+      "y": 270
+    },
+    "facing=west,orientation=down,state=none": {
+      "model": "advancedperipherals:block/ultimate_monitor",
+      "x": 90,
+      "y": 270
+    },
+    "facing=west,orientation=down,state=r": {
+      "model": "advancedperipherals:block/ultimate_monitor_r",
+      "x": 90,
+      "y": 270
+    },
+    "facing=west,orientation=down,state=rd": {
+      "model": "advancedperipherals:block/ultimate_monitor_rd",
+      "x": 90,
+      "y": 270
+    },
+    "facing=west,orientation=down,state=ru": {
+      "model": "advancedperipherals:block/ultimate_monitor_ru",
+      "x": 90,
+      "y": 270
+    },
+    "facing=west,orientation=down,state=rud": {
+      "model": "advancedperipherals:block/ultimate_monitor_rud",
+      "x": 90,
+      "y": 270
+    },
+    "facing=west,orientation=down,state=u": {
+      "model": "advancedperipherals:block/ultimate_monitor_u",
+      "x": 90,
+      "y": 270
+    },
+    "facing=west,orientation=down,state=ud": {
+      "model": "advancedperipherals:block/ultimate_monitor_ud",
+      "x": 90,
+      "y": 270
+    },
+    "facing=west,orientation=north,state=d": {
+      "model": "advancedperipherals:block/ultimate_monitor_d",
+      "x": 0,
+      "y": 270
+    },
+    "facing=west,orientation=north,state=l": {
+      "model": "advancedperipherals:block/ultimate_monitor_l",
+      "x": 0,
+      "y": 270
+    },
+    "facing=west,orientation=north,state=ld": {
+      "model": "advancedperipherals:block/ultimate_monitor_ld",
+      "x": 0,
+      "y": 270
+    },
+    "facing=west,orientation=north,state=lr": {
+      "model": "advancedperipherals:block/ultimate_monitor_lr",
+      "x": 0,
+      "y": 270
+    },
+    "facing=west,orientation=north,state=lrd": {
+      "model": "advancedperipherals:block/ultimate_monitor_lrd",
+      "x": 0,
+      "y": 270
+    },
+    "facing=west,orientation=north,state=lru": {
+      "model": "advancedperipherals:block/ultimate_monitor_lru",
+      "x": 0,
+      "y": 270
+    },
+    "facing=west,orientation=north,state=lrud": {
+      "model": "advancedperipherals:block/ultimate_monitor_lrud",
+      "x": 0,
+      "y": 270
+    },
+    "facing=west,orientation=north,state=lu": {
+      "model": "advancedperipherals:block/ultimate_monitor_lu",
+      "x": 0,
+      "y": 270
+    },
+    "facing=west,orientation=north,state=lud": {
+      "model": "advancedperipherals:block/ultimate_monitor_lud",
+      "x": 0,
+      "y": 270
+    },
+    "facing=west,orientation=north,state=none": {
+      "model": "advancedperipherals:block/ultimate_monitor",
+      "x": 0,
+      "y": 270
+    },
+    "facing=west,orientation=north,state=r": {
+      "model": "advancedperipherals:block/ultimate_monitor_r",
+      "x": 0,
+      "y": 270
+    },
+    "facing=west,orientation=north,state=rd": {
+      "model": "advancedperipherals:block/ultimate_monitor_rd",
+      "x": 0,
+      "y": 270
+    },
+    "facing=west,orientation=north,state=ru": {
+      "model": "advancedperipherals:block/ultimate_monitor_ru",
+      "x": 0,
+      "y": 270
+    },
+    "facing=west,orientation=north,state=rud": {
+      "model": "advancedperipherals:block/ultimate_monitor_rud",
+      "x": 0,
+      "y": 270
+    },
+    "facing=west,orientation=north,state=u": {
+      "model": "advancedperipherals:block/ultimate_monitor_u",
+      "x": 0,
+      "y": 270
+    },
+    "facing=west,orientation=north,state=ud": {
+      "model": "advancedperipherals:block/ultimate_monitor_ud",
+      "x": 0,
+      "y": 270
+    },
+    "facing=west,orientation=up,state=d": {
+      "model": "advancedperipherals:block/ultimate_monitor_d",
+      "x": 270,
+      "y": 270
+    },
+    "facing=west,orientation=up,state=l": {
+      "model": "advancedperipherals:block/ultimate_monitor_l",
+      "x": 270,
+      "y": 270
+    },
+    "facing=west,orientation=up,state=ld": {
+      "model": "advancedperipherals:block/ultimate_monitor_ld",
+      "x": 270,
+      "y": 270
+    },
+    "facing=west,orientation=up,state=lr": {
+      "model": "advancedperipherals:block/ultimate_monitor_lr",
+      "x": 270,
+      "y": 270
+    },
+    "facing=west,orientation=up,state=lrd": {
+      "model": "advancedperipherals:block/ultimate_monitor_lrd",
+      "x": 270,
+      "y": 270
+    },
+    "facing=west,orientation=up,state=lru": {
+      "model": "advancedperipherals:block/ultimate_monitor_lru",
+      "x": 270,
+      "y": 270
+    },
+    "facing=west,orientation=up,state=lrud": {
+      "model": "advancedperipherals:block/ultimate_monitor_lrud",
+      "x": 270,
+      "y": 270
+    },
+    "facing=west,orientation=up,state=lu": {
+      "model": "advancedperipherals:block/ultimate_monitor_lu",
+      "x": 270,
+      "y": 270
+    },
+    "facing=west,orientation=up,state=lud": {
+      "model": "advancedperipherals:block/ultimate_monitor_lud",
+      "x": 270,
+      "y": 270
+    },
+    "facing=west,orientation=up,state=none": {
+      "model": "advancedperipherals:block/ultimate_monitor",
+      "x": 270,
+      "y": 270
+    },
+    "facing=west,orientation=up,state=r": {
+      "model": "advancedperipherals:block/ultimate_monitor_r",
+      "x": 270,
+      "y": 270
+    },
+    "facing=west,orientation=up,state=rd": {
+      "model": "advancedperipherals:block/ultimate_monitor_rd",
+      "x": 270,
+      "y": 270
+    },
+    "facing=west,orientation=up,state=ru": {
+      "model": "advancedperipherals:block/ultimate_monitor_ru",
+      "x": 270,
+      "y": 270
+    },
+    "facing=west,orientation=up,state=rud": {
+      "model": "advancedperipherals:block/ultimate_monitor_rud",
+      "x": 270,
+      "y": 270
+    },
+    "facing=west,orientation=up,state=u": {
+      "model": "advancedperipherals:block/ultimate_monitor_u",
+      "x": 270,
+      "y": 270
+    },
+    "facing=west,orientation=up,state=ud": {
+      "model": "advancedperipherals:block/ultimate_monitor_ud",
+      "x": 270,
+      "y": 270
+    }
+  }
+}

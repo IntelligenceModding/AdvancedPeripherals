@@ -1,0 +1,9 @@
+{
+  "parent": "advancedperipherals:block/monitor_base",
+  "textures": {
+    "back": "advancedperipherals:block/transparent",
+    "front": "advancedperipherals:block/ultimate_monitor_27",
+    "side": "advancedperipherals:block/transparent",
+    "top": "advancedperipherals:block/transparent"
+  }
+}

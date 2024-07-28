@@ -1,5 +1,6 @@
 package de.srendi.advancedperipherals.common.setup;
 
+import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.monitor.UltimateBlockMonitor;
 import de.srendi.advancedperipherals.common.blocks.PlayerDetectorBlock;
 import de.srendi.advancedperipherals.common.blocks.RedstoneIntegratorBlock;
 import de.srendi.advancedperipherals.common.blocks.base.APBlockEntityBlock;
@@ -39,7 +40,10 @@ public class APBlocks {
     public static final RegistryObject<Block> GEO_SCANNER = register("geo_scanner", () -> new APBlockEntityBlock<>(APBlockEntityTypes.GEO_SCANNER, false), () -> new APBlockItem(APBlocks.GEO_SCANNER.get(), APConfig.PERIPHERALS_CONFIG.enableGeoScanner));
     public static final RegistryObject<Block> COLONY_INTEGRATOR = register("colony_integrator", () -> new APBlockEntityBlock<>(APBlockEntityTypes.COLONY_INTEGRATOR, false), () -> new APBlockItem(APBlocks.COLONY_INTEGRATOR.get(), APConfig.PERIPHERALS_CONFIG.enableColonyIntegrator));
     public static final RegistryObject<Block> NBT_STORAGE = register("nbt_storage", () -> new APBlockEntityBlock<>(APBlockEntityTypes.NBT_STORAGE, false), () -> new APBlockItem(APBlocks.NBT_STORAGE.get(), APConfig.PERIPHERALS_CONFIG.enableNBTStorage));
-    public static final RegistryObject<Block> DISTANCE_DETECTOR = register("distance_detector", () -> new APBlockEntityBlock<>(APBlockEntityTypes.DISTANCE_DETECTOR, BlockBehaviour.Properties.of(Material.METAL).noOcclusion(), true), () -> new APBlockItem(APBlocks.DISTANCE_DETECTOR.get(), APConfig.PERIPHERALS_CONFIG.enableNBTStorage));
+    public static final RegistryObject<Block> DISTANCE_DETECTOR = register("distance_detector", () -> new APBlockEntityBlock<>(APBlockEntityTypes.DISTANCE_DETECTOR, BlockBehaviour.Properties.of(Material.METAL).noOcclusion(), true), () -> new APBlockItem(APBlocks.DISTANCE_DETECTOR.get(), APConfig.PERIPHERALS_CONFIG.enableDistanceDetector));
+    public static final RegistryObject<Block> ULTIMATE_MONITOR = register("ultimate_monitor",
+        () -> new UltimateBlockMonitor(BlockBehaviour.Properties.of(Material.BUILDABLE_GLASS).strength(4, 2).noOcclusion().isValidSpawn(APBlocks::never).isRedstoneConductor(APBlocks::never).isSuffocating(APBlocks::never).isViewBlocking(APBlocks::never).lightLevel((state) -> state.getLightEmission()), APBlockEntityTypes.ULTIMATE_MONITOR),
+        () -> new APBlockItem(APBlocks.ULTIMATE_MONITOR.get(), APConfig.PERIPHERALS_CONFIG.enableUltimateMonitor));
 
     private static <T extends Block> RegistryObject<T> registerNoItem(String name, Supplier<T> block) {
         return APRegistration.BLOCKS.register(name, block);
@@ -49,6 +53,10 @@ public class APBlocks {
         RegistryObject<T> registryObject = registerNoItem(name, block);
         APRegistration.ITEMS.register(name, blockItem);
         return registryObject;
+    }
+
+    public static boolean never(BlockState state, BlockGetter level, BlockPos pos, net.minecraft.world.entity.EntityType<?> entity) {
+        return false;
     }
 
     public static boolean never(BlockState state, BlockGetter level, BlockPos pos) {

@@ -314,11 +314,11 @@ dependencies {
     compileOnly fg.deobf("com.ldtteam:domum_ornamentum:${domumornamentum_version}:universal")
     compileOnly fg.deobf("com.ldtteam:blockui:${blockui_version}")
     // IMPORTANT. This should be removed/commented when running `runData`
-    runtimeOnly fg.deobf("com.ldtteam:minecolonies:${minecolonies_version}")
-    runtimeOnly fg.deobf("com.ldtteam:structurize:${structurize_version}")
-    runtimeOnly fg.deobf("com.ldtteam:multipiston:${multipiston_version}")
-    runtimeOnly fg.deobf("com.ldtteam:domum_ornamentum:${domumornamentum_version}:universal")
-    runtimeOnly fg.deobf("com.ldtteam:blockui:${blockui_version}")
+    // runtimeOnly fg.deobf("com.ldtteam:minecolonies:${minecolonies_version}")
+    // runtimeOnly fg.deobf("com.ldtteam:structurize:${structurize_version}")
+    // runtimeOnly fg.deobf("com.ldtteam:multipiston:${multipiston_version}")
+    // runtimeOnly fg.deobf("com.ldtteam:domum_ornamentum:${domumornamentum_version}:universal")
+    // runtimeOnly fg.deobf("com.ldtteam:blockui:${blockui_version}")
 
     // Patchouli
     compileOnly fg.deobf("vazkii.patchouli:Patchouli:${patchouli_version}")
@@ -331,8 +331,8 @@ dependencies {
     // DimStorage
     compileOnly fg.deobf("curse.maven:dimstorage-353882:${dimstorage_version}")
     compileOnly fg.deobf("curse.maven:edivadlib-638508:${edivadlib_version}")
-    runtimeOnly fg.deobf("curse.maven:dimstorage-353882:${dimstorage_version}")
-    runtimeOnly fg.deobf("curse.maven:edivadlib-638508:${edivadlib_version}")
+    // runtimeOnly fg.deobf("curse.maven:dimstorage-353882:${dimstorage_version}")
+    // runtimeOnly fg.deobf("curse.maven:edivadlib-638508:${edivadlib_version}")
 
     //Powah
     compileOnly fg.deobf("curse.maven:powah-633483:${powah_version}")

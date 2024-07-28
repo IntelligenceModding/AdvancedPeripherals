@@ -107,6 +107,9 @@ public class PeripheralsConfig implements IAPConfig {
     public final ForgeConfigSpec.BooleanValue enableSaddleTurtle;
     public final ForgeConfigSpec.BooleanValue allowSaddleTurtleCapturePlayer;
 
+    // Ultimate monitor
+    public final ForgeConfigSpec.BooleanValue enableUltimateMonitor;
+
     private static final List<String> chatBoxDefaultBannedCommands = Arrays.asList(
         "/execute",
         "/op",
@@ -242,6 +245,10 @@ public class PeripheralsConfig implements IAPConfig {
 
         enableSaddleTurtle = builder.comment("Enable saddle turtle").define("enableSaddleTurtle", true);
         allowSaddleTurtleCapturePlayer = builder.comment("Allow saddle turtle to capture player").define("allowSaddleTurtleCapturePlayer", true);
+    
+        pop("Ultimate_Monitor", builder);
+
+        enableUltimateMonitor = builder.comment("Enable ultimate monitor").define("enableUltimateMonitor", true);
 
         pop("Operations", builder);
 
