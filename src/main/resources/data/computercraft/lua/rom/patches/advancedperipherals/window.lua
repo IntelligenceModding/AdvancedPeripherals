@@ -1,6 +1,4 @@
 
-local window_create = window.create
-
 local expect = dofile("rom/modules/main/cc/expect.lua").expect
 
 local tHex = {
@@ -23,6 +21,7 @@ local tHex = {
 }
 
 local string_rep = string.rep
+local window_create = window.create
 
 --- patch window.create
 function window.create(parent, nX, nY, nWidth, nHeight, bStartVisible)
@@ -52,6 +51,10 @@ function window.create(parent, nX, nY, nWidth, nHeight, bStartVisible)
     end
 
     local w = window_create(parent, nX, nY, nWidth, nHeight, bStartVisible)
+
+    function w.isUltimate()
+        return parent.isUltimate and parent.isUltimate()
+    end
 
     --- patch window.setPaletteColour
     function w.setPaletteColour(colour, r, g, b, a)

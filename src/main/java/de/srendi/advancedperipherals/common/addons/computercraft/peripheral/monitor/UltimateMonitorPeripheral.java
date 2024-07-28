@@ -462,7 +462,7 @@ public class UltimateMonitorPeripheral implements IPeripheral {
                 double r = args.getFiniteDouble(1);
                 double g = args.getFiniteDouble(2);
                 double b = args.getFiniteDouble(3);
-                double a = args.getFiniteDouble(3);
+                double a = args.getFiniteDouble(4);
                 setColour(getTerminal(), colour, r, g, b, a);
             }
             break;

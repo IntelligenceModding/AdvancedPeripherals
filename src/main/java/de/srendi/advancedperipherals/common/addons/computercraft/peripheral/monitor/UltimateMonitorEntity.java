@@ -573,42 +573,47 @@ public class UltimateMonitorEntity extends TileGeneric {
     }
     // endregion
 
-    private void monitorTouched( float xPos, float yPos, float zPos, @Nullable Player player )
-    {
+    private void monitorTouched(float xPos, float yPos, float zPos, @Nullable Player player) {
         XYPair pair = XYPair
-            .of( xPos, yPos, zPos, getDirection(), getOrientation() )
-            .add( xIndex, height - yIndex - 1 );
+            .of(xPos, yPos, zPos, getDirection(), getOrientation())
+            .add(xIndex, height - yIndex - 1);
 
-        if( pair.x() > width - RENDER_BORDER || pair.y() > height - RENDER_BORDER || pair.x() < RENDER_BORDER || pair.y() < RENDER_BORDER )
-        {
+        if (pair.x() > width - RENDER_BORDER || pair.y() > height - RENDER_BORDER || pair.x() < RENDER_BORDER || pair.y() < RENDER_BORDER) {
             return;
         }
 
         UltimateServerMonitor serverTerminal = getServerMonitor();
-        if( serverTerminal == null ) return;
+        if (serverTerminal == null) {
+            return;
+        }
 
         UltimateNetworkedTerminal originTerminal = serverTerminal.getTerminal();
-        if( originTerminal == null ) return;
+        if (originTerminal == null) {
+            return;
+        }
 
         double xCharWidth = (width - (RENDER_BORDER + RENDER_MARGIN) * 2.0) / originTerminal.getWidth();
         double yCharHeight = (height - (RENDER_BORDER + RENDER_MARGIN) * 2.0) / originTerminal.getHeight();
 
-        int xCharPos = (int) Math.min( originTerminal.getWidth(), Math.max( (pair.x() - RENDER_BORDER - RENDER_MARGIN) / xCharWidth + 1.0, 1.0 ) );
-        int yCharPos = (int) Math.min( originTerminal.getHeight(), Math.max( (pair.y() - RENDER_BORDER - RENDER_MARGIN) / yCharHeight + 1.0, 1.0 ) );
+        // TODO: sight check for depth panel
+        int xCharPos = (int) Math.min(originTerminal.getWidth(), Math.max((pair.x() - RENDER_BORDER - RENDER_MARGIN) / xCharWidth + 1.0, 1.0));
+        int yCharPos = (int) Math.min(originTerminal.getHeight(), Math.max((pair.y() - RENDER_BORDER - RENDER_MARGIN) / yCharHeight + 1.0, 1.0));
 
-        eachComputer( c -> c.queueEvent( "monitor_touch", c.getAttachmentName(), xCharPos, yCharPos, player == null ? null : player.getName().getString() ) );
+        eachComputer(c -> c.queueEvent("monitor_touch", c.getAttachmentName(), xCharPos, yCharPos,
+            player == null ? null : player.getName().getString()));
     }
 
-    private void eachComputer( Consumer<IComputerAccess> fun )
-    {
-        for( int x = 0; x < width; x++ )
-        {
-            for( int y = 0; y < height; y++ )
-            {
-                UltimateMonitorEntity monitor = getLoadedMonitor( x, y ).getMonitor();
-                if( monitor == null ) continue;
+    private void eachComputer(Consumer<IComputerAccess> fun) {
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                UltimateMonitorEntity monitor = getLoadedMonitor(x, y).getMonitor();
+                if (monitor == null) {
+                    continue;
+                }
 
-                for( IComputerAccess computer : monitor.computers ) fun.accept( computer );
+                for (IComputerAccess computer : monitor.computers) {
+                    fun.accept(computer);
+                }
             }
         }
     }
