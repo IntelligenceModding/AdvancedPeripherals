@@ -3,6 +3,9 @@ package de.srendi.advancedperipherals.common.network;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.network.base.IPacket;
 import de.srendi.advancedperipherals.common.network.toclient.DistanceDetectorSyncPacket;
+import de.srendi.advancedperipherals.common.network.toclient.RenderableObjectClearPacket;
+import de.srendi.advancedperipherals.common.network.toclient.RenderableObjectDeletePacket;
+import de.srendi.advancedperipherals.common.network.toclient.RenderableObjectSyncPacket;
 import de.srendi.advancedperipherals.common.network.toclient.SaddleTurtleInfoPacket;
 import de.srendi.advancedperipherals.common.network.toclient.ToastToClientPacket;
 import de.srendi.advancedperipherals.common.network.toserver.GlassesHotkeyPacket;
@@ -38,6 +41,9 @@ public class APNetworking {
         registerServerToClient(DistanceDetectorSyncPacket.class, DistanceDetectorSyncPacket::decode);
         registerServerToClient(SaddleTurtleInfoPacket.class, SaddleTurtleInfoPacket::decode);
         registerServerToClient(ToastToClientPacket.class, ToastToClientPacket::decode);
+        registerServerToClient(RenderableObjectSyncPacket.class, RenderableObjectSyncPacket::decode);
+        registerServerToClient(RenderableObjectDeletePacket.class, RenderableObjectDeletePacket::decode);
+        registerServerToClient(RenderableObjectClearPacket.class, RenderableObjectClearPacket::decode);
         registerClientToServer(GlassesHotkeyPacket.class, GlassesHotkeyPacket::decode);
         registerClientToServer(SaddleTurtleControlPacket.class, SaddleTurtleControlPacket::decode);
     }

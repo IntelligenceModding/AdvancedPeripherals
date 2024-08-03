@@ -4,8 +4,8 @@ import de.srendi.advancedperipherals.AdvancedPeripherals;
 
 public class FloatingNumberType implements PropertyType<Number> {
 
-    public double min;
-    public double max;
+    public float min;
+    public float max;
 
     @Override
     public boolean checkIsValid(Object type) {
@@ -14,8 +14,8 @@ public class FloatingNumberType implements PropertyType<Number> {
 
     @Override
     public Number mapValue(Object type) {
-        AdvancedPeripherals.debug("Mapping value " + type + " to " + Math.min(Math.max((double) type, min), max));
-        return Math.min(Math.max((double) type, min), max);
+        AdvancedPeripherals.debug("Mapping value " + type + " to " + Math.min(Math.max((float) type, min), max));
+        return Math.min(Math.max((float) type, min), max);
     }
 
     @Override

@@ -12,7 +12,7 @@ import java.lang.annotation.Target;
 @ObjectProperty(type = FloatingNumberType.class)
 public @interface FloatingNumberProperty {
 
-    double min() default Double.MIN_VALUE;
-    double max() default Double.MAX_VALUE;
+    float min() default Float.MIN_VALUE;
+    float max() default Float.MAX_VALUE;
 
 }

@@ -7,6 +7,7 @@ import de.srendi.advancedperipherals.client.renderer.DistanceDetectorRenderer;
 import de.srendi.advancedperipherals.client.screens.InventoryManagerScreen;
 import de.srendi.advancedperipherals.client.screens.SaddleTurtleScreen;
 import de.srendi.advancedperipherals.client.screens.SmartGlassesScreen;
+import de.srendi.advancedperipherals.client.smartglasses.OverlayModuleOverlay;
 import de.srendi.advancedperipherals.common.setup.APBlockEntityTypes;
 import de.srendi.advancedperipherals.common.setup.APContainerTypes;
 import de.srendi.advancedperipherals.common.setup.CCRegistration;
@@ -28,6 +29,7 @@ public class ClientRegistry {
     private static final String[] TURTLE_MODELS = new String[]{"turtle_chat_box_upgrade_left", "turtle_chat_box_upgrade_right", "turtle_environment_upgrade_left", "turtle_environment_upgrade_right", "turtle_player_upgrade_left", "turtle_player_upgrade_right", "turtle_geoscanner_upgrade_left", "turtle_geoscanner_upgrade_right"};
 
     public static final SaddleTurtleScreen SADDLE_TURTLE_OVERLAY = new SaddleTurtleScreen();
+    public static final OverlayModuleOverlay OVERLAY_MODULE_OVERLAY = new OverlayModuleOverlay();
 
     @SubscribeEvent
     public static void registerModels(ModelEvent.RegisterAdditional event) {
@@ -71,5 +73,6 @@ public class ClientRegistry {
     @SubscribeEvent
     public static void registeringOverlays(RegisterGuiOverlaysEvent event) {
         event.registerAboveAll(SaddleTurtleScreen.ID, SADDLE_TURTLE_OVERLAY);
+        event.registerAboveAll(OverlayModuleOverlay.ID, OVERLAY_MODULE_OVERLAY);
     }
 }

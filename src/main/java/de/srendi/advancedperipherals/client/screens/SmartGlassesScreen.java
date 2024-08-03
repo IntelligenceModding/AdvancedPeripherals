@@ -67,7 +67,7 @@ public class SmartGlassesScreen extends ComputerScreenBase<SmartGlassesContainer
     }
 
     @Override
-    protected void renderLabels(PoseStack poseStack, int x, int y) {
+    protected void renderLabels(@NotNull PoseStack poseStack, int x, int y) {
         FormattedCharSequence formattedcharsequence = currentType.getName().getVisualOrderText();
         this.font.draw(poseStack, formattedcharsequence, (212 + ComputerSidebar.WIDTH - (float) this.font.width(formattedcharsequence) / 2), 133, 4210752);
     }

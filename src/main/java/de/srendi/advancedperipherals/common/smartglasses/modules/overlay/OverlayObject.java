@@ -179,7 +179,7 @@ public abstract class OverlayObject {
 
     }
 
-    protected void encode(FriendlyByteBuf buffer) {
+    public void encode(FriendlyByteBuf buffer) {
         buffer.writeUtf(id);
         Entity entity = module.getAccess().getEntity();
         if(entity instanceof Player player) {
@@ -191,4 +191,13 @@ public abstract class OverlayObject {
         }
     }
 
+    @Override
+    public String toString() {
+        return "OverlayObject{" +
+                "enabled=" + enabled +
+                ", id='" + id + '\'' +
+                ", module=" + module +
+                ", player=" + player +
+                '}';
+    }
 }

@@ -27,7 +27,7 @@ public class OverlayGlassesFunctions implements IModuleFunctions {
     @LuaFunction
     public final MethodResult createPanel(String id, IArguments arguments) throws LuaException {
         Panel panel = new Panel(id, overlayModule, arguments);
-        Pair<OverlayObject, Boolean> success = overlayModule.addObject(panel);
+        Pair<RenderableObject, Boolean> success = overlayModule.addObject(panel);
         if(!success.getRight())
             return MethodResult.of(success.getLeft(), IModule.ErrorConstants.ALREADY_EXISTS);
 
@@ -37,6 +37,16 @@ public class OverlayGlassesFunctions implements IModuleFunctions {
     @LuaFunction
     public final MethodResult getObjects(IArguments arguments) {
         return MethodResult.of((Object) overlayModule.getObjects().stream().map(OverlayObject::getId).toArray(String[]::new));
+    }
+
+    @LuaFunction
+    public final MethodResult removeObject(String id) {
+        return MethodResult.of(overlayModule.removeObject(id));
+    }
+
+    @LuaFunction
+    public final MethodResult clear() {
+        return MethodResult.of(overlayModule.clear());
     }
 
 }

@@ -79,7 +79,7 @@ public class SmartGlassesSettingsSwitch extends AbstractWidget {
     }
 
     @Override
-    public void updateNarration(NarrationElementOutput pNarrationElementOutput) {
+    public void updateNarration(@NotNull NarrationElementOutput pNarrationElementOutput) {
 
     }
 }
