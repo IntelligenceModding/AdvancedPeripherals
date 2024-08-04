@@ -1,4 +1,4 @@
-package de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertyTypes;
+package de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertytypes;
 
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.ObjectProperty;
 
@@ -9,7 +9,10 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
-@ObjectProperty(type = BooleanType.class)
-public @interface BooleanProperty {
+@ObjectProperty(type = FixedPointNumberType.class)
+public @interface FixedPointNumberProperty {
+
+    long min() default Long.MIN_VALUE;
+    long max() default Long.MAX_VALUE;
 
 }

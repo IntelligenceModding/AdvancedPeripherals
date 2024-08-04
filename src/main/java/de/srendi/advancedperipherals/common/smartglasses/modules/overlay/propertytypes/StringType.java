@@ -1,4 +1,4 @@
-package de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertyTypes;
+package de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertytypes;
 
 public class StringType implements PropertyType<String> {
 

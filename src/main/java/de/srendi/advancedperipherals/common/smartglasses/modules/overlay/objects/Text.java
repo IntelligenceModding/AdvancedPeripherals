@@ -7,7 +7,7 @@ import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.client.smartglasses.objects.IObjectRenderer;
 import de.srendi.advancedperipherals.client.smartglasses.objects.TextRenderer;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.OverlayModule;
-import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertyTypes.StringProperty;
+import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertytypes.StringProperty;
 import net.minecraft.network.FriendlyByteBuf;
 
 import java.util.UUID;

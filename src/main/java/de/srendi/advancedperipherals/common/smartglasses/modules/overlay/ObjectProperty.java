@@ -1,6 +1,6 @@
 package de.srendi.advancedperipherals.common.smartglasses.modules.overlay;
 
-import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertyTypes.PropertyType;
+import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertytypes.PropertyType;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

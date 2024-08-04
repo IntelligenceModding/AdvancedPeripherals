@@ -1,4 +1,4 @@
-package de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertyTypes;
+package de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertytypes;
 
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.ObjectProperty;
 
@@ -9,7 +9,7 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
-@ObjectProperty(type = StringType.class)
-public @interface StringProperty {
+@ObjectProperty(type = BooleanType.class)
+public @interface BooleanProperty {
 
 }

@@ -1,4 +1,4 @@
-package de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertyTypes;
+package de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertytypes;
 
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.ObjectProperty;

@@ -6,8 +6,8 @@ import dan200.computercraft.api.lua.LuaFunction;
 import de.srendi.advancedperipherals.client.smartglasses.objects.IObjectRenderer;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.OverlayModule;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.OverlayObject;
-import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertyTypes.FixedPointNumberProperty;
-import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertyTypes.FloatingNumberProperty;
+import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertytypes.FixedPointNumberProperty;
+import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertytypes.FloatingNumberProperty;
 import net.minecraft.network.FriendlyByteBuf;
 
 import java.util.UUID;
