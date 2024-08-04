@@ -7,7 +7,11 @@ import dan200.computercraft.api.lua.MethodResult;
 import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesAccess;
 import de.srendi.advancedperipherals.common.smartglasses.modules.IModule;
 import de.srendi.advancedperipherals.common.smartglasses.modules.IModuleFunctions;
+import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.Circle;
+import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.Panel;
+import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.RenderableObject;
 import de.srendi.advancedperipherals.common.util.Pair;
+import net.minecraft.client.Minecraft;
 
 public class OverlayGlassesFunctions implements IModuleFunctions {
 
@@ -35,6 +39,16 @@ public class OverlayGlassesFunctions implements IModuleFunctions {
     }
 
     @LuaFunction
+    public final MethodResult createCircle(String id, IArguments arguments) throws LuaException {
+        Circle circle = new Circle(id, overlayModule, arguments);
+        Pair<RenderableObject, Boolean> success = overlayModule.addObject(circle);
+        if(!success.getRight())
+            return MethodResult.of(success.getLeft(), IModule.ErrorConstants.ALREADY_EXISTS);
+
+        return MethodResult.of(success.getLeft(), "SUCCESS");
+    }
+
+    @LuaFunction
     public final MethodResult getObjects(IArguments arguments) {
         return MethodResult.of((Object) overlayModule.getObjects().stream().map(OverlayObject::getId).toArray(String[]::new));
     }
@@ -47,6 +61,12 @@ public class OverlayGlassesFunctions implements IModuleFunctions {
     @LuaFunction
     public final MethodResult clear() {
         return MethodResult.of(overlayModule.clear());
+    }
+
+    // TODO: This will crash on dedicated servers
+    @LuaFunction
+    public final MethodResult getSize() {
+        return MethodResult.of(Minecraft.getInstance().getWindow().getWidth(), Minecraft.getInstance().getWindow().getHeight());
     }
 
 }

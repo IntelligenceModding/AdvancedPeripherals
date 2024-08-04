@@ -10,7 +10,6 @@ import de.srendi.advancedperipherals.common.util.StringUtil;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraftforge.network.NetworkEvent;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.logging.log4j.Level;
 
@@ -19,7 +18,6 @@ import java.lang.reflect.Field;
 import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
-
 
 public abstract class OverlayObject {
 
@@ -173,10 +171,6 @@ public abstract class OverlayObject {
             AdvancedPeripherals.debug("The field type " + fieldType.getName() + " is not supported for the value " + value + ".", Level.WARN);
         }
         return value;
-    }
-
-    protected void handle(NetworkEvent.Context context) {
-
     }
 
     public void encode(FriendlyByteBuf buffer) {

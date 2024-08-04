@@ -8,6 +8,7 @@ import de.srendi.advancedperipherals.client.screens.InventoryManagerScreen;
 import de.srendi.advancedperipherals.client.screens.SaddleTurtleScreen;
 import de.srendi.advancedperipherals.client.screens.SmartGlassesScreen;
 import de.srendi.advancedperipherals.client.smartglasses.OverlayModuleOverlay;
+import de.srendi.advancedperipherals.client.smartglasses.OverlayObjectHolder;
 import de.srendi.advancedperipherals.common.setup.APBlockEntityTypes;
 import de.srendi.advancedperipherals.common.setup.APContainerTypes;
 import de.srendi.advancedperipherals.common.setup.CCRegistration;
@@ -58,6 +59,7 @@ public class ClientRegistry {
         ComputerCraftAPIClient.registerTurtleUpgradeModeller(CCRegistration.WEAK_TURTLE.get(), new MetaTurtleUpgradeModeller<>());
 
         ItemPropertiesRegistry.register();
+        OverlayObjectHolder.registerDecodeObjects();
     }
 
     @SubscribeEvent

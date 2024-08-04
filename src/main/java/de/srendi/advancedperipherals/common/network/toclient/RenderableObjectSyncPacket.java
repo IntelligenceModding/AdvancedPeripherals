@@ -2,7 +2,8 @@ package de.srendi.advancedperipherals.common.network.toclient;
 
 import de.srendi.advancedperipherals.client.smartglasses.OverlayObjectHolder;
 import de.srendi.advancedperipherals.common.network.base.IPacket;
-import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.RenderableObject;
+import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.ObjectDecodeRegistry;
+import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.RenderableObject;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.network.NetworkEvent;
 
@@ -25,6 +26,8 @@ public class RenderableObjectSyncPacket implements IPacket {
     }
 
     public static RenderableObjectSyncPacket decode(FriendlyByteBuf buffer) {
-        return new RenderableObjectSyncPacket(RenderableObject.decode(buffer));
+        int id = buffer.readInt();
+        RenderableObject decodedObject = ObjectDecodeRegistry.getObject(id, buffer);
+        return new RenderableObjectSyncPacket(decodedObject);
     }
 }

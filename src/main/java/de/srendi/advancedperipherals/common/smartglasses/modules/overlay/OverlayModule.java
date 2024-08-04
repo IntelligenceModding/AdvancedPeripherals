@@ -8,6 +8,7 @@ import de.srendi.advancedperipherals.common.network.toclient.RenderableObjectSyn
 import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesAccess;
 import de.srendi.advancedperipherals.common.smartglasses.modules.IModule;
 import de.srendi.advancedperipherals.common.smartglasses.modules.IModuleFunctions;
+import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.RenderableObject;
 import de.srendi.advancedperipherals.common.util.Pair;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;

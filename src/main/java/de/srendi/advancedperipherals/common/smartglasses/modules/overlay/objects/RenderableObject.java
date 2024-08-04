@@ -1,9 +1,11 @@
-package de.srendi.advancedperipherals.common.smartglasses.modules.overlay;
+package de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects;
 
 import dan200.computercraft.api.lua.IArguments;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
-import de.srendi.advancedperipherals.AdvancedPeripherals;
+import de.srendi.advancedperipherals.client.smartglasses.objects.IObjectRenderer;
+import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.OverlayModule;
+import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.OverlayObject;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertyTypes.FixedPointNumberProperty;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertyTypes.FloatingNumberProperty;
 import net.minecraft.network.FriendlyByteBuf;
@@ -31,52 +33,6 @@ public class RenderableObject extends OverlayObject {
     @FixedPointNumberProperty(min = -32767, max = 32767)
     public int maxY = 0;
 
-    @LuaFunction
-    public float getOpacity() {
-        return opacity;
-    }
-
-    @LuaFunction
-    public void setOpacity(float opacity) {
-        this.opacity = opacity;
-        getModule().update(this);
-    }
-
-    @LuaFunction
-    public int getColor() {
-        return color;
-    }
-
-    @LuaFunction
-    public void setColor(int color) {
-        this.color = color;
-        getModule().update(this);
-    }
-
-    @LuaFunction
-    public void setMaxX(int maxX) {
-        this.maxX = maxX;
-        getModule().update(this);
-    }
-
-    @LuaFunction
-    public void setMaxY(int maxY) {
-        this.maxY = maxY;
-        getModule().update(this);
-    }
-
-    @LuaFunction
-    public void setX(int x) {
-        this.x = x;
-        getModule().update(this);
-    }
-
-    @LuaFunction
-    public void setY(int y) {
-        this.y = y;
-        getModule().update(this);
-    }
-
     public RenderableObject(String id, OverlayModule module, IArguments arguments) throws LuaException {
         super(id, module, arguments);
         reflectivelyMapProperties(arguments);
@@ -84,6 +40,72 @@ public class RenderableObject extends OverlayObject {
 
     public RenderableObject(String id, UUID player) {
         super(id, player);
+    }
+
+    @LuaFunction
+    public final float getOpacity() {
+        return opacity;
+    }
+
+    @LuaFunction
+    public final void setOpacity(double opacity) {
+        this.opacity = (float) opacity;
+        getModule().update(this);
+    }
+
+    @LuaFunction
+    public final int getColor() {
+        return color;
+    }
+
+    @LuaFunction
+    public final void setColor(int color) {
+        this.color = color;
+        getModule().update(this);
+    }
+
+    @LuaFunction
+    public final void setMaxX(int maxX) {
+        this.maxX = maxX;
+        getModule().update(this);
+    }
+
+    @LuaFunction
+    public final int getMaxX() {
+        return maxX;
+    }
+
+    @LuaFunction
+    public final void setMaxY(int maxY) {
+        this.maxY = maxY;
+        getModule().update(this);
+    }
+
+    @LuaFunction
+    public final int getMaxY() {
+        return maxY;
+    }
+
+    @LuaFunction
+    public final void setX(int x) {
+        this.x = x;
+        getModule().update(this);
+    }
+
+    @LuaFunction
+    public final int getX() {
+        return x;
+    }
+
+    @LuaFunction
+    public final void setY(int y) {
+        this.y = y;
+        getModule().update(this);
+    }
+
+    @LuaFunction
+    public final int getY() {
+        return y;
     }
 
     @Override
@@ -98,31 +120,8 @@ public class RenderableObject extends OverlayObject {
         buffer.writeInt(maxY);
     }
 
-    public static RenderableObject decode(FriendlyByteBuf buffer) {
-        String id = buffer.readUtf();
-        boolean hasValidUUID = buffer.readBoolean();
-        if (!hasValidUUID) {
-            AdvancedPeripherals.exception("Tried to decode a buffer for an OverlayObject but without a valid player as target.", new IllegalArgumentException());
-            return null;
-        }
-        UUID player = buffer.readUUID();
-        int color = buffer.readInt();
-        float opacity = buffer.readFloat();
-
-        int x = buffer.readInt();
-        int y = buffer.readInt();
-        int sizeX = buffer.readInt();
-        int sizeY = buffer.readInt();
-
-        RenderableObject clientObject = new RenderableObject(id, player);
-        clientObject.color = color;
-        clientObject.opacity = opacity;
-        clientObject.x = x;
-        clientObject.y = y;
-        clientObject.maxX = sizeX;
-        clientObject.maxY = sizeY;
-
-        return clientObject;
+    public IObjectRenderer getRenderObject() {
+        return null;
     }
 
     @Override
