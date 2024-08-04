@@ -1,15 +1,7 @@
 package de.srendi.advancedperipherals.client.smartglasses;
 
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.BufferBuilder;
-import com.mojang.blaze3d.vertex.BufferUploader;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.Tesselator;
-import com.mojang.blaze3d.vertex.VertexFormat;
-import com.mojang.math.Matrix4f;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.RenderableObject;
-import net.minecraft.client.renderer.GameRenderer;
 import net.minecraftforge.client.gui.overlay.ForgeGui;
 import net.minecraftforge.client.gui.overlay.IGuiOverlay;
 
@@ -21,6 +13,8 @@ public class OverlayModuleOverlay implements IGuiOverlay {
         poseStack.pushPose();
 
         for (RenderableObject object : OverlayObjectHolder.getObjects()) {
+            if (!object.isEnabled())
+                continue;
             object.getRenderObject().render(object, gui, poseStack, partialTick, screenWidth, screenHeight);
         }
         poseStack.popPose();

@@ -2,44 +2,57 @@ package de.srendi.advancedperipherals.common.smartglasses.modules.overlay.object
 
 import dan200.computercraft.api.lua.IArguments;
 import dan200.computercraft.api.lua.LuaException;
+import dan200.computercraft.api.lua.LuaFunction;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.client.smartglasses.objects.IObjectRenderer;
-import de.srendi.advancedperipherals.client.smartglasses.objects.PanelRenderer;
 import de.srendi.advancedperipherals.client.smartglasses.objects.TextRenderer;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.OverlayModule;
+import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertyTypes.StringProperty;
 import net.minecraft.network.FriendlyByteBuf;
 
 import java.util.UUID;
 
-/**
- * A panel is the standard panel which can contain multiple render-able objects in it.
- */
-public class Panel extends RenderableObject {
-    public static final int ID = 0;
+public class Text extends RenderableObject {
+    public static final int ID = 2;
 
-    private final IObjectRenderer renderer = new PanelRenderer();
+    private final IObjectRenderer renderer = new TextRenderer();
 
-    public Panel(String id, OverlayModule module, IArguments arguments) throws LuaException {
+    @StringProperty
+    public String content;
+
+    public Text(String id, OverlayModule module, IArguments arguments) throws LuaException {
         super(id, module, arguments);
+        reflectivelyMapProperties(arguments);
     }
 
-    /**
-     * constructor for the client side initialization
-     *
-     * @param id     id of the object
-     * @param player the target player
-     */
-    public Panel(String id, UUID player) {
+    public Text(String id, UUID player) {
         super(id, player);
+    }
+
+    @LuaFunction
+    public final String getContent() {
+        return content;
+    }
+
+    @LuaFunction
+    public final void setContent(String content) {
+        this.content = content;
+        getModule().update(this);
+    }
+
+    @Override
+    public IObjectRenderer getRenderObject() {
+        return renderer;
     }
 
     @Override
     public void encode(FriendlyByteBuf buffer) {
         buffer.writeInt(ID);
         super.encode(buffer);
+        buffer.writeUtf(content);
     }
 
-    public static Panel decode(FriendlyByteBuf buffer) {
+    public static Text decode(FriendlyByteBuf buffer) {
         String id = buffer.readUtf();
         boolean hasValidUUID = buffer.readBoolean();
         if (!hasValidUUID) {
@@ -54,20 +67,18 @@ public class Panel extends RenderableObject {
         int y = buffer.readInt();
         int sizeX = buffer.readInt();
         int sizeY = buffer.readInt();
+        String content = buffer.readUtf();
 
-        Panel clientObject = new Panel(id, player);
+        Text clientObject = new Text(id, player);
         clientObject.color = color;
         clientObject.opacity = opacity;
         clientObject.x = x;
         clientObject.y = y;
         clientObject.maxX = sizeX;
         clientObject.maxY = sizeY;
+        clientObject.content = content;
 
         return clientObject;
     }
 
-    @Override
-    public IObjectRenderer getRenderObject() {
-        return renderer;
-    }
 }

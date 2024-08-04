@@ -5,6 +5,7 @@ import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.ObjectD
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.Circle;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.Panel;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.RenderableObject;
+import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.Text;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,5 +39,6 @@ public class OverlayObjectHolder {
     public static void registerDecodeObjects() {
         ObjectDecodeRegistry.register(Panel.ID, Panel::decode);
         ObjectDecodeRegistry.register(Circle.ID, Circle::decode);
+        ObjectDecodeRegistry.register(Text.ID, Text::decode);
     }
 }

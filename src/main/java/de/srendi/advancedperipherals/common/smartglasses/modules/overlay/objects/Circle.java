@@ -16,6 +16,8 @@ public class Circle extends RenderableObject {
 
     public static final int ID = 1;
 
+    private final IObjectRenderer renderer = new CircleRenderer();
+
     @FixedPointNumberProperty(min = -32767, max = 32767)
     public int radius = 0;
 
@@ -77,7 +79,7 @@ public class Circle extends RenderableObject {
 
     @Override
     public IObjectRenderer getRenderObject() {
-        return new CircleRenderer();
+        return renderer;
     }
 
     @Override
