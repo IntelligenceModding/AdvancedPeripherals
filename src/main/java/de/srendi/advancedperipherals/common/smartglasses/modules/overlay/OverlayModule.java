@@ -133,7 +133,6 @@ public class OverlayModule implements IModule {
 
     public int bulkUpdate() {
         int size = objectsToUpdate.size();
-        AdvancedPeripherals.debug("Updating " + size);
         int packetCount = (int) Math.ceil((double) size / 15000);
 
         // In some cases, if the user creates a lot of objects above 15k, the packet payload can be too big.

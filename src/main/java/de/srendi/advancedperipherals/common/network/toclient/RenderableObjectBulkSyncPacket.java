@@ -1,6 +1,5 @@
 package de.srendi.advancedperipherals.common.network.toclient;
 
-import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.client.smartglasses.OverlayObjectHolder;
 import de.srendi.advancedperipherals.common.network.base.IPacket;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.ObjectDecodeRegistry;
@@ -29,8 +28,6 @@ public class RenderableObjectBulkSyncPacket implements IPacket {
     }
 
     public static RenderableObjectBulkSyncPacket decode(FriendlyByteBuf buffer) {
-        AdvancedPeripherals.debug("Size" + buffer.readableBytes());
-
         int size = buffer.readInt();
         RenderableObject[] objects = new RenderableObject[size];
 

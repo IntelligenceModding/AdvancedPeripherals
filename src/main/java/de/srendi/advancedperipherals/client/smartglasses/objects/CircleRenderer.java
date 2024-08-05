@@ -13,18 +13,23 @@ import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraftforge.client.gui.overlay.ForgeGui;
 
+import java.util.List;
+
 public class CircleRenderer implements IObjectRenderer {
 
     @Override
-    public void render(RenderableObject object, ForgeGui gui, PoseStack poseStack, float partialTick, int screenWidth, int screenHeight) {
-        Circle circle = (Circle) object;
+    public void renderBatch(List<RenderableObject> objects, ForgeGui gui, PoseStack poseStack, float partialTick, int screenWidth, int screenHeight) {
+        for (RenderableObject object : objects) {
 
-        float alpha = object.opacity;
-        float red = (float) (object.color >> 16 & 255) / 255.0F;
-        float green = (float) (object.color >> 8 & 255) / 255.0F;
-        float blue = (float) (object.color & 255) / 255.0F;
+            Circle circle = (Circle) object;
 
-        drawCircle(poseStack, circle.x, circle.y, circle.radius, 120, red, green, blue, alpha);
+            float alpha = object.opacity;
+            float red = (float) (object.color >> 16 & 255) / 255.0F;
+            float green = (float) (object.color >> 8 & 255) / 255.0F;
+            float blue = (float) (object.color & 255) / 255.0F;
+
+            drawCircle(poseStack, circle.x, circle.y, circle.radius, 120, red, green, blue, alpha);
+        }
     }
 
     public void drawCircle(PoseStack poseStack, float cx, float cy, float r, int numSegments, float red, float green, float blue, float alpha) {
