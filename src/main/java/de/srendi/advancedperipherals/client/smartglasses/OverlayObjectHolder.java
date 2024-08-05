@@ -1,6 +1,5 @@
 package de.srendi.advancedperipherals.client.smartglasses;
 
-import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.ObjectDecodeRegistry;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.Circle;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.Panel;
@@ -20,8 +19,12 @@ public class OverlayObjectHolder {
     public static void addOrUpdateObject(RenderableObject object) {
         removeObject(object.getId());
         objects.add(object);
-        AdvancedPeripherals.debug("Added object to client renderer " + object);
-        AdvancedPeripherals.debug("Having objects " + objects);
+    }
+
+    public static void addOrUpdateObjects(RenderableObject[] object) {
+        for (RenderableObject renderableObject : object) {
+            addOrUpdateObject(renderableObject);
+        }
     }
 
     public static List<RenderableObject> getObjects() {

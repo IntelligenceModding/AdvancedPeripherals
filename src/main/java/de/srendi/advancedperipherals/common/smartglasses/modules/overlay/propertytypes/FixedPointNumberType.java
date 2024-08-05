@@ -1,7 +1,5 @@
 package de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertytypes;
 
-import de.srendi.advancedperipherals.AdvancedPeripherals;
-
 public class FixedPointNumberType implements PropertyType<Number> {
 
     public long min;
@@ -28,7 +26,6 @@ public class FixedPointNumberType implements PropertyType<Number> {
         FixedPointNumberProperty decimalProperty = (FixedPointNumberProperty) property;
         min = decimalProperty.min();
         max = decimalProperty.max();
-        AdvancedPeripherals.debug("Initialized number property with min " + min + " and max " + max);
     }
 }
 

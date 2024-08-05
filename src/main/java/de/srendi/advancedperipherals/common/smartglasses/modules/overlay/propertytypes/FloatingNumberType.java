@@ -1,7 +1,5 @@
 package de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertytypes;
 
-import de.srendi.advancedperipherals.AdvancedPeripherals;
-
 public class FloatingNumberType implements PropertyType<Number> {
 
     public float min;
@@ -14,7 +12,6 @@ public class FloatingNumberType implements PropertyType<Number> {
 
     @Override
     public Number mapValue(Object type) {
-        AdvancedPeripherals.debug("Mapping value " + type + " to " + Math.min(Math.max((float) type, min), max));
         return Math.min(Math.max((float) type, min), max);
     }
 
@@ -23,7 +20,6 @@ public class FloatingNumberType implements PropertyType<Number> {
         FloatingNumberProperty decimalProperty = (FloatingNumberProperty) property;
         min = decimalProperty.min();
         max = decimalProperty.max();
-        AdvancedPeripherals.debug("Initialized decimal property with min " + min + " and max " + max);
     }
 }
 

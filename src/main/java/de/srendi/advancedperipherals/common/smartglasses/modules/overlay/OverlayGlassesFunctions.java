@@ -49,8 +49,14 @@ public class OverlayGlassesFunctions implements IModuleFunctions {
     }
 
     @LuaFunction
-    public final MethodResult getObjects(IArguments arguments) {
+    public final MethodResult getObjects() {
         return MethodResult.of((Object) overlayModule.getObjects().stream().map(OverlayObject::getId).toArray(String[]::new));
+    }
+
+    @LuaFunction
+    public final MethodResult getObject(IArguments arguments) throws LuaException {
+        String id = arguments.getString(0);
+        return MethodResult.of(overlayModule.getObjects().stream().filter(object -> object.getId().equals(id)).findFirst());
     }
 
     @LuaFunction
@@ -68,5 +74,17 @@ public class OverlayGlassesFunctions implements IModuleFunctions {
     public final MethodResult getSize() {
         return MethodResult.of(Minecraft.getInstance().getWindow().getWidth(), Minecraft.getInstance().getWindow().getHeight());
     }
+
+    @LuaFunction
+    public final MethodResult update() {
+        return MethodResult.of(overlayModule.bulkUpdate());
+    }
+
+    @LuaFunction
+    public final MethodResult autoUpdate(IArguments arguments) throws LuaException {
+        overlayModule.autoUpdate = arguments.optBoolean(0, !overlayModule.autoUpdate);
+        return MethodResult.of(overlayModule.autoUpdate);
+    }
+
 
 }
