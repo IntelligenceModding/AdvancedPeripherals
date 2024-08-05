@@ -39,10 +39,10 @@ public class CircleRenderer implements IObjectRenderer {
         double angle = Math.PI * 2 / numSegments;
 
         for (int i = 0; i <= numSegments; i++) {
-            double x = cx + r * Math.cos(i * angle);
-            double y = cy + r * Math.sin(i * angle);
+            double x = cx + r * Math.sin(i * angle);
+            double y = cy + r * Math.cos(i * angle);
 
-            bufferbuilder.vertex(matrix, (float) y, (float) x, 0f).color(red, green, blue, alpha).endVertex();
+            bufferbuilder.vertex(matrix, (float) x, (float) y, 0f).color(red, green, blue, alpha).endVertex();
         }
 
         BufferUploader.drawWithShader(bufferbuilder.end());
