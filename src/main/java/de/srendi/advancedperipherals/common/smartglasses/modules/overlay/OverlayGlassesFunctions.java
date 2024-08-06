@@ -5,13 +5,11 @@ import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.lua.MethodResult;
 import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesAccess;
-import de.srendi.advancedperipherals.common.smartglasses.modules.IModule;
 import de.srendi.advancedperipherals.common.smartglasses.modules.IModuleFunctions;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.Circle;
-import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.Panel;
+import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.Rectangle;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.RenderableObject;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.Text;
-import de.srendi.advancedperipherals.common.util.Pair;
 import net.minecraft.client.Minecraft;
 
 public class OverlayGlassesFunctions implements IModuleFunctions {
@@ -25,9 +23,9 @@ public class OverlayGlassesFunctions implements IModuleFunctions {
     }
 
     @LuaFunction
-    public final MethodResult createPanel(IArguments arguments) throws LuaException {
-        Panel panel = new Panel(overlayModule, arguments);
-        RenderableObject object = overlayModule.addObject(panel);
+    public final MethodResult createRectangle(IArguments arguments) throws LuaException {
+        Rectangle rectangle = new Rectangle(overlayModule, arguments);
+        RenderableObject object = overlayModule.addObject(rectangle);
 
         return MethodResult.of(object, "SUCCESS");
     }

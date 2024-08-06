@@ -4,21 +4,21 @@ import dan200.computercraft.api.lua.IArguments;
 import dan200.computercraft.api.lua.LuaException;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.client.smartglasses.objects.IObjectRenderer;
-import de.srendi.advancedperipherals.client.smartglasses.objects.PanelRenderer;
+import de.srendi.advancedperipherals.client.smartglasses.objects.RectangleRenderer;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.OverlayModule;
 import net.minecraft.network.FriendlyByteBuf;
 
 import java.util.UUID;
 
 /**
- * A panel is the standard panel which can contain multiple render-able objects in it.
+ * Just a rectangle
  */
-public class Panel extends RenderableObject {
+public class Rectangle extends RenderableObject {
     public static final int TYPE_ID = 0;
 
-    private final IObjectRenderer renderer = new PanelRenderer();
+    private final IObjectRenderer renderer = new RectangleRenderer();
 
-    public Panel(OverlayModule module, IArguments arguments) throws LuaException {
+    public Rectangle(OverlayModule module, IArguments arguments) throws LuaException {
         super(module, arguments);
     }
 
@@ -27,7 +27,7 @@ public class Panel extends RenderableObject {
      *
      * @param player the target player
      */
-    public Panel(UUID player) {
+    public Rectangle(UUID player) {
         super(player);
     }
 
@@ -37,7 +37,7 @@ public class Panel extends RenderableObject {
         super.encode(buffer);
     }
 
-    public static Panel decode(FriendlyByteBuf buffer) {
+    public static Rectangle decode(FriendlyByteBuf buffer) {
         int objectId = buffer.readInt();
         boolean hasValidUUID = buffer.readBoolean();
         if (!hasValidUUID) {
@@ -53,7 +53,7 @@ public class Panel extends RenderableObject {
         int sizeX = buffer.readInt();
         int sizeY = buffer.readInt();
 
-        Panel clientObject = new Panel(player);
+        Rectangle clientObject = new Rectangle(player);
         clientObject.setId(objectId);
         clientObject.color = color;
         clientObject.opacity = opacity;

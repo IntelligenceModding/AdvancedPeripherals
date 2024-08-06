@@ -14,7 +14,7 @@ import net.minecraftforge.client.gui.overlay.ForgeGui;
 
 import java.util.List;
 
-public class PanelRenderer implements IObjectRenderer {
+public class RectangleRenderer implements IObjectRenderer {
 
     @Override
     public void renderBatch(List<RenderableObject> objects, ForgeGui gui, PoseStack poseStack, float partialTick, int screenWidth, int screenHeight) {
