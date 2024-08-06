@@ -6,42 +6,43 @@ import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.RenderableObject;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.Text;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Static holder for client side renderable objects - will change
  */
 public class OverlayObjectHolder {
 
-    public static List<RenderableObject> objects = new ArrayList<>();
+    public static Map<Integer, RenderableObject> objects = new HashMap<>();
 
     public static void addOrUpdateObject(RenderableObject object) {
-        removeObject(object.getId());
-        objects.add(object);
+        objects.put(object.getId(), object);
     }
 
-    public static void addOrUpdateObjects(RenderableObject[] object) {
-        for (RenderableObject renderableObject : object) {
+    public static void addOrUpdateObjects(Collection<RenderableObject> objects) {
+        for (RenderableObject renderableObject : objects) {
             addOrUpdateObject(renderableObject);
         }
     }
 
-    public static List<RenderableObject> getObjects() {
-        return objects;
+    public static void removeObject(int id) {
+        objects.remove(id);
     }
 
-    public static void removeObject(String id) {
-        objects.removeIf(object -> object.getId().equals(id));
+    public static Collection<RenderableObject> getObjects() {
+        return objects.values();
     }
+
 
     public static void clear() {
         objects.clear();
     }
 
     public static void registerDecodeObjects() {
-        ObjectDecodeRegistry.register(Panel.ID, Panel::decode);
-        ObjectDecodeRegistry.register(Circle.ID, Circle::decode);
-        ObjectDecodeRegistry.register(Text.ID, Text::decode);
+        ObjectDecodeRegistry.register(Panel.TYPE_ID, Panel::decode);
+        ObjectDecodeRegistry.register(Circle.TYPE_ID, Circle::decode);
+        ObjectDecodeRegistry.register(Text.TYPE_ID, Text::decode);
     }
 }

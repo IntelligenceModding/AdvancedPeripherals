@@ -14,32 +14,31 @@ import java.util.UUID;
  * A panel is the standard panel which can contain multiple render-able objects in it.
  */
 public class Panel extends RenderableObject {
-    public static final int ID = 0;
+    public static final int TYPE_ID = 0;
 
     private final IObjectRenderer renderer = new PanelRenderer();
 
-    public Panel(String id, OverlayModule module, IArguments arguments) throws LuaException {
-        super(id, module, arguments);
+    public Panel(OverlayModule module, IArguments arguments) throws LuaException {
+        super(module, arguments);
     }
 
     /**
      * constructor for the client side initialization
      *
-     * @param id     id of the object
      * @param player the target player
      */
-    public Panel(String id, UUID player) {
-        super(id, player);
+    public Panel(UUID player) {
+        super(player);
     }
 
     @Override
     public void encode(FriendlyByteBuf buffer) {
-        buffer.writeInt(ID);
+        buffer.writeInt(TYPE_ID);
         super.encode(buffer);
     }
 
     public static Panel decode(FriendlyByteBuf buffer) {
-        String id = buffer.readUtf();
+        int objectId = buffer.readInt();
         boolean hasValidUUID = buffer.readBoolean();
         if (!hasValidUUID) {
             AdvancedPeripherals.exception("Tried to decode a buffer for an OverlayObject but without a valid player as target.", new IllegalArgumentException());
@@ -54,7 +53,8 @@ public class Panel extends RenderableObject {
         int sizeX = buffer.readInt();
         int sizeY = buffer.readInt();
 
-        Panel clientObject = new Panel(id, player);
+        Panel clientObject = new Panel(player);
+        clientObject.setId(objectId);
         clientObject.color = color;
         clientObject.opacity = opacity;
         clientObject.x = x;

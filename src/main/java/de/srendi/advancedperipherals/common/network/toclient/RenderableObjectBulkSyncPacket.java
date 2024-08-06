@@ -7,11 +7,15 @@ import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.network.NetworkEvent;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 public class RenderableObjectBulkSyncPacket implements IPacket {
 
-    private final RenderableObject[] objects;
+    private final Collection<RenderableObject> objects;
 
-    public RenderableObjectBulkSyncPacket(RenderableObject[] objects) {
+    public RenderableObjectBulkSyncPacket(Collection<RenderableObject> objects) {
         this.objects = objects;
     }
 
@@ -22,18 +26,18 @@ public class RenderableObjectBulkSyncPacket implements IPacket {
 
     @Override
     public void encode(FriendlyByteBuf buffer) {
-        buffer.writeInt(objects.length);
+        buffer.writeInt(objects.size());
         for (RenderableObject object : objects)
             object.encode(buffer);
     }
 
     public static RenderableObjectBulkSyncPacket decode(FriendlyByteBuf buffer) {
         int size = buffer.readInt();
-        RenderableObject[] objects = new RenderableObject[size];
+        List<RenderableObject> objects = new ArrayList<>();
 
         for (int i = 0; i < size; i++) {
-            int id = buffer.readInt();
-            objects[i] = ObjectDecodeRegistry.getObject(id, buffer);
+            int typeId = buffer.readInt();
+            objects.add(ObjectDecodeRegistry.getObject(typeId, buffer));
         }
 
         return new RenderableObjectBulkSyncPacket(objects);

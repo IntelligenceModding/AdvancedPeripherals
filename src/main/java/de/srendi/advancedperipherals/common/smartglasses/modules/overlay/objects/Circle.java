@@ -13,21 +13,20 @@ import net.minecraft.network.FriendlyByteBuf;
 import java.util.UUID;
 
 public class Circle extends RenderableObject {
-
-    public static final int ID = 1;
+    public static final int TYPE_ID = 1;
 
     private final IObjectRenderer renderer = new CircleRenderer();
 
     @FixedPointNumberProperty(min = -32767, max = 32767)
     public int radius = 0;
 
-    public Circle(String id, OverlayModule module, IArguments arguments) throws LuaException {
-        super(id, module, arguments);
+    public Circle(OverlayModule module, IArguments arguments) throws LuaException {
+        super(module, arguments);
         reflectivelyMapProperties(arguments);
     }
 
-    public Circle(String id, UUID player) {
-        super(id, player);
+    public Circle(UUID player) {
+        super(player);
     }
 
     @LuaFunction
@@ -43,13 +42,13 @@ public class Circle extends RenderableObject {
 
     @Override
     public void encode(FriendlyByteBuf buffer) {
-        buffer.writeInt(ID);
+        buffer.writeInt(TYPE_ID);
         super.encode(buffer);
         buffer.writeInt(radius);
     }
 
     public static Circle decode(FriendlyByteBuf buffer) {
-        String id = buffer.readUtf();
+        int objectId = buffer.readInt();
         boolean hasValidUUID = buffer.readBoolean();
         if (!hasValidUUID) {
             AdvancedPeripherals.exception("Tried to decode a buffer for an OverlayObject but without a valid player as target.", new IllegalArgumentException());
@@ -65,7 +64,8 @@ public class Circle extends RenderableObject {
         int maxY = buffer.readInt();
         int radius = buffer.readInt();
 
-        Circle clientObject = new Circle(id, player);
+        Circle clientObject = new Circle(player);
+        clientObject.setId(objectId);
         clientObject.color = color;
         clientObject.opacity = opacity;
         clientObject.x = x;

@@ -10,6 +10,7 @@ import de.srendi.advancedperipherals.common.smartglasses.modules.IModuleFunction
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.Circle;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.Panel;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.RenderableObject;
+import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.Text;
 import de.srendi.advancedperipherals.common.util.Pair;
 import net.minecraft.client.Minecraft;
 
@@ -24,49 +25,48 @@ public class OverlayGlassesFunctions implements IModuleFunctions {
     }
 
     @LuaFunction
-    public final String test() {
-        return "Hello World! I'm an overlay module!";
+    public final MethodResult createPanel(IArguments arguments) throws LuaException {
+        Panel panel = new Panel(overlayModule, arguments);
+        RenderableObject object = overlayModule.addObject(panel);
+
+        return MethodResult.of(object, "SUCCESS");
     }
 
     @LuaFunction
-    public final MethodResult createPanel(String id, IArguments arguments) throws LuaException {
-        Panel panel = new Panel(id, overlayModule, arguments);
-        Pair<RenderableObject, Boolean> success = overlayModule.addObject(panel);
-        if(!success.getRight())
-            return MethodResult.of(success.getLeft(), IModule.ErrorConstants.ALREADY_EXISTS);
+    public final MethodResult createCircle(IArguments arguments) throws LuaException {
+        Circle circle = new Circle(overlayModule, arguments);
+        RenderableObject object = overlayModule.addObject(circle);
 
-        return MethodResult.of(success.getLeft(), "SUCCESS");
+        return MethodResult.of(object, "SUCCESS");
     }
 
     @LuaFunction
-    public final MethodResult createCircle(String id, IArguments arguments) throws LuaException {
-        Circle circle = new Circle(id, overlayModule, arguments);
-        Pair<RenderableObject, Boolean> success = overlayModule.addObject(circle);
-        if(!success.getRight())
-            return MethodResult.of(success.getLeft(), IModule.ErrorConstants.ALREADY_EXISTS);
+    public final MethodResult createText(IArguments arguments) throws LuaException {
+        Text circle = new Text(overlayModule, arguments);
+        RenderableObject object = overlayModule.addObject(circle);
 
-        return MethodResult.of(success.getLeft(), "SUCCESS");
-    }
-
-    @LuaFunction
-    public final MethodResult getObjects() {
-        return MethodResult.of((Object) overlayModule.getObjects().stream().map(OverlayObject::getId).toArray(String[]::new));
+        return MethodResult.of(object, "SUCCESS");
     }
 
     @LuaFunction
     public final MethodResult getObject(IArguments arguments) throws LuaException {
-        String id = arguments.getString(0);
-        return MethodResult.of(overlayModule.getObjects().stream().filter(object -> object.getId().equals(id)).findFirst());
+        int id = arguments.getInt(0);
+        return MethodResult.of(overlayModule.getObjects().get(id));
     }
 
     @LuaFunction
-    public final MethodResult removeObject(String id) {
+    public final MethodResult removeObject(int id) {
         return MethodResult.of(overlayModule.removeObject(id));
     }
 
     @LuaFunction
     public final MethodResult clear() {
         return MethodResult.of(overlayModule.clear());
+    }
+
+    @LuaFunction
+    public final MethodResult getObjectsSize() {
+        return MethodResult.of(overlayModule.getObjects().size());
     }
 
     // TODO: This will crash on dedicated servers

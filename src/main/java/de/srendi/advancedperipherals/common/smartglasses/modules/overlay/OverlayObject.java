@@ -24,25 +24,27 @@ public abstract class OverlayObject {
     @BooleanProperty
     private boolean enabled = true;
 
-    private final String id;
+    private int id;
     private OverlayModule module;
     private UUID player;
 
-    public OverlayObject(String id, OverlayModule module, IArguments arguments) {
-        this.id = id;
+    public OverlayObject(OverlayModule module, IArguments arguments) {
         this.module = module;
     }
 
     /**
      * For clientside initialization
      */
-    public OverlayObject(String id, UUID player) {
-        this.id = id;
+    public OverlayObject(UUID player) {
         this.player = player;
     }
 
+    public void setId(int id) {
+        this.id = id;
+    }
+
     @LuaFunction
-    public final String getId() {
+    public int getId() {
         return id;
     }
 
@@ -83,11 +85,11 @@ public abstract class OverlayObject {
      * @see PropertyType
      */
     public void reflectivelyMapProperties(IArguments arguments) throws LuaException {
-        if (arguments.optTable(1).isEmpty())
+        if (arguments.optTable(0).isEmpty())
             return;
 
         try {
-            Map<String, Object> properties = arguments.optTable(1).get().entrySet().stream()
+            Map<String, Object> properties = arguments.optTable(0).get().entrySet().stream()
                     .filter(entry -> entry.getKey() instanceof String)
                     .collect(Collectors.toMap(entry -> (String) entry.getKey(), Map.Entry::getValue));
 
@@ -174,7 +176,7 @@ public abstract class OverlayObject {
     }
 
     public void encode(FriendlyByteBuf buffer) {
-        buffer.writeUtf(id);
+        buffer.writeInt(id);
         Entity entity = module.getAccess().getEntity();
         if(entity instanceof Player player) {
             buffer.writeBoolean(true);
@@ -189,7 +191,6 @@ public abstract class OverlayObject {
     public String toString() {
         return "OverlayObject{" +
                 "enabled=" + enabled +
-                ", id='" + id + '\'' +
                 ", module=" + module +
                 ", player=" + player +
                 '}';

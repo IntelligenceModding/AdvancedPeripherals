@@ -7,26 +7,30 @@ import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.client.smartglasses.objects.IObjectRenderer;
 import de.srendi.advancedperipherals.client.smartglasses.objects.TextRenderer;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.OverlayModule;
+import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertytypes.FloatingNumberProperty;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertytypes.StringProperty;
 import net.minecraft.network.FriendlyByteBuf;
 
 import java.util.UUID;
 
 public class Text extends RenderableObject {
-    public static final int ID = 2;
+    public static final int TYPE_ID = 2;
 
     private final IObjectRenderer renderer = new TextRenderer();
 
     @StringProperty
-    public String content;
+    public String content = "";
 
-    public Text(String id, OverlayModule module, IArguments arguments) throws LuaException {
-        super(id, module, arguments);
+    @FloatingNumberProperty(min = 0, max = 128)
+    public float fontSize = 1;
+
+    public Text(OverlayModule module, IArguments arguments) throws LuaException {
+        super(module, arguments);
         reflectivelyMapProperties(arguments);
     }
 
-    public Text(String id, UUID player) {
-        super(id, player);
+    public Text(UUID player) {
+        super(player);
     }
 
     @LuaFunction
@@ -40,6 +44,18 @@ public class Text extends RenderableObject {
         getModule().update(this);
     }
 
+    @LuaFunction
+    public double getFontSize() {
+        return fontSize;
+    }
+
+    // For any reason, cc does not support float, only double. So we need to cast it here
+    @LuaFunction
+    public void setFontSize(double fontSize) {
+        this.fontSize = (float) fontSize;
+        getModule().update(this);
+    }
+
     @Override
     public IObjectRenderer getRenderObject() {
         return renderer;
@@ -47,13 +63,14 @@ public class Text extends RenderableObject {
 
     @Override
     public void encode(FriendlyByteBuf buffer) {
-        buffer.writeInt(ID);
+        buffer.writeInt(TYPE_ID);
         super.encode(buffer);
         buffer.writeUtf(content);
+        buffer.writeFloat(fontSize);
     }
 
     public static Text decode(FriendlyByteBuf buffer) {
-        String id = buffer.readUtf();
+        int objectId = buffer.readInt();
         boolean hasValidUUID = buffer.readBoolean();
         if (!hasValidUUID) {
             AdvancedPeripherals.exception("Tried to decode a buffer for an OverlayObject but without a valid player as target.", new IllegalArgumentException());
@@ -68,8 +85,10 @@ public class Text extends RenderableObject {
         int sizeX = buffer.readInt();
         int sizeY = buffer.readInt();
         String content = buffer.readUtf();
+        float fontSize = buffer.readFloat();
 
-        Text clientObject = new Text(id, player);
+        Text clientObject = new Text(player);
+        clientObject.setId(objectId);
         clientObject.color = color;
         clientObject.opacity = opacity;
         clientObject.x = x;
@@ -77,6 +96,7 @@ public class Text extends RenderableObject {
         clientObject.maxX = sizeX;
         clientObject.maxY = sizeY;
         clientObject.content = content;
+        clientObject.fontSize = fontSize;
 
         return clientObject;
     }

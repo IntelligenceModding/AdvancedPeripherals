@@ -10,16 +10,14 @@ import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesAccess;
 import de.srendi.advancedperipherals.common.smartglasses.modules.IModule;
 import de.srendi.advancedperipherals.common.smartglasses.modules.IModuleFunctions;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.RenderableObject;
-import de.srendi.advancedperipherals.common.util.Pair;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.CopyOnWriteArraySet;
-
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * We want to support scripts which were made for the plethora classes. So we call this item the same as the overlay item from plethora
@@ -27,11 +25,12 @@ import java.util.concurrent.CopyOnWriteArraySet;
  */
 public class OverlayModule implements IModule {
 
-    public final CopyOnWriteArraySet<RenderableObject> objects = new CopyOnWriteArraySet<>();
-    public final CopyOnWriteArrayList<RenderableObject> objectsToUpdate = new CopyOnWriteArrayList<>();
+    public final ConcurrentHashMap<Integer, RenderableObject> objects = new ConcurrentHashMap<>();
+    public final ConcurrentHashMap<Integer, RenderableObject> objectsToUpdate = new ConcurrentHashMap<>();
     public final SmartGlassesAccess access;
 
     public boolean autoUpdate = true;
+    private int idCounter = 0;
 
     public OverlayModule(SmartGlassesAccess access) {
         this.access = access;
@@ -60,7 +59,7 @@ public class OverlayModule implements IModule {
         return access;
     }
 
-    public CopyOnWriteArraySet<RenderableObject> getObjects() {
+    public Map<Integer, RenderableObject> getObjects() {
         return objects;
     }
 
@@ -71,21 +70,16 @@ public class OverlayModule implements IModule {
      * @return A pair of the object and a boolean. The boolean is true if the object was added successfully and false if not.
      * The object is the object which was added or the object which already exists(When not successful).
      */
-    public Pair<RenderableObject, Boolean> addObject(RenderableObject object) {
-        List<RenderableObject> objectsToCheck = new ArrayList<>();
-        objectsToCheck.addAll(objects);
-        objectsToCheck.addAll(objectsToUpdate);
-        for (RenderableObject overlayObject : objectsToCheck) {
-            if (overlayObject.getId().equals(object.getId()))
-                return Pair.of(overlayObject, false);
-        }
+    public RenderableObject addObject(RenderableObject object) {
+        int id = idCounter++;
+        object.setId(id);
         if (autoUpdate) {
             APNetworking.sendTo(new RenderableObjectSyncPacket(object), (ServerPlayer) access.getEntity());
-            objects.add(object);
+            objects.put(id, object);
         } else {
-            objectsToUpdate.add(object);
+            objectsToUpdate.put(id, object);
         }
-        return Pair.of(object, true);
+        return object;
     }
 
     /**
@@ -94,13 +88,13 @@ public class OverlayModule implements IModule {
      * @param id the object id
      * @return true if the object existed and was removed, false if the object was not in the collection
      */
-    public boolean removeObject(String id) {
-        boolean removed = objects.removeIf(object -> object.getId().equals(id));
+    public boolean removeObject(int id) {
+        RenderableObject removed = objects.remove(id);
 
-        if (removed)
+        if (removed != null)
             APNetworking.sendTo(new RenderableObjectDeletePacket(id), (ServerPlayer) access.getEntity());
 
-        return removed;
+        return removed != null;
     }
 
     /**
@@ -111,6 +105,7 @@ public class OverlayModule implements IModule {
     public int clear() {
         int size = objects.size();
         objects.clear();
+        idCounter = 0;
         objectsToUpdate.clear();
         APNetworking.sendTo(new RenderableObjectClearPacket(), (ServerPlayer) access.getEntity());
         return size;
@@ -127,7 +122,7 @@ public class OverlayModule implements IModule {
             return;
         }
 
-        objectsToUpdate.add(object);
+        objectsToUpdate.put(object.getId(), object);
     }
 
 
@@ -137,22 +132,25 @@ public class OverlayModule implements IModule {
 
         // In some cases, if the user creates a lot of objects above 15k, the packet payload can be too big.
         // We split up the packets for every 15k objects to prevent the payload limit from mc
-
-        // Iterate and send packets
         for (int i = 0; i < packetCount; i++) {
-            int startIndex = i * 15000;
-            int endIndex = Math.min(startIndex + 15000, size);
+            List<RenderableObject> packetObjects = new ArrayList<>();
+            int count = 0;
 
-            // Create a sublist for the current packet
-            List<RenderableObject> packetObjects = objectsToUpdate.subList(startIndex, endIndex);
+            for (RenderableObject object : objectsToUpdate.values()) {
+                packetObjects.add(object);
+                objects.put(object.getId(), object);
+                objectsToUpdate.remove(object.getId());
+                count++;
 
-            // Send the packet
-            APNetworking.sendTo(new RenderableObjectBulkSyncPacket(packetObjects.toArray(new RenderableObject[0])),
+                if (count >= 15000) {
+                    break; // Ensure we don't exceed the packet size limit
+                }
+            }
+
+            APNetworking.sendTo(new RenderableObjectBulkSyncPacket(packetObjects),
                     (ServerPlayer) access.getEntity()
             );
         }
-        objects.addAll(objectsToUpdate);
-        objectsToUpdate.clear();
 
         return size;
     }

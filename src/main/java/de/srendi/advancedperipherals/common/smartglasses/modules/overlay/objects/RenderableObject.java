@@ -33,13 +33,13 @@ public class RenderableObject extends OverlayObject {
     @FixedPointNumberProperty(min = -32767, max = 32767)
     public int maxY = 0;
 
-    public RenderableObject(String id, OverlayModule module, IArguments arguments) throws LuaException {
-        super(id, module, arguments);
+    public RenderableObject(OverlayModule module, IArguments arguments) throws LuaException {
+        super(module, arguments);
         reflectivelyMapProperties(arguments);
     }
 
-    public RenderableObject(String id, UUID player) {
-        super(id, player);
+    public RenderableObject(UUID player) {
+        super(player);
     }
 
     @LuaFunction

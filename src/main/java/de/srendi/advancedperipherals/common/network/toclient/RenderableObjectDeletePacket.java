@@ -7,9 +7,9 @@ import net.minecraftforge.network.NetworkEvent;
 
 public class RenderableObjectDeletePacket implements IPacket {
 
-    private final String object;
+    private final int object;
 
-    public RenderableObjectDeletePacket(String object) {
+    public RenderableObjectDeletePacket(int object) {
         this.object = object;
     }
 
@@ -20,10 +20,10 @@ public class RenderableObjectDeletePacket implements IPacket {
 
     @Override
     public void encode(FriendlyByteBuf buffer) {
-        buffer.writeUtf(object);
+        buffer.writeInt(object);
     }
 
     public static RenderableObjectDeletePacket decode(FriendlyByteBuf buffer) {
-        return new RenderableObjectDeletePacket(buffer.readUtf());
+        return new RenderableObjectDeletePacket(buffer.readInt());
     }
 }
