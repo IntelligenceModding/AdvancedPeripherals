@@ -17,7 +17,11 @@ public class TextRenderer implements IObjectRenderer {
         for (RenderableObject object : objects) {
             Text text = (Text) object;
             poseStack.scale(text.fontSize, text.fontSize, 1);
-            minecraft.font.draw(poseStack, text.content, text.x / text.fontSize, text.y / text.fontSize, text.color);
+            if (text.shadow) {
+                minecraft.font.drawShadow(poseStack, text.content, text.x / text.fontSize, text.y / text.fontSize, text.color);
+            } else {
+                minecraft.font.draw(poseStack, text.content, text.x / text.fontSize, text.y / text.fontSize, text.color);
+            }
         }
 
     }

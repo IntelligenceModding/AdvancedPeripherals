@@ -7,6 +7,7 @@ import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.client.smartglasses.objects.IObjectRenderer;
 import de.srendi.advancedperipherals.client.smartglasses.objects.TextRenderer;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.OverlayModule;
+import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertytypes.BooleanProperty;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertytypes.FloatingNumberProperty;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertytypes.StringProperty;
 import net.minecraft.network.FriendlyByteBuf;
@@ -23,6 +24,9 @@ public class Text extends RenderableObject {
 
     @FloatingNumberProperty(min = 0, max = 128)
     public float fontSize = 1;
+
+    @BooleanProperty
+    public boolean shadow = false;
 
     public Text(OverlayModule module, IArguments arguments) throws LuaException {
         super(module, arguments);
@@ -56,6 +60,16 @@ public class Text extends RenderableObject {
         getModule().update(this);
     }
 
+    @LuaFunction
+    public void setShadow(boolean shadow) {
+        this.shadow = shadow;
+    }
+
+    @LuaFunction
+    public boolean isShadow() {
+        return shadow;
+    }
+
     @Override
     public IObjectRenderer getRenderObject() {
         return renderer;
@@ -67,6 +81,7 @@ public class Text extends RenderableObject {
         super.encode(buffer);
         buffer.writeUtf(content);
         buffer.writeFloat(fontSize);
+        buffer.writeBoolean(shadow);
     }
 
     public static Text decode(FriendlyByteBuf buffer) {
@@ -86,6 +101,7 @@ public class Text extends RenderableObject {
         int sizeY = buffer.readInt();
         String content = buffer.readUtf();
         float fontSize = buffer.readFloat();
+        boolean shadow = buffer.readBoolean();
 
         Text clientObject = new Text(player);
         clientObject.setId(objectId);
@@ -97,6 +113,7 @@ public class Text extends RenderableObject {
         clientObject.maxY = sizeY;
         clientObject.content = content;
         clientObject.fontSize = fontSize;
+        clientObject.shadow = shadow;
 
         return clientObject;
     }
