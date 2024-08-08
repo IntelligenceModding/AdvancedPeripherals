@@ -1,10 +1,11 @@
 package de.srendi.advancedperipherals.client.smartglasses;
 
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.ObjectDecodeRegistry;
-import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.Circle;
-import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.Rectangle;
+import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.CircleObject;
+import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.ItemObject;
+import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.RectangleObject;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.RenderableObject;
-import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.Text;
+import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.TextObject;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -35,14 +36,14 @@ public class OverlayObjectHolder {
         return objects.values();
     }
 
-
     public static void clear() {
         objects.clear();
     }
 
     public static void registerDecodeObjects() {
-        ObjectDecodeRegistry.register(Rectangle.TYPE_ID, Rectangle::decode);
-        ObjectDecodeRegistry.register(Circle.TYPE_ID, Circle::decode);
-        ObjectDecodeRegistry.register(Text.TYPE_ID, Text::decode);
+        ObjectDecodeRegistry.register(RectangleObject.TYPE_ID, RectangleObject::decode);
+        ObjectDecodeRegistry.register(CircleObject.TYPE_ID, CircleObject::decode);
+        ObjectDecodeRegistry.register(TextObject.TYPE_ID, TextObject::decode);
+        ObjectDecodeRegistry.register(ItemObject.TYPE_ID, ItemObject::decode);
     }
 }

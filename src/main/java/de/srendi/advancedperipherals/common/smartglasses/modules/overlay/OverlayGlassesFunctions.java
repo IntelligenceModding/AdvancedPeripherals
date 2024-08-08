@@ -6,10 +6,11 @@ import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.lua.MethodResult;
 import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesAccess;
 import de.srendi.advancedperipherals.common.smartglasses.modules.IModuleFunctions;
-import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.Circle;
-import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.Rectangle;
+import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.CircleObject;
+import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.ItemObject;
+import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.RectangleObject;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.RenderableObject;
-import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.Text;
+import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.TextObject;
 import net.minecraft.client.Minecraft;
 
 public class OverlayGlassesFunctions implements IModuleFunctions {
@@ -24,7 +25,7 @@ public class OverlayGlassesFunctions implements IModuleFunctions {
 
     @LuaFunction
     public final MethodResult createRectangle(IArguments arguments) throws LuaException {
-        Rectangle rectangle = new Rectangle(overlayModule, arguments);
+        RectangleObject rectangle = new RectangleObject(overlayModule, arguments);
         RenderableObject object = overlayModule.addObject(rectangle);
 
         return MethodResult.of(object, "SUCCESS");
@@ -32,7 +33,7 @@ public class OverlayGlassesFunctions implements IModuleFunctions {
 
     @LuaFunction
     public final MethodResult createCircle(IArguments arguments) throws LuaException {
-        Circle circle = new Circle(overlayModule, arguments);
+        CircleObject circle = new CircleObject(overlayModule, arguments);
         RenderableObject object = overlayModule.addObject(circle);
 
         return MethodResult.of(object, "SUCCESS");
@@ -40,8 +41,16 @@ public class OverlayGlassesFunctions implements IModuleFunctions {
 
     @LuaFunction
     public final MethodResult createText(IArguments arguments) throws LuaException {
-        Text circle = new Text(overlayModule, arguments);
+        TextObject circle = new TextObject(overlayModule, arguments);
         RenderableObject object = overlayModule.addObject(circle);
+
+        return MethodResult.of(object, "SUCCESS");
+    }
+
+    @LuaFunction
+    public final MethodResult createItem(IArguments arguments) throws LuaException {
+        ItemObject item = new ItemObject(overlayModule, arguments);
+        RenderableObject object = overlayModule.addObject(item);
 
         return MethodResult.of(object, "SUCCESS");
     }

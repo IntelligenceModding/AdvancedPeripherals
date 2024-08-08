@@ -12,7 +12,7 @@ import net.minecraft.network.FriendlyByteBuf;
 
 import java.util.UUID;
 
-public class Circle extends RenderableObject {
+public class CircleObject extends RenderableObject {
     public static final int TYPE_ID = 1;
 
     private final IObjectRenderer renderer = new CircleRenderer();
@@ -20,12 +20,12 @@ public class Circle extends RenderableObject {
     @FixedPointNumberProperty(min = -32767, max = 32767)
     public int radius = 0;
 
-    public Circle(OverlayModule module, IArguments arguments) throws LuaException {
+    public CircleObject(OverlayModule module, IArguments arguments) throws LuaException {
         super(module, arguments);
         reflectivelyMapProperties(arguments);
     }
 
-    public Circle(UUID player) {
+    public CircleObject(UUID player) {
         super(player);
     }
 
@@ -47,7 +47,7 @@ public class Circle extends RenderableObject {
         buffer.writeInt(radius);
     }
 
-    public static Circle decode(FriendlyByteBuf buffer) {
+    public static CircleObject decode(FriendlyByteBuf buffer) {
         int objectId = buffer.readInt();
         boolean hasValidUUID = buffer.readBoolean();
         if (!hasValidUUID) {
@@ -64,7 +64,7 @@ public class Circle extends RenderableObject {
         int maxY = buffer.readInt();
         int radius = buffer.readInt();
 
-        Circle clientObject = new Circle(player);
+        CircleObject clientObject = new CircleObject(player);
         clientObject.setId(objectId);
         clientObject.color = color;
         clientObject.opacity = opacity;

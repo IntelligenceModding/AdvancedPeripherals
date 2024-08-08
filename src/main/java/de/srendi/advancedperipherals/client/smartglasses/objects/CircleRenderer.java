@@ -8,7 +8,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import com.mojang.math.Matrix4f;
-import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.Circle;
+import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.CircleObject;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.RenderableObject;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraftforge.client.gui.overlay.ForgeGui;
@@ -21,7 +21,7 @@ public class CircleRenderer implements IObjectRenderer {
     public void renderBatch(List<RenderableObject> objects, ForgeGui gui, PoseStack poseStack, float partialTick, int screenWidth, int screenHeight) {
         for (RenderableObject object : objects) {
 
-            Circle circle = (Circle) object;
+            CircleObject circle = (CircleObject) object;
 
             float alpha = object.opacity;
             float red = (float) (object.color >> 16 & 255) / 255.0F;

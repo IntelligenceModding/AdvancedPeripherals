@@ -14,7 +14,7 @@ import net.minecraft.network.FriendlyByteBuf;
 
 import java.util.UUID;
 
-public class Text extends RenderableObject {
+public class TextObject extends RenderableObject {
     public static final int TYPE_ID = 2;
 
     private final IObjectRenderer renderer = new TextRenderer();
@@ -28,12 +28,12 @@ public class Text extends RenderableObject {
     @BooleanProperty
     public boolean shadow = false;
 
-    public Text(OverlayModule module, IArguments arguments) throws LuaException {
+    public TextObject(OverlayModule module, IArguments arguments) throws LuaException {
         super(module, arguments);
         reflectivelyMapProperties(arguments);
     }
 
-    public Text(UUID player) {
+    public TextObject(UUID player) {
         super(player);
     }
 
@@ -84,7 +84,7 @@ public class Text extends RenderableObject {
         buffer.writeBoolean(shadow);
     }
 
-    public static Text decode(FriendlyByteBuf buffer) {
+    public static TextObject decode(FriendlyByteBuf buffer) {
         int objectId = buffer.readInt();
         boolean hasValidUUID = buffer.readBoolean();
         if (!hasValidUUID) {
@@ -103,7 +103,7 @@ public class Text extends RenderableObject {
         float fontSize = buffer.readFloat();
         boolean shadow = buffer.readBoolean();
 
-        Text clientObject = new Text(player);
+        TextObject clientObject = new TextObject(player);
         clientObject.setId(objectId);
         clientObject.color = color;
         clientObject.opacity = opacity;

@@ -2,7 +2,7 @@ package de.srendi.advancedperipherals.client.smartglasses.objects;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.RenderableObject;
-import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.Text;
+import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.TextObject;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.client.gui.overlay.ForgeGui;
 
@@ -15,7 +15,7 @@ public class TextRenderer implements IObjectRenderer {
 
         Minecraft minecraft = Minecraft.getInstance();
         for (RenderableObject object : objects) {
-            Text text = (Text) object;
+            TextObject text = (TextObject) object;
             poseStack.scale(text.fontSize, text.fontSize, 1);
             if (text.shadow) {
                 minecraft.font.drawShadow(poseStack, text.content, text.x / text.fontSize, text.y / text.fontSize, text.color);

@@ -4,40 +4,46 @@ import dan200.computercraft.api.lua.IArguments;
 import dan200.computercraft.api.lua.LuaException;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.client.smartglasses.objects.IObjectRenderer;
-import de.srendi.advancedperipherals.client.smartglasses.objects.RectangleRenderer;
+import de.srendi.advancedperipherals.client.smartglasses.objects.ItemRenderer;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.OverlayModule;
+import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertytypes.StringProperty;
 import net.minecraft.network.FriendlyByteBuf;
 
 import java.util.UUID;
 
-/**
- * Just a rectangle
- */
-public class Rectangle extends RenderableObject {
-    public static final int TYPE_ID = 0;
+public class ItemObject extends RenderableObject {
+    public static final int TYPE_ID = 3;
 
-    private final IObjectRenderer renderer = new RectangleRenderer();
+    private final IObjectRenderer renderer = new ItemRenderer();
 
-    public Rectangle(OverlayModule module, IArguments arguments) throws LuaException {
+    @StringProperty
+    public String item = "minecraft:air";
+
+    public ItemObject(OverlayModule module, IArguments arguments) throws LuaException {
         super(module, arguments);
+        reflectivelyMapProperties(arguments);
     }
 
-    /**
-     * constructor for the client side initialization
-     *
-     * @param player the target player
-     */
-    public Rectangle(UUID player) {
+    public ItemObject(UUID player) {
         super(player);
+    }
+
+    public void setItem(String item) {
+        this.item = item;
+    }
+
+    public String getItem() {
+        return item;
     }
 
     @Override
     public void encode(FriendlyByteBuf buffer) {
         buffer.writeInt(TYPE_ID);
         super.encode(buffer);
+        buffer.writeUtf(item);
     }
 
-    public static Rectangle decode(FriendlyByteBuf buffer) {
+    public static ItemObject decode(FriendlyByteBuf buffer) {
         int objectId = buffer.readInt();
         boolean hasValidUUID = buffer.readBoolean();
         if (!hasValidUUID) {
@@ -50,17 +56,19 @@ public class Rectangle extends RenderableObject {
 
         int x = buffer.readInt();
         int y = buffer.readInt();
-        int sizeX = buffer.readInt();
-        int sizeY = buffer.readInt();
+        int maxX = buffer.readInt();
+        int maxY = buffer.readInt();
+        String item = buffer.readUtf();
 
-        Rectangle clientObject = new Rectangle(player);
+        ItemObject clientObject = new ItemObject(player);
         clientObject.setId(objectId);
         clientObject.color = color;
         clientObject.opacity = opacity;
         clientObject.x = x;
         clientObject.y = y;
-        clientObject.maxX = sizeX;
-        clientObject.maxY = sizeY;
+        clientObject.maxX = maxX;
+        clientObject.maxY = maxY;
+        clientObject.item = item;
 
         return clientObject;
     }
@@ -68,5 +76,18 @@ public class Rectangle extends RenderableObject {
     @Override
     public IObjectRenderer getRenderObject() {
         return renderer;
+    }
+
+    @Override
+    public String toString() {
+        return "ItemObject{" +
+                "item='" + item + '\'' +
+                ", opacity=" + opacity +
+                ", color=" + color +
+                ", x=" + x +
+                ", y=" + y +
+                ", maxX=" + maxX +
+                ", maxY=" + maxY +
+                '}';
     }
 }
