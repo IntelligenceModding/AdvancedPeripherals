@@ -318,7 +318,7 @@ public class APFakePlayer extends FakePlayer {
         if (skipEntity)
             return blockHit;
 
-        List<Entity> entities = level.getEntities(this, getBoundingBox().expandTowards(look.x * range, look.y * range, look.z * range).inflate(1, 1, 1), collidablePredicate);
+        List<Entity> entities = level.getEntities(this, getBoundingBox().expandTowards(look.x * range, look.y * range, look.z * range).inflate(1), collidablePredicate);
 
         LivingEntity closestEntity = null;
         Vec3 closestVec = null;
@@ -328,29 +328,20 @@ public class APFakePlayer extends FakePlayer {
                 continue;
             // Add litter bigger that just pick radius
             AABB box = entityHit.getBoundingBox().inflate(entityHit.getPickRadius() + 0.5);
-            Optional<Vec3> clipResult = box.clip(origin, target);
-
             if (box.contains(origin)) {
-                if (closestDistance >= 0.0D) {
-                    closestEntity = (LivingEntity) entityHit;
-                    closestVec = clipResult.orElse(origin);
-                    closestDistance = 0.0D;
-                }
-            } else if (clipResult.isPresent()) {
+                closestEntity = (LivingEntity) entityHit;
+                closestVec = clipResult.orElse(origin);
+                closestDistance = 0;
+                break;
+            }
+            Optional<Vec3> clipResult = box.clip(origin, target);
+            if (clipResult.isPresent()) {
                 Vec3 clipVec = clipResult.get();
                 double distance = origin.distanceTo(clipVec);
-
-                if (distance < closestDistance || closestDistance == 0.0D) {
-                    if (entityHit == entityHit.getRootVehicle() && !entityHit.canRiderInteract()) {
-                        if (closestDistance == 0.0D) {
-                            closestEntity = (LivingEntity) entityHit;
-                            closestVec = clipVec;
-                        }
-                    } else {
-                        closestEntity = (LivingEntity) entityHit;
-                        closestVec = clipVec;
-                        closestDistance = distance;
-                    }
+                if (distance < closestDistance) {
+                    closestEntity = (LivingEntity) entityHit;
+                    closestVec = clipVec;
+                    closestDistance = distance;
                 }
             }
         }
