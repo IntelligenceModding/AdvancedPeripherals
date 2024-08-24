@@ -24,7 +24,7 @@ public class AutomataSoulFeedingPlugin extends AutomataCorePlugin {
 
         InteractionResult result = owner.withPlayer(APFakePlayer::useOnEntity);
         automataCore.addRotationCycle(3);
-        return MethodResult.of(true, result.toString());
+        return MethodResult.of(result.consumesAction(), result.toString());
     }
 
     @Override

@@ -56,7 +56,7 @@ public class AutomataEntityHandPlugin extends AutomataCorePlugin {
             if (automataCore.hasAttribute(AutomataCorePeripheral.ATTR_STORING_TOOL_DURABILITY))
                 selectedTool.setDamageValue(previousDamageValue);
 
-            return MethodResult.of(true, result.toString());
+            return MethodResult.of(result.consumesAction(), result.toString());
         });
     }
 
