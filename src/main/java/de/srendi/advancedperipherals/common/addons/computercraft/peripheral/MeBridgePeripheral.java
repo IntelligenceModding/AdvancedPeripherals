@@ -179,7 +179,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (parsedFilter.isEmpty())
             return MethodResult.of(null, "EMPTY_FILTER");
 
-        return MethodResult.of(AppEngApi.getObjectFromStack(AppEngApi.findAEStackFromFilter(monitor, getCraftingService(), parsedFilter), getCraftingService()));
+        return MethodResult.of(AppEngApi.parseAeStack(AppEngApi.findAEStackFromFilter(monitor, getCraftingService(), parsedFilter), getCraftingService()));
     }
 
     @Override
@@ -196,7 +196,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (parsedFilter.isEmpty())
             return MethodResult.of(null, "EMPTY_FILTER");
 
-        return MethodResult.of(AppEngApi.findAEFluidFromFilter(AppEngApi.getMonitor(node), getCraftingService(), parsedFilter));
+        return MethodResult.of(AppEngApi.parseAeStack(AppEngApi.findAEFluidFromFilter(AppEngApi.getMonitor(node), getCraftingService(), parsedFilter), getCraftingService()));
     }
 
     @Override
@@ -232,7 +232,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (!isAvailable())
             return notConnected();
 
-        return MethodResult.of(AppEngApi.listCraftableStacks(AppEngApi.getMonitor(node), getCraftingService()));
+        return MethodResult.of(AppEngApi.listCraftableFluids(AppEngApi.getMonitor(node), getCraftingService()));
     }
 
     @Override
@@ -328,13 +328,12 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
             outputFilter = GenericFilter.parseGeneric(outputFilterTable).getLeft();
         }
 
-
         Pair<IPatternDetails, String> pattern = AppEngApi.findPatternFromFilters(node.getGrid(), getLevel(), inputFilter, outputFilter);
 
         if (pattern.getRight() != null)
             return MethodResult.of(null, pattern.getRight());
 
-        return MethodResult.of(AppEngApi.getObjectFromPattern(pattern.getLeft()));
+        return MethodResult.of(AppEngApi.parsePattern(pattern.getLeft()));
     }
 
     @Override
@@ -610,7 +609,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
         for (ICraftingCPU cpu : craftingGrid.getCpus()) {
             if (cpu.getJobStatus() != null)
-                jobs.add(AppEngApi.getObjectFromJob(cpu.getJobStatus(), cpu));
+                jobs.add(AppEngApi.parseCraftingJob(cpu.getJobStatus(), cpu));
         }
         return MethodResult.of(jobs);
     }
@@ -776,7 +775,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         List<Object> map = new ArrayList<>();
 
         for (ICraftingCPU iCraftingCPU : grid.getCpus()) {
-            Object cpu = AppEngApi.getObjectFromCPU(iCraftingCPU, false);
+            Object cpu = AppEngApi.parseCraftingCPU(iCraftingCPU, false);
             map.add(cpu);
         }
         return MethodResult.of(map);

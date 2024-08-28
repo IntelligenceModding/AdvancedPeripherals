@@ -4,6 +4,7 @@ import com.refinedmods.refinedstorage.api.IRSAPI;
 import com.refinedmods.refinedstorage.api.autocrafting.ICraftingManager;
 import com.refinedmods.refinedstorage.api.autocrafting.ICraftingPattern;
 import com.refinedmods.refinedstorage.api.network.INetwork;
+import com.refinedmods.refinedstorage.api.network.INetworkNodeGraphEntry;
 import com.refinedmods.refinedstorage.api.network.node.INetworkNode;
 import com.refinedmods.refinedstorage.api.storage.IStorage;
 import com.refinedmods.refinedstorage.api.storage.cache.IStorageCache;
@@ -12,6 +13,7 @@ import com.refinedmods.refinedstorage.api.storage.externalstorage.IExternalStora
 import com.refinedmods.refinedstorage.api.util.StackListEntry;
 import com.refinedmods.refinedstorage.apiimpl.API;
 import com.refinedmods.refinedstorage.apiimpl.network.node.NetworkNode;
+import com.refinedmods.refinedstorage.apiimpl.network.node.diskdrive.DiskDriveNetworkNode;
 import dan200.computercraft.shared.util.NBTUtil;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
@@ -89,13 +91,13 @@ public class RefinedStorage {
 
     public static Object listFluids(INetwork network) {
         List<Object> fluids = new ArrayList<>();
-        getFluids(network).forEach(item -> fluids.add(getObjectFromFluid(item, network)));
+        getFluids(network).forEach(item -> fluids.add(parseFluidStack(item, network)));
         return fluids;
     }
 
     public static Object listItems(INetwork network) {
         List<Object> items = new ArrayList<>();
-        getItems(network).forEach(item -> items.add(getObjectFromStack(item, network)));
+        getItems(network).forEach(item -> items.add(parseItemStack(item, network)));
         return items;
     }
 
@@ -153,78 +155,10 @@ public class RefinedStorage {
         return total;
     }
 
-    public static Object getObjectFromPattern(ICraftingPattern pattern, INetwork network) {
-        if (pattern == null)
-            return null;
-
-        Map<String, Object> map = new HashMap<>();
-        map.put("outputs", pattern.getOutputs().stream().map(stack -> getObjectFromStack(stack.copy(), network)).toList());
-        map.put("fluidOutputs", pattern.getFluidOutputs().stream().map(stack -> getObjectFromFluid(stack.copy(), network)).toList());
-
-        List<List<Map<String, Object>>> inputs = pattern.getInputs().stream()
-                .map(singleInputList -> singleInputList.stream()
-                        .map(stack -> getObjectFromStack(stack.copy(), network))
-                        .collect(Collectors.toList()))
-                .collect(Collectors.toList());
-
-        List<List<Map<String, Object>>> fluidInputs = pattern.getInputs().stream()
-                .map(singleInputList -> singleInputList.stream()
-                        .map(stack -> getObjectFromStack(stack.copy(), network))
-                        .collect(Collectors.toList()))
-                .collect(Collectors.toList());
-
-        List<Object> byproducts = new ArrayList<>();
-        if (!pattern.isProcessing()) {
-            byproducts = pattern.getByproducts().stream()
-                    .map(stack -> getObjectFromStack(stack.copy(), network))
-                    .collect(Collectors.toList());
-        }
-
-        map.put("fluidInputs", fluidInputs);
-        map.put("inputs", inputs);
-        map.put("byproducts", byproducts);
-        map.put("processing", pattern.isProcessing());
-        Map<String, Object> container = new HashMap<>();
-        map.put("name", pattern.getContainer().getName().getString());
-        map.put("position", LuaConverter.posToObject(pattern.getContainer().getPosition()));
-
-        map.put("container", container);
-        map.put("isValid", pattern.isValid());
-        map.put("errorMessage", pattern.getErrorMessage() == null ? "" : pattern.getErrorMessage().getString());
-        return map;
-    }
-
-    public static Map<String, Object> getObjectFromStack(@Nullable ItemStack itemStack, INetwork network) {
-        if (itemStack == null)
-            return Collections.emptyMap();
-
-        Map<String, Object> map = LuaConverter.itemToObject(itemStack.getItem());
-        CompoundTag nbt = itemStack.getTag();
-        map.put("fingerprint", ItemUtil.getFingerprint(itemStack));
-        map.put("amount", itemStack.getCount());
-        map.put("displayName", itemStack.getDisplayName().getString());
-        map.put("isCraftable", isItemCraftable(network, itemStack));
-        map.put("nbt", nbt == null ? null : NBTUtil.toLua(nbt));
-
-        return map;
-    }
-
-    public static Map<String, Object> getObjectFromFluid(@Nullable FluidStack fluidStack, INetwork network) {
-        if (fluidStack == null)
-            return Collections.emptyMap();
-
-        Map<String, Object> map = LuaConverter.fluidToObject(fluidStack.getFluid());
-        map.put("amount", fluidStack.getAmount());
-        map.put("displayName", fluidStack.getDisplayName().getString());
-        map.put("isCraftable", isFluidCraftable(network, fluidStack));
-
-        return map;
-    }
-
     public static Object getItem(INetwork network, ItemStack item) {
         for (ItemStack itemStack : getItems(network)) {
             if (itemStack.sameItem(item) && Objects.equals(itemStack.getTag(), item.getTag()))
-                return getObjectFromStack(itemStack.copy(), network);
+                return parseItemStack(itemStack.copy(), network);
         }
         return null;
     }
@@ -272,6 +206,150 @@ public class RefinedStorage {
             result.add(entry.getStack().copy());
 
         return result;
+    }
+
+    public static List<Object> getStorageDisks(INetwork network) {
+        List<Object> storageDisks = new ArrayList<>();
+
+        Collection<INetworkNodeGraphEntry> collection = network.getNodeGraph().all();
+
+        for (INetworkNodeGraphEntry graphEntry : collection) {
+            INetworkNode node = graphEntry.getNode();
+            if (node instanceof DiskDriveNetworkNode diskDrive) {
+                Arrays.stream(diskDrive.getFluidDisks()).filter(Objects::nonNull).forEach(disk -> storageDisks.add(parseStorageDisk(disk)));
+                Arrays.stream(diskDrive.getItemDisks()).filter(Objects::nonNull).forEach(disk -> storageDisks.add(parseStorageDisk(disk)));
+            }
+        }
+
+        return storageDisks;
+    }
+
+    public static List<Object> getDiskDrives(INetwork network) {
+        List<Object> diskDrives = new ArrayList<>();
+
+        Collection<INetworkNodeGraphEntry> collection = network.getNodeGraph().all();
+
+        for (INetworkNodeGraphEntry graphEntry : collection) {
+            INetworkNode node = graphEntry.getNode();
+            if (node instanceof DiskDriveNetworkNode diskDrive) {
+                diskDrives.add(parseDiskDrive(diskDrive));
+            }
+        }
+
+        return diskDrives;
+    }
+
+    public static Object parseStorageDisk(IStorageDisk<?> disk) {
+        Map<String, Object> properties = new HashMap<>();
+
+        properties.put("used", disk.getStored());
+        properties.put("capacity", disk.getCapacity());
+
+        return properties;
+    }
+
+    public static Object parseDiskDrive(DiskDriveNetworkNode diskDrive) {
+        Map<String, Object> properties = new HashMap<>();
+
+        long total = 0;
+        long used = 0;
+
+        List<Object> disks = new ArrayList<>();
+        for (IStorageDisk<?> disk : diskDrive.getFluidDisks()) {
+            if (disk == null)
+                continue;
+            total += disk.getCapacity();
+            used += disk.getStored();
+
+            disks.add(parseStorageDisk(disk));
+        }
+        for (IStorageDisk<?> disk : diskDrive.getItemDisks()) {
+            if (disk == null)
+                continue;
+            total += disk.getCapacity();
+            used += disk.getStored();
+
+            disks.add(parseStorageDisk(disk));
+        }
+
+        properties.put("used", used);
+        properties.put("total", total);
+        properties.put("drives", disks);
+        properties.put("mode", diskDrive.getWhitelistBlacklistMode());
+        properties.put("redstone_mode", diskDrive.getRedstoneMode().toString());
+        properties.put("access_type", diskDrive.getAccessType().toString());
+        properties.put("position", LuaConverter.posToObject(diskDrive.getPos()));
+        properties.put("priority", diskDrive.getPriority());
+
+        return properties;
+    }
+
+    public static Object parsePattern(ICraftingPattern pattern, INetwork network) {
+        if (pattern == null)
+            return null;
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("outputs", pattern.getOutputs().stream().map(stack -> parseItemStack(stack.copy(), network)).toList());
+        map.put("fluidOutputs", pattern.getFluidOutputs().stream().map(stack -> parseFluidStack(stack.copy(), network)).toList());
+
+        List<List<Map<String, Object>>> inputs = pattern.getInputs().stream()
+                .map(singleInputList -> singleInputList.stream()
+                        .map(stack -> parseItemStack(stack.copy(), network))
+                        .collect(Collectors.toList()))
+                .collect(Collectors.toList());
+
+        List<List<Map<String, Object>>> fluidInputs = pattern.getInputs().stream()
+                .map(singleInputList -> singleInputList.stream()
+                        .map(stack -> parseItemStack(stack.copy(), network))
+                        .collect(Collectors.toList()))
+                .collect(Collectors.toList());
+
+        List<Object> byproducts = new ArrayList<>();
+        if (!pattern.isProcessing()) {
+            byproducts = pattern.getByproducts().stream()
+                    .map(stack -> parseItemStack(stack.copy(), network))
+                    .collect(Collectors.toList());
+        }
+
+        map.put("fluidInputs", fluidInputs);
+        map.put("inputs", inputs);
+        map.put("byproducts", byproducts);
+        map.put("processing", pattern.isProcessing());
+        Map<String, Object> container = new HashMap<>();
+        map.put("name", pattern.getContainer().getName().getString());
+        map.put("position", LuaConverter.posToObject(pattern.getContainer().getPosition()));
+
+        map.put("container", container);
+        map.put("isValid", pattern.isValid());
+        map.put("errorMessage", pattern.getErrorMessage() == null ? "" : pattern.getErrorMessage().getString());
+        return map;
+    }
+
+    public static Map<String, Object> parseItemStack(@Nullable ItemStack itemStack, INetwork network) {
+        if (itemStack == null)
+            return Collections.emptyMap();
+
+        Map<String, Object> map = LuaConverter.itemToObject(itemStack.getItem());
+        CompoundTag nbt = itemStack.getTag();
+        map.put("fingerprint", ItemUtil.getFingerprint(itemStack));
+        map.put("amount", itemStack.getCount());
+        map.put("displayName", itemStack.getDisplayName().getString());
+        map.put("isCraftable", isItemCraftable(network, itemStack));
+        map.put("nbt", nbt == null ? null : NBTUtil.toLua(nbt));
+
+        return map;
+    }
+
+    public static Map<String, Object> parseFluidStack(@Nullable FluidStack fluidStack, INetwork network) {
+        if (fluidStack == null)
+            return Collections.emptyMap();
+
+        Map<String, Object> map = LuaConverter.fluidToObject(fluidStack.getFluid());
+        map.put("amount", fluidStack.getAmount());
+        map.put("displayName", fluidStack.getDisplayName().getString());
+        map.put("isCraftable", isFluidCraftable(network, fluidStack));
+
+        return map;
     }
 
     public void initiate() {

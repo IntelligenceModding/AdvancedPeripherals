@@ -115,7 +115,7 @@ public class FluidFilter extends GenericFilter {
 
         // If the filter does not have nbt values, a tag or a fingerprint, just test if the items are the same
         if (fluid != Fluids.EMPTY) {
-            if (tag == null && nbt == null && fingerprint.isEmpty())
+            if (tag == null && nbt == null)
                 return stack.getFluid().isSame(fluid);
         }
         if (tag != null && !stack.getFluid().is(tag))

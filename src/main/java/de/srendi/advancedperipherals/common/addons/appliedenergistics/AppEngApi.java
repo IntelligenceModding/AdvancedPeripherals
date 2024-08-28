@@ -88,14 +88,14 @@ public class AppEngApi {
         }
 
         if (crafting == null)
-            return null;
+            return Pair.of(0L, AEFluidKey.of(FluidStack.EMPTY));
 
         for (var temp : crafting.getCraftables(param -> true)) {
             if (temp instanceof AEFluidKey key && item.test(key.toStack(1)))
                 return Pair.of(0L, key);
         }
 
-        return null;
+        return Pair.of(0L, AEFluidKey.of(FluidStack.EMPTY));
     }
 
     /**
@@ -157,7 +157,7 @@ public class AppEngApi {
         KeyCounter keyCounter = monitor.getAvailableStacks();
         for (Object2LongMap.Entry<AEKey> aeKey : keyCounter) {
             if (aeKey.getKey() instanceof AEItemKey itemKey) {
-                items.add(getObjectFromStack(Pair.of(aeKey.getLongValue(), itemKey), service));
+                items.add(parseAeStack(Pair.of(aeKey.getLongValue(), itemKey), service));
             }
         }
         return items;
@@ -169,7 +169,7 @@ public class AppEngApi {
         Set<AEKey> craftables = service.getCraftables(AEKeyFilter.none());
         for (AEKey aeKey : craftables) {
             if (aeKey instanceof AEItemKey) {
-                items.add(getObjectFromStack(Pair.of(keyCounter.get(aeKey), aeKey), service));
+                items.add(parseAeStack(Pair.of(keyCounter.get(aeKey), aeKey), service));
             }
         }
         return items;
@@ -179,7 +179,7 @@ public class AppEngApi {
         List<Object> items = new ArrayList<>();
         for (Object2LongMap.Entry<AEKey> aeKey : monitor.getAvailableStacks()) {
             if (aeKey.getKey() instanceof AEFluidKey itemKey) {
-                items.add(getObjectFromStack(Pair.of(aeKey.getLongValue(), itemKey), service));
+                items.add(parseAeStack(Pair.of(aeKey.getLongValue(), itemKey), service));
             }
         }
         return items;
@@ -189,7 +189,7 @@ public class AppEngApi {
         List<Object> items = new ArrayList<>();
         for (Object2LongMap.Entry<AEKey> aeKey : monitor.getAvailableStacks()) {
             if (APAddons.appMekLoaded && aeKey.getKey() instanceof MekanismKey itemKey) {
-                items.add(getObjectFromStack(Pair.of(aeKey.getLongValue(), itemKey), service));
+                items.add(parseAeStack(Pair.of(aeKey.getLongValue(), itemKey), service));
             }
         }
         return items;
@@ -201,7 +201,7 @@ public class AppEngApi {
         Set<AEKey> craftables = service.getCraftables(AEKeyFilter.none());
         for (AEKey aeKey : craftables) {
             if (aeKey instanceof AEFluidKey) {
-                items.add(getObjectFromStack(Pair.of(keyCounter.get(aeKey), aeKey), service));
+                items.add(parseAeStack(Pair.of(keyCounter.get(aeKey), aeKey), service));
             }
         }
         return items;
@@ -230,7 +230,7 @@ public class AppEngApi {
     }
 
     public static List<Object> listPatterns(IGrid grid, Level level) {
-        return getPatterns(grid, level).stream().map(AppEngApi::getObjectFromPattern).collect(Collectors.toList());
+        return getPatterns(grid, level).stream().map(AppEngApi::parsePattern).collect(Collectors.toList());
     }
 
     public static List<Object> listDrives(IGrid grid) {
@@ -243,7 +243,7 @@ public class AppEngApi {
             if (drive == null || drive.getCellCount() != 10)
                 continue;
 
-            drives.add(getObjectFromDrive(drive));
+            drives.add(parseDrive(drive));
         }
 
         return drives;
@@ -256,21 +256,34 @@ public class AppEngApi {
         return null;
     }
 
-    public static <T extends AEKey> Map<String, Object> getObjectFromStack(Pair<Long, T> stack, @Nullable ICraftingService service) {
-        if (stack.getRight() == null)
+    public static <T extends AEKey> Map<String, Object> parseAeStack(Pair<Long, T> stack, @Nullable ICraftingService service) {
+        if (stack == null || stack.getRight() == null)
             return Collections.emptyMap();
         if (stack.getRight() instanceof AEItemKey itemKey)
-            return getObjectFromItemStack(Pair.of(stack.getLeft(), itemKey), service);
+            return parseItemStack(Pair.of(stack.getLeft(), itemKey), service);
         if (stack.getRight() instanceof AEFluidKey fluidKey)
-            return getObjectFromFluidStack(Pair.of(stack.getLeft(), fluidKey), service);
+            return parseFluidStack(Pair.of(stack.getLeft(), fluidKey), service);
         if (APAddons.appMekLoaded && (stack.getRight() instanceof MekanismKey gasKey))
-            return getObjectFromGasStack(Pair.of(stack.getLeft(), gasKey), service);
+            return parseChemStack(Pair.of(stack.getLeft(), gasKey));
 
-        AdvancedPeripherals.debug("Could not create table from unknown stack " + stack.getRight().getClass() + " - Report this to the maintainer of ap", org.apache.logging.log4j.Level.ERROR);
+        AdvancedPeripherals.debug("Could not create table from unknown stack " + stack.getRight().getClass() + " - Report this to the maintainer of ap", org.apache.logging.log4j.Level.WARN);
         return Collections.emptyMap();
     }
 
-    public static Map<Object, Object> getObjectFromDrive(DriveBlockEntity drive) {
+    public static Map<String, Object> parseGenericStack(GenericStack stack) {
+        if (stack.what() == null)
+            return Collections.emptyMap();
+        if (stack.what() instanceof AEItemKey aeItemKey)
+            return parseItemStack(Pair.of(stack.amount(), aeItemKey), null);
+        if (stack.what() instanceof AEFluidKey aeFluidKey)
+            return parseFluidStack(Pair.of(stack.amount(), aeFluidKey), null);
+
+        AdvancedPeripherals.debug("Could not create table from unknown stack " + stack.getClass() + " - Report this to the maintainer of ap", org.apache.logging.log4j.Level.WARN);
+        return Collections.emptyMap();
+    }
+
+
+    public static Map<Object, Object> parseDrive(DriveBlockEntity drive) {
         Map<Object, Object> map = new HashMap<>();
 
         map.put("powered", drive.isPowered());
@@ -288,7 +301,7 @@ public class AppEngApi {
                 totalBytes += cellInventory.getTotalBytes();
                 usedBytes += cellInventory.getUsedBytes();
 
-                driveCells.add(getObjectFromCell(cell, item));
+                driveCells.add(parseCell(cell, item));
             }
         }
 
@@ -303,7 +316,7 @@ public class AppEngApi {
         return map;
     }
 
-    public static Map<Object, Object> getObjectFromCell(BasicStorageCell cell, ItemStack cellItem) {
+    public static Map<Object, Object> parseCell(IBasicCellItem cell, ItemStack cellItem) {
         Map<Object, Object> map = new HashMap<>();
         BasicCellInventory cellInventory = BasicCellHandler.INSTANCE.getCellInventory(cellItem, null);
 
@@ -318,7 +331,7 @@ public class AppEngApi {
         return map;
     }
 
-    private static Map<String, Object> getObjectFromItemStack(Pair<Long, AEItemKey> stack, @Nullable ICraftingService craftingService) {
+    private static Map<String, Object> parseItemStack(Pair<Long, AEItemKey> stack, @Nullable ICraftingService craftingService) {
         Map<String, Object> map = new HashMap<>();
         String displayName = stack.getRight().getDisplayName().getString();
         CompoundTag nbt = stack.getRight().toTag();
@@ -334,7 +347,7 @@ public class AppEngApi {
         return map;
     }
 
-    private static Map<String, Object> getObjectFromFluidStack(Pair<Long, AEFluidKey> stack, @Nullable ICraftingService craftingService) {
+    private static Map<String, Object> parseFluidStack(Pair<Long, AEFluidKey> stack, @Nullable ICraftingService craftingService) {
         Map<String, Object> map = new HashMap<>();
         long amount = stack.getLeft();
         map.put("name", ForgeRegistries.FLUIDS.getKey(stack.getRight().getFluid()).toString());
@@ -346,7 +359,7 @@ public class AppEngApi {
         return map;
     }
 
-    private static Map<String, Object> getObjectFromGasStack(Pair<Long, MekanismKey> stack, @Nullable ICraftingService craftingService) {
+    private static Map<String, Object> parseChemStack(Pair<Long, MekanismKey> stack) {
         Map<String, Object> map = new HashMap<>();
         long amount = stack.getLeft();
         map.put("name", stack.getRight().getStack().getTypeRegistryName().toString());
@@ -357,27 +370,27 @@ public class AppEngApi {
         return map;
     }
 
-    public static Map<String, Object> getObjectFromPattern(IPatternDetails pattern) {
+    public static Map<String, Object> parsePattern(IPatternDetails pattern) {
         Map<String, Object> map = new HashMap<>();
 
-        map.put("inputs", Arrays.stream(pattern.getInputs()).map(AppEngApi::getObjectFromPatternInput).collect(Collectors.toList()));
-        map.put("outputs", Arrays.stream(pattern.getOutputs()).map(AppEngApi::getObjectFromGenericStack).collect(Collectors.toList()));
-        map.put("primaryOutput", getObjectFromGenericStack(pattern.getPrimaryOutput()));
+        map.put("inputs", Arrays.stream(pattern.getInputs()).map(AppEngApi::parsePatternInput).collect(Collectors.toList()));
+        map.put("outputs", Arrays.stream(pattern.getOutputs()).map(AppEngApi::parseGenericStack).collect(Collectors.toList()));
+        map.put("primaryOutput", parseGenericStack(pattern.getPrimaryOutput()));
         return map;
     }
 
-    public static Map<String, Object> getObjectFromPatternInput(IPatternDetails.IInput patternInput) {
+    public static Map<String, Object> parsePatternInput(IPatternDetails.IInput patternInput) {
         Map<String, Object> map = new HashMap<>();
-        map.put("primaryInput", getObjectFromGenericStack(patternInput.getPossibleInputs()[0]));
+        map.put("primaryInput", parseGenericStack(patternInput.getPossibleInputs()[0]));
         map.put("possibleInputs",
                 Arrays.stream(Arrays.copyOfRange(patternInput.getPossibleInputs(), 1, patternInput.getPossibleInputs().length))
-                        .map(AppEngApi::getObjectFromGenericStack));
+                        .map(AppEngApi::parseGenericStack));
         map.put("multiplier", patternInput.getMultiplier());
         map.put("remaining", patternInput.getRemainingKey(patternInput.getPossibleInputs()[0].what()));
         return map;
     }
 
-    public static Map<String, Object> getObjectFromCPU(ICraftingCPU cpu, boolean recursive) {
+    public static Map<String, Object> parseCraftingCPU(ICraftingCPU cpu, boolean recursive) {
         Map<String, Object> map = new HashMap<>();
         long storage = cpu.getAvailableStorage();
         int coProcessors = cpu.getCoProcessors();
@@ -386,34 +399,24 @@ public class AppEngApi {
         map.put("coProcessors", coProcessors);
         map.put("isBusy", isBusy);
         if (!recursive)
-            map.put("craftingJob", cpu.getJobStatus() != null ? getObjectFromJob(cpu.getJobStatus(), null) : null);
+            map.put("craftingJob", cpu.getJobStatus() != null ? parseCraftingJob(cpu.getJobStatus(), null) : null);
         map.put("name", cpu.getName() != null ? cpu.getName().getString() : "Unnamed");
         map.put("selectionMode", cpu.getSelectionMode().toString());
 
         return map;
     }
 
-    public static Map<String, Object> getObjectFromJob(CraftingJobStatus job, @Nullable ICraftingCPU cpu) {
+    public static Map<String, Object> parseCraftingJob(CraftingJobStatus job, @Nullable ICraftingCPU cpu) {
         Map<String, Object> map = new HashMap<>();
-        map.put("storage", getObjectFromGenericStack(job.crafting()));
+        map.put("storage", parseGenericStack(job.crafting()));
         map.put("elapsedTimeNanos", job.elapsedTimeNanos());
         map.put("totalItem", job.totalItems());
         map.put("progress", job.progress());
 
         if (cpu != null)
-            map.put("cpu", getObjectFromCPU(cpu, true));
+            map.put("cpu", parseCraftingCPU(cpu, true));
 
         return map;
-    }
-
-    public static Map<String, Object> getObjectFromGenericStack(GenericStack stack) {
-        if (stack.what() == null)
-            return Collections.emptyMap();
-        if (stack.what() instanceof AEItemKey aeItemKey)
-            return getObjectFromItemStack(Pair.of(stack.amount(), aeItemKey), null);
-        if (stack.what() instanceof AEFluidKey aeFluidKey)
-            return getObjectFromFluidStack(Pair.of(stack.amount(), aeFluidKey), null);
-        return Collections.emptyMap();
     }
 
     public static MEStorage getMonitor(IGridNode node) {
@@ -941,7 +944,7 @@ public class AppEngApi {
                     continue;
 
                 if (stack.getItem() instanceof IBasicCellItem cell) {
-                    items.add(getObjectFromCell(cell, stack));
+                    items.add(parseCell(cell, stack));
                 } else if (APAddons.aeThingsLoaded && stack.getItem() instanceof DISKDrive disk) {
                     items.add(getObjectFromDisk(disk, stack));
                 } else if (APAddons.aeAdditionsLoaded && stack.getItem() instanceof SuperStorageCell superStorageCell) {
@@ -951,26 +954,6 @@ public class AppEngApi {
         }
 
         return items;
-    }
-
-    private static Map<String, Object> getObjectFromCell(IBasicCellItem cell, ItemStack stack) {
-        Map<String, Object> map = new HashMap<>();
-
-        map.put("item", ItemUtil.getRegistryKey(stack.getItem()).toString());
-
-        String cellType = "";
-
-        if (cell.getKeyType().getClass().isAssignableFrom(AEKeyType.items().getClass())) {
-            cellType = "item";
-        } else if (cell.getKeyType().getClass().isAssignableFrom(AEKeyType.fluids().getClass())) {
-            cellType = "fluid";
-        }
-
-        map.put("cellType", cellType);
-        map.put("bytesPerType", cell.getBytesPerType(null));
-        map.put("totalBytes", cell.getBytes(null));
-
-        return map;
     }
 
     private static Map<String, Object> getObjectFromDisk(DISKDrive drive, ItemStack stack) {

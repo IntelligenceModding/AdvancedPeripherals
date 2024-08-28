@@ -92,7 +92,7 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
             return notConnected();
 
         List<Object> items = new ArrayList<>();
-        RefinedStorage.getCraftableItems(getNetwork()).forEach(item -> items.add(RefinedStorage.getObjectFromStack(item.copy(), getNetwork())));
+        RefinedStorage.getCraftableItems(getNetwork()).forEach(item -> items.add(RefinedStorage.parseItemStack(item.copy(), getNetwork())));
         return MethodResult.of(items);
     }
 
@@ -103,20 +103,26 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
             return notConnected();
 
         List<Object> fluids = new ArrayList<>();
-        RefinedStorage.getCraftableFluids(getNetwork()).forEach(fluid -> fluids.add(RefinedStorage.getObjectFromFluid(fluid, getNetwork())));
+        RefinedStorage.getCraftableFluids(getNetwork()).forEach(fluid -> fluids.add(RefinedStorage.parseFluidStack(fluid, getNetwork())));
         return MethodResult.of(fluids);
     }
 
     @Override
     @LuaFunction(mainThread = true)
     public final MethodResult listCells() {
-        return null;
+        if (!isAvailable())
+            return notConnected();
+
+        return MethodResult.of(RefinedStorage.getStorageDisks(getNetwork()));
     }
 
     @Override
     @LuaFunction(mainThread = true)
     public final MethodResult listDrives() {
-        return null;
+        if (!isAvailable())
+            return notConnected();
+
+        return MethodResult.of(RefinedStorage.getDiskDrives(getNetwork()));
     }
 
     @Override
@@ -138,6 +144,11 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     }
 
     @Override
+    public MethodResult getTotalChemicalStorage() {
+        return null;
+    }
+
+    @Override
     @LuaFunction(mainThread = true)
     public final MethodResult getUsedExternItemStorage() {
         return null;
@@ -146,6 +157,11 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     @Override
     @LuaFunction(mainThread = true)
     public final MethodResult getUsedExternFluidStorage() {
+        return null;
+    }
+
+    @Override
+    public MethodResult getUsedExternChemicalStorage() {
         return null;
     }
 
@@ -162,6 +178,11 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     }
 
     @Override
+    public MethodResult getUsedChemicalStorage() {
+        return null;
+    }
+
+    @Override
     @LuaFunction(mainThread = true)
     public final MethodResult getAvailableExternItemStorage() {
         return null;
@@ -174,6 +195,11 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     }
 
     @Override
+    public MethodResult getAvailableExternChemicalStorage() {
+        return null;
+    }
+
+    @Override
     @LuaFunction(mainThread = true)
     public final MethodResult getAvailableItemStorage() {
         return null;
@@ -182,6 +208,11 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     @Override
     @LuaFunction(mainThread = true)
     public final MethodResult getAvailableFluidStorage() {
+        return null;
+    }
+
+    @Override
+    public MethodResult getAvailableChemicalStorage() {
         return null;
     }
 
@@ -201,6 +232,11 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
             return notConnected();
 
         return MethodResult.of(RefinedStorage.getMaxFluidExternalStorage(getNetwork()));
+    }
+
+    @Override
+    public MethodResult getTotalExternChemicalStorage() {
+        return null;
     }
 
     @Override
@@ -242,7 +278,7 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     @Override
     @LuaFunction(mainThread = true)
     public final MethodResult getAvgPowerInjection() {
-        return null;
+        return MethodResult.of(0);
     }
 
     @Override
@@ -261,7 +297,7 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
         ItemStack patternItem = RefinedStorage.findStackFromFilter(getNetwork(), getNetwork().getCraftingManager(), parsedFilter);
 
-        return MethodResult.of(RefinedStorage.getObjectFromPattern(getNetwork().getCraftingManager().getPattern(patternItem), getNetwork()));
+        return MethodResult.of(RefinedStorage.parsePattern(getNetwork().getCraftingManager().getPattern(patternItem), getNetwork()));
     }
 
     @Override
@@ -406,13 +442,20 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (filter.rightPresent())
             return MethodResult.of(null, filter.getRight());
 
-        return MethodResult.of(RefinedStorage.getObjectFromStack(RefinedStorage.findStackFromFilter(getNetwork(), getNetwork().getCraftingManager(), filter.getLeft()), getNetwork()));
+        return MethodResult.of(RefinedStorage.parseItemStack(RefinedStorage.findStackFromFilter(getNetwork(), getNetwork().getCraftingManager(), filter.getLeft()), getNetwork()));
     }
 
     @Override
     @LuaFunction(mainThread = true)
     public final MethodResult getFluid(IArguments arguments) throws LuaException {
-        return null;
+        if (!isAvailable())
+            return notConnected();
+
+        Pair<FluidFilter, String> filter = FluidFilter.parse(arguments.getTable(0));
+        if (filter.rightPresent())
+            return MethodResult.of(null, filter.getRight());
+
+        return MethodResult.of(RefinedStorage.parseFluidStack(RefinedStorage.findFluidFromFilter(getNetwork(), getNetwork().getCraftingManager(), filter.getLeft()), getNetwork()));
     }
 
     @Override

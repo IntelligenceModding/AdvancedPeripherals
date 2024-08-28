@@ -61,25 +61,37 @@ public interface IStorageSystemPeripheral {
 
     MethodResult getTotalExternFluidStorage();
 
+    MethodResult getTotalExternChemicalStorage();
+
     MethodResult getTotalItemStorage();
 
     MethodResult getTotalFluidStorage();
+
+    MethodResult getTotalChemicalStorage();
 
     MethodResult getUsedExternItemStorage();
 
     MethodResult getUsedExternFluidStorage();
 
+    MethodResult getUsedExternChemicalStorage();
+
     MethodResult getUsedItemStorage();
 
     MethodResult getUsedFluidStorage();
+
+    MethodResult getUsedChemicalStorage();
 
     MethodResult getAvailableExternItemStorage();
 
     MethodResult getAvailableExternFluidStorage();
 
+    MethodResult getAvailableExternChemicalStorage();
+
     MethodResult getAvailableItemStorage();
 
     MethodResult getAvailableFluidStorage();
+
+    MethodResult getAvailableChemicalStorage();
 
     MethodResult craftItem(IComputerAccess computer, IArguments arguments) throws LuaException;
 

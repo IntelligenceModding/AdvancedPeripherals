@@ -26,7 +26,8 @@ import net.minecraftforge.fluids.FluidType;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import java.util.Collections;
+
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -237,7 +238,9 @@ public class LuaConverter {
     }
 
     public static <T> List<String> tagsToList(@NotNull Supplier<Stream<TagKey<T>>> tags) {
-        if (tags.get().findAny().isEmpty()) return Collections.emptyList();
+        // We use new ArrayList here instead of Collections.emptyList to prevent an issue with
+        // textutils.serialise. I just hope this does not lead to a memory leak
+        if (tags.get().findAny().isEmpty()) return new ArrayList<>();
         return tags.get().map(LuaConverter::tagToString).toList();
     }
 
