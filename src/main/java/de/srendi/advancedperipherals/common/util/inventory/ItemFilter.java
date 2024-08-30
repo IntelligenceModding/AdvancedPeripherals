@@ -128,16 +128,15 @@ public class ItemFilter extends GenericFilter<ItemStack> {
             return fingerprint.equals(testFingerprint);
         }
 
-        // If the filter does not have nbt values, a tag or a fingerprint, just test if the items are the same
-        if (item != Items.AIR) {
-            if (tag == null && nbt == null)
-                return stack.is(item);
+        if (item != Items.AIR && !stack.is(item)) {
+            return false;
         }
-        if (tag != null && !stack.is(tag))
+        if (tag != null && !stack.is(tag)) {
             return false;
-        if (nbt != null && !stack.getOrCreateTag().equals(nbt) && (item == Items.AIR || stack.is(item)))
+        }
+        if (nbt != null && !stack.getOrCreateTag().equals(nbt)) {
             return false;
-
+        }
         return true;
     }
 

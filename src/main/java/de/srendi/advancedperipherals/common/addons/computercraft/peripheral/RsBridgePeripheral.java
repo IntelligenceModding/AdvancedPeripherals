@@ -96,7 +96,7 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
             return notConnected();
 
         List<Object> items = new ArrayList<>();
-        RefinedStorage.getCraftableItems(getNetwork()).forEach(item -> items.add(RefinedStorage.parseItemStack(item.copy(), getNetwork())));
+        RefinedStorage.getCraftableItems(getNetwork()).forEach(item -> items.add(RefinedStorage.parseItemStack(item, getNetwork())));
         return MethodResult.of(items);
     }
 
@@ -505,7 +505,7 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
             return MethodResult.of(null, filter.getRight());
 
         ItemStack stack = RefinedStorage.findStackFromFilter(getNetwork(), getNetwork().getCraftingManager(), filter.getLeft());
-        if (stack == null)
+        if (stack.isEmpty())
             return MethodResult.of(null, "NOT_CRAFTABLE");
 
         ICalculationResult result = getNetwork().getCraftingManager().create(stack, filter.getLeft().getCount());
@@ -527,7 +527,7 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
             return MethodResult.of(null, filter.getRight());
 
         FluidStack stack = RefinedStorage.findFluidFromFilter(getNetwork(), getNetwork().getCraftingManager(), filter.getLeft());
-        if (stack == null)
+        if (stack.isEmpty())
             return MethodResult.of(null, "NOT_CRAFTABLE");
 
         ICalculationResult result = getNetwork().getCraftingManager().create(stack, filter.getLeft().getCount());
@@ -558,7 +558,7 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
             return MethodResult.of(null, filter.getRight());
 
         ItemStack stack = RefinedStorage.findStackFromFilter(getNetwork(), getNetwork().getCraftingManager(), filter.getLeft());
-        if (stack == null)
+        if (stack.isEmpty())
             return MethodResult.of(null, "NOT_CRAFTABLE");
 
         for (ICraftingTask task : getNetwork().getCraftingManager().getTasks()) {

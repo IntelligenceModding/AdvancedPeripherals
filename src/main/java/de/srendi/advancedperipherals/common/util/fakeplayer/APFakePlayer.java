@@ -242,26 +242,26 @@ public class APFakePlayer extends FakePlayer {
             if (event.isCanceled()) {
                 return event.getCancellationResult();
             }
-            boolean denied = event.getUseItem() == Event.Result.DENY;
-            if (!denied) {
+            boolean usedItem = event.getUseItem() != Event.Result.DENY;
+            boolean usedOnBlock = event.getUseBlock() != Event.Result.DENY;
+            if (usedItem) {
                 InteractionResult result = stack.onItemUseFirst(new UseOnContext(level, this, InteractionHand.MAIN_HAND, stack, blockHit));
                 if (result != InteractionResult.PASS) {
                     return result;
                 }
 
                 boolean bypass = getMainHandItem().doesSneakBypassUse(level, pos, this);
-                if (isShiftKeyDown() || bypass || event.getUseBlock() == Event.Result.ALLOW) {
+                if (isShiftKeyDown() || bypass || usedOnBlock) {
                     InteractionResult useType = gameMode.useItemOn(this, level, stack, InteractionHand.MAIN_HAND, blockHit);
-                    if (useType == InteractionResult.SUCCESS) {
-                        return InteractionResult.SUCCESS;
+                    if (useType.consumesAction()) {
+                        return useType;
                     }
                 }
             }
 
-            if (stack.isEmpty() || getCooldowns().isOnCooldown(stack.getItem())) {
+            if (!stack.isEmpty() && getCooldowns().isOnCooldown(stack.getItem())) {
                 return InteractionResult.PASS;
             }
-
 
             if (stack.getItem() instanceof BlockItem blockItem) {
                 Block block = blockItem.getBlock();
@@ -270,12 +270,12 @@ public class APFakePlayer extends FakePlayer {
                 }
             }
 
-            if (denied) {
+            if (!usedItem && !usedOnBlock) {
                 return InteractionResult.PASS;
             }
 
             ItemStack copyBeforeUse = stack.copy();
-            InteractionResult result = stack.useOn(new UseOnContext(level, this, InteractionHand.MAIN_HAND, copyBeforeUse, blockHit));
+            InteractionResult result = stack.useOn(new UseOnContext(level, this, InteractionHand.MAIN_HAND, stack, blockHit));
             if (stack.isEmpty()) {
                 ForgeEventFactory.onPlayerDestroyItem(this, copyBeforeUse, InteractionHand.MAIN_HAND);
             }
