@@ -19,7 +19,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.Map;
 
-public class FluidFilter extends GenericFilter {
+public class FluidFilter extends GenericFilter<FluidStack> {
 
     private Fluid fluid = Fluids.EMPTY;
     private TagKey<Fluid> tag = null;
@@ -100,7 +100,7 @@ public class FluidFilter extends GenericFilter {
     }
 
     @Override
-    public boolean test(GenericStack genericStack) {
+    public boolean testAE(GenericStack genericStack) {
         if (genericStack.what() instanceof AEFluidKey aeFluidKey) {
             return test(aeFluidKey.toStack(1));
         }

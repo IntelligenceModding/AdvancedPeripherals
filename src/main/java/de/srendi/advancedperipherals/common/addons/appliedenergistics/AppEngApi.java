@@ -123,7 +123,7 @@ public class AppEngApi {
                 outerLoop:
                 for (IPatternDetails.IInput input : pattern.getInputs()) {
                     for (GenericStack possibleInput : input.getPossibleInputs()) {
-                        if (inputFilter.test(possibleInput)) {
+                        if (inputFilter.testAE(possibleInput)) {
                             inputMatch = true;
                             break outerLoop;
                         }
@@ -135,7 +135,7 @@ public class AppEngApi {
 
             if (outputFilter != null) {
                 for (GenericStack output : pattern.getOutputs()) {
-                    if (outputFilter.test(output)) {
+                    if (outputFilter.testAE(output)) {
                         outputMatch = true;
                         break;
                     }

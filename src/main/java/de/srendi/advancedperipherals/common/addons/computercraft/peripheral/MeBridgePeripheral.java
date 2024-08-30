@@ -314,8 +314,8 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (!hasAnyFilter)
             return MethodResult.of(null, "NO_FILTER");
 
-        GenericFilter inputFilter = null;
-        GenericFilter outputFilter = null;
+        GenericFilter<?> inputFilter = null;
+        GenericFilter<?> outputFilter = null;
 
         if (hasInputFilter) {
             Map<?, ?> inputFilterTable = TableHelper.getTableField(filterTable, "input");
@@ -638,7 +638,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
         int jobsCanceled = 0;
         for (ICraftingCPU cpu : craftingGrid.getCpus()) {
-            if (cpu.getJobStatus() != null && filter.getLeft().test(cpu.getJobStatus().crafting())) {
+            if (cpu.getJobStatus() != null && filter.getLeft().testAE(cpu.getJobStatus().crafting())) {
                 if (cpu instanceof CraftingCPUCluster cpuCluster) {
                     cpuCluster.cancel();
                     jobsCanceled++;

@@ -19,7 +19,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.Map;
 
-public class ItemFilter extends GenericFilter {
+public class ItemFilter extends GenericFilter<ItemStack> {
 
     private Item item = Items.AIR;
     private TagKey<Item> tag = null;
@@ -115,7 +115,7 @@ public class ItemFilter extends GenericFilter {
     }
 
     @Override
-    public boolean test(GenericStack genericStack) {
+    public boolean testAE(GenericStack genericStack) {
         if (genericStack.what() instanceof AEItemKey aeItemKey) {
             return test(aeItemKey.toStack());
         }
@@ -130,7 +130,7 @@ public class ItemFilter extends GenericFilter {
 
         // If the filter does not have nbt values, a tag or a fingerprint, just test if the items are the same
         if (item != Items.AIR) {
-            if (tag == null && nbt == null && fingerprint.isEmpty())
+            if (tag == null && nbt == null)
                 return stack.is(item);
         }
         if (tag != null && !stack.is(tag))

@@ -6,7 +6,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.Map;
 
-public abstract class GenericFilter {
+public abstract class GenericFilter<T> {
 
     /**
      * Try to parse a raw filter table to any existing filter type. Could be a fluid filter, an item filter, maybe something else
@@ -18,7 +18,7 @@ public abstract class GenericFilter {
      * @param rawFilter The raw filter, which is a map of strings and objects
      * @return A pair of the parsed filter and an error message, if there is one
      */
-    public static Pair<? extends GenericFilter, String> parseGeneric(Map<?, ?> rawFilter) {
+    public static Pair<? extends GenericFilter<?>, String> parseGeneric(Map<?, ?> rawFilter) {
         // TODO: Add chemical filter support
 
         if (!rawFilter.containsKey("name")) {
@@ -45,22 +45,29 @@ public abstract class GenericFilter {
             // If the name is in neither of the registries, we will just return an empty filter
             return Pair.of(empty(), "NO_VALID_FILTER_TYPE");
         }
-
     }
 
     public abstract boolean isEmpty();
 
-    public abstract boolean test(GenericStack genericStack);
+    // AE2 stuff
+    public abstract boolean testAE(GenericStack genericStack);
 
-    public static GenericFilter empty() {
-        return new GenericFilter() {
+    public abstract boolean test(T toTest);
+
+    public static GenericFilter<?> empty() {
+        return new GenericFilter<>() {
             @Override
             public boolean isEmpty() {
                 return true;
             }
 
             @Override
-            public boolean test(GenericStack genericStack) {
+            public boolean testAE(GenericStack genericStack) {
+                return false;
+            }
+
+            @Override
+            public boolean test(Object toTest) {
                 return false;
             }
         };

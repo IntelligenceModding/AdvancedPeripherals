@@ -17,9 +17,12 @@ import com.refinedmods.refinedstorage.apiimpl.network.node.diskdrive.DiskDriveNe
 import dan200.computercraft.shared.util.NBTUtil;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
+import de.srendi.advancedperipherals.common.util.Pair;
 import de.srendi.advancedperipherals.common.util.inventory.FluidFilter;
+import de.srendi.advancedperipherals.common.util.inventory.GenericFilter;
 import de.srendi.advancedperipherals.common.util.inventory.ItemFilter;
 import de.srendi.advancedperipherals.common.util.inventory.ItemUtil;
+import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
@@ -87,6 +90,79 @@ public class RefinedStorage {
         }
 
         return FluidStack.EMPTY;
+    }
+
+    /**
+     * Finds a pattern from filters.
+     *
+     * @param network      The network to search patterns from.
+     * @param inputFilter  The input filter to apply, can be null to ignore input filter.
+     * @param outputFilter The output filter to apply, can be null to ignore output filter.
+     * @return A Pair object containing the matched pattern and an error message if no pattern is found.
+     * The pattern can be null if no pattern is found.
+     * The error message is "NO_PATTERN_FOUND" if no pattern is found.
+     */
+    public static Pair<ICraftingPattern, String> findPatternFromFilters(INetwork network, @Nullable GenericFilter<?> inputFilter, @Nullable GenericFilter<?> outputFilter) {
+        for (ICraftingPattern pattern : network.getCraftingManager().getPatterns()) {
+            if (pattern.getInputs().isEmpty())
+                continue;
+            if (pattern.getOutputs().isEmpty())
+                continue;
+
+            boolean inputMatch = false;
+            boolean outputMatch = false;
+
+            if (inputFilter != null) {
+                if (inputFilter instanceof ItemFilter itemInputFilter) {
+                    outerLoop:
+                    for (NonNullList<ItemStack> input : pattern.getInputs()) {
+                        for (ItemStack possibleInput : input) {
+                            if (itemInputFilter.test(possibleInput)) {
+                                inputMatch = true;
+                                break outerLoop;
+                            }
+                        }
+                    }
+                } else if(inputFilter instanceof FluidFilter itemFluidFilter) {
+                    outerLoop:
+                    for (NonNullList<FluidStack> input : pattern.getFluidInputs()) {
+                        for (FluidStack possibleInput : input) {
+                            if (itemFluidFilter.test(possibleInput)) {
+                                inputMatch = true;
+                                break outerLoop;
+                            }
+                        }
+                    }
+                }
+            } else {
+                inputMatch = true;
+            }
+
+            if (outputFilter != null) {
+                if (outputFilter instanceof ItemFilter itemOutputFilter) {
+                    for (ItemStack output : pattern.getOutputs()) {
+                        if (itemOutputFilter.test(output)) {
+                            outputMatch = true;
+                            break;
+                        }
+                    }
+                } else if(outputFilter instanceof FluidFilter fluidOutputFilter) {
+                    for (FluidStack output : pattern.getFluidOutputs()) {
+                        if (fluidOutputFilter.test(output)) {
+                            outputMatch = true;
+                            break;
+                        }
+                    }
+                }
+            } else {
+                outputMatch = true;
+            }
+
+            if (inputMatch && outputMatch)
+                return Pair.of(pattern, null);
+        }
+
+        return Pair.of(null, "NO_PATTERN_FOUND");
     }
 
     public static Object listFluids(INetwork network) {
@@ -206,6 +282,17 @@ public class RefinedStorage {
             result.add(entry.getStack().copy());
 
         return result;
+    }
+
+    public static List<Object> getPatterns(INetwork network) {
+        List<Object> patterns = new ArrayList<>();
+        Collection<ICraftingPattern> craftingPatterns = network.getCraftingManager().getPatterns();
+
+        for (ICraftingPattern pattern : craftingPatterns) {
+            patterns.add(parsePattern(pattern, network));
+        }
+
+        return patterns;
     }
 
     public static List<Object> getStorageDisks(INetwork network) {

@@ -1,5 +1,6 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.peripheral;
 
+import com.refinedmods.refinedstorage.api.autocrafting.ICraftingPattern;
 import com.refinedmods.refinedstorage.api.autocrafting.task.CalculationResultType;
 import com.refinedmods.refinedstorage.api.autocrafting.task.ICalculationResult;
 import com.refinedmods.refinedstorage.api.autocrafting.task.ICraftingTask;
@@ -9,6 +10,7 @@ import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.lua.MethodResult;
 import dan200.computercraft.api.peripheral.IComputerAccess;
+import dan200.computercraft.core.apis.TableHelper;
 import dan200.computercraft.core.computer.ComputerSide;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.BlockEntityPeripheralOwner;
@@ -32,6 +34,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Optional;
 
 public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwner<RsBridgeEntity>> implements IStorageSystemPeripheral {
 
@@ -287,23 +291,54 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (!isAvailable())
             return notConnected();
 
-        Pair<ItemFilter, String> filter = ItemFilter.parse(arguments.getTable(0));
-        if (filter.rightPresent())
-            return MethodResult.of(false, filter.getRight());
+        // Expected input is a table with either an input table, an output table or both to filter for both
+        Map<?, ?> filterTable;
+        try {
+            Optional<Map<?, ?>> optionalTable = arguments.optTable(0);
+            if (optionalTable.isEmpty())
+                return MethodResult.of(null, "EMPTY_INPUT");
+            filterTable = optionalTable.get();
+        } catch (LuaException e) {
+            return MethodResult.of(null, "NO_TABLE");
+        }
 
-        ItemFilter parsedFilter = filter.getLeft();
-        if (parsedFilter.isEmpty())
-            return MethodResult.of(false, "EMPTY_FILTER");
+        boolean hasInputFilter = filterTable.containsKey("input");
+        boolean hasOutputFilter = filterTable.containsKey("output");
+        boolean hasAnyFilter = hasInputFilter || hasOutputFilter;
 
-        ItemStack patternItem = RefinedStorage.findStackFromFilter(getNetwork(), getNetwork().getCraftingManager(), parsedFilter);
+        // If the player tries to filter for nothing, return nothing.
+        if (!hasAnyFilter)
+            return MethodResult.of(null, "NO_FILTER");
 
-        return MethodResult.of(RefinedStorage.parsePattern(getNetwork().getCraftingManager().getPattern(patternItem), getNetwork()));
+        GenericFilter<?> inputFilter = null;
+        GenericFilter<?> outputFilter = null;
+
+        if (hasInputFilter) {
+            Map<?, ?> inputFilterTable = TableHelper.getTableField(filterTable, "input");
+
+            inputFilter = GenericFilter.parseGeneric(inputFilterTable).getLeft();
+        }
+        if (hasOutputFilter) {
+            Map<?, ?> outputFilterTable = TableHelper.getTableField(filterTable, "output");
+
+            outputFilter = GenericFilter.parseGeneric(outputFilterTable).getLeft();
+        }
+
+        Pair<ICraftingPattern, String> pattern = RefinedStorage.findPatternFromFilters(getNetwork(), inputFilter, outputFilter);
+
+        if (pattern.getRight() != null)
+            return MethodResult.of(null, pattern.getRight());
+
+        return MethodResult.of(RefinedStorage.parsePattern(pattern.getLeft(), getNetwork()));
     }
 
     @Override
     @LuaFunction(mainThread = true)
     public final MethodResult getPatterns() {
-        return null;
+        if (!isAvailable())
+            return notConnected();
+
+        return MethodResult.of(RefinedStorage.getPatterns(getNetwork()));
     }
 
     protected MethodResult exportToChest(@NotNull IArguments arguments, @Nullable IItemHandler targetInventory) throws LuaException {
