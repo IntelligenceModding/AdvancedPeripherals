@@ -52,4 +52,9 @@ class PeripheralTest {
         thenComputerOk();
     }
 
+    @GameTest
+    fun energyDet(context: GameTestHelper) = context.sequence {
+        thenComputerOk();
+    }
+
 }
