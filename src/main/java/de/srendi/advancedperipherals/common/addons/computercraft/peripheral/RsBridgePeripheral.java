@@ -1,5 +1,6 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.peripheral;
 
+import com.refinedmods.refinedstorage.api.autocrafting.ICraftingManager;
 import com.refinedmods.refinedstorage.api.autocrafting.ICraftingPattern;
 import com.refinedmods.refinedstorage.api.autocrafting.task.CalculationResultType;
 import com.refinedmods.refinedstorage.api.autocrafting.task.ICalculationResult;
@@ -148,76 +149,120 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     }
 
     @Override
+    @LuaFunction(mainThread = true)
     public MethodResult getTotalChemicalStorage() {
-        return null;
+        if (!isAvailable())
+            return notConnected();
+
+        return MethodResult.of(-1);
     }
 
     @Override
     @LuaFunction(mainThread = true)
     public final MethodResult getUsedExternItemStorage() {
-        return null;
+        if (!isAvailable())
+            return notConnected();
+
+        return MethodResult.of(RefinedStorage.getUsedItemExternalStorage(getNetwork()));
     }
 
     @Override
     @LuaFunction(mainThread = true)
     public final MethodResult getUsedExternFluidStorage() {
-        return null;
+        if (!isAvailable())
+            return notConnected();
+
+        return MethodResult.of(RefinedStorage.getUsedFluidExternalStorage(getNetwork()));
     }
 
     @Override
+    @LuaFunction(mainThread = true)
     public MethodResult getUsedExternChemicalStorage() {
-        return null;
+        if (!isAvailable())
+            return notConnected();
+
+        return MethodResult.of(-1);
     }
 
     @Override
     @LuaFunction(mainThread = true)
     public final MethodResult getUsedItemStorage() {
-        return null;
+        if (!isAvailable())
+            return notConnected();
+
+        return MethodResult.of(RefinedStorage.getUsedItemDiskStorage(getNetwork()));
     }
 
     @Override
     @LuaFunction(mainThread = true)
     public final MethodResult getUsedFluidStorage() {
-        return null;
+        if (!isAvailable())
+            return notConnected();
+
+        return MethodResult.of(RefinedStorage.getUsedFluidDiskStorage(getNetwork()));
     }
 
     @Override
+    @LuaFunction(mainThread = true)
     public MethodResult getUsedChemicalStorage() {
-        return null;
+        if (!isAvailable())
+            return notConnected();
+
+        return MethodResult.of(-1);
     }
 
     @Override
     @LuaFunction(mainThread = true)
     public final MethodResult getAvailableExternItemStorage() {
-        return null;
+        if (!isAvailable())
+            return notConnected();
+
+        return MethodResult.of(RefinedStorage.getMaxItemExternalStorage(getNetwork()) - RefinedStorage.getUsedItemExternalStorage(getNetwork()));
     }
 
     @Override
     @LuaFunction(mainThread = true)
     public final MethodResult getAvailableExternFluidStorage() {
-        return null;
+        if (!isAvailable())
+            return notConnected();
+
+        return MethodResult.of(RefinedStorage.getMaxFluidExternalStorage(getNetwork()) - RefinedStorage.getUsedFluidExternalStorage(getNetwork()));
     }
 
     @Override
+    @LuaFunction(mainThread = true)
     public MethodResult getAvailableExternChemicalStorage() {
-        return null;
+        if (!isAvailable())
+            return notConnected();
+
+        return MethodResult.of(-1);
     }
 
     @Override
     @LuaFunction(mainThread = true)
     public final MethodResult getAvailableItemStorage() {
-        return null;
+        if (!isAvailable())
+            return notConnected();
+
+        return MethodResult.of(RefinedStorage.getMaxItemDiskStorage(getNetwork()) - RefinedStorage.getUsedItemDiskStorage(getNetwork()));
     }
 
     @Override
     @LuaFunction(mainThread = true)
     public final MethodResult getAvailableFluidStorage() {
-        return null;
+        if (!isAvailable())
+            return notConnected();
+
+        return MethodResult.of(RefinedStorage.getMaxFluidDiskStorage(getNetwork()) - RefinedStorage.getUsedFluidDiskStorage(getNetwork()));
     }
 
     @Override
+    @LuaFunction(mainThread = true)
     public MethodResult getAvailableChemicalStorage() {
-        return null;
+        if (!isAvailable())
+            return notConnected();
+
+        return MethodResult.of(-1);
     }
 
     @Override
@@ -239,8 +284,12 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     }
 
     @Override
+    @LuaFunction(mainThread = true)
     public MethodResult getTotalExternChemicalStorage() {
-        return null;
+        if (!isAvailable())
+            return notConnected();
+
+        return MethodResult.of(-1);
     }
 
     @Override
@@ -539,13 +588,44 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     }
 
     @Override
+    @LuaFunction(mainThread = true)
     public MethodResult getCraftingTasks() {
-        return null;
+        if (!isAvailable())
+            return notConnected();
+
+        return MethodResult.of(RefinedStorage.getCraftingTasks(getNetwork()));
     }
 
     @Override
+    @LuaFunction(mainThread = true)
     public MethodResult cancelCraftingTasks(IArguments arguments) throws LuaException {
-        return null;
+        if (!isAvailable())
+            return notConnected();
+
+        Pair<? extends GenericFilter<?>, String> filter = GenericFilter.parseGeneric(arguments.getTable(0));
+        if (filter.getRight() != null)
+            return MethodResult.of(null, filter.getRight());
+
+        ICraftingManager craftingManager = getNetwork().getCraftingManager();
+        int canceled = 0;
+
+        for (ICraftingTask task : craftingManager.getTasks()) {
+            if (filter.getLeft() instanceof ItemFilter itemFilter) {
+                if (itemFilter.test(task.getRequested().getItem())) {
+                    craftingManager.cancel(task.getId());
+                    canceled++;
+                }
+            }
+
+            if (filter.getLeft() instanceof FluidFilter fluidFilter) {
+                if (fluidFilter.test(task.getRequested().getFluid())) {
+                    craftingManager.cancel(task.getId());
+                    canceled++;
+                }
+            }
+        }
+
+        return MethodResult.of(canceled);
     }
 
     @Override
@@ -553,6 +633,7 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     public final MethodResult isItemCrafting(IArguments arguments) throws LuaException {
         if (!isAvailable())
             return notConnected();
+
         Pair<ItemFilter, String> filter = ItemFilter.parse(arguments.getTable(0));
         if (filter.rightPresent())
             return MethodResult.of(null, filter.getRight());
@@ -572,13 +653,40 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     @Override
     @LuaFunction(mainThread = true)
     public final MethodResult isFluidCraftable(IArguments arguments) throws LuaException {
-        return null;
+        if (!isAvailable())
+            return notConnected();
+
+        Pair<FluidFilter, String> filter = FluidFilter.parse(arguments.getTable(0));
+        if (filter.rightPresent())
+            return MethodResult.of(false, filter.getRight());
+
+        FluidFilter parsedFilter = filter.getLeft();
+        if (parsedFilter.isEmpty())
+            return MethodResult.of(false, "EMPTY_FILTER");
+
+        return MethodResult.of(RefinedStorage.isFluidCraftable(getNetwork(), parsedFilter.toFluidStack()));
     }
 
     @Override
     @LuaFunction(mainThread = true)
     public final MethodResult isFluidCrafting(IArguments arguments) throws LuaException {
-        return null;
+        if (!isAvailable())
+            return notConnected();
+
+        Pair<FluidFilter, String> filter = FluidFilter.parse(arguments.getTable(0));
+        if (filter.rightPresent())
+            return MethodResult.of(null, filter.getRight());
+
+        FluidStack stack = RefinedStorage.findFluidFromFilter(getNetwork(), getNetwork().getCraftingManager(), filter.getLeft());
+        if (stack.isEmpty())
+            return MethodResult.of(null, "NOT_CRAFTABLE");
+
+        for (ICraftingTask task : getNetwork().getCraftingManager().getTasks()) {
+            FluidStack taskStack = task.getRequested().getFluid();
+            if (taskStack != null && taskStack.isFluidEqual(stack))
+                return MethodResult.of(true);
+        }
+        return MethodResult.of(false);
     }
 
     @Override
@@ -594,6 +702,7 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         ItemFilter parsedFilter = filter.getLeft();
         if (parsedFilter.isEmpty())
             return MethodResult.of(false, "EMPTY_FILTER");
+
         return MethodResult.of(RefinedStorage.isItemCraftable(getNetwork(), parsedFilter.toItemStack()));
     }
 }

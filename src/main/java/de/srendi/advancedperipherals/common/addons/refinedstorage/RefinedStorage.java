@@ -3,6 +3,7 @@ package de.srendi.advancedperipherals.common.addons.refinedstorage;
 import com.refinedmods.refinedstorage.api.IRSAPI;
 import com.refinedmods.refinedstorage.api.autocrafting.ICraftingManager;
 import com.refinedmods.refinedstorage.api.autocrafting.ICraftingPattern;
+import com.refinedmods.refinedstorage.api.autocrafting.task.ICraftingTask;
 import com.refinedmods.refinedstorage.api.network.INetwork;
 import com.refinedmods.refinedstorage.api.network.INetworkNodeGraphEntry;
 import com.refinedmods.refinedstorage.api.network.node.INetworkNode;
@@ -211,6 +212,26 @@ public class RefinedStorage {
         return creative ? -1 : total;
     }
 
+    public static long getUsedItemDiskStorage(INetwork network) {
+        long used = 0;
+        for (IStorage<ItemStack> store : network.getItemStorageCache().getStorages()) {
+            if (store instanceof IStorageDisk<ItemStack> storageDisk) {
+                used += storageDisk.getStored();
+            }
+        }
+        return used;
+    }
+
+    public static long getUsedFluidDiskStorage(INetwork network) {
+        long used = 0;
+        for (IStorage<FluidStack> store : network.getFluidStorageCache().getStorages()) {
+            if (store instanceof IStorageDisk<FluidStack> storageDisk) {
+                used += storageDisk.getStored();
+            }
+        }
+        return used;
+    }
+
     public static long getMaxItemExternalStorage(INetwork network) {
         long total = 0;
         for (IStorage<ItemStack> store : network.getItemStorageCache().getStorages()) {
@@ -229,6 +250,26 @@ public class RefinedStorage {
             }
         }
         return total;
+    }
+
+    public static long getUsedItemExternalStorage(INetwork network) {
+        long used = 0;
+        for (IStorage<ItemStack> store : network.getItemStorageCache().getStorages()) {
+            if (store instanceof IExternalStorage<ItemStack> externalStorage) {
+                used += externalStorage.getStored();
+            }
+        }
+        return used;
+    }
+
+    public static long getUsedFluidExternalStorage(INetwork network) {
+        long used = 0;
+        for (IStorage<FluidStack> store : network.getFluidStorageCache().getStorages()) {
+            if (store instanceof IExternalStorage<FluidStack> externalStorage) {
+                used += externalStorage.getStored();
+            }
+        }
+        return used;
     }
 
     public static Object getItem(INetwork network, ItemStack item) {
@@ -314,9 +355,7 @@ public class RefinedStorage {
     public static List<Object> getDiskDrives(INetwork network) {
         List<Object> diskDrives = new ArrayList<>();
 
-        Collection<INetworkNodeGraphEntry> collection = network.getNodeGraph().all();
-
-        for (INetworkNodeGraphEntry graphEntry : collection) {
+        for (INetworkNodeGraphEntry graphEntry : network.getNodeGraph().all()) {
             INetworkNode node = graphEntry.getNode();
             if (node instanceof DiskDriveNetworkNode diskDrive) {
                 diskDrives.add(parseDiskDrive(diskDrive));
@@ -324,6 +363,27 @@ public class RefinedStorage {
         }
 
         return diskDrives;
+    }
+
+    public static List<Object> getCraftingTasks(INetwork network) {
+        List<Object> tasks = new ArrayList<>();
+
+        for (ICraftingTask task : network.getCraftingManager().getTasks()) {
+            tasks.add(parseCraftingTask(task, network));
+        }
+
+        return tasks;
+    }
+
+    public static Object parseCraftingTask(ICraftingTask task, INetwork network) {
+        Map<String, Object> properties = new HashMap<>();
+
+        properties.put("id", task.getId());
+        properties.put("pattern", parsePattern(task.getPattern(), network));
+        properties.put("quantity", task.getQuantity());
+        properties.put("completion", task.getCompletionPercentage());
+
+        return properties;
     }
 
     public static Object parseStorageDisk(IStorageDisk<?> disk) {
