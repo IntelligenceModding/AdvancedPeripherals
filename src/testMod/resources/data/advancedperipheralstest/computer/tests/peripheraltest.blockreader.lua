@@ -10,7 +10,7 @@ function tableLength(T)
 end
 
 -- Test Block Reader functions on a simple block
-test.eq("blockReader", peripheral.getType("left"), "Peripheral should be blockReader")
+test.eq("block_reader", peripheral.getType("left"), "Peripheral should be blockReader")
 simpleReader = peripheral.wrap("left")
 test.assert(simpleReader, "Peripheral not found")
 
@@ -20,7 +20,7 @@ test.assert(not simpleReader.isTileEntity(), "Block should not be a TileEntity")
 test.eq(0, tableLength(simpleReader.getBlockStates()), "Block State should be empty")
 
 -- Test Block Reader functions on a stair block
-test.eq("blockReader", peripheral.getType("back"), "Peripheral should be blockReader")
+test.eq("block_reader", peripheral.getType("back"), "Peripheral should be blockReader")
 stairReader = peripheral.wrap("back")
 test.assert(stairReader, "Peripheral not found")
 
@@ -35,7 +35,7 @@ test.eq("straight", stairReader.getBlockStates()["shape"], "Stair Shape should b
 test.assert(not stairReader.getBlockStates()["waterlogged"], "Stair Waterlogged should be false")
 
 -- Test Block Reader functions on a sign block
-test.eq("blockReader", peripheral.getType("right"), "Peripheral should be blockReader")
+test.eq("block_reader", peripheral.getType("right"), "Peripheral should be blockReader")
 signReader = peripheral.wrap("right")
 test.assert(signReader, "Peripheral not found")
 

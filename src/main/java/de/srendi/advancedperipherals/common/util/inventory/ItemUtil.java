@@ -2,8 +2,12 @@ package de.srendi.advancedperipherals.common.util.inventory;
 
 import dan200.computercraft.shared.Registry;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
+import de.srendi.advancedperipherals.client.KeyBindings;
+import de.srendi.advancedperipherals.common.util.EnumColor;
 import de.srendi.advancedperipherals.common.util.StringUtil;
 import net.minecraft.ResourceLocationException;
+import net.minecraft.core.NonNullList;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;

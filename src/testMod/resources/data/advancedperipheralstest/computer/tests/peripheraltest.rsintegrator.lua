@@ -4,8 +4,8 @@
 --- `getAnalogOutput`, `setOutput`, `setAnalogOutput`
 ---
 
-test.eq("redstoneIntegrator", peripheral.getType("left"), "Peripheral should be redstoneIntegrator")
-test.eq("redstoneIntegrator", peripheral.getType("right"), "Peripheral should be redstoneIntegrator")
+test.eq("redstone_integrator", peripheral.getType("left"), "Peripheral should be redstone_integrator")
+test.eq("redstone_integrator", peripheral.getType("right"), "Peripheral should be redstone_integrator")
 
 first = peripheral.wrap("left")
 test.assert(first, "Peripheral not found")

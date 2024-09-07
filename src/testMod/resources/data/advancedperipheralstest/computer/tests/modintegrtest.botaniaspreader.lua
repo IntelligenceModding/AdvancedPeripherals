@@ -7,7 +7,7 @@
 -- TODO Add tests for hasLens and getLens in 1.20.1 AP versions
 
 -- Test basic Mana Spreader that is empty and directed towards a Mana Pool
-test.eq("manaSpreader", peripheral.getType("left"), "Peripheral should be manaSpreader")
+test.eq("mana_spreader", peripheral.getType("left"), "Peripheral should be manaSpreader")
 spreader = peripheral.wrap("left")
 test.assert(spreader, "Peripheral not found")
 
@@ -27,7 +27,7 @@ test.eq(computerPos.y, bounding.y, "Bounding y should be set to Mana pool (same 
 test.eq(computerPos.z - 1, bounding.z, "Bounding z should be set to Mana pool (-1 relative to computer")
 
 -- Test Gaia Mana Spreader that is full
-test.eq("manaSpreader", peripheral.getType("right"), "Peripheral should be manaSpreader")
+test.eq("mana_spreader", peripheral.getType("right"), "Peripheral should be manaSpreader")
 gaiaSpreader = peripheral.wrap("right")
 test.assert(gaiaSpreader, "Peripheral not found")
 
@@ -40,7 +40,7 @@ test.assert(gaiaSpreader.isFull(), "Mana Spreader should be full")
 test.assert(not gaiaSpreader.getBounding(), "Mana Spreader should not be bound to anything")
 
 -- Test Elven Mana Spreader that has 177 mana
-test.eq("manaSpreader", peripheral.getType("back"), "Peripheral should be manaSpreader")
+test.eq("mana_spreader", peripheral.getType("back"), "Peripheral should be manaSpreader")
 elvenSpreader = peripheral.wrap("back")
 test.assert(elvenSpreader, "Peripheral not found")
 
@@ -53,7 +53,7 @@ test.assert(not elvenSpreader.isFull(), "Mana Spreader should not be full")
 test.assert(not elvenSpreader.getBounding(), "Mana Spreader should not be bound to anything")
 
 -- Test Pulse Mana Spreader that is empty
-test.eq("manaSpreader", peripheral.getType("top"), "Peripheral should be manaSpreader")
+test.eq("mana_spreader", peripheral.getType("top"), "Peripheral should be manaSpreader")
 pulseSpreader = peripheral.wrap("top")
 test.assert(pulseSpreader, "Peripheral not found")
 

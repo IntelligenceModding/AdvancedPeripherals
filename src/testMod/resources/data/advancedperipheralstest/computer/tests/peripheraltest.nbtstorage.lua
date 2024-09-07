@@ -9,7 +9,7 @@ TEST_FLOAT = 3.14
 TEST_VALUE = "AP Game Test"
 TEST_JSON_VALUE = "AP Game Test JSON"
 
-test.eq("nbtStorage", peripheral.getType("left"), "Peripheral should be nbtStorage")
+test.eq("nbt_storage", peripheral.getType("left"), "Peripheral should be nbtStorage")
 storage = peripheral.wrap("left")
 test.assert(storage, "Peripheral not found")
 

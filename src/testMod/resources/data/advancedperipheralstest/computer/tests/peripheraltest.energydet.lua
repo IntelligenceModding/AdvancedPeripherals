@@ -3,7 +3,7 @@
 --- Covers `getTransferRate`, `setTransferRateLimit`, `getTransferRateLimit`
 ---
 
-test.eq("energyDetector", peripheral.getType("right"), "Peripheral should be energyDetector")
+test.eq("energy_detector", peripheral.getType("right"), "Peripheral should be energyDetector")
 
 det = peripheral.wrap("right")
 det.setTransferRateLimit(0)

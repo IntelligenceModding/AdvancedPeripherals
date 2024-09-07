@@ -15,29 +15,29 @@ test.assert(isOnline, "Bridge is not connected/system is not online")
 energyUsage = bridge.getEnergyUsage()
 test.assert(energyUsage > 18, tostring(energyUsage) .. " Consumption does not seem right")
 
-maxEnergyStorage = bridge.getMaxEnergyStorage()
+maxEnergyStorage = bridge.getEnergyCapacity()
 test.assert(maxEnergyStorage == 1608800, tostring(maxEnergyStorage) .. " Max Energy Storage does not seem right")
 
-energyStorage = bridge.getEnergyStorage()
+energyStorage = bridge.getStoredEnergy()
 test.assert(energyStorage > 1590000, tostring(energyStorage) .. " Energy Storage does not seem right")
 
 totalItemStorage = bridge.getTotalItemStorage()
-test.assert(totalItemStorage == 67264, "Total item storage is not valid")
+test.assert(totalItemStorage == 65536, "Total item storage is not valid")
 
 totalFluidStorage = bridge.getTotalFluidStorage()
-test.assert(totalFluidStorage == 81536, "Total fluid storage is not valid")
+test.assert(totalFluidStorage == 65536, "Total fluid storage is not valid")
 
 usedItemStorage = bridge.getUsedItemStorage()
-test.assert(usedItemStorage == 1120, "Used item storage is not valid")
+test.assert(usedItemStorage == 1088, "Used item storage is not valid")
 
 usedFluidStorage = bridge.getUsedFluidStorage()
-test.assert(usedFluidStorage == 2025, "Used fluid storage is not valid")
+test.assert(usedFluidStorage == 1025, "Used fluid storage is not valid")
 
 availableItemStorage = bridge.getAvailableItemStorage()
-test.assert(availableItemStorage == 66144, "Available item storage is not valid")
+test.assert(availableItemStorage == 64448, "Available item storage is not valid")
 
 availableFluidStorage = bridge.getAvailableFluidStorage()
-test.assert(availableFluidStorage == 79511, "Available fluid storage is not valid")
+test.assert(availableFluidStorage == 64511, "Available fluid storage is not valid")
 
 cells = bridge.listCells()
 test.assert(#cells == 2, "There should be 2 cells")

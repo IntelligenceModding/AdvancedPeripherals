@@ -5,7 +5,7 @@
 ---
 
 sleep(4)
-bridge = peripheral.wrap("meBridge_3")
+bridge = peripheral.wrap("me_bridge_3")
 chest = peripheral.wrap("minecraft:chest_2")
 test.assert(bridge, "Peripheral not found")
 test.assert(chest, "Chest not found")

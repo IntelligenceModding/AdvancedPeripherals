@@ -4,7 +4,7 @@
 --- `sendFormattedMessage`, `sendFormattedMessageToPlayer`
 ---
 
-chatBox = peripheral.find("chatBox")
+chatBox = peripheral.find("chat_box")
 test.assert(chatBox, "Peripheral not found")
 
 function assertMessage(msg, hidden)

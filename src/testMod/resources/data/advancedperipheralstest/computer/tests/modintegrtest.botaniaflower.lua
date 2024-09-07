@@ -5,7 +5,7 @@
 ---
 
 -- Test for Entropinnyum (Flower has full mana store and is on enchanted soil)
-test.eq("manaFlower", peripheral.getType("left"), "Peripheral should be manaFlower")
+test.eq("mana_flower", peripheral.getType("left"), "Peripheral should be manaFlower")
 entropinnyum = peripheral.wrap("left")
 test.assert(entropinnyum, "Peripheral not found")
 
@@ -17,7 +17,7 @@ test.assert(not entropinnyum.isFloating(), "Entropinnyum should not be floating"
 -- test.assert(not entropinnyum.isEmpty(), "Entropinnyum should not be empty") TODO: uncomment for 1.20.1 AP versions
 
 -- Test for Endoflame (Flower has no mana stored and is on normal soil)
-test.eq("manaFlower", peripheral.getType("right"), "Peripheral should be manaFlower")
+test.eq("mana_flower", peripheral.getType("right"), "Peripheral should be manaFlower")
 endoflame = peripheral.wrap("right")
 test.assert(endoflame, "Peripheral not found")
 
@@ -29,7 +29,7 @@ test.assert(not endoflame.isFloating(), "Endoflame should not be floating")
 -- test.assert(endoflame.isEmpty(), "Endoflame should be empty") TODO: uncomment for 1.20.1 AP versions
 
 -- Test for Kekimurus (Flower has 1800 mana stored and is floating)
-test.eq("manaFlower", peripheral.getType("back"), "Peripheral should be manaFlower")
+test.eq("mana_flower", peripheral.getType("back"), "Peripheral should be manaFlower")
 kekimurus = peripheral.wrap("back")
 test.assert(kekimurus, "Peripheral not found")
 

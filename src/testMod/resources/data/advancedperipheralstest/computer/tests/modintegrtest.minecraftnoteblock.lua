@@ -3,7 +3,7 @@
 --- Covers `playNote`, `getNote`, `changeNoteBy`, `changeNote`
 ---
 
-test.eq("noteBlock", peripheral.getType("left"), "Peripheral should be noteBlock")
+test.eq("note_block", peripheral.getType("left"), "Peripheral should be noteBlock")
 noteBlock = peripheral.wrap("left")
 test.assert(noteBlock, "Peripheral not found")
 

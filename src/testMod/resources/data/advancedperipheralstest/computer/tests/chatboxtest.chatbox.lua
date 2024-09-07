@@ -6,7 +6,7 @@
 
 sleep(3)
 
-chatBox = peripheral.find("chatBox")
+chatBox = peripheral.find("chat_box")
 test.assert(chatBox, "Peripheral not found")
 config = chatBox.getConfiguration()
 

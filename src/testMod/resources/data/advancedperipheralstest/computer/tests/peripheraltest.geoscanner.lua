@@ -28,7 +28,7 @@ function testBlockAt(result, x, y, z, expectedName, expectedTag)
     test.assert(tagFound, ("Block at %d, %d, %d has the wrong tags"):format(x, y, z))
 end
 
-scanner = peripheral.find("geoScanner")
+scanner = peripheral.find("geo_scanner")
 test.assert(scanner, "Peripheral not found")
 
 config = scanner.getConfiguration()
