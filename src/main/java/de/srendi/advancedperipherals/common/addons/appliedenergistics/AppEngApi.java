@@ -931,11 +931,11 @@ public class AppEngApi {
 
         if (!iterator.hasNext()) return items;
         while (iterator.hasNext()) {
-            DriveBlockEntity entity = (DriveBlockEntity) iterator.next().getService(IStorageProvider.class);
-            if (entity == null)
+            IStorageProvider entity = iterator.next().getService(IStorageProvider.class);
+            if (entity == null || !(entity instanceof DriveBlockEntity drive))
                 continue;
 
-            InternalInventory inventory = entity.getInternalInventory();
+            InternalInventory inventory = drive.getInternalInventory();
 
             for (int i = 0; i < inventory.size(); i++) {
                 ItemStack stack = inventory.getStackInSlot(i);
