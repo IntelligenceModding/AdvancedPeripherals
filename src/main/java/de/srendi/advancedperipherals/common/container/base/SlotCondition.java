@@ -12,9 +12,9 @@ import java.util.List;
  */
 public class SlotCondition {
 
-    public List<TagKey<?>> neededTags = new ArrayList<>();
+    private List<TagKey<?>> neededTags = new ArrayList<>();
 
-    public List<Item> neededItems = new ArrayList<>();
+    private List<Item> neededItems = new ArrayList<>();
 
     /**
      * Sets the valid tags for the item
@@ -75,9 +75,9 @@ public class SlotCondition {
                 if (stack.getTags().noneMatch(tag::equals)) valid = false;
             }
         }
-        if (!neededItems.isEmpty()) {
-            if (!neededItems.contains(stack.getItem())) valid = false;
-        }
+        if (!neededItems.isEmpty() && (!neededItems.contains(stack.getItem())))
+            valid = false;
+
         return valid;
     }
 

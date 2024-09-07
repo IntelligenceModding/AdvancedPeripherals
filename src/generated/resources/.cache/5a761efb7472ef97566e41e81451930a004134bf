@@ -1,4 +1,4 @@
-// 1.19.2	2023-07-19T14:31:39.6751301	Turtle Upgrades
+// 1.19.2	2024-05-28T14:53:16.655476	Turtle Upgrades
 b8f19ae0fb5bb898facc08e3787e0f96c8211881 data/advancedperipherals/computercraft/turtle_upgrades/chatty_turtle.json
 fe98c60e7d61139aacf2d0872873e610aac8a37b data/advancedperipherals/computercraft/turtle_upgrades/chunky_turtle.json
 ae619da638ad89d7302d832d6c09e2c87401c539 data/advancedperipherals/computercraft/turtle_upgrades/compass_turtle.json
@@ -10,4 +10,5 @@ c9b2df2d4fed11f60a8e6f8da77b2fa53dd13572 data/advancedperipherals/computercraft/
 42fc2b9a2601ef44d617cb18302c2c4fff31d282 data/advancedperipherals/computercraft/turtle_upgrades/overpowered_husbandry_automata.json
 fa7743922ef6b4dd3e633f2857e4047d533f13b5 data/advancedperipherals/computercraft/turtle_upgrades/overpowered_weak_automata.json
 4054c59ceb099f17c4555fd5f36b2f8b4109f624 data/advancedperipherals/computercraft/turtle_upgrades/player_turtle.json
+fa6624d0dab03bd26c2cccecad51848d5071ecd3 data/advancedperipherals/computercraft/turtle_upgrades/saddle_turtle.json
 c8059a2717cfac5b02898658c4d2d52fbd5710d4 data/advancedperipherals/computercraft/turtle_upgrades/weak_automata.json

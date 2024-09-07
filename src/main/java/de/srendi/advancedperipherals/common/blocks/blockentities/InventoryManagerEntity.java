@@ -5,9 +5,10 @@ import de.srendi.advancedperipherals.common.blocks.base.IInventoryBlock;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralBlockEntity;
 import de.srendi.advancedperipherals.common.container.InventoryManagerContainer;
 import de.srendi.advancedperipherals.common.items.MemoryCardItem;
-import de.srendi.advancedperipherals.common.setup.BlockEntityTypes;
+import de.srendi.advancedperipherals.common.setup.APBlockEntityTypes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -15,13 +16,17 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.server.ServerLifecycleHooks;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import java.util.UUID;
 
 public class InventoryManagerEntity extends PeripheralBlockEntity<InventoryManagerPeripheral> implements IInventoryBlock<InventoryManagerContainer> {
 
+    private UUID owner = null;
+
     public InventoryManagerEntity(BlockPos pos, BlockState state) {
-        super(BlockEntityTypes.INVENTORY_MANAGER.get(), pos, state);
+        super(APBlockEntityTypes.INVENTORY_MANAGER.get(), pos, state);
     }
 
     @NotNull
@@ -45,22 +50,48 @@ public class InventoryManagerEntity extends PeripheralBlockEntity<InventoryManag
         return itemStackIn.getItem() instanceof MemoryCardItem;
     }
 
+    @Override
+    public void setItem(int index, @NotNull ItemStack stack) {
+        if (stack.getItem() instanceof MemoryCardItem && stack.hasTag() && stack.getTag().contains("ownerId")) {
+            UUID owner = stack.getTag().getUUID("ownerId");
+            this.owner = owner;
+            stack.getTag().remove("ownerId");
+            stack.getTag().remove("owner");
+        } else {
+            this.owner = null;
+        }
+        super.setItem(index, stack);
+    }
+
     @NotNull
     @Override
     public Component getDisplayName() {
         return Component.translatable("block.advancedperipherals.inventory_manager");
     }
 
-    public Player getOwnerPlayer() {
-        //Checks if the tile entity has an item in his inventory
-        if (items.get(0).isEmpty()) return null;
-        ItemStack stack = items.get(0);
-        //Checks if the item contains the owner name
-        if (!stack.getOrCreateTag().contains("owner")) return null;
-        //Loop through all players and check if the player is online
-        for (Player entity : ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers()) {
-            if (entity.getName().getString().equals(stack.getOrCreateTag().getString("owner"))) return entity;
+    @Override
+    public void load(CompoundTag data) {
+        if (data.contains("ownerId")) {
+            this.owner = data.getUUID("ownerId");
         }
-        return null;
+        super.load(data);
+        // Fresh the memory card for backward compatibility
+        this.setItem(0, this.getItem(0));
+    }
+
+    @Override
+    public void saveAdditional(CompoundTag data) {
+        super.saveAdditional(data);
+        if (this.owner != null) {
+            data.putUUID("ownerId", this.owner);
+        }
+    }
+
+    public Player getOwnerPlayer() {
+        if (this.owner == null) {
+            return null;
+        }
+        Player player = ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayer(this.owner);
+        return player;
     }
 }

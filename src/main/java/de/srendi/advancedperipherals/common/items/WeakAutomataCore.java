@@ -1,12 +1,12 @@
 package de.srendi.advancedperipherals.common.items;
 
 import de.srendi.advancedperipherals.common.configuration.APConfig;
-import de.srendi.advancedperipherals.common.setup.Items;
+import de.srendi.advancedperipherals.common.items.base.BaseItem;
+import de.srendi.advancedperipherals.common.setup.APItems;
 import de.srendi.advancedperipherals.common.util.EnumColor;
 import de.srendi.advancedperipherals.lib.metaphysics.IFeedableAutomataCore;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-public class WeakAutomataCore extends APItem implements IFeedableAutomataCore {
+public class WeakAutomataCore extends BaseItem implements IFeedableAutomataCore {
 
     private static final String CONSUMED_ENTITY_COUNT = "consumed_entity_count";
     private static final String CONSUMED_ENTITY_NAME = "consumed_entity_name";
@@ -37,24 +37,25 @@ public class WeakAutomataCore extends APItem implements IFeedableAutomataCore {
     static {
         Map<String, Integer> endSouls = new HashMap<>();
         endSouls.put(ForgeRegistries.ENTITY_TYPES.getKey(EntityType.ENDERMAN).toString(), 10);
-        WeakAutomataCoreRecord endSoulRecord = new WeakAutomataCoreRecord(endSouls, Items.END_AUTOMATA_CORE.get());
+        WeakAutomataCoreRecord endSoulRecord = new WeakAutomataCoreRecord(endSouls, APItems.END_AUTOMATA_CORE.get());
 
         Map<String, Integer> husbandrySouls = new HashMap<>();
         husbandrySouls.put(ForgeRegistries.ENTITY_TYPES.getKey(EntityType.COW).toString(), 3);
         husbandrySouls.put(ForgeRegistries.ENTITY_TYPES.getKey(EntityType.SHEEP).toString(), 3);
         husbandrySouls.put(ForgeRegistries.ENTITY_TYPES.getKey(EntityType.CHICKEN).toString(), 3);
-        WeakAutomataCoreRecord husbandrySoulRecord = new WeakAutomataCoreRecord(husbandrySouls, Items.HUSBANDRY_AUTOMATA_CORE.get());
+        WeakAutomataCoreRecord husbandrySoulRecord = new WeakAutomataCoreRecord(husbandrySouls, APItems.HUSBANDRY_AUTOMATA_CORE.get());
 
         endSoulRecord.ingredients.keySet().forEach(entityType -> AUTOMATA_CORE_REGISTRY.put(entityType, endSoulRecord));
         husbandrySoulRecord.ingredients.keySet().forEach(entityType -> AUTOMATA_CORE_REGISTRY.put(entityType, husbandrySoulRecord));
     }
 
-    public WeakAutomataCore(Properties properties, @Nullable ResourceLocation turtleID, @Nullable ResourceLocation pocketID) {
-        super(properties, turtleID, pocketID, APConfig.METAPHYSICS_CONFIG.enableWeakAutomataCore);
+    public WeakAutomataCore(Properties properties) {
+        super(properties);
     }
 
-    public WeakAutomataCore(@Nullable ResourceLocation turtleID, @Nullable ResourceLocation pocketID) {
-        super(turtleID, pocketID, APConfig.METAPHYSICS_CONFIG.enableWeakAutomataCore);
+    @Override
+    public boolean isEnabled() {
+        return APConfig.METAPHYSICS_CONFIG.enableWeakAutomataCore.get();
     }
 
     @Override

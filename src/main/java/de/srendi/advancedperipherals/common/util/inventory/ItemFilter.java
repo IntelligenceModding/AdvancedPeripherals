@@ -1,5 +1,7 @@
 package de.srendi.advancedperipherals.common.util.inventory;
 
+import appeng.api.stacks.AEItemKey;
+import appeng.api.stacks.GenericStack;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.core.apis.TableHelper;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
@@ -17,7 +19,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.Map;
 
-public class ItemFilter {
+public class ItemFilter extends GenericFilter<ItemStack> {
 
     private Item item = Items.AIR;
     private TagKey<Item> tag = null;
@@ -67,14 +69,14 @@ public class ItemFilter {
         }
         if (item.containsKey("fromSlot")) {
             try {
-                itemFilter.fromSlot = TableHelper.getIntField(item, "fromSlot");
+                itemFilter.fromSlot = TableHelper.getIntField(item, "fromSlot") - 1;
             } catch (LuaException luaException) {
                 return Pair.of(null, "NO_VALID_FROMSLOT");
             }
         }
         if (item.containsKey("toSlot")) {
             try {
-                itemFilter.toSlot = TableHelper.getIntField(item, "toSlot");
+                itemFilter.toSlot = TableHelper.getIntField(item, "toSlot") - 1;
             } catch (LuaException luaException) {
                 return Pair.of(null, "NO_VALID_TOSLOT");
             }
@@ -112,22 +114,29 @@ public class ItemFilter {
         return result;
     }
 
+    @Override
+    public boolean testAE(GenericStack genericStack) {
+        if (genericStack.what() instanceof AEItemKey aeItemKey) {
+            return test(aeItemKey.toStack());
+        }
+        return false;
+    }
+
     public boolean test(ItemStack stack) {
         if (!fingerprint.isEmpty()) {
             String testFingerprint = ItemUtil.getFingerprint(stack);
             return fingerprint.equals(testFingerprint);
         }
 
-        // If the filter does not have nbt values, a tag or a fingerprint, just test if the items are the same
-        if (item != Items.AIR) {
-            if (tag == null && nbt == null && fingerprint.isEmpty())
-                return stack.is(item);
+        if (item != Items.AIR && !stack.is(item)) {
+            return false;
         }
-        if (tag != null && !stack.is(tag))
+        if (tag != null && !stack.is(tag)) {
             return false;
-        if (nbt != null && !stack.getOrCreateTag().equals(nbt) && (item == Items.AIR || stack.is(item)))
+        }
+        if (nbt != null && !stack.getOrCreateTag().equals(nbt)) {
             return false;
-
+        }
         return true;
     }
 

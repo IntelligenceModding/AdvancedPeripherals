@@ -9,11 +9,13 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.FrontAndTop;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.Nameable;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.JigsawBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import org.apache.commons.lang3.NotImplementedException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -32,7 +34,16 @@ public class BlockEntityPeripheralOwner<T extends BlockEntity & IPeripheralTileE
     @Nullable
     @Override
     public String getCustomName() {
-        return tileEntity.getPersistentData().getString("CustomName");
+        String result = "";
+
+        if (tileEntity instanceof Nameable nameableEntity) {
+            Component customName = nameableEntity.getCustomName();
+            if (customName != null) {
+                result = customName.toString();
+            }
+        }
+
+        return result;
     }
 
     @NotNull
@@ -50,7 +61,7 @@ public class BlockEntityPeripheralOwner<T extends BlockEntity & IPeripheralTileE
     @NotNull
     @Override
     public Direction getFacing() {
-        return tileEntity.getBlockState().getValue(JigsawBlock.ORIENTATION).front();
+        return getOrientation().front();
     }
 
     @NotNull
@@ -80,7 +91,7 @@ public class BlockEntityPeripheralOwner<T extends BlockEntity & IPeripheralTileE
 
     @Override
     public <T1> T1 withPlayer(Function<APFakePlayer, T1> function) {
-        throw new RuntimeException("Not implemented yet");
+        throw new NotImplementedException();
     }
 
     @Override
@@ -91,7 +102,7 @@ public class BlockEntityPeripheralOwner<T extends BlockEntity & IPeripheralTileE
     @Override
     public ItemStack storeItem(ItemStack stored) {
         // TODO: tricks with capability needed
-        throw new RuntimeException("Not implemented yet");
+        throw new NotImplementedException();
     }
 
     @Override

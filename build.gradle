@@ -17,7 +17,12 @@ plugins {
     id 'java'
 }
 
-java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+    withSourcesJar()
+}
 
 wrapper {
     gradleVersion = '8.4'
@@ -384,20 +389,26 @@ dependencies {
     compileOnly fg.deobf("com.ldtteam:multipiston:${multipiston_version}")
     compileOnly fg.deobf("com.ldtteam:domum_ornamentum:${domumornamentum_version}:universal")
     compileOnly fg.deobf("com.ldtteam:blockui:${blockui_version}")
-    // IMPORTANT. This should be removed/uncommented when running `runData`
+    // IMPORTANT. This should be removed/commented when running `runData`
     runtimeOnly fg.deobf("com.ldtteam:minecolonies:${minecolonies_version}")
     runtimeOnly fg.deobf("com.ldtteam:structurize:${structurize_version}")
     runtimeOnly fg.deobf("com.ldtteam:multipiston:${multipiston_version}")
     runtimeOnly fg.deobf("com.ldtteam:domum_ornamentum:${domumornamentum_version}:universal")
     runtimeOnly fg.deobf("com.ldtteam:blockui:${blockui_version}")
 
-    //Patchouli
+    // Patchouli
     compileOnly fg.deobf("vazkii.patchouli:Patchouli:${patchouli_version}")
     runtimeOnly fg.deobf("vazkii.patchouli:Patchouli:${patchouli_version}")
 
     // Create
     compileOnly fg.deobf("com.simibubi.create:create-${minecraft_version}:${create_version}:all")
     runtimeOnly fg.deobf("com.simibubi.create:create-${minecraft_version}:${create_version}:all")
+
+    // DimStorage
+    compileOnly fg.deobf("curse.maven:dimstorage-353882:${dimstorage_version}")
+    compileOnly fg.deobf("curse.maven:edivadlib-638508:${edivadlib_version}")
+    runtimeOnly fg.deobf("curse.maven:dimstorage-353882:${dimstorage_version}")
+    runtimeOnly fg.deobf("curse.maven:edivadlib-638508:${edivadlib_version}")
 
     //Powah
     compileOnly fg.deobf("curse.maven:powah-633483:${powah_version}")
@@ -424,6 +435,9 @@ dependencies {
     // Testing stuff
     // JEI
     implementation fg.deobf("mezz.jei:jei-${jei_version}")
+
+    // Jade
+    implementation fg.deobf("curse.maven:jade-324717:${jade_version}")
 
     // Create Crafts & Additions
     compileOnly fg.deobf("curse.maven:createaddition-439890:5099757")
@@ -494,6 +508,8 @@ jar {
 }
 
 jar.finalizedBy('reobfJar')
+
+compileKotlin.enabled = false
 
 tasks.withType(Checkstyle) {
     reports {
@@ -611,7 +627,7 @@ publishing {
             publication.groupId = project.group
             publication.version = isSnapshotVersion ? "${minecraft_version}-${version}-${project.teamcityBuild}" : "${minecraft_version}-${version}"
             publication.artifactId =  isSnapshotVersion ? "advancedperipherals-snapshots" : "advancedperipherals"
-            publication.artifacts = [jar]
+            publication.artifacts = [jar, sourcesJar]
             publication.pom {
                 name.set("AdvancedPeripherals")
                 packaging = 'jar'

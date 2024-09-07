@@ -17,28 +17,39 @@ import de.srendi.advancedperipherals.common.addons.computercraft.owner.TurtlePer
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralBlockEntity;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.events.Events;
+import de.srendi.advancedperipherals.common.network.APNetworking;
+import de.srendi.advancedperipherals.common.network.toclient.ToastToClientPacket;
 import de.srendi.advancedperipherals.common.util.CoordUtil;
 import de.srendi.advancedperipherals.common.util.StringUtil;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
 import de.srendi.advancedperipherals.lib.peripherals.IPeripheralFunction;
-import de.srendi.advancedperipherals.network.APNetworking;
-import de.srendi.advancedperipherals.network.toclient.ToastToClientPacket;
+import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.ComponentContents;
+import net.minecraft.network.chat.ClickEvent;
+import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.server.ServerLifecycleHooks;
-import org.jetbrains.annotations.NotNull;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Predicate;
 
+import static de.srendi.advancedperipherals.common.commands.APCommands.ROOT_SAFE_EXEC_LITERAL;
 import static de.srendi.advancedperipherals.common.addons.computercraft.operations.SimpleFreeOperation.CHAT_MESSAGE;
 
 public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
 
-    public static final String PERIPHERAL_TYPE = "chatBox";
+    public static final String PERIPHERAL_TYPE = "chat_box";
 
     private long lastConsumedMessage;
 
@@ -69,12 +80,102 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
         return withOperation(CHAT_MESSAGE, null, null, function, null);
     }
 
+    @Nullable
+    protected ComponentContents filterComponentContents(@NotNull ComponentContents content) {
+        return content;
+    }
+
+    private boolean isChatBoxPreventingRunCommand() {
+        return APConfig.PERIPHERALS_CONFIG.chatBoxPreventRunCommand.get();
+    }
+
+    private List<Predicate<String>> getChatBoxCommandFilters() {
+        return APConfig.PERIPHERALS_CONFIG.getChatBoxCommandFilters();
+    }
+
+    private boolean shouldWrapCommand(String command) {
+        return APConfig.PERIPHERALS_CONFIG.chatBoxWrapCommand.get();
+    }
+
+    private boolean isCommandBanned(String command) {
+        for (Predicate<String> pattern : getChatBoxCommandFilters()) {
+            if (pattern.test(command)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static MutableComponent createFormattedError(String message) {
+        return Component.literal("[AP] " + message).setStyle(Style.EMPTY.withColor(ChatFormatting.RED).withBold(true));
+    }
+
+    @Nullable
+    protected Style filterComponentStyle(@NotNull Style style) {
+        ClickEvent click = style.getClickEvent();
+        if (click != null) {
+            if (isChatBoxPreventingRunCommand() && click.getAction() == ClickEvent.Action.RUN_COMMAND) {
+                style = style
+                    .withClickEvent(null)
+                    .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, createFormattedError("'run_command' action is banned")));
+            } else if (click.getAction() == ClickEvent.Action.RUN_COMMAND || click.getAction() == ClickEvent.Action.SUGGEST_COMMAND) {
+                String command = click.getValue();
+                if (command.length() > 0 && command.charAt(0) == '/') {
+                    if (isCommandBanned(command)) {
+                        style = style
+                            .withClickEvent(null)
+                            .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, createFormattedError("Command `" + command + "` is banned")));
+                    } else if (shouldWrapCommand(command)) {
+                        style = style.withClickEvent(new ClickEvent(click.getAction(), "/" + ROOT_SAFE_EXEC_LITERAL + " " + command));
+                    }
+                }
+            }
+        }
+        HoverEvent hover = style.getHoverEvent();
+        if (hover != null) {
+            HoverEvent.ItemStackInfo itemInfo = hover.getValue(HoverEvent.Action.SHOW_ITEM);
+            if (itemInfo != null) {
+                try {
+                    itemInfo.getItemStack().getTooltipLines(null, TooltipFlag.Default.ADVANCED);
+                } catch (RuntimeException e) {
+                    style = style.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, createFormattedError("Invalid item")));
+                }
+            }
+        }
+        return style;
+    }
+
+    @Nullable
+    protected MutableComponent filterMessage(@NotNull Component message) {
+        ComponentContents content = filterComponentContents(message.getContents());
+        if (content == null) {
+            return null;
+        }
+        MutableComponent out = MutableComponent.create(content);
+        if (message instanceof MutableComponent mc) {
+            Style style = filterComponentStyle(mc.getStyle());
+            if (style == null) {
+                return null;
+            }
+            out.setStyle(style);
+        }
+        for (Component comp : message.getSiblings()) {
+            MutableComponent filtered = filterMessage(comp);
+            if (filtered == null) {
+                return null;
+            }
+            out.append(filtered);
+        }
+        return out;
+    }
+
+    @Nullable
     private MutableComponent appendPrefix(String prefix, String brackets, String color) {
         Component prefixComponent = Component.literal(APConfig.PERIPHERALS_CONFIG.defaultChatBoxPrefix.get());
         if (!prefix.isEmpty()) {
             MutableComponent formattablePrefix;
             try {
-                formattablePrefix = MutableComponent.Serializer.fromJson(prefix);
+                formattablePrefix = Component.Serializer.fromJson(prefix);
                 prefixComponent = formattablePrefix;
             } catch (JsonSyntaxException exception) {
                 AdvancedPeripherals.debug("Non json prefix, using plain text instead.");
@@ -83,7 +184,7 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
         }
         if (brackets.isEmpty()) brackets = "[]";
 
-        return Component.literal(color + brackets.charAt(0) + "\u00a7r").append(prefixComponent).append(color + brackets.charAt(1) + "\u00a7r ");
+        return filterMessage(Component.literal(color + brackets.charAt(0) + "\u00a7r").append(prefixComponent).append(color + brackets.charAt(1) + "\u00a7r "));
     }
 
     /**
@@ -111,26 +212,37 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
         return withChatOperation(ignored -> {
             String message = arguments.getString(0);
             int maxRange = APConfig.PERIPHERALS_CONFIG.chatBoxMaxRange.get();
-            int range = arguments.optInt(4, maxRange);
-            range = maxRange == -1 ? range : Math.min(range, APConfig.PERIPHERALS_CONFIG.chatBoxMaxRange.get());
+            int range = arguments.optInt(4, -1);
             ResourceKey<Level> dimension = getLevel().dimension();
             MutableComponent component = Component.Serializer.fromJson(message);
-            if (component == null)
+            if (component == null) {
                 return MethodResult.of(null, "incorrect json");
+            }
+            component = filterMessage(component);
+            if (component == null) {
+                return MethodResult.of(null, "illegal message");
+            }
 
-            if (checkBrackets(arguments.optString(2)))
+            if (checkBrackets(arguments.optString(2))) {
                 return MethodResult.of(null, "incorrect bracket string (e.g. [], {}, <>, ...)");
+            }
 
             MutableComponent preparedMessage = appendPrefix(
                     StringUtil.convertAndToSectionMark(arguments.optString(1, APConfig.PERIPHERALS_CONFIG.defaultChatBoxPrefix.get())),
                     arguments.optString(2, "[]"),
                     StringUtil.convertAndToSectionMark(arguments.optString(3, ""))
-            ).append(component);
+            );
+            if (preparedMessage == null) {
+                return MethodResult.of(null, "illegal prefix");
+            }
+            preparedMessage.append(component);
             for (ServerPlayer player : ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers()) {
-                if (!APConfig.PERIPHERALS_CONFIG.chatBoxMultiDimensional.get() && player.getLevel().dimension() != dimension)
+                if (!APConfig.PERIPHERALS_CONFIG.chatBoxMultiDimensional.get() && player.getLevel().dimension() != dimension) {
                     continue;
-                if (range == -1 || CoordUtil.isInRange(getPos(), getLevel(), player, range, maxRange))
+                }
+                if (CoordUtil.isInRange(getPos(), getLevel(), player, range, maxRange)) {
                     player.sendSystemMessage(preparedMessage);
+                }
             }
             return MethodResult.of(true);
         });
@@ -141,22 +253,28 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
         return withChatOperation(ignored -> {
             String message = arguments.getString(0);
             int maxRange = APConfig.PERIPHERALS_CONFIG.chatBoxMaxRange.get();
-            int range = arguments.optInt(4, maxRange);
-            range = maxRange == -1 ? range : Math.min(range, APConfig.PERIPHERALS_CONFIG.chatBoxMaxRange.get());
+            int range = arguments.optInt(4, -1);
             ResourceKey<Level> dimension = getLevel().dimension();
-            if (checkBrackets(arguments.optString(2)))
+            if (checkBrackets(arguments.optString(2))) {
                 return MethodResult.of(null, "incorrect bracket string (e.g. [], {}, <>, ...)");
+            }
 
             MutableComponent preparedMessage = appendPrefix(
                     StringUtil.convertAndToSectionMark(arguments.optString(1, APConfig.PERIPHERALS_CONFIG.defaultChatBoxPrefix.get())),
                     arguments.optString(2, "[]"),
                     StringUtil.convertAndToSectionMark(arguments.optString(3, ""))
-            ).append(message);
+            );
+            if (preparedMessage == null) {
+                return MethodResult.of(null, "illegal prefix");
+            }
+            preparedMessage.append(message);
             for (ServerPlayer player : ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers()) {
-                if (!APConfig.PERIPHERALS_CONFIG.chatBoxMultiDimensional.get() && player.getLevel().dimension() != dimension)
+                if (!APConfig.PERIPHERALS_CONFIG.chatBoxMultiDimensional.get() && player.getLevel().dimension() != dimension) {
                     continue;
-                if (range == -1 || CoordUtil.isInRange(getPos(), getLevel(), player, range, maxRange))
+                }
+                if (CoordUtil.isInRange(getPos(), getLevel(), player, range, maxRange)) {
                     player.sendSystemMessage(preparedMessage);
+                }
             }
             return MethodResult.of(true);
         });
@@ -168,30 +286,42 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
             String message = arguments.getString(0);
             String playerName = arguments.getString(1);
             int maxRange = APConfig.PERIPHERALS_CONFIG.chatBoxMaxRange.get();
-            int range = arguments.optInt(5, maxRange);
-            range = maxRange == -1 ? range : Math.min(range, APConfig.PERIPHERALS_CONFIG.chatBoxMaxRange.get());
+            int range = arguments.optInt(5, -1);
             ResourceKey<Level> dimension = getLevel().dimension();
             ServerPlayer player = getPlayer(playerName);
-            if (player == null)
+            if (player == null) {
                 return MethodResult.of(null, "incorrect player name/uuid");
+            }
 
             MutableComponent component = Component.Serializer.fromJson(message);
-            if (component == null)
+            if (component == null) {
                 return MethodResult.of(null, "incorrect json");
+            }
+            component = filterMessage(component);
+            if (component == null) {
+                return MethodResult.of(null, "illegal message");
+            }
 
-            if (checkBrackets(arguments.optString(3)))
+            if (checkBrackets(arguments.optString(3))) {
                 return MethodResult.of(null, "incorrect bracket string (e.g. [], {}, <>, ...)");
+            }
 
             MutableComponent preparedMessage = appendPrefix(
                     StringUtil.convertAndToSectionMark(arguments.optString(2, APConfig.PERIPHERALS_CONFIG.defaultChatBoxPrefix.get())),
                     arguments.optString(3, "[]"),
                     StringUtil.convertAndToSectionMark(arguments.optString(4, ""))
-            ).append(component);
-            if (!APConfig.PERIPHERALS_CONFIG.chatBoxMultiDimensional.get() && player.getLevel().dimension() != dimension)
+            );
+            if (preparedMessage == null) {
+                return MethodResult.of(null, "illegal prefix");
+            }
+            preparedMessage.append(component);
+            if (!APConfig.PERIPHERALS_CONFIG.chatBoxMultiDimensional.get() && player.getLevel().dimension() != dimension) {
                 return MethodResult.of(false, "NOT_SAME_DIMENSION");
+            }
 
-            if (range == -1 || CoordUtil.isInRange(getPos(), getLevel(), player, range, maxRange))
+            if (CoordUtil.isInRange(getPos(), getLevel(), player, range, maxRange)) {
                 player.sendSystemMessage(preparedMessage);
+            }
             return MethodResult.of(true);
         });
     }
@@ -204,34 +334,50 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
             String title = arguments.getString(1);
             String playerName = arguments.getString(2);
             int maxRange = APConfig.PERIPHERALS_CONFIG.chatBoxMaxRange.get();
-            int range = arguments.optInt(6, maxRange);
-            range = maxRange == -1 ? range : Math.min(range, APConfig.PERIPHERALS_CONFIG.chatBoxMaxRange.get());
+            int range = arguments.optInt(6, -1);
             ResourceKey<Level> dimension = getLevel().dimension();
             ServerPlayer player = getPlayer(playerName);
-            if (player == null)
+            if (player == null) {
                 return MethodResult.of(null, "incorrect player name/uuid");
+            }
 
             MutableComponent messageComponent = Component.Serializer.fromJson(message);
-            if (messageComponent == null)
+            if (messageComponent == null) {
                 return MethodResult.of(null, "incorrect json for message");
+            }
+            messageComponent = filterMessage(messageComponent);
+            if (messageComponent == null) {
+                return MethodResult.of(null, "illegal message");
+            }
 
             MutableComponent titleComponent = Component.Serializer.fromJson(title);
-            if (titleComponent == null)
+            if (titleComponent == null) {
                 return MethodResult.of(null, "incorrect json for title");
+            }
+            titleComponent = filterMessage(titleComponent);
+            if (titleComponent == null) {
+                return MethodResult.of(null, "illegal title");
+            }
 
-            if (checkBrackets(arguments.optString(4)))
+            if (checkBrackets(arguments.optString(4))) {
                 return MethodResult.of(null, "incorrect bracket string (e.g. [], {}, <>, ,,,)");
+            }
 
             MutableComponent preparedMessage = appendPrefix(
                     StringUtil.convertAndToSectionMark(arguments.optString(3, APConfig.PERIPHERALS_CONFIG.defaultChatBoxPrefix.get())),
                     arguments.optString(4, "[]"),
                     StringUtil.convertAndToSectionMark(arguments.optString(5, ""))
-            ).append(messageComponent);
+            );
+            if (preparedMessage == null) {
+                return MethodResult.of(null, "illegal prefix");
+            }
+            preparedMessage.append(messageComponent);
 
-            if (!APConfig.PERIPHERALS_CONFIG.chatBoxMultiDimensional.get() && player.getLevel().dimension() != dimension)
+            if (!APConfig.PERIPHERALS_CONFIG.chatBoxMultiDimensional.get() && player.getLevel().dimension() != dimension) {
                 return MethodResult.of(false, "NOT_SAME_DIMENSION");
+            }
 
-            if (range == -1 || CoordUtil.isInRange(getPos(), getLevel(), player, range, maxRange)) {
+            if (CoordUtil.isInRange(getPos(), getLevel(), player, range, maxRange)) {
                 ToastToClientPacket packet = new ToastToClientPacket(titleComponent, preparedMessage);
                 APNetworking.sendTo(packet, player);
             }
@@ -246,26 +392,33 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
             String message = arguments.getString(0);
             String playerName = arguments.getString(1);
             int maxRange = APConfig.PERIPHERALS_CONFIG.chatBoxMaxRange.get();
-            int range = arguments.optInt(5, maxRange);
-            range = maxRange == -1 ? range : Math.min(range, APConfig.PERIPHERALS_CONFIG.chatBoxMaxRange.get());
+            int range = arguments.optInt(5, -1);
             ResourceKey<Level> dimension = getLevel().dimension();
             ServerPlayer player = getPlayer(playerName);
-            if (player == null)
+            if (player == null) {
                 return MethodResult.of(null, "incorrect player name/uuid");
+            }
 
-            if (checkBrackets(arguments.optString(3)))
+            if (checkBrackets(arguments.optString(3))) {
                 return MethodResult.of(null, "incorrect bracket string (e.g. [], {}, <>, ...)");
+            }
 
             MutableComponent preparedMessage = appendPrefix(
                     StringUtil.convertAndToSectionMark(arguments.optString(2, APConfig.PERIPHERALS_CONFIG.defaultChatBoxPrefix.get())),
                     arguments.optString(3, "[]"),
                     StringUtil.convertAndToSectionMark(arguments.optString(4, ""))
-            ).append(message);
-            if (!APConfig.PERIPHERALS_CONFIG.chatBoxMultiDimensional.get() && player.getLevel().dimension() != dimension)
+            );
+            if (preparedMessage == null) {
+                return MethodResult.of(null, "illegal prefix");
+            }
+            preparedMessage.append(message);
+            if (!APConfig.PERIPHERALS_CONFIG.chatBoxMultiDimensional.get() && player.getLevel().dimension() != dimension) {
                 return MethodResult.of(false, "NOT_SAME_DIMENSION");
+            }
 
-            if (range == -1 || CoordUtil.isInRange(getPos(), getLevel(), player, range, maxRange))
+            if (CoordUtil.isInRange(getPos(), getLevel(), player, range, maxRange)) {
                 player.sendSystemMessage(preparedMessage, false);
+            }
             return MethodResult.of(true);
         });
     }
@@ -277,26 +430,32 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
             String title = arguments.getString(1);
             String playerName = arguments.getString(2);
             int maxRange = APConfig.PERIPHERALS_CONFIG.chatBoxMaxRange.get();
-            int range = arguments.optInt(6, maxRange);
-            range = maxRange == -1 ? range : Math.min(range, APConfig.PERIPHERALS_CONFIG.chatBoxMaxRange.get());
+            int range = arguments.optInt(6, -1);
             ResourceKey<Level> dimension = getLevel().dimension();
             ServerPlayer player = getPlayer(playerName);
-            if (player == null)
+            if (player == null) {
                 return MethodResult.of(null, "incorrect player name/uuid");
+            }
 
-            if (checkBrackets(arguments.optString(4)))
+            if (checkBrackets(arguments.optString(4))) {
                 return MethodResult.of(null, "incorrect bracket string (e.g. [], {}, <>, ...)");
+            }
 
             MutableComponent preparedMessage = appendPrefix(
                     StringUtil.convertAndToSectionMark(arguments.optString(3, APConfig.PERIPHERALS_CONFIG.defaultChatBoxPrefix.get())),
                     arguments.optString(4, "[]"),
                     StringUtil.convertAndToSectionMark(arguments.optString(5, ""))
-            ).append(message);
+            );
+            if (preparedMessage == null) {
+                return MethodResult.of(null, "illegal prefix");
+            }
+            preparedMessage.append(message);
 
-            if (!APConfig.PERIPHERALS_CONFIG.chatBoxMultiDimensional.get() && player.getLevel().dimension() != dimension)
+            if (!APConfig.PERIPHERALS_CONFIG.chatBoxMultiDimensional.get() && player.getLevel().dimension() != dimension) {
                 return MethodResult.of(false, "NOT_SAME_DIMENSION");
+            }
 
-            if (range == -1 || CoordUtil.isInRange(getPos(), getLevel(), player, range, maxRange)) {
+            if (CoordUtil.isInRange(getPos(), getLevel(), player, range, maxRange)) {
                 ToastToClientPacket packet = new ToastToClientPacket(Component.literal(title), preparedMessage);
                 APNetworking.sendTo(packet, player);
             }

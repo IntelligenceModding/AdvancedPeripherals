@@ -9,7 +9,7 @@ import java.util.Map;
 public abstract class BasePeripheralOwner implements IPeripheralOwner {
     private final Map<PeripheralOwnerAbility<?>, IOwnerAbility> abilities;
 
-    public BasePeripheralOwner() {
+    protected BasePeripheralOwner() {
         abilities = new HashMap<>();
     }
 

@@ -9,5 +9,11 @@ public interface IBasePeripheral<T extends IPeripheralOwner> extends IPeripheral
 
     Iterable<IComputerAccess> getConnectedComputers();
 
+    default void queueEvent(String event, Object... args) {
+        for (IComputerAccess computer : getConnectedComputers()) {
+            computer.queueEvent(event, args);
+        }
+    }
+
     T getPeripheralOwner();
 }

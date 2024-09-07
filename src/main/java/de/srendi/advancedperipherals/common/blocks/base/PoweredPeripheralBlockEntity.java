@@ -19,7 +19,7 @@ public abstract class PoweredPeripheralBlockEntity<T extends BasePeripheral<?>> 
 
     private final LazyOptional<IEnergyStorage> lazyEnergyStorage;
 
-    public PoweredPeripheralBlockEntity(BlockEntityType<?> tileEntityTypeIn, BlockPos pos, BlockState state) {
+    protected PoweredPeripheralBlockEntity(BlockEntityType<?> tileEntityTypeIn, BlockPos pos, BlockState state) {
         super(tileEntityTypeIn, pos, state);
         if (APConfig.PERIPHERALS_CONFIG.enablePoweredPeripherals.get()) {
             lazyEnergyStorage = LazyOptional.of(() -> new EnergyStorage(this.getMaxEnergyStored()));

@@ -16,13 +16,35 @@ import java.util.Locale;
 
 public class CoordUtil {
 
+    /**
+     * isInRange checks if the player is in the range
+     *
+     * @param pos the position to start check
+     * @param world the world to start check
+     * @param player the player going to be check
+     * @param range the range that user want to reach, must be -1, 0, or a positive number
+     * @param maxRange the maximum range the user can reach, must be -1, 0, or a positive number
+     *
+     * @return If the player is in the {@code range} as well as in the {@code maxRange}, or {@code range} and {@code maxRange} are -1
+     */
     public static boolean isInRange(@Nullable BlockPos pos, @Nullable Level world, @Nullable Player player, int range, int maxRange) {
-        // There are rare cases where these are null. For example if a player detector pocket computer runs while not in a player inventory
+        // There are rare cases where these can be null. For example if a player detector pocket computer runs while not in a player inventory
         // Fixes https://github.com/SirEndii/AdvancedPeripherals/issues/356
-        if (pos == null || world == null || player == null)
+        if (pos == null || world == null || player == null) {
             return false;
+        }
 
-        range = maxRange == -1 ? range : Math.min(Math.abs(range), maxRange);
+        if (range == 0 || maxRange == 0) {
+            return false;
+        }
+        if (range < 0) {
+            if (maxRange < 0) {
+                return true;
+            }
+            range = maxRange;
+        } else if (maxRange > 0 && range > maxRange) {
+            range = maxRange;
+        }
         return isPlayerInBlockRange(pos, world, player, (double) range);
     }
 
@@ -83,21 +105,20 @@ public class CoordUtil {
     }
 
     public static Direction getDirection(FrontAndTop orientation, String computerSide) throws LuaException {
-        if (computerSide == null) {
+        if (computerSide == null)
             throw new LuaException("null is not a valid side");
-        }
 
         computerSide = computerSide.toLowerCase(Locale.ROOT);
         Direction dir = Direction.byName(computerSide);
         if (dir != null)
             return dir;
+
         Direction top = orientation.top();
         Direction front = orientation.front();
 
         final ComputerSide side = ComputerSide.valueOfInsensitive(computerSide);
-        if (side == null) {
+        if (side == null)
             throw new LuaException(computerSide + " is not a valid side");
-        }
 
         if (front.getAxis() == Direction.Axis.Y) {
             return switch (side) {
@@ -118,6 +139,42 @@ public class CoordUtil {
                 case LEFT -> front.getClockWise();
             };
         }
+
     }
 
+    public static ComputerSide getComputerSide(FrontAndTop orientation, Direction direction) {
+        Direction top = orientation.top();
+        Direction front = orientation.front();
+
+        if (direction == front) {
+            return ComputerSide.FRONT;
+        }
+        if (direction == front.getOpposite()) {
+            return ComputerSide.BACK;
+        }
+        if (front.getAxis() == Direction.Axis.Y) {
+            if (direction == top) {
+                return ComputerSide.TOP;
+            }
+            if (direction == top.getOpposite()) {
+                return ComputerSide.BOTTOM;
+            }
+            if (direction == top.getClockWise()) {
+                return ComputerSide.RIGHT;
+            }
+            if (direction == top.getCounterClockWise()) {
+                return ComputerSide.LEFT;
+            }
+        }
+        if (direction == front.getClockWise()) {
+            return ComputerSide.RIGHT;
+        }
+        if (direction == front.getCounterClockWise()) {
+            return ComputerSide.LEFT;
+        }
+        if (direction == Direction.UP) {
+            return ComputerSide.TOP;
+        }
+        return ComputerSide.BOTTOM;
+    }
 }

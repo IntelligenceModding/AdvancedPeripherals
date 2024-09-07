@@ -7,7 +7,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public enum SimpleFreeOperation implements IPeripheralOperation<Object> {
-    CHAT_MESSAGE(100);
+    CHAT_MESSAGE(1000),
+    SADDLE_CAPTURE(5000);
 
     private final int defaultCooldown;
     private ForgeConfigSpec.IntValue cooldown;
@@ -18,7 +19,7 @@ public enum SimpleFreeOperation implements IPeripheralOperation<Object> {
 
     @Override
     public void addToConfig(ForgeConfigSpec.Builder builder) {
-        cooldown = builder.defineInRange(settingsName() + "Cooldown", defaultCooldown, 1_000, Integer.MAX_VALUE);
+        cooldown = builder.defineInRange(settingsName() + "Cooldown", defaultCooldown, 100, Integer.MAX_VALUE);
     }
 
     @Override

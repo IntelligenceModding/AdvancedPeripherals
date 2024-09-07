@@ -6,6 +6,31 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+## [1.19.2-0.7.36r] - 2024-06-11
+
+### Added
+- [Features/#43] Up/down versions of automata block functions using pitch and yaw - Thanks to @zyxkad
+- [Features/#9] Added shift sneaking version of `useOnBlock` - Thanks to @zyxkad
+
+### Fixed
+- [#582] Reworked the chunky turtle logic to fix several issues with them - Thanks to @zyxkad
+- Fixed a crash with the ME Bridge while trying to iterate through storage busses without a connected storage block
+- Fixed `isOnEnchantedSoil()` for the mana flower integration
+- [#419] Fixed that the automata `digBlock` function does not use breaking directions the right way. Fixes several issues with hammers or other AOE tools. - Thanks to @zyxkad
+- [#629] Fixed that placed blocks do not retain their custom block name when destroyed - Thanks to @WiggleWizzard
+- [#621] Fixed that the `listCells` function for the ME Bridge does not search in third party drives - Thanks to @michele-grifa
+- [#632] Fixed that the chat box allows sending chat messages with negative range - Thanks to @zyxkad
+- [#619] Fixed that the chat box can spoof people to click message to run danger commands - Thanks to @zyxkad
+- [#617] Fixed that sending invalid nbt data for some mod items through the chat box can cause a client crash - Thanks to @zyxkad
+- [#603] Fixed that the note block integration does not trigger allays - Thanks to @zyxkad
+- [#599] Fixed that turtle upgrades can't be equipped with custom NBT values - Thanks to @zyxkad
+- [#595] Fixed that `scanEntities` does not include living entity fields - Thanks to @zyxkad
+- [#581] Fixed concurrency issues with our server worker, fixes a crash when CC is set to use multiple threads - Thanks to @zyxkad
+
+### Changed
+- [#588] Changed the misspelled `maxHealth` parameter in the player detector, the misspelled attribute is still included in the table for backwards compatibility - Thanks to @zyxkad
+- [#613] Clamp analog output of the `setAnalogOutput` function between 0-15 - Thanks to @zyxkad
+
 ## [1.19.2-0.7.35r] - 2024-04-12
 
 ### Fixed

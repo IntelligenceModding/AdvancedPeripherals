@@ -1,5 +1,7 @@
 package de.srendi.advancedperipherals.common.util.inventory;
 
+import appeng.api.stacks.AEFluidKey;
+import appeng.api.stacks.GenericStack;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.core.apis.TableHelper;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
@@ -17,7 +19,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.Map;
 
-public class FluidFilter {
+public class FluidFilter extends GenericFilter<FluidStack> {
 
     private Fluid fluid = Fluids.EMPTY;
     private TagKey<Fluid> tag = null;
@@ -97,22 +99,29 @@ public class FluidFilter {
         return this;
     }
 
+    @Override
+    public boolean testAE(GenericStack genericStack) {
+        if (genericStack.what() instanceof AEFluidKey aeFluidKey) {
+            return test(aeFluidKey.toStack(1));
+        }
+        return false;
+    }
+
     public boolean test(FluidStack stack) {
         if (!fingerprint.isEmpty()) {
             String testFingerprint = FluidUtil.getFingerprint(stack);
             return fingerprint.equals(testFingerprint);
         }
 
-        // If the filter does not have nbt values, a tag or a fingerprint, just test if the items are the same
-        if (fluid != Fluids.EMPTY) {
-            if (tag == null && nbt == null && fingerprint.isEmpty())
-                return stack.getFluid().isSame(fluid);
+        if (fluid != Fluids.EMPTY && !stack.getFluid().isSame(fluid)) {
+            return false;
         }
-        if (tag != null && !stack.getFluid().is(tag))
+        if (tag != null && !stack.getFluid().is(tag)) {
             return false;
-        if (nbt != null && !stack.getOrCreateTag().equals(nbt) && (fluid == Fluids.EMPTY || stack.getFluid().isSame(fluid)))
+        }
+        if (nbt != null && !stack.getOrCreateTag().equals(nbt)) {
             return false;
-
+        }
         return true;
     }
 

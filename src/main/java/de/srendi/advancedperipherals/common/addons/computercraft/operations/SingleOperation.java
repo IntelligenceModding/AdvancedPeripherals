@@ -5,7 +5,7 @@ import net.minecraftforge.common.ForgeConfigSpec;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Function;
+import java.util.function.UnaryOperator;
 
 public enum SingleOperation implements IPeripheralOperation<SingleOperationContext> {
     DIG(1000, 1),
@@ -14,7 +14,9 @@ public enum SingleOperation implements IPeripheralOperation<SingleOperationConte
     USE_ON_ANIMAL(2500, 10),
     CAPTURE_ANIMAL(50_000, 100),
     WARP(1000, DistancePolicy.IGNORED, CountPolicy.MULTIPLY, 1, DistancePolicy.SQRT, CountPolicy.MULTIPLY),
-    ACCURE_PLACE(1000, DistancePolicy.IGNORED, CountPolicy.MULTIPLY, 1, DistancePolicy.LINEAR, CountPolicy.MULTIPLY);
+    ACCURE_PLACE(1000, DistancePolicy.IGNORED, CountPolicy.MULTIPLY, 1, DistancePolicy.LINEAR, CountPolicy.MULTIPLY),
+    PREPARE_PORTAL(3_000, 600),
+    ACTIVE_PORTAL(60_000, 1);
 
     private final int defaultCooldown;
     private final DistancePolicy distanceCooldownPolicy;
@@ -35,7 +37,7 @@ public enum SingleOperation implements IPeripheralOperation<SingleOperationConte
     }
 
     SingleOperation(int defaultCooldown, int defaultCost) {
-        this(defaultCooldown, DistancePolicy.IGNORED, CountPolicy.MULTIPLY, defaultCost, DistancePolicy.IGNORED, CountPolicy.MULTIPLY);
+        this(defaultCooldown, DistancePolicy.IGNORED, CountPolicy.IGNORED, defaultCost, DistancePolicy.IGNORED, CountPolicy.IGNORED);
     }
 
     @Override
@@ -78,9 +80,9 @@ public enum SingleOperation implements IPeripheralOperation<SingleOperationConte
         LINEAR(d -> d),
         SQRT(d -> (int) Math.sqrt(d));
 
-        private final Function<Integer, Integer> factorFunction;
+        private final UnaryOperator<Integer> factorFunction;
 
-        DistancePolicy(Function<Integer, Integer> factorFunction) {
+        DistancePolicy(UnaryOperator<Integer> factorFunction) {
             this.factorFunction = factorFunction;
         }
 
@@ -90,11 +92,12 @@ public enum SingleOperation implements IPeripheralOperation<SingleOperationConte
     }
 
     public enum CountPolicy {
+        IGNORED(c -> 1),
         MULTIPLY(c -> c);
 
-        private final Function<Integer, Integer> factorFunction;
+        private final UnaryOperator<Integer> factorFunction;
 
-        CountPolicy(Function<Integer, Integer> factorFunction) {
+        CountPolicy(UnaryOperator<Integer> factorFunction) {
             this.factorFunction = factorFunction;
         }
 
