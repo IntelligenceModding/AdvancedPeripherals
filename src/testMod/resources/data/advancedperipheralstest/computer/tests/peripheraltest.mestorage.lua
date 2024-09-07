@@ -41,16 +41,16 @@ test.assert(availableFluidStorage == 64511, "Available fluid storage is not vali
 
 cells = bridge.listCells()
 test.assert(#cells == 2, "There should be 2 cells")
-
+print(textutils.serialize(cells[1]))
 itemCell = nil
 fluidCell = nil
 for _, cell in pairs(cells) do
-    if cell.cellType == "item" then
+    if cell.type == "ae2:i" then
         itemCell = cell
     end
 end
 for _, cell in pairs(cells) do
-    if cell.cellType == "fluid" then
+    if cell.type == "ae2:f" then
         fluidCell = cell
     end
 end
@@ -58,16 +58,17 @@ end
 test.assert(itemCell, "Item cell not found")
 test.assert(fluidCell, "Fluid cell not found")
 
-itemCellBytes = itemCell.totalBytes
+itemCellBytes = itemCell.bytes
+print(textutils.serialize(itemCell))
 test.assert(itemCellBytes == 65536, "Item cell bytes is not valid")
 
-fluidCellBytes = fluidCell.totalBytes
+fluidCellBytes = fluidCell.bytes
 test.assert(fluidCellBytes == 65536, "Fluid cell bytes is not valid")
 
-itemCellItem = itemCell.item
+itemCellItem = itemCell.item.name
 test.assert(itemCellItem == "ae2:item_storage_cell_64k", "Item cell item not found")
 
-fluidCellItem = fluidCell.item
+fluidCellItem = fluidCell.item.name
 test.assert(fluidCellItem == "ae2:fluid_storage_cell_64k", "Fluid cell item not found")
 
 itemCellBytesPerType = itemCell.bytesPerType

@@ -17,7 +17,7 @@ test.eq(1, noteBlock.getNote(), "Note should be 1")
 noteBlock.playNote()
 
 -- this note block has a block above it, so it should not play a note
-test.eq("noteBlock", peripheral.getType("right"), "Peripheral should be noteBlock")
+test.eq("note_block", peripheral.getType("right"), "Peripheral should be noteBlock")
 silentNoteBlock = peripheral.wrap("right")
 test.assert(silentNoteBlock, "Peripheral not found")
 
