@@ -54,7 +54,7 @@ stickCount = bridge.getItem(stickFilter).amount
 test.assert(stickCount == 8, "We should have 8 sticks")
 
 -- There is no getFluid function, so we need to do it like this
-waterCount = bridge.listCraftableFluid()[1].amount
+waterCount = bridge.listCraftableFluids()[1].amount
 test.assert(waterCount == 0, "We should not have water")
 
 craftingSuccessful = bridge.craftFluid(waterFilter)

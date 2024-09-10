@@ -5,7 +5,7 @@
 ---
 
 sleep(4)
-bridge = peripheral.wrap("me_bridge_3")
+bridge = peripheral.wrap("me_bridge_20")
 chest = peripheral.wrap("minecraft:chest_2")
 test.assert(bridge, "Peripheral not found")
 test.assert(chest, "Chest not found")
@@ -19,8 +19,8 @@ test.assert(energyUsage > 17, tostring(energyUsage) .. " Consumption does not se
 planksFilter = {name="minecraft:oak_planks", count=5}
 logFilter = {name="minecraft:oak_log", count=8}
 
-exported, err = bridge.exportItemToPeripheral(planksFilter, peripheral.getName(chest))
-test.assert(exported == 5, "Export failed ".. (err or ""))
+exported, err = bridge.exportItem(planksFilter, peripheral.getName(chest))
+test.assert(exported == 5, "Export failed 5 planks to chest ".. (err or ""))
 
 planksItem = bridge.getItem(planksFilter)
 test.assert(planksItem.amount == 251, "We should have 251 planks")
@@ -36,7 +36,7 @@ test.assert(chestPlanks, "Planks not found in chest")
 test.assert(chestPlanks.count == 5, "We should have 5 planks in the chest")
 
 exported, err = bridge.exportItem(planksFilter, "front")
-test.assert(exported == 5, "Export failed ".. (err or ""))
+test.assert(exported == 5, "Export failed 5 planks to front:".. (err or ""))
 
 planksItem = bridge.getItem(planksFilter)
 test.assert(planksItem.amount == 246, "We should have 246 planks")
@@ -50,8 +50,8 @@ end
 test.assert(chestPlanks, "Planks not found in chest")
 test.assert(chestPlanks.count == 10, "We should have 5 planks in the chest")
 
-imported, err = bridge.importItemFromPeripheral(logFilter, peripheral.getName(chest))
-test.assert(imported == 8, "import failed ".. (err or ""))
+imported, err = bridge.importItem(logFilter, peripheral.getName(chest))
+test.assert(imported == 8, "import failed 8 logs to chest".. (err or ""))
 
 logsItem = bridge.getItem(logFilter)
 test.assert(logsItem.amount == 264, "We should have 264 logs")
@@ -67,7 +67,7 @@ test.assert(chestLogs, "Logs not found in chest")
 test.assert(chestLogs.count == 56, "We should have 56 logs in the chest")
 
 imported, err = bridge.importItem(logFilter, "south")
-test.assert(imported == 8, "import failed ".. (err or ""))
+test.assert(imported == 8, "import failed 8 logs from south".. (err or ""))
 
 logsItem = bridge.getItem(logFilter)
 test.assert(logsItem.amount == 272, "We should have 272 logs")

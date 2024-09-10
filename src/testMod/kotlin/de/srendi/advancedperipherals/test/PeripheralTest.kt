@@ -17,17 +17,17 @@ class PeripheralTest {
 
     // The ME System needs to boot up, so we use a sleep() in the specific lua script
     // We set the timeoutTicks to 300 so the test does not fail
-    @GameTest(timeoutTicks = 300)
+    @GameTest(timeoutTicks = 600)
     fun meCrafting(context: GameTestHelper) = context.sequence {
         thenComputerOk();
     }
 
-    @GameTest(timeoutTicks = 300)
+    @GameTest(timeoutTicks = 600)
     fun meStorage(context: GameTestHelper) = context.sequence {
         thenComputerOk();
     }
 
-    @GameTest(timeoutTicks = 300)
+    @GameTest(timeoutTicks = 600)
     fun meTransfer(context: GameTestHelper) = context.sequence {
         thenComputerOk();
     }

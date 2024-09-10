@@ -16,7 +16,7 @@ sleep(0.5)
 test.eq(100, det.getTransferRate(), "Transfer Rate should be 100")
 test.eq(100, det.getTransferRateLimit(), "Transfer Rate Limit should be 100")
 
-det.setTransferRateLimit(100000)
+det.setTransferRateLimit(4000000)
 sleep(0.5)
-test.eq(3200, det.getTransferRate(), "Transfer Rate should be 3200") -- Rate limit from the cables
-test.eq(100000, det.getTransferRateLimit(), "Transfer Rate Limit should be 100000")
+test.eq(100000, det.getTransferRate(), "Transfer Rate should be 100000") -- Rate limit from the cables
+test.eq(4000000, det.getTransferRateLimit(), "Transfer Rate Limit should be 4000000")
