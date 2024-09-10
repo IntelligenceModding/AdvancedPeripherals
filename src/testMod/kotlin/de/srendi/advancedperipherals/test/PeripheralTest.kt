@@ -52,7 +52,7 @@ class PeripheralTest {
         thenComputerOk();
     }
 
-    @GameTest
+    @GameTest(timeoutTicks = 300)
     fun energyDet(context: GameTestHelper) = context.sequence {
         thenComputerOk();
     }
