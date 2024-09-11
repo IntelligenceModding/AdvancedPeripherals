@@ -2,6 +2,7 @@
 --- Advanced Peripherals ME Bridge crafting tests
 --- Covers `isConnected`, `getEnergyUsage`, `isItemCrafting`, `isItemCraftable`,
 --- `getItem`, `craftItem`, `listCraftableFluid`, `craftFluid`, `getCraftingCPUs`,
+--- `getFluid`, `isFluidCrafting`
 ---
 
 sleep(4)
@@ -54,8 +55,8 @@ stickCount = bridge.getItem(stickFilter).amount
 test.assert(stickCount == 8, "We should have 8 sticks")
 
 -- There is no getFluid function, so we need to do it like this
-waterCount = bridge.listCraftableFluids()[1].amount
-test.assert(waterCount == 0, "We should not have water")
+waterCount = bridge.getFluid({name="minecraft:water"})
+test.assert(waterCount, "We should not have water")
 
 craftingSuccessful = bridge.craftFluid(waterFilter)
 test.assert(craftingSuccessful, "Crafting failed")
@@ -64,9 +65,9 @@ test.assert(craftingSuccessful, "Crafting failed")
 -- We just have the pattern which uses a dummy recipe with one log to craft 1B water. The log ist just transferred to a chest
 
 -- But we can test if there is a job
--- Well... if we would have a function for that...
--- isFluidCrafting = bridge.isItemCrafting(waterFilter)
--- test.assert(isFluidCrafting, "There should be a crafting job")
+sleep(0.5)
+isFluidCrafting = bridge.isFluidCrafting(waterFilter)
+test.assert(isFluidCrafting, "There should be a crafting job")
 
 cpus = bridge.getCraftingCPUs()
 test.assert(#cpus == 3, "There should be three CPUs")
