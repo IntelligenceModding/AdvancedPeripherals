@@ -1,9 +1,14 @@
 package de.srendi.advancedperipherals.test
 
-import dan200.computercraft.gametest.api.*
+import dan200.computercraft.gametest.api.GameTestHolder
+import dan200.computercraft.gametest.api.sequence
+import dan200.computercraft.gametest.api.thenComputerOk
+import dan200.computercraft.gametest.api.thenOnComputer
 import dan200.computercraft.gametest.core.TestEvents
+import mekanism.common.lib.radiation.RadiationManager
 import net.minecraft.core.BlockPos
-import net.minecraft.gametest.framework.*
+import net.minecraft.gametest.framework.GameTest
+import net.minecraft.gametest.framework.GameTestHelper
 import net.minecraft.world.InteractionHand
 import net.minecraft.world.entity.EntityType
 import net.minecraft.world.entity.animal.allay.Allay
@@ -76,4 +81,45 @@ class ModIntegrTest {
         }
     }
 
+    @GameTest(setupTicks = 60)
+    fun mekanismradiation(context: GameTestHelper) = context.sequence {
+        RadiationManager.INSTANCE.clearSources()
+
+        var radiation: Array<out Any?>? = null;
+        var rawRadiation = 0.0;
+        thenOnComputer {
+            radiation = callPeripheral("right", "getRadiation")
+            rawRadiation = callPeripheral("right", "getRadiationRaw")?.get(0) as Double
+        }
+        thenWaitUntil {
+            if (radiation?.get(0) == null)
+                context.fail("Radiation not set")
+            val value = (radiation?.get(0) as Map<*, *>)["radiation"]
+            if (value == null) {
+                context.fail("Radiation not found")
+            }
+            context.assertDoubleIs(value.toString().toDouble(), 99.9999, "Radiation incorrect")
+
+            context.assertDoubleIs(rawRadiation, 1.0E-07, "Raw radiation incorrect")
+        }
+        thenExecute {
+            context.destroyBlock(BlockPos(3,2,2))
+        }
+        thenOnComputer {
+            radiation = callPeripheral("right", "getRadiation")
+            rawRadiation = callPeripheral("right", "getRadiationRaw")?.get(0) as Double
+        }
+        thenWaitUntil {
+            if (radiation?.get(0) == null)
+                context.fail("Radiation not set")
+            val value = (radiation?.get(0) as Map<*, *>)["radiation"]
+            if (value == null) {
+                context.fail("Radiation not found")
+            }
+            context.assertDoubleInRange(value.toString().toDouble(), 2.49,2.51,"Radiation incorrect")
+
+            context.assertDoubleInRange(rawRadiation, 2.49,2.51,"Raw radiation incorrect")
+            RadiationManager.INSTANCE.clearSources()
+        }
+    }
 }
