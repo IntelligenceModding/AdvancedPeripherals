@@ -39,7 +39,11 @@ public abstract class BaseItem extends Item {
         if (this instanceof IInventoryItem inventoryItem) {
             ServerPlayer serverPlayerEntity = (ServerPlayer) playerIn;
             ItemStack stack = playerIn.getItemInHand(handIn);
-            NetworkHooks.openScreen(serverPlayerEntity, inventoryItem.createContainer(playerIn, stack), buf -> buf.writeItem(stack));
+            NetworkHooks.openScreen(serverPlayerEntity, inventoryItem.createContainer(playerIn, stack), buf -> {
+                        buf.writeBlockPos(playerIn.blockPosition());
+                        buf.writeItem(stack);
+                    }
+            );
         }
         return super.use(worldIn, playerIn, handIn);
     }

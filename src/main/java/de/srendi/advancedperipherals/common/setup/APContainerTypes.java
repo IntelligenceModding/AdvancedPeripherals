@@ -3,6 +3,7 @@ package de.srendi.advancedperipherals.common.setup;
 import dan200.computercraft.shared.network.container.ComputerContainerData;
 import dan200.computercraft.shared.network.container.ContainerData;
 import de.srendi.advancedperipherals.common.container.InventoryManagerContainer;
+import de.srendi.advancedperipherals.common.container.KeyboardContainer;
 import de.srendi.advancedperipherals.common.container.SmartGlassesContainer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.inventory.MenuType;
@@ -16,6 +17,12 @@ public class APContainerTypes {
         BlockPos pos = data.readBlockPos();
         Level level = inv.player.getCommandSenderWorld();
         return new InventoryManagerContainer(windowId, inv, pos, level);
+    }));
+
+    public static final RegistryObject<MenuType<KeyboardContainer>> KEYBOARD_CONTAINER = APRegistration.CONTAINER_TYPES.register("keyboard_container", () -> IForgeMenuType.create((windowId, inv, data) -> {
+        BlockPos pos = data.readBlockPos();
+        Level level = inv.player.getCommandSenderWorld();
+        return new KeyboardContainer(windowId, inv, pos, level);
     }));
 
     public static final RegistryObject<MenuType<SmartGlassesContainer>> SMART_GLASSES_CONTAINER = APRegistration.CONTAINER_TYPES.register("smart_glasses_container", () -> ContainerData.toType(ComputerContainerData::new,
