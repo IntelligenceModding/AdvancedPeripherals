@@ -4,6 +4,7 @@ import dan200.computercraft.shared.computer.blocks.TileComputerBase;
 import de.srendi.advancedperipherals.common.container.KeyboardContainer;
 import de.srendi.advancedperipherals.common.items.base.BaseItem;
 import de.srendi.advancedperipherals.common.items.base.IInventoryItem;
+import de.srendi.advancedperipherals.common.util.EnumColor;
 import de.srendi.advancedperipherals.common.util.NBTUtil;
 import de.srendi.advancedperipherals.common.util.SideHelper;
 import net.minecraft.core.BlockPos;
@@ -17,10 +18,14 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 public class KeyboardItem extends BaseItem implements IInventoryItem {
 
@@ -65,17 +70,26 @@ public class KeyboardItem extends BaseItem implements IInventoryItem {
         return new InteractionResultHolder<>(InteractionResult.PASS, playerIn.getItemInHand(handIn));
     }
 
+    @Override
+    public void appendHoverText(ItemStack stack, @Nullable Level levelIn, List<Component> tooltip, TooltipFlag flagIn) {
+        super.appendHoverText(stack, levelIn, tooltip, flagIn);
+        CompoundTag data = stack.getOrCreateTag();
+        if (data.contains("bind")) {
+            tooltip.add(EnumColor.buildTextComponent(Component.translatable("item.advancedperipherals.tooltip.binding.boundto", NBTUtil.blockPosFromNBT(data.getCompound("bind")).toShortString())));
+        }
+    }
+
     private void bind(Player player, ItemStack itemStack, BlockPos pos) {
         CompoundTag tag = NBTUtil.toNBT(pos);
 
         itemStack.getOrCreateTag().put(BIND_TAG, tag);
-        player.sendSystemMessage(Component.literal("Bound to " + pos.toShortString()));
+        player.displayClientMessage(EnumColor.buildTextComponent(Component.translatable("text.advancedperipherals.bind_keyboard", pos.toShortString())), true);
     }
 
     private void clear(Player player, ItemStack itemStack) {
         itemStack.getOrCreateTag().remove(BIND_TAG);
 
-        player.sendSystemMessage(Component.literal("Unbound"));
+        player.displayClientMessage(EnumColor.buildTextComponent(Component.translatable("text.advancedperipherals.cleared_keyboard")), true);
     }
 
     @Override

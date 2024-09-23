@@ -56,6 +56,7 @@ public class EnUsLanguageProvider extends LanguageProvider {
         addItem(APItems.OVERLAY_MODULE, "Overlay Module");
         addItem(APItems.NIGHT_VISION_MODULE, "Night Vision Module");
         addItem(APItems.HOTKEY_MODULE, "Hotkey Module");
+        addItem(APItems.KEYBOARD, "Keyboard");
     }
 
     private void addBlocks() {
@@ -80,7 +81,6 @@ public class EnUsLanguageProvider extends LanguageProvider {
     private void addTurtles() {
         addTurtle(CCRegistration.ID.CHATTY_TURTLE, "Chatty");
         addTurtle(CCRegistration.ID.CHUNKY_TURTLE, "Chunky");
-        addTurtle(CCRegistration.ID.COMPASS_TURTLE, "Compass");
         addTurtle(CCRegistration.ID.SADDLE_TURTLE, "Saddle");
         addTurtle(CCRegistration.ID.ENVIRONMENT_TURTLE, "Environment");
         addTurtle(CCRegistration.ID.PLAYER_TURTLE, "Player Detector");
@@ -124,9 +124,10 @@ public class EnUsLanguageProvider extends LanguageProvider {
         addTooltip(APBlocks.RS_BRIDGE.get(), "&7The RS Bridge interacts with Refined Storage to manage your items.");
         addTooltip(APBlocks.ME_BRIDGE.get(), "&7The ME Bridge interacts with Applied Energistics to manage your items.");
         addTooltip(APBlocks.CHAT_BOX.get(), "&7Interacts with the ingame chat, can read and write messages.");
-        addTooltip(APBlocks.PERIPHERAL_CASING.get(), "&7An empty hull without the love it deserves. Used as crafting ingredient");
+        addTooltip(APBlocks.PERIPHERAL_CASING.get(), "&7An empty hull without the love it deserves. Used as crafting ingredient.");
         addTooltip(APItems.MEMORY_CARD.get(), "&7Can save the rights of a player to use it in an inventory manager.");
-        addTooltip("memory_card.bound", "&7Bound to &b%s&7.");
+        addTooltip(APItems.KEYBOARD.get(), "&7Can be bound to a computer, used to type something on a computer without the need to open the computer.");
+        addTooltip("binding.boundto", "&7Bound to &b%s&7.");
         addTooltip(APBlocks.INVENTORY_MANAGER.get(), "&7This block is able to send or receive specific items from a player inventory.");
         addTooltip(APBlocks.REDSTONE_INTEGRATOR.get(), "&7This block is able to interact with redstone. Works exactly like the redstone api of an computer.");
         addTooltip(APBlocks.BLOCK_READER.get(), "&7Reads nbt data of blocks to interact with blocks which do not have computer support.");
@@ -142,8 +143,10 @@ public class EnUsLanguageProvider extends LanguageProvider {
     }
 
     private void addTexts() {
-        addText("removed_player", "Cleared the memory card");
-        addText("added_player", "Added you to the memory card");
+        addText("bind_memorycard", "&7Added you to the memory card");
+        addText("cleared_memorycard", "&7Cleared the memory card");
+        addText("bind_keyboard", "&7Bound to &b%s&7");
+        addText("cleared_keyboard", "&7Bind removed");
         addText("automata_core_feed_by_player", "You're trying to feed an entity to a soul, but your own body refuses to do this. Maybe something more mechanical can do this?");
         addText("smart_glasses.peripherals", "Peripherals");
         addText("smart_glasses.modules", "Modules");
