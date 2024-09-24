@@ -89,6 +89,7 @@
   "text.advancedperipherals.bind_memorycard": "&7Added you to the memory card",
   "text.advancedperipherals.cleared_keyboard": "&7Bind removed",
   "text.advancedperipherals.cleared_memorycard": "&7Cleared the memory card",
+  "text.advancedperipherals.keyboard_notbound": "&7Keyboard not bound",
   "text.advancedperipherals.saddle_turtle_dismount_hint": "Controlling %1$s. Press %2$s and %3$s to dismount.",
   "text.advancedperipherals.smart_glasses.modules": "Modules",
   "text.advancedperipherals.smart_glasses.peripherals": "Peripherals",

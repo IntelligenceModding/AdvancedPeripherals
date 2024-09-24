@@ -147,6 +147,7 @@ public class EnUsLanguageProvider extends LanguageProvider {
         addText("cleared_memorycard", "&7Cleared the memory card");
         addText("bind_keyboard", "&7Bound to &b%s&7");
         addText("cleared_keyboard", "&7Bind removed");
+        addText("keyboard_notbound", "&7Keyboard not bound");
         addText("automata_core_feed_by_player", "You're trying to feed an entity to a soul, but your own body refuses to do this. Maybe something more mechanical can do this?");
         addText("smart_glasses.peripherals", "Peripherals");
         addText("smart_glasses.modules", "Modules");

@@ -29,7 +29,7 @@ import java.util.List;
 
 public class KeyboardItem extends BaseItem implements IInventoryItem {
 
-    private static final String BIND_TAG = "bind";
+    public static final String BIND_TAG = "bind";
 
     public KeyboardItem() {
         super(new Properties().stacksTo(1));
@@ -63,9 +63,17 @@ public class KeyboardItem extends BaseItem implements IInventoryItem {
 
     @Override
     public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn) {
+        if (playerIn.level.isClientSide())
+            return new InteractionResultHolder<>(InteractionResult.PASS, playerIn.getItemInHand(handIn));
         // Used to prevent the menu from opening when we just want to bind/unbind the keyboard
-        if (!playerIn.isShiftKeyDown())
+        if (!playerIn.isShiftKeyDown()) {
+            if (!playerIn.getItemInHand(handIn).getOrCreateTag().contains(BIND_TAG)) {
+                playerIn.displayClientMessage(EnumColor.buildTextComponent(Component.translatable("text.advancedperipherals.keyboard_notbound")), false);
+                return new InteractionResultHolder<>(InteractionResult.PASS, playerIn.getItemInHand(handIn));
+            }
+            // Run the super use which handles the IInventoryItem stuff to actually open the container
             return super.use(worldIn, playerIn, handIn);
+        }
 
         return new InteractionResultHolder<>(InteractionResult.PASS, playerIn.getItemInHand(handIn));
     }
@@ -74,8 +82,8 @@ public class KeyboardItem extends BaseItem implements IInventoryItem {
     public void appendHoverText(ItemStack stack, @Nullable Level levelIn, List<Component> tooltip, TooltipFlag flagIn) {
         super.appendHoverText(stack, levelIn, tooltip, flagIn);
         CompoundTag data = stack.getOrCreateTag();
-        if (data.contains("bind")) {
-            tooltip.add(EnumColor.buildTextComponent(Component.translatable("item.advancedperipherals.tooltip.binding.boundto", NBTUtil.blockPosFromNBT(data.getCompound("bind")).toShortString())));
+        if (data.contains(BIND_TAG)) {
+            tooltip.add(EnumColor.buildTextComponent(Component.translatable("item.advancedperipherals.tooltip.binding.boundto", NBTUtil.blockPosFromNBT(data.getCompound(BIND_TAG)).toShortString())));
         }
     }
 
@@ -103,7 +111,7 @@ public class KeyboardItem extends BaseItem implements IInventoryItem {
 
             @Override
             public AbstractContainerMenu createMenu(int pContainerId, @NotNull Inventory playerInv, @NotNull Player player) {
-                return new KeyboardContainer(pContainerId, playerInv, player.blockPosition(), player.getLevel());
+                return new KeyboardContainer(pContainerId, playerInv, player.blockPosition(), player.getLevel(), itemStack);
             }
         };
     }
