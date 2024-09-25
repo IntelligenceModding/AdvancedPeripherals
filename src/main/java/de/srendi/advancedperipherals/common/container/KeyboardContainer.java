@@ -11,26 +11,39 @@ import de.srendi.advancedperipherals.common.items.KeyboardItem;
 import de.srendi.advancedperipherals.common.setup.APContainerTypes;
 import de.srendi.advancedperipherals.common.util.NBTUtil;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.server.ServerLifecycleHooks;
 import org.jetbrains.annotations.NotNull;
-
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 public class KeyboardContainer extends BaseContainer implements ComputerMenu {
 
     private final ServerInputState<KeyboardContainer> input;
-    private final BlockPos computerPos;
     @Nullable
     private ServerComputer computer = null;
 
     public KeyboardContainer(int id, Inventory inventory, BlockPos pos, Level level, ItemStack keyboardItem) {
         super(APContainerTypes.KEYBOARD_CONTAINER.get(), id, inventory, pos, level);
         this.input = new ServerInputState<>( this );
-        this.computerPos = NBTUtil.blockPosFromNBT(keyboardItem.getOrCreateTag().getCompound(KeyboardItem.BIND_TAG));
+
+        CompoundTag data = keyboardItem.getOrCreateTag();
+
+        if (!data.getBoolean(KeyboardItem.BOUND_TYPE_TAG)) {
+            BlockPos computerPos = NBTUtil.blockPosFromNBT(keyboardItem.getOrCreateTag().getCompound(KeyboardItem.BIND_TAG));
+
+            for (ServerComputer computer : ServerContext.get(ServerLifecycleHooks.getCurrentServer()).registry().getComputers()) {
+                if (computer.getPosition() != null && computer.getPosition().equals(computerPos)) {
+                    this.computer = computer;
+                }
+            }
+        } else if (data.contains(KeyboardItem.GLASSES_BIND_TAG)) {
+            computer = ServerContext.get(ServerLifecycleHooks.getCurrentServer()).registry().get(data.getInt(KeyboardItem.GLASSES_BIND_TAG));
+        }
+
     }
 
     @Override
@@ -38,17 +51,9 @@ public class KeyboardContainer extends BaseContainer implements ComputerMenu {
         return true;
     }
 
+    @Nullable
     @Override
     public ServerComputer getComputer() {
-        if (computer != null)
-            return computer;
-
-        for (ServerComputer computer : ServerContext.get(ServerLifecycleHooks.getCurrentServer()).registry().getComputers()) {
-            if (computer.getPosition().equals(computerPos)) {
-                this.computer = computer;
-            }
-        }
-
         return computer;
     }
 

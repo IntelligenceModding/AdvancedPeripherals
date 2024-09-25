@@ -127,7 +127,8 @@ public class EnUsLanguageProvider extends LanguageProvider {
         addTooltip(APBlocks.PERIPHERAL_CASING.get(), "&7An empty hull without the love it deserves. Used as crafting ingredient.");
         addTooltip(APItems.MEMORY_CARD.get(), "&7Can save the rights of a player to use it in an inventory manager.");
         addTooltip(APItems.KEYBOARD.get(), "&7Can be bound to a computer, used to type something on a computer without the need to open the computer.");
-        addTooltip("binding.boundto", "&7Bound to &b%s&7.");
+        addTooltip("binding.bound_to", "&7Bound to &b%s&7.");
+        addTooltip("binding.bound_to_glasses", "&7Bound to Smart Glasses with Id &b%s&7.");
         addTooltip(APBlocks.INVENTORY_MANAGER.get(), "&7This block is able to send or receive specific items from a player inventory.");
         addTooltip(APBlocks.REDSTONE_INTEGRATOR.get(), "&7This block is able to interact with redstone. Works exactly like the redstone api of an computer.");
         addTooltip(APBlocks.BLOCK_READER.get(), "&7Reads nbt data of blocks to interact with blocks which do not have computer support.");
@@ -148,6 +149,7 @@ public class EnUsLanguageProvider extends LanguageProvider {
         addText("bind_keyboard", "&7Bound to &b%s&7");
         addText("cleared_keyboard", "&7Bind removed");
         addText("keyboard_notbound", "&7Keyboard not bound");
+        addText("could_not_bind_keyboard", "&cCould not bind the keyboard to the computer located at &c%s");
         addText("automata_core_feed_by_player", "You're trying to feed an entity to a soul, but your own body refuses to do this. Maybe something more mechanical can do this?");
         addText("smart_glasses.peripherals", "Peripherals");
         addText("smart_glasses.modules", "Modules");
