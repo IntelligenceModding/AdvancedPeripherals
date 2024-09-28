@@ -54,11 +54,14 @@ public class KeyboardItem extends BaseItem implements IInventoryItem, IModuleIte
     @NotNull
     @Override
     public InteractionResult useOn(UseOnContext context) {
-        if (context.getPlayer() == null) return InteractionResult.PASS;
+        if (context.getPlayer() == null)
+            return InteractionResult.PASS;
 
-        if (SideHelper.isClientPlayer(context.getPlayer())) return InteractionResult.PASS;
+        if (SideHelper.isClientPlayer(context.getPlayer()))
+            return InteractionResult.PASS;
 
-        if (!context.getPlayer().isShiftKeyDown()) return InteractionResult.PASS;
+        if (!context.getPlayer().isShiftKeyDown())
+            return InteractionResult.PASS;
 
         BlockEntity entity = context.getLevel().getBlockEntity(context.getClickedPos());
         if (entity instanceof TileComputerBase) {
@@ -71,9 +74,11 @@ public class KeyboardItem extends BaseItem implements IInventoryItem, IModuleIte
 
     @Override
     public void inventoryTick(ItemStack itemStack, Level level, Entity entity, int inventorySlot, boolean isCurrentItem, @Nullable SmartGlassesAccess access, @Nullable IModule module) {
-        if (level.isClientSide()) return;
+        if (level.isClientSide())
+            return;
 
-        if (access == null) return;
+        if (access == null)
+            return;
 
         CompoundTag data = itemStack.getOrCreateTag();
         int instanceId = access.getComputer().getInstanceID();
@@ -85,7 +90,6 @@ public class KeyboardItem extends BaseItem implements IInventoryItem, IModuleIte
             data.putBoolean(BOUND_TYPE_TAG, true);
             data.putInt(GLASSES_BIND_TAG, access.getComputer().getInstanceID());
             data.remove(BIND_TAG);
-
         }
 
         if (KeybindUtil.isKeyPressed(KeyBindings.GLASSES_HOTKEY_KEYBINDING)) {

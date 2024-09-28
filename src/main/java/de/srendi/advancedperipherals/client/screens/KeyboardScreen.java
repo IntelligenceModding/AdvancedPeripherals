@@ -40,6 +40,17 @@ public class KeyboardScreen extends BaseScreen<KeyboardContainer> {
 
     @Override
     public void render(@NotNull PoseStack matrixStack, int x, int y, float partialTicks) {
+        Minecraft minecraft = Minecraft.getInstance();
+        float scale = 2f;
+        int screenWidth = minecraft.getWindow().getGuiScaledWidth();
+        // Make the text a bit smaller on small screens
+        if (screenWidth <= 1080)
+            scale = 1f;
+
+        matrixStack.scale(scale, scale, 1);
+        String text = "Press ESC to close the Keyboard Screen.";
+        float textX = (screenWidth / 2f - minecraft.font.width(text) * scale / 2f) / scale;
+        minecraft.font.drawShadow(matrixStack, text, textX, 1, 0xFFFFFF);
     }
 
     @Override
@@ -166,7 +177,6 @@ public class KeyboardScreen extends BaseScreen<KeyboardContainer> {
 
     @Override
     public boolean mouseDragged(double mouseX, double mouseY, int button, double v2, double v3) {
-
         if (button == lastMouseButton && (mouseX != lastMouseX || mouseY != lastMouseY)) {
             input.mouseDrag(button + 1, (int) mouseX, (int) mouseY);
             lastMouseX = (int) mouseX;
@@ -178,7 +188,6 @@ public class KeyboardScreen extends BaseScreen<KeyboardContainer> {
 
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double delta) {
-
         input.mouseScroll(delta < 0 ? 1 : -1, (int) mouseX, (int) mouseY);
 
         lastMouseX = (int) mouseX;
