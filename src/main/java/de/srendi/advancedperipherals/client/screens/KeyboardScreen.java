@@ -39,18 +39,23 @@ public class KeyboardScreen extends BaseScreen<KeyboardContainer> {
     }
 
     @Override
-    public void render(@NotNull PoseStack matrixStack, int x, int y, float partialTicks) {
+    public void render(@NotNull PoseStack poseStack, int x, int y, float partialTicks) {
         Minecraft minecraft = Minecraft.getInstance();
         float scale = 2f;
         int screenWidth = minecraft.getWindow().getGuiScaledWidth();
+        int screenHeight = minecraft.getWindow().getGuiScaledHeight();
         // Make the text a bit smaller on small screens
         if (screenWidth <= 1080)
             scale = 1f;
 
-        matrixStack.scale(scale, scale, 1);
+        poseStack.scale(scale, scale, 1);
         String text = "Press ESC to close the Keyboard Screen.";
         float textX = (screenWidth / 2f - minecraft.font.width(text) * scale / 2f) / scale;
-        minecraft.font.drawShadow(matrixStack, text, textX, 1, 0xFFFFFF);
+        minecraft.font.drawShadow(poseStack, text, textX, 1, 0xFFFFFF);
+
+        // Prevents JEI/REI/EMI from rendering. Maybe not the best way, but it works for now.
+        poseStack.scale(4f, 4f, 1);
+        minecraft.font.draw(poseStack, "", screenWidth, screenHeight, 0xFFFFFF);
     }
 
     @Override
