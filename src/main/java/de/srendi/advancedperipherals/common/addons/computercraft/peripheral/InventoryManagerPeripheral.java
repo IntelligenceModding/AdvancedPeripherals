@@ -189,12 +189,12 @@ public class InventoryManagerPeripheral extends BasePeripheral<BlockEntityPeriph
 
     @LuaFunction(mainThread = true)
     public final Map<String, Object> getItemInHand() throws LuaException {
-        return LuaConverter.stackToObject(getOwnerPlayer().getMainHandItem());
+        return LuaConverter.stackToObject(getOwnerPlayer().getMainHandItem().copy());
     }
 
     @LuaFunction(mainThread = true)
     public final Map<String, Object> getItemInOffHand() throws LuaException {
-        return LuaConverter.stackToObject(getOwnerPlayer().getOffhandItem());
+        return LuaConverter.stackToObject(getOwnerPlayer().getOffhandItem().copy());
     }
 
     private Player getOwnerPlayer() throws LuaException {
