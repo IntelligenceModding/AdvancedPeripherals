@@ -1,11 +1,12 @@
 package de.srendi.advancedperipherals.client.smartglasses;
 
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.ObjectDecodeRegistry;
-import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.CircleObject;
-import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.ItemObject;
-import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.RectangleObject;
-import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.RenderableObject;
-import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.TextObject;
+import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.three_dim.BlockObject;
+import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.two_dim.CircleObject;
+import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.two_dim.ItemObject;
+import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.two_dim.RectangleObject;
+import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.two_dim.RenderableObject;
+import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.two_dim.TextObject;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -45,5 +46,7 @@ public class OverlayObjectHolder {
         ObjectDecodeRegistry.register(CircleObject.TYPE_ID, CircleObject::decode);
         ObjectDecodeRegistry.register(TextObject.TYPE_ID, TextObject::decode);
         ObjectDecodeRegistry.register(ItemObject.TYPE_ID, ItemObject::decode);
+
+        ObjectDecodeRegistry.register(BlockObject.TYPE_ID, BlockObject::decode);
     }
 }

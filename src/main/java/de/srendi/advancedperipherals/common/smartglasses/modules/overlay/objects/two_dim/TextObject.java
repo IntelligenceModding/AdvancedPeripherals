@@ -1,4 +1,4 @@
-package de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects;
+package de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.two_dim;
 
 import dan200.computercraft.api.lua.IArguments;
 import dan200.computercraft.api.lua.LuaException;
@@ -97,6 +97,7 @@ public class TextObject extends RenderableObject {
 
         int x = buffer.readInt();
         int y = buffer.readInt();
+        int z = buffer.readInt();
         int sizeX = buffer.readInt();
         int sizeY = buffer.readInt();
         String content = buffer.readUtf();
@@ -109,6 +110,7 @@ public class TextObject extends RenderableObject {
         clientObject.opacity = opacity;
         clientObject.x = x;
         clientObject.y = y;
+        clientObject.z = z;
         clientObject.maxX = sizeX;
         clientObject.maxY = sizeY;
         clientObject.content = content;

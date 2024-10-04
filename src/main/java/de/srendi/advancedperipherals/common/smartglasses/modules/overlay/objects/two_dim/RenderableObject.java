@@ -1,4 +1,4 @@
-package de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects;
+package de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.two_dim;
 
 import dan200.computercraft.api.lua.IArguments;
 import dan200.computercraft.api.lua.LuaException;
@@ -26,6 +26,9 @@ public class RenderableObject extends OverlayObject {
 
     @FixedPointNumberProperty(min = -32767, max = 32767)
     public int y = 0;
+
+    @FixedPointNumberProperty(min = -32767, max = 32767)
+    public int z = 0;
 
     @FixedPointNumberProperty(min = -32767, max = 32767)
     public int maxX = 0;
@@ -108,6 +111,17 @@ public class RenderableObject extends OverlayObject {
         return y;
     }
 
+    @LuaFunction
+    public final void setZ(int z) {
+        this.z = z;
+        getModule().update(this);
+    }
+
+    @LuaFunction
+    public final int getZ() {
+        return z;
+    }
+
     @Override
     public void encode(FriendlyByteBuf buffer) {
         super.encode(buffer);
@@ -116,6 +130,7 @@ public class RenderableObject extends OverlayObject {
 
         buffer.writeInt(x);
         buffer.writeInt(y);
+        buffer.writeInt(z);
         buffer.writeInt(maxX);
         buffer.writeInt(maxY);
     }
@@ -131,6 +146,7 @@ public class RenderableObject extends OverlayObject {
                 ", color=" + color +
                 ", x=" + x +
                 ", y=" + y +
+                ", z=" + z +
                 ", sizeX=" + maxX +
                 ", sizeY=" + maxY +
                 '}';

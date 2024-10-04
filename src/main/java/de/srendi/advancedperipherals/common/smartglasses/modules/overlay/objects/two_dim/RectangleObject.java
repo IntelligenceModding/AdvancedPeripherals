@@ -1,4 +1,4 @@
-package de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects;
+package de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.two_dim;
 
 import dan200.computercraft.api.lua.IArguments;
 import dan200.computercraft.api.lua.LuaException;
@@ -50,6 +50,7 @@ public class RectangleObject extends RenderableObject {
 
         int x = buffer.readInt();
         int y = buffer.readInt();
+        int z = buffer.readInt();
         int sizeX = buffer.readInt();
         int sizeY = buffer.readInt();
 
@@ -59,6 +60,7 @@ public class RectangleObject extends RenderableObject {
         clientObject.opacity = opacity;
         clientObject.x = x;
         clientObject.y = y;
+        clientObject.z = z;
         clientObject.maxX = sizeX;
         clientObject.maxY = sizeY;
 

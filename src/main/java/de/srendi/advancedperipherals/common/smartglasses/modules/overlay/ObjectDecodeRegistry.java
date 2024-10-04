@@ -1,6 +1,6 @@
 package de.srendi.advancedperipherals.common.smartglasses.modules.overlay;
 
-import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.RenderableObject;
+import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.two_dim.RenderableObject;
 import net.minecraft.network.FriendlyByteBuf;
 
 import java.util.HashMap;

@@ -6,11 +6,12 @@ import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.lua.MethodResult;
 import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesAccess;
 import de.srendi.advancedperipherals.common.smartglasses.modules.IModuleFunctions;
-import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.CircleObject;
-import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.ItemObject;
-import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.RectangleObject;
-import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.RenderableObject;
-import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.TextObject;
+import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.three_dim.BlockObject;
+import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.two_dim.CircleObject;
+import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.two_dim.ItemObject;
+import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.two_dim.RectangleObject;
+import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.two_dim.RenderableObject;
+import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.two_dim.TextObject;
 import net.minecraft.client.Minecraft;
 
 public class OverlayGlassesFunctions implements IModuleFunctions {
@@ -51,6 +52,14 @@ public class OverlayGlassesFunctions implements IModuleFunctions {
     public final MethodResult createItem(IArguments arguments) throws LuaException {
         ItemObject item = new ItemObject(overlayModule, arguments);
         RenderableObject object = overlayModule.addObject(item);
+
+        return MethodResult.of(object, "SUCCESS");
+    }
+
+    @LuaFunction
+    public final MethodResult createBlock(IArguments arguments) throws LuaException {
+        BlockObject block = new BlockObject(overlayModule, arguments);
+        RenderableObject object = overlayModule.addObject(block);
 
         return MethodResult.of(object, "SUCCESS");
     }

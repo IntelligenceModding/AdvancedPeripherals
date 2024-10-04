@@ -1,8 +1,8 @@
 package de.srendi.advancedperipherals.client.smartglasses.objects;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.ItemObject;
-import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.RenderableObject;
+import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.two_dim.ItemObject;
+import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.two_dim.RenderableObject;
 import de.srendi.advancedperipherals.common.util.inventory.ItemUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.item.Item;

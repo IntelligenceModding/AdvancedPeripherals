@@ -112,10 +112,6 @@ public class SmartGlassesComputer extends ServerComputer implements IPocketAcces
         this.itemHandler = itemHandler;
     }
 
-    public SmartGlassesItemHandler getItemHandler() {
-        return this.itemHandler;
-    }
-
     public void markDirty() {
         isDirty = true;
     }
@@ -217,14 +213,6 @@ public class SmartGlassesComputer extends ServerComputer implements IPocketAcces
         return modules;
     }
 
-    @Override
-    protected void onTerminalChanged() {
-        super.onTerminalChanged();
-
-        /*if (entity instanceof ServerPlayer player && entity.isAlive()) {
-            // Broadcast the terminal to the current player.
-        }*/
-    }
 
     @Override
     protected void onRemoved() {

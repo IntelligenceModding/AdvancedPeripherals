@@ -6,8 +6,10 @@ import net.minecraftforge.client.gui.overlay.ForgeGui;
 
 import java.util.List;
 
-public interface IObjectRenderer {
+public class BlockRenderer implements IObjectRenderer {
 
-    void renderBatch(List<RenderableObject> object, ForgeGui gui, PoseStack poseStack, float partialTick, int screenWidth, int screenHeight);
+    @Override
+    public void renderBatch(List<RenderableObject> objects, ForgeGui gui, PoseStack poseStack, float partialTick, int screenWidth, int screenHeight) {
 
+    }
 }

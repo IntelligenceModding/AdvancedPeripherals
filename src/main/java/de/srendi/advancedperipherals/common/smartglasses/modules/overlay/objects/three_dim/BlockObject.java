@@ -1,49 +1,53 @@
-package de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects;
+package de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.three_dim;
 
 import dan200.computercraft.api.lua.IArguments;
 import dan200.computercraft.api.lua.LuaException;
+import dan200.computercraft.api.lua.LuaFunction;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
+import de.srendi.advancedperipherals.client.smartglasses.objects.BlockRenderer;
 import de.srendi.advancedperipherals.client.smartglasses.objects.IObjectRenderer;
-import de.srendi.advancedperipherals.client.smartglasses.objects.ItemRenderer;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.OverlayModule;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertytypes.StringProperty;
 import net.minecraft.network.FriendlyByteBuf;
 
 import java.util.UUID;
 
-public class ItemObject extends RenderableObject {
-    public static final int TYPE_ID = 3;
+public class BlockObject extends ThreeDimensionalObject {
+    public static final int TYPE_ID = 4;
 
-    private final IObjectRenderer renderer = new ItemRenderer();
+    private final IObjectRenderer renderer = new BlockRenderer();
 
     @StringProperty
-    public String item = "minecraft:air";
+    public String block = "minecraft:air";
 
-    public ItemObject(OverlayModule module, IArguments arguments) throws LuaException {
+    public BlockObject(OverlayModule module, IArguments arguments) throws LuaException {
         super(module, arguments);
         reflectivelyMapProperties(arguments);
     }
 
-    public ItemObject(UUID player) {
+    public BlockObject(UUID player) {
         super(player);
     }
 
-    public void setItem(String item) {
-        this.item = item;
+    @LuaFunction
+    public void setBlock(String block) {
+        this.block = block;
+        getModule().update(this);
     }
 
-    public String getItem() {
-        return item;
+    @LuaFunction
+    public final String getBlock() {
+        return block;
     }
 
     @Override
     public void encode(FriendlyByteBuf buffer) {
         buffer.writeInt(TYPE_ID);
         super.encode(buffer);
-        buffer.writeUtf(item);
+        buffer.writeUtf(block);
     }
 
-    public static ItemObject decode(FriendlyByteBuf buffer) {
+    public static BlockObject decode(FriendlyByteBuf buffer) {
         int objectId = buffer.readInt();
         boolean hasValidUUID = buffer.readBoolean();
         if (!hasValidUUID) {
@@ -56,19 +60,21 @@ public class ItemObject extends RenderableObject {
 
         int x = buffer.readInt();
         int y = buffer.readInt();
+        int z = buffer.readInt();
         int maxX = buffer.readInt();
         int maxY = buffer.readInt();
-        String item = buffer.readUtf();
+        String block = buffer.readUtf();
 
-        ItemObject clientObject = new ItemObject(player);
+        BlockObject clientObject = new BlockObject(player);
         clientObject.setId(objectId);
         clientObject.color = color;
         clientObject.opacity = opacity;
         clientObject.x = x;
         clientObject.y = y;
+        clientObject.z = z;
         clientObject.maxX = maxX;
         clientObject.maxY = maxY;
-        clientObject.item = item;
+        clientObject.block = block;
 
         return clientObject;
     }
@@ -76,18 +82,5 @@ public class ItemObject extends RenderableObject {
     @Override
     public IObjectRenderer getRenderObject() {
         return renderer;
-    }
-
-    @Override
-    public String toString() {
-        return "ItemObject{" +
-                "item='" + item + '\'' +
-                ", opacity=" + opacity +
-                ", color=" + color +
-                ", x=" + x +
-                ", y=" + y +
-                ", maxX=" + maxX +
-                ", maxY=" + maxY +
-                '}';
     }
 }

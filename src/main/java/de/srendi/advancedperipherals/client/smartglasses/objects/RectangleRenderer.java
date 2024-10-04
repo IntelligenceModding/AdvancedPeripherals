@@ -8,7 +8,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import com.mojang.math.Matrix4f;
-import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.RenderableObject;
+import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.two_dim.RenderableObject;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraftforge.client.gui.overlay.ForgeGui;
 
