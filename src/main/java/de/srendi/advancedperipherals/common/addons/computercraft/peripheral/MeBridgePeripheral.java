@@ -420,8 +420,8 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (parsedFilter.isEmpty())
             return MethodResult.of(null, "EMPTY_FILTER");
 
-        Pair<Long, AEItemKey> item = AppEngApi.findAEStackFromFilter(monitor, getCraftingService(), parsedFilter)
-        if (item.getRight().isEmpty())
+        Pair<Long, AEItemKey> item = AppEngApi.findAEStackFromFilter(monitor, getCraftingService(), parsedFilter);
+        if (item.getRight() == null && item.getLeft() == 0)
             return MethodResult.of(null, "NOT_FOUND");
         return MethodResult.of(AppEngApi.getObjectFromStack(item, getCraftingService()));
     }
