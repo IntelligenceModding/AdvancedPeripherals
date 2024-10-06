@@ -44,7 +44,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.lang.ref.WeakReference;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -73,12 +72,6 @@ public class APFakePlayer extends FakePlayer {
         }
     }
 
-    // public protected method
-    @Override
-    public void setLevel(Level level) {
-        super.setLevel(level);
-    }
-
     @Override
     public void awardStat(@NotNull Stat<?> stat) {
         MinecraftServer server = level().getServer();
@@ -97,6 +90,11 @@ public class APFakePlayer extends FakePlayer {
     @Override
     public boolean isSilent() {
         return true;
+    }
+
+    @Override
+    public void setLevel(@NotNull Level level) {
+        super.setLevel(level);
     }
 
     @Override
@@ -153,7 +151,7 @@ public class APFakePlayer extends FakePlayer {
     }
 
     public Pair<Boolean, String> digBlock() {
-        Level world = this.level();
+        Level world = level();
         HitResult hit = findHit(true, false);
         if (hit.getType() == HitResult.Type.MISS) {
             return Pair.of(false, "Nothing to break");
@@ -243,26 +241,26 @@ public class APFakePlayer extends FakePlayer {
             if (event.isCanceled()) {
                 return event.getCancellationResult();
             }
-            boolean denied = event.getUseItem() == Event.Result.DENY;
-            if (!denied) {
-                InteractionResult result = stack.onItemUseFirst(new UseOnContext(this.level(), this, InteractionHand.MAIN_HAND, stack, blockHit));
+            boolean usedItem = event.getUseItem() != Event.Result.DENY;
+            boolean usedOnBlock = event.getUseBlock() != Event.Result.DENY;
+            if (usedItem) {
+                InteractionResult result = stack.onItemUseFirst(new UseOnContext(level(), this, InteractionHand.MAIN_HAND, stack, blockHit));
                 if (result != InteractionResult.PASS) {
                     return result;
                 }
 
-                boolean bypass = getMainHandItem().doesSneakBypassUse(this.level(), pos, this);
-                if (isShiftKeyDown() || bypass || event.getUseBlock() == Event.Result.ALLOW) {
-                    InteractionResult useType = gameMode.useItemOn(this, this.level(), stack, InteractionHand.MAIN_HAND, blockHit);
-                    if (useType == InteractionResult.SUCCESS) {
-                        return InteractionResult.SUCCESS;
+                boolean bypass = getMainHandItem().doesSneakBypassUse(level(), pos, this);
+                if (isShiftKeyDown() || bypass || usedOnBlock) {
+                    InteractionResult useType = gameMode.useItemOn(this, level(), stack, InteractionHand.MAIN_HAND, blockHit);
+                    if (useType.consumesAction()) {
+                        return useType;
                     }
                 }
             }
 
-            if (stack.isEmpty() || getCooldowns().isOnCooldown(stack.getItem())) {
+            if (!stack.isEmpty() && getCooldowns().isOnCooldown(stack.getItem())) {
                 return InteractionResult.PASS;
             }
-
 
             if (stack.getItem() instanceof BlockItem blockItem) {
                 Block block = blockItem.getBlock();
@@ -271,12 +269,12 @@ public class APFakePlayer extends FakePlayer {
                 }
             }
 
-            if (denied) {
+            if (!usedItem && !usedOnBlock) {
                 return InteractionResult.PASS;
             }
 
             ItemStack copyBeforeUse = stack.copy();
-            InteractionResult result = stack.useOn(new UseOnContext(this.level(), this, InteractionHand.MAIN_HAND, copyBeforeUse, blockHit));
+            InteractionResult result = stack.useOn(new UseOnContext(level(), this, InteractionHand.MAIN_HAND, stack, blockHit));
             if (stack.isEmpty()) {
                 ForgeEventFactory.onPlayerDestroyItem(this, copyBeforeUse, InteractionHand.MAIN_HAND);
             }
@@ -309,7 +307,7 @@ public class APFakePlayer extends FakePlayer {
             blockHit = BlockHitResult.miss(traceContext.getTo(), traceDirection, new BlockPos((int) traceContext.getTo().x, (int) traceContext.getTo().y, (int) traceContext.getTo().z));
         } else {
             blockHit = BlockGetter.traverseBlocks(traceContext.getFrom(), traceContext.getTo(), traceContext, (rayTraceContext, blockPos) -> {
-                if (this.level().isEmptyBlock(blockPos) || blockPos.equals(blockPosition())) {
+                if (level().isEmptyBlock(blockPos) || blockPos.equals(blockPosition())) {
                     return null;
                 }
                 return new BlockHitResult(new Vec3(blockPos.getX(), blockPos.getY(), blockPos.getZ()), traceDirection, blockPos, false);
@@ -319,46 +317,59 @@ public class APFakePlayer extends FakePlayer {
         if (skipEntity)
             return blockHit;
 
-        List<Entity> entities = this.level().getEntities(this, getBoundingBox().expandTowards(look.x * range, look.y * range, look.z * range).inflate(1, 1, 1), collidablePredicate);
+        List<Entity> entities = level().getEntities(this, getBoundingBox().expandTowards(look.x * range, look.y * range, look.z * range).inflate(1), collidablePredicate);
 
         LivingEntity closestEntity = null;
         Vec3 closestVec = null;
-        double closestDistance = range;
+        double closestDistance = blockHit.getType() == HitResult.Type.MISS ? range * range : distanceToSqr(blockHit.getLocation());
         for (Entity entityHit : entities) {
-            if (!(entityHit instanceof LivingEntity) || entityFilter != null && !entityFilter.test(entityHit))
+            if (!(entityHit instanceof LivingEntity entity)) {
                 continue;
-            // Add litter bigger that just pick radius
-            AABB box = entityHit.getBoundingBox().inflate(entityHit.getPickRadius() + 0.5);
-            Optional<Vec3> clipResult = box.clip(origin, target);
+            }
+            // TODO: maybe let entityFilter returns the priority of the entity, instead of only returns the closest one.
+            if (entityFilter != null && !entityFilter.test(entity)) {
+                continue;
+            }
 
+            // Removed a lot logic here to make Automata cores interact like a player.
+            // However, the results for some edge cases may change. Need more review and tests.
+
+            // Hit vehicle before passenger
+            if (entity.isPassenger()) {
+                continue;
+            }
+
+            AABB box = entity.getBoundingBox();
+            Vec3 clipVec;
             if (box.contains(origin)) {
-                if (closestDistance >= 0.0D) {
-                    closestEntity = (LivingEntity) entityHit;
-                    closestVec = clipResult.orElse(origin);
-                    closestDistance = 0.0D;
-                }
-            } else if (clipResult.isPresent()) {
-                Vec3 clipVec = clipResult.get();
-                double distance = origin.distanceTo(clipVec);
-
-                if (distance < closestDistance || closestDistance == 0.0D) {
-                    if (entityHit == entityHit.getRootVehicle() && !entityHit.canRiderInteract()) {
-                        if (closestDistance == 0.0D) {
-                            closestEntity = (LivingEntity) entityHit;
-                            closestVec = clipVec;
-                        }
-                    } else {
-                        closestEntity = (LivingEntity) entityHit;
-                        closestVec = clipVec;
-                        closestDistance = distance;
-                    }
+                clipVec = origin;
+            } else {
+                clipVec = box.clip(origin, target).orElse(null);
+                if (clipVec == null) {
+                    continue;
                 }
             }
+            double distance = origin.distanceToSqr(clipVec);
+            // Ignore small enough distance
+            if (distance <= 1e-6) {
+                distance = 0;
+            }
+            if (distance > closestDistance) {
+                continue;
+            }
+            if (distance == closestDistance && closestEntity != null) {
+                // Hit larger entity before smaller
+                if (closestEntity.getBoundingBox().getSize() >= box.getSize()) {
+                    continue;
+                }
+            }
+            closestEntity = entity;
+            closestVec = clipVec;
+            closestDistance = distance;
         }
-        if (closestEntity != null && closestDistance <= range && (blockHit.getType() == HitResult.Type.MISS || distanceToSqr(blockHit.getLocation()) > closestDistance * closestDistance)) {
+        if (closestEntity != null) {
             return new EntityHitResult(closestEntity, closestVec);
-        } else {
-            return blockHit;
         }
+        return blockHit;
     }
 }

@@ -55,7 +55,7 @@ public class RefinedStorage {
 
     public static ItemStack findStackFromFilter(INetwork network, @Nullable ICraftingManager crafting, ItemFilter filter) {
         for (StackListEntry<ItemStack> temp : network.getItemStorageCache().getList().getStacks()) {
-            if (filter.test(temp.getStack().copy()))
+            if (filter.test(temp.getStack()))
                 return temp.getStack().copy();
         }
 
@@ -64,7 +64,7 @@ public class RefinedStorage {
 
         for (ICraftingPattern pattern : crafting.getPatterns()) {
             for(ItemStack stack : pattern.getOutputs()) {
-                if (filter.test(stack.copy()))
+                if (filter.test(stack))
                     return stack.copy();
             }
         }
@@ -78,7 +78,7 @@ public class RefinedStorage {
 
     public static FluidStack findFluidFromFilter(INetwork network, @Nullable ICraftingManager crafting, FluidFilter filter) {
         for (StackListEntry<FluidStack> temp : network.getFluidStorageCache().getList().getStacks()) {
-            if (filter.test(temp.getStack().copy()))
+            if (filter.test(temp.getStack()))
                 return temp.getStack().copy();
         }
 
@@ -165,7 +165,7 @@ public class RefinedStorage {
         List<ItemStack> outputsList = pattern.getOutputs();
         List<Object> outputs = new ArrayList<>();
         for (ItemStack itemStack : outputsList)
-            outputs.add(getObjectFromStack(itemStack.copy(), network));
+            outputs.add(getObjectFromStack(itemStack, network));
 
         map.put("outputs", outputs);
 
@@ -174,7 +174,7 @@ public class RefinedStorage {
         for (List<ItemStack> singleInputList : inputList) {
             List<Object> inputs1 = new ArrayList<>();
             for (ItemStack stack : singleInputList)
-                inputs1.add(getObjectFromStack(stack.copy(), network));
+                inputs1.add(getObjectFromStack(stack, network));
             inputs.add(inputs1);
         }
 
@@ -182,7 +182,7 @@ public class RefinedStorage {
         if (!pattern.isProcessing()) {
             List<ItemStack> byproductsList = pattern.getByproducts();
             for (ItemStack stack : byproductsList)
-                byproducts.add(getObjectFromStack(stack.copy(), network));
+                byproducts.add(getObjectFromStack(stack, network));
         }
 
         map.put("inputs", inputs);
@@ -228,7 +228,7 @@ public class RefinedStorage {
     public static Object getItem(INetwork network, ItemStack item) {
         for (ItemStack itemStack : getItems(network)) {
             if (itemStack.is(item.getItem()) && Objects.equals(itemStack.getTag(), item.getTag()))
-                return getObjectFromStack(itemStack.copy(), network);
+                return getObjectFromStack(itemStack, network);
         }
         return null;
     }

@@ -10,6 +10,7 @@ public class WorldConfig implements IAPConfig {
     public final ForgeConfigSpec.BooleanValue enableVillagerStructures;
     public final ForgeConfigSpec.BooleanValue givePlayerBookOnJoin;
     public final ForgeConfigSpec.IntValue villagerStructureWeight;
+    public final ForgeConfigSpec.BooleanValue enableWanderingTraderTrades;
     private final ForgeConfigSpec configSpec;
 
     public WorldConfig() {
@@ -20,6 +21,7 @@ public class WorldConfig implements IAPConfig {
         enableVillagerStructures = builder.comment("Enable the villager structures for the computer scientist.").define("enableVillagerStructures", true);
         givePlayerBookOnJoin = builder.comment("Gives the ap documentation to new players.").define("givePlayerBookOnJoin", true);
         villagerStructureWeight = builder.comment("The weight of the villager structures.").defineInRange("villagerStructureWeight", 10, 0, 16000);
+        enableWanderingTraderTrades = builder.comment("Enable new wandering trader trades.").define("enableWanderingTraderTrades", true);
 
         builder.pop();
         configSpec = builder.build();

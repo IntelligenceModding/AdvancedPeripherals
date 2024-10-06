@@ -74,7 +74,7 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
             return notConnected();
 
         List<Object> items = new ArrayList<>();
-        RefinedStorage.getCraftableItems(getNetwork()).forEach(item -> items.add(RefinedStorage.getObjectFromStack(item.copy(), getNetwork())));
+        RefinedStorage.getCraftableItems(getNetwork()).forEach(item -> items.add(RefinedStorage.getObjectFromStack(item, getNetwork())));
         return MethodResult.of(items);
     }
 
@@ -299,7 +299,10 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (filter.rightPresent())
             return MethodResult.of(null, filter.getRight());
 
-        return MethodResult.of(RefinedStorage.getObjectFromStack(RefinedStorage.findStackFromFilter(getNetwork(), getNetwork().getCraftingManager(), filter.getLeft()), getNetwork()));
+        ItemStack item = RefinedStorage.findStackFromFilter(getNetwork(), getNetwork().getCraftingManager(), filter.getLeft());
+        if (item.isEmpty())
+            return MethodResult.of(null, "NOT_FOUND");
+        return MethodResult.of(RefinedStorage.getObjectFromStack(item, getNetwork()));
     }
 
     @LuaFunction(mainThread = true)
@@ -313,7 +316,7 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
             return MethodResult.of(null, filter.getRight());
 
         ItemStack stack = RefinedStorage.findStackFromFilter(getNetwork(), getNetwork().getCraftingManager(), filter.getLeft());
-        if (stack == null)
+        if (stack.isEmpty())
             return MethodResult.of(null, "NOT_CRAFTABLE");
 
         ICalculationResult result = getNetwork().getCraftingManager().create(stack, filter.getLeft().getCount());
@@ -334,7 +337,7 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
             return MethodResult.of(null, filter.getRight());
 
         FluidStack stack = RefinedStorage.findFluidFromFilter(getNetwork(), getNetwork().getCraftingManager(), filter.getLeft());
-        if (stack == null)
+        if (stack.isEmpty())
             return MethodResult.of(null, "NOT_CRAFTABLE");
 
         ICalculationResult result = getNetwork().getCraftingManager().create(stack, filter.getLeft().getCount());
@@ -355,7 +358,7 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
             return MethodResult.of(null, filter.getRight());
 
         ItemStack stack = RefinedStorage.findStackFromFilter(getNetwork(), getNetwork().getCraftingManager(), filter.getLeft());
-        if (stack == null)
+        if (stack.isEmpty())
             return MethodResult.of(null, "NOT_CRAFTABLE");
 
         for (ICraftingTask task : getNetwork().getCraftingManager().getTasks()) {

@@ -103,16 +103,15 @@ public class FluidFilter {
             return fingerprint.equals(testFingerprint);
         }
 
-        // If the filter does not have nbt values, a tag or a fingerprint, just test if the items are the same
-        if (fluid != Fluids.EMPTY) {
-            if (tag == null && nbt == null && fingerprint.isEmpty())
-                return stack.getFluid().isSame(fluid);
+        if (fluid != Fluids.EMPTY && !stack.getFluid().isSame(fluid)) {
+            return false;
         }
-        if (tag != null && !stack.getFluid().is(tag))
+        if (tag != null && !stack.getFluid().is(tag)) {
             return false;
-        if (nbt != null && !stack.getOrCreateTag().equals(nbt) && (fluid == Fluids.EMPTY || stack.getFluid().isSame(fluid)))
+        }
+        if (nbt != null && !stack.getOrCreateTag().equals(nbt)) {
             return false;
-
+        }
         return true;
     }
 
