@@ -59,7 +59,7 @@ public class WeakAutomataCore extends BaseItem implements IFeedableAutomataCore 
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
+    public void appendHoverText(@NotNull ItemStack stack, @Nullable Level worldIn, @NotNull List<Component> tooltip, @NotNull TooltipFlag flagIn) {
         super.appendHoverText(stack, worldIn, tooltip, flagIn);
         CompoundTag tag = stack.getOrCreateTag();
         CompoundTag consumedData = tag.getCompound(CONSUMER_ENTITY_COMPOUND);

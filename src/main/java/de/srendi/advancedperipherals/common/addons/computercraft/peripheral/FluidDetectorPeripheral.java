@@ -9,10 +9,10 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 public class FluidDetectorPeripheral extends BasePeripheral<BlockEntityPeripheralOwner<FluidDetectorEntity>> {
 
-    public static final String TYPE = "fluid_detector";
+    public static final String PERIPHERAL_TYPE = "fluid_detector";
 
     public FluidDetectorPeripheral(FluidDetectorEntity tileEntity) {
-        super(TYPE, new BlockEntityPeripheralOwner<>(tileEntity));
+        super(PERIPHERAL_TYPE, new BlockEntityPeripheralOwner<>(tileEntity));
     }
 
     @Override

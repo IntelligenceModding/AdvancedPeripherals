@@ -11,3 +11,5 @@ on:
 jobs:
   build-and-test:
     uses: IntelligenceModding/actions/.github/workflows/build-and-test.yaml@master
+  run-gametests:
+    uses: IntelligenceModding/actions/.github/workflows/run-gametests.yaml@master

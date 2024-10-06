@@ -1,3 +1,4 @@
+import cc.tweaked.gradle.ClientJavaExec
 import net.darkhax.curseforgegradle.TaskPublishCurseForge
 
 import java.text.SimpleDateFormat
@@ -7,8 +8,8 @@ plugins {
     id 'net.darkhax.curseforgegradle' version '1.1.16'
     id 'org.jetbrains.changelog' version '1.2.1'
     id "com.modrinth.minotaur" version "2.+"
-    id "org.jetbrains.kotlin.jvm" version "1.6.10"
-    id 'net.minecraftforge.gradle' version '[6.0.18,6.2)'
+    id "org.jetbrains.kotlin.jvm" version "${kotlin_version}"
+    id 'net.minecraftforge.gradle'
     id 'org.parchmentmc.librarian.forgegradle' version '1.+'
     id 'org.spongepowered.mixin' version '0.7.+'
     id "com.github.breadmoirai.github-release" version "2.5.2"
@@ -61,7 +62,23 @@ sourceSets {
     main.resources {
         srcDir 'src/generated/resources'
     }
-    testMod {}
+    testMod {
+        java.srcDir 'src/testMod/java'
+        kotlin.srcDir 'src/testMod/kotlin'
+        resources.srcDir 'src/testMod/resources'
+        compileClasspath += main.compileClasspath + test.compileClasspath
+        runtimeClasspath += main.runtimeClasspath + test.runtimeClasspath
+    }
+    testFixtures {
+        java.srcDir 'src/testFixtures/java'
+        kotlin.srcDir 'src/testFixtures/kotlin'
+        resources.srcDir 'src/testFixtures/resources'
+    }
+}
+
+java.registerFeature("testFixtures") {
+    usingSourceSet(sourceSets.testFixtures)
+    disablePublication()
 }
 
 minecraft {
@@ -71,7 +88,13 @@ minecraft {
     accessTransformer file('src/main/resources/META-INF/accesstransformer.cfg')
     accessTransformer file('src/testMod/resources/META-INF/accesstransformer.cfg')
 
+
     runs {
+        all {
+            lazyToken('minecraft_classpath') {
+                configurations.library.copyRecursive().resolve().collect { it.absolutePath }.join(File.pathSeparator)
+            }
+        }
         client {
             workingDirectory project.file('run')
 
@@ -135,33 +158,67 @@ minecraft {
             workingDirectory project.file('test-files/client')
             parent runs.client
 
-            mods {
-                aptest {
-                    source sourceSets.testMod
-                }
+            def oldClasspath = lazyTokens["minecraft_classpath"]
+            lazyToken("minecraft_classpath") {
+                // Add all files in testMinecraftLibrary to the classpath.
+                def allFiles = new HashSet<String>();
+
+                def minecraftClasspath = oldClasspath?.get()
+                if (minecraftClasspath != null && !minecraftClasspath.isEmpty()) allFiles.addAll(minecraftClasspath.split(File.pathSeparatorChar))
+
+                for (file in configurations["testMinecraftLibrary"]) allFiles.add(file.absolutePath)
+
+                println("New classpath $allFiles")
+                allFiles.join(File.pathSeparator)
             }
 
-            lazyToken('minecraft_classpath') {
-                (configurations.implementationExtra.copyRecursive().resolve())
-                        .collect { it.absolutePath }
-                        .join(File.pathSeparator)
+            property 'forge.logging.markers', 'REGISTRIES'
+            property 'forge.logging.console.level', 'debug'
+            property 'forge.enabledGameTestNamespaces', 'advancedperipherals,advancedperipheralstest'
+            property 'advancedperipheralstest.sources', file("src/testMod/resources/data/advancedperipheralstest").absolutePath
+            property 'advancedperipheralstest.tags', 'common,client'
+
+            args "--mixin.config=ccgametest.mixins.json"
+            args "--mixin.config=advancedperipheralstest.mixins.json"
+
+            mods {
+                advancedperipheralstest {
+                    source sourceSets.testMod
+                    source sourceSets.testFixtures
+                }
             }
         }
 
-        testServer {
+        gameTestServer {
+            def oldClasspath = lazyTokens["minecraft_classpath"]
+            lazyToken("minecraft_classpath") {
+                // Add all files in testMinecraftLibrary to the classpath.
+                def allFiles = new HashSet<String>();
+
+                def minecraftClasspath = oldClasspath?.get()
+                if (minecraftClasspath != null && !minecraftClasspath.isEmpty()) allFiles.addAll(minecraftClasspath.split(File.pathSeparatorChar))
+
+                for (file in configurations["testMinecraftLibrary"]) allFiles.add(file.absolutePath)
+
+                println("New classpath $allFiles")
+                allFiles.join(File.pathSeparator)
+            }
+
             workingDirectory project.file('test-files/server')
+            property 'forge.logging.markers', 'REGISTRIES'
+            property 'forge.logging.console.level', 'debug'
+            property 'forge.enabledGameTestNamespaces', 'advancedperipherals,advancedperipheralstest'
+            property 'advancedperipheralstest.sources', file("src/testMod/resources/data/advancedperipheralstest").absolutePath
+
+            args "--mixin.config=ccgametest.mixins.json"
+            args "--mixin.config=advancedperipheralstest.mixins.json"
             parent runs.server
 
             mods {
-                aptest {
+                advancedperipheralstest {
                     source sourceSets.testMod
+                    source sourceSets.testFixtures
                 }
-            }
-
-            lazyToken('minecraft_classpath') {
-                (configurations.implementationExtra.copyRecursive().resolve())
-                        .collect { it.absolutePath }
-                        .join(File.pathSeparator)
             }
         }
     }
@@ -252,9 +309,27 @@ repositories {
 }
 
 configurations {
+    minecraftLibrary { extendsFrom(minecraftEmbed) }
+
+    testMinecraftLibrary {
+        canBeResolved = true
+        canBeConsumed = false
+        // Prevent ending up with multiple versions of libraries on the classpath.
+        shouldResolveConsistentlyWith(minecraftLibrary)
+    }
+
+    library
+    implementation.extendsFrom library
     implementationExtra
+    testImplementation.extendsFrom(implementation)
     testModImplementation.extendsFrom(implementation)
     testModImplementation.extendsFrom(testImplementation)
+    testFixturesImplementation.extendsFrom(implementation)
+    testFixturesImplementation.extendsFrom(testImplementation)
+}
+
+processTestModResources {
+    duplicatesStrategy = 'exclude'
 }
 
 dependencies {
@@ -265,6 +340,7 @@ dependencies {
     compileOnly "org.jetbrains:annotations:${jb_annotations}"
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
     implementation fg.deobf("org.squiddev:cc-tweaked-${minecraft_version}:${cc_version}")
+    implementation fg.deobf("org.squiddev:cc-tweaked-${minecraft_version}:${cc_version}:api")
     // Minimal requirements end
 
     // Extended requirements
@@ -300,7 +376,7 @@ dependencies {
     compileOnly fg.deobf("curse.maven:ae-additions-493962:${ae2additions_version}")
     //runtimeOnly fg.deobf("curse.maven:ae-additions-493962:${ae2additions_version}")
 
-    implementation fg.deobf("thedarkcolour:kotlinforforge:${kotlinforforge_version}")
+    runtimeOnly fg.deobf("thedarkcolour:kotlinforforge:${kotlinforforge_version}")
 
     // Botania
     compileOnly fg.deobf("vazkii.botania:Botania:${botania_version}")
@@ -345,12 +421,17 @@ dependencies {
 
     testImplementation "org.junit.jupiter:junit-jupiter-api:${junit_version}"
     testImplementation "org.junit.jupiter:junit-jupiter-params:${junit_version}"
+    testImplementation "org.junit.jupiter:junit-jupiter-engine:${junit_version}"
+    testImplementation "net.jqwik:jqwik:${jqwikVersion}"
+    testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:${kotlin_coroutines_version}"
     testImplementation "org.hamcrest:hamcrest:${hamcrest_version}"
-    testImplementation "org.jetbrains.kotlin:kotlin-reflect:${kotlin_version}"
-    testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:${kotlinx_coroutines_version}"
     testModImplementation sourceSets.main.output
+    testModImplementation sourceSets.testFixtures.output
 
-    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junit_version}"
+    testMinecraftLibrary("org.junit.jupiter:junit-jupiter-api:${junit_version}")
+    testMinecraftLibrary("org.junit.jupiter:junit-jupiter-params:${junit_version}")
+    testMinecraftLibrary("org.hamcrest:hamcrest:${hamcrest_version}")
+
     // Testing stuff
     // JEI
     implementation fg.deobf("mezz.jei:jei-${jei_version}")
@@ -381,6 +462,11 @@ changelog {
 
 compileTestModJava {
     dependsOn(compileJava)
+    dependsOn(compileKotlin)
+    dependsOn(compileTestJava)
+    dependsOn(compileTestKotlin)
+    dependsOn(compileTestFixturesJava)
+    dependsOn(compileTestFixturesKotlin)
 }
 
 task setupServer(type: Copy) {
@@ -394,28 +480,12 @@ task setupServer(type: Copy) {
     into "test-files/server"
 }
 
-["Client", "Server"].forEach { name ->
-    tasks.register("test$name", JavaExec.class).configure {
-        it.group('In-game tests')
-        it.description("Runs tests on a temporary Minecraft instance.")
-        it.dependsOn(setupServer, "prepareRunTest$name", "cleanTest$name", 'compileTestModJava')
-
-        JavaExec exec = tasks.getByName("runTest$name")
-        exec.copyTo(it)
-        it.setClasspath(exec.getClasspath())
-        it.mainClass = exec.mainClass
-        it.setArgs(exec.getArgs())
-
-        it.systemProperty('forge.logging.console.level', 'debug')
-        it.systemProperty('ttoolkit.run', 'true')
-    }
-}
-
 test {
     useJUnitPlatform()
     testLogging {
         events "skipped", "failed"
     }
+    finalizedBy('runGameTestServer')
 }
 
 afterEvaluate {
@@ -612,3 +682,11 @@ publishing {
         }
     }
 }
+
+tasks.register('runGameTestClient', ClientJavaExec, { task ->
+    task.outputs.upToDateWhen { false }
+
+    description "Runs client-side gametests with no mods"
+    setRunConfig(minecraft.runs.testClient)
+    tags("client")
+})

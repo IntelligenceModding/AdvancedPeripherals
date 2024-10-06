@@ -21,12 +21,12 @@ build
 eclipse
 run
 server
+/.jqwik-database
 
 # Files from Forge MDK
 forge*changelog.txt
 
 #github
-
 1.17
 .env
 
