@@ -8,6 +8,4 @@ import de.srendi.advancedperipherals.lib.peripherals.IPeripheralPlugin;
  */
 public interface IModuleFunctions extends IPeripheralPlugin {
 
-    IModuleFunctions EMPTY = new IModuleFunctions() {};
-
 }

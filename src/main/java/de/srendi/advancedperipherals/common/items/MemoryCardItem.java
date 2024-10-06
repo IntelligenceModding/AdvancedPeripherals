@@ -30,9 +30,8 @@ public class MemoryCardItem extends BaseItem {
     public void appendHoverText(ItemStack stack, @Nullable Level levelIn, List<Component> tooltip, TooltipFlag flagIn) {
         super.appendHoverText(stack, levelIn, tooltip, flagIn);
         CompoundTag data = stack.getOrCreateTag();
-        // TODO <0.8>: remove the owner name field
-        if (data.contains("ownerId") && data.contains("owner")) {
-            tooltip.add(EnumColor.buildTextComponent(Component.translatable("item.advancedperipherals.tooltip.memory_card.bound", data.getString("owner"))));
+        if (data.contains("ownerId")) {
+            tooltip.add(EnumColor.buildTextComponent(Component.translatable("item.advancedperipherals.tooltip.binding.boundto", data.getString("ownerId"))));
         }
     }
 
@@ -41,15 +40,12 @@ public class MemoryCardItem extends BaseItem {
         if (!worldIn.isClientSide) {
             ItemStack stack = playerIn.getItemInHand(handIn);
             CompoundTag data = stack.getOrCreateTag();
-            // TODO <0.8>: remove the owner name field
-            if (data.contains("ownerId") || data.contains("owner")) {
-                playerIn.displayClientMessage(Component.translatable("text.advancedperipherals.removed_player"), true);
+            if (data.contains("ownerId")) {
+                playerIn.displayClientMessage(EnumColor.buildTextComponent(Component.translatable("text.advancedperipherals.cleared_memorycard")), true);
                 data.remove("ownerId");
-                data.remove("owner");
             } else {
-                playerIn.displayClientMessage(Component.translatable("text.advancedperipherals.added_player"), true);
+                playerIn.displayClientMessage(EnumColor.buildTextComponent(Component.translatable("text.advancedperipherals.bind_memorycard")), true);
                 data.putUUID("ownerId", playerIn.getUUID());
-                data.putString("owner", playerIn.getName().getString());
             }
         }
         return super.use(worldIn, playerIn, handIn);
