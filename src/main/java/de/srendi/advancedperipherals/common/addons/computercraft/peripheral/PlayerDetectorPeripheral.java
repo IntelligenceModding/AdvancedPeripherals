@@ -195,7 +195,7 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
 
     @LuaFunction(value = {"getPlayerPos", "getPlayer"}, mainThread = true)
     public final Map<String, Object> getPlayerPos(IArguments arguments) throws LuaException {
-        if (!APConfig.PERIPHERALS_CONFIG.playerSpy.get())
+        if (!APConfig.PERIPHERALS_CONFIG.enablePlayerPosFunction.get())
             throw new LuaException("This function is disabled in the config. Activate it or ask an admin if he can activate it.");
         ResourceKey<Level> dimension = getLevel().dimension();
 
@@ -269,6 +269,19 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
             info.put("respawnAngle", existingPlayer.getRespawnAngle());
         }
         return info;
+    }
+
+    @LuaFunction(mainThread = true)
+    public final String getPlayerUUID(String username) throws LuaException {
+        ResourceKey<Level> dimension = getLevel().dimension();
+
+        for (Player player : getPlayers()) {
+            if (!isAllowedMultiDimensional() && player.getLevel().dimension() != dimension)
+                continue;
+            if(player.getName().getString().equals(username))
+                return player.getUUID().toString();
+        }
+        return null;
     }
 
     private List<ServerPlayer> getPlayers() {
