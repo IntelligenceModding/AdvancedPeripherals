@@ -6,6 +6,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+## [1.19.2-0.7.37r] - 2024-10-06
+
+### Added
+- Wandering Trader config
+
+### Changed
+- Safe the owner of the memory card to the inventory manager after a player places the card into the manager and clear the card after. Resolves a security issue where players could eventually steal memory cards from other players
+
+### Fixed
+- [#660] Fixed that the inventory manager's `getItemInHand` function adds a blank nbt tag to the item
+- [#636] Fixed that the automata's `useOnBlock` function will return PASS in some specific case
+- [#645] Fixed that the inventory functions for the powah integration would always return nil
+- Fixed that some entity operations don't have enough range
+
 ## [1.19.2-0.7.36r] - 2024-06-11
 
 ### Added
