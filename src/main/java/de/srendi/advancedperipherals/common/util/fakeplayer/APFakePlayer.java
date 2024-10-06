@@ -44,7 +44,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.lang.ref.WeakReference;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -91,7 +90,6 @@ public class APFakePlayer extends FakePlayer {
     @Override
     public void openTextEdit(@NotNull SignBlockEntity sign) {
     }
-
 
     @Override
     public boolean isSilent() {
@@ -318,46 +316,59 @@ public class APFakePlayer extends FakePlayer {
         if (skipEntity)
             return blockHit;
 
-        List<Entity> entities = level.getEntities(this, getBoundingBox().expandTowards(look.x * range, look.y * range, look.z * range).inflate(1, 1, 1), collidablePredicate);
+        List<Entity> entities = level.getEntities(this, getBoundingBox().expandTowards(look.x * range, look.y * range, look.z * range).inflate(1), collidablePredicate);
 
         LivingEntity closestEntity = null;
         Vec3 closestVec = null;
-        double closestDistance = range;
+        double closestDistance = blockHit.getType() == HitResult.Type.MISS ? range * range : distanceToSqr(blockHit.getLocation());
         for (Entity entityHit : entities) {
-            if (!(entityHit instanceof LivingEntity) || entityFilter != null && !entityFilter.test(entityHit))
+            if (!(entityHit instanceof LivingEntity entity)) {
                 continue;
-            // Add litter bigger that just pick radius
-            AABB box = entityHit.getBoundingBox().inflate(entityHit.getPickRadius() + 0.5);
-            Optional<Vec3> clipResult = box.clip(origin, target);
+            }
+            // TODO: maybe let entityFilter returns the priority of the entity, instead of only returns the closest one.
+            if (entityFilter != null && !entityFilter.test(entity)) {
+                continue;
+            }
 
+            // Removed a lot logic here to make Automata cores interact like a player.
+            // However, the results for some edge cases may change. Need more review and tests.
+
+            // Hit vehicle before passenger
+            if (entity.isPassenger()) {
+                continue;
+            }
+
+            AABB box = entity.getBoundingBox();
+            Vec3 clipVec;
             if (box.contains(origin)) {
-                if (closestDistance >= 0.0D) {
-                    closestEntity = (LivingEntity) entityHit;
-                    closestVec = clipResult.orElse(origin);
-                    closestDistance = 0.0D;
-                }
-            } else if (clipResult.isPresent()) {
-                Vec3 clipVec = clipResult.get();
-                double distance = origin.distanceTo(clipVec);
-
-                if (distance < closestDistance || closestDistance == 0.0D) {
-                    if (entityHit == entityHit.getRootVehicle() && !entityHit.canRiderInteract()) {
-                        if (closestDistance == 0.0D) {
-                            closestEntity = (LivingEntity) entityHit;
-                            closestVec = clipVec;
-                        }
-                    } else {
-                        closestEntity = (LivingEntity) entityHit;
-                        closestVec = clipVec;
-                        closestDistance = distance;
-                    }
+                clipVec = origin;
+            } else {
+                clipVec = box.clip(origin, target).orElse(null);
+                if (clipVec == null) {
+                    continue;
                 }
             }
+            double distance = origin.distanceToSqr(clipVec);
+            // Ignore small enough distance
+            if (distance <= 1e-6) {
+                distance = 0;
+            }
+            if (distance > closestDistance) {
+                continue;
+            }
+            if (distance == closestDistance && closestEntity != null) {
+                // Hit larger entity before smaller
+                if (closestEntity.getBoundingBox().getSize() >= box.getSize()) {
+                    continue;
+                }
+            }
+            closestEntity = entity;
+            closestVec = clipVec;
+            closestDistance = distance;
         }
-        if (closestEntity != null && closestDistance <= range && (blockHit.getType() == HitResult.Type.MISS || distanceToSqr(blockHit.getLocation()) > closestDistance * closestDistance)) {
+        if (closestEntity != null) {
             return new EntityHitResult(closestEntity, closestVec);
-        } else {
-            return blockHit;
         }
+        return blockHit;
     }
 }
