@@ -563,7 +563,7 @@ public class AppEngApi {
         if (!iterator.hasNext()) return items;
         while (iterator.hasNext()) {
             IStorageProvider entity = iterator.next().getService(IStorageProvider.class);
-            if (entity == null || !(entity instanceof DriveBlockEntity drive))
+            if (!(entity instanceof DriveBlockEntity drive))
                 continue;
 
             InternalInventory inventory = drive.getInternalInventory();
