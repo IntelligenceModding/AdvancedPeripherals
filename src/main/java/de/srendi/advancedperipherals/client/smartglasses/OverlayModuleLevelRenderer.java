@@ -6,6 +6,7 @@ import com.mojang.blaze3d.vertex.BufferUploader;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
+import com.mojang.blaze3d.vertex.VertexFormat;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.client.RenderUtil;
 import de.srendi.advancedperipherals.common.util.EnumColor;
@@ -13,8 +14,14 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.CandleBlock;
+import net.minecraft.world.level.block.LecternBlock;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RenderLevelStageEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -54,7 +61,7 @@ public class OverlayModuleLevelRenderer {
 
             posestack.translate(-view.x + blockPos.getX(), -view.y + blockPos.getY(), -view.z + blockPos.getZ());
 
-            RenderUtil.drawPlane(posestack, bufferbuilder, colors[0], colors[1], colors[2], 0.8f, RenderUtil.Perspective.UP, 0f, 0.5f, 0f, 0.5f, 0f, 1f);
+            RenderUtil.drawPlane(posestack, bufferbuilder, colors[0], colors[1], colors[2], 0.8f, Direction.UP, 0f, 0.5f, 0f, 0.5f, 0f, 1f);
 
             BufferUploader.drawWithShader(bufferbuilder.end());
             posestack.popPose();
@@ -66,6 +73,23 @@ public class OverlayModuleLevelRenderer {
             posestack.translate(-view.x + blockPos.getX(), -view.y + blockPos.getY(), -view.z + blockPos.getZ());
 
             RenderUtil.drawBox(posestack, bufferbuilder, colors[0], colors[1], colors[2], 0.8f, 16f, 16f, 12f);
+            BufferUploader.drawWithShader(bufferbuilder.end());
+            posestack.popPose();
+
+            posestack.pushPose();
+            RenderSystem.setShader(GameRenderer::getPositionColorShader);
+            bufferbuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR_NORMAL);
+            colors = EnumColor.LIGHT_PURPLE.getRgb();
+
+            blockPos = new BlockPos(0, 190, 2);
+            posestack.translate(-view.x + blockPos.getX(), -view.y + blockPos.getY(), -view.z + blockPos.getZ());
+
+            VoxelShape shape = Block.box(0.0, 0.0, 0.0, 16.0, 18.0, 16.0);
+            RenderSystem.setShaderColor(colors[0], colors[1], colors[2], 0.6f);
+
+            RenderUtil.drawVoxelShape(posestack, bufferbuilder, shape, 0f, 0f, 0f, colors[0], colors[1], colors[2], 0.6f);
+            RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
+
             BufferUploader.drawWithShader(bufferbuilder.end());
             posestack.popPose();
 
