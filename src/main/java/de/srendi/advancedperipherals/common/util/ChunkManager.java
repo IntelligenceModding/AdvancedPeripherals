@@ -27,7 +27,7 @@ public class ChunkManager extends SavedData {
 
     private static final String DATA_NAME = AdvancedPeripherals.MOD_ID + "_ForcedChunks";
     private static final String FORCED_CHUNKS_TAG = "forcedChunks";
-    private static int tickCounter = 0;
+    private static long tickCounter = 0;
     private final Map<UUID, LoadChunkRecord> forcedChunks = new HashMap<>();
     private boolean initialized = false;
 
@@ -60,8 +60,7 @@ public class ChunkManager extends SavedData {
             tickCounter++;
             // run cleanup per chunkLoadValidTime / 10
             final int checkIntervalInTick = APConfig.PERIPHERALS_CONFIG.chunkLoadValidTime.get() * 20 / 10;
-            if (tickCounter >= checkIntervalInTick) {
-                tickCounter = 0;
+            if (tickCounter % checkIntervalInTick == 0) {
                 ChunkManager.get(ServerLifecycleHooks.getCurrentServer().overworld()).cleanup();
             }
         }
@@ -259,7 +258,7 @@ public class ChunkManager extends SavedData {
             this.dimensionName = dimensionName;
             this.pos = pos;
             this.radius = radius;
-            this.lastTouch = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC);
+            this.lastTouch = tickCounter;
         }
 
         public static LoadChunkRecord deserialize(@NotNull CompoundTag tag) {
@@ -285,12 +284,11 @@ public class ChunkManager extends SavedData {
         }
 
         public void touch() {
-            lastTouch = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC);
+            lastTouch = tickCounter;
         }
 
         public boolean isValid() {
-            long currentEpoch = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC);
-            return lastTouch + APConfig.PERIPHERALS_CONFIG.chunkLoadValidTime.get() >= currentEpoch;
+            return lastTouch + APConfig.PERIPHERALS_CONFIG.chunkLoadValidTime.get() * 20 >= tickCounter;
         }
 
         public @NotNull CompoundTag serialize() {
