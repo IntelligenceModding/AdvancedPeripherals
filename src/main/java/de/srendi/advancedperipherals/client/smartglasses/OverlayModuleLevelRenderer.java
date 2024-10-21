@@ -9,6 +9,9 @@ import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.client.RenderUtil;
+import de.srendi.advancedperipherals.client.smartglasses.objects.threedim.IThreeDObjectRenderer;
+import de.srendi.advancedperipherals.client.smartglasses.objects.twodim.ITwoDObjectRenderer;
+import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.two_dim.RenderableObject;
 import de.srendi.advancedperipherals.common.util.EnumColor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GameRenderer;
@@ -17,15 +20,17 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.CandleBlock;
-import net.minecraft.world.level.block.LecternBlock;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RenderLevelStageEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Mod.EventBusSubscriber(value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.FORGE, modid = AdvancedPeripherals.MOD_ID)
 public class OverlayModuleLevelRenderer {
@@ -37,6 +42,29 @@ public class OverlayModuleLevelRenderer {
 
         BufferBuilder bufferbuilder = Tesselator.getInstance().getBuilder();
         if (event.getStage() == RenderLevelStageEvent.Stage.AFTER_TRANSLUCENT_BLOCKS) {
+            Map<Class<? extends RenderableObject>, List<RenderableObject>> batches = new HashMap<>();
+
+            for (RenderableObject object : OverlayObjectHolder.getObjects()) {
+                if (!object.isEnabled() || object.getRenderObject() instanceof ITwoDObjectRenderer)
+                    continue;
+
+                Class<? extends RenderableObject> objectClass = object.getClass();
+
+                if (batches.containsKey(objectClass)) {
+                    batches.get(objectClass).add(object);
+                    continue;
+                }
+
+                List<RenderableObject> newBatchArray = new ArrayList<>();
+                newBatchArray.add(object);
+                batches.put(objectClass, newBatchArray);
+            }
+
+            for (List<RenderableObject> batch : batches.values()) {
+                ((IThreeDObjectRenderer) batch.get(0).getRenderObject()).renderBatch(batch, event, posestack, view, bufferbuilder);
+            }
+
+
             bufferbuilder.begin(RenderType.solid().mode(), DefaultVertexFormat.BLOCK);
             BlockPos blockPos = new BlockPos(0, 190, 0);
 
@@ -63,16 +91,6 @@ public class OverlayModuleLevelRenderer {
 
             RenderUtil.drawPlane(posestack, bufferbuilder, colors[0], colors[1], colors[2], 0.8f, Direction.UP, 0f, 0.5f, 0f, 0.5f, 0f, 1f);
 
-            BufferUploader.drawWithShader(bufferbuilder.end());
-            posestack.popPose();
-            posestack.pushPose();
-            RenderSystem.setShader(GameRenderer::getPositionColorShader);
-            bufferbuilder.begin(RenderType.translucent().mode(), DefaultVertexFormat.POSITION_COLOR_NORMAL);
-
-            blockPos = new BlockPos(5, 190, 0);
-            posestack.translate(-view.x + blockPos.getX(), -view.y + blockPos.getY(), -view.z + blockPos.getZ());
-
-            RenderUtil.drawBox(posestack, bufferbuilder, colors[0], colors[1], colors[2], 0.8f, 16f, 16f, 12f);
             BufferUploader.drawWithShader(bufferbuilder.end());
             posestack.popPose();
 

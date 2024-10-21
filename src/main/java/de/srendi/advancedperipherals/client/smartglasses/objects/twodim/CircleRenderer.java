@@ -1,4 +1,4 @@
-package de.srendi.advancedperipherals.client.smartglasses.objects;
+package de.srendi.advancedperipherals.client.smartglasses.objects.twodim;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
@@ -15,7 +15,7 @@ import net.minecraftforge.client.gui.overlay.ForgeGui;
 
 import java.util.List;
 
-public class CircleRenderer implements IObjectRenderer {
+public class CircleRenderer implements ITwoDObjectRenderer {
 
     @Override
     public void renderBatch(List<RenderableObject> objects, ForgeGui gui, PoseStack poseStack, float partialTick, int screenWidth, int screenHeight) {

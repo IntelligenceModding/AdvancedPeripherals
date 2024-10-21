@@ -4,7 +4,8 @@ import dan200.computercraft.api.lua.IArguments;
 import dan200.computercraft.api.lua.LuaException;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.client.smartglasses.objects.IObjectRenderer;
-import de.srendi.advancedperipherals.client.smartglasses.objects.RectangleRenderer;
+import de.srendi.advancedperipherals.client.smartglasses.objects.twodim.ITwoDObjectRenderer;
+import de.srendi.advancedperipherals.client.smartglasses.objects.twodim.RectangleRenderer;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.OverlayModule;
 import net.minecraft.network.FriendlyByteBuf;
 

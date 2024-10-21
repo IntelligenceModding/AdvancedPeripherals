@@ -1,6 +1,8 @@
 package de.srendi.advancedperipherals.client.smartglasses;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import de.srendi.advancedperipherals.client.smartglasses.objects.threedim.IThreeDObjectRenderer;
+import de.srendi.advancedperipherals.client.smartglasses.objects.twodim.ITwoDObjectRenderer;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.two_dim.RenderableObject;
 import net.minecraftforge.client.gui.overlay.ForgeGui;
 import net.minecraftforge.client.gui.overlay.IGuiOverlay;
@@ -20,7 +22,7 @@ public class OverlayModuleOverlay implements IGuiOverlay {
         Map<Class<? extends RenderableObject>, List<RenderableObject>> batches = new HashMap<>();
 
         for (RenderableObject object : OverlayObjectHolder.getObjects()) {
-            if (!object.isEnabled())
+            if (!object.isEnabled() || !(object.getRenderObject() instanceof ITwoDObjectRenderer))
                 continue;
 
             Class<? extends RenderableObject> objectClass = object.getClass();
@@ -36,7 +38,7 @@ public class OverlayModuleOverlay implements IGuiOverlay {
         }
 
         for (List<RenderableObject> batch : batches.values()) {
-            batch.get(0).getRenderObject().renderBatch(batch, gui, poseStack, partialTick, screenWidth, screenHeight);
+            ((ITwoDObjectRenderer) batch.get(0).getRenderObject()).renderBatch(batch, gui, poseStack, partialTick, screenWidth, screenHeight);
         }
 
         poseStack.popPose();
