@@ -6,6 +6,23 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+## [1.20.1-0.7.41r] - 2024-10-21
+
+### Added
+- Wandering Trader config
+
+### Changed
+- Save the owner of the memory card to the inventory manager after a player places the card into the manager and clear the card after. Resolves a security issue where players could eventually steal memory cards from other players
+
+### Fixed
+- [#660] Fixed that the inventory manager's `getItemInHand` function adds a blank nbt tag to the item
+- [#636] Fixed that the automata's `useOnBlock` function will return PASS in some specific case
+- [#645] Fixed that the inventory functions for the powah integration would always return nil
+- Fixed that some entity operations don't have enough range
+- [#642] Fixed that some powah integrations clashes with the generic energy peripheral from CC which disables some functions
+- [#640] Fixed null pointer exception when invoking `getName`
+- [#662] Use tick time instead of epoch time for our chunk manager, fixes an issue where chunks unload if some ticks are skipped (lag)
+
 ## [1.20.1-0.7.40r] - 2024-06-11
 
 ### Added
