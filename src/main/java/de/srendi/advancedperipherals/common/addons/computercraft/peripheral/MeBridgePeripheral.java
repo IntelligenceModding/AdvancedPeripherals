@@ -37,7 +37,7 @@ import java.util.*;
 
 public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwner<MeBridgeEntity>> implements IStorageSystemPeripheral {
 
-    public static final String PERIPHERAL_TYPE = "meBridge";
+    public static final String PERIPHERAL_TYPE = "me_bridge";
     private final MeBridgeEntity tile;
     private IGridNode node;
 
@@ -262,7 +262,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         String side = arguments.getString(1);
         IItemHandler inventory;
 
-        if (Direction.byName(side.toUpperCase(Locale.ROOT)) == null && ComputerSide.valueOfInsensitive(side.toUpperCase(Locale.ROOT)) == null) {
+        if (Direction.byName(side) != null || ComputerSide.valueOfInsensitive(side.toUpperCase(Locale.ROOT)) != null) {
             inventory = InventoryUtil.getHandlerFromDirection(arguments.getString(1), owner);
         } else {
             inventory = InventoryUtil.getHandlerFromName(computer, arguments.getString(1));
@@ -280,7 +280,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         String side = arguments.getString(1);
         IItemHandler inventory;
 
-        if (Direction.byName(side.toUpperCase(Locale.ROOT)) == null && ComputerSide.valueOfInsensitive(side.toUpperCase(Locale.ROOT)) == null) {
+        if (Direction.byName(side) != null || ComputerSide.valueOfInsensitive(side.toUpperCase(Locale.ROOT)) != null) {
             inventory = InventoryUtil.getHandlerFromDirection(arguments.getString(1), owner);
         } else {
             inventory = InventoryUtil.getHandlerFromName(computer, arguments.getString(1));

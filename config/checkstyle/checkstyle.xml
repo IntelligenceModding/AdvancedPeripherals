@@ -22,7 +22,7 @@
 
         <!-- Blocks -->
         <module name="EmptyBlock">
-            <property name="tokens" value="LITERAL_WHILE,LITERAL_TRY,LITERAL_CATCH,LITERAL_FINALLY,LITERAL_DO,LITERAL_IF,LITERAL_ELSE,INSTANCE_INIT,STATIC_INIT,LITERAL_SWITCH,LITERAL_SYNCHRONIZED,LITERAL_CASE,LITERAL_DEFAULT,ARRAY_INIT"/>
+            <property name="tokens" value="LITERAL_WHILE,LITERAL_TRY,LITERAL_FINALLY,LITERAL_DO,LITERAL_IF,LITERAL_ELSE,INSTANCE_INIT,STATIC_INIT,LITERAL_SWITCH,LITERAL_SYNCHRONIZED,LITERAL_CASE,LITERAL_DEFAULT,ARRAY_INIT"/>
         </module>
         <module name="EmptyCatchBlock">
             <property name="exceptionVariableName" value="ignored" />
@@ -92,12 +92,12 @@
         <module name="LocalFinalVariableName" />
         <module name="LocalVariableName" />
         <module name="MemberName" />
-        <module name="MethodName" />
         <module name="MethodTypeParameterName">
             <property name="format" value="[A-Z ]+"/>
         </module>
         <module name="PackageName">
-            <property name="format" value="^de\.srendi\.advancedperipherals(\.[a-z][a-z0-9]*)*" />
+            <property name="format" value="(?:(dan200\.computercraft)|(de\.srendi\.advancedperipherals))(\.[a-z][a-z0-9]*)*" />
+            <!-- For the game tests -->
         </module>
         <module name="ParameterName" />
         <module name="StaticVariableName">

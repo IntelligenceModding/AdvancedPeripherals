@@ -1,10 +1,8 @@
 package de.srendi.advancedperipherals.common.items.base;
 
 import de.srendi.advancedperipherals.AdvancedPeripherals;
-import de.srendi.advancedperipherals.client.KeyBindings;
-import de.srendi.advancedperipherals.common.util.EnumColor;
-import de.srendi.advancedperipherals.common.util.KeybindUtil;
 import de.srendi.advancedperipherals.common.util.TranslationUtil;
+import de.srendi.advancedperipherals.common.util.inventory.ItemUtil;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
@@ -45,17 +43,10 @@ public abstract class BaseItem extends Item {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
+    public void appendHoverText(@NotNull ItemStack stack, @Nullable Level worldIn, @NotNull List<Component> tooltip, @NotNull TooltipFlag flagIn) {
         super.appendHoverText(stack, worldIn, tooltip, flagIn);
-        if (!KeybindUtil.isKeyPressed(KeyBindings.DESCRIPTION_KEYBINDING)) {
-            tooltip.add(EnumColor.buildTextComponent(Component.translatable("item.advancedperipherals.tooltip.show_desc", KeyBindings.DESCRIPTION_KEYBINDING.getTranslatedKeyMessage())));
-        } else {
-            tooltip.add(EnumColor.buildTextComponent(getDescription()));
-        }
-        if (!isEnabled())
-            tooltip.add(EnumColor.buildTextComponent(Component.translatable("item.advancedperipherals.tooltip.disabled")));
+        ItemUtil.buildItemTooltip(getDescription(), isEnabled(), tooltip);
     }
-
 
     public @NotNull Component getDescription() {
         if (description == null) description = TranslationUtil.itemTooltip(getDescriptionId());

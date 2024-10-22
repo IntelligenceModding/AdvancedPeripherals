@@ -19,7 +19,7 @@ public class NoteBlockIntegration extends BlockIntegrationPeripheral<NoteBlock> 
     @NotNull
     @Override
     public String getType() {
-        return "noteBlock";
+        return "note_block";
     }
 
     @LuaFunction(mainThread = true)
