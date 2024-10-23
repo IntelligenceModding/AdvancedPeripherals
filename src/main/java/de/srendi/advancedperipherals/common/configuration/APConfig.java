@@ -18,6 +18,7 @@ public class APConfig extends ModConfig {
     public static final PeripheralsConfig PERIPHERALS_CONFIG = new PeripheralsConfig();
     public static final MetaphysicsConfig METAPHYSICS_CONFIG = new MetaphysicsConfig();
     public static final WorldConfig WORLD_CONFIG = new WorldConfig();
+    public static final APIConfig API_CONFIG = new APIConfig();
 
     public APConfig(IAPConfig config, ModContainer container) {
         super(config.getType(), config.getConfigSpec(), container, "Advancedperipherals/" + config.getFileName() + ".toml");
@@ -32,6 +33,7 @@ public class APConfig extends ModConfig {
         modContainer.addConfig(new APConfig(PERIPHERALS_CONFIG, modContainer));
         modContainer.addConfig(new APConfig(METAPHYSICS_CONFIG, modContainer));
         modContainer.addConfig(new APConfig(WORLD_CONFIG, modContainer));
+        modContainer.addConfig(new APConfig(API_CONFIG, modContainer));
     }
 
     @Override

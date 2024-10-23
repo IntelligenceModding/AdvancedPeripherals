@@ -87,7 +87,9 @@ public class AutomataEntityHandPlugin extends AutomataCorePlugin {
         BlockPos currentPos = owner.getPos();
         AABB box = new AABB(currentPos);
         ItemStack itemInHand = owner.getToolInMainHand();
-        List<Map<String, Object>> entities = owner.getLevel().getEntities((Entity) null, box.inflate(automataCore.getInteractionRadius()), suitableEntity).stream().map(entity -> LuaConverter.completeEntityWithPositionToLua(entity, itemInHand, currentPos, detailed)).toList();
+        List<Map<String, Object>> entities = owner.getLevel().getEntities((Entity) null, box.inflate(automataCore.getInteractionRadius()), suitableEntity).stream()
+                .map(entity -> LuaConverter.completeEntityWithRelativePositionToLua(entity, itemInHand, currentPos, detailed))
+                .toList();
         return MethodResult.of(entities);
     }
 }

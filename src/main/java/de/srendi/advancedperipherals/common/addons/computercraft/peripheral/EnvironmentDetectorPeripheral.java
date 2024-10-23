@@ -8,6 +8,7 @@ import dan200.computercraft.api.peripheral.IComputerAccess;
 import dan200.computercraft.api.pocket.IPocketAccess;
 import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
+import de.srendi.advancedperipherals.common.addons.computercraft.apis.EntityAPI;
 import de.srendi.advancedperipherals.common.addons.computercraft.operations.SphereOperationContext;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.BlockEntityPeripheralOwner;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.IPeripheralOwner;
@@ -15,7 +16,6 @@ import de.srendi.advancedperipherals.common.addons.computercraft.owner.PocketPer
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.TurtlePeripheralOwner;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralBlockEntity;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
-import de.srendi.advancedperipherals.common.util.LuaConverter;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
 import de.srendi.advancedperipherals.lib.peripherals.IPeripheralPlugin;
 import net.minecraft.core.BlockPos;
@@ -40,6 +40,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 import java.util.function.Function;
 
+import static de.srendi.advancedperipherals.common.addons.computercraft.apis.EntityAPI.ENTITY_API;
 import static de.srendi.advancedperipherals.common.addons.computercraft.operations.SphereOperation.SCAN_ENTITIES;
 
 public class EnvironmentDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
@@ -198,7 +199,6 @@ public class EnvironmentDetectorPeripheral extends BasePeripheral<IPeripheralOwn
     @LuaFunction(mainThread = true)
     public final MethodResult scanEntities(@NotNull IComputerAccess access, @NotNull IArguments arguments) throws LuaException {
         int radius = arguments.getInt(0);
-        boolean detailed = arguments.count() > 1 ? arguments.getBoolean(1) : false;
         return withOperation(SCAN_ENTITIES, new SphereOperationContext(radius), context -> {
             if (radius > SCAN_ENTITIES.getMaxCostRadius())
                 return MethodResult.of(null, "Radius exceeds max value");
@@ -206,8 +206,10 @@ public class EnvironmentDetectorPeripheral extends BasePeripheral<IPeripheralOwn
         }, context -> {
             BlockPos pos = owner.getPos();
             AABB box = new AABB(pos);
-            List<Map<String, Object>> entities = getLevel().getEntities((Entity) null, box.inflate(radius), entity -> entity instanceof LivingEntity && entity.isAlive()).stream().map(entity -> LuaConverter.completeEntityWithPositionToLua(entity, pos, detailed)).toList();
-            return MethodResult.of(entities);
+            List<String> entityUUIDs = getLevel().getEntities((Entity) null, box.inflate(radius), LivingEntity.class::isInstance).stream()
+                    .map(entity -> entity.getUUID().toString())
+                    .toList();
+            return MethodResult.of(entityUUIDs);
         }, null);
     }
 
@@ -242,5 +244,10 @@ public class EnvironmentDetectorPeripheral extends BasePeripheral<IPeripheralOwn
         } else {
             return MethodResult.of(canContinueSleep == Event.Result.ALLOW);
         }
+    }
+
+    @LuaFunction
+    public final EntityAPI getEntityAPI() {
+        return ENTITY_API;
     }
 }
