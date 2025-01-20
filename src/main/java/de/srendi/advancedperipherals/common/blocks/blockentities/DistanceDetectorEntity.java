@@ -212,7 +212,7 @@ public class DistanceDetectorEntity extends PeripheralBlockEntity<DistanceDetect
         Vec3 from = center;
         Vec3 to = from.add(direction.x * maxRange, direction.y * maxRange, direction.z * maxRange);
 
-        HitResult result = this.getHitResult(to, from);
+        HitResult result = this.getHitResult(from, to);
         if (result.getType() == HitResult.Type.MISS) {
             return -1;
         }
@@ -225,12 +225,12 @@ public class DistanceDetectorEntity extends PeripheralBlockEntity<DistanceDetect
         return distance;
     }
 
-    private HitResult getHitResult(Vec3 to, Vec3 from) {
+    private HitResult getHitResult(Vec3 from, Vec3 to) {
         Level level = this.getLevel();
         return switch (this.detectionType) {
-            case ENTITY -> HitResultUtil.getEntityHitResult(to, from, level);
-            case BLOCK -> HitResultUtil.getBlockHitResult(to, from, level, this.ignoreTransparent ? HitResultUtil.IgnoreNoOccludedContext.INSTANCE : ClipContext.Block.COLLIDER, this.getBlockPos());
-            case BOTH -> HitResultUtil.getHitResult(to, from, level, this.ignoreTransparent ? HitResultUtil.IgnoreNoOccludedContext.INSTANCE : ClipContext.Block.COLLIDER, this.getBlockPos());
+            case ENTITY -> HitResultUtil.getEntityHitResult(from, to, level);
+            case BLOCK -> HitResultUtil.getBlockHitResult(from, to, level, this.ignoreTransparent ? HitResultUtil.IgnoreNoOccludedContext.INSTANCE : ClipContext.Block.COLLIDER, this.getBlockPos());
+            case BOTH -> HitResultUtil.getHitResult(from, to, level, this.ignoreTransparent ? HitResultUtil.IgnoreNoOccludedContext.INSTANCE : ClipContext.Block.COLLIDER, this.getBlockPos());
         };
     }
 }

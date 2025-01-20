@@ -46,7 +46,7 @@ import java.util.Optional;
 
 public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwner<MeBridgeEntity>> implements IStorageSystemPeripheral {
 
-    public static final String PERIPHERAL_TYPE = "meBridge";
+    public static final String PERIPHERAL_TYPE = "me_bridge";
     private final MeBridgeEntity tile;
     private IGridNode node;
 
