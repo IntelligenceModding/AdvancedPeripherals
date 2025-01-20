@@ -44,10 +44,12 @@ public class WiredCableP2PTunnelPart extends CapabilityP2PTunnelPart<WiredCableP
         return MODELS.getModel(this.isPowered(), this.isActive());
     }
 
+    @Override
     public void onTunnelConfigChange() {
         this.connectionsChanged();
     }
 
+    @Override
     public void onTunnelNetworkChange() {
         this.connectionsChanged();
     }
