@@ -9,6 +9,7 @@ import net.minecraft.core.component.PatchedDataComponentMap;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
+import java.util.Optional;
 
 import static de.srendi.advancedperipherals.common.setup.DataComponents.FUEL_CONSUMPTION_RATE;
 
@@ -30,7 +31,8 @@ public abstract class FuelAbility<T extends IPeripheralOwner> implements IOwnerA
      */
     protected int getConsumptionRate() {
         DataComponentPatch settings = owner.getDataStorage();
-        int rate = settings.get(FUEL_CONSUMPTION_RATE.get()).get();
+        Optional<? extends Integer> opt = settings.get(FUEL_CONSUMPTION_RATE.get());
+        int rate = opt != null && opt.isPresent() ? opt.get() : 0;
         if (rate == 0) {
             setConsumptionRate(DEFAULT_FUEL_CONSUMING_RATE);
             return DEFAULT_FUEL_CONSUMING_RATE;

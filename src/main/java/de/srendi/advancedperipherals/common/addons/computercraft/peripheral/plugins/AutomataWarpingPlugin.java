@@ -54,6 +54,13 @@ public class AutomataWarpingPlugin extends AutomataCorePlugin {
         return Pair.onlyRight(settings.get(POINT_DATA_MARK.get()));
     }
 
+    protected void setPointData(@NotNull CompoundTag data) {
+        TurtlePeripheralOwner owner = automataCore.getPeripheralOwner();
+        PatchedDataComponentMap settings = PatchedDataComponentMap.fromPatch(DataComponentMap.EMPTY, owner.getDataStorage());
+        settings.set(POINT_DATA_MARK.get(), data);
+        owner.putDataStorage(settings.asPatch());
+    }
+
     private int getWarpCost(SingleOperationContext context) {
         FuelAbility<?> fuelAbility = automataCore.getPeripheralOwner().getAbility(PeripheralOwnerAbility.FUEL);
         Objects.requireNonNull(fuelAbility);
@@ -72,6 +79,7 @@ public class AutomataWarpingPlugin extends AutomataCorePlugin {
             return MethodResult.of(null, "Cannot add new point, limit reached");
 
         data.put(name, NBTUtil.toNBT(automataCore.getPeripheralOwner().getPos()));
+        setPointData(data);
         return MethodResult.of(true);
     }
 
@@ -87,6 +95,7 @@ public class AutomataWarpingPlugin extends AutomataCorePlugin {
             return MethodResult.of(null, "Cannot find point to delete");
 
         data.remove(name);
+        setPointData(data);
         return MethodResult.of(true);
     }
 
