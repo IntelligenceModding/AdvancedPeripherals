@@ -79,7 +79,7 @@ public class WiredCableP2PTunnelPart extends CapabilityP2PTunnelPart<WiredCableP
     }
 
     private class P2PWiredElement extends WiredModemElement {
-        private boolean updated = false;
+        private boolean updating = false;
 
         @Nonnull
         @Override
@@ -101,10 +101,10 @@ public class WiredCableP2PTunnelPart extends CapabilityP2PTunnelPart<WiredCableP
 
         @Override
         protected void attachPeripheral(String name, IPeripheral peripheral) {
-            if (this.updated) {
+            if (this.updating) {
                 return;
             }
-            this.updated = true;
+            this.updating = true;
             try {
                 WiredCableP2PTunnelPart.this.connectionsChanged();
                 WiredCableP2PTunnelPart in = WiredCableP2PTunnelPart.this.getInput();
@@ -115,16 +115,16 @@ public class WiredCableP2PTunnelPart extends CapabilityP2PTunnelPart<WiredCableP
                     out.element.attachPeripheral(name, peripheral);
                 }
             } finally {
-                this.updated = false;
+                this.updating = false;
             }
         }
 
         @Override
         protected void detachPeripheral(String name) {
-            if (this.updated) {
+            if (this.updating) {
                 return;
             }
-            this.updated = true;
+            this.updating = true;
             try {
                 WiredCableP2PTunnelPart.this.connectionsChanged();
                 WiredCableP2PTunnelPart in = WiredCableP2PTunnelPart.this.getInput();
@@ -135,7 +135,7 @@ public class WiredCableP2PTunnelPart extends CapabilityP2PTunnelPart<WiredCableP
                     out.element.detachPeripheral(name);
                 }
             } finally {
-                this.updated = false;
+                this.updating = false;
             }
         }
     }
