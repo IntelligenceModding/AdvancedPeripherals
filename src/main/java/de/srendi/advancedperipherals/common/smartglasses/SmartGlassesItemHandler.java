@@ -1,19 +1,26 @@
 package de.srendi.advancedperipherals.common.smartglasses;
 
+import dan200.computercraft.api.pocket.IPocketUpgrade;
+import dan200.computercraft.shared.PocketUpgrades;
 import de.srendi.advancedperipherals.common.items.SmartGlassesItem;
+import de.srendi.advancedperipherals.common.smartglasses.modules.IModuleItem;
 import net.minecraft.core.NonNullList;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.ContainerHelper;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemHandlerHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
 import javax.annotation.Nonnull;
 
 public class SmartGlassesItemHandler implements IItemHandlerModifiable {
 
-    private static final int SLOTS = 12;
+    public static final int SLOTS = 11;
+    public static final int PERIPHERAL_SLOTS = 5;
 
     private final ItemStack glasses;
     @Nullable
@@ -40,7 +47,34 @@ public class SmartGlassesItemHandler implements IItemHandlerModifiable {
 
     @Override
     public boolean isItemValid(int slot, @NotNull ItemStack stack) {
-        return !(stack.getItem() instanceof SmartGlassesItem);
+        if (stack.getItem() instanceof SmartGlassesItem) {
+            return false;
+        }
+        List<ItemStack> items = this.loadItems();
+        if (slot < PERIPHERAL_SLOTS) {
+            IPocketUpgrade upgrade = PocketUpgrades.instance().get(stack);
+            if (upgrade == null) {
+                return false;
+            }
+            ResourceLocation id = upgrade.getUpgradeID();
+            for (int i = 0; i < PERIPHERAL_SLOTS; i++) {
+                IPocketUpgrade u = PocketUpgrades.instance().get(items.get(i));
+                if (u != null && u.getUpgradeID().equals(id)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        Item item = stack.getItem();
+        if (!(item instanceof IModuleItem module)) {
+            return false;
+        }
+        for (int i = PERIPHERAL_SLOTS; i < SLOTS; i++) {
+            if (items.get(i).getItem() == item) {
+                return false;
+            }
+        }
+        return true;
     }
 
     @Override
@@ -53,15 +87,11 @@ public class SmartGlassesItemHandler implements IItemHandlerModifiable {
             return stack;
         }
         ItemStack existing = getStackInSlot(slot);
-        int limit = getSlotLimit(slot);
-
         if (!existing.isEmpty()) {
-            if (!ItemHandlerHelper.canItemStacksStack(stack, existing)) {
-                return stack;
-            }
-            limit -= existing.getCount();
+            return stack;
         }
 
+        int limit = getSlotLimit(slot);
         if (limit <= 0) {
             return stack;
         }
@@ -117,7 +147,7 @@ public class SmartGlassesItemHandler implements IItemHandlerModifiable {
     @Override
     public void setStackInSlot(int slot, @NotNull ItemStack stack) {
         NonNullList<ItemStack> items = loadItems();
-        if (stack.equals(items.get(slot))) {
+        if (ItemStack.isSameItemSameTags(stack, items.get(slot))) {
             return;
         }
         items.set(slot, stack);
