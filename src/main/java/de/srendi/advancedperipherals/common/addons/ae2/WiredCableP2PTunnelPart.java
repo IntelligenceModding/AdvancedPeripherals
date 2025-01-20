@@ -59,20 +59,17 @@ public class WiredCableP2PTunnelPart extends CapabilityP2PTunnelPart<WiredCableP
         this.lastFreq = this.getFrequency();
 
         for (IWiredNode node : this.connected) {
-            System.err.println("Disconnecting from " + node);
             this.node.disconnectFrom(node);
         }
         this.connected.clear();
 
         WiredCableP2PTunnelPart in = this.getInput();
         if (in != null && in != this) {
-            System.err.println("Connecting to " + in.node);
             this.node.connectTo(in.node);
             this.connected.add(in.node);
         }
         for (WiredCableP2PTunnelPart out : WiredCableP2PTunnelPart.this.getOutputs()) {
             if (out != this) {
-                System.err.println("Connecting to " + out.node);
                 this.node.connectTo(out.node);
                 this.connected.add(out.node);
             }
