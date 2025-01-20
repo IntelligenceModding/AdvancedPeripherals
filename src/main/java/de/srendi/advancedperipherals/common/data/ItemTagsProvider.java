@@ -19,5 +19,9 @@ public class ItemTagsProvider extends TagsProvider<Item> {
     @Override
     protected void addTags() {
         tag(APTags.Items.SMART_GLASSES).add(APItems.SMART_GLASSES.get()).add(APItems.SMART_GLASSES_NETHERITE.get());
+        tag(de.srendi.advancedperipherals.common.addons.ae2.Integration.getCableP2PTag())
+            .add(dan200.computercraft.shared.Registry.ModItems.CABLE.get())
+            .add(dan200.computercraft.shared.Registry.ModItems.WIRED_MODEM.get())
+            .add(dan200.computercraft.shared.Registry.ModItems.WIRED_MODEM_FULL.get());
     }
 }

@@ -3,6 +3,7 @@ package de.srendi.advancedperipherals.common.addons.computercraft.integrations;
 import dan200.computercraft.api.peripheral.IPeripheral;
 import dan200.computercraft.api.peripheral.IPeripheralProvider;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
+import de.srendi.advancedperipherals.common.addons.APAddons;
 import de.srendi.advancedperipherals.common.util.Platform;
 import de.srendi.advancedperipherals.lib.integrations.IPeripheralIntegration;
 import de.srendi.advancedperipherals.lib.peripherals.BlockEntityIntegrationPeripheral;
@@ -23,7 +24,15 @@ import java.util.function.Predicate;
 
 public class IntegrationPeripheralProvider implements IPeripheralProvider {
 
-    private static final String[] SUPPORTED_MODS = new String[]{"botania", "create", "mekanism", "powah", "dimstorage", "valkyrienskies"};
+    private static final String[] SUPPORTED_MODS = new String[]{
+        APAddons.APPLIEDENERGISTICS_MODID,
+        APAddons.BOTANIA_MODID,
+        APAddons.CREATE_MODID,
+        APAddons.MEKANISM_MODID,
+        APAddons.POWAH_MODID,
+        APAddons.DIMSTORAGE_MODID,
+        APAddons.VALKYRIEN_SKIES_MODID
+    };
 
     private static final PriorityQueue<IPeripheralIntegration> integrations = new PriorityQueue<>(Comparator.comparingInt(IPeripheralIntegration::getPriority));
 

@@ -1,5 +1,6 @@
 package de.srendi.advancedperipherals.common.setup;
 
+import de.srendi.advancedperipherals.common.addons.APAddons;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.items.APItem;
 import de.srendi.advancedperipherals.common.items.MemoryCardItem;
@@ -15,6 +16,7 @@ import net.minecraftforge.registries.RegistryObject;
 
 public class APItems {
 
+    public static final RegistryObject<Item> CABLE_P2P_TUNNEL = APAddons.appliedEnergisticsLoaded ? (RegistryObject<Item>) (RegistryObject<?>) de.srendi.advancedperipherals.common.addons.ae2.Registries.CABLE_P2P_TUNNEL : null;
     public static final RegistryObject<Item> CHUNK_CONTROLLER = APRegistration.ITEMS.register("chunk_controller", () -> new APItem(new Item.Properties().stacksTo(16), APConfig.PERIPHERALS_CONFIG.enableChunkyTurtle));
     public static final RegistryObject<Item> COMPUTER_TOOL = APRegistration.ITEMS.register("computer_tool", () -> new APItem(new Item.Properties().stacksTo(1), () -> true));
     public static final RegistryObject<Item> END_AUTOMATA_CORE = APRegistration.ITEMS.register("end_automata_core", () -> new APItem(new Item.Properties().stacksTo(1), APConfig.METAPHYSICS_CONFIG.enableEndAutomataCore));
