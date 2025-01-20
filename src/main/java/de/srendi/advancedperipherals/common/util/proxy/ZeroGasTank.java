@@ -1,4 +1,4 @@
-package de.srendi.advancedperipherals.common.util;
+package de.srendi.advancedperipherals.common.util.proxy;
 
 import mekanism.api.Action;
 import mekanism.api.chemical.gas.GasStack;

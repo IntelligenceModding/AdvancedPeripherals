@@ -56,6 +56,10 @@ public class MeBridgeEntity extends PeripheralBlockEntity<MeBridgePeripheral> im
     public <T extends BlockEntity> void handleTick(Level level, BlockState state, BlockEntityType<T> type) {
         if (!this.level.isClientSide) {
             if (!initialized) {
+                MeBridgePeripheral peripheral = this.getPeripheral();
+                if (peripheral == null) {
+                    return;
+                }
 
                 mainNode.setFlags(GridFlags.REQUIRE_CHANNEL);
                 mainNode.setIdlePowerUsage(APConfig.PERIPHERALS_CONFIG.meConsumption.get());
@@ -63,9 +67,6 @@ public class MeBridgeEntity extends PeripheralBlockEntity<MeBridgePeripheral> im
                 mainNode.setInWorldNode(true);
                 mainNode.create(level, getBlockPos());
 
-                //peripheral can be null if `getCapability` was not called before
-                if (peripheral == null)
-                    peripheral = createPeripheral();
                 peripheral.setNode(mainNode);
                 initialized = true;
             }
