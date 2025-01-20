@@ -31,7 +31,7 @@ public class IntegrationPeripheralProvider implements IPeripheralProvider {
         APAddons.MEKANISM_MODID,
         APAddons.POWAH_MODID,
         APAddons.DIMSTORAGE_MODID,
-        APAddons.VALKYRIEN_SKIES_MODID
+        APAddons.VALKYRIEN_SKIES_MODID,
     };
 
     private static final PriorityQueue<IPeripheralIntegration> integrations = new PriorityQueue<>(Comparator.comparingInt(IPeripheralIntegration::getPriority));
