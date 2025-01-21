@@ -45,6 +45,6 @@ public class GeneralConfig implements IAPConfig {
 
     @Override
     public ModConfig.Type getType() {
-        return ModConfig.Type.COMMON;
+        return ModConfig.Type.SERVER;
     }
 }
