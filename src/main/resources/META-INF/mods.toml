@@ -1,7 +1,7 @@
 modLoader = "javafml"
 loaderVersion = "[${loader_version},)"
-license = "All rights reserved"
-issueTrackerURL = "https://github.com/Seniorendi/AdvancedPeripherals/issues"
+license = "Apache-2.0"
+issueTrackerURL = "https://github.com/IntelligenceModding/AdvancedPeripherals/issues"
 logoFile = "pack.png"
 [[mods]]
 modId = "${mod_id}"

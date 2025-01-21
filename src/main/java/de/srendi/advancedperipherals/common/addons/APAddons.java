@@ -23,38 +23,51 @@ import java.util.List;
 @Mod.EventBusSubscriber(modid = AdvancedPeripherals.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class APAddons {
 
-    public static final String CURIOS_MODID = "curios";
-    public static final String REFINEDSTORAGE_MODID = "refinedstorage";
+    public static final String AE_ADDITIONS_MODID = "ae2additions";
     public static final String AE_THINGS_MODID = "ae2things";
     public static final String APPLIEDENERGISTICS_MODID = "ae2";
-    public static final String MEKANISM_MODID = "mekanism";
-    public static final String AE_ADDITIONS_MODID = "ae2additions";
     public static final String APP_MEKANISTICS_MODID = "appmek";
+    public static final String BOTANIA_MODID = "botania";
+    public static final String CREATE_MODID = "create";
+    public static final String CURIOS_MODID = "curios";
+    public static final String DIMSTORAGE_MODID = "dimstorage";
+    public static final String MEKANISM_MODID = "mekanism";
+    public static final String POWAH_MODID = "powah";
+    public static final String REFINEDSTORAGE_MODID = "refinedstorage";
     public static final String VALKYRIEN_SKIES_MODID = "valkyrienskies";
 
-    public static boolean curiosLoaded;
-    public static boolean refinedStorageLoaded;
-    public static boolean aeThingsLoaded;
-    public static boolean appliedEnergisticsLoaded;
-    public static boolean mekanismLoaded;
     public static boolean aeAdditionsLoaded;
+    public static boolean aeThingsLoaded;
     public static boolean appMekLoaded;
+    public static boolean appliedEnergisticsLoaded;
+    public static boolean botaniaLoaded;
+    public static boolean createLoaded;
+    public static boolean curiosLoaded;
+    public static boolean dimstorageLoaded;
+    public static boolean mekanismLoaded;
+    public static boolean powahLoaded;
+    public static boolean refinedStorageLoaded;
     public static boolean vs2Loaded;
 
     // Use static so these checks run as early as possible, so we can use them for our registries
     static {
         ModList modList = ModList.get();
-        curiosLoaded = modList.isLoaded(CURIOS_MODID);
-        refinedStorageLoaded = modList.isLoaded(REFINEDSTORAGE_MODID);
-        appliedEnergisticsLoaded = modList.isLoaded(APPLIEDENERGISTICS_MODID);
-        mekanismLoaded = modList.isLoaded(MEKANISM_MODID);
-        aeThingsLoaded = modList.isLoaded(AE_THINGS_MODID);
         aeAdditionsLoaded = modList.isLoaded(AE_ADDITIONS_MODID);
+        aeThingsLoaded = modList.isLoaded(AE_THINGS_MODID);
         appMekLoaded = modList.isLoaded(APP_MEKANISTICS_MODID);
+        appliedEnergisticsLoaded = modList.isLoaded(APPLIEDENERGISTICS_MODID);
+        botaniaLoaded = modList.isLoaded(BOTANIA_MODID);
+        createLoaded = modList.isLoaded(CREATE_MODID);
+        curiosLoaded = modList.isLoaded(CURIOS_MODID);
+        dimstorageLoaded = modList.isLoaded(DIMSTORAGE_MODID);
+        mekanismLoaded = modList.isLoaded(MEKANISM_MODID);
+        powahLoaded = modList.isLoaded(POWAH_MODID);
+        refinedStorageLoaded = modList.isLoaded(REFINEDSTORAGE_MODID);
         vs2Loaded = modList.isLoaded(VALKYRIEN_SKIES_MODID);
 
-        if (refinedStorageLoaded)
+        if (refinedStorageLoaded) {
             RefinedStorage.instance = new RefinedStorage();
+        }
     }
 
     @SubscribeEvent
