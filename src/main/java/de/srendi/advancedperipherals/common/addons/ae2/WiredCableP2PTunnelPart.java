@@ -38,7 +38,7 @@ public class WiredCableP2PTunnelPart extends CapabilityP2PTunnelPart<WiredCableP
         super(partItem, Capabilities.CAPABILITY_WIRED_ELEMENT);
         this.inputHandler = outElement;
         this.outputHandler = outElement;
-        this.emptyHandler = outElement;
+        this.emptyHandler = null; // should never used
     }
 
     @PartModels
@@ -97,13 +97,18 @@ public class WiredCableP2PTunnelPart extends CapabilityP2PTunnelPart<WiredCableP
                 part.connected.add(this);
             }
         }
-        this.sendBlockUpdate();
     }
 
     @Override
     protected void onMainNodeStateChanged(IGridNodeListener.State reason) {
         super.onMainNodeStateChanged(reason);
+        if (reason == IGridNodeListener.State.GRID_BOOT) {
+            return;
+        }
         if (this.isActive()) {
+            if (!this.getMainNode().hasGridBooted()) {
+                return;
+            }
             this.connectionsChanged();
             this.refreshConnection();
         } else if (this.activated) {
