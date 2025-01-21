@@ -1,37 +1,44 @@
 package de.srendi.advancedperipherals.common.addons.ae2;
 
+import appeng.api.networking.IGridNodeListener;
 import appeng.api.parts.IPartItem;
 import appeng.api.parts.IPartModel;
 import appeng.items.parts.PartModels;
 import appeng.parts.p2p.CapabilityP2PTunnelPart;
 import appeng.parts.p2p.P2PModels;
+import dan200.computercraft.api.ComputerCraftAPI;
 import dan200.computercraft.api.network.wired.IWiredElement;
+import dan200.computercraft.api.network.wired.IWiredNetworkChange;
 import dan200.computercraft.api.network.wired.IWiredNode;
-import dan200.computercraft.api.peripheral.IPeripheral;
 import dan200.computercraft.shared.Capabilities;
-import dan200.computercraft.shared.peripheral.modem.wired.WiredModemElement;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import javax.annotation.Nonnull;
 
 public class WiredCableP2PTunnelPart extends CapabilityP2PTunnelPart<WiredCableP2PTunnelPart, IWiredElement> {
     private static final P2PModels MODELS = new P2PModels(AdvancedPeripherals.getRL("part/p2p/p2p_tunnel_cable"));
 
-    private final P2PWiredElement element = new P2PWiredElement();
+    private final IWiredElement element = new P2PWiredElement();
+    private final IWiredElement outElement = new P2PWiredElement();
     private final IWiredNode node = this.element.getNode();
-    private final Set<IWiredNode> connected = new HashSet<>();
-    private short lastFreq = 0;
+    private Set<WiredCableP2PTunnelPart> connected = new HashSet<>();
+    private boolean activated = false;
 
     public WiredCableP2PTunnelPart(IPartItem<?> partItem) {
         super(partItem, Capabilities.CAPABILITY_WIRED_ELEMENT);
-        this.inputHandler = element;
-        this.outputHandler = element;
-        this.emptyHandler = element;
+        this.inputHandler = outElement;
+        this.outputHandler = outElement;
+        this.emptyHandler = outElement;
     }
 
     @PartModels
@@ -46,40 +53,103 @@ public class WiredCableP2PTunnelPart extends CapabilityP2PTunnelPart<WiredCableP
 
     @Override
     public void onTunnelConfigChange() {
+        super.onTunnelConfigChange();
         this.connectionsChanged();
     }
 
     @Override
     public void onTunnelNetworkChange() {
+        super.onTunnelNetworkChange();
         this.connectionsChanged();
     }
 
     protected void connectionsChanged() {
-        if (this.lastFreq == this.getFrequency()) {
+        if (this.isClientSide()) {
             return;
         }
-        this.lastFreq = this.getFrequency();
-
-        for (IWiredNode node : this.connected) {
-            this.node.disconnectFrom(node);
+        if (!this.isActive()) {
+            return;
         }
-        this.connected.clear();
+        if (!this.activated) {
+            this.activated = true;
+            this.node.connectTo(this.outElement.getNode());
+        }
 
+        Stream<WiredCableP2PTunnelPart> nodeStream = this.getOutputStream().filter(out -> out != this);
         WiredCableP2PTunnelPart in = this.getInput();
         if (in != null && in != this) {
-            this.node.connectTo(in.node);
-            this.connected.add(in.node);
+            nodeStream = Stream.concat(nodeStream, Stream.of(in));
         }
-        for (WiredCableP2PTunnelPart out : WiredCableP2PTunnelPart.this.getOutputs()) {
-            if (out != this) {
-                this.node.connectTo(out.node);
-                this.connected.add(out.node);
+        Set<WiredCableP2PTunnelPart> nodes = nodeStream.collect(Collectors.toCollection(HashSet::new));
+
+        for (WiredCableP2PTunnelPart part : this.connected.stream().filter(n -> !nodes.contains(n)).collect(Collectors.toList())) {
+            if (part.connected.contains(this)) {
+                this.node.disconnectFrom(part.node);
+                part.connected.remove(this);
             }
+            this.connected.remove(part);
+        }
+
+        for (WiredCableP2PTunnelPart part : nodes) {
+            if (!this.connected.contains(part)) {
+                this.node.connectTo(part.node);
+                this.connected.add(part);
+                part.connected.add(this);
+            }
+        }
+        this.sendBlockUpdate();
+    }
+
+    @Override
+    protected void onMainNodeStateChanged(IGridNodeListener.State reason) {
+        super.onMainNodeStateChanged(reason);
+        if (this.isActive()) {
+            this.connectionsChanged();
+            this.refreshConnection();
+        } else if (this.activated) {
+            this.activated = false;
+            this.node.remove();
+            this.connected.clear();
         }
     }
 
-    private class P2PWiredElement extends WiredModemElement {
-        private boolean updating = false;
+    protected BlockPos getFacingPos() {
+        return this.getHost().getLocation().getPos().relative(this.getSide());
+    }
+
+    protected void refreshConnection() {
+        BlockEntity cable = this.getLevel().getBlockEntity(this.getFacingPos());
+        IWiredElement elem = cable == null ? null : cable.getCapability(Capabilities.CAPABILITY_WIRED_ELEMENT, this.getSide().getOpposite()).orElse(null);
+        if (elem == null) {
+            return;
+        }
+        elem.getNode().connectTo(this.outElement.getNode());
+    }
+
+    @Override
+    public void onNeighborChanged(BlockGetter level, BlockPos pos, BlockPos neighbor) {
+        if (!this.getFacingPos().equals(neighbor)) {
+            return;
+        }
+        if (this.activated) {
+            this.refreshConnection();
+        }
+    }
+
+    private class P2PWiredElement implements IWiredElement {
+        private final IWiredNode node = ComputerCraftAPI.createWiredNodeForElement(this);
+
+        @Nonnull
+        @Override
+        public IWiredNode getNode() {
+            return node;
+        }
+
+        @Nonnull
+        @Override
+        public String getSenderID() {
+            return "p2p";
+        }
 
         @Nonnull
         @Override
@@ -93,50 +163,7 @@ public class WiredCableP2PTunnelPart extends CapabilityP2PTunnelPart<WiredCableP
             return Vec3.atCenterOf(WiredCableP2PTunnelPart.this.getBlockEntity().getBlockPos());
         }
 
-        @Nonnull
         @Override
-        public String getSenderID() {
-            return "p2p";
-        }
-
-        @Override
-        protected void attachPeripheral(String name, IPeripheral peripheral) {
-            if (this.updating) {
-                return;
-            }
-            this.updating = true;
-            try {
-                WiredCableP2PTunnelPart.this.connectionsChanged();
-                WiredCableP2PTunnelPart in = WiredCableP2PTunnelPart.this.getInput();
-                if (in != null) {
-                    in.element.attachPeripheral(name, peripheral);
-                }
-                for (WiredCableP2PTunnelPart out : WiredCableP2PTunnelPart.this.getOutputs()) {
-                    out.element.attachPeripheral(name, peripheral);
-                }
-            } finally {
-                this.updating = false;
-            }
-        }
-
-        @Override
-        protected void detachPeripheral(String name) {
-            if (this.updating) {
-                return;
-            }
-            this.updating = true;
-            try {
-                WiredCableP2PTunnelPart.this.connectionsChanged();
-                WiredCableP2PTunnelPart in = WiredCableP2PTunnelPart.this.getInput();
-                if (in != null) {
-                    in.element.detachPeripheral(name);
-                }
-                for (WiredCableP2PTunnelPart out : WiredCableP2PTunnelPart.this.getOutputs()) {
-                    out.element.detachPeripheral(name);
-                }
-            } finally {
-                this.updating = false;
-            }
-        }
+        public void networkChanged(IWiredNetworkChange change) {}
     }
 }
