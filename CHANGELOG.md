@@ -6,8 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+## [1.21.1-0.7.47a] - 2025-01-21
 
-## Fixed:
+### Fixed:
 - Fixed that the colony integrator's `getCitizens` function would stop working when NPCs are idling
 - Fixed errors with fuel ability functions from the automata turtles
 - Fixed that automata turtles could break themselves
