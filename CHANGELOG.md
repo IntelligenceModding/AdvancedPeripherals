@@ -7,7 +7,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
-## Fixed:
+### Fixed:
 - Fixed that the colony integrator's `getCitizens` function would stop working when NPCs are idling
 - Fixed errors with fuel ability functions from the automata turtles
 - Fixed that automata turtles could break themselves
