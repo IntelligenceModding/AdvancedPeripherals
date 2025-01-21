@@ -25,7 +25,6 @@ import java.util.function.Predicate;
 public class IntegrationPeripheralProvider implements IPeripheralProvider {
 
     private static final String[] SUPPORTED_MODS = new String[]{
-        APAddons.APPLIEDENERGISTICS_MODID,
         APAddons.BOTANIA_MODID,
         APAddons.CREATE_MODID,
         APAddons.MEKANISM_MODID,

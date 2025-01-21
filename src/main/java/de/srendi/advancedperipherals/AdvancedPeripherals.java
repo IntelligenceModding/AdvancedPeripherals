@@ -1,6 +1,7 @@
 package de.srendi.advancedperipherals;
 
 import de.srendi.advancedperipherals.common.addons.APAddons;
+import de.srendi.advancedperipherals.common.addons.ae2.AE2Registries;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.network.APNetworking;
 import de.srendi.advancedperipherals.common.setup.APRegistration;
@@ -72,7 +73,7 @@ public class AdvancedPeripherals {
     public void onLoadComplete(FMLLoadCompleteEvent event) {
         event.enqueueWork(() -> {
             if (APAddons.appliedEnergisticsLoaded) {
-                de.srendi.advancedperipherals.common.addons.ae2.Integration.onComplete();
+                AE2Registries.finishRegister();
             }
         });
     }
