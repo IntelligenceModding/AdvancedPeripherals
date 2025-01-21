@@ -1,13 +1,8 @@
 package de.srendi.advancedperipherals.common.configuration;
 
-import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.config.ModConfig;
-import net.minecraftforge.fml.loading.FMLPaths;
-
-import java.nio.file.Path;
-import java.util.function.Function;
 
 public class APConfig extends ModConfig {
 
