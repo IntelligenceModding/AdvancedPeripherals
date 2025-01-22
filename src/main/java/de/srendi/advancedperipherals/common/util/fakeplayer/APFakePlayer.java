@@ -32,7 +32,6 @@ import net.minecraft.world.level.block.CommandBlock;
 import net.minecraft.world.level.block.StructureBlock;
 import net.minecraft.world.level.block.entity.SignBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
@@ -46,7 +45,6 @@ import net.minecraftforge.eventbus.api.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
 import java.util.UUID;
 import java.util.function.Predicate;
 
@@ -55,12 +53,13 @@ public class APFakePlayer extends FakePlayer {
     Highly inspired by https://github.com/SquidDev-CC/plethora/blob/minecraft-1.12/src/main/java/org/squiddev/plethora/gameplay/PlethoraFakePlayer.java
     */
     public static final GameProfile PROFILE = new GameProfile(UUID.fromString("6e483f02-30db-4454-b612-3a167614b276"), "[" + AdvancedPeripherals.MOD_ID + "]");
-    private static final Predicate<Entity> collidablePredicate = EntitySelector.NO_SPECTATORS;
+    private static final Predicate<Entity> DEFAULT_ENTITY_FILTER = EntitySelector.NO_SPECTATORS.and(LivingEntity.class::isInstance).and((entity) -> !entity.isPassenger());
 
     private BlockPos source = null;
     private BlockPos digPosition = null;
     private Block digBlock = null;
     private float currentDamage = 0;
+    private double reachRange = -1;
 
     public APFakePlayer(ServerLevel world, Entity owner, GameProfile profile) {
         super(world, profile != null && profile.isComplete() ? profile : PROFILE);
@@ -140,13 +139,38 @@ public class APFakePlayer extends FakePlayer {
         }
     }
 
+    public static <T> Action<T> wrapActionWithReachRange(double range, Action<T> action) {
+        return player -> player.<T>doActionWithReachRange(range, action);
+    }
+
+    public <T> T doActionWithReachRange(double range, Action<T> action) {
+        this.reachRange = range;
+        try {
+            return action.apply(this);
+        } finally {
+            this.reachRange = -1;
+        }
+    }
+
+    public double getReachRange() {
+        AttributeInstance reachAttribute = this.getAttribute(ForgeMod.REACH_DISTANCE.get());
+        if (reachAttribute == null) {
+            throw new IllegalArgumentException("How did this happened?");
+        }
+        double range = reachAttribute.getValue();
+        if (this.reachRange >= 0 && this.reachRange < range) {
+            range = this.reachRange;
+        }
+        return range;
+    }
+
     public Pair<Boolean, String> digBlock() {
         Level world = getLevel();
         HitResult hit = findHit(true, false);
-        if (hit.getType() == HitResult.Type.MISS) {
+        if (!(hit instanceof BlockHitResult blockHit) || hit.getType() == HitResult.Type.MISS) {
             return Pair.of(false, "Nothing to break");
         }
-        BlockPos pos = new BlockPos(hit.getLocation());
+        BlockPos pos = blockHit.getBlockPos();
         BlockState state = world.getBlockState(pos);
         Block block = state.getBlock();
 
@@ -276,81 +300,34 @@ public class APFakePlayer extends FakePlayer {
     }
 
     public HitResult findHit(boolean skipEntity, boolean skipBlock) {
-        return findHit(skipEntity, skipBlock, null);
+        return findHit(skipEntity, skipBlock, DEFAULT_ENTITY_FILTER);
     }
 
     @NotNull
-    public HitResult findHit(boolean skipEntity, boolean skipBlock, @Nullable Predicate<Entity> entityFilter) {
-        AttributeInstance reachAttribute = this.getAttribute(ForgeMod.REACH_DISTANCE.get());
-        if (reachAttribute == null)
-            throw new IllegalArgumentException("How did this happened?");
-
-        double range = reachAttribute.getValue();
+    public HitResult findHit(boolean skipEntity, boolean skipBlock, @NotNull Predicate<Entity> entityFilter) {
+        double range = this.getReachRange();
         Vec3 origin = new Vec3(this.getX(), this.getY(), this.getZ());
         Vec3 look = this.getLookAngle();
         Vec3 target = new Vec3(origin.x + look.x * range, origin.y + look.y * range, origin.z + look.z * range);
-        HitResult blockHit;
+
+        BlockHitResult blockHit;
         if (skipBlock) {
             Direction traceDirection = Direction.getNearest(look.x, look.y, look.z);
             blockHit = BlockHitResult.miss(target, traceDirection, new BlockPos(target));
         } else {
-            blockHit = HitResultUtil.getBlockHitResult(target, origin, level, ClipContext.Block.OUTLINE, this.source);
+            blockHit = HitResultUtil.getBlockHitResult(origin, target, level, ClipContext.Block.OUTLINE, this.source);
         }
 
         if (skipEntity) {
             return blockHit;
         }
 
-        List<Entity> entities = level.getEntities(this, this.getBoundingBox().expandTowards(look.x * range, look.y * range, look.z * range).inflate(1), collidablePredicate);
-
-        LivingEntity closestEntity = null;
-        Vec3 closestVec = null;
-        double closestDistance = blockHit.getType() == HitResult.Type.MISS ? range * range : distanceToSqr(blockHit.getLocation());
-        for (Entity entityHit : entities) {
-            if (!(entityHit instanceof LivingEntity entity)) {
-                continue;
-            }
-            // TODO: maybe let entityFilter returns the priority of the entity, instead of only returns the closest one.
-            if (entityFilter != null && !entityFilter.test(entity)) {
-                continue;
-            }
-
-            // Hit vehicle before passenger
-            if (entity.isPassenger()) {
-                continue;
-            }
-
-            AABB box = entity.getBoundingBox();
-            Vec3 clipVec;
-            if (box.contains(origin)) {
-                clipVec = origin;
-            } else {
-                clipVec = box.clip(origin, target).orElse(null);
-                if (clipVec == null) {
-                    continue;
-                }
-            }
-            double distance = origin.distanceToSqr(clipVec);
-            // Ignore small enough distance
-            if (distance <= 1e-6) {
-                distance = 0;
-            }
-            if (distance > closestDistance) {
-                continue;
-            }
-            if (distance == closestDistance && closestEntity != null) {
-                // Hit larger entity before smaller
-                if (closestEntity.getBoundingBox().getSize() >= box.getSize()) {
-                    continue;
-                }
-            }
-            closestEntity = entity;
-            closestVec = clipVec;
-            closestDistance = distance;
+        // TODO: maybe let entityFilter returns the priority of the entity, instead of only returns the closest one.
+        EntityHitResult entityHit = HitResultUtil.getEntityHitResult(origin, target, level, this, entityFilter);
+        if (entityHit.getType() == HitResult.Type.ENTITY) {
+            return entityHit;
         }
-        if (closestEntity != null) {
-            return new EntityHitResult(closestEntity, closestVec);
-        }
+
         return blockHit;
     }
 

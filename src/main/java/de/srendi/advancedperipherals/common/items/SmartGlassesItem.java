@@ -5,6 +5,9 @@ import dan200.computercraft.ComputerCraft;
 import dan200.computercraft.api.ComputerCraftAPI;
 import dan200.computercraft.api.filesystem.IWritableMount;
 import dan200.computercraft.api.media.IMedia;
+import dan200.computercraft.api.peripheral.IPeripheral;
+import dan200.computercraft.api.pocket.IPocketUpgrade;
+import dan200.computercraft.shared.PocketUpgrades;
 import dan200.computercraft.shared.computer.core.ComputerFamily;
 import dan200.computercraft.shared.computer.core.ServerComputerRegistry;
 import dan200.computercraft.shared.computer.core.ServerContext;
@@ -23,6 +26,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.Container;
@@ -47,6 +51,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Map;
 
 public class SmartGlassesItem extends ArmorItem implements IComputerItem, IMedia {
 
@@ -83,6 +88,9 @@ public class SmartGlassesItem extends ArmorItem implements IComputerItem, IMedia
 
     private boolean tick(ItemStack stack, Level world, Entity entity, SmartGlassesComputer computer) {
         computer.setLevel((ServerLevel) world);
+        if (entity != null) {
+            computer.setPosition(entity.blockPosition());
+        }
 
         boolean changed = false;
 
@@ -118,6 +126,13 @@ public class SmartGlassesItem extends ArmorItem implements IComputerItem, IMedia
             computer.setStack(stack);
         }
 
+        for (Map.Entry<ResourceLocation, IPeripheral> e : computer.getUpgrades().entrySet()) {
+            IPocketUpgrade upgrade = PocketUpgrades.instance().get(e.getKey().toString());
+            if (upgrade != null) {
+                upgrade.update(computer, e.getValue());
+            }
+        }
+
         return changed;
     }
 
@@ -125,9 +140,9 @@ public class SmartGlassesItem extends ArmorItem implements IComputerItem, IMedia
     public void inventoryTick(@NotNull ItemStack stack, @NotNull Level world, @NotNull Entity entity, int slotNum, boolean selected) {
         LazyOptional<IItemHandler> optItemHandler = stack.getCapability(ForgeCapabilities.ITEM_HANDLER);
         SmartGlassesItemHandler itemHandler = (SmartGlassesItemHandler) optItemHandler.orElse(null);
-        for(int slot = 0; slot < itemHandler.getSlots(); slot++) {
+        for (int slot = 0; slot < itemHandler.getSlots(); slot++) {
             ItemStack itemStack = itemHandler.getStackInSlot(slot);
-            if(itemStack.getItem() instanceof IModuleItem iModuleItem) {
+            if (itemStack.getItem() instanceof IModuleItem iModuleItem) {
                 SmartGlassesAccess glassesAccess = null;
                 IModule module = null;
                 if (!world.isClientSide) {
@@ -155,7 +170,9 @@ public class SmartGlassesItem extends ArmorItem implements IComputerItem, IMedia
 
     @Override
     public boolean onEntityItemUpdate(ItemStack stack, ItemEntity entity) {
-        if (entity.level.isClientSide || entity.level.getServer() == null) return false;
+        if (entity.level.isClientSide || entity.level.getServer() == null) {
+            return false;
+        }
 
         SmartGlassesComputer computer = getServerComputer(entity.level.getServer(), stack);
         if (computer != null && tick(stack, entity.level, entity, computer)) {

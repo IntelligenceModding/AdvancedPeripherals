@@ -31,13 +31,14 @@ public class ClientEventSubscriber {
     @SubscribeEvent
     public static void playerTryDismount(InputEvent.Key event) {
         Minecraft minecraft = Minecraft.getInstance();
-        if (!minecraft.options.keyShift.matches(event.getKey(), event.getScanCode())) {
+        boolean isShift = minecraft.options.keyShift.matches(event.getKey(), event.getScanCode());
+        if (!isShift) {
             return;
         }
         switch (event.getAction()) {
             case InputConstants.PRESS:
                 sneaking = true;
-                if (ClientRegistry.SADDLE_TURTLE_OVERLAY.isPlayerMountedOnTurtle()) {
+                if (ClientRegistry.SADDLE_TURTLE_OVERLAY.isPlayerControllingTurtle()) {
                     minecraft.options.keyShift.setDown(false);
                 }
                 break;
@@ -65,7 +66,7 @@ public class ClientEventSubscriber {
 
     @SubscribeEvent
     public static void playerMove(MovementInputUpdateEvent event) {
-        if (ClientRegistry.SADDLE_TURTLE_OVERLAY.isPlayerMountedOnTurtle()) {
+        if (ClientRegistry.SADDLE_TURTLE_OVERLAY.isPlayerControllingTurtle()) {
             Input input = event.getInput();
             if (sneaking == lastSneak && lastInput != null) {
                 if (lastInput.up == input.up && lastInput.down == input.down && lastInput.left == input.left && lastInput.right == input.right && lastInput.jumping == input.jumping) {

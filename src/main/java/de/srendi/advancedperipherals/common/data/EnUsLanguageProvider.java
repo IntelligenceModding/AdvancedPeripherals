@@ -57,6 +57,8 @@ public class EnUsLanguageProvider extends LanguageProvider {
         addItem(APItems.OVERPOWERED_HUSBANDRY_AUTOMATA_CORE, "Overpowered Husbandry Automata Core");
         addItem(APItems.OVERPOWERED_WEAK_AUTOMATA_CORE, "Overpowered Weak Automata Core");
         addItem(APItems.WEAK_AUTOMATA_CORE, "Weak Automata Core");
+
+        addItem(APItems.CABLE_P2P_TUNNEL, "Cable P2P Tunnel");
     }
 
     private void addBlocks() {

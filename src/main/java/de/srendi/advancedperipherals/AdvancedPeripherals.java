@@ -1,6 +1,7 @@
 package de.srendi.advancedperipherals;
 
 import de.srendi.advancedperipherals.common.addons.APAddons;
+import de.srendi.advancedperipherals.common.addons.ae2.AE2Registries;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.network.APNetworking;
 import de.srendi.advancedperipherals.common.setup.APRegistration;
@@ -11,6 +12,7 @@ import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -35,6 +37,7 @@ public class AdvancedPeripherals {
         APConfig.register(ModLoadingContext.get());
 
         modBus.addListener(this::commonSetup);
+        modBus.addListener(this::onLoadComplete);
         APRegistration.register();
         MinecraftForge.EVENT_BUS.register(this);
         new APAddons();
@@ -67,4 +70,11 @@ public class AdvancedPeripherals {
         });
     }
 
+    public void onLoadComplete(FMLLoadCompleteEvent event) {
+        event.enqueueWork(() -> {
+            if (APAddons.appliedEnergisticsLoaded) {
+                AE2Registries.finishRegister();
+            }
+        });
+    }
 }

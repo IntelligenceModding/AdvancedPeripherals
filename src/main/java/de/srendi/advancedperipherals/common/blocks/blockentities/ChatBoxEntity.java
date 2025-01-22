@@ -24,8 +24,6 @@ public class ChatBoxEntity extends PeripheralBlockEntity<ChatBoxPeripheral> {
 
     @Override
     public <T extends BlockEntity> void handleTick(Level level, BlockState state, BlockEntityType<T> type) {
-        if (peripheral != null) {
-            peripheral.update();
-        }
+        this.getLazyPeripheral().ifPresent(ChatBoxPeripheral::update);
     }
 }
