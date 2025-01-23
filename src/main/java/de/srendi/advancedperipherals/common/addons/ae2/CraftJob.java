@@ -21,6 +21,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+import java.util.concurrent.atomic.AtomicLong;
 
 //TODO needs to persistent - should be stored in the me bridge
 // We also need to do the same for the rs bridge. So we want to create a proper interface to keep the lua functions the same
@@ -35,9 +36,9 @@ public class CraftJob {
     private static final String UNKNOWN_ERROR = "UNKNOWN_ERROR";
     public static final String EVENT = "ae_crafting";
 
-    private static volatile long idSeq = 0;
+    private static final AtomicLong ID_SEQ = new AtomicLong();
 
-    private final long id = ++idSeq;
+    private final long id = ID_SEQ.incrementAndGet();
     private final IComputerAccess computer;
     private final IGridNode node;
     private final IActionSource source;
