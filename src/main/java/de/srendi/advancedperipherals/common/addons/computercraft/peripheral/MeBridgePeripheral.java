@@ -24,7 +24,6 @@ import de.srendi.advancedperipherals.common.addons.computercraft.owner.BlockEnti
 import de.srendi.advancedperipherals.common.blocks.blockentities.MeBridgeEntity;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.util.Pair;
-import de.srendi.advancedperipherals.common.util.ServerWorker;
 import de.srendi.advancedperipherals.common.util.inventory.FluidFilter;
 import de.srendi.advancedperipherals.common.util.inventory.FluidUtil;
 import de.srendi.advancedperipherals.common.util.inventory.GenericFilter;
@@ -158,7 +157,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     }
 
     private boolean isAvailable() {
-        return node.getGrid() != null && node.hasGridBooted();
+        return node.hasGridBooted();
     }
 
     @Override
@@ -562,7 +561,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     }
 
     @Override
-    @LuaFunction(mainThread = true)
+    @LuaFunction
     public final MethodResult craftItem(IComputerAccess computer, IArguments arguments) throws LuaException {
         if (!isAvailable())
             return notConnected();
@@ -576,22 +575,27 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
             return MethodResult.of(false, "EMPTY_FILTER");
 
         String cpuName = arguments.optString(1, "");
-        ICraftingCPU target = AppEngApi.getCraftingCPU(node, cpuName);
-        if (!cpuName.isEmpty() && target == null)
-            return MethodResult.of(false, "CPU " + cpuName + " does not exists");
 
-        ICraftingService craftingGrid = node.getGrid().getService(ICraftingService.class);
-        Pair<Long, AEItemKey> stack = AppEngApi.findAEStackFromFilter(AppEngApi.getMonitor(tile.getGridNode()), craftingGrid, filter.getLeft());
-        if (stack.getRight() == null && stack.getLeft() == 0)
-            return MethodResult.of(false, "NOT_CRAFTABLE");
+        return new CraftJobCallback(computer, () -> {
+            ICraftingCPU target = AppEngApi.getCraftingCPU(node, cpuName);
+            if (!cpuName.isEmpty() && target == null) {
+                return MethodResult.of(false, "CPU " + cpuName + " does not exists");
+            }
 
-        CraftJob job = new CraftJob(owner.getLevel(), computer, node, stack.getRight(), parsedFilter.getCount(), tile, tile, target);
-        tile.addJob(job);
-        return MethodResult.of(job);
+            ICraftingService craftingGrid = node.getGrid().getService(ICraftingService.class);
+            Pair<Long, AEItemKey> stack = AppEngApi.findAEStackFromFilter(AppEngApi.getMonitor(tile.getGridNode()), craftingGrid, parsedFilter);
+            if (stack.getRight() == null && stack.getLeft() == 0) {
+                return MethodResult.of(false, "NOT_CRAFTABLE");
+            }
+
+            CraftJob job = new CraftJob(owner.getLevel(), computer, node, stack.getRight(), parsedFilter.getCount(), tile, tile, target);
+            tile.addJob(job);
+            return MethodResult.of(job);
+        }).pull;
     }
 
     @Override
-    @LuaFunction(mainThread = true)
+    @LuaFunction
     public final MethodResult craftFluid(IComputerAccess computer, IArguments arguments) throws LuaException {
         if (!isAvailable())
             return notConnected();
@@ -605,18 +609,20 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
             return MethodResult.of(false, "EMPTY_FILTER");
 
         String cpuName = arguments.optString(1, "");
-        ICraftingCPU target = AppEngApi.getCraftingCPU(node, cpuName);
-        if (!cpuName.isEmpty() && target == null)
-            return MethodResult.of(false, "CPU " + cpuName + " does not exists");
+        return new CraftJobCallback(computer, () -> {
+            ICraftingCPU target = AppEngApi.getCraftingCPU(node, cpuName);
+            if (!cpuName.isEmpty() && target == null)
+                return MethodResult.of(false, "CPU " + cpuName + " does not exists");
 
-        ICraftingService craftingGrid = node.getGrid().getService(ICraftingService.class);
-        Pair<Long, AEFluidKey> stack = AppEngApi.findAEFluidFromFilter(AppEngApi.getMonitor(tile.getGridNode()), craftingGrid, filter.getLeft());
-        if (stack.getRight() == null && stack.getLeft() == 0)
-            return MethodResult.of(false, "NOT_CRAFTABLE");
+            ICraftingService craftingGrid = node.getGrid().getService(ICraftingService.class);
+            Pair<Long, AEFluidKey> stack = AppEngApi.findAEFluidFromFilter(AppEngApi.getMonitor(tile.getGridNode()), craftingGrid, parsedFilter);
+            if (stack.getRight() == null && stack.getLeft() == 0)
+                return MethodResult.of(false, "NOT_CRAFTABLE");
 
-        CraftJob job = new CraftJob(owner.getLevel(), computer, node, stack.getRight(), parsedFilter.getCount(), tile, tile, target);
-        tile.addJob(job);
-        return MethodResult.of(job);
+            CraftJob job = new CraftJob(owner.getLevel(), computer, node, stack.getRight(), parsedFilter.getCount(), tile, tile, target);
+            tile.addJob(job);
+            return MethodResult.of(job);
+        }).pull;
     }
 
     @Override

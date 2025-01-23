@@ -1,9 +1,14 @@
 package de.srendi.advancedperipherals.common.util.inventory;
 
 import dan200.computercraft.api.lua.IArguments;
+import dan200.computercraft.api.lua.ILuaCallback;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.MethodResult;
 import dan200.computercraft.api.peripheral.IComputerAccess;
+import de.srendi.advancedperipherals.common.util.ServerWorker;
+
+import java.util.function.Supplier;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Implementation for common storage peripheral functions. Used for AE2 {@link de.srendi.advancedperipherals.common.addons.computercraft.peripheral.MeBridgePeripheral}
@@ -125,4 +130,32 @@ public interface IStorageSystemPeripheral {
 
     MethodResult isChemicalCrafting(IArguments arguments) throws LuaException;
 
+    // TODO: In 1.20.1 we should use the mainThread descriptor instead
+    @Deprecated(forRemoval = true, since = "1.20.1")
+    class CraftJobCallback implements ILuaCallback {
+        public static final String EVENT_ID = "_bridge_craft_requested";
+        private static final AtomicInteger ID_SEQ = new AtomicInteger();
+
+        public final MethodResult pull = MethodResult.pullEvent(EVENT_ID, this);
+        private final int id = ID_SEQ.incrementAndGet();
+        private volatile MethodResult result;
+
+        public CraftJobCallback(IComputerAccess computer, Supplier<MethodResult> worker) {
+            ServerWorker.add(() -> {
+                this.result = worker.get();
+                computer.queueEvent(EVENT_ID, this.id);
+            });
+        }
+
+        @Override
+        public MethodResult resume(Object[] datas) {
+            if (!(datas[0] instanceof String event) || !(datas[1] instanceof Number taskId)) {
+                return this.pull;
+            }
+            if (!event.equals(EVENT_ID) || taskId.intValue() != this.id) {
+                return this.pull;
+            }
+            return this.result;
+        }
+    }
 }
