@@ -133,14 +133,12 @@ public interface IStorageSystemPeripheral {
         public static final String EVENT_ID = "bridge_craft_requested";
         private static volatile int idSeq = 0;
 
-        public final MethodResult pull = MethodResult.pullEvent(EVENT_ID, this);
-        private final int id;
-        private final Supplier<MethodResult> worker;
+        private final MethodResult pull = MethodResult.pullEvent(EVENT_ID, this);
+        private final int id = 0;
         private volatile MethodResult result;
 
         public CraftJobCallback(IComputerAccess computer, Supplier<MethodResult> worker) {
             this.id = ++idSeq;
-            this.worker = worker;
             ServerWorker.add(() -> {
                 this.result = worker.get();
                 computer.queueEvent(EVENT_ID, this.id);
