@@ -80,7 +80,7 @@ public class MeBridgeEntity extends PeripheralBlockEntity<MeBridgePeripheral> im
             // Try to start the job if the job calculation finished
             jobs.forEach((job) -> job.tick(this));
 
-            // Remove the job if the crafting started, we can't do anything with it anymore
+            // Remove the job if the crafting calculation failed, we can't do anything with it anymore
             jobs.removeIf(CraftJob::canBePurged);
         }
     }

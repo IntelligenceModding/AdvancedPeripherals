@@ -12,6 +12,7 @@ import appeng.api.networking.crafting.ICraftingSimulationRequester;
 import appeng.api.networking.crafting.ICraftingSubmitResult;
 import appeng.api.networking.security.IActionSource;
 import appeng.api.stacks.AEKey;
+import appeng.api.stacks.KeyCounter;
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.peripheral.IComputerAccess;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
@@ -32,10 +33,11 @@ public class CraftJob {
     private static final String NOT_CRAFTABLE = "NOT_CRAFTABLE";
     private static final String MISSING_ITEMS = "MISSING_ITEMS";
     private static final String UNKNOWN_ERROR = "UNKNOWN_ERROR";
-    public static final String EVENT = "aeCrafting";
+    public static final String EVENT = "ae_crafting";
 
-    //TODO - We also need to prevent that jobs from other bridges can have the same id in the case one ME system uses two bridges
-    private final String id = "a";
+    private static volatile long idSeq = 0;
+
+    private final long id = ++idSeq;
     private final IComputerAccess computer;
     private final IGridNode node;
     private final IActionSource source;
@@ -67,7 +69,7 @@ public class CraftJob {
     }
 
     @LuaFunction
-    public final String getId() {
+    public final long getId() {
         return id;
     }
 
@@ -113,16 +115,16 @@ public class CraftJob {
 
     //TODO use pre defined constants as event arg
     protected void fireNotConnected() {
-        fireEvent(false, false, true, false, false, id, "not connected");
+        fireEvent(false, false, true, false, false, "not connected");
     }
 
     public void setStartedCrafting(boolean startedCrafting) {
         this.startedCrafting = startedCrafting;
-        fireEvent(true, true, false, false, false, id, CRAFTING_STARTED);
+        fireEvent(true, true, false, false, false, CRAFTING_STARTED);
     }
 
-    protected void fireEvent(boolean calculationStarted, boolean craftingStarted, boolean isDone, boolean wasCanceled, boolean error, String id, String message) {
-        this.computer.queueEvent(EVENT, calculationStarted, craftingStarted, isDone, wasCanceled, error, id, message);
+    protected void fireEvent(boolean calculationStarted, boolean craftingStarted, boolean isDone, boolean wasCanceled, boolean error, String message) {
+        this.computer.queueEvent(EVENT, calculationStarted, craftingStarted, isDone, wasCanceled, error, this.id, message);
         this.debugMessage = message;
         this.errorOccurred = error;
     }
@@ -140,12 +142,9 @@ public class CraftJob {
         if (startedCalculation) {
             return;
         }
+        startedCalculation = true;
 
         IGrid grid = node.getGrid();
-        if (grid == null) { //true when the block is not connected
-            fireNotConnected();
-            return;
-        }
 
         ICraftingService crafting = grid.getService(ICraftingService.class);
 
@@ -155,13 +154,12 @@ public class CraftJob {
         }
 
         if (!crafting.isCraftable(item)) {
-            fireEvent(false, false, true, false, false, id, NOT_CRAFTABLE);
+            fireEvent(false, false, true, false, false, NOT_CRAFTABLE);
             return;
         }
 
         futureJob = crafting.beginCraftingCalculation(world, this.requester, item, amount, CalculationStrategy.REPORT_MISSING_ITEMS);
-        fireEvent(true, false, false, false,false, id, CALCULATION_STARTED);
-        startedCalculation = true;
+        fireEvent(true, false, false, false, false, CALCULATION_STARTED);
     }
 
     public void tick(ICraftingRequester requester) {
@@ -180,33 +178,30 @@ public class CraftJob {
         } catch (ExecutionException | InterruptedException ex) {
             AdvancedPeripherals.debug("Tried to get job, but job calculation is not done. Should be done.", org.apache.logging.log4j.Level.ERROR);
             ex.printStackTrace();
-            fireEvent(true, false, false, false,true, id, UNKNOWN_ERROR);
+            fireEvent(true, false, false, false, true, UNKNOWN_ERROR);
             return;
         }
 
         if (job == null) {
             AdvancedPeripherals.debug("Job is null, should not be null.", org.apache.logging.log4j.Level.ERROR);
-            fireEvent(true, false, false, false,true, id, UNKNOWN_ERROR);
+            fireEvent(true, false, false, false, true, UNKNOWN_ERROR);
             return;
         }
 
-        if (!job.missingItems().isEmpty()) {
-            fireEvent(true, false, false, false,true, id, MISSING_ITEMS);
+        KeyCounter missing = job.missingItems();
+        if (!missing.isEmpty()) {
+            fireEvent(true, false, false, false, true, MISSING_ITEMS);
             calculationNotSuccessful = true;
             return;
         }
 
         IGrid grid = node.getGrid();
-        if (grid == null) {
-            fireNotConnected();
-            return;
-        }
 
         ICraftingService crafting = grid.getService(ICraftingService.class);
         ICraftingSubmitResult submitResult = crafting.submitJob(job, requester, target, false, this.source);
         if (!submitResult.successful()) {
             calculationNotSuccessful = true;
-            fireEvent(true, true, false, false, true, id, submitResult.errorCode().toString());
+            fireEvent(true, true, false, false, true, submitResult.errorCode().toString());
             return;
         }
 
@@ -218,16 +213,16 @@ public class CraftJob {
     public void jobStateChange() {
         ICraftingLink jobLink = this.jobLink;
         if (jobLink == null) {
-            fireEvent(true, true, true, false, true, id, UNKNOWN_ERROR);
+            fireEvent(true, true, true, false, true, UNKNOWN_ERROR);
             return;
         }
 
         if (jobLink.isCanceled()) {
-            fireEvent(true, true, false, true, false, id, JOB_CANCELED);
+            fireEvent(true, true, false, true, false, JOB_CANCELED);
         }
 
         if (jobLink.isDone()) {
-            fireEvent(true, true, true, false, false, id, JOB_DONE);
+            fireEvent(true, true, true, false, false, JOB_DONE);
         }
     }
 }
