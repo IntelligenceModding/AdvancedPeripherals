@@ -103,7 +103,7 @@ public class GeoScannerPeripheral extends BasePeripheral<IPeripheralOwner> {
     public final MethodResult chunkAnalyze() throws LuaException {
         return withOperation(SCAN_BLOCKS, SCAN_BLOCKS.free(), null, ignored -> {
             Level level = getLevel();
-            LevelChunk chunk = level.getChunkAt(getWorldBlockPos());
+            LevelChunk chunk = level.getChunkAt(getPhysicsBlockPos());
             ChunkPos chunkPos = chunk.getPos();
             HashMap<String, Integer> data = new HashMap<>();
             for (int x = chunkPos.getMinBlockX(); x <= chunkPos.getMaxBlockX(); x++) {
@@ -136,7 +136,7 @@ public class GeoScannerPeripheral extends BasePeripheral<IPeripheralOwner> {
             scan(result, getLevel(), getCenterPos(), context.getRadius());
             if (isOnShip()) {
                 int i = result.size();
-                scan(result, getLevel(), getWorldPos(), context.getRadius());
+                scan(result, getLevel(), getPhysicsPos(), context.getRadius());
                 for (; i < result.size(); i++) {
                     Map<String, Object> data = result.get(i);
                     data.put("notOnShip", true);

@@ -73,7 +73,7 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
             if (!isAllowedMultiDimensional() && player.getLevel().dimension() != dimension) {
                 continue;
             }
-            if (CoordUtil.isInRange(getWorldPos(), player, getLevel(), firstPos, secondPos, MAX_RANGE)) {
+            if (CoordUtil.isInRange(getPhysicsPos(), player, getLevel(), firstPos, secondPos, MAX_RANGE)) {
                 playersName.add(player.getName().getString());
             }
         }
@@ -86,7 +86,7 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
         ResourceKey<Level> dimension = getLevel().dimension();
 
         for (ServerPlayer player : getPlayers()) {
-            if (player.getLevel().dimension() == dimension && CoordUtil.isInRange(getWorldPos(), getLevel(), player, x, y, z, MAX_RANGE)) {
+            if (player.getLevel().dimension() == dimension && CoordUtil.isInRange(getPhysicsPos(), getLevel(), player, x, y, z, MAX_RANGE)) {
                 playersName.add(player.getName().getString());
             }
         }
@@ -99,7 +99,7 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
         ResourceKey<Level> dimension = getLevel().dimension();
 
         for (ServerPlayer player : getPlayers()) {
-            if (player.getLevel().dimension() == dimension && CoordUtil.isInRange(getWorldPos(), getLevel(), player, range, MAX_RANGE)) {
+            if (player.getLevel().dimension() == dimension && CoordUtil.isInRange(getPhysicsPos(), getLevel(), player, range, MAX_RANGE)) {
                 playersName.add(player.getName().getString());
             }
         }
@@ -118,7 +118,7 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
             if (!isAllowedMultiDimensional() && player.getLevel().dimension() != dimension) {
                 continue;
             }
-            if (CoordUtil.isInRange(getWorldPos(), player, getLevel(), firstPos, secondPos, MAX_RANGE)) {
+            if (CoordUtil.isInRange(getPhysicsPos(), player, getLevel(), firstPos, secondPos, MAX_RANGE)) {
                 return true;
             }
         }
@@ -132,7 +132,7 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
         ResourceKey<Level> dimension = getLevel().dimension();
 
         for (ServerPlayer player : getPlayers()) {
-            if (player.getLevel().dimension() == dimension && CoordUtil.isInRange(getWorldPos(), getLevel(), player, x, y, z, MAX_RANGE)) {
+            if (player.getLevel().dimension() == dimension && CoordUtil.isInRange(getPhysicsPos(), getLevel(), player, x, y, z, MAX_RANGE)) {
                 return true;
             }
         }
@@ -146,7 +146,7 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
         ResourceKey<Level> dimension = getLevel().dimension();
 
         for (ServerPlayer player : getPlayers()) {
-            if (player.getLevel().dimension() == dimension && CoordUtil.isInRange(getWorldPos(), getLevel(), player, range, MAX_RANGE)) {
+            if (player.getLevel().dimension() == dimension && CoordUtil.isInRange(getPhysicsPos(), getLevel(), player, range, MAX_RANGE)) {
                 return true;
             }
         }
@@ -163,7 +163,7 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
         if (!isAllowedMultiDimensional() && player.getLevel().dimension() != dimension) {
             return false;
         }
-        return CoordUtil.isInRange(getWorldPos(), player, getLevel(), firstPos, secondPos, MAX_RANGE);
+        return CoordUtil.isInRange(getPhysicsPos(), player, getLevel(), firstPos, secondPos, MAX_RANGE);
     }
 
     @LuaFunction(mainThread = true)
@@ -171,7 +171,7 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
         ResourceKey<Level> dimension = getLevel().dimension();
 
         ServerPlayer player = getPlayer(username);
-        return player.getLevel().dimension() == dimension && CoordUtil.isInRange(getWorldPos(), getLevel(), player, x, y, z, MAX_RANGE);
+        return player.getLevel().dimension() == dimension && CoordUtil.isInRange(getPhysicsPos(), getLevel(), player, x, y, z, MAX_RANGE);
     }
 
     @LuaFunction(mainThread = true)
@@ -179,7 +179,7 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
         ResourceKey<Level> dimension = getLevel().dimension();
 
         ServerPlayer player = getPlayer(username);
-        return player.getLevel().dimension() == dimension && CoordUtil.isInRange(getWorldPos(), getLevel(), player, range, MAX_RANGE);
+        return player.getLevel().dimension() == dimension && CoordUtil.isInRange(getPhysicsPos(), getLevel(), player, range, MAX_RANGE);
     }
 
     @LuaFunction(value = {"getPlayerPos", "getPlayer"}, mainThread = true)
@@ -187,7 +187,7 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
         if (!APConfig.PERIPHERALS_CONFIG.playerSpy.get())
             throw new LuaException("This function is disabled in the config. Activate it or ask an admin if he can activate it.");
         ResourceKey<Level> dimension = getLevel().dimension();
-        Vec3 pos = getWorldPos();
+        Vec3 pos = getPhysicsPos();
 
         ServerPlayer player = getPlayer(arguments.getString(0));
         if (player == null) {

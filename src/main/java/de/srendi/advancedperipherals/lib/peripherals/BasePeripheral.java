@@ -156,7 +156,7 @@ public abstract class BasePeripheral<O extends IPeripheralOwner> implements IBas
         return APAddons.vs2Loaded && APAddons.isBlockOnShip(owner.getLevel(), owner.getPos());
     }
 
-    public Vec3 getWorldPos() {
+    public Vec3 getPhysicsPos() {
         Vec3 pos = this.getCenterPos();
         if (!APAddons.vs2Loaded) {
             return pos;
@@ -169,8 +169,8 @@ public abstract class BasePeripheral<O extends IPeripheralOwner> implements IBas
         return new Vec3(newPos.x, newPos.y, newPos.z);
     }
 
-    public final BlockPos getWorldBlockPos() {
-        return new BlockPos(this.getWorldPos());
+    public final BlockPos getPhysicsBlockPos() {
+        return new BlockPos(this.getPhysicsPos());
     }
 
     protected Direction validateSide(String direction) throws LuaException {

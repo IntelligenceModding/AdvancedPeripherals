@@ -185,7 +185,7 @@ public class DistanceDetectorEntity extends PeripheralBlockEntity<DistanceDetect
         BlockEntityPeripheralOwner<DistanceDetectorEntity> owner = peripheral.getPeripheralOwner();
         final double maxRange = this.getMaxRange();
         Vec3 direction = owner.getDirection();
-        Vec3 center = peripheral.getWorldPos();
+        Vec3 center = peripheral.getPhysicsPos();
         Vec3 from = center;
         Vec3 to = from.add(direction.x * maxRange, direction.y * maxRange, direction.z * maxRange);
 

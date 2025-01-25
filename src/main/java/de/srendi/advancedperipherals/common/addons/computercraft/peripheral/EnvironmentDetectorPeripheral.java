@@ -93,24 +93,24 @@ public class EnvironmentDetectorPeripheral extends BasePeripheral<IPeripheralOwn
 
     @LuaFunction(mainThread = true)
     public final String getBiome() {
-        Optional<ResourceKey<Biome>> biome = getLevel().getBiome(this.getWorldBlockPos()).unwrapKey();
+        Optional<ResourceKey<Biome>> biome = getLevel().getBiome(this.getPhysicsBlockPos()).unwrapKey();
         return biome.map(biomeResourceKey -> biomeResourceKey.location().toString()).orElse("unknown");
     }
 
     @LuaFunction(mainThread = true)
     public final int getSkyLightLevel() {
-        return getLevel().getBrightness(LightLayer.SKY, this.getWorldBlockPos().offset(0, 1, 0));
+        return getLevel().getBrightness(LightLayer.SKY, this.getPhysicsBlockPos().offset(0, 1, 0));
     }
 
     @LuaFunction(mainThread = true)
     public final int getBlockLightLevel() {
-        return getLevel().getBrightness(LightLayer.BLOCK, this.getWorldBlockPos().offset(0, 1, 0));
+        return getLevel().getBrightness(LightLayer.BLOCK, this.getPhysicsBlockPos().offset(0, 1, 0));
     }
 
     @LuaFunction(mainThread = true)
     public final int getDayLightLevel() {
         Level level = getLevel();
-        int i = level.getBrightness(LightLayer.SKY, this.getWorldBlockPos().offset(0, 1, 0)) - level.getSkyDarken();
+        int i = level.getBrightness(LightLayer.SKY, this.getPhysicsBlockPos().offset(0, 1, 0)) - level.getSkyDarken();
         float f = level.getSunAngle(1.0F);
         if (i > 0) {
             float f1 = f < (float) Math.PI ? 0.0F : ((float) Math.PI * 2F);
@@ -128,7 +128,7 @@ public class EnvironmentDetectorPeripheral extends BasePeripheral<IPeripheralOwn
 
     @LuaFunction(mainThread = true)
     public final boolean isSlimeChunk() {
-        ChunkPos chunkPos = new ChunkPos(this.getWorldBlockPos());
+        ChunkPos chunkPos = new ChunkPos(this.getPhysicsBlockPos());
         return WorldgenRandom.seedSlimeChunk(chunkPos.x, chunkPos.z, ((WorldGenLevel) getLevel()).getSeed(), 987234911L).nextInt(10) == 0;
     }
 
@@ -208,7 +208,7 @@ public class EnvironmentDetectorPeripheral extends BasePeripheral<IPeripheralOwn
         return withOperation(SCAN_ENTITIES, new SphereOperationContext(radius), context -> {
             return context.getRadius() > SCAN_ENTITIES.getMaxCostRadius() ? MethodResult.of(null, "Radius exceeds max value") : null;
         }, context -> {
-            Vec3 pos = this.getWorldPos();
+            Vec3 pos = this.getPhysicsPos();
             AABB box = new AABB(pos, pos);
             List<Map<String, Object>> entities = getLevel().getEntities((Entity) null, box.inflate(context.getRadius() + 0.5), entity -> entity instanceof LivingEntity && entity.isAlive()).stream().map(entity -> LuaConverter.completeEntityWithPositionToLua(entity, pos, detailed)).toList();
             return MethodResult.of(entities);
