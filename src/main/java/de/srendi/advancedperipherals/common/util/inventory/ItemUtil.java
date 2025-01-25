@@ -24,6 +24,18 @@ public class ItemUtil {
     public static final Item POCKET_NORMAL = Registry.ModItems.POCKET_COMPUTER_NORMAL.get();
     public static final Item POCKET_ADVANCED = Registry.ModItems.POCKET_COMPUTER_ADVANCED.get();
 
+    private ItemUtil() {}
+
+    static MessageDigest getMessageDigest(String algorithm) {
+        try {
+            return MessageDigest.getInstance(algorithm);
+        } catch (NoSuchAlgorithmException ex) {
+            AdvancedPeripherals.debug("Could not generate fingerprint.", Level.ERROR);
+            ex.printStackTrace();
+            return null;
+        }
+    }
+
     /**
      * Fingerprints are MD5 hashes generated out of the nbt tag, the registry name and the display name from item stacks
      * Used to filter inventory specific operations. {@link de.srendi.advancedperipherals.common.addons.computercraft.peripheral.InventoryManagerPeripheral}
@@ -31,16 +43,16 @@ public class ItemUtil {
      * @return A generated MD5 hash from the item stack
      */
     public static String getFingerprint(ItemStack stack) {
-        String fingerprint = stack.getOrCreateTag() + getRegistryKey(stack).toString() + stack.getDisplayName().getString();
-        try {
-            byte[] bytesOfHash = fingerprint.getBytes(StandardCharsets.UTF_8);
-            MessageDigest md = MessageDigest.getInstance("MD5");
-            return StringUtil.toHexString(md.digest(bytesOfHash));
-        } catch (NoSuchAlgorithmException ex) {
-            AdvancedPeripherals.debug("Could not parse fingerprint.", Level.ERROR);
-            ex.printStackTrace();
+        MessageDigest md = getMessageDigest("MD5");
+        if (md == null) {
+            return "";
         }
-        return "";
+        CompoundTag tag = stack.getTag();
+        md.update(getRegistryKey(stack).toString().getBytes(StandardCharsets.UTF_8));
+        if (tag != null && !tag.isEmpty()) {
+            md.update(tag.getAsString().getBytes(StandardCharsets.UTF_8));
+        }
+        return StringUtil.toHexString(md.digest());
     }
 
     public static ItemStack makeTurtle(Item turtle, String upgrade) {
@@ -70,6 +82,6 @@ public class ItemUtil {
     }
 
     public static ResourceLocation getRegistryKey(ItemStack item) {
-        return ForgeRegistries.ITEMS.getKey(item.copy().getItem());
+        return ForgeRegistries.ITEMS.getKey(item.getItem());
     }
 }

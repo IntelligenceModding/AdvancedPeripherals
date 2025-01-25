@@ -28,8 +28,7 @@ import java.util.Objects;
 
 public class FluidUtil {
 
-    private FluidUtil() {
-    }
+    private FluidUtil() {}
 
     @Nullable
     public static IFluidHandler extractHandler(@Nullable Object object) {
@@ -76,16 +75,16 @@ public class FluidUtil {
 
     @NotNull
     public static String getFingerprint(@NotNull FluidStack stack) {
-        String fingerprint = stack.getOrCreateTag() + getRegistryKey(stack).toString() + stack.getDisplayName().getString();
-        try {
-            byte[] bytesOfHash = fingerprint.getBytes(StandardCharsets.UTF_8);
-            MessageDigest md = MessageDigest.getInstance("MD5");
-            return StringUtil.toHexString(md.digest(bytesOfHash));
-        } catch (NoSuchAlgorithmException ex) {
-            AdvancedPeripherals.debug("Could not parse fingerprint.", org.apache.logging.log4j.Level.ERROR);
-            ex.printStackTrace();
+        MessageDigest md = ItemUtil.getMessageDigest("MD5");
+        if (md == null) {
+            return "";
         }
-        return "";
+        CompoundTag tag = stack.getTag();
+        md.update(getRegistryKey(stack).toString().getBytes(StandardCharsets.UTF_8));
+        if (tag != null && !tag.isEmpty()) {
+            md.update(tag.getAsString().getBytes(StandardCharsets.UTF_8));
+        }
+        return StringUtil.toHexString(md.digest());
     }
 
     public static ResourceLocation getRegistryKey(Fluid fluid) {
@@ -93,6 +92,6 @@ public class FluidUtil {
     }
 
     public static ResourceLocation getRegistryKey(FluidStack fluid) {
-        return ForgeRegistries.FLUIDS.getKey(fluid.copy().getFluid());
+        return ForgeRegistries.FLUIDS.getKey(fluid.getFluid());
     }
 }
