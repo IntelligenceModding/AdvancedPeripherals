@@ -82,7 +82,7 @@ public class SmartGlassesComputer extends ServerComputer implements IPocketAcces
 
     @Override
     public BlockPos getPosition() {
-        return this.entity == null ? super.getPosition() : this.entity.blockPosition();
+        return this.entity == null ? super.getPosition() : new BlockPos(this.entity.getEyePosition());
     }
 
     @Override
@@ -212,7 +212,7 @@ public class SmartGlassesComputer extends ServerComputer implements IPocketAcces
             return;
         }
         this.setLevel((ServerLevel) this.entity.getCommandSenderWorld());
-        this.setPosition(this.entity.blockPosition());
+        this.setPosition(new BlockPos(this.entity.getEyePosition()));
     }
 
     public Map<Integer, IModule> getModules() {

@@ -6,7 +6,7 @@ import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
 
 public class ModulePeripheral extends BasePeripheral<ModulePeripheralOwner> {
 
-    public static final String PERIPHERAL_TYPE = "smartGlasses";
+    public static final String PERIPHERAL_TYPE = "smart_glasses";
 
     public ModulePeripheral(SmartGlassesComputer computer) {
         super(PERIPHERAL_TYPE, new ModulePeripheralOwner(computer));
@@ -15,14 +15,14 @@ public class ModulePeripheral extends BasePeripheral<ModulePeripheralOwner> {
 
     public void updateModules() {
         // We need to set the initialisation to false so the dynamic peripheral re-builds the plugins
-        initialized = false;
-        if (plugins != null)
-            plugins.clear();
+        clearAllPlugins();
 
-        getPeripheralOwner().getComputer().getModules().values().forEach(module -> {
-            IModuleFunctions functions = module.getFunctions(getPeripheralOwner().getComputer().getSmartGlassesAccess());
-            if (functions != null)
+        SmartGlassesComputer computer = getPeripheralOwner().getComputer();
+        computer.getModules().values().forEach(module -> {
+            IModuleFunctions functions = module.getFunctions(computer.getSmartGlassesAccess());
+            if (functions != null) {
                 addPlugin(functions);
+            }
         });
     }
 

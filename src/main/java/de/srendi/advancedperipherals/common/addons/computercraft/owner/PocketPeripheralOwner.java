@@ -67,7 +67,6 @@ public class PocketPeripheralOwner extends BasePeripheralOwner {
         return owner.getDirection();
     }
 
-
     /**
      * Not used for pockets
      */

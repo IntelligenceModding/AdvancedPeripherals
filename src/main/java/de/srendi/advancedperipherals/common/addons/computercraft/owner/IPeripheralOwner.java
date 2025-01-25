@@ -1,6 +1,7 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.owner;
 
 import dan200.computercraft.api.peripheral.IPeripheral;
+import de.srendi.advancedperipherals.common.addons.APAddons;
 import de.srendi.advancedperipherals.common.util.fakeplayer.APFakePlayer;
 import de.srendi.advancedperipherals.lib.peripherals.IPeripheralOperation;
 import net.minecraft.core.BlockPos;
@@ -11,9 +12,11 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+import org.joml.Vector3d;
+import org.valkyrienskies.core.api.ships.Ship;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
 import java.util.Collection;
 
 public interface IPeripheralOwner {
@@ -32,6 +35,20 @@ public interface IPeripheralOwner {
     @NotNull Direction getFacing();
 
     @NotNull FrontAndTop getOrientation();
+
+    @NotNull
+    default Vec3 getDirection() {
+        Vec3 dir = Vec3.atLowerCornerOf(getFacing().getNormal());
+        if (!APAddons.vs2Loaded) {
+            return dir;
+        }
+        Ship ship = APAddons.getVS2Ship(getLevel(), getPos());
+        if (ship == null) {
+            return dir;
+        }
+        Vector3d newDir = ship.getShipToWorld().transformDirection(new Vector3d(dir.x, dir.y, dir.z));
+        return new Vec3(newDir.x, newDir.y, newDir.z);
+    }
 
     @Nullable Player getOwner();
 

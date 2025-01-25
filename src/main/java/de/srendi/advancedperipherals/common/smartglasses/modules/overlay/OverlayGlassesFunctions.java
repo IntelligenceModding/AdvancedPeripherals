@@ -16,6 +16,7 @@ import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.two_dim.RenderableObject;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.two_dim.TextObject;
 import net.minecraft.client.Minecraft;
+import net.minecraft.world.phys.Vec3;
 
 public class OverlayGlassesFunctions implements IModuleFunctions {
 
@@ -120,7 +121,8 @@ public class OverlayGlassesFunctions implements IModuleFunctions {
 
     @LuaFunction
     public final MethodResult getCoords() {
-        return MethodResult.of(access.getEntity().position().x, access.getEntity().position().y, access.getEntity().position().z);
+        Vec3 pos = access.getEntity().getEyePosition();
+        return MethodResult.of(pos.x, pos.y, pos.z);
     }
 
     @LuaFunction

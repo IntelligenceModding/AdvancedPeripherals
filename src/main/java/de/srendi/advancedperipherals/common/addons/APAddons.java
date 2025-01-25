@@ -93,14 +93,14 @@ public class APAddons {
     }
 
     public static boolean isBlockOnShip(Level level, BlockPos pos) {
-        if (!vs2Loaded) {
+        if (level == null || !vs2Loaded) {
             return false;
         }
         return VSGameUtilsKt.isBlockInShipyard(level, pos);
     }
 
     public static Ship getVS2Ship(Level level, BlockPos pos) {
-        if (!vs2Loaded) {
+        if (level == null || !vs2Loaded) {
             return null;
         }
         return VSGameUtilsKt.getShipObjectManagingPos(level, pos);

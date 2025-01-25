@@ -41,7 +41,7 @@ public abstract class BasePeripheral<O extends IPeripheralOwner> implements IBas
     protected final O owner;
     protected final List<BoundMethod> pluggedMethods = new ArrayList<>();
     protected boolean initialized = false;
-    protected List<IPeripheralPlugin> plugins = null;
+    protected final List<IPeripheralPlugin> plugins = new LinkedList<>();
     protected String[] methodNames = new String[0];
 
     protected BasePeripheral(String type, O owner) {
@@ -49,32 +49,41 @@ public abstract class BasePeripheral<O extends IPeripheralOwner> implements IBas
         this.owner = owner;
     }
 
+    protected void clearAllPlugins() {
+        this.initialized = false;
+        plugins.clear();
+    }
+
     protected void buildPlugins() {
-        if (!initialized) {
-            initialized = true;
-            this.pluggedMethods.clear();
-            if (plugins != null) plugins.forEach(plugin -> {
-                if (plugin.isSuitable(this))
-                    pluggedMethods.addAll(plugin.getMethods());
-            });
-            owner.getAbilities().forEach(ability -> {
-                if (ability instanceof IPeripheralPlugin peripheralPlugin)
-                    pluggedMethods.addAll(peripheralPlugin.getMethods());
-            });
-            this.methodNames = pluggedMethods.stream().map(BoundMethod::getName).toArray(String[]::new);
+        if (this.initialized) {
+            return;
         }
+        this.initialized = true;
+        this.pluggedMethods.clear();
+        this.plugins.forEach(plugin -> {
+            if (plugin.isSuitable(this)) {
+                this.pluggedMethods.addAll(plugin.getMethods());
+            }
+        });
+        owner.getAbilities().forEach(ability -> {
+            if (ability instanceof IPeripheralPlugin peripheralPlugin) {
+                this.pluggedMethods.addAll(peripheralPlugin.getMethods());
+            }
+        });
+        this.methodNames = this.pluggedMethods.stream().map(BoundMethod::getName).toArray(String[]::new);
     }
 
     protected void addPlugin(@NotNull IPeripheralPlugin plugin) {
-        if (plugins == null) plugins = new LinkedList<>();
-        plugins.add(plugin);
+        this.plugins.add(plugin);
         IPeripheralOperation<?>[] operations = plugin.getOperations();
         if (operations != null) {
             OperationAbility operationAbility = owner.getAbility(PeripheralOwnerAbility.OPERATION);
-            if (operationAbility == null)
+            if (operationAbility == null) {
                 throw new IllegalArgumentException("This is not possible to attach plugin with operations to not operationable owner");
-            for (IPeripheralOperation<?> operation : operations)
+            }
+            for (IPeripheralOperation<?> operation : operations) {
                 operationAbility.registerOperation(operation);
+            }
         }
     }
 

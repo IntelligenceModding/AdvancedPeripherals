@@ -1,6 +1,6 @@
 package de.srendi.advancedperipherals.common.blocks.blockentities;
 
-import de.srendi.advancedperipherals.common.addons.APAddons;
+import de.srendi.advancedperipherals.common.addons.computercraft.owner.BlockEntityPeripheralOwner;
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.DistanceDetectorPeripheral;
 import de.srendi.advancedperipherals.common.blocks.base.BaseBlock;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralBlockEntity;
@@ -20,8 +20,6 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
-import org.joml.Vector3d;
-import org.valkyrienskies.core.api.ships.Ship;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -179,36 +177,15 @@ public class DistanceDetectorEntity extends PeripheralBlockEntity<DistanceDetect
         return ClientboundBlockEntityDataPacket.create(this);
     }
 
-    protected Vec3 getCenterPos() {
-        Vec3 pos = Vec3.atCenterOf(this.getBlockPos());
-        if (!APAddons.vs2Loaded) {
-            return pos;
-        }
-        Ship ship = APAddons.getVS2Ship(this.getLevel(), this.getBlockPos());
-        if (ship == null) {
-            return pos;
-        }
-        Vector3d newPos = ship.getShipToWorld().transformPosition(new Vector3d(pos.x, pos.y, pos.z));
-        return new Vec3(newPos.x, newPos.y, newPos.z);
-    }
-
-    protected Vec3 getDirection() {
-        Vec3 dir = Vec3.atLowerCornerOf(getBlockState().getValue(BaseBlock.ORIENTATION).front().getNormal());
-        if (!APAddons.vs2Loaded) {
-            return dir;
-        }
-        Ship ship = APAddons.getVS2Ship(this.getLevel(), this.getBlockPos());
-        if (ship == null) {
-            return dir;
-        }
-        Vector3d newDir = ship.getShipToWorld().transformDirection(new Vector3d(dir.x, dir.y, dir.z));
-        return new Vec3(newDir.x, newDir.y, newDir.z);
-    }
-
     public double calculateDistance() {
+        DistanceDetectorPeripheral peripheral = this.getPeripheral();
+        if (peripheral == null) {
+            return -1;
+        }
+        BlockEntityPeripheralOwner<DistanceDetectorEntity> owner = peripheral.getPeripheralOwner();
         final double maxRange = this.getMaxRange();
-        Vec3 direction = getDirection();
-        Vec3 center = getCenterPos();
+        Vec3 direction = owner.getDirection();
+        Vec3 center = peripheral.getWorldPos();
         Vec3 from = center;
         Vec3 to = from.add(direction.x * maxRange, direction.y * maxRange, direction.z * maxRange);
 
