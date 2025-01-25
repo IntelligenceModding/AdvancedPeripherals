@@ -16,8 +16,8 @@ import dan200.computercraft.api.lua.MethodResult;
 import dan200.computercraft.api.peripheral.IComputerAccess;
 import dan200.computercraft.core.apis.TableHelper;
 import dan200.computercraft.core.computer.ComputerSide;
+import de.srendi.advancedperipherals.common.addons.ae2.AECraftJob;
 import de.srendi.advancedperipherals.common.addons.ae2.AppEngApi;
-import de.srendi.advancedperipherals.common.addons.ae2.CraftJob;
 import de.srendi.advancedperipherals.common.addons.ae2.MeFluidHandler;
 import de.srendi.advancedperipherals.common.addons.ae2.MeItemHandler;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.BlockEntityPeripheralOwner;
@@ -46,12 +46,13 @@ import java.util.Optional;
 public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwner<MeBridgeEntity>> implements IStorageSystemPeripheral {
 
     public static final String PERIPHERAL_TYPE = "me_bridge";
-    private final MeBridgeEntity tile;
+
+    private final MeBridgeEntity bridge;
     private IGridNode node;
 
     public MeBridgePeripheral(MeBridgeEntity tileEntity) {
         super(PERIPHERAL_TYPE, new BlockEntityPeripheralOwner<>(tileEntity));
-        this.tile = tileEntity;
+        this.bridge = tileEntity;
         this.node = tileEntity.getActionableNode();
     }
 
@@ -77,7 +78,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
      */
     protected MethodResult exportToChest(@NotNull IArguments arguments, @Nullable IItemHandler targetInventory) throws LuaException {
         MEStorage monitor = AppEngApi.getMonitor(node);
-        MeItemHandler itemHandler = new MeItemHandler(monitor, tile);
+        MeItemHandler itemHandler = new MeItemHandler(monitor, bridge);
         Pair<ItemFilter, String> filter = ItemFilter.parse(arguments.getTable(0));
 
         if (filter.rightPresent())
@@ -98,7 +99,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
      */
     protected MethodResult exportToTank(@NotNull IArguments arguments, @Nullable IFluidHandler targetTank) throws LuaException {
         MEStorage monitor = AppEngApi.getMonitor(node);
-        MeFluidHandler fluidHandler = new MeFluidHandler(monitor, tile);
+        MeFluidHandler fluidHandler = new MeFluidHandler(monitor, bridge);
         Pair<FluidFilter, String> filter = FluidFilter.parse(arguments.getTable(0));
 
         if (filter.rightPresent())
@@ -119,7 +120,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
      */
     protected MethodResult importToME(@NotNull IArguments arguments, @Nullable IItemHandler targetInventory) throws LuaException {
         MEStorage monitor = AppEngApi.getMonitor(node);
-        MeItemHandler itemHandler = new MeItemHandler(monitor, tile);
+        MeItemHandler itemHandler = new MeItemHandler(monitor, bridge);
         Pair<ItemFilter, String> filter = ItemFilter.parse(arguments.getTable(0));
 
         if (filter.rightPresent())
@@ -140,7 +141,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
      */
     protected MethodResult importToME(@NotNull IArguments arguments, @Nullable IFluidHandler targetTank) throws LuaException {
         MEStorage monitor = AppEngApi.getMonitor(node);
-        MeFluidHandler fluidHandler = new MeFluidHandler(monitor, tile);
+        MeFluidHandler fluidHandler = new MeFluidHandler(monitor, bridge);
         Pair<FluidFilter, String> filter = FluidFilter.parse(arguments.getTable(0));
 
         if (filter.rightPresent())
@@ -568,28 +569,28 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
         Pair<ItemFilter, String> filter = ItemFilter.parse(arguments.getTable(0));
         if (filter.rightPresent())
-            return MethodResult.of(false, filter.getRight());
+            return MethodResult.of(null, filter.getRight());
 
         ItemFilter parsedFilter = filter.getLeft();
         if (parsedFilter.isEmpty())
-            return MethodResult.of(false, "EMPTY_FILTER");
+            return MethodResult.of(null, "EMPTY_FILTER");
 
         String cpuName = arguments.optString(1, "");
 
         return new CraftJobCallback(computer, () -> {
             ICraftingCPU target = AppEngApi.getCraftingCPU(node, cpuName);
             if (!cpuName.isEmpty() && target == null) {
-                return MethodResult.of(false, "CPU " + cpuName + " does not exists");
+                return MethodResult.of(null, "CPU " + cpuName + " does not exists");
             }
 
             ICraftingService craftingGrid = node.getGrid().getService(ICraftingService.class);
-            Pair<Long, AEItemKey> stack = AppEngApi.findAEStackFromFilter(AppEngApi.getMonitor(tile.getGridNode()), craftingGrid, parsedFilter);
+            Pair<Long, AEItemKey> stack = AppEngApi.findAEStackFromFilter(AppEngApi.getMonitor(bridge.getGridNode()), craftingGrid, parsedFilter);
             if (stack.getRight() == null && stack.getLeft() == 0) {
-                return MethodResult.of(false, "NOT_CRAFTABLE");
+                return MethodResult.of(null, "NOT_CRAFTABLE");
             }
 
-            CraftJob job = new CraftJob(owner.getLevel(), computer, node, stack.getRight(), parsedFilter.getCount(), tile, tile, target);
-            tile.addJob(job);
+            AECraftJob job = new AECraftJob(owner.getLevel(), computer, node, stack.getRight(), parsedFilter.getCount(), bridge, target);
+            bridge.addJob(job);
             return MethodResult.of(job);
         }).pull;
     }
@@ -602,25 +603,25 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
         Pair<FluidFilter, String> filter = FluidFilter.parse(arguments.getTable(0));
         if (filter.rightPresent())
-            return MethodResult.of(false, filter.getRight());
+            return MethodResult.of(null, filter.getRight());
 
         FluidFilter parsedFilter = filter.getLeft();
         if (parsedFilter.isEmpty())
-            return MethodResult.of(false, "EMPTY_FILTER");
+            return MethodResult.of(null, "EMPTY_FILTER");
 
         String cpuName = arguments.optString(1, "");
         return new CraftJobCallback(computer, () -> {
             ICraftingCPU target = AppEngApi.getCraftingCPU(node, cpuName);
             if (!cpuName.isEmpty() && target == null)
-                return MethodResult.of(false, "CPU " + cpuName + " does not exists");
+                return MethodResult.of(null, "CPU " + cpuName + " does not exists");
 
             ICraftingService craftingGrid = node.getGrid().getService(ICraftingService.class);
-            Pair<Long, AEFluidKey> stack = AppEngApi.findAEFluidFromFilter(AppEngApi.getMonitor(tile.getGridNode()), craftingGrid, parsedFilter);
+            Pair<Long, AEFluidKey> stack = AppEngApi.findAEFluidFromFilter(AppEngApi.getMonitor(bridge.getGridNode()), craftingGrid, parsedFilter);
             if (stack.getRight() == null && stack.getLeft() == 0)
                 return MethodResult.of(false, "NOT_CRAFTABLE");
 
-            CraftJob job = new CraftJob(owner.getLevel(), computer, node, stack.getRight(), parsedFilter.getCount(), tile, tile, target);
-            tile.addJob(job);
+            AECraftJob job = new AECraftJob(owner.getLevel(), computer, node, stack.getRight(), parsedFilter.getCount(), bridge, target);
+            bridge.addJob(job);
             return MethodResult.of(job);
         }).pull;
     }
@@ -640,9 +641,11 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
         List<Object> jobs = new ArrayList<>();
 
-        for (ICraftingCPU cpu : craftingGrid.getCpus()) {
-            if (cpu.getJobStatus() != null)
-                jobs.add(AppEngApi.parseCraftingJob(cpu.getJobStatus(), cpu));
+        for (AECraftJob job : bridge.getJobs()) {
+            for (ICraftingCPU cpu : craftingGrid.getCpus()) {
+                if (cpu.isBusy() && job.getToCraft().matches(cpu.getJobStatus().crafting()))
+                    jobs.add(AppEngApi.parseCraftingJob(job, cpu));
+            }
         }
         return MethodResult.of(jobs);
     }

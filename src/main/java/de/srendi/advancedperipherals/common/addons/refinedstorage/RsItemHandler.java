@@ -31,7 +31,7 @@ public class RsItemHandler implements IStorageSystemItemHandler {
 
     @Override
     public ItemStack extractItem(ItemFilter filter, int count, boolean simulate) {
-        ItemStack item = RefinedStorage.findStackFromFilter(network, network.getCraftingManager(), filter);
+        ItemStack item = RsApi.findItemFromFilter(network, network.getCraftingManager(), filter);
         if (item == null)
             AdvancedPeripherals.debug("Trying to extract item: " + item + " from filter: " + filter);
         if(item == null)

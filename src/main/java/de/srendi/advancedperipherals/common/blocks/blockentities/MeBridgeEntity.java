@@ -18,7 +18,7 @@ import appeng.api.storage.StorageHelper;
 import appeng.api.util.AECableType;
 import com.google.common.collect.ImmutableSet;
 import de.srendi.advancedperipherals.common.addons.ae2.AppEngApi;
-import de.srendi.advancedperipherals.common.addons.ae2.CraftJob;
+import de.srendi.advancedperipherals.common.addons.ae2.AECraftJob;
 import de.srendi.advancedperipherals.common.addons.ae2.MeBridgeEntityListener;
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.MeBridgePeripheral;
 import de.srendi.advancedperipherals.common.blocks.base.IInventoryBlock;
@@ -26,6 +26,7 @@ import de.srendi.advancedperipherals.common.blocks.base.PeripheralBlockEntity;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.setup.APBlockEntityTypes;
 import de.srendi.advancedperipherals.common.setup.APBlocks;
+import de.srendi.advancedperipherals.common.util.inventory.BasicCraftJob;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.player.Player;
@@ -44,7 +45,7 @@ import java.util.stream.Collectors;
 
 public class MeBridgeEntity extends PeripheralBlockEntity<MeBridgePeripheral> implements IActionSource, IInWorldGridNodeHost, ICraftingSimulationRequester, IInventoryBlock, ICraftingRequester {
 
-    private final List<CraftJob> jobs = new CopyOnWriteArrayList<>();
+    private final List<AECraftJob> jobs = new CopyOnWriteArrayList<>();
     private boolean initialized = false;
     private final IManagedGridNode mainNode = GridHelper.createManagedNode(this, MeBridgeEntityListener.INSTANCE);
 
@@ -78,10 +79,10 @@ public class MeBridgeEntity extends PeripheralBlockEntity<MeBridgePeripheral> im
             }
 
             // Try to start the job if the job calculation finished
-            jobs.forEach((job) -> job.tick(this));
+            jobs.forEach(BasicCraftJob::tick);
 
             // Remove the job if the crafting calculation failed, we can't do anything with it anymore
-            jobs.removeIf(CraftJob::canBePurged);
+            jobs.removeIf(BasicCraftJob::canBePurged);
         }
     }
 
@@ -142,8 +143,12 @@ public class MeBridgeEntity extends PeripheralBlockEntity<MeBridgePeripheral> im
         return this;
     }
 
-    public void addJob(CraftJob job) {
+    public void addJob(AECraftJob job) {
         jobs.add(job);
+    }
+
+    public List<AECraftJob> getJobs() {
+        return jobs;
     }
 
     @Override
@@ -175,7 +180,7 @@ public class MeBridgeEntity extends PeripheralBlockEntity<MeBridgePeripheral> im
 
     @Override
     public ImmutableSet<ICraftingLink> getRequestedJobs() {
-        return jobs.stream().filter(CraftJob::isCraftingStarted).map(CraftJob::getJobLink).collect(Collectors.toCollection(ImmutableSet::of));
+        return jobs.stream().filter(BasicCraftJob::isCraftingStarted).map(AECraftJob::getJobLink).collect(Collectors.toCollection(ImmutableSet::of));
     }
 
     @Override
@@ -185,6 +190,6 @@ public class MeBridgeEntity extends PeripheralBlockEntity<MeBridgePeripheral> im
 
     @Override
     public void jobStateChange(ICraftingLink link) {
-        jobs.stream().filter(CraftJob::isCraftingStarted).filter((job) -> job.getJobLink().getCraftingID().equals(link.getCraftingID())).forEach(CraftJob::jobStateChange);
+        jobs.stream().filter(BasicCraftJob::isCraftingStarted).filter((job) -> job.getJobLink().getCraftingID().equals(link.getCraftingID())).forEach(AECraftJob::jobStateChanged);
     }
 }

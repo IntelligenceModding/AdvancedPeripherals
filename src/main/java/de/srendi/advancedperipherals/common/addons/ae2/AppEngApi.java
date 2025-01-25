@@ -159,6 +159,9 @@ public class AppEngApi {
         return Pair.of(null, "NO_PATTERN_FOUND");
     }
 
+    public static boolean compareStackWithGeneric(GenericStack generic, ItemStack itemStack) {
+        if (generic)
+    }
 
     public static List<Object> listStacks(MEStorage monitor, ICraftingService service) {
         List<Object> items = new ArrayList<>();
@@ -400,12 +403,12 @@ public class AppEngApi {
         return map;
     }
 
-    public static Map<String, Object> parseCraftingJob(CraftingJobStatus job, @Nullable ICraftingCPU cpu) {
+    public static Map<String, Object> parseCraftingJob(CraftingJobStatus jobStatus, AECraftJob craftJob, @Nullable ICraftingCPU cpu) {
         Map<String, Object> map = new HashMap<>();
-        map.put("requestedItem", parseGenericStack(job.crafting()));
-        map.put("elapsedTimeNanos", job.elapsedTimeNanos());
-        map.put("totalItem", job.totalItems());
-        map.put("progress", job.progress());
+        map.put("requestedItem", parseGenericStack(jobStatus.crafting()));
+        map.put("elapsedTimeNanos", jobStatus.elapsedTimeNanos());
+        map.put("totalItem", jobStatus.totalItems());
+        map.put("progress", jobStatus.progress());
 
         if (cpu != null)
             map.put("cpu", parseCraftingCPU(cpu, true));

@@ -1,7 +1,7 @@
 package de.srendi.advancedperipherals.common.addons;
 
 import de.srendi.advancedperipherals.AdvancedPeripherals;
-import de.srendi.advancedperipherals.common.addons.refinedstorage.RefinedStorage;
+import de.srendi.advancedperipherals.common.addons.refinedstorage.RsApi;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
@@ -66,7 +66,7 @@ public class APAddons {
         vs2Loaded = modList.isLoaded(VALKYRIEN_SKIES_MODID);
 
         if (refinedStorageLoaded) {
-            RefinedStorage.instance = new RefinedStorage();
+            RsApi.instance = new RsApi();
         }
     }
 
