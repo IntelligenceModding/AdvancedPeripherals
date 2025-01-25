@@ -12,15 +12,16 @@ import net.minecraft.core.FrontAndTop;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.Nameable;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
+
+import java.util.Objects;
 import org.apache.commons.lang3.NotImplementedException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Objects;
 
 public class BlockEntityPeripheralOwner<T extends BlockEntity & IPeripheralTileEntity> extends BasePeripheralOwner {
 
@@ -72,9 +73,13 @@ public class BlockEntityPeripheralOwner<T extends BlockEntity & IPeripheralTileE
 
     @Nullable
     @Override
+    public Entity getHoldingEntity() {
+        return null;
+    }
+
+    @Nullable
+    @Override
     public Player getOwner() {
-        if (tileEntity instanceof InventoryManagerEntity inventoryManagerEntity)
-            return inventoryManagerEntity.getOwnerPlayer();
         return null;
     }
 

@@ -78,10 +78,8 @@ public class PocketPeripheralOwner extends BasePeripheralOwner {
 
     @Nullable
     @Override
-    public Player getOwner() {
-        Entity owner = pocket.getEntity();
-        if (owner instanceof Player player) return player;
-        return null;
+    public Entity getHoldingEntity() {
+        return pocket.getEntity();
     }
 
     @NotNull

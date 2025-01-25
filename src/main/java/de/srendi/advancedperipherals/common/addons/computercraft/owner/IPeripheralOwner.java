@@ -15,9 +15,11 @@ import net.minecraft.world.phys.Vec3;
 import org.joml.Vector3d;
 import org.valkyrienskies.core.api.ships.Ship;
 
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import java.util.Collection;
 
 public interface IPeripheralOwner {
 
@@ -50,7 +52,23 @@ public interface IPeripheralOwner {
         return new Vec3(newDir.x, newDir.y, newDir.z);
     }
 
-    @Nullable Player getOwner();
+    @Nullable Entity getHoldingEntity();
+
+    @Nullable
+    default Player getOwner() {
+        Entity owner = pocket.getHoldingEntity();
+        Set<Entity> checked = new HashSet<>();
+        while (owner != null && checked.add(owner)) {
+            if (owner instanceof Player player) {
+                return (Player) player;
+            }
+            if (!(owner instanceof OwnableEntity ownable)) {
+                break;
+            }
+            owner = ownable.getOwner();
+        }
+        return null;
+    }
 
     @NotNull CompoundTag getDataStorage();
 
