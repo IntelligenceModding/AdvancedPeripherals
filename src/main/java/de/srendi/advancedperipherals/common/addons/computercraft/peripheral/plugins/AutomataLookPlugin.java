@@ -20,6 +20,7 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 import org.valkyrienskies.core.api.ships.Ship;
+import org.valkyrienskies.mod.common.VSGameUtilsKt;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -57,7 +58,7 @@ public class AutomataLookPlugin extends AutomataCorePlugin {
         data.put("y", pos.y - origin.y);
         data.put("z", pos.z - origin.z);
         if (APAddons.vs2Loaded) {
-            Ship ship = APAddons.getVS2Ship(automataCore.getLevel(), blockPos);
+            Ship ship = VSGameUtilsKt.getShipObjectManagingPos(automataCore.getLevel(), blockPos);
             if (ship != null) {
                 data.put("shipId", ship.getId());
                 data.put("shipName", ship.getSlug());

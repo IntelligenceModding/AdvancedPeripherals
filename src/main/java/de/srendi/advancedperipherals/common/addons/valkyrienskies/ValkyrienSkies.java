@@ -1,6 +1,5 @@
 package de.srendi.advancedperipherals.common.addons.valkyrienskies;
 
-import de.srendi.advancedperipherals.common.addons.APAddons;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.phys.Vec3;
@@ -16,7 +15,7 @@ public final class ValkyrienSkies {
     private ValkyrienSkies() {}
 
     public static List<ServerShip> getNearbyShips(ServerLevel level, Vec3 pos, double radius) {
-        Ship ship = APAddons.getVS2Ship(level, new BlockPos(pos));
+        Ship ship = VSGameUtilsKt.getShipObjectManagingPos(level, new BlockPos(pos));
         if (ship != null) {
             Vector3d newPos = ship.getShipToWorld().transformPosition(new Vector3d(pos.x, pos.y, pos.z));
             pos = new Vec3(newPos.x, newPos.y, newPos.z);

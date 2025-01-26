@@ -12,7 +12,6 @@ import net.minecraftforge.fml.InterModComms;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
-import org.valkyrienskies.core.api.ships.Ship;
 import org.valkyrienskies.mod.common.VSGameUtilsKt;
 import top.theillusivec4.curios.api.CuriosApi;
 import top.theillusivec4.curios.api.SlotResult;
@@ -93,16 +92,9 @@ public class APAddons {
     }
 
     public static boolean isBlockOnShip(Level level, BlockPos pos) {
-        if (level == null || !vs2Loaded) {
+        if (!vs2Loaded) {
             return false;
         }
         return VSGameUtilsKt.isBlockInShipyard(level, pos);
-    }
-
-    public static Ship getVS2Ship(Level level, BlockPos pos) {
-        if (level == null || !vs2Loaded) {
-            return null;
-        }
-        return VSGameUtilsKt.getShipObjectManagingPos(level, pos);
     }
 }
