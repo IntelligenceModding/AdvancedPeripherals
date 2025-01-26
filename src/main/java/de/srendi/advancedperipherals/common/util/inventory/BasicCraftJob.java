@@ -33,7 +33,7 @@ public abstract class BasicCraftJob {
     protected boolean isJobDone = false;
     protected long jobDoneTime = 0;
     protected boolean isJobCanceled = false;
-    protected String debugMessage = "";
+    protected String debugMessage = null;
 
     public BasicCraftJob(IComputerAccess computer, String eventName, Level world, long amount) {
         this.computer = computer;
@@ -82,11 +82,6 @@ public abstract class BasicCraftJob {
     }
 
     @LuaFunction
-    public final boolean hasDebugMessage() {
-        return !debugMessage.isEmpty();
-    }
-
-    @LuaFunction
     public final String getDebugMessage() {
         return debugMessage;
     }
@@ -106,9 +101,34 @@ public abstract class BasicCraftJob {
         return getTotalItems();
     }
 
-    @LuaFunction(value = "getProgress")
-    public final long getProgressLua() {
-        return getProgress();
+    @LuaFunction(value = "getItemProgress")
+    public final long getItemProgressLua() {
+        return getItemProgress();
+    }
+
+    @LuaFunction(value = "getEmittedItems")
+    public final Object getEmittedItemsLua() {
+        return (getEmittedItems());
+    }
+
+    @LuaFunction(value = "getUsedItems")
+    public final Object getUsedItemsLua() {
+        return (getUsedItems());
+    }
+
+    @LuaFunction(value = "getMissingItems")
+    public final Object getMissingItemsLua() {
+        return (getMissingItems());
+    }
+
+    @LuaFunction(value = "hasMultiplePaths")
+    public final boolean hasMultiplePathsLua() {
+        return (hasMultiplePaths());
+    }
+
+    @LuaFunction(value = "getFinalOutput")
+    public final Object getFinalOutputLua() {
+        return (getFinalOutput());
     }
 
     public abstract Object getParsedRequestedItem();
@@ -117,7 +137,17 @@ public abstract class BasicCraftJob {
 
     public abstract long getTotalItems();
 
-    public abstract long getProgress();
+    public abstract long getItemProgress();
+
+    public abstract Object getEmittedItems();
+
+    public abstract Object getUsedItems();
+
+    public abstract Object getMissingItems();
+
+    public abstract boolean hasMultiplePaths();
+
+    public abstract Object getFinalOutput();
 
     public Level getWorld() {
         return world;

@@ -289,6 +289,14 @@ public class AppEngApi {
         return Collections.emptyMap();
     }
 
+    public static List<Object> parseKeyCounter(KeyCounter counter) {
+        List<Object> parsedKeys = new ArrayList<>();
+        for (AEKey key : counter.keySet()) {
+            parsedKeys.add(parseGenericStack(new GenericStack(key, counter.get(key))));
+        }
+
+        return parsedKeys;
+    }
 
     public static Map<Object, Object> parseDrive(DriveBlockEntity drive) {
         Map<Object, Object> map = new HashMap<>();
@@ -414,7 +422,7 @@ public class AppEngApi {
             return map;
         }
 
-        return craftJob.withJobStatus(jobStatus).withCPU(cpu);
+        return craftJob.withJobStatus(() -> jobStatus).withCPU(cpu);
     }
 
     public static MEStorage getMonitor(IGridNode node) {

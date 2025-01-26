@@ -5,6 +5,7 @@ import com.refinedmods.refinedstorage.api.autocrafting.task.CalculationResultTyp
 import com.refinedmods.refinedstorage.api.autocrafting.task.ICalculationResult;
 import com.refinedmods.refinedstorage.api.autocrafting.task.ICraftingTask;
 import dan200.computercraft.api.peripheral.IComputerAccess;
+import de.srendi.advancedperipherals.common.util.LuaConverter;
 import de.srendi.advancedperipherals.common.util.inventory.BasicCraftJob;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -45,7 +46,7 @@ public class RSCraftJob extends BasicCraftJob {
 
     @Override
     public Object getParsedRequestedItem() {
-        return null;
+        return LuaConverter.itemStackToObject(itemToCraft, (int) amount);
     }
 
     @Override
@@ -59,8 +60,33 @@ public class RSCraftJob extends BasicCraftJob {
     }
 
     @Override
-    public long getProgress() {
+    public long getItemProgress() {
         return 0;
+    }
+
+    @Override
+    public Object getEmittedItems() {
+        return null;
+    }
+
+    @Override
+    public Object getUsedItems() {
+        return null;
+    }
+
+    @Override
+    public Object getMissingItems() {
+        return null;
+    }
+
+    @Override
+    public boolean hasMultiplePaths() {
+        return false;
+    }
+
+    @Override
+    public Object getFinalOutput() {
+        return null;
     }
 
     public ICraftingTask getCraftingTask() {
