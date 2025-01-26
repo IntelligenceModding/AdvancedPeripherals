@@ -16,6 +16,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Vector3d;
 import org.valkyrienskies.core.api.ships.ServerShip;
+import org.valkyrienskies.mod.common.VSGameUtilsKt;
 
 import java.util.List;
 import java.util.Map;
@@ -38,7 +39,7 @@ public class AutomataVSMountPlugin extends AutomataCorePlugin {
     @LuaFunction(mainThread = true)
     public final MethodResult getCurrentShip() {
         IPeripheralOwner owner = this.automataCore.getPeripheralOwner();
-        ServerShip ship = (ServerShip) APAddons.getVS2Ship(owner.getLevel(), owner.getPos());
+        ServerShip ship = (ServerShip) VSGameUtilsKt.getShipObjectManagingPos(owner.getLevel(), owner.getPos());
         if (ship == null) {
             return MethodResult.of();
         }

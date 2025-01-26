@@ -16,6 +16,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Vector3d;
 import org.valkyrienskies.core.api.ships.Ship;
+import org.valkyrienskies.mod.common.VSGameUtilsKt;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -46,7 +47,7 @@ public interface IPeripheralOwner {
         if (!APAddons.vs2Loaded) {
             return dir;
         }
-        Ship ship = APAddons.getVS2Ship(getLevel(), getPos());
+        Ship ship = VSGameUtilsKt.getShipObjectManagingPos(getLevel(), getPos());
         if (ship == null) {
             return dir;
         }
