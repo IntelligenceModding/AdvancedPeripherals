@@ -43,13 +43,33 @@ public class RSCraftJob extends BasicCraftJob {
         return craftingTask != null && craftingTask.getCompletionPercentage() != 100 && craftingManager.getTasks().stream().noneMatch(task -> task.getId() == this.craftingTask.getId());
     }
 
+    @Override
+    public Object getParsedRequestedItem() {
+        return null;
+    }
+
+    @Override
+    public long getElapsedTime() {
+        return 0;
+    }
+
+    @Override
+    public long getTotalItems() {
+        return 0;
+    }
+
+    @Override
+    public long getProgress() {
+        return 0;
+    }
+
     public ICraftingTask getCraftingTask() {
         return craftingTask;
     }
 
     @Override
     protected void maybeCraft() {
-        if (startedCrafting || calculationNotSuccessful ||  calculationResult == null) {
+        if (startedCrafting || calculationNotSuccessful || calculationResult == null) {
             return;
         }
 

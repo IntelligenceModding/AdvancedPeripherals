@@ -91,6 +91,34 @@ public abstract class BasicCraftJob {
         return debugMessage;
     }
 
+    @LuaFunction(value = "getRequestedItem")
+    public final Object getRequestedItemLua() {
+        return getParsedRequestedItem();
+    }
+
+    @LuaFunction(value = "getElapsedTime")
+    public final long getElapsedTimeLua() {
+        return getElapsedTime();
+    }
+
+    @LuaFunction(value = "getTotalItems")
+    public final long getTotalItemsLua() {
+        return getTotalItems();
+    }
+
+    @LuaFunction(value = "getProgress")
+    public final long getProgressLua() {
+        return getProgress();
+    }
+
+    public abstract Object getParsedRequestedItem();
+
+    public abstract long getElapsedTime();
+
+    public abstract long getTotalItems();
+
+    public abstract long getProgress();
+
     public Level getWorld() {
         return world;
     }

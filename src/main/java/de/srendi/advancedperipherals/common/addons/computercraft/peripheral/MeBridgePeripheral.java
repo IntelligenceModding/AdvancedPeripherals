@@ -591,7 +591,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
             AECraftJob job = new AECraftJob(owner.getLevel(), computer, node, stack.getRight(), parsedFilter.getCount(), bridge, target);
             bridge.addJob(job);
-            return MethodResult.of(job);
+            return MethodResult.of(job.withCPU(target));
         }).pull;
     }
 
@@ -622,7 +622,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
             AECraftJob job = new AECraftJob(owner.getLevel(), computer, node, stack.getRight(), parsedFilter.getCount(), bridge, target);
             bridge.addJob(job);
-            return MethodResult.of(job);
+            return MethodResult.of(job.withCPU(target));
         }).pull;
     }
 
@@ -644,7 +644,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         for (AECraftJob job : bridge.getJobs()) {
             for (ICraftingCPU cpu : craftingGrid.getCpus()) {
                 if (cpu.isBusy() && job.getToCraft().matches(cpu.getJobStatus().crafting()))
-                    jobs.add(AppEngApi.parseCraftingJob(job, cpu));
+                    jobs.add(AppEngApi.parseCraftingJob(cpu.getJobStatus(), job, cpu));
             }
         }
         return MethodResult.of(jobs);

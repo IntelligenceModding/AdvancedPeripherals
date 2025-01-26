@@ -159,10 +159,6 @@ public class AppEngApi {
         return Pair.of(null, "NO_PATTERN_FOUND");
     }
 
-    public static boolean compareStackWithGeneric(GenericStack generic, ItemStack itemStack) {
-        if (generic)
-    }
-
     public static List<Object> listStacks(MEStorage monitor, ICraftingService service) {
         List<Object> items = new ArrayList<>();
         KeyCounter keyCounter = monitor.getAvailableStacks();
@@ -396,24 +392,29 @@ public class AppEngApi {
         map.put("coProcessors", coProcessors);
         map.put("isBusy", isBusy);
         if (!recursive)
-            map.put("craftingJob", cpu.getJobStatus() != null ? parseCraftingJob(cpu.getJobStatus(), null) : null);
+            map.put("craftingJob", cpu.getJobStatus() != null ? parseCraftingJob(cpu.getJobStatus(), null, null) : null);
         map.put("name", cpu.getName() != null ? cpu.getName().getString() : "Unnamed");
         map.put("selectionMode", cpu.getSelectionMode().toString());
 
         return map;
     }
 
-    public static Map<String, Object> parseCraftingJob(CraftingJobStatus jobStatus, AECraftJob craftJob, @Nullable ICraftingCPU cpu) {
-        Map<String, Object> map = new HashMap<>();
-        map.put("requestedItem", parseGenericStack(jobStatus.crafting()));
-        map.put("elapsedTimeNanos", jobStatus.elapsedTimeNanos());
-        map.put("totalItem", jobStatus.totalItems());
-        map.put("progress", jobStatus.progress());
+    public static Object parseCraftingJob(CraftingJobStatus jobStatus, AECraftJob craftJob, @Nullable ICraftingCPU cpu) {
+        if (craftJob == null) {
+            Map<String, Object> map = new HashMap<>();
 
-        if (cpu != null)
-            map.put("cpu", parseCraftingCPU(cpu, true));
+            map.put("requestedItem", parseGenericStack(jobStatus.crafting()));
+            map.put("elapsedTimeNanos", jobStatus.elapsedTimeNanos());
+            map.put("totalItem", jobStatus.totalItems());
+            map.put("progress", jobStatus.progress());
 
-        return map;
+            if (cpu != null)
+                map.put("cpu", parseCraftingCPU(cpu, true));
+
+            return map;
+        }
+
+        return craftJob.withJobStatus(jobStatus).withCPU(cpu);
     }
 
     public static MEStorage getMonitor(IGridNode node) {

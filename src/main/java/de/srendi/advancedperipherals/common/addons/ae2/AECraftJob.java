@@ -3,6 +3,7 @@ package de.srendi.advancedperipherals.common.addons.ae2;
 import appeng.api.networking.IGrid;
 import appeng.api.networking.IGridNode;
 import appeng.api.networking.crafting.CalculationStrategy;
+import appeng.api.networking.crafting.CraftingJobStatus;
 import appeng.api.networking.crafting.ICraftingCPU;
 import appeng.api.networking.crafting.ICraftingLink;
 import appeng.api.networking.crafting.ICraftingPlan;
@@ -13,6 +14,8 @@ import appeng.api.networking.crafting.ICraftingSubmitResult;
 import appeng.api.networking.security.IActionSource;
 import appeng.api.stacks.AEKey;
 import appeng.api.stacks.KeyCounter;
+import appeng.me.cluster.implementations.CraftingCPUCluster;
+import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.peripheral.IComputerAccess;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.blocks.blockentities.MeBridgeEntity;
@@ -31,12 +34,13 @@ public class AECraftJob extends BasicCraftJob {
     private final IActionSource source;
     private final ICraftingSimulationRequester simulationRequester;
     private final ICraftingRequester requester;
-    private final ICraftingCPU target;
+    private ICraftingCPU target;
     private final AEKey toCraft;
 
     private Future<ICraftingPlan> futureJob;
     @Nullable
     private ICraftingLink jobLink; // Job after calculation was done
+    private CraftingJobStatus jobStatus;
 
     public AECraftJob(Level world, final IComputerAccess computer, IGridNode node, AEKey item, long amount, MeBridgeEntity bridge, ICraftingCPU target) {
         super(computer, "ae", world, amount);
@@ -46,6 +50,11 @@ public class AECraftJob extends BasicCraftJob {
         this.simulationRequester = bridge;
         this.requester = bridge;
         this.target = target;
+    }
+
+    @LuaFunction
+    public final Object getCraftingCPU() {
+        return AppEngApi.parseCraftingCPU(target, true);
     }
 
     @Nullable
@@ -69,6 +78,50 @@ public class AECraftJob extends BasicCraftJob {
     @Override
     protected boolean isJobCanceled() {
         return jobLink != null && jobLink.isCanceled();
+    }
+
+    @Override
+    public Object getParsedRequestedItem() {
+        if (jobStatus == null) {
+            return null;
+        }
+        return AppEngApi.parseGenericStack(jobStatus.crafting());
+    }
+
+    @Override
+    public long getElapsedTime() {
+        if (jobStatus == null) {
+            return -1;
+        }
+        return jobStatus.elapsedTimeNanos();
+    }
+
+    @Override
+    public long getTotalItems() {
+        if (jobStatus == null) {
+            return -1;
+        }
+        return jobStatus.totalItems();
+    }
+
+    @Override
+    public long getProgress() {
+        if (jobStatus == null) {
+            return -1;
+        }
+        return jobStatus.progress();
+    }
+
+    public AECraftJob withJobStatus(CraftingJobStatus jobStatus) {
+        this.jobStatus = jobStatus;
+        return this;
+    }
+
+    public AECraftJob withCPU(ICraftingCPU target) {
+        if (this.target == null) {
+            this.target = target;
+        }
+        return this;
     }
 
     public void startCalculation() {
@@ -121,8 +174,8 @@ public class AECraftJob extends BasicCraftJob {
 
         IGrid grid = node.getGrid();
 
-        ICraftingService crafting = grid.getService(ICraftingService.class);
-        ICraftingSubmitResult submitResult = crafting.submitJob(job, requester, target, false, this.source);
+        ICraftingService craftingService = grid.getService(ICraftingService.class);
+        ICraftingSubmitResult submitResult = craftingService.submitJob(job, requester, target, false, this.source);
         if (!submitResult.successful()) {
             calculationNotSuccessful = true;
             fireEvent(true, false, false, false, true, submitResult.errorCode().toString());
@@ -132,6 +185,7 @@ public class AECraftJob extends BasicCraftJob {
         this.jobLink = submitResult.link();
         this.futureJob = null;
         setStartedCrafting();
+        tryFindCPUAndStatus(craftingService);
     }
 
     public void jobStateChanged() {
@@ -151,5 +205,21 @@ public class AECraftJob extends BasicCraftJob {
             fireEvent(true, true, true, false, false, JOB_DONE);
             setJobDone();
         }
+    }
+
+    private void tryFindCPUAndStatus(ICraftingService service) {
+        if (jobLink == null || jobStatus != null || !startedCrafting) {
+            return;
+        }
+        for (ICraftingCPU cpu : service.getCpus()) {
+            if (cpu instanceof CraftingCPUCluster cpuCluster) {
+                if (cpuCluster.craftingLogic.getLastLink() != null && cpuCluster.craftingLogic.getLastLink().getCraftingID().equals(jobLink.getCraftingID())) {
+                    this.jobStatus = cpuCluster.getJobStatus();
+                    this.target = cpu;
+                    return;
+                }
+            }
+        }
+        AdvancedPeripherals.debug("Could not find CPU or job link even after job started", org.apache.logging.log4j.Level.WARN);
     }
 }
