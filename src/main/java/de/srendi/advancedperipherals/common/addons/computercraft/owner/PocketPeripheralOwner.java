@@ -42,41 +42,46 @@ public class PocketPeripheralOwner extends BasePeripheralOwner {
     @Override
     public Level getLevel() {
         Entity owner = pocket.getEntity();
-        if (owner == null) return null;
-        return owner.getCommandSenderWorld();
+        return owner == null ? null : owner.getCommandSenderWorld();
     }
 
     @NotNull
     @Override
     public BlockPos getPos() {
         Entity owner = pocket.getEntity();
-        if (owner == null) return new BlockPos(0, 0, 0);
-        return owner.blockPosition();
+        return owner == null ? BlockPos.ZERO : new BlockPos(owner.getEyePosition());
     }
 
     @NotNull
     @Override
     public Vec3 getCenterPos() {
         Entity owner = pocket.getEntity();
-        if (owner == null) return new Vec3(0, 0, 0);
-        return owner.position();
+        return owner == null ? Vec3.ZERO : owner.getEyePosition();
     }
 
     @NotNull
     @Override
     public Direction getFacing() {
-        Entity owner = pocket.getEntity();
-        if (owner == null) return Direction.NORTH;
-        return owner.getDirection();
+        Vec3 dir = getDirection();
+        return Direction.getNearest(dir.x, dir.y, dir.z);
     }
 
-    /**
-     * Not used for pockets
-     */
     @NotNull
     @Override
     public FrontAndTop getOrientation() {
-        return FrontAndTop.NORTH_UP;
+        Entity owner = pocket.getEntity();
+        if (owner == null) {
+            return FrontAndTop.NORTH_UP;
+        }
+        Vec3 up = owner.getUpVector(1.0f);
+        return FrontAndTop.fromFrontAndTop(getFacing(), Direction.getNearest(up.x, up.y, up.z));
+    }
+
+    @NotNull
+    @Override
+    public Vec3 getDirection() {
+        Entity owner = pocket.getEntity();
+        return owner == null ? /* North */ new Vec3(0, 0, -1) : owner.getLookAngle();
     }
 
     @Nullable

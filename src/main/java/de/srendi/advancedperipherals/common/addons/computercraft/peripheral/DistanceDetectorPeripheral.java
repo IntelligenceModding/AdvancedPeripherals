@@ -257,7 +257,11 @@ public class DistanceDetectorPeripheral extends BasePeripheral<IPeripheralOwner>
         if (result.getType() == HitResult.Type.MISS) {
             return -1;
         }
-        return result.getLocation().distanceTo(center) - 0.5f;
+        double distance = result.getLocation().distanceTo(center);
+        if (this.tileEntity != null) {
+            distance -= 0.5;
+        }
+        return distance;
     }
 
     /**
