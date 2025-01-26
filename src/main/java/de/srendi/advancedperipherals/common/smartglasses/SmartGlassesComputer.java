@@ -212,18 +212,18 @@ public class SmartGlassesComputer extends ServerComputer implements IPocketAcces
     public void tickServer() {
         super.tickServer();
 
+        boolean shouldUpdateInventory = this.peripheralOutdated || this.isDirty;
         if (this.peripheralOutdated && this.itemHandler != null) {
             this.peripheralOutdated = false;
             this.updatePeripheralsAndModules(this.itemHandler);
         }
-
         if (this.isDirty) {
             this.isDirty = false;
             CompoundTag data = this.stack.getOrCreateTag();
             data.put(UPGRADE_DATAS_TAG, this.upgradeDatas.copy());
-            if (entity instanceof Player player) {
-                player.getInventory().setChanged();
-            }
+        }
+        if (shouldUpdateInventory && entity instanceof Player player) {
+            player.getInventory().setChanged();
         }
 
         this.modules.values().forEach(module -> {

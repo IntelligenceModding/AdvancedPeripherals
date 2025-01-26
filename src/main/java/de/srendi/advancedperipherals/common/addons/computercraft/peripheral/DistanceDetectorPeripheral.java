@@ -26,6 +26,7 @@ public class DistanceDetectorPeripheral extends BasePeripheral<IPeripheralOwner>
 
     public static final String PERIPHERAL_TYPE = "distance_detector";
 
+    private final AtomicBoolean isDirty = new AtomicBoolean(false);
     private final DistanceDetectorEntity tileEntity;
     private final AtomicInteger maxRange;
     private volatile float currentDistance;
@@ -37,6 +38,7 @@ public class DistanceDetectorPeripheral extends BasePeripheral<IPeripheralOwner>
     public DistanceDetectorPeripheral(DistanceDetectorEntity tileEntity) {
         super(PERIPHERAL_TYPE, new BlockEntityPeripheralOwner<>(tileEntity));
         this.tileEntity = tileEntity;
+        // TODO: let distance detector block also use data storage
         this.maxRange = new AtomicInteger(Float.floatToRawIntBits(this.tileEntity.getMaxRange()));
         this.currentDistance = this.tileEntity.getCurrentDistance();
         this.showLaser = new AtomicBoolean(this.tileEntity.getShowLaser());
@@ -45,7 +47,6 @@ public class DistanceDetectorPeripheral extends BasePeripheral<IPeripheralOwner>
         this.detectionType = new AtomicReference<>(this.tileEntity.getDetectionType());
     }
 
-    // TODO: thread safely save data
     protected DistanceDetectorPeripheral(IPeripheralOwner owner) {
         super(PERIPHERAL_TYPE, owner);
         this.tileEntity = null;
@@ -89,7 +90,7 @@ public class DistanceDetectorPeripheral extends BasePeripheral<IPeripheralOwner>
             this.tileEntity.setMaxRange(maxRange);
             this.tileEntity.sendUpdate();
         }
-        this.owner.markDataStorageDirty();
+        this.isDirty.set(true);
     }
 
     public float getCurrentDistance() {
@@ -97,16 +98,12 @@ public class DistanceDetectorPeripheral extends BasePeripheral<IPeripheralOwner>
     }
 
     public void setCurrentDistance(float currentDistance) {
-        // Since setCurrentDistance should only invokes from main thread, volatile field should be safe here.
-        if (this.currentDistance == currentDistance) {
-            return;
-        }
         this.currentDistance = currentDistance;
         if (this.tileEntity != null) {
             this.tileEntity.setCurrentDistance(currentDistance);
             this.tileEntity.sendUpdate();
         }
-        this.owner.markDataStorageDirty();
+        this.isDirty.set(true);
     }
 
     public boolean getCalculatePeriodically() {
@@ -118,7 +115,7 @@ public class DistanceDetectorPeripheral extends BasePeripheral<IPeripheralOwner>
         if (this.tileEntity != null) {
             this.tileEntity.setCalculatePeriodically(calculatePeriodically);
         }
-        this.owner.markDataStorageDirty();
+        this.isDirty.set(true);
     }
 
     public boolean getShowLaser() {
@@ -133,7 +130,7 @@ public class DistanceDetectorPeripheral extends BasePeripheral<IPeripheralOwner>
             this.tileEntity.setShowLaser(showLaser);
             this.tileEntity.sendUpdate();
         }
-        this.owner.markDataStorageDirty();
+        this.isDirty.set(true);
     }
 
     public boolean getIgnoreTransparent() {
@@ -145,7 +142,7 @@ public class DistanceDetectorPeripheral extends BasePeripheral<IPeripheralOwner>
         if (this.tileEntity != null) {
             this.tileEntity.setIgnoreTransparent(ignoreTransparent);
         }
-        this.owner.markDataStorageDirty();
+        this.isDirty.set(true);
     }
 
     public DetectionType getDetectionType() {
@@ -159,7 +156,7 @@ public class DistanceDetectorPeripheral extends BasePeripheral<IPeripheralOwner>
         if (this.tileEntity != null) {
             this.tileEntity.setDetectionType(detectionType);
         }
-        this.owner.markDataStorageDirty();
+        this.isDirty.set(true);
     }
 
     @LuaFunction
@@ -285,6 +282,19 @@ public class DistanceDetectorPeripheral extends BasePeripheral<IPeripheralOwner>
             // The calculateDistance function is not thread safe, so we have to run it on the main thread.
             // It should be okay to run that function every 2 ticks, calculating it does not take too much time.
             this.calculateAndUpdateDistance();
+        }
+
+        if (this.isDirty.getAndSet(false)) {
+            if (this.tileEntity == null) {
+                CompoundTag data = this.owner.getDataStorage();
+                data.putFloat("maxRange", this.getMaxRange());
+                data.putFloat("currentDistance", this.getCurrentDistance());
+                data.putBoolean("showLaser", this.getShowLaser());
+                data.putBoolean("calculatePeriodically", this.getCalculatePeriodically());
+                data.putBoolean("ignoreTransparent", this.getIgnoreTransparent());
+                data.putByte("detectionType", (byte) this.getDetectionType().ordinal());
+            }
+            this.owner.markDataStorageDirty();
         }
     }
 
