@@ -15,8 +15,8 @@ public class PocketChatBoxUpgrade extends BasePocketUpgrade<ChatBoxPeripheral> {
 
     @Nullable
     @Override
-    public ChatBoxPeripheral getPeripheral(IPocketAccess access) {
-        return new ChatBoxPeripheral(access);
+    public ChatBoxPeripheral getPeripheral(IPocketAccess pocketAccess) {
+        return new ChatBoxPeripheral(pocketAccess, this);
     }
 
 }

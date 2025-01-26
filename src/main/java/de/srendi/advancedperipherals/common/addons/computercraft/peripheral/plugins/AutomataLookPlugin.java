@@ -52,7 +52,7 @@ public class AutomataLookPlugin extends AutomataCorePlugin {
         data.put("name", blockName == null ? null : blockName.toString());
         data.put("tags", LuaConverter.tagsToList(() -> state.getBlock().builtInRegistryHolder().tags()));
         Vec3 pos = blockHit.getLocation();
-        Vec3 origin = automataCore.getWorldPos();
+        Vec3 origin = automataCore.getPhysicsPos();
         data.put("x", pos.x - origin.x);
         data.put("y", pos.y - origin.y);
         data.put("z", pos.z - origin.z);
@@ -79,7 +79,7 @@ public class AutomataLookPlugin extends AutomataCorePlugin {
         }
 
         EntityHitResult entityHit = (EntityHitResult) result;
-        Vec3 origin = automataCore.getWorldPos();
+        Vec3 origin = automataCore.getPhysicsPos();
         return MethodResult.of(LuaConverter.completeEntityWithPositionToLua(entityHit.getEntity(), origin, true));
     }
 

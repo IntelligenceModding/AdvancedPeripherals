@@ -1,14 +1,17 @@
 package de.srendi.advancedperipherals.common.util;
 
 import dan200.computercraft.api.pocket.IPocketAccess;
+import dan200.computercraft.api.pocket.IPocketUpgrade;
 import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.IPeripheralOwner;
 import de.srendi.advancedperipherals.lib.peripherals.IPeripheralTileEntity;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import org.jetbrains.annotations.NotNull;
 
 public class DataStorageUtil {
+    private DataStorageUtil() {}
 
     public static CompoundTag getDataStorage(@NotNull ITurtleAccess access, @NotNull TurtleSide side) {
         return access.getUpgradeNBTData(side);
@@ -18,8 +21,17 @@ public class DataStorageUtil {
         return tileEntity.getPeripheralSettings();
     }
 
-    public static CompoundTag getDataStorage(@NotNull IPocketAccess pocket) {
-        return pocket.getUpgradeNBTData();
+    public static CompoundTag getDataStorage(@NotNull IPocketAccess pocket, @NotNull IPocketUpgrade upgrade) {
+        String id = upgrade.getUpgradeID().toString();
+        CompoundTag datas = pocket.getUpgradeNBTData();
+        Tag tag = datas.get(id);
+        if (tag instanceof CompoundTag data) {
+            return data;
+        }
+        CompoundTag data = new CompoundTag();
+        datas.put(id, data);
+        pocket.updateUpgradeNBTData();
+        return data;
     }
 
     /**

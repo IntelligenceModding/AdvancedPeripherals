@@ -1,5 +1,8 @@
 package de.srendi.advancedperipherals.common.util;
 
+import de.srendi.advancedperipherals.common.addons.computercraft.owner.IPeripheralOwner;
+import de.srendi.advancedperipherals.common.addons.computercraft.owner.BlockEntityPeripheralOwner;
+import de.srendi.advancedperipherals.common.addons.computercraft.owner.TurtlePeripheralOwner;
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.DistanceDetectorPeripheral;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -46,11 +49,18 @@ public class HitResultUtil {
      * @param to          the target position/max position
      * @param level       the level
      * @param shapeGetter the block collision shape getter
-     * @param source      the source Entity/BlockPos that will be ignored
+     * @param source      the source Entity/BlockPos that will be ignored, or an {@link IPeripheralOwner} to auto determine the source.
      * @return the hit result. {@link BlockHitResult#miss(Vec3, Direction, BlockPos)} if nothing found
      */
     @NotNull
     public static HitResult getHitResult(Vec3 from, Vec3 to, Level level, ClipContext.ShapeGetter shapeGetter, Object source) {
+        if (source instanceof IPeripheralOwner owner) {
+            if (owner instanceof BlockEntityPeripheralOwner<?> || owner instanceof TurtlePeripheralOwner) {
+                source = owner.getPos();
+            } else {
+                source = owner.getHoldingEntity();
+            }
+        }
         EntityHitResult entityResult = getEntityHitResult(from, to, level, source instanceof Entity ? (Entity) source : null, source instanceof Predicate<?> ? (Predicate<Entity>) source : EntitySelector.NO_SPECTATORS);
         BlockHitResult blockResult = getBlockHitResult(from, to, level, shapeGetter, source instanceof BlockPos ? (BlockPos) source : null);
 
@@ -82,7 +92,24 @@ public class HitResultUtil {
      */
     @NotNull
     public static EntityHitResult getEntityHitResult(Vec3 from, Vec3 to, Level level) {
-        return getEntityHitResult(from, to, level, null, EntitySelector.NO_SPECTATORS);
+        return getEntityHitResult(from, to, level, null);
+    }
+
+    /**
+     * This method is used to get the hit result of an entity from the start position of a block
+     * This could be used to find an entity from the eyes position of another entity but since
+     * this method uses one AABB made out of the two coordinates, this would also find any entities
+     * which are not located in the ray you might want. {@link DistanceDetectorPeripheral#getDistance()}
+     *
+     * @param from   the source position like a block
+     * @param to     the target position/max position
+     * @param level  the world
+     * @param source the source Entity that will be ignored
+     * @return the entity hit result. An empty HitResult with {@link HitResult.Type#MISS} as type if nothing found
+     */
+    @NotNull
+    public static EntityHitResult getEntityHitResult(Vec3 from, Vec3 to, Level level, Entity source) {
+        return getEntityHitResult(from, to, level, source, EntitySelector.NO_SPECTATORS);
     }
 
     /**

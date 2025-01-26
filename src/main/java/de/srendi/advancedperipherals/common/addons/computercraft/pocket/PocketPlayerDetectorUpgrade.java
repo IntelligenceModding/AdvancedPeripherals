@@ -16,8 +16,8 @@ public class PocketPlayerDetectorUpgrade extends BasePocketUpgrade<PlayerDetecto
 
     @Nullable
     @Override
-    public PlayerDetectorPeripheral getPeripheral(@NotNull IPocketAccess iPocketAccess) {
-        return new PlayerDetectorPeripheral(iPocketAccess);
+    public PlayerDetectorPeripheral getPeripheral(@NotNull IPocketAccess pocketAccess) {
+        return new PlayerDetectorPeripheral(pocketAccess, this);
     }
 
 }

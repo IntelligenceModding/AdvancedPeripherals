@@ -80,6 +80,7 @@
   "keybind.advancedperipherals.description": "Show Description",
   "pocket.advancedperipherals.chatty_pocket": "Chatty",
   "pocket.advancedperipherals.colony_pocket": "Colony",
+  "pocket.advancedperipherals.distance_pocket": "Distance Detector",
   "pocket.advancedperipherals.environment_pocket": "Environment",
   "pocket.advancedperipherals.geoscanner_pocket": "Geo",
   "pocket.advancedperipherals.player_pocket": "Player Detector",

@@ -11,8 +11,5 @@ public interface IPeripheralTileEntity {
 
     void markSettingsChanged();
 
-    default <T extends BlockEntity> void handleTick(Level level, BlockState state, BlockEntityType<T> type) {
-
-    }
-
+    default <T extends BlockEntity> void handleTick(Level level, BlockState state, BlockEntityType<T> type) {}
 }

@@ -23,6 +23,7 @@ import org.apache.logging.log4j.Level;
 import java.util.Map;
 
 public class NBTUtil {
+    private NBTUtil() {}
 
     public static Tag toDirectNBT(Object object) {
         // Mostly dan200.computercraft.shared.util toNBTTag method

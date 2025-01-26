@@ -3,11 +3,11 @@ package de.srendi.advancedperipherals.common.util.inventory;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.peripheral.IComputerAccess;
 import dan200.computercraft.api.peripheral.IPeripheral;
-import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.IPeripheralOwner;
 import de.srendi.advancedperipherals.common.util.CoordUtil;
 import de.srendi.advancedperipherals.common.util.StringUtil;
 import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -23,13 +23,11 @@ import org.jetbrains.annotations.Nullable;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.Objects;
 
 public class FluidUtil {
 
-    private FluidUtil() {
-    }
+    private FluidUtil() {}
 
     @Nullable
     public static IFluidHandler extractHandler(@Nullable Object object) {
@@ -76,16 +74,16 @@ public class FluidUtil {
 
     @NotNull
     public static String getFingerprint(@NotNull FluidStack stack) {
-        String fingerprint = stack.getOrCreateTag() + getRegistryKey(stack).toString() + stack.getDisplayName().getString();
-        try {
-            byte[] bytesOfHash = fingerprint.getBytes(StandardCharsets.UTF_8);
-            MessageDigest md = MessageDigest.getInstance("MD5");
-            return StringUtil.toHexString(md.digest(bytesOfHash));
-        } catch (NoSuchAlgorithmException ex) {
-            AdvancedPeripherals.debug("Could not parse fingerprint.", org.apache.logging.log4j.Level.ERROR);
-            ex.printStackTrace();
+        MessageDigest md = ItemUtil.getMessageDigest("MD5");
+        if (md == null) {
+            return "";
         }
-        return "";
+        CompoundTag tag = stack.getTag();
+        md.update(getRegistryKey(stack).toString().getBytes(StandardCharsets.UTF_8));
+        if (tag != null && !tag.isEmpty()) {
+            md.update(tag.getAsString().getBytes(StandardCharsets.UTF_8));
+        }
+        return StringUtil.toHexString(md.digest());
     }
 
     public static ResourceLocation getRegistryKey(Fluid fluid) {
@@ -93,6 +91,6 @@ public class FluidUtil {
     }
 
     public static ResourceLocation getRegistryKey(FluidStack fluid) {
-        return ForgeRegistries.FLUIDS.getKey(fluid.copy().getFluid());
+        return ForgeRegistries.FLUIDS.getKey(fluid.getFluid());
     }
 }

@@ -43,17 +43,17 @@ public class SmartGlassesAccess implements IPocketAccess {
 
     @Override
     public CompoundTag getUpgradeNBTData() {
-        return new CompoundTag();
+        return computer.getUpgradeNBTData();
     }
 
     @Override
     public void updateUpgradeNBTData() {
-
+        computer.updateUpgradeNBTData();
     }
 
     @Override
     public void invalidatePeripheral() {
-
+        computer.invalidatePeripheral();
     }
 
     @Override

@@ -18,6 +18,7 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.pocket.IPocketAccess;
+import dan200.computercraft.api.pocket.IPocketUpgrade;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.BlockEntityPeripheralOwner;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.IPeripheralOwner;
@@ -50,8 +51,8 @@ public class ColonyPeripheral extends BasePeripheral<IPeripheralOwner> {
         super(PERIPHERAL_TYPE, new BlockEntityPeripheralOwner<>(tileEntity));
     }
 
-    public ColonyPeripheral(IPocketAccess access) {
-        super(PERIPHERAL_TYPE, new PocketPeripheralOwner(access));
+    public ColonyPeripheral(IPocketAccess access, IPocketUpgrade upgrade) {
+        super(PERIPHERAL_TYPE, new PocketPeripheralOwner(access, upgrade));
     }
 
     @Override
