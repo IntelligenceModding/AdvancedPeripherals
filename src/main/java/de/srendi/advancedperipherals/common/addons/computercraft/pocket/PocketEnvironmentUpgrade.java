@@ -16,8 +16,8 @@ public class PocketEnvironmentUpgrade extends BasePocketUpgrade<EnvironmentDetec
 
     @Nullable
     @Override
-    public EnvironmentDetectorPeripheral getPeripheral(@NotNull IPocketAccess iPocketAccess) {
-        return new EnvironmentDetectorPeripheral(iPocketAccess);
+    public EnvironmentDetectorPeripheral getPeripheral(@NotNull IPocketAccess pocketAccess) {
+        return new EnvironmentDetectorPeripheral(pocketAccess, this);
     }
 
 }

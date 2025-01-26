@@ -44,6 +44,8 @@ import java.util.stream.Stream;
 
 public class LuaConverter {
 
+    private static final CompoundTag EMPTY_TAG = new CompoundTag();
+
     public static Map<String, Object> entityToLua(Entity entity) {
         Map<String, Object> data = new HashMap<>();
         data.put("id", entity.getId());
@@ -200,7 +202,10 @@ public class LuaConverter {
             return null;
         }
         Map<String, Object> map = itemToObject(stack.getItem());
-        CompoundTag nbt = stack.copy().getOrCreateTag();
+        CompoundTag nbt = stack.getTag();
+        if (nbt == null) {
+            nbt = EMPTY_TAG;
+        }
         map.put("count", stack.getCount());
         map.put("displayName", stack.getDisplayName().getString());
         map.put("maxStackSize", stack.getMaxStackSize());
@@ -216,7 +221,10 @@ public class LuaConverter {
             return null;
         }
         Map<String, Object> map = fluidToObject(stack.getFluid());
-        CompoundTag nbt = stack.copy().getOrCreateTag();
+        CompoundTag nbt = stack.getTag();
+        if (nbt == null) {
+            nbt = EMPTY_TAG;
+        }
         map.put("count", stack.getAmount());
         map.put("displayName", stack.getDisplayName().getString());
         map.put("nbt", NBTUtil.toLua(nbt));
