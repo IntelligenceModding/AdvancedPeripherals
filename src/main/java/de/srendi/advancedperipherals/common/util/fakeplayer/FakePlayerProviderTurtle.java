@@ -18,6 +18,7 @@ import net.minecraftforge.items.wrapper.InvWrapper;
 import org.joml.Matrix4dc;
 import org.joml.Vector3d;
 import org.valkyrienskies.core.api.ships.Ship;
+import org.valkyrienskies.mod.common.VSGameUtilsKt;
 
 import java.util.WeakHashMap;
 
@@ -45,7 +46,7 @@ public final class FakePlayerProviderTurtle {
         Vec3 direction = Vec3.atLowerCornerOf(turtle.getDirection().getNormal());
         Vec3 position = Vec3.atCenterOf(pos);
         if (APAddons.vs2Loaded) {
-            Ship ship = APAddons.getVS2Ship(level, pos);
+            Ship ship = VSGameUtilsKt.getShipObjectManagingPos(level, pos);
             if (ship != null) {
                 Matrix4dc matrix = ship.getShipToWorld();
                 Vector3d newPos = matrix.transformPosition(new Vector3d(position.x, position.y, position.z));

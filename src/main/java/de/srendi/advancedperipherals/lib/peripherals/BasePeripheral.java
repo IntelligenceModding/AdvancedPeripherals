@@ -21,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3d;
 import org.valkyrienskies.core.api.ships.Ship;
+import org.valkyrienskies.mod.common.VSGameUtilsKt;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -153,7 +154,7 @@ public abstract class BasePeripheral<O extends IPeripheralOwner> implements IBas
     }
 
     public boolean isOnShip() {
-        return APAddons.vs2Loaded && APAddons.isBlockOnShip(owner.getLevel(), owner.getPos());
+        return APAddons.isBlockOnShip(owner.getLevel(), owner.getPos());
     }
 
     public Vec3 getPhysicsPos() {
@@ -161,7 +162,7 @@ public abstract class BasePeripheral<O extends IPeripheralOwner> implements IBas
         if (!APAddons.vs2Loaded) {
             return pos;
         }
-        Ship ship = APAddons.getVS2Ship(owner.getLevel(), owner.getPos());
+        Ship ship = VSGameUtilsKt.getShipObjectManagingPos(owner.getLevel(), owner.getPos());
         if (ship == null) {
             return pos;
         }
