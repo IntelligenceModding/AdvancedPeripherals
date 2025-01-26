@@ -5,6 +5,7 @@ import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.lua.MethodResult;
 import dan200.computercraft.api.pocket.IPocketAccess;
+import dan200.computercraft.api.pocket.IPocketUpgrade;
 import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.BlockEntityPeripheralOwner;
@@ -41,8 +42,8 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
         super(PERIPHERAL_TYPE, new TurtlePeripheralOwner(access, side));
     }
 
-    public PlayerDetectorPeripheral(IPocketAccess pocket) {
-        super(PERIPHERAL_TYPE, new PocketPeripheralOwner(pocket));
+    public PlayerDetectorPeripheral(IPocketAccess pocket, IPocketUpgrade upgrade) {
+        super(PERIPHERAL_TYPE, new PocketPeripheralOwner(pocket, upgrade));
     }
 
     private boolean isAllowedMultiDimensional() {

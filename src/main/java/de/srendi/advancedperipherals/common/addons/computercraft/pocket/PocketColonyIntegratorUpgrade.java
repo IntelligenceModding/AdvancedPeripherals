@@ -13,7 +13,7 @@ public class PocketColonyIntegratorUpgrade extends BasePocketUpgrade<ColonyPerip
     }
 
     @Override
-    protected ColonyPeripheral getPeripheral(IPocketAccess access) {
-        return new ColonyPeripheral(access);
+    protected ColonyPeripheral getPeripheral(IPocketAccess pocketAccess) {
+        return new ColonyPeripheral(pocketAccess, this);
     }
 }

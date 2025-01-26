@@ -157,7 +157,7 @@ public class SmartGlassesItemHandler implements IItemHandlerModifiable {
 
     public void setChanged() {
         if (this.computer != null) {
-            this.computer.markDirty();
+            this.computer.invalidatePeripheral();
         }
     }
 

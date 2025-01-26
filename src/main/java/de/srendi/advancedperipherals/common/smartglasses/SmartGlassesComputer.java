@@ -34,6 +34,8 @@ import javax.annotation.Nullable;
  */
 public class SmartGlassesComputer extends ServerComputer implements IPocketAccess {
 
+    public static final String UPGRADE_DATAS_TAG = "UpgradeDatas";
+
     @Nullable
     private Entity entity;
     private ItemStack stack = ItemStack.EMPTY;
@@ -42,16 +44,19 @@ public class SmartGlassesComputer extends ServerComputer implements IPocketAcces
     private SmartGlassesItemHandler itemHandler = null;
     @NotNull
     private final ModulePeripheral modulePeripheral;
+    private final CompoundTag upgradeDatas;
 
+    private boolean peripheralOutdated = false;
     private boolean isDirty = true;
 
     private Map<ResourceLocation, IPeripheral> upgrades = Collections.emptyMap();
     private final Map<Integer, IModule> modules = new HashMap<>();
 
-    public SmartGlassesComputer(ServerLevel world, int computerID, @Nullable String label, ComputerFamily family) {
+    public SmartGlassesComputer(ServerLevel world, int computerID, @Nullable String label, ComputerFamily family, @NotNull CompoundTag upgradeDatas) {
         super(world, computerID, label, family, 39, 13);
         this.addAPI(new SmartGlassesAPI());
         this.modulePeripheral = new ModulePeripheral(this);
+        this.upgradeDatas = upgradeDatas;
         this.setPeripheral(ComputerSide.BACK, this.modulePeripheral);
     }
 
@@ -97,6 +102,8 @@ public class SmartGlassesComputer extends ServerComputer implements IPocketAcces
 
     public void setStack(ItemStack stack) {
         this.stack = stack;
+        this.invalidatePeripheral();
+        this.updateUpgradeNBTData();
     }
 
     public ItemStack getStack() {
@@ -116,30 +123,36 @@ public class SmartGlassesComputer extends ServerComputer implements IPocketAcces
         this.itemHandler = itemHandler;
     }
 
-    public void markDirty() {
-        isDirty = true;
-    }
-
-    public boolean isDirty() {
-        return isDirty;
-    }
-
     @Override
     @NotNull
     public CompoundTag getUpgradeNBTData() {
-        return new CompoundTag();
+        return this.upgradeDatas;
     }
 
-    @Override
-    public void updateUpgradeNBTData() {
-        if (entity instanceof Player player) {
-            player.getInventory().setChanged();
+    public void setUpgradeData(@NotNull ComputerSide side, @NotNull ResourceLocation id, @NotNull CompoundTag data) {
+        data.putString("UpgradeSide", side.getName());
+        this.upgradeDatas.put(id.toString(), data);
+        this.updateUpgradeNBTData();
+    }
+
+    public void removeUpgradeData(@NotNull ComputerSide side) {
+        for (String id : this.upgradeDatas.getAllKeys()) {
+            if (side.getName().equals(this.upgradeDatas.getCompound(id).getString("UpgradeSide"))) {
+                this.upgradeDatas.remove(id);
+                this.updateUpgradeNBTData();
+                return;
+            }
         }
     }
 
     @Override
+    public void updateUpgradeNBTData() {
+        this.isDirty = true;
+    }
+
+    @Override
     public void invalidatePeripheral() {
-        updatePeripheralsAndModules(this.itemHandler);
+        this.peripheralOutdated = true;
     }
 
     @Override
@@ -153,7 +166,7 @@ public class SmartGlassesComputer extends ServerComputer implements IPocketAcces
         super.setPeripheral(side, peripheral);
     }
 
-    public void updatePeripheralsAndModules(SmartGlassesItemHandler itemHandler) {
+    private void updatePeripheralsAndModules(SmartGlassesItemHandler itemHandler) {
         Set<ResourceLocation> upgradesIdSet = new HashSet<>();
         ImmutableMap.Builder<ResourceLocation, IPeripheral> upgradesBuilder = new ImmutableMap.Builder<>();
         for (int slot = 0; slot < SmartGlassesItemHandler.PERIPHERAL_SLOTS; slot++) {
@@ -162,9 +175,15 @@ public class SmartGlassesComputer extends ServerComputer implements IPocketAcces
             IPocketUpgrade upgrade = PocketUpgrades.instance().get(peripheralItem);
             IPeripheral peripheral = upgrade != null ? upgrade.createPeripheral(smartGlassesAccess) : null;
             setPeripheral(side, peripheral);
-            if (peripheral != null && upgradesIdSet.add(upgrade.getUpgradeID())) {
-                upgradesBuilder.put(upgrade.getUpgradeID(), peripheral);
+            if (peripheral != null) {
+                ResourceLocation id = upgrade.getUpgradeID();
+                if (upgradesIdSet.add(id)) {
+                    upgradesBuilder.put(id, peripheral);
+                    setUpgradeData(side, id, this.upgradeDatas.getCompound(id.toString()));
+                    continue;
+                }
             }
+            removeUpgradeData(side);
         }
         this.upgrades = upgradesBuilder.build();
         for (int slot = SmartGlassesItemHandler.PERIPHERAL_SLOTS; slot < SmartGlassesItemHandler.SLOTS; slot++) {
@@ -193,12 +212,21 @@ public class SmartGlassesComputer extends ServerComputer implements IPocketAcces
     public void tickServer() {
         super.tickServer();
 
-        if (isDirty()) {
-            invalidatePeripheral();
-            isDirty = false;
+        if (this.peripheralOutdated && this.itemHandler != null) {
+            this.peripheralOutdated = false;
+            this.updatePeripheralsAndModules(this.itemHandler);
         }
 
-        modules.values().forEach(module -> {
+        if (this.isDirty) {
+            this.isDirty = false;
+            CompoundTag data = this.stack.getOrCreateTag();
+            data.put(UPGRADE_DATAS_TAG, this.upgradeDatas.copy());
+            if (entity instanceof Player player) {
+                player.getInventory().setChanged();
+            }
+        }
+
+        this.modules.values().forEach(module -> {
             module.tick(smartGlassesAccess);
         });
     }

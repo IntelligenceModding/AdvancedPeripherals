@@ -7,6 +7,7 @@ import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.lua.MethodResult;
 import dan200.computercraft.api.peripheral.IComputerAccess;
 import dan200.computercraft.api.pocket.IPocketAccess;
+import dan200.computercraft.api.pocket.IPocketUpgrade;
 import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
@@ -66,8 +67,8 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
         this(new TurtlePeripheralOwner(turtle, side));
     }
 
-    public ChatBoxPeripheral(IPocketAccess pocket) {
-        this(new PocketPeripheralOwner(pocket));
+    public ChatBoxPeripheral(IPocketAccess pocket, IPocketUpgrade upgrade) {
+        this(new PocketPeripheralOwner(pocket, upgrade));
     }
 
     @Override

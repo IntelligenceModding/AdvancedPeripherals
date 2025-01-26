@@ -5,6 +5,7 @@ import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.lua.MethodResult;
 import dan200.computercraft.api.pocket.IPocketAccess;
+import dan200.computercraft.api.pocket.IPocketUpgrade;
 import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
 import de.srendi.advancedperipherals.common.addons.computercraft.operations.SphereOperationContext;
@@ -57,8 +58,8 @@ public class GeoScannerPeripheral extends BasePeripheral<IPeripheralOwner> {
         this(new TurtlePeripheralOwner(turtle, side).attachFuel(1));
     }
 
-    public GeoScannerPeripheral(IPocketAccess pocket) {
-        this(new PocketPeripheralOwner(pocket));
+    public GeoScannerPeripheral(IPocketAccess pocket, IPocketUpgrade upgrade) {
+        this(new PocketPeripheralOwner(pocket, upgrade));
     }
 
     private static List<Map<String, Object>> scan(List<Map<String, Object>> result, Level level, Vec3 center, int radius) {

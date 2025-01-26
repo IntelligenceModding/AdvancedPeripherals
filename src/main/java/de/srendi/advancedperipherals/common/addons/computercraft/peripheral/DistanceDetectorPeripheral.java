@@ -3,12 +3,16 @@ package de.srendi.advancedperipherals.common.addons.computercraft.peripheral;
 import dan200.computercraft.api.lua.IArguments;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
+import dan200.computercraft.api.pocket.IPocketAccess;
+import dan200.computercraft.api.pocket.IPocketUpgrade;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.BlockEntityPeripheralOwner;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.IPeripheralOwner;
+import de.srendi.advancedperipherals.common.addons.computercraft.owner.PocketPeripheralOwner;
 import de.srendi.advancedperipherals.common.blocks.blockentities.DistanceDetectorEntity;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.util.HitResultUtil;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.HitResult;
@@ -39,6 +43,23 @@ public class DistanceDetectorPeripheral extends BasePeripheral<IPeripheralOwner>
         this.calculatePeriodically = this.tileEntity.getCalculatePeriodically();
         this.ignoreTransparent = this.tileEntity.getIgnoreTransparent();
         this.detectionType = new AtomicReference<>(this.tileEntity.getDetectionType());
+    }
+
+    // TODO: thread safely save data
+    protected DistanceDetectorPeripheral(IPeripheralOwner owner) {
+        super(PERIPHERAL_TYPE, owner);
+        this.tileEntity = null;
+        CompoundTag data = this.owner.getDataStorage();
+        this.maxRange = new AtomicInteger(Float.floatToRawIntBits(data.contains("maxRange") ? data.getFloat("maxRange") : this.getConfiguredMaxRange()));
+        this.currentDistance = data.contains("currentDistance") ? data.getFloat("currentDistance") : -1;
+        this.showLaser = new AtomicBoolean(data.contains("showLaser") ? data.getBoolean("showLaser") : true);
+        this.calculatePeriodically = data.contains("calculatePeriodically") ? data.getBoolean("calculatePeriodically") : false;
+        this.ignoreTransparent = data.contains("ignoreTransparent") ? data.getBoolean("ignoreTransparent") : true;
+        this.detectionType = new AtomicReference<>(data.contains("detectionType") ? DetectionType.values()[data.getByte("detectionType")] : DetectionType.BOTH);
+    }
+
+    public DistanceDetectorPeripheral(IPocketAccess pocket, IPocketUpgrade upgrade) {
+        this(new PocketPeripheralOwner(pocket, upgrade));
     }
 
     @Override
@@ -147,7 +168,7 @@ public class DistanceDetectorPeripheral extends BasePeripheral<IPeripheralOwner>
         return this.getShowLaser();
     }
 
-    @LuaFunction
+    @LuaFunction(value = {"setIgnoreTransparency"})
     public final void setIgnoreTransparencyLua(boolean enable) {
         this.setIgnoreTransparent(enable);
     }
@@ -210,17 +231,17 @@ public class DistanceDetectorPeripheral extends BasePeripheral<IPeripheralOwner>
         return this.getCalculatePeriodically();
     }
 
-    @LuaFunction
+    @LuaFunction(value = {"setCalculatePeriodically"})
     public final void setCalculatePeriodicallyLua(boolean shouldCalculatePeriodically) {
         this.setCalculatePeriodically(shouldCalculatePeriodically);
     }
 
-    @LuaFunction
+    @LuaFunction(value = {"setMaxRange"})
     public final void setMaxRangeLua(double maxDistance) {
         this.setMaxRange((float) maxDistance);
     }
 
-    @LuaFunction
+    @LuaFunction(value = {"getMaxRange"})
     public final double getMaxRangeLua() {
         return this.getMaxRange();
     }

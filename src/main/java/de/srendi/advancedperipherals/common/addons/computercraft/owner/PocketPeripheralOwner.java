@@ -2,6 +2,7 @@ package de.srendi.advancedperipherals.common.addons.computercraft.owner;
 
 import dan200.computercraft.api.peripheral.IPeripheral;
 import dan200.computercraft.api.pocket.IPocketAccess;
+import dan200.computercraft.api.pocket.IPocketUpgrade;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.util.DataStorageUtil;
 import de.srendi.advancedperipherals.common.util.fakeplayer.APFakePlayer;
@@ -20,12 +21,15 @@ import org.jetbrains.annotations.Nullable;
 
 public class PocketPeripheralOwner extends BasePeripheralOwner {
     private final IPocketAccess pocket;
+    private final IPocketUpgrade upgrade;
 
-    public PocketPeripheralOwner(IPocketAccess pocket) {
+    public PocketPeripheralOwner(IPocketAccess pocket, IPocketUpgrade upgrade) {
         super();
         this.pocket = pocket;
-        if(APConfig.PERIPHERALS_CONFIG.disablePocketFuelConsumption.get())
+        this.upgrade = upgrade;
+        if (APConfig.PERIPHERALS_CONFIG.disablePocketFuelConsumption.get()) {
             attachAbility(PeripheralOwnerAbility.FUEL, new InfinitePocketFuelAbility(this));
+        }
     }
 
     @Nullable
@@ -84,7 +88,7 @@ public class PocketPeripheralOwner extends BasePeripheralOwner {
     @NotNull
     @Override
     public CompoundTag getDataStorage() {
-        return DataStorageUtil.getDataStorage(pocket);
+        return DataStorageUtil.getDataStorage(pocket, upgrade);
     }
 
     @Override

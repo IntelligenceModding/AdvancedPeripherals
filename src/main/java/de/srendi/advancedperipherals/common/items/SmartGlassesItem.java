@@ -248,7 +248,7 @@ public class SmartGlassesItem extends ArmorItem implements IComputerItem, IMedia
                 setComputerID(stack, computerID);
             }
 
-            computer = new SmartGlassesComputer(level, getComputerID(stack), getLabel(stack), getFamily());
+            computer = new SmartGlassesComputer(level, getComputerID(stack), getLabel(stack), getFamily(), stack.getOrCreateTag().getCompound(SmartGlassesComputer.UPGRADE_DATAS_TAG).copy());
 
             setInstanceID(stack, computer.register());
             setSessionID(stack, registry.getSessionID());
