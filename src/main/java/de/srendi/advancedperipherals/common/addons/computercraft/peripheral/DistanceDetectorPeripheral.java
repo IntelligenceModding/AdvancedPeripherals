@@ -71,6 +71,10 @@ public class DistanceDetectorPeripheral extends BasePeripheral<IPeripheralOwner>
         return APConfig.PERIPHERALS_CONFIG.distanceDetectorRange.get().floatValue();
     }
 
+    public int getUpdateRate() {
+        return APConfig.PERIPHERALS_CONFIG.distanceDetectorUpdateRate.get();
+    }
+
     public float getMaxRange() {
         return Float.intBitsToFloat(this.maxRange.get());
     }
@@ -168,7 +172,7 @@ public class DistanceDetectorPeripheral extends BasePeripheral<IPeripheralOwner>
         return this.getShowLaser();
     }
 
-    @LuaFunction(value = {"setIgnoreTransparency"})
+    @LuaFunction(value = "setIgnoreTransparency")
     public final void setIgnoreTransparencyLua(boolean enable) {
         this.setIgnoreTransparent(enable);
     }
@@ -231,17 +235,17 @@ public class DistanceDetectorPeripheral extends BasePeripheral<IPeripheralOwner>
         return this.getCalculatePeriodically();
     }
 
-    @LuaFunction(value = {"setCalculatePeriodically"})
+    @LuaFunction(value = "setCalculatePeriodically")
     public final void setCalculatePeriodicallyLua(boolean shouldCalculatePeriodically) {
         this.setCalculatePeriodically(shouldCalculatePeriodically);
     }
 
-    @LuaFunction(value = {"setMaxRange"})
+    @LuaFunction(value = "setMaxRange")
     public final void setMaxRangeLua(double maxDistance) {
         this.setMaxRange((float) maxDistance);
     }
 
-    @LuaFunction(value = {"getMaxRange"})
+    @LuaFunction(value = "getMaxRange")
     public final double getMaxRangeLua() {
         return this.getMaxRange();
     }
@@ -271,6 +275,17 @@ public class DistanceDetectorPeripheral extends BasePeripheral<IPeripheralOwner>
         double distance = this.calculateDistanceImpl();
         this.setCurrentDistance((float) distance);
         return distance;
+    }
+
+    @Override
+    public void update() {
+        if (this.getCalculatePeriodically() && this.getLevel().getGameTime() % this.getUpdateRate() == 0) {
+            // We calculate the distance every 2 ticks, so we do not have to run the getDistance function of the peripheral
+            // on the main thread which prevents the 1 tick yield time of the function.
+            // The calculateDistance function is not thread safe, so we have to run it on the main thread.
+            // It should be okay to run that function every 2 ticks, calculating it does not take too much time.
+            this.calculateAndUpdateDistance();
+        }
     }
 
     protected HitResult getHitResult(Vec3 from, Vec3 to) {

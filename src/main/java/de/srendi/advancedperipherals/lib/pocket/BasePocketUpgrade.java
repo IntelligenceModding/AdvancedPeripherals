@@ -28,4 +28,12 @@ public abstract class BasePocketUpgrade<T extends IBasePeripheral<?>> extends Ab
         if (!peripheral.isEnabled()) return DisabledPeripheral.INSTANCE;
         return peripheral;
     }
+
+    @Override
+    public void update(@NotNull IPocketAccess access, @Nullable IPeripheral peripheral) {
+        super.update(access, peripheral);
+        if (peripheral instanceof IBasePeripheral basePeripheral) {
+            basePeripheral.update();
+        }
+    }
 }

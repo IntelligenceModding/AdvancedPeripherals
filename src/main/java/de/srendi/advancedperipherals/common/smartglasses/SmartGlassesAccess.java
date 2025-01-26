@@ -48,12 +48,10 @@ public class SmartGlassesAccess implements IPocketAccess {
 
     @Override
     public void updateUpgradeNBTData() {
-
     }
 
     @Override
     public void invalidatePeripheral() {
-
     }
 
     @Override

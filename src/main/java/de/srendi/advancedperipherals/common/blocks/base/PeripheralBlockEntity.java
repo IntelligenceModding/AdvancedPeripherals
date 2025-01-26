@@ -22,6 +22,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.capabilities.Capability;
@@ -242,5 +243,10 @@ public abstract class PeripheralBlockEntity<T extends BasePeripheral<?>> extends
     public ComputerSide getComputerSide(Direction direction) {
         FrontAndTop orientation = getBlockState().getValue(BaseBlock.ORIENTATION);
         return CoordUtil.getComputerSide(orientation, direction);
+    }
+
+    @Override
+    public <U extends BlockEntity> void handleTick(Level level, BlockState state, BlockEntityType<U> type) {
+        this.getLazyPeripheral().ifPresent(BasePeripheral<?>::update);
     }
 }

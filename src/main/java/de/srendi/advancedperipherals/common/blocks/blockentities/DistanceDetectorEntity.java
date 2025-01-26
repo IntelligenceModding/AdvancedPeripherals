@@ -9,9 +9,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -82,22 +79,6 @@ public class DistanceDetectorEntity extends PeripheralBlockEntity<DistanceDetect
 
     public void setDetectionType(DistanceDetectorPeripheral.DetectionType detectionType) {
         this.detectionType = detectionType;
-    }
-
-    @Override
-    public <T extends BlockEntity> void handleTick(Level level, BlockState state, BlockEntityType<T> type) {
-        DistanceDetectorPeripheral peripheral = this.getPeripheral();
-        if (peripheral == null) {
-            return;
-        }
-
-        if (level.getGameTime() % APConfig.PERIPHERALS_CONFIG.distanceDetectorUpdateRate.get() == 0 && this.getCalculatePeriodically()) {
-            // We calculate the distance every 2 ticks, so we do not have to run the getDistance function of the peripheral
-            // on the main thread which prevents the 1 tick yield time of the function.
-            // The calculateDistance function is not thread safe, so we have to run it on the main thread.
-            // It should be okay to run that function every 2 ticks, calculating it does not take too much time.
-            peripheral.calculateAndUpdateDistance();
-        }
     }
 
     @Override

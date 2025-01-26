@@ -47,4 +47,12 @@ public abstract class PeripheralTurtleUpgrade<T extends IBasePeripheral<?>> exte
         }
         return super.isItemSuitable(stack);
     }
+
+    @Override
+    public void update(@NotNull ITurtleAccess turtle, @NotNull TurtleSide side) {
+        super.update(turtle, side);
+        if (!turtle.getLevel().isClientSide() && turtle.getPeripheral(side) instanceof IBasePeripheral basePeripheral) {
+            basePeripheral.update();
+        }
+    }
 }

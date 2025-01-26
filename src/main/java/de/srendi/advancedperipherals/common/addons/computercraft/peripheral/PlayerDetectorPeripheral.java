@@ -14,6 +14,7 @@ import de.srendi.advancedperipherals.common.addons.computercraft.owner.PocketPer
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.TurtlePeripheralOwner;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralBlockEntity;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
+import de.srendi.advancedperipherals.common.events.Events;
 import de.srendi.advancedperipherals.common.util.CoordUtil;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
@@ -33,6 +34,7 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
 
     public static final String PERIPHERAL_TYPE = "player_detector";
     private static final int MAX_RANGE = APConfig.PERIPHERALS_CONFIG.playerDetMaxRange.get();
+    private long lastConsumedMessage = Events.getLastPlayerMessageID() - 1;
 
     public PlayerDetectorPeripheral(PeripheralBlockEntity<?> tileEntity) {
         super(PERIPHERAL_TYPE, new BlockEntityPeripheralOwner<>(tileEntity));
@@ -264,5 +266,14 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
 
     private ServerPlayer getPlayer(String name) {
         return ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayerByName(name);
+    }
+
+    @Override
+    public void update() {
+        lastConsumedMessage = Events.traversePlayerMessages(lastConsumedMessage, message -> getConnectedComputers().forEach(computer -> {
+            if(message.eventName().equals("playerChangedDimension")) {
+                computer.queueEvent(message.eventName(), message.playerName(), message.fromDimension(), message.toDimension());
+            } else computer.queueEvent(message.eventName(), message.playerName(), message.fromDimension());
+        }));
     }
 }

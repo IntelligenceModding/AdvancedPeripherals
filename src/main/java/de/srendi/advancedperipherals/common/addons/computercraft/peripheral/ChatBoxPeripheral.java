@@ -485,6 +485,7 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
         });
     }
 
+    @Override
     public void update() {
         lastConsumedMessage = Events.traverseChatMessages(lastConsumedMessage, message -> {
             for (IComputerAccess computer : getConnectedComputers()) {
