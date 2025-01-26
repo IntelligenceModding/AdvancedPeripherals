@@ -218,6 +218,7 @@ public class AECraftJob extends BasicCraftJob {
             fireEvent(true, false, false, false, true, UNKNOWN_ERROR);
             return;
         }
+        this.currentJob = job;
 
         KeyCounter missing = job.missingItems();
         if (!missing.isEmpty()) {
