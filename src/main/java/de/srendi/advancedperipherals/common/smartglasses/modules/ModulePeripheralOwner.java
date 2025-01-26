@@ -83,6 +83,12 @@ public class ModulePeripheralOwner extends BasePeripheralOwner {
 
     @Nullable
     @Override
+    public Entity getHoldingEntity() {
+        return computer.getEntity();
+    }
+
+    @Nullable
+    @Override
     public Player getOwner() {
         Entity owner = computer.getEntity();
         return owner instanceof Player player ? player : null;

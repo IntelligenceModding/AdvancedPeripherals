@@ -157,7 +157,7 @@ public class InventoryManagerPeripheral extends BasePeripheral<InventoryManagerO
     @LuaFunction(mainThread = true)
     public final boolean isWearing(int index) throws LuaException {
         List<ItemStack> armor = getOwnerPlayer().getInventory().armor;
-        return 0 <= index && index < armor.size() && armor.get(index);
+        return 0 <= index && index < armor.size() && !armor.get(index).isEmpty();
     }
 
     @LuaFunction(mainThread = true)

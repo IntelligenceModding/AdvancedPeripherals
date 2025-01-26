@@ -8,6 +8,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.FrontAndTop;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.OwnableEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -56,7 +58,7 @@ public interface IPeripheralOwner {
 
     @Nullable
     default Player getOwner() {
-        Entity owner = pocket.getHoldingEntity();
+        Entity owner = getHoldingEntity();
         Set<Entity> checked = new HashSet<>();
         while (owner != null && checked.add(owner)) {
             if (owner instanceof Player player) {

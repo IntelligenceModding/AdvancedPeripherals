@@ -4,16 +4,41 @@ import dan200.computercraft.api.lua.IArguments;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.BlockEntityPeripheralOwner;
+import de.srendi.advancedperipherals.common.addons.computercraft.owner.IPeripheralOwner;
 import de.srendi.advancedperipherals.common.blocks.blockentities.DistanceDetectorEntity;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
+import de.srendi.advancedperipherals.common.util.HitResultUtil;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
+import net.minecraft.world.level.ClipContext;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
 
-public class DistanceDetectorPeripheral extends BasePeripheral<BlockEntityPeripheralOwner<DistanceDetectorEntity>> {
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
+
+public class DistanceDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
 
     public static final String PERIPHERAL_TYPE = "distance_detector";
 
+    private final DistanceDetectorEntity tileEntity;
+    private final AtomicInteger maxRange;
+    private volatile float currentDistance;
+    private final AtomicBoolean showLaser;
+    private volatile boolean calculatePeriodically;
+    private volatile boolean ignoreTransparent;
+    private final AtomicReference<DetectionType> detectionType;
+
     public DistanceDetectorPeripheral(DistanceDetectorEntity tileEntity) {
         super(PERIPHERAL_TYPE, new BlockEntityPeripheralOwner<>(tileEntity));
+        this.tileEntity = tileEntity;
+        this.maxRange = new AtomicInteger(Float.floatToRawIntBits(this.tileEntity.getMaxRange()));
+        this.currentDistance = this.tileEntity.getCurrentDistance();
+        this.showLaser = new AtomicBoolean(this.tileEntity.getShowLaser());
+        this.calculatePeriodically = this.tileEntity.getCalculatePeriodically();
+        this.ignoreTransparent = this.tileEntity.getIgnoreTransparent();
+        this.detectionType = new AtomicReference<>(this.tileEntity.getDetectionType());
     }
 
     @Override
@@ -21,24 +46,115 @@ public class DistanceDetectorPeripheral extends BasePeripheral<BlockEntityPeriph
         return APConfig.PERIPHERALS_CONFIG.enableDistanceDetector.get();
     }
 
+    public float getConfiguredMaxRange() {
+        return APConfig.PERIPHERALS_CONFIG.distanceDetectorRange.get().floatValue();
+    }
+
+    public float getMaxRange() {
+        return Float.intBitsToFloat(this.maxRange.get());
+    }
+
+    public void setMaxRange(float maxRange) {
+        maxRange = Math.min(Math.max(maxRange, 0), this.getConfiguredMaxRange());
+        int maxRangeBits = Float.floatToRawIntBits(maxRange);
+        if (this.maxRange.getAndSet(maxRangeBits) == maxRange) {
+            return;
+        }
+        if (this.tileEntity != null) {
+            this.tileEntity.setMaxRange(maxRange);
+            this.tileEntity.sendUpdate();
+        }
+        this.owner.markDataStorageDirty();
+    }
+
+    public float getCurrentDistance() {
+        return this.currentDistance;
+    }
+
+    public void setCurrentDistance(float currentDistance) {
+        // Since setCurrentDistance should only invokes from main thread, volatile field should be safe here.
+        if (this.currentDistance == currentDistance) {
+            return;
+        }
+        this.currentDistance = currentDistance;
+        if (this.tileEntity != null) {
+            this.tileEntity.setCurrentDistance(currentDistance);
+            this.tileEntity.sendUpdate();
+        }
+        this.owner.markDataStorageDirty();
+    }
+
+    public boolean getCalculatePeriodically() {
+        return this.calculatePeriodically;
+    }
+
+    public void setCalculatePeriodically(boolean calculatePeriodically) {
+        this.calculatePeriodically = calculatePeriodically;
+        if (this.tileEntity != null) {
+            this.tileEntity.setCalculatePeriodically(calculatePeriodically);
+        }
+        this.owner.markDataStorageDirty();
+    }
+
+    public boolean getShowLaser() {
+        return this.showLaser.get();
+    }
+
+    public void setShowLaser(boolean showLaser) {
+        if (this.showLaser.getAndSet(showLaser) == showLaser) {
+            return;
+        }
+        if (this.tileEntity != null) {
+            this.tileEntity.setShowLaser(showLaser);
+            this.tileEntity.sendUpdate();
+        }
+        this.owner.markDataStorageDirty();
+    }
+
+    public boolean getIgnoreTransparent() {
+        return this.ignoreTransparent;
+    }
+
+    public void setIgnoreTransparent(boolean ignoreTransparent) {
+        this.ignoreTransparent = ignoreTransparent;
+        if (this.tileEntity != null) {
+            this.tileEntity.setIgnoreTransparent(ignoreTransparent);
+        }
+        this.owner.markDataStorageDirty();
+    }
+
+    public DetectionType getDetectionType() {
+        return this.detectionType.get();
+    }
+
+    public void setDetectionType(DetectionType detectionType) {
+        if (this.detectionType.getAndSet(detectionType) == detectionType) {
+            return;
+        }
+        if (this.tileEntity != null) {
+            this.tileEntity.setDetectionType(detectionType);
+        }
+        this.owner.markDataStorageDirty();
+    }
+
     @LuaFunction
     public final void setLaserVisibility(boolean laser) {
-        getPeripheralOwner().tileEntity.setShowLaser(laser);
+        this.setShowLaser(laser);
     }
 
     @LuaFunction
     public final boolean getLaserVisibility() {
-        return getPeripheralOwner().tileEntity.getLaserVisibility();
+        return this.getShowLaser();
     }
 
     @LuaFunction
-    public final void setIgnoreTransparency(boolean enable) {
-        getPeripheralOwner().tileEntity.setIgnoreTransparent(enable);
+    public final void setIgnoreTransparencyLua(boolean enable) {
+        this.setIgnoreTransparent(enable);
     }
 
     @LuaFunction
     public final boolean ignoresTransparency() {
-        return getPeripheralOwner().tileEntity.ignoreTransparent();
+        return this.getIgnoreTransparent();
     }
 
     @LuaFunction
@@ -61,55 +177,85 @@ public class DistanceDetectorPeripheral extends BasePeripheral<BlockEntityPeriph
         } else {
             throw new LuaException("arg #1 must be a string or a number");
         }
-        getPeripheralOwner().tileEntity.setDetectionType(detectionType);
+        this.setDetectionType(detectionType);
     }
 
     @LuaFunction
     public final boolean detectsEntities() {
-        DetectionType detectionType = getPeripheralOwner().tileEntity.getDetectionType();
-        return detectionType.detectEntity();
+        return this.getDetectionType().detectEntity();
     }
 
     @LuaFunction
     public final boolean detectsBlocks() {
-        DetectionType detectionType = getPeripheralOwner().tileEntity.getDetectionType();
-        return detectionType.detectBlock();
+        return this.getDetectionType().detectBlock();
     }
 
     @LuaFunction
     public final String getDetectionMode() {
-        DetectionType detectionType = getPeripheralOwner().tileEntity.getDetectionType();
-        return detectionType.toString();
+        return this.getDetectionType().toString();
     }
 
     @LuaFunction
     public final double getDistance() {
-        return getPeripheralOwner().tileEntity.getCurrentDistance();
+        return this.getCurrentDistance();
     }
 
     @LuaFunction(mainThread = true)
     public final double calculateDistance() {
-        return getPeripheralOwner().tileEntity.calculateAndUpdateDistance();
+        return this.calculateAndUpdateDistance();
     }
 
     @LuaFunction
     public final boolean shouldCalculatePeriodically() {
-        return getPeripheralOwner().tileEntity.shouldCalculatePeriodically();
+        return this.getCalculatePeriodically();
     }
 
     @LuaFunction
-    public final void setCalculatePeriodically(boolean shouldRenderPeriodically) {
-        getPeripheralOwner().tileEntity.setShouldCalculatePeriodically(shouldRenderPeriodically);
+    public final void setCalculatePeriodicallyLua(boolean shouldCalculatePeriodically) {
+        this.setCalculatePeriodically(shouldCalculatePeriodically);
     }
 
     @LuaFunction
-    public final void setMaxRange(double maxDistance) {
-        getPeripheralOwner().tileEntity.setMaxRange((float) maxDistance);
+    public final void setMaxRangeLua(double maxDistance) {
+        this.setMaxRange((float) maxDistance);
     }
 
     @LuaFunction
-    public final double getMaxRange() {
-        return getPeripheralOwner().tileEntity.getMaxRange();
+    public final double getMaxRangeLua() {
+        return this.getMaxRange();
+    }
+
+    protected double calculateDistanceImpl() {
+        final double maxRange = this.getMaxRange();
+        Vec3 direction = this.owner.getDirection();
+        Vec3 center = this.getPhysicsPos();
+        Vec3 from = center;
+        Vec3 to = from.add(direction.scale(maxRange));
+
+        HitResult result = this.getHitResult(from, to);
+        if (result.getType() == HitResult.Type.MISS) {
+            return -1;
+        }
+        return result.getLocation().distanceTo(center) - 0.5f;
+    }
+
+    /**
+     * calculateAndUpdateDistance should only invokes from server main thread
+     */
+    public double calculateAndUpdateDistance() {
+        double distance = this.calculateDistanceImpl();
+        this.setCurrentDistance((float) distance);
+        return distance;
+    }
+
+    protected HitResult getHitResult(Vec3 from, Vec3 to) {
+        Level level = this.getLevel();
+        ClipContext.ShapeGetter shapeGetter = this.ignoreTransparent ? HitResultUtil.IgnoreNoOccludedContext.INSTANCE : ClipContext.Block.COLLIDER;
+        return switch (this.getDetectionType()) {
+            case ENTITY -> HitResultUtil.getEntityHitResult(from, to, level, this.owner.getHoldingEntity());
+            case BLOCK -> HitResultUtil.getBlockHitResult(from, to, level, shapeGetter, this.getPos());
+            case BOTH -> HitResultUtil.getHitResult(from, to, level, shapeGetter, this.owner);
+        };
     }
 
     public enum DetectionType {

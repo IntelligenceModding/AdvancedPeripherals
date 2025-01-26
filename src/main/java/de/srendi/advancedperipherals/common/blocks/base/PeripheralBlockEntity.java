@@ -20,6 +20,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -230,9 +231,12 @@ public abstract class PeripheralBlockEntity<T extends BasePeripheral<?>> extends
         this.setChanged();
     }
 
-    protected void sendUpdate() {
+    public void sendUpdate() {
         this.setChanged();
-        this.getLevel().sendBlockUpdated(this.getBlockPos(), this.getBlockState(), this.getBlockState(), 11);
+        Level level = this.getLevel();
+        if (level != null) {
+            level.sendBlockUpdated(this.getBlockPos(), this.getBlockState(), this.getBlockState(), 11);
+        }
     }
 
     public ComputerSide getComputerSide(Direction direction) {
