@@ -290,7 +290,9 @@ public class AECraftJob extends BasicCraftJob {
                     cpuCluster.craftingLogic.addListener((key) -> {
                         // The last time the listeners are called from the cpu logic is when the job is finished
                         // These listeners are not intended by ae2 to be used like this, but it works, and we don't modify the key
-                        this.cachedStatus = cpuCluster.getJobStatus();
+                        if (cpuCluster.getJobStatus() != null) {
+                            this.cachedStatus = cpuCluster.getJobStatus();
+                        }
                     });
                     this.targetCpu = cpu;
                     return;
@@ -301,9 +303,10 @@ public class AECraftJob extends BasicCraftJob {
     }
 
     private CraftingJobStatus getJobStatus() {
-        if (jobStatus == null || jobStatus.get() == null || cachedStatus != null) {
+        if (jobStatus == null || jobStatus.get() == null && cachedStatus != null) {
             return cachedStatus;
         }
+        cachedStatus = jobStatus.get();
         return jobStatus.get();
     }
 }

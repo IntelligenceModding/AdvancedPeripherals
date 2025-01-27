@@ -112,6 +112,9 @@ public interface IStorageSystemPeripheral {
 
     MethodResult getCraftingJobs();
 
+    // A function to get our BasicCraftJob object with the id
+    MethodResult getCraftingJob(int id);
+
     MethodResult cancelCraftingJobs(IArguments arguments) throws LuaException;
 
     MethodResult craftFluid(IComputerAccess computer, IArguments arguments) throws LuaException;

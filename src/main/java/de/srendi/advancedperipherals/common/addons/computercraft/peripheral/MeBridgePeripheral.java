@@ -653,6 +653,22 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
     @Override
     @LuaFunction(mainThread = true)
+    public MethodResult getCraftingJob(int id) {
+        if (!isAvailable())
+            return notConnected();
+
+        AECraftJob foundJob = null;
+
+        for (AECraftJob job : bridge.getJobs()) {
+            if (job.getId() == id) {
+                foundJob = job;
+            }
+        }
+        return MethodResult.of(foundJob);
+    }
+
+    @Override
+    @LuaFunction(mainThread = true)
     public MethodResult cancelCraftingJobs(IArguments arguments) {
         if (!isAvailable())
             return notConnected();

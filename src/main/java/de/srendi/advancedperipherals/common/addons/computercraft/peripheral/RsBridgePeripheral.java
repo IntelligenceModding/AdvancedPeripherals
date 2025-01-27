@@ -11,6 +11,7 @@ import dan200.computercraft.api.lua.MethodResult;
 import dan200.computercraft.api.peripheral.IComputerAccess;
 import dan200.computercraft.core.apis.TableHelper;
 import dan200.computercraft.core.computer.ComputerSide;
+import de.srendi.advancedperipherals.common.addons.ae2.AECraftJob;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.BlockEntityPeripheralOwner;
 import de.srendi.advancedperipherals.common.addons.refinedstorage.RSCraftJob;
 import de.srendi.advancedperipherals.common.addons.refinedstorage.RsApi;
@@ -627,6 +628,22 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
             return notConnected();
 
         return MethodResult.of(RsApi.getCraftingTasks(getNetwork(), bridge));
+    }
+
+    @Override
+    @LuaFunction(mainThread = true)
+    public MethodResult getCraftingJob(int id) {
+        if (!isAvailable())
+            return notConnected();
+
+        RSCraftJob foundJob = null;
+
+        for (RSCraftJob job : bridge.getJobs()) {
+            if (job.getId() == id) {
+                foundJob = job;
+            }
+        }
+        return MethodResult.of(foundJob);
     }
 
     @Override
