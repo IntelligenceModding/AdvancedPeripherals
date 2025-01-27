@@ -2,19 +2,13 @@ package de.srendi.advancedperipherals.common.util.inventory;
 
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.peripheral.IComputerAccess;
+import de.srendi.advancedperipherals.common.util.StatusConstants;
 import net.minecraft.world.level.Level;
 
 import java.util.concurrent.atomic.AtomicLong;
 
 public abstract class BasicCraftJob {
 
-    protected static final String CALCULATION_STARTED = "CALCULATION_STARTED";
-    protected static final String CRAFTING_STARTED = "CRAFTING_STARTED";
-    protected static final String JOB_CANCELED = "JOB_CANCELED";
-    protected static final String JOB_DONE = "JOB_DONE";
-    protected static final String NOT_CRAFTABLE = "NOT_CRAFTABLE";
-    protected static final String MISSING_ITEMS = "MISSING_ITEMS";
-    protected static final String UNKNOWN_ERROR = "UNKNOWN_ERROR";
     protected static final String EVENT = "_crafting";
     private static final int JOB_DONE_PURGE_TIME = 5 * 60 * 1000;
 
@@ -108,27 +102,32 @@ public abstract class BasicCraftJob {
 
     @LuaFunction(value = "getEmittedItems")
     public final Object getEmittedItemsLua() {
-        return (getEmittedItems());
+        return getEmittedItems();
     }
 
     @LuaFunction(value = "getUsedItems")
     public final Object getUsedItemsLua() {
-        return (getUsedItems());
+        return getUsedItems();
     }
 
     @LuaFunction(value = "getMissingItems")
     public final Object getMissingItemsLua() {
-        return (getMissingItems());
+        return getMissingItems();
     }
 
     @LuaFunction(value = "hasMultiplePaths")
     public final boolean hasMultiplePathsLua() {
-        return (hasMultiplePaths());
+        return hasMultiplePaths();
     }
 
     @LuaFunction(value = "getFinalOutput")
     public final Object getFinalOutputLua() {
-        return (getFinalOutput());
+        return getFinalOutput();
+    }
+
+    @LuaFunction(value = "cancel")
+    public final boolean cancelLua() {
+        return cancel();
     }
 
     public abstract Object getParsedRequestedItem();
@@ -149,6 +148,8 @@ public abstract class BasicCraftJob {
 
     public abstract Object getFinalOutput();
 
+    public abstract boolean cancel();
+
     public Level getWorld() {
         return world;
     }
@@ -162,12 +163,12 @@ public abstract class BasicCraftJob {
     }
 
     protected void fireNotConnected() {
-        fireEvent(false, false, true, false, false, "not connected");
+        fireEvent(true, StatusConstants.NOT_CONNECTED);
     }
 
     public void setStartedCrafting() {
         this.startedCrafting = true;
-        fireEvent(true, true, false, false, false, CRAFTING_STARTED);
+        fireEvent(false, StatusConstants.CRAFTING_STARTED);
     }
 
     public void setJobCanceled() {
@@ -180,8 +181,14 @@ public abstract class BasicCraftJob {
         this.jobDoneTime = System.currentTimeMillis();
     }
 
-    protected void fireEvent(boolean calculationStarted, boolean craftingStarted, boolean isDone, boolean wasCanceled, boolean error, String message) {
-        this.computer.queueEvent(eventName + EVENT, calculationStarted, craftingStarted, isDone, wasCanceled, error, this.id, message);
+    protected void fireEvent(boolean error, StatusConstants message) {
+        this.computer.queueEvent(eventName + EVENT, error, this.id, message.toString());
+        this.debugMessage = message.toString();
+        this.errorOccurred = error;
+    }
+
+    protected void fireEvent(boolean error, String message) {
+        this.computer.queueEvent(eventName + EVENT, error, this.id, message);
         this.debugMessage = message;
         this.errorOccurred = error;
     }

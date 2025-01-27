@@ -1,0 +1,44 @@
+package de.srendi.advancedperipherals.common.util;
+
+/**
+ * A collection of constants used as return types for several peripherals
+ */
+public enum StatusConstants {
+
+    // Crafting Jobs
+    CALCULATION_STARTED,
+    CRAFTING_STARTED,
+    JOB_CANCELED,
+    JOB_DONE,
+    NOT_CRAFTABLE,
+    MISSING_ITEMS,
+    CPU_DOES_NOT_EXIST,
+    // Filters
+    EMPTY_FILTER,
+    FLUID_NOT_FOUND,
+    ITEM_NOT_FOUND,
+    NO_VALID_FLUID,
+    NO_VALID_ITEM,
+    NO_VALID_FROMSLOT,
+    NO_VALID_TOSLOT,
+    NO_VALID_NBT_HASH,
+    NO_VALID_NBT,
+    NO_VALID_FINGERPRINT,
+    NO_VALID_COUNT,
+    NO_VALID_FILTER_TYPE,
+    // Misc
+    NOT_CONNECTED,
+    UNKNOWN_ERROR;
+
+    private String info;
+
+    public StatusConstants withInfo(String info) {
+        this.info = info;
+        return this;
+    }
+
+    public String asString() {
+        return this + "_" + this.info;
+    }
+
+}

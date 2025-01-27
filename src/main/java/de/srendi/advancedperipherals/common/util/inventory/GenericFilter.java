@@ -3,6 +3,7 @@ package de.srendi.advancedperipherals.common.util.inventory;
 import appeng.api.stacks.GenericStack;
 import de.srendi.advancedperipherals.common.util.Pair;
 import de.srendi.advancedperipherals.common.util.RegistryUtil;
+import de.srendi.advancedperipherals.common.util.StatusConstants;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.Map;
@@ -44,7 +45,7 @@ public abstract class GenericFilter<T> {
             return FluidFilter.parse(rawFilter);
         } else {
             // If the name is in neither of the registries, we will just return an empty filter
-            return Pair.of(empty(), "NO_VALID_FILTER_TYPE");
+            return Pair.of(empty(), StatusConstants.NO_VALID_FILTER_TYPE.asString());
         }
     }
 

@@ -19,6 +19,7 @@ import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.peripheral.IComputerAccess;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.blocks.blockentities.MeBridgeEntity;
+import de.srendi.advancedperipherals.common.util.StatusConstants;
 import de.srendi.advancedperipherals.common.util.inventory.BasicCraftJob;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
@@ -99,7 +100,7 @@ public class AECraftJob extends BasicCraftJob {
         if (getJobStatus() == null) {
             return -1;
         }
-        return getJobStatus() .elapsedTimeNanos();
+        return getJobStatus().elapsedTimeNanos();
     }
 
     @Override
@@ -107,7 +108,7 @@ public class AECraftJob extends BasicCraftJob {
         if (getJobStatus() == null) {
             return -1;
         }
-        return getJobStatus() .totalItems();
+        return getJobStatus().totalItems();
     }
 
     @Override
@@ -158,6 +159,17 @@ public class AECraftJob extends BasicCraftJob {
         return AppEngApi.parseGenericStack(currentJob.finalOutput());
     }
 
+    @Override
+    public boolean cancel() {
+        if (targetCpu instanceof CraftingCPUCluster cluster) {
+            if (cluster.isBusy()) {
+                cluster.cancel();
+                return true;
+            }
+        }
+        return false;
+    }
+
     @LuaFunction
     public long getUsedBytes() {
         if (currentJob == null) {
@@ -189,13 +201,13 @@ public class AECraftJob extends BasicCraftJob {
         ICraftingService craftingService = grid.getService(ICraftingService.class);
 
         if (!craftingService.isCraftable(toCraft)) {
-            fireEvent(false, false, false, false, false, NOT_CRAFTABLE);
+            fireEvent(true, StatusConstants.NOT_CRAFTABLE);
             calculationNotSuccessful = true;
             return;
         }
 
         futureJob = craftingService.beginCraftingCalculation(world, this.simulationRequester, toCraft, amount, CalculationStrategy.REPORT_MISSING_ITEMS);
-        fireEvent(true, false, false, false, false, CALCULATION_STARTED);
+        fireEvent(false, StatusConstants.CALCULATION_STARTED);
     }
 
     public void maybeCraft() {
@@ -209,20 +221,20 @@ public class AECraftJob extends BasicCraftJob {
         } catch (ExecutionException | InterruptedException ex) {
             AdvancedPeripherals.debug("Tried to get job, but job calculation is not done. Should be done.", org.apache.logging.log4j.Level.ERROR);
             ex.printStackTrace();
-            fireEvent(true, false, false, false, true, UNKNOWN_ERROR);
+            fireEvent(true, StatusConstants.UNKNOWN_ERROR);
             return;
         }
 
         if (job == null) {
             AdvancedPeripherals.debug("Job is null, should not be null.", org.apache.logging.log4j.Level.ERROR);
-            fireEvent(true, false, false, false, true, UNKNOWN_ERROR);
+            fireEvent(true, StatusConstants.UNKNOWN_ERROR);
             return;
         }
         this.currentJob = job;
 
         KeyCounter missing = job.missingItems();
         if (!missing.isEmpty()) {
-            fireEvent(true, false, false, false, true, MISSING_ITEMS);
+            fireEvent(true, StatusConstants.MISSING_ITEMS);
             calculationNotSuccessful = true;
             return;
         }
@@ -233,7 +245,7 @@ public class AECraftJob extends BasicCraftJob {
         ICraftingSubmitResult submitResult = craftingService.submitJob(job, requester, targetCpu, false, this.source);
         if (!submitResult.successful()) {
             calculationNotSuccessful = true;
-            fireEvent(true, false, false, false, true, submitResult.errorCode().toString());
+            fireEvent(true, submitResult.errorCode().toString());
             return;
         }
 
@@ -246,18 +258,18 @@ public class AECraftJob extends BasicCraftJob {
     public void jobStateChanged() {
         ICraftingLink jobLink = this.jobLink;
         if (jobLink == null) {
-            fireEvent(true, true, true, false, true, UNKNOWN_ERROR);
+            fireEvent(true, StatusConstants.UNKNOWN_ERROR);
             return;
         }
 
         if (jobLink.isCanceled() && !isJobCanceled) {
-            fireEvent(true, true, false, true, false, JOB_CANCELED);
+            fireEvent(false, StatusConstants.JOB_CANCELED);
             setJobCanceled();
             return;
         }
 
         if (jobLink.isDone() && !isJobDone) {
-            fireEvent(true, true, true, false, false, JOB_DONE);
+            fireEvent(false, StatusConstants.JOB_DONE);
             setJobDone();
         }
     }

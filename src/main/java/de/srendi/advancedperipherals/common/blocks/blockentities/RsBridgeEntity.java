@@ -43,7 +43,7 @@ public class RsBridgeEntity extends NetworkNodeBlockEntity<RefinedStorageNode> i
     private boolean addedListener = false;
 
     public RsBridgeEntity(BlockPos pos, BlockState state) {
-        super(APBlockEntityTypes.RS_BRIDGE.get(), pos, state, SPEC);
+        super(APBlockEntityTypes.RS_BRIDGE.get(), pos, state, SPEC, RefinedStorageNode.class);
         peripheralSettings = new CompoundTag();
     }
 
@@ -122,6 +122,7 @@ public class RsBridgeEntity extends NetworkNodeBlockEntity<RefinedStorageNode> i
 
     @Override
     public void onChanged() {
+        // Not as perfect as we currently do it for our AE jobs. This is called for every job even if they aren't created from the bridge
         jobs.stream().filter(BasicCraftJob::isCraftingStarted).forEach(BasicCraftJob::jobStateChanged);
     }
 }

@@ -8,6 +8,7 @@ import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.util.NBTUtil;
 import de.srendi.advancedperipherals.common.util.Pair;
 import de.srendi.advancedperipherals.common.util.RegistryUtil;
+import de.srendi.advancedperipherals.common.util.StatusConstants;
 import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
@@ -43,38 +44,38 @@ public class FluidFilter extends GenericFilter<FluidStack> {
                 if (name.startsWith("#")) {
                     fluidFilter.tag = TagKey.create(Registry.FLUID_REGISTRY, new ResourceLocation(name.substring(1)));
                 } else if ((fluidFilter.fluid = RegistryUtil.getRegistryEntry(name, ForgeRegistries.FLUIDS)) == null) {
-                    return Pair.of(null, "FLUID_NOT_FOUND");
+                    return Pair.of(null, StatusConstants.FLUID_NOT_FOUND.asString());
                 }
             } catch (LuaException luaException) {
-                return Pair.of(null, "NO_VALID_FLUID");
+                return Pair.of(null, StatusConstants.NO_VALID_FLUID.asString());
             }
         }
         if (item.containsKey("nbtHash")) {
             try {
                 fluidFilter.nbtHash = TableHelper.getStringField(item, "nbtHash");
             } catch (LuaException luaException) {
-                return Pair.of(null, "NO_VALID_NBT_HASH");
+                return Pair.of(null, StatusConstants.NO_VALID_NBT_HASH.asString());
             }
         }
         if (item.containsKey("nbt")) {
             try {
                 fluidFilter.nbt = NBTUtil.fromText(TableHelper.getStringField(item, "nbt"));
             } catch (LuaException luaException) {
-                return Pair.of(null, "NO_VALID_NBT");
+                return Pair.of(null, StatusConstants.NO_VALID_NBT.asString());
             }
         }
         if (item.containsKey("fingerprint")) {
             try {
                 fluidFilter.fingerprint = TableHelper.getStringField(item, "fingerprint");
             } catch (LuaException luaException) {
-                return Pair.of(null, "NO_VALID_FINGERPRINT");
+                return Pair.of(null, StatusConstants.NO_VALID_FINGERPRINT.asString());
             }
         }
         if (item.containsKey("count")) {
             try {
                 fluidFilter.count = TableHelper.getIntField(item, "count");
             } catch (LuaException luaException) {
-                return Pair.of(null, "NO_VALID_COUNT");
+                return Pair.of(null, StatusConstants.NO_VALID_COUNT.asString());
             }
         }
         AdvancedPeripherals.debug("Parsed fluid filter: " + fluidFilter);

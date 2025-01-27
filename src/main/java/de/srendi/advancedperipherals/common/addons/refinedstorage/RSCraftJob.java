@@ -6,6 +6,7 @@ import com.refinedmods.refinedstorage.api.autocrafting.task.ICalculationResult;
 import com.refinedmods.refinedstorage.api.autocrafting.task.ICraftingTask;
 import dan200.computercraft.api.peripheral.IComputerAccess;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
+import de.srendi.advancedperipherals.common.util.StatusConstants;
 import de.srendi.advancedperipherals.common.util.inventory.BasicCraftJob;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -89,6 +90,15 @@ public class RSCraftJob extends BasicCraftJob {
         return null;
     }
 
+    @Override
+    public boolean cancel() {
+        if (isJobDone() || isJobCanceled()) {
+            return false;
+        }
+        craftingManager.cancel(craftingTask.getId());
+        return true;
+    }
+
     public ICraftingTask getCraftingTask() {
         return craftingTask;
     }
@@ -102,14 +112,14 @@ public class RSCraftJob extends BasicCraftJob {
         CalculationResultType type = calculationResult.getType();
 
         if (type == CalculationResultType.MISSING) {
-            fireEvent(true, false, false, false, true, MISSING_ITEMS);
+            fireEvent(true, StatusConstants.MISSING_ITEMS);
             calculationNotSuccessful = true;
             return;
         }
 
         if (!calculationResult.isOk()) {
             calculationNotSuccessful = true;
-            fireEvent(true, false, false, false, true, type.toString());
+            fireEvent(true, type.toString());
             return;
         }
 
@@ -134,7 +144,7 @@ public class RSCraftJob extends BasicCraftJob {
         }
 
         calculationResult = craftingManager.create(itemToCraft, (int) amount);
-        fireEvent(true, false, false, false, false, CALCULATION_STARTED);
+        fireEvent(false, StatusConstants.CALCULATION_STARTED);
     }
 
     private void maybeCalculateFluid() {
@@ -143,29 +153,29 @@ public class RSCraftJob extends BasicCraftJob {
         }
 
         if (craftingManager.getPattern(fluidToCraft) == null) {
-            fireEvent(false, false, false, false, false, NOT_CRAFTABLE);
+            fireEvent(true, StatusConstants.NOT_CRAFTABLE);
             return;
         }
 
         calculationResult = craftingManager.create(fluidToCraft, (int) amount);
-        fireEvent(true, false, false, false, false, CALCULATION_STARTED);
+        fireEvent(false, StatusConstants.CALCULATION_STARTED);
     }
 
     @Override
     public void jobStateChanged() {
         if (this.craftingTask == null) {
-            fireEvent(true, true, true, false, true, UNKNOWN_ERROR);
+            fireEvent(true, StatusConstants.UNKNOWN_ERROR);
             return;
         }
 
         if (isJobCanceled() && !isJobCanceled) {
-            fireEvent(true, true, false, true, false, JOB_CANCELED);
+            fireEvent(false, StatusConstants.JOB_CANCELED);
             setJobCanceled();
             return;
         }
 
         if (isJobDone() && !isJobDone) {
-            fireEvent(true, true, true, false, false, JOB_DONE);
+            fireEvent(true, StatusConstants.JOB_DONE);
             setJobDone();
         }
     }

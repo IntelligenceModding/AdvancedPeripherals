@@ -8,6 +8,7 @@ import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.util.NBTUtil;
 import de.srendi.advancedperipherals.common.util.Pair;
 import de.srendi.advancedperipherals.common.util.RegistryUtil;
+import de.srendi.advancedperipherals.common.util.StatusConstants;
 import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
@@ -45,17 +46,17 @@ public class ItemFilter extends GenericFilter<ItemStack> {
                 if (name.startsWith("#")) {
                     itemFilter.tag = TagKey.create(Registry.ITEM_REGISTRY, new ResourceLocation(name.substring(1)));
                 } else if ((itemFilter.item = RegistryUtil.getRegistryEntry(name, ForgeRegistries.ITEMS)) == null) {
-                    return Pair.of(null, "ITEM_NOT_FOUND");
+                    return Pair.of(null, StatusConstants.ITEM_NOT_FOUND.asString());
                 }
             } catch (LuaException luaException) {
-                return Pair.of(null, "NO_VALID_ITEM");
+                return Pair.of(null, StatusConstants.NO_VALID_ITEM.asString());
             }
         }
         if (item.containsKey("nbtHash")) {
             try {
                 itemFilter.nbtHash = TableHelper.getStringField(item, "nbtHash");
             } catch (LuaException luaException) {
-                return Pair.of(null, "NO_VALID_NBT_HASH");
+                return Pair.of(null, StatusConstants.NO_VALID_NBT_HASH.asString());
             }
         }
         if (item.containsKey("nbt")) {
@@ -65,7 +66,7 @@ public class ItemFilter extends GenericFilter<ItemStack> {
                 try {
                     itemFilter.nbt = NBTUtil.fromText(TableHelper.getTableField(item, "nbt").toString());
                 } catch (LuaException e) {
-                    return Pair.of(null, "NO_VALID_NBT");
+                    return Pair.of(null, StatusConstants.NO_VALID_NBT.asString());
                 }
             }
         }
@@ -73,28 +74,28 @@ public class ItemFilter extends GenericFilter<ItemStack> {
             try {
                 itemFilter.fingerprint = TableHelper.getStringField(item, "fingerprint");
             } catch (LuaException luaException) {
-                return Pair.of(null, "NO_VALID_FINGERPRINT");
+                return Pair.of(null, StatusConstants.NO_VALID_FINGERPRINT.asString());
             }
         }
         if (item.containsKey("fromSlot")) {
             try {
                 itemFilter.fromSlot = TableHelper.getIntField(item, "fromSlot") - 1;
             } catch (LuaException luaException) {
-                return Pair.of(null, "NO_VALID_FROMSLOT");
+                return Pair.of(null, StatusConstants.NO_VALID_FROMSLOT.asString());
             }
         }
         if (item.containsKey("toSlot")) {
             try {
                 itemFilter.toSlot = TableHelper.getIntField(item, "toSlot") - 1;
             } catch (LuaException luaException) {
-                return Pair.of(null, "NO_VALID_TOSLOT");
+                return Pair.of(null, StatusConstants.NO_VALID_TOSLOT.asString());
             }
         }
         if (item.containsKey("count")) {
             try {
                 itemFilter.count = TableHelper.getIntField(item, "count");
             } catch (LuaException luaException) {
-                return Pair.of(null, "NO_VALID_COUNT");
+                return Pair.of(null, StatusConstants.NO_VALID_COUNT.asString());
             }
         }
 
