@@ -3,6 +3,7 @@ package de.srendi.advancedperipherals.common.addons.refinedstorage;
 import com.refinedmods.refinedstorage.api.autocrafting.ICraftingManager;
 import com.refinedmods.refinedstorage.api.autocrafting.task.CalculationResultType;
 import com.refinedmods.refinedstorage.api.autocrafting.task.ICalculationResult;
+import com.refinedmods.refinedstorage.api.autocrafting.task.ICraftingRequestInfo;
 import com.refinedmods.refinedstorage.api.autocrafting.task.ICraftingTask;
 import dan200.computercraft.api.peripheral.IComputerAccess;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
@@ -52,12 +53,20 @@ public class RSCraftJob extends BasicCraftJob {
 
     @Override
     public long getElapsedTime() {
-        return 0;
+        if (craftingTask == null) {
+            return -1;
+        }
+        return System.nanoTime() - craftingTask.getStartTime() * 1_000;
     }
 
     @Override
     public long getTotalItems() {
-        return 0;
+        if (craftingTask == null || craftingTask.getRequested() == null) {
+            return -1;
+        }
+        ICraftingRequestInfo requestInfo = craftingTask.getRequested();
+
+        return requestInfo.getFluid() != null ? requestInfo.getFluid().getAmount() : requestInfo.getItem().getCount();
     }
 
     @Override
