@@ -18,7 +18,8 @@ Mostly noteworthy are the bridges. These will have identical functions and some 
 
 ### Fixed
 - Fixed that fluids would always return the `name` key with the value `minecraft:fluid`
-
+- Fixed that several AP features do not work on dedicated servers. A few of them are chat box events, player detector events, villager trades and villager structures
+- 
 ### Added
 - Added fluid type properties to lua fluid objects
 

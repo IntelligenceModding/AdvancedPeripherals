@@ -20,7 +20,7 @@ import net.neoforged.neoforge.event.server.ServerAboutToStartEvent;
 import java.util.ArrayList;
 import java.util.List;
 
-@EventBusSubscriber(modid = AdvancedPeripherals.MOD_ID, value = Dist.CLIENT, bus = EventBusSubscriber.Bus.GAME)
+@EventBusSubscriber(modid = AdvancedPeripherals.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
 public class VillageStructures {
 
     // Adapted from Pneumaticcraft
