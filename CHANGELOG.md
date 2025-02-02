@@ -6,6 +6,22 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+We will introduce more breaking changes in the upcoming 1.21.1 alpha releases and in the next major version.
+Mostly noteworthy are the bridges. These will have identical functions and some additions and fixes
+
+### Breaking Changes
+- Renamed the following functions in the ME Bridge:
+- `listFluid` -> `listFluids`
+- `listGas` -> `listGases`
+- `listCraftableFluid` -> `listCraftableFluids`
+
+### Fixed
+- Fixed that fluids would always return the `name` key with the value `minecraft:fluid`
+
+### Added
+- Added fluid type properties to lua fluid objects
+
 ## [1.21.1-0.7.47a] - 2025-01-21
 
 ### Fixed:

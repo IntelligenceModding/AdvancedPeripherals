@@ -170,7 +170,7 @@ public class AppEngApi {
     }
 
     private static Map<String, Object> getObjectFromItemStack(Pair<Long, AEItemKey> stack, @Nullable ICraftingService craftingService) {
-        Map<String, Object> map = LuaConverter.stackToObject(stack.getRight().toStack());
+        Map<String, Object> map = LuaConverter.itemStackToObject(stack.getRight().toStack());
         long count = stack.getLeft();
         // We re-set the amount since item stacks can only hold up to 2^31 for the count while ae2 stacks can hold up to 2^63
         map.put("count", count);
@@ -180,9 +180,9 @@ public class AppEngApi {
     }
 
     private static Map<String, Object> getObjectFromFluidStack(Pair<Long, AEFluidKey> stack, @Nullable ICraftingService craftingService) {
-        Map<String, Object> map = new HashMap<>();
+        Map<String, Object> map = LuaConverter.fluidStackToObject(stack.getRight().toStack(1));
         long count = stack.getLeft();
-        map.put("name", stack.getRight().getFluid().builtInRegistryHolder().key().registry().toString());
+        map.put("name", stack.getRight().getFluid().builtInRegistryHolder().key().location().toString());
         map.put("count", count);
         map.put("displayName", stack.getRight().getDisplayName().getString());
         map.put("tags", LuaConverter.tagsToList(() -> stack.getRight().getFluid().builtInRegistryHolder().tags()));

@@ -443,7 +443,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     }
 
     @LuaFunction(mainThread = true)
-    public final MethodResult listFluid() {
+    public final MethodResult listFluids() {
         if (!isConnected())
             return notConnected();
 
@@ -451,7 +451,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     }
 
     @LuaFunction(mainThread = true)
-    public final MethodResult listGas() {
+    public final MethodResult listGases() {
         if (!isConnected())
             return notConnected();
 
@@ -459,7 +459,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     }
 
     @LuaFunction(mainThread = true)
-    public final MethodResult listCraftableFluid() {
+    public final MethodResult listCraftableFluids() {
         if (!isConnected())
             return notConnected();
 

@@ -3,6 +3,7 @@ package de.srendi.advancedperipherals.common.util;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.shared.util.NBTUtil;
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.InventoryManagerPeripheral;
+import de.srendi.advancedperipherals.common.util.inventory.FluidUtil;
 import de.srendi.advancedperipherals.common.util.inventory.ItemUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponentPatch;
@@ -14,7 +15,10 @@ import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.properties.Property;
+import net.minecraft.world.level.material.Fluid;
 import net.neoforged.neoforge.common.IShearable;
+import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.FluidType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
@@ -100,8 +104,8 @@ public class LuaConverter {
         return map;
     }
 
-    public static Map<String, Object> stackToObject(@NotNull ItemStack stack) {
-        if (stack.isEmpty()) return new HashMap<>();
+    public static Map<String, Object> itemStackToObject(@NotNull ItemStack stack) {
+        if (stack.isEmpty()) return Collections.emptyMap();
         Map<String, Object> map = itemToObject(stack.getItem());
         DataComponentPatch components = stack.getComponentsPatch();
         map.put("count", stack.getCount());
@@ -112,10 +116,37 @@ public class LuaConverter {
         return map;
     }
 
-    public static Map<String, Object> stackToObject(@NotNull ItemStack itemStack, int amount) {
+    public static Map<String, Object> fluidStackToObject(@NotNull FluidStack stack) {
+        if (stack.isEmpty()) return Collections.emptyMap();
+        Map<String, Object> map = fluidToObject(stack.getFluid());
+        DataComponentPatch components = stack.getComponentsPatch();
+        map.put("count", stack.getAmount());
+        map.put("displayName", stack.getHoverName().getString());
+        map.put("fluidType", fluidTypeToObject(stack.getFluidType()));
+        map.put("components", NBTUtil.toLua(DataComponentUtil.toNbt(components)));
+        map.put("fingerprint", FluidUtil.getFingerprint(stack));
+        return map;
+    }
+
+    public static Map<String, Object> fluidTypeToObject(FluidType type) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("viscosity", type.getViscosity());
+        map.put("density", type.getDensity());
+        map.put("canHydrate", type.canHydrate((Entity) null));
+        map.put("canExtinguish", type.canExtinguish(null));
+        map.put("canDrownIn", type.canDrownIn(null));
+        map.put("canSwim",type.canSwim(null));
+        map.put("canPushEntity",type.canPushEntity(null));
+        map.put("supportsBoating",type.supportsBoating(null));
+        map.put("canConvertToSource",type.canConvertToSource(null));
+        map.put("temperature",type.getTemperature(null));
+        return map;
+    }
+
+    public static Map<String, Object> itemStackToObject(@NotNull ItemStack itemStack, int amount) {
         ItemStack stack = itemStack.copy();
         stack.setCount(amount);
-        return stackToObject(stack);
+        return itemStackToObject(stack);
     }
 
     /**
@@ -128,7 +159,7 @@ public class LuaConverter {
      */
     public static Map<String, Object> stackToObjectWithSlot(@NotNull ItemStack stack, int slot) {
         if (stack.isEmpty()) return new HashMap<>();
-        Map<String, Object> map = stackToObject(stack);
+        Map<String, Object> map = itemStackToObject(stack);
         map.put("slot", slot);
         return map;
     }
@@ -137,6 +168,12 @@ public class LuaConverter {
         Map<String, Object> map = new HashMap<>();
         map.put("tags", tagsToList(() -> item.builtInRegistryHolder().tags()));
         map.put("name", ItemUtil.getRegistryKey(item).toString());
+        return map;
+    }
+    public static Map<String, Object> fluidToObject(@NotNull Fluid fluid) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("tags", tagsToList(() -> fluid.builtInRegistryHolder().tags()));
+        map.put("name", FluidUtil.getRegistryKey(fluid).toString());
         return map;
     }
 
