@@ -81,8 +81,8 @@ public class MineColonies {
         map.put("work", citizen.getWorkBuilding() == null ? null : jobToObject(citizen.getWorkBuilding(), citizen.getJob()));
         map.put("home", citizen.getHomeBuilding() == null ? null : homeToObject(citizen.getHomeBuilding()));
         map.put("betterFood", citizen.needsBetterFood());
-        map.put("isAsleep", citizen.getStatus().equals(VisibleCitizenStatus.SLEEP));
-        map.put("isIdle", citizen.getStatus().equals(VisibleCitizenStatus.HOUSE));
+        map.put("isAsleep", citizen.getStatus() != null && citizen.getStatus().equals(VisibleCitizenStatus.SLEEP));
+        map.put("isIdle", citizen.getStatus() == null || citizen.getStatus().equals(VisibleCitizenStatus.HOUSE));
         citizen.getEntity().ifPresent(entity -> {
             map.put("health", entity.getHealth());
             map.put("maxHealth", entity.getMaxHealth());
@@ -109,7 +109,7 @@ public class MineColonies {
         map.put("saturation", visitor.getSaturation());
         map.put("happiness", visitor.getCitizenHappinessHandler().getHappiness(visitor.getColony(), visitor));
         map.put("skills", skillsToObject(visitor.getCitizenSkillHandler().getSkills()));
-        map.put("recruitCost", LuaConverter.stackToObject(visitor.getRecruitCost()));
+        map.put("recruitCost", LuaConverter.itemStackToObject(visitor.getRecruitCost()));
 
         return map;
     }
@@ -284,7 +284,7 @@ public class MineColonies {
                     List<Map<String, Object>> researchCostItems = new ArrayList<>();
 
                     for (ItemStack costItem : item.getItems())
-                        researchCostItems.add(LuaConverter.stackToObject(costItem));
+                        researchCostItems.add(LuaConverter.itemStackToObject(costItem));
 
                     researchCost.put("validItems", researchCostItems);
                     researchCost.put("count", item.count());
@@ -353,7 +353,7 @@ public class MineColonies {
             Map<String, Object> map = new HashMap<>();
             ItemStack stack = resource.getItemStack().copy();
 
-            map.put("item", LuaConverter.stackToObject(stack));
+            map.put("item", LuaConverter.itemStackToObject(stack));
             map.put("displayName", resource.getName());
             map.put("available", resource.getAvailable());
             map.put("delivering", resource.getAmountInDelivery());

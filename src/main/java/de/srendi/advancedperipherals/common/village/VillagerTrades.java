@@ -7,7 +7,6 @@ import de.srendi.advancedperipherals.common.setup.Blocks;
 import de.srendi.advancedperipherals.common.setup.CCRegistration;
 import de.srendi.advancedperipherals.common.setup.Items;
 import de.srendi.advancedperipherals.common.setup.Villagers;
-import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.village.VillagerTradesEvent;
@@ -15,7 +14,7 @@ import net.neoforged.neoforge.event.village.WandererTradesEvent;
 
 import static de.srendi.advancedperipherals.common.village.VillagerTrade.TradeBuilder;
 
-@EventBusSubscriber(modid = AdvancedPeripherals.MOD_ID, value = Dist.CLIENT, bus = EventBusSubscriber.Bus.GAME)
+@EventBusSubscriber(modid = AdvancedPeripherals.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
 public class VillagerTrades {
 
     @SubscribeEvent

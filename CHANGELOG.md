@@ -7,6 +7,37 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+We will introduce more breaking changes in the upcoming 1.21.1 alpha releases and in the next major version.
+Mostly noteworthy are the bridges. These will have identical functions and some additions and fixes
+Not all of the breaking changes are documented yet. But we will document them before we release a beta version
+
+### Breaking Changes
+- Renamed the following functions in the ME Bridge:
+- `listFluid` -> `listFluids`
+- `listGas` -> `listGases`
+- `listCraftableFluid` -> `listCraftableFluids`
+
+### Fixed
+- Fixed that fluids would always return the `name` key with the value `minecraft:fluid`
+- Fixed that several AP features do not work on dedicated servers. A few of them are chat box events, player detector events, villager trades and villager structures
+- Fixed that functions which interact with fluid handlers would not work.
+
+### Added
+- Added fluid type properties to lua fluid objects
+
+## [1.21.1-0.7.47a] - 2025-01-21
+
+### Fixed:
+- Fixed that the colony integrator's `getCitizens` function would stop working when NPCs are idling
+- Fixed errors with fuel ability functions from the automata turtles
+- Fixed that automata turtles could break themselves
+- Fixed that the end turtle would not save war points
+
+## [1.21.1-0.7.46a] - 2025-01-18
+
+### Changed
+- Downgraded CC:T Version to `1.113.1` so curseforge users can still use AP since CC:T does not get published to curseforge anymore.
+
 ### Breaking Changes
 - Renamed `nbt` to `components` in every item lua object
 - Renamed `amount` to `count` in every ME Bridge lua item object

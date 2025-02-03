@@ -311,6 +311,11 @@ public class APFakePlayer extends FakePlayer {
                 if (level().isEmptyBlock(blockPos) || blockPos.equals(blockPosition())) {
                     return null;
                 }
+                BlockHitResult shaped = traceContext.getBlockShape(level().getBlockState(blockPos), level(), blockPos)
+                        .clip(rayTraceContext.getFrom(), rayTraceContext.getTo(), blockPos);
+                if (shaped != null && shaped.getType() != HitResult.Type.MISS) {
+                    return shaped;
+                }
                 return new BlockHitResult(new Vec3(blockPos.getX(), blockPos.getY(), blockPos.getZ()), traceDirection, blockPos, false);
             }, rayTraceContext -> BlockHitResult.miss(rayTraceContext.getTo(), traceDirection, new BlockPos((int) rayTraceContext.getTo().x, (int) rayTraceContext.getTo().y, (int) rayTraceContext.getTo().z)));
         }

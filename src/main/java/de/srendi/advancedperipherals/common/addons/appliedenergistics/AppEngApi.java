@@ -21,11 +21,9 @@ import appeng.blockentity.storage.DriveBlockEntity;
 import appeng.me.cells.BasicCellHandler;
 import appeng.me.cells.BasicCellInventory;
 import appeng.parts.storagebus.StorageBusPart;
-import dan200.computercraft.shared.util.NBTUtil;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.addons.APAddons;
 import de.srendi.advancedperipherals.common.setup.BlockEntityTypes;
-import de.srendi.advancedperipherals.common.util.DataComponentUtil;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
 import de.srendi.advancedperipherals.common.util.Pair;
 import de.srendi.advancedperipherals.common.util.inventory.FluidFilter;
@@ -34,7 +32,6 @@ import de.srendi.advancedperipherals.common.util.inventory.ItemUtil;
 import it.unimi.dsi.fastutil.objects.Object2LongMap;
 import me.ramidzkh.mekae2.ae2.MekanismKey;
 import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.Tag;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
@@ -173,7 +170,7 @@ public class AppEngApi {
     }
 
     private static Map<String, Object> getObjectFromItemStack(Pair<Long, AEItemKey> stack, @Nullable ICraftingService craftingService) {
-        Map<String, Object> map = LuaConverter.stackToObject(stack.getRight().toStack());
+        Map<String, Object> map = LuaConverter.itemStackToObject(stack.getRight().toStack());
         long count = stack.getLeft();
         // We re-set the amount since item stacks can only hold up to 2^31 for the count while ae2 stacks can hold up to 2^63
         map.put("count", count);
@@ -183,9 +180,9 @@ public class AppEngApi {
     }
 
     private static Map<String, Object> getObjectFromFluidStack(Pair<Long, AEFluidKey> stack, @Nullable ICraftingService craftingService) {
-        Map<String, Object> map = new HashMap<>();
+        Map<String, Object> map = LuaConverter.fluidStackToObject(stack.getRight().toStack(1));
         long count = stack.getLeft();
-        map.put("name", stack.getRight().getFluid().builtInRegistryHolder().key().registry().toString());
+        map.put("name", stack.getRight().getFluid().builtInRegistryHolder().key().location().toString());
         map.put("count", count);
         map.put("displayName", stack.getRight().getDisplayName().getString());
         map.put("tags", LuaConverter.tagsToList(() -> stack.getRight().getFluid().builtInRegistryHolder().tags()));

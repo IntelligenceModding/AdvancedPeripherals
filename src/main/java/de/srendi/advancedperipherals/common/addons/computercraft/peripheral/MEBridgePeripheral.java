@@ -442,24 +442,24 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         return MethodResult.of(AppEngApi.listCraftableStacks(AppEngApi.getMonitor(node), getCraftingService()));
     }
 
-    @LuaFunction(mainThread = true)
-    public final MethodResult listFluid() {
+    @LuaFunction(mainThread = true, value = {"listFluid", "listFluids"})
+    public final MethodResult listFluids() {
         if (!isConnected())
             return notConnected();
 
         return MethodResult.of(AppEngApi.listFluids(AppEngApi.getMonitor(node), getCraftingService()));
     }
 
-    @LuaFunction(mainThread = true)
-    public final MethodResult listGas() {
+    @LuaFunction(mainThread = true, value = {"listGas", "listGases"})
+    public final MethodResult listGases() {
         if (!isConnected())
             return notConnected();
 
         return MethodResult.of(AppEngApi.listGases(AppEngApi.getMonitor(node), getCraftingService(), 0));
     }
 
-    @LuaFunction(mainThread = true)
-    public final MethodResult listCraftableFluid() {
+    @LuaFunction(mainThread = true, value = {"listCraftableFluid", "listCraftableFluids"})
+    public final MethodResult listCraftableFluids() {
         if (!isConnected())
             return notConnected();
 
