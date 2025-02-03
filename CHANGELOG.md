@@ -9,6 +9,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 We will introduce more breaking changes in the upcoming 1.21.1 alpha releases and in the next major version.
 Mostly noteworthy are the bridges. These will have identical functions and some additions and fixes
+Not all of the breaking changes are documented yet. But we will document them before we release a beta version
 
 ### Breaking Changes
 - Renamed the following functions in the ME Bridge:
@@ -19,7 +20,8 @@ Mostly noteworthy are the bridges. These will have identical functions and some 
 ### Fixed
 - Fixed that fluids would always return the `name` key with the value `minecraft:fluid`
 - Fixed that several AP features do not work on dedicated servers. A few of them are chat box events, player detector events, villager trades and villager structures
-- 
+- Fixed that functions which interact with fluid handlers would not work.
+
 ### Added
 - Added fluid type properties to lua fluid objects
 

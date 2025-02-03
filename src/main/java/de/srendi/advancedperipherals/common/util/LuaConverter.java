@@ -135,11 +135,11 @@ public class LuaConverter {
         map.put("canHydrate", type.canHydrate((Entity) null));
         map.put("canExtinguish", type.canExtinguish(null));
         map.put("canDrownIn", type.canDrownIn(null));
-        map.put("canSwim",type.canSwim(null));
-        map.put("canPushEntity",type.canPushEntity(null));
-        map.put("supportsBoating",type.supportsBoating(null));
-        map.put("canConvertToSource",type.canConvertToSource(null));
-        map.put("temperature",type.getTemperature(null));
+        map.put("canSwim", type.canSwim(null));
+        map.put("canPushEntity", type.canPushEntity(null));
+        map.put("supportsBoating", type.supportsBoating(null));
+        map.put("canConvertToSource", type.canConvertToSource(null));
+        map.put("temperature", type.getTemperature(null));
         return map;
     }
 
@@ -170,6 +170,7 @@ public class LuaConverter {
         map.put("name", ItemUtil.getRegistryKey(item).toString());
         return map;
     }
+
     public static Map<String, Object> fluidToObject(@NotNull Fluid fluid) {
         Map<String, Object> map = new HashMap<>();
         map.put("tags", tagsToList(() -> fluid.builtInRegistryHolder().tags()));
