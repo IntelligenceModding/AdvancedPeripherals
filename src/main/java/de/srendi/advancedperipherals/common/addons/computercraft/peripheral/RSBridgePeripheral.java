@@ -15,6 +15,7 @@ import de.srendi.advancedperipherals.common.addons.refinedstorage.RefinedStorage
 import de.srendi.advancedperipherals.common.blocks.blockentities.RsBridgeEntity;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.util.Pair;
+import de.srendi.advancedperipherals.common.util.inventory.FluidFilter;
 import de.srendi.advancedperipherals.common.util.inventory.IStorageSystemPeripheral;
 import de.srendi.advancedperipherals.common.util.inventory.ItemFilter;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
@@ -96,7 +97,22 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     @Override
     @LuaFunction(mainThread = true)
     public MethodResult getFluid(IArguments arguments) throws LuaException {
-        return null;
+        if (!isAvailable())
+            return notConnected();
+
+        Pair<FluidFilter, String> filter = FluidFilter.parse(arguments.getTable(0));
+        if (filter.rightPresent())
+            return MethodResult.of(null, filter.getRight());
+
+        FluidFilter parsedFilter = filter.getLeft();
+        if (parsedFilter.isEmpty())
+            return MethodResult.of(null, "EMPTY_FILTER");
+
+        Map<?, ?> resourceProperties = RefinedStorageApi.getFluid(getNetwork(), parsedFilter);
+        if (resourceProperties == null)
+            return MethodResult.of(null, "NOT_FOUND");
+
+        return MethodResult.of(resourceProperties);
     }
 
     @Override
@@ -118,8 +134,19 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
     @Override
     @LuaFunction(mainThread = true)
-    public MethodResult listFluids(IArguments arguments) {
-        return null;
+    public MethodResult listFluids(IArguments arguments) throws LuaException {
+        if (!isAvailable())
+            return notConnected();
+
+        Pair<FluidFilter, String> filter = FluidFilter.parse(arguments.optTable(0, Map.of()));
+        if (filter.rightPresent())
+            return MethodResult.of(null, filter.getRight());
+
+        FluidFilter parsedFilter = filter.getLeft();
+
+        Set<Map<?, ?>> resourceProperties = RefinedStorageApi.listFluids(getNetwork(), parsedFilter);
+
+        return MethodResult.of(resourceProperties);
     }
 
     @Override

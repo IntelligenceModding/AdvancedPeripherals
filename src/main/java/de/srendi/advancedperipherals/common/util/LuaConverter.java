@@ -143,10 +143,18 @@ public class LuaConverter {
         return map;
     }
 
-    public static Map<String, Object> itemStackToObject(@NotNull ItemStack itemStack, int amount) {
-        ItemStack stack = itemStack.copy();
-        stack.setCount(amount);
-        return itemStackToObject(stack);
+    public static Map<String, Object> itemStackToObject(@NotNull ItemStack itemStack, long count) {
+        if (itemStack.isEmpty()) return Collections.emptyMap();
+        Map<String, Object> map = itemStackToObject(itemStack);
+        map.put("count", count);
+        return map;
+    }
+
+    public static Map<String, Object> fluidStackToObject(@NotNull FluidStack itemStack, long count) {
+        if (itemStack.isEmpty()) return Collections.emptyMap();
+        Map<String, Object> map = fluidStackToObject(itemStack);
+        map.put("count", count);
+        return map;
     }
 
     /**

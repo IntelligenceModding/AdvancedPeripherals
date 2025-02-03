@@ -165,7 +165,7 @@ public class AppEngApi {
         if (APAddons.appMekLoaded && (stack.getRight() instanceof MekanismKey gasKey))
             return getObjectFromGasStack(Pair.of(stack.getLeft(), gasKey), service);
 
-        AdvancedPeripherals.debug("Could not create table from unknown stack " + stack.getRight().getClass() + " - Report this to the maintainer of ap", Level.ERROR);
+        AdvancedPeripherals.debug("Could not create table from unknown stack " + stack.getRight().getClass() + " - Report this to the maintainer of ap", Level.WARN);
         return Collections.emptyMap();
     }
 
