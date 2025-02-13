@@ -112,7 +112,9 @@ public class ItemFilter {
 
     public ItemStack toItemStack() {
         var result = new ItemStack(item, count);
-        result.applyComponents(components);
+        if (components != null) {
+            result.applyComponents(components);
+        }
         return result;
     }
 

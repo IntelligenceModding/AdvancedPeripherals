@@ -96,7 +96,9 @@ public class FluidFilter {
 
     public FluidStack toFluidStack() {
         var result = new FluidStack(fluid, count);
-        result.applyComponents(components);
+        if (componentsAsNbt != null) {
+            result.applyComponents(components);
+        }
         return result;
     }
 
