@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+### Fixed
+- Fixed a Null Pointer Exception when trying to work with item filters without any component filters applied. 
+
 ## [1.21.1-0.7.48a] - 2025-02-03
 
 We will introduce more breaking changes in the upcoming 1.21.1 alpha releases and in the next major version.
