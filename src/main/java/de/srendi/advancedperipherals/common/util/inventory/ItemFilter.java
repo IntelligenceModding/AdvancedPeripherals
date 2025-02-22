@@ -1,5 +1,9 @@
 package de.srendi.advancedperipherals.common.util.inventory;
 
+import appeng.api.stacks.AEItemKey;
+import appeng.api.stacks.GenericStack;
+import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
+import com.refinedmods.refinedstorage.common.support.resource.ItemResource;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.core.apis.TableHelper;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
@@ -18,8 +22,7 @@ import net.minecraft.world.item.Items;
 
 import java.util.Map;
 
-//TODO tag
-public class ItemFilter {
+public class ItemFilter extends GenericFilter<ItemStack> {
 
     private Item item = Items.AIR;
     private TagKey<Item> tag = null;
@@ -108,6 +111,22 @@ public class ItemFilter {
 
     public boolean isEmpty() {
         return fingerprint.isEmpty() && item == Items.AIR && tag == null && componentsAsNbt == null;
+    }
+
+    @Override
+    public boolean testAE(GenericStack genericStack) {
+        if (genericStack.what() instanceof AEItemKey aeItemKey) {
+            return test(aeItemKey.toStack());
+        }
+        return false;
+    }
+
+    @Override
+    public boolean testRS(ResourceAmount resourceAmount) {
+        if (resourceAmount.resource() instanceof ItemResource itemResource) {
+            return test(itemResource.toItemStack(1));
+        }
+        return false;
     }
 
     public ItemStack toItemStack() {

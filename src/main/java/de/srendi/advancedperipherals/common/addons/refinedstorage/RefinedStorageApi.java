@@ -1,5 +1,7 @@
 package de.srendi.advancedperipherals.common.addons.refinedstorage;
 
+import com.refinedmods.refinedstorage.api.autocrafting.Ingredient;
+import com.refinedmods.refinedstorage.api.autocrafting.Pattern;
 import com.refinedmods.refinedstorage.api.network.Network;
 import com.refinedmods.refinedstorage.api.network.autocrafting.AutocraftingNetworkComponent;
 import com.refinedmods.refinedstorage.api.network.storage.StorageNetworkComponent;
@@ -14,8 +16,10 @@ import com.refinedmods.refinedstorage.neoforge.support.resource.VariantUtil;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.setup.BlockEntityTypes;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
+import de.srendi.advancedperipherals.common.util.Pair;
 import de.srendi.advancedperipherals.common.util.inventory.FluidFilter;
 import de.srendi.advancedperipherals.common.util.inventory.FluidUtil;
+import de.srendi.advancedperipherals.common.util.inventory.GenericFilter;
 import de.srendi.advancedperipherals.common.util.inventory.ItemFilter;
 import de.srendi.advancedperipherals.common.util.inventory.ItemUtil;
 import net.minecraft.world.item.ItemStack;
@@ -23,11 +27,15 @@ import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.fluids.FluidStack;
 import org.apache.logging.log4j.Level;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Refined Storage Api helper methods and parsers
@@ -83,7 +91,7 @@ public class RefinedStorageApi {
      * @param filter  The filter here is optional, if an empty filter is provided, the method will return every resource
      * @return a set of items
      */
-    public static Set<Map<String, Object>> listItems(Network network, ItemFilter filter) {
+    public static Set<Map<String, Object>> getItems(Network network, ItemFilter filter) {
         Set<Map<String, Object>> items = new HashSet<>();
         StorageNetworkComponent storage = network.getComponent(StorageNetworkComponent.class);
         for (TrackedResourceAmount trackedResource : storage.getResources(Actor.EMPTY.getClass())) {
@@ -103,7 +111,7 @@ public class RefinedStorageApi {
      * @param filter  The filter here is optional, if an empty filter is provided, the method will return every resource
      * @return a set of fluid stacks
      */
-    public static Set<Map<String, Object>> listFluids(Network network, FluidFilter filter) {
+    public static Set<Map<String, Object>> getFluids(Network network, FluidFilter filter) {
         Set<Map<String, Object>> items = new HashSet<>();
         StorageNetworkComponent storage = network.getComponent(StorageNetworkComponent.class);
         for (TrackedResourceAmount trackedResource : storage.getResources(Actor.EMPTY.getClass())) {
@@ -115,33 +123,124 @@ public class RefinedStorageApi {
         return items;
     }
 
-    public static Set<Map<String, Object>> listCraftableItems(Network network, ItemFilter filter) {
+    /**
+     * Returns every craftable item from the system while also checking if the filter test passes for the items
+     * The filter can be empty, see {@link ItemFilter#empty()}
+     *
+     * @param network the rs network
+     * @param filter  The filter here is optional, if an empty filter is provided, the method will return every resource
+     * @return a set of parsed item stacks
+     */
+    public static Set<Map<String, Object>> getCraftableItems(Network network, ItemFilter filter) {
         Set<Map<String, Object>> items = new HashSet<>();
         AutocraftingNetworkComponent autocrafting = network.getComponent(AutocraftingNetworkComponent.class);
         StorageNetworkComponent storage = network.getComponent(StorageNetworkComponent.class);
         for (ResourceKey key : autocrafting.getOutputs()) {
             if (key instanceof ItemResource itemResource && filter.test(itemResource.toItemStack())) {
-                items.add(getObjectFromKey(key, storage.get(key)));
+                items.add(getObjectFromResourceKey(key, storage.get(key)));
             }
         }
         return items;
     }
 
-    public static Set<Map<String, Object>> listCraftableFluids(Network network, FluidFilter filter) {
+    /**
+     * Returns every craftable fluid from the system while also checking if the filter test passes for the fluids
+     * The filter can be empty, see {@link FluidFilter#empty()}
+     *
+     * @param network the rs network
+     * @param filter  The filter here is optional, if an empty filter is provided, the method will return every resource
+     * @return a set of parsed fluids stacks
+     */
+    public static Set<Map<String, Object>> getCraftableFluids(Network network, FluidFilter filter) {
         Set<Map<String, Object>> items = new HashSet<>();
         AutocraftingNetworkComponent autocrafting = network.getComponent(AutocraftingNetworkComponent.class);
         StorageNetworkComponent storage = network.getComponent(StorageNetworkComponent.class);
         for (ResourceKey key : autocrafting.getOutputs()) {
             long amount = storage.get(key);
             if (key instanceof FluidResource fluidResource && filter.test(VariantUtil.toFluidStack(fluidResource, amount))) {
-                items.add(getObjectFromKey(key, amount));
+                items.add(getObjectFromResourceKey(key, amount));
             }
         }
         return items;
     }
 
+    public static Set<Object> getPatterns(Network network) {
+        Set<Object> patterns = new HashSet<>();
+        AutocraftingNetworkComponent autocrafting = network.getComponent(AutocraftingNetworkComponent.class);
 
-    private static Map<String, Object> getObjectFromKey(@NotNull ResourceKey resource, long count) {
+        for (Pattern pattern : autocrafting.getPatterns()) {
+            patterns.add(parsePattern(pattern));
+        }
+
+        return patterns;
+    }
+
+    /**
+     * Finds a pattern from filters.
+     *
+     * @param network      The network to search patterns from.
+     * @param inputFilter  The input filter to apply, can be null to ignore input filter.
+     * @param outputFilter The output filter to apply, can be null to ignore output filter.
+     * @return A Pair object containing the matched pattern and an error message if no pattern is found.
+     * The pattern can be null if no pattern is found.
+     * The error message is "NO_PATTERN_FOUND" if no pattern is found.
+     */
+    public static Pair<Pattern, String> findPatternFromFilters(Network network, @Nullable GenericFilter<?> inputFilter, @Nullable GenericFilter<?> outputFilter) {
+        AutocraftingNetworkComponent autocrafting = network.getComponent(AutocraftingNetworkComponent.class);
+        for (Pattern pattern : autocrafting.getPatterns()) {
+            if (pattern.layout().ingredients().isEmpty())
+                continue;
+            if (pattern.layout().outputs().isEmpty())
+                continue;
+
+            boolean inputMatch = false;
+            boolean outputMatch = false;
+
+            if (inputFilter != null) {
+                outerLoop:
+                for (Ingredient input : pattern.layout().ingredients()) {
+                    for (ResourceKey possibleInput : input.inputs()) {
+                        if (inputFilter.testRS(new ResourceAmount(possibleInput, 1))) {
+                            inputMatch = true;
+                            break outerLoop;
+                        }
+                    }
+                }
+            } else {
+                inputMatch = true;
+            }
+
+            if (outputFilter != null) {
+                for (ResourceAmount output : pattern.layout().outputs()) {
+                    if (outputFilter.testRS(output)) {
+                        outputMatch = true;
+                        break;
+                    }
+                }
+            } else {
+                outputMatch = true;
+            }
+
+            if (inputMatch && outputMatch)
+                return Pair.of(pattern, null);
+        }
+
+        return Pair.of(null, "NO_PATTERN_FOUND");
+    }
+
+
+    private static Map<String, Object> getObjectFromResourceKey(@NotNull ResourceKey resource) {
+        return getObjectFromResourceKey(resource, 0);
+    }
+
+    /**
+     * Helper method to get a parsed lua resource key. Currently only suppors item and fluid resources
+     *
+     * @param resource the resource
+     * @param count    count of the resource - can be 0 and lower
+     * @return the parsed key to a lua properties map
+     */
+    private static Map<String, Object> getObjectFromResourceKey(@NotNull ResourceKey resource, long count) {
         boolean countZeroOrLower = count <= 0;
         if (resource instanceof ItemResource) {
             if (countZeroOrLower) {
@@ -159,8 +258,40 @@ public class RefinedStorageApi {
         return Collections.emptyMap();
     }
 
-    private static Map<String, Object> getObjectFromKey(@NotNull ResourceKey resource) {
-        return getObjectFromKey(resource, 0);
+    /**
+     * Helper method to get a parsed lua resourceAmount key. Currently only suppors item and fluid resources
+     *
+     * @param resourceAmount the resourceAmount
+     * @return the parsed key to a lua properties map
+     */
+    private static Map<String, Object> getObjectFromResourceAmount(@NotNull ResourceAmount resourceAmount) {
+        if (resourceAmount.resource() instanceof ItemResource) {
+            return getObjectFromItemResource(resourceAmount);
+        }
+        if (resourceAmount.resource() instanceof FluidResource) {
+            return getObjectFromFluidResource(resourceAmount);
+        }
+        AdvancedPeripherals.debug("Could not create table from unknown resourceAmount " + resourceAmount.getClass() + " - Report this to the maintainer of ap", Level.WARN);
+        return Collections.emptyMap();
+    }
+
+    public static Object parsePattern(Pattern pattern) {
+        if (pattern == null)
+            return null;
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("outputs", pattern.layout().outputs().stream().map(RefinedStorageApi::getObjectFromResourceAmount).toList());
+
+        List<List<Map<String, Object>>> inputs = pattern.layout().ingredients().stream()
+                .map(ingredient -> ingredient.inputs().stream()
+                        .map(key -> getObjectFromResourceKey(key, ingredient.amount()))
+                        .collect(Collectors.toList()))
+                .collect(Collectors.toList());
+
+        map.put("inputs", inputs);
+        map.put("patterntype", pattern.layout().type().toString());
+        map.put("id", pattern.id().toString());
+        return map;
     }
 
     /**

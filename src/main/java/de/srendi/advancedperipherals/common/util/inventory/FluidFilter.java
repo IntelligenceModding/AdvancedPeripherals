@@ -1,5 +1,10 @@
 package de.srendi.advancedperipherals.common.util.inventory;
 
+import appeng.api.stacks.AEFluidKey;
+import appeng.api.stacks.GenericStack;
+import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
+import com.refinedmods.refinedstorage.common.support.resource.FluidResource;
+import com.refinedmods.refinedstorage.neoforge.support.resource.VariantUtil;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.core.apis.TableHelper;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
@@ -19,7 +24,7 @@ import net.neoforged.neoforge.fluids.FluidStack;
 import java.util.Map;
 
 //TODO tag
-public class FluidFilter {
+public class FluidFilter extends GenericFilter<FluidStack> {
 
     private Fluid fluid = Fluids.EMPTY;
     private TagKey<Fluid> tag = null;
@@ -92,6 +97,22 @@ public class FluidFilter {
 
     public boolean isEmpty() {
         return fingerprint.isEmpty() && fluid == Fluids.EMPTY && tag == null && componentsAsNbt == null;
+    }
+
+    @Override
+    public boolean testAE(GenericStack genericStack) {
+        if (genericStack.what() instanceof AEFluidKey aeFluidKey) {
+            return test(aeFluidKey.toStack(1));
+        }
+        return false;
+    }
+
+    @Override
+    public boolean testRS(ResourceAmount resourceAmount) {
+        if (resourceAmount.resource() instanceof FluidResource fluidResource) {
+            return test(VariantUtil.toFluidStack(fluidResource, 1));
+        }
+        return false;
     }
 
     public FluidStack toFluidStack() {

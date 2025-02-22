@@ -1,5 +1,6 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.peripheral;
 
+import com.refinedmods.refinedstorage.api.autocrafting.Pattern;
 import com.refinedmods.refinedstorage.api.network.Network;
 import com.refinedmods.refinedstorage.api.network.NetworkComponent;
 import com.refinedmods.refinedstorage.api.network.energy.EnergyNetworkComponent;
@@ -9,6 +10,7 @@ import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.lua.MethodResult;
 import dan200.computercraft.api.peripheral.IComputerAccess;
+import dan200.computercraft.core.apis.TableHelper;
 import de.srendi.advancedperipherals.common.addons.APAddons;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.BlockEntityPeripheralOwner;
 import de.srendi.advancedperipherals.common.addons.refinedstorage.RefinedStorageApi;
@@ -16,12 +18,14 @@ import de.srendi.advancedperipherals.common.blocks.blockentities.RsBridgeEntity;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.util.Pair;
 import de.srendi.advancedperipherals.common.util.inventory.FluidFilter;
+import de.srendi.advancedperipherals.common.util.inventory.GenericFilter;
 import de.srendi.advancedperipherals.common.util.inventory.IStorageSystemPeripheral;
 import de.srendi.advancedperipherals.common.util.inventory.ItemFilter;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwner<RsBridgeEntity>> implements IStorageSystemPeripheral {
@@ -127,7 +131,7 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
         ItemFilter parsedFilter = filter.getLeft();
 
-        Set<Map<String, Object>> resourceProperties = RefinedStorageApi.listItems(getNetwork(), parsedFilter);
+        Set<Map<String, Object>> resourceProperties = RefinedStorageApi.getItems(getNetwork(), parsedFilter);
 
         return MethodResult.of(resourceProperties);
     }
@@ -144,7 +148,7 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
         FluidFilter parsedFilter = filter.getLeft();
 
-        Set<Map<String, Object>> resourceProperties = RefinedStorageApi.listFluids(getNetwork(), parsedFilter);
+        Set<Map<String, Object>> resourceProperties = RefinedStorageApi.getFluids(getNetwork(), parsedFilter);
 
         return MethodResult.of(resourceProperties);
     }
@@ -161,7 +165,7 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
         ItemFilter parsedFilter = filter.getLeft();
 
-        Set<Map<String, Object>> resourceProperties = RefinedStorageApi.listCraftableItems(getNetwork(), parsedFilter);
+        Set<Map<String, Object>> resourceProperties = RefinedStorageApi.getCraftableItems(getNetwork(), parsedFilter);
 
         return MethodResult.of(resourceProperties);
     }
@@ -178,7 +182,7 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
         FluidFilter parsedFilter = filter.getLeft();
 
-        Set<Map<String, Object>> resourceProperties = RefinedStorageApi.listCraftableFluids(getNetwork(), parsedFilter);
+        Set<Map<String, Object>> resourceProperties = RefinedStorageApi.getCraftableFluids(getNetwork(), parsedFilter);
 
         return MethodResult.of(resourceProperties);
     }
@@ -221,14 +225,58 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
     @Override
     @LuaFunction(mainThread = true)
-    public MethodResult getFilteredPatterns(IArguments arguments) throws LuaException {
-        return null;
+    public final MethodResult getFilteredPatterns(IArguments arguments) throws LuaException {
+        if (!isAvailable())
+            return notConnected();
+
+        // Expected input is a table with either an input table, an output table or both to filter for both
+        Map<?, ?> filterTable;
+        try {
+            Optional<Map<?, ?>> optionalTable = arguments.optTable(0);
+            if (optionalTable.isEmpty())
+                return MethodResult.of(null, "EMPTY_INPUT");
+            filterTable = optionalTable.get();
+        } catch (LuaException e) {
+            return MethodResult.of(null, "NO_TABLE");
+        }
+
+        boolean hasInputFilter = filterTable.containsKey("input");
+        boolean hasOutputFilter = filterTable.containsKey("output");
+        boolean hasAnyFilter = hasInputFilter || hasOutputFilter;
+
+        // If the player tries to filter for nothing, return nothing.
+        if (!hasAnyFilter)
+            return MethodResult.of(null, "NO_FILTER");
+
+        GenericFilter<?> inputFilter = null;
+        GenericFilter<?> outputFilter = null;
+
+        if (hasInputFilter) {
+            Map<?, ?> inputFilterTable = TableHelper.getTableField(filterTable, "input");
+
+            inputFilter = GenericFilter.parseGeneric(inputFilterTable).getLeft();
+        }
+        if (hasOutputFilter) {
+            Map<?, ?> outputFilterTable = TableHelper.getTableField(filterTable, "output");
+
+            outputFilter = GenericFilter.parseGeneric(outputFilterTable).getLeft();
+        }
+
+        Pair<Pattern, String> pattern = RefinedStorageApi.findPatternFromFilters(getNetwork(), inputFilter, outputFilter);
+
+        if (pattern.getRight() != null)
+            return MethodResult.of(null, pattern.getRight());
+
+        return MethodResult.of(RefinedStorageApi.parsePattern(pattern.getLeft()));
     }
 
     @Override
     @LuaFunction(mainThread = true)
-    public MethodResult getPatterns() {
-        return null;
+    public final MethodResult getPatterns() {
+        if (!isAvailable())
+            return notConnected();
+
+        return MethodResult.of(RefinedStorageApi.getPatterns(getNetwork()));
     }
 
     @Override
