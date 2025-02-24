@@ -4,11 +4,19 @@ import com.refinedmods.refinedstorage.api.autocrafting.Ingredient;
 import com.refinedmods.refinedstorage.api.autocrafting.Pattern;
 import com.refinedmods.refinedstorage.api.network.Network;
 import com.refinedmods.refinedstorage.api.network.autocrafting.AutocraftingNetworkComponent;
+import com.refinedmods.refinedstorage.api.network.impl.node.storage.StorageNetworkNode;
+import com.refinedmods.refinedstorage.api.network.impl.storage.StorageConfiguration;
+import com.refinedmods.refinedstorage.api.network.node.GraphNetworkComponent;
 import com.refinedmods.refinedstorage.api.network.storage.StorageNetworkComponent;
 import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage.api.storage.Actor;
+import com.refinedmods.refinedstorage.api.storage.StateTrackedStorage;
+import com.refinedmods.refinedstorage.api.storage.Storage;
 import com.refinedmods.refinedstorage.api.storage.TrackedResourceAmount;
+import com.refinedmods.refinedstorage.api.storage.composite.CompositeStorage;
+import com.refinedmods.refinedstorage.common.api.storage.SerializableStorage;
+import com.refinedmods.refinedstorage.common.api.support.network.InWorldNetworkNodeContainer;
 import com.refinedmods.refinedstorage.common.support.resource.FluidResource;
 import com.refinedmods.refinedstorage.common.support.resource.ItemResource;
 import com.refinedmods.refinedstorage.neoforge.api.RefinedStorageNeoForgeApi;
@@ -23,6 +31,8 @@ import de.srendi.advancedperipherals.common.util.inventory.GenericFilter;
 import de.srendi.advancedperipherals.common.util.inventory.ItemFilter;
 import de.srendi.advancedperipherals.common.util.inventory.ItemUtil;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.material.Fluids;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.fluids.FluidStack;
 import org.apache.logging.log4j.Level;
@@ -175,6 +185,36 @@ public class RefinedStorageApi {
         return patterns;
     }
 
+    public static Set<Object> listCells(Network network) {
+        Set<Object> disks = new HashSet<>();
+
+        GraphNetworkComponent graphNetworkComponent = network.getComponent(GraphNetworkComponent.class);
+        for (InWorldNetworkNodeContainer nodeContainer : graphNetworkComponent.getContainers(InWorldNetworkNodeContainer.class)) {
+            if (nodeContainer.getNode() instanceof StorageNetworkNode storageNetworkNode) {
+                CompositeStorage storage = (CompositeStorage) storageNetworkNode.getStorage();
+                for (Storage disk : storage.getSources()) {
+                    if (!(disk instanceof StateTrackedStorage stateTrackedStorage))
+                        continue;
+
+                    disks.add(parseStorageDisk(stateTrackedStorage));
+                }
+            }
+        }
+        return disks;
+    }
+
+    public static Set<Object> listDrives(Network network) {
+        Set<Object> drives = new HashSet<>();
+
+        GraphNetworkComponent graphNetworkComponent = network.getComponent(GraphNetworkComponent.class);
+        for (InWorldNetworkNodeContainer nodeContainer : graphNetworkComponent.getContainers(InWorldNetworkNodeContainer.class)) {
+            if (nodeContainer.getNode() instanceof StorageNetworkNode storageNetworkNode) {
+                drives.add(parseDiskDrive(storageNetworkNode, nodeContainer));
+            }
+        }
+        return drives;
+    }
+
     /**
      * Finds a pattern from filters.
      *
@@ -228,7 +268,6 @@ public class RefinedStorageApi {
         return Pair.of(null, "NO_PATTERN_FOUND");
     }
 
-
     private static Map<String, Object> getObjectFromResourceKey(@NotNull ResourceKey resource) {
         return getObjectFromResourceKey(resource, 0);
     }
@@ -273,6 +312,54 @@ public class RefinedStorageApi {
         }
         AdvancedPeripherals.debug("Could not create table from unknown resourceAmount " + resourceAmount.getClass() + " - Report this to the maintainer of ap", Level.WARN);
         return Collections.emptyMap();
+    }
+
+    public static Object parseDiskDrive(StorageNetworkNode diskDrive, InWorldNetworkNodeContainer nodeContainer) {
+        Map<String, Object> properties = new HashMap<>();
+
+        StorageConfiguration storageConfiguration = diskDrive.getStorageConfiguration();
+        CompositeStorage storage = (CompositeStorage) diskDrive.getStorage();
+
+        Set<Object> disks = new HashSet<>();
+        for (Storage disk : storage.getSources()) {
+            if (!(disk instanceof StateTrackedStorage stateTrackedStorage))
+                continue;
+
+            disks.add(parseStorageDisk(stateTrackedStorage));
+        }
+
+        properties.put("used", diskDrive.getStored());
+        properties.put("total", diskDrive.getCapacity());
+        properties.put("disks", disks);
+        properties.put("mode", storageConfiguration.getFilterMode().toString());
+        //TODO Redstone mode
+        properties.put("redstone_mode", false);
+        properties.put("access_type", storageConfiguration.getAccessMode().toString());
+        properties.put("position", LuaConverter.posToObject(nodeContainer.getLocalPosition()));
+        properties.put("priority", nodeContainer.getPriority());
+
+        return properties;
+    }
+
+    public static Object parseStorageDisk(StateTrackedStorage disk) {
+        Map<String, Object> properties = new HashMap<>();
+
+        properties.put("used", disk.getStored());
+        properties.put("capacity", disk.getCapacity());
+        properties.put("state", disk.getState().toString());
+        if (disk.getDelegate() instanceof SerializableStorage serializableStorage) {
+            String type;
+            if (serializableStorage.getType().isAllowed(new ItemResource(Items.DIRT))) {
+                type = "item";
+            } else if (serializableStorage.getType().isAllowed(new FluidResource(Fluids.WATER))) {
+                type = "fluid";
+            } else {
+                type = "unknown";
+            }
+            properties.put("type", type);
+        }
+
+        return properties;
     }
 
     public static Object parsePattern(Pattern pattern) {

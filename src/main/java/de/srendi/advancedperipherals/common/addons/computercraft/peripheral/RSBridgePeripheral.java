@@ -24,6 +24,7 @@ import de.srendi.advancedperipherals.common.util.inventory.ItemFilter;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
 import org.jetbrains.annotations.NotNull;
 
+import java.sql.Ref;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -190,13 +191,19 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     @Override
     @LuaFunction(mainThread = true)
     public MethodResult listCells() {
-        return null;
+        if (!isAvailable())
+            return notConnected();
+
+        return MethodResult.of(RefinedStorageApi.listCells(getNetwork()));
     }
 
     @Override
     @LuaFunction(mainThread = true)
     public MethodResult listDrives() {
-        return null;
+        if (!isAvailable())
+            return notConnected();
+
+        return MethodResult.of(RefinedStorageApi.listDrives(getNetwork()));
     }
 
     @Override
