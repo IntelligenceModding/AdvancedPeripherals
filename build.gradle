@@ -216,7 +216,7 @@ dependencies {
     // Extended requirements
     // We don't use the api since we need a specific class from mekanism
     compileOnly "mekanism:Mekanism:${mekanism_version}"
-    //runtimeOnly "mekanism:Mekanism:${mekanism_version}"
+    runtimeOnly "mekanism:Mekanism:${mekanism_version}"
 
     // Applied Energistics 2
     runtimeOnly "appeng:appliedenergistics2:${appliedenergistics_version}"

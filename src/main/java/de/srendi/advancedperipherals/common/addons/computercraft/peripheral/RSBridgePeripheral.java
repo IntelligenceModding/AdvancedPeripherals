@@ -4,7 +4,7 @@ import com.refinedmods.refinedstorage.api.autocrafting.Pattern;
 import com.refinedmods.refinedstorage.api.network.Network;
 import com.refinedmods.refinedstorage.api.network.NetworkComponent;
 import com.refinedmods.refinedstorage.api.network.energy.EnergyNetworkComponent;
-import com.refinedmods.refinedstorage.api.network.node.NetworkNode;
+import com.refinedmods.refinedstorage.api.network.impl.node.AbstractNetworkNode;
 import dan200.computercraft.api.lua.IArguments;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
@@ -24,9 +24,8 @@ import de.srendi.advancedperipherals.common.util.inventory.ItemFilter;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
 import org.jetbrains.annotations.NotNull;
 
-import java.sql.Ref;
+import java.util.Collections;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 
 public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwner<RsBridgeEntity>> implements IStorageSystemPeripheral {
@@ -43,8 +42,8 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         return APAddons.refinedStorageLoaded && APConfig.PERIPHERALS_CONFIG.enableRSBridge.get();
     }
 
-    private NetworkNode getNode() {
-        return owner.tileEntity.getNode();
+    private AbstractNetworkNode getNode() {
+        return (AbstractNetworkNode) owner.tileEntity.getNode();
     }
 
     private Network getNetwork() {
@@ -60,7 +59,7 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     }
 
     private boolean isAvailable() {
-        return true;
+        return getNode().isActive();
     }
 
     @Override
@@ -232,19 +231,15 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
     @Override
     @LuaFunction(mainThread = true)
-    public final MethodResult getFilteredPatterns(IArguments arguments) throws LuaException {
+    public final MethodResult getPatterns(IArguments arguments) throws LuaException {
         if (!isAvailable())
             return notConnected();
 
         // Expected input is a table with either an input table, an output table or both to filter for both
-        Map<?, ?> filterTable;
-        try {
-            Optional<Map<?, ?>> optionalTable = arguments.optTable(0);
-            if (optionalTable.isEmpty())
-                return MethodResult.of(null, "EMPTY_INPUT");
-            filterTable = optionalTable.get();
-        } catch (LuaException e) {
-            return MethodResult.of(null, "NO_TABLE");
+        // If no table is provided or it's empty, return every pattern
+        Map<?, ?> filterTable = arguments.optTable(0, Collections.emptyMap());
+        if (filterTable.isEmpty()) {
+            return MethodResult.of(RefinedStorageApi.getPatterns(getNetwork()));
         }
 
         boolean hasInputFilter = filterTable.containsKey("input");
@@ -279,35 +274,42 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
     @Override
     @LuaFunction(mainThread = true)
-    public final MethodResult getPatterns() {
+    public MethodResult getStoredEnergy() {
         if (!isAvailable())
             return notConnected();
 
-        return MethodResult.of(RefinedStorageApi.getPatterns(getNetwork()));
-    }
+        EnergyNetworkComponent energyComponent = getNetwork().getComponent(EnergyNetworkComponent.class);
 
-    @Override
-    @LuaFunction(mainThread = true)
-    public MethodResult getStoredEnergy() {
-        return null;
+        return MethodResult.of(energyComponent.getStored());
     }
 
     @Override
     @LuaFunction(mainThread = true)
     public MethodResult getEnergyCapacity() {
-        return null;
+        if (!isAvailable())
+            return notConnected();
+
+        EnergyNetworkComponent energyComponent = getNetwork().getComponent(EnergyNetworkComponent.class);
+
+        return MethodResult.of(energyComponent.getCapacity());
     }
 
     @Override
     @LuaFunction(mainThread = true)
     public MethodResult getEnergyUsage() {
-        return null;
+        if (!isAvailable())
+            return notConnected();
+
+        return MethodResult.of(0);
     }
 
     @Override
     @LuaFunction(mainThread = true)
     public MethodResult getAvgPowerInjection() {
-        return null;
+        if (!isAvailable())
+            return notConnected();
+
+        return MethodResult.of(0);
     }
 
     @Override
