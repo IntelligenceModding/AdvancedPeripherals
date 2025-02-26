@@ -179,6 +179,17 @@ repositories {
         }
     }
     maven {
+        url = uri("https://maven.pkg.github.com/refinedmods/refinedstorage-mekanism-integration")
+        credentials {
+            username = "anything"
+            password = "\u0067hp_oGjcDFCn8jeTzIj4Ke9pLoEVtpnZMP4VQgaX"
+        }
+    }
+    maven {
+        name = "EMI"
+        url = uri("https://maven.terraformersmc.com/")
+    }
+    maven {
         name = 'Kotlin for Forge'
         url = 'https://thedarkcolour.github.io/KotlinForForge/'
         content {
@@ -210,8 +221,15 @@ dependencies {
     implementation "cc.tweaked:cc-tweaked-${minecraft_version}-forge:${cc_version}"
     // Minimal requirements end
 
-    compileOnly("com.refinedmods.refinedstorage:refinedstorage-neoforge:${refinedstorageVersion}")
-    runtimeOnly("com.refinedmods.refinedstorage:refinedstorage-neoforge:${refinedstorageVersion}")
+    compileOnly("com.refinedmods.refinedstorage:refinedstorage-neoforge:${refinedstorage_version}")
+    runtimeOnly("com.refinedmods.refinedstorage:refinedstorage-neoforge:${refinedstorage_version}")
+
+    compileOnly("com.refinedmods.refinedstorage:refinedstorage-mekanism-integration:${refinedstorage_mekanism_version}")
+    runtimeOnly("com.refinedmods.refinedstorage:refinedstorage-mekanism-integration:${refinedstorage_mekanism_version}")
+
+    // Needed for the refined storage mek integration
+    compileOnlyApi("dev.emi:emi-neoforge:${emiVersion}")
+
 
     // Extended requirements
     // We don't use the api since we need a specific class from mekanism

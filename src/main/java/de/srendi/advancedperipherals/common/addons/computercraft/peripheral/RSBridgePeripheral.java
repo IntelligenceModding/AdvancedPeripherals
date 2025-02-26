@@ -5,6 +5,8 @@ import com.refinedmods.refinedstorage.api.network.Network;
 import com.refinedmods.refinedstorage.api.network.NetworkComponent;
 import com.refinedmods.refinedstorage.api.network.energy.EnergyNetworkComponent;
 import com.refinedmods.refinedstorage.api.network.impl.node.AbstractNetworkNode;
+import com.refinedmods.refinedstorage.common.storage.StorageTypes;
+import com.refinedmods.refinedstorage.mekanism.ChemicalResourceType;
 import dan200.computercraft.api.lua.IArguments;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
@@ -59,7 +61,7 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     }
 
     private boolean isAvailable() {
-        return getNode().isActive();
+        return true;
     }
 
     @Override
@@ -315,109 +317,162 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     @Override
     @LuaFunction(mainThread = true)
     public MethodResult getTotalExternItemStorage() {
-        return null;
+        if (!isAvailable())
+            return notConnected();
+
+        return MethodResult.of(RefinedStorageApi.getTotalExternStorage(getNetwork(), StorageTypes.ITEM));
     }
 
     @Override
     @LuaFunction(mainThread = true)
     public MethodResult getTotalExternFluidStorage() {
-        return null;
+        if (!isAvailable())
+            return notConnected();
+
+        return MethodResult.of(RefinedStorageApi.getTotalExternStorage(getNetwork(), StorageTypes.FLUID));
     }
 
     @Override
     @LuaFunction(mainThread = true)
     public MethodResult getTotalExternChemicalStorage() {
-        return null;
+        if (!isAvailable())
+            return notConnected();
+
+        return MethodResult.of(RefinedStorageApi.getTotalExternStorage(getNetwork(), ChemicalResourceType.STORAGE_TYPE));
     }
 
     @Override
     @LuaFunction(mainThread = true)
     public MethodResult getTotalItemStorage() {
-        return null;
+        if (!isAvailable())
+            return notConnected();
+
+        return MethodResult.of(RefinedStorageApi.getTotalStorage(getNetwork(), StorageTypes.ITEM));
     }
 
     @Override
     @LuaFunction(mainThread = true)
     public MethodResult getTotalFluidStorage() {
-        return null;
+        if (!isAvailable())
+            return notConnected();
+
+        return MethodResult.of(RefinedStorageApi.getTotalStorage(getNetwork(), StorageTypes.FLUID));
     }
 
     @Override
     @LuaFunction(mainThread = true)
     public MethodResult getTotalChemicalStorage() {
-        return null;
+        if (!isAvailable())
+            return notConnected();
+
+        return MethodResult.of(RefinedStorageApi.getTotalStorage(getNetwork(), ChemicalResourceType.STORAGE_TYPE));
     }
 
     @Override
     @LuaFunction(mainThread = true)
     public MethodResult getUsedExternItemStorage() {
-        return null;
+        if (!isAvailable())
+            return notConnected();
+
+        return MethodResult.of(RefinedStorageApi.getUsedExternStorage(getNetwork(), StorageTypes.ITEM));
     }
 
     @Override
     @LuaFunction(mainThread = true)
     public MethodResult getUsedExternFluidStorage() {
-        return null;
+        if (!isAvailable())
+            return notConnected();
+
+        return MethodResult.of(RefinedStorageApi.getUsedExternStorage(getNetwork(), StorageTypes.FLUID));
     }
 
     @Override
     @LuaFunction(mainThread = true)
     public MethodResult getUsedExternChemicalStorage() {
-        return null;
+        if (!isAvailable())
+            return notConnected();
+
+        return MethodResult.of(RefinedStorageApi.getUsedExternStorage(getNetwork(), ChemicalResourceType.STORAGE_TYPE));
     }
 
     @Override
     @LuaFunction(mainThread = true)
     public MethodResult getUsedItemStorage() {
-        return null;
+        if (!isAvailable())
+            return notConnected();
+
+        return MethodResult.of(RefinedStorageApi.getUsedStorage(getNetwork(), StorageTypes.ITEM));
     }
 
     @Override
     @LuaFunction(mainThread = true)
     public MethodResult getUsedFluidStorage() {
-        return null;
+        if (!isAvailable())
+            return notConnected();
+
+        return MethodResult.of(RefinedStorageApi.getUsedStorage(getNetwork(), StorageTypes.FLUID));
     }
 
     @Override
     @LuaFunction(mainThread = true)
     public MethodResult getUsedChemicalStorage() {
-        return null;
+        if (!isAvailable())
+            return notConnected();
+
+        return MethodResult.of(RefinedStorageApi.getUsedStorage(getNetwork(), ChemicalResourceType.STORAGE_TYPE));
     }
 
     @Override
     @LuaFunction(mainThread = true)
     public MethodResult getAvailableExternItemStorage() {
-        return null;
+        if (!isAvailable())
+            return notConnected();
+
+        return MethodResult.of(RefinedStorageApi.getTotalExternStorage(getNetwork(), StorageTypes.ITEM) - RefinedStorageApi.getUsedExternStorage(getNetwork(), StorageTypes.ITEM));
     }
 
     @Override
     @LuaFunction(mainThread = true)
     public MethodResult getAvailableExternFluidStorage() {
-        return null;
+        if (!isAvailable())
+            return notConnected();
+
+        return MethodResult.of(RefinedStorageApi.getTotalExternStorage(getNetwork(), StorageTypes.FLUID) - RefinedStorageApi.getUsedExternStorage(getNetwork(), StorageTypes.FLUID));
     }
 
     @Override
     @LuaFunction(mainThread = true)
     public MethodResult getAvailableExternChemicalStorage() {
-        return null;
-    }
+        if (!isAvailable())
+            return notConnected();
 
+        return MethodResult.of(RefinedStorageApi.getTotalExternStorage(getNetwork(), ChemicalResourceType.STORAGE_TYPE) - RefinedStorageApi.getUsedExternStorage(getNetwork(), ChemicalResourceType.STORAGE_TYPE));
+    }
     @Override
     @LuaFunction(mainThread = true)
     public MethodResult getAvailableItemStorage() {
-        return null;
+        if (!isAvailable())
+            return notConnected();
+
+        return MethodResult.of(RefinedStorageApi.getTotalStorage(getNetwork(), StorageTypes.ITEM) - RefinedStorageApi.getUsedStorage(getNetwork(), StorageTypes.ITEM));
     }
 
     @Override
     @LuaFunction(mainThread = true)
     public MethodResult getAvailableFluidStorage() {
-        return null;
+        if (!isAvailable())
+            return notConnected();
+
+        return MethodResult.of(RefinedStorageApi.getTotalStorage(getNetwork(), StorageTypes.FLUID) - RefinedStorageApi.getUsedStorage(getNetwork(), StorageTypes.FLUID));
     }
 
     @Override
     @LuaFunction(mainThread = true)
     public MethodResult getAvailableChemicalStorage() {
-        return null;
+        if (!isAvailable())
+            return notConnected();
+
+        return MethodResult.of(RefinedStorageApi.getTotalStorage(getNetwork(), ChemicalResourceType.STORAGE_TYPE) - RefinedStorageApi.getUsedStorage(getNetwork(), ChemicalResourceType.STORAGE_TYPE));
     }
 
     @Override

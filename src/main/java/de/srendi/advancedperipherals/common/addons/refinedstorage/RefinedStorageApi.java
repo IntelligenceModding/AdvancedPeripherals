@@ -4,6 +4,8 @@ import com.refinedmods.refinedstorage.api.autocrafting.Ingredient;
 import com.refinedmods.refinedstorage.api.autocrafting.Pattern;
 import com.refinedmods.refinedstorage.api.network.Network;
 import com.refinedmods.refinedstorage.api.network.autocrafting.AutocraftingNetworkComponent;
+import com.refinedmods.refinedstorage.api.network.impl.node.externalstorage.ExposedExternalStorage;
+import com.refinedmods.refinedstorage.api.network.impl.node.externalstorage.ExternalStorageNetworkNode;
 import com.refinedmods.refinedstorage.api.network.impl.node.storage.StorageNetworkNode;
 import com.refinedmods.refinedstorage.api.network.impl.storage.StorageConfiguration;
 import com.refinedmods.refinedstorage.api.network.node.GraphNetworkComponent;
@@ -16,9 +18,13 @@ import com.refinedmods.refinedstorage.api.storage.Storage;
 import com.refinedmods.refinedstorage.api.storage.TrackedResourceAmount;
 import com.refinedmods.refinedstorage.api.storage.composite.CompositeStorage;
 import com.refinedmods.refinedstorage.common.api.storage.SerializableStorage;
+import com.refinedmods.refinedstorage.common.api.storage.StorageType;
 import com.refinedmods.refinedstorage.common.api.support.network.InWorldNetworkNodeContainer;
+import com.refinedmods.refinedstorage.common.api.support.resource.ResourceType;
+import com.refinedmods.refinedstorage.common.storage.StorageTypes;
 import com.refinedmods.refinedstorage.common.support.resource.FluidResource;
 import com.refinedmods.refinedstorage.common.support.resource.ItemResource;
+import com.refinedmods.refinedstorage.common.support.resource.ResourceTypes;
 import com.refinedmods.refinedstorage.neoforge.api.RefinedStorageNeoForgeApi;
 import com.refinedmods.refinedstorage.neoforge.support.resource.VariantUtil;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
@@ -268,6 +274,81 @@ public class RefinedStorageApi {
         return Pair.of(null, "NO_PATTERN_FOUND");
     }
 
+    public static long getTotalStorage(Network network, StorageType type) {
+        long total = 0;
+
+        GraphNetworkComponent graphNetworkComponent = network.getComponent(GraphNetworkComponent.class);
+        for (InWorldNetworkNodeContainer nodeContainer : graphNetworkComponent.getContainers(InWorldNetworkNodeContainer.class)) {
+            if (nodeContainer.getNode() instanceof StorageNetworkNode storageNetworkNode) {
+                CompositeStorage storage = (CompositeStorage) storageNetworkNode.getStorage();
+                for (Storage disk : storage.getSources()) {
+                    if (!(disk instanceof StateTrackedStorage stateTrackedStorage))
+                        continue;
+
+                    if (stateTrackedStorage.getDelegate() instanceof SerializableStorage serializableStorage) {
+                        if (serializableStorage.getType() != type)
+                            continue;
+                    }
+
+                    total += stateTrackedStorage.getCapacity();
+                }
+            }
+        }
+        return total;
+    }
+
+    public static long getUsedStorage(Network network, StorageType type) {
+        long used = 0;
+
+        GraphNetworkComponent graphNetworkComponent = network.getComponent(GraphNetworkComponent.class);
+        for (InWorldNetworkNodeContainer nodeContainer : graphNetworkComponent.getContainers(InWorldNetworkNodeContainer.class)) {
+            if (nodeContainer.getNode() instanceof StorageNetworkNode storageNetworkNode) {
+                CompositeStorage storage = (CompositeStorage) storageNetworkNode.getStorage();
+                for (Storage disk : storage.getSources()) {
+                    if (!(disk instanceof StateTrackedStorage stateTrackedStorage))
+                        continue;
+
+                    if (stateTrackedStorage.getDelegate() instanceof SerializableStorage serializableStorage) {
+                        if (serializableStorage.getType() != type)
+                            continue;
+                    }
+
+                    used += stateTrackedStorage.getStored();
+                }
+            }
+        }
+        return used;
+    }
+
+    public static long getTotalExternStorage(Network network, StorageType type) {
+        long total = 0;
+
+        GraphNetworkComponent graphNetworkComponent = network.getComponent(GraphNetworkComponent.class);
+        for (InWorldNetworkNodeContainer nodeContainer : graphNetworkComponent.getContainers(InWorldNetworkNodeContainer.class)) {
+            if (nodeContainer.getNode() instanceof ExternalStorageNetworkNode storageNetworkNode) {
+                ExposedExternalStorage storage = (ExposedExternalStorage) storageNetworkNode.getStorage();
+                // TODO
+            }
+
+        }
+        return total;
+    }
+
+    public static long getUsedExternStorage(Network network, StorageType type) {
+        long used = 0;
+
+        GraphNetworkComponent graphNetworkComponent = network.getComponent(GraphNetworkComponent.class);
+        for (InWorldNetworkNodeContainer nodeContainer : graphNetworkComponent.getContainers(InWorldNetworkNodeContainer.class)) {
+            if (nodeContainer.getNode() instanceof ExternalStorageNetworkNode storageNetworkNode) {
+                ExposedExternalStorage storage = (ExposedExternalStorage) storageNetworkNode.getStorage();
+
+                used += storage.getAll().stream().filter(amount -> type.isAllowed(amount.resource())).mapToLong(ResourceAmount::amount).sum();
+            }
+
+        }
+        return used;
+    }
+
     private static Map<String, Object> getObjectFromResourceKey(@NotNull ResourceKey resource) {
         return getObjectFromResourceKey(resource, 0);
     }
@@ -349,9 +430,9 @@ public class RefinedStorageApi {
         properties.put("state", disk.getState().toString());
         if (disk.getDelegate() instanceof SerializableStorage serializableStorage) {
             String type;
-            if (serializableStorage.getType().isAllowed(new ItemResource(Items.DIRT))) {
+            if (serializableStorage.getType() == StorageTypes.ITEM) {
                 type = "item";
-            } else if (serializableStorage.getType().isAllowed(new FluidResource(Fluids.WATER))) {
+            } else if (serializableStorage.getType() == StorageTypes.FLUID) {
                 type = "fluid";
             } else {
                 type = "unknown";
