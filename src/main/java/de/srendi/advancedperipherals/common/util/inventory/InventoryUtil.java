@@ -77,10 +77,10 @@ public class InventoryUtil {
                     ItemStack extracted = inventoryFrom.extractItem(i, amount - transferableAmount, true);
                     if (extracted.isEmpty())
                         continue;
-                    ItemStack inserted = storageSystemHandler.insertItem(toSlot, extracted, false);
+                    ItemStack remaining = storageSystemHandler.insertItem(toSlot, extracted, false);
 
-                    amount -= inserted.getCount();
-                    transferableAmount += inventoryFrom.extractItem(i, extracted.getCount() - inserted.getCount(), false).getCount();
+                    amount -= remaining.getCount();
+                    transferableAmount += inventoryFrom.extractItem(i, extracted.getCount() - remaining.getCount(), false).getCount();
                     if (transferableAmount >= filter.getCount())
                         break;
                 }

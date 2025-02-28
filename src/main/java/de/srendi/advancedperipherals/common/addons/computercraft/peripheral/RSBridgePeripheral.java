@@ -16,15 +16,22 @@ import dan200.computercraft.core.apis.TableHelper;
 import de.srendi.advancedperipherals.common.addons.APAddons;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.BlockEntityPeripheralOwner;
 import de.srendi.advancedperipherals.common.addons.refinedstorage.RefinedStorageApi;
+import de.srendi.advancedperipherals.common.addons.refinedstorage.RsFluidHandler;
+import de.srendi.advancedperipherals.common.addons.refinedstorage.RsItemHandler;
 import de.srendi.advancedperipherals.common.blocks.blockentities.RsBridgeEntity;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.util.Pair;
 import de.srendi.advancedperipherals.common.util.inventory.FluidFilter;
+import de.srendi.advancedperipherals.common.util.inventory.FluidUtil;
 import de.srendi.advancedperipherals.common.util.inventory.GenericFilter;
 import de.srendi.advancedperipherals.common.util.inventory.IStorageSystemPeripheral;
+import de.srendi.advancedperipherals.common.util.inventory.InventoryUtil;
 import de.srendi.advancedperipherals.common.util.inventory.ItemFilter;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
+import net.neoforged.neoforge.fluids.capability.IFluidHandler;
+import net.neoforged.neoforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.Map;
@@ -64,6 +71,86 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         return true;
     }
 
+    /**
+     * exports an item out of the system to a valid inventory
+     *
+     * @param arguments       the arguments given by the computer
+     * @param targetInventory the give inventory
+     * @return the exportable amount or null with a string if something went wrong
+     */
+    protected MethodResult exportToChest(@NotNull IArguments arguments, @Nullable IItemHandler targetInventory) throws LuaException {
+        RsItemHandler itemHandler = new RsItemHandler(getNetwork());
+        Pair<ItemFilter, String> filter = ItemFilter.parse(arguments.getTable(0));
+
+        if (filter.rightPresent())
+            return MethodResult.of(0, filter.getRight());
+
+        if (targetInventory == null)
+            return MethodResult.of(0, "Target Inventory does not exist");
+
+        return MethodResult.of(InventoryUtil.moveItem(itemHandler, targetInventory, filter.getLeft()), null);
+    }
+
+    /**
+     * exports a fluid out of the system to a valid tank
+     *
+     * @param arguments  the arguments given by the computer
+     * @param targetTank the give tank
+     * @return the exportable amount or null with a string if something went wrong
+     */
+    protected MethodResult exportToTank(@NotNull IArguments arguments, @Nullable IFluidHandler targetTank) throws LuaException {
+        RsFluidHandler fluidHandler = new RsFluidHandler(getNetwork());
+        Pair<FluidFilter, String> filter = FluidFilter.parse(arguments.getTable(0));
+
+        if (filter.rightPresent())
+            return MethodResult.of(0, filter.getRight());
+
+        if (targetTank == null)
+            return MethodResult.of(0, "Target Tank does not exist");
+
+        return MethodResult.of(InventoryUtil.moveFluid(fluidHandler, targetTank, filter.getLeft()), null);
+    }
+
+    /**
+     * imports an item to the system from a valid inventory
+     *
+     * @param arguments       the arguments given by the computer
+     * @param targetInventory the give inventory
+     * @return the imported amount or null with a string if something went wrong
+     */
+    protected MethodResult importToRS(@NotNull IArguments arguments, @Nullable IItemHandler targetInventory) throws LuaException {
+        RsItemHandler itemHandler = new RsItemHandler(getNetwork());
+        Pair<ItemFilter, String> filter = ItemFilter.parse(arguments.getTable(0));
+
+        if (filter.rightPresent())
+            return MethodResult.of(0, filter.getRight());
+
+        if (targetInventory == null)
+            return MethodResult.of(0, "Target Inventory does not exist");
+
+        return MethodResult.of(InventoryUtil.moveItem(targetInventory, itemHandler, filter.getLeft()), null);
+    }
+
+    /**
+     * imports a fluid to the system from a valid tank
+     *
+     * @param arguments  the arguments given by the computer
+     * @param targetTank the give tank
+     * @return the imported amount or null with a string if something went wrong
+     */
+    protected MethodResult importToRS(@NotNull IArguments arguments, @Nullable IFluidHandler targetTank) throws LuaException {
+        RsFluidHandler fluidHandler = new RsFluidHandler(getNetwork());
+        Pair<FluidFilter, String> filter = FluidFilter.parse(arguments.getTable(0));
+
+        if (filter.rightPresent())
+            return MethodResult.of(0, filter.getRight());
+
+        if (targetTank == null)
+            return MethodResult.of(0, "Target Tank does not exist");
+
+        return MethodResult.of(InventoryUtil.moveFluid(targetTank, fluidHandler, filter.getLeft()), null);
+    }
+
     @Override
     @LuaFunction(mainThread = true)
     public MethodResult isConnected() {
@@ -93,7 +180,7 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (parsedFilter.isEmpty())
             return MethodResult.of(null, "EMPTY_FILTER");
 
-        Map<?, ?> resourceProperties = RefinedStorageApi.getItem(getNetwork(), parsedFilter);
+        Map<?, ?> resourceProperties = RefinedStorageApi.getParsedItem(getNetwork(), parsedFilter);
         if (resourceProperties == null)
             return MethodResult.of(null, "NOT_FOUND");
 
@@ -114,7 +201,7 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (parsedFilter.isEmpty())
             return MethodResult.of(null, "EMPTY_FILTER");
 
-        Map<?, ?> resourceProperties = RefinedStorageApi.getFluid(getNetwork(), parsedFilter);
+        Map<?, ?> resourceProperties = RefinedStorageApi.getParsedFluid(getNetwork(), parsedFilter);
         if (resourceProperties == null)
             return MethodResult.of(null, "NOT_FOUND");
 
@@ -133,7 +220,7 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
         ItemFilter parsedFilter = filter.getLeft();
 
-        Set<Map<String, Object>> resourceProperties = RefinedStorageApi.getItems(getNetwork(), parsedFilter);
+        Set<Map<String, Object>> resourceProperties = RefinedStorageApi.getParsedItems(getNetwork(), parsedFilter);
 
         return MethodResult.of(resourceProperties);
     }
@@ -150,7 +237,7 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
         FluidFilter parsedFilter = filter.getLeft();
 
-        Set<Map<String, Object>> resourceProperties = RefinedStorageApi.getFluids(getNetwork(), parsedFilter);
+        Set<Map<String, Object>> resourceProperties = RefinedStorageApi.getParsedFluids(getNetwork(), parsedFilter);
 
         return MethodResult.of(resourceProperties);
     }
@@ -209,26 +296,42 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
     @Override
     @LuaFunction(mainThread = true)
-    public MethodResult importItem(IComputerAccess computer, IArguments arguments) throws LuaException {
-        return null;
+    public final MethodResult importItem(IComputerAccess computer, IArguments arguments) throws LuaException {
+        if (!isAvailable())
+            return notConnected();
+
+        IItemHandler inventory = InventoryUtil.getHandlerFromDirection(arguments.getString(1), owner);
+        return importToRS(arguments, inventory);
     }
 
     @Override
     @LuaFunction(mainThread = true)
     public MethodResult exportItem(IComputerAccess computer, IArguments arguments) throws LuaException {
-        return null;
+        if (!isAvailable())
+            return notConnected();
+
+        IItemHandler inventory = InventoryUtil.getHandlerFromDirection(arguments.getString(1), owner);
+        return exportToChest(arguments, inventory);
     }
 
     @Override
     @LuaFunction(mainThread = true)
     public MethodResult importFluid(IComputerAccess computer, IArguments arguments) throws LuaException {
-        return null;
+        if (!isAvailable())
+            return notConnected();
+
+        IFluidHandler handler = FluidUtil.getHandlerFromDirection(arguments.getString(1), owner);
+        return importToRS(arguments, handler);
     }
 
     @Override
     @LuaFunction(mainThread = true)
     public MethodResult exportFluid(IComputerAccess computer, IArguments arguments) throws LuaException {
-        return null;
+        if (!isAvailable())
+            return notConnected();
+
+        IFluidHandler handler = FluidUtil.getHandlerFromDirection(arguments.getString(1), owner);
+        return exportToTank(arguments, handler);
     }
 
     @Override
@@ -448,6 +551,7 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
         return MethodResult.of(RefinedStorageApi.getTotalExternStorage(getNetwork(), ChemicalResourceType.STORAGE_TYPE) - RefinedStorageApi.getUsedExternStorage(getNetwork(), ChemicalResourceType.STORAGE_TYPE));
     }
+
     @Override
     @LuaFunction(mainThread = true)
     public MethodResult getAvailableItemStorage() {

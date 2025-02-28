@@ -20,11 +20,9 @@ import com.refinedmods.refinedstorage.api.storage.composite.CompositeStorage;
 import com.refinedmods.refinedstorage.common.api.storage.SerializableStorage;
 import com.refinedmods.refinedstorage.common.api.storage.StorageType;
 import com.refinedmods.refinedstorage.common.api.support.network.InWorldNetworkNodeContainer;
-import com.refinedmods.refinedstorage.common.api.support.resource.ResourceType;
 import com.refinedmods.refinedstorage.common.storage.StorageTypes;
 import com.refinedmods.refinedstorage.common.support.resource.FluidResource;
 import com.refinedmods.refinedstorage.common.support.resource.ItemResource;
-import com.refinedmods.refinedstorage.common.support.resource.ResourceTypes;
 import com.refinedmods.refinedstorage.neoforge.api.RefinedStorageNeoForgeApi;
 import com.refinedmods.refinedstorage.neoforge.support.resource.VariantUtil;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
@@ -37,8 +35,6 @@ import de.srendi.advancedperipherals.common.util.inventory.GenericFilter;
 import de.srendi.advancedperipherals.common.util.inventory.ItemFilter;
 import de.srendi.advancedperipherals.common.util.inventory.ItemUtil;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.level.material.Fluids;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.fluids.FluidStack;
 import org.apache.logging.log4j.Level;
@@ -66,13 +62,50 @@ public class RefinedStorageApi {
     }
 
     /**
+     * Returns the first item resource that fits to the filter
+     *
+     * @param network refined storage network
+     * @param filter  item filter instance - can be an empty filter to get the first item of the system see {@link ItemFilter#empty()}
+     * @return the first item in the system that fits the item filter or null
+     */
+    @Nullable
+    public static ItemResource getItem(Network network, ItemFilter filter) {
+        StorageNetworkComponent storage = network.getComponent(StorageNetworkComponent.class);
+        for (TrackedResourceAmount trackedResource : storage.getResources(Actor.EMPTY.getClass())) {
+            if (trackedResource.resourceAmount().resource() instanceof ItemResource itemResource && filter.test(itemResource.toItemStack())) {
+                return itemResource;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Returns the first fluid parsed to a lua object which fits to the filter
+     *
+     * @param network refined storage network
+     * @param filter  fluid filter instance - can be an empty filter to get the first fluid of the system see {@link FluidFilter#empty()}
+     * @return the first fluid in the system that fits the fluid filter or null
+     */
+    @Nullable
+    public static FluidResource getFluid(Network network, FluidFilter filter) {
+        StorageNetworkComponent storage = network.getComponent(StorageNetworkComponent.class);
+        for (TrackedResourceAmount trackedResource : storage.getResources(Actor.EMPTY.getClass())) {
+            if (trackedResource.resourceAmount().resource() instanceof FluidResource fluidResource && filter.test(VariantUtil.toFluidStack(fluidResource, trackedResource.resourceAmount().amount()))) {
+                return fluidResource;
+            }
+        }
+        return null;
+    }
+
+    /**
      * Returns the first item parsed to a lua object which fits to the filter
      *
      * @param network refined storage network
      * @param filter  item filter instance - can be an empty filter to get the first item of the system see {@link ItemFilter#empty()}
-     * @return the first item in the system that fits the item filter
+     * @return the first item in the system that fits the item filter or null
      */
-    public static Map<String, Object> getItem(Network network, ItemFilter filter) {
+    @Nullable
+    public static Map<String, Object> getParsedItem(Network network, ItemFilter filter) {
         StorageNetworkComponent storage = network.getComponent(StorageNetworkComponent.class);
         for (TrackedResourceAmount trackedResource : storage.getResources(Actor.EMPTY.getClass())) {
             if (trackedResource.resourceAmount().resource() instanceof ItemResource itemResource && filter.test(itemResource.toItemStack())) {
@@ -87,9 +120,10 @@ public class RefinedStorageApi {
      *
      * @param network refined storage network
      * @param filter  fluid filter instance - can be an empty filter to get the first fluid of the system see {@link FluidFilter#empty()}
-     * @return the first fluid in the system that fits the fluid filter
+     * @return the first fluid in the system that fits the fluid filter or null
      */
-    public static Map<String, Object> getFluid(Network network, FluidFilter filter) {
+    @Nullable
+    public static Map<String, Object> getParsedFluid(Network network, FluidFilter filter) {
         StorageNetworkComponent storage = network.getComponent(StorageNetworkComponent.class);
         for (TrackedResourceAmount trackedResource : storage.getResources(Actor.EMPTY.getClass())) {
             if (trackedResource.resourceAmount().resource() instanceof FluidResource fluidResource && filter.test(VariantUtil.toFluidStack(fluidResource, trackedResource.resourceAmount().amount()))) {
@@ -107,7 +141,7 @@ public class RefinedStorageApi {
      * @param filter  The filter here is optional, if an empty filter is provided, the method will return every resource
      * @return a set of items
      */
-    public static Set<Map<String, Object>> getItems(Network network, ItemFilter filter) {
+    public static Set<Map<String, Object>> getParsedItems(Network network, ItemFilter filter) {
         Set<Map<String, Object>> items = new HashSet<>();
         StorageNetworkComponent storage = network.getComponent(StorageNetworkComponent.class);
         for (TrackedResourceAmount trackedResource : storage.getResources(Actor.EMPTY.getClass())) {
@@ -127,7 +161,7 @@ public class RefinedStorageApi {
      * @param filter  The filter here is optional, if an empty filter is provided, the method will return every resource
      * @return a set of fluid stacks
      */
-    public static Set<Map<String, Object>> getFluids(Network network, FluidFilter filter) {
+    public static Set<Map<String, Object>> getParsedFluids(Network network, FluidFilter filter) {
         Set<Map<String, Object>> items = new HashSet<>();
         StorageNetworkComponent storage = network.getComponent(StorageNetworkComponent.class);
         for (TrackedResourceAmount trackedResource : storage.getResources(Actor.EMPTY.getClass())) {
