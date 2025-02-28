@@ -301,6 +301,13 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
             return notConnected();
 
         IItemHandler inventory = InventoryUtil.getHandlerFromDirection(arguments.getString(1), owner);
+
+        if (inventory == null)
+            inventory = InventoryUtil.getHandlerFromName(computer, arguments.getString(1));
+
+        if (inventory == null)
+            return MethodResult.of(0, "The target inventory does not exist. Make sure the bridge is exposed in the computer network. Reach out to our discord or our documentation for help.");
+
         return importToRS(arguments, inventory);
     }
 
@@ -311,6 +318,13 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
             return notConnected();
 
         IItemHandler inventory = InventoryUtil.getHandlerFromDirection(arguments.getString(1), owner);
+
+        if (inventory == null)
+            inventory = InventoryUtil.getHandlerFromName(computer, arguments.getString(1));
+
+        if (inventory == null)
+            return MethodResult.of(0, "The target inventory does not exist. Make sure the bridge is exposed in the computer network. Reach out to our discord or our documentation for help.");
+
         return exportToChest(arguments, inventory);
     }
 
@@ -321,6 +335,12 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
             return notConnected();
 
         IFluidHandler handler = FluidUtil.getHandlerFromDirection(arguments.getString(1), owner);
+        if (handler == null)
+            handler = FluidUtil.getHandlerFromName(computer, arguments.getString(1));
+
+        if (handler == null)
+            return MethodResult.of(0, "The target tank does not exist. Make sure the bridge is exposed in the computer network. Reach out to our discord or our documentation for help.");
+
         return importToRS(arguments, handler);
     }
 
@@ -331,6 +351,12 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
             return notConnected();
 
         IFluidHandler handler = FluidUtil.getHandlerFromDirection(arguments.getString(1), owner);
+        if (handler == null)
+            handler = FluidUtil.getHandlerFromName(computer, arguments.getString(1));
+
+        if (handler == null)
+            return MethodResult.of(0, "The target tank does not exist. Make sure the bridge is exposed in the computer network. Reach out to our discord or our documentation for help.");
+
         return exportToTank(arguments, handler);
     }
 

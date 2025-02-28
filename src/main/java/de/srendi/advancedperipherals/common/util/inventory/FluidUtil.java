@@ -43,19 +43,16 @@ public class FluidUtil {
         return null;
     }
 
-    @NotNull
+    @Nullable
     public static IFluidHandler getHandlerFromDirection(@NotNull String direction, @NotNull IPeripheralOwner owner) throws LuaException {
         Level level = owner.getLevel();
         Objects.requireNonNull(level);
         Direction relativeDirection = CoordUtil.getDirection(owner.getOrientation(), direction);
         BlockEntity target = level.getBlockEntity(owner.getPos().relative(relativeDirection));
         if (target == null)
-            throw new LuaException("Target '" + direction + "' is empty or not a fluid handler");
+            return null;
 
-        IFluidHandler handler = extractHandler(target, level, owner.getPos().relative(relativeDirection), relativeDirection);
-        if (handler == null)
-            throw new LuaException("Target '" + direction + "' is not a fluid handler");
-        return handler;
+        return extractHandler(target, level, owner.getPos().relative(relativeDirection), relativeDirection);
     }
 
     @Nullable

@@ -104,9 +104,10 @@ public class CoordUtil {
         return world.getNearbyPlayers(TargetingConditions.forNonCombat(), null, new AABB(firstPos.getX(), firstPos.getY(), firstPos.getZ(), secondPos.getX(), secondPos.getY(), secondPos.getZ())).contains(player);
     }
 
+    @Nullable
     public static Direction getDirection(FrontAndTop orientation, String computerSide) throws LuaException {
         if (computerSide == null) {
-            throw new LuaException("null is not a valid side");
+            return null;
         }
 
         computerSide = computerSide.toLowerCase(Locale.ROOT);
@@ -118,7 +119,7 @@ public class CoordUtil {
 
         final ComputerSide side = ComputerSide.valueOfInsensitive(computerSide);
         if (side == null) {
-            throw new LuaException(computerSide + " is not a valid side");
+            return null;
         }
 
         if (front.getAxis() == Direction.Axis.Y) {
