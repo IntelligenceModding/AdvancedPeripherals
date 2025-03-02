@@ -433,6 +433,8 @@ jar {
 
 jar.finalizedBy('reobfJar')
 
+compileKotlin.enabled = false
+
 tasks.withType(Checkstyle) {
     reports {
         xml.required = false
