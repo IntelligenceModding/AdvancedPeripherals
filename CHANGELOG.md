@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+### Fixed
+- [#711] Fixed that the block reader would not be able to access registries for component information
+
 ## [1.21.1-0.7.49a] - 2025-02-14
 
 ### Fixed
