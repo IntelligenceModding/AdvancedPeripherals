@@ -3,9 +3,11 @@ package de.srendi.advancedperipherals.common.addons.computercraft.peripheral;
 import com.refinedmods.refinedstorage.api.autocrafting.Pattern;
 import com.refinedmods.refinedstorage.api.network.Network;
 import com.refinedmods.refinedstorage.api.network.NetworkComponent;
+import com.refinedmods.refinedstorage.api.network.autocrafting.AutocraftingNetworkComponent;
 import com.refinedmods.refinedstorage.api.network.energy.EnergyNetworkComponent;
 import com.refinedmods.refinedstorage.api.network.impl.node.AbstractNetworkNode;
 import com.refinedmods.refinedstorage.common.storage.StorageTypes;
+import com.refinedmods.refinedstorage.common.support.resource.ItemResource;
 import com.refinedmods.refinedstorage.mekanism.ChemicalResourceType;
 import dan200.computercraft.api.lua.IArguments;
 import dan200.computercraft.api.lua.LuaException;
@@ -15,6 +17,7 @@ import dan200.computercraft.api.peripheral.IComputerAccess;
 import dan200.computercraft.core.apis.TableHelper;
 import de.srendi.advancedperipherals.common.addons.APAddons;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.BlockEntityPeripheralOwner;
+import de.srendi.advancedperipherals.common.addons.refinedstorage.RSCraftJob;
 import de.srendi.advancedperipherals.common.addons.refinedstorage.RefinedStorageApi;
 import de.srendi.advancedperipherals.common.addons.refinedstorage.RsFluidHandler;
 import de.srendi.advancedperipherals.common.addons.refinedstorage.RsItemHandler;
@@ -41,8 +44,11 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
     public static final String PERIPHERAL_TYPE = "rsBridge";
 
+    private final RsBridgeEntity bridge;
+
     public RSBridgePeripheral(RsBridgeEntity owner) {
         super(PERIPHERAL_TYPE, new BlockEntityPeripheralOwner<>(owner));
+        this.bridge = owner;
     }
 
     @Override
@@ -608,6 +614,31 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     @Override
     @LuaFunction(mainThread = true)
     public MethodResult craftItem(IComputerAccess computer, IArguments arguments) throws LuaException {
+        if (!isAvailable())
+            return notConnected();
+
+        Pair<ItemFilter, String> filter = ItemFilter.parse(arguments.getTable(0));
+        if (filter.rightPresent())
+            return MethodResult.of(null, filter.getRight());
+
+        ItemResource stack = RefinedStorageApi.getItem(getNetwork(), filter.getLeft());
+        if (stack == null)
+            return MethodResult.of(null, "NOT_CRAFTABLE");
+
+        RSCraftJob job = new RSCraftJob(computer, getLevel(), filter.getLeft().getCount(), stack, getNetwork().getComponent(AutocraftingNetworkComponent.class));
+        bridge.addJob(job);
+        return MethodResult.of(job);
+    }
+
+
+    @Override
+    @LuaFunction(mainThread = true)
+    public MethodResult craftFluid(IComputerAccess computer, IArguments arguments) throws LuaException {
+        return null;
+    }
+
+    @Override
+    public MethodResult craftChemical(IComputerAccess computer, IArguments arguments) throws LuaException {
         return null;
     }
 
@@ -618,16 +649,16 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     }
 
     @Override
-    @LuaFunction(mainThread = true)
-    public MethodResult cancelCraftingTasks(IArguments arguments) throws LuaException {
+    public MethodResult getCraftingJob(int id) {
         return null;
     }
 
     @Override
     @LuaFunction(mainThread = true)
-    public MethodResult craftFluid(IComputerAccess computer, IArguments arguments) throws LuaException {
+    public MethodResult cancelCraftingTasks(IArguments arguments) throws LuaException {
         return null;
     }
+
 
     @Override
     @LuaFunction(mainThread = true)
@@ -650,6 +681,16 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     @Override
     @LuaFunction(mainThread = true)
     public MethodResult isFluidCrafting(IArguments arguments) throws LuaException {
+        return null;
+    }
+
+    @Override
+    public MethodResult isChemicalCraftable(IArguments arguments) throws LuaException {
+        return null;
+    }
+
+    @Override
+    public MethodResult isChemicalCrafting(IArguments arguments) throws LuaException {
         return null;
     }
 }

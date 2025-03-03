@@ -383,7 +383,7 @@ public class RefinedStorageApi {
         return used;
     }
 
-    private static Map<String, Object> getObjectFromResourceKey(@NotNull ResourceKey resource) {
+    public static Map<String, Object> getObjectFromResourceKey(@NotNull ResourceKey resource) {
         return getObjectFromResourceKey(resource, 0);
     }
 
@@ -394,7 +394,7 @@ public class RefinedStorageApi {
      * @param count    count of the resource - can be 0 and lower
      * @return the parsed key to a lua properties map
      */
-    private static Map<String, Object> getObjectFromResourceKey(@NotNull ResourceKey resource, long count) {
+    public static Map<String, Object> getObjectFromResourceKey(@NotNull ResourceKey resource, long count) {
         boolean countZeroOrLower = count <= 0;
         if (resource instanceof ItemResource) {
             if (countZeroOrLower) {
