@@ -1,13 +1,12 @@
 package de.srendi.advancedperipherals.common.addons.powah;
 
 import dan200.computercraft.api.lua.LuaFunction;
+import de.srendi.advancedperipherals.common.util.LuaConverter;
 import de.srendi.advancedperipherals.lib.peripherals.APGenericPeripheral;
-import org.jetbrains.annotations.NotNull;
 import owmii.powah.block.magmator.MagmatorTile;
 
 public class MagmatorIntegration implements APGenericPeripheral {
 
-    @NotNull
     @Override
     public String getPeripheralType() {
         return "magmator";
@@ -30,12 +29,7 @@ public class MagmatorIntegration implements APGenericPeripheral {
 
     // getTank is thread safe
     @LuaFunction
-    public final long getTankCapacity(MagmatorTile blockEntity) {
-        return blockEntity.getTank().getCapacity();
-    }
-
-    @LuaFunction
-    public final long getFluidInTank(MagmatorTile blockEntity) {
-        return blockEntity.getTank().getFluidAmount();
+    public final Object getFuelTank(MagmatorTile blockEntity) {
+        return LuaConverter.fluidStackToObject(blockEntity.getTank().getFluid());
     }
 }

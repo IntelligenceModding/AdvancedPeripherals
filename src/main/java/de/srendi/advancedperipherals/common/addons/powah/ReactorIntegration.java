@@ -1,8 +1,8 @@
 package de.srendi.advancedperipherals.common.addons.powah;
 
 import dan200.computercraft.api.lua.LuaFunction;
-import de.srendi.advancedperipherals.lib.peripherals.APGenericPeripheral;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
+import de.srendi.advancedperipherals.lib.peripherals.APGenericPeripheral;
 import net.minecraft.world.item.ItemStack;
 import owmii.powah.block.reactor.ReactorPartTile;
 import owmii.powah.block.reactor.ReactorTile;
@@ -64,17 +64,17 @@ public class ReactorIntegration implements APGenericPeripheral {
     }
 
     @LuaFunction(mainThread = true)
-    public final Object getInventoryUraninite(ReactorPartTile blockEntity) {
+    public final Object getUraniniteSlot(ReactorPartTile blockEntity) {
         return getInventoryAt(blockEntity, URANINITE_SLOT);
     }
 
     @LuaFunction(mainThread = true)
-    public final Object getInventoryRedstone(ReactorPartTile blockEntity) {
+    public final Object getRedstoneSlot(ReactorPartTile blockEntity) {
         return getInventoryAt(blockEntity, REDSTONE_SLOT);
     }
 
     @LuaFunction(mainThread = true)
-    public final Object getInventoryCarbon(ReactorPartTile blockEntity) {
+    public final Object getCarbonSlot(ReactorPartTile blockEntity) {
         return getInventoryAt(blockEntity, CARBON_SLOT);
     }
 }

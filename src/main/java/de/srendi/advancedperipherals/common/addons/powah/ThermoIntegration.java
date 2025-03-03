@@ -1,6 +1,7 @@
 package de.srendi.advancedperipherals.common.addons.powah;
 
 import dan200.computercraft.api.lua.LuaFunction;
+import de.srendi.advancedperipherals.common.util.LuaConverter;
 import de.srendi.advancedperipherals.lib.peripherals.APGenericPeripheral;
 import owmii.powah.block.thermo.ThermoTile;
 
@@ -22,7 +23,7 @@ public class ThermoIntegration implements APGenericPeripheral {
     }
 
     @LuaFunction
-    public final double getCoolantInTank(ThermoTile blockEntity) {
-        return blockEntity.getTank().getFluidAmount();
+    public final Object getCoolantTank(ThermoTile blockEntity) {
+        return LuaConverter.fluidStackToObject(blockEntity.getTank().getFluid());
     }
 }

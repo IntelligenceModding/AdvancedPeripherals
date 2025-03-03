@@ -1,8 +1,8 @@
 package de.srendi.advancedperipherals.common.addons.powah;
 
 import dan200.computercraft.api.lua.LuaFunction;
-import de.srendi.advancedperipherals.lib.peripherals.APGenericPeripheral;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
+import de.srendi.advancedperipherals.lib.peripherals.APGenericPeripheral;
 import net.minecraft.world.item.ItemStack;
 import owmii.powah.block.furnator.FurnatorTile;
 
@@ -35,7 +35,7 @@ public class FurnatorIntegration implements APGenericPeripheral {
     }
 
     @LuaFunction(mainThread = true)
-    public final Object getInventoryFuel(FurnatorTile blockEntity) {
+    public final Object getFuelSlot(FurnatorTile blockEntity) {
         return LuaConverter.itemStackToObject(blockEntity.getInventory().getStackInSlot(1));
     }
 }
