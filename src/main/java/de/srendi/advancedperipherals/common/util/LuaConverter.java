@@ -105,7 +105,9 @@ public class LuaConverter {
     }
 
     public static Map<String, Object> itemStackToObject(@NotNull ItemStack stack) {
-        if (stack.isEmpty()) return Collections.emptyMap();
+        if (stack.isEmpty()) {
+            return null;
+        }
         Map<String, Object> map = itemToObject(stack.getItem());
         DataComponentPatch components = stack.getComponentsPatch();
         map.put("count", stack.getCount());
@@ -117,7 +119,9 @@ public class LuaConverter {
     }
 
     public static Map<String, Object> fluidStackToObject(@NotNull FluidStack stack) {
-        if (stack.isEmpty()) return Collections.emptyMap();
+        if (stack.isEmpty()) {
+            return null;
+        }
         Map<String, Object> map = fluidToObject(stack.getFluid());
         DataComponentPatch components = stack.getComponentsPatch();
         map.put("count", stack.getAmount());
@@ -158,7 +162,9 @@ public class LuaConverter {
      * @see InventoryManagerPeripheral#getItems()
      */
     public static Map<String, Object> stackToObjectWithSlot(@NotNull ItemStack stack, int slot) {
-        if (stack.isEmpty()) return new HashMap<>();
+        if (stack.isEmpty()) {
+            return null;
+        }
         Map<String, Object> map = itemStackToObject(stack);
         map.put("slot", slot);
         return map;
@@ -179,7 +185,9 @@ public class LuaConverter {
     }
 
     public static <T> List<String> tagsToList(@NotNull Supplier<Stream<TagKey<T>>> tags) {
-        if (tags.get().findAny().isEmpty()) return Collections.emptyList();
+        if (tags.get().findAny().isEmpty()) {
+            return Collections.emptyList();
+        }
         return tags.get().map(LuaConverter::tagToString).toList();
     }
 

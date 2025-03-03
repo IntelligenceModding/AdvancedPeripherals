@@ -3,15 +3,16 @@ import net.darkhax.curseforgegradle.TaskPublishCurseForge
 import java.text.SimpleDateFormat
 
 plugins {
-    id "maven-publish"
-    id 'net.darkhax.curseforgegradle' version '1.1.16'
-    id 'org.jetbrains.changelog' version '1.2.1'
-    id "com.modrinth.minotaur" version "2.+"
-    id 'net.neoforged.moddev' version '2.+'
-    id "com.github.breadmoirai.github-release" version "2.5.2"
     id 'checkstyle'
-    id 'java'
     id 'idea'
+    id 'java'
+    id 'maven-publish'
+
+    id 'com.github.breadmoirai.github-release' version '2.5.2'
+    id 'com.modrinth.minotaur' version '2.+'
+    id 'net.darkhax.curseforgegradle' version '1.1.16'
+    id 'net.neoforged.moddev' version '2.+'
+    id 'org.jetbrains.changelog' version '1.2.1'
 }
 
 java {
@@ -27,6 +28,8 @@ wrapper {
 }
 
 def isSnapshotVersion = project.hasProperty('teamcityBuild')
+def githubUser = 'IntelligenceModding'
+def githubRepo = 'AdvancedPeripherals'
 
 version = "${mod_version}" + (isSnapshotVersion ? "-SNAPSHOT" : "") + "${mod_artifact_suffix}"
 group = 'de.srendi.advancedperipherals'
@@ -217,38 +220,40 @@ dependencies {
     // Extended requirements
     // We don't use the api since we need a specific class from mekanism
     compileOnly "mekanism:Mekanism:${mekanism_version}"
-    //runtimeOnly "mekanism:Mekanism:${mekanism_version}"
+    // runtimeOnly "mekanism:Mekanism:${mekanism_version}"
 
     // Applied Energistics 2
-    runtimeOnly "appeng:appliedenergistics2:${appliedenergistics_version}"
     compileOnly "appeng:appliedenergistics2:${appliedenergistics_version}"
+    runtimeOnly "appeng:appliedenergistics2:${appliedenergistics_version}"
 
     // Applied Mekanistics
-    //runtimeOnly "curse.maven:applied-mekanistics-574300:${appliedmekanistics_version}"
     compileOnly "curse.maven:applied-mekanistics-574300:${appliedmekanistics_version}"
+    // runtimeOnly "curse.maven:applied-mekanistics-574300:${appliedmekanistics_version}"
 
     // AE2 Things
     compileOnly "curse.maven:ae2things-609977:${ae2things_version}-sources"
-    //runtimeOnly "curse.maven:ae2things-609977:${ae2things_version}-sources"
+    // runtimeOnly "curse.maven:ae2things-609977:${ae2things_version}-sources"
 
     // Minecolonies
-    // Remove/Comment this section if you want to use runData.
-    runtimeOnly "com.ldtteam:minecolonies:${minecolonies_version}"
-    runtimeOnly "com.ldtteam:structurize:${structurize_version}"
-    runtimeOnly "com.ldtteam:domum-ornamentum:${domumornamentum_version}"
-    runtimeOnly "com.ldtteam:blockui:${blockui_version}"
-
+    compileOnly "com.ldtteam:blockui:${blockui_version}"
+    compileOnly "com.ldtteam:domum-ornamentum:${domumornamentum_version}"
     compileOnly "com.ldtteam:minecolonies:${minecolonies_version}"
     compileOnly "com.ldtteam:structurize:${structurize_version}"
-    compileOnly "com.ldtteam:domum-ornamentum:${domumornamentum_version}"
-    compileOnly "com.ldtteam:blockui:${blockui_version}"
 
-    //Patchouli
-    //runtimeOnly "vazkii.patchouli:Patchouli:${patchouli_version}-NEOFORGE"
+    // Remove/Comment this section if you want to use runData.
+    runtimeOnly "com.ldtteam:blockui:${blockui_version}"
+    runtimeOnly "com.ldtteam:domum-ornamentum:${domumornamentum_version}"
+    runtimeOnly "com.ldtteam:minecolonies:${minecolonies_version}"
+    runtimeOnly "com.ldtteam:structurize:${structurize_version}"
+
+    // Patchouli
     compileOnly "vazkii.patchouli:Patchouli:${patchouli_version}-NEOFORGE"
+    // runtimeOnly "vazkii.patchouli:Patchouli:${patchouli_version}-NEOFORGE"
 
-    //Powah
-    //implementation "curse.maven:powah-633483:${powah_version}"
+    // Powah
+    compileOnly "curse.maven:powah-633483:${powah_version}"
+    runtimeOnly "me.shedaniel.cloth:cloth-config-neoforge:${cloth_config_version}"
+    runtimeOnly "curse.maven:powah-633483:${powah_version}"
 
     testImplementation "org.junit.jupiter:junit-jupiter-api:${junit_version}"
     testImplementation "org.junit.jupiter:junit-jupiter-params:${junit_version}"
@@ -268,10 +273,10 @@ changelog {
     version = "${project.version}"
     path = "${project.projectDir}/CHANGELOG.md"
     header = "[${minecraft_version}-${-> version.get()}] - ${new SimpleDateFormat("yyyy-MM-dd").format(new Date())}"
-    //Valid patterns would be
-    //1.16.5-1.1.1.1b
-    //1.18-1.0r
-    //1.19-1.0.0a
+    // Valid patterns would be:
+    //   1.16.5-1.1.1.1b
+    //   1.18-1.0r
+    //   1.19-1.0.0a
     headerParserRegex = ~/\d+(\.\d+){1,2}-\d+(\.\d+){1,3}\w/
     itemPrefix = "-"
     keepUnreleasedSection = true
@@ -367,14 +372,14 @@ githubRelease {
 
     if (githubKey != null)
         token = githubKey
-    owner = "IntelligenceModding"
-    repo = "AdvancedPeripherals"
+    owner = githubUser
+    repo = githubRepo
     tagName = "${minecraft_version}-${version}"
     releaseName = "${minecraft_version}-${version}"
     targetCommitish = "release/${minecraft_version}"
     generateReleaseNotes = false
     try {
-        body = "${project.changelog.get("${minecraft_version}-${version}").withHeader(false).toText()}"
+        body = project.changelog.get("${minecraft_version}-${version}").withHeader(false).toText()
     } catch (err) {
         System.out.println(err)
         body = ""
@@ -397,7 +402,7 @@ modrinth {
     }
 
     try {
-        changelog = "${project.changelog.get("${minecraft_version}-${project.version}").withHeader(false).toText()}"
+        changelog = project.changelog.get("${minecraft_version}-${project.version}").withHeader(false).toText()
     } catch (err) {
         System.out.println(err)
         changelog = ""
@@ -415,15 +420,16 @@ publishing {
             publication.pom {
                 name.set("AdvancedPeripherals")
                 packaging = 'jar'
-                description.set('Advanced Peripherals provides multiple extensions for ComputerCraft in form of Peripherals, Pocket Upgrades, Turtles or new gear.\n' +
-                        'It also integrates with multiple third party mods.')
+                description.set(
+                    'Advanced Peripherals provides multiple extensions for ComputerCraft in form of Peripherals, Pocket Upgrades, Turtles or new gear.\n' +
+                    'It also integrates with multiple third party mods.')
                 url.set('https://docs.intelligence-modding.de/')
                 scm {
-                    url.set('https://github.com/SirEndii/AdvancedPeripherals.git')
+                    url.set("https://github.com/${githubUser}/${githubRepo}.git")
                 }
                 issueManagement {
                     system.set('github')
-                    url.set('https://github.com/SirEndii/AdvancedPeripherals/issues')
+                    url.set("https://github.com/${githubUser}/${githubRepo}/issues")
                 }
                 licenses {
                     license {
@@ -440,7 +446,7 @@ publishing {
                     }.forEach() { Node el ->
                         el.parent().remove(el)
                     }
-                    //remove ForgeGradle's mapped suffix from versions & set as optional so anyone else doesn't inherit them
+                    // remove ForgeGradle's mapped suffix from versions & set as optional so anyone else doesn't inherit them
                     allDeps.<Node> findAll() { Node el ->
                         el.version.text().contains('_mapped_')
                     }.each { Node el ->
