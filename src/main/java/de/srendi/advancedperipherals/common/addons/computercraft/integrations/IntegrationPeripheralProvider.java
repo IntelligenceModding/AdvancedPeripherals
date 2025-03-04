@@ -4,15 +4,11 @@ import dan200.computercraft.api.ComputerCraftAPI;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.util.Platform;
 import de.srendi.advancedperipherals.lib.integrations.IPeripheralIntegration;
-import de.srendi.advancedperipherals.lib.peripherals.BlockEntityIntegrationPeripheral;
 import net.minecraft.world.level.block.NoteBlock;
-import net.minecraft.world.level.block.entity.BlockEntity;
 
 import java.util.Comparator;
 import java.util.Optional;
 import java.util.PriorityQueue;
-import java.util.function.Function;
-import java.util.function.Predicate;
 
 public class IntegrationPeripheralProvider {
 

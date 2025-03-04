@@ -3,12 +3,9 @@ package de.srendi.advancedperipherals.common.addons.powah;
 import dan200.computercraft.api.lua.LuaFunction;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
 import de.srendi.advancedperipherals.lib.peripherals.APGenericPeripheral;
-import net.minecraft.world.item.ItemStack;
 import owmii.powah.block.reactor.ReactorPartTile;
 import owmii.powah.block.reactor.ReactorTile;
 import owmii.powah.lib.logistics.energy.Energy;
-
-import java.util.Optional;
 
 public class ReactorIntegration implements APGenericPeripheral {
     private static final int URANINITE_SLOT = 1;
