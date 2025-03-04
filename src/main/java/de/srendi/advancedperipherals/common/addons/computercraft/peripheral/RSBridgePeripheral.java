@@ -368,49 +368,6 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
     @Override
     @LuaFunction(mainThread = true)
-    public final MethodResult getPatterns(IArguments arguments) throws LuaException {
-        if (!isAvailable())
-            return notConnected();
-
-        // Expected input is a table with either an input table, an output table or both to filter for both
-        // If no table is provided or it's empty, return every pattern
-        Map<?, ?> filterTable = arguments.optTable(0, Collections.emptyMap());
-        if (filterTable.isEmpty()) {
-            return MethodResult.of(RefinedStorageApi.getPatterns(getNetwork()));
-        }
-
-        boolean hasInputFilter = filterTable.containsKey("input");
-        boolean hasOutputFilter = filterTable.containsKey("output");
-        boolean hasAnyFilter = hasInputFilter || hasOutputFilter;
-
-        // If the player tries to filter for nothing, return nothing.
-        if (!hasAnyFilter)
-            return MethodResult.of(null, "NO_FILTER");
-
-        GenericFilter<?> inputFilter = null;
-        GenericFilter<?> outputFilter = null;
-
-        if (hasInputFilter) {
-            Map<?, ?> inputFilterTable = TableHelper.getTableField(filterTable, "input");
-
-            inputFilter = GenericFilter.parseGeneric(inputFilterTable).getLeft();
-        }
-        if (hasOutputFilter) {
-            Map<?, ?> outputFilterTable = TableHelper.getTableField(filterTable, "output");
-
-            outputFilter = GenericFilter.parseGeneric(outputFilterTable).getLeft();
-        }
-
-        Pair<Pattern, String> pattern = RefinedStorageApi.findPatternFromFilters(getNetwork(), inputFilter, outputFilter);
-
-        if (pattern.getRight() != null)
-            return MethodResult.of(null, pattern.getRight());
-
-        return MethodResult.of(RefinedStorageApi.parsePattern(pattern.getLeft()));
-    }
-
-    @Override
-    @LuaFunction(mainThread = true)
     public MethodResult getStoredEnergy() {
         if (!isAvailable())
             return notConnected();
@@ -692,5 +649,48 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     @Override
     public MethodResult isChemicalCrafting(IArguments arguments) throws LuaException {
         return null;
+    }
+
+    @Override
+    @LuaFunction(mainThread = true)
+    public final MethodResult getPatterns(IArguments arguments) throws LuaException {
+        if (!isAvailable())
+            return notConnected();
+
+        // Expected input is a table with either an input table, an output table or both to filter for both
+        // If no table is provided or it's empty, return every pattern
+        Map<?, ?> filterTable = arguments.optTable(0, Collections.emptyMap());
+        if (filterTable.isEmpty()) {
+            return MethodResult.of(RefinedStorageApi.getPatterns(getNetwork()));
+        }
+
+        boolean hasInputFilter = filterTable.containsKey("input");
+        boolean hasOutputFilter = filterTable.containsKey("output");
+        boolean hasAnyFilter = hasInputFilter || hasOutputFilter;
+
+        // If the player tries to filter for nothing, return nothing.
+        if (!hasAnyFilter)
+            return MethodResult.of(null, "NO_FILTER");
+
+        GenericFilter<?> inputFilter = null;
+        GenericFilter<?> outputFilter = null;
+
+        if (hasInputFilter) {
+            Map<?, ?> inputFilterTable = TableHelper.getTableField(filterTable, "input");
+
+            inputFilter = GenericFilter.parseGeneric(inputFilterTable).getLeft();
+        }
+        if (hasOutputFilter) {
+            Map<?, ?> outputFilterTable = TableHelper.getTableField(filterTable, "output");
+
+            outputFilter = GenericFilter.parseGeneric(outputFilterTable).getLeft();
+        }
+
+        Pair<Pattern, String> pattern = RefinedStorageApi.findPatternFromFilters(getNetwork(), inputFilter, outputFilter);
+
+        if (pattern.getRight() != null)
+            return MethodResult.of(null, pattern.getRight());
+
+        return MethodResult.of(RefinedStorageApi.parsePattern(pattern.getLeft()));
     }
 }

@@ -49,8 +49,6 @@ public interface IStorageSystemPeripheral {
 
     MethodResult exportFluid(IComputerAccess computer, IArguments arguments) throws LuaException;
 
-    MethodResult getPatterns(IArguments arguments) throws LuaException;
-
     MethodResult getStoredEnergy();
 
     MethodResult getEnergyCapacity();
@@ -119,5 +117,7 @@ public interface IStorageSystemPeripheral {
     MethodResult isChemicalCraftable(IArguments arguments) throws LuaException;
 
     MethodResult isChemicalCrafting(IArguments arguments) throws LuaException;
+
+    MethodResult getPatterns(IArguments arguments) throws LuaException;
 
 }
