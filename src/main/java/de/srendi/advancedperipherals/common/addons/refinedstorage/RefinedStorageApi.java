@@ -23,17 +23,20 @@ import com.refinedmods.refinedstorage.common.api.support.network.InWorldNetworkN
 import com.refinedmods.refinedstorage.common.storage.StorageTypes;
 import com.refinedmods.refinedstorage.common.support.resource.FluidResource;
 import com.refinedmods.refinedstorage.common.support.resource.ItemResource;
+import com.refinedmods.refinedstorage.mekanism.ChemicalResource;
 import com.refinedmods.refinedstorage.neoforge.api.RefinedStorageNeoForgeApi;
 import com.refinedmods.refinedstorage.neoforge.support.resource.VariantUtil;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.setup.BlockEntityTypes;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
 import de.srendi.advancedperipherals.common.util.Pair;
+import de.srendi.advancedperipherals.common.util.inventory.ChemicalFilter;
 import de.srendi.advancedperipherals.common.util.inventory.FluidFilter;
 import de.srendi.advancedperipherals.common.util.inventory.FluidUtil;
 import de.srendi.advancedperipherals.common.util.inventory.GenericFilter;
 import de.srendi.advancedperipherals.common.util.inventory.ItemFilter;
 import de.srendi.advancedperipherals.common.util.inventory.ItemUtil;
+import mekanism.api.chemical.ChemicalStack;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.fluids.FluidStack;
@@ -92,6 +95,24 @@ public class RefinedStorageApi {
         for (TrackedResourceAmount trackedResource : storage.getResources(Actor.EMPTY.getClass())) {
             if (trackedResource.resourceAmount().resource() instanceof FluidResource fluidResource && filter.test(VariantUtil.toFluidStack(fluidResource, trackedResource.resourceAmount().amount()))) {
                 return fluidResource;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Returns the first chemical parsed to a lua object which fits to the filter
+     *
+     * @param network refined storage network
+     * @param filter  fluid filter instance - can be an empty filter to get the first fluid of the system see {@link FluidFilter#empty()}
+     * @return the first fluid in the system that fits the fluid filter or null
+     */
+    @Nullable
+    public static ChemicalResource getChemical(Network network, ChemicalFilter filter) {
+        StorageNetworkComponent storage = network.getComponent(StorageNetworkComponent.class);
+        for (TrackedResourceAmount trackedResource : storage.getResources(Actor.EMPTY.getClass())) {
+            if (trackedResource.resourceAmount().resource() instanceof ChemicalResource chemicalResource && filter.test(new ChemicalStack(chemicalResource.chemical(), trackedResource.resourceAmount().amount()))) {
+                return chemicalResource;
             }
         }
         return null;

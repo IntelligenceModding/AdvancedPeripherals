@@ -7,7 +7,9 @@ import com.refinedmods.refinedstorage.api.network.autocrafting.AutocraftingNetwo
 import com.refinedmods.refinedstorage.api.network.energy.EnergyNetworkComponent;
 import com.refinedmods.refinedstorage.api.network.impl.node.AbstractNetworkNode;
 import com.refinedmods.refinedstorage.common.storage.StorageTypes;
+import com.refinedmods.refinedstorage.common.support.resource.FluidResource;
 import com.refinedmods.refinedstorage.common.support.resource.ItemResource;
+import com.refinedmods.refinedstorage.mekanism.ChemicalResource;
 import com.refinedmods.refinedstorage.mekanism.ChemicalResourceType;
 import dan200.computercraft.api.lua.IArguments;
 import dan200.computercraft.api.lua.LuaException;
@@ -24,6 +26,7 @@ import de.srendi.advancedperipherals.common.addons.refinedstorage.RsItemHandler;
 import de.srendi.advancedperipherals.common.blocks.blockentities.RsBridgeEntity;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.util.Pair;
+import de.srendi.advancedperipherals.common.util.inventory.ChemicalFilter;
 import de.srendi.advancedperipherals.common.util.inventory.FluidFilter;
 import de.srendi.advancedperipherals.common.util.inventory.FluidUtil;
 import de.srendi.advancedperipherals.common.util.inventory.GenericFilter;
@@ -587,16 +590,41 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         return MethodResult.of(job);
     }
 
-
     @Override
     @LuaFunction(mainThread = true)
     public MethodResult craftFluid(IComputerAccess computer, IArguments arguments) throws LuaException {
-        return null;
+        if (!isAvailable())
+            return notConnected();
+
+        Pair<FluidFilter, String> filter = FluidFilter.parse(arguments.getTable(0));
+        if (filter.rightPresent())
+            return MethodResult.of(null, filter.getRight());
+
+        FluidResource stack = RefinedStorageApi.getFluid(getNetwork(), filter.getLeft());
+        if (stack == null)
+            return MethodResult.of(null, "NOT_CRAFTABLE");
+
+        RSCraftJob job = new RSCraftJob(computer, getLevel(), filter.getLeft().getCount(), stack, getNetwork().getComponent(AutocraftingNetworkComponent.class));
+        bridge.addJob(job);
+        return MethodResult.of(job);
     }
 
     @Override
     public MethodResult craftChemical(IComputerAccess computer, IArguments arguments) throws LuaException {
-        return null;
+        if (!isAvailable())
+            return notConnected();
+
+        Pair<ChemicalFilter, String> filter = ChemicalFilter.parse(arguments.getTable(0));
+        if (filter.rightPresent())
+            return MethodResult.of(null, filter.getRight());
+
+        ChemicalResource stack = RefinedStorageApi.getChemical(getNetwork(), filter.getLeft());
+        if (stack == null)
+            return MethodResult.of(null, "NOT_CRAFTABLE");
+
+        RSCraftJob job = new RSCraftJob(computer, getLevel(), filter.getLeft().getCount(), stack, getNetwork().getComponent(AutocraftingNetworkComponent.class));
+        bridge.addJob(job);
+        return MethodResult.of(job);
     }
 
     @Override
