@@ -3,7 +3,6 @@ package de.srendi.advancedperipherals.common.addons.computercraft.peripheral;
 import dan200.computercraft.api.lua.IArguments;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
-import dan200.computercraft.api.lua.MethodResult;
 import dan200.computercraft.api.pocket.IPocketAccess;
 import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
@@ -54,17 +53,28 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
         return APConfig.PERIPHERALS_CONFIG.enablePlayerDetector.get();
     }
 
+    private ResourceKey<Level> getDimensionId() {
+        Level level = this.getLevel();
+        if (level == null) {
+            return null;
+        }
+        return level.dimension();
+    }
+
     @LuaFunction(mainThread = true)
     public final String[] getOnlinePlayers() {
         return ServerLifecycleHooks.getCurrentServer().getPlayerNames();
     }
 
     @LuaFunction(mainThread = true)
-    public final MethodResult getPlayersInCoords(Map<?, ?> firstCoord, Map<?, ?> secondCoord) throws LuaException {
+    public final List<String> getPlayersInCoords(Map<?, ?> firstCoord, Map<?, ?> secondCoord) throws LuaException {
         List<String> playersName = new ArrayList<>();
         BlockPos firstPos = LuaConverter.convertToBlockPos(firstCoord);
         BlockPos secondPos = LuaConverter.convertToBlockPos(secondCoord);
-        ResourceKey<Level> dimension = getLevel().dimension();
+        ResourceKey<Level> dimension = getDimensionId();
+        if (dimension == null) {
+            return Collections.emptyList();
+        }
 
         for (ServerPlayer player : getPlayers()) {
             if (!isAllowedMultiDimensional() && player.getLevel().dimension() != dimension)
@@ -72,13 +82,16 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
             if (CoordUtil.isInRange(getPos(), player, getLevel(), firstPos, secondPos, MAX_RANGE))
                 playersName.add(player.getName().getString());
         }
-        return MethodResult.of(playersName);
+        return playersName;
     }
 
     @LuaFunction(mainThread = true)
     public final List<String> getPlayersInCubic(int x, int y, int z) {
         List<String> playersName = new ArrayList<>();
-        ResourceKey<Level> dimension = getLevel().dimension();
+        ResourceKey<Level> dimension = getDimensionId();
+        if (dimension == null) {
+            return Collections.emptyList();
+        }
 
         for (ServerPlayer player : getPlayers()) {
             if (!isAllowedMultiDimensional() && player.getLevel().dimension() != dimension)
@@ -92,7 +105,10 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
     @LuaFunction(mainThread = true)
     public final List<String> getPlayersInRange(int range) {
         List<String> playersName = new ArrayList<>();
-        ResourceKey<Level> dimension = getLevel().dimension();
+        ResourceKey<Level> dimension = getDimensionId();
+        if (dimension == null) {
+            return Collections.emptyList();
+        }
 
         for (ServerPlayer player : getPlayers()) {
             if (!isAllowedMultiDimensional() && player.getLevel().dimension() != dimension)
@@ -109,7 +125,10 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
             return false;
         BlockPos firstPos = LuaConverter.convertToBlockPos(firstCoord);
         BlockPos secondPos = LuaConverter.convertToBlockPos(secondCoord);
-        ResourceKey<Level> dimension = getLevel().dimension();
+        ResourceKey<Level> dimension = getDimensionId();
+        if (dimension == null) {
+            return false;
+        }
 
         for (ServerPlayer player : getPlayers()) {
             if (!isAllowedMultiDimensional() && player.getLevel().dimension() != dimension)
@@ -123,7 +142,10 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
     public final boolean isPlayersInCubic(int x, int y, int z) {
         if (getPlayers().isEmpty())
             return false;
-        ResourceKey<Level> dimension = getLevel().dimension();
+        ResourceKey<Level> dimension = getDimensionId();
+        if (dimension == null) {
+            return false;
+        }
 
         for (ServerPlayer player : getPlayers()) {
             if (!isAllowedMultiDimensional() && player.getLevel().dimension() != dimension)
@@ -137,7 +159,10 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
     public final boolean isPlayersInRange(int range) {
         if (getPlayers().isEmpty())
             return false;
-        ResourceKey<Level> dimension = getLevel().dimension();
+        ResourceKey<Level> dimension = getDimensionId();
+        if (dimension == null) {
+            return false;
+        }
 
         for (ServerPlayer player : getPlayers()) {
             if (!isAllowedMultiDimensional() && player.getLevel().dimension() != dimension)
@@ -151,7 +176,10 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
     public final boolean isPlayerInCoords(Map<?, ?> firstCoord, Map<?, ?> secondCoord, String username) throws LuaException {
         BlockPos firstPos = LuaConverter.convertToBlockPos(firstCoord);
         BlockPos secondPos = LuaConverter.convertToBlockPos(secondCoord);
-        ResourceKey<Level> dimension = getLevel().dimension();
+        ResourceKey<Level> dimension = getDimensionId();
+        if (dimension == null) {
+            return false;
+        }
 
         for (Player player : getPlayers()) {
             if (!isAllowedMultiDimensional() && player.getLevel().dimension() != dimension)
@@ -165,7 +193,10 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
 
     @LuaFunction(mainThread = true)
     public final boolean isPlayerInCubic(int x, int y, int z, String username) {
-        ResourceKey<Level> dimension = getLevel().dimension();
+        ResourceKey<Level> dimension = getDimensionId();
+        if (dimension == null) {
+            return false;
+        }
 
         for (Player player : getPlayers()) {
             if (!isAllowedMultiDimensional() && player.getLevel().dimension() != dimension)
@@ -180,7 +211,10 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
 
     @LuaFunction(mainThread = true)
     public final boolean isPlayerInRange(int range, String username) {
-        ResourceKey<Level> dimension = getLevel().dimension();
+        ResourceKey<Level> dimension = getDimensionId();
+        if (dimension == null) {
+            return false;
+        }
 
         for (Player player : getPlayers()) {
             if (!isAllowedMultiDimensional() && player.getLevel().dimension() != dimension)
@@ -197,7 +231,10 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
     public final Map<String, Object> getPlayerPos(IArguments arguments) throws LuaException {
         if (!APConfig.PERIPHERALS_CONFIG.playerSpy.get())
             throw new LuaException("This function is disabled in the config. Activate it or ask an admin if he can activate it.");
-        ResourceKey<Level> dimension = getLevel().dimension();
+        ResourceKey<Level> dimension = getDimensionId();
+        if (dimension == null) {
+            return Collections.emptyMap();
+        }
 
         ServerPlayer existingPlayer = null;
         for (ServerPlayer player : getPlayers()) {
