@@ -314,7 +314,7 @@ dependencies {
 
     // Botania
     compileOnly fg.deobf("vazkii.botania:Botania:${botania_version}")
-    // runtimeOnly fg.deobf("vazkii.botania:Botania:${botania_version}")
+    runtimeOnly fg.deobf("vazkii.botania:Botania:${botania_version}")
 
     // Minecolonies
     // Change to compileOnly when running `runData`
@@ -339,7 +339,7 @@ dependencies {
 
     // Create
     compileOnly fg.deobf("com.simibubi.create:create-${minecraft_version}:${create_version}:all")
-    // runtimeOnly fg.deobf("com.simibubi.create:create-${minecraft_version}:${create_version}:all")
+    runtimeOnly fg.deobf("com.simibubi.create:create-${minecraft_version}:${create_version}:all")
 
     // DimStorage
     compileOnly fg.deobf("curse.maven:dimstorage-353882:${dimstorage_version}")
@@ -384,10 +384,10 @@ dependencies {
     compileOnly "org.valkyrienskies.core:api-game:${vs_core_version}"
     compileOnly "org.valkyrienskies.core:util:${vs_core_version}"
     compileOnly "org.valkyrienskies.core:impl:${vs_core_version}"
-    // runtimeOnly fg.deobf("org.valkyrienskies:valkyrienskies-119-forge:${vs2_version}")
-    // runtimeOnly fg.deobf("curse.maven:valkyrien-skies-258371:${valkyrien_skies_version}")
-    // runtimeOnly fg.deobf("curse.maven:eureka-ships-654384:${eureka_ships_version}")
-    // runtimeOnly fg.deobf("curse.maven:clockwork-807792:${clockwork_version}")
+    runtimeOnly fg.deobf("org.valkyrienskies:valkyrienskies-119-forge:${vs2_version}")
+    runtimeOnly fg.deobf("curse.maven:valkyrien-skies-258371:${valkyrien_skies_version}")
+    runtimeOnly fg.deobf("curse.maven:eureka-ships-654384:${eureka_ships_version}")
+    runtimeOnly fg.deobf("curse.maven:clockwork-807792:${clockwork_version}")
 }
 
 
