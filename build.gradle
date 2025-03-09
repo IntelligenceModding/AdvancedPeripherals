@@ -201,12 +201,12 @@ repositories {
         }
     }
     maven {
-        name = "Modmaven Jei"
+        name = "Modmaven"
         url = 'https://modmaven.dev/'
         content {
-            includeGroup("mezz.jei")
             includeGroup("appeng")
             includeGroup("mekanism")
+            includeGroup("mezz.jei")
         }
     }
     maven {
@@ -314,7 +314,7 @@ dependencies {
 
     // Botania
     compileOnly fg.deobf("vazkii.botania:Botania:${botania_version}")
-    runtimeOnly fg.deobf("vazkii.botania:Botania:${botania_version}")
+    // runtimeOnly fg.deobf("vazkii.botania:Botania:${botania_version}")
 
     // Minecolonies
     // Change to compileOnly when running `runData`
@@ -339,7 +339,7 @@ dependencies {
 
     // Create
     compileOnly fg.deobf("com.simibubi.create:create-${minecraft_version}:${create_version}:all")
-    runtimeOnly fg.deobf("com.simibubi.create:create-${minecraft_version}:${create_version}:all")
+    // runtimeOnly fg.deobf("com.simibubi.create:create-${minecraft_version}:${create_version}:all")
 
     // DimStorage
     compileOnly fg.deobf("curse.maven:dimstorage-353882:${dimstorage_version}")
@@ -376,23 +376,18 @@ dependencies {
     // runtimeOnly fg.deobf("curse.maven:createaddition-439890:5099757")
 
     // Valkyrien Skies 2
-    implementation("org.joml:joml:1.10.4") {
-        transitive = false
-    }
-    implementation("org.joml:joml-primitives:1.10.0") {
-        transitive = false
-    }
-    // implementation fg.deobf("org.valkyrienskies:valkyrienskies-119-common:${vs2_version}")
-    implementation fg.deobf("org.valkyrienskies:valkyrienskies-119-forge:${vs2_version}") {
-        transitive = false
-    }
+    compileOnly("org.joml:joml:1.10.4")
+    compileOnly("org.joml:joml-primitives:1.10.0")
+    // compileOnly fg.deobf("org.valkyrienskies:valkyrienskies-119-common:${vs2_version}")
+    compileOnly fg.deobf("org.valkyrienskies:valkyrienskies-119-forge:${vs2_version}")
     compileOnly "org.valkyrienskies.core:api:${vs_core_version}"
     compileOnly "org.valkyrienskies.core:api-game:${vs_core_version}"
     compileOnly "org.valkyrienskies.core:util:${vs_core_version}"
     compileOnly "org.valkyrienskies.core:impl:${vs_core_version}"
-    runtimeOnly fg.deobf("curse.maven:valkyrien-skies-258371:${valkyrien_skies_version}")
-    runtimeOnly fg.deobf("curse.maven:eureka-ships-654384:${eureka_ships_version}")
-    runtimeOnly fg.deobf("curse.maven:clockwork-807792:${clockwork_version}")
+    // runtimeOnly fg.deobf("org.valkyrienskies:valkyrienskies-119-forge:${vs2_version}")
+    // runtimeOnly fg.deobf("curse.maven:valkyrien-skies-258371:${valkyrien_skies_version}")
+    // runtimeOnly fg.deobf("curse.maven:eureka-ships-654384:${eureka_ships_version}")
+    // runtimeOnly fg.deobf("curse.maven:clockwork-807792:${clockwork_version}")
 }
 
 
@@ -427,12 +422,12 @@ task setupServer(type: Copy) {
 }
 
 ["Client", "Server"].forEach { name ->
-    tasks.register("test$name", JavaExec.class).configure {
+    tasks.register("test${name}", JavaExec.class).configure {
         it.group('In-game tests')
         it.description("Runs tests on a temporary Minecraft instance.")
-        it.dependsOn(setupServer, "prepareRunTest$name", "cleanTest$name", 'compileTestModJava')
+        it.dependsOn(setupServer, "prepareRunTest${name}", "cleanTest${name}", 'compileTestModJava')
 
-        JavaExec exec = tasks.getByName("runTest$name")
+        JavaExec exec = tasks.getByName("runTest${name}")
         exec.copyTo(it)
         it.setClasspath(exec.getClasspath())
         it.mainClass = exec.mainClass

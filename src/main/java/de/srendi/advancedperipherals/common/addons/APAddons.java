@@ -2,6 +2,7 @@ package de.srendi.advancedperipherals.common.addons;
 
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.addons.refinedstorage.RefinedStorage;
+import de.srendi.advancedperipherals.common.addons.valkyrienskies.ValkyrienSkies;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
@@ -12,7 +13,6 @@ import net.minecraftforge.fml.InterModComms;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
-import org.valkyrienskies.mod.common.VSGameUtilsKt;
 import top.theillusivec4.curios.api.CuriosApi;
 import top.theillusivec4.curios.api.SlotResult;
 import top.theillusivec4.curios.api.SlotTypeMessage;
@@ -95,6 +95,6 @@ public class APAddons {
         if (!vs2Loaded) {
             return false;
         }
-        return VSGameUtilsKt.isBlockInShipyard(level, pos);
+        return ValkyrienSkies.isBlockOnShip(level, pos);
     }
 }
