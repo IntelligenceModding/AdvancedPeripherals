@@ -429,13 +429,8 @@ public class AppEngApi {
         return node.getGrid().getService(IStorageService.class).getInventory();
     }
 
-    public static boolean isItemCrafting(MEStorage monitor, ICraftingService grid, ItemFilter filter,
+    public static boolean isCrafting(MEStorage monitor, ICraftingService grid, GenericFilter<?> filter,
                                          @Nullable ICraftingCPU craftingCPU) {
-        Pair<Long, AEItemKey> stack = AppEngApi.findAEStackFromFilter(monitor, grid, filter);
-
-        // If the item stack does not exist, it cannot be crafted.
-        if (stack == null)
-            return false;
 
         // If the passed cpu is null, check all cpus
         if (craftingCPU == null) {
@@ -448,7 +443,7 @@ public class AppEngApi {
                     if (jobStatus == null)
                         continue;
 
-                    if (jobStatus.crafting().what().equals(stack.getRight()))
+                    if (filter.testAE(jobStatus.crafting()))
                         return true;
                 }
             }
@@ -460,45 +455,7 @@ public class AppEngApi {
                 if (jobStatus == null)
                     return false;
 
-                return jobStatus.crafting().what().equals(stack.getRight());
-            }
-        }
-
-        return false;
-    }
-
-    public static boolean isFluidCrafting(MEStorage monitor, ICraftingService grid, FluidFilter filter,
-                                          @Nullable ICraftingCPU craftingCPU) {
-        Pair<Long, AEFluidKey> stack = AppEngApi.findAEFluidFromFilter(monitor, grid, filter);
-
-        // If the fluid stack does not exist, it cannot be crafted.
-        if (stack == null)
-            return false;
-
-        // If the passed cpu is null, check all cpus
-        if (craftingCPU == null) {
-            // Loop through all crafting cpus and check if the fluid is being crafted.
-            for (ICraftingCPU cpu : grid.getCpus()) {
-                if (cpu.isBusy()) {
-                    CraftingJobStatus jobStatus = cpu.getJobStatus();
-
-                    // avoid null pointer exception
-                    if (jobStatus == null)
-                        continue;
-
-                    if (jobStatus.crafting().what().equals(stack.getRight()))
-                        return true;
-                }
-            }
-        } else {
-            if (craftingCPU.isBusy()) {
-                CraftingJobStatus jobStatus = craftingCPU.getJobStatus();
-
-                // avoid null pointer exception
-                if (jobStatus == null)
-                    return false;
-
-                return jobStatus.crafting().what().equals(stack.getRight());
+                return filter.testAE(jobStatus.crafting());
             }
         }
 

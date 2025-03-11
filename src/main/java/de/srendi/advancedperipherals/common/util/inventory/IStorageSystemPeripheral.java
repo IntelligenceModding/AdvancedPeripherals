@@ -6,9 +6,10 @@ import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.MethodResult;
 import dan200.computercraft.api.peripheral.IComputerAccess;
 import de.srendi.advancedperipherals.common.util.ServerWorker;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.function.Supplier;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Supplier;
 
 /**
  * Implementation for common storage peripheral functions. Used for AE2 {@link de.srendi.advancedperipherals.common.addons.computercraft.peripheral.MeBridgePeripheral}
@@ -18,7 +19,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * In case there is a new mod which adds new ways to store and craft items, this ensures that the new peripheral
  * has the same functions as the other ones
  * <p>
- * Implementation needs to override {@link dan200.computercraft.api.lua.LuaFunction}
+ * Implemented functions need to override {@link dan200.computercraft.api.lua.LuaFunction}
  */
 public interface IStorageSystemPeripheral {
 
@@ -32,17 +33,17 @@ public interface IStorageSystemPeripheral {
 
     MethodResult getChemical(IArguments arguments) throws LuaException;
 
-    MethodResult listItems();
+    MethodResult listItems(IArguments arguments) throws LuaException;
 
-    MethodResult listFluids();
+    MethodResult listFluids(IArguments arguments) throws LuaException;
 
-    MethodResult listChemicals();
+    MethodResult listChemicals(IArguments arguments) throws LuaException;
 
-    MethodResult listCraftableItems();
+    MethodResult listCraftableItems(IArguments arguments) throws LuaException;
 
-    MethodResult listCraftableFluids();
+    MethodResult listCraftableFluids(IArguments arguments) throws LuaException;
 
-    MethodResult listCraftableChemicals();
+    MethodResult listCraftableChemicals(IArguments arguments) throws LuaException;
 
     MethodResult listCells();
 
@@ -58,11 +59,7 @@ public interface IStorageSystemPeripheral {
 
     MethodResult importChemical(IComputerAccess computer, IArguments arguments) throws LuaException;
 
-    MethodResult exportchemical(IComputerAccess computer, IArguments arguments) throws LuaException;
-
-    MethodResult getFilteredPatterns(IArguments arguments) throws LuaException;
-
-    MethodResult getPatterns();
+    MethodResult exportChemical(IComputerAccess computer, IArguments arguments) throws LuaException;
 
     MethodResult getStoredEnergy();
 
@@ -108,30 +105,24 @@ public interface IStorageSystemPeripheral {
 
     MethodResult getAvailableChemicalStorage();
 
-    MethodResult craftItem(IComputerAccess computer, IArguments arguments) throws LuaException;
-
-    MethodResult getCraftingJobs();
+    MethodResult getCraftingTasks();
 
     // A function to get our BasicCraftJob object with the id
-    MethodResult getCraftingJob(int id);
+    MethodResult getCraftingTask(int id);
 
-    MethodResult cancelCraftingJobs(IArguments arguments) throws LuaException;
+    MethodResult cancelCraftingTasks(IArguments arguments) throws LuaException;
+
+    MethodResult craftItem(IComputerAccess computer, IArguments arguments) throws LuaException;
 
     MethodResult craftFluid(IComputerAccess computer, IArguments arguments) throws LuaException;
 
     MethodResult craftChemical(IComputerAccess computer, IArguments arguments) throws LuaException;
 
-    MethodResult isItemCraftable(IArguments arguments) throws LuaException;
+    MethodResult isCraftable(IArguments arguments) throws LuaException;
 
-    MethodResult isItemCrafting(IArguments arguments) throws LuaException;
+    MethodResult isCrafting(IArguments arguments) throws LuaException;
 
-    MethodResult isFluidCraftable(IArguments arguments) throws LuaException;
-
-    MethodResult isFluidCrafting(IArguments arguments) throws LuaException;
-
-    MethodResult isChemicalCraftable(IArguments arguments) throws LuaException;
-
-    MethodResult isChemicalCrafting(IArguments arguments) throws LuaException;
+    MethodResult getPatterns(IArguments arguments) throws LuaException;
 
     // TODO: In 1.20.1 we should use the mainThread descriptor instead
     @Deprecated(forRemoval = true, since = "1.20.1")
@@ -150,6 +141,7 @@ public interface IStorageSystemPeripheral {
             });
         }
 
+        @NotNull
         @Override
         public MethodResult resume(Object[] datas) {
             if (!(datas[0] instanceof String event) || !(datas[1] instanceof Number taskId)) {

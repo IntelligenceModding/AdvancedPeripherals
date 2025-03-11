@@ -39,6 +39,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -216,7 +217,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
     @Override
     @LuaFunction(mainThread = true)
-    public final MethodResult listItems() {
+    public final MethodResult listItems(IArguments arguments) {
         if (!isAvailable())
             return notConnected();
 
@@ -225,7 +226,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
     @Override
     @LuaFunction(mainThread = true)
-    public final MethodResult listFluids() {
+    public final MethodResult listFluids(IArguments arguments) {
         if (!isAvailable())
             return notConnected();
 
@@ -233,13 +234,13 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     }
 
     @Override
-    public MethodResult listChemicals() {
+    public MethodResult listChemicals(IArguments arguments) {
         return null;
     }
 
     @Override
     @LuaFunction(mainThread = true)
-    public final MethodResult listCraftableItems() {
+    public final MethodResult listCraftableItems(IArguments arguments) {
         if (!isAvailable())
             return notConnected();
 
@@ -248,7 +249,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
     @Override
     @LuaFunction(mainThread = true)
-    public final MethodResult listCraftableFluids() {
+    public final MethodResult listCraftableFluids(IArguments arguments) {
         if (!isAvailable())
             return notConnected();
 
@@ -256,7 +257,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     }
 
     @Override
-    public MethodResult listCraftableChemicals() {
+    public MethodResult listCraftableChemicals(IArguments arguments) {
         return null;
     }
 
@@ -316,19 +317,14 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
     @Override
     @LuaFunction(mainThread = true)
-    public MethodResult getFilteredPatterns(IArguments arguments) throws LuaException {
+    public MethodResult getPatterns(IArguments arguments) throws LuaException {
         if (!isAvailable())
             return notConnected();
 
         // Expected input is a table with either an input table, an output table or both to filter for both
-        Map<?, ?> filterTable;
-        try {
-            Optional<Map<?, ?>> optionalTable = arguments.optTable(0);
-            if (optionalTable.isEmpty())
-                return MethodResult.of(null, "EMPTY_INPUT");
-            filterTable = optionalTable.get();
-        } catch (LuaException e) {
-            return MethodResult.of(null, "NO_TABLE");
+        Map<?, ?> filterTable = arguments.optTable(0, Collections.emptyMap());
+        if (filterTable.isEmpty()) {
+            return MethodResult.of(AppEngApi.getPatterns(node.getGrid(), getLevel()));
         }
 
         boolean hasInputFilter = filterTable.containsKey("input");
@@ -359,15 +355,6 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
             return MethodResult.of(null, pattern.getRight());
 
         return MethodResult.of(AppEngApi.parsePattern(pattern.getLeft()));
-    }
-
-    @Override
-    @LuaFunction(mainThread = true)
-    public MethodResult getPatterns() {
-        if (!isAvailable())
-            return notConnected();
-
-        return MethodResult.of(AppEngApi.listPatterns(node.getGrid(), getLevel()));
     }
 
     @Override
@@ -634,7 +621,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
     @Override
     @LuaFunction(mainThread = true)
-    public MethodResult getCraftingJobs() {
+    public MethodResult getCraftingTasks() {
         if (!isAvailable())
             return notConnected();
 
@@ -653,7 +640,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
     @Override
     @LuaFunction(mainThread = true)
-    public MethodResult getCraftingJob(int id) {
+    public MethodResult getCraftingTask(int id) {
         if (!isAvailable())
             return notConnected();
 
@@ -669,7 +656,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
     @Override
     @LuaFunction(mainThread = true)
-    public MethodResult cancelCraftingJobs(IArguments arguments) {
+    public MethodResult cancelCraftingTasks(IArguments arguments) {
         if (!isAvailable())
             return notConnected();
 
@@ -685,7 +672,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
             return MethodResult.of(null, "NO_TABLE");
         }
 
-        Pair<? extends GenericFilter, String> filter = GenericFilter.parseGeneric(filterTable);
+        Pair<? extends GenericFilter<?>, String> filter = GenericFilter.parseGeneric(filterTable);
         if (filter.getRight() != null)
             return MethodResult.of(null, filter.getRight());
 
@@ -703,72 +690,19 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
     @Override
     @LuaFunction(mainThread = true)
-    public final MethodResult isItemCraftable(IArguments arguments) throws LuaException {
+    public final MethodResult isCraftable(IArguments arguments) throws LuaException {
         if (!isAvailable())
             return notConnected();
 
-        Pair<ItemFilter, String> filter = ItemFilter.parse(arguments.getTable(0));
-        if (filter.rightPresent())
-            return MethodResult.of(false, filter.getRight());
+        Pair<? extends GenericFilter<?>, String> filter = GenericFilter.parseGeneric(arguments.getTable(0));
+        if (filter.getRight() != null)
+            return MethodResult.of(null, filter.getRight());
 
-        ItemFilter parsedFilter = filter.getLeft();
+        GenericFilter<?> parsedFilter = filter.getLeft();
         if (parsedFilter.isEmpty())
             return MethodResult.of(false, "EMPTY_FILTER");
 
-        AEItemKey item = AEItemKey.of(parsedFilter.toItemStack());
-
-        return MethodResult.of(getCraftingService().isCraftable(item));
-    }
-
-    @Override
-    @LuaFunction(mainThread = true)
-    public final MethodResult isFluidCrafting(IArguments arguments) throws LuaException {
-        if (!isAvailable())
-            return notConnected();
-
-        MEStorage monitor = AppEngApi.getMonitor(node);
-        ICraftingService grid = node.getGrid().getService(ICraftingService.class);
-
-        Pair<FluidFilter, String> filter = FluidFilter.parse(arguments.getTable(0));
-        if (filter.rightPresent())
-            return MethodResult.of(false, filter.getRight());
-
-        FluidFilter parsedFilter = filter.getLeft();
-        if (parsedFilter.isEmpty())
-            return MethodResult.of(false, "EMPTY_FILTER");
-        String cpuName = arguments.optString(1, "");
-        ICraftingCPU craftingCPU = AppEngApi.getCraftingCPU(node, cpuName);
-
-        return MethodResult.of(AppEngApi.isFluidCrafting(monitor, grid, parsedFilter, craftingCPU));
-    }
-
-    @Override
-    public MethodResult isChemicalCraftable(IArguments arguments) throws LuaException {
-        return null;
-    }
-
-    @Override
-    public MethodResult isChemicalCrafting(IArguments arguments) throws LuaException {
-        return null;
-    }
-
-    @Override
-    @LuaFunction(mainThread = true)
-    public final MethodResult isFluidCraftable(IArguments arguments) throws LuaException {
-        if (!isAvailable())
-            return notConnected();
-
-        Pair<FluidFilter, String> filter = FluidFilter.parse(arguments.getTable(0));
-        if (filter.rightPresent())
-            return MethodResult.of(false, filter.getRight());
-
-        FluidFilter parsedFilter = filter.getLeft();
-        if (parsedFilter.isEmpty())
-            return MethodResult.of(false, "EMPTY_FILTER");
-
-        AEFluidKey fluid = AEFluidKey.of(parsedFilter.toFluidStack());
-
-        return MethodResult.of(getCraftingService().isCraftable(fluid));
+        return MethodResult.of(AppEngApi.findPatternFromFilters(node.getGrid(), getLevel(), null, parsedFilter).getLeft() != null);
     }
 
     @Override
@@ -795,7 +729,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     }
 
     @Override
-    public MethodResult exportchemical(IComputerAccess computer, IArguments arguments) throws LuaException {
+    public MethodResult exportChemical(IComputerAccess computer, IArguments arguments) throws LuaException {
         return null;
     }
 
@@ -819,24 +753,25 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
     @Override
     @LuaFunction(mainThread = true)
-    public final MethodResult isItemCrafting(IArguments arguments) throws LuaException {
+    public final MethodResult isCrafting(IArguments arguments) throws LuaException {
         if (!isAvailable())
             return notConnected();
 
         MEStorage monitor = AppEngApi.getMonitor(node);
         ICraftingService grid = node.getGrid().getService(ICraftingService.class);
 
-        Pair<ItemFilter, String> filter = ItemFilter.parse(arguments.getTable(0));
-        if (filter.rightPresent())
-            return MethodResult.of(false, filter.getRight());
+        Pair<? extends GenericFilter<?>, String> filter = GenericFilter.parseGeneric(arguments.getTable(0));
+        if (filter.getRight() != null)
+            return MethodResult.of(null, filter.getRight());
 
-        ItemFilter parsedFilter = filter.getLeft();
+        GenericFilter<?> parsedFilter = filter.getLeft();
         if (parsedFilter.isEmpty())
             return MethodResult.of(false, "EMPTY_FILTER");
+
         String cpuName = arguments.optString(1, "");
         ICraftingCPU craftingCPU = AppEngApi.getCraftingCPU(node, cpuName);
 
-        return MethodResult.of(AppEngApi.isItemCrafting(monitor, grid, parsedFilter, craftingCPU));
+        return MethodResult.of(AppEngApi.isCrafting(monitor, grid, parsedFilter, craftingCPU));
     }
 
     @LuaFunction(mainThread = true)
