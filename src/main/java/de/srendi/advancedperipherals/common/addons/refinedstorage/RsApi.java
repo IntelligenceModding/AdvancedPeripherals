@@ -2,6 +2,7 @@ package de.srendi.advancedperipherals.common.addons.refinedstorage;
 
 import com.refinedmods.refinedstorage.api.autocrafting.Ingredient;
 import com.refinedmods.refinedstorage.api.autocrafting.Pattern;
+import com.refinedmods.refinedstorage.api.autocrafting.status.TaskStatus;
 import com.refinedmods.refinedstorage.api.network.Network;
 import com.refinedmods.refinedstorage.api.network.autocrafting.AutocraftingNetworkComponent;
 import com.refinedmods.refinedstorage.api.network.impl.node.externalstorage.ExposedExternalStorage;
@@ -27,6 +28,7 @@ import com.refinedmods.refinedstorage.mekanism.ChemicalResource;
 import com.refinedmods.refinedstorage.neoforge.api.RefinedStorageNeoForgeApi;
 import com.refinedmods.refinedstorage.neoforge.support.resource.VariantUtil;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
+import de.srendi.advancedperipherals.common.blocks.blockentities.RsBridgeEntity;
 import de.srendi.advancedperipherals.common.setup.BlockEntityTypes;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
 import de.srendi.advancedperipherals.common.util.Pair;
@@ -44,6 +46,7 @@ import org.apache.logging.log4j.Level;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -55,7 +58,7 @@ import java.util.stream.Collectors;
 /**
  * Refined Storage Api helper methods and parsers
  */
-public class RefinedStorageApi {
+public class RsApi {
 
     public static void registerCapabilities(@NotNull RegisterCapabilitiesEvent event) {
         event.registerBlockEntity(
@@ -404,6 +407,16 @@ public class RefinedStorageApi {
         return used;
     }
 
+    public static List<Object> getCraftingTasks(RsBridgeEntity entity) {
+        List<Object> tasks = new ArrayList<>();
+
+        for (RSCraftJob task : entity.getJobs()) {
+            tasks.add(parseCraftingTask(task));
+        }
+
+        return tasks;
+    }
+
     public static Map<String, Object> getObjectFromResourceKey(@NotNull ResourceKey resource) {
         return getObjectFromResourceKey(resource, 0);
     }
@@ -498,12 +511,25 @@ public class RefinedStorageApi {
         return properties;
     }
 
+    public static Object parseCraftingTask(RSCraftJob task) {
+        Map<String, Object> properties = new HashMap<>();
+
+        TaskStatus status = task.getCraftingTask();
+
+        properties.put("bridge_id", task.getId());
+        properties.put("id", status.info().id().toString());
+        properties.put("quantity", status.info().amount());
+        properties.put("completion", status.percentageCompleted());
+
+        return properties;
+    }
+
     public static Object parsePattern(Pattern pattern) {
         if (pattern == null)
             return null;
 
-        Map<String, Object> map = new HashMap<>();
-        map.put("outputs", pattern.layout().outputs().stream().map(RefinedStorageApi::getObjectFromResourceAmount).toList());
+        Map<String, Object> propeties = new HashMap<>();
+        propeties.put("outputs", pattern.layout().outputs().stream().map(RsApi::getObjectFromResourceAmount).toList());
 
         List<List<Map<String, Object>>> inputs = pattern.layout().ingredients().stream()
                 .map(ingredient -> ingredient.inputs().stream()
@@ -511,10 +537,10 @@ public class RefinedStorageApi {
                         .collect(Collectors.toList()))
                 .collect(Collectors.toList());
 
-        map.put("inputs", inputs);
-        map.put("patterntype", pattern.layout().type().toString());
-        map.put("id", pattern.id().toString());
-        return map;
+        propeties.put("inputs", inputs);
+        propeties.put("patterntype", pattern.layout().type().toString());
+        propeties.put("id", pattern.id().toString());
+        return propeties;
     }
 
     /**

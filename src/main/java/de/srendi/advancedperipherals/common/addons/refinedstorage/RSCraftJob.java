@@ -3,6 +3,7 @@ package de.srendi.advancedperipherals.common.addons.refinedstorage;
 import com.refinedmods.refinedstorage.api.autocrafting.preview.Preview;
 import com.refinedmods.refinedstorage.api.autocrafting.preview.PreviewType;
 import com.refinedmods.refinedstorage.api.autocrafting.status.TaskStatus;
+import com.refinedmods.refinedstorage.api.autocrafting.task.TaskId;
 import com.refinedmods.refinedstorage.api.network.autocrafting.AutocraftingNetworkComponent;
 import com.refinedmods.refinedstorage.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage.api.storage.Actor;
@@ -22,7 +23,8 @@ public class RSCraftJob extends BasicCraftJob {
     private final ResourceKey toCraft;
 
     private TaskStatus craftingTask;
-    private Future<Optional<Preview>> futureTask;
+    private Future<Optional<Preview>> futureCalculationResult;
+    private Future<Optional<TaskId>> futureTask;
 
     public RSCraftJob(IComputerAccess computer, Level world, long amount, ResourceKey toCraft, AutocraftingNetworkComponent calculationResult) {
         super(computer, "rs", world, amount);
@@ -42,7 +44,7 @@ public class RSCraftJob extends BasicCraftJob {
 
     @Override
     public Object getParsedRequestedItem() {
-        return RefinedStorageApi.getObjectFromResourceKey(toCraft, amount);
+        return RsApi.getObjectFromResourceKey(toCraft, amount);
     }
 
     @Override
@@ -106,15 +108,50 @@ public class RSCraftJob extends BasicCraftJob {
     }
 
     @Override
+    public void tick() {
+        super.tick();
+        // The following is to get the TaskStatus from the issued task
+        if (futureTask == null || !futureTask.isDone() || craftingTask != null) {
+            return;
+        }
+        Optional<TaskId> optionalId;
+
+        try {
+            optionalId = futureTask.get();
+        } catch (InterruptedException | ExecutionException e) {
+            AdvancedPeripherals.debug("Tried to get the task but the task was not done. Should be done", org.apache.logging.log4j.Level.ERROR);
+            fireEvent(true, StatusConstants.UNKNOWN_ERROR);
+            return;
+        }
+
+        if (optionalId.isEmpty()) {
+            // This indicates that the second calculation was not successful. Well I guess. There is no java doc and I currently
+            // don't get an answer from the maintainer. So maybe we want to fire the crafting event
+            return;
+        }
+
+        TaskId id = optionalId.get();
+        for (TaskStatus status : autocraftingComponent.getStatuses()) {
+            if (status.info().id() == id) {
+                this.craftingTask = status;
+
+                // And only now we set that the crafting is started.
+                setStartedCrafting();
+            }
+
+        }
+    }
+
+    @Override
     protected void maybeCraft() {
-        if (startedCrafting || futureTask == null || !futureTask.isDone()) {
+        if (startedCrafting || futureTask != null || futureCalculationResult == null || !futureCalculationResult.isDone()) {
             return;
         }
 
         Optional<Preview> optionalPreview;
 
         try {
-            optionalPreview = futureTask.get();
+            optionalPreview = futureCalculationResult.get();
         } catch (ExecutionException | InterruptedException ex) {
             AdvancedPeripherals.debug("Tried to get preview, but preview calculation is not done. Should be done.", org.apache.logging.log4j.Level.ERROR);
             ex.printStackTrace();
@@ -146,8 +183,7 @@ public class RSCraftJob extends BasicCraftJob {
 
         // How RS2 handles crafting is a bit cursed. We first create a preview which calculates the recipes, and then we check if the preview was successful
         // If it was, we again start a task which again calculates the recipes, and then we hope nothing changed from the first calculation
-        autocraftingComponent.startTask(toCraft, amount, Actor.EMPTY, false);
-        setStartedCrafting();
+        futureTask = autocraftingComponent.startTask(toCraft, amount, Actor.EMPTY, false);
     }
 
     @Override
@@ -162,7 +198,7 @@ public class RSCraftJob extends BasicCraftJob {
             return;
         }
 
-        futureTask = autocraftingComponent.getPreview(toCraft, amount);
+        futureCalculationResult = autocraftingComponent.getPreview(toCraft, amount);
         fireEvent(false, StatusConstants.CALCULATION_STARTED);
     }
 

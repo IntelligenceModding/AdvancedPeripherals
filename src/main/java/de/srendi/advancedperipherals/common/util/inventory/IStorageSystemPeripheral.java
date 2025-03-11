@@ -96,27 +96,19 @@ public interface IStorageSystemPeripheral {
     MethodResult getCraftingTasks();
 
     // A function to get our BasicCraftJob object with the id
-    MethodResult getCraftingJob(int id);
+    MethodResult getCraftingTask(int id);
 
     MethodResult cancelCraftingTasks(IArguments arguments) throws LuaException;
 
-    MethodResult craftFluid(IComputerAccess computer, IArguments arguments) throws LuaException;
-
     MethodResult craftItem(IComputerAccess computer, IArguments arguments) throws LuaException;
+
+    MethodResult craftFluid(IComputerAccess computer, IArguments arguments) throws LuaException;
 
     MethodResult craftChemical(IComputerAccess computer, IArguments arguments) throws LuaException;
 
-    MethodResult isItemCraftable(IArguments arguments) throws LuaException;
+    MethodResult isCraftable(IArguments arguments) throws LuaException;
 
-    MethodResult isItemCrafting(IArguments arguments) throws LuaException;
-
-    MethodResult isFluidCraftable(IArguments arguments) throws LuaException;
-
-    MethodResult isFluidCrafting(IArguments arguments) throws LuaException;
-
-    MethodResult isChemicalCraftable(IArguments arguments) throws LuaException;
-
-    MethodResult isChemicalCrafting(IArguments arguments) throws LuaException;
+    MethodResult isCrafting(IArguments arguments) throws LuaException;
 
     MethodResult getPatterns(IArguments arguments) throws LuaException;
 

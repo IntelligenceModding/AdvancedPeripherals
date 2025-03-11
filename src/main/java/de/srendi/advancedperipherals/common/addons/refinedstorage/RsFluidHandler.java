@@ -35,7 +35,7 @@ public class RsFluidHandler implements IStorageSystemFluidHandler {
     @Override
     public FluidStack drain(FluidFilter filter, FluidAction simulate) {
         AdvancedPeripherals.debug("Trying to extract fluid from filter: " + filter);
-        FluidResource fluid = RefinedStorageApi.getFluid(network, filter);
+        FluidResource fluid = RsApi.getFluid(network, filter);
         if (fluid == null)
             return FluidStack.EMPTY;
 

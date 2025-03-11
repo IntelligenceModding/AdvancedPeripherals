@@ -193,7 +193,7 @@ public abstract class BasicCraftJob {
         this.errorOccurred = error;
     }
 
-    public final void tick() {
+    public void tick() {
         startCalculation();
         maybeCraft();
     }
