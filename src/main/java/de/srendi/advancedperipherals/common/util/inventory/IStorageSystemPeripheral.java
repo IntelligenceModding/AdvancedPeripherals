@@ -29,13 +29,19 @@ public interface IStorageSystemPeripheral {
 
     MethodResult getFluid(IArguments arguments) throws LuaException;
 
+    MethodResult getChemical(IArguments arguments) throws LuaException;
+
     MethodResult listItems(IArguments arguments) throws LuaException;
 
     MethodResult listFluids(IArguments arguments) throws LuaException;
 
+    MethodResult listChemicals(IArguments arguments) throws LuaException;
+
     MethodResult listCraftableItems(IArguments arguments) throws LuaException;
 
     MethodResult listCraftableFluids(IArguments arguments) throws LuaException;
+
+    MethodResult listCraftableChemicals(IArguments arguments) throws LuaException;
 
     MethodResult listCells();
 
@@ -48,6 +54,10 @@ public interface IStorageSystemPeripheral {
     MethodResult importFluid(IComputerAccess computer, IArguments arguments) throws LuaException;
 
     MethodResult exportFluid(IComputerAccess computer, IArguments arguments) throws LuaException;
+
+    MethodResult importChemical(IComputerAccess computer, IArguments arguments) throws LuaException;
+
+    MethodResult exportChemical(IComputerAccess computer, IArguments arguments) throws LuaException;
 
     MethodResult getStoredEnergy();
 

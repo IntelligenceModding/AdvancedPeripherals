@@ -36,7 +36,6 @@ import de.srendi.advancedperipherals.common.util.inventory.IStorageSystemPeriphe
 import de.srendi.advancedperipherals.common.util.inventory.InventoryUtil;
 import de.srendi.advancedperipherals.common.util.inventory.ItemFilter;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
-import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
@@ -221,6 +220,11 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     }
 
     @Override
+    public MethodResult getChemical(IArguments arguments) throws LuaException {
+        return null;
+    }
+
+    @Override
     @LuaFunction(mainThread = true)
     public MethodResult listItems(IArguments arguments) throws LuaException {
         if (!isAvailable())
@@ -255,6 +259,11 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     }
 
     @Override
+    public MethodResult listChemicals(IArguments arguments) throws LuaException {
+        return null;
+    }
+
+    @Override
     @LuaFunction(mainThread = true)
     public MethodResult listCraftableItems(IArguments arguments) throws LuaException {
         if (!isAvailable())
@@ -286,6 +295,11 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         Set<Map<String, Object>> resourceProperties = RsApi.getCraftableFluids(getNetwork(), parsedFilter);
 
         return MethodResult.of(resourceProperties);
+    }
+
+    @Override
+    public MethodResult listCraftableChemicals(IArguments arguments) throws LuaException {
+        return null;
     }
 
     @Override
@@ -370,6 +384,16 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
             return MethodResult.of(0, "The target tank does not exist. Make sure the bridge is exposed in the computer network. Reach out to our discord or our documentation for help.");
 
         return exportToTank(arguments, handler);
+    }
+
+    @Override
+    public MethodResult importChemical(IComputerAccess computer, IArguments arguments) throws LuaException {
+        return null;
+    }
+
+    @Override
+    public MethodResult exportChemical(IComputerAccess computer, IArguments arguments) throws LuaException {
+        return null;
     }
 
     @Override
@@ -692,7 +716,7 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
         GenericFilter<?> parsedFilter = filter.getLeft();
 
-        return MethodResult.of(RsApi.findPatternFromFilters(getNetwork(), null, parsedFilter).getLeft()  != null);
+        return MethodResult.of(RsApi.findPatternFromFilters(getNetwork(), null, parsedFilter).getLeft() != null);
     }
 
     @Override
@@ -711,7 +735,7 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
         for (TaskStatus status : craftingManager.getStatuses()) {
             if (parsedFilter.testRS(new ResourceAmount(status.info().resource(), 1))) {
-                 return MethodResult.of(true);
+                return MethodResult.of(true);
             }
         }
 
