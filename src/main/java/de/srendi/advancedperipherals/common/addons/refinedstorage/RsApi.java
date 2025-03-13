@@ -158,6 +158,24 @@ public class RsApi {
     }
 
     /**
+     * Returns the first mekanism chemical parsed to a lua object which fits to the filter
+     *
+     * @param network refined storage network
+     * @param filter  chemical filter instance - can be an empty filter to get the first chemical of the system see {@link ChemicalFilter#empty()}
+     * @return the first chemical in the system that fits the chemical filter or null
+     */
+    @Nullable
+    public static Map<String, Object> getParsedChemical(Network network, ChemicalFilter filter) {
+        StorageNetworkComponent storage = network.getComponent(StorageNetworkComponent.class);
+        for (TrackedResourceAmount trackedResource : storage.getResources(Actor.EMPTY.getClass())) {
+            if (trackedResource.resourceAmount().resource() instanceof ChemicalResource chemicalResource && filter.test(new ChemicalStack(chemicalResource.chemical(), trackedResource.resourceAmount().amount()))) {
+                return getObjectFromItemResource(trackedResource.resourceAmount());
+            }
+        }
+        return null;
+    }
+
+    /**
      * Returns every item from the system while also checking if the filter test passes for the items
      * The filter can be empty, see {@link ItemFilter#empty()}
      *
@@ -190,6 +208,26 @@ public class RsApi {
         StorageNetworkComponent storage = network.getComponent(StorageNetworkComponent.class);
         for (TrackedResourceAmount trackedResource : storage.getResources(Actor.EMPTY.getClass())) {
             if (trackedResource.resourceAmount().resource() instanceof FluidResource fluidResource && filter.test(VariantUtil.toFluidStack(fluidResource, trackedResource.resourceAmount().amount()))) {
+                items.add(getObjectFromFluidResource(trackedResource.resourceAmount()));
+            }
+        }
+
+        return items;
+    }
+
+    /**
+     * Returns every fluid from the system while also checking if the filter test passes for the fluids
+     * The filter can be empty, see {@link FluidFilter#empty()}
+     *
+     * @param network the rs network
+     * @param filter  The filter here is optional, if an empty filter is provided, the method will return every resource
+     * @return a set of fluid stacks
+     */
+    public static Set<Map<String, Object>> getParsedCnemicals(Network network, ChemicalFilter filter) {
+        Set<Map<String, Object>> items = new HashSet<>();
+        StorageNetworkComponent storage = network.getComponent(StorageNetworkComponent.class);
+        for (TrackedResourceAmount trackedResource : storage.getResources(Actor.EMPTY.getClass())) {
+            if (trackedResource.resourceAmount().resource() instanceof ChemicalResource fluidResource && filter.test(new ChemicalStack(fluidResource.chemical(), trackedResource.resourceAmount().amount()))) {
                 items.add(getObjectFromFluidResource(trackedResource.resourceAmount()));
             }
         }
@@ -232,6 +270,27 @@ public class RsApi {
         for (ResourceKey key : autocrafting.getOutputs()) {
             long amount = storage.get(key);
             if (key instanceof FluidResource fluidResource && filter.test(VariantUtil.toFluidStack(fluidResource, amount))) {
+                items.add(getObjectFromResourceKey(key, amount));
+            }
+        }
+        return items;
+    }
+
+    /**
+     * Returns every craftable mekanism chemical from the system while also checking if the filter test passes for the chemicals
+     * The filter can be empty, see {@link ChemicalFilter#empty()}
+     *
+     * @param network the rs network
+     * @param filter  The filter here is optional, if an empty filter is provided, the method will return every resource
+     * @return a set of parsed chemical stacks
+     */
+    public static Set<Map<String, Object>> getCraftableChemicals(Network network, ChemicalFilter filter) {
+        Set<Map<String, Object>> items = new HashSet<>();
+        AutocraftingNetworkComponent autocrafting = network.getComponent(AutocraftingNetworkComponent.class);
+        StorageNetworkComponent storage = network.getComponent(StorageNetworkComponent.class);
+        for (ResourceKey key : autocrafting.getOutputs()) {
+            long amount = storage.get(key);
+            if (key instanceof ChemicalResource chemicalResource && filter.test(new ChemicalStack(chemicalResource.chemical(), amount))) {
                 items.add(getObjectFromResourceKey(key, amount));
             }
         }
@@ -290,8 +349,8 @@ public class RsApi {
      * The error message is "NO_PATTERN_FOUND" if no pattern is found.
      */
     public static Pair<Pattern, String> findPatternFromFilters(Network network, @Nullable GenericFilter<?> inputFilter, @Nullable GenericFilter<?> outputFilter) {
-        AutocraftingNetworkComponent autocrafting = network.getComponent(AutocraftingNetworkComponent.class);
-        for (Pattern pattern : autocrafting.getPatterns()) {
+        AutocraftingNetworkComponent autocraftingComponent = network.getComponent(AutocraftingNetworkComponent.class);
+        for (Pattern pattern : autocraftingComponent.getPatterns()) {
             if (pattern.layout().ingredients().isEmpty())
                 continue;
             if (pattern.layout().outputs().isEmpty())

@@ -36,6 +36,7 @@ import de.srendi.advancedperipherals.common.util.inventory.IStorageSystemPeriphe
 import de.srendi.advancedperipherals.common.util.inventory.InventoryUtil;
 import de.srendi.advancedperipherals.common.util.inventory.ItemFilter;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
+import mekanism.api.chemical.Chemical;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
@@ -221,7 +222,22 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
     @Override
     public MethodResult getChemical(IArguments arguments) throws LuaException {
-        return null;
+        if (!isAvailable())
+            return notConnected();
+
+        Pair<ChemicalFilter, String> filter = ChemicalFilter.parse(arguments.getTable(0));
+        if (filter.rightPresent())
+            return MethodResult.of(null, filter.getRight());
+
+        ChemicalFilter parsedFilter = filter.getLeft();
+        if (parsedFilter.isEmpty())
+            return MethodResult.of(null, "EMPTY_FILTER");
+
+        Map<?, ?> resourceProperties = RsApi.getParsedChemical(getNetwork(), parsedFilter);
+        if (resourceProperties == null)
+            return MethodResult.of(null, "NOT_FOUND");
+
+        return MethodResult.of(resourceProperties);
     }
 
     @Override
@@ -260,7 +276,18 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
     @Override
     public MethodResult listChemicals(IArguments arguments) throws LuaException {
-        return null;
+        if (!isAvailable())
+            return notConnected();
+
+        Pair<ChemicalFilter, String> filter = ChemicalFilter.parse(arguments.optTable(0, Map.of()));
+        if (filter.rightPresent())
+            return MethodResult.of(null, filter.getRight());
+
+        ChemicalFilter parsedFilter = filter.getLeft();
+
+        Set<Map<String, Object>> resourceProperties = RsApi.getParsedCnemicals(getNetwork(), parsedFilter);
+
+        return MethodResult.of(resourceProperties);
     }
 
     @Override
@@ -299,7 +326,18 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
     @Override
     public MethodResult listCraftableChemicals(IArguments arguments) throws LuaException {
-        return null;
+        if (!isAvailable())
+            return notConnected();
+
+        Pair<ChemicalFilter, String> filter = ChemicalFilter.parse(arguments.optTable(0, Map.of()));
+        if (filter.rightPresent())
+            return MethodResult.of(null, filter.getRight());
+
+        ChemicalFilter parsedFilter = filter.getLeft();
+
+        Set<Map<String, Object>> resourceProperties = RsApi.getCraftableChemicals(getNetwork(), parsedFilter);
+
+        return MethodResult.of(resourceProperties);
     }
 
     @Override
