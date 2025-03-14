@@ -38,6 +38,7 @@ import de.srendi.advancedperipherals.common.util.inventory.FluidUtil;
 import de.srendi.advancedperipherals.common.util.inventory.GenericFilter;
 import de.srendi.advancedperipherals.common.util.inventory.ItemFilter;
 import de.srendi.advancedperipherals.common.util.inventory.ItemUtil;
+import mekanism.api.MekanismAPI;
 import mekanism.api.chemical.ChemicalStack;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
@@ -661,4 +662,18 @@ public class RsApi {
         return properties;
     }
 
+    public static ChemicalStack resourceToChemicalStack(ResourceAmount resourceAmount) {
+        if (resourceAmount.resource() instanceof ChemicalResource chemicalResource)
+            return new ChemicalStack(MekanismAPI.CHEMICAL_REGISTRY.createIntrusiveHolder(chemicalResource.chemical()), resourceAmount.amount());
+
+        return ChemicalStack.EMPTY;
+    }
+
+    public static ChemicalStack resourceToChemicalStack(ChemicalResource resource, long alternateCount) {
+        return new ChemicalStack(MekanismAPI.CHEMICAL_REGISTRY.createIntrusiveHolder(resource.chemical()), alternateCount);
+    }
+
+    public static ChemicalStack resourceToChemicalStack(ChemicalResource resource) {
+        return resourceToChemicalStack(resource, 1);
+    }
 }

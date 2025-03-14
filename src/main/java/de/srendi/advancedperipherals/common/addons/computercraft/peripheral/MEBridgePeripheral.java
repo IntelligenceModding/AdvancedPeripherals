@@ -99,7 +99,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (targetTank == null)
             return MethodResult.of(0, "Target Tank does not exist");
 
-        return MethodResult.of(InventoryUtil.moveFluid(fluidHandler, targetTank, filter.getLeft()), null);
+        return MethodResult.of(FluidUtil.moveFluid(fluidHandler, targetTank, filter.getLeft()), null);
     }
 
     /**
@@ -141,7 +141,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (targetTank == null)
             return MethodResult.of(0, "Target Tank does not exist");
 
-        return MethodResult.of(InventoryUtil.moveFluid(targetTank, fluidHandler, filter.getLeft()), null);
+        return MethodResult.of(FluidUtil.moveFluid(targetTank, fluidHandler, filter.getLeft()), null);
     }
 
     private MethodResult notConnected() {
