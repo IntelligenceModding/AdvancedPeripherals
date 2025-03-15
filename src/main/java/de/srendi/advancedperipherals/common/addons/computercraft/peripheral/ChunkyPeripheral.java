@@ -1,5 +1,6 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.peripheral;
 
+import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.peripheral.IComputerAccess;
 import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
@@ -42,6 +43,11 @@ public class ChunkyPeripheral extends BasePeripheral<TurtlePeripheralOwner> {
     @Override
     public boolean isEnabled() {
         return APConfig.PERIPHERALS_CONFIG.enableChunkyTurtle.get();
+    }
+
+    @LuaFunction
+    public int getRadius() {
+        return ChunkManager.getMaxLoadRadius();
     }
 
     public void updateChunkState() {

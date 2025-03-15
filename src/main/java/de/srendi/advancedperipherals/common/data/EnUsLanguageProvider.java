@@ -58,6 +58,8 @@ public class EnUsLanguageProvider extends LanguageProvider {
         addItem(APItems.OVERPOWERED_HUSBANDRY_AUTOMATA_CORE, "Overpowered Husbandry Automata Core");
         addItem(APItems.OVERPOWERED_WEAK_AUTOMATA_CORE, "Overpowered Weak Automata Core");
         addItem(APItems.WEAK_AUTOMATA_CORE, "Weak Automata Core");
+
+        addItem(APItems.CABLE_P2P_TUNNEL, "Cable P2P Tunnel");
     }
 
     private void addBlocks() {
@@ -99,6 +101,7 @@ public class EnUsLanguageProvider extends LanguageProvider {
     private void addPockets() {
         addPocket(CCRegistration.ID.CHATTY_POCKET, "Chatty");
         addPocket(CCRegistration.ID.COLONY_POCKET, "Colony");
+        addPocket(CCRegistration.ID.DISTANCE_POCKET, "Distance Detector");
         addPocket(CCRegistration.ID.ENVIRONMENT_POCKET, "Environment");
         addPocket(CCRegistration.ID.GEOSCANNER_POCKET, "Geo");
         addPocket(CCRegistration.ID.PLAYER_POCKET, "Player Detector");

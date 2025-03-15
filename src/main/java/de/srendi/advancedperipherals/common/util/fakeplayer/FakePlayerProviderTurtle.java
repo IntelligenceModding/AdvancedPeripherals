@@ -4,6 +4,7 @@ import com.mojang.authlib.GameProfile;
 import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.shared.util.WorldUtil;
 import de.srendi.advancedperipherals.common.addons.APAddons;
+import de.srendi.advancedperipherals.common.addons.valkyrienskies.ValkyrienSkies;
 import net.minecraft.commands.arguments.EntityAnchorArgument;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -15,9 +16,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.items.wrapper.InvWrapper;
-import org.joml.Matrix4dc;
-import org.joml.Vector3d;
-import org.valkyrienskies.core.api.ships.Ship;
 
 import java.util.WeakHashMap;
 
@@ -45,14 +43,8 @@ public final class FakePlayerProviderTurtle {
         Vec3 direction = Vec3.atLowerCornerOf(turtle.getDirection().getNormal());
         Vec3 position = Vec3.atCenterOf(pos);
         if (APAddons.vs2Loaded) {
-            Ship ship = APAddons.getVS2Ship(level, pos);
-            if (ship != null) {
-                Matrix4dc matrix = ship.getShipToWorld();
-                Vector3d newPos = matrix.transformPosition(new Vector3d(position.x, position.y, position.z));
-                Vector3d newDir = matrix.transformDirection(new Vector3d(direction.x, direction.y, direction.z));
-                position = new Vec3(newPos.x, newPos.y, newPos.z);
-                direction = new Vec3(newDir.x, newDir.y, newDir.z);
-            }
+            position = ValkyrienSkies.transformToWorldPos(level, pos, position);
+            direction = ValkyrienSkies.transformToWorldDir(level, pos, direction);
         }
         player.setPosRaw(position.x, position.y, position.z);
         player.lookAt(EntityAnchorArgument.Anchor.FEET, position.add(direction));

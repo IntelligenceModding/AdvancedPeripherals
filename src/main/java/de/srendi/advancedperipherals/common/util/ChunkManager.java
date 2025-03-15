@@ -39,6 +39,10 @@ public class ChunkManager extends SavedData {
         super();
     }
 
+    public static int getMaxLoadRadius() {
+        return APConfig.PERIPHERALS_CONFIG.chunkyTurtleRadius.get();
+    }
+
     public static @NotNull ChunkManager get(@NotNull ServerLevel level) {
         return level.getDataStorage().computeIfAbsent(ChunkManager::load, ChunkManager::new, DATA_NAME);
     }
@@ -81,6 +85,10 @@ public class ChunkManager extends SavedData {
         return ForgeChunkManager.forceChunk(level, AdvancedPeripherals.MOD_ID, owner, pos.x, pos.z, false, true);
     }
 
+    public synchronized int getForcedChunksCount() {
+        return this.forcedChunks.size();
+    }
+
     public synchronized boolean addForceChunk(ServerLevel level, UUID owner, ChunkPos pos) {
         AdvancedPeripherals.debug("Trying to load forced chunk cluster " + pos, Level.WARN);
         LoadChunkRecord oldRecord = forcedChunks.get(owner);
@@ -91,7 +99,7 @@ public class ChunkManager extends SavedData {
             }
             unforceChunkRecord(owner, oldRecord, oldLevel);
         }
-        final int chunkRadius = APConfig.PERIPHERALS_CONFIG.chunkyTurtleRadius.get();
+        final int chunkRadius = getMaxLoadRadius();
         forcedChunks.put(owner, new LoadChunkRecord(level.dimension().location().toString(), pos, chunkRadius));
         setDirty();
         boolean result = true;
@@ -154,7 +162,7 @@ public class ChunkManager extends SavedData {
         initialized = true;
 
         AdvancedPeripherals.debug(String.format("Schedule chunk manager init, forcedChunks = %d", forcedChunks.size()), Level.WARN);
-        final int chunkRadius = APConfig.PERIPHERALS_CONFIG.chunkyTurtleRadius.get();
+        final int chunkRadius = getMaxLoadRadius();
         final Map<String, ServerLevel> levels = getServerLevels();
         forcedChunks.forEach((uuid, value) -> {
             String dimensionName = value.getDimensionName();

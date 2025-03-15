@@ -5,6 +5,7 @@ import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.lua.MethodResult;
 import dan200.computercraft.api.pocket.IPocketAccess;
+import dan200.computercraft.api.pocket.IPocketUpgrade;
 import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.BlockEntityPeripheralOwner;
@@ -13,6 +14,7 @@ import de.srendi.advancedperipherals.common.addons.computercraft.owner.PocketPer
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.TurtlePeripheralOwner;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralBlockEntity;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
+import de.srendi.advancedperipherals.common.events.Events;
 import de.srendi.advancedperipherals.common.util.CoordUtil;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
@@ -32,6 +34,7 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
 
     public static final String PERIPHERAL_TYPE = "player_detector";
     private static final int MAX_RANGE = APConfig.PERIPHERALS_CONFIG.playerDetMaxRange.get();
+    private long lastConsumedMessage = Events.getLastPlayerMessageID() - 1;
 
     public PlayerDetectorPeripheral(PeripheralBlockEntity<?> tileEntity) {
         super(PERIPHERAL_TYPE, new BlockEntityPeripheralOwner<>(tileEntity));
@@ -41,8 +44,8 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
         super(PERIPHERAL_TYPE, new TurtlePeripheralOwner(access, side));
     }
 
-    public PlayerDetectorPeripheral(IPocketAccess pocket) {
-        super(PERIPHERAL_TYPE, new PocketPeripheralOwner(pocket));
+    public PlayerDetectorPeripheral(IPocketAccess pocket, IPocketUpgrade upgrade) {
+        super(PERIPHERAL_TYPE, new PocketPeripheralOwner(pocket, upgrade));
     }
 
     private boolean isAllowedMultiDimensional() {
@@ -73,7 +76,7 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
             if (!isAllowedMultiDimensional() && player.getLevel().dimension() != dimension) {
                 continue;
             }
-            if (CoordUtil.isInRange(getWorldPos(), player, getLevel(), firstPos, secondPos, MAX_RANGE)) {
+            if (CoordUtil.isInRange(getPhysicsPos(), player, getLevel(), firstPos, secondPos, MAX_RANGE)) {
                 playersName.add(player.getName().getString());
             }
         }
@@ -86,7 +89,7 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
         ResourceKey<Level> dimension = getLevel().dimension();
 
         for (ServerPlayer player : getPlayers()) {
-            if (player.getLevel().dimension() == dimension && CoordUtil.isInRange(getWorldPos(), getLevel(), player, x, y, z, MAX_RANGE)) {
+            if (player.getLevel().dimension() == dimension && CoordUtil.isInRange(getPhysicsPos(), getLevel(), player, x, y, z, MAX_RANGE)) {
                 playersName.add(player.getName().getString());
             }
         }
@@ -99,7 +102,7 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
         ResourceKey<Level> dimension = getLevel().dimension();
 
         for (ServerPlayer player : getPlayers()) {
-            if (player.getLevel().dimension() == dimension && CoordUtil.isInRange(getWorldPos(), getLevel(), player, range, MAX_RANGE)) {
+            if (player.getLevel().dimension() == dimension && CoordUtil.isInRange(getPhysicsPos(), getLevel(), player, range, MAX_RANGE)) {
                 playersName.add(player.getName().getString());
             }
         }
@@ -118,7 +121,7 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
             if (!isAllowedMultiDimensional() && player.getLevel().dimension() != dimension) {
                 continue;
             }
-            if (CoordUtil.isInRange(getWorldPos(), player, getLevel(), firstPos, secondPos, MAX_RANGE)) {
+            if (CoordUtil.isInRange(getPhysicsPos(), player, getLevel(), firstPos, secondPos, MAX_RANGE)) {
                 return true;
             }
         }
@@ -132,7 +135,7 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
         ResourceKey<Level> dimension = getLevel().dimension();
 
         for (ServerPlayer player : getPlayers()) {
-            if (player.getLevel().dimension() == dimension && CoordUtil.isInRange(getWorldPos(), getLevel(), player, x, y, z, MAX_RANGE)) {
+            if (player.getLevel().dimension() == dimension && CoordUtil.isInRange(getPhysicsPos(), getLevel(), player, x, y, z, MAX_RANGE)) {
                 return true;
             }
         }
@@ -146,7 +149,7 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
         ResourceKey<Level> dimension = getLevel().dimension();
 
         for (ServerPlayer player : getPlayers()) {
-            if (player.getLevel().dimension() == dimension && CoordUtil.isInRange(getWorldPos(), getLevel(), player, range, MAX_RANGE)) {
+            if (player.getLevel().dimension() == dimension && CoordUtil.isInRange(getPhysicsPos(), getLevel(), player, range, MAX_RANGE)) {
                 return true;
             }
         }
@@ -163,7 +166,7 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
         if (!isAllowedMultiDimensional() && player.getLevel().dimension() != dimension) {
             return false;
         }
-        return CoordUtil.isInRange(getWorldPos(), player, getLevel(), firstPos, secondPos, MAX_RANGE);
+        return CoordUtil.isInRange(getPhysicsPos(), player, getLevel(), firstPos, secondPos, MAX_RANGE);
     }
 
     @LuaFunction(mainThread = true)
@@ -171,7 +174,7 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
         ResourceKey<Level> dimension = getLevel().dimension();
 
         ServerPlayer player = getPlayer(username);
-        return player.getLevel().dimension() == dimension && CoordUtil.isInRange(getWorldPos(), getLevel(), player, x, y, z, MAX_RANGE);
+        return player.getLevel().dimension() == dimension && CoordUtil.isInRange(getPhysicsPos(), getLevel(), player, x, y, z, MAX_RANGE);
     }
 
     @LuaFunction(mainThread = true)
@@ -179,7 +182,7 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
         ResourceKey<Level> dimension = getLevel().dimension();
 
         ServerPlayer player = getPlayer(username);
-        return player.getLevel().dimension() == dimension && CoordUtil.isInRange(getWorldPos(), getLevel(), player, range, MAX_RANGE);
+        return player.getLevel().dimension() == dimension && CoordUtil.isInRange(getPhysicsPos(), getLevel(), player, range, MAX_RANGE);
     }
 
     @LuaFunction(value = {"getPlayerPos", "getPlayer"}, mainThread = true)
@@ -187,7 +190,7 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
         if (!APConfig.PERIPHERALS_CONFIG.playerSpy.get())
             throw new LuaException("This function is disabled in the config. Activate it or ask an admin if he can activate it.");
         ResourceKey<Level> dimension = getLevel().dimension();
-        Vec3 pos = getWorldPos();
+        Vec3 pos = getPhysicsPos();
 
         ServerPlayer player = getPlayer(arguments.getString(0));
         if (player == null) {
@@ -263,5 +266,14 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
 
     private ServerPlayer getPlayer(String name) {
         return ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayerByName(name);
+    }
+
+    @Override
+    public void update() {
+        lastConsumedMessage = Events.traversePlayerMessages(lastConsumedMessage, message -> getConnectedComputers().forEach(computer -> {
+            if(message.eventName().equals("playerChangedDimension")) {
+                computer.queueEvent(message.eventName(), message.playerName(), message.fromDimension(), message.toDimension());
+            } else computer.queueEvent(message.eventName(), message.playerName(), message.fromDimension());
+        }));
     }
 }

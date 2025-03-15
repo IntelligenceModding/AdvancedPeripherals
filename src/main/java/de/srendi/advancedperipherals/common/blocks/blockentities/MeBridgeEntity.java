@@ -12,9 +12,9 @@ import appeng.api.networking.security.IActionSource;
 import appeng.api.stacks.AEItemKey;
 import appeng.api.storage.StorageHelper;
 import appeng.api.util.AECableType;
-import de.srendi.advancedperipherals.common.addons.appliedenergistics.AppEngApi;
-import de.srendi.advancedperipherals.common.addons.appliedenergistics.CraftJob;
-import de.srendi.advancedperipherals.common.addons.appliedenergistics.MeBridgeEntityListener;
+import de.srendi.advancedperipherals.common.addons.ae2.AppEngApi;
+import de.srendi.advancedperipherals.common.addons.ae2.CraftJob;
+import de.srendi.advancedperipherals.common.addons.ae2.MeBridgeEntityListener;
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.MeBridgePeripheral;
 import de.srendi.advancedperipherals.common.blocks.base.IInventoryBlock;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralBlockEntity;
@@ -54,8 +54,13 @@ public class MeBridgeEntity extends PeripheralBlockEntity<MeBridgePeripheral> im
 
     @Override
     public <T extends BlockEntity> void handleTick(Level level, BlockState state, BlockEntityType<T> type) {
-        if (!this.level.isClientSide) {
+        super.handleTick(level, state, type);
+        if (!this.level.isClientSide()) {
             if (!initialized) {
+                MeBridgePeripheral peripheral = this.getPeripheral();
+                if (peripheral == null) {
+                    return;
+                }
 
                 mainNode.setFlags(GridFlags.REQUIRE_CHANNEL);
                 mainNode.setIdlePowerUsage(APConfig.PERIPHERALS_CONFIG.meConsumption.get());
@@ -63,9 +68,6 @@ public class MeBridgeEntity extends PeripheralBlockEntity<MeBridgePeripheral> im
                 mainNode.setInWorldNode(true);
                 mainNode.create(level, getBlockPos());
 
-                //peripheral can be null if `getCapability` was not called before
-                if (peripheral == null)
-                    peripheral = createPeripheral();
                 peripheral.setNode(mainNode);
                 initialized = true;
             }

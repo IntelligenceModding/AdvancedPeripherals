@@ -1,6 +1,7 @@
 package de.srendi.advancedperipherals.common.data;
 
 import de.srendi.advancedperipherals.AdvancedPeripherals;
+import de.srendi.advancedperipherals.common.addons.ae2.AE2Registries;
 import de.srendi.advancedperipherals.common.setup.APItems;
 import de.srendi.advancedperipherals.common.setup.APTags;
 import net.minecraft.core.Registry;
@@ -18,6 +19,9 @@ public class ItemTagsProvider extends TagsProvider<Item> {
 
     @Override
     protected void addTags() {
-        tag(APTags.Items.SMART_GLASSES).add(APItems.SMART_GLASSES.get()).add(APItems.SMART_GLASSES_NETHERITE.get());
+        tag(APTags.Items.SMART_GLASSES)
+            .add(APItems.SMART_GLASSES.get())
+            .add(APItems.SMART_GLASSES_NETHERITE.get());
+        AE2Registries.registerTags(this::tag);
     }
 }

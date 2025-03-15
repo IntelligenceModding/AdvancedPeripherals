@@ -7,6 +7,7 @@ import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.addons.computercraft.integrations.IntegrationPeripheralProvider;
 import de.srendi.advancedperipherals.common.addons.computercraft.pocket.PocketChatBoxUpgrade;
 import de.srendi.advancedperipherals.common.addons.computercraft.pocket.PocketColonyIntegratorUpgrade;
+import de.srendi.advancedperipherals.common.addons.computercraft.pocket.PocketDistanceDetectorUpgrade;
 import de.srendi.advancedperipherals.common.addons.computercraft.pocket.PocketEnvironmentUpgrade;
 import de.srendi.advancedperipherals.common.addons.computercraft.pocket.PocketGeoScannerUpgrade;
 import de.srendi.advancedperipherals.common.addons.computercraft.pocket.PocketPlayerDetectorUpgrade;
@@ -46,6 +47,7 @@ public class CCRegistration {
 
     public static final RegistryObject<PocketUpgradeSerialiser<PocketChatBoxUpgrade>> CHAT_BOX_POCKET = APRegistration.POCKET_SERIALIZER.register(ID.CHATTY_POCKET.getPath(), () -> PocketUpgradeSerialiser.simpleWithCustomItem(PocketChatBoxUpgrade::new));
     public static final RegistryObject<PocketUpgradeSerialiser<PocketColonyIntegratorUpgrade>> COLONY_POCKET = APRegistration.POCKET_SERIALIZER.register(ID.COLONY_POCKET.getPath(), () -> PocketUpgradeSerialiser.simpleWithCustomItem(PocketColonyIntegratorUpgrade::new));
+    public static final RegistryObject<PocketUpgradeSerialiser<PocketDistanceDetectorUpgrade>> DISTANCE_DETECTOR_POCKET = APRegistration.POCKET_SERIALIZER.register(ID.DISTANCE_POCKET.getPath(), () -> PocketUpgradeSerialiser.simpleWithCustomItem(PocketDistanceDetectorUpgrade::new));
     public static final RegistryObject<PocketUpgradeSerialiser<PocketEnvironmentUpgrade>> ENVIRONMENT_POCKET = APRegistration.POCKET_SERIALIZER.register(ID.ENVIRONMENT_POCKET.getPath(), () -> PocketUpgradeSerialiser.simpleWithCustomItem(PocketEnvironmentUpgrade::new));
     public static final RegistryObject<PocketUpgradeSerialiser<PocketGeoScannerUpgrade>> GEO_SCANNER_POCKET = APRegistration.POCKET_SERIALIZER.register(ID.GEOSCANNER_POCKET.getPath(), () -> PocketUpgradeSerialiser.simpleWithCustomItem(PocketGeoScannerUpgrade::new));
     public static final RegistryObject<PocketUpgradeSerialiser<PocketPlayerDetectorUpgrade>> PLAYER_DETECTOR_POCKET = APRegistration.POCKET_SERIALIZER.register(ID.PLAYER_POCKET.getPath(), () -> PocketUpgradeSerialiser.simpleWithCustomItem(PocketPlayerDetectorUpgrade::new));
@@ -76,6 +78,7 @@ public class CCRegistration {
 
         public static final ResourceLocation CHATTY_POCKET = new ResourceLocation(AdvancedPeripherals.MOD_ID, "chatty_pocket");
         public static final ResourceLocation COLONY_POCKET = new ResourceLocation(AdvancedPeripherals.MOD_ID, "colony_pocket");
+        public static final ResourceLocation DISTANCE_POCKET = new ResourceLocation(AdvancedPeripherals.MOD_ID, "distance_pocket");
         public static final ResourceLocation ENVIRONMENT_POCKET = new ResourceLocation(AdvancedPeripherals.MOD_ID, "environment_pocket");
         public static final ResourceLocation GEOSCANNER_POCKET = new ResourceLocation(AdvancedPeripherals.MOD_ID, "geoscanner_pocket");
         public static final ResourceLocation PLAYER_POCKET = new ResourceLocation(AdvancedPeripherals.MOD_ID, "player_pocket");

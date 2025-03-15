@@ -14,6 +14,8 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
+
 import org.apache.commons.lang3.NotImplementedException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -45,19 +47,33 @@ public class ModulePeripheralOwner extends BasePeripheralOwner {
     @NotNull
     @Override
     public BlockPos getPos() {
-        return computer.getEntity().getOnPos();
+        return new BlockPos(computer.getEntity().getEyePosition());
+    }
+
+    @NotNull
+    @Override
+    public Vec3 getCenterPos() {
+        return computer.getEntity().getEyePosition();
     }
 
     @NotNull
     @Override
     public Direction getFacing() {
-        return Direction.NORTH;
+        Vec3 dir = getDirection();
+        return Direction.getNearest(dir.x, dir.y, dir.z);
     }
 
     @NotNull
     @Override
     public FrontAndTop getOrientation() {
-        return FrontAndTop.NORTH_UP;
+        Vec3 up = computer.getEntity().getUpVector(1.0f);
+        return FrontAndTop.fromFrontAndTop(getFacing(), Direction.getNearest(up.x, up.y, up.z));
+    }
+
+    @NotNull
+    @Override
+    public Vec3 getDirection() {
+        return computer.getEntity().getLookAngle();
     }
 
     @NotNull
@@ -67,10 +83,15 @@ public class ModulePeripheralOwner extends BasePeripheralOwner {
 
     @Nullable
     @Override
+    public Entity getHoldingEntity() {
+        return computer.getEntity();
+    }
+
+    @Nullable
+    @Override
     public Player getOwner() {
         Entity owner = computer.getEntity();
-        if (owner instanceof Player player) return player;
-        return null;
+        return owner instanceof Player player ? player : null;
     }
 
     @NotNull

@@ -10,10 +10,10 @@ import dan200.computercraft.shared.computer.core.ServerComputer;
 import de.srendi.advancedperipherals.common.smartglasses.modules.IModule;
 import de.srendi.advancedperipherals.common.smartglasses.modules.IModuleItem;
 import de.srendi.advancedperipherals.common.smartglasses.modules.ModulePeripheral;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Inventory;
@@ -21,17 +21,20 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nullable;
+import com.google.common.collect.ImmutableMap;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import javax.annotation.Nullable;
 
 /**
  * Basically just a {@link dan200.computercraft.shared.pocket.core.PocketServerComputer} but with some changes
  */
 public class SmartGlassesComputer extends ServerComputer implements IPocketAccess {
+
+    public static final String UPGRADE_DATAS_TAG = "UpgradeDatas";
 
     @Nullable
     private Entity entity;
@@ -40,20 +43,21 @@ public class SmartGlassesComputer extends ServerComputer implements IPocketAcces
     @Nullable
     private SmartGlassesItemHandler itemHandler = null;
     @NotNull
-    private final ModulePeripheral peripheral;
+    private final ModulePeripheral modulePeripheral;
+    private final CompoundTag upgradeDatas;
 
-    private int lightColour = -1;
-    private boolean lightChanged = false;
-    private boolean isDirty = false;
+    private boolean peripheralOutdated = false;
+    private boolean isDirty = true;
 
-    private final Set<ServerPlayer> tracking = new HashSet<>();
+    private Map<ResourceLocation, IPeripheral> upgrades = Collections.emptyMap();
     private final Map<Integer, IModule> modules = new HashMap<>();
 
-    public SmartGlassesComputer(ServerLevel world, int computerID, @Nullable String label, ComputerFamily family) {
+    public SmartGlassesComputer(ServerLevel world, int computerID, @Nullable String label, ComputerFamily family, @NotNull CompoundTag upgradeDatas) {
         super(world, computerID, label, family, 39, 13);
         this.addAPI(new SmartGlassesAPI());
-        peripheral = new ModulePeripheral(this);
-        this.setPeripheral(ComputerSide.BACK, peripheral);
+        this.modulePeripheral = new ModulePeripheral(this);
+        this.upgradeDatas = upgradeDatas;
+        this.setPeripheral(ComputerSide.BACK, this.modulePeripheral);
     }
 
     @Nullable
@@ -65,7 +69,7 @@ public class SmartGlassesComputer extends ServerComputer implements IPocketAcces
 
         if (entity instanceof Player player) {
             Inventory inventory = player.getInventory();
-            if (inventory.items.contains(stack) || inventory.armor.contains(stack) || inventory.offhand.contains(stack)) {
+            if (inventory.contains(stack)) {
                 return player;
             }
             return null;
@@ -74,6 +78,16 @@ public class SmartGlassesComputer extends ServerComputer implements IPocketAcces
             return itemEntity.getItem() == stack ? entity : null;
         }
         return null;
+    }
+
+    @Override
+    public ServerLevel getLevel() {
+        return this.entity == null ? super.getLevel() : (ServerLevel) this.entity.getCommandSenderWorld();
+    }
+
+    @Override
+    public BlockPos getPosition() {
+        return this.entity == null ? super.getPosition() : new BlockPos(this.entity.getEyePosition());
     }
 
     @Override
@@ -88,6 +102,8 @@ public class SmartGlassesComputer extends ServerComputer implements IPocketAcces
 
     public void setStack(ItemStack stack) {
         this.stack = stack;
+        this.invalidatePeripheral();
+        this.updateUpgradeNBTData();
     }
 
     public ItemStack getStack() {
@@ -96,77 +112,81 @@ public class SmartGlassesComputer extends ServerComputer implements IPocketAcces
 
     @Override
     public int getLight() {
-        return lightColour;
+        return 0;
     }
 
     @Override
     public void setLight(int colour) {
-        if (colour < 0 || colour > 0xFFFFFF) {
-            colour = -1;
-        }
-
-        if (lightColour == colour) {
-            return;
-        }
-        lightColour = colour;
-        lightChanged = true;
     }
 
     public void setItemHandler(@Nullable SmartGlassesItemHandler itemHandler) {
         this.itemHandler = itemHandler;
     }
 
-    public void markDirty() {
-        isDirty = true;
-    }
-
-    public boolean isDirty() {
-        return isDirty;
-    }
-
     @Override
     @NotNull
     public CompoundTag getUpgradeNBTData() {
-        return new CompoundTag();
+        return this.upgradeDatas;
     }
 
-    @Override
-    public void updateUpgradeNBTData() {
-        if (entity instanceof Player player) {
-            player.getInventory().setChanged();
+    public void setUpgradeData(@NotNull ComputerSide side, @NotNull ResourceLocation id, @NotNull CompoundTag data) {
+        data.putString("UpgradeSide", side.getName());
+        this.upgradeDatas.put(id.toString(), data);
+        this.updateUpgradeNBTData();
+    }
+
+    public void removeUpgradeData(@NotNull ComputerSide side) {
+        for (String id : this.upgradeDatas.getAllKeys()) {
+            if (side.getName().equals(this.upgradeDatas.getCompound(id).getString("UpgradeSide"))) {
+                this.upgradeDatas.remove(id);
+                this.updateUpgradeNBTData();
+                return;
+            }
         }
     }
 
     @Override
+    public void updateUpgradeNBTData() {
+        this.isDirty = true;
+    }
+
+    @Override
     public void invalidatePeripheral() {
+        this.peripheralOutdated = true;
     }
 
     @Override
     @NotNull
     public Map<ResourceLocation, IPeripheral> getUpgrades() {
-        return Collections.emptyMap();
+        return this.upgrades;
     }
 
+    @Override
     public void setPeripheral(ComputerSide side, IPeripheral peripheral) {
         super.setPeripheral(side, peripheral);
     }
 
-    public void updatePeripheralsAndModules(SmartGlassesItemHandler itemHandler) {
-        for (int slot = 0; slot < 5; slot++) {
+    private void updatePeripheralsAndModules(SmartGlassesItemHandler itemHandler) {
+        Set<ResourceLocation> upgradesIdSet = new HashSet<>();
+        ImmutableMap.Builder<ResourceLocation, IPeripheral> upgradesBuilder = new ImmutableMap.Builder<>();
+        for (int slot = 0; slot < SmartGlassesItemHandler.PERIPHERAL_SLOTS; slot++) {
+            ComputerSide side = SmartGlassesSlot.indexToSide(slot);
             ItemStack peripheralItem = itemHandler.getStackInSlot(slot);
-            if (!peripheralItem.isEmpty()) {
-                IPocketUpgrade upgrade = PocketUpgrades.instance().get(peripheralItem);
-                if (upgrade != null) {
-                    IPeripheral peripheral = upgrade.createPeripheral(smartGlassesAccess);
-                    if (peripheral != null) {
-                        setPeripheral(SmartGlassesSlot.indexToSide(slot), peripheral);
-                        continue;
-                    }
+            IPocketUpgrade upgrade = PocketUpgrades.instance().get(peripheralItem);
+            IPeripheral peripheral = upgrade != null ? upgrade.createPeripheral(smartGlassesAccess) : null;
+            setPeripheral(side, peripheral);
+            if (peripheral != null) {
+                ResourceLocation id = upgrade.getUpgradeID();
+                if (upgradesIdSet.add(id)) {
+                    upgradesBuilder.put(id, peripheral);
+                    setUpgradeData(side, id, this.upgradeDatas.getCompound(id.toString()));
+                    continue;
                 }
             }
-            setPeripheral(SmartGlassesSlot.indexToSide(slot), null);
+            removeUpgradeData(side);
         }
-        for (int slot = 5; slot < 11; slot++) {
+        this.upgrades = upgradesBuilder.build();
+        for (int slot = SmartGlassesItemHandler.PERIPHERAL_SLOTS; slot < SmartGlassesItemHandler.SLOTS; slot++) {
             ItemStack peripheralItem = itemHandler.getStackInSlot(slot);
             IModule oldModule = modules.get(slot);
             if (!peripheralItem.isEmpty() && peripheralItem.getItem() instanceof IModuleItem module) {
@@ -175,13 +195,16 @@ public class SmartGlassesComputer extends ServerComputer implements IPocketAcces
                     continue;
                 }
                 modules.put(slot, newModule);
-                peripheral.updateModules();
-                setPeripheral(ComputerSide.BACK, null);
-                setPeripheral(ComputerSide.BACK, peripheral);
             } else if (oldModule != null) {
                 oldModule.onUnequipped(smartGlassesAccess);
                 modules.remove(slot);
             }
+        }
+        this.modulePeripheral.updateModules();
+        setPeripheral(ComputerSide.BACK, null);
+        setPeripheral(ComputerSide.BACK, this.modulePeripheral);
+        if (this.entity instanceof Player player) {
+            player.getInventory().setChanged();
         }
     }
 
@@ -189,34 +212,40 @@ public class SmartGlassesComputer extends ServerComputer implements IPocketAcces
     public void tickServer() {
         super.tickServer();
 
-        // Find any players which have gone missing and remove them from the tracking list.
-        tracking.removeIf(player -> !player.isAlive() || player.level != getLevel());
-
-        // And now find any new players, add them to the tracking list, and broadcast state where appropriate.
-        boolean sendState = hasOutputChanged() || lightChanged;
-        lightChanged = false;
-        if (sendState) {
-            tracking.addAll(getLevel().players());
+        boolean shouldUpdateInventory = this.peripheralOutdated || this.isDirty;
+        if (this.peripheralOutdated && this.itemHandler != null) {
+            this.peripheralOutdated = false;
+            this.updatePeripheralsAndModules(this.itemHandler);
+        }
+        if (this.isDirty) {
+            this.isDirty = false;
+            CompoundTag data = this.stack.getOrCreateTag();
+            data.put(UPGRADE_DATAS_TAG, this.upgradeDatas.copy());
+        }
+        if (shouldUpdateInventory && entity instanceof Player player) {
+            player.getInventory().setChanged();
         }
 
-        if (isDirty()) {
-            updatePeripheralsAndModules(this.itemHandler);
-            isDirty = false;
-        }
-
-        modules.values().forEach(module -> {
+        this.modules.values().forEach(module -> {
             module.tick(smartGlassesAccess);
         });
     }
 
     public void setEntity(@Nullable Entity entity) {
+        if (this.entity == entity) {
+            return;
+        }
         this.entity = entity;
+        if (entity == null) {
+            return;
+        }
+        this.setLevel((ServerLevel) this.entity.getCommandSenderWorld());
+        this.setPosition(new BlockPos(this.entity.getEyePosition()));
     }
 
     public Map<Integer, IModule> getModules() {
         return modules;
     }
-
 
     @Override
     protected void onRemoved() {
