@@ -124,7 +124,7 @@ public class ItemFilter {
         if (tag != null && !stack.is(tag)) {
             return false;
         }
-        if (nbt != null && !stack.getOrCreateTag().equals(nbt)) {
+        if (nbt != null && !(stack.hasTag() ? stack.getTag().equals(nbt) : nbt.isEmpty())) {
             return false;
         }
         return true;

@@ -25,6 +25,7 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 public class LuaConverter {
+    private static final CompoundTag EMPTY_COMPOUND = new CompoundTag();
 
     public static Map<String, Object> entityToLua(Entity entity) {
         Map<String, Object> data = new HashMap<>();
@@ -103,7 +104,7 @@ public class LuaConverter {
     public static Map<String, Object> stackToObject(@NotNull ItemStack stack) {
         if (stack.isEmpty()) return new HashMap<>();
         Map<String, Object> map = itemToObject(stack.getItem());
-        CompoundTag nbt = stack.copy().getOrCreateTag();
+        CompoundTag nbt = stack.hasTag() ? stack.getTag() : EMPTY_COMPOUND;
         map.put("count", stack.getCount());
         map.put("displayName", stack.getDisplayName().getString());
         map.put("maxStackSize", stack.getMaxStackSize());

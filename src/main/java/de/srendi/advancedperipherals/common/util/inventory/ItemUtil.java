@@ -5,6 +5,7 @@ import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.util.StringUtil;
 import net.minecraft.ResourceLocationException;
 import net.minecraft.core.NonNullList;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -20,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ItemUtil {
+    private static final CompoundTag EMPTY_COMPOUND = new CompoundTag();
 
     public static final Item TURTLE_NORMAL = Registry.ModItems.TURTLE_NORMAL.get();
     public static final Item TURTLE_ADVANCED = Registry.ModItems.TURTLE_ADVANCED.get();
@@ -53,7 +55,7 @@ public class ItemUtil {
      * @return A generated MD5 hash from the item stack
      */
     public static String getFingerprint(ItemStack stack) {
-        String fingerprint = stack.getOrCreateTag() + getRegistryKey(stack).toString() + stack.getDisplayName().getString();
+        String fingerprint = (stack.hasTag() ? stack.getTag() : EMPTY_COMPOUND) + getRegistryKey(stack).toString() + stack.getDisplayName().getString();
         try {
             byte[] bytesOfHash = fingerprint.getBytes(StandardCharsets.UTF_8);
             MessageDigest md = MessageDigest.getInstance("MD5");
@@ -77,7 +79,9 @@ public class ItemUtil {
         return stack;
     }
 
-    //Gathers all items in handler and returns them
+    /**
+     * Gathers all items in handler and returns them
+     */
     public static List<ItemStack> getItemsFromItemHandler(IItemHandler handler) {
         List<ItemStack> items = new ArrayList<>(handler.getSlots());
         for (int slot = 0; slot < handler.getSlots(); slot++) {
@@ -103,6 +107,6 @@ public class ItemUtil {
     }
 
     public static ResourceLocation getRegistryKey(ItemStack item) {
-        return ForgeRegistries.ITEMS.getKey(item.copy().getItem());
+        return ForgeRegistries.ITEMS.getKey(item.getItem());
     }
 }
