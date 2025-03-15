@@ -10,14 +10,14 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.network.NetworkEvent;
 import net.minecraftforge.server.ServerLifecycleHooks;
 
-public class GlassesHotkeyPacket implements IPacket {
+public class KeyboardMouseMovePacket implements IPacket {
 
-    private final String keyBind;
-    private final int keyPressDuration;
+    private final double dx;
+    private final double dy;
 
-    public GlassesHotkeyPacket(String keyBind, int keyPressDuration) {
-        this.keyBind = keyBind;
-        this.keyPressDuration = keyPressDuration;
+    public KeyboardMouseMovePacket(double dx, double dy) {
+        this.dx = dx;
+        this.dy = dy;
     }
 
     @Override
@@ -33,7 +33,7 @@ public class GlassesHotkeyPacket implements IPacket {
             if (stack.getItem() instanceof SmartGlassesItem) {
                 SmartGlassesComputer computer = SmartGlassesItem.getServerComputer(server, stack);
                 if (computer != null) {
-                    computer.queueEvent("glasses_key_pressed", new Object[]{keyBind, keyPressDuration});
+                    computer.queueEvent("player_mouse_move", new Object[]{dx, dy});
                     break;
                 }
             }
@@ -42,11 +42,11 @@ public class GlassesHotkeyPacket implements IPacket {
 
     @Override
     public void encode(FriendlyByteBuf buffer) {
-        buffer.writeUtf(keyBind);
-        buffer.writeInt(keyPressDuration);
+        buffer.writeDouble(dx);
+        buffer.writeDouble(dy);
     }
 
-    public static GlassesHotkeyPacket decode(FriendlyByteBuf buffer) {
-        return new GlassesHotkeyPacket(buffer.readUtf(), buffer.readInt());
+    public static KeyboardMouseMovePacket decode(FriendlyByteBuf buffer) {
+        return new KeyboardMouseMovePacket(buffer.readDouble(), buffer.readDouble());
     }
 }

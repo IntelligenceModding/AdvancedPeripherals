@@ -5,6 +5,8 @@ import de.srendi.advancedperipherals.client.KeyBindings;
 import de.srendi.advancedperipherals.common.container.KeyboardContainer;
 import de.srendi.advancedperipherals.common.items.base.BaseItem;
 import de.srendi.advancedperipherals.common.items.base.IInventoryItem;
+import de.srendi.advancedperipherals.common.network.APNetworking;
+import de.srendi.advancedperipherals.common.network.toclient.KeyboardMouseCapturePacket;
 import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesAccess;
 import de.srendi.advancedperipherals.common.smartglasses.modules.IModule;
 import de.srendi.advancedperipherals.common.smartglasses.modules.IModuleItem;
@@ -75,17 +77,21 @@ public class KeyboardItem extends BaseItem implements IInventoryItem, IModuleIte
 
     @Override
     public void inventoryTick(ItemStack itemStack, Level level, Entity entity, int inventorySlot, boolean isCurrentItem, @Nullable SmartGlassesAccess access, @Nullable IModule module) {
-        if (level.isClientSide())
+        if (level.isClientSide()) {
             return;
+        }
 
-        if (access == null)
+        if (access == null || !(module instanceof KeyboardModule keyboadModule)) {
             return;
+        }
 
         CompoundTag data = itemStack.getOrCreateTag();
         int instanceId = access.getComputer().getInstanceID();
         int oldInstanceId = -1;
 
-        if (data.contains(GLASSES_BIND_TAG)) oldInstanceId = data.getInt(GLASSES_BIND_TAG);
+        if (data.contains(GLASSES_BIND_TAG)) {
+            oldInstanceId = data.getInt(GLASSES_BIND_TAG);
+        }
 
         if (!data.contains(BOUND_TYPE_TAG) || ((oldInstanceId != -1 && oldInstanceId != instanceId)) || !data.getBoolean(BOUND_TYPE_TAG)) {
             data.putBoolean(BOUND_TYPE_TAG, true);
@@ -93,13 +99,25 @@ public class KeyboardItem extends BaseItem implements IInventoryItem, IModuleIte
             data.remove(BIND_TAG);
         }
 
-        if (entity instanceof ServerPlayer serverPlayer) {
-            if (KeybindUtil.isKeyPressed(KeyBindings.GLASSES_HOTKEY_KEYBINDING)) {
-                NetworkHooks.openScreen(serverPlayer, this.createContainer(serverPlayer, itemStack), buf -> {
-                    buf.writeBlockPos(serverPlayer.blockPosition());
-                    buf.writeItem(itemStack);
-                });
-            }
+        if (!(entity instanceof ServerPlayer serverPlayer)) {
+            return;
+        }
+        // TODO: this for sure won't work on dedicated server
+        if (!KeyBindings.GLASSES_HOTKEY_KEYBINDING.isDown()) {
+            return;
+        }
+
+        access.getComputer().queueEvent("keyboard_open");
+        if (serverPlayer.containerMenu instanceof KeyboardContainer openedKeyboard && openedKeyboard.getKeyboardItem() == itemStack) {
+            return;
+        }
+
+        NetworkHooks.openScreen(serverPlayer, this.createContainer(serverPlayer, itemStack), buf -> {
+            buf.writeBlockPos(serverPlayer.blockPosition());
+            buf.writeItem(itemStack);
+        });
+        if (keyboadModule.isCapturingMouse()) {
+            APNetworking.sendTo(new KeyboardMouseCapturePacket(true), serverPlayer);
         }
     }
 

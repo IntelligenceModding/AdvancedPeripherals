@@ -36,7 +36,7 @@ public class HotkeyModuleItem extends BaseItem implements IModuleItem {
         if (KeybindUtil.isKeyPressed(KeyBindings.GLASSES_HOTKEY_KEYBINDING)) {
             // Add another 50ms to the duration, one tick
             setKeyPressDuration(stack, getKeyPressDuration(stack) + 50);
-        } else if(getKeyPressDuration(stack) > 0) {
+        } else if (getKeyPressDuration(stack) > 0) {
             // If the key is not pressed, but the duration is greater than 0, we can assume that the key was pressed
             // We can now post the event
 
@@ -44,12 +44,12 @@ public class HotkeyModuleItem extends BaseItem implements IModuleItem {
             setKeyPressDuration(stack, 0);
 
             String keyBind = KeyBindings.GLASSES_HOTKEY_KEYBINDING.getKey().getName();
-            APNetworking.sendToServer(new GlassesHotkeyPacket(player.getUUID(), keyBind, duration));
+            APNetworking.sendToServer(new GlassesHotkeyPacket(keyBind, duration));
         }
     }
 
     public static int getKeyPressDuration(ItemStack stack) {
-        return stack.copy().getOrCreateTag().getInt(KEY_PRESS_DURATION_NBT);
+        return stack.hasTag() ? stack.getTag().getInt(KEY_PRESS_DURATION_NBT) : 0;
     }
 
     public static void setKeyPressDuration(ItemStack stack, int keyPressDuration) {
