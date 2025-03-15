@@ -12,16 +12,12 @@ import de.srendi.advancedperipherals.common.addons.APAddons;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.IPeripheralOwner;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.OperationAbility;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.PeripheralOwnerAbility;
+import de.srendi.advancedperipherals.common.addons.valkyrienskies.ValkyrienSkies;
 import de.srendi.advancedperipherals.common.util.CoordUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.joml.Vector3d;
-import org.valkyrienskies.core.api.ships.Ship;
-import org.valkyrienskies.mod.common.VSGameUtilsKt;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -34,6 +30,8 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public abstract class BasePeripheral<O extends IPeripheralOwner> implements IBasePeripheral<O>, IDynamicPeripheral {
 
@@ -162,12 +160,7 @@ public abstract class BasePeripheral<O extends IPeripheralOwner> implements IBas
         if (!APAddons.vs2Loaded) {
             return pos;
         }
-        Ship ship = VSGameUtilsKt.getShipObjectManagingPos(owner.getLevel(), owner.getPos());
-        if (ship == null) {
-            return pos;
-        }
-        Vector3d newPos = ship.getShipToWorld().transformPosition(new Vector3d(pos.x, pos.y, pos.z));
-        return new Vec3(newPos.x, newPos.y, newPos.z);
+        return ValkyrienSkies.transformToWorldPos(owner.getLevel(), owner.getPos(), pos);
     }
 
     public final BlockPos getPhysicsBlockPos() {
