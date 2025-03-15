@@ -18,7 +18,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.MenuAccess;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import org.jetbrains.annotations.NotNull;
 import org.lwjgl.glfw.GLFW;
@@ -234,7 +233,7 @@ public class KeyboardScreen extends Screen implements MenuAccess<KeyboardContain
         this.mouseState = MouseState.RELEASED;
     }
 
-    private static enum MouseState {
-        RELEASED, NORMAL, CAPTURE;
+    private enum MouseState {
+        RELEASED, NORMAL, CAPTURE
     }
 }

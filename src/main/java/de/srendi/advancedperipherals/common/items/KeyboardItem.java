@@ -12,8 +12,6 @@ import de.srendi.advancedperipherals.common.smartglasses.modules.IModule;
 import de.srendi.advancedperipherals.common.smartglasses.modules.IModuleItem;
 import de.srendi.advancedperipherals.common.smartglasses.modules.keyboard.KeyboardModule;
 import de.srendi.advancedperipherals.common.util.EnumColor;
-import de.srendi.advancedperipherals.common.util.KeybindUtil;
-import de.srendi.advancedperipherals.common.util.NBTUtil;
 import de.srendi.advancedperipherals.common.util.SideHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;

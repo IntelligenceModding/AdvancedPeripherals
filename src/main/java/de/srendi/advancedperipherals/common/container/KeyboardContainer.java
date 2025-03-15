@@ -9,7 +9,6 @@ import dan200.computercraft.shared.computer.terminal.TerminalState;
 import de.srendi.advancedperipherals.common.container.base.BaseContainer;
 import de.srendi.advancedperipherals.common.items.KeyboardItem;
 import de.srendi.advancedperipherals.common.setup.APContainerTypes;
-import de.srendi.advancedperipherals.common.util.NBTUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
