@@ -27,7 +27,7 @@ public class FluidFilter extends GenericFilter<FluidStack> {
     private TagKey<Fluid> tag = null;
     private CompoundTag nbt = null;
     private String nbtHash = null;
-    private int count = 1000;
+    private int count = Integer.MAX_VALUE;
     private String fingerprint = "";
 
     private FluidFilter() {
