@@ -45,13 +45,15 @@ public class InventoryUtil {
     }
 
     public static int moveItem(IItemHandler inventoryFrom, IItemHandler inventoryTo, ItemFilter filter) {
-        if (inventoryFrom == null) return 0;
+        if (inventoryFrom == null) {
+            return 0;
+        }
 
         final int fromSlot = filter.getFromSlot();
         final int toSlot = filter.getToSlot();
 
         final int required = filter.getCount();
-        int transferableAmount = 0;
+        int transferred = 0;
 
         // The logic changes with storage systems since these systems do not have slots
         if (inventoryFrom instanceof IStorageSystemItemHandler storageSystemHandler) {
@@ -61,7 +63,7 @@ public class InventoryUtil {
                 return storageSystemHandler.extractItem(filter, extracted.getCount() - remains.getCount(), false).getCount();
             }
             for (int i = toSlot == -1 ? 0 : toSlot; i < (toSlot == -1 ? inventoryTo.getSlots() : toSlot + 1); i++) {
-                ItemStack extracted = storageSystemHandler.extractItem(filter, required - transferableAmount, true);
+                ItemStack extracted = storageSystemHandler.extractItem(filter, required - transferred, true);
                 if (extracted.isEmpty()) {
                     break;
                 }
@@ -71,18 +73,18 @@ public class InventoryUtil {
                 } else {
                     remains = inventoryTo.insertItem(toSlot, extracted, false);
                 }
-                transferableAmount += storageSystemHandler.extractItem(filter, extracted.getCount() - remains.getCount(), false).getCount();
-                if (transferableAmount >= filter.getCount()) {
+                transferred += storageSystemHandler.extractItem(filter, extracted.getCount() - remains.getCount(), false).getCount();
+                if (transferred >= filter.getCount()) {
                     break;
                 }
             }
-            return transferableAmount;
+            return transferred;
         }
 
         if (inventoryTo instanceof IStorageSystemItemHandler storageSystemHandler) {
             for (int i = fromSlot == -1 ? 0 : fromSlot; i < (fromSlot == -1 ? inventoryFrom.getSlots() : fromSlot + 1); i++) {
                 if (filter.test(inventoryFrom.getStackInSlot(i))) {
-                    ItemStack extracted = inventoryFrom.extractItem(i, required - transferableAmount, true);
+                    ItemStack extracted = inventoryFrom.extractItem(i, required - transferred, true);
                     if (extracted.isEmpty()) {
                         continue;
                     }
@@ -91,18 +93,18 @@ public class InventoryUtil {
                     if (inserted == 0) {
                         break;
                     }
-                    transferableAmount += inventoryFrom.extractItem(i, inserted, false).getCount();
-                    if (transferableAmount >= filter.getCount()) {
+                    transferred += inventoryFrom.extractItem(i, inserted, false).getCount();
+                    if (transferred >= filter.getCount()) {
                         break;
                     }
                 }
             }
-            return transferableAmount;
+            return transferred;
         }
 
         for (int i = fromSlot == -1 ? 0 : fromSlot; i < (fromSlot == -1 ? inventoryFrom.getSlots() : fromSlot + 1); i++) {
             if (filter.test(inventoryFrom.getStackInSlot(i))) {
-                ItemStack extracted = inventoryFrom.extractItem(i, required - transferableAmount, true);
+                ItemStack extracted = inventoryFrom.extractItem(i, required - transferred, true);
                 if (extracted.isEmpty()) {
                     continue;
                 }
@@ -116,48 +118,48 @@ public class InventoryUtil {
                 if (inserted == 0) {
                     break;
                 }
-                transferableAmount += inventoryFrom.extractItem(i, inserted, false).getCount();
-                if (transferableAmount >= filter.getCount()) {
+                transferred += inventoryFrom.extractItem(i, inserted, false).getCount();
+                if (transferred >= filter.getCount()) {
                     break;
                 }
             }
         }
-        return transferableAmount;
+        return transferred;
     }
 
     public static int moveFluid(IFluidHandler inventoryFrom, IFluidHandler inventoryTo, FluidFilter filter) {
-        if (inventoryFrom == null) return 0;
+        if (inventoryFrom == null) {
+            return 0;
+        }
 
-        int amount = filter.getCount();
-        int transferableAmount = 0;
+        final int required = filter.getCount();
+        int transferred = 0;
 
         // The logic changes with storage systems since these systems do not have slots
         if (inventoryFrom instanceof IStorageSystemFluidHandler storageSystemHandler) {
             FluidStack extracted = storageSystemHandler.drain(filter, IFluidHandler.FluidAction.SIMULATE);
             int inserted = inventoryTo.fill(extracted, IFluidHandler.FluidAction.EXECUTE);
 
-            transferableAmount += storageSystemHandler.drain(filter.setCount(inserted), IFluidHandler.FluidAction.EXECUTE).getAmount();
+            transferred += storageSystemHandler.drain(filter.setCount(inserted), IFluidHandler.FluidAction.EXECUTE).getAmount();
 
-            return transferableAmount;
+            return transferred;
         }
 
         if (inventoryTo instanceof IStorageSystemFluidHandler storageSystemHandler) {
             if (filter.test(inventoryFrom.getFluidInTank(0))) {
                 FluidStack toExtract = inventoryFrom.getFluidInTank(0).copy();
-                toExtract.setAmount(amount);
+                toExtract.setAmount(required);
                 FluidStack extracted = inventoryFrom.drain(toExtract, IFluidHandler.FluidAction.SIMULATE);
                 if (extracted.isEmpty())
                     return 0;
                 int inserted = storageSystemHandler.fill(extracted, IFluidHandler.FluidAction.EXECUTE);
 
                 extracted.setAmount(inserted);
-                transferableAmount += inventoryFrom.drain(extracted, IFluidHandler.FluidAction.EXECUTE).getAmount();
+                transferred += inventoryFrom.drain(extracted, IFluidHandler.FluidAction.EXECUTE).getAmount();
             }
-
-            return transferableAmount;
+            return transferred;
         }
-
-        return transferableAmount;
+        return transferred;
     }
 
 
