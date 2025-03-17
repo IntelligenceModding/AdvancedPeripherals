@@ -52,6 +52,11 @@ public class InventoryUtil {
 
         // The logic changes with storage systems since these systems do not have slots
         if (inventoryFrom instanceof IStorageSystemItemHandler storageSystemHandler) {
+            if (inventoryTo instanceof IStorageSystemItemHandler targetSSH) {
+                ItemStack extracted = storageSystemHandler.extractItem(filter, filter.getCount(), true);
+                ItemStack remain = targetSSH.insertItem(toSlot, extracted, false);
+                return storageSystemHandler.extractItem(filter, extracted.getCount() - remain.getCount(), false).getCount();
+            }
             for (int i = toSlot == -1 ? 0 : toSlot; i < (toSlot == -1 ? inventoryTo.getSlots() : toSlot + 1); i++) {
                 ItemStack extracted = storageSystemHandler.extractItem(filter, filter.getCount(), true);
                 if (extracted.isEmpty())

@@ -27,7 +27,7 @@ public class ItemFilter extends GenericFilter<ItemStack> {
     private TagKey<Item> tag = null;
     private CompoundTag nbt = null;
     private String nbtHash = null;
-    private int count = 64;
+    private int count = Integer.MAX_VALUE;
     private String fingerprint = "";
     public int fromSlot = -1;
     public int toSlot = -1;

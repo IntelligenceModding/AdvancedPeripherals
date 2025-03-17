@@ -29,6 +29,10 @@ import de.srendi.advancedperipherals.common.util.inventory.ItemFilter;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
+import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.IItemHandler;
@@ -46,6 +50,7 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     public static final String PERIPHERAL_TYPE = "rs_bridge";
 
     private final RsBridgeEntity bridge;
+    private final ICapabilityProvider capabilityWrapper = new CapabilityWrapper(this);
 
     public RsBridgePeripheral(RsBridgeEntity tileEntity) {
         super(PERIPHERAL_TYPE, new BlockEntityPeripheralOwner<>(tileEntity));
@@ -69,8 +74,21 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     }
 
     @Override
+    public Object getTarget() {
+        return capabilityWrapper;
+    }
+
+    @Override
     public boolean isEnabled() {
         return APConfig.PERIPHERALS_CONFIG.enableRSBridge.get();
+    }
+
+    protected RsItemHandler getItemHandler() {
+        return new RsItemHandler(getNetwork());
+    }
+
+    protected RsFluidHandler getFluidHandler() {
+        return new RsFluidHandler(getNetwork());
     }
 
     @Override
@@ -393,7 +411,7 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     }
 
     protected MethodResult exportToChest(@NotNull IArguments arguments, @Nullable IItemHandler targetInventory) throws LuaException {
-        RsItemHandler itemHandler = new RsItemHandler(getNetwork());
+        RsItemHandler itemHandler = getItemHandler();
         if (targetInventory == null)
             return MethodResult.of(0, "INVALID_TARGET");
 
@@ -405,7 +423,7 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     }
 
     protected MethodResult importToSystem(@NotNull IArguments arguments, @Nullable IItemHandler targetInventory) throws LuaException {
-        RsItemHandler itemHandler = new RsItemHandler(getNetwork());
+        RsItemHandler itemHandler = getItemHandler();
         if (targetInventory == null)
             return MethodResult.of(0, "INVALID_TARGET");
 
@@ -417,7 +435,7 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     }
 
     protected MethodResult exportToTank(@NotNull IArguments arguments, @Nullable IFluidHandler targetInventory) throws LuaException {
-        RsFluidHandler itemHandler = new RsFluidHandler(getNetwork());
+        RsFluidHandler itemHandler = getFluidHandler();
         if (targetInventory == null)
             return MethodResult.of(0, "INVALID_TARGET");
 
@@ -429,7 +447,7 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     }
 
     protected MethodResult importToSystem(@NotNull IArguments arguments, @Nullable IFluidHandler targetInventory) throws LuaException {
-        RsFluidHandler itemHandler = new RsFluidHandler(getNetwork());
+        RsFluidHandler itemHandler = getFluidHandler();
         if (targetInventory == null)
             return MethodResult.of(0, "INVALID_TARGET");
 
@@ -713,5 +731,23 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         GenericFilter<?> parsedFilter = filter.getLeft();
 
         return MethodResult.of(RsApi.findPatternFromFilters(getNetwork(), null, parsedFilter).getLeft() != null);
+    }
+
+    private static final class CapabilityWrapper implements ICapabilityProvider {
+        private final RsBridgePeripheral peripheral;
+
+        private CapabilityWrapper(RsBridgePeripheral peripheral) {
+            this.peripheral = peripheral;
+        }
+
+        @Override
+        public <T> LazyOptional<T> getCapability(final Capability<T> cap, final Direction side) {
+            if (cap == ForgeCapabilities.ITEM_HANDLER) {
+                return LazyOptional.of(this.peripheral::getItemHandler).cast();
+            } else if (cap == ForgeCapabilities.FLUID_HANDLER) {
+                return LazyOptional.of(this.peripheral::getFluidHandler).cast();
+            }
+            return LazyOptional.empty();
+        }
     }
 }
