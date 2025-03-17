@@ -147,7 +147,7 @@ public class InventoryUtil {
             FluidStack fluid = inventoryFrom.getFluidInTank(i);
             if (filter.test(fluid)) {
                 FluidStack toExtract = fluid.copy();
-                toExtract.setAmount(required);
+                toExtract.setAmount(required - transferred);
                 FluidStack extracted = inventoryFrom.drain(toExtract, IFluidHandler.FluidAction.SIMULATE);
                 if (extracted.isEmpty()) {
                     continue;
