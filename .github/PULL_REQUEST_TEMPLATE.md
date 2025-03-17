@@ -1,9 +1,9 @@
-**PLEASE READ THE [GUIDELINES](https://github.com/SirEndii/AdvancedPeripherals/blob/dev/1.20.1/CONTRIBUTING.md) BEFORE MAKING A CONTRIBUTION**
+**PLEASE READ THE [GUIDELINES](https://github.com/IntelligenceModding/AdvancedPeripherals/blob/dev/1.21.1/CONTRIBUTING.md) BEFORE MAKING A CONTRIBUTION**
 
 
 * **Please check if the PR fulfills these requirements**
 - [ ] The commit message are well described
-- [ ] Docs have been added / updated (for features or maybe bugs which were noted). If not, please update the needed documentation [here](https://github.com/SirEndii/Advanced-Peripherals-Documentation/pulls). Feel free to remove this check if you don't need it
+- [ ] Docs have been added / updated (for features or maybe bugs which were noted). If not, please update the needed documentation [here](https://github.com/IntelligenceModding/Advanced-Peripherals-Documentation/pulls). Feel free to remove this check if you don't need it
 - [ ] All changes have fully been tested
 
 * **What kind of change does this PR introduce?** (Bug fix, feature, ...)
