@@ -33,6 +33,10 @@ import de.srendi.advancedperipherals.common.util.inventory.InventoryUtil;
 import de.srendi.advancedperipherals.common.util.inventory.ItemFilter;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
 import net.minecraft.core.Direction;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
+import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
@@ -50,6 +54,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     public static final String PERIPHERAL_TYPE = "me_bridge";
 
     private final MeBridgeEntity bridge;
+    private final ICapabilityProvider capabilityWrapper = new CapabilityWrapper(this);
     private IGridNode node;
 
     public MeBridgePeripheral(MeBridgeEntity tileEntity) {
@@ -63,12 +68,25 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     }
 
     @Override
+    public Object getTarget() {
+        return capabilityWrapper;
+    }
+
+    @Override
     public boolean isEnabled() {
         return APConfig.PERIPHERALS_CONFIG.enableMEBridge.get();
     }
 
     private ICraftingService getCraftingService() {
         return node.getGrid().getCraftingService();
+    }
+
+    protected MeItemHandler getItemHandler() {
+        return new MeItemHandler(AppEngApi.getMonitor(node), bridge);
+    }
+
+    protected MeFluidHandler getFluidHandler() {
+        return new MeFluidHandler(AppEngApi.getMonitor(node), bridge);
     }
 
     /**
@@ -79,8 +97,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
      * @return the exportable amount or null with a string if something went wrong
      */
     protected MethodResult exportToChest(@NotNull IArguments arguments, @Nullable IItemHandler targetInventory) throws LuaException {
-        MEStorage monitor = AppEngApi.getMonitor(node);
-        MeItemHandler itemHandler = new MeItemHandler(monitor, bridge);
+        MeItemHandler itemHandler = getItemHandler();
         Pair<ItemFilter, String> filter = ItemFilter.parse(arguments.getTable(0));
 
         if (filter.rightPresent())
@@ -100,8 +117,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
      * @return the exportable amount or null with a string if something went wrong
      */
     protected MethodResult exportToTank(@NotNull IArguments arguments, @Nullable IFluidHandler targetTank) throws LuaException {
-        MEStorage monitor = AppEngApi.getMonitor(node);
-        MeFluidHandler fluidHandler = new MeFluidHandler(monitor, bridge);
+        MeFluidHandler fluidHandler = getFluidHandler();
         Pair<FluidFilter, String> filter = FluidFilter.parse(arguments.getTable(0));
 
         if (filter.rightPresent())
@@ -121,8 +137,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
      * @return the imported amount or null with a string if something went wrong
      */
     protected MethodResult importToME(@NotNull IArguments arguments, @Nullable IItemHandler targetInventory) throws LuaException {
-        MEStorage monitor = AppEngApi.getMonitor(node);
-        MeItemHandler itemHandler = new MeItemHandler(monitor, bridge);
+        MeItemHandler itemHandler = getItemHandler();
         Pair<ItemFilter, String> filter = ItemFilter.parse(arguments.getTable(0));
 
         if (filter.rightPresent())
@@ -142,8 +157,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
      * @return the imported amount or null with a string if something went wrong
      */
     protected MethodResult importToME(@NotNull IArguments arguments, @Nullable IFluidHandler targetTank) throws LuaException {
-        MEStorage monitor = AppEngApi.getMonitor(node);
-        MeFluidHandler fluidHandler = new MeFluidHandler(monitor, bridge);
+        MeFluidHandler fluidHandler = getFluidHandler();
         Pair<FluidFilter, String> filter = FluidFilter.parse(arguments.getTable(0));
 
         if (filter.rightPresent())
@@ -787,5 +801,23 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
             map.add(cpu);
         }
         return MethodResult.of(map);
+    }
+
+    private static final class CapabilityWrapper implements ICapabilityProvider {
+        private final MeBridgePeripheral peripheral;
+
+        private CapabilityWrapper(MeBridgePeripheral peripheral) {
+            this.peripheral = peripheral;
+        }
+
+        @Override
+        public <T> LazyOptional<T> getCapability(final Capability<T> cap, final Direction side) {
+            if (cap == ForgeCapabilities.ITEM_HANDLER) {
+                return LazyOptional.of(this.peripheral::getItemHandler).cast();
+            } else if (cap == ForgeCapabilities.FLUID_HANDLER) {
+                return LazyOptional.of(this.peripheral::getFluidHandler).cast();
+            }
+            return LazyOptional.empty();
+        }
     }
 }
