@@ -29,15 +29,4 @@ public class TurtleChatBoxUpgrade extends PeripheralTurtleUpgrade<ChatBoxPeriphe
     protected ChatBoxPeripheral buildPeripheral(@NotNull ITurtleAccess turtle, @NotNull TurtleSide side) {
         return new ChatBoxPeripheral(turtle, side);
     }
-
-    @Override
-    public void update(@NotNull ITurtleAccess turtle, @NotNull TurtleSide side) {
-        super.update(turtle, side);
-        if (turtle.getLevel().isClientSide)
-            return;
-
-        if (turtle.getPeripheral(side) instanceof ChatBoxPeripheral chatBox) {
-            chatBox.update();
-        }
-    }
 }

@@ -16,6 +16,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.HasCustomInventoryScreen;
@@ -26,6 +27,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.PushReaction;
+import net.minecraft.world.level.portal.PortalInfo;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
@@ -34,8 +36,8 @@ public class TurtleSeatEntity extends Entity implements HasCustomInventoryScreen
 
     // TODO: better rendering
 
-    private ITurtleAccess turtle;
-    private int life;
+    private ITurtleAccess turtle = null;
+    private int life = 0;
 
     private boolean forwardKey = false;
     private boolean backKey = false;
@@ -58,7 +60,10 @@ public class TurtleSeatEntity extends Entity implements HasCustomInventoryScreen
     public TurtleSeatEntity(ITurtleAccess turtle) {
         this(APEntities.TURTLE_SEAT.get(), turtle.getLevel());
         this.turtle = turtle;
-        this.life = 0;
+    }
+
+    public void setTurtle(ITurtleAccess turtle) {
+        this.turtle = turtle;
     }
 
     public ITurtleAccess getOwner() {
@@ -79,6 +84,11 @@ public class TurtleSeatEntity extends Entity implements HasCustomInventoryScreen
 
     public void keepAlive() {
         this.life = 2;
+    }
+
+    public Vec3 getTurtlePos() {
+        BlockPos pos = this.turtle.getPosition();
+        return Vec3.atCenterOf(pos);
     }
 
     @Override
@@ -124,12 +134,17 @@ public class TurtleSeatEntity extends Entity implements HasCustomInventoryScreen
 
     @Override
     public Vec3 getDismountLocationForPassenger(LivingEntity entity) {
-        return super.getDismountLocationForPassenger(entity).add(0, 0.5, 0);
+        return this.getTurtlePos().add(0, 0.4, 0);
     }
 
     @Override
     public Entity getControllingPassenger() {
         return null; // this.getFirstPassenger();
+    }
+
+    @Override
+    public double getPassengersRidingOffset() {
+        return 0.05;
     }
 
     @Override
@@ -219,6 +234,11 @@ public class TurtleSeatEntity extends Entity implements HasCustomInventoryScreen
     @Override
     public boolean canChangeDimensions() {
         return false;
+    }
+
+    @Override
+    public PortalInfo findDimensionEntryPoint(ServerLevel newLevel) {
+        return new PortalInfo(this.getTurtlePos(), Vec3.ZERO, 0, 0);
     }
 
     @Override

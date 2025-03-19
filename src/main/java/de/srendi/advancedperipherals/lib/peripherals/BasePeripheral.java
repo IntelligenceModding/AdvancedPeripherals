@@ -12,15 +12,12 @@ import de.srendi.advancedperipherals.common.addons.APAddons;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.IPeripheralOwner;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.OperationAbility;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.PeripheralOwnerAbility;
+import de.srendi.advancedperipherals.common.addons.valkyrienskies.ValkyrienSkies;
 import de.srendi.advancedperipherals.common.util.CoordUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.joml.Vector3d;
-import org.valkyrienskies.core.api.ships.Ship;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -33,6 +30,8 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public abstract class BasePeripheral<O extends IPeripheralOwner> implements IBasePeripheral<O>, IDynamicPeripheral {
 
@@ -41,7 +40,7 @@ public abstract class BasePeripheral<O extends IPeripheralOwner> implements IBas
     protected final O owner;
     protected final List<BoundMethod> pluggedMethods = new ArrayList<>();
     protected boolean initialized = false;
-    protected List<IPeripheralPlugin> plugins = null;
+    protected final List<IPeripheralPlugin> plugins = new LinkedList<>();
     protected String[] methodNames = new String[0];
 
     protected BasePeripheral(String type, O owner) {
@@ -49,32 +48,41 @@ public abstract class BasePeripheral<O extends IPeripheralOwner> implements IBas
         this.owner = owner;
     }
 
+    protected void clearAllPlugins() {
+        this.initialized = false;
+        plugins.clear();
+    }
+
     protected void buildPlugins() {
-        if (!initialized) {
-            initialized = true;
-            this.pluggedMethods.clear();
-            if (plugins != null) plugins.forEach(plugin -> {
-                if (plugin.isSuitable(this))
-                    pluggedMethods.addAll(plugin.getMethods());
-            });
-            owner.getAbilities().forEach(ability -> {
-                if (ability instanceof IPeripheralPlugin peripheralPlugin)
-                    pluggedMethods.addAll(peripheralPlugin.getMethods());
-            });
-            this.methodNames = pluggedMethods.stream().map(BoundMethod::getName).toArray(String[]::new);
+        if (this.initialized) {
+            return;
         }
+        this.initialized = true;
+        this.pluggedMethods.clear();
+        this.plugins.forEach(plugin -> {
+            if (plugin.isSuitable(this)) {
+                this.pluggedMethods.addAll(plugin.getMethods());
+            }
+        });
+        owner.getAbilities().forEach(ability -> {
+            if (ability instanceof IPeripheralPlugin peripheralPlugin) {
+                this.pluggedMethods.addAll(peripheralPlugin.getMethods());
+            }
+        });
+        this.methodNames = this.pluggedMethods.stream().map(BoundMethod::getName).toArray(String[]::new);
     }
 
     protected void addPlugin(@NotNull IPeripheralPlugin plugin) {
-        if (plugins == null) plugins = new LinkedList<>();
-        plugins.add(plugin);
+        this.plugins.add(plugin);
         IPeripheralOperation<?>[] operations = plugin.getOperations();
         if (operations != null) {
             OperationAbility operationAbility = owner.getAbility(PeripheralOwnerAbility.OPERATION);
-            if (operationAbility == null)
+            if (operationAbility == null) {
                 throw new IllegalArgumentException("This is not possible to attach plugin with operations to not operationable owner");
-            for (IPeripheralOperation<?> operation : operations)
+            }
+            for (IPeripheralOperation<?> operation : operations) {
                 operationAbility.registerOperation(operation);
+            }
         }
     }
 
@@ -144,24 +152,19 @@ public abstract class BasePeripheral<O extends IPeripheralOwner> implements IBas
     }
 
     public boolean isOnShip() {
-        return APAddons.vs2Loaded && APAddons.isBlockOnShip(owner.getLevel(), owner.getPos());
+        return APAddons.isBlockOnShip(owner.getLevel(), owner.getPos());
     }
 
-    public Vec3 getWorldPos() {
+    public Vec3 getPhysicsPos() {
         Vec3 pos = this.getCenterPos();
         if (!APAddons.vs2Loaded) {
             return pos;
         }
-        Ship ship = APAddons.getVS2Ship(owner.getLevel(), owner.getPos());
-        if (ship == null) {
-            return pos;
-        }
-        Vector3d newPos = ship.getShipToWorld().transformPosition(new Vector3d(pos.x, pos.y, pos.z));
-        return new Vec3(newPos.x, newPos.y, newPos.z);
+        return ValkyrienSkies.transformToWorldPos(owner.getLevel(), owner.getPos(), pos);
     }
 
-    public final BlockPos getWorldBlockPos() {
-        return new BlockPos(this.getWorldPos());
+    public final BlockPos getPhysicsBlockPos() {
+        return new BlockPos(this.getPhysicsPos());
     }
 
     protected Direction validateSide(String direction) throws LuaException {

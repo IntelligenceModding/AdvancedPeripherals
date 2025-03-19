@@ -1,9 +1,13 @@
 package de.srendi.advancedperipherals.common.util;
 
+import de.srendi.advancedperipherals.common.addons.computercraft.owner.IPeripheralOwner;
+import de.srendi.advancedperipherals.common.addons.computercraft.owner.BlockEntityPeripheralOwner;
+import de.srendi.advancedperipherals.common.addons.computercraft.owner.TurtlePeripheralOwner;
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.DistanceDetectorPeripheral;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntitySelector;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
@@ -20,37 +24,45 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.function.Predicate;
 
 public class HitResultUtil {
 
     /**
      * This method is used to get the hit result of an entity from the start position of a block
      *
-     * @param to          the target position/max position
      * @param from        the source position like a block
+     * @param to          the target position/max position
      * @param level       the level
      * @param shapeGetter the block collision shape getter
      * @return the hit result. {@link BlockHitResult#miss(Vec3, Direction, BlockPos)} if nothing found
      */
     @NotNull
-    public static HitResult getHitResult(Vec3 to, Vec3 from, Level level, ClipContext.ShapeGetter shapeGetter) {
-        return getHitResult(to, from, level, shapeGetter, null);
+    public static HitResult getHitResult(Vec3 from, Vec3 to, Level level, ClipContext.ShapeGetter shapeGetter) {
+        return getHitResult(from, to, level, shapeGetter, null);
     }
 
     /**
      * This method is used to get the hit result of an entity from the start position of a block
      *
-     * @param to          the target position/max position
      * @param from        the source position like a block
+     * @param to          the target position/max position
      * @param level       the level
      * @param shapeGetter the block collision shape getter
-     * @param source      the source Entity/BlockPos that will be ignored
+     * @param source      the source Entity/BlockPos that will be ignored, or an {@link IPeripheralOwner} to auto determine the source.
      * @return the hit result. {@link BlockHitResult#miss(Vec3, Direction, BlockPos)} if nothing found
      */
     @NotNull
-    public static HitResult getHitResult(Vec3 to, Vec3 from, Level level, ClipContext.ShapeGetter shapeGetter, Object source) {
-        EntityHitResult entityResult = getEntityHitResult(to, from, level, source instanceof Entity ? (Entity) source : null);
-        BlockHitResult blockResult = getBlockHitResult(to, from, level, shapeGetter, source instanceof BlockPos ? (BlockPos) source : null);
+    public static HitResult getHitResult(Vec3 from, Vec3 to, Level level, ClipContext.ShapeGetter shapeGetter, Object source) {
+        if (source instanceof IPeripheralOwner owner) {
+            if (owner instanceof BlockEntityPeripheralOwner<?> || owner instanceof TurtlePeripheralOwner) {
+                source = owner.getPos();
+            } else {
+                source = owner.getHoldingEntity();
+            }
+        }
+        EntityHitResult entityResult = getEntityHitResult(from, to, level, source instanceof Entity ? (Entity) source : null, source instanceof Predicate<?> ? (Predicate<Entity>) source : EntitySelector.NO_SPECTATORS);
+        BlockHitResult blockResult = getBlockHitResult(from, to, level, shapeGetter, source instanceof BlockPos ? (BlockPos) source : null);
 
         if (entityResult.getType() == HitResult.Type.MISS) {
             if (blockResult.getType() == HitResult.Type.MISS) {
@@ -73,14 +85,14 @@ public class HitResultUtil {
      * this method uses one AABB made out of the two coordinates, this would also find any entities
      * which are not located in the ray you might want. {@link DistanceDetectorPeripheral#getDistance()}
      *
-     * @param to    the target position/max position
      * @param from  the source position like a block
+     * @param to    the target position/max position
      * @param level the world
      * @return the entity hit result. An empty HitResult with {@link HitResult.Type#MISS} as type if nothing found
      */
     @NotNull
-    public static EntityHitResult getEntityHitResult(Vec3 to, Vec3 from, Level level) {
-        return getEntityHitResult(to, from, level, null);
+    public static EntityHitResult getEntityHitResult(Vec3 from, Vec3 to, Level level) {
+        return getEntityHitResult(from, to, level, null);
     }
 
     /**
@@ -89,17 +101,35 @@ public class HitResultUtil {
      * this method uses one AABB made out of the two coordinates, this would also find any entities
      * which are not located in the ray you might want. {@link DistanceDetectorPeripheral#getDistance()}
      *
-     * @param to     the target position/max position
      * @param from   the source position like a block
+     * @param to     the target position/max position
      * @param level  the world
      * @param source the source Entity that will be ignored
      * @return the entity hit result. An empty HitResult with {@link HitResult.Type#MISS} as type if nothing found
      */
     @NotNull
-    public static EntityHitResult getEntityHitResult(Vec3 to, Vec3 from, Level level, Entity source) {
+    public static EntityHitResult getEntityHitResult(Vec3 from, Vec3 to, Level level, Entity source) {
+        return getEntityHitResult(from, to, level, source, EntitySelector.NO_SPECTATORS);
+    }
+
+    /**
+     * This method is used to get the hit result of an entity from the start position of a block
+     * This could be used to find an entity from the eyes position of another entity but since
+     * this method uses one AABB made out of the two coordinates, this would also find any entities
+     * which are not located in the ray you might want. {@link DistanceDetectorPeripheral#getDistance()}
+     *
+     * @param from         the source position like a block
+     * @param to           the target position/max position
+     * @param level        the world
+     * @param source       the source Entity that will be ignored
+     * @param entityFilter the entity filter
+     * @return the entity hit result. An empty HitResult with {@link HitResult.Type#MISS} as type if nothing found
+     */
+    @NotNull
+    public static EntityHitResult getEntityHitResult(Vec3 from, Vec3 to, Level level, Entity source, Predicate<Entity> entityFilter) {
         AABB checkingBox = new AABB(to, from);
 
-        List<Entity> entities = level.getEntities(source, checkingBox, (entity) -> true);
+        List<Entity> entities = level.getEntities(source, checkingBox, entityFilter);
 
         Entity nearestEntity = null;
         Vec3 hitPos = null;
@@ -124,29 +154,29 @@ public class HitResultUtil {
     /**
      * This method is used to get the hit result of a block from the start position of a block
      *
-     * @param to          the target position/max position
      * @param from        the source position
+     * @param to          the target position/max position
      * @param level       the world
      * @param shapeGetter the block collision shape getter
      * @return the block hit result. {@link BlockHitResult#miss(Vec3, Direction, BlockPos)} if nothing found
      */
     @NotNull
-    public static BlockHitResult getBlockHitResult(Vec3 to, Vec3 from, Level level, ClipContext.ShapeGetter shapeGetter) {
-        return getBlockHitResult(to, from, level, shapeGetter, null);
+    public static BlockHitResult getBlockHitResult(Vec3 from, Vec3 to, Level level, ClipContext.ShapeGetter shapeGetter) {
+        return getBlockHitResult(from, to, level, shapeGetter, null);
     }
 
     /**
      * This method is used to get the hit result of a block from the start position of a block
      *
-     * @param to          the target position/max position
      * @param from        the source position
+     * @param to          the target position/max position
      * @param level       the world
      * @param shapeGetter the block collision shape getter
      * @param source      the source BlockPos that will be ignored
      * @return the block hit result. {@link BlockHitResult#miss(Vec3, Direction, BlockPos)} if nothing found
      */
     @NotNull
-    public static BlockHitResult getBlockHitResult(Vec3 to, Vec3 from, Level level, ClipContext.ShapeGetter shapeGetter, BlockPos source) {
+    public static BlockHitResult getBlockHitResult(Vec3 from, Vec3 to, Level level, ClipContext.ShapeGetter shapeGetter, BlockPos source) {
         return level.clip(new AdvancedClipContext(from, to, shapeGetter, ClipContext.Fluid.NONE, null, source));
     }
 

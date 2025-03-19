@@ -4,7 +4,7 @@ import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.lua.MethodResult;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
-import de.srendi.advancedperipherals.common.addons.computercraft.owner.BlockEntityPeripheralOwner;
+import de.srendi.advancedperipherals.common.addons.computercraft.owner.InventoryManagerOwner;
 import de.srendi.advancedperipherals.common.blocks.blockentities.InventoryManagerEntity;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
@@ -29,12 +29,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class InventoryManagerPeripheral extends BasePeripheral<BlockEntityPeripheralOwner<InventoryManagerEntity>> {
+public class InventoryManagerPeripheral extends BasePeripheral<InventoryManagerOwner> {
 
     public static final String PERIPHERAL_TYPE = "inventory_manager";
 
     public InventoryManagerPeripheral(InventoryManagerEntity tileEntity) {
-        super(PERIPHERAL_TYPE, new BlockEntityPeripheralOwner<>(tileEntity));
+        super(PERIPHERAL_TYPE, new InventoryManagerOwner(tileEntity));
     }
 
     @Override
@@ -103,13 +103,13 @@ public class InventoryManagerPeripheral extends BasePeripheral<BlockEntityPeriph
     @LuaFunction(value = {"list", "getItems"}, mainThread = true)
     public final List<Object> getItems() throws LuaException {
         List<Object> items = new ArrayList<>();
-        int i = 0; //Used to let users easily sort the items by the slots. Also, a better way for the user to see where an item actually is
-        for (ItemStack stack : getOwnerPlayer().getInventory().items) {
-            ItemStack copiedStack = stack.copy();
-            if (!copiedStack.isEmpty())
-                items.add(LuaConverter.stackToObjectWithSlot(copiedStack, i));
-
-            i++;
+        List<ItemStack> stacks = getOwnerPlayer().getInventory().items;
+        // Used to let users easily sort the items by the slots. Also, a better way for the user to see where an item actually is
+        for (int slot = 0; slot < stacks.size(); slot++) {
+            ItemStack stack = stacks.get(slot);
+            if (!stack.isEmpty()) {
+                items.add(LuaConverter.stackToObjectWithSlot(stack, slot));
+            }
         }
         return items;
     }
@@ -127,7 +127,7 @@ public class InventoryManagerPeripheral extends BasePeripheral<BlockEntityPeriph
         List<Object> items = new ArrayList<>();
         for (int slot = 0; slot < inventoryTo.getSlots(); slot++) {
             if (!inventoryTo.getStackInSlot(slot).isEmpty()) {
-                items.add(LuaConverter.stackToObjectWithSlot(inventoryTo.getStackInSlot(slot).copy(), slot));
+                items.add(LuaConverter.stackToObjectWithSlot(inventoryTo.getStackInSlot(slot), slot));
             }
         }
         return MethodResult.of(items);
@@ -137,9 +137,8 @@ public class InventoryManagerPeripheral extends BasePeripheral<BlockEntityPeriph
     public final List<Object> getArmor() throws LuaException {
         List<Object> items = new ArrayList<>();
         for (ItemStack stack : getOwnerPlayer().getInventory().armor) {
-            ItemStack copiedStack = stack.copy();
-            if (!copiedStack.isEmpty()) {
-                items.add(LuaConverter.stackToObjectWithSlot(copiedStack, ArmorSlot.getSlotForItem(copiedStack)));
+            if (!stack.isEmpty()) {
+                items.add(LuaConverter.stackToObjectWithSlot(stack, ArmorSlot.getSlotForItem(stack)));
             }
         }
         return items;
@@ -157,24 +156,18 @@ public class InventoryManagerPeripheral extends BasePeripheral<BlockEntityPeriph
 
     @LuaFunction(mainThread = true)
     public final boolean isWearing(int index) throws LuaException {
-        int i = 0;
-        for (ItemStack stack : getOwnerPlayer().getInventory().armor) {
-            if (!stack.isEmpty()) {
-                if (index == i - 100) return true;
-                i++;
-            }
-        }
-        return false;
+        List<ItemStack> armor = getOwnerPlayer().getInventory().armor;
+        return 0 <= index && index < armor.size() && !armor.get(index).isEmpty();
     }
 
     @LuaFunction(mainThread = true)
     public final int getEmptySpace() throws LuaException {
-        int i = 0;
+        int count = 0;
         for (ItemStack stack : getOwnerPlayer().getInventory().items) {
             if (stack.isEmpty())
-                i++;
+                count++;
         }
-        return i;
+        return count;
     }
 
     @LuaFunction(mainThread = true)

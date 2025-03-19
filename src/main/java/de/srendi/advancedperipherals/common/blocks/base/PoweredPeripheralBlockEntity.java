@@ -17,15 +17,10 @@ import org.jetbrains.annotations.Nullable;
 
 public abstract class PoweredPeripheralBlockEntity<T extends BasePeripheral<?>> extends PeripheralBlockEntity<T> {
 
-    private final LazyOptional<IEnergyStorage> lazyEnergyStorage;
+    private LazyOptional<IEnergyStorage> lazyEnergyStorage = LazyOptional.empty();
 
     protected PoweredPeripheralBlockEntity(BlockEntityType<?> tileEntityTypeIn, BlockPos pos, BlockState state) {
         super(tileEntityTypeIn, pos, state);
-        if (APConfig.PERIPHERALS_CONFIG.enablePoweredPeripherals.get()) {
-            lazyEnergyStorage = LazyOptional.of(() -> new EnergyStorage(this.getMaxEnergyStored()));
-        } else {
-            lazyEnergyStorage = LazyOptional.empty();
-        }
     }
 
     protected abstract int getMaxEnergyStored();
@@ -43,9 +38,14 @@ public abstract class PoweredPeripheralBlockEntity<T extends BasePeripheral<?>> 
     }
 
     @Override
-    public <T1> @NotNull LazyOptional<T1> getCapability(@NotNull Capability<T1> cap, @Nullable Direction direction) {
-        if (cap == ForgeCapabilities.ENERGY && lazyEnergyStorage.isPresent()) {
-            return lazyEnergyStorage.cast();
+    public <U> @NotNull LazyOptional<U> getCapability(@NotNull Capability<U> cap, @Nullable Direction direction) {
+        if (cap == ForgeCapabilities.ENERGY) {
+            if (APConfig.PERIPHERALS_CONFIG.enablePoweredPeripherals.get()) {
+                if (!lazyEnergyStorage.isPresent()) {
+                    lazyEnergyStorage = LazyOptional.of(() -> new EnergyStorage(this.getMaxEnergyStored()));
+                }
+                return lazyEnergyStorage.cast();
+            }
         }
         return super.getCapability(cap, direction);
     }
@@ -55,5 +55,4 @@ public abstract class PoweredPeripheralBlockEntity<T extends BasePeripheral<?>> 
         super.invalidateCaps();
         this.lazyEnergyStorage.invalidate();
     }
-
 }

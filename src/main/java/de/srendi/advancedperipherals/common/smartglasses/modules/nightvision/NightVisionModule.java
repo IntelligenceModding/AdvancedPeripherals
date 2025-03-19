@@ -11,7 +11,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class NightVisionModule implements IModule {
 
-    public boolean nightVisionEnabled = true;
+    private boolean nightVisionEnabled = true;
 
     public NightVisionModule() {
 
@@ -35,7 +35,6 @@ public class NightVisionModule implements IModule {
                 player.removeEffect(MobEffects.NIGHT_VISION);
             }
         }
-
     }
 
     /**

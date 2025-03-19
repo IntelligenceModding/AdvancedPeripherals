@@ -16,4 +16,6 @@ public interface IBasePeripheral<T extends IPeripheralOwner> extends IPeripheral
     }
 
     T getPeripheralOwner();
+
+    default void update() {}
 }

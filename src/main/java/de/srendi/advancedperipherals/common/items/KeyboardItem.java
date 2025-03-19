@@ -5,13 +5,13 @@ import de.srendi.advancedperipherals.client.KeyBindings;
 import de.srendi.advancedperipherals.common.container.KeyboardContainer;
 import de.srendi.advancedperipherals.common.items.base.BaseItem;
 import de.srendi.advancedperipherals.common.items.base.IInventoryItem;
+import de.srendi.advancedperipherals.common.network.APNetworking;
+import de.srendi.advancedperipherals.common.network.toclient.KeyboardMouseCapturePacket;
 import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesAccess;
 import de.srendi.advancedperipherals.common.smartglasses.modules.IModule;
 import de.srendi.advancedperipherals.common.smartglasses.modules.IModuleItem;
 import de.srendi.advancedperipherals.common.smartglasses.modules.keyboard.KeyboardModule;
 import de.srendi.advancedperipherals.common.util.EnumColor;
-import de.srendi.advancedperipherals.common.util.KeybindUtil;
-import de.srendi.advancedperipherals.common.util.NBTUtil;
 import de.srendi.advancedperipherals.common.util.SideHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -54,37 +54,42 @@ public class KeyboardItem extends BaseItem implements IInventoryItem, IModuleIte
     @NotNull
     @Override
     public InteractionResult useOn(UseOnContext context) {
-        if (context.getPlayer() == null)
+        Player player = context.getPlayer();
+        if (player == null)
             return InteractionResult.PASS;
 
-        if (SideHelper.isClientPlayer(context.getPlayer()))
+        if (SideHelper.isClientPlayer(player))
             return InteractionResult.PASS;
 
-        if (!context.getPlayer().isShiftKeyDown())
+        if (!player.isShiftKeyDown())
             return InteractionResult.PASS;
 
         BlockEntity entity = context.getLevel().getBlockEntity(context.getClickedPos());
         if (entity instanceof TileComputerBase) {
-            bind(context.getPlayer(), context.getItemInHand(), context.getClickedPos());
+            bind(player, context.getItemInHand(), context.getLevel(), context.getClickedPos());
         } else {
-            clear(context.getPlayer(), context.getItemInHand());
+            clear(player, context.getItemInHand());
         }
         return super.useOn(context);
     }
 
     @Override
     public void inventoryTick(ItemStack itemStack, Level level, Entity entity, int inventorySlot, boolean isCurrentItem, @Nullable SmartGlassesAccess access, @Nullable IModule module) {
-        if (level.isClientSide())
+        if (level.isClientSide()) {
             return;
+        }
 
-        if (access == null)
+        if (access == null || !(module instanceof KeyboardModule keyboadModule)) {
             return;
+        }
 
         CompoundTag data = itemStack.getOrCreateTag();
         int instanceId = access.getComputer().getInstanceID();
         int oldInstanceId = -1;
 
-        if (data.contains(GLASSES_BIND_TAG)) oldInstanceId = data.getInt(GLASSES_BIND_TAG);
+        if (data.contains(GLASSES_BIND_TAG)) {
+            oldInstanceId = data.getInt(GLASSES_BIND_TAG);
+        }
 
         if (!data.contains(BOUND_TYPE_TAG) || ((oldInstanceId != -1 && oldInstanceId != instanceId)) || !data.getBoolean(BOUND_TYPE_TAG)) {
             data.putBoolean(BOUND_TYPE_TAG, true);
@@ -92,31 +97,43 @@ public class KeyboardItem extends BaseItem implements IInventoryItem, IModuleIte
             data.remove(BIND_TAG);
         }
 
-        if (KeybindUtil.isKeyPressed(KeyBindings.GLASSES_HOTKEY_KEYBINDING)) {
-            if (entity instanceof ServerPlayer serverPlayer) {
-                NetworkHooks.openScreen(serverPlayer, ((IInventoryItem) this).createContainer(serverPlayer, itemStack), buf -> {
-                    buf.writeBlockPos(serverPlayer.blockPosition());
-                    buf.writeItem(itemStack);
-                });
-            }
+        if (!(entity instanceof ServerPlayer serverPlayer)) {
+            return;
+        }
+        // TODO: this for sure won't work on dedicated server
+        if (!KeyBindings.GLASSES_HOTKEY_KEYBINDING.isDown()) {
+            return;
+        }
+
+        access.getComputer().queueEvent("keyboard_open");
+        if (serverPlayer.containerMenu instanceof KeyboardContainer openedKeyboard && openedKeyboard.getKeyboardItem() == itemStack) {
+            return;
+        }
+
+        NetworkHooks.openScreen(serverPlayer, this.createContainer(serverPlayer, itemStack), buf -> {
+            buf.writeBlockPos(serverPlayer.blockPosition());
+            buf.writeItem(itemStack);
+        });
+        if (keyboadModule.isCapturingMouse()) {
+            APNetworking.sendTo(new KeyboardMouseCapturePacket(true), serverPlayer);
         }
     }
 
     @Override
     public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn) {
-        if (playerIn.level.isClientSide())
+        if (playerIn.level.isClientSide()) {
             return new InteractionResultHolder<>(InteractionResult.PASS, playerIn.getItemInHand(handIn));
-        // Used to prevent the menu from opening when we just want to bind/unbind the keyboard
-        if (!playerIn.isShiftKeyDown()) {
-            if (!playerIn.getItemInHand(handIn).getOrCreateTag().contains(BIND_TAG)) {
-                playerIn.displayClientMessage(EnumColor.buildTextComponent(Component.translatable("text.advancedperipherals.keyboard_notbound")), false);
-                return new InteractionResultHolder<>(InteractionResult.PASS, playerIn.getItemInHand(handIn));
-            }
-            // Run the super use which handles the IInventoryItem stuff to actually open the container
-            return super.use(worldIn, playerIn, handIn);
         }
-
-        return new InteractionResultHolder<>(InteractionResult.PASS, playerIn.getItemInHand(handIn));
+        // Used to prevent the menu from opening when we just want to bind/unbind the keyboard
+        if (playerIn.isShiftKeyDown()) {
+            return new InteractionResultHolder<>(InteractionResult.PASS, playerIn.getItemInHand(handIn));
+        }
+        if (!playerIn.getItemInHand(handIn).getOrCreateTag().contains(BIND_TAG)) {
+            playerIn.displayClientMessage(EnumColor.buildTextComponent(Component.translatable("text.advancedperipherals.keyboard_notbound")), false);
+            return new InteractionResultHolder<>(InteractionResult.PASS, playerIn.getItemInHand(handIn));
+        }
+        // Run the super use which handles the IInventoryItem stuff to actually open the container
+        return super.use(worldIn, playerIn, handIn);
     }
 
     @Override
@@ -125,27 +142,38 @@ public class KeyboardItem extends BaseItem implements IInventoryItem, IModuleIte
         CompoundTag data = stack.getOrCreateTag();
         if (data.contains(BOUND_TYPE_TAG) && !data.getBoolean(BOUND_TYPE_TAG)) {
             if (data.contains(BIND_TAG)) {
-                tooltip.add(EnumColor.buildTextComponent(Component.translatable("item.advancedperipherals.tooltip.binding.bound_to", NBTUtil.blockPosFromNBT(data.getCompound(BIND_TAG)).toShortString())));
+                tooltip.add(EnumColor.buildTextComponent(Component.translatable("item.advancedperipherals.tooltip.binding.bound_to", data.getInt(BIND_TAG))));
             }
         } else {
             if (data.contains(GLASSES_BIND_TAG)) {
                 tooltip.add(EnumColor.buildTextComponent(Component.translatable("item.advancedperipherals.tooltip.binding.bound_to_glasses", data.getInt(GLASSES_BIND_TAG))));
-
             }
         }
     }
 
-    private void bind(Player player, ItemStack itemStack, BlockPos pos) {
-        CompoundTag tag = NBTUtil.toNBT(pos);
+    private void bind(Player player, ItemStack itemStack, Level world, BlockPos pos) {
+        CompoundTag data = itemStack.getOrCreateTag();
+        data.putBoolean(BOUND_TYPE_TAG, false);
 
-        itemStack.getOrCreateTag().putBoolean(BOUND_TYPE_TAG, false);
-        itemStack.getOrCreateTag().put(BIND_TAG, tag);
+        if (!(world.getBlockEntity(pos) instanceof TileComputerBase computer)) {
+            // TODO: should it show bind failed message?
+            return;
+        }
+
+        int id = computer.getComputerID();
+        if (id < 0) {
+            // TODO: show computer not initialized error?
+            return;
+        }
+        data.putInt(BIND_TAG, id);
+
         player.displayClientMessage(EnumColor.buildTextComponent(Component.translatable("text.advancedperipherals.bind_keyboard", pos.toShortString())), true);
     }
 
     private void clear(Player player, ItemStack itemStack) {
-        itemStack.getOrCreateTag().remove(BIND_TAG);
-        itemStack.getOrCreateTag().putBoolean(BOUND_TYPE_TAG, false);
+        CompoundTag data = itemStack.getOrCreateTag();
+        data.remove(BIND_TAG);
+        data.putBoolean(BOUND_TYPE_TAG, false);
 
         player.displayClientMessage(EnumColor.buildTextComponent(Component.translatable("text.advancedperipherals.cleared_keyboard")), true);
     }

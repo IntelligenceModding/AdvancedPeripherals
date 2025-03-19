@@ -7,9 +7,11 @@ import dan200.computercraft.api.lua.MethodResult;
 import dan200.computercraft.core.apis.TableHelper;
 import de.srendi.advancedperipherals.common.addons.APAddons;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.TurtlePeripheralOwner;
+import de.srendi.advancedperipherals.common.addons.valkyrienskies.ValkyrienSkies;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
 import de.srendi.advancedperipherals.common.util.fakeplayer.APFakePlayer;
 import de.srendi.advancedperipherals.lib.peripherals.AutomataCorePeripheral;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.state.BlockState;
@@ -18,12 +20,11 @@ import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.registries.ForgeRegistries;
-import org.jetbrains.annotations.NotNull;
-import org.valkyrienskies.core.api.ships.Ship;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import org.jetbrains.annotations.NotNull;
 
 public class AutomataLookPlugin extends AutomataCorePlugin {
 
@@ -52,16 +53,12 @@ public class AutomataLookPlugin extends AutomataCorePlugin {
         data.put("name", blockName == null ? null : blockName.toString());
         data.put("tags", LuaConverter.tagsToList(() -> state.getBlock().builtInRegistryHolder().tags()));
         Vec3 pos = blockHit.getLocation();
-        Vec3 origin = automataCore.getWorldPos();
+        Vec3 origin = automataCore.getPhysicsPos();
         data.put("x", pos.x - origin.x);
         data.put("y", pos.y - origin.y);
         data.put("z", pos.z - origin.z);
         if (APAddons.vs2Loaded) {
-            Ship ship = APAddons.getVS2Ship(automataCore.getLevel(), blockPos);
-            if (ship != null) {
-                data.put("shipId", ship.getId());
-                data.put("shipName", ship.getSlug());
-            }
+            ValkyrienSkies.encodeShipInfo(automataCore.getLevel(), blockPos, data);
         }
         return MethodResult.of(data);
     }
@@ -79,7 +76,7 @@ public class AutomataLookPlugin extends AutomataCorePlugin {
         }
 
         EntityHitResult entityHit = (EntityHitResult) result;
-        Vec3 origin = automataCore.getWorldPos();
+        Vec3 origin = automataCore.getPhysicsPos();
         return MethodResult.of(LuaConverter.completeEntityWithPositionToLua(entityHit.getEntity(), origin, true));
     }
 

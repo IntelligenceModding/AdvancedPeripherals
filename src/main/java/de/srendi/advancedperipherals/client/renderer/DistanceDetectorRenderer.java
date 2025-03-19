@@ -28,7 +28,7 @@ public class DistanceDetectorRenderer implements BlockEntityRenderer<DistanceDet
 
     @Override
     public void render(@NotNull DistanceDetectorEntity pBlockEntity, float pPartialTick, @NotNull PoseStack pPoseStack, MultiBufferSource pBufferSource, int pPackedLight, int pPackedOverlay) {
-        if (pBlockEntity.getLaserVisibility()) {
+        if (pBlockEntity.getShowLaser()) {
             float distance = pBlockEntity.getCurrentDistance();
             float[] color = EnumColor.RED.getRgb();
             if (distance == -1) {

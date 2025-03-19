@@ -2,6 +2,7 @@ package de.srendi.advancedperipherals.common.network;
 
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.network.base.IPacket;
+import de.srendi.advancedperipherals.common.network.toclient.KeyboardMouseCapturePacket;
 import de.srendi.advancedperipherals.common.network.toclient.RenderableObjectBulkSyncPacket;
 import de.srendi.advancedperipherals.common.network.toclient.RenderableObjectClearPacket;
 import de.srendi.advancedperipherals.common.network.toclient.RenderableObjectDeletePacket;
@@ -9,6 +10,9 @@ import de.srendi.advancedperipherals.common.network.toclient.RenderableObjectSyn
 import de.srendi.advancedperipherals.common.network.toclient.SaddleTurtleInfoPacket;
 import de.srendi.advancedperipherals.common.network.toclient.ToastToClientPacket;
 import de.srendi.advancedperipherals.common.network.toserver.GlassesHotkeyPacket;
+import de.srendi.advancedperipherals.common.network.toserver.KeyboardMouseClickPacket;
+import de.srendi.advancedperipherals.common.network.toserver.KeyboardMouseMovePacket;
+import de.srendi.advancedperipherals.common.network.toserver.KeyboardMouseScrollPacket;
 import de.srendi.advancedperipherals.common.network.toserver.SaddleTurtleControlPacket;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
@@ -38,13 +42,18 @@ public class APNetworking {
     private static int index = 0;
 
     public static void init() {
+        registerServerToClient(KeyboardMouseCapturePacket.class, KeyboardMouseCapturePacket::decode);
+        registerServerToClient(RenderableObjectBulkSyncPacket.class, RenderableObjectBulkSyncPacket::decode);
+        registerServerToClient(RenderableObjectClearPacket.class, RenderableObjectClearPacket::decode);
+        registerServerToClient(RenderableObjectDeletePacket.class, RenderableObjectDeletePacket::decode);
+        registerServerToClient(RenderableObjectSyncPacket.class, RenderableObjectSyncPacket::decode);
         registerServerToClient(SaddleTurtleInfoPacket.class, SaddleTurtleInfoPacket::decode);
         registerServerToClient(ToastToClientPacket.class, ToastToClientPacket::decode);
-        registerServerToClient(RenderableObjectSyncPacket.class, RenderableObjectSyncPacket::decode);
-        registerServerToClient(RenderableObjectDeletePacket.class, RenderableObjectDeletePacket::decode);
-        registerServerToClient(RenderableObjectClearPacket.class, RenderableObjectClearPacket::decode);
-        registerServerToClient(RenderableObjectBulkSyncPacket.class, RenderableObjectBulkSyncPacket::decode);
+
         registerClientToServer(GlassesHotkeyPacket.class, GlassesHotkeyPacket::decode);
+        registerClientToServer(KeyboardMouseClickPacket.class, KeyboardMouseClickPacket::decode);
+        registerClientToServer(KeyboardMouseMovePacket.class, KeyboardMouseMovePacket::decode);
+        registerClientToServer(KeyboardMouseScrollPacket.class, KeyboardMouseScrollPacket::decode);
         registerClientToServer(SaddleTurtleControlPacket.class, SaddleTurtleControlPacket::decode);
     }
 

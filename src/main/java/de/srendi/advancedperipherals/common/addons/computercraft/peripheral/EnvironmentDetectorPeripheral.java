@@ -5,8 +5,10 @@ import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.lua.MethodResult;
 import dan200.computercraft.api.pocket.IPocketAccess;
+import dan200.computercraft.api.pocket.IPocketUpgrade;
 import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
+
 import de.srendi.advancedperipherals.common.addons.computercraft.operations.SphereOperationContext;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.BlockEntityPeripheralOwner;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.IPeripheralOwner;
@@ -17,6 +19,7 @@ import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
 import de.srendi.advancedperipherals.lib.peripherals.IPeripheralPlugin;
+
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
@@ -34,7 +37,6 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.SleepingTimeCheckEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.server.ServerLifecycleHooks;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -44,6 +46,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
+import org.jetbrains.annotations.NotNull;
 
 import static de.srendi.advancedperipherals.common.addons.computercraft.operations.SphereOperation.SCAN_ENTITIES;
 
@@ -68,8 +71,8 @@ public class EnvironmentDetectorPeripheral extends BasePeripheral<IPeripheralOwn
         this(new TurtlePeripheralOwner(turtle, side).attachFuel(1));
     }
 
-    public EnvironmentDetectorPeripheral(IPocketAccess pocket) {
-        this(new PocketPeripheralOwner(pocket));
+    public EnvironmentDetectorPeripheral(IPocketAccess pocket, IPocketUpgrade upgrade) {
+        this(new PocketPeripheralOwner(pocket, upgrade));
     }
 
     private static int estimateCost(int radius) {
@@ -93,24 +96,24 @@ public class EnvironmentDetectorPeripheral extends BasePeripheral<IPeripheralOwn
 
     @LuaFunction(mainThread = true)
     public final String getBiome() {
-        Optional<ResourceKey<Biome>> biome = getLevel().getBiome(this.getWorldBlockPos()).unwrapKey();
+        Optional<ResourceKey<Biome>> biome = getLevel().getBiome(this.getPhysicsBlockPos()).unwrapKey();
         return biome.map(biomeResourceKey -> biomeResourceKey.location().toString()).orElse("unknown");
     }
 
     @LuaFunction(mainThread = true)
     public final int getSkyLightLevel() {
-        return getLevel().getBrightness(LightLayer.SKY, this.getWorldBlockPos().offset(0, 1, 0));
+        return getLevel().getBrightness(LightLayer.SKY, this.getPhysicsBlockPos().offset(0, 1, 0));
     }
 
     @LuaFunction(mainThread = true)
     public final int getBlockLightLevel() {
-        return getLevel().getBrightness(LightLayer.BLOCK, this.getWorldBlockPos().offset(0, 1, 0));
+        return getLevel().getBrightness(LightLayer.BLOCK, this.getPhysicsBlockPos().offset(0, 1, 0));
     }
 
     @LuaFunction(mainThread = true)
     public final int getDayLightLevel() {
         Level level = getLevel();
-        int i = level.getBrightness(LightLayer.SKY, this.getWorldBlockPos().offset(0, 1, 0)) - level.getSkyDarken();
+        int i = level.getBrightness(LightLayer.SKY, this.getPhysicsBlockPos().offset(0, 1, 0)) - level.getSkyDarken();
         float f = level.getSunAngle(1.0F);
         if (i > 0) {
             float f1 = f < (float) Math.PI ? 0.0F : ((float) Math.PI * 2F);
@@ -128,7 +131,7 @@ public class EnvironmentDetectorPeripheral extends BasePeripheral<IPeripheralOwn
 
     @LuaFunction(mainThread = true)
     public final boolean isSlimeChunk() {
-        ChunkPos chunkPos = new ChunkPos(this.getWorldBlockPos());
+        ChunkPos chunkPos = new ChunkPos(this.getPhysicsBlockPos());
         return WorldgenRandom.seedSlimeChunk(chunkPos.x, chunkPos.z, ((WorldGenLevel) getLevel()).getSeed(), 987234911L).nextInt(10) == 0;
     }
 
@@ -208,7 +211,7 @@ public class EnvironmentDetectorPeripheral extends BasePeripheral<IPeripheralOwn
         return withOperation(SCAN_ENTITIES, new SphereOperationContext(radius), context -> {
             return context.getRadius() > SCAN_ENTITIES.getMaxCostRadius() ? MethodResult.of(null, "Radius exceeds max value") : null;
         }, context -> {
-            Vec3 pos = this.getWorldPos();
+            Vec3 pos = this.getPhysicsPos();
             AABB box = new AABB(pos, pos);
             List<Map<String, Object>> entities = getLevel().getEntities((Entity) null, box.inflate(context.getRadius() + 0.5), entity -> entity instanceof LivingEntity && entity.isAlive()).stream().map(entity -> LuaConverter.completeEntityWithPositionToLua(entity, pos, detailed)).toList();
             return MethodResult.of(entities);

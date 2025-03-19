@@ -1,4 +1,4 @@
-package de.srendi.advancedperipherals.common.addons.appliedenergistics;
+package de.srendi.advancedperipherals.common.addons.ae2;
 
 import appeng.api.crafting.IPatternDetails;
 import appeng.api.inventories.InternalInventory;

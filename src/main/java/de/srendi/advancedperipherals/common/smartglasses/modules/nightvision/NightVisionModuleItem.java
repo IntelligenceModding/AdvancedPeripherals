@@ -30,12 +30,13 @@ public class NightVisionModuleItem extends BaseItem implements IModuleItem {
             return;
         }
 
-        if (module instanceof NightVisionModule nightVisionModule) {
-            if (nightVisionModule.nightVisionEnabled) {
-                player.addEffect(new MobEffectInstance(MobEffects.NIGHT_VISION, 20 * 13 - 1 /* minus 1 tick then the client timing won't flash */));
-            } else {
-                player.removeEffect(MobEffects.NIGHT_VISION);
-            }
+        if (!(module instanceof NightVisionModule nightVisionModule)) {
+            return;
+        }
+        if (nightVisionModule.isNightVisionEnabled()) {
+            player.addEffect(new MobEffectInstance(MobEffects.NIGHT_VISION, 20 * 13 - 1 /* minus 1 tick then the client timing won't flash */));
+        } else {
+            player.removeEffect(MobEffects.NIGHT_VISION);
         }
     }
 }

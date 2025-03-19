@@ -14,9 +14,11 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public abstract class AutomataCorePeripheral extends BasePeripheral<TurtlePeripheralOwner> {
     private final IAutomataCoreTier tier;
@@ -28,6 +30,11 @@ public abstract class AutomataCorePeripheral extends BasePeripheral<TurtlePeriph
         owner.attachFuel(tier.getMaxFuelConsumptionRate());
         owner.attachOperation(possibleOperations());
         this.tier = tier;
+    }
+
+    @Override
+    public Set<String> getAdditionalTypes() {
+        return Collections.singleton("automata");
     }
 
     public void addRotationCycle() {

@@ -13,6 +13,7 @@ import dan200.computercraft.shared.computer.core.ServerComputer;
 import dan200.computercraft.shared.computer.core.ServerContext;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.ChunkyPeripheral;
+import de.srendi.advancedperipherals.common.util.ChunkManager;
 import de.srendi.advancedperipherals.common.util.inventory.ItemUtil;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
@@ -102,6 +103,8 @@ public class APCommands {
             );
         }
 
+        ChunkManager manager = ChunkManager.get(source.getServer().overworld());
+        source.sendSuccess(Component.literal("Forced " + manager.getForcedChunksCount() + " chunks"), true);
         table.display(source);
         return computers.length;
     }
