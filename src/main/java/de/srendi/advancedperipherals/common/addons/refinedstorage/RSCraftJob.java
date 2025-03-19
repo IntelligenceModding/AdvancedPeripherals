@@ -162,6 +162,7 @@ public class RSCraftJob extends BasicCraftJob {
                 this.craftingTask = status;
                 // And only now we set that the crafting is started.
                 setStartedCrafting();
+                break;
             }
         }
     }
