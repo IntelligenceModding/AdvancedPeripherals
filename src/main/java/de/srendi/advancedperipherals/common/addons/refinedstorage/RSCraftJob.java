@@ -13,9 +13,11 @@ import de.srendi.advancedperipherals.common.util.StatusConstants;
 import de.srendi.advancedperipherals.common.util.inventory.BasicCraftJob;
 import net.minecraft.world.level.Level;
 
+import java.util.Collections;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+import java.util.stream.Collectors;
 
 public class RSCraftJob extends BasicCraftJob {
 
@@ -23,6 +25,7 @@ public class RSCraftJob extends BasicCraftJob {
     private final ResourceKey toCraft;
 
     private TaskStatus craftingTask;
+    private Preview preview;
     private Future<Optional<Preview>> futureCalculationResult;
     private Future<Optional<TaskId>> futureTask;
 
@@ -71,27 +74,41 @@ public class RSCraftJob extends BasicCraftJob {
 
     @Override
     public Object getEmittedItems() {
-        return null;
+        if (preview == null) {
+            return Collections.emptyList();
+        }
+
+        return preview.items().stream().filter(item -> item.toCraft() > 0).map(item -> RsApi.getObjectFromResourceKey(item.resource(), item.toCraft())).collect(Collectors.toList());
     }
 
     @Override
     public Object getUsedItems() {
-        return null;
+        // Not supported for rs2
+        return Collections.emptyList();
     }
 
     @Override
     public Object getMissingItems() {
-        return null;
+        if (preview == null) {
+            return Collections.emptyList();
+        }
+
+        return preview.items().stream().filter(item -> item.missing() > 0).map(item -> RsApi.getObjectFromResourceKey(item.resource(), item.missing())).collect(Collectors.toList());
     }
 
     @Override
     public boolean hasMultiplePaths() {
+        // Not supported for rs2
         return false;
     }
 
     @Override
     public Object getFinalOutput() {
-        return null;
+        if (preview == null) {
+            return Collections.emptyList();
+        }
+
+        return preview.outputsOfPatternWithCycle().stream().map(RsApi::getObjectFromResourceAmount).collect(Collectors.toList());
     }
 
     public TaskStatus getCraftingTask() {
@@ -110,6 +127,15 @@ public class RSCraftJob extends BasicCraftJob {
     @Override
     public void tick() {
         super.tick();
+        // RS2 does re-create a new instance of the TaskStatus when something changes - so we actually need to re fetch that from the system
+        // It's cursed, but the only way currently
+        if (craftingTask != null) {
+            for (TaskStatus status : autocraftingComponent.getStatuses()) {
+                if (status.info().id() == craftingTask.info().id()) {
+                    this.craftingTask = status;
+                }
+            }
+        }
         // The following is to get the TaskStatus from the issued task
         if (futureTask == null || !futureTask.isDone() || craftingTask != null) {
             return;
@@ -134,11 +160,9 @@ public class RSCraftJob extends BasicCraftJob {
         for (TaskStatus status : autocraftingComponent.getStatuses()) {
             if (status.info().id() == id) {
                 this.craftingTask = status;
-
                 // And only now we set that the crafting is started.
                 setStartedCrafting();
             }
-
         }
     }
 
@@ -166,7 +190,9 @@ public class RSCraftJob extends BasicCraftJob {
             return;
         }
 
-        Preview preview = optionalPreview.orElse(null);
+        Preview preview = optionalPreview.get();
+        this.preview = preview;
+
         PreviewType previewType = preview.type();
 
         if (previewType == PreviewType.MISSING_RESOURCES) {

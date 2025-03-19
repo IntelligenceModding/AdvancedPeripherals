@@ -512,7 +512,7 @@ public class RsApi {
      * @param resourceAmount the resourceAmount
      * @return the parsed key to a lua properties map
      */
-    private static Map<String, Object> getObjectFromResourceAmount(@NotNull ResourceAmount resourceAmount) {
+    public static Map<String, Object> getObjectFromResourceAmount(@NotNull ResourceAmount resourceAmount) {
         if (resourceAmount.resource() instanceof ItemResource) {
             return getObjectFromItemResource(resourceAmount);
         }
