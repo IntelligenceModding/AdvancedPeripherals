@@ -117,7 +117,9 @@ public class FluidFilter extends GenericFilter<FluidStack> {
 
     public FluidStack toFluidStack() {
         var result = new FluidStack(fluid, count);
-        result.applyComponents(components);
+        if (componentsAsNbt != null) {
+            result.applyComponents(components);
+        }
         return result;
     }
 

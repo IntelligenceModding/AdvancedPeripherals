@@ -36,6 +36,7 @@ jobs:
       build_name: ${{ needs.generate-artifact-name.outputs.name }}
       pr: ${{ github.event_name == 'pull_request' && github.event.number || '' }}
       check: ${{ github.event_name != 'push' }}
+      java-version: ''
 
   publish:
     if: ${{ github.event_name == 'push' && contains(github.ref, 'release/') }}

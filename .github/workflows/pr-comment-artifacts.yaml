@@ -7,7 +7,7 @@ on:
     types:
       - "completed"
     workflows:
-      - "Build and Test"
+      - "Build and Publish"
 
 permissions:
   actions: read

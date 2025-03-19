@@ -7,6 +7,16 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Fixed
+- [#711] Fixed that the block reader would not be able to access registries for component information
+
+## [1.21.1-0.7.49a] - 2025-02-14
+
+### Fixed
+- Fixed a Null Pointer Exception when trying to work with item filters without any component filters applied. 
+
+## [1.21.1-0.7.48a] - 2025-02-03
+
 We will introduce more breaking changes in the upcoming 1.21.1 alpha releases and in the next major version.
 Mostly noteworthy are the bridges. These will have identical functions and some additions and fixes
 Not all of the breaking changes are documented yet. But we will document them before we release a beta version
