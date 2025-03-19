@@ -36,7 +36,7 @@ public class KeyboardScreen extends Screen implements MenuAccess<KeyboardContain
     private MouseState mouseState = MouseState.RELEASED;
     private boolean captureMouse;
     private boolean regrabingMouse;
-    private byte[] lastPosLock = new byte[0];
+    private final byte[] lastPosLock = new byte[0];
     private double lastX = 0;
     private double lastY = 0;
     private double lastScroll = 0;
