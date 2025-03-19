@@ -133,6 +133,7 @@ public class RSCraftJob extends BasicCraftJob {
             for (TaskStatus status : autocraftingComponent.getStatuses()) {
                 if (status.info().id() == craftingTask.info().id()) {
                     this.craftingTask = status;
+                    break;
                 }
             }
         }
