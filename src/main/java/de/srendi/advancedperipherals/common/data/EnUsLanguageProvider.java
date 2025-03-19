@@ -110,7 +110,7 @@ public class EnUsLanguageProvider extends LanguageProvider {
         addTooltip(Blocks.ENVIRONMENT_DETECTOR.get(), "&7This peripheral interacts with the minecraft world.");
         addTooltip(Blocks.PLAYER_DETECTOR.get(), "&7This peripheral can be used to interact with players, but don't be a stalker.");
         addTooltip(Blocks.ME_BRIDGE.get(), "&7The ME Bridge interacts with Applied Energistics to manage your items.");
-        addTooltip(Blocks.RS_BRIDGE.get(), "&7The RS Bridge interacts with Refined Storage 2 to manage your items.");
+        addTooltip(Blocks.RS_BRIDGE.get(), "&7The RS Bridge interacts with Refined Storage to manage your items.");
         addTooltip(Blocks.CHAT_BOX.get(), "&7Interacts with the ingame chat, can read and write messages.");
         addTooltip(Blocks.PERIPHERAL_CASING.get(), "&7An empty hull without the love it deserves. Used as a crafting ingredient");
         addTooltip(Items.MEMORY_CARD.get(), "&7Can save the rights of a player to use it in an inventory manager.");
