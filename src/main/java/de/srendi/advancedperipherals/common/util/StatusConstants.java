@@ -30,15 +30,8 @@ public enum StatusConstants {
     NOT_CONNECTED,
     UNKNOWN_ERROR;
 
-    private String info;
-
-    public StatusConstants withInfo(String info) {
-        this.info = info;
-        return this;
-    }
-
-    public String asString() {
-        return this + "_" + this.info;
+    public String withInfo(String extraInfo) {
+        return this + "_" + extraInfo;
     }
 
 }
