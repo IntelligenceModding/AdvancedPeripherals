@@ -65,7 +65,7 @@ public interface IStorageSystemPeripheral {
 
     MethodResult getEnergyUsage();
 
-    MethodResult getAvgPowerInjection();
+    MethodResult getAverageEnergyInput();
 
     MethodResult getTotalExternItemStorage();
 
