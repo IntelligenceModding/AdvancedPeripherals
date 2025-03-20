@@ -533,7 +533,7 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
     @Override
     @LuaFunction(mainThread = true)
-    public final MethodResult getAvgPowerInjection() {
+    public final MethodResult getAverageEnergyInput() {
         if (!isAvailable())
             return notConnected();
 
