@@ -288,7 +288,7 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (!isAvailable())
             return notConnected();
 
-        Pair<ItemFilter, String> filter = ItemFilter.parse(arguments.optTable(0, Map.of()));
+        Pair<ItemFilter, String> filter = ItemFilter.parse(arguments.optTable(0, Collections.emptyMap()));
         if (filter.rightPresent())
             return MethodResult.of(null, filter.getRight());
 
@@ -305,7 +305,7 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (!isAvailable())
             return notConnected();
 
-        Pair<FluidFilter, String> filter = FluidFilter.parse(arguments.optTable(0, Map.of()));
+        Pair<FluidFilter, String> filter = FluidFilter.parse(arguments.optTable(0, Collections.emptyMap()));
         if (filter.rightPresent())
             return MethodResult.of(null, filter.getRight());
 
@@ -322,7 +322,7 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (!isAvailable())
             return notConnected();
 
-        Pair<ChemicalFilter, String> filter = ChemicalFilter.parse(arguments.optTable(0, Map.of()));
+        Pair<ChemicalFilter, String> filter = ChemicalFilter.parse(arguments.optTable(0, Collections.emptyMap()));
         if (filter.rightPresent())
             return MethodResult.of(null, filter.getRight());
 
@@ -339,7 +339,7 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (!isAvailable())
             return notConnected();
 
-        Pair<ItemFilter, String> filter = ItemFilter.parse(arguments.optTable(0, Map.of()));
+        Pair<ItemFilter, String> filter = ItemFilter.parse(arguments.optTable(0, Collections.emptyMap()));
         if (filter.rightPresent())
             return MethodResult.of(null, filter.getRight());
 
@@ -356,7 +356,7 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (!isAvailable())
             return notConnected();
 
-        Pair<FluidFilter, String> filter = FluidFilter.parse(arguments.optTable(0, Map.of()));
+        Pair<FluidFilter, String> filter = FluidFilter.parse(arguments.optTable(0, Collections.emptyMap()));
         if (filter.rightPresent())
             return MethodResult.of(null, filter.getRight());
 
@@ -373,7 +373,7 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (!isAvailable())
             return notConnected();
 
-        Pair<ChemicalFilter, String> filter = ChemicalFilter.parse(arguments.optTable(0, Map.of()));
+        Pair<ChemicalFilter, String> filter = ChemicalFilter.parse(arguments.optTable(0, Collections.emptyMap()));
         if (filter.rightPresent())
             return MethodResult.of(null, filter.getRight());
 
