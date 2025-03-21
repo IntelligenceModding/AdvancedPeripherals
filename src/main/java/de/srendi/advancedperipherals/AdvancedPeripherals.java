@@ -50,6 +50,11 @@ public class AdvancedPeripherals {
             LOGGER.log(level, "[DEBUG] {}", message);
     }
 
+    public static void debug(String message, Throwable throwable) {
+        if (APConfig.GENERAL_CONFIG.enableDebugMode.get())
+            LOGGER.error("[DEBUG] " + message, throwable);
+    }
+
     public static ResourceLocation getRL(String resource) {
         return ResourceLocation.fromNamespaceAndPath(MOD_ID, resource);
     }

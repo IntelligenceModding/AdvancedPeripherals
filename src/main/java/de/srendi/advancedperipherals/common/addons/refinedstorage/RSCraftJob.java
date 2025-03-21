@@ -145,8 +145,8 @@ public class RSCraftJob extends BasicCraftJob {
 
         try {
             optionalId = futureTask.get();
-        } catch (InterruptedException | ExecutionException e) {
-            AdvancedPeripherals.debug("Tried to get the task but the task was not done. Should be done", org.apache.logging.log4j.Level.ERROR);
+        } catch (InterruptedException | ExecutionException ex) {
+            AdvancedPeripherals.debug("Tried to get the task but the task was not done. Should be done", ex);
             fireEvent(true, StatusConstants.UNKNOWN_ERROR);
             return;
         }
@@ -179,8 +179,7 @@ public class RSCraftJob extends BasicCraftJob {
         try {
             optionalPreview = futureCalculationResult.get();
         } catch (ExecutionException | InterruptedException ex) {
-            AdvancedPeripherals.debug("Tried to get preview, but preview calculation is not done. Should be done.", org.apache.logging.log4j.Level.ERROR);
-            ex.printStackTrace();
+            AdvancedPeripherals.debug("Tried to get preview, but preview calculation is not done. Should be done.", ex);
             fireEvent(true, StatusConstants.UNKNOWN_ERROR);
             return;
         }
