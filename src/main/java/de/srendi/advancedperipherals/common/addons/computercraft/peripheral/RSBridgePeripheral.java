@@ -537,6 +537,7 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (!isAvailable())
             return notConnected();
 
+        // Not supported for Refined Storage
         return MethodResult.of(0);
     }
 
@@ -822,7 +823,7 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
         GenericFilter<?> parsedFilter = filter.getLeft();
 
-        return MethodResult.of(RsApi.findPatternFromFilters(getNetwork(), null, parsedFilter).getLeft() != null);
+        return MethodResult.of(RsApi.findPatternFromFilters(getNetwork(), null, parsedFilter).leftPresent());
     }
 
     @Override
@@ -885,7 +886,7 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
         Pair<Pattern, String> pattern = RsApi.findPatternFromFilters(getNetwork(), inputFilter, outputFilter);
 
-        if (pattern.getRight() != null)
+        if (pattern.rightPresent())
             return MethodResult.of(null, pattern.getRight());
 
         return MethodResult.of(RsApi.parsePattern(pattern.getLeft()));
