@@ -29,6 +29,7 @@ import de.srendi.advancedperipherals.common.addons.refinedstorage.RsItemHandler;
 import de.srendi.advancedperipherals.common.blocks.blockentities.RsBridgeEntity;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.util.Pair;
+import de.srendi.advancedperipherals.common.util.StatusConstants;
 import de.srendi.advancedperipherals.common.util.inventory.ChemicalFilter;
 import de.srendi.advancedperipherals.common.util.inventory.ChemicalUtil;
 import de.srendi.advancedperipherals.common.util.inventory.FluidFilter;
@@ -414,7 +415,7 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
             inventory = InventoryUtil.getHandlerFromName(computer, arguments.getString(1));
 
         if (inventory == null)
-            return MethodResult.of(0, "The target inventory does not exist. Make sure the bridge is exposed in the computer network. Reach out to our discord or our documentation for help.");
+            return MethodResult.of(0, StatusConstants.INVENTORY_NOT_FOUND.name());
 
         return importToRS(arguments, inventory);
     }
@@ -431,7 +432,7 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
             inventory = InventoryUtil.getHandlerFromName(computer, arguments.getString(1));
 
         if (inventory == null)
-            return MethodResult.of(0, "The target inventory does not exist. Make sure the bridge is exposed in the computer network. Reach out to our discord or our documentation for help.");
+            return MethodResult.of(0, StatusConstants.INVENTORY_NOT_FOUND.name());
 
         return exportToChest(arguments, inventory);
     }
@@ -447,7 +448,7 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
             handler = FluidUtil.getHandlerFromName(computer, arguments.getString(1));
 
         if (handler == null)
-            return MethodResult.of(0, "The target tank does not exist. Make sure the bridge is exposed in the computer network. Reach out to our discord or our documentation for help.");
+            return MethodResult.of(0, StatusConstants.INVENTORY_NOT_FOUND.name());
 
         return importToRS(arguments, handler);
     }
@@ -463,7 +464,7 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
             handler = FluidUtil.getHandlerFromName(computer, arguments.getString(1));
 
         if (handler == null)
-            return MethodResult.of(0, "The target tank does not exist. Make sure the bridge is exposed in the computer network. Reach out to our discord or our documentation for help.");
+            return MethodResult.of(0, StatusConstants.INVENTORY_NOT_FOUND.name());
 
         return exportToTank(arguments, handler);
     }
@@ -479,7 +480,7 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
             handler = ChemicalUtil.getHandlerFromName(computer, arguments.getString(1));
 
         if (handler == null)
-            return MethodResult.of(0, "The target tank does not exist. Make sure the bridge is exposed in the computer network. Reach out to our discord or our documentation for help.");
+            return MethodResult.of(0, StatusConstants.INVENTORY_NOT_FOUND.name());
 
         return importToRS(arguments, handler);
     }
@@ -495,7 +496,7 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
             handler = ChemicalUtil.getHandlerFromName(computer, arguments.getString(1));
 
         if (handler == null)
-            return MethodResult.of(0, "The target tank does not exist. Make sure the bridge is exposed in the computer network. Reach out to our discord or our documentation for help.");
+            return MethodResult.of(0, StatusConstants.INVENTORY_NOT_FOUND.name());
 
         return exportToTank(arguments, handler);
     }
