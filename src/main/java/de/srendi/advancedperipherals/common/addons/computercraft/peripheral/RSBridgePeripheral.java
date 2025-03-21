@@ -544,29 +544,29 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
     @Override
     @LuaFunction(mainThread = true)
-    public final MethodResult getTotalExternItemStorage() {
+    public final MethodResult getTotalExternalItemStorage() {
         if (!isAvailable())
             return notConnected();
 
-        return MethodResult.of(RsApi.getTotalExternStorage(getNetwork(), StorageTypes.ITEM));
+        return MethodResult.of(RsApi.getTotalExternalStorage(getNetwork(), StorageTypes.ITEM));
     }
 
     @Override
     @LuaFunction(mainThread = true)
-    public final MethodResult getTotalExternFluidStorage() {
+    public final MethodResult getTotalExternalFluidStorage() {
         if (!isAvailable())
             return notConnected();
 
-        return MethodResult.of(RsApi.getTotalExternStorage(getNetwork(), StorageTypes.FLUID));
+        return MethodResult.of(RsApi.getTotalExternalStorage(getNetwork(), StorageTypes.FLUID));
     }
 
     @Override
     @LuaFunction(mainThread = true)
-    public final MethodResult getTotalExternChemicalStorage() {
+    public final MethodResult getTotalExternalChemicalStorage() {
         if (!isAvailable())
             return notConnected();
 
-        return MethodResult.of(RsApi.getTotalExternStorage(getNetwork(), ChemicalResourceType.STORAGE_TYPE));
+        return MethodResult.of(RsApi.getTotalExternalStorage(getNetwork(), ChemicalResourceType.STORAGE_TYPE));
     }
 
     @Override
@@ -598,29 +598,29 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
     @Override
     @LuaFunction(mainThread = true)
-    public final MethodResult getUsedExternItemStorage() {
+    public final MethodResult getUsedExternalItemStorage() {
         if (!isAvailable())
             return notConnected();
 
-        return MethodResult.of(RsApi.getUsedExternStorage(getNetwork(), StorageTypes.ITEM));
+        return MethodResult.of(RsApi.getUsedExternalStorage(getNetwork(), StorageTypes.ITEM));
     }
 
     @Override
     @LuaFunction(mainThread = true)
-    public final MethodResult getUsedExternFluidStorage() {
+    public final MethodResult getUsedExternalFluidStorage() {
         if (!isAvailable())
             return notConnected();
 
-        return MethodResult.of(RsApi.getUsedExternStorage(getNetwork(), StorageTypes.FLUID));
+        return MethodResult.of(RsApi.getUsedExternalStorage(getNetwork(), StorageTypes.FLUID));
     }
 
     @Override
     @LuaFunction(mainThread = true)
-    public final MethodResult getUsedExternChemicalStorage() {
+    public final MethodResult getUsedExternalChemicalStorage() {
         if (!isAvailable())
             return notConnected();
 
-        return MethodResult.of(RsApi.getUsedExternStorage(getNetwork(), ChemicalResourceType.STORAGE_TYPE));
+        return MethodResult.of(RsApi.getUsedExternalStorage(getNetwork(), ChemicalResourceType.STORAGE_TYPE));
     }
 
     @Override
@@ -652,29 +652,29 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
     @Override
     @LuaFunction(mainThread = true)
-    public final MethodResult getAvailableExternItemStorage() {
+    public final MethodResult getAvailableExternalItemStorage() {
         if (!isAvailable())
             return notConnected();
 
-        return MethodResult.of(RsApi.getTotalExternStorage(getNetwork(), StorageTypes.ITEM) - RsApi.getUsedExternStorage(getNetwork(), StorageTypes.ITEM));
+        return MethodResult.of(RsApi.getTotalExternalStorage(getNetwork(), StorageTypes.ITEM) - RsApi.getUsedExternalStorage(getNetwork(), StorageTypes.ITEM));
     }
 
     @Override
     @LuaFunction(mainThread = true)
-    public final MethodResult getAvailableExternFluidStorage() {
+    public final MethodResult getAvailableExternalFluidStorage() {
         if (!isAvailable())
             return notConnected();
 
-        return MethodResult.of(RsApi.getTotalExternStorage(getNetwork(), StorageTypes.FLUID) - RsApi.getUsedExternStorage(getNetwork(), StorageTypes.FLUID));
+        return MethodResult.of(RsApi.getTotalExternalStorage(getNetwork(), StorageTypes.FLUID) - RsApi.getUsedExternalStorage(getNetwork(), StorageTypes.FLUID));
     }
 
     @Override
     @LuaFunction(mainThread = true)
-    public final MethodResult getAvailableExternChemicalStorage() {
+    public final MethodResult getAvailableExternalChemicalStorage() {
         if (!isAvailable())
             return notConnected();
 
-        return MethodResult.of(RsApi.getTotalExternStorage(getNetwork(), ChemicalResourceType.STORAGE_TYPE) - RsApi.getUsedExternStorage(getNetwork(), ChemicalResourceType.STORAGE_TYPE));
+        return MethodResult.of(RsApi.getTotalExternalStorage(getNetwork(), ChemicalResourceType.STORAGE_TYPE) - RsApi.getUsedExternalStorage(getNetwork(), ChemicalResourceType.STORAGE_TYPE));
     }
 
     @Override

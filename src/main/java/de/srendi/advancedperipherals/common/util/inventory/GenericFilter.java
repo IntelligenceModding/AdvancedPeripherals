@@ -5,7 +5,6 @@ import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
 import de.srendi.advancedperipherals.common.util.Pair;
 import mekanism.api.MekanismAPI;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.world.item.ItemStack;
 
 import java.util.Map;
 

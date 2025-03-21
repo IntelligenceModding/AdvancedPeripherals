@@ -67,11 +67,11 @@ public interface IStorageSystemPeripheral {
 
     MethodResult getAverageEnergyInput();
 
-    MethodResult getTotalExternItemStorage();
+    MethodResult getTotalExternalItemStorage();
 
-    MethodResult getTotalExternFluidStorage();
+    MethodResult getTotalExternalFluidStorage();
 
-    MethodResult getTotalExternChemicalStorage();
+    MethodResult getTotalExternalChemicalStorage();
 
     MethodResult getTotalItemStorage();
 
@@ -79,11 +79,11 @@ public interface IStorageSystemPeripheral {
 
     MethodResult getTotalChemicalStorage();
 
-    MethodResult getUsedExternItemStorage();
+    MethodResult getUsedExternalItemStorage();
 
-    MethodResult getUsedExternFluidStorage();
+    MethodResult getUsedExternalFluidStorage();
 
-    MethodResult getUsedExternChemicalStorage();
+    MethodResult getUsedExternalChemicalStorage();
 
     MethodResult getUsedItemStorage();
 
@@ -91,11 +91,11 @@ public interface IStorageSystemPeripheral {
 
     MethodResult getUsedChemicalStorage();
 
-    MethodResult getAvailableExternItemStorage();
+    MethodResult getAvailableExternalItemStorage();
 
-    MethodResult getAvailableExternFluidStorage();
+    MethodResult getAvailableExternalFluidStorage();
 
-    MethodResult getAvailableExternChemicalStorage();
+    MethodResult getAvailableExternalChemicalStorage();
 
     MethodResult getAvailableItemStorage();
 

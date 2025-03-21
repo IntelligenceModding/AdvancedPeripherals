@@ -439,7 +439,7 @@ public class RsApi {
         return used;
     }
 
-    public static long getTotalExternStorage(Network network, StorageType type) {
+    public static long getTotalExternalStorage(Network network, StorageType type) {
         long total = 0;
 
         GraphNetworkComponent graphNetworkComponent = network.getComponent(GraphNetworkComponent.class);
@@ -453,7 +453,7 @@ public class RsApi {
         return total;
     }
 
-    public static long getUsedExternStorage(Network network, StorageType type) {
+    public static long getUsedExternalStorage(Network network, StorageType type) {
         long used = 0;
 
         GraphNetworkComponent graphNetworkComponent = network.getComponent(GraphNetworkComponent.class);
