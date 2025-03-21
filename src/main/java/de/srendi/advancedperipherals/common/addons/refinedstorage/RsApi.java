@@ -73,7 +73,7 @@ public class RsApi {
      * Returns the first item resource that fits to the filter
      *
      * @param network refined storage network
-     * @param filter  item filter instance - can be an empty filter to get the first item of the system see {@link ItemFilter#empty()}
+     * @param filter  item filter instance - can be an empty filter to get the first item of the system see {@link ItemFilter#createEmpty()}
      * @return the first item in the system that fits the item filter or null
      */
     @Nullable
@@ -91,7 +91,7 @@ public class RsApi {
      * Returns the first fluid parsed to a lua object which fits to the filter
      *
      * @param network refined storage network
-     * @param filter  fluid filter instance - can be an empty filter to get the first fluid of the system see {@link FluidFilter#empty()}
+     * @param filter  fluid filter instance - can be an empty filter to get the first fluid of the system see {@link FluidFilter#createEmpty()}
      * @return the first fluid in the system that fits the fluid filter or null
      */
     @Nullable
@@ -109,7 +109,7 @@ public class RsApi {
      * Returns the first chemical parsed to a lua object which fits to the filter
      *
      * @param network refined storage network
-     * @param filter  fluid filter instance - can be an empty filter to get the first fluid of the system see {@link FluidFilter#empty()}
+     * @param filter  fluid filter instance - can be an empty filter to get the first fluid of the system see {@link FluidFilter#createEmpty()}
      * @return the first fluid in the system that fits the fluid filter or null
      */
     @Nullable
@@ -127,7 +127,7 @@ public class RsApi {
      * Returns the first item parsed to a lua object which fits to the filter
      *
      * @param network refined storage network
-     * @param filter  item filter instance - can be an empty filter to get the first item of the system see {@link ItemFilter#empty()}
+     * @param filter  item filter instance - can be an empty filter to get the first item of the system see {@link ItemFilter#createEmpty()}
      * @return the first item in the system that fits the item filter or null
      */
     @Nullable
@@ -145,7 +145,7 @@ public class RsApi {
      * Returns the first fluid parsed to a lua object which fits to the filter
      *
      * @param network refined storage network
-     * @param filter  fluid filter instance - can be an empty filter to get the first fluid of the system see {@link FluidFilter#empty()}
+     * @param filter  fluid filter instance - can be an empty filter to get the first fluid of the system see {@link FluidFilter#createEmpty()}
      * @return the first fluid in the system that fits the fluid filter or null
      */
     @Nullable
@@ -163,7 +163,7 @@ public class RsApi {
      * Returns the first mekanism chemical parsed to a lua object which fits to the filter
      *
      * @param network refined storage network
-     * @param filter  chemical filter instance - can be an empty filter to get the first chemical of the system see {@link ChemicalFilter#empty()}
+     * @param filter  chemical filter instance - can be an empty filter to get the first chemical of the system see {@link ChemicalFilter#createEmpty()}
      * @return the first chemical in the system that fits the chemical filter or null
      */
     @Nullable
@@ -179,7 +179,7 @@ public class RsApi {
 
     /**
      * Returns every item from the system while also checking if the filter test passes for the items
-     * The filter can be empty, see {@link ItemFilter#empty()}
+     * The filter can be empty, see {@link ItemFilter#createEmpty()}
      *
      * @param network the rs network
      * @param filter  The filter here is optional, if an empty filter is provided, the method will return every resource
@@ -199,7 +199,7 @@ public class RsApi {
 
     /**
      * Returns every fluid from the system while also checking if the filter test passes for the fluids
-     * The filter can be empty, see {@link FluidFilter#empty()}
+     * The filter can be empty, see {@link FluidFilter#createEmpty()}
      *
      * @param network the rs network
      * @param filter  The filter here is optional, if an empty filter is provided, the method will return every resource
@@ -219,7 +219,7 @@ public class RsApi {
 
     /**
      * Returns every fluid from the system while also checking if the filter test passes for the fluids
-     * The filter can be empty, see {@link FluidFilter#empty()}
+     * The filter can be empty, see {@link FluidFilter#createEmpty()}
      *
      * @param network the rs network
      * @param filter  The filter here is optional, if an empty filter is provided, the method will return every resource
@@ -239,7 +239,7 @@ public class RsApi {
 
     /**
      * Returns every craftable item from the system while also checking if the filter test passes for the items
-     * The filter can be empty, see {@link ItemFilter#empty()}
+     * The filter can be empty, see {@link ItemFilter#createEmpty()}
      *
      * @param network the rs network
      * @param filter  The filter here is optional, if an empty filter is provided, the method will return every resource
@@ -259,7 +259,7 @@ public class RsApi {
 
     /**
      * Returns every craftable fluid from the system while also checking if the filter test passes for the fluids
-     * The filter can be empty, see {@link FluidFilter#empty()}
+     * The filter can be empty, see {@link FluidFilter#createEmpty()}
      *
      * @param network the rs network
      * @param filter  The filter here is optional, if an empty filter is provided, the method will return every resource
@@ -280,7 +280,7 @@ public class RsApi {
 
     /**
      * Returns every craftable mekanism chemical from the system while also checking if the filter test passes for the chemicals
-     * The filter can be empty, see {@link ChemicalFilter#empty()}
+     * The filter can be empty, see {@link ChemicalFilter#createEmpty()}
      *
      * @param network the rs network
      * @param filter  The filter here is optional, if an empty filter is provided, the method will return every resource

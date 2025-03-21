@@ -26,6 +26,8 @@ import java.util.Map;
 //TODO tag
 public class FluidFilter extends GenericFilter<FluidStack> {
 
+    public static final FluidFilter EMPTY = new FluidFilter();
+
     private Fluid fluid = Fluids.EMPTY;
     private TagKey<Fluid> tag = null;
     private Tag componentsAsNbt = null;
@@ -37,10 +39,12 @@ public class FluidFilter extends GenericFilter<FluidStack> {
     }
 
     public static Pair<FluidFilter, String> parse(Map<?, ?> item) {
-        FluidFilter fluidFilter = empty();
         // If the map is empty, return a filter without any filters
         if (item.isEmpty())
-            return Pair.of(fluidFilter, null);
+            return Pair.of(EMPTY, null);
+
+        FluidFilter fluidFilter = createEmpty();
+
         if (item.containsKey("name")) {
             try {
                 String name = TableHelper.getStringField(item, "name");
@@ -84,19 +88,19 @@ public class FluidFilter extends GenericFilter<FluidStack> {
     }
 
     public static FluidFilter fromStack(FluidStack stack) {
-        FluidFilter filter = empty();
+        FluidFilter filter = createEmpty();
         filter.fluid = stack.getFluid();
         filter.componentsAsNbt = DataComponentUtil.toNbt(stack.getComponentsPatch());
         filter.components = stack.getComponents();
         return filter;
     }
 
-    public static FluidFilter empty() {
+    public static FluidFilter createEmpty() {
         return new FluidFilter();
     }
 
     public boolean isEmpty() {
-        return fingerprint.isEmpty() && fluid == Fluids.EMPTY && tag == null && componentsAsNbt == null;
+        return this == EMPTY || (fingerprint.isEmpty() && fluid == Fluids.EMPTY && tag == null && componentsAsNbt == null);
     }
 
     @Override

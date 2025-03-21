@@ -19,6 +19,8 @@ import java.util.Map;
 
 public class ChemicalFilter extends GenericFilter<ChemicalStack> {
 
+    public static final ChemicalFilter EMPTY = new ChemicalFilter();
+
     private Holder<Chemical> chemical = MekanismAPI.EMPTY_CHEMICAL_HOLDER;
     private TagKey<Chemical> tag = null;
     private long count = 64;
@@ -30,10 +32,12 @@ public class ChemicalFilter extends GenericFilter<ChemicalStack> {
     }
 
     public static Pair<ChemicalFilter, String> parse(Map<?, ?> item) {
-        ChemicalFilter chemicalFilter = empty();
         // If the map is empty, return a filter without any filters
         if (item.isEmpty())
-            return Pair.of(chemicalFilter, null);
+            return Pair.of(EMPTY, null);
+
+        ChemicalFilter chemicalFilter = createEmpty();
+
         if (item.containsKey("name")) {
             try {
                 String name = TableHelper.getStringField(item, "name");
@@ -80,17 +84,17 @@ public class ChemicalFilter extends GenericFilter<ChemicalStack> {
     }
 
     public static ChemicalFilter fromStack(ChemicalStack stack) {
-        ChemicalFilter filter = empty();
+        ChemicalFilter filter = createEmpty();
         filter.chemical = stack.getChemicalHolder();
         return filter;
     }
 
-    public static ChemicalFilter empty() {
+    public static ChemicalFilter createEmpty() {
         return new ChemicalFilter();
     }
 
     public boolean isEmpty() {
-        return fingerprint.isEmpty() && chemical.is(MekanismAPI.EMPTY_CHEMICAL_KEY) && tag == null;
+        return this == EMPTY || (fingerprint.isEmpty() && chemical.is(MekanismAPI.EMPTY_CHEMICAL_KEY) && tag == null);
     }
 
     @Override

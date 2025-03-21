@@ -24,6 +24,8 @@ import java.util.Map;
 
 public class ItemFilter extends GenericFilter<ItemStack> {
 
+    public static final ItemFilter EMPTY = new ItemFilter();
+
     private Item item = Items.AIR;
     private TagKey<Item> tag = null;
     private Tag componentsAsNbt = null;
@@ -37,10 +39,12 @@ public class ItemFilter extends GenericFilter<ItemStack> {
     }
 
     public static Pair<ItemFilter, String> parse(Map<?, ?> item) {
-        ItemFilter itemFilter = empty();
         // If the map is empty, return a filter without any filters
         if (item.isEmpty())
-            return Pair.of(itemFilter, null);
+            return Pair.of(EMPTY, null);
+
+        ItemFilter itemFilter = createEmpty();
+
         if (item.containsKey("name")) {
             try {
                 String name = TableHelper.getStringField(item, "name");
@@ -98,19 +102,19 @@ public class ItemFilter extends GenericFilter<ItemStack> {
     }
 
     public static ItemFilter fromStack(ItemStack stack) {
-        ItemFilter filter = empty();
+        ItemFilter filter = createEmpty();
         filter.item = stack.getItem();
         filter.componentsAsNbt = DataComponentUtil.toNbt(stack.getComponentsPatch());
         filter.components = (PatchedDataComponentMap) stack.getComponents();
         return filter;
     }
 
-    public static ItemFilter empty() {
+    public static ItemFilter createEmpty() {
         return new ItemFilter();
     }
 
     public boolean isEmpty() {
-        return fingerprint.isEmpty() && item == Items.AIR && tag == null && componentsAsNbt == null;
+        return this == EMPTY || (fingerprint.isEmpty() && item == Items.AIR && tag == null && componentsAsNbt == null);
     }
 
     @Override
