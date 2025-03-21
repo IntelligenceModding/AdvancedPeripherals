@@ -542,8 +542,6 @@ public class RsApi {
         properties.put("total", diskDrive.getCapacity());
         properties.put("disks", disks);
         properties.put("mode", storageConfiguration.getFilterMode().toString());
-        //TODO Redstone mode
-        properties.put("redstone_mode", false);
         properties.put("access_type", storageConfiguration.getAccessMode().toString());
         properties.put("position", LuaConverter.posToObject(nodeContainer.getLocalPosition()));
         properties.put("priority", nodeContainer.getPriority());
