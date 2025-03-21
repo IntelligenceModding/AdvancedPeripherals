@@ -529,7 +529,7 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (!isAvailable())
             return notConnected();
 
-        return MethodResult.of(0);
+        return MethodResult.of(RsApi.getEnergyUsage(getNetwork()));
     }
 
     @Override

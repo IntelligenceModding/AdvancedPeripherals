@@ -5,6 +5,7 @@ import com.refinedmods.refinedstorage.api.autocrafting.Pattern;
 import com.refinedmods.refinedstorage.api.autocrafting.status.TaskStatus;
 import com.refinedmods.refinedstorage.api.network.Network;
 import com.refinedmods.refinedstorage.api.network.autocrafting.AutocraftingNetworkComponent;
+import com.refinedmods.refinedstorage.api.network.impl.node.AbstractNetworkNode;
 import com.refinedmods.refinedstorage.api.network.impl.node.externalstorage.ExposedExternalStorage;
 import com.refinedmods.refinedstorage.api.network.impl.node.externalstorage.ExternalStorageNetworkNode;
 import com.refinedmods.refinedstorage.api.network.impl.node.storage.StorageNetworkNode;
@@ -476,6 +477,19 @@ public class RsApi {
         }
 
         return tasks;
+    }
+
+    public static long getEnergyUsage(Network network) {
+        long energyUsage = 0;
+
+        GraphNetworkComponent graphNetworkComponent = network.getComponent(GraphNetworkComponent.class);
+        for (InWorldNetworkNodeContainer nodeContainer : graphNetworkComponent.getContainers(InWorldNetworkNodeContainer.class)) {
+            if (nodeContainer.getNode() instanceof AbstractNetworkNode abstractNetworkNode) {
+                energyUsage += abstractNetworkNode.getEnergyUsage();
+            }
+        }
+
+        return energyUsage;
     }
 
     public static Map<String, Object> getObjectFromResourceKey(@NotNull ResourceKey resource) {
