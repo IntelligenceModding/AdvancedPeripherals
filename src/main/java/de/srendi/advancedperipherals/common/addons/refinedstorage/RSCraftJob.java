@@ -37,12 +37,12 @@ public class RSCraftJob extends BasicCraftJob {
 
     @Override
     protected boolean isJobDone() {
-        return craftingTask != null && craftingTask.percentageCompleted() == 100;
+        return craftingTask != null && craftingTask.percentageCompleted() >= 100;
     }
 
     @Override
     protected boolean isJobCanceled() {
-        return craftingTask != null && craftingTask.percentageCompleted() != 100 && autocraftingComponent.getStatuses().stream().noneMatch(task -> task.info().id() == craftingTask.info().id());
+        return craftingTask != null && craftingTask.percentageCompleted() < 100 && autocraftingComponent.getStatuses().stream().noneMatch(task -> task.info().id() == craftingTask.info().id());
     }
 
     @Override
