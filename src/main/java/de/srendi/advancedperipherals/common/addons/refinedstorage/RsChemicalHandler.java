@@ -30,7 +30,7 @@ public class RsChemicalHandler implements IStorageSystemChemicalHandler {
             return resource;
 
         ChemicalStack inserted = resource.copy();
-        long amountInserted = component.insert(ChemicalResource.ofChemicalStack(inserted), resource.getAmount(), action == mekanism.api.Action.SIMULATE ? Action.SIMULATE : Action.EXECUTE, Actor.EMPTY)
+        long amountInserted = component.insert(ChemicalResource.ofChemicalStack(inserted), resource.getAmount(), action == mekanism.api.Action.SIMULATE ? Action.SIMULATE : Action.EXECUTE, Actor.EMPTY);
         inserted.setAmount(resource.getAmount() - amountInserted);
         return inserted;
     }

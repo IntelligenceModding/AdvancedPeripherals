@@ -28,7 +28,8 @@ public class RsFluidHandler implements IStorageSystemFluidHandler {
     public int fill(FluidStack resource, @NotNull FluidAction action) {
         if (resource.isEmpty())
             return 0;
-        return (int) (resource.getAmount() - component.insert(VariantUtil.ofFluidStack(resource), resource.getAmount(), action == FluidAction.SIMULATE ? Action.SIMULATE : Action.EXECUTE, Actor.EMPTY));
+        long inserted = component.insert(VariantUtil.ofFluidStack(resource), resource.getAmount(), action == FluidAction.SIMULATE ? Action.SIMULATE : Action.EXECUTE, Actor.EMPTY);
+        return (int) (resource.getAmount() - inserted);
     }
 
     @NotNull
@@ -40,7 +41,8 @@ public class RsFluidHandler implements IStorageSystemFluidHandler {
             return FluidStack.EMPTY;
 
         FluidStack extracted = VariantUtil.toFluidStack(fluid, 1);
-        extracted.setAmount((int) component.extract(fluid, filter.getCount(), simulate == FluidAction.SIMULATE ? Action.SIMULATE : Action.EXECUTE, Actor.EMPTY));
+        long amountExtracted = component.extract(fluid, filter.getCount(), simulate == FluidAction.SIMULATE ? Action.SIMULATE : Action.EXECUTE, Actor.EMPTY);
+        extracted.setAmount((int) amountExtracted);
 
         AdvancedPeripherals.debug("Extracted fluid: " + extracted + " from filter: " + filter);
         return extracted;
