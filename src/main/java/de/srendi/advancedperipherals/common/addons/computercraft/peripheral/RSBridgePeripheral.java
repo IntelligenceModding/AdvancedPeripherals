@@ -329,7 +329,7 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
         ChemicalFilter parsedFilter = filter.getLeft();
 
-        Set<Map<String, Object>> resourceProperties = RsApi.getParsedCnemicals(getNetwork(), parsedFilter);
+        Set<Map<String, Object>> resourceProperties = RsApi.getParsedChemicals(getNetwork(), parsedFilter);
 
         return MethodResult.of(resourceProperties);
     }

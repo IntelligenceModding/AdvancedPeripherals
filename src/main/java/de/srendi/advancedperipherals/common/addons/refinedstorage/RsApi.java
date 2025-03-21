@@ -225,7 +225,7 @@ public class RsApi {
      * @param filter  The filter here is optional, if an empty filter is provided, the method will return every resource
      * @return a set of fluid stacks
      */
-    public static Set<Map<String, Object>> getParsedCnemicals(Network network, ChemicalFilter filter) {
+    public static Set<Map<String, Object>> getParsedChemicals(Network network, ChemicalFilter filter) {
         Set<Map<String, Object>> items = new HashSet<>();
         StorageNetworkComponent storage = network.getComponent(StorageNetworkComponent.class);
         for (TrackedResourceAmount trackedResource : storage.getResources(Actor.EMPTY.getClass())) {
