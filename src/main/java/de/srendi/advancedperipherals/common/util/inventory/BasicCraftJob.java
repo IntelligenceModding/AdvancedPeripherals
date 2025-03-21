@@ -80,81 +80,81 @@ public abstract class BasicCraftJob {
         return debugMessage;
     }
 
-    @LuaFunction(value = "getRequestedItem")
-    public final Object getRequestedItemLua() {
-        return getParsedRequestedItem();
+    @LuaFunction
+    public final Object getRequestedItem() {
+        return getParsedRequestedItemImpl();
     }
 
-    @LuaFunction(value = "getElapsedTime")
-    public final long getElapsedTimeLua() {
-        return getElapsedTime();
+    @LuaFunction
+    public final long getElapsedTime() {
+        return getElapsedTimeImpl();
     }
 
-    @LuaFunction(value = "getTotalItems")
-    public final long getTotalItemsLua() {
-        return getTotalItems();
+    @LuaFunction
+    public final long getTotalItems() {
+        return getTotalItemsImpl();
     }
 
-    @LuaFunction(value = "getItemProgress")
-    public final long getItemProgressLua() {
-        return getItemProgress();
+    @LuaFunction
+    public final long getItemProgress() {
+        return getItemProgressImpl();
     }
 
-    @LuaFunction(value = "getEmittedItems")
-    public final Object getEmittedItemsLua() {
-        return getEmittedItems();
+    @LuaFunction
+    public final Object getEmittedItems() {
+        return getEmittedItemsImpl();
     }
 
-    @LuaFunction(value = "getUsedItems")
-    public final Object getUsedItemsLua() {
-        return getUsedItems();
+    @LuaFunction
+    public final Object getUsedItems() {
+        return getUsedItemsImpl();
     }
 
-    @LuaFunction(value = "getMissingItems")
-    public final Object getMissingItemsLua() {
-        return getMissingItems();
+    @LuaFunction
+    public final Object getMissingItems() {
+        return getMissingItemsImpl();
     }
 
-    @LuaFunction(value = "hasMultiplePaths")
-    public final boolean hasMultiplePathsLua() {
-        return hasMultiplePaths();
+    @LuaFunction
+    public final boolean hasMultiplePaths() {
+        return hasMultiplePathsImpl();
     }
 
-    @LuaFunction(value = "getFinalOutput")
-    public final Object getFinalOutputLua() {
-        return getFinalOutput();
+    @LuaFunction
+    public final Object getFinalOutput() {
+        return getFinalOutputImpl();
     }
 
-    @LuaFunction(value = "cancel")
-    public final boolean cancelLua() {
-        return cancel();
+    @LuaFunction
+    public final boolean cancel() {
+        return cancelImpl();
     }
 
-    public abstract Object getParsedRequestedItem();
+    protected abstract Object getParsedRequestedItemImpl();
 
-    public abstract long getElapsedTime();
+    protected abstract long getElapsedTimeImpl();
 
-    public abstract long getTotalItems();
+    protected abstract long getTotalItemsImpl();
 
-    public abstract long getItemProgress();
+    protected abstract long getItemProgressImpl();
 
-    public abstract Object getEmittedItems();
+    protected abstract Object getEmittedItemsImpl();
 
-    public abstract Object getUsedItems();
+    protected abstract Object getUsedItemsImpl();
 
-    public abstract Object getMissingItems();
+    protected abstract Object getMissingItemsImpl();
 
-    public abstract boolean hasMultiplePaths();
+    protected abstract boolean hasMultiplePathsImpl();
 
-    public abstract Object getFinalOutput();
+    protected abstract Object getFinalOutputImpl();
 
-    public abstract boolean cancel();
+    protected abstract boolean cancelImpl();
 
-    public Level getWorld() {
+    protected Level getWorld() {
         return world;
     }
 
-    public long getAmount() {
+    protected long getAmount() {
         return amount;
     }
 
@@ -166,17 +166,17 @@ public abstract class BasicCraftJob {
         fireEvent(true, StatusConstants.NOT_CONNECTED);
     }
 
-    public void setStartedCrafting() {
+    protected void setStartedCrafting() {
         this.startedCrafting = true;
         fireEvent(false, StatusConstants.CRAFTING_STARTED);
     }
 
-    public void setJobCanceled() {
+    protected void setJobCanceled() {
         this.isJobCanceled = true;
         this.jobDoneTime = System.currentTimeMillis();
     }
 
-    public void setJobDone() {
+    protected void setJobDone() {
         this.isJobDone = true;
         this.jobDoneTime = System.currentTimeMillis();
     }

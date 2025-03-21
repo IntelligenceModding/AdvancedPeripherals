@@ -46,12 +46,12 @@ public class RSCraftJob extends BasicCraftJob {
     }
 
     @Override
-    public Object getParsedRequestedItem() {
+    public Object getParsedRequestedItemImpl() {
         return RsApi.getObjectFromResourceKey(toCraft, amount);
     }
 
     @Override
-    public long getElapsedTime() {
+    public long getElapsedTimeImpl() {
         if (craftingTask == null) {
             return -1;
         }
@@ -59,7 +59,7 @@ public class RSCraftJob extends BasicCraftJob {
     }
 
     @Override
-    public long getTotalItems() {
+    public long getTotalItemsImpl() {
         if (craftingTask == null) {
             return -1;
         }
@@ -68,12 +68,12 @@ public class RSCraftJob extends BasicCraftJob {
     }
 
     @Override
-    public long getItemProgress() {
+    public long getItemProgressImpl() {
         return craftingTask == null ? 0 : craftingTask.items().stream().mapToLong(TaskStatus.Item::stored).sum();
     }
 
     @Override
-    public Object getEmittedItems() {
+    public Object getEmittedItemsImpl() {
         if (preview == null) {
             return Collections.emptyList();
         }
@@ -82,13 +82,13 @@ public class RSCraftJob extends BasicCraftJob {
     }
 
     @Override
-    public Object getUsedItems() {
+    public Object getUsedItemsImpl() {
         // Not supported for rs2
         return Collections.emptyList();
     }
 
     @Override
-    public Object getMissingItems() {
+    public Object getMissingItemsImpl() {
         if (preview == null) {
             return Collections.emptyList();
         }
@@ -97,13 +97,13 @@ public class RSCraftJob extends BasicCraftJob {
     }
 
     @Override
-    public boolean hasMultiplePaths() {
+    public boolean hasMultiplePathsImpl() {
         // Not supported for rs2
         return false;
     }
 
     @Override
-    public Object getFinalOutput() {
+    public Object getFinalOutputImpl() {
         if (preview == null) {
             return Collections.emptyList();
         }
@@ -116,7 +116,7 @@ public class RSCraftJob extends BasicCraftJob {
     }
 
     @Override
-    public boolean cancel() {
+    public boolean cancelImpl() {
         if (isJobDone() || isJobCanceled()) {
             return false;
         }
