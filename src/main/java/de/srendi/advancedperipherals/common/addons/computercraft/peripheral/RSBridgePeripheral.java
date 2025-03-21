@@ -876,12 +876,22 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (hasInputFilter) {
             Map<?, ?> inputFilterTable = TableHelper.getTableField(filterTable, "input");
 
-            inputFilter = GenericFilter.parseGeneric(inputFilterTable).getLeft();
+            Pair<? extends GenericFilter<?>, String> parsedFilter = GenericFilter.parseGeneric(inputFilterTable);
+
+            if (parsedFilter.rightPresent())
+                return MethodResult.of(null, parsedFilter.getRight());
+
+            inputFilter = parsedFilter.getLeft();
         }
         if (hasOutputFilter) {
             Map<?, ?> outputFilterTable = TableHelper.getTableField(filterTable, "output");
 
-            outputFilter = GenericFilter.parseGeneric(outputFilterTable).getLeft();
+            Pair<? extends GenericFilter<?>, String> parsedFilter = GenericFilter.parseGeneric(outputFilterTable);
+
+            if (parsedFilter.rightPresent())
+                return MethodResult.of(null, parsedFilter.getRight());
+
+            outputFilter = parsedFilter.getLeft();
         }
 
         Pair<Pattern, String> pattern = RsApi.findPatternFromFilters(getNetwork(), inputFilter, outputFilter);
