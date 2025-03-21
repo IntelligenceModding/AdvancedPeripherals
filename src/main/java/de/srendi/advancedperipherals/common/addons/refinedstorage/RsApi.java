@@ -33,6 +33,7 @@ import de.srendi.advancedperipherals.common.setup.BlockEntityTypes;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
 import de.srendi.advancedperipherals.common.util.Pair;
 import de.srendi.advancedperipherals.common.util.inventory.ChemicalFilter;
+import de.srendi.advancedperipherals.common.util.inventory.ChemicalUtil;
 import de.srendi.advancedperipherals.common.util.inventory.FluidFilter;
 import de.srendi.advancedperipherals.common.util.inventory.FluidUtil;
 import de.srendi.advancedperipherals.common.util.inventory.GenericFilter;
@@ -115,7 +116,7 @@ public class RsApi {
     public static ChemicalResource getChemical(Network network, ChemicalFilter filter) {
         StorageNetworkComponent storage = network.getComponent(StorageNetworkComponent.class);
         for (TrackedResourceAmount trackedResource : storage.getResources(Actor.EMPTY.getClass())) {
-            if (trackedResource.resourceAmount().resource() instanceof ChemicalResource chemicalResource && filter.test(new ChemicalStack(chemicalResource.chemical(), trackedResource.resourceAmount().amount()))) {
+            if (trackedResource.resourceAmount().resource() instanceof ChemicalResource chemicalResource && filter.test(ChemicalUtil.toChemicalStack(chemicalResource.chemical(), trackedResource.resourceAmount().amount()))) {
                 return chemicalResource;
             }
         }
@@ -169,7 +170,7 @@ public class RsApi {
     public static Map<String, Object> getParsedChemical(Network network, ChemicalFilter filter) {
         StorageNetworkComponent storage = network.getComponent(StorageNetworkComponent.class);
         for (TrackedResourceAmount trackedResource : storage.getResources(Actor.EMPTY.getClass())) {
-            if (trackedResource.resourceAmount().resource() instanceof ChemicalResource chemicalResource && filter.test(new ChemicalStack(chemicalResource.chemical(), trackedResource.resourceAmount().amount()))) {
+            if (trackedResource.resourceAmount().resource() instanceof ChemicalResource chemicalResource && filter.test(ChemicalUtil.toChemicalStack(chemicalResource.chemical(), trackedResource.resourceAmount().amount()))) {
                 return getObjectFromItemResource(trackedResource.resourceAmount());
             }
         }
@@ -228,7 +229,7 @@ public class RsApi {
         Set<Map<String, Object>> items = new HashSet<>();
         StorageNetworkComponent storage = network.getComponent(StorageNetworkComponent.class);
         for (TrackedResourceAmount trackedResource : storage.getResources(Actor.EMPTY.getClass())) {
-            if (trackedResource.resourceAmount().resource() instanceof ChemicalResource fluidResource && filter.test(new ChemicalStack(fluidResource.chemical(), trackedResource.resourceAmount().amount()))) {
+            if (trackedResource.resourceAmount().resource() instanceof ChemicalResource fluidResource && filter.test(ChemicalUtil.toChemicalStack(fluidResource.chemical(), trackedResource.resourceAmount().amount()))) {
                 items.add(getObjectFromFluidResource(trackedResource.resourceAmount()));
             }
         }
@@ -291,7 +292,7 @@ public class RsApi {
         StorageNetworkComponent storage = network.getComponent(StorageNetworkComponent.class);
         for (ResourceKey key : autocrafting.getOutputs()) {
             long amount = storage.get(key);
-            if (key instanceof ChemicalResource chemicalResource && filter.test(new ChemicalStack(chemicalResource.chemical(), amount))) {
+            if (key instanceof ChemicalResource chemicalResource && filter.test(ChemicalUtil.toChemicalStack(chemicalResource.chemical(), amount))) {
                 items.add(getObjectFromResourceKey(key, amount));
             }
         }

@@ -7,6 +7,7 @@ import com.refinedmods.refinedstorage.api.storage.Actor;
 import com.refinedmods.refinedstorage.mekanism.ChemicalResource;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.util.inventory.ChemicalFilter;
+import de.srendi.advancedperipherals.common.util.inventory.ChemicalUtil;
 import de.srendi.advancedperipherals.common.util.inventory.IStorageSystemChemicalHandler;
 import mekanism.api.chemical.ChemicalStack;
 import org.jetbrains.annotations.NotNull;
@@ -24,26 +25,28 @@ public class RsChemicalHandler implements IStorageSystemChemicalHandler {
 
     @NotNull
     @Override
-    public ChemicalStack insertChemical(int tank, ChemicalStack resource, mekanism.api.Action action) {
+    public ChemicalStack insertChemical(int tank, ChemicalStack resource, @NotNull mekanism.api.Action action) {
         if (resource.isEmpty())
             return resource;
 
-        ChemicalStack chemical = resource.copy();
-        chemical.setAmount(resource.getAmount() - component.insert(ChemicalResource.ofChemicalStack(chemical), resource.getAmount(), action == mekanism.api.Action.SIMULATE ? Action.SIMULATE : Action.EXECUTE, Actor.EMPTY));
-        return chemical;
+        ChemicalStack inserted = resource.copy();
+        long amountInserted = component.insert(ChemicalResource.ofChemicalStack(inserted), resource.getAmount(), action == mekanism.api.Action.SIMULATE ? Action.SIMULATE : Action.EXECUTE, Actor.EMPTY)
+        inserted.setAmount(resource.getAmount() - amountInserted);
+        return inserted;
     }
 
     @Override
     public ChemicalStack extractChemical(ChemicalFilter filter, long count, mekanism.api.Action simulate) {
-        AdvancedPeripherals.debug("Trying to extract fluid from filter: " + filter);
-        ChemicalResource fluid = RsApi.getChemical(network, filter);
-        if (fluid == null)
+        AdvancedPeripherals.debug("Trying to extract chemical from filter: " + filter);
+        ChemicalResource chemical = RsApi.getChemical(network, filter);
+        if (chemical == null)
             return ChemicalStack.EMPTY;
 
-        ChemicalStack extracted = new ChemicalStack(fluid.chemical(), 1);
-        extracted.setAmount((int) component.extract(fluid, filter.getCount(), simulate == mekanism.api.Action.SIMULATE ? Action.SIMULATE : Action.EXECUTE, Actor.EMPTY));
+        ChemicalStack extracted = ChemicalUtil.toChemicalStack(chemical.chemical(), 1);
+        long amountExtracted = component.extract(chemical, filter.getCount(), simulate == mekanism.api.Action.SIMULATE ? Action.SIMULATE : Action.EXECUTE, Actor.EMPTY);
+        extracted.setAmount(amountExtracted);
 
-        AdvancedPeripherals.debug("Extracted fluid: " + extracted + " from filter: " + filter);
+        AdvancedPeripherals.debug("Extracted chemical: " + extracted + " from filter: " + filter);
         return extracted;
     }
 
