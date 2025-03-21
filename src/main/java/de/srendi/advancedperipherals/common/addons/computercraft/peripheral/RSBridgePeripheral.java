@@ -101,7 +101,7 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (targetInventory == null)
             return MethodResult.of(0, "Target Inventory does not exist");
 
-        return MethodResult.of(InventoryUtil.moveItem(itemHandler, targetInventory, filter.getLeft()), null);
+        return MethodResult.of(InventoryUtil.moveItem(itemHandler, targetInventory, filter.getLeft()));
     }
 
     /**
@@ -121,7 +121,7 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (targetTank == null)
             return MethodResult.of(0, "Target Tank does not exist");
 
-        return MethodResult.of(FluidUtil.moveFluid(fluidHandler, targetTank, filter.getLeft()), null);
+        return MethodResult.of(FluidUtil.moveFluid(fluidHandler, targetTank, filter.getLeft()));
     }
 
     /**
@@ -141,7 +141,7 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (targetTank == null)
             return MethodResult.of(0, "Target Tank does not exist");
 
-        return MethodResult.of(ChemicalUtil.moveChemical(chemicalHandler, targetTank, filter.getLeft()), null);
+        return MethodResult.of(ChemicalUtil.moveChemical(chemicalHandler, targetTank, filter.getLeft()));
     }
 
     /**
@@ -161,7 +161,7 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (targetInventory == null)
             return MethodResult.of(0, "Target Inventory does not exist");
 
-        return MethodResult.of(InventoryUtil.moveItem(targetInventory, itemHandler, filter.getLeft()), null);
+        return MethodResult.of(InventoryUtil.moveItem(targetInventory, itemHandler, filter.getLeft()));
     }
 
     /**
@@ -181,7 +181,7 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (targetTank == null)
             return MethodResult.of(0, "Target Tank does not exist");
 
-        return MethodResult.of(FluidUtil.moveFluid(targetTank, fluidHandler, filter.getLeft()), null);
+        return MethodResult.of(FluidUtil.moveFluid(targetTank, fluidHandler, filter.getLeft()));
     }
 
     /**
@@ -201,7 +201,7 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (targetTank == null)
             return MethodResult.of(0, "Target Tank does not exist");
 
-        return MethodResult.of(ChemicalUtil.moveChemical(targetTank, chemicalHandler, filter.getLeft()), null);
+        return MethodResult.of(ChemicalUtil.moveChemical(targetTank, chemicalHandler, filter.getLeft()));
     }
 
     @Override
