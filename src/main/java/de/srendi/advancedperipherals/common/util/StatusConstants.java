@@ -12,7 +12,7 @@ public enum StatusConstants {
     JOB_DONE,
     NOT_CRAFTABLE,
     MISSING_ITEMS,
-    CPU_DOES_NOT_EXIST,
+    CPU_NOT_FOUND,
     // Filters
     EMPTY_FILTER,
     FILTER_FLUID_NOT_FOUND,
