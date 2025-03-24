@@ -9,7 +9,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 public abstract class BasicCraftJob {
 
-    protected static final String EVENT = "_crafting";
+    private static final String EVENT = "_crafting";
     private static final int JOB_DONE_PURGE_TIME = 5 * 60 * 1000;
 
     public static final AtomicLong ID_SEQ = new AtomicLong();
