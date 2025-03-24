@@ -316,12 +316,12 @@ public class RsApi {
 
         GraphNetworkComponent graphNetworkComponent = network.getComponent(GraphNetworkComponent.class);
         for (InWorldNetworkNodeContainer nodeContainer : graphNetworkComponent.getContainers(InWorldNetworkNodeContainer.class)) {
-            if (nodeContainer.getNode() instanceof StorageNetworkNode storageNetworkNode) {
-                CompositeStorage storage = (CompositeStorage) storageNetworkNode.getStorage();
-                for (Storage disk : storage.getSources()) {
-                    if (!(disk instanceof StateTrackedStorage stateTrackedStorage))
-                        continue;
-
+            if (!(nodeContainer.getNode() instanceof StorageNetworkNode storageNetworkNode)) {
+                continue;
+            }
+            CompositeStorage storage = (CompositeStorage) storageNetworkNode.getStorage();
+            for (Storage disk : storage.getSources()) {
+                if (disk instanceof StateTrackedStorage stateTrackedStorage) {
                     disks.add(parseStorageDisk(stateTrackedStorage));
                 }
             }
