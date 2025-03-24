@@ -120,7 +120,6 @@ public class RsBridgeEntity extends PeripheralBlockEntity<RSBridgePeripheral> im
     @Override
     public void taskRemoved(@NotNull TaskId taskId) {
         jobs.stream().filter(job -> job.isCraftingStarted() && job.getCraftingTask().info().id().equals(taskId)).forEach(BasicCraftJob::jobStateChanged);
-
     }
 
     @Override
