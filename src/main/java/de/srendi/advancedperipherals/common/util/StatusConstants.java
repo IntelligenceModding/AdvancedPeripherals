@@ -11,14 +11,15 @@ public enum StatusConstants {
     JOB_CANCELED,
     JOB_DONE,
     NOT_CRAFTABLE,
-    MISSING_ITEMS,
+    MISSING_ITEMS, // If there are missing items for a crafting recipe/job after the calculation is done
     CPU_NOT_FOUND,
     // Filters
     EMPTY_FILTER,
-    FILTER_FLUID_NOT_FOUND,
-    FILTER_ITEM_NOT_FOUND,
-    NO_VALID_FLUID,
-    NO_VALID_ITEM,
+    FILTER_ITEM_NOT_FOUND, // Item could not be found in registry
+    FILTER_FLUID_NOT_FOUND, // Fluid could not be found in registry
+    FILTER_CHEMICAL_NOT_FOUND, // Chemical could not be found in registry
+    NO_VALID_FLUID, // Fluid property of filter is not a string
+    NO_VALID_ITEM, // Item property of filter is not a string
     NO_VALID_FROMSLOT,
     NO_VALID_TOSLOT,
     NO_VALID_NBT_HASH,
@@ -28,7 +29,7 @@ public enum StatusConstants {
     NO_VALID_FILTER_TYPE,
     // Inventory,
     INVENTORY_NOT_FOUND,
-    ITEM_NOT_FOUND,
+    ITEM_NOT_FOUND, // Debug message when an item couldn't be found in an/the target inventory
     FLUID_NOT_FOUND,
     CHEMICAL_NOT_FOUND,
     // Misc
