@@ -26,6 +26,7 @@ import com.refinedmods.refinedstorage.common.storage.StorageTypes;
 import com.refinedmods.refinedstorage.common.support.resource.FluidResource;
 import com.refinedmods.refinedstorage.common.support.resource.ItemResource;
 import com.refinedmods.refinedstorage.mekanism.ChemicalResource;
+import com.refinedmods.refinedstorage.mekanism.ChemicalResourceType;
 import com.refinedmods.refinedstorage.neoforge.api.RefinedStorageNeoForgeApi;
 import com.refinedmods.refinedstorage.neoforge.support.resource.VariantUtil;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
@@ -575,6 +576,8 @@ public class RsApi {
                 type = "item";
             } else if (serializableStorage.getType() == StorageTypes.FLUID) {
                 type = "fluid";
+            } else if (serializableStorage.getType() == ChemicalResourceType.STORAGE_TYPE) {
+                type = "chemical";
             } else {
                 type = "unknown";
             }
