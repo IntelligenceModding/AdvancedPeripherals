@@ -197,8 +197,8 @@ public class RSCraftJob extends BasicCraftJob {
         PreviewType previewType = preview.type();
 
         if (previewType == PreviewType.MISSING_RESOURCES) {
-            fireEvent(true, StatusConstants.MISSING_ITEMS);
             calculationNotSuccessful = true;
+            fireEvent(true, StatusConstants.MISSING_ITEMS);
             return;
         }
 
