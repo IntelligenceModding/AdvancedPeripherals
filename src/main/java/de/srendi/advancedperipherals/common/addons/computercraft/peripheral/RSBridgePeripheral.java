@@ -207,8 +207,8 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
     @Override
     @LuaFunction(mainThread = true)
-    public final MethodResult isConnected() {
-        return MethodResult.of(isAvailable());
+    public final boolean isConnected() {
+        return isAvailable();
     }
 
     @Override

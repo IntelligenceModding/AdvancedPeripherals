@@ -21,7 +21,7 @@ import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.MEBr
  */
 public interface IStorageSystemPeripheral {
 
-    MethodResult isConnected();
+    boolean isConnected();
 
     MethodResult isOnline();
 
