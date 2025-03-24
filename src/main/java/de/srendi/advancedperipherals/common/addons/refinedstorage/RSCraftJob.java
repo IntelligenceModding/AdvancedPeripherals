@@ -131,7 +131,7 @@ public class RSCraftJob extends BasicCraftJob {
         // It's cursed, but the only way currently
         if (craftingTask != null) {
             for (TaskStatus status : autocraftingComponent.getStatuses()) {
-                if (status.info().id() == craftingTask.info().id()) {
+                if (status.info().id().equals(craftingTask.info().id())) {
                     this.craftingTask = status;
                     break;
                 }
@@ -159,7 +159,7 @@ public class RSCraftJob extends BasicCraftJob {
 
         TaskId id = optionalId.get();
         for (TaskStatus status : autocraftingComponent.getStatuses()) {
-            if (status.info().id() == id) {
+            if (status.info().id().equals(id)) {
                 this.craftingTask = status;
                 // And only now we set that the crafting is started.
                 setStartedCrafting();
