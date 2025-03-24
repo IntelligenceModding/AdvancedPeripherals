@@ -21,7 +21,6 @@ public abstract class GenericFilter<T> {
      * @return A pair of the parsed filter and an error message, if there is one
      */
     public static Pair<? extends GenericFilter<?>, String> parseGeneric(Map<?, ?> rawFilter) {
-        // TODO: Add chemical filter support
 
         if (!rawFilter.containsKey("name")) {
             if (rawFilter.containsKey("type") && rawFilter.get("type") instanceof String type) {

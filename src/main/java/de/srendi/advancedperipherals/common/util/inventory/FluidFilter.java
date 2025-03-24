@@ -23,7 +23,6 @@ import net.neoforged.neoforge.fluids.FluidStack;
 
 import java.util.Map;
 
-//TODO tag
 public class FluidFilter extends GenericFilter<FluidStack> {
 
     public static final FluidFilter EMPTY = new FluidFilter();
