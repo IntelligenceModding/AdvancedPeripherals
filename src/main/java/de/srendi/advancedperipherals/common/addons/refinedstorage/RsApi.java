@@ -448,7 +448,7 @@ public class RsApi {
         for (InWorldNetworkNodeContainer nodeContainer : graphNetworkComponent.getContainers(InWorldNetworkNodeContainer.class)) {
             if (nodeContainer.getNode() instanceof ExternalStorageNetworkNode storageNetworkNode) {
                 ExposedExternalStorage storage = (ExposedExternalStorage) storageNetworkNode.getStorage();
-                // TODO
+                // TODO - Waiting for next rs beta/milestone patch
             }
 
         }
