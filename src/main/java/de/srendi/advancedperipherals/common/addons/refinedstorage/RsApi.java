@@ -20,7 +20,6 @@ import com.refinedmods.refinedstorage.api.storage.Storage;
 import com.refinedmods.refinedstorage.api.storage.TrackedResourceAmount;
 import com.refinedmods.refinedstorage.api.storage.composite.CompositeStorage;
 import com.refinedmods.refinedstorage.common.api.storage.SerializableStorage;
-import com.refinedmods.refinedstorage.common.api.storage.StorageType;
 import com.refinedmods.refinedstorage.common.api.support.network.InWorldNetworkNodeContainer;
 import com.refinedmods.refinedstorage.common.storage.StorageTypes;
 import com.refinedmods.refinedstorage.common.support.resource.FluidResource;
