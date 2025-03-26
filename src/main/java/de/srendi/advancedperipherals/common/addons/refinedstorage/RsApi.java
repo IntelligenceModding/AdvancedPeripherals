@@ -395,7 +395,7 @@ public class RsApi {
         return Pair.of(null, "NO_PATTERN_FOUND");
     }
 
-    public static long getTotalStorage(Network network, StorageType type) {
+    public static long getTotalStorage(Network network, RsStorageTypes type) {
         long total = 0;
 
         GraphNetworkComponent graphNetworkComponent = network.getComponent(GraphNetworkComponent.class);
@@ -407,7 +407,7 @@ public class RsApi {
                         continue;
 
                     if (stateTrackedStorage.getDelegate() instanceof SerializableStorage serializableStorage) {
-                        if (serializableStorage.getType() != type)
+                        if (serializableStorage.getType() != type.getStorageType())
                             continue;
                     }
 
@@ -418,7 +418,7 @@ public class RsApi {
         return total;
     }
 
-    public static long getUsedStorage(Network network, StorageType type) {
+    public static long getUsedStorage(Network network, RsStorageTypes type) {
         long used = 0;
 
         GraphNetworkComponent graphNetworkComponent = network.getComponent(GraphNetworkComponent.class);
@@ -430,7 +430,7 @@ public class RsApi {
                         continue;
 
                     if (stateTrackedStorage.getDelegate() instanceof SerializableStorage serializableStorage) {
-                        if (serializableStorage.getType() != type)
+                        if (serializableStorage.getType() != type.getStorageType())
                             continue;
                     }
 
@@ -441,7 +441,7 @@ public class RsApi {
         return used;
     }
 
-    public static long getTotalExternalStorage(Network network, StorageType type) {
+    public static long getTotalExternalStorage(Network network, RsStorageTypes type) {
         long total = 0;
 
         GraphNetworkComponent graphNetworkComponent = network.getComponent(GraphNetworkComponent.class);
@@ -455,7 +455,7 @@ public class RsApi {
         return total;
     }
 
-    public static long getUsedExternalStorage(Network network, StorageType type) {
+    public static long getUsedExternalStorage(Network network, RsStorageTypes type) {
         long used = 0;
 
         GraphNetworkComponent graphNetworkComponent = network.getComponent(GraphNetworkComponent.class);
@@ -463,7 +463,7 @@ public class RsApi {
             if (nodeContainer.getNode() instanceof ExternalStorageNetworkNode storageNetworkNode) {
                 ExposedExternalStorage storage = (ExposedExternalStorage) storageNetworkNode.getStorage();
 
-                used += storage.getAll().stream().filter(amount -> type.isAllowed(amount.resource())).mapToLong(ResourceAmount::amount).sum();
+                used += storage.getAll().stream().filter(amount -> type.getStorageType().isAllowed(amount.resource())).mapToLong(ResourceAmount::amount).sum();
             }
 
         }

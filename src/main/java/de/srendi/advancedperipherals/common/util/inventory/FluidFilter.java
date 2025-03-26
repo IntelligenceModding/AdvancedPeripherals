@@ -8,6 +8,7 @@ import com.refinedmods.refinedstorage.neoforge.support.resource.VariantUtil;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.core.apis.TableHelper;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
+import de.srendi.advancedperipherals.common.addons.APAddons;
 import de.srendi.advancedperipherals.common.util.DataComponentUtil;
 import de.srendi.advancedperipherals.common.util.NBTUtil;
 import de.srendi.advancedperipherals.common.util.Pair;
@@ -104,6 +105,9 @@ public class FluidFilter extends GenericFilter<FluidStack> {
 
     @Override
     public boolean testAE(GenericStack genericStack) {
+        if (!APAddons.ae2Loaded)
+            return false;
+
         if (genericStack.what() instanceof AEFluidKey aeFluidKey) {
             return test(aeFluidKey.toStack(1));
         }
@@ -112,6 +116,9 @@ public class FluidFilter extends GenericFilter<FluidStack> {
 
     @Override
     public boolean testRS(ResourceAmount resourceAmount) {
+        if (!APAddons.refinedStorageLoaded)
+            return false;
+
         if (resourceAmount.resource() instanceof FluidResource fluidResource) {
             return test(VariantUtil.toFluidStack(fluidResource, 1));
         }

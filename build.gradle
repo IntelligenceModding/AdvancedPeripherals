@@ -228,16 +228,15 @@ dependencies {
     runtimeOnly("com.refinedmods.refinedstorage:refinedstorage-neoforge:${refinedstorage_version}")
 
     compileOnly("com.refinedmods.refinedstorage:refinedstorage-mekanism-integration:${refinedstorage_mekanism_version}")
-    runtimeOnly("com.refinedmods.refinedstorage:refinedstorage-mekanism-integration:${refinedstorage_mekanism_version}")
+    // runtimeOnly("com.refinedmods.refinedstorage:refinedstorage-mekanism-integration:${refinedstorage_mekanism_version}")
 
     // Needed for the refined storage mek integration
     compileOnlyApi("dev.emi:emi-neoforge:${emiVersion}")
 
-
     // Extended requirements
     // We don't use the api since we need a specific class from mekanism
     compileOnly "mekanism:Mekanism:${mekanism_version}"
-    // runtimeOnly "mekanism:Mekanism:${mekanism_version}"
+    runtimeOnly "mekanism:Mekanism:${mekanism_version}"
 
     // Applied Energistics 2
     compileOnly "appeng:appliedenergistics2:${appliedenergistics_version}"
