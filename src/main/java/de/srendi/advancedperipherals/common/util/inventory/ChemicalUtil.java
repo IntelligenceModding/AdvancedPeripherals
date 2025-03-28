@@ -127,6 +127,6 @@ public class ChemicalUtil {
     }
 
     public static ResourceLocation getRegistryKey(ChemicalStack fluid) {
-        return MekanismAPI.CHEMICAL_REGISTRY.getKey(fluid.copy().getChemical());
+        return MekanismAPI.CHEMICAL_REGISTRY.getKey(fluid.getChemical());
     }
 }
