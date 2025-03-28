@@ -54,7 +54,7 @@ public abstract class GenericFilter<T> {
     // AE2 stuff
     public abstract boolean testAE(GenericStack genericStack);
 
-    // AE2 stuff
+    // RS stuff
     public abstract boolean testRS(ResourceAmount resourceAmount);
 
     public abstract boolean test(T toTest);
