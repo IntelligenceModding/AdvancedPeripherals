@@ -10,6 +10,28 @@ import java.util.Map;
 
 public abstract class GenericFilter<T> {
 
+    private static final GenericFilter<?> EMPTY = new GenericFilter<>() {
+        @Override
+        public boolean isEmpty() {
+            return true;
+        }
+
+        @Override
+        public boolean testAE(GenericStack genericStack) {
+            return false;
+        }
+
+        @Override
+        public boolean testRS(ResourceAmount resourceAmount) {
+            return false;
+        }
+
+        @Override
+        public boolean test(Object toTest) {
+            return false;
+        }
+    };
+
     /**
      * Try to parse a raw filter table to any existing filter type. Could be a fluid filter, an item filter, maybe something else
      * in the future.
@@ -61,27 +83,7 @@ public abstract class GenericFilter<T> {
     public abstract boolean test(T toTest);
 
     public static GenericFilter<?> empty() {
-        return new GenericFilter<>() {
-            @Override
-            public boolean isEmpty() {
-                return true;
-            }
-
-            @Override
-            public boolean testAE(GenericStack genericStack) {
-                return false;
-            }
-
-            @Override
-            public boolean testRS(ResourceAmount resourceAmount) {
-                return false;
-            }
-
-            @Override
-            public boolean test(Object toTest) {
-                return false;
-            }
-        };
+        return EMPTY;
     }
 
 }
