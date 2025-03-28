@@ -7,6 +7,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Changed
+- We enhanced the RS Bridge in a major way including new functions, a better crafting system and more. Refer to the [docs](https://docs.advanced-peripherals.de/0.7-bridges/guides/storage_system_functions/)
+
 ### Fixed
 - [#711] Fixed that the block reader would not be able to access registries for component information
 
