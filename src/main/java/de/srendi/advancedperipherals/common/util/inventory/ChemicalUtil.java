@@ -116,8 +116,7 @@ public class ChemicalUtil {
             MessageDigest md = MessageDigest.getInstance("MD5");
             return StringUtil.toHexString(md.digest(bytesOfHash));
         } catch (NoSuchAlgorithmException ex) {
-            AdvancedPeripherals.debug("Could not parse fingerprint.", org.apache.logging.log4j.Level.ERROR);
-            ex.printStackTrace();
+            AdvancedPeripherals.debug("Could not parse fingerprint", ex);
         }
         return "";
     }
