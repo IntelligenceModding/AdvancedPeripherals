@@ -239,8 +239,8 @@ dependencies {
     runtimeOnly "mekanism:Mekanism:${mekanism_version}"
 
     // Applied Energistics 2
-    compileOnly "appeng:appliedenergistics2:${appliedenergistics_version}"
-    runtimeOnly "appeng:appliedenergistics2:${appliedenergistics_version}"
+    compileOnly "org.appliedenergistics:appliedenergistics2:${appliedenergistics_version}"
+    runtimeOnly "org.appliedenergistics:appliedenergistics2:${appliedenergistics_version}"
 
     // Applied Mekanistics
     compileOnly "curse.maven:applied-mekanistics-574300:${appliedmekanistics_version}"
