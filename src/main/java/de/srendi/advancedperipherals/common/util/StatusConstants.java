@@ -34,6 +34,7 @@ public enum StatusConstants {
     CHEMICAL_NOT_FOUND,
     // Misc
     NOT_CONNECTED,
+    NOT_FOUND, // Generic not found state
     UNKNOWN_ERROR;
 
     public String withInfo(String extraInfo) {

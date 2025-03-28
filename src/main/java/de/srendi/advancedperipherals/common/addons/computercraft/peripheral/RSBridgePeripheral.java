@@ -9,6 +9,7 @@ import com.refinedmods.refinedstorage.api.network.energy.EnergyNetworkComponent;
 import com.refinedmods.refinedstorage.api.network.impl.node.AbstractNetworkNode;
 import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage.common.support.resource.ItemResource;
+import com.refinedmods.refinedstorage.mekanism.ChemicalResource;
 import com.refinedmods.refinedstorage.neoforge.support.resource.VariantUtil;
 import dan200.computercraft.api.lua.IArguments;
 import dan200.computercraft.api.lua.LuaException;
@@ -772,10 +773,9 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (filter.rightPresent())
             return MethodResult.of(null, filter.getRight());
 
-        //RSCraftJob job = new RSCraftJob(computer, getLevel(), filter.getLeft().getCount(), ChemicalResource.ofChemicalStack(filter.getLeft().toChemicalStack()), getNetwork().getComponent(AutocraftingNetworkComponent.class));
-        //bridge.addJob(job);
-        //return MethodResult.of(job);
-        return MethodResult.of(0);
+        RSCraftJob job = new RSCraftJob(computer, getLevel(), filter.getLeft().getCount(), ChemicalResource.ofChemicalStack(filter.getLeft().toChemicalStack()), getNetwork().getComponent(AutocraftingNetworkComponent.class));
+        bridge.addJob(job);
+        return MethodResult.of(job);
     }
 
     @Override
@@ -793,14 +793,12 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (!isAvailable())
             return notConnected();
 
-        RSCraftJob foundJob = null;
-
         for (RSCraftJob job : bridge.getJobs()) {
             if (job.getId() == id) {
-                foundJob = job;
+                return MethodResult.of(job);
             }
         }
-        return MethodResult.of(foundJob);
+        return MethodResult.of(null, StatusConstants.NOT_FOUND);
     }
 
     @Override
