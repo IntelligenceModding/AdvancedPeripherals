@@ -10,6 +10,28 @@ import java.util.Map;
 
 public abstract class GenericFilter<T> {
 
+    private static final GenericFilter<?> EMPTY = new GenericFilter<>() {
+        @Override
+        public boolean isEmpty() {
+            return true;
+        }
+
+        @Override
+        public boolean testAE(GenericStack genericStack) {
+            return false;
+        }
+
+        @Override
+        public boolean testRS(ResourceAmount resourceAmount) {
+            return false;
+        }
+
+        @Override
+        public boolean test(Object toTest) {
+            return false;
+        }
+    };
+
     /**
      * Try to parse a raw filter table to any existing filter type. Could be a fluid filter, an item filter, maybe something else
      * in the future.
@@ -22,18 +44,19 @@ public abstract class GenericFilter<T> {
      */
     public static Pair<? extends GenericFilter<?>, String> parseGeneric(Map<?, ?> rawFilter) {
 
-        if (!rawFilter.containsKey("name")) {
-            if (rawFilter.containsKey("type") && rawFilter.get("type") instanceof String type) {
-                switch (type) {
-                    case "item":
-                        return ItemFilter.parse(rawFilter);
-                    case "fluid":
-                        return FluidFilter.parse(rawFilter);
-                    case "chemical":
-                        return ChemicalFilter.parse(rawFilter);
-                }
+        if (rawFilter.containsKey("type") && rawFilter.get("type") instanceof String type) {
+            switch (type) {
+                case "item":
+                    return ItemFilter.parse(rawFilter);
+                case "fluid":
+                    return FluidFilter.parse(rawFilter);
+                case "chemical":
+                    return ChemicalFilter.parse(rawFilter);
             }
         }
+        if (!rawFilter.containsKey("name"))
+            return Pair.of(empty(), "NO_NAME_OR_TYPE");
+
         String name = rawFilter.get("name").toString();
 
         // Let's check in which registry this thing is
@@ -54,33 +77,13 @@ public abstract class GenericFilter<T> {
     // AE2 stuff
     public abstract boolean testAE(GenericStack genericStack);
 
-    // AE2 stuff
+    // RS stuff
     public abstract boolean testRS(ResourceAmount resourceAmount);
 
     public abstract boolean test(T toTest);
 
     public static GenericFilter<?> empty() {
-        return new GenericFilter<>() {
-            @Override
-            public boolean isEmpty() {
-                return true;
-            }
-
-            @Override
-            public boolean testAE(GenericStack genericStack) {
-                return false;
-            }
-
-            @Override
-            public boolean testRS(ResourceAmount resourceAmount) {
-                return false;
-            }
-
-            @Override
-            public boolean test(Object toTest) {
-                return false;
-            }
-        };
+        return EMPTY;
     }
 
 }
