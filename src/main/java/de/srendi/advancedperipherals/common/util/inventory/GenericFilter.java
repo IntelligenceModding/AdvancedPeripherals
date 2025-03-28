@@ -22,18 +22,19 @@ public abstract class GenericFilter<T> {
      */
     public static Pair<? extends GenericFilter<?>, String> parseGeneric(Map<?, ?> rawFilter) {
 
-        if (!rawFilter.containsKey("name")) {
-            if (rawFilter.containsKey("type") && rawFilter.get("type") instanceof String type) {
-                switch (type) {
-                    case "item":
-                        return ItemFilter.parse(rawFilter);
-                    case "fluid":
-                        return FluidFilter.parse(rawFilter);
-                    case "chemical":
-                        return ChemicalFilter.parse(rawFilter);
-                }
+        if (rawFilter.containsKey("type") && rawFilter.get("type") instanceof String type) {
+            switch (type) {
+                case "item":
+                    return ItemFilter.parse(rawFilter);
+                case "fluid":
+                    return FluidFilter.parse(rawFilter);
+                case "chemical":
+                    return ChemicalFilter.parse(rawFilter);
             }
         }
+        if (!rawFilter.containsKey("name"))
+            return Pair.of(empty(), "NO_NAME_OR_TYPE");
+
         String name = rawFilter.get("name").toString();
 
         // Let's check in which registry this thing is
