@@ -8,7 +8,6 @@ import appeng.api.networking.crafting.ICraftingService;
 import appeng.api.stacks.AEFluidKey;
 import appeng.api.stacks.AEItemKey;
 import appeng.api.storage.MEStorage;
-import appeng.me.cluster.implementations.CraftingCPUCluster;
 import dan200.computercraft.api.lua.IArguments;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
@@ -16,8 +15,10 @@ import dan200.computercraft.api.lua.MethodResult;
 import dan200.computercraft.api.peripheral.IComputerAccess;
 import dan200.computercraft.core.apis.TableHelper;
 import dan200.computercraft.core.computer.ComputerSide;
+import de.srendi.advancedperipherals.common.addons.APAddons;
 import de.srendi.advancedperipherals.common.addons.appliedenergistics.AECraftJob;
 import de.srendi.advancedperipherals.common.addons.appliedenergistics.AppEngApi;
+import de.srendi.advancedperipherals.common.addons.appliedenergistics.MeChemicalHandler;
 import de.srendi.advancedperipherals.common.addons.appliedenergistics.MeFluidHandler;
 import de.srendi.advancedperipherals.common.addons.appliedenergistics.MeItemHandler;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.BlockEntityPeripheralOwner;
@@ -25,6 +26,8 @@ import de.srendi.advancedperipherals.common.blocks.blockentities.MeBridgeEntity;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.util.Pair;
 import de.srendi.advancedperipherals.common.util.StatusConstants;
+import de.srendi.advancedperipherals.common.util.inventory.ChemicalFilter;
+import de.srendi.advancedperipherals.common.util.inventory.ChemicalUtil;
 import de.srendi.advancedperipherals.common.util.inventory.FluidFilter;
 import de.srendi.advancedperipherals.common.util.inventory.FluidUtil;
 import de.srendi.advancedperipherals.common.util.inventory.GenericFilter;
@@ -32,6 +35,8 @@ import de.srendi.advancedperipherals.common.util.inventory.IStorageSystemPeriphe
 import de.srendi.advancedperipherals.common.util.inventory.InventoryUtil;
 import de.srendi.advancedperipherals.common.util.inventory.ItemFilter;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
+import me.ramidzkh.mekae2.ae2.MekanismKey;
+import mekanism.api.chemical.IChemicalHandler;
 import net.minecraft.core.Direction;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.items.IItemHandler;
@@ -43,7 +48,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Optional;
 
 public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwner<MeBridgeEntity>> implements IStorageSystemPeripheral {
 
@@ -114,6 +118,27 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     }
 
     /**
+     * exports a fluid out of the system to a valid tank
+     *
+     * @param arguments  the arguments given by the computer
+     * @param targetTank the give tank
+     * @return the exportable amount or null with a string if something went wrong
+     */
+    protected MethodResult exportToTank(@NotNull IArguments arguments, @Nullable IChemicalHandler targetTank) throws LuaException {
+        MEStorage monitor = AppEngApi.getMonitor(node);
+        MeChemicalHandler chemicalHandler = new MeChemicalHandler(monitor, bridge);
+        Pair<ChemicalFilter, String> filter = ChemicalFilter.parse(arguments.getTable(0));
+
+        if (filter.rightPresent())
+            return MethodResult.of(0, filter.getRight());
+
+        if (targetTank == null)
+            return MethodResult.of(0, "Target Tank does not exist");
+
+        return MethodResult.of(ChemicalUtil.moveChemical(chemicalHandler, targetTank, filter.getLeft()));
+    }
+
+    /**
      * imports an item to the system from a valid inventory
      *
      * @param arguments       the arguments given by the computer
@@ -155,6 +180,27 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         return MethodResult.of(FluidUtil.moveFluid(targetTank, fluidHandler, filter.getLeft()), null);
     }
 
+    /**
+     * imports a fluid to the system from a valid tank
+     *
+     * @param arguments  the arguments given by the computer
+     * @param targetTank the give tank
+     * @return the imported amount or null with a string if something went wrong
+     */
+    protected MethodResult importToME(@NotNull IArguments arguments, @Nullable IChemicalHandler targetTank) throws LuaException {
+        MEStorage monitor = AppEngApi.getMonitor(node);
+        MeChemicalHandler chemicalHandler = new MeChemicalHandler(monitor, bridge);
+        Pair<ChemicalFilter, String> filter = ChemicalFilter.parse(arguments.getTable(0));
+
+        if (filter.rightPresent())
+            return MethodResult.of(0, filter.getRight());
+
+        if (targetTank == null)
+            return MethodResult.of(0, "Target Tank does not exist");
+
+        return MethodResult.of(ChemicalUtil.moveChemical(targetTank, chemicalHandler, filter.getLeft()));
+    }
+
     private MethodResult notConnected() {
         return MethodResult.of(null, StatusConstants.NOT_CONNECTED.toString());
     }
@@ -188,7 +234,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
         ItemFilter parsedFilter = filter.getLeft();
         if (parsedFilter.isEmpty())
-            return MethodResult.of(null, "EMPTY_FILTER");
+            return MethodResult.of(null, StatusConstants.EMPTY_FILTER.toString());
 
         return MethodResult.of(AppEngApi.parseAeStack(AppEngApi.findAEStackFromFilter(monitor, getCraftingService(), parsedFilter), getCraftingService()));
     }
@@ -205,60 +251,119 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
         FluidFilter parsedFilter = filter.getLeft();
         if (parsedFilter.isEmpty())
-            return MethodResult.of(null, "EMPTY_FILTER");
+            return MethodResult.of(null, StatusConstants.EMPTY_FILTER.toString());
 
         return MethodResult.of(AppEngApi.parseAeStack(AppEngApi.findAEFluidFromFilter(AppEngApi.getMonitor(node), getCraftingService(), parsedFilter), getCraftingService()));
     }
 
     @Override
     public MethodResult getChemical(IArguments arguments) throws LuaException {
-        return null;
+        if (!isAvailable())
+            return notConnected();
+
+        Pair<ChemicalFilter, String> filter = ChemicalFilter.parse(arguments.getTable(0));
+        if (filter.rightPresent())
+            return MethodResult.of(null, filter.getRight());
+
+        ChemicalFilter parsedFilter = filter.getLeft();
+        if (parsedFilter.isEmpty())
+            return MethodResult.of(null, StatusConstants.EMPTY_FILTER.toString());
+
+        return MethodResult.of(AppEngApi.parseAeStack(AppEngApi.findAEChemicalFromFilter(AppEngApi.getMonitor(node), getCraftingService(), parsedFilter), getCraftingService()));
     }
 
     @Override
     @LuaFunction(mainThread = true)
-    public final MethodResult listItems(IArguments arguments) {
+    public final MethodResult listItems(IArguments arguments) throws LuaException {
         if (!isAvailable())
             return notConnected();
 
-        return MethodResult.of(AppEngApi.listStacks(AppEngApi.getMonitor(node), getCraftingService()));
+        Pair<ItemFilter, String> filter = ItemFilter.parse(arguments.optTable(0, Collections.emptyMap()));
+        if (filter.rightPresent())
+            return MethodResult.of(null, filter.getRight());
+
+        ItemFilter parsedFilter = filter.getLeft();
+
+        return MethodResult.of(AppEngApi.listItems(AppEngApi.getMonitor(node), getCraftingService(), parsedFilter));
     }
 
     @Override
     @LuaFunction(mainThread = true)
-    public final MethodResult listFluids(IArguments arguments) {
+    public final MethodResult listFluids(IArguments arguments) throws LuaException {
         if (!isAvailable())
             return notConnected();
 
-        return MethodResult.of(AppEngApi.listFluids(AppEngApi.getMonitor(node), getCraftingService()));
+        Pair<FluidFilter, String> filter = FluidFilter.parse(arguments.optTable(0, Collections.emptyMap()));
+        if (filter.rightPresent())
+            return MethodResult.of(null, filter.getRight());
+
+        FluidFilter parsedFilter = filter.getLeft();
+
+        return MethodResult.of(AppEngApi.listFluids(AppEngApi.getMonitor(node), getCraftingService(), parsedFilter));
     }
 
     @Override
-    public MethodResult listChemicals(IArguments arguments) {
-        return null;
+    public MethodResult listChemicals(IArguments arguments) throws LuaException {
+        if (!isAvailable())
+            return notConnected();
+
+        if (!APAddons.mekanismLoaded || !APAddons.appMekLoaded)
+            return MethodResult.of(Collections.emptyList());
+
+        Pair<ChemicalFilter, String> filter = ChemicalFilter.parse(arguments.optTable(0, Collections.emptyMap()));
+        if (filter.rightPresent())
+            return MethodResult.of(null, filter.getRight());
+
+        ChemicalFilter parsedFilter = filter.getLeft();
+
+        return MethodResult.of(AppEngApi.listChemicals(AppEngApi.getMonitor(node), getCraftingService(), parsedFilter));
     }
 
     @Override
     @LuaFunction(mainThread = true)
-    public final MethodResult listCraftableItems(IArguments arguments) {
+    public final MethodResult listCraftableItems(IArguments arguments) throws LuaException {
         if (!isAvailable())
             return notConnected();
 
-        return MethodResult.of(AppEngApi.listCraftableStacks(AppEngApi.getMonitor(node), getCraftingService()));
+        Pair<ItemFilter, String> filter = ItemFilter.parse(arguments.optTable(0, Collections.emptyMap()));
+        if (filter.rightPresent())
+            return MethodResult.of(null, filter.getRight());
+
+        ItemFilter parsedFilter = filter.getLeft();
+
+        return MethodResult.of(AppEngApi.listCraftableItems(AppEngApi.getMonitor(node), getCraftingService(), parsedFilter));
     }
 
     @Override
     @LuaFunction(mainThread = true)
-    public final MethodResult listCraftableFluids(IArguments arguments) {
+    public final MethodResult listCraftableFluids(IArguments arguments) throws LuaException {
         if (!isAvailable())
             return notConnected();
 
-        return MethodResult.of(AppEngApi.listCraftableFluids(AppEngApi.getMonitor(node), getCraftingService()));
+        Pair<FluidFilter, String> filter = FluidFilter.parse(arguments.optTable(0, Collections.emptyMap()));
+        if (filter.rightPresent())
+            return MethodResult.of(null, filter.getRight());
+
+        FluidFilter parsedFilter = filter.getLeft();
+
+        return MethodResult.of(AppEngApi.listCraftableFluids(AppEngApi.getMonitor(node), getCraftingService(), parsedFilter));
     }
 
     @Override
-    public MethodResult listCraftableChemicals(IArguments arguments) {
-        return null;
+    public MethodResult listCraftableChemicals(IArguments arguments) throws LuaException {
+        if (!isAvailable())
+            return notConnected();
+
+        if (!APAddons.mekanismLoaded || !APAddons.appMekLoaded)
+            return MethodResult.of(Collections.emptyList());
+
+        Pair<ChemicalFilter, String> filter = ChemicalFilter.parse(arguments.optTable(0, Collections.emptyMap()));
+        if (filter.rightPresent())
+            return MethodResult.of(null, filter.getRight());
+
+        ChemicalFilter parsedFilter = filter.getLeft();
+
+        return MethodResult.of(AppEngApi.listCraftableChemicals(AppEngApi.getMonitor(node), getCraftingService(), parsedFilter));
     }
 
     @Override
@@ -317,11 +422,103 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
     @Override
     @LuaFunction(mainThread = true)
+    public final MethodResult importFluid(IComputerAccess computer, IArguments arguments) throws LuaException {
+        if (!isAvailable())
+            return notConnected();
+
+        String side = arguments.getString(1);
+        IFluidHandler fluidHandler;
+
+        if (Direction.byName(side.toUpperCase(Locale.ROOT)) == null && ComputerSide.valueOfInsensitive(side.toUpperCase(Locale.ROOT)) == null) {
+            fluidHandler = FluidUtil.getHandlerFromDirection(arguments.getString(1), owner);
+        } else {
+            fluidHandler = FluidUtil.getHandlerFromName(computer, arguments.getString(1));
+        }
+
+        if (fluidHandler == null)
+            return MethodResult.of(0, StatusConstants.INVENTORY_NOT_FOUND.name());
+
+        return importToME(arguments, fluidHandler);
+    }
+
+    @Override
+    @LuaFunction(mainThread = true)
+    public final MethodResult exportFluid(IComputerAccess computer, IArguments arguments) throws LuaException {
+        if (!isAvailable())
+            return notConnected();
+
+        String side = arguments.getString(1);
+        IFluidHandler fluidHandler;
+
+        if (Direction.byName(side.toUpperCase(Locale.ROOT)) == null && ComputerSide.valueOfInsensitive(side.toUpperCase(Locale.ROOT)) == null) {
+            fluidHandler = FluidUtil.getHandlerFromDirection(arguments.getString(1), owner);
+        } else {
+            fluidHandler = FluidUtil.getHandlerFromName(computer, arguments.getString(1));
+        }
+
+        if (fluidHandler == null)
+            return MethodResult.of(0, StatusConstants.INVENTORY_NOT_FOUND.name());
+
+        return exportToTank(arguments, fluidHandler);
+    }
+
+
+    @Override
+    @LuaFunction(mainThread = true)
+    public MethodResult importChemical(IComputerAccess computer, IArguments arguments) throws LuaException {
+        if (!isAvailable())
+            return notConnected();
+
+        if (!APAddons.mekanismLoaded || !APAddons.appMekLoaded)
+            return MethodResult.of(0);
+
+        String side = arguments.getString(1);
+        IChemicalHandler chemicalHandler;
+
+        if (Direction.byName(side.toUpperCase(Locale.ROOT)) == null && ComputerSide.valueOfInsensitive(side.toUpperCase(Locale.ROOT)) == null) {
+            chemicalHandler = ChemicalUtil.getHandlerFromDirection(arguments.getString(1), owner);
+        } else {
+            chemicalHandler = ChemicalUtil.getHandlerFromName(computer, arguments.getString(1));
+        }
+
+        if (chemicalHandler == null)
+            return MethodResult.of(0, StatusConstants.INVENTORY_NOT_FOUND.name());
+
+        return importToME(arguments, chemicalHandler);
+    }
+
+    @Override
+    @LuaFunction(mainThread = true)
+    public MethodResult exportChemical(IComputerAccess computer, IArguments arguments) throws LuaException {
+        if (!isAvailable())
+            return notConnected();
+
+        if (!APAddons.mekanismLoaded || !APAddons.appMekLoaded)
+            return MethodResult.of(0);
+
+        String side = arguments.getString(1);
+        IChemicalHandler chemicalHandler;
+
+        if (Direction.byName(side.toUpperCase(Locale.ROOT)) == null && ComputerSide.valueOfInsensitive(side.toUpperCase(Locale.ROOT)) == null) {
+            chemicalHandler = ChemicalUtil.getHandlerFromDirection(arguments.getString(1), owner);
+        } else {
+            chemicalHandler = ChemicalUtil.getHandlerFromName(computer, arguments.getString(1));
+        }
+
+        if (chemicalHandler == null)
+            return MethodResult.of(0, StatusConstants.INVENTORY_NOT_FOUND.name());
+
+        return exportToTank(arguments, chemicalHandler);
+    }
+
+    @Override
+    @LuaFunction(mainThread = true)
     public MethodResult getPatterns(IArguments arguments) throws LuaException {
         if (!isAvailable())
             return notConnected();
 
         // Expected input is a table with either an input table, an output table or both to filter for both
+        // If no table is provided or it's empty, return every pattern
         Map<?, ?> filterTable = arguments.optTable(0, Collections.emptyMap());
         if (filterTable.isEmpty()) {
             return MethodResult.of(AppEngApi.getPatterns(node.getGrid(), getLevel()));
@@ -618,7 +815,33 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
     @Override
     public MethodResult craftChemical(IComputerAccess computer, IArguments arguments) throws LuaException {
-        return null;
+        if (!isAvailable())
+            return notConnected();
+
+        if (!APAddons.mekanismLoaded || !APAddons.appMekLoaded)
+            return MethodResult.of(null);
+
+        Pair<ChemicalFilter, String> filter = ChemicalFilter.parse(arguments.getTable(0));
+        if (filter.rightPresent())
+            return MethodResult.of(null, filter.getRight());
+
+        ChemicalFilter parsedFilter = filter.getLeft();
+        if (parsedFilter.isEmpty())
+            return MethodResult.of(null, StatusConstants.EMPTY_FILTER.toString());
+
+        String cpuName = arguments.optString(1, "");
+        ICraftingCPU target = AppEngApi.getCraftingCPU(node, cpuName);
+        if (!cpuName.isEmpty() && target == null)
+            return MethodResult.of(null, StatusConstants.CPU_NOT_FOUND.withInfo(cpuName));
+
+        ICraftingService craftingGrid = node.getGrid().getService(ICraftingService.class);
+        Pair<Long, MekanismKey> stack = AppEngApi.findAEChemicalFromFilter(AppEngApi.getMonitor(bridge.getGridNode()), craftingGrid, parsedFilter);
+        if (stack.getRight() == null && stack.getLeft() == 0)
+            return MethodResult.of(false, StatusConstants.NOT_CRAFTABLE.toString());
+
+        AECraftJob job = new AECraftJob(owner.getLevel(), computer, node, stack.getRight(), parsedFilter.getCount(), bridge, target);
+        bridge.addJob(job);
+        return MethodResult.of(job.withCPU(target));
     }
 
     @Override
@@ -658,29 +881,21 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
     @Override
     @LuaFunction(mainThread = true)
-    public MethodResult cancelCraftingTasks(IArguments arguments) {
+    public MethodResult cancelCraftingTasks(IArguments arguments) throws LuaException {
         if (!isAvailable())
             return notConnected();
 
         ICraftingService craftingGrid = node.getGrid().getService(ICraftingService.class);
 
-        Map<?, ?> filterTable;
-        try {
-            Optional<Map<?, ?>> optionalTable = arguments.optTable(0);
-            if (optionalTable.isEmpty())
-                return MethodResult.of(null, "EMPTY_INPUT");
-            filterTable = optionalTable.get();
-        } catch (LuaException e) {
-            return MethodResult.of(null, "NO_TABLE");
-        }
-
-        Pair<? extends GenericFilter<?>, String> filter = GenericFilter.parseGeneric(filterTable);
+        Pair<? extends GenericFilter<?>, String> filter = GenericFilter.parseGeneric(arguments.getTable(0));
         if (filter.getRight() != null)
             return MethodResult.of(null, filter.getRight());
 
+        GenericFilter<?> parsedFilter = filter.getLeft();
+
         int jobsCanceled = 0;
         for (ICraftingCPU cpu : craftingGrid.getCpus()) {
-            if (cpu.getJobStatus() != null && filter.getLeft().testAE(cpu.getJobStatus().crafting())) {
+            if (cpu.getJobStatus() != null && parsedFilter.testAE(cpu.getJobStatus().crafting())) {
                 cpu.cancelJob();
                 jobsCanceled++;
             }
@@ -700,55 +915,9 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
         GenericFilter<?> parsedFilter = filter.getLeft();
         if (parsedFilter.isEmpty())
-            return MethodResult.of(false, "EMPTY_FILTER");
+            return MethodResult.of(false, StatusConstants.EMPTY_FILTER.toString());
 
         return MethodResult.of(AppEngApi.findPatternFromFilters(node.getGrid(), getLevel(), null, parsedFilter).getLeft() != null);
-    }
-
-    @Override
-    @LuaFunction(mainThread = true)
-    public final MethodResult exportFluid(IComputerAccess computer, IArguments arguments) throws LuaException {
-        String side = arguments.getString(1);
-        IFluidHandler fluidHandler;
-
-        if (Direction.byName(side.toUpperCase(Locale.ROOT)) == null && ComputerSide.valueOfInsensitive(side.toUpperCase(Locale.ROOT)) == null) {
-            fluidHandler = FluidUtil.getHandlerFromDirection(arguments.getString(1), owner);
-        } else {
-            fluidHandler = FluidUtil.getHandlerFromName(computer, arguments.getString(1));
-        }
-
-        if (fluidHandler == null)
-            return MethodResult.of(0, "The target tank does not exist. Make sure the bridge is exposed in the computer network. Reach out to our discord or our documentation for help.");
-
-        return exportToTank(arguments, fluidHandler);
-    }
-
-    @Override
-    public MethodResult importChemical(IComputerAccess computer, IArguments arguments) throws LuaException {
-        return null;
-    }
-
-    @Override
-    public MethodResult exportChemical(IComputerAccess computer, IArguments arguments) throws LuaException {
-        return null;
-    }
-
-    @Override
-    @LuaFunction(mainThread = true)
-    public final MethodResult importFluid(IComputerAccess computer, IArguments arguments) throws LuaException {
-        String side = arguments.getString(1);
-        IFluidHandler fluidHandler;
-
-        if (Direction.byName(side.toUpperCase(Locale.ROOT)) == null && ComputerSide.valueOfInsensitive(side.toUpperCase(Locale.ROOT)) == null) {
-            fluidHandler = FluidUtil.getHandlerFromDirection(arguments.getString(1), owner);
-        } else {
-            fluidHandler = FluidUtil.getHandlerFromName(computer, arguments.getString(1));
-        }
-
-        if (fluidHandler == null)
-            return MethodResult.of(0, "The target tank does not exist. Make sure the bridge is exposed in the computer network. Reach out to our discord or our documentation for help.");
-
-        return importToME(arguments, fluidHandler);
     }
 
     @Override
@@ -765,7 +934,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
         GenericFilter<?> parsedFilter = filter.getLeft();
         if (parsedFilter.isEmpty())
-            return MethodResult.of(false, "EMPTY_FILTER");
+            return MethodResult.of(false, StatusConstants.EMPTY_FILTER.toString());
 
         String cpuName = arguments.optString(1, "");
         ICraftingCPU craftingCPU = AppEngApi.getCraftingCPU(node, cpuName);
@@ -774,7 +943,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     }
 
     @LuaFunction(mainThread = true)
-    public final MethodResult getCraftingCPUs() throws LuaException {
+    public final MethodResult getCraftingCPUs() {
         if (!isAvailable())
             return notConnected();
 
