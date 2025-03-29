@@ -82,16 +82,13 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
      * @param targetInventory the give inventory
      * @return the exportable amount or null with a string if something went wrong
      */
-    protected MethodResult exportToChest(@NotNull IArguments arguments, @Nullable IItemHandler targetInventory) throws LuaException {
+    protected MethodResult exportToChest(@NotNull IArguments arguments, IItemHandler targetInventory) throws LuaException {
         MEStorage monitor = AppEngApi.getMonitor(node);
         MeItemHandler itemHandler = new MeItemHandler(monitor, bridge);
         Pair<ItemFilter, String> filter = ItemFilter.parse(arguments.getTable(0));
 
         if (filter.rightPresent())
             return MethodResult.of(0, filter.getRight());
-
-        if (targetInventory == null)
-            return MethodResult.of(0, "Target Inventory does not exist");
 
         return MethodResult.of(InventoryUtil.moveItem(itemHandler, targetInventory, filter.getLeft()), null);
     }
@@ -103,16 +100,13 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
      * @param targetTank the give tank
      * @return the exportable amount or null with a string if something went wrong
      */
-    protected MethodResult exportToTank(@NotNull IArguments arguments, @Nullable IFluidHandler targetTank) throws LuaException {
+    protected MethodResult exportToTank(@NotNull IArguments arguments, IFluidHandler targetTank) throws LuaException {
         MEStorage monitor = AppEngApi.getMonitor(node);
         MeFluidHandler fluidHandler = new MeFluidHandler(monitor, bridge);
         Pair<FluidFilter, String> filter = FluidFilter.parse(arguments.getTable(0));
 
         if (filter.rightPresent())
             return MethodResult.of(0, filter.getRight());
-
-        if (targetTank == null)
-            return MethodResult.of(0, "Target Tank does not exist");
 
         return MethodResult.of(FluidUtil.moveFluid(fluidHandler, targetTank, filter.getLeft()), null);
     }
@@ -124,16 +118,13 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
      * @param targetTank the give tank
      * @return the exportable amount or null with a string if something went wrong
      */
-    protected MethodResult exportToTank(@NotNull IArguments arguments, @Nullable IChemicalHandler targetTank) throws LuaException {
+    protected MethodResult exportToTank(@NotNull IArguments arguments, IChemicalHandler targetTank) throws LuaException {
         MEStorage monitor = AppEngApi.getMonitor(node);
         MeChemicalHandler chemicalHandler = new MeChemicalHandler(monitor, bridge);
         Pair<ChemicalFilter, String> filter = ChemicalFilter.parse(arguments.getTable(0));
 
         if (filter.rightPresent())
             return MethodResult.of(0, filter.getRight());
-
-        if (targetTank == null)
-            return MethodResult.of(0, "Target Tank does not exist");
 
         return MethodResult.of(ChemicalUtil.moveChemical(chemicalHandler, targetTank, filter.getLeft()));
     }
@@ -145,16 +136,13 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
      * @param targetInventory the give inventory
      * @return the imported amount or null with a string if something went wrong
      */
-    protected MethodResult importToME(@NotNull IArguments arguments, @Nullable IItemHandler targetInventory) throws LuaException {
+    protected MethodResult importToME(@NotNull IArguments arguments, IItemHandler targetInventory) throws LuaException {
         MEStorage monitor = AppEngApi.getMonitor(node);
         MeItemHandler itemHandler = new MeItemHandler(monitor, bridge);
         Pair<ItemFilter, String> filter = ItemFilter.parse(arguments.getTable(0));
 
         if (filter.rightPresent())
             return MethodResult.of(0, filter.getRight());
-
-        if (targetInventory == null)
-            return MethodResult.of(0, "Target Inventory does not exist");
 
         return MethodResult.of(InventoryUtil.moveItem(targetInventory, itemHandler, filter.getLeft()), null);
     }
@@ -166,16 +154,13 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
      * @param targetTank the give tank
      * @return the imported amount or null with a string if something went wrong
      */
-    protected MethodResult importToME(@NotNull IArguments arguments, @Nullable IFluidHandler targetTank) throws LuaException {
+    protected MethodResult importToME(@NotNull IArguments arguments, IFluidHandler targetTank) throws LuaException {
         MEStorage monitor = AppEngApi.getMonitor(node);
         MeFluidHandler fluidHandler = new MeFluidHandler(monitor, bridge);
         Pair<FluidFilter, String> filter = FluidFilter.parse(arguments.getTable(0));
 
         if (filter.rightPresent())
             return MethodResult.of(0, filter.getRight());
-
-        if (targetTank == null)
-            return MethodResult.of(0, "Target Tank does not exist");
 
         return MethodResult.of(FluidUtil.moveFluid(targetTank, fluidHandler, filter.getLeft()), null);
     }
@@ -187,16 +172,13 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
      * @param targetTank the give tank
      * @return the imported amount or null with a string if something went wrong
      */
-    protected MethodResult importToME(@NotNull IArguments arguments, @Nullable IChemicalHandler targetTank) throws LuaException {
+    protected MethodResult importToME(@NotNull IArguments arguments, IChemicalHandler targetTank) throws LuaException {
         MEStorage monitor = AppEngApi.getMonitor(node);
         MeChemicalHandler chemicalHandler = new MeChemicalHandler(monitor, bridge);
         Pair<ChemicalFilter, String> filter = ChemicalFilter.parse(arguments.getTable(0));
 
         if (filter.rightPresent())
             return MethodResult.of(0, filter.getRight());
-
-        if (targetTank == null)
-            return MethodResult.of(0, "Target Tank does not exist");
 
         return MethodResult.of(ChemicalUtil.moveChemical(targetTank, chemicalHandler, filter.getLeft()));
     }
@@ -399,6 +381,9 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
             inventory = InventoryUtil.getHandlerFromName(computer, arguments.getString(1));
         }
 
+        if (inventory == null)
+            return MethodResult.of(0, StatusConstants.INVENTORY_NOT_FOUND.name());
+
         return importToME(arguments, inventory);
     }
 
@@ -416,6 +401,9 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         } else {
             inventory = InventoryUtil.getHandlerFromName(computer, arguments.getString(1));
         }
+
+        if (inventory == null)
+            return MethodResult.of(0, StatusConstants.INVENTORY_NOT_FOUND.name());
 
         return exportToChest(arguments, inventory);
     }
