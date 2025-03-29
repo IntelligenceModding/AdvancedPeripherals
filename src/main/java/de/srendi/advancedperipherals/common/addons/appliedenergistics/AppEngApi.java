@@ -521,9 +521,14 @@ public class AppEngApi {
             IItemHandler itemHandler = InventoryUtil.extractHandler(null, bus.getLevel(), connectedInventoryPos, bus.getSide());
             if (itemHandler != null) {
                 for (int i = 0; i < itemHandler.getSlots(); i++) {
-                    // The net.minecraft.world.Container defaults to a max stack size of 99 - some containers like the vanilla chests do not override that.
-                    // So we instead use a hard coded number here. I know that this will maybe break support with third party chests that support a higher stack count
-                    total += 64;
+                    ItemStack stack = itemHandler.getStackInSlot(i);
+
+                    // Use 64 as a rough estimate if no item is in that slot
+                    if (stack.isEmpty())
+                        total += 64;
+
+                    // If the slot is not empty, use the max stack size of that stack
+                    total += stack.getMaxStackSize();
                 }
             }
         }
