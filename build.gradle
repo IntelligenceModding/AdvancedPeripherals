@@ -244,11 +244,11 @@ dependencies {
 
     // Applied Mekanistics
     compileOnly "curse.maven:applied-mekanistics-574300:${appliedmekanistics_version}"
-    // runtimeOnly "curse.maven:applied-mekanistics-574300:${appliedmekanistics_version}"
+    runtimeOnly "curse.maven:applied-mekanistics-574300:${appliedmekanistics_version}"
 
     // AE2 Things
     compileOnly "curse.maven:ae2things-609977:${ae2things_version}-sources"
-    // runtimeOnly "curse.maven:ae2things-609977:${ae2things_version}-sources"
+    runtimeOnly "curse.maven:ae2things-609977:${ae2things_version}-sources"
 
     // Minecolonies
     compileOnly "com.ldtteam:blockui:${blockui_version}"
