@@ -30,8 +30,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.function.Supplier;
 
-//TODO needs to persistent - should be stored in the me bridge
-// We also need to do the same for the rs bridge. So we want to create a proper interface to keep the lua functions the same
 public class AECraftJob extends BasicCraftJob {
 
     private final IGridNode node;
