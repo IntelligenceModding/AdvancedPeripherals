@@ -431,11 +431,12 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
         IItemHandler inventory = InventoryUtil.getHandlerFromDirection(arguments.getString(1), owner);
 
-        if (inventory == null)
+        if (inventory == null) {
             inventory = InventoryUtil.getHandlerFromName(computer, arguments.getString(1));
-
-        if (inventory == null)
-            return MethodResult.of(0, StatusConstants.INVENTORY_NOT_FOUND.name());
+            if (inventory == null) {
+                return MethodResult.of(0, StatusConstants.INVENTORY_NOT_FOUND.name());
+            }
+        }
 
         return exportToChest(arguments, inventory);
     }
