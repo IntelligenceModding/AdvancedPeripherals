@@ -406,7 +406,7 @@ public class RsApi {
                         continue;
 
                     if (stateTrackedStorage.getDelegate() instanceof SerializableStorage serializableStorage) {
-                        if (serializableStorage.getType() != type.getStorageType())
+                        if (type.getStorageType() != null && serializableStorage.getType() != type.getStorageType())
                             continue;
                     }
 
@@ -429,7 +429,7 @@ public class RsApi {
                         continue;
 
                     if (stateTrackedStorage.getDelegate() instanceof SerializableStorage serializableStorage) {
-                        if (serializableStorage.getType() != type.getStorageType())
+                        if (type.getStorageType() != null && serializableStorage.getType() != type.getStorageType())
                             continue;
                     }
 
@@ -462,7 +462,7 @@ public class RsApi {
             if (nodeContainer.getNode() instanceof ExternalStorageNetworkNode storageNetworkNode) {
                 ExposedExternalStorage storage = (ExposedExternalStorage) storageNetworkNode.getStorage();
 
-                used += storage.getAll().stream().filter(amount -> type.getStorageType().isAllowed(amount.resource())).mapToLong(ResourceAmount::amount).sum();
+                used += storage.getAll().stream().filter(amount -> type.getStorageType() != null && type.getStorageType().isAllowed(amount.resource())).mapToLong(ResourceAmount::amount).sum();
             }
 
         }
