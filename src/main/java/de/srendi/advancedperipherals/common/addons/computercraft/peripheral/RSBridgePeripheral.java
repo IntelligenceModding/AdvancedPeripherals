@@ -465,11 +465,12 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
             return notConnected();
 
         IFluidHandler handler = FluidUtil.getHandlerFromDirection(arguments.getString(1), owner);
-        if (handler == null)
+        if (handler == null) {
             handler = FluidUtil.getHandlerFromName(computer, arguments.getString(1));
-
-        if (handler == null)
-            return MethodResult.of(0, StatusConstants.INVENTORY_NOT_FOUND.name());
+            if (handler == null) {
+                return MethodResult.of(0, StatusConstants.INVENTORY_NOT_FOUND.name());
+            }
+        }
 
         return exportToTank(arguments, handler);
     }
