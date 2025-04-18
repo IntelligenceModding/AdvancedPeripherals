@@ -482,11 +482,12 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
             return MethodResult.of(Collections.emptyList());
 
         IChemicalHandler handler = ChemicalUtil.getHandlerFromDirection(arguments.getString(1), owner);
-        if (handler == null)
+        if (handler == null) {
             handler = ChemicalUtil.getHandlerFromName(computer, arguments.getString(1));
-
-        if (handler == null)
-            return MethodResult.of(0, StatusConstants.INVENTORY_NOT_FOUND.name());
+            if (handler == null) {
+                return MethodResult.of(0, StatusConstants.INVENTORY_NOT_FOUND.name());
+            }
+        }
 
         return importToRS(arguments, handler);
     }
