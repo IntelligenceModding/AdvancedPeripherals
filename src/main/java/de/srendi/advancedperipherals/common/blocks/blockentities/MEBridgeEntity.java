@@ -12,7 +12,7 @@ import appeng.api.orientation.BlockOrientation;
 import appeng.api.util.AECableType;
 import appeng.me.helpers.IGridConnectedBlockEntity;
 import de.srendi.advancedperipherals.common.addons.appliedenergistics.CraftJob;
-import de.srendi.advancedperipherals.common.addons.appliedenergistics.MeBridgeEntityListener;
+import de.srendi.advancedperipherals.common.addons.appliedenergistics.MEBridgeEntityListener;
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.MEBridgePeripheral;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralBlockEntity;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
@@ -34,13 +34,13 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public class MeBridgeEntity extends PeripheralBlockEntity<MEBridgePeripheral> implements IActionSource, IActionHost, IInWorldGridNodeHost, IGridConnectedBlockEntity, ICraftingSimulationRequester {
+public class MEBridgeEntity extends PeripheralBlockEntity<MEBridgePeripheral> implements IActionSource, IActionHost, IInWorldGridNodeHost, IGridConnectedBlockEntity, ICraftingSimulationRequester {
 
     private final List<CraftJob> jobs = new CopyOnWriteArrayList<>();
     private boolean initialized = false;
-    private final IManagedGridNode mainNode = GridHelper.createManagedNode(this, MeBridgeEntityListener.INSTANCE);
+    private final IManagedGridNode mainNode = GridHelper.createManagedNode(this, MEBridgeEntityListener.INSTANCE);
 
-    public MeBridgeEntity(BlockPos pos, BlockState state) {
+    public MEBridgeEntity(BlockPos pos, BlockState state) {
         super(BlockEntityTypes.ME_BRIDGE.get(), pos, state);
         getMainNode().setExposedOnSides(getGridConnectableSides(null));
     }

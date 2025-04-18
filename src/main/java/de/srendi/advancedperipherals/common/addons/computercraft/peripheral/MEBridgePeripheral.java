@@ -17,7 +17,7 @@ import de.srendi.advancedperipherals.common.addons.appliedenergistics.CraftJob;
 import de.srendi.advancedperipherals.common.addons.appliedenergistics.MeFluidHandler;
 import de.srendi.advancedperipherals.common.addons.appliedenergistics.MeItemHandler;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.BlockEntityPeripheralOwner;
-import de.srendi.advancedperipherals.common.blocks.blockentities.MeBridgeEntity;
+import de.srendi.advancedperipherals.common.blocks.blockentities.MEBridgeEntity;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.util.Pair;
 import de.srendi.advancedperipherals.common.util.ServerWorker;
@@ -35,13 +35,13 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwner<MeBridgeEntity>> {
+public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwner<MEBridgeEntity>> {
 
     public static final String PERIPHERAL_TYPE = "meBridge";
-    private final MeBridgeEntity tile;
+    private final MEBridgeEntity tile;
     private IGridNode node;
 
-    public MEBridgePeripheral(MeBridgeEntity tileEntity) {
+    public MEBridgePeripheral(MEBridgeEntity tileEntity) {
         super(PERIPHERAL_TYPE, new BlockEntityPeripheralOwner<>(tileEntity));
         this.tile = tileEntity;
         this.node = tileEntity.getActionableNode();
