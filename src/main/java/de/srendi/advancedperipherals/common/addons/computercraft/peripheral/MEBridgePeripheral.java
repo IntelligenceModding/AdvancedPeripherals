@@ -14,8 +14,8 @@ import dan200.computercraft.api.lua.MethodResult;
 import dan200.computercraft.api.peripheral.IComputerAccess;
 import de.srendi.advancedperipherals.common.addons.appliedenergistics.AppEngApi;
 import de.srendi.advancedperipherals.common.addons.appliedenergistics.CraftJob;
-import de.srendi.advancedperipherals.common.addons.appliedenergistics.MeFluidHandler;
-import de.srendi.advancedperipherals.common.addons.appliedenergistics.MeItemHandler;
+import de.srendi.advancedperipherals.common.addons.appliedenergistics.MEFluidHandler;
+import de.srendi.advancedperipherals.common.addons.appliedenergistics.MEItemHandler;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.BlockEntityPeripheralOwner;
 import de.srendi.advancedperipherals.common.blocks.blockentities.MEBridgeEntity;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
@@ -69,7 +69,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
      */
     protected MethodResult exportToChest(@NotNull IArguments arguments, @Nullable IItemHandler targetInventory) throws LuaException {
         MEStorage monitor = AppEngApi.getMonitor(node);
-        MeItemHandler itemHandler = new MeItemHandler(monitor, tile);
+        MEItemHandler itemHandler = new MEItemHandler(monitor, tile);
         Pair<ItemFilter, String> filter = ItemFilter.parse(arguments.getTable(0));
 
         if (filter.rightPresent())
@@ -90,7 +90,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
      */
     protected MethodResult exportToTank(@NotNull IArguments arguments, @Nullable IFluidHandler targetTank) throws LuaException {
         MEStorage monitor = AppEngApi.getMonitor(node);
-        MeFluidHandler fluidHandler = new MeFluidHandler(monitor, tile);
+        MEFluidHandler fluidHandler = new MEFluidHandler(monitor, tile);
         Pair<FluidFilter, String> filter = FluidFilter.parse(arguments.getTable(0));
 
         if (filter.rightPresent())
@@ -111,7 +111,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
      */
     protected MethodResult importToME(@NotNull IArguments arguments, @Nullable IItemHandler targetInventory) throws LuaException {
         MEStorage monitor = AppEngApi.getMonitor(node);
-        MeItemHandler itemHandler = new MeItemHandler(monitor, tile);
+        MEItemHandler itemHandler = new MEItemHandler(monitor, tile);
         Pair<ItemFilter, String> filter = ItemFilter.parse(arguments.getTable(0));
 
         if (filter.rightPresent())
@@ -132,7 +132,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
      */
     protected MethodResult importToME(@NotNull IArguments arguments, @Nullable IFluidHandler targetTank) throws LuaException {
         MEStorage monitor = AppEngApi.getMonitor(node);
-        MeFluidHandler fluidHandler = new MeFluidHandler(monitor, tile);
+        MEFluidHandler fluidHandler = new MEFluidHandler(monitor, tile);
         Pair<FluidFilter, String> filter = FluidFilter.parse(arguments.getTable(0));
 
         if (filter.rightPresent())

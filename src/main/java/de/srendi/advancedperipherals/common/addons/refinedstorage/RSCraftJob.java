@@ -47,7 +47,7 @@ public class RSCraftJob extends BasicCraftJob {
 
     @Override
     public Object getParsedRequestedItemImpl() {
-        return RsApi.getObjectFromResourceKey(toCraft, amount);
+        return RSApi.getObjectFromResourceKey(toCraft, amount);
     }
 
     @Override
@@ -78,7 +78,7 @@ public class RSCraftJob extends BasicCraftJob {
             return Collections.emptyList();
         }
 
-        return preview.items().stream().filter(item -> item.toCraft() > 0).map(item -> RsApi.getObjectFromResourceKey(item.resource(), item.toCraft())).collect(Collectors.toList());
+        return preview.items().stream().filter(item -> item.toCraft() > 0).map(item -> RSApi.getObjectFromResourceKey(item.resource(), item.toCraft())).collect(Collectors.toList());
     }
 
     @Override
@@ -93,7 +93,7 @@ public class RSCraftJob extends BasicCraftJob {
             return Collections.emptyList();
         }
 
-        return preview.items().stream().filter(item -> item.missing() > 0).map(item -> RsApi.getObjectFromResourceKey(item.resource(), item.missing())).collect(Collectors.toList());
+        return preview.items().stream().filter(item -> item.missing() > 0).map(item -> RSApi.getObjectFromResourceKey(item.resource(), item.missing())).collect(Collectors.toList());
     }
 
     @Override
@@ -108,7 +108,7 @@ public class RSCraftJob extends BasicCraftJob {
             return Collections.emptyList();
         }
 
-        return preview.outputsOfPatternWithCycle().stream().map(RsApi::getObjectFromResourceAmount).collect(Collectors.toList());
+        return preview.outputsOfPatternWithCycle().stream().map(RSApi::getObjectFromResourceAmount).collect(Collectors.toList());
     }
 
     public TaskStatus getCraftingTask() {

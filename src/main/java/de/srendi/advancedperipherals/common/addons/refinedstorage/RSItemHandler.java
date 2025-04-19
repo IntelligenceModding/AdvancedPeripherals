@@ -16,13 +16,13 @@ import com.refinedmods.refinedstorage.api.core.Action;
  *
  * @see de.srendi.advancedperipherals.common.addons.computercraft.peripheral.RSBridgePeripheral
  */
-public class RsItemHandler implements IStorageSystemItemHandler {
+public class RSItemHandler implements IStorageSystemItemHandler {
 
     @NotNull
     private final Network network;
     private final StorageNetworkComponent component;
 
-    public RsItemHandler(@NotNull Network network) {
+    public RSItemHandler(@NotNull Network network) {
         this.network = network;
         this.component = network.getComponent(StorageNetworkComponent.class);
     }
@@ -39,7 +39,7 @@ public class RsItemHandler implements IStorageSystemItemHandler {
     @Override
     public ItemStack extractItem(ItemFilter filter, int count, boolean simulate) {
         AdvancedPeripherals.debug("Trying to extract item from filter: " + filter);
-        ItemResource itemResource = RsApi.getItem(network, filter);
+        ItemResource itemResource = RSApi.getItem(network, filter);
         if (itemResource == null)
             return ItemStack.EMPTY;
 

@@ -7,7 +7,7 @@ import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.core.apis.TableHelper;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.addons.APAddons;
-import de.srendi.advancedperipherals.common.addons.refinedstorage.RsApi;
+import de.srendi.advancedperipherals.common.addons.refinedstorage.RSApi;
 import de.srendi.advancedperipherals.common.util.Pair;
 import mekanism.api.MekanismAPI;
 import mekanism.api.chemical.Chemical;
@@ -108,7 +108,7 @@ public class ChemicalFilter extends GenericFilter<ChemicalStack> {
         if (!APAddons.mekanismLoaded || !APAddons.refinedStorageLoaded || !APAddons.refinedStorageMekanismLoaded)
             return false;
         if (resourceAmount.resource() instanceof ChemicalResource chemicalResource) {
-            return test(RsApi.resourceToChemicalStack(chemicalResource));
+            return test(RSApi.resourceToChemicalStack(chemicalResource));
         }
         return false;
     }

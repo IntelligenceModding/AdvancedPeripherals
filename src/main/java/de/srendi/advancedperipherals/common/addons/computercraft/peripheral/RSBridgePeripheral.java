@@ -20,10 +20,10 @@ import dan200.computercraft.core.apis.TableHelper;
 import de.srendi.advancedperipherals.common.addons.APAddons;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.BlockEntityPeripheralOwner;
 import de.srendi.advancedperipherals.common.addons.refinedstorage.RSCraftJob;
-import de.srendi.advancedperipherals.common.addons.refinedstorage.RsApi;
-import de.srendi.advancedperipherals.common.addons.refinedstorage.RsChemicalHandler;
-import de.srendi.advancedperipherals.common.addons.refinedstorage.RsFluidHandler;
-import de.srendi.advancedperipherals.common.addons.refinedstorage.RsItemHandler;
+import de.srendi.advancedperipherals.common.addons.refinedstorage.RSApi;
+import de.srendi.advancedperipherals.common.addons.refinedstorage.RSChemicalHandler;
+import de.srendi.advancedperipherals.common.addons.refinedstorage.RSFluidHandler;
+import de.srendi.advancedperipherals.common.addons.refinedstorage.RSItemHandler;
 import de.srendi.advancedperipherals.common.addons.refinedstorage.RsStorageTypes;
 import de.srendi.advancedperipherals.common.blocks.blockentities.RsBridgeEntity;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
@@ -92,7 +92,7 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
      * @return the exportable amount or null with a string if something went wrong
      */
     protected MethodResult exportToChest(@NotNull IArguments arguments, @Nullable IItemHandler targetInventory) throws LuaException {
-        RsItemHandler itemHandler = new RsItemHandler(getNetwork());
+        RSItemHandler itemHandler = new RSItemHandler(getNetwork());
         Pair<ItemFilter, String> filter = ItemFilter.parse(arguments.getTable(0));
 
         if (filter.rightPresent())
@@ -112,7 +112,7 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
      * @return the exportable amount or null with a string if something went wrong
      */
     protected MethodResult exportToTank(@NotNull IArguments arguments, @Nullable IFluidHandler targetTank) throws LuaException {
-        RsFluidHandler fluidHandler = new RsFluidHandler(getNetwork());
+        RSFluidHandler fluidHandler = new RSFluidHandler(getNetwork());
         Pair<FluidFilter, String> filter = FluidFilter.parse(arguments.getTable(0));
 
         if (filter.rightPresent())
@@ -132,7 +132,7 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
      * @return the exportable amount or null with a string if something went wrong
      */
     protected MethodResult exportToTank(@NotNull IArguments arguments, @Nullable IChemicalHandler targetTank) throws LuaException {
-        RsChemicalHandler chemicalHandler = new RsChemicalHandler(getNetwork());
+        RSChemicalHandler chemicalHandler = new RSChemicalHandler(getNetwork());
         Pair<ChemicalFilter, String> filter = ChemicalFilter.parse(arguments.getTable(0));
 
         if (filter.rightPresent())
@@ -152,7 +152,7 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
      * @return the imported amount or null with a string if something went wrong
      */
     protected MethodResult importToRS(@NotNull IArguments arguments, @Nullable IItemHandler targetInventory) throws LuaException {
-        RsItemHandler itemHandler = new RsItemHandler(getNetwork());
+        RSItemHandler itemHandler = new RSItemHandler(getNetwork());
         Pair<ItemFilter, String> filter = ItemFilter.parse(arguments.getTable(0));
 
         if (filter.rightPresent())
@@ -172,7 +172,7 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
      * @return the imported amount or null with a string if something went wrong
      */
     protected MethodResult importToRS(@NotNull IArguments arguments, @Nullable IFluidHandler targetTank) throws LuaException {
-        RsFluidHandler fluidHandler = new RsFluidHandler(getNetwork());
+        RSFluidHandler fluidHandler = new RSFluidHandler(getNetwork());
         Pair<FluidFilter, String> filter = FluidFilter.parse(arguments.getTable(0));
 
         if (filter.rightPresent())
@@ -192,7 +192,7 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
      * @return the imported amount or null with a string if something went wrong
      */
     protected MethodResult importToRS(@NotNull IArguments arguments, @Nullable IChemicalHandler targetTank) throws LuaException {
-        RsChemicalHandler chemicalHandler = new RsChemicalHandler(getNetwork());
+        RSChemicalHandler chemicalHandler = new RSChemicalHandler(getNetwork());
         Pair<ChemicalFilter, String> filter = ChemicalFilter.parse(arguments.getTable(0));
 
         if (filter.rightPresent())
@@ -233,7 +233,7 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (parsedFilter.isEmpty())
             return MethodResult.of(null, "EMPTY_FILTER");
 
-        Map<?, ?> resourceProperties = RsApi.getParsedItem(getNetwork(), parsedFilter);
+        Map<?, ?> resourceProperties = RSApi.getParsedItem(getNetwork(), parsedFilter);
         if (resourceProperties == null)
             return MethodResult.of(null, "NOT_FOUND");
 
@@ -254,7 +254,7 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (parsedFilter.isEmpty())
             return MethodResult.of(null, "EMPTY_FILTER");
 
-        Map<?, ?> resourceProperties = RsApi.getParsedFluid(getNetwork(), parsedFilter);
+        Map<?, ?> resourceProperties = RSApi.getParsedFluid(getNetwork(), parsedFilter);
         if (resourceProperties == null)
             return MethodResult.of(null, "NOT_FOUND");
 
@@ -275,7 +275,7 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (parsedFilter.isEmpty())
             return MethodResult.of(null, "EMPTY_FILTER");
 
-        Map<?, ?> resourceProperties = RsApi.getParsedChemical(getNetwork(), parsedFilter);
+        Map<?, ?> resourceProperties = RSApi.getParsedChemical(getNetwork(), parsedFilter);
         if (resourceProperties == null)
             return MethodResult.of(null, "NOT_FOUND");
 
@@ -294,7 +294,7 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
         ItemFilter parsedFilter = filter.getLeft();
 
-        Set<Map<String, Object>> resourceProperties = RsApi.getParsedItems(getNetwork(), parsedFilter);
+        Set<Map<String, Object>> resourceProperties = RSApi.getParsedItems(getNetwork(), parsedFilter);
 
         return MethodResult.of(resourceProperties);
     }
@@ -311,7 +311,7 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
         FluidFilter parsedFilter = filter.getLeft();
 
-        Set<Map<String, Object>> resourceProperties = RsApi.getParsedFluids(getNetwork(), parsedFilter);
+        Set<Map<String, Object>> resourceProperties = RSApi.getParsedFluids(getNetwork(), parsedFilter);
 
         return MethodResult.of(resourceProperties);
     }
@@ -328,7 +328,7 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
         ChemicalFilter parsedFilter = filter.getLeft();
 
-        Set<Map<String, Object>> resourceProperties = RsApi.getParsedChemicals(getNetwork(), parsedFilter);
+        Set<Map<String, Object>> resourceProperties = RSApi.getParsedChemicals(getNetwork(), parsedFilter);
 
         return MethodResult.of(resourceProperties);
     }
@@ -345,7 +345,7 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
         ItemFilter parsedFilter = filter.getLeft();
 
-        Set<Map<String, Object>> resourceProperties = RsApi.getCraftableItems(getNetwork(), parsedFilter);
+        Set<Map<String, Object>> resourceProperties = RSApi.getCraftableItems(getNetwork(), parsedFilter);
 
         return MethodResult.of(resourceProperties);
     }
@@ -362,7 +362,7 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
         FluidFilter parsedFilter = filter.getLeft();
 
-        Set<Map<String, Object>> resourceProperties = RsApi.getCraftableFluids(getNetwork(), parsedFilter);
+        Set<Map<String, Object>> resourceProperties = RSApi.getCraftableFluids(getNetwork(), parsedFilter);
 
         return MethodResult.of(resourceProperties);
     }
@@ -382,7 +382,7 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
         ChemicalFilter parsedFilter = filter.getLeft();
 
-        Set<Map<String, Object>> resourceProperties = RsApi.getCraftableChemicals(getNetwork(), parsedFilter);
+        Set<Map<String, Object>> resourceProperties = RSApi.getCraftableChemicals(getNetwork(), parsedFilter);
 
         return MethodResult.of(resourceProperties);
     }
@@ -393,7 +393,7 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (!isAvailable())
             return notConnected();
 
-        return MethodResult.of(RsApi.listCells(getNetwork()));
+        return MethodResult.of(RSApi.listCells(getNetwork()));
     }
 
     @Override
@@ -402,7 +402,7 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (!isAvailable())
             return notConnected();
 
-        return MethodResult.of(RsApi.listDrives(getNetwork()));
+        return MethodResult.of(RSApi.listDrives(getNetwork()));
     }
 
     @Override
@@ -543,7 +543,7 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (!isAvailable())
             return notConnected();
 
-        return MethodResult.of(RsApi.getEnergyUsage(getNetwork()));
+        return MethodResult.of(RSApi.getEnergyUsage(getNetwork()));
     }
 
     @Override
@@ -562,7 +562,7 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (!isAvailable())
             return notConnected();
 
-        return MethodResult.of(RsApi.getTotalExternalStorage(getNetwork(), RsStorageTypes.ITEM));
+        return MethodResult.of(RSApi.getTotalExternalStorage(getNetwork(), RsStorageTypes.ITEM));
     }
 
     @Override
@@ -571,7 +571,7 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (!isAvailable())
             return notConnected();
 
-        return MethodResult.of(RsApi.getTotalExternalStorage(getNetwork(), RsStorageTypes.FLUID));
+        return MethodResult.of(RSApi.getTotalExternalStorage(getNetwork(), RsStorageTypes.FLUID));
     }
 
     @Override
@@ -583,7 +583,7 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (!APAddons.refinedStorageMekanismLoaded)
             return MethodResult.of(0);
 
-        return MethodResult.of(RsApi.getTotalExternalStorage(getNetwork(), RsStorageTypes.CHEMICAL));
+        return MethodResult.of(RSApi.getTotalExternalStorage(getNetwork(), RsStorageTypes.CHEMICAL));
     }
 
     @Override
@@ -592,7 +592,7 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (!isAvailable())
             return notConnected();
 
-        return MethodResult.of(RsApi.getTotalStorage(getNetwork(), RsStorageTypes.ITEM));
+        return MethodResult.of(RSApi.getTotalStorage(getNetwork(), RsStorageTypes.ITEM));
     }
 
     @Override
@@ -601,7 +601,7 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (!isAvailable())
             return notConnected();
 
-        return MethodResult.of(RsApi.getTotalStorage(getNetwork(), RsStorageTypes.FLUID));
+        return MethodResult.of(RSApi.getTotalStorage(getNetwork(), RsStorageTypes.FLUID));
     }
 
     @Override
@@ -613,7 +613,7 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (!APAddons.refinedStorageMekanismLoaded)
             return MethodResult.of(0);
 
-        return MethodResult.of(RsApi.getTotalStorage(getNetwork(), RsStorageTypes.CHEMICAL));
+        return MethodResult.of(RSApi.getTotalStorage(getNetwork(), RsStorageTypes.CHEMICAL));
     }
 
     @Override
@@ -622,7 +622,7 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (!isAvailable())
             return notConnected();
 
-        return MethodResult.of(RsApi.getUsedExternalStorage(getNetwork(), RsStorageTypes.ITEM));
+        return MethodResult.of(RSApi.getUsedExternalStorage(getNetwork(), RsStorageTypes.ITEM));
     }
 
     @Override
@@ -631,7 +631,7 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (!isAvailable())
             return notConnected();
 
-        return MethodResult.of(RsApi.getUsedExternalStorage(getNetwork(), RsStorageTypes.FLUID));
+        return MethodResult.of(RSApi.getUsedExternalStorage(getNetwork(), RsStorageTypes.FLUID));
     }
 
     @Override
@@ -643,7 +643,7 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (!APAddons.refinedStorageMekanismLoaded)
             return MethodResult.of(0);
 
-        return MethodResult.of(RsApi.getUsedExternalStorage(getNetwork(), RsStorageTypes.CHEMICAL));
+        return MethodResult.of(RSApi.getUsedExternalStorage(getNetwork(), RsStorageTypes.CHEMICAL));
     }
 
     @Override
@@ -652,7 +652,7 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (!isAvailable())
             return notConnected();
 
-        return MethodResult.of(RsApi.getUsedStorage(getNetwork(), RsStorageTypes.ITEM));
+        return MethodResult.of(RSApi.getUsedStorage(getNetwork(), RsStorageTypes.ITEM));
     }
 
     @Override
@@ -661,7 +661,7 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (!isAvailable())
             return notConnected();
 
-        return MethodResult.of(RsApi.getUsedStorage(getNetwork(), RsStorageTypes.FLUID));
+        return MethodResult.of(RSApi.getUsedStorage(getNetwork(), RsStorageTypes.FLUID));
     }
 
     @Override
@@ -673,7 +673,7 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (!APAddons.refinedStorageMekanismLoaded)
             return MethodResult.of(0);
 
-        return MethodResult.of(RsApi.getUsedStorage(getNetwork(), RsStorageTypes.CHEMICAL));
+        return MethodResult.of(RSApi.getUsedStorage(getNetwork(), RsStorageTypes.CHEMICAL));
     }
 
     @Override
@@ -682,7 +682,7 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (!isAvailable())
             return notConnected();
 
-        return MethodResult.of(RsApi.getTotalExternalStorage(getNetwork(), RsStorageTypes.ITEM) - RsApi.getUsedExternalStorage(getNetwork(), RsStorageTypes.ITEM));
+        return MethodResult.of(RSApi.getTotalExternalStorage(getNetwork(), RsStorageTypes.ITEM) - RSApi.getUsedExternalStorage(getNetwork(), RsStorageTypes.ITEM));
     }
 
     @Override
@@ -691,7 +691,7 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (!isAvailable())
             return notConnected();
 
-        return MethodResult.of(RsApi.getTotalExternalStorage(getNetwork(), RsStorageTypes.FLUID) - RsApi.getUsedExternalStorage(getNetwork(), RsStorageTypes.FLUID));
+        return MethodResult.of(RSApi.getTotalExternalStorage(getNetwork(), RsStorageTypes.FLUID) - RSApi.getUsedExternalStorage(getNetwork(), RsStorageTypes.FLUID));
     }
 
     @Override
@@ -703,7 +703,7 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (!APAddons.refinedStorageMekanismLoaded)
             return MethodResult.of(0);
 
-        return MethodResult.of(RsApi.getTotalExternalStorage(getNetwork(), RsStorageTypes.CHEMICAL) - RsApi.getUsedExternalStorage(getNetwork(), RsStorageTypes.CHEMICAL));
+        return MethodResult.of(RSApi.getTotalExternalStorage(getNetwork(), RsStorageTypes.CHEMICAL) - RSApi.getUsedExternalStorage(getNetwork(), RsStorageTypes.CHEMICAL));
     }
 
     @Override
@@ -712,7 +712,7 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (!isAvailable())
             return notConnected();
 
-        return MethodResult.of(RsApi.getTotalStorage(getNetwork(), RsStorageTypes.ITEM) - RsApi.getUsedStorage(getNetwork(), RsStorageTypes.ITEM));
+        return MethodResult.of(RSApi.getTotalStorage(getNetwork(), RsStorageTypes.ITEM) - RSApi.getUsedStorage(getNetwork(), RsStorageTypes.ITEM));
     }
 
     @Override
@@ -721,7 +721,7 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (!isAvailable())
             return notConnected();
 
-        return MethodResult.of(RsApi.getTotalStorage(getNetwork(), RsStorageTypes.FLUID) - RsApi.getUsedStorage(getNetwork(), RsStorageTypes.FLUID));
+        return MethodResult.of(RSApi.getTotalStorage(getNetwork(), RsStorageTypes.FLUID) - RSApi.getUsedStorage(getNetwork(), RsStorageTypes.FLUID));
     }
 
     @Override
@@ -733,7 +733,7 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (!APAddons.refinedStorageMekanismLoaded)
             return MethodResult.of(0);
 
-        return MethodResult.of(RsApi.getTotalStorage(getNetwork(), RsStorageTypes.CHEMICAL) - RsApi.getUsedStorage(getNetwork(), RsStorageTypes.CHEMICAL));
+        return MethodResult.of(RSApi.getTotalStorage(getNetwork(), RsStorageTypes.CHEMICAL) - RSApi.getUsedStorage(getNetwork(), RsStorageTypes.CHEMICAL));
     }
 
     @Override
@@ -790,7 +790,7 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (!isAvailable())
             return notConnected();
 
-        return MethodResult.of(RsApi.getCraftingTasks(bridge));
+        return MethodResult.of(RSApi.getCraftingTasks(bridge));
     }
 
     @Override
@@ -845,7 +845,7 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
         GenericFilter<?> parsedFilter = filter.getLeft();
 
-        return MethodResult.of(RsApi.findPatternFromFilters(getNetwork(), null, parsedFilter).leftPresent());
+        return MethodResult.of(RSApi.findPatternFromFilters(getNetwork(), null, parsedFilter).leftPresent());
     }
 
     @Override
@@ -881,7 +881,7 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         // If no table is provided or it's empty, return every pattern
         Map<?, ?> filterTable = arguments.optTable(0, Collections.emptyMap());
         if (filterTable.isEmpty()) {
-            return MethodResult.of(RsApi.getPatterns(getNetwork()));
+            return MethodResult.of(RSApi.getPatterns(getNetwork()));
         }
 
         boolean hasInputFilter = filterTable.containsKey("input");
@@ -916,11 +916,11 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
             outputFilter = parsedFilter.getLeft();
         }
 
-        Pair<Pattern, String> pattern = RsApi.findPatternFromFilters(getNetwork(), inputFilter, outputFilter);
+        Pair<Pattern, String> pattern = RSApi.findPatternFromFilters(getNetwork(), inputFilter, outputFilter);
 
         if (pattern.rightPresent())
             return MethodResult.of(null, pattern.getRight());
 
-        return MethodResult.of(RsApi.parsePattern(pattern.getLeft()));
+        return MethodResult.of(RSApi.parsePattern(pattern.getLeft()));
     }
 }

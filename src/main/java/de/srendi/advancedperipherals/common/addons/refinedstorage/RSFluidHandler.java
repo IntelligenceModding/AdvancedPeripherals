@@ -12,13 +12,13 @@ import de.srendi.advancedperipherals.common.util.inventory.IStorageSystemFluidHa
 import net.neoforged.neoforge.fluids.FluidStack;
 import org.jetbrains.annotations.NotNull;
 
-public class RsFluidHandler implements IStorageSystemFluidHandler {
+public class RSFluidHandler implements IStorageSystemFluidHandler {
 
     @NotNull
     private final Network network;
     private final StorageNetworkComponent component;
 
-    public RsFluidHandler(@NotNull Network network) {
+    public RSFluidHandler(@NotNull Network network) {
         this.network = network;
         this.component = network.getComponent(StorageNetworkComponent.class);
 
@@ -36,7 +36,7 @@ public class RsFluidHandler implements IStorageSystemFluidHandler {
     @Override
     public FluidStack drain(FluidFilter filter, FluidAction simulate) {
         AdvancedPeripherals.debug("Trying to extract fluid from filter: " + filter);
-        FluidResource fluid = RsApi.getFluid(network, filter);
+        FluidResource fluid = RSApi.getFluid(network, filter);
         if (fluid == null)
             return FluidStack.EMPTY;
 

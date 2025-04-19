@@ -61,7 +61,7 @@ import java.util.stream.Collectors;
 /**
  * Refined Storage Api helper methods and parsers
  */
-public class RsApi {
+public class RSApi {
 
     public static void registerCapabilities(@NotNull RegisterCapabilitiesEvent event) {
         event.registerBlockEntity(
@@ -604,7 +604,7 @@ public class RsApi {
             return null;
 
         Map<String, Object> propeties = new HashMap<>();
-        propeties.put("outputs", pattern.layout().outputs().stream().map(RsApi::getObjectFromResourceAmount).toList());
+        propeties.put("outputs", pattern.layout().outputs().stream().map(RSApi::getObjectFromResourceAmount).toList());
 
         List<List<Map<String, Object>>> inputs = pattern.layout().ingredients().stream()
                 .map(ingredient -> ingredient.inputs().stream()
