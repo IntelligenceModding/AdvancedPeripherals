@@ -99,7 +99,7 @@ public class AdvancedPeripherals {
                     });
         });
 
-        if (APAddons.ae2Loaded)
+        if (APAddons.ae2Loaded())
             event.registerBlockEntity(
                     AECapabilities.IN_WORLD_GRID_NODE_HOST,
                     BlockEntityTypes.ME_BRIDGE.get(),
