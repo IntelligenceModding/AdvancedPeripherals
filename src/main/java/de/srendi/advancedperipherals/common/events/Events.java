@@ -41,7 +41,7 @@ public class Events {
         // We could switch to the advancement way to give new players the book. However, that would not allow us to create
         // a config option for that. So we will stick with the custom solution here.
         // See https://vazkiimods.github.io/Patchouli/docs/patchouli-basics/giving-new
-        if (APConfig.WORLD_CONFIG.givePlayerBookOnJoin.get() && APAddons.patchouliLoaded) {
+        if (APConfig.WORLD_CONFIG.givePlayerBookOnJoin.get() && APAddons.patchouliLoaded()) {
             if (!hasPlayedBefore(player)) {
                 ItemStack book = new ItemStack(ItemUtil.getRegistryEntry("patchouli:guide_book", BuiltInRegistries.ITEM));
                 CompoundTag nbt = new CompoundTag();

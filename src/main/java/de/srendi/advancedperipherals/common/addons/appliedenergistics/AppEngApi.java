@@ -126,7 +126,7 @@ public class AppEngApi {
     public static List<Object> listGases(MEStorage monitor, ICraftingService service, int flag) {
         List<Object> items = new ArrayList<>();
         for (Object2LongMap.Entry<AEKey> aeKey : monitor.getAvailableStacks()) {
-            if (APAddons.appMekLoaded && aeKey.getKey() instanceof MekanismKey itemKey) {
+            if (APAddons.appMekLoaded() && aeKey.getKey() instanceof MekanismKey itemKey) {
                 items.add(getObjectFromStack(Pair.of(aeKey.getLongValue(), itemKey), service));
             }
         }
@@ -152,7 +152,7 @@ public class AppEngApi {
             return getObjectFromItemStack(Pair.of(stack.getLeft(), itemKey), service);
         if (stack.getRight() instanceof AEFluidKey fluidKey)
             return getObjectFromFluidStack(Pair.of(stack.getLeft(), fluidKey), service);
-        if (APAddons.appMekLoaded && (stack.getRight() instanceof MekanismKey gasKey))
+        if (APAddons.appMekLoaded() && (stack.getRight() instanceof MekanismKey gasKey))
             return getObjectFromGasStack(Pair.of(stack.getLeft(), gasKey), service);
 
         AdvancedPeripherals.debug("Could not create table from unknown stack " + stack.getRight().getClass() + " - Report this to the maintainer of ap", Level.ERROR);
