@@ -286,11 +286,11 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     @LuaFunction(mainThread = true)
     public final MethodResult listItems(IArguments arguments) throws LuaException {
         if (!isAvailable())
-            return notConnected(Collections.emptyList());
+            return notConnected(null);
 
         Pair<ItemFilter, String> filter = ItemFilter.parse(arguments.optTable(0, Collections.emptyMap()));
         if (filter.rightPresent())
-            return MethodResult.of(Collections.emptyList(), filter.getRight());
+            return MethodResult.of(null, filter.getRight());
 
         ItemFilter parsedFilter = filter.getLeft();
 
@@ -303,11 +303,11 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     @LuaFunction(mainThread = true)
     public final MethodResult listFluids(IArguments arguments) throws LuaException {
         if (!isAvailable())
-            return notConnected(Collections.emptyList());
+            return notConnected(null);
 
         Pair<FluidFilter, String> filter = FluidFilter.parse(arguments.optTable(0, Collections.emptyMap()));
         if (filter.rightPresent())
-            return MethodResult.of(Collections.emptyList(), filter.getRight());
+            return MethodResult.of(null, filter.getRight());
 
         FluidFilter parsedFilter = filter.getLeft();
 
@@ -320,11 +320,11 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     @LuaFunction(mainThread = true)
     public final MethodResult listChemicals(IArguments arguments) throws LuaException {
         if (!isAvailable())
-            return notConnected(Collections.emptyList());
+            return notConnected(null);
 
         Pair<ChemicalFilter, String> filter = ChemicalFilter.parse(arguments.optTable(0, Collections.emptyMap()));
         if (filter.rightPresent())
-            return MethodResult.of(Collections.emptyList(), filter.getRight());
+            return MethodResult.of(null, filter.getRight());
 
         ChemicalFilter parsedFilter = filter.getLeft();
 
@@ -337,11 +337,11 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     @LuaFunction(mainThread = true)
     public final MethodResult listCraftableItems(IArguments arguments) throws LuaException {
         if (!isAvailable())
-            return notConnected(Collections.emptyList());
+            return notConnected(null);
 
         Pair<ItemFilter, String> filter = ItemFilter.parse(arguments.optTable(0, Collections.emptyMap()));
         if (filter.rightPresent())
-            return MethodResult.of(Collections.emptyList(), filter.getRight());
+            return MethodResult.of(null, filter.getRight());
 
         ItemFilter parsedFilter = filter.getLeft();
 
@@ -354,11 +354,11 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     @LuaFunction(mainThread = true)
     public final MethodResult listCraftableFluids(IArguments arguments) throws LuaException {
         if (!isAvailable())
-            return notConnected(Collections.emptyList());
+            return notConnected(null);
 
         Pair<FluidFilter, String> filter = FluidFilter.parse(arguments.optTable(0, Collections.emptyMap()));
         if (filter.rightPresent())
-            return MethodResult.of(Collections.emptyList(), filter.getRight());
+            return MethodResult.of(null, filter.getRight());
 
         FluidFilter parsedFilter = filter.getLeft();
 
@@ -371,14 +371,14 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     @LuaFunction(mainThread = true)
     public final MethodResult listCraftableChemicals(IArguments arguments) throws LuaException {
         if (!isAvailable())
-            return notConnected(Collections.emptyList());
+            return notConnected(null);
 
         if (!APAddons.refinedStorageMekanismLoaded)
-            return MethodResult.of(Collections.emptyList());
+            return MethodResult.of(null);
 
         Pair<ChemicalFilter, String> filter = ChemicalFilter.parse(arguments.optTable(0, Collections.emptyMap()));
         if (filter.rightPresent())
-            return MethodResult.of(Collections.emptyList(), filter.getRight());
+            return MethodResult.of(null, filter.getRight());
 
         ChemicalFilter parsedFilter = filter.getLeft();
 
@@ -391,7 +391,7 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     @LuaFunction(mainThread = true)
     public final MethodResult listCells() {
         if (!isAvailable())
-            return notConnected(Collections.emptyList());
+            return notConnected(null);
 
         return MethodResult.of(RSApi.listCells(getNetwork()));
     }
@@ -400,7 +400,7 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     @LuaFunction(mainThread = true)
     public final MethodResult listDrives() {
         if (!isAvailable())
-            return notConnected(Collections.emptyList());
+            return notConnected(null);
 
         return MethodResult.of(RSApi.listDrives(getNetwork()));
     }
@@ -788,7 +788,7 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     @LuaFunction(mainThread = true)
     public final MethodResult getCraftingTasks() {
         if (!isAvailable())
-            return notConnected(Collections.emptyList());
+            return notConnected(null);
 
         return MethodResult.of(RSApi.getCraftingTasks(bridge));
     }
@@ -874,7 +874,7 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     @LuaFunction(mainThread = true)
     public final MethodResult getPatterns(IArguments arguments) throws LuaException {
         if (!isAvailable())
-            return notConnected(Collections.emptyList());
+            return notConnected(null);
 
         // Expected input is a table with either an input table, an output table or both to filter for both
         // If no table is provided or it's empty, return every pattern
@@ -889,7 +889,7 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
         // If the player tries to filter for nothing, return nothing.
         if (!hasAnyFilter)
-            return MethodResult.of(Collections.emptyList(), "NO_FILTER");
+            return MethodResult.of(null, "NO_FILTER");
 
         GenericFilter<?> inputFilter = null;
         GenericFilter<?> outputFilter = null;
@@ -900,7 +900,7 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
             Pair<? extends GenericFilter<?>, String> parsedFilter = GenericFilter.parseGeneric(inputFilterTable);
 
             if (parsedFilter.rightPresent())
-                return MethodResult.of(Collections.emptyList(), parsedFilter.getRight());
+                return MethodResult.of(null, parsedFilter.getRight());
 
             inputFilter = parsedFilter.getLeft();
         }
@@ -910,7 +910,7 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
             Pair<? extends GenericFilter<?>, String> parsedFilter = GenericFilter.parseGeneric(outputFilterTable);
 
             if (parsedFilter.rightPresent())
-                return MethodResult.of(Collections.emptyList(), parsedFilter.getRight());
+                return MethodResult.of(null, parsedFilter.getRight());
 
             outputFilter = parsedFilter.getLeft();
         }
@@ -918,7 +918,7 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         Pair<Pattern, String> pattern = RSApi.findPatternFromFilters(getNetwork(), inputFilter, outputFilter);
 
         if (pattern.rightPresent())
-            return MethodResult.of(Collections.emptyList(), pattern.getRight());
+            return MethodResult.of(null, pattern.getRight());
 
         return MethodResult.of(RSApi.parsePattern(pattern.getLeft()));
     }
