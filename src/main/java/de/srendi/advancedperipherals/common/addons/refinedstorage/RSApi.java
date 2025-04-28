@@ -192,7 +192,6 @@ public class RSApi {
         for (TrackedResourceAmount trackedResource : storage.getResources(Actor.EMPTY.getClass())) {
             if (trackedResource.resourceAmount().resource() instanceof ItemResource itemResource && filter.test(itemResource.toItemStack())) {
                 items.add(getObjectFromItemResource(trackedResource.resourceAmount()));
-
             }
         }
         return items;
