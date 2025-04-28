@@ -99,7 +99,7 @@ public class ChemicalUtil {
 
         IChemicalHandler handler = extractHandler(location.getTarget(), null, null, null);
         if (handler == null)
-            throw new LuaException("Target '" + name + "' is not a fluid handler");
+            throw new LuaException("Target '" + name + "' is not a chemical handler");
         return handler;
     }
 
@@ -121,11 +121,11 @@ public class ChemicalUtil {
         return "";
     }
 
-    public static ResourceLocation getRegistryKey(Chemical fluid) {
-        return MekanismAPI.CHEMICAL_REGISTRY.getKey(fluid);
+    public static ResourceLocation getRegistryKey(Chemical chemical) {
+        return MekanismAPI.CHEMICAL_REGISTRY.getKey(chemical);
     }
 
-    public static ResourceLocation getRegistryKey(ChemicalStack fluid) {
-        return MekanismAPI.CHEMICAL_REGISTRY.getKey(fluid.getChemical());
+    public static ResourceLocation getRegistryKey(ChemicalStack chemicalStack) {
+        return MekanismAPI.CHEMICAL_REGISTRY.getKey(chemicalStack.getChemical());
     }
 }
