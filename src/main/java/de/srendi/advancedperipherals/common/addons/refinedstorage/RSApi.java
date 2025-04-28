@@ -29,6 +29,7 @@ import com.refinedmods.refinedstorage.mekanism.ChemicalResourceType;
 import com.refinedmods.refinedstorage.neoforge.api.RefinedStorageNeoForgeApi;
 import com.refinedmods.refinedstorage.neoforge.support.resource.VariantUtil;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
+import de.srendi.advancedperipherals.common.addons.APAddons;
 import de.srendi.advancedperipherals.common.blocks.blockentities.RSBridgeEntity;
 import de.srendi.advancedperipherals.common.setup.BlockEntityTypes;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
@@ -496,13 +497,15 @@ public class RSApi {
     }
 
     /**
-     * Helper method to get a parsed lua resource key. Currently only suppors item and fluid resources
+     * Helper method to get a parsed lua resource key.
      *
      * @param resource the resource
      * @param count    count of the resource - can be 0 and lower
      * @return the parsed key to a lua properties map
      */
     public static Map<String, Object> getObjectFromResourceKey(@NotNull ResourceKey resource, long count) {
+        // Resource amounts can't be zero or the client will just crash,
+        // So we need to check that and set it to one
         boolean countZeroOrLower = count <= 0;
         if (resource instanceof ItemResource) {
             if (countZeroOrLower) {
@@ -515,6 +518,12 @@ public class RSApi {
                 return getObjectFromFluidResource(new ResourceAmount(resource, 1), count);
             }
             return getObjectFromFluidResource(new ResourceAmount(resource, count));
+        }
+        if (APAddons.refinedStorageMekanismLoaded && resource instanceof ChemicalResource) {
+            if (countZeroOrLower) {
+                return getObjectFromChemicalResource(new ResourceAmount(resource, 1), count);
+            }
+            return getObjectFromChemicalResource(new ResourceAmount(resource, count));
         }
         AdvancedPeripherals.debug("Could not create table from unknown resource " + resource.getClass() + " - Report this to the maintainer of ap", Level.WARN);
         return Collections.emptyMap();
@@ -532,6 +541,9 @@ public class RSApi {
         }
         if (resourceAmount.resource() instanceof FluidResource) {
             return getObjectFromFluidResource(resourceAmount);
+        }
+        if (APAddons.refinedStorageMekanismLoaded && resourceAmount.resource() instanceof ChemicalResource) {
+            return getObjectFromChemicalResource(resourceAmount);
         }
         AdvancedPeripherals.debug("Could not create table from unknown resourceAmount " + resourceAmount.getClass() + " - Report this to the maintainer of ap", Level.WARN);
         return Collections.emptyMap();
@@ -574,7 +586,7 @@ public class RSApi {
                 type = "item";
             } else if (serializableStorage.getType() == StorageTypes.FLUID) {
                 type = "fluid";
-            } else if (serializableStorage.getType() == ChemicalResourceType.STORAGE_TYPE) {
+            } else if (APAddons.refinedStorageMekanismLoaded && serializableStorage.getType() == ChemicalResourceType.STORAGE_TYPE) {
                 type = "chemical";
             } else {
                 type = "unknown";
@@ -672,6 +684,37 @@ public class RSApi {
      */
     public static Map<String, Object> getObjectFromFluidResource(ResourceAmount trackedResourceAmount, long alternateCount) {
         Map<String, Object> properties = getObjectFromFluidResource(trackedResourceAmount);
+        properties.put("count", alternateCount);
+        return properties;
+    }
+
+
+    /**
+     * Parses an RS TrackedResourceAmount to a lua object
+     * This method assumes you did an instanceof check before that the {@link ResourceKey} is an {@link ChemicalResource}
+     *
+     * @param trackedResourceAmount the tracked resource amount containing a ChemicalResource
+     * @return a Map containing the properties which CC can parse to a lua table
+     */
+    public static Map<String, Object> getObjectFromChemicalResource(ResourceAmount trackedResourceAmount) {
+        ChemicalResource resource = (ChemicalResource) trackedResourceAmount.resource();
+        long count = trackedResourceAmount.amount();
+        ChemicalStack stack = resourceToChemicalStack(resource, count);
+        Map<String, Object> properties = LuaConverter.chemicalStackToObject(stack, count);
+        properties.put("fingerprint", ChemicalUtil.getFingerprint(stack));
+        return properties;
+    }
+
+    /**
+     * Parses an RS TrackedResourceAmount to a lua object
+     * This method assumes you did an instanceof check before that the {@link ResourceKey} is an {@link ChemicalResource}
+     *
+     * @param trackedResourceAmount the tracked resource amount containing a ChemicalResource
+     * @param alternateCount        a count can be passed to overwrite the count of the object. Useful for patterns and craftable stacks
+     * @return a Map containing the properties which CC can parse to a lua table
+     */
+    public static Map<String, Object> getObjectFromChemicalResource(ResourceAmount trackedResourceAmount, long alternateCount) {
+        Map<String, Object> properties = getObjectFromChemicalResource(trackedResourceAmount);
         properties.put("count", alternateCount);
         return properties;
     }
