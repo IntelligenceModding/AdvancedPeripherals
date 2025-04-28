@@ -31,7 +31,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public class RsBridgeEntity extends PeripheralBlockEntity<RSBridgePeripheral> implements IPeripheralTileEntity, NetworkNodeContainerProvider, TaskStatusListener {
+public class RSBridgeEntity extends PeripheralBlockEntity<RSBridgePeripheral> implements IPeripheralTileEntity, NetworkNodeContainerProvider, TaskStatusListener {
 
     protected CompoundTag peripheralSettings;
     private final NetworkNode node;
@@ -39,7 +39,7 @@ public class RsBridgeEntity extends PeripheralBlockEntity<RSBridgePeripheral> im
     private final List<RSCraftJob> jobs = new CopyOnWriteArrayList<>();
     private boolean addedListener = false;
 
-    public RsBridgeEntity(BlockPos pos, BlockState state) {
+    public RSBridgeEntity(BlockPos pos, BlockState state) {
         super(BlockEntityTypes.RS_BRIDGE.get(), pos, state);
         peripheralSettings = new CompoundTag();
         ConnectionStrategy connectionStrategy = new SimpleConnectionStrategy(pos);

@@ -29,7 +29,7 @@ import com.refinedmods.refinedstorage.mekanism.ChemicalResourceType;
 import com.refinedmods.refinedstorage.neoforge.api.RefinedStorageNeoForgeApi;
 import com.refinedmods.refinedstorage.neoforge.support.resource.VariantUtil;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
-import de.srendi.advancedperipherals.common.blocks.blockentities.RsBridgeEntity;
+import de.srendi.advancedperipherals.common.blocks.blockentities.RSBridgeEntity;
 import de.srendi.advancedperipherals.common.setup.BlockEntityTypes;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
 import de.srendi.advancedperipherals.common.util.Pair;
@@ -469,7 +469,7 @@ public class RSApi {
         return used;
     }
 
-    public static List<Object> getCraftingTasks(RsBridgeEntity entity) {
+    public static List<Object> getCraftingTasks(RSBridgeEntity entity) {
         List<Object> tasks = new ArrayList<>();
 
         for (RSCraftJob task : entity.getJobs()) {

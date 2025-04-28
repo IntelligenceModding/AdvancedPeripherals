@@ -25,7 +25,7 @@ import de.srendi.advancedperipherals.common.addons.refinedstorage.RSCraftJob;
 import de.srendi.advancedperipherals.common.addons.refinedstorage.RSFluidHandler;
 import de.srendi.advancedperipherals.common.addons.refinedstorage.RSItemHandler;
 import de.srendi.advancedperipherals.common.addons.refinedstorage.RsStorageTypes;
-import de.srendi.advancedperipherals.common.blocks.blockentities.RsBridgeEntity;
+import de.srendi.advancedperipherals.common.blocks.blockentities.RSBridgeEntity;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.util.Pair;
 import de.srendi.advancedperipherals.common.util.StatusConstants;
@@ -48,13 +48,13 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
-public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwner<RsBridgeEntity>> implements IStorageSystemPeripheral {
+public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwner<RSBridgeEntity>> implements IStorageSystemPeripheral {
 
     public static final String PERIPHERAL_TYPE = "rsBridge";
 
-    private final RsBridgeEntity bridge;
+    private final RSBridgeEntity bridge;
 
-    public RSBridgePeripheral(RsBridgeEntity owner) {
+    public RSBridgePeripheral(RSBridgeEntity owner) {
         super(PERIPHERAL_TYPE, new BlockEntityPeripheralOwner<>(owner));
         this.bridge = owner;
     }
