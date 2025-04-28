@@ -362,12 +362,12 @@ public class RSApi {
             boolean outputMatch = false;
 
             if (inputFilter != null) {
-                outerLoop:
+                OUTERLOOP:
                 for (Ingredient input : pattern.layout().ingredients()) {
                     for (ResourceKey possibleInput : input.inputs()) {
                         if (inputFilter.testRS(new ResourceAmount(possibleInput, 1))) {
                             inputMatch = true;
-                            break outerLoop;
+                            break OUTERLOOP;
                         }
                     }
                 }
