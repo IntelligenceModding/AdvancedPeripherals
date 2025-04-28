@@ -228,7 +228,7 @@ dependencies {
     runtimeOnly("com.refinedmods.refinedstorage:refinedstorage-neoforge:${refinedstorage_version}")
 
     compileOnly("com.refinedmods.refinedstorage:refinedstorage-mekanism-integration:${refinedstorage_mekanism_version}")
-    // runtimeOnly("com.refinedmods.refinedstorage:refinedstorage-mekanism-integration:${refinedstorage_mekanism_version}")
+    runtimeOnly("com.refinedmods.refinedstorage:refinedstorage-mekanism-integration:${refinedstorage_mekanism_version}")
 
     // Needed for the refined storage mek integration
     compileOnlyApi("dev.emi:emi-neoforge:${emiVersion}")

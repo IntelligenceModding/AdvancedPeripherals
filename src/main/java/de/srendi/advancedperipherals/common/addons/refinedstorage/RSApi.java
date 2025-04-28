@@ -721,13 +721,13 @@ public class RSApi {
 
     public static ChemicalStack resourceToChemicalStack(ResourceAmount resourceAmount) {
         if (resourceAmount.resource() instanceof ChemicalResource chemicalResource)
-            return new ChemicalStack(MekanismAPI.CHEMICAL_REGISTRY.createIntrusiveHolder(chemicalResource.chemical()), resourceAmount.amount());
+            return new ChemicalStack(MekanismAPI.CHEMICAL_REGISTRY.wrapAsHolder(chemicalResource.chemical()), resourceAmount.amount());
 
         return ChemicalStack.EMPTY;
     }
 
     public static ChemicalStack resourceToChemicalStack(ChemicalResource resource, long alternateCount) {
-        return new ChemicalStack(MekanismAPI.CHEMICAL_REGISTRY.createIntrusiveHolder(resource.chemical()), alternateCount);
+        return new ChemicalStack(MekanismAPI.CHEMICAL_REGISTRY.wrapAsHolder(resource.chemical()), alternateCount);
     }
 
     public static ChemicalStack resourceToChemicalStack(ChemicalResource resource) {
