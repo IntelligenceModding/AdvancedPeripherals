@@ -181,7 +181,7 @@ public class LuaConverter {
     }
 
     public static Map<String, Object> fluidStackToObject(@NotNull FluidStack fluidStack, long count) {
-        if (fluidStack.isEmpty())  {
+        if (fluidStack.isEmpty()) {
             return null;
         }
         Map<String, Object> map = fluidStackToObject(fluidStack);

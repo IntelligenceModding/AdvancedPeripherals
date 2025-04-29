@@ -790,7 +790,7 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (!isAvailable())
             return notConnected(null);
 
-        return MethodResult.of(RSApi.getCraftingTasks(bridge));
+        return MethodResult.of(RSApi.getCraftingTasks(getNetwork(), bridge));
     }
 
     @Override

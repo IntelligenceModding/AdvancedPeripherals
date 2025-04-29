@@ -21,6 +21,7 @@ import com.refinedmods.refinedstorage.api.storage.TrackedResourceAmount;
 import com.refinedmods.refinedstorage.api.storage.composite.CompositeStorage;
 import com.refinedmods.refinedstorage.common.api.storage.SerializableStorage;
 import com.refinedmods.refinedstorage.common.api.support.network.InWorldNetworkNodeContainer;
+import com.refinedmods.refinedstorage.common.api.support.resource.PlatformResourceKey;
 import com.refinedmods.refinedstorage.common.storage.StorageTypes;
 import com.refinedmods.refinedstorage.common.support.resource.FluidResource;
 import com.refinedmods.refinedstorage.common.support.resource.ItemResource;
@@ -173,7 +174,7 @@ public class RSApi {
         StorageNetworkComponent storage = network.getComponent(StorageNetworkComponent.class);
         for (TrackedResourceAmount trackedResource : storage.getResources(Actor.EMPTY.getClass())) {
             if (trackedResource.resourceAmount().resource() instanceof ChemicalResource chemicalResource && filter.test(ChemicalUtil.toChemicalStack(chemicalResource.chemical(), trackedResource.resourceAmount().amount()))) {
-                return getObjectFromItemResource(trackedResource.resourceAmount());
+                return getObjectFromChemicalResource(trackedResource.resourceAmount());
             }
         }
         return null;
@@ -469,11 +470,20 @@ public class RSApi {
         return used;
     }
 
-    public static List<Object> getCraftingTasks(RSBridgeEntity entity) {
+    public static List<Object> getCraftingTasks(Network network, RSBridgeEntity entity) {
         List<Object> tasks = new ArrayList<>();
 
-        for (RSCraftJob task : entity.getJobs()) {
-            tasks.add(parseCraftingTask(task));
+        AutocraftingNetworkComponent autocrafting = network.getComponent(AutocraftingNetworkComponent.class);
+
+        OUTERLOOP:
+        for (TaskStatus status : autocrafting.getStatuses()) {
+            for (RSCraftJob task : entity.getJobs()) {
+                if (status.info().id().equals(task.getCraftingTask().info().id())) {
+                    tasks.add(parseCraftingTask(task, status));
+                    continue OUTERLOOP;
+                }
+            }
+            tasks.add(parseCraftingTask(null, status));
         }
 
         return tasks;
@@ -549,6 +559,40 @@ public class RSApi {
         return Collections.emptyMap();
     }
 
+    /**
+     * Tries to compare two resources
+     *
+     * @return true if the registry key of the resources matches
+     */
+    public static boolean isSameResource(ResourceKey resource, ResourceKey toCompare) {
+        if (resource == null || toCompare == null) {
+            return false;
+        }
+
+        // If the resource types do not match, return false early
+        if (resource instanceof PlatformResourceKey platformResource && toCompare instanceof PlatformResourceKey toComparePlatformResource) {
+            if (platformResource.getResourceType() != toComparePlatformResource.getResourceType()) {
+                return false;
+            }
+        }
+
+        if (resource instanceof ItemResource itemResource && toCompare instanceof ItemResource toCompareItemResource) {
+            return ItemUtil.getRegistryKey(itemResource.item()).equals(ItemUtil.getRegistryKey(toCompareItemResource.item()));
+        }
+
+        if (resource instanceof FluidResource fluidResource && toCompare instanceof FluidResource toCompareFluidResource) {
+            return FluidUtil.getRegistryKey(fluidResource.fluid()).equals(FluidUtil.getRegistryKey(toCompareFluidResource.fluid()));
+        }
+
+        if (APAddons.refinedStorageMekanismLoaded) {
+            if (resource instanceof ChemicalResource chemicalResource && toCompare instanceof ChemicalResource toCompareChemicalResource) {
+                return ChemicalUtil.getRegistryKey(chemicalResource.chemical()).equals(ChemicalUtil.getRegistryKey(toCompareChemicalResource.chemical()));
+            }
+        }
+
+        return false;
+    }
+
     public static Object parseDiskDrive(StorageNetworkNode diskDrive, InWorldNetworkNodeContainer nodeContainer) {
         Map<String, Object> properties = new HashMap<>();
 
@@ -597,14 +641,16 @@ public class RSApi {
         return properties;
     }
 
-    public static Object parseCraftingTask(RSCraftJob task) {
+    public static Object parseCraftingTask(@Nullable RSCraftJob task, TaskStatus status) {
         Map<String, Object> properties = new HashMap<>();
 
-        TaskStatus status = task.getCraftingTask();
-
-        properties.put("bridge_id", task.getId());
+        properties.put("bridge_id", task == null ? -1 : task.getId());
         properties.put("id", status.info().id().toString());
         properties.put("quantity", status.info().amount());
+        // The "stored" attribute of the Item does not always work. I guess this is a bug, I at least reported it.
+        // So currently we just calculate it by subtracting the currently crafting from the requested amount
+        properties.put("crafted", status.items().stream().filter(item -> isSameResource(item.resource(), status.info().resource())).map(item -> status.info().amount() - item.crafting()).findFirst().orElse(-1L));
+        properties.put("resource", getObjectFromResourceKey(status.info().resource(), status.info().amount()));
         properties.put("completion", status.percentageCompleted());
 
         return properties;
