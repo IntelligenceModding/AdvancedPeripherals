@@ -267,6 +267,9 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (!isAvailable())
             return notConnected(null);
 
+        if (!APAddons.refinedStorageMekanismLoaded)
+            return MethodResult.of(null, StatusConstants.ADDON_NOT_LOADED.withInfo("RS_MEKANISM"));
+
         Pair<ChemicalFilter, String> filter = ChemicalFilter.parse(arguments.getTable(0));
         if (filter.rightPresent())
             return MethodResult.of(null, filter.getRight());
@@ -322,6 +325,9 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (!isAvailable())
             return notConnected(null);
 
+        if (!APAddons.refinedStorageMekanismLoaded)
+            return MethodResult.of(null, StatusConstants.ADDON_NOT_LOADED.withInfo("RS_MEKANISM"));
+
         Pair<ChemicalFilter, String> filter = ChemicalFilter.parse(arguments.optTable(0, Collections.emptyMap()));
         if (filter.rightPresent())
             return MethodResult.of(null, filter.getRight());
@@ -374,7 +380,7 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
             return notConnected(null);
 
         if (!APAddons.refinedStorageMekanismLoaded)
-            return MethodResult.of(null);
+            return MethodResult.of(null, StatusConstants.ADDON_NOT_LOADED.withInfo("RS_MEKANISM"));
 
         Pair<ChemicalFilter, String> filter = ChemicalFilter.parse(arguments.optTable(0, Collections.emptyMap()));
         if (filter.rightPresent())
@@ -482,7 +488,7 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
             return notConnected(0);
 
         if (!APAddons.refinedStorageMekanismLoaded)
-            return MethodResult.of(0);
+            return MethodResult.of(0, StatusConstants.ADDON_NOT_LOADED.withInfo("RS_MEKANISM"));
 
         IChemicalHandler handler = ChemicalUtil.getHandlerFromDirection(arguments.getString(1), owner);
         if (handler == null) {
@@ -502,7 +508,7 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
             return notConnected(0);
 
         if (!APAddons.refinedStorageMekanismLoaded)
-            return MethodResult.of(0);
+            return MethodResult.of(0, StatusConstants.ADDON_NOT_LOADED.withInfo("RS_MEKANISM"));
 
         IChemicalHandler handler = ChemicalUtil.getHandlerFromDirection(arguments.getString(1), owner);
         if (handler == null) {
@@ -581,7 +587,7 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
             return notConnected(0);
 
         if (!APAddons.refinedStorageMekanismLoaded)
-            return MethodResult.of(0);
+            return MethodResult.of(0, StatusConstants.ADDON_NOT_LOADED.withInfo("RS_MEKANISM"));
 
         return MethodResult.of(RSApi.getTotalExternalStorage(getNetwork(), RsStorageTypes.CHEMICAL));
     }
@@ -611,7 +617,7 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
             return notConnected(0);
 
         if (!APAddons.refinedStorageMekanismLoaded)
-            return MethodResult.of(0);
+            return MethodResult.of(0, StatusConstants.ADDON_NOT_LOADED.withInfo("RS_MEKANISM"));
 
         return MethodResult.of(RSApi.getTotalStorage(getNetwork(), RsStorageTypes.CHEMICAL));
     }
@@ -641,7 +647,7 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
             return notConnected(0);
 
         if (!APAddons.refinedStorageMekanismLoaded)
-            return MethodResult.of(0);
+            return MethodResult.of(0, StatusConstants.ADDON_NOT_LOADED.withInfo("RS_MEKANISM"));
 
         return MethodResult.of(RSApi.getUsedExternalStorage(getNetwork(), RsStorageTypes.CHEMICAL));
     }
@@ -671,7 +677,7 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
             return notConnected(0);
 
         if (!APAddons.refinedStorageMekanismLoaded)
-            return MethodResult.of(0);
+            return MethodResult.of(0, StatusConstants.ADDON_NOT_LOADED.withInfo("RS_MEKANISM"));
 
         return MethodResult.of(RSApi.getUsedStorage(getNetwork(), RsStorageTypes.CHEMICAL));
     }
@@ -701,7 +707,7 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
             return notConnected(0);
 
         if (!APAddons.refinedStorageMekanismLoaded)
-            return MethodResult.of(0);
+            return MethodResult.of(0, StatusConstants.ADDON_NOT_LOADED.withInfo("RS_MEKANISM"));
 
         return MethodResult.of(RSApi.getTotalExternalStorage(getNetwork(), RsStorageTypes.CHEMICAL) - RSApi.getUsedExternalStorage(getNetwork(), RsStorageTypes.CHEMICAL));
     }
@@ -731,7 +737,7 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
             return notConnected(0);
 
         if (!APAddons.refinedStorageMekanismLoaded)
-            return MethodResult.of(0);
+            return MethodResult.of(0, StatusConstants.ADDON_NOT_LOADED.withInfo("RS_MEKANISM"));
 
         return MethodResult.of(RSApi.getTotalStorage(getNetwork(), RsStorageTypes.CHEMICAL) - RSApi.getUsedStorage(getNetwork(), RsStorageTypes.CHEMICAL));
     }
@@ -773,7 +779,7 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
             return notConnected(null);
 
         if (!APAddons.refinedStorageMekanismLoaded)
-            return MethodResult.of(null);
+            return MethodResult.of(null, StatusConstants.ADDON_NOT_LOADED.withInfo("RS_MEKANISM"));
 
         Pair<ChemicalFilter, String> filter = ChemicalFilter.parse(arguments.getTable(0));
         if (filter.rightPresent())
