@@ -2,9 +2,15 @@ package de.srendi.advancedperipherals.common.util;
 
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.shared.util.NBTUtil;
+import de.srendi.advancedperipherals.common.addons.APAddons;
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.InventoryManagerPeripheral;
+import de.srendi.advancedperipherals.common.util.inventory.ChemicalUtil;
 import de.srendi.advancedperipherals.common.util.inventory.FluidUtil;
 import de.srendi.advancedperipherals.common.util.inventory.ItemUtil;
+import mekanism.api.MekanismAPI;
+import mekanism.api.MekanismAPITags;
+import mekanism.api.chemical.Chemical;
+import mekanism.api.chemical.ChemicalStack;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.tags.TagKey;
@@ -95,7 +101,9 @@ public class LuaConverter {
     }
 
     public static Object posToObject(BlockPos pos) {
-        if (pos == null) return null;
+        if (pos == null) {
+            return null;
+        }
 
         Map<String, Object> map = new HashMap<>(3);
         map.put("x", pos.getX());
@@ -132,6 +140,22 @@ public class LuaConverter {
         return map;
     }
 
+    public static Map<String, Object> chemicalStackToObject(@NotNull ChemicalStack stack) {
+        // In theory should not be called if the addon is not installed, but just to be save
+        if (!APAddons.refinedStorageMekanismLoaded) {
+            return null;
+        }
+
+        if (stack.isEmpty()) {
+            return null;
+        }
+        Map<String, Object> map = chemicalToObject(stack.getChemical());
+        map.put("count", stack.getAmount());
+        map.put("displayName", stack.getTextComponent().getString());
+        map.put("fingerprint", ChemicalUtil.getFingerprint(stack));
+        return map;
+    }
+
     public static Map<String, Object> fluidTypeToObject(FluidType type) {
         Map<String, Object> map = new HashMap<>();
         map.put("viscosity", type.getViscosity());
@@ -148,15 +172,33 @@ public class LuaConverter {
     }
 
     public static Map<String, Object> itemStackToObject(@NotNull ItemStack itemStack, long count) {
-        if (itemStack.isEmpty()) return Collections.emptyMap();
+        if (itemStack.isEmpty()) {
+            return null;
+        }
         Map<String, Object> map = itemStackToObject(itemStack);
         map.put("count", count);
         return map;
     }
 
-    public static Map<String, Object> fluidStackToObject(@NotNull FluidStack itemStack, long count) {
-        if (itemStack.isEmpty()) return Collections.emptyMap();
-        Map<String, Object> map = fluidStackToObject(itemStack);
+    public static Map<String, Object> fluidStackToObject(@NotNull FluidStack fluidStack, long count) {
+        if (fluidStack.isEmpty()) {
+            return null;
+        }
+        Map<String, Object> map = fluidStackToObject(fluidStack);
+        map.put("count", count);
+        return map;
+    }
+
+    public static Map<String, Object> chemicalStackToObject(@NotNull ChemicalStack chemicalStack, long count) {
+        // In theory should not be called if the addon is not installed, but just to be save
+        if (!APAddons.refinedStorageMekanismLoaded) {
+            return null;
+        }
+
+        if (chemicalStack.isEmpty()) {
+            return null;
+        }
+        Map<String, Object> map = chemicalStackToObject(chemicalStack);
         map.put("count", count);
         return map;
     }
@@ -189,6 +231,20 @@ public class LuaConverter {
         Map<String, Object> map = new HashMap<>();
         map.put("tags", tagsToList(() -> fluid.builtInRegistryHolder().tags()));
         map.put("name", FluidUtil.getRegistryKey(fluid).toString());
+        return map;
+    }
+
+    public static Map<String, Object> chemicalToObject(@NotNull Chemical chemical) {
+        // In theory should not be called if the addon is not installed, but just to be save
+        if (!APAddons.refinedStorageMekanismLoaded) {
+            return null;
+        }
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("tags", tagsToList(() -> MekanismAPI.CHEMICAL_REGISTRY.wrapAsHolder(chemical).tags()));
+        map.put("isGaseous", MekanismAPI.CHEMICAL_REGISTRY.wrapAsHolder(chemical).is(MekanismAPITags.Chemicals.GASEOUS));
+        map.put("radioactivity", chemical.getRadioactivity());
+        map.put("name", ChemicalUtil.getRegistryKey(chemical).toString());
         return map;
     }
 

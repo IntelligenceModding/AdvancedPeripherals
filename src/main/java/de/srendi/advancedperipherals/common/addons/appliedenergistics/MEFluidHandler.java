@@ -15,14 +15,14 @@ import org.jetbrains.annotations.NotNull;
  * Used to transfer item between an inventory and the ME system.
  * @see MEBridgePeripheral
  */
-public class MeFluidHandler implements IStorageSystemFluidHandler {
+public class MEFluidHandler implements IStorageSystemFluidHandler {
 
     @NotNull
     private final MEStorage storageMonitor;
     @NotNull
     private final IActionSource actionSource;
 
-    public MeFluidHandler(@NotNull MEStorage storageMonitor, @NotNull IActionSource actionSource) {
+    public MEFluidHandler(@NotNull MEStorage storageMonitor, @NotNull IActionSource actionSource) {
         this.storageMonitor = storageMonitor;
         this.actionSource = actionSource;
     }

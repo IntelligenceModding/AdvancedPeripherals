@@ -31,7 +31,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public class RsBridgeEntity extends PeripheralBlockEntity<RSBridgePeripheral> implements IPeripheralTileEntity, NetworkNodeContainerProvider, TaskStatusListener {
+public class RSBridgeEntity extends PeripheralBlockEntity<RSBridgePeripheral> implements IPeripheralTileEntity, NetworkNodeContainerProvider, TaskStatusListener {
 
     protected CompoundTag peripheralSettings;
     private final NetworkNode node;
@@ -39,7 +39,7 @@ public class RsBridgeEntity extends PeripheralBlockEntity<RSBridgePeripheral> im
     private final List<RSCraftJob> jobs = new CopyOnWriteArrayList<>();
     private boolean addedListener = false;
 
-    public RsBridgeEntity(BlockPos pos, BlockState state) {
+    public RSBridgeEntity(BlockPos pos, BlockState state) {
         super(BlockEntityTypes.RS_BRIDGE.get(), pos, state);
         peripheralSettings = new CompoundTag();
         ConnectionStrategy connectionStrategy = new SimpleConnectionStrategy(pos);
@@ -114,16 +114,16 @@ public class RsBridgeEntity extends PeripheralBlockEntity<RSBridgePeripheral> im
 
     @Override
     public void taskStatusChanged(@NotNull TaskStatus taskStatus) {
-        jobs.stream().filter(job -> job.isCraftingStarted() && job.getCraftingTask().info().id().equals(taskStatus.info().id())).forEach(BasicCraftJob::jobStateChanged);
+        jobs.stream().filter(BasicCraftJob::isCraftingStarted).filter(job -> job.getCraftingTask().info().id().equals(taskStatus.info().id())).forEach(BasicCraftJob::jobStateChanged);
     }
 
     @Override
     public void taskRemoved(@NotNull TaskId taskId) {
-        jobs.stream().filter(job -> job.isCraftingStarted() && job.getCraftingTask().info().id().equals(taskId)).forEach(BasicCraftJob::jobStateChanged);
+        jobs.stream().filter(BasicCraftJob::isCraftingStarted).filter(job -> job.getCraftingTask().info().id().equals(taskId)).forEach(BasicCraftJob::jobStateChanged);
     }
 
     @Override
     public void taskAdded(@NotNull TaskStatus taskStatus) {
-        jobs.stream().filter(job -> job.isCraftingStarted() && job.getCraftingTask().info().id().equals(taskStatus.info().id())).forEach(BasicCraftJob::jobStateChanged);
+        jobs.stream().filter(BasicCraftJob::isCraftingStarted).filter(job -> job.getCraftingTask().info().id().equals(taskStatus.info().id())).forEach(BasicCraftJob::jobStateChanged);
     }
 }

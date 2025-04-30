@@ -12,13 +12,13 @@ import de.srendi.advancedperipherals.common.util.inventory.IStorageSystemChemica
 import mekanism.api.chemical.ChemicalStack;
 import org.jetbrains.annotations.NotNull;
 
-public class RsChemicalHandler implements IStorageSystemChemicalHandler {
+public class RSChemicalHandler implements IStorageSystemChemicalHandler {
 
     @NotNull
     private final Network network;
     private final StorageNetworkComponent component;
 
-    public RsChemicalHandler(@NotNull Network network) {
+    public RSChemicalHandler(@NotNull Network network) {
         this.network = network;
         this.component = network.getComponent(StorageNetworkComponent.class);
     }
@@ -38,7 +38,7 @@ public class RsChemicalHandler implements IStorageSystemChemicalHandler {
     @Override
     public ChemicalStack extractChemical(ChemicalFilter filter, long count, mekanism.api.Action simulate) {
         AdvancedPeripherals.debug("Trying to extract chemical from filter: " + filter);
-        ChemicalResource chemical = RsApi.getChemical(network, filter);
+        ChemicalResource chemical = RSApi.getChemical(network, filter);
         if (chemical == null)
             return ChemicalStack.EMPTY;
 

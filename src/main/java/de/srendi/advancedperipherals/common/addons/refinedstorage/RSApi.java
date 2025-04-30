@@ -21,6 +21,7 @@ import com.refinedmods.refinedstorage.api.storage.TrackedResourceAmount;
 import com.refinedmods.refinedstorage.api.storage.composite.CompositeStorage;
 import com.refinedmods.refinedstorage.common.api.storage.SerializableStorage;
 import com.refinedmods.refinedstorage.common.api.support.network.InWorldNetworkNodeContainer;
+import com.refinedmods.refinedstorage.common.api.support.resource.PlatformResourceKey;
 import com.refinedmods.refinedstorage.common.storage.StorageTypes;
 import com.refinedmods.refinedstorage.common.support.resource.FluidResource;
 import com.refinedmods.refinedstorage.common.support.resource.ItemResource;
@@ -29,7 +30,8 @@ import com.refinedmods.refinedstorage.mekanism.ChemicalResourceType;
 import com.refinedmods.refinedstorage.neoforge.api.RefinedStorageNeoForgeApi;
 import com.refinedmods.refinedstorage.neoforge.support.resource.VariantUtil;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
-import de.srendi.advancedperipherals.common.blocks.blockentities.RsBridgeEntity;
+import de.srendi.advancedperipherals.common.addons.APAddons;
+import de.srendi.advancedperipherals.common.blocks.blockentities.RSBridgeEntity;
 import de.srendi.advancedperipherals.common.setup.BlockEntityTypes;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
 import de.srendi.advancedperipherals.common.util.Pair;
@@ -61,7 +63,7 @@ import java.util.stream.Collectors;
 /**
  * Refined Storage Api helper methods and parsers
  */
-public class RsApi {
+public class RSApi {
 
     public static void registerCapabilities(@NotNull RegisterCapabilitiesEvent event) {
         event.registerBlockEntity(
@@ -172,7 +174,7 @@ public class RsApi {
         StorageNetworkComponent storage = network.getComponent(StorageNetworkComponent.class);
         for (TrackedResourceAmount trackedResource : storage.getResources(Actor.EMPTY.getClass())) {
             if (trackedResource.resourceAmount().resource() instanceof ChemicalResource chemicalResource && filter.test(ChemicalUtil.toChemicalStack(chemicalResource.chemical(), trackedResource.resourceAmount().amount()))) {
-                return getObjectFromItemResource(trackedResource.resourceAmount());
+                return getObjectFromChemicalResource(trackedResource.resourceAmount());
             }
         }
         return null;
@@ -192,7 +194,6 @@ public class RsApi {
         for (TrackedResourceAmount trackedResource : storage.getResources(Actor.EMPTY.getClass())) {
             if (trackedResource.resourceAmount().resource() instanceof ItemResource itemResource && filter.test(itemResource.toItemStack())) {
                 items.add(getObjectFromItemResource(trackedResource.resourceAmount()));
-
             }
         }
         return items;
@@ -363,12 +364,12 @@ public class RsApi {
             boolean outputMatch = false;
 
             if (inputFilter != null) {
-                outerLoop:
+                OUTERLOOP:
                 for (Ingredient input : pattern.layout().ingredients()) {
                     for (ResourceKey possibleInput : input.inputs()) {
                         if (inputFilter.testRS(new ResourceAmount(possibleInput, 1))) {
                             inputMatch = true;
-                            break outerLoop;
+                            break OUTERLOOP;
                         }
                     }
                 }
@@ -406,7 +407,7 @@ public class RsApi {
                         continue;
 
                     if (stateTrackedStorage.getDelegate() instanceof SerializableStorage serializableStorage) {
-                        if (serializableStorage.getType() != type.getStorageType())
+                        if (type.getStorageType() != null && serializableStorage.getType() != type.getStorageType())
                             continue;
                     }
 
@@ -429,7 +430,7 @@ public class RsApi {
                         continue;
 
                     if (stateTrackedStorage.getDelegate() instanceof SerializableStorage serializableStorage) {
-                        if (serializableStorage.getType() != type.getStorageType())
+                        if (type.getStorageType() != null && serializableStorage.getType() != type.getStorageType())
                             continue;
                     }
 
@@ -462,18 +463,27 @@ public class RsApi {
             if (nodeContainer.getNode() instanceof ExternalStorageNetworkNode storageNetworkNode) {
                 ExposedExternalStorage storage = (ExposedExternalStorage) storageNetworkNode.getStorage();
 
-                used += storage.getAll().stream().filter(amount -> type.getStorageType().isAllowed(amount.resource())).mapToLong(ResourceAmount::amount).sum();
+                used += storage.getAll().stream().filter(amount -> type.getStorageType() != null && type.getStorageType().isAllowed(amount.resource())).mapToLong(ResourceAmount::amount).sum();
             }
 
         }
         return used;
     }
 
-    public static List<Object> getCraftingTasks(RsBridgeEntity entity) {
+    public static List<Object> getCraftingTasks(Network network, RSBridgeEntity entity) {
         List<Object> tasks = new ArrayList<>();
 
-        for (RSCraftJob task : entity.getJobs()) {
-            tasks.add(parseCraftingTask(task));
+        AutocraftingNetworkComponent autocrafting = network.getComponent(AutocraftingNetworkComponent.class);
+
+        OUTERLOOP:
+        for (TaskStatus status : autocrafting.getStatuses()) {
+            for (RSCraftJob task : entity.getJobs()) {
+                if (status.info().id().equals(task.getCraftingTask().info().id())) {
+                    tasks.add(parseCraftingTask(task, status));
+                    continue OUTERLOOP;
+                }
+            }
+            tasks.add(parseCraftingTask(null, status));
         }
 
         return tasks;
@@ -497,13 +507,15 @@ public class RsApi {
     }
 
     /**
-     * Helper method to get a parsed lua resource key. Currently only suppors item and fluid resources
+     * Helper method to get a parsed lua resource key.
      *
      * @param resource the resource
      * @param count    count of the resource - can be 0 and lower
      * @return the parsed key to a lua properties map
      */
     public static Map<String, Object> getObjectFromResourceKey(@NotNull ResourceKey resource, long count) {
+        // Resource amounts can't be zero or the client will just crash,
+        // So we need to check that and set it to one
         boolean countZeroOrLower = count <= 0;
         if (resource instanceof ItemResource) {
             if (countZeroOrLower) {
@@ -516,6 +528,12 @@ public class RsApi {
                 return getObjectFromFluidResource(new ResourceAmount(resource, 1), count);
             }
             return getObjectFromFluidResource(new ResourceAmount(resource, count));
+        }
+        if (APAddons.refinedStorageMekanismLoaded && resource instanceof ChemicalResource) {
+            if (countZeroOrLower) {
+                return getObjectFromChemicalResource(new ResourceAmount(resource, 1), count);
+            }
+            return getObjectFromChemicalResource(new ResourceAmount(resource, count));
         }
         AdvancedPeripherals.debug("Could not create table from unknown resource " + resource.getClass() + " - Report this to the maintainer of ap", Level.WARN);
         return Collections.emptyMap();
@@ -534,8 +552,45 @@ public class RsApi {
         if (resourceAmount.resource() instanceof FluidResource) {
             return getObjectFromFluidResource(resourceAmount);
         }
+        if (APAddons.refinedStorageMekanismLoaded && resourceAmount.resource() instanceof ChemicalResource) {
+            return getObjectFromChemicalResource(resourceAmount);
+        }
         AdvancedPeripherals.debug("Could not create table from unknown resourceAmount " + resourceAmount.getClass() + " - Report this to the maintainer of ap", Level.WARN);
         return Collections.emptyMap();
+    }
+
+    /**
+     * Tries to compare two resources
+     *
+     * @return true if the registry key of the resources matches
+     */
+    public static boolean isSameResource(ResourceKey resource, ResourceKey toCompare) {
+        if (resource == null || toCompare == null) {
+            return false;
+        }
+
+        // If the resource types do not match, return false early
+        if (resource instanceof PlatformResourceKey platformResource && toCompare instanceof PlatformResourceKey toComparePlatformResource) {
+            if (platformResource.getResourceType() != toComparePlatformResource.getResourceType()) {
+                return false;
+            }
+        }
+
+        if (resource instanceof ItemResource itemResource && toCompare instanceof ItemResource toCompareItemResource) {
+            return ItemUtil.getRegistryKey(itemResource.item()).equals(ItemUtil.getRegistryKey(toCompareItemResource.item()));
+        }
+
+        if (resource instanceof FluidResource fluidResource && toCompare instanceof FluidResource toCompareFluidResource) {
+            return FluidUtil.getRegistryKey(fluidResource.fluid()).equals(FluidUtil.getRegistryKey(toCompareFluidResource.fluid()));
+        }
+
+        if (APAddons.refinedStorageMekanismLoaded) {
+            if (resource instanceof ChemicalResource chemicalResource && toCompare instanceof ChemicalResource toCompareChemicalResource) {
+                return ChemicalUtil.getRegistryKey(chemicalResource.chemical()).equals(ChemicalUtil.getRegistryKey(toCompareChemicalResource.chemical()));
+            }
+        }
+
+        return false;
     }
 
     public static Object parseDiskDrive(StorageNetworkNode diskDrive, InWorldNetworkNodeContainer nodeContainer) {
@@ -575,7 +630,7 @@ public class RsApi {
                 type = "item";
             } else if (serializableStorage.getType() == StorageTypes.FLUID) {
                 type = "fluid";
-            } else if (serializableStorage.getType() == ChemicalResourceType.STORAGE_TYPE) {
+            } else if (APAddons.refinedStorageMekanismLoaded && serializableStorage.getType() == ChemicalResourceType.STORAGE_TYPE) {
                 type = "chemical";
             } else {
                 type = "unknown";
@@ -586,14 +641,16 @@ public class RsApi {
         return properties;
     }
 
-    public static Object parseCraftingTask(RSCraftJob task) {
+    public static Object parseCraftingTask(@Nullable RSCraftJob task, TaskStatus status) {
         Map<String, Object> properties = new HashMap<>();
 
-        TaskStatus status = task.getCraftingTask();
-
-        properties.put("bridge_id", task.getId());
+        properties.put("bridge_id", task == null ? -1 : task.getId());
         properties.put("id", status.info().id().toString());
         properties.put("quantity", status.info().amount());
+        // The "stored" attribute of the Item does not always work. I guess this is a bug, I at least reported it.
+        // So currently we just calculate it by subtracting the currently crafting from the requested amount
+        properties.put("crafted", status.items().stream().filter(item -> isSameResource(item.resource(), status.info().resource())).map(item -> status.info().amount() - item.crafting()).findFirst().orElse(-1L));
+        properties.put("resource", getObjectFromResourceKey(status.info().resource(), status.info().amount()));
         properties.put("completion", status.percentageCompleted());
 
         return properties;
@@ -604,7 +661,7 @@ public class RsApi {
             return null;
 
         Map<String, Object> propeties = new HashMap<>();
-        propeties.put("outputs", pattern.layout().outputs().stream().map(RsApi::getObjectFromResourceAmount).toList());
+        propeties.put("outputs", pattern.layout().outputs().stream().map(RSApi::getObjectFromResourceAmount).toList());
 
         List<List<Map<String, Object>>> inputs = pattern.layout().ingredients().stream()
                 .map(ingredient -> ingredient.inputs().stream()
@@ -677,15 +734,46 @@ public class RsApi {
         return properties;
     }
 
+
+    /**
+     * Parses an RS TrackedResourceAmount to a lua object
+     * This method assumes you did an instanceof check before that the {@link ResourceKey} is an {@link ChemicalResource}
+     *
+     * @param trackedResourceAmount the tracked resource amount containing a ChemicalResource
+     * @return a Map containing the properties which CC can parse to a lua table
+     */
+    public static Map<String, Object> getObjectFromChemicalResource(ResourceAmount trackedResourceAmount) {
+        ChemicalResource resource = (ChemicalResource) trackedResourceAmount.resource();
+        long count = trackedResourceAmount.amount();
+        ChemicalStack stack = resourceToChemicalStack(resource, count);
+        Map<String, Object> properties = LuaConverter.chemicalStackToObject(stack, count);
+        properties.put("fingerprint", ChemicalUtil.getFingerprint(stack));
+        return properties;
+    }
+
+    /**
+     * Parses an RS TrackedResourceAmount to a lua object
+     * This method assumes you did an instanceof check before that the {@link ResourceKey} is an {@link ChemicalResource}
+     *
+     * @param trackedResourceAmount the tracked resource amount containing a ChemicalResource
+     * @param alternateCount        a count can be passed to overwrite the count of the object. Useful for patterns and craftable stacks
+     * @return a Map containing the properties which CC can parse to a lua table
+     */
+    public static Map<String, Object> getObjectFromChemicalResource(ResourceAmount trackedResourceAmount, long alternateCount) {
+        Map<String, Object> properties = getObjectFromChemicalResource(trackedResourceAmount);
+        properties.put("count", alternateCount);
+        return properties;
+    }
+
     public static ChemicalStack resourceToChemicalStack(ResourceAmount resourceAmount) {
         if (resourceAmount.resource() instanceof ChemicalResource chemicalResource)
-            return new ChemicalStack(MekanismAPI.CHEMICAL_REGISTRY.createIntrusiveHolder(chemicalResource.chemical()), resourceAmount.amount());
+            return new ChemicalStack(MekanismAPI.CHEMICAL_REGISTRY.wrapAsHolder(chemicalResource.chemical()), resourceAmount.amount());
 
         return ChemicalStack.EMPTY;
     }
 
     public static ChemicalStack resourceToChemicalStack(ChemicalResource resource, long alternateCount) {
-        return new ChemicalStack(MekanismAPI.CHEMICAL_REGISTRY.createIntrusiveHolder(resource.chemical()), alternateCount);
+        return new ChemicalStack(MekanismAPI.CHEMICAL_REGISTRY.wrapAsHolder(resource.chemical()), alternateCount);
     }
 
     public static ChemicalStack resourceToChemicalStack(ChemicalResource resource) {

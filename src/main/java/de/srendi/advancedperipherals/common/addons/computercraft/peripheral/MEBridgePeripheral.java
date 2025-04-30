@@ -19,10 +19,10 @@ import de.srendi.advancedperipherals.common.addons.APAddons;
 import de.srendi.advancedperipherals.common.addons.appliedenergistics.AECraftJob;
 import de.srendi.advancedperipherals.common.addons.appliedenergistics.AppEngApi;
 import de.srendi.advancedperipherals.common.addons.appliedenergistics.MeChemicalHandler;
-import de.srendi.advancedperipherals.common.addons.appliedenergistics.MeFluidHandler;
-import de.srendi.advancedperipherals.common.addons.appliedenergistics.MeItemHandler;
+import de.srendi.advancedperipherals.common.addons.appliedenergistics.MEFluidHandler;
+import de.srendi.advancedperipherals.common.addons.appliedenergistics.MEItemHandler;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.BlockEntityPeripheralOwner;
-import de.srendi.advancedperipherals.common.blocks.blockentities.MeBridgeEntity;
+import de.srendi.advancedperipherals.common.blocks.blockentities.MEBridgeEntity;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.util.Pair;
 import de.srendi.advancedperipherals.common.util.StatusConstants;
@@ -48,14 +48,14 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwner<MeBridgeEntity>> implements IStorageSystemPeripheral {
+public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwner<MEBridgeEntity>> implements IStorageSystemPeripheral {
 
     public static final String PERIPHERAL_TYPE = "me_bridge";
 
-    private final MeBridgeEntity bridge;
+    private final MEBridgeEntity bridge;
     private IGridNode node;
 
-    public MEBridgePeripheral(MeBridgeEntity tileEntity) {
+    public MEBridgePeripheral(MEBridgeEntity tileEntity) {
         super(PERIPHERAL_TYPE, new BlockEntityPeripheralOwner<>(tileEntity));
         this.bridge = tileEntity;
         this.node = tileEntity.getActionableNode();
@@ -83,7 +83,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
      */
     protected MethodResult exportToChest(@NotNull IArguments arguments, IItemHandler targetInventory) throws LuaException {
         MEStorage monitor = AppEngApi.getMonitor(node);
-        MeItemHandler itemHandler = new MeItemHandler(monitor, bridge);
+        MEItemHandler itemHandler = new MEItemHandler(monitor, bridge);
         Pair<ItemFilter, String> filter = ItemFilter.parse(arguments.getTable(0));
 
         if (filter.rightPresent())
@@ -101,7 +101,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
      */
     protected MethodResult exportToTank(@NotNull IArguments arguments, IFluidHandler targetTank) throws LuaException {
         MEStorage monitor = AppEngApi.getMonitor(node);
-        MeFluidHandler fluidHandler = new MeFluidHandler(monitor, bridge);
+        MEFluidHandler fluidHandler = new MEFluidHandler(monitor, bridge);
         Pair<FluidFilter, String> filter = FluidFilter.parse(arguments.getTable(0));
 
         if (filter.rightPresent())
@@ -137,7 +137,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
      */
     protected MethodResult importToME(@NotNull IArguments arguments, IItemHandler targetInventory) throws LuaException {
         MEStorage monitor = AppEngApi.getMonitor(node);
-        MeItemHandler itemHandler = new MeItemHandler(monitor, bridge);
+        MEItemHandler itemHandler = new MEItemHandler(monitor, bridge);
         Pair<ItemFilter, String> filter = ItemFilter.parse(arguments.getTable(0));
 
         if (filter.rightPresent())
@@ -155,7 +155,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
      */
     protected MethodResult importToME(@NotNull IArguments arguments, IFluidHandler targetTank) throws LuaException {
         MEStorage monitor = AppEngApi.getMonitor(node);
-        MeFluidHandler fluidHandler = new MeFluidHandler(monitor, bridge);
+        MEFluidHandler fluidHandler = new MEFluidHandler(monitor, bridge);
         Pair<FluidFilter, String> filter = FluidFilter.parse(arguments.getTable(0));
 
         if (filter.rightPresent())

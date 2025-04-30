@@ -16,14 +16,14 @@ import org.jetbrains.annotations.NotNull;
  *
  * @see MEBridgePeripheral
  */
-public class MeItemHandler implements IStorageSystemItemHandler {
+public class MEItemHandler implements IStorageSystemItemHandler {
 
     @NotNull
     private final MEStorage storageMonitor;
     @NotNull
     private final IActionSource actionSource;
 
-    public MeItemHandler(@NotNull MEStorage storageMonitor, @NotNull IActionSource actionSource) {
+    public MEItemHandler(@NotNull MEStorage storageMonitor, @NotNull IActionSource actionSource) {
         this.storageMonitor = storageMonitor;
         this.actionSource = actionSource;
     }

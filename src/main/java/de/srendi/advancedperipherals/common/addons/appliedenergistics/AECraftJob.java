@@ -19,10 +19,9 @@ import appeng.me.cluster.implementations.CraftingCPUCluster;
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.peripheral.IComputerAccess;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
-import de.srendi.advancedperipherals.common.blocks.blockentities.MeBridgeEntity;
+import de.srendi.advancedperipherals.common.blocks.blockentities.MEBridgeEntity;
 import de.srendi.advancedperipherals.common.util.StatusConstants;
 import de.srendi.advancedperipherals.common.util.inventory.BasicCraftJob;
-import net.minecraft.world.entity.animal.Panda;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 
@@ -49,7 +48,7 @@ public class AECraftJob extends BasicCraftJob {
     // In the case the job is done and would return null, we have this cached one.
     private CraftingJobStatus cachedStatus;
 
-    public AECraftJob(Level world, final IComputerAccess computer, IGridNode node, AEKey item, long amount, MeBridgeEntity bridge, ICraftingCPU target) {
+    public AECraftJob(Level world, final IComputerAccess computer, IGridNode node, AEKey item, long amount, MEBridgeEntity bridge, ICraftingCPU target) {
         super(computer, "ae", world, amount);
         this.node = node;
         this.source = bridge;

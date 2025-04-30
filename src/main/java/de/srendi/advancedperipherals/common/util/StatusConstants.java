@@ -35,6 +35,7 @@ public enum StatusConstants {
     // Misc
     NOT_CONNECTED,
     NOT_FOUND, // Generic not found state
+    ADDON_NOT_LOADED,
     UNKNOWN_ERROR;
 
     public String withInfo(String extraInfo) {
