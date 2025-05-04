@@ -21,7 +21,6 @@ public class RSFluidHandler implements IStorageSystemFluidHandler {
     public RSFluidHandler(@NotNull Network network) {
         this.network = network;
         this.component = network.getComponent(StorageNetworkComponent.class);
-
     }
 
     @Override
