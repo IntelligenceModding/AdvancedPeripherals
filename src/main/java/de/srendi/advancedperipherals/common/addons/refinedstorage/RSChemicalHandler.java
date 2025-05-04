@@ -29,10 +29,9 @@ public class RSChemicalHandler implements IStorageSystemChemicalHandler {
         if (resource.isEmpty())
             return resource;
 
-        ChemicalStack inserted = resource.copy();
         long amountInserted = component.insert(ChemicalResource.ofChemicalStack(inserted), resource.getAmount(), action == mekanism.api.Action.SIMULATE ? Action.SIMULATE : Action.EXECUTE, Actor.EMPTY);
-        inserted.setAmount(resource.getAmount() - amountInserted);
-        return inserted;
+        ChemicalStack remain = resource.copyWithAmount(resource.getAmount() - amountInserted);
+        return remain;
     }
 
     @Override
@@ -42,9 +41,8 @@ public class RSChemicalHandler implements IStorageSystemChemicalHandler {
         if (chemical == null)
             return ChemicalStack.EMPTY;
 
-        ChemicalStack extracted = ChemicalUtil.toChemicalStack(chemical.chemical(), 1);
         long amountExtracted = component.extract(chemical, filter.getCount(), simulate == mekanism.api.Action.SIMULATE ? Action.SIMULATE : Action.EXECUTE, Actor.EMPTY);
-        extracted.setAmount(amountExtracted);
+        ChemicalStack extracted = ChemicalUtil.toChemicalStack(chemical.chemical(), amountExtracted);
 
         AdvancedPeripherals.debug("Extracted chemical: " + extracted + " from filter: " + filter);
         return extracted;
