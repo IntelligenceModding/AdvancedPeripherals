@@ -45,8 +45,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwner<RSBridgeEntity>> implements IStorageSystemPeripheral {
 
@@ -297,7 +297,7 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
         ItemFilter parsedFilter = filter.getLeft();
 
-        Set<Map<String, Object>> resourceProperties = RSApi.getParsedItems(getNetwork(), parsedFilter);
+        List<Map<String, Object>> resourceProperties = RSApi.getParsedItems(getNetwork(), parsedFilter);
 
         return MethodResult.of(resourceProperties);
     }
@@ -314,7 +314,7 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
         FluidFilter parsedFilter = filter.getLeft();
 
-        Set<Map<String, Object>> resourceProperties = RSApi.getParsedFluids(getNetwork(), parsedFilter);
+        List<Map<String, Object>> resourceProperties = RSApi.getParsedFluids(getNetwork(), parsedFilter);
 
         return MethodResult.of(resourceProperties);
     }
@@ -334,7 +334,7 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
         ChemicalFilter parsedFilter = filter.getLeft();
 
-        Set<Map<String, Object>> resourceProperties = RSApi.getParsedChemicals(getNetwork(), parsedFilter);
+        List<Map<String, Object>> resourceProperties = RSApi.getParsedChemicals(getNetwork(), parsedFilter);
 
         return MethodResult.of(resourceProperties);
     }
@@ -351,7 +351,7 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
         ItemFilter parsedFilter = filter.getLeft();
 
-        Set<Map<String, Object>> resourceProperties = RSApi.getCraftableItems(getNetwork(), parsedFilter);
+        List<Map<String, Object>> resourceProperties = RSApi.getCraftableItems(getNetwork(), parsedFilter);
 
         return MethodResult.of(resourceProperties);
     }
@@ -368,7 +368,7 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
         FluidFilter parsedFilter = filter.getLeft();
 
-        Set<Map<String, Object>> resourceProperties = RSApi.getCraftableFluids(getNetwork(), parsedFilter);
+        List<Map<String, Object>> resourceProperties = RSApi.getCraftableFluids(getNetwork(), parsedFilter);
 
         return MethodResult.of(resourceProperties);
     }
@@ -388,7 +388,7 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
         ChemicalFilter parsedFilter = filter.getLeft();
 
-        Set<Map<String, Object>> resourceProperties = RSApi.getCraftableChemicals(getNetwork(), parsedFilter);
+        List<Map<String, Object>> resourceProperties = RSApi.getCraftableChemicals(getNetwork(), parsedFilter);
 
         return MethodResult.of(resourceProperties);
     }
