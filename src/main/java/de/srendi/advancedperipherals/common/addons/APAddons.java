@@ -1,12 +1,7 @@
 package de.srendi.advancedperipherals.common.addons;
 
-import de.srendi.advancedperipherals.AdvancedPeripherals;
-import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModList;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.fml.event.lifecycle.InterModEnqueueEvent;
 
-@EventBusSubscriber(modid = AdvancedPeripherals.MOD_ID, bus = EventBusSubscriber.Bus.MOD)
 public class APAddons {
 
     public static final String AE2_MODID = "ae2";
@@ -18,6 +13,9 @@ public class APAddons {
     public static final String MINECOLONIES_MODID = "minecolonies";
     public static final String PATCHOULI_MODID = "patchouli";
     public static final String POWAH_MODID = "powah";
+
+    // Used for our global helper lua api to gather the versions of our mod integrations.
+    public static final String[] MOD_IDS = new String[]{AE2_MODID, CURIOS_MODID, REFINEDSTORAGE_MODID, REFINEDSTORAGE_MEKANISM_MODID, MEKANISM_MODID, APP_MEKANISTICS_MODID, MINECOLONIES_MODID, PATCHOULI_MODID, POWAH_MODID};
 
     public static boolean ae2Loaded;
     public static boolean curiosLoaded;
@@ -44,15 +42,5 @@ public class APAddons {
         minecoloniesLoaded = modList.isLoaded(MINECOLONIES_MODID);
         patchouliLoaded = modList.isLoaded(PATCHOULI_MODID);
         powahLoaded = modList.isLoaded(POWAH_MODID);
-    }
-
-    @SubscribeEvent
-    public static void interModComms(InterModEnqueueEvent event) {
-        /*
-        if (!curiosLoaded) {
-        }
-
-        InterModComms.sendTo("curios", SlotTypeMessage.REGISTER_TYPE, () -> new SlotTypeMessage.Builder("glasses").size(1).build());
-        */
     }
 }
