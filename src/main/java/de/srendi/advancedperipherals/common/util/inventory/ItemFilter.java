@@ -7,7 +7,7 @@ import com.refinedmods.refinedstorage.common.support.resource.ItemResource;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.core.apis.TableHelper;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
-import de.srendi.advancedperipherals.common.addons.APAddons;
+import de.srendi.advancedperipherals.common.addons.APAddon;
 import de.srendi.advancedperipherals.common.util.DataComponentUtil;
 import de.srendi.advancedperipherals.common.util.NBTUtil;
 import de.srendi.advancedperipherals.common.util.Pair;
@@ -120,7 +120,7 @@ public class ItemFilter extends GenericFilter<ItemStack> {
 
     @Override
     public boolean testAE(GenericStack genericStack) {
-        if (!APAddons.ae2Loaded)
+        if (!APAddon.AE2.isLoaded())
             return false;
 
         if (genericStack.what() instanceof AEItemKey aeItemKey) {
@@ -131,7 +131,7 @@ public class ItemFilter extends GenericFilter<ItemStack> {
 
     @Override
     public boolean testRS(ResourceAmount resourceAmount) {
-        if (!APAddons.refinedStorageLoaded)
+        if (!APAddon.REFINEDSTORAGE.isLoaded())
             return false;
 
         if (resourceAmount.resource() instanceof ItemResource itemResource) {

@@ -30,7 +30,7 @@ import com.refinedmods.refinedstorage.mekanism.ChemicalResourceType;
 import com.refinedmods.refinedstorage.neoforge.api.RefinedStorageNeoForgeApi;
 import com.refinedmods.refinedstorage.neoforge.support.resource.VariantUtil;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
-import de.srendi.advancedperipherals.common.addons.APAddons;
+import de.srendi.advancedperipherals.common.addons.APAddon;
 import de.srendi.advancedperipherals.common.blocks.blockentities.RSBridgeEntity;
 import de.srendi.advancedperipherals.common.setup.BlockEntityTypes;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
@@ -532,7 +532,7 @@ public class RSApi {
             }
             return getObjectFromFluidResource(new ResourceAmount(resource, count));
         }
-        if (APAddons.refinedStorageMekanismLoaded && resource instanceof ChemicalResource) {
+        if (APAddon.REFINEDSTORAGE_MEKANISM.isLoaded() && resource instanceof ChemicalResource) {
             if (countZeroOrLower) {
                 return getObjectFromChemicalResource(new ResourceAmount(resource, 1), count);
             }
@@ -555,7 +555,7 @@ public class RSApi {
         if (resourceAmount.resource() instanceof FluidResource) {
             return getObjectFromFluidResource(resourceAmount);
         }
-        if (APAddons.refinedStorageMekanismLoaded && resourceAmount.resource() instanceof ChemicalResource) {
+        if (APAddon.REFINEDSTORAGE_MEKANISM.isLoaded() && resourceAmount.resource() instanceof ChemicalResource) {
             return getObjectFromChemicalResource(resourceAmount);
         }
         AdvancedPeripherals.debug("Could not create table from unknown resourceAmount " + resourceAmount.getClass() + " - Report this to the maintainer of ap", Level.WARN);
@@ -587,7 +587,7 @@ public class RSApi {
             return FluidUtil.getRegistryKey(fluidResource.fluid()).equals(FluidUtil.getRegistryKey(toCompareFluidResource.fluid()));
         }
 
-        if (APAddons.refinedStorageMekanismLoaded) {
+        if (APAddon.REFINEDSTORAGE_MEKANISM.isLoaded()) {
             if (resource instanceof ChemicalResource chemicalResource && toCompare instanceof ChemicalResource toCompareChemicalResource) {
                 return ChemicalUtil.getRegistryKey(chemicalResource.chemical()).equals(ChemicalUtil.getRegistryKey(toCompareChemicalResource.chemical()));
             }
@@ -633,7 +633,7 @@ public class RSApi {
                 type = "item";
             } else if (serializableStorage.getType() == StorageTypes.FLUID) {
                 type = "fluid";
-            } else if (APAddons.refinedStorageMekanismLoaded && serializableStorage.getType() == ChemicalResourceType.STORAGE_TYPE) {
+            } else if (APAddon.REFINEDSTORAGE_MEKANISM.isLoaded() && serializableStorage.getType() == ChemicalResourceType.STORAGE_TYPE) {
                 type = "chemical";
             } else {
                 type = "unknown";

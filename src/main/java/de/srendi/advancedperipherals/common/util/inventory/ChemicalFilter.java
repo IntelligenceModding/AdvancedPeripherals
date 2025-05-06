@@ -6,7 +6,7 @@ import com.refinedmods.refinedstorage.mekanism.ChemicalResource;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.core.apis.TableHelper;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
-import de.srendi.advancedperipherals.common.addons.APAddons;
+import de.srendi.advancedperipherals.common.addons.APAddon;
 import de.srendi.advancedperipherals.common.addons.refinedstorage.RSApi;
 import de.srendi.advancedperipherals.common.util.Pair;
 import mekanism.api.MekanismAPI;
@@ -105,7 +105,7 @@ public class ChemicalFilter extends GenericFilter<ChemicalStack> {
 
     @Override
     public boolean testRS(ResourceAmount resourceAmount) {
-        if (!APAddons.mekanismLoaded || !APAddons.refinedStorageLoaded || !APAddons.refinedStorageMekanismLoaded)
+        if (!APAddon.REFINEDSTORAGE_MEKANISM.isLoaded())
             return false;
         if (resourceAmount.resource() instanceof ChemicalResource chemicalResource) {
             return test(RSApi.resourceToChemicalStack(chemicalResource));

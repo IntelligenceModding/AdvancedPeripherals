@@ -3,7 +3,7 @@ package de.srendi.advancedperipherals.common.addons.refinedstorage;
 import com.refinedmods.refinedstorage.common.api.storage.StorageType;
 import com.refinedmods.refinedstorage.common.storage.StorageTypes;
 import com.refinedmods.refinedstorage.mekanism.ChemicalResourceType;
-import de.srendi.advancedperipherals.common.addons.APAddons;
+import de.srendi.advancedperipherals.common.addons.APAddon;
 
 import java.util.function.Supplier;
 
@@ -15,7 +15,7 @@ public enum RsStorageTypes {
     ITEM(() -> StorageTypes.ITEM),
     FLUID(() -> StorageTypes.FLUID),
     CHEMICAL(() -> {
-        if (APAddons.refinedStorageMekanismLoaded)
+        if (APAddon.REFINEDSTORAGE_MEKANISM.isLoaded())
             return ChemicalResourceType.STORAGE_TYPE;
         return null;
     });

@@ -4,7 +4,7 @@ import dan200.computercraft.api.lua.ILuaAPI;
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.lua.MethodResult;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
-import de.srendi.advancedperipherals.common.addons.APAddons;
+import de.srendi.advancedperipherals.common.addons.APAddon;
 import de.srendi.advancedperipherals.common.util.StatusConstants;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.ModList;
@@ -29,7 +29,7 @@ public class GlobalAPHelperAPI implements ILuaAPI {
     public final Object getAddonVersions() {
         Map<String, String> modVersions = new HashMap<>();
 
-        for (String modId : APAddons.MOD_IDS) {
+        for (String modId : APAddon.getAllModIds()) {
             Optional<? extends ModContainer> addon = ModList.get().getModContainerById(modId);
             addon.ifPresent(modContainer -> modVersions.put(modId, modContainer.getModInfo().getVersion().toString()));
         }
