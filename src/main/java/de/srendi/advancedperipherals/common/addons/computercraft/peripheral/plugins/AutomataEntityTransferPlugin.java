@@ -33,8 +33,6 @@ import static de.srendi.advancedperipherals.common.setup.DataComponents.ENTITY_T
 
 public class AutomataEntityTransferPlugin extends AutomataCorePlugin {
 
-    private static final String ENTITY_NBT_KEY = "storedEntity";
-
     private final Predicate<Entity> suitableEntity;
 
     public AutomataEntityTransferPlugin(AutomataCorePeripheral automataCore, Predicate<Entity> suitableEntity) {

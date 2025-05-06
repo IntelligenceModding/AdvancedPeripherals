@@ -3,26 +3,17 @@ package de.srendi.advancedperipherals.common.addons.computercraft.integrations;
 import dan200.computercraft.api.ComputerCraftAPI;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.util.Platform;
-import de.srendi.advancedperipherals.lib.integrations.IPeripheralIntegration;
-import net.minecraft.world.level.block.NoteBlock;
 
-import java.util.Comparator;
 import java.util.Optional;
-import java.util.PriorityQueue;
 
 public class IntegrationPeripheralProvider {
 
     private static final String[] SUPPORTED_MODS = new String[]{"mekanism", "powah"};
 
-    private static final PriorityQueue<IPeripheralIntegration> integrations = new PriorityQueue<>(Comparator.comparingInt(IPeripheralIntegration::getPriority));
-
-    private static void registerIntegration(IPeripheralIntegration integration) {
-        integrations.add(integration);
-    }
-
     public static void load() {
         ComputerCraftAPI.registerGenericSource(new BeaconIntegration());
-        registerIntegration(new BlockIntegration(NoteBlockIntegration::new, NoteBlock.class::isInstance));
+        //TODO: See https://github.com/cc-tweaked/CC-Tweaked/discussions/2196
+        //registerIntegration(new BlockIntegration(NoteBlockIntegration::new, NoteBlock.class::isInstance));
 
         for (String mod : SUPPORTED_MODS) {
             Optional<Object> integration = Platform.maybeLoadIntegration(mod, mod + ".Integration");
@@ -35,14 +26,4 @@ public class IntegrationPeripheralProvider {
             runnable.run();
         }
     }
-
-    /*@NotNull
-    @Override
-    public LazyOptional<IPeripheral> getPeripheral(@NotNull Level level, @NotNull BlockPos blockPos, @NotNull Direction direction) {
-        for (IPeripheralIntegration integration : integrations) {
-            if (integration.isSuitable(level, blockPos, direction))
-                return LazyOptional.of(() -> integration.buildPeripheral(level, blockPos, direction));
-        }
-        return LazyOptional.empty();
-    }*/
 }

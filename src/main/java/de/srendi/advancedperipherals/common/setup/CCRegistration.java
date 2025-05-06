@@ -46,12 +46,8 @@ public class CCRegistration {
     public static final DeferredHolder<UpgradeType<? extends IPocketUpgrade>, UpgradeType<PocketGeoScannerUpgrade>> GEO_SCANNER_POCKET = Registration.POCKET_SERIALIZER.register(ID.GEOSCANNER_POCKET.getPath(), () -> UpgradeType.simpleWithCustomItem(PocketGeoScannerUpgrade::new));
     public static final DeferredHolder<UpgradeType<? extends IPocketUpgrade>, UpgradeType<PocketColonyIntegratorUpgrade>> COLONY_POCKET = Registration.POCKET_SERIALIZER.register(ID.COLONY_POCKET.getPath(), () -> UpgradeType.simpleWithCustomItem(PocketColonyIntegratorUpgrade::new));
 
-    public static IntegrationPeripheralProvider integrationPeripheralProvider;
-
     public static void register() {
         IntegrationPeripheralProvider.load();
-        integrationPeripheralProvider = new IntegrationPeripheralProvider();
-        //ForgeComputerCraftAPI.registerPeripheralProvider(integrationPeripheralProvider);
     }
 
     public static class ID {
