@@ -1,6 +1,5 @@
 package de.srendi.advancedperipherals.common.util.inventory;
 
-import dan200.computercraft.shared.ModRegistry;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.util.StringUtil;
 import net.minecraft.ResourceLocationException;
@@ -10,21 +9,13 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.items.IItemHandler;
-import org.apache.logging.log4j.Level;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ItemUtil {
-
-    public static final Item TURTLE_NORMAL = ModRegistry.Items.TURTLE_NORMAL.get();
-    public static final Item TURTLE_ADVANCED = ModRegistry.Items.TURTLE_ADVANCED.get();
-
-    public static final Item POCKET_NORMAL = ModRegistry.Items.POCKET_COMPUTER_NORMAL.get();
-    public static final Item POCKET_ADVANCED = ModRegistry.Items.POCKET_COMPUTER_ADVANCED.get();
 
     private ItemUtil() {
     }
@@ -53,14 +44,13 @@ public class ItemUtil {
      */
     public static String getFingerprint(ItemStack stack) {
         String fingerprint = stack.getComponents() + getRegistryKey(stack).toString() + stack.getDisplayName().getString();
-        try {
-            byte[] bytesOfHash = fingerprint.getBytes(StandardCharsets.UTF_8);
-            MessageDigest md = MessageDigest.getInstance("MD5");
+
+        byte[] bytesOfHash = fingerprint.getBytes(StandardCharsets.UTF_8);
+        MessageDigest md = AdvancedPeripherals.getFingerprintMessageDigest();
+        if (md != null) {
             return StringUtil.toHexString(md.digest(bytesOfHash));
-        } catch (NoSuchAlgorithmException ex) {
-            AdvancedPeripherals.debug("Could not parse fingerprint.", Level.ERROR);
-            ex.printStackTrace();
         }
+
         return "";
     }
 
