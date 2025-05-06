@@ -54,10 +54,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -188,8 +186,8 @@ public class RSApi {
      * @param filter  The filter here is optional, if an empty filter is provided, the method will return every resource
      * @return a set of items
      */
-    public static Set<Map<String, Object>> getParsedItems(Network network, ItemFilter filter) {
-        Set<Map<String, Object>> items = new HashSet<>();
+    public static List<Map<String, Object>> getParsedItems(Network network, ItemFilter filter) {
+        List<Map<String, Object>> items = new ArrayList<>();
         StorageNetworkComponent storage = network.getComponent(StorageNetworkComponent.class);
         for (TrackedResourceAmount trackedResource : storage.getResources(Actor.EMPTY.getClass())) {
             if (trackedResource.resourceAmount().resource() instanceof ItemResource itemResource && filter.test(itemResource.toItemStack())) {
@@ -207,8 +205,8 @@ public class RSApi {
      * @param filter  The filter here is optional, if an empty filter is provided, the method will return every resource
      * @return a set of fluid stacks
      */
-    public static Set<Map<String, Object>> getParsedFluids(Network network, FluidFilter filter) {
-        Set<Map<String, Object>> items = new HashSet<>();
+    public static List<Map<String, Object>> getParsedFluids(Network network, FluidFilter filter) {
+        List<Map<String, Object>> items = new ArrayList<>();
         StorageNetworkComponent storage = network.getComponent(StorageNetworkComponent.class);
         for (TrackedResourceAmount trackedResource : storage.getResources(Actor.EMPTY.getClass())) {
             if (trackedResource.resourceAmount().resource() instanceof FluidResource fluidResource && filter.test(VariantUtil.toFluidStack(fluidResource, trackedResource.resourceAmount().amount()))) {
@@ -227,8 +225,8 @@ public class RSApi {
      * @param filter  The filter here is optional, if an empty filter is provided, the method will return every resource
      * @return a set of fluid stacks
      */
-    public static Set<Map<String, Object>> getParsedChemicals(Network network, ChemicalFilter filter) {
-        Set<Map<String, Object>> items = new HashSet<>();
+    public static List<Map<String, Object>> getParsedChemicals(Network network, ChemicalFilter filter) {
+        List<Map<String, Object>> items = new ArrayList<>();
         StorageNetworkComponent storage = network.getComponent(StorageNetworkComponent.class);
         for (TrackedResourceAmount trackedResource : storage.getResources(Actor.EMPTY.getClass())) {
             if (trackedResource.resourceAmount().resource() instanceof ChemicalResource fluidResource && filter.test(ChemicalUtil.toChemicalStack(fluidResource.chemical(), trackedResource.resourceAmount().amount()))) {
@@ -247,8 +245,8 @@ public class RSApi {
      * @param filter  The filter here is optional, if an empty filter is provided, the method will return every resource
      * @return a set of parsed item stacks
      */
-    public static Set<Map<String, Object>> getCraftableItems(Network network, ItemFilter filter) {
-        Set<Map<String, Object>> items = new HashSet<>();
+    public static List<Map<String, Object>> getCraftableItems(Network network, ItemFilter filter) {
+        List<Map<String, Object>> items = new ArrayList<>();
         AutocraftingNetworkComponent autocrafting = network.getComponent(AutocraftingNetworkComponent.class);
         StorageNetworkComponent storage = network.getComponent(StorageNetworkComponent.class);
         for (ResourceKey key : autocrafting.getOutputs()) {
@@ -267,8 +265,8 @@ public class RSApi {
      * @param filter  The filter here is optional, if an empty filter is provided, the method will return every resource
      * @return a set of parsed fluids stacks
      */
-    public static Set<Map<String, Object>> getCraftableFluids(Network network, FluidFilter filter) {
-        Set<Map<String, Object>> items = new HashSet<>();
+    public static List<Map<String, Object>> getCraftableFluids(Network network, FluidFilter filter) {
+        List<Map<String, Object>> items = new ArrayList<>();
         AutocraftingNetworkComponent autocrafting = network.getComponent(AutocraftingNetworkComponent.class);
         StorageNetworkComponent storage = network.getComponent(StorageNetworkComponent.class);
         for (ResourceKey key : autocrafting.getOutputs()) {
@@ -288,8 +286,8 @@ public class RSApi {
      * @param filter  The filter here is optional, if an empty filter is provided, the method will return every resource
      * @return a set of parsed chemical stacks
      */
-    public static Set<Map<String, Object>> getCraftableChemicals(Network network, ChemicalFilter filter) {
-        Set<Map<String, Object>> items = new HashSet<>();
+    public static List<Map<String, Object>> getCraftableChemicals(Network network, ChemicalFilter filter) {
+        List<Map<String, Object>> items = new ArrayList<>();
         AutocraftingNetworkComponent autocrafting = network.getComponent(AutocraftingNetworkComponent.class);
         StorageNetworkComponent storage = network.getComponent(StorageNetworkComponent.class);
         for (ResourceKey key : autocrafting.getOutputs()) {
@@ -301,8 +299,8 @@ public class RSApi {
         return items;
     }
 
-    public static Set<Object> getPatterns(Network network) {
-        Set<Object> patterns = new HashSet<>();
+    public static List<Object> getPatterns(Network network) {
+        List<Object> patterns = new ArrayList<>();
         AutocraftingNetworkComponent autocrafting = network.getComponent(AutocraftingNetworkComponent.class);
 
         for (Pattern pattern : autocrafting.getPatterns()) {
@@ -312,8 +310,8 @@ public class RSApi {
         return patterns;
     }
 
-    public static Set<Object> listCells(Network network) {
-        Set<Object> disks = new HashSet<>();
+    public static List<Object> listCells(Network network) {
+        List<Object> disks = new ArrayList<>();
 
         GraphNetworkComponent graphNetworkComponent = network.getComponent(GraphNetworkComponent.class);
         for (InWorldNetworkNodeContainer nodeContainer : graphNetworkComponent.getContainers(InWorldNetworkNodeContainer.class)) {
@@ -330,8 +328,8 @@ public class RSApi {
         return disks;
     }
 
-    public static Set<Object> listDrives(Network network) {
-        Set<Object> drives = new HashSet<>();
+    public static List<Object> listDrives(Network network) {
+        List<Object> drives = new ArrayList<>();
 
         GraphNetworkComponent graphNetworkComponent = network.getComponent(GraphNetworkComponent.class);
         for (InWorldNetworkNodeContainer nodeContainer : graphNetworkComponent.getContainers(InWorldNetworkNodeContainer.class)) {
@@ -458,12 +456,17 @@ public class RSApi {
     public static long getUsedExternalStorage(Network network, RsStorageTypes type) {
         long used = 0;
 
+        // If the storage type if null, it just means that the supplier returns no storage type. That happens when an addon is not loaded
+        if (type.getStorageType() == null) {
+            return used;
+        }
+
         GraphNetworkComponent graphNetworkComponent = network.getComponent(GraphNetworkComponent.class);
         for (InWorldNetworkNodeContainer nodeContainer : graphNetworkComponent.getContainers(InWorldNetworkNodeContainer.class)) {
             if (nodeContainer.getNode() instanceof ExternalStorageNetworkNode storageNetworkNode) {
                 ExposedExternalStorage storage = (ExposedExternalStorage) storageNetworkNode.getStorage();
 
-                used += storage.getAll().stream().filter(amount -> type.getStorageType() != null && type.getStorageType().isAllowed(amount.resource())).mapToLong(ResourceAmount::amount).sum();
+                used += storage.getAll().stream().filter(amount -> type.getStorageType().isAllowed(amount.resource())).mapToLong(ResourceAmount::amount).sum();
             }
 
         }
@@ -599,7 +602,7 @@ public class RSApi {
         StorageConfiguration storageConfiguration = diskDrive.getStorageConfiguration();
         CompositeStorage storage = (CompositeStorage) diskDrive.getStorage();
 
-        Set<Object> disks = new HashSet<>();
+        List<Object> disks = new ArrayList<>();
         for (Storage disk : storage.getSources()) {
             if (!(disk instanceof StateTrackedStorage stateTrackedStorage))
                 continue;

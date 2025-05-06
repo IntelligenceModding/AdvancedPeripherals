@@ -30,10 +30,9 @@ public class RSItemHandler implements IStorageSystemItemHandler {
     @NotNull
     @Override
     public ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
-        ItemStack inserted = stack.copy();
         long insertedAmount = component.insert(ItemResource.ofItemStack(stack), stack.getCount(), simulate ? Action.SIMULATE : Action.EXECUTE, Actor.EMPTY);
-        inserted.setCount((int) (stack.getCount() - insertedAmount));
-        return inserted;
+        ItemStack remain = stack.copyWithCount((int) (stack.getCount() - insertedAmount));
+        return remain;
     }
 
     @Override
@@ -43,9 +42,8 @@ public class RSItemHandler implements IStorageSystemItemHandler {
         if (itemResource == null)
             return ItemStack.EMPTY;
 
-        ItemStack extracted = itemResource.toItemStack();
         long extractedAmount = component.extract(itemResource, count, simulate ? Action.SIMULATE : Action.EXECUTE, Actor.EMPTY);
-        extracted.setCount((int) extractedAmount);
+        ItemStack extracted = itemResource.toItemStack(extractedAmount);
 
         AdvancedPeripherals.debug("Extracted item: " + extracted + " from filter: " + filter);
         return extracted;

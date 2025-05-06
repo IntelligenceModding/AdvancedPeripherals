@@ -21,7 +21,6 @@ public class RSFluidHandler implements IStorageSystemFluidHandler {
     public RSFluidHandler(@NotNull Network network) {
         this.network = network;
         this.component = network.getComponent(StorageNetworkComponent.class);
-
     }
 
     @Override
@@ -40,9 +39,8 @@ public class RSFluidHandler implements IStorageSystemFluidHandler {
         if (fluid == null)
             return FluidStack.EMPTY;
 
-        FluidStack extracted = VariantUtil.toFluidStack(fluid, 1);
         long amountExtracted = component.extract(fluid, filter.getCount(), simulate == FluidAction.SIMULATE ? Action.SIMULATE : Action.EXECUTE, Actor.EMPTY);
-        extracted.setAmount((int) amountExtracted);
+        FluidStack extracted = VariantUtil.toFluidStack(fluid, (int) amountExtracted);
 
         AdvancedPeripherals.debug("Extracted fluid: " + extracted + " from filter: " + filter);
         return extracted;

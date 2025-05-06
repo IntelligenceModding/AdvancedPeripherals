@@ -21,15 +21,13 @@ public class ServerWorker {
 
     @SubscribeEvent
     public static void serverTick(ServerTickEvent.Post event) {
-        if (event.hasTime()) {
-            while (true) {
-                final Runnable runnable = callQueue.poll();
-                if (runnable == null) {
-                    return;
-                }
-                AdvancedPeripherals.debug("Running queued server worker call: " + runnable);
-                runnable.run();
+        while (true) {
+            final Runnable runnable = callQueue.poll();
+            if (runnable == null) {
+                return;
             }
+            AdvancedPeripherals.debug("Running queued server worker call: " + runnable);
+            runnable.run();
         }
     }
 }

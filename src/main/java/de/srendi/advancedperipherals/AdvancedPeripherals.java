@@ -17,7 +17,10 @@ import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.Nullable;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Random;
 
 @Mod(AdvancedPeripherals.MOD_ID)
@@ -27,6 +30,9 @@ public class AdvancedPeripherals {
     public static final String NAME = "Advanced Peripherals";
     public static final Logger LOGGER = LogManager.getLogger(NAME);
     public static final Random RANDOM = new Random();
+
+    // Used for out item/fluid fingerprints
+    private static MessageDigest fingerprintMessageDigest = null;
 
     public AdvancedPeripherals(IEventBus modBus) {
         LOGGER.info("AdvancedPeripherals says hello!");
@@ -38,6 +44,20 @@ public class AdvancedPeripherals {
         modBus.addListener(ChunkManager::registerTicketController);
 
         Registration.register(modBus);
+
+        try {
+            fingerprintMessageDigest = MessageDigest.getInstance("MD5");
+        } catch (NoSuchAlgorithmException e) {
+            AdvancedPeripherals.debug("Could not create message digest. Fingerprint creation WILL fail.", e);
+        }
+    }
+
+    @Nullable
+    public static MessageDigest getFingerprintMessageDigest() {
+        if (fingerprintMessageDigest != null) {
+            fingerprintMessageDigest.reset();
+        }
+        return fingerprintMessageDigest;
     }
 
     public static void debug(String message) {

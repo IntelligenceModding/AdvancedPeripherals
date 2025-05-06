@@ -9,6 +9,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
+import static de.srendi.advancedperipherals.common.setup.DataComponents.ABILITY_COOLDOWN;
 import static de.srendi.advancedperipherals.common.setup.DataComponents.TURTLE_UPGRADE_STORED_DATA;
 
 public abstract class ClockwiseAnimatedTurtleUpgrade<T extends IBasePeripheral<?>> extends PeripheralTurtleUpgrade<T> {
@@ -41,10 +42,13 @@ public abstract class ClockwiseAnimatedTurtleUpgrade<T extends IBasePeripheral<?
 
     @Override
     public boolean isItemSuitable(@NotNull ItemStack stack) {
-        if (!stack.has(TURTLE_UPGRADE_STORED_DATA))
+        if (!stack.has(TURTLE_UPGRADE_STORED_DATA) && !stack.has(ABILITY_COOLDOWN))
             return super.isItemSuitable(stack);
         var tweakedStack = stack.copy();
+
+        // We can safely try to remove either of them even if one of them is missing.
         tweakedStack.remove(TURTLE_UPGRADE_STORED_DATA);
+        tweakedStack.remove(ABILITY_COOLDOWN);
         return super.isItemSuitable(tweakedStack);
     }
 

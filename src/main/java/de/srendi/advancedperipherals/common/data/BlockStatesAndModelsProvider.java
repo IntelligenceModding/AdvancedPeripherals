@@ -37,7 +37,6 @@ public class BlockStatesAndModelsProvider extends BlockStateProvider {
 
         // Define blocks with custom model generation
         peripheralBlock(Blocks.PLAYER_DETECTOR.get(), generateModel(Blocks.PLAYER_DETECTOR.get(), false, "side", "front", "top"));
-        peripheralBlock(Blocks.REDSTONE_INTEGRATOR.get(), generateModel(Blocks.REDSTONE_INTEGRATOR.get(), false, "side", "front", "top", "bottom"));
         peripheralBlock(Blocks.BLOCK_READER.get(), generateModel(Blocks.BLOCK_READER.get(), false, "north", "south", "east", "west", "up", "down"));
 
         // Define a simple block with all sides having the same texture
