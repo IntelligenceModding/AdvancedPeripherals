@@ -64,7 +64,6 @@ public class EnUsLanguageProvider extends LanguageProvider {
         addBlock(Blocks.NBT_STORAGE, "NBT Storage");
         addBlock(Blocks.PERIPHERAL_CASING, "Peripheral Casing");
         addBlock(Blocks.PLAYER_DETECTOR, "Player Detector");
-        addBlock(Blocks.REDSTONE_INTEGRATOR, "Redstone Integrator");
     }
 
     private void addTurtles() {
@@ -116,7 +115,6 @@ public class EnUsLanguageProvider extends LanguageProvider {
         addTooltip(Items.MEMORY_CARD.get(), "&7Can save the rights of a player to use it in an inventory manager.");
         addTooltip("memory_card.bound", "&7Bound to &b%s&7.");
         addTooltip(Blocks.INVENTORY_MANAGER.get(), "&7This block is able to send or receive specific items from a player inventory.");
-        addTooltip(Blocks.REDSTONE_INTEGRATOR.get(), "&7This block is able to interact with redstone. Works exactly like the redstone api of an computer.");
         addTooltip(Blocks.BLOCK_READER.get(), "&7Reads nbt data of blocks to interact with blocks which do not have computer support.");
         addTooltip(Blocks.GEO_SCANNER.get(), "&7Scans the area around it to find some shiny ores.");
         addTooltip(Blocks.COLONY_INTEGRATOR.get(), "&7Interacts with Minecolonies to read data about your colony and citizens.");

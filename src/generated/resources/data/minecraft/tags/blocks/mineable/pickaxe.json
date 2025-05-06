@@ -8,7 +8,6 @@
     "advancedperipherals:energy_detector",
     "advancedperipherals:peripheral_casing",
     "advancedperipherals:inventory_manager",
-    "advancedperipherals:redstone_integrator",
     "advancedperipherals:block_reader",
     "advancedperipherals:geo_scanner",
     "advancedperipherals:nbt_storage",

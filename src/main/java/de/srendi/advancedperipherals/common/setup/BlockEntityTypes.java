@@ -12,7 +12,6 @@ import de.srendi.advancedperipherals.common.blocks.blockentities.InventoryManage
 import de.srendi.advancedperipherals.common.blocks.blockentities.MEBridgeEntity;
 import de.srendi.advancedperipherals.common.blocks.blockentities.NBTStorageEntity;
 import de.srendi.advancedperipherals.common.blocks.blockentities.PlayerDetectorEntity;
-import de.srendi.advancedperipherals.common.blocks.blockentities.RedstoneIntegratorEntity;
 import de.srendi.advancedperipherals.common.blocks.blockentities.RSBridgeEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.neoforged.neoforge.registries.DeferredHolder;
@@ -26,7 +25,6 @@ public class BlockEntityTypes {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<RSBridgeEntity>> RS_BRIDGE = APAddons.refinedStorageLoaded ? Registration.BLOCK_ENTITIES.register("rs_bridge", () -> new BlockEntityType<>(RSBridgeEntity::new, Sets.newHashSet(Blocks.RS_BRIDGE.get()), null)) : null;
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<EnergyDetectorEntity>> ENERGY_DETECTOR = Registration.BLOCK_ENTITIES.register("energy_detector", () -> new BlockEntityType<>(EnergyDetectorEntity::new, Sets.newHashSet(Blocks.ENERGY_DETECTOR.get()), null));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<InventoryManagerEntity>> INVENTORY_MANAGER = Registration.BLOCK_ENTITIES.register("inventory_manager", () -> new BlockEntityType<>(InventoryManagerEntity::new, Sets.newHashSet(Blocks.INVENTORY_MANAGER.get()), null));
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<RedstoneIntegratorEntity>> REDSTONE_INTEGRATOR = Registration.BLOCK_ENTITIES.register("redstone_integrator", () -> new BlockEntityType<>(RedstoneIntegratorEntity::new, Sets.newHashSet(Blocks.REDSTONE_INTEGRATOR.get()), null));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ColonyIntegratorEntity>> COLONY_INTEGRATOR = Registration.BLOCK_ENTITIES.register("colony_integrator", () -> new BlockEntityType<>(ColonyIntegratorEntity::new, Sets.newHashSet(Blocks.COLONY_INTEGRATOR.get()), null));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BlockReaderEntity>> BLOCK_READER = Registration.BLOCK_ENTITIES.register("block_reader", () -> new BlockEntityType<>(BlockReaderEntity::new, Sets.newHashSet(Blocks.BLOCK_READER.get()), null));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<GeoScannerEntity>> GEO_SCANNER = Registration.BLOCK_ENTITIES.register("geo_scanner", () -> new BlockEntityType<>(GeoScannerEntity::new, Sets.newHashSet(Blocks.GEO_SCANNER.get()), null));

@@ -50,7 +50,7 @@ import java.util.Map;
 
 public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwner<RSBridgeEntity>> implements IStorageSystemPeripheral {
 
-    public static final String PERIPHERAL_TYPE = "rsBridge";
+    public static final String PERIPHERAL_TYPE = "rs_bridge";
 
     private final RSBridgeEntity bridge;
 

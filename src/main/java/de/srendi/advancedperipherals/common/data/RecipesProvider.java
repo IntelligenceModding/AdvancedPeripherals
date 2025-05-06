@@ -59,8 +59,6 @@ public class RecipesProvider extends RecipeProvider implements IConditionBuilder
 
         ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, Blocks.PLAYER_DETECTOR.get()).define('S', Items.SMOOTH_STONE).define('A', CASING).define('R', Tags.Items.STORAGE_BLOCKS_REDSTONE).pattern("SSS").pattern("SAS").pattern("SRS").unlockedBy(HAS_ITEM, has(CASING)).save(recipeOutput);
 
-        ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, Blocks.REDSTONE_INTEGRATOR.get()).define('R', Tags.Items.STORAGE_BLOCKS_REDSTONE).define('A', CASING).define('C', Items.COMPARATOR).pattern("RCR").pattern("CAC").pattern("RCR").unlockedBy(HAS_ITEM, has(CASING)).save(recipeOutput);
-
         ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, Blocks.BLOCK_READER.get()).define('O', Items.OBSERVER).define('I', Tags.Items.INGOTS_IRON).define('M', ModRegistry.Blocks.WIRED_MODEM_FULL.get()).define('R', Tags.Items.STORAGE_BLOCKS_REDSTONE).define('A', CASING).pattern("IRI").pattern("MAO").pattern("IRI").unlockedBy(HAS_ITEM, has(CASING)).save(recipeOutput);
 
         ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, Blocks.GEO_SCANNER.get()).define('O', Items.OBSERVER).define('D', Tags.Items.GEMS_DIAMOND).define('C', CASING).define('R', Tags.Items.STORAGE_BLOCKS_REDSTONE).define('M', ModRegistry.Blocks.WIRED_MODEM_FULL.get()).pattern("DMD").pattern("DCD").pattern("ROR").unlockedBy(HAS_ITEM, has(CASING)).save(recipeOutput);
