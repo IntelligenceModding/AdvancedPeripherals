@@ -26,7 +26,7 @@ public class GlobalAPHelperAPI implements ILuaAPI {
     }
 
     @LuaFunction
-    public final Object getVersions() {
+    public final Object getAddonVersions() {
         Map<String, String> modVersions = new HashMap<>();
 
         for (String modId : APAddons.MOD_IDS) {
