@@ -456,12 +456,17 @@ public class RSApi {
     public static long getUsedExternalStorage(Network network, RsStorageTypes type) {
         long used = 0;
 
+        // If the storage type if null, it just means that the supplier returns no storage type. That happens when an addon is not loaded
+        if (type.getStorageType() == null) {
+            return used;
+        }
+
         GraphNetworkComponent graphNetworkComponent = network.getComponent(GraphNetworkComponent.class);
         for (InWorldNetworkNodeContainer nodeContainer : graphNetworkComponent.getContainers(InWorldNetworkNodeContainer.class)) {
             if (nodeContainer.getNode() instanceof ExternalStorageNetworkNode storageNetworkNode) {
                 ExposedExternalStorage storage = (ExposedExternalStorage) storageNetworkNode.getStorage();
 
-                used += storage.getAll().stream().filter(amount -> type.getStorageType() != null && type.getStorageType().isAllowed(amount.resource())).mapToLong(ResourceAmount::amount).sum();
+                used += storage.getAll().stream().filter(amount -> type.getStorageType().isAllowed(amount.resource())).mapToLong(ResourceAmount::amount).sum();
             }
 
         }
