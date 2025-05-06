@@ -3,6 +3,7 @@ package de.srendi.advancedperipherals;
 import dan200.computercraft.api.peripheral.PeripheralCapability;
 import de.srendi.advancedperipherals.common.addons.APAddons;
 import de.srendi.advancedperipherals.common.addons.appliedenergistics.AppEngApi;
+import de.srendi.advancedperipherals.common.addons.refinedstorage.RSApi;
 import de.srendi.advancedperipherals.common.blocks.base.ICapabilityProvider;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.setup.Registration;
@@ -47,6 +48,11 @@ public class AdvancedPeripherals {
     public static void debug(String message, Level level) {
         if (APConfig.GENERAL_CONFIG.enableDebugMode.get())
             LOGGER.log(level, "[DEBUG] {}", message);
+    }
+
+    public static void debug(String message, Throwable throwable) {
+        if (APConfig.GENERAL_CONFIG.enableDebugMode.get())
+            LOGGER.error("[DEBUG] " + message, throwable);
     }
 
     public static ResourceLocation getRL(String resource) {
@@ -95,5 +101,7 @@ public class AdvancedPeripherals {
 
         if (APAddons.ae2Loaded)
             AppEngApi.registerCapabilities(event);
+        if (APAddons.refinedStorageLoaded)
+            RSApi.registerCapabilities(event);
     }
 }

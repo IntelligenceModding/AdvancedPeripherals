@@ -14,10 +14,10 @@ import dan200.computercraft.api.lua.MethodResult;
 import dan200.computercraft.api.peripheral.IComputerAccess;
 import de.srendi.advancedperipherals.common.addons.appliedenergistics.AppEngApi;
 import de.srendi.advancedperipherals.common.addons.appliedenergistics.CraftJob;
-import de.srendi.advancedperipherals.common.addons.appliedenergistics.MeFluidHandler;
-import de.srendi.advancedperipherals.common.addons.appliedenergistics.MeItemHandler;
+import de.srendi.advancedperipherals.common.addons.appliedenergistics.MEFluidHandler;
+import de.srendi.advancedperipherals.common.addons.appliedenergistics.MEItemHandler;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.BlockEntityPeripheralOwner;
-import de.srendi.advancedperipherals.common.blocks.blockentities.MeBridgeEntity;
+import de.srendi.advancedperipherals.common.blocks.blockentities.MEBridgeEntity;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.util.Pair;
 import de.srendi.advancedperipherals.common.util.ServerWorker;
@@ -35,13 +35,13 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwner<MeBridgeEntity>> {
+public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwner<MEBridgeEntity>> {
 
     public static final String PERIPHERAL_TYPE = "meBridge";
-    private final MeBridgeEntity tile;
+    private final MEBridgeEntity tile;
     private IGridNode node;
 
-    public MeBridgePeripheral(MeBridgeEntity tileEntity) {
+    public MEBridgePeripheral(MEBridgeEntity tileEntity) {
         super(PERIPHERAL_TYPE, new BlockEntityPeripheralOwner<>(tileEntity));
         this.tile = tileEntity;
         this.node = tileEntity.getActionableNode();
@@ -69,7 +69,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
      */
     protected MethodResult exportToChest(@NotNull IArguments arguments, @Nullable IItemHandler targetInventory) throws LuaException {
         MEStorage monitor = AppEngApi.getMonitor(node);
-        MeItemHandler itemHandler = new MeItemHandler(monitor, tile);
+        MEItemHandler itemHandler = new MEItemHandler(monitor, tile);
         Pair<ItemFilter, String> filter = ItemFilter.parse(arguments.getTable(0));
 
         if (filter.rightPresent())
@@ -90,7 +90,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
      */
     protected MethodResult exportToTank(@NotNull IArguments arguments, @Nullable IFluidHandler targetTank) throws LuaException {
         MEStorage monitor = AppEngApi.getMonitor(node);
-        MeFluidHandler fluidHandler = new MeFluidHandler(monitor, tile);
+        MEFluidHandler fluidHandler = new MEFluidHandler(monitor, tile);
         Pair<FluidFilter, String> filter = FluidFilter.parse(arguments.getTable(0));
 
         if (filter.rightPresent())
@@ -99,7 +99,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (targetTank == null)
             return MethodResult.of(0, "Target Tank does not exist");
 
-        return MethodResult.of(InventoryUtil.moveFluid(fluidHandler, targetTank, filter.getLeft()), null);
+        return MethodResult.of(FluidUtil.moveFluid(fluidHandler, targetTank, filter.getLeft()), null);
     }
 
     /**
@@ -111,7 +111,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
      */
     protected MethodResult importToME(@NotNull IArguments arguments, @Nullable IItemHandler targetInventory) throws LuaException {
         MEStorage monitor = AppEngApi.getMonitor(node);
-        MeItemHandler itemHandler = new MeItemHandler(monitor, tile);
+        MEItemHandler itemHandler = new MEItemHandler(monitor, tile);
         Pair<ItemFilter, String> filter = ItemFilter.parse(arguments.getTable(0));
 
         if (filter.rightPresent())
@@ -132,7 +132,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
      */
     protected MethodResult importToME(@NotNull IArguments arguments, @Nullable IFluidHandler targetTank) throws LuaException {
         MEStorage monitor = AppEngApi.getMonitor(node);
-        MeFluidHandler fluidHandler = new MeFluidHandler(monitor, tile);
+        MEFluidHandler fluidHandler = new MEFluidHandler(monitor, tile);
         Pair<FluidFilter, String> filter = FluidFilter.parse(arguments.getTable(0));
 
         if (filter.rightPresent())
@@ -141,7 +141,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (targetTank == null)
             return MethodResult.of(0, "Target Tank does not exist");
 
-        return MethodResult.of(InventoryUtil.moveFluid(targetTank, fluidHandler, filter.getLeft()), null);
+        return MethodResult.of(FluidUtil.moveFluid(targetTank, fluidHandler, filter.getLeft()), null);
     }
 
     private MethodResult notConnected() {

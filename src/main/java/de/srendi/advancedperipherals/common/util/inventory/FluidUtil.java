@@ -30,6 +30,41 @@ public class FluidUtil {
     private FluidUtil() {
     }
 
+    public static int moveFluid(IFluidHandler inventoryFrom, IFluidHandler inventoryTo, FluidFilter filter) {
+        if (inventoryFrom == null) return 0;
+
+        int amount = filter.getCount();
+        int transferableAmount = 0;
+
+        // The logic changes with storage systems since these systems do not have slots
+        if (inventoryFrom instanceof IStorageSystemFluidHandler storageSystemHandler) {
+            FluidStack extracted = storageSystemHandler.drain(filter, IFluidHandler.FluidAction.SIMULATE);
+            int inserted = inventoryTo.fill(extracted, IFluidHandler.FluidAction.EXECUTE);
+
+            transferableAmount += storageSystemHandler.drain(filter.setCount(inserted), IFluidHandler.FluidAction.EXECUTE).getAmount();
+
+            return transferableAmount;
+        }
+
+        if (inventoryTo instanceof IStorageSystemFluidHandler storageSystemHandler) {
+            if (filter.test(inventoryFrom.getFluidInTank(0))) {
+                FluidStack toExtract = inventoryFrom.getFluidInTank(0).copy();
+                toExtract.setAmount(amount);
+                FluidStack extracted = inventoryFrom.drain(toExtract, IFluidHandler.FluidAction.SIMULATE);
+                if (extracted.isEmpty())
+                    return 0;
+                int inserted = storageSystemHandler.fill(extracted, IFluidHandler.FluidAction.EXECUTE);
+
+                extracted.setAmount(inserted);
+                transferableAmount += inventoryFrom.drain(extracted, IFluidHandler.FluidAction.EXECUTE).getAmount();
+            }
+
+            return transferableAmount;
+        }
+
+        return transferableAmount;
+    }
+
     public static IFluidHandler extractHandler(@Nullable Object object, @Nullable Level level, @Nullable BlockPos pos, @Nullable Direction direction) {
         if (object instanceof IFluidHandler itemHandler)
             return itemHandler;
@@ -43,19 +78,16 @@ public class FluidUtil {
         return null;
     }
 
-    @NotNull
+    @Nullable
     public static IFluidHandler getHandlerFromDirection(@NotNull String direction, @NotNull IPeripheralOwner owner) throws LuaException {
         Level level = owner.getLevel();
         Objects.requireNonNull(level);
         Direction relativeDirection = CoordUtil.getDirection(owner.getOrientation(), direction);
         BlockEntity target = level.getBlockEntity(owner.getPos().relative(relativeDirection));
         if (target == null)
-            throw new LuaException("Target '" + direction + "' is empty or not a fluid handler");
+            return null;
 
-        IFluidHandler handler = extractHandler(target, level, owner.getPos().relative(relativeDirection), relativeDirection);
-        if (handler == null)
-            throw new LuaException("Target '" + direction + "' is not a fluid handler");
-        return handler;
+        return extractHandler(target, level, owner.getPos().relative(relativeDirection), relativeDirection);
     }
 
     @Nullable

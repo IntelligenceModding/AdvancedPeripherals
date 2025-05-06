@@ -1,8 +1,13 @@
 package de.srendi.advancedperipherals.common.util.inventory;
 
+import appeng.api.stacks.AEItemKey;
+import appeng.api.stacks.GenericStack;
+import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
+import com.refinedmods.refinedstorage.common.support.resource.ItemResource;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.core.apis.TableHelper;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
+import de.srendi.advancedperipherals.common.addons.APAddons;
 import de.srendi.advancedperipherals.common.util.DataComponentUtil;
 import de.srendi.advancedperipherals.common.util.NBTUtil;
 import de.srendi.advancedperipherals.common.util.Pair;
@@ -18,8 +23,9 @@ import net.minecraft.world.item.Items;
 
 import java.util.Map;
 
-//TODO tag
-public class ItemFilter {
+public class ItemFilter extends GenericFilter<ItemStack> {
+
+    public static final ItemFilter EMPTY = new ItemFilter();
 
     private Item item = Items.AIR;
     private TagKey<Item> tag = null;
@@ -34,10 +40,12 @@ public class ItemFilter {
     }
 
     public static Pair<ItemFilter, String> parse(Map<?, ?> item) {
-        ItemFilter itemFilter = empty();
         // If the map is empty, return a filter without any filters
         if (item.isEmpty())
-            return Pair.of(itemFilter, null);
+            return Pair.of(EMPTY, null);
+
+        ItemFilter itemFilter = createEmpty();
+
         if (item.containsKey("name")) {
             try {
                 String name = TableHelper.getStringField(item, "name");
@@ -95,19 +103,41 @@ public class ItemFilter {
     }
 
     public static ItemFilter fromStack(ItemStack stack) {
-        ItemFilter filter = empty();
+        ItemFilter filter = createEmpty();
         filter.item = stack.getItem();
         filter.componentsAsNbt = DataComponentUtil.toNbt(stack.getComponentsPatch());
         filter.components = (PatchedDataComponentMap) stack.getComponents();
         return filter;
     }
 
-    public static ItemFilter empty() {
+    public static ItemFilter createEmpty() {
         return new ItemFilter();
     }
 
     public boolean isEmpty() {
-        return fingerprint.isEmpty() && item == Items.AIR && tag == null && componentsAsNbt == null;
+        return this == EMPTY || (fingerprint.isEmpty() && item == Items.AIR && tag == null && componentsAsNbt == null);
+    }
+
+    @Override
+    public boolean testAE(GenericStack genericStack) {
+        if (!APAddons.ae2Loaded)
+            return false;
+
+        if (genericStack.what() instanceof AEItemKey aeItemKey) {
+            return test(aeItemKey.toStack());
+        }
+        return false;
+    }
+
+    @Override
+    public boolean testRS(ResourceAmount resourceAmount) {
+        if (!APAddons.refinedStorageLoaded)
+            return false;
+
+        if (resourceAmount.resource() instanceof ItemResource itemResource) {
+            return test(itemResource.toItemStack(1));
+        }
+        return false;
     }
 
     public ItemStack toItemStack() {
@@ -119,6 +149,9 @@ public class ItemFilter {
     }
 
     public boolean test(ItemStack stack) {
+        if (isEmpty())
+            return true;
+
         if (!fingerprint.isEmpty()) {
             String testFingerprint = ItemUtil.getFingerprint(stack);
             return fingerprint.equals(testFingerprint);

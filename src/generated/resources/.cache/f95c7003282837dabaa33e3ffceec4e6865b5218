@@ -1,4 +1,4 @@
-// 1.21.1	2025-01-14T18:51:29.8886424	Block tags
-6566cca83fe6d74441cb2b220aa517b93951dac9 data/minecraft/tags/blocks/mineable/pickaxe.json
-5c9d90b6cb82fe772165b794f1eb511db72cb639 data/minecraft/tags/blocks/needs_iron_tool.json
+// 1.21.1	2025-01-14T21:35:41.316368	Block tags
+ad2dad8f4f2ec5a67735fe462d83d1ac4c3ef006 data/minecraft/tags/blocks/mineable/pickaxe.json
+f4459900cde17548776562b1a6f3c12ccc86efa5 data/minecraft/tags/blocks/needs_iron_tool.json
 e1f71dcb4f9e7e36e29b0ad09d6520dc3adfa4a6 data/neoforge/tags/blocks/needs_wood_tool.json

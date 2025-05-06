@@ -1,4 +1,4 @@
-// 1.21.1	2025-01-14T18:51:29.8897473	Loot Tables
+// 1.21.1	2025-01-14T21:35:41.3183672	Loot Tables
 9b54955770745d55de988a86cbd08aa9ae23ff86 data/advancedperipherals/loot_table/blocks/block_reader.json
 d4f1bc579f83dc67ce9f94d35926d34b8894c990 data/advancedperipherals/loot_table/blocks/chat_box.json
 9ac96b8e3da827886d8da459a2f146e8ae3ee798 data/advancedperipherals/loot_table/blocks/colony_integrator.json
@@ -11,3 +11,4 @@ ae62bfa75e39a59374602c8a87cc2afe8b4923dd data/advancedperipherals/loot_table/blo
 fa56de9a073f32ab8a65b5f17c57f360a157b5c1 data/advancedperipherals/loot_table/blocks/peripheral_casing.json
 d61b1c54dd6da8f0213d5eb8a5b40d78bff5ba90 data/advancedperipherals/loot_table/blocks/player_detector.json
 6bad9bed7baa7af4b5ca3cae7c4cb8d47dc7b593 data/advancedperipherals/loot_table/blocks/redstone_integrator.json
+76cdba2795aafc897a579670afb264b75147f498 data/advancedperipherals/loot_table/blocks/rs_bridge.json

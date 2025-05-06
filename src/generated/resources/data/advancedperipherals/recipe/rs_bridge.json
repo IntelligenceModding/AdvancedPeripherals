@@ -1,0 +1,39 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "refinedstorage"
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "C": {
+      "item": "advancedperipherals:peripheral_casing"
+    },
+    "E": {
+      "tag": "refinedstorage:exporters"
+    },
+    "I": {
+      "item": "refinedstorage:interface"
+    },
+    "P": {
+      "item": "refinedstorage:advanced_processor"
+    },
+    "R": {
+      "tag": "refinedstorage:importers"
+    },
+    "X": {
+      "tag": "refinedstorage:external_storages"
+    }
+  },
+  "pattern": [
+    "PXP",
+    "ECR",
+    "PIP"
+  ],
+  "result": {
+    "count": 1,
+    "id": "advancedperipherals:rs_bridge"
+  }
+}

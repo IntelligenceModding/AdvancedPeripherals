@@ -175,14 +175,22 @@ repositories {
         }
     }
     maven {
-        url = uri("https://maven.pkg.github.com/refinedmods/refinedstorage")
+        url = uri("https://maven.pkg.github.com/refinedmods/refinedstorage2")
         credentials {
             username = "anything"
             password = "\u0067hp_oGjcDFCn8jeTzIj4Ke9pLoEVtpnZMP4VQgaX"
         }
-        content {
-            includeModule("com.refinedmods", "refinedstorage")
+    }
+    maven {
+        url = uri("https://maven.pkg.github.com/refinedmods/refinedstorage-mekanism-integration")
+        credentials {
+            username = "anything"
+            password = "\u0067hp_oGjcDFCn8jeTzIj4Ke9pLoEVtpnZMP4VQgaX"
         }
+    }
+    maven {
+        name = "EMI"
+        url = uri("https://maven.terraformersmc.com/")
     }
     maven {
         name = 'Kotlin for Forge'
@@ -214,13 +222,21 @@ dependencies {
     compileOnly "org.jetbrains:annotations:${jb_annotations}"
     implementation "net.neoforged:neoforge:${neo_version}"
     implementation "cc.tweaked:cc-tweaked-${minecraft_version}-forge:${cc_version}"
-
     // Minimal requirements end
+
+    compileOnly("com.refinedmods.refinedstorage:refinedstorage-neoforge:${refinedstorage_version}")
+    runtimeOnly("com.refinedmods.refinedstorage:refinedstorage-neoforge:${refinedstorage_version}")
+
+    compileOnly("com.refinedmods.refinedstorage:refinedstorage-mekanism-integration:${refinedstorage_mekanism_version}")
+    runtimeOnly("com.refinedmods.refinedstorage:refinedstorage-mekanism-integration:${refinedstorage_mekanism_version}")
+
+    // Needed for the refined storage mek integration
+    compileOnlyApi("dev.emi:emi-neoforge:${emiVersion}")
 
     // Extended requirements
     // We don't use the api since we need a specific class from mekanism
     compileOnly "mekanism:Mekanism:${mekanism_version}"
-    // runtimeOnly "mekanism:Mekanism:${mekanism_version}"
+    runtimeOnly "mekanism:Mekanism:${mekanism_version}"
 
     // Applied Energistics 2
     compileOnly "appeng:appliedenergistics2:${appliedenergistics_version}"

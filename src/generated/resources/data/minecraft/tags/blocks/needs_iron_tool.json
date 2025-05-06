@@ -4,6 +4,7 @@
     "advancedperipherals:chat_box",
     "advancedperipherals:player_detector",
     "advancedperipherals:me_bridge",
+    "advancedperipherals:rs_bridge",
     "advancedperipherals:energy_detector",
     "advancedperipherals:inventory_manager",
     "advancedperipherals:redstone_integrator",
