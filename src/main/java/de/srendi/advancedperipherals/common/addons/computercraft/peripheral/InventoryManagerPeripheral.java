@@ -32,7 +32,7 @@ import java.util.Map;
 
 public class InventoryManagerPeripheral extends BasePeripheral<BlockEntityPeripheralOwner<InventoryManagerEntity>> {
 
-    public static final String PERIPHERAL_TYPE = "inventoryManager";
+    public static final String PERIPHERAL_TYPE = "inventory_manager";
 
     public InventoryManagerPeripheral(InventoryManagerEntity tileEntity) {
         super(PERIPHERAL_TYPE, new BlockEntityPeripheralOwner<>(tileEntity));

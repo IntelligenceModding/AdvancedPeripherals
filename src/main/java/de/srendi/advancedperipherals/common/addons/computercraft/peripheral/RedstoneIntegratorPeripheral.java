@@ -10,7 +10,7 @@ import net.minecraft.core.Direction;
 
 public class RedstoneIntegratorPeripheral extends BasePeripheral<BlockEntityPeripheralOwner<RedstoneIntegratorEntity>> {
 
-    public static final String PERIPHERAL_TYPE = "redstoneIntegrator";
+    public static final String PERIPHERAL_TYPE = "redstone_integrator";
 
     public RedstoneIntegratorPeripheral(RedstoneIntegratorEntity tileEntity) {
         super(PERIPHERAL_TYPE, new BlockEntityPeripheralOwner<>(tileEntity));

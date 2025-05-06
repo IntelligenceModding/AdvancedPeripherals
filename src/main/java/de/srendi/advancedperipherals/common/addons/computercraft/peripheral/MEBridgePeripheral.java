@@ -37,7 +37,7 @@ import java.util.List;
 
 public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwner<MEBridgeEntity>> {
 
-    public static final String PERIPHERAL_TYPE = "meBridge";
+    public static final String PERIPHERAL_TYPE = "me_bridge";
     private final MEBridgeEntity tile;
     private IGridNode node;
 
