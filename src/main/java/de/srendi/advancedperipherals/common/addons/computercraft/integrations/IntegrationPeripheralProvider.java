@@ -2,8 +2,6 @@ package de.srendi.advancedperipherals.common.addons.computercraft.integrations;
 
 import dan200.computercraft.api.peripheral.IPeripheral;
 import dan200.computercraft.api.peripheral.IPeripheralProvider;
-import de.srendi.advancedperipherals.AdvancedPeripherals;
-import de.srendi.advancedperipherals.common.util.Platform;
 import de.srendi.advancedperipherals.lib.integrations.IPeripheralIntegration;
 import de.srendi.advancedperipherals.lib.peripherals.BlockEntityIntegrationPeripheral;
 import net.minecraft.core.BlockPos;
@@ -16,14 +14,13 @@ import net.minecraftforge.common.util.LazyOptional;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Comparator;
-import java.util.Optional;
 import java.util.PriorityQueue;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
 public class IntegrationPeripheralProvider implements IPeripheralProvider {
 
-    private static final String[] SUPPORTED_MODS = new String[]{"botania", "create", "mekanism", "powah"};
+    private static final String[] SUPPORTED_MODS = new String[]{};
 
     private static final PriorityQueue<IPeripheralIntegration> integrations = new PriorityQueue<>(Comparator.comparingInt(IPeripheralIntegration::getPriority));
 
@@ -71,15 +68,6 @@ public class IntegrationPeripheralProvider implements IPeripheralProvider {
     public static void load() {
         registerIntegration(new BlockEntityIntegration(BeaconIntegration::new, BeaconBlockEntity.class::isInstance));
         registerIntegration(new BlockIntegration(NoteBlockIntegration::new, NoteBlock.class::isInstance));
-
-        for (String mod : SUPPORTED_MODS) {
-            Optional<Object> integration = Platform.maybeLoadIntegration(mod, mod + ".Integration");
-            integration.ifPresent(obj -> {
-                AdvancedPeripherals.LOGGER.warn("Successfully loaded integration for {}", mod);
-                ((Runnable) obj).run();
-            });
-            if (integration.isEmpty()) AdvancedPeripherals.LOGGER.warn("Failed to load integration for {}", mod);
-        }
     }
 
     @NotNull

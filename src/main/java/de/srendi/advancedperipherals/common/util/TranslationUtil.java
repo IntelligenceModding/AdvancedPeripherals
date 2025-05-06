@@ -11,10 +11,10 @@ public class TranslationUtil {
     }
 
     public static String turtle(String name) {
-        return String.format("turtle.%s.%s", AdvancedPeripherals.MOD_ID, name);
+        return String.format("turtle.%s.%s", AdvancedPeripherals.ITEM_MOD_ID, name);
     }
 
     public static String pocket(String name) {
-        return String.format("pocket.%s.%s", AdvancedPeripherals.MOD_ID, name);
+        return String.format("pocket.%s.%s", AdvancedPeripherals.ITEM_MOD_ID, name);
     }
 }

@@ -16,7 +16,7 @@ public class PoiTypeProvider extends PoiTypeTagsProvider {
 
 
     public PoiTypeProvider(DataGenerator pGenerator, @Nullable ExistingFileHelper existingFileHelper) {
-        super(pGenerator, AdvancedPeripherals.MOD_ID, existingFileHelper);
+        super(pGenerator, AdvancedPeripherals.ITEM_MOD_ID, existingFileHelper);
     }
 
     @Override

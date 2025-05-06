@@ -1,8 +1,8 @@
 package de.srendi.advancedperipherals.common.configuration;
 
-import de.srendi.advancedperipherals.common.addons.computercraft.operations.SimpleFreeOperation;
-import de.srendi.advancedperipherals.common.addons.computercraft.operations.SingleOperation;
-import de.srendi.advancedperipherals.common.addons.computercraft.operations.SphereOperation;
+// import de.srendi.advancedperipherals.common.addons.computercraft.operations.SimpleFreeOperation;
+// import de.srendi.advancedperipherals.common.addons.computercraft.operations.SingleOperation;
+// import de.srendi.advancedperipherals.common.addons.computercraft.operations.SphereOperation;
 import net.minecraft.FieldsAreNonnullByDefault;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.fml.config.ModConfig;
@@ -44,6 +44,7 @@ public class PeripheralsConfig implements IAPConfig {
     public final ForgeConfigSpec.ConfigValue<String> defaultChatBoxPrefix;
     public final ForgeConfigSpec.IntValue chatBoxMaxRange;
     public final ForgeConfigSpec.BooleanValue chatBoxMultiDimensional;
+    public final ForgeConfigSpec.BooleanValue chatBoxBroadcast;
     public final ForgeConfigSpec.BooleanValue chatBoxPreventRunCommand;
     public final ForgeConfigSpec.BooleanValue chatBoxWrapCommand;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> chatBoxBannedCommands;
@@ -147,6 +148,7 @@ public class PeripheralsConfig implements IAPConfig {
         defaultChatBoxPrefix = builder.comment("Defines default chatbox prefix").define("defaultChatBoxPrefix", "AP");
         chatBoxMaxRange = builder.comment("Defines the maximal range of the chat box in blocks. -1 for infinite. If the range is not -1, players in other dimensions won't able to receive messages").defineInRange("chatBoxMaxRange", -1, -1, 30000000);
         chatBoxMultiDimensional = builder.comment("If true, the chat box is able to send messages to other dimensions than its own").define("chatBoxMultiDimensional", true);
+        chatBoxBroadcast = builder.comment("If true, chat box will 'broadcast' the messages instead of sending one individually to each player. This option does not affect anything directly, and relies on other mods to utilise this behavior (for example, mods that bridge minecraft chat to other platforms can intercept broadcasted messages and relay them, unlike individually sent ones). This option will only go in effect if `chatBoxMaxRange` is set to `-1` and `chatBoxMultiDimensional` is also set to `true`.").define("chatBoxBroadcast", true);
         chatBoxPreventRunCommand = builder.comment("If true, the chat box cannot use 'run_command' action").define("chatBoxPreventRunCommand", false);
         chatBoxWrapCommand = builder.comment("If true, the chat box will wrap and execute 'run_command' or 'suggest_command' action with zero permission, in order to prevent operators accidently run dangerous commands.").define("chatBoxWrapCommand", true);
         chatBoxBannedCommands = builder.comment("These commands below will not be able to send by 'run_command' or 'suggest_command' action. It will match as prefix if starts with '/', other wise use regex pattern").defineList("chatBoxBannedCommands", chatBoxDefaultBannedCommands, (o) -> o instanceof String value && value.length() > 0);
@@ -205,9 +207,9 @@ public class PeripheralsConfig implements IAPConfig {
 
         pop("Operations", builder);
 
-        register(SingleOperation.values(), builder);
-        register(SphereOperation.values(), builder);
-        register(SimpleFreeOperation.values(), builder);
+        // register(SingleOperation.values(), builder);
+        // register(SphereOperation.values(), builder);
+        // register(SimpleFreeOperation.values(), builder);
 
         builder.pop();
 

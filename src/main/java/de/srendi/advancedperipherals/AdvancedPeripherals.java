@@ -1,9 +1,7 @@
 package de.srendi.advancedperipherals;
 
-import de.srendi.advancedperipherals.common.addons.APAddons;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.setup.Registration;
-import de.srendi.advancedperipherals.common.village.VillageStructures;
 import de.srendi.advancedperipherals.network.APNetworking;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
@@ -21,7 +19,8 @@ import java.util.Random;
 @Mod(AdvancedPeripherals.MOD_ID)
 public class AdvancedPeripherals {
 
-    public static final String MOD_ID = "advancedperipherals";
+    public static final String MOD_ID = "advancedperipherals_lite";
+    public static final String ITEM_MOD_ID = "advancedperipherals";
     public static final String NAME = "Advanced Peripherals";
     public static final Logger LOGGER = LogManager.getLogger(NAME);
     public static final Random RANDOM = new Random();
@@ -49,14 +48,12 @@ public class AdvancedPeripherals {
     }
 
     public static ResourceLocation getRL(String resource) {
-        return new ResourceLocation(MOD_ID, resource);
+        return new ResourceLocation(ITEM_MOD_ID, resource);
     }
 
     public void commonSetup(FMLCommonSetupEvent event) {
-        APAddons.commonSetup();
         event.enqueueWork(() -> {
             APNetworking.init();
-            VillageStructures.init();
         });
     }
 

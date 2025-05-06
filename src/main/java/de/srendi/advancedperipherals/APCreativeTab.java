@@ -1,7 +1,7 @@
 package de.srendi.advancedperipherals;
 
-import de.srendi.advancedperipherals.common.setup.Blocks;
 import de.srendi.advancedperipherals.common.setup.CCRegistration;
+import de.srendi.advancedperipherals.common.setup.Items;
 import de.srendi.advancedperipherals.common.setup.Registration;
 import de.srendi.advancedperipherals.common.util.inventory.ItemUtil;
 import net.minecraft.core.NonNullList;
@@ -23,25 +23,10 @@ public class APCreativeTab extends CreativeModeTab {
     @Override
     public void fillItemList(NonNullList<ItemStack> items) {
         Registration.ITEMS.getEntries().stream().map(RegistryObject::get).forEach(item -> items.add(new ItemStack(item)));
-        items.addAll(pocketUpgrade(CCRegistration.ID.COLONY_POCKET));
-        items.addAll(pocketUpgrade(CCRegistration.ID.CHATTY_POCKET));
-        items.addAll(pocketUpgrade(CCRegistration.ID.PLAYER_POCKET));
-        items.addAll(pocketUpgrade(CCRegistration.ID.ENVIRONMENT_POCKET));
-        items.addAll(pocketUpgrade(CCRegistration.ID.GEOSCANNER_POCKET));
 
-        items.addAll(turtleUpgrade(CCRegistration.ID.CHATTY_TURTLE));
         items.addAll(turtleUpgrade(CCRegistration.ID.CHUNKY_TURTLE));
         items.addAll(turtleUpgrade(CCRegistration.ID.COMPASS_TURTLE));
-        items.addAll(turtleUpgrade(CCRegistration.ID.PLAYER_TURTLE));
-        items.addAll(turtleUpgrade(CCRegistration.ID.ENVIRONMENT_TURTLE));
-        items.addAll(turtleUpgrade(CCRegistration.ID.GEOSCANNER_TURTLE));
 
-        items.addAll(turtleUpgrade(CCRegistration.ID.WEAK_AUTOMATA));
-        items.addAll(turtleUpgrade(CCRegistration.ID.OP_WEAK_AUTOMATA));
-        items.addAll(turtleUpgrade(CCRegistration.ID.HUSBANDRY_AUTOMATA));
-        items.addAll(turtleUpgrade(CCRegistration.ID.OP_HUSBANDRY_AUTOMATA));
-        items.addAll(turtleUpgrade(CCRegistration.ID.END_AUTOMATA));
-        items.addAll(turtleUpgrade(CCRegistration.ID.OP_END_AUTOMATA));
     }
 
     private static Collection<ItemStack> pocketUpgrade(ResourceLocation pocketId) {
@@ -57,6 +42,6 @@ public class APCreativeTab extends CreativeModeTab {
     @Override
     @NotNull
     public ItemStack makeIcon() {
-        return new ItemStack(Blocks.CHAT_BOX.get());
+        return new ItemStack(Items.CHUNK_CONTROLLER.get());
     }
 }

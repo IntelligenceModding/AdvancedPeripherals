@@ -1,6 +1,5 @@
 package de.srendi.advancedperipherals.common.configuration;
 
-import de.srendi.advancedperipherals.common.addons.computercraft.operations.AutomataCoreTier;
 import net.minecraft.FieldsAreNonnullByDefault;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.fml.config.ModConfig;
@@ -28,7 +27,7 @@ public class MetaphysicsConfig implements IAPConfig {
         endAutomataCoreWarpPointLimit = builder.comment("Defines max warp point stored in warp core. Mostly need to not allow NBT overflow error").defineInRange("endAutomataCoreWarpPointLimit", 64, 1, Integer.MAX_VALUE);
         overpoweredAutomataBreakChance = builder.comment("Chance that overpowered automata will break after rotation cycle").defineInRange("overpoweredAutomataBreakChance", 0.002, 0, 1);
 
-        register(AutomataCoreTier.values(), builder);
+        // register(AutomataCoreTier.values(), builder);
 
         builder.pop();
 

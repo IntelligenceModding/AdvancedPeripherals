@@ -1,6 +1,5 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.owner;
 
-import de.srendi.advancedperipherals.common.util.fakeplayer.APFakePlayer;
 import de.srendi.advancedperipherals.lib.peripherals.IPeripheralOperation;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -13,7 +12,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
-import java.util.function.Function;
 
 public interface IPeripheralOwner {
 
@@ -32,8 +30,6 @@ public interface IPeripheralOwner {
     @NotNull CompoundTag getDataStorage();
 
     void markDataStorageDirty();
-
-    <T> T withPlayer(Function<APFakePlayer, T> function);
 
     ItemStack getToolInMainHand();
 

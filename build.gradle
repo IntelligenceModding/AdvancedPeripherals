@@ -7,7 +7,6 @@ plugins {
     id 'net.darkhax.curseforgegradle' version '1.1.16'
     id 'org.jetbrains.changelog' version '1.2.1'
     id "com.modrinth.minotaur" version "2.+"
-    id "org.jetbrains.kotlin.jvm" version "1.6.10"
     id 'net.minecraftforge.gradle' version '[6.0.18,6.2)'
     id 'org.parchmentmc.librarian.forgegradle' version '1.+'
     id 'org.spongepowered.mixin' version '0.7.+'
@@ -30,7 +29,7 @@ wrapper {
 
 def isSnapshotVersion = project.hasProperty('teamcityBuild')
 
-version = "${mod_version}" + (isSnapshotVersion ? "-SNAPSHOT" : "")
+version = "${mod_version}" + (isSnapshotVersion ? "-SNAPSHOT" : "") + "${mod_artifact_suffix}"
 group = 'de.srendi.advancedperipherals'
 
 def static getenv(path = ".env") {
@@ -81,7 +80,7 @@ minecraft {
             properties 'forge.logging.console.level': 'debug'
 
             mods {
-                advancedperipherals {
+                advancedperipherals_lite {
                     source sourceSets.main
                 }
             }
@@ -105,7 +104,7 @@ minecraft {
             property 'forge.logging.console.level', 'info'
 
             mods {
-                advancedperipherals {
+                advancedperipherals_lite {
                     source sourceSets.main
                 }
             }
@@ -119,13 +118,13 @@ minecraft {
             property 'mixin.env.refMapRemappingFile', "${buildDir}/createSrgToMcp/output.srg"
             property 'forge.logging.console.level', 'debug'
 
-            args '--mod', 'advancedperipherals', '--all',
+            args '--mod', 'advancedperipherals_lite', '--all',
                     '--existing', file('src/main/resources').toString(),
                     '--existing', file('src/generated/resources').toString(),
                     '--output', file('src/generated/resources/')
 
             mods {
-                advancedperipherals {
+                advancedperipherals_lite {
                     source sourceSets.main
                 }
             }
@@ -170,14 +169,6 @@ minecraft {
 repositories {
     mavenCentral()
     maven {
-        name = "Blamejared maven botania patchouli"
-        url = 'https://maven.blamejared.com'
-        content {
-            includeGroup("vazkii.botania")
-            includeGroup("vazkii.patchouli")
-        }
-    }
-    maven {
         name = "Squiddev maven cct"
         url = 'https://squiddev.cc/maven/'
         content {
@@ -187,60 +178,12 @@ repositories {
         }
     }
     maven {
-        name = "Theillusivec4 maven curios"
-        url = "https://maven.theillusivec4.top/"
-        content {
-            includeGroup("top.theillusivec4.curios")
-        }
-    }
-    maven {
-        name = "LDT Team minecolonies"
-        url = 'https://ldtteam.jfrog.io/ldtteam/modding'
-        content {
-            includeGroup("com.ldtteam")
-        }
-    }
-    maven {
         name = "Modmaven Jei"
         url = 'https://modmaven.dev/'
         content {
             includeGroup("mezz.jei")
             includeGroup("appeng")
             includeGroup("mekanism")
-        }
-    }
-    maven {
-        name = "Create maven"
-        url = "https://maven.tterrag.com/"
-        content {
-            includeGroup("com.simibubi.create")
-            includeGroup("com.jozufozu.flywheel")
-            includeGroup("com.tterrag.registrate")
-        }
-    }
-    maven {
-        name = "Shedaniel cloth"
-        url = "https://maven.shedaniel.me/"
-        content {
-            includeGroup("dev.architectury")
-            includeGroup("me.shedaniel.cloth")
-        }
-    }
-    maven {
-        url = uri("https://maven.pkg.github.com/refinedmods/refinedstorage")
-        credentials {
-            username = "anything"
-            password = "\u0067hp_oGjcDFCn8jeTzIj4Ke9pLoEVtpnZMP4VQgaX"
-        }
-        content {
-            includeModule("com.refinedmods", "refinedstorage")
-        }
-    }
-    maven {
-        name = 'Kotlin for Forge'
-        url = 'https://thedarkcolour.github.io/KotlinForForge/'
-        content {
-            includeModule("thedarkcolour", "kotlinforforge")
         }
     }
     maven {
@@ -267,94 +210,18 @@ dependencies {
     implementation fg.deobf("org.squiddev:cc-tweaked-${minecraft_version}:${cc_version}")
     // Minimal requirements end
 
-    // Extended requirements
-    // We don't use the api since we need a specific class from mekanism
-    compileOnly fg.deobf("mekanism:Mekanism:${mekanism_version}")
-    runtimeOnly fg.deobf("mekanism:Mekanism:${mekanism_version}")
-
-    // Applied Energistics 2
-    compileOnly fg.deobf("appeng:appliedenergistics2-forge:${appliedenergistics_version}")
-    runtimeOnly fg.deobf("appeng:appliedenergistics2-forge:${appliedenergistics_version}")
-
-    // Applied Mekanistics
-    implementation fg.deobf("curse.maven:applied-mekanistics-574300:${appliedmekanistics_version}")
-
-    // Curios
-    compileOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}:api")
-    compileOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}")
-    runtimeOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}")
-
-    // Refined Storage
-    compileOnly fg.deobf("com.refinedmods:refinedstorage:${refinedstorage_version}") {
-        transitive false
-    }
-    runtimeOnly fg.deobf("com.refinedmods:refinedstorage:${refinedstorage_version}") {
-        transitive false
-    }
-
-    // AE2 Things
-    compileOnly fg.deobf("curse.maven:ae2things-609977:${ae2things_version}-sources")
-    //runtimeOnly fg.deobf("curse.maven:ae2things-609977:${ae2things_version}-sources")
-
-    // AE2 Additions
-    compileOnly fg.deobf("curse.maven:ae-additions-493962:${ae2additions_version}")
-    //runtimeOnly fg.deobf("curse.maven:ae-additions-493962:${ae2additions_version}")
-
-    implementation fg.deobf("thedarkcolour:kotlinforforge:${kotlinforforge_version}")
-
-    // Botania
-    compileOnly fg.deobf("vazkii.botania:Botania:${botania_version}")
-    runtimeOnly fg.deobf("vazkii.botania:Botania:${botania_version}")
-
-    // Minecolonies
-    // Change to compileOnly when running `runData`
-    compileOnly fg.deobf("com.ldtteam:minecolonies:${minecolonies_version}")
-    compileOnly fg.deobf("com.ldtteam:structurize:${structurize_version}")
-    compileOnly fg.deobf("com.ldtteam:multipiston:${multipiston_version}")
-    compileOnly fg.deobf("com.ldtteam:domum_ornamentum:${domumornamentum_version}:universal")
-    compileOnly fg.deobf("com.ldtteam:blockui:${blockui_version}")
-    // IMPORTANT. This should be removed/uncommented when running `runData`
-    runtimeOnly fg.deobf("com.ldtteam:minecolonies:${minecolonies_version}")
-    runtimeOnly fg.deobf("com.ldtteam:structurize:${structurize_version}")
-    runtimeOnly fg.deobf("com.ldtteam:multipiston:${multipiston_version}")
-    runtimeOnly fg.deobf("com.ldtteam:domum_ornamentum:${domumornamentum_version}:universal")
-    runtimeOnly fg.deobf("com.ldtteam:blockui:${blockui_version}")
-
-    //Patchouli
-    compileOnly fg.deobf("vazkii.patchouli:Patchouli:${patchouli_version}")
-    runtimeOnly fg.deobf("vazkii.patchouli:Patchouli:${patchouli_version}")
-
-    // Create
-    compileOnly fg.deobf("com.simibubi.create:create-${minecraft_version}:${create_version}:all")
-    runtimeOnly fg.deobf("com.simibubi.create:create-${minecraft_version}:${create_version}:all")
-
-    //Removed until fully ported
-    //testImplementation fg.deobf("site.siredvin.ttoolkit:ttoolkit-${minecraft_version}:${ttoolkit_version}")
-
-    //Powah
-    compileOnly fg.deobf("curse.maven:powah-633483:${powah_version}")
-    runtimeOnly fg.deobf("curse.maven:powah-633483:${powah_version}")
-    runtimeOnly fg.deobf("me.shedaniel.cloth:cloth-config-forge:8.2.88")
-    runtimeOnly fg.deobf("dev.architectury:architectury-forge:6.2.43")
-
-    // Crash utilities. Used to debug the chunky turtle. Can be uncommented if not needed
+    // Crash utilities. Used to debug the chunky turtle. Can be commented if not needed
     runtimeOnly fg.deobf("curse.maven:crash-utilities-371813:4406293")
 
     testImplementation "org.junit.jupiter:junit-jupiter-api:${junit_version}"
     testImplementation "org.junit.jupiter:junit-jupiter-params:${junit_version}"
     testImplementation "org.hamcrest:hamcrest:${hamcrest_version}"
-    testImplementation "org.jetbrains.kotlin:kotlin-reflect:${kotlin_version}"
-    testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:${kotlinx_coroutines_version}"
     testModImplementation sourceSets.main.output
 
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junit_version}"
     // Testing stuff
     // JEI
     implementation fg.deobf("mezz.jei:jei-${jei_version}")
-
-    // Create Crafts & Additions
-    compileOnly fg.deobf("curse.maven:createaddition-439890:5099757")
-    // runtimeOnly fg.deobf("curse.maven:createaddition-439890:5099757")
 }
 
 
@@ -428,7 +295,7 @@ jar {
                     "Implementation-Vendor"   : "Srendi",
                     "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")])
     })
-    archiveFileName = "AdvancedPeripherals-${minecraft_version}-${mod_version}.jar"
+    archiveFileName = "AdvancedPeripherals-lite-${minecraft_version}-${mod_version}.jar"
 }
 
 jar.finalizedBy('reobfJar')
@@ -449,16 +316,7 @@ tasks.named('processResources', ProcessResources).configure {
                              loader_version            : loader_version,
                              mod_id                    : mod_id,
                              version                   : version,
-                             cc_version                : cc_version,
-                             curios_version            : curios_version,
-                             minecolonies_version      : minecolonies_version,
-                             appliedenergistics_version: appliedenergistics_version,
-                             patchouli_version         : patchouli_version,
-                             refinedstorage_version    : refinedstorage_version,
-                             botania_version           : botania_version,
-                             mekanism_version          : mekanism_version,
-                             ae2things_version         : ae2things_version,
-                             powah_version             : powah_version,]
+                             cc_version                : cc_version,]
 
     inputs.properties replaceProperties
 
@@ -548,7 +406,7 @@ publishing {
             publication.from((SoftwareComponent) components.java)
             publication.groupId = project.group
             publication.version = isSnapshotVersion ? "${minecraft_version}-${version}-${project.teamcityBuild}" : "${minecraft_version}-${version}"
-            publication.artifactId =  isSnapshotVersion ? "advancedperipherals-snapshots" : "advancedperipherals"
+            publication.artifactId =  isSnapshotVersion ? "advancedperipherals-lite-snapshots" : "advancedperipherals-lite"
             publication.artifacts = [jar, sourcesJar]
             publication.pom {
                 name.set("AdvancedPeripherals")
@@ -557,11 +415,11 @@ publishing {
                         'It also integrates with multiple third party mods.')
                 url.set('https://docs.intelligence-modding.de/')
                 scm {
-                    url.set('https://github.com/SirEndii/AdvancedPeripherals.git')
+                    url.set('https://github.com/IntelligenceModding/AdvancedPeripherals.git')
                 }
                 issueManagement {
                     system.set('github')
-                    url.set('https://github.com/SirEndii/AdvancedPeripherals/issues')
+                    url.set('https://github.com/IntelligenceModding/AdvancedPeripherals/issues')
                 }
                 licenses {
                     license {

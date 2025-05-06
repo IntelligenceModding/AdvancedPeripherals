@@ -2,7 +2,6 @@ package de.srendi.advancedperipherals.common.data;
 
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.blocks.base.BaseBlock;
-import de.srendi.advancedperipherals.common.setup.Blocks;
 import net.minecraft.core.Direction;
 import net.minecraft.core.FrontAndTop;
 import net.minecraft.data.DataGenerator;
@@ -15,27 +14,11 @@ import net.minecraftforge.registries.ForgeRegistries;
 public class BlockStatesAndModelsProvider extends BlockStateProvider {
 
     public BlockStatesAndModelsProvider(DataGenerator packOutput, ExistingFileHelper exFileHelper) {
-        super(packOutput, AdvancedPeripherals.MOD_ID, exFileHelper);
+        super(packOutput, AdvancedPeripherals.ITEM_MOD_ID, exFileHelper);
     }
 
     @Override
     protected void registerStatesAndModels() {
-        peripheralBlock(Blocks.ENVIRONMENT_DETECTOR.get(), "front");
-        peripheralBlock(Blocks.CHAT_BOX.get(), "front");
-        peripheralBlock(Blocks.PLAYER_DETECTOR.get(), "side", "front");
-        peripheralBlock(Blocks.ME_BRIDGE.get(), "front");
-        peripheralBlock(Blocks.RS_BRIDGE.get(), "front");
-        peripheralBlock(Blocks.ENERGY_DETECTOR.get(), "front", "back");
-        peripheralBlock(Blocks.PERIPHERAL_CASING.get());
-        peripheralBlock(Blocks.INVENTORY_MANAGER.get(), "front");
-        peripheralBlock(Blocks.REDSTONE_INTEGRATOR.get(), "front");
-        peripheralBlock(Blocks.BLOCK_READER.get(), generateModel(Blocks.BLOCK_READER.get(), false, "north", "south", "east", "west", "up", "down"));
-        peripheralBlock(Blocks.GEO_SCANNER.get(), "front");
-        peripheralBlock(Blocks.COLONY_INTEGRATOR.get(), generateModel(Blocks.COLONY_INTEGRATOR.get())
-                .texture("particle", blockTexture(Blocks.COLONY_INTEGRATOR.get()))
-                .texture("up", blockTexture(net.minecraft.world.level.block.Blocks.OAK_LOG, "top"))
-                .texture("down", blockTexture(net.minecraft.world.level.block.Blocks.OAK_LOG, "top")));
-        peripheralBlock(Blocks.NBT_STORAGE.get(), "front");
     }
 
     private void peripheralBlock(Block block, ModelFile file) {

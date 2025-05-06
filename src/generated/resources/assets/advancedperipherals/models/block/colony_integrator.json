@@ -1,9 +1,0 @@
-{
-  "parent": "minecraft:block/cube_all",
-  "textures": {
-    "all": "advancedperipherals:block/colony_integrator",
-    "down": "minecraft:block/oak_log_top",
-    "particle": "advancedperipherals:block/colony_integrator",
-    "up": "minecraft:block/oak_log_top"
-  }
-}

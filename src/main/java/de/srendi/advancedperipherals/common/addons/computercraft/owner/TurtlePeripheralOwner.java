@@ -7,8 +7,6 @@ import dan200.computercraft.api.turtle.TurtleSide;
 import dan200.computercraft.shared.TurtlePermissions;
 import dan200.computercraft.shared.util.InventoryUtil;
 import de.srendi.advancedperipherals.common.util.DataStorageUtil;
-import de.srendi.advancedperipherals.common.util.fakeplayer.APFakePlayer;
-import de.srendi.advancedperipherals.common.util.fakeplayer.FakePlayerProviderTurtle;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.FrontAndTop;
@@ -18,8 +16,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.function.Function;
 
 public class TurtlePeripheralOwner extends BasePeripheralOwner {
     public final ITurtleAccess turtle;
@@ -65,7 +61,9 @@ public class TurtlePeripheralOwner extends BasePeripheralOwner {
     @Override
     public Player getOwner() {
         GameProfile owningPlayer = turtle.getOwningPlayer();
-        if (owningPlayer == null) return null;
+        if (owningPlayer == null) {
+            return null;
+        }
         return turtle.getLevel().getPlayerByUUID(owningPlayer.getId());
     }
 
@@ -78,11 +76,6 @@ public class TurtlePeripheralOwner extends BasePeripheralOwner {
     @Override
     public void markDataStorageDirty() {
         turtle.updateUpgradeNBTData(side);
-    }
-
-    @Override
-    public <T> T withPlayer(Function<APFakePlayer, T> function) {
-        return FakePlayerProviderTurtle.withPlayer(turtle, function);
     }
 
     @Override
@@ -102,14 +95,21 @@ public class TurtlePeripheralOwner extends BasePeripheralOwner {
 
     @Override
     public boolean isMovementPossible(@NotNull Level level, @NotNull BlockPos pos) {
-        return FakePlayerProviderTurtle.withPlayer(turtle, player -> {
-            if (level.isOutsideBuildHeight(pos)) return false;
-            if (!level.isInWorldBounds(pos)) return false;
-            if (ComputerCraft.turtlesObeyBlockProtection && !TurtlePermissions.isBlockEnterable(level, pos, player))
-                return false;
-            if (!level.isAreaLoaded(pos, 0)) return false;
-            return level.getWorldBorder().isWithinBounds(pos);
-        });
+        GameProfile profile = turtle.getOwningPlayer();
+        Player player = profile == null ? null : turtle.getLevel().getPlayerByUUID(profile.getId());
+        if (level.isOutsideBuildHeight(pos)) {
+            return false;
+        }
+        if (!level.isInWorldBounds(pos)) {
+            return false;
+        }
+        if (ComputerCraft.turtlesObeyBlockProtection && player != null && !TurtlePermissions.isBlockEnterable(level, pos, player)) {
+            return false;
+        }
+        if (!level.isAreaLoaded(pos, 0)) {
+            return false;
+        }
+        return level.getWorldBorder().isWithinBounds(pos);
     }
 
     @Override

@@ -3,7 +3,6 @@ package de.srendi.advancedperipherals.common.addons.computercraft.owner;
 import dan200.computercraft.api.pocket.IPocketAccess;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.util.DataStorageUtil;
-import de.srendi.advancedperipherals.common.util.fakeplayer.APFakePlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.FrontAndTop;
@@ -14,8 +13,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.function.Function;
 
 public class PocketPeripheralOwner extends BasePeripheralOwner {
     private final IPocketAccess pocket;
@@ -84,11 +81,6 @@ public class PocketPeripheralOwner extends BasePeripheralOwner {
     @Override
     public void markDataStorageDirty() {
         pocket.updateUpgradeNBTData();
-    }
-
-    @Override
-    public <T> T withPlayer(Function<APFakePlayer, T> function) {
-        throw new RuntimeException("Not implemented yet");
     }
 
     @Override

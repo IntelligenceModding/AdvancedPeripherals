@@ -26,7 +26,7 @@ public class BlockTagsProvider extends TagsProvider<Block> {
     private final DataGenerator generator;
 
     public BlockTagsProvider(DataGenerator generator, @Nullable ExistingFileHelper existingFileHelper, @NotNull DeferredRegister<Block> blockRegistry) {
-        super(generator, Registry.BLOCK, AdvancedPeripherals.MOD_ID, existingFileHelper);
+        super(generator, Registry.BLOCK, AdvancedPeripherals.ITEM_MOD_ID, existingFileHelper);
         this.blockRegistry = blockRegistry;
         this.generator = generator;
     }

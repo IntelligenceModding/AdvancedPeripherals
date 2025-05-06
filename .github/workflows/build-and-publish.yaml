@@ -1,0 +1,64 @@
+name: Build and Test
+
+on:
+  workflow_dispatch:
+  push:
+  pull_request:
+    types:
+      - opened
+      - synchronize
+
+jobs:
+  generate-artifact-name:
+    runs-on: self-hosted
+    outputs:
+      name: ${{ steps.name.outputs.name }}
+    steps:
+      - name: Generate Name
+        id: name
+        run: |
+          if [[ "${{ github.event_name }}" == 'pull_request' ]]; then
+            suffix="PR ${{ github.event.number }}"
+          else
+            ref="${{ github.ref }}"
+            ref="${ref#refs/heads/}"
+            suffix="${ref//\//-}"
+          fi
+          name="AdvancedPeripherals $suffix"
+          echo "name: $name"
+          echo "name=$name" >> "$GITHUB_OUTPUT"
+
+  build-and-test:
+    needs:
+      - generate-artifact-name
+    uses: IntelligenceModding/actions/.github/workflows/build-and-test.yaml@master
+    with:
+      build_name: ${{ needs.generate-artifact-name.outputs.name }}
+      pr: ${{ github.event_name == 'pull_request' && github.event.number || '' }}
+      check: ${{ github.event_name != 'push' }}
+
+  publish:
+    if: ${{ github.event_name == 'push' && contains(github.ref, 'release/') }}
+    runs-on: self-hosted
+    needs:
+      - build-and-test
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v4
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+      - name: Download Builds
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ needs.build-and-test.outputs.artifact-name }}
+          path: build/libs
+      - name: Patch Changelog
+        run: ./gradlew patchChangelog
+      - name: Github Release
+        run: ./gradlew githubRelease
+      - name: Publish Maven
+        run: ./gradlew publishAllPublicationsToPublicRepository
+      - name: Publish Modrinth
+        run: ./gradlew modrinth
+      - name: Publish CurseForge
+        run: ./gradlew publishCurseForge
