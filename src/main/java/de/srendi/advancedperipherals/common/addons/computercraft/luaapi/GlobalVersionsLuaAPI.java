@@ -13,12 +13,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-public class GlobalAPHelperAPI implements ILuaAPI {
+public class GlobalVersionsLuaAPI implements ILuaAPI {
 
-    private static final String NAME = "ap_helper";
-
-    public GlobalAPHelperAPI() {
-    }
+    private static final String NAME = AdvancedPeripherals.MOD_ID;
 
     @Override
     public String[] getNames() {
