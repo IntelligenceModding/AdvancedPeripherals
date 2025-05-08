@@ -11,6 +11,8 @@ import net.minecraft.world.level.gameevent.GameEvent;
 import net.neoforged.neoforge.common.CommonHooks;
 import org.jetbrains.annotations.NotNull;
 
+import static net.minecraft.world.level.block.NoteBlock.INSTRUMENT;
+
 public class NoteBlockIntegration extends BlockIntegrationPeripheral<NoteBlock> {
 
     public NoteBlockIntegration(Level world, BlockPos pos) {
@@ -50,7 +52,8 @@ public class NoteBlockIntegration extends BlockIntegrationPeripheral<NoteBlock> 
 
     @LuaFunction(mainThread = true)
     public final void playNote() {
-        if (world.isEmptyBlock(pos.above())) {
+        BlockState state = world.getBlockState(pos);
+        if (state.getValue(INSTRUMENT).worksAboveNoteBlock() || world.getBlockState(pos.above()).isAir()) {
             world.blockEvent(pos, getBlock(), 0, 0);
             world.gameEvent(null, GameEvent.NOTE_BLOCK_PLAY, pos);
         }

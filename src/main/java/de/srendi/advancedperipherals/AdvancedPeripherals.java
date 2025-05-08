@@ -3,6 +3,7 @@ package de.srendi.advancedperipherals;
 import dan200.computercraft.api.peripheral.PeripheralCapability;
 import de.srendi.advancedperipherals.common.addons.APAddons;
 import de.srendi.advancedperipherals.common.addons.appliedenergistics.AppEngApi;
+import de.srendi.advancedperipherals.common.addons.computercraft.integrations.IntegrationPeripheralProvider;
 import de.srendi.advancedperipherals.common.addons.refinedstorage.RSApi;
 import de.srendi.advancedperipherals.common.blocks.base.ICapabilityProvider;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
@@ -123,5 +124,8 @@ public class AdvancedPeripherals {
             AppEngApi.registerCapabilities(event);
         if (APAddons.refinedStorageLoaded)
             RSApi.registerCapabilities(event);
+
+        IntegrationPeripheralProvider.registerBlockIntegrations(event);
+
     }
 }
