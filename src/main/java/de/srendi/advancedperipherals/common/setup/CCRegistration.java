@@ -50,7 +50,7 @@ public class CCRegistration {
 
     public static void register() {
         IntegrationPeripheralProvider.load();
-        ComputerCraftAPI.registerAPIFactory(unused -> new GlobalVersionsLuaAPI());
+        ComputerCraftAPI.registerAPIFactory(unused -> GlobalVersionsLuaAPI.INSTANCE);
     }
 
     public static class ID {

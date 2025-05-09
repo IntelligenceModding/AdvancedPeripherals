@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.Optional;
 
 public class GlobalVersionsLuaAPI implements ILuaAPI {
+    public static final String INSTANCE = new GlobalVersionsLuaAPI();
 
     private static final String NAME = AdvancedPeripherals.MOD_ID;
 
