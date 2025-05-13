@@ -22,7 +22,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.Objects;
 
 public class FluidUtil {
@@ -108,14 +107,13 @@ public class FluidUtil {
     @NotNull
     public static String getFingerprint(@NotNull FluidStack stack) {
         String fingerprint = stack.getComponents() + getRegistryKey(stack).toString() + stack.getDisplayName().getString();
-        try {
-            byte[] bytesOfHash = fingerprint.getBytes(StandardCharsets.UTF_8);
-            MessageDigest md = MessageDigest.getInstance("MD5");
+
+        byte[] bytesOfHash = fingerprint.getBytes(StandardCharsets.UTF_8);
+        MessageDigest md = AdvancedPeripherals.getFingerprintMessageDigest();
+        if (md != null) {
             return StringUtil.toHexString(md.digest(bytesOfHash));
-        } catch (NoSuchAlgorithmException ex) {
-            AdvancedPeripherals.debug("Could not parse fingerprint.", org.apache.logging.log4j.Level.ERROR);
-            ex.printStackTrace();
         }
+
         return "";
     }
 
