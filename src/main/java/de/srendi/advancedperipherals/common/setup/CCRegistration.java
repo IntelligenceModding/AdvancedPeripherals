@@ -1,10 +1,12 @@
 package de.srendi.advancedperipherals.common.setup;
 
+import dan200.computercraft.api.ComputerCraftAPI;
 import dan200.computercraft.api.pocket.IPocketUpgrade;
 import dan200.computercraft.api.turtle.ITurtleUpgrade;
 import dan200.computercraft.api.upgrades.UpgradeType;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.addons.computercraft.integrations.IntegrationPeripheralProvider;
+import de.srendi.advancedperipherals.common.addons.computercraft.luaapi.GlobalVersionsLuaAPI;
 import de.srendi.advancedperipherals.common.addons.computercraft.pocket.PocketChatBoxUpgrade;
 import de.srendi.advancedperipherals.common.addons.computercraft.pocket.PocketColonyIntegratorUpgrade;
 import de.srendi.advancedperipherals.common.addons.computercraft.pocket.PocketEnvironmentUpgrade;
@@ -48,6 +50,7 @@ public class CCRegistration {
 
     public static void register() {
         IntegrationPeripheralProvider.load();
+        ComputerCraftAPI.registerAPIFactory(unused -> GlobalVersionsLuaAPI.INSTANCE);
     }
 
     public static class ID {

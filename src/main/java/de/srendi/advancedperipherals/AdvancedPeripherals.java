@@ -1,7 +1,7 @@
 package de.srendi.advancedperipherals;
 
 import dan200.computercraft.api.peripheral.PeripheralCapability;
-import de.srendi.advancedperipherals.common.addons.APAddons;
+import de.srendi.advancedperipherals.common.addons.APAddon;
 import de.srendi.advancedperipherals.common.addons.appliedenergistics.AppEngApi;
 import de.srendi.advancedperipherals.common.addons.computercraft.integrations.IntegrationPeripheralProvider;
 import de.srendi.advancedperipherals.common.addons.refinedstorage.RSApi;
@@ -37,7 +37,7 @@ public class AdvancedPeripherals {
 
     public AdvancedPeripherals(IEventBus modBus) {
         LOGGER.info("AdvancedPeripherals says hello!");
-        APAddons.setup();
+        APAddon.setup();
 
         APConfig.register(ModLoadingContext.get());
 
@@ -120,9 +120,9 @@ public class AdvancedPeripherals {
                     });
         });
 
-        if (APAddons.ae2Loaded)
+        if (APAddon.AE2.isLoaded())
             AppEngApi.registerCapabilities(event);
-        if (APAddons.refinedStorageLoaded)
+        if (APAddon.REFINEDSTORAGE.isLoaded())
             RSApi.registerCapabilities(event);
 
         IntegrationPeripheralProvider.registerBlockIntegrations(event);
