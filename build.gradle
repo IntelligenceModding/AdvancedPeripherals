@@ -383,6 +383,23 @@ tasks.register('publishCurseForge', TaskPublishCurseForge, { task ->
     }
 })
 
+tasks.register("copyBlockTextures", Copy) {
+    from 'src/generated/block-textures'
+    into "src/generated/resources/assets/${project.mod_id}/textures/block"
+}
+
+tasks.named("runData") {
+    finalizedBy("copyBlockTextures")
+}
+
+tasks.named("processResources") {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+
+tasks.withType(Jar).configureEach {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+
 githubRelease {
     releaseAssets = jar.archiveFile
 

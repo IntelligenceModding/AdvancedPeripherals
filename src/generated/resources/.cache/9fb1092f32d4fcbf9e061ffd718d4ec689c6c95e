@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 // 1.21.1	2025-05-07T00:17:51.4050745	Recipes
+=======
+// 1.21.1	2025-05-17T23:25:29.957441838	Recipes
+>>>>>>> dc1425e3 (new procedurally generated textures for the blocks)
 f5ba1f7d129c88dca1a13c8deaae2d269644c7fa data/advancedperipherals/advancement/recipes/redstone/block_reader.json
 e172645262ade9fc4a1c999a2c0041711c2eab55 data/advancedperipherals/advancement/recipes/redstone/chat_box.json
 213de9a7e340c5eb9c01d82a72e7b58921c5290a data/advancedperipherals/advancement/recipes/redstone/chunk_controller.json
@@ -8,8 +12,8 @@ e172645262ade9fc4a1c999a2c0041711c2eab55 data/advancedperipherals/advancement/re
 a681c8e71de169543d040cb642a73c78c869996a data/advancedperipherals/advancement/recipes/redstone/environment_detector.json
 6185db5c5e46fd50689be5a09148fac3ca6597a4 data/advancedperipherals/advancement/recipes/redstone/geo_scanner.json
 e42a673e5560588d9e15a588fde9b1007cb5cb92 data/advancedperipherals/advancement/recipes/redstone/inventory_manager.json
-baecdaf090fa243789d5556b7805ffef90982b89 data/advancedperipherals/advancement/recipes/redstone/memory_card.json
 dc9dca7938a135dd5457ecf87c4f7d381a903412 data/advancedperipherals/advancement/recipes/redstone/me_bridge.json
+baecdaf090fa243789d5556b7805ffef90982b89 data/advancedperipherals/advancement/recipes/redstone/memory_card.json
 c348c8990fc9bbd21509241ce44d082588a22acb data/advancedperipherals/advancement/recipes/redstone/nbt_storage.json
 f218420f4c94524614229bb2d50e5c7f8e6beb28 data/advancedperipherals/advancement/recipes/redstone/overpowered_end_automata_core.json
 5c2eb93fbe93dadac77d14a9c8aa2e93e3e926c0 data/advancedperipherals/advancement/recipes/redstone/overpowered_husbandry_automata_core.json
@@ -27,8 +31,8 @@ c8d06dd085c0477f94d90f3a5f0800c3efc08d02 data/advancedperipherals/recipe/chat_bo
 a276eb3b9827c19ced8123f46a69c1a0e767604f data/advancedperipherals/recipe/environment_detector.json
 99514e8880e42821c00e7faafb2e722bb01a326c data/advancedperipherals/recipe/geo_scanner.json
 68bc0e72ef07f424ea6e911b1aa02c6791100c1a data/advancedperipherals/recipe/inventory_manager.json
-4f6d83b8d9f9b07bea06e382ae2858e019f27b8f data/advancedperipherals/recipe/memory_card.json
 75c8f4f5c1c9edd1d94f3d9dfb0ac2dc6a1a3cbc data/advancedperipherals/recipe/me_bridge.json
+4f6d83b8d9f9b07bea06e382ae2858e019f27b8f data/advancedperipherals/recipe/memory_card.json
 51a26059ee5e9d8572560d404cb9874e8fd30416 data/advancedperipherals/recipe/nbt_storage.json
 ba80666226c2a0d1aa30709e31756ca27076069a data/advancedperipherals/recipe/overpowered_end_automata_core.json
 54f0e79105f168a6cb67772b39d73f0a6c3da563 data/advancedperipherals/recipe/overpowered_husbandry_automata_core.json

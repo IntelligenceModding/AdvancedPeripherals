@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 // 1.21.1	2025-05-07T00:17:51.4040751	Loot Tables
+=======
+// 1.21.1	2025-05-17T23:25:29.957241602	Loot Tables
+>>>>>>> dc1425e3 (new procedurally generated textures for the blocks)
 9b54955770745d55de988a86cbd08aa9ae23ff86 data/advancedperipherals/loot_table/blocks/block_reader.json
 d4f1bc579f83dc67ce9f94d35926d34b8894c990 data/advancedperipherals/loot_table/blocks/chat_box.json
 9ac96b8e3da827886d8da459a2f146e8ae3ee798 data/advancedperipherals/loot_table/blocks/colony_integrator.json
