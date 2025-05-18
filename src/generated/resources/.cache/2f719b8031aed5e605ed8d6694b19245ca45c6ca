@@ -1,7 +1,2 @@
-<<<<<<< HEAD
-// 1.21.1	2025-05-07T00:17:51.4075794	Languages: en_us for mod: advancedperipherals
+// 1.21.1	2025-05-18T07:14:34.271757589	Languages: en_us for mod: advancedperipherals
 4d8689d30caa2e8181f6c64f04b26ee3e3a9935a assets/advancedperipherals/lang/en_us.json
-=======
-// 1.21.1	2025-05-17T23:25:29.958404511	Languages: en_us for mod: advancedperipherals
-df95afe714aeff7559b0093257aeca501dabb1e2 assets/advancedperipherals/lang/en_us.json
->>>>>>> dc1425e3 (new procedurally generated textures for the blocks)

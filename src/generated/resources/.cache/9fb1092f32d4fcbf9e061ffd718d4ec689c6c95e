@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-// 1.21.1	2025-05-07T00:17:51.4050745	Recipes
-=======
-// 1.21.1	2025-05-17T23:25:29.957441838	Recipes
->>>>>>> dc1425e3 (new procedurally generated textures for the blocks)
+// 1.21.1	2025-05-18T07:14:34.271178913	Recipes
 f5ba1f7d129c88dca1a13c8deaae2d269644c7fa data/advancedperipherals/advancement/recipes/redstone/block_reader.json
 e172645262ade9fc4a1c999a2c0041711c2eab55 data/advancedperipherals/advancement/recipes/redstone/chat_box.json
 213de9a7e340c5eb9c01d82a72e7b58921c5290a data/advancedperipherals/advancement/recipes/redstone/chunk_controller.json
