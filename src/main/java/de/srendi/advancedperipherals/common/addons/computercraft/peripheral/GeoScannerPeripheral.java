@@ -101,7 +101,12 @@ public class GeoScannerPeripheral extends BasePeripheral<IPeripheralOwner> {
 
     @LuaFunction(mainThread = true)
     public final MethodResult chunkAnalyze() throws LuaException {
-        return withOperation(SCAN_BLOCKS, SCAN_BLOCKS.free(), null, ignored -> {
+        return withOperation(SCAN_BLOCKS, SCAN_BLOCKS.free(), context -> {
+            if (owner.getOwner() == null)
+                return MethodResult.of(null, "NOT_ATTACHED_TO_ENTITY");
+            return null;
+        }, ignored -> {
+
             Level level = getLevel();
             LevelChunk chunk = level.getChunkAt(getPos());
             ChunkPos chunkPos = chunk.getPos();
@@ -127,6 +132,9 @@ public class GeoScannerPeripheral extends BasePeripheral<IPeripheralOwner> {
     public final MethodResult scan(@NotNull IArguments arguments) throws LuaException {
         int radius = arguments.getInt(0);
         return withOperation(SCAN_BLOCKS, new SphereOperationContext(radius), context -> {
+            if (owner.getOwner() == null)
+                return MethodResult.of(null, "NOT_ATTACHED_TO_ENTITY");
+
             if (context.getRadius() > SCAN_BLOCKS.getMaxCostRadius()) {
                 return MethodResult.of(null, "Radius is exceed max value");
             }

@@ -61,6 +61,9 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
 
     @LuaFunction(mainThread = true)
     public final MethodResult getPlayersInCoords(Map<?, ?> firstCoord, Map<?, ?> secondCoord) throws LuaException {
+        if (owner.getOwner() == null)
+            return MethodResult.of(null, "NOT_ATTACHED_TO_ENTITY");
+
         List<String> playersName = new ArrayList<>();
         BlockPos firstPos = LuaConverter.convertToBlockPos(firstCoord);
         BlockPos secondPos = LuaConverter.convertToBlockPos(secondCoord);
@@ -76,7 +79,10 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
     }
 
     @LuaFunction(mainThread = true)
-    public final List<String> getPlayersInCubic(int x, int y, int z) {
+    public final MethodResult getPlayersInCubic(int x, int y, int z) {
+        if (owner.getOwner() == null)
+            return MethodResult.of(null, "NOT_ATTACHED_TO_ENTITY");
+
         List<String> playersName = new ArrayList<>();
         ResourceKey<Level> dimension = getLevel().dimension();
 
@@ -86,11 +92,14 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
             if (CoordUtil.isInRange(getPos(), getLevel(), player, x, y, z, MAX_RANGE))
                 playersName.add(player.getName().getString());
         }
-        return playersName;
+        return MethodResult.of(playersName);
     }
 
     @LuaFunction(mainThread = true)
-    public final List<String> getPlayersInRange(int range) {
+    public final MethodResult getPlayersInRange(int range) {
+        if (owner.getOwner() == null)
+            return MethodResult.of(null, "NOT_ATTACHED_TO_ENTITY");
+
         List<String> playersName = new ArrayList<>();
         ResourceKey<Level> dimension = getLevel().dimension();
 
@@ -100,13 +109,16 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
             if (CoordUtil.isInRange(getPos(), getLevel(), player, range, MAX_RANGE))
                 playersName.add(player.getName().getString());
         }
-        return playersName;
+        return MethodResult.of(playersName);
     }
 
     @LuaFunction(mainThread = true)
-    public final boolean isPlayersInCoords(Map<?, ?> firstCoord, Map<?, ?> secondCoord) throws LuaException {
+    public final MethodResult isPlayersInCoords(Map<?, ?> firstCoord, Map<?, ?> secondCoord) throws LuaException {
+        if (owner.getOwner() == null)
+            return MethodResult.of(false, "NOT_ATTACHED_TO_ENTITY");
+
         if (getPlayers().isEmpty())
-            return false;
+            return MethodResult.of(false);
         BlockPos firstPos = LuaConverter.convertToBlockPos(firstCoord);
         BlockPos secondPos = LuaConverter.convertToBlockPos(secondCoord);
         ResourceKey<Level> dimension = getLevel().dimension();
@@ -114,41 +126,50 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
         for (ServerPlayer player : getPlayers()) {
             if (!isAllowedMultiDimensional() && player.level().dimension() != dimension)
                 continue;
-            if (CoordUtil.isInRange(getPos(), player, getLevel(), firstPos, secondPos, MAX_RANGE)) return true;
+            if (CoordUtil.isInRange(getPos(), player, getLevel(), firstPos, secondPos, MAX_RANGE)) return MethodResult.of(true);
         }
-        return false;
+        return MethodResult.of(false);
     }
 
     @LuaFunction(mainThread = true)
-    public final boolean isPlayersInCubic(int x, int y, int z) {
+    public final MethodResult isPlayersInCubic(int x, int y, int z) {
+        if (owner.getOwner() == null)
+            return MethodResult.of(false, "NOT_ATTACHED_TO_ENTITY");
+
         if (getPlayers().isEmpty())
-            return false;
+            return MethodResult.of(false);
         ResourceKey<Level> dimension = getLevel().dimension();
 
         for (ServerPlayer player : getPlayers()) {
             if (!isAllowedMultiDimensional() && player.level().dimension() != dimension)
                 continue;
-            if (CoordUtil.isInRange(getPos(), getLevel(), player, x, y, z, MAX_RANGE)) return true;
+            if (CoordUtil.isInRange(getPos(), getLevel(), player, x, y, z, MAX_RANGE)) return MethodResult.of(true);
         }
-        return false;
+        return MethodResult.of(false);
     }
 
     @LuaFunction(mainThread = true)
-    public final boolean isPlayersInRange(int range) {
+    public final MethodResult isPlayersInRange(int range) {
+        if (owner.getOwner() == null)
+            return MethodResult.of(false, "NOT_ATTACHED_TO_ENTITY");
+
         if (getPlayers().isEmpty())
-            return false;
+            return MethodResult.of(false);
         ResourceKey<Level> dimension = getLevel().dimension();
 
         for (ServerPlayer player : getPlayers()) {
             if (!isAllowedMultiDimensional() && player.level().dimension() != dimension)
                 continue;
-            if (CoordUtil.isInRange(getPos(), getLevel(), player, range, MAX_RANGE)) return true;
+            if (CoordUtil.isInRange(getPos(), getLevel(), player, range, MAX_RANGE)) return MethodResult.of(true);
         }
-        return false;
+        return MethodResult.of(false);
     }
 
     @LuaFunction(mainThread = true)
-    public final boolean isPlayerInCoords(Map<?, ?> firstCoord, Map<?, ?> secondCoord, String username) throws LuaException {
+    public final MethodResult isPlayerInCoords(Map<?, ?> firstCoord, Map<?, ?> secondCoord, String username) throws LuaException {
+        if (owner.getOwner() == null)
+            return MethodResult.of(false, "NOT_ATTACHED_TO_ENTITY");
+
         BlockPos firstPos = LuaConverter.convertToBlockPos(firstCoord);
         BlockPos secondPos = LuaConverter.convertToBlockPos(secondCoord);
         ResourceKey<Level> dimension = getLevel().dimension();
@@ -158,13 +179,16 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
                 continue;
             if (CoordUtil.isInRange(getPos(), player, getLevel(), firstPos, secondPos, MAX_RANGE))
                 if(player.getName().getString().equals(username))
-                    return true;
+                    return MethodResult.of(true);
         }
-        return false;
+        return MethodResult.of(false);
     }
 
     @LuaFunction(mainThread = true)
-    public final boolean isPlayerInCubic(int x, int y, int z, String username) {
+    public final MethodResult isPlayerInCubic(int x, int y, int z, String username) {
+        if (owner.getOwner() == null)
+            return MethodResult.of(false, "NOT_ATTACHED_TO_ENTITY");
+
         ResourceKey<Level> dimension = getLevel().dimension();
 
         for (Player player : getPlayers()) {
@@ -172,14 +196,17 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
                 continue;
             if (CoordUtil.isInRange(getPos(), getLevel(), player, x, y, z, MAX_RANGE)) {
                 if(player.getName().getString().equals(username))
-                    return true;
+                    return MethodResult.of(true);
             }
         }
-        return false;
+        return MethodResult.of(false);
     }
 
     @LuaFunction(mainThread = true)
-    public final boolean isPlayerInRange(int range, String username) {
+    public final MethodResult isPlayerInRange(int range, String username) {
+        if (owner.getOwner() == null)
+            return MethodResult.of(false, "NOT_ATTACHED_TO_ENTITY");
+
         ResourceKey<Level> dimension = getLevel().dimension();
 
         for (Player player : getPlayers()) {
@@ -187,16 +214,20 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
                 continue;
             if (CoordUtil.isInRange(getPos(), getLevel(), player, range, MAX_RANGE)) {
                 if(player.getName().getString().equals(username))
-                    return true;
+                    return MethodResult.of(true);
             }
         }
-        return false;
+        return MethodResult.of(false);
     }
 
     @LuaFunction(value = {"getPlayerPos", "getPlayer"}, mainThread = true)
-    public final Map<String, Object> getPlayerPos(IArguments arguments) throws LuaException {
+    public final MethodResult getPlayerPos(IArguments arguments) throws LuaException {
         if (!APConfig.PERIPHERALS_CONFIG.playerSpy.get())
             throw new LuaException("This function is disabled in the config. Activate it or ask an admin if he can activate it.");
+
+        if (owner.getOwner() == null)
+            return MethodResult.of(null, "NOT_ATTACHED_TO_ENTITY");
+
         ResourceKey<Level> dimension = getLevel().dimension();
 
         ServerPlayer existingPlayer = null;
@@ -210,7 +241,7 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
             }
         }
         if (existingPlayer == null)
-            return Collections.emptyMap();
+            return MethodResult.of(Collections.emptyMap(), "PLAYER_NOT_FOUND");
 
         Map<String, Object> info = new HashMap<>();
 
@@ -268,7 +299,7 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
             info.put("respawnDimension", existingPlayer.getRespawnDimension().location().toString());
             info.put("respawnAngle", existingPlayer.getRespawnAngle());
         }
-        return info;
+        return MethodResult.of(info);
     }
 
     private List<ServerPlayer> getPlayers() {

@@ -7,8 +7,15 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+###
+- Create 6 support
+
+### Changed
+- Set chat cooldown minimum to zero
+- Dropped Create 5 support
+
 ### Fixed
-- Set cooldown minimums to zero
+- [#637] Fixed NullPointer Exception when running a program on a pocket computer and removing it from the inventory
 
 ## [1.20.1-0.7.41r] - 2024-10-21
 
