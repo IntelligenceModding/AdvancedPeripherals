@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * This class is required by {@link SlotInputHandler} to define which item is valid for the slot.
+ * This class is required by {@link APSlotHandler} to define which item is valid for the slot.
  */
 public class SlotCondition {
 
@@ -63,7 +63,7 @@ public class SlotCondition {
     }
 
     /**
-     * Checks if the stack is valid for the tags/items. Used in {@link SlotInputHandler}
+     * Checks if the stack is valid for the tags/items. Used in {@link APSlotHandler}
      *
      * @param stack the {@link ItemStack} which needs to be checked
      * @return returns true if the item is valid

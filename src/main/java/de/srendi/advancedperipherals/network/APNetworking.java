@@ -2,7 +2,10 @@ package de.srendi.advancedperipherals.network;
 
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.network.base.IPacket;
+import de.srendi.advancedperipherals.network.toclient.InventoryManagerUpdatePacket;
 import de.srendi.advancedperipherals.network.toclient.ToastToClientPacket;
+import de.srendi.advancedperipherals.network.toclient.UsernameToCachePacket;
+import de.srendi.advancedperipherals.network.toserver.RetrieveUsernamePacket;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
@@ -29,6 +32,10 @@ public class APNetworking {
 
     public static void init() {
         registerServerToClient(ToastToClientPacket.class, ToastToClientPacket::decode);
+        registerServerToClient(UsernameToCachePacket.class, UsernameToCachePacket::decode);
+        registerServerToClient(InventoryManagerUpdatePacket.class, InventoryManagerUpdatePacket::decode);
+
+        registerClientToServer(RetrieveUsernamePacket.class, RetrieveUsernamePacket::decode);
     }
 
     public static <MSG extends IPacket> void registerServerToClient(Class<MSG> packet, Function<FriendlyByteBuf, MSG> decode) {

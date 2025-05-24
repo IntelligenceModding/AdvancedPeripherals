@@ -16,6 +16,8 @@ import org.jetbrains.annotations.NotNull;
 
 public class InventoryManagerContainer extends BaseContainer {
 
+    public static final int SLOT_X = 79, SLOT_Y = 29;
+
     public InventoryManagerContainer(int id, Inventory inventory, BlockPos pos, Level level) {
         super(ContainerTypes.INVENTORY_MANAGER_CONTAINER.get(), id, inventory, pos, level);
         layoutPlayerInventorySlots(7, 84);

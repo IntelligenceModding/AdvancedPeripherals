@@ -6,6 +6,8 @@ import de.srendi.advancedperipherals.common.blocks.base.PeripheralBlockEntity;
 import de.srendi.advancedperipherals.common.container.InventoryManagerContainer;
 import de.srendi.advancedperipherals.common.items.MemoryCardItem;
 import de.srendi.advancedperipherals.common.setup.BlockEntityTypes;
+import de.srendi.advancedperipherals.network.APNetworking;
+import de.srendi.advancedperipherals.network.toclient.InventoryManagerUpdatePacket;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -16,9 +18,9 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.server.ServerLifecycleHooks;
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
 import java.util.UUID;
 
 public class InventoryManagerEntity extends PeripheralBlockEntity<InventoryManagerPeripheral> implements IInventoryBlock<InventoryManagerContainer> {
@@ -37,8 +39,11 @@ public class InventoryManagerEntity extends PeripheralBlockEntity<InventoryManag
 
     @Override
     public InventoryManagerContainer createContainer(int id, Inventory playerInventory, BlockPos pos, Level world) {
+        updateClient();
+
         return new InventoryManagerContainer(id, playerInventory, pos, world);
     }
+
 
     @Override
     public int getInvSize() {
@@ -62,9 +67,8 @@ public class InventoryManagerEntity extends PeripheralBlockEntity<InventoryManag
                 // Only clear owner when the new card item is not the current item
                 this.owner = null;
             }
-        } else {
-            this.owner = null;
         }
+        updateClient();
         super.setItem(index, stack);
     }
 
@@ -75,7 +79,7 @@ public class InventoryManagerEntity extends PeripheralBlockEntity<InventoryManag
     }
 
     @Override
-    public void load(CompoundTag data) {
+    public void load(@NotNull CompoundTag data) {
         if (data.contains("ownerId")) {
             this.owner = data.getUUID("ownerId");
         }
@@ -85,11 +89,15 @@ public class InventoryManagerEntity extends PeripheralBlockEntity<InventoryManag
     }
 
     @Override
-    public void saveAdditional(CompoundTag data) {
+    public void saveAdditional(@NotNull CompoundTag data) {
         super.saveAdditional(data);
         if (this.owner != null) {
             data.putUUID("ownerId", this.owner);
         }
+    }
+
+    public void updateClient() {
+        APNetworking.sendToAllAround(new InventoryManagerUpdatePacket(owner != null, this.owner, this.getBlockPos()), this.getLevel().dimension(), this.getBlockPos(), 10);
     }
 
     public Player getOwnerPlayer() {
@@ -98,5 +106,13 @@ public class InventoryManagerEntity extends PeripheralBlockEntity<InventoryManag
         }
         Player player = ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayer(this.owner);
         return player;
+    }
+
+    public void setOwner(UUID owner) {
+        this.owner = owner;
+    }
+
+    public UUID getOwner() {
+        return owner;
     }
 }
