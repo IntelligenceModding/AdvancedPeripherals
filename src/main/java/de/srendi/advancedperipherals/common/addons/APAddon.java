@@ -7,14 +7,15 @@ import java.util.Arrays;
 public enum APAddon {
 
     AE2("ae2"),
-    CURIOS("curios"),
-    REFINEDSTORAGE("refinedstorage"),
-    REFINEDSTORAGE_MEKANISM("refinedstorage_mekanism_integration"),
-    MEKANISM("mekanism"),
+    AE2_THINGS("ae2_things"),
     APP_MEKANISTICS("appmek"),
+    CURIOS("curios"),
+    MEKANISM("mekanism"),
     MINECOLONIES("minecolonies"),
     PATCHOULI("patchouli"),
-    POWAH("powah");
+    POWAH("powah"),
+    REFINEDSTORAGE("refinedstorage"),
+    REFINEDSTORAGE_MEKANISM("refinedstorage_mekanism_integration");
 
     private final String modId;
     private boolean loaded;

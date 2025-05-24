@@ -15,7 +15,7 @@ import dan200.computercraft.api.lua.MethodResult;
 import dan200.computercraft.api.peripheral.IComputerAccess;
 import dan200.computercraft.core.apis.TableHelper;
 import dan200.computercraft.core.computer.ComputerSide;
-import de.srendi.advancedperipherals.common.addons.APAddons;
+import de.srendi.advancedperipherals.common.addons.APAddon;
 import de.srendi.advancedperipherals.common.addons.appliedenergistics.AECraftJob;
 import de.srendi.advancedperipherals.common.addons.appliedenergistics.AppEngApi;
 import de.srendi.advancedperipherals.common.addons.appliedenergistics.MeChemicalHandler;
@@ -288,7 +288,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (!isAvailable())
             return notConnected();
 
-        if (!APAddons.mekanismLoaded || !APAddons.appMekLoaded)
+        if (!APAddon.APP_MEKANISTICS.isLoaded())
             return MethodResult.of(Collections.emptyList());
 
         Pair<ChemicalFilter, String> filter = ChemicalFilter.parse(arguments.optTable(0, Collections.emptyMap()));
@@ -335,7 +335,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (!isAvailable())
             return notConnected();
 
-        if (!APAddons.mekanismLoaded || !APAddons.appMekLoaded)
+        if (!APAddon.APP_MEKANISTICS.isLoaded())
             return MethodResult.of(Collections.emptyList());
 
         Pair<ChemicalFilter, String> filter = ChemicalFilter.parse(arguments.optTable(0, Collections.emptyMap()));
@@ -456,7 +456,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (!isAvailable())
             return notConnected();
 
-        if (!APAddons.mekanismLoaded || !APAddons.appMekLoaded)
+        if (!APAddon.APP_MEKANISTICS.isLoaded())
             return MethodResult.of(0);
 
         String side = arguments.getString(1);
@@ -480,7 +480,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (!isAvailable())
             return notConnected();
 
-        if (!APAddons.mekanismLoaded || !APAddons.appMekLoaded)
+        if (APAddon.APP_MEKANISTICS.isLoaded())
             return MethodResult.of(0);
 
         String side = arguments.getString(1);
@@ -805,7 +805,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (!isAvailable())
             return notConnected();
 
-        if (!APAddons.mekanismLoaded || !APAddons.appMekLoaded)
+        if (!APAddon.APP_MEKANISTICS.isLoaded())
             return MethodResult.of(null);
 
         Pair<ChemicalFilter, String> filter = ChemicalFilter.parse(arguments.getTable(0));
