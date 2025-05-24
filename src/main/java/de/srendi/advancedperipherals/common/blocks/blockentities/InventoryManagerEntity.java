@@ -39,6 +39,7 @@ public class InventoryManagerEntity extends PeripheralBlockEntity<InventoryManag
 
     @Override
     public InventoryManagerContainer createContainer(int id, Inventory playerInventory, BlockPos pos, Level world) {
+        // Update the clients instance of the inventory manager so the UI shows the correct owner
         updateClient();
 
         return new InventoryManagerContainer(id, playerInventory, pos, world);
@@ -67,6 +68,8 @@ public class InventoryManagerEntity extends PeripheralBlockEntity<InventoryManag
                 // Only clear owner when the new card item is not the current item
                 this.owner = null;
             }
+        } else {
+            owner = null;
         }
         updateClient();
         super.setItem(index, stack);

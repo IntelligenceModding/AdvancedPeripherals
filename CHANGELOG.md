@@ -6,10 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
-## [1.20.1-0.7.42r] - 2025-05-24
+
+### Added
+-  [#739] Show the current owner of the inventory manager in the ui
+
 ## [1.20.1-0.7.42r] - 2025-05-24
 
-###
+### Added
 - Create 6 support
 
 ### Changed
