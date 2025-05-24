@@ -926,6 +926,8 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (pattern.rightPresent())
             return MethodResult.of(null, pattern.getRight());
 
-        return MethodResult.of(RSApi.parsePattern(pattern.getLeft()));
+        AutocraftingNetworkComponent autocrafting = getNetwork().getComponent(AutocraftingNetworkComponent.class);
+
+        return MethodResult.of(RSApi.parsePattern(pattern.getLeft(), autocrafting));
     }
 }
