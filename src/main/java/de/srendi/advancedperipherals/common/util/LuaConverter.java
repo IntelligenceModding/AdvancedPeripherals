@@ -2,7 +2,7 @@ package de.srendi.advancedperipherals.common.util;
 
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.shared.util.NBTUtil;
-import de.srendi.advancedperipherals.common.addons.APAddons;
+import de.srendi.advancedperipherals.common.addons.APAddon;
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.InventoryManagerPeripheral;
 import de.srendi.advancedperipherals.common.util.inventory.ChemicalUtil;
 import de.srendi.advancedperipherals.common.util.inventory.FluidUtil;
@@ -142,7 +142,7 @@ public class LuaConverter {
 
     public static Map<String, Object> chemicalStackToObject(@NotNull ChemicalStack stack) {
         // In theory should not be called if the addon is not installed, but just to be save
-        if (!APAddons.refinedStorageMekanismLoaded) {
+        if (!APAddon.MEKANISM.isLoaded()) {
             return null;
         }
 
@@ -191,7 +191,7 @@ public class LuaConverter {
 
     public static Map<String, Object> chemicalStackToObject(@NotNull ChemicalStack chemicalStack, long count) {
         // In theory should not be called if the addon is not installed, but just to be save
-        if (!APAddons.refinedStorageMekanismLoaded) {
+        if (!APAddon.MEKANISM.isLoaded()) {
             return null;
         }
 
@@ -236,7 +236,7 @@ public class LuaConverter {
 
     public static Map<String, Object> chemicalToObject(@NotNull Chemical chemical) {
         // In theory should not be called if the addon is not installed, but just to be save
-        if (!APAddons.refinedStorageMekanismLoaded) {
+        if (!APAddon.MEKANISM.isLoaded()) {
             return null;
         }
 

@@ -10,7 +10,7 @@ on:
 
 jobs:
   generate-artifact-name:
-    runs-on: self-hosted
+    runs-on: [self-hosted, type-cx32, volume-cache-15GB]
     outputs:
       name: ${{ steps.name.outputs.name }}
     steps:
@@ -40,7 +40,7 @@ jobs:
 
   publish:
     if: ${{ github.event_name == 'push' && contains(github.ref, 'release/') }}
-    runs-on: self-hosted
+    runs-on: [self-hosted, type-cx32, volume-cache-15GB]
     needs:
       - build-and-test
     steps:

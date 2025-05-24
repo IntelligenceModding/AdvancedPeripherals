@@ -5,7 +5,7 @@ import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.items.ModItems;
 import com.refinedmods.refinedstorage.common.misc.ProcessorItem;
 import dan200.computercraft.shared.ModRegistry;
-import de.srendi.advancedperipherals.common.addons.APAddons;
+import de.srendi.advancedperipherals.common.addons.APAddon;
 import de.srendi.advancedperipherals.common.setup.Blocks;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.component.DataComponents;
@@ -65,7 +65,7 @@ public class RecipesProvider extends RecipeProvider implements IConditionBuilder
 
         ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, Blocks.NBT_STORAGE.get()).define('C', Tags.Items.CHESTS).define('A', CASING).define('R', Tags.Items.STORAGE_BLOCKS_REDSTONE).define('I', Tags.Items.INGOTS_IRON).pattern("ICI").pattern("CAC").pattern("RCR").unlockedBy(HAS_ITEM, has(CASING)).save(recipeOutput);
 
-        ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, Blocks.ME_BRIDGE.get()).define('F', AEBlocks.FLUIX_BLOCK.asItem()).define('A', CASING).define('I', AEBlocks.INTERFACE.asItem()).pattern("FIF").pattern("IAI").pattern("FIF").unlockedBy(HAS_ITEM, has(CASING)).save(recipeOutput.withConditions(new ModLoadedCondition(APAddons.AE2_MODID)));
+        ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, Blocks.ME_BRIDGE.get()).define('F', AEBlocks.FLUIX_BLOCK.asItem()).define('A', CASING).define('I', AEBlocks.INTERFACE.asItem()).pattern("FIF").pattern("IAI").pattern("FIF").unlockedBy(HAS_ITEM, has(CASING)).save(recipeOutput.withConditions(new ModLoadedCondition(APAddon.AE2.getModId())));
 
 
         com.refinedmods.refinedstorage.common.content.Items rsItems = com.refinedmods.refinedstorage.common.content.Items.INSTANCE;
@@ -79,9 +79,9 @@ public class RecipesProvider extends RecipeProvider implements IConditionBuilder
                 .define('R', com.refinedmods.refinedstorage.common.content.Tags.IMPORTERS)
                 .pattern("PXP")
                 .pattern("ECR")
-                .pattern("PIP").unlockedBy(HAS_ITEM, has(CASING)).save(recipeOutput.withConditions(new ModLoadedCondition(APAddons.REFINEDSTORAGE_MODID)));
+                .pattern("PIP").unlockedBy(HAS_ITEM, has(CASING)).save(recipeOutput.withConditions(new ModLoadedCondition(APAddon.REFINEDSTORAGE.getModId())));
 
-        ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, Blocks.COLONY_INTEGRATOR.get()).define('O', ItemTags.LOGS).define('A', CASING).define('B', ModItems.buildGoggles).define('S', com.ldtteam.structurize.items.ModItems.buildTool).define('R', ModBlocks.blockRack).pattern("ORO").pattern("BAS").pattern("ORO").unlockedBy(HAS_ITEM, has(CASING)).save(recipeOutput.withConditions(new ModLoadedCondition(APAddons.MINECOLONIES_MODID)));
+        ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, Blocks.COLONY_INTEGRATOR.get()).define('O', ItemTags.LOGS).define('A', CASING).define('B', ModItems.buildGoggles).define('S', com.ldtteam.structurize.items.ModItems.buildTool).define('R', ModBlocks.blockRack).pattern("ORO").pattern("BAS").pattern("ORO").unlockedBy(HAS_ITEM, has(CASING)).save(recipeOutput.withConditions(new ModLoadedCondition(APAddon.MINECOLONIES.getModId())));
 
         ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, de.srendi.advancedperipherals.common.setup.Items.WEAK_AUTOMATA_CORE.get())
                 .define('A', CASING)

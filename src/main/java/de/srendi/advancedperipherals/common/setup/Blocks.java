@@ -1,6 +1,6 @@
 package de.srendi.advancedperipherals.common.setup;
 
-import de.srendi.advancedperipherals.common.addons.APAddons;
+import de.srendi.advancedperipherals.common.addons.APAddon;
 import de.srendi.advancedperipherals.common.blocks.PlayerDetectorBlock;
 import de.srendi.advancedperipherals.common.blocks.base.APBlockEntityBlock;
 import de.srendi.advancedperipherals.common.blocks.base.BaseBlock;
@@ -18,8 +18,8 @@ public class Blocks {
     public static final DeferredHolder<Block, APBlockEntityBlock<?>> ENVIRONMENT_DETECTOR = register("environment_detector", () -> new APBlockEntityBlock<>(BlockEntityTypes.ENVIRONMENT_DETECTOR, false), () -> new APBlockItem(Blocks.ENVIRONMENT_DETECTOR.get(), APConfig.PERIPHERALS_CONFIG.enableEnvironmentDetector::get));
     public static final DeferredHolder<Block, APBlockEntityBlock<?>> CHAT_BOX = register("chat_box", () -> new APBlockEntityBlock<>(BlockEntityTypes.CHAT_BOX, true), () -> new APBlockItem(Blocks.CHAT_BOX.get(), APConfig.PERIPHERALS_CONFIG.enableChatBox::get));
     public static final DeferredHolder<Block, APBlockEntityBlock<?>> PLAYER_DETECTOR = register("player_detector", PlayerDetectorBlock::new, () -> new APBlockItem(Blocks.PLAYER_DETECTOR.get(), APConfig.PERIPHERALS_CONFIG.enablePlayerDetector::get));
-    public static final DeferredHolder<Block, APBlockEntityBlock<?>> ME_BRIDGE = register("me_bridge", () -> new APBlockEntityBlock<>(APAddons.ae2Loaded ? BlockEntityTypes.ME_BRIDGE : null, APAddons.ae2Loaded), () -> new APBlockItem(Blocks.ME_BRIDGE.get(), APConfig.PERIPHERALS_CONFIG.enableMEBridge::get));
-    public static final DeferredHolder<Block, APBlockEntityBlock<?>> RS_BRIDGE = register("rs_bridge", () -> new APBlockEntityBlock<>(APAddons.refinedStorageLoaded ? BlockEntityTypes.RS_BRIDGE : null, APAddons.refinedStorageLoaded), () -> new APBlockItem(Blocks.RS_BRIDGE.get(), APConfig.PERIPHERALS_CONFIG.enableRSBridge::get));
+    public static final DeferredHolder<Block, APBlockEntityBlock<?>> ME_BRIDGE = register("me_bridge", () -> new APBlockEntityBlock<>(APAddon.AE2.isLoaded() ? BlockEntityTypes.ME_BRIDGE : null, APAddon.AE2.isLoaded()), () -> new APBlockItem(Blocks.ME_BRIDGE.get(), APConfig.PERIPHERALS_CONFIG.enableMEBridge::get));
+    public static final DeferredHolder<Block, APBlockEntityBlock<?>> RS_BRIDGE = register("rs_bridge", () -> new APBlockEntityBlock<>(APAddon.REFINEDSTORAGE.isLoaded() ? BlockEntityTypes.RS_BRIDGE : null, APAddon.REFINEDSTORAGE.isLoaded()), () -> new APBlockItem(Blocks.RS_BRIDGE.get(), APConfig.PERIPHERALS_CONFIG.enableRSBridge::get));
     public static final DeferredHolder<Block, APBlockEntityBlock<?>> ENERGY_DETECTOR = register("energy_detector", () -> new APBlockEntityBlock<>(BlockEntityTypes.ENERGY_DETECTOR, true), () -> new APBlockItem(Blocks.ENERGY_DETECTOR.get(), APConfig.PERIPHERALS_CONFIG.enableEnergyDetector::get));
     public static final DeferredHolder<Block, BaseBlock> PERIPHERAL_CASING = register("peripheral_casing", BaseBlock::new, () -> new APBlockItem(Blocks.PERIPHERAL_CASING.get(), new Item.Properties().stacksTo(16), () -> true));
     public static final DeferredHolder<Block, APBlockEntityBlock<?>> INVENTORY_MANAGER = register("inventory_manager", () -> new APBlockEntityBlock<>(BlockEntityTypes.INVENTORY_MANAGER, false), () -> new APBlockItem(Blocks.INVENTORY_MANAGER.get(), APConfig.PERIPHERALS_CONFIG.enableInventoryManager::get));

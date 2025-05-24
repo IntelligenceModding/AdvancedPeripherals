@@ -29,7 +29,7 @@ import appeng.me.cells.BasicCellInventory;
 import appeng.me.cluster.implementations.CraftingCPUCluster;
 import appeng.parts.storagebus.StorageBusPart;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
-import de.srendi.advancedperipherals.common.addons.APAddons;
+import de.srendi.advancedperipherals.common.addons.APAddon;
 import de.srendi.advancedperipherals.common.setup.BlockEntityTypes;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
 import de.srendi.advancedperipherals.common.util.Pair;
@@ -218,7 +218,7 @@ public class AppEngApi {
     public static List<Object> listChemicals(MEStorage monitor, ICraftingService service, ChemicalFilter filter) {
         List<Object> items = new ArrayList<>();
         for (Object2LongMap.Entry<AEKey> aeKey : monitor.getAvailableStacks()) {
-            if (APAddons.appMekLoaded && aeKey.getKey() instanceof MekanismKey mekanismKey && filter.test(mekanismKey.getStack())) {
+            if (APAddon.APP_MEKANISTICS.isLoaded() && aeKey.getKey() instanceof MekanismKey mekanismKey && filter.test(mekanismKey.getStack())) {
                 items.add(parseAeStack(Pair.of(aeKey.getLongValue(), mekanismKey), service));
             }
         }
@@ -302,7 +302,7 @@ public class AppEngApi {
             return parseItemStack(Pair.of(stack.getLeft(), itemKey), service);
         if (stack.getRight() instanceof AEFluidKey fluidKey)
             return parseFluidStack(Pair.of(stack.getLeft(), fluidKey), service);
-        if (APAddons.appMekLoaded && (stack.getRight() instanceof MekanismKey gasKey))
+        if (APAddon.APP_MEKANISTICS.isLoaded() && (stack.getRight() instanceof MekanismKey gasKey))
             return parseChemStack(Pair.of(stack.getLeft(), gasKey));
 
         AdvancedPeripherals.debug("Could not create table from unknown stack " + stack.getRight().getClass() + " - Report this to the maintainer of ap", org.apache.logging.log4j.Level.WARN);
