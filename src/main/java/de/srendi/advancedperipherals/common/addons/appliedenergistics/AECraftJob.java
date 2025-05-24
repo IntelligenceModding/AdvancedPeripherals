@@ -300,10 +300,13 @@ public class AECraftJob extends BasicCraftJob {
     }
 
     private CraftingJobStatus getJobStatus() {
-        if (jobStatus == null || jobStatus.get() == null && cachedStatus != null) {
-            return cachedStatus;
+        // If the jobStatus is null, then we are not at the point where crafting started
+        // If the value of the jobStatus is null, then the job is done and the cpu has no job anymore or a new one,
+        // and we need to use the cached object.
+        // Otherwise we set the cached object to the jobStatus.
+        if (jobStatus != null && jobStatus.get() != null) {
+            cachedStatus = jobStatus.get();
         }
-        cachedStatus = jobStatus.get();
-        return jobStatus.get();
+        return cachedStatus;
     }
 }
