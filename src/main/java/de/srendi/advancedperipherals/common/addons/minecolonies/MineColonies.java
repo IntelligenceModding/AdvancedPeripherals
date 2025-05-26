@@ -1,24 +1,41 @@
 package de.srendi.advancedperipherals.common.addons.minecolonies;
 
+import com.google.common.collect.ImmutableCollection;
+import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.IVisitorData;
 import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.managers.interfaces.IRegisteredStructureManager;
 import com.minecolonies.api.colony.permissions.Action;
+import com.minecolonies.api.colony.requestsystem.request.IRequest;
+import com.minecolonies.api.colony.requestsystem.requestable.deliveryman.Delivery;
+import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.colony.workorders.IWorkOrder;
 import com.minecolonies.api.entity.citizen.Skill;
-import com.minecolonies.api.research.*;
+import com.minecolonies.api.research.IGlobalResearch;
+import com.minecolonies.api.research.IGlobalResearchTree;
+import com.minecolonies.api.research.ILocalResearch;
+import com.minecolonies.api.research.ILocalResearchTree;
+import com.minecolonies.api.research.IResearchCost;
+import com.minecolonies.api.research.IResearchEffect;
+import com.minecolonies.api.research.IResearchRequirement;
 import com.minecolonies.api.research.requirements.BuildingResearchRequirement;
 import com.minecolonies.api.research.util.ResearchState;
+import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.core.colony.buildings.AbstractBuildingStructureBuilder;
 import com.minecolonies.core.colony.buildings.utils.BuildingBuilderResource;
+import com.minecolonies.core.colony.buildings.workerbuildings.BuildingBuilder;
 import com.minecolonies.core.entity.citizen.citizenhandlers.CitizenSkillHandler;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
 import io.netty.buffer.Unpooled;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -33,6 +50,7 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.server.command.TextComponentHelper;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -114,7 +132,7 @@ public class MineColonies {
      * Converts a building {@link IBuilding} and job {@link IJob} to a map
      *
      * @param work the home building
-     * @param job the job
+     * @param job  the job
      * @return a map with information about the building and job
      */
     public static Object jobToObject(IBuilding work, IJob<?> job) {
@@ -343,6 +361,18 @@ public class MineColonies {
         List<BuildingBuilderResource> resources = new ArrayList<>(builderBuilding.getNeededResources().values());
         resources.sort(new BuildingBuilderResource.ResourceComparator());
 
+        final IColonyView colonyView = IColonyManager.getInstance().getColonyView(colony.getID(), colony.getWorld().dimension());
+        final List<Delivery> deliveries = new ArrayList<>();
+
+        if (colonyView != null) {
+            final IBuildingView buildingView = colonyView.getBuilding(pos);
+            if (buildingView instanceof BuildingBuilder.View builderBuildingView) {
+                for (Map.Entry<Integer, Collection<IToken<?>>> entry : builderBuildingView.getOpenRequestsByCitizen().entrySet()) {
+                    addDeliveryRequestsToList(builderBuildingView, deliveries, ImmutableList.copyOf(entry.getValue()));
+                }
+            }
+        }
+
         List<Object> result = new ArrayList<>();
         for (BuildingBuilderResource resource : resources) {
             Map<String, Object> map = new HashMap<>();
@@ -351,13 +381,39 @@ public class MineColonies {
             map.put("item", LuaConverter.stackToObject(stack));
             map.put("displayName", resource.getName());
             map.put("available", resource.getAvailable());
-            map.put("delivering", resource.getAmountInDelivery());
+            int amountInDelivery = 0;
+            for (final Delivery delivery : deliveries) {
+                if (ItemStackUtils.compareItemStacksIgnoreStackSize(resource.getItemStack(), delivery.getStack(), false, true)) {
+                    amountInDelivery += delivery.getStack().getCount();
+                }
+            }
+            map.put("delivering", amountInDelivery);
             map.put("status", resource.getAvailabilityStatus().toString());
             map.put("needed", resource.getAmount());
             result.add(map);
         }
 
         return result;
+    }
+
+    /**
+     * Stolen from minecolonies codebase to get delivery requests.
+     * <p>
+     * See {@link com.minecolonies.core.items.ItemResourceScroll#openWindow(CompoundTag, Player)}
+     */
+    private static void addDeliveryRequestsToList(BuildingBuilder.View builder, List<Delivery> requestList, ImmutableCollection<IToken<?>> tokensToCheck) {
+        for (final IToken<?> token : tokensToCheck) {
+            final IRequest<?> request = builder.getColony().getRequestManager().getRequestForToken(token);
+            if (request != null) {
+                if (request.getRequest() instanceof Delivery && ((Delivery) request.getRequest()).getTarget().getInDimensionLocation().equals(builder.getID())) {
+                    requestList.add((Delivery) request.getRequest());
+                }
+
+                if (request.hasChildren()) {
+                    addDeliveryRequestsToList(builder, requestList, request.getChildren());
+                }
+            }
+        }
     }
 
 }

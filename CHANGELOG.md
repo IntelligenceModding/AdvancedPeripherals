@@ -10,6 +10,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Added
 -  [#739] Show the current owner of the inventory manager in the ui
 
+### Fixed
+- Support with the latest minecolonies version (1.1.897-snapshot)
+- [#438] Fixed that the `dilvering` attribute of work order requests is always zero
+
 ## [1.20.1-0.7.42r] - 2025-05-24
 
 ### Added
