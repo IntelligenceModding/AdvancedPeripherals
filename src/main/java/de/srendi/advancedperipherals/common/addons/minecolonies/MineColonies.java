@@ -129,7 +129,7 @@ public class MineColonies {
      * Converts a building {@link IBuilding} and job {@link IJob} to a map
      *
      * @param work the home building
-     * @param job the job
+     * @param job  the job
      * @return a map with information about the building and job
      */
     public static Object jobToObject(IBuilding work, IJob<?> job) {
@@ -385,7 +385,8 @@ public class MineColonies {
                     amountInDelivery += delivery.getStack().getCount();
                 }
             }
-            map.put("delivering", amountInDelivery);            map.put("status", resource.getAvailabilityStatus().toString());
+            map.put("delivering", amountInDelivery);
+            map.put("status", resource.getAvailabilityStatus().toString());
             map.put("needs", resource.getAmount());
             result.add(map);
         }
