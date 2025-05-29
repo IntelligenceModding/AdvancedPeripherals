@@ -677,10 +677,10 @@ public class RSApi {
 
         Map<String, Object> properties = new HashMap<>();
 
-        List<ResourceAmount> secondaryOutputs = pattern.layout().outputs().subList(1, pattern.layout().outputs().size());
-
-        properties.put("primaryOutput", getObjectFromResourceAmount(pattern.layout().outputs().get(0), autocraftingComponent));
-        properties.put("outputs", secondaryOutputs.stream().map((resource) -> getObjectFromResourceAmount(resource, autocraftingComponent)).toList());
+        // Same format for AE2. Return the primary output which is just the first element of the outputs
+        // And then every output of the pattern in the outputs property, also with the primary output
+        properties.put("primaryOutput", getObjectFromResourceAmount(pattern.layout().outputs().getFirst(), autocraftingComponent));
+        properties.put("outputs", pattern.layout().outputs().stream().map((resource) -> getObjectFromResourceAmount(resource, autocraftingComponent)).toList());
 
         List<List<Map<String, Object>>> inputs = pattern.layout().ingredients().stream()
                 .map(ingredient -> ingredient.inputs().stream()

@@ -509,7 +509,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         // If no table is provided or it's empty, return every pattern
         Map<?, ?> filterTable = arguments.optTable(0, Collections.emptyMap());
         if (filterTable.isEmpty()) {
-            return MethodResult.of(AppEngApi.getPatterns(node.getGrid(), getLevel()));
+            return MethodResult.of(AppEngApi.listPatterns(node.getGrid(), getLevel()));
         }
 
         boolean hasInputFilter = filterTable.containsKey("input");
