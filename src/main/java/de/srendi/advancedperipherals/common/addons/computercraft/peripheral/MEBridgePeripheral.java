@@ -8,6 +8,7 @@ import appeng.api.networking.crafting.ICraftingService;
 import appeng.api.stacks.AEFluidKey;
 import appeng.api.stacks.AEItemKey;
 import appeng.api.storage.MEStorage;
+import appeng.crafting.pattern.EncodedPatternItem;
 import dan200.computercraft.api.lua.IArguments;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
@@ -533,7 +534,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
             outputFilter = GenericFilter.parseGeneric(outputFilterTable).getLeft();
         }
 
-        Pair<IPatternDetails, String> pattern = AppEngApi.findPatternFromFilters(node.getGrid(), getLevel(), inputFilter, outputFilter);
+        Pair<Pair<EncodedPatternItem<?>, IPatternDetails>, String> pattern = AppEngApi.findPatternFromFilters(node.getGrid(), getLevel(), inputFilter, outputFilter);
 
         if (pattern.getRight() != null)
             return MethodResult.of(null, pattern.getRight());

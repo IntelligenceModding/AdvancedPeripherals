@@ -20,6 +20,7 @@ import appeng.api.storage.IStorageProvider;
 import appeng.api.storage.MEStorage;
 import appeng.api.storage.cells.IBasicCellItem;
 import appeng.blockentity.storage.DriveBlockEntity;
+import appeng.core.definitions.AEItems;
 import appeng.crafting.execution.CraftingCpuLogic;
 import appeng.crafting.pattern.EncodedPatternItem;
 import appeng.helpers.patternprovider.PatternContainer;
@@ -143,17 +144,18 @@ public class AppEngApi {
      * The pattern can be null if no pattern is found.
      * The error message is "NO_PATTERN_FOUND" if no pattern is found.
      */
-    public static Pair<IPatternDetails, String> findPatternFromFilters(IGrid grid, net.minecraft.world.level.Level level, @Nullable GenericFilter<?> inputFilter, @Nullable GenericFilter<?> outputFilter) {
-        for (IPatternDetails pattern : getPatterns(grid, level)) {
-            if (pattern.getInputs().length == 0) continue;
-            if (pattern.getOutputs().isEmpty()) continue;
+    public static Pair<Pair<EncodedPatternItem<?>, IPatternDetails>, String> findPatternFromFilters(IGrid grid, net.minecraft.world.level.Level level, @Nullable GenericFilter<?> inputFilter, @Nullable GenericFilter<?> outputFilter) {
+        for (Pair<EncodedPatternItem<?>, IPatternDetails> pattern : getPatterns(grid, level)) {
+            IPatternDetails patternDetails = pattern.getRight();
+            if (patternDetails.getInputs().length == 0) continue;
+            if (patternDetails.getOutputs().isEmpty()) continue;
 
             boolean inputMatch = false;
             boolean outputMatch = false;
 
             if (inputFilter != null) {
                 outerLoop:
-                for (IPatternDetails.IInput input : pattern.getInputs()) {
+                for (IPatternDetails.IInput input : patternDetails.getInputs()) {
                     for (GenericStack possibleInput : input.getPossibleInputs()) {
                         if (inputFilter.testAE(possibleInput)) {
                             inputMatch = true;
@@ -166,7 +168,7 @@ public class AppEngApi {
             }
 
             if (outputFilter != null) {
-                for (GenericStack output : pattern.getOutputs()) {
+                for (GenericStack output : patternDetails.getOutputs()) {
                     if (outputFilter.testAE(output)) {
                         outputMatch = true;
                         break;
@@ -176,7 +178,7 @@ public class AppEngApi {
                 outputMatch = true;
             }
 
-            if (inputMatch && outputMatch) return Pair.of(pattern, null);
+            if (inputMatch && outputMatch) return Pair.of(Pair.of(pattern.getLeft(), patternDetails), null);
         }
 
         return Pair.of(null, StatusConstants.NOT_FOUND.toString());
@@ -249,8 +251,8 @@ public class AppEngApi {
         return items;
     }
 
-    public static List<IPatternDetails> getPatterns(IGrid grid, Level level) {
-        List<IPatternDetails> patterns = new ArrayList<>();
+    public static List<Pair<EncodedPatternItem<?>, IPatternDetails>> getPatterns(IGrid grid, Level level) {
+        List<Pair<EncodedPatternItem<?>, IPatternDetails>> patterns = new ArrayList<>();
 
         for (var machineClass : grid.getMachineClasses()) {
             var containerClass = tryCastMachineToContainer(machineClass);
@@ -262,7 +264,7 @@ public class AppEngApi {
                         IPatternDetails patternDetails = item.decode(patternItem, level);
                         if (patternDetails == null) continue;
 
-                        patterns.add(patternDetails);
+                        patterns.add(Pair.of(item, patternDetails));
                     }
                 }
             }
@@ -399,13 +401,24 @@ public class AppEngApi {
         return map;
     }
 
-    public static Map<String, Object> parsePattern(IPatternDetails pattern) {
+    public static Map<String, Object> parsePattern(Pair<EncodedPatternItem<?>, IPatternDetails> pattern) {
         Map<String, Object> map = new HashMap<>();
+        IPatternDetails patternDetails = pattern.getRight();
+        String patternType = getPatternType(pattern.getLeft());
 
-        map.put("inputs", Arrays.stream(pattern.getInputs()).map(AppEngApi::parsePatternInput).collect(Collectors.toList()));
-        map.put("outputs", pattern.getOutputs().stream().map(AppEngApi::parseGenericStack).collect(Collectors.toList()));
-        map.put("primaryOutput", parseGenericStack(pattern.getPrimaryOutput()));
+        map.put("inputs", Arrays.stream(patternDetails.getInputs()).map(AppEngApi::parsePatternInput).collect(Collectors.toList()));
+        map.put("outputs", patternDetails.getOutputs().stream().map(AppEngApi::parseGenericStack).collect(Collectors.toList()));
+        map.put("primaryOutput", parseGenericStack(patternDetails.getPrimaryOutput()));
+        map.put("patternType", patternType);
         return map;
+    }
+
+    private static String getPatternType(EncodedPatternItem<?> patternItem) {
+        if (patternItem.equals(AEItems.CRAFTING_PATTERN.get())) return "crafting";
+        if (patternItem.equals(AEItems.PROCESSING_PATTERN.get())) return "processing";
+        if (patternItem.equals(AEItems.SMITHING_TABLE_PATTERN.get())) return "smithing";
+        if (patternItem.equals(AEItems.STONECUTTING_PATTERN.get())) return "stonecutting";
+        return "unknown";
     }
 
     public static Map<String, Object> parsePatternInput(IPatternDetails.IInput patternInput) {

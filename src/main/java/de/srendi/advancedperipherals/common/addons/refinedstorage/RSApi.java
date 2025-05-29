@@ -675,8 +675,12 @@ public class RSApi {
         if (pattern == null)
             return null;
 
-        Map<String, Object> propeties = new HashMap<>();
-        propeties.put("outputs", pattern.layout().outputs().stream().map((resource) -> getObjectFromResourceAmount(resource, autocraftingComponent)).toList());
+        Map<String, Object> properties = new HashMap<>();
+
+        List<ResourceAmount> secondaryOutputs = pattern.layout().outputs().subList(1, pattern.layout().outputs().size());
+
+        properties.put("primaryOutput", getObjectFromResourceAmount(pattern.layout().outputs().get(0), autocraftingComponent));
+        properties.put("outputs", secondaryOutputs.stream().map((resource) -> getObjectFromResourceAmount(resource, autocraftingComponent)).toList());
 
         List<List<Map<String, Object>>> inputs = pattern.layout().ingredients().stream()
                 .map(ingredient -> ingredient.inputs().stream()
@@ -684,10 +688,10 @@ public class RSApi {
                         .collect(Collectors.toList()))
                 .collect(Collectors.toList());
 
-        propeties.put("inputs", inputs);
-        propeties.put("patterntype", pattern.layout().type().toString());
-        propeties.put("id", pattern.id().toString());
-        return propeties;
+        properties.put("inputs", inputs);
+        properties.put("patternType", pattern.layout().type().toString());
+        properties.put("id", pattern.id().toString());
+        return properties;
     }
 
     /**
