@@ -14,13 +14,13 @@ import com.minecolonies.api.research.IGlobalResearch;
 import com.minecolonies.api.research.IGlobalResearchTree;
 import com.minecolonies.api.research.ILocalResearch;
 import com.minecolonies.api.research.ILocalResearchTree;
+import com.minecolonies.api.research.IResearchEffect;
 import com.minecolonies.api.research.IResearchRequirement;
-import com.minecolonies.api.research.effects.IResearchEffect;
+import com.minecolonies.api.research.requirements.BuildingResearchRequirement;
 import com.minecolonies.api.research.util.ResearchState;
 import com.minecolonies.core.colony.buildings.AbstractBuildingStructureBuilder;
 import com.minecolonies.core.colony.buildings.utils.BuildingBuilderResource;
 import com.minecolonies.core.entity.citizen.citizenhandlers.CitizenSkillHandler;
-import com.minecolonies.core.research.BuildingResearchRequirement;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
 import io.netty.buffer.Unpooled;
@@ -237,7 +237,6 @@ public class MineColonies {
         Map<String, Object> map = new HashMap<>();
 
         map.put("builder", LuaConverter.posToObject(workOrder.getClaimedBy()));
-        map.put("changed", workOrder.isDirty());
         map.put("id", workOrder.getID());
         map.put("priority", workOrder.getPriority());
         map.put("isClaimed", workOrder.isClaimed());
@@ -275,8 +274,8 @@ public class MineColonies {
                 ILocalResearch colonyResearch = colonyTree.getResearch(branch, researchName);
 
                 List<String> effects = new ArrayList<>();
-                for (IResearchEffect<?> researchEffect : research.getEffects())
-                    effects.add(Component.translatable(researchEffect.getDesc().getKey(), researchEffect.getDesc().getArgs()).getString());
+                for (IResearchEffect researchEffect : research.getEffects())
+                    effects.add(Component.translatable(researchEffect.getName().getKey(), researchEffect.getName().getArgs()).getString());
 
                 List<Map<String, Object>> cost = new ArrayList<>();
                 for (SizedIngredient item : research.getCostList()) {
@@ -294,7 +293,7 @@ public class MineColonies {
                 }
 
                 List<Map<String, Object>> requirements = new ArrayList<>();
-                for (IResearchRequirement requirement : research.getResearchRequirement()) {
+                for (IResearchRequirement requirement : research.getResearchRequirements()) {
                     Map<String, Object> requirementItem = new HashMap<>();
                     requirementItem.put("fulfilled", requirement.isFulfilled(colony));
                     if (requirement instanceof BuildingResearchRequirement buildingRequirement) {
