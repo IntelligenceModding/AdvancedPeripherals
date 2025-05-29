@@ -706,7 +706,7 @@ public class RSApi {
         long count = trackedResourceAmount.amount();
         ItemStack stack = resource.toItemStack();
         Map<String, Object> properties = LuaConverter.itemStackToObject(stack, count);
-        properties.put("isCraftable",autocraftingComponent != null && !autocraftingComponent.getPatternsByOutput(trackedResourceAmount.resource()).isEmpty());
+        properties.put("isCraftable", autocraftingComponent != null && !autocraftingComponent.getPatternsByOutput(trackedResourceAmount.resource()).isEmpty());
         return properties;
     }
 
@@ -735,7 +735,7 @@ public class RSApi {
         long count = trackedResourceAmount.amount();
         FluidStack stack = VariantUtil.toFluidStack(resource, count);
         Map<String, Object> properties = LuaConverter.fluidStackToObject(stack, count);
-        properties.put("isCraftable",autocraftingComponent != null && !autocraftingComponent.getPatternsByOutput(trackedResourceAmount.resource()).isEmpty());
+        properties.put("isCraftable", autocraftingComponent != null && !autocraftingComponent.getPatternsByOutput(trackedResourceAmount.resource()).isEmpty());
         return properties;
     }
 
@@ -766,7 +766,7 @@ public class RSApi {
         long count = trackedResourceAmount.amount();
         ChemicalStack stack = resourceToChemicalStack(resource, count);
         Map<String, Object> properties = LuaConverter.chemicalStackToObject(stack, count);
-        properties.put("isCraftable",autocraftingComponent != null && !autocraftingComponent.getPatternsByOutput(trackedResourceAmount.resource()).isEmpty());
+        properties.put("isCraftable", autocraftingComponent != null && !autocraftingComponent.getPatternsByOutput(trackedResourceAmount.resource()).isEmpty());
         return properties;
     }
 
