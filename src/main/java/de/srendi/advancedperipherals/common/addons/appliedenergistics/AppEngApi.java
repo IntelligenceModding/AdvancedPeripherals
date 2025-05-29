@@ -346,13 +346,11 @@ public class AppEngApi {
     }
 
     public static Map<Object, Object> parseDrive(DriveBlockEntity drive) {
-        Map<Object, Object> map = new HashMap<>();
-
         long totalBytes = 0;
         long usedBytes = 0;
 
         if (drive.getCellCount() != 10)
-            return map;
+            return Collections.emptyMap();
 
         List<Object> driveCells = new ArrayList<>();
         for (ItemStack item : drive.getInternalInventory()) {
@@ -365,67 +363,69 @@ public class AppEngApi {
             }
         }
 
-        map.put("usedBytes", usedBytes);
-        map.put("totalBytes", totalBytes);
-        map.put("cells", driveCells);
-        map.put("priority", drive.getPriority());
-        map.put("menuIcon", LuaConverter.itemToObject(drive.getMainMenuIcon().getItem()));
-        map.put("position", LuaConverter.posToObject(drive.getBlockPos()));
-        map.put("name", drive.hasCustomName() ? drive.getCustomName().getString() : drive.getDisplayName().getString());
+        Map<Object, Object> properties = new HashMap<>();
 
-        return map;
+        properties.put("usedBytes", usedBytes);
+        properties.put("totalBytes", totalBytes);
+        properties.put("cells", driveCells);
+        properties.put("priority", drive.getPriority());
+        properties.put("menuIcon", LuaConverter.itemToObject(drive.getMainMenuIcon().getItem()));
+        properties.put("position", LuaConverter.posToObject(drive.getBlockPos()));
+        properties.put("name", drive.hasCustomName() ? drive.getCustomName().getString() : drive.getDisplayName().getString());
+
+        return properties;
     }
 
     public static Map<Object, Object> parseCell(IBasicCellItem cell, ItemStack cellItem) {
-        Map<Object, Object> map = new HashMap<>();
+        Map<Object, Object> properties = new HashMap<>();
         BasicCellInventory cellInventory = BasicCellHandler.INSTANCE.getCellInventory(cellItem, null);
 
-        map.put("item", LuaConverter.itemToObject(cellItem.getItem()));
-        map.put("type", cell.getKeyType().toString());
-        map.put("bytes", cell.getBytes(cellItem));
-        map.put("bytesPerType", cell.getBytesPerType(cellItem));
-        map.put("usedBytes", cellInventory.getUsedBytes());
-        map.put("totalTypes", cell.getTotalTypes(cellItem));
-        map.put("fuzzyMode", cell.getFuzzyMode(cellItem).toString());
+        properties.put("item", LuaConverter.itemToObject(cellItem.getItem()));
+        properties.put("type", cell.getKeyType().toString());
+        properties.put("bytes", cell.getBytes(cellItem));
+        properties.put("bytesPerType", cell.getBytesPerType(cellItem));
+        properties.put("usedBytes", cellInventory.getUsedBytes());
+        properties.put("totalTypes", cell.getTotalTypes(cellItem));
+        properties.put("fuzzyMode", cell.getFuzzyMode(cellItem).toString());
 
-        return map;
+        return properties;
     }
 
     private static Map<String, Object> parseItemStack(Pair<Long, AEItemKey> stack, @Nullable ICraftingService craftingService) {
-        Map<String, Object> map = LuaConverter.itemStackToObject(stack.getRight().toStack());
-        map.put("isCraftable", craftingService != null && craftingService.isCraftable(stack.getRight()));
-        map.put("count", stack.getLeft());
-        return map;
+        Map<String, Object> properties = LuaConverter.itemStackToObject(stack.getRight().toStack());
+        properties.put("isCraftable", craftingService != null && craftingService.isCraftable(stack.getRight()));
+        properties.put("count", stack.getLeft());
+        return properties;
     }
 
     private static Map<String, Object> parseFluidStack(Pair<Long, AEFluidKey> stack, @Nullable ICraftingService craftingService) {
-        Map<String, Object> map = LuaConverter.fluidStackToObject(stack.getRight().toStack(1));
-        map.put("count", stack.getLeft());
-        map.put("isCraftable", craftingService != null && craftingService.isCraftable(stack.getRight()));
-        return map;
+        Map<String, Object> properties = LuaConverter.fluidStackToObject(stack.getRight().toStack(1));
+        properties.put("count", stack.getLeft());
+        properties.put("isCraftable", craftingService != null && craftingService.isCraftable(stack.getRight()));
+        return properties;
     }
 
     private static Map<String, Object> parseChemStack(Pair<Long, MekanismKey> stack) {
-        Map<String, Object> map = new HashMap<>();
+        Map<String, Object> properties = new HashMap<>();
         long amount = stack.getLeft();
-        map.put("name", stack.getRight().getStack().getChemicalHolder().getRegisteredName());
-        map.put("amount", amount);
-        map.put("displayName", stack.getRight().getDisplayName().getString());
-        map.put("tags", LuaConverter.tagsToList(() -> stack.getRight().getStack().getTags()));
+        properties.put("name", stack.getRight().getStack().getChemicalHolder().getRegisteredName());
+        properties.put("amount", amount);
+        properties.put("displayName", stack.getRight().getDisplayName().getString());
+        properties.put("tags", LuaConverter.tagsToList(() -> stack.getRight().getStack().getTags()));
 
-        return map;
+        return properties;
     }
 
     public static Map<String, Object> parsePattern(Pair<EncodedPatternItem<?>, IPatternDetails> pattern) {
-        Map<String, Object> map = new HashMap<>();
+        Map<String, Object> properties = new HashMap<>();
         IPatternDetails patternDetails = pattern.getRight();
         String patternType = getPatternType(pattern.getLeft());
 
-        map.put("inputs", Arrays.stream(patternDetails.getInputs()).map(AppEngApi::parsePatternInput).collect(Collectors.toList()));
-        map.put("outputs", patternDetails.getOutputs().stream().map(AppEngApi::parseGenericStack).collect(Collectors.toList()));
-        map.put("primaryOutput", parseGenericStack(patternDetails.getPrimaryOutput()));
-        map.put("patternType", patternType);
-        return map;
+        properties.put("inputs", Arrays.stream(patternDetails.getInputs()).map(AppEngApi::parsePatternInput).collect(Collectors.toList()));
+        properties.put("outputs", patternDetails.getOutputs().stream().map(AppEngApi::parseGenericStack).collect(Collectors.toList()));
+        properties.put("primaryOutput", parseGenericStack(patternDetails.getPrimaryOutput()));
+        properties.put("patternType", patternType);
+        return properties;
     }
 
     private static String getPatternType(EncodedPatternItem<?> patternItem) {
@@ -437,28 +437,28 @@ public class AppEngApi {
     }
 
     public static Map<String, Object> parsePatternInput(IPatternDetails.IInput patternInput) {
-        Map<String, Object> map = new HashMap<>();
-        map.put("primaryInput", parseGenericStack(patternInput.getPossibleInputs()[0]));
-        map.put("possibleInputs", Arrays.stream(Arrays.copyOfRange(patternInput.getPossibleInputs(), 1, patternInput.getPossibleInputs().length)).map(AppEngApi::parseGenericStack));
-        map.put("multiplier", patternInput.getMultiplier());
-        map.put("remaining", patternInput.getRemainingKey(patternInput.getPossibleInputs()[0].what()));
-        return map;
+        Map<String, Object> properties = new HashMap<>();
+        properties.put("primaryInput", parseGenericStack(patternInput.getPossibleInputs()[0]));
+        properties.put("possibleInputs", Arrays.stream(Arrays.copyOfRange(patternInput.getPossibleInputs(), 1, patternInput.getPossibleInputs().length)).map(AppEngApi::parseGenericStack));
+        properties.put("multiplier", patternInput.getMultiplier());
+        properties.put("remaining", patternInput.getRemainingKey(patternInput.getPossibleInputs()[0].what()));
+        return properties;
     }
 
     public static Map<String, Object> parseCraftingCPU(ICraftingCPU cpu, boolean recursive) {
-        Map<String, Object> map = new HashMap<>();
+        Map<String, Object> properties = new HashMap<>();
         long storage = cpu.getAvailableStorage();
         int coProcessors = cpu.getCoProcessors();
         boolean isBusy = cpu.isBusy();
-        map.put("storage", storage);
-        map.put("coProcessors", coProcessors);
-        map.put("isBusy", isBusy);
+        properties.put("storage", storage);
+        properties.put("coProcessors", coProcessors);
+        properties.put("isBusy", isBusy);
         if (!recursive)
-            map.put("craftingJob", cpu.getJobStatus() != null ? parseCraftingJob(cpu.getJobStatus(), null, null) : null);
-        map.put("name", cpu.getName() != null ? cpu.getName().getString() : "Unnamed");
-        map.put("selectionMode", cpu.getSelectionMode().toString());
+            properties.put("craftingJob", cpu.getJobStatus() != null ? parseCraftingJob(cpu.getJobStatus(), null, null) : null);
+        properties.put("name", cpu.getName() != null ? cpu.getName().getString() : "Unnamed");
+        properties.put("selectionMode", cpu.getSelectionMode().toString());
 
-        return map;
+        return properties;
     }
 
     public static Object parseCraftingJob(CraftingJobStatus status, @Nullable AECraftJob craftJob, @Nullable ICraftingCPU cpu) {
@@ -920,21 +920,21 @@ public class AppEngApi {
     }
 
     private static Map<String, Object> getObjectFromDisk(DISKDrive drive, ItemStack stack) {
-        Map<String, Object> map = new HashMap<>();
+        Map<String, Object> properties = new HashMap<>();
         DISKCellInventory cellInventory = DISKCellHandler.INSTANCE.getCellInventory(stack, null);
 
         if (cellInventory == null)
             return null;
 
-        map.put("item", LuaConverter.itemToObject(stack.getItem()));
-        map.put("type", drive.getKeyType().toString());
-        map.put("bytes", drive.getBytes(stack));
-        map.put("bytesPerType", 0);
-        map.put("usedBytes", cellInventory.getNbtItemCount());
-        map.put("totalTypes", 0);
-        map.put("fuzzyMode", drive.getFuzzyMode(stack).toString());
+        properties.put("item", LuaConverter.itemToObject(stack.getItem()));
+        properties.put("type", drive.getKeyType().toString());
+        properties.put("bytes", drive.getBytes(stack));
+        properties.put("bytesPerType", 0);
+        properties.put("usedBytes", cellInventory.getNbtItemCount());
+        properties.put("totalTypes", 0);
+        properties.put("fuzzyMode", drive.getFuzzyMode(stack).toString());
 
-        return map;
+        return properties;
     }
 
 }
