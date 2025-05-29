@@ -13,6 +13,7 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * Used to transfer item between an inventory and the ME system.
+ *
  * @see MEBridgePeripheral
  */
 public class MEFluidHandler implements IStorageSystemFluidHandler {
@@ -29,7 +30,7 @@ public class MEFluidHandler implements IStorageSystemFluidHandler {
 
     @Override
     public int fill(FluidStack resource, FluidAction action) {
-        if(resource.isEmpty())
+        if (resource.isEmpty())
             return 0;
         AEFluidKey itemKey = AEFluidKey.of(resource.getFluid());
         long inserted = storageMonitor.insert(itemKey, resource.getAmount(), action == FluidAction.SIMULATE ? Actionable.SIMULATE : Actionable.MODULATE, actionSource);
@@ -40,10 +41,10 @@ public class MEFluidHandler implements IStorageSystemFluidHandler {
     @NotNull
     @Override
     public FluidStack drain(FluidFilter filter, FluidAction simulate) {
-        Pair<Long, AEFluidKey> itemKey = AppEngApi.findAEFluidFromFilter(storageMonitor, null, filter);
-        if(itemKey == null)
+        Pair<Long, AEFluidKey> fluidKey = AppEngApi.findAEFluidFromFilter(storageMonitor, null, filter);
+        if (fluidKey.getRight().toStack(0).isEmpty())
             return FluidStack.EMPTY;
-        long extracted = storageMonitor.extract(itemKey.getRight(), filter.getCount(), simulate == FluidAction.SIMULATE ? Actionable.SIMULATE : Actionable.MODULATE, actionSource);
-        return new FluidStack(itemKey.getRight().getFluid(), (int) Math.min(extracted, Integer.MAX_VALUE));
+        long extracted = storageMonitor.extract(fluidKey.getRight(), filter.getCount(), simulate == FluidAction.SIMULATE ? Actionable.SIMULATE : Actionable.MODULATE, actionSource);
+        return new FluidStack(fluidKey.getRight().getFluid(), (int) Math.min(extracted, Integer.MAX_VALUE));
     }
 }

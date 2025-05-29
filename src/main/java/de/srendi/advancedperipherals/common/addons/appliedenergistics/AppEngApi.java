@@ -145,10 +145,8 @@ public class AppEngApi {
      */
     public static Pair<IPatternDetails, String> findPatternFromFilters(IGrid grid, net.minecraft.world.level.Level level, @Nullable GenericFilter<?> inputFilter, @Nullable GenericFilter<?> outputFilter) {
         for (IPatternDetails pattern : getPatterns(grid, level)) {
-            if (pattern.getInputs().length == 0)
-                continue;
-            if (pattern.getOutputs().isEmpty())
-                continue;
+            if (pattern.getInputs().length == 0) continue;
+            if (pattern.getOutputs().isEmpty()) continue;
 
             boolean inputMatch = false;
             boolean outputMatch = false;
@@ -256,15 +254,13 @@ public class AppEngApi {
 
         for (var machineClass : grid.getMachineClasses()) {
             var containerClass = tryCastMachineToContainer(machineClass);
-            if (containerClass == null)
-                continue;
+            if (containerClass == null) continue;
 
             for (var container : grid.getActiveMachines(containerClass)) {
                 for (ItemStack patternItem : container.getTerminalPatternInventory()) {
                     if (patternItem.getItem() instanceof EncodedPatternItem<?> item) {
                         IPatternDetails patternDetails = item.decode(patternItem, level);
-                        if (patternDetails == null)
-                            continue;
+                        if (patternDetails == null) continue;
 
                         patterns.add(patternDetails);
                     }
@@ -285,8 +281,7 @@ public class AppEngApi {
             DriveBlockEntity drive = (DriveBlockEntity) node.getService(IStorageProvider.class);
 
             // A normal drive has a cellCount of 10
-            if (drive == null || drive.getCellCount() != 10)
-                continue;
+            if (drive == null || drive.getCellCount() != 10) continue;
 
             drives.add(parseDrive(drive));
         }
@@ -477,11 +472,9 @@ public class AppEngApi {
                     CraftingJobStatus jobStatus = cpu.getJobStatus();
 
                     // avoid null pointer exception
-                    if (jobStatus == null)
-                        continue;
+                    if (jobStatus == null) continue;
 
-                    if (filter.testAE(jobStatus.crafting()))
-                        return true;
+                    if (filter.testAE(jobStatus.crafting())) return true;
                 }
             }
         } else {
@@ -546,8 +539,7 @@ public class AppEngApi {
     public static long getTotalExternalChemicalStorage(IGridNode node) {
         long total = 0;
 
-        if (!APAddon.APP_MEKANISTICS.isLoaded())
-            return 0;
+        if (!APAddon.APP_MEKANISTICS.isLoaded()) return 0;
 
         for (IGridNode iGridNode : node.getGrid().getMachineNodes(StorageBusPart.class)) {
             StorageBusPart bus = (StorageBusPart) iGridNode.getService(IStorageProvider.class);
@@ -555,8 +547,7 @@ public class AppEngApi {
             BlockPos connectedInventoryPos = bus.getHost().getBlockEntity().getBlockPos().relative(bus.getSide());
             BlockEntity connectedInventoryEntity = level.getBlockEntity(connectedInventoryPos);
 
-            if (connectedInventoryEntity == null)
-                continue;
+            if (connectedInventoryEntity == null) continue;
 
             if (connectedInventoryEntity instanceof TileEntityChemicalTank tank) {
                 total += tank.getChemicalTank().getCapacity();
@@ -601,8 +592,7 @@ public class AppEngApi {
     public static long getUsedExternalChemicalStorage(IGridNode node) {
         long used = 0;
 
-        if (!APAddon.APP_MEKANISTICS.isLoaded())
-            return 0;
+        if (!APAddon.APP_MEKANISTICS.isLoaded()) return 0;
 
         for (IGridNode iGridNode : node.getGrid().getMachineNodes(StorageBusPart.class)) {
             StorageBusPart bus = (StorageBusPart) iGridNode.getService(IStorageProvider.class);
@@ -624,16 +614,14 @@ public class AppEngApi {
 
         // note: do not query DriveBlockEntity.class specifically here, because it will avoid subclasses, e.g. the ME Extended Drive from ExtendedAE
         for (IGridNode iGridNode : node.getGrid().getNodes()) {
-            if (!(iGridNode.getService(IStorageProvider.class) instanceof DriveBlockEntity entity))
-                continue;
+            if (!(iGridNode.getService(IStorageProvider.class) instanceof DriveBlockEntity entity)) continue;
 
             InternalInventory inventory = entity.getInternalInventory();
 
             for (int i = 0; i < inventory.size(); i++) {
                 ItemStack stack = inventory.getStackInSlot(i);
 
-                if (stack.isEmpty())
-                    continue;
+                if (stack.isEmpty()) continue;
 
                 if (stack.getItem() instanceof IBasicCellItem cell) {
                     if (cell.getKeyType().getClass().isAssignableFrom(AEKeyType.items().getClass())) {
@@ -653,16 +641,14 @@ public class AppEngApi {
         long total = 0;
 
         for (IGridNode iGridNode : node.getGrid().getNodes()) {
-            if (!(iGridNode.getService(IStorageProvider.class) instanceof DriveBlockEntity entity))
-                continue;
+            if (!(iGridNode.getService(IStorageProvider.class) instanceof DriveBlockEntity entity)) continue;
 
             InternalInventory inventory = entity.getInternalInventory();
 
             for (int i = 0; i < inventory.size(); i++) {
                 ItemStack stack = inventory.getStackInSlot(i);
 
-                if (stack.isEmpty())
-                    continue;
+                if (stack.isEmpty()) continue;
 
                 if (stack.getItem() instanceof IBasicCellItem cell) {
                     if (cell.getKeyType().getClass().isAssignableFrom(AEKeyType.fluids().getClass())) {
@@ -678,21 +664,18 @@ public class AppEngApi {
     public static long getTotalChemicalStorage(IGridNode node) {
         long total = 0;
 
-        if (!APAddon.APP_MEKANISTICS.isLoaded())
-            return 0;
+        if (!APAddon.APP_MEKANISTICS.isLoaded()) return 0;
 
         for (IGridNode iGridNode : node.getGrid().getMachineNodes(DriveBlockEntity.class)) {
             DriveBlockEntity entity = (DriveBlockEntity) iGridNode.getService(IStorageProvider.class);
-            if (entity == null)
-                continue;
+            if (entity == null) continue;
 
             InternalInventory inventory = entity.getInternalInventory();
 
             for (int i = 0; i < inventory.size(); i++) {
                 ItemStack stack = inventory.getStackInSlot(i);
 
-                if (stack.isEmpty())
-                    continue;
+                if (stack.isEmpty()) continue;
 
                 if (stack.getItem() instanceof ChemicalStorageCell cell) {
                     if (cell.getKeyType() instanceof MekanismKeyType) {
@@ -710,16 +693,14 @@ public class AppEngApi {
         long used = 0;
 
         for (IGridNode iGridNode : node.getGrid().getNodes()) {
-            if (!(iGridNode.getService(IStorageProvider.class) instanceof DriveBlockEntity entity))
-                continue;
+            if (!(iGridNode.getService(IStorageProvider.class) instanceof DriveBlockEntity entity)) continue;
 
             InternalInventory inventory = entity.getInternalInventory();
 
             for (int i = 0; i < inventory.size(); i++) {
                 ItemStack stack = inventory.getStackInSlot(i);
 
-                if (stack.isEmpty())
-                    continue;
+                if (stack.isEmpty()) continue;
 
                 if (stack.getItem() instanceof IBasicCellItem cell) {
                     if (cell.getKeyType().getClass().isAssignableFrom(AEKeyType.items().getClass())) {
@@ -743,8 +724,7 @@ public class AppEngApi {
         long used = 0;
 
         for (IGridNode iGridNode : node.getGrid().getNodes()) {
-            if (!(iGridNode.getService(IStorageProvider.class) instanceof DriveBlockEntity entity))
-                continue;
+            if (!(iGridNode.getService(IStorageProvider.class) instanceof DriveBlockEntity entity)) continue;
 
             InternalInventory inventory = entity.getInternalInventory();
 
@@ -767,13 +747,11 @@ public class AppEngApi {
     public static long getUsedChemicalStorage(IGridNode node) {
         long used = 0;
 
-        if (!APAddon.APP_MEKANISTICS.isLoaded())
-            return 0;
+        if (!APAddon.APP_MEKANISTICS.isLoaded()) return 0;
 
         for (IGridNode iGridNode : node.getGrid().getMachineNodes(DriveBlockEntity.class)) {
             DriveBlockEntity entity = (DriveBlockEntity) iGridNode.getService(IStorageProvider.class);
-            if (entity == null)
-                continue;
+            if (entity == null) continue;
 
             InternalInventory inventory = entity.getInternalInventory();
 
@@ -867,21 +845,18 @@ public class AppEngApi {
 
         Iterator<IGridNode> iterator = node.getGrid().getNodes().iterator();
 
-        if (!iterator.hasNext())
-            return items;
+        if (!iterator.hasNext()) return items;
 
         while (iterator.hasNext()) {
             IStorageProvider entity = iterator.next().getService(IStorageProvider.class);
-            if (!(entity instanceof DriveBlockEntity drive))
-                continue;
+            if (!(entity instanceof DriveBlockEntity drive)) continue;
 
             InternalInventory inventory = drive.getInternalInventory();
 
             for (int i = 0; i < inventory.size(); i++) {
                 ItemStack stack = inventory.getStackInSlot(i);
 
-                if (stack.isEmpty())
-                    continue;
+                if (stack.isEmpty()) continue;
 
                 if (stack.getItem() instanceof IBasicCellItem cell) {
                     items.add(parseCell(cell, stack));

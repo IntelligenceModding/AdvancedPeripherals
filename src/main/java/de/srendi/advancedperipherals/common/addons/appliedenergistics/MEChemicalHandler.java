@@ -17,14 +17,14 @@ import org.jetbrains.annotations.NotNull;
  * Used to transfer a chemical between a tank and the ME system.
  * @see MEBridgePeripheral
  */
-public class MeChemicalHandler implements IStorageSystemChemicalHandler {
+public class MEChemicalHandler implements IStorageSystemChemicalHandler {
 
     @NotNull
     private final MEStorage storageMonitor;
     @NotNull
     private final IActionSource actionSource;
 
-    public MeChemicalHandler(@NotNull MEStorage storageMonitor, @NotNull IActionSource actionSource) {
+    public MEChemicalHandler(@NotNull MEStorage storageMonitor, @NotNull IActionSource actionSource) {
         this.storageMonitor = storageMonitor;
         this.actionSource = actionSource;
     }
@@ -44,13 +44,13 @@ public class MeChemicalHandler implements IStorageSystemChemicalHandler {
     @NotNull
     @Override
     public ChemicalStack extractChemical(ChemicalFilter filter, long count, Action simulate) {
-        Pair<Long, MekanismKey> itemKey = AppEngApi.findAEChemicalFromFilter(storageMonitor, null, filter);
-        if(itemKey == null)
+        Pair<Long, MekanismKey> chemicalKey = AppEngApi.findAEChemicalFromFilter(storageMonitor, null, filter);
+        if(chemicalKey.getRight().getStack().isEmpty())
             return ChemicalStack.EMPTY;
 
-        ChemicalStack extracted = itemKey.getRight().getStack();
+        ChemicalStack extracted = chemicalKey.getRight().getStack();
 
-        long amountExtracted = storageMonitor.extract(itemKey.getRight(), filter.getCount(), simulate == Action.SIMULATE ? Actionable.SIMULATE : Actionable.MODULATE, actionSource);
+        long amountExtracted = storageMonitor.extract(chemicalKey.getRight(), filter.getCount(), simulate == Action.SIMULATE ? Actionable.SIMULATE : Actionable.MODULATE, actionSource);
         extracted.setAmount(amountExtracted);
         AdvancedPeripherals.debug("Extracted chemical: " + extracted + " from filter: " + filter);
         return extracted;

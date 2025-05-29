@@ -18,7 +18,7 @@ import dan200.computercraft.core.computer.ComputerSide;
 import de.srendi.advancedperipherals.common.addons.APAddon;
 import de.srendi.advancedperipherals.common.addons.appliedenergistics.AECraftJob;
 import de.srendi.advancedperipherals.common.addons.appliedenergistics.AppEngApi;
-import de.srendi.advancedperipherals.common.addons.appliedenergistics.MeChemicalHandler;
+import de.srendi.advancedperipherals.common.addons.appliedenergistics.MEChemicalHandler;
 import de.srendi.advancedperipherals.common.addons.appliedenergistics.MEFluidHandler;
 import de.srendi.advancedperipherals.common.addons.appliedenergistics.MEItemHandler;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.BlockEntityPeripheralOwner;
@@ -119,7 +119,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
      */
     protected MethodResult exportToTank(@NotNull IArguments arguments, IChemicalHandler targetTank) throws LuaException {
         MEStorage monitor = AppEngApi.getMonitor(node);
-        MeChemicalHandler chemicalHandler = new MeChemicalHandler(monitor, bridge);
+        MEChemicalHandler chemicalHandler = new MEChemicalHandler(monitor, bridge);
         Pair<ChemicalFilter, String> filter = ChemicalFilter.parse(arguments.getTable(0));
 
         if (filter.rightPresent())
@@ -173,7 +173,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
      */
     protected MethodResult importToME(@NotNull IArguments arguments, IChemicalHandler targetTank) throws LuaException {
         MEStorage monitor = AppEngApi.getMonitor(node);
-        MeChemicalHandler chemicalHandler = new MeChemicalHandler(monitor, bridge);
+        MEChemicalHandler chemicalHandler = new MEChemicalHandler(monitor, bridge);
         Pair<ChemicalFilter, String> filter = ChemicalFilter.parse(arguments.getTable(0));
 
         if (filter.rightPresent())
