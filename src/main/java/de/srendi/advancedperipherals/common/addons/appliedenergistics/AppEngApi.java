@@ -332,8 +332,6 @@ public class AppEngApi {
     public static Map<Object, Object> parseDrive(DriveBlockEntity drive) {
         Map<Object, Object> map = new HashMap<>();
 
-        map.put("powered", drive.isPowered());
-
         long totalBytes = 0;
         long usedBytes = 0;
 
@@ -747,7 +745,8 @@ public class AppEngApi {
     public static long getUsedChemicalStorage(IGridNode node) {
         long used = 0;
 
-        if (!APAddon.APP_MEKANISTICS.isLoaded()) return 0;
+        if (!APAddon.APP_MEKANISTICS.isLoaded())
+            return 0;
 
         for (IGridNode iGridNode : node.getGrid().getMachineNodes(DriveBlockEntity.class)) {
             DriveBlockEntity entity = (DriveBlockEntity) iGridNode.getService(IStorageProvider.class);
@@ -761,7 +760,7 @@ public class AppEngApi {
                 if (stack.getItem() instanceof ChemicalStorageCell) {
                     BasicCellInventory cellInventory = BasicCellHandler.INSTANCE.getCellInventory(stack, null);
 
-                    used = cellInventory.getUsedBytes() / MekanismKeyType.TYPE.getAmountPerByte();
+                    used = cellInventory.getUsedBytes();
                 }
             }
         }
