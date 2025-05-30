@@ -318,7 +318,7 @@ public class AppEngApi {
         if (stack.getRight() instanceof AEFluidKey fluidKey)
             return parseFluidStack(Pair.of(stack.getLeft(), fluidKey), service);
         if (APAddon.APP_MEKANISTICS.isLoaded() && (stack.getRight() instanceof MekanismKey gasKey))
-            return parseChemStack(Pair.of(stack.getLeft(), gasKey));
+            return parseChemStack(Pair.of(stack.getLeft(), gasKey), service);
 
         AdvancedPeripherals.debug("Could not create table from unknown stack " + stack.getRight().getClass() + " - Report this to the maintainer of ap", org.apache.logging.log4j.Level.WARN);
         return Collections.emptyMap();
@@ -391,10 +391,28 @@ public class AppEngApi {
         return properties;
     }
 
+    private static Map<String, Object> parseDISKDrive(DISKDrive drive, ItemStack stack) {
+        Map<String, Object> properties = new HashMap<>();
+        DISKCellInventory cellInventory = DISKCellHandler.INSTANCE.getCellInventory(stack, null);
+
+        if (cellInventory == null)
+            return null;
+
+        properties.put("item", LuaConverter.itemToObject(stack.getItem()));
+        properties.put("type", drive.getKeyType().toString());
+        properties.put("bytes", drive.getBytes(stack));
+        properties.put("bytesPerType", 0);
+        properties.put("usedBytes", cellInventory.getNbtItemCount());
+        properties.put("totalTypes", 0);
+        properties.put("fuzzyMode", drive.getFuzzyMode(stack).toString());
+
+        return properties;
+    }
+
     private static Map<String, Object> parseItemStack(Pair<Long, AEItemKey> stack, @Nullable ICraftingService craftingService) {
         Map<String, Object> properties = LuaConverter.itemStackToObject(stack.getRight().toStack());
-        properties.put("isCraftable", craftingService != null && craftingService.isCraftable(stack.getRight()));
         properties.put("count", stack.getLeft());
+        properties.put("isCraftable", craftingService != null && craftingService.isCraftable(stack.getRight()));
         return properties;
     }
 
@@ -405,14 +423,9 @@ public class AppEngApi {
         return properties;
     }
 
-    private static Map<String, Object> parseChemStack(Pair<Long, MekanismKey> stack) {
-        Map<String, Object> properties = new HashMap<>();
-        long amount = stack.getLeft();
-        properties.put("name", stack.getRight().getStack().getChemicalHolder().getRegisteredName());
-        properties.put("amount", amount);
-        properties.put("displayName", stack.getRight().getDisplayName().getString());
-        properties.put("tags", LuaConverter.tagsToList(() -> stack.getRight().getStack().getTags()));
-
+    private static Map<String, Object> parseChemStack(Pair<Long, MekanismKey> stack, @Nullable ICraftingService craftingService) {
+        Map<String, Object> properties = LuaConverter.chemicalStackToObject(stack.getRight().withAmount(stack.getLeft()));
+        properties.put("isCraftable", craftingService != null && craftingService.isCraftable(stack.getRight()));
         return properties;
     }
 
@@ -911,30 +924,12 @@ public class AppEngApi {
                 if (stack.getItem() instanceof IBasicCellItem cell) {
                     items.add(parseCell(cell, stack));
                 } else if (APAddon.AE2_THINGS.isLoaded() && stack.getItem() instanceof DISKDrive disk) {
-                    items.add(getObjectFromDisk(disk, stack));
+                    items.add(parseDISKDrive(disk, stack));
                 }
             }
         }
 
         return items;
-    }
-
-    private static Map<String, Object> getObjectFromDisk(DISKDrive drive, ItemStack stack) {
-        Map<String, Object> properties = new HashMap<>();
-        DISKCellInventory cellInventory = DISKCellHandler.INSTANCE.getCellInventory(stack, null);
-
-        if (cellInventory == null)
-            return null;
-
-        properties.put("item", LuaConverter.itemToObject(stack.getItem()));
-        properties.put("type", drive.getKeyType().toString());
-        properties.put("bytes", drive.getBytes(stack));
-        properties.put("bytesPerType", 0);
-        properties.put("usedBytes", cellInventory.getNbtItemCount());
-        properties.put("totalTypes", 0);
-        properties.put("fuzzyMode", drive.getFuzzyMode(stack).toString());
-
-        return properties;
     }
 
 }
