@@ -2,6 +2,7 @@
   "parent": "minecraft:block/cube_all",
   "textures": {
     "all": "advancedperipherals:block/peripheral_casing",
+    "down": "advancedperipherals:block/bottom",
     "particle": "advancedperipherals:block/peripheral_casing"
   }
 }
