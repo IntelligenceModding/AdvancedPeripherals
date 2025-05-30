@@ -239,6 +239,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     }
 
     @Override
+    @LuaFunction(mainThread = true)
     public MethodResult getChemical(IArguments arguments) throws LuaException {
         if (!isAvailable())
             return notConnected();
@@ -256,7 +257,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
     @Override
     @LuaFunction(mainThread = true)
-    public final MethodResult listItems(IArguments arguments) throws LuaException {
+    public final MethodResult getItems(IArguments arguments) throws LuaException {
         if (!isAvailable())
             return notConnected();
 
@@ -271,7 +272,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
     @Override
     @LuaFunction(mainThread = true)
-    public final MethodResult listFluids(IArguments arguments) throws LuaException {
+    public final MethodResult getFluids(IArguments arguments) throws LuaException {
         if (!isAvailable())
             return notConnected();
 
@@ -285,7 +286,8 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     }
 
     @Override
-    public MethodResult listChemicals(IArguments arguments) throws LuaException {
+    @LuaFunction(mainThread = true)
+    public MethodResult getChemicals(IArguments arguments) throws LuaException {
         if (!isAvailable())
             return notConnected();
 
@@ -303,7 +305,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
     @Override
     @LuaFunction(mainThread = true)
-    public final MethodResult listCraftableItems(IArguments arguments) throws LuaException {
+    public final MethodResult getCraftableItems(IArguments arguments) throws LuaException {
         if (!isAvailable())
             return notConnected();
 
@@ -318,7 +320,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
     @Override
     @LuaFunction(mainThread = true)
-    public final MethodResult listCraftableFluids(IArguments arguments) throws LuaException {
+    public final MethodResult getCraftableFluids(IArguments arguments) throws LuaException {
         if (!isAvailable())
             return notConnected();
 
@@ -332,7 +334,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     }
 
     @Override
-    public MethodResult listCraftableChemicals(IArguments arguments) throws LuaException {
+    public MethodResult getCraftableChemicals(IArguments arguments) throws LuaException {
         if (!isAvailable())
             return notConnected();
 
@@ -350,7 +352,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
     @Override
     @LuaFunction(mainThread = true)
-    public final MethodResult listCells() {
+    public final MethodResult getCells() {
         if (!isAvailable())
             return notConnected();
 
@@ -359,7 +361,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
     @Override
     @LuaFunction(mainThread = true)
-    public MethodResult listDrives() {
+    public MethodResult getDrives() {
         if (!isAvailable())
             return notConnected();
 

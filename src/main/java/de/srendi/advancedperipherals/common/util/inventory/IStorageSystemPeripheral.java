@@ -31,21 +31,21 @@ public interface IStorageSystemPeripheral {
 
     MethodResult getChemical(IArguments arguments) throws LuaException;
 
-    MethodResult listItems(IArguments arguments) throws LuaException;
+    MethodResult getItems(IArguments arguments) throws LuaException;
 
-    MethodResult listFluids(IArguments arguments) throws LuaException;
+    MethodResult getFluids(IArguments arguments) throws LuaException;
 
-    MethodResult listChemicals(IArguments arguments) throws LuaException;
+    MethodResult getChemicals(IArguments arguments) throws LuaException;
 
-    MethodResult listCraftableItems(IArguments arguments) throws LuaException;
+    MethodResult getCraftableItems(IArguments arguments) throws LuaException;
 
-    MethodResult listCraftableFluids(IArguments arguments) throws LuaException;
+    MethodResult getCraftableFluids(IArguments arguments) throws LuaException;
 
-    MethodResult listCraftableChemicals(IArguments arguments) throws LuaException;
+    MethodResult getCraftableChemicals(IArguments arguments) throws LuaException;
 
-    MethodResult listCells();
+    MethodResult getCells();
 
-    MethodResult listDrives();
+    MethodResult getDrives();
 
     MethodResult importItem(IComputerAccess computer, IArguments arguments) throws LuaException;
 
