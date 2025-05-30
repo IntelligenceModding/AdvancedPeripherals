@@ -18,7 +18,7 @@ import dan200.computercraft.core.apis.TableHelper;
 import dan200.computercraft.core.computer.ComputerSide;
 import de.srendi.advancedperipherals.common.addons.APAddon;
 import de.srendi.advancedperipherals.common.addons.appliedenergistics.AECraftJob;
-import de.srendi.advancedperipherals.common.addons.appliedenergistics.AppEngApi;
+import de.srendi.advancedperipherals.common.addons.appliedenergistics.AEApi;
 import de.srendi.advancedperipherals.common.addons.appliedenergistics.MEChemicalHandler;
 import de.srendi.advancedperipherals.common.addons.appliedenergistics.MEFluidHandler;
 import de.srendi.advancedperipherals.common.addons.appliedenergistics.MEItemHandler;
@@ -83,7 +83,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
      * @return the exportable amount or null with a string if something went wrong
      */
     protected MethodResult exportToChest(@NotNull IArguments arguments, IItemHandler targetInventory) throws LuaException {
-        MEStorage monitor = AppEngApi.getMonitor(node);
+        MEStorage monitor = AEApi.getMonitor(node);
         MEItemHandler itemHandler = new MEItemHandler(monitor, bridge);
         Pair<ItemFilter, String> filter = ItemFilter.parse(arguments.getTable(0));
 
@@ -101,7 +101,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
      * @return the exportable amount or null with a string if something went wrong
      */
     protected MethodResult exportToTank(@NotNull IArguments arguments, IFluidHandler targetTank) throws LuaException {
-        MEStorage monitor = AppEngApi.getMonitor(node);
+        MEStorage monitor = AEApi.getMonitor(node);
         MEFluidHandler fluidHandler = new MEFluidHandler(monitor, bridge);
         Pair<FluidFilter, String> filter = FluidFilter.parse(arguments.getTable(0));
 
@@ -119,7 +119,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
      * @return the exportable amount or null with a string if something went wrong
      */
     protected MethodResult exportToTank(@NotNull IArguments arguments, IChemicalHandler targetTank) throws LuaException {
-        MEStorage monitor = AppEngApi.getMonitor(node);
+        MEStorage monitor = AEApi.getMonitor(node);
         MEChemicalHandler chemicalHandler = new MEChemicalHandler(monitor, bridge);
         Pair<ChemicalFilter, String> filter = ChemicalFilter.parse(arguments.getTable(0));
 
@@ -137,7 +137,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
      * @return the imported amount or null with a string if something went wrong
      */
     protected MethodResult importToME(@NotNull IArguments arguments, IItemHandler targetInventory) throws LuaException {
-        MEStorage monitor = AppEngApi.getMonitor(node);
+        MEStorage monitor = AEApi.getMonitor(node);
         MEItemHandler itemHandler = new MEItemHandler(monitor, bridge);
         Pair<ItemFilter, String> filter = ItemFilter.parse(arguments.getTable(0));
 
@@ -155,7 +155,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
      * @return the imported amount or null with a string if something went wrong
      */
     protected MethodResult importToME(@NotNull IArguments arguments, IFluidHandler targetTank) throws LuaException {
-        MEStorage monitor = AppEngApi.getMonitor(node);
+        MEStorage monitor = AEApi.getMonitor(node);
         MEFluidHandler fluidHandler = new MEFluidHandler(monitor, bridge);
         Pair<FluidFilter, String> filter = FluidFilter.parse(arguments.getTable(0));
 
@@ -173,7 +173,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
      * @return the imported amount or null with a string if something went wrong
      */
     protected MethodResult importToME(@NotNull IArguments arguments, IChemicalHandler targetTank) throws LuaException {
-        MEStorage monitor = AppEngApi.getMonitor(node);
+        MEStorage monitor = AEApi.getMonitor(node);
         MEChemicalHandler chemicalHandler = new MEChemicalHandler(monitor, bridge);
         Pair<ChemicalFilter, String> filter = ChemicalFilter.parse(arguments.getTable(0));
 
@@ -209,7 +209,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (!isAvailable())
             return notConnected();
 
-        MEStorage monitor = AppEngApi.getMonitor(node);
+        MEStorage monitor = AEApi.getMonitor(node);
         Pair<ItemFilter, String> filter = ItemFilter.parse(arguments.getTable(0));
         if (filter.rightPresent())
             return MethodResult.of(null, filter.getRight());
@@ -218,7 +218,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (parsedFilter.isEmpty())
             return MethodResult.of(null, StatusConstants.EMPTY_FILTER.toString());
 
-        return MethodResult.of(AppEngApi.parseAeStack(AppEngApi.findAEStackFromFilter(monitor, getCraftingService(), parsedFilter), getCraftingService()));
+        return MethodResult.of(AEApi.parseAeStack(AEApi.findAEStackFromFilter(monitor, getCraftingService(), parsedFilter), getCraftingService()));
     }
 
     @Override
@@ -235,7 +235,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (parsedFilter.isEmpty())
             return MethodResult.of(null, StatusConstants.EMPTY_FILTER.toString());
 
-        return MethodResult.of(AppEngApi.parseAeStack(AppEngApi.findAEFluidFromFilter(AppEngApi.getMonitor(node), getCraftingService(), parsedFilter), getCraftingService()));
+        return MethodResult.of(AEApi.parseAeStack(AEApi.findAEFluidFromFilter(AEApi.getMonitor(node), getCraftingService(), parsedFilter), getCraftingService()));
     }
 
     @Override
@@ -252,7 +252,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (parsedFilter.isEmpty())
             return MethodResult.of(null, StatusConstants.EMPTY_FILTER.toString());
 
-        return MethodResult.of(AppEngApi.parseAeStack(AppEngApi.findAEChemicalFromFilter(AppEngApi.getMonitor(node), getCraftingService(), parsedFilter), getCraftingService()));
+        return MethodResult.of(AEApi.parseAeStack(AEApi.findAEChemicalFromFilter(AEApi.getMonitor(node), getCraftingService(), parsedFilter), getCraftingService()));
     }
 
     @Override
@@ -267,7 +267,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
         ItemFilter parsedFilter = filter.getLeft();
 
-        return MethodResult.of(AppEngApi.listItems(AppEngApi.getMonitor(node), getCraftingService(), parsedFilter));
+        return MethodResult.of(AEApi.listItems(AEApi.getMonitor(node), getCraftingService(), parsedFilter));
     }
 
     @Override
@@ -282,7 +282,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
         FluidFilter parsedFilter = filter.getLeft();
 
-        return MethodResult.of(AppEngApi.listFluids(AppEngApi.getMonitor(node), getCraftingService(), parsedFilter));
+        return MethodResult.of(AEApi.listFluids(AEApi.getMonitor(node), getCraftingService(), parsedFilter));
     }
 
     @Override
@@ -300,7 +300,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
         ChemicalFilter parsedFilter = filter.getLeft();
 
-        return MethodResult.of(AppEngApi.listChemicals(AppEngApi.getMonitor(node), getCraftingService(), parsedFilter));
+        return MethodResult.of(AEApi.listChemicals(AEApi.getMonitor(node), getCraftingService(), parsedFilter));
     }
 
     @Override
@@ -315,7 +315,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
         ItemFilter parsedFilter = filter.getLeft();
 
-        return MethodResult.of(AppEngApi.listCraftableItems(AppEngApi.getMonitor(node), getCraftingService(), parsedFilter));
+        return MethodResult.of(AEApi.listCraftableItems(AEApi.getMonitor(node), getCraftingService(), parsedFilter));
     }
 
     @Override
@@ -330,7 +330,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
         FluidFilter parsedFilter = filter.getLeft();
 
-        return MethodResult.of(AppEngApi.listCraftableFluids(AppEngApi.getMonitor(node), getCraftingService(), parsedFilter));
+        return MethodResult.of(AEApi.listCraftableFluids(AEApi.getMonitor(node), getCraftingService(), parsedFilter));
     }
 
     @Override
@@ -347,7 +347,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
         ChemicalFilter parsedFilter = filter.getLeft();
 
-        return MethodResult.of(AppEngApi.listCraftableChemicals(AppEngApi.getMonitor(node), getCraftingService(), parsedFilter));
+        return MethodResult.of(AEApi.listCraftableChemicals(AEApi.getMonitor(node), getCraftingService(), parsedFilter));
     }
 
     @Override
@@ -356,7 +356,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (!isAvailable())
             return notConnected();
 
-        return MethodResult.of(AppEngApi.listCells(node));
+        return MethodResult.of(AEApi.listCells(node));
     }
 
     @Override
@@ -365,7 +365,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (!isAvailable())
             return notConnected();
 
-        return MethodResult.of(AppEngApi.listDrives(node.getGrid()));
+        return MethodResult.of(AEApi.listDrives(node.getGrid()));
     }
 
     @Override
@@ -511,7 +511,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         // If no table is provided or it's empty, return every pattern
         Map<?, ?> filterTable = arguments.optTable(0, Collections.emptyMap());
         if (filterTable.isEmpty()) {
-            return MethodResult.of(AppEngApi.listPatterns(node.getGrid(), getLevel()));
+            return MethodResult.of(AEApi.listPatterns(node.getGrid(), getLevel()));
         }
 
         boolean hasInputFilter = filterTable.containsKey("input");
@@ -536,12 +536,12 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
             outputFilter = GenericFilter.parseGeneric(outputFilterTable).getLeft();
         }
 
-        Pair<Pair<EncodedPatternItem<?>, IPatternDetails>, String> pattern = AppEngApi.findPatternFromFilters(node.getGrid(), getLevel(), inputFilter, outputFilter);
+        Pair<Pair<EncodedPatternItem<?>, IPatternDetails>, String> pattern = AEApi.findPatternFromFilters(node.getGrid(), getLevel(), inputFilter, outputFilter);
 
         if (pattern.getRight() != null)
             return MethodResult.of(null, pattern.getRight());
 
-        return MethodResult.of(AppEngApi.parsePattern(pattern.getLeft()));
+        return MethodResult.of(AEApi.parsePattern(pattern.getLeft()));
     }
 
     @Override
@@ -586,7 +586,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (!isAvailable())
             return notConnected();
 
-        return MethodResult.of(AppEngApi.getTotalExternalItemStorage(node));
+        return MethodResult.of(AEApi.getTotalExternalItemStorage(node));
     }
 
     @Override
@@ -595,7 +595,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (!isAvailable())
             return notConnected();
 
-        return MethodResult.of(AppEngApi.getTotalExternalFluidStorage(node));
+        return MethodResult.of(AEApi.getTotalExternalFluidStorage(node));
     }
 
     @Override
@@ -604,7 +604,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (!isAvailable())
             return notConnected();
 
-        return MethodResult.of(AppEngApi.getTotalExternalChemicalStorage(node));
+        return MethodResult.of(AEApi.getTotalExternalChemicalStorage(node));
     }
 
     @Override
@@ -613,7 +613,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (!isAvailable())
             return notConnected();
 
-        return MethodResult.of(AppEngApi.getTotalItemStorage(node));
+        return MethodResult.of(AEApi.getTotalItemStorage(node));
     }
 
     @Override
@@ -622,7 +622,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (!isAvailable())
             return notConnected();
 
-        return MethodResult.of(AppEngApi.getTotalFluidStorage(node));
+        return MethodResult.of(AEApi.getTotalFluidStorage(node));
     }
 
     @Override
@@ -631,7 +631,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (!isAvailable())
             return notConnected();
 
-        return MethodResult.of(AppEngApi.getTotalChemicalStorage(node));
+        return MethodResult.of(AEApi.getTotalChemicalStorage(node));
     }
 
     @Override
@@ -640,7 +640,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (!isAvailable())
             return notConnected();
 
-        return MethodResult.of(AppEngApi.getUsedExternalItemStorage(node));
+        return MethodResult.of(AEApi.getUsedExternalItemStorage(node));
     }
 
     @Override
@@ -649,7 +649,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (!isAvailable())
             return notConnected();
 
-        return MethodResult.of(AppEngApi.getUsedExternalFluidStorage(node));
+        return MethodResult.of(AEApi.getUsedExternalFluidStorage(node));
     }
 
     @Override
@@ -658,7 +658,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (!isAvailable())
             return notConnected();
 
-        return MethodResult.of(AppEngApi.getUsedExternalChemicalStorage(node));
+        return MethodResult.of(AEApi.getUsedExternalChemicalStorage(node));
     }
 
     @Override
@@ -667,7 +667,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (!isAvailable())
             return notConnected();
 
-        return MethodResult.of(AppEngApi.getUsedItemStorage(node));
+        return MethodResult.of(AEApi.getUsedItemStorage(node));
     }
 
     @Override
@@ -676,7 +676,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (!isAvailable())
             return notConnected();
 
-        return MethodResult.of(AppEngApi.getUsedFluidStorage(node));
+        return MethodResult.of(AEApi.getUsedFluidStorage(node));
     }
 
     @Override
@@ -685,7 +685,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (!isAvailable())
             return notConnected();
 
-        return MethodResult.of(AppEngApi.getUsedChemicalStorage(node));
+        return MethodResult.of(AEApi.getUsedChemicalStorage(node));
     }
 
     @Override
@@ -694,7 +694,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (!isAvailable())
             return notConnected();
 
-        return MethodResult.of(AppEngApi.getAvailableExternalItemStorage(node));
+        return MethodResult.of(AEApi.getAvailableExternalItemStorage(node));
     }
 
     @Override
@@ -703,7 +703,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (!isAvailable())
             return notConnected();
 
-        return MethodResult.of(AppEngApi.getAvailableExternalFluidStorage(node));
+        return MethodResult.of(AEApi.getAvailableExternalFluidStorage(node));
     }
 
     @Override
@@ -712,7 +712,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (!isAvailable())
             return notConnected();
 
-        return MethodResult.of(AppEngApi.getAvailableExternalChemicalStorage(node));
+        return MethodResult.of(AEApi.getAvailableExternalChemicalStorage(node));
     }
 
     @Override
@@ -721,7 +721,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (!isAvailable())
             return notConnected();
 
-        return MethodResult.of(AppEngApi.getAvailableItemStorage(node));
+        return MethodResult.of(AEApi.getAvailableItemStorage(node));
     }
 
     @Override
@@ -730,7 +730,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (!isAvailable())
             return notConnected();
 
-        return MethodResult.of(AppEngApi.getAvailableFluidStorage(node));
+        return MethodResult.of(AEApi.getAvailableFluidStorage(node));
     }
 
     @Override
@@ -739,7 +739,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (!isAvailable())
             return notConnected();
 
-        return MethodResult.of(AppEngApi.getAvailableChemicalStorage(node));
+        return MethodResult.of(AEApi.getAvailableChemicalStorage(node));
     }
 
     @Override
@@ -758,13 +758,13 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
         String cpuName = arguments.optString(1, "");
 
-        ICraftingCPU target = AppEngApi.getCraftingCPU(node, cpuName);
+        ICraftingCPU target = AEApi.getCraftingCPU(node, cpuName);
         if (!cpuName.isEmpty() && target == null) {
             return MethodResult.of(null, StatusConstants.CPU_NOT_FOUND.withInfo(cpuName));
         }
 
         ICraftingService craftingGrid = node.getGrid().getService(ICraftingService.class);
-        Pair<Long, AEItemKey> stack = AppEngApi.findAEStackFromFilter(AppEngApi.getMonitor(bridge.getGridNode()), craftingGrid, parsedFilter);
+        Pair<Long, AEItemKey> stack = AEApi.findAEStackFromFilter(AEApi.getMonitor(bridge.getGridNode()), craftingGrid, parsedFilter);
         if (stack.getRight() == null && stack.getLeft() == 0) {
             return MethodResult.of(null, StatusConstants.NOT_CRAFTABLE.toString());
         }
@@ -789,12 +789,12 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
             return MethodResult.of(null, StatusConstants.EMPTY_FILTER.toString());
 
         String cpuName = arguments.optString(1, "");
-        ICraftingCPU target = AppEngApi.getCraftingCPU(node, cpuName);
+        ICraftingCPU target = AEApi.getCraftingCPU(node, cpuName);
         if (!cpuName.isEmpty() && target == null)
             return MethodResult.of(null, StatusConstants.CPU_NOT_FOUND.withInfo(cpuName));
 
         ICraftingService craftingGrid = node.getGrid().getService(ICraftingService.class);
-        Pair<Long, AEFluidKey> stack = AppEngApi.findAEFluidFromFilter(AppEngApi.getMonitor(bridge.getGridNode()), craftingGrid, parsedFilter);
+        Pair<Long, AEFluidKey> stack = AEApi.findAEFluidFromFilter(AEApi.getMonitor(bridge.getGridNode()), craftingGrid, parsedFilter);
         if (stack.getRight() == null && stack.getLeft() == 0)
             return MethodResult.of(false, StatusConstants.NOT_CRAFTABLE.toString());
 
@@ -820,12 +820,12 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
             return MethodResult.of(null, StatusConstants.EMPTY_FILTER.toString());
 
         String cpuName = arguments.optString(1, "");
-        ICraftingCPU target = AppEngApi.getCraftingCPU(node, cpuName);
+        ICraftingCPU target = AEApi.getCraftingCPU(node, cpuName);
         if (!cpuName.isEmpty() && target == null)
             return MethodResult.of(null, StatusConstants.CPU_NOT_FOUND.withInfo(cpuName));
 
         ICraftingService craftingGrid = node.getGrid().getService(ICraftingService.class);
-        Pair<Long, MekanismKey> stack = AppEngApi.findAEChemicalFromFilter(AppEngApi.getMonitor(bridge.getGridNode()), craftingGrid, parsedFilter);
+        Pair<Long, MekanismKey> stack = AEApi.findAEChemicalFromFilter(AEApi.getMonitor(bridge.getGridNode()), craftingGrid, parsedFilter);
         if (stack.getRight() == null && stack.getLeft() == 0)
             return MethodResult.of(false, StatusConstants.NOT_CRAFTABLE.toString());
 
@@ -847,7 +847,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         for (AECraftJob job : bridge.getJobs()) {
             for (ICraftingCPU cpu : craftingGrid.getCpus()) {
                 if (cpu.isBusy() && job.getToCraft().matches(cpu.getJobStatus().crafting()))
-                    jobs.add(AppEngApi.parseCraftingJob(cpu.getJobStatus(), job, cpu));
+                    jobs.add(AEApi.parseCraftingJob(cpu.getJobStatus(), job, cpu));
             }
         }
         return MethodResult.of(jobs);
@@ -907,7 +907,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (parsedFilter.isEmpty())
             return MethodResult.of(false, StatusConstants.EMPTY_FILTER.toString());
 
-        return MethodResult.of(AppEngApi.findPatternFromFilters(node.getGrid(), getLevel(), null, parsedFilter).getLeft() != null);
+        return MethodResult.of(AEApi.findPatternFromFilters(node.getGrid(), getLevel(), null, parsedFilter).getLeft() != null);
     }
 
     @Override
@@ -927,9 +927,9 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
             return MethodResult.of(false, StatusConstants.EMPTY_FILTER.toString());
 
         String cpuName = arguments.optString(1, "");
-        ICraftingCPU craftingCPU = AppEngApi.getCraftingCPU(node, cpuName);
+        ICraftingCPU craftingCPU = AEApi.getCraftingCPU(node, cpuName);
 
-        return MethodResult.of(AppEngApi.isCrafting(grid, parsedFilter, craftingCPU));
+        return MethodResult.of(AEApi.isCrafting(grid, parsedFilter, craftingCPU));
     }
 
     @LuaFunction(mainThread = true)
@@ -941,7 +941,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         List<Object> map = new ArrayList<>();
 
         for (ICraftingCPU iCraftingCPU : grid.getCpus()) {
-            Object cpu = AppEngApi.parseCraftingCPU(iCraftingCPU, false);
+            Object cpu = AEApi.parseCraftingCPU(iCraftingCPU, false);
             map.add(cpu);
         }
         return MethodResult.of(map);

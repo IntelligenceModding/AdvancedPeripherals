@@ -41,7 +41,7 @@ public class MEFluidHandler implements IStorageSystemFluidHandler {
     @NotNull
     @Override
     public FluidStack drain(FluidFilter filter, FluidAction simulate) {
-        Pair<Long, AEFluidKey> fluidKey = AppEngApi.findAEFluidFromFilter(storageMonitor, null, filter);
+        Pair<Long, AEFluidKey> fluidKey = AEApi.findAEFluidFromFilter(storageMonitor, null, filter);
         if (fluidKey.getRight().toStack(0).isEmpty())
             return FluidStack.EMPTY;
         long extracted = storageMonitor.extract(fluidKey.getRight(), filter.getCount(), simulate == FluidAction.SIMULATE ? Actionable.SIMULATE : Actionable.MODULATE, actionSource);

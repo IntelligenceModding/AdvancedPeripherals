@@ -70,7 +70,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class AppEngApi {
+public class AEApi {
 
     public static void registerCapabilities(RegisterCapabilitiesEvent event) {
         event.registerBlockEntity(AECapabilities.IN_WORLD_GRID_NODE_HOST, BlockEntityTypes.ME_BRIDGE.get(), (blockEntity, side) -> blockEntity);
@@ -284,7 +284,7 @@ public class AppEngApi {
     }
 
     public static List<Object> listPatterns(IGrid grid, Level level) {
-        return getPatterns(grid, level).stream().map(AppEngApi::parsePattern).collect(Collectors.toList());
+        return getPatterns(grid, level).stream().map(AEApi::parsePattern).collect(Collectors.toList());
     }
 
     public static List<Object> listDrives(IGrid grid) {
@@ -434,8 +434,8 @@ public class AppEngApi {
         IPatternDetails patternDetails = pattern.getRight();
         String patternType = getPatternType(pattern.getLeft());
 
-        properties.put("inputs", Arrays.stream(patternDetails.getInputs()).map(AppEngApi::parsePatternInput).collect(Collectors.toList()));
-        properties.put("outputs", patternDetails.getOutputs().stream().map(AppEngApi::parseGenericStack).collect(Collectors.toList()));
+        properties.put("inputs", Arrays.stream(patternDetails.getInputs()).map(AEApi::parsePatternInput).collect(Collectors.toList()));
+        properties.put("outputs", patternDetails.getOutputs().stream().map(AEApi::parseGenericStack).collect(Collectors.toList()));
         properties.put("primaryOutput", parseGenericStack(patternDetails.getPrimaryOutput()));
         properties.put("patternType", patternType);
         return properties;
@@ -452,7 +452,7 @@ public class AppEngApi {
     public static Map<String, Object> parsePatternInput(IPatternDetails.IInput patternInput) {
         Map<String, Object> properties = new HashMap<>();
         properties.put("primaryInput", parseGenericStack(patternInput.getPossibleInputs()[0]));
-        properties.put("possibleInputs", Arrays.stream(Arrays.copyOfRange(patternInput.getPossibleInputs(), 1, patternInput.getPossibleInputs().length)).map(AppEngApi::parseGenericStack));
+        properties.put("possibleInputs", Arrays.stream(Arrays.copyOfRange(patternInput.getPossibleInputs(), 1, patternInput.getPossibleInputs().length)).map(AEApi::parseGenericStack));
         properties.put("multiplier", patternInput.getMultiplier());
         properties.put("remaining", patternInput.getRemainingKey(patternInput.getPossibleInputs()[0].what()));
         return properties;

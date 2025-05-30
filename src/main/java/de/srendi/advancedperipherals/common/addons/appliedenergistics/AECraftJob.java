@@ -63,7 +63,7 @@ public class AECraftJob extends BasicCraftJob {
         if (targetCpu == null) {
             return null;
         }
-        return AppEngApi.parseCraftingCPU(targetCpu, true);
+        return AEApi.parseCraftingCPU(targetCpu, true);
     }
 
     @Nullable
@@ -91,7 +91,7 @@ public class AECraftJob extends BasicCraftJob {
 
     @Override
     public Object getParsedRequestedItemImpl() {
-        return AppEngApi.parseGenericStack(new GenericStack(toCraft, amount));
+        return AEApi.parseGenericStack(new GenericStack(toCraft, amount));
     }
 
     @Override
@@ -123,7 +123,7 @@ public class AECraftJob extends BasicCraftJob {
         if (currentJob == null) {
             return null;
         }
-        return AppEngApi.parseKeyCounter(currentJob.emittedItems());
+        return AEApi.parseKeyCounter(currentJob.emittedItems());
     }
 
     @Override
@@ -131,7 +131,7 @@ public class AECraftJob extends BasicCraftJob {
         if (currentJob == null) {
             return null;
         }
-        return AppEngApi.parseKeyCounter(currentJob.usedItems());
+        return AEApi.parseKeyCounter(currentJob.usedItems());
     }
 
     @Override
@@ -139,7 +139,7 @@ public class AECraftJob extends BasicCraftJob {
         if (currentJob == null) {
             return null;
         }
-        return AppEngApi.parseKeyCounter(currentJob.missingItems());
+        return AEApi.parseKeyCounter(currentJob.missingItems());
     }
 
     @Override
@@ -155,7 +155,7 @@ public class AECraftJob extends BasicCraftJob {
         if (currentJob == null) {
             return null;
         }
-        return AppEngApi.parseGenericStack(currentJob.finalOutput());
+        return AEApi.parseGenericStack(currentJob.finalOutput());
     }
 
     @Override
