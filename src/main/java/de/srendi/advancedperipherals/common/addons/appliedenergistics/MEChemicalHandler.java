@@ -35,10 +35,10 @@ public class MEChemicalHandler implements IStorageSystemChemicalHandler {
         if(resource.isEmpty())
             return resource;
 
-        ChemicalStack inserted = resource.copy();
+        ChemicalStack remain = resource.copy();
         long amountInserted = storageMonitor.insert(MekanismKey.of(resource), resource.getAmount(), action == Action.SIMULATE ? Actionable.SIMULATE : Actionable.MODULATE, actionSource);
-        inserted.setAmount(resource.getAmount() - amountInserted);
-        return inserted;
+        remain.setAmount(resource.getAmount() - amountInserted);
+        return remain;
     }
 
     @NotNull

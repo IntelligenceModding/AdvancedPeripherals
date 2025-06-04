@@ -58,6 +58,7 @@ import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.items.IItemHandler;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -76,10 +77,12 @@ public class AEApi {
         event.registerBlockEntity(AECapabilities.IN_WORLD_GRID_NODE_HOST, BlockEntityTypes.ME_BRIDGE.get(), (blockEntity, side) -> blockEntity);
     }
 
+    @NotNull
     public static Pair<Long, AEItemKey> findAEStackFromStack(MEStorage monitor, @Nullable ICraftingService crafting, ItemStack item) {
         return findAEStackFromFilter(monitor, crafting, ItemFilter.fromStack(item));
     }
 
+    @NotNull
     public static Pair<Long, AEItemKey> findAEStackFromFilter(MEStorage monitor, @Nullable ICraftingService crafting, ItemFilter filter) {
         for (Object2LongMap.Entry<AEKey> temp : monitor.getAvailableStacks()) {
             if (temp.getKey() instanceof AEItemKey key && filter.test(key.toStack()))
@@ -97,10 +100,12 @@ public class AEApi {
         return Pair.of(0L, AEItemKey.of(ItemStack.EMPTY));
     }
 
+    @NotNull
     public static Pair<Long, AEFluidKey> findAEFluidFromStack(MEStorage monitor, @Nullable ICraftingService crafting, FluidStack item) {
         return findAEFluidFromFilter(monitor, crafting, FluidFilter.fromStack(item));
     }
 
+    @NotNull
     public static Pair<Long, AEFluidKey> findAEFluidFromFilter(MEStorage monitor, @Nullable ICraftingService crafting, FluidFilter filter) {
         for (Object2LongMap.Entry<AEKey> temp : monitor.getAvailableStacks()) {
             if (temp.getKey() instanceof AEFluidKey key && filter.test(key.toStack(1)))
@@ -118,10 +123,12 @@ public class AEApi {
         return Pair.of(0L, AEFluidKey.of(FluidStack.EMPTY));
     }
 
+    @NotNull
     public static Pair<Long, MekanismKey> findAEChemicalFromStack(MEStorage monitor, @Nullable ICraftingService crafting, ChemicalStack stack) {
         return findAEChemicalFromFilter(monitor, crafting, ChemicalFilter.fromStack(stack));
     }
 
+    @NotNull
     public static Pair<Long, MekanismKey> findAEChemicalFromFilter(MEStorage monitor, @Nullable ICraftingService crafting, ChemicalFilter filter) {
         for (Object2LongMap.Entry<AEKey> temp : monitor.getAvailableStacks()) {
             if (temp.getKey() instanceof MekanismKey key && filter.test(key.getStack()))
@@ -148,8 +155,9 @@ public class AEApi {
      * @param outputFilter The output filter to apply, can be null to ignore output filter.
      * @return A Pair object containing the matched pattern and an error message if no pattern is found.
      * The pattern can be null if no pattern is found.
-     * The error message is "NO_PATTERN_FOUND" if no pattern is found.
+     * The error message is "NOT_FOUND" if no pattern is found. See {@link StatusConstants#NOT_FOUND}
      */
+    @NotNull
     public static Pair<Pair<EncodedPatternItem<?>, IPatternDetails>, String> findPatternFromFilters(IGrid grid, net.minecraft.world.level.Level level, @Nullable GenericFilter<?> inputFilter, @Nullable GenericFilter<?> outputFilter) {
         for (Pair<EncodedPatternItem<?>, IPatternDetails> pattern : getPatterns(grid, level)) {
             IPatternDetails patternDetails = pattern.getRight();
@@ -311,8 +319,8 @@ public class AEApi {
     }
 
     public static <T extends AEKey> Map<String, Object> parseAeStack(Pair<Long, T> stack, @Nullable ICraftingService service) {
-        if (stack == null || stack.getRight() == null)
-            return Collections.emptyMap();
+        if (stack.getRight() == null)
+            return null;
         if (stack.getRight() instanceof AEItemKey itemKey)
             return parseItemStack(Pair.of(stack.getLeft(), itemKey), service);
         if (stack.getRight() instanceof AEFluidKey fluidKey)
@@ -321,19 +329,19 @@ public class AEApi {
             return parseChemStack(Pair.of(stack.getLeft(), gasKey), service);
 
         AdvancedPeripherals.debug("Could not create table from unknown stack " + stack.getRight().getClass() + " - Report this to the maintainer of ap", org.apache.logging.log4j.Level.WARN);
-        return Collections.emptyMap();
+        return null;
     }
 
     public static Map<String, Object> parseGenericStack(GenericStack stack) {
         if (stack.what() == null)
-            return Collections.emptyMap();
+            return null;
         if (stack.what() instanceof AEItemKey aeItemKey)
             return parseItemStack(Pair.of(stack.amount(), aeItemKey), null);
         if (stack.what() instanceof AEFluidKey aeFluidKey)
             return parseFluidStack(Pair.of(stack.amount(), aeFluidKey), null);
 
         AdvancedPeripherals.debug("Could not create table from unknown stack " + stack.getClass() + " - Report this to the maintainer of ap", org.apache.logging.log4j.Level.WARN);
-        return Collections.emptyMap();
+        return null;
     }
 
     public static List<Object> parseKeyCounter(KeyCounter counter) {
@@ -348,9 +356,6 @@ public class AEApi {
     public static Map<Object, Object> parseDrive(DriveBlockEntity drive) {
         long totalBytes = 0;
         long usedBytes = 0;
-
-        if (drive.getCellCount() != 10)
-            return Collections.emptyMap();
 
         List<Object> driveCells = new ArrayList<>();
         for (ItemStack item : drive.getInternalInventory()) {
@@ -548,11 +553,7 @@ public class AEApi {
                 for (int i = 0; i < itemHandler.getSlots(); i++) {
                     ItemStack stack = itemHandler.getStackInSlot(i);
 
-                    // Use 64 as a rough estimate if no item is in that slot
-                    if (stack.isEmpty()) total += 64;
-
-                    // If the slot is not empty, use the max stack size of that stack
-                    total += stack.getMaxStackSize();
+                    total += stack.isEmpty() ? itemHandler.getSlotLimit(i) : stack.getMaxStackSize();
                 }
             }
         }
@@ -818,7 +819,7 @@ public class AEApi {
                 if (stack.getItem() instanceof ChemicalStorageCell) {
                     BasicCellInventory cellInventory = BasicCellHandler.INSTANCE.getCellInventory(stack, null);
 
-                    used = cellInventory.getUsedBytes();
+                    used += cellInventory.getUsedBytes();
                 }
             }
         }

@@ -42,6 +42,7 @@ import net.minecraft.core.Direction;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -183,8 +184,8 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         return MethodResult.of(ChemicalUtil.moveChemical(targetTank, chemicalHandler, filter.getLeft()));
     }
 
-    private MethodResult notConnected() {
-        return MethodResult.of(null, StatusConstants.NOT_CONNECTED.toString());
+    private MethodResult notConnected(@Nullable Object defaultValue) {
+        return MethodResult.of(defaultValue, StatusConstants.NOT_CONNECTED.toString());
     }
 
     private boolean isAvailable() {
@@ -207,7 +208,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     @LuaFunction(mainThread = true)
     public final MethodResult getItem(IArguments arguments) throws LuaException {
         if (!isAvailable())
-            return notConnected();
+            return notConnected(null);
 
         MEStorage monitor = AEApi.getMonitor(node);
         Pair<ItemFilter, String> filter = ItemFilter.parse(arguments.getTable(0));
@@ -225,7 +226,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     @LuaFunction(mainThread = true)
     public MethodResult getFluid(IArguments arguments) throws LuaException {
         if (!isAvailable())
-            return notConnected();
+            return notConnected(null);
 
         Pair<FluidFilter, String> filter = FluidFilter.parse(arguments.getTable(0));
         if (filter.rightPresent())
@@ -242,7 +243,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     @LuaFunction(mainThread = true)
     public MethodResult getChemical(IArguments arguments) throws LuaException {
         if (!isAvailable())
-            return notConnected();
+            return notConnected(null);
 
         Pair<ChemicalFilter, String> filter = ChemicalFilter.parse(arguments.getTable(0));
         if (filter.rightPresent())
@@ -259,7 +260,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     @LuaFunction(mainThread = true)
     public final MethodResult getItems(IArguments arguments) throws LuaException {
         if (!isAvailable())
-            return notConnected();
+            return notConnected(null);
 
         Pair<ItemFilter, String> filter = ItemFilter.parse(arguments.optTable(0, Collections.emptyMap()));
         if (filter.rightPresent())
@@ -274,7 +275,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     @LuaFunction(mainThread = true)
     public final MethodResult getFluids(IArguments arguments) throws LuaException {
         if (!isAvailable())
-            return notConnected();
+            return notConnected(null);
 
         Pair<FluidFilter, String> filter = FluidFilter.parse(arguments.optTable(0, Collections.emptyMap()));
         if (filter.rightPresent())
@@ -289,10 +290,10 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     @LuaFunction(mainThread = true)
     public MethodResult getChemicals(IArguments arguments) throws LuaException {
         if (!isAvailable())
-            return notConnected();
+            return notConnected(null);
 
         if (!APAddon.APP_MEKANISTICS.isLoaded())
-            return MethodResult.of(Collections.emptyList());
+            return MethodResult.of(null, StatusConstants.ADDON_NOT_LOADED.withInfo(APAddon.APP_MEKANISTICS.name()));
 
         Pair<ChemicalFilter, String> filter = ChemicalFilter.parse(arguments.optTable(0, Collections.emptyMap()));
         if (filter.rightPresent())
@@ -307,7 +308,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     @LuaFunction(mainThread = true)
     public final MethodResult getCraftableItems(IArguments arguments) throws LuaException {
         if (!isAvailable())
-            return notConnected();
+            return notConnected(null);
 
         Pair<ItemFilter, String> filter = ItemFilter.parse(arguments.optTable(0, Collections.emptyMap()));
         if (filter.rightPresent())
@@ -322,7 +323,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     @LuaFunction(mainThread = true)
     public final MethodResult getCraftableFluids(IArguments arguments) throws LuaException {
         if (!isAvailable())
-            return notConnected();
+            return notConnected(null);
 
         Pair<FluidFilter, String> filter = FluidFilter.parse(arguments.optTable(0, Collections.emptyMap()));
         if (filter.rightPresent())
@@ -336,10 +337,10 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     @Override
     public MethodResult getCraftableChemicals(IArguments arguments) throws LuaException {
         if (!isAvailable())
-            return notConnected();
+            return notConnected(null);
 
         if (!APAddon.APP_MEKANISTICS.isLoaded())
-            return MethodResult.of(Collections.emptyList());
+            return MethodResult.of(null, StatusConstants.ADDON_NOT_LOADED.withInfo(APAddon.APP_MEKANISTICS.name()));
 
         Pair<ChemicalFilter, String> filter = ChemicalFilter.parse(arguments.optTable(0, Collections.emptyMap()));
         if (filter.rightPresent())
@@ -354,7 +355,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     @LuaFunction(mainThread = true)
     public final MethodResult getCells() {
         if (!isAvailable())
-            return notConnected();
+            return notConnected(null);
 
         return MethodResult.of(AEApi.listCells(node));
     }
@@ -363,7 +364,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     @LuaFunction(mainThread = true)
     public MethodResult getDrives() {
         if (!isAvailable())
-            return notConnected();
+            return notConnected(null);
 
         return MethodResult.of(AEApi.listDrives(node.getGrid()));
     }
@@ -372,7 +373,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     @LuaFunction(mainThread = true)
     public final MethodResult importItem(IComputerAccess computer, IArguments arguments) throws LuaException {
         if (!isAvailable())
-            return notConnected();
+            return notConnected(0);
 
         String side = arguments.getString(1);
         IItemHandler inventory;
@@ -393,7 +394,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     @LuaFunction(mainThread = true)
     public final MethodResult exportItem(IComputerAccess computer, @NotNull IArguments arguments) throws LuaException {
         if (!isAvailable())
-            return notConnected();
+            return notConnected(0);
 
         String side = arguments.getString(1);
         IItemHandler inventory;
@@ -414,7 +415,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     @LuaFunction(mainThread = true)
     public final MethodResult importFluid(IComputerAccess computer, IArguments arguments) throws LuaException {
         if (!isAvailable())
-            return notConnected();
+            return notConnected(0);
 
         String side = arguments.getString(1);
         IFluidHandler fluidHandler;
@@ -435,7 +436,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     @LuaFunction(mainThread = true)
     public final MethodResult exportFluid(IComputerAccess computer, IArguments arguments) throws LuaException {
         if (!isAvailable())
-            return notConnected();
+            return notConnected(0);
 
         String side = arguments.getString(1);
         IFluidHandler fluidHandler;
@@ -457,7 +458,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     @LuaFunction(mainThread = true)
     public MethodResult importChemical(IComputerAccess computer, IArguments arguments) throws LuaException {
         if (!isAvailable())
-            return notConnected();
+            return notConnected(0);
 
         if (!APAddon.APP_MEKANISTICS.isLoaded())
             return MethodResult.of(0);
@@ -481,7 +482,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     @LuaFunction(mainThread = true)
     public MethodResult exportChemical(IComputerAccess computer, IArguments arguments) throws LuaException {
         if (!isAvailable())
-            return notConnected();
+            return notConnected(0);
 
         if (APAddon.APP_MEKANISTICS.isLoaded())
             return MethodResult.of(0);
@@ -505,7 +506,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     @LuaFunction(mainThread = true)
     public MethodResult getPatterns(IArguments arguments) throws LuaException {
         if (!isAvailable())
-            return notConnected();
+            return notConnected(null);
 
         // Expected input is a table with either an input table, an output table or both to filter for both
         // If no table is provided or it's empty, return every pattern
@@ -548,7 +549,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     @LuaFunction(mainThread = true)
     public final MethodResult getStoredEnergy() {
         if (!isAvailable())
-            return notConnected();
+            return notConnected(0);
 
         return MethodResult.of(node.getGrid().getEnergyService().getStoredPower());
     }
@@ -557,7 +558,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     @LuaFunction(mainThread = true)
     public final MethodResult getEnergyCapacity() {
         if (!isAvailable())
-            return notConnected();
+            return notConnected(0);
 
         return MethodResult.of(node.getGrid().getEnergyService().getMaxStoredPower());
     }
@@ -566,7 +567,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     @LuaFunction(mainThread = true)
     public final MethodResult getEnergyUsage() {
         if (!isAvailable())
-            return notConnected();
+            return notConnected(0);
 
         return MethodResult.of(node.getGrid().getEnergyService().getAvgPowerUsage());
     }
@@ -575,7 +576,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     @LuaFunction(mainThread = true)
     public final MethodResult getAverageEnergyInput() {
         if (!isAvailable())
-            return notConnected();
+            return notConnected(0);
 
         return MethodResult.of(node.getGrid().getEnergyService().getAvgPowerInjection());
     }
@@ -584,7 +585,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     @LuaFunction(mainThread = true)
     public MethodResult getTotalExternalItemStorage() {
         if (!isAvailable())
-            return notConnected();
+            return notConnected(0);
 
         return MethodResult.of(AEApi.getTotalExternalItemStorage(node));
     }
@@ -593,7 +594,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     @LuaFunction(mainThread = true)
     public MethodResult getTotalExternalFluidStorage() {
         if (!isAvailable())
-            return notConnected();
+            return notConnected(0);
 
         return MethodResult.of(AEApi.getTotalExternalFluidStorage(node));
     }
@@ -602,7 +603,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     @LuaFunction(mainThread = true)
     public MethodResult getTotalExternalChemicalStorage() {
         if (!isAvailable())
-            return notConnected();
+            return notConnected(0);
 
         return MethodResult.of(AEApi.getTotalExternalChemicalStorage(node));
     }
@@ -611,7 +612,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     @LuaFunction(mainThread = true)
     public final MethodResult getTotalItemStorage() {
         if (!isAvailable())
-            return notConnected();
+            return notConnected(0);
 
         return MethodResult.of(AEApi.getTotalItemStorage(node));
     }
@@ -620,7 +621,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     @LuaFunction(mainThread = true)
     public final MethodResult getTotalFluidStorage() {
         if (!isAvailable())
-            return notConnected();
+            return notConnected(0);
 
         return MethodResult.of(AEApi.getTotalFluidStorage(node));
     }
@@ -629,7 +630,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     @LuaFunction(mainThread = true)
     public MethodResult getTotalChemicalStorage() {
         if (!isAvailable())
-            return notConnected();
+            return notConnected(0);
 
         return MethodResult.of(AEApi.getTotalChemicalStorage(node));
     }
@@ -638,7 +639,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     @LuaFunction(mainThread = true)
     public MethodResult getUsedExternalItemStorage() {
         if (!isAvailable())
-            return notConnected();
+            return notConnected(0);
 
         return MethodResult.of(AEApi.getUsedExternalItemStorage(node));
     }
@@ -647,7 +648,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     @LuaFunction(mainThread = true)
     public MethodResult getUsedExternalFluidStorage() {
         if (!isAvailable())
-            return notConnected();
+            return notConnected(0);
 
         return MethodResult.of(AEApi.getUsedExternalFluidStorage(node));
     }
@@ -656,7 +657,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     @LuaFunction(mainThread = true)
     public MethodResult getUsedExternalChemicalStorage() {
         if (!isAvailable())
-            return notConnected();
+            return notConnected(0);
 
         return MethodResult.of(AEApi.getUsedExternalChemicalStorage(node));
     }
@@ -665,7 +666,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     @LuaFunction(mainThread = true)
     public final MethodResult getUsedItemStorage() {
         if (!isAvailable())
-            return notConnected();
+            return notConnected(0);
 
         return MethodResult.of(AEApi.getUsedItemStorage(node));
     }
@@ -674,7 +675,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     @LuaFunction(mainThread = true)
     public final MethodResult getUsedFluidStorage() {
         if (!isAvailable())
-            return notConnected();
+            return notConnected(0);
 
         return MethodResult.of(AEApi.getUsedFluidStorage(node));
     }
@@ -683,7 +684,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     @LuaFunction(mainThread = true)
     public MethodResult getUsedChemicalStorage() {
         if (!isAvailable())
-            return notConnected();
+            return notConnected(0);
 
         return MethodResult.of(AEApi.getUsedChemicalStorage(node));
     }
@@ -692,7 +693,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     @LuaFunction(mainThread = true)
     public MethodResult getAvailableExternalItemStorage() {
         if (!isAvailable())
-            return notConnected();
+            return notConnected(0);
 
         return MethodResult.of(AEApi.getAvailableExternalItemStorage(node));
     }
@@ -701,7 +702,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     @LuaFunction(mainThread = true)
     public MethodResult getAvailableExternalFluidStorage() {
         if (!isAvailable())
-            return notConnected();
+            return notConnected(0);
 
         return MethodResult.of(AEApi.getAvailableExternalFluidStorage(node));
     }
@@ -710,7 +711,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     @LuaFunction(mainThread = true)
     public MethodResult getAvailableExternalChemicalStorage() {
         if (!isAvailable())
-            return notConnected();
+            return notConnected(0);
 
         return MethodResult.of(AEApi.getAvailableExternalChemicalStorage(node));
     }
@@ -719,7 +720,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     @LuaFunction(mainThread = true)
     public final MethodResult getAvailableItemStorage() {
         if (!isAvailable())
-            return notConnected();
+            return notConnected(0);
 
         return MethodResult.of(AEApi.getAvailableItemStorage(node));
     }
@@ -728,7 +729,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     @LuaFunction(mainThread = true)
     public final MethodResult getAvailableFluidStorage() {
         if (!isAvailable())
-            return notConnected();
+            return notConnected(0);
 
         return MethodResult.of(AEApi.getAvailableFluidStorage(node));
     }
@@ -737,7 +738,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     @LuaFunction(mainThread = true)
     public MethodResult getAvailableChemicalStorage() {
         if (!isAvailable())
-            return notConnected();
+            return notConnected(0);
 
         return MethodResult.of(AEApi.getAvailableChemicalStorage(node));
     }
@@ -746,7 +747,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     @LuaFunction
     public final MethodResult craftItem(IComputerAccess computer, IArguments arguments) throws LuaException {
         if (!isAvailable())
-            return notConnected();
+            return notConnected(null);
 
         Pair<ItemFilter, String> filter = ItemFilter.parse(arguments.getTable(0));
         if (filter.rightPresent())
@@ -778,7 +779,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     @LuaFunction
     public final MethodResult craftFluid(IComputerAccess computer, IArguments arguments) throws LuaException {
         if (!isAvailable())
-            return notConnected();
+            return notConnected(null);
 
         Pair<FluidFilter, String> filter = FluidFilter.parse(arguments.getTable(0));
         if (filter.rightPresent())
@@ -806,10 +807,10 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     @Override
     public MethodResult craftChemical(IComputerAccess computer, IArguments arguments) throws LuaException {
         if (!isAvailable())
-            return notConnected();
+            return notConnected(null);
 
         if (!APAddon.APP_MEKANISTICS.isLoaded())
-            return MethodResult.of(null);
+            return MethodResult.of(null, StatusConstants.ADDON_NOT_LOADED.withInfo(APAddon.APP_MEKANISTICS.name()));
 
         Pair<ChemicalFilter, String> filter = ChemicalFilter.parse(arguments.getTable(0));
         if (filter.rightPresent())
@@ -838,7 +839,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     @LuaFunction(mainThread = true)
     public MethodResult getCraftingTasks() {
         if (!isAvailable())
-            return notConnected();
+            return notConnected(null);
 
         ICraftingService craftingGrid = node.getGrid().getService(ICraftingService.class);
 
@@ -857,7 +858,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     @LuaFunction(mainThread = true)
     public MethodResult getCraftingTask(int id) {
         if (!isAvailable())
-            return notConnected();
+            return notConnected(null);
 
         AECraftJob foundJob = null;
 
@@ -873,13 +874,13 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     @LuaFunction(mainThread = true)
     public MethodResult cancelCraftingTasks(IArguments arguments) throws LuaException {
         if (!isAvailable())
-            return notConnected();
+            return notConnected(0);
 
         ICraftingService craftingGrid = node.getGrid().getService(ICraftingService.class);
 
         Pair<? extends GenericFilter<?>, String> filter = GenericFilter.parseGeneric(arguments.getTable(0));
         if (filter.getRight() != null)
-            return MethodResult.of(null, filter.getRight());
+            return MethodResult.of(0, filter.getRight());
 
         GenericFilter<?> parsedFilter = filter.getLeft();
 
@@ -897,11 +898,11 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     @LuaFunction(mainThread = true)
     public final MethodResult isCraftable(IArguments arguments) throws LuaException {
         if (!isAvailable())
-            return notConnected();
+            return notConnected(false);
 
         Pair<? extends GenericFilter<?>, String> filter = GenericFilter.parseGeneric(arguments.getTable(0));
         if (filter.getRight() != null)
-            return MethodResult.of(null, filter.getRight());
+            return MethodResult.of(false, filter.getRight());
 
         GenericFilter<?> parsedFilter = filter.getLeft();
         if (parsedFilter.isEmpty())
@@ -914,13 +915,13 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     @LuaFunction(mainThread = true)
     public final MethodResult isCrafting(IArguments arguments) throws LuaException {
         if (!isAvailable())
-            return notConnected();
+            return notConnected(false);
 
         ICraftingService grid = node.getGrid().getService(ICraftingService.class);
 
         Pair<? extends GenericFilter<?>, String> filter = GenericFilter.parseGeneric(arguments.getTable(0));
         if (filter.getRight() != null)
-            return MethodResult.of(null, filter.getRight());
+            return MethodResult.of(false, filter.getRight());
 
         GenericFilter<?> parsedFilter = filter.getLeft();
         if (parsedFilter.isEmpty())
@@ -935,7 +936,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     @LuaFunction(mainThread = true)
     public final MethodResult getCraftingCPUs() {
         if (!isAvailable())
-            return notConnected();
+            return notConnected(null);
 
         ICraftingService grid = node.getGrid().getService(ICraftingService.class);
         List<Object> map = new ArrayList<>();

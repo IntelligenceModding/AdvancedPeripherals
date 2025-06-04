@@ -277,7 +277,8 @@ public class AECraftJob extends BasicCraftJob {
         }
         for (ICraftingCPU cpu : service.getCpus()) {
             if (cpu instanceof CraftingCPUCluster cpuCluster) {
-                if (cpuCluster.craftingLogic.getLastLink() != null && cpuCluster.craftingLogic.getLastLink().getCraftingID().equals(jobLink.getCraftingID())) {
+                final ICraftingLink lastLink = cpuCluster.craftingLogic.getLastLink();
+                if (lastLink != null && lastLink.getCraftingID().equals(jobLink.getCraftingID())) {
                     this.jobStatus = () -> {
                         // Compare the id of the job in the cpu. This job object can exist longer than the job needs time to complete. So the cpu could have a new job
                         if (cpuCluster.craftingLogic.getLastLink() != null && cpuCluster.craftingLogic.getLastLink().getCraftingID().equals(jobLink.getCraftingID()))

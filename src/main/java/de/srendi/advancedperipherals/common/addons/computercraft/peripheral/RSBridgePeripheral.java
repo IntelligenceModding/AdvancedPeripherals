@@ -72,8 +72,8 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         return getNode().getNetwork();
     }
 
-    private MethodResult notConnected(Object defaultValue) {
-        return MethodResult.of(defaultValue, "NOT_CONNECTED");
+    private MethodResult notConnected(@Nullable Object defaultValue) {
+        return MethodResult.of(defaultValue, StatusConstants.NOT_CONNECTED.toString());
     }
 
     private <I extends NetworkComponent> I getComponent(@NotNull Class<I> componentClass) {
@@ -779,7 +779,7 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
             return notConnected(null);
 
         if (!APAddon.REFINEDSTORAGE_MEKANISM.isLoaded())
-            return MethodResult.of(null, StatusConstants.ADDON_NOT_LOADED.withInfo("RS_MEKANISM"));
+            return MethodResult.of(null, StatusConstants.ADDON_NOT_LOADED.withInfo(APAddon.REFINEDSTORAGE_MEKANISM.name()));
 
         Pair<ChemicalFilter, String> filter = ChemicalFilter.parse(arguments.getTable(0));
         if (filter.rightPresent())
