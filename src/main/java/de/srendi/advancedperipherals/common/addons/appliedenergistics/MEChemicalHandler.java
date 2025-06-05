@@ -15,6 +15,7 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * Used to transfer a chemical between a tank and the ME system.
+ *
  * @see MEBridgePeripheral
  */
 public class MEChemicalHandler implements IStorageSystemChemicalHandler {
@@ -32,7 +33,7 @@ public class MEChemicalHandler implements IStorageSystemChemicalHandler {
     @NotNull
     @Override
     public ChemicalStack insertChemical(int tank, ChemicalStack resource, @NotNull Action action) {
-        if(resource.isEmpty())
+        if (resource.isEmpty())
             return resource;
 
         ChemicalStack remain = resource.copy();
@@ -45,7 +46,7 @@ public class MEChemicalHandler implements IStorageSystemChemicalHandler {
     @Override
     public ChemicalStack extractChemical(ChemicalFilter filter, long count, Action simulate) {
         Pair<Long, MekanismKey> chemicalKey = AEApi.findAEChemicalFromFilter(storageMonitor, null, filter);
-        if(chemicalKey.getRight().getStack().isEmpty())
+        if (chemicalKey.getRight().getStack().isEmpty())
             return ChemicalStack.EMPTY;
 
         ChemicalStack extracted = chemicalKey.getRight().getStack();
