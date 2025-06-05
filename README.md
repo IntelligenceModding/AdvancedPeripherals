@@ -64,7 +64,7 @@ But until we fix that system, any translation PRs are welcome!
 
 <!----------------------------------------------------------------------------->
 
-[Documentation]: https://advancedperipherals.madefor.cc/
+[Documentation]: https://docs.advanced-peripherals.de/
 [Contributors]: https://github.com/IntelligenceModding/AdvancedPeripherals/graphs/contributors
 [CurseForge]: https://www.curseforge.com/minecraft/mc-mods/advanced-peripherals
 [Actions]: https://github.com/IntelligenceModding/AdvancedPeripherals/actions
