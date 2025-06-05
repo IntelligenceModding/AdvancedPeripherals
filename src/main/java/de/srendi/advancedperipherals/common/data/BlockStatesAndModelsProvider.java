@@ -16,6 +16,8 @@ import net.neoforged.neoforge.client.model.generators.ModelFile;
 import net.neoforged.neoforge.client.model.generators.ModelProvider;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 
+import java.util.Arrays;
+
 public class BlockStatesAndModelsProvider extends BlockStateProvider {
 
     public BlockStatesAndModelsProvider(PackOutput packOutput, ExistingFileHelper exFileHelper) {
@@ -89,8 +91,11 @@ public class BlockStatesAndModelsProvider extends BlockStateProvider {
             if (side.equals("bottom")) side = "down";
             if (side.equals("back")) side = "south";
             builder.texture(side, blockTexture(block, sideTexture));
+        }
 
-
+        // In the case that there is no bottom side defined, we use the default bottom texture.
+        if (Arrays.stream(sides).noneMatch(side -> side.equals("bottom"))) {
+            builder.texture("down", ModelProvider.BLOCK_FOLDER + "/" + "bottom");
         }
         builder.texture("particle", particleTexture);
         return builder;

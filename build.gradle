@@ -264,7 +264,7 @@ dependencies {
 
     // Patchouli
     compileOnly "vazkii.patchouli:Patchouli:${patchouli_version}-NEOFORGE"
-    // runtimeOnly "vazkii.patchouli:Patchouli:${patchouli_version}-NEOFORGE"
+    runtimeOnly "vazkii.patchouli:Patchouli:${patchouli_version}-NEOFORGE"
 
     // Powah
     compileOnly "curse.maven:powah-633483:${powah_version}"
