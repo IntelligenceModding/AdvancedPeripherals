@@ -15,7 +15,6 @@ import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.lua.MethodResult;
 import dan200.computercraft.api.peripheral.IComputerAccess;
 import dan200.computercraft.core.apis.TableHelper;
-import dan200.computercraft.core.computer.ComputerSide;
 import de.srendi.advancedperipherals.common.addons.APAddon;
 import de.srendi.advancedperipherals.common.addons.appliedenergistics.AEApi;
 import de.srendi.advancedperipherals.common.addons.appliedenergistics.AECraftJob;
@@ -38,7 +37,6 @@ import de.srendi.advancedperipherals.common.util.inventory.ItemFilter;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
 import me.ramidzkh.mekae2.ae2.MekanismKey;
 import mekanism.api.chemical.IChemicalHandler;
-import net.minecraft.core.Direction;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
@@ -47,7 +45,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwner<MEBridgeEntity>> implements IStorageSystemPeripheral {
@@ -376,12 +373,10 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
             return notConnected(0);
 
         String side = arguments.getString(1);
-        IItemHandler inventory;
+        IItemHandler inventory = InventoryUtil.getHandlerFromDirection(side, owner);
 
-        if (Direction.byName(side.toUpperCase(Locale.ROOT)) == null && ComputerSide.valueOfInsensitive(side.toUpperCase(Locale.ROOT)) == null) {
-            inventory = InventoryUtil.getHandlerFromDirection(arguments.getString(1), owner);
-        } else {
-            inventory = InventoryUtil.getHandlerFromName(computer, arguments.getString(1));
+        if (inventory == null) {
+            inventory = InventoryUtil.getHandlerFromName(computer, side);
         }
 
         if (inventory == null)
@@ -397,12 +392,10 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
             return notConnected(0);
 
         String side = arguments.getString(1);
-        IItemHandler inventory;
+        IItemHandler inventory = InventoryUtil.getHandlerFromDirection(side, owner);
 
-        if (Direction.byName(side.toUpperCase(Locale.ROOT)) == null && ComputerSide.valueOfInsensitive(side.toUpperCase(Locale.ROOT)) == null) {
-            inventory = InventoryUtil.getHandlerFromDirection(arguments.getString(1), owner);
-        } else {
-            inventory = InventoryUtil.getHandlerFromName(computer, arguments.getString(1));
+        if (inventory == null) {
+            inventory = InventoryUtil.getHandlerFromName(computer, side);
         }
 
         if (inventory == null)
@@ -418,12 +411,10 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
             return notConnected(0);
 
         String side = arguments.getString(1);
-        IFluidHandler fluidHandler;
+        IFluidHandler fluidHandler = FluidUtil.getHandlerFromDirection(side, owner);
 
-        if (Direction.byName(side.toUpperCase(Locale.ROOT)) == null && ComputerSide.valueOfInsensitive(side.toUpperCase(Locale.ROOT)) == null) {
-            fluidHandler = FluidUtil.getHandlerFromDirection(arguments.getString(1), owner);
-        } else {
-            fluidHandler = FluidUtil.getHandlerFromName(computer, arguments.getString(1));
+        if (fluidHandler == null) {
+            fluidHandler = FluidUtil.getHandlerFromName(computer, side);
         }
 
         if (fluidHandler == null)
@@ -439,12 +430,10 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
             return notConnected(0);
 
         String side = arguments.getString(1);
-        IFluidHandler fluidHandler;
+        IFluidHandler fluidHandler = FluidUtil.getHandlerFromDirection(side, owner);
 
-        if (Direction.byName(side.toUpperCase(Locale.ROOT)) == null && ComputerSide.valueOfInsensitive(side.toUpperCase(Locale.ROOT)) == null) {
-            fluidHandler = FluidUtil.getHandlerFromDirection(arguments.getString(1), owner);
-        } else {
-            fluidHandler = FluidUtil.getHandlerFromName(computer, arguments.getString(1));
+        if (fluidHandler == null) {
+            fluidHandler = FluidUtil.getHandlerFromName(computer, side);
         }
 
         if (fluidHandler == null)
@@ -464,12 +453,10 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
             return MethodResult.of(0);
 
         String side = arguments.getString(1);
-        IChemicalHandler chemicalHandler;
+        IChemicalHandler chemicalHandler = ChemicalUtil.getHandlerFromDirection(side, owner);
 
-        if (Direction.byName(side.toUpperCase(Locale.ROOT)) == null && ComputerSide.valueOfInsensitive(side.toUpperCase(Locale.ROOT)) == null) {
-            chemicalHandler = ChemicalUtil.getHandlerFromDirection(arguments.getString(1), owner);
-        } else {
-            chemicalHandler = ChemicalUtil.getHandlerFromName(computer, arguments.getString(1));
+        if (chemicalHandler == null) {
+            chemicalHandler = ChemicalUtil.getHandlerFromName(computer, side);
         }
 
         if (chemicalHandler == null)
@@ -488,12 +475,10 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
             return MethodResult.of(0);
 
         String side = arguments.getString(1);
-        IChemicalHandler chemicalHandler;
+        IChemicalHandler chemicalHandler = ChemicalUtil.getHandlerFromDirection(side, owner);
 
-        if (Direction.byName(side.toUpperCase(Locale.ROOT)) == null && ComputerSide.valueOfInsensitive(side.toUpperCase(Locale.ROOT)) == null) {
-            chemicalHandler = ChemicalUtil.getHandlerFromDirection(arguments.getString(1), owner);
-        } else {
-            chemicalHandler = ChemicalUtil.getHandlerFromName(computer, arguments.getString(1));
+        if (chemicalHandler == null) {
+            chemicalHandler = ChemicalUtil.getHandlerFromName(computer, side);
         }
 
         if (chemicalHandler == null)
