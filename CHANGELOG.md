@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+### Fixed
+- [#740] Fixed that the geo scanner and player detector would always return nil when not used via the pocket upgrade
+
 ## [1.20.1-0.7.43r] - 2025-05-26
 
 ### Added

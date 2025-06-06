@@ -7,6 +7,7 @@ import dan200.computercraft.api.peripheral.IPeripheral;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.IPeripheralOwner;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.OperationAbility;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.PeripheralOwnerAbility;
+import de.srendi.advancedperipherals.common.addons.computercraft.owner.PocketPeripheralOwner;
 import de.srendi.advancedperipherals.common.util.CoordUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -152,5 +153,9 @@ public abstract class BasePeripheral<O extends IPeripheralOwner> implements IBas
         OperationAbility operationAbility = owner.getAbility(PeripheralOwnerAbility.OPERATION);
         if (operationAbility == null) throw new IllegalArgumentException("This shouldn't happen at all");
         return operationAbility.performOperation(operation, context, check, method, successCallback, failCallback);
+    }
+
+    protected boolean isOnPocket() {
+        return this.owner != null && owner instanceof PocketPeripheralOwner;
     }
 }
