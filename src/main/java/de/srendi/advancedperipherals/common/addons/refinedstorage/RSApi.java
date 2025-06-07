@@ -134,9 +134,11 @@ public class RSApi {
     @Nullable
     public static Map<String, Object> getParsedItem(Network network, ItemFilter filter) {
         StorageNetworkComponent storage = network.getComponent(StorageNetworkComponent.class);
+        AutocraftingNetworkComponent autocrafting = network.getComponent(AutocraftingNetworkComponent.class);
+
         for (TrackedResourceAmount trackedResource : storage.getResources(Actor.EMPTY.getClass())) {
             if (trackedResource.resourceAmount().resource() instanceof ItemResource itemResource && filter.test(itemResource.toItemStack())) {
-                return getObjectFromItemResource(trackedResource.resourceAmount());
+                return getObjectFromItemResource(trackedResource.resourceAmount(), autocrafting);
             }
         }
         return null;
@@ -152,9 +154,11 @@ public class RSApi {
     @Nullable
     public static Map<String, Object> getParsedFluid(Network network, FluidFilter filter) {
         StorageNetworkComponent storage = network.getComponent(StorageNetworkComponent.class);
+        AutocraftingNetworkComponent autocrafting = network.getComponent(AutocraftingNetworkComponent.class);
+
         for (TrackedResourceAmount trackedResource : storage.getResources(Actor.EMPTY.getClass())) {
             if (trackedResource.resourceAmount().resource() instanceof FluidResource fluidResource && filter.test(VariantUtil.toFluidStack(fluidResource, trackedResource.resourceAmount().amount()))) {
-                return getObjectFromItemResource(trackedResource.resourceAmount());
+                return getObjectFromItemResource(trackedResource.resourceAmount(), autocrafting);
             }
         }
         return null;
@@ -170,9 +174,11 @@ public class RSApi {
     @Nullable
     public static Map<String, Object> getParsedChemical(Network network, ChemicalFilter filter) {
         StorageNetworkComponent storage = network.getComponent(StorageNetworkComponent.class);
+        AutocraftingNetworkComponent autocrafting = network.getComponent(AutocraftingNetworkComponent.class);
+
         for (TrackedResourceAmount trackedResource : storage.getResources(Actor.EMPTY.getClass())) {
             if (trackedResource.resourceAmount().resource() instanceof ChemicalResource chemicalResource && filter.test(ChemicalUtil.toChemicalStack(chemicalResource.chemical(), trackedResource.resourceAmount().amount()))) {
-                return getObjectFromChemicalResource(trackedResource.resourceAmount());
+                return getObjectFromChemicalResource(trackedResource.resourceAmount(), autocrafting);
             }
         }
         return null;
@@ -189,9 +195,11 @@ public class RSApi {
     public static List<Map<String, Object>> getParsedItems(Network network, ItemFilter filter) {
         List<Map<String, Object>> items = new ArrayList<>();
         StorageNetworkComponent storage = network.getComponent(StorageNetworkComponent.class);
+        AutocraftingNetworkComponent autocrafting = network.getComponent(AutocraftingNetworkComponent.class);
+
         for (TrackedResourceAmount trackedResource : storage.getResources(Actor.EMPTY.getClass())) {
             if (trackedResource.resourceAmount().resource() instanceof ItemResource itemResource && filter.test(itemResource.toItemStack())) {
-                items.add(getObjectFromItemResource(trackedResource.resourceAmount()));
+                items.add(getObjectFromItemResource(trackedResource.resourceAmount(), autocrafting));
             }
         }
         return items;
@@ -208,9 +216,11 @@ public class RSApi {
     public static List<Map<String, Object>> getParsedFluids(Network network, FluidFilter filter) {
         List<Map<String, Object>> items = new ArrayList<>();
         StorageNetworkComponent storage = network.getComponent(StorageNetworkComponent.class);
+        AutocraftingNetworkComponent autocrafting = network.getComponent(AutocraftingNetworkComponent.class);
+
         for (TrackedResourceAmount trackedResource : storage.getResources(Actor.EMPTY.getClass())) {
             if (trackedResource.resourceAmount().resource() instanceof FluidResource fluidResource && filter.test(VariantUtil.toFluidStack(fluidResource, trackedResource.resourceAmount().amount()))) {
-                items.add(getObjectFromFluidResource(trackedResource.resourceAmount()));
+                items.add(getObjectFromFluidResource(trackedResource.resourceAmount(), autocrafting));
             }
         }
 
@@ -228,9 +238,11 @@ public class RSApi {
     public static List<Map<String, Object>> getParsedChemicals(Network network, ChemicalFilter filter) {
         List<Map<String, Object>> items = new ArrayList<>();
         StorageNetworkComponent storage = network.getComponent(StorageNetworkComponent.class);
+        AutocraftingNetworkComponent autocrafting = network.getComponent(AutocraftingNetworkComponent.class);
+
         for (TrackedResourceAmount trackedResource : storage.getResources(Actor.EMPTY.getClass())) {
             if (trackedResource.resourceAmount().resource() instanceof ChemicalResource fluidResource && filter.test(ChemicalUtil.toChemicalStack(fluidResource.chemical(), trackedResource.resourceAmount().amount()))) {
-                items.add(getObjectFromFluidResource(trackedResource.resourceAmount()));
+                items.add(getObjectFromFluidResource(trackedResource.resourceAmount(), autocrafting));
             }
         }
 
@@ -251,7 +263,7 @@ public class RSApi {
         StorageNetworkComponent storage = network.getComponent(StorageNetworkComponent.class);
         for (ResourceKey key : autocrafting.getOutputs()) {
             if (key instanceof ItemResource itemResource && filter.test(itemResource.toItemStack())) {
-                items.add(getObjectFromResourceKey(key, storage.get(key)));
+                items.add(getObjectFromResourceKey(key, storage.get(key), autocrafting));
             }
         }
         return items;
@@ -272,7 +284,7 @@ public class RSApi {
         for (ResourceKey key : autocrafting.getOutputs()) {
             long amount = storage.get(key);
             if (key instanceof FluidResource fluidResource && filter.test(VariantUtil.toFluidStack(fluidResource, amount))) {
-                items.add(getObjectFromResourceKey(key, amount));
+                items.add(getObjectFromResourceKey(key, amount, autocrafting));
             }
         }
         return items;
@@ -293,7 +305,7 @@ public class RSApi {
         for (ResourceKey key : autocrafting.getOutputs()) {
             long amount = storage.get(key);
             if (key instanceof ChemicalResource chemicalResource && filter.test(ChemicalUtil.toChemicalStack(chemicalResource.chemical(), amount))) {
-                items.add(getObjectFromResourceKey(key, amount));
+                items.add(getObjectFromResourceKey(key, amount, autocrafting));
             }
         }
         return items;
@@ -304,7 +316,7 @@ public class RSApi {
         AutocraftingNetworkComponent autocrafting = network.getComponent(AutocraftingNetworkComponent.class);
 
         for (Pattern pattern : autocrafting.getPatterns()) {
-            patterns.add(parsePattern(pattern));
+            patterns.add(parsePattern(pattern, autocrafting));
         }
 
         return patterns;
@@ -482,11 +494,11 @@ public class RSApi {
         for (TaskStatus status : autocrafting.getStatuses()) {
             for (RSCraftJob task : entity.getJobs()) {
                 if (status.info().id().equals(task.getCraftingTask().info().id())) {
-                    tasks.add(parseCraftingTask(task, status));
+                    tasks.add(parseCraftingTask(task, status, autocrafting));
                     continue OUTERLOOP;
                 }
             }
-            tasks.add(parseCraftingTask(null, status));
+            tasks.add(parseCraftingTask(null, status, autocrafting));
         }
 
         return tasks;
@@ -505,8 +517,8 @@ public class RSApi {
         return energyUsage;
     }
 
-    public static Map<String, Object> getObjectFromResourceKey(@NotNull ResourceKey resource) {
-        return getObjectFromResourceKey(resource, 0);
+    public static Map<String, Object> getObjectFromResourceKey(@NotNull ResourceKey resource, @Nullable AutocraftingNetworkComponent autocraftingComponent) {
+        return getObjectFromResourceKey(resource, 0, autocraftingComponent);
     }
 
     /**
@@ -516,27 +528,27 @@ public class RSApi {
      * @param count    count of the resource - can be 0 and lower
      * @return the parsed key to a lua properties map
      */
-    public static Map<String, Object> getObjectFromResourceKey(@NotNull ResourceKey resource, long count) {
+    public static Map<String, Object> getObjectFromResourceKey(@NotNull ResourceKey resource, long count, @Nullable AutocraftingNetworkComponent autocraftingComponent) {
         // Resource amounts can't be zero or the client will just crash,
         // So we need to check that and set it to one
         boolean countZeroOrLower = count <= 0;
         if (resource instanceof ItemResource) {
             if (countZeroOrLower) {
-                return getObjectFromItemResource(new ResourceAmount(resource, 1), count);
+                return getObjectFromItemResource(new ResourceAmount(resource, 1), count, autocraftingComponent);
             }
-            return getObjectFromItemResource(new ResourceAmount(resource, count));
+            return getObjectFromItemResource(new ResourceAmount(resource, count), autocraftingComponent);
         }
         if (resource instanceof FluidResource) {
             if (countZeroOrLower) {
-                return getObjectFromFluidResource(new ResourceAmount(resource, 1), count);
+                return getObjectFromFluidResource(new ResourceAmount(resource, 1), count, autocraftingComponent);
             }
-            return getObjectFromFluidResource(new ResourceAmount(resource, count));
+            return getObjectFromFluidResource(new ResourceAmount(resource, count), autocraftingComponent);
         }
         if (APAddon.REFINEDSTORAGE_MEKANISM.isLoaded() && resource instanceof ChemicalResource) {
             if (countZeroOrLower) {
-                return getObjectFromChemicalResource(new ResourceAmount(resource, 1), count);
+                return getObjectFromChemicalResource(new ResourceAmount(resource, 1), count, autocraftingComponent);
             }
-            return getObjectFromChemicalResource(new ResourceAmount(resource, count));
+            return getObjectFromChemicalResource(new ResourceAmount(resource, count), autocraftingComponent);
         }
         AdvancedPeripherals.debug("Could not create table from unknown resource " + resource.getClass() + " - Report this to the maintainer of ap", Level.WARN);
         return Collections.emptyMap();
@@ -548,15 +560,15 @@ public class RSApi {
      * @param resourceAmount the resourceAmount
      * @return the parsed key to a lua properties map
      */
-    public static Map<String, Object> getObjectFromResourceAmount(@NotNull ResourceAmount resourceAmount) {
+    public static Map<String, Object> getObjectFromResourceAmount(@NotNull ResourceAmount resourceAmount, @Nullable AutocraftingNetworkComponent autocraftingComponent) {
         if (resourceAmount.resource() instanceof ItemResource) {
-            return getObjectFromItemResource(resourceAmount);
+            return getObjectFromItemResource(resourceAmount, autocraftingComponent);
         }
         if (resourceAmount.resource() instanceof FluidResource) {
-            return getObjectFromFluidResource(resourceAmount);
+            return getObjectFromFluidResource(resourceAmount, autocraftingComponent);
         }
         if (APAddon.REFINEDSTORAGE_MEKANISM.isLoaded() && resourceAmount.resource() instanceof ChemicalResource) {
-            return getObjectFromChemicalResource(resourceAmount);
+            return getObjectFromChemicalResource(resourceAmount, autocraftingComponent);
         }
         AdvancedPeripherals.debug("Could not create table from unknown resourceAmount " + resourceAmount.getClass() + " - Report this to the maintainer of ap", Level.WARN);
         return Collections.emptyMap();
@@ -644,7 +656,7 @@ public class RSApi {
         return properties;
     }
 
-    public static Object parseCraftingTask(@Nullable RSCraftJob task, TaskStatus status) {
+    public static Object parseCraftingTask(@Nullable RSCraftJob task, TaskStatus status, @Nullable AutocraftingNetworkComponent autocraftingComponent) {
         Map<String, Object> properties = new HashMap<>();
 
         properties.put("bridge_id", task == null ? -1 : task.getId());
@@ -653,29 +665,33 @@ public class RSApi {
         // The "stored" attribute of the Item does not always work. I guess this is a bug, I at least reported it.
         // So currently we just calculate it by subtracting the currently crafting from the requested amount
         properties.put("crafted", status.items().stream().filter(item -> isSameResource(item.resource(), status.info().resource())).map(item -> status.info().amount() - item.crafting()).findFirst().orElse(-1L));
-        properties.put("resource", getObjectFromResourceKey(status.info().resource(), status.info().amount()));
+        properties.put("resource", getObjectFromResourceKey(status.info().resource(), status.info().amount(), autocraftingComponent));
         properties.put("completion", status.percentageCompleted());
 
         return properties;
     }
 
-    public static Object parsePattern(Pattern pattern) {
+    public static Object parsePattern(Pattern pattern, @Nullable AutocraftingNetworkComponent autocraftingComponent) {
         if (pattern == null)
             return null;
 
-        Map<String, Object> propeties = new HashMap<>();
-        propeties.put("outputs", pattern.layout().outputs().stream().map(RSApi::getObjectFromResourceAmount).toList());
+        Map<String, Object> properties = new HashMap<>();
+
+        // Same format for AE2. Return the primary output which is just the first element of the outputs
+        // And then every output of the pattern in the outputs property, also with the primary output
+        properties.put("primaryOutput", getObjectFromResourceAmount(pattern.layout().outputs().getFirst(), autocraftingComponent));
+        properties.put("outputs", pattern.layout().outputs().stream().map((resource) -> getObjectFromResourceAmount(resource, autocraftingComponent)).toList());
 
         List<List<Map<String, Object>>> inputs = pattern.layout().ingredients().stream()
                 .map(ingredient -> ingredient.inputs().stream()
-                        .map(key -> getObjectFromResourceKey(key, ingredient.amount()))
+                        .map(key -> getObjectFromResourceKey(key, ingredient.amount(), autocraftingComponent))
                         .collect(Collectors.toList()))
                 .collect(Collectors.toList());
 
-        propeties.put("inputs", inputs);
-        propeties.put("patterntype", pattern.layout().type().toString());
-        propeties.put("id", pattern.id().toString());
-        return propeties;
+        properties.put("inputs", inputs);
+        properties.put("patternType", pattern.layout().type().toString());
+        properties.put("id", pattern.id().toString());
+        return properties;
     }
 
     /**
@@ -685,12 +701,12 @@ public class RSApi {
      * @param trackedResourceAmount the tracked resource amount containing an ItemResource
      * @return a Map containing the properties which CC can parse to a lua table
      */
-    public static Map<String, Object> getObjectFromItemResource(ResourceAmount trackedResourceAmount) {
+    public static Map<String, Object> getObjectFromItemResource(ResourceAmount trackedResourceAmount, @Nullable AutocraftingNetworkComponent autocraftingComponent) {
         ItemResource resource = (ItemResource) trackedResourceAmount.resource();
         long count = trackedResourceAmount.amount();
         ItemStack stack = resource.toItemStack();
         Map<String, Object> properties = LuaConverter.itemStackToObject(stack, count);
-        properties.put("fingerprint", ItemUtil.getFingerprint(stack));
+        properties.put("isCraftable", autocraftingComponent != null && !autocraftingComponent.getPatternsByOutput(trackedResourceAmount.resource()).isEmpty());
         return properties;
     }
 
@@ -701,8 +717,8 @@ public class RSApi {
      * @param trackedResourceAmount the tracked resource amount containing an ItemResource
      * @return a Map containing the properties which CC can parse to a lua table
      */
-    public static Map<String, Object> getObjectFromItemResource(ResourceAmount trackedResourceAmount, long alternateCount) {
-        Map<String, Object> properties = getObjectFromItemResource(trackedResourceAmount);
+    public static Map<String, Object> getObjectFromItemResource(ResourceAmount trackedResourceAmount, long alternateCount, @Nullable AutocraftingNetworkComponent autocraftingComponent) {
+        Map<String, Object> properties = getObjectFromItemResource(trackedResourceAmount, autocraftingComponent);
         properties.put("count", alternateCount);
         return properties;
     }
@@ -714,12 +730,12 @@ public class RSApi {
      * @param trackedResourceAmount the tracked resource amount containing an ItemResource
      * @return a Map containing the properties which CC can parse to a lua table
      */
-    public static Map<String, Object> getObjectFromFluidResource(ResourceAmount trackedResourceAmount) {
+    public static Map<String, Object> getObjectFromFluidResource(ResourceAmount trackedResourceAmount, @Nullable AutocraftingNetworkComponent autocraftingComponent) {
         FluidResource resource = (FluidResource) trackedResourceAmount.resource();
         long count = trackedResourceAmount.amount();
         FluidStack stack = VariantUtil.toFluidStack(resource, count);
         Map<String, Object> properties = LuaConverter.fluidStackToObject(stack, count);
-        properties.put("fingerprint", FluidUtil.getFingerprint(stack));
+        properties.put("isCraftable", autocraftingComponent != null && !autocraftingComponent.getPatternsByOutput(trackedResourceAmount.resource()).isEmpty());
         return properties;
     }
 
@@ -731,8 +747,8 @@ public class RSApi {
      * @param alternateCount        a count can be passed to overwrite the count of the object. Useful for patterns and craftable stacks
      * @return a Map containing the properties which CC can parse to a lua table
      */
-    public static Map<String, Object> getObjectFromFluidResource(ResourceAmount trackedResourceAmount, long alternateCount) {
-        Map<String, Object> properties = getObjectFromFluidResource(trackedResourceAmount);
+    public static Map<String, Object> getObjectFromFluidResource(ResourceAmount trackedResourceAmount, long alternateCount, @Nullable AutocraftingNetworkComponent autocraftingComponent) {
+        Map<String, Object> properties = getObjectFromFluidResource(trackedResourceAmount, autocraftingComponent);
         properties.put("count", alternateCount);
         return properties;
     }
@@ -745,12 +761,12 @@ public class RSApi {
      * @param trackedResourceAmount the tracked resource amount containing a ChemicalResource
      * @return a Map containing the properties which CC can parse to a lua table
      */
-    public static Map<String, Object> getObjectFromChemicalResource(ResourceAmount trackedResourceAmount) {
+    public static Map<String, Object> getObjectFromChemicalResource(ResourceAmount trackedResourceAmount, @Nullable AutocraftingNetworkComponent autocraftingComponent) {
         ChemicalResource resource = (ChemicalResource) trackedResourceAmount.resource();
         long count = trackedResourceAmount.amount();
         ChemicalStack stack = resourceToChemicalStack(resource, count);
         Map<String, Object> properties = LuaConverter.chemicalStackToObject(stack, count);
-        properties.put("fingerprint", ChemicalUtil.getFingerprint(stack));
+        properties.put("isCraftable", autocraftingComponent != null && !autocraftingComponent.getPatternsByOutput(trackedResourceAmount.resource()).isEmpty());
         return properties;
     }
 
@@ -762,8 +778,8 @@ public class RSApi {
      * @param alternateCount        a count can be passed to overwrite the count of the object. Useful for patterns and craftable stacks
      * @return a Map containing the properties which CC can parse to a lua table
      */
-    public static Map<String, Object> getObjectFromChemicalResource(ResourceAmount trackedResourceAmount, long alternateCount) {
-        Map<String, Object> properties = getObjectFromChemicalResource(trackedResourceAmount);
+    public static Map<String, Object> getObjectFromChemicalResource(ResourceAmount trackedResourceAmount, long alternateCount, @Nullable AutocraftingNetworkComponent autocraftingComponent) {
+        Map<String, Object> properties = getObjectFromChemicalResource(trackedResourceAmount, autocraftingComponent);
         properties.put("count", alternateCount);
         return properties;
     }

@@ -72,8 +72,8 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         return getNode().getNetwork();
     }
 
-    private MethodResult notConnected(Object defaultValue) {
-        return MethodResult.of(defaultValue, "NOT_CONNECTED");
+    private MethodResult notConnected(@Nullable Object defaultValue) {
+        return MethodResult.of(defaultValue, StatusConstants.NOT_CONNECTED.toString());
     }
 
     private <I extends NetworkComponent> I getComponent(@NotNull Class<I> componentClass) {
@@ -287,7 +287,7 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
     @Override
     @LuaFunction(mainThread = true)
-    public final MethodResult listItems(IArguments arguments) throws LuaException {
+    public final MethodResult getItems(IArguments arguments) throws LuaException {
         if (!isAvailable())
             return notConnected(null);
 
@@ -304,7 +304,7 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
     @Override
     @LuaFunction(mainThread = true)
-    public final MethodResult listFluids(IArguments arguments) throws LuaException {
+    public final MethodResult getFluids(IArguments arguments) throws LuaException {
         if (!isAvailable())
             return notConnected(null);
 
@@ -321,7 +321,7 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
     @Override
     @LuaFunction(mainThread = true)
-    public final MethodResult listChemicals(IArguments arguments) throws LuaException {
+    public final MethodResult getChemicals(IArguments arguments) throws LuaException {
         if (!isAvailable())
             return notConnected(null);
 
@@ -341,7 +341,7 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
     @Override
     @LuaFunction(mainThread = true)
-    public final MethodResult listCraftableItems(IArguments arguments) throws LuaException {
+    public final MethodResult getCraftableItems(IArguments arguments) throws LuaException {
         if (!isAvailable())
             return notConnected(null);
 
@@ -358,7 +358,7 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
     @Override
     @LuaFunction(mainThread = true)
-    public final MethodResult listCraftableFluids(IArguments arguments) throws LuaException {
+    public final MethodResult getCraftableFluids(IArguments arguments) throws LuaException {
         if (!isAvailable())
             return notConnected(null);
 
@@ -375,7 +375,7 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
     @Override
     @LuaFunction(mainThread = true)
-    public final MethodResult listCraftableChemicals(IArguments arguments) throws LuaException {
+    public final MethodResult getCraftableChemicals(IArguments arguments) throws LuaException {
         if (!isAvailable())
             return notConnected(null);
 
@@ -395,7 +395,7 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
     @Override
     @LuaFunction(mainThread = true)
-    public final MethodResult listCells() {
+    public final MethodResult getCells() {
         if (!isAvailable())
             return notConnected(null);
 
@@ -404,7 +404,7 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
     @Override
     @LuaFunction(mainThread = true)
-    public final MethodResult listDrives() {
+    public final MethodResult getDrives() {
         if (!isAvailable())
             return notConnected(null);
 
@@ -779,7 +779,7 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
             return notConnected(null);
 
         if (!APAddon.REFINEDSTORAGE_MEKANISM.isLoaded())
-            return MethodResult.of(null, StatusConstants.ADDON_NOT_LOADED.withInfo("RS_MEKANISM"));
+            return MethodResult.of(null, StatusConstants.ADDON_NOT_LOADED.withInfo(APAddon.REFINEDSTORAGE_MEKANISM.name()));
 
         Pair<ChemicalFilter, String> filter = ChemicalFilter.parse(arguments.getTable(0));
         if (filter.rightPresent())
@@ -926,6 +926,8 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (pattern.rightPresent())
             return MethodResult.of(null, pattern.getRight());
 
-        return MethodResult.of(RSApi.parsePattern(pattern.getLeft()));
+        AutocraftingNetworkComponent autocrafting = getNetwork().getComponent(AutocraftingNetworkComponent.class);
+
+        return MethodResult.of(RSApi.parsePattern(pattern.getLeft(), autocrafting));
     }
 }
