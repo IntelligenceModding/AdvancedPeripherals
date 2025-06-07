@@ -865,6 +865,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         for (AECraftJob job : bridge.getJobs()) {
             if (job.getId() == id) {
                 foundJob = job;
+                break;
             }
         }
         return MethodResult.of(foundJob);
