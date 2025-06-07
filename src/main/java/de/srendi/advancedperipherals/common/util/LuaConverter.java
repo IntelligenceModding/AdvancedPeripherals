@@ -22,6 +22,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.scores.Team;
 import net.minecraftforge.common.IForgeShearable;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidType;
@@ -45,75 +46,89 @@ import java.util.stream.Stream;
 public class LuaConverter {
 
     private static final CompoundTag EMPTY_TAG = new CompoundTag();
+    private static final Map<Class<? extends Entity>, List<EntityConverter<?>>> ENTITY_CONVERTERS = new HashMap<>();
 
-    public static Map<String, Object> entityToLua(Entity entity) {
-        Map<String, Object> data = new HashMap<>();
-        data.put("id", entity.getId());
-        data.put("uuid", entity.getStringUUID());
-        if (entity.hasCustomName())
-            data.put("customName", entity.getCustomName().getString());
-        EntityType<?> type = entity.getType();
-        data.put("displayName", type.getDescription().getString());
-        data.put("name", type.builtInRegistryHolder().key().location().toString());
-        data.put("type", type.getDescriptionId());
-        data.put("category", type.getCategory());
-        data.put("canBurn", entity.fireImmune());
-        data.put("canFreeze", entity.canFreeze());
-        data.put("isGlowing", entity.isCurrentlyGlowing());
-        data.put("isUnderWater", entity.isUnderWater());
-        data.put("isInLava", entity.isInLava());
-        data.put("isInWall", entity.isInWall());
-        return data;
+    /**
+     * registerEntityConverter register a converter for a type of entity.
+     * If an old converter exists, it will invoke the old one first before invoke the new converter.
+     *
+     * @param clazz     The entity's class
+     * @param converter The {@link EntityConverter}
+     */
+    public static <T extends Entity> void registerEntityConverter(Class<T> clazz, EntityConverter<T> converter) {
+        ENTITY_CONVERTERS.computeIfAbsent(clazz, (k) -> new ArrayList<>(1)).add(converter);
     }
 
-    public static Map<String, Object> livingEntityToLua(LivingEntity entity, boolean detailed) {
-        Map<String, Object> data = entityToLua(entity);
-        data.put("baby", entity.isBaby());
-        data.put("health", entity.getHealth());
-        data.put("maxHealth", entity.getMaxHealth());
-        data.put("lastDamageSource", entity.getLastDamageSource() == null ? null : entity.getLastDamageSource().toString());
-        if (detailed) {
-            Map<String, Object> effMap = new HashMap<>();
-            entity.getActiveEffectsMap().forEach((key, value) -> {
-                effMap.put(key.getDescriptionId(), effectToObject(value));
-            });
-            data.put("effects", effMap);
-        }
-        return data;
-    }
-
-    public static Map<String, Object> mobToLua(Mob animal, boolean detailed) {
-        Map<String, Object> data = livingEntityToLua(animal, detailed);
-        data.put("aggressive", animal.isAggressive());
-        return data;
-    }
-
-    public static Map<String, Object> animalToLua(Animal animal, ItemStack itemInHand, boolean detailed) {
-        Map<String, Object> data = mobToLua(animal, detailed);
-        data.put("inLove", animal.isInLove());
-        if (animal instanceof IForgeShearable shareable && !itemInHand.isEmpty()) {
-            data.put("shareable", shareable.isShearable(itemInHand, animal.level, animal.blockPosition()));
-        }
-        return data;
-    }
-
-    public static Map<String, Object> playerToLua(Player player, boolean detailed) {
-        Map<String, Object> data = livingEntityToLua(player, detailed);
-        data.put("score", player.getScore());
-        data.put("luck", player.getLuck());
-        Inventory inv = player.getInventory();
-        data.put("handSlot", inv.selected);
-        if (detailed) {
-            Map<Integer, Object> invMap = new HashMap<>();
-            for (int slot = 0; slot < inv.getContainerSize(); slot++) {
-                ItemStack item = inv.getItem(slot);
-                if (!item.isEmpty()) {
-                    invMap.put(slot, itemStackToObject(item));
-                }
+    /**
+     * register default entity converters
+     */
+    static {
+        registerEntityConverter(Entity.class, (entity, data, ctx) -> {
+            data.put("id", entity.getId());
+            data.put("uuid", entity.getStringUUID());
+            if (entity.hasCustomName())
+                data.put("customName", entity.getCustomName().getString());
+            EntityType<?> type = entity.getType();
+            data.put("displayName", type.getDescription().getString());
+            data.put("name", type.builtInRegistryHolder().key().location().toString());
+            if (ctx.detailed()) {
+                data.put("type", type.getDescriptionId());
+                data.put("category", type.getCategory());
+                data.put("canBurn", entity.fireImmune());
+                data.put("canFreeze", entity.canFreeze());
+                data.put("tags", entity.getTags());
+                data.put("isGlowing", entity.isCurrentlyGlowing());
+                data.put("isUnderWater", entity.isUnderWater());
+                data.put("isInLava", entity.isInLava());
+                data.put("isInWall", entity.isInWall());
+                data.put("team", teamToLua(entity.getTeam()));
             }
-            data.put("inventory", invMap);
-        }
-        return data;
+        });
+        registerEntityConverter(LivingEntity.class, (entity, data, ctx) -> {
+            data.put("baby", entity.isBaby());
+            data.put("health", entity.getHealth());
+            data.put("maxHealth", entity.getMaxHealth());
+            if (ctx.detailed()) {
+                data.put("lastDamageSource", entity.getLastDamageSource() == null ? null : entity.getLastDamageSource().toString());
+                Map<String, Object> effMap = new HashMap<>();
+                entity.getActiveEffectsMap().forEach((key, value) -> {
+                    effMap.put(key.getDescriptionId(), effectToLua(value));
+                });
+                data.put("effects", effMap);
+            }
+        });
+        registerEntityConverter(Mob.class, (entity, data, ctx) -> {
+            data.put("aggressive", entity.isAggressive());
+        });
+        registerEntityConverter(Animal.class, (entity, data, ctx) -> {
+            data.put("inLove", entity.isInLove());
+            if (ctx.detailed() && !ctx.itemInHand().isEmpty() entity instanceof IForgeShearable shareable) {
+                data.put("shareable", shareable.isShearable(ctx.itemInHand(), entity.level, entity.blockPosition()));
+            }
+        });
+        registerEntityConverter(Player.class, (entity, data, ctx) -> {
+            data.put("score", entity.getScore());
+            data.put("luck", entity.getLuck());
+            Inventory inv = entity.getInventory();
+            data.put("handSlot", inv.selected);
+            if (ctx.detailed()) {
+                Map<Integer, Object> invMap = new HashMap<>();
+                for (int slot = 0; slot < inv.getContainerSize(); slot++) {
+                    ItemStack item = inv.getItem(slot);
+                    if (!item.isEmpty()) {
+                        invMap.put(slot, itemStackToObject(item));
+                    }
+                }
+                data.put("inventory", invMap);
+            }
+        });
+    }
+
+    @FunctionalInterface
+    public interface EntityConverter<T extends Entity> {
+        void entityToMap(T entity, Map<String, Object> data, Context ctx);
+
+        record Context(boolean detailed, ItemStack itemInHand) {}
     }
 
     public static Map<String, Object> completeEntityToLua(Entity entity) {
@@ -129,11 +144,20 @@ public class LuaConverter {
     }
 
     public static Map<String, Object> completeEntityToLua(Entity entity, ItemStack itemInHand, boolean detailed) {
-        if (entity instanceof Player player) return playerToLua(player, detailed);
-        if (entity instanceof Animal animal) return animalToLua(animal, itemInHand, detailed);
-        if (entity instanceof Mob mob) return mobToLua(mob, detailed);
-        if (entity instanceof LivingEntity livingEntity) return livingEntityToLua(livingEntity, detailed);
-        return entityToLua(entity);
+        if (entity == null) {
+            return null;
+        }
+        EntityConverter.Context ctx = new EntityConverter.Context(detailed, itemInHand);
+        Map<String, Object> data = new HashMap<>();
+        for (Class<?> entityClass = entity.getClass(); Entity.class.isAssignableFrom(entityClass); entityClass = entityClass.getSuperclass()) {
+            List<EntityConverter<? extends Entity>> converters = ENTITY_CONVERTERS.get((Class<? extends Entity>) entityClass);
+            if (converters != null) {
+                for (EntityConverter<? extends Entity> converter : converters) {
+                    converter.entityToMap(entity, data, ctx);
+                }
+            }
+        }
+        return data;
     }
 
     public static Map<String, Object> completeEntityWithPositionToLua(Entity entity, BlockPos pos) {
@@ -303,11 +327,21 @@ public class LuaConverter {
         return new BlockPos(center.getX() + relative.getX(), center.getY() + relative.getY(), center.getZ() + relative.getZ());
     }
 
-    public static Object effectToObject(MobEffectInstance effect) {
+    public static Map<String, Object> effectToLua(MobEffectInstance effect) {
         Map<String, Object> map = new HashMap<>();
         map.put("name", effect.getDescriptionId());
         map.put("duration", effect.getDuration());
         map.put("amplifier", effect.getAmplifier());
+        return map;
+    }
+
+    public static Map<String, Object> teamToLua(Team team) {
+        if (team == null) {
+            return null;
+        }
+        Map<String, Object> map = new HashMap<>();
+        map.put("name", team.getName());
+        map.put("color", team.getColor());
         return map;
     }
 
