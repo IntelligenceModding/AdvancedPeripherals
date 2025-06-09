@@ -7,6 +7,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+The new ME and RS Bridge system are more or less final, but expect any last-minute changes before the final release. We will listen for any feedback and try to improve the system as much as we can!
+If there are any inconsistencies or bugs, please report them at our github!
+
 ### Changed
 - We enhanced the RS and ME Bridge majorly, including new functions, a better crafting system and more. Refer to the [docs](https://docs.advanced-peripherals.de/0.7/guides/storage_system_functions/)
 - The fingerprints now use a new hashing algorithm called XXHash64. This change speeds up the process of generating the hashes by a huge factor. Due to that, the hashes now have a different format and are displayed as a 64 bit integers parsed to a string to prevent rounding issues within cc and AP.
