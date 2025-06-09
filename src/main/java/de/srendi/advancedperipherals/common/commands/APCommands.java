@@ -66,10 +66,7 @@ public class APCommands {
             return 0;
         }
         String fingerprint = ItemUtil.getFingerprint(playerEntity.getMainHandItem());
-        if (fingerprint.isEmpty()) {
-            source.sendFailure(Component.literal("There was an issue while generating the hash. Report to Author"));
-            return 0;
-        }
+
         source.sendSuccess(() -> Component.literal("Fingerprint of the item: "), true);
         source.sendSuccess(() -> ComponentUtils.wrapInSquareBrackets(
                 Component.literal(fingerprint)

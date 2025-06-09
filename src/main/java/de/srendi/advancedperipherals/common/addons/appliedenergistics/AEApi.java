@@ -204,7 +204,7 @@ public class AEApi {
         List<Object> items = new ArrayList<>();
         KeyCounter keyCounter = monitor.getAvailableStacks();
         for (Object2LongMap.Entry<AEKey> aeKey : keyCounter) {
-            if (aeKey.getKey() instanceof AEItemKey itemKey && filter.test(itemKey.toStack())) {
+            if (aeKey.getKey() instanceof AEItemKey itemKey && filter.test(itemKey.getReadOnlyStack())) {
                 items.add(parseAeStack(Pair.of(aeKey.getLongValue(), itemKey), service));
             }
         }
@@ -414,7 +414,7 @@ public class AEApi {
     }
 
     private static Map<String, Object> parseItemStack(Pair<Long, AEItemKey> stack, @Nullable ICraftingService craftingService) {
-        Map<String, Object> properties = LuaConverter.itemStackToObject(stack.getRight().toStack());
+        Map<String, Object> properties = LuaConverter.itemStackToObject(stack.getRight().getReadOnlyStack());
         properties.put("count", stack.getLeft());
         properties.put("isCraftable", craftingService != null && craftingService.isCraftable(stack.getRight()));
         return properties;

@@ -3,10 +3,9 @@ package de.srendi.advancedperipherals.common.util.inventory;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.peripheral.IComputerAccess;
 import dan200.computercraft.api.peripheral.IPeripheral;
-import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.IPeripheralOwner;
 import de.srendi.advancedperipherals.common.util.CoordUtil;
-import de.srendi.advancedperipherals.common.util.StringUtil;
+import de.srendi.advancedperipherals.common.util.FingerprintUtil;
 import mekanism.api.Action;
 import mekanism.api.MekanismAPI;
 import mekanism.api.chemical.Chemical;
@@ -21,8 +20,6 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
 import java.util.Objects;
 
 public class ChemicalUtil {
@@ -106,18 +103,11 @@ public class ChemicalUtil {
         return new ChemicalStack(MekanismAPI.CHEMICAL_REGISTRY.wrapAsHolder(chemical), amount);
     }
 
-    @NotNull
     public static String getFingerprint(@NotNull ChemicalStack stack) {
         // A pretty lame fingerprint, a chemical stack does not have any components or other stuff
-        String fingerprint = getRegistryKey(stack).toString();
+        FingerprintUtil.FingerprintKey fingerprintKey = new FingerprintUtil.FingerprintKey(getRegistryKey(stack), null, null);
 
-        byte[] bytesOfHash = fingerprint.getBytes(StandardCharsets.UTF_8);
-        MessageDigest md = AdvancedPeripherals.getFingerprintMessageDigest();
-        if (md != null) {
-            return StringUtil.toHexString(md.digest(bytesOfHash));
-        }
-
-        return "";
+        return FingerprintUtil.hash(fingerprintKey);
     }
 
     public static ResourceLocation getRegistryKey(Chemical chemical) {

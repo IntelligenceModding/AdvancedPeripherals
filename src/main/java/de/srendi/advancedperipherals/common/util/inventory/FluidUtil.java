@@ -3,10 +3,9 @@ package de.srendi.advancedperipherals.common.util.inventory;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.peripheral.IComputerAccess;
 import dan200.computercraft.api.peripheral.IPeripheral;
-import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.IPeripheralOwner;
 import de.srendi.advancedperipherals.common.util.CoordUtil;
-import de.srendi.advancedperipherals.common.util.StringUtil;
+import de.srendi.advancedperipherals.common.util.FingerprintUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -20,8 +19,6 @@ import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
 import java.util.Objects;
 
 public class FluidUtil {
@@ -106,15 +103,9 @@ public class FluidUtil {
 
     @NotNull
     public static String getFingerprint(@NotNull FluidStack stack) {
-        String fingerprint = stack.getComponents() + getRegistryKey(stack).toString() + stack.getDisplayName().getString();
+        FingerprintUtil.FingerprintKey fingerprintKey = new FingerprintUtil.FingerprintKey(getRegistryKey(stack), stack.getComponentsPatch().hashCode(), stack.getDisplayName().getString());
 
-        byte[] bytesOfHash = fingerprint.getBytes(StandardCharsets.UTF_8);
-        MessageDigest md = AdvancedPeripherals.getFingerprintMessageDigest();
-        if (md != null) {
-            return StringUtil.toHexString(md.digest(bytesOfHash));
-        }
-
-        return "";
+        return FingerprintUtil.hash(fingerprintKey);
     }
 
     public static ResourceLocation getRegistryKey(Fluid fluid) {

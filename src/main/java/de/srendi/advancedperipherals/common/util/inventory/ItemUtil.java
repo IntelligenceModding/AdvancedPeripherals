@@ -1,7 +1,6 @@
 package de.srendi.advancedperipherals.common.util.inventory;
 
-import de.srendi.advancedperipherals.AdvancedPeripherals;
-import de.srendi.advancedperipherals.common.util.StringUtil;
+import de.srendi.advancedperipherals.common.util.FingerprintUtil;
 import net.minecraft.ResourceLocationException;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -10,8 +9,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.items.IItemHandler;
 
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,21 +34,15 @@ public class ItemUtil {
     }
 
     /**
-     * Fingerprints are MD5 hashes generated out of the nbt tag, the registry name and the display name from item stacks
-     * Used to filter inventory specific operations. {@link de.srendi.advancedperipherals.common.addons.computercraft.peripheral.InventoryManagerPeripheral}
+     * Fingerprints are XXHash64 hashes generated out of the nbt tag, the registry name and the display name from item stacks
+     * Used to filter inventory specific operations. See {@link ItemFilter}
      *
-     * @return A generated MD5 hash from the item stack
+     * @return A generated XXHash64 hash from the item stack
      */
     public static String getFingerprint(ItemStack stack) {
-        String fingerprint = stack.getComponents() + getRegistryKey(stack).toString() + stack.getDisplayName().getString();
+        FingerprintUtil.FingerprintKey fingerprintKey = new FingerprintUtil.FingerprintKey(getRegistryKey(stack), stack.getComponentsPatch().hashCode(), stack.getDisplayName().getString());
 
-        byte[] bytesOfHash = fingerprint.getBytes(StandardCharsets.UTF_8);
-        MessageDigest md = AdvancedPeripherals.getFingerprintMessageDigest();
-        if (md != null) {
-            return StringUtil.toHexString(md.digest(bytesOfHash));
-        }
-
-        return "";
+        return FingerprintUtil.hash(fingerprintKey);
     }
 
     //Gathers all items in handler and returns them
