@@ -370,7 +370,6 @@ public class MineColonies {
             }
         }
 
-
         List<Object> result = new ArrayList<>();
         for (BuildingBuilderResource resource : resources) {
             Map<String, Object> map = new HashMap<>();
