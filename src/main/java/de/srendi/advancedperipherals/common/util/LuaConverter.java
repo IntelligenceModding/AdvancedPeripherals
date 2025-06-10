@@ -222,8 +222,8 @@ public class LuaConverter {
 
     public static Map<String, Object> itemToObject(@NotNull Item item) {
         Map<String, Object> properties = new HashMap<>();
-        //properties.put("tags", tagsToList(() -> item.builtInRegistryHolder().tags()));
-        //properties.put("name", ItemUtil.getRegistryKey(item).toString());
+        properties.put("tags", tagsToList(() -> item.builtInRegistryHolder().tags()));
+        properties.put("name", ItemUtil.getRegistryKey(item).toString());
         return properties;
     }
 
