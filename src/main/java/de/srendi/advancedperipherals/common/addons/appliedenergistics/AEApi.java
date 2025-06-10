@@ -455,10 +455,15 @@ public class AEApi {
 
     public static Map<String, Object> parsePatternInput(IPatternDetails.IInput patternInput) {
         Map<String, Object> properties = new HashMap<>();
-        properties.put("primaryInput", parseGenericStack(patternInput.getPossibleInputs()[0]));
+        GenericStack primaryInput = patternInput.getPossibleInputs()[0];
+        properties.put("primaryInput", parseGenericStack(primaryInput));
         properties.put("possibleInputs", Arrays.stream(Arrays.copyOfRange(patternInput.getPossibleInputs(), 1, patternInput.getPossibleInputs().length)).map(AEApi::parseGenericStack));
         properties.put("multiplier", patternInput.getMultiplier());
-        properties.put("remaining", patternInput.getRemainingKey(patternInput.getPossibleInputs()[0].what()));
+
+        AEKey remainingKey = patternInput.getRemainingKey(patternInput.getPossibleInputs()[0].what());
+        Map<String, Object> remainingKeyProperties = remainingKey == null ? null : parseGenericStack(new GenericStack(remainingKey, 1));
+        properties.put("remaining", remainingKeyProperties);
+
         return properties;
     }
 
