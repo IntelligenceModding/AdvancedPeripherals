@@ -15,7 +15,11 @@ If there are any inconsistencies or bugs, please report them at our github!
 - The fingerprints now use a new hashing algorithm called XXHash64. This change speeds up the process of generating the hashes by a huge factor. Due to that, the hashes now have a different format and are displayed as a 64 bit integers parsed to a string to prevent rounding issues within cc and AP.
 - Changed the default name style of our peripherals to match the ones from CC:Tweaked going from camelCase to snake_case. For example, the name of the chat box peripheral is now chat_box instead of chatBox.
 
+### Added
+- A global AP lua api providing information about the mod versions of our addons and AP itself
+
 ### Fixed
+- Re-Support powah
 - [#738] Fixed support for the latest minecolonies version
 - [#711] Fixed that the block reader would not be able to access registries for component information
 - [#741] Fixed the bottom textures of our peripherals
