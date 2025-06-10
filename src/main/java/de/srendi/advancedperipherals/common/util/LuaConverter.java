@@ -2,9 +2,15 @@ package de.srendi.advancedperipherals.common.util;
 
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.shared.util.NBTUtil;
+import de.srendi.advancedperipherals.common.addons.APAddon;
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.InventoryManagerPeripheral;
+import de.srendi.advancedperipherals.common.util.inventory.ChemicalUtil;
 import de.srendi.advancedperipherals.common.util.inventory.FluidUtil;
 import de.srendi.advancedperipherals.common.util.inventory.ItemUtil;
+import mekanism.api.MekanismAPI;
+import mekanism.api.MekanismAPITags;
+import mekanism.api.chemical.Chemical;
+import mekanism.api.chemical.ChemicalStack;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.tags.TagKey;
@@ -95,58 +101,106 @@ public class LuaConverter {
     }
 
     public static Object posToObject(BlockPos pos) {
-        if (pos == null) return null;
+        if (pos == null) {
+            return null;
+        }
 
-        Map<String, Object> map = new HashMap<>(3);
-        map.put("x", pos.getX());
-        map.put("y", pos.getY());
-        map.put("z", pos.getZ());
-        return map;
+        Map<String, Object> properties = new HashMap<>(3);
+        properties.put("x", pos.getX());
+        properties.put("y", pos.getY());
+        properties.put("z", pos.getZ());
+        return properties;
     }
 
     public static Map<String, Object> itemStackToObject(@NotNull ItemStack stack) {
-        if (stack.isEmpty()) return Collections.emptyMap();
-        Map<String, Object> map = itemToObject(stack.getItem());
+        if (stack.isEmpty()) {
+            return null;
+        }
+        Map<String, Object> properties = itemToObject(stack.getItem());
         DataComponentPatch components = stack.getComponentsPatch();
-        map.put("count", stack.getCount());
-        map.put("displayName", stack.getDisplayName().getString());
-        map.put("maxStackSize", stack.getMaxStackSize());
-        map.put("components", NBTUtil.toLua(DataComponentUtil.toNbt(components)));
-        map.put("fingerprint", ItemUtil.getFingerprint(stack));
-        return map;
+        properties.put("count", stack.getCount());
+        properties.put("displayName", stack.getDisplayName().getString());
+        properties.put("maxStackSize", stack.getMaxStackSize());
+        properties.put("components", NBTUtil.toLua(DataComponentUtil.toNbt(components)));
+        properties.put("fingerprint", ItemUtil.getFingerprint(stack));
+        return properties;
     }
 
     public static Map<String, Object> fluidStackToObject(@NotNull FluidStack stack) {
-        if (stack.isEmpty()) return Collections.emptyMap();
-        Map<String, Object> map = fluidToObject(stack.getFluid());
+        if (stack.isEmpty()) {
+            return null;
+        }
+        Map<String, Object> properties = fluidToObject(stack.getFluid());
         DataComponentPatch components = stack.getComponentsPatch();
-        map.put("count", stack.getAmount());
-        map.put("displayName", stack.getHoverName().getString());
-        map.put("fluidType", fluidTypeToObject(stack.getFluidType()));
-        map.put("components", NBTUtil.toLua(DataComponentUtil.toNbt(components)));
-        map.put("fingerprint", FluidUtil.getFingerprint(stack));
-        return map;
+        properties.put("count", stack.getAmount());
+        properties.put("displayName", stack.getHoverName().getString());
+        properties.put("fluidType", fluidTypeToObject(stack.getFluidType()));
+        properties.put("components", NBTUtil.toLua(DataComponentUtil.toNbt(components)));
+        properties.put("fingerprint", FluidUtil.getFingerprint(stack));
+        return properties;
+    }
+
+    public static Map<String, Object> chemicalStackToObject(@NotNull ChemicalStack stack) {
+        // In theory should not be called if the addon is not installed, but just to be save
+        if (!APAddon.MEKANISM.isLoaded()) {
+            return null;
+        }
+
+        if (stack.isEmpty()) {
+            return null;
+        }
+        Map<String, Object> properties = chemicalToObject(stack.getChemical());
+        properties.put("count", stack.getAmount());
+        properties.put("displayName", stack.getTextComponent().getString());
+        properties.put("fingerprint", ChemicalUtil.getFingerprint(stack));
+        return properties;
     }
 
     public static Map<String, Object> fluidTypeToObject(FluidType type) {
-        Map<String, Object> map = new HashMap<>();
-        map.put("viscosity", type.getViscosity());
-        map.put("density", type.getDensity());
-        map.put("canHydrate", type.canHydrate((Entity) null));
-        map.put("canExtinguish", type.canExtinguish(null));
-        map.put("canDrownIn", type.canDrownIn(null));
-        map.put("canSwim", type.canSwim(null));
-        map.put("canPushEntity", type.canPushEntity(null));
-        map.put("supportsBoating", type.supportsBoating(null));
-        map.put("canConvertToSource", type.canConvertToSource(null));
-        map.put("temperature", type.getTemperature(null));
-        return map;
+        Map<String, Object> properties = new HashMap<>();
+        properties.put("viscosity", type.getViscosity());
+        properties.put("density", type.getDensity());
+        properties.put("canHydrate", type.canHydrate((Entity) null));
+        properties.put("canExtinguish", type.canExtinguish(null));
+        properties.put("canDrownIn", type.canDrownIn(null));
+        properties.put("canSwim", type.canSwim(null));
+        properties.put("canPushEntity", type.canPushEntity(null));
+        properties.put("supportsBoating", type.supportsBoating(null));
+        properties.put("canConvertToSource", type.canConvertToSource(null));
+        properties.put("temperature", type.getTemperature(null));
+        return properties;
     }
 
-    public static Map<String, Object> itemStackToObject(@NotNull ItemStack itemStack, int amount) {
-        ItemStack stack = itemStack.copy();
-        stack.setCount(amount);
-        return itemStackToObject(stack);
+    public static Map<String, Object> itemStackToObject(@NotNull ItemStack itemStack, long count) {
+        if (itemStack.isEmpty()) {
+            return null;
+        }
+        Map<String, Object> properties = itemStackToObject(itemStack);
+        properties.put("count", count);
+        return properties;
+    }
+
+    public static Map<String, Object> fluidStackToObject(@NotNull FluidStack fluidStack, long count) {
+        if (fluidStack.isEmpty()) {
+            return null;
+        }
+        Map<String, Object> properties = fluidStackToObject(fluidStack);
+        properties.put("count", count);
+        return properties;
+    }
+
+    public static Map<String, Object> chemicalStackToObject(@NotNull ChemicalStack chemicalStack, long count) {
+        // In theory should not be called if the addon is not installed, but just to be save
+        if (!APAddon.MEKANISM.isLoaded()) {
+            return null;
+        }
+
+        if (chemicalStack.isEmpty()) {
+            return null;
+        }
+        Map<String, Object> properties = chemicalStackToObject(chemicalStack);
+        properties.put("count", count);
+        return properties;
     }
 
     /**
@@ -158,28 +212,46 @@ public class LuaConverter {
      * @see InventoryManagerPeripheral#getItems()
      */
     public static Map<String, Object> stackToObjectWithSlot(@NotNull ItemStack stack, int slot) {
-        if (stack.isEmpty()) return new HashMap<>();
-        Map<String, Object> map = itemStackToObject(stack);
-        map.put("slot", slot);
-        return map;
+        if (stack.isEmpty()) {
+            return null;
+        }
+        Map<String, Object> properties = itemStackToObject(stack);
+        properties.put("slot", slot);
+        return properties;
     }
 
     public static Map<String, Object> itemToObject(@NotNull Item item) {
-        Map<String, Object> map = new HashMap<>();
-        map.put("tags", tagsToList(() -> item.builtInRegistryHolder().tags()));
-        map.put("name", ItemUtil.getRegistryKey(item).toString());
-        return map;
+        Map<String, Object> properties = new HashMap<>();
+        properties.put("tags", tagsToList(() -> item.builtInRegistryHolder().tags()));
+        properties.put("name", ItemUtil.getRegistryKey(item).toString());
+        return properties;
     }
 
     public static Map<String, Object> fluidToObject(@NotNull Fluid fluid) {
-        Map<String, Object> map = new HashMap<>();
-        map.put("tags", tagsToList(() -> fluid.builtInRegistryHolder().tags()));
-        map.put("name", FluidUtil.getRegistryKey(fluid).toString());
-        return map;
+        Map<String, Object> properties = new HashMap<>();
+        properties.put("tags", tagsToList(() -> fluid.builtInRegistryHolder().tags()));
+        properties.put("name", FluidUtil.getRegistryKey(fluid).toString());
+        return properties;
+    }
+
+    public static Map<String, Object> chemicalToObject(@NotNull Chemical chemical) {
+        // In theory should not be called if the addon is not installed, but just to be save
+        if (!APAddon.MEKANISM.isLoaded()) {
+            return null;
+        }
+
+        Map<String, Object> properties = new HashMap<>();
+        properties.put("tags", tagsToList(() -> MekanismAPI.CHEMICAL_REGISTRY.wrapAsHolder(chemical).tags()));
+        properties.put("isGaseous", MekanismAPI.CHEMICAL_REGISTRY.wrapAsHolder(chemical).is(MekanismAPITags.Chemicals.GASEOUS));
+        properties.put("radioactivity", chemical.getRadioactivity());
+        properties.put("name", ChemicalUtil.getRegistryKey(chemical).toString());
+        return properties;
     }
 
     public static <T> List<String> tagsToList(@NotNull Supplier<Stream<TagKey<T>>> tags) {
-        if (tags.get().findAny().isEmpty()) return Collections.emptyList();
+        if (tags.get().findAny().isEmpty()) {
+            return Collections.emptyList();
+        }
         return tags.get().map(LuaConverter::tagToString).toList();
     }
 

@@ -22,7 +22,6 @@ import static de.srendi.advancedperipherals.common.setup.DataComponents.CHUNKY_I
 public class ChunkyPeripheral extends BasePeripheral<TurtlePeripheralOwner> {
 
     public static final String PERIPHERAL_TYPE = "chunky";
-    private static final String UUID_TAG = "uuid";
     private @Nullable ChunkPos loadedCentralChunk = null;
 
     public ChunkyPeripheral(ITurtleAccess turtle, TurtleSide side) {

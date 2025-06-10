@@ -7,8 +7,8 @@ import de.srendi.advancedperipherals.common.blocks.blockentities.BlockReaderEnti
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
-import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -19,7 +19,7 @@ import java.util.Map;
 
 public class BlockReaderPeripheral extends BasePeripheral<BlockEntityPeripheralOwner<BlockReaderEntity>> {
 
-    public static final String PERIPHERAL_TYPE = "blockReader";
+    public static final String PERIPHERAL_TYPE = "block_reader";
 
     public BlockReaderPeripheral(BlockReaderEntity tileEntity) {
         super(PERIPHERAL_TYPE, new BlockEntityPeripheralOwner<>(tileEntity));
@@ -40,10 +40,11 @@ public class BlockReaderPeripheral extends BasePeripheral<BlockEntityPeripheralO
     public final Object getBlockData() {
         if (getBlockInFront().is(Blocks.AIR))
             return null;
-        BlockEntity target = getLevel().getBlockEntity(getPos().relative(owner.getFacing()));
+        Level level = getLevel();
+        BlockEntity target = level.getBlockEntity(getPos().relative(owner.getFacing()));
         if (target == null)
             return null;
-        return NBTUtil.toLua(target.saveWithoutMetadata(RegistryAccess.EMPTY));
+        return NBTUtil.toLua(target.saveWithoutMetadata(level.registryAccess()));
     }
 
     @LuaFunction(mainThread = true)

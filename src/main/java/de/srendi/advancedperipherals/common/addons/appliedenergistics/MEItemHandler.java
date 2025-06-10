@@ -4,6 +4,7 @@ import appeng.api.config.Actionable;
 import appeng.api.networking.security.IActionSource;
 import appeng.api.stacks.AEItemKey;
 import appeng.api.storage.MEStorage;
+import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.MEBridgePeripheral;
 import de.srendi.advancedperipherals.common.util.Pair;
 import de.srendi.advancedperipherals.common.util.inventory.IStorageSystemItemHandler;
 import de.srendi.advancedperipherals.common.util.inventory.ItemFilter;
@@ -13,16 +14,16 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Used to transfer item between an inventory and the ME system.
  *
- * @see de.srendi.advancedperipherals.common.addons.computercraft.peripheral.MeBridgePeripheral
+ * @see MEBridgePeripheral
  */
-public class MeItemHandler implements IStorageSystemItemHandler {
+public class MEItemHandler implements IStorageSystemItemHandler {
 
     @NotNull
     private final MEStorage storageMonitor;
     @NotNull
     private final IActionSource actionSource;
 
-    public MeItemHandler(@NotNull MEStorage storageMonitor, @NotNull IActionSource actionSource) {
+    public MEItemHandler(@NotNull MEStorage storageMonitor, @NotNull IActionSource actionSource) {
         this.storageMonitor = storageMonitor;
         this.actionSource = actionSource;
     }
@@ -40,8 +41,8 @@ public class MeItemHandler implements IStorageSystemItemHandler {
 
     @Override
     public ItemStack extractItem(ItemFilter filter, int count, boolean simulate) {
-        Pair<Long, AEItemKey> itemKey = AppEngApi.findAEStackFromFilter(storageMonitor, null, filter);
-        if (itemKey.getRight() == null)
+        Pair<Long, AEItemKey> itemKey = AEApi.findAEStackFromFilter(storageMonitor, null, filter);
+        if (itemKey.getRight().toStack().isEmpty())
             return ItemStack.EMPTY;
         long extracted = storageMonitor.extract(itemKey.getRight(), count, simulate ? Actionable.SIMULATE : Actionable.MODULATE, actionSource);
         // Safe to cast here, the amount will never be higher than 64

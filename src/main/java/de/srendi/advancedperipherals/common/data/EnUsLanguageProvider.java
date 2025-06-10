@@ -60,10 +60,10 @@ public class EnUsLanguageProvider extends LanguageProvider {
         addBlock(Blocks.GEO_SCANNER, "Geo Scanner");
         addBlock(Blocks.INVENTORY_MANAGER, "Inventory Manager");
         addBlock(Blocks.ME_BRIDGE, "ME Bridge");
+        addBlock(Blocks.RS_BRIDGE, "RS Bridge");
         addBlock(Blocks.NBT_STORAGE, "NBT Storage");
         addBlock(Blocks.PERIPHERAL_CASING, "Peripheral Casing");
         addBlock(Blocks.PLAYER_DETECTOR, "Player Detector");
-        addBlock(Blocks.REDSTONE_INTEGRATOR, "Redstone Integrator");
     }
 
     private void addTurtles() {
@@ -109,12 +109,12 @@ public class EnUsLanguageProvider extends LanguageProvider {
         addTooltip(Blocks.ENVIRONMENT_DETECTOR.get(), "&7This peripheral interacts with the minecraft world.");
         addTooltip(Blocks.PLAYER_DETECTOR.get(), "&7This peripheral can be used to interact with players, but don't be a stalker.");
         addTooltip(Blocks.ME_BRIDGE.get(), "&7The ME Bridge interacts with Applied Energistics to manage your items.");
+        addTooltip(Blocks.RS_BRIDGE.get(), "&7The RS Bridge interacts with Refined Storage to manage your items.");
         addTooltip(Blocks.CHAT_BOX.get(), "&7Interacts with the ingame chat, can read and write messages.");
         addTooltip(Blocks.PERIPHERAL_CASING.get(), "&7An empty hull without the love it deserves. Used as a crafting ingredient");
         addTooltip(Items.MEMORY_CARD.get(), "&7Can save the rights of a player to use it in an inventory manager.");
         addTooltip("memory_card.bound", "&7Bound to &b%s&7.");
         addTooltip(Blocks.INVENTORY_MANAGER.get(), "&7This block is able to send or receive specific items from a player inventory.");
-        addTooltip(Blocks.REDSTONE_INTEGRATOR.get(), "&7This block is able to interact with redstone. Works exactly like the redstone api of an computer.");
         addTooltip(Blocks.BLOCK_READER.get(), "&7Reads nbt data of blocks to interact with blocks which do not have computer support.");
         addTooltip(Blocks.GEO_SCANNER.get(), "&7Scans the area around it to find some shiny ores.");
         addTooltip(Blocks.COLONY_INTEGRATOR.get(), "&7Interacts with Minecolonies to read data about your colony and citizens.");

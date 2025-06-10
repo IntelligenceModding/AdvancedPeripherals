@@ -3,10 +3,9 @@ package de.srendi.advancedperipherals.common.util.inventory;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.peripheral.IComputerAccess;
 import dan200.computercraft.api.peripheral.IPeripheral;
-import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.IPeripheralOwner;
 import de.srendi.advancedperipherals.common.util.CoordUtil;
-import de.srendi.advancedperipherals.common.util.StringUtil;
+import de.srendi.advancedperipherals.common.util.FingerprintUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -20,14 +19,46 @@ import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.Objects;
 
 public class FluidUtil {
 
     private FluidUtil() {
+    }
+
+    public static int moveFluid(IFluidHandler inventoryFrom, IFluidHandler inventoryTo, FluidFilter filter) {
+        if (inventoryFrom == null) return 0;
+
+        int amount = filter.getCount();
+        int transferableAmount = 0;
+
+        // The logic changes with storage systems since these systems do not have slots
+        if (inventoryFrom instanceof IStorageSystemFluidHandler storageSystemHandler) {
+            FluidStack extracted = storageSystemHandler.drain(filter, IFluidHandler.FluidAction.SIMULATE);
+            int inserted = inventoryTo.fill(extracted, IFluidHandler.FluidAction.EXECUTE);
+
+            transferableAmount += storageSystemHandler.drain(filter.setCount(inserted), IFluidHandler.FluidAction.EXECUTE).getAmount();
+
+            return transferableAmount;
+        }
+
+        if (inventoryTo instanceof IStorageSystemFluidHandler storageSystemHandler) {
+            if (filter.test(inventoryFrom.getFluidInTank(0))) {
+                FluidStack toExtract = inventoryFrom.getFluidInTank(0).copy();
+                toExtract.setAmount(amount);
+                FluidStack extracted = inventoryFrom.drain(toExtract, IFluidHandler.FluidAction.SIMULATE);
+                if (extracted.isEmpty())
+                    return 0;
+                int inserted = storageSystemHandler.fill(extracted, IFluidHandler.FluidAction.EXECUTE);
+
+                extracted.setAmount(inserted);
+                transferableAmount += inventoryFrom.drain(extracted, IFluidHandler.FluidAction.EXECUTE).getAmount();
+            }
+
+            return transferableAmount;
+        }
+
+        return transferableAmount;
     }
 
     public static IFluidHandler extractHandler(@Nullable Object object, @Nullable Level level, @Nullable BlockPos pos, @Nullable Direction direction) {
@@ -43,19 +74,16 @@ public class FluidUtil {
         return null;
     }
 
-    @NotNull
+    @Nullable
     public static IFluidHandler getHandlerFromDirection(@NotNull String direction, @NotNull IPeripheralOwner owner) throws LuaException {
         Level level = owner.getLevel();
         Objects.requireNonNull(level);
         Direction relativeDirection = CoordUtil.getDirection(owner.getOrientation(), direction);
         BlockEntity target = level.getBlockEntity(owner.getPos().relative(relativeDirection));
         if (target == null)
-            throw new LuaException("Target '" + direction + "' is empty or not a fluid handler");
+            return null;
 
-        IFluidHandler handler = extractHandler(target, level, owner.getPos().relative(relativeDirection), relativeDirection);
-        if (handler == null)
-            throw new LuaException("Target '" + direction + "' is not a fluid handler");
-        return handler;
+        return extractHandler(target, level, owner.getPos().relative(relativeDirection), relativeDirection);
     }
 
     @Nullable
@@ -75,16 +103,9 @@ public class FluidUtil {
 
     @NotNull
     public static String getFingerprint(@NotNull FluidStack stack) {
-        String fingerprint = stack.getComponents() + getRegistryKey(stack).toString() + stack.getDisplayName().getString();
-        try {
-            byte[] bytesOfHash = fingerprint.getBytes(StandardCharsets.UTF_8);
-            MessageDigest md = MessageDigest.getInstance("MD5");
-            return StringUtil.toHexString(md.digest(bytesOfHash));
-        } catch (NoSuchAlgorithmException ex) {
-            AdvancedPeripherals.debug("Could not parse fingerprint.", org.apache.logging.log4j.Level.ERROR);
-            ex.printStackTrace();
-        }
-        return "";
+        FingerprintUtil.FingerprintKey fingerprintKey = new FingerprintUtil.FingerprintKey(getRegistryKey(stack), stack.getComponentsPatch().hashCode(), stack.getDisplayName().getString());
+
+        return FingerprintUtil.hash(fingerprintKey);
     }
 
     public static ResourceLocation getRegistryKey(Fluid fluid) {

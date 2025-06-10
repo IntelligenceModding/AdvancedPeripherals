@@ -1,96 +1,36 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.integrations;
 
 import dan200.computercraft.api.ComputerCraftAPI;
+import dan200.computercraft.api.peripheral.PeripheralCapability;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.util.Platform;
-import de.srendi.advancedperipherals.lib.integrations.IPeripheralIntegration;
-import de.srendi.advancedperipherals.lib.peripherals.BlockEntityIntegrationPeripheral;
-import net.minecraft.world.level.block.NoteBlock;
-import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.Blocks;
+import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 
-import java.util.Comparator;
 import java.util.Optional;
-import java.util.PriorityQueue;
-import java.util.function.Function;
-import java.util.function.Predicate;
 
 public class IntegrationPeripheralProvider {
 
-    private static final String[] SUPPORTED_MODS = new String[]{"mekanism"};
-
-    private static final PriorityQueue<IPeripheralIntegration> integrations = new PriorityQueue<>(Comparator.comparingInt(IPeripheralIntegration::getPriority));
-
-    private static void registerIntegration(IPeripheralIntegration integration) {
-        integrations.add(integration);
-    }
-
-    /**
-     * Register tile entity integration, better use this method over manual TileEntityIntegration creation, because this method provides type check
-     *
-     * @param integration integration generator
-     * @param tileClass   target integration class
-     * @param <T>         target integration
-     *
-     * @deprecated will be removed in 1.21. Use generics instead, see existing integrations
-     */
-    @Deprecated(forRemoval = true, since = "1.20.1-0.7.39")
-    public static <T extends BlockEntity> void registerBlockEntityIntegration(Function<BlockEntity, BlockEntityIntegrationPeripheral<T>> integration, Class<T> tileClass) {
-        registerIntegration(new BlockEntityIntegration(integration, tileClass::isInstance));
-    }
-
-    /**
-     * Register tile entity integration, better use this method over manual TileEntityIntegration creation, because this method provides type check
-     *
-     * @param integration integration generator
-     * @param tileClass   target integration class
-     * @param priority    Integration priority, lower is better
-     * @param <T>         target integration
-     *
-     * @deprecated will be removed in 1.21. Use generics instead, see existing integrations
-     */
-    @Deprecated(forRemoval = true, since = "1.20.1-0.7.39")
-    public static <T extends BlockEntity> void registerBlockEntityIntegration(Function<BlockEntity, BlockEntityIntegrationPeripheral<T>> integration, Class<T> tileClass, int priority) {
-        registerIntegration(new BlockEntityIntegration(integration, tileClass::isInstance, priority));
-    }
-
-    /**
-     * Register tile entity integration, better use this method over manual TileEntityIntegration creation, because this method provides type check
-     * Provides a predicate for specific block entity checks
-     *
-     * @param integration integration generator
-     * @param tileClass   target integration class
-     * @param predicate   target block entity
-     * @param priority    Integration priority, lower is better
-     * @param <T>         target integration
-     *
-     * @deprecated will be removed in 1.21. Use generics instead, see existing integrations
-     */
-    @Deprecated(forRemoval = true, since = "1.20.1-0.7.39")
-    public static <T extends BlockEntity> void registerBlockEntityIntegration(Function<BlockEntity, BlockEntityIntegrationPeripheral<T>> integration, Class<T> tileClass, Predicate<T> predicate, int priority) {
-        registerIntegration(new BlockEntityIntegration(integration, tile -> tileClass.isInstance(tile) && predicate.test((T) tile), priority));
-    }
+    private static final String[] SUPPORTED_MODS = new String[]{"mekanism", "powah"};
 
     public static void load() {
         ComputerCraftAPI.registerGenericSource(new BeaconIntegration());
-        registerIntegration(new BlockIntegration(NoteBlockIntegration::new, NoteBlock.class::isInstance));
 
         for (String mod : SUPPORTED_MODS) {
             Optional<Object> integration = Platform.maybeLoadIntegration(mod, mod + ".Integration");
-            integration.ifPresent(obj -> {
-                AdvancedPeripherals.LOGGER.warn("Successfully loaded integration for {}", mod);
-                ((Runnable) obj).run();
-            });
-            if (integration.isEmpty()) AdvancedPeripherals.LOGGER.warn("Failed to load integration for {}", mod);
+            if (integration.isEmpty()) {
+                AdvancedPeripherals.LOGGER.warn("Failed to load integration for {}", mod);
+                continue;
+            }
+            Runnable runnable = (Runnable) (integration.get());
+            AdvancedPeripherals.LOGGER.info("Successfully loaded integration for {}", mod);
+            runnable.run();
         }
     }
 
-    /*@NotNull
-    @Override
-    public LazyOptional<IPeripheral> getPeripheral(@NotNull Level level, @NotNull BlockPos blockPos, @NotNull Direction direction) {
-        for (IPeripheralIntegration integration : integrations) {
-//            if (integration.isSuitable(level, blockPos, direction))
-//                return LazyOptional.of(() -> integration.buildPeripheral(level, blockPos, direction));
-//        }
-//        return LazyOptional.empty();
-//    }*/
+    public static void registerBlockIntegrations(RegisterCapabilitiesEvent event) {
+        event.registerBlock(
+                PeripheralCapability.get(),
+                (level, pos, state, blockEntity, side) -> new NoteBlockIntegration(level, pos), Blocks.NOTE_BLOCK);
+    }
 }

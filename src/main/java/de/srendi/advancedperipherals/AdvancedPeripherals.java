@@ -1,8 +1,10 @@
 package de.srendi.advancedperipherals;
 
 import dan200.computercraft.api.peripheral.PeripheralCapability;
-import de.srendi.advancedperipherals.common.addons.APAddons;
-import de.srendi.advancedperipherals.common.addons.appliedenergistics.AppEngApi;
+import de.srendi.advancedperipherals.common.addons.APAddon;
+import de.srendi.advancedperipherals.common.addons.appliedenergistics.AEApi;
+import de.srendi.advancedperipherals.common.addons.computercraft.integrations.IntegrationPeripheralProvider;
+import de.srendi.advancedperipherals.common.addons.refinedstorage.RSApi;
 import de.srendi.advancedperipherals.common.blocks.base.ICapabilityProvider;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.setup.Registration;
@@ -16,7 +18,10 @@ import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.Nullable;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Random;
 
 @Mod(AdvancedPeripherals.MOD_ID)
@@ -27,9 +32,12 @@ public class AdvancedPeripherals {
     public static final Logger LOGGER = LogManager.getLogger(NAME);
     public static final Random RANDOM = new Random();
 
+    // Used for out item/fluid fingerprints
+    private static MessageDigest fingerprintMessageDigest = null;
+
     public AdvancedPeripherals(IEventBus modBus) {
         LOGGER.info("AdvancedPeripherals says hello!");
-        APAddons.setup();
+        APAddon.setup();
 
         APConfig.register(ModLoadingContext.get());
 
@@ -37,6 +45,20 @@ public class AdvancedPeripherals {
         modBus.addListener(ChunkManager::registerTicketController);
 
         Registration.register(modBus);
+
+        try {
+            fingerprintMessageDigest = MessageDigest.getInstance("MD5");
+        } catch (NoSuchAlgorithmException e) {
+            AdvancedPeripherals.debug("Could not create message digest. Fingerprint creation WILL fail.", e);
+        }
+    }
+
+    @Nullable
+    public static MessageDigest getFingerprintMessageDigest() {
+        if (fingerprintMessageDigest != null) {
+            fingerprintMessageDigest.reset();
+        }
+        return fingerprintMessageDigest;
     }
 
     public static void debug(String message) {
@@ -47,6 +69,11 @@ public class AdvancedPeripherals {
     public static void debug(String message, Level level) {
         if (APConfig.GENERAL_CONFIG.enableDebugMode.get())
             LOGGER.log(level, "[DEBUG] {}", message);
+    }
+
+    public static void debug(String message, Throwable throwable) {
+        if (APConfig.GENERAL_CONFIG.enableDebugMode.get())
+            LOGGER.error("[DEBUG] " + message, throwable);
     }
 
     public static ResourceLocation getRL(String resource) {
@@ -93,7 +120,12 @@ public class AdvancedPeripherals {
                     });
         });
 
-        if (APAddons.ae2Loaded)
-            AppEngApi.registerCapabilities(event);
+        if (APAddon.AE2.isLoaded())
+            AEApi.registerCapabilities(event);
+        if (APAddon.REFINEDSTORAGE.isLoaded())
+            RSApi.registerCapabilities(event);
+
+        IntegrationPeripheralProvider.registerBlockIntegrations(event);
+
     }
 }

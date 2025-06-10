@@ -48,9 +48,6 @@ public class VillagerTrades {
             TradeBuilder.createTrade(event, Blocks.INVENTORY_MANAGER.get(), VillagerTrade.Type.ITEM_FOR_EMERALD, 2, 2)
                     .setXp(4)
                     .build();
-            TradeBuilder.createTrade(event, Blocks.REDSTONE_INTEGRATOR.get(), VillagerTrade.Type.ITEM_FOR_EMERALD, 2, 2)
-                    .setXp(3)
-                    .build();
             TradeBuilder.createTrade(event, ModRegistry.Blocks.COMPUTER_ADVANCED.get(), VillagerTrade.Type.ITEM_FOR_EMERALD, 3, 2)
                     .setXp(4)
                     .build();

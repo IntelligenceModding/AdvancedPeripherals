@@ -25,14 +25,13 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Predicate;
 
 import static de.srendi.advancedperipherals.common.addons.computercraft.operations.SingleOperation.CAPTURE_ANIMAL;
 import static de.srendi.advancedperipherals.common.setup.DataComponents.ENTITY_TRANSFER;
 
 public class AutomataEntityTransferPlugin extends AutomataCorePlugin {
-
-    private static final String ENTITY_NBT_KEY = "storedEntity";
 
     private final Predicate<Entity> suitableEntity;
 
@@ -47,7 +46,10 @@ public class AutomataEntityTransferPlugin extends AutomataCorePlugin {
     }
 
     protected boolean isEntityInside() {
-        return automataCore.getPeripheralOwner().getDataStorage().get(ENTITY_TRANSFER.get()).isPresent();
+        Optional<? extends CompoundTag> entityTransfer = automataCore.getPeripheralOwner().getDataStorage().get(ENTITY_TRANSFER.get());
+        if (entityTransfer != null)
+            return entityTransfer.isPresent();
+        return false;
     }
 
     protected void saveEntity(CompoundTag data) {

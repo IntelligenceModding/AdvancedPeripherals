@@ -16,6 +16,8 @@ import net.neoforged.neoforge.client.model.generators.ModelFile;
 import net.neoforged.neoforge.client.model.generators.ModelProvider;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 
+import java.util.Arrays;
+
 public class BlockStatesAndModelsProvider extends BlockStateProvider {
 
     public BlockStatesAndModelsProvider(PackOutput packOutput, ExistingFileHelper exFileHelper) {
@@ -31,12 +33,12 @@ public class BlockStatesAndModelsProvider extends BlockStateProvider {
         peripheralBlock(Blocks.ENERGY_DETECTOR.get(), "front", "back", "top", "east");
         peripheralBlock(Blocks.INVENTORY_MANAGER.get(), "front", "top");
         peripheralBlock(Blocks.GEO_SCANNER.get(), "front", "top");
+        peripheralBlock(Blocks.RS_BRIDGE.get(), "front", "top");
         peripheralBlock(Blocks.COLONY_INTEGRATOR.get(), "front", "top");
         peripheralBlock(Blocks.NBT_STORAGE.get(), "front", "top");
 
         // Define blocks with custom model generation
         peripheralBlock(Blocks.PLAYER_DETECTOR.get(), generateModel(Blocks.PLAYER_DETECTOR.get(), false, "side", "front", "top"));
-        peripheralBlock(Blocks.REDSTONE_INTEGRATOR.get(), generateModel(Blocks.REDSTONE_INTEGRATOR.get(), false, "side", "front", "top", "bottom"));
         peripheralBlock(Blocks.BLOCK_READER.get(), generateModel(Blocks.BLOCK_READER.get(), false, "north", "south", "east", "west", "up", "down"));
 
         // Define a simple block with all sides having the same texture
@@ -89,8 +91,11 @@ public class BlockStatesAndModelsProvider extends BlockStateProvider {
             if (side.equals("bottom")) side = "down";
             if (side.equals("back")) side = "south";
             builder.texture(side, blockTexture(block, sideTexture));
+        }
 
-
+        // In the case that there is no bottom side defined, we use the default bottom texture.
+        if (Arrays.stream(sides).noneMatch(side -> side.equals("bottom"))) {
+            builder.texture("down", ModelProvider.BLOCK_FOLDER + "/" + "bottom");
         }
         builder.texture("particle", particleTexture);
         return builder;

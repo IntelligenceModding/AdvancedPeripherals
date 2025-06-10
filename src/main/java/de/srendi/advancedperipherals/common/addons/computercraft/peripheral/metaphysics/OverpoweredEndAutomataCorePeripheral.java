@@ -8,7 +8,7 @@ import de.srendi.advancedperipherals.common.configuration.APConfig;
 
 public class OverpoweredEndAutomataCorePeripheral extends EndAutomataCorePeripheral {
 
-    public static final String TYPE = "overpoweredEndAutomata";
+    public static final String TYPE = "overpowered_end_automata";
 
     public OverpoweredEndAutomataCorePeripheral(ITurtleAccess turtle, TurtleSide side) {
         super(TYPE, turtle, side, AutomataCoreTier.OVERPOWERED_TIER2);

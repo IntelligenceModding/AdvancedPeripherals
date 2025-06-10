@@ -12,8 +12,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.neoforged.neoforge.capabilities.Capabilities;
-import net.neoforged.neoforge.fluids.FluidStack;
-import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.ItemHandlerHelper;
 import net.neoforged.neoforge.items.wrapper.InvWrapper;
@@ -77,10 +75,10 @@ public class InventoryUtil {
                     ItemStack extracted = inventoryFrom.extractItem(i, amount - transferableAmount, true);
                     if (extracted.isEmpty())
                         continue;
-                    ItemStack inserted = storageSystemHandler.insertItem(toSlot, extracted, false);
+                    ItemStack remaining = storageSystemHandler.insertItem(toSlot, extracted, false);
 
-                    amount -= inserted.getCount();
-                    transferableAmount += inventoryFrom.extractItem(i, extracted.getCount() - inserted.getCount(), false).getCount();
+                    amount -= remaining.getCount();
+                    transferableAmount += inventoryFrom.extractItem(i, extracted.getCount() - remaining.getCount(), false).getCount();
                     if (transferableAmount >= filter.getCount())
                         break;
                 }
@@ -108,42 +106,6 @@ public class InventoryUtil {
         return transferableAmount;
     }
 
-    public static int moveFluid(IFluidHandler inventoryFrom, IFluidHandler inventoryTo, FluidFilter filter) {
-        if (inventoryFrom == null) return 0;
-
-        int amount = filter.getCount();
-        int transferableAmount = 0;
-
-        // The logic changes with storage systems since these systems do not have slots
-        if (inventoryFrom instanceof IStorageSystemFluidHandler storageSystemHandler) {
-            FluidStack extracted = storageSystemHandler.drain(filter, IFluidHandler.FluidAction.SIMULATE);
-            int inserted = inventoryTo.fill(extracted, IFluidHandler.FluidAction.EXECUTE);
-
-            transferableAmount += storageSystemHandler.drain(filter.setCount(inserted), IFluidHandler.FluidAction.EXECUTE).getAmount();
-
-            return transferableAmount;
-        }
-
-        if (inventoryTo instanceof IStorageSystemFluidHandler storageSystemHandler) {
-            if (filter.test(inventoryFrom.getFluidInTank(0))) {
-                FluidStack toExtract = inventoryFrom.getFluidInTank(0).copy();
-                toExtract.setAmount(amount);
-                FluidStack extracted = inventoryFrom.drain(toExtract, IFluidHandler.FluidAction.SIMULATE);
-                if (extracted.isEmpty())
-                    return 0;
-                int inserted = storageSystemHandler.fill(extracted, IFluidHandler.FluidAction.EXECUTE);
-
-                extracted.setAmount(inserted);
-                transferableAmount += inventoryFrom.drain(extracted, IFluidHandler.FluidAction.EXECUTE).getAmount();
-            }
-
-            return transferableAmount;
-        }
-
-        return transferableAmount;
-    }
-
-
     @Nullable
     public static IItemHandler getHandlerFromName(@NotNull IComputerAccess access, String name) throws LuaException {
         IPeripheral location = access.getAvailablePeripheral(name);
@@ -158,6 +120,8 @@ public class InventoryUtil {
         Level level = owner.getLevel();
         Objects.requireNonNull(level);
         Direction relativeDirection = CoordUtil.getDirection(owner.getOrientation(), direction);
+        if (relativeDirection == null)
+            return null;
         BlockEntity target = level.getBlockEntity(owner.getPos().relative(relativeDirection));
         if (target == null)
             return null;

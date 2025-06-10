@@ -20,11 +20,11 @@
               "source": "block_entity"
             }
           ],
-          "name": "advancedperipherals:redstone_integrator"
+          "name": "advancedperipherals:rs_bridge"
         }
       ],
       "rolls": 1.0
     }
   ],
-  "random_sequence": "advancedperipherals:blocks/redstone_integrator"
+  "random_sequence": "advancedperipherals:blocks/rs_bridge"
 }

@@ -19,7 +19,7 @@ import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.pocket.IPocketAccess;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
-import de.srendi.advancedperipherals.common.addons.APAddons;
+import de.srendi.advancedperipherals.common.addons.APAddon;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.BlockEntityPeripheralOwner;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.IPeripheralOwner;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.PocketPeripheralOwner;
@@ -42,7 +42,7 @@ import java.util.stream.Collectors;
 
 public class ColonyPeripheral extends BasePeripheral<IPeripheralOwner> {
 
-    public static final String PERIPHERAL_TYPE = "colonyIntegrator";
+    public static final String PERIPHERAL_TYPE = "colony_integrator";
 
     protected boolean hasPermission = true;
 
@@ -56,7 +56,7 @@ public class ColonyPeripheral extends BasePeripheral<IPeripheralOwner> {
 
     @Override
     public boolean isEnabled() {
-        return APAddons.minecoloniesLoaded && APConfig.PERIPHERALS_CONFIG.enableColonyIntegrator.get();
+        return APAddon.MINECOLONIES.isLoaded() && APConfig.PERIPHERALS_CONFIG.enableColonyIntegrator.get();
     }
 
     @LuaFunction(mainThread = true)

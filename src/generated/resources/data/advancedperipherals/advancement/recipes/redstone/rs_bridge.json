@@ -1,4 +1,10 @@
 {
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "refinedstorage"
+    }
+  ],
   "parent": "minecraft:recipes/root",
   "criteria": {
     "has_item": {
@@ -13,7 +19,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "advancedperipherals:redstone_integrator"
+        "recipe": "advancedperipherals:rs_bridge"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
@@ -26,7 +32,7 @@
   ],
   "rewards": {
     "recipes": [
-      "advancedperipherals:redstone_integrator"
+      "advancedperipherals:rs_bridge"
     ]
   }
 }

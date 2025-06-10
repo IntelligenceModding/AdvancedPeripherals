@@ -1,8 +1,14 @@
 package de.srendi.advancedperipherals.common.util.inventory;
 
+import appeng.api.stacks.AEFluidKey;
+import appeng.api.stacks.GenericStack;
+import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
+import com.refinedmods.refinedstorage.common.support.resource.FluidResource;
+import com.refinedmods.refinedstorage.neoforge.support.resource.VariantUtil;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.core.apis.TableHelper;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
+import de.srendi.advancedperipherals.common.addons.APAddon;
 import de.srendi.advancedperipherals.common.util.DataComponentUtil;
 import de.srendi.advancedperipherals.common.util.NBTUtil;
 import de.srendi.advancedperipherals.common.util.Pair;
@@ -18,8 +24,9 @@ import net.neoforged.neoforge.fluids.FluidStack;
 
 import java.util.Map;
 
-//TODO tag
-public class FluidFilter {
+public class FluidFilter extends GenericFilter<FluidStack> {
+
+    public static final FluidFilter EMPTY = new FluidFilter();
 
     private Fluid fluid = Fluids.EMPTY;
     private TagKey<Fluid> tag = null;
@@ -32,10 +39,12 @@ public class FluidFilter {
     }
 
     public static Pair<FluidFilter, String> parse(Map<?, ?> item) {
-        FluidFilter fluidFilter = empty();
         // If the map is empty, return a filter without any filters
         if (item.isEmpty())
-            return Pair.of(fluidFilter, null);
+            return Pair.of(EMPTY, null);
+
+        FluidFilter fluidFilter = createEmpty();
+
         if (item.containsKey("name")) {
             try {
                 String name = TableHelper.getStringField(item, "name");
@@ -79,19 +88,41 @@ public class FluidFilter {
     }
 
     public static FluidFilter fromStack(FluidStack stack) {
-        FluidFilter filter = empty();
+        FluidFilter filter = createEmpty();
         filter.fluid = stack.getFluid();
         filter.componentsAsNbt = DataComponentUtil.toNbt(stack.getComponentsPatch());
         filter.components = stack.getComponents();
         return filter;
     }
 
-    public static FluidFilter empty() {
+    public static FluidFilter createEmpty() {
         return new FluidFilter();
     }
 
     public boolean isEmpty() {
-        return fingerprint.isEmpty() && fluid == Fluids.EMPTY && tag == null && componentsAsNbt == null;
+        return this == EMPTY || (fingerprint.isEmpty() && fluid == Fluids.EMPTY && tag == null && componentsAsNbt == null);
+    }
+
+    @Override
+    public boolean testAE(GenericStack genericStack) {
+        if (!APAddon.AE2.isLoaded())
+            return false;
+
+        if (genericStack.what() instanceof AEFluidKey aeFluidKey) {
+            return test(aeFluidKey.toStack(1));
+        }
+        return false;
+    }
+
+    @Override
+    public boolean testRS(ResourceAmount resourceAmount) {
+        if (!APAddon.REFINEDSTORAGE.isLoaded())
+            return false;
+
+        if (resourceAmount.resource() instanceof FluidResource fluidResource) {
+            return test(VariantUtil.toFluidStack(fluidResource, 1));
+        }
+        return false;
     }
 
     public FluidStack toFluidStack() {
