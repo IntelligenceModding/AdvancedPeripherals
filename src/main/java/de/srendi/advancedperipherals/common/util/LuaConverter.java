@@ -59,9 +59,7 @@ public class LuaConverter {
         ENTITY_CONVERTERS.computeIfAbsent(clazz, (k) -> new ArrayList<>(1)).add(converter);
     }
 
-    /**
-     * register default entity converters
-     */
+    // register default entity converters
     static {
         registerEntityConverter(Entity.class, (entity, data, ctx) -> {
             data.put("id", entity.getId());
@@ -73,7 +71,7 @@ public class LuaConverter {
             data.put("name", type.builtInRegistryHolder().key().location().toString());
             if (ctx.detailed()) {
                 data.put("type", type.getDescriptionId());
-                data.put("category", type.getCategory());
+                data.put("category", type.getCategory().getName());
                 data.put("canBurn", entity.fireImmune());
                 data.put("canFreeze", entity.canFreeze());
                 data.put("tags", entity.getTags());
@@ -102,7 +100,7 @@ public class LuaConverter {
         });
         registerEntityConverter(Animal.class, (entity, data, ctx) -> {
             data.put("inLove", entity.isInLove());
-            if (ctx.detailed() && !ctx.itemInHand().isEmpty() entity instanceof IForgeShearable shareable) {
+            if (ctx.detailed() && !ctx.itemInHand().isEmpty() && entity instanceof IForgeShearable shareable) {
                 data.put("shareable", shareable.isShearable(ctx.itemInHand(), entity.level, entity.blockPosition()));
             }
         });
@@ -153,7 +151,7 @@ public class LuaConverter {
             List<EntityConverter<? extends Entity>> converters = ENTITY_CONVERTERS.get((Class<? extends Entity>) entityClass);
             if (converters != null) {
                 for (EntityConverter<? extends Entity> converter : converters) {
-                    converter.entityToMap(entity, data, ctx);
+                    ((EntityConverter<Entity>) converter).entityToMap(entity, data, ctx);
                 }
             }
         }
