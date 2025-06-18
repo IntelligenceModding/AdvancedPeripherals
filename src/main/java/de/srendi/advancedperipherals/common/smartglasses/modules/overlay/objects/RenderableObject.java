@@ -16,7 +16,6 @@ import java.util.UUID;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-// TODO: generate setters/getters lua functions out of our FloatingNumberProperty fields
 public class RenderableObject extends OverlayObject {
 
     @FloatingNumberProperty(min = 0, max = 1)
