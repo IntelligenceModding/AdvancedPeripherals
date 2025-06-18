@@ -22,7 +22,7 @@ public class ChemicalFilter extends GenericFilter<ChemicalStack> {
 
     public static final ChemicalFilter EMPTY = new ChemicalFilter();
 
-    private Holder<Chemical> chemical = MekanismAPI.EMPTY_CHEMICAL_HOLDER;
+    private Holder<Chemical> chemical = MekanismAPI.EMPTY_CHEMICAL.getAsHolder();
     private TagKey<Chemical> tag = null;
     private long count = 64;
     private String fingerprint = "";
@@ -95,7 +95,7 @@ public class ChemicalFilter extends GenericFilter<ChemicalStack> {
     }
 
     public boolean isEmpty() {
-        return this == EMPTY || (fingerprint.isEmpty() && chemical.is(MekanismAPI.EMPTY_CHEMICAL_KEY) && tag == null);
+        return this == EMPTY || (fingerprint.isEmpty() && chemical.is(MekanismAPI.EMPTY_CHEMICAL_NAME) && tag == null);
     }
 
     @Override
@@ -126,7 +126,7 @@ public class ChemicalFilter extends GenericFilter<ChemicalStack> {
             return fingerprint.equals(testFingerprint);
         }
 
-        if (!chemical.is(MekanismAPI.EMPTY_CHEMICAL_KEY) && !stack.is(chemical)) {
+        if (!chemical.is(MekanismAPI.EMPTY_CHEMICAL_NAME) && !stack.is(chemical)) {
             return false;
         }
         if (tag != null && !stack.is(tag)) {

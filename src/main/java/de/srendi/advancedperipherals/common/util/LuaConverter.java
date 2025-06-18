@@ -242,8 +242,8 @@ public class LuaConverter {
 
         Map<String, Object> properties = new HashMap<>();
         properties.put("tags", tagsToList(() -> MekanismAPI.CHEMICAL_REGISTRY.wrapAsHolder(chemical).tags()));
-        properties.put("isGaseous", MekanismAPI.CHEMICAL_REGISTRY.wrapAsHolder(chemical).is(MekanismAPITags.Chemicals.GASEOUS));
-        properties.put("radioactivity", chemical.getRadioactivity());
+        properties.put("isGaseous", chemical.isGaseous());
+        properties.put("radioactivity", chemical.isRadioactive());
         properties.put("name", ChemicalUtil.getRegistryKey(chemical).toString());
         return properties;
     }
