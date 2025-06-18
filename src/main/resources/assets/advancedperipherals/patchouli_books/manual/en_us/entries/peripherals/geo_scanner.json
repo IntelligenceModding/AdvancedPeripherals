@@ -5,7 +5,7 @@
   "pages": [
     {
       "type": "text",
-      "text": "The Geo Scanner provides information about blocks around and chunk where scanner located. Geo scanner has delay between scans, so you should be ready for this.$(p)For the full documentation please see the $(9)$(l:https://docs.intelligence-modding.de/peripherals/geo_scanner/)official wiki page$(/l)$()!"
+      "text": "The Geo Scanner provides information about blocks around and chunk where scanner located. Geo scanner has delay between scans, so you should be ready for this.$(p)For the full documentation please see the $(9)$(l:https://docs.advanced-peripherals.de/peripherals/geo_scanner/)official wiki page$(/l)$()!"
     },
     {
       "type": "crafting",

@@ -5,7 +5,7 @@
   "pages": [
     {
       "type": "text",
-      "text": "The colony integrator can interact with a colony from MineColonies..$(p)For the full documentation please see the $(9)$(l:https://docs.intelligence-modding.de/peripherals/colony_integrator/)official wiki page$(/l)$()!"
+      "text": "The colony integrator can interact with a colony from MineColonies..$(p)For the full documentation please see the $(9)$(l:https://docs.advanced-peripherals.de/peripherals/colony_integrator/)official wiki page$(/l)$()!"
     },
     {
       "type": "crafting",

@@ -5,7 +5,7 @@
   "pages": [
     {
       "type": "text",
-      "text": "The Energy Detector can detect energy flow and acts as a resistor. You can define the max flow rate to use it as a resistor.$(p)For the full documentation please see the $(9)$(l:https://docs.intelligence-modding.de/peripherals/energy_detector/)official wiki page$(/l)$()!"
+      "text": "The Energy Detector can detect energy flow and acts as a resistor. You can define the max flow rate to use it as a resistor.$(p)For the full documentation please see the $(9)$(l:https://docs.advanced-peripherals.de/peripherals/energy_detector/)official wiki page$(/l)$()!"
     },
     {
       "type": "crafting",

@@ -5,7 +5,7 @@
   "pages": [
     {
       "type": "text",
-      "text": "NBT Storage is custom block that allow input/output custom data to block. Mostly provided for ID support.$(p)For the full documentation please see the $(9)$(l:https://docs.intelligence-modding.de/peripherals/nbt_storage/)official wiki page$(/l)$()!"
+      "text": "NBT Storage is custom block that allow input/output custom data to block. Mostly provided for ID support.$(p)For the full documentation please see the $(9)$(l:https://docs.advanced-peripherals.de/peripherals/nbt_storage/)official wiki page$(/l)$()!"
     },
     {
       "type": "crafting",

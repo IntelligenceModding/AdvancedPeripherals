@@ -5,7 +5,7 @@
   "pages": [
     {
       "type": "text",
-      "text": "The RS Bridge is able to interact with Refined Storage. You can retrieve items, craft items, get all items as a list and more.$(p)For the full documentation please see the $(9)$(l:https://docs.intelligence-modding.de/peripherals/rs_bridge/)official wiki page$(/l)$()!"
+      "text": "The RS Bridge is able to interact with Refined Storage. You can retrieve items, craft items, get all items as a list and more.$(p)For the full documentation please see the $(9)$(l:https://docs.advanced-peripherals.de/peripherals/rs_bridge/)official wiki page$(/l)$()!"
     },
     {
       "type": "crafting",
