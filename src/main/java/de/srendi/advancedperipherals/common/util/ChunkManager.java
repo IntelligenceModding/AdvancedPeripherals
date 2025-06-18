@@ -118,14 +118,6 @@ public class ChunkManager extends SavedData {
         }
     }
 
-    // This method is kept for backward compatibility
-    // use removeForceChunk without the position argument instead
-    // TODO: remove in next major version
-    @Deprecated(forRemoval = true, since = "1.19.2-0.7.36")
-    public synchronized boolean removeForceChunk(ServerLevel level, UUID owner, ChunkPos pos) {
-        return removeForceChunk(level, owner);
-    }
-
     public synchronized boolean removeForceChunk(ServerLevel level, UUID owner) {
         AdvancedPeripherals.debug("Attempting to unload forced chunk cluster " + owner, Level.WARN);
         LoadChunkRecord chunkRecord = forcedChunks.get(owner);

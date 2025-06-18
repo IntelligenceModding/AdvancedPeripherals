@@ -31,7 +31,7 @@ public class MemoryCardItem extends BaseItem {
         super.appendHoverText(stack, levelIn, tooltip, flagIn);
         CompoundTag data = stack.getOrCreateTag();
         if (data.contains("ownerId")) {
-            tooltip.add(EnumColor.buildTextComponent(Component.translatable("item.advancedperipherals.tooltip.binding.bound_to", data.getString("ownerId"))));
+            tooltip.add(EnumColor.buildTextComponent(Component.translatable("item.advancedperipherals.tooltip.memory_card.bound", data.getString("owner"))));
         }
     }
 
@@ -41,7 +41,7 @@ public class MemoryCardItem extends BaseItem {
             ItemStack stack = playerIn.getItemInHand(handIn);
             CompoundTag data = stack.getOrCreateTag();
             if (data.contains("ownerId")) {
-                playerIn.displayClientMessage(EnumColor.buildTextComponent(Component.translatable("text.advancedperipherals.cleared_memorycard")), true);
+                playerIn.displayClientMessage(Component.translatable("text.advancedperipherals.removed_player"), true);
                 data.remove("ownerId");
             } else {
                 playerIn.displayClientMessage(EnumColor.buildTextComponent(Component.translatable("text.advancedperipherals.bind_memorycard")), true);
