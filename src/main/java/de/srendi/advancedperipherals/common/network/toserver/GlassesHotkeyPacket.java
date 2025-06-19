@@ -2,7 +2,9 @@ package de.srendi.advancedperipherals.common.network.toserver;
 
 import de.srendi.advancedperipherals.common.items.SmartGlassesItem;
 import de.srendi.advancedperipherals.common.network.base.IPacket;
+import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesAccess;
 import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesComputer;
+import de.srendi.advancedperipherals.common.smartglasses.modules.keyboard.KeyboardModule;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
@@ -29,15 +31,33 @@ public class GlassesHotkeyPacket implements IPacket {
             return;
         }
 
+        ItemStack smartGlasses = null;
+        SmartGlassesComputer computer = null;
         for (ItemStack stack : serverPlayer.getAllSlots()) {
             if (stack.getItem() instanceof SmartGlassesItem) {
-                SmartGlassesComputer computer = SmartGlassesItem.getServerComputer(server, stack);
+                computer = SmartGlassesItem.getServerComputer(server, stack);
                 if (computer != null) {
-                    computer.queueEvent("glasses_key_pressed", new Object[]{keyBind, keyPressDuration});
+                    smartGlasses = stack;
                     break;
                 }
             }
         }
+        if (computer == null) {
+            return;
+        }
+        if (keyPressDuration >= 0) {
+            computer.queueEvent("glasses_key_pressed", new Object[]{keyBind, keyPressDuration});
+            return;
+        }
+        SmartGlassesAccess glasses = computer.getSmartGlassesAccess();
+        computer.getModules().values()
+            .stream()
+            .filter(KeyboardModule.class::isInstance)
+            .map(KeyboardModule.class::cast)
+            .findFirst()
+            .ifPresent((keyboardModule) -> {
+                keyboardModule.openKeyboard(glasses);
+            });
     }
 
     @Override

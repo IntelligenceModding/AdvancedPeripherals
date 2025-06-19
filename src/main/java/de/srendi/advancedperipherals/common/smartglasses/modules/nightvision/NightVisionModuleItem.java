@@ -20,7 +20,7 @@ public class NightVisionModuleItem extends BaseItem implements IModuleItem {
     }
 
     @Override
-    public IModule createModule(SmartGlassesAccess access) {
+    public IModule createModule(SmartGlassesAccess access, ItemStack stack) {
         return new NightVisionModule();
     }
 
@@ -34,7 +34,14 @@ public class NightVisionModuleItem extends BaseItem implements IModuleItem {
             return;
         }
         if (nightVisionModule.isNightVisionEnabled()) {
-            player.addEffect(new MobEffectInstance(MobEffects.NIGHT_VISION, 20 * 13 - 1 /* minus 1 tick then the client timing won't flash */));
+            player.addEffect(new MobEffectInstance(
+                MobEffects.NIGHT_VISION,
+                20 * 13 - 1, /* minus 1 tick then the client timing won't flash */
+                0,
+                false,
+                false,
+                true
+            ));
         } else {
             player.removeEffect(MobEffects.NIGHT_VISION);
         }
