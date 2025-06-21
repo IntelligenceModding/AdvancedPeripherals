@@ -259,6 +259,8 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
         info.put("y", Math.floor(y * unit) / unit);
         info.put("z", Math.floor(z * unit) / unit);
         if (APConfig.PERIPHERALS_CONFIG.morePlayerInformation.get()) {
+            info.put("uuid", existingPlayer.getUUID().toString());
+            info.put("name", existingPlayer.getName().getString());
             info.put("yaw", existingPlayer.yRotO);
             info.put("pitch", existingPlayer.xRotO);
             info.put("dimension", existingPlayer.level().dimension().location().toString());

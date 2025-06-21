@@ -24,7 +24,7 @@ public class ChemicalFilter extends GenericFilter<ChemicalStack> {
 
     private Holder<Chemical> chemical = MekanismAPI.EMPTY_CHEMICAL.getAsHolder();
     private TagKey<Chemical> tag = null;
-    private long count = 64;
+    private long count = 1000;
     private String fingerprint = "";
     public int fromSlot = -1;
     public int toSlot = -1;

@@ -43,6 +43,7 @@ public class PeripheralsConfig implements IAPConfig {
     public final ModConfigSpec.BooleanValue enableChatBox;
     public final ModConfigSpec.ConfigValue<String> defaultChatBoxPrefix;
     public final ModConfigSpec.IntValue chatBoxMaxRange;
+    public final ModConfigSpec.IntValue chatBoxMessageSize;
     public final ModConfigSpec.BooleanValue chatBoxMultiDimensional;
     public final ModConfigSpec.BooleanValue chatBoxPreventRunCommand;
     public final ModConfigSpec.BooleanValue chatBoxWrapCommand;
@@ -146,6 +147,7 @@ public class PeripheralsConfig implements IAPConfig {
         enableChatBox = builder.comment("Enable the Chat Box or not.").define("enableChatBox", true);
         defaultChatBoxPrefix = builder.comment("Defines default chatbox prefix").define("defaultChatBoxPrefix", "AP");
         chatBoxMaxRange = builder.comment("Defines the maximal range of the chat box in blocks. -1 for infinite. If the range is not -1, players in other dimensions won't able to receive messages").defineInRange("chatBoxMaxRange", -1, -1, 30000000);
+        chatBoxMessageSize = builder.comment("Defines the maximal number of characters in a message. Depending on the modpack and server, too large messages can't unexpectedly disconnect players").defineInRange("chatBoxMessageSize", 1024, -0, 8192);
         chatBoxMultiDimensional = builder.comment("If true, the chat box is able to send messages to other dimensions than its own").define("chatBoxMultiDimensional", true);
         chatBoxPreventRunCommand = builder.comment("If true, the chat box cannot use 'run_command' action").define("chatBoxPreventRunCommand", false);
         chatBoxWrapCommand = builder.comment("If true, the chat box will wrap and execute 'run_command' or 'suggest_command' action with zero permission, in order to prevent operators accidently run dangerous commands.").define("chatBoxWrapCommand", true);

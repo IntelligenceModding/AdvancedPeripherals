@@ -6,9 +6,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
-## [1.21.1-0.7.50b] - 2025-06-10
-## [1.21.1-0.7.50b] - 2025-06-10
-## [1.21.1-0.7.49a] - 2025-02-14
+
+### Added
+- UUID and Name property to the player lua object of the player detector
+
+### Changed
+- Patchouli book texture
+- Default chemical filter count from 64 mB to 1000 mB
+- Added a configurable char limit to chat box messages
+
+### Fixed
+- Fixed that several mekanism integrations would crash the game/server when mekanism is not loaded
+- [#746] Fixed that export and import functions from the ME bridge would not find target inventories
+- Updated Patchouli book documentation URLs
+- Support with the latest mekanism version
 
 ## [1.21.1-0.7.50b] - 2025-06-10
 

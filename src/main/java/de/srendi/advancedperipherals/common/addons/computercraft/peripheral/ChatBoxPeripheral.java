@@ -111,6 +111,10 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
     public final MethodResult sendFormattedMessage(@NotNull IArguments arguments) throws LuaException {
         return withChatOperation(ignored -> {
             String message = arguments.getString(0);
+
+            if (message.length() > APConfig.PERIPHERALS_CONFIG.chatBoxMessageSize.get())
+                return MethodResult.of(null, "Message is too long");
+
             int maxRange = APConfig.PERIPHERALS_CONFIG.chatBoxMaxRange.get();
             int range = arguments.optInt(4, -1);
             ResourceKey<Level> dimension = getLevel().dimension();
@@ -140,6 +144,10 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
     public final MethodResult sendMessage(@NotNull IArguments arguments) throws LuaException {
         return withChatOperation(ignored -> {
             String message = arguments.getString(0);
+
+            if (message.length() > APConfig.PERIPHERALS_CONFIG.chatBoxMessageSize.get())
+                return MethodResult.of(null, "Message is too long");
+
             int maxRange = APConfig.PERIPHERALS_CONFIG.chatBoxMaxRange.get();
             int range = arguments.optInt(4, -1);
             ResourceKey<Level> dimension = getLevel().dimension();
@@ -165,6 +173,10 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
     public final MethodResult sendFormattedMessageToPlayer(@NotNull IArguments arguments) throws LuaException {
         return withChatOperation(ignored -> {
             String message = arguments.getString(0);
+
+            if (message.length() > APConfig.PERIPHERALS_CONFIG.chatBoxMessageSize.get())
+                return MethodResult.of(null, "Message is too long");
+
             String playerName = arguments.getString(1);
             int maxRange = APConfig.PERIPHERALS_CONFIG.chatBoxMaxRange.get();
             int range = arguments.optInt(5, -1);
@@ -199,6 +211,10 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
     public final MethodResult sendFormattedToastToPlayer(@NotNull IArguments arguments) throws LuaException {
         return withChatOperation(ignored -> {
             String message = arguments.getString(0);
+
+            if (message.length() > APConfig.PERIPHERALS_CONFIG.chatBoxMessageSize.get())
+                return MethodResult.of(null, "Message is too long");
+
             String title = arguments.getString(1);
             String playerName = arguments.getString(2);
             int maxRange = APConfig.PERIPHERALS_CONFIG.chatBoxMaxRange.get();
@@ -241,6 +257,10 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
     public final MethodResult sendMessageToPlayer(@NotNull IArguments arguments) throws LuaException {
         return withChatOperation(ignored -> {
             String message = arguments.getString(0);
+
+            if (message.length() > APConfig.PERIPHERALS_CONFIG.chatBoxMessageSize.get())
+                return MethodResult.of(null, "Message is too long");
+
             String playerName = arguments.getString(1);
             int maxRange = APConfig.PERIPHERALS_CONFIG.chatBoxMaxRange.get();
             int range = arguments.optInt(5, -1);
@@ -270,6 +290,10 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
     public final MethodResult sendToastToPlayer(@NotNull IArguments arguments) throws LuaException {
         return withChatOperation(ignored -> {
             String message = arguments.getString(0);
+
+            if (message.length() > APConfig.PERIPHERALS_CONFIG.chatBoxMessageSize.get())
+                return MethodResult.of(null, "Message is too long");
+
             String title = arguments.getString(1);
             String playerName = arguments.getString(2);
             int maxRange = APConfig.PERIPHERALS_CONFIG.chatBoxMaxRange.get();
