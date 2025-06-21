@@ -298,7 +298,6 @@ public class MineColonies {
 
                     researchCost.put("validItems", researchCostItems);
                     researchCost.put("count", item.count());
-                    //researchCost.put("", item.getType().getId().toString());
 
                     cost.add(researchCost);
                 }

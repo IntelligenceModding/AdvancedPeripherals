@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+## [1.21.1-0.7.50b] - 2025-06-10
+## [1.21.1-0.7.50b] - 2025-06-10
+## [1.21.1-0.7.49a] - 2025-02-14
 
 ## [1.21.1-0.7.50b] - 2025-06-10
 
