@@ -2,8 +2,9 @@ package de.srendi.advancedperipherals.common.util.inventory;
 
 import appeng.api.stacks.GenericStack;
 import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
+import de.srendi.advancedperipherals.common.addons.APAddon;
+import de.srendi.advancedperipherals.common.addons.mekanism.Mekanism;
 import de.srendi.advancedperipherals.common.util.Pair;
-import mekanism.api.MekanismAPI;
 import net.minecraft.core.registries.BuiltInRegistries;
 
 import java.util.Map;
@@ -45,14 +46,12 @@ public abstract class GenericFilter<T> {
     public static Pair<? extends GenericFilter<?>, String> parseGeneric(Map<?, ?> rawFilter) {
 
         if (rawFilter.containsKey("type") && rawFilter.get("type") instanceof String type) {
-            switch (type) {
-                case "item":
-                    return ItemFilter.parse(rawFilter);
-                case "fluid":
-                    return FluidFilter.parse(rawFilter);
-                case "chemical":
-                    return ChemicalFilter.parse(rawFilter);
-            }
+            if (type.equals("item"))
+                return ItemFilter.parse(rawFilter);
+            if (type.equals("fluid"))
+                return FluidFilter.parse(rawFilter);
+            if (type.equals("chemical") && APAddon.MEKANISM.isLoaded())
+                return ChemicalFilter.parse(rawFilter);
         }
         if (!rawFilter.containsKey("name"))
             return Pair.of(empty(), "NO_NAME_OR_TYPE");
@@ -64,7 +63,7 @@ public abstract class GenericFilter<T> {
             return ItemFilter.parse(rawFilter);
         } else if (ItemUtil.getRegistryEntry(name, BuiltInRegistries.FLUID) != null) {
             return FluidFilter.parse(rawFilter);
-        } else if (ItemUtil.getRegistryEntry(name, MekanismAPI.CHEMICAL_REGISTRY) != null) {
+        } else if (APAddon.MEKANISM.isLoaded() && ItemUtil.getRegistryEntry(name, Mekanism.getChemicalRegistry()) != null) {
             return ChemicalFilter.parse(rawFilter);
         } else {
             // If the name is in neither of the registries, we will just return an empty filter

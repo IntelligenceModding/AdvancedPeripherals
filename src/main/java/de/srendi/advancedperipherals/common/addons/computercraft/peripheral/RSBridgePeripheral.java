@@ -20,17 +20,16 @@ import dan200.computercraft.core.apis.TableHelper;
 import de.srendi.advancedperipherals.common.addons.APAddon;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.BlockEntityPeripheralOwner;
 import de.srendi.advancedperipherals.common.addons.refinedstorage.RSApi;
-import de.srendi.advancedperipherals.common.addons.refinedstorage.RSChemicalHandler;
 import de.srendi.advancedperipherals.common.addons.refinedstorage.RSCraftJob;
 import de.srendi.advancedperipherals.common.addons.refinedstorage.RSFluidHandler;
 import de.srendi.advancedperipherals.common.addons.refinedstorage.RSItemHandler;
+import de.srendi.advancedperipherals.common.addons.refinedstorage.RSMekanismApi;
 import de.srendi.advancedperipherals.common.addons.refinedstorage.RsStorageTypes;
 import de.srendi.advancedperipherals.common.blocks.blockentities.RSBridgeEntity;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.util.Pair;
 import de.srendi.advancedperipherals.common.util.StatusConstants;
 import de.srendi.advancedperipherals.common.util.inventory.ChemicalFilter;
-import de.srendi.advancedperipherals.common.util.inventory.ChemicalUtil;
 import de.srendi.advancedperipherals.common.util.inventory.FluidFilter;
 import de.srendi.advancedperipherals.common.util.inventory.FluidUtil;
 import de.srendi.advancedperipherals.common.util.inventory.GenericFilter;
@@ -38,7 +37,6 @@ import de.srendi.advancedperipherals.common.util.inventory.IStorageSystemPeriphe
 import de.srendi.advancedperipherals.common.util.inventory.InventoryUtil;
 import de.srendi.advancedperipherals.common.util.inventory.ItemFilter;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
-import mekanism.api.chemical.IChemicalHandler;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
@@ -68,7 +66,7 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         return (AbstractNetworkNode) owner.tileEntity.getNode();
     }
 
-    private Network getNetwork() {
+    public Network getNetwork() {
         return getNode().getNetwork();
     }
 
@@ -125,26 +123,6 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     }
 
     /**
-     * exports a fluid out of the system to a valid tank
-     *
-     * @param arguments  the arguments given by the computer
-     * @param targetTank the give tank
-     * @return the exportable amount or null with a string if something went wrong
-     */
-    protected MethodResult exportToTank(@NotNull IArguments arguments, @Nullable IChemicalHandler targetTank) throws LuaException {
-        RSChemicalHandler chemicalHandler = new RSChemicalHandler(getNetwork());
-        Pair<ChemicalFilter, String> filter = ChemicalFilter.parse(arguments.getTable(0));
-
-        if (filter.rightPresent())
-            return MethodResult.of(0, filter.getRight());
-
-        if (targetTank == null)
-            return MethodResult.of(0, "Target Tank does not exist");
-
-        return MethodResult.of(ChemicalUtil.moveChemical(chemicalHandler, targetTank, filter.getLeft()));
-    }
-
-    /**
      * imports an item to the system from a valid inventory
      *
      * @param arguments       the arguments given by the computer
@@ -182,26 +160,6 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
             return MethodResult.of(0, "Target Tank does not exist");
 
         return MethodResult.of(FluidUtil.moveFluid(targetTank, fluidHandler, filter.getLeft()));
-    }
-
-    /**
-     * imports a fluid to the system from a valid tank
-     *
-     * @param arguments  the arguments given by the computer
-     * @param targetTank the give tank
-     * @return the imported amount or null with a string if something went wrong
-     */
-    protected MethodResult importToRS(@NotNull IArguments arguments, @Nullable IChemicalHandler targetTank) throws LuaException {
-        RSChemicalHandler chemicalHandler = new RSChemicalHandler(getNetwork());
-        Pair<ChemicalFilter, String> filter = ChemicalFilter.parse(arguments.getTable(0));
-
-        if (filter.rightPresent())
-            return MethodResult.of(0, filter.getRight());
-
-        if (targetTank == null)
-            return MethodResult.of(0, "Target Tank does not exist");
-
-        return MethodResult.of(ChemicalUtil.moveChemical(targetTank, chemicalHandler, filter.getLeft()));
     }
 
     @Override
@@ -268,7 +226,7 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
             return notConnected(null);
 
         if (!APAddon.REFINEDSTORAGE_MEKANISM.isLoaded())
-            return MethodResult.of(null, StatusConstants.ADDON_NOT_LOADED.withInfo("RS_MEKANISM"));
+            return MethodResult.of(null, StatusConstants.ADDON_NOT_LOADED.withInfo(APAddon.REFINEDSTORAGE_MEKANISM));
 
         Pair<ChemicalFilter, String> filter = ChemicalFilter.parse(arguments.getTable(0));
         if (filter.rightPresent())
@@ -380,7 +338,7 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
             return notConnected(null);
 
         if (!APAddon.REFINEDSTORAGE_MEKANISM.isLoaded())
-            return MethodResult.of(null, StatusConstants.ADDON_NOT_LOADED.withInfo("RS_MEKANISM"));
+            return MethodResult.of(null, StatusConstants.ADDON_NOT_LOADED.withInfo(APAddon.REFINEDSTORAGE_MEKANISM));
 
         Pair<ChemicalFilter, String> filter = ChemicalFilter.parse(arguments.optTable(0, Collections.emptyMap()));
         if (filter.rightPresent())
@@ -488,17 +446,9 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
             return notConnected(0);
 
         if (!APAddon.REFINEDSTORAGE_MEKANISM.isLoaded())
-            return MethodResult.of(0, StatusConstants.ADDON_NOT_LOADED.withInfo("RS_MEKANISM"));
+            return MethodResult.of(0, StatusConstants.ADDON_NOT_LOADED.withInfo(APAddon.REFINEDSTORAGE_MEKANISM));
 
-        IChemicalHandler handler = ChemicalUtil.getHandlerFromDirection(arguments.getString(1), owner);
-        if (handler == null) {
-            handler = ChemicalUtil.getHandlerFromName(computer, arguments.getString(1));
-            if (handler == null) {
-                return MethodResult.of(0, StatusConstants.INVENTORY_NOT_FOUND.name());
-            }
-        }
-
-        return importToRS(arguments, handler);
+        return RSMekanismApi.importToRS(arguments, computer, this);
     }
 
     @Override
@@ -508,17 +458,9 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
             return notConnected(0);
 
         if (!APAddon.REFINEDSTORAGE_MEKANISM.isLoaded())
-            return MethodResult.of(0, StatusConstants.ADDON_NOT_LOADED.withInfo("RS_MEKANISM"));
+            return MethodResult.of(0, StatusConstants.ADDON_NOT_LOADED.withInfo(APAddon.REFINEDSTORAGE_MEKANISM));
 
-        IChemicalHandler handler = ChemicalUtil.getHandlerFromDirection(arguments.getString(1), owner);
-        if (handler == null) {
-            handler = ChemicalUtil.getHandlerFromName(computer, arguments.getString(1));
-            if (handler == null) {
-                return MethodResult.of(0, StatusConstants.INVENTORY_NOT_FOUND.name());
-            }
-        }
-
-        return exportToTank(arguments, handler);
+        return RSMekanismApi.exportToTank(arguments, computer, this);
     }
 
     @Override

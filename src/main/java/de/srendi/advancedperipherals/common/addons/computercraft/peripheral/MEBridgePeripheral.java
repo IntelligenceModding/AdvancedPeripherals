@@ -18,7 +18,7 @@ import dan200.computercraft.core.apis.TableHelper;
 import de.srendi.advancedperipherals.common.addons.APAddon;
 import de.srendi.advancedperipherals.common.addons.appliedenergistics.AEApi;
 import de.srendi.advancedperipherals.common.addons.appliedenergistics.AECraftJob;
-import de.srendi.advancedperipherals.common.addons.appliedenergistics.MEChemicalHandler;
+import de.srendi.advancedperipherals.common.addons.appliedenergistics.AEMekanismApi;
 import de.srendi.advancedperipherals.common.addons.appliedenergistics.MEFluidHandler;
 import de.srendi.advancedperipherals.common.addons.appliedenergistics.MEItemHandler;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.BlockEntityPeripheralOwner;
@@ -27,7 +27,6 @@ import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.util.Pair;
 import de.srendi.advancedperipherals.common.util.StatusConstants;
 import de.srendi.advancedperipherals.common.util.inventory.ChemicalFilter;
-import de.srendi.advancedperipherals.common.util.inventory.ChemicalUtil;
 import de.srendi.advancedperipherals.common.util.inventory.FluidFilter;
 import de.srendi.advancedperipherals.common.util.inventory.FluidUtil;
 import de.srendi.advancedperipherals.common.util.inventory.GenericFilter;
@@ -36,7 +35,6 @@ import de.srendi.advancedperipherals.common.util.inventory.InventoryUtil;
 import de.srendi.advancedperipherals.common.util.inventory.ItemFilter;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
 import me.ramidzkh.mekae2.ae2.MekanismKey;
-import mekanism.api.chemical.IChemicalHandler;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
@@ -71,6 +69,10 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
     private ICraftingService getCraftingService() {
         return node.getGrid().getCraftingService();
+    }
+
+    public MEBridgeEntity getBridge() {
+        return bridge;
     }
 
     /**
@@ -109,23 +111,6 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         return MethodResult.of(FluidUtil.moveFluid(fluidHandler, targetTank, filter.getLeft()), null);
     }
 
-    /**
-     * exports a fluid out of the system to a valid tank
-     *
-     * @param arguments  the arguments given by the computer
-     * @param targetTank the give tank
-     * @return the exportable amount or null with a string if something went wrong
-     */
-    protected MethodResult exportToTank(@NotNull IArguments arguments, IChemicalHandler targetTank) throws LuaException {
-        MEStorage monitor = AEApi.getMonitor(node);
-        MEChemicalHandler chemicalHandler = new MEChemicalHandler(monitor, bridge);
-        Pair<ChemicalFilter, String> filter = ChemicalFilter.parse(arguments.getTable(0));
-
-        if (filter.rightPresent())
-            return MethodResult.of(0, filter.getRight());
-
-        return MethodResult.of(ChemicalUtil.moveChemical(chemicalHandler, targetTank, filter.getLeft()));
-    }
 
     /**
      * imports an item to the system from a valid inventory
@@ -161,24 +146,6 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
             return MethodResult.of(0, filter.getRight());
 
         return MethodResult.of(FluidUtil.moveFluid(targetTank, fluidHandler, filter.getLeft()), null);
-    }
-
-    /**
-     * imports a fluid to the system from a valid tank
-     *
-     * @param arguments  the arguments given by the computer
-     * @param targetTank the give tank
-     * @return the imported amount or null with a string if something went wrong
-     */
-    protected MethodResult importToME(@NotNull IArguments arguments, IChemicalHandler targetTank) throws LuaException {
-        MEStorage monitor = AEApi.getMonitor(node);
-        MEChemicalHandler chemicalHandler = new MEChemicalHandler(monitor, bridge);
-        Pair<ChemicalFilter, String> filter = ChemicalFilter.parse(arguments.getTable(0));
-
-        if (filter.rightPresent())
-            return MethodResult.of(0, filter.getRight());
-
-        return MethodResult.of(ChemicalUtil.moveChemical(targetTank, chemicalHandler, filter.getLeft()));
     }
 
     private MethodResult notConnected(@Nullable Object defaultValue) {
@@ -450,19 +417,9 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
             return notConnected(0);
 
         if (!APAddon.APP_MEKANISTICS.isLoaded())
-            return MethodResult.of(0);
+            return MethodResult.of(null, StatusConstants.ADDON_NOT_LOADED.withInfo(APAddon.APP_MEKANISTICS.name()));
 
-        String side = arguments.getString(1);
-        IChemicalHandler chemicalHandler = ChemicalUtil.getHandlerFromDirection(side, owner);
-
-        if (chemicalHandler == null) {
-            chemicalHandler = ChemicalUtil.getHandlerFromName(computer, side);
-        }
-
-        if (chemicalHandler == null)
-            return MethodResult.of(0, StatusConstants.INVENTORY_NOT_FOUND.name());
-
-        return importToME(arguments, chemicalHandler);
+        return AEMekanismApi.importToME(arguments, computer, this);
     }
 
     @Override
@@ -471,20 +428,10 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (!isAvailable())
             return notConnected(0);
 
-        if (APAddon.APP_MEKANISTICS.isLoaded())
-            return MethodResult.of(0);
+        if (!APAddon.APP_MEKANISTICS.isLoaded())
+            return MethodResult.of(null, StatusConstants.ADDON_NOT_LOADED.withInfo(APAddon.APP_MEKANISTICS.name()));
 
-        String side = arguments.getString(1);
-        IChemicalHandler chemicalHandler = ChemicalUtil.getHandlerFromDirection(side, owner);
-
-        if (chemicalHandler == null) {
-            chemicalHandler = ChemicalUtil.getHandlerFromName(computer, side);
-        }
-
-        if (chemicalHandler == null)
-            return MethodResult.of(0, StatusConstants.INVENTORY_NOT_FOUND.name());
-
-        return exportToTank(arguments, chemicalHandler);
+        return AEMekanismApi.exportToTank(arguments, computer, this);
     }
 
     @Override

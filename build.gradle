@@ -225,18 +225,23 @@ dependencies {
     // Minimal requirements end
 
     compileOnly("com.refinedmods.refinedstorage:refinedstorage-neoforge:${refinedstorage_version}")
-    runtimeOnly("com.refinedmods.refinedstorage:refinedstorage-neoforge:${refinedstorage_version}")
+    runtimeOnly("com.refinedmods.refinedstorage:refinedstorage-neoforge:${refinedstorage_version}") {
+        transitive = false
+    }
 
+    // Transitive prevents that this dependency would load other dependencies which are used by refined storage and are faulty marked
     compileOnly("com.refinedmods.refinedstorage:refinedstorage-mekanism-integration:${refinedstorage_mekanism_version}")
-    runtimeOnly("com.refinedmods.refinedstorage:refinedstorage-mekanism-integration:${refinedstorage_mekanism_version}")
+    runtimeOnly("com.refinedmods.refinedstorage:refinedstorage-mekanism-integration:${refinedstorage_mekanism_version}")  {
+            transitive = false
+    }
 
     // Needed for the refined storage mek integration
-    compileOnlyApi("dev.emi:emi-neoforge:${emiVersion}")
+    //compileOnlyApi("dev.emi:emi-neoforge:${emiVersion}")
 
     // Extended requirements
     // We don't use the api since we need a specific class from mekanism
     compileOnly "mekanism:Mekanism:${mekanism_version}"
-    //runtimeOnly "mekanism:Mekanism:${mekanism_version}"
+    runtimeOnly "mekanism:Mekanism:${mekanism_version}"
 
     // Applied Energistics 2
     compileOnly "org.appliedenergistics:appliedenergistics2:${appliedenergistics_version}"
@@ -244,7 +249,7 @@ dependencies {
 
     // Applied Mekanistics
     compileOnly "curse.maven:applied-mekanistics-574300:${appliedmekanistics_version}"
-    //runtimeOnly "curse.maven:applied-mekanistics-574300:${appliedmekanistics_version}"
+    runtimeOnly "curse.maven:applied-mekanistics-574300:${appliedmekanistics_version}"
 
     // AE2 Things
     compileOnly "curse.maven:ae2things-609977:${ae2things_version}-sources"

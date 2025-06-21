@@ -1,8 +1,11 @@
 package de.srendi.advancedperipherals.common.addons.mekanism;
 
+import mekanism.api.MekanismAPI;
+import mekanism.api.chemical.Chemical;
 import mekanism.api.radiation.IRadiationManager;
 import mekanism.common.util.UnitDisplayUtils;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.DefaultedRegistry;
 import net.minecraft.core.GlobalPos;
 import net.minecraft.world.level.Level;
 
@@ -30,6 +33,10 @@ public class Mekanism {
         if (!world.isClientSide)
             return IRadiationManager.INSTANCE.getRadiationLevel(GlobalPos.of(world.dimension(), pos));
         return 0;
+    }
+
+    public static DefaultedRegistry<Chemical> getChemicalRegistry() {
+        return MekanismAPI.CHEMICAL_REGISTRY;
     }
 
 }

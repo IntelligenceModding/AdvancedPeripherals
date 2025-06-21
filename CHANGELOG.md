@@ -7,6 +7,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.21.1-0.7.50b] - 2025-06-10
+
 The new ME and RS Bridge system are more or less final, but expect any last-minute changes before the final release. We will listen for any feedback and try to improve the system as much as we can!
 If there are any inconsistencies or bugs, please report them at our github!
 
