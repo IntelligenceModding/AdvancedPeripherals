@@ -42,7 +42,7 @@ public class MEItemHandler implements IStorageSystemItemHandler {
     @Override
     public ItemStack extractItem(ItemFilter filter, int count, boolean simulate) {
         Pair<Long, AEItemKey> itemKey = AEApi.findAEStackFromFilter(storageMonitor, null, filter);
-        if (itemKey.getRight().toStack().isEmpty())
+        if (itemKey.getRight() == null)
             return ItemStack.EMPTY;
         long extracted = storageMonitor.extract(itemKey.getRight(), count, simulate ? Actionable.SIMULATE : Actionable.MODULATE, actionSource);
         // Safe to cast here, the amount will never be higher than 64

@@ -89,14 +89,14 @@ public class AEApi {
         }
 
         if (crafting == null)
-            return Pair.of(0L, AEItemKey.of(ItemStack.EMPTY));
+            return Pair.of(0L, null);
 
         for (var temp : crafting.getCraftables(param -> true)) {
             if (temp instanceof AEItemKey key && filter.test(key.toStack()))
                 return Pair.of(0L, key);
         }
 
-        return Pair.of(0L, AEItemKey.of(ItemStack.EMPTY));
+        return Pair.of(0L, null);
     }
 
     @NotNull
@@ -112,14 +112,14 @@ public class AEApi {
         }
 
         if (crafting == null)
-            return Pair.of(0L, AEFluidKey.of(FluidStack.EMPTY));
+            return Pair.of(0L, null);
 
         for (var temp : crafting.getCraftables(param -> true)) {
             if (temp instanceof AEFluidKey key && filter.test(key.toStack(1)))
                 return Pair.of(0L, key);
         }
 
-        return Pair.of(0L, AEFluidKey.of(FluidStack.EMPTY));
+        return Pair.of(0L, null);
     }
 
     @NotNull
@@ -135,14 +135,14 @@ public class AEApi {
         }
 
         if (crafting == null)
-            return Pair.of(0L, MekanismKey.of(ChemicalStack.EMPTY));
+            return Pair.of(0L, null);
 
         for (var temp : crafting.getCraftables(param -> true)) {
             if (temp instanceof MekanismKey key && filter.test(key.getStack()))
                 return Pair.of(0L, key);
         }
 
-        return Pair.of(0L, MekanismKey.of(ChemicalStack.EMPTY));
+        return Pair.of(0L, null);
     }
 
     /**

@@ -276,11 +276,6 @@ dependencies {
     runtimeOnly "me.shedaniel.cloth:cloth-config-neoforge:${cloth_config_version}"
     runtimeOnly "curse.maven:powah-633483:${powah_version}"
 
-    testImplementation "org.junit.jupiter:junit-jupiter-api:${junit_version}"
-    testImplementation "org.junit.jupiter:junit-jupiter-params:${junit_version}"
-    testImplementation "org.hamcrest:hamcrest:${hamcrest_version}"
-    testImplementation "org.jetbrains.kotlin:kotlin-reflect:${kotlin_version}"
-    testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:${kotlinx_coroutines_version}"
     testModImplementation sourceSets.main.output
 
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junit_version}"

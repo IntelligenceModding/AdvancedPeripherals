@@ -19,6 +19,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.level.material.Fluid;
 import net.neoforged.neoforge.common.IShearable;
@@ -124,6 +125,21 @@ public class LuaConverter {
         properties.put("fingerprint", ItemUtil.getFingerprint(stack));
         return properties;
     }
+
+    public static Map<String, Object> itemStackToObject(@NotNull ItemStack stack, Level level) {
+        if (stack.isEmpty()) {
+            return null;
+        }
+        Map<String, Object> properties = itemToObject(stack.getItem());
+        DataComponentPatch components = stack.getComponentsPatch();
+        properties.put("count", stack.getCount());
+        properties.put("displayName", stack.getDisplayName().getString());
+        properties.put("maxStackSize", stack.getMaxStackSize());
+        properties.put("components", NBTUtil.toLua(DataComponentUtil.toNbt(components, level)));
+        properties.put("fingerprint", ItemUtil.getFingerprint(stack));
+        return properties;
+    }
+
 
     public static Map<String, Object> fluidStackToObject(@NotNull FluidStack stack) {
         if (stack.isEmpty()) {

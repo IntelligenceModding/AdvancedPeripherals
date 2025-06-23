@@ -46,7 +46,7 @@ public class MEChemicalHandler implements IStorageSystemChemicalHandler {
     @Override
     public ChemicalStack extractChemical(ChemicalFilter filter, long count, Action simulate) {
         Pair<Long, MekanismKey> chemicalKey = AEApi.findAEChemicalFromFilter(storageMonitor, null, filter);
-        if (chemicalKey.getRight().getStack().isEmpty())
+        if (chemicalKey.getRight() == null)
             return ChemicalStack.EMPTY;
 
         ChemicalStack extracted = chemicalKey.getRight().getStack();
