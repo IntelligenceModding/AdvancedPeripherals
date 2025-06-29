@@ -1,9 +1,11 @@
 package de.srendi.advancedperipherals.common.blocks.base;
 
 import dan200.computercraft.api.peripheral.IComputerAccess;
+import dan200.computercraft.api.peripheral.IPeripheral;
 import dan200.computercraft.core.computer.ComputerSide;
 import dan200.computercraft.shared.Capabilities;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
+import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.DisabledPeripheral;
 import de.srendi.advancedperipherals.common.util.CoordUtil;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
 import de.srendi.advancedperipherals.lib.peripherals.IPeripheralTileEntity;
@@ -36,6 +38,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
+import java.util.Optional;
 
 public abstract class PeripheralBlockEntity<T extends BasePeripheral<?>> extends BaseContainerBlockEntity implements WorldlyContainer, MenuProvider, IPeripheralTileEntity {
 
@@ -44,7 +47,7 @@ public abstract class PeripheralBlockEntity<T extends BasePeripheral<?>> extends
     protected NonNullList<ItemStack> items;
     private LazyOptional<? extends IItemHandler> handler = LazyOptional.empty();
     private LazyOptional<? extends IFluidHandler> fluidHandler = LazyOptional.empty();
-    private LazyOptional<T> peripheralCap = LazyOptional.empty();
+    private LazyOptional<IPeripheral> peripheralCap = LazyOptional.empty();
 
     protected PeripheralBlockEntity(BlockEntityType<?> tileEntityTypeIn, BlockPos pos, BlockState state) {
         super(tileEntityTypeIn, pos, state);
@@ -89,11 +92,19 @@ public abstract class PeripheralBlockEntity<T extends BasePeripheral<?>> extends
     @NotNull
     protected abstract T createPeripheral();
 
-    public Iterable<IComputerAccess> getConnectedComputers() {
-        return this.getLazyPeripheral().map(BasePeripheral::getConnectedComputers).orElse(Collections.emptyList());
+    protected IPeripheral createPeripheralDisable() {
+        T peripheral = this.createPeripheral();
+        if (peripheral.isEnabled()) {
+            return peripheral;
+        }
+        return new DisabledPeripheral(peripheral);
     }
 
-    public LazyOptional<T> getLazyPeripheral() {
+    public Iterable<IComputerAccess> getConnectedComputers() {
+        return this.getPeripheralOptional().map(BasePeripheral::getConnectedComputers).orElse(Collections.emptyList());
+    }
+
+    public LazyOptional<IPeripheral> getLazyPeripheral() {
         // Perform later peripheral creation, because creating peripheral
         // on init of tile entity cause some infinity loop, if peripheral
         // are depend on tile entity data
@@ -101,19 +112,22 @@ public abstract class PeripheralBlockEntity<T extends BasePeripheral<?>> extends
             // Recreate peripheral to allow CC: Tweaked correctly handle
             // peripheral update logic, so new peripheral and old one will be
             // different
-            final T peripheral = createPeripheral();
-            if (!peripheral.isEnabled()) {
-                AdvancedPeripherals.debug(peripheral.getType() + " is disabled, you can enable it in the Configuration.");
-                return LazyOptional.empty();
-            }
-            this.peripheralCap = LazyOptional.of(() -> peripheral);
+            this.peripheralCap = LazyOptional.of(this::createPeripheralDisable);
         }
         return this.peripheralCap;
     }
 
     @Nullable
     public T getPeripheral() {
-        return this.getLazyPeripheral().orElse(null);
+        IPeripheral peripheral = this.getLazyPeripheral().orElse(null);
+        if (peripheral == null || peripheral instanceof DisabledPeripheral) {
+            return null;
+        }
+        return (T) peripheral;
+    }
+
+    public Optional<T> getPeripheralOptional() {
+        return Optional.ofNullable(this.getPeripheral());
     }
 
     /*@Override
@@ -247,6 +261,9 @@ public abstract class PeripheralBlockEntity<T extends BasePeripheral<?>> extends
 
     @Override
     public <U extends BlockEntity> void handleTick(Level level, BlockState state, BlockEntityType<U> type) {
-        this.getLazyPeripheral().ifPresent(BasePeripheral<?>::update);
+        T peripheral = this.getPeripheral();
+        if (peripheral != null) {
+            peripheral.update();
+        }
     }
 }
