@@ -213,8 +213,6 @@ repositories {
         name = "Create maven"
         url = "https://maven.tterrag.com/"
         content {
-            includeGroup("com.simibubi.create")
-            includeGroup("com.jozufozu.flywheel")
             includeGroup("com.tterrag.registrate")
         }
     }
@@ -338,8 +336,8 @@ dependencies {
     runtimeOnly fg.deobf("vazkii.patchouli:Patchouli:${patchouli_version}")
 
     // Create
-    compileOnly fg.deobf("com.simibubi.create:create-${minecraft_version}:${create_version}:all")
-    runtimeOnly fg.deobf("com.simibubi.create:create-${minecraft_version}:${create_version}:all")
+    compileOnly fg.deobf("curse.maven:create-328085:${create_version}")
+    runtimeOnly fg.deobf("curse.maven:create-328085:${create_version}")
 
     // DimStorage
     compileOnly fg.deobf("curse.maven:dimstorage-353882:${dimstorage_version}")
@@ -379,12 +377,16 @@ dependencies {
     compileOnly("org.joml:joml:1.10.4")
     compileOnly("org.joml:joml-primitives:1.10.0")
     // compileOnly fg.deobf("org.valkyrienskies:valkyrienskies-119-common:${vs2_version}")
-    compileOnly fg.deobf("org.valkyrienskies:valkyrienskies-119-forge:${vs2_version}")
+    compileOnly fg.deobf("org.valkyrienskies:valkyrienskies-119-forge:${vs2_version}")  {
+        transitive = false
+    }
     compileOnly "org.valkyrienskies.core:api:${vs_core_version}"
     compileOnly "org.valkyrienskies.core:api-game:${vs_core_version}"
     compileOnly "org.valkyrienskies.core:util:${vs_core_version}"
     compileOnly "org.valkyrienskies.core:impl:${vs_core_version}"
-    runtimeOnly fg.deobf("org.valkyrienskies:valkyrienskies-119-forge:${vs2_version}")
+    runtimeOnly fg.deobf("org.valkyrienskies:valkyrienskies-119-forge:${vs2_version}") {
+        transitive = false
+    }
     runtimeOnly fg.deobf("curse.maven:valkyrien-skies-258371:${valkyrien_skies_version}")
     runtimeOnly fg.deobf("curse.maven:eureka-ships-654384:${eureka_ships_version}")
     runtimeOnly fg.deobf("curse.maven:clockwork-807792:${clockwork_version}")
