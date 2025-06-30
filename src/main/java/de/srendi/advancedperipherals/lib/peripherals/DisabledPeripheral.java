@@ -1,7 +1,6 @@
 package de.srendi.advancedperipherals.lib.peripherals;
 
 import dan200.computercraft.api.lua.IArguments;
-import dan200.computercraft.api.lua.IDynamicLuaObject;
 import dan200.computercraft.api.lua.ILuaContext;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
@@ -11,7 +10,6 @@ import dan200.computercraft.api.peripheral.IDynamicPeripheral;
 import dan200.computercraft.api.peripheral.IPeripheral;
 
 import java.lang.reflect.Method;
-import java.util.Objects;
 import java.util.stream.Stream;
 
 public class DisabledPeripheral implements IDynamicPeripheral {
