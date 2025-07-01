@@ -18,17 +18,17 @@ public class StringUtil {
     /**
      * This method will convert "&[0-9a-z]" to "§[0-9a-z]", then we can make colored message in CC easier
      * If a '&' is behind reverse slash '\', it will be ignored.
-     *   Note: In CC, you need to use <code>"\\&"</code> to get an unescaped '&' character
+     * Note: In CC, you need to use <code>"\\&"</code> to get an unescaped '&' character
      * If the character after '&' is not a digital number or lowercase letter, the & operator will not be escaped as well.
      *
      * Some convert example:
-     *  "&a" -> "§a"
-     *  "&" -> "&"
-     *  "\\&" -> "&"
-     *  "\\&a" -> "&a"
-     *  "&A" -> "&A"
-     *  "& a" -> "& a"
-     *  "&&a" -> "&§a"
+     * "&a" -> "§a"
+     * "&" -> "&"
+     * "\\&" -> "&"
+     * "\\&a" -> "&a"
+     * "&A" -> "&A"
+     * "& a" -> "& a"
+     * "&&a" -> "&§a"
      */
     public static String convertAndToSectionMark(String str) {
         return str == null ? null : str.replaceAll("(?<!\\\\)&(?=[0-9a-z])", "\u00a7").replaceAll("\\\\&", "&");
@@ -40,7 +40,6 @@ public class StringUtil {
      * Lua encodes bytes as 8bit ASCII (latin1) strings.
      * To convert this to a UTF-8 string, we need to interpret the byte string as ISO-8859-1 to get each individual byte,
      * then convert that to a UTF-8 string.
-     *
      *
      * @param asciiByteString the utf encoded string sourced from lua.
      * @return A String, with all characters correctly interpreted as UTF-8.

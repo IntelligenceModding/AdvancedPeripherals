@@ -172,43 +172,43 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
             String message = arguments.getString(0);
 
             // check size while it represents bytes (in utf8 mode) as that is longer
-          if (message.length() > APConfig.PERIPHERALS_CONFIG.chatBoxMessageSize.get()) {
-            return MethodResult.of(null, "Message is too long");
-          }
+            if (message.length() > APConfig.PERIPHERALS_CONFIG.chatBoxMessageSize.get()) {
+                return MethodResult.of(null, "Message is too long");
+            }
 
-          if (useUTF8) {
-            message = StringUtil.byteStringToUTF8(message);
-          }
+            if (useUTF8) {
+                message = StringUtil.byteStringToUTF8(message);
+            }
 
-          int maxRange = APConfig.PERIPHERALS_CONFIG.chatBoxMaxRange.get();
-          int range = arguments.optInt(4, -1);
-          ResourceKey<Level> dimension = getLevel().dimension();
+            int maxRange = APConfig.PERIPHERALS_CONFIG.chatBoxMaxRange.get();
+            int range = arguments.optInt(4, -1);
+            ResourceKey<Level> dimension = getLevel().dimension();
 
-          Optional<String> brackets = arguments.optString(2);
-          if (useUTF8) {
-              brackets = brackets.map(StringUtil::byteStringToUTF8);
-          }
+            Optional<String> brackets = arguments.optString(2);
+            if (useUTF8) {
+                brackets = brackets.map(StringUtil::byteStringToUTF8);
+            }
 
-          if (checkBrackets(brackets))
+            if (checkBrackets(brackets))
                 return MethodResult.of(null, "incorrect bracket string (e.g. [], {}, <>, ...)");
 
-          Optional<String> prefix = arguments.optString(1);
-          if (useUTF8) {
-              prefix = prefix.map(StringUtil::byteStringToUTF8);
-          }
+            Optional<String> prefix = arguments.optString(1);
+            if (useUTF8) {
+                prefix = prefix.map(StringUtil::byteStringToUTF8);
+            }
 
-          String bracketColor = arguments.optString(3, "");
-          if (useUTF8) {
-              bracketColor = StringUtil.byteStringToUTF8(bracketColor);
-          }
+            String bracketColor = arguments.optString(3, "");
+            if (useUTF8) {
+                bracketColor = StringUtil.byteStringToUTF8(bracketColor);
+            }
 
-          MutableComponent preparedMessage = appendPrefix(
+            MutableComponent preparedMessage = appendPrefix(
                     StringUtil.convertAndToSectionMark(prefix.orElseGet(APConfig.PERIPHERALS_CONFIG.defaultChatBoxPrefix)),
                     brackets.orElse("[]"),
                     StringUtil.convertAndToSectionMark(bracketColor)
             ).append(message);
 
-          for (ServerPlayer player : ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers()) {
+            for (ServerPlayer player : ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers()) {
                 if (!APConfig.PERIPHERALS_CONFIG.chatBoxMultiDimensional.get() && player.level().dimension() != dimension)
                     continue;
                 if (CoordUtil.isInRange(getPos(), getLevel(), player, range, maxRange))
@@ -231,7 +231,7 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
                 return MethodResult.of(null, "Message is too long");
 
             if (useUTF8) {
-              message = StringUtil.byteStringToUTF8(message);
+                message = StringUtil.byteStringToUTF8(message);
             }
 
 
@@ -289,23 +289,23 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
             boolean useUTF8 = arguments.optBoolean(7, false);
 
             String message = arguments.getString(0);
-          // check size while it represents bytes (in utf8 mode) as that is longer
-          if (message.length() > APConfig.PERIPHERALS_CONFIG.chatBoxMessageSize.get()) {
-            return MethodResult.of(null, "Message is too long");
-          }
+            // check size while it represents bytes (in utf8 mode) as that is longer
+            if (message.length() > APConfig.PERIPHERALS_CONFIG.chatBoxMessageSize.get()) {
+                return MethodResult.of(null, "Message is too long");
+            }
 
-          if (useUTF8) {
-            message = StringUtil.byteStringToUTF8(message);
-          }
+            if (useUTF8) {
+                message = StringUtil.byteStringToUTF8(message);
+            }
 
 
-          String title = arguments.getString(1);
+            String title = arguments.getString(1);
 
-          // TODO: missing max length check?
+            // TODO: missing max length check?
 
-          if (useUTF8) {
-            title = StringUtil.byteStringToUTF8(title);
-          }
+            if (useUTF8) {
+                title = StringUtil.byteStringToUTF8(title);
+            }
 
             String playerName = arguments.getString(2);
             int maxRange = APConfig.PERIPHERALS_CONFIG.chatBoxMaxRange.get();
@@ -326,14 +326,14 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
             Optional<String> brackets = arguments.optString(4);
 
             if (useUTF8) {
-              brackets = brackets.map(StringUtil::byteStringToUTF8);
+                brackets = brackets.map(StringUtil::byteStringToUTF8);
             }
 
-          if (checkBrackets(brackets))
+            if (checkBrackets(brackets))
                 return MethodResult.of(null, "incorrect bracket string (e.g. [], {}, <>, ,,,)");
 
 
-          Optional<String> prefix = arguments.optString(3);
+            Optional<String> prefix = arguments.optString(3);
             if (useUTF8) {
                 prefix = prefix.map(StringUtil::byteStringToUTF8);
             }
@@ -386,26 +386,26 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
             if (player == null)
                 return MethodResult.of(null, "incorrect player name/uuid");
 
-          Optional<String> brackets = arguments.optString(3);
+            Optional<String> brackets = arguments.optString(3);
 
-          if (useUTF8) {
-            brackets = brackets.map(StringUtil::byteStringToUTF8);
-          }
+            if (useUTF8) {
+                brackets = brackets.map(StringUtil::byteStringToUTF8);
+            }
 
-          if (checkBrackets(brackets))
+            if (checkBrackets(brackets))
                 return MethodResult.of(null, "incorrect bracket string (e.g. [], {}, <>, ...)");
 
-          Optional<String> prefix = arguments.optString(2);
+            Optional<String> prefix = arguments.optString(2);
 
-          if (useUTF8) {
-            prefix = prefix.map(StringUtil::byteStringToUTF8);
-          }
-          String bracketColor = arguments.optString(4, "");
-          if (useUTF8) {
-            bracketColor = StringUtil.byteStringToUTF8(bracketColor);
-          }
+            if (useUTF8) {
+                prefix = prefix.map(StringUtil::byteStringToUTF8);
+            }
+            String bracketColor = arguments.optString(4, "");
+            if (useUTF8) {
+                bracketColor = StringUtil.byteStringToUTF8(bracketColor);
+            }
 
-          MutableComponent preparedMessage = appendPrefix(
+            MutableComponent preparedMessage = appendPrefix(
                     StringUtil.convertAndToSectionMark(prefix.orElseGet(APConfig.PERIPHERALS_CONFIG.defaultChatBoxPrefix)),
                     brackets.orElse("[]"),
                     StringUtil.convertAndToSectionMark(bracketColor)
@@ -452,25 +452,25 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
             if (player == null)
                 return MethodResult.of(null, "incorrect player name/uuid");
 
-          Optional<String> brackets = arguments.optString(4);
+            Optional<String> brackets = arguments.optString(4);
 
-          if (useUTF8) {
-            brackets = brackets.map(StringUtil::byteStringToUTF8);
-          }
+            if (useUTF8) {
+                brackets = brackets.map(StringUtil::byteStringToUTF8);
+            }
 
-          if (checkBrackets(brackets))
+            if (checkBrackets(brackets))
                 return MethodResult.of(null, "incorrect bracket string (e.g. [], {}, <>, ...)");
 
-          Optional<String> prefix = arguments.optString(3);
+            Optional<String> prefix = arguments.optString(3);
 
-          if (useUTF8) {
-            prefix = prefix.map(StringUtil::byteStringToUTF8);
-          }
+            if (useUTF8) {
+                prefix = prefix.map(StringUtil::byteStringToUTF8);
+            }
 
-          String bracketColor = arguments.optString(5, "");
-          if (useUTF8) {
-            bracketColor = StringUtil.byteStringToUTF8(bracketColor);
-          }
+            String bracketColor = arguments.optString(5, "");
+            if (useUTF8) {
+                bracketColor = StringUtil.byteStringToUTF8(bracketColor);
+            }
 
             MutableComponent preparedMessage = appendPrefix(
                     StringUtil.convertAndToSectionMark(prefix.orElseGet(APConfig.PERIPHERALS_CONFIG.defaultChatBoxPrefix)),
@@ -491,10 +491,10 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
 
     public void update() {
         lastConsumedMessage = Events.traverseChatMessages(lastConsumedMessage, message -> {
-          String byteString = StringUtil.utf8ToByteString(message.message());
-          for (IComputerAccess computer : getConnectedComputers()) {
-              computer.queueEvent("chat", message.username(), message.message(), message.uuid(), message.isHidden(),
-                  byteString);
+            String byteString = StringUtil.utf8ToByteString(message.message());
+            for (IComputerAccess computer : getConnectedComputers()) {
+                computer.queueEvent("chat", message.username(), message.message(), message.uuid(), message.isHidden(),
+                        byteString);
             }
         });
     }
