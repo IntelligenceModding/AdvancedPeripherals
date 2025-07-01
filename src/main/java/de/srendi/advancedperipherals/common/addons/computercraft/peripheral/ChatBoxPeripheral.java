@@ -24,7 +24,12 @@ import de.srendi.advancedperipherals.lib.peripherals.IPeripheralFunction;
 import de.srendi.advancedperipherals.network.APNetworking;
 import de.srendi.advancedperipherals.network.toclient.ToastToClientPacket;
 import net.minecraft.ChatFormatting;
-import net.minecraft.network.chat.*;
+import net.minecraft.network.chat.ClickEvent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.ComponentContents;
+import net.minecraft.network.chat.HoverEvent;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.TooltipFlag;
@@ -110,15 +115,15 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
         if (click != null) {
             if (isChatBoxPreventingRunCommand() && click.getAction() == ClickEvent.Action.RUN_COMMAND) {
                 style = style
-                        .withClickEvent(null)
-                        .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, createFormattedError("'run_command' action is banned")));
+                    .withClickEvent(null)
+                    .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, createFormattedError("'run_command' action is banned")));
             } else if (click.getAction() == ClickEvent.Action.RUN_COMMAND || click.getAction() == ClickEvent.Action.SUGGEST_COMMAND) {
                 String command = click.getValue();
                 if (command.length() > 0 && command.charAt(0) == '/') {
                     if (isCommandBanned(command)) {
                         style = style
-                                .withClickEvent(null)
-                                .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, createFormattedError("Command `" + command + "` is banned")));
+                            .withClickEvent(null)
+                            .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, createFormattedError("Command `" + command + "` is banned")));
                     } else if (shouldWrapCommand(command)) {
                         style = style.withClickEvent(new ClickEvent(click.getAction(), "/" + ROOT_SAFE_EXEC_LITERAL + " " + command));
                     }
@@ -243,9 +248,9 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
             }
 
             MutableComponent preparedMessage = appendPrefix(
-                    StringUtil.convertAndToSectionMark(prefix.orElseGet(APConfig.PERIPHERALS_CONFIG.defaultChatBoxPrefix)),
-                    brackets.orElse("[]"),
-                    StringUtil.convertAndToSectionMark(bracketColor)
+                StringUtil.convertAndToSectionMark(prefix.orElseGet(APConfig.PERIPHERALS_CONFIG.defaultChatBoxPrefix)),
+                brackets.orElse("[]"),
+                StringUtil.convertAndToSectionMark(bracketColor)
             );
             if (preparedMessage == null) {
                 return MethodResult.of(null, "illegal prefix");
@@ -255,10 +260,10 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
             int maxRange = APConfig.PERIPHERALS_CONFIG.chatBoxMaxRange.get();
             int range = arguments.optInt(4, -1);
             if (
-                    APConfig.PERIPHERALS_CONFIG.chatBoxBroadcast.get()
-                            && APConfig.PERIPHERALS_CONFIG.chatBoxMultiDimensional.get()
-                            && maxRange == -1
-                            && range == -1
+                APConfig.PERIPHERALS_CONFIG.chatBoxBroadcast.get()
+                    && APConfig.PERIPHERALS_CONFIG.chatBoxMultiDimensional.get()
+                    && maxRange == -1
+                    && range == -1
             ) {
                 ServerLifecycleHooks.getCurrentServer().getPlayerList().broadcastSystemMessage(preparedMessage, false);
                 return MethodResult.of(true);
@@ -309,9 +314,9 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
             }
 
             MutableComponent preparedMessage = appendPrefix(
-                    StringUtil.convertAndToSectionMark(prefix.orElseGet(APConfig.PERIPHERALS_CONFIG.defaultChatBoxPrefix)),
-                    brackets.orElse("[]"),
-                    StringUtil.convertAndToSectionMark(bracketColor)
+                StringUtil.convertAndToSectionMark(prefix.orElseGet(APConfig.PERIPHERALS_CONFIG.defaultChatBoxPrefix)),
+                brackets.orElse("[]"),
+                StringUtil.convertAndToSectionMark(bracketColor)
             );
             if (preparedMessage == null) {
                 return MethodResult.of(null, "illegal prefix");
@@ -321,10 +326,10 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
             int maxRange = APConfig.PERIPHERALS_CONFIG.chatBoxMaxRange.get();
             int range = arguments.optInt(4, -1);
             if (
-                    APConfig.PERIPHERALS_CONFIG.chatBoxBroadcast.get()
-                            && APConfig.PERIPHERALS_CONFIG.chatBoxMultiDimensional.get()
-                            && maxRange == -1
-                            && range == -1
+                APConfig.PERIPHERALS_CONFIG.chatBoxBroadcast.get()
+                    && APConfig.PERIPHERALS_CONFIG.chatBoxMultiDimensional.get()
+                    && maxRange == -1
+                    && range == -1
             ) {
                 ServerLifecycleHooks.getCurrentServer().getPlayerList().broadcastSystemMessage(preparedMessage, false);
                 return MethodResult.of(true);
@@ -392,9 +397,9 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
 
 
             MutableComponent preparedMessage = appendPrefix(
-                    StringUtil.convertAndToSectionMark(prefix.orElseGet(APConfig.PERIPHERALS_CONFIG.defaultChatBoxPrefix)),
-                    brackets.orElse("[]"),
-                    StringUtil.convertAndToSectionMark(bracketColor)
+                StringUtil.convertAndToSectionMark(prefix.orElseGet(APConfig.PERIPHERALS_CONFIG.defaultChatBoxPrefix)),
+                brackets.orElse("[]"),
+                StringUtil.convertAndToSectionMark(bracketColor)
             );
             if (preparedMessage == null) {
                 return MethodResult.of(null, "illegal prefix");
@@ -474,9 +479,9 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
             }
 
             MutableComponent preparedMessage = appendPrefix(
-                    StringUtil.convertAndToSectionMark(prefix.orElseGet(APConfig.PERIPHERALS_CONFIG.defaultChatBoxPrefix)),
-                    brackets.orElse("[]"),
-                    StringUtil.convertAndToSectionMark(bracketColor)
+                StringUtil.convertAndToSectionMark(prefix.orElseGet(APConfig.PERIPHERALS_CONFIG.defaultChatBoxPrefix)),
+                brackets.orElse("[]"),
+                StringUtil.convertAndToSectionMark(bracketColor)
             );
             if (preparedMessage == null) {
                 return MethodResult.of(null, "illegal prefix");
@@ -536,9 +541,9 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
             }
 
             MutableComponent preparedMessage = appendPrefix(
-                    StringUtil.convertAndToSectionMark(prefix.orElseGet(APConfig.PERIPHERALS_CONFIG.defaultChatBoxPrefix)),
-                    brackets.orElse("[]"),
-                    StringUtil.convertAndToSectionMark(bracketColor)
+                StringUtil.convertAndToSectionMark(prefix.orElseGet(APConfig.PERIPHERALS_CONFIG.defaultChatBoxPrefix)),
+                brackets.orElse("[]"),
+                StringUtil.convertAndToSectionMark(bracketColor)
             );
             if (preparedMessage == null) {
                 return MethodResult.of(null, "illegal prefix");
@@ -600,9 +605,9 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
             }
 
             MutableComponent preparedMessage = appendPrefix(
-                    StringUtil.convertAndToSectionMark(prefix.orElseGet(APConfig.PERIPHERALS_CONFIG.defaultChatBoxPrefix)),
-                    brackets.orElse("[]"),
-                    StringUtil.convertAndToSectionMark(bracketColor)
+                StringUtil.convertAndToSectionMark(prefix.orElseGet(APConfig.PERIPHERALS_CONFIG.defaultChatBoxPrefix)),
+                brackets.orElse("[]"),
+                StringUtil.convertAndToSectionMark(bracketColor)
             );
             if (preparedMessage == null) {
                 return MethodResult.of(null, "illegal prefix");
@@ -626,7 +631,7 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
             String byteString = StringUtil.utf8ToByteString(message.message());
             for (IComputerAccess computer : getConnectedComputers()) {
                 computer.queueEvent("chat", message.username(), message.message(), message.uuid(), message.isHidden(),
-                        byteString);
+                    byteString);
             }
         });
     }
