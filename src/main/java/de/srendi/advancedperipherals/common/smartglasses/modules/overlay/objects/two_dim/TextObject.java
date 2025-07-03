@@ -7,11 +7,13 @@ import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.client.smartglasses.objects.IObjectRenderer;
 import de.srendi.advancedperipherals.client.smartglasses.objects.twodim.TextRenderer;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.OverlayModule;
+import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.RenderableObject;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertytypes.BooleanProperty;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertytypes.FloatingNumberProperty;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertytypes.StringProperty;
 import net.minecraft.network.FriendlyByteBuf;
 
+import java.util.Optional;
 import java.util.UUID;
 
 public class TextObject extends RenderableObject {
@@ -85,36 +87,15 @@ public class TextObject extends RenderableObject {
     }
 
     public static TextObject decode(FriendlyByteBuf buffer) {
-        int objectId = buffer.readInt();
-        boolean hasValidUUID = buffer.readBoolean();
-        if (!hasValidUUID) {
-            AdvancedPeripherals.exception("Tried to decode a buffer for an OverlayObject but without a valid player as target.", new IllegalArgumentException());
+        Optional<TextObject> optionalObject = RenderableObject.baseDecode(buffer, TextObject::new);
+        if (optionalObject.isEmpty())
             return null;
-        }
-        UUID player = buffer.readUUID();
-        int color = buffer.readInt();
-        float opacity = buffer.readFloat();
 
-        float x = buffer.readFloat();
-        float y = buffer.readFloat();
-        float z = buffer.readFloat();
-        float maxX = buffer.readFloat();
-        float maxY = buffer.readFloat();
-        float maxZ = buffer.readFloat();
         String content = buffer.readUtf();
         float fontSize = buffer.readFloat();
         boolean shadow = buffer.readBoolean();
 
-        TextObject clientObject = new TextObject(player);
-        clientObject.setId(objectId);
-        clientObject.color = color;
-        clientObject.opacity = opacity;
-        clientObject.x = x;
-        clientObject.y = y;
-        clientObject.z = z;
-        clientObject.maxX = maxX;
-        clientObject.maxY = maxY;
-        clientObject.maxZ = maxZ;
+        TextObject clientObject = optionalObject.get();
         clientObject.content = content;
         clientObject.fontSize = fontSize;
         clientObject.shadow = shadow;

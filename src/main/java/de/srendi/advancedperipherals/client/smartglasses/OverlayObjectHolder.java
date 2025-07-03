@@ -7,8 +7,9 @@ import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.three_dim.TorusObject;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.two_dim.CircleObject;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.two_dim.ItemObject;
+import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.two_dim.LineObject;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.two_dim.RectangleObject;
-import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.two_dim.RenderableObject;
+import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.RenderableObject;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.two_dim.TextObject;
 
 import java.util.Collection;
@@ -49,6 +50,7 @@ public class OverlayObjectHolder {
         ObjectDecodeRegistry.register(CircleObject.TYPE_ID, CircleObject::decode);
         ObjectDecodeRegistry.register(TextObject.TYPE_ID, TextObject::decode);
         ObjectDecodeRegistry.register(ItemObject.TYPE_ID, ItemObject::decode);
+        ObjectDecodeRegistry.register(LineObject.TYPE_ID, LineObject::decode);
 
         ObjectDecodeRegistry.register(BoxObject.TYPE_ID, BoxObject::decode);
         ObjectDecodeRegistry.register(BlockObject.TYPE_ID, BlockObject::decode);

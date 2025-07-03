@@ -35,7 +35,7 @@ public class BoxRenderer implements IThreeDObjectRenderer {
             float blue = RenderUtil.getBlue(box.color);
 
             poseStack.translate(-view.x + box.getX(), -view.y + box.getY(), -view.z + box.getZ());
-            RenderUtil.drawBox(poseStack, bufferBuilder, red, green, blue, alpha, box.x, box.y, box.z, obj.xRot, obj.yRot, obj.zRot, obj.maxX, obj.maxY, obj.maxZ);
+            RenderUtil.drawBox(poseStack, bufferBuilder, red, green, blue, alpha, box.x, box.y, box.z, obj.rotX, obj.rotY, obj.rotZ, obj.maxX, obj.maxY, obj.maxZ);
             BufferUploader.drawWithShader(bufferBuilder.end());
             onPostRender(obj);
 

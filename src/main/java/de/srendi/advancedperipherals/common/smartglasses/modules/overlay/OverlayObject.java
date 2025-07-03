@@ -4,6 +4,7 @@ import dan200.computercraft.api.lua.IArguments;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
+import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.RenderableObject;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertytypes.BooleanProperty;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertytypes.PropertyType;
 import de.srendi.advancedperipherals.common.util.StringUtil;
@@ -156,7 +157,7 @@ public abstract class OverlayObject {
         if (fieldType.isAssignableFrom(value.getClass())) {
             return value;
         } else if (fieldType.equals(Integer.TYPE)) {
-            return Integer.valueOf(StringUtil.removeFloatingPoints(value.toString()));
+            return Double.valueOf(value.toString()).intValue();
         } else if (fieldType.equals(Double.TYPE)) {
             return Double.valueOf(value.toString());
         } else if (fieldType.equals(Boolean.TYPE)) {

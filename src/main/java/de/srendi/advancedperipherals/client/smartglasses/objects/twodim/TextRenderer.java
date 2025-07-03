@@ -1,7 +1,7 @@
 package de.srendi.advancedperipherals.client.smartglasses.objects.twodim;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.two_dim.RenderableObject;
+import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.RenderableObject;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.two_dim.TextObject;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.client.gui.overlay.ForgeGui;

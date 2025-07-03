@@ -7,10 +7,13 @@ import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.client.smartglasses.objects.IObjectRenderer;
 import de.srendi.advancedperipherals.client.smartglasses.objects.threedim.TorusRenderer;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.OverlayModule;
+import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.RenderableObject;
+import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.two_dim.CircleObject;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertytypes.FixedPointNumberProperty;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertytypes.FloatingNumberProperty;
 import net.minecraft.network.FriendlyByteBuf;
 
+import java.util.Optional;
 import java.util.UUID;
 
 public class TorusObject extends ThreeDimensionalObject {
@@ -94,49 +97,21 @@ public class TorusObject extends ThreeDimensionalObject {
     }
 
     public static TorusObject decode(FriendlyByteBuf buffer) {
-        int objectId = buffer.readInt();
-        boolean hasValidUUID = buffer.readBoolean();
-        if (!hasValidUUID) {
-            AdvancedPeripherals.exception("Tried to decode a buffer for an OverlayObject but without a valid player as target.", new IllegalArgumentException());
+        Optional<TorusObject> optionalObject = RenderableObject.baseDecode(buffer, TorusObject::new);
+        if (optionalObject.isEmpty())
             return null;
-        }
-        UUID player = buffer.readUUID();
-        int color = buffer.readInt();
-        float opacity = buffer.readFloat();
-
-        float x = buffer.readFloat();
-        float y = buffer.readFloat();
-        float z = buffer.readFloat();
-        float maxX = buffer.readFloat();
-        float maxY = buffer.readFloat();
-        float maxZ = buffer.readFloat();
 
         boolean disableDepthTest = buffer.readBoolean();
         boolean disableCulling = buffer.readBoolean();
-        float xRot = buffer.readFloat();
-        float yRot = buffer.readFloat();
-        float zRot = buffer.readFloat();
 
         int sectors = buffer.readInt();
         int stacks = buffer.readInt();
         float minorRadius = buffer.readFloat();
         float majorRadius = buffer.readFloat();
 
-        TorusObject clientObject = new TorusObject(player);
-        clientObject.setId(objectId);
-        clientObject.color = color;
-        clientObject.opacity = opacity;
-        clientObject.x = x;
-        clientObject.y = y;
-        clientObject.z = z;
-        clientObject.maxX = maxX;
-        clientObject.maxY = maxY;
-        clientObject.maxZ = maxZ;
+        TorusObject clientObject = optionalObject.get();
         clientObject.disableDepthTest = disableDepthTest;
         clientObject.disableCulling = disableCulling;
-        clientObject.xRot = xRot;
-        clientObject.yRot = yRot;
-        clientObject.zRot = zRot;
         clientObject.sides = sectors;
         clientObject.rings = stacks;
         clientObject.minorRadius = minorRadius;

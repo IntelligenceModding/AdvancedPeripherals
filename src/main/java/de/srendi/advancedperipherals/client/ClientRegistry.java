@@ -75,6 +75,6 @@ public class ClientRegistry {
     @SubscribeEvent
     public static void registeringOverlays(RegisterGuiOverlaysEvent event) {
         event.registerAboveAll(SaddleTurtleScreen.ID, SADDLE_TURTLE_OVERLAY);
-        event.registerAboveAll(OverlayModuleOverlay.ID, OVERLAY_MODULE_OVERLAY);
+        event.registerBelowAll(OverlayModuleOverlay.ID, OVERLAY_MODULE_OVERLAY);
     }
 }

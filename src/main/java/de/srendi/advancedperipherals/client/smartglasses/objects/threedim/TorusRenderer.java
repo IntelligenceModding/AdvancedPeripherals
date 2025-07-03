@@ -35,7 +35,7 @@ public class TorusRenderer implements IThreeDObjectRenderer {
             float blue = RenderUtil.getBlue(torus.color);
 
             poseStack.translate(-view.x + torus.x, -view.y + torus.y, -view.z + torus.z);
-            RenderUtil.drawTorus(poseStack, bufferBuilder, torus.majorRadius, torus.minorRadius, 0, 0, 0, torus.xRot, torus.yRot, torus.zRot, red, green, blue, alpha, torus.rings, torus.sides);
+            RenderUtil.drawTorus(poseStack, bufferBuilder, torus.majorRadius, torus.minorRadius, 0, 0, 0, torus.rotX, torus.rotY, torus.rotZ, red, green, blue, alpha, torus.rings, torus.sides);
             BufferUploader.drawWithShader(bufferBuilder.end());
             onPostRender(obj);
 
