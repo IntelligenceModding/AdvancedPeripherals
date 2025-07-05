@@ -2,6 +2,7 @@ package de.srendi.advancedperipherals.common.util;
 
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.shared.util.NBTUtil;
+import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.addons.APAddon;
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.InventoryManagerPeripheral;
 import de.srendi.advancedperipherals.common.util.inventory.ChemicalUtil;
@@ -121,7 +122,11 @@ public class LuaConverter {
         properties.put("count", stack.getCount());
         properties.put("displayName", stack.getDisplayName().getString());
         properties.put("maxStackSize", stack.getMaxStackSize());
-        properties.put("components", NBTUtil.toLua(DataComponentUtil.toNbt(components)));
+        try {
+            properties.put("components", NBTUtil.toLua(DataComponentUtil.toNbt(components)));
+        } catch (IllegalStateException ex) {
+            AdvancedPeripherals.debug("Couldn't create components for Item Stack " + stack, ex);
+        }
         properties.put("fingerprint", ItemUtil.getFingerprint(stack));
         return properties;
     }
@@ -135,7 +140,11 @@ public class LuaConverter {
         properties.put("count", stack.getCount());
         properties.put("displayName", stack.getDisplayName().getString());
         properties.put("maxStackSize", stack.getMaxStackSize());
-        properties.put("components", NBTUtil.toLua(DataComponentUtil.toNbt(components, level)));
+        try {
+            properties.put("components", NBTUtil.toLua(DataComponentUtil.toNbt(components, level)));
+        } catch (IllegalStateException ex) {
+            AdvancedPeripherals.debug("Couldn't create components for Item Stack " + stack, ex);
+        }
         properties.put("fingerprint", ItemUtil.getFingerprint(stack));
         return properties;
     }

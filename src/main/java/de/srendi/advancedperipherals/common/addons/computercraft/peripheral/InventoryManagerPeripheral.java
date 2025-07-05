@@ -2,6 +2,7 @@ package de.srendi.advancedperipherals.common.addons.computercraft.peripheral;
 
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
+import dan200.computercraft.api.lua.LuaTable;
 import dan200.computercraft.api.lua.MethodResult;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.BlockEntityPeripheralOwner;
@@ -54,7 +55,7 @@ public class InventoryManagerPeripheral extends BasePeripheral<BlockEntityPeriph
     //The item is specified the same as with the RS/ME bridge:
     //{name="minecraft:enchanted_book", count=1, nbt="ae70053c97f877de546b0248b9ddf525"}
     @LuaFunction(mainThread = true)
-    public final MethodResult addItemToPlayer(String invDirection, Map<?, ?> item) throws LuaException {
+    public final MethodResult addItemToPlayer(String invDirection, LuaTable<?, ?> item) throws LuaException {
         Pair<ItemFilter, String> filter = ItemFilter.parse(item);
         if (filter.rightPresent())
             return MethodResult.of(0, filter.getRight());
@@ -79,7 +80,7 @@ public class InventoryManagerPeripheral extends BasePeripheral<BlockEntityPeriph
     }
 
     @LuaFunction(mainThread = true)
-    public final MethodResult removeItemFromPlayer(String invDirection, Map<?, ?> item) throws LuaException {
+    public final MethodResult removeItemFromPlayer(String invDirection, LuaTable<?, ?> item) throws LuaException {
         Pair<ItemFilter, String> filter = ItemFilter.parse(item);
         if (filter.rightPresent())
             return MethodResult.of(0, filter.getRight());

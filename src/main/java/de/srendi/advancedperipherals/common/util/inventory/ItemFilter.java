@@ -5,7 +5,7 @@ import appeng.api.stacks.GenericStack;
 import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage.common.support.resource.ItemResource;
 import dan200.computercraft.api.lua.LuaException;
-import dan200.computercraft.core.apis.TableHelper;
+import dan200.computercraft.api.lua.LuaTable;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.addons.APAddon;
 import de.srendi.advancedperipherals.common.util.DataComponentUtil;
@@ -21,7 +21,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
-import java.util.Map;
 
 public class ItemFilter extends GenericFilter<ItemStack> {
 
@@ -39,7 +38,7 @@ public class ItemFilter extends GenericFilter<ItemStack> {
     private ItemFilter() {
     }
 
-    public static Pair<ItemFilter, String> parse(Map<?, ?> item) {
+    public static Pair<ItemFilter, String> parse(LuaTable<?, ?> item) {
         // If the map is empty, return a filter without any filters
         if (item.isEmpty())
             return Pair.of(EMPTY, null);
@@ -48,7 +47,7 @@ public class ItemFilter extends GenericFilter<ItemStack> {
 
         if (item.containsKey("name")) {
             try {
-                String name = TableHelper.getStringField(item, "name");
+                String name = item.getString("name");
                 if (name.startsWith("#")) {
                     itemFilter.tag = TagKey.create(Registries.ITEM, ResourceLocation.parse(name.substring(1)));
                 } else if ((itemFilter.item = ItemUtil.getRegistryEntry(name, BuiltInRegistries.ITEM)) == null) {
@@ -60,10 +59,10 @@ public class ItemFilter extends GenericFilter<ItemStack> {
         }
         if (item.containsKey("components")) {
             try {
-                itemFilter.componentsAsNbt = NBTUtil.fromText(TableHelper.getStringField(item, "components"));
+                itemFilter.componentsAsNbt = NBTUtil.fromText(item.getString("components"));
             } catch (LuaException luaException) {
                 try {
-                    itemFilter.componentsAsNbt = NBTUtil.fromText(TableHelper.getTableField(item, "components").toString());
+                    itemFilter.componentsAsNbt = NBTUtil.fromText(item.getTable("components").toString());
                 } catch (LuaException e) {
                     return Pair.of(null, "NO_VALID_COMPONENTS");
                 }
@@ -71,28 +70,28 @@ public class ItemFilter extends GenericFilter<ItemStack> {
         }
         if (item.containsKey("fingerprint")) {
             try {
-                itemFilter.fingerprint = TableHelper.getStringField(item, "fingerprint");
+                itemFilter.fingerprint = item.getString("fingerprint");
             } catch (LuaException luaException) {
                 return Pair.of(null, "NO_VALID_FINGERPRINT");
             }
         }
         if (item.containsKey("fromSlot")) {
             try {
-                itemFilter.fromSlot = TableHelper.getIntField(item, "fromSlot");
+                itemFilter.fromSlot = item.getInt("fromSlot");
             } catch (LuaException luaException) {
                 return Pair.of(null, "NO_VALID_FROMSLOT");
             }
         }
         if (item.containsKey("toSlot")) {
             try {
-                itemFilter.toSlot = TableHelper.getIntField(item, "toSlot");
+                itemFilter.toSlot = item.getInt( "toSlot");
             } catch (LuaException luaException) {
                 return Pair.of(null, "NO_VALID_TOSLOT");
             }
         }
         if (item.containsKey("count")) {
             try {
-                itemFilter.count = TableHelper.getIntField(item, "count");
+                itemFilter.count = item.getInt( "count");
             } catch (LuaException luaException) {
                 return Pair.of(null, "NO_VALID_COUNT");
             }

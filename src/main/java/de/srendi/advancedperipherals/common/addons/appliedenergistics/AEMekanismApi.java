@@ -4,6 +4,7 @@ import appeng.api.storage.MEStorage;
 import dan200.computercraft.api.lua.IArguments;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.MethodResult;
+import dan200.computercraft.api.lua.ObjectLuaTable;
 import dan200.computercraft.api.peripheral.IComputerAccess;
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.MEBridgePeripheral;
 import de.srendi.advancedperipherals.common.blocks.blockentities.MEBridgeEntity;
@@ -30,7 +31,7 @@ public class AEMekanismApi {
     public static MethodResult importToME(@NotNull IArguments arguments, IComputerAccess computer, MEBridgePeripheral peripheral) throws LuaException {
         MEBridgeEntity bridge = peripheral.getBridge();
         MEStorage monitor = AEApi.getMonitor(bridge.getActionableNode());
-        Pair<ChemicalFilter, String> filter = ChemicalFilter.parse(arguments.getTable(0));
+        Pair<ChemicalFilter, String> filter = ChemicalFilter.parse(new ObjectLuaTable(arguments.getTable(0)));
 
         if (filter.rightPresent())
             return MethodResult.of(0, filter.getRight());
@@ -61,7 +62,7 @@ public class AEMekanismApi {
     public static MethodResult exportToTank(@NotNull IArguments arguments, IComputerAccess computer, MEBridgePeripheral peripheral) throws LuaException {
         MEBridgeEntity bridge = peripheral.getBridge();
         MEStorage monitor = AEApi.getMonitor(bridge.getActionableNode());
-        Pair<ChemicalFilter, String> filter = ChemicalFilter.parse(arguments.getTable(0));
+        Pair<ChemicalFilter, String> filter = ChemicalFilter.parse(new ObjectLuaTable(arguments.getTable(0)));
 
         if (filter.rightPresent())
             return MethodResult.of(0, filter.getRight());

@@ -12,9 +12,10 @@ import appeng.crafting.pattern.EncodedPatternItem;
 import dan200.computercraft.api.lua.IArguments;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
+import dan200.computercraft.api.lua.LuaTable;
 import dan200.computercraft.api.lua.MethodResult;
+import dan200.computercraft.api.lua.ObjectLuaTable;
 import dan200.computercraft.api.peripheral.IComputerAccess;
-import dan200.computercraft.core.apis.TableHelper;
 import de.srendi.advancedperipherals.common.addons.APAddon;
 import de.srendi.advancedperipherals.common.addons.appliedenergistics.AEApi;
 import de.srendi.advancedperipherals.common.addons.appliedenergistics.AECraftJob;
@@ -24,6 +25,7 @@ import de.srendi.advancedperipherals.common.addons.appliedenergistics.MEItemHand
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.BlockEntityPeripheralOwner;
 import de.srendi.advancedperipherals.common.blocks.blockentities.MEBridgeEntity;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
+import de.srendi.advancedperipherals.common.util.EmptyLuaTable;
 import de.srendi.advancedperipherals.common.util.Pair;
 import de.srendi.advancedperipherals.common.util.StatusConstants;
 import de.srendi.advancedperipherals.common.util.inventory.ChemicalFilter;
@@ -44,6 +46,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwner<MEBridgeEntity>> implements IStorageSystemPeripheral {
 
@@ -85,7 +88,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     protected MethodResult exportToChest(@NotNull IArguments arguments, IItemHandler targetInventory) throws LuaException {
         MEStorage monitor = AEApi.getMonitor(node);
         MEItemHandler itemHandler = new MEItemHandler(monitor, bridge);
-        Pair<ItemFilter, String> filter = ItemFilter.parse(arguments.getTable(0));
+        Pair<ItemFilter, String> filter = ItemFilter.parse(new ObjectLuaTable(arguments.getTable(0)));
 
         if (filter.rightPresent())
             return MethodResult.of(0, filter.getRight());
@@ -103,7 +106,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     protected MethodResult exportToTank(@NotNull IArguments arguments, IFluidHandler targetTank) throws LuaException {
         MEStorage monitor = AEApi.getMonitor(node);
         MEFluidHandler fluidHandler = new MEFluidHandler(monitor, bridge);
-        Pair<FluidFilter, String> filter = FluidFilter.parse(arguments.getTable(0));
+        Pair<FluidFilter, String> filter = FluidFilter.parse(new ObjectLuaTable(arguments.getTable(0)));
 
         if (filter.rightPresent())
             return MethodResult.of(0, filter.getRight());
@@ -122,7 +125,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     protected MethodResult importToME(@NotNull IArguments arguments, IItemHandler targetInventory) throws LuaException {
         MEStorage monitor = AEApi.getMonitor(node);
         MEItemHandler itemHandler = new MEItemHandler(monitor, bridge);
-        Pair<ItemFilter, String> filter = ItemFilter.parse(arguments.getTable(0));
+        Pair<ItemFilter, String> filter = ItemFilter.parse(new ObjectLuaTable(arguments.getTable(0)));
 
         if (filter.rightPresent())
             return MethodResult.of(0, filter.getRight());
@@ -140,7 +143,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     protected MethodResult importToME(@NotNull IArguments arguments, IFluidHandler targetTank) throws LuaException {
         MEStorage monitor = AEApi.getMonitor(node);
         MEFluidHandler fluidHandler = new MEFluidHandler(monitor, bridge);
-        Pair<FluidFilter, String> filter = FluidFilter.parse(arguments.getTable(0));
+        Pair<FluidFilter, String> filter = FluidFilter.parse(new ObjectLuaTable(arguments.getTable(0)));
 
         if (filter.rightPresent())
             return MethodResult.of(0, filter.getRight());
@@ -175,7 +178,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
             return notConnected(null);
 
         MEStorage monitor = AEApi.getMonitor(node);
-        Pair<ItemFilter, String> filter = ItemFilter.parse(arguments.getTable(0));
+        Pair<ItemFilter, String> filter = ItemFilter.parse(new ObjectLuaTable(arguments.getTable(0)));
         if (filter.rightPresent())
             return MethodResult.of(null, filter.getRight());
 
@@ -192,7 +195,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (!isAvailable())
             return notConnected(null);
 
-        Pair<FluidFilter, String> filter = FluidFilter.parse(arguments.getTable(0));
+        Pair<FluidFilter, String> filter = FluidFilter.parse(new ObjectLuaTable(arguments.getTable(0)));
         if (filter.rightPresent())
             return MethodResult.of(null, filter.getRight());
 
@@ -209,7 +212,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (!isAvailable())
             return notConnected(null);
 
-        Pair<ChemicalFilter, String> filter = ChemicalFilter.parse(arguments.getTable(0));
+        Pair<ChemicalFilter, String> filter = ChemicalFilter.parse(new ObjectLuaTable(arguments.getTable(0)));
         if (filter.rightPresent())
             return MethodResult.of(null, filter.getRight());
 
@@ -226,7 +229,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (!isAvailable())
             return notConnected(null);
 
-        Pair<ItemFilter, String> filter = ItemFilter.parse(arguments.optTable(0, Collections.emptyMap()));
+        Pair<ItemFilter, String> filter = ItemFilter.parse(arguments.optTableUnsafe(0).orElse(EmptyLuaTable.INSTANCE));
         if (filter.rightPresent())
             return MethodResult.of(null, filter.getRight());
 
@@ -241,7 +244,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (!isAvailable())
             return notConnected(null);
 
-        Pair<FluidFilter, String> filter = FluidFilter.parse(arguments.optTable(0, Collections.emptyMap()));
+        Pair<FluidFilter, String> filter = FluidFilter.parse(arguments.optTableUnsafe(0).orElse(EmptyLuaTable.INSTANCE));
         if (filter.rightPresent())
             return MethodResult.of(null, filter.getRight());
 
@@ -259,7 +262,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (!APAddon.APP_MEKANISTICS.isLoaded())
             return MethodResult.of(null, StatusConstants.ADDON_NOT_LOADED.withInfo(APAddon.APP_MEKANISTICS.name()));
 
-        Pair<ChemicalFilter, String> filter = ChemicalFilter.parse(arguments.optTable(0, Collections.emptyMap()));
+        Pair<ChemicalFilter, String> filter = ChemicalFilter.parse(arguments.optTableUnsafe(0).orElse(EmptyLuaTable.INSTANCE));
         if (filter.rightPresent())
             return MethodResult.of(null, filter.getRight());
 
@@ -274,7 +277,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (!isAvailable())
             return notConnected(null);
 
-        Pair<ItemFilter, String> filter = ItemFilter.parse(arguments.optTable(0, Collections.emptyMap()));
+        Pair<ItemFilter, String> filter = ItemFilter.parse(arguments.optTableUnsafe(0).orElse(EmptyLuaTable.INSTANCE));
         if (filter.rightPresent())
             return MethodResult.of(null, filter.getRight());
 
@@ -289,7 +292,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (!isAvailable())
             return notConnected(null);
 
-        Pair<FluidFilter, String> filter = FluidFilter.parse(arguments.optTable(0, Collections.emptyMap()));
+        Pair<FluidFilter, String> filter = FluidFilter.parse(arguments.optTableUnsafe(0).orElse(EmptyLuaTable.INSTANCE));
         if (filter.rightPresent())
             return MethodResult.of(null, filter.getRight());
 
@@ -306,7 +309,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (!APAddon.APP_MEKANISTICS.isLoaded())
             return MethodResult.of(null, StatusConstants.ADDON_NOT_LOADED.withInfo(APAddon.APP_MEKANISTICS.name()));
 
-        Pair<ChemicalFilter, String> filter = ChemicalFilter.parse(arguments.optTable(0, Collections.emptyMap()));
+        Pair<ChemicalFilter, String> filter = ChemicalFilter.parse(arguments.optTableUnsafe(0).orElse(EmptyLuaTable.INSTANCE));
         if (filter.rightPresent())
             return MethodResult.of(null, filter.getRight());
 
@@ -442,10 +445,12 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
         // Expected input is a table with either an input table, an output table or both to filter for both
         // If no table is provided or it's empty, return every pattern
-        Map<?, ?> filterTable = arguments.optTable(0, Collections.emptyMap());
-        if (filterTable.isEmpty()) {
+        Optional<LuaTable<?, ?>> optFilter = arguments.optTableUnsafe(0);
+        if (optFilter.isEmpty()) {
             return MethodResult.of(AEApi.listPatterns(node.getGrid(), getLevel()));
         }
+
+        LuaTable<?, ?> filterTable = optFilter.get();
 
         boolean hasInputFilter = filterTable.containsKey("input");
         boolean hasOutputFilter = filterTable.containsKey("output");
@@ -459,12 +464,12 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         GenericFilter<?> outputFilter = null;
 
         if (hasInputFilter) {
-            Map<?, ?> inputFilterTable = TableHelper.getTableField(filterTable, "input");
+            LuaTable<?, ?> inputFilterTable = new ObjectLuaTable(filterTable.getTable("input"));
 
             inputFilter = GenericFilter.parseGeneric(inputFilterTable).getLeft();
         }
         if (hasOutputFilter) {
-            Map<?, ?> outputFilterTable = TableHelper.getTableField(filterTable, "output");
+            LuaTable<?, ?> outputFilterTable = new ObjectLuaTable(filterTable.getTable("output"));
 
             outputFilter = GenericFilter.parseGeneric(outputFilterTable).getLeft();
         }
@@ -681,7 +686,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (!isAvailable())
             return notConnected(null);
 
-        Pair<ItemFilter, String> filter = ItemFilter.parse(arguments.getTable(0));
+        Pair<ItemFilter, String> filter = ItemFilter.parse(new ObjectLuaTable(arguments.getTable(0)));
         if (filter.rightPresent())
             return MethodResult.of(null, filter.getRight());
 
@@ -713,7 +718,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (!isAvailable())
             return notConnected(null);
 
-        Pair<FluidFilter, String> filter = FluidFilter.parse(arguments.getTable(0));
+        Pair<FluidFilter, String> filter = FluidFilter.parse(new ObjectLuaTable(arguments.getTable(0)));
         if (filter.rightPresent())
             return MethodResult.of(null, filter.getRight());
 
@@ -744,7 +749,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (!APAddon.APP_MEKANISTICS.isLoaded())
             return MethodResult.of(null, StatusConstants.ADDON_NOT_LOADED.withInfo(APAddon.APP_MEKANISTICS.name()));
 
-        Pair<ChemicalFilter, String> filter = ChemicalFilter.parse(arguments.getTable(0));
+        Pair<ChemicalFilter, String> filter = ChemicalFilter.parse(new ObjectLuaTable(arguments.getTable(0)));
         if (filter.rightPresent())
             return MethodResult.of(null, filter.getRight());
 
@@ -811,7 +816,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
         ICraftingService craftingGrid = node.getGrid().getService(ICraftingService.class);
 
-        Pair<? extends GenericFilter<?>, String> filter = GenericFilter.parseGeneric(arguments.getTable(0));
+        Pair<? extends GenericFilter<?>, String> filter = GenericFilter.parseGeneric(new ObjectLuaTable(arguments.getTable(0)));
         if (filter.getRight() != null)
             return MethodResult.of(0, filter.getRight());
 
@@ -833,7 +838,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (!isAvailable())
             return notConnected(false);
 
-        Pair<? extends GenericFilter<?>, String> filter = GenericFilter.parseGeneric(arguments.getTable(0));
+        Pair<? extends GenericFilter<?>, String> filter = GenericFilter.parseGeneric(new ObjectLuaTable(arguments.getTable(0)));
         if (filter.getRight() != null)
             return MethodResult.of(false, filter.getRight());
 
@@ -852,7 +857,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
         ICraftingService grid = node.getGrid().getService(ICraftingService.class);
 
-        Pair<? extends GenericFilter<?>, String> filter = GenericFilter.parseGeneric(arguments.getTable(0));
+        Pair<? extends GenericFilter<?>, String> filter = GenericFilter.parseGeneric(new ObjectLuaTable(arguments.getTable(0)));
         if (filter.getRight() != null)
             return MethodResult.of(false, filter.getRight());
 

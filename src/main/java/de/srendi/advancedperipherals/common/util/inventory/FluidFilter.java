@@ -6,7 +6,7 @@ import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage.common.support.resource.FluidResource;
 import com.refinedmods.refinedstorage.neoforge.support.resource.VariantUtil;
 import dan200.computercraft.api.lua.LuaException;
-import dan200.computercraft.core.apis.TableHelper;
+import dan200.computercraft.api.lua.LuaTable;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.addons.APAddon;
 import de.srendi.advancedperipherals.common.util.DataComponentUtil;
@@ -38,7 +38,7 @@ public class FluidFilter extends GenericFilter<FluidStack> {
     private FluidFilter() {
     }
 
-    public static Pair<FluidFilter, String> parse(Map<?, ?> item) {
+    public static Pair<FluidFilter, String> parse(LuaTable<?, ?> item) {
         // If the map is empty, return a filter without any filters
         if (item.isEmpty())
             return Pair.of(EMPTY, null);
@@ -47,7 +47,7 @@ public class FluidFilter extends GenericFilter<FluidStack> {
 
         if (item.containsKey("name")) {
             try {
-                String name = TableHelper.getStringField(item, "name");
+                String name = item.getString("name");
                 if (name.startsWith("#")) {
                     fluidFilter.tag = TagKey.create(Registries.FLUID, ResourceLocation.parse(name.substring(1)));
                 } else if ((fluidFilter.fluid = ItemUtil.getRegistryEntry(name, BuiltInRegistries.FLUID)) == null) {
@@ -59,10 +59,10 @@ public class FluidFilter extends GenericFilter<FluidStack> {
         }
         if (item.containsKey("components")) {
             try {
-                fluidFilter.componentsAsNbt = NBTUtil.fromText(TableHelper.getStringField(item, "components"));
+                fluidFilter.componentsAsNbt = NBTUtil.fromText(item.getString( "components"));
             } catch (LuaException luaException) {
                 try {
-                    fluidFilter.componentsAsNbt = NBTUtil.fromText(TableHelper.getTableField(item, "components").toString());
+                    fluidFilter.componentsAsNbt = NBTUtil.fromText(item.getTable("components").toString());
                 } catch (LuaException e) {
                     return Pair.of(null, "NO_VALID_COMPONENTS");
                 }
@@ -70,14 +70,14 @@ public class FluidFilter extends GenericFilter<FluidStack> {
         }
         if (item.containsKey("fingerprint")) {
             try {
-                fluidFilter.fingerprint = TableHelper.getStringField(item, "fingerprint");
+                fluidFilter.fingerprint = item.getString("fingerprint");
             } catch (LuaException luaException) {
                 return Pair.of(null, "NO_VALID_FINGERPRINT");
             }
         }
         if (item.containsKey("count")) {
             try {
-                fluidFilter.count = TableHelper.getIntField(item, "count");
+                fluidFilter.count = item.getInt("count");
             } catch (LuaException luaException) {
                 return Pair.of(null, "NO_VALID_COUNT");
             }

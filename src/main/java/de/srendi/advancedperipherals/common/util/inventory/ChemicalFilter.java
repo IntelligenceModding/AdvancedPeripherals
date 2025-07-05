@@ -4,7 +4,7 @@ import appeng.api.stacks.GenericStack;
 import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage.mekanism.ChemicalResource;
 import dan200.computercraft.api.lua.LuaException;
-import dan200.computercraft.core.apis.TableHelper;
+import dan200.computercraft.api.lua.LuaTable;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.addons.APAddon;
 import de.srendi.advancedperipherals.common.addons.refinedstorage.RSApi;
@@ -32,7 +32,7 @@ public class ChemicalFilter extends GenericFilter<ChemicalStack> {
     private ChemicalFilter() {
     }
 
-    public static Pair<ChemicalFilter, String> parse(Map<?, ?> item) {
+    public static Pair<ChemicalFilter, String> parse(LuaTable<?, ?> item) {
         // If the map is empty, return a filter without any filters
         if (item.isEmpty())
             return Pair.of(EMPTY, null);
@@ -41,7 +41,7 @@ public class ChemicalFilter extends GenericFilter<ChemicalStack> {
 
         if (item.containsKey("name")) {
             try {
-                String name = TableHelper.getStringField(item, "name");
+                String name = item.getString("name");
                 if (name.startsWith("#")) {
                     chemicalFilter.tag = TagKey.create(MekanismAPI.CHEMICAL_REGISTRY_NAME, ResourceLocation.parse(name.substring(1)));
                 } else if ((chemicalFilter.chemical = MekanismAPI.CHEMICAL_REGISTRY.getHolder(ResourceLocation.parse(name)).orElse(null)) == null) {
@@ -53,28 +53,28 @@ public class ChemicalFilter extends GenericFilter<ChemicalStack> {
         }
         if (item.containsKey("fingerprint")) {
             try {
-                chemicalFilter.fingerprint = TableHelper.getStringField(item, "fingerprint");
+                chemicalFilter.fingerprint = item.getString("fingerprint");
             } catch (LuaException luaException) {
                 return Pair.of(null, "NO_VALID_FINGERPRINT");
             }
         }
         if (item.containsKey("fromSlot")) {
             try {
-                chemicalFilter.fromSlot = TableHelper.getIntField(item, "fromSlot");
+                chemicalFilter.fromSlot = item.getInt( "fromSlot");
             } catch (LuaException luaException) {
                 return Pair.of(null, "NO_VALID_FROMSLOT");
             }
         }
         if (item.containsKey("toSlot")) {
             try {
-                chemicalFilter.toSlot = TableHelper.getIntField(item, "toSlot");
+                chemicalFilter.toSlot = item.getInt( "toSlot");
             } catch (LuaException luaException) {
                 return Pair.of(null, "NO_VALID_TOSLOT");
             }
         }
         if (item.containsKey("count")) {
             try {
-                chemicalFilter.count = TableHelper.getIntField(item, "count");
+                chemicalFilter.count = item.getInt( "count");
             } catch (LuaException luaException) {
                 return Pair.of(null, "NO_VALID_COUNT");
             }

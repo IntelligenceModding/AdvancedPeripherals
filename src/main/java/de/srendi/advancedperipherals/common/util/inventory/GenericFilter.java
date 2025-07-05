@@ -2,6 +2,7 @@ package de.srendi.advancedperipherals.common.util.inventory;
 
 import appeng.api.stacks.GenericStack;
 import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
+import dan200.computercraft.api.lua.LuaTable;
 import de.srendi.advancedperipherals.common.addons.APAddon;
 import de.srendi.advancedperipherals.common.addons.mekanism.Mekanism;
 import de.srendi.advancedperipherals.common.util.Pair;
@@ -43,7 +44,7 @@ public abstract class GenericFilter<T> {
      * @param rawFilter The raw filter, which is a map of strings and objects
      * @return A pair of the parsed filter and an error message, if there is one
      */
-    public static Pair<? extends GenericFilter<?>, String> parseGeneric(Map<?, ?> rawFilter) {
+    public static Pair<? extends GenericFilter<?>, String> parseGeneric(LuaTable<?, ?> rawFilter) {
 
         if (rawFilter.containsKey("type") && rawFilter.get("type") instanceof String type) {
             if (type.equals("item"))

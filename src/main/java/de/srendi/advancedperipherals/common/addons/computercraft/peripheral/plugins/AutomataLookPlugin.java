@@ -3,9 +3,10 @@ package de.srendi.advancedperipherals.common.addons.computercraft.peripheral.plu
 import dan200.computercraft.api.lua.IArguments;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
+import dan200.computercraft.api.lua.LuaTable;
 import dan200.computercraft.api.lua.MethodResult;
-import dan200.computercraft.core.apis.TableHelper;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.TurtlePeripheralOwner;
+import de.srendi.advancedperipherals.common.util.EmptyLuaTable;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
 import de.srendi.advancedperipherals.common.util.fakeplayer.APFakePlayer;
 import de.srendi.advancedperipherals.lib.peripherals.AutomataCorePeripheral;
@@ -20,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 public class AutomataLookPlugin extends AutomataCorePlugin {
 
@@ -29,9 +31,13 @@ public class AutomataLookPlugin extends AutomataCorePlugin {
 
     @LuaFunction(mainThread = true)
     public final MethodResult lookAtBlock(@NotNull IArguments arguments) throws LuaException {
-        Map<?, ?> opts = arguments.count() > 0 ? arguments.getTable(0) : Collections.emptyMap();
-        float yaw = opts != null ? (float) TableHelper.optNumberField(opts, "yaw", 0) : 0;
-        float pitch = opts != null ? (float) TableHelper.optNumberField(opts, "pitch", 0) : 0;
+        Optional<LuaTable<?, ?>> optOptions = arguments.optTableUnsafe(0);
+        LuaTable<?, ?> options = EmptyLuaTable.INSTANCE;
+        if (optOptions.isPresent())
+            options = optOptions.get();
+
+        float yaw = options.optDouble("yaw").orElse(0d).floatValue();
+        float pitch = options.optDouble( "pitch").orElse(0d).floatValue();
 
         automataCore.addRotationCycle();
         TurtlePeripheralOwner owner = automataCore.getPeripheralOwner();
@@ -51,9 +57,13 @@ public class AutomataLookPlugin extends AutomataCorePlugin {
 
     @LuaFunction(mainThread = true)
     public final MethodResult lookAtEntity(@NotNull IArguments arguments) throws LuaException {
-        Map<?, ?> opts = arguments.count() > 0 ? arguments.getTable(0) : Collections.emptyMap();
-        float yaw = opts != null ? (float) TableHelper.optNumberField(opts, "yaw", 0) : 0;
-        float pitch = opts != null ? (float) TableHelper.optNumberField(opts, "pitch", 0) : 0;
+        Optional<LuaTable<?, ?>> optOptions = arguments.optTableUnsafe(0);
+        LuaTable<?, ?> options = EmptyLuaTable.INSTANCE;
+        if (optOptions.isPresent())
+            options = optOptions.get();
+
+        float yaw = options.optDouble("yaw").orElse(0d).floatValue();
+        float pitch = options.optDouble( "pitch").orElse(0d).floatValue();
 
         automataCore.addRotationCycle();
         HitResult result = automataCore.getPeripheralOwner().withPlayer(APFakePlayer.wrapActionWithRot(yaw, pitch, p -> p.findHit(false, true)));
