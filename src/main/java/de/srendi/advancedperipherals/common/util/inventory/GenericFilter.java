@@ -8,8 +8,6 @@ import de.srendi.advancedperipherals.common.addons.mekanism.Mekanism;
 import de.srendi.advancedperipherals.common.util.Pair;
 import net.minecraft.core.registries.BuiltInRegistries;
 
-import java.util.Map;
-
 public abstract class GenericFilter<T> {
 
     private static final GenericFilter<?> EMPTY = new GenericFilter<>() {

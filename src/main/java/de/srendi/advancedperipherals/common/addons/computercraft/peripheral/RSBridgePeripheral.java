@@ -19,7 +19,6 @@ import dan200.computercraft.api.lua.MethodResult;
 import dan200.computercraft.api.lua.ObjectLuaTable;
 import dan200.computercraft.api.peripheral.IComputerAccess;
 import de.srendi.advancedperipherals.common.addons.APAddon;
-import de.srendi.advancedperipherals.common.addons.appliedenergistics.AEApi;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.BlockEntityPeripheralOwner;
 import de.srendi.advancedperipherals.common.addons.refinedstorage.RSApi;
 import de.srendi.advancedperipherals.common.addons.refinedstorage.RSCraftJob;
@@ -45,7 +44,6 @@ import net.neoforged.neoforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;

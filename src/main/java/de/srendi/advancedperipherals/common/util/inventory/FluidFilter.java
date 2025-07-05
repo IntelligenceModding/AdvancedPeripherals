@@ -22,8 +22,6 @@ import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
 import net.neoforged.neoforge.fluids.FluidStack;
 
-import java.util.Map;
-
 public class FluidFilter extends GenericFilter<FluidStack> {
 
     public static final FluidFilter EMPTY = new FluidFilter();

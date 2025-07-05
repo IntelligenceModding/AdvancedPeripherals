@@ -16,8 +16,6 @@ import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 
-import java.util.Map;
-
 public class ChemicalFilter extends GenericFilter<ChemicalStack> {
 
     public static final ChemicalFilter EMPTY = new ChemicalFilter();
