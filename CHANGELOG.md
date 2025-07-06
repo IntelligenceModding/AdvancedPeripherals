@@ -6,6 +6,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+Due to some internal changes and fixes, the minimum version of neoforge was raised to 21.1.186, minecolonies to 1.1.1020-1.21.1-snapshot and CC:Tweaked to 1.116.0
+
+### Added
+- [#761] Added hungarian translation, thanks to @bayi!
+- [#757] Added UTF8 support to the chat box, thanks to @456dev!
+
+### Fixed
+- [#760] Fixed support with the latest CC version
+- Omit the data components property of lua item stack tables when an error occurred. This fixes a rare issue with the colony integrator when trying to parse enchantments. Fingerprints can be used to filter different enchanted items, that will eventually be fixe when we find a fix for it.
+- [#752] Fixed that export/import functions of the ME Bridge would return nil when the requested amount couldn't be exported
+
 ## [1.21.1-0.7.51b] - 2025-06-21
 
 ### Added
