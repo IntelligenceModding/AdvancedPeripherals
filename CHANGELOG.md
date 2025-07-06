@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+## [1.21.1-0.7.52b] - 2025-07-06
 
 Due to some internal changes and fixes, the minimum version of neoforge was raised to 21.1.186, minecolonies to 1.1.1020-1.21.1-snapshot and CC:Tweaked to 1.116.0
 
