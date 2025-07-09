@@ -20,7 +20,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 public class AutomataLookPlugin extends AutomataCorePlugin {
 

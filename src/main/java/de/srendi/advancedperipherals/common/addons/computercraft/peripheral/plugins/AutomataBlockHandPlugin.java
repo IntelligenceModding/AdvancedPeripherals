@@ -40,7 +40,6 @@ import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Optional;
 import java.util.stream.Stream;
 
 import static de.srendi.advancedperipherals.common.addons.computercraft.operations.SingleOperation.*;
