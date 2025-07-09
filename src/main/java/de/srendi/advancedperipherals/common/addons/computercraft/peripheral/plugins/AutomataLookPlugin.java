@@ -30,10 +30,7 @@ public class AutomataLookPlugin extends AutomataCorePlugin {
 
     @LuaFunction(mainThread = true)
     public final MethodResult lookAtBlock(@NotNull IArguments arguments) throws LuaException {
-        Optional<LuaTable<?, ?>> optOptions = arguments.optTableUnsafe(0);
-        LuaTable<?, ?> options = EmptyLuaTable.INSTANCE;
-        if (optOptions.isPresent())
-            options = optOptions.get();
+        LuaTable<?, ?> options = EmptyLuaTable.orEmpty(arguments.optTable(0).orElse(null));
 
         float yaw = options.optDouble("yaw").orElse(0d).floatValue();
         float pitch = options.optDouble( "pitch").orElse(0d).floatValue();
@@ -56,10 +53,7 @@ public class AutomataLookPlugin extends AutomataCorePlugin {
 
     @LuaFunction(mainThread = true)
     public final MethodResult lookAtEntity(@NotNull IArguments arguments) throws LuaException {
-        Optional<LuaTable<?, ?>> optOptions = arguments.optTableUnsafe(0);
-        LuaTable<?, ?> options = EmptyLuaTable.INSTANCE;
-        if (optOptions.isPresent())
-            options = optOptions.get();
+        LuaTable<?, ?> options = EmptyLuaTable.orEmpty(arguments.optTable(0).orElse(null));
 
         float yaw = options.optDouble("yaw").orElse(0d).floatValue();
         float pitch = options.optDouble( "pitch").orElse(0d).floatValue();

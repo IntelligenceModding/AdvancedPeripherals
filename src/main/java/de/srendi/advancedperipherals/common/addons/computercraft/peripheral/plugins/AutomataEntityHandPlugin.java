@@ -45,10 +45,7 @@ public class AutomataEntityHandPlugin extends AutomataCorePlugin {
 
     @LuaFunction(mainThread = true)
     public final MethodResult useOnAnimal(@NotNull IArguments arguments) throws LuaException {
-        Optional<LuaTable<?, ?>> optOptions = arguments.optTableUnsafe(0);
-        LuaTable<?, ?> options = EmptyLuaTable.INSTANCE;
-        if (optOptions.isPresent())
-            options = optOptions.get();
+        LuaTable<?, ?> options = EmptyLuaTable.orEmpty(arguments.optTable(0).orElse(null));
 
         boolean sneak = options.optBoolean("sneak").orElse(false);
         float yaw = options.optDouble("yaw").orElse(0d).floatValue();
@@ -68,10 +65,7 @@ public class AutomataEntityHandPlugin extends AutomataCorePlugin {
 
     @LuaFunction(mainThread = true)
     public final MethodResult inspectAnimal(@NotNull IArguments arguments) throws LuaException {
-        Optional<LuaTable<?, ?>> optOptions = arguments.optTableUnsafe(0);
-        LuaTable<?, ?> options = EmptyLuaTable.INSTANCE;
-        if (optOptions.isPresent())
-            options = optOptions.get();
+        LuaTable<?, ?> options = EmptyLuaTable.orEmpty(arguments.optTable(0).orElse(null));
 
         boolean sneak = options.optBoolean("sneak").orElse(false);
         float yaw = options.optDouble("yaw").orElse(0d).floatValue();
