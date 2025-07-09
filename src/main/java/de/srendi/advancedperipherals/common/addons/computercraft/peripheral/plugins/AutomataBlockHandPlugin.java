@@ -40,7 +40,6 @@ import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Optional;
 import java.util.stream.Stream;
 
 import static de.srendi.advancedperipherals.common.addons.computercraft.operations.SingleOperation.*;
@@ -58,10 +57,7 @@ public class AutomataBlockHandPlugin extends AutomataCorePlugin {
 
     @LuaFunction(mainThread = true)
     public final MethodResult digBlock(@NotNull IArguments arguments) throws LuaException {
-        Optional<LuaTable<?, ?>> optOptions = arguments.optTableUnsafe(0);
-        LuaTable<?, ?> options = EmptyLuaTable.INSTANCE;
-        if (optOptions.isPresent())
-            options = optOptions.get();
+        LuaTable<?, ?> options = EmptyLuaTable.orEmpty(arguments.optTable(0).orElse(null));
 
         boolean sneak = options.optBoolean("sneak").orElse(false);
         float yaw = options.optDouble("yaw").orElse(0d).floatValue();
@@ -84,10 +80,7 @@ public class AutomataBlockHandPlugin extends AutomataCorePlugin {
 
     @LuaFunction(mainThread = true)
     public final MethodResult useOnBlock(@NotNull IArguments arguments) throws LuaException {
-        Optional<LuaTable<?, ?>> optOptions = arguments.optTableUnsafe(0);
-        LuaTable<?, ?> options = EmptyLuaTable.INSTANCE;
-        if (optOptions.isPresent())
-            options = optOptions.get();
+        LuaTable<?, ?> options = EmptyLuaTable.orEmpty(arguments.optTable(0).orElse(null));
 
         boolean sneak = options.optBoolean("sneak").orElse(false);
         float yaw = options.optDouble("yaw").orElse(0d).floatValue();
@@ -121,8 +114,7 @@ public class AutomataBlockHandPlugin extends AutomataCorePlugin {
      */
     @LuaFunction(mainThread = true)
     public MethodResult placeBlock(@NotNull IArguments arguments) throws LuaException {
-        Optional<LuaTable<?, ?>> optOptions = arguments.optTableUnsafe(0);
-        final LuaTable<?, ?> options = optOptions.orElse(EmptyLuaTable.INSTANCE);
+        LuaTable<?, ?> options = EmptyLuaTable.orEmpty(arguments.optTable(0).orElse(null));
 
         ITurtleAccess turtle = automataCore.getPeripheralOwner().getTurtle();
         CompassPeripheral compassPeripheral = Stream.of(TurtleSide.values()).map(side -> turtle.getPeripheral(side) instanceof CompassPeripheral compass ? compass : null).filter(peripheral -> peripheral != null).findFirst().orElse(null);

@@ -46,7 +46,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwner<RSBridgeEntity>> implements IStorageSystemPeripheral {
 
@@ -251,7 +250,7 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (!isAvailable())
             return notConnected(null);
 
-        Pair<ItemFilter, String> filter = ItemFilter.parse(arguments.optTableUnsafe(0).orElse(EmptyLuaTable.INSTANCE));
+        Pair<ItemFilter, String> filter = ItemFilter.parse(EmptyLuaTable.orEmpty(arguments.optTable(0).orElse(null)));
         if (filter.rightPresent())
             return MethodResult.of(null, filter.getRight());
 
@@ -268,7 +267,7 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (!isAvailable())
             return notConnected(null);
 
-        Pair<FluidFilter, String> filter = FluidFilter.parse(arguments.optTableUnsafe(0).orElse(EmptyLuaTable.INSTANCE));
+        Pair<FluidFilter, String> filter = FluidFilter.parse(EmptyLuaTable.orEmpty(arguments.optTable(0).orElse(null)));
         if (filter.rightPresent())
             return MethodResult.of(null, filter.getRight());
 
@@ -288,7 +287,7 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (!APAddon.REFINEDSTORAGE_MEKANISM.isLoaded())
             return MethodResult.of(null, StatusConstants.ADDON_NOT_LOADED.withInfo("RS_MEKANISM"));
 
-        Pair<ChemicalFilter, String> filter = ChemicalFilter.parse(arguments.optTableUnsafe(0).orElse(EmptyLuaTable.INSTANCE));
+        Pair<ChemicalFilter, String> filter = ChemicalFilter.parse(EmptyLuaTable.orEmpty(arguments.optTable(0).orElse(null)));
         if (filter.rightPresent())
             return MethodResult.of(null, filter.getRight());
 
@@ -305,7 +304,7 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (!isAvailable())
             return notConnected(null);
 
-        Pair<ItemFilter, String> filter = ItemFilter.parse(arguments.optTableUnsafe(0).orElse(EmptyLuaTable.INSTANCE));
+        Pair<ItemFilter, String> filter = ItemFilter.parse(EmptyLuaTable.orEmpty(arguments.optTable(0).orElse(null)));
         if (filter.rightPresent())
             return MethodResult.of(null, filter.getRight());
 
@@ -322,7 +321,7 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (!isAvailable())
             return notConnected(null);
 
-        Pair<FluidFilter, String> filter = FluidFilter.parse(arguments.optTableUnsafe(0).orElse(EmptyLuaTable.INSTANCE));
+        Pair<FluidFilter, String> filter = FluidFilter.parse(EmptyLuaTable.orEmpty(arguments.optTable(0).orElse(null)));
         if (filter.rightPresent())
             return MethodResult.of(null, filter.getRight());
 
@@ -342,7 +341,7 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (!APAddon.REFINEDSTORAGE_MEKANISM.isLoaded())
             return MethodResult.of(null, StatusConstants.ADDON_NOT_LOADED.withInfo(APAddon.REFINEDSTORAGE_MEKANISM));
 
-        Pair<ChemicalFilter, String> filter = ChemicalFilter.parse(arguments.optTableUnsafe(0).orElse(EmptyLuaTable.INSTANCE));
+        Pair<ChemicalFilter, String> filter = ChemicalFilter.parse(EmptyLuaTable.orEmpty(arguments.optTable(0).orElse(null)));
         if (filter.rightPresent())
             return MethodResult.of(null, filter.getRight());
 
@@ -828,12 +827,10 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
         // Expected input is a table with either an input table, an output table or both to filter for both
         // If no table is provided or it's empty, return every pattern
-        Optional<LuaTable<?, ?>> optFilter = arguments.optTableUnsafe(0);
-        if (optFilter.isEmpty()) {
+        LuaTable<?, ?> filterTable = EmptyLuaTable.orEmpty(arguments.optTable(0).orElse(null));
+        if (filterTable.isEmpty()) {
             return MethodResult.of(RSApi.getPatterns(getNetwork()));
         }
-
-        LuaTable<?, ?> filterTable = optFilter.get();
 
         boolean hasInputFilter = filterTable.containsKey("input");
         boolean hasOutputFilter = filterTable.containsKey("output");
