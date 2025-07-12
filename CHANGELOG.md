@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+### Fixed
+- Fixed a crash at initializing when patchouli is not installed
+- Fixed that some Inventory Manager functions can't be wrapped
+
 ## [1.21.1-0.7.53b] - 2025-07-09
 
 ### Fixed
