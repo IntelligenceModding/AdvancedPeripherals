@@ -13,6 +13,17 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [1.21.1-0.7.52b] - 2025-07-06
 
+### Fixed
+- Fixed a crash at initializing when patchouli is not installed
+- Fixed that some Inventory Manager functions can't be wrapped
+
+## [1.21.1-0.7.53b] - 2025-07-09
+
+### Fixed
+- [#762] Fixed that several lua functions would throw a `IllegalStateException`
+
+## [1.21.1-0.7.52b] - 2025-07-06
+
 Due to some internal changes and fixes, the minimum version of neoforge was raised to 21.1.186, minecolonies to 1.1.1020-1.21.1-snapshot and CC:Tweaked to 1.116.0
 
 ### Added
