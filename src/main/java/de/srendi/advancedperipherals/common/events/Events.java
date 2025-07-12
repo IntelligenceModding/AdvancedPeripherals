@@ -18,8 +18,6 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.CommandEvent;
 import net.neoforged.neoforge.event.ServerChatEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
-import vazkii.patchouli.api.PatchouliAPI;
-import vazkii.patchouli.common.base.PatchouliAPIImpl;
 
 import java.util.function.Consumer;
 
@@ -43,7 +41,7 @@ public class Events {
         // See https://vazkiimods.github.io/Patchouli/docs/patchouli-basics/giving-new
         if (APConfig.WORLD_CONFIG.givePlayerBookOnJoin.get() && APAddon.PATCHOULI.isLoaded()) {
             if (!hasPlayedBefore(player)) {
-                PatchouliAPI.IPatchouliAPI patchouli = new PatchouliAPIImpl();
+                vazkii.patchouli.api.PatchouliAPI.IPatchouliAPI patchouli = vazkii.patchouli.api.PatchouliAPI.get();
                 ItemStack book = patchouli.getBookStack(AdvancedPeripherals.getRL("manual"));
                 player.addItem(book);
             }
