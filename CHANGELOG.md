@@ -7,12 +7,6 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 ## [1.21.1-0.7.54b] - 2025-07-12
-## [1.21.1-0.7.53b] - 2025-07-09
-
-### Fixed
-- [#762] Fixed that several lua functions would throw a `IllegalStateException`
-
-## [1.21.1-0.7.52b] - 2025-07-06
 
 ### Fixed
 - Fixed a crash at initializing when patchouli is not installed
