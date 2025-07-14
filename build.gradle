@@ -403,7 +403,7 @@ githubRelease {
         body = ""
     }
     draft = false
-    prerelease = !release_type.equalsIgnoreCase("release")
+    prerelease = release_type.equalsIgnoreCase("alpha")
 }
 
 modrinth {
