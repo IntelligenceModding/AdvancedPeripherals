@@ -122,10 +122,14 @@ public class OverlayGlassesFunctions implements IModuleFunctions {
         return MethodResult.of(overlayModule.getObjects().size());
     }
 
-    // TODO: This will crash on dedicated servers
     @LuaFunction
     public final MethodResult getSize() {
-        return MethodResult.of(Minecraft.getInstance().getWindow().getWidth(), Minecraft.getInstance().getWindow().getHeight());
+        return MethodResult.of(overlayModule.getScreenWidth(), overlayModule.getScreenHeight());
+    }
+
+    @LuaFunction
+    public final MethodResult getGuiScale() {
+        return MethodResult.of(overlayModule.getGuiScale());
     }
 
     @LuaFunction

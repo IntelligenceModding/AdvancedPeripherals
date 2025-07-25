@@ -2,6 +2,7 @@ package de.srendi.advancedperipherals.common.network;
 
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.network.base.IPacket;
+import de.srendi.advancedperipherals.common.network.toclient.OverlayModuleClientRequestPacket;
 import de.srendi.advancedperipherals.common.network.toclient.RenderableObjectBulkSyncPacket;
 import de.srendi.advancedperipherals.common.network.toclient.RenderableObjectClearPacket;
 import de.srendi.advancedperipherals.common.network.toclient.RenderableObjectDeletePacket;
@@ -9,6 +10,7 @@ import de.srendi.advancedperipherals.common.network.toclient.RenderableObjectSyn
 import de.srendi.advancedperipherals.common.network.toclient.SaddleTurtleInfoPacket;
 import de.srendi.advancedperipherals.common.network.toclient.ToastToClientPacket;
 import de.srendi.advancedperipherals.common.network.toserver.GlassesHotkeyPacket;
+import de.srendi.advancedperipherals.common.network.toserver.OverlayModuleClientInfoPacket;
 import de.srendi.advancedperipherals.common.network.toserver.SaddleTurtleControlPacket;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
@@ -44,8 +46,11 @@ public class APNetworking {
         registerServerToClient(RenderableObjectDeletePacket.class, RenderableObjectDeletePacket::decode);
         registerServerToClient(RenderableObjectClearPacket.class, RenderableObjectClearPacket::decode);
         registerServerToClient(RenderableObjectBulkSyncPacket.class, RenderableObjectBulkSyncPacket::decode);
+        registerServerToClient(OverlayModuleClientRequestPacket.class, OverlayModuleClientRequestPacket::decode);
+
         registerClientToServer(GlassesHotkeyPacket.class, GlassesHotkeyPacket::decode);
         registerClientToServer(SaddleTurtleControlPacket.class, SaddleTurtleControlPacket::decode);
+        registerClientToServer(OverlayModuleClientInfoPacket.class, OverlayModuleClientInfoPacket::decode);
     }
 
     public static <MSG extends IPacket> void registerServerToClient(Class<MSG> packet, Function<FriendlyByteBuf, MSG> decode) {
