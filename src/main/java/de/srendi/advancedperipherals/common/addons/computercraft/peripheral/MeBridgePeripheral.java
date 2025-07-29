@@ -11,6 +11,7 @@ import dan200.computercraft.api.lua.IArguments;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.lua.MethodResult;
+import dan200.computercraft.api.lua.ObjectLuaTable;
 import dan200.computercraft.api.peripheral.IComputerAccess;
 import de.srendi.advancedperipherals.common.addons.appliedenergistics.AppEngApi;
 import de.srendi.advancedperipherals.common.addons.appliedenergistics.CraftJob;
@@ -70,7 +71,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     protected MethodResult exportToChest(@NotNull IArguments arguments, @Nullable IItemHandler targetInventory) throws LuaException {
         MEStorage monitor = AppEngApi.getMonitor(node);
         MeItemHandler itemHandler = new MeItemHandler(monitor, tile);
-        Pair<ItemFilter, String> filter = ItemFilter.parse(arguments.getTable(0));
+        Pair<ItemFilter, String> filter = ItemFilter.parse(new ObjectLuaTable(arguments.getTable(0)));
 
         if (filter.rightPresent())
             return MethodResult.of(0, filter.getRight());
@@ -91,7 +92,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     protected MethodResult exportToTank(@NotNull IArguments arguments, @Nullable IFluidHandler targetTank) throws LuaException {
         MEStorage monitor = AppEngApi.getMonitor(node);
         MeFluidHandler fluidHandler = new MeFluidHandler(monitor, tile);
-        Pair<FluidFilter, String> filter = FluidFilter.parse(arguments.getTable(0));
+        Pair<FluidFilter, String> filter = FluidFilter.parse(new ObjectLuaTable(arguments.getTable(0)));
 
         if (filter.rightPresent())
             return MethodResult.of(0, filter.getRight());
@@ -112,7 +113,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     protected MethodResult importToME(@NotNull IArguments arguments, @Nullable IItemHandler targetInventory) throws LuaException {
         MEStorage monitor = AppEngApi.getMonitor(node);
         MeItemHandler itemHandler = new MeItemHandler(monitor, tile);
-        Pair<ItemFilter, String> filter = ItemFilter.parse(arguments.getTable(0));
+        Pair<ItemFilter, String> filter = ItemFilter.parse(new ObjectLuaTable(arguments.getTable(0)));
 
         if (filter.rightPresent())
             return MethodResult.of(0, filter.getRight());
@@ -133,7 +134,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     protected MethodResult importToME(@NotNull IArguments arguments, @Nullable IFluidHandler targetTank) throws LuaException {
         MEStorage monitor = AppEngApi.getMonitor(node);
         MeFluidHandler fluidHandler = new MeFluidHandler(monitor, tile);
-        Pair<FluidFilter, String> filter = FluidFilter.parse(arguments.getTable(0));
+        Pair<FluidFilter, String> filter = FluidFilter.parse(new ObjectLuaTable(arguments.getTable(0)));
 
         if (filter.rightPresent())
             return MethodResult.of(0, filter.getRight());
@@ -158,7 +159,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (!isConnected())
             return notConnected();
 
-        Pair<ItemFilter, String> filter = ItemFilter.parse(arguments.getTable(0));
+        Pair<ItemFilter, String> filter = ItemFilter.parse(new ObjectLuaTable(arguments.getTable(0)));
         if (filter.rightPresent())
             return MethodResult.of(false, filter.getRight());
 
@@ -187,7 +188,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (!isConnected())
             return notConnected();
 
-        Pair<FluidFilter, String> filter = FluidFilter.parse(arguments.getTable(0));
+        Pair<FluidFilter, String> filter = FluidFilter.parse(new ObjectLuaTable(arguments.getTable(0)));
         if (filter.rightPresent())
             return MethodResult.of(false, filter.getRight());
 
@@ -260,7 +261,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         MEStorage monitor = AppEngApi.getMonitor(node);
         ICraftingService grid = node.getGrid().getService(ICraftingService.class);
 
-        Pair<ItemFilter, String> filter = ItemFilter.parse(arguments.getTable(0));
+        Pair<ItemFilter, String> filter = ItemFilter.parse(new ObjectLuaTable(arguments.getTable(0)));
         if (filter.rightPresent())
             return MethodResult.of(false, filter.getRight());
 
@@ -278,7 +279,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (!isConnected())
             return notConnected();
 
-        Pair<ItemFilter, String> filter = ItemFilter.parse(arguments.getTable(0));
+        Pair<ItemFilter, String> filter = ItemFilter.parse(new ObjectLuaTable(arguments.getTable(0)));
         if (filter.rightPresent())
             return MethodResult.of(false, filter.getRight());
 
@@ -299,7 +300,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         MEStorage monitor = AppEngApi.getMonitor(node);
         ICraftingService grid = node.getGrid().getService(ICraftingService.class);
 
-        Pair<FluidFilter, String> filter = FluidFilter.parse(arguments.getTable(0));
+        Pair<FluidFilter, String> filter = FluidFilter.parse(new ObjectLuaTable(arguments.getTable(0)));
         if (filter.rightPresent())
             return MethodResult.of(false, filter.getRight());
 
@@ -317,7 +318,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (!isConnected())
             return notConnected();
 
-        Pair<FluidFilter, String> filter = FluidFilter.parse(arguments.getTable(0));
+        Pair<FluidFilter, String> filter = FluidFilter.parse(new ObjectLuaTable(arguments.getTable(0)));
         if (filter.rightPresent())
             return MethodResult.of(false, filter.getRight());
 
@@ -412,7 +413,7 @@ public class MeBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
             return notConnected();
 
         MEStorage monitor = AppEngApi.getMonitor(node);
-        Pair<ItemFilter, String> filter = ItemFilter.parse(arguments.getTable(0));
+        Pair<ItemFilter, String> filter = ItemFilter.parse(new ObjectLuaTable(arguments.getTable(0)));
         if (filter.rightPresent())
             return MethodResult.of(null, filter.getRight());
 

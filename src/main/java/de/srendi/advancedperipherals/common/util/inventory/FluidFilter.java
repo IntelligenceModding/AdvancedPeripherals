@@ -1,7 +1,7 @@
 package de.srendi.advancedperipherals.common.util.inventory;
 
 import dan200.computercraft.api.lua.LuaException;
-import dan200.computercraft.core.apis.TableHelper;
+import dan200.computercraft.api.lua.LuaTable;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.util.NBTUtil;
 import de.srendi.advancedperipherals.common.util.Pair;
@@ -15,8 +15,6 @@ import net.minecraft.world.level.material.Fluids;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.registries.ForgeRegistries;
 
-import java.util.Map;
-
 public class FluidFilter {
 
     private Fluid fluid = Fluids.EMPTY;
@@ -28,14 +26,14 @@ public class FluidFilter {
     private FluidFilter() {
     }
 
-    public static Pair<FluidFilter, String> parse(Map<?, ?> item) {
+    public static Pair<FluidFilter, String> parse(LuaTable<?, ?> item) {
         FluidFilter fluidFilter = empty();
         // If the map is empty, return a filter without any filters
         if (item.isEmpty())
             return Pair.of(fluidFilter, null);
         if (item.containsKey("name")) {
             try {
-                String name = TableHelper.getStringField(item, "name");
+                String name = item.getString("name");
                 if (name.startsWith("#")) {
                     fluidFilter.tag = TagKey.create(Registries.FLUID, new ResourceLocation(name.substring(1)));
                 } else if ((fluidFilter.fluid = ItemUtil.getRegistryEntry(name, ForgeRegistries.FLUIDS)) == null) {
@@ -47,21 +45,22 @@ public class FluidFilter {
         }
         if (item.containsKey("nbt")) {
             try {
-                fluidFilter.nbt = NBTUtil.fromText(TableHelper.getStringField(item, "nbt"));
+                fluidFilter.nbt = NBTUtil.fromText(item.getString("nbt"));
             } catch (LuaException luaException) {
                 return Pair.of(null, "NO_VALID_NBT");
             }
         }
         if (item.containsKey("fingerprint")) {
             try {
-                fluidFilter.fingerprint = TableHelper.getStringField(item, "fingerprint");
+                fluidFilter.fingerprint = item.getString("fingerprint");
             } catch (LuaException luaException) {
                 return Pair.of(null, "NO_VALID_FINGERPRINT");
             }
         }
         if (item.containsKey("count")) {
             try {
-                fluidFilter.count = TableHelper.getIntField(item, "count");
+                fluidFilter.count = item
+                        .getInt("count");
             } catch (LuaException luaException) {
                 return Pair.of(null, "NO_VALID_COUNT");
             }

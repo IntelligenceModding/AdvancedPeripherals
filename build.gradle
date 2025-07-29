@@ -178,7 +178,7 @@ repositories {
     }
     maven {
         name = "Squiddev maven cct"
-        url = 'https://squiddev.cc/maven/'
+        url = 'https://maven.squiddev.cc'
         content {
             includeGroup("cc.tweaked")
             includeModule("org.squiddev", "Cobalt")

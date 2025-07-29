@@ -89,9 +89,8 @@ public class APCommands {
         TableBuilder table = new TableBuilder("ChunkyTurtles", "Computer", "Position");
 
         ServerComputer[] computers = ServerContext.get(source.getServer()).registry().getComputers().stream().filter((computer) -> {
-            Environment env = computer.getComputer().getEnvironment();
             for (ComputerSide side : ComputerSide.values()) {
-                if (env.getPeripheral(side) instanceof ChunkyPeripheral) {
+                if (computer.getPeripheral(side) instanceof ChunkyPeripheral) {
                     return true;
                 }
             }

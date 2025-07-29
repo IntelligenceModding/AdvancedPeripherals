@@ -1,7 +1,7 @@
 package de.srendi.advancedperipherals.common.util.inventory;
 
 import dan200.computercraft.api.lua.LuaException;
-import dan200.computercraft.core.apis.TableHelper;
+import dan200.computercraft.api.lua.LuaTable;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.util.NBTUtil;
 import de.srendi.advancedperipherals.common.util.Pair;
@@ -14,8 +14,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraftforge.registries.ForgeRegistries;
-
-import java.util.Map;
 
 public class ItemFilter {
 
@@ -30,14 +28,14 @@ public class ItemFilter {
     private ItemFilter() {
     }
 
-    public static Pair<ItemFilter, String> parse(Map<?, ?> item) {
+    public static Pair<ItemFilter, String> parse(LuaTable<?, ?> item) {
         ItemFilter itemFilter = empty();
         // If the map is empty, return a filter without any filters
         if (item.isEmpty())
             return Pair.of(itemFilter, null);
         if (item.containsKey("name")) {
             try {
-                String name = TableHelper.getStringField(item, "name");
+                String name = item.getString("name");
                 if (name.startsWith("#")) {
                     itemFilter.tag = TagKey.create(Registries.ITEM, new ResourceLocation(name.substring(1)));
                 } else if ((itemFilter.item = ItemUtil.getRegistryEntry(name, ForgeRegistries.ITEMS)) == null) {
@@ -49,10 +47,10 @@ public class ItemFilter {
         }
         if (item.containsKey("nbt")) {
             try {
-                itemFilter.nbt = NBTUtil.fromText(TableHelper.getStringField(item, "nbt"));
+                itemFilter.nbt = NBTUtil.fromText(item.getString("nbt"));
             } catch (LuaException luaException) {
                 try {
-                    itemFilter.nbt = NBTUtil.fromText(TableHelper.getTableField(item, "nbt").toString());
+                    itemFilter.nbt = NBTUtil.fromText(item.getTable("nbt").toString());
                 } catch (LuaException e) {
                     return Pair.of(null, "NO_VALID_NBT");
                 }
@@ -60,28 +58,28 @@ public class ItemFilter {
         }
         if (item.containsKey("fingerprint")) {
             try {
-                itemFilter.fingerprint = TableHelper.getStringField(item, "fingerprint");
+                itemFilter.fingerprint = item.getString("fingerprint");
             } catch (LuaException luaException) {
                 return Pair.of(null, "NO_VALID_FINGERPRINT");
             }
         }
         if (item.containsKey("fromSlot")) {
             try {
-                itemFilter.fromSlot = TableHelper.getIntField(item, "fromSlot");
+                itemFilter.fromSlot = item.getInt("fromSlot");
             } catch (LuaException luaException) {
                 return Pair.of(null, "NO_VALID_FROMSLOT");
             }
         }
         if (item.containsKey("toSlot")) {
             try {
-                itemFilter.toSlot = TableHelper.getIntField(item, "toSlot");
+                itemFilter.toSlot = item.getInt("toSlot");
             } catch (LuaException luaException) {
                 return Pair.of(null, "NO_VALID_TOSLOT");
             }
         }
         if (item.containsKey("count")) {
             try {
-                itemFilter.count = TableHelper.getIntField(item, "count");
+                itemFilter.count = item.getInt("count");
             } catch (LuaException luaException) {
                 return Pair.of(null, "NO_VALID_COUNT");
             }

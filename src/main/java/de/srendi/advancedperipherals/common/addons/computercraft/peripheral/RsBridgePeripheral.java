@@ -8,6 +8,7 @@ import dan200.computercraft.api.lua.IArguments;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.lua.MethodResult;
+import dan200.computercraft.api.lua.ObjectLuaTable;
 import dan200.computercraft.api.peripheral.IComputerAccess;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.BlockEntityPeripheralOwner;
@@ -157,7 +158,7 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (!isConnected())
             return notConnected();
 
-        Pair<ItemFilter, String> filter = ItemFilter.parse(arguments.getTable(0));
+        Pair<ItemFilter, String> filter = ItemFilter.parse(new ObjectLuaTable(arguments.getTable(0)));
         if (filter.rightPresent())
             return MethodResult.of(false, filter.getRight());
 
@@ -175,7 +176,7 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (targetInventory == null)
             return MethodResult.of(0, "INVALID_TARGET");
 
-        Pair<ItemFilter, String> filter = ItemFilter.parse(arguments.getTable(0));
+        Pair<ItemFilter, String> filter = ItemFilter.parse(new ObjectLuaTable(arguments.getTable(0)));
         if (filter.rightPresent())
             return MethodResult.of(0, filter.getRight());
 
@@ -187,7 +188,7 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (targetInventory == null)
             return MethodResult.of(0, "INVALID_TARGET");
 
-        Pair<ItemFilter, String> filter = ItemFilter.parse(arguments.getTable(0));
+        Pair<ItemFilter, String> filter = ItemFilter.parse(new ObjectLuaTable(arguments.getTable(0)));
         if (filter.rightPresent())
             return MethodResult.of(0, filter.getRight());
 
@@ -199,7 +200,7 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (targetInventory == null)
             return MethodResult.of(0, "INVALID_TARGET");
 
-        Pair<FluidFilter, String> filter = FluidFilter.parse(arguments.getTable(0));
+        Pair<FluidFilter, String> filter = FluidFilter.parse(new ObjectLuaTable(arguments.getTable(0)));
         if (filter.rightPresent())
             return MethodResult.of(0, filter.getRight());
 
@@ -211,7 +212,7 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (targetInventory == null)
             return MethodResult.of(0, "INVALID_TARGET");
 
-        Pair<FluidFilter, String> filter = FluidFilter.parse(arguments.getTable(0));
+        Pair<FluidFilter, String> filter = FluidFilter.parse(new ObjectLuaTable(arguments.getTable(0)));
         if (filter.rightPresent())
             return MethodResult.of(0, filter.getRight());
 
@@ -295,7 +296,7 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (!isConnected())
             return notConnected();
 
-        Pair<ItemFilter, String> filter = ItemFilter.parse(arguments.getTable(0));
+        Pair<ItemFilter, String> filter = ItemFilter.parse(new ObjectLuaTable(arguments.getTable(0)));
         if (filter.rightPresent())
             return MethodResult.of(null, filter.getRight());
 
@@ -311,7 +312,7 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
             return notConnected();
 
 
-        Pair<ItemFilter, String> filter = ItemFilter.parse(arguments.getTable(0));
+        Pair<ItemFilter, String> filter = ItemFilter.parse(new ObjectLuaTable(arguments.getTable(0)));
         if (filter.rightPresent())
             return MethodResult.of(null, filter.getRight());
 
@@ -332,7 +333,7 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (!isConnected())
             return notConnected();
 
-        Pair<FluidFilter, String> filter = FluidFilter.parse(arguments.getTable(0));
+        Pair<FluidFilter, String> filter = FluidFilter.parse(new ObjectLuaTable(arguments.getTable(0)));
         if (filter.rightPresent())
             return MethodResult.of(null, filter.getRight());
 
@@ -353,7 +354,7 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     public final MethodResult isItemCrafting(IArguments arguments) throws LuaException {
         if (!isConnected())
             return notConnected();
-        Pair<ItemFilter, String> filter = ItemFilter.parse(arguments.getTable(0));
+        Pair<ItemFilter, String> filter = ItemFilter.parse(new ObjectLuaTable(arguments.getTable(0)));
         if (filter.rightPresent())
             return MethodResult.of(null, filter.getRight());
 
@@ -374,7 +375,7 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (!isConnected())
             return notConnected();
 
-        Pair<ItemFilter, String> filter = ItemFilter.parse(arguments.getTable(0));
+        Pair<ItemFilter, String> filter = ItemFilter.parse(new ObjectLuaTable(arguments.getTable(0)));
         if (filter.rightPresent())
             return MethodResult.of(false, filter.getRight());
 
