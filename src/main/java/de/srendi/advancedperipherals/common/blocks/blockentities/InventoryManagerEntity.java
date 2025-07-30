@@ -100,6 +100,8 @@ public class InventoryManagerEntity extends PeripheralBlockEntity<InventoryManag
     }
 
     public void updateClient() {
+        if (level.isClientSide())
+            return;
         APNetworking.sendToAllAround(new InventoryManagerUpdatePacket(owner != null, this.owner, this.getBlockPos()), this.getLevel().dimension(), this.getBlockPos(), 10);
     }
 
