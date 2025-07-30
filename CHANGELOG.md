@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+### Fixed
+- Added Support for the latest CC:T version, bumped minimum to 1.116.1
+- [#768] Prevent client side crash when inserting memory cards into the inventory manager
+
 ## [1.20.1-0.7.44r] - 2025-06-06
 
 ### Fixed
