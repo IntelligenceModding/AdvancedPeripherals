@@ -105,9 +105,13 @@ public class AutomataWarpingPlugin extends AutomataCorePlugin {
         if (pairData.leftPresent())
             return pairData.getLeft();
 
+        CompoundTag data = pairData.getRight();
+
+        if (!data.contains(name))
+            return MethodResult.of(null, "Cannot find point to teleport");
+
         TurtlePeripheralOwner owner = automataCore.getPeripheralOwner();
         Level level = owner.getLevel();
-        CompoundTag data = pairData.getRight();
         BlockPos newPosition = NBTUtil.blockPosFromNBT(data.getCompound(name));
         return automataCore.withOperation(WARP, automataCore.toDistance(newPosition), context -> {
             boolean result = owner.move(level, newPosition);
