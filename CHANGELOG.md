@@ -10,6 +10,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Fixed
 - Added Support for the latest CC:T version, bumped minimum to 1.116.1
 - [#768] Prevent client side crash when inserting memory cards into the inventory manager
+- [#766] Return nil instead of teleporting to 0,0,0 when a warp point does not exist in a end automata turtle
 
 ## [1.20.1-0.7.44r] - 2025-06-06
 
