@@ -6,7 +6,6 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 
 import dan200.computercraft.core.computer.ComputerSide;
-import dan200.computercraft.core.computer.Environment;
 import dan200.computercraft.shared.ModRegistry;
 import dan200.computercraft.shared.command.text.ChatHelpers;
 import dan200.computercraft.shared.command.text.TableBuilder;

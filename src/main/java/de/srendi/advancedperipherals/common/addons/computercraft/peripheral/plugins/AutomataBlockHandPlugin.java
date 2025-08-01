@@ -40,8 +40,7 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import java.util.Collections;
-import java.util.Map;
+
 import java.util.Optional;
 import java.util.stream.Stream;
 
