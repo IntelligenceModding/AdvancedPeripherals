@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+## [1.20.1-0.7.45r] - 2025-08-02
 
 ### Fixed
 - Added Support for the latest CC:T version, bumped minimum to 1.116.1
