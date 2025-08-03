@@ -6,8 +6,6 @@ import de.srendi.advancedperipherals.common.blocks.base.PeripheralBlockEntity;
 import de.srendi.advancedperipherals.common.container.InventoryManagerContainer;
 import de.srendi.advancedperipherals.common.items.MemoryCardItem;
 import de.srendi.advancedperipherals.common.setup.BlockEntityTypes;
-import de.srendi.advancedperipherals.network.APNetworking;
-import de.srendi.advancedperipherals.network.toclient.InventoryManagerUpdatePacket;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -39,9 +37,6 @@ public class InventoryManagerEntity extends PeripheralBlockEntity<InventoryManag
 
     @Override
     public InventoryManagerContainer createContainer(int id, Inventory playerInventory, BlockPos pos, Level world) {
-        // Update the clients instance of the inventory manager so the UI shows the correct owner
-        updateClient();
-
         return new InventoryManagerContainer(id, playerInventory, pos, world);
     }
 
@@ -58,6 +53,7 @@ public class InventoryManagerEntity extends PeripheralBlockEntity<InventoryManag
 
     @Override
     public void setItem(int index, @NotNull ItemStack stack) {
+        boolean shouldClearOwner = false;
         if (stack.getItem() instanceof MemoryCardItem) {
             if (stack.hasTag() && stack.getTag().contains("ownerId")) {
                 UUID owner = stack.getTag().getUUID("ownerId");
@@ -66,12 +62,14 @@ public class InventoryManagerEntity extends PeripheralBlockEntity<InventoryManag
                 stack.getTag().remove("owner");
             } else if (stack != this.getItem(index)) {
                 // Only clear owner when the new card item is not the current item
-                this.owner = null;
+                shouldClearOwner = true;
             }
         } else {
-            owner = null;
+            shouldClearOwner = true;
         }
-        updateClient();
+        if (shouldClearOwner && this.getLevel() != null && !this.getLevel().isClientSide) {
+            this.owner = null;
+        }
         super.setItem(index, stack);
     }
 
@@ -87,22 +85,24 @@ public class InventoryManagerEntity extends PeripheralBlockEntity<InventoryManag
             this.owner = data.getUUID("ownerId");
         }
         super.load(data);
-        // Fresh the memory card for backward compatibility
-        this.setItem(0, this.getItem(0));
     }
 
     @Override
-    public void saveAdditional(@NotNull CompoundTag data) {
-        super.saveAdditional(data);
+    protected void saveShared(@NotNull CompoundTag data) {
+        super.saveShared(data);
         if (this.owner != null) {
             data.putUUID("ownerId", this.owner);
         }
     }
 
-    public void updateClient() {
-        if (level.isClientSide())
-            return;
-        APNetworking.sendToAllAround(new InventoryManagerUpdatePacket(owner != null, this.owner, this.getBlockPos()), this.getLevel().dimension(), this.getBlockPos(), 10);
+    @Override
+    public void onLoad() {
+        super.onLoad();
+        // Fresh the memory card for backward compatibility
+        // TODO: remove in 0.8
+        if (!this.getLevel().isClientSide) {
+            this.setItem(0, this.getItem(0));
+        }
     }
 
     public Player getOwnerPlayer() {
@@ -113,11 +113,11 @@ public class InventoryManagerEntity extends PeripheralBlockEntity<InventoryManag
         return player;
     }
 
-    public void setOwner(UUID owner) {
-        this.owner = owner;
-    }
-
     public UUID getOwner() {
         return owner;
+    }
+
+    public void setOwner(UUID owner) {
+        this.owner = owner;
     }
 }
