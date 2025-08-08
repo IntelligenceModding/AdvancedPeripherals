@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+### Fixed
+- [#775] Added support for the latest RS2 version, fixes a crash when trying to submit a crafting job. Min RS2 version is now beta 8
+
 ## [1.21.1-0.7.55b] - 2025-07-14
 
 ### Fixed
