@@ -1,5 +1,6 @@
 package de.srendi.advancedperipherals.common.addons.refinedstorage;
 
+import com.refinedmods.refinedstorage.api.autocrafting.calculation.CancellationToken;
 import com.refinedmods.refinedstorage.api.autocrafting.preview.Preview;
 import com.refinedmods.refinedstorage.api.autocrafting.preview.PreviewType;
 import com.refinedmods.refinedstorage.api.autocrafting.status.TaskStatus;
@@ -210,7 +211,7 @@ public class RSCraftJob extends BasicCraftJob {
 
         // How RS2 handles crafting is a bit cursed. We first create a preview which calculates the recipes, and then we check if the preview was successful
         // If it was, we again start a task which again calculates the recipes, and then we hope nothing changed from the first calculation
-        futureTask = autocraftingComponent.startTask(toCraft, amount, Actor.EMPTY, false);
+        futureTask = autocraftingComponent.startTask(toCraft, amount, Actor.EMPTY, false, CancellationToken.NONE);
     }
 
     @Override
@@ -225,7 +226,7 @@ public class RSCraftJob extends BasicCraftJob {
             return;
         }
 
-        futureCalculationResult = autocraftingComponent.getPreview(toCraft, amount);
+        futureCalculationResult = autocraftingComponent.getPreview(toCraft, amount, CancellationToken.NONE);
         fireEvent(false, StatusConstants.CALCULATION_STARTED);
     }
 
