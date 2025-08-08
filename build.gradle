@@ -160,6 +160,10 @@ repositories {
         }
     }
     maven {
+        name = "TerraformersMC EMI"
+        url = "https://maven.terraformersmc.com/"
+    }
+    maven {
         name = "SirEdvin's private repository"
         url = "https://repo.repsy.io/mvn/siredvin/default"
         content {
@@ -282,8 +286,8 @@ dependencies {
 
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junit_version}"
     // Testing stuff
-    // JEI
-    implementation "mezz.jei:jei-${jei_version}"
+    // EMI
+    runtimeOnly "dev.emi:emi-neoforge:${emi_version}"
 }
 
 
