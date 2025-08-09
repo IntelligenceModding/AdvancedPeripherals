@@ -16,6 +16,7 @@ import com.refinedmods.refinedstorage.apiimpl.API;
 import com.refinedmods.refinedstorage.apiimpl.network.node.NetworkNode;
 import com.refinedmods.refinedstorage.apiimpl.network.node.diskdrive.DiskDriveNetworkNode;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
+import de.srendi.advancedperipherals.common.blocks.blockentities.RSBridgeEntity;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
 import de.srendi.advancedperipherals.common.util.Pair;
 import de.srendi.advancedperipherals.common.util.inventory.FluidFilter;
@@ -54,11 +55,11 @@ public class RSApi {
         return node;
     }
 
-    public static ItemStack findStackFromStack(INetwork network, @Nullable ICraftingManager crafting, ItemStack item) {
-        return findStackFromFilter(network, crafting, ItemFilter.fromStack(item));
+    public static ItemStack findItemFromStack(INetwork network, @Nullable ICraftingManager crafting, ItemStack item) {
+        return findItemFromFilter(network, crafting, ItemFilter.fromStack(item));
     }
 
-    public static ItemStack findStackFromFilter(INetwork network, @Nullable ICraftingManager crafting, ItemFilter filter) {
+    public static ItemStack findItemFromFilter(INetwork network, @Nullable ICraftingManager crafting, ItemFilter filter) {
         for (StackListEntry<ItemStack> temp : network.getItemStorageCache().getList().getStacks()) {
             if (filter.test(temp.getStack()))
                 return temp.getStack().copy();
@@ -370,11 +371,11 @@ public class RSApi {
         return diskDrives;
     }
 
-    public static List<Object> getCraftingTasks(INetwork network) {
+    public static List<Object> getCraftingTasks(INetwork network, RSBridgeEntity entity) {
         List<Object> tasks = new ArrayList<>();
 
-        for (ICraftingTask task : network.getCraftingManager().getTasks()) {
-            tasks.add(parseCraftingTask(task, network));
+        for (RSCraftJob task : entity.getJobs()) {
+            tasks.add(parseCraftingTask(task.getCraftingTask(), network));
         }
 
         return tasks;

@@ -19,11 +19,13 @@ import appeng.api.storage.IStorageProvider;
 import appeng.api.storage.MEStorage;
 import appeng.api.storage.cells.IBasicCellItem;
 import appeng.blockentity.storage.DriveBlockEntity;
+import appeng.crafting.execution.CraftingCpuLogic;
 import appeng.crafting.pattern.EncodedPatternItem;
 import appeng.helpers.iface.PatternContainer;
 import appeng.items.storage.BasicStorageCell;
 import appeng.me.cells.BasicCellHandler;
 import appeng.me.cells.BasicCellInventory;
+import appeng.me.cluster.implementations.CraftingCPUCluster;
 import appeng.parts.storagebus.StorageBusPart;
 import com.the9grounds.aeadditions.item.storage.StorageCell;
 import com.the9grounds.aeadditions.item.storage.SuperStorageCell;
@@ -290,6 +292,14 @@ public class AEApi {
         return Collections.emptyMap();
     }
 
+    public static List<Object> parseKeyCounter(KeyCounter counter) {
+        List<Object> parsedKeys = new ArrayList<>();
+        for (AEKey key : counter.keySet()) {
+            parsedKeys.add(parseGenericStack(new GenericStack(key, counter.get(key))));
+        }
+
+        return parsedKeys;
+    }
 
     public static Map<Object, Object> parseDrive(DriveBlockEntity drive) {
         Map<Object, Object> map = new HashMap<>();
@@ -393,24 +403,34 @@ public class AEApi {
         map.put("coProcessors", coProcessors);
         map.put("isBusy", isBusy);
         if (!recursive)
-            map.put("craftingJob", cpu.getJobStatus() != null ? parseCraftingJob(cpu.getJobStatus(), null) : null);
+            map.put("craftingJob", cpu.getJobStatus() != null ? parseCraftingJob(cpu.getJobStatus(), null, null) : null);
         map.put("name", cpu.getName() != null ? cpu.getName().getString() : "Unnamed");
         map.put("selectionMode", cpu.getSelectionMode().toString());
 
         return map;
     }
 
-    public static Map<String, Object> parseCraftingJob(CraftingJobStatus job, @Nullable ICraftingCPU cpu) {
-        Map<String, Object> map = new HashMap<>();
-        map.put("requestedItem", parseGenericStack(job.crafting()));
-        map.put("elapsedTimeNanos", job.elapsedTimeNanos());
-        map.put("totalItem", job.totalItems());
-        map.put("progress", job.progress());
+    public static Object parseCraftingJob(CraftingJobStatus status, AECraftJob craftJob, @Nullable ICraftingCPU cpu) {
+        Map<String, Object> properties = new HashMap<>();
 
-        if (cpu != null)
-            map.put("cpu", parseCraftingCPU(cpu, true));
+        properties.put("bridge_id", craftJob == null ? -1 : craftJob.getId());
+        properties.put("quantity", status.crafting().amount());
+        properties.put("resource", parseGenericStack(status.crafting()));
 
-        return map;
+        if (cpu != null) {
+            CraftingCpuLogic craftingCpuLogic = ((CraftingCPUCluster) cpu).craftingLogic;
+            long pending = craftingCpuLogic.getPendingOutputs(status.crafting().what());
+            long active = craftingCpuLogic.getWaitingFor(status.crafting().what());
+            long crafted = status.crafting().amount() - (pending + active);
+            properties.put("completion", crafted / (double) status.crafting().amount());
+            properties.put("crafted", crafted);
+
+            properties.put("id", craftingCpuLogic.getLastLink().getCraftingID().toString());
+
+            properties.put("cpu", parseCraftingCPU(cpu, true));
+        }
+
+        return properties;
     }
 
     public static MEStorage getMonitor(IGridNode node) {
@@ -419,6 +439,7 @@ public class AEApi {
 
     public static boolean isCrafting(ICraftingService grid, GenericFilter<?> filter,
                                          @Nullable ICraftingCPU craftingCPU) {
+
         // If the passed cpu is null, check all cpus
         if (craftingCPU == null) {
             // Loop through all crafting cpus and check if the item is being crafted.

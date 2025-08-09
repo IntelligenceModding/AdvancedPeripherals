@@ -2,8 +2,6 @@ package de.srendi.advancedperipherals.common.addons.computercraft.peripheral;
 
 import com.refinedmods.refinedstorage.api.autocrafting.ICraftingManager;
 import com.refinedmods.refinedstorage.api.autocrafting.ICraftingPattern;
-import com.refinedmods.refinedstorage.api.autocrafting.task.CalculationResultType;
-import com.refinedmods.refinedstorage.api.autocrafting.task.ICalculationResult;
 import com.refinedmods.refinedstorage.api.autocrafting.task.ICraftingTask;
 import com.refinedmods.refinedstorage.api.network.INetwork;
 import dan200.computercraft.api.lua.IArguments;
@@ -13,13 +11,13 @@ import dan200.computercraft.api.lua.MethodResult;
 import dan200.computercraft.api.peripheral.IComputerAccess;
 import dan200.computercraft.core.apis.TableHelper;
 import dan200.computercraft.core.computer.ComputerSide;
-import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.BlockEntityPeripheralOwner;
 import de.srendi.advancedperipherals.common.addons.refinedstorage.RSApi;
+import de.srendi.advancedperipherals.common.addons.refinedstorage.RSCraftJob;
 import de.srendi.advancedperipherals.common.addons.refinedstorage.RSNode;
-import de.srendi.advancedperipherals.common.addons.refinedstorage.RsFluidHandler;
-import de.srendi.advancedperipherals.common.addons.refinedstorage.RsItemHandler;
-import de.srendi.advancedperipherals.common.blocks.blockentities.RsBridgeEntity;
+import de.srendi.advancedperipherals.common.addons.refinedstorage.RSFluidHandler;
+import de.srendi.advancedperipherals.common.addons.refinedstorage.RSItemHandler;
+import de.srendi.advancedperipherals.common.blocks.blockentities.RSBridgeEntity;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.util.Pair;
 import de.srendi.advancedperipherals.common.util.StatusConstants;
@@ -29,10 +27,13 @@ import de.srendi.advancedperipherals.common.util.inventory.GenericFilter;
 import de.srendi.advancedperipherals.common.util.inventory.IStorageSystemPeripheral;
 import de.srendi.advancedperipherals.common.util.inventory.InventoryUtil;
 import de.srendi.advancedperipherals.common.util.inventory.ItemFilter;
-import de.srendi.advancedperipherals.common.util.inventory.ItemUtil;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
+import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.IItemHandler;
@@ -45,12 +46,16 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 
-public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwner<RsBridgeEntity>> implements IStorageSystemPeripheral {
+public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwner<RSBridgeEntity>> implements IStorageSystemPeripheral {
 
     public static final String PERIPHERAL_TYPE = "rs_bridge";
 
-    public RsBridgePeripheral(RsBridgeEntity tileEntity) {
+    private final RSBridgeEntity bridge;
+    private final ICapabilityProvider capabilityWrapper = new CapabilityWrapper(this);
+
+    public RsBridgePeripheral(RSBridgeEntity tileEntity) {
         super(PERIPHERAL_TYPE, new BlockEntityPeripheralOwner<>(tileEntity));
+        this.bridge = tileEntity;
     }
 
     private RSNode getNode() {
@@ -71,8 +76,21 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     }
 
     @Override
+    public Object getTarget() {
+        return capabilityWrapper;
+    }
+
+    @Override
     public boolean isEnabled() {
         return APConfig.PERIPHERALS_CONFIG.enableRSBridge.get();
+    }
+
+    protected RSItemHandler getItemHandler() {
+        return new RSItemHandler(getNetwork());
+    }
+
+    protected RSFluidHandler getFluidHandler() {
+        return new RSFluidHandler(getNetwork());
     }
 
     @Override
@@ -396,7 +414,7 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     }
 
     protected MethodResult exportToChest(@NotNull IArguments arguments, @Nullable IItemHandler targetInventory) throws LuaException {
-        RsItemHandler itemHandler = new RsItemHandler(getNetwork());
+        RSItemHandler itemHandler = new RSItemHandler(getNetwork());
         if (targetInventory == null)
             return MethodResult.of(0, StatusConstants.TARGET_NOT_FOUND);
 
@@ -408,7 +426,7 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     }
 
     protected MethodResult importToSystem(@NotNull IArguments arguments, @Nullable IItemHandler targetInventory) throws LuaException {
-        RsItemHandler itemHandler = new RsItemHandler(getNetwork());
+        RSItemHandler itemHandler = new RSItemHandler(getNetwork());
         if (targetInventory == null)
             return MethodResult.of(0, StatusConstants.TARGET_NOT_FOUND);
 
@@ -420,7 +438,7 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     }
 
     protected MethodResult exportToTank(@NotNull IArguments arguments, @Nullable IFluidHandler targetInventory) throws LuaException {
-        RsFluidHandler itemHandler = new RsFluidHandler(getNetwork());
+        RSFluidHandler itemHandler = new RSFluidHandler(getNetwork());
         if (targetInventory == null)
             return MethodResult.of(0, StatusConstants.TARGET_NOT_FOUND);
 
@@ -432,7 +450,7 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     }
 
     protected MethodResult importToSystem(@NotNull IArguments arguments, @Nullable IFluidHandler targetInventory) throws LuaException {
-        RsFluidHandler itemHandler = new RsFluidHandler(getNetwork());
+        RSFluidHandler itemHandler = new RSFluidHandler(getNetwork());
         if (targetInventory == null)
             return MethodResult.of(0, StatusConstants.TARGET_NOT_FOUND);
 
@@ -535,7 +553,7 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (filter.rightPresent())
             return MethodResult.of(null, filter.getRight());
 
-        return MethodResult.of(RSApi.parseItemStack(RSApi.findStackFromFilter(getNetwork(), getNetwork().getCraftingManager(), filter.getLeft()), getNetwork()));
+        return MethodResult.of(RSApi.parseItemStack(RSApi.findItemFromFilter(getNetwork(), getNetwork().getCraftingManager(), filter.getLeft()), getNetwork()));
     }
 
     @Override
@@ -557,8 +575,8 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     }
 
     @Override
-    @LuaFunction(mainThread = true)
-    public final MethodResult craftItem(IComputerAccess computerAccess, IArguments arguments) throws LuaException {
+    @LuaFunction
+    public final MethodResult craftItem(IComputerAccess computer, IArguments arguments) throws LuaException {
         if (!isAvailable())
             return notConnected(null);
 
@@ -566,21 +584,20 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (filter.rightPresent())
             return MethodResult.of(null, filter.getRight());
 
-        ItemStack stack = RSApi.findStackFromFilter(getNetwork(), getNetwork().getCraftingManager(), filter.getLeft());
-        if (stack.isEmpty())
-            return MethodResult.of(null, StatusConstants.NOT_CRAFTABLE.toString());
+        return new CraftJobCallback(computer, () -> {
+            ItemStack stack = RSApi.findItemFromFilter(getNetwork(), getNetwork().getCraftingManager(), filter.getLeft());
+            if (stack.isEmpty())
+                return MethodResult.of(null, "NOT_CRAFTABLE");
 
-        ICalculationResult result = getNetwork().getCraftingManager().create(stack, filter.getLeft().getCount());
-        CalculationResultType type = result.getType();
-        if (type == CalculationResultType.OK)
-            getNetwork().getCraftingManager().start(result.getTask());
-        AdvancedPeripherals.debug("Crafting Result of '" + ItemUtil.getRegistryKey(stack).toString() + "':" + type);
-        return MethodResult.of(type == CalculationResultType.OK);
+            RSCraftJob job = new RSCraftJob(computer, getLevel(), filter.getLeft().getCount(), stack, getNetwork().getCraftingManager());
+            bridge.addJob(job);
+            return MethodResult.of(job);
+        }).pull;
     }
 
     @Override
-    @LuaFunction(mainThread = true)
-    public final MethodResult craftFluid(IComputerAccess computerAccess, IArguments arguments) throws LuaException {
+    @LuaFunction
+    public final MethodResult craftFluid(IComputerAccess computer, IArguments arguments) throws LuaException {
         if (!isAvailable())
             return notConnected(null);
 
@@ -588,25 +605,19 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (filter.rightPresent())
             return MethodResult.of(null, filter.getRight());
 
-        FluidStack stack = RSApi.findFluidFromFilter(getNetwork(), getNetwork().getCraftingManager(), filter.getLeft());
-        if (stack.isEmpty())
-            return MethodResult.of(null, StatusConstants.NOT_CRAFTABLE.toString());
+        return new CraftJobCallback(computer, () -> {
+            FluidStack stack = RSApi.findFluidFromFilter(getNetwork(), getNetwork().getCraftingManager(), filter.getLeft());
+            if (stack.isEmpty())
+                return MethodResult.of(null, "NOT_CRAFTABLE");
 
-        ICalculationResult result = getNetwork().getCraftingManager().create(stack, filter.getLeft().getCount());
-        CalculationResultType type = result.getType();
-        if (type == CalculationResultType.OK)
-            getNetwork().getCraftingManager().start(result.getTask());
-        AdvancedPeripherals.debug("Crafting Result of '" + FluidUtil.getRegistryKey(stack).toString() + "':" + type);
-        return MethodResult.of(type == CalculationResultType.OK);
+            RSCraftJob job = new RSCraftJob(computer, getLevel(), filter.getLeft().getCount(), stack, getNetwork().getCraftingManager());
+            bridge.addJob(job);
+            return MethodResult.of(job);
+        }).pull;
     }
 
     @Override
     public MethodResult craftChemical(IComputerAccess computer, IArguments arguments) throws LuaException {
-        return null;
-    }
-
-    @Override
-    public MethodResult getCraftingTask(int id) {
         return null;
     }
 
@@ -616,7 +627,23 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (!isAvailable())
             return notConnected(null);
 
-        return MethodResult.of(RSApi.getCraftingTasks(getNetwork()));
+        return MethodResult.of(RSApi.getCraftingTasks(getNetwork(), bridge));
+    }
+
+    @Override
+    @LuaFunction(mainThread = true)
+    public MethodResult getCraftingTask(int id) {
+        if (!isAvailable())
+            return notConnected(null);
+
+        RSCraftJob foundJob = null;
+
+        for (RSCraftJob job : bridge.getJobs()) {
+            if (job.getId() == id) {
+                foundJob = job;
+            }
+        }
+        return MethodResult.of(foundJob);
     }
 
     @Override
@@ -657,18 +684,33 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (!isAvailable())
             return notConnected(false);
 
-        Pair<ItemFilter, String> filter = ItemFilter.parse(arguments.getTable(0));
-        if (filter.rightPresent())
+        Pair<? extends GenericFilter<?>, String> filter = GenericFilter.parseGeneric(arguments.getTable(0));
+        if (filter.getRight() != null)
             return MethodResult.of(null, filter.getRight());
 
-        ItemStack stack = RSApi.findStackFromFilter(getNetwork(), getNetwork().getCraftingManager(), filter.getLeft());
-        if (stack.isEmpty())
-            return MethodResult.of(null, "NOT_CRAFTABLE");
+        GenericFilter<?> parsedFilter = filter.getLeft();
 
-        for (ICraftingTask task : getNetwork().getCraftingManager().getTasks()) {
-            ItemStack taskStack = task.getRequested().getItem();
-            if (taskStack != null && taskStack.sameItem(stack))
-                return MethodResult.of(true);
+        if (parsedFilter instanceof ItemFilter itemFilter) {
+            ItemStack stack = RSApi.findItemFromFilter(getNetwork(), getNetwork().getCraftingManager(), itemFilter);
+            if (stack.isEmpty())
+                return MethodResult.of(null, "NOT_CRAFTABLE");
+
+            for (ICraftingTask task : getNetwork().getCraftingManager().getTasks()) {
+                ItemStack taskStack = task.getRequested().getItem();
+                if (taskStack != null && taskStack.sameItem(stack))
+                    return MethodResult.of(true);
+            }
+        }
+        if (parsedFilter instanceof FluidFilter itemFilter) {
+            FluidStack stack = RSApi.findFluidFromFilter(getNetwork(), getNetwork().getCraftingManager(), itemFilter);
+            if (stack.isEmpty())
+                return MethodResult.of(null, "NOT_CRAFTABLE");
+
+            for (ICraftingTask task : getNetwork().getCraftingManager().getTasks()) {
+                FluidStack taskStack = task.getRequested().getFluid();
+                if (taskStack != null && taskStack.isFluidEqual(stack))
+                    return MethodResult.of(true);
+            }
         }
         return MethodResult.of(false);
     }
@@ -679,14 +721,30 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (!isAvailable())
             return notConnected(false);
 
-        Pair<ItemFilter, String> filter = ItemFilter.parse(arguments.getTable(0));
-        if (filter.rightPresent())
-            return MethodResult.of(false, filter.getRight());
+        Pair<? extends GenericFilter<?>, String> filter = GenericFilter.parseGeneric(arguments.getTable(0));
+        if (filter.getRight() != null)
+            return MethodResult.of(null, filter.getRight());
 
-        ItemFilter parsedFilter = filter.getLeft();
-        if (parsedFilter.isEmpty())
-            return MethodResult.of(false, "EMPTY_FILTER");
+        GenericFilter<?> parsedFilter = filter.getLeft();
 
-        return MethodResult.of(RSApi.isItemCraftable(getNetwork(), parsedFilter.toItemStack()));
+        return MethodResult.of(RSApi.findPatternFromFilters(getNetwork(), null, parsedFilter).getLeft() != null);
+    }
+
+    private static final class CapabilityWrapper implements ICapabilityProvider {
+        private final RsBridgePeripheral peripheral;
+
+        private CapabilityWrapper(RsBridgePeripheral peripheral) {
+            this.peripheral = peripheral;
+        }
+
+        @Override
+        public <T> LazyOptional<T> getCapability(final Capability<T> cap, final Direction side) {
+            if (cap == ForgeCapabilities.ITEM_HANDLER) {
+                return LazyOptional.of(this.peripheral::getItemHandler).cast();
+            } else if (cap == ForgeCapabilities.FLUID_HANDLER) {
+                return LazyOptional.of(this.peripheral::getFluidHandler).cast();
+            }
+            return LazyOptional.empty();
+        }
     }
 }

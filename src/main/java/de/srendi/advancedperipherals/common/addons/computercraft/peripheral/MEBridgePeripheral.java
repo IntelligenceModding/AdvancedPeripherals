@@ -18,7 +18,7 @@ import dan200.computercraft.api.peripheral.IComputerAccess;
 import dan200.computercraft.core.apis.TableHelper;
 import dan200.computercraft.core.computer.ComputerSide;
 import de.srendi.advancedperipherals.common.addons.ae2.AEApi;
-import de.srendi.advancedperipherals.common.addons.ae2.CraftJob;
+import de.srendi.advancedperipherals.common.addons.ae2.AECraftJob;
 import de.srendi.advancedperipherals.common.addons.ae2.MEFluidHandler;
 import de.srendi.advancedperipherals.common.addons.ae2.MEItemHandler;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.BlockEntityPeripheralOwner;
@@ -35,6 +35,10 @@ import de.srendi.advancedperipherals.common.util.inventory.InventoryUtil;
 import de.srendi.advancedperipherals.common.util.inventory.ItemFilter;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
 import net.minecraft.core.Direction;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
+import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
@@ -49,17 +53,24 @@ import java.util.Optional;
 public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwner<MeBridgeEntity>> implements IStorageSystemPeripheral {
 
     public static final String PERIPHERAL_TYPE = "me_bridge";
-    private final MeBridgeEntity tile;
+
+    private final MeBridgeEntity bridge;
+    private final ICapabilityProvider capabilityWrapper = new CapabilityWrapper(this);
     private IGridNode node;
 
     public MEBridgePeripheral(MeBridgeEntity tileEntity) {
         super(PERIPHERAL_TYPE, new BlockEntityPeripheralOwner<>(tileEntity));
-        this.tile = tileEntity;
+        this.bridge = tileEntity;
         this.node = tileEntity.getActionableNode();
     }
 
     public void setNode(IManagedGridNode node) {
         this.node = node.getNode();
+    }
+
+    @Override
+    public Object getTarget() {
+        return capabilityWrapper;
     }
 
     @Override
@@ -71,6 +82,14 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         return node.getGrid().getCraftingService();
     }
 
+    protected MEItemHandler getItemHandler() {
+        return new MEItemHandler(AEApi.getMonitor(node), bridge);
+    }
+
+    protected MEFluidHandler getFluidHandler() {
+        return new MEFluidHandler(AEApi.getMonitor(node), bridge);
+    }
+
     /**
      * exports an item out of the system to a valid inventory
      *
@@ -79,8 +98,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
      * @return the exportable amount or null with a string if something went wrong
      */
     protected MethodResult exportToChest(@NotNull IArguments arguments, @Nullable IItemHandler targetInventory) throws LuaException {
-        MEStorage monitor = AEApi.getMonitor(node);
-        MEItemHandler itemHandler = new MEItemHandler(monitor, tile);
+        MEItemHandler itemHandler = getItemHandler();
         Pair<ItemFilter, String> filter = ItemFilter.parse(arguments.getTable(0));
 
         if (filter.rightPresent())
@@ -100,8 +118,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
      * @return the exportable amount or null with a string if something went wrong
      */
     protected MethodResult exportToTank(@NotNull IArguments arguments, @Nullable IFluidHandler targetTank) throws LuaException {
-        MEStorage monitor = AEApi.getMonitor(node);
-        MEFluidHandler fluidHandler = new MEFluidHandler(monitor, tile);
+        MEFluidHandler fluidHandler = getFluidHandler();
         Pair<FluidFilter, String> filter = FluidFilter.parse(arguments.getTable(0));
 
         if (filter.rightPresent())
@@ -121,8 +138,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
      * @return the imported amount or null with a string if something went wrong
      */
     protected MethodResult importToME(@NotNull IArguments arguments, @Nullable IItemHandler targetInventory) throws LuaException {
-        MEStorage monitor = AEApi.getMonitor(node);
-        MEItemHandler itemHandler = new MEItemHandler(monitor, tile);
+        MEItemHandler itemHandler = getItemHandler();
         Pair<ItemFilter, String> filter = ItemFilter.parse(arguments.getTable(0));
 
         if (filter.rightPresent())
@@ -142,8 +158,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
      * @return the imported amount or null with a string if something went wrong
      */
     protected MethodResult importToME(@NotNull IArguments arguments, @Nullable IFluidHandler targetTank) throws LuaException {
-        MEStorage monitor = AEApi.getMonitor(node);
-        MEFluidHandler fluidHandler = new MEFluidHandler(monitor, tile);
+        MEFluidHandler fluidHandler = getFluidHandler();
         Pair<FluidFilter, String> filter = FluidFilter.parse(arguments.getTable(0));
 
         if (filter.rightPresent())
@@ -553,37 +568,41 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     }
 
     @Override
-    @LuaFunction(mainThread = true)
+    @LuaFunction
     public final MethodResult craftItem(IComputerAccess computer, IArguments arguments) throws LuaException {
         if (!isAvailable())
             return notConnected(null);
 
         Pair<ItemFilter, String> filter = ItemFilter.parse(arguments.getTable(0));
         if (filter.rightPresent())
-            return MethodResult.of(false, filter.getRight());
+            return MethodResult.of(null, filter.getRight());
 
         ItemFilter parsedFilter = filter.getLeft();
         if (parsedFilter.isEmpty())
-            return MethodResult.of(false, StatusConstants.EMPTY_FILTER.toString());
+            return MethodResult.of(null, StatusConstants.EMPTY_FILTER.toString());
 
         String cpuName = arguments.optString(1, "");
-        ICraftingCPU target = AEApi.getCraftingCPU(node, cpuName);
-        if (!cpuName.isEmpty() && target == null)
-            return MethodResult.of(false, "CPU " + cpuName + " does not exists");
 
-        ICraftingService craftingGrid = node.getGrid().getService(ICraftingService.class);
-        Pair<Long, AEItemKey> stack = AEApi.findAEStackFromFilter(AEApi.getMonitor(tile.getGridNode()), craftingGrid, filter.getLeft());
-        if (stack.getRight() == null && stack.getLeft() == 0)
-            return MethodResult.of(null, StatusConstants.NOT_CRAFTABLE.toString());
+        return new CraftJobCallback(computer, () -> {
+            ICraftingCPU target = AEApi.getCraftingCPU(node, cpuName);
+            if (!cpuName.isEmpty() && target == null) {
+                return MethodResult.of(null, StatusConstants.CPU_NOT_FOUND.withInfo(cpuName));
+            }
 
-        CraftJob job = new CraftJob(owner.getLevel(), computer, node, stack.getRight(), parsedFilter.getCount(), tile, tile, target);
-        tile.addJob(job);
-        ServerWorker.add(job::startCrafting);
-        return MethodResult.of(true);
+            ICraftingService craftingGrid = node.getGrid().getService(ICraftingService.class);
+            Pair<Long, AEItemKey> stack = AEApi.findAEStackFromFilter(AEApi.getMonitor(bridge.getGridNode()), craftingGrid, parsedFilter);
+            if (stack.getRight() == null && stack.getLeft() == 0) {
+                return MethodResult.of(null, StatusConstants.NOT_CRAFTABLE.toString());
+            }
+
+            AECraftJob job = new AECraftJob(owner.getLevel(), computer, node, stack.getRight(), parsedFilter.getCount(), bridge, target);
+            bridge.addJob(job);
+            return MethodResult.of(job.withCPU(target));
+        }).pull;
     }
 
     @Override
-    @LuaFunction(mainThread = true)
+    @LuaFunction
     public final MethodResult craftFluid(IComputerAccess computer, IArguments arguments) throws LuaException {
         if (!isAvailable())
             return notConnected(null);
@@ -597,19 +616,20 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
             return MethodResult.of(false, StatusConstants.EMPTY_FILTER.toString());
 
         String cpuName = arguments.optString(1, "");
-        ICraftingCPU target = AEApi.getCraftingCPU(node, cpuName);
-        if (!cpuName.isEmpty() && target == null)
-            return MethodResult.of(false, "CPU " + cpuName + " does not exists");
+        return new CraftJobCallback(computer, () -> {
+            ICraftingCPU target = AEApi.getCraftingCPU(node, cpuName);
+            if (!cpuName.isEmpty() && target == null)
+                return MethodResult.of(null, StatusConstants.CPU_NOT_FOUND.withInfo(cpuName));
 
-        ICraftingService craftingGrid = node.getGrid().getService(ICraftingService.class);
-        Pair<Long, AEFluidKey> stack = AEApi.findAEFluidFromFilter(AEApi.getMonitor(tile.getGridNode()), craftingGrid, filter.getLeft());
-        if (stack.getRight() == null && stack.getLeft() == 0)
-            return MethodResult.of(null, StatusConstants.NOT_CRAFTABLE.toString());
+            ICraftingService craftingGrid = node.getGrid().getService(ICraftingService.class);
+            Pair<Long, AEFluidKey> stack = AEApi.findAEFluidFromFilter(AEApi.getMonitor(bridge.getGridNode()), craftingGrid, parsedFilter);
+            if (stack.getRight() == null && stack.getLeft() == 0)
+                return MethodResult.of(false, StatusConstants.NOT_CRAFTABLE.toString());
 
-        CraftJob job = new CraftJob(owner.getLevel(), computer, node, stack.getRight(), parsedFilter.getCount(), tile, tile, target);
-        tile.addJob(job);
-        ServerWorker.add(job::startCrafting);
-        return MethodResult.of(true);
+            AECraftJob job = new AECraftJob(owner.getLevel(), computer, node, stack.getRight(), parsedFilter.getCount(), bridge, target);
+            bridge.addJob(job);
+            return MethodResult.of(job.withCPU(target));
+        }).pull;
     }
 
     @Override
@@ -627,9 +647,11 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
         List<Object> jobs = new ArrayList<>();
 
-        for (ICraftingCPU cpu : craftingGrid.getCpus()) {
-            if (cpu.getJobStatus() != null)
-                jobs.add(AEApi.parseCraftingJob(cpu.getJobStatus(), cpu));
+        for (AECraftJob job : bridge.getJobs()) {
+            for (ICraftingCPU cpu : craftingGrid.getCpus()) {
+                if (cpu.isBusy() && job.getToCraft().matches(cpu.getJobStatus().crafting()))
+                    jobs.add(AEApi.parseCraftingJob(cpu.getJobStatus(), job, cpu));
+            }
         }
         return MethodResult.of(jobs);
     }
@@ -637,7 +659,17 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     @Override
     @LuaFunction(mainThread = true)
     public MethodResult getCraftingTask(int id) {
-        return null;
+        if (!isAvailable())
+            return notConnected(null);
+
+        AECraftJob foundJob = null;
+
+        for (AECraftJob job : bridge.getJobs()) {
+            if (job.getId() == id) {
+                foundJob = job;
+            }
+        }
+        return MethodResult.of(foundJob);
     }
 
 
@@ -765,5 +797,23 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
             map.add(cpu);
         }
         return MethodResult.of(map);
+    }
+
+    private static final class CapabilityWrapper implements ICapabilityProvider {
+        private final MEBridgePeripheral peripheral;
+
+        private CapabilityWrapper(MEBridgePeripheral peripheral) {
+            this.peripheral = peripheral;
+        }
+
+        @Override
+        public <T> LazyOptional<T> getCapability(final Capability<T> cap, final Direction side) {
+            if (cap == ForgeCapabilities.ITEM_HANDLER) {
+                return LazyOptional.of(this.peripheral::getItemHandler).cast();
+            } else if (cap == ForgeCapabilities.FLUID_HANDLER) {
+                return LazyOptional.of(this.peripheral::getFluidHandler).cast();
+            }
+            return LazyOptional.empty();
+        }
     }
 }

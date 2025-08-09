@@ -8,12 +8,12 @@ import de.srendi.advancedperipherals.common.util.inventory.IStorageSystemFluidHa
 import net.minecraftforge.fluids.FluidStack;
 import org.jetbrains.annotations.NotNull;
 
-public class RsFluidHandler implements IStorageSystemFluidHandler {
+public class RSFluidHandler implements IStorageSystemFluidHandler {
 
     @NotNull
     private final INetwork network;
 
-    public RsFluidHandler(@NotNull INetwork network) {
+    public RSFluidHandler(@NotNull INetwork network) {
         this.network = network;
     }
 

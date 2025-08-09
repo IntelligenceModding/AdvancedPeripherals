@@ -16,7 +16,7 @@ import de.srendi.advancedperipherals.common.blocks.blockentities.MeBridgeEntity;
 import de.srendi.advancedperipherals.common.blocks.blockentities.NBTStorageEntity;
 import de.srendi.advancedperipherals.common.blocks.blockentities.PlayerDetectorEntity;
 import de.srendi.advancedperipherals.common.blocks.blockentities.RedstoneIntegratorEntity;
-import de.srendi.advancedperipherals.common.blocks.blockentities.RsBridgeEntity;
+import de.srendi.advancedperipherals.common.blocks.blockentities.RSBridgeEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraftforge.registries.RegistryObject;
 
@@ -39,6 +39,6 @@ public class APBlockEntityTypes {
     public static final RegistryObject<BlockEntityType<NBTStorageEntity>> NBT_STORAGE = APRegistration.TILE_ENTITIES.register("nbt_storage", () -> new BlockEntityType<>(NBTStorageEntity::new, Sets.newHashSet(APBlocks.NBT_STORAGE.get()), null));
     public static final RegistryObject<BlockEntityType<PlayerDetectorEntity>> PLAYER_DETECTOR = APRegistration.TILE_ENTITIES.register("player_detector", () -> new BlockEntityType<>(PlayerDetectorEntity::new, Sets.newHashSet(APBlocks.PLAYER_DETECTOR.get()), null));
     public static final RegistryObject<BlockEntityType<RedstoneIntegratorEntity>> REDSTONE_INTEGRATOR = APRegistration.TILE_ENTITIES.register("redstone_integrator", () -> new BlockEntityType<>(RedstoneIntegratorEntity::new, Sets.newHashSet(APBlocks.REDSTONE_INTEGRATOR.get()), null));
-    public static final RegistryObject<BlockEntityType<RsBridgeEntity>> RS_BRIDGE = APAddons.refinedStorageLoaded ? APRegistration.TILE_ENTITIES.register("rs_bridge", () -> new BlockEntityType<>(RsBridgeEntity::new, Sets.newHashSet(APBlocks.RS_BRIDGE.get()), null)) : null;
+    public static final RegistryObject<BlockEntityType<RSBridgeEntity>> RS_BRIDGE = APAddons.refinedStorageLoaded ? APRegistration.TILE_ENTITIES.register("rs_bridge", () -> new BlockEntityType<>(RSBridgeEntity::new, Sets.newHashSet(APBlocks.RS_BRIDGE.get()), null)) : null;
 
 }
