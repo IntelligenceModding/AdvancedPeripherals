@@ -21,19 +21,24 @@ public class RectangleRenderer implements ITwoDObjectRenderer {
     public void renderBatch(List<RenderableObject> objects, ForgeGui gui, PoseStack poseStack, float partialTick, int screenWidth, int screenHeight) {
         RenderSystem.setShader(GameRenderer::getPositionColorShader);
         BufferBuilder bufferbuilder = Tesselator.getInstance().getBuilder();
-        Matrix4f matrix = poseStack.last().pose();
+
         bufferbuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
 
         for (RenderableObject obj : objects) {
+            poseStack.pushPose();
+            Matrix4f matrix = poseStack.last().pose();
+
             float alpha = obj.opacity;
             float red = RenderUtil.getRed(obj.color);
             float green = RenderUtil.getGreen(obj.color);
             float blue = RenderUtil.getBlue(obj.color);
 
-            bufferbuilder.vertex(matrix, obj.x, obj.maxY, obj.z).color(red, green, blue, 0.0001f).endVertex();
-            bufferbuilder.vertex(matrix, obj.maxX, obj.maxY, obj.z).color(red, green, blue, 0.00f).endVertex();
-            bufferbuilder.vertex(matrix, obj.maxX, obj.y, obj.z).color(red, green, blue, 0.0f).endVertex();
-            bufferbuilder.vertex(matrix, obj.x, obj.y, obj.z).color(red, green, blue, 0f).endVertex();
+            bufferbuilder.vertex(matrix, obj.x, obj.maxY, obj.z).color(red, green, blue, alpha).endVertex();
+            bufferbuilder.vertex(matrix, obj.maxX, obj.maxY, obj.z).color(red, green, blue, alpha).endVertex();
+            bufferbuilder.vertex(matrix, obj.maxX, obj.y, obj.z).color(red, green, blue, alpha).endVertex();
+            bufferbuilder.vertex(matrix, obj.x, obj.y, obj.z).color(red, green, blue, alpha).endVertex();
+            poseStack.popPose();
+
         }
 
         BufferUploader.drawWithShader(bufferbuilder.end());

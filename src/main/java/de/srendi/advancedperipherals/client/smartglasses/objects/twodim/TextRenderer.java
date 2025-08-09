@@ -24,13 +24,17 @@ public class TextRenderer implements ITwoDObjectRenderer {
                 x -= (minecraft.font.width(text.content) * text.fontSize) / 2f;
             }
 
-            if (text.shadow) {
+            if (!text.shadow) {
                 minecraft.font.drawShadow(poseStack, text.content, x / text.fontSize, text.y / text.fontSize, text.color);
             } else {
                 minecraft.font.draw(poseStack, text.content, x / text.fontSize, text.y / text.fontSize, text.color);
             }
             poseStack.popPose();
         }
+    }
 
+    @Override
+    public int getWeight() {
+        return 110;
     }
 }

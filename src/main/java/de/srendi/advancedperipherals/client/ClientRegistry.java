@@ -20,6 +20,7 @@ import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.client.event.ModelEvent;
 import net.minecraftforge.client.event.RegisterGuiOverlaysEvent;
 import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
+import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
@@ -72,9 +73,9 @@ public class ClientRegistry {
         event.registerBlockEntityRenderer(APBlockEntityTypes.DISTANCE_DETECTOR.get(), DistanceDetectorRenderer::new);
     }
 
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void registeringOverlays(RegisterGuiOverlaysEvent event) {
         event.registerAboveAll(SaddleTurtleScreen.ID, SADDLE_TURTLE_OVERLAY);
-        event.registerBelowAll(OverlayModuleOverlay.ID, OVERLAY_MODULE_OVERLAY);
+        event.registerAboveAll(OverlayModuleOverlay.ID, OVERLAY_MODULE_OVERLAY);
     }
 }
