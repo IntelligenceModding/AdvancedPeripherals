@@ -30,10 +30,10 @@ public class RectangleRenderer implements ITwoDObjectRenderer {
             float green = RenderUtil.getGreen(obj.color);
             float blue = RenderUtil.getBlue(obj.color);
 
-            bufferbuilder.vertex(matrix, obj.x, obj.maxY, 0f).color(red, green, blue, alpha).endVertex();
-            bufferbuilder.vertex(matrix, obj.maxX, obj.maxY, 0f).color(red, green, blue, alpha).endVertex();
-            bufferbuilder.vertex(matrix, obj.maxX, obj.y, 0f).color(red, green, blue, alpha).endVertex();
-            bufferbuilder.vertex(matrix, obj.x, obj.y, 0f).color(red, green, blue, alpha).endVertex();
+            bufferbuilder.vertex(matrix, obj.x, obj.maxY, obj.z).color(red, green, blue, 0.0001f).endVertex();
+            bufferbuilder.vertex(matrix, obj.maxX, obj.maxY, obj.z).color(red, green, blue, 0.00f).endVertex();
+            bufferbuilder.vertex(matrix, obj.maxX, obj.y, obj.z).color(red, green, blue, 0.0f).endVertex();
+            bufferbuilder.vertex(matrix, obj.x, obj.y, obj.z).color(red, green, blue, 0f).endVertex();
         }
 
         BufferUploader.drawWithShader(bufferbuilder.end());

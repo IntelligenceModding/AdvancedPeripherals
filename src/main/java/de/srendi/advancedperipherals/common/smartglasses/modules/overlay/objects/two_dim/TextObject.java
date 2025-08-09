@@ -30,6 +30,9 @@ public class TextObject extends RenderableObject {
     @BooleanProperty
     public boolean shadow = false;
 
+    @BooleanProperty
+    public boolean center = false;
+
     public TextObject(OverlayModule module, IArguments arguments) throws LuaException {
         super(module, arguments);
         reflectivelyMapProperties(arguments);
@@ -40,19 +43,14 @@ public class TextObject extends RenderableObject {
     }
 
     @LuaFunction
-    public final String getContent() {
-        return content;
-    }
-
-    @LuaFunction
     public final void setContent(String content) {
         this.content = content;
         getModule().update(this);
     }
 
     @LuaFunction
-    public double getFontSize() {
-        return fontSize;
+    public final String getContent() {
+        return content;
     }
 
     // For any reason, cc does not support float, only double. So we need to cast it here
@@ -63,13 +61,30 @@ public class TextObject extends RenderableObject {
     }
 
     @LuaFunction
+    public double getFontSize() {
+        return fontSize;
+    }
+
+    @LuaFunction
     public void setShadow(boolean shadow) {
         this.shadow = shadow;
+        getModule().update(this);
     }
 
     @LuaFunction
     public boolean isShadow() {
         return shadow;
+    }
+
+    @LuaFunction
+    public void setCenter(boolean center) {
+        this.center = center;
+        getModule().update(this);
+    }
+
+    @LuaFunction
+    public boolean isCenter() {
+        return center;
     }
 
     @Override
@@ -84,6 +99,7 @@ public class TextObject extends RenderableObject {
         buffer.writeUtf(content);
         buffer.writeFloat(fontSize);
         buffer.writeBoolean(shadow);
+        buffer.writeBoolean(center);
     }
 
     public static TextObject decode(FriendlyByteBuf buffer) {
@@ -94,11 +110,13 @@ public class TextObject extends RenderableObject {
         String content = buffer.readUtf();
         float fontSize = buffer.readFloat();
         boolean shadow = buffer.readBoolean();
+        boolean center = buffer.readBoolean();
 
         TextObject clientObject = optionalObject.get();
         clientObject.content = content;
         clientObject.fontSize = fontSize;
         clientObject.shadow = shadow;
+        clientObject.center = center;
 
         return clientObject;
     }

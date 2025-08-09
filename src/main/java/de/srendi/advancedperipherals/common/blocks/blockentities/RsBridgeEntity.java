@@ -7,7 +7,7 @@ import com.refinedmods.refinedstorage.blockentity.data.BlockEntitySynchronizatio
 import dan200.computercraft.api.peripheral.IPeripheral;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.RsBridgePeripheral;
-import de.srendi.advancedperipherals.common.addons.refinedstorage.RefinedStorageNode;
+import de.srendi.advancedperipherals.common.addons.refinedstorage.RSNode;
 import de.srendi.advancedperipherals.common.setup.APBlockEntityTypes;
 import de.srendi.advancedperipherals.lib.peripherals.IPeripheralTileEntity;
 import net.minecraft.core.BlockPos;
@@ -22,7 +22,7 @@ import org.jetbrains.annotations.Nullable;
 
 import static dan200.computercraft.shared.Capabilities.CAPABILITY_PERIPHERAL;
 
-public class RsBridgeEntity extends NetworkNodeBlockEntity<RefinedStorageNode> implements INetworkNodeProxy<RefinedStorageNode>, IRedstoneConfigurable, IPeripheralTileEntity {
+public class RsBridgeEntity extends NetworkNodeBlockEntity<RSNode> implements INetworkNodeProxy<RSNode>, IRedstoneConfigurable, IPeripheralTileEntity {
 
     private static final String PERIPHERAL_SETTINGS = "AP_SETTINGS";
     //I have no clue what this does, but it works
@@ -51,8 +51,8 @@ public class RsBridgeEntity extends NetworkNodeBlockEntity<RefinedStorageNode> i
         return super.getCapability(cap, direction);
     }
 
-    public RefinedStorageNode createNode(Level level, BlockPos blockPos) {
-        return new RefinedStorageNode(level, blockPos);
+    public RSNode createNode(Level level, BlockPos blockPos) {
+        return new RSNode(level, blockPos);
     }
 
     @Override

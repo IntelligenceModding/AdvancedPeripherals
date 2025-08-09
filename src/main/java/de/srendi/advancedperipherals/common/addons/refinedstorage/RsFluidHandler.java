@@ -27,7 +27,7 @@ public class RsFluidHandler implements IStorageSystemFluidHandler {
     @NotNull
     @Override
     public FluidStack drain(FluidFilter filter, FluidAction simulate) {
-        FluidStack fluid = RefinedStorage.findFluidFromFilter(network, null, filter);
+        FluidStack fluid = RSApi.findFluidFromFilter(network, null, filter);
         if (fluid == null)
             return FluidStack.EMPTY;
         return network.extractFluid(fluid, filter.getCount(), IComparer.COMPARE_QUANTITY, simulate == FluidAction.SIMULATE ? Action.SIMULATE : Action.PERFORM);

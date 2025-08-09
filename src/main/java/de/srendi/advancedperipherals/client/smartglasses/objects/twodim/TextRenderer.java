@@ -12,16 +12,24 @@ public class TextRenderer implements ITwoDObjectRenderer {
 
     @Override
     public void renderBatch(List<RenderableObject> objects, ForgeGui gui, PoseStack poseStack, float partialTick, int screenWidth, int screenHeight) {
-
         Minecraft minecraft = Minecraft.getInstance();
         for (RenderableObject obj : objects) {
             TextObject text = (TextObject) obj;
+            poseStack.pushPose();
             poseStack.scale(text.fontSize, text.fontSize, 1);
-            if (text.shadow) {
-                minecraft.font.drawShadow(poseStack, text.content, text.x / text.fontSize, text.y / text.fontSize, text.color);
-            } else {
-                minecraft.font.draw(poseStack, text.content, text.x / text.fontSize, text.y / text.fontSize, text.color);
+
+            float x = text.x;
+
+            if (text.center) {
+                x -= (minecraft.font.width(text.content) * text.fontSize) / 2f;
             }
+
+            if (text.shadow) {
+                minecraft.font.drawShadow(poseStack, text.content, x / text.fontSize, text.y / text.fontSize, text.color);
+            } else {
+                minecraft.font.draw(poseStack, text.content, x / text.fontSize, text.y / text.fontSize, text.color);
+            }
+            poseStack.popPose();
         }
 
     }

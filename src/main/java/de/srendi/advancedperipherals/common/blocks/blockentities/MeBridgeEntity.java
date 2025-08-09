@@ -12,10 +12,10 @@ import appeng.api.networking.security.IActionSource;
 import appeng.api.stacks.AEItemKey;
 import appeng.api.storage.StorageHelper;
 import appeng.api.util.AECableType;
-import de.srendi.advancedperipherals.common.addons.ae2.AppEngApi;
+import de.srendi.advancedperipherals.common.addons.ae2.AEApi;
 import de.srendi.advancedperipherals.common.addons.ae2.CraftJob;
-import de.srendi.advancedperipherals.common.addons.ae2.MeBridgeEntityListener;
-import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.MeBridgePeripheral;
+import de.srendi.advancedperipherals.common.addons.ae2.MEBridgeEntityListener;
+import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.MEBridgePeripheral;
 import de.srendi.advancedperipherals.common.blocks.base.IInventoryBlock;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralBlockEntity;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
@@ -36,11 +36,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public class MeBridgeEntity extends PeripheralBlockEntity<MeBridgePeripheral> implements IActionSource, IActionHost, IInWorldGridNodeHost, ICraftingSimulationRequester, IInventoryBlock {
+public class MeBridgeEntity extends PeripheralBlockEntity<MEBridgePeripheral> implements IActionSource, IActionHost, IInWorldGridNodeHost, ICraftingSimulationRequester, IInventoryBlock {
 
     private final List<CraftJob> jobs = new CopyOnWriteArrayList<>();
     private boolean initialized = false;
-    private final IManagedGridNode mainNode = GridHelper.createManagedNode(this, MeBridgeEntityListener.INSTANCE);
+    private final IManagedGridNode mainNode = GridHelper.createManagedNode(this, MEBridgeEntityListener.INSTANCE);
 
     public MeBridgeEntity(BlockPos pos, BlockState state) {
         super(APBlockEntityTypes.ME_BRIDGE.get(), pos, state);
@@ -48,8 +48,8 @@ public class MeBridgeEntity extends PeripheralBlockEntity<MeBridgePeripheral> im
 
     @NotNull
     @Override
-    protected MeBridgePeripheral createPeripheral() {
-        return new MeBridgePeripheral(this);
+    protected MEBridgePeripheral createPeripheral() {
+        return new MEBridgePeripheral(this);
     }
 
     @Override
@@ -57,7 +57,7 @@ public class MeBridgeEntity extends PeripheralBlockEntity<MeBridgePeripheral> im
         super.handleTick(level, state, type);
         if (!this.level.isClientSide()) {
             if (!initialized) {
-                MeBridgePeripheral peripheral = this.getPeripheral();
+                MEBridgePeripheral peripheral = this.getPeripheral();
                 if (peripheral == null) {
                     return;
                 }
@@ -156,7 +156,7 @@ public class MeBridgeEntity extends PeripheralBlockEntity<MeBridgePeripheral> im
             return;
 
         IEnergyService energySrc = mainNode.getGrid().getEnergyService();
-        int inserted = (int) StorageHelper.poweredInsert(energySrc, AppEngApi.getMonitor(getActionableNode()), AEItemKey.of(stack), stack.getCount(), this);
+        int inserted = (int) StorageHelper.poweredInsert(energySrc, AEApi.getMonitor(getActionableNode()), AEItemKey.of(stack), stack.getCount(), this);
 
         if (inserted > 0) {
             getItem(index).setCount(getItem(index).getCount() - inserted);

@@ -10,9 +10,9 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
-public class RefinedStorageNode extends NetworkNode {
+public class RSNode extends NetworkNode {
 
-    public RefinedStorageNode(Level level, BlockPos pos) {
+    public RSNode(Level level, BlockPos pos) {
         super(level, pos);
     }
 

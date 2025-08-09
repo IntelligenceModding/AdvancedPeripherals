@@ -4,6 +4,7 @@ import appeng.api.config.Actionable;
 import appeng.api.networking.security.IActionSource;
 import appeng.api.stacks.AEFluidKey;
 import appeng.api.storage.MEStorage;
+import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.MEBridgePeripheral;
 import de.srendi.advancedperipherals.common.util.Pair;
 import de.srendi.advancedperipherals.common.util.inventory.FluidFilter;
 import de.srendi.advancedperipherals.common.util.inventory.IStorageSystemFluidHandler;
@@ -13,16 +14,16 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Used to transfer item between an inventory and the ME system.
  *
- * @see de.srendi.advancedperipherals.common.addons.computercraft.peripheral.MeBridgePeripheral
+ * @see MEBridgePeripheral
  */
-public class MeFluidHandler implements IStorageSystemFluidHandler {
+public class MEFluidHandler implements IStorageSystemFluidHandler {
 
     @NotNull
     private final MEStorage storageMonitor;
     @NotNull
     private final IActionSource actionSource;
 
-    public MeFluidHandler(@NotNull MEStorage storageMonitor, @NotNull IActionSource actionSource) {
+    public MEFluidHandler(@NotNull MEStorage storageMonitor, @NotNull IActionSource actionSource) {
         this.storageMonitor = storageMonitor;
         this.actionSource = actionSource;
     }
@@ -40,7 +41,7 @@ public class MeFluidHandler implements IStorageSystemFluidHandler {
     @NotNull
     @Override
     public FluidStack drain(FluidFilter filter, FluidAction simulate) {
-        Pair<Long, AEFluidKey> itemKey = AppEngApi.findAEFluidFromFilter(storageMonitor, null, filter);
+        Pair<Long, AEFluidKey> itemKey = AEApi.findAEFluidFromFilter(storageMonitor, null, filter);
         if (itemKey == null)
             return FluidStack.EMPTY;
         long extracted = storageMonitor.extract(itemKey.getRight(), filter.getCount(), simulate == FluidAction.SIMULATE ? Actionable.SIMULATE : Actionable.MODULATE, actionSource);

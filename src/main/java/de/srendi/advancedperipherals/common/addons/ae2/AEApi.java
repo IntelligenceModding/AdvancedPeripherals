@@ -62,7 +62,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class AppEngApi {
+public class AEApi {
 
     public static Pair<Long, AEItemKey> findAEStackFromStack(MEStorage monitor, @Nullable ICraftingService crafting, ItemStack item) {
         return findAEStackFromFilter(monitor, crafting, ItemFilter.fromStack(item));
@@ -238,7 +238,7 @@ public class AppEngApi {
     }
 
     public static List<Object> listPatterns(IGrid grid, Level level) {
-        return getPatterns(grid, level).stream().map(AppEngApi::parsePattern).collect(Collectors.toList());
+        return getPatterns(grid, level).stream().map(AEApi::parsePattern).collect(Collectors.toList());
     }
 
     public static List<Object> listDrives(IGrid grid) {
@@ -367,8 +367,8 @@ public class AppEngApi {
     public static Map<String, Object> parsePattern(IPatternDetails pattern) {
         Map<String, Object> map = new HashMap<>();
 
-        map.put("inputs", Arrays.stream(pattern.getInputs()).map(AppEngApi::parsePatternInput).collect(Collectors.toList()));
-        map.put("outputs", Arrays.stream(pattern.getOutputs()).map(AppEngApi::parseGenericStack).collect(Collectors.toList()));
+        map.put("inputs", Arrays.stream(pattern.getInputs()).map(AEApi::parsePatternInput).collect(Collectors.toList()));
+        map.put("outputs", Arrays.stream(pattern.getOutputs()).map(AEApi::parseGenericStack).collect(Collectors.toList()));
         map.put("primaryOutput", parseGenericStack(pattern.getPrimaryOutput()));
         return map;
     }
@@ -378,7 +378,7 @@ public class AppEngApi {
         map.put("primaryInput", parseGenericStack(patternInput.getPossibleInputs()[0]));
         map.put("possibleInputs",
                 Arrays.stream(Arrays.copyOfRange(patternInput.getPossibleInputs(), 1, patternInput.getPossibleInputs().length))
-                        .map(AppEngApi::parseGenericStack));
+                        .map(AEApi::parseGenericStack));
         map.put("multiplier", patternInput.getMultiplier());
         map.put("remaining", patternInput.getRemainingKey(patternInput.getPossibleInputs()[0].what()));
         return map;
@@ -417,14 +417,8 @@ public class AppEngApi {
         return node.getGrid().getService(IStorageService.class).getInventory();
     }
 
-    public static boolean isItemCrafting(MEStorage monitor, ICraftingService grid, ItemFilter filter,
+    public static boolean isCrafting(ICraftingService grid, GenericFilter<?> filter,
                                          @Nullable ICraftingCPU craftingCPU) {
-        Pair<Long, AEItemKey> stack = AppEngApi.findAEStackFromFilter(monitor, grid, filter);
-
-        // If the item stack does not exist, it cannot be crafted.
-        if (stack == null)
-            return false;
-
         // If the passed cpu is null, check all cpus
         if (craftingCPU == null) {
             // Loop through all crafting cpus and check if the item is being crafted.
@@ -436,7 +430,7 @@ public class AppEngApi {
                     if (jobStatus == null)
                         continue;
 
-                    if (jobStatus.crafting().what().equals(stack.getRight()))
+                    if (filter.testAE(jobStatus.crafting()))
                         return true;
                 }
             }
@@ -448,45 +442,7 @@ public class AppEngApi {
                 if (jobStatus == null)
                     return false;
 
-                return jobStatus.crafting().what().equals(stack.getRight());
-            }
-        }
-
-        return false;
-    }
-
-    public static boolean isFluidCrafting(MEStorage monitor, ICraftingService grid, FluidFilter filter,
-                                          @Nullable ICraftingCPU craftingCPU) {
-        Pair<Long, AEFluidKey> stack = AppEngApi.findAEFluidFromFilter(monitor, grid, filter);
-
-        // If the fluid stack does not exist, it cannot be crafted.
-        if (stack == null)
-            return false;
-
-        // If the passed cpu is null, check all cpus
-        if (craftingCPU == null) {
-            // Loop through all crafting cpus and check if the fluid is being crafted.
-            for (ICraftingCPU cpu : grid.getCpus()) {
-                if (cpu.isBusy()) {
-                    CraftingJobStatus jobStatus = cpu.getJobStatus();
-
-                    // avoid null pointer exception
-                    if (jobStatus == null)
-                        continue;
-
-                    if (jobStatus.crafting().what().equals(stack.getRight()))
-                        return true;
-                }
-            }
-        } else {
-            if (craftingCPU.isBusy()) {
-                CraftingJobStatus jobStatus = craftingCPU.getJobStatus();
-
-                // avoid null pointer exception
-                if (jobStatus == null)
-                    return false;
-
-                return jobStatus.crafting().what().equals(stack.getRight());
+                return filter.testAE(jobStatus.crafting());
             }
         }
 

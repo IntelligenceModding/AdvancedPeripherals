@@ -4,9 +4,10 @@ import dan200.computercraft.api.lua.IArguments;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.MethodResult;
 import dan200.computercraft.api.peripheral.IComputerAccess;
+import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.MEBridgePeripheral;
 
 /**
- * Implementation for common storage peripheral functions. Used for AE2 {@link de.srendi.advancedperipherals.common.addons.computercraft.peripheral.MeBridgePeripheral}
+ * Implementation for common storage peripheral functions. Used for AE2 {@link MEBridgePeripheral}
  * and RS {@link de.srendi.advancedperipherals.common.addons.computercraft.peripheral.RsBridgePeripheral}
  * <p>
  * This ensures that these both bridges use the same methods. This makes it easier to support both in the same script
@@ -17,112 +18,105 @@ import dan200.computercraft.api.peripheral.IComputerAccess;
  */
 public interface IStorageSystemPeripheral {
 
-    MethodResult isConnected();
+        boolean isConnected();
 
-    MethodResult isOnline();
+        MethodResult isOnline();
 
-    MethodResult getItem(IArguments arguments) throws LuaException;
+        MethodResult getItem(IArguments arguments) throws LuaException;
 
-    MethodResult getFluid(IArguments arguments) throws LuaException;
+        MethodResult getFluid(IArguments arguments) throws LuaException;
 
-    MethodResult getChemical(IArguments arguments) throws LuaException;
+        MethodResult getChemical(IArguments arguments) throws LuaException;
 
-    MethodResult listItems();
+        MethodResult getItems(IArguments arguments) throws LuaException;
 
-    MethodResult listFluids();
+        MethodResult getFluids(IArguments arguments) throws LuaException;
 
-    MethodResult listChemicals();
+        MethodResult getChemicals(IArguments arguments) throws LuaException;
 
-    MethodResult listCraftableItems();
+        MethodResult getCraftableItems(IArguments arguments) throws LuaException;
 
-    MethodResult listCraftableFluids();
+        MethodResult getCraftableFluids(IArguments arguments) throws LuaException;
 
-    MethodResult listCraftableChemicals();
+        MethodResult getCraftableChemicals(IArguments arguments) throws LuaException;
 
-    MethodResult listCells();
+        MethodResult getCells();
 
-    MethodResult listDrives();
+        MethodResult getDrives();
 
-    MethodResult importItem(IComputerAccess computer, IArguments arguments) throws LuaException;
+        MethodResult importItem(IComputerAccess computer, IArguments arguments) throws LuaException;
 
-    MethodResult exportItem(IComputerAccess computer, IArguments arguments) throws LuaException;
+        MethodResult exportItem(IComputerAccess computer, IArguments arguments) throws LuaException;
 
-    MethodResult importFluid(IComputerAccess computer, IArguments arguments) throws LuaException;
+        MethodResult importFluid(IComputerAccess computer, IArguments arguments) throws LuaException;
 
-    MethodResult exportFluid(IComputerAccess computer, IArguments arguments) throws LuaException;
+        MethodResult exportFluid(IComputerAccess computer, IArguments arguments) throws LuaException;
 
-    MethodResult importChemical(IComputerAccess computer, IArguments arguments) throws LuaException;
+        MethodResult importChemical(IComputerAccess computer, IArguments arguments) throws LuaException;
 
-    MethodResult exportchemical(IComputerAccess computer, IArguments arguments) throws LuaException;
+        MethodResult exportChemical(IComputerAccess computer, IArguments arguments) throws LuaException;
 
-    MethodResult getFilteredPatterns(IArguments arguments) throws LuaException;
+        MethodResult getStoredEnergy();
 
-    MethodResult getPatterns();
+        MethodResult getEnergyCapacity();
 
-    MethodResult getStoredEnergy();
+        MethodResult getEnergyUsage();
 
-    MethodResult getEnergyCapacity();
+        MethodResult getAverageEnergyInput();
 
-    MethodResult getEnergyUsage();
+        MethodResult getTotalExternalItemStorage();
 
-    MethodResult getAvgPowerInjection();
+        MethodResult getTotalExternalFluidStorage();
 
-    MethodResult getTotalExternItemStorage();
+        MethodResult getTotalExternalChemicalStorage();
 
-    MethodResult getTotalExternFluidStorage();
+        MethodResult getTotalItemStorage();
 
-    MethodResult getTotalExternChemicalStorage();
+        MethodResult getTotalFluidStorage();
 
-    MethodResult getTotalItemStorage();
+        MethodResult getTotalChemicalStorage();
 
-    MethodResult getTotalFluidStorage();
+        MethodResult getUsedExternalItemStorage();
 
-    MethodResult getTotalChemicalStorage();
+        MethodResult getUsedExternalFluidStorage();
 
-    MethodResult getUsedExternItemStorage();
+        MethodResult getUsedExternalChemicalStorage();
 
-    MethodResult getUsedExternFluidStorage();
+        MethodResult getUsedItemStorage();
 
-    MethodResult getUsedExternChemicalStorage();
+        MethodResult getUsedFluidStorage();
 
-    MethodResult getUsedItemStorage();
+        MethodResult getUsedChemicalStorage();
 
-    MethodResult getUsedFluidStorage();
+        MethodResult getAvailableExternalItemStorage();
 
-    MethodResult getUsedChemicalStorage();
+        MethodResult getAvailableExternalFluidStorage();
 
-    MethodResult getAvailableExternItemStorage();
+        MethodResult getAvailableExternalChemicalStorage();
 
-    MethodResult getAvailableExternFluidStorage();
+        MethodResult getAvailableItemStorage();
 
-    MethodResult getAvailableExternChemicalStorage();
+        MethodResult getAvailableFluidStorage();
 
-    MethodResult getAvailableItemStorage();
+        MethodResult getAvailableChemicalStorage();
 
-    MethodResult getAvailableFluidStorage();
+        MethodResult getCraftingTasks();
 
-    MethodResult getAvailableChemicalStorage();
+        // A function to get our BasicCraftJob object with the id
+        MethodResult getCraftingTask(int id);
 
-    MethodResult craftItem(IComputerAccess computer, IArguments arguments) throws LuaException;
+        MethodResult cancelCraftingTasks(IArguments arguments) throws LuaException;
 
-    MethodResult getCraftingJobs();
+        MethodResult craftItem(IComputerAccess computer, IArguments arguments) throws LuaException;
 
-    MethodResult cancelCraftingJobs(IArguments arguments) throws LuaException;
+        MethodResult craftFluid(IComputerAccess computer, IArguments arguments) throws LuaException;
 
-    MethodResult craftFluid(IComputerAccess computer, IArguments arguments) throws LuaException;
+        MethodResult craftChemical(IComputerAccess computer, IArguments arguments) throws LuaException;
 
-    MethodResult craftChemical(IComputerAccess computer, IArguments arguments) throws LuaException;
+        MethodResult isCraftable(IArguments arguments) throws LuaException;
 
-    MethodResult isItemCraftable(IArguments arguments) throws LuaException;
+        MethodResult isCrafting(IArguments arguments) throws LuaException;
 
-    MethodResult isItemCrafting(IArguments arguments) throws LuaException;
-
-    MethodResult isFluidCraftable(IArguments arguments) throws LuaException;
-
-    MethodResult isFluidCrafting(IArguments arguments) throws LuaException;
-
-    MethodResult isChemicalCraftable(IArguments arguments) throws LuaException;
-
-    MethodResult isChemicalCrafting(IArguments arguments) throws LuaException;
+        MethodResult getPatterns(IArguments arguments) throws LuaException;
 
 }

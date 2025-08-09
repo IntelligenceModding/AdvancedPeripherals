@@ -54,6 +54,7 @@ public class RenderableObject extends OverlayObject {
 
     public RenderableObject(OverlayModule module, IArguments arguments) throws LuaException {
         super(module, arguments);
+        reflectivelyMapProperties(arguments);
     }
 
     public RenderableObject(UUID player) {

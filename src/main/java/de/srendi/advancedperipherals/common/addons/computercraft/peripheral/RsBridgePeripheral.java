@@ -15,13 +15,14 @@ import dan200.computercraft.core.apis.TableHelper;
 import dan200.computercraft.core.computer.ComputerSide;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.BlockEntityPeripheralOwner;
-import de.srendi.advancedperipherals.common.addons.refinedstorage.RefinedStorage;
-import de.srendi.advancedperipherals.common.addons.refinedstorage.RefinedStorageNode;
+import de.srendi.advancedperipherals.common.addons.refinedstorage.RSApi;
+import de.srendi.advancedperipherals.common.addons.refinedstorage.RSNode;
 import de.srendi.advancedperipherals.common.addons.refinedstorage.RsFluidHandler;
 import de.srendi.advancedperipherals.common.addons.refinedstorage.RsItemHandler;
 import de.srendi.advancedperipherals.common.blocks.blockentities.RsBridgeEntity;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.util.Pair;
+import de.srendi.advancedperipherals.common.util.StatusConstants;
 import de.srendi.advancedperipherals.common.util.inventory.FluidFilter;
 import de.srendi.advancedperipherals.common.util.inventory.FluidUtil;
 import de.srendi.advancedperipherals.common.util.inventory.GenericFilter;
@@ -52,7 +53,7 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         super(PERIPHERAL_TYPE, new BlockEntityPeripheralOwner<>(tileEntity));
     }
 
-    private RefinedStorageNode getNode() {
+    private RSNode getNode() {
         return owner.tileEntity.getNode();
     }
 
@@ -60,9 +61,10 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         return getNode().getNetwork();
     }
 
-    private MethodResult notConnected() {
-        return MethodResult.of(null, "NOT_CONNECTED");
+    private MethodResult notConnected(@Nullable Object defaultValue) {
+        return MethodResult.of(defaultValue, StatusConstants.NOT_CONNECTED.toString());
     }
+
 
     private boolean isAvailable() {
         return getNetwork() != null;
@@ -75,8 +77,8 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
     @Override
     @LuaFunction(mainThread = true)
-    public final MethodResult isConnected() {
-        return MethodResult.of(isAvailable());
+    public final boolean isConnected() {
+        return isAvailable();
     }
 
     @Override
@@ -89,108 +91,108 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
     @Override
     @LuaFunction(mainThread = true)
-    public final MethodResult listItems() {
+    public final MethodResult getItems(IArguments arguments) {
         if (!isAvailable())
-            return notConnected();
+            return notConnected(null);
 
-        return MethodResult.of(RefinedStorage.listItems(getNetwork()));
+        return MethodResult.of(RSApi.listItems(getNetwork()));
     }
 
     @Override
     @LuaFunction(mainThread = true)
-    public final MethodResult listCraftableItems() {
+    public final MethodResult getCraftableItems(IArguments arguments) {
         if (!isAvailable())
-            return notConnected();
+            return notConnected(null);
 
         List<Object> items = new ArrayList<>();
-        RefinedStorage.getCraftableItems(getNetwork()).forEach(item -> items.add(RefinedStorage.parseItemStack(item, getNetwork())));
+        RSApi.getCraftableItems(getNetwork()).forEach(item -> items.add(RSApi.parseItemStack(item, getNetwork())));
         return MethodResult.of(items);
     }
 
     @Override
     @LuaFunction(mainThread = true)
-    public final MethodResult listCraftableFluids() {
+    public final MethodResult getCraftableFluids(IArguments arguments) {
         if (!isAvailable())
-            return notConnected();
+            return notConnected(null);
 
         List<Object> fluids = new ArrayList<>();
-        RefinedStorage.getCraftableFluids(getNetwork()).forEach(fluid -> fluids.add(RefinedStorage.parseFluidStack(fluid, getNetwork())));
+        RSApi.getCraftableFluids(getNetwork()).forEach(fluid -> fluids.add(RSApi.parseFluidStack(fluid, getNetwork())));
         return MethodResult.of(fluids);
     }
 
     @Override
-    public MethodResult listCraftableChemicals() {
+    public MethodResult getCraftableChemicals(IArguments arguments) {
         return null;
     }
 
     @Override
     @LuaFunction(mainThread = true)
-    public final MethodResult listCells() {
+    public final MethodResult getCells() {
         if (!isAvailable())
-            return notConnected();
+            return notConnected(null);
 
-        return MethodResult.of(RefinedStorage.getStorageDisks(getNetwork()));
+        return MethodResult.of(RSApi.getStorageDisks(getNetwork()));
     }
 
     @Override
     @LuaFunction(mainThread = true)
-    public final MethodResult listDrives() {
+    public final MethodResult getDrives() {
         if (!isAvailable())
-            return notConnected();
+            return notConnected(null);
 
-        return MethodResult.of(RefinedStorage.getDiskDrives(getNetwork()));
+        return MethodResult.of(RSApi.getDiskDrives(getNetwork()));
     }
 
     @Override
     @LuaFunction(mainThread = true)
     public final MethodResult getTotalItemStorage() {
         if (!isAvailable())
-            return notConnected();
+            return notConnected(0);
 
-        return MethodResult.of(RefinedStorage.getMaxItemDiskStorage(getNetwork()));
+        return MethodResult.of(RSApi.getMaxItemDiskStorage(getNetwork()));
     }
 
     @Override
     @LuaFunction(mainThread = true)
     public final MethodResult getTotalFluidStorage() {
         if (!isAvailable())
-            return notConnected();
+            return notConnected(0);
 
-        return MethodResult.of(RefinedStorage.getMaxFluidDiskStorage(getNetwork()));
+        return MethodResult.of(RSApi.getMaxFluidDiskStorage(getNetwork()));
     }
 
     @Override
     @LuaFunction(mainThread = true)
     public MethodResult getTotalChemicalStorage() {
         if (!isAvailable())
-            return notConnected();
+            return notConnected(0);
 
         return MethodResult.of(-1);
     }
 
     @Override
     @LuaFunction(mainThread = true)
-    public final MethodResult getUsedExternItemStorage() {
+    public final MethodResult getUsedExternalItemStorage() {
         if (!isAvailable())
-            return notConnected();
+            return notConnected(0);
 
-        return MethodResult.of(RefinedStorage.getUsedItemExternalStorage(getNetwork()));
+        return MethodResult.of(RSApi.getUsedItemExternalStorage(getNetwork()));
     }
 
     @Override
     @LuaFunction(mainThread = true)
-    public final MethodResult getUsedExternFluidStorage() {
+    public final MethodResult getUsedExternalFluidStorage() {
         if (!isAvailable())
-            return notConnected();
+            return notConnected(0);
 
-        return MethodResult.of(RefinedStorage.getUsedFluidExternalStorage(getNetwork()));
+        return MethodResult.of(RSApi.getUsedFluidExternalStorage(getNetwork()));
     }
 
     @Override
     @LuaFunction(mainThread = true)
-    public MethodResult getUsedExternChemicalStorage() {
+    public MethodResult getUsedExternalChemicalStorage() {
         if (!isAvailable())
-            return notConnected();
+            return notConnected(0);
 
         return MethodResult.of(-1);
     }
@@ -199,52 +201,52 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     @LuaFunction(mainThread = true)
     public final MethodResult getUsedItemStorage() {
         if (!isAvailable())
-            return notConnected();
+            return notConnected(0);
 
-        return MethodResult.of(RefinedStorage.getUsedItemDiskStorage(getNetwork()));
+        return MethodResult.of(RSApi.getUsedItemDiskStorage(getNetwork()));
     }
 
     @Override
     @LuaFunction(mainThread = true)
     public final MethodResult getUsedFluidStorage() {
         if (!isAvailable())
-            return notConnected();
+            return notConnected(0);
 
-        return MethodResult.of(RefinedStorage.getUsedFluidDiskStorage(getNetwork()));
+        return MethodResult.of(RSApi.getUsedFluidDiskStorage(getNetwork()));
     }
 
     @Override
     @LuaFunction(mainThread = true)
     public MethodResult getUsedChemicalStorage() {
         if (!isAvailable())
-            return notConnected();
+            return notConnected(0);
 
         return MethodResult.of(-1);
     }
 
     @Override
     @LuaFunction(mainThread = true)
-    public final MethodResult getAvailableExternItemStorage() {
+    public final MethodResult getAvailableExternalItemStorage() {
         if (!isAvailable())
-            return notConnected();
+            return notConnected(0);
 
-        return MethodResult.of(RefinedStorage.getMaxItemExternalStorage(getNetwork()) - RefinedStorage.getUsedItemExternalStorage(getNetwork()));
+        return MethodResult.of(RSApi.getMaxItemExternalStorage(getNetwork()) - RSApi.getUsedItemExternalStorage(getNetwork()));
     }
 
     @Override
     @LuaFunction(mainThread = true)
-    public final MethodResult getAvailableExternFluidStorage() {
+    public final MethodResult getAvailableExternalFluidStorage() {
         if (!isAvailable())
-            return notConnected();
+            return notConnected(0);
 
-        return MethodResult.of(RefinedStorage.getMaxFluidExternalStorage(getNetwork()) - RefinedStorage.getUsedFluidExternalStorage(getNetwork()));
+        return MethodResult.of(RSApi.getMaxFluidExternalStorage(getNetwork()) - RSApi.getUsedFluidExternalStorage(getNetwork()));
     }
 
     @Override
     @LuaFunction(mainThread = true)
-    public MethodResult getAvailableExternChemicalStorage() {
+    public MethodResult getAvailableExternalChemicalStorage() {
         if (!isAvailable())
-            return notConnected();
+            return notConnected(0);
 
         return MethodResult.of(-1);
     }
@@ -253,67 +255,67 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     @LuaFunction(mainThread = true)
     public final MethodResult getAvailableItemStorage() {
         if (!isAvailable())
-            return notConnected();
+            return notConnected(0);
 
-        return MethodResult.of(RefinedStorage.getMaxItemDiskStorage(getNetwork()) - RefinedStorage.getUsedItemDiskStorage(getNetwork()));
+        return MethodResult.of(RSApi.getMaxItemDiskStorage(getNetwork()) - RSApi.getUsedItemDiskStorage(getNetwork()));
     }
 
     @Override
     @LuaFunction(mainThread = true)
     public final MethodResult getAvailableFluidStorage() {
         if (!isAvailable())
-            return notConnected();
+            return notConnected(0);
 
-        return MethodResult.of(RefinedStorage.getMaxFluidDiskStorage(getNetwork()) - RefinedStorage.getUsedFluidDiskStorage(getNetwork()));
+        return MethodResult.of(RSApi.getMaxFluidDiskStorage(getNetwork()) - RSApi.getUsedFluidDiskStorage(getNetwork()));
     }
 
     @Override
     @LuaFunction(mainThread = true)
     public MethodResult getAvailableChemicalStorage() {
         if (!isAvailable())
-            return notConnected();
+            return notConnected(0);
 
         return MethodResult.of(-1);
     }
 
     @Override
     @LuaFunction(mainThread = true)
-    public final MethodResult getTotalExternItemStorage() {
+    public final MethodResult getTotalExternalItemStorage() {
         if (!isAvailable())
-            return notConnected();
+            return notConnected(0);
 
-        return MethodResult.of(RefinedStorage.getMaxItemExternalStorage(getNetwork()));
+        return MethodResult.of(RSApi.getMaxItemExternalStorage(getNetwork()));
     }
 
     @Override
     @LuaFunction(mainThread = true)
-    public final MethodResult getTotalExternFluidStorage() {
+    public final MethodResult getTotalExternalFluidStorage() {
         if (!isAvailable())
-            return notConnected();
+            return notConnected(0);
 
-        return MethodResult.of(RefinedStorage.getMaxFluidExternalStorage(getNetwork()));
+        return MethodResult.of(RSApi.getMaxFluidExternalStorage(getNetwork()));
     }
 
     @Override
     @LuaFunction(mainThread = true)
-    public MethodResult getTotalExternChemicalStorage() {
+    public MethodResult getTotalExternalChemicalStorage() {
         if (!isAvailable())
-            return notConnected();
+            return notConnected(0);
 
         return MethodResult.of(-1);
     }
 
     @Override
     @LuaFunction(mainThread = true)
-    public final MethodResult listFluids() {
+    public final MethodResult getFluids(IArguments arguments) {
         if (!isAvailable())
-            return notConnected();
+            return notConnected(null);
 
-        return MethodResult.of(RefinedStorage.listFluids(getNetwork()));
+        return MethodResult.of(RSApi.listFluids(getNetwork()));
     }
 
     @Override
-    public MethodResult listChemicals() {
+    public MethodResult getChemicals(IArguments arguments) {
         return null;
     }
 
@@ -321,7 +323,7 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     @LuaFunction(mainThread = true)
     public final MethodResult getEnergyUsage() {
         if (!isAvailable())
-            return notConnected();
+            return notConnected(0);
 
         return MethodResult.of(getNetwork().getEnergyUsage());
     }
@@ -330,7 +332,7 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     @LuaFunction(mainThread = true)
     public final MethodResult getEnergyCapacity() {
         if (!isAvailable())
-            return notConnected();
+            return notConnected(0);
 
         return MethodResult.of(getNetwork().getEnergyStorage().getMaxEnergyStored());
     }
@@ -339,33 +341,29 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     @LuaFunction(mainThread = true)
     public final MethodResult getStoredEnergy() {
         if (!isAvailable())
-            return notConnected();
+            return notConnected(0);
 
         return MethodResult.of(getNetwork().getEnergyStorage().getEnergyStored());
     }
 
-    @Override
     @LuaFunction(mainThread = true)
-    public final MethodResult getAvgPowerInjection() {
+    public final MethodResult getAverageEnergyInput() {
         return MethodResult.of(0);
     }
 
     @Override
     @LuaFunction(mainThread = true)
-    public final MethodResult getFilteredPatterns(IArguments arguments) throws LuaException {
+    public final MethodResult getPatterns(IArguments arguments) throws LuaException {
         if (!isAvailable())
-            return notConnected();
+            return notConnected(null);
 
         // Expected input is a table with either an input table, an output table or both to filter for both
         Map<?, ?> filterTable;
-        try {
-            Optional<Map<?, ?>> optionalTable = arguments.optTable(0);
-            if (optionalTable.isEmpty())
-                return MethodResult.of(null, "EMPTY_INPUT");
-            filterTable = optionalTable.get();
-        } catch (LuaException e) {
-            return MethodResult.of(null, "NO_TABLE");
-        }
+        Optional<Map<?, ?>> optionalTable = arguments.optTable(0);
+        if (optionalTable.isEmpty())
+            return MethodResult.of(RSApi.getPatterns(getNetwork()));
+
+        filterTable = optionalTable.get();
 
         boolean hasInputFilter = filterTable.containsKey("input");
         boolean hasOutputFilter = filterTable.containsKey("output");
@@ -373,7 +371,7 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
         // If the player tries to filter for nothing, return nothing.
         if (!hasAnyFilter)
-            return MethodResult.of(null, "NO_FILTER");
+            return MethodResult.of(null, StatusConstants.MISSING_FILTER.toString());
 
         GenericFilter<?> inputFilter = null;
         GenericFilter<?> outputFilter = null;
@@ -389,27 +387,18 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
             outputFilter = GenericFilter.parseGeneric(outputFilterTable).getLeft();
         }
 
-        Pair<ICraftingPattern, String> pattern = RefinedStorage.findPatternFromFilters(getNetwork(), inputFilter, outputFilter);
+        Pair<ICraftingPattern, String> pattern = RSApi.findPatternFromFilters(getNetwork(), inputFilter, outputFilter);
 
         if (pattern.getRight() != null)
             return MethodResult.of(null, pattern.getRight());
 
-        return MethodResult.of(RefinedStorage.parsePattern(pattern.getLeft(), getNetwork()));
-    }
-
-    @Override
-    @LuaFunction(mainThread = true)
-    public final MethodResult getPatterns() {
-        if (!isAvailable())
-            return notConnected();
-
-        return MethodResult.of(RefinedStorage.getPatterns(getNetwork()));
+        return MethodResult.of(RSApi.parsePattern(pattern.getLeft(), getNetwork()));
     }
 
     protected MethodResult exportToChest(@NotNull IArguments arguments, @Nullable IItemHandler targetInventory) throws LuaException {
         RsItemHandler itemHandler = new RsItemHandler(getNetwork());
         if (targetInventory == null)
-            return MethodResult.of(0, "INVALID_TARGET");
+            return MethodResult.of(0, StatusConstants.TARGET_NOT_FOUND);
 
         Pair<ItemFilter, String> filter = ItemFilter.parse(arguments.getTable(0));
         if (filter.rightPresent())
@@ -421,7 +410,7 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     protected MethodResult importToSystem(@NotNull IArguments arguments, @Nullable IItemHandler targetInventory) throws LuaException {
         RsItemHandler itemHandler = new RsItemHandler(getNetwork());
         if (targetInventory == null)
-            return MethodResult.of(0, "INVALID_TARGET");
+            return MethodResult.of(0, StatusConstants.TARGET_NOT_FOUND);
 
         Pair<ItemFilter, String> filter = ItemFilter.parse(arguments.getTable(0));
         if (filter.rightPresent())
@@ -433,7 +422,7 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     protected MethodResult exportToTank(@NotNull IArguments arguments, @Nullable IFluidHandler targetInventory) throws LuaException {
         RsFluidHandler itemHandler = new RsFluidHandler(getNetwork());
         if (targetInventory == null)
-            return MethodResult.of(0, "INVALID_TARGET");
+            return MethodResult.of(0, StatusConstants.TARGET_NOT_FOUND);
 
         Pair<FluidFilter, String> filter = FluidFilter.parse(arguments.getTable(0));
         if (filter.rightPresent())
@@ -445,7 +434,7 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     protected MethodResult importToSystem(@NotNull IArguments arguments, @Nullable IFluidHandler targetInventory) throws LuaException {
         RsFluidHandler itemHandler = new RsFluidHandler(getNetwork());
         if (targetInventory == null)
-            return MethodResult.of(0, "INVALID_TARGET");
+            return MethodResult.of(0, StatusConstants.TARGET_NOT_FOUND);
 
         Pair<FluidFilter, String> filter = FluidFilter.parse(arguments.getTable(0));
         if (filter.rightPresent())
@@ -458,7 +447,7 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     @LuaFunction(mainThread = true)
     public final MethodResult exportItem(IComputerAccess computer, IArguments arguments) throws LuaException {
         if (!isAvailable())
-            return notConnected();
+            return notConnected(0);
 
         String side = arguments.getString(1);
         IItemHandler inventory;
@@ -476,7 +465,7 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     @LuaFunction(mainThread = true)
     public final MethodResult importItem(IComputerAccess computer, IArguments arguments) throws LuaException {
         if (!isAvailable())
-            return notConnected();
+            return notConnected(0);
 
         String side = arguments.getString(1);
         IItemHandler inventory;
@@ -494,7 +483,7 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     @LuaFunction(mainThread = true)
     public final MethodResult exportFluid(IComputerAccess computer, IArguments arguments) throws LuaException {
         if (!isAvailable())
-            return notConnected();
+            return notConnected(0);
 
         String side = arguments.getString(1);
         IFluidHandler fluidHandler;
@@ -504,9 +493,6 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         } else {
             fluidHandler = FluidUtil.getHandlerFromName(computer, arguments.getString(1));
         }
-
-        if (fluidHandler == null)
-            return MethodResult.of(0, "The target tank does not exist. Make sure the bridge is exposed in the computer network. Reach out to our discord or our documentation for help.");
 
         return exportToTank(arguments, fluidHandler);
     }
@@ -517,7 +503,7 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     }
 
     @Override
-    public MethodResult exportchemical(IComputerAccess computer, IArguments arguments) throws LuaException {
+    public MethodResult exportChemical(IComputerAccess computer, IArguments arguments) throws LuaException {
         return null;
     }
 
@@ -525,7 +511,7 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     @LuaFunction(mainThread = true)
     public final MethodResult importFluid(IComputerAccess computer, IArguments arguments) throws LuaException {
         if (!isAvailable())
-            return notConnected();
+            return notConnected(0);
 
         String side = arguments.getString(1);
         IFluidHandler fluidHandler;
@@ -536,9 +522,6 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
             fluidHandler = FluidUtil.getHandlerFromName(computer, arguments.getString(1));
         }
 
-        if (fluidHandler == null)
-            return MethodResult.of(0, "The target tank does not exist. Make sure the bridge is exposed in the computer network. Reach out to our discord or our documentation for help.");
-
         return importToSystem(arguments, fluidHandler);
     }
 
@@ -546,26 +529,26 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     @LuaFunction(mainThread = true)
     public final MethodResult getItem(IArguments arguments) throws LuaException {
         if (!isAvailable())
-            return notConnected();
+            return notConnected(0);
 
         Pair<ItemFilter, String> filter = ItemFilter.parse(arguments.getTable(0));
         if (filter.rightPresent())
             return MethodResult.of(null, filter.getRight());
 
-        return MethodResult.of(RefinedStorage.parseItemStack(RefinedStorage.findStackFromFilter(getNetwork(), getNetwork().getCraftingManager(), filter.getLeft()), getNetwork()));
+        return MethodResult.of(RSApi.parseItemStack(RSApi.findStackFromFilter(getNetwork(), getNetwork().getCraftingManager(), filter.getLeft()), getNetwork()));
     }
 
     @Override
     @LuaFunction(mainThread = true)
     public final MethodResult getFluid(IArguments arguments) throws LuaException {
         if (!isAvailable())
-            return notConnected();
+            return notConnected(0);
 
         Pair<FluidFilter, String> filter = FluidFilter.parse(arguments.getTable(0));
         if (filter.rightPresent())
             return MethodResult.of(null, filter.getRight());
 
-        return MethodResult.of(RefinedStorage.parseFluidStack(RefinedStorage.findFluidFromFilter(getNetwork(), getNetwork().getCraftingManager(), filter.getLeft()), getNetwork()));
+        return MethodResult.of(RSApi.parseFluidStack(RSApi.findFluidFromFilter(getNetwork(), getNetwork().getCraftingManager(), filter.getLeft()), getNetwork()));
     }
 
     @Override
@@ -577,16 +560,15 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     @LuaFunction(mainThread = true)
     public final MethodResult craftItem(IComputerAccess computerAccess, IArguments arguments) throws LuaException {
         if (!isAvailable())
-            return notConnected();
-
+            return notConnected(null);
 
         Pair<ItemFilter, String> filter = ItemFilter.parse(arguments.getTable(0));
         if (filter.rightPresent())
             return MethodResult.of(null, filter.getRight());
 
-        ItemStack stack = RefinedStorage.findStackFromFilter(getNetwork(), getNetwork().getCraftingManager(), filter.getLeft());
+        ItemStack stack = RSApi.findStackFromFilter(getNetwork(), getNetwork().getCraftingManager(), filter.getLeft());
         if (stack.isEmpty())
-            return MethodResult.of(null, "NOT_CRAFTABLE");
+            return MethodResult.of(null, StatusConstants.NOT_CRAFTABLE.toString());
 
         ICalculationResult result = getNetwork().getCraftingManager().create(stack, filter.getLeft().getCount());
         CalculationResultType type = result.getType();
@@ -600,15 +582,15 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     @LuaFunction(mainThread = true)
     public final MethodResult craftFluid(IComputerAccess computerAccess, IArguments arguments) throws LuaException {
         if (!isAvailable())
-            return notConnected();
+            return notConnected(null);
 
         Pair<FluidFilter, String> filter = FluidFilter.parse(arguments.getTable(0));
         if (filter.rightPresent())
             return MethodResult.of(null, filter.getRight());
 
-        FluidStack stack = RefinedStorage.findFluidFromFilter(getNetwork(), getNetwork().getCraftingManager(), filter.getLeft());
+        FluidStack stack = RSApi.findFluidFromFilter(getNetwork(), getNetwork().getCraftingManager(), filter.getLeft());
         if (stack.isEmpty())
-            return MethodResult.of(null, "NOT_CRAFTABLE");
+            return MethodResult.of(null, StatusConstants.NOT_CRAFTABLE.toString());
 
         ICalculationResult result = getNetwork().getCraftingManager().create(stack, filter.getLeft().getCount());
         CalculationResultType type = result.getType();
@@ -624,19 +606,24 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     }
 
     @Override
-    @LuaFunction(mainThread = true)
-    public MethodResult getCraftingJobs() {
-        if (!isAvailable())
-            return notConnected();
-
-        return MethodResult.of(RefinedStorage.getCraftingTasks(getNetwork()));
+    public MethodResult getCraftingTask(int id) {
+        return null;
     }
 
     @Override
     @LuaFunction(mainThread = true)
-    public MethodResult cancelCraftingJobs(IArguments arguments) throws LuaException {
+    public MethodResult getCraftingTasks() {
         if (!isAvailable())
-            return notConnected();
+            return notConnected(null);
+
+        return MethodResult.of(RSApi.getCraftingTasks(getNetwork()));
+    }
+
+    @Override
+    @LuaFunction(mainThread = true)
+    public MethodResult cancelCraftingTasks(IArguments arguments) throws LuaException {
+        if (!isAvailable())
+            return notConnected(0);
 
         Pair<? extends GenericFilter<?>, String> filter = GenericFilter.parseGeneric(arguments.getTable(0));
         if (filter.getRight() != null)
@@ -666,15 +653,15 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
     @Override
     @LuaFunction(mainThread = true)
-    public final MethodResult isItemCrafting(IArguments arguments) throws LuaException {
+    public final MethodResult isCrafting(IArguments arguments) throws LuaException {
         if (!isAvailable())
-            return notConnected();
+            return notConnected(false);
 
         Pair<ItemFilter, String> filter = ItemFilter.parse(arguments.getTable(0));
         if (filter.rightPresent())
             return MethodResult.of(null, filter.getRight());
 
-        ItemStack stack = RefinedStorage.findStackFromFilter(getNetwork(), getNetwork().getCraftingManager(), filter.getLeft());
+        ItemStack stack = RSApi.findStackFromFilter(getNetwork(), getNetwork().getCraftingManager(), filter.getLeft());
         if (stack.isEmpty())
             return MethodResult.of(null, "NOT_CRAFTABLE");
 
@@ -688,58 +675,9 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
     @Override
     @LuaFunction(mainThread = true)
-    public final MethodResult isFluidCraftable(IArguments arguments) throws LuaException {
+    public final MethodResult isCraftable(IArguments arguments) throws LuaException {
         if (!isAvailable())
-            return notConnected();
-
-        Pair<FluidFilter, String> filter = FluidFilter.parse(arguments.getTable(0));
-        if (filter.rightPresent())
-            return MethodResult.of(false, filter.getRight());
-
-        FluidFilter parsedFilter = filter.getLeft();
-        if (parsedFilter.isEmpty())
-            return MethodResult.of(false, "EMPTY_FILTER");
-
-        return MethodResult.of(RefinedStorage.isFluidCraftable(getNetwork(), parsedFilter.toFluidStack()));
-    }
-
-    @Override
-    @LuaFunction(mainThread = true)
-    public final MethodResult isFluidCrafting(IArguments arguments) throws LuaException {
-        if (!isAvailable())
-            return notConnected();
-
-        Pair<FluidFilter, String> filter = FluidFilter.parse(arguments.getTable(0));
-        if (filter.rightPresent())
-            return MethodResult.of(null, filter.getRight());
-
-        FluidStack stack = RefinedStorage.findFluidFromFilter(getNetwork(), getNetwork().getCraftingManager(), filter.getLeft());
-        if (stack.isEmpty())
-            return MethodResult.of(null, "NOT_CRAFTABLE");
-
-        for (ICraftingTask task : getNetwork().getCraftingManager().getTasks()) {
-            FluidStack taskStack = task.getRequested().getFluid();
-            if (taskStack != null && taskStack.isFluidEqual(stack))
-                return MethodResult.of(true);
-        }
-        return MethodResult.of(false);
-    }
-
-    @Override
-    public MethodResult isChemicalCraftable(IArguments arguments) throws LuaException {
-        return null;
-    }
-
-    @Override
-    public MethodResult isChemicalCrafting(IArguments arguments) throws LuaException {
-        return null;
-    }
-
-    @Override
-    @LuaFunction(mainThread = true)
-    public final MethodResult isItemCraftable(IArguments arguments) throws LuaException {
-        if (!isAvailable())
-            return notConnected();
+            return notConnected(false);
 
         Pair<ItemFilter, String> filter = ItemFilter.parse(arguments.getTable(0));
         if (filter.rightPresent())
@@ -749,6 +687,6 @@ public class RsBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (parsedFilter.isEmpty())
             return MethodResult.of(false, "EMPTY_FILTER");
 
-        return MethodResult.of(RefinedStorage.isItemCraftable(getNetwork(), parsedFilter.toItemStack()));
+        return MethodResult.of(RSApi.isItemCraftable(getNetwork(), parsedFilter.toItemStack()));
     }
 }

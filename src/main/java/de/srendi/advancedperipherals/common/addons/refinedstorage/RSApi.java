@@ -38,13 +38,13 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-public class RefinedStorage {
+public class RSApi {
 
-    public static RefinedStorage instance;
+    public static RSApi instance;
 
     private final IRSAPI api;
 
-    public RefinedStorage() {
+    public RSApi() {
         api = API.instance();
         initiate();
     }
@@ -497,7 +497,7 @@ public class RefinedStorage {
     }
 
     public void initiate() {
-        api.getNetworkNodeRegistry().add(new ResourceLocation(AdvancedPeripherals.MOD_ID, "rs_bridge"), (tag, world, pos) -> read(tag, new RefinedStorageNode(world, pos)));
+        api.getNetworkNodeRegistry().add(new ResourceLocation(AdvancedPeripherals.MOD_ID, "rs_bridge"), (tag, world, pos) -> read(tag, new RSNode(world, pos)));
     }
 
     public IRSAPI getApi() {

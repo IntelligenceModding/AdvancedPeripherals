@@ -23,6 +23,7 @@ public class RectangleObject extends RenderableObject {
 
     public RectangleObject(OverlayModule module, IArguments arguments) throws LuaException {
         super(module, arguments);
+        reflectivelyMapProperties(arguments);
     }
 
     /**
