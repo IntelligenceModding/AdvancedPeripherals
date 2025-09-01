@@ -77,6 +77,8 @@ public class ChemicalUtil {
         Level level = owner.getLevel();
         Objects.requireNonNull(level);
         Direction relativeDirection = CoordUtil.getDirection(owner.getOrientation(), direction);
+        if (relativeDirection == null)
+            return null;
         BlockEntity target = level.getBlockEntity(owner.getPos().relative(relativeDirection));
         if (target == null)
             return null;
