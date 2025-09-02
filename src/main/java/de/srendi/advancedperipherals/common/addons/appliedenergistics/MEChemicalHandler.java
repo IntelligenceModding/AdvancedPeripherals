@@ -51,7 +51,7 @@ public class MEChemicalHandler implements IStorageSystemChemicalHandler {
 
         ChemicalStack extracted = chemicalKey.getRight().getStack();
 
-        long amountExtracted = storageMonitor.extract(chemicalKey.getRight(), filter.getCount(), simulate == Action.SIMULATE ? Actionable.SIMULATE : Actionable.MODULATE, actionSource);
+        long amountExtracted = storageMonitor.extract(chemicalKey.getRight(), count, simulate == Action.SIMULATE ? Actionable.SIMULATE : Actionable.MODULATE, actionSource);
         extracted.setAmount(amountExtracted);
         AdvancedPeripherals.debug("Extracted chemical: " + extracted + " from filter: " + filter);
         return extracted;
