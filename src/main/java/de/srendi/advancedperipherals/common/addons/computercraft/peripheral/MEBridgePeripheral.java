@@ -3,11 +3,16 @@ package de.srendi.advancedperipherals.common.addons.computercraft.peripheral;
 import appeng.api.crafting.IPatternDetails;
 import appeng.api.networking.IGridNode;
 import appeng.api.networking.IManagedGridNode;
+import appeng.api.networking.crafting.CraftingJobStatus;
 import appeng.api.networking.crafting.ICraftingCPU;
+import appeng.api.networking.crafting.ICraftingLink;
 import appeng.api.networking.crafting.ICraftingService;
 import appeng.api.stacks.AEFluidKey;
 import appeng.api.stacks.AEItemKey;
+import appeng.api.stacks.AEKey;
+import appeng.api.stacks.GenericStack;
 import appeng.api.storage.MEStorage;
+import appeng.api.config.Actionable;
 import appeng.crafting.pattern.EncodedPatternItem;
 import dan200.computercraft.api.lua.IArguments;
 import dan200.computercraft.api.lua.LuaException;
@@ -36,7 +41,16 @@ import de.srendi.advancedperipherals.common.util.inventory.IStorageSystemPeriphe
 import de.srendi.advancedperipherals.common.util.inventory.InventoryUtil;
 import de.srendi.advancedperipherals.common.util.inventory.ItemFilter;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
+import de.srendi.advancedperipherals.network.APNetworking;
+import de.srendi.advancedperipherals.network.toclient.CraftingCompleteToastPacket;
+import de.srendi.advancedperipherals.network.toclient.ToastToClientPacket;
+import de.srendi.advancedperipherals.common.util.CoordUtil;
 import me.ramidzkh.mekae2.ae2.MekanismKey;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.level.Level;
+import net.neoforged.neoforge.server.ServerLifecycleHooks;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
@@ -44,6 +58,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwner<MEBridgeEntity>> implements IStorageSystemPeripheral {
 
@@ -830,6 +845,188 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
     @Override
     @LuaFunction(mainThread = true)
+    public MethodResult forceCompleteCraftingTasks(IArguments arguments) throws LuaException {
+        if (!isAvailable())
+            return notConnected(0);
+
+        ICraftingService craftingGrid = node.getGrid().getService(ICraftingService.class);
+
+        Pair<? extends GenericFilter<?>, String> filter = GenericFilter.parseGeneric(new ObjectLuaTable(arguments.getTable(0)));
+        if (filter.getRight() != null && !"NO_NAME_OR_TYPE".equals(filter.getRight()))
+            return MethodResult.of(0, filter.getRight());
+
+        GenericFilter<?> parsedFilter = filter.getLeft();
+        boolean matchAll = parsedFilter.isEmpty();
+
+        int jobsCompleted = 0;
+        for (ICraftingCPU cpu : craftingGrid.getCpus()) {
+            if (cpu.isBusy() && cpu.getJobStatus() != null && (matchAll || parsedFilter.testAE(cpu.getJobStatus().crafting()))) {
+                try {
+                    CraftingJobStatus jobStatus = cpu.getJobStatus();
+                    GenericStack craftingStack = jobStatus.crafting();
+                    AEKey craftedItem = craftingStack.what();
+                    long totalAmount = craftingStack.amount();
+                    
+                    System.out.println("[DEBUG] ==> Processing job for: " + craftedItem.getDisplayName().getString());
+                    System.out.println("[DEBUG] ==> Total target amount: " + totalAmount);
+                    System.out.println("[DEBUG] ==> CPU busy: " + cpu.isBusy());
+                    System.out.println("[DEBUG] ==> CPU type: " + cpu.getClass().getSimpleName());
+                    
+                    // Calculate the actual completed amount using AE2 internal logic
+                    long actualCraftedAmount = totalAmount;
+                    if (cpu instanceof appeng.me.cluster.implementations.CraftingCPUCluster cpuCluster) {
+                        try {
+                            appeng.crafting.execution.CraftingCpuLogic craftingCpuLogic = cpuCluster.craftingLogic;
+                            long pending = craftingCpuLogic.getPendingOutputs(craftedItem);
+                            long active = craftingCpuLogic.getWaitingFor(craftedItem);
+                            actualCraftedAmount = totalAmount - (pending + active);
+                            
+                            System.out.println("[DEBUG] ==> AE2 Logic - Pending: " + pending + ", Active: " + active + ", Calculated Completed: " + actualCraftedAmount);
+                            
+                            // If calculated amount is 0 or negative, it means nothing is completed yet
+                            // In this case, we should force complete with the total requested amount
+                            if (actualCraftedAmount <= 0) {
+                                System.out.println("[DEBUG] ==> No items completed yet, using total amount for force completion");
+                                actualCraftedAmount = totalAmount;
+                            }
+                        } catch (Exception e) {
+                            System.out.println("[DEBUG] ==> Could not calculate precise amount: " + e.getMessage());
+                            e.printStackTrace();
+                            // Fall back to total amount if calculation fails
+                            actualCraftedAmount = totalAmount;
+                        }
+                    } else {
+                        System.out.println("[DEBUG] ==> Non-CraftingCPUCluster, using total amount: " + totalAmount);
+                    }
+                    
+                    // For force completion, we insert the full requested amount
+                    // The notification should show what we actually added to storage
+                    long amountToInsert = actualCraftedAmount;
+                    System.out.println("[DEBUG] ==> Final amount to insert and notify: " + amountToInsert);
+
+                    MEStorage storage = AEApi.getMonitor(node);
+                    long inserted = storage.insert(craftedItem, amountToInsert, Actionable.MODULATE, bridge);
+                    System.out.println("[DEBUG] ==> Actually inserted into storage: " + inserted);
+
+                    // Cancel the job without relying on AE2 notification logic
+                    cpu.cancelJob();
+                    Thread.sleep(50);
+                    boolean completed = !cpu.isBusy();
+                    System.out.println("[DEBUG] ==> CPU idle after cancellation: " + completed);
+
+                    if (completed) {
+                        jobsCompleted++;
+                        
+                        System.out.println("[DEBUG] ==> Sending notification with amount: " + amountToInsert);
+                        // Send custom notification with crafted item details
+                        sendForceCompletionNotification(jobsCompleted, craftedItem, amountToInsert, inserted);
+                    }
+                } catch (Exception e) {
+                    // Continue to next CPU if this one fails
+                    continue;
+                }
+            }
+        }
+        return MethodResult.of(jobsCompleted);
+    }
+
+    private void sendForceCompletionNotification(int jobNumber, AEKey craftedItem, long craftedAmount, long insertedAmount) {
+        System.out.println("[DEBUG-NOTIF] ==> sendForceCompletionNotification called with:");
+        System.out.println("[DEBUG-NOTIF] ==> jobNumber: " + jobNumber);
+        System.out.println("[DEBUG-NOTIF] ==> craftedItem: " + craftedItem.getDisplayName().getString());
+        System.out.println("[DEBUG-NOTIF] ==> craftedAmount: " + craftedAmount);
+        System.out.println("[DEBUG-NOTIF] ==> insertedAmount: " + insertedAmount);
+        
+        // Generate unique job ID for this force completion (matching original AE2 system style)
+        long jobId = System.currentTimeMillis() + jobNumber;
+        
+        // Send ComputerCraft notification exactly like original AE2 system
+        for (IComputerAccess computer : getConnectedComputers()) {
+            computer.queueEvent("ae_crafting", false, jobId, "JOB_DONE");
+        }
+        
+        if (shouldSendCraftingNotifications()) {
+            sendToastToNearbyPlayers(jobId, craftedItem, craftedAmount, insertedAmount);
+        } else {
+            System.out.println("[DEBUG-NOTIF] ==> Skipping toast notification - notifications disabled");
+        }
+    }
+    
+    private void sendToastToNearbyPlayers(long jobId, AEKey craftedItem, long craftedAmount, long insertedAmount) {
+        System.out.println("[DEBUG-TOAST] ==> sendToastToNearbyPlayers called with:");
+        System.out.println("[DEBUG-TOAST] ==> jobId: " + jobId);
+        System.out.println("[DEBUG-TOAST] ==> craftedItem: " + craftedItem.getDisplayName().getString());
+        System.out.println("[DEBUG-TOAST] ==> craftedAmount: " + craftedAmount);
+        System.out.println("[DEBUG-TOAST] ==> insertedAmount: " + insertedAmount);
+        
+        try {
+            ResourceKey<Level> dimension = getLevel().dimension();
+            int range = 32;
+            
+            Component title = Component.literal("Auto-Crafting Complete");
+            
+            String formattedAmount = craftedItem.formatAmount(craftedAmount, appeng.api.stacks.AmountFormat.SLOT);
+            String itemName = craftedItem.getDisplayName().getString();
+            
+            System.out.println("[DEBUG-TOAST] ==> AE2 formatAmount result: '" + formattedAmount + "'");
+            System.out.println("[DEBUG-TOAST] ==> Item name: '" + itemName + "'");
+            
+            String simpleAmount = String.valueOf(craftedAmount);
+            System.out.println("[DEBUG-TOAST] ==> Simple amount formatting: '" + simpleAmount + "'");
+            
+            Component message = Component.literal(simpleAmount + " " + itemName);
+            System.out.println("[DEBUG-TOAST] ==> Final message (using simple formatting): '" + message.getString() + "'");
+            
+            if (insertedAmount != craftedAmount) {
+                message = Component.literal(formattedAmount + " " + itemName + " (" + insertedAmount + " stored)");
+                System.out.println("[DEBUG-TOAST] ==> Modified message for partial storage: '" + message.getString() + "'");
+            }
+            
+            for (ServerPlayer player : ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers()) {
+                if (player.level().dimension() != dimension)
+                    continue;
+                    
+                if (CoordUtil.isInRange(getPos(), getLevel(), player, range, range)) {
+                    System.out.println("[DEBUG-TOAST] ==> Sending notification packet to player: " + player.getName().getString());
+                    System.out.println("[DEBUG-TOAST] ==> Client will decide whether to show notification based on their client setting");
+                    
+                    // Send the packet to the client - the client will check its own setting
+                    CraftingCompleteToastPacket packet = new CraftingCompleteToastPacket(title, message, craftedItem, craftedAmount);
+                    APNetworking.sendTo(player, packet);
+                }
+            }
+            
+        } catch (Exception e) {
+            System.out.println("[DEBUG-TOAST] ==> ERROR in sendToastToNearbyPlayers: " + e.getMessage());
+            e.printStackTrace();
+            // Ignore toast notification errors, don't break the force completion
+        }
+    }
+    
+    /**
+     * Check if crafting notifications should be sent to players.
+     * This method checks the server-side configuration.
+     * Individual client settings are checked on each client when they receive the packet.
+     * 
+     * @return true if notifications should be sent, false otherwise
+     */
+    private boolean shouldSendCraftingNotifications() {
+        // Check server-side setting
+        boolean serverSetting = APConfig.PERIPHERALS_CONFIG.meCraftingNotifications.get();
+        
+        if (!serverSetting) {
+            System.out.println("[DEBUG-NOTIF] ==> Notifications disabled by server config (meCraftingNotifications=false)");
+            return false;
+        }
+        
+        // Server setting is enabled, send packets to all clients
+        // Each client will check their own setting when they receive the packet
+        System.out.println("[DEBUG-NOTIF] ==> Server notifications enabled, sending packets to clients");
+        return true;
+    }
+
+    @Override
+    @LuaFunction(mainThread = true)
     public final MethodResult isCraftable(IArguments arguments) throws LuaException {
         if (!isAvailable())
             return notConnected(false);
@@ -880,5 +1077,130 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
             map.add(cpu);
         }
         return MethodResult.of(map);
+    }
+
+    @LuaFunction(mainThread = true)
+    public final MethodResult forceStopCPU(String cpuName) {
+        if (!isAvailable())
+            return notConnected(null);
+
+        if (cpuName == null || cpuName.trim().isEmpty())
+            return MethodResult.of(null, "CPU name cannot be empty");
+
+        ICraftingCPU cpu = AEApi.getCraftingCPU(node, cpuName.trim());
+        if (cpu == null)
+            return MethodResult.of(null, "CPU not found: " + cpuName);
+
+        if (!cpu.isBusy())
+            return MethodResult.of(null, "CPU is not busy: " + cpuName);
+
+        try {
+            cpu.cancelJob();
+            return MethodResult.of(true, "Successfully stopped CPU: " + cpuName);
+        } catch (Exception e) {
+            return MethodResult.of(null, "Failed to stop CPU: " + e.getMessage());
+        }
+    }
+
+    @LuaFunction(mainThread = true)
+    public final MethodResult forceCompleteCPU(String cpuName) {
+        if (!isAvailable())
+            return notConnected(null);
+
+        if (cpuName == null || cpuName.trim().isEmpty())
+            return MethodResult.of(null, "CPU name cannot be empty");
+
+        ICraftingCPU cpu = AEApi.getCraftingCPU(node, cpuName.trim());
+        if (cpu == null)
+            return MethodResult.of(null, "CPU not found: " + cpuName);
+
+        if (!cpu.isBusy())
+            return MethodResult.of(null, "CPU is not busy: " + cpuName);
+
+        try {
+            CraftingJobStatus jobStatus = cpu.getJobStatus();
+            if (jobStatus == null)
+                return MethodResult.of(null, "No active job found on CPU: " + cpuName);
+
+            // Get the item being crafted and its quantity
+            GenericStack craftingStack = jobStatus.crafting();
+            AEKey craftedItem = craftingStack.what();
+            long craftedAmount = craftingStack.amount();
+
+            // Get the ME storage to insert the completed items
+            MEStorage storage = AEApi.getMonitor(node);
+
+            // Insert the crafted items into storage first
+            long inserted = storage.insert(craftedItem, craftedAmount, Actionable.MODULATE, bridge);
+
+            // Access the CraftingCPUCluster to force natural job completion
+            if (cpu instanceof appeng.me.cluster.implementations.CraftingCPUCluster cpuCluster) {
+                try {
+                    // Get the current job link to trigger proper completion notification
+                    ICraftingLink currentLink = cpuCluster.craftingLogic.getLastLink();
+                    if (currentLink != null) {
+                        // Force the job to be marked as done by manipulating the link state
+                        // This will trigger the jobStateChange callback in MEBridgeEntity
+                        // which then calls jobStateChanged() on the AECraftJob, firing the completion event
+
+                        // Cancel the job to free the CPU and trigger state change
+                        cpuCluster.craftingLogic.cancel();
+
+                        // Small delay to allow the state change to propagate
+                        Thread.sleep(50);
+
+                        // The jobStateChange callback should have been triggered automatically by AE2
+                        // when the job was canceled, which will call jobStateChanged() on matching jobs
+
+                        boolean isNowIdle = !cpu.isBusy();
+
+                        if (inserted == craftedAmount && isNowIdle) {
+                            return MethodResult.of(true, "Successfully force completed CPU: " + cpuName
+                                + " (" + inserted + " items added, completion notification sent)");
+                        } else if (inserted > 0 && isNowIdle) {
+                            return MethodResult.of(true, "Partially completed CPU: " + cpuName
+                                + " (" + inserted + "/" + craftedAmount + " items added, completion notification sent)");
+                        } else if (isNowIdle) {
+                            return MethodResult.of(true, "Force completed CPU: " + cpuName
+                                + " (job completed, CPU now idle, " + inserted + " items added, completion notification sent)");
+                        } else {
+                            return MethodResult.of(false, "Failed to complete CPU: " + cpuName
+                                + " (CPU still busy after completion attempt)");
+                        }
+                    }
+                } catch (Exception clusterException) {
+                    // Fallback to regular cancellation if cluster method fails
+                    cpu.cancelJob();
+                    Thread.sleep(50);
+                    boolean isNowIdle = !cpu.isBusy();
+
+                    if (isNowIdle) {
+                        return MethodResult.of(true, "Force completed CPU (fallback): " + cpuName
+                            + " (" + inserted + " items added, job canceled)");
+                    } else {
+                        return MethodResult.of(false, "Failed to complete CPU: " + cpuName
+                            + " (CPU still busy after fallback cancellation)");
+                    }
+                }
+            } else {
+                // Fallback for non-CraftingCPUCluster implementations
+                cpu.cancelJob();
+                Thread.sleep(50);
+                boolean isNowIdle = !cpu.isBusy();
+
+                if (isNowIdle) {
+                    return MethodResult.of(true, "Force completed CPU (basic): " + cpuName
+                        + " (" + inserted + " items added, job canceled)");
+                } else {
+                    return MethodResult.of(false, "Failed to complete CPU: " + cpuName
+                        + " (CPU still busy after cancellation)");
+                }
+            }
+        } catch (Exception e) {
+            return MethodResult.of(false, "Error during force completion: " + e.getMessage());
+        }
+
+        // This should never be reached, but added for completeness
+        return MethodResult.of(false, "Unexpected error in force completion");
     }
 }

@@ -1,6 +1,7 @@
 package de.srendi.advancedperipherals.network;
 
 import de.srendi.advancedperipherals.AdvancedPeripherals;
+import de.srendi.advancedperipherals.network.toclient.CraftingCompleteToastPacket;
 import de.srendi.advancedperipherals.network.toclient.ToastToClientPacket;
 import de.srendi.advancedperipherals.network.toclient.UsernameToCachePacket;
 import de.srendi.advancedperipherals.network.toserver.RetrieveUsernamePacket;
@@ -20,6 +21,7 @@ public class APNetworking {
 
     public static void init(PayloadRegistrar registrar) {
         registrar.playToClient(ToastToClientPacket.TYPE, ToastToClientPacket.CODEC, ToastToClientPacket::handle);
+        registrar.playToClient(CraftingCompleteToastPacket.TYPE, CraftingCompleteToastPacket.CODEC, CraftingCompleteToastPacket::handle);
         registrar.playToClient(UsernameToCachePacket.TYPE, UsernameToCachePacket.CODEC, UsernameToCachePacket::handle);
 
         registrar.playToServer(RetrieveUsernamePacket.TYPE, RetrieveUsernamePacket.CODEC, RetrieveUsernamePacket::handle);

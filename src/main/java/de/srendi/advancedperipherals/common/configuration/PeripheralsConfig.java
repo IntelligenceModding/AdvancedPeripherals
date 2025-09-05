@@ -53,6 +53,7 @@ public class PeripheralsConfig implements IAPConfig {
     // ME Bridge
     public final ModConfigSpec.BooleanValue enableMEBridge;
     public final ModConfigSpec.IntValue meConsumption;
+    public final ModConfigSpec.BooleanValue meCraftingNotifications;
 
     // Rs Bridge
     public final ModConfigSpec.BooleanValue enableRSBridge;
@@ -157,6 +158,7 @@ public class PeripheralsConfig implements IAPConfig {
 
         enableMEBridge = builder.comment("Enable the Me Bridge or not.").define("enableMeBridge", true);
         meConsumption = builder.comment("Power consumption per tick.").defineInRange("mePowerConsumption", 10, 0, Integer.MAX_VALUE);
+        meCraftingNotifications = builder.comment("Enable crafting completion notifications for force-completed jobs. When enabled, players receive visual toast notifications when forceCompleteCraftingTasks() completes jobs. This works in conjunction with AE2's wireless terminal notification setting - both the server setting AND AE2's client notification setting must be enabled for notifications to appear.").define("meCraftingNotifications", true);
 
         pop("RS_Bridge", builder);
         enableRSBridge = builder.comment("Enable the Rs Bridge or not.").define("enableRsBridge", true);

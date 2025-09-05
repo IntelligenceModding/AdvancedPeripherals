@@ -128,7 +128,7 @@ public class AEApi {
     }
 
     @NotNull
-    public static Pair<Long, MekanismKey> findAEChemicalFromFilter(MEStorage monitor, @Nullable ICraftingService crafting, ChemicalFilter filter) {
+        public static Pair<Long, MekanismKey> findAEChemicalFromFilter(MEStorage monitor, @Nullable ICraftingService crafting, ChemicalFilter filter) {
         for (Object2LongMap.Entry<AEKey> temp : monitor.getAvailableStacks()) {
             if (temp.getKey() instanceof MekanismKey key && filter.test(key.getStack()))
                 return Pair.of(temp.getLongValue(), key);

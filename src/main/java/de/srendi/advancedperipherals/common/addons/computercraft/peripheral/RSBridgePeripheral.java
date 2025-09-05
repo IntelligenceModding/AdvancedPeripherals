@@ -2,12 +2,16 @@ package de.srendi.advancedperipherals.common.addons.computercraft.peripheral;
 
 import com.refinedmods.refinedstorage.api.autocrafting.Pattern;
 import com.refinedmods.refinedstorage.api.autocrafting.status.TaskStatus;
+import com.refinedmods.refinedstorage.api.core.Action;
 import com.refinedmods.refinedstorage.api.network.Network;
 import com.refinedmods.refinedstorage.api.network.NetworkComponent;
 import com.refinedmods.refinedstorage.api.network.autocrafting.AutocraftingNetworkComponent;
 import com.refinedmods.refinedstorage.api.network.energy.EnergyNetworkComponent;
 import com.refinedmods.refinedstorage.api.network.impl.node.AbstractNetworkNode;
+import com.refinedmods.refinedstorage.api.network.storage.StorageNetworkComponent;
 import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
+import com.refinedmods.refinedstorage.api.resource.ResourceKey;
+import com.refinedmods.refinedstorage.api.storage.Actor;
 import com.refinedmods.refinedstorage.common.support.resource.ItemResource;
 import com.refinedmods.refinedstorage.mekanism.ChemicalResource;
 import com.refinedmods.refinedstorage.neoforge.support.resource.VariantUtil;
@@ -783,6 +787,57 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
     @Override
     @LuaFunction(mainThread = true)
+    public final MethodResult forceCompleteCraftingTasks(IArguments arguments) throws LuaException {
+        if (!isAvailable())
+            return notConnected(0);
+
+        Pair<? extends GenericFilter<?>, String> filter = GenericFilter.parseGeneric(new ObjectLuaTable(arguments.getTable(0)));
+        if (filter.getRight() != null && !"NO_NAME_OR_TYPE".equals(filter.getRight()))
+            return MethodResult.of(0, filter.getRight());
+
+        GenericFilter<?> parsedFilter = filter.getLeft();
+        boolean matchAll = parsedFilter.isEmpty(); // If filter is empty, match all jobs
+
+        AutocraftingNetworkComponent craftingManager = getComponent(AutocraftingNetworkComponent.class);
+        StorageNetworkComponent storage = getNetwork().getComponent(StorageNetworkComponent.class);
+        int completed = 0;
+
+        for (TaskStatus status : craftingManager.getStatuses()) {
+            if (matchAll || parsedFilter.testRS(new ResourceAmount(status.info().resource(), 1))) {
+                try {
+                    // Get task details
+                    long amount = status.info().amount();
+                    ResourceKey resource = status.info().resource();
+
+                    // Insert the completed items into storage first
+                    long inserted = storage.insert(resource, amount, Action.EXECUTE, Actor.EMPTY);
+
+                    // Cancel the task to free up the crafting process and trigger notification
+                    craftingManager.cancel(status.info().id());
+
+                    // Manually trigger JOB_DONE notification for matching jobs
+                    final TaskStatus finalStatus = status;
+                    bridge.getJobs().stream()
+                        .filter(job -> job.getCraftingTask() != null &&
+                                       job.getCraftingTask().info().id().equals(finalStatus.info().id()))
+                        .forEach(job -> {
+                            // Directly fire JOB_DONE notification bypassing normal completion checks
+                            job.forceFireJobDone();
+                        });
+
+                    completed++;
+                } catch (Exception e) {
+                    // Continue to next task if this one fails
+                    continue;
+                }
+            }
+        }
+
+        return MethodResult.of(completed);
+    }
+
+    @Override
+    @LuaFunction(mainThread = true)
     public final MethodResult isCraftable(IArguments arguments) throws LuaException {
         if (!isAvailable())
             return notConnected(false);
@@ -872,5 +927,73 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         AutocraftingNetworkComponent autocrafting = getNetwork().getComponent(AutocraftingNetworkComponent.class);
 
         return MethodResult.of(RSApi.parsePattern(pattern.getLeft(), autocrafting));
+    }
+
+    @LuaFunction(mainThread = true)
+    public final MethodResult forceCompleteCPU(String taskIdOrResourceName) {
+        if (!isAvailable())
+            return notConnected(null);
+
+        if (taskIdOrResourceName == null || taskIdOrResourceName.trim().isEmpty())
+            return MethodResult.of(null, "Task ID or resource name cannot be empty");
+
+        AutocraftingNetworkComponent craftingManager = getComponent(AutocraftingNetworkComponent.class);
+        TaskStatus targetTask = null;
+
+        // First try to find by task ID
+        for (TaskStatus status : craftingManager.getStatuses()) {
+            if (status.info().id().toString().equals(taskIdOrResourceName.trim())) {
+                targetTask = status;
+                break;
+            }
+        }
+
+        // If not found by ID, try to find by resource name (basic matching)
+        if (targetTask == null) {
+            for (TaskStatus status : craftingManager.getStatuses()) {
+                String resourceName = status.info().resource().toString();
+                if (resourceName.contains(taskIdOrResourceName.trim())) {
+                    targetTask = status;
+                    break;
+                }
+            }
+        }
+
+        if (targetTask == null)
+            return MethodResult.of(null, "Task not found: " + taskIdOrResourceName);
+
+        try {
+            // Get task details before canceling
+            long amount = targetTask.info().amount();
+            ResourceKey resource = targetTask.info().resource();
+
+            // Insert the items into the storage network first
+            Network network = getNetwork();
+            StorageNetworkComponent storage = network.getComponent(StorageNetworkComponent.class);
+
+            // Create a resource amount to insert
+            ResourceAmount resourceAmount = new ResourceAmount(resource, amount);
+
+            // Try to insert the completed items
+            long inserted = storage.insert(resource, amount, Action.EXECUTE, Actor.EMPTY);
+
+            // Cancel the task to free up the crafting process
+            craftingManager.cancel(targetTask.info().id());
+
+            // Manually trigger JOB_DONE notification for matching jobs
+            final TaskStatus finalTargetTask = targetTask;
+            bridge.getJobs().stream()
+                .filter(job -> job.getCraftingTask() != null &&
+                               job.getCraftingTask().info().id().equals(finalTargetTask.info().id()))
+                .forEach(job -> {
+                    // Directly fire JOB_DONE notification bypassing normal completion checks
+                    job.forceFireJobDone();
+                });
+
+            return MethodResult.of(true, "Successfully force completed task: " + taskIdOrResourceName
+                + " (" + inserted + "/" + amount + " items added, completion notification sent)");
+        } catch (Exception e) {
+            return MethodResult.of(false, "Error during force completion: " + e.getMessage());
+        }
     }
 }

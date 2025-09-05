@@ -128,8 +128,6 @@ public class RSCraftJob extends BasicCraftJob {
     @Override
     public void tick() {
         super.tick();
-        // RS2 does re-create a new instance of the TaskStatus when something changes - so we actually need to re fetch that from the system
-        // It's cursed, but the only way currently
         if (craftingTask != null) {
             for (TaskStatus status : autocraftingComponent.getStatuses()) {
                 if (status.info().id().equals(craftingTask.info().id())) {
@@ -153,8 +151,6 @@ public class RSCraftJob extends BasicCraftJob {
         }
 
         if (optionalId.isEmpty()) {
-            // This indicates that the second calculation was not successful. Well I guess. There is no java doc and I currently
-            // don't get an answer from the maintainer. So maybe we want to fire the crafting event
             return;
         }
 
@@ -162,7 +158,6 @@ public class RSCraftJob extends BasicCraftJob {
         for (TaskStatus status : autocraftingComponent.getStatuses()) {
             if (status.info().id().equals(id)) {
                 this.craftingTask = status;
-                // And only now we set that the crafting is started.
                 setStartedCrafting();
                 break;
             }
@@ -185,7 +180,6 @@ public class RSCraftJob extends BasicCraftJob {
             return;
         }
 
-        // TODO: I currently don't exactly know when the optional can be empty after the future is done. So I need to evaluate this.
         if (optionalPreview.isEmpty()) {
             AdvancedPeripherals.debug("preview optional is empty.", org.apache.logging.log4j.Level.ERROR);
             fireEvent(true, StatusConstants.UNKNOWN_ERROR);
@@ -209,8 +203,6 @@ public class RSCraftJob extends BasicCraftJob {
             return;
         }
 
-        // How RS2 handles crafting is a bit cursed. We first create a preview which calculates the recipes, and then we check if the preview was successful
-        // If it was, we again start a task which again calculates the recipes, and then we hope nothing changed from the first calculation
         futureTask = autocraftingComponent.startTask(toCraft, amount, Actor.EMPTY, false, CancellationToken.NONE);
     }
 
@@ -245,6 +237,13 @@ public class RSCraftJob extends BasicCraftJob {
 
         if (isJobDone() && !isJobDone) {
             fireEvent(true, StatusConstants.JOB_DONE);
+            setJobDone();
+        }
+    }
+    
+    public void forceFireJobDone() {
+        if (!isJobDone) {
+            fireEvent(false, StatusConstants.JOB_DONE);
             setJobDone();
         }
     }

@@ -16,6 +16,7 @@ public class APConfig {
     public static final PeripheralsConfig PERIPHERALS_CONFIG = new PeripheralsConfig();
     public static final MetaphysicsConfig METAPHYSICS_CONFIG = new MetaphysicsConfig();
     public static final WorldConfig WORLD_CONFIG = new WorldConfig();
+    public static final ClientConfig CLIENT_CONFIG = new ClientConfig();
 
     public APConfig() {
     }
@@ -29,6 +30,7 @@ public class APConfig {
         APConfigHelper.registerConfig(KNOWN_CONFIGS, modContainer, PERIPHERALS_CONFIG);
         APConfigHelper.registerConfig(KNOWN_CONFIGS, modContainer, METAPHYSICS_CONFIG);
         APConfigHelper.registerConfig(KNOWN_CONFIGS, modContainer, WORLD_CONFIG);
+        APConfigHelper.registerConfig(KNOWN_CONFIGS, modContainer, CLIENT_CONFIG);
     }
 
     public static class APConfigHelper {

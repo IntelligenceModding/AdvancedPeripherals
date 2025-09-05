@@ -260,12 +260,26 @@ public class AECraftJob extends BasicCraftJob {
         }
 
         if (jobLink.isCanceled() && !isJobCanceled) {
-            fireEvent(false, StatusConstants.JOB_CANCELED);
+            // If we already force-marked this job as done, do not emit a canceled event
+            if (!isJobDone) {
+                fireEvent(false, StatusConstants.JOB_CANCELED);
+            }
             setJobCanceled();
             return;
         }
 
         if (jobLink.isDone() && !isJobDone) {
+            fireEvent(false, StatusConstants.JOB_DONE);
+            setJobDone();
+        }
+    }
+
+    /**
+     * Manually fire JOB_DONE notification for force completed jobs.
+     * This bypasses the normal jobLink.isDone() check.
+     */
+    public void forceFireJobDone() {
+        if (!isJobDone) {
             fireEvent(false, StatusConstants.JOB_DONE);
             setJobDone();
         }

@@ -110,6 +110,8 @@ public interface IStorageSystemPeripheral {
 
     MethodResult cancelCraftingTasks(IArguments arguments) throws LuaException;
 
+    MethodResult forceCompleteCraftingTasks(IArguments arguments) throws LuaException;
+
     MethodResult craftItem(IComputerAccess computer, IArguments arguments) throws LuaException;
 
     MethodResult craftFluid(IComputerAccess computer, IArguments arguments) throws LuaException;
