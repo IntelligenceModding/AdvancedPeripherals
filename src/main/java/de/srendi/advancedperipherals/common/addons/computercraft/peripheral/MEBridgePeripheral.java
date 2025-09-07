@@ -1,5 +1,6 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.peripheral;
 
+import de.srendi.advancedperipherals.AdvancedPeripherals;
 import appeng.api.crafting.IPatternDetails;
 import appeng.api.networking.IGridNode;
 import appeng.api.networking.IManagedGridNode;
@@ -867,10 +868,10 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
                     AEKey craftedItem = craftingStack.what();
                     long totalAmount = craftingStack.amount();
                     
-                    System.out.println("[DEBUG] ==> Processing job for: " + craftedItem.getDisplayName().getString());
-                    System.out.println("[DEBUG] ==> Total target amount: " + totalAmount);
-                    System.out.println("[DEBUG] ==> CPU busy: " + cpu.isBusy());
-                    System.out.println("[DEBUG] ==> CPU type: " + cpu.getClass().getSimpleName());
+                    AdvancedPeripherals.debug("[DEBUG] ==> Processing job for: " + craftedItem.getDisplayName().getString());
+                    AdvancedPeripherals.debug("[DEBUG] ==> Total target amount: " + totalAmount);
+                    AdvancedPeripherals.debug("[DEBUG] ==> CPU busy: " + cpu.isBusy());
+                    AdvancedPeripherals.debug("[DEBUG] ==> CPU type: " + cpu.getClass().getSimpleName());
                     
                     // Calculate the actual completed amount using AE2 internal logic
                     long actualCraftedAmount = totalAmount;
@@ -881,43 +882,43 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
                             long active = craftingCpuLogic.getWaitingFor(craftedItem);
                             actualCraftedAmount = totalAmount - (pending + active);
                             
-                            System.out.println("[DEBUG] ==> AE2 Logic - Pending: " + pending + ", Active: " + active + ", Calculated Completed: " + actualCraftedAmount);
+                            AdvancedPeripherals.debug("[DEBUG] ==> AE2 Logic - Pending: " + pending + ", Active: " + active + ", Calculated Completed: " + actualCraftedAmount);
                             
                             // If calculated amount is 0 or negative, it means nothing is completed yet
                             // In this case, we should force complete with the total requested amount
                             if (actualCraftedAmount <= 0) {
-                                System.out.println("[DEBUG] ==> No items completed yet, using total amount for force completion");
+                                AdvancedPeripherals.debug("[DEBUG] ==> No items completed yet, using total amount for force completion");
                                 actualCraftedAmount = totalAmount;
                             }
                         } catch (Exception e) {
-                            System.out.println("[DEBUG] ==> Could not calculate precise amount: " + e.getMessage());
+                            AdvancedPeripherals.debug("[DEBUG] ==> Could not calculate precise amount: " + e.getMessage());
                             e.printStackTrace();
                             // Fall back to total amount if calculation fails
                             actualCraftedAmount = totalAmount;
                         }
                     } else {
-                        System.out.println("[DEBUG] ==> Non-CraftingCPUCluster, using total amount: " + totalAmount);
+                        AdvancedPeripherals.debug("[DEBUG] ==> Non-CraftingCPUCluster, using total amount: " + totalAmount);
                     }
                     
                     // For force completion, we insert the full requested amount
                     // The notification should show what we actually added to storage
                     long amountToInsert = actualCraftedAmount;
-                    System.out.println("[DEBUG] ==> Final amount to insert and notify: " + amountToInsert);
+                    AdvancedPeripherals.debug("[DEBUG] ==> Final amount to insert and notify: " + amountToInsert);
 
                     MEStorage storage = AEApi.getMonitor(node);
                     long inserted = storage.insert(craftedItem, amountToInsert, Actionable.MODULATE, bridge);
-                    System.out.println("[DEBUG] ==> Actually inserted into storage: " + inserted);
+                    AdvancedPeripherals.debug("[DEBUG] ==> Actually inserted into storage: " + inserted);
 
                     // Cancel the job without relying on AE2 notification logic
                     cpu.cancelJob();
                     Thread.sleep(50);
                     boolean completed = !cpu.isBusy();
-                    System.out.println("[DEBUG] ==> CPU idle after cancellation: " + completed);
+                    AdvancedPeripherals.debug("[DEBUG] ==> CPU idle after cancellation: " + completed);
 
                     if (completed) {
                         jobsCompleted++;
                         
-                        System.out.println("[DEBUG] ==> Sending notification with amount: " + amountToInsert);
+                        AdvancedPeripherals.debug("[DEBUG] ==> Sending notification with amount: " + amountToInsert);
                         // Send custom notification with crafted item details
                         sendForceCompletionNotification(jobsCompleted, craftedItem, amountToInsert, inserted);
                     }
@@ -931,11 +932,11 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     }
 
     private void sendForceCompletionNotification(int jobNumber, AEKey craftedItem, long craftedAmount, long insertedAmount) {
-        System.out.println("[DEBUG-NOTIF] ==> sendForceCompletionNotification called with:");
-        System.out.println("[DEBUG-NOTIF] ==> jobNumber: " + jobNumber);
-        System.out.println("[DEBUG-NOTIF] ==> craftedItem: " + craftedItem.getDisplayName().getString());
-        System.out.println("[DEBUG-NOTIF] ==> craftedAmount: " + craftedAmount);
-        System.out.println("[DEBUG-NOTIF] ==> insertedAmount: " + insertedAmount);
+        AdvancedPeripherals.debug("[DEBUG-NOTIF] ==> sendForceCompletionNotification called with:");
+        AdvancedPeripherals.debug("[DEBUG-NOTIF] ==> jobNumber: " + jobNumber);
+        AdvancedPeripherals.debug("[DEBUG-NOTIF] ==> craftedItem: " + craftedItem.getDisplayName().getString());
+        AdvancedPeripherals.debug("[DEBUG-NOTIF] ==> craftedAmount: " + craftedAmount);
+        AdvancedPeripherals.debug("[DEBUG-NOTIF] ==> insertedAmount: " + insertedAmount);
         
         // Generate unique job ID for this force completion (matching original AE2 system style)
         long jobId = System.currentTimeMillis() + jobNumber;
@@ -948,58 +949,35 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (shouldSendCraftingNotifications()) {
             sendToastToNearbyPlayers(jobId, craftedItem, craftedAmount, insertedAmount);
         } else {
-            System.out.println("[DEBUG-NOTIF] ==> Skipping toast notification - notifications disabled");
+            AdvancedPeripherals.debug("[DEBUG-NOTIF] ==> Skipping toast notification - notifications disabled");
         }
     }
     
     private void sendToastToNearbyPlayers(long jobId, AEKey craftedItem, long craftedAmount, long insertedAmount) {
-        System.out.println("[DEBUG-TOAST] ==> sendToastToNearbyPlayers called with:");
-        System.out.println("[DEBUG-TOAST] ==> jobId: " + jobId);
-        System.out.println("[DEBUG-TOAST] ==> craftedItem: " + craftedItem.getDisplayName().getString());
-        System.out.println("[DEBUG-TOAST] ==> craftedAmount: " + craftedAmount);
-        System.out.println("[DEBUG-TOAST] ==> insertedAmount: " + insertedAmount);
+        AdvancedPeripherals.debug("[DEBUG-TOAST] ==> sendToastToNearbyPlayers called with:");
+        AdvancedPeripherals.debug("[DEBUG-TOAST] ==> jobId: " + jobId);
+        AdvancedPeripherals.debug("[DEBUG-TOAST] ==> craftedItem: " + craftedItem.getDisplayName().getString());
+        AdvancedPeripherals.debug("[DEBUG-TOAST] ==> craftedAmount: " + craftedAmount);
+        AdvancedPeripherals.debug("[DEBUG-TOAST] ==> insertedAmount: " + insertedAmount);
         
-        try {
-            ResourceKey<Level> dimension = getLevel().dimension();
-            int range = 32;
-            
-            Component title = Component.literal("Auto-Crafting Complete");
-            
-            String formattedAmount = craftedItem.formatAmount(craftedAmount, appeng.api.stacks.AmountFormat.SLOT);
-            String itemName = craftedItem.getDisplayName().getString();
-            
-            System.out.println("[DEBUG-TOAST] ==> AE2 formatAmount result: '" + formattedAmount + "'");
-            System.out.println("[DEBUG-TOAST] ==> Item name: '" + itemName + "'");
-            
-            String simpleAmount = String.valueOf(craftedAmount);
-            System.out.println("[DEBUG-TOAST] ==> Simple amount formatting: '" + simpleAmount + "'");
-            
-            Component message = Component.literal(simpleAmount + " " + itemName);
-            System.out.println("[DEBUG-TOAST] ==> Final message (using simple formatting): '" + message.getString() + "'");
-            
-            if (insertedAmount != craftedAmount) {
-                message = Component.literal(formattedAmount + " " + itemName + " (" + insertedAmount + " stored)");
-                System.out.println("[DEBUG-TOAST] ==> Modified message for partial storage: '" + message.getString() + "'");
+        ResourceKey<Level> dimension = getLevel().dimension();
+        int range = 32; // Toast notification range
+        
+        AdvancedPeripherals.debug("[DEBUG-TOAST] ==> Sending AE2 notification packets to nearby players");
+        
+        for (ServerPlayer player : ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers()) {
+            if (player.level().dimension() != dimension)
+                continue;
+                
+            if (CoordUtil.isInRange(getPos(), getLevel(), player, range, range)) {
+                AdvancedPeripherals.debug("[DEBUG-TOAST] ==> Sending packet to player: " + player.getName().getString());
+                
+                // Send packet with item data - client will create authentic AE2 FinishedJobToast
+                Component title = Component.literal("Auto-Crafting Complete");
+                Component message = Component.literal(craftedAmount + " " + craftedItem.getDisplayName().getString());
+                CraftingCompleteToastPacket packet = new CraftingCompleteToastPacket(title, message, craftedItem, craftedAmount);
+                APNetworking.sendTo(player, packet);
             }
-            
-            for (ServerPlayer player : ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers()) {
-                if (player.level().dimension() != dimension)
-                    continue;
-                    
-                if (CoordUtil.isInRange(getPos(), getLevel(), player, range, range)) {
-                    System.out.println("[DEBUG-TOAST] ==> Sending notification packet to player: " + player.getName().getString());
-                    System.out.println("[DEBUG-TOAST] ==> Client will decide whether to show notification based on their client setting");
-                    
-                    // Send the packet to the client - the client will check its own setting
-                    CraftingCompleteToastPacket packet = new CraftingCompleteToastPacket(title, message, craftedItem, craftedAmount);
-                    APNetworking.sendTo(player, packet);
-                }
-            }
-            
-        } catch (Exception e) {
-            System.out.println("[DEBUG-TOAST] ==> ERROR in sendToastToNearbyPlayers: " + e.getMessage());
-            e.printStackTrace();
-            // Ignore toast notification errors, don't break the force completion
         }
     }
     
@@ -1015,13 +993,13 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         boolean serverSetting = APConfig.PERIPHERALS_CONFIG.meCraftingNotifications.get();
         
         if (!serverSetting) {
-            System.out.println("[DEBUG-NOTIF] ==> Notifications disabled by server config (meCraftingNotifications=false)");
+            AdvancedPeripherals.debug("[DEBUG-NOTIF] ==> Notifications disabled by server config (meCraftingNotifications=false)");
             return false;
         }
         
         // Server setting is enabled, send packets to all clients
         // Each client will check their own setting when they receive the packet
-        System.out.println("[DEBUG-NOTIF] ==> Server notifications enabled, sending packets to clients");
+        AdvancedPeripherals.debug("[DEBUG-NOTIF] ==> Server notifications enabled, sending packets to clients");
         return true;
     }
 

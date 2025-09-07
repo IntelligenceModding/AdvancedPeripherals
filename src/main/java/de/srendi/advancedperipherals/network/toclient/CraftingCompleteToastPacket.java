@@ -81,11 +81,11 @@ public class CraftingCompleteToastPacket implements IAPPacket {
         try {
             // Attempt to get AE2's notification setting
             // Let's try different potential methods
-            System.out.println("[DEBUG-CLIENT] ==> Attempting to access AE2 config...");
+            AdvancedPeripherals.debug("[DEBUG-CLIENT] ==> Attempting to access AE2 config...");
             
             // Try AEConfig instance methods
             if (AEConfig.instance() != null) {
-                System.out.println("[DEBUG-CLIENT] ==> AEConfig instance found");
+                AdvancedPeripherals.debug("[DEBUG-CLIENT] ==> AEConfig instance found");
                 
                 // Use reflection to access AE2's notification setting
                 // This is more robust than compile-time method calls
@@ -111,7 +111,7 @@ public class CraftingCompleteToastPacket implements IAPPacket {
                             if (result instanceof Boolean) {
                                 ae2NotificationSetting = (Boolean) result;
                                 methodFound = true;
-                                System.out.println("[DEBUG-CLIENT] ==> Found AE2 method: " + methodName + " = " + ae2NotificationSetting);
+                                AdvancedPeripherals.debug("[DEBUG-CLIENT] ==> Found AE2 method: " + methodName + " = " + ae2NotificationSetting);
                                 break;
                             }
                         } catch (Exception ignored) {
@@ -120,63 +120,52 @@ public class CraftingCompleteToastPacket implements IAPPacket {
                     }
                     
                     if (!methodFound) {
-                        System.out.println("[DEBUG-CLIENT] ==> No AE2 notification method found, using default");
+                        AdvancedPeripherals.debug("[DEBUG-CLIENT] ==> No AE2 notification method found, using default");
                         ae2NotificationSetting = true;
                     }
                     
                 } catch (Exception reflectionError) {
-                    System.out.println("[DEBUG-CLIENT] ==> Reflection failed: " + reflectionError.getMessage());
+                    AdvancedPeripherals.debug("[DEBUG-CLIENT] ==> Reflection failed: " + reflectionError.getMessage());
                     ae2NotificationSetting = true; // Default to enabled
                 }
                 
-                System.out.println("[DEBUG-CLIENT] ==> AE2 notification setting: " + ae2NotificationSetting);
+                AdvancedPeripherals.debug("[DEBUG-CLIENT] ==> AE2 notification setting: " + ae2NotificationSetting);
             }
             
             // Additional debug info about AE2 integration
-            System.out.println("[DEBUG-CLIENT] ==> AE2 integration complete");
+            AdvancedPeripherals.debug("[DEBUG-CLIENT] ==> AE2 integration complete");
             
         } catch (Exception e) {
-            System.out.println("[DEBUG-CLIENT] ==> Could not access AE2 config: " + e.getMessage());
+            AdvancedPeripherals.debug("[DEBUG-CLIENT] ==> Could not access AE2 config: " + e.getMessage());
             ae2NotificationSetting = true; // Default to enabled if we can't check
         }
         
         if (!clientNotificationSetting) {
-            System.out.println("[DEBUG-CLIENT] ==> AdvancedPeripherals client notification setting disabled, not showing toast");
+            AdvancedPeripherals.debug("[DEBUG-CLIENT] ==> AdvancedPeripherals client notification setting disabled, not showing toast");
             return;
         }
         
         if (!ae2NotificationSetting) {
-            System.out.println("[DEBUG-CLIENT] ==> AE2 notification setting disabled, not showing toast");
+            AdvancedPeripherals.debug("[DEBUG-CLIENT] ==> AE2 notification setting disabled, not showing toast");
             return;
         }
         
-        System.out.println("[DEBUG-CLIENT] ==> Both notification settings enabled, showing toast");
+        AdvancedPeripherals.debug("[DEBUG-CLIENT] ==> Both notification settings enabled, showing toast");
         
-        Minecraft minecraft = Minecraft.getInstance();
-        
-        try {
-            // Use AE2's original FinishedJobToast directly
-            if (!itemStack.isEmpty()) {
-                AEItemKey aeKey = AEItemKey.of(itemStack);
-                // Use the preserved amount, not the ItemStack count
-                long amount = this.craftedAmount;
-                
-                System.out.println("[DEBUG-CLIENT] ==> Using AE2 FinishedJobToast with amount: " + amount);
-                
-                // Create and add AE2's original FinishedJobToast
-                appeng.client.gui.me.common.FinishedJobToast finishedJobToast = 
-                    new appeng.client.gui.me.common.FinishedJobToast(aeKey, amount);
-                
-                minecraft.getToasts().addToast(finishedJobToast);
-                System.out.println("[DEBUG-CLIENT] ==> Successfully added AE2 FinishedJobToast");
-            } else {
-                System.out.println("[DEBUG-CLIENT] ==> ItemStack is empty, skipping toast");
-            }
-        } catch (Exception | NoClassDefFoundError e) {
-            // If AE2's toast isn't available, log error but don't crash
-            AdvancedPeripherals.debug("Failed to display AE2 FinishedJobToast: " + e.getMessage());
-            System.out.println("[DEBUG-CLIENT] ==> Failed to create AE2 toast: " + e.getMessage());
-            e.printStackTrace();
+        if (!itemStack.isEmpty()) {
+            AEItemKey aeKey = AEItemKey.of(itemStack);
+            long amount = this.craftedAmount;
+            
+            AdvancedPeripherals.debug("[DEBUG-CLIENT] ==> Creating AE2 FinishedJobToast with amount: " + amount);
+            
+            // Create and add AE2's authentic FinishedJobToast
+            appeng.client.gui.me.common.FinishedJobToast finishedJobToast = 
+                new appeng.client.gui.me.common.FinishedJobToast(aeKey, amount);
+            
+            Minecraft.getInstance().getToasts().addToast(finishedJobToast);
+            AdvancedPeripherals.debug("[DEBUG-CLIENT] ==> AE2 FinishedJobToast displayed successfully");
+        } else {
+            AdvancedPeripherals.debug("[DEBUG-CLIENT] ==> ItemStack is empty, skipping toast");
         }
     }
 
