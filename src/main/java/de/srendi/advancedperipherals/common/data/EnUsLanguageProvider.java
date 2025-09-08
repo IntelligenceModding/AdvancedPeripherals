@@ -149,7 +149,6 @@ public class EnUsLanguageProvider extends LanguageProvider {
         addTooltip(APItems.COMPUTER_TOOL.get(), "&7This tool was made to tune our blocks. But for now, it's just a blue useless wrench.");
         addTooltip(APItems.MEMORY_CARD.get(), "&7Can save the rights of a player to use it in an inventory manager.");
         addTooltip("binding.bound_to", "&7Bound to &b%s&7.");
-        addTooltip("binding.bound_to_glasses", "&7Bound to Glasses with id &b%s&7.");
 
     }
 

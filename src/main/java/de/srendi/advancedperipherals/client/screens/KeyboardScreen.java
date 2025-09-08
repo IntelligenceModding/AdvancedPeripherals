@@ -95,6 +95,9 @@ public class KeyboardScreen extends Screen implements MenuAccess<KeyboardContain
             return;
         }
         super.removed();
+        if (this.minecraft.player != null) {
+            this.keyboardContainer.removed(this.minecraft.player);
+        }
         this.minecraft.keyboardHandler.setSendRepeatsToGui(false);
     }
 
@@ -167,7 +170,11 @@ public class KeyboardScreen extends Screen implements MenuAccess<KeyboardContain
     @Override
     public final boolean keyPressed(int key, int scancode, int modifiers) {
         if (key == GLFW.GLFW_KEY_ESCAPE) {
-            super.onClose();
+            if (this.minecraft.player != null) {
+                this.minecraft.player.closeContainer();
+            } else {
+                super.onClose();
+            }
             return true;
         }
         // Forward the tab key to the terminal, rather than moving between controls.

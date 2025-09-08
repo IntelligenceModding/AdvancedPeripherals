@@ -4,8 +4,6 @@ import de.srendi.advancedperipherals.client.screens.KeyboardScreen;
 import de.srendi.advancedperipherals.common.network.base.IPacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.network.NetworkEvent;
 
 public class KeyboardMouseCapturePacket implements IPacket {
@@ -16,7 +14,6 @@ public class KeyboardMouseCapturePacket implements IPacket {
         this.enable = enable;
     }
 
-    @OnlyIn(Dist.CLIENT)
     @Override
     public void handle(NetworkEvent.Context context) {
         if (!(Minecraft.getInstance().screen instanceof KeyboardScreen screen)) {

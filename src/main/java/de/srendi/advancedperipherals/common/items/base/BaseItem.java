@@ -34,15 +34,14 @@ public abstract class BaseItem extends Item {
 
     @Override
     public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn) {
-        if (worldIn.isClientSide)
-            return new InteractionResultHolder<>(InteractionResult.PASS, playerIn.getItemInHand(handIn));
+        ItemStack stack = playerIn.getItemInHand(handIn);
+        if (worldIn.isClientSide) {
+            return new InteractionResultHolder<>(InteractionResult.PASS, stack);
+        }
         if (this instanceof IInventoryItem inventoryItem) {
             ServerPlayer serverPlayerEntity = (ServerPlayer) playerIn;
-            ItemStack stack = playerIn.getItemInHand(handIn);
-            NetworkHooks.openScreen(serverPlayerEntity, inventoryItem.createContainer(playerIn, stack), buf -> {
-                buf.writeBlockPos(playerIn.blockPosition());
-                buf.writeItem(stack);
-            });
+            NetworkHooks.openScreen(serverPlayerEntity, inventoryItem.createContainer(playerIn, stack), buf -> inventoryItem.writeContainerData(playerIn, stack, buf));
+            return new InteractionResultHolder<>(InteractionResult.SUCCESS, stack);
         }
         return super.use(worldIn, playerIn, handIn);
     }

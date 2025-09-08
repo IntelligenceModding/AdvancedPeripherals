@@ -22,32 +22,42 @@ import org.jetbrains.annotations.Nullable;
 
 public class KeyboardContainer extends BaseContainer implements ComputerMenu {
 
+    @Nullable
     private final ServerInputState<KeyboardContainer> input;
     private final ItemStack keyboardItem;
     @Nullable
-    private ServerComputer computer = null;
+    private ServerComputer computer;
 
     public KeyboardContainer(int id, Inventory inventory, BlockPos pos, Level level, ItemStack keyboardItem) {
+        this(id, inventory, pos, level, keyboardItem, null);
+    }
+
+    public KeyboardContainer(int id, Inventory inventory, BlockPos pos, Level level, ItemStack keyboardItem, ServerComputer computer) {
         super(APContainerTypes.KEYBOARD_CONTAINER.get(), id, inventory, pos, level);
-        this.input = new ServerInputState<>(this);
         this.keyboardItem = keyboardItem;
 
-        CompoundTag data = keyboardItem.getOrCreateTag();
-
-        if (!data.getBoolean(KeyboardItem.BOUND_TYPE_TAG)) {
-            // Cannot use instance ID here since they will change after reload the block
-            int computerId = keyboardItem.getOrCreateTag().getInt(KeyboardItem.BIND_TAG);
-
-            for (ServerComputer computer : ServerContext.get(ServerLifecycleHooks.getCurrentServer()).registry().getComputers()) {
-                if (computer.getID() == computerId) {
-                    this.computer = computer;
-                    break;
-                }
-            }
-        } else if (data.contains(KeyboardItem.GLASSES_BIND_TAG)) {
-            computer = ServerContext.get(ServerLifecycleHooks.getCurrentServer()).registry().get(data.getInt(KeyboardItem.GLASSES_BIND_TAG));
+        if (level.isClientSide) {
+            this.input = null;
+            this.computer = null;
+            return;
         }
-
+        this.input = new ServerInputState<>(this);
+        this.computer = computer;
+        if (computer != null) {
+            return;
+        }
+        CompoundTag data = keyboardItem.getOrCreateTag();
+        if (!data.contains(KeyboardItem.BIND_TAG)) {
+            return;
+        }
+        // Cannot use instance ID here since they will change after reload the block
+        int computerId = data.getInt(KeyboardItem.BIND_TAG);
+        for (ServerComputer computr : ServerContext.get(ServerLifecycleHooks.getCurrentServer()).registry().getComputers()) {
+            if (computr.getID() == computerId) {
+                this.computer = computr;
+                break;
+            }
+        }
     }
 
     public ItemStack getKeyboardItem() {
@@ -55,7 +65,7 @@ public class KeyboardContainer extends BaseContainer implements ComputerMenu {
     }
 
     @Override
-    public boolean stillValid(@NotNull Player playerIn) {
+    public boolean stillValid(@NotNull Player player) {
         return true;
     }
 
@@ -73,6 +83,7 @@ public class KeyboardContainer extends BaseContainer implements ComputerMenu {
         return computer;
     }
 
+    @Nullable
     @Override
     public ServerInputHandler getInput() {
         return input;
