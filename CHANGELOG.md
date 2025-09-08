@@ -6,6 +6,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+### Changed
+- [#667] Broadcast messages where possible in chat box functions instead of sending them to player individually. Improves third party chat mod support like discord integrations.
+
+### Fixed
+- [#784] Fixed that the energy detector would allow more throughput when there are multiple energy transmissions per tick
+
+### Added
+- [#757] Added utf8 support to the Chat Box. Adds an optional "useutf8" parameter.
+- [#755] Added a disabled peripheral, see https://docs.advanced-peripherals.de/latest/guides/disabled_peripherals for more info.
+ 
 ## [1.19.2-0.7.37r] - 2024-10-06
 
 ### Added
