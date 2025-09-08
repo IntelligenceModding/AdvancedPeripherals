@@ -36,6 +36,7 @@ jobs:
       build_name: ${{ needs.generate-artifact-name.outputs.name }}
       pr: ${{ github.event_name == 'pull_request' && github.event.number || '' }}
       check: ${{ github.event_name != 'push' }}
+      java-version: ''
 
   publish:
     if: ${{ github.event_name == 'push' && contains(github.ref, 'release/') }}
@@ -45,6 +46,13 @@ jobs:
     steps:
       - name: Checkout sources
         uses: actions/checkout@v4
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'microsoft'
+          cache: 'gradle'
+          java-version: '17'
+          java-version-file: '.tool-versions'
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
       - name: Download Builds
@@ -54,11 +62,27 @@ jobs:
           path: build/libs
       - name: Patch Changelog
         run: ./gradlew patchChangelog
-      - name: Github Release
-        run: ./gradlew githubRelease
+      - name: Push Changelog Patch
+        run: |
+          git config user.name github-actions && \
+          git config user.email github-actions[bot]@users.noreply.github.com && \
+          git add CHANGELOG.md && \
+          git commit -m 'action: patchChangelog' && \
+          git push
       - name: Publish Maven
+        env:
+          PUBLIC_REP_NAME: ${{ secrets.PUBLIC_REP_NAME }}
+          PUBLIC_REP_KEY: ${{ secrets.PUBLIC_REP_KEY }}
         run: ./gradlew publishAllPublicationsToPublicRepository
+      - name: Github Release
+        env:
+          GITHUB_KEY: ${{ github.token }}
+        run: ./gradlew githubRelease
       - name: Publish Modrinth
+        env:
+          MODRINTH_KEY: ${{ secrets.MODRINTH_KEY }}
         run: ./gradlew modrinth
       - name: Publish CurseForge
+        env:
+          CURSEFORGE_KEY: ${{ secrets.CURSEFORGE_KEY }}
         run: ./gradlew publishCurseForge
