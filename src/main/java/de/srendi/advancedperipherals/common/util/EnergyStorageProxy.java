@@ -24,7 +24,7 @@ public class EnergyStorageProxy implements IEnergyStorage {
         IEnergyStorage out = energyDetectorTE.getOutputStorage();
         if (out == null)
             return 0;
-        int transferred = out.receiveEnergy(Math.min(maxReceive, maxTransferRate), simulate);
+        int transferred = out.receiveEnergy(Math.min(maxReceive, maxTransferRate - transferredInThisTick), simulate);
         if (!simulate) {
             transferredInThisTick += transferred;
         }
