@@ -15,6 +15,7 @@ import net.minecraft.core.FrontAndTop;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.WorldlyContainer;
@@ -136,19 +137,51 @@ public abstract class PeripheralBlockEntity<T extends BasePeripheral<?>> extends
     }*/
 
     @Override
+    public void load(@NotNull CompoundTag compound) {
+        ContainerHelper.loadAllItems(compound, items);
+        peripheralSettings = compound.getCompound(PERIPHERAL_SETTINGS_KEY);
+        super.load(compound);
+    }
+
+    /**
+     * will automatically adds shared data at the end
+     *
+     * @see saveShared
+     */
+    @Override
     public void saveAdditional(@NotNull CompoundTag compound) {
         super.saveAdditional(compound);
+        this.saveShared(compound);
         ContainerHelper.saveAllItems(compound, items);
         if (!peripheralSettings.isEmpty()) {
             compound.put(PERIPHERAL_SETTINGS_KEY, peripheralSettings);
         }
     }
 
+    /**
+     * will automatically adds shared data at the end
+     *
+     * @return combined update tag and shared data
+     * @see saveShared
+     */
     @Override
-    public void load(@NotNull CompoundTag compound) {
-        ContainerHelper.loadAllItems(compound, items);
-        peripheralSettings = compound.getCompound(PERIPHERAL_SETTINGS_KEY);
-        super.load(compound);
+    public CompoundTag getUpdateTag() {
+        final CompoundTag compound = super.getUpdateTag();
+        this.saveShared(compound);
+        return compound;
+    }
+
+    /**
+     * define datas that should both be saved on server and sync to client
+     *
+     * @see saveAdditional
+     * @see getUpdateTag
+     */
+    protected void saveShared(@NotNull CompoundTag compound) {}
+
+    @Override
+    public ClientboundBlockEntityDataPacket getUpdatePacket() {
+        return ClientboundBlockEntityDataPacket.create(this);
     }
 
     @NotNull
@@ -192,11 +225,12 @@ public abstract class PeripheralBlockEntity<T extends BasePeripheral<?>> extends
     @Override
     public boolean isEmpty() {
         for (ItemStack itemStack : items) {
-            if (itemStack.isEmpty()) return true;
+            if (!itemStack.isEmpty()) {
+                return false;
+            }
         }
-        return false;
+        return true;
     }
-
 
     @NotNull
     @Override
@@ -210,7 +244,11 @@ public abstract class PeripheralBlockEntity<T extends BasePeripheral<?>> extends
     @NotNull
     @Override
     public ItemStack removeItem(int index, int count) {
-        return ContainerHelper.removeItem(items, index, count);
+        ItemStack removed = ContainerHelper.removeItem(items, index, count);
+        if (!removed.isEmpty()) {
+            this.setChanged();
+        }
+        return removed;
     }
 
     @NotNull
@@ -225,6 +263,7 @@ public abstract class PeripheralBlockEntity<T extends BasePeripheral<?>> extends
         if (stack.getCount() > getMaxStackSize()) {
             stack.setCount(getMaxStackSize());
         }
+        this.setChanged();
     }
 
     @Override
@@ -235,6 +274,7 @@ public abstract class PeripheralBlockEntity<T extends BasePeripheral<?>> extends
     @Override
     public void clearContent() {
         items.clear();
+        this.setChanged();
     }
 
     public CompoundTag getPeripheralSettings() {
@@ -246,12 +286,19 @@ public abstract class PeripheralBlockEntity<T extends BasePeripheral<?>> extends
         this.setChanged();
     }
 
+    /**
+     * set this block entity as {@link setChanged changed}, and sync the change to client
+     *
+     * @see saveShared
+     * @see getUpdateTag
+     */
     public void sendUpdate() {
-        this.setChanged();
         Level level = this.getLevel();
-        if (level != null) {
-            level.sendBlockUpdated(this.getBlockPos(), this.getBlockState(), this.getBlockState(), 11);
+        if (level == null || level.isClientSide) {
+            return;
         }
+        this.setChanged();
+        level.sendBlockUpdated(this.getBlockPos(), this.getBlockState(), this.getBlockState(), 0 /* no use on server-side */);
     }
 
     public ComputerSide getComputerSide(Direction direction) {
