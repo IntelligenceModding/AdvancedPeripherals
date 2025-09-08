@@ -76,7 +76,7 @@ public class AutomataEntityHandPlugin extends AutomataCorePlugin {
         if (!(entity instanceof Animal animal))
             return MethodResult.of(null, "Well, entity is not animal entity, but how?");
 
-        return MethodResult.of(LuaConverter.animalToLua(animal, owner.getToolInMainHand(), true));
+        return MethodResult.of(LuaConverter.completeEntityToLua(animal, owner.getToolInMainHand(), true));
     }
 
     @LuaFunction(mainThread = true)
