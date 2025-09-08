@@ -213,8 +213,6 @@ repositories {
         name = "Create maven"
         url = "https://maven.tterrag.com/"
         content {
-            includeGroup("com.simibubi.create")
-            includeGroup("com.jozufozu.flywheel")
             includeGroup("com.tterrag.registrate")
         }
     }
@@ -325,8 +323,8 @@ dependencies {
     runtimeOnly fg.deobf("vazkii.patchouli:Patchouli:${patchouli_version}")
 
     // Create
-    compileOnly fg.deobf("com.simibubi.create:create-${minecraft_version}:${create_version}:all")
-    runtimeOnly fg.deobf("com.simibubi.create:create-${minecraft_version}:${create_version}:all")
+    compileOnly fg.deobf("curse.maven:create-328085:${create_version}")
+    runtimeOnly fg.deobf("curse.maven:create-328085:${create_version}")
 
     //Removed until fully ported
     //testImplementation fg.deobf("site.siredvin.ttoolkit:ttoolkit-${minecraft_version}:${ttoolkit_version}")
