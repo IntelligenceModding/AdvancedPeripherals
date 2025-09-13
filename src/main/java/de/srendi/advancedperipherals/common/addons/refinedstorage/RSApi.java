@@ -80,8 +80,8 @@ public class RSApi {
     @Nullable
     public static ItemResource getItem(Network network, ItemFilter filter) {
         StorageNetworkComponent storage = network.getComponent(StorageNetworkComponent.class);
-        for (TrackedResourceAmount trackedResource : storage.getResources(Actor.EMPTY.getClass())) {
-            if (trackedResource.resourceAmount().resource() instanceof ItemResource itemResource && filter.test(itemResource.toItemStack())) {
+        for (ResourceAmount resourceAmount : storage.getAll()) {
+            if (resourceAmount.resource() instanceof ItemResource itemResource && filter.test(itemResource.toItemStack())) {
                 return itemResource;
             }
         }
@@ -98,8 +98,8 @@ public class RSApi {
     @Nullable
     public static FluidResource getFluid(Network network, FluidFilter filter) {
         StorageNetworkComponent storage = network.getComponent(StorageNetworkComponent.class);
-        for (TrackedResourceAmount trackedResource : storage.getResources(Actor.EMPTY.getClass())) {
-            if (trackedResource.resourceAmount().resource() instanceof FluidResource fluidResource && filter.test(VariantUtil.toFluidStack(fluidResource, trackedResource.resourceAmount().amount()))) {
+        for (ResourceAmount resourceAmount : storage.getAll()) {
+            if (resourceAmount.resource() instanceof FluidResource fluidResource && filter.test(VariantUtil.toFluidStack(fluidResource, resourceAmount.amount()))) {
                 return fluidResource;
             }
         }
@@ -116,8 +116,8 @@ public class RSApi {
     @Nullable
     public static ChemicalResource getChemical(Network network, ChemicalFilter filter) {
         StorageNetworkComponent storage = network.getComponent(StorageNetworkComponent.class);
-        for (TrackedResourceAmount trackedResource : storage.getResources(Actor.EMPTY.getClass())) {
-            if (trackedResource.resourceAmount().resource() instanceof ChemicalResource chemicalResource && filter.test(ChemicalUtil.toChemicalStack(chemicalResource.chemical(), trackedResource.resourceAmount().amount()))) {
+        for (ResourceAmount resourceAmount : storage.getAll()) {
+            if (resourceAmount.resource() instanceof ChemicalResource chemicalResource && filter.test(ChemicalUtil.toChemicalStack(chemicalResource.chemical(), resourceAmount.amount()))) {
                 return chemicalResource;
             }
         }
@@ -136,9 +136,9 @@ public class RSApi {
         StorageNetworkComponent storage = network.getComponent(StorageNetworkComponent.class);
         AutocraftingNetworkComponent autocrafting = network.getComponent(AutocraftingNetworkComponent.class);
 
-        for (TrackedResourceAmount trackedResource : storage.getResources(Actor.EMPTY.getClass())) {
-            if (trackedResource.resourceAmount().resource() instanceof ItemResource itemResource && filter.test(itemResource.toItemStack())) {
-                return getObjectFromItemResource(trackedResource.resourceAmount(), autocrafting);
+        for (ResourceAmount resourceAmount : storage.getAll()) {
+            if (resourceAmount.resource() instanceof ItemResource itemResource && filter.test(itemResource.toItemStack())) {
+                return getObjectFromItemResource(resourceAmount, autocrafting);
             }
         }
         return null;
@@ -156,9 +156,9 @@ public class RSApi {
         StorageNetworkComponent storage = network.getComponent(StorageNetworkComponent.class);
         AutocraftingNetworkComponent autocrafting = network.getComponent(AutocraftingNetworkComponent.class);
 
-        for (TrackedResourceAmount trackedResource : storage.getResources(Actor.EMPTY.getClass())) {
-            if (trackedResource.resourceAmount().resource() instanceof FluidResource fluidResource && filter.test(VariantUtil.toFluidStack(fluidResource, trackedResource.resourceAmount().amount()))) {
-                return getObjectFromItemResource(trackedResource.resourceAmount(), autocrafting);
+        for (ResourceAmount resourceAmount : storage.getAll()) {
+            if (resourceAmount.resource() instanceof FluidResource fluidResource && filter.test(VariantUtil.toFluidStack(fluidResource, resourceAmount.amount()))) {
+                return getObjectFromItemResource(resourceAmount, autocrafting);
             }
         }
         return null;
@@ -176,9 +176,9 @@ public class RSApi {
         StorageNetworkComponent storage = network.getComponent(StorageNetworkComponent.class);
         AutocraftingNetworkComponent autocrafting = network.getComponent(AutocraftingNetworkComponent.class);
 
-        for (TrackedResourceAmount trackedResource : storage.getResources(Actor.EMPTY.getClass())) {
-            if (trackedResource.resourceAmount().resource() instanceof ChemicalResource chemicalResource && filter.test(ChemicalUtil.toChemicalStack(chemicalResource.chemical(), trackedResource.resourceAmount().amount()))) {
-                return getObjectFromChemicalResource(trackedResource.resourceAmount(), autocrafting);
+        for (ResourceAmount resourceAmount : storage.getAll()) {
+            if (resourceAmount.resource() instanceof ChemicalResource chemicalResource && filter.test(ChemicalUtil.toChemicalStack(chemicalResource.chemical(), resourceAmount.amount()))) {
+                return getObjectFromChemicalResource(resourceAmount, autocrafting);
             }
         }
         return null;
@@ -197,9 +197,9 @@ public class RSApi {
         StorageNetworkComponent storage = network.getComponent(StorageNetworkComponent.class);
         AutocraftingNetworkComponent autocrafting = network.getComponent(AutocraftingNetworkComponent.class);
 
-        for (TrackedResourceAmount trackedResource : storage.getResources(Actor.EMPTY.getClass())) {
-            if (trackedResource.resourceAmount().resource() instanceof ItemResource itemResource && filter.test(itemResource.toItemStack())) {
-                items.add(getObjectFromItemResource(trackedResource.resourceAmount(), autocrafting));
+        for (ResourceAmount resourceAmount : storage.getAll()) {
+            if (resourceAmount.resource() instanceof ItemResource itemResource && filter.test(itemResource.toItemStack())) {
+                items.add(getObjectFromItemResource(resourceAmount, autocrafting));
             }
         }
         return items;
@@ -218,9 +218,9 @@ public class RSApi {
         StorageNetworkComponent storage = network.getComponent(StorageNetworkComponent.class);
         AutocraftingNetworkComponent autocrafting = network.getComponent(AutocraftingNetworkComponent.class);
 
-        for (TrackedResourceAmount trackedResource : storage.getResources(Actor.EMPTY.getClass())) {
-            if (trackedResource.resourceAmount().resource() instanceof FluidResource fluidResource && filter.test(VariantUtil.toFluidStack(fluidResource, trackedResource.resourceAmount().amount()))) {
-                items.add(getObjectFromFluidResource(trackedResource.resourceAmount(), autocrafting));
+        for (ResourceAmount resourceAmount : storage.getAll()) {
+            if (resourceAmount.resource() instanceof FluidResource fluidResource && filter.test(VariantUtil.toFluidStack(fluidResource, resourceAmount.amount()))) {
+                items.add(getObjectFromFluidResource(resourceAmount, autocrafting));
             }
         }
 
@@ -240,9 +240,9 @@ public class RSApi {
         StorageNetworkComponent storage = network.getComponent(StorageNetworkComponent.class);
         AutocraftingNetworkComponent autocrafting = network.getComponent(AutocraftingNetworkComponent.class);
 
-        for (TrackedResourceAmount trackedResource : storage.getResources(Actor.EMPTY.getClass())) {
-            if (trackedResource.resourceAmount().resource() instanceof ChemicalResource fluidResource && filter.test(ChemicalUtil.toChemicalStack(fluidResource.chemical(), trackedResource.resourceAmount().amount()))) {
-                items.add(getObjectFromFluidResource(trackedResource.resourceAmount(), autocrafting));
+        for (ResourceAmount resourceAmount : storage.getAll()) {
+            if (resourceAmount.resource() instanceof ChemicalResource fluidResource && filter.test(ChemicalUtil.toChemicalStack(fluidResource.chemical(), resourceAmount.amount()))) {
+                items.add(getObjectFromFluidResource(resourceAmount, autocrafting));
             }
         }
 
