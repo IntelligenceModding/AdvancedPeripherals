@@ -6,6 +6,7 @@ import com.refinedmods.refinedstorage.api.autocrafting.preview.PreviewType;
 import com.refinedmods.refinedstorage.api.autocrafting.status.TaskStatus;
 import com.refinedmods.refinedstorage.api.autocrafting.task.TaskId;
 import com.refinedmods.refinedstorage.api.network.autocrafting.AutocraftingNetworkComponent;
+import com.refinedmods.refinedstorage.api.network.impl.autocrafting.TimeoutableCancellationToken;
 import com.refinedmods.refinedstorage.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage.api.storage.Actor;
 import dan200.computercraft.api.peripheral.IComputerAccess;
@@ -28,7 +29,7 @@ public class RSCraftJob extends BasicCraftJob {
     private TaskStatus craftingTask;
     private Preview preview;
     private Future<Optional<Preview>> futureCalculationResult;
-    private Future<Optional<TaskId>> futureTask;
+    private Optional<TaskId> futureTask = Optional.empty();
 
     public RSCraftJob(IComputerAccess computer, Level world, long amount, ResourceKey toCraft, AutocraftingNetworkComponent calculationResult) {
         super(computer, "rs", world, amount);
@@ -139,26 +140,11 @@ public class RSCraftJob extends BasicCraftJob {
             }
         }
         // The following is to get the TaskStatus from the issued task
-        if (futureTask == null || !futureTask.isDone() || craftingTask != null) {
-            return;
-        }
-        Optional<TaskId> optionalId;
-
-        try {
-            optionalId = futureTask.get();
-        } catch (InterruptedException | ExecutionException ex) {
-            AdvancedPeripherals.debug("Tried to get the task but the task was not done. Should be done", ex);
-            fireEvent(true, StatusConstants.UNKNOWN_ERROR);
+        if (futureTask.isEmpty() || craftingTask != null) {
             return;
         }
 
-        if (optionalId.isEmpty()) {
-            // This indicates that the second calculation was not successful. Well I guess. There is no java doc and I currently
-            // don't get an answer from the maintainer. So maybe we want to fire the crafting event
-            return;
-        }
-
-        TaskId id = optionalId.get();
+        TaskId id = futureTask.get();
         for (TaskStatus status : autocraftingComponent.getStatuses()) {
             if (status.info().id().equals(id)) {
                 this.craftingTask = status;
@@ -171,7 +157,7 @@ public class RSCraftJob extends BasicCraftJob {
 
     @Override
     protected void maybeCraft() {
-        if (startedCrafting || futureTask != null || futureCalculationResult == null || !futureCalculationResult.isDone()) {
+        if (startedCrafting || futureTask.isPresent() || futureCalculationResult == null || !futureCalculationResult.isDone()) {
             return;
         }
 
@@ -209,9 +195,9 @@ public class RSCraftJob extends BasicCraftJob {
             return;
         }
 
-        // How RS2 handles crafting is a bit cursed. We first create a preview which calculates the recipes, and then we check if the preview was successful
+        // We first create a preview which calculates the recipes, and then we check if the preview was successful
         // If it was, we again start a task which again calculates the recipes, and then we hope nothing changed from the first calculation
-        futureTask = autocraftingComponent.startTask(toCraft, amount, Actor.EMPTY, false, CancellationToken.NONE);
+        futureTask = autocraftingComponent.startTask(toCraft, amount, Actor.EMPTY, false, new TimeoutableCancellationToken());
     }
 
     @Override
@@ -226,7 +212,7 @@ public class RSCraftJob extends BasicCraftJob {
             return;
         }
 
-        futureCalculationResult = autocraftingComponent.getPreview(toCraft, amount, CancellationToken.NONE);
+        futureCalculationResult = autocraftingComponent.getPreview(toCraft, amount, new TimeoutableCancellationToken());
         fireEvent(false, StatusConstants.CALCULATION_STARTED);
     }
 
