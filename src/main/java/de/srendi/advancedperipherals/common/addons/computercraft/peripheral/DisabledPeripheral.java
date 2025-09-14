@@ -1,4 +1,4 @@
-package de.srendi.advancedperipherals.lib.peripherals;
+package de.srendi.advancedperipherals.common.addons.computercraft.peripheral;
 
 import dan200.computercraft.api.lua.IArguments;
 import dan200.computercraft.api.lua.ILuaContext;
