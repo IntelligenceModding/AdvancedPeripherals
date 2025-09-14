@@ -2,8 +2,8 @@ package de.srendi.advancedperipherals.common.blocks.base;
 
 import dan200.computercraft.api.peripheral.IComputerAccess;
 import dan200.computercraft.api.peripheral.IPeripheral;
-import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
+import de.srendi.advancedperipherals.lib.peripherals.DisabledPeripheral;
 import de.srendi.advancedperipherals.lib.peripherals.IPeripheralTileEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -29,65 +29,85 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
+import java.util.Optional;
 
 public abstract class PeripheralBlockEntity<T extends BasePeripheral<?>> extends BaseContainerBlockEntity implements WorldlyContainer, MenuProvider, IPeripheralTileEntity, ICapabilityProvider {
     private static final String PERIPHERAL_SETTINGS_KEY = "peripheralSettings";
-    protected CompoundTag peripheralSettings;
+    protected CompoundTag peripheralSettings = new CompoundTag();
     protected NonNullList<ItemStack> items;
     @Nullable
-    protected T peripheral = null;
-    private IItemHandler itemHandler;
-    private IFluidHandler fluidHandler;
+    private IItemHandler itemHandler = null;
+    private IFluidHandler fluidHandler = null;
+    private IPeripheral peripheral = null;
 
-    public PeripheralBlockEntity(BlockEntityType<?> tileEntityTypeIn, BlockPos pos, BlockState state) {
+    protected PeripheralBlockEntity(BlockEntityType<?> tileEntityTypeIn, BlockPos pos, BlockState state) {
         super(tileEntityTypeIn, pos, state);
         if (this instanceof IInventoryBlock<?> inventoryBlock) {
             items = NonNullList.withSize(inventoryBlock.getInvSize(), ItemStack.EMPTY);
         } else {
             items = NonNullList.withSize(0, ItemStack.EMPTY);
         }
-        peripheralSettings = new CompoundTag();
     }
 
     @Nullable
     @Override
     public IPeripheral createPeripheralCap(@Nullable Direction side) {
-        if (peripheral == null)
-            // Perform later peripheral creation, because creating peripheral
-            // on init of tile entity cause some infinity loop, if peripheral
-            // are depend on tile entity data
-            this.peripheral = this.createPeripheral();
-        if (peripheral.isEnabled()) {
-            return peripheral;
-        } else {
-            AdvancedPeripherals.debug(peripheral.getType() + " is disabled, you can enable it in the Configuration.");
+        // Perform later peripheral creation, because creating peripheral
+        // on init of tile entity cause some infinity loop, if peripheral
+        // are depend on tile entity data
+        if (this.peripheral == null) {
+            // Recreate peripheral to allow CC: Tweaked correctly handle
+            // peripheral update logic, so new peripheral and old one will be
+            // different
+            this.peripheral = this.createPeripheralDisable();
         }
-        return null;
+        return this.peripheral;
     }
 
     @Nullable
     @Override
     public IFluidHandler createFluidHandlerCap(@Nullable Direction side) {
-        if (fluidHandler == null)
-            fluidHandler = new FluidTank(0);
-        return fluidHandler;
+        if (this.fluidHandler == null) {
+            this.fluidHandler = new FluidTank(0);
+        }
+        return this.fluidHandler;
     }
 
     @Nullable
     @Override
     public IItemHandler createItemHandlerCap(@Nullable Direction side) {
-        if (itemHandler == null)
-            itemHandler = new SidedInvWrapper(this, null);
-        return itemHandler;
+        if (this.itemHandler == null) {
+            this.itemHandler = new SidedInvWrapper(this, null);
+        }
+        return this.itemHandler;
     }
 
     @NotNull
     protected abstract T createPeripheral();
 
+    protected IPeripheral createPeripheralDisable() {
+        T peripheral = this.createPeripheral();
+        if (peripheral.isEnabled()) {
+            return peripheral;
+        }
+        return new DisabledPeripheral(peripheral);
+    }
+
     public Iterable<IComputerAccess> getConnectedComputers() {
-        if (peripheral == null) // just avoid some NPE in strange cases
-            return Collections.emptyList();
-        return peripheral.getConnectedComputers();
+        return this.getPeripheralOptional().map(BasePeripheral::getConnectedComputers).orElse(Collections.emptyList());
+    }
+
+    @Nullable
+    public T getPeripheral() {
+        IPeripheral peripheral = this.createPeripheralCap(null);
+        if (peripheral == null || peripheral instanceof DisabledPeripheral) {
+            return null;
+        }
+        return (T) peripheral;
+    }
+
+    public Optional<T> getPeripheralOptional() {
+        return Optional.ofNullable(this.getPeripheral());
     }
 
     /*@Override
@@ -210,7 +230,6 @@ public abstract class PeripheralBlockEntity<T extends BasePeripheral<?>> extends
 
     @Override
     public void markSettingsChanged() {
-        setChanged();
+        this.setChanged();
     }
 }
-

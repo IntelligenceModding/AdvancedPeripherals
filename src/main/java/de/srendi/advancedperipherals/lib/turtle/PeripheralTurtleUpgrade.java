@@ -33,7 +33,7 @@ public abstract class PeripheralTurtleUpgrade<T extends IBasePeripheral<?>> exte
     public IPeripheral createPeripheral(@NotNull ITurtleAccess turtle, @NotNull TurtleSide side) {
         T peripheral = buildPeripheral(turtle, side);
         if (!peripheral.isEnabled()) {
-            return DisabledPeripheral.INSTANCE;
+            return new DisabledPeripheral(peripheral);
         }
         return peripheral;
     }
