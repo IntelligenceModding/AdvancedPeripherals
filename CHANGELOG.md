@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+### Fixed
+- Fixed support for Refined Storage version 2.0.0
+- [#786] Minor performance improvements to the RS Bridges resources iteration - improves the performance with any get*Resource* function - Thanks to @SirYwell!
+- [#784] Fixed that the energy detector transfer rate limit is not enforced
+- Fixed an issue where the ME Bridge could void chemicals during exporting/importing
+- Fixed an issue where export/import fluids and chemicals in the ME Bridge would not detect any remote target peripherals
+
 ## [1.21.1-0.7.55b] - 2025-07-14
 
 ### Fixed
