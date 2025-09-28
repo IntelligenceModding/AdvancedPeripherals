@@ -67,10 +67,7 @@ public class MEBridgeEntity extends PeripheralBlockEntity<MEBridgePeripheral> im
                 mainNode.setVisualRepresentation(new ItemStack(Blocks.ME_BRIDGE.get()));
                 mainNode.setInWorldNode(true);
                 mainNode.create(level, getBlockPos());
-                //peripheral can be null if `createPeripheralCap` was not called before
-                if (peripheral == null)
-                    peripheral = createPeripheral();
-                peripheral.setNode(mainNode);
+                this.getPeripheralOptional().ifPresent(peripheral -> peripheral.setNode(mainNode));
                 initialized = true;
             }
 

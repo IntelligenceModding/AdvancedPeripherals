@@ -25,7 +25,9 @@ public abstract class BasePocketUpgrade<T extends IBasePeripheral<?>> extends Ab
     @Override
     public IPeripheral createPeripheral(@NotNull IPocketAccess access) {
         peripheral = getPeripheral(access);
-        if (!peripheral.isEnabled()) return DisabledPeripheral.INSTANCE;
+        if (!peripheral.isEnabled()) {
+            return new DisabledPeripheral(peripheral);
+        }
         return peripheral;
     }
 }
