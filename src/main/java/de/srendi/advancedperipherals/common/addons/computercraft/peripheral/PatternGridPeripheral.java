@@ -55,7 +55,13 @@ public class PatternGridPeripheral extends BasePeripheral<TurtlePeripheralOwner>
         return APAddon.REFINEDSTORAGE.isLoaded() && APConfig.PERIPHERALS_CONFIG.enableCompassTurtle.get();
     }
 
-    // Returns information about a pattern, in the style of the RSBridge.getPattern() method.
+    /**
+     * Returns information about a pattern, in the style of the RS Bridge ".getPattern()" method.
+     *
+     * @param target the pattern item to examine
+     * @return a Map containing the properties as returned by the RSApi
+     * @throws RuntimeException if the pattern is blank, or if the item isn't a pattern at all
+     */
     public Map<String, Object> getDetailsForItem(ItemStack target) throws RuntimeException {
         if(!target.is(Items.INSTANCE.getPattern())) {
             throw new RuntimeException("Not a pattern");
@@ -67,7 +73,7 @@ public class PatternGridPeripheral extends BasePeripheral<TurtlePeripheralOwner>
         }
 
         if(pattern.isEmpty()) {
-            throw new RuntimeException("Pattern is empty");
+            throw new RuntimeException("Pattern is blank");
         }
         else {
             return (Map<String, Object>) RSApi.parsePattern(pattern.get(), null);
@@ -92,8 +98,14 @@ public class PatternGridPeripheral extends BasePeripheral<TurtlePeripheralOwner>
 
     // -----------------------------------------------------------------------------------------------------------------
 
-    // Make sure we have patterns available.
-    public int verifyPatternsInSlot(int slot) throws RuntimeException {
+    /**
+     * Ensures that a slot contains patterns.
+     *
+     * @param slot the slot number to look in
+     * @return how many patterns are in the slot
+     * @throws RuntimeException if the slot doesn't contain any patterns
+     */
+    private int verifyPatternsInSlot(int slot) throws RuntimeException {
         Container turtleInventory = this.getPeripheralOwner().getTurtle().getInventory();
         ItemStack selected = turtleInventory.getItem(slot);
         if(selected.is(Items.INSTANCE.getPattern()) && selected.getCount() > 0) {
@@ -105,8 +117,14 @@ public class PatternGridPeripheral extends BasePeripheral<TurtlePeripheralOwner>
         }
     }
 
-    // Find a slot to insert a newly built pattern.
-    public int getFreeSlotAfterBuild(int source) throws RuntimeException {
+    /**
+     * Finds a free slot in which to insert the result of a pattern build.
+     *
+     * @param source the slot containing our source pattern
+     * @return which slot to store the built pattern in
+     * @throws RuntimeException if there are no free slots in the turtle
+     */
+    private int getFreeSlotAfterBuild(int source) throws RuntimeException {
         // We assume that we'll consume one of whatever is in the source slot.
         Container turtleInventory = this.getPeripheralOwner().getTurtle().getInventory();
 
@@ -126,9 +144,16 @@ public class PatternGridPeripheral extends BasePeripheral<TurtlePeripheralOwner>
         }
     }
 
-    public ResourceKey parseResourceName(String resourceName) throws RuntimeException {
+    /**
+     * Attempts to match a String resource name to an ItemResource or FluidResource.
+     *
+     * @param name the resource name
+     * @return a ResourceKey representing the resource
+     * @throws RuntimeException if the name doesn't match a resource
+     */
+    private ResourceKey parseResourceName(String name) throws RuntimeException {
         try {
-            ResourceLocation location = ResourceLocation.parse(resourceName);
+            ResourceLocation location = ResourceLocation.parse(name);
             // Try as item first
             Item item = BuiltInRegistries.ITEM.get(location);
             if (!item.equals(BuiltInRegistries.ITEM.get(ResourceLocation.parse("minecraft:air")))) {
@@ -139,16 +164,15 @@ public class PatternGridPeripheral extends BasePeripheral<TurtlePeripheralOwner>
             if (!fluid.equals(Fluids.EMPTY)) {
                 return new FluidResource(fluid);
             }
-            throw new RuntimeException("Couldn't find item or fluid: " + resourceName);
+            throw new RuntimeException("Couldn't find item or fluid: " + name);
         } catch(Exception e) {
-            throw new RuntimeException("Couldn't find item or fluid: " + resourceName);
+            throw new RuntimeException("Couldn't find item or fluid: " + name);
         }
     }
 
     // -----------------------------------------------------------------------------------------------------------------
 
     // Build a crafting pattern from a table of slots.
-    // TODO: replace with Lua exceptions
     @LuaFunction(mainThread = true)
     public MethodResult buildCrafting(Map<?, ?> recipeInput, Optional<Boolean> fuzzy) {
         ITurtleAccess turtle = this.getPeripheralOwner().getTurtle();
