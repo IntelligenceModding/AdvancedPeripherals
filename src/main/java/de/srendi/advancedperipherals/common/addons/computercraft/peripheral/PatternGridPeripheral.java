@@ -1,0 +1,291 @@
+package de.srendi.advancedperipherals.common.addons.computercraft.peripheral;
+
+import com.refinedmods.refinedstorage.api.autocrafting.Pattern;
+import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
+import com.refinedmods.refinedstorage.api.resource.ResourceKey;
+import com.refinedmods.refinedstorage.common.api.autocrafting.PatternProviderItem;
+import com.refinedmods.refinedstorage.common.autocrafting.CraftingPatternState;
+import com.refinedmods.refinedstorage.common.autocrafting.PatternState;
+import com.refinedmods.refinedstorage.common.autocrafting.ProcessingPatternState;
+import com.refinedmods.refinedstorage.common.autocrafting.patterngrid.PatternType;
+import com.refinedmods.refinedstorage.common.content.DataComponents;
+import com.refinedmods.refinedstorage.common.content.Items;
+import com.refinedmods.refinedstorage.common.support.resource.FluidResource;
+import com.refinedmods.refinedstorage.common.support.resource.ItemResource;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
+
+import dan200.computercraft.api.lua.LuaFunction;
+import dan200.computercraft.api.lua.MethodResult;
+import dan200.computercraft.api.turtle.ITurtleAccess;
+import dan200.computercraft.api.turtle.TurtleSide;
+import de.srendi.advancedperipherals.common.addons.APAddon;
+import de.srendi.advancedperipherals.common.addons.computercraft.owner.TurtlePeripheralOwner;
+import de.srendi.advancedperipherals.common.addons.refinedstorage.RSApi;
+import de.srendi.advancedperipherals.common.configuration.APConfig;
+import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.Container;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.CraftingInput;
+import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.level.material.Fluids;
+
+public class PatternGridPeripheral extends BasePeripheral<TurtlePeripheralOwner> {
+
+    public static final String PERIPHERAL_TYPE = "pattern_grid";
+
+    protected PatternGridPeripheral(TurtlePeripheralOwner owner) {
+        super(PERIPHERAL_TYPE, owner);
+    }
+
+    public PatternGridPeripheral(ITurtleAccess turtle, TurtleSide side) {
+        this(new TurtlePeripheralOwner(turtle, side));
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return APAddon.REFINEDSTORAGE.isLoaded() && APConfig.PERIPHERALS_CONFIG.enableCompassTurtle.get();
+    }
+
+    // Returns information about a pattern, in the style of the RSBridge.getPattern() method.
+    public Map<String, Object> getDetailsForItem(ItemStack target) throws RuntimeException {
+        if(!target.is(Items.INSTANCE.getPattern())) {
+            throw new RuntimeException("Not a pattern");
+        }
+
+        Optional<Pattern> pattern = Optional.empty();
+        if (target.getItem() instanceof PatternProviderItem patternProvider) {
+            pattern = patternProvider.getPattern(target, this.getLevel());
+        }
+
+        if(pattern.isEmpty()) {
+            throw new RuntimeException("Pattern is empty");
+        }
+        else {
+            return (Map<String, Object>) RSApi.parsePattern(pattern.get(), null);
+        }
+    }
+
+    @LuaFunction(mainThread = true)
+    public MethodResult getDetails(Optional<Integer> slot) {
+        try {
+            ITurtleAccess turtle = this.getPeripheralOwner().getTurtle();
+            // Note: the hack at the end of the line here converts between CC slot numbering (from 1) to Java slot numbering (from 0).
+            // It's broken out like this so we can call getDetailsInSlot from the builder functions later, and not have to care
+            // what Lua thinks about array indexing.
+            ItemStack target = turtle.getInventory().getItem(slot.orElse(turtle.getSelectedSlot() + 1) - 1);
+            return MethodResult.of(getDetailsForItem(target));
+        }
+        catch(RuntimeException e) {
+            // Did you know: passing a naked RuntimeException to the Lua interpreter causes a bizarre hang
+            return MethodResult.of(false, e.getMessage());
+        }
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+
+    // Make sure we have patterns available.
+    public int verifyPatternsInSlot(int slot) throws RuntimeException {
+        Container turtleInventory = this.getPeripheralOwner().getTurtle().getInventory();
+        ItemStack selected = turtleInventory.getItem(slot);
+        if(selected.is(Items.INSTANCE.getPattern()) && selected.getCount() > 0) {
+            return selected.getCount();
+        }
+        else {
+            // TODO: do I even care to do this here
+            throw new RuntimeException("No pattern available");
+        }
+    }
+
+    // Find a slot to insert a newly built pattern.
+    public int getFreeSlotAfterBuild(int source) throws RuntimeException {
+        // We assume that we'll consume one of whatever is in the source slot.
+        Container turtleInventory = this.getPeripheralOwner().getTurtle().getInventory();
+
+        if(turtleInventory.getItem(source).getCount() <= 1) {
+            // We're using the last of something, so feel free to take its place.
+            return source;
+        }
+        else {
+            // Otherwise... are there any free slots?
+            for(int i = 0; i < turtleInventory.getContainerSize(); i++) {
+                if (turtleInventory.getItem(i).getCount() == 0) {
+                    return i;
+                }
+            }
+            // Turtle's full, keep movin'
+            throw new RuntimeException("No room in destination");
+        }
+    }
+
+    public ResourceKey parseResourceName(String resourceName) throws RuntimeException {
+        try {
+            ResourceLocation location = ResourceLocation.parse(resourceName);
+            // Try as item first
+            Item item = BuiltInRegistries.ITEM.get(location);
+            if (!item.equals(BuiltInRegistries.ITEM.get(ResourceLocation.parse("minecraft:air")))) {
+                return new ItemResource(item);
+            }
+            // Try as fluid
+            Fluid fluid = BuiltInRegistries.FLUID.get(location);
+            if (!fluid.equals(Fluids.EMPTY)) {
+                return new FluidResource(fluid);
+            }
+            throw new RuntimeException("Couldn't find item or fluid: " + resourceName);
+        } catch(Exception e) {
+            throw new RuntimeException("Couldn't find item or fluid: " + resourceName);
+        }
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+
+    // Build a crafting pattern from a table of slots.
+    // TODO: replace with Lua exceptions
+    @LuaFunction(mainThread = true)
+    public MethodResult buildCrafting(Map<?, ?> recipeInput, Optional<Boolean> fuzzy) {
+        ITurtleAccess turtle = this.getPeripheralOwner().getTurtle();
+
+        try {
+            verifyPatternsInSlot(turtle.getSelectedSlot());
+            int destinationSlot = getFreeSlotAfterBuild(turtle.getSelectedSlot());
+
+            ItemStack patternStack = new ItemStack(Items.INSTANCE.getPattern());
+            PatternState patternState = new PatternState(UUID.randomUUID(), PatternType.CRAFTING);
+            patternStack.set(DataComponents.INSTANCE.getPatternState(), patternState);
+
+            List<ItemStack> ingredients = new ArrayList<>(Collections.nCopies(9, ItemStack.EMPTY));
+
+            for (Object o : recipeInput.keySet()) {
+                // Note: I'm assuming that Lua returns all numbers as doubles.
+                // Only care about slots 1 through 9 in the input; we'll just ignore everything else.
+                if(o instanceof Double) {
+                    int slot = ((Double) o).intValue() - 1;
+                    if(slot >= 0 && slot < 9) {
+                        if(recipeInput.get(o) instanceof String) {
+                            ingredients.set(slot, ((ItemResource) parseResourceName((String) recipeInput.get(o))).toItemStack());
+                        } else {
+                            return MethodResult.of(false, "Couldn't parse item in slot " + slot);
+                        }
+                    }
+                }
+            }
+
+            CraftingInput craftingInput = CraftingInput.of(3, 3, ingredients);
+            CraftingInput.Positioned positioned = new CraftingInput.Positioned(craftingInput, 0, 0);
+            CraftingPatternState craftingState = new CraftingPatternState(fuzzy.orElse(false), positioned);
+            patternStack.set(DataComponents.INSTANCE.getCraftingPatternState(), craftingState);
+
+            // Kismet: a bad recipe will be caught automatically
+            Map<String, Object> result;
+            try {
+                 result = getDetailsForItem(patternStack);
+            }
+            catch(Exception e) {
+                throw new RuntimeException("Bad recipe");
+            }
+
+            turtle.getInventory().removeItem(turtle.getSelectedSlot(), 1);
+            turtle.getInventory().setItem(destinationSlot, patternStack);
+
+            return MethodResult.of(true, result);
+        }
+        catch(Exception e) {
+            // I like exceptions but the other peripherals in this mod don't use them. So just return errors as strings.
+            return MethodResult.of(false, e.getMessage());
+        }
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+
+    // Build a processing pattern from a list of ingredients.
+    @LuaFunction(mainThread = true)
+    public MethodResult buildProcessing(Map<?, ?> recipeInput) {
+        ITurtleAccess turtle = this.getPeripheralOwner().getTurtle();
+
+        try {
+            verifyPatternsInSlot(turtle.getSelectedSlot());
+            int destinationSlot = getFreeSlotAfterBuild(turtle.getSelectedSlot());
+
+            ItemStack patternStack = new ItemStack(Items.INSTANCE.getPattern());
+            PatternState patternState = new PatternState(UUID.randomUUID(), PatternType.PROCESSING);
+            patternStack.set(DataComponents.INSTANCE.getPatternState(), patternState);
+
+            List<Optional<ProcessingPatternState.ProcessingIngredient>> ingredients = new ArrayList<>();
+            List<Optional<ResourceAmount>> results = new ArrayList<>();
+
+            /* Attempt to parse our recipe. We should be passed in a table that looks like this:
+             *
+             * {
+             *     inputs = {
+             *         [1] = { name = "<item>", count = <int> },
+             *         [2] = { name = "<item>", alts = { [1] = "<tag>", ... }, count = <int> },
+             *         ...
+             *     },
+             *     outputs = {
+             *         [1] = { name = "<item>", count = <int> },
+             *         ...
+             *     }
+             * }
+             *
+             * Note that input names can be passed as a string or as an array of strings (for alternates).
+             * That's a lot to validate, so barring better options, we'll just catch and error out.
+             */
+            try {
+                // Lua sends in all numbers as doubles. We don't really care about the index.
+                Map<Double, Map<String, Object>> inputMap = (Map<Double, Map<String, Object>>) recipeInput.get("inputs");
+                for(Map<String, Object> thisInput : inputMap.values()) {
+                    int thisCount = ((Double) thisInput.get("count")).intValue();
+                    ResourceKey thisItem = parseResourceName((String) thisInput.get("name"));
+                    List<ResourceLocation> theseAlts = new ArrayList<>();
+                    
+                    if(thisInput.containsKey("alts")) {
+                        theseAlts = ((Map<Double, String>) thisInput.get("alts")).values().stream().map(
+                            ResourceLocation::parse).toList();
+                    }
+
+                    ingredients.add(Optional.of(new ProcessingPatternState.ProcessingIngredient(new ResourceAmount(thisItem, thisCount), theseAlts)));
+                }
+
+                Map<Double, Map<String, Object>> outputMap = (Map<Double, Map<String, Object>>) recipeInput.get("outputs");
+                for(Map<String, Object> thisOutput : outputMap.values()) {
+                    int thisCount = ((Double) thisOutput.get("count")).intValue();
+                    ResourceKey thisItem = parseResourceName((String) thisOutput.get("name"));
+                    results.add(Optional.of(new ResourceAmount(thisItem, thisCount)));
+                }
+            }
+            catch(Exception e) {
+                throw new RuntimeException("Recipe is malformed");
+            }
+
+            ProcessingPatternState processingState = new ProcessingPatternState(ingredients, results);
+            patternStack.set(DataComponents.INSTANCE.getProcessingPatternState(), processingState);
+            
+            // Kismet: a bad recipe will be caught automatically
+            Map<String, Object> result;
+            try {
+                result = getDetailsForItem(patternStack);
+            }
+            catch(Exception e) {
+                throw new RuntimeException("Pattern couldn't be built");
+            }
+
+            turtle.getInventory().removeItem(turtle.getSelectedSlot(), 1);
+            turtle.getInventory().setItem(destinationSlot, patternStack);
+
+            // And now the reversal of the ugly hack in getDetails above.
+            return MethodResult.of(true, result);
+        }
+        catch(Exception e) {
+            // I like exceptions but the other peripherals in this mod don't use them. So just return errors as strings.
+            return MethodResult.of(false, e.getMessage());
+        }
+    }
+}

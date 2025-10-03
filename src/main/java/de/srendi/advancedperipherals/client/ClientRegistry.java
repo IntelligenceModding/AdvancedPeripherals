@@ -24,6 +24,7 @@ public class ClientRegistry {
     public static void onUpgradeModeller(RegisterTurtleModellersEvent event) {
         event.register(CCRegistration.CHUNKY_TURTLE.get(), TurtleUpgradeModeller.flatItem());
         event.register(CCRegistration.COMPASS_TURTLE.get(), TurtleUpgradeModeller.flatItem());
+        event.register(CCRegistration.PATTERN_TURTLE.get(), TurtleUpgradeModeller.sided(AdvancedPeripherals.getRL("block/turtle_pattern_left"), AdvancedPeripherals.getRL("block/turtle_pattern_right")));
         event.register(CCRegistration.CHAT_BOX_TURTLE.get(), TurtleUpgradeModeller.sided(AdvancedPeripherals.getRL("block/turtle_chatty_left"), AdvancedPeripherals.getRL("block/turtle_chatty_right")));
         event.register(CCRegistration.ENVIRONMENT_TURTLE.get(), TurtleUpgradeModeller.sided(AdvancedPeripherals.getRL("block/turtle_environment_left"), AdvancedPeripherals.getRL("block/turtle_environment_right")));
         event.register(CCRegistration.GEO_SCANNER_TURTLE.get(), TurtleUpgradeModeller.sided(AdvancedPeripherals.getRL("block/turtle_geoscanner_left"), AdvancedPeripherals.getRL("block/turtle_geoscanner_right")));

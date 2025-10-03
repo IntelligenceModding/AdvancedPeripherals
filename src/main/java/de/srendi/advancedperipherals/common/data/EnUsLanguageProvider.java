@@ -72,6 +72,7 @@ public class EnUsLanguageProvider extends LanguageProvider {
         addTurtle(CCRegistration.ID.ENVIRONMENT_TURTLE, "Environment");
         addTurtle(CCRegistration.ID.PLAYER_TURTLE, "Player Detector");
         addTurtle(CCRegistration.ID.GEOSCANNER_TURTLE, "Geo");
+        addTurtle(CCRegistration.ID.PATTERN_TURTLE, "Pattern Grid");
         addTurtle(CCRegistration.ID.COMPASS_TURTLE, "Compass");
         addTurtle(CCRegistration.ID.WEAK_AUTOMATA, "Weak automata");
         addTurtle(CCRegistration.ID.HUSBANDRY_AUTOMATA, "Husbandry automata");
