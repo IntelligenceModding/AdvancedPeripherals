@@ -13,12 +13,7 @@ import com.refinedmods.refinedstorage.common.content.Items;
 import com.refinedmods.refinedstorage.common.support.resource.FluidResource;
 import com.refinedmods.refinedstorage.common.support.resource.ItemResource;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.lua.MethodResult;
@@ -62,9 +57,9 @@ public class PatternGridPeripheral extends BasePeripheral<TurtlePeripheralOwner>
      * @return a Map containing the properties as returned by the RSApi
      * @throws RuntimeException if the pattern is blank, or if the item isn't a pattern at all
      */
-    public Map<String, Object> getDetailsForItem(ItemStack target) throws RuntimeException {
-        if(!target.is(Items.INSTANCE.getPattern())) {
-            throw new RuntimeException("Not a pattern");
+    public Map<String, Object> getDetailsForItem(ItemStack target) throws IllegalArgumentException, IllegalStateException {
+        if (!target.is(Items.INSTANCE.getPattern())) {
+            throw new IllegalArgumentException("Not a pattern");
         }
 
         Optional<Pattern> pattern = Optional.empty();
@@ -72,10 +67,9 @@ public class PatternGridPeripheral extends BasePeripheral<TurtlePeripheralOwner>
             pattern = patternProvider.getPattern(target, this.getLevel());
         }
 
-        if(pattern.isEmpty()) {
-            throw new RuntimeException("Pattern is blank");
-        }
-        else {
+        if (pattern.isEmpty()) {
+            throw new IllegalStateException("Pattern is blank");
+        } else {
             return (Map<String, Object>) RSApi.parsePattern(pattern.get(), null);
         }
     }
@@ -85,12 +79,11 @@ public class PatternGridPeripheral extends BasePeripheral<TurtlePeripheralOwner>
         try {
             ITurtleAccess turtle = this.getPeripheralOwner().getTurtle();
             // Note: the hack at the end of the line here converts between CC slot numbering (from 1) to Java slot numbering (from 0).
-            // It's broken out like this so we can call getDetailsInSlot from the builder functions later, and not have to care
+            // It's broken out like this so we can call getDetailsForItem from the builder functions later, and not have to care
             // what Lua thinks about array indexing.
             ItemStack target = turtle.getInventory().getItem(slot.orElse(turtle.getSelectedSlot() + 1) - 1);
             return MethodResult.of(getDetailsForItem(target));
-        }
-        catch(RuntimeException e) {
+        } catch (RuntimeException e) {
             // Did you know: passing a naked RuntimeException to the Lua interpreter causes a bizarre hang
             return MethodResult.of(false, e.getMessage());
         }
@@ -105,15 +98,14 @@ public class PatternGridPeripheral extends BasePeripheral<TurtlePeripheralOwner>
      * @return how many patterns are in the slot
      * @throws RuntimeException if the slot doesn't contain any patterns
      */
-    private int verifyPatternsInSlot(int slot) throws RuntimeException {
+    private int verifyPatternsInSlot(int slot) throws IllegalStateException {
         Container turtleInventory = this.getPeripheralOwner().getTurtle().getInventory();
         ItemStack selected = turtleInventory.getItem(slot);
-        if(selected.is(Items.INSTANCE.getPattern()) && selected.getCount() > 0) {
+        if (selected.is(Items.INSTANCE.getPattern()) && selected.getCount() > 0) {
             return selected.getCount();
-        }
-        else {
+        } else {
             // TODO: do I even care to do this here
-            throw new RuntimeException("No pattern available");
+            throw new IllegalStateException("No pattern available");
         }
     }
 
@@ -124,23 +116,22 @@ public class PatternGridPeripheral extends BasePeripheral<TurtlePeripheralOwner>
      * @return which slot to store the built pattern in
      * @throws RuntimeException if there are no free slots in the turtle
      */
-    private int getFreeSlotAfterBuild(int source) throws RuntimeException {
+    private int getFreeSlotAfterBuild(int source) throws IllegalStateException {
         // We assume that we'll consume one of whatever is in the source slot.
         Container turtleInventory = this.getPeripheralOwner().getTurtle().getInventory();
 
-        if(turtleInventory.getItem(source).getCount() <= 1) {
+        if (turtleInventory.getItem(source).getCount() <= 1) {
             // We're using the last of something, so feel free to take its place.
             return source;
-        }
-        else {
+        } else {
             // Otherwise... are there any free slots?
-            for(int i = 0; i < turtleInventory.getContainerSize(); i++) {
+            for (int i = 0; i < turtleInventory.getContainerSize(); i++) {
                 if (turtleInventory.getItem(i).getCount() == 0) {
                     return i;
                 }
             }
             // Turtle's full, keep movin'
-            throw new RuntimeException("No room in destination");
+            throw new IllegalStateException("No room in destination");
         }
     }
 
@@ -151,7 +142,7 @@ public class PatternGridPeripheral extends BasePeripheral<TurtlePeripheralOwner>
      * @return a ResourceKey representing the resource
      * @throws RuntimeException if the name doesn't match a resource
      */
-    private ResourceKey parseResourceName(String name) throws RuntimeException {
+    private ResourceKey parseResourceName(String name) throws IllegalArgumentException {
         try {
             ResourceLocation location = ResourceLocation.parse(name);
             // Try as item first
@@ -165,9 +156,9 @@ public class PatternGridPeripheral extends BasePeripheral<TurtlePeripheralOwner>
             if (!fluid.equals(Fluids.EMPTY)) {
                 return new FluidResource(fluid);
             }
-            throw new RuntimeException("Couldn't find item or fluid: " + name);
-        } catch(Exception e) {
-            throw new RuntimeException("Couldn't find item or fluid: " + name);
+            throw new IllegalArgumentException("Couldn't find item or fluid: " + name);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Couldn't find item or fluid: " + name);
         }
     }
 
@@ -191,10 +182,10 @@ public class PatternGridPeripheral extends BasePeripheral<TurtlePeripheralOwner>
             for (Object o : recipeInput.keySet()) {
                 // Note: I'm assuming that Lua returns all numbers as doubles.
                 // Only care about slots 1 through 9 in the input; we'll just ignore everything else.
-                if(o instanceof Double) {
+                if (o instanceof Double) {
                     int slot = ((Double) o).intValue() - 1;
-                    if(slot >= 0 && slot < 9) {
-                        if(recipeInput.get(o) instanceof String) {
+                    if (slot >= 0 && slot < 9) {
+                        if (recipeInput.get(o) instanceof String) {
                             ingredients.set(slot, ((ItemResource) parseResourceName((String) recipeInput.get(o))).toItemStack());
                         } else {
                             return MethodResult.of(false, "Couldn't parse item in slot " + slot);
@@ -211,9 +202,8 @@ public class PatternGridPeripheral extends BasePeripheral<TurtlePeripheralOwner>
             // Kismet: a bad recipe will be caught automatically
             Map<String, Object> result;
             try {
-                 result = getDetailsForItem(patternStack);
-            }
-            catch(Exception e) {
+                result = getDetailsForItem(patternStack);
+            } catch (Exception e) {
                 throw new RuntimeException("Bad recipe");
             }
 
@@ -221,8 +211,7 @@ public class PatternGridPeripheral extends BasePeripheral<TurtlePeripheralOwner>
             turtle.getInventory().setItem(destinationSlot, patternStack);
 
             return MethodResult.of(true, result);
-        }
-        catch(Exception e) {
+        } catch (Exception e) {
             // I like exceptions but the other peripherals in this mod don't use them. So just return errors as strings.
             return MethodResult.of(false, e.getMessage());
         }
@@ -266,12 +255,12 @@ public class PatternGridPeripheral extends BasePeripheral<TurtlePeripheralOwner>
             try {
                 // Lua sends in all numbers as doubles. We don't really care about the index.
                 Map<Double, Map<String, Object>> inputMap = (Map<Double, Map<String, Object>>) recipeInput.get("inputs");
-                for(Map<String, Object> thisInput : inputMap.values()) {
+                for (Map<String, Object> thisInput : inputMap.values()) {
                     int thisCount = ((Double) thisInput.get("count")).intValue();
                     ResourceKey thisItem = parseResourceName((String) thisInput.get("name"));
                     List<ResourceLocation> theseAlts = new ArrayList<>();
-                    
-                    if(thisInput.containsKey("alts")) {
+
+                    if (thisInput.containsKey("alts")) {
                         theseAlts = ((Map<Double, String>) thisInput.get("alts")).values().stream().map(
                             ResourceLocation::parse).toList();
                     }
@@ -280,25 +269,23 @@ public class PatternGridPeripheral extends BasePeripheral<TurtlePeripheralOwner>
                 }
 
                 Map<Double, Map<String, Object>> outputMap = (Map<Double, Map<String, Object>>) recipeInput.get("outputs");
-                for(Map<String, Object> thisOutput : outputMap.values()) {
+                for (Map<String, Object> thisOutput : outputMap.values()) {
                     int thisCount = ((Double) thisOutput.get("count")).intValue();
                     ResourceKey thisItem = parseResourceName((String) thisOutput.get("name"));
                     results.add(Optional.of(new ResourceAmount(thisItem, thisCount)));
                 }
-            }
-            catch(Exception e) {
+            } catch (Exception e) {
                 throw new RuntimeException("Recipe is malformed");
             }
 
             ProcessingPatternState processingState = new ProcessingPatternState(ingredients, results);
             patternStack.set(DataComponents.INSTANCE.getProcessingPatternState(), processingState);
-            
+
             // Kismet: a bad recipe will be caught automatically
             Map<String, Object> result;
             try {
                 result = getDetailsForItem(patternStack);
-            }
-            catch(Exception e) {
+            } catch (Exception e) {
                 throw new RuntimeException("Pattern couldn't be built");
             }
 
@@ -307,8 +294,7 @@ public class PatternGridPeripheral extends BasePeripheral<TurtlePeripheralOwner>
 
             // And now the reversal of the ugly hack in getDetails above.
             return MethodResult.of(true, result);
-        }
-        catch(Exception e) {
+        } catch (Exception e) {
             // I like exceptions but the other peripherals in this mod don't use them. So just return errors as strings.
             return MethodResult.of(false, e.getMessage());
         }
