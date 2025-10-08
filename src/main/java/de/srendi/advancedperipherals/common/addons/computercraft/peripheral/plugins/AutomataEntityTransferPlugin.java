@@ -22,7 +22,6 @@ import net.minecraft.world.phys.HitResult;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import java.util.Optional;
 import java.util.function.Predicate;
 
 import static de.srendi.advancedperipherals.common.addons.computercraft.operations.SingleOperation.CAPTURE_ANIMAL;
@@ -76,10 +75,7 @@ public class AutomataEntityTransferPlugin extends AutomataCorePlugin {
 
     @LuaFunction(mainThread = true)
     public final MethodResult captureAnimal(@NotNull IArguments arguments) throws LuaException {
-        Optional<LuaTable<?, ?>> optOptions = arguments.optTableUnsafe(0);
-        LuaTable<?, ?> options = EmptyLuaTable.INSTANCE;
-        if (optOptions.isPresent())
-            options = optOptions.get();
+        LuaTable<?, ?> options = EmptyLuaTable.orEmpty(arguments.optTable(0).orElse(null));
 
         float yaw = options.optDouble("yaw").orElse(0d).floatValue();
         float pitch = options.optDouble( "pitch").orElse(0d).floatValue();
