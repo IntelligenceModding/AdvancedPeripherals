@@ -13,10 +13,11 @@ import com.refinedmods.refinedstorage.common.content.Items;
 import com.refinedmods.refinedstorage.common.support.resource.FluidResource;
 import com.refinedmods.refinedstorage.common.support.resource.ItemResource;
 
-import java.util.*;
-
+import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
+import dan200.computercraft.api.lua.LuaTable;
 import dan200.computercraft.api.lua.MethodResult;
+import dan200.computercraft.api.lua.ObjectLuaTable;
 import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
 import de.srendi.advancedperipherals.common.addons.APAddon;
@@ -32,6 +33,13 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
 
 public class PatternGridPeripheral extends BasePeripheral<TurtlePeripheralOwner> {
 
@@ -55,7 +63,8 @@ public class PatternGridPeripheral extends BasePeripheral<TurtlePeripheralOwner>
      *
      * @param target the pattern item to examine
      * @return a Map containing the properties as returned by the RSApi
-     * @throws RuntimeException if the pattern is blank, or if the item isn't a pattern at all
+     * @throws IllegalArgumentException if the item isn't a pattern
+     * @throws IllegalStateException if the pattern is blank
      */
     public Map<String, Object> getDetailsForItem(ItemStack target) throws IllegalArgumentException, IllegalStateException {
         if (!target.is(Items.INSTANCE.getPattern())) {
@@ -69,9 +78,9 @@ public class PatternGridPeripheral extends BasePeripheral<TurtlePeripheralOwner>
 
         if (pattern.isEmpty()) {
             throw new IllegalStateException("Pattern is blank");
-        } else {
-            return (Map<String, Object>) RSApi.parsePattern(pattern.get(), null);
         }
+
+        return (Map<String, Object>) RSApi.parsePattern(pattern.get(), null);
     }
 
     @LuaFunction(mainThread = true)
@@ -83,8 +92,7 @@ public class PatternGridPeripheral extends BasePeripheral<TurtlePeripheralOwner>
             // what Lua thinks about array indexing.
             ItemStack target = turtle.getInventory().getItem(slot.orElse(turtle.getSelectedSlot() + 1) - 1);
             return MethodResult.of(getDetailsForItem(target));
-        } catch (RuntimeException e) {
-            // Did you know: passing a naked RuntimeException to the Lua interpreter causes a bizarre hang
+        } catch (IllegalStateException | IllegalArgumentException e) {
             return MethodResult.of(false, e.getMessage());
         }
     }
@@ -96,7 +104,7 @@ public class PatternGridPeripheral extends BasePeripheral<TurtlePeripheralOwner>
      *
      * @param slot the slot number to look in
      * @return how many patterns are in the slot
-     * @throws RuntimeException if the slot doesn't contain any patterns
+     * @throws IllegalStateException if the slot doesn't contain any patterns
      */
     private int verifyPatternsInSlot(int slot) throws IllegalStateException {
         Container turtleInventory = this.getPeripheralOwner().getTurtle().getInventory();
@@ -114,7 +122,7 @@ public class PatternGridPeripheral extends BasePeripheral<TurtlePeripheralOwner>
      *
      * @param source the slot containing our source pattern
      * @return which slot to store the built pattern in
-     * @throws RuntimeException if there are no free slots in the turtle
+     * @throws IllegalStateException if there are no free slots in the turtle
      */
     private int getFreeSlotAfterBuild(int source) throws IllegalStateException {
         // We assume that we'll consume one of whatever is in the source slot.
@@ -140,26 +148,22 @@ public class PatternGridPeripheral extends BasePeripheral<TurtlePeripheralOwner>
      *
      * @param name the resource name
      * @return a ResourceKey representing the resource
-     * @throws RuntimeException if the name doesn't match a resource
+     * @throws IllegalArgumentException if the name doesn't match a resource
      */
     private ResourceKey parseResourceName(String name) throws IllegalArgumentException {
-        try {
-            ResourceLocation location = ResourceLocation.parse(name);
-            // Try as item first
-            Item item = BuiltInRegistries.ITEM.get(location);
-            // The parser seems to be greedy... sometimes it'll map an invalid Item to air. Make sure it behaves.
-            if (!item.equals(BuiltInRegistries.ITEM.get(ResourceLocation.parse("minecraft:air")))) {
-                return new ItemResource(item);
-            }
-            // Try as fluid
-            Fluid fluid = BuiltInRegistries.FLUID.get(location);
-            if (!fluid.equals(Fluids.EMPTY)) {
-                return new FluidResource(fluid);
-            }
-            throw new IllegalArgumentException("Couldn't find item or fluid: " + name);
-        } catch (Exception e) {
-            throw new IllegalArgumentException("Couldn't find item or fluid: " + name);
+        ResourceLocation location = ResourceLocation.parse(name);
+        // Try as item first
+        Item item = BuiltInRegistries.ITEM.get(location);
+        // The parser seems to be greedy... sometimes it'll map an invalid Item to air. Make sure it behaves.
+        if (!item.equals(BuiltInRegistries.ITEM.get(ResourceLocation.parse("minecraft:air")))) {
+            return new ItemResource(item);
         }
+        // Try as fluid
+        Fluid fluid = BuiltInRegistries.FLUID.get(location);
+        if (!fluid.equals(Fluids.EMPTY)) {
+            return new FluidResource(fluid);
+        }
+        throw new IllegalArgumentException("Couldn't find item or fluid: " + name);
     }
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -199,19 +203,19 @@ public class PatternGridPeripheral extends BasePeripheral<TurtlePeripheralOwner>
             CraftingPatternState craftingState = new CraftingPatternState(fuzzy.orElse(false), positioned);
             patternStack.set(DataComponents.INSTANCE.getCraftingPatternState(), craftingState);
 
-            // Kismet: a bad recipe will be caught automatically
+            // Kismet: a bad recipe will be caught automatically, since it'll stay a blank pattern
             Map<String, Object> result;
             try {
                 result = getDetailsForItem(patternStack);
-            } catch (Exception e) {
-                throw new RuntimeException("Bad recipe");
+            } catch (IllegalStateException e) {
+                throw new IllegalStateException("Bad recipe");
             }
 
             turtle.getInventory().removeItem(turtle.getSelectedSlot(), 1);
             turtle.getInventory().setItem(destinationSlot, patternStack);
 
             return MethodResult.of(true, result);
-        } catch (Exception e) {
+        } catch (IllegalStateException | IllegalArgumentException e) {
             // I like exceptions but the other peripherals in this mod don't use them. So just return errors as strings.
             return MethodResult.of(false, e.getMessage());
         }
@@ -221,8 +225,9 @@ public class PatternGridPeripheral extends BasePeripheral<TurtlePeripheralOwner>
 
     // Build a processing pattern from a list of ingredients.
     @LuaFunction(mainThread = true)
-    public MethodResult buildProcessing(Map<?, ?> recipeInput) {
+    public MethodResult buildProcessing(Map<?, ?> recipeArg) {
         ITurtleAccess turtle = this.getPeripheralOwner().getTurtle();
+        LuaTable<?, ?> recipeTable = new ObjectLuaTable(recipeArg);
 
         try {
             verifyPatternsInSlot(turtle.getSelectedSlot());
@@ -249,52 +254,50 @@ public class PatternGridPeripheral extends BasePeripheral<TurtlePeripheralOwner>
              *     }
              * }
              *
-             * Note that input names can be passed as a string or as an array of strings (for alternates).
-             * That's a lot to validate, so barring better options, we'll just catch and error out.
              */
-            try {
-                // Lua sends in all numbers as doubles. We don't really care about the index.
-                Map<Double, Map<String, Object>> inputMap = (Map<Double, Map<String, Object>>) recipeInput.get("inputs");
-                for (Map<String, Object> thisInput : inputMap.values()) {
-                    int thisCount = ((Double) thisInput.get("count")).intValue();
-                    ResourceKey thisItem = parseResourceName((String) thisInput.get("name"));
-                    List<ResourceLocation> theseAlts = new ArrayList<>();
 
-                    if (thisInput.containsKey("alts")) {
-                        theseAlts = ((Map<Double, String>) thisInput.get("alts")).values().stream().map(
-                            ResourceLocation::parse).toList();
-                    }
+            // Lua sends in all numbers as doubles. We don't really care about the index.
+            LuaTable<?, ?> inputsTable = new ObjectLuaTable(recipeTable.getTable("inputs"));
 
-                    ingredients.add(Optional.of(new ProcessingPatternState.ProcessingIngredient(new ResourceAmount(thisItem, thisCount), theseAlts)));
+            for (LuaTable<?, ?> thisInput : inputsTable.values().stream().map(Map.class::cast).map(ObjectLuaTable::new).toList()) {
+                int thisCount = thisInput.getInt("count");
+                ResourceKey thisItem = parseResourceName(thisInput.getString("name"));
+
+                List<ResourceLocation> theseAlts = new ArrayList<>();
+
+                if (thisInput.containsKey("alts")) {
+                    theseAlts = thisInput.getTable("alts").values().stream()
+                        .map(String.class::cast).map(ResourceLocation::parse).toList();
                 }
 
-                Map<Double, Map<String, Object>> outputMap = (Map<Double, Map<String, Object>>) recipeInput.get("outputs");
-                for (Map<String, Object> thisOutput : outputMap.values()) {
-                    int thisCount = ((Double) thisOutput.get("count")).intValue();
-                    ResourceKey thisItem = parseResourceName((String) thisOutput.get("name"));
-                    results.add(Optional.of(new ResourceAmount(thisItem, thisCount)));
-                }
-            } catch (Exception e) {
-                throw new RuntimeException("Recipe is malformed");
+                ingredients.add(Optional.of(
+                    new ProcessingPatternState.ProcessingIngredient(new ResourceAmount(thisItem, thisCount), theseAlts)));
+            }
+
+            LuaTable<?, ?> outputsTable = new ObjectLuaTable(recipeTable.getTable("outputs"));
+
+            for (LuaTable<?, ?> thisOutput : outputsTable.values().stream().map(Map.class::cast).map(ObjectLuaTable::new).toList()) {
+                int thisCount = thisOutput.getInt("count");
+                ResourceKey thisItem = parseResourceName(thisOutput.getString("name"));
+
+                results.add(Optional.of(new ResourceAmount(thisItem, thisCount)));
             }
 
             ProcessingPatternState processingState = new ProcessingPatternState(ingredients, results);
             patternStack.set(DataComponents.INSTANCE.getProcessingPatternState(), processingState);
 
-            // Kismet: a bad recipe will be caught automatically
             Map<String, Object> result;
             try {
                 result = getDetailsForItem(patternStack);
-            } catch (Exception e) {
-                throw new RuntimeException("Pattern couldn't be built");
+            } catch (IllegalStateException e) {
+                throw new IllegalStateException("Bad recipe");
             }
 
             turtle.getInventory().removeItem(turtle.getSelectedSlot(), 1);
             turtle.getInventory().setItem(destinationSlot, patternStack);
 
-            // And now the reversal of the ugly hack in getDetails above.
             return MethodResult.of(true, result);
-        } catch (Exception e) {
+        } catch (IllegalStateException | IllegalArgumentException | LuaException e) {
             // I like exceptions but the other peripherals in this mod don't use them. So just return errors as strings.
             return MethodResult.of(false, e.getMessage());
         }
