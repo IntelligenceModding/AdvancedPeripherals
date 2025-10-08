@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+## [1.20.1-0.7.46r] - 2025-10-08
 
 ### Added
 - [#755] Added disabled peripherals, a better way to check if a peripheral is disabled in the config. See [docs](https://docs.advanced-peripherals.de/latest/guides/disabled_peripherals)
