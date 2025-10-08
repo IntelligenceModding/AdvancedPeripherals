@@ -55,7 +55,7 @@ public class PatternGridPeripheral extends BasePeripheral<TurtlePeripheralOwner>
 
     @Override
     public boolean isEnabled() {
-        return APAddon.REFINEDSTORAGE.isLoaded() && APConfig.PERIPHERALS_CONFIG.enableCompassTurtle.get();
+        return APAddon.REFINEDSTORAGE.isLoaded() && APConfig.PERIPHERALS_CONFIG.enablePatternGridTurtle.get();
     }
 
     /**

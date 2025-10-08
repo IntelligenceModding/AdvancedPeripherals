@@ -58,6 +58,9 @@ public class PeripheralsConfig implements IAPConfig {
     public final ModConfigSpec.BooleanValue enableRSBridge;
     public final ModConfigSpec.IntValue rsConsumption;
 
+    // Pattern Grid turtle
+    public final ModConfigSpec.BooleanValue enablePatternGridTurtle;
+
     // Environment Detector
     public final ModConfigSpec.BooleanValue enableEnvironmentDetector;
 
@@ -161,6 +164,9 @@ public class PeripheralsConfig implements IAPConfig {
         pop("RS_Bridge", builder);
         enableRSBridge = builder.comment("Enable the Rs Bridge or not.").define("enableRsBridge", true);
         rsConsumption = builder.comment("Power consumption per tick.").defineInRange("rsPowerConsumption", 10, 0, Integer.MAX_VALUE);
+
+        pop("Pattern_Grid_Turtle", builder);
+        enablePatternGridTurtle = builder.comment("Enable the RS Pattern Grid turtle or not.").define("enablePatternGridTurtle", true);
 
         pop("Environment_Detector", builder);
 
