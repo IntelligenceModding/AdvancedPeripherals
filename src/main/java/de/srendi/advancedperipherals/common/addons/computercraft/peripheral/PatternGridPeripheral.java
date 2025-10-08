@@ -155,7 +155,7 @@ public class PatternGridPeripheral extends BasePeripheral<TurtlePeripheralOwner>
         // Try as item first
         Item item = BuiltInRegistries.ITEM.get(location);
         // The parser seems to be greedy... sometimes it'll map an invalid Item to air. Make sure it behaves.
-        if (!item.equals(BuiltInRegistries.ITEM.get(ResourceLocation.parse("minecraft:air")))) {
+        if (!item.equals(net.minecraft.world.item.Items.AIR)) {
             return new ItemResource(item);
         }
         // Try as fluid
