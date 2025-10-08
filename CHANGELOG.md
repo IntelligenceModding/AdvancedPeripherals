@@ -12,7 +12,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Fixed
 - [#784] Fixed that the energy detector transfer rate limit is not enforced
-- [#772] Fixed that the inventory manager does not save it's content
+- [#772] Fixed that the inventory manager does not save its content
+- [#777] Fixed `IArguments has been closed` being thrown with some functions that still use the wrong table functions
+
 ## [1.20.1-0.7.45r] - 2025-08-02
 
 ### Fixed
