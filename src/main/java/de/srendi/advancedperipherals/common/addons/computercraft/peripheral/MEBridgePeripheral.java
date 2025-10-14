@@ -220,8 +220,8 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     /**
      * creates multiple processing patterns for all combinations of inputs for the given cooking recipe
      * @param recipe any type of cooking recipe (smelting, blasting, e.g.)
-     * @return a list of itemStacks with each itemStack representing one pattern
      * @param <T> the specific type of the cooking recipe (e.g. smeltingRecipe)
+     * @return a list of itemStacks with each itemStack representing one pattern
      */
     protected <T extends AbstractCookingRecipe> List<ItemStack> createCookingPatternsForRecipe(RecipeHolder<T> recipe) {
         T cookingRecipe = recipe.value();
