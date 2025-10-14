@@ -149,6 +149,13 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
         return MethodResult.of(FluidUtil.moveFluid(targetTank, fluidHandler, filter.getLeft()), null);
     }
+    /**
+     * removes blank patterns from the me system matching the number of given patterns and inserts the given patterns afterward.
+     * patterns that can not be inserted will be dropped at the location of the me bridge.
+     * @param patterns a list of ae2 patterns as itemStacks
+     * @return a {@link MethodResult}, NOT_FOUND if the given list is empty, MISSING_BLANK_PATTERN if there aren't enough blank patterns
+     * in the me system or PATTERN_CREATED if the process was successful.
+     */
     protected MethodResult removeBlankPatternsAndInsertCreatedPatterns(List<ItemStack> patterns) {
         if (patterns.isEmpty()) {
             return MethodResult.of(StatusConstants.NOT_FOUND.withInfo("No matching recipe for given output"));
@@ -173,6 +180,13 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
                                        .withInfo("Inserted " + (patterns.size() - notInsertedPatterns.size()) + " patterns, "
                                                  + notInsertedPatterns.size() + " didn't fit in the system"));
     }
+    /**
+     * creates a ae2 crafting pattern for the given recipe
+     * @param recipe a craftingRecipe to create a pattern for
+     * @param allowSubstitutes whether the me system allows using substitutes or not
+     * @param allowFluidSubstitutes whether the me system allows using fluid substitutes or not
+     * @return a itemStack of the resulting pattern
+     */
     protected ItemStack createCraftingPatternForRecipe(RecipeHolder<CraftingRecipe> recipe, boolean allowSubstitutes,
                                                        boolean allowFluidSubstitutes) {
         CraftingRecipe craftingRecipe = recipe.value();
@@ -203,6 +217,12 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
                                                                   bridge.getLevel().registryAccess()),
                                                           allowSubstitutes, allowFluidSubstitutes);
     }
+    /**
+     * creates multiple processing patterns for all combinations of inputs for the given cooking recipe
+     * @param recipe any type of cooking recipe (smelting, blasting, e.g.)
+     * @return a list of itemStacks with each itemStack representing one pattern
+     * @param <T> the specific type of the cooking recipe (e.g. smeltingRecipe)
+     */
     protected <T extends AbstractCookingRecipe> List<ItemStack> createCookingPatternsForRecipe(RecipeHolder<T> recipe) {
         T cookingRecipe = recipe.value();
         ItemStack resultItem = cookingRecipe.getResultItem(bridge.getLevel().registryAccess());
@@ -220,6 +240,12 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         }
         return patterns;
     }
+    /**
+     * creates multiple smithing pattern for all combinations of inputs for the given smithing recipe
+     * @param recipe a smithingRecipe to create a pattern for
+     * @param allowSubstitutes whether the me system allows substitutes
+     * @return a list of itemStacks with each itemStack representing one pattern
+     */
     protected List<ItemStack> createSmithingPatternsForRecipe(RecipeHolder<SmithingRecipe> recipe, boolean allowSubstitutes) {
         SmithingRecipe smithingRecipe = recipe.value();
         ItemStack resultItem = smithingRecipe.getResultItem(bridge.getLevel().registryAccess());
@@ -247,6 +273,12 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
             return patterns;
         }
     }
+    /**
+     * creates a stonecutting pattern for the given stonecutting recipe
+     * @param recipe a stoneCuttingRecipe to create a pattern for
+     * @param allowSubstitutes whether the me system allows substitutes
+     * @return a itemStack of the resulting pattern
+     */
     protected ItemStack createStonecuttingPatternForRecipe(RecipeHolder<StonecutterRecipe> recipe,
                                                            boolean allowSubstitutes) {
         StonecutterRecipe smithingRecipe = recipe.value();
@@ -255,6 +287,11 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         AEItemKey input = AEItemKey.of(smithingRecipe.getIngredients().get(0).getItems()[0]);
         return PatternDetailsHelper.encodeStonecuttingPattern(recipe, input, result, allowSubstitutes);
     }
+    /**
+     * creates a generic stack from the given lua table
+     * @param table a lua list containing lua tables with a resource location string and a number
+     * @return a list of genericStack based on the given table
+     */
     protected List<GenericStack> createGenericStacksFromLuaTable(Map<?, ?> table) {
         List<GenericStack> result = new ArrayList<>();
         for (Map<?, ?> subTable : table.values().stream().map(Map.class::cast).toList()) {
@@ -266,10 +303,17 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         }
         return result;
     }
+    /**
+     * used to filter recipes based on the resultItems resource location string
+     * @param recipe the given recipe
+     * @param keyRegex a regex to match against the recipes resulting item
+     * @return whether the resultItem of the recipe matches the given regexKey or not
+     */
     private boolean filterRecipes(RecipeHolder<?> recipe, String keyRegex) {
         return BuiltInRegistries.ITEM.getKey(recipe.value().getResultItem(bridge.getLevel().registryAccess()).getItem())
                                      .toString().matches(keyRegex);
     }
+
     private MethodResult notConnected(@Nullable Object defaultValue) {
         return MethodResult.of(defaultValue, StatusConstants.NOT_CONNECTED.toString());
     }
@@ -277,6 +321,11 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     private boolean isAvailable() {
         return node.hasGridBooted();
     }
+    /**
+     * tests whether the me system is available, the pattern creation is enabled in the config and an encoding terminal is connected to
+     * the me system
+     * @return a methodResult describing the missing requirement or null if every requirement is fulfilled
+     */
     private MethodResult patternEncodingInactive() {
         if (!isAvailable())
             return notConnected(null);
@@ -287,6 +336,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
             return MethodResult.of(StatusConstants.NOT_CONNECTED.withInfo("Pattern Encoder not connected"));
         return null;
     }
+
     @Override
     @LuaFunction(mainThread = true)
     public final boolean isConnected() {
