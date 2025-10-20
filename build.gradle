@@ -113,6 +113,13 @@ neoForge {
 repositories {
     mavenCentral()
     maven {
+        name = "Intelligence Mirror Repo"
+        url = "https://mvn.intelligence-modding.de/Minecraft"
+        content {
+            includeGroup("com.refinedmods.refinedstorage")
+        }
+    }
+    maven {
         name = "Blamejared maven botania patchouli"
         url = 'https://maven.blamejared.com'
         content {
@@ -176,20 +183,6 @@ repositories {
         content {
             includeGroup("dev.architectury")
             includeGroup("me.shedaniel.cloth")
-        }
-    }
-    maven {
-        url = uri("https://maven.pkg.github.com/refinedmods/refinedstorage2")
-        credentials {
-            username = "anything"
-            password = "\u0067hp_oGjcDFCn8jeTzIj4Ke9pLoEVtpnZMP4VQgaX"
-        }
-    }
-    maven {
-        url = uri("https://maven.pkg.github.com/refinedmods/refinedstorage-mekanism-integration")
-        credentials {
-            username = "anything"
-            password = "\u0067hp_oGjcDFCn8jeTzIj4Ke9pLoEVtpnZMP4VQgaX"
         }
     }
     maven {
