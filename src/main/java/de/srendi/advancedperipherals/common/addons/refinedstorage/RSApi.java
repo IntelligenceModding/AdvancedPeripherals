@@ -606,7 +606,7 @@ public class RSApi {
         return false;
     }
 
-    public static Object parseDiskDrive(StorageNetworkNode diskDrive, InWorldNetworkNodeContainer nodeContainer) {
+    public static Map<String, Object> parseDiskDrive(StorageNetworkNode diskDrive, InWorldNetworkNodeContainer nodeContainer) {
         Map<String, Object> properties = new HashMap<>();
 
         StorageConfiguration storageConfiguration = diskDrive.getStorageConfiguration();
@@ -631,7 +631,7 @@ public class RSApi {
         return properties;
     }
 
-    public static Object parseStorageDisk(StateTrackedStorage disk) {
+    public static Map<String, Object> parseStorageDisk(StateTrackedStorage disk) {
         Map<String, Object> properties = new HashMap<>();
 
         properties.put("used", disk.getStored());
@@ -654,7 +654,7 @@ public class RSApi {
         return properties;
     }
 
-    public static Object parseCraftingTask(@Nullable RSCraftJob task, TaskStatus status, @Nullable AutocraftingNetworkComponent autocraftingComponent) {
+    public static Map<String, Object> parseCraftingTask(@Nullable RSCraftJob task, TaskStatus status, @Nullable AutocraftingNetworkComponent autocraftingComponent) {
         Map<String, Object> properties = new HashMap<>();
 
         properties.put("bridge_id", task == null ? -1 : task.getId());
@@ -669,7 +669,7 @@ public class RSApi {
         return properties;
     }
 
-    public static Object parsePattern(Pattern pattern, @Nullable AutocraftingNetworkComponent autocraftingComponent) {
+    public static Map<String, Object> parsePattern(Pattern pattern, @Nullable AutocraftingNetworkComponent autocraftingComponent) {
         if (pattern == null)
             return null;
 

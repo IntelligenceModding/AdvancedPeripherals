@@ -80,7 +80,7 @@ public class PatternGridPeripheral extends BasePeripheral<TurtlePeripheralOwner>
             throw new IllegalStateException("Pattern is blank");
         }
 
-        return (Map<String, Object>) RSApi.parsePattern(pattern.get(), null);
+        return RSApi.parsePattern(pattern.get(), null);
     }
 
     @LuaFunction(mainThread = true)
