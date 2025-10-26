@@ -1,20 +1,23 @@
 pluginManagement {
     repositories {
         gradlePluginPortal()
+        mavenCentral()
         maven {
-            name = 'MinecraftForge'
-            url = 'https://maven.minecraftforge.net/'
+            name = 'NeoForged'
+            url = 'https://maven.neoforged.net/releases'
             content {
                 includeGroup("net.minecraftforge")
-                includeGroup("net.minecraftforge.gradle")
+                includeGroup("net.neoforged.gradle.userdev")
+                includeGroup("net.neoforged.gradle")
+                includeGroup("net.neoforged")
+                includeGroup("codechicken")
                 includeGroup("org.spongepowered.mixin")
                 includeGroup("org.spongepowered")
             }
         }
-        maven { url = 'https://maven.parchmentmc.org' }
     }
 }
 
 plugins {
-    id 'org.gradle.toolchains.foojay-resolver-convention' version '0.7.0'
+    id 'org.gradle.toolchains.foojay-resolver-convention' version '0.8.0'
 }
