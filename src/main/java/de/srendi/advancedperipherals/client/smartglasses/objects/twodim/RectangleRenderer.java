@@ -12,7 +12,7 @@ import com.mojang.math.Vector3f;
 import de.srendi.advancedperipherals.client.RenderUtil;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.RenderableObject;
 import net.minecraft.client.renderer.GameRenderer;
-import net.minecraftforge.client.gui.overlay.ForgeGui;
+import net.neoforged.client.gui.overlay.ForgeGui;
 
 import java.util.List;
 

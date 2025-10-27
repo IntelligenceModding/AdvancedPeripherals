@@ -5,56 +5,87 @@ import dan200.computercraft.api.peripheral.IComputerAccess;
 import dan200.computercraft.api.peripheral.IPeripheral;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.IPeripheralOwner;
 import de.srendi.advancedperipherals.common.util.CoordUtil;
-import de.srendi.advancedperipherals.common.util.StringUtil;
+import de.srendi.advancedperipherals.common.util.FingerprintUtil;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.material.Fluid;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
 import java.util.Objects;
 
 public class FluidUtil {
 
-    private FluidUtil() {}
+    private FluidUtil() {
+    }
 
-    @Nullable
-    public static IFluidHandler extractHandler(@Nullable Object object) {
-        if (object instanceof IFluidHandler fluidHandler)
-            return fluidHandler;
+    public static int moveFluid(IFluidHandler inventoryFrom, IFluidHandler inventoryTo, FluidFilter filter) {
+        if (inventoryFrom == null) return 0;
 
-        if (object instanceof ICapabilityProvider capabilityProvider) {
-            LazyOptional<IFluidHandler> cap = capabilityProvider.getCapability(ForgeCapabilities.FLUID_HANDLER);
-            if (cap.isPresent())
-                return cap.orElseThrow(NullPointerException::new);
+        int amount = filter.getCount();
+        int transferableAmount = 0;
+
+        // The logic changes with storage systems since these systems do not have slots
+        if (inventoryFrom instanceof IStorageSystemFluidHandler storageSystemHandler) {
+            FluidStack extracted = storageSystemHandler.drain(filter, IFluidHandler.FluidAction.SIMULATE);
+            int inserted = inventoryTo.fill(extracted, IFluidHandler.FluidAction.EXECUTE);
+
+            transferableAmount += storageSystemHandler.drain(filter.setCount(inserted), IFluidHandler.FluidAction.EXECUTE).getAmount();
+
+            return transferableAmount;
+        }
+
+        if (inventoryTo instanceof IStorageSystemFluidHandler storageSystemHandler) {
+            if (filter.test(inventoryFrom.getFluidInTank(0))) {
+                FluidStack toExtract = inventoryFrom.getFluidInTank(0).copy();
+                toExtract.setAmount(amount);
+                FluidStack extracted = inventoryFrom.drain(toExtract, IFluidHandler.FluidAction.SIMULATE);
+                if (extracted.isEmpty())
+                    return 0;
+                int inserted = storageSystemHandler.fill(extracted, IFluidHandler.FluidAction.EXECUTE);
+
+                extracted.setAmount(inserted);
+                transferableAmount += inventoryFrom.drain(extracted, IFluidHandler.FluidAction.EXECUTE).getAmount();
+            }
+
+            return transferableAmount;
+        }
+
+        return transferableAmount;
+    }
+
+    public static IFluidHandler extractHandler(@Nullable Object object, @Nullable Level level, @Nullable BlockPos pos, @Nullable Direction direction) {
+        if (object instanceof IFluidHandler itemHandler)
+            return itemHandler;
+        if (object instanceof BlockEntity blockEntity && level == null && pos == null) {
+            pos = blockEntity.getBlockPos();
+            level = blockEntity.getLevel();
+        }
+        if (level != null && pos != null) {
+            return level.getCapability(Capabilities.FluidHandler.BLOCK, pos, direction != null ? direction : Direction.NORTH);
         }
         return null;
     }
 
-    @NotNull
+    @Nullable
     public static IFluidHandler getHandlerFromDirection(@NotNull String direction, @NotNull IPeripheralOwner owner) throws LuaException {
         Level level = owner.getLevel();
         Objects.requireNonNull(level);
         Direction relativeDirection = CoordUtil.getDirection(owner.getOrientation(), direction);
+        if (relativeDirection == null)
+            return null;
         BlockEntity target = level.getBlockEntity(owner.getPos().relative(relativeDirection));
         if (target == null)
-            throw new LuaException("Target '" + direction + "' is empty or not a fluid handler");
+            return null;
 
-        IFluidHandler handler = extractHandler(target);
-        if (handler == null)
-            throw new LuaException("Target '" + direction + "' is not a fluid handler");
-        return handler;
+        return extractHandler(target, level, owner.getPos().relative(relativeDirection), relativeDirection);
     }
 
     @Nullable
@@ -66,7 +97,7 @@ public class FluidUtil {
         if (location == null)
             return null;
 
-        IFluidHandler handler = extractHandler(location.getTarget());
+        IFluidHandler handler = extractHandler(location.getTarget(), null, null, null);
         if (handler == null)
             throw new LuaException("Target '" + name + "' is not a fluid handler");
         return handler;
@@ -74,23 +105,16 @@ public class FluidUtil {
 
     @NotNull
     public static String getFingerprint(@NotNull FluidStack stack) {
-        MessageDigest md = ItemUtil.getMessageDigest("MD5");
-        if (md == null) {
-            return "";
-        }
-        CompoundTag tag = stack.getTag();
-        md.update(getRegistryKey(stack).toString().getBytes(StandardCharsets.UTF_8));
-        if (tag != null && !tag.isEmpty()) {
-            md.update(tag.getAsString().getBytes(StandardCharsets.UTF_8));
-        }
-        return StringUtil.toHexString(md.digest());
+        FingerprintUtil.FingerprintKey fingerprintKey = new FingerprintUtil.FingerprintKey(getRegistryKey(stack), stack.getComponentsPatch().hashCode(), stack.getDisplayName().getString());
+
+        return FingerprintUtil.hash(fingerprintKey);
     }
 
     public static ResourceLocation getRegistryKey(Fluid fluid) {
-        return ForgeRegistries.FLUIDS.getKey(fluid);
+        return BuiltInRegistries.FLUID.getKey(fluid);
     }
 
     public static ResourceLocation getRegistryKey(FluidStack fluid) {
-        return ForgeRegistries.FLUIDS.getKey(fluid.getFluid());
+        return BuiltInRegistries.FLUID.getKey(fluid.copy().getFluid());
     }
 }

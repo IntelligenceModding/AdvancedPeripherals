@@ -1,5 +1,7 @@
 package de.srendi.advancedperipherals.common.util;
 
+import de.srendi.advancedperipherals.common.addons.APAddon;
+
 public enum StatusConstants {
 
     // Crafting Jobs
@@ -41,9 +43,9 @@ public enum StatusConstants {
         return this + "_" + extraInfo;
     }
 
-    /*public String withInfo(APAddon addon) {
+    public String withInfo(APAddon addon) {
         return this + "_" + addon.getModId();
-    }*/
+    }
 
 
 }

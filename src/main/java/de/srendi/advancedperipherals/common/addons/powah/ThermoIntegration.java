@@ -1,40 +1,29 @@
 package de.srendi.advancedperipherals.common.addons.powah;
 
 import dan200.computercraft.api.lua.LuaFunction;
-import de.srendi.advancedperipherals.lib.peripherals.BlockEntityIntegrationPeripheral;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import org.jetbrains.annotations.NotNull;
+import de.srendi.advancedperipherals.common.util.LuaConverter;
+import de.srendi.advancedperipherals.lib.peripherals.APGenericPeripheral;
 import owmii.powah.block.thermo.ThermoTile;
 
-public class ThermoIntegration extends BlockEntityIntegrationPeripheral<ThermoTile> {
-    protected ThermoIntegration(BlockEntity entity) {
-        super(entity);
-    }
+public class ThermoIntegration implements APGenericPeripheral {
 
-    @NotNull
     @Override
-    public String getType() {
+    public String getPeripheralType() {
         return "thermo";
     }
 
     @LuaFunction(mainThread = true)
-    public final String getName() {
-        return "Thermo generator";
-    }
-
-    @LuaFunction(mainThread = true)
-    public final double getEnergy() {
+    public final double getStoredEnergy(ThermoTile blockEntity) {
         return blockEntity.getEnergy().getEnergyStored();
     }
 
     @LuaFunction(mainThread = true)
-    public final double getMaxEnergy() {
+    public final double getMaxEnergy(ThermoTile blockEntity) {
         return blockEntity.getEnergy().getMaxEnergyStored();
     }
 
-    @LuaFunction(mainThread = true)
-    public final double getCoolantInTank() {
-        return blockEntity.getTank().getFluidAmount();
+    @LuaFunction
+    public final Object getCoolantTank(ThermoTile blockEntity) {
+        return LuaConverter.fluidStackToObject(blockEntity.getTank().getFluid());
     }
-
 }

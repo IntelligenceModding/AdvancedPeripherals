@@ -16,8 +16,8 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.client.event.RenderLevelStageEvent;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.neoforged.client.event.RenderLevelStageEvent;
+import net.neoforged.registries.ForgeRegistries;
 
 import java.util.List;
 

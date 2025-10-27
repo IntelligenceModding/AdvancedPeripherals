@@ -1,13 +1,13 @@
 package de.srendi.advancedperipherals.common.network.toclient;
 
-import de.srendi.advancedperipherals.common.network.base.IPacket;
+import de.srendi.advancedperipherals.common.network.IAPPacket;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.fml.loading.FMLEnvironment;
-import net.minecraftforge.network.NetworkEvent;
+import net.neoforged.fml.loading.FMLEnvironment;
+import net.neoforged.network.NetworkEvent;
 
 import static de.srendi.advancedperipherals.client.ClientRegistry.SADDLE_TURTLE_OVERLAY;
 
-public class SaddleTurtleInfoPacket implements IPacket {
+public class SaddleTurtleInfoPacket implements IAPPacket {
 
     private final int fuelLevel;
     private final int fuelLimit;

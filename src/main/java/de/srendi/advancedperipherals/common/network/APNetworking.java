@@ -1,7 +1,6 @@
 package de.srendi.advancedperipherals.common.network;
 
 import de.srendi.advancedperipherals.AdvancedPeripherals;
-import de.srendi.advancedperipherals.common.network.base.IPacket;
 import de.srendi.advancedperipherals.common.network.toclient.OverlayModuleClientRequestPacket;
 import de.srendi.advancedperipherals.common.network.toclient.RenderableObjectBulkSyncPacket;
 import de.srendi.advancedperipherals.common.network.toclient.RenderableObjectClearPacket;
@@ -9,82 +8,58 @@ import de.srendi.advancedperipherals.common.network.toclient.RenderableObjectDel
 import de.srendi.advancedperipherals.common.network.toclient.RenderableObjectSyncPacket;
 import de.srendi.advancedperipherals.common.network.toclient.SaddleTurtleInfoPacket;
 import de.srendi.advancedperipherals.common.network.toclient.ToastToClientPacket;
+import de.srendi.advancedperipherals.common.network.toclient.UsernameToCachePacket;
 import de.srendi.advancedperipherals.common.network.toserver.GlassesHotkeyPacket;
 import de.srendi.advancedperipherals.common.network.toserver.OverlayModuleClientInfoPacket;
+import de.srendi.advancedperipherals.common.network.toserver.RetrieveUsernamePacket;
 import de.srendi.advancedperipherals.common.network.toserver.SaddleTurtleControlPacket;
-import net.minecraft.core.BlockPos;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.level.ServerLevel;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.level.ChunkPos;
-import net.minecraft.world.level.Level;
-import net.minecraftforge.common.util.FakePlayer;
-import net.minecraftforge.fml.ModLoadingContext;
-import net.minecraftforge.network.NetworkDirection;
-import net.minecraftforge.network.NetworkRegistry;
-import net.minecraftforge.network.PacketDistributor;
-import net.minecraftforge.network.simple.SimpleChannel;
-import net.minecraftforge.server.ServerLifecycleHooks;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.ModLoadingContext;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.common.util.FakePlayer;
+import net.neoforged.neoforge.network.PacketDistributor;
+import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
+import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 
-import java.util.Optional;
-import java.util.function.Function;
-
+@EventBusSubscriber(modid = AdvancedPeripherals.MOD_ID)
 public class APNetworking {
 
     private static final String PROTOCOL_VERSION = ModLoadingContext.get().getActiveContainer().getModInfo().getVersion().toString();
+    
+    public static void init(PayloadRegistrar registrar) {
+        registrar.playToClient(SaddleTurtleInfoPacket.class, SaddleTurtleInfoPacket::decode);
+        registrar.playToClient(ToastToClientPacket.class, ToastToClientPacket::decode);
+        registrar.playToClient(RenderableObjectSyncPacket.class, RenderableObjectSyncPacket::decode);
+        registrar.playToClient(RenderableObjectDeletePacket.class, RenderableObjectDeletePacket::decode);
+        registrar.playToClient(RenderableObjectClearPacket.class, RenderableObjectClearPacket::decode);
+        registrar.playToClient(RenderableObjectBulkSyncPacket.class, RenderableObjectBulkSyncPacket::decode);
+        registrar.playToClient(OverlayModuleClientRequestPacket.TYPE, OverlayModuleClientRequestPacket.CODEC, OverlayModuleClientRequestPacket::handle);
+        registrar.playToClient(ToastToClientPacket.TYPE, ToastToClientPacket.CODEC, ToastToClientPacket::handle);
+        registrar.playToClient(UsernameToCachePacket.TYPE, UsernameToCachePacket.CODEC, UsernameToCachePacket::handle);
 
-    public static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(new ResourceLocation(AdvancedPeripherals.MOD_ID, "main_channel"), () -> PROTOCOL_VERSION, PROTOCOL_VERSION::equals, PROTOCOL_VERSION::equals);
-
-    private static int index = 0;
-
-    public static void init() {
-        registerServerToClient(SaddleTurtleInfoPacket.class, SaddleTurtleInfoPacket::decode);
-        registerServerToClient(ToastToClientPacket.class, ToastToClientPacket::decode);
-        registerServerToClient(RenderableObjectSyncPacket.class, RenderableObjectSyncPacket::decode);
-        registerServerToClient(RenderableObjectDeletePacket.class, RenderableObjectDeletePacket::decode);
-        registerServerToClient(RenderableObjectClearPacket.class, RenderableObjectClearPacket::decode);
-        registerServerToClient(RenderableObjectBulkSyncPacket.class, RenderableObjectBulkSyncPacket::decode);
-        registerServerToClient(OverlayModuleClientRequestPacket.class, OverlayModuleClientRequestPacket::decode);
-
-        registerClientToServer(GlassesHotkeyPacket.class, GlassesHotkeyPacket::decode);
-        registerClientToServer(SaddleTurtleControlPacket.class, SaddleTurtleControlPacket::decode);
-        registerClientToServer(OverlayModuleClientInfoPacket.class, OverlayModuleClientInfoPacket::decode);
+        registrar.playToServer(GlassesHotkeyPacket.class, GlassesHotkeyPacket::decode);
+        registrar.playToServer(SaddleTurtleControlPacket.class, SaddleTurtleControlPacket::decode);
+        registrar.playToServer(OverlayModuleClientInfoPacket.class, OverlayModuleClientInfoPacket::decode);
+        registrar.playToServer(RetrieveUsernamePacket.TYPE, RetrieveUsernamePacket.CODEC, RetrieveUsernamePacket::handle);
     }
-
-    public static <MSG extends IPacket> void registerServerToClient(Class<MSG> packet, Function<FriendlyByteBuf, MSG> decode) {
-        CHANNEL.registerMessage(index++, packet, IPacket::encode, decode, IPacket::handle, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
+    
+    @SubscribeEvent
+    public static void register(final RegisterPayloadHandlersEvent event) {
+        final PayloadRegistrar registrar = event.registrar(AdvancedPeripherals.MOD_ID)
+                .versioned(PROTOCOL_VERSION);
+        init(registrar);
     }
+    
 
-    public static <MSG extends IPacket> void registerClientToServer(Class<MSG> packet, Function<FriendlyByteBuf, MSG> decode) {
-        CHANNEL.registerMessage(index++, packet, IPacket::encode, decode, IPacket::handle, Optional.of(NetworkDirection.PLAY_TO_SERVER));
-    }
-
-    public static void sendToClient(Object packet, ServerPlayer player) {
-        CHANNEL.sendTo(packet, player.connection.getConnection(), NetworkDirection.PLAY_TO_CLIENT);
-    }
-
-    public static void sendToServer(Object packet) {
-        CHANNEL.sendToServer(packet);
-    }
-
-    public static void sendTo(Object packet, ServerPlayer player) {
+    public static void sendTo(ServerPlayer player, CustomPacketPayload message) {
         if (!(player instanceof FakePlayer)) {
-            CHANNEL.sendTo(packet, player.connection.getConnection(), NetworkDirection.PLAY_TO_CLIENT);
+            PacketDistributor.sendToPlayer(player, message);
         }
     }
 
-    public static void sendToAll(Object packet) {
-        MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
-        server.getPlayerList().getPlayers().forEach(player -> sendTo(packet, player));
-    }
-
-    public static void sendToAllTracking(Object packet, Level world, BlockPos pos) {
-        if (world instanceof ServerLevel) {
-            ((ServerLevel) world).getChunkSource().chunkMap.getPlayers(new ChunkPos(pos), false).forEach(p -> sendTo(packet, p));
-        } else {
-            CHANNEL.send(PacketDistributor.TRACKING_CHUNK.with(() -> world.getChunk(pos.getX() >> 4, pos.getZ() >> 4)), packet);
-        }
+    public static void sendToServer(CustomPacketPayload message) {
+        PacketDistributor.sendToServer(message);
     }
 }

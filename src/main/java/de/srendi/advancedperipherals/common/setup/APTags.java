@@ -18,7 +18,7 @@ public class APTags {
         }
 
         private static TagKey<Item> tag(@NotNull String name) {
-            return TagKey.create(Registry.ITEM_REGISTRY, new ResourceLocation(AdvancedPeripherals.MOD_ID, name));
+            return TagKey.create(Registry.ITEM_REGISTRY, AdvancedPeripherals.getRL(name));
         }
     }
 }

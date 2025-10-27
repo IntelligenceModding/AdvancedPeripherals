@@ -1,6 +1,7 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.owner;
 
 import dan200.computercraft.api.peripheral.IPeripheral;
+import de.srendi.advancedperipherals.common.addons.APAddon;
 import de.srendi.advancedperipherals.common.addons.APAddons;
 import de.srendi.advancedperipherals.common.addons.valkyrienskies.ValkyrienSkies;
 import de.srendi.advancedperipherals.common.util.fakeplayer.APFakePlayer;
@@ -8,6 +9,7 @@ import de.srendi.advancedperipherals.lib.peripherals.IPeripheralOperation;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.FrontAndTop;
+import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.OwnableEntity;
@@ -42,10 +44,11 @@ public interface IPeripheralOwner {
     @NotNull
     default Vec3 getDirection() {
         Vec3 dir = Vec3.atLowerCornerOf(getFacing().getNormal());
-        if (!APAddons.vs2Loaded) {
+        /*if (!APAddon. {
             return dir;
         }
-        return ValkyrienSkies.transformToWorldDir(getLevel(), getPos(), dir);
+        return ValkyrienSkies.transformToWorldDir(getLevel(), getPos(), dir);*/
+        return dir;
     }
 
     @Nullable Entity getHoldingEntity();
@@ -56,7 +59,7 @@ public interface IPeripheralOwner {
         Set<Entity> checked = new HashSet<>();
         while (owner != null && checked.add(owner)) {
             if (owner instanceof Player player) {
-                return (Player) player;
+                return player;
             }
             if (!(owner instanceof OwnableEntity ownable)) {
                 break;
@@ -66,7 +69,12 @@ public interface IPeripheralOwner {
         return null;
     }
 
-    @NotNull CompoundTag getDataStorage();
+    DataComponentPatch getDataStorage();
+
+    // Not everything from MC uses the new data component system, so we provide a nbt data storage too
+    CompoundTag getNbtStorage();
+
+    void putDataStorage(DataComponentPatch dataStorage);
 
     void markDataStorageDirty();
 

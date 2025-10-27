@@ -8,25 +8,27 @@ import appeng.api.networking.crafting.ICraftingService;
 import appeng.api.stacks.AEFluidKey;
 import appeng.api.stacks.AEItemKey;
 import appeng.api.storage.MEStorage;
-import appeng.me.cluster.implementations.CraftingCPUCluster;
+import appeng.crafting.pattern.EncodedPatternItem;
 import dan200.computercraft.api.lua.IArguments;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
+import dan200.computercraft.api.lua.LuaTable;
 import dan200.computercraft.api.lua.MethodResult;
 import dan200.computercraft.api.lua.ObjectLuaTable;
 import dan200.computercraft.api.peripheral.IComputerAccess;
-import dan200.computercraft.core.apis.TableHelper;
-import dan200.computercraft.core.computer.ComputerSide;
-import de.srendi.advancedperipherals.common.addons.ae2.AEApi;
-import de.srendi.advancedperipherals.common.addons.ae2.AECraftJob;
-import de.srendi.advancedperipherals.common.addons.ae2.MEFluidHandler;
-import de.srendi.advancedperipherals.common.addons.ae2.MEItemHandler;
+import de.srendi.advancedperipherals.common.addons.APAddon;
+import de.srendi.advancedperipherals.common.addons.appliedenergistics.AEApi;
+import de.srendi.advancedperipherals.common.addons.appliedenergistics.AECraftJob;
+import de.srendi.advancedperipherals.common.addons.appliedenergistics.AEMekanismApi;
+import de.srendi.advancedperipherals.common.addons.appliedenergistics.MEFluidHandler;
+import de.srendi.advancedperipherals.common.addons.appliedenergistics.MEItemHandler;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.BlockEntityPeripheralOwner;
-import de.srendi.advancedperipherals.common.blocks.blockentities.MeBridgeEntity;
+import de.srendi.advancedperipherals.common.blocks.blockentities.MEBridgeEntity;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
+import de.srendi.advancedperipherals.common.util.EmptyLuaTable;
 import de.srendi.advancedperipherals.common.util.Pair;
-import de.srendi.advancedperipherals.common.util.ServerWorker;
 import de.srendi.advancedperipherals.common.util.StatusConstants;
+import de.srendi.advancedperipherals.common.util.inventory.ChemicalFilter;
 import de.srendi.advancedperipherals.common.util.inventory.FluidFilter;
 import de.srendi.advancedperipherals.common.util.inventory.FluidUtil;
 import de.srendi.advancedperipherals.common.util.inventory.GenericFilter;
@@ -34,31 +36,23 @@ import de.srendi.advancedperipherals.common.util.inventory.IStorageSystemPeriphe
 import de.srendi.advancedperipherals.common.util.inventory.InventoryUtil;
 import de.srendi.advancedperipherals.common.util.inventory.ItemFilter;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
-import net.minecraft.core.Direction;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.items.IItemHandler;
+import me.ramidzkh.mekae2.ae2.MekanismKey;
+import net.neoforged.neoforge.fluids.capability.IFluidHandler;
+import net.neoforged.neoforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Optional;
 
-public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwner<MeBridgeEntity>> implements IStorageSystemPeripheral {
+public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwner<MEBridgeEntity>> implements IStorageSystemPeripheral {
 
     public static final String PERIPHERAL_TYPE = "me_bridge";
 
-    private final MeBridgeEntity bridge;
-    private final ICapabilityProvider capabilityWrapper = new CapabilityWrapper(this);
+    private final MEBridgeEntity bridge;
     private IGridNode node;
 
-    public MEBridgePeripheral(MeBridgeEntity tileEntity) {
+    public MEBridgePeripheral(MEBridgeEntity tileEntity) {
         super(PERIPHERAL_TYPE, new BlockEntityPeripheralOwner<>(tileEntity));
         this.bridge = tileEntity;
         this.node = tileEntity.getActionableNode();
@@ -66,11 +60,6 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
     public void setNode(IManagedGridNode node) {
         this.node = node.getNode();
-    }
-
-    @Override
-    public Object getTarget() {
-        return capabilityWrapper;
     }
 
     @Override
@@ -82,12 +71,8 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         return node.getGrid().getCraftingService();
     }
 
-    protected MEItemHandler getItemHandler() {
-        return new MEItemHandler(AEApi.getMonitor(node), bridge);
-    }
-
-    protected MEFluidHandler getFluidHandler() {
-        return new MEFluidHandler(AEApi.getMonitor(node), bridge);
+    public MEBridgeEntity getBridge() {
+        return bridge;
     }
 
     /**
@@ -97,15 +82,13 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
      * @param targetInventory the give inventory
      * @return the exportable amount or null with a string if something went wrong
      */
-    protected MethodResult exportToChest(@NotNull IArguments arguments, @Nullable IItemHandler targetInventory) throws LuaException {
-        MEItemHandler itemHandler = getItemHandler();
-        Pair<ItemFilter, String> filter = ItemFilter.parse(arguments.getTable(0));
+    protected MethodResult exportToChest(@NotNull IArguments arguments, IItemHandler targetInventory) throws LuaException {
+        MEStorage monitor = AEApi.getMonitor(node);
+        MEItemHandler itemHandler = new MEItemHandler(monitor, bridge);
+        Pair<ItemFilter, String> filter = ItemFilter.parse(new ObjectLuaTable(arguments.getTable(0)));
 
         if (filter.rightPresent())
             return MethodResult.of(0, filter.getRight());
-
-        if (targetInventory == null)
-            return MethodResult.of(0, StatusConstants.TARGET_NOT_FOUND.toString());
 
         return MethodResult.of(InventoryUtil.moveItem(itemHandler, targetInventory, filter.getLeft()), null);
     }
@@ -117,18 +100,17 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
      * @param targetTank the give tank
      * @return the exportable amount or null with a string if something went wrong
      */
-    protected MethodResult exportToTank(@NotNull IArguments arguments, @Nullable IFluidHandler targetTank) throws LuaException {
-        MEFluidHandler fluidHandler = getFluidHandler();
-        Pair<FluidFilter, String> filter = FluidFilter.parse(arguments.getTable(0));
+    protected MethodResult exportToTank(@NotNull IArguments arguments, IFluidHandler targetTank) throws LuaException {
+        MEStorage monitor = AEApi.getMonitor(node);
+        MEFluidHandler fluidHandler = new MEFluidHandler(monitor, bridge);
+        Pair<FluidFilter, String> filter = FluidFilter.parse(new ObjectLuaTable(arguments.getTable(0)));
 
         if (filter.rightPresent())
             return MethodResult.of(0, filter.getRight());
 
-        if (targetTank == null)
-            return MethodResult.of(0, StatusConstants.TARGET_NOT_FOUND.toString());
-
-        return MethodResult.of(InventoryUtil.moveFluid(fluidHandler, targetTank, filter.getLeft()), null);
+        return MethodResult.of(FluidUtil.moveFluid(fluidHandler, targetTank, filter.getLeft()), null);
     }
+
 
     /**
      * imports an item to the system from a valid inventory
@@ -137,15 +119,13 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
      * @param targetInventory the give inventory
      * @return the imported amount or null with a string if something went wrong
      */
-    protected MethodResult importToME(@NotNull IArguments arguments, @Nullable IItemHandler targetInventory) throws LuaException {
-        MEItemHandler itemHandler = getItemHandler();
-        Pair<ItemFilter, String> filter = ItemFilter.parse(arguments.getTable(0));
+    protected MethodResult importToME(@NotNull IArguments arguments, IItemHandler targetInventory) throws LuaException {
+        MEStorage monitor = AEApi.getMonitor(node);
+        MEItemHandler itemHandler = new MEItemHandler(monitor, bridge);
+        Pair<ItemFilter, String> filter = ItemFilter.parse(new ObjectLuaTable(arguments.getTable(0)));
 
         if (filter.rightPresent())
             return MethodResult.of(0, filter.getRight());
-
-        if (targetInventory == null)
-            return MethodResult.of(0, StatusConstants.TARGET_NOT_FOUND.toString());
 
         return MethodResult.of(InventoryUtil.moveItem(targetInventory, itemHandler, filter.getLeft()), null);
     }
@@ -157,17 +137,15 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
      * @param targetTank the give tank
      * @return the imported amount or null with a string if something went wrong
      */
-    protected MethodResult importToME(@NotNull IArguments arguments, @Nullable IFluidHandler targetTank) throws LuaException {
-        MEFluidHandler fluidHandler = getFluidHandler();
-        Pair<FluidFilter, String> filter = FluidFilter.parse(arguments.getTable(0));
+    protected MethodResult importToME(@NotNull IArguments arguments, IFluidHandler targetTank) throws LuaException {
+        MEStorage monitor = AEApi.getMonitor(node);
+        MEFluidHandler fluidHandler = new MEFluidHandler(monitor, bridge);
+        Pair<FluidFilter, String> filter = FluidFilter.parse(new ObjectLuaTable(arguments.getTable(0)));
 
         if (filter.rightPresent())
             return MethodResult.of(0, filter.getRight());
 
-        if (targetTank == null)
-            return MethodResult.of(0, StatusConstants.TARGET_NOT_FOUND.toString());
-
-        return MethodResult.of(InventoryUtil.moveFluid(targetTank, fluidHandler, filter.getLeft()), null);
+        return MethodResult.of(FluidUtil.moveFluid(targetTank, fluidHandler, filter.getLeft()), null);
     }
 
     private MethodResult notConnected(@Nullable Object defaultValue) {
@@ -175,7 +153,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     }
 
     private boolean isAvailable() {
-        return node.getGrid() != null && node.hasGridBooted();
+        return node.hasGridBooted();
     }
 
     @Override
@@ -197,7 +175,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
             return notConnected(null);
 
         MEStorage monitor = AEApi.getMonitor(node);
-        Pair<ItemFilter, String> filter = ItemFilter.parse(arguments.getTable(0));
+        Pair<ItemFilter, String> filter = ItemFilter.parse(new ObjectLuaTable(arguments.getTable(0)));
         if (filter.rightPresent())
             return MethodResult.of(null, filter.getRight());
 
@@ -214,7 +192,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (!isAvailable())
             return notConnected(null);
 
-        Pair<FluidFilter, String> filter = FluidFilter.parse(arguments.getTable(0));
+        Pair<FluidFilter, String> filter = FluidFilter.parse(new ObjectLuaTable(arguments.getTable(0)));
         if (filter.rightPresent())
             return MethodResult.of(null, filter.getRight());
 
@@ -226,54 +204,115 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     }
 
     @Override
+    @LuaFunction(mainThread = true)
     public MethodResult getChemical(IArguments arguments) throws LuaException {
-        return null;
+        if (!isAvailable())
+            return notConnected(null);
+
+        Pair<ChemicalFilter, String> filter = ChemicalFilter.parse(new ObjectLuaTable(arguments.getTable(0)));
+        if (filter.rightPresent())
+            return MethodResult.of(null, filter.getRight());
+
+        ChemicalFilter parsedFilter = filter.getLeft();
+        if (parsedFilter.isEmpty())
+            return MethodResult.of(null, StatusConstants.EMPTY_FILTER.toString());
+
+        return MethodResult.of(AEApi.parseAeStack(AEApi.findAEChemicalFromFilter(AEApi.getMonitor(node), getCraftingService(), parsedFilter), getCraftingService()));
     }
 
     @Override
     @LuaFunction(mainThread = true)
-    public final MethodResult getItems(IArguments arguments) {
+    public final MethodResult getItems(IArguments arguments) throws LuaException {
         if (!isAvailable())
             return notConnected(null);
 
-        return MethodResult.of(AEApi.listStacks(AEApi.getMonitor(node), getCraftingService()));
+        Pair<ItemFilter, String> filter = ItemFilter.parse(EmptyLuaTable.orEmpty(arguments.optTable(0).orElse(null)));
+        if (filter.rightPresent())
+            return MethodResult.of(null, filter.getRight());
+
+        ItemFilter parsedFilter = filter.getLeft();
+
+        return MethodResult.of(AEApi.listItems(AEApi.getMonitor(node), getCraftingService(), parsedFilter));
     }
 
     @Override
     @LuaFunction(mainThread = true)
-    public final MethodResult getFluids(IArguments arguments) {
+    public final MethodResult getFluids(IArguments arguments) throws LuaException {
         if (!isAvailable())
             return notConnected(null);
 
-        return MethodResult.of(AEApi.listFluids(AEApi.getMonitor(node), getCraftingService()));
-    }
+        Pair<FluidFilter, String> filter = FluidFilter.parse(EmptyLuaTable.orEmpty(arguments.optTable(0).orElse(null)));
+        if (filter.rightPresent())
+            return MethodResult.of(null, filter.getRight());
 
-    @Override
-    public MethodResult getChemicals(IArguments arguments) {
-        return null;
+        FluidFilter parsedFilter = filter.getLeft();
+
+        return MethodResult.of(AEApi.listFluids(AEApi.getMonitor(node), getCraftingService(), parsedFilter));
     }
 
     @Override
     @LuaFunction(mainThread = true)
-    public final MethodResult getCraftableItems(IArguments arguments) {
+    public MethodResult getChemicals(IArguments arguments) throws LuaException {
         if (!isAvailable())
             return notConnected(null);
 
-        return MethodResult.of(AEApi.listCraftableStacks(AEApi.getMonitor(node), getCraftingService()));
+        if (!APAddon.APP_MEKANISTICS.isLoaded())
+            return MethodResult.of(null, StatusConstants.ADDON_NOT_LOADED.withInfo(APAddon.APP_MEKANISTICS.name()));
+
+        Pair<ChemicalFilter, String> filter = ChemicalFilter.parse(EmptyLuaTable.orEmpty(arguments.optTable(0).orElse(null)));
+        if (filter.rightPresent())
+            return MethodResult.of(null, filter.getRight());
+
+        ChemicalFilter parsedFilter = filter.getLeft();
+
+        return MethodResult.of(AEApi.listChemicals(AEApi.getMonitor(node), getCraftingService(), parsedFilter));
     }
 
     @Override
     @LuaFunction(mainThread = true)
-    public final MethodResult getCraftableFluids(IArguments arguments) {
+    public final MethodResult getCraftableItems(IArguments arguments) throws LuaException {
         if (!isAvailable())
             return notConnected(null);
 
-        return MethodResult.of(AEApi.listCraftableFluids(AEApi.getMonitor(node), getCraftingService()));
+        Pair<ItemFilter, String> filter = ItemFilter.parse(EmptyLuaTable.orEmpty(arguments.optTable(0).orElse(null)));
+        if (filter.rightPresent())
+            return MethodResult.of(null, filter.getRight());
+
+        ItemFilter parsedFilter = filter.getLeft();
+
+        return MethodResult.of(AEApi.listCraftableItems(AEApi.getMonitor(node), getCraftingService(), parsedFilter));
     }
 
     @Override
-    public MethodResult getCraftableChemicals(IArguments arguments) {
-        return null;
+    @LuaFunction(mainThread = true)
+    public final MethodResult getCraftableFluids(IArguments arguments) throws LuaException {
+        if (!isAvailable())
+            return notConnected(null);
+
+        Pair<FluidFilter, String> filter = FluidFilter.parse(EmptyLuaTable.orEmpty(arguments.optTable(0).orElse(null)));
+        if (filter.rightPresent())
+            return MethodResult.of(null, filter.getRight());
+
+        FluidFilter parsedFilter = filter.getLeft();
+
+        return MethodResult.of(AEApi.listCraftableFluids(AEApi.getMonitor(node), getCraftingService(), parsedFilter));
+    }
+
+    @Override
+    public MethodResult getCraftableChemicals(IArguments arguments) throws LuaException {
+        if (!isAvailable())
+            return notConnected(null);
+
+        if (!APAddon.APP_MEKANISTICS.isLoaded())
+            return MethodResult.of(null, StatusConstants.ADDON_NOT_LOADED.withInfo(APAddon.APP_MEKANISTICS.name()));
+
+        Pair<ChemicalFilter, String> filter = ChemicalFilter.parse(EmptyLuaTable.orEmpty(arguments.optTable(0).orElse(null)));
+        if (filter.rightPresent())
+            return MethodResult.of(null, filter.getRight());
+
+        ChemicalFilter parsedFilter = filter.getLeft();
+
+        return MethodResult.of(AEApi.listCraftableChemicals(AEApi.getMonitor(node), getCraftingService(), parsedFilter));
     }
 
     @Override
@@ -301,13 +340,14 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
             return notConnected(0);
 
         String side = arguments.getString(1);
-        IItemHandler inventory;
+        IItemHandler inventory = InventoryUtil.getHandlerFromDirection(side, owner);
 
-        if (Direction.byName(side.toUpperCase(Locale.ROOT)) == null && ComputerSide.valueOfInsensitive(side.toUpperCase(Locale.ROOT)) == null) {
-            inventory = InventoryUtil.getHandlerFromDirection(arguments.getString(1), owner);
-        } else {
-            inventory = InventoryUtil.getHandlerFromName(computer, arguments.getString(1));
+        if (inventory == null) {
+            inventory = InventoryUtil.getHandlerFromName(computer, side);
         }
+
+        if (inventory == null)
+            return MethodResult.of(0, StatusConstants.INVENTORY_NOT_FOUND.name());
 
         return importToME(arguments, inventory);
     }
@@ -319,15 +359,79 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
             return notConnected(0);
 
         String side = arguments.getString(1);
-        IItemHandler inventory;
+        IItemHandler inventory = InventoryUtil.getHandlerFromDirection(side, owner);
 
-        if (Direction.byName(side.toUpperCase(Locale.ROOT)) == null && ComputerSide.valueOfInsensitive(side.toUpperCase(Locale.ROOT)) == null) {
-            inventory = InventoryUtil.getHandlerFromDirection(arguments.getString(1), owner);
-        } else {
-            inventory = InventoryUtil.getHandlerFromName(computer, arguments.getString(1));
+        if (inventory == null) {
+            inventory = InventoryUtil.getHandlerFromName(computer, side);
         }
 
+        if (inventory == null)
+            return MethodResult.of(0, StatusConstants.INVENTORY_NOT_FOUND.name());
+
         return exportToChest(arguments, inventory);
+    }
+
+    @Override
+    @LuaFunction(mainThread = true)
+    public final MethodResult importFluid(IComputerAccess computer, IArguments arguments) throws LuaException {
+        if (!isAvailable())
+            return notConnected(0);
+
+        String side = arguments.getString(1);
+        IFluidHandler fluidHandler = FluidUtil.getHandlerFromDirection(side, owner);
+
+        if (fluidHandler == null) {
+            fluidHandler = FluidUtil.getHandlerFromName(computer, side);
+        }
+
+        if (fluidHandler == null)
+            return MethodResult.of(0, StatusConstants.INVENTORY_NOT_FOUND.name());
+
+        return importToME(arguments, fluidHandler);
+    }
+
+    @Override
+    @LuaFunction(mainThread = true)
+    public final MethodResult exportFluid(IComputerAccess computer, IArguments arguments) throws LuaException {
+        if (!isAvailable())
+            return notConnected(0);
+
+        String side = arguments.getString(1);
+        IFluidHandler fluidHandler = FluidUtil.getHandlerFromDirection(side, owner);
+
+        if (fluidHandler == null) {
+            fluidHandler = FluidUtil.getHandlerFromName(computer, side);
+        }
+
+        if (fluidHandler == null)
+            return MethodResult.of(0, StatusConstants.INVENTORY_NOT_FOUND.name());
+
+        return exportToTank(arguments, fluidHandler);
+    }
+
+
+    @Override
+    @LuaFunction(mainThread = true)
+    public MethodResult importChemical(IComputerAccess computer, IArguments arguments) throws LuaException {
+        if (!isAvailable())
+            return notConnected(0);
+
+        if (!APAddon.APP_MEKANISTICS.isLoaded())
+            return MethodResult.of(null, StatusConstants.ADDON_NOT_LOADED.withInfo(APAddon.APP_MEKANISTICS.name()));
+
+        return AEMekanismApi.importToME(arguments, computer, this);
+    }
+
+    @Override
+    @LuaFunction(mainThread = true)
+    public MethodResult exportChemical(IComputerAccess computer, IArguments arguments) throws LuaException {
+        if (!isAvailable())
+            return notConnected(0);
+
+        if (!APAddon.APP_MEKANISTICS.isLoaded())
+            return MethodResult.of(null, StatusConstants.ADDON_NOT_LOADED.withInfo(APAddon.APP_MEKANISTICS.name()));
+
+        return AEMekanismApi.exportToTank(arguments, computer, this);
     }
 
     @Override
@@ -337,13 +441,12 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
             return notConnected(null);
 
         // Expected input is a table with either an input table, an output table or both to filter for both
-        Map<?, ?> filterTable;
+        // If no table is provided or it's empty, return every pattern
+        LuaTable<?, ?> filterTable = EmptyLuaTable.orEmpty(arguments.optTable(0).orElse(null));
 
-        Optional<Map<?, ?>> optionalTable = arguments.optTable(0);
-        if (optionalTable.isEmpty())
+        if (filterTable.isEmpty()) {
             return MethodResult.of(AEApi.listPatterns(node.getGrid(), getLevel()));
-
-        filterTable = optionalTable.get();
+        }
 
         boolean hasInputFilter = filterTable.containsKey("input");
         boolean hasOutputFilter = filterTable.containsKey("output");
@@ -351,23 +454,23 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
         // If the player tries to filter for nothing, return nothing.
         if (!hasAnyFilter)
-            return MethodResult.of(null, StatusConstants.MISSING_FILTER.toString());
+            return MethodResult.of(null, "NO_FILTER");
 
         GenericFilter<?> inputFilter = null;
         GenericFilter<?> outputFilter = null;
 
         if (hasInputFilter) {
-            Map<?, ?> inputFilterTable = TableHelper.getTableField(filterTable, "input");
+            LuaTable<?, ?> inputFilterTable = new ObjectLuaTable(filterTable.getTable("input"));
 
             inputFilter = GenericFilter.parseGeneric(inputFilterTable).getLeft();
         }
         if (hasOutputFilter) {
-            Map<?, ?> outputFilterTable = TableHelper.getTableField(filterTable, "output");
+            LuaTable<?, ?> outputFilterTable = new ObjectLuaTable(filterTable.getTable("output"));
 
             outputFilter = GenericFilter.parseGeneric(outputFilterTable).getLeft();
         }
 
-        Pair<IPatternDetails, String> pattern = AEApi.findPatternFromFilters(node.getGrid(), getLevel(), inputFilter, outputFilter);
+        Pair<Pair<EncodedPatternItem<?>, IPatternDetails>, String> pattern = AEApi.findPatternFromFilters(node.getGrid(), getLevel(), inputFilter, outputFilter);
 
         if (pattern.getRight() != null)
             return MethodResult.of(null, pattern.getRight());
@@ -402,6 +505,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         return MethodResult.of(node.getGrid().getEnergyService().getAvgPowerUsage());
     }
 
+    @Override
     @LuaFunction(mainThread = true)
     public final MethodResult getAverageEnergyInput() {
         if (!isAvailable())
@@ -428,6 +532,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         return MethodResult.of(AEApi.getTotalExternalFluidStorage(node));
     }
 
+    @Override
     @LuaFunction(mainThread = true)
     public MethodResult getTotalExternalChemicalStorage() {
         if (!isAvailable())
@@ -454,6 +559,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         return MethodResult.of(AEApi.getTotalFluidStorage(node));
     }
 
+    @Override
     @LuaFunction(mainThread = true)
     public MethodResult getTotalChemicalStorage() {
         if (!isAvailable())
@@ -507,6 +613,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         return MethodResult.of(AEApi.getUsedFluidStorage(node));
     }
 
+    @Override
     @LuaFunction(mainThread = true)
     public MethodResult getUsedChemicalStorage() {
         if (!isAvailable())
@@ -533,6 +640,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         return MethodResult.of(AEApi.getAvailableExternalFluidStorage(node));
     }
 
+    @Override
     @LuaFunction(mainThread = true)
     public MethodResult getAvailableExternalChemicalStorage() {
         if (!isAvailable())
@@ -559,6 +667,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         return MethodResult.of(AEApi.getAvailableFluidStorage(node));
     }
 
+    @Override
     @LuaFunction(mainThread = true)
     public MethodResult getAvailableChemicalStorage() {
         if (!isAvailable())
@@ -573,7 +682,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (!isAvailable())
             return notConnected(null);
 
-        Pair<ItemFilter, String> filter = ItemFilter.parse(arguments.getTable(0));
+        Pair<ItemFilter, String> filter = ItemFilter.parse(new ObjectLuaTable(arguments.getTable(0)));
         if (filter.rightPresent())
             return MethodResult.of(null, filter.getRight());
 
@@ -583,22 +692,20 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
         String cpuName = arguments.optString(1, "");
 
-        return new CraftJobCallback(computer, () -> {
-            ICraftingCPU target = AEApi.getCraftingCPU(node, cpuName);
-            if (!cpuName.isEmpty() && target == null) {
-                return MethodResult.of(null, StatusConstants.CPU_NOT_FOUND.withInfo(cpuName));
-            }
+        ICraftingCPU target = AEApi.getCraftingCPU(node, cpuName);
+        if (!cpuName.isEmpty() && target == null) {
+            return MethodResult.of(null, StatusConstants.CPU_NOT_FOUND.withInfo(cpuName));
+        }
 
-            ICraftingService craftingGrid = node.getGrid().getService(ICraftingService.class);
-            Pair<Long, AEItemKey> stack = AEApi.findAEStackFromFilter(AEApi.getMonitor(bridge.getGridNode()), craftingGrid, parsedFilter);
-            if (stack.getRight() == null && stack.getLeft() == 0) {
-                return MethodResult.of(null, StatusConstants.NOT_CRAFTABLE.toString());
-            }
+        ICraftingService craftingGrid = node.getGrid().getService(ICraftingService.class);
+        Pair<Long, AEItemKey> stack = AEApi.findAEStackFromFilter(AEApi.getMonitor(bridge.getGridNode()), craftingGrid, parsedFilter);
+        if (stack.getRight() == null && stack.getLeft() == 0) {
+            return MethodResult.of(null, StatusConstants.NOT_CRAFTABLE.toString());
+        }
 
-            AECraftJob job = new AECraftJob(owner.getLevel(), computer, node, stack.getRight(), parsedFilter.getCount(), bridge, target);
-            bridge.addJob(job);
-            return MethodResult.of(job.withCPU(target));
-        }).pull;
+        AECraftJob job = new AECraftJob(owner.getLevel(), computer, node, stack.getRight(), parsedFilter.getCount(), bridge, target);
+        bridge.addJob(job);
+        return MethodResult.of(job.withCPU(target));
     }
 
     @Override
@@ -607,34 +714,58 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (!isAvailable())
             return notConnected(null);
 
-        Pair<FluidFilter, String> filter = FluidFilter.parse(arguments.getTable(0));
+        Pair<FluidFilter, String> filter = FluidFilter.parse(new ObjectLuaTable(arguments.getTable(0)));
         if (filter.rightPresent())
-            return MethodResult.of(false, filter.getRight());
+            return MethodResult.of(null, filter.getRight());
 
         FluidFilter parsedFilter = filter.getLeft();
         if (parsedFilter.isEmpty())
-            return MethodResult.of(false, StatusConstants.EMPTY_FILTER.toString());
+            return MethodResult.of(null, StatusConstants.EMPTY_FILTER.toString());
 
         String cpuName = arguments.optString(1, "");
-        return new CraftJobCallback(computer, () -> {
-            ICraftingCPU target = AEApi.getCraftingCPU(node, cpuName);
-            if (!cpuName.isEmpty() && target == null)
-                return MethodResult.of(null, StatusConstants.CPU_NOT_FOUND.withInfo(cpuName));
+        ICraftingCPU target = AEApi.getCraftingCPU(node, cpuName);
+        if (!cpuName.isEmpty() && target == null)
+            return MethodResult.of(null, StatusConstants.CPU_NOT_FOUND.withInfo(cpuName));
 
-            ICraftingService craftingGrid = node.getGrid().getService(ICraftingService.class);
-            Pair<Long, AEFluidKey> stack = AEApi.findAEFluidFromFilter(AEApi.getMonitor(bridge.getGridNode()), craftingGrid, parsedFilter);
-            if (stack.getRight() == null && stack.getLeft() == 0)
-                return MethodResult.of(false, StatusConstants.NOT_CRAFTABLE.toString());
+        ICraftingService craftingGrid = node.getGrid().getService(ICraftingService.class);
+        Pair<Long, AEFluidKey> stack = AEApi.findAEFluidFromFilter(AEApi.getMonitor(bridge.getGridNode()), craftingGrid, parsedFilter);
+        if (stack.getRight() == null && stack.getLeft() == 0)
+            return MethodResult.of(false, StatusConstants.NOT_CRAFTABLE.toString());
 
-            AECraftJob job = new AECraftJob(owner.getLevel(), computer, node, stack.getRight(), parsedFilter.getCount(), bridge, target);
-            bridge.addJob(job);
-            return MethodResult.of(job.withCPU(target));
-        }).pull;
+        AECraftJob job = new AECraftJob(owner.getLevel(), computer, node, stack.getRight(), parsedFilter.getCount(), bridge, target);
+        bridge.addJob(job);
+        return MethodResult.of(job.withCPU(target));
     }
 
     @Override
     public MethodResult craftChemical(IComputerAccess computer, IArguments arguments) throws LuaException {
-        return null;
+        if (!isAvailable())
+            return notConnected(null);
+
+        if (!APAddon.APP_MEKANISTICS.isLoaded())
+            return MethodResult.of(null, StatusConstants.ADDON_NOT_LOADED.withInfo(APAddon.APP_MEKANISTICS.name()));
+
+        Pair<ChemicalFilter, String> filter = ChemicalFilter.parse(new ObjectLuaTable(arguments.getTable(0)));
+        if (filter.rightPresent())
+            return MethodResult.of(null, filter.getRight());
+
+        ChemicalFilter parsedFilter = filter.getLeft();
+        if (parsedFilter.isEmpty())
+            return MethodResult.of(null, StatusConstants.EMPTY_FILTER.toString());
+
+        String cpuName = arguments.optString(1, "");
+        ICraftingCPU target = AEApi.getCraftingCPU(node, cpuName);
+        if (!cpuName.isEmpty() && target == null)
+            return MethodResult.of(null, StatusConstants.CPU_NOT_FOUND.withInfo(cpuName));
+
+        ICraftingService craftingGrid = node.getGrid().getService(ICraftingService.class);
+        Pair<Long, MekanismKey> stack = AEApi.findAEChemicalFromFilter(AEApi.getMonitor(bridge.getGridNode()), craftingGrid, parsedFilter);
+        if (stack.getRight() == null && stack.getLeft() == 0)
+            return MethodResult.of(false, StatusConstants.NOT_CRAFTABLE.toString());
+
+        AECraftJob job = new AECraftJob(owner.getLevel(), computer, node, stack.getRight(), parsedFilter.getCount(), bridge, target);
+        bridge.addJob(job);
+        return MethodResult.of(job.withCPU(target));
     }
 
     @Override
@@ -667,11 +798,11 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         for (AECraftJob job : bridge.getJobs()) {
             if (job.getId() == id) {
                 foundJob = job;
+                break;
             }
         }
         return MethodResult.of(foundJob);
     }
-
 
     @Override
     @LuaFunction(mainThread = true)
@@ -681,7 +812,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
         ICraftingService craftingGrid = node.getGrid().getService(ICraftingService.class);
 
-        Pair<? extends GenericFilter<?>, String> filter = GenericFilter.parseGeneric(arguments.getTable(0));
+        Pair<? extends GenericFilter<?>, String> filter = GenericFilter.parseGeneric(new ObjectLuaTable(arguments.getTable(0)));
         if (filter.getRight() != null)
             return MethodResult.of(0, filter.getRight());
 
@@ -690,10 +821,8 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         int jobsCanceled = 0;
         for (ICraftingCPU cpu : craftingGrid.getCpus()) {
             if (cpu.getJobStatus() != null && parsedFilter.testAE(cpu.getJobStatus().crafting())) {
-                if (cpu instanceof CraftingCPUCluster cpuCluster) {
-                    cpuCluster.cancel();
-                    jobsCanceled++;
-                }
+                cpu.cancelJob();
+                jobsCanceled++;
             }
         }
         return MethodResult.of(jobsCanceled);
@@ -714,52 +843,6 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
             return MethodResult.of(false, StatusConstants.EMPTY_FILTER.toString());
 
         return MethodResult.of(AEApi.findPatternFromFilters(node.getGrid(), getLevel(), null, parsedFilter).getLeft() != null);
-    }
-
-    @Override
-    @LuaFunction(mainThread = true)
-    public final MethodResult exportFluid(IComputerAccess computer, IArguments arguments) throws LuaException {
-        if (!isAvailable())
-            return notConnected(0);
-
-        String side = arguments.getString(1);
-        IFluidHandler fluidHandler;
-
-        if (Direction.byName(side.toUpperCase(Locale.ROOT)) == null && ComputerSide.valueOfInsensitive(side.toUpperCase(Locale.ROOT)) == null) {
-            fluidHandler = FluidUtil.getHandlerFromDirection(arguments.getString(1), owner);
-        } else {
-            fluidHandler = FluidUtil.getHandlerFromName(computer, arguments.getString(1));
-        }
-
-        return exportToTank(arguments, fluidHandler);
-    }
-
-    @Override
-    public MethodResult importChemical(IComputerAccess computer, IArguments arguments) throws LuaException {
-        return null;
-    }
-
-    @Override
-    public MethodResult exportChemical(IComputerAccess computer, IArguments arguments) throws LuaException {
-        return null;
-    }
-
-    @Override
-    @LuaFunction(mainThread = true)
-    public final MethodResult importFluid(IComputerAccess computer, IArguments arguments) throws LuaException {
-        if (!isAvailable())
-            return notConnected(0);
-
-        String side = arguments.getString(1);
-        IFluidHandler fluidHandler;
-
-        if (Direction.byName(side.toUpperCase(Locale.ROOT)) == null && ComputerSide.valueOfInsensitive(side.toUpperCase(Locale.ROOT)) == null) {
-            fluidHandler = FluidUtil.getHandlerFromDirection(arguments.getString(1), owner);
-        } else {
-            fluidHandler = FluidUtil.getHandlerFromName(computer, arguments.getString(1));
-        }
-
-        return importToME(arguments, fluidHandler);
     }
 
     @Override
@@ -797,23 +880,5 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
             map.add(cpu);
         }
         return MethodResult.of(map);
-    }
-
-    private static final class CapabilityWrapper implements ICapabilityProvider {
-        private final MEBridgePeripheral peripheral;
-
-        private CapabilityWrapper(MEBridgePeripheral peripheral) {
-            this.peripheral = peripheral;
-        }
-
-        @Override
-        public <T> LazyOptional<T> getCapability(final Capability<T> cap, final Direction side) {
-            if (cap == ForgeCapabilities.ITEM_HANDLER) {
-                return LazyOptional.of(this.peripheral::getItemHandler).cast();
-            } else if (cap == ForgeCapabilities.FLUID_HANDLER) {
-                return LazyOptional.of(this.peripheral::getFluidHandler).cast();
-            }
-            return LazyOptional.empty();
-        }
     }
 }

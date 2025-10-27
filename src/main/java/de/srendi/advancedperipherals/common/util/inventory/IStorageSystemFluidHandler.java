@@ -1,7 +1,8 @@
 package de.srendi.advancedperipherals.common.util.inventory;
 
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.IFluidHandler;
+
+import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import org.jetbrains.annotations.NotNull;
 
 public interface IStorageSystemFluidHandler extends IFluidHandler {
@@ -11,7 +12,7 @@ public interface IStorageSystemFluidHandler extends IFluidHandler {
      * Uses a filter to find the right item. The amount should never be greater than 64
      * stack sizes greater than 64.
      *
-     * @param filter   The parsed filter
+     * @param filter The parsed filter
      * @param simulate Should this action be simulated
      * @return extracted from the slot, must be empty if nothing can be extracted. The returned ItemStack can be safely modified after, so item handlers should return a new or copied stack.
      */

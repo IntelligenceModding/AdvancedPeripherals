@@ -2,23 +2,29 @@ package de.srendi.advancedperipherals.client.screens;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
+import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.entity.TurtleSeatEntity;
+import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.LayeredDraw;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
-import net.minecraftforge.client.gui.overlay.ForgeGui;
-import net.minecraftforge.client.gui.overlay.IGuiOverlay;
+import org.jspecify.annotations.NonNull;
 
-public class SaddleTurtleScreen extends GuiComponent implements IGuiOverlay {
-    public static final String ID = "saddle_turtle_overlay";
+public class SaddleTurtleScreen implements LayeredDraw.Layer {
+    public static final ResourceLocation ID = AdvancedPeripherals.getRL("saddle_turtle_overlay");
 
     private static final long ACTIVE_TIMEOUT = 5000;
 
-    private ForgeGui gui;
+    public static final ResourceLocation GUI_SPRITE_ATLAS = ResourceLocation
+            .withDefaultNamespace("textures/atlas/gui.png");
+
+    private GuiGraphics gui;
     private int screenWidth = 0;
     private int screenHeight = 0;
 
@@ -30,7 +36,7 @@ public class SaddleTurtleScreen extends GuiComponent implements IGuiOverlay {
     public SaddleTurtleScreen() {}
 
     protected Font getFont() {
-        return this.gui.getMinecraft().font;
+        return this.gui.minecraft.font;
     }
 
     protected int textWidth(String text) {
@@ -103,26 +109,26 @@ public class SaddleTurtleScreen extends GuiComponent implements IGuiOverlay {
 
     private void renderFuelBar(PoseStack stack) {
         // TODO: use a better looking bar here, and/or find someway to change the bar's color
-        RenderSystem.setShaderTexture(0, GuiComponent.GUI_ICONS_LOCATION);
+        RenderSystem.setShaderTexture(0, GUI_SPRITE_ATLAS);
         int fontColor = 0x80ff20;
 
         int width = 182;
         int left = this.screenWidth / 2 - 91;
         int top = this.screenHeight - 32 + 3;
-        this.blit(stack, left, top, 0, 64, width, 5);
+        gui.blit(GUI_SPRITE_ATLAS, left, top, 0, 64, width, 5);
         if (fuelLevel > 0 && fuelLimit > 0) {
             int progWidth = fuelLevel * width / fuelLimit;
-            this.blit(stack, left, top, 0, 69, progWidth, 5);
+            gui.blit( GUI_SPRITE_ATLAS, left, top, 0, 69, progWidth, 5);
         }
 
         String text = fuelLimit > 0 ? String.format("%d / %d", fuelLevel, fuelLimit) : "Infinity";
         int x = (this.screenWidth - getFont().width(text)) / 2;
         int y = this.screenHeight - 31;
-        getFont().draw(stack, text, (float)(x + 1), (float) y, 0);
-        getFont().draw(stack, text, (float)(x - 1), (float) y, 0);
-        getFont().draw(stack, text, (float) x, (float)(y + 1), 0);
-        getFont().draw(stack, text, (float) x, (float)(y - 1), 0);
-        getFont().draw(stack, text, (float) x, (float) y, fontColor);
+        getFont().drawInBatch(text, (float)(x + 1), (float) y, 0, false, stack.last().pose(), gui.bufferSource(), Font.DisplayMode.NORMAL, 0, 0);
+        getFont().drawInBatch(text, (float)(x - 1), (float) y, 0, false, stack.last().pose(), gui.bufferSource(), Font.DisplayMode.NORMAL, 0, 0);
+        getFont().drawInBatch(text, (float) x, (float)(y + 1), 0, false, stack.last().pose(), gui.bufferSource(), Font.DisplayMode.NORMAL, 0, 0);
+        getFont().drawInBatch(text, (float) x, (float)(y - 1), 0, false, stack.last().pose(), gui.bufferSource(), Font.DisplayMode.NORMAL, 0, 0);
+        getFont().drawInBatch(text, (float) x, (float) y, fontColor, false, stack.last().pose(), gui.bufferSource(), Font.DisplayMode.NORMAL, 0, 0);
     }
 
     private void renderDismountHint(PoseStack stack) {
@@ -133,24 +139,24 @@ public class SaddleTurtleScreen extends GuiComponent implements IGuiOverlay {
             name, minecraft.options.keyShift.getTranslatedKeyMessage(), minecraft.options.keyInventory.getTranslatedKeyMessage());
         float top = 10;
         float x = (float)(this.screenWidth / 2 - textWidth(text) / 2);
-        getFont().drawShadow(stack, text, x, top, 0xffffff);
+        getFont().drawInBatch(text, x, top, 0xffffff, true, stack.last().pose(), gui.bufferSource(), Font.DisplayMode.NORMAL, 0, 0);
     }
 
     @Override
-    public void render(ForgeGui gui, PoseStack poseStack, float partialTick, int screenWidth, int screenHeight) {
+    public void render(@NonNull GuiGraphics guiGraphics, @NonNull DeltaTracker deltaTracker) {
         if (!isPlayerMountedOnTurtle()) {
             return;
         }
 
-        this.gui = gui;
-        this.screenWidth = screenWidth;
-        this.screenHeight = screenHeight;
+        this.gui = guiGraphics;
+        this.screenWidth = guiGraphics.guiWidth();
+        this.screenHeight = guiGraphics.guiHeight();
 
         if (this.shouldRenderFuelBar()) {
-            this.renderFuelBar(poseStack);
+            this.renderFuelBar(guiGraphics.pose());
         }
         if (isPlayerControllingTurtle()) {
-            this.renderDismountHint(poseStack);
+            this.renderDismountHint(guiGraphics.pose());
         }
     }
 }

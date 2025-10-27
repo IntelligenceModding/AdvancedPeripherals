@@ -2,9 +2,9 @@ package de.srendi.advancedperipherals.common.util.proxy;
 
 import de.srendi.advancedperipherals.common.blocks.blockentities.FluidDetectorEntity;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.neoforged.fluids.FluidStack;
+import net.neoforged.fluids.capability.IFluidHandler;
+import net.neoforged.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
 public class FluidStorageProxy extends AbstractStorageProxy implements IFluidHandler {

@@ -1,11 +1,11 @@
 package de.srendi.advancedperipherals.common.network.toclient;
 
 import de.srendi.advancedperipherals.client.smartglasses.OverlayObjectHolder;
-import de.srendi.advancedperipherals.common.network.base.IPacket;
+import de.srendi.advancedperipherals.common.network.IAPPacket;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.network.NetworkEvent;
+import net.neoforged.network.NetworkEvent;
 
-public class RenderableObjectDeletePacket implements IPacket {
+public class RenderableObjectDeletePacket implements IAPPacket {
 
     private final int object;
 

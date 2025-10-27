@@ -92,7 +92,7 @@ public class SaddlePeripheral extends BasePeripheral<TurtlePeripheralOwner> {
             this.seat.keepAlive();
             BlockPos pos = this.owner.getPos();
             Level level = this.owner.getLevel();
-            if (this.seat.getLevel() != this.owner.getLevel()) {
+            if (this.seat.level() != this.owner.getLevel()) {
                 this.seat = TeleportUtil.teleportToWithPassengers(this.seat, (ServerLevel) level, this.seat.getTurtlePos());
                 this.seat.setTurtle(this.owner.getTurtle());
                 this.seat.keepAlive();

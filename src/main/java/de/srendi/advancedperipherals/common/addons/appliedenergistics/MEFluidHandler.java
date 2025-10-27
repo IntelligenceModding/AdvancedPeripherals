@@ -1,4 +1,4 @@
-package de.srendi.advancedperipherals.common.addons.ae2;
+package de.srendi.advancedperipherals.common.addons.appliedenergistics;
 
 import appeng.api.config.Actionable;
 import appeng.api.networking.security.IActionSource;
@@ -8,7 +8,7 @@ import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.MEBr
 import de.srendi.advancedperipherals.common.util.Pair;
 import de.srendi.advancedperipherals.common.util.inventory.FluidFilter;
 import de.srendi.advancedperipherals.common.util.inventory.IStorageSystemFluidHandler;
-import net.minecraftforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.FluidStack;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -41,10 +41,10 @@ public class MEFluidHandler implements IStorageSystemFluidHandler {
     @NotNull
     @Override
     public FluidStack drain(FluidFilter filter, FluidAction simulate) {
-        Pair<Long, AEFluidKey> itemKey = AEApi.findAEFluidFromFilter(storageMonitor, null, filter);
-        if (itemKey == null)
+        Pair<Long, AEFluidKey> fluidKey = AEApi.findAEFluidFromFilter(storageMonitor, null, filter);
+        if (fluidKey.getRight() == null)
             return FluidStack.EMPTY;
-        long extracted = storageMonitor.extract(itemKey.getRight(), filter.getCount(), simulate == FluidAction.SIMULATE ? Actionable.SIMULATE : Actionable.MODULATE, actionSource);
-        return new FluidStack(itemKey.getRight().getFluid(), (int) Math.min(extracted, Integer.MAX_VALUE));
+        long extracted = storageMonitor.extract(fluidKey.getRight(), filter.getCount(), simulate == FluidAction.SIMULATE ? Actionable.SIMULATE : Actionable.MODULATE, actionSource);
+        return new FluidStack(fluidKey.getRight().getFluid(), (int) Math.min(extracted, Integer.MAX_VALUE));
     }
 }

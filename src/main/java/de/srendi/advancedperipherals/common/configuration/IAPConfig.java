@@ -1,24 +1,24 @@
 package de.srendi.advancedperipherals.common.configuration;
 
 import de.srendi.advancedperipherals.lib.misc.IConfigHandler;
-import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.fml.config.ModConfig;
+import net.neoforged.fml.config.ModConfig;
+import net.neoforged.neoforge.common.ModConfigSpec;
 
 public interface IAPConfig {
 
-    ForgeConfigSpec getConfigSpec();
+    ModConfigSpec getConfigSpec();
 
     String getFileName();
 
     ModConfig.Type getType();
 
-    default void register(IConfigHandler[] data, final ForgeConfigSpec.Builder builder) {
+    default void register(IConfigHandler[] data, final ModConfigSpec.Builder builder) {
         for (IConfigHandler handler : data) {
             handler.addToConfig(builder);
         }
     }
 
-    default void pop(String name, ForgeConfigSpec.Builder builder) {
+    default void pop(String name, ModConfigSpec.Builder builder) {
         builder.pop();
         builder.push(name);
     }

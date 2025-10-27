@@ -1,7 +1,7 @@
 package de.srendi.advancedperipherals.common.util.inventory;
 
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.items.IItemHandler;
+import net.neoforged.neoforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 
 public interface IStorageSystemItemHandler extends IItemHandler {
@@ -11,7 +11,6 @@ public interface IStorageSystemItemHandler extends IItemHandler {
      * Uses a filter to find the right item. The amount should never be greater than 64
      * stack sizes greater than 64.
      *
-     * @param filter   The parsed filter
      * @param filter The parsed filter
      * @param count The amount to extract
      * @param simulate Should this action be simulated

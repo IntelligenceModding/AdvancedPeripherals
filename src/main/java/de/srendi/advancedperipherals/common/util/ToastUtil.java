@@ -20,7 +20,7 @@ public class ToastUtil {
         Minecraft minecraft = Minecraft.getInstance();
 
         minecraft.getToasts().addToast(SystemToast.multiline(minecraft,
-                SystemToast.SystemToastIds.PERIODIC_NOTIFICATION, title, message));
+                SystemToast.SystemToastId.PERIODIC_NOTIFICATION, title, message));
     }
 
 }

@@ -2,20 +2,22 @@ package de.srendi.advancedperipherals.common.addons.computercraft.turtles;
 
 import dan200.computercraft.api.peripheral.IPeripheral;
 import dan200.computercraft.api.turtle.ITurtleAccess;
+import dan200.computercraft.api.turtle.ITurtleUpgrade;
 import dan200.computercraft.api.turtle.TurtleSide;
+import dan200.computercraft.api.upgrades.UpgradeType;
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.ChunkyPeripheral;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
+import de.srendi.advancedperipherals.common.setup.CCRegistration;
 import de.srendi.advancedperipherals.lib.turtle.PeripheralTurtleUpgrade;
 import net.minecraft.client.resources.model.ModelResourceLocation;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 public class TurtleChunkyUpgrade extends PeripheralTurtleUpgrade<ChunkyPeripheral> {
     private int updateTick = 0;
 
-    public TurtleChunkyUpgrade(ResourceLocation id, ItemStack stack) {
-        super(id, stack);
+    public TurtleChunkyUpgrade(ItemStack stack) {
+        super(CCRegistration.ID.CHUNKY_TURTLE, stack);
     }
 
     @Override
@@ -31,6 +33,11 @@ public class TurtleChunkyUpgrade extends PeripheralTurtleUpgrade<ChunkyPeriphera
     @Override
     protected ChunkyPeripheral buildPeripheral(@NotNull ITurtleAccess turtle, @NotNull TurtleSide side) {
         return new ChunkyPeripheral(turtle, side);
+    }
+
+    @Override
+    public UpgradeType<? extends ITurtleUpgrade> getType() {
+        return CCRegistration.CHUNKY_TURTLE.get();
     }
 
     @Override

@@ -6,6 +6,7 @@ import de.srendi.advancedperipherals.common.addons.computercraft.owner.TurtlePer
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.DistanceDetectorPeripheral;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.Vec3i;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySelector;
 import net.minecraft.world.level.BlockGetter;
@@ -66,7 +67,7 @@ public class HitResultUtil {
 
         if (entityResult.getType() == HitResult.Type.MISS) {
             if (blockResult.getType() == HitResult.Type.MISS) {
-                return BlockHitResult.miss(from, blockResult.getDirection(), new BlockPos(to));
+                return BlockHitResult.miss(from, blockResult.getDirection(), new BlockPos((int) to.x, (int) to.y, (int) to.z));
             }
             return blockResult;
         } else if (blockResult.getType() == HitResult.Type.MISS) {

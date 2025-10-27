@@ -3,7 +3,7 @@ package de.srendi.advancedperipherals.client.smartglasses.objects.twodim;
 import com.mojang.blaze3d.vertex.PoseStack;
 import de.srendi.advancedperipherals.client.smartglasses.objects.IObjectRenderer;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.RenderableObject;
-import net.minecraftforge.client.gui.overlay.ForgeGui;
+import net.neoforged.client.gui.overlay.ForgeGui;
 
 import java.util.List;
 

@@ -2,54 +2,39 @@ package de.srendi.advancedperipherals.common.addons.powah;
 
 import dan200.computercraft.api.lua.LuaFunction;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
-import de.srendi.advancedperipherals.lib.peripherals.BlockEntityIntegrationPeripheral;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import org.jetbrains.annotations.NotNull;
+import de.srendi.advancedperipherals.lib.peripherals.APGenericPeripheral;
 import owmii.powah.block.furnator.FurnatorTile;
 
-public class FurnatorIntegration extends BlockEntityIntegrationPeripheral<FurnatorTile> {
-    protected FurnatorIntegration(BlockEntity entity) {
-        super(entity);
-    }
+public class FurnatorIntegration implements APGenericPeripheral {
 
-    @NotNull
     @Override
-    public String getType() {
+    public String getPeripheralType() {
         return "furnator";
     }
 
-    @LuaFunction(mainThread = true)
-    public final String getName() {
-        return "Furnator";
-    }
-
-    @LuaFunction(mainThread = true)
-    public final boolean isBurning() {
+    @LuaFunction
+    public final boolean isBurning(FurnatorTile blockEntity) {
         return blockEntity.isBurning();
     }
 
     @LuaFunction(mainThread = true)
-    public final double getEnergy() {
+    public final double getStoredEnergy(FurnatorTile blockEntity) {
         return blockEntity.getEnergy().getEnergyStored();
     }
 
     @LuaFunction(mainThread = true)
-    public final double getMaxEnergy() {
+    public final double getMaxEnergy(FurnatorTile blockEntity) {
         return blockEntity.getEnergy().getMaxEnergyStored();
     }
 
     @LuaFunction(mainThread = true)
-    public final double getCarbon() {
+    public final double getCarbon(FurnatorTile blockEntity) {
+        // Technically getCarbon is thread safe, but perCent is not atomic
         return blockEntity.getCarbon().perCent();
     }
 
     @LuaFunction(mainThread = true)
-    public final Object getInventory() {
-        ItemStack stack = blockEntity.getInventory().getStackInSlot(1);
-        if (stack.isEmpty()) {
-            return null;
-        }
-        return LuaConverter.itemStackToObject(stack);
+    public final Object getFuelSlot(FurnatorTile blockEntity) {
+        return LuaConverter.itemStackToObject(blockEntity.getInventory().getStackInSlot(1));
     }
 }

@@ -19,7 +19,7 @@ public abstract class PeripheralTurtleUpgrade<T extends IBasePeripheral<?>> exte
     protected int tick;
 
     protected PeripheralTurtleUpgrade(ResourceLocation id, ItemStack item) {
-        super(id, TurtleUpgradeType.PERIPHERAL, TranslationUtil.turtle(id.getPath()), item);
+        super(TurtleUpgradeType.PERIPHERAL, TranslationUtil.turtle(id.getPath()), item);
     }
 
     // TODO: Do we still need this with the new modeller system?
@@ -34,7 +34,7 @@ public abstract class PeripheralTurtleUpgrade<T extends IBasePeripheral<?>> exte
     public IPeripheral createPeripheral(@NotNull ITurtleAccess turtle, @NotNull TurtleSide side) {
         T peripheral = buildPeripheral(turtle, side);
         if (!peripheral.isEnabled()) {
-            return DisabledPeripheral.INSTANCE;
+            return new DisabledPeripheral(peripheral);
         }
         return peripheral;
     }
@@ -51,7 +51,7 @@ public abstract class PeripheralTurtleUpgrade<T extends IBasePeripheral<?>> exte
     @Override
     public void update(@NotNull ITurtleAccess turtle, @NotNull TurtleSide side) {
         super.update(turtle, side);
-        if (!turtle.getLevel().isClientSide() && turtle.getPeripheral(side) instanceof IBasePeripheral basePeripheral) {
+        if (!turtle.getLevel().isClientSide() && turtle.getPeripheral(side) instanceof IBasePeripheral<?> basePeripheral) {
             basePeripheral.update();
         }
     }

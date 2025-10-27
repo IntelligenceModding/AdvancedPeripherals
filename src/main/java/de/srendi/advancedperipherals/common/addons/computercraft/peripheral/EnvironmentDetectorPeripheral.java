@@ -33,10 +33,10 @@ import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.levelgen.WorldgenRandom;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.entity.player.SleepingTimeCheckEvent;
-import net.minecraftforge.eventbus.api.Event;
-import net.minecraftforge.server.ServerLifecycleHooks;
+import net.neoforged.common.MinecraftForge;
+import net.neoforged.event.entity.player.SleepingTimeCheckEvent;
+import net.neoforged.eventbus.api.Event;
+import net.neoforged.server.ServerLifecycleHooks;
 
 import java.util.ArrayList;
 import java.util.HashMap;

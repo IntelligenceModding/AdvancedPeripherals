@@ -1,4 +1,4 @@
-package de.srendi.advancedperipherals.common.addons.ae2;
+package de.srendi.advancedperipherals.common.addons.appliedenergistics;
 
 import appeng.api.networking.IGrid;
 import appeng.api.networking.IGridNode;
@@ -13,14 +13,15 @@ import appeng.api.networking.crafting.ICraftingSimulationRequester;
 import appeng.api.networking.crafting.ICraftingSubmitResult;
 import appeng.api.networking.security.IActionSource;
 import appeng.api.stacks.AEKey;
+import appeng.api.stacks.GenericStack;
 import appeng.api.stacks.KeyCounter;
 import appeng.me.cluster.implementations.CraftingCPUCluster;
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.peripheral.IComputerAccess;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
-import de.srendi.advancedperipherals.common.blocks.blockentities.MeBridgeEntity;
-import de.srendi.advancedperipherals.common.util.BasicCraftJob;
+import de.srendi.advancedperipherals.common.blocks.blockentities.MEBridgeEntity;
 import de.srendi.advancedperipherals.common.util.StatusConstants;
+import de.srendi.advancedperipherals.common.util.inventory.BasicCraftJob;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 
@@ -28,8 +29,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.function.Supplier;
 
-//TODO needs to persistent - should be stored in the me bridge
-// We also need to do the same for the rs bridge. So we want to create a proper interface to keep the lua functions the same
 public class AECraftJob extends BasicCraftJob {
 
     private final IGridNode node;
@@ -49,7 +48,7 @@ public class AECraftJob extends BasicCraftJob {
     // In the case the job is done and would return null, we have this cached one.
     private CraftingJobStatus cachedStatus;
 
-    public AECraftJob(Level world, final IComputerAccess computer, IGridNode node, AEKey item, long amount, MeBridgeEntity bridge, ICraftingCPU target) {
+    public AECraftJob(Level world, final IComputerAccess computer, IGridNode node, AEKey item, long amount, MEBridgeEntity bridge, ICraftingCPU target) {
         super(computer, "ae", world, amount);
         this.node = node;
         this.source = bridge;
@@ -61,6 +60,9 @@ public class AECraftJob extends BasicCraftJob {
 
     @LuaFunction
     public final Object getCraftingCPU() {
+        if (targetCpu == null) {
+            return null;
+        }
         return AEApi.parseCraftingCPU(targetCpu, true);
     }
 
@@ -88,15 +90,12 @@ public class AECraftJob extends BasicCraftJob {
     }
 
     @Override
-    public Object getParsedRequestedItem() {
-        if (getJobStatus() == null) {
-            return null;
-        }
-        return AEApi.parseGenericStack(getJobStatus().crafting());
+    public Object getParsedRequestedItemImpl() {
+        return AEApi.parseGenericStack(new GenericStack(toCraft, amount));
     }
 
     @Override
-    public long getElapsedTime() {
+    public long getElapsedTimeImpl() {
         if (getJobStatus() == null) {
             return -1;
         }
@@ -104,7 +103,7 @@ public class AECraftJob extends BasicCraftJob {
     }
 
     @Override
-    public long getTotalItems() {
+    public long getTotalItemsImpl() {
         if (getJobStatus() == null) {
             return -1;
         }
@@ -112,7 +111,7 @@ public class AECraftJob extends BasicCraftJob {
     }
 
     @Override
-    public long getItemProgress() {
+    public long getItemProgressImpl() {
         if (getJobStatus() == null) {
             return -1;
         }
@@ -120,7 +119,7 @@ public class AECraftJob extends BasicCraftJob {
     }
 
     @Override
-    public Object getEmittedItems() {
+    public Object getEmittedItemsImpl() {
         if (currentJob == null) {
             return null;
         }
@@ -128,7 +127,7 @@ public class AECraftJob extends BasicCraftJob {
     }
 
     @Override
-    public Object getUsedItems() {
+    public Object getUsedItemsImpl() {
         if (currentJob == null) {
             return null;
         }
@@ -136,7 +135,7 @@ public class AECraftJob extends BasicCraftJob {
     }
 
     @Override
-    public Object getMissingItems() {
+    public Object getMissingItemsImpl() {
         if (currentJob == null) {
             return null;
         }
@@ -144,7 +143,7 @@ public class AECraftJob extends BasicCraftJob {
     }
 
     @Override
-    public boolean hasMultiplePaths() {
+    public boolean hasMultiplePathsImpl() {
         if (currentJob == null) {
             return false;
         }
@@ -152,7 +151,7 @@ public class AECraftJob extends BasicCraftJob {
     }
 
     @Override
-    public Object getFinalOutput() {
+    public Object getFinalOutputImpl() {
         if (currentJob == null) {
             return null;
         }
@@ -160,12 +159,10 @@ public class AECraftJob extends BasicCraftJob {
     }
 
     @Override
-    public boolean cancel() {
-        if (targetCpu instanceof CraftingCPUCluster cluster) {
-            if (cluster.isBusy()) {
-                cluster.cancel();
-                return true;
-            }
+    public boolean cancelImpl() {
+        if (targetCpu.isBusy()) {
+            targetCpu.cancelJob();
+            return true;
         }
         return false;
     }
@@ -280,7 +277,8 @@ public class AECraftJob extends BasicCraftJob {
         }
         for (ICraftingCPU cpu : service.getCpus()) {
             if (cpu instanceof CraftingCPUCluster cpuCluster) {
-                if (cpuCluster.craftingLogic.getLastLink() != null && cpuCluster.craftingLogic.getLastLink().getCraftingID().equals(jobLink.getCraftingID())) {
+                final ICraftingLink lastLink = cpuCluster.craftingLogic.getLastLink();
+                if (lastLink != null && lastLink.getCraftingID().equals(jobLink.getCraftingID())) {
                     this.jobStatus = () -> {
                         // Compare the id of the job in the cpu. This job object can exist longer than the job needs time to complete. So the cpu could have a new job
                         if (cpuCluster.craftingLogic.getLastLink() != null && cpuCluster.craftingLogic.getLastLink().getCraftingID().equals(jobLink.getCraftingID()))
@@ -303,10 +301,13 @@ public class AECraftJob extends BasicCraftJob {
     }
 
     private CraftingJobStatus getJobStatus() {
-        if (jobStatus == null || jobStatus.get() == null && cachedStatus != null) {
-            return cachedStatus;
+        // If the jobStatus is null, then we are not at the point where crafting started
+        // If the value of the jobStatus is null, then the job is done and the cpu has no job anymore or a new one,
+        // and we need to use the cached object.
+        // Otherwise we set the cached object to the jobStatus.
+        if (jobStatus != null && jobStatus.get() != null) {
+            cachedStatus = jobStatus.get();
         }
-        cachedStatus = jobStatus.get();
-        return jobStatus.get();
+        return cachedStatus;
     }
 }

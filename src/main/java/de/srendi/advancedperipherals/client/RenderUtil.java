@@ -2,8 +2,8 @@ package de.srendi.advancedperipherals.client;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Matrix4f;
-import com.mojang.math.Quaternion;
+
+import mekanism.common.lib.math.Quaternion;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.texture.TextureAtlas;
@@ -11,6 +11,7 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.InventoryMenu;
+import org.joml.Quaternionf;
 
 public class RenderUtil {
 
@@ -23,7 +24,7 @@ public class RenderUtil {
         pY = pY / 16;
         pZ = pZ / 16;
 
-        poseStack.mulPose(new Quaternion(xRot, yRot, zRot, true));
+        poseStack.mulPose(new Quaternionf(xRot, yRot, zRot, true));
 
         drawPlane(poseStack, buffer, r, g, b, a, Direction.UP, pX, pY, pZ, sX, sY, sZ);
         drawPlane(poseStack, buffer, r, g, b, a, Direction.DOWN, pX, pY, pZ, sX, sY, sZ);

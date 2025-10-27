@@ -15,10 +15,10 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class MemoryCardItem extends BaseItem {
+public class MemoryCardItem extends APItem {
 
     public MemoryCardItem() {
-        super(new Properties().stacksTo(1));
+        super(new Properties().stacksTo(1), () -> true);
     }
 
     @Override

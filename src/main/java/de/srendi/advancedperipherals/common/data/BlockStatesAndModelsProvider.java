@@ -8,13 +8,13 @@ import net.minecraft.core.FrontAndTop;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
-import net.minecraftforge.client.model.generators.BlockModelBuilder;
-import net.minecraftforge.client.model.generators.BlockStateProvider;
-import net.minecraftforge.client.model.generators.ConfiguredModel;
-import net.minecraftforge.client.model.generators.ModelFile;
-import net.minecraftforge.client.model.generators.ModelProvider;
-import net.minecraftforge.common.data.ExistingFileHelper;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.neoforged.client.model.generators.BlockModelBuilder;
+import net.neoforged.client.model.generators.BlockStateProvider;
+import net.neoforged.client.model.generators.ConfiguredModel;
+import net.neoforged.client.model.generators.ModelFile;
+import net.neoforged.client.model.generators.ModelProvider;
+import net.neoforged.common.data.ExistingFileHelper;
+import net.neoforged.registries.ForgeRegistries;
 
 import java.util.Arrays;
 

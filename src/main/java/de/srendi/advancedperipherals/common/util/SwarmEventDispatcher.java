@@ -6,9 +6,9 @@ import dan200.computercraft.shared.computer.core.ServerContext;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
 import net.minecraft.server.MinecraftServer;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.tick.ServerTickEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -23,7 +23,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * SwarmEventDispatcher will combine multiple same events which fired from different peripherals into one event as a table.
  * Then we can save ComputerCraft's event queue space.
  */
-@Mod.EventBusSubscriber(modid = AdvancedPeripherals.MOD_ID)
+@EventBusSubscriber(modid = AdvancedPeripherals.MOD_ID)
 public final class SwarmEventDispatcher {
     private static final ConcurrentMap<String, ConcurrentMap<Integer, ConcurrentMap<String, Set<Object>>>> events = new ConcurrentHashMap<>();
     private static final AtomicBoolean updated = new AtomicBoolean();
@@ -83,10 +83,7 @@ public final class SwarmEventDispatcher {
     }
 
     @SubscribeEvent
-    public static void serverTick(TickEvent.ServerTickEvent tickEvent) {
-        if (tickEvent.phase != TickEvent.Phase.END) {
-            return;
-        }
+    public static void serverTick(ServerTickEvent.Post tickEvent) {
         if (!updated.compareAndSet(true, false)) {
             return;
         }

@@ -7,9 +7,9 @@ import de.srendi.advancedperipherals.common.setup.APBlockEntityTypes;
 import de.srendi.advancedperipherals.common.util.proxy.FluidStorageProxy;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.fluids.capability.templates.FluidTank;
+import net.neoforged.common.capabilities.ForgeCapabilities;
+import net.neoforged.fluids.capability.IFluidHandler;
+import net.neoforged.fluids.capability.templates.FluidTank;
 import org.jetbrains.annotations.NotNull;
 
 public class FluidDetectorEntity extends BaseDetectorEntity<IFluidHandler, FluidStorageProxy, FluidDetectorPeripheral> {

@@ -1,19 +1,25 @@
 package de.srendi.advancedperipherals;
 
-import de.srendi.advancedperipherals.common.addons.APAddons;
+import dan200.computercraft.api.peripheral.PeripheralCapability;
+import de.srendi.advancedperipherals.common.addons.APAddon;
 import de.srendi.advancedperipherals.common.addons.ae2.AE2Registries;
+import de.srendi.advancedperipherals.common.addons.appliedenergistics.AEApi;
+import de.srendi.advancedperipherals.common.addons.computercraft.integrations.IntegrationPeripheralProvider;
+import de.srendi.advancedperipherals.common.addons.refinedstorage.RSApi;
+import de.srendi.advancedperipherals.common.blocks.base.ICapabilityProvider;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.network.APNetworking;
 import de.srendi.advancedperipherals.common.setup.APRegistration;
+import de.srendi.advancedperipherals.common.util.ChunkManager;
 import de.srendi.advancedperipherals.common.village.VillageStructures;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.ModLoadingContext;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.ModLoadingContext;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.neoforged.fml.event.lifecycle.FMLLoadCompleteEvent;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -28,24 +34,23 @@ public class AdvancedPeripherals {
     public static final Logger LOGGER = LogManager.getLogger(NAME);
     public static final Random RANDOM = new Random();
     public static final APCreativeTab TAB = new APCreativeTab();
-    public static final APAddons ADDONS = new APAddons();
 
-    public AdvancedPeripherals() {
+    public AdvancedPeripherals(IEventBus modBus) {
         LOGGER.info("AdvancedPeripherals says hello!");
-        IEventBus modBus = FMLJavaModLoadingContext.get().getModEventBus();
+        APAddon.setup();
 
         APConfig.register(ModLoadingContext.get());
 
-        modBus.addListener(this::commonSetup);
-        modBus.addListener(this::onLoadComplete);
-        APRegistration.register();
-        MinecraftForge.EVENT_BUS.register(this);
-        new APAddons();
+        modBus.addListener(this::registerCapabilities);
+        modBus.addListener(ChunkManager::registerTicketController);
+
+        APRegistration.register(modBus);
     }
+
 
     public static void debug(String message) {
         if (APConfig.GENERAL_CONFIG.enableDebugMode.get())
-            LOGGER.debug("[DEBUG] {}", message);
+            LOGGER.info("[DEBUG] {}", message);
     }
 
     public static void debug(String message, Level level) {
@@ -53,14 +58,13 @@ public class AdvancedPeripherals {
             LOGGER.log(level, "[DEBUG] {}", message);
     }
 
-    public static void exception(String message, Exception exception) {
-        if (APConfig.GENERAL_CONFIG.enableDebugMode.get()) {
-            LOGGER.error("[DEBUG]", exception);
-        }
+    public static void debug(String message, Throwable throwable) {
+        if (APConfig.GENERAL_CONFIG.enableDebugMode.get())
+            LOGGER.error("[DEBUG] " + message, throwable);
     }
 
     public static ResourceLocation getRL(String resource) {
-        return new ResourceLocation(MOD_ID, resource);
+        return ResourceLocation.fromNamespaceAndPath(MOD_ID, resource);
     }
 
     public void commonSetup(FMLCommonSetupEvent event) {
@@ -72,9 +76,58 @@ public class AdvancedPeripherals {
 
     public void onLoadComplete(FMLLoadCompleteEvent event) {
         event.enqueueWork(() -> {
-            if (APAddons.appliedEnergisticsLoaded) {
+            if (APAddon.AE2.isLoaded()) {
                 AE2Registries.finishRegister();
             }
         });
+    }
+
+    public void registerCapabilities(RegisterCapabilitiesEvent event) {
+        APRegistration.BLOCK_ENTITIES.getEntries().forEach((entry) -> {
+
+            event.registerBlockEntity(
+                    PeripheralCapability.get(),
+                    entry.get(),
+                    (blockEntity, side) -> {
+                        if (blockEntity instanceof ICapabilityProvider provider)
+                            return provider.createPeripheralCap(side);
+                        return null;
+                    });
+
+            event.registerBlockEntity(
+                    Capabilities.ItemHandler.BLOCK,
+                    entry.get(),
+                    (blockEntity, side) -> {
+                        if (blockEntity instanceof ICapabilityProvider provider)
+                            return provider.createItemHandlerCap(side);
+                        return null;
+                    });
+
+            event.registerBlockEntity(
+                    Capabilities.FluidHandler.BLOCK,
+                    entry.get(),
+                    (blockEntity, side) -> {
+                        if (blockEntity instanceof ICapabilityProvider provider)
+                            return provider.createFluidHandlerCap(side);
+                        return null;
+                    });
+
+            event.registerBlockEntity(
+                    Capabilities.EnergyStorage.BLOCK,
+                    entry.get(),
+                    (blockEntity, side) -> {
+                        if (blockEntity instanceof ICapabilityProvider provider)
+                            return provider.createEnergyStorageCap(side);
+                        return null;
+                    });
+        });
+
+        if (APAddon.AE2.isLoaded())
+            AEApi.registerCapabilities(event);
+        if (APAddon.REFINEDSTORAGE.isLoaded())
+            RSApi.registerCapabilities(event);
+
+        IntegrationPeripheralProvider.registerBlockIntegrations(event);
+
     }
 }

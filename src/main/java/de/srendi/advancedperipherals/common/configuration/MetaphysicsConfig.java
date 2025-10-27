@@ -2,22 +2,22 @@ package de.srendi.advancedperipherals.common.configuration;
 
 import de.srendi.advancedperipherals.common.addons.computercraft.operations.AutomataCoreTier;
 import net.minecraft.FieldsAreNonnullByDefault;
-import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.fml.config.ModConfig;
+import net.neoforged.fml.config.ModConfig;
+import net.neoforged.neoforge.common.ModConfigSpec;
 
 @FieldsAreNonnullByDefault
 public class MetaphysicsConfig implements IAPConfig {
 
-    public final ForgeConfigSpec.IntValue energyToFuelRate;
-    public final ForgeConfigSpec.BooleanValue enableWeakAutomataCore;
-    public final ForgeConfigSpec.BooleanValue enableEndAutomataCore;
-    public final ForgeConfigSpec.BooleanValue enableHusbandryAutomataCore;
-    public final ForgeConfigSpec.IntValue endAutomataCoreWarpPointLimit;
-    public final ForgeConfigSpec.DoubleValue overpoweredAutomataBreakChance;
-    private final ForgeConfigSpec configSpec;
+    public final ModConfigSpec.IntValue energyToFuelRate;
+    public final ModConfigSpec.BooleanValue enableWeakAutomataCore;
+    public final ModConfigSpec.BooleanValue enableEndAutomataCore;
+    public final ModConfigSpec.BooleanValue enableHusbandryAutomataCore;
+    public final ModConfigSpec.IntValue endAutomataCoreWarpPointLimit;
+    public final ModConfigSpec.DoubleValue overpoweredAutomataBreakChance;
+    private final ModConfigSpec configSpec;
 
     public MetaphysicsConfig() {
-        ForgeConfigSpec.Builder builder = new ForgeConfigSpec.Builder();
+        ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
 
         builder.comment("Config for metaphysics").push("Metaphysics");
 
@@ -36,7 +36,7 @@ public class MetaphysicsConfig implements IAPConfig {
     }
 
     @Override
-    public ForgeConfigSpec getConfigSpec() {
+    public ModConfigSpec getConfigSpec() {
         return configSpec;
     }
 

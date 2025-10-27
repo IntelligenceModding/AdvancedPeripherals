@@ -1,76 +1,75 @@
 package de.srendi.advancedperipherals.common.blocks.blockentities;
 
-import com.refinedmods.refinedstorage.api.autocrafting.ICraftingManager;
-import com.refinedmods.refinedstorage.api.autocrafting.craftingmonitor.ICraftingMonitorListener;
-import com.refinedmods.refinedstorage.api.network.node.INetworkNodeProxy;
-import com.refinedmods.refinedstorage.blockentity.NetworkNodeBlockEntity;
-import com.refinedmods.refinedstorage.blockentity.config.IRedstoneConfigurable;
-import com.refinedmods.refinedstorage.blockentity.data.BlockEntitySynchronizationSpec;
-import dan200.computercraft.api.peripheral.IPeripheral;
-import de.srendi.advancedperipherals.AdvancedPeripherals;
-import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.RsBridgePeripheral;
+import com.refinedmods.refinedstorage.api.autocrafting.status.TaskStatus;
+import com.refinedmods.refinedstorage.api.autocrafting.status.TaskStatusListener;
+import com.refinedmods.refinedstorage.api.autocrafting.task.TaskId;
+import com.refinedmods.refinedstorage.api.network.autocrafting.AutocraftingNetworkComponent;
+import com.refinedmods.refinedstorage.api.network.impl.node.SimpleNetworkNode;
+import com.refinedmods.refinedstorage.api.network.node.NetworkNode;
+import com.refinedmods.refinedstorage.common.api.support.network.ConnectionStrategy;
+import com.refinedmods.refinedstorage.common.api.support.network.InWorldNetworkNodeContainer;
+import com.refinedmods.refinedstorage.common.api.support.network.NetworkNodeContainerProvider;
+import com.refinedmods.refinedstorage.common.support.network.InWorldNetworkNodeContainerImpl;
+import com.refinedmods.refinedstorage.common.support.network.SimpleConnectionStrategy;
+import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.RSBridgePeripheral;
 import de.srendi.advancedperipherals.common.addons.refinedstorage.RSCraftJob;
-import de.srendi.advancedperipherals.common.addons.refinedstorage.RSNode;
-import de.srendi.advancedperipherals.common.setup.APBlockEntityTypes;
-import de.srendi.advancedperipherals.common.util.BasicCraftJob;
+import de.srendi.advancedperipherals.common.blocks.base.PeripheralBlockEntity;
+import de.srendi.advancedperipherals.common.configuration.APConfig;
+import de.srendi.advancedperipherals.common.setup.BlockEntityTypes;
+import de.srendi.advancedperipherals.common.util.inventory.BasicCraftJob;
 import de.srendi.advancedperipherals.lib.peripherals.IPeripheralTileEntity;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.util.LazyOptional;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import static dan200.computercraft.shared.Capabilities.CAPABILITY_PERIPHERAL;
+public class RSBridgeEntity extends PeripheralBlockEntity<RSBridgePeripheral> implements IPeripheralTileEntity, NetworkNodeContainerProvider, TaskStatusListener {
 
-public class RSBridgeEntity extends NetworkNodeBlockEntity<RSNode> implements INetworkNodeProxy<RSNode>, IRedstoneConfigurable, IPeripheralTileEntity, ICraftingMonitorListener {
-
-    private static final String PERIPHERAL_SETTINGS = "AP_SETTINGS";
-    //I have no clue what this does, but it works
-    private static final BlockEntitySynchronizationSpec SPEC = BlockEntitySynchronizationSpec.builder().build();
     protected CompoundTag peripheralSettings;
-    protected RsBridgePeripheral peripheral = new RsBridgePeripheral(this);
-    private LazyOptional<IPeripheral> peripheralCap;
+    private final NetworkNode node;
+    private final InWorldNetworkNodeContainer networkNodeContainer;
     private final List<RSCraftJob> jobs = new CopyOnWriteArrayList<>();
     private boolean addedListener = false;
 
     public RSBridgeEntity(BlockPos pos, BlockState state) {
-        super(APBlockEntityTypes.RS_BRIDGE.get(), pos, state, SPEC, RSNode.class);
+        super(BlockEntityTypes.RS_BRIDGE.get(), pos, state);
         peripheralSettings = new CompoundTag();
+        ConnectionStrategy connectionStrategy = new SimpleConnectionStrategy(pos);
+        node = new SimpleNetworkNode(APConfig.PERIPHERALS_CONFIG.rsConsumption.get());
+        networkNodeContainer = new InWorldNetworkNodeContainerImpl(this, node, "RS Bridge", 1, connectionStrategy, null);
     }
 
     @NotNull
-    public <T1> LazyOptional<T1> getCapability(@NotNull Capability<T1> cap, @Nullable Direction direction) {
-        if (cap == CAPABILITY_PERIPHERAL) {
-            if (peripheral.isEnabled()) {
-                if (peripheralCap == null) {
-                    peripheralCap = LazyOptional.of(() -> peripheral);
-                }
-                return peripheralCap.cast();
-            } else {
-                AdvancedPeripherals.debug(peripheral.getType() + " is disabled, you can enable it in the Configuration.");
-            }
-        }
-        return super.getCapability(cap, direction);
+    @Override
+    protected RSBridgePeripheral createPeripheral() {
+        return new RSBridgePeripheral(this);
+    }
+
+    @Override
+    public CompoundTag getPeripheralSettings() {
+        return peripheralSettings;
+    }
+
+    @Override
+    public void markSettingsChanged() {
+        setChanged();
     }
 
     @Override
     public <T extends BlockEntity> void handleTick(Level level, BlockState state, BlockEntityType<T> type) {
         if (getNode().getNetwork() != null) {
-            ICraftingManager manager = getNode().getNetwork().getCraftingManager();
-            if (manager != null && !this.addedListener) {
+            AutocraftingNetworkComponent manager = getNode().getNetwork().getComponent(AutocraftingNetworkComponent.class);
+            if (!this.addedListener) {
                 manager.addListener(this);
                 this.addedListener = true;
-            } else if (manager == null && this.addedListener) {
-                this.addedListener = false;
             }
         }
 
@@ -89,40 +88,42 @@ public class RSBridgeEntity extends NetworkNodeBlockEntity<RSNode> implements IN
         return jobs;
     }
 
-    public RSNode createNode(Level level, BlockPos blockPos) {
-        return new RSNode(level, blockPos);
+    public NetworkNode getNode() {
+        return node;
+    }
+
+    public void clearRemoved() {
+        super.clearRemoved();
+        initialize(this.level, null);
+    }
+
+    @NotNull
+    @Override
+    public Set<InWorldNetworkNodeContainer> getContainers() {
+        return Set.of(networkNodeContainer);
     }
 
     @Override
-    public void saveAdditional(@NotNull CompoundTag compound) {
-        super.saveAdditional(compound);
-        if (!peripheralSettings.isEmpty()) compound.put(PERIPHERAL_SETTINGS, peripheralSettings);
+    public void addContainer(@NotNull InWorldNetworkNodeContainer inWorldNetworkNodeContainer) {
     }
 
     @Override
-    public void load(@NotNull CompoundTag compound) {
-        peripheralSettings = compound.getCompound(PERIPHERAL_SETTINGS);
-        super.load(compound);
+    public boolean canBuild(@NotNull ServerPlayer serverPlayer) {
+        return true;
     }
 
     @Override
-    public CompoundTag getPeripheralSettings() {
-        return peripheralSettings;
+    public void taskStatusChanged(@NotNull TaskStatus taskStatus) {
+        jobs.stream().filter(BasicCraftJob::isCraftingStarted).filter(job -> job.getCraftingTask().info().id().equals(taskStatus.info().id())).forEach(BasicCraftJob::jobStateChanged);
     }
 
     @Override
-    public void markSettingsChanged() {
-        setChanged();
+    public void taskRemoved(@NotNull TaskId taskId) {
+        jobs.stream().filter(BasicCraftJob::isCraftingStarted).filter(job -> job.getCraftingTask().info().id().equals(taskId)).forEach(BasicCraftJob::jobStateChanged);
     }
 
     @Override
-    public void onAttached() {
-
-    }
-
-    @Override
-    public void onChanged() {
-        // Not as perfect as we currently do it for our AE jobs. This is called for every job even if they aren't created from the bridge
-        jobs.stream().filter(BasicCraftJob::isCraftingStarted).forEach(BasicCraftJob::jobStateChanged);
+    public void taskAdded(@NotNull TaskStatus taskStatus) {
+        jobs.stream().filter(BasicCraftJob::isCraftingStarted).filter(job -> job.getCraftingTask().info().id().equals(taskStatus.info().id())).forEach(BasicCraftJob::jobStateChanged);
     }
 }

@@ -1,71 +1,33 @@
 package de.srendi.advancedperipherals.common.util.inventory;
 
-import dan200.computercraft.shared.Registry;
-import de.srendi.advancedperipherals.AdvancedPeripherals;
-import de.srendi.advancedperipherals.common.util.StringUtil;
-import net.minecraft.nbt.CompoundTag;
+import de.srendi.advancedperipherals.common.util.FingerprintUtil;
+import net.minecraft.ResourceLocationException;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.registries.ForgeRegistries;
-import org.apache.logging.log4j.Level;
+import net.neoforged.neoforge.items.IItemHandler;
 
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ItemUtil {
 
-    public static final Item TURTLE_NORMAL = Registry.ModItems.TURTLE_NORMAL.get();
-    public static final Item TURTLE_ADVANCED = Registry.ModItems.TURTLE_ADVANCED.get();
-
-    public static final Item POCKET_NORMAL = Registry.ModItems.POCKET_COMPUTER_NORMAL.get();
-    public static final Item POCKET_ADVANCED = Registry.ModItems.POCKET_COMPUTER_ADVANCED.get();
-
-    private ItemUtil() {}
-
-    static MessageDigest getMessageDigest(String algorithm) {
-        try {
-            return MessageDigest.getInstance(algorithm);
-        } catch (NoSuchAlgorithmException ex) {
-            AdvancedPeripherals.debug("Could not generate fingerprint.", Level.ERROR);
-            ex.printStackTrace();
-            return null;
-        }
+    private ItemUtil() {
     }
+
 
     /**
-     * Fingerprints are MD5 hashes generated out of the nbt tag, the registry name and the display name from item stacks
-     * Used to filter inventory specific operations. {@link de.srendi.advancedperipherals.common.addons.computercraft.peripheral.InventoryManagerPeripheral}
+     * Fingerprints are XXHash64 hashes generated out of the nbt tag, the registry name and the display name from item stacks
+     * Used to filter inventory specific operations. See {@link ItemFilter}
      *
-     * @return A generated MD5 hash from the item stack
+     * @return A generated XXHash64 hash from the item stack
      */
     public static String getFingerprint(ItemStack stack) {
-        MessageDigest md = getMessageDigest("MD5");
-        if (md == null) {
-            return "";
-        }
-        CompoundTag tag = stack.getTag();
-        md.update(getRegistryKey(stack).toString().getBytes(StandardCharsets.UTF_8));
-        if (tag != null && !tag.isEmpty()) {
-            md.update(tag.getAsString().getBytes(StandardCharsets.UTF_8));
-        }
-        return StringUtil.toHexString(md.digest());
-    }
+        FingerprintUtil.FingerprintKey fingerprintKey = new FingerprintUtil.FingerprintKey(getRegistryKey(stack), stack.getComponentsPatch().hashCode(), stack.getDisplayName().getString());
 
-    public static ItemStack makeTurtle(Item turtle, String upgrade) {
-        ItemStack stack = new ItemStack(turtle);
-        stack.getOrCreateTag().putString("RightUpgrade", upgrade);
-        return stack;
-    }
-
-    public static ItemStack makePocket(Item turtle, String upgrade) {
-        ItemStack stack = new ItemStack(turtle);
-        stack.getOrCreateTag().putString("Upgrade", upgrade);
-        return stack;
+        return FingerprintUtil.hash(fingerprintKey);
     }
 
     //Gathers all items in handler and returns them
@@ -79,10 +41,10 @@ public class ItemUtil {
     }
 
     public static ResourceLocation getRegistryKey(Item item) {
-        return ForgeRegistries.ITEMS.getKey(item);
+        return BuiltInRegistries.ITEM.getKey(item);
     }
 
     public static ResourceLocation getRegistryKey(ItemStack item) {
-        return ForgeRegistries.ITEMS.getKey(item.getItem());
+        return BuiltInRegistries.ITEM.getKey(item.copy().getItem());
     }
 }

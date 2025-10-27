@@ -4,8 +4,8 @@ import de.srendi.advancedperipherals.common.addons.computercraft.operations.Simp
 import de.srendi.advancedperipherals.common.addons.computercraft.operations.SingleOperation;
 import de.srendi.advancedperipherals.common.addons.computercraft.operations.SphereOperation;
 import net.minecraft.FieldsAreNonnullByDefault;
-import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.fml.config.ModConfig;
+import net.neoforged.fml.config.ModConfig;
+import net.neoforged.neoforge.common.ModConfigSpec;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -17,96 +17,96 @@ import java.util.regex.Pattern;
 public class PeripheralsConfig implements IAPConfig {
 
     // Player Detector
-    public final ForgeConfigSpec.IntValue playerDetMaxRange;
-    public final ForgeConfigSpec.BooleanValue playerSpy;
-    public final ForgeConfigSpec.BooleanValue morePlayerInformation;
-    public final ForgeConfigSpec.BooleanValue enablePlayerDetector;
-    public final ForgeConfigSpec.BooleanValue playerDetMultiDimensional;
-    public final ForgeConfigSpec.BooleanValue playerSpyRandError;
-    public final ForgeConfigSpec.IntValue playerSpyRandErrorAmount;
-    public final ForgeConfigSpec.IntValue playerSpyPreciseMaxRange;
+    public final ModConfigSpec.IntValue playerDetMaxRange;
+    public final ModConfigSpec.BooleanValue playerSpy;
+    public final ModConfigSpec.BooleanValue morePlayerInformation;
+    public final ModConfigSpec.BooleanValue enablePlayerDetector;
+    public final ModConfigSpec.BooleanValue playerDetMultiDimensional;
+    public final ModConfigSpec.BooleanValue playerSpyRandError;
+    public final ModConfigSpec.IntValue playerSpyRandErrorAmount;
+    public final ModConfigSpec.IntValue playerSpyPreciseMaxRange;
 
     // Energy Detector
-    public final ForgeConfigSpec.IntValue energyDetectorMaxFlow;
-    public final ForgeConfigSpec.BooleanValue enableEnergyDetector;
+    public final ModConfigSpec.IntValue energyDetectorMaxFlow;
+    public final ModConfigSpec.BooleanValue enableEnergyDetector;
 
     // Fluid Detector
-    public final ForgeConfigSpec.IntValue fluidDetectorMaxFlow;
-    public final ForgeConfigSpec.BooleanValue enableFluidDetector;
+    public final ModConfigSpec.IntValue fluidDetectorMaxFlow;
+    public final ModConfigSpec.BooleanValue enableFluidDetector;
 
     // Gas Detector
-    public final ForgeConfigSpec.IntValue gasDetectorMaxFlow;
-    public final ForgeConfigSpec.BooleanValue enableGasDetector;
+    public final ModConfigSpec.IntValue gasDetectorMaxFlow;
+    public final ModConfigSpec.BooleanValue enableGasDetector;
 
     // NBT Storage
-    public final ForgeConfigSpec.IntValue nbtStorageMaxSize;
-    public final ForgeConfigSpec.BooleanValue enableNBTStorage;
+    public final ModConfigSpec.IntValue nbtStorageMaxSize;
+    public final ModConfigSpec.BooleanValue enableNBTStorage;
 
     // Chunky turtle
-    public final ForgeConfigSpec.IntValue chunkLoadValidTime;
+    public final ModConfigSpec.IntValue chunkLoadValidTime;
 
-    public final ForgeConfigSpec.IntValue chunkyTurtleRadius;
-    public final ForgeConfigSpec.BooleanValue enableChunkyTurtle;
+    public final ModConfigSpec.IntValue chunkyTurtleRadius;
+    public final ModConfigSpec.BooleanValue enableChunkyTurtle;
 
     // Chat box
-    public final ForgeConfigSpec.BooleanValue enableChatBox;
-    public final ForgeConfigSpec.ConfigValue<String> defaultChatBoxPrefix;
-    public final ForgeConfigSpec.IntValue chatBoxMaxRange;
-    public final ForgeConfigSpec.BooleanValue chatBoxMultiDimensional;
-    public final ForgeConfigSpec.BooleanValue chatBoxBroadcast;
-    public final ForgeConfigSpec.BooleanValue chatBoxPreventRunCommand;
-    public final ForgeConfigSpec.BooleanValue chatBoxWrapCommand;
-    public final ForgeConfigSpec.ConfigValue<List<? extends String>> chatBoxBannedCommands;
+    public final ModConfigSpec.BooleanValue enableChatBox;
+    public final ModConfigSpec.ConfigValue<String> defaultChatBoxPrefix;
+    public final ModConfigSpec.IntValue chatBoxMaxRange;
+    public final ModConfigSpec.BooleanValue chatBoxMultiDimensional;
+    public final ModConfigSpec.BooleanValue chatBoxBroadcast;
+    public final ModConfigSpec.BooleanValue chatBoxPreventRunCommand;
+    public final ModConfigSpec.BooleanValue chatBoxWrapCommand;
+    public final ModConfigSpec.ConfigValue<List<? extends String>> chatBoxBannedCommands;
     private List<Predicate<String>> chatBoxCommandFilters = null;
 
     // ME Bridge
-    public final ForgeConfigSpec.BooleanValue enableMEBridge;
-    public final ForgeConfigSpec.IntValue meConsumption;
+    public final ModConfigSpec.BooleanValue enableMEBridge;
+    public final ModConfigSpec.IntValue meConsumption;
 
     // Rs Bridge
-    public final ForgeConfigSpec.BooleanValue enableRSBridge;
-    public final ForgeConfigSpec.IntValue rsConsumption;
+    public final ModConfigSpec.BooleanValue enableRSBridge;
+    public final ModConfigSpec.IntValue rsConsumption;
 
     // Environment Detector
-    public final ForgeConfigSpec.BooleanValue enableEnvironmentDetector;
+    public final ModConfigSpec.BooleanValue enableEnvironmentDetector;
 
     // Smart glasses
-    public final ForgeConfigSpec.BooleanValue enableSmartGlasses;
+    public final ModConfigSpec.BooleanValue enableSmartGlasses;
 
     // Inventory Manager
-    public final ForgeConfigSpec.BooleanValue enableInventoryManager;
+    public final ModConfigSpec.BooleanValue enableInventoryManager;
 
     // Redstone Integrator
-    public final ForgeConfigSpec.BooleanValue enableRedstoneIntegrator;
+    public final ModConfigSpec.BooleanValue enableRedstoneIntegrator;
 
     // Block reader
-    public final ForgeConfigSpec.BooleanValue enableBlockReader;
+    public final ModConfigSpec.BooleanValue enableBlockReader;
 
     // Geo Scanner
-    public final ForgeConfigSpec.BooleanValue enableGeoScanner;
+    public final ModConfigSpec.BooleanValue enableGeoScanner;
 
     // Colony integrator
-    public final ForgeConfigSpec.BooleanValue enableColonyIntegrator;
+    public final ModConfigSpec.BooleanValue enableColonyIntegrator;
 
     // Compass turtle
-    public final ForgeConfigSpec.BooleanValue enableCompassTurtle;
-    public final ForgeConfigSpec.IntValue compassAccurePlaceRadius;
-    public final ForgeConfigSpec.IntValue compassAccurePlaceFreeRadius;
+    public final ModConfigSpec.BooleanValue enableCompassTurtle;
+    public final ModConfigSpec.IntValue compassAccurePlaceRadius;
+    public final ModConfigSpec.IntValue compassAccurePlaceFreeRadius;
 
     // Distance Detector
-    public final ForgeConfigSpec.BooleanValue enableDistanceDetector;
-    public final ForgeConfigSpec.DoubleValue distanceDetectorRange;
-    public final ForgeConfigSpec.IntValue distanceDetectorUpdateRate;
+    public final ModConfigSpec.BooleanValue enableDistanceDetector;
+    public final ModConfigSpec.DoubleValue distanceDetectorRange;
+    public final ModConfigSpec.IntValue distanceDetectorUpdateRate;
 
     // Powered Peripherals
-    public final ForgeConfigSpec.BooleanValue enablePoweredPeripherals;
-    public final ForgeConfigSpec.BooleanValue disablePocketFuelConsumption;
-    public final ForgeConfigSpec.IntValue poweredPeripheralMaxEnergyStorage;
-    private final ForgeConfigSpec configSpec;
+    public final ModConfigSpec.BooleanValue enablePoweredPeripherals;
+    public final ModConfigSpec.BooleanValue disablePocketFuelConsumption;
+    public final ModConfigSpec.IntValue poweredPeripheralMaxEnergyStorage;
+    private final ModConfigSpec configSpec;
 
     // Saddle turtle (it's tamed)
-    public final ForgeConfigSpec.BooleanValue enableSaddleTurtle;
-    public final ForgeConfigSpec.BooleanValue allowSaddleTurtleCapturePlayer;
+    public final ModConfigSpec.BooleanValue enableSaddleTurtle;
+    public final ModConfigSpec.BooleanValue allowSaddleTurtleCapturePlayer;
 
     private static final List<String> chatBoxDefaultBannedCommands = Arrays.asList(
         "/execute",
@@ -129,7 +129,7 @@ public class PeripheralsConfig implements IAPConfig {
     );
 
     public PeripheralsConfig() {
-        ForgeConfigSpec.Builder builder = new ForgeConfigSpec.Builder();
+        ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
 
         builder.comment("Peripherals config").push("Peripherals");
 
@@ -257,7 +257,7 @@ public class PeripheralsConfig implements IAPConfig {
     }
 
     @Override
-    public ForgeConfigSpec getConfigSpec() {
+    public ModConfigSpec getConfigSpec() {
         return configSpec;
     }
 

@@ -2,7 +2,7 @@ package de.srendi.advancedperipherals.common.data;
 
 import de.srendi.advancedperipherals.common.setup.APRegistration;
 import net.minecraft.world.level.block.Block;
-import net.minecraftforge.registries.RegistryObject;
+import net.neoforged.registries.RegistryObject;
 import org.jetbrains.annotations.NotNull;
 
 public class BlockLootTables extends net.minecraft.data.loot.BlockLoot {

@@ -1,12 +1,12 @@
 package de.srendi.advancedperipherals.common.network.toserver;
 
 import de.srendi.advancedperipherals.common.entity.TurtleSeatEntity;
-import de.srendi.advancedperipherals.common.network.base.IPacket;
+import de.srendi.advancedperipherals.common.network.IAPPacket;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraftforge.network.NetworkEvent;
+import net.neoforged.network.NetworkEvent;
 
-public class SaddleTurtleControlPacket implements IPacket {
+public class SaddleTurtleControlPacket implements IAPPacket {
 
     public final boolean forward;
     public final boolean back;

@@ -7,10 +7,11 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.world.Container;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.EntityBlock;
@@ -21,9 +22,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.material.Material;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraftforge.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -32,7 +31,7 @@ public abstract class BaseBlockEntityBlock extends BaseBlock implements EntityBl
     private final boolean belongToTickingEntity;
 
     public BaseBlockEntityBlock(boolean belongToTickingEntity) {
-        this(belongToTickingEntity, Properties.of(Material.METAL).strength(1, 5).sound(SoundType.METAL).noOcclusion().requiresCorrectToolForDrops());
+        this(belongToTickingEntity, Properties.of().sound(SoundType.METAL).mapColor(DyeColor.GRAY).strength(1, 5).sound(SoundType.METAL).noOcclusion().requiresCorrectToolForDrops());
     }
 
     public BaseBlockEntityBlock(boolean belongToTickingEntity, Properties properties) {
@@ -42,22 +41,16 @@ public abstract class BaseBlockEntityBlock extends BaseBlock implements EntityBl
 
     @NotNull
     @Override
-    public abstract BlockEntity newBlockEntity(@NotNull BlockPos pos, @NotNull BlockState state);
-
-    @NotNull
-    @Override
-    public InteractionResult use(@NotNull BlockState state, Level levelIn, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand handIn, @NotNull BlockHitResult hit) {
-        if (levelIn.isClientSide) return InteractionResult.SUCCESS;
+    public ItemInteractionResult useItemOn(@NotNull ItemStack stack, @NotNull BlockState state, Level levelIn, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand handIn, @NotNull BlockHitResult hit) {
+        if (levelIn.isClientSide) return ItemInteractionResult.SUCCESS;
         BlockEntity tileEntity = levelIn.getBlockEntity(pos);
-        if (tileEntity != null && !(tileEntity instanceof IInventoryMenuBlock<?>))
-            return InteractionResult.PASS;
-
+        if (tileEntity != null && !(tileEntity instanceof IInventoryBlock)) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
         MenuProvider namedContainerProvider = this.getMenuProvider(state, levelIn, pos);
         if (namedContainerProvider != null) {
-            if (!(player instanceof ServerPlayer serverPlayerEntity)) return InteractionResult.PASS;
-            NetworkHooks.openScreen(serverPlayerEntity, namedContainerProvider, pos);
+            if (!(player instanceof ServerPlayer serverPlayerEntity)) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+            serverPlayerEntity.openMenu(namedContainerProvider, pos);
         }
-        return InteractionResult.SUCCESS;
+        return ItemInteractionResult.SUCCESS;
     }
 
     @Override
@@ -75,8 +68,8 @@ public abstract class BaseBlockEntityBlock extends BaseBlock implements EntityBl
         if (worldIn.getBlockEntity(pos) == null)
             return;
         //Used for the lua function getName()
-        if (stack.hasCustomHoverName() && worldIn.getBlockEntity(pos) instanceof BaseContainerBlockEntity blockEntity) {
-            blockEntity.setCustomName(stack.getHoverName());
+        if (worldIn.getBlockEntity(pos) instanceof BaseContainerBlockEntity blockEntity) {
+            blockEntity.name = stack.getHoverName();
         }
     }
 
@@ -91,6 +84,8 @@ public abstract class BaseBlockEntityBlock extends BaseBlock implements EntityBl
         };
     }
 
+
+    @Deprecated
     @Nullable
     @Override
     public MenuProvider getMenuProvider(@NotNull BlockState pState, Level pLevel, @NotNull BlockPos pPos) {
@@ -99,8 +94,7 @@ public abstract class BaseBlockEntityBlock extends BaseBlock implements EntityBl
         return menuProvider;
     }
 
-    @NotNull
-    public RenderShape getRenderShape(@NotNull BlockState state) {
+    public @NotNull RenderShape getRenderShape(@NotNull BlockState state) {
         return RenderShape.MODEL;
     }
 }

@@ -51,7 +51,7 @@ public class CoordUtil {
 
     // To fix issue #439
     private static boolean isPlayerInBlockRange(@NotNull Vec3 pos, @NotNull Level world, @NotNull Player player, double range) {
-        if (range != -1 && player.getLevel() != world)
+        if (range != -1 && player.level() != world)
             return false;
 
         double x = player.getX(), y = player.getY(), ey = player.getEyeY(), z = player.getZ();
@@ -77,7 +77,7 @@ public class CoordUtil {
     }
 
     private static boolean isPlayerInBlockRangeXYZ(@NotNull Vec3 pos, @NotNull Level world, @NotNull Player player, double dx, double dy, double dz, int maxRange) {
-        if (maxRange != -1 && player.getLevel() != world)
+        if (maxRange != -1 && player.level() != world)
             return false;
 
         double x = player.getX(), y = player.getY(), ey = player.getEyeY(), z = player.getZ();
@@ -101,7 +101,7 @@ public class CoordUtil {
         // Use manhattan distance, not euclidean distance to keep same behavior than other `isInRange` functions
         if (maxRange != -1 && x + y + z > maxRange)
             return false;
-        return world.getNearbyPlayers(TargetingConditions.forNonCombat(), null, new AABB(firstPos, secondPos)).contains(player);
+        return world.getNearbyPlayers(TargetingConditions.forNonCombat(), null, AABB.encapsulatingFullBlocks(firstPos, secondPos)).contains(player);
     }
 
     public static Direction getDirection(FrontAndTop orientation, String computerSide) throws LuaException {

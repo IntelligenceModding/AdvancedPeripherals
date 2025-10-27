@@ -7,8 +7,8 @@ import de.srendi.advancedperipherals.common.util.RegistryUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.client.gui.overlay.ForgeGui;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.neoforged.client.gui.overlay.ForgeGui;
+import net.neoforged.registries.ForgeRegistries;
 
 import java.util.List;
 

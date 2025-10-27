@@ -1,47 +1,51 @@
 package de.srendi.advancedperipherals.common.util.proxy;
 
 import mekanism.api.Action;
+import mekanism.api.chemical.Chemical;
+import mekanism.api.chemical.ChemicalStack;
+import mekanism.api.chemical.IChemicalHandler;
+import mekanism.api.chemical.IChemicalTank;
 import mekanism.api.chemical.gas.GasStack;
 import mekanism.api.chemical.gas.IGasHandler;
 import org.jetbrains.annotations.NotNull;
 
-public class ZeroGasTank implements IGasHandler {
+public class ZeroGasTank implements IChemicalHandler {
 
     @Override
-    public int getTanks() {
+    public int getChemicalTanks() {
         return 0;
     }
 
     @NotNull
     @Override
-    public GasStack getChemicalInTank(int tank) {
-        return GasStack.EMPTY;
+    public ChemicalStack getChemicalInTank(int tank) {
+        return ChemicalStack.EMPTY;
     }
 
     @Override
-    public void setChemicalInTank(int tank, GasStack stack) {
+    public void setChemicalInTank(int tank, ChemicalStack stack) {
 
     }
 
     @Override
-    public long getTankCapacity(int tank) {
+    public long getChemicalTankCapacity(int tank) {
         return 0;
     }
 
     @Override
-    public boolean isValid(int tank, @NotNull GasStack stack) {
+    public boolean isValid(int tank, @NotNull ChemicalStack stack) {
         return false;
     }
 
     @NotNull
     @Override
-    public GasStack insertChemical(int tank, @NotNull GasStack stack, @NotNull Action action) {
-        return GasStack.EMPTY;
+    public ChemicalStack insertChemical(int tank, @NotNull ChemicalStack stack, @NotNull Action action) {
+        return ChemicalStack.EMPTY;
     }
 
     @NotNull
     @Override
-    public GasStack extractChemical(int tank, long amount, @NotNull Action action) {
-        return GasStack.EMPTY;
+    public ChemicalStack extractChemical(int tank, long amount, @NotNull Action action) {
+        return ChemicalStack.EMPTY;
     }
 }

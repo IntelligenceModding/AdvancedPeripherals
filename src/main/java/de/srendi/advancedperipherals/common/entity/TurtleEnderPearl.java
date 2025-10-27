@@ -12,19 +12,21 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.projectile.ThrowableProjectile;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.portal.DimensionTransition;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
 
 import java.util.List;
 import java.util.function.Consumer;
@@ -65,15 +67,10 @@ public class TurtleEnderPearl extends ThrowableProjectile {
 
     @Nullable
     private ServerComputer getServerComputer() {
-        if (this.turtle instanceof TurtleBrain turtle) {
-            return turtle.getOwner().createServerComputer();
+        if (this.turtle instanceof TurtleBrain brain) {
+            return brain.getOwner().createServerComputer();
         }
         return null;
-    }
-
-    @Override
-    public Packet<?> getAddEntityPacket() {
-        return new ClientboundAddEntityPacket(this);
     }
 
     @Override
@@ -83,11 +80,13 @@ public class TurtleEnderPearl extends ThrowableProjectile {
     public void addAdditionalSaveData(CompoundTag storage) {}
 
     @Override
-    protected void defineSynchedData() {}
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+
+    }
 
     @Override
     public void tick() {
-        if (this.level.isClientSide) {
+        if (this.level().isClientSide) {
             super.tick();
             return;
         }
@@ -129,6 +128,7 @@ public class TurtleEnderPearl extends ThrowableProjectile {
             return entity.turtle != null && super.shouldRender(entity, view, x, y, z);
         }
 
+        @NotNull
         @Override
         public ResourceLocation getTextureLocation(TurtleEnderPearl entity) {
             return null;
@@ -136,7 +136,7 @@ public class TurtleEnderPearl extends ThrowableProjectile {
     }
 
     @Override
-    public void remove(Entity.RemovalReason reason) {
+    public void remove(Entity.@NotNull RemovalReason reason) {
         super.remove(reason);
         if (reason.shouldDestroy()) {
             if (this.callback != null) {
@@ -146,7 +146,7 @@ public class TurtleEnderPearl extends ThrowableProjectile {
     }
 
     @Override
-    public void restoreFrom(Entity entity) {
+    public void restoreFrom(@NotNull Entity entity) {
         super.restoreFrom(entity);
         if (!(entity instanceof TurtleEnderPearl oldPearl)) {
             return;
@@ -158,35 +158,37 @@ public class TurtleEnderPearl extends ThrowableProjectile {
     }
 
     @Override
-    public boolean canChangeDimensions() {
-        return !this.changedDim && super.canChangeDimensions();
+    public boolean canChangeDimensions(@NotNull Level oldLevel, @NotNull Level newLevel) {
+        return !this.changedDim && super.canChangeDimensions(oldLevel, newLevel);
     }
 
+    @Nullable
     @Override
-    public Entity changeDimension(ServerLevel newWorld) {
+    public Entity changeDimension(@NotNull DimensionTransition transition) {
         if (this.changedDim) {
             return null;
         }
-        Entity newEntity = super.changeDimension(newWorld);
+        ServerLevel newLevel = transition.newLevel();
+        Entity newEntity = super.changeDimension(transition);
         this.changedDim = newEntity != null;
         if (newEntity instanceof TurtleEnderPearl newPearl) {
-            AdvancedPeripherals.debug("Turtle Ender Pearl crossed to dimension " + newWorld.dimension().toString());
+            AdvancedPeripherals.debug("Turtle Ender Pearl crossed to dimension " + newLevel.dimension());
             newPearl.spawnPos = newPearl.blockPosition();
-            ChunkManager.get(newWorld).addForceChunk(newWorld, newPearl.getUUID(), newPearl.chunkPosition());
-            if (newWorld.dimension() == Level.END) {
+            ChunkManager.get(newLevel).addForceChunk(newLevel, newPearl.getUUID(), newPearl.chunkPosition());
+            if (newLevel.dimension() == Level.END) {
                 newPearl.life = 0;
                 // do not spawn turtle on the obsidian platform
-                final int maxHeight = newWorld.getMaxBuildHeight();
+                final int maxHeight = newLevel.getMaxBuildHeight();
                 int lowestY = maxHeight;
                 for (; lowestY > newPearl.spawnPos.getY() + 2; lowestY--) {
-                    if (!newWorld.getBlockState(newPearl.spawnPos.atY(lowestY - 1)).isAir()) {
+                    if (!newLevel.getBlockState(newPearl.spawnPos.atY(lowestY - 1)).isAir()) {
                         break;
                     }
                 }
                 AdvancedPeripherals.debug("Turtle Ender Pearl lowest Y: " + lowestY);
                 for (int y = lowestY; y <= maxHeight; y++) {
                     BlockPos pos = newPearl.spawnPos.atY(y);
-                    List<TurtleEnderPearl> pearlList = newWorld.<TurtleEnderPearl>getEntities(APEntities.TURTLE_ENDER_PEARL.get(), new AABB(pos), entity -> true);
+                    List<TurtleEnderPearl> pearlList = newLevel.getEntities(APEntities.TURTLE_ENDER_PEARL.get(), new AABB(pos), entity -> true);
                     if (pearlList.isEmpty()) {
                         AdvancedPeripherals.debug("Turtle Ender Pearl moved to " + pos);
                         newPearl.moveTo(Vec3.atCenterOf(pos));

@@ -1,8 +1,8 @@
 package de.srendi.advancedperipherals.common.container.base;
 
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.SlotItemHandler;
+import net.neoforged.items.IItemHandler;
+import net.neoforged.items.SlotItemHandler;
 import org.jetbrains.annotations.NotNull;
 
 public class SlotInputHandler extends SlotItemHandler {

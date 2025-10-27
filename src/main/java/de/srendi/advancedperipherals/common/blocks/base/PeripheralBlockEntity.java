@@ -1,15 +1,13 @@
 package de.srendi.advancedperipherals.common.blocks.base;
 
 import dan200.computercraft.api.peripheral.IComputerAccess;
-import dan200.computercraft.core.computer.ComputerSide;
-import dan200.computercraft.shared.Capabilities;
-import de.srendi.advancedperipherals.AdvancedPeripherals;
-import de.srendi.advancedperipherals.common.util.CoordUtil;
+import dan200.computercraft.api.peripheral.IPeripheral;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
+import de.srendi.advancedperipherals.lib.peripherals.DisabledPeripheral;
 import de.srendi.advancedperipherals.lib.peripherals.IPeripheralTileEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.FrontAndTop;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -20,100 +18,96 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.fluids.capability.templates.FluidTank;
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.wrapper.SidedInvWrapper;
+import net.neoforged.neoforge.fluids.capability.IFluidHandler;
+import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
+import net.neoforged.neoforge.items.IItemHandler;
+import net.neoforged.neoforge.items.wrapper.SidedInvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
+import java.util.Optional;
 
-public abstract class PeripheralBlockEntity<T extends BasePeripheral<?>> extends BaseContainerBlockEntity implements WorldlyContainer, MenuProvider, IPeripheralTileEntity {
-
+public abstract class PeripheralBlockEntity<T extends BasePeripheral<?>> extends BaseContainerBlockEntity implements WorldlyContainer, MenuProvider, IPeripheralTileEntity, ICapabilityProvider {
     private static final String PERIPHERAL_SETTINGS_KEY = "peripheralSettings";
     protected CompoundTag peripheralSettings = new CompoundTag();
     protected NonNullList<ItemStack> items;
-    private LazyOptional<? extends IItemHandler> handler = LazyOptional.empty();
-    private LazyOptional<? extends IFluidHandler> fluidHandler = LazyOptional.empty();
-    private LazyOptional<T> peripheralCap = LazyOptional.empty();
+    @Nullable
+    private IItemHandler itemHandler = null;
+    private IFluidHandler fluidHandler = null;
+    private IPeripheral peripheral = null;
 
     protected PeripheralBlockEntity(BlockEntityType<?> tileEntityTypeIn, BlockPos pos, BlockState state) {
         super(tileEntityTypeIn, pos, state);
-        if (this instanceof IInventoryBlock inventoryBlock) {
+        if (this instanceof IInventoryMenuBlock<?> inventoryBlock) {
             items = NonNullList.withSize(inventoryBlock.getInvSize(), ItemStack.EMPTY);
         } else {
             items = NonNullList.withSize(0, ItemStack.EMPTY);
         }
     }
 
-    @NotNull
+    @Nullable
     @Override
-    public <U> LazyOptional<U> getCapability(@NotNull Capability<U> cap, @Nullable Direction direction) {
-        if (cap == Capabilities.CAPABILITY_PERIPHERAL) {
-            return this.getLazyPeripheral().cast();
-        } else if (cap == ForgeCapabilities.ITEM_HANDLER) {
-            if (!remove && direction != null && this instanceof IInventoryBlock) {
-                if (!handler.isPresent()) {
-                    handler = LazyOptional.of(() -> new SidedInvWrapper(this, Direction.NORTH));
-                }
-                return handler.cast();
-            }
-        } else if (cap == ForgeCapabilities.FLUID_HANDLER) {
-            if (!remove && direction != null) {
-                if (!fluidHandler.isPresent()) {
-                    fluidHandler = LazyOptional.of(() -> new FluidTank(0));
-                }
-                return fluidHandler.cast();
-            }
+    public IPeripheral createPeripheralCap(@Nullable Direction side) {
+        // Perform later peripheral creation, because creating peripheral
+        // on init of tile entity cause some infinity loop, if peripheral
+        // are depend on tile entity data
+        if (this.peripheral == null) {
+            // Recreate peripheral to allow CC: Tweaked correctly handle
+            // peripheral update logic, so new peripheral and old one will be
+            // different
+            this.peripheral = this.createPeripheralDisable();
         }
-        return super.getCapability(cap, direction);
+        return this.peripheral;
     }
 
+    @Nullable
     @Override
-    public void invalidateCaps() {
-        super.invalidateCaps();
-        peripheralCap.invalidate();
-        handler.invalidate();
-        fluidHandler.invalidate();
+    public IFluidHandler createFluidHandlerCap(@Nullable Direction side) {
+        if (this.fluidHandler == null) {
+            this.fluidHandler = new FluidTank(0);
+        }
+        return this.fluidHandler;
+    }
+
+    @Nullable
+    @Override
+    public IItemHandler createItemHandlerCap(@Nullable Direction side) {
+        if (this.itemHandler == null) {
+            this.itemHandler = new SidedInvWrapper(this, null);
+        }
+        return this.itemHandler;
     }
 
     @NotNull
     protected abstract T createPeripheral();
 
-    public Iterable<IComputerAccess> getConnectedComputers() {
-        return this.getLazyPeripheral().map(BasePeripheral::getConnectedComputers).orElse(Collections.emptyList());
+    protected IPeripheral createPeripheralDisable() {
+        T peripheral = this.createPeripheral();
+        if (peripheral.isEnabled()) {
+            return peripheral;
+        }
+        return new DisabledPeripheral(peripheral);
     }
 
-    public LazyOptional<T> getLazyPeripheral() {
-        // Perform later peripheral creation, because creating peripheral
-        // on init of tile entity cause some infinity loop, if peripheral
-        // are depend on tile entity data
-        if (!this.peripheralCap.isPresent()) {
-            // Recreate peripheral to allow CC: Tweaked correctly handle
-            // peripheral update logic, so new peripheral and old one will be
-            // different
-            final T peripheral = createPeripheral();
-            if (!peripheral.isEnabled()) {
-                AdvancedPeripherals.debug(peripheral.getType() + " is disabled, you can enable it in the Configuration.");
-                return LazyOptional.empty();
-            }
-            this.peripheralCap = LazyOptional.of(() -> peripheral);
-        }
-        return this.peripheralCap;
+    public Iterable<IComputerAccess> getConnectedComputers() {
+        return this.getPeripheralOptional().map(BasePeripheral::getConnectedComputers).orElse(Collections.emptyList());
     }
 
     @Nullable
     public T getPeripheral() {
-        return this.getLazyPeripheral().orElse(null);
+        IPeripheral peripheral = this.createPeripheralCap(null);
+        if (peripheral == null || peripheral instanceof DisabledPeripheral) {
+            return null;
+        }
+        return (T) peripheral;
+    }
+
+    public Optional<T> getPeripheralOptional() {
+        return Optional.ofNullable(this.getPeripheral());
     }
 
     /*@Override
@@ -122,22 +116,19 @@ public abstract class PeripheralBlockEntity<T extends BasePeripheral<?>> extends
     }*/
 
     @Override
-    public void saveAdditional(@NotNull CompoundTag compound) {
-        super.saveAdditional(compound);
-        ContainerHelper.saveAllItems(compound, items);
-        if (!peripheralSettings.isEmpty()) {
-            compound.put(PERIPHERAL_SETTINGS_KEY, peripheralSettings);
-        }
+    protected void saveAdditional(@NotNull CompoundTag tag, @NotNull HolderLookup.Provider provider) {
+        super.saveAdditional(tag, provider);
+        ContainerHelper.saveAllItems(tag, items, provider);
+        if (!peripheralSettings.isEmpty()) tag.put(PERIPHERAL_SETTINGS_KEY, peripheralSettings);
     }
 
     @Override
-    public void load(@NotNull CompoundTag compound) {
-        ContainerHelper.loadAllItems(compound, items);
-        peripheralSettings = compound.getCompound(PERIPHERAL_SETTINGS_KEY);
-        super.load(compound);
+    protected void loadAdditional(@NotNull CompoundTag tag, @NotNull HolderLookup.Provider provider) {
+        ContainerHelper.loadAllItems(tag, items, provider);
+        peripheralSettings = tag.getCompound(PERIPHERAL_SETTINGS_KEY);
+        super.loadAdditional(tag, provider);
     }
 
-    @NotNull
     @Override
     protected Component getDefaultName() {
         return this instanceof IInventoryMenuBlock<?> inventoryBlock ? inventoryBlock.getDisplayName() : null;
@@ -149,7 +140,6 @@ public abstract class PeripheralBlockEntity<T extends BasePeripheral<?>> extends
         return createMenu(id, inventory);
     }
 
-    @NotNull
     @Override
     protected AbstractContainerMenu createMenu(int id, @NotNull Inventory player) {
         return this instanceof IInventoryMenuBlock<?> inventoryBlock ? inventoryBlock.createContainer(id, player, worldPosition, level) : null;
@@ -213,6 +203,17 @@ public abstract class PeripheralBlockEntity<T extends BasePeripheral<?>> extends
         }
     }
 
+    @NotNull
+    @Override
+    public NonNullList<ItemStack> getItems() {
+        return items;
+    }
+
+    @Override
+    public void setItems(@NotNull NonNullList<ItemStack> items) {
+        this.items = items;
+    }
+
     @Override
     public boolean stillValid(@NotNull Player player) {
         return true;
@@ -230,23 +231,5 @@ public abstract class PeripheralBlockEntity<T extends BasePeripheral<?>> extends
     @Override
     public void markSettingsChanged() {
         this.setChanged();
-    }
-
-    public void sendUpdate() {
-        this.setChanged();
-        Level level = this.getLevel();
-        if (level != null) {
-            level.sendBlockUpdated(this.getBlockPos(), this.getBlockState(), this.getBlockState(), 11);
-        }
-    }
-
-    public ComputerSide getComputerSide(Direction direction) {
-        FrontAndTop orientation = getBlockState().getValue(BaseBlock.ORIENTATION);
-        return CoordUtil.getComputerSide(orientation, direction);
-    }
-
-    @Override
-    public <U extends BlockEntity> void handleTick(Level level, BlockState state, BlockEntityType<U> type) {
-        this.getLazyPeripheral().ifPresent(BasePeripheral<?>::update);
     }
 }

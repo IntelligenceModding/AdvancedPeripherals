@@ -1,18 +1,18 @@
 package de.srendi.advancedperipherals.common.network.toserver;
 
 import de.srendi.advancedperipherals.common.items.SmartGlassesItem;
-import de.srendi.advancedperipherals.common.network.base.IPacket;
+import de.srendi.advancedperipherals.common.network.IAPPacket;
 import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesComputer;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.network.NetworkEvent;
-import net.minecraftforge.server.ServerLifecycleHooks;
+import net.neoforged.network.NetworkEvent;
+import net.neoforged.server.ServerLifecycleHooks;
 
 import java.util.UUID;
 
-public class GlassesHotkeyPacket implements IPacket {
+public class GlassesHotkeyPacket implements IAPPacket {
 
     private final UUID player;
     private final String keyBind;

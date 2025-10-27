@@ -5,19 +5,16 @@ import dan200.computercraft.api.peripheral.IComputerAccess;
 import dan200.computercraft.api.peripheral.IPeripheral;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.IPeripheralOwner;
 import de.srendi.advancedperipherals.common.util.CoordUtil;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.ItemHandlerHelper;
-import net.minecraftforge.items.wrapper.InvWrapper;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.items.IItemHandler;
+import net.neoforged.neoforge.items.ItemHandlerHelper;
+import net.neoforged.neoforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -28,16 +25,18 @@ public class InventoryUtil {
     private InventoryUtil() {
     }
 
-    public static IItemHandler extractHandler(@Nullable Object object) {
-        if (object instanceof ICapabilityProvider capabilityProvider) {
-            LazyOptional<IItemHandler> cap = capabilityProvider.getCapability(ForgeCapabilities.ITEM_HANDLER);
-            if (cap.isPresent())
-                return cap.orElseThrow(NullPointerException::new);
-        }
+    public static IItemHandler extractHandler(@Nullable Object object, @Nullable Level level, @Nullable BlockPos pos, @Nullable Direction direction) {
         if (object instanceof IItemHandler itemHandler)
             return itemHandler;
         if (object instanceof Container container)
             return new InvWrapper(container);
+        if (object instanceof BlockEntity blockEntity && level == null && pos == null) {
+            pos = blockEntity.getBlockPos();
+            level = blockEntity.getLevel();
+        }
+        if (level != null && pos != null) {
+            return level.getCapability(Capabilities.ItemHandler.BLOCK, pos, direction != null ? direction : Direction.NORTH);
+        }
         return null;
     }
 
@@ -76,10 +75,10 @@ public class InventoryUtil {
                     ItemStack extracted = inventoryFrom.extractItem(i, amount - transferableAmount, true);
                     if (extracted.isEmpty())
                         continue;
-                    ItemStack inserted = storageSystemHandler.insertItem(toSlot, extracted, false);
+                    ItemStack remaining = storageSystemHandler.insertItem(toSlot, extracted, false);
 
-                    amount -= inserted.getCount();
-                    transferableAmount += inventoryFrom.extractItem(i, extracted.getCount() - inserted.getCount(), false).getCount();
+                    amount -= remaining.getCount();
+                    transferableAmount += inventoryFrom.extractItem(i, extracted.getCount() - remaining.getCount(), false).getCount();
                     if (transferableAmount >= filter.getCount())
                         break;
                 }
@@ -107,49 +106,13 @@ public class InventoryUtil {
         return transferableAmount;
     }
 
-    public static int moveFluid(IFluidHandler inventoryFrom, IFluidHandler inventoryTo, FluidFilter filter) {
-        if (inventoryFrom == null) return 0;
-
-        int amount = filter.getCount();
-        int transferableAmount = 0;
-
-        // The logic changes with storage systems since these systems do not have slots
-        if (inventoryFrom instanceof IStorageSystemFluidHandler storageSystemHandler) {
-            FluidStack extracted = storageSystemHandler.drain(filter, IFluidHandler.FluidAction.SIMULATE);
-            int inserted = inventoryTo.fill(extracted, IFluidHandler.FluidAction.EXECUTE);
-
-            transferableAmount += storageSystemHandler.drain(filter.setCount(inserted), IFluidHandler.FluidAction.EXECUTE).getAmount();
-
-            return transferableAmount;
-        }
-
-        if (inventoryTo instanceof IStorageSystemFluidHandler storageSystemHandler) {
-            if (filter.test(inventoryFrom.getFluidInTank(0))) {
-                FluidStack toExtract = inventoryFrom.getFluidInTank(0).copy();
-                toExtract.setAmount(amount);
-                FluidStack extracted = inventoryFrom.drain(toExtract, IFluidHandler.FluidAction.SIMULATE);
-                if (extracted.isEmpty())
-                    return 0;
-                int inserted = storageSystemHandler.fill(extracted, IFluidHandler.FluidAction.EXECUTE);
-
-                extracted.setAmount(inserted);
-                transferableAmount += inventoryFrom.drain(extracted, IFluidHandler.FluidAction.EXECUTE).getAmount();
-            }
-
-            return transferableAmount;
-        }
-
-        return transferableAmount;
-    }
-
-
     @Nullable
     public static IItemHandler getHandlerFromName(@NotNull IComputerAccess access, String name) throws LuaException {
         IPeripheral location = access.getAvailablePeripheral(name);
         if (location == null)
             return null;
 
-        return extractHandler(location.getTarget());
+        return extractHandler(location.getTarget(), null, null, null);
     }
 
     @Nullable
@@ -157,10 +120,12 @@ public class InventoryUtil {
         Level level = owner.getLevel();
         Objects.requireNonNull(level);
         Direction relativeDirection = CoordUtil.getDirection(owner.getOrientation(), direction);
+        if (relativeDirection == null)
+            return null;
         BlockEntity target = level.getBlockEntity(owner.getPos().relative(relativeDirection));
         if (target == null)
             return null;
 
-        return extractHandler(target);
+        return extractHandler(target, level, target.getBlockPos(), relativeDirection.getOpposite());
     }
 }

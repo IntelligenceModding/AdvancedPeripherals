@@ -2,77 +2,80 @@ package de.srendi.advancedperipherals.common.util.inventory;
 
 import appeng.api.stacks.AEFluidKey;
 import appeng.api.stacks.GenericStack;
+import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
+import com.refinedmods.refinedstorage.common.support.resource.FluidResource;
+import com.refinedmods.refinedstorage.neoforge.support.resource.VariantUtil;
 import dan200.computercraft.api.lua.LuaException;
-import dan200.computercraft.core.apis.TableHelper;
+import dan200.computercraft.api.lua.LuaTable;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
+import de.srendi.advancedperipherals.common.addons.APAddon;
+import de.srendi.advancedperipherals.common.util.DataComponentUtil;
 import de.srendi.advancedperipherals.common.util.NBTUtil;
 import de.srendi.advancedperipherals.common.util.Pair;
-import de.srendi.advancedperipherals.common.util.RegistryUtil;
-import net.minecraft.core.Registry;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.core.component.PatchedDataComponentMap;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.registries.ForgeRegistries;
-
-import java.util.Map;
+import net.neoforged.neoforge.fluids.FluidStack;
 
 public class FluidFilter extends GenericFilter<FluidStack> {
 
+    public static final FluidFilter EMPTY = new FluidFilter();
+
     private Fluid fluid = Fluids.EMPTY;
     private TagKey<Fluid> tag = null;
-    private CompoundTag nbt = null;
-    private String nbtHash = null;
+    private Tag componentsAsNbt = null;
+    private PatchedDataComponentMap components;
     private int count = 1000;
     private String fingerprint = "";
 
     private FluidFilter() {
     }
 
-    public static Pair<FluidFilter, String> parse(Map<?, ?> item) {
-        FluidFilter fluidFilter = empty();
+    public static Pair<FluidFilter, String> parse(LuaTable<?, ?> item) {
         // If the map is empty, return a filter without any filters
         if (item.isEmpty())
-            return Pair.of(fluidFilter, null);
+            return Pair.of(EMPTY, null);
+
+        FluidFilter fluidFilter = createEmpty();
+
         if (item.containsKey("name")) {
             try {
-                String name = TableHelper.getStringField(item, "name");
+                String name = item.getString("name");
                 if (name.startsWith("#")) {
-                    fluidFilter.tag = TagKey.create(Registry.FLUID_REGISTRY, new ResourceLocation(name.substring(1)));
-                } else if ((fluidFilter.fluid = RegistryUtil.getRegistryEntry(name, ForgeRegistries.FLUIDS)) == null) {
+                    fluidFilter.tag = TagKey.create(Registries.FLUID, ResourceLocation.parse(name.substring(1)));
+                } else if ((fluidFilter.fluid = ItemUtil.getRegistryEntry(name, BuiltInRegistries.FLUID)) == null) {
                     return Pair.of(null, "FLUID_NOT_FOUND");
                 }
             } catch (LuaException luaException) {
                 return Pair.of(null, "NO_VALID_FLUID");
             }
         }
-        if (item.containsKey("nbtHash")) {
+        if (item.containsKey("components")) {
             try {
-                fluidFilter.nbtHash = TableHelper.getStringField(item, "nbtHash");
+                fluidFilter.componentsAsNbt = NBTUtil.fromText(item.getString( "components"));
             } catch (LuaException luaException) {
-                return Pair.of(null, "NO_VALID_NBT_HASH");
-            }
-        }
-        if (item.containsKey("nbt")) {
-            try {
-                fluidFilter.nbt = NBTUtil.fromText(TableHelper.getStringField(item, "nbt"));
-            } catch (LuaException luaException) {
-                return Pair.of(null, "NO_VALID_NBT");
+                try {
+                    fluidFilter.componentsAsNbt = NBTUtil.fromText(item.getTable("components").toString());
+                } catch (LuaException e) {
+                    return Pair.of(null, "NO_VALID_COMPONENTS");
+                }
             }
         }
         if (item.containsKey("fingerprint")) {
             try {
-                fluidFilter.fingerprint = TableHelper.getStringField(item, "fingerprint");
+                fluidFilter.fingerprint = item.getString("fingerprint");
             } catch (LuaException luaException) {
                 return Pair.of(null, "NO_VALID_FINGERPRINT");
             }
         }
         if (item.containsKey("count")) {
             try {
-                fluidFilter.count = TableHelper.getIntField(item, "count");
+                fluidFilter.count = item.getInt("count");
             } catch (LuaException luaException) {
                 return Pair.of(null, "NO_VALID_COUNT");
             }
@@ -83,37 +86,54 @@ public class FluidFilter extends GenericFilter<FluidStack> {
     }
 
     public static FluidFilter fromStack(FluidStack stack) {
-        FluidFilter filter = empty();
+        FluidFilter filter = createEmpty();
         filter.fluid = stack.getFluid();
-        filter.nbt = stack.hasTag() ? stack.getTag() : null;
+        filter.componentsAsNbt = DataComponentUtil.toNbt(stack.getComponentsPatch());
+        filter.components = stack.getComponents();
         return filter;
     }
 
-    public static FluidFilter empty() {
+    public static FluidFilter createEmpty() {
         return new FluidFilter();
     }
 
     public boolean isEmpty() {
-        return fingerprint.isEmpty() && fluid == Fluids.EMPTY && tag == null && nbt == null && nbtHash == null;
+        return this == EMPTY || (fingerprint.isEmpty() && fluid == Fluids.EMPTY && tag == null && componentsAsNbt == null);
+    }
+
+    @Override
+    public boolean testAE(GenericStack genericStack) {
+        if (!APAddon.AE2.isLoaded())
+            return false;
+
+        if (genericStack.what() instanceof AEFluidKey aeFluidKey) {
+            return test(aeFluidKey.toStack(1));
+        }
+        return false;
+    }
+
+    @Override
+    public boolean testRS(ResourceAmount resourceAmount) {
+        if (!APAddon.REFINEDSTORAGE.isLoaded())
+            return false;
+
+        if (resourceAmount.resource() instanceof FluidResource fluidResource) {
+            return test(VariantUtil.toFluidStack(fluidResource, 1));
+        }
+        return false;
     }
 
     public FluidStack toFluidStack() {
         var result = new FluidStack(fluid, count);
-        result.setTag(nbt != null ? nbt.copy() : null);
+        if (componentsAsNbt != null) {
+            result.applyComponents(components);
+        }
         return result;
     }
 
     public FluidFilter setCount(int count) {
         this.count = count;
         return this;
-    }
-
-    @Override
-    public boolean testAE(GenericStack genericStack) {
-        if (genericStack.what() instanceof AEFluidKey aeFluidKey) {
-            return test(aeFluidKey.toStack(1));
-        }
-        return false;
     }
 
     public boolean test(FluidStack stack) {
@@ -128,10 +148,7 @@ public class FluidFilter extends GenericFilter<FluidStack> {
         if (tag != null && !stack.getFluid().is(tag)) {
             return false;
         }
-        if (nbt != null && !stack.getOrCreateTag().equals(nbt)) {
-            return false;
-        }
-        if (nbtHash != null && !dan200.computercraft.shared.util.NBTUtil.getNBTHash(stack.getOrCreateTag()).equals(nbtHash)) {
+        if (componentsAsNbt != null && !DataComponentUtil.toNbt(stack.getComponentsPatch()).equals(componentsAsNbt)) {
             return false;
         }
         return true;
@@ -145,8 +162,8 @@ public class FluidFilter extends GenericFilter<FluidStack> {
         return fluid;
     }
 
-    public Tag getNbt() {
-        return nbt;
+    public Tag getComponentsAsNbt() {
+        return componentsAsNbt;
     }
 
     @Override
@@ -154,7 +171,7 @@ public class FluidFilter extends GenericFilter<FluidStack> {
         return "FluidFilter{" +
                 "fluid=" + FluidUtil.getRegistryKey(fluid) +
                 ", tag=" + tag +
-                ", nbt=" + nbt +
+                ", components=" + componentsAsNbt +
                 ", count=" + count +
                 ", fingerprint='" + fingerprint + '\'' +
                 '}';

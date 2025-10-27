@@ -18,11 +18,11 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.wrapper.PlayerArmorInvWrapper;
-import net.minecraftforge.items.wrapper.PlayerInvWrapper;
-import net.minecraftforge.items.wrapper.PlayerOffhandInvWrapper;
+import net.neoforged.common.capabilities.ForgeCapabilities;
+import net.neoforged.items.IItemHandler;
+import net.neoforged.items.wrapper.PlayerArmorInvWrapper;
+import net.neoforged.items.wrapper.PlayerInvWrapper;
+import net.neoforged.items.wrapper.PlayerOffhandInvWrapper;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;

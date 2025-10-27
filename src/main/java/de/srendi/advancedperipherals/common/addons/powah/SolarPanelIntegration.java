@@ -1,39 +1,28 @@
 package de.srendi.advancedperipherals.common.addons.powah;
 
 import dan200.computercraft.api.lua.LuaFunction;
-import de.srendi.advancedperipherals.lib.peripherals.BlockEntityIntegrationPeripheral;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import org.jetbrains.annotations.NotNull;
+import de.srendi.advancedperipherals.lib.peripherals.APGenericPeripheral;
 import owmii.powah.block.solar.SolarTile;
 
-public class SolarPanelIntegration extends BlockEntityIntegrationPeripheral<SolarTile> {
-    protected SolarPanelIntegration(BlockEntity entity) {
-        super(entity);
-    }
+public class SolarPanelIntegration implements APGenericPeripheral {
 
-    @NotNull
     @Override
-    public String getType() {
+    public String getPeripheralType() {
         return "solar_panel";
     }
 
     @LuaFunction(mainThread = true)
-    public final String getName() {
-        return "Solar Panel";
-    }
-
-    @LuaFunction(mainThread = true)
-    public final double getEnergy() {
+    public final double getStoredEnergy(SolarTile blockEntity) {
         return blockEntity.getEnergy().getEnergyStored();
     }
 
     @LuaFunction(mainThread = true)
-    public final double getMaxEnergy() {
+    public final double getMaxEnergy(SolarTile blockEntity) {
         return blockEntity.getEnergy().getMaxEnergyStored();
     }
 
-    @LuaFunction(mainThread = true)
-    public final boolean canSeeSky() {
+    @LuaFunction
+    public final boolean canSeeSky(SolarTile blockEntity) {
         return blockEntity.canSeeSky();
     }
 

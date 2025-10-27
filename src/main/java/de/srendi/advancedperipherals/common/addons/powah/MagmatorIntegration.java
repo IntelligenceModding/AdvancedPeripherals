@@ -1,49 +1,35 @@
 package de.srendi.advancedperipherals.common.addons.powah;
 
 import dan200.computercraft.api.lua.LuaFunction;
-import de.srendi.advancedperipherals.lib.peripherals.BlockEntityIntegrationPeripheral;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import org.jetbrains.annotations.NotNull;
+import de.srendi.advancedperipherals.common.util.LuaConverter;
+import de.srendi.advancedperipherals.lib.peripherals.APGenericPeripheral;
 import owmii.powah.block.magmator.MagmatorTile;
 
-public class MagmatorIntegration extends BlockEntityIntegrationPeripheral<MagmatorTile> {
-    protected MagmatorIntegration(BlockEntity entity) {
-        super(entity);
-    }
+public class MagmatorIntegration implements APGenericPeripheral {
 
-    @NotNull
     @Override
-    public String getType() {
+    public String getPeripheralType() {
         return "magmator";
     }
 
     @LuaFunction(mainThread = true)
-    public final String getName() {
-        return "Magmator";
-    }
-
-    @LuaFunction(mainThread = true)
-    public final double getEnergy() {
+    public final double getStoredEnergy(MagmatorTile blockEntity) {
         return blockEntity.getEnergy().getEnergyStored();
     }
 
     @LuaFunction(mainThread = true)
-    public final double getMaxEnergy() {
+    public final double getMaxEnergy(MagmatorTile blockEntity) {
         return blockEntity.getEnergy().getMaxEnergyStored();
     }
 
-    @LuaFunction(mainThread = true)
-    public final boolean isBurning() {
+    @LuaFunction
+    public final boolean isBurning(MagmatorTile blockEntity) {
         return blockEntity.isBurning();
     }
 
-    @LuaFunction(mainThread = true)
-    public final long getTankCapacity() {
-        return blockEntity.getTank().getCapacity();
-    }
-
-    @LuaFunction(mainThread = true)
-    public final long getFluidInTank() {
-        return blockEntity.getTank().getFluidAmount();
+    // getTank is thread safe
+    @LuaFunction
+    public final Object getFuelTank(MagmatorTile blockEntity) {
+        return LuaConverter.fluidStackToObject(blockEntity.getTank().getFluid());
     }
 }

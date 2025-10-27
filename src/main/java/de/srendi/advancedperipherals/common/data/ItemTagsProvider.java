@@ -8,7 +8,7 @@ import net.minecraft.core.Registry;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.tags.TagsProvider;
 import net.minecraft.world.item.Item;
-import net.minecraftforge.common.data.ExistingFileHelper;
+import net.neoforged.common.data.ExistingFileHelper;
 import org.jetbrains.annotations.Nullable;
 
 public class ItemTagsProvider extends TagsProvider<Item> {
