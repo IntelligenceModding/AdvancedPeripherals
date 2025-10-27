@@ -1,13 +1,17 @@
 package de.srendi.advancedperipherals.common.network.toclient;
 
+import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.network.IAPPacket;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.neoforged.fml.loading.FMLEnvironment;
-import net.neoforged.network.NetworkEvent;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import static de.srendi.advancedperipherals.client.ClientRegistry.SADDLE_TURTLE_OVERLAY;
 
 public class SaddleTurtleInfoPacket implements IAPPacket {
+
+    public static final CustomPacketPayload.Type<SaddleTurtleInfoPacket> TYPE = new Type<>(AdvancedPeripherals.getRL("saddleturtleinfo"));
 
     private final int fuelLevel;
     private final int fuelLimit;
@@ -19,8 +23,14 @@ public class SaddleTurtleInfoPacket implements IAPPacket {
         this.barColor = barColor;
     }
 
+    public SaddleTurtleInfoPacket(RegistryFriendlyByteBuf buffer) {
+        this.fuelLevel = buffer.readInt();
+        this.fuelLimit = buffer.readInt();
+        this.barColor = buffer.readInt();
+    }
+
     @Override
-    public void handle(NetworkEvent.Context context) {
+    public void handle(IPayloadContext context) {
         if (!FMLEnvironment.dist.isClient()) {
             return;
         }
@@ -30,16 +40,14 @@ public class SaddleTurtleInfoPacket implements IAPPacket {
     }
 
     @Override
-    public void encode(FriendlyByteBuf buffer) {
+    public void write(RegistryFriendlyByteBuf buffer) {
         buffer.writeInt(this.fuelLevel);
         buffer.writeInt(this.fuelLimit);
         buffer.writeInt(this.barColor);
     }
 
-    public static SaddleTurtleInfoPacket decode(FriendlyByteBuf buffer) {
-        int fuelLevel = buffer.readInt();
-        int fuelLimit = buffer.readInt();
-        int barColor = buffer.readInt();
-        return new SaddleTurtleInfoPacket(fuelLevel, fuelLimit, barColor);
+    @Override
+    public Type<? extends CustomPacketPayload> type() {
+        return TYPE;
     }
 }

@@ -1,19 +1,23 @@
 package de.srendi.advancedperipherals.common.network.toserver;
 
+import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.items.SmartGlassesItem;
 import de.srendi.advancedperipherals.common.network.IAPPacket;
 import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesComputer;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.OverlayModule;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.network.NetworkEvent;
-import net.neoforged.server.ServerLifecycleHooks;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
+import net.neoforged.neoforge.server.ServerLifecycleHooks;
 
 import java.util.UUID;
 
 public class OverlayModuleClientInfoPacket implements IAPPacket {
+
+    public static final Type<OverlayModuleClientInfoPacket> TYPE = new Type<>(AdvancedPeripherals.getRL("overlaymoduleclientinfo"));
 
     private final UUID player;
     private final int screenWidth;
@@ -27,8 +31,15 @@ public class OverlayModuleClientInfoPacket implements IAPPacket {
         this.guiScale = guiScale;
     }
 
+    public OverlayModuleClientInfoPacket(RegistryFriendlyByteBuf buffer) {
+        this.player = buffer.readUUID();
+        this.screenWidth = buffer.readInt();
+        this.screenHeight = buffer.readInt();
+        this.guiScale = buffer.readDouble();
+    }
+
     @Override
-    public void handle(NetworkEvent.Context context) {
+    public void handle(IPayloadContext context) {
         MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
 
         ServerPlayer serverPlayer = server.getPlayerList().getPlayer(player);
@@ -50,14 +61,15 @@ public class OverlayModuleClientInfoPacket implements IAPPacket {
     }
 
     @Override
-    public void encode(FriendlyByteBuf buffer) {
+    public void write(RegistryFriendlyByteBuf buffer) {
         buffer.writeUUID(player);
         buffer.writeInt(screenWidth);
         buffer.writeInt(screenHeight);
         buffer.writeDouble(guiScale);
     }
 
-    public static OverlayModuleClientInfoPacket decode(FriendlyByteBuf buffer) {
-        return new OverlayModuleClientInfoPacket(buffer.readUUID(), buffer.readInt(), buffer.readInt(), buffer.readDouble());
+    @Override
+    public Type<? extends CustomPacketPayload> type() {
+        return TYPE;
     }
 }

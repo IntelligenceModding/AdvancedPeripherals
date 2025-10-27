@@ -1,12 +1,16 @@
 package de.srendi.advancedperipherals.common.network.toserver;
 
+import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.entity.TurtleSeatEntity;
 import de.srendi.advancedperipherals.common.network.IAPPacket;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.server.level.ServerPlayer;
-import net.neoforged.network.NetworkEvent;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.world.entity.player.Player;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 public class SaddleTurtleControlPacket implements IAPPacket {
+
+    public static final CustomPacketPayload.Type<SaddleTurtleControlPacket> TYPE = new Type<>(AdvancedPeripherals.getRL("saddleturtlecontrol"));
 
     public final boolean forward;
     public final boolean back;
@@ -35,9 +39,13 @@ public class SaddleTurtleControlPacket implements IAPPacket {
         this((bits & FORWARD_BIT) != 0, (bits & BACK_BIT) != 0, (bits & LEFT_BIT) != 0, (bits & RIGHT_BIT) != 0, (bits & UP_BIT) != 0, (bits & DOWN_BIT) != 0);
     }
 
+    public SaddleTurtleControlPacket(RegistryFriendlyByteBuf buffer) {
+        this(buffer.readByte());
+    }
+
     @Override
-    public void handle(NetworkEvent.Context context) {
-        ServerPlayer player = context.getSender();
+    public void handle(IPayloadContext context) {
+        Player player = context.player();
         if (player != null && player.getRootVehicle() instanceof TurtleSeatEntity seat) {
             seat.handleSaddleTurtleControlPacket(this);
         }
@@ -67,11 +75,12 @@ public class SaddleTurtleControlPacket implements IAPPacket {
     }
 
     @Override
-    public void encode(FriendlyByteBuf buffer) {
+    public void write(RegistryFriendlyByteBuf buffer) {
         buffer.writeByte(this.encodeToBits());
     }
 
-    public static SaddleTurtleControlPacket decode(FriendlyByteBuf buffer) {
-        return new SaddleTurtleControlPacket(buffer.readByte());
+    @Override
+    public Type<? extends CustomPacketPayload> type() {
+        return TYPE;
     }
 }

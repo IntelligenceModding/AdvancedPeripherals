@@ -13,6 +13,10 @@ import de.srendi.advancedperipherals.common.network.toserver.GlassesHotkeyPacket
 import de.srendi.advancedperipherals.common.network.toserver.OverlayModuleClientInfoPacket;
 import de.srendi.advancedperipherals.common.network.toserver.RetrieveUsernamePacket;
 import de.srendi.advancedperipherals.common.network.toserver.SaddleTurtleControlPacket;
+import dev.emi.emi.network.EmiPacket;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.codec.StreamDecoder;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -29,20 +33,24 @@ public class APNetworking {
     private static final String PROTOCOL_VERSION = ModLoadingContext.get().getActiveContainer().getModInfo().getVersion().toString();
     
     public static void init(PayloadRegistrar registrar) {
-        registrar.playToClient(SaddleTurtleInfoPacket.class, SaddleTurtleInfoPacket::decode);
-        registrar.playToClient(ToastToClientPacket.class, ToastToClientPacket::decode);
-        registrar.playToClient(RenderableObjectSyncPacket.class, RenderableObjectSyncPacket::decode);
-        registrar.playToClient(RenderableObjectDeletePacket.class, RenderableObjectDeletePacket::decode);
-        registrar.playToClient(RenderableObjectClearPacket.class, RenderableObjectClearPacket::decode);
-        registrar.playToClient(RenderableObjectBulkSyncPacket.class, RenderableObjectBulkSyncPacket::decode);
-        registrar.playToClient(OverlayModuleClientRequestPacket.TYPE, OverlayModuleClientRequestPacket.CODEC, OverlayModuleClientRequestPacket::handle);
-        registrar.playToClient(ToastToClientPacket.TYPE, ToastToClientPacket.CODEC, ToastToClientPacket::handle);
-        registrar.playToClient(UsernameToCachePacket.TYPE, UsernameToCachePacket.CODEC, UsernameToCachePacket::handle);
+        registrar.playToClient(SaddleTurtleInfoPacket.TYPE, makeReader(SaddleTurtleInfoPacket::new), SaddleTurtleInfoPacket::handle);
+        registrar.playToClient(ToastToClientPacket.TYPE, makeReader(ToastToClientPacket::new), ToastToClientPacket::handle);
+        registrar.playToClient(RenderableObjectSyncPacket.TYPE, makeReader(RenderableObjectSyncPacket::new), RenderableObjectSyncPacket::handle);
+        registrar.playToClient(RenderableObjectDeletePacket.TYPE, makeReader(RenderableObjectDeletePacket::new), RenderableObjectDeletePacket::handle);
+        registrar.playToClient(RenderableObjectClearPacket.TYPE, makeReader(RenderableObjectClearPacket::new), RenderableObjectClearPacket::handle);
+        registrar.playToClient(RenderableObjectBulkSyncPacket.TYPE, makeReader(RenderableObjectBulkSyncPacket::new), RenderableObjectBulkSyncPacket::handle);
+        registrar.playToClient(OverlayModuleClientRequestPacket.TYPE, makeReader(OverlayModuleClientRequestPacket::new), OverlayModuleClientRequestPacket::handle);
+        registrar.playToClient(ToastToClientPacket.TYPE, makeReader(ToastToClientPacket::new), ToastToClientPacket::handle);
+        registrar.playToClient(UsernameToCachePacket.TYPE, makeReader(UsernameToCachePacket::new), UsernameToCachePacket::handle);
 
-        registrar.playToServer(GlassesHotkeyPacket.class, GlassesHotkeyPacket::decode);
-        registrar.playToServer(SaddleTurtleControlPacket.class, SaddleTurtleControlPacket::decode);
-        registrar.playToServer(OverlayModuleClientInfoPacket.class, OverlayModuleClientInfoPacket::decode);
-        registrar.playToServer(RetrieveUsernamePacket.TYPE, RetrieveUsernamePacket.CODEC, RetrieveUsernamePacket::handle);
+        registrar.playToServer(GlassesHotkeyPacket.TYPE, makeReader(GlassesHotkeyPacket::new), GlassesHotkeyPacket::handle);
+        registrar.playToServer(SaddleTurtleControlPacket.TYPE, makeReader(SaddleTurtleControlPacket::new), SaddleTurtleControlPacket::handle);
+        registrar.playToServer(OverlayModuleClientInfoPacket.TYPE, makeReader(OverlayModuleClientInfoPacket::new), OverlayModuleClientInfoPacket::handle);
+        registrar.playToServer(RetrieveUsernamePacket.TYPE, makeReader(RetrieveUsernamePacket::new), RetrieveUsernamePacket::handle);
+    }
+
+    private static <T extends IAPPacket> StreamCodec<RegistryFriendlyByteBuf, T> makeReader(StreamDecoder<RegistryFriendlyByteBuf, T> reader) {
+        return StreamCodec.ofMember(IAPPacket::write, reader);
     }
     
     @SubscribeEvent
@@ -51,7 +59,6 @@ public class APNetworking {
                 .versioned(PROTOCOL_VERSION);
         init(registrar);
     }
-    
 
     public static void sendTo(ServerPlayer player, CustomPacketPayload message) {
         if (!(player instanceof FakePlayer)) {

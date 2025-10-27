@@ -1,18 +1,24 @@
 package de.srendi.advancedperipherals.common.network.toserver;
 
+import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.items.SmartGlassesItem;
 import de.srendi.advancedperipherals.common.network.IAPPacket;
+import de.srendi.advancedperipherals.common.network.toclient.UsernameToCachePacket;
 import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesComputer;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.network.NetworkEvent;
-import net.neoforged.server.ServerLifecycleHooks;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
+import net.neoforged.neoforge.server.ServerLifecycleHooks;
 
 import java.util.UUID;
 
 public class GlassesHotkeyPacket implements IAPPacket {
+
+    public static final Type<GlassesHotkeyPacket> TYPE = new Type<>(AdvancedPeripherals.getRL("glasseshotkey"));
 
     private final UUID player;
     private final String keyBind;
@@ -24,8 +30,14 @@ public class GlassesHotkeyPacket implements IAPPacket {
         this.keyPressDuration = keyPressDuration;
     }
 
+    public GlassesHotkeyPacket(RegistryFriendlyByteBuf buffer) {
+        this.player = buffer.readUUID();
+        this.keyBind = buffer.readUtf();
+        this.keyPressDuration = buffer.readInt();
+    }
+
     @Override
-    public void handle(NetworkEvent.Context context) {
+    public void handle(IPayloadContext context) {
         MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
 
         ServerPlayer serverPlayer = server.getPlayerList().getPlayer(player);
@@ -43,7 +55,7 @@ public class GlassesHotkeyPacket implements IAPPacket {
     }
 
     @Override
-    public void encode(FriendlyByteBuf buffer) {
+    public void write(RegistryFriendlyByteBuf buffer) {
         buffer.writeUUID(player);
         buffer.writeUtf(keyBind);
         buffer.writeInt(keyPressDuration);
@@ -51,5 +63,10 @@ public class GlassesHotkeyPacket implements IAPPacket {
 
     public static GlassesHotkeyPacket decode(FriendlyByteBuf buffer) {
         return new GlassesHotkeyPacket(buffer.readUUID(), buffer.readUtf(), buffer.readInt());
+    }
+
+    @Override
+    public Type<? extends CustomPacketPayload> type() {
+        return null;
     }
 }

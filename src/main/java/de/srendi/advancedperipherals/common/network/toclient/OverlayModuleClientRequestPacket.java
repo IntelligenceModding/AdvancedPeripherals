@@ -2,10 +2,10 @@ package de.srendi.advancedperipherals.common.network.toclient;
 
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.network.APNetworking;
-import de.srendi.advancedperipherals.common.network.EmptyCodec;
 import de.srendi.advancedperipherals.common.network.IAPPacket;
 import de.srendi.advancedperipherals.common.network.toserver.OverlayModuleClientInfoPacket;
 import net.minecraft.client.Minecraft;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
@@ -17,11 +17,18 @@ public class OverlayModuleClientRequestPacket implements IAPPacket {
 
     public static final Type<OverlayModuleClientRequestPacket> TYPE = new Type<>(AdvancedPeripherals.getRL("overlaymoduleclientrequest"));
 
-
     public OverlayModuleClientRequestPacket() {
 
     }
 
+    public OverlayModuleClientRequestPacket(FriendlyByteBuf buffer) {
+
+    }
+
+    @Override
+    public void write(RegistryFriendlyByteBuf buf) {
+
+    }
 
     @Override
     public void handle(IPayloadContext context) {

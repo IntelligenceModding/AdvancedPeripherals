@@ -1,13 +1,17 @@
 package de.srendi.advancedperipherals.common.network.toclient;
 
+import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.client.smartglasses.OverlayObjectHolder;
 import de.srendi.advancedperipherals.common.network.IAPPacket;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.ObjectDecodeRegistry;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.RenderableObject;
-import net.minecraft.network.FriendlyByteBuf;
-import net.neoforged.network.NetworkEvent;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 public class RenderableObjectSyncPacket implements IAPPacket {
+
+    public static final CustomPacketPayload.Type<RenderableObjectSyncPacket> TYPE = new Type<>(AdvancedPeripherals.getRL("renderableobjectsync"));
 
     private final RenderableObject object;
 
@@ -15,19 +19,22 @@ public class RenderableObjectSyncPacket implements IAPPacket {
         this.object = object;
     }
 
+    public RenderableObjectSyncPacket(RegistryFriendlyByteBuf buffer) {
+        this.object = ObjectDecodeRegistry.getObject(buffer.readInt(), buffer);
+    }
+
     @Override
-    public void handle(NetworkEvent.Context context) {
+    public void handle(IPayloadContext context) {
         OverlayObjectHolder.addOrUpdateObject(object);
     }
 
     @Override
-    public void encode(FriendlyByteBuf buffer) {
+    public void write(RegistryFriendlyByteBuf buffer) {
         object.encode(buffer);
     }
 
-    public static RenderableObjectSyncPacket decode(FriendlyByteBuf buffer) {
-        int id = buffer.readInt();
-        RenderableObject decodedObject = ObjectDecodeRegistry.getObject(id, buffer);
-        return new RenderableObjectSyncPacket(decodedObject);
+    @Override
+    public Type<? extends CustomPacketPayload> type() {
+        return TYPE;
     }
 }
