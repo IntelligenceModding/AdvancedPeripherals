@@ -187,12 +187,15 @@ public class SmartGlassesComputer extends ServerComputer implements IPocketAcces
         }
         this.upgrades = upgradesBuilder.build();
         for (int slot = SmartGlassesItemHandler.PERIPHERAL_SLOTS; slot < SmartGlassesItemHandler.SLOTS; slot++) {
-            ItemStack peripheralItem = itemHandler.getStackInSlot(slot);
+            ItemStack moduleItem = itemHandler.getStackInSlot(slot);
             IModule oldModule = modules.get(slot);
-            if (!peripheralItem.isEmpty() && peripheralItem.getItem() instanceof IModuleItem module) {
-                IModule newModule = module.createModule(smartGlassesAccess);
-                if (oldModule != null && oldModule.getName().equals(newModule.getName())) {
-                    continue;
+            if (!moduleItem.isEmpty() && moduleItem.getItem() instanceof IModuleItem module) {
+                IModule newModule = module.createModule(smartGlassesAccess, moduleItem);
+                if (oldModule != null) {
+                    if (oldModule.getName().equals(newModule.getName())) {
+                        continue;
+                    }
+                    oldModule.onUnequipped(smartGlassesAccess);
                 }
                 modules.put(slot, newModule);
             } else if (oldModule != null) {

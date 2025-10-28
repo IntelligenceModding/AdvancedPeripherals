@@ -10,6 +10,7 @@ import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
@@ -23,8 +24,16 @@ public abstract class BaseContainer extends AbstractContainerMenu {
     protected BaseContainer(@Nullable MenuType<?> type, int id, Inventory inventory, BlockPos pos, Level world) {
         super(type, id);
         this.inventory = new InvWrapper(inventory);
-        if (world != null)
-            this.tileEntity = (PeripheralBlockEntity<?>) world.getBlockEntity(pos);
+        if (world != null) {
+            BlockEntity blockEntity = world.getBlockEntity(pos);
+            // for player containers, pos is the position of the player
+            // We don't actual need a block entity for player containers
+            // But if a player stands for example on a mekanism cable, setting the tileEntity by casting and without a check
+            // would prevent opening the screen
+            if (blockEntity instanceof PeripheralBlockEntity<?> peripheralBlockEntity) {
+                tileEntity = peripheralBlockEntity;
+            }
+        }
     }
 
     @Override

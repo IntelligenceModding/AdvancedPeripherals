@@ -44,6 +44,7 @@ public class EnUsLanguageProvider extends LanguageProvider {
         addItem(APItems.CHUNK_CONTROLLER, "Chunk Controller");
         addItem(APItems.COMPUTER_TOOL, "Computer Tool");
         addItem(APItems.HOTKEY_MODULE, "Hotkey Module");
+        addItem(APItems.KEYBOARD, "Wireless Keyboard");
         addItem(APItems.MEMORY_CARD, "Memory Card");
         addItem(APItems.NIGHT_VISION_MODULE, "Night Vision Module");
         addItem(APItems.OVERLAY_MODULE, "Overlay Module");
@@ -147,13 +148,18 @@ public class EnUsLanguageProvider extends LanguageProvider {
 
         addTooltip(APItems.COMPUTER_TOOL.get(), "&7This tool was made to tune our blocks. But for now, it's just a blue useless wrench.");
         addTooltip(APItems.MEMORY_CARD.get(), "&7Can save the rights of a player to use it in an inventory manager.");
-        addTooltip("memory_card.bound", "&7Bound to &b%s&7.");
+        addTooltip("binding.bound_to", "&7Bound to &b%s&7.");
+
     }
 
     private void addTexts() {
-        addText("removed_player", "Cleared the memory card");
-        addText("added_player", "Added you to the memory card");
         addText("automata_core.feed_by_player", "You're trying to feed an entity to a soul, but your own body refuses to do this. Maybe something more mechanical can do this?");
+        addText("keyboard.close", "Press ESC to close the Keyboard Screen");
+        addText("cleared_memorycard", "Cleared the memory card");
+        addText("bind_memorycard", "Bounded the memory card to you");
+        addText("keyboard_notbound", "The keyboard it not bound");
+        addText("bind_keyboard", "Bounded the keyboard to %s");
+        addText("cleared_keyboard", "Cleared the keyboard");
         addText("smart_glasses.peripherals", "Peripherals");
         addText("smart_glasses.modules", "Modules");
         addText("saddle_turtle.dismount_hint", "Controlling %1$s. Press %2$s and %3$s to dismount.");

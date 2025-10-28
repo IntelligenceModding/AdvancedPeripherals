@@ -13,7 +13,7 @@ import net.minecraft.util.FormattedCharSequence;
 import net.minecraftforge.client.gui.overlay.ForgeGui;
 import net.minecraftforge.client.gui.overlay.IGuiOverlay;
 
-public class SaddleTurtleScreen extends GuiComponent implements IGuiOverlay {
+public class SaddleTurtleOverlay extends GuiComponent implements IGuiOverlay {
     public static final String ID = "saddle_turtle_overlay";
 
     private static final long ACTIVE_TIMEOUT = 5000;
@@ -27,7 +27,7 @@ public class SaddleTurtleScreen extends GuiComponent implements IGuiOverlay {
     private int barColor = 0;
     private long lastActived = 0;
 
-    public SaddleTurtleScreen() {}
+    public SaddleTurtleOverlay() {}
 
     protected Font getFont() {
         return this.gui.getMinecraft().font;
@@ -45,12 +45,12 @@ public class SaddleTurtleScreen extends GuiComponent implements IGuiOverlay {
         return getFont().width(text);
     }
 
-    public static boolean isPlayerControllingTurtle() {
+    public boolean isPlayerControllingTurtle() {
         LocalPlayer player = Minecraft.getInstance().player;
         return player != null && player.getVehicle() instanceof TurtleSeatEntity;
     }
 
-    public static boolean isPlayerMountedOnTurtle() {
+    public boolean isPlayerMountedOnTurtle() {
         LocalPlayer player = Minecraft.getInstance().player;
         return player != null && player.getRootVehicle() instanceof TurtleSeatEntity;
     }
@@ -59,7 +59,7 @@ public class SaddleTurtleScreen extends GuiComponent implements IGuiOverlay {
         if (this.lastActived == 0) {
             return false;
         }
-        if (!isPlayerMountedOnTurtle()) {
+        if (!this.isPlayerMountedOnTurtle()) {
             this.hide();
             return false;
         }
@@ -138,7 +138,7 @@ public class SaddleTurtleScreen extends GuiComponent implements IGuiOverlay {
 
     @Override
     public void render(ForgeGui gui, PoseStack poseStack, float partialTick, int screenWidth, int screenHeight) {
-        if (!isPlayerMountedOnTurtle()) {
+        if (!this.isPlayerMountedOnTurtle()) {
             return;
         }
 
@@ -149,7 +149,7 @@ public class SaddleTurtleScreen extends GuiComponent implements IGuiOverlay {
         if (this.shouldRenderFuelBar()) {
             this.renderFuelBar(poseStack);
         }
-        if (isPlayerControllingTurtle()) {
+        if (this.isPlayerControllingTurtle()) {
             this.renderDismountHint(poseStack);
         }
     }
