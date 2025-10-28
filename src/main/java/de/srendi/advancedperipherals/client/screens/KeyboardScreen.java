@@ -1,3 +1,8 @@
+// SPDX-FileCopyrightText: 2021 The CC: Tweaked Developers
+// SPDX-FileCopyrightText: 2025 The AdvancedPeripheral Developers
+//
+// SPDX-License-Identifier: MPL-2.0
+
 package de.srendi.advancedperipherals.client.screens;
 
 import com.mojang.blaze3d.platform.InputConstants;
