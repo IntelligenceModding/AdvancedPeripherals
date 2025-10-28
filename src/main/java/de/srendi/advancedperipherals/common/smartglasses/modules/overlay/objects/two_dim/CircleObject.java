@@ -7,9 +7,13 @@ import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.client.smartglasses.objects.IObjectRenderer;
 import de.srendi.advancedperipherals.client.smartglasses.objects.twodim.CircleRenderer;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.OverlayModule;
+import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.RenderableObject;
+import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertytypes.BooleanProperty;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertytypes.FixedPointNumberProperty;
 import net.minecraft.network.FriendlyByteBuf;
+import owmii.powah.lib.client.util.Render;
 
+import java.util.Optional;
 import java.util.UUID;
 
 public class CircleObject extends RenderableObject {
@@ -19,6 +23,18 @@ public class CircleObject extends RenderableObject {
 
     @FixedPointNumberProperty(min = -32767, max = 32767)
     public int radius = 0;
+
+    @BooleanProperty
+    public boolean filled = true;
+
+    @BooleanProperty
+    public boolean pixelated = false;
+
+    @FixedPointNumberProperty(min = 0, max = 32767)
+    public int borderWidth = 4;
+
+    @FixedPointNumberProperty(min = 0, max = 100)
+    public int segments = 25;
 
     public CircleObject(OverlayModule module, IArguments arguments) throws LuaException {
         super(module, arguments);
@@ -40,43 +56,78 @@ public class CircleObject extends RenderableObject {
         getModule().update(this);
     }
 
+    @LuaFunction
+    public boolean isFilled() {
+        return filled;
+    }
+
+    @LuaFunction
+    public void setFilled(boolean filled) {
+        this.filled = filled;
+        getModule().update(this);
+    }
+
+    @LuaFunction
+    public boolean isPixelated() {
+        return pixelated;
+    }
+
+    @LuaFunction
+    public void setPixelated(boolean pixelated) {
+        this.pixelated = pixelated;
+        getModule().update(this);
+    }
+
+    @LuaFunction
+    public int getBorderWidth() {
+        return borderWidth;
+    }
+
+    @LuaFunction
+    public void setBorderWidth(int borderWidth) {
+        this.borderWidth = borderWidth;
+        getModule().update(this);
+    }
+
+    @LuaFunction
+    public int getSegments() {
+        return segments;
+    }
+
+    @LuaFunction
+    public void setSegments(int segments) {
+        this.segments = segments;
+        getModule().update(this);
+    }
+
     @Override
     public void encode(FriendlyByteBuf buffer) {
         buffer.writeInt(TYPE_ID);
         super.encode(buffer);
         buffer.writeInt(radius);
+        buffer.writeBoolean(filled);
+        buffer.writeBoolean(pixelated);
+        buffer.writeInt(borderWidth);
+        buffer.writeInt(segments);
     }
 
     public static CircleObject decode(FriendlyByteBuf buffer) {
-        int objectId = buffer.readInt();
-        boolean hasValidUUID = buffer.readBoolean();
-        if (!hasValidUUID) {
-            AdvancedPeripherals.exception("Tried to decode a buffer for an OverlayObject but without a valid player as target.", new IllegalArgumentException());
+        Optional<CircleObject> optionalObject = RenderableObject.baseDecode(buffer, CircleObject::new);
+        if (optionalObject.isEmpty())
             return null;
-        }
-        UUID player = buffer.readUUID();
-        int color = buffer.readInt();
-        float opacity = buffer.readFloat();
 
-        float x = buffer.readFloat();
-        float y = buffer.readFloat();
-        float z = buffer.readFloat();
-        float maxX = buffer.readFloat();
-        float maxY = buffer.readFloat();
-        float maxZ = buffer.readFloat();
         int radius = buffer.readInt();
+        boolean filled = buffer.readBoolean();
+        boolean pixelated = buffer.readBoolean();
+        int borderWidth = buffer.readInt();
+        int segments = buffer.readInt();
 
-        CircleObject clientObject = new CircleObject(player);
-        clientObject.setId(objectId);
-        clientObject.color = color;
-        clientObject.opacity = opacity;
-        clientObject.x = x;
-        clientObject.y = y;
-        clientObject.z = z;
-        clientObject.maxX = maxX;
-        clientObject.maxY = maxY;
-        clientObject.maxZ = maxZ;
+        CircleObject clientObject = optionalObject.get();
         clientObject.radius = radius;
+        clientObject.filled = filled;
+        clientObject.pixelated = pixelated;
+        clientObject.borderWidth = borderWidth;
+        clientObject.segments = segments;
 
         return clientObject;
     }

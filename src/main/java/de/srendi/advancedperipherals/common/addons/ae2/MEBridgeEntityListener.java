@@ -4,9 +4,9 @@ import appeng.api.networking.IGridNode;
 import appeng.api.networking.IGridNodeListener;
 import de.srendi.advancedperipherals.common.blocks.blockentities.MeBridgeEntity;
 
-public class MeBridgeEntityListener implements IGridNodeListener<MeBridgeEntity> {
+public class MEBridgeEntityListener implements IGridNodeListener<MeBridgeEntity> {
 
-    public static final MeBridgeEntityListener INSTANCE = new MeBridgeEntityListener();
+    public static final MEBridgeEntityListener INSTANCE = new MEBridgeEntityListener();
 
     @Override
     public void onSecurityBreak(MeBridgeEntity nodeOwner, IGridNode node) {

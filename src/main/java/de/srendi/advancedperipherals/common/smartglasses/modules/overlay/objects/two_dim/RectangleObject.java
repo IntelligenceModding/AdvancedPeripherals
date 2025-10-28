@@ -6,8 +6,11 @@ import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.client.smartglasses.objects.IObjectRenderer;
 import de.srendi.advancedperipherals.client.smartglasses.objects.twodim.RectangleRenderer;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.OverlayModule;
+import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.RenderableObject;
 import net.minecraft.network.FriendlyByteBuf;
+import org.w3c.dom.css.Rect;
 
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -20,6 +23,7 @@ public class RectangleObject extends RenderableObject {
 
     public RectangleObject(OverlayModule module, IArguments arguments) throws LuaException {
         super(module, arguments);
+        reflectivelyMapProperties(arguments);
     }
 
     /**
@@ -38,34 +42,8 @@ public class RectangleObject extends RenderableObject {
     }
 
     public static RectangleObject decode(FriendlyByteBuf buffer) {
-        int objectId = buffer.readInt();
-        boolean hasValidUUID = buffer.readBoolean();
-        if (!hasValidUUID) {
-            AdvancedPeripherals.exception("Tried to decode a buffer for an OverlayObject but without a valid player as target.", new IllegalArgumentException());
-            return null;
-        }
-        UUID player = buffer.readUUID();
-        int color = buffer.readInt();
-        float opacity = buffer.readFloat();
-
-        float x = buffer.readFloat();
-        float y = buffer.readFloat();
-        float z = buffer.readFloat();
-        float maxX = buffer.readFloat();
-        float maxY = buffer.readFloat();
-        float maxZ = buffer.readFloat();
-        RectangleObject clientObject = new RectangleObject(player);
-        clientObject.setId(objectId);
-        clientObject.color = color;
-        clientObject.opacity = opacity;
-        clientObject.x = x;
-        clientObject.y = y;
-        clientObject.z = z;
-        clientObject.maxX = maxX;
-        clientObject.maxY = maxY;
-        clientObject.maxZ = maxZ;
-
-        return clientObject;
+        Optional<RectangleObject> optionalObject = RenderableObject.baseDecode(buffer, RectangleObject::new);
+        return optionalObject.orElse(null);
     }
 
     @Override

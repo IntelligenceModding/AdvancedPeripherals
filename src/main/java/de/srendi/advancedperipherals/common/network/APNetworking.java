@@ -3,6 +3,7 @@ package de.srendi.advancedperipherals.common.network;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.network.base.IPacket;
 import de.srendi.advancedperipherals.common.network.toclient.KeyboardMouseCapturePacket;
+import de.srendi.advancedperipherals.common.network.toclient.OverlayModuleClientRequestPacket;
 import de.srendi.advancedperipherals.common.network.toclient.RenderableObjectBulkSyncPacket;
 import de.srendi.advancedperipherals.common.network.toclient.RenderableObjectClearPacket;
 import de.srendi.advancedperipherals.common.network.toclient.RenderableObjectDeletePacket;
@@ -13,6 +14,7 @@ import de.srendi.advancedperipherals.common.network.toserver.GlassesHotkeyPacket
 import de.srendi.advancedperipherals.common.network.toserver.KeyboardMouseClickPacket;
 import de.srendi.advancedperipherals.common.network.toserver.KeyboardMouseMovePacket;
 import de.srendi.advancedperipherals.common.network.toserver.KeyboardMouseScrollPacket;
+import de.srendi.advancedperipherals.common.network.toserver.OverlayModuleClientInfoPacket;
 import de.srendi.advancedperipherals.common.network.toserver.SaddleTurtleControlPacket;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
@@ -43,6 +45,7 @@ public class APNetworking {
 
     public static void init() {
         registerServerToClient(KeyboardMouseCapturePacket.class, KeyboardMouseCapturePacket::decode);
+        registerServerToClient(OverlayModuleClientRequestPacket.class, OverlayModuleClientRequestPacket::decode);
         registerServerToClient(RenderableObjectBulkSyncPacket.class, RenderableObjectBulkSyncPacket::decode);
         registerServerToClient(RenderableObjectClearPacket.class, RenderableObjectClearPacket::decode);
         registerServerToClient(RenderableObjectDeletePacket.class, RenderableObjectDeletePacket::decode);
@@ -55,6 +58,7 @@ public class APNetworking {
         registerClientToServer(KeyboardMouseMovePacket.class, KeyboardMouseMovePacket::decode);
         registerClientToServer(KeyboardMouseScrollPacket.class, KeyboardMouseScrollPacket::decode);
         registerClientToServer(SaddleTurtleControlPacket.class, SaddleTurtleControlPacket::decode);
+        registerClientToServer(OverlayModuleClientInfoPacket.class, OverlayModuleClientInfoPacket::decode);
     }
 
     public static <MSG extends IPacket> void registerServerToClient(Class<MSG> packet, Function<FriendlyByteBuf, MSG> decode) {
@@ -85,10 +89,10 @@ public class APNetworking {
     }
 
     public static void sendToAllTracking(Object packet, Level world, BlockPos pos) {
-        if (world instanceof ServerLevel) {
-            ((ServerLevel) world).getChunkSource().chunkMap.getPlayers(new ChunkPos(pos), false).forEach(p -> sendTo(packet, p));
-        } else {
-            CHANNEL.send(PacketDistributor.TRACKING_CHUNK.with(() -> world.getChunk(pos.getX() >> 4, pos.getZ() >> 4)), packet);
+        if (world instanceof final ServerLevel serverLevel) {
+            serverLevel.getChunkSource().chunkMap.getPlayers(new ChunkPos(pos), false).forEach(p -> sendTo(packet, p));
+            return;
         }
+        CHANNEL.send(PacketDistributor.TRACKING_CHUNK.with(() -> world.getChunk(pos.getX() >> 4, pos.getZ() >> 4)), packet);
     }
 }

@@ -268,7 +268,7 @@ public class PeripheralsConfig implements IAPConfig {
 
     @Override
     public ModConfig.Type getType() {
-        return ModConfig.Type.COMMON;
+        return ModConfig.Type.SERVER;
     }
 
     private List<Predicate<String>> parseChatBoxCommandFilters() {

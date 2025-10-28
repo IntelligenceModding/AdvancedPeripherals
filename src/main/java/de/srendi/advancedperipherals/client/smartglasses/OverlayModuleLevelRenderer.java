@@ -11,7 +11,7 @@ import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.client.RenderUtil;
 import de.srendi.advancedperipherals.client.smartglasses.objects.threedim.IThreeDObjectRenderer;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.three_dim.ThreeDimensionalObject;
-import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.two_dim.RenderableObject;
+import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.RenderableObject;
 import de.srendi.advancedperipherals.common.util.EnumColor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GameRenderer;
@@ -65,7 +65,7 @@ public class OverlayModuleLevelRenderer {
             }
 
             //TODO Everything below here is just for debugging and testing. Will be removed before we push to production
-            BlockPos blockPos = new BlockPos(2, 10, 0);
+            BlockPos blockPos = new BlockPos(2, 100, 0);
 
             float[] colors = EnumColor.DARK_PURPLE.getRgb();
 
@@ -87,7 +87,7 @@ public class OverlayModuleLevelRenderer {
             posestack.pushPose();
             colors = EnumColor.WHITE.getRgb();
 
-            blockPos = new BlockPos(0, 10, 0);
+            blockPos = new BlockPos(0, 100, 0);
             posestack.translate(-view.x + blockPos.getX(), -view.y + blockPos.getY(), -view.z + blockPos.getZ());
 
             RenderUtil.drawSphere(posestack, boxVertexConsumer, 2f, 0f, 0f, 0f, 270f, 0f, 0f, colors[0], colors[1], colors[2], 0.4f, 16, 128);
@@ -101,7 +101,7 @@ public class OverlayModuleLevelRenderer {
             posestack.pushPose();
 
             colors = EnumColor.WHITE.getRgb();
-            blockPos = new BlockPos(6, 10, 0);
+            blockPos = new BlockPos(6, 100, 0);
             posestack.translate(-view.x + blockPos.getX(), -view.y + blockPos.getY(), -view.z + blockPos.getZ());
 
             RenderUtil.drawTorus(posestack, boxVertexConsumer, 1f, 0.4f, 0f, 0f, 0f, 0f, 0f, 0f, colors[0], colors[1], colors[2], 1f, 48, 48);

@@ -36,7 +36,7 @@ public class BlockRenderer implements IThreeDObjectRenderer {
             BlockObject block = (BlockObject) obj;
 
             poseStack.translate(-view.x + block.getX(), -view.y + block.getY(), -view.z + block.getZ());
-            poseStack.mulPose(new Quaternion(block.xRot, block.yRot, block.zRot, true));
+            poseStack.mulPose(new Quaternion(block.rotX, block.rotY, block.rotZ, true));
             poseStack.translate(-0.5f, -0.5f, -0.5f);
             float alpha = block.opacity;
             float red = RenderUtil.getRed(block.color);

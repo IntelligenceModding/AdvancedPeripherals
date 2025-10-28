@@ -2,6 +2,7 @@ package de.srendi.advancedperipherals.common.smartglasses.modules.overlay;
 
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.network.APNetworking;
+import de.srendi.advancedperipherals.common.network.toclient.OverlayModuleClientRequestPacket;
 import de.srendi.advancedperipherals.common.network.toclient.RenderableObjectBulkSyncPacket;
 import de.srendi.advancedperipherals.common.network.toclient.RenderableObjectClearPacket;
 import de.srendi.advancedperipherals.common.network.toclient.RenderableObjectDeletePacket;
@@ -9,9 +10,12 @@ import de.srendi.advancedperipherals.common.network.toclient.RenderableObjectSyn
 import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesAccess;
 import de.srendi.advancedperipherals.common.smartglasses.modules.IModule;
 import de.srendi.advancedperipherals.common.smartglasses.modules.IModuleFunctions;
-import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.two_dim.RenderableObject;
+import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.RenderableObject;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -19,10 +23,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-/**
- * We want to support scripts which were made for the plethora classes. So we call this item the same as the overlay item from plethora
- * We'll first add our own implementation for a rendering system and then add the API endpoints for plethora scripts
- */
 public class OverlayModule implements IModule {
 
     public final ConcurrentHashMap<Integer, RenderableObject> objects = new ConcurrentHashMap<>();
@@ -31,6 +31,10 @@ public class OverlayModule implements IModule {
 
     public boolean autoUpdate = true;
     private int idCounter = 0;
+
+    private int screenWidth = 0;
+    private int screenHeight = 0;
+    private double guiScale = 1;
 
     public OverlayModule(SmartGlassesAccess access) {
         this.access = access;
@@ -48,11 +52,29 @@ public class OverlayModule implements IModule {
 
     @Override
     public void tick(@NotNull SmartGlassesAccess smartGlassesAccess) {
-        /*
+
         Entity entity = smartGlassesAccess.getEntity();
-        if (entity != null && entity.getLevel().getGameTime() % 20 == 0)
-            AdvancedPeripherals.LOGGER.info("I'm an overlay module! And I'm alive!");
-        */
+        if (entity instanceof ServerPlayer player && entity.getLevel().getGameTime() % 2 == 0) {
+            APNetworking.sendTo(new OverlayModuleClientRequestPacket(), player);
+        }
+    }
+
+    public void setScreenSizes(int screenWidth, int screenHeight, double guiScale) {
+        this.screenWidth = screenWidth;
+        this.screenHeight = screenHeight;
+        this.guiScale = guiScale;
+    }
+
+    public int getScreenWidth() {
+        return screenWidth;
+    }
+
+    public int getScreenHeight() {
+        return screenHeight;
+    }
+
+    public double getGuiScale() {
+        return guiScale;
     }
 
     public SmartGlassesAccess getAccess() {

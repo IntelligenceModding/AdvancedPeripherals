@@ -6,9 +6,11 @@ import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.client.smartglasses.objects.IObjectRenderer;
 import de.srendi.advancedperipherals.client.smartglasses.objects.twodim.ItemRenderer;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.OverlayModule;
+import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.RenderableObject;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertytypes.StringProperty;
 import net.minecraft.network.FriendlyByteBuf;
 
+import java.util.Optional;
 import java.util.UUID;
 
 public class ItemObject extends RenderableObject {
@@ -44,34 +46,13 @@ public class ItemObject extends RenderableObject {
     }
 
     public static ItemObject decode(FriendlyByteBuf buffer) {
-        int objectId = buffer.readInt();
-        boolean hasValidUUID = buffer.readBoolean();
-        if (!hasValidUUID) {
-            AdvancedPeripherals.exception("Tried to decode a buffer for an OverlayObject but without a valid player as target.", new IllegalArgumentException());
+        Optional<ItemObject> optionalObject = RenderableObject.baseDecode(buffer, ItemObject::new);
+        if (optionalObject.isEmpty())
             return null;
-        }
-        UUID player = buffer.readUUID();
-        int color = buffer.readInt();
-        float opacity = buffer.readFloat();
 
-        float x = buffer.readFloat();
-        float y = buffer.readFloat();
-        float z = buffer.readFloat();
-        float maxX = buffer.readFloat();
-        float maxY = buffer.readFloat();
-        float maxZ = buffer.readFloat();
         String item = buffer.readUtf();
 
-        ItemObject clientObject = new ItemObject(player);
-        clientObject.setId(objectId);
-        clientObject.color = color;
-        clientObject.opacity = opacity;
-        clientObject.x = x;
-        clientObject.y = y;
-        clientObject.z = z;
-        clientObject.maxX = maxX;
-        clientObject.maxY = maxY;
-        clientObject.maxZ = maxZ;
+        ItemObject clientObject = optionalObject.get();
         clientObject.item = item;
 
         return clientObject;

@@ -1,26 +1,32 @@
 package de.srendi.advancedperipherals.common.blocks.blockentities;
 
+import appeng.api.config.Actionable;
 import appeng.api.networking.GridFlags;
 import appeng.api.networking.GridHelper;
 import appeng.api.networking.IGridNode;
 import appeng.api.networking.IInWorldGridNodeHost;
 import appeng.api.networking.IManagedGridNode;
+import appeng.api.networking.crafting.ICraftingLink;
+import appeng.api.networking.crafting.ICraftingRequester;
 import appeng.api.networking.crafting.ICraftingSimulationRequester;
 import appeng.api.networking.energy.IEnergyService;
 import appeng.api.networking.security.IActionHost;
 import appeng.api.networking.security.IActionSource;
 import appeng.api.stacks.AEItemKey;
+import appeng.api.stacks.AEKey;
 import appeng.api.storage.StorageHelper;
 import appeng.api.util.AECableType;
-import de.srendi.advancedperipherals.common.addons.ae2.AppEngApi;
-import de.srendi.advancedperipherals.common.addons.ae2.CraftJob;
-import de.srendi.advancedperipherals.common.addons.ae2.MeBridgeEntityListener;
-import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.MeBridgePeripheral;
+import com.google.common.collect.ImmutableSet;
+import de.srendi.advancedperipherals.common.addons.ae2.AEApi;
+import de.srendi.advancedperipherals.common.addons.ae2.AECraftJob;
+import de.srendi.advancedperipherals.common.addons.ae2.MEBridgeEntityListener;
+import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.MEBridgePeripheral;
 import de.srendi.advancedperipherals.common.blocks.base.IInventoryBlock;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralBlockEntity;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.setup.APBlockEntityTypes;
 import de.srendi.advancedperipherals.common.setup.APBlocks;
+import de.srendi.advancedperipherals.common.util.BasicCraftJob;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.player.Player;
@@ -35,12 +41,13 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.stream.Collectors;
 
-public class MeBridgeEntity extends PeripheralBlockEntity<MeBridgePeripheral> implements IActionSource, IActionHost, IInWorldGridNodeHost, ICraftingSimulationRequester, IInventoryBlock {
+public class MeBridgeEntity extends PeripheralBlockEntity<MEBridgePeripheral> implements IActionSource, IInWorldGridNodeHost, ICraftingSimulationRequester, IInventoryBlock, ICraftingRequester {
 
-    private final List<CraftJob> jobs = new CopyOnWriteArrayList<>();
+    private final List<AECraftJob> jobs = new CopyOnWriteArrayList<>();
     private boolean initialized = false;
-    private final IManagedGridNode mainNode = GridHelper.createManagedNode(this, MeBridgeEntityListener.INSTANCE);
+    private final IManagedGridNode mainNode = GridHelper.createManagedNode(this, MEBridgeEntityListener.INSTANCE);
 
     public MeBridgeEntity(BlockPos pos, BlockState state) {
         super(APBlockEntityTypes.ME_BRIDGE.get(), pos, state);
@@ -48,8 +55,8 @@ public class MeBridgeEntity extends PeripheralBlockEntity<MeBridgePeripheral> im
 
     @NotNull
     @Override
-    protected MeBridgePeripheral createPeripheral() {
-        return new MeBridgePeripheral(this);
+    protected MEBridgePeripheral createPeripheral() {
+        return new MEBridgePeripheral(this);
     }
 
     @Override
@@ -57,7 +64,7 @@ public class MeBridgeEntity extends PeripheralBlockEntity<MeBridgePeripheral> im
         super.handleTick(level, state, type);
         if (!this.level.isClientSide()) {
             if (!initialized) {
-                MeBridgePeripheral peripheral = this.getPeripheral();
+                MEBridgePeripheral peripheral = this.getPeripheral();
                 if (peripheral == null) {
                     return;
                 }
@@ -73,10 +80,10 @@ public class MeBridgeEntity extends PeripheralBlockEntity<MeBridgePeripheral> im
             }
 
             // Try to start the job if the job calculation finished
-            jobs.forEach(CraftJob::maybeCraft);
+            jobs.forEach(BasicCraftJob::tick);
 
-            // Remove the job if the crafting started, we can't do anything with it anymore
-            jobs.removeIf(CraftJob::isCraftingStarted);
+            // Remove the job if the crafting calculation failed, we can't do anything with it anymore
+            jobs.removeIf(BasicCraftJob::canBePurged);
         }
     }
 
@@ -137,8 +144,12 @@ public class MeBridgeEntity extends PeripheralBlockEntity<MeBridgePeripheral> im
         return this;
     }
 
-    public void addJob(CraftJob job) {
+    public void addJob(AECraftJob job) {
         jobs.add(job);
+    }
+
+    public List<AECraftJob> getJobs() {
+        return jobs;
     }
 
     @Override
@@ -156,7 +167,7 @@ public class MeBridgeEntity extends PeripheralBlockEntity<MeBridgePeripheral> im
             return;
 
         IEnergyService energySrc = mainNode.getGrid().getEnergyService();
-        int inserted = (int) StorageHelper.poweredInsert(energySrc, AppEngApi.getMonitor(getActionableNode()), AEItemKey.of(stack), stack.getCount(), this);
+        int inserted = (int) StorageHelper.poweredInsert(energySrc, AEApi.getMonitor(getActionableNode()), AEItemKey.of(stack), stack.getCount(), this);
 
         if (inserted > 0) {
             getItem(index).setCount(getItem(index).getCount() - inserted);
@@ -168,4 +179,18 @@ public class MeBridgeEntity extends PeripheralBlockEntity<MeBridgePeripheral> im
         return false;
     }
 
+    @Override
+    public ImmutableSet<ICraftingLink> getRequestedJobs() {
+        return jobs.stream().filter(BasicCraftJob::isCraftingStarted).map(AECraftJob::getJobLink).collect(Collectors.toCollection(ImmutableSet::of));
+    }
+
+    @Override
+    public long insertCraftedItems(ICraftingLink link, AEKey what, long amount, Actionable mode) {
+        return 0;
+    }
+
+    @Override
+    public void jobStateChange(ICraftingLink link) {
+        jobs.stream().filter(BasicCraftJob::isCraftingStarted).filter((job) -> job.getJobLink().getCraftingID().equals(link.getCraftingID())).forEach(AECraftJob::jobStateChanged);
+    }
 }

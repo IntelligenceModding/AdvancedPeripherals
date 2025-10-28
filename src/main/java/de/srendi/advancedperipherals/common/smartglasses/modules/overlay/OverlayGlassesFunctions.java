@@ -12,8 +12,9 @@ import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.three_dim.TorusObject;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.two_dim.CircleObject;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.two_dim.ItemObject;
+import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.two_dim.LineObject;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.two_dim.RectangleObject;
-import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.two_dim.RenderableObject;
+import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.RenderableObject;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.two_dim.TextObject;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.phys.Vec3;
@@ -40,6 +41,14 @@ public class OverlayGlassesFunctions implements IModuleFunctions {
     public final MethodResult createCircle(IArguments arguments) throws LuaException {
         CircleObject circle = new CircleObject(overlayModule, arguments);
         RenderableObject object = overlayModule.addObject(circle);
+
+        return MethodResult.of(object, "SUCCESS");
+    }
+
+    @LuaFunction
+    public final MethodResult createLine(IArguments arguments) throws LuaException {
+        LineObject rectangle = new LineObject(overlayModule, arguments);
+        RenderableObject object = overlayModule.addObject(rectangle);
 
         return MethodResult.of(object, "SUCCESS");
     }
@@ -113,10 +122,14 @@ public class OverlayGlassesFunctions implements IModuleFunctions {
         return MethodResult.of(overlayModule.getObjects().size());
     }
 
-    // TODO: This will crash on dedicated servers
     @LuaFunction
     public final MethodResult getSize() {
-        return MethodResult.of(Minecraft.getInstance().getWindow().getWidth(), Minecraft.getInstance().getWindow().getHeight());
+        return MethodResult.of(overlayModule.getScreenWidth(), overlayModule.getScreenHeight());
+    }
+
+    @LuaFunction
+    public final MethodResult getGuiScale() {
+        return MethodResult.of(overlayModule.getGuiScale());
     }
 
     @LuaFunction

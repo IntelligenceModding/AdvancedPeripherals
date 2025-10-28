@@ -14,12 +14,12 @@ import org.jetbrains.annotations.NotNull;
  *
  * @see de.srendi.advancedperipherals.common.addons.computercraft.peripheral.RsBridgePeripheral
  */
-public class RsItemHandler implements IStorageSystemItemHandler {
+public class RSItemHandler implements IStorageSystemItemHandler {
 
     @NotNull
     private final INetwork network;
 
-    public RsItemHandler(@NotNull INetwork network) {
+    public RSItemHandler(@NotNull INetwork network) {
         this.network = network;
     }
 
@@ -31,7 +31,7 @@ public class RsItemHandler implements IStorageSystemItemHandler {
 
     @Override
     public ItemStack extractItem(ItemFilter filter, int count, boolean simulate) {
-        ItemStack item = RefinedStorage.findStackFromFilter(network, network.getCraftingManager(), filter);
+        ItemStack item = RSApi.findItemFromFilter(network, network.getCraftingManager(), filter);
         if (item == null)
             AdvancedPeripherals.debug("Trying to extract item: " + item + " from filter: " + filter);
         if(item == null)

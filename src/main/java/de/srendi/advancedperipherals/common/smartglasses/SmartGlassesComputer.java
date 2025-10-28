@@ -250,6 +250,11 @@ public class SmartGlassesComputer extends ServerComputer implements IPocketAcces
         return modules;
     }
 
+    @Nullable
+    public <T extends IModule> T getModule(Class<T> module) {
+        return modules.values().stream().filter(module::isInstance).map(module::cast).findFirst().orElse(null);
+    }
+
     @Override
     protected void onRemoved() {
         super.onRemoved();

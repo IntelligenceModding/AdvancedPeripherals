@@ -36,7 +36,7 @@ public class SphereRenderer implements IThreeDObjectRenderer {
             float blue = RenderUtil.getRed(sphere.color);
 
             poseStack.translate(-view.x, -view.y, -view.z);
-            RenderUtil.drawSphere(poseStack, boxVertexConsumer, sphere.radius, sphere.x, sphere.y, sphere.z, sphere.xRot, sphere.yRot, sphere.zRot, red, green, blue, alpha, sphere.sectors, sphere.stacks);
+            RenderUtil.drawSphere(poseStack, boxVertexConsumer, sphere.radius, sphere.x, sphere.y, sphere.z, sphere.rotX, sphere.rotY, sphere.rotZ, red, green, blue, alpha, sphere.sectors, sphere.stacks);
             onPostRender(obj);
 
             poseStack.popPose();
