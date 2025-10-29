@@ -8,7 +8,7 @@ import org.jetbrains.annotations.Nullable;
 
 public interface IModuleItem {
 
-    IModule createModule(SmartGlassesAccess access);
+    IModule createModule(SmartGlassesAccess access, ItemStack stack);
 
     /**
      * This method is called every tick the item is in the inventory of the smart glasses

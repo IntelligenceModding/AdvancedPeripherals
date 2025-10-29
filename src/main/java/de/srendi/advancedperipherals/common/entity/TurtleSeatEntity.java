@@ -39,18 +39,8 @@ public class TurtleSeatEntity extends Entity implements HasCustomInventoryScreen
     private ITurtleAccess turtle = null;
     private int life = 0;
 
-    private boolean forwardKey = false;
-    private boolean backKey = false;
-    private boolean leftKey = false;
-    private boolean rightKey = false;
-    private boolean upKey = false;
-    private boolean downKey = false;
-    private boolean forwardKeyOld = false;
-    private boolean backKeyOld = false;
-    private boolean leftKeyOld = false;
-    private boolean rightKeyOld = false;
-    private boolean upKeyOld = false;
-    private boolean downKeyOld = false;
+    private InputKeySet inputs = InputKeySet.NONE;
+    private InputKeySet oldInputs = InputKeySet.NONE;
 
     public TurtleSeatEntity(EntityType<?> type, Level world) {
         super(type, world);
@@ -158,41 +148,31 @@ public class TurtleSeatEntity extends Entity implements HasCustomInventoryScreen
             return;
         }
         ServerComputer computer = this.getServerComputer();
-        if (computer != null) {
-            if (this.forwardKey != this.forwardKeyOld) {
-                this.forwardKeyOld = this.forwardKey;
-                computer.queueEvent("saddle_control", new Object[]{"forward", this.forwardKey});
+        if (computer != null && this.inputs != this.oldInputs) {
+            if (this.inputs.forward() != this.oldInputs.forward()) {
+                computer.queueEvent("saddle_control", new Object[]{"forward", this.inputs.forward()});
             }
-            if (this.backKey != this.backKeyOld) {
-                this.backKeyOld = this.backKey;
-                computer.queueEvent("saddle_control", new Object[]{"back", this.backKey});
+            if (this.inputs.back() != this.oldInputs.back()) {
+                computer.queueEvent("saddle_control", new Object[]{"back", this.inputs.back()});
             }
-            if (this.leftKey != this.leftKeyOld) {
-                this.leftKeyOld = this.leftKey;
-                computer.queueEvent("saddle_control", new Object[]{"left", this.leftKey});
+            if (this.inputs.left() != this.oldInputs.left()) {
+                computer.queueEvent("saddle_control", new Object[]{"left", this.inputs.left()});
             }
-            if (this.rightKey != this.rightKeyOld) {
-                this.rightKeyOld = this.rightKey;
-                computer.queueEvent("saddle_control", new Object[]{"right", this.rightKey});
+            if (this.inputs.right() != this.oldInputs.right()) {
+                computer.queueEvent("saddle_control", new Object[]{"right", this.inputs.right()});
             }
-            if (this.upKey != this.upKeyOld) {
-                this.upKeyOld = this.upKey;
-                computer.queueEvent("saddle_control", new Object[]{"up", this.upKey});
+            if (this.inputs.up() != this.oldInputs.up()) {
+                computer.queueEvent("saddle_control", new Object[]{"up", this.inputs.up()});
             }
-            if (this.downKey != this.downKeyOld) {
-                this.downKeyOld = this.downKey;
-                computer.queueEvent("saddle_control", new Object[]{"down", this.downKey});
+            if (this.inputs.down() != this.oldInputs.down()) {
+                computer.queueEvent("saddle_control", new Object[]{"down", this.inputs.down()});
             }
+            this.oldInputs = this.inputs;
         }
     }
 
     public void handleSaddleTurtleControlPacket(SaddleTurtleControlPacket packet) {
-        this.forwardKey = packet.forward;
-        this.backKey = packet.back;
-        this.leftKey = packet.left;
-        this.rightKey = packet.right;
-        this.upKey = packet.up;
-        this.downKey = packet.down;
+        this.inputs = packet.inputs;
     }
 
     @Override

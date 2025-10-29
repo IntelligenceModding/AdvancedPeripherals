@@ -38,7 +38,6 @@ public class DistanceDetectorPeripheral extends BasePeripheral<IPeripheralOwner>
     public DistanceDetectorPeripheral(DistanceDetectorEntity tileEntity) {
         super(PERIPHERAL_TYPE, new BlockEntityPeripheralOwner<>(tileEntity));
         this.tileEntity = tileEntity;
-        // TODO: let distance detector block also use data storage
         this.maxRange = new AtomicInteger(Float.floatToRawIntBits(this.tileEntity.getMaxRange()));
         this.currentDistance = this.tileEntity.getCurrentDistance();
         this.showLaser = new AtomicBoolean(this.tileEntity.getShowLaser());

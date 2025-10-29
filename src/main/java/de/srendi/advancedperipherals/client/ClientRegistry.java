@@ -5,7 +5,8 @@ import dan200.computercraft.api.client.turtle.TurtleUpgradeModeller;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.client.renderer.DistanceDetectorRenderer;
 import de.srendi.advancedperipherals.client.screens.InventoryManagerScreen;
-import de.srendi.advancedperipherals.client.screens.SaddleTurtleScreen;
+import de.srendi.advancedperipherals.client.screens.KeyboardScreen;
+import de.srendi.advancedperipherals.client.screens.SaddleTurtleOverlay;
 import de.srendi.advancedperipherals.client.screens.SmartGlassesScreen;
 import de.srendi.advancedperipherals.client.smartglasses.OverlayModuleOverlay;
 import de.srendi.advancedperipherals.client.smartglasses.OverlayObjectHolder;
@@ -31,7 +32,7 @@ import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 @EventBusSubscriber(modid = AdvancedPeripherals.MOD_ID, value = Dist.CLIENT)
 public class ClientRegistry {
 
-    public static final SaddleTurtleScreen SADDLE_TURTLE_OVERLAY = new SaddleTurtleScreen();
+    public static final SaddleTurtleOverlay SADDLE_TURTLE_OVERLAY = new SaddleTurtleOverlay();
     public static final OverlayModuleOverlay OVERLAY_MODULE_OVERLAY = new OverlayModuleOverlay();
 
     @SubscribeEvent
@@ -42,6 +43,24 @@ public class ClientRegistry {
 
     @SubscribeEvent
     public static void onClientSetup(FMLClientSetupEvent event) {
+        MenuScreens.register(APContainerTypes.INVENTORY_MANAGER_CONTAINER.get(), InventoryManagerScreen::new);
+        MenuScreens.register(APContainerTypes.KEYBOARD_CONTAINER.get(), KeyboardScreen::new);
+        MenuScreens.register(APContainerTypes.SMART_GLASSES_CONTAINER.get(), SmartGlassesScreen::new);
+
+        ComputerCraftAPIClient.registerTurtleUpgradeModeller(CCRegistration.CHUNKY_TURTLE.get(), TurtleUpgradeModeller.flatItem());
+        ComputerCraftAPIClient.registerTurtleUpgradeModeller(CCRegistration.COMPASS_TURTLE.get(), TurtleUpgradeModeller.flatItem());
+        ComputerCraftAPIClient.registerTurtleUpgradeModeller(CCRegistration.SADDLE_TURTLE.get(), TurtleUpgradeModeller.flatItem());
+        ComputerCraftAPIClient.registerTurtleUpgradeModeller(CCRegistration.CHAT_BOX_TURTLE.get(), TurtleUpgradeModeller.sided(new ModelResourceLocation(AdvancedPeripherals.getRL("turtle_chat_box_upgrade_left"), "inventory"), new ModelResourceLocation(AdvancedPeripherals.getRL("turtle_chat_box_upgrade_right"), "inventory")));
+        ComputerCraftAPIClient.registerTurtleUpgradeModeller(CCRegistration.ENVIRONMENT_TURTLE.get(), TurtleUpgradeModeller.sided(new ModelResourceLocation(AdvancedPeripherals.getRL("turtle_environment_upgrade_left"), "inventory"), new ModelResourceLocation(AdvancedPeripherals.getRL("turtle_environment_upgrade_right"), "inventory")));
+        ComputerCraftAPIClient.registerTurtleUpgradeModeller(CCRegistration.GEO_SCANNER_TURTLE.get(), TurtleUpgradeModeller.sided(new ModelResourceLocation(AdvancedPeripherals.getRL("turtle_geoscanner_upgrade_left"), "inventory"), new ModelResourceLocation(AdvancedPeripherals.getRL("turtle_geoscanner_upgrade_right"), "inventory")));
+        ComputerCraftAPIClient.registerTurtleUpgradeModeller(CCRegistration.PLAYER_DETECTOR_TURTLE.get(), TurtleUpgradeModeller.sided(new ModelResourceLocation(AdvancedPeripherals.getRL("turtle_player_upgrade_left"), "inventory"), new ModelResourceLocation(AdvancedPeripherals.getRL("turtle_player_upgrade_right"), "inventory")));
+        ComputerCraftAPIClient.registerTurtleUpgradeModeller(CCRegistration.OP_END_TURTLE.get(), new MetaTurtleUpgradeModeller<>());
+        ComputerCraftAPIClient.registerTurtleUpgradeModeller(CCRegistration.OP_HUSBANDRY_TURTLE.get(), new MetaTurtleUpgradeModeller<>());
+        ComputerCraftAPIClient.registerTurtleUpgradeModeller(CCRegistration.OP_WEAK_TURTLE.get(), new MetaTurtleUpgradeModeller<>());
+        ComputerCraftAPIClient.registerTurtleUpgradeModeller(CCRegistration.HUSBANDRY_TURTLE.get(), new MetaTurtleUpgradeModeller<>());
+        ComputerCraftAPIClient.registerTurtleUpgradeModeller(CCRegistration.END_TURTLE.get(), new MetaTurtleUpgradeModeller<>());
+        ComputerCraftAPIClient.registerTurtleUpgradeModeller(CCRegistration.WEAK_TURTLE.get(), new MetaTurtleUpgradeModeller<>());
+
         ItemPropertiesRegistry.register();
         OverlayObjectHolder.registerDecodeObjects();
     }
@@ -74,7 +93,7 @@ public class ClientRegistry {
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void registeringOverlays(RegisterGuiLayersEvent event) {
-        event.registerAboveAll(SaddleTurtleScreen.ID, SADDLE_TURTLE_OVERLAY);
+        event.registerAboveAll(SaddleTurtleOverlay.ID, SADDLE_TURTLE_OVERLAY);
         event.registerAboveAll(OverlayModuleOverlay.ID, OVERLAY_MODULE_OVERLAY);
     }
 }

@@ -31,12 +31,14 @@ public class ServerWorker {
     }
 
     @SubscribeEvent
-    public static void serverTick(ServerTickEvent.Post event) {
-        while (!callQueue.isEmpty()) {
-            final Runnable runnable = callQueue.poll();
-            tasksRan++;
-            AdvancedPeripherals.debug("Running task #" + tasksRan + ". Running " + runnable.getClass());
-            runnable.run();
+    public static void serverTick(TickEvent.ServerTickEvent event) {
+        if (event.phase == TickEvent.Phase.END) {
+            for (int remain = callQueue.size(); remain > 0; remain--) {
+                final Runnable runnable = callQueue.poll();
+                tasksRan++;
+                AdvancedPeripherals.debug("Running task #" + tasksRan + ". Running " + runnable.getClass());
+                runnable.run();
+            }
         }
     }
 }

@@ -16,13 +16,12 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
 import org.jspecify.annotations.NonNull;
 
-public class SaddleTurtleScreen implements LayeredDraw.Layer {
+public class SaddleTurtleOverlay implements LayeredDraw.Layer {
     public static final ResourceLocation ID = AdvancedPeripherals.getRL("saddle_turtle_overlay");
 
     private static final long ACTIVE_TIMEOUT = 5000;
 
-    public static final ResourceLocation GUI_SPRITE_ATLAS = ResourceLocation
-            .withDefaultNamespace("textures/atlas/gui.png");
+    public static final ResourceLocation GUI_SPRITE_ATLAS = ResourceLocation.withDefaultNamespace("textures/atlas/gui.png");
 
     private GuiGraphics gui;
     private int screenWidth = 0;
@@ -33,7 +32,7 @@ public class SaddleTurtleScreen implements LayeredDraw.Layer {
     private int barColor = 0;
     private long lastActived = 0;
 
-    public SaddleTurtleScreen() {}
+    public SaddleTurtleOverlay() {}
 
     protected Font getFont() {
         return this.gui.minecraft.font;
@@ -51,12 +50,12 @@ public class SaddleTurtleScreen implements LayeredDraw.Layer {
         return getFont().width(text);
     }
 
-    public static boolean isPlayerControllingTurtle() {
+    public boolean isPlayerControllingTurtle() {
         LocalPlayer player = Minecraft.getInstance().player;
         return player != null && player.getVehicle() instanceof TurtleSeatEntity;
     }
 
-    public static boolean isPlayerMountedOnTurtle() {
+    public boolean isPlayerMountedOnTurtle() {
         LocalPlayer player = Minecraft.getInstance().player;
         return player != null && player.getRootVehicle() instanceof TurtleSeatEntity;
     }
@@ -65,7 +64,7 @@ public class SaddleTurtleScreen implements LayeredDraw.Layer {
         if (this.lastActived == 0) {
             return false;
         }
-        if (!isPlayerMountedOnTurtle()) {
+        if (!this.isPlayerMountedOnTurtle()) {
             this.hide();
             return false;
         }
@@ -144,7 +143,7 @@ public class SaddleTurtleScreen implements LayeredDraw.Layer {
 
     @Override
     public void render(@NonNull GuiGraphics guiGraphics, @NonNull DeltaTracker deltaTracker) {
-        if (!isPlayerMountedOnTurtle()) {
+        if (!this.isPlayerMountedOnTurtle()) {
             return;
         }
 
@@ -155,7 +154,7 @@ public class SaddleTurtleScreen implements LayeredDraw.Layer {
         if (this.shouldRenderFuelBar()) {
             this.renderFuelBar(guiGraphics.pose());
         }
-        if (isPlayerControllingTurtle()) {
+        if (this.isPlayerControllingTurtle()) {
             this.renderDismountHint(guiGraphics.pose());
         }
     }

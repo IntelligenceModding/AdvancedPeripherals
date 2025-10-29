@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+// TODO: generate setters/getters lua functions out of our Property annotations
 public abstract class OverlayObject {
 
     @BooleanProperty

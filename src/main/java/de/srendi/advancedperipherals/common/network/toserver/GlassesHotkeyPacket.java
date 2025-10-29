@@ -4,7 +4,9 @@ import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.items.SmartGlassesItem;
 import de.srendi.advancedperipherals.common.network.IAPPacket;
 import de.srendi.advancedperipherals.common.network.toclient.UsernameToCachePacket;
+import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesAccess;
 import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesComputer;
+import de.srendi.advancedperipherals.common.smartglasses.modules.keyboard.KeyboardModule;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
@@ -20,49 +22,52 @@ public class GlassesHotkeyPacket implements IAPPacket {
 
     public static final Type<GlassesHotkeyPacket> TYPE = new Type<>(AdvancedPeripherals.getRL("glasseshotkey"));
 
-    private final UUID player;
     private final String keyBind;
     private final int keyPressDuration;
 
-    public GlassesHotkeyPacket(UUID player, String keyBind, int keyPressDuration) {
-        this.player = player;
+    public GlassesHotkeyPacket(String keyBind, int keyPressDuration) {
         this.keyBind = keyBind;
         this.keyPressDuration = keyPressDuration;
     }
 
     public GlassesHotkeyPacket(RegistryFriendlyByteBuf buffer) {
-        this.player = buffer.readUUID();
         this.keyBind = buffer.readUtf();
         this.keyPressDuration = buffer.readInt();
     }
 
     @Override
     public void handle(IPayloadContext context) {
-        MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
-
-        ServerPlayer serverPlayer = server.getPlayerList().getPlayer(player);
-        if (serverPlayer == null)
+        if (context.player() instanceof ServerPlayer player) {
             return;
-
-        for (ItemStack stack : serverPlayer.getAllSlots()) {
-            if (stack.getItem() instanceof SmartGlassesItem) {
-                SmartGlassesComputer computer = SmartGlassesItem.getServerComputer(server, stack);
-
-                if (computer != null)
-                    computer.queueEvent("glassesKeyPressed", new Object[]{keyBind, keyPressDuration});
-            }
         }
+
+        ItemStack smartGlasses = player.getItemBySlot(EquipmentSlot.HEAD);
+        if (!(smartGlasses.getItem() instanceof SmartGlassesItem)) {
+            return;
+        }
+        SmartGlassesComputer computer = SmartGlassesItem.getServerComputer(player.server, stack);
+        if (computer == null) {
+            return;
+        }
+        if (keyPressDuration >= 0) {
+            computer.queueEvent("glasses_key_pressed", new Object[]{keyBind, keyPressDuration});
+            return;
+        }
+        SmartGlassesAccess glasses = computer.getSmartGlassesAccess();
+        computer.getModules().values()
+            .stream()
+            .filter(KeyboardModule.class::isInstance)
+            .map(KeyboardModule.class::cast)
+            .findFirst()
+            .ifPresent((keyboardModule) -> {
+                keyboardModule.openKeyboard(glasses);
+            });
     }
 
     @Override
     public void write(RegistryFriendlyByteBuf buffer) {
-        buffer.writeUUID(player);
         buffer.writeUtf(keyBind);
         buffer.writeInt(keyPressDuration);
-    }
-
-    public static GlassesHotkeyPacket decode(FriendlyByteBuf buffer) {
-        return new GlassesHotkeyPacket(buffer.readUUID(), buffer.readUtf(), buffer.readInt());
     }
 
     @Override

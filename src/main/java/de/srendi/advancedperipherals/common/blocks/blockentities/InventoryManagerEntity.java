@@ -52,6 +52,7 @@ public class InventoryManagerEntity extends PeripheralBlockEntity<InventoryManag
 
     @Override
     public void setItem(int index, @NotNull ItemStack stack) {
+        boolean shouldClearOwner = false;
         if (stack.getItem() instanceof MemoryCardItem) {
             if (stack.hasTag() && stack.getTag().contains("ownerId")) {
                 UUID owner = stack.getTag().getUUID("ownerId");
@@ -60,9 +61,12 @@ public class InventoryManagerEntity extends PeripheralBlockEntity<InventoryManag
                 stack.getTag().remove("owner");
             } else if (stack != this.getItem(index)) {
                 // Only clear owner when the new card item is not the current item
-                this.owner = null;
+                shouldClearOwner = true;
             }
         } else {
+            shouldClearOwner = true;
+        }
+        if (shouldClearOwner && this.getLevel() != null && !this.getLevel().isClientSide) {
             this.owner = null;
         }
         super.setItem(index, stack);
@@ -80,13 +84,11 @@ public class InventoryManagerEntity extends PeripheralBlockEntity<InventoryManag
             this.owner = data.getUUID("ownerId");
         }
         super.load(data);
-        // Fresh the memory card for backward compatibility
-        this.setItem(0, this.getItem(0));
     }
 
     @Override
-    public void saveAdditional(@NotNull CompoundTag data) {
-        super.saveAdditional(data);
+    protected void saveShared(@NotNull CompoundTag data) {
+        super.saveShared(data);
         if (this.owner != null) {
             data.putUUID("ownerId", this.owner);
         }
