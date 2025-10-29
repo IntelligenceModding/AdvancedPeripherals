@@ -12,7 +12,7 @@ import java.util.UUID;
 
 public class UsernameToCachePacket implements IAPPacket {
 
-    public static final Type<UsernameToCachePacket> TYPE = new Type<>(AdvancedPeripherals.getRL("usernametocache"));
+    public static final Type<UsernameToCachePacket> TYPE = new Type<>(AdvancedPeripherals.getRL("username_to_cache"));
 
     public UUID uuid;
     public String username;

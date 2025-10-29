@@ -15,19 +15,12 @@ public class OverlayModuleClientRequestPacket implements IAPPacket {
 
     public static final StreamCodec<RegistryFriendlyByteBuf, OverlayModuleClientRequestPacket> CODEC = new EmptyCodec<>(OverlayModuleClientRequestPacket::new);
 
-    public static final Type<OverlayModuleClientRequestPacket> TYPE = new Type<>(AdvancedPeripherals.getRL("overlaymoduleclientrequest"));
+    public static final Type<OverlayModuleClientRequestPacket> TYPE = new Type<>(AdvancedPeripherals.getRL("overlay_module_client_request"));
 
     public OverlayModuleClientRequestPacket() {
-
     }
 
     public OverlayModuleClientRequestPacket(FriendlyByteBuf buffer) {
-
-    }
-
-    @Override
-    public void write(RegistryFriendlyByteBuf buf) {
-
     }
 
     @Override
@@ -38,6 +31,10 @@ public class OverlayModuleClientRequestPacket implements IAPPacket {
         double guiScale = minecraft.getWindow().getGuiScale();
 
         APNetworking.sendToServer(new OverlayModuleClientInfoPacket(minecraft.player.getUUID(), sizeX, sizeY, guiScale));
+    }
+
+    @Override
+    public void write(RegistryFriendlyByteBuf buf) {
     }
 
     @Override

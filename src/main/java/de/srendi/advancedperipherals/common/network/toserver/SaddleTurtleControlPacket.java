@@ -10,7 +10,7 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 public class SaddleTurtleControlPacket implements IAPPacket {
 
-    public static final CustomPacketPayload.Type<SaddleTurtleControlPacket> TYPE = new Type<>(AdvancedPeripherals.getRL("saddleturtlecontrol"));
+    public static final CustomPacketPayload.Type<SaddleTurtleControlPacket> TYPE = new Type<>(AdvancedPeripherals.getRL("saddle_turtle_control"));
     public final InputKeySet inputs;
 
     public SaddleTurtleControlPacket(InputKeySet inputs) {

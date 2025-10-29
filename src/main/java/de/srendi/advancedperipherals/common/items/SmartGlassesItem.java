@@ -67,6 +67,14 @@ public class SmartGlassesItem extends ArmorItem implements IComputerItem, IMedia
         super(material, EquipmentSlot.HEAD, new Properties().stacksTo(1).tab(AdvancedPeripherals.TAB));
     }
 
+    public static ItemStack getEquipped(LivingEntity entity) {
+        ItemStack stack = entity.getItemBySlot(EquipmentSlot.HEAD);
+        if (!(stack.getItem() instanceof SmartGlassesItem)) {
+            return ItemStack.EMPTY;
+        }
+        return stack;
+    }
+
     @Nullable
     @Override
     public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundTag nbt) {

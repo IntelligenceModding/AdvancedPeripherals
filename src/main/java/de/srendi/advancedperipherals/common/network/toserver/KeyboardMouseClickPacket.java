@@ -4,13 +4,13 @@ import de.srendi.advancedperipherals.common.items.SmartGlassesItem;
 import de.srendi.advancedperipherals.common.network.base.IPacket;
 import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesComputer;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.network.NetworkEvent;
-import net.minecraftforge.server.ServerLifecycleHooks;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
-public class KeyboardMouseClickPacket implements IPacket {
+public class KeyboardMouseClickPacket implements IAPPacket {
+
+    public static final Type<GlassesHotkeyPacket> TYPE = new Type<>(AdvancedPeripherals.getRL("keyboard_mouse_click"));
 
     private final int button;
     private final boolean isRelease;
@@ -20,33 +20,36 @@ public class KeyboardMouseClickPacket implements IPacket {
         this.isRelease = isRelease;
     }
 
-    @Override
-    public void handle(NetworkEvent.Context context) {
-        MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
-
-        ServerPlayer serverPlayer = context.getSender();
-        if (serverPlayer == null) {
-            return;
-        }
-
-        for (ItemStack stack : serverPlayer.getAllSlots()) {
-            if (stack.getItem() instanceof SmartGlassesItem) {
-                SmartGlassesComputer computer = SmartGlassesItem.getServerComputer(server, stack);
-                if (computer != null) {
-                    computer.queueEvent(isRelease ? "player_mouse_up" : "player_mouse_click", new Object[]{button});
-                    break;
-                }
-            }
-        }
+    public KeyboardMouseClickPacket(FriendlyByteBuf buffer) {
+        this.button = buffer.readVarInt();
+        this.isRelease = buffer.readBoolean();
     }
 
     @Override
-    public void encode(FriendlyByteBuf buffer) {
+    public void handle(IPayloadContext context) {
+        if (context.player() instanceof ServerPlayer player) {
+            return;
+        }
+
+        ItemStack smartGlasses = SmartGlassesItem.getEquipped(player);
+        if (smartGlasses.isEmpty()) {
+            return;
+        }
+        SmartGlassesComputer computer = SmartGlassesItem.getServerComputer(player.server, stack);
+        if (computer == null) {
+            return;
+        }
+        computer.queueEvent(isRelease ? "player_mouse_up" : "player_mouse_click", new Object[]{button});
+    }
+
+    @Override
+    public void write(FriendlyByteBuf buffer) {
         buffer.writeVarInt(button);
         buffer.writeBoolean(isRelease);
     }
 
-    public static KeyboardMouseClickPacket decode(FriendlyByteBuf buffer) {
-        return new KeyboardMouseClickPacket(buffer.readVarInt(), buffer.readBoolean());
+    @Override
+    public Type<? extends CustomPacketPayload> type() {
+        return TYPE;
     }
 }

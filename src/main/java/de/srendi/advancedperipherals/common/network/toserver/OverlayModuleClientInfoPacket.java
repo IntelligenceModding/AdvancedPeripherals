@@ -17,7 +17,7 @@ import java.util.UUID;
 
 public class OverlayModuleClientInfoPacket implements IAPPacket {
 
-    public static final Type<OverlayModuleClientInfoPacket> TYPE = new Type<>(AdvancedPeripherals.getRL("overlaymoduleclientinfo"));
+    public static final Type<OverlayModuleClientInfoPacket> TYPE = new Type<>(AdvancedPeripherals.getRL("overlay_module_client_info"));
 
     private final UUID player;
     private final int screenWidth;

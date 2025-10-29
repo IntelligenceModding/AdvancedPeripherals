@@ -16,7 +16,7 @@ import java.util.List;
 
 public class RenderableObjectBulkSyncPacket implements IAPPacket {
 
-    public static final Type<RenderableObjectBulkSyncPacket> TYPE = new Type<>(AdvancedPeripherals.getRL("renderableobjectbulksync"));
+    public static final Type<RenderableObjectBulkSyncPacket> TYPE = new Type<>(AdvancedPeripherals.getRL("renderable_object_bulk_sync"));
 
     private final Collection<RenderableObject> objects;
 

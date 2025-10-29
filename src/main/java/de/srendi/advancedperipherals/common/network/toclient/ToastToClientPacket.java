@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class ToastToClientPacket implements IAPPacket {
 
-    public static final Type<ToastToClientPacket> TYPE = new Type<>(AdvancedPeripherals.getRL("toasttoclient"));
+    public static final Type<ToastToClientPacket> TYPE = new Type<>(AdvancedPeripherals.getRL("toast_to_client"));
 
     private final Component title;
     private final Component component;

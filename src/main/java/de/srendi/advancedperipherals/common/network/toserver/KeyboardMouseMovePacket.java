@@ -4,13 +4,13 @@ import de.srendi.advancedperipherals.common.items.SmartGlassesItem;
 import de.srendi.advancedperipherals.common.network.base.IPacket;
 import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesComputer;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.network.NetworkEvent;
-import net.minecraftforge.server.ServerLifecycleHooks;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
-public class KeyboardMouseMovePacket implements IPacket {
+public class KeyboardMouseMovePacket implements IAPPacket {
+
+    public static final Type<GlassesHotkeyPacket> TYPE = new Type<>(AdvancedPeripherals.getRL("keyboard_mouse_move"));
 
     private final double dx;
     private final double dy;
@@ -20,33 +20,36 @@ public class KeyboardMouseMovePacket implements IPacket {
         this.dy = dy;
     }
 
-    @Override
-    public void handle(NetworkEvent.Context context) {
-        MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
-
-        ServerPlayer serverPlayer = context.getSender();
-        if (serverPlayer == null) {
-            return;
-        }
-
-        for (ItemStack stack : serverPlayer.getAllSlots()) {
-            if (stack.getItem() instanceof SmartGlassesItem) {
-                SmartGlassesComputer computer = SmartGlassesItem.getServerComputer(server, stack);
-                if (computer != null) {
-                    computer.queueEvent("player_mouse_move", new Object[]{dx, dy});
-                    break;
-                }
-            }
-        }
+    public KeyboardMouseMovePacket(FriendlyByteBuf buffer) {
+        this.dx = buffer.readDouble();
+        this.dy = buffer.readDouble();
     }
 
     @Override
-    public void encode(FriendlyByteBuf buffer) {
+    public void handle(IPayloadContext context) {
+        if (context.player() instanceof ServerPlayer player) {
+            return;
+        }
+
+        ItemStack smartGlasses = SmartGlassesItem.getEquipped(player);
+        if (smartGlasses.isEmpty()) {
+            return;
+        }
+        SmartGlassesComputer computer = SmartGlassesItem.getServerComputer(player.server, stack);
+        if (computer == null) {
+            return;
+        }
+        computer.queueEvent("player_mouse_move", new Object[]{dx, dy});
+    }
+
+    @Override
+    public void write(FriendlyByteBuf buffer) {
         buffer.writeDouble(dx);
         buffer.writeDouble(dy);
     }
 
-    public static KeyboardMouseMovePacket decode(FriendlyByteBuf buffer) {
-        return new KeyboardMouseMovePacket(buffer.readDouble(), buffer.readDouble());
+    @Override
+    public Type<? extends CustomPacketPayload> type() {
+        return TYPE;
     }
 }

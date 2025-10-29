@@ -9,7 +9,7 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 public class RenderableObjectDeletePacket implements IAPPacket {
 
-    public static final CustomPacketPayload.Type<RenderableObjectDeletePacket> TYPE = new Type<>(AdvancedPeripherals.getRL("renderableobjectdelete"));
+    public static final CustomPacketPayload.Type<RenderableObjectDeletePacket> TYPE = new Type<>(AdvancedPeripherals.getRL("renderable_object_delete"));
 
     private final int object;
 

@@ -17,7 +17,7 @@ import java.util.UUID;
 
 public class RetrieveUsernamePacket implements IAPPacket {
 
-    public static final CustomPacketPayload.Type<RetrieveUsernamePacket> TYPE = new Type<>(AdvancedPeripherals.getRL("retrieveusername"));
+    public static final CustomPacketPayload.Type<RetrieveUsernamePacket> TYPE = new Type<>(AdvancedPeripherals.getRL("retrieve_username"));
 
     public UUID uuid;
     public UUID requester;

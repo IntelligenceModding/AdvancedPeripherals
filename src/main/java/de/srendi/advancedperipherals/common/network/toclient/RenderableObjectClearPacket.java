@@ -9,14 +9,12 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 public class RenderableObjectClearPacket implements IAPPacket {
 
-    public static final CustomPacketPayload.Type<RenderableObjectClearPacket> TYPE = new Type<>(AdvancedPeripherals.getRL("renderableobjectclear"));
+    public static final CustomPacketPayload.Type<RenderableObjectClearPacket> TYPE = new Type<>(AdvancedPeripherals.getRL("renderable_object_clear"));
 
     public RenderableObjectClearPacket() {
-
     }
 
     public RenderableObjectClearPacket(RegistryFriendlyByteBuf buffer) {
-
     }
 
     @Override
@@ -26,7 +24,6 @@ public class RenderableObjectClearPacket implements IAPPacket {
 
     @Override
     public void write(RegistryFriendlyByteBuf buffer) {
-
     }
 
     @Override

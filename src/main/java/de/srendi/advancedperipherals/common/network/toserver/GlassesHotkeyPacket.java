@@ -10,17 +10,15 @@ import de.srendi.advancedperipherals.common.smartglasses.modules.keyboard.Keyboa
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
-import net.neoforged.neoforge.server.ServerLifecycleHooks;
 
 import java.util.UUID;
 
 public class GlassesHotkeyPacket implements IAPPacket {
 
-    public static final Type<GlassesHotkeyPacket> TYPE = new Type<>(AdvancedPeripherals.getRL("glasseshotkey"));
+    public static final Type<GlassesHotkeyPacket> TYPE = new Type<>(AdvancedPeripherals.getRL("glasses_hotkey"));
 
     private final String keyBind;
     private final int keyPressDuration;
@@ -41,11 +39,11 @@ public class GlassesHotkeyPacket implements IAPPacket {
             return;
         }
 
-        ItemStack smartGlasses = player.getItemBySlot(EquipmentSlot.HEAD);
-        if (!(smartGlasses.getItem() instanceof SmartGlassesItem)) {
+        ItemStack smartGlasses = SmartGlassesItem.getEquipped(player);
+        if (smartGlasses.isEmpty()) {
             return;
         }
-        SmartGlassesComputer computer = SmartGlassesItem.getServerComputer(player.server, stack);
+        SmartGlassesComputer computer = SmartGlassesItem.getServerComputer(player.server, smartGlasses);
         if (computer == null) {
             return;
         }
@@ -72,6 +70,6 @@ public class GlassesHotkeyPacket implements IAPPacket {
 
     @Override
     public Type<? extends CustomPacketPayload> type() {
-        return null;
+        return TYPE;
     }
 }

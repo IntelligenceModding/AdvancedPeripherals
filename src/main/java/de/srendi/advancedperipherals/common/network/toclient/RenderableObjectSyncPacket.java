@@ -11,7 +11,7 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 public class RenderableObjectSyncPacket implements IAPPacket {
 
-    public static final CustomPacketPayload.Type<RenderableObjectSyncPacket> TYPE = new Type<>(AdvancedPeripherals.getRL("renderableobjectsync"));
+    public static final CustomPacketPayload.Type<RenderableObjectSyncPacket> TYPE = new Type<>(AdvancedPeripherals.getRL("renderable_object_sync"));
 
     private final RenderableObject object;
 

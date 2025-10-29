@@ -11,7 +11,7 @@ import static de.srendi.advancedperipherals.client.ClientRegistry.SADDLE_TURTLE_
 
 public class SaddleTurtleInfoPacket implements IAPPacket {
 
-    public static final CustomPacketPayload.Type<SaddleTurtleInfoPacket> TYPE = new Type<>(AdvancedPeripherals.getRL("saddleturtleinfo"));
+    public static final CustomPacketPayload.Type<SaddleTurtleInfoPacket> TYPE = new Type<>(AdvancedPeripherals.getRL("saddle_turtle_info"));
 
     private final int fuelLevel;
     private final int fuelLimit;
