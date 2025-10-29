@@ -7,11 +7,9 @@ import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesComputer;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.OverlayModule;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
-import net.neoforged.neoforge.server.ServerLifecycleHooks;
 
 import java.util.UUID;
 
@@ -40,24 +38,23 @@ public class OverlayModuleClientInfoPacket implements IAPPacket {
 
     @Override
     public void handle(IPayloadContext context) {
-        MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
-
-        ServerPlayer serverPlayer = server.getPlayerList().getPlayer(player);
-        if (serverPlayer == null)
+        if (context.player() instanceof ServerPlayer player) {
             return;
-
-        for (ItemStack stack : serverPlayer.getAllSlots()) {
-            if (stack.getItem() instanceof SmartGlassesItem) {
-                SmartGlassesComputer computer = SmartGlassesItem.getServerComputer(server, stack);
-
-                if (computer != null) {
-                    OverlayModule module = computer.getModule(OverlayModule.class);
-
-                    if (module != null)
-                        module.setScreenSizes(screenWidth, screenHeight, guiScale);
-                }
-            }
         }
+
+        ItemStack smartGlasses = SmartGlassesItem.getEquipped(player);
+        if (smartGlasses.isEmpty()) {
+            return;
+        }
+        SmartGlassesComputer computer = SmartGlassesItem.getServerComputer(player.server, stack);
+        if (computer == null) {
+            return;
+        }
+        OverlayModule module = computer.getModule(OverlayModule.class);
+        if (module == null) {
+            return;
+        }
+        module.setScreenSizes(screenWidth, screenHeight, guiScale);
     }
 
     @Override
