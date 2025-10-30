@@ -2,7 +2,6 @@ package de.srendi.advancedperipherals.client;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
-import de.srendi.advancedperipherals.client.screens.SaddleTurtleScreen;
 import de.srendi.advancedperipherals.common.entity.TurtleSeatEntity;
 import de.srendi.advancedperipherals.common.network.APNetworking;
 import de.srendi.advancedperipherals.common.network.toserver.SaddleTurtleControlPacket;
@@ -68,7 +67,7 @@ public class ClientEventSubscriber {
 
     @SubscribeEvent
     public static void playerMove(MovementInputUpdateEvent event) {
-        if (SaddleTurtleScreen.isPlayerControllingTurtle()) {
+        if (ClientRegistry.SADDLE_TURTLE_OVERLAY.isPlayerControllingTurtle()) {
             Input input = event.getInput();
             if (sneaking == lastSneak && lastInput != null) {
                 if (lastInput.up == input.up && lastInput.down == input.down && lastInput.left == input.left && lastInput.right == input.right && lastInput.jumping == input.jumping) {

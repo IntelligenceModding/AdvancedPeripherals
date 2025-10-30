@@ -1,7 +1,7 @@
 package de.srendi.advancedperipherals.common.network.toserver;
 
 import de.srendi.advancedperipherals.common.items.SmartGlassesItem;
-import de.srendi.advancedperipherals.common.network.base.IPacket;
+import de.srendi.advancedperipherals.common.network.IAPPacket;
 import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesComputer;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;

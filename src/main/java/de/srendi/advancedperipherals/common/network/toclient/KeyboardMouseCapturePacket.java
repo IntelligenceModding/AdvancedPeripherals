@@ -1,7 +1,7 @@
 package de.srendi.advancedperipherals.common.network.toclient;
 
 import de.srendi.advancedperipherals.client.screens.KeyboardScreen;
-import de.srendi.advancedperipherals.common.network.base.IPacket;
+import de.srendi.advancedperipherals.common.network.IAPPacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
