@@ -1,15 +1,15 @@
 package de.srendi.advancedperipherals.client;
 
 import de.srendi.advancedperipherals.AdvancedPeripherals;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.client.event.ClientTickEvent;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-@Mod.EventBusSubscriber(value = Dist.CLIENT, modid = AdvancedPeripherals.MOD_ID)
+@EventBusSubscriber(value = Dist.CLIENT, modid = AdvancedPeripherals.MOD_ID)
 public class ClientWorker {
 
     private static final Map<String, Runnable> tasks = new ConcurrentHashMap<>();
@@ -23,12 +23,10 @@ public class ClientWorker {
     }
 
     @SubscribeEvent
-    public static void clientTick(TickEvent.ClientTickEvent event) {
-        if (event.phase == TickEvent.Phase.END) {
-            tasks.forEach((id, runnable) -> {
-                tasks.remove(id, runnable);
-                runnable.run();
-            });
-        }
+    public static void clientTick(ClientTickEvent.Post event) {
+        tasks.forEach((id, runnable) -> {
+            tasks.remove(id, runnable);
+            runnable.run();
+        });
     }
 }

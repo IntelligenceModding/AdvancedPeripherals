@@ -15,7 +15,6 @@ import de.srendi.advancedperipherals.common.blocks.blockentities.InventoryManage
 import de.srendi.advancedperipherals.common.blocks.blockentities.MEBridgeEntity;
 import de.srendi.advancedperipherals.common.blocks.blockentities.NBTStorageEntity;
 import de.srendi.advancedperipherals.common.blocks.blockentities.PlayerDetectorEntity;
-import de.srendi.advancedperipherals.common.blocks.blockentities.RedstoneIntegratorEntity;
 import de.srendi.advancedperipherals.common.blocks.blockentities.RSBridgeEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.neoforged.neoforge.registries.DeferredHolder;
@@ -38,7 +37,6 @@ public class APBlockEntityTypes {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<MEBridgeEntity>> ME_BRIDGE = APAddon.AE2.isLoaded() ? APRegistration.BLOCK_ENTITIES.register("me_bridge", () -> new BlockEntityType<>(MEBridgeEntity::new, Sets.newHashSet(APBlocks.ME_BRIDGE.get()), null)) : null;
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<NBTStorageEntity>> NBT_STORAGE = APRegistration.BLOCK_ENTITIES.register("nbt_storage", () -> new BlockEntityType<>(NBTStorageEntity::new, Sets.newHashSet(APBlocks.NBT_STORAGE.get()), null));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<PlayerDetectorEntity>> PLAYER_DETECTOR = APRegistration.BLOCK_ENTITIES.register("player_detector", () -> new BlockEntityType<>(PlayerDetectorEntity::new, Sets.newHashSet(APBlocks.PLAYER_DETECTOR.get()), null));
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<RedstoneIntegratorEntity>> REDSTONE_INTEGRATOR = APRegistration.BLOCK_ENTITIES.register("redstone_integrator", () -> new BlockEntityType<>(RedstoneIntegratorEntity::new, Sets.newHashSet(APBlocks.REDSTONE_INTEGRATOR.get()), null));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<RSBridgeEntity>> RS_BRIDGE = APAddon.REFINEDSTORAGE.isLoaded() ? APRegistration.BLOCK_ENTITIES.register("rs_bridge", () -> new BlockEntityType<>(RSBridgeEntity::new, Sets.newHashSet(APBlocks.RS_BRIDGE.get()), null)) : null;
 
 }

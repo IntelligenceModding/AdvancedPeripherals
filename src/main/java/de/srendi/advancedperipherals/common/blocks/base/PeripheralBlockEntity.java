@@ -2,10 +2,6 @@ package de.srendi.advancedperipherals.common.blocks.base;
 
 import dan200.computercraft.api.peripheral.IComputerAccess;
 import dan200.computercraft.api.peripheral.IPeripheral;
-import dan200.computercraft.core.computer.ComputerSide;
-import dan200.computercraft.shared.Capabilities;
-import de.srendi.advancedperipherals.AdvancedPeripherals;
-import de.srendi.advancedperipherals.common.util.CoordUtil;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
 import de.srendi.advancedperipherals.lib.peripherals.DisabledPeripheral;
 import de.srendi.advancedperipherals.lib.peripherals.IPeripheralTileEntity;
@@ -15,7 +11,6 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.WorldlyContainer;
@@ -40,13 +35,14 @@ public abstract class PeripheralBlockEntity<T extends BasePeripheral<?>> extends
     private static final String PERIPHERAL_SETTINGS_KEY = "peripheralSettings";
     protected CompoundTag peripheralSettings = new CompoundTag();
     protected NonNullList<ItemStack> items;
+    @Nullable
     private IItemHandler itemHandler = null;
     private IFluidHandler fluidHandler = null;
     private IPeripheral peripheral = null;
 
     protected PeripheralBlockEntity(BlockEntityType<?> tileEntityTypeIn, BlockPos pos, BlockState state) {
         super(tileEntityTypeIn, pos, state);
-        if (this instanceof IInventoryMenuBlock<?> inventoryBlock) {
+        if (this instanceof IInventoryBlock inventoryBlock) {
             items = NonNullList.withSize(inventoryBlock.getInvSize(), ItemStack.EMPTY);
         } else {
             items = NonNullList.withSize(0, ItemStack.EMPTY);
@@ -120,56 +116,22 @@ public abstract class PeripheralBlockEntity<T extends BasePeripheral<?>> extends
     }*/
 
     @Override
+    protected void saveAdditional(@NotNull CompoundTag tag, @NotNull HolderLookup.Provider provider) {
+        super.saveAdditional(tag, provider);
+        ContainerHelper.saveAllItems(tag, items, provider);
+        if (!peripheralSettings.isEmpty()) tag.put(PERIPHERAL_SETTINGS_KEY, peripheralSettings);
+    }
+
+    @Override
     protected void loadAdditional(@NotNull CompoundTag tag, @NotNull HolderLookup.Provider provider) {
         ContainerHelper.loadAllItems(tag, items, provider);
         peripheralSettings = tag.getCompound(PERIPHERAL_SETTINGS_KEY);
         super.loadAdditional(tag, provider);
     }
 
-    /**
-     * will automatically adds shared data at the end
-     *
-     * @see saveShared
-     */
-    @Override
-    protected void saveAdditional(@NotNull CompoundTag tag, @NotNull HolderLookup.Provider provider) {
-        super.saveAdditional(tag, provider);
-        this.saveShared(compound);
-        ContainerHelper.saveAllItems(tag, items, provider);
-        if (!peripheralSettings.isEmpty()) {
-            tag.put(PERIPHERAL_SETTINGS_KEY, peripheralSettings);
-        }
-    }
-
-    /**
-     * will automatically adds shared data at the end
-     *
-     * @return combined update tag and shared data
-     * @see saveShared
-     */
-    @Override
-    public CompoundTag getUpdateTag() {
-        final CompoundTag compound = super.getUpdateTag();
-        this.saveShared(compound);
-        return compound;
-    }
-
-    /**
-     * define datas that should both be saved on server and sync to client
-     *
-     * @see saveAdditional
-     * @see getUpdateTag
-     */
-    protected void saveShared(@NotNull CompoundTag compound) {}
-
-    @Override
-    public ClientboundBlockEntityDataPacket getUpdatePacket() {
-        return ClientboundBlockEntityDataPacket.create(this);
-    }
-
     @Override
     protected Component getDefaultName() {
-        return this instanceof IInventoryMenuBlock<?> inventoryBlock ? inventoryBlock.getDisplayName() : null;
+        return this instanceof IInventoryBlock<?> inventoryBlock ? inventoryBlock.getDisplayName() : null;
     }
 
     @Nullable
@@ -180,7 +142,7 @@ public abstract class PeripheralBlockEntity<T extends BasePeripheral<?>> extends
 
     @Override
     protected AbstractContainerMenu createMenu(int id, @NotNull Inventory player) {
-        return this instanceof IInventoryMenuBlock<?> inventoryBlock ? inventoryBlock.createContainer(id, player, worldPosition, level) : null;
+        return this instanceof IInventoryBlock<?> inventoryBlock ? inventoryBlock.createContainer(id, player, worldPosition, level) : null;
     }
 
     @Override
@@ -206,12 +168,11 @@ public abstract class PeripheralBlockEntity<T extends BasePeripheral<?>> extends
     @Override
     public boolean isEmpty() {
         for (ItemStack itemStack : items) {
-            if (!itemStack.isEmpty()) {
-                return false;
-            }
+            if (itemStack.isEmpty()) return true;
         }
-        return true;
+        return false;
     }
+
 
     @NotNull
     @Override
@@ -225,11 +186,7 @@ public abstract class PeripheralBlockEntity<T extends BasePeripheral<?>> extends
     @NotNull
     @Override
     public ItemStack removeItem(int index, int count) {
-        ItemStack removed = ContainerHelper.removeItem(items, index, count);
-        if (!removed.isEmpty()) {
-            this.setChanged();
-        }
-        return removed;
+        return ContainerHelper.removeItem(items, index, count);
     }
 
     @NotNull
@@ -244,7 +201,6 @@ public abstract class PeripheralBlockEntity<T extends BasePeripheral<?>> extends
         if (stack.getCount() > getMaxStackSize()) {
             stack.setCount(getMaxStackSize());
         }
-        this.setChanged();
     }
 
     @NotNull
@@ -266,7 +222,6 @@ public abstract class PeripheralBlockEntity<T extends BasePeripheral<?>> extends
     @Override
     public void clearContent() {
         items.clear();
-        this.setChanged();
     }
 
     public CompoundTag getPeripheralSettings() {
@@ -276,33 +231,5 @@ public abstract class PeripheralBlockEntity<T extends BasePeripheral<?>> extends
     @Override
     public void markSettingsChanged() {
         this.setChanged();
-    }
-
-    /**
-     * set this block entity as {@link setChanged changed}, and sync the change to client
-     *
-     * @see saveShared
-     * @see getUpdateTag
-     */
-    public void sendUpdate() {
-        Level level = this.getLevel();
-        if (level == null || level.isClientSide) {
-            return;
-        }
-        this.setChanged();
-        level.sendBlockUpdated(this.getBlockPos(), this.getBlockState(), this.getBlockState(), 0 /* no use on server-side */);
-    }
-
-    public ComputerSide getComputerSide(Direction direction) {
-        FrontAndTop orientation = getBlockState().getValue(BaseBlock.ORIENTATION);
-        return CoordUtil.getComputerSide(orientation, direction);
-    }
-
-    @Override
-    public <U extends BlockEntity> void handleTick(Level level, BlockState state, BlockEntityType<U> type) {
-        T peripheral = this.getPeripheral();
-        if (peripheral != null) {
-            peripheral.update();
-        }
     }
 }

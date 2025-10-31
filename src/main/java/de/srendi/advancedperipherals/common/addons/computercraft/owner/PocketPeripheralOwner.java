@@ -1,35 +1,33 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.owner;
 
-import dan200.computercraft.api.peripheral.IPeripheral;
 import dan200.computercraft.api.pocket.IPocketAccess;
-import dan200.computercraft.api.pocket.IPocketUpgrade;
+import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.util.DataStorageUtil;
 import de.srendi.advancedperipherals.common.util.fakeplayer.APFakePlayer;
-import de.srendi.advancedperipherals.lib.peripherals.IBasePeripheral;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.FrontAndTop;
+import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
-import org.apache.commons.lang3.NotImplementedException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.function.Function;
+
 public class PocketPeripheralOwner extends BasePeripheralOwner {
     private final IPocketAccess pocket;
-    private final IPocketUpgrade upgrade;
 
-    public PocketPeripheralOwner(IPocketAccess pocket, IPocketUpgrade upgrade) {
+    public PocketPeripheralOwner(IPocketAccess pocket) {
         super();
         this.pocket = pocket;
-        this.upgrade = upgrade;
-        if (APConfig.PERIPHERALS_CONFIG.disablePocketFuelConsumption.get()) {
+        if(APConfig.PERIPHERALS_CONFIG.disablePocketFuelConsumption.get())
             attachAbility(PeripheralOwnerAbility.FUEL, new InfinitePocketFuelAbility(this));
-        }
     }
 
     @Nullable
@@ -41,69 +39,65 @@ public class PocketPeripheralOwner extends BasePeripheralOwner {
     @Nullable
     @Override
     public Level getLevel() {
-        Entity owner = pocket.getEntity();
-        return owner == null ? null : owner.getCommandSenderWorld();
+        return pocket.getLevel();
     }
 
     @NotNull
     @Override
     public BlockPos getPos() {
-        Entity owner = pocket.getEntity();
-        return owner == null ? BlockPos.ZERO : new BlockPos(owner.getEyePosition());
-    }
-
-    @NotNull
-    @Override
-    public Vec3 getCenterPos() {
-        Entity owner = pocket.getEntity();
-        return owner == null ? Vec3.ZERO : owner.getEyePosition();
+        Vec3 position = pocket.getPosition();
+        return new BlockPos((int) position.x, (int) position.y, (int) position.z);
     }
 
     @NotNull
     @Override
     public Direction getFacing() {
-        Vec3 dir = getDirection();
-        return Direction.getNearest(dir.x, dir.y, dir.z);
+        Entity owner = pocket.getEntity();
+        if (owner == null) return Direction.NORTH;
+        return owner.getDirection();
     }
 
+
+    /**
+     * Not used for pockets
+     */
     @NotNull
     @Override
     public FrontAndTop getOrientation() {
-        Entity owner = pocket.getEntity();
-        if (owner == null) {
-            return FrontAndTop.NORTH_UP;
-        }
-        Vec3 up = owner.getUpVector(1.0f);
-        return FrontAndTop.fromFrontAndTop(getFacing(), Direction.getNearest(up.x, up.y, up.z));
-    }
-
-    @NotNull
-    @Override
-    public Vec3 getDirection() {
-        Entity owner = pocket.getEntity();
-        return owner == null ? /* North */ new Vec3(0, 0, -1) : owner.getLookAngle();
+        return FrontAndTop.NORTH_UP;
     }
 
     @Nullable
     @Override
-    public Entity getHoldingEntity() {
-        return pocket.getEntity();
+    public Player getOwner() {
+        Entity owner = pocket.getEntity();
+        if (owner instanceof Player player) return player;
+        return null;
     }
 
-    @NotNull
     @Override
-    public CompoundTag getDataStorage() {
-        return DataStorageUtil.getDataStorage(pocket, upgrade);
+    public DataComponentPatch getDataStorage() {
+        return DataStorageUtil.getDataStorage(pocket);
+    }
+
+    @Override
+    public CompoundTag getNbtStorage() {
+        AdvancedPeripherals.debug("Pocket peripheral at " + getPos() + " tried to use nbt storage but it should instead use data component storage, report to github!", org.apache.logging.log4j.Level.WARN);
+        return null;
+    }
+
+    @Override
+    public void putDataStorage(DataComponentPatch dataStorage) {
+        DataStorageUtil.putDataStorage(pocket, dataStorage);
     }
 
     @Override
     public void markDataStorageDirty() {
-        pocket.updateUpgradeNBTData();
     }
 
     @Override
-    public <T> T withPlayer(APFakePlayer.Action<T> function) {
-        throw new NotImplementedException();
+    public <T> T withPlayer(Function<APFakePlayer, T> function) {
+        throw new RuntimeException("Not implemented yet");
     }
 
     @Override
@@ -113,12 +107,13 @@ public class PocketPeripheralOwner extends BasePeripheralOwner {
 
     @Override
     public ItemStack storeItem(ItemStack stored) {
-        throw new NotImplementedException();
+        // Tricks with inventory needed
+        throw new RuntimeException("Not implemented yet");
     }
 
     @Override
     public void destroyUpgrade() {
-        throw new NotImplementedException();
+        throw new RuntimeException("Not implemented yet");
     }
 
     @Override
@@ -129,19 +124,5 @@ public class PocketPeripheralOwner extends BasePeripheralOwner {
     @Override
     public boolean move(@NotNull Level level, @NotNull BlockPos pos) {
         return false;
-    }
-
-    @Override
-    public <T extends IPeripheral> T getConnectedPeripheral(Class<T> type) {
-        IPeripheral foundPeripheral = pocket.getUpgrades().values().stream()
-            .filter(peripheral -> {
-                if (peripheral == null || type.isInstance(peripheral)) {
-                    return false;
-                }
-                return peripheral instanceof IBasePeripheral basePeripheral ? basePeripheral.isEnabled() : true;
-            })
-            .findFirst()
-            .orElse(null);
-        return (T) foundPeripheral;
     }
 }

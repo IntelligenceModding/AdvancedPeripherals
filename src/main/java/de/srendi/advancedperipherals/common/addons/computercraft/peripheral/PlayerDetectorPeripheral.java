@@ -44,7 +44,7 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
         super(PERIPHERAL_TYPE, new TurtlePeripheralOwner(access, side));
     }
 
-    public PlayerDetectorPeripheral(IPocketAccess pocket, IPocketUpgrade upgrade) {
+    public PlayerDetectorPeripheral(IPocketAccess pocket) {
         super(PERIPHERAL_TYPE, new PocketPeripheralOwner(pocket, upgrade));
     }
 

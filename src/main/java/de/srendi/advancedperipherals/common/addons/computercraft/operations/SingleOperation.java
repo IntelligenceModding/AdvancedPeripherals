@@ -1,7 +1,7 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.operations;
 
 import de.srendi.advancedperipherals.lib.peripherals.IPeripheralOperation;
-import net.neoforged.common.ForgeConfigSpec;
+import net.neoforged.neoforge.common.ModConfigSpec;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -26,8 +26,8 @@ public enum SingleOperation implements IPeripheralOperation<SingleOperationConte
     private final int defaultCost;
     private final DistancePolicy distanceCostPolicy;
     private final CountPolicy countCostPolicy;
-    private ForgeConfigSpec.IntValue cooldown;
-    private ForgeConfigSpec.IntValue cost;
+    private ModConfigSpec.IntValue cooldown;
+    private ModConfigSpec.IntValue cost;
 
     SingleOperation(int defaultCooldown, DistancePolicy distanceCooldownPolicy, CountPolicy countCooldownPolicy, int defaultCost, DistancePolicy distanceCostPolicy, CountPolicy countCostPolicy) {
         this.defaultCooldown = defaultCooldown;
@@ -72,7 +72,7 @@ public enum SingleOperation implements IPeripheralOperation<SingleOperationConte
     }
 
     @Override
-    public void addToConfig(ForgeConfigSpec.Builder builder) {
+    public void addToConfig(ModConfigSpec.Builder builder) {
         cooldown = builder.defineInRange(settingsName() + "Cooldown", defaultCooldown, 1_000, Integer.MAX_VALUE);
         cost = builder.defineInRange(settingsName() + "Cost", defaultCost, 0, Integer.MAX_VALUE);
     }

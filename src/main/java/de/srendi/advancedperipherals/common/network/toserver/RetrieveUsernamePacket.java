@@ -8,6 +8,7 @@ import de.srendi.advancedperipherals.common.network.toclient.UsernameToCachePack
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
+import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import net.neoforged.neoforge.server.ServerLifecycleHooks;
 import org.jetbrains.annotations.NotNull;
@@ -43,7 +44,7 @@ public class RetrieveUsernamePacket implements IAPPacket {
 
         if (gameProfile.isEmpty())
             return;
-        APNetworking.sendTo(player, new UsernameToCachePacket(gameProfile.get().getId(), gameProfile.get().getName()));
+        PacketDistributor.sendToPlayer(player, new UsernameToCachePacket(gameProfile.get().getId(), gameProfile.get().getName()));
     }
 
     @Override

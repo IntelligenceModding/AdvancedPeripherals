@@ -2,6 +2,7 @@ package de.srendi.advancedperipherals.common.setup;
 
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
@@ -18,7 +19,7 @@ public class APTags {
         }
 
         private static TagKey<Item> tag(@NotNull String name) {
-            return TagKey.create(Registry.ITEM_REGISTRY, AdvancedPeripherals.getRL(name));
+            return TagKey.create(Registries.ITEM, AdvancedPeripherals.getRL(name));
         }
     }
 }

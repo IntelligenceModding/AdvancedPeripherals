@@ -8,16 +8,15 @@ import dan200.computercraft.api.lua.MethodResult;
 import dan200.computercraft.api.peripheral.IComputerAccess;
 import dan200.computercraft.api.peripheral.IDynamicPeripheral;
 import dan200.computercraft.api.peripheral.IPeripheral;
-import de.srendi.advancedperipherals.common.addons.APAddons;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.IPeripheralOwner;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.OperationAbility;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.PeripheralOwnerAbility;
-import de.srendi.advancedperipherals.common.addons.valkyrienskies.ValkyrienSkies;
 import de.srendi.advancedperipherals.common.util.CoordUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -30,8 +29,6 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public abstract class BasePeripheral<O extends IPeripheralOwner> implements IBasePeripheral<O>, IDynamicPeripheral {
 
@@ -40,7 +37,7 @@ public abstract class BasePeripheral<O extends IPeripheralOwner> implements IBas
     protected final O owner;
     protected final List<BoundMethod> pluggedMethods = new ArrayList<>();
     protected boolean initialized = false;
-    protected final List<IPeripheralPlugin> plugins = new LinkedList<>();
+    protected List<IPeripheralPlugin> plugins = null;
     protected String[] methodNames = new String[0];
 
     protected BasePeripheral(String type, O owner) {
@@ -48,41 +45,32 @@ public abstract class BasePeripheral<O extends IPeripheralOwner> implements IBas
         this.owner = owner;
     }
 
-    protected void clearAllPlugins() {
-        this.initialized = false;
-        plugins.clear();
-    }
-
     protected void buildPlugins() {
-        if (this.initialized) {
-            return;
+        if (!initialized) {
+            initialized = true;
+            this.pluggedMethods.clear();
+            if (plugins != null) plugins.forEach(plugin -> {
+                if (plugin.isSuitable(this))
+                    pluggedMethods.addAll(plugin.getMethods());
+            });
+            owner.getAbilities().forEach(ability -> {
+                if (ability instanceof IPeripheralPlugin peripheralPlugin)
+                    pluggedMethods.addAll(peripheralPlugin.getMethods());
+            });
+            this.methodNames = pluggedMethods.stream().map(BoundMethod::getName).toArray(String[]::new);
         }
-        this.initialized = true;
-        this.pluggedMethods.clear();
-        this.plugins.forEach(plugin -> {
-            if (plugin.isSuitable(this)) {
-                this.pluggedMethods.addAll(plugin.getMethods());
-            }
-        });
-        owner.getAbilities().forEach(ability -> {
-            if (ability instanceof IPeripheralPlugin peripheralPlugin) {
-                this.pluggedMethods.addAll(peripheralPlugin.getMethods());
-            }
-        });
-        this.methodNames = this.pluggedMethods.stream().map(BoundMethod::getName).toArray(String[]::new);
     }
 
     protected void addPlugin(@NotNull IPeripheralPlugin plugin) {
-        this.plugins.add(plugin);
+        if (plugins == null) plugins = new LinkedList<>();
+        plugins.add(plugin);
         IPeripheralOperation<?>[] operations = plugin.getOperations();
         if (operations != null) {
             OperationAbility operationAbility = owner.getAbility(PeripheralOwnerAbility.OPERATION);
-            if (operationAbility == null) {
+            if (operationAbility == null)
                 throw new IllegalArgumentException("This is not possible to attach plugin with operations to not operationable owner");
-            }
-            for (IPeripheralOperation<?> operation : operations) {
+            for (IPeripheralOperation<?> operation : operations)
                 operationAbility.registerOperation(operation);
-            }
         }
     }
 
@@ -139,32 +127,12 @@ public abstract class BasePeripheral<O extends IPeripheralOwner> implements IBas
         return getPeripheralConfiguration();
     }
 
-    public BlockPos getPos() {
+    protected BlockPos getPos() {
         return owner.getPos();
     }
 
-    public Vec3 getCenterPos() {
-        return owner.getCenterPos();
-    }
-
-    public Level getLevel() {
+    protected Level getLevel() {
         return owner.getLevel();
-    }
-
-    public boolean isOnShip() {
-        return APAddons.isBlockOnShip(owner.getLevel(), owner.getPos());
-    }
-
-    public Vec3 getPhysicsPos() {
-        Vec3 pos = this.getCenterPos();
-        if (!APAddons.vs2Loaded) {
-            return pos;
-        }
-        return ValkyrienSkies.transformToWorldPos(owner.getLevel(), owner.getPos(), pos);
-    }
-
-    public final BlockPos getPhysicsBlockPos() {
-        return new BlockPos(this.getPhysicsPos());
     }
 
     protected Direction validateSide(String direction) throws LuaException {
@@ -174,13 +142,16 @@ public abstract class BasePeripheral<O extends IPeripheralOwner> implements IBas
     @Override
     @NotNull
     public String @NotNull [] getMethodNames() {
-        buildPlugins();
+        if (!initialized)
+            buildPlugins();
         return methodNames;
     }
 
     @Override
     @NotNull
     public MethodResult callMethod(@NotNull IComputerAccess access, @NotNull ILuaContext context, int index, @NotNull IArguments arguments) throws LuaException {
+        if (!initialized)
+            buildPlugins();
         return pluggedMethods.get(index).apply(access, context, arguments);
     }
 

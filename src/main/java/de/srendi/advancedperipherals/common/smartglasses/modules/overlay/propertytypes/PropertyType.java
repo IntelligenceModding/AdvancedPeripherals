@@ -21,7 +21,7 @@ public interface PropertyType<T> {
         try {
             return property.type().getDeclaredConstructor().newInstance();
         } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException exception) {
-            AdvancedPeripherals.exception("An error occurred while trying to create the property type", exception);
+            AdvancedPeripherals.debug("An error occurred while trying to create the property type", exception);
         }
         return null;
     }

@@ -3,8 +3,9 @@ package de.srendi.advancedperipherals.client.smartglasses;
 import com.mojang.blaze3d.vertex.PoseStack;
 import de.srendi.advancedperipherals.client.smartglasses.objects.twodim.ITwoDObjectRenderer;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.RenderableObject;
-import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.two_dim.RectangleObject;
-import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.two_dim.TextObject;
+import net.minecraft.client.DeltaTracker;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.LayeredDraw;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -12,11 +13,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-public class OverlayModuleOverlay implements IGuiOverlay {
+public class OverlayModuleOverlay implements LayeredDraw.Layer {
     public static final String ID = "overlay_module_overlay";
 
     @Override
-    public void render(ForgeGui gui, PoseStack poseStack, float partialTick, int screenWidth, int screenHeight) {
+    public void render(GuiGraphics gui, DeltaTracker deltaTracker) {
+        this.render(gui, gui.pose(), deltaTracker, gui.guiWidth(), gui.guiHeight());
+    }
+
+    public void render(GuiGraphics gui, PoseStack poseStack, DeltaTracker deltaTracker, int screenWidth, int screenHeight) {
         poseStack.pushPose();
 
         Map<Integer, Map<Class<? extends RenderableObject>, List<RenderableObject>>> prioritizedBatches = new TreeMap<>();
@@ -43,7 +48,7 @@ public class OverlayModuleOverlay implements IGuiOverlay {
             for (List<RenderableObject> batch : batchesForWeight.values()) {
 
                 if (!batch.isEmpty()) {
-                    ((ITwoDObjectRenderer) batch.get(0).getRenderObject()).renderBatch(batch, gui, poseStack, partialTick, screenWidth, screenHeight);
+                    ((ITwoDObjectRenderer) batch.get(0).getRenderObject()).renderBatch(batch, gui, poseStack, deltaTracker, screenWidth, screenHeight);
                 }
             }
         }

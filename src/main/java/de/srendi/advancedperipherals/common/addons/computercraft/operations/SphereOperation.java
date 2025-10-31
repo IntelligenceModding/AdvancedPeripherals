@@ -2,7 +2,7 @@ package de.srendi.advancedperipherals.common.addons.computercraft.operations;
 
 import com.google.common.math.IntMath;
 import de.srendi.advancedperipherals.lib.peripherals.IPeripheralOperation;
-import net.neoforged.common.ForgeConfigSpec;
+import net.neoforged.neoforge.common.ModConfigSpec;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -16,10 +16,10 @@ public enum SphereOperation implements IPeripheralOperation<SphereOperationConte
     private final int defaultMaxFreeRadius;
     private final int defaultMaxCostRadius;
     private final double defaultExtraBlockCost;
-    private ForgeConfigSpec.IntValue cooldown;
-    private ForgeConfigSpec.IntValue maxFreeRadius;
-    private ForgeConfigSpec.IntValue maxCostRadius;
-    private ForgeConfigSpec.DoubleValue extraBlockCost;
+    private ModConfigSpec.IntValue cooldown;
+    private ModConfigSpec.IntValue maxFreeRadius;
+    private ModConfigSpec.IntValue maxCostRadius;
+    private ModConfigSpec.DoubleValue extraBlockCost;
 
     SphereOperation(int defaultCooldown, int defaultMaxFreeRadius, int defaultMaxCostRadius, double defaultExtraBlockCost) {
         this.defaultCooldown = defaultCooldown;
@@ -29,7 +29,7 @@ public enum SphereOperation implements IPeripheralOperation<SphereOperationConte
     }
 
     @Override
-    public void addToConfig(ForgeConfigSpec.Builder builder) {
+    public void addToConfig(ModConfigSpec.Builder builder) {
         cooldown = builder.defineInRange(settingsName() + "Cooldown", defaultCooldown, 100, Integer.MAX_VALUE);
         maxFreeRadius = builder.defineInRange(settingsName() + "MaxFreeRadius", defaultMaxFreeRadius, 1, Integer.MAX_VALUE);
         maxCostRadius = builder.defineInRange(settingsName() + "MaxCostRadius", defaultMaxCostRadius, 1, Integer.MAX_VALUE);

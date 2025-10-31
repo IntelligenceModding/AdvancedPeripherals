@@ -9,11 +9,10 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 public class OverlayModuleClientRequestPacket implements IAPPacket {
-
-    public static final StreamCodec<RegistryFriendlyByteBuf, OverlayModuleClientRequestPacket> CODEC = new EmptyCodec<>(OverlayModuleClientRequestPacket::new);
 
     public static final Type<OverlayModuleClientRequestPacket> TYPE = new Type<>(AdvancedPeripherals.getRL("overlay_module_client_request"));
 
@@ -30,7 +29,7 @@ public class OverlayModuleClientRequestPacket implements IAPPacket {
         int sizeX = minecraft.getWindow().getWidth(), sizeY = minecraft.getWindow().getHeight();
         double guiScale = minecraft.getWindow().getGuiScale();
 
-        APNetworking.sendToServer(new OverlayModuleClientInfoPacket(minecraft.player.getUUID(), sizeX, sizeY, guiScale));
+        PacketDistributor.sendToServer(new OverlayModuleClientInfoPacket(minecraft.player.getUUID(), sizeX, sizeY, guiScale));
     }
 
     @Override

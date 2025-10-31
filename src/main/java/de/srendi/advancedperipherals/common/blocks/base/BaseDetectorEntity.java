@@ -146,4 +146,5 @@ public abstract class BaseDetectorEntity<T, S extends IStorageProxy, P extends B
         Direction outputDirection = this.getOutputDirection();
         return level.getCapability(this.capability, worldPosition.relative(outputDirection), outputDirection.getOpposite());
     }
+
 }

@@ -33,7 +33,6 @@ public class AdvancedPeripherals {
     public static final String NAME = "Advanced Peripherals";
     public static final Logger LOGGER = LogManager.getLogger(NAME);
     public static final Random RANDOM = new Random();
-    public static final APCreativeTab TAB = new APCreativeTab();
 
     public AdvancedPeripherals(IEventBus modBus) {
         LOGGER.info("AdvancedPeripherals says hello!");
@@ -43,10 +42,10 @@ public class AdvancedPeripherals {
 
         modBus.addListener(this::registerCapabilities);
         modBus.addListener(ChunkManager::registerTicketController);
+        modBus.addListener(this::onLoadComplete);
 
         APRegistration.register(modBus);
     }
-
 
     public static void debug(String message) {
         if (APConfig.GENERAL_CONFIG.enableDebugMode.get())
@@ -65,13 +64,6 @@ public class AdvancedPeripherals {
 
     public static ResourceLocation getRL(String resource) {
         return ResourceLocation.fromNamespaceAndPath(MOD_ID, resource);
-    }
-
-    public void commonSetup(FMLCommonSetupEvent event) {
-        event.enqueueWork(() -> {
-            APNetworking.init();
-            VillageStructures.init();
-        });
     }
 
     public void onLoadComplete(FMLLoadCompleteEvent event) {
