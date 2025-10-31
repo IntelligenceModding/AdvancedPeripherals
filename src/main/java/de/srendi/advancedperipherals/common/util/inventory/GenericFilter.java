@@ -6,6 +6,7 @@ import dan200.computercraft.api.lua.LuaTable;
 import de.srendi.advancedperipherals.common.addons.APAddon;
 import de.srendi.advancedperipherals.common.addons.mekanism.Mekanism;
 import de.srendi.advancedperipherals.common.util.Pair;
+import de.srendi.advancedperipherals.common.util.RegistryUtil;
 import net.minecraft.core.registries.BuiltInRegistries;
 
 public abstract class GenericFilter<T> {
@@ -58,11 +59,11 @@ public abstract class GenericFilter<T> {
         String name = rawFilter.get("name").toString();
 
         // Let's check in which registry this thing is
-        if (ItemUtil.getRegistryEntry(name, BuiltInRegistries.ITEM) != null) {
+        if (RegistryUtil.getRegistryEntry(name, BuiltInRegistries.ITEM) != null) {
             return ItemFilter.parse(rawFilter);
-        } else if (ItemUtil.getRegistryEntry(name, BuiltInRegistries.FLUID) != null) {
+        } else if (RegistryUtil.getRegistryEntry(name, BuiltInRegistries.FLUID) != null) {
             return FluidFilter.parse(rawFilter);
-        } else if (APAddon.MEKANISM.isLoaded() && ItemUtil.getRegistryEntry(name, Mekanism.getChemicalRegistry()) != null) {
+        } else if (APAddon.MEKANISM.isLoaded() && RegistryUtil.getRegistryEntry(name, Mekanism.getChemicalRegistry()) != null) {
             return ChemicalFilter.parse(rawFilter);
         } else {
             // If the name is in neither of the registries, we will just return an empty filter

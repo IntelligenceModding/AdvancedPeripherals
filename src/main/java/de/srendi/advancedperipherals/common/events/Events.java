@@ -4,25 +4,24 @@ import com.google.common.collect.EvictingQueue;
 import com.mojang.brigadier.context.CommandContextBuilder;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
+import de.srendi.advancedperipherals.common.addons.APAddon;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.util.Pair;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.arguments.MessageArgument;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.event.CommandEvent;
-import net.neoforged.event.ServerChatEvent;
-import net.neoforged.event.entity.player.PlayerEvent;
-import net.neoforged.eventbus.api.EventPriority;
-import net.neoforged.eventbus.api.SubscribeEvent;
-import net.neoforged.fml.common.Mod;
-import net.neoforged.registries.ForgeRegistries;
+import net.neoforged.bus.api.EventPriority;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.CommandEvent;
+import net.neoforged.neoforge.event.ServerChatEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 
 import java.util.function.Consumer;
 
-@Mod.EventBusSubscriber(modid = AdvancedPeripherals.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
+@EventBusSubscriber(modid = AdvancedPeripherals.MOD_ID)
 public class Events {
 
     private static final String PLAYED_BEFORE = "ap_played_before";
@@ -37,23 +36,24 @@ public class Events {
     public static void onWorldJoin(PlayerEvent.PlayerLoggedInEvent event) {
         Player player = event.getEntity();
 
-        if (APConfig.WORLD_CONFIG.givePlayerBookOnJoin.get()) {
+        // We could switch to the advancement way to give new players the book. However, that would not allow us to create
+        // a config option for that. So we will stick with the custom solution here.
+        // See https://vazkiimods.github.io/Patchouli/docs/patchouli-basics/giving-new
+        if (APConfig.WORLD_CONFIG.givePlayerBookOnJoin.get() && APAddon.PATCHOULI.isLoaded()) {
             if (!hasPlayedBefore(player)) {
-                ItemStack book = new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation("patchouli", "guide_book")));
-                CompoundTag nbt = new CompoundTag();
-                nbt.putString("patchouli:book", "advancedperipherals:manual");
-                book.setTag(nbt);
+                vazkii.patchouli.api.PatchouliAPI.IPatchouliAPI patchouli = vazkii.patchouli.api.PatchouliAPI.get();
+                ItemStack book = patchouli.getBookStack(AdvancedPeripherals.getRL("manual"));
                 player.addItem(book);
             }
         }
 
-        putPlayerMessage(Pair.of(getLastPlayerMessageID(), new PlayerMessageObject("playerJoin", player.getName().getString(), player.getLevel().dimension().location().toString(), "")));
+        putPlayerMessage(Pair.of(getLastPlayerMessageID(), new PlayerMessageObject("playerJoin", player.getName().getString(), player.level().dimension().location().toString(), "")));
     }
 
     @SubscribeEvent
     public static void onWorldLeave(PlayerEvent.PlayerLoggedOutEvent event) {
         Player player = event.getEntity();
-        putPlayerMessage(Pair.of(getLastPlayerMessageID(), new PlayerMessageObject("playerLeave", player.getName().getString(), player.getLevel().dimension().location().toString(), "")));
+        putPlayerMessage(Pair.of(getLastPlayerMessageID(), new PlayerMessageObject("playerLeave", player.getName().getString(), player.level().dimension().location().toString(), "")));
     }
 
     @SubscribeEvent
@@ -94,7 +94,7 @@ public class Events {
     }
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
-    public static void onChatBox(ServerChatEvent.Submitted event) {
+    public static void onChatBox(ServerChatEvent event) {
         if (APConfig.PERIPHERALS_CONFIG.enableChatBox.get()) {
             String message = event.getMessage().getString();
             boolean isHidden = false;

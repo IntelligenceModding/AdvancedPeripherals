@@ -11,6 +11,7 @@ import de.srendi.advancedperipherals.common.addons.APAddon;
 import de.srendi.advancedperipherals.common.util.DataComponentUtil;
 import de.srendi.advancedperipherals.common.util.NBTUtil;
 import de.srendi.advancedperipherals.common.util.Pair;
+import de.srendi.advancedperipherals.common.util.RegistryUtil;
 import net.minecraft.core.component.PatchedDataComponentMap;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
@@ -50,7 +51,7 @@ public class ItemFilter extends GenericFilter<ItemStack> {
                 String name = item.getString("name");
                 if (name.startsWith("#")) {
                     itemFilter.tag = TagKey.create(Registries.ITEM, ResourceLocation.parse(name.substring(1)));
-                } else if ((itemFilter.item = ItemUtil.getRegistryEntry(name, BuiltInRegistries.ITEM)) == null) {
+                } else if ((itemFilter.item = RegistryUtil.getRegistryEntry(name, BuiltInRegistries.ITEM)) == null) {
                     return Pair.of(null, "ITEM_NOT_FOUND");
                 }
             } catch (LuaException luaException) {

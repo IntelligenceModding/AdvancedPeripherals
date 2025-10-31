@@ -2,22 +2,20 @@ package de.srendi.advancedperipherals.common.util.fakeplayer;
 
 import com.mojang.authlib.GameProfile;
 import dan200.computercraft.api.turtle.ITurtleAccess;
+import dan200.computercraft.shared.util.InventoryUtil;
 import dan200.computercraft.shared.util.WorldUtil;
-import de.srendi.advancedperipherals.common.addons.APAddons;
-import de.srendi.advancedperipherals.common.addons.valkyrienskies.ValkyrienSkies;
-import net.minecraft.commands.arguments.EntityAnchorArgument;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.Container;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.phys.Vec3;
-import net.neoforged.items.ItemHandlerHelper;
-import net.neoforged.items.wrapper.InvWrapper;
 
 import java.util.WeakHashMap;
+import java.util.function.Function;
 
 public final class FakePlayerProviderTurtle {
 
@@ -34,21 +32,11 @@ public final class FakePlayerProviderTurtle {
     }
 
     public static void load(APFakePlayer player, ITurtleAccess turtle) {
-        ServerLevel level = (ServerLevel) turtle.getLevel();
-        player.setLevel(level);
-
-        BlockPos pos = turtle.getPosition();
-        player.setSourceBlock(pos);
-
-        Vec3 direction = Vec3.atLowerCornerOf(turtle.getDirection().getNormal());
-        Vec3 position = Vec3.atCenterOf(pos);
-        if (APAddons.vs2Loaded) {
-            position = ValkyrienSkies.transformToWorldPos(level, pos, position);
-            direction = ValkyrienSkies.transformToWorldDir(level, pos, direction);
-        }
-        player.setPosRaw(position.x, position.y, position.z);
-        player.lookAt(EntityAnchorArgument.Anchor.FEET, position.add(direction));
-
+        Direction direction = turtle.getDirection();
+        player.setLevel(turtle.getLevel());
+        // Player position
+        BlockPos position = turtle.getPosition();
+        player.moveTo(position.getX() + 0.5, position.getY() + 0.5, position.getZ() + 0.5, direction.toYRot(), 0);
         // Player inventory
         Inventory playerInventory = player.getInventory();
         playerInventory.selected = 0;
@@ -68,7 +56,12 @@ public final class FakePlayerProviderTurtle {
         // Add properties
         ItemStack activeStack = player.getItemInHand(InteractionHand.MAIN_HAND);
         if (!activeStack.isEmpty()) {
-            player.getAttributes().addTransientAttributeModifiers(activeStack.getAttributeModifiers(EquipmentSlot.MAINHAND));
+            activeStack.getAttributeModifiers().forEach(EquipmentSlot.MAINHAND, (attr, modif) -> {
+                AttributeInstance inst = player.getAttribute(attr);
+                if (inst != null) {
+                    inst.addOrUpdateTransientModifier(modif);
+                }
+            });
         }
     }
 
@@ -79,7 +72,12 @@ public final class FakePlayerProviderTurtle {
         // Remove properties
         ItemStack activeStack = player.getItemInHand(InteractionHand.MAIN_HAND);
         if (!activeStack.isEmpty()) {
-            player.getAttributes().removeAttributeModifiers(activeStack.getAttributeModifiers(EquipmentSlot.MAINHAND));
+            activeStack.getAttributeModifiers().forEach(EquipmentSlot.MAINHAND, (attr, modif) -> {
+                AttributeInstance inst = player.getAttribute(attr);
+                if (inst != null) {
+                    inst.addOrUpdateTransientModifier(modif);
+                }
+            });
         }
 
         // Copy primary items into turtle inventory and then insert/drop the rest
@@ -95,10 +93,10 @@ public final class FakePlayerProviderTurtle {
         for (int i = size; i < largerSize; i++) {
             ItemStack remaining = playerInventory.getItem(i);
             if (!remaining.isEmpty()) {
-                remaining = ItemHandlerHelper.insertItem(new InvWrapper(turtleInventory), remaining, false);
+                remaining = InventoryUtil.storeItemsFromOffset(turtleInventory, remaining, 0);
                 if (!remaining.isEmpty()) {
                     BlockPos position = turtle.getPosition();
-                    WorldUtil.dropItemStack(remaining, turtle.getLevel(), position, turtle.getDirection().getOpposite());
+                    WorldUtil.dropItemStack(turtle.getLevel(), position, turtle.getDirection().getOpposite(), remaining);
                 }
             }
 
@@ -106,7 +104,8 @@ public final class FakePlayerProviderTurtle {
         }
     }
 
-    public static <T> T withPlayer(ITurtleAccess turtle, APFakePlayer.Action<T> function) {
+
+    public static <T> T withPlayer(ITurtleAccess turtle, Function<APFakePlayer, T> function) {
         APFakePlayer player = getPlayer(turtle, turtle.getOwningPlayer());
         load(player, turtle);
         T result = function.apply(player);

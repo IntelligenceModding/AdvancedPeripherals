@@ -54,7 +54,7 @@ public class SmartGlassesComputer extends ServerComputer implements IPocketAcces
 
     public SmartGlassesComputer(ServerLevel world, int computerID, @Nullable String label, ComputerFamily family, @NotNull CompoundTag upgradeDatas) {
         super(world, computerID, label, family, 39, 13);
-        this.addAPI(new SmartGlassesAPI());
+        this.addApi(new SmartGlassesAPI());
         this.modulePeripheral = new ModulePeripheral(this);
         this.upgradeDatas = upgradeDatas;
         this.setPeripheral(ComputerSide.BACK, this.modulePeripheral);

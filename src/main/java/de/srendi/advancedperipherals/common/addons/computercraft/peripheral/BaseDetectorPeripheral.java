@@ -32,7 +32,7 @@ public abstract class BaseDetectorPeripheral<E extends BaseDetectorEntity> exten
 
     @LuaFunction
     public final String getLastTransferedId() {
-        return owner.tileEntity.getLastTransferedId();
+        return owner.tileEntity.getLastTransferredId();
     }
 
     @LuaFunction

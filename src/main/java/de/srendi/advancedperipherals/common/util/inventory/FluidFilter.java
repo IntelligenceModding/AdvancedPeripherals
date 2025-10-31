@@ -12,6 +12,7 @@ import de.srendi.advancedperipherals.common.addons.APAddon;
 import de.srendi.advancedperipherals.common.util.DataComponentUtil;
 import de.srendi.advancedperipherals.common.util.NBTUtil;
 import de.srendi.advancedperipherals.common.util.Pair;
+import de.srendi.advancedperipherals.common.util.RegistryUtil;
 import net.minecraft.core.component.PatchedDataComponentMap;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
@@ -48,7 +49,7 @@ public class FluidFilter extends GenericFilter<FluidStack> {
                 String name = item.getString("name");
                 if (name.startsWith("#")) {
                     fluidFilter.tag = TagKey.create(Registries.FLUID, ResourceLocation.parse(name.substring(1)));
-                } else if ((fluidFilter.fluid = ItemUtil.getRegistryEntry(name, BuiltInRegistries.FLUID)) == null) {
+                } else if ((fluidFilter.fluid = RegistryUtil.getRegistryEntry(name, BuiltInRegistries.FLUID)) == null) {
                     return Pair.of(null, "FLUID_NOT_FOUND");
                 }
             } catch (LuaException luaException) {

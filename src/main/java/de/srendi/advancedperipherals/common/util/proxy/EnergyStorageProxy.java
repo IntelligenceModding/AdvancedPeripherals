@@ -1,7 +1,7 @@
 package de.srendi.advancedperipherals.common.util.proxy;
 
 import de.srendi.advancedperipherals.common.blocks.blockentities.EnergyDetectorEntity;
-import net.neoforged.energy.IEnergyStorage;
+import net.neoforged.neoforge.energy.IEnergyStorage;
 
 public class EnergyStorageProxy extends AbstractStorageProxy implements IEnergyStorage {
 

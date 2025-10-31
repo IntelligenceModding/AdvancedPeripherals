@@ -2,7 +2,6 @@ package de.srendi.advancedperipherals.common.util.fakeplayer;
 
 import com.mojang.authlib.GameProfile;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
-import de.srendi.advancedperipherals.common.util.HitResultUtil;
 import de.srendi.advancedperipherals.common.util.Pair;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -20,32 +19,38 @@ import net.minecraft.world.entity.EntitySelector;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.CommandBlock;
+import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.StructureBlock;
-import net.minecraft.world.level.block.entity.SignBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.common.ForgeHooks;
-import net.neoforged.common.ForgeMod;
-import net.neoforged.common.util.FakePlayer;
-import net.neoforged.event.ForgeEventFactory;
-import net.neoforged.event.entity.player.PlayerInteractEvent;
-import net.neoforged.eventbus.api.Event;
+import net.neoforged.neoforge.common.CommonHooks;
+import net.neoforged.neoforge.common.util.FakePlayer;
+import net.neoforged.neoforge.common.util.TriState;
+import net.neoforged.neoforge.event.EventHooks;
+import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.lang.ref.WeakReference;
+import java.util.List;
 import java.util.UUID;
+import java.util.function.Function;
 import java.util.function.Predicate;
 
 public class APFakePlayer extends FakePlayer {
@@ -53,38 +58,38 @@ public class APFakePlayer extends FakePlayer {
     Highly inspired by https://github.com/SquidDev-CC/plethora/blob/minecraft-1.12/src/main/java/org/squiddev/plethora/gameplay/PlethoraFakePlayer.java
     */
     public static final GameProfile PROFILE = new GameProfile(UUID.fromString("6e483f02-30db-4454-b612-3a167614b276"), "[" + AdvancedPeripherals.MOD_ID + "]");
-    private static final Predicate<Entity> DEFAULT_ENTITY_FILTER = EntitySelector.NO_SPECTATORS.and(LivingEntity.class::isInstance).and((entity) -> !entity.isPassenger());
+    private static final Predicate<Entity> collidablePredicate = EntitySelector.NO_SPECTATORS;
 
-    private BlockPos source = null;
-    private BlockPos digPosition = null;
-    private Block digBlock = null;
+    private final WeakReference<Entity> owner;
+
+    private BlockPos digPosition;
+    private Block digBlock;
+
     private float currentDamage = 0;
-    private double reachRange = -1;
 
     public APFakePlayer(ServerLevel world, Entity owner, GameProfile profile) {
-        super(world, profile != null && profile.isComplete() ? profile : PROFILE);
+        super(world, profile != null && StringUtils.isNotBlank(profile.getName()) ? profile : PROFILE);
         if (owner != null) {
             setCustomName(owner.getName());
+            this.owner = new WeakReference<>(owner);
+        } else {
+            this.owner = null;
         }
-    }
-
-    public void setSourceBlock(BlockPos pos) {
-        this.source = pos;
     }
 
     @Override
     public void awardStat(@NotNull Stat<?> stat) {
-        MinecraftServer server = level.getServer();
+        MinecraftServer server = level().getServer();
         if (server != null && getGameProfile() != PROFILE) {
             Player player = server.getPlayerList().getPlayer(getUUID());
-            if (player != null) {
+            if (player != null)
                 player.awardStat(stat);
-            }
         }
     }
 
     @Override
-    public void openTextEdit(@NotNull SignBlockEntity sign) {
+    public boolean canAttack(@NotNull LivingEntity livingEntity) {
+        return true;
     }
 
     @Override
@@ -93,10 +98,16 @@ public class APFakePlayer extends FakePlayer {
     }
 
     @Override
+    public void setLevel(@NotNull Level level) {
+        super.setLevel(level);
+    }
+
+    @Override
     public void playSound(@NotNull SoundEvent soundIn, float volume, float pitch) {
     }
 
     private void setState(Block block, BlockPos pos) {
+
         if (digPosition != null) {
             gameMode.handleBlockBreakAction(digPosition, ServerboundPlayerActionPacket.Action.ABORT_DESTROY_BLOCK, Direction.EAST, 320, 1);
         }
@@ -111,25 +122,25 @@ public class APFakePlayer extends FakePlayer {
         return 0;
     }
 
-    public static <T> Action<T> wrapActionWithRot(float yaw, float pitch, Action<T> action) {
+    public static <T> Function<APFakePlayer, T> wrapActionWithRot(float yaw, float pitch, Function<APFakePlayer, T> action) {
         return player -> player.<T>doActionWithRot(yaw, pitch, action);
     }
 
-    public <T> T doActionWithRot(float yaw, float pitch, Action<T> action) {
-        final float yRot = this.getYRot(), xRot = this.getXRot();
-        this.setRot(yRot + yaw, xRot + pitch);
+    public <T> T doActionWithRot(float yaw, float pitch, Function<APFakePlayer, T> action) {
+        final float oldRot = this.getYRot();
+        this.setRot(oldRot + yaw, pitch);
         try {
             return action.apply(this);
         } finally {
-            this.setRot(yRot, xRot);
+            this.setRot(oldRot, 0);
         }
     }
 
-    public static <T> Action<T> wrapActionWithShiftKey(boolean shift, Action<T> action) {
+    public static <T> Function<APFakePlayer, T> wrapActionWithShiftKey(boolean shift, Function<APFakePlayer, T> action) {
         return player -> player.<T>doActionWithShiftKey(shift, action);
     }
 
-    public <T> T doActionWithShiftKey(boolean shift, Action<T> action) {
+    public <T> T doActionWithShiftKey(boolean shift, Function<APFakePlayer, T> action) {
         boolean old = this.isShiftKeyDown();
         this.setShiftKeyDown(shift);
         try {
@@ -139,38 +150,14 @@ public class APFakePlayer extends FakePlayer {
         }
     }
 
-    public static <T> Action<T> wrapActionWithReachRange(double range, Action<T> action) {
-        return player -> player.<T>doActionWithReachRange(range, action);
-    }
-
-    public <T> T doActionWithReachRange(double range, Action<T> action) {
-        this.reachRange = range;
-        try {
-            return action.apply(this);
-        } finally {
-            this.reachRange = -1;
-        }
-    }
-
-    public double getReachRange() {
-        AttributeInstance reachAttribute = this.getAttribute(ForgeMod.REACH_DISTANCE.get());
-        if (reachAttribute == null) {
-            throw new IllegalArgumentException("How did this happened?");
-        }
-        double range = reachAttribute.getValue();
-        if (this.reachRange >= 0 && this.reachRange < range) {
-            range = this.reachRange;
-        }
-        return range;
-    }
 
     public Pair<Boolean, String> digBlock() {
-        Level world = getLevel();
+        Level world = level();
         HitResult hit = findHit(true, false);
-        if (!(hit instanceof BlockHitResult blockHit) || hit.getType() == HitResult.Type.MISS) {
+        if (hit.getType() == HitResult.Type.MISS) {
             return Pair.of(false, "Nothing to break");
         }
-        BlockPos pos = blockHit.getBlockPos();
+        BlockPos pos = ((BlockHitResult) hit).getBlockPos();
         BlockState state = world.getBlockState(pos);
         Block block = state.getBlock();
 
@@ -186,7 +173,7 @@ public class APFakePlayer extends FakePlayer {
         Vec3 look = getLookAngle();
         Direction direction = Direction.getNearest(look.x, look.y, look.z).getOpposite();
 
-        if (world.isEmptyBlock(pos) || state.getMaterial().isLiquid()) {
+        if (world.isEmptyBlock(pos) || state.getBlock() instanceof LiquidBlock) {
             return Pair.of(false, "Nothing to dig here");
         }
 
@@ -199,7 +186,7 @@ public class APFakePlayer extends FakePlayer {
         }
 
         ServerPlayerGameMode manager = gameMode;
-        float breakSpeed = 0.5f * tool.getDestroySpeed(state) / state.getDestroySpeed(level, pos) - 0.1f;
+        float breakSpeed = 0.5f * tool.getDestroySpeed(state) / state.getDestroySpeed(world, pos) - 0.1f;
         for (int i = 0; i < 10; i++) {
             currentDamage += breakSpeed;
 
@@ -234,7 +221,7 @@ public class APFakePlayer extends FakePlayer {
     public InteractionResult useOnSpecificEntity(@NotNull Entity entity, HitResult result) {
         InteractionResult simpleInteraction = interactOn(entity, InteractionHand.MAIN_HAND);
         if (simpleInteraction == InteractionResult.SUCCESS) return simpleInteraction;
-        if (ForgeHooks.onInteractEntityAt(this, entity, result.getLocation(), InteractionHand.MAIN_HAND) != null) {
+        if (CommonHooks.onInteractEntityAt(this, entity, result.getLocation(), InteractionHand.MAIN_HAND) == InteractionResult.FAIL) {
             return InteractionResult.FAIL;
         }
 
@@ -251,21 +238,21 @@ public class APFakePlayer extends FakePlayer {
         if (hit instanceof BlockHitResult blockHit) {
             ItemStack stack = getMainHandItem();
             BlockPos pos = blockHit.getBlockPos();
-            PlayerInteractEvent.RightClickBlock event = ForgeHooks.onRightClickBlock(this, InteractionHand.MAIN_HAND, pos, blockHit);
+            PlayerInteractEvent.RightClickBlock event = CommonHooks.onRightClickBlock(this, InteractionHand.MAIN_HAND, pos, blockHit);
             if (event.isCanceled()) {
                 return event.getCancellationResult();
             }
-            boolean usedItem = event.getUseItem() != Event.Result.DENY;
-            boolean usedOnBlock = event.getUseBlock() != Event.Result.DENY;
+            boolean usedItem = event.getUseItem() != TriState.FALSE;
+            boolean usedOnBlock = event.getUseBlock() != TriState.FALSE;
             if (usedItem) {
-                InteractionResult result = stack.onItemUseFirst(new UseOnContext(level, this, InteractionHand.MAIN_HAND, stack, blockHit));
+                InteractionResult result = stack.onItemUseFirst(new UseOnContext(level(), this, InteractionHand.MAIN_HAND, stack, blockHit));
                 if (result != InteractionResult.PASS) {
                     return result;
                 }
 
-                boolean bypass = getMainHandItem().doesSneakBypassUse(level, pos, this);
+                boolean bypass = getMainHandItem().doesSneakBypassUse(level(), pos, this);
                 if (isShiftKeyDown() || bypass || usedOnBlock) {
-                    InteractionResult useType = gameMode.useItemOn(this, level, stack, InteractionHand.MAIN_HAND, blockHit);
+                    InteractionResult useType = gameMode.useItemOn(this, level(), stack, InteractionHand.MAIN_HAND, blockHit);
                     if (useType.consumesAction()) {
                         return useType;
                     }
@@ -288,9 +275,9 @@ public class APFakePlayer extends FakePlayer {
             }
 
             ItemStack copyBeforeUse = stack.copy();
-            InteractionResult result = stack.useOn(new UseOnContext(level, this, InteractionHand.MAIN_HAND, stack, blockHit));
+            InteractionResult result = stack.useOn(new UseOnContext(level(), this, InteractionHand.MAIN_HAND, stack, blockHit));
             if (stack.isEmpty()) {
-                ForgeEventFactory.onPlayerDestroyItem(this, copyBeforeUse, InteractionHand.MAIN_HAND);
+                EventHooks.onPlayerDestroyItem(this, copyBeforeUse, InteractionHand.MAIN_HAND);
             }
             return result;
         } else if (hit instanceof EntityHitResult entityHit) {
@@ -300,39 +287,95 @@ public class APFakePlayer extends FakePlayer {
     }
 
     public HitResult findHit(boolean skipEntity, boolean skipBlock) {
-        return findHit(skipEntity, skipBlock, DEFAULT_ENTITY_FILTER);
+        return findHit(skipEntity, skipBlock, null);
     }
 
     @NotNull
-    public HitResult findHit(boolean skipEntity, boolean skipBlock, @NotNull Predicate<Entity> entityFilter) {
-        double range = this.getReachRange();
-        Vec3 origin = new Vec3(this.getX(), this.getY(), this.getZ());
-        Vec3 look = this.getLookAngle();
+    public HitResult findHit(boolean skipEntity, boolean skipBlock, @Nullable Predicate<Entity> entityFilter) {
+        AttributeInstance reachAttribute = getAttribute(Attributes.BLOCK_INTERACTION_RANGE);
+        if (reachAttribute == null)
+            throw new IllegalArgumentException("How did this happened?");
+
+        double range = reachAttribute.getValue();
+        Vec3 origin = new Vec3(getX(), getY(), getZ());
+        Vec3 look = getLookAngle();
         Vec3 target = new Vec3(origin.x + look.x * range, origin.y + look.y * range, origin.z + look.z * range);
-
-        BlockHitResult blockHit;
+        ClipContext traceContext = new ClipContext(origin, target, ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, this);
+        Vec3 directionVec = traceContext.getFrom().subtract(traceContext.getTo());
+        Direction traceDirection = Direction.getNearest(directionVec.x, directionVec.y, directionVec.z);
+        HitResult blockHit;
         if (skipBlock) {
-            Direction traceDirection = Direction.getNearest(look.x, look.y, look.z);
-            blockHit = BlockHitResult.miss(target, traceDirection, new BlockPos(target));
+            blockHit = BlockHitResult.miss(traceContext.getTo(), traceDirection, new BlockPos((int) traceContext.getTo().x, (int) traceContext.getTo().y, (int) traceContext.getTo().z));
         } else {
-            blockHit = HitResultUtil.getBlockHitResult(origin, target, level, ClipContext.Block.OUTLINE, this.source);
+            blockHit = BlockGetter.traverseBlocks(traceContext.getFrom(), traceContext.getTo(), traceContext, (rayTraceContext, blockPos) -> {
+                if (level().isEmptyBlock(blockPos) || blockPos.equals(blockPosition())) {
+                    return null;
+                }
+                BlockHitResult shaped = traceContext.getBlockShape(level().getBlockState(blockPos), level(), blockPos)
+                        .clip(rayTraceContext.getFrom(), rayTraceContext.getTo(), blockPos);
+                if (shaped != null && shaped.getType() != HitResult.Type.MISS) {
+                    return shaped;
+                }
+                return new BlockHitResult(new Vec3(blockPos.getX(), blockPos.getY(), blockPos.getZ()), traceDirection, blockPos, false);
+            }, rayTraceContext -> BlockHitResult.miss(rayTraceContext.getTo(), traceDirection, new BlockPos((int) rayTraceContext.getTo().x, (int) rayTraceContext.getTo().y, (int) rayTraceContext.getTo().z)));
         }
 
-        if (skipEntity) {
+        if (skipEntity)
             return blockHit;
-        }
 
-        // TODO: maybe let entityFilter returns the priority of the entity, instead of only returns the closest one.
-        EntityHitResult entityHit = HitResultUtil.getEntityHitResult(origin, target, level, this, entityFilter);
-        if (entityHit.getType() == HitResult.Type.ENTITY) {
-            return entityHit;
-        }
+        List<Entity> entities = level().getEntities(this, getBoundingBox().expandTowards(look.x * range, look.y * range, look.z * range).inflate(1), collidablePredicate);
 
+        LivingEntity closestEntity = null;
+        Vec3 closestVec = null;
+        double closestDistance = blockHit.getType() == HitResult.Type.MISS ? range * range : distanceToSqr(blockHit.getLocation());
+        for (Entity entityHit : entities) {
+            if (!(entityHit instanceof LivingEntity entity)) {
+                continue;
+            }
+            // TODO: maybe let entityFilter returns the priority of the entity, instead of only returns the closest one.
+            if (entityFilter != null && !entityFilter.test(entity)) {
+                continue;
+            }
+
+            // Removed a lot logic here to make Automata cores interact like a player.
+            // However, the results for some edge cases may change. Need more review and tests.
+
+            // Hit vehicle before passenger
+            if (entity.isPassenger()) {
+                continue;
+            }
+
+            AABB box = entity.getBoundingBox();
+            Vec3 clipVec;
+            if (box.contains(origin)) {
+                clipVec = origin;
+            } else {
+                clipVec = box.clip(origin, target).orElse(null);
+                if (clipVec == null) {
+                    continue;
+                }
+            }
+            double distance = origin.distanceToSqr(clipVec);
+            // Ignore small enough distance
+            if (distance <= 1e-6) {
+                distance = 0;
+            }
+            if (distance > closestDistance) {
+                continue;
+            }
+            if (distance == closestDistance && closestEntity != null) {
+                // Hit larger entity before smaller
+                if (closestEntity.getBoundingBox().getSize() >= box.getSize()) {
+                    continue;
+                }
+            }
+            closestEntity = entity;
+            closestVec = clipVec;
+            closestDistance = distance;
+        }
+        if (closestEntity != null) {
+            return new EntityHitResult(closestEntity, closestVec);
+        }
         return blockHit;
-    }
-
-    @FunctionalInterface
-    public interface Action<T> {
-        T apply(APFakePlayer player);
     }
 }

@@ -7,9 +7,9 @@ import de.srendi.advancedperipherals.common.setup.APBlockEntityTypes;
 import de.srendi.advancedperipherals.common.util.proxy.EnergyStorageProxy;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.common.capabilities.ForgeCapabilities;
-import net.neoforged.energy.EnergyStorage;
-import net.neoforged.energy.IEnergyStorage;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.energy.EnergyStorage;
+import net.neoforged.neoforge.energy.IEnergyStorage;
 import org.jetbrains.annotations.NotNull;
 
 public class EnergyDetectorEntity extends BaseDetectorEntity<IEnergyStorage, EnergyStorageProxy, EnergyDetectorPeripheral> {
@@ -17,7 +17,7 @@ public class EnergyDetectorEntity extends BaseDetectorEntity<IEnergyStorage, Ene
     private static final EnergyStorage ZERO_STORAGE = new EnergyStorage(0, 0, 0);
 
     public EnergyDetectorEntity(BlockPos pos, BlockState state) {
-        super(APBlockEntityTypes.ENERGY_DETECTOR.get(), pos, state, ForgeCapabilities.ENERGY);
+        super(APBlockEntityTypes.ENERGY_DETECTOR.get(), pos, state, Capabilities.EnergyStorage.BLOCK);
     }
 
     @Override

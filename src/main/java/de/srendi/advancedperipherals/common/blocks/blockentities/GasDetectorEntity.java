@@ -1,16 +1,13 @@
 package de.srendi.advancedperipherals.common.blocks.blockentities;
 
-import com.refinedmods.refinedstorage.mekanism.ChemicalCapabilityCache;
 import com.refinedmods.refinedstorage.mekanism.ChemicalUtil;
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.GasDetectorPeripheral;
-import de.srendi.advancedperipherals.common.addons.mekanism.MekanismCapabilities;
 import de.srendi.advancedperipherals.common.blocks.base.BaseDetectorEntity;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.setup.APBlockEntityTypes;
 import de.srendi.advancedperipherals.common.util.proxy.GasStorageProxy;
 import de.srendi.advancedperipherals.common.util.proxy.ZeroGasTank;
 import mekanism.api.chemical.IChemicalHandler;
-import mekanism.api.chemical.IChemicalTank;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
@@ -38,7 +35,7 @@ public class GasDetectorEntity extends BaseDetectorEntity<IChemicalHandler, GasS
 
     @Override
     @NotNull
-    protected IGasHandler getZeroStorage() {
+    protected IChemicalHandler getZeroStorage() {
         return ZERO_STORAGE;
     }
 }
