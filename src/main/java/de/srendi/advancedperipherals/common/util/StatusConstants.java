@@ -2,6 +2,9 @@ package de.srendi.advancedperipherals.common.util;
 
 import de.srendi.advancedperipherals.common.addons.APAddon;
 
+/**
+ * A collection of constants used as return types for several peripherals
+ */
 public enum StatusConstants {
 
     // Crafting Jobs
@@ -46,6 +49,4 @@ public enum StatusConstants {
     public String withInfo(APAddon addon) {
         return this + "_" + addon.getModId();
     }
-
-
 }

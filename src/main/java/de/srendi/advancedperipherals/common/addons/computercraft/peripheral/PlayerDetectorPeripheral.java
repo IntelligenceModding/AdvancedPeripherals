@@ -30,6 +30,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+// TODO: Improve player detect logic
+// Check player's box in the area instead of check player in the players in the area
 public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
 
     public static final String PERIPHERAL_TYPE = "player_detector";
@@ -89,7 +91,10 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
         ResourceKey<Level> dimension = getLevel().dimension();
 
         for (ServerPlayer player : getPlayers()) {
-            if (player.level().dimension() == dimension && CoordUtil.isInRange(getPhysicsPos(), getLevel(), player, x, y, z, MAX_RANGE)) {
+            if (!isAllowedMultiDimensional() && player.level().dimension() != dimension) {
+                continue;
+            }
+            if (CoordUtil.isInRange(getPos(), getLevel(), player, x, y, z, MAX_RANGE)) {
                 playersName.add(player.getName().getString());
             }
         }
@@ -102,7 +107,10 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
         ResourceKey<Level> dimension = getLevel().dimension();
 
         for (ServerPlayer player : getPlayers()) {
-            if (player.level().dimension() == dimension && CoordUtil.isInRange(getPhysicsPos(), getLevel(), player, range, MAX_RANGE)) {
+            if (!isAllowedMultiDimensional() && player.level().dimension() != dimension) {
+                continue;
+            }
+            if (CoordUtil.isInRange(getPos(), getLevel(), player, range, MAX_RANGE)) {
                 playersName.add(player.getName().getString());
             }
         }
@@ -135,7 +143,10 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
         ResourceKey<Level> dimension = getLevel().dimension();
 
         for (ServerPlayer player : getPlayers()) {
-            if (player.level().dimension() == dimension && CoordUtil.isInRange(getPhysicsPos(), getLevel(), player, x, y, z, MAX_RANGE)) {
+            if (!isAllowedMultiDimensional() && player.level().dimension() != dimension) {
+                continue;
+            }
+            if (CoordUtil.isInRange(getPos(), getLevel(), player, x, y, z, MAX_RANGE)) {
                 return true;
             }
         }
@@ -149,7 +160,10 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
         ResourceKey<Level> dimension = getLevel().dimension();
 
         for (ServerPlayer player : getPlayers()) {
-            if (player.level().dimension() == dimension && CoordUtil.isInRange(getPhysicsPos(), getLevel(), player, range, MAX_RANGE)) {
+            if (!isAllowedMultiDimensional() && player.level().dimension() != dimension) {
+                continue;
+            }
+            if (CoordUtil.isInRange(getPos(), getLevel(), player, range, MAX_RANGE)) {
                 return true;
             }
         }
@@ -162,9 +176,15 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
         BlockPos secondPos = LuaConverter.convertToBlockPos(secondCoord);
         ResourceKey<Level> dimension = getLevel().dimension();
 
-        ServerPlayer player = getPlayer(username);
-        if (!isAllowedMultiDimensional() && player.level().dimension() != dimension) {
-            return false;
+        for (Player player : getPlayers()) {
+            if (!isAllowedMultiDimensional() && player.level().dimension() != dimension) {
+                continue;
+            }
+            if (CoordUtil.isInRange(getPos(), player, getLevel(), firstPos, secondPos, MAX_RANGE)) {
+                if (player.getName().getString().equals(username)) {
+                    return true;
+                }
+            }
         }
         return CoordUtil.isInRange(getPhysicsPos(), player, getLevel(), firstPos, secondPos, MAX_RANGE);
     }
@@ -173,34 +193,55 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
     public final boolean isPlayerInCubic(int x, int y, int z, String username) {
         ResourceKey<Level> dimension = getLevel().dimension();
 
-        ServerPlayer player = getPlayer(username);
-        return player.level().dimension() == dimension && CoordUtil.isInRange(getPhysicsPos(), getLevel(), player, x, y, z, MAX_RANGE);
+        for (Player player : getPlayers()) {
+            if (!isAllowedMultiDimensional() && player.level().dimension() != dimension) {
+                continue;
+            }
+            if (CoordUtil.isInRange(getPos(), getLevel(), player, x, y, z, MAX_RANGE)) {
+                if (player.getName().getString().equals(username)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     @LuaFunction(mainThread = true)
     public final boolean isPlayerInRange(int range, String username) {
         ResourceKey<Level> dimension = getLevel().dimension();
 
-        ServerPlayer player = getPlayer(username);
-        return player.level().dimension() == dimension && CoordUtil.isInRange(getPhysicsPos(), getLevel(), player, range, MAX_RANGE);
+        for (Player player : getPlayers()) {
+            if (!isAllowedMultiDimensional() && player.level().dimension() != dimension) {
+                continue;
+            }
+            if (CoordUtil.isInRange(getPos(), getLevel(), player, range, MAX_RANGE)) {
+                if (player.getName().getString().equals(username)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     @LuaFunction(value = {"getPlayerPos", "getPlayer"}, mainThread = true)
     public final Map<String, Object> getPlayerPos(IArguments arguments) throws LuaException {
-        if (!APConfig.PERIPHERALS_CONFIG.playerSpy.get())
+        if (!APConfig.PERIPHERALS_CONFIG.playerSpy.get()) {
             throw new LuaException("This function is disabled in the config. Activate it or ask an admin if he can activate it.");
+        }
         ResourceKey<Level> dimension = getLevel().dimension();
         Vec3 pos = getPhysicsPos();
 
-        ServerPlayer player = getPlayer(arguments.getString(0));
-        if (player == null) {
-            return null;
-        }
-        if (!isAllowedMultiDimensional() && player.level().dimension() != dimension) {
-            return null;
-        }
-        if (MAX_RANGE != -1 && !CoordUtil.isInRange(pos, getLevel(), player, MAX_RANGE, MAX_RANGE)) {
-            return null;
+        ServerPlayer existingPlayer = null;
+        for (ServerPlayer player : getPlayers()) {
+            if (!isAllowedMultiDimensional() && player.level().dimension() != dimension) {
+                continue;
+            }
+            if (player.getName().getString().equals(arguments.getString(0))) {
+                if (MAX_RANGE == -1 || CoordUtil.isInRange(getPos(), getLevel(), player, MAX_RANGE, MAX_RANGE)) {
+                    existingPlayer = player;
+                }
+                break;
+            }
         }
 
         Map<String, Object> info = new HashMap<>();
@@ -246,16 +287,18 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
         info.put("y", Math.floor(y * unit) / unit);
         info.put("z", Math.floor(z * unit) / unit);
         if (APConfig.PERIPHERALS_CONFIG.morePlayerInformation.get()) {
-            info.put("yaw", player.yRotO);
-            info.put("pitch", player.xRotO);
-            info.put("dimension", player.level().dimension().location().toString());
-            info.put("eyeHeight", player.getEyeHeight());
-            info.put("health", player.getHealth());
-            info.put("maxHealth", player.getMaxHealth());
-            info.put("airSupply", player.getAirSupply());
-            info.put("respawnPosition", LuaConverter.posToObject(player.getRespawnPosition()));
-            info.put("respawnDimension", player.getRespawnDimension().location().toString());
-            info.put("respawnAngle", player.getRespawnAngle());
+            info.put("uuid", existingPlayer.getUUID().toString());
+            info.put("name", existingPlayer.getName().getString());
+            info.put("yaw", existingPlayer.yRotO);
+            info.put("pitch", existingPlayer.xRotO);
+            info.put("dimension", existingPlayer.level().dimension().location().toString());
+            info.put("eyeHeight", existingPlayer.getEyeHeight());
+            info.put("health", existingPlayer.getHealth());
+            info.put("maxHealth", existingPlayer.getMaxHealth());
+            info.put("airSupply", existingPlayer.getAirSupply());
+            info.put("respawnPosition", LuaConverter.posToObject(existingPlayer.getRespawnPosition()));
+            info.put("respawnDimension", existingPlayer.getRespawnDimension().location().toString());
+            info.put("respawnAngle", existingPlayer.getRespawnAngle());
         }
         return info;
     }

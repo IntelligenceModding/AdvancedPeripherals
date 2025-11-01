@@ -5,8 +5,8 @@ import dan200.computercraft.ComputerCraft;
 import dan200.computercraft.api.peripheral.IPeripheral;
 import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
-import dan200.computercraft.shared.TurtlePermissions;
 import dan200.computercraft.shared.util.InventoryUtil;
+import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.util.DataStorageUtil;
 import de.srendi.advancedperipherals.common.util.fakeplayer.APFakePlayer;
 import de.srendi.advancedperipherals.common.util.fakeplayer.FakePlayerProviderTurtle;
@@ -14,6 +14,7 @@ import de.srendi.advancedperipherals.lib.peripherals.IBasePeripheral;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.FrontAndTop;
+import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
@@ -79,15 +80,24 @@ public class TurtlePeripheralOwner extends BasePeripheralOwner {
         return turtle.getLevel().getPlayerByUUID(owningPlayer.getId());
     }
 
-    @NotNull
     @Override
-    public CompoundTag getDataStorage() {
+    public DataComponentPatch getDataStorage() {
         return DataStorageUtil.getDataStorage(turtle, side);
     }
 
     @Override
+    public CompoundTag getNbtStorage() {
+        AdvancedPeripherals.debug("Turtle peripheral at " + getPos() + " tried to use nbt storage but it should instead use data component storage, report to github!", org.apache.logging.log4j.Level.WARN);
+        return null;
+    }
+
+    @Override
+    public void putDataStorage(DataComponentPatch dataStorage) {
+        DataStorageUtil.putDataStorage(turtle, side, dataStorage);
+    }
+
+    @Override
     public void markDataStorageDirty() {
-        turtle.updateUpgradeNBTData(side);
     }
 
     @Override
@@ -102,7 +112,7 @@ public class TurtlePeripheralOwner extends BasePeripheralOwner {
 
     @Override
     public ItemStack storeItem(ItemStack stored) {
-        return InventoryUtil.storeItems(stored, new InvWrapper(turtle.getInventory()), turtle.getSelectedSlot());
+        return InventoryUtil.storeItemsIntoSlot(turtle.getInventory(), stored, turtle.getSelectedSlot());
     }
 
     @Override
@@ -115,8 +125,6 @@ public class TurtlePeripheralOwner extends BasePeripheralOwner {
         return FakePlayerProviderTurtle.withPlayer(turtle, player -> {
             if (level.isOutsideBuildHeight(pos)) return false;
             if (!level.isInWorldBounds(pos)) return false;
-            if (ComputerCraft.turtlesObeyBlockProtection && !TurtlePermissions.isBlockEnterable(level, pos, player))
-                return false;
             if (!level.isAreaLoaded(pos, 0)) return false;
             return level.getWorldBorder().isWithinBounds(pos);
         });

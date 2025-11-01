@@ -2,11 +2,17 @@ package de.srendi.advancedperipherals.common.util;
 
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.shared.util.NBTUtil;
+import de.srendi.advancedperipherals.AdvancedPeripherals;
+import de.srendi.advancedperipherals.common.addons.APAddon;
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.InventoryManagerPeripheral;
+import de.srendi.advancedperipherals.common.util.inventory.ChemicalUtil;
 import de.srendi.advancedperipherals.common.util.inventory.FluidUtil;
 import de.srendi.advancedperipherals.common.util.inventory.ItemUtil;
+import mekanism.api.MekanismAPI;
+import mekanism.api.chemical.Chemical;
+import mekanism.api.chemical.ChemicalStack;
 import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -19,13 +25,14 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.scores.Team;
-import net.neoforged.common.IForgeShearable;
-import net.neoforged.fluids.FluidStack;
-import net.neoforged.fluids.FluidType;
+import net.neoforged.neoforge.common.IShearable;
+import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.FluidType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Quaterniondc;
@@ -211,11 +218,11 @@ public class LuaConverter {
             return null;
         }
 
-        Map<String, Object> map = new HashMap<>(3);
-        map.put("x", pos.getX());
-        map.put("y", pos.getY());
-        map.put("z", pos.getZ());
-        return map;
+        Map<String, Object> properties = new HashMap<>(3);
+        properties.put("x", pos.getX());
+        properties.put("y", pos.getY());
+        properties.put("z", pos.getZ());
+        return properties;
     }
 
     @Nullable
@@ -223,42 +230,117 @@ public class LuaConverter {
         if (stack.isEmpty()) {
             return null;
         }
-        Map<String, Object> map = itemToObject(stack.getItem());
-        CompoundTag nbt = stack.getTag();
+        Map<String, Object> properties = itemToObject(stack.getItem());
+        DataComponentPatch components = stack.getComponentsPatch();
         if (nbt == null) {
             nbt = EMPTY_TAG;
         }
-        map.put("count", stack.getCount());
-        map.put("displayName", stack.getDisplayName().getString());
-        map.put("maxStackSize", stack.getMaxStackSize());
-        map.put("nbt", NBTUtil.toLua(nbt));
-        map.put("nbtHash", NBTUtil.getNBTHash(nbt));
-        map.put("fingerprint", ItemUtil.getFingerprint(stack));
-        return map;
+        properties.put("count", stack.getCount());
+        properties.put("displayName", stack.getDisplayName().getString());
+        properties.put("maxStackSize", stack.getMaxStackSize());
+        try {
+            properties.put("components", NBTUtil.toLua(DataComponentUtil.toNbt(components)));
+        } catch (IllegalStateException ex) {
+            AdvancedPeripherals.debug("Couldn't create components for Item Stack " + stack, ex);
+        }
+        properties.put("fingerprint", ItemUtil.getFingerprint(stack));
+        return properties;
     }
 
     @Nullable
+    public static Map<String, Object> itemStackToObject(@NotNull ItemStack stack, Level level) {
+        if (stack.isEmpty()) {
+            return null;
+        }
+        Map<String, Object> properties = itemToObject(stack.getItem());
+        DataComponentPatch components = stack.getComponentsPatch();
+        properties.put("count", stack.getCount());
+        properties.put("displayName", stack.getDisplayName().getString());
+        properties.put("maxStackSize", stack.getMaxStackSize());
+        try {
+            properties.put("components", NBTUtil.toLua(DataComponentUtil.toNbt(components, level)));
+        } catch (IllegalStateException ex) {
+            AdvancedPeripherals.debug("Couldn't create components for Item Stack " + stack, ex);
+        }
+        properties.put("fingerprint", ItemUtil.getFingerprint(stack));
+        return properties;
+    }
+
     public static Map<String, Object> fluidStackToObject(@NotNull FluidStack stack) {
         if (stack.isEmpty()) {
             return null;
         }
-        Map<String, Object> map = fluidToObject(stack.getFluid());
-        CompoundTag nbt = stack.getTag();
-        if (nbt == null) {
-            nbt = EMPTY_TAG;
-        }
-        map.put("count", stack.getAmount());
-        map.put("displayName", stack.getDisplayName().getString());
-        map.put("nbt", NBTUtil.toLua(nbt));
-        map.put("nbtHash", NBTUtil.getNBTHash(nbt));
-        map.put("fingerprint", FluidUtil.getFingerprint(stack));
-        return map;
+        Map<String, Object> properties = fluidToObject(stack.getFluid());
+        DataComponentPatch components = stack.getComponentsPatch();
+        properties.put("count", stack.getAmount());
+        properties.put("displayName", stack.getHoverName().getString());
+        properties.put("fluidType", fluidTypeToObject(stack.getFluidType()));
+        properties.put("components", NBTUtil.toLua(DataComponentUtil.toNbt(components)));
+        properties.put("fingerprint", FluidUtil.getFingerprint(stack));
+        return properties;
     }
 
-    public static Map<String, Object> itemStackToObject(@NotNull ItemStack itemStack, int amount) {
-        ItemStack stack = itemStack.copy();
-        stack.setCount(amount);
-        return itemStackToObject(stack);
+    public static Map<String, Object> chemicalStackToObject(@NotNull ChemicalStack stack) {
+        // In theory should not be called if the addon is not installed, but just to be save
+        if (!APAddon.MEKANISM.isLoaded()) {
+            return null;
+        }
+
+        if (stack.isEmpty()) {
+            return null;
+        }
+        Map<String, Object> properties = chemicalToObject(stack.getChemical());
+        properties.put("count", stack.getAmount());
+        properties.put("displayName", stack.getTextComponent().getString());
+        properties.put("fingerprint", ChemicalUtil.getFingerprint(stack));
+        return properties;
+    }
+
+    public static Map<String, Object> fluidTypeToObject(FluidType type) {
+        Map<String, Object> properties = new HashMap<>();
+        properties.put("viscosity", type.getViscosity());
+        properties.put("density", type.getDensity());
+        properties.put("canHydrate", type.canHydrate((Entity) null));
+        properties.put("canExtinguish", type.canExtinguish(null));
+        properties.put("canDrownIn", type.canDrownIn(null));
+        properties.put("canSwim", type.canSwim(null));
+        properties.put("canPushEntity", type.canPushEntity(null));
+        properties.put("supportsBoating", type.supportsBoating(null));
+        properties.put("canConvertToSource", type.canConvertToSource(null));
+        properties.put("temperature", type.getTemperature(null));
+        return properties;
+    }
+
+    public static Map<String, Object> itemStackToObject(@NotNull ItemStack itemStack, long count) {
+        if (itemStack.isEmpty()) {
+            return null;
+        }
+        Map<String, Object> properties = itemStackToObject(itemStack);
+        properties.put("count", count);
+        return properties;
+    }
+
+    public static Map<String, Object> fluidStackToObject(@NotNull FluidStack fluidStack, long count) {
+        if (fluidStack.isEmpty()) {
+            return null;
+        }
+        Map<String, Object> properties = fluidStackToObject(fluidStack);
+        properties.put("count", count);
+        return properties;
+    }
+
+    public static Map<String, Object> chemicalStackToObject(@NotNull ChemicalStack chemicalStack, long count) {
+        // In theory should not be called if the addon is not installed, but just to be save
+        if (!APAddon.MEKANISM.isLoaded()) {
+            return null;
+        }
+
+        if (chemicalStack.isEmpty()) {
+            return null;
+        }
+        Map<String, Object> properties = chemicalStackToObject(chemicalStack);
+        properties.put("count", count);
+        return properties;
     }
 
     /**
@@ -274,16 +356,37 @@ public class LuaConverter {
         if (stack.isEmpty()) {
             return null;
         }
-        Map<String, Object> map = itemStackToObject(stack);
-        map.put("slot", slot + 1);
-        return map;
+        Map<String, Object> properties = itemStackToObject(stack);
+        properties.put("slot", slot + 1);
+        return properties;
     }
 
     public static Map<String, Object> itemToObject(@NotNull Item item) {
-        Map<String, Object> map = new HashMap<>();
-        map.put("tags", tagsToList(() -> item.builtInRegistryHolder().tags()));
-        map.put("name", ItemUtil.getRegistryKey(item).toString());
-        return map;
+        Map<String, Object> properties = new HashMap<>();
+        properties.put("tags", tagsToList(() -> item.builtInRegistryHolder().tags()));
+        properties.put("name", ItemUtil.getRegistryKey(item).toString());
+        return properties;
+    }
+
+    public static Map<String, Object> fluidToObject(@NotNull Fluid fluid) {
+        Map<String, Object> properties = new HashMap<>();
+        properties.put("tags", tagsToList(() -> fluid.builtInRegistryHolder().tags()));
+        properties.put("name", FluidUtil.getRegistryKey(fluid).toString());
+        return properties;
+    }
+
+    public static Map<String, Object> chemicalToObject(@NotNull Chemical chemical) {
+        // In theory should not be called if the addon is not installed, but just to be save
+        if (!APAddon.MEKANISM.isLoaded()) {
+            return null;
+        }
+
+        Map<String, Object> properties = new HashMap<>();
+        properties.put("tags", tagsToList(() -> MekanismAPI.CHEMICAL_REGISTRY.wrapAsHolder(chemical).tags()));
+        properties.put("isGaseous", chemical.isGaseous());
+        properties.put("radioactivity", chemical.isRadioactive());
+        properties.put("name", ChemicalUtil.getRegistryKey(chemical).toString());
+        return properties;
     }
 
     public static Map<String, Object> fluidToObject(@NotNull Fluid fluid) {
@@ -299,9 +402,7 @@ public class LuaConverter {
     }
 
     public static <T> List<String> tagsToList(@NotNull Supplier<Stream<TagKey<T>>> tags) {
-        // We use new ArrayList here instead of Collections.emptyList to prevent an issue with
-        // textutils.serialise. I just hope this does not lead to a memory leak
-        if (tags.get().findAny().isEmpty()) return new ArrayList<>();
+        // We do not use Collections.emptyList here to prevent an issue with textutils.serialise.
         return tags.get().map(LuaConverter::tagToString).toList();
     }
 
@@ -317,7 +418,8 @@ public class LuaConverter {
         if (!(table.get("x") instanceof Number x) || !(table.get("y") instanceof Number y) || !(table.get("z") instanceof Number z)) {
             throw new LuaException("Position should be numbers");
         }
-        return new BlockPos(x.intValue(), y.intValue(), z.intValue());
+        // Use round here in case of 0.1 + 0.2 calculation
+        return new BlockPos((int) (Math.round(x.doubleValue())), (int) (Math.round(y.doubleValue())), (int) (Math.round(z.doubleValue())));
     }
 
     public static BlockPos convertToBlockPos(BlockPos center, Map<?, ?> table) throws LuaException {
@@ -365,10 +467,6 @@ public class LuaConverter {
         Quaterniondc rot = tf.getShipToWorldRotation();
         final double rotX = rot.x(), rotY = rot.y(), rotZ = rot.z(), rotW = rot.w();
         map.put("rotate", Map.of("x", rotX, "y", rotY, "z", rotZ, "w", rotW));
-        // Not really correct?
-        // map.put("pitch", Math.toDegrees(Math.asin(-2 * (rotX * rotZ - rotW * rotY))));
-        // map.put("roll", Math.toDegrees(Math.atan2(2 * (rotX * rotY + rotW * rotZ), rotW * rotW + rotX * rotX - rotY * rotY - rotZ * rotZ)));
-        // map.put("yaw", Math.toDegrees(Math.atan2(2 * (rotY * rotZ + rotW * rotX), rotW * rotW - rotX * rotX - rotY * rotY + rotZ * rotZ)));
 
         AABBic box = ship.getShipAABB();
         if (box != null) {

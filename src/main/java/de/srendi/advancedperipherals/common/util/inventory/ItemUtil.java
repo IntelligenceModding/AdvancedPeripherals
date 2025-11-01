@@ -17,7 +17,6 @@ public class ItemUtil {
     private ItemUtil() {
     }
 
-
     /**
      * Fingerprints are XXHash64 hashes generated out of the nbt tag, the registry name and the display name from item stacks
      * Used to filter inventory specific operations. See {@link ItemFilter}

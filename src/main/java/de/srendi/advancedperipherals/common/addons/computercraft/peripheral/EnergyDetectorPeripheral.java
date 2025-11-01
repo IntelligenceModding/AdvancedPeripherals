@@ -5,10 +5,10 @@ import de.srendi.advancedperipherals.common.configuration.APConfig;
 
 public class EnergyDetectorPeripheral extends BaseDetectorPeripheral<EnergyDetectorEntity> {
 
-    public static final String TYPE = "energy_detector";
+    public static final String PERIPHERAL_TYPE = "energy_detector";
 
     public EnergyDetectorPeripheral(EnergyDetectorEntity tileEntity) {
-        super(TYPE, tileEntity);
+        super(PERIPHERAL_TYPE, tileEntity);
     }
 
     @Override

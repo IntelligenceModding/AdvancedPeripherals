@@ -199,7 +199,7 @@ repositories {
     maven {
         url = "https://cursemaven.com"
         content {
-            includeGroup "curse.maven"
+            includeGroup("curse.maven")
         }
     }
 }
@@ -436,8 +436,8 @@ publishing {
                 name.set("AdvancedPeripherals")
                 packaging = 'jar'
                 description.set(
-                        'Advanced Peripherals provides multiple extensions for ComputerCraft in form of Peripherals, Pocket Upgrades, Turtles or new gear.\n' +
-                                'It also integrates with multiple third party mods.')
+                    'Advanced Peripherals provides multiple extensions for ComputerCraft in form of Peripherals, Pocket Upgrades, Turtles or new gear.\n' +
+                    'It also integrates with multiple third party mods.')
                 url.set('https://docs.intelligence-modding.de/')
                 scm {
                     url.set("https://github.com/${githubUser}/${githubRepo}.git")

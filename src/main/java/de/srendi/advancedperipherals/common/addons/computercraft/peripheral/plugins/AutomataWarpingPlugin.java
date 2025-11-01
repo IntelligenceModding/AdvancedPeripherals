@@ -19,7 +19,9 @@ import de.srendi.advancedperipherals.common.util.ServerWorker;
 import de.srendi.advancedperipherals.lib.peripherals.AutomataCorePeripheral;
 import de.srendi.advancedperipherals.lib.peripherals.IPeripheralOperation;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
+import net.minecraft.core.Direction
+import net.minecraft.core.component.DataComponentMap;
+import net.minecraft.core.component.PatchedDataComponentMap;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
@@ -29,11 +31,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-import static de.srendi.advancedperipherals.common.addons.computercraft.operations.SingleOperation.*;
+import static de.srendi.advancedperipherals.common.addons.computercraft.operations.SingleOperation.WARP;
+import static de.srendi.advancedperipherals.common.setup.DataComponents.POINT_DATA_MARK;
+import static de.srendi.advancedperipherals.common.setup.DataComponents.WORLD_DATA_MARK;
 
 public class AutomataWarpingPlugin extends AutomataCorePlugin {
-
-    private static final String POINT_DATA_MARK = "warp_points";
 
     private final Map<String, TurtleEnderPearl> shipPearls = new HashMap<>();
 
@@ -49,12 +51,26 @@ public class AutomataWarpingPlugin extends AutomataCorePlugin {
     @NotNull
     protected Pair<MethodResult, CompoundTag> getPointData() {
         TurtlePeripheralOwner owner = automataCore.getPeripheralOwner();
-        CompoundTag settings = owner.getDataStorage();
-        if (!settings.contains(POINT_DATA_MARK)) {
-            settings.put(POINT_DATA_MARK, new CompoundTag());
+        PatchedDataComponentMap settings = PatchedDataComponentMap.fromPatch(DataComponentMap.EMPTY, owner.getDataStorage());
+        if (!settings.has(WORLD_DATA_MARK.get())) {
+            settings.set(WORLD_DATA_MARK.get(), owner.getLevel().dimension().location().toString());
+        } else {
+            String worldName = settings.get(WORLD_DATA_MARK.get());
+            if (!owner.getLevel().dimension().location().toString().equals(worldName))
+                return Pair.onlyLeft(MethodResult.of(null, "Incorrect world for this upgrade"));
+        }
+        if (!settings.has(POINT_DATA_MARK.get())) {
+            settings.set(POINT_DATA_MARK.get(), new CompoundTag());
         }
 
-        return Pair.onlyRight(settings.getCompound(POINT_DATA_MARK));
+        return Pair.onlyRight(settings.get(POINT_DATA_MARK.get()));
+    }
+
+    protected void setPointData(@NotNull CompoundTag data) {
+        TurtlePeripheralOwner owner = automataCore.getPeripheralOwner();
+        PatchedDataComponentMap settings = PatchedDataComponentMap.fromPatch(DataComponentMap.EMPTY, owner.getDataStorage());
+        settings.set(POINT_DATA_MARK.get(), data);
+        owner.putDataStorage(settings.asPatch());
     }
 
     protected Pair<MethodResult, CompoundTag> getPoint(String name) {
@@ -92,9 +108,8 @@ public class AutomataWarpingPlugin extends AutomataCorePlugin {
             return MethodResult.of(null, "Cannot add new point, limit reached");
         }
 
-        TurtlePeripheralOwner owner = automataCore.getPeripheralOwner();
-        Level level = owner.getLevel();
-        data.put(name, NBTUtil.toNBT(level, owner.getPos()));
+        data.put(name, NBTUtil.toNBT(automataCore.getPeripheralOwner().getPos()));
+        setPointData(data);
         return MethodResult.of(true);
     }
 
@@ -112,6 +127,7 @@ public class AutomataWarpingPlugin extends AutomataCorePlugin {
         }
 
         data.remove(name);
+        setPointData(data);
         return MethodResult.of(true);
     }
 
@@ -133,13 +149,16 @@ public class AutomataWarpingPlugin extends AutomataCorePlugin {
             return pairData.getLeft();
         }
 
-        TurtlePeripheralOwner owner = automataCore.getPeripheralOwner();
-        Pair<Level, BlockPos> newLevelAndPosition = NBTUtil.levelAndBlockPosFromNBT(pairData.getRight());
-        Level newLevel = newLevelAndPosition.getLeft();
-        BlockPos newPosition = newLevelAndPosition.getRight();
+        CompoundTag data = pairData.getRight();
 
-        return automataCore.withOperation(WARP, getWarpContext(newLevel, newPosition), context -> {
-            boolean result = owner.move(newLevel, newPosition);
+        if (!data.contains(name))
+            return MethodResult.of(null, "Cannot find point to teleport");
+
+        TurtlePeripheralOwner owner = automataCore.getPeripheralOwner();
+        Level level = owner.getLevel();
+        BlockPos newPosition = NBTUtil.blockPosFromNBT(data.getCompound(name));
+        return automataCore.withOperation(WARP, automataCore.toDistance(newPosition), context -> {
+            boolean result = owner.move(level, newPosition);
             if (!result) {
                 return MethodResult.of(null, "Cannot teleport to location");
             }

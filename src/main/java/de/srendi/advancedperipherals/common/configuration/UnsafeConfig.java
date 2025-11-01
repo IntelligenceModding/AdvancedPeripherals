@@ -1,6 +1,5 @@
 package de.srendi.advancedperipherals.common.configuration;
 
-
 import net.neoforged.neoforge.common.ModConfigSpec;
 
 public class UnsafeConfig {

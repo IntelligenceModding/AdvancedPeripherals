@@ -33,10 +33,10 @@ import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.levelgen.WorldgenRandom;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.common.MinecraftForge;
-import net.neoforged.event.entity.player.SleepingTimeCheckEvent;
-import net.neoforged.eventbus.api.Event;
-import net.neoforged.server.ServerLifecycleHooks;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.entity.player.CanContinueSleepingEvent;
+import net.neoforged.neoforge.server.ServerLifecycleHooks;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -237,17 +237,16 @@ public class EnvironmentDetectorPeripheral extends BasePeripheral<IPeripheralOwn
         if (player == null)
             return MethodResult.of(false, "player_not_online");
 
-        if (!player.level.dimensionType().bedWorks())
+        if (!player.level().dimensionType().bedWorks())
             return MethodResult.of(false, "not_allowed_in_dimension");
 
-        SleepingTimeCheckEvent evt = new SleepingTimeCheckEvent(player, Optional.empty());
-        MinecraftForge.EVENT_BUS.post(evt);
+        CanContinueSleepingEvent evt = new CanContinueSleepingEvent(player, null);
+        NeoForge.EVENT_BUS.post(evt);
 
-        Event.Result canContinueSleep = evt.getResult();
-        if (canContinueSleep == Event.Result.DEFAULT) {
-            return MethodResult.of(!player.level.isDay());
+        if (evt.mayContinueSleeping()) {
+            return MethodResult.of(!player.level().isDay());
         } else {
-            return MethodResult.of(canContinueSleep == Event.Result.ALLOW);
+            return MethodResult.of(true);
         }
     }
 }

@@ -3,9 +3,10 @@ package de.srendi.advancedperipherals.common.addons.computercraft.peripheral.plu
 import dan200.computercraft.api.lua.IArguments;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
+import dan200.computercraft.api.lua.LuaTable;
 import dan200.computercraft.api.lua.MethodResult;
-import dan200.computercraft.core.apis.TableHelper;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.TurtlePeripheralOwner;
+import de.srendi.advancedperipherals.common.util.EmptyLuaTable;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
 import de.srendi.advancedperipherals.common.util.fakeplayer.APFakePlayer;
 import de.srendi.advancedperipherals.lib.peripherals.AutomataCorePeripheral;
@@ -21,7 +22,6 @@ import net.minecraft.world.phys.HitResult;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
@@ -44,10 +44,12 @@ public class AutomataEntityHandPlugin extends AutomataCorePlugin {
 
     @LuaFunction(mainThread = true)
     public final MethodResult useOnAnimal(@NotNull IArguments arguments) throws LuaException {
-        Map<?, ?> opts = arguments.count() > 0 ? arguments.getTable(0) : Collections.emptyMap();
-        boolean sneak = TableHelper.optBooleanField(opts, "sneak", false);
-        float yaw = opts != null ? (float) TableHelper.optNumberField(opts, "yaw", 0) : 0;
-        float pitch = opts != null ? (float) TableHelper.optNumberField(opts, "pitch", 0) : 0;
+        LuaTable<?, ?> options = EmptyLuaTable.orEmpty(arguments.optTable(0).orElse(null));
+
+        boolean sneak = options.optBoolean("sneak").orElse(false);
+        float yaw = options.optDouble("yaw").orElse(0d).floatValue();
+        float pitch = options.optDouble( "pitch").orElse(0d).floatValue();
+
         return automataCore.withOperation(USE_ON_ANIMAL, context -> {
             TurtlePeripheralOwner owner = automataCore.getPeripheralOwner();
             ItemStack selectedTool = owner.getToolInMainHand();
@@ -62,9 +64,11 @@ public class AutomataEntityHandPlugin extends AutomataCorePlugin {
 
     @LuaFunction(mainThread = true)
     public final MethodResult inspectAnimal(@NotNull IArguments arguments) throws LuaException {
-        Map<?, ?> opts = arguments.count() > 0 ? arguments.getTable(0) : Collections.emptyMap();
-        float yaw = opts != null ? (float) TableHelper.optNumberField(opts, "yaw", 0) : 0;
-        float pitch = opts != null ? (float) TableHelper.optNumberField(opts, "pitch", 0) : 0;
+        LuaTable<?, ?> options = EmptyLuaTable.orEmpty(arguments.optTable(0).orElse(null));
+
+        boolean sneak = options.optBoolean("sneak").orElse(false);
+        float yaw = options.optDouble("yaw").orElse(0d).floatValue();
+        float pitch = options.optDouble( "pitch").orElse(0d).floatValue();
 
         automataCore.addRotationCycle();
         TurtlePeripheralOwner owner = automataCore.getPeripheralOwner();

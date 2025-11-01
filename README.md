@@ -5,7 +5,6 @@
 <div align = center>
 
 [![Badge License]][License]   
-[![Badge Gradle]][Actions]   
 [![Badge Crowdin]][Crowdin]
 
 ![Banner]
@@ -28,10 +27,14 @@ mods like **[PeripheralsPlusOne]**.*
 <br>
 <br>
 
+## Contributing
+Contributions to the project are always welcome! <br>
+Read our [Contribution](CONTRIBUTING.md) Guidelines to get started.
+
 ## Translating
 
-All translation is done via **[Crowdin]**, as such we <br>
-will close pull requests related to translations.
+Translations are usually done via **[Crowdin]**. <br>
+But until we fix that system, any translation PRs are welcome!
 
 [![Badge Localized]][Crowdin]
 
@@ -61,10 +64,10 @@ will close pull requests related to translations.
 
 <!----------------------------------------------------------------------------->
 
-[Documentation]: https://advancedperipherals.madefor.cc/
-[Contributors]: https://github.com/Seniorendi/AdvancedPeripherals/graphs/contributors
+[Documentation]: https://docs.advanced-peripherals.de/
+[Contributors]: https://github.com/IntelligenceModding/AdvancedPeripherals/graphs/contributors
 [CurseForge]: https://www.curseforge.com/minecraft/mc-mods/advanced-peripherals
-[Actions]: https://github.com/Seniorendi/AdvancedPeripherals/actions
+[Actions]: https://github.com/IntelligenceModding/AdvancedPeripherals/actions
 [Crowdin]: https://crowdin.com/project/advanced-peripherals
 [Discord]: https://discord.intelligence-modding.de
 [Banner]: https://www.bisecthosting.com/images/CF/Advanced_Peripherals/BH_AP_Header.png 'Advanced Peripherals'
@@ -74,7 +77,7 @@ will close pull requests related to translations.
 
 [@FatalMerlin]: https://github.com/FatalMerlin
 [@SirEdvin]: https://github.com/SirEdvin
-[@Srendi]: https://github.com/Seniorendi
+[@Srendi]: https://github.com/IntelligenceModding
 [@Olfi01]: https://github.com/Olfi01
 
 [License]: LICENSE
@@ -85,8 +88,6 @@ will close pull requests related to translations.
 [Badge Localized]: https://badges.crowdin.net/advanced-peripherals/localized.svg
 [Badge Crowdin]: https://img.shields.io/badge/Localized_On-Crowdin-373d4c?style=for-the-badge&labelColor=464e62&logoColor=white&logo=Crowdin
 [Badge License]: https://img.shields.io/badge/License-Apache_2.0-961b1f?style=for-the-badge&labelColor=D22128&logoColor=white&logo=Apache
-[Badge Gradle]: https://img.shields.io/github/workflow/status/Seniorendi/AdvancedPeripherals/Gradle%20Snapshot?style=for-the-badge&labelColor=034654&color=023741&logoColor=white&logo=Gradle
-
 
 <!---------------------------------[ Buttons ]--------------------------------->
 

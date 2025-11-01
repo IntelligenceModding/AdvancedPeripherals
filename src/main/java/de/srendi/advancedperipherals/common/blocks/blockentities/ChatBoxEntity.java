@@ -18,4 +18,9 @@ public class ChatBoxEntity extends PeripheralBlockEntity<ChatBoxPeripheral> {
     protected ChatBoxPeripheral createPeripheral() {
         return new ChatBoxPeripheral(this);
     }
+
+    @Override
+    public <T extends BlockEntity> void handleTick(Level level, BlockState state, BlockEntityType<T> type) {
+        this.getPeripheralOptional().ifPresent(ChatBoxPeripheral::update);
+    }
 }

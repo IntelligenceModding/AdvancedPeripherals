@@ -5,6 +5,7 @@ import de.srendi.advancedperipherals.common.items.base.BaseItem;
 import de.srendi.advancedperipherals.common.setup.APItems;
 import de.srendi.advancedperipherals.common.util.EnumColor;
 import de.srendi.advancedperipherals.lib.metaphysics.IFeedableAutomataCore;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
@@ -16,33 +17,31 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.level.Level;
-import net.neoforged.common.util.FakePlayer;
-import net.neoforged.registries.ForgeRegistries;
+import net.neoforged.neoforge.common.util.FakePlayer;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-public class WeakAutomataCore extends BaseItem implements IFeedableAutomataCore {
+import static de.srendi.advancedperipherals.common.setup.DataComponents.CONSUMED_ENTITY_COMPOUND;
+
+public class WeakAutomataCore extends APItem implements IFeedableAutomataCore {
 
     private static final String CONSUMED_ENTITY_COUNT = "consumed_entity_count";
     private static final String CONSUMED_ENTITY_NAME = "consumed_entity_name";
-    private static final String CONSUMER_ENTITY_COMPOUND = "consumed_entity_compound";
     private static final Map<String, WeakAutomataCoreRecord> AUTOMATA_CORE_REGISTRY = new HashMap<>();
 
     static {
         Map<String, Integer> endSouls = new HashMap<>();
-        endSouls.put(ForgeRegistries.ENTITY_TYPES.getKey(EntityType.ENDERMAN).toString(), 10);
+        endSouls.put(BuiltInRegistries.ENTITY_TYPE.getKey(EntityType.ENDERMAN).toString(), 10);
         WeakAutomataCoreRecord endSoulRecord = new WeakAutomataCoreRecord(endSouls, APItems.END_AUTOMATA_CORE.get());
 
         Map<String, Integer> husbandrySouls = new HashMap<>();
-        husbandrySouls.put(ForgeRegistries.ENTITY_TYPES.getKey(EntityType.COW).toString(), 3);
-        husbandrySouls.put(ForgeRegistries.ENTITY_TYPES.getKey(EntityType.SHEEP).toString(), 3);
-        husbandrySouls.put(ForgeRegistries.ENTITY_TYPES.getKey(EntityType.CHICKEN).toString(), 3);
+        husbandrySouls.put(BuiltInRegistries.ENTITY_TYPE.getKey(EntityType.COW).toString(), 3);
+        husbandrySouls.put(BuiltInRegistries.ENTITY_TYPE.getKey(EntityType.SHEEP).toString(), 3);
+        husbandrySouls.put(BuiltInRegistries.ENTITY_TYPE.getKey(EntityType.CHICKEN).toString(), 3);
         WeakAutomataCoreRecord husbandrySoulRecord = new WeakAutomataCoreRecord(husbandrySouls, APItems.HUSBANDRY_AUTOMATA_CORE.get());
 
         endSoulRecord.ingredients.keySet().forEach(entityType -> AUTOMATA_CORE_REGISTRY.put(entityType, endSoulRecord));
@@ -50,24 +49,24 @@ public class WeakAutomataCore extends BaseItem implements IFeedableAutomataCore 
     }
 
     public WeakAutomataCore(Properties properties) {
-        super(properties);
+        super(properties, APConfig.METAPHYSICS_CONFIG.enableWeakAutomataCore);
+    }
+
+    public WeakAutomataCore() {
+        super(APConfig.METAPHYSICS_CONFIG.enableWeakAutomataCore);
     }
 
     @Override
-    public boolean isEnabled() {
-        return APConfig.METAPHYSICS_CONFIG.enableWeakAutomataCore.get();
-    }
+    public void appendHoverText(@NotNull ItemStack stack, @NotNull TooltipContext context, @NotNull List<Component> tooltip, @NotNull TooltipFlag flagIn) {
+        super.appendHoverText(stack, context, tooltip, flagIn);
 
-    @Override
-    public void appendHoverText(ItemStack stack, @Nullable Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
-        super.appendHoverText(stack, worldIn, tooltip, flagIn);
-        CompoundTag tag = stack.getOrCreateTag();
-        CompoundTag consumedData = tag.getCompound(CONSUMER_ENTITY_COMPOUND);
-        consumedData.getAllKeys().forEach(key -> {
-            WeakAutomataCoreRecord record = AUTOMATA_CORE_REGISTRY.get(key);
-            CompoundTag recordData = consumedData.getCompound(key);
-            tooltip.add(EnumColor.buildTextComponent(Component.literal(String.format("Consumed: %d/%d %s", recordData.getInt(CONSUMED_ENTITY_COUNT), record.getRequiredCount(key), recordData.getString(CONSUMED_ENTITY_NAME)))));
-        });
+        CompoundTag consumedData = stack.get(CONSUMED_ENTITY_COMPOUND.get());
+        if (consumedData != null)
+            consumedData.getAllKeys().forEach(key -> {
+                WeakAutomataCoreRecord record = AUTOMATA_CORE_REGISTRY.get(key);
+                CompoundTag recordData = consumedData.getCompound(key);
+                tooltip.add(EnumColor.buildTextComponent(Component.literal(String.format("Consumed: %d/%d %s", recordData.getInt(CONSUMED_ENTITY_COUNT), record.getRequiredCount(key), recordData.getString(CONSUMED_ENTITY_NAME)))));
+            });
     }
 
     @Override
@@ -78,9 +77,11 @@ public class WeakAutomataCore extends BaseItem implements IFeedableAutomataCore 
             return InteractionResult.FAIL;
         }
         String entityType = EntityType.getKey(entity.getType()).toString();
+
         if (AUTOMATA_CORE_REGISTRY.containsKey(entityType)) {
-            CompoundTag tag = stack.getOrCreateTag();
-            CompoundTag consumedData = tag.getCompound(CONSUMER_ENTITY_COMPOUND);
+            CompoundTag consumedData = stack.get(CONSUMED_ENTITY_COMPOUND) == null ? new CompoundTag() : stack.get(CONSUMED_ENTITY_COMPOUND);
+            if (consumedData == null)
+                return InteractionResult.PASS;
             WeakAutomataCoreRecord record;
             if (consumedData.isEmpty()) {
                 record = AUTOMATA_CORE_REGISTRY.get(entityType);
@@ -98,7 +99,7 @@ public class WeakAutomataCore extends BaseItem implements IFeedableAutomataCore 
             if (record.isFinished(consumedData)) {
                 player.setItemInHand(hand, new ItemStack(record.resultSoul));
             }
-            tag.put(CONSUMER_ENTITY_COMPOUND, consumedData);
+            stack.set(CONSUMED_ENTITY_COMPOUND.get(), consumedData);
             return InteractionResult.SUCCESS;
         }
         return InteractionResult.PASS;

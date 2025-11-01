@@ -5,22 +5,22 @@ import de.srendi.advancedperipherals.common.blocks.base.BaseBlock;
 import de.srendi.advancedperipherals.common.setup.APBlocks;
 import net.minecraft.core.Direction;
 import net.minecraft.core.FrontAndTop;
-import net.minecraft.data.DataGenerator;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
-import net.neoforged.client.model.generators.BlockModelBuilder;
-import net.neoforged.client.model.generators.BlockStateProvider;
-import net.neoforged.client.model.generators.ConfiguredModel;
-import net.neoforged.client.model.generators.ModelFile;
-import net.neoforged.client.model.generators.ModelProvider;
-import net.neoforged.common.data.ExistingFileHelper;
-import net.neoforged.registries.ForgeRegistries;
+import net.neoforged.neoforge.client.model.generators.BlockModelBuilder;
+import net.neoforged.neoforge.client.model.generators.BlockStateProvider;
+import net.neoforged.neoforge.client.model.generators.ConfiguredModel;
+import net.neoforged.neoforge.client.model.generators.ModelFile;
+import net.neoforged.neoforge.client.model.generators.ModelProvider;
+import net.neoforged.neoforge.common.data.ExistingFileHelper;
 
 import java.util.Arrays;
 
 public class BlockStatesAndModelsProvider extends BlockStateProvider {
 
-    public BlockStatesAndModelsProvider(DataGenerator packOutput, ExistingFileHelper exFileHelper) {
+    public BlockStatesAndModelsProvider(PackOutput packOutput, ExistingFileHelper exFileHelper) {
         super(packOutput, AdvancedPeripherals.MOD_ID, exFileHelper);
     }
 
@@ -112,12 +112,15 @@ public class BlockStatesAndModelsProvider extends BlockStateProvider {
                     break;
             }
 
+            if (side.equals("top")) side = "up";
+            if (side.equals("bottom")) side = "down";
+            if (side.equals("back")) side = "south";
             builder.texture(side, blockTexture(block, sideTexture));
         }
 
-        // Add default bottom texture if not specified
-        if (!Arrays.asList(sides).contains("down") && !Arrays.asList(sides).contains("bottom")) {
-            builder.texture("down", AdvancedPeripherals.getRL(ModelProvider.BLOCK_FOLDER + "/" + "bottom"));
+        // In the case that there is no bottom side defined, we use the default bottom texture.
+        if (Arrays.stream(sides).noneMatch(side -> side.equals("bottom"))) {
+            builder.texture("down", ModelProvider.BLOCK_FOLDER + "/" + "bottom");
         }
         builder.texture("particle", particleTexture);
         return builder;
@@ -131,11 +134,11 @@ public class BlockStatesAndModelsProvider extends BlockStateProvider {
     // Helper methods for generating resource locations and block names
     private ResourceLocation blockTexture(Block block, String offset) {
         ResourceLocation name = key(block);
-        return new ResourceLocation(name.getNamespace(), ModelProvider.BLOCK_FOLDER + "/" + name.getPath() + "_" + offset);
+        return ResourceLocation.fromNamespaceAndPath(name.getNamespace(), ModelProvider.BLOCK_FOLDER + "/" + name.getPath() + "_" + offset);
     }
 
     private ResourceLocation key(Block block) {
-        return ForgeRegistries.BLOCKS.getKey(block);
+        return BuiltInRegistries.BLOCK.getKey(block);
     }
 
     private String name(Block block) {

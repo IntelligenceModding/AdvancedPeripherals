@@ -1,10 +1,11 @@
 package de.srendi.advancedperipherals.common.util;
 
 import com.google.gson.JsonObject;
+import de.srendi.advancedperipherals.common.util.inventory.ItemUtil;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.neoforged.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -25,7 +26,7 @@ public class RawValue implements Ingredient.Value {
 
     @NotNull
     public Collection<ItemStack> getItems() {
-        return Collections.singleton(new ItemStack(ForgeRegistries.ITEMS.getValue(this.item)));
+        return Collections.singleton(new ItemStack(ItemUtil.getRegistryEntry(this.item.toString(), BuiltInRegistries.ITEM)));
     }
 
     @NotNull

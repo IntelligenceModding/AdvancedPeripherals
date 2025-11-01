@@ -35,7 +35,6 @@ public class APCreativeTab {
         builder.title(Component.translatable("advancedperipherals.name"));
     }
 
-
     // Friendly stolen from CC:Tweaked ModRegistry.class
     private static boolean isOurUpgrade(Holder.Reference<? extends UpgradeBase> upgrade) {
         String namespace = upgrade.key().location().getNamespace();

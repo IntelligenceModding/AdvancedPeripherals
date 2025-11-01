@@ -1,0 +1,62 @@
+modLoader = "javafml"
+loaderVersion = "[${loader_version},)"
+license = "Apache-2.0"
+issueTrackerURL = "https://github.com/IntelligenceModding/AdvancedPeripherals/issues"
+logoFile = "pack.png"
+
+[[mods]]
+modId = "${mod_id}"
+version = "${version}"
+displayName = "Advanced Peripherals"
+displayURL = "https://docs.intelligence-modding.de/"
+authors = "Srendi"
+description = '''
+Advanced Peripherals provides multiple extensions for ComputerCraft in form of Peripherals, Pocket Upgrades, Turtles or new gear.
+It also integrates with multiple third party mods.
+'''
+
+[[accessTransformers]]
+file = "META-INF/accesstransformer.cfg"
+
+[[dependencies.${ mod_id }]]
+modId = "neoforge"
+type = "required"
+versionRange = "[${neo_version},)"
+ordering = "NONE"
+side = "BOTH"
+[[dependencies.${ mod_id }]]
+modId = "minecraft"
+type = "required"
+versionRange = "[${minecraft_version},)"
+ordering = "NONE"
+side = "BOTH"
+[[dependencies.${ mod_id }]]
+modId = "computercraft"
+type = "required"
+versionRange = "[${cc_version},)"
+ordering = "AFTER"
+side = "BOTH"
+[[dependencies.${mod_id}]]
+modId = "ae2"
+type = "optional"
+versionRange = "[${appliedenergistics_version},)"
+ordering = "NONE"
+side = "BOTH"
+[[dependencies.${ mod_id }]]
+modId = "minecolonies"
+type = "optional"
+versionRange = "[${minecolonies_version},)"
+ordering = "NONE"
+side = "BOTH"
+[[dependencies.${ mod_id }]]
+modId = "patchouli"
+type = "optional"
+versionRange = "[${patchouli_version},)"
+ordering = "NONE"
+side = "BOTH"
+[[dependencies.${ mod_id }]]
+modId = "mekanism"
+type = "optional"
+versionRange = "[${mekanism_version},)"
+ordering = "NONE"
+side = "BOTH"

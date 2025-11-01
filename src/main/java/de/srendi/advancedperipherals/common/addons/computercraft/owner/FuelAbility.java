@@ -3,13 +3,17 @@ package de.srendi.advancedperipherals.common.addons.computercraft.owner;
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.lua.MethodResult;
 import de.srendi.advancedperipherals.lib.peripherals.IPeripheralPlugin;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.core.component.DataComponentMap;
+import net.minecraft.core.component.DataComponentPatch;
+import net.minecraft.core.component.PatchedDataComponentMap;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
+import java.util.Optional;
+
+import static de.srendi.advancedperipherals.common.setup.DataComponents.FUEL_CONSUMPTION_RATE;
 
 public abstract class FuelAbility<T extends IPeripheralOwner> implements IOwnerAbility, IPeripheralPlugin {
-    protected static final String FUEL_CONSUMING_RATE_SETTING = "FUEL_CONSUMING_RATE";
     protected static final int DEFAULT_FUEL_CONSUMING_RATE = 1;
 
     protected @NotNull T owner;
@@ -26,8 +30,9 @@ public abstract class FuelAbility<T extends IPeripheralOwner> implements IOwnerA
      * @return the fuel consumption rate
      */
     protected int getConsumptionRate() {
-        CompoundTag settings = owner.getDataStorage();
-        int rate = settings.getInt(FUEL_CONSUMING_RATE_SETTING);
+        DataComponentPatch settings = owner.getDataStorage();
+        Optional<? extends Integer> opt = settings.get(FUEL_CONSUMPTION_RATE.get());
+        int rate = opt != null && opt.isPresent() ? opt.get() : 0;
         if (rate == 0) {
             setConsumptionRate(DEFAULT_FUEL_CONSUMING_RATE);
             return DEFAULT_FUEL_CONSUMING_RATE;
@@ -44,7 +49,8 @@ public abstract class FuelAbility<T extends IPeripheralOwner> implements IOwnerA
         if (rate < DEFAULT_FUEL_CONSUMING_RATE) rate = DEFAULT_FUEL_CONSUMING_RATE;
         int maxFuelRate = getMaxFuelConsumptionRate();
         if (rate > maxFuelRate) rate = maxFuelRate;
-        owner.getDataStorage().putInt(FUEL_CONSUMING_RATE_SETTING, rate);
+        PatchedDataComponentMap settings = PatchedDataComponentMap.fromPatch(DataComponentMap.EMPTY, owner.getDataStorage());
+        settings.set(FUEL_CONSUMPTION_RATE.get(), rate);
     }
 
     public abstract boolean isFuelConsumptionDisable();

@@ -19,6 +19,7 @@ import de.srendi.advancedperipherals.common.util.LuaConverter;
 import de.srendi.advancedperipherals.common.util.ScanUtils;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
@@ -26,8 +27,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.common.Tags;
-import net.neoforged.registries.ForgeRegistries;
+import net.neoforged.neoforge.common.Tags;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -70,7 +70,7 @@ public class GeoScannerPeripheral extends BasePeripheral<IPeripheralOwner> {
             data.put("z", pos.z);
 
             Block block = state.getBlock();
-            ResourceLocation name = ForgeRegistries.BLOCKS.getKey(block);
+            ResourceLocation name = BuiltInRegistries.BLOCK.getKey(block);
             data.put("name", name == null ? "unknown" : name.toString());
             data.put("tags", LuaConverter.tagsToList(() -> block.builtInRegistryHolder().tags()));
 
@@ -111,7 +111,7 @@ public class GeoScannerPeripheral extends BasePeripheral<IPeripheralOwner> {
                 for (int z = chunkPos.getMinBlockZ(); z <= chunkPos.getMaxBlockZ(); z++) {
                     for (int y = level.dimensionType().minY(); y < level.dimensionType().height(); y++) {
                         BlockState block = chunk.getBlockState(new BlockPos(x, y, z));
-                        ResourceLocation name = ForgeRegistries.BLOCKS.getKey(block.getBlock());
+                        ResourceLocation name = BuiltInRegistries.BLOCK.getKey(block.getBlock());
                         if (name != null) {
                             if (block.is(Tags.Blocks.ORES)) {
                                 data.put(name.toString(), data.getOrDefault(name.toString(), 0) + 1);

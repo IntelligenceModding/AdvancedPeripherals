@@ -1,12 +1,9 @@
 package de.srendi.advancedperipherals.common.addons;
 
-import de.srendi.advancedperipherals.AdvancedPeripherals;
 import net.neoforged.fml.ModList;
-import net.neoforged.fml.common.EventBusSubscriber;
 
 import java.util.Arrays;
 
-@EventBusSubscriber(modid = AdvancedPeripherals.MOD_ID)
 public enum APAddon {
 
     AE2("ae2"),

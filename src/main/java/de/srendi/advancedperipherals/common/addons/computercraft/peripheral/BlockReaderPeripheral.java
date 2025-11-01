@@ -7,11 +7,12 @@ import de.srendi.advancedperipherals.common.blocks.blockentities.BlockReaderEnti
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.Property;
-import net.neoforged.registries.ForgeRegistries;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -32,17 +33,18 @@ public class BlockReaderPeripheral extends BasePeripheral<BlockEntityPeripheralO
     @LuaFunction(mainThread = true)
     public final String getBlockName() {
         if (getBlockInFront().is(Blocks.AIR)) return "none";
-        return ForgeRegistries.BLOCKS.getKey(getBlockInFront().getBlock()).toString();
+        return BuiltInRegistries.BLOCK.getKey(getBlockInFront().getBlock()).toString();
     }
 
     @LuaFunction(mainThread = true)
     public final Object getBlockData() {
         if (getBlockInFront().is(Blocks.AIR))
             return null;
-        BlockEntity target = getLevel().getBlockEntity(getPos().relative(owner.getFacing()));
+        Level level = getLevel();
+        BlockEntity target = level.getBlockEntity(getPos().relative(owner.getFacing()));
         if (target == null)
             return null;
-        return NBTUtil.toLua(target.saveWithoutMetadata());
+        return NBTUtil.toLua(target.saveWithoutMetadata(level.registryAccess()));
     }
 
     @LuaFunction(mainThread = true)

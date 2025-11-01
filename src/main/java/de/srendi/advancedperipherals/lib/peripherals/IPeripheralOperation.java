@@ -4,7 +4,7 @@ import de.srendi.advancedperipherals.lib.misc.IConfigHandler;
 
 import java.util.Map;
 
-public interface IPeripheralOperation<T> extends IConfigHandler {
+public interface IPeripheralOperation<T> extends IConfigHandler, IDataComponentProvider<Long> {
     int getInitialCooldown();
 
     int getCooldown(T context);

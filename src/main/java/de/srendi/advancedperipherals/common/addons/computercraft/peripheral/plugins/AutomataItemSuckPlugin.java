@@ -9,12 +9,12 @@ import de.srendi.advancedperipherals.common.util.LuaConverter;
 import de.srendi.advancedperipherals.lib.peripherals.AutomataCorePeripheral;
 import de.srendi.advancedperipherals.lib.peripherals.IPeripheralOperation;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.AABB;
-import net.neoforged.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -100,7 +100,7 @@ public class AutomataItemSuckPlugin extends AutomataCorePlugin {
             List<ItemEntity> items = getItems();
             int requiredQuantity = requiredQuantityArg;
             for (ItemEntity item : items) {
-                ResourceLocation itemName = ForgeRegistries.ITEMS.getKey(item.getItem().getItem());
+                ResourceLocation itemName = BuiltInRegistries.ITEM.getKey(item.getItem().getItem());
                 if (itemName == null)
                     continue;
                 if (itemName.toString().equals(technicalName))

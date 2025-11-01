@@ -1,6 +1,5 @@
 package de.srendi.advancedperipherals.lib.misc;
 
-
 import net.neoforged.neoforge.common.ModConfigSpec;
 
 import java.util.Arrays;

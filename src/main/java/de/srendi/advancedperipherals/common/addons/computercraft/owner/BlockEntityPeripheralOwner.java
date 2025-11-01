@@ -1,6 +1,7 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.owner;
 
 import dan200.computercraft.api.peripheral.IPeripheral;
+import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.blocks.base.BaseBlock;
 import de.srendi.advancedperipherals.common.util.DataStorageUtil;
 import de.srendi.advancedperipherals.common.util.fakeplayer.APFakePlayer;
@@ -8,6 +9,7 @@ import de.srendi.advancedperipherals.lib.peripherals.IPeripheralTileEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.FrontAndTop;
+import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.Nameable;
@@ -34,16 +36,13 @@ public class BlockEntityPeripheralOwner<T extends BlockEntity & IPeripheralTileE
     @Nullable
     @Override
     public String getCustomName() {
-        String result = "";
-
         if (tileEntity instanceof Nameable nameableEntity) {
-            Component customName = nameableEntity.getCustomName();
-            if (customName != null) {
-                result = customName.toString();
+            Component name = nameableEntity.getCustomName();
+            if (name != null) {
+                return name.getString();
             }
         }
-
-        return result;
+        return null;
     }
 
     @NotNull
@@ -82,10 +81,20 @@ public class BlockEntityPeripheralOwner<T extends BlockEntity & IPeripheralTileE
         return null;
     }
 
-    @NotNull
     @Override
-    public CompoundTag getDataStorage() {
+    public DataComponentPatch getDataStorage() {
+        AdvancedPeripherals.debug("Block Entity peripheral at " + getPos() + " tried to use data component storage but it should instead use nbt storage, report to github!", org.apache.logging.log4j.Level.WARN);
+        return DataComponentPatch.EMPTY;
+    }
+
+    @Override
+    public CompoundTag getNbtStorage() {
         return DataStorageUtil.getDataStorage(tileEntity);
+    }
+
+    @Override
+    public void putDataStorage(DataComponentPatch dataStorage) {
+        AdvancedPeripherals.debug("Block Entity peripheral at " + getPos() + " tried to use data component storage but it should instead use nbt storage, report to github!", org.apache.logging.log4j.Level.WARN);
     }
 
     @Override

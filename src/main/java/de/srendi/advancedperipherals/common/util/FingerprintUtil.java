@@ -11,7 +11,7 @@ import java.util.HashMap;
 /**
  * Mainly used in AP to hash the fingerprint of items. Successor to the old MD5 based hashes
  * <p>
- * AP currently uses the XXHash library from jpountz see {@link XXHash64}.
+ * AP currently uses the XXHash library from jpountz see {@link net.jpountz.xxhash.XXHash64}.
  * There are better libraries available, but this one is already shipped within minecraft.
  */
 public class FingerprintUtil {
@@ -36,8 +36,10 @@ public class FingerprintUtil {
         return Long.toString(hash);
     }
 
-    public record FingerprintKey(ResourceLocation itemId, @Nullable Integer dataHashCode,
-                                 @Nullable String displayName) {
+    public record FingerprintKey(
+        ResourceLocation itemId,
+        @Nullable Integer dataHashCode,
+        @Nullable String displayName
+    ) {
     }
-
 }

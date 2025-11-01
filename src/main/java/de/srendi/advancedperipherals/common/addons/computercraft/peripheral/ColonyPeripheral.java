@@ -20,6 +20,7 @@ import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.pocket.IPocketAccess;
 import dan200.computercraft.api.pocket.IPocketUpgrade;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
+import de.srendi.advancedperipherals.common.addons.APAddon;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.BlockEntityPeripheralOwner;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.IPeripheralOwner;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.PocketPeripheralOwner;
@@ -31,7 +32,6 @@ import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
-import net.neoforged.fml.ModList;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -39,7 +39,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 public class ColonyPeripheral extends BasePeripheral<IPeripheralOwner> {
 
@@ -57,7 +56,7 @@ public class ColonyPeripheral extends BasePeripheral<IPeripheralOwner> {
 
     @Override
     public boolean isEnabled() {
-        return ModList.get().isLoaded("minecolonies") && APConfig.PERIPHERALS_CONFIG.enableColonyIntegrator.get();
+        return APAddon.MINECOLONIES.isLoaded() && APConfig.PERIPHERALS_CONFIG.enableColonyIntegrator.get();
     }
 
     @LuaFunction(mainThread = true)
@@ -66,14 +65,15 @@ public class ColonyPeripheral extends BasePeripheral<IPeripheralOwner> {
     }
 
     @LuaFunction(mainThread = true)
-    public final boolean isWithin(Map<?, ?> pos) throws LuaException {
+    public final boolean isWithin(Map<?, ?> posTable) throws LuaException {
         IColony colony = getColonyWithoutPermission();
 
-        if (!(pos.containsKey("x") && pos.containsKey("y") && pos.containsKey("z")))
-            throw new LuaException("Coordinates expected");
-        BlockPos p = new BlockPos(((Number) pos.get("x")).intValue(), ((Number) pos.get("y")).intValue(), ((Number) pos.get("z")).intValue());
+        if(colony == null)
+            return false;
 
-        return colony.isCoordInColony(this.getLevel(), p);
+        BlockPos pos = LuaConverter.convertToBlockPos(posTable);
+
+        return colony.isCoordInColony(this.getLevel(), pos);
     }
 
     @LuaFunction(mainThread = true)
@@ -218,7 +218,7 @@ public class ColonyPeripheral extends BasePeripheral<IPeripheralOwner> {
             try {
                 result.put(branch.toString(), MineColonies.getResearch(branch, globalTree.getPrimaryResearch(branch), colony));
             } catch (CommandSyntaxException ex) {
-                AdvancedPeripherals.debug("Error getting research for branch " + branch.toString() + ": " + ex.getMessage(), org.apache.logging.log4j.Level.WARN);
+                AdvancedPeripherals.debug("Error getting research for branch " + branch + ": " + ex.getMessage(), org.apache.logging.log4j.Level.WARN);
                 ex.printStackTrace();
             }
         }
@@ -237,12 +237,10 @@ public class ColonyPeripheral extends BasePeripheral<IPeripheralOwner> {
     }
 
     @LuaFunction(mainThread = true)
-    public final Object getBuilderResources(Map<?, ?> pos) throws LuaException {
+    public final Object getBuilderResources(Map<?, ?> posTable) throws LuaException {
         IColony colony = getColony();
 
-        if (!(pos.containsKey("x") && pos.containsKey("y") && pos.containsKey("z")))
-            throw new LuaException("Coordinates expected");
-        BlockPos blockPos = LuaConverter.convertToBlockPos(pos);
+        BlockPos blockPos = LuaConverter.convertToBlockPos(posTable);
 
         return MineColonies.builderResourcesToObject(colony, blockPos);
     }
@@ -278,7 +276,7 @@ public class ColonyPeripheral extends BasePeripheral<IPeripheralOwner> {
             map.put("state", request.getState().toString());
             map.put("count", deliverableRequest.getCount());
             map.put("minCount", deliverableRequest.getMinimumCount());
-            map.put("items", request.getDisplayStacks().stream().map(LuaConverter::itemStackToObject).collect(Collectors.toList()));
+            map.put("items", request.getDisplayStacks().stream().map(item -> LuaConverter.itemStackToObject(item, getLevel())).toList();
             map.put("target", request.getRequester().getRequesterDisplayName(requestManager, request).getString());
             result.add(map);
         });
@@ -286,8 +284,7 @@ public class ColonyPeripheral extends BasePeripheral<IPeripheralOwner> {
     }
 
     private IColony getColony() throws LuaException {
-        IMinecoloniesAPI api = IMinecoloniesAPI.getInstance();
-        IColony colony = api.getColonyManager().getColonyByPosFromWorld(getLevel(), getPos());
+        IColony colony = getColonyWithoutPermission();
         this.hasPermission = !(owner instanceof PocketPeripheralOwner) || MineColonies.hasAccess(owner.getOwner(), colony);
         if (colony == null || !this.hasPermission)
             throw new LuaException("Here is no colony or you don't have the right permissions");

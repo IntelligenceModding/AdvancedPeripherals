@@ -1,6 +1,5 @@
 package de.srendi.advancedperipherals.lib;
 
-
 import net.neoforged.neoforge.common.ModConfigSpec;
 
 /**

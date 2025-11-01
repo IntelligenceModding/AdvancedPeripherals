@@ -1,6 +1,8 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.operations;
 
+import de.srendi.advancedperipherals.common.setup.DataComponents;
 import de.srendi.advancedperipherals.lib.peripherals.IPeripheralOperation;
+import net.minecraft.core.component.DataComponentType;
 import net.neoforged.neoforge.common.ModConfigSpec;
 
 import java.util.HashMap;
@@ -73,8 +75,13 @@ public enum SingleOperation implements IPeripheralOperation<SingleOperationConte
 
     @Override
     public void addToConfig(ModConfigSpec.Builder builder) {
-        cooldown = builder.defineInRange(settingsName() + "Cooldown", defaultCooldown, 1_000, Integer.MAX_VALUE);
+        cooldown = builder.defineInRange(settingsName() + "Cooldown", defaultCooldown, 0, Integer.MAX_VALUE);
         cost = builder.defineInRange(settingsName() + "Cost", defaultCost, 0, Integer.MAX_VALUE);
+    }
+
+    @Override
+    public DataComponentType<Long> dataComponentType() {
+        return DataComponents.SINGLE_OPERATION.get();
     }
 
     public enum DistancePolicy {

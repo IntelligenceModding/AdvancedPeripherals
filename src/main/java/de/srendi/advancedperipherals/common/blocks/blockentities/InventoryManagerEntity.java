@@ -8,6 +8,7 @@ import de.srendi.advancedperipherals.common.items.MemoryCardItem;
 import de.srendi.advancedperipherals.common.setup.APBlockEntityTypes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
@@ -15,11 +16,13 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.server.ServerLifecycleHooks;
+import net.neoforged.neoforge.server.ServerLifecycleHooks;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
+
+import static de.srendi.advancedperipherals.common.setup.DataComponents.OWNER;
 
 public class InventoryManagerEntity extends PeripheralBlockEntity<InventoryManagerPeripheral> implements IInventoryMenuBlock<InventoryManagerContainer> {
 
@@ -54,11 +57,9 @@ public class InventoryManagerEntity extends PeripheralBlockEntity<InventoryManag
     public void setItem(int index, @NotNull ItemStack stack) {
         boolean shouldClearOwner = false;
         if (stack.getItem() instanceof MemoryCardItem) {
-            if (stack.hasTag() && stack.getTag().contains("ownerId")) {
-                UUID owner = stack.getTag().getUUID("ownerId");
-                this.owner = owner;
-                stack.getTag().remove("ownerId");
-                stack.getTag().remove("owner");
+            if (stack.has(OWNER)) {
+                this.owner = stack.get(OWNER);
+                stack.remove(OWNER);
             } else if (stack != this.getItem(index)) {
                 // Only clear owner when the new card item is not the current item
                 shouldClearOwner = true;
@@ -79,16 +80,16 @@ public class InventoryManagerEntity extends PeripheralBlockEntity<InventoryManag
     }
 
     @Override
-    public void load(@NotNull CompoundTag data) {
+    public void loadAdditional(CompoundTag data, @NotNull HolderLookup.Provider provider) {
         if (data.contains("ownerId")) {
             this.owner = data.getUUID("ownerId");
         }
-        super.load(data);
+        super.loadAdditional(data, provider);
     }
 
     @Override
-    protected void saveShared(@NotNull CompoundTag data) {
-        super.saveShared(data);
+    public void saveAdditional(@NotNull CompoundTag data, @NotNull HolderLookup.Provider provider) {
+        super.saveAdditional(data, provider);
         if (this.owner != null) {
             data.putUUID("ownerId", this.owner);
         }
@@ -98,7 +99,6 @@ public class InventoryManagerEntity extends PeripheralBlockEntity<InventoryManag
         if (this.owner == null) {
             return null;
         }
-        Player player = ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayer(this.owner);
-        return player;
+        return ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayer(this.owner);
     }
 }

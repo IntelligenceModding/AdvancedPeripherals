@@ -58,7 +58,7 @@ public class KeyboardItem extends BaseItem implements IInventoryItem, IModuleIte
         if (player == null)
             return InteractionResult.PASS;
 
-        if (SideHelper.isClientPlayer(player))
+        if (player.level().isClientSide)
             return InteractionResult.PASS;
 
         if (!player.isShiftKeyDown())

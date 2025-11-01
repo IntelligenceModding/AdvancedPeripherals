@@ -1,279 +1,115 @@
+// TODO: check recipe correctness
+
 package de.srendi.advancedperipherals.common.data;
 
 import appeng.core.definitions.AEBlocks;
+import com.minecolonies.api.blocks.ModBlocks;
+import com.minecolonies.api.items.ModItems;
 import com.refinedmods.refinedstorage.RSBlocks;
 import com.refinedmods.refinedstorage.RSItems;
-import dan200.computercraft.shared.Registry;
-import de.srendi.advancedperipherals.AdvancedPeripherals;
+import com.refinedmods.refinedstorage.common.misc.ProcessorItem;
+import dan200.computercraft.shared.ModRegistry;
+import de.srendi.advancedperipherals.common.addons.APAddon;
 import de.srendi.advancedperipherals.common.setup.APBlocks;
 import de.srendi.advancedperipherals.common.setup.APItems;
 import de.srendi.advancedperipherals.common.util.RawValue;
-import net.minecraft.data.DataGenerator;
-import net.minecraft.data.recipes.FinishedRecipe;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.data.PackOutput;
+import net.minecraft.data.recipes.RecipeCategory;
+import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.RecipeProvider;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.data.recipes.ShapelessRecipeBuilder;
-import net.minecraft.data.recipes.UpgradeRecipeBuilder;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.alchemy.PotionUtils;
+import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.item.alchemy.Potions;
-import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.block.Block;
-import net.neoforged.common.Tags;
-import net.neoforged.common.crafting.ConditionalRecipe;
-import net.neoforged.common.crafting.StrictNBTIngredient;
-import net.neoforged.common.crafting.conditions.IConditionBuilder;
-import org.jetbrains.annotations.NotNull;
+import net.neoforged.neoforge.common.Tags;
+import net.neoforged.neoforge.common.conditions.IConditionBuilder;
+import net.neoforged.neoforge.common.conditions.ModLoadedCondition;
 
-import java.util.function.Consumer;
-import java.util.stream.Stream;
+import java.util.concurrent.CompletableFuture;
 
 public class RecipesProvider extends RecipeProvider implements IConditionBuilder {
 
     private static final Block CASING = APBlocks.PERIPHERAL_CASING.get();
     private static final String HAS_ITEM = "has_item";
 
-    public RecipesProvider(DataGenerator packOutput) {
-        super(packOutput);
+    public RecipesProvider(PackOutput pGenerator, CompletableFuture<HolderLookup.Provider> lookupProvider) {
+        super(pGenerator, lookupProvider);
     }
+
 
     @Override
-    protected void buildCraftingRecipes(@NotNull Consumer<FinishedRecipe> consumer) {
-        addShapeless(consumer);
-        addShaped(consumer);
-        addSmithing(consumer);
-    }
+    protected void buildRecipes(RecipeOutput recipeOutput) {
 
-    private void addShapeless(@NotNull Consumer<FinishedRecipe> consumer) {
-        ShapelessRecipeBuilder.shapeless(APItems.OVERPOWERED_WEAK_AUTOMATA_CORE.get())
-                .requires(APItems.WEAK_AUTOMATA_CORE.get())
-                .requires(Items.NETHER_STAR)
-                .unlockedBy(HAS_ITEM, has(APItems.WEAK_AUTOMATA_CORE.get()))
-                .save(consumer);
 
-        ShapelessRecipeBuilder.shapeless(APItems.OVERPOWERED_END_AUTOMATA_CORE.get())
-                .requires(APItems.END_AUTOMATA_CORE.get())
-                .requires(Items.NETHER_STAR)
-                .unlockedBy(HAS_ITEM, has(APItems.END_AUTOMATA_CORE.get()))
-                .save(consumer);
+        ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, Blocks.CHAT_BOX.get()).define('P', ItemTags.LOGS).define('A', CASING).define('G', Tags.Items.INGOTS_GOLD).pattern("PPP").pattern("PAP").pattern("PGP").unlockedBy(HAS_ITEM, has(CASING)).save(recipeOutput);
 
-        ShapelessRecipeBuilder.shapeless(APItems.OVERPOWERED_HUSBANDRY_AUTOMATA_CORE.get())
-                .requires(APItems.HUSBANDRY_AUTOMATA_CORE.get())
-                .requires(Items.NETHER_STAR)
-                .unlockedBy(HAS_ITEM, has(APItems.HUSBANDRY_AUTOMATA_CORE.get()))
-                .save(consumer);
-    }
+        ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, APItems.CHUNK_CONTROLLER.get()).define('I', Tags.Items.INGOTS_IRON).define('R', Tags.Items.DUSTS_REDSTONE).define('A', Items.ENDER_EYE).pattern("IRI").pattern("RAR").pattern("IRI").unlockedBy(HAS_ITEM, has(Items.RESPAWN_ANCHOR)).save(recipeOutput);
 
-    private void addShaped(@NotNull Consumer<FinishedRecipe> consumer) {
-        /*ShapedRecipeBuilder.shaped(APItems.AR_GOGGLES.get())
-                .define('E', Tags.Items.ENDER_PEARLS)
-                .define('S', Tags.Items.RODS_WOODEN)
-                .define('G', Tags.Items.GLASS_BLACK)
-                .pattern("GSG")
-                .pattern(" E ")
-                .unlockedBy(HAS_ITEM, has(Items.STICK))
-                .save(consumer);
-        */
+        ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, APItems.COMPUTER_TOOL.get()).define('I', Tags.Items.INGOTS_IRON).define('B', Items.BLUE_TERRACOTTA).pattern("I I").pattern("IBI").pattern(" B ").unlockedBy(HAS_ITEM, has(Items.BLUE_TERRACOTTA)).save(recipeOutput);
 
-        ShapedRecipeBuilder.shaped(APBlocks.CHAT_BOX.get())
-                .define('P', ItemTags.LOGS)
-                .define('A', CASING)
-                .define('G', Tags.Items.INGOTS_GOLD)
-                .pattern("PPP")
-                .pattern("PAP")
-                .pattern("PGP")
-                .unlockedBy(HAS_ITEM, has(CASING))
-                .save(consumer);
+        ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, Blocks.ENERGY_DETECTOR.get()).define('B', Tags.Items.STORAGE_BLOCKS_REDSTONE).define('R', Items.REDSTONE_TORCH).define('C', Items.COMPARATOR).define('A', CASING).define('G', Tags.Items.INGOTS_GOLD).pattern("BRB").pattern("CAC").pattern("BGB").unlockedBy(HAS_ITEM, has(CASING)).save(recipeOutput);
 
-        ShapedRecipeBuilder.shaped(APItems.CHUNK_CONTROLLER.get())
-                .define('I', Tags.Items.INGOTS_IRON)
-                .define('R', Tags.Items.DUSTS_REDSTONE)
-                .define('A', Items.ENDER_EYE)
-                .pattern("IRI")
-                .pattern("RAR")
-                .pattern("IRI")
-                .unlockedBy(HAS_ITEM, has(Items.RESPAWN_ANCHOR))
-                .save(consumer);
+        ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, Blocks.ENVIRONMENT_DETECTOR.get()).define('W', ItemTags.WOOL).define('S', ItemTags.SAPLINGS).define('C', Tags.Items.CROPS).define('A', CASING).define('L', ItemTags.LEAVES).pattern("WSW").pattern("LAL").pattern("WCW").unlockedBy(HAS_ITEM, has(CASING)).save(recipeOutput);
 
-        ShapedRecipeBuilder.shaped(APItems.COMPUTER_TOOL.get())
-                .define('I', Tags.Items.INGOTS_IRON)
-                .define('B', Items.BLUE_TERRACOTTA)
-                .pattern("I I")
-                .pattern("IBI")
-                .pattern(" B ")
-                .unlockedBy(HAS_ITEM, has(Items.BLUE_TERRACOTTA))
-                .save(consumer);
+        ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, Blocks.INVENTORY_MANAGER.get()).define('I', Tags.Items.INGOTS_IRON).define('C', Tags.Items.CHESTS).define('A', CASING).pattern("ICI").pattern("CAC").pattern("ICI").unlockedBy(HAS_ITEM, has(CASING)).save(recipeOutput);
 
-        ShapedRecipeBuilder.shaped(APBlocks.ENERGY_DETECTOR.get())
-                .define('B', Tags.Items.STORAGE_BLOCKS_REDSTONE)
-                .define('R', Items.REDSTONE_TORCH)
-                .define('C', Items.COMPARATOR)
-                .define('A', CASING)
-                .define('G', Tags.Items.INGOTS_GOLD)
-                .pattern("BRB")
-                .pattern("CAC")
-                .pattern("BGB")
-                .unlockedBy(HAS_ITEM, has(CASING))
-                .save(consumer);
+        ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, APItems.MEMORY_CARD.get()).define('I', Tags.Items.INGOTS_IRON).define('W', Tags.Items.GLASS_BLOCKS_CHEAP).define('O', Items.OBSERVER).define('G', Tags.Items.INGOTS_GOLD).pattern("IWI").pattern("IOI").pattern(" G ").unlockedBy(HAS_ITEM, has(Items.OBSERVER)).save(recipeOutput);
 
-        ShapedRecipeBuilder.shaped(APBlocks.ENVIRONMENT_DETECTOR.get())
-                .define('W', ItemTags.WOOL)
-                .define('S', ItemTags.SAPLINGS)
-                .define('C', Tags.Items.CROPS)
-                .define('A', CASING)
-                .define('L', ItemTags.LEAVES)
-                .pattern("WSW")
-                .pattern("LAL")
-                .pattern("WCW")
-                .unlockedBy(HAS_ITEM, has(CASING))
-                .save(consumer);
+        ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, Blocks.PERIPHERAL_CASING.get()).define('I', Tags.Items.INGOTS_IRON).define('i', Items.IRON_BARS).define('R', Tags.Items.STORAGE_BLOCKS_REDSTONE).pattern("IiI").pattern("iRi").pattern("IiI").unlockedBy(HAS_ITEM, has(Items.REDSTONE_BLOCK)).save(recipeOutput);
 
-        ShapedRecipeBuilder.shaped(APBlocks.INVENTORY_MANAGER.get())
-                .define('I', Tags.Items.INGOTS_IRON)
-                .define('C', Tags.Items.CHESTS)
-                .define('A', CASING)
-                .pattern("ICI")
-                .pattern("CAC")
-                .pattern("ICI")
-                .unlockedBy(HAS_ITEM, has(CASING))
-                .save(consumer);
+        ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, Blocks.PLAYER_DETECTOR.get()).define('S', Items.SMOOTH_STONE).define('A', CASING).define('R', Tags.Items.STORAGE_BLOCKS_REDSTONE).pattern("SSS").pattern("SAS").pattern("SRS").unlockedBy(HAS_ITEM, has(CASING)).save(recipeOutput);
 
-        ShapedRecipeBuilder.shaped(APItems.MEMORY_CARD.get())
-                .define('I', Tags.Items.INGOTS_IRON)
-                .define('W', Tags.Items.GLASS_WHITE)
-                .define('O', Items.OBSERVER)
-                .define('G', Tags.Items.INGOTS_GOLD)
-                .pattern("IWI")
-                .pattern("IOI")
-                .pattern(" G ")
-                .unlockedBy(HAS_ITEM, has(Items.OBSERVER))
-                .save(consumer);
+        ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, Blocks.BLOCK_READER.get()).define('O', Items.OBSERVER).define('I', Tags.Items.INGOTS_IRON).define('M', ModRegistry.Blocks.WIRED_MODEM_FULL.get()).define('R', Tags.Items.STORAGE_BLOCKS_REDSTONE).define('A', CASING).pattern("IRI").pattern("MAO").pattern("IRI").unlockedBy(HAS_ITEM, has(CASING)).save(recipeOutput);
 
-        ShapedRecipeBuilder.shaped(APBlocks.PERIPHERAL_CASING.get())
-                .define('I', Tags.Items.INGOTS_IRON)
-                .define('i', Items.IRON_BARS)
-                .define('R', Tags.Items.STORAGE_BLOCKS_REDSTONE)
-                .pattern("IiI")
-                .pattern("iRi")
-                .pattern("IiI")
-                .unlockedBy(HAS_ITEM, has(Items.REDSTONE_BLOCK))
-                .save(consumer);
+        ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, Blocks.GEO_SCANNER.get()).define('O', Items.OBSERVER).define('D', Tags.Items.GEMS_DIAMOND).define('C', CASING).define('R', Tags.Items.STORAGE_BLOCKS_REDSTONE).define('M', ModRegistry.Blocks.WIRED_MODEM_FULL.get()).pattern("DMD").pattern("DCD").pattern("ROR").unlockedBy(HAS_ITEM, has(CASING)).save(recipeOutput);
 
-        ShapedRecipeBuilder.shaped(APBlocks.PLAYER_DETECTOR.get())
-                .define('S', Items.SMOOTH_STONE)
-                .define('A', CASING)
-                .define('R', Tags.Items.STORAGE_BLOCKS_REDSTONE)
-                .pattern("SSS")
-                .pattern("SAS")
-                .pattern("SRS")
-                .unlockedBy(HAS_ITEM, has(CASING))
-                .save(consumer);
+        ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, Blocks.NBT_STORAGE.get()).define('C', Tags.Items.CHESTS).define('A', CASING).define('R', Tags.Items.STORAGE_BLOCKS_REDSTONE).define('I', Tags.Items.INGOTS_IRON).pattern("ICI").pattern("CAC").pattern("RCR").unlockedBy(HAS_ITEM, has(CASING)).save(recipeOutput);
 
-        ShapedRecipeBuilder.shaped(APBlocks.REDSTONE_INTEGRATOR.get())
-                .define('R', Tags.Items.STORAGE_BLOCKS_REDSTONE)
-                .define('A', CASING)
-                .define('C', Items.COMPARATOR)
-                .pattern("RCR")
-                .pattern("CAC")
-                .pattern("RCR")
-                .unlockedBy(HAS_ITEM, has(CASING))
-                .save(consumer);
+        ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, Blocks.ME_BRIDGE.get()).define('F', AEBlocks.FLUIX_BLOCK.asItem()).define('A', CASING).define('I', AEBlocks.INTERFACE.asItem()).pattern("FIF").pattern("IAI").pattern("FIF").unlockedBy(HAS_ITEM, has(CASING)).save(recipeOutput.withConditions(new ModLoadedCondition(APAddon.AE2.getModId())));
 
-        ShapedRecipeBuilder.shaped(APBlocks.BLOCK_READER.get())
-                .define('O', Items.OBSERVER)
-                .define('I', Tags.Items.INGOTS_IRON)
-                .define('M', Registry.ModBlocks.WIRED_MODEM_FULL.get())
-                .define('R', Tags.Items.STORAGE_BLOCKS_REDSTONE)
-                .define('A', CASING)
-                .pattern("IRI")
-                .pattern("MAO")
-                .pattern("IRI")
-                .unlockedBy(HAS_ITEM, has(CASING))
-                .save(consumer);
 
-        ShapedRecipeBuilder.shaped(APBlocks.GEO_SCANNER.get())
-                .define('O', Items.OBSERVER)
-                .define('D', Tags.Items.GEMS_DIAMOND)
+        com.refinedmods.refinedstorage.common.content.Items rsItems = com.refinedmods.refinedstorage.common.content.Items.INSTANCE;
+        com.refinedmods.refinedstorage.common.content.Blocks rsBlocks = com.refinedmods.refinedstorage.common.content.Blocks.INSTANCE;
+        ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, Blocks.RS_BRIDGE.get())
+                .define('P', rsItems.getProcessor(ProcessorItem.Type.ADVANCED))
                 .define('C', CASING)
-                .define('R', Tags.Items.STORAGE_BLOCKS_REDSTONE)
-                .define('M', Registry.ModBlocks.WIRED_MODEM_FULL.get())
-                .pattern("DMD")
-                .pattern("DCD")
-                .pattern("ROR")
-                .unlockedBy(HAS_ITEM, has(CASING))
-                .save(consumer);
+                .define('I', rsBlocks.getInterface())
+                .define('X', com.refinedmods.refinedstorage.common.content.Tags.EXTERNAL_STORAGES)
+                .define('E', com.refinedmods.refinedstorage.common.content.Tags.EXPORTERS)
+                .define('R', com.refinedmods.refinedstorage.common.content.Tags.IMPORTERS)
+                .pattern("PXP")
+                .pattern("ECR")
+                .pattern("PIP").unlockedBy(HAS_ITEM, has(CASING)).save(recipeOutput.withConditions(new ModLoadedCondition(APAddon.REFINEDSTORAGE.getModId())));
 
-        ShapedRecipeBuilder.shaped(APBlocks.NBT_STORAGE.get())
-                .define('C', Tags.Items.CHESTS)
-                .define('A', CASING)
-                .define('R', Tags.Items.STORAGE_BLOCKS_REDSTONE)
-                .define('I', Tags.Items.INGOTS_IRON)
-                .pattern("ICI")
-                .pattern("CAC")
-                .pattern("RCR")
-                .unlockedBy(HAS_ITEM, has(CASING))
-                .save(consumer);
+        ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, Blocks.COLONY_INTEGRATOR.get()).define('O', ItemTags.LOGS).define('A', CASING).define('B', ModItems.buildGoggles).define('S', com.ldtteam.structurize.items.ModItems.buildTool).define('R', ModBlocks.blockRack).pattern("ORO").pattern("BAS").pattern("ORO").unlockedBy(HAS_ITEM, has(CASING)).save(recipeOutput.withConditions(new ModLoadedCondition(APAddon.MINECOLONIES.getModId())));
 
-        ConditionalRecipe.builder()
-                .addCondition(
-                        modLoaded("minecolonies")
-                )
-                .addRecipe(
-                        ShapedRecipeBuilder.shaped(APBlocks.COLONY_INTEGRATOR.get())
-                                .define('O', ItemTags.LOGS)
-                                .define('A', CASING)
-                                .define('R', Ingredient.fromValues(Stream.of(new RawValue(new ResourceLocation("minecolonies", "blockminecoloniesrack")))))
-                                .pattern("ORO")
-                                .pattern(" A ")
-                                .pattern("ORO")
-                                .unlockedBy(HAS_ITEM, has(CASING))::save
-                ).build(consumer, new ResourceLocation(AdvancedPeripherals.MOD_ID, "colony_integrator"));
-
-        ConditionalRecipe.builder()
-                .addCondition(
-                        modLoaded("ae2")
-                )
-                .addRecipe(
-                        ShapedRecipeBuilder.shaped(APBlocks.ME_BRIDGE.get())
-                                .define('F', AEBlocks.FLUIX_BLOCK.asItem())
-                                .define('A', CASING)
-                                .define('I', AEBlocks.INTERFACE.asItem())
-                                .pattern("FIF")
-                                .pattern("IAI")
-                                .pattern("FIF")
-                                .unlockedBy(HAS_ITEM, has(CASING))::save
-                ).build(consumer, new ResourceLocation(AdvancedPeripherals.MOD_ID, "me_bridge"));
-
-        ConditionalRecipe.builder()
-                .addCondition(
-                        modLoaded("refinedstorage")
-                )
-                .addRecipe(
-                        ShapedRecipeBuilder.shaped(APBlocks.RS_BRIDGE.get())
-                                .define('Q', RSItems.QUARTZ_ENRICHED_IRON.get())
-                                .define('A', CASING)
-                                .define('I', RSBlocks.INTERFACE.get())
-                                .pattern("QIQ")
-                                .pattern("IAI")
-                                .pattern("QIQ")
-                                .unlockedBy(HAS_ITEM, has(CASING))::save
-                ).build(consumer, new ResourceLocation(AdvancedPeripherals.MOD_ID, "rs_bridge"));
-
-        ShapedRecipeBuilder.shaped(APItems.WEAK_AUTOMATA_CORE.get())
+        ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, APItems.WEAK_AUTOMATA_CORE.get())
                 .define('A', CASING)
                 .define('R', Tags.Items.STORAGE_BLOCKS_REDSTONE)
                 .define('S', Items.SOUL_LANTERN)
                 .define('D', Tags.Items.GEMS_DIAMOND)
-                .define('L', StrictNBTIngredient.of(PotionUtils.setPotion(new ItemStack(Items.POTION), Potions.LONG_REGENERATION)))
+                .define('L', () -> {
+                    ItemStack potion = Items.POTION.getDefaultInstance();
+                    potion.update(DataComponents.POTION_CONTENTS, PotionContents.EMPTY, Potions.LONG_REGENERATION, PotionContents::withPotion);
+                    return potion.getItem();
+                })
                 .pattern("RAR")
                 .pattern("DSD")
                 .pattern("RLR")
                 .unlockedBy(HAS_ITEM, has(CASING))
-                .save(consumer);
+                .save(recipeOutput);
 
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.REDSTONE, APItems.OVERPOWERED_WEAK_AUTOMATA_CORE.get()).requires(APItems.WEAK_AUTOMATA_CORE.get()).requires(Items.NETHER_STAR).unlockedBy(HAS_ITEM, has(APItems.WEAK_AUTOMATA_CORE.get())).save(recipeOutput);
+
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.REDSTONE, APItems.OVERPOWERED_END_AUTOMATA_CORE.get()).requires(APItems.END_AUTOMATA_CORE.get()).requires(Items.NETHER_STAR).unlockedBy(HAS_ITEM, has(APItems.END_AUTOMATA_CORE.get())).save(recipeOutput);
+
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.REDSTONE, APItems.OVERPOWERED_HUSBANDRY_AUTOMATA_CORE.get()).requires(APItems.HUSBANDRY_AUTOMATA_CORE.get()).requires(Items.NETHER_STAR).unlockedBy(HAS_ITEM, has(APItems.HUSBANDRY_AUTOMATA_CORE.get())).save(recipeOutput);
     }
 
     private void addSmithing(@NotNull Consumer<FinishedRecipe> consumer) {

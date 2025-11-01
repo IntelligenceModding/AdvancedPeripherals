@@ -22,7 +22,6 @@ public abstract class PeripheralTurtleUpgrade<T extends IBasePeripheral<?>> exte
         super(TurtleUpgradeType.PERIPHERAL, TranslationUtil.turtle(id.getPath()), item);
     }
 
-    // TODO: Do we still need this with the new modeller system?
     public abstract ModelResourceLocation getLeftModel();
 
     public abstract ModelResourceLocation getRightModel();

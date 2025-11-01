@@ -10,7 +10,8 @@ import de.srendi.advancedperipherals.common.addons.computercraft.owner.TurtlePer
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.lib.peripherals.AutomataCorePeripheral;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.common.capabilities.ForgeCapabilities;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.energy.IEnergyStorage;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
@@ -31,19 +32,22 @@ public class AutomataChargingPlugin extends AutomataCorePlugin {
 
         ItemStack stack = owner.getToolInMainHand();
         int fuel = arguments.optInt(0, -1);
-        return stack.getCapability(ForgeCapabilities.ENERGY).map(storage -> {
+
+        IEnergyStorage energyStorage = stack.getCapability(Capabilities.EnergyStorage.ITEM);
+        if (energyStorage != null) {
             int availableFuelSpace = fuelAbility.getFuelMaxCount() - fuelAbility.getFuelCount();
             int requestedRF;
             if (fuel != -1) {
                 requestedRF = fuel * APConfig.METAPHYSICS_CONFIG.energyToFuelRate.get();
             } else {
-                requestedRF = storage.getEnergyStored();
+                requestedRF = energyStorage.getEnergyStored();
             }
-            int realConsumedRF = storage.extractEnergy(Math.min(requestedRF, availableFuelSpace * APConfig.METAPHYSICS_CONFIG.energyToFuelRate.get()), false);
+            int realConsumedRF = energyStorage.extractEnergy(Math.min(requestedRF, availableFuelSpace * APConfig.METAPHYSICS_CONFIG.energyToFuelRate.get()), false);
             int receivedFuel = realConsumedRF / APConfig.METAPHYSICS_CONFIG.energyToFuelRate.get();
             fuelAbility.addFuel(receivedFuel);
             automataCore.addRotationCycle();
             return MethodResult.of(true, receivedFuel);
-        }).orElse(MethodResult.of(null, "Item should provide energy ..."));
+        }
+        return MethodResult.of(false);
     }
 }

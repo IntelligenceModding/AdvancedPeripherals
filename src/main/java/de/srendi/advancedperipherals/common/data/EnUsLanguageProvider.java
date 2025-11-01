@@ -7,20 +7,20 @@ import de.srendi.advancedperipherals.common.setup.APItems;
 import de.srendi.advancedperipherals.common.setup.APVillagers;
 import de.srendi.advancedperipherals.common.setup.CCRegistration;
 import net.minecraft.client.KeyMapping;
-import net.minecraft.data.DataGenerator;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.npc.VillagerProfession;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
-import net.neoforged.common.data.LanguageProvider;
-import net.neoforged.registries.ForgeRegistries;
+import net.neoforged.neoforge.common.data.LanguageProvider;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Supplier;
 
 public class EnUsLanguageProvider extends LanguageProvider {
 
-    public EnUsLanguageProvider(DataGenerator gen) {
+    public EnUsLanguageProvider(PackOutput gen) {
         super(gen, AdvancedPeripherals.MOD_ID, "en_us");
     }
 
@@ -149,7 +149,6 @@ public class EnUsLanguageProvider extends LanguageProvider {
         addTooltip(APItems.COMPUTER_TOOL.get(), "&7This tool was made to tune our blocks. But for now, it's just a blue useless wrench.");
         addTooltip(APItems.MEMORY_CARD.get(), "&7Can save the rights of a player to use it in an inventory manager.");
         addTooltip("binding.bound_to", "&7Bound to &b%s&7.");
-
     }
 
     private void addTexts() {
@@ -192,11 +191,11 @@ public class EnUsLanguageProvider extends LanguageProvider {
     }
 
     private void addTooltip(Item item, String name) {
-        addTooltip(ForgeRegistries.ITEMS.getKey(item).getPath(), name);
+        addTooltip(BuiltInRegistries.ITEM.getKey(item).getPath(), name);
     }
 
     private void addTooltip(Block block, String name) {
-        addTooltip(ForgeRegistries.BLOCKS.getKey(block).getPath(), name);
+        addTooltip(BuiltInRegistries.BLOCK.getKey(block).getPath(), name);
     }
 
     private void addTooltip(String tooltip, String name) {

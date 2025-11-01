@@ -1,7 +1,9 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.operations;
 
 import com.google.common.math.IntMath;
+import de.srendi.advancedperipherals.common.setup.DataComponents;
 import de.srendi.advancedperipherals.lib.peripherals.IPeripheralOperation;
+import net.minecraft.core.component.DataComponentType;
 import net.neoforged.neoforge.common.ModConfigSpec;
 
 import java.util.HashMap;
@@ -30,7 +32,7 @@ public enum SphereOperation implements IPeripheralOperation<SphereOperationConte
 
     @Override
     public void addToConfig(ModConfigSpec.Builder builder) {
-        cooldown = builder.defineInRange(settingsName() + "Cooldown", defaultCooldown, 100, Integer.MAX_VALUE);
+        cooldown = builder.defineInRange(settingsName() + "Cooldown", defaultCooldown, 0, Integer.MAX_VALUE);
         maxFreeRadius = builder.defineInRange(settingsName() + "MaxFreeRadius", defaultMaxFreeRadius, 1, Integer.MAX_VALUE);
         maxCostRadius = builder.defineInRange(settingsName() + "MaxCostRadius", defaultMaxCostRadius, 1, Integer.MAX_VALUE);
         extraBlockCost = builder.defineInRange(settingsName() + "ExtraBlockCost", defaultExtraBlockCost, 0.1, Double.MAX_VALUE);
@@ -80,5 +82,10 @@ public enum SphereOperation implements IPeripheralOperation<SphereOperationConte
 
     public SphereOperationContext cost() {
         return new SphereOperationContext(getMaxCostRadius());
+    }
+
+    @Override
+    public DataComponentType<Long> dataComponentType() {
+        return DataComponents.SPHERE_OPERATION.get();
     }
 }

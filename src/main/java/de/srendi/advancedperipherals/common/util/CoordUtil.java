@@ -104,9 +104,11 @@ public class CoordUtil {
         return world.getNearbyPlayers(TargetingConditions.forNonCombat(), null, AABB.encapsulatingFullBlocks(firstPos, secondPos)).contains(player);
     }
 
+    @Nullable
     public static Direction getDirection(FrontAndTop orientation, String computerSide) throws LuaException {
-        if (computerSide == null)
-            throw new LuaException("null is not a valid side");
+        if (computerSide == null) {
+            return null;
+        }
 
         computerSide = computerSide.toLowerCase(Locale.ROOT);
         Direction dir = Direction.byName(computerSide);
@@ -117,8 +119,9 @@ public class CoordUtil {
         Direction front = orientation.front();
 
         final ComputerSide side = ComputerSide.valueOfInsensitive(computerSide);
-        if (side == null)
-            throw new LuaException(computerSide + " is not a valid side");
+        if (side == null) {
+            return null;
+        }
 
         if (front.getAxis() == Direction.Axis.Y) {
             return switch (side) {
@@ -129,17 +132,15 @@ public class CoordUtil {
                 case RIGHT -> top.getClockWise();
                 case LEFT -> top.getCounterClockWise();
             };
-        } else {
-            return switch (side) {
-                case FRONT -> front;
-                case BACK -> front.getOpposite();
-                case TOP -> Direction.UP;
-                case BOTTOM -> Direction.DOWN;
-                case RIGHT -> front.getCounterClockWise();
-                case LEFT -> front.getClockWise();
-            };
         }
-
+        return switch (side) {
+            case FRONT -> front;
+            case BACK -> front.getOpposite();
+            case TOP -> Direction.UP;
+            case BOTTOM -> Direction.DOWN;
+            case RIGHT -> front.getCounterClockWise();
+            case LEFT -> front.getClockWise();
+        };
     }
 
     public static ComputerSide getComputerSide(FrontAndTop orientation, Direction direction) {

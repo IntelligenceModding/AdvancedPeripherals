@@ -3,14 +3,16 @@ package de.srendi.advancedperipherals.common.addons.computercraft.peripheral.plu
 import dan200.computercraft.api.lua.IArguments;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
+import dan200.computercraft.api.lua.LuaTable;
 import dan200.computercraft.api.lua.MethodResult;
 import dan200.computercraft.api.turtle.ITurtleAccess;
-import dan200.computercraft.core.apis.TableHelper;
+import dan200.computercraft.api.turtle.TurtleSide;
 import dan200.computercraft.shared.turtle.core.TurtlePlayer;
 import de.srendi.advancedperipherals.common.addons.computercraft.operations.SingleOperationContext;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.TurtlePeripheralOwner;
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.CompassPeripheral;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
+import de.srendi.advancedperipherals.common.util.EmptyLuaTable;
 import de.srendi.advancedperipherals.common.util.Pair;
 import de.srendi.advancedperipherals.common.util.StringUtil;
 import de.srendi.advancedperipherals.common.util.fakeplayer.APFakePlayer;
@@ -30,16 +32,18 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.SignBlockEntity;
+import net.minecraft.world.level.block.entity.SignText;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.common.ForgeHooks;
-import net.neoforged.event.entity.player.PlayerInteractEvent;
+import net.neoforged.neoforge.common.CommonHooks;
+import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import static de.srendi.advancedperipherals.common.addons.computercraft.operations.SingleOperation.ACCURE_PLACE;
 import static de.srendi.advancedperipherals.common.addons.computercraft.operations.SingleOperation.DIG;
@@ -59,10 +63,12 @@ public class AutomataBlockHandPlugin extends AutomataCorePlugin {
 
     @LuaFunction(mainThread = true)
     public final MethodResult digBlock(@NotNull IArguments arguments) throws LuaException {
-        Map<?, ?> opts = arguments.count() > 0 ? arguments.getTable(0) : Collections.emptyMap();
-        boolean sneak = TableHelper.optBooleanField(opts, "sneak", false);
-        float yaw = opts != null ? (float) TableHelper.optNumberField(opts, "yaw", 0) : 0;
-        float pitch = opts != null ? (float) TableHelper.optNumberField(opts, "pitch", 0) : 0;
+        LuaTable<?, ?> options = EmptyLuaTable.orEmpty(arguments.optTable(0).orElse(null));
+
+        boolean sneak = options.optBoolean("sneak").orElse(false);
+        float yaw = options.optDouble("yaw").orElse(0d).floatValue();
+        float pitch = options.optDouble( "pitch").orElse(0d).floatValue();
+
         return automataCore.withOperation(DIG, context -> {
             TurtlePeripheralOwner owner = automataCore.getPeripheralOwner();
             ItemStack selectedTool = owner.getToolInMainHand();
@@ -80,10 +86,12 @@ public class AutomataBlockHandPlugin extends AutomataCorePlugin {
 
     @LuaFunction(mainThread = true)
     public final MethodResult useOnBlock(@NotNull IArguments arguments) throws LuaException {
-        Map<?, ?> opts = arguments.count() > 0 ? arguments.getTable(0) : Collections.emptyMap();
-        boolean sneak = TableHelper.optBooleanField(opts, "sneak", false);
-        float yaw = opts != null ? (float) TableHelper.optNumberField(opts, "yaw", 0) : 0;
-        float pitch = opts != null ? (float) TableHelper.optNumberField(opts, "pitch", 0) : 0;
+        LuaTable<?, ?> options = EmptyLuaTable.orEmpty(arguments.optTable(0).orElse(null));
+
+        boolean sneak = options.optBoolean("sneak").orElse(false);
+        float yaw = options.optDouble("yaw").orElse(0d).floatValue();
+        float pitch = options.optDouble( "pitch").orElse(0d).floatValue();
+
         return automataCore.withOperation(USE_ON_BLOCK, context -> {
             TurtlePeripheralOwner owner = automataCore.getPeripheralOwner();
             ItemStack selectedTool = owner.getToolInMainHand();
@@ -154,32 +162,35 @@ public class AutomataBlockHandPlugin extends AutomataCorePlugin {
      * placeBlock method will let turtle place a block with more details when compass has equipped.
      * It should not able to place fluids / use any item, because compass does not recognize them.
      *
-     * @param options A table contains how to place the block:
+     * @param arguments A table contains how to place the block:
      *   x: the x offset relative to the turtle. Default 0
      *   y: the y offset relative to the turtle. Default 0
      *   z: the z offset relative to the turtle. Default 0
      *   anchor: the direction the block is going to hanging on. Default is the direction of the turtle
      *   front: the direction the block is going to facing. Default is same as anchor
      *   top: the direction the block's top is going to facing. Default is TOP
-     *   text: the text going to write on the sign. Default is null
+     *   text: the text going to write on the sign's front side. Default is null
+     *   backText: the text going to write on the sign's back side. Default is null
      */
     @LuaFunction(mainThread = true)
-    public final MethodResult placeBlock(@NotNull Map<?, ?> options) throws LuaException {
+    public final MethodResult placeBlock(@NotNull IArguments arguments) throws LuaException {
+        LuaTable<?, ?> options = EmptyLuaTable.orEmpty(arguments.optTable(0).orElse(null));
+
         ITurtleAccess turtle = automataCore.getPeripheralOwner().getTurtle();
         if (!automataCore.getPeripheralOwner().hasConnectedPeripheral(CompassPeripheral.class)) {
             return MethodResult.of(false, "COMPASS_NOT_EQUIPPED");
         }
-        int x = TableHelper.optIntField(options, "x", 0);
-        int y = TableHelper.optIntField(options, "y", 0);
-        int z = TableHelper.optIntField(options, "z", 0);
+        int x = options.optInt("x").orElse(0);
+        int y = options.optInt( "y").orElse(0);
+        int z = options.optInt( "z").orElse(0);
         final int maxDist = APConfig.PERIPHERALS_CONFIG.compassAccurePlaceRadius.get();
         final int freeDist = APConfig.PERIPHERALS_CONFIG.compassAccurePlaceFreeRadius.get();
         if (Math.abs(x) > maxDist || Math.abs(y) > maxDist || Math.abs(z) > maxDist) {
             return MethodResult.of(null, "OUT_OF_RANGE");
         }
-        String anchor = TableHelper.optStringField(options, "anchor", null);
-        String front = TableHelper.optStringField(options, "front", null);
-        String top = TableHelper.optStringField(options, "top", null);
+        String anchor = options.optString("anchor").orElse(null);
+        String front = options.optString("front").orElse(null);
+        String top = options.optString("top").orElse(null);
         Direction anchorDir = anchor != null ? automataCore.validateSide(anchor) : null;
         Direction frontDir = front != null ? automataCore.validateSide(front) : null;
         Direction topDir = top != null ? automataCore.validateSide(top) : null;
@@ -206,7 +217,7 @@ public class AutomataBlockHandPlugin extends AutomataCorePlugin {
      * @return A nullable string of the error. <code>null</code> means the operation is successful
      */
     @Nullable
-    private String deployOn(ItemStack stack, BlockPos position, Direction anchor, Direction front, Direction top, Map<?, ?> options) throws LuaException {
+    private String deployOn(ItemStack stack, BlockPos position, Direction anchor, Direction front, Direction top, LuaTable<?, ?> options) throws LuaException {
         ITurtleAccess turtle = automataCore.getPeripheralOwner().getTurtle();
         Level world = turtle.getLevel();
         if (anchor == null) {
@@ -221,7 +232,7 @@ public class AutomataBlockHandPlugin extends AutomataCorePlugin {
         TurtlePlayer turtlePlayer = TurtlePlayer.getWithPosition(turtle, position, front.getOpposite());
         BlockHitResult hit = BlockHitResult.miss(Vec3.atCenterOf(position), top, position);
         AdvanceDirectionalPlaceContext context = new AdvanceDirectionalPlaceContext(world, position, anchor, front, stack, top);
-        PlayerInteractEvent.RightClickBlock event = ForgeHooks.onRightClickBlock(turtlePlayer, InteractionHand.MAIN_HAND, position, hit);
+        PlayerInteractEvent.RightClickBlock event = CommonHooks.onRightClickBlock(turtlePlayer.player(), InteractionHand.MAIN_HAND, position, hit);
         if (event.isCanceled()) {
             return "EVENT_CANCELED";
         }
@@ -237,26 +248,29 @@ public class AutomataBlockHandPlugin extends AutomataCorePlugin {
         if (blockItem instanceof SignItem) {
             BlockEntity blockEntity = world.getBlockEntity(position);
             if (blockEntity instanceof SignBlockEntity sign) {
-                String text = StringUtil.convertAndToSectionMark(TableHelper.optStringField(options, "text", null));
-                setSignText(world, sign, text);
+                String text = StringUtil.convertAndToSectionMark(options.optString("text").orElse(null));
+                setSignText(world, sign, text, true);
+                String backText = StringUtil.convertAndToSectionMark(options.optString("backText").orElse(null));
+                setSignText(world, sign, backText, false);
             }
         }
         return null;
     }
 
-    private static void setSignText(Level world, SignBlockEntity sign, String text) {
+    private static void setSignText(Level world, SignBlockEntity block, String text, boolean front) {
+        SignText sign = block.getText(front);
         if (text == null) {
-            for (int i = 0; i < SignBlockEntity.LINES; i++) {
+            for (int i = 0; i < SignText.LINES; i++) {
                 sign.setMessage(i, Component.literal(""));
             }
         } else {
             String[] lines = text.split("\n");
-            for (int i = 0; i < SignBlockEntity.LINES; i++) {
+            for (int i = 0; i < SignText.LINES; i++) {
                 sign.setMessage(i, Component.literal(i < lines.length ? lines[i] : ""));
             }
         }
-        sign.setChanged();
-        world.sendBlockUpdated(sign.getBlockPos(), sign.getBlockState(), sign.getBlockState(), Block.UPDATE_ALL);
+        block.setChanged();
+        world.sendBlockUpdated(block.getBlockPos(), block.getBlockState(), block.getBlockState(), Block.UPDATE_ALL);
     }
 
     private static class AdvanceDirectionalPlaceContext extends DirectionalPlaceContext {

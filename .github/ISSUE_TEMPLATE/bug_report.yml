@@ -1,5 +1,7 @@
 name: Bug Report
 description: Report bugs and problems
+labels: ["bug", "needs review"]
+projects: "IntelligenceModding/2"
 body:
   - type: markdown
     attributes:
@@ -39,14 +41,23 @@ body:
       multiple: false
       options:
         - Own compiled build.
-        - 1.19.2-0.7.23b (Latest 1.19)
-        - 1.19.2-0.7.22b 
-        - 1.19.2-0.7.21b 
-        - 1.18.2-0.7.24r (Latest 1.18)
-        - 1.18.2-0.7.23r
-        - 1.18.2-0.7.22r
-        - 1.16.5-0.7.8r (Latest 1.16)
-        - older
+        - 1.21.1-0.7.55b (Latest 1.21.1)
+        - 1.21.1-0.7.54b
+        - 1.21.1-0.7.53b 
+        - 1.21.1-0.7.52b
+        - 1.21.1-0.7.51b
+        - 1.21.1-0.7.50b
+        - 1.20.4-0.7.43a (Latest 1.20.4)
+        - 1.20.1-0.7.45r (Latest 1.20.1)
+        - 1.20.1-0.7.44r
+        - 1.20.1-0.7.43r
+        - 1.19.2-0.7.37r (Latest 1.19.2)
+        - 1.19.2-0.7.36r
+        - 1.19.2-0.7.35r
+        - 1.18.2-0.7.31r (Latest 1.18.2)
+        - 1.18.2-0.7.30r
+        - 1.18.2-0.7.29r
+        - older (probably unsupported)
     validations:
       required: true
   - type: input

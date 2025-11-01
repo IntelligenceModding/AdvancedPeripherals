@@ -5,8 +5,7 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import dan200.computercraft.core.computer.ComputerSide;
-import dan200.computercraft.core.computer.Environment;
-import dan200.computercraft.shared.command.UserLevel;
+import dan200.computercraft.shared.ModRegistry;
 import dan200.computercraft.shared.command.text.ChatHelpers;
 import dan200.computercraft.shared.command.text.TableBuilder;
 import dan200.computercraft.shared.computer.core.ServerComputer;
@@ -23,11 +22,14 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentUtils;
 import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.server.level.ServerPlayer;
-import net.neoforged.event.RegisterCommandsEvent;
-import net.neoforged.eventbus.api.SubscribeEvent;
-import net.neoforged.fml.common.Mod;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.RegisterCommandsEvent;
 
-@Mod.EventBusSubscriber(modid = AdvancedPeripherals.MOD_ID)
+import java.util.Comparator;
+
+
+@EventBusSubscriber(modid = AdvancedPeripherals.MOD_ID)
 public class APCommands {
     public static final String ROOT_LITERAL = "advancedperipherals";
     public static final String FORCELOAD_LITERAL = "forceload";
@@ -50,7 +52,7 @@ public class APCommands {
                 .then(Commands.literal("help")
                     .executes(context -> forceloadHelp(context.getSource())))
                 .then(Commands.literal("dump")
-                    .requires(UserLevel.OWNER_OP)
+                    .requires(ModRegistry.Permissions.PERMISSION_DUMP)
                     .executes(context -> forceloadDump(context.getSource())))
             )
             .then(safeExecNode)
@@ -65,12 +67,9 @@ public class APCommands {
             return 0;
         }
         String fingerprint = ItemUtil.getFingerprint(playerEntity.getMainHandItem());
-        if (fingerprint.isEmpty()) {
-            source.sendFailure(Component.literal("There was an issue while generating the hash. Report to Author"));
-            return 0;
-        }
-        source.sendSuccess(Component.literal("Fingerprint of the item: "), true);
-        source.sendSuccess(ComponentUtils.wrapInSquareBrackets(
+
+        source.sendSuccess(() -> Component.literal("Fingerprint of the item: "), true);
+        source.sendSuccess(() -> ComponentUtils.wrapInSquareBrackets(
                 Component.literal(fingerprint)
                         .withStyle(style -> style.applyFormat(ChatFormatting.GREEN)
                                 .withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, fingerprint))
@@ -79,7 +78,7 @@ public class APCommands {
     }
 
     private static int forceloadHelp(CommandSourceStack source) throws CommandSyntaxException {
-        source.sendSuccess(Component.literal(FORCELOAD_HELP), true);
+        source.sendSuccess(() -> Component.literal(FORCELOAD_HELP), true);
         return 1;
     }
 
@@ -87,14 +86,13 @@ public class APCommands {
         TableBuilder table = new TableBuilder("ChunkyTurtles", "Computer", "Position");
 
         ServerComputer[] computers = ServerContext.get(source.getServer()).registry().getComputers().stream().filter((computer) -> {
-            Environment env = computer.getComputer().getEnvironment();
             for (ComputerSide side : ComputerSide.values()) {
-                if (env.getPeripheral(side) instanceof ChunkyPeripheral) {
+                if (computer.getPeripheral(side) instanceof ChunkyPeripheral) {
                     return true;
                 }
             }
             return false;
-        }).sorted((a, b) -> a.getID() - b.getID()).toArray(size -> new ServerComputer[size]);
+        }).sorted(Comparator.comparingInt(ServerComputer::getID)).toArray(ServerComputer[]::new);
 
         for (ServerComputer computer : computers) {
             table.row(
@@ -113,7 +111,8 @@ public class APCommands {
         CommandSourceStack source = context.getSource().withPermission(0);
         String command = StringArgumentType.getString(context, "command");
         try {
-            return source.getServer().getCommands().performPrefixedCommand(source, command);
+            source.getServer().getCommands().performPrefixedCommand(source, command);
+            return 1;
         } catch (RuntimeException e) {
             source.sendFailure(Component.literal(e.getMessage()));
             return 0;
@@ -124,7 +123,7 @@ public class APCommands {
     private static Component makeComputerDumpCommand(ServerComputer computer) {
         return ChatHelpers.link(
             Component.literal("#" + computer.getID()),
-            "/computercraft dump " + computer.getInstanceID(),
+            "/computercraft dump " + computer.getInstanceUUID(),
             Component.translatable("commands.computercraft.dump.action")
         );
     }
@@ -132,7 +131,7 @@ public class APCommands {
     private static Component makeComputerPosCommand(ServerComputer computer) {
         return ChatHelpers.link(
             ChatHelpers.position(computer.getPosition()),
-            "/computercraft tp " + computer.getInstanceID(),
+            "/computercraft tp " + computer.getInstanceUUID(),
             Component.translatable("commands.computercraft.tp.action")
         );
     }

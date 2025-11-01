@@ -3,14 +3,17 @@ package de.srendi.advancedperipherals.common.addons.computercraft.peripheral.plu
 import dan200.computercraft.api.lua.IArguments;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
+import dan200.computercraft.api.lua.LuaTable;
 import dan200.computercraft.api.lua.MethodResult;
-import dan200.computercraft.core.apis.TableHelper;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.TurtlePeripheralOwner;
+import de.srendi.advancedperipherals.common.util.EmptyLuaTable;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
 import de.srendi.advancedperipherals.common.util.fakeplayer.APFakePlayer;
 import de.srendi.advancedperipherals.lib.peripherals.AutomataCorePeripheral;
 import de.srendi.advancedperipherals.lib.peripherals.IPeripheralOperation;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.component.DataComponentMap;
+import net.minecraft.core.component.PatchedDataComponentMap;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -21,15 +24,13 @@ import net.minecraft.world.phys.HitResult;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collections;
-import java.util.Map;
+import java.util.Optional;
 import java.util.function.Predicate;
 
 import static de.srendi.advancedperipherals.common.addons.computercraft.operations.SingleOperation.CAPTURE_ANIMAL;
+import static de.srendi.advancedperipherals.common.setup.DataComponents.ENTITY_TRANSFER;
 
 public class AutomataEntityTransferPlugin extends AutomataCorePlugin {
-
-    private static final String ENTITY_NBT_KEY = "storedEntity";
 
     private final Predicate<Entity> suitableEntity;
 
@@ -44,19 +45,26 @@ public class AutomataEntityTransferPlugin extends AutomataCorePlugin {
     }
 
     protected boolean isEntityInside() {
-        return !automataCore.getPeripheralOwner().getDataStorage().getCompound(ENTITY_NBT_KEY).isEmpty();
+        Optional<? extends CompoundTag> entityTransfer = automataCore.getPeripheralOwner().getDataStorage().get(ENTITY_TRANSFER.get());
+        if (entityTransfer != null)
+            return entityTransfer.isPresent();
+        return false;
     }
 
     protected void saveEntity(CompoundTag data) {
-        automataCore.getPeripheralOwner().getDataStorage().put(ENTITY_NBT_KEY, data);
+        PatchedDataComponentMap patch = PatchedDataComponentMap.fromPatch(DataComponentMap.EMPTY, automataCore.getPeripheralOwner().getDataStorage());
+        patch.set(ENTITY_TRANSFER.get(), data);
+        automataCore.getPeripheralOwner().putDataStorage(patch.asPatch());
     }
 
     protected CompoundTag getEntity() {
-        return automataCore.getPeripheralOwner().getDataStorage().getCompound(ENTITY_NBT_KEY);
+        return automataCore.getPeripheralOwner().getDataStorage().get(ENTITY_TRANSFER.get()).get();
     }
 
     protected void removeEntity() {
-        automataCore.getPeripheralOwner().getDataStorage().remove(ENTITY_NBT_KEY);
+        PatchedDataComponentMap patch = PatchedDataComponentMap.fromPatch(DataComponentMap.EMPTY, automataCore.getPeripheralOwner().getDataStorage());
+        patch.remove(ENTITY_TRANSFER.get());
+        automataCore.getPeripheralOwner().putDataStorage(patch.asPatch());
     }
 
     @Nullable
@@ -76,9 +84,10 @@ public class AutomataEntityTransferPlugin extends AutomataCorePlugin {
 
     @LuaFunction(mainThread = true)
     public final MethodResult captureAnimal(@NotNull IArguments arguments) throws LuaException {
-        Map<?, ?> opts = arguments.count() > 0 ? arguments.getTable(0) : Collections.emptyMap();
-        float yaw = opts != null ? (float) TableHelper.optNumberField(opts, "yaw", 0) : 0;
-        float pitch = opts != null ? (float) TableHelper.optNumberField(opts, "pitch", 0) : 0;
+        LuaTable<?, ?> options = EmptyLuaTable.orEmpty(arguments.optTable(0).orElse(null));
+
+        float yaw = options.optDouble("yaw").orElse(0d).floatValue();
+        float pitch = options.optDouble( "pitch").orElse(0d).floatValue();
 
         HitResult entityHit = automataCore.getPeripheralOwner().withPlayer(APFakePlayer.wrapActionWithRot(yaw, pitch, p -> p.findHit(false, true, suitableEntity)));
         if (entityHit.getType() == HitResult.Type.MISS)

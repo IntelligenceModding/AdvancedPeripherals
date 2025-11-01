@@ -6,7 +6,6 @@ import de.srendi.advancedperipherals.common.blocks.blockentities.PlayerDetectorE
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.setup.APBlockEntityTypes;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -32,27 +31,16 @@ public class PlayerDetectorBlock extends APBlockEntityBlock<PlayerDetectorEntity
 
     @NotNull
     @Override
-    public ItemInteractionResult useItemOn(@NotNull ItemStack stack, @NotNull BlockState state, Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand handIn, @NotNull BlockHitResult hit) {
-        queuePlayerEvent(level, pos, player.getName().getString());
-        return super.useItemOn(stack, state, level, pos, player, handIn, hit);
-    }
-
-    @NotNull
-    @Override
-    protected InteractionResult useWithoutItem(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, Player player, @NotNull BlockHitResult hitResult) {
-        queuePlayerEvent(level, pos, player.getName().getString());
-        return super.useWithoutItem(state, level, pos, player, hitResult);
-    }
-
-    private void queuePlayerEvent(Level level, BlockPos pos, String playerName) {
+    public @NotNull InteractionResult useWithoutItem(@NotNull BlockState state, Level levelIn, @NotNull BlockPos pos, @NotNull Player player, @NotNull BlockHitResult hit) {
         if (!APConfig.PERIPHERALS_CONFIG.enablePlayerDetector.get())
-            return;
-        BlockEntity tileEntity = level.getBlockEntity(pos);
+            return super.useWithoutItem(state, levelIn, pos, player, hit);
+        BlockEntity tileEntity = levelIn.getBlockEntity(pos);
         if (tileEntity instanceof PlayerDetectorEntity entity) {
             for (IComputerAccess computer : entity.getConnectedComputers()) {
                 computer.queueEvent("playerClick", playerName, level.dimension().location().toString());
             }
         }
+        return super.useWithoutItem(state, levelIn, pos, player, hit);
     }
 
 }
