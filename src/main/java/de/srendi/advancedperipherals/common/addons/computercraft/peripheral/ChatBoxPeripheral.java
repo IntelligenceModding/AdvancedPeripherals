@@ -435,7 +435,7 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
                     StringUtil.convertAndToSectionMark(prefix.orElseGet(APConfig.PERIPHERALS_CONFIG.defaultChatBoxPrefix)),
                     brackets.orElse("[]"),
                     StringUtil.convertAndToSectionMark(bracketColor)
-            )
+            );
             if (preparedMessage == null) {
                 return MethodResult.of(null, "illegal prefix");
             }

@@ -276,7 +276,7 @@ public class ColonyPeripheral extends BasePeripheral<IPeripheralOwner> {
             map.put("state", request.getState().toString());
             map.put("count", deliverableRequest.getCount());
             map.put("minCount", deliverableRequest.getMinimumCount());
-            map.put("items", request.getDisplayStacks().stream().map(item -> LuaConverter.itemStackToObject(item, getLevel())).toList();
+            map.put("items", request.getDisplayStacks().stream().map(item -> LuaConverter.itemStackToObject(item, getLevel())).toList());
             map.put("target", request.getRequester().getRequesterDisplayName(requestManager, request).getString());
             result.add(map);
         });
