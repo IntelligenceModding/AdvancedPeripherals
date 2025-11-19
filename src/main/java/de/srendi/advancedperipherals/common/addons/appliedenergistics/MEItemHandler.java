@@ -45,7 +45,7 @@ public class MEItemHandler implements IStorageSystemItemHandler {
         if (itemKey.getRight() == null)
             return ItemStack.EMPTY;
         long extracted = storageMonitor.extract(itemKey.getRight(), count, simulate ? Actionable.SIMULATE : Actionable.MODULATE, actionSource);
-        // Safe to cast here, the amount will never be higher than 64
+        // Safe to cast here, the amount will never be higher than count
         ItemStack stack = itemKey.getRight().toStack();
         stack.setCount((int) extracted);
         return stack;

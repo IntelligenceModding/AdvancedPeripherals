@@ -46,64 +46,48 @@ public class InventoryUtil {
         int fromSlot = filter.getFromSlot();
         int toSlot = filter.getToSlot();
 
-        int amount = filter.getCount();
-        int transferableAmount = 0;
+        int transferred = 0;
 
-        // The logic changes with storage systems since these systems do not have slots
+        // The logic changes when exporting from storage systems since these systems do not have slots
         if (inventoryFrom instanceof IStorageSystemItemHandler storageSystemHandler) {
             for (int i = toSlot == -1 ? 0 : toSlot; i < (toSlot == -1 ? inventoryTo.getSlots() : toSlot + 1); i++) {
-                ItemStack extracted = storageSystemHandler.extractItem(filter, filter.getCount(), true);
+                ItemStack existing = inventoryTo.getStackInSlot(i);
+                ItemStack extracted;
+                if (existing.isEmpty()) {
+                    extracted = storageSystemHandler.extractItem(filter, filter.getCount() - transferred, true);
+                }
+                else { // If item already exists in slot, try to export same type of item
+                    extracted = storageSystemHandler.extractItem(ItemFilter.fromStack(existing), filter.getCount() - transferred, true);
+                    if (!filter.test(extracted))
+                        extracted = ItemStack.EMPTY;
+                }
                 if (extracted.isEmpty())
                     continue;
-                ItemStack inserted;
-                if (toSlot == -1) {
-                    inserted = ItemHandlerHelper.insertItem(inventoryTo, extracted, false);
-                } else {
-                    inserted = inventoryTo.insertItem(toSlot, extracted, false);
-                }
-                amount -= extracted.getCount() - inserted.getCount();
-                transferableAmount += storageSystemHandler.extractItem(filter, extracted.getCount() - inserted.getCount(), false).getCount();
-                if (transferableAmount >= filter.getCount())
+                ItemStack remaining = inventoryTo.insertItem(i, extracted, false);
+                transferred += storageSystemHandler.extractItem(filter, extracted.getCount() - remaining.getCount(), false).getCount();
+                if (transferred >= filter.getCount())
                     break;
             }
-            return transferableAmount;
-        }
-
-        if (inventoryTo instanceof IStorageSystemItemHandler storageSystemHandler) {
-            for (int i = fromSlot == -1 ? 0 : fromSlot; i < (fromSlot == -1 ? inventoryFrom.getSlots() : fromSlot + 1); i++) {
-                if (filter.test(inventoryFrom.getStackInSlot(i))) {
-                    ItemStack extracted = inventoryFrom.extractItem(i, amount - transferableAmount, true);
-                    if (extracted.isEmpty())
-                        continue;
-                    ItemStack remaining = storageSystemHandler.insertItem(toSlot, extracted, false);
-
-                    amount -= remaining.getCount();
-                    transferableAmount += inventoryFrom.extractItem(i, extracted.getCount() - remaining.getCount(), false).getCount();
-                    if (transferableAmount >= filter.getCount())
-                        break;
-                }
-            }
-            return transferableAmount;
+            return transferred;
         }
 
         for (int i = fromSlot == -1 ? 0 : fromSlot; i < (fromSlot == -1 ? inventoryFrom.getSlots() : fromSlot + 1); i++) {
             if (filter.test(inventoryFrom.getStackInSlot(i))) {
-                ItemStack extracted = inventoryFrom.extractItem(i, amount - transferableAmount, true);
+                ItemStack extracted = inventoryFrom.extractItem(i, filter.getCount() - transferred, true);
                 if (extracted.isEmpty())
                     continue;
-                ItemStack inserted;
-                if (toSlot == -1) {
-                    inserted = ItemHandlerHelper.insertItem(inventoryTo, extracted, false);
+                ItemStack remaining;
+                if (toSlot == -1 && !(inventoryTo instanceof IStorageSystemItemHandler)) {
+                    remaining = ItemHandlerHelper.insertItem(inventoryTo, extracted, false);
                 } else {
-                    inserted = inventoryTo.insertItem(toSlot, extracted, false);
+                    remaining = inventoryTo.insertItem(toSlot, extracted, false); // toSlot is ignored for storage systems
                 }
-                amount -= inserted.getCount();
-                transferableAmount += inventoryFrom.extractItem(i, extracted.getCount() - inserted.getCount(), false).getCount();
-                if (transferableAmount >= filter.getCount())
+                transferred += inventoryFrom.extractItem(i, extracted.getCount() - remaining.getCount(), false).getCount();
+                if (transferred >= filter.getCount())
                     break;
             }
         }
-        return transferableAmount;
+        return transferred;
     }
 
     @Nullable
