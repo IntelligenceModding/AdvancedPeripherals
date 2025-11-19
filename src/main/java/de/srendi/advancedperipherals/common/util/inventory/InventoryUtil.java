@@ -64,7 +64,7 @@ public class InventoryUtil {
                 if (extracted.isEmpty())
                     continue;
                 ItemStack remaining = inventoryTo.insertItem(i, extracted, false);
-                transferred += storageSystemHandler.extractItem(filter, extracted.getCount() - remaining.getCount(), false).getCount();
+                transferred += storageSystemHandler.extractItem(ItemFilter.fromStack(extracted), extracted.getCount() - remaining.getCount(), false).getCount();
                 if (transferred >= filter.getCount())
                     break;
             }
