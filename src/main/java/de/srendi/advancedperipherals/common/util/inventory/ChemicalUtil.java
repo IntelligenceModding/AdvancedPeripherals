@@ -40,7 +40,7 @@ public class ChemicalUtil {
         // The logic changes with storage systems since these systems do not have slots
         if (inventoryFrom instanceof IStorageSystemChemicalHandler storageFrom) {
             ChemicalStack extracted = storageFrom.extractChemical(filter, Action.SIMULATE);
-            ChemicalStack remaining = toSlot <= 0
+            ChemicalStack remaining = toSlot < 0
                 ? inventoryTo.insertChemical(extracted, Action.EXECUTE)
                 : inventoryTo.insertChemical(toSlot, extracted, Action.EXECUTE);
             long inserted = extracted.getAmount() - remaining.getAmount();
@@ -69,7 +69,7 @@ public class ChemicalUtil {
             if (extracted.isEmpty()) {
                 continue;
             }
-            ChemicalStack remaining = toSlot <= 0
+            ChemicalStack remaining = toSlot < 0
                 ? inventoryTo.insertChemical(extracted, Action.EXECUTE)
                 : inventoryTo.insertChemical(toSlot, extracted, Action.EXECUTE);
             long inserted = extracted.getAmount() - remaining.getAmount();

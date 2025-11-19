@@ -62,7 +62,7 @@ public class InventoryUtil {
             if (extracted.isEmpty()) {
                 return 0;
             }
-            ItemStack remaining = toSlot <= 0
+            ItemStack remaining = toSlot < 0
                 ? ItemHandlerHelper.insertItem(inventoryTo, extracted, false)
                 : inventoryTo.insertItem(toSlot, extracted, false);
             int inserted = extracted.getCount() - remaining.getCount();
@@ -108,7 +108,7 @@ public class InventoryUtil {
             if (extracted.isEmpty()) {
                 continue;
             }
-            ItemStack remaining = toSlot <= 0
+            ItemStack remaining = toSlot < 0
                 ? ItemHandlerHelper.insertItem(inventoryTo, extracted, false)
                 : inventoryTo.insertItem(toSlot, extracted, false);
             int inserted = extracted.getCount() - remaining.getCount();
