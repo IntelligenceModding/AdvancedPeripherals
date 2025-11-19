@@ -30,11 +30,12 @@ public class ChemicalUtil {
         int fromSlot = filter.getFromSlot();
         int toSlot = filter.getToSlot();
 
-        long amount = filter.getCount();
         long transferred = 0;
 
         // The logic changes when exporting from storage systems since these systems do not have slots
         if (inventoryFrom instanceof IStorageSystemChemicalHandler storageSystemHandler) {
+            if (toSlot < -1 || toSlot >= inventoryTo.getChemicalTanks())
+                return 0;
             for (int i = toSlot == -1 ? 0 : toSlot; i < (toSlot == -1 ? inventoryTo.getChemicalTanks() : toSlot + 1); i++) {
                 ChemicalStack existing = inventoryTo.getChemicalInTank(i);
                 ChemicalStack extracted;
@@ -60,6 +61,8 @@ public class ChemicalUtil {
             return transferred;
         }
 
+        if (fromSlot < -1 || fromSlot >= inventoryFrom.getChemicalTanks())
+            return 0;
         for (int i = fromSlot == -1 ? 0 : fromSlot; i < (fromSlot == -1 ? inventoryFrom.getChemicalTanks() : fromSlot + 1); i++) {
             if (filter.test(inventoryFrom.getChemicalInTank(i))) {
                 ChemicalStack extracted;

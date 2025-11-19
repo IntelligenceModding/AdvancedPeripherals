@@ -50,6 +50,8 @@ public class InventoryUtil {
 
         // The logic changes when exporting from storage systems since these systems do not have slots
         if (inventoryFrom instanceof IStorageSystemItemHandler storageSystemHandler) {
+            if (toSlot < -1 || toSlot >= inventoryTo.getSlots())
+                return 0;
             for (int i = toSlot == -1 ? 0 : toSlot; i < (toSlot == -1 ? inventoryTo.getSlots() : toSlot + 1); i++) {
                 ItemStack existing = inventoryTo.getStackInSlot(i);
                 ItemStack extracted;
@@ -70,6 +72,8 @@ public class InventoryUtil {
             return transferred;
         }
 
+        if (fromSlot < -1 || fromSlot >= inventoryFrom.getSlots())
+            return 0;
         for (int i = fromSlot == -1 ? 0 : fromSlot; i < (fromSlot == -1 ? inventoryFrom.getSlots() : fromSlot + 1); i++) {
             if (filter.test(inventoryFrom.getStackInSlot(i))) {
                 ItemStack extracted = inventoryFrom.extractItem(i, filter.getCount() - transferred, true);
