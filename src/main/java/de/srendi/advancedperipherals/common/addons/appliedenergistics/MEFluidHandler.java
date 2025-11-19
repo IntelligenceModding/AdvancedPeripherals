@@ -33,16 +33,15 @@ public class MEFluidHandler implements IStorageSystemFluidHandler {
         if (resource.isEmpty())
             return 0;
         AEFluidKey itemKey = AEFluidKey.of(resource.getFluid());
-        long inserted = storageMonitor.insert(itemKey, resource.getAmount(), action == FluidAction.SIMULATE ? Actionable.SIMULATE : Actionable.MODULATE, actionSource);
-
-        return (int) Math.min(inserted, Integer.MAX_VALUE);
+        // should never overflow
+        return (int) (storageMonitor.insert(itemKey, resource.getAmount(), action == FluidAction.SIMULATE ? Actionable.SIMULATE : Actionable.MODULATE, actionSource));
     }
 
     @NotNull
     @Override
     public FluidStack drain(FluidFilter filter, FluidAction simulate) {
         Pair<Long, AEFluidKey> fluidKey = AEApi.findAEFluidFromFilter(storageMonitor, null, filter);
-        if (fluidKey.getRight() == null)
+        if (fluidKey.getRight() == null) 
             return FluidStack.EMPTY;
         long extracted = storageMonitor.extract(fluidKey.getRight(), filter.getAmount(), simulate == FluidAction.SIMULATE ? Actionable.SIMULATE : Actionable.MODULATE, actionSource);
         return new FluidStack(fluidKey.getRight().getFluid(), (int) Math.min(extracted, Integer.MAX_VALUE));

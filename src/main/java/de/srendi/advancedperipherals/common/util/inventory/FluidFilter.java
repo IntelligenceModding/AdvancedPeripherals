@@ -48,8 +48,11 @@ public class FluidFilter extends GenericFilter<FluidStack> {
                 String name = item.getString("name");
                 if (name.startsWith("#")) {
                     fluidFilter.tag = TagKey.create(Registries.FLUID, ResourceLocation.parse(name.substring(1)));
-                } else if ((fluidFilter.fluid = ItemUtil.getRegistryEntry(name, BuiltInRegistries.FLUID)) == null) {
-                    return Pair.of(null, "FLUID_NOT_FOUND");
+                } else {
+                    fluidFilter.fluid = ItemUtil.getRegistryEntry(name, BuiltInRegistries.FLUID);
+                    if (fluidFilter.fluid == null) {
+                        return Pair.of(null, "FLUID_NOT_FOUND");
+                    }
                 }
             } catch (LuaException luaException) {
                 return Pair.of(null, "NO_VALID_FLUID");
@@ -89,6 +92,7 @@ public class FluidFilter extends GenericFilter<FluidStack> {
     public static FluidFilter fromStack(FluidStack stack) {
         FluidFilter filter = createEmpty();
         filter.fluid = stack.getFluid();
+        filter.amount = stack.getAmount();
         filter.componentsAsNbt = DataComponentUtil.toNbt(stack.getComponentsPatch());
         filter.components = stack.getComponents();
         return filter;

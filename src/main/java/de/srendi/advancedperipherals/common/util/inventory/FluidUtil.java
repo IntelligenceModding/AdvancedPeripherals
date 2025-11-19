@@ -43,13 +43,16 @@ public class FluidUtil {
                 return 0;
             }
             int inserted = inventoryTo.fill(extracted, IFluidHandler.FluidAction.EXECUTE);
+            if (inserted == 0) {
+                return 0;
+            }
             needs -= inserted;
             extracted.setAmount(inserted);
-            storageFrom.drain(extracted, IFluidHandler.FluidAction.EXECUTE);
+            storageFrom.drain(FluidFilter.fromStack(extracted), IFluidHandler.FluidAction.EXECUTE);
             return filter.getAmount() - needs;
         }
 
-        for (int i = 0; i < inventoryTo.getTanks() && needs >= 0; i++) {
+        for (int i = 0; i < inventoryFrom.getTanks() && needs >= 0; i++) {
             FluidStack stack = inventoryFrom.getFluidInTank(i);
             if (!filter.test(stack)) {
                 continue;

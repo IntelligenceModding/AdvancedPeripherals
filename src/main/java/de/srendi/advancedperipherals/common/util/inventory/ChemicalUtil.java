@@ -44,9 +44,12 @@ public class ChemicalUtil {
                 ? inventoryTo.insertChemical(extracted, Action.EXECUTE)
                 : inventoryTo.insertChemical(toSlot, extracted, Action.EXECUTE);
             long inserted = extracted.getAmount() - remaining.getAmount();
+            if (inserted == 0) {
+                return 0;
+            }
             needs -= inserted;
             extracted.setAmount(inserted);
-            storageFrom.extractChemical(extracted, Action.EXECUTE);
+            storageFrom.extractChemical(ChemicalFilter.fromStack(extracted), Action.EXECUTE);
             return filter.getAmount() - needs;
         }
 

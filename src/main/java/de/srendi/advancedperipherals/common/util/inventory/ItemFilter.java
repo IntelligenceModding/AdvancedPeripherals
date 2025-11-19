@@ -104,6 +104,7 @@ public class ItemFilter extends GenericFilter<ItemStack> {
     public static ItemFilter fromStack(ItemStack stack) {
         ItemFilter filter = createEmpty();
         filter.item = stack.getItem();
+        filter.count = stack.getCount();
         filter.componentsAsNbt = DataComponentUtil.toNbt(stack.getComponentsPatch());
         filter.components = (PatchedDataComponentMap) stack.getComponents();
         return filter;

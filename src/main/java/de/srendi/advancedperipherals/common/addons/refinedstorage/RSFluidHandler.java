@@ -27,8 +27,8 @@ public class RSFluidHandler implements IStorageSystemFluidHandler {
     public int fill(FluidStack resource, @NotNull FluidAction action) {
         if (resource.isEmpty())
             return 0;
-        long inserted = component.insert(VariantUtil.ofFluidStack(resource), resource.getAmount(), action == FluidAction.SIMULATE ? Action.SIMULATE : Action.EXECUTE, Actor.EMPTY);
-        return (int) (resource.getAmount() - inserted);
+        // should never overflow
+        return (int) (component.insert(VariantUtil.ofFluidStack(resource), resource.getAmount(), action == FluidAction.SIMULATE ? Action.SIMULATE : Action.EXECUTE, Actor.EMPTY));
     }
 
     @NotNull

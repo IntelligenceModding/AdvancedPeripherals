@@ -86,6 +86,7 @@ public class ChemicalFilter extends GenericFilter<ChemicalStack> {
     public static ChemicalFilter fromStack(ChemicalStack stack) {
         ChemicalFilter filter = createEmpty();
         filter.chemical = stack.getChemicalHolder();
+        filter.amount = stack.getAmount();
         return filter;
     }
 

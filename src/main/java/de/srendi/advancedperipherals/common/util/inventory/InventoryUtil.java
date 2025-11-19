@@ -66,6 +66,9 @@ public class InventoryUtil {
                 ? ItemHandlerHelper.insertItem(inventoryTo, extracted, false)
                 : inventoryTo.insertItem(toSlot, extracted, false);
             int inserted = extracted.getCount() - remaining.getCount();
+            if (inserted == 0) {
+                return 0;
+            }
             needs -= inserted;
             extracted.setCount(inserted);
             storageFrom.extractItem(ItemFilter.fromStack(extracted), false);
