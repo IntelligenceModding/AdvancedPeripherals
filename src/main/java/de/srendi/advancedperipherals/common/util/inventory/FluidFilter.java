@@ -29,8 +29,8 @@ public class FluidFilter extends GenericFilter<FluidStack> {
     private Fluid fluid = Fluids.EMPTY;
     private TagKey<Fluid> tag = null;
     private Tag componentsAsNbt = null;
-    private PatchedDataComponentMap components;
-    private int count = 1000;
+    private PatchedDataComponentMap components = null;
+    private int amount = 1000;
     private String fingerprint = "";
 
     private FluidFilter() {
@@ -57,7 +57,7 @@ public class FluidFilter extends GenericFilter<FluidStack> {
         }
         if (item.containsKey("components")) {
             try {
-                fluidFilter.componentsAsNbt = NBTUtil.fromText(item.getString( "components"));
+                fluidFilter.componentsAsNbt = NBTUtil.fromText(item.getString("components"));
             } catch (LuaException luaException) {
                 try {
                     fluidFilter.componentsAsNbt = NBTUtil.fromText(item.getTable("components").toString());
@@ -73,9 +73,10 @@ public class FluidFilter extends GenericFilter<FluidStack> {
                 return Pair.of(null, "NO_VALID_FINGERPRINT");
             }
         }
+        // TODO: rename count to amount in 0.8
         if (item.containsKey("count")) {
             try {
-                fluidFilter.count = item.getInt("count");
+                fluidFilter.amount = item.getInt("count");
             } catch (LuaException luaException) {
                 return Pair.of(null, "NO_VALID_COUNT");
             }
@@ -103,8 +104,9 @@ public class FluidFilter extends GenericFilter<FluidStack> {
 
     @Override
     public boolean testAE(GenericStack genericStack) {
-        if (!APAddon.AE2.isLoaded())
+        if (!APAddon.AE2.isLoaded()) {
             return false;
+        }
 
         if (genericStack.what() instanceof AEFluidKey aeFluidKey) {
             return test(aeFluidKey.toStack(1));
@@ -114,8 +116,9 @@ public class FluidFilter extends GenericFilter<FluidStack> {
 
     @Override
     public boolean testRS(ResourceAmount resourceAmount) {
-        if (!APAddon.REFINEDSTORAGE.isLoaded())
+        if (!APAddon.REFINEDSTORAGE.isLoaded()) {
             return false;
+        }
 
         if (resourceAmount.resource() instanceof FluidResource fluidResource) {
             return test(VariantUtil.toFluidStack(fluidResource, 1));
@@ -123,17 +126,30 @@ public class FluidFilter extends GenericFilter<FluidStack> {
         return false;
     }
 
+    @Override
+    public FluidFilter copy() {
+        FluidFilter newFilter = new FluidFilter();
+        newFilter.fluid = this.fluid;
+        newFilter.tag = this.tag;
+        newFilter.componentsAsNbt = this.componentsAsNbt;
+        newFilter.components = this.components;
+        newFilter.amount = this.amount;
+        newFilter.fingerprint = this.fingerprint;
+        return newFilter;
+    }
+
+    public FluidFilter copyWithAmount(int amount) {
+        FluidFilter newFilter = this.copy();
+        newFilter.amount = amount;
+        return newFilter;
+    }
+
     public FluidStack toFluidStack() {
-        var result = new FluidStack(fluid, count);
+        FluidStack result = new FluidStack(fluid, amount);
         if (componentsAsNbt != null) {
             result.applyComponents(components);
         }
         return result;
-    }
-
-    public FluidFilter setCount(int count) {
-        this.count = count;
-        return this;
     }
 
     public boolean test(FluidStack stack) {
@@ -154,8 +170,8 @@ public class FluidFilter extends GenericFilter<FluidStack> {
         return true;
     }
 
-    public int getCount() {
-        return count;
+    public int getAmount() {
+        return amount;
     }
 
     public Fluid getFluid() {
@@ -172,7 +188,7 @@ public class FluidFilter extends GenericFilter<FluidStack> {
                 "fluid=" + FluidUtil.getRegistryKey(fluid) +
                 ", tag=" + tag +
                 ", components=" + componentsAsNbt +
-                ", count=" + count +
+                ", amount=" + amount +
                 ", fingerprint='" + fingerprint + '\'' +
                 '}';
     }

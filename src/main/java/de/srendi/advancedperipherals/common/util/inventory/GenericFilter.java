@@ -10,7 +10,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 
 public abstract class GenericFilter<T> {
 
-    private static final GenericFilter<?> EMPTY = new GenericFilter<>() {
+    private static final GenericFilter EMPTY = new GenericFilter() {
         @Override
         public boolean isEmpty() {
             return true;
@@ -30,7 +30,16 @@ public abstract class GenericFilter<T> {
         public boolean test(Object toTest) {
             return false;
         }
+
+        @Override
+        public GenericFilter copy() {
+            return this;
+        }
     };
+
+    public static <T> GenericFilter<T> empty() {
+        return (GenericFilter<T>) EMPTY;
+    }
 
     /**
      * Try to parse a raw filter table to any existing filter type. Could be a fluid filter, an item filter, maybe something else
@@ -80,8 +89,5 @@ public abstract class GenericFilter<T> {
 
     public abstract boolean test(T toTest);
 
-    public static GenericFilter<?> empty() {
-        return EMPTY;
-    }
-
+    public abstract GenericFilter<T> copy();
 }

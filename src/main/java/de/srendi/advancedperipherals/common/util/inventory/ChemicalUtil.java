@@ -21,67 +21,59 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
+import java.util.stream.IntStream;
 
 public class ChemicalUtil {
 
     public static long moveChemical(IChemicalHandler inventoryFrom, IChemicalHandler inventoryTo, ChemicalFilter filter) {
-        if (inventoryFrom == null) return 0;
+        if (inventoryFrom == null) {
+            return 0;
+        }
 
-        long amount = filter.getCount();
-        long transferableAmount = 0;
+        int fromSlot = filter.getFromSlot();
+        int toSlot = filter.getToSlot();
+        long needs = filter.getAmount();
+        if (needs <= 0) {
+            return 0;
+        }
 
         // The logic changes with storage systems since these systems do not have slots
-        if (inventoryFrom instanceof IStorageSystemChemicalHandler storageSystemHandler) {
-            ChemicalStack extracted = storageSystemHandler.extractChemical(filter, amount, Action.SIMULATE);
-            amount = Math.min(amount, extracted.getAmount());
-            if (amount > 0) {
-                ChemicalStack remaining;
-                int toSlot = filter.getToSlot();
-                if (toSlot >= 0) {
-                    remaining = inventoryTo.insertChemical(toSlot, extracted, Action.EXECUTE);
-                } else {
-                    remaining = inventoryTo.insertChemical(extracted, Action.EXECUTE);
-                }
-                amount -= remaining.getAmount();
-            }
-            if (amount > 0) {
-                transferableAmount += storageSystemHandler.extractChemical(filter, amount, Action.EXECUTE).getAmount();
-            }
-            return transferableAmount;
+        if (inventoryFrom instanceof IStorageSystemChemicalHandler storageFrom) {
+            ChemicalStack extracted = storageFrom.extractChemical(filter, Action.SIMULATE);
+            ChemicalStack remaining = toSlot <= 0
+                ? inventoryTo.insertChemical(extracted, Action.EXECUTE)
+                : inventoryTo.insertChemical(toSlot, extracted, Action.EXECUTE);
+            long inserted = extracted.getAmount() - remaining.getAmount();
+            needs -= inserted;
+            extracted.setAmount(inserted);
+            storageFrom.extractChemical(extracted, Action.EXECUTE);
+            return filter.getAmount() - needs;
         }
 
-        if (inventoryTo instanceof IStorageSystemChemicalHandler storageSystemHandler) {
-            int fromSlot = filter.getFromSlot();
-            if (fromSlot >= 0) {
-                transferableAmount = importChemical(inventoryFrom, filter, storageSystemHandler, amount, fromSlot);
-            } else {
-                int tanks = inventoryFrom.getChemicalTanks();
-                for (int i = 0; amount > 0 && i < tanks; i++) {
-                    long imported = importChemical(inventoryFrom, filter, storageSystemHandler, amount, i);
-                    transferableAmount += imported;
-                    amount -= imported;
-                }
-            }
-            return transferableAmount;
+        int[] fromSlots = (
+            fromSlot >= 0
+                ? IntStream.of(fromSlot)
+                : IntStream.range(0, inventoryFrom.getChemicalTanks())
+        )
+            .filter((i) -> filter.test(inventoryFrom.getChemicalInTank(i)))
+            .toArray();
+        if (fromSlots.length == 0) {
+            return 0;
         }
 
-        return transferableAmount;
-    }
-
-    private static long importChemical(IChemicalHandler inventoryFrom, ChemicalFilter filter, IStorageSystemChemicalHandler storageSystemHandler, long amount, int tank) {
-        long transferableAmount = 0;
-        ChemicalStack chemicalInTank = inventoryFrom.getChemicalInTank(tank);
-        if (filter.test(chemicalInTank)) {
-            ChemicalStack extracted = inventoryFrom.extractChemical(tank, amount, Action.SIMULATE);
-            if (!extracted.isEmpty()) {
-                long remaining = storageSystemHandler.insertChemical(extracted, Action.EXECUTE).getAmount();
-                long extracting = extracted.getAmount() - remaining;
-                if (extracting > 0) {
-                    transferableAmount += inventoryFrom.extractChemical(tank, extracting, Action.EXECUTE).getAmount();
-                }
+        for (int i : fromSlots) {
+            ChemicalStack extracted = inventoryFrom.extractChemical(i, needs, Action.SIMULATE);
+            if (extracted.isEmpty()) {
+                continue;
             }
+            ChemicalStack remaining = toSlot <= 0
+                ? inventoryTo.insertChemical(extracted, Action.EXECUTE)
+                : inventoryTo.insertChemical(toSlot, extracted, Action.EXECUTE);
+            long inserted = extracted.getAmount() - remaining.getAmount();
+            needs -= inserted;
+            inventoryFrom.extractChemical(i, inserted, Action.SIMULATE);
         }
-        return transferableAmount;
+        return filter.getAmount() - needs;
     }
 
     public static IChemicalHandler extractHandler(@Nullable Object object, @Nullable Level level, @Nullable BlockPos pos, @Nullable Direction direction) {

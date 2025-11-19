@@ -39,7 +39,7 @@ public class RSFluidHandler implements IStorageSystemFluidHandler {
         if (fluid == null)
             return FluidStack.EMPTY;
 
-        long amountExtracted = component.extract(fluid, filter.getCount(), simulate == FluidAction.SIMULATE ? Action.SIMULATE : Action.EXECUTE, Actor.EMPTY);
+        long amountExtracted = component.extract(fluid, filter.getAmount(), simulate == FluidAction.SIMULATE ? Action.SIMULATE : Action.EXECUTE, Actor.EMPTY);
         FluidStack extracted = VariantUtil.toFluidStack(fluid, (int) amountExtracted);
 
         AdvancedPeripherals.debug("Extracted fluid: " + extracted + " from filter: " + filter);

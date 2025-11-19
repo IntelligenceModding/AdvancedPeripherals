@@ -12,11 +12,10 @@ public interface IStorageSystemChemicalHandler extends IChemicalHandler {
      * stack sizes greater than 64.
      *
      * @param filter The parsed filter
-     * @param count The amount to extract
      * @param simulate Should this action be simulated
      * @return extracted from the slot, must be empty if nothing can be extracted. The returned ItemStack can be safely modified after, so item handlers should return a new or copied stack.
      */
-    ChemicalStack extractChemical(ChemicalFilter filter, long count, Action simulate);
+    ChemicalStack extractChemical(ChemicalFilter filter, Action simulate);
 
     @Override
     default int getChemicalTanks() {

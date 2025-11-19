@@ -710,7 +710,7 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (filter.rightPresent())
             return MethodResult.of(null, filter.getRight());
 
-        RSCraftJob job = new RSCraftJob(computer, getLevel(), filter.getLeft().getCount(), VariantUtil.ofFluidStack(filter.getLeft().toFluidStack()), getNetwork().getComponent(AutocraftingNetworkComponent.class));
+        RSCraftJob job = new RSCraftJob(computer, getLevel(), filter.getLeft().getAmount(), VariantUtil.ofFluidStack(filter.getLeft().toFluidStack()), getNetwork().getComponent(AutocraftingNetworkComponent.class));
         bridge.addJob(job);
         return MethodResult.of(job);
     }
@@ -728,7 +728,7 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (filter.rightPresent())
             return MethodResult.of(null, filter.getRight());
 
-        RSCraftJob job = new RSCraftJob(computer, getLevel(), filter.getLeft().getCount(), ChemicalResource.ofChemicalStack(filter.getLeft().toChemicalStack()), getNetwork().getComponent(AutocraftingNetworkComponent.class));
+        RSCraftJob job = new RSCraftJob(computer, getLevel(), filter.getLeft().getAmount(), ChemicalResource.ofChemicalStack(filter.getLeft().toChemicalStack()), getNetwork().getComponent(AutocraftingNetworkComponent.class));
         bridge.addJob(job);
         return MethodResult.of(job);
     }

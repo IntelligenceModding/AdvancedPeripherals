@@ -36,13 +36,13 @@ public class RSItemHandler implements IStorageSystemItemHandler {
     }
 
     @Override
-    public ItemStack extractItem(ItemFilter filter, int count, boolean simulate) {
+    public ItemStack extractItem(ItemFilter filter, boolean simulate) {
         AdvancedPeripherals.debug("Trying to extract item from filter: " + filter);
         ItemResource itemResource = RSApi.getItem(network, filter);
         if (itemResource == null)
             return ItemStack.EMPTY;
 
-        long extractedAmount = component.extract(itemResource, count, simulate ? Action.SIMULATE : Action.EXECUTE, Actor.EMPTY);
+        long extractedAmount = component.extract(itemResource, filter.getCount(), simulate ? Action.SIMULATE : Action.EXECUTE, Actor.EMPTY);
         ItemStack extracted = itemResource.toItemStack(extractedAmount);
 
         AdvancedPeripherals.debug("Extracted item: " + extracted + " from filter: " + filter);

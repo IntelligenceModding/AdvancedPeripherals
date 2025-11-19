@@ -139,6 +139,26 @@ public class ItemFilter extends GenericFilter<ItemStack> {
         return false;
     }
 
+    @Override
+    public ItemFilter copy() {
+        ItemFilter newFilter = new ItemFilter();
+        newFilter.item = this.item;
+        newFilter.tag = this.tag;
+        newFilter.componentsAsNbt = this.componentsAsNbt;
+        newFilter.components = this.components;
+        newFilter.count = this.count;
+        newFilter.fingerprint = this.fingerprint;
+        newFilter.fromSlot = this.fromSlot;
+        newFilter.toSlot = this.toSlot;
+        return newFilter;
+    }
+
+    public ItemFilter copyWithCount(int count) {
+        ItemFilter newFilter = this.copy();
+        newFilter.count = count;
+        return newFilter;
+    }
+
     public ItemStack toItemStack() {
         var result = new ItemStack(item, count);
         if (components != null) {

@@ -35,13 +35,13 @@ public class RSChemicalHandler implements IStorageSystemChemicalHandler {
     }
 
     @Override
-    public ChemicalStack extractChemical(ChemicalFilter filter, long count, mekanism.api.Action simulate) {
+    public ChemicalStack extractChemical(ChemicalFilter filter, mekanism.api.Action simulate) {
         AdvancedPeripherals.debug("Trying to extract chemical from filter: " + filter);
         ChemicalResource chemical = RSApi.getChemical(network, filter);
         if (chemical == null)
             return ChemicalStack.EMPTY;
 
-        long amountExtracted = component.extract(chemical, filter.getCount(), simulate == mekanism.api.Action.SIMULATE ? Action.SIMULATE : Action.EXECUTE, Actor.EMPTY);
+        long amountExtracted = component.extract(chemical, filter.getAmount(), simulate == mekanism.api.Action.SIMULATE ? Action.SIMULATE : Action.EXECUTE, Actor.EMPTY);
         ChemicalStack extracted = ChemicalUtil.toChemicalStack(chemical.chemical(), amountExtracted);
 
         AdvancedPeripherals.debug("Extracted chemical: " + extracted + " from filter: " + filter);

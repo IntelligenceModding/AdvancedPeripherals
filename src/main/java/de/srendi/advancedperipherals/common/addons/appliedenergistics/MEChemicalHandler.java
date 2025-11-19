@@ -44,14 +44,14 @@ public class MEChemicalHandler implements IStorageSystemChemicalHandler {
 
     @NotNull
     @Override
-    public ChemicalStack extractChemical(ChemicalFilter filter, long count, Action simulate) {
+    public ChemicalStack extractChemical(ChemicalFilter filter, Action simulate) {
         Pair<Long, MekanismKey> chemicalKey = AEApi.findAEChemicalFromFilter(storageMonitor, null, filter);
         if (chemicalKey.getRight() == null)
             return ChemicalStack.EMPTY;
 
         ChemicalStack extracted = chemicalKey.getRight().getStack();
 
-        long amountExtracted = storageMonitor.extract(chemicalKey.getRight(), count, simulate == Action.SIMULATE ? Actionable.SIMULATE : Actionable.MODULATE, actionSource);
+        long amountExtracted = storageMonitor.extract(chemicalKey.getRight(), filter.getAmount(), simulate == Action.SIMULATE ? Actionable.SIMULATE : Actionable.MODULATE, actionSource);
         extracted.setAmount(amountExtracted);
         AdvancedPeripherals.debug("Extracted chemical: " + extracted + " from filter: " + filter);
         return extracted;

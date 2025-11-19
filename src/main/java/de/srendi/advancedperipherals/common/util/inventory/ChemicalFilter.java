@@ -22,7 +22,7 @@ public class ChemicalFilter extends GenericFilter<ChemicalStack> {
 
     private Holder<Chemical> chemical = MekanismAPI.EMPTY_CHEMICAL.getAsHolder();
     private TagKey<Chemical> tag = null;
-    private long count = 1000;
+    private long amount = 1000;
     private String fingerprint = "";
     public int fromSlot = -1;
     public int toSlot = -1;
@@ -58,21 +58,22 @@ public class ChemicalFilter extends GenericFilter<ChemicalStack> {
         }
         if (item.containsKey("fromSlot")) {
             try {
-                chemicalFilter.fromSlot = item.getInt( "fromSlot");
+                chemicalFilter.fromSlot = item.getInt("fromSlot");
             } catch (LuaException luaException) {
                 return Pair.of(null, "NO_VALID_FROMSLOT");
             }
         }
         if (item.containsKey("toSlot")) {
             try {
-                chemicalFilter.toSlot = item.getInt( "toSlot");
+                chemicalFilter.toSlot = item.getInt("toSlot");
             } catch (LuaException luaException) {
                 return Pair.of(null, "NO_VALID_TOSLOT");
             }
         }
+        // TODO: rename count to amount in 0.8
         if (item.containsKey("count")) {
             try {
-                chemicalFilter.count = item.getInt( "count");
+                chemicalFilter.amount = item.getLong("count");
             } catch (LuaException luaException) {
                 return Pair.of(null, "NO_VALID_COUNT");
             }
@@ -111,8 +112,26 @@ public class ChemicalFilter extends GenericFilter<ChemicalStack> {
         return false;
     }
 
+    @Override
+    public ChemicalFilter copy() {
+        ChemicalFilter newFilter = new ChemicalFilter();
+        newFilter.chemical = this.chemical;
+        newFilter.tag = this.tag;
+        newFilter.amount = this.amount;
+        newFilter.fingerprint = this.fingerprint;
+        newFilter.fromSlot = this.fromSlot;
+        newFilter.toSlot = this.toSlot;
+        return newFilter;
+    }
+
+    public ChemicalFilter copyWithAmount(int amount) {
+        ChemicalFilter newFilter = this.copy();
+        newFilter.amount = amount;
+        return newFilter;
+    }
+
     public ChemicalStack toChemicalStack() {
-        return new ChemicalStack(chemical, count);
+        return new ChemicalStack(chemical, amount);
     }
 
     public boolean test(ChemicalStack stack) {
@@ -134,8 +153,8 @@ public class ChemicalFilter extends GenericFilter<ChemicalStack> {
         return true;
     }
 
-    public long getCount() {
-        return count;
+    public long getAmount() {
+        return amount;
     }
 
     public Holder<Chemical> getChemical() {
@@ -155,7 +174,7 @@ public class ChemicalFilter extends GenericFilter<ChemicalStack> {
         return "ChemicalFilter{" +
                 "item=" + chemical.getRegisteredName() +
                 ", tag=" + tag +
-                ", count=" + count +
+                ", amount=" + amount +
                 ", fingerprint='" + fingerprint + '\'' +
                 ", fromSlot=" + fromSlot +
                 ", toSlot=" + toSlot +
