@@ -15,8 +15,10 @@ import mekanism.common.capabilities.Capabilities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.neoforged.neoforge.items.ItemHandlerHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -27,61 +29,74 @@ public class ChemicalUtil {
     public static long moveChemical(IChemicalHandler inventoryFrom, IChemicalHandler inventoryTo, ChemicalFilter filter) {
         if (inventoryFrom == null) return 0;
 
-        long amount = filter.getCount();
-        long transferableAmount = 0;
+        int fromSlot = filter.getFromSlot();
+        int toSlot = filter.getToSlot();
 
-        // The logic changes with storage systems since these systems do not have slots
+        long amount = filter.getCount();
+        long transferred = 0;
+
+        // The logic changes when exporting from storage systems since these systems do not have slots
         if (inventoryFrom instanceof IStorageSystemChemicalHandler storageSystemHandler) {
-            ChemicalStack extracted = storageSystemHandler.extractChemical(filter, amount, Action.SIMULATE);
-            amount = Math.min(amount, extracted.getAmount());
-            if (amount > 0) {
+            for (int i = toSlot == -1 ? 0 : toSlot; i < (toSlot == -1 ? inventoryTo.getChemicalTanks() : toSlot + 1); i++) {
+                ChemicalStack existing = inventoryTo.getChemicalInTank(i);
+                ChemicalStack extracted;
+                if (existing.isEmpty()) {
+                    extracted = storageSystemHandler.extractChemical(filter, filter.getCount() - transferred, Action.SIMULATE);
+                }
+                else { // If chemical already exists in tank, try to export same type of chemical
+                    extracted = storageSystemHandler.extractChemical(ChemicalFilter.fromStack(existing), filter.getCount() - transferred, Action.SIMULATE);
+                    if (!filter.test(extracted))
+                        extracted = ChemicalStack.EMPTY;
+                }
+                if (extracted.isEmpty())
+                    continue;
                 ChemicalStack remaining;
-                int toSlot = filter.getToSlot();
-                if (toSlot >= 0) {
-                    remaining = inventoryTo.insertChemical(toSlot, extracted, Action.EXECUTE);
-                } else {
+                if (toSlot == -1) { // Try to use this chemical handler's distribution
                     remaining = inventoryTo.insertChemical(extracted, Action.EXECUTE);
                 }
-                amount -= remaining.getAmount();
-            }
-            if (amount > 0) {
-                transferableAmount += storageSystemHandler.extractChemical(filter, amount, Action.EXECUTE).getAmount();
-            }
-            return transferableAmount;
-        }
-
-        if (inventoryTo instanceof IStorageSystemChemicalHandler storageSystemHandler) {
-            int fromSlot = filter.getFromSlot();
-            if (fromSlot >= 0) {
-                transferableAmount = importChemical(inventoryFrom, filter, storageSystemHandler, amount, fromSlot);
-            } else {
-                int tanks = inventoryFrom.getChemicalTanks();
-                for (int i = 0; amount > 0 && i < tanks; i++) {
-                    long imported = importChemical(inventoryFrom, filter, storageSystemHandler, amount, i);
-                    transferableAmount += imported;
-                    amount -= imported;
+                else {
+                    remaining = inventoryTo.insertChemical(i, extracted, Action.EXECUTE);
                 }
+                transferred += storageSystemHandler.extractChemical(ChemicalFilter.fromStack(extracted), extracted.getAmount() - remaining.getAmount(), Action.EXECUTE).getAmount();
+                if (transferred >= filter.getCount())
+                    break;
             }
-            return transferableAmount;
+            return transferred;
         }
 
-        return transferableAmount;
-    }
-
-    private static long importChemical(IChemicalHandler inventoryFrom, ChemicalFilter filter, IStorageSystemChemicalHandler storageSystemHandler, long amount, int tank) {
-        long transferableAmount = 0;
-        ChemicalStack chemicalInTank = inventoryFrom.getChemicalInTank(tank);
-        if (filter.test(chemicalInTank)) {
-            ChemicalStack extracted = inventoryFrom.extractChemical(tank, amount, Action.SIMULATE);
-            if (!extracted.isEmpty()) {
-                long remaining = storageSystemHandler.insertChemical(extracted, Action.EXECUTE).getAmount();
-                long extracting = extracted.getAmount() - remaining;
-                if (extracting > 0) {
-                    transferableAmount += inventoryFrom.extractChemical(tank, extracting, Action.EXECUTE).getAmount();
+        for (int i = fromSlot == -1 ? 0 : fromSlot; i < (fromSlot == -1 ? inventoryFrom.getChemicalTanks() : fromSlot + 1); i++) {
+            if (filter.test(inventoryFrom.getChemicalInTank(i))) {
+                ChemicalStack extracted;
+                if (fromSlot == -1) { // Try to use this chemical handler's distribution
+                    ChemicalStack toExtract = inventoryFrom.getChemicalInTank(i).copyWithAmount(filter.getCount() - transferred);
+                    extracted = inventoryFrom.extractChemical(toExtract, Action.SIMULATE);
                 }
+                else {
+                    extracted = inventoryFrom.extractChemical(i, filter.getCount() - transferred, Action.SIMULATE);
+                }
+                if (extracted.isEmpty())
+                    continue;
+
+                ChemicalStack remaining;
+                if (toSlot == -1 && !(inventoryTo instanceof IStorageSystemItemHandler)) {  // Try to use this chemical handler's distribution
+                    remaining = inventoryTo.insertChemical(extracted, Action.EXECUTE);
+                } else {
+                    remaining = inventoryTo.insertChemical(toSlot, extracted, Action.EXECUTE); // toSlot is ignored for storage systems
+                }
+
+                if (fromSlot == -1) { // Try to use this chemical handler's distribution
+                    extracted.setAmount(extracted.getAmount() - remaining.getAmount());
+                    transferred += inventoryFrom.extractChemical(extracted, Action.EXECUTE).getAmount();
+                }
+                else {
+                    transferred += inventoryFrom.extractChemical(i, filter.getCount() - remaining.getAmount(), Action.EXECUTE).getAmount();
+                }
+                if (transferred >= filter.getCount())
+                    break;
             }
         }
-        return transferableAmount;
+        return transferred;
+
     }
 
     public static IChemicalHandler extractHandler(@Nullable Object object, @Nullable Level level, @Nullable BlockPos pos, @Nullable Direction direction) {

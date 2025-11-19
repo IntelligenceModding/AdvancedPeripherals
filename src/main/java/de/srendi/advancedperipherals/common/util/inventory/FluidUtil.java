@@ -31,6 +31,7 @@ public class FluidUtil {
 
         int transferred = 0;
 
+        // The logic changes when exporting from storage systems since these systems do not have slots
         if (inventoryFrom instanceof IStorageSystemFluidHandler storageSystemHandler) {
             for (int i = 0; i < inventoryTo.getTanks(); i++) {
                 FluidStack existing = inventoryTo.getFluidInTank(i);
@@ -38,7 +39,7 @@ public class FluidUtil {
                 if (existing.isEmpty()) {
                     extracted = storageSystemHandler.drain(filter, filter.getCount() - transferred, IFluidHandler.FluidAction.SIMULATE);
                 }
-                else { // If fluid already exists in slot, try to export same type of fluid
+                else { // If fluid already exists in tank, try to export same type of fluid
                     extracted = storageSystemHandler.drain(FluidFilter.fromStack(existing),filter.getCount() - transferred,  IFluidHandler.FluidAction.SIMULATE);
                     if (!filter.test(extracted))
                         extracted = FluidStack.EMPTY;
