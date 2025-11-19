@@ -55,8 +55,7 @@ public class InventoryUtil {
                 ItemStack extracted;
                 if (existing.isEmpty()) {
                     extracted = storageSystemHandler.extractItem(filter, filter.getCount() - transferred, true);
-                }
-                else { // If item already exists in slot, try to export same type of item
+                } else { // If item already exists in slot, try to export same type of item
                     extracted = storageSystemHandler.extractItem(ItemFilter.fromStack(existing), filter.getCount() - transferred, true);
                     if (!filter.test(extracted))
                         extracted = ItemStack.EMPTY;

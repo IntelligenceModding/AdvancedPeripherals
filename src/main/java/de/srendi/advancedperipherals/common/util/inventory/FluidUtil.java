@@ -38,9 +38,8 @@ public class FluidUtil {
                 FluidStack extracted;
                 if (existing.isEmpty()) {
                     extracted = storageSystemHandler.drain(filter, filter.getCount() - transferred, IFluidHandler.FluidAction.SIMULATE);
-                }
-                else { // If fluid already exists in tank, try to export same type of fluid
-                    extracted = storageSystemHandler.drain(FluidFilter.fromStack(existing),filter.getCount() - transferred,  IFluidHandler.FluidAction.SIMULATE);
+                } else { // If fluid already exists in tank, try to export same type of fluid
+                    extracted = storageSystemHandler.drain(FluidFilter.fromStack(existing), filter.getCount() - transferred, IFluidHandler.FluidAction.SIMULATE);
                     if (!filter.test(extracted))
                         extracted = FluidStack.EMPTY;
                 }

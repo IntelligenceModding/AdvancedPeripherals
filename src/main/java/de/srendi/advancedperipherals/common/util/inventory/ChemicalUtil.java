@@ -15,10 +15,8 @@ import mekanism.common.capabilities.Capabilities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.neoforged.neoforge.items.ItemHandlerHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -42,8 +40,7 @@ public class ChemicalUtil {
                 ChemicalStack extracted;
                 if (existing.isEmpty()) {
                     extracted = storageSystemHandler.extractChemical(filter, filter.getCount() - transferred, Action.SIMULATE);
-                }
-                else { // If chemical already exists in tank, try to export same type of chemical
+                } else { // If chemical already exists in tank, try to export same type of chemical
                     extracted = storageSystemHandler.extractChemical(ChemicalFilter.fromStack(existing), filter.getCount() - transferred, Action.SIMULATE);
                     if (!filter.test(extracted))
                         extracted = ChemicalStack.EMPTY;
@@ -53,8 +50,7 @@ public class ChemicalUtil {
                 ChemicalStack remaining;
                 if (toSlot == -1) { // Try to use this chemical handler's distribution
                     remaining = inventoryTo.insertChemical(extracted, Action.EXECUTE);
-                }
-                else {
+                } else {
                     remaining = inventoryTo.insertChemical(i, extracted, Action.EXECUTE);
                 }
                 transferred += storageSystemHandler.extractChemical(ChemicalFilter.fromStack(extracted), extracted.getAmount() - remaining.getAmount(), Action.EXECUTE).getAmount();
@@ -70,8 +66,7 @@ public class ChemicalUtil {
                 if (fromSlot == -1) { // Try to use this chemical handler's distribution
                     ChemicalStack toExtract = inventoryFrom.getChemicalInTank(i).copyWithAmount(filter.getCount() - transferred);
                     extracted = inventoryFrom.extractChemical(toExtract, Action.SIMULATE);
-                }
-                else {
+                } else {
                     extracted = inventoryFrom.extractChemical(i, filter.getCount() - transferred, Action.SIMULATE);
                 }
                 if (extracted.isEmpty())
@@ -87,8 +82,7 @@ public class ChemicalUtil {
                 if (fromSlot == -1) { // Try to use this chemical handler's distribution
                     extracted.setAmount(extracted.getAmount() - remaining.getAmount());
                     transferred += inventoryFrom.extractChemical(extracted, Action.EXECUTE).getAmount();
-                }
-                else {
+                } else {
                     transferred += inventoryFrom.extractChemical(i, filter.getCount() - remaining.getAmount(), Action.EXECUTE).getAmount();
                 }
                 if (transferred >= filter.getCount())
