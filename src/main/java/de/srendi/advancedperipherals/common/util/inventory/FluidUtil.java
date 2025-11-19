@@ -29,36 +29,44 @@ public class FluidUtil {
     public static int moveFluid(IFluidHandler inventoryFrom, IFluidHandler inventoryTo, FluidFilter filter) {
         if (inventoryFrom == null) return 0;
 
-        int amount = filter.getCount();
-        int transferableAmount = 0;
+        int transferred = 0;
 
-        // The logic changes with storage systems since these systems do not have slots
         if (inventoryFrom instanceof IStorageSystemFluidHandler storageSystemHandler) {
-            FluidStack extracted = storageSystemHandler.drain(filter, IFluidHandler.FluidAction.SIMULATE);
-            int inserted = inventoryTo.fill(extracted, IFluidHandler.FluidAction.EXECUTE);
-
-            transferableAmount += storageSystemHandler.drain(filter.setCount(inserted), IFluidHandler.FluidAction.EXECUTE).getAmount();
-
-            return transferableAmount;
+            for (int i = 0; i < inventoryTo.getTanks(); i++) {
+                FluidStack existing = inventoryTo.getFluidInTank(i);
+                FluidStack extracted;
+                if (existing.isEmpty()) {
+                    extracted = storageSystemHandler.drain(filter, filter.getCount() - transferred, IFluidHandler.FluidAction.SIMULATE);
+                }
+                else { // If fluid already exists in slot, try to export same type of fluid
+                    extracted = storageSystemHandler.drain(FluidFilter.fromStack(existing),filter.getCount() - transferred,  IFluidHandler.FluidAction.SIMULATE);
+                    if (!filter.test(extracted))
+                        extracted = FluidStack.EMPTY;
+                }
+                if (extracted.isEmpty())
+                    continue;
+                int inserted = inventoryTo.fill(extracted, IFluidHandler.FluidAction.EXECUTE);
+                transferred += storageSystemHandler.drain(FluidFilter.fromStack(extracted), inserted, IFluidHandler.FluidAction.EXECUTE).getAmount();
+                if (transferred >= filter.getCount())
+                    break;
+            }
+            return transferred;
         }
 
-        if (inventoryTo instanceof IStorageSystemFluidHandler storageSystemHandler) {
-            if (filter.test(inventoryFrom.getFluidInTank(0))) {
-                FluidStack toExtract = inventoryFrom.getFluidInTank(0).copy();
-                toExtract.setAmount(amount);
+        for (int i = 0; i < inventoryFrom.getTanks(); i++) {
+            if (filter.test(inventoryFrom.getFluidInTank(i))) {
+                FluidStack toExtract = inventoryFrom.getFluidInTank(i).copyWithAmount(filter.getCount() - transferred);
                 FluidStack extracted = inventoryFrom.drain(toExtract, IFluidHandler.FluidAction.SIMULATE);
                 if (extracted.isEmpty())
-                    return 0;
-                int inserted = storageSystemHandler.fill(extracted, IFluidHandler.FluidAction.EXECUTE);
-
+                    continue;
+                int inserted = inventoryTo.fill(extracted, IFluidHandler.FluidAction.EXECUTE);
                 extracted.setAmount(inserted);
-                transferableAmount += inventoryFrom.drain(extracted, IFluidHandler.FluidAction.EXECUTE).getAmount();
+                transferred += inventoryFrom.drain(extracted, IFluidHandler.FluidAction.EXECUTE).getAmount();
+                if (transferred >= filter.getCount())
+                    break;
             }
-
-            return transferableAmount;
         }
-
-        return transferableAmount;
+        return transferred;
     }
 
     public static IFluidHandler extractHandler(@Nullable Object object, @Nullable Level level, @Nullable BlockPos pos, @Nullable Direction direction) {

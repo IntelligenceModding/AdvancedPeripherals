@@ -33,13 +33,13 @@ public class RSFluidHandler implements IStorageSystemFluidHandler {
 
     @NotNull
     @Override
-    public FluidStack drain(FluidFilter filter, FluidAction simulate) {
+    public FluidStack drain(FluidFilter filter, int count, FluidAction simulate) {
         AdvancedPeripherals.debug("Trying to extract fluid from filter: " + filter);
         FluidResource fluid = RSApi.getFluid(network, filter);
         if (fluid == null)
             return FluidStack.EMPTY;
 
-        long amountExtracted = component.extract(fluid, filter.getCount(), simulate == FluidAction.SIMULATE ? Action.SIMULATE : Action.EXECUTE, Actor.EMPTY);
+        long amountExtracted = component.extract(fluid, count, simulate == FluidAction.SIMULATE ? Action.SIMULATE : Action.EXECUTE, Actor.EMPTY);
         FluidStack extracted = VariantUtil.toFluidStack(fluid, (int) amountExtracted);
 
         AdvancedPeripherals.debug("Extracted fluid: " + extracted + " from filter: " + filter);

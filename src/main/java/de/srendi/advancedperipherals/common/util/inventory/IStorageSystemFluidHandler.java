@@ -17,7 +17,7 @@ public interface IStorageSystemFluidHandler extends IFluidHandler {
      * @return extracted from the slot, must be empty if nothing can be extracted. The returned ItemStack can be safely modified after, so item handlers should return a new or copied stack.
      */
     @NotNull
-    FluidStack drain(FluidFilter filter, FluidAction simulate);
+    FluidStack drain(FluidFilter filter, int count, FluidAction simulate);
 
     @Override
     default int getTanks() {
