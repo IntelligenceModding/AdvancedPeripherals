@@ -77,7 +77,13 @@ public class FluidFilter extends GenericFilter<FluidStack> {
             }
         }
         // TODO: rename count to amount in 0.8
-        if (item.containsKey("count")) {
+        if (item.containsKey("amount")) {
+            try {
+                fluidFilter.amount = item.getInt("amount");
+            } catch (LuaException luaException) {
+                return Pair.of(null, "NO_VALID_COUNT");
+            }
+        } else if (item.containsKey("count")) {
             try {
                 fluidFilter.amount = item.getInt("count");
             } catch (LuaException luaException) {
@@ -90,9 +96,13 @@ public class FluidFilter extends GenericFilter<FluidStack> {
     }
 
     public static FluidFilter fromStack(FluidStack stack) {
+        return fromStackWithAmount(stack, stack.getAmount());
+    }
+
+    public static FluidFilter fromStackWithAmount(FluidStack stack, int amount) {
         FluidFilter filter = createEmpty();
         filter.fluid = stack.getFluid();
-        filter.amount = stack.getAmount();
+        filter.amount = amount;
         filter.componentsAsNbt = DataComponentUtil.toNbt(stack.getComponentsPatch());
         filter.components = stack.getComponents();
         return filter;

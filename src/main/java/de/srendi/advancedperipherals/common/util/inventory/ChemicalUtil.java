@@ -37,20 +37,19 @@ public class ChemicalUtil {
             return 0;
         }
 
+        ChemicalInserter inserter = inventoryTo instanceof IStorageSystemChemicalHandler storageTo
+            ? (stack) -> storageTo.insertChemical(stack, Action.EXECUTE)
+            : toSlot < 0
+                ? (stack) -> inventoryTo.insertChemical(stack, Action.EXECUTE)
+                : (stack) -> inventoryTo.insertChemical(toSlot, stack, Action.EXECUTE);
+
         // The logic changes with storage systems since these systems do not have slots
         if (inventoryFrom instanceof IStorageSystemChemicalHandler storageFrom) {
-            ChemicalStack extracted = storageFrom.extractChemical(filter, Action.SIMULATE);
-            ChemicalStack remaining = toSlot < 0
-                ? inventoryTo.insertChemical(extracted, Action.EXECUTE)
-                : inventoryTo.insertChemical(toSlot, extracted, Action.EXECUTE);
-            long inserted = extracted.getAmount() - remaining.getAmount();
-            if (inserted == 0) {
-                return 0;
-            }
-            needs -= inserted;
-            extracted.setAmount(inserted);
-            storageFrom.extractChemical(ChemicalFilter.fromStack(extracted), Action.EXECUTE);
-            return filter.getAmount() - needs;
+            return storageFrom.extractChemicals(
+                filter,
+                (extracted) -> extracted.getAmount() - inserter.insertChemical(extracted).getAmount(),
+                Action.EXECUTE
+            );
         }
 
         int[] fromSlots = (
@@ -69,12 +68,16 @@ public class ChemicalUtil {
             if (extracted.isEmpty()) {
                 continue;
             }
-            ChemicalStack remaining = toSlot < 0
-                ? inventoryTo.insertChemical(extracted, Action.EXECUTE)
-                : inventoryTo.insertChemical(toSlot, extracted, Action.EXECUTE);
+            ChemicalStack remaining = inserter.insertChemical(extracted);
             long inserted = extracted.getAmount() - remaining.getAmount();
+            if (inserted == 0) {
+                continue;
+            }
             needs -= inserted;
             inventoryFrom.extractChemical(i, inserted, Action.SIMULATE);
+            if (needs <= 0) {
+                break;
+            }
         }
         return filter.getAmount() - needs;
     }
@@ -138,5 +141,10 @@ public class ChemicalUtil {
 
     public static ResourceLocation getRegistryKey(ChemicalStack chemicalStack) {
         return MekanismAPI.CHEMICAL_REGISTRY.getKey(chemicalStack.getChemical());
+    }
+
+    @FunctionalInterface
+    private interface ChemicalInserter {
+        ChemicalStack insertChemical(ChemicalStack stack);
     }
 }

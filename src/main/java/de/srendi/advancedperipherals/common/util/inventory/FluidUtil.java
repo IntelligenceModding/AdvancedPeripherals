@@ -38,18 +38,11 @@ public class FluidUtil {
 
         // The logic changes with storage systems since these systems do not have slots
         if (inventoryFrom instanceof IStorageSystemFluidHandler storageFrom) {
-            FluidStack extracted = storageFrom.drain(filter, IFluidHandler.FluidAction.SIMULATE);
-            if (extracted.isEmpty()) {
-                return 0;
-            }
-            int inserted = inventoryTo.fill(extracted, IFluidHandler.FluidAction.EXECUTE);
-            if (inserted == 0) {
-                return 0;
-            }
-            needs -= inserted;
-            extracted.setAmount(inserted);
-            storageFrom.drain(FluidFilter.fromStack(extracted), IFluidHandler.FluidAction.EXECUTE);
-            return filter.getAmount() - needs;
+            return storageFrom.extractFluids(
+                filter,
+                (extracted) -> inventoryTo.fill(extracted, IFluidHandler.FluidAction.EXECUTE),
+                IFluidHandler.FluidAction.EXECUTE
+            );
         }
 
         for (int i = 0; i < inventoryFrom.getTanks() && needs >= 0; i++) {
@@ -62,6 +55,9 @@ public class FluidUtil {
                 continue;
             }
             int inserted = inventoryTo.fill(extracted, IFluidHandler.FluidAction.EXECUTE);
+            if (inserted == 0) {
+                continue;
+            }
             needs -= inserted;
             extracted.setAmount(inserted);
             inventoryFrom.drain(extracted, IFluidHandler.FluidAction.EXECUTE);
@@ -85,8 +81,7 @@ public class FluidUtil {
 
     @Nullable
     public static IFluidHandler getHandlerFromDirection(@NotNull String direction, @NotNull IPeripheralOwner owner) throws LuaException {
-        Level level = owner.getLevel();
-        Objects.requireNonNull(level);
+        Level level = Objects.requireNonNull(owner.getLevel());
         Direction relativeDirection = CoordUtil.getDirection(owner.getOrientation(), direction);
         if (relativeDirection == null)
             return null;
@@ -124,6 +119,6 @@ public class FluidUtil {
     }
 
     public static ResourceLocation getRegistryKey(FluidStack fluid) {
-        return BuiltInRegistries.FLUID.getKey(fluid.copy().getFluid());
+        return BuiltInRegistries.FLUID.getKey(fluid.getFluid());
     }
 }

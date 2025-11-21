@@ -56,23 +56,15 @@ public class InventoryUtil {
             return 0;
         }
 
+        ItemInserter inserter = inventoryTo instanceof IStorageSystemItemHandler storageTo
+            ? (stack) -> storageTo.insertItem(stack, false)
+            : toSlot < 0
+                ? (stack) -> ItemHandlerHelper.insertItem(inventoryTo, stack, false)
+                : (stack) -> inventoryTo.insertItem(toSlot, stack, false);
+
         // The logic changes with storage systems since these systems do not have slots
         if (inventoryFrom instanceof IStorageSystemItemHandler storageFrom) {
-            ItemStack extracted = storageFrom.extractItem(filter, true);
-            if (extracted.isEmpty()) {
-                return 0;
-            }
-            ItemStack remaining = toSlot < 0
-                ? ItemHandlerHelper.insertItem(inventoryTo, extracted, false)
-                : inventoryTo.insertItem(toSlot, extracted, false);
-            int inserted = extracted.getCount() - remaining.getCount();
-            if (inserted == 0) {
-                return 0;
-            }
-            needs -= inserted;
-            extracted.setCount(inserted);
-            storageFrom.extractItem(ItemFilter.fromStack(extracted), false);
-            return filter.getCount() - needs;
+            return storageFrom.extractItems(filter, (extracted) -> extracted.getCount() - inserter.insertItem(extracted).getCount(), false);
         }
 
         int[] fromSlots = (
@@ -86,32 +78,16 @@ public class InventoryUtil {
             return 0;
         }
 
-        if (inventoryTo instanceof IStorageSystemItemHandler storageTo) {
-            for (int i : fromSlots) {
-                ItemStack extracted = inventoryFrom.extractItem(i, needs, true);
-                if (extracted.isEmpty()) {
-                    continue;
-                }
-                ItemStack remaining = storageTo.insertItem(toSlot, extracted, false);
-                int inserted = extracted.getCount() - remaining.getCount();
-                needs -= inserted;
-                inventoryFrom.extractItem(i, inserted, false);
-                if (needs <= 0) {
-                    break;
-                }
-            }
-            return filter.getCount() - needs;
-        }
-
         for (int i : fromSlots) {
             ItemStack extracted = inventoryFrom.extractItem(i, needs, true);
             if (extracted.isEmpty()) {
                 continue;
             }
-            ItemStack remaining = toSlot < 0
-                ? ItemHandlerHelper.insertItem(inventoryTo, extracted, false)
-                : inventoryTo.insertItem(toSlot, extracted, false);
+            ItemStack remaining = inserter.insertItem(extracted);
             int inserted = extracted.getCount() - remaining.getCount();
+            if (inserted == 0) {
+                continue;
+            }
             needs -= inserted;
             inventoryFrom.extractItem(i, inserted, false);
             if (needs <= 0) {
@@ -142,5 +118,10 @@ public class InventoryUtil {
             return null;
         }
         return extractHandler(target, level, target.getBlockPos(), relativeDirection.getOpposite());
+    }
+
+    @FunctionalInterface
+    private interface ItemInserter {
+        ItemStack insertItem(ItemStack stack);
     }
 }

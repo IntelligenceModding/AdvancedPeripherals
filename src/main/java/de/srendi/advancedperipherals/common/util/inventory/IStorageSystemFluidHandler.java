@@ -9,53 +9,52 @@ public interface IStorageSystemFluidHandler extends IFluidHandler {
 
     /**
      * Used to extract an item from the system via a peripheral.
-     * Uses a filter to find the right item. The amount should never be greater than 64
-     * stack sizes greater than 64.
+     * Uses a filter to find the right item.
      *
      * @param filter The parsed filter
+     * @param processor The extractation processor
      * @param simulate Should this action be simulated
-     * @return extracted from the slot, must be empty if nothing can be extracted. The returned ItemStack can be safely modified after, so item handlers should return a new or copied stack.
+     * @return extracted fluid amount
      */
-    @NotNull
-    FluidStack drain(FluidFilter filter, FluidAction simulate);
+    int extractFluids(FluidFilter filter, StorageProcessor<FluidStack> processor, FluidAction action);
 
     @Override
     default int getTanks() {
         return 1;
     }
 
-    /*
-    These 5 methods are ignored in our transferring logic. Storage Systems do not respect tanks directly and to extract we need a filter
+    /**
+     * These 5 methods below are ignored in our transferring logic.
+     * Storage Systems do not respect tanks directly and to extract we need a filter
      */
 
     @NotNull
     @Override
     default FluidStack drain(int maxDrain, FluidAction action) {
-        return FluidStack.EMPTY;
-
+        throw new UnsupportedOperationException();
     }
 
     @NotNull
     @Override
     default FluidStack drain(FluidStack resource, FluidAction action) {
-        return FluidStack.EMPTY;
+        throw new UnsupportedOperationException();
 
     }
 
     @NotNull
     @Override
     default FluidStack getFluidInTank(int tank) {
-        return FluidStack.EMPTY;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     default boolean isFluidValid(int tank, @NotNull FluidStack stack) {
-        return false;
+        throw new UnsupportedOperationException();
 
     }
 
     @Override
     default int getTankCapacity(int tank) {
-        return 0;
+        throw new UnsupportedOperationException();
     }
 }

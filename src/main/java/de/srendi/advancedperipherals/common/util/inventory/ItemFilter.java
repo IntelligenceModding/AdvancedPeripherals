@@ -84,14 +84,14 @@ public class ItemFilter extends GenericFilter<ItemStack> {
         }
         if (item.containsKey("toSlot")) {
             try {
-                itemFilter.toSlot = item.getInt( "toSlot");
+                itemFilter.toSlot = item.getInt("toSlot");
             } catch (LuaException luaException) {
                 return Pair.of(null, "NO_VALID_TOSLOT");
             }
         }
         if (item.containsKey("count")) {
             try {
-                itemFilter.count = item.getInt( "count");
+                itemFilter.count = item.getInt("count");
             } catch (LuaException luaException) {
                 return Pair.of(null, "NO_VALID_COUNT");
             }
@@ -102,9 +102,13 @@ public class ItemFilter extends GenericFilter<ItemStack> {
     }
 
     public static ItemFilter fromStack(ItemStack stack) {
+        return fromStackWithCount(stack, stack.getCount());
+    }
+
+    public static ItemFilter fromStackWithCount(ItemStack stack, int count) {
         ItemFilter filter = createEmpty();
         filter.item = stack.getItem();
-        filter.count = stack.getCount();
+        filter.count = count;
         filter.componentsAsNbt = DataComponentUtil.toNbt(stack.getComponentsPatch());
         filter.components = (PatchedDataComponentMap) stack.getComponents();
         return filter;

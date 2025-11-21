@@ -71,7 +71,13 @@ public class ChemicalFilter extends GenericFilter<ChemicalStack> {
             }
         }
         // TODO: rename count to amount in 0.8
-        if (item.containsKey("count")) {
+        if (item.containsKey("amount")) {
+            try {
+                chemicalFilter.amount = item.getLong("amount");
+            } catch (LuaException luaException) {
+                return Pair.of(null, "NO_VALID_COUNT");
+            }
+        } else if (item.containsKey("count")) {
             try {
                 chemicalFilter.amount = item.getLong("count");
             } catch (LuaException luaException) {
@@ -84,9 +90,13 @@ public class ChemicalFilter extends GenericFilter<ChemicalStack> {
     }
 
     public static ChemicalFilter fromStack(ChemicalStack stack) {
+        return fromStackWithAmount(stack, stack.getAmount());
+    }
+
+    public static ChemicalFilter fromStackWithAmount(ChemicalStack stack, long amount) {
         ChemicalFilter filter = createEmpty();
         filter.chemical = stack.getChemicalHolder();
-        filter.amount = stack.getAmount();
+        filter.amount = amount;
         return filter;
     }
 

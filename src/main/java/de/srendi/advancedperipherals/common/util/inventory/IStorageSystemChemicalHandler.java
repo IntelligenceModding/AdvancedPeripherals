@@ -12,10 +12,11 @@ public interface IStorageSystemChemicalHandler extends IChemicalHandler {
      * stack sizes greater than 64.
      *
      * @param filter The parsed filter
+     * @param processor The extractation processor
      * @param simulate Should this action be simulated
-     * @return extracted from the slot, must be empty if nothing can be extracted. The returned ItemStack can be safely modified after, so item handlers should return a new or copied stack.
+     * @return extracted chemical amount
      */
-    ChemicalStack extractChemical(ChemicalFilter filter, Action simulate);
+    long extractChemicals(ChemicalFilter filter, StorageProcessor.Large<ChemicalStack> processor, Action action);
 
     @Override
     default int getChemicalTanks() {
@@ -29,27 +30,35 @@ public interface IStorageSystemChemicalHandler extends IChemicalHandler {
 
     @Override
     default ChemicalStack getChemicalInTank(int tank) {
-        return ChemicalStack.EMPTY;
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    ChemicalStack insertChemical(ChemicalStack resource, Action action);
+
+    @Override
+    default ChemicalStack insertChemical(int tank, ChemicalStack resource, Action action) {
+        return this.insertChemical(resource, action);
     }
 
     @Override
     default ChemicalStack extractChemical(long amount, Action action) {
-        return ChemicalStack.EMPTY;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     default ChemicalStack extractChemical(ChemicalStack stack, Action action) {
-        return ChemicalStack.EMPTY;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     default ChemicalStack extractChemical(int tank, long amount, Action action) {
-        return ChemicalStack.EMPTY;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     default void setChemicalInTank(int tank, ChemicalStack stack) {
-
+        throw new UnsupportedOperationException();
     }
 
     @Override

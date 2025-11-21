@@ -6,11 +6,13 @@ import com.refinedmods.refinedstorage.api.network.storage.StorageNetworkComponen
 import com.refinedmods.refinedstorage.api.storage.Actor;
 import com.refinedmods.refinedstorage.common.support.resource.FluidResource;
 import com.refinedmods.refinedstorage.neoforge.support.resource.VariantUtil;
-import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.util.inventory.FluidFilter;
 import de.srendi.advancedperipherals.common.util.inventory.IStorageSystemFluidHandler;
+import de.srendi.advancedperipherals.common.util.inventory.StorageProcessor;
 import net.neoforged.neoforge.fluids.FluidStack;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 public class RSFluidHandler implements IStorageSystemFluidHandler {
 
@@ -25,24 +27,37 @@ public class RSFluidHandler implements IStorageSystemFluidHandler {
 
     @Override
     public int fill(FluidStack resource, @NotNull FluidAction action) {
-        if (resource.isEmpty())
+        if (resource.isEmpty()) {
             return 0;
+        }
         // should never overflow
-        return (int) (component.insert(VariantUtil.ofFluidStack(resource), resource.getAmount(), action == FluidAction.SIMULATE ? Action.SIMULATE : Action.EXECUTE, Actor.EMPTY));
+        return (int) (component.insert(VariantUtil.ofFluidStack(resource), resource.getAmount(), action.simulate() ? Action.SIMULATE : Action.EXECUTE, Actor.EMPTY));
     }
 
-    @NotNull
     @Override
-    public FluidStack drain(FluidFilter filter, FluidAction simulate) {
-        AdvancedPeripherals.debug("Trying to extract fluid from filter: " + filter);
-        FluidResource fluid = RSApi.getFluid(network, filter);
-        if (fluid == null)
-            return FluidStack.EMPTY;
-
-        long amountExtracted = component.extract(fluid, filter.getAmount(), simulate == FluidAction.SIMULATE ? Action.SIMULATE : Action.EXECUTE, Actor.EMPTY);
-        FluidStack extracted = VariantUtil.toFluidStack(fluid, (int) amountExtracted);
-
-        AdvancedPeripherals.debug("Extracted fluid: " + extracted + " from filter: " + filter);
-        return extracted;
+    public int extractFluids(FluidFilter filter, StorageProcessor<FluidStack> processor, FluidAction action) {
+        List<FluidResource> fluids = RSApi.getFluids(network, filter);
+        if (fluids.isEmpty()) {
+            return 0;
+        }
+        int needs = filter.getAmount();
+        for (FluidResource fluid : fluids) {
+            int amount = (int) component.extract(fluid, needs, Action.SIMULATE, Actor.EMPTY);
+            if (amount == 0) {
+                continue;
+            }
+            int extracted = processor.process(VariantUtil.toFluidStack(fluid, amount));
+            if (extracted == 0) {
+                continue;
+            }
+            needs -= extracted;
+            if (action.execute()) {
+                component.extract(fluid, extracted, Action.EXECUTE, Actor.EMPTY);;
+            }
+            if (needs <= 0) {
+                break;
+            }
+        }
+        return filter.getAmount() - needs;
     }
 }
