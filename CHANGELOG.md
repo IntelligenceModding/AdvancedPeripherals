@@ -7,12 +7,19 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Changed
+- Fluid & checmical filter can use `amount` instead of `count`. `count` field will be removed in 0.8.
+- When filter is invalid, an error will be thrown instead of return a silent ignorable string.
+
 ### Fixed
 - Fixed support for Refined Storage version 2.0.0
 - [#786] Minor performance improvements to the RS Bridges resources iteration - improves the performance with any get*Resource* function - Thanks to @SirYwell!
 - [#784] Fixed that the energy detector transfer rate limit is not enforced
 - Fixed an issue where the ME Bridge could void chemicals during exporting/importing
 - Fixed an issue where export/import fluids and chemicals in the ME Bridge would not detect any remote target peripherals
+- Fixed an issue when export/import with slots out of the range will cause error
+- Fixed bridges will only export the first item that matches the filter
+- [#794] Fixed bridges will only import fluids from the first tank.
 
 ## [1.21.1-0.7.55b] - 2025-07-14
 
