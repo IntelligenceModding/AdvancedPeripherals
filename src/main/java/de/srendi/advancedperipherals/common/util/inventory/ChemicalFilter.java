@@ -22,7 +22,7 @@ public class ChemicalFilter extends GenericFilter<ChemicalStack> {
 
     private Holder<Chemical> chemical = MekanismAPI.EMPTY_CHEMICAL.getAsHolder();
     private TagKey<Chemical> tag = null;
-    private long count = 1000;
+    private long amount = 1000;
     private String fingerprint = "";
     public int fromSlot = -1;
     public int toSlot = -1;
@@ -30,7 +30,7 @@ public class ChemicalFilter extends GenericFilter<ChemicalStack> {
     private ChemicalFilter() {
     }
 
-    public static Pair<ChemicalFilter, String> parse(LuaTable<?, ?> item) {
+    public static Pair<ChemicalFilter, String> parse(LuaTable<?, ?> item) throws LuaException {
         // If the map is empty, return a filter without any filters
         if (item.isEmpty())
             return Pair.of(EMPTY, null);
@@ -38,44 +38,27 @@ public class ChemicalFilter extends GenericFilter<ChemicalStack> {
         ChemicalFilter chemicalFilter = createEmpty();
 
         if (item.containsKey("name")) {
-            try {
-                String name = item.getString("name");
-                if (name.startsWith("#")) {
-                    chemicalFilter.tag = TagKey.create(MekanismAPI.CHEMICAL_REGISTRY_NAME, ResourceLocation.parse(name.substring(1)));
-                } else if ((chemicalFilter.chemical = MekanismAPI.CHEMICAL_REGISTRY.getHolder(ResourceLocation.parse(name)).orElse(null)) == null) {
-                    return Pair.of(null, "CHEMICAL_NOT_FOUND");
-                }
-            } catch (LuaException luaException) {
-                return Pair.of(null, "NO_VALID_ITEM");
+            String name = item.getString("name");
+            if (name.startsWith("#")) {
+                chemicalFilter.tag = TagKey.create(MekanismAPI.CHEMICAL_REGISTRY_NAME, ResourceLocation.parse(name.substring(1)));
+            } else if ((chemicalFilter.chemical = MekanismAPI.CHEMICAL_REGISTRY.getHolder(ResourceLocation.parse(name)).orElse(null)) == null) {
+                return Pair.of(null, "CHEMICAL_NOT_FOUND");
             }
         }
         if (item.containsKey("fingerprint")) {
-            try {
-                chemicalFilter.fingerprint = item.getString("fingerprint");
-            } catch (LuaException luaException) {
-                return Pair.of(null, "NO_VALID_FINGERPRINT");
-            }
+            chemicalFilter.fingerprint = item.getString("fingerprint");
         }
         if (item.containsKey("fromSlot")) {
-            try {
-                chemicalFilter.fromSlot = item.getInt( "fromSlot");
-            } catch (LuaException luaException) {
-                return Pair.of(null, "NO_VALID_FROMSLOT");
-            }
+            chemicalFilter.fromSlot = item.getInt("fromSlot");
         }
         if (item.containsKey("toSlot")) {
-            try {
-                chemicalFilter.toSlot = item.getInt( "toSlot");
-            } catch (LuaException luaException) {
-                return Pair.of(null, "NO_VALID_TOSLOT");
-            }
+            chemicalFilter.toSlot = item.getInt("toSlot");
         }
-        if (item.containsKey("count")) {
-            try {
-                chemicalFilter.count = item.getInt( "count");
-            } catch (LuaException luaException) {
-                return Pair.of(null, "NO_VALID_COUNT");
-            }
+        // TODO: rename count to amount in 0.8
+        if (item.containsKey("amount")) {
+            chemicalFilter.amount = item.getLong("amount");
+        } else if (item.containsKey("count")) {
+            chemicalFilter.amount = item.getLong("count");
         }
 
         AdvancedPeripherals.debug("Parsed item filter: " + chemicalFilter);
@@ -83,8 +66,13 @@ public class ChemicalFilter extends GenericFilter<ChemicalStack> {
     }
 
     public static ChemicalFilter fromStack(ChemicalStack stack) {
+        return fromStackWithAmount(stack, stack.getAmount());
+    }
+
+    public static ChemicalFilter fromStackWithAmount(ChemicalStack stack, long amount) {
         ChemicalFilter filter = createEmpty();
         filter.chemical = stack.getChemicalHolder();
+        filter.amount = amount;
         return filter;
     }
 
@@ -111,8 +99,26 @@ public class ChemicalFilter extends GenericFilter<ChemicalStack> {
         return false;
     }
 
+    @Override
+    public ChemicalFilter copy() {
+        ChemicalFilter newFilter = new ChemicalFilter();
+        newFilter.chemical = this.chemical;
+        newFilter.tag = this.tag;
+        newFilter.amount = this.amount;
+        newFilter.fingerprint = this.fingerprint;
+        newFilter.fromSlot = this.fromSlot;
+        newFilter.toSlot = this.toSlot;
+        return newFilter;
+    }
+
+    public ChemicalFilter copyWithAmount(long amount) {
+        ChemicalFilter newFilter = this.copy();
+        newFilter.amount = amount;
+        return newFilter;
+    }
+
     public ChemicalStack toChemicalStack() {
-        return new ChemicalStack(chemical, count);
+        return new ChemicalStack(chemical, amount);
     }
 
     public boolean test(ChemicalStack stack) {
@@ -134,8 +140,8 @@ public class ChemicalFilter extends GenericFilter<ChemicalStack> {
         return true;
     }
 
-    public long getCount() {
-        return count;
+    public long getAmount() {
+        return amount;
     }
 
     public Holder<Chemical> getChemical() {
@@ -155,7 +161,7 @@ public class ChemicalFilter extends GenericFilter<ChemicalStack> {
         return "ChemicalFilter{" +
                 "item=" + chemical.getRegisteredName() +
                 ", tag=" + tag +
-                ", count=" + count +
+                ", amount=" + amount +
                 ", fingerprint='" + fingerprint + '\'' +
                 ", fromSlot=" + fromSlot +
                 ", toSlot=" + toSlot +

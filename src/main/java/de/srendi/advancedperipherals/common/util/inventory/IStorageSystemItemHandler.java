@@ -6,46 +6,54 @@ import org.jetbrains.annotations.NotNull;
 
 public interface IStorageSystemItemHandler extends IItemHandler {
 
+    ItemStack insertItem(ItemStack stack, boolean simulate);
+
     /**
      * Used to extract an item from the system via a peripheral.
      * Uses a filter to find the right item. The amount should never be greater than 64
      * stack sizes greater than 64.
      *
      * @param filter The parsed filter
-     * @param count The amount to extract
+     * @param processor The extractation processor
      * @param simulate Should this action be simulated
-     * @return extracted from the slot, must be empty if nothing can be extracted. The returned ItemStack can be safely modified after, so item handlers should return a new or copied stack.
+     * @return extracted item count
      */
-    ItemStack extractItem(ItemFilter filter, int count, boolean simulate);
+    int extractItems(ItemFilter filter, StorageProcessor<ItemStack> processor, boolean simulate);
 
-    /*
-    These 5 methods are ignored in our transferring logic. Storage Systems do not respect slots and to extract we need a filter
+    /**
+     * These 6 methods below are ignored in our transferring logic.
+     * Storage Systems do not respect slots and to extract we need a filter
      */
 
     @Override
     default int getSlots() {
-        return 0;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     default int getSlotLimit(int slot) {
-        return 0;
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    default ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
+        throw new UnsupportedOperationException();
     }
 
     @NotNull
     @Override
     default ItemStack extractItem(int slot, int amount, boolean simulate) {
-        return ItemStack.EMPTY;
+        throw new UnsupportedOperationException();
     }
 
     @NotNull
     @Override
     default ItemStack getStackInSlot(int slot) {
-        return ItemStack.EMPTY;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     default boolean isItemValid(int slot, @NotNull ItemStack stack) {
-        return false;
+        throw new UnsupportedOperationException();
     }
 }

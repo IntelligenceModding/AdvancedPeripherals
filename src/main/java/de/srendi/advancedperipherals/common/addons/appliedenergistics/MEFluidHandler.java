@@ -8,8 +8,11 @@ import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.MEBr
 import de.srendi.advancedperipherals.common.util.Pair;
 import de.srendi.advancedperipherals.common.util.inventory.FluidFilter;
 import de.srendi.advancedperipherals.common.util.inventory.IStorageSystemFluidHandler;
+import de.srendi.advancedperipherals.common.util.inventory.StorageProcessor;
 import net.neoforged.neoforge.fluids.FluidStack;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 /**
  * Used to transfer item between an inventory and the ME system.
@@ -30,21 +33,39 @@ public class MEFluidHandler implements IStorageSystemFluidHandler {
 
     @Override
     public int fill(FluidStack resource, FluidAction action) {
-        if (resource.isEmpty())
+        if (resource.isEmpty()) {
             return 0;
+        }
         AEFluidKey itemKey = AEFluidKey.of(resource.getFluid());
-        long inserted = storageMonitor.insert(itemKey, resource.getAmount(), action == FluidAction.SIMULATE ? Actionable.SIMULATE : Actionable.MODULATE, actionSource);
-
-        return (int) Math.min(inserted, Integer.MAX_VALUE);
+        // should never overflow
+        return (int) (storageMonitor.insert(itemKey, resource.getAmount(), action.simulate() ? Actionable.SIMULATE : Actionable.MODULATE, actionSource));
     }
 
-    @NotNull
     @Override
-    public FluidStack drain(FluidFilter filter, FluidAction simulate) {
-        Pair<Long, AEFluidKey> fluidKey = AEApi.findAEFluidFromFilter(storageMonitor, null, filter);
-        if (fluidKey.getRight() == null)
-            return FluidStack.EMPTY;
-        long extracted = storageMonitor.extract(fluidKey.getRight(), filter.getCount(), simulate == FluidAction.SIMULATE ? Actionable.SIMULATE : Actionable.MODULATE, actionSource);
-        return new FluidStack(fluidKey.getRight().getFluid(), (int) Math.min(extracted, Integer.MAX_VALUE));
+    public int extractFluids(FluidFilter filter, StorageProcessor<FluidStack> processor, FluidAction action) {
+        List<Pair<Long, AEFluidKey>> fluidKeys = AEApi.findAEFluidsFromFilter(storageMonitor, filter);
+        if (fluidKeys.isEmpty()) {
+            return 0;
+        }
+        int needs = filter.getAmount();
+        for (Pair<Long, AEFluidKey> pair : fluidKeys) {
+            AEFluidKey fluidKey = pair.right();
+            int amount = (int) storageMonitor.extract(fluidKey, needs, Actionable.SIMULATE, actionSource);
+            if (amount == 0) {
+                continue;
+            }
+            int extracted = processor.process(new FluidStack(fluidKey.getFluid(), amount));
+            if (extracted == 0) {
+                continue;
+            }
+            needs -= extracted;
+            if (action.execute()) {
+                storageMonitor.extract(fluidKey, extracted, Actionable.MODULATE, actionSource);
+            }
+            if (needs <= 0) {
+                break;
+            }
+        }
+        return filter.getAmount() - needs;
     }
 }

@@ -160,9 +160,17 @@ repositories {
     }
     maven {
         name = "Create maven"
-        url = "https://maven.tterrag.com/"
+        url = "https://maven.createmod.net"
         content {
             includeGroup("com.simibubi.create")
+            includeGroup("dev.engine-room.flywheel")
+            includeGroup("net.createmod.ponder")
+        }
+    }
+    maven {
+        name = "Create Registrate maven"
+        url = "https://maven.ithundxr.dev/snapshots"
+        content {
             includeGroup("com.tterrag.registrate")
         }
     }
@@ -234,9 +242,6 @@ dependencies {
             transitive = false
     }
 
-    // Needed for the refined storage mek integration
-    //compileOnlyApi("dev.emi:emi-neoforge:${emiVersion}")
-
     // Extended requirements
     // We don't use the api since we need a specific class from mekanism
     compileOnly "mekanism:Mekanism:${mekanism_version}"
@@ -253,6 +258,12 @@ dependencies {
     // AE2 Things
     compileOnly "curse.maven:ae2things-609977:${ae2things_version}-sources"
     runtimeOnly "curse.maven:ae2things-609977:${ae2things_version}-sources"
+
+    implementation ("com.simibubi.create:create-${minecraft_version}:${create_version}:slim") { transitive = false }
+    implementation "net.createmod.ponder:Ponder-NeoForge-${minecraft_version}:${ponder_version}"
+    compileOnly "dev.engine-room.flywheel:flywheel-neoforge-api-${minecraft_version}:${flywheel_version}"
+    runtimeOnly "dev.engine-room.flywheel:flywheel-neoforge-${minecraft_version}:${flywheel_version}"
+    implementation "com.tterrag.registrate:Registrate:${registrate_version}"
 
     // Minecolonies
     compileOnly "com.ldtteam:blockui:${blockui_version}"

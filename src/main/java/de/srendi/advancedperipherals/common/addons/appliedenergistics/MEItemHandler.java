@@ -8,8 +8,11 @@ import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.MEBr
 import de.srendi.advancedperipherals.common.util.Pair;
 import de.srendi.advancedperipherals.common.util.inventory.IStorageSystemItemHandler;
 import de.srendi.advancedperipherals.common.util.inventory.ItemFilter;
+import de.srendi.advancedperipherals.common.util.inventory.StorageProcessor;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 /**
  * Used to transfer item between an inventory and the ME system.
@@ -30,25 +33,38 @@ public class MEItemHandler implements IStorageSystemItemHandler {
 
     @NotNull
     @Override
-    public ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
+    public ItemStack insertItem(@NotNull ItemStack stack, boolean simulate) {
         AEItemKey itemKey = AEItemKey.of(stack);
         long inserted = storageMonitor.insert(itemKey, stack.getCount(), simulate ? Actionable.SIMULATE : Actionable.MODULATE, actionSource);
-        ItemStack insertedStack = stack.copy();
         // Safe to cast here, the amount will never be higher than 64
-        insertedStack.setCount(insertedStack.getCount() - (int) inserted);
-        return insertedStack;
+        return stack.copyWithCount(stack.getCount() - (int) inserted);
     }
 
     @Override
-    public ItemStack extractItem(ItemFilter filter, int count, boolean simulate) {
-        Pair<Long, AEItemKey> itemKey = AEApi.findAEStackFromFilter(storageMonitor, null, filter);
-        if (itemKey.getRight() == null)
-            return ItemStack.EMPTY;
-        long extracted = storageMonitor.extract(itemKey.getRight(), count, simulate ? Actionable.SIMULATE : Actionable.MODULATE, actionSource);
-        // Safe to cast here, the amount will never be higher than 64
-        ItemStack stack = itemKey.getRight().toStack();
-        stack.setCount((int) extracted);
-        return stack;
+    public int extractItems(ItemFilter filter, StorageProcessor<ItemStack> processor, boolean simulate) {
+        List<Pair<Long, AEItemKey>> itemKeys = AEApi.findAEStacksFromFilter(storageMonitor, filter);
+        if (itemKeys.isEmpty()) {
+            return 0;
+        }
+        int needs = filter.getCount();
+        for (Pair<Long, AEItemKey> pair : itemKeys) {
+            AEItemKey itemKey = pair.right();
+            int count = (int) storageMonitor.extract(itemKey, needs, Actionable.SIMULATE, actionSource);
+            if (count == 0) {
+                continue;
+            }
+            int extracted = processor.process(itemKey.toStack().copyWithCount(count));
+            if (extracted == 0) {
+                continue;
+            }
+            needs -= extracted;
+            if (!simulate) {
+                storageMonitor.extract(itemKey, extracted, Actionable.MODULATE, actionSource);
+            }
+            if (needs <= 0) {
+                break;
+            }
+        }
+        return filter.getCount() - needs;
     }
-
 }

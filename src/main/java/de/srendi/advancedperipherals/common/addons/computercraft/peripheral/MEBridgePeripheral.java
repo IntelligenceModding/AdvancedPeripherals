@@ -732,7 +732,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (stack.getRight() == null && stack.getLeft() == 0)
             return MethodResult.of(false, StatusConstants.NOT_CRAFTABLE.toString());
 
-        AECraftJob job = new AECraftJob(owner.getLevel(), computer, node, stack.getRight(), parsedFilter.getCount(), bridge, target);
+        AECraftJob job = new AECraftJob(owner.getLevel(), computer, node, stack.getRight(), parsedFilter.getAmount(), bridge, target);
         bridge.addJob(job);
         return MethodResult.of(job.withCPU(target));
     }
@@ -763,7 +763,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (stack.getRight() == null && stack.getLeft() == 0)
             return MethodResult.of(false, StatusConstants.NOT_CRAFTABLE.toString());
 
-        AECraftJob job = new AECraftJob(owner.getLevel(), computer, node, stack.getRight(), parsedFilter.getCount(), bridge, target);
+        AECraftJob job = new AECraftJob(owner.getLevel(), computer, node, stack.getRight(), parsedFilter.getAmount(), bridge, target);
         bridge.addJob(job);
         return MethodResult.of(job.withCPU(target));
     }
