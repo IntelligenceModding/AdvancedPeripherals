@@ -36,7 +36,7 @@ public class FluidFilter extends GenericFilter<FluidStack> {
     private FluidFilter() {
     }
 
-    public static Pair<FluidFilter, String> parse(LuaTable<?, ?> item) {
+    public static Pair<FluidFilter, String> parse(LuaTable<?, ?> item) throws LuaException {
         // If the map is empty, return a filter without any filters
         if (item.isEmpty())
             return Pair.of(EMPTY, null);
@@ -44,51 +44,35 @@ public class FluidFilter extends GenericFilter<FluidStack> {
         FluidFilter fluidFilter = createEmpty();
 
         if (item.containsKey("name")) {
-            try {
-                String name = item.getString("name");
-                if (name.startsWith("#")) {
-                    fluidFilter.tag = TagKey.create(Registries.FLUID, ResourceLocation.parse(name.substring(1)));
-                } else {
-                    fluidFilter.fluid = ItemUtil.getRegistryEntry(name, BuiltInRegistries.FLUID);
-                    if (fluidFilter.fluid == null) {
-                        return Pair.of(null, "FLUID_NOT_FOUND");
-                    }
+            String name = item.getString("name");
+            if (name.startsWith("#")) {
+                fluidFilter.tag = TagKey.create(Registries.FLUID, ResourceLocation.parse(name.substring(1)));
+            } else {
+                fluidFilter.fluid = ItemUtil.getRegistryEntry(name, BuiltInRegistries.FLUID);
+                if (fluidFilter.fluid == null) {
+                    return Pair.of(null, "FLUID_NOT_FOUND");
                 }
-            } catch (LuaException luaException) {
-                return Pair.of(null, "NO_VALID_FLUID");
             }
         }
         if (item.containsKey("components")) {
             try {
                 fluidFilter.componentsAsNbt = NBTUtil.fromText(item.getString("components"));
-            } catch (LuaException luaException) {
+            } catch (LuaException e1) {
                 try {
                     fluidFilter.componentsAsNbt = NBTUtil.fromText(item.getTable("components").toString());
-                } catch (LuaException e) {
-                    return Pair.of(null, "NO_VALID_COMPONENTS");
+                } catch (LuaException e2) {
+                    throw new LuaException("bad field \"components\", expect NBT string or table");
                 }
             }
         }
         if (item.containsKey("fingerprint")) {
-            try {
-                fluidFilter.fingerprint = item.getString("fingerprint");
-            } catch (LuaException luaException) {
-                return Pair.of(null, "NO_VALID_FINGERPRINT");
-            }
+            fluidFilter.fingerprint = item.getString("fingerprint");
         }
         // TODO: rename count to amount in 0.8
         if (item.containsKey("amount")) {
-            try {
-                fluidFilter.amount = item.getInt("amount");
-            } catch (LuaException luaException) {
-                return Pair.of(null, "NO_VALID_COUNT");
-            }
+            fluidFilter.amount = item.getInt("amount");
         } else if (item.containsKey("count")) {
-            try {
-                fluidFilter.amount = item.getInt("count");
-            } catch (LuaException luaException) {
-                return Pair.of(null, "NO_VALID_COUNT");
-            }
+            fluidFilter.amount = item.getInt("count");
         }
         AdvancedPeripherals.debug("Parsed fluid filter: " + fluidFilter);
 

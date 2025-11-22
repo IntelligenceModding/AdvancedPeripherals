@@ -30,7 +30,7 @@ public class ChemicalFilter extends GenericFilter<ChemicalStack> {
     private ChemicalFilter() {
     }
 
-    public static Pair<ChemicalFilter, String> parse(LuaTable<?, ?> item) {
+    public static Pair<ChemicalFilter, String> parse(LuaTable<?, ?> item) throws LuaException {
         // If the map is empty, return a filter without any filters
         if (item.isEmpty())
             return Pair.of(EMPTY, null);
@@ -38,51 +38,27 @@ public class ChemicalFilter extends GenericFilter<ChemicalStack> {
         ChemicalFilter chemicalFilter = createEmpty();
 
         if (item.containsKey("name")) {
-            try {
-                String name = item.getString("name");
-                if (name.startsWith("#")) {
-                    chemicalFilter.tag = TagKey.create(MekanismAPI.CHEMICAL_REGISTRY_NAME, ResourceLocation.parse(name.substring(1)));
-                } else if ((chemicalFilter.chemical = MekanismAPI.CHEMICAL_REGISTRY.getHolder(ResourceLocation.parse(name)).orElse(null)) == null) {
-                    return Pair.of(null, "CHEMICAL_NOT_FOUND");
-                }
-            } catch (LuaException luaException) {
-                return Pair.of(null, "NO_VALID_ITEM");
+            String name = item.getString("name");
+            if (name.startsWith("#")) {
+                chemicalFilter.tag = TagKey.create(MekanismAPI.CHEMICAL_REGISTRY_NAME, ResourceLocation.parse(name.substring(1)));
+            } else if ((chemicalFilter.chemical = MekanismAPI.CHEMICAL_REGISTRY.getHolder(ResourceLocation.parse(name)).orElse(null)) == null) {
+                return Pair.of(null, "CHEMICAL_NOT_FOUND");
             }
         }
         if (item.containsKey("fingerprint")) {
-            try {
-                chemicalFilter.fingerprint = item.getString("fingerprint");
-            } catch (LuaException luaException) {
-                return Pair.of(null, "NO_VALID_FINGERPRINT");
-            }
+            chemicalFilter.fingerprint = item.getString("fingerprint");
         }
         if (item.containsKey("fromSlot")) {
-            try {
-                chemicalFilter.fromSlot = item.getInt("fromSlot");
-            } catch (LuaException luaException) {
-                return Pair.of(null, "NO_VALID_FROMSLOT");
-            }
+            chemicalFilter.fromSlot = item.getInt("fromSlot");
         }
         if (item.containsKey("toSlot")) {
-            try {
-                chemicalFilter.toSlot = item.getInt("toSlot");
-            } catch (LuaException luaException) {
-                return Pair.of(null, "NO_VALID_TOSLOT");
-            }
+            chemicalFilter.toSlot = item.getInt("toSlot");
         }
         // TODO: rename count to amount in 0.8
         if (item.containsKey("amount")) {
-            try {
-                chemicalFilter.amount = item.getLong("amount");
-            } catch (LuaException luaException) {
-                return Pair.of(null, "NO_VALID_COUNT");
-            }
+            chemicalFilter.amount = item.getLong("amount");
         } else if (item.containsKey("count")) {
-            try {
-                chemicalFilter.amount = item.getLong("count");
-            } catch (LuaException luaException) {
-                return Pair.of(null, "NO_VALID_COUNT");
-            }
+            chemicalFilter.amount = item.getLong("count");
         }
 
         AdvancedPeripherals.debug("Parsed item filter: " + chemicalFilter);

@@ -38,7 +38,7 @@ public class ItemFilter extends GenericFilter<ItemStack> {
     private ItemFilter() {
     }
 
-    public static Pair<ItemFilter, String> parse(LuaTable<?, ?> item) {
+    public static Pair<ItemFilter, String> parse(LuaTable<?, ?> item) throws LuaException {
         // If the map is empty, return a filter without any filters
         if (item.isEmpty())
             return Pair.of(EMPTY, null);
@@ -46,55 +46,35 @@ public class ItemFilter extends GenericFilter<ItemStack> {
         ItemFilter itemFilter = createEmpty();
 
         if (item.containsKey("name")) {
-            try {
-                String name = item.getString("name");
-                if (name.startsWith("#")) {
-                    itemFilter.tag = TagKey.create(Registries.ITEM, ResourceLocation.parse(name.substring(1)));
-                } else if ((itemFilter.item = ItemUtil.getRegistryEntry(name, BuiltInRegistries.ITEM)) == null) {
-                    return Pair.of(null, "ITEM_NOT_FOUND");
-                }
-            } catch (LuaException luaException) {
-                return Pair.of(null, "NO_VALID_ITEM");
+            String name = item.getString("name");
+            if (name.startsWith("#")) {
+                itemFilter.tag = TagKey.create(Registries.ITEM, ResourceLocation.parse(name.substring(1)));
+            } else if ((itemFilter.item = ItemUtil.getRegistryEntry(name, BuiltInRegistries.ITEM)) == null) {
+                return Pair.of(null, "ITEM_NOT_FOUND");
             }
         }
         if (item.containsKey("components")) {
             try {
                 itemFilter.componentsAsNbt = NBTUtil.fromText(item.getString("components"));
-            } catch (LuaException luaException) {
+            } catch (LuaException e1) {
                 try {
                     itemFilter.componentsAsNbt = NBTUtil.fromText(item.getTable("components").toString());
-                } catch (LuaException e) {
-                    return Pair.of(null, "NO_VALID_COMPONENTS");
+                } catch (LuaException e2) {
+                    throw new LuaException("bad field \"components\", expect NBT string or table");
                 }
             }
         }
         if (item.containsKey("fingerprint")) {
-            try {
-                itemFilter.fingerprint = item.getString("fingerprint");
-            } catch (LuaException luaException) {
-                return Pair.of(null, "NO_VALID_FINGERPRINT");
-            }
+            itemFilter.fingerprint = item.getString("fingerprint");
         }
         if (item.containsKey("fromSlot")) {
-            try {
-                itemFilter.fromSlot = item.getInt("fromSlot");
-            } catch (LuaException luaException) {
-                return Pair.of(null, "NO_VALID_FROMSLOT");
-            }
+            itemFilter.fromSlot = item.getInt("fromSlot");
         }
         if (item.containsKey("toSlot")) {
-            try {
-                itemFilter.toSlot = item.getInt("toSlot");
-            } catch (LuaException luaException) {
-                return Pair.of(null, "NO_VALID_TOSLOT");
-            }
+            itemFilter.toSlot = item.getInt("toSlot");
         }
         if (item.containsKey("count")) {
-            try {
-                itemFilter.count = item.getInt("count");
-            } catch (LuaException luaException) {
-                return Pair.of(null, "NO_VALID_COUNT");
-            }
+            itemFilter.count = item.getInt("count");
         }
 
         AdvancedPeripherals.debug("Parsed item filter: " + itemFilter);

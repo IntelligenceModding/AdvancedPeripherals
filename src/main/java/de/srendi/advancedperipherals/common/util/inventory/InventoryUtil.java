@@ -51,6 +51,13 @@ public class InventoryUtil {
         int fromSlot = filter.getFromSlot();
         int toSlot = filter.getToSlot();
 
+        if (!(inventoryFrom instanceof IStorageSystemItemHandler) && fromSlot >= inventoryFrom.getSlots()) {
+            return 0;
+        }
+        if (!(inventoryTo instanceof IStorageSystemItemHandler) && toSlot >= inventoryTo.getSlots()) {
+            return 0;
+        }
+
         int needs = filter.getCount();
         if (needs <= 0) {
             return 0;

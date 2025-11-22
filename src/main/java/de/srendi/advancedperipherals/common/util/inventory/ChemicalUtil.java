@@ -32,6 +32,14 @@ public class ChemicalUtil {
 
         int fromSlot = filter.getFromSlot();
         int toSlot = filter.getToSlot();
+
+        if (!(inventoryFrom instanceof IStorageSystemChemicalHandler) && fromSlot >= inventoryFrom.getChemicalTanks()) {
+            return 0;
+        }
+        if (!(inventoryTo instanceof IStorageSystemChemicalHandler) && toSlot >= inventoryTo.getChemicalTanks()) {
+            return 0;
+        }
+
         long needs = filter.getAmount();
         if (needs <= 0) {
             return 0;
