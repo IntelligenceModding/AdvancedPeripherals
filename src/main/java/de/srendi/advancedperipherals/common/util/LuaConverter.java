@@ -363,14 +363,14 @@ public class LuaConverter {
 
     public static Map<String, Object> itemToObject(@NotNull Item item) {
         Map<String, Object> properties = new HashMap<>();
-        properties.put("tags", tagsToList(() -> item.builtInRegistryHolder().tags()));
+        properties.put("tags", tagsToList(item.builtInRegistryHolder().tags()));
         properties.put("name", ItemUtil.getRegistryKey(item).toString());
         return properties;
     }
 
     public static Map<String, Object> fluidToObject(@NotNull Fluid fluid) {
         Map<String, Object> properties = new HashMap<>();
-        properties.put("tags", tagsToList(() -> fluid.builtInRegistryHolder().tags()));
+        properties.put("tags", tagsToList(fluid.builtInRegistryHolder().tags()));
         properties.put("name", FluidUtil.getRegistryKey(fluid).toString());
         return properties;
     }
@@ -382,7 +382,7 @@ public class LuaConverter {
         }
 
         Map<String, Object> properties = new HashMap<>();
-        properties.put("tags", tagsToList(() -> MekanismAPI.CHEMICAL_REGISTRY.wrapAsHolder(chemical).tags()));
+        properties.put("tags", tagsToList(MekanismAPI.CHEMICAL_REGISTRY.wrapAsHolder(chemical).tags()));
         properties.put("isGaseous", chemical.isGaseous());
         properties.put("radioactivity", chemical.isRadioactive());
         properties.put("name", ChemicalUtil.getRegistryKey(chemical).toString());
@@ -392,7 +392,7 @@ public class LuaConverter {
     public static Map<String, Object> fluidToObject(@NotNull Fluid fluid) {
         Map<String, Object> map = new HashMap<>();
         FluidType fluidType = fluid.getFluidType();
-        map.put("tags", tagsToList(() -> fluid.builtInRegistryHolder().tags()));
+        map.put("tags", tagsToList(fluid.builtInRegistryHolder().tags()));
         map.put("name", FluidUtil.getRegistryKey(fluid).toString());
         map.put("density", fluidType.getDensity());
         map.put("lightLevel", fluidType.getLightLevel());
@@ -401,9 +401,9 @@ public class LuaConverter {
         return map;
     }
 
-    public static <T> List<String> tagsToList(@NotNull Supplier<Stream<TagKey<T>>> tags) {
+    public static <T> List<String> tagsToList(@NotNull Stream<TagKey<T>> tags) {
         // We do not use Collections.emptyList here to prevent an issue with textutils.serialise.
-        return tags.get().map(LuaConverter::tagToString).toList();
+        return tags.map(LuaConverter::tagToString).toList();
     }
 
     public static <T> String tagToString(@NotNull TagKey<T> tag) {

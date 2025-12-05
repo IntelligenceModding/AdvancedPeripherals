@@ -48,7 +48,7 @@ public class AutomataLookPlugin extends AutomataCorePlugin {
         if (blockName != null) {
             data.put("name", blockName.toString());
         }
-        data.put("tags", LuaConverter.tagsToList(() -> state.getBlock().builtInRegistryHolder().tags()));
+        data.put("tags", LuaConverter.tagsToList(state.getBlock().builtInRegistryHolder().tags()));
         Vec3 pos = blockHit.getLocation();
         Vec3 origin = automataCore.getPhysicsPos();
         data.put("x", pos.x - origin.x);
