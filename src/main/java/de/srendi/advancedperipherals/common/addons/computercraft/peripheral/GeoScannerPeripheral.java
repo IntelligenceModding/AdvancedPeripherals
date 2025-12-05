@@ -39,9 +39,9 @@ import static de.srendi.advancedperipherals.common.addons.computercraft.operatio
 
 public class GeoScannerPeripheral extends BasePeripheral<IPeripheralOwner> {
 
-    /*
-    Highly inspired by https://github.com/SquidDev-CC/plethora/ BlockScanner
-    */
+    /**
+     * Highly inspired by https://github.com/SquidDev-CC/plethora/ BlockScanner
+     */
 
     public static final String PERIPHERAL_TYPE = "geo_scanner";
 
@@ -64,7 +64,7 @@ public class GeoScannerPeripheral extends BasePeripheral<IPeripheralOwner> {
 
     private static List<Map<String, Object>> scan(List<Map<String, Object>> result, Level level, Vec3 center, int radius) {
         ScanUtils.relativeTraverseBlocks(level, center, radius, (state, pos) -> {
-            HashMap<String, Object> data = new HashMap<>(6);
+            HashMap<String, Object> data = new HashMap<>(6); // 5 normal fields + 1 "notOnShip" flag
             data.put("x", pos.x);
             data.put("y", pos.y);
             data.put("z", pos.z);
