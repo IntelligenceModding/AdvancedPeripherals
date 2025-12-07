@@ -28,6 +28,7 @@ import net.minecraft.world.level.chunk.LevelChunk;
 import net.neoforged.neoforge.common.Tags;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -60,10 +61,10 @@ public class GeoScannerPeripheral extends BasePeripheral<IPeripheralOwner> {
         this(new PocketPeripheralOwner(pocket));
     }
 
-    private static List<Map<String, ?>> scan(Level level, BlockPos center, int radius) {
-        List<Map<String, ?>> result = new ArrayList<>();
+    private static List<Map<String, Object>> scan(Level level, BlockPos center, int radius) {
+        List<Map<String, Object>> result = new ArrayList<>();
         ScanUtils.relativeTraverseBlocks(level, center, radius, (state, pos) -> {
-            HashMap<String, Object> data = new HashMap<>(6);
+            Map<String, Object> data = new HashMap<>(6 * 2);
             data.put("x", pos.getX());
             data.put("y", pos.getY());
             data.put("z", pos.getZ());
@@ -71,7 +72,7 @@ public class GeoScannerPeripheral extends BasePeripheral<IPeripheralOwner> {
             Block block = state.getBlock();
             ResourceLocation name = BuiltInRegistries.BLOCK.getKey(block);
             data.put("name", name == null ? "unknown" : name.toString());
-            data.put("tags", LuaConverter.tagsToList(() -> block.builtInRegistryHolder().tags()));
+            data.put("tags", LuaConverter.getHolderTags(block.builtInRegistryHolder()));
 
             result.add(data);
         });
@@ -105,21 +106,26 @@ public class GeoScannerPeripheral extends BasePeripheral<IPeripheralOwner> {
             Level level = getLevel();
             LevelChunk chunk = level.getChunkAt(getPos());
             ChunkPos chunkPos = chunk.getPos();
-            HashMap<String, Integer> data = new HashMap<>();
+            Map<ResourceLocation, Integer> data = new HashMap<>();
             for (int x = chunkPos.getMinBlockX(); x <= chunkPos.getMaxBlockX(); x++) {
                 for (int z = chunkPos.getMinBlockZ(); z <= chunkPos.getMaxBlockZ(); z++) {
-                    for (int y = level.dimensionType().minY(); y < level.dimensionType().height(); y++) {
+                    for (int y = level.getMinBuildHeight(); y < level.getHeight(); y++) {
                         BlockState block = chunk.getBlockState(new BlockPos(x, y, z));
                         ResourceLocation name = BuiltInRegistries.BLOCK.getKey(block.getBlock());
-                        if (name != null) {
-                            if (block.is(Tags.Blocks.ORES)) {
-                                data.put(name.toString(), data.getOrDefault(name.toString(), 0) + 1);
-                            }
+                        if (name != null && block.is(Tags.Blocks.ORES)) {
+                            data.compute(name, (k, v) -> (v == null ? 0 : v) + 1);
                         }
                     }
                 }
             }
-            return MethodResult.of(data);
+            return MethodResult.of(
+                Map.ofEntries(
+                    data.entrySet()
+                        .stream()
+                        .map((entry) -> new AbstractMap.SimpleImmutableEntry(entry.getKey().toString(), entry.getValue()))
+                        .toArray(Map.Entry[]::new)
+                )
+            );
         }, null);
     }
 

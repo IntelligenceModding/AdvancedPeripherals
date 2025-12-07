@@ -16,21 +16,24 @@ public class ScanUtils {
     }
 
     public static void traverseBlocks(Level world, BlockPos center, int radius, BiConsumer<BlockState, BlockPos> consumer, boolean relativePosition) {
-        int x = center.getX();
-        int y = center.getY();
-        int z = center.getZ();
-        for (int oX = x - radius; oX <= x + radius; oX++) {
-            for (int oY = y - radius; oY <= y + radius; oY++) {
-                for (int oZ = z - radius; oZ <= z + radius; oZ++) {
-                    BlockPos subPos = new BlockPos(oX, oY, oZ);
-                    BlockState blockState = world.getBlockState(subPos);
-                    if (!blockState.isAir()) {
-                        if (relativePosition) {
-                            consumer.accept(blockState, new BlockPos(oX - x, oY - y, oZ - z));
-                        } else {
-                            consumer.accept(blockState, subPos);
-                        }
+        final int x = center.getX(), y = center.getY(), z = center.getZ();
+        final int minX = x - radius, maxX = x + radius;
+        final int minY = y - radius, maxY = y + radius;
+        final int minZ = z - radius, maxZ = z + radius;
+        final BlockPos.MutableBlockPos subPos = new BlockPos.MutableBlockPos();
+        for (int oX = minX; oX <= maxX; oX++) {
+            for (int oY = minY; oY <= maxY; oY++) {
+                for (int oZ = minZ; oZ <= maxZ; oZ++) {
+                    BlockState blockState = world.getBlockState(subPos.set(oX, oY, oZ));
+                    if (blockState.isAir()) {
+                        continue;
                     }
+                    consumer.accept(
+                        blockState,
+                        relativePosition
+                            ? new BlockPos(oX - x, oY - y, oZ - z)
+                            : new BlockPos(oX, oY, oZ)
+                    );
                 }
             }
         }

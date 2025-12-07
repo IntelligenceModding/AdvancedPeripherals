@@ -12,7 +12,10 @@ import mekanism.api.MekanismAPI;
 import mekanism.api.chemical.Chemical;
 import mekanism.api.chemical.ChemicalStack;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
+import net.minecraft.core.Registry;
 import net.minecraft.core.component.DataComponentPatch;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.entity.Entity;
@@ -28,11 +31,9 @@ import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.FluidType;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 public class LuaConverter {
@@ -246,14 +247,14 @@ public class LuaConverter {
 
     public static Map<String, Object> itemToObject(@NotNull Item item) {
         Map<String, Object> properties = new HashMap<>();
-        properties.put("tags", tagsToList(() -> item.builtInRegistryHolder().tags()));
+        properties.put("tags", getHolderTags(item.builtInRegistryHolder()));
         properties.put("name", ItemUtil.getRegistryKey(item).toString());
         return properties;
     }
 
     public static Map<String, Object> fluidToObject(@NotNull Fluid fluid) {
         Map<String, Object> properties = new HashMap<>();
-        properties.put("tags", tagsToList(() -> fluid.builtInRegistryHolder().tags()));
+        properties.put("tags", getHolderTags(fluid.builtInRegistryHolder()));
         properties.put("name", FluidUtil.getRegistryKey(fluid).toString());
         return properties;
     }
@@ -265,22 +266,37 @@ public class LuaConverter {
         }
 
         Map<String, Object> properties = new HashMap<>();
-        properties.put("tags", tagsToList(() -> MekanismAPI.CHEMICAL_REGISTRY.wrapAsHolder(chemical).tags()));
+        properties.put("tags", getHolderTags(MekanismAPI.CHEMICAL_REGISTRY.wrapAsHolder(chemical)));
         properties.put("isGaseous", chemical.isGaseous());
         properties.put("radioactivity", chemical.isRadioactive());
         properties.put("name", ChemicalUtil.getRegistryKey(chemical).toString());
         return properties;
     }
 
-    public static <T> List<String> tagsToList(@NotNull Supplier<Stream<TagKey<T>>> tags) {
-        if (tags.get().findAny().isEmpty()) {
-            return Collections.emptyList();
+    private static final LRUCache<ResourceKey<?>, List<String>> HOLDER2TAGS_CACHE = new LRUCache<>(512);
+
+    public static <T> List<String> getHolderTags(final Holder<T> holder) {
+        final ResourceKey<T> holderKey = holder.unwrapKey().orElse(null);
+        if (holderKey == null) {
+            return tagsToList(holder.tags());
         }
-        return tags.get().map(LuaConverter::tagToString).toList();
+        return HOLDER2TAGS_CACHE.computeIfAbsent(holderKey, (k) -> tagsToList(holder.tags()));
     }
 
-    public static <T> String tagToString(@NotNull TagKey<T> tag) {
-        return tag.registry().location() + "/" + tag.location();
+    public static <T> List<String> tagsToList(Stream<TagKey<T>> tags) {
+        return tags.map(LuaConverter::tagToString).toList();
+    }
+
+    private static final LRUCache<TagKey<?>, String> TAG2STRING_CACHE = new LRUCache<>(1024);
+
+    public static String tagToString(@NotNull TagKey<?> tag) {
+        return TAG2STRING_CACHE.computeIfAbsent(tag, (t) -> registryToSlashString(t.registry()) + t.location().toString());
+    }
+
+    private static final LRUCache<ResourceKey<?>, String> REGISTRY2SLASH_STRING_CACHE = new LRUCache<>(256);
+
+    private static String registryToSlashString(final ResourceKey<? extends Registry<?>> key) {
+        return REGISTRY2SLASH_STRING_CACHE.computeIfAbsent(key, (k) -> k.location().toString() + "/");
     }
 
     // BlockPos tricks

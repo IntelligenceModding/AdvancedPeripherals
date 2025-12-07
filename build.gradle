@@ -146,7 +146,7 @@ repositories {
         name = "LDT Team minecolonies"
         url = 'https://ldtteam.jfrog.io/ldtteam/modding'
         content {
-            includeGroup "com.ldtteam"
+            includeGroup("com.ldtteam")
         }
     }
     maven {
@@ -204,10 +204,24 @@ repositories {
             includeModule("thedarkcolour", "kotlinforforge")
         }
     }
-    maven {
-        url = "https://cursemaven.com"
-        content {
-            includeGroup "curse.maven"
+    exclusiveContent {
+        forRepository {
+            maven {
+                url = "https://cursemaven.com"
+            }
+        }
+        filter {
+            includeGroup("curse.maven")
+        }
+    }
+    exclusiveContent {
+        forRepository {
+            maven {
+                url = "https://api.modrinth.com/maven"
+            }
+        }
+        filter {
+            includeGroup("maven.modrinth")
         }
     }
 }
@@ -292,6 +306,8 @@ dependencies {
     // Testing stuff
     // EMI
     runtimeOnly "dev.emi:emi-neoforge:${emi_version}"
+    // Spark
+    runtimeOnly "maven.modrinth:spark:1.10.124-neoforge-1.21.1"
 }
 
 

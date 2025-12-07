@@ -46,7 +46,7 @@ public class AutomataLookPlugin extends AutomataCorePlugin {
         ResourceLocation blockName = BuiltInRegistries.BLOCK.getKey(state.getBlock());
         if (blockName != null)
             data.put("name", blockName.toString());
-        data.put("tags", LuaConverter.tagsToList(() -> state.getBlock().builtInRegistryHolder().tags()));
+        data.put("tags", LuaConverter.getHolderTags(state.getBlock().builtInRegistryHolder()));
         return MethodResult.of(data);
     }
 
