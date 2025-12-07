@@ -280,7 +280,9 @@ public class LuaConverter {
         if (holderKey == null) {
             return tagsToList(holder.tags());
         }
-        return HOLDER2TAGS_CACHE.computeIfAbsent(holderKey, (k) -> tagsToList(holder.tags()));
+        synchronized (HOLDER2TAGS_CACHE) {
+            return HOLDER2TAGS_CACHE.computeIfAbsent(holderKey, (k) -> tagsToList(holder.tags()));
+        }
     }
 
     public static <T> List<String> tagsToList(Stream<TagKey<T>> tags) {
@@ -290,13 +292,17 @@ public class LuaConverter {
     private static final LRUCache<TagKey<?>, String> TAG2STRING_CACHE = new LRUCache<>(1024);
 
     public static String tagToString(@NotNull TagKey<?> tag) {
-        return TAG2STRING_CACHE.computeIfAbsent(tag, (t) -> registryToSlashString(t.registry()) + t.location().toString());
+        synchronized (TAG2STRING_CACHE) {
+            return TAG2STRING_CACHE.computeIfAbsent(tag, (t) -> registryToSlashString(t.registry()) + t.location().toString());
+        }
     }
 
     private static final LRUCache<ResourceKey<?>, String> REGISTRY2SLASH_STRING_CACHE = new LRUCache<>(256);
 
     private static String registryToSlashString(final ResourceKey<? extends Registry<?>> key) {
-        return REGISTRY2SLASH_STRING_CACHE.computeIfAbsent(key, (k) -> k.location().toString() + "/");
+        synchronized (REGISTRY2SLASH_STRING_CACHE) {
+            return REGISTRY2SLASH_STRING_CACHE.computeIfAbsent(key, (k) -> k.location().toString() + "/");
+        }
     }
 
     // BlockPos tricks
