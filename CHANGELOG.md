@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+## [1.21.1-0.7.57b] - 2025-09-28
 
 ### Changed
 - Fluid & checmical filter can use `amount` instead of `count`. `count` field will be removed in 0.8.
@@ -20,6 +21,11 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Fixed an issue when export/import with slots out of the range will cause error
 - Fixed bridges will only export the first item that matches the filter
 - [#794] Fixed bridges will only import fluids from the first tank.
+
+## [1.21.1-0.7.56b] - 2025-08-08
+
+### Fixed
+- [#775] Added support for the latest RS2 version, fixes a crash when trying to submit a crafting job. Min RS2 version is now beta 8
 
 ## [1.21.1-0.7.55b] - 2025-07-14
 
