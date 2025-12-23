@@ -207,7 +207,7 @@ public class MineColonies {
         map.put("maxLevel", building.getMaxBuildingLevel());
         map.put("name", building.getBuildingDisplayName());
         map.put("built", building.isBuilt());
-        map.put("isWorking", building.hasWorkOrder());
+        map.put("isWorking", building.isPendingConstruction());
         map.put("priority", building.getPickUpPriority());
         map.put("structure", structureData);
         map.put("citizens", citizensData);
@@ -237,7 +237,7 @@ public class MineColonies {
     public static int getAmountOfConstructionSites(IColony colony) {
         int constructionSites = 0;
         for (IBuilding building : colony.getBuildingManager().getBuildings().values()) {
-            if (building.hasWorkOrder())
+            if (building.isPendingConstruction())
                 constructionSites++;
         }
 
