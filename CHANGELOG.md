@@ -6,6 +6,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+### Added
+- [#798] Added PT_BR Translation
+
+### Changed
+- Changed following minimum versions: CC:Tweaked: 1.116.2, Minecolonies: 1.1.1230-1.21.1-snapshot
+- Optimized tags to lua table conversion, greatly improving performance in any listing functions for items/blocks, fluids or gases
+- Refactored our resources transportation logic between peripherals and other devices. Invluding inventory manager or export/import functions from the bridges. Testing is welcome
+
 ## [1.21.1-0.7.57b] - 2025-09-28
 
 ### Changed
