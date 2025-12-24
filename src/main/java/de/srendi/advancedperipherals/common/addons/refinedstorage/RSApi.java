@@ -86,6 +86,17 @@ public class RSApi {
         return null;
     }
 
+    public static List<ItemResource> getItems(Network network, ItemFilter filter) {
+        List<ItemResource> items = new ArrayList<>();
+        StorageNetworkComponent storage = network.getComponent(StorageNetworkComponent.class);
+        for (ResourceAmount resourceAmount : storage.getAll()) {
+            if (resourceAmount.resource() instanceof ItemResource itemResource && filter.test(itemResource.toItemStack())) {
+                items.add(itemResource);
+            }
+        }
+        return items;
+    }
+
     /**
      * Returns the first fluid parsed to a lua object which fits to the filter
      *
@@ -104,6 +115,17 @@ public class RSApi {
         return null;
     }
 
+    public static List<FluidResource> getFluids(Network network, FluidFilter filter) {
+        List<FluidResource> fluids = new ArrayList<>();
+        StorageNetworkComponent storage = network.getComponent(StorageNetworkComponent.class);
+        for (ResourceAmount resourceAmount : storage.getAll()) {
+            if (resourceAmount.resource() instanceof FluidResource fluidResource && filter.test(VariantUtil.toFluidStack(fluidResource, resourceAmount.amount()))) {
+                fluids.add(fluidResource);
+            }
+        }
+        return fluids;
+    }
+
     /**
      * Returns the first chemical parsed to a lua object which fits to the filter
      *
@@ -120,6 +142,17 @@ public class RSApi {
             }
         }
         return null;
+    }
+
+    public static List<ChemicalResource> getChemicals(Network network, ChemicalFilter filter) {
+        List<ChemicalResource> chemicals = new ArrayList<>();
+        StorageNetworkComponent storage = network.getComponent(StorageNetworkComponent.class);
+        for (ResourceAmount resourceAmount : storage.getAll()) {
+            if (resourceAmount.resource() instanceof ChemicalResource chemicalResource && filter.test(ChemicalUtil.toChemicalStack(chemicalResource.chemical(), resourceAmount.amount()))) {
+                chemicals.add(chemicalResource);
+            }
+        }
+        return chemicals;
     }
 
     /**

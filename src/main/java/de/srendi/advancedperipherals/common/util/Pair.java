@@ -4,15 +4,7 @@ import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-public final class Pair<T, V> {
-    private final T left;
-    private final V right;
-
-    public Pair(T left, V right) {
-        this.left = left;
-        this.right = right;
-    }
-
+public record Pair<T, V>(T left, V right) {
     public static <T, V> Pair<T, V> onlyRight(V right) {
         return new Pair<>(null, right);
     }
@@ -25,10 +17,12 @@ public final class Pair<T, V> {
         return new Pair<>(left, right);
     }
 
+    // TODO: replace by left() in 0.8
     public T getLeft() {
         return left;
     }
 
+    // TODO: replace by right() in 0.8
     public V getRight() {
         return right;
     }

@@ -100,6 +100,17 @@ public class AEApi {
     }
 
     @NotNull
+    public static List<Pair<Long, AEItemKey>> findAEStacksFromFilter(MEStorage monitor, ItemFilter filter) {
+        List<Pair<Long, AEItemKey>> items = new ArrayList<>();
+        for (Object2LongMap.Entry<AEKey> temp : monitor.getAvailableStacks()) {
+            if (temp.getKey() instanceof AEItemKey key && filter.test(key.toStack())) {
+                items.add(Pair.of(temp.getLongValue(), key));
+            }
+        }
+        return items;
+    }
+
+    @NotNull
     public static Pair<Long, AEFluidKey> findAEFluidFromStack(MEStorage monitor, @Nullable ICraftingService crafting, FluidStack item) {
         return findAEFluidFromFilter(monitor, crafting, FluidFilter.fromStack(item));
     }
@@ -123,6 +134,17 @@ public class AEApi {
     }
 
     @NotNull
+    public static List<Pair<Long, AEFluidKey>> findAEFluidsFromFilter(MEStorage monitor, FluidFilter filter) {
+        List<Pair<Long, AEFluidKey>> fluids = new ArrayList<>();
+        for (Object2LongMap.Entry<AEKey> temp : monitor.getAvailableStacks()) {
+            if (temp.getKey() instanceof AEFluidKey key && filter.test(key.toStack(1))) {
+                fluids.add(Pair.of(temp.getLongValue(), key));
+            }
+        }
+        return fluids;
+    }
+
+    @NotNull
     public static Pair<Long, MekanismKey> findAEChemicalFromStack(MEStorage monitor, @Nullable ICraftingService crafting, ChemicalStack stack) {
         return findAEChemicalFromFilter(monitor, crafting, ChemicalFilter.fromStack(stack));
     }
@@ -143,6 +165,17 @@ public class AEApi {
         }
 
         return Pair.of(0L, null);
+    }
+
+    @NotNull
+    public static List<Pair<Long, MekanismKey>> findAEChemicalsFromFilter(MEStorage monitor, ChemicalFilter filter) {
+        List<Pair<Long, MekanismKey>> chemicals = new ArrayList<>();
+        for (Object2LongMap.Entry<AEKey> temp : monitor.getAvailableStacks()) {
+            if (temp.getKey() instanceof MekanismKey key && filter.test(key.getStack())) {
+                chemicals.add(Pair.of(temp.getLongValue(), key));
+            }
+        }
+        return chemicals;
     }
 
     /**

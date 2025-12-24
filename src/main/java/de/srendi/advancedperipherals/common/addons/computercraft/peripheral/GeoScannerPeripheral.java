@@ -30,6 +30,7 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.common.Tags;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -39,9 +40,9 @@ import static de.srendi.advancedperipherals.common.addons.computercraft.operatio
 
 public class GeoScannerPeripheral extends BasePeripheral<IPeripheralOwner> {
 
-    /**
-     * Highly inspired by https://github.com/SquidDev-CC/plethora/ BlockScanner
-     */
+    /*
+    Highly inspired by https://github.com/SquidDev-CC/plethora/ BlockScanner
+    */
 
     public static final String PERIPHERAL_TYPE = "geo_scanner";
 
@@ -62,17 +63,18 @@ public class GeoScannerPeripheral extends BasePeripheral<IPeripheralOwner> {
         this(new PocketPeripheralOwner(pocket, upgrade));
     }
 
-    private static List<Map<String, Object>> scan(List<Map<String, Object>> result, Level level, Vec3 center, int radius) {
+    private static List<Map<String, Object>> scan(Level level, BlockPos center, int radius) {
+        List<Map<String, Object>> result = new ArrayList<>();
         ScanUtils.relativeTraverseBlocks(level, center, radius, (state, pos) -> {
-            HashMap<String, Object> data = new HashMap<>(6); // 5 normal fields + 1 "notOnShip" flag
-            data.put("x", pos.x);
-            data.put("y", pos.y);
-            data.put("z", pos.z);
+            Map<String, Object> data = new HashMap<>(6 * 2);
+            data.put("x", pos.getX());
+            data.put("y", pos.getY());
+            data.put("z", pos.getZ());
 
             Block block = state.getBlock();
             ResourceLocation name = BuiltInRegistries.BLOCK.getKey(block);
             data.put("name", name == null ? "unknown" : name.toString());
-            data.put("tags", LuaConverter.tagsToList(block.builtInRegistryHolder().tags()));
+            data.put("tags", LuaConverter.getHolderTags(block.builtInRegistryHolder()));
 
             result.add(data);
         });
@@ -104,23 +106,28 @@ public class GeoScannerPeripheral extends BasePeripheral<IPeripheralOwner> {
     public final MethodResult chunkAnalyze() throws LuaException {
         return withOperation(SCAN_BLOCKS, SCAN_BLOCKS.free(), null, ignored -> {
             Level level = getLevel();
-            LevelChunk chunk = level.getChunkAt(getPhysicsBlockPos());
+            LevelChunk chunk = level.getChunkAt(getPos());
             ChunkPos chunkPos = chunk.getPos();
-            HashMap<String, Integer> data = new HashMap<>();
+            Map<ResourceLocation, Integer> data = new HashMap<>();
             for (int x = chunkPos.getMinBlockX(); x <= chunkPos.getMaxBlockX(); x++) {
                 for (int z = chunkPos.getMinBlockZ(); z <= chunkPos.getMaxBlockZ(); z++) {
-                    for (int y = level.dimensionType().minY(); y < level.dimensionType().height(); y++) {
+                    for (int y = level.getMinBuildHeight(); y < level.getHeight(); y++) {
                         BlockState block = chunk.getBlockState(new BlockPos(x, y, z));
                         ResourceLocation name = BuiltInRegistries.BLOCK.getKey(block.getBlock());
-                        if (name != null) {
-                            if (block.is(Tags.Blocks.ORES)) {
-                                data.put(name.toString(), data.getOrDefault(name.toString(), 0) + 1);
-                            }
+                        if (name != null && block.is(Tags.Blocks.ORES)) {
+                            data.compute(name, (k, v) -> (v == null ? 0 : v) + 1);
                         }
                     }
                 }
             }
-            return MethodResult.of(data);
+            return MethodResult.of(
+                Map.ofEntries(
+                    data.entrySet()
+                        .stream()
+                        .map((entry) -> new AbstractMap.SimpleImmutableEntry(entry.getKey().toString(), entry.getValue()))
+                        .toArray(Map.Entry[]::new)
+                )
+            );
         }, null);
     }
 
@@ -132,18 +139,6 @@ public class GeoScannerPeripheral extends BasePeripheral<IPeripheralOwner> {
                 return MethodResult.of(null, "Radius is exceed max value");
             }
             return null;
-        }, context -> {
-            List<Map<String, Object>> result = new ArrayList<>();
-            scan(result, getLevel(), getCenterPos(), context.getRadius());
-            if (isOnShip()) {
-                int i = result.size();
-                scan(result, getLevel(), getPhysicsPos(), context.getRadius());
-                for (; i < result.size(); i++) {
-                    Map<String, Object> data = result.get(i);
-                    data.put("notOnShip", true);
-                }
-            }
-            return MethodResult.of(result);
-        }, null);
+        }, context -> MethodResult.of(scan(getLevel(), getPos(), context.getRadius())), null);
     }
 }
