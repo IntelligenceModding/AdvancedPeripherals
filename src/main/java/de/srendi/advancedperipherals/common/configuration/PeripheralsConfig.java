@@ -19,6 +19,7 @@ public class PeripheralsConfig implements IAPConfig {
     // Player Detector
     public final ModConfigSpec.IntValue playerDetMaxRange;
     public final ModConfigSpec.BooleanValue playerSpy;
+    public final ModConfigSpec.BooleanValue showSpectators;
     public final ModConfigSpec.BooleanValue morePlayerInformation;
     public final ModConfigSpec.BooleanValue enablePlayerDetector;
     public final ModConfigSpec.BooleanValue playerDetMultiDimensional;
@@ -120,6 +121,7 @@ public class PeripheralsConfig implements IAPConfig {
         enablePlayerDetector = builder.comment("Enable the Player Detector or not.").define("enablePlayerDetector", true);
         playerDetMaxRange = builder.comment("The max range of the player detector functions. If anyone use a higher range, the detector will use this max range. -1 for unlimited").defineInRange("playerDetMaxRange", -1, -1, Integer.MAX_VALUE);
         playerSpy = builder.comment("Activates the \"getPlayerPos\" function of the Player Detector").define("enablePlayerPosFunction", true);
+        showSpectators = builder.comment("Returns a play in any function even when they are in spectator").define("showSpectators", true);
         morePlayerInformation = builder.comment("Adds more information to `getPlayerPos` of the Player Detector. Like rotation and dimension").define("morePlayerInformation", true);
         playerDetMultiDimensional = builder.comment("If true, the player detector can observe players which aren't in the same dimension as the detector itself. `playerDetMaxRange` needs to be infinite(-1) for it to work.").define("chatBoxMultiDimensional", true);
         playerSpyRandError = builder.comment("If true, add random error to `getPlayerPos` player position that varies based on how far the player is from the detector. Prevents getting the exact position of players far from the detector.").define("enablePlayerPosRandomError", false);

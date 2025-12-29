@@ -60,7 +60,7 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
 
     @LuaFunction(mainThread = true)
     public final String[] getOnlinePlayers() {
-        return ServerLifecycleHooks.getCurrentServer().getPlayerNames();
+        return getPlayers().stream().map(player -> player.getName().getString()).toArray(String[]::new);
     }
 
     @LuaFunction(mainThread = true)
@@ -276,6 +276,9 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
     }
 
     private List<ServerPlayer> getPlayers() {
-        return ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers();
+        if (APConfig.PERIPHERALS_CONFIG.showSpectators.get())
+            return ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers();
+
+        return ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers().stream().filter(player -> !player.isSpectator()).toList();
     }
 }
