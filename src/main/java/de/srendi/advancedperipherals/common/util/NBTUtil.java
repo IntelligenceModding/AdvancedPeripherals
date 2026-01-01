@@ -17,8 +17,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.ChunkPos;
-import net.neoforged.server.ServerLifecycleHooks;
-import org.apache.logging.log4j.Level;
+import net.minecraft.world.level.Level;
 
 import java.util.Map;
 
@@ -59,7 +58,7 @@ public class NBTUtil {
         try {
             return json == null ? null : TagParser.parseTag(json);
         } catch (CommandSyntaxException ex) {
-            AdvancedPeripherals.debug("Could not parse json data to NBT", Level.ERROR);
+            AdvancedPeripherals.debug("Could not parse json data to NBT", org.apache.logging.log4j.Level.ERROR);
             if(APConfig.GENERAL_CONFIG.enableDebugMode.get())
                 ex.printStackTrace();
             return null;
@@ -78,13 +77,12 @@ public class NBTUtil {
         return new BlockPos(nbt.getInt("x"), nbt.getInt("y"), nbt.getInt("z"));
     }
 
-    public static Pair<net.minecraft.world.level.Level, BlockPos> levelAndBlockPosFromNBT(CompoundTag nbt) {
-        MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
+    public static Pair<Level, BlockPos> levelAndBlockPosFromNBT(MinecraftServer server, CompoundTag nbt) {
         ServerLevel level = server.getLevel(ResourceKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(nbt.getString("dim"))));
         return new Pair(level, blockPosFromNBT(nbt));
     }
 
-    public static CompoundTag toNBT(net.minecraft.world.level.Level level, BlockPos pos) {
+    public static CompoundTag toNBT(Level level, BlockPos pos) {
         CompoundTag data = toNBT(pos);
         data.putString("dim", level.dimension().location().toString());
         return data;

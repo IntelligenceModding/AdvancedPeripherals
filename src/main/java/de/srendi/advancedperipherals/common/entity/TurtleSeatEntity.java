@@ -3,11 +3,11 @@ package de.srendi.advancedperipherals.common.entity;
 import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.shared.computer.core.ServerComputer;
 import dan200.computercraft.shared.network.container.ComputerContainerData;
-import dan200.computercraft.shared.turtle.blocks.TileTurtle;
+import dan200.computercraft.shared.turtle.blocks.TurtleBlockEntity;
 import dan200.computercraft.shared.turtle.core.TurtleBrain;
-import dan200.computercraft.shared.turtle.items.TurtleItemFactory;
 import de.srendi.advancedperipherals.common.network.toserver.SaddleTurtleControlPacket;
 import de.srendi.advancedperipherals.common.setup.APEntities;
+import de.srendi.advancedperipherals.common.util.InputKeySet;
 import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
@@ -27,7 +27,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.PushReaction;
-import net.minecraft.world.level.portal.PortalInfo;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
@@ -64,7 +63,7 @@ public class TurtleSeatEntity extends Entity implements HasCustomInventoryScreen
     private ServerComputer getServerComputer() {
         Player player = this.getSelfAndPassengers().filter(e -> e instanceof Player).map(e -> (Player) e).findFirst().orElse(null);
         if (player != null && this.turtle instanceof TurtleBrain turtle) {
-            TileTurtle tile = turtle.getOwner();
+            TurtleBlockEntity tile = turtle.getOwner();
             if (tile.isUsable(player)) {
                 return tile.createServerComputer();
             }
@@ -184,12 +183,15 @@ public class TurtleSeatEntity extends Entity implements HasCustomInventoryScreen
                 return;
             }
             if (this.turtle instanceof TurtleBrain turtle) {
-                TileTurtle tile = turtle.getOwner();
+                TurtleBlockEntity tile = turtle.getOwner();
                 if (!tile.isUsable(player)) {
                     return;
                 }
                 ServerComputer computer = tile.createServerComputer();
-                ItemStack stack = TurtleItemFactory.create(tile);
+                BlockState state = tile.getBlockState();
+                // AbstractComputerBlock.getItem is protected, so we need use Block.getCloneItemStack instead
+                // TODO: ask Squid if AbstractComputerBlock.getItem can be public
+                ItemStack stack = state.getBlock().getCloneItemStack(this.level, tile.getBlockPos(), state);
                 new ComputerContainerData(computer, stack).open(player, tile);
             }
         }
@@ -212,13 +214,8 @@ public class TurtleSeatEntity extends Entity implements HasCustomInventoryScreen
     }
 
     @Override
-    public boolean canChangeDimensions() {
+    public boolean canChangeDimensions(Level oldLevel, Level newLevel) {
         return false;
-    }
-
-    @Override
-    public PortalInfo findDimensionEntryPoint(ServerLevel newLevel) {
-        return new PortalInfo(this.getTurtlePos(), Vec3.ZERO, 0, 0);
     }
 
     @Override

@@ -178,7 +178,7 @@ public class AutomataWarpingPlugin extends AutomataCorePlugin {
             return pairData.getLeft();
         }
 
-        Pair<Level, BlockPos> newLevelAndPosition = NBTUtil.levelAndBlockPosFromNBT(pairData.getRight());
+        Pair<Level, BlockPos> newLevelAndPosition = NBTUtil.levelAndBlockPosFromNBT(automataCore.getLevel().getServer(), pairData.getRight());
         return MethodResult.of(getWarpCost(getWarpContext(newLevelAndPosition.getLeft(), newLevelAndPosition.getRight())));
     }
 
@@ -190,7 +190,7 @@ public class AutomataWarpingPlugin extends AutomataCorePlugin {
         }
 
         TurtlePeripheralOwner owner = automataCore.getPeripheralOwner();
-        Pair<Level, BlockPos> newLevelAndPosition = NBTUtil.levelAndBlockPosFromNBT(pairData.getRight());
+        Pair<Level, BlockPos> newLevelAndPosition = NBTUtil.levelAndBlockPosFromNBT(automataCore.getLevel().getServer(), pairData.getRight());
         if (newLevelAndPosition.getLeft() != owner.getLevel()) {
             return MethodResult.of(-1);
         }

@@ -31,10 +31,7 @@ public class ServerWorker {
     }
 
     @SubscribeEvent
-    public static void serverTick(TickEvent.ServerTickEvent event) {
-        if (event.phase != TickEvent.Phase.END) {
-            return;
-        }
+    public static void serverTick(final ServerTickEvent.Post event) {
         for (int remain = callQueue.size(); remain > 0; remain--) {
             final Runnable runnable = callQueue.poll();
             tasksRan++;

@@ -24,6 +24,9 @@ import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 @EventBusSubscriber(modid = AdvancedPeripherals.MOD_ID, value = Dist.CLIENT)
 public class ClientRegistry {
 
+    public static final SaddleTurtleOverlay SADDLE_TURTLE_OVERLAY = new SaddleTurtleOverlay();
+    public static final OverlayModuleOverlay OVERLAY_MODULE_OVERLAY = new OverlayModuleOverlay();
+
     @SubscribeEvent
     public static void onClientSetup(FMLClientSetupEvent event) {
         ItemPropertiesRegistry.register();
