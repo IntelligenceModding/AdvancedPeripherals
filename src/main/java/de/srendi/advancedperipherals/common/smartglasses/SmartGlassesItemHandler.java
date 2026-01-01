@@ -1,7 +1,7 @@
 package de.srendi.advancedperipherals.common.smartglasses;
 
 import dan200.computercraft.api.pocket.IPocketUpgrade;
-import dan200.computercraft.shared.PocketUpgrades;
+import dan200.computercraft.impl.PocketUpgrades;
 import de.srendi.advancedperipherals.common.items.SmartGlassesItem;
 import de.srendi.advancedperipherals.common.smartglasses.modules.IModuleItem;
 import net.minecraft.core.NonNullList;
@@ -9,8 +9,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.items.IItemHandlerModifiable;
-import net.neoforged.items.ItemHandlerHelper;
+import net.neoforged.neoforge.items.IItemHandlerModifiable;
+import net.neoforged.neoforge.items.ItemHandlerHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

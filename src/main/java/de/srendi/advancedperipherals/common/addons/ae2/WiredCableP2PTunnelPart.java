@@ -7,10 +7,10 @@ import appeng.items.parts.PartModels;
 import appeng.parts.p2p.CapabilityP2PTunnelPart;
 import appeng.parts.p2p.P2PModels;
 import dan200.computercraft.api.ComputerCraftAPI;
-import dan200.computercraft.api.network.wired.IWiredElement;
-import dan200.computercraft.api.network.wired.IWiredNetworkChange;
-import dan200.computercraft.api.network.wired.IWiredNode;
-import dan200.computercraft.shared.Capabilities;
+import dan200.computercraft.api.network.wired.WiredElement;
+import dan200.computercraft.api.network.wired.WiredElementCapability;
+import dan200.computercraft.api.network.wired.WiredNetworkChange;
+import dan200.computercraft.api.network.wired.WiredNode;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.BlockGetter;
@@ -25,17 +25,17 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.annotation.Nonnull;
 
-public class WiredCableP2PTunnelPart extends CapabilityP2PTunnelPart<WiredCableP2PTunnelPart, IWiredElement> {
+public class WiredCableP2PTunnelPart extends CapabilityP2PTunnelPart<WiredCableP2PTunnelPart, WiredElement> {
     private static final P2PModels MODELS = new P2PModels(AdvancedPeripherals.getRL("part/p2p/p2p_tunnel_cable"));
 
-    private final IWiredElement element = new P2PWiredElement();
-    private final IWiredElement outElement = new P2PWiredElement();
-    private final IWiredNode node = this.element.getNode();
+    private final WiredElement element = new P2PWiredElement();
+    private final WiredElement outElement = new P2PWiredElement();
+    private final WiredNode node = this.element.getNode();
     private Set<WiredCableP2PTunnelPart> connected = new HashSet<>();
     private boolean activated = false;
 
     public WiredCableP2PTunnelPart(IPartItem<?> partItem) {
-        super(partItem, Capabilities.CAPABILITY_WIRED_ELEMENT);
+        super(partItem, WiredElementCapability.get());
         this.inputHandler = outElement;
         this.outputHandler = outElement;
         this.emptyHandler = null; // should never used
@@ -123,8 +123,7 @@ public class WiredCableP2PTunnelPart extends CapabilityP2PTunnelPart<WiredCableP
     }
 
     protected void refreshConnection() {
-        BlockEntity cable = this.getLevel().getBlockEntity(this.getFacingPos());
-        IWiredElement elem = cable == null ? null : cable.getCapability(Capabilities.CAPABILITY_WIRED_ELEMENT, this.getSide().getOpposite()).orElse(null);
+        WiredElement elem = this.getLevel().getCapability(WiredElementCapability.get(), this.getFacingPos(), this.getSide().getOpposite()).orElse(null);
         if (elem == null) {
             return;
         }
@@ -141,12 +140,12 @@ public class WiredCableP2PTunnelPart extends CapabilityP2PTunnelPart<WiredCableP
         }
     }
 
-    private class P2PWiredElement implements IWiredElement {
-        private final IWiredNode node = ComputerCraftAPI.createWiredNodeForElement(this);
+    private class P2PWiredElement implements WiredElement {
+        private final WiredNode node = ComputerCraftAPI.createWiredNodeForElement(this);
 
         @Nonnull
         @Override
-        public IWiredNode getNode() {
+        public WiredNode getNode() {
             return node;
         }
 
@@ -169,6 +168,6 @@ public class WiredCableP2PTunnelPart extends CapabilityP2PTunnelPart<WiredCableP
         }
 
         @Override
-        public void networkChanged(IWiredNetworkChange change) {}
+        public void networkChanged(WiredNetworkChange change) {}
     }
 }

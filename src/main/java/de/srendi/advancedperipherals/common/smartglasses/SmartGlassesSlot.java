@@ -1,8 +1,8 @@
 package de.srendi.advancedperipherals.common.smartglasses;
 
 import dan200.computercraft.core.computer.ComputerSide;
-import net.neoforged.items.IItemHandler;
-import net.neoforged.items.SlotItemHandler;
+import net.neoforged.neoforge.items.IItemHandler;
+import net.neoforged.neoforge.items.SlotItemHandler;
 
 public class SmartGlassesSlot extends SlotItemHandler {
 

@@ -1,7 +1,6 @@
 package de.srendi.advancedperipherals.common.network;
 
 import de.srendi.advancedperipherals.AdvancedPeripherals;
-import de.srendi.advancedperipherals.common.network.base.IPacket;
 import de.srendi.advancedperipherals.common.network.toclient.KeyboardMouseCapturePacket;
 import de.srendi.advancedperipherals.common.network.toclient.OverlayModuleClientRequestPacket;
 import de.srendi.advancedperipherals.common.network.toclient.RenderableObjectBulkSyncPacket;

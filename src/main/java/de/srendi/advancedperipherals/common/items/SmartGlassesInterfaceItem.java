@@ -19,7 +19,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.neoforged.common.capabilities.ForgeCapabilities;
 import net.neoforged.common.util.LazyOptional;
-import net.neoforged.items.IItemHandler;
+import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
 

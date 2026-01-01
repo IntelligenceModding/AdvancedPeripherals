@@ -4,6 +4,7 @@ import de.srendi.advancedperipherals.client.screens.KeyboardScreen;
 import de.srendi.advancedperipherals.common.network.IAPPacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 public class KeyboardMouseCapturePacket implements IAPPacket {

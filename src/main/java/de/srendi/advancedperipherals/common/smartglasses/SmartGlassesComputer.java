@@ -4,7 +4,7 @@ import dan200.computercraft.api.peripheral.IPeripheral;
 import dan200.computercraft.api.pocket.IPocketAccess;
 import dan200.computercraft.api.pocket.IPocketUpgrade;
 import dan200.computercraft.core.computer.ComputerSide;
-import dan200.computercraft.shared.PocketUpgrades;
+import dan200.computercraft.impl.PocketUpgrades;
 import dan200.computercraft.shared.computer.core.ComputerFamily;
 import dan200.computercraft.shared.computer.core.ServerComputer;
 import de.srendi.advancedperipherals.common.smartglasses.modules.IModule;
