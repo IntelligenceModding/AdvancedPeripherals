@@ -22,6 +22,7 @@ import net.minecraft.server.level.ServerPlayer;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
 
@@ -52,7 +53,9 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
 
     @LuaFunction(mainThread = true)
     public final String[] getOnlinePlayers() {
-        return getPlayers().stream().map(player -> player.getName().getString()).toArray(String[]::new);
+        return getPlayers()
+            .map(player -> player.getName().getString())
+            .toArray(String[]::new);
     }
 
     @LuaFunction(mainThread = true)
@@ -61,7 +64,6 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
         BlockPos secondPos = LuaConverter.convertToBlockPos(secondCoord);
 
         return getPlayers()
-            .stream()
             .filter(player -> CoordUtil.isInRange(getPos(), player, getLevel(), firstPos, secondPos, MAX_RANGE))
             .map(player -> player.getName().getString())
             .toList();
@@ -70,7 +72,6 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
     @LuaFunction(mainThread = true)
     public final List<String> getPlayersInCubic(int x, int y, int z) {
         return getPlayers()
-            .stream()
             .filter(player -> CoordUtil.isInRange(getPos(), getLevel(), player, x, y, z, MAX_RANGE))
             .map(player -> player.getName().getString())
             .toList();
@@ -79,7 +80,6 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
     @LuaFunction(mainThread = true)
     public final List<String> getPlayersInRange(int range) {
         return getPlayers()
-            .stream()
             .filter(player -> CoordUtil.isInRange(getPos(), getLevel(), player, range, MAX_RANGE))
             .map(player -> player.getName().getString())
             .toList();
@@ -91,21 +91,18 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
         BlockPos secondPos = LuaConverter.convertToBlockPos(secondCoord);
 
         return getPlayers()
-            .stream()
             .anyMatch(player -> CoordUtil.isInRange(getPos(), player, getLevel(), firstPos, secondPos, MAX_RANGE));
     }
 
     @LuaFunction(mainThread = true)
     public final boolean isPlayersInCubic(int x, int y, int z) {
         return getPlayers()
-            .stream()
             .anyMatch(player -> CoordUtil.isInRange(getPos(), getLevel(), player, x, y, z, MAX_RANGE));
     }
 
     @LuaFunction(mainThread = true)
     public final boolean isPlayersInRange(int range) {
         return getPlayers()
-            .stream()
             .anyMatch(player -> CoordUtil.isInRange(getPos(), getLevel(), player, range, MAX_RANGE));
     }
 
@@ -204,16 +201,16 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
         return info;
     }
 
-    private List<ServerPlayer> getPlayers() {
+    private Stream<ServerPlayer> getPlayers() {
         ServerLevel level = getLevel();
         if (level == null) {
-            return List.of();
+            return Stream.of();
         }
-        List<ServerPlayer> players = isAllowedMultiDimensional()
-            ? level.getServer().getPlayerList().getPlayers()
-            : level.players();
+        Stream<ServerPlayer> players = isAllowedMultiDimensional()
+            ? level.getServer().getPlayerList().getPlayers().stream()
+            : level.players().stream();
         if (!APConfig.PERIPHERALS_CONFIG.showSpectators.get()) {
-            players = players.stream().filter(player -> !player.isSpectator()).toList();
+            players = players.filter(player -> !player.isSpectator());
         }
         return players;
     }
