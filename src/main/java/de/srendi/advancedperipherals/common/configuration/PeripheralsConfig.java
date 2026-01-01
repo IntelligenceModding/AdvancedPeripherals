@@ -19,6 +19,7 @@ public class PeripheralsConfig implements IAPConfig {
     // Player Detector
     public final ModConfigSpec.IntValue playerDetMaxRange;
     public final ModConfigSpec.BooleanValue playerSpy;
+    public final ModConfigSpec.BooleanValue showSpectators;
     public final ModConfigSpec.BooleanValue morePlayerInformation;
     public final ModConfigSpec.BooleanValue enablePlayerDetector;
     public final ModConfigSpec.BooleanValue playerDetMultiDimensional;

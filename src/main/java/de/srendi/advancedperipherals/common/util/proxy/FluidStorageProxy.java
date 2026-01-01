@@ -13,6 +13,7 @@ public class FluidStorageProxy extends AbstractStorageProxy implements IFluidHan
     private ResourceLocation lastTransfered = null;
     private ResourceLocation wasReady = null;
     private volatile ResourceLocation ready = null;
+    private boolean receiving = false;
 
     public FluidStorageProxy(FluidDetectorEntity fluidDetectorEntity, int maxTransferRate) {
         super(maxTransferRate);
@@ -41,10 +42,17 @@ public class FluidStorageProxy extends AbstractStorageProxy implements IFluidHan
 
     @Override
     public int fill(FluidStack resource, IFluidHandler.FluidAction action) {
-        return fluidDetectorEntity.getOutputStorage().map(outStorage -> {
-            FluidStack transferring = resource.copy();
-            transferring.setAmount((int) Math.min(resource.getAmount(), this.getTransferRate()));
-            int transferred = outStorage.fill(transferring, action);
+        if (this.receiving) {
+            return 0;
+        }
+        this.receiving = true;
+        try {
+            IFluidHandler storage = fluidDetectorEntity.getOutputStorage().get();
+            if (storage == null) {
+                return 0;
+            }
+            FluidStack transferring = resource.copyWithAmount((int) Math.min(resource.getAmount(), this.getTransferRate()));
+            int transferred = storage.fill(transferring, action);
             if (!action.simulate()) {
                 this.wasReady = ForgeRegistries.FLUIDS.getKey(resource.getFluid());
                 if (transferred > 0) {
@@ -53,7 +61,9 @@ public class FluidStorageProxy extends AbstractStorageProxy implements IFluidHan
                 }
             }
             return transferred;
-        }).orElse(0);
+        } finally {
+            this.receiving = false;
+        }
     }
 
     @Override

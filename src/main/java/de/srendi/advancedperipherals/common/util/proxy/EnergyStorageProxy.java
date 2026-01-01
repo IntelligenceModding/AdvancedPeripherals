@@ -9,6 +9,7 @@ public class EnergyStorageProxy extends AbstractStorageProxy implements IEnergyS
     private boolean lastTransfered = false;
     private boolean wasReady = false;
     private volatile boolean ready = false;
+    private boolean receiving = false;
 
     public EnergyStorageProxy(EnergyDetectorEntity energyDetectorTE, int maxTransferRate) {
         super(maxTransferRate);
@@ -22,8 +23,16 @@ public class EnergyStorageProxy extends AbstractStorageProxy implements IEnergyS
 
     @Override
     public int receiveEnergy(int maxReceive, boolean simulate) {
-        return energyDetectorTE.getOutputStorage().map(outStorage -> {
-            int transferred = outStorage.receiveEnergy((int) Math.min(maxReceive, this.getTransferRate()), simulate);
+        if (this.receiving) {
+            return 0;
+        }
+        this.receiving = true;
+        try {
+            IEnergyStorage storage = energyDetectorTE.getOutputStorage().orElse(null);
+            if (storage == null) {
+                return 0;
+            }
+            int transferred = storage.receiveEnergy((int) Math.min(maxReceive, this.getTransferRate()), simulate);
             if (!simulate) {
                 this.wasReady = true;
                 if (transferred > 0) {
@@ -32,7 +41,9 @@ public class EnergyStorageProxy extends AbstractStorageProxy implements IEnergyS
                 }
             }
             return transferred;
-        }).orElse(0);
+        } finally {
+            this.receiving = false;
+        }
     }
 
     @Override

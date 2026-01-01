@@ -20,7 +20,7 @@ public interface IPeripheralOwner {
 
     @Nullable String getCustomName();
 
-    @Nullable Level getLevel();
+    @NotNull Level getLevel();
 
     @NotNull BlockPos getPos();
 

@@ -14,7 +14,7 @@ import de.srendi.advancedperipherals.common.addons.computercraft.owner.Periphera
 import de.srendi.advancedperipherals.common.util.CoordUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.world.level.Level;
+import net.minecraft.server.level.ServerLevel;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -131,8 +131,8 @@ public abstract class BasePeripheral<O extends IPeripheralOwner> implements IBas
         return owner.getPos();
     }
 
-    protected Level getLevel() {
-        return owner.getLevel();
+    protected ServerLevel getLevel() {
+        return (ServerLevel) owner.getLevel();
     }
 
     protected Direction validateSide(String direction) throws LuaException {

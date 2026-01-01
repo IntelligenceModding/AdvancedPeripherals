@@ -39,6 +39,8 @@ public class PocketPeripheralOwner extends BasePeripheralOwner {
     @Nullable
     @Override
     public Level getLevel() {
+        // TODO: Certain version of CC will make pocket computer has null level while changing dimensions.
+        // Not sure if this is fixed in later CC so bunch of null checks can be removed. :3
         return pocket.getLevel();
     }
 

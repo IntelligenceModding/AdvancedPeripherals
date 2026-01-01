@@ -8,6 +8,14 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ## [Unreleased]
 
 ### Added
+- Config option to hide spectators from the player detector
+
+### Changed
+- Player Detector's `getPlayerPos` / `getPlayer` now returns `nil` instead of `{}` for not found players, which can be checked easier.
+
+## [1.21.1-0.7.58b] - 2025-12-23
+
+### Added
 - [#798] Added PT_BR Translation
 
 ### Changed
