@@ -31,27 +31,35 @@ public class NBTUtil {
         // assuming that map keys are strings
         if (object == null) {
             return null;
-        } else if (object instanceof Boolean bool) {
-            return ByteTag.valueOf((byte) (bool ? 1 : 0));
-        } else if (object instanceof Integer integer) {
-            return IntTag.valueOf(integer);
-        } else if (object instanceof Number number) {
-            return DoubleTag.valueOf(number.doubleValue());
-        } else if (object instanceof String) {
-            return StringTag.valueOf(object.toString());
-        } else if (object instanceof Map<?, ?> map) {
-            CompoundTag nbt = new CompoundTag();
-
-            for (Map.Entry<?, ?> item : map.entrySet()) {
-                Tag value = toDirectNBT(item.getValue());
-                if (item.getKey() != null && value != null) {
-                    nbt.put(item.getKey().toString(), value);
-                }
-            }
-            return nbt;
-        } else {
-            return null;
         }
+        if (object instanceof Boolean bool) {
+            return ByteTag.valueOf((byte) (bool ? 1 : 0));
+        }
+        if (object instanceof Integer integer) {
+            return IntTag.valueOf(integer);
+        }
+        if (object instanceof Number number) {
+            return DoubleTag.valueOf(number.doubleValue());
+        }
+        if (object instanceof String string) {
+            return StringTag.valueOf(string);
+        }
+        if (object instanceof Map<?, ?> map) {
+            return mapToNBT(map);
+        }
+        return null;
+    }
+
+    public static CompoundTag mapToNBT(Map<?, ?> map) {
+        CompoundTag nbt = new CompoundTag();
+
+        for (Map.Entry<?, ?> item : map.entrySet()) {
+            Tag value = toDirectNBT(item.getValue());
+            if (item.getKey() != null && value != null) {
+                nbt.put(item.getKey().toString(), value);
+            }
+        }
+        return nbt;
     }
 
     public static CompoundTag fromText(String json) {

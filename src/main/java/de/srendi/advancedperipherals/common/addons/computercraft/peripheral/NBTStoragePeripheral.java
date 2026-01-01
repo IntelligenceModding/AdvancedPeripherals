@@ -1,19 +1,22 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.peripheral;
 
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import dan200.computercraft.api.lua.IArguments;
+import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
+import dan200.computercraft.api.lua.LuaValues;
 import dan200.computercraft.api.lua.MethodResult;
 import dan200.computercraft.shared.util.NBTUtil;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.BlockEntityPeripheralOwner;
 import de.srendi.advancedperipherals.common.blocks.blockentities.NBTStorageEntity;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
-import de.srendi.advancedperipherals.common.util.CountingWipingStream;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.TagParser;
 
 import java.io.IOException;
-import java.io.ObjectOutputStream;
+import java.io.DataOutputStream;
+import java.io.OutputStream;
 import java.util.Map;
 
 public class NBTStoragePeripheral extends BasePeripheral<BlockEntityPeripheralOwner<NBTStorageEntity>> {
@@ -37,37 +40,42 @@ public class NBTStoragePeripheral extends BasePeripheral<BlockEntityPeripheralOw
     }
 
     @LuaFunction(mainThread = true)
-    public final MethodResult read() {
+    public final MethodResult load() {
         return MethodResult.of(NBTUtil.toLua(owner.tileEntity.getStored()));
     }
 
     @LuaFunction(mainThread = true)
-    public final MethodResult writeJson(String jsonData) {
-        if (jsonData.length() > APConfig.PERIPHERALS_CONFIG.nbtStorageMaxSize.get()) {
-            return MethodResult.of(null, "JSON size is bigger than allowed");
+    public final MethodResult save(IArguments args) throws LuaException {
+        Object data = args.get(0);
+        if (data == null) {
+            throw new LuaException("argument #1 must provide a vaild SNBT string or a NBT-like table");
         }
         CompoundTag parsedData;
-        try {
-            parsedData = TagParser.parseTag(jsonData);
-        } catch (CommandSyntaxException ex) {
-            return MethodResult.of(null, String.format("Cannot parse json: %s", ex.getMessage()));
+        if (data instanceof String snbt) {
+            try {
+                parsedData = TagParser.parseTag(snbt);
+            } catch (CommandSyntaxException ex) {
+                return MethodResult.of(false, String.format("Cannot parse SNBT: %s", ex.getMessage()));
+            }
+        } else if (data instanceof Map<?, ?> map) {
+            parsedData = de.srendi.advancedperipherals.common.util.NBTUtil.mapToNBT(map);
+        } else {
+            throw LuaValues.badArgumentOf(args, 0, "string or table");
+        }
+        if (getNBTSize(parsedData) > APConfig.PERIPHERALS_CONFIG.nbtStorageMaxSize.get()) {
+            return MethodResult.of(false, "NBT size is bigger than allowed");
         }
         owner.tileEntity.setStored(parsedData);
         return MethodResult.of(true);
     }
 
-    @LuaFunction(mainThread = true)
-    public final MethodResult writeTable(Map<?, ?> data) {
-        CountingWipingStream countingStream = new CountingWipingStream();
-        try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(countingStream)) {
-            objectOutputStream.writeObject(data);
+    private static int getNBTSize(CompoundTag data) {
+        DataOutputStream dataOutput = new DataOutputStream(OutputStream.nullOutputStream());
+        try {
+            data.write(dataOutput);
         } catch (IOException e) {
-            return MethodResult.of(null, String.format("No idea, how this happened, but java IO Exception appear %s", e.getMessage()));
+            throw new AssertionError("Unexpected IOException", e);
         }
-        if (countingStream.getWrittenBytes() > APConfig.PERIPHERALS_CONFIG.nbtStorageMaxSize.get())
-            return MethodResult.of(null, "JSON size is bigger than allowed");
-        CompoundTag parsedData = (CompoundTag) de.srendi.advancedperipherals.common.util.NBTUtil.toDirectNBT(data);
-        owner.tileEntity.setStored(parsedData);
-        return MethodResult.of(true);
+        return dataOutput.size();
     }
 }

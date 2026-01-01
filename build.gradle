@@ -273,11 +273,16 @@ dependencies {
     compileOnly "curse.maven:ae2things-609977:${ae2things_version}-sources"
     runtimeOnly "curse.maven:ae2things-609977:${ae2things_version}-sources"
 
+    // Create
     implementation ("com.simibubi.create:create-${minecraft_version}:${create_version}:slim") { transitive = false }
     implementation "net.createmod.ponder:Ponder-NeoForge-${minecraft_version}:${ponder_version}"
     compileOnly "dev.engine-room.flywheel:flywheel-neoforge-api-${minecraft_version}:${flywheel_version}"
     runtimeOnly "dev.engine-room.flywheel:flywheel-neoforge-${minecraft_version}:${flywheel_version}"
     implementation "com.tterrag.registrate:Registrate:${registrate_version}"
+
+    // DimStorage
+    compileOnly "curse.maven:dimstorage-353882:${dimstorage_version}"
+    compileOnly "curse.maven:edivadlib-638508:${edivadlib_version}"
 
     // Minecolonies
     compileOnly "com.ldtteam:blockui:${blockui_version}"
@@ -285,11 +290,14 @@ dependencies {
     compileOnly "com.ldtteam:minecolonies:${minecolonies_version}"
     compileOnly "com.ldtteam:structurize:${structurize_version}"
 
-    // Remove/Comment this section if you want to use runData.
-    runtimeOnly "com.ldtteam:blockui:${blockui_version}"
-    runtimeOnly "com.ldtteam:domum-ornamentum:${domumornamentum_version}"
-    runtimeOnly "com.ldtteam:minecolonies:${minecolonies_version}"
-    runtimeOnly "com.ldtteam:structurize:${structurize_version}"
+    // IMPORTANT. This should be removed/commented when running `runData`
+    // Automated now, tho if you are not executing runData directly it's no help
+    if (!project.gradle.startParameter.taskNames.contains("runData")) {
+        runtimeOnly "com.ldtteam:blockui:${blockui_version}"
+        runtimeOnly "com.ldtteam:domum-ornamentum:${domumornamentum_version}"
+        runtimeOnly "com.ldtteam:minecolonies:${minecolonies_version}"
+        runtimeOnly "com.ldtteam:structurize:${structurize_version}"
+    }
 
     // Patchouli
     compileOnly "vazkii.patchouli:Patchouli:${patchouli_version}-NEOFORGE"

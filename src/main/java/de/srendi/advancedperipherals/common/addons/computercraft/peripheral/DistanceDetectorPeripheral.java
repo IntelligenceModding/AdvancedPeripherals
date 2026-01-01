@@ -3,6 +3,7 @@ package de.srendi.advancedperipherals.common.addons.computercraft.peripheral;
 import dan200.computercraft.api.lua.IArguments;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
+import dan200.computercraft.api.lua.LuaValues;
 import dan200.computercraft.api.pocket.IPocketAccess;
 import dan200.computercraft.api.pocket.IPocketUpgrade;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.BlockEntityPeripheralOwner;
@@ -182,7 +183,7 @@ public class DistanceDetectorPeripheral extends BasePeripheral<IPeripheralOwner>
     public final void setDetectionMode(IArguments args) throws LuaException {
         Object mode = args.get(0);
         if (mode == null) {
-            throw new LuaException("arg #1 must provide a mode name or an index between [0, 2]");
+            throw new LuaException("argument #1 must provide a mode name or an index between [0, 2]");
         }
         DetectionType detectionType;
         if (mode instanceof Number modeInd) {
@@ -196,7 +197,7 @@ public class DistanceDetectorPeripheral extends BasePeripheral<IPeripheralOwner>
                 default -> throw new LuaException("Unknown detection mode '" + mode + "'");
             };
         } else {
-            throw new LuaException("arg #1 must be a string or a number");
+            throw LuaValues.badArgumentOf(args, 0, "string or number");
         }
         this.setDetectionType(detectionType);
     }
