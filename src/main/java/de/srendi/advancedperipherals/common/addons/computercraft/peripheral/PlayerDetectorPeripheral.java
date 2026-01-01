@@ -239,13 +239,9 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
     public void update() {
         lastConsumedMessage = Events.traversePlayerMessages(
             lastConsumedMessage,
-            message -> getConnectedComputers().forEach(computer -> {
-                if (message.eventName().equals("playerChangedDimension")) {
-                    computer.queueEvent(message.eventName(), message.playerName(), message.fromDimension(), message.toDimension());
-                } else {
-                    computer.queueEvent(message.eventName(), message.playerName(), message.fromDimension());
-                }
-            })
+            message -> getConnectedComputers().forEach(computer ->
+                computer.queueEvent(message.eventName(), message.playerName(), message.fromDimension(), message.toDimension())
+            )
         );
     }
 }

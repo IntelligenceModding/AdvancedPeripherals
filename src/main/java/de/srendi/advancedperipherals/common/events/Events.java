@@ -27,8 +27,8 @@ public class Events {
     private static final String PLAYED_BEFORE = "ap_played_before";
     private static final int CHAT_QUEUE_MAX_SIZE = 50;
     private static final int PLAYER_QUEUE_MAX_SIZE = 50;
-    public static final EvictingQueue<Pair<Long, ChatMessageObject>> messageQueue = EvictingQueue.create(CHAT_QUEUE_MAX_SIZE);
-    public static final EvictingQueue<Pair<Long, PlayerMessageObject>> playerMessageQueue = EvictingQueue.create(PLAYER_QUEUE_MAX_SIZE);
+    private static final EvictingQueue<Pair<Long, ChatMessageObject>> messageQueue = EvictingQueue.create(CHAT_QUEUE_MAX_SIZE);
+    private static final EvictingQueue<Pair<Long, PlayerMessageObject>> playerMessageQueue = EvictingQueue.create(PLAYER_QUEUE_MAX_SIZE);
     private static long lastChatMessageID = 0;
     private static long lastPlayerMessageID = 0;
 
@@ -40,20 +40,20 @@ public class Events {
         // a config option for that. So we will stick with the custom solution here.
         // See https://vazkiimods.github.io/Patchouli/docs/patchouli-basics/giving-new
         if (APConfig.WORLD_CONFIG.givePlayerBookOnJoin.get() && APAddon.PATCHOULI.isLoaded()) {
-            if (!hasPlayedBefore(player)) {
+            if (!getAndSetPlayedBefore(player)) {
                 vazkii.patchouli.api.PatchouliAPI.IPatchouliAPI patchouli = vazkii.patchouli.api.PatchouliAPI.get();
                 ItemStack book = patchouli.getBookStack(AdvancedPeripherals.getRL("manual"));
                 player.addItem(book);
             }
         }
 
-        putPlayerMessage(Pair.of(getLastPlayerMessageID(), new PlayerMessageObject("playerJoin", player.getName().getString(), player.level().dimension().location().toString(), "")));
+        putPlayerMessage(Pair.of(getLastPlayerMessageID(), new PlayerMessageObject("player_join", player.getName().getString(), player.level().dimension().location().toString(), null)));
     }
 
     @SubscribeEvent
     public static void onWorldLeave(PlayerEvent.PlayerLoggedOutEvent event) {
         Player player = event.getEntity();
-        putPlayerMessage(Pair.of(getLastPlayerMessageID(), new PlayerMessageObject("playerLeave", player.getName().getString(), player.level().dimension().location().toString(), "")));
+        putPlayerMessage(Pair.of(getLastPlayerMessageID(), new PlayerMessageObject("player_leave", player.getName().getString(), player.level().dimension().location().toString(), null)));
     }
 
     @SubscribeEvent
@@ -62,7 +62,7 @@ public class Events {
         String fromDim = event.getFrom().location().toString();
         String toDim = event.getTo().location().toString();
 
-        putPlayerMessage(Pair.of(getLastPlayerMessageID(), new PlayerMessageObject("playerChangedDimension", player.getName().getString(), fromDim, toDim)));
+        putPlayerMessage(Pair.of(getLastPlayerMessageID(), new PlayerMessageObject("player_changed_dimension", player.getName().getString(), fromDim, toDim)));
     }
 
     @SubscribeEvent
@@ -80,7 +80,7 @@ public class Events {
         }
         if (message.startsWith("$")) {
             event.setCanceled(true);
-            message = message.replace("$", "");
+            message = message.substring(1);
             isHidden = true;
         }
         putChatMessage(Pair.of(getLastChatMessageID(), new ChatMessageObject(username, message, uuid, isHidden)));
@@ -100,60 +100,71 @@ public class Events {
             boolean isHidden = false;
             if (message.startsWith("$")) {
                 event.setCanceled(true);
-                message = message.replace("$", "");
+                message = message.substring(1);
                 isHidden = true;
             }
             putChatMessage(Pair.of(getLastChatMessageID(), new ChatMessageObject(event.getUsername(), message, event.getPlayer().getUUID().toString(), isHidden)));
         }
     }
 
-    public static synchronized void putChatMessage(Pair<Long, ChatMessageObject> message) {
-        messageQueue.add(message);
-        lastChatMessageID++;
+    public static void putChatMessage(Pair<Long, ChatMessageObject> message) {
+        synchronized (messageQueue) {
+            messageQueue.add(message);
+            lastChatMessageID++;
+        }
     }
 
-    public static synchronized void putPlayerMessage(Pair<Long, PlayerMessageObject> message) {
-        playerMessageQueue.add(message);
-        lastPlayerMessageID++;
+    public static void putPlayerMessage(Pair<Long, PlayerMessageObject> message) {
+        synchronized (playerMessageQueue) {
+            playerMessageQueue.add(message);
+            lastPlayerMessageID++;
+        }
     }
 
-    public static synchronized long traverseChatMessages(long lastConsumedMessage, Consumer<ChatMessageObject> consumer) {
-        for (Pair<Long, ChatMessageObject> message : messageQueue) {
-            if (message.getLeft() <= lastConsumedMessage)
-                continue;
-            consumer.accept(message.getRight());
-            lastConsumedMessage = message.getLeft();
+    public static long traverseChatMessages(long lastConsumedMessage, Consumer<ChatMessageObject> consumer) {
+        synchronized (messageQueue) {
+            for (Pair<Long, ChatMessageObject> message : messageQueue) {
+                if (message.getLeft() <= lastConsumedMessage)
+                    continue;
+                consumer.accept(message.getRight());
+                lastConsumedMessage = message.getLeft();
+            }
         }
         return lastConsumedMessage;
     }
 
-    public static synchronized long traversePlayerMessages(long lastConsumedMessage, Consumer<PlayerMessageObject> consumer) {
-        for (Pair<Long, PlayerMessageObject> message : playerMessageQueue) {
-            if (message.getLeft() <= lastConsumedMessage)
-                continue;
-            consumer.accept(message.getRight());
-            lastConsumedMessage = message.getLeft();
+    public static long traversePlayerMessages(long lastConsumedMessage, Consumer<PlayerMessageObject> consumer) {
+        synchronized (playerMessageQueue) {
+            for (Pair<Long, PlayerMessageObject> message : playerMessageQueue) {
+                if (message.getLeft() <= lastConsumedMessage)
+                    continue;
+                consumer.accept(message.getRight());
+                lastConsumedMessage = message.getLeft();
+            }
         }
         return lastConsumedMessage;
     }
 
-    public static synchronized long getLastChatMessageID() {
-        return lastChatMessageID;
+    public static long getLastChatMessageID() {
+        synchronized (messageQueue) {
+            return lastChatMessageID;
+        }
     }
 
-    public static synchronized long getLastPlayerMessageID() {
-        return lastPlayerMessageID;
+    public static long getLastPlayerMessageID() {
+        synchronized (playerMessageQueue) {
+            return lastPlayerMessageID;
+        }
     }
 
-    private static boolean hasPlayedBefore(Player player) {
+    private static boolean getAndSetPlayedBefore(Player player) {
         CompoundTag tag = player.getPersistentData().getCompound(Player.PERSISTED_NBT_TAG);
         if (tag.getBoolean(PLAYED_BEFORE)) {
             return true;
-        } else {
-            tag.putBoolean(PLAYED_BEFORE, true);
-            player.getPersistentData().put(Player.PERSISTED_NBT_TAG, tag);
-            return false;
         }
+        tag.putBoolean(PLAYED_BEFORE, true);
+        player.getPersistentData().put(Player.PERSISTED_NBT_TAG, tag);
+        return false;
     }
 
     public record ChatMessageObject(String username, String message, String uuid, boolean isHidden) {}

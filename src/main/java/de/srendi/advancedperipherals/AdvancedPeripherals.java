@@ -94,10 +94,6 @@ public class AdvancedPeripherals {
         });
     }
 
-    public static ResourceLocation getRL(String resource) {
-        return ResourceLocation.fromNamespaceAndPath(MOD_ID, resource);
-    }
-
     public void registerCapabilities(RegisterCapabilitiesEvent event) {
         APRegistration.BLOCK_ENTITIES.getEntries().forEach((entry) -> {
 
