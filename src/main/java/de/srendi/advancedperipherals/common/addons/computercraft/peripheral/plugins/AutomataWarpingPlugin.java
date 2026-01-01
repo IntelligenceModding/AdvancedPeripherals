@@ -32,8 +32,8 @@ import java.util.Map;
 import java.util.Objects;
 
 import static de.srendi.advancedperipherals.common.addons.computercraft.operations.SingleOperation.WARP;
-import static de.srendi.advancedperipherals.common.setup.DataComponents.POINT_DATA_MARK;
-import static de.srendi.advancedperipherals.common.setup.DataComponents.WORLD_DATA_MARK;
+import static de.srendi.advancedperipherals.common.setup.APDataComponents.POINT_DATA_MARK;
+import static de.srendi.advancedperipherals.common.setup.APDataComponents.WORLD_DATA_MARK;
 
 public class AutomataWarpingPlugin extends AutomataCorePlugin {
 

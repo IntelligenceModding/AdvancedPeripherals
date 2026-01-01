@@ -9,8 +9,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-import static de.srendi.advancedperipherals.common.setup.DataComponents.ABILITY_COOLDOWN;
-import static de.srendi.advancedperipherals.common.setup.DataComponents.TURTLE_UPGRADE_STORED_DATA;
+import static de.srendi.advancedperipherals.common.setup.APDataComponents.ABILITY_COOLDOWN;
+import static de.srendi.advancedperipherals.common.setup.APDataComponents.TURTLE_UPGRADE_STORED_DATA;
 
 public abstract class ClockwiseAnimatedTurtleUpgrade<T extends IBasePeripheral<?>> extends PeripheralTurtleUpgrade<T> {
 

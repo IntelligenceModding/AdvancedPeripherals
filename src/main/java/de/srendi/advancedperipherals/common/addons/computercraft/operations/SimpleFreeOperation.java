@@ -1,6 +1,6 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.operations;
 
-import de.srendi.advancedperipherals.common.setup.DataComponents;
+import de.srendi.advancedperipherals.common.setup.APDataComponents;
 import de.srendi.advancedperipherals.lib.peripherals.IPeripheralOperation;
 import net.minecraft.core.component.DataComponentType;
 import net.neoforged.neoforge.common.ModConfigSpec;
@@ -50,6 +50,6 @@ public enum SimpleFreeOperation implements IPeripheralOperation<Object> {
 
     @Override
     public DataComponentType<Long> dataComponentType() {
-        return DataComponents.SIMPLE_FREE_OPERATION.get();
+        return APDataComponents.SIMPLE_FREE_OPERATION.get();
     }
 }

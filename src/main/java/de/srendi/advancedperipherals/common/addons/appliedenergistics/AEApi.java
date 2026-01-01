@@ -31,7 +31,7 @@ import appeng.me.cluster.implementations.CraftingCPUCluster;
 import appeng.parts.storagebus.StorageBusPart;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.addons.APAddon;
-import de.srendi.advancedperipherals.common.setup.BlockEntityTypes;
+import de.srendi.advancedperipherals.common.setup.APBlockEntityTypes;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
 import de.srendi.advancedperipherals.common.util.Pair;
 import de.srendi.advancedperipherals.common.util.StatusConstants;
@@ -73,7 +73,7 @@ import java.util.stream.Collectors;
 public class AEApi {
 
     public static void registerCapabilities(RegisterCapabilitiesEvent event) {
-        event.registerBlockEntity(AECapabilities.IN_WORLD_GRID_NODE_HOST, BlockEntityTypes.ME_BRIDGE.get(), (blockEntity, side) -> blockEntity);
+        event.registerBlockEntity(AECapabilities.IN_WORLD_GRID_NODE_HOST, APBlockEntityTypes.ME_BRIDGE.get(), (blockEntity, side) -> blockEntity);
     }
 
     @NotNull

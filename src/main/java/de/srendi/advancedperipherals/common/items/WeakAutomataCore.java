@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import static de.srendi.advancedperipherals.common.setup.DataComponents.CONSUMED_ENTITY_COMPOUND;
+import static de.srendi.advancedperipherals.common.setup.APDataComponents.CONSUMED_ENTITY_COMPOUND;
 
 public class WeakAutomataCore extends APItem implements IFeedableAutomataCore {
 

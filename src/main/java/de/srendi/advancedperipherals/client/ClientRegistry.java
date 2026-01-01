@@ -13,7 +13,6 @@ import de.srendi.advancedperipherals.client.smartglasses.OverlayObjectHolder;
 import de.srendi.advancedperipherals.common.setup.APBlockEntityTypes;
 import de.srendi.advancedperipherals.common.setup.APContainerTypes;
 import de.srendi.advancedperipherals.common.setup.CCRegistration;
-import de.srendi.advancedperipherals.common.setup.ContainerTypes;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -33,9 +32,9 @@ public class ClientRegistry {
 
     @SubscribeEvent
     public static void menuRegister(RegisterMenuScreensEvent event) {
-        event.register(ContainerTypes.INVENTORY_MANAGER_CONTAINER.get(), InventoryManagerScreen::new);
-        event.register(ContainerTypes.KEYBOARD_CONTAINER.get(), KeyboardScreen::new);
-        event.register(ContainerTypes.SMART_GLASSES_CONTAINER.get(), SmartGlassesScreen::new);
+        event.register(APContainerTypes.INVENTORY_MANAGER_CONTAINER.get(), InventoryManagerScreen::new);
+        event.register(APContainerTypes.KEYBOARD_CONTAINER.get(), KeyboardScreen::new);
+        event.register(APContainerTypes.SMART_GLASSES_CONTAINER.get(), SmartGlassesScreen::new);
     }
 
     @SubscribeEvent

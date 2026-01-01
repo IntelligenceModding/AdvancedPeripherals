@@ -1,6 +1,6 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.operations;
 
-import de.srendi.advancedperipherals.common.setup.DataComponents;
+import de.srendi.advancedperipherals.common.setup.APDataComponents;
 import de.srendi.advancedperipherals.lib.peripherals.IPeripheralOperation;
 import net.minecraft.core.component.DataComponentType;
 import net.neoforged.neoforge.common.ModConfigSpec;
@@ -81,7 +81,7 @@ public enum SingleOperation implements IPeripheralOperation<SingleOperationConte
 
     @Override
     public DataComponentType<Long> dataComponentType() {
-        return DataComponents.SINGLE_OPERATION.get();
+        return APDataComponents.SINGLE_OPERATION.get();
     }
 
     public enum DistancePolicy {

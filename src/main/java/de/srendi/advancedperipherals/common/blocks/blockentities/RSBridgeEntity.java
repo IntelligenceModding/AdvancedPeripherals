@@ -15,7 +15,7 @@ import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.RSBr
 import de.srendi.advancedperipherals.common.addons.refinedstorage.RSCraftJob;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralBlockEntity;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
-import de.srendi.advancedperipherals.common.setup.BlockEntityTypes;
+import de.srendi.advancedperipherals.common.setup.APBlockEntityTypes;
 import de.srendi.advancedperipherals.common.util.inventory.BasicCraftJob;
 import de.srendi.advancedperipherals.lib.peripherals.IPeripheralTileEntity;
 import net.minecraft.core.BlockPos;

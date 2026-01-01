@@ -1,10 +1,10 @@
 package de.srendi.advancedperipherals.common.util.proxy;
 
 import de.srendi.advancedperipherals.common.blocks.blockentities.FluidDetectorEntity;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
-import net.neoforged.fluids.FluidStack;
-import net.neoforged.fluids.capability.IFluidHandler;
-import net.neoforged.registries.ForgeRegistries;
+import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import org.jetbrains.annotations.NotNull;
 
 public class FluidStorageProxy extends AbstractStorageProxy implements IFluidHandler {
@@ -54,7 +54,7 @@ public class FluidStorageProxy extends AbstractStorageProxy implements IFluidHan
             FluidStack transferring = resource.copyWithAmount((int) Math.min(resource.getAmount(), this.getTransferRate()));
             int transferred = storage.fill(transferring, action);
             if (!action.simulate()) {
-                this.wasReady = ForgeRegistries.FLUIDS.getKey(resource.getFluid());
+                this.wasReady = BuiltInRegistries.FLUID.getKey(resource.getFluid());
                 if (transferred > 0) {
                     this.onTransfered(transferred);
                     this.lastTransfered = this.wasReady;

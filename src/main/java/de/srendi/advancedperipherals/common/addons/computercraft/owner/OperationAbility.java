@@ -23,7 +23,7 @@ import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
-import static de.srendi.advancedperipherals.common.setup.DataComponents.ABILITY_COOLDOWN;
+import static de.srendi.advancedperipherals.common.setup.APDataComponents.ABILITY_COOLDOWN;
 
 public class OperationAbility implements IOwnerAbility, IPeripheralPlugin {
     private final Map<String, IPeripheralOperation<?>> allowedOperations = new HashMap<>();

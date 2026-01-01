@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Map;
 import java.util.Optional;
 
-import static de.srendi.advancedperipherals.common.setup.DataComponents.FUEL_CONSUMPTION_RATE;
+import static de.srendi.advancedperipherals.common.setup.APDataComponents.FUEL_CONSUMPTION_RATE;
 
 public abstract class FuelAbility<T extends IPeripheralOwner> implements IOwnerAbility, IPeripheralPlugin {
     protected static final int DEFAULT_FUEL_CONSUMING_RATE = 1;

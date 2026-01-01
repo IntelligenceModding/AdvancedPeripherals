@@ -28,7 +28,7 @@ import java.util.Optional;
 import java.util.function.Predicate;
 
 import static de.srendi.advancedperipherals.common.addons.computercraft.operations.SingleOperation.CAPTURE_ANIMAL;
-import static de.srendi.advancedperipherals.common.setup.DataComponents.ENTITY_TRANSFER;
+import static de.srendi.advancedperipherals.common.setup.APDataComponents.ENTITY_TRANSFER;
 
 public class AutomataEntityTransferPlugin extends AutomataCorePlugin {
 

@@ -16,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-import static de.srendi.advancedperipherals.common.setup.DataComponents.OWNER;
+import static de.srendi.advancedperipherals.common.setup.APDataComponents.OWNER;
 
 public class MemoryCardItem extends APItem {
     public MemoryCardItem() {

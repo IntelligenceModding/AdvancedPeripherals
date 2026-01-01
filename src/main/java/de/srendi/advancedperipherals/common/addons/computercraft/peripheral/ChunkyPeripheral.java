@@ -18,7 +18,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Objects;
 import java.util.UUID;
 
-import static de.srendi.advancedperipherals.common.setup.DataComponents.CHUNKY_ID;
+import static de.srendi.advancedperipherals.common.setup.APDataComponents.CHUNKY_ID;
 
 public class ChunkyPeripheral extends BasePeripheral<TurtlePeripheralOwner> {
 

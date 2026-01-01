@@ -24,8 +24,6 @@ import de.srendi.advancedperipherals.common.util.CoordUtil;
 import de.srendi.advancedperipherals.common.util.StringUtil;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
 import de.srendi.advancedperipherals.lib.peripherals.IPeripheralFunction;
-import de.srendi.advancedperipherals.network.APNetworking;
-import de.srendi.advancedperipherals.network.toclient.ToastToClientPacket;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
