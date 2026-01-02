@@ -77,7 +77,7 @@ public class EnUsLanguageProvider extends LanguageProvider {
         addBlock(APBlocks.NBT_STORAGE, "NBT Storage");
         addBlock(APBlocks.PERIPHERAL_CASING, "Peripheral Casing");
         addBlock(APBlocks.PLAYER_DETECTOR, "Player Detector");
-        addBlock(APBlocks.REDSTONE_INTEGRATOR, "Redstone Integrator");
+        // addBlock(APBlocks.REDSTONE_INTEGRATOR, "Redstone Integrator");
         addBlock(APBlocks.RS_BRIDGE, "RS Bridge");
     }
 
@@ -135,7 +135,7 @@ public class EnUsLanguageProvider extends LanguageProvider {
         addTooltip(APBlocks.NBT_STORAGE.get(), "&7Acts like a storage disk. Can store nbt based data.");
         addTooltip(APBlocks.PERIPHERAL_CASING.get(), "&7An empty hull without the love it deserves. Used as crafting ingredient");
         addTooltip(APBlocks.PLAYER_DETECTOR.get(), "&7This peripheral can be used to interact with players, but don't be a stalker.");
-        addTooltip(APBlocks.REDSTONE_INTEGRATOR.get(), "&7This block is able to interact with redstone. Works exactly like the redstone api of an computer.");
+        // addTooltip(APBlocks.REDSTONE_INTEGRATOR.get(), "&7This block is able to interact with redstone. Works exactly like the redstone api of an computer.");
         addTooltip(APBlocks.RS_BRIDGE.get(), "&7The RS Bridge interacts with Refined Storage to manage your items.");
 
         addTooltip(APItems.CHUNK_CONTROLLER.get(), "&7A crafting ingredient for the Chunky Turtle.");

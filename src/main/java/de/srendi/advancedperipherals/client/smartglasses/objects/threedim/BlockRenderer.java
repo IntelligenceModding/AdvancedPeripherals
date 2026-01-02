@@ -8,6 +8,7 @@ import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects
 import de.srendi.advancedperipherals.common.util.RegistryUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.core.BlockPos;
@@ -43,7 +44,7 @@ public class BlockRenderer implements IThreeDObjectRenderer {
             onPreRender(block);
 
             poseStack.translate(-view.x + block.getX(), -view.y + block.getY(), -view.z + block.getZ());
-            poseStack.mulPose(new Quaternionf(block.rotX, block.rotY, block.rotZ, true));
+            poseStack.mulPose(new Quaternionf().rotationXYZ((float) Math.toRadians(block.rotX), (float) Math.toRadians(block.rotY), (float) Math.toRadians(block.rotZ)));
             poseStack.translate(-0.5f, -0.5f, -0.5f);
 
             BlockPos blockPos = BlockPos.containing(block.getX(), block.getY(), block.getZ());

@@ -24,7 +24,7 @@ public class ItemRenderer implements ITwoDObjectRenderer {
             if (renderItem == null) {
                 continue;
             }
-            minecraft.getItemRenderer().renderGuiItem(new ItemStack(renderItem), (int) obj.x, (int) obj.y);
+            gui.renderItem(new ItemStack(renderItem), (int) obj.x, (int) obj.y);
         }
     }
 }

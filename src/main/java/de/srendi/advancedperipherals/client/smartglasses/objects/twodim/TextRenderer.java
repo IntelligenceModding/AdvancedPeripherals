@@ -39,11 +39,7 @@ public class TextRenderer implements ITwoDObjectRenderer {
 
             poseStack.scale(text.fontSize, text.fontSize, 1);
 
-            if (!text.shadow) {
-                minecraft.font.drawShadow(poseStack, text.content, 0, 0, text.color);
-            } else {
-                minecraft.font.draw(poseStack, text.content, 0, 0, text.color);
-            }
+            gui.drawString(minecraft.font, text.content, 0, 0, text.color, text.shadow);
             poseStack.popPose();
         }
     }

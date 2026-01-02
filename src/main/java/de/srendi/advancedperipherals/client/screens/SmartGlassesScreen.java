@@ -5,8 +5,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import dan200.computercraft.client.gui.AbstractComputerScreen;
 import dan200.computercraft.client.gui.GuiSprites;
 import dan200.computercraft.client.gui.widgets.ComputerSidebar;
-import dan200.computercraft.client.gui.widgets.WidgetTerminal;
-import dan200.computercraft.client.render.RenderTypes;
+import dan200.computercraft.client.gui.widgets.TerminalWidget;
 import dan200.computercraft.client.render.SpriteRenderer;
 import dan200.computercraft.shared.computer.inventory.AbstractComputerMenu;
 import dan200.computercraft.shared.turtle.inventory.TurtleMenu;
@@ -44,26 +43,21 @@ public class SmartGlassesScreen extends AbstractComputerScreen<SmartGlassesConta
     }
 
     @Override
-    protected WidgetTerminal createTerminal() {
-        return new WidgetTerminal(terminalData, input, leftPos + TurtleMenu.BORDER + AbstractComputerMenu.SIDEBAR_WIDTH, topPos + TurtleMenu.BORDER);
+    protected TerminalWidget createTerminal() {
+        return new TerminalWidget(terminalData, input, leftPos + TurtleMenu.BORDER + AbstractComputerMenu.SIDEBAR_WIDTH, topPos + TurtleMenu.BORDER);
     }
 
     @Override
     protected void renderBg(@NotNull GuiGraphics graphics, float partialTicks, int mouseX, int mouseY) {
-        RenderSystem.setShaderTexture(0, BACKGROUND);
-        graphics.blit(leftPos + AbstractComputerMenu.SIDEBAR_WIDTH, topPos, 0, 0, TEX_WIDTH, TEX_HEIGHT);
+        graphics.blit(BACKGROUND, leftPos + AbstractComputerMenu.SIDEBAR_WIDTH, topPos, 0, 0, TEX_WIDTH, TEX_HEIGHT);
 
         if (currentType == SlotType.PERIPHERALS) {
-            graphics.blit(leftPos + AbstractComputerMenu.SIDEBAR_WIDTH + 222, topPos + 183, 186, 183, 18, 18);
+            graphics.blit(BACKGROUND, leftPos + AbstractComputerMenu.SIDEBAR_WIDTH + 222, topPos + 183, 186, 183, 18, 18);
         }
 
-        RenderSystem.setShaderTexture(0, SIDEBAR);
-        ComputerSidebar.renderBackground(
-            SpriteRenderer.createForGui(graphics, RenderTypes.GUI_SPRITES),
-            GuiSprites.getComputerTextures(this.family),
-            leftPos,
-            topPos + sidebarYOffset
-        );
+        // RenderSystem.setShaderTexture(0, SIDEBAR);
+        // TODO: render the background texture
+        // See https://github.com/cc-tweaked/CC-Tweaked/blob/mc-1.21.x/projects/common/src/client/java/dan200/computercraft/client/gui/ComputerScreen.java#L41
     }
 
     // TODO:
@@ -78,9 +72,9 @@ public class SmartGlassesScreen extends AbstractComputerScreen<SmartGlassesConta
     // }
 
     @Override
-    protected void renderLabels(@NotNull PoseStack poseStack, int x, int y) {
+    protected void renderLabels(@NotNull GuiGraphics graphics, int x, int y) {
         FormattedCharSequence formattedcharsequence = currentType.getName().getVisualOrderText();
-        this.font.draw(poseStack, formattedcharsequence, (212 + AbstractComputerMenu.SIDEBAR_WIDTH - (float) this.font.width(formattedcharsequence) / 2), 133, 4210752);
+        graphics.drawCenteredString(this.font, formattedcharsequence, 212 + AbstractComputerMenu.SIDEBAR_WIDTH, 133, 4210752);
     }
 
     public void setCurrentType(SlotType currentType) {

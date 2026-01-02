@@ -9,7 +9,7 @@ import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.vertex.PoseStack;
 import dan200.computercraft.client.gui.ClientInputHandler;
-import dan200.computercraft.client.gui.widgets.WidgetTerminal;
+import dan200.computercraft.client.gui.widgets.TerminalWidget;
 import dan200.computercraft.core.terminal.Terminal;
 import dan200.computercraft.shared.computer.core.InputHandler;
 import de.srendi.advancedperipherals.client.ClientWorker;
@@ -37,7 +37,7 @@ public class KeyboardScreen extends Screen implements MenuAccess<KeyboardContain
     protected final KeyboardContainer keyboardContainer;
     protected final InputHandler input;
     private final Terminal terminalData;
-    private WidgetTerminal terminal;
+    private TerminalWidget terminal;
     private MouseState mouseState = MouseState.RELEASED;
     private boolean captureMouse;
     private boolean regrabingMouse;
@@ -60,20 +60,21 @@ public class KeyboardScreen extends Screen implements MenuAccess<KeyboardContain
     }
 
     @Override
-    public void render(@NotNull PoseStack poseStack, int x, int y, float partialTicks) {
-        super.render(poseStack, x, y, partialTicks);
+    public void render(@NotNull GuiGraphics graphics, int x, int y, float partialTicks) {
+        super.render(graphics, x, y, partialTicks);
 
         Minecraft minecraft = Minecraft.getInstance();
-        float scale = 2f;
         int screenWidth = minecraft.getWindow().getGuiScaledWidth();
-        // Make the text a bit smaller on small screens
-        if (screenWidth <= 1080)
-            scale = 1f;
 
-        poseStack.scale(scale, scale, 1);
+        // float scale = 2f;
+        // // Make the text a bit smaller on small screens
+        // if (screenWidth <= 1080) {
+        //     scale = 1f;
+        // }
+        // poseStack.scale(scale, scale, 1);
+
         Component text = Component.translatable("text.advancedperipherals.keyboard.close");
-        float textX = (screenWidth / 2f - minecraft.font.width(text) * scale / 2f) / scale;
-        minecraft.font.drawShadow(poseStack, text, textX, 1, 0xFFFFFF);
+        graphics.drawCenteredString(minecraft.font, text, screenWidth / 2f, 1, 0xFFFFFF);
     }
 
     @Override
@@ -88,7 +89,7 @@ public class KeyboardScreen extends Screen implements MenuAccess<KeyboardContain
         super.init();
         // this.minecraft.keyboardHandler.setSendRepeatsToGui(true);
 
-        this.terminal = addWidget(new WidgetTerminal(terminalData, new ClientInputHandler(this.keyboardContainer), 0, 0));
+        this.terminal = addWidget(new TerminalWidget(terminalData, new ClientInputHandler(this.keyboardContainer), 0, 0));
         this.terminal.visible = false;
         this.terminal.active = false;
         setFocused(this.terminal);

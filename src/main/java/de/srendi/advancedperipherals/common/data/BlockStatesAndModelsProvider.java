@@ -41,7 +41,7 @@ public class BlockStatesAndModelsProvider extends BlockStateProvider {
 
         // Define blocks with custom model generation
         peripheralBlock(APBlocks.PLAYER_DETECTOR.get(), generateModel(APBlocks.PLAYER_DETECTOR.get(), false, "side", "front", "top"));
-        peripheralBlock(APBlocks.REDSTONE_INTEGRATOR.get(), generateModel(APBlocks.REDSTONE_INTEGRATOR.get(), false, "side", "front", "top", "bottom"));
+        // peripheralBlock(APBlocks.REDSTONE_INTEGRATOR.get(), generateModel(APBlocks.REDSTONE_INTEGRATOR.get(), false, "side", "front", "top", "bottom"));
         peripheralBlock(APBlocks.BLOCK_READER.get(), generateModel(APBlocks.BLOCK_READER.get(), false, "north", "south", "east", "west", "up", "down"));
         peripheralBlock(APBlocks.DISTANCE_DETECTOR.get(), generateModel(APBlocks.DISTANCE_DETECTOR.get(), false, "north", "south", "east", "west", "up", "down"));
 

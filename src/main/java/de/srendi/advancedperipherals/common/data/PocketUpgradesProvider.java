@@ -19,7 +19,7 @@ public class PocketUpgradesProvider {
     public static void addUpgrades(BootstrapContext<IPocketUpgrade> upgrades) {
         upgrades.register(id(CCRegistration.ID.CHATTY_POCKET), new PocketChatBoxUpgrade(new ItemStack(APBlocks.CHAT_BOX.get())));
         upgrades.register(id(CCRegistration.ID.COLONY_POCKET), new PocketColonyIntegratorUpgrade(new ItemStack(APBlocks.COLONY_INTEGRATOR.get())));
-        upgrades.register(id(CCRegistration.ID.DISTANCE_POCKET, new PocketDistanceDetectorUpgrade(new ItemStack(APBlocks.DISTANCE_DETECTOR.get()))));
+        upgrades.register(id(CCRegistration.ID.DISTANCE_POCKET), new PocketDistanceDetectorUpgrade(new ItemStack(APBlocks.DISTANCE_DETECTOR.get())));
         upgrades.register(id(CCRegistration.ID.ENVIRONMENT_POCKET), new PocketEnvironmentUpgrade(new ItemStack(APBlocks.ENVIRONMENT_DETECTOR.get())));
         upgrades.register(id(CCRegistration.ID.GEOSCANNER_POCKET), new PocketGeoScannerUpgrade(new ItemStack(APBlocks.GEO_SCANNER.get())));
         upgrades.register(id(CCRegistration.ID.PLAYER_POCKET), new PocketPlayerDetectorUpgrade(new ItemStack(APBlocks.PLAYER_DETECTOR.get())));

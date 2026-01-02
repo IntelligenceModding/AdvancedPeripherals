@@ -3,6 +3,7 @@ package de.srendi.advancedperipherals.common.data;
 import dan200.computercraft.api.pocket.IPocketUpgrade;
 import dan200.computercraft.api.turtle.ITurtleUpgrade;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
+import de.srendi.advancedperipherals.common.setup.APRegistration;
 import net.minecraft.Util;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.RegistrySetBuilder;
@@ -32,7 +33,7 @@ public class DataGenerators {
         CompletableFuture<HolderLookup.Provider> lookupProvider = event.getLookupProvider();
 
         CompletableFuture<HolderLookup.Provider> completablefuture = CompletableFuture.supplyAsync(VanillaRegistries::createLookup, Util.backgroundExecutor());
-        generator.addProvider(event.includeServer(), new BlockTagsProvider(packOutput, completablefuture, existingFileHelper, Registration.BLOCKS));
+        generator.addProvider(event.includeServer(), new BlockTagsProvider(packOutput, completablefuture, existingFileHelper, APRegistration.BLOCKS));
         generator.addProvider(event.includeServer(), new RecipesProvider(packOutput, lookupProvider));
         generator.addProvider(event.includeServer(), new BlockLootTablesProvider(packOutput, lookupProvider));
         CompletableFuture<RegistrySetBuilder.PatchedRegistries> fullRegistryPatch = RegistryPatchGenerator.createLookup(event.getLookupProvider(), Util.make(new RegistrySetBuilder(), (builder) -> {

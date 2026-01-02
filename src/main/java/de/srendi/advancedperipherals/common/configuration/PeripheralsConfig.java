@@ -274,11 +274,11 @@ public class PeripheralsConfig implements IAPConfig {
             .comment("Enable the inventory manager or not.")
             .define("enableInventoryManager", true);
 
-        pop("Redstone_Integrator", builder);
+        // pop("Redstone_Integrator", builder);
 
-        enableRedstoneIntegrator = builder
-            .comment("Enable the redstone integrator or not.")
-            .define("enableRedstoneIntegrator", true);
+        // enableRedstoneIntegrator = builder
+        //     .comment("Enable the redstone integrator or not.")
+        //     .define("enableRedstoneIntegrator", true);
 
         pop("Block_Reader", builder);
 

@@ -33,11 +33,10 @@ public class SmartGlassesSettingsSwitch extends AbstractWidget {
 
     @Override
     public void renderWidget(@NotNull GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
-        RenderSystem.setShaderTexture(0, BACKGROUND);
         if (isEnabled) {
-            graphics.blit(this.getX() - 3, this.getY(), 45, 217, 24, 22);
+            graphics.blit(BACKGROUND, this.getX() - 3, this.getY(), 45, 217, 24, 22);
         } else {
-            graphics.blit(this.getX(), this.getY(), 23, 217, 21, 22);
+            graphics.blit(BACKGROUND, this.getX(), this.getY(), 23, 217, 21, 22);
         }
     }
 
