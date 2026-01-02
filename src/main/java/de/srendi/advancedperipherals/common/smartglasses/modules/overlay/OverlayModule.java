@@ -1,7 +1,6 @@
 package de.srendi.advancedperipherals.common.smartglasses.modules.overlay;
 
 import de.srendi.advancedperipherals.AdvancedPeripherals;
-import de.srendi.advancedperipherals.common.network.APNetworking;
 import de.srendi.advancedperipherals.common.network.toclient.OverlayModuleClientRequestPacket;
 import de.srendi.advancedperipherals.common.network.toclient.RenderableObjectBulkSyncPacket;
 import de.srendi.advancedperipherals.common.network.toclient.RenderableObjectClearPacket;
@@ -16,6 +15,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -55,7 +55,7 @@ public class OverlayModule implements IModule {
 
         Entity entity = smartGlassesAccess.getEntity();
         if (entity instanceof ServerPlayer player && entity.getLevel().getGameTime() % 2 == 0) {
-            APNetworking.sendTo(new OverlayModuleClientRequestPacket(), player);
+            PacketDistributor.sendToPlayer(player, new OverlayModuleClientRequestPacket());
         }
     }
 
@@ -96,7 +96,7 @@ public class OverlayModule implements IModule {
         int id = idCounter++;
         object.setId(id);
         if (autoUpdate) {
-            APNetworking.sendTo(new RenderableObjectSyncPacket(object), (ServerPlayer) access.getEntity());
+            PacketDistributor.sendToPlayer((ServerPlayer) access.getEntity(), new RenderableObjectSyncPacket(object));
             objects.put(id, object);
         } else {
             objectsToUpdate.put(id, object);
@@ -114,7 +114,7 @@ public class OverlayModule implements IModule {
         RenderableObject removed = objects.remove(id);
 
         if (removed != null)
-            APNetworking.sendTo(new RenderableObjectDeletePacket(id), (ServerPlayer) access.getEntity());
+            PacketDistributor.sendToPlayer((ServerPlayer) access.getEntity(), new RenderableObjectDeletePacket(id));
 
         return removed != null;
     }
@@ -129,7 +129,7 @@ public class OverlayModule implements IModule {
         objects.clear();
         idCounter = 0;
         objectsToUpdate.clear();
-        APNetworking.sendTo(new RenderableObjectClearPacket(), (ServerPlayer) access.getEntity());
+        PacketDistributor.sendToPlayer((ServerPlayer) access.getEntity(), new RenderableObjectClearPacket());
         return size;
     }
 
@@ -140,7 +140,7 @@ public class OverlayModule implements IModule {
      */
     public void update(RenderableObject object) {
         if (autoUpdate) {
-            APNetworking.sendTo(new RenderableObjectSyncPacket(object), (ServerPlayer) access.getEntity());
+            PacketDistributor.sendToPlayer((ServerPlayer) access.getEntity(), new RenderableObjectSyncPacket(object));
             return;
         }
 
@@ -169,9 +169,7 @@ public class OverlayModule implements IModule {
                 }
             }
 
-            APNetworking.sendTo(new RenderableObjectBulkSyncPacket(packetObjects),
-                    (ServerPlayer) access.getEntity()
-            );
+            PacketDistributor.sendToPlayer((ServerPlayer) access.getEntity(), new RenderableObjectBulkSyncPacket(packetObjects));
         }
 
         return size;

@@ -4,7 +4,7 @@ import dan200.computercraft.api.lua.IArguments;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
-import de.srendi.advancedperipherals.client.smartglasses.objects.IObjectRenderer;
+import de.srendi.advancedperipherals.client.smartglasses.objects.threedim.IThreeDObjectRenderer;
 import de.srendi.advancedperipherals.client.smartglasses.objects.threedim.SphereRenderer;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.OverlayModule;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.RenderableObject;
@@ -19,7 +19,7 @@ import java.util.UUID;
 public class SphereObject extends ThreeDimensionalObject {
     public static final int TYPE_ID = 6;
 
-    private final IObjectRenderer renderer = new SphereRenderer();
+    private static final IObjectRenderer RENDERER = new SphereRenderer();
 
     @FixedPointNumberProperty(min = 1, max = 1024)
     public int sectors = 16;
@@ -104,7 +104,7 @@ public class SphereObject extends ThreeDimensionalObject {
     }
 
     @Override
-    public IObjectRenderer getRenderObject() {
-        return renderer;
+    public IThreeDObjectRenderer getObjectRenderer() {
+        return RENDERER;
     }
 }

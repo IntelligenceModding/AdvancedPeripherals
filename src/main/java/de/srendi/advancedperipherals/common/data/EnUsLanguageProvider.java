@@ -175,7 +175,7 @@ public class EnUsLanguageProvider extends LanguageProvider {
     }
 
     private void add(@NotNull Supplier<VillagerProfession> key, @NotNull String name) {
-        add(new ResourceLocation(key.get().name()).toLanguageKey("entity.minecraft.villager"), name);
+        add(ResourceLocation.parse(key.get().name()).toLanguageKey("entity.minecraft.villager"), name);
     }
 
     private void addText(String key, String value) {

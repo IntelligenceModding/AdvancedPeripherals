@@ -13,14 +13,16 @@ public class KeyboardMouseScrollPacket implements IAPPacket {
 
     public static final Type<GlassesHotkeyPacket> TYPE = new Type<>(AdvancedPeripherals.getRL("keyboard_mouse_scroll"));
 
-    private final int delta;
+    private final int deltaY;
+    private final int deltaX;
 
-    public KeyboardMouseScrollPacket(int delta) {
-        this.delta = delta;
+    public KeyboardMouseScrollPacket(int deltaY, int deltaX) {
+        this.deltaY = deltaY;
+        this.deltaX = deltaX;
     }
 
     public KeyboardMouseScrollPacket(FriendlyByteBuf buffer) {
-        this(buffer.readVarInt());
+        this(buffer.readVarInt(), buffer.readVarInt());
     }
 
     @Override
@@ -37,12 +39,13 @@ public class KeyboardMouseScrollPacket implements IAPPacket {
         if (computer == null) {
             return;
         }
-        computer.queueEvent("player_mouse_scroll", new Object[]{delta});
+        computer.queueEvent("player_mouse_scroll", new Object[]{this.deltaY, this.deltaX});
     }
 
     @Override
     public void write(FriendlyByteBuf buffer) {
-        buffer.writeVarInt(delta);
+        buffer.writeVarInt(this.deltaY);
+        buffer.writeVarInt(this.deltaX);
     }
 
     @Override

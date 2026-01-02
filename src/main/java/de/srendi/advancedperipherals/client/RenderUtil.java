@@ -11,6 +11,7 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.InventoryMenu;
+import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 
 public class RenderUtil {
@@ -52,40 +53,40 @@ public class RenderUtil {
 
 
         if (perspective == Direction.UP) {
-            buffer.vertex(matrix4f, -sX, sY, sZ).color(r, g, b, a).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(0xF000F0).normal(0f, 1f, 0f).endVertex();
-            buffer.vertex(matrix4f, sX, sY, sZ).color(r, g, b, a).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(0xF000F0).normal(0f, 1f, 0f).endVertex();
-            buffer.vertex(matrix4f, sX, sY, -sZ).color(r, g, b, a).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(0xF000F0).normal(0f, 1f, 0f).endVertex();
-            buffer.vertex(matrix4f, -sX, sY, -sZ).color(r, g, b, a).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(0xF000F0).normal(0f, 1f, 0f).endVertex();
+            buffer.addVertex(matrix4f, -sX, sY, sZ).setColor(r, g, b, a).overlayCoords(OverlayTexture.NO_OVERLAY).setUv2(0xF000F0).setNormal(0f, 1f, 0f);
+            buffer.addVertex(matrix4f, sX, sY, sZ).setColor(r, g, b, a).overlayCoords(OverlayTexture.NO_OVERLAY).setUv2(0xF000F0).setNormal(0f, 1f, 0f);
+            buffer.addVertex(matrix4f, sX, sY, -sZ).setColor(r, g, b, a).overlayCoords(OverlayTexture.NO_OVERLAY).setUv2(0xF000F0).setNormal(0f, 1f, 0f);
+            buffer.addVertex(matrix4f, -sX, sY, -sZ).setColor(r, g, b, a).overlayCoords(OverlayTexture.NO_OVERLAY).setUv2(0xF000F0).setNormal(0f, 1f, 0f);
         }
         if (perspective == Direction.DOWN) {
-            buffer.vertex(matrix4f, -sX, -sY, sZ).color(r, g, b, a).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(0xF000F0).normal(0f, -1f, 0f).endVertex();
-            buffer.vertex(matrix4f, -sX, -sY, -sZ).color(r, g, b, a).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(0xF000F0).normal(0f, -1f, 0f).endVertex();
-            buffer.vertex(matrix4f, sX, -sY, -sZ).color(r, g, b, a).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(0xF000F0).normal(0f, -1f, 0f).endVertex();
-            buffer.vertex(matrix4f, sX, -sY, sZ).color(r, g, b, a).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(0xF000F0).normal(0f, -1f, 0f).endVertex();
+            buffer.addVertex(matrix4f, -sX, -sY, sZ).setColor(r, g, b, a).overlayCoords(OverlayTexture.NO_OVERLAY).setUv2(0xF000F0).setNormal(0f, -1f, 0f);
+            buffer.addVertex(matrix4f, -sX, -sY, -sZ).setColor(r, g, b, a).overlayCoords(OverlayTexture.NO_OVERLAY).setUv2(0xF000F0).setNormal(0f, -1f, 0f);
+            buffer.addVertex(matrix4f, sX, -sY, -sZ).setColor(r, g, b, a).overlayCoords(OverlayTexture.NO_OVERLAY).setUv2(0xF000F0).setNormal(0f, -1f, 0f);
+            buffer.addVertex(matrix4f, sX, -sY, sZ).setColor(r, g, b, a).overlayCoords(OverlayTexture.NO_OVERLAY).setUv2(0xF000F0).setNormal(0f, -1f, 0f);
         }
         if (perspective == Direction.SOUTH) {
-            buffer.vertex(matrix4f, sX, -sY, sZ).color(r, g, b, a).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(0xF000F0).normal(1f, 0f, 0f).endVertex();
-            buffer.vertex(matrix4f, sX, -sY, -sZ).color(r, g, b, a).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(0xF000F0).normal(1f, 0f, 0f).endVertex();
-            buffer.vertex(matrix4f, sX, sY, -sZ).color(r, g, b, a).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(0xF000F0).normal(1f, 0f, 0f).endVertex();
-            buffer.vertex(matrix4f, sX, sY, sZ).color(r, g, b, a).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(0xF000F0).normal(1f, 0f, 0f).endVertex();
+            buffer.addVertex(matrix4f, sX, -sY, sZ).setColor(r, g, b, a).overlayCoords(OverlayTexture.NO_OVERLAY).setUv2(0xF000F0).setNormal(1f, 0f, 0f);
+            buffer.addVertex(matrix4f, sX, -sY, -sZ).setColor(r, g, b, a).overlayCoords(OverlayTexture.NO_OVERLAY).setUv2(0xF000F0).setNormal(1f, 0f, 0f);
+            buffer.addVertex(matrix4f, sX, sY, -sZ).setColor(r, g, b, a).overlayCoords(OverlayTexture.NO_OVERLAY).setUv2(0xF000F0).setNormal(1f, 0f, 0f);
+            buffer.addVertex(matrix4f, sX, sY, sZ).setColor(r, g, b, a).overlayCoords(OverlayTexture.NO_OVERLAY).setUv2(0xF000F0).setNormal(1f, 0f, 0f);
         }
         if (perspective == Direction.NORTH) {
-            buffer.vertex(matrix4f, -sX, -sY, sZ).color(r, g, b, a).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(0xF000F0).normal(1f, 0f, 0f).endVertex();
-            buffer.vertex(matrix4f, -sX, sY, sZ).color(r, g, b, a).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(0xF000F0).normal(1f, 0f, 0f).endVertex();
-            buffer.vertex(matrix4f, -sX, sY, -sZ).color(r, g, b, a).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(0xF000F0).normal(1f, 0f, 0f).endVertex();
-            buffer.vertex(matrix4f, -sX, -sY, -sZ).color(r, g, b, a).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(0xF000F0).normal(1f, 0f, 0f).endVertex();
+            buffer.addVertex(matrix4f, -sX, -sY, sZ).setColor(r, g, b, a).overlayCoords(OverlayTexture.NO_OVERLAY).setUv2(0xF000F0).setNormal(1f, 0f, 0f);
+            buffer.addVertex(matrix4f, -sX, sY, sZ).setColor(r, g, b, a).overlayCoords(OverlayTexture.NO_OVERLAY).setUv2(0xF000F0).setNormal(1f, 0f, 0f);
+            buffer.addVertex(matrix4f, -sX, sY, -sZ).setColor(r, g, b, a).overlayCoords(OverlayTexture.NO_OVERLAY).setUv2(0xF000F0).setNormal(1f, 0f, 0f);
+            buffer.addVertex(matrix4f, -sX, -sY, -sZ).setColor(r, g, b, a).overlayCoords(OverlayTexture.NO_OVERLAY).setUv2(0xF000F0).setNormal(1f, 0f, 0f);
         }
         if (perspective == Direction.EAST) {
-            buffer.vertex(matrix4f, -sX, -sY, -sZ).color(r, g, b, a).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(0xF000F0).normal(0f, 1f, 0f).endVertex();
-            buffer.vertex(matrix4f, -sX, sY, -sZ).color(r, g, b, a).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(0xF000F0).normal(0f, 1f, 0f).endVertex();
-            buffer.vertex(matrix4f, sX, sY, -sZ).color(r, g, b, a).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(0xF000F0).normal(0f, 1f, 0f).endVertex();
-            buffer.vertex(matrix4f, sX, -sY, -sZ).color(r, g, b, a).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(0xF000F0).normal(0f, 1f, 0f).endVertex();
+            buffer.addVertex(matrix4f, -sX, -sY, -sZ).setColor(r, g, b, a).overlayCoords(OverlayTexture.NO_OVERLAY).setUv2(0xF000F0).setNormal(0f, 1f, 0f);
+            buffer.addVertex(matrix4f, -sX, sY, -sZ).setColor(r, g, b, a).overlayCoords(OverlayTexture.NO_OVERLAY).setUv2(0xF000F0).setNormal(0f, 1f, 0f);
+            buffer.addVertex(matrix4f, sX, sY, -sZ).setColor(r, g, b, a).overlayCoords(OverlayTexture.NO_OVERLAY).setUv2(0xF000F0).setNormal(0f, 1f, 0f);
+            buffer.addVertex(matrix4f, sX, -sY, -sZ).setColor(r, g, b, a).overlayCoords(OverlayTexture.NO_OVERLAY).setUv2(0xF000F0).setNormal(0f, 1f, 0f);
         }
         if (perspective == Direction.WEST) {
-            buffer.vertex(matrix4f, -sX, -sY, sZ).color(r, g, b, a).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(0xF000F0).normal(0f, 1f, 0f).endVertex();
-            buffer.vertex(matrix4f, sX, -sY, sZ).color(r, g, b, a).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(0xF000F0).normal(0f, 1f, 0f).endVertex();
-            buffer.vertex(matrix4f, sX, sY, sZ).color(r, g, b, a).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(0xF000F0).normal(0f, 1f, 0f).endVertex();
-            buffer.vertex(matrix4f, -sX, sY, sZ).color(r, g, b, a).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(0xF000F0).normal(0f, 1f, 0f).endVertex();
+            buffer.addVertex(matrix4f, -sX, -sY, sZ).setColor(r, g, b, a).overlayCoords(OverlayTexture.NO_OVERLAY).setUv2(0xF000F0).setNormal(0f, 1f, 0f);
+            buffer.addVertex(matrix4f, sX, -sY, sZ).setColor(r, g, b, a).overlayCoords(OverlayTexture.NO_OVERLAY).setUv2(0xF000F0).setNormal(0f, 1f, 0f);
+            buffer.addVertex(matrix4f, sX, sY, sZ).setColor(r, g, b, a).overlayCoords(OverlayTexture.NO_OVERLAY).setUv2(0xF000F0).setNormal(0f, 1f, 0f);
+            buffer.addVertex(matrix4f, -sX, sY, sZ).setColor(r, g, b, a).overlayCoords(OverlayTexture.NO_OVERLAY).setUv2(0xF000F0).setNormal(0f, 1f, 0f);
         }
         posestack.popPose();
     }
@@ -93,10 +94,10 @@ public class RenderUtil {
     public static void drawTorus(PoseStack poseStack, VertexConsumer consumer, float majorRadius, float minorRadius, double pX, double pY, double pZ, float xRot, float yRot, float zRot, float r, float g, float b, float a, int sides, int rings) {
         poseStack.pushPose();
         poseStack.translate(pX, pY, pZ);
-        poseStack.mulPose(new Quaternion(xRot, yRot, zRot, true));
+        poseStack.mulPose(new Quaternionf(xRot, yRot, zRot, true));
 
         Matrix4f matrix4f = poseStack.last().pose();
-        TextureAtlasSprite texture = Minecraft.getInstance().getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(new ResourceLocation("block/crimson_stem"));
+        TextureAtlasSprite texture = Minecraft.getInstance().getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(ResourceLocation.withDefaultNamespace("block/crimson_stem"));
 
         float x, y, z;
         float nx, ny, nz;
@@ -144,7 +145,7 @@ public class RenderUtil {
                 nx = x - centerX;
                 ny = y - centerY;
                 nz = z;
-                consumer.vertex(matrix4f, x, y, z).color(r, g, b, a).uv(u1, v1).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(0xF000F0).normal(nx, ny, nz).endVertex();
+                consumer.addVertex(matrix4f, x, y, z).setColor(r, g, b, a).uv(u1, v1).overlayCoords(OverlayTexture.NO_OVERLAY).setUv2(0xF000F0).setNormal(nx, ny, nz);
 
                 // Calculate vertex positions
                 x = centerX + minorRadius * cosSideAngle * cosRingAngle;
@@ -156,7 +157,7 @@ public class RenderUtil {
                 ny = y - centerY;
                 nz = z;
 
-                consumer.vertex(matrix4f, x, y, z).color(r, g, b, a).uv(u1, v2).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(0xF000F0).normal(nx, ny, nz).endVertex();
+                consumer.addVertex(matrix4f, x, y, z).setColor(r, g, b, a).uv(u1, v2).overlayCoords(OverlayTexture.NO_OVERLAY).setUv2(0xF000F0).setNormal(nx, ny, nz);
 
                 x = nextCenterX + minorRadius * cosSideAngle * nextCosRingAngle;
                 y = nextCenterY + minorRadius * cosSideAngle * nextSinRingAngle;
@@ -165,7 +166,7 @@ public class RenderUtil {
                 nx = x - nextCenterX;
                 ny = y - nextCenterY;
                 nz = z;
-                consumer.vertex(matrix4f, x, y, z).color(r, g, b, a).uv(u2, v2).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(0xF000F0).normal(nx, ny, nz).endVertex();
+                consumer.addVertex(matrix4f, x, y, z).setColor(r, g, b, a).uv(u2, v2).overlayCoords(OverlayTexture.NO_OVERLAY).setUv2(0xF000F0).setNormal(nx, ny, nz);
 
 
                 x = nextCenterX + minorRadius * nextCosSideAngle * nextCosRingAngle;
@@ -175,7 +176,7 @@ public class RenderUtil {
                 nx = x - nextCenterX;
                 ny = y - nextCenterY;
                 nz = z;
-                consumer.vertex(matrix4f, x, y, z).color(r, g, b, a).uv(u2, v1).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(0xF000F0).normal(nx, ny, nz).endVertex();
+                consumer.addVertex(matrix4f, x, y, z).setColor(r, g, b, a).uv(u2, v1).overlayCoords(OverlayTexture.NO_OVERLAY).setUv2(0xF000F0).setNormal(nx, ny, nz);
             }
         }
 
@@ -185,10 +186,10 @@ public class RenderUtil {
     public static void drawSphere(PoseStack poseStack, VertexConsumer consumer, float radius, double pX, double pY, double pZ, float xRot, float yRot, float zRot, float r, float g, float b, float a, int sectors, int stacks) {
         poseStack.pushPose();
         poseStack.translate(pX, pY, pZ);
-        poseStack.mulPose(new Quaternion(xRot, yRot, zRot, true));
+        poseStack.mulPose(new Quaternionf(xRot, yRot, zRot, true));
 
         Matrix4f matrix4f = poseStack.last().pose();
-        TextureAtlasSprite texture = Minecraft.getInstance().getTextureAtlas(TextureAtlas.LOCATION_BLOCKS).apply(new ResourceLocation("block/dirt"));
+        TextureAtlasSprite texture = Minecraft.getInstance().getTextureAtlas(TextureAtlas.LOCATION_BLOCKS).apply(ResourceLocation.withDefaultNamespace("block/dirt"));
 
         float z, xy;
         float nx1, ny1, nz1, nx2, ny2, nz2, nx3, ny3, nz3, nx4, ny4, nz4, lengthInv = (1.0f / radius); // vertex normal
@@ -251,10 +252,10 @@ public class RenderUtil {
                 v1 -= (texture.getV1() - texture.getV0()) / stacks;
                 v2 -= (texture.getV1() - texture.getV0()) / stacks;
 
-                consumer.vertex(matrix4f, x1, y1, z).color(r, g, b, a).uv(u1, v1).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(0xF000F0).normal(nx1, ny1, nz1).endVertex();
-                consumer.vertex(matrix4f, x2, y2, z).color(r, g, b, a).uv(u2, v1).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(0xF000F0).normal(nx2, ny2, nz2).endVertex();
-                consumer.vertex(matrix4f, x3, y3, z3).color(r, g, b, a).uv(u2, v2).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(0xF000F0).normal(nx3, ny3, nz3).endVertex();
-                consumer.vertex(matrix4f, x4, y4, z4).color(r, g, b, a).uv(u1, v2).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(0xF000F0).normal(nx4, ny4, nz4).endVertex();
+                consumer.addVertex(matrix4f, x1, y1, z).setColor(r, g, b, a).uv(u1, v1).overlayCoords(OverlayTexture.NO_OVERLAY).setUv2(0xF000F0).setNormal(nx1, ny1, nz1);
+                consumer.addVertex(matrix4f, x2, y2, z).setColor(r, g, b, a).uv(u2, v1).overlayCoords(OverlayTexture.NO_OVERLAY).setUv2(0xF000F0).setNormal(nx2, ny2, nz2);
+                consumer.addVertex(matrix4f, x3, y3, z3).setColor(r, g, b, a).uv(u2, v2).overlayCoords(OverlayTexture.NO_OVERLAY).setUv2(0xF000F0).setNormal(nx3, ny3, nz3);
+                consumer.addVertex(matrix4f, x4, y4, z4).setColor(r, g, b, a).uv(u1, v2).overlayCoords(OverlayTexture.NO_OVERLAY).setUv2(0xF000F0).setNormal(nx4, ny4, nz4);
 
             }
         }
@@ -281,7 +282,7 @@ public class RenderUtil {
         pY = pY / 16;
         pZ = pZ / 16;
 
-        poseStack.mulPose(new Quaternion(xRot, yRot, zRot, true));
+        poseStack.mulPose(new Quaternionf(xRot, yRot, zRot, true));
 
         drawPlane(poseStack, buffer, texture, Direction.UP, pX, pY, pZ, sX, sY, sZ, pUOffset, pVOffset, pWidth, pHeight);
         drawPlane(poseStack, buffer, texture, Direction.DOWN, pX, pY, pZ, sX, sY, sZ, pUOffset, pVOffset, pWidth, pHeight);
@@ -315,40 +316,40 @@ public class RenderUtil {
         float v2 = stillTexture.getV(pHeight);
 
         if (perspective == Direction.UP) {
-            buffer.vertex(matrix4f, -sX, sY, sZ).color(1, 1, 1, 1f).uv(u1, v2).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(0xF000F0).normal(0f, 1f, 0f).endVertex();
-            buffer.vertex(matrix4f, sX, sY, sZ).color(1, 1, 1, 1f).uv(u1, v1).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(0xF000F0).normal(0f, 1f, 0f).endVertex();
-            buffer.vertex(matrix4f, sX, sY, -sZ).color(1, 1, 1, 1f).uv(u2, v1).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(0xF000F0).normal(0f, 1f, 0f).endVertex();
-            buffer.vertex(matrix4f, -sX, sY, -sZ).color(1, 1, 1, 1f).uv(u2, v2).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(0xF000F0).normal(0f, 1f, 0f).endVertex();
+            buffer.addVertex(matrix4f, -sX, sY, sZ).setColor(1, 1, 1, 1f).uv(u1, v2).overlayCoords(OverlayTexture.NO_OVERLAY).setUv2(0xF000F0).setNormal(0f, 1f, 0f);
+            buffer.addVertex(matrix4f, sX, sY, sZ).setColor(1, 1, 1, 1f).uv(u1, v1).overlayCoords(OverlayTexture.NO_OVERLAY).setUv2(0xF000F0).setNormal(0f, 1f, 0f);
+            buffer.addVertex(matrix4f, sX, sY, -sZ).setColor(1, 1, 1, 1f).uv(u2, v1).overlayCoords(OverlayTexture.NO_OVERLAY).setUv2(0xF000F0).setNormal(0f, 1f, 0f);
+            buffer.addVertex(matrix4f, -sX, sY, -sZ).setColor(1, 1, 1, 1f).uv(u2, v2).overlayCoords(OverlayTexture.NO_OVERLAY).setUv2(0xF000F0).setNormal(0f, 1f, 0f);
         }
         if (perspective == Direction.DOWN) {
-            buffer.vertex(matrix4f, -sX, -sY, sZ).color(1, 1, 1, 1f).uv(u1, v2).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(0xF000F0).normal(0f, -1f, 0f).endVertex();
-            buffer.vertex(matrix4f, -sX, -sY, -sZ).color(1, 1, 1, 1f).uv(u2, v2).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(0xF000F0).normal(0f, -1f, 0f).endVertex();
-            buffer.vertex(matrix4f, sX, -sY, -sZ).color(1, 1, 1, 1f).uv(u2, v1).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(0xF000F0).normal(0f, -1f, 0f).endVertex();
-            buffer.vertex(matrix4f, sX, -sY, sZ).color(1, 1, 1, 1f).uv(u1, v1).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(0xF000F0).normal(0f, -1f, 0f).endVertex();
+            buffer.addVertex(matrix4f, -sX, -sY, sZ).setColor(1, 1, 1, 1f).uv(u1, v2).overlayCoords(OverlayTexture.NO_OVERLAY).setUv2(0xF000F0).setNormal(0f, -1f, 0f);
+            buffer.addVertex(matrix4f, -sX, -sY, -sZ).setColor(1, 1, 1, 1f).uv(u2, v2).overlayCoords(OverlayTexture.NO_OVERLAY).setUv2(0xF000F0).setNormal(0f, -1f, 0f);
+            buffer.addVertex(matrix4f, sX, -sY, -sZ).setColor(1, 1, 1, 1f).uv(u2, v1).overlayCoords(OverlayTexture.NO_OVERLAY).setUv2(0xF000F0).setNormal(0f, -1f, 0f);
+            buffer.addVertex(matrix4f, sX, -sY, sZ).setColor(1, 1, 1, 1f).uv(u1, v1).overlayCoords(OverlayTexture.NO_OVERLAY).setUv2(0xF000F0).setNormal(0f, -1f, 0f);
         }
         if (perspective == Direction.SOUTH) {
-            buffer.vertex(matrix4f, sX, -sY, sZ).color(1, 1, 1, 1f).uv(u1, v2).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(0xF000F0).normal(1f, 0f, 0f).endVertex();
-            buffer.vertex(matrix4f, sX, -sY, -sZ).color(1, 1, 1, 1f).uv(u2, v2).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(0xF000F0).normal(1f, 0f, 0f).endVertex();
-            buffer.vertex(matrix4f, sX, sY, -sZ).color(1, 1, 1, 1f).uv(u2, v1).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(0xF000F0).normal(1f, 0f, 0f).endVertex();
-            buffer.vertex(matrix4f, sX, sY, sZ).color(1, 1, 1, 1f).uv(u1, v1).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(0xF000F0).normal(1f, 0f, 0f).endVertex();
+            buffer.addVertex(matrix4f, sX, -sY, sZ).setColor(1, 1, 1, 1f).uv(u1, v2).overlayCoords(OverlayTexture.NO_OVERLAY).setUv2(0xF000F0).setNormal(1f, 0f, 0f);
+            buffer.addVertex(matrix4f, sX, -sY, -sZ).setColor(1, 1, 1, 1f).uv(u2, v2).overlayCoords(OverlayTexture.NO_OVERLAY).setUv2(0xF000F0).setNormal(1f, 0f, 0f);
+            buffer.addVertex(matrix4f, sX, sY, -sZ).setColor(1, 1, 1, 1f).uv(u2, v1).overlayCoords(OverlayTexture.NO_OVERLAY).setUv2(0xF000F0).setNormal(1f, 0f, 0f);
+            buffer.addVertex(matrix4f, sX, sY, sZ).setColor(1, 1, 1, 1f).uv(u1, v1).overlayCoords(OverlayTexture.NO_OVERLAY).setUv2(0xF000F0).setNormal(1f, 0f, 0f);
         }
         if (perspective == Direction.NORTH) {
-            buffer.vertex(matrix4f, -sX, -sY, sZ).color(1, 1, 1, 1f).uv(u1, v2).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(0xF000F0).normal(1f, 0f, 0f).endVertex();
-            buffer.vertex(matrix4f, -sX, sY, sZ).color(1, 1, 1, 1f).uv(u1, v1).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(0xF000F0).normal(1f, 0f, 0f).endVertex();
-            buffer.vertex(matrix4f, -sX, sY, -sZ).color(1, 1, 1, 1f).uv(u2, v1).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(0xF000F0).normal(1f, 0f, 0f).endVertex();
-            buffer.vertex(matrix4f, -sX, -sY, -sZ).color(1, 1, 1, 1f).uv(u2, v2).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(0xF000F0).normal(1f, 0f, 0f).endVertex();
+            buffer.addVertex(matrix4f, -sX, -sY, sZ).setColor(1, 1, 1, 1f).uv(u1, v2).overlayCoords(OverlayTexture.NO_OVERLAY).setUv2(0xF000F0).setNormal(1f, 0f, 0f);
+            buffer.addVertex(matrix4f, -sX, sY, sZ).setColor(1, 1, 1, 1f).uv(u1, v1).overlayCoords(OverlayTexture.NO_OVERLAY).setUv2(0xF000F0).setNormal(1f, 0f, 0f);
+            buffer.addVertex(matrix4f, -sX, sY, -sZ).setColor(1, 1, 1, 1f).uv(u2, v1).overlayCoords(OverlayTexture.NO_OVERLAY).setUv2(0xF000F0).setNormal(1f, 0f, 0f);
+            buffer.addVertex(matrix4f, -sX, -sY, -sZ).setColor(1, 1, 1, 1f).uv(u2, v2).overlayCoords(OverlayTexture.NO_OVERLAY).setUv2(0xF000F0).setNormal(1f, 0f, 0f);
         }
         if (perspective == Direction.EAST) {
-            buffer.vertex(matrix4f, -sX, -sY, -sZ).color(1, 1, 1, 1f).uv(u1, v2).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(0xF000F0).normal(0f, 1f, 0f).endVertex();
-            buffer.vertex(matrix4f, -sX, sY, -sZ).color(1, 1, 1, 1f).uv(u2, v2).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(0xF000F0).normal(0f, 1f, 0f).endVertex();
-            buffer.vertex(matrix4f, sX, sY, -sZ).color(1, 1, 1, 1f).uv(u2, v1).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(0xF000F0).normal(0f, 1f, 0f).endVertex();
-            buffer.vertex(matrix4f, sX, -sY, -sZ).color(1, 1, 1, 1f).uv(u1, v1).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(0xF000F0).normal(0f, 1f, 0f).endVertex();
+            buffer.addVertex(matrix4f, -sX, -sY, -sZ).setColor(1, 1, 1, 1f).uv(u1, v2).overlayCoords(OverlayTexture.NO_OVERLAY).setUv2(0xF000F0).setNormal(0f, 1f, 0f);
+            buffer.addVertex(matrix4f, -sX, sY, -sZ).setColor(1, 1, 1, 1f).uv(u2, v2).overlayCoords(OverlayTexture.NO_OVERLAY).setUv2(0xF000F0).setNormal(0f, 1f, 0f);
+            buffer.addVertex(matrix4f, sX, sY, -sZ).setColor(1, 1, 1, 1f).uv(u2, v1).overlayCoords(OverlayTexture.NO_OVERLAY).setUv2(0xF000F0).setNormal(0f, 1f, 0f);
+            buffer.addVertex(matrix4f, sX, -sY, -sZ).setColor(1, 1, 1, 1f).uv(u1, v1).overlayCoords(OverlayTexture.NO_OVERLAY).setUv2(0xF000F0).setNormal(0f, 1f, 0f);
         }
         if (perspective == Direction.WEST) {
-            buffer.vertex(matrix4f, -sX, -sY, sZ).color(1, 1, 1, 1f).uv(u1, v2).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(0xF000F0).normal(0f, 1f, 0f).endVertex();
-            buffer.vertex(matrix4f, sX, -sY, sZ).color(1, 1, 1, 1f).uv(u1, v1).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(0xF000F0).normal(0f, 1f, 0f).endVertex();
-            buffer.vertex(matrix4f, sX, sY, sZ).color(1, 1, 1, 1f).uv(u2, v1).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(0xF000F0).normal(0f, 1f, 0f).endVertex();
-            buffer.vertex(matrix4f, -sX, sY, sZ).color(1, 1, 1, 1f).uv(u2, v2).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(0xF000F0).normal(0f, 1f, 0f).endVertex();
+            buffer.addVertex(matrix4f, -sX, -sY, sZ).setColor(1, 1, 1, 1f).uv(u1, v2).overlayCoords(OverlayTexture.NO_OVERLAY).setUv2(0xF000F0).setNormal(0f, 1f, 0f);
+            buffer.addVertex(matrix4f, sX, -sY, sZ).setColor(1, 1, 1, 1f).uv(u1, v1).overlayCoords(OverlayTexture.NO_OVERLAY).setUv2(0xF000F0).setNormal(0f, 1f, 0f);
+            buffer.addVertex(matrix4f, sX, sY, sZ).setColor(1, 1, 1, 1f).uv(u2, v1).overlayCoords(OverlayTexture.NO_OVERLAY).setUv2(0xF000F0).setNormal(0f, 1f, 0f);
+            buffer.addVertex(matrix4f, -sX, sY, sZ).setColor(1, 1, 1, 1f).uv(u2, v2).overlayCoords(OverlayTexture.NO_OVERLAY).setUv2(0xF000F0).setNormal(0f, 1f, 0f);
         }
         poseStack.popPose();
     }

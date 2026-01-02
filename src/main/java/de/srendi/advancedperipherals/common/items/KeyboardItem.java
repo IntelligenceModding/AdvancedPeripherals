@@ -6,7 +6,6 @@ import de.srendi.advancedperipherals.client.KeyBindings;
 import de.srendi.advancedperipherals.common.container.KeyboardContainer;
 import de.srendi.advancedperipherals.common.items.base.BaseItem;
 import de.srendi.advancedperipherals.common.items.base.IInventoryItem;
-import de.srendi.advancedperipherals.common.network.APNetworking;
 import de.srendi.advancedperipherals.common.network.toserver.GlassesHotkeyPacket;
 import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesAccess;
 import de.srendi.advancedperipherals.common.smartglasses.modules.IModule;
@@ -32,6 +31,7 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -94,7 +94,7 @@ public class KeyboardItem extends BaseItem implements IInventoryItem, IModuleIte
         if (player.containerMenu instanceof KeyboardContainer openedKeyboard && openedKeyboard.getKeyboardItem().equals(itemStack)) {
             return;
         }
-        APNetworking.sendToServer(new GlassesHotkeyPacket("", -1));
+        PacketDistributor.sendToServer(new GlassesHotkeyPacket("", -1));
         return;
     }
 

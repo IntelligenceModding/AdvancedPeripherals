@@ -3,7 +3,6 @@ package de.srendi.advancedperipherals.common.smartglasses.modules.keyboard;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.container.KeyboardContainer;
 import de.srendi.advancedperipherals.common.items.KeyboardItem;
-import de.srendi.advancedperipherals.common.network.APNetworking;
 import de.srendi.advancedperipherals.common.network.toclient.KeyboardMouseCapturePacket;
 import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesAccess;
 import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesComputer;
@@ -13,6 +12,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.network.NetworkHooks;
+import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.Nullable;
 
 public class KeyboardModule implements IModule {
@@ -57,7 +57,7 @@ public class KeyboardModule implements IModule {
         boolean captureMouse = this.captureMouse;
         if (captureMouse != lastCaptureMouse) {
             lastCaptureMouse = captureMouse;
-            APNetworking.sendTo(new KeyboardMouseCapturePacket(captureMouse), player);
+            PacketDistributor.sendToPlayer(player, new KeyboardMouseCapturePacket(captureMouse));
         }
     }
 
@@ -89,7 +89,7 @@ public class KeyboardModule implements IModule {
         boolean captureMouse = this.captureMouse;
         this.lastCaptureMouse = captureMouse;
         if (captureMouse) {
-            APNetworking.sendTo(new KeyboardMouseCapturePacket(true), player);
+            PacketDistributor.sendToPlayer(player, new KeyboardMouseCapturePacket(true));
         }
     }
 }

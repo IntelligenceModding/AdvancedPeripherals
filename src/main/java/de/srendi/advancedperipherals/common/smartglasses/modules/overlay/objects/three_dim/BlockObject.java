@@ -4,8 +4,8 @@ import dan200.computercraft.api.lua.IArguments;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
-import de.srendi.advancedperipherals.client.smartglasses.objects.IObjectRenderer;
 import de.srendi.advancedperipherals.client.smartglasses.objects.threedim.BlockRenderer;
+import de.srendi.advancedperipherals.client.smartglasses.objects.threedim.IThreeDObjectRenderer;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.OverlayModule;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.RenderableObject;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.two_dim.CircleObject;
@@ -18,7 +18,7 @@ import java.util.UUID;
 public class BlockObject extends ThreeDimensionalObject {
     public static final int TYPE_ID = 5;
 
-    private final IObjectRenderer renderer = new BlockRenderer();
+    private static final IThreeDObjectRenderer RENDERER = new BlockRenderer();
 
     @StringProperty
     public String block = "minecraft:air";
@@ -69,7 +69,7 @@ public class BlockObject extends ThreeDimensionalObject {
     }
 
     @Override
-    public IObjectRenderer getRenderObject() {
-        return renderer;
+    public IThreeDObjectRenderer getObjectRenderer() {
+        return RENDERER;
     }
 }

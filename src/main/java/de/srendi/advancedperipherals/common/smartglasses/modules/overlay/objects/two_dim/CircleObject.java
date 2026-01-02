@@ -19,7 +19,7 @@ import java.util.UUID;
 public class CircleObject extends RenderableObject {
     public static final int TYPE_ID = 1;
 
-    private final IObjectRenderer renderer = new CircleRenderer();
+    private static final IObjectRenderer RENDERER = new CircleRenderer();
 
     @FixedPointNumberProperty(min = -32767, max = 32767)
     public int radius = 0;
@@ -133,8 +133,8 @@ public class CircleObject extends RenderableObject {
     }
 
     @Override
-    public IObjectRenderer getRenderObject() {
-        return renderer;
+    public IObjectRenderer getObjectRenderer() {
+        return RENDERER;
     }
 
     @Override

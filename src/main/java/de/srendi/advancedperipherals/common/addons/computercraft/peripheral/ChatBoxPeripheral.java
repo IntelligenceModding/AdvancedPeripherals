@@ -18,7 +18,6 @@ import de.srendi.advancedperipherals.common.addons.computercraft.owner.TurtlePer
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralBlockEntity;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.events.Events;
-import de.srendi.advancedperipherals.common.network.APNetworking;
 import de.srendi.advancedperipherals.common.network.toclient.ToastToClientPacket;
 import de.srendi.advancedperipherals.common.util.CoordUtil;
 import de.srendi.advancedperipherals.common.util.StringUtil;
@@ -30,6 +29,7 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
+import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.server.ServerLifecycleHooks;
 import org.jetbrains.annotations.NotNull;
 
@@ -379,7 +379,7 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
 
             if (CoordUtil.isInRange(getPhysicsPos(), getLevel(), player, range, maxRange)) {
                 ToastToClientPacket packet = new ToastToClientPacket(titleComponent, preparedMessage);
-                APNetworking.sendTo(player, packet);
+                PacketDistributor.sendToPlayer(player, packet);
             }
 
             return MethodResult.of(true);
@@ -515,7 +515,7 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
 
             if (CoordUtil.isInRange(getPhysicsPos(), getLevel(), player, range, maxRange)) {
                 ToastToClientPacket packet = new ToastToClientPacket(Component.literal(title), preparedMessage);
-                APNetworking.sendTo(player, packet);
+                PacketDistributor.sendToPlayer(player, packet);
             }
             return MethodResult.of(true);
         });

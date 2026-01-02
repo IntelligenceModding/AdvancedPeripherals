@@ -8,7 +8,7 @@ import net.minecraft.resources.ResourceLocation;
 public class ItemPropertiesRegistry {
 
     public static void register() {
-        ItemProperties.register(APItems.MEMORY_CARD.get(), new ResourceLocation(AdvancedPeripherals.MOD_ID, "bounded"), (stack, level, entity, seed) -> {
+        ItemProperties.register(APItems.MEMORY_CARD.get(), AdvancedPeripherals.getRL("bounded"), (stack, level, entity, seed) -> {
             boolean bounded = stack.getOrCreateTag().contains("owner");
             return bounded ? 1 : 0;
         });

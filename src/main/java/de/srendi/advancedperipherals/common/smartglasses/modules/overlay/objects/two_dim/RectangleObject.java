@@ -19,7 +19,7 @@ import java.util.UUID;
 public class RectangleObject extends RenderableObject {
     public static final int TYPE_ID = 0;
 
-    private final IObjectRenderer renderer = new RectangleRenderer();
+    private static final IObjectRenderer RENDERER = new RectangleRenderer();
 
     public RectangleObject(OverlayModule module, IArguments arguments) throws LuaException {
         super(module, arguments);
@@ -47,7 +47,7 @@ public class RectangleObject extends RenderableObject {
     }
 
     @Override
-    public IObjectRenderer getRenderObject() {
-        return renderer;
+    public IObjectRenderer getObjectRenderer() {
+        return RENDERER;
     }
 }

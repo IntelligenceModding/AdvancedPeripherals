@@ -16,7 +16,7 @@ import java.util.UUID;
 public class ItemObject extends RenderableObject {
     public static final int TYPE_ID = 3;
 
-    private final IObjectRenderer renderer = new ItemRenderer();
+    private static final IObjectRenderer RENDERER = new ItemRenderer();
 
     @StringProperty
     public String item = "minecraft:air";
@@ -59,8 +59,8 @@ public class ItemObject extends RenderableObject {
     }
 
     @Override
-    public IObjectRenderer getRenderObject() {
-        return renderer;
+    public IObjectRenderer getObjectRenderer() {
+        return RENDERER;
     }
 
     @Override

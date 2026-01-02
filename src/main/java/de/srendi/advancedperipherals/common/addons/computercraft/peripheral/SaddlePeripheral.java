@@ -11,7 +11,6 @@ import dan200.computercraft.shared.turtle.core.TurtleBrain;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.TurtlePeripheralOwner;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.entity.TurtleSeatEntity;
-import de.srendi.advancedperipherals.common.network.APNetworking;
 import de.srendi.advancedperipherals.common.network.toclient.SaddleTurtleInfoPacket;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
 import de.srendi.advancedperipherals.common.util.TeleportUtil;
@@ -24,13 +23,14 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySelector;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.TamableAnimal;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.vehicle.AbstractMinecart;
 import net.minecraft.world.entity.vehicle.Boat;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -126,7 +126,7 @@ public class SaddlePeripheral extends BasePeripheral<TurtlePeripheralOwner> {
         if (this.rider instanceof ServerPlayer player) {
             ITurtleAccess turtle = this.owner.getTurtle();
             SaddleTurtleInfoPacket packet = new SaddleTurtleInfoPacket(turtle.getFuelLevel(), turtle.getFuelLimit(), barColor);
-            APNetworking.sendTo(packet, player);
+            PacketDistributor.sendToPlayer(packet, player);
         }
     }
 

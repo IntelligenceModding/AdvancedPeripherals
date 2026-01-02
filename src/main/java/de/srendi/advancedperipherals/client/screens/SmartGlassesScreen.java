@@ -2,10 +2,14 @@ package de.srendi.advancedperipherals.client.screens;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-import dan200.computercraft.client.gui.ComputerScreenBase;
+import dan200.computercraft.client.gui.AbstractComputerScreen;
+import dan200.computercraft.client.gui.GuiSprites;
 import dan200.computercraft.client.gui.widgets.ComputerSidebar;
 import dan200.computercraft.client.gui.widgets.WidgetTerminal;
-import dan200.computercraft.shared.turtle.inventory.ContainerTurtle;
+import dan200.computercraft.client.render.RenderTypes;
+import dan200.computercraft.client.render.SpriteRenderer;
+import dan200.computercraft.shared.computer.inventory.AbstractComputerMenu;
+import dan200.computercraft.shared.turtle.inventory.TurtleMenu;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.client.widgets.SmartGlassesSettingsSwitch;
 import de.srendi.advancedperipherals.common.container.SmartGlassesContainer;
@@ -16,19 +20,19 @@ import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.entity.player.Inventory;
 import org.jetbrains.annotations.NotNull;
 
-public class SmartGlassesScreen extends ComputerScreenBase<SmartGlassesContainer> {
+public class SmartGlassesScreen extends AbstractComputerScreen<SmartGlassesContainer> {
 
-    private static final ResourceLocation BACKGROUND = new ResourceLocation(AdvancedPeripherals.MOD_ID, "textures/gui/smart_glasses_gui.png");
-    public static final ResourceLocation SIDEBAR = new ResourceLocation(AdvancedPeripherals.MOD_ID, "textures/gui/corners_glasses.png");
+    private static final ResourceLocation BACKGROUND = AdvancedPeripherals.getRL("textures/gui/smart_glasses_gui.png");
+    public static final ResourceLocation SIDEBAR = AdvancedPeripherals.getRL("textures/gui/corners_glasses.png");
 
     private static final int TEX_WIDTH = 254;
     private static final int TEX_HEIGHT = 217;
     private SlotType currentType = SlotType.defaultType();
 
     public SmartGlassesScreen(SmartGlassesContainer container, Inventory player, Component title) {
-        super(container, player, title, ContainerTurtle.BORDER);
+        super(container, player, title, TurtleMenu.BORDER);
 
-        imageWidth = TEX_WIDTH + ComputerSidebar.WIDTH;
+        imageWidth = TEX_WIDTH + AbstractComputerMenu.SIDEBAR_WIDTH;
         imageHeight = TEX_HEIGHT;
     }
 
@@ -41,35 +45,42 @@ public class SmartGlassesScreen extends ComputerScreenBase<SmartGlassesContainer
 
     @Override
     protected WidgetTerminal createTerminal() {
-        return new WidgetTerminal(terminalData, input, leftPos + ContainerTurtle.BORDER + ComputerSidebar.WIDTH, topPos + ContainerTurtle.BORDER);
+        return new WidgetTerminal(terminalData, input, leftPos + TurtleMenu.BORDER + AbstractComputerMenu.SIDEBAR_WIDTH, topPos + TurtleMenu.BORDER);
     }
 
     @Override
-    protected void renderBg(@NotNull PoseStack transform, float partialTicks, int mouseX, int mouseY) {
+    protected void renderBg(@NotNull GuiGraphics graphics, float partialTicks, int mouseX, int mouseY) {
         RenderSystem.setShaderTexture(0, BACKGROUND);
-        blit(transform, leftPos + ComputerSidebar.WIDTH, topPos, 0, 0, TEX_WIDTH, TEX_HEIGHT);
+        graphics.blit(leftPos + AbstractComputerMenu.SIDEBAR_WIDTH, topPos, 0, 0, TEX_WIDTH, TEX_HEIGHT);
 
-        if (currentType == SlotType.PERIPHERALS)
-            blit(transform, leftPos + ComputerSidebar.WIDTH + 222, topPos + 183, 186, 183, 18, 18);
+        if (currentType == SlotType.PERIPHERALS) {
+            graphics.blit(leftPos + AbstractComputerMenu.SIDEBAR_WIDTH + 222, topPos + 183, 186, 183, 18, 18);
+        }
 
         RenderSystem.setShaderTexture(0, SIDEBAR);
-        ComputerSidebar.renderBackground(transform, leftPos, topPos + sidebarYOffset);
+        ComputerSidebar.renderBackground(
+            SpriteRenderer.createForGui(graphics, RenderTypes.GUI_SPRITES),
+            GuiSprites.getComputerTextures(this.family),
+            leftPos,
+            topPos + sidebarYOffset
+        );
     }
 
-    @Override
-    protected void renderTooltip(@NotNull PoseStack poseStack, int x, int y) {
-        super.renderTooltip(poseStack, x, y);
-        renderables.forEach(renderable -> {
-            if (renderable instanceof SmartGlassesSettingsSwitch smartGlassesSettingsSwitch) {
-                smartGlassesSettingsSwitch.renderTooltip(poseStack, x, y);
-            }
-        });
-    }
+    // TODO:
+    // @Override
+    // protected void renderTooltip(@NotNull PoseStack poseStack, int x, int y) {
+    //     super.renderTooltip(poseStack, x, y);
+    //     renderables.forEach(renderable -> {
+    //         if (renderable instanceof SmartGlassesSettingsSwitch smartGlassesSettingsSwitch) {
+    //             smartGlassesSettingsSwitch.renderTooltip(poseStack, x, y);
+    //         }
+    //     });
+    // }
 
     @Override
     protected void renderLabels(@NotNull PoseStack poseStack, int x, int y) {
         FormattedCharSequence formattedcharsequence = currentType.getName().getVisualOrderText();
-        this.font.draw(poseStack, formattedcharsequence, (212 + ComputerSidebar.WIDTH - (float) this.font.width(formattedcharsequence) / 2), 133, 4210752);
+        this.font.draw(poseStack, formattedcharsequence, (212 + AbstractComputerMenu.SIDEBAR_WIDTH - (float) this.font.width(formattedcharsequence) / 2), 133, 4210752);
     }
 
     public void setCurrentType(SlotType currentType) {

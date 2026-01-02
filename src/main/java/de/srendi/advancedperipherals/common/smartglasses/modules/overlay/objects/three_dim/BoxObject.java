@@ -3,8 +3,8 @@ package de.srendi.advancedperipherals.common.smartglasses.modules.overlay.object
 import dan200.computercraft.api.lua.IArguments;
 import dan200.computercraft.api.lua.LuaException;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
-import de.srendi.advancedperipherals.client.smartglasses.objects.IObjectRenderer;
 import de.srendi.advancedperipherals.client.smartglasses.objects.threedim.BoxRenderer;
+import de.srendi.advancedperipherals.client.smartglasses.objects.threedim.IThreeDObjectRenderer;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.OverlayModule;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.RenderableObject;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.two_dim.CircleObject;
@@ -16,7 +16,7 @@ import java.util.UUID;
 public class BoxObject extends ThreeDimensionalObject {
     public static final int TYPE_ID = 4;
 
-    private final IObjectRenderer renderer = new BoxRenderer();
+    private static final IObjectRenderer RENDERER = new BoxRenderer();
 
     public BoxObject(OverlayModule module, IArguments arguments) throws LuaException {
         super(module, arguments);
@@ -49,7 +49,7 @@ public class BoxObject extends ThreeDimensionalObject {
     }
 
     @Override
-    public IObjectRenderer getRenderObject() {
-        return renderer;
+    public IObjectRenderer getObjectRenderer() {
+        return RENDERER;
     }
 }

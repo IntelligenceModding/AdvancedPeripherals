@@ -21,9 +21,9 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
-import net.neoforged.client.event.RenderLevelStageEvent;
 import net.neoforged.eventbus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod;
+import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -35,81 +35,80 @@ public class OverlayModuleLevelRenderer {
 
     @SubscribeEvent
     public static void renderLevelState(RenderLevelStageEvent event) {
-        PoseStack posestack = event.getPoseStack();
-        Vec3 view = Minecraft.getInstance().getEntityRenderDispatcher().camera.getPosition();
+        PoseStack poseStack = event.getPoseStack();
+        Vec3 view = event.getCamera().getPosition();
 
-        BufferBuilder bufferbuilder = Tesselator.getInstance().getBuilder();
         if (event.getStage() == RenderLevelStageEvent.Stage.AFTER_TRANSLUCENT_BLOCKS) {
             Map<Class<? extends RenderableObject>, List<ThreeDimensionalObject>> batches = new HashMap<>();
 
             for (RenderableObject object : OverlayObjectHolder.getObjects()) {
-                if (!object.isEnabled() || !(object.getRenderObject() instanceof IThreeDObjectRenderer))
+                if (!object.isEnabled()) {
                     continue;
-
-                ThreeDimensionalObject threeDimObject = (ThreeDimensionalObject) object;
-
-                Class<? extends ThreeDimensionalObject> objectClass = threeDimObject.getClass();
-
-                if (batches.containsKey(objectClass)) {
-                    batches.get(objectClass).add(threeDimObject);
+                }
+                if (!(object instanceof ThreeDimensionalObject threeDimObject)) {
                     continue;
                 }
 
-                List<ThreeDimensionalObject> newBatchArray = new ArrayList<>();
-                newBatchArray.add(threeDimObject);
-                batches.put(objectClass, newBatchArray);
+                Class<? extends ThreeDimensionalObject> objectClass = threeDimObject.getClass();
+
+                List<ThreeDimensionalObject> batchList = batches.get(objectClass);
+                if (batchList == null) {
+                    batchList = new ArrayList<>();
+                    batches.put(objectClass, batchList);
+                }
+                batchList.add(threeDimObject);
             }
 
             for (List<ThreeDimensionalObject> batch : batches.values()) {
-                ((IThreeDObjectRenderer) batch.get(0).getRenderObject()).renderBatch(batch, event, posestack, view, bufferbuilder);
+                batch.get(0).getObjectRenderer().renderBatch(batch, event, poseStack, view);
             }
 
-            //TODO Everything below here is just for debugging and testing. Will be removed before we push to production
-            BlockPos blockPos = new BlockPos(2, 100, 0);
+            // TODO: Everything below here is just for debugging and testing. Will be removed before we push to production
+            // {
+            //     BlockPos blockPos = new BlockPos(2, 100, 0);
 
-            float[] colors = EnumColor.DARK_PURPLE.getRgb();
+            //     float[] colors = EnumColor.DARK_PURPLE.getRgb();
 
-            RenderSystem.setShader(GameRenderer::getPositionColorShader);
-            bufferbuilder.begin(RenderType.translucent().mode(), DefaultVertexFormat.POSITION_COLOR_NORMAL);
-            posestack.pushPose();
+            //     RenderSystem.setShader(GameRenderer::getPositionColorShader);
+            //     BufferBuilder bufferbuilder = Tesselator.getInstance().getBuilder(RenderType.translucent().mode(), DefaultVertexFormat.POSITION_COLOR_NORMAL);
+            //     poseStack.pushPose();
 
-            posestack.translate(-view.x + blockPos.getX(), -view.y + blockPos.getY(), -view.z + blockPos.getZ());
+            //     poseStack.translate(-view.x + blockPos.getX(), -view.y + blockPos.getY(), -view.z + blockPos.getZ());
 
-            RenderUtil.drawPlane(posestack, bufferbuilder, colors[0], colors[1], colors[2], 0.8f, Direction.UP, 0f, 0.5f, 0f, 0.5f, 0f, 1f);
+            //     RenderUtil.drawPlane(poseStack, bufferbuilder, colors[0], colors[1], colors[2], 0.8f, Direction.UP, 0f, 0.5f, 0f, 0.5f, 0f, 1f);
 
-            BufferUploader.drawWithShader(bufferbuilder.end());
-            posestack.popPose();
+            //     BufferUploader.drawWithShader(bufferbuilder.buildOrThrow());
+            //     poseStack.popPose();
 
-            VertexConsumer boxVertexConsumer = Minecraft.getInstance().renderBuffers().bufferSource().getBuffer(RenderType.entityCutout(InventoryMenu.BLOCK_ATLAS));
-            //RenderSystem.setShader(GameRenderer::getPositionColorLightmapShader);
+            //     VertexConsumer boxVertexConsumer = Minecraft.getInstance().renderBuffers().bufferSource().getBuffer(RenderType.entityCutout(InventoryMenu.BLOCK_ATLAS));
+            //     //RenderSystem.setShader(GameRenderer::getPositionColorLightmapShader);
 
-            //bufferbuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR_LIGHTMAP);
-            posestack.pushPose();
-            colors = EnumColor.WHITE.getRgb();
+            //     //bufferbuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR_LIGHTMAP);
+            //     poseStack.pushPose();
+            //     colors = EnumColor.WHITE.getRgb();
 
-            blockPos = new BlockPos(0, 100, 0);
-            posestack.translate(-view.x + blockPos.getX(), -view.y + blockPos.getY(), -view.z + blockPos.getZ());
+            //     blockPos = new BlockPos(0, 100, 0);
+            //     poseStack.translate(-view.x + blockPos.getX(), -view.y + blockPos.getY(), -view.z + blockPos.getZ());
 
-            RenderUtil.drawSphere(posestack, boxVertexConsumer, 2f, 0f, 0f, 0f, 270f, 0f, 0f, colors[0], colors[1], colors[2], 0.4f, 16, 128);
+            //     RenderUtil.drawSphere(poseStack, boxVertexConsumer, 2f, 0f, 0f, 0f, 270f, 0f, 0f, colors[0], colors[1], colors[2], 0.4f, 16, 128);
 
-            //BufferUploader.drawWithShader(bufferbuilder.end());
-            posestack.popPose();
+            //     //BufferUploader.drawWithShader(bufferbuilder.end());
+            //     poseStack.popPose();
 
-            boxVertexConsumer = Minecraft.getInstance().renderBuffers().bufferSource().getBuffer(RenderType.entityCutout(InventoryMenu.BLOCK_ATLAS));
+            //     boxVertexConsumer = Minecraft.getInstance().renderBuffers().bufferSource().getBuffer(RenderType.entityCutout(InventoryMenu.BLOCK_ATLAS));
 
-            //bufferbuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR_NORMAL);
-            posestack.pushPose();
+            //     //bufferbuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR_NORMAL);
+            //     poseStack.pushPose();
 
-            colors = EnumColor.WHITE.getRgb();
-            blockPos = new BlockPos(6, 100, 0);
-            posestack.translate(-view.x + blockPos.getX(), -view.y + blockPos.getY(), -view.z + blockPos.getZ());
+            //     colors = EnumColor.WHITE.getRgb();
+            //     blockPos = new BlockPos(6, 100, 0);
+            //     poseStack.translate(-view.x + blockPos.getX(), -view.y + blockPos.getY(), -view.z + blockPos.getZ());
 
-            RenderUtil.drawTorus(posestack, boxVertexConsumer, 1f, 0.4f, 0f, 0f, 0f, 0f, 0f, 0f, colors[0], colors[1], colors[2], 1f, 48, 48);
+            //     RenderUtil.drawTorus(poseStack, boxVertexConsumer, 1f, 0.4f, 0f, 0f, 0f, 0f, 0f, 0f, colors[0], colors[1], colors[2], 1f, 48, 48);
 
-            //BufferUploader.drawWithShader(bufferbuilder.end());
-            posestack.popPose();
-
+            //     //BufferUploader.drawWithShader(bufferbuilder.end());
+            //     poseStack.popPose();
+            // }
         }
     }
-
 }

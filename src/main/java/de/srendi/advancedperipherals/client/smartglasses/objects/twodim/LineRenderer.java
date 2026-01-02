@@ -7,21 +7,21 @@ import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexFormat;
-import com.mojang.math.Matrix4f;
 import de.srendi.advancedperipherals.client.RenderUtil;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.RenderableObject;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.two_dim.LineObject;
+import net.minecraft.client.DeltaTracker;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.GameRenderer;
-import net.neoforged.client.gui.overlay.ForgeGui;
+import org.joml.Matrix4f;
 
 import java.util.List;
 
 public class LineRenderer implements ITwoDObjectRenderer {
 
     @Override
-    public void renderBatch(List<RenderableObject> objects, ForgeGui gui, PoseStack poseStack, float partialTick, int screenWidth, int screenHeight) {
+    public void renderBatch(List<RenderableObject> objects, GuiGraphics gui, PoseStack poseStack, DeltaTracker partialTick, int screenWidth, int screenHeight) {
         RenderSystem.setShader(GameRenderer::getPositionColorShader);
-        BufferBuilder bufferbuilder = Tesselator.getInstance().getBuilder();
         Matrix4f matrix = poseStack.last().pose();
 
         for (RenderableObject obj : objects) {
@@ -44,16 +44,16 @@ public class LineRenderer implements ITwoDObjectRenderer {
 
             // Normal, smooth lines
             if (!line.pixelated) {
-                bufferbuilder.begin(VertexFormat.Mode.DEBUG_LINE_STRIP, DefaultVertexFormat.POSITION_COLOR);
-                bufferbuilder.vertex(matrix, x1, y1, 0).color(red, green, blue, alpha).endVertex();
-                bufferbuilder.vertex(matrix, x2, y2, 0).color(red, green, blue, alpha).endVertex();
-                BufferUploader.drawWithShader(bufferbuilder.end());
+                BufferBuilder bufferBuilder = Tesselator.getInstance().begin(VertexFormat.Mode.DEBUG_LINE_STRIP, DefaultVertexFormat.POSITION_COLOR);
+                bufferBuilder.addVertex(matrix, x1, y1, 0).setColor(red, green, blue, alpha);
+                bufferBuilder.addVertex(matrix, x2, y2, 0).setColor(red, green, blue, alpha);
+                BufferUploader.drawWithShader(bufferBuilder.buildOrThrow());
 
                 continue; // Skip the rest of the loop for this object
             }
 
             // Pixelated lines
-            bufferbuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
+            BufferBuilder bufferBuilder = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
 
             // Calculate the delta for each axis
             float dx = x2 - x1;
@@ -92,12 +92,12 @@ public class LineRenderer implements ITwoDObjectRenderer {
                 float p_y2 = currentY + PIXEL_SIZE;
                 float p_z2 = currentZ;
 
-                bufferbuilder.vertex(matrix, p_x1, p_y2, p_z1).color(red, green, blue, alpha).endVertex(); // Bottom-left
-                bufferbuilder.vertex(matrix, p_x2, p_y2, p_z1).color(red, green, blue, alpha).endVertex(); // Bottom-right
-                bufferbuilder.vertex(matrix, p_x2, p_y1, p_z2).color(red, green, blue, alpha).endVertex(); // Top-right
-                bufferbuilder.vertex(matrix, p_x1, p_y1, p_z2).color(red, green, blue, alpha).endVertex(); // Top-left
+                bufferBuilder.addVertex(matrix, p_x1, p_y2, p_z1).setColor(red, green, blue, alpha); // Bottom-left
+                bufferBuilder.addVertex(matrix, p_x2, p_y2, p_z1).setColor(red, green, blue, alpha); // Bottom-right
+                bufferBuilder.addVertex(matrix, p_x2, p_y1, p_z2).setColor(red, green, blue, alpha); // Top-right
+                bufferBuilder.addVertex(matrix, p_x1, p_y1, p_z2).setColor(red, green, blue, alpha); // Top-left
             }
-            BufferUploader.drawWithShader(bufferbuilder.end());
+            BufferUploader.drawWithShader(bufferBuilder.buildOrThrow());
         }
     }
 }

@@ -19,7 +19,7 @@ import java.util.UUID;
 public class TextObject extends RenderableObject {
     public static final int TYPE_ID = 2;
 
-    private final IObjectRenderer renderer = new TextRenderer();
+    private static final IObjectRenderer RENDERER = new TextRenderer();
 
     @StringProperty
     public String content = "";
@@ -88,8 +88,8 @@ public class TextObject extends RenderableObject {
     }
 
     @Override
-    public IObjectRenderer getRenderObject() {
-        return renderer;
+    public IObjectRenderer getObjectRenderer() {
+        return RENDERER;
     }
 
     @Override

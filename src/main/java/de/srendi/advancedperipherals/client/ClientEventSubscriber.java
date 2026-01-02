@@ -3,7 +3,6 @@ package de.srendi.advancedperipherals.client;
 import com.mojang.blaze3d.platform.InputConstants;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.entity.TurtleSeatEntity;
-import de.srendi.advancedperipherals.common.network.APNetworking;
 import de.srendi.advancedperipherals.common.network.toserver.SaddleTurtleControlPacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.Input;
@@ -17,6 +16,7 @@ import net.neoforged.neoforge.client.event.RenderGuiEvent;
 import net.neoforged.neoforge.client.event.RenderGuiLayerEvent;
 import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
 import net.neoforged.neoforge.event.entity.EntityMountEvent;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 @EventBusSubscriber(modid = AdvancedPeripherals.MOD_ID, value = Dist.CLIENT)
 public class ClientEventSubscriber {
@@ -80,7 +80,7 @@ public class ClientEventSubscriber {
             lastInput.right = input.right;
             lastInput.jumping = input.jumping;
             lastSneak = sneaking;
-            APNetworking.sendToServer(new SaddleTurtleControlPacket(input.up, input.down, input.left, input.right, input.jumping, sneaking));
+            PacketDistributor.sendToServer(new SaddleTurtleControlPacket(input.up, input.down, input.left, input.right, input.jumping, sneaking));
         }
     }
 }

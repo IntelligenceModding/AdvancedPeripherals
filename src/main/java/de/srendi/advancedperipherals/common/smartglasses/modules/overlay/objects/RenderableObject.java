@@ -16,7 +16,7 @@ import java.util.UUID;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-public class RenderableObject extends OverlayObject {
+public abstract class RenderableObject extends OverlayObject {
 
     @FloatingNumberProperty(min = 0, max = 1)
     public float opacity = 1;
@@ -236,9 +236,7 @@ public class RenderableObject extends OverlayObject {
         return Optional.of(clientObject);
     }
 
-    public IObjectRenderer getRenderObject() {
-        return null;
-    }
+    public abstract IObjectRenderer getObjectRenderer();
 
     @Override
     public String toString() {

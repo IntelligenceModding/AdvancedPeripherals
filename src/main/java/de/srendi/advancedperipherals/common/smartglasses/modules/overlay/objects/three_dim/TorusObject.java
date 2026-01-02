@@ -4,7 +4,7 @@ import dan200.computercraft.api.lua.IArguments;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
-import de.srendi.advancedperipherals.client.smartglasses.objects.IObjectRenderer;
+import de.srendi.advancedperipherals.client.smartglasses.objects.threedim.IThreeDObjectRenderer;
 import de.srendi.advancedperipherals.client.smartglasses.objects.threedim.TorusRenderer;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.OverlayModule;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.RenderableObject;
@@ -19,7 +19,7 @@ import java.util.UUID;
 public class TorusObject extends ThreeDimensionalObject {
     public static final int TYPE_ID = 7;
 
-    private final IObjectRenderer renderer = new TorusRenderer();
+    private static final IObjectRenderer RENDERER = new TorusRenderer();
 
     @FixedPointNumberProperty(min = 1, max = 1024)
     public int sides = 32;
@@ -121,7 +121,7 @@ public class TorusObject extends ThreeDimensionalObject {
     }
 
     @Override
-    public IObjectRenderer getRenderObject() {
-        return renderer;
+    public IThreeDObjectRenderer getObjectRenderer() {
+        return RENDERER;
     }
 }

@@ -6,6 +6,7 @@ import com.mojang.blaze3d.vertex.BufferUploader;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexFormat;
+import com.mojang.blaze3d.vertex.Tesselator;
 import de.srendi.advancedperipherals.client.RenderUtil;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.three_dim.ThreeDimensionalObject;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.three_dim.TorusObject;
@@ -18,15 +19,15 @@ import java.util.List;
 public class TorusRenderer implements IThreeDObjectRenderer {
 
     @Override
-    public void renderBatch(List<ThreeDimensionalObject> batch, RenderLevelStageEvent event, PoseStack poseStack, Vec3 view, BufferBuilder bufferBuilder) {
+    public void renderBatch(List<ThreeDimensionalObject> batch, RenderLevelStageEvent event, PoseStack poseStack, Vec3 view) {
         poseStack.pushPose();
 
         for (ThreeDimensionalObject obj : batch) {
+            TorusObject torus = (TorusObject) obj;
+
             poseStack.pushPose();
             onPreRender(obj);
-            bufferBuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR_NORMAL);
-
-            TorusObject torus = (TorusObject) obj;
+            BufferBuilder bufferBuilder = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR_NORMAL);
 
             RenderSystem.setShader(GameRenderer::getPositionColorShader);
             float alpha = torus.opacity;
@@ -36,9 +37,9 @@ public class TorusRenderer implements IThreeDObjectRenderer {
 
             poseStack.translate(-view.x + torus.x, -view.y + torus.y, -view.z + torus.z);
             RenderUtil.drawTorus(poseStack, bufferBuilder, torus.majorRadius, torus.minorRadius, 0, 0, 0, torus.rotX, torus.rotY, torus.rotZ, red, green, blue, alpha, torus.rings, torus.sides);
-            BufferUploader.drawWithShader(bufferBuilder.end());
-            onPostRender(obj);
+            BufferUploader.drawWithShader(bufferBuilder.buildOrThrow());
 
+            onPostRender(obj);
             poseStack.popPose();
         }
 

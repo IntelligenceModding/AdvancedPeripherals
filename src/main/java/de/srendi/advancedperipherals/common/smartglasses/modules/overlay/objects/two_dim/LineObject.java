@@ -21,13 +21,13 @@ import java.util.UUID;
 public class LineObject extends RenderableObject {
     public static final int TYPE_ID = 8;
 
+    private static final IObjectRenderer RENDERER = new LineRenderer();
+
     @BooleanProperty
     public boolean pixelated = false;
 
     @FixedPointNumberProperty(min = 0, max = 32767)
     public int pixelSize = 4;
-
-    private final IObjectRenderer renderer = new LineRenderer();
 
     public LineObject(OverlayModule module, IArguments arguments) throws LuaException {
         super(module, arguments);
@@ -91,7 +91,7 @@ public class LineObject extends RenderableObject {
     }
 
     @Override
-    public IObjectRenderer getRenderObject() {
-        return renderer;
+    public IObjectRenderer getObjectRenderer() {
+        return RENDERER;
     }
 }

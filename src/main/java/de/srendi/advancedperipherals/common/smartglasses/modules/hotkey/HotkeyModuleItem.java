@@ -12,6 +12,7 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
 public class HotkeyModuleItem extends BaseItem implements IModuleItem {
@@ -46,7 +47,7 @@ public class HotkeyModuleItem extends BaseItem implements IModuleItem {
             setKeyPressDuration(stack, 0);
 
             String keyBind = KeyBindings.GLASSES_HOTKEY_KEYBINDING.getKey().getName();
-            APNetworking.sendToServer(new GlassesHotkeyPacket(keyBind, duration));
+            PacketDistributor.sendToServer(new GlassesHotkeyPacket(keyBind, duration));
         }
     }
 

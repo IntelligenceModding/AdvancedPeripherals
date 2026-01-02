@@ -1,25 +1,25 @@
 package de.srendi.advancedperipherals.client.smartglasses.objects.twodim;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Matrix4f;
-import com.mojang.math.Vector3f;
+import com.mojang.math.Axis;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.RenderableObject;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.two_dim.TextObject;
+import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
-import net.neoforged.client.gui.overlay.ForgeGui;
+import net.minecraft.client.gui.GuiGraphics;
 
 import java.util.List;
 
 public class TextRenderer implements ITwoDObjectRenderer {
 
     @Override
-    public void renderBatch(List<RenderableObject> objects, ForgeGui gui, PoseStack ignored, float partialTick, int screenWidth, int screenHeight) {
+    public void renderBatch(List<RenderableObject> objects, GuiGraphics gui, PoseStack ignored, DeltaTracker partialTick, int screenWidth, int screenHeight) {
         Minecraft minecraft = Minecraft.getInstance();
         for (RenderableObject obj : objects) {
             TextObject text = (TextObject) obj;
-            float rotX = obj.rotX;
-            float rotY = obj.rotY;
-            float rotZ = obj.rotZ;
+            float rotX = text.rotX;
+            float rotY = text.rotY;
+            float rotZ = text.rotZ;
 
             float x = text.x;
 
@@ -29,13 +29,13 @@ public class TextRenderer implements ITwoDObjectRenderer {
 
             PoseStack poseStack = new PoseStack();
 
-            poseStack.translate(x / text.fontSize, text.y / text.fontSize, obj.z);
+            poseStack.translate(x / text.fontSize, text.y / text.fontSize, text.z);
 
             poseStack.pushPose();
 
-            poseStack.mulPose(Vector3f.XP.rotationDegrees(rotX));
-            poseStack.mulPose(Vector3f.YP.rotationDegrees(rotY));
-            poseStack.mulPose(Vector3f.ZP.rotationDegrees(rotZ));
+            poseStack.mulPose(Axis.XP.rotationDegrees(rotX));
+            poseStack.mulPose(Axis.YP.rotationDegrees(rotY));
+            poseStack.mulPose(Axis.ZP.rotationDegrees(rotZ));
 
             poseStack.scale(text.fontSize, text.fontSize, 1);
 

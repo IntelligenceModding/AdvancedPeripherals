@@ -116,7 +116,7 @@ public class RecipesProvider extends RecipeProvider implements IConditionBuilder
         UpgradeRecipeBuilder
                 .smithing(Ingredient.of(APItems.SMART_GLASSES.get()), Ingredient.of(Items.NETHERITE_INGOT), APItems.SMART_GLASSES_NETHERITE.get())
                 .unlocks("has_item", has(Items.NETHERITE_INGOT))
-                .save(consumer, new ResourceLocation(AdvancedPeripherals.MOD_ID, "armor/" + APItems.SMART_GLASSES_NETHERITE.getKey().location().getPath()));
+                .save(consumer, AdvancedPeripherals.getRL("armor/" + APItems.SMART_GLASSES_NETHERITE.getKey().location().getPath()));
     }
 
 }

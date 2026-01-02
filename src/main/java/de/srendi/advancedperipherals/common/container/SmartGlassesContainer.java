@@ -3,7 +3,7 @@ package de.srendi.advancedperipherals.common.container;
 import dan200.computercraft.client.gui.widgets.ComputerSidebar;
 import dan200.computercraft.shared.computer.core.ComputerFamily;
 import dan200.computercraft.shared.computer.core.ServerComputer;
-import dan200.computercraft.shared.computer.inventory.ContainerComputerBase;
+import dan200.computercraft.shared.computer.inventory.AbstractComputerMenu;
 import dan200.computercraft.shared.network.container.ComputerContainerData;
 import de.srendi.advancedperipherals.common.setup.APContainerTypes;
 import de.srendi.advancedperipherals.common.smartglasses.SlotType;
@@ -18,7 +18,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Predicate;
 
-public class SmartGlassesContainer extends ContainerComputerBase {
+public class SmartGlassesContainer extends AbstractComputerMenu {
     public static final int BORDER = 8;
     public static final int PLAYER_START_Y = 134;
     public static final int PLAYER_START_X = ComputerSidebar.WIDTH + BORDER;
