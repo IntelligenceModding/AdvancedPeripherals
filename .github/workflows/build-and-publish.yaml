@@ -3,9 +3,10 @@ name: Build and Publish
 on:
   workflow_dispatch:
   push:
-  pull_request:
+  pull_request_target:
     types:
       - opened
+      - reopened
       - synchronize
 
 jobs:
@@ -17,7 +18,7 @@ jobs:
       - name: Generate Name
         id: name
         run: |
-          if [[ "${{ github.event_name }}" == 'pull_request' ]]; then
+          if [[ "${{ github.event_name }}" == 'pull_request_target' ]]; then
             suffix="PR ${{ github.event.number }}"
           else
             ref="${{ github.ref }}"
@@ -34,7 +35,9 @@ jobs:
     uses: IntelligenceModding/actions/.github/workflows/build-and-test.yaml@master
     with:
       build_name: ${{ needs.generate-artifact-name.outputs.name }}
-      pr: ${{ github.event_name == 'pull_request' && github.event.number || '' }}
+      pr: ${{ github.event_name == 'pull_request_target' && github.event.number || '' }}
+      pr_ref: ${{ github.event_name == 'pull_request_target' && github.event.pull_request.head.ref || '' }}
+      pr_repo: ${{ github.event_name == 'pull_request_target' && github.event.pull_request.head.repo.full_name || '' }}
       check: ${{ github.event_name != 'push' }}
       java-version: ''
 
@@ -44,14 +47,13 @@ jobs:
     needs:
       - build-and-test
     steps:
-      - name: Checkout sources
+      - name: Checkout Sources
         uses: actions/checkout@v4
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
           distribution: 'microsoft'
           cache: 'gradle'
-          java-version: '17'
           java-version-file: '.tool-versions'
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
