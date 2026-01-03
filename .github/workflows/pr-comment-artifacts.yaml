@@ -41,7 +41,13 @@ jobs:
           echo "Getting previous logs: $LOG_URL"
           gh api "$LOG_URL" >_logs.zip
           echo "Unzipping logs"
-          unzip -p _logs.zip >_build.txt
+          if ! unzip -p _logs.zip >_build.txt ; then
+            if [ $? -eq 1 ]; then
+              echo "::warning::Logs are empty, is runner okay?"
+              exit 0
+            fi
+            exit $?
+          fi
 
           echo "Parsing logs"
           function parse_var {
