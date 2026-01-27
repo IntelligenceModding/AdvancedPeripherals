@@ -5,7 +5,6 @@ import de.srendi.advancedperipherals.client.smartglasses.OverlayObjectHolder;
 import de.srendi.advancedperipherals.common.network.IAPPacket;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.ObjectDecodeRegistry;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.RenderableObject;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
@@ -24,7 +23,7 @@ public class RenderableObjectBulkSyncPacket implements IAPPacket {
         this.objects = objects;
     }
 
-    public RenderableObjectBulkSyncPacket(FriendlyByteBuf buffer) {
+    public RenderableObjectBulkSyncPacket(RegistryFriendlyByteBuf buffer) {
         int size = buffer.readInt();
         List<RenderableObject> objects = new ArrayList<>();
 

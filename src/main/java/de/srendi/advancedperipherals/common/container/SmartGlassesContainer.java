@@ -21,7 +21,7 @@ import java.util.function.Predicate;
 public class SmartGlassesContainer extends AbstractComputerMenu {
     public static final int BORDER = 8;
     public static final int PLAYER_START_Y = 134;
-    public static final int PLAYER_START_X = ComputerSidebar.WIDTH + BORDER;
+    public static final int PLAYER_START_X = AbstractComputerMenu.SIDEBAR_WIDTH + BORDER;
 
     public SmartGlassesContainer(int id, Predicate<Player> canUse, ServerComputer computer, Inventory playerInventory, IItemHandler inventory, ComputerContainerData data) {
         super(APContainerTypes.SMART_GLASSES_CONTAINER.get(), id, canUse, ComputerFamily.ADVANCED, computer, data);

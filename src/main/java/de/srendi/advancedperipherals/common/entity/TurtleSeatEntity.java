@@ -104,18 +104,8 @@ public class TurtleSeatEntity extends Entity implements HasCustomInventoryScreen
     @Override
     protected void removePassenger(Entity entity) {
         super.removePassenger(entity);
-        this.forwardKey = false;
-        this.backKey = false;
-        this.leftKey = false;
-        this.rightKey = false;
-        this.upKey = false;
-        this.downKey = false;
-        this.forwardKeyOld = false;
-        this.backKeyOld = false;
-        this.leftKeyOld = false;
-        this.rightKeyOld = false;
-        this.upKeyOld = false;
-        this.downKeyOld = false;
+        this.inputs = InputKeySet.NONE;
+        this.oldInputs = InputKeySet.NONE;
         if (entity instanceof TamableAnimal tamed) {
             tamed.setInSittingPose(false);
         }

@@ -100,7 +100,7 @@ public class SmartGlassesItemHandler implements IItemHandlerModifiable {
 
         if (!simulate) {
             if (existing.isEmpty()) {
-                setStackInSlot(slot, reachedLimit ? ItemHandlerHelper.copyStackWithSize(stack, limit) : stack);
+                setStackInSlot(slot, reachedLimit ? stack.copyWithCount(limit) : stack);
             } else {
                 existing.grow(reachedLimit ? limit : stack.getCount());
             }
@@ -108,7 +108,7 @@ public class SmartGlassesItemHandler implements IItemHandlerModifiable {
             setChanged();
         }
 
-        return reachedLimit ? ItemHandlerHelper.copyStackWithSize(stack, stack.getCount() - limit) : ItemStack.EMPTY;
+        return reachedLimit ? stack.copyWithCount(stack.getCount() - limit) : ItemStack.EMPTY;
     }
 
     @Override
@@ -134,9 +134,9 @@ public class SmartGlassesItemHandler implements IItemHandlerModifiable {
         }
 
         if (!simulate) {
-            setStackInSlot(slot, ItemHandlerHelper.copyStackWithSize(existing, existing.getCount() - toExtract));
+            setStackInSlot(slot, existing.copyWithCount(existing.getCount() - toExtract));
         }
-        return ItemHandlerHelper.copyStackWithSize(existing, toExtract);
+        return existing.copyWithCount(toExtract);
     }
 
     @Override

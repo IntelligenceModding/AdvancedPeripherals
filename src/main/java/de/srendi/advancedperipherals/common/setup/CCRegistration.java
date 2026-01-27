@@ -56,7 +56,8 @@ public class CCRegistration {
 
     public static void register() {
         IntegrationPeripheralProvider.load();
-        ComputerCraftAPI.registerAPIFactory(unused -> GlobalVersionsLuaAPI.INSTANCE);
+        ComputerCraftAPI.registerAPIFactory(system -> GlobalVersionsLuaAPI.INSTANCE);
+        ComputerCraftAPI.registerAPIFactory(SmartGlassesAPI::create);
     }
 
     public static class ID {

@@ -12,8 +12,8 @@ import org.jetbrains.annotations.NotNull;
 public enum SmartGlassesMaterials implements ArmorMaterial {
 
     // We use the same name, so they use the same model texture
-    CHAIN("smart_glasses", 15, new int[]{1, 4, 5, 2}, 12, SoundEvents.ARMOR_EQUIP_CHAIN, 0.0F, 0.0F, Ingredient.of(Items.IRON_INGOT)),
-    NETHERITE("smart_glasses", 37, new int[]{3, 6, 8, 3}, 15, SoundEvents.ARMOR_EQUIP_NETHERITE, 3.0F, 0.1F, Ingredient.of(Items.NETHERITE_INGOT));
+    CHAIN("smart_glasses", 15, new int[]{1, 4, 5, 2}, 12, SoundEvents.ARMOR_EQUIP_CHAIN.value(), 0.0F, 0.0F, Ingredient.of(Items.IRON_INGOT)),
+    NETHERITE("smart_glasses", 37, new int[]{3, 6, 8, 3}, 15, SoundEvents.ARMOR_EQUIP_NETHERITE.value(), 3.0F, 0.1F, Ingredient.of(Items.NETHERITE_INGOT));
 
     private static final int[] HEALTH_PER_SLOT = new int[]{13, 15, 16, 11};
     private final String name;

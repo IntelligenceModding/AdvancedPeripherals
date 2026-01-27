@@ -135,7 +135,7 @@ public class AutomataBlockHandPlugin extends AutomataCorePlugin {
     }
 
     private InteractionResult updateBlock(APFakePlayer player, Map<?, ?> options) {
-        Level world = player.getLevel();
+        Level world = player.level();
         HitResult hit = player.findHit(true, false);
         if (!(hit instanceof BlockHitResult blockHit)) {
             return InteractionResult.PASS;

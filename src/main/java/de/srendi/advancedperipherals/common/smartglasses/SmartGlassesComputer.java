@@ -7,6 +7,7 @@ import dan200.computercraft.core.computer.ComputerSide;
 import dan200.computercraft.impl.PocketUpgrades;
 import dan200.computercraft.shared.computer.core.ComputerFamily;
 import dan200.computercraft.shared.computer.core.ServerComputer;
+import de.srendi.advancedperipherals.common.setup.APComputerComponents;
 import de.srendi.advancedperipherals.common.smartglasses.modules.IModule;
 import de.srendi.advancedperipherals.common.smartglasses.modules.IModuleItem;
 import de.srendi.advancedperipherals.common.smartglasses.modules.ModulePeripheral;
@@ -53,8 +54,10 @@ public class SmartGlassesComputer extends ServerComputer implements IPocketAcces
     private final Map<Integer, IModule> modules = new HashMap<>();
 
     public SmartGlassesComputer(ServerLevel world, int computerID, @Nullable String label, ComputerFamily family, @NotNull CompoundTag upgradeDatas) {
-        super(world, computerID, label, family, 39, 13);
-        this.addApi(new SmartGlassesAPI());
+        super(
+            world, computerID, label, family, 39, 13,
+            ComponentMap.builder().add(APComputerComponents.SMARTGLASSES, Boolean.TRUE).build()
+        );
         this.modulePeripheral = new ModulePeripheral(this);
         this.upgradeDatas = upgradeDatas;
         this.setPeripheral(ComputerSide.BACK, this.modulePeripheral);
@@ -82,7 +85,7 @@ public class SmartGlassesComputer extends ServerComputer implements IPocketAcces
 
     @Override
     public ServerLevel getLevel() {
-        return this.entity == null ? super.getLevel() : (ServerLevel) this.entity.getCommandSenderWorld();
+        return this.entity == null ? super.getLevel() : (ServerLevel) this.entity.level();
     }
 
     @Override
@@ -172,7 +175,7 @@ public class SmartGlassesComputer extends ServerComputer implements IPocketAcces
         for (int slot = 0; slot < SmartGlassesItemHandler.PERIPHERAL_SLOTS; slot++) {
             ComputerSide side = SmartGlassesSlot.indexToSide(slot);
             ItemStack peripheralItem = itemHandler.getStackInSlot(slot);
-            IPocketUpgrade upgrade = PocketUpgrades.instance().get(peripheralItem);
+            IPocketUpgrade upgrade = PocketUpgrades.instance().get(this.getLevel().registryAccess(), peripheralItem);
             IPeripheral peripheral = upgrade != null ? upgrade.createPeripheral(smartGlassesAccess) : null;
             setPeripheral(side, peripheral);
             if (peripheral != null) {
@@ -242,8 +245,7 @@ public class SmartGlassesComputer extends ServerComputer implements IPocketAcces
         if (entity == null) {
             return;
         }
-        this.setLevel((ServerLevel) this.entity.getCommandSenderWorld());
-        this.setPosition(new BlockPos(this.entity.getEyePosition()));
+        this.setPosition((ServerLevel) this.entity.level(), new BlockPos(this.entity.getEyePosition()));
     }
 
     public Map<Integer, IModule> getModules() {

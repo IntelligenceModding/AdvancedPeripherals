@@ -7,7 +7,6 @@ import de.srendi.advancedperipherals.common.network.toclient.UsernameToCachePack
 import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesAccess;
 import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesComputer;
 import de.srendi.advancedperipherals.common.smartglasses.modules.keyboard.KeyboardModule;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
@@ -35,7 +34,7 @@ public class GlassesHotkeyPacket implements IAPPacket {
 
     @Override
     public void handle(IPayloadContext context) {
-        if (context.player() instanceof ServerPlayer player) {
+        if (!(context.player() instanceof ServerPlayer player)) {
             return;
         }
 

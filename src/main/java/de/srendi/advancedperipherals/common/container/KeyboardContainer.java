@@ -11,12 +11,12 @@ import de.srendi.advancedperipherals.common.items.KeyboardItem;
 import de.srendi.advancedperipherals.common.setup.APContainerTypes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.server.ServerLifecycleHooks;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -36,7 +36,7 @@ public class KeyboardContainer extends BaseContainer implements ComputerMenu {
         super(APContainerTypes.KEYBOARD_CONTAINER.get(), id, inventory, pos, level);
         this.keyboardItem = keyboardItem;
 
-        if (level.isClientSide) {
+        if (!(level instanceof final ServerLevel serverLevel)) {
             this.input = null;
             this.computer = null;
             return;
@@ -52,7 +52,7 @@ public class KeyboardContainer extends BaseContainer implements ComputerMenu {
         }
         // Cannot use instance ID here since they will change after reload the block
         int computerId = data.getInt(KeyboardItem.BIND_TAG);
-        for (ServerComputer computr : ServerContext.get(ServerLifecycleHooks.getCurrentServer()).registry().getComputers()) {
+        for (ServerComputer computr : ServerContext.get(serverLevel.getServer()).registry().getComputers()) {
             if (computr.getID() == computerId) {
                 this.computer = computr;
                 break;

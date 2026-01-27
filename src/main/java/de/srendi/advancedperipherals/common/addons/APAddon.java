@@ -58,16 +58,6 @@ public enum APAddon {
                         .build());
     }
 
-    public static ItemStack getCurioGlasses(Player player) {
-        if (!curiosLoaded)
-            return ItemStack.EMPTY;
-        List<SlotResult> curioSlots = CuriosApi.getCuriosHelper().findCurios(player, "glasses");
-        if (curioSlots.isEmpty())
-            return ItemStack.EMPTY;
-
-        return curioSlots.get(0).stack();
-    }
-
     public static boolean isBlockOnShip(Level level, BlockPos pos) {
         if (!vs2Loaded) {
             return false;

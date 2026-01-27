@@ -18,7 +18,7 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 
 public class APItems {
 
-    public static final DeferredHolder<Item, APItem> CABLE_P2P_TUNNEL = APAddon.appliedEnergisticsLoaded ? (DeferredHolder<Item, APItem>) (DeferredHolder<Item, ?>) AE2Registries.CABLE_P2P_TUNNEL : null;
+    public static final DeferredHolder<Item, APItem> CABLE_P2P_TUNNEL = APAddon.AE2.isLoaded() ? (DeferredHolder<Item, APItem>) (DeferredHolder<Item, ?>) AE2Registries.CABLE_P2P_TUNNEL : null;
     public static final DeferredHolder<Item, APItem> CHUNK_CONTROLLER = APRegistration.ITEMS.register("chunk_controller", () -> new APItem(new Item.Properties().stacksTo(16), APConfig.PERIPHERALS_CONFIG.enableChunkyTurtle));
     public static final DeferredHolder<Item, APItem> COMPUTER_TOOL = APRegistration.ITEMS.register("computer_tool", () -> new APItem(new Item.Properties().stacksTo(1), () -> true));
     public static final DeferredHolder<Item, APItem> END_AUTOMATA_CORE = APRegistration.ITEMS.register("end_automata_core", () -> new APItem(new Item.Properties().stacksTo(1), APConfig.METAPHYSICS_CONFIG.enableEndAutomataCore));

@@ -4,7 +4,6 @@ import dan200.computercraft.shared.network.container.ComputerContainerData;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.addons.APAddon;
 import de.srendi.advancedperipherals.common.items.base.BaseItem;
-import de.srendi.advancedperipherals.common.setup.APTags;
 import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesComputer;
 import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesMenuProvider;
 import net.minecraft.network.chat.Component;
@@ -34,24 +33,14 @@ public class SmartGlassesInterfaceItem extends BaseItem {
         if (world.isClientSide)
             return new InteractionResultHolder<>(InteractionResult.PASS, player.getItemInHand(hand));
 
-        // In case this method gets executed by the smart glasses interface, we need to check if the glasses may be in the
-        // curio slot or on the head
-        ItemStack findGlasses = player.getItemBySlot(EquipmentSlot.HEAD);
-        if (!findGlasses.is(APTags.Items.SMART_GLASSES))
-            if (APAddon.curiosLoaded)
-                findGlasses = APAddon.getCurioGlasses(player);
+        final ItemStack glasses = SmartGlassesItem.getEquipped(player);
 
-        if (!findGlasses.is(APTags.Items.SMART_GLASSES)) {
+        if (!(glasses.getItem() instanceof SmartGlassesItem glassesItem)) {
             player.displayClientMessage(Component.translatable("item.advancedperipherals.smartglasses.dontwear"), false);
             return super.use(world, player, hand);
         }
 
-        // The constructor of the ComputerContainerData in the lambda wants a final version of this var
-        ItemStack glasses = findGlasses;
-
-        SmartGlassesItem smartGlasses = (SmartGlassesItem) glasses.getItem();
-
-        SmartGlassesComputer computer = smartGlasses.getOrCreateComputer((ServerLevel) world, player, player.getInventory(), glasses);
+        SmartGlassesComputer computer = glassesItem.getOrCreateComputer((ServerLevel) world, player, player.getInventory(), glasses);
         computer.turnOn();
 
         LazyOptional<IItemHandler> itemHandler = glasses.getCapability(ForgeCapabilities.ITEM_HANDLER);

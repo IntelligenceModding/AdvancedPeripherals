@@ -280,6 +280,10 @@ dependencies {
     runtimeOnly "dev.engine-room.flywheel:flywheel-neoforge-${minecraft_version}:${flywheel_version}"
     implementation "com.tterrag.registrate:Registrate:${registrate_version}"
 
+    // Curios
+    runtimeOnly "top.theillusivec4.curios:curios-neoforge:${curios_version}"
+    compileOnly "top.theillusivec4.curios:curios-neoforge:${curios_version}:api"
+
     // DimStorage
     compileOnly "curse.maven:dimstorage-353882:${dimstorage_version}"
     compileOnly "curse.maven:edivadlib-638508:${edivadlib_version}"

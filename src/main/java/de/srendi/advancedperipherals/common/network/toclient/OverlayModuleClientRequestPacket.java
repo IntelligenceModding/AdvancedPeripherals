@@ -5,7 +5,6 @@ import de.srendi.advancedperipherals.common.network.APNetworking;
 import de.srendi.advancedperipherals.common.network.IAPPacket;
 import de.srendi.advancedperipherals.common.network.toserver.OverlayModuleClientInfoPacket;
 import net.minecraft.client.Minecraft;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
@@ -19,7 +18,7 @@ public class OverlayModuleClientRequestPacket implements IAPPacket {
     public OverlayModuleClientRequestPacket() {
     }
 
-    public OverlayModuleClientRequestPacket(FriendlyByteBuf buffer) {
+    public OverlayModuleClientRequestPacket(RegistryFriendlyByteBuf buffer) {
     }
 
     @Override

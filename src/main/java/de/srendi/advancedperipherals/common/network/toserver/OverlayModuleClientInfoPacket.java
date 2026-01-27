@@ -47,7 +47,7 @@ public class OverlayModuleClientInfoPacket implements IAPPacket {
         if (smartGlasses.isEmpty()) {
             return;
         }
-        SmartGlassesComputer computer = SmartGlassesItem.getServerComputer(ServerLifecycleHooks.getCurrentServer(), stack);
+        SmartGlassesComputer computer = SmartGlassesItem.getServerComputer(ServerLifecycleHooks.getCurrentServer(), smartGlasses);
         if (computer == null) {
             return;
         }

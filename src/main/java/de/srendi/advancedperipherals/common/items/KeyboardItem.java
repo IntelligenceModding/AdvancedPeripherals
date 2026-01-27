@@ -100,7 +100,7 @@ public class KeyboardItem extends BaseItem implements IInventoryItem, IModuleIte
 
     @Override
     public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn) {
-        if (playerIn.level.isClientSide()) {
+        if (playerIn.level().isClientSide()) {
             return new InteractionResultHolder<>(InteractionResult.PASS, playerIn.getItemInHand(handIn));
         }
         // Used to prevent the menu from opening when we just want to bind/unbind the keyboard
@@ -162,7 +162,7 @@ public class KeyboardItem extends BaseItem implements IInventoryItem, IModuleIte
 
             @Override
             public AbstractContainerMenu createMenu(int pContainerId, @NotNull Inventory playerInv, @NotNull Player player) {
-                return new KeyboardContainer(pContainerId, playerInv, player.blockPosition(), player.getLevel(), itemStack);
+                return new KeyboardContainer(pContainerId, playerInv, player.blockPosition(), player.level(), itemStack);
             }
         };
     }
@@ -177,7 +177,7 @@ public class KeyboardItem extends BaseItem implements IInventoryItem, IModuleIte
 
             @Override
             public AbstractContainerMenu createMenu(int pContainerId, @NotNull Inventory playerInv, @NotNull Player player) {
-                return new KeyboardContainer(pContainerId, playerInv, player.blockPosition(), player.getLevel(), itemStack, computer);
+                return new KeyboardContainer(pContainerId, playerInv, player.blockPosition(), player.level(), itemStack, computer);
             }
         };
     }

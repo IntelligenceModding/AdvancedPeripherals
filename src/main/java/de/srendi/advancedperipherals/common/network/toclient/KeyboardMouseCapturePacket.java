@@ -4,7 +4,7 @@ import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.client.screens.KeyboardScreen;
 import de.srendi.advancedperipherals.common.network.IAPPacket;
 import net.minecraft.client.Minecraft;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
@@ -18,7 +18,7 @@ public class KeyboardMouseCapturePacket implements IAPPacket {
         this.enable = enable;
     }
 
-    public KeyboardMouseCapturePacket(FriendlyByteBuf buffer) {
+    public KeyboardMouseCapturePacket(RegistryFriendlyByteBuf buffer) {
         this(buffer.readBoolean());
     }
 
@@ -31,7 +31,7 @@ public class KeyboardMouseCapturePacket implements IAPPacket {
     }
 
     @Override
-    public void write(FriendlyByteBuf buffer) {
+    public void write(RegistryFriendlyByteBuf buffer) {
         buffer.writeBoolean(this.enable);
     }
 

@@ -4,7 +4,7 @@ import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.items.SmartGlassesItem;
 import de.srendi.advancedperipherals.common.network.IAPPacket;
 import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesComputer;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
@@ -22,7 +22,7 @@ public class KeyboardMouseClickPacket implements IAPPacket {
         this.isRelease = isRelease;
     }
 
-    public KeyboardMouseClickPacket(FriendlyByteBuf buffer) {
+    public KeyboardMouseClickPacket(RegistryFriendlyByteBuf buffer) {
         this.button = buffer.readVarInt();
         this.isRelease = buffer.readBoolean();
     }
@@ -37,7 +37,7 @@ public class KeyboardMouseClickPacket implements IAPPacket {
         if (smartGlasses.isEmpty()) {
             return;
         }
-        SmartGlassesComputer computer = SmartGlassesItem.getServerComputer(player.server, stack);
+        SmartGlassesComputer computer = SmartGlassesItem.getServerComputer(player.server, smartGlasses);
         if (computer == null) {
             return;
         }
@@ -45,7 +45,7 @@ public class KeyboardMouseClickPacket implements IAPPacket {
     }
 
     @Override
-    public void write(FriendlyByteBuf buffer) {
+    public void write(RegistryFriendlyByteBuf buffer) {
         buffer.writeVarInt(button);
         buffer.writeBoolean(isRelease);
     }
