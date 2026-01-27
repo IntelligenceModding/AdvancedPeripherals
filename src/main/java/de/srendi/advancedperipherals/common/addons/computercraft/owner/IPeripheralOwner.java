@@ -14,7 +14,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
-import java.util.function.Function;
 
 public interface IPeripheralOwner {
 
@@ -39,7 +38,7 @@ public interface IPeripheralOwner {
 
     void markDataStorageDirty();
 
-    <T> T withPlayer(Function<APFakePlayer, T> function);
+    <T> T withPlayer(APFakePlayer.Action<T> function);
 
     ItemStack getToolInMainHand();
 

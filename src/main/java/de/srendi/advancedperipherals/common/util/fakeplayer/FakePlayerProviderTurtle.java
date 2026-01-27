@@ -15,7 +15,6 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.WeakHashMap;
-import java.util.function.Function;
 
 public final class FakePlayerProviderTurtle {
 
@@ -105,7 +104,7 @@ public final class FakePlayerProviderTurtle {
     }
 
 
-    public static <T> T withPlayer(ITurtleAccess turtle, Function<APFakePlayer, T> function) {
+    public static <T> T withPlayer(ITurtleAccess turtle, APFakePlayer.Action<T> function) {
         APFakePlayer player = getPlayer(turtle, turtle.getOwningPlayer());
         load(player, turtle);
         T result = function.apply(player);

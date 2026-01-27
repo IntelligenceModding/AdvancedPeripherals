@@ -2,7 +2,7 @@ package de.srendi.advancedperipherals.common.items;
 
 import dan200.computercraft.shared.network.container.ComputerContainerData;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
-import de.srendi.advancedperipherals.common.addons.APAddons;
+import de.srendi.advancedperipherals.common.addons.APAddon;
 import de.srendi.advancedperipherals.common.items.base.BaseItem;
 import de.srendi.advancedperipherals.common.setup.APTags;
 import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesComputer;
@@ -38,8 +38,8 @@ public class SmartGlassesInterfaceItem extends BaseItem {
         // curio slot or on the head
         ItemStack findGlasses = player.getItemBySlot(EquipmentSlot.HEAD);
         if (!findGlasses.is(APTags.Items.SMART_GLASSES))
-            if (APAddons.curiosLoaded)
-                findGlasses = APAddons.getCurioGlasses(player);
+            if (APAddon.curiosLoaded)
+                findGlasses = APAddon.getCurioGlasses(player);
 
         if (!findGlasses.is(APTags.Items.SMART_GLASSES)) {
             player.displayClientMessage(Component.translatable("item.advancedperipherals.smartglasses.dontwear"), false);

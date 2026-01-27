@@ -18,8 +18,6 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.function.Function;
-
 public class PocketPeripheralOwner extends BasePeripheralOwner {
     private final IPocketAccess pocket;
 
@@ -98,7 +96,7 @@ public class PocketPeripheralOwner extends BasePeripheralOwner {
     }
 
     @Override
-    public <T> T withPlayer(Function<APFakePlayer, T> function) {
+    public <T> T withPlayer(APFakePlayer.Action<T> function) {
         throw new RuntimeException("Not implemented yet");
     }
 

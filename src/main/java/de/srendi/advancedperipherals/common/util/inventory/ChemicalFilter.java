@@ -54,11 +54,8 @@ public class ChemicalFilter extends GenericFilter<ChemicalStack> {
         if (item.containsKey("toSlot")) {
             chemicalFilter.toSlot = item.getInt("toSlot");
         }
-        // TODO: rename count to amount in 0.8
         if (item.containsKey("amount")) {
             chemicalFilter.amount = item.getLong("amount");
-        } else if (item.containsKey("count")) {
-            chemicalFilter.amount = item.getLong("count");
         }
 
         AdvancedPeripherals.debug("Parsed item filter: " + chemicalFilter);

@@ -232,4 +232,12 @@ public abstract class PeripheralBlockEntity<T extends BasePeripheral<?>> extends
     public void markSettingsChanged() {
         this.setChanged();
     }
+
+    public void sendUpdate() {
+        if (this.getLevel().isClientSide) {
+            return;
+        }
+        this.setChanged();
+        this.getLevel().sendBlockUpdated(this.getBlockPos(), this.getBlockState(), this.getBlockState(), 0 /* no use on server-side */);
+    }
 }

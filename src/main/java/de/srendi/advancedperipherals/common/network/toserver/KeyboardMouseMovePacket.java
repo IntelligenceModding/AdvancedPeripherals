@@ -1,5 +1,6 @@
 package de.srendi.advancedperipherals.common.network.toserver;
 
+import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.items.SmartGlassesItem;
 import de.srendi.advancedperipherals.common.network.IAPPacket;
 import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesComputer;
@@ -28,7 +29,7 @@ public class KeyboardMouseMovePacket implements IAPPacket {
 
     @Override
     public void handle(IPayloadContext context) {
-        if (context.player() instanceof ServerPlayer player) {
+        if (!(context.player() instanceof ServerPlayer player)) {
             return;
         }
 

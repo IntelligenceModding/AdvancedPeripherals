@@ -1,5 +1,6 @@
 package de.srendi.advancedperipherals.common.network.toclient;
 
+import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.client.screens.KeyboardScreen;
 import de.srendi.advancedperipherals.common.network.IAPPacket;
 import net.minecraft.client.Minecraft;

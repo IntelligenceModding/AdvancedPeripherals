@@ -69,11 +69,8 @@ public class FluidFilter extends GenericFilter<FluidStack> {
         if (item.containsKey("fingerprint")) {
             fluidFilter.fingerprint = item.getString("fingerprint");
         }
-        // TODO: rename count to amount in 0.8
         if (item.containsKey("amount")) {
             fluidFilter.amount = item.getInt("amount");
-        } else if (item.containsKey("count")) {
-            fluidFilter.amount = item.getInt("count");
         }
         AdvancedPeripherals.debug("Parsed fluid filter: " + fluidFilter);
 

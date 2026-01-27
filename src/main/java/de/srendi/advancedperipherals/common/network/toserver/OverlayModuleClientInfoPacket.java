@@ -39,7 +39,7 @@ public class OverlayModuleClientInfoPacket implements IAPPacket {
 
     @Override
     public void handle(IPayloadContext context) {
-        if (context.player() instanceof ServerPlayer player) {
+        if (!(context.player() instanceof ServerPlayer player)) {
             return;
         }
 

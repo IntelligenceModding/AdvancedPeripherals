@@ -4,7 +4,7 @@ import dan200.computercraft.api.lua.IArguments;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.lua.MethodResult;
-import de.srendi.advancedperipherals.common.addons.APAddons;
+import de.srendi.advancedperipherals.common.addons.APAddon;
 import de.srendi.advancedperipherals.common.addons.computercraft.operations.SingleOperationContext;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.IPeripheralOwner;
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.plugins.AutomataCorePlugin;
@@ -33,7 +33,7 @@ public class AutomataVSMountPlugin extends AutomataCorePlugin {
     @LuaFunction(mainThread = true)
     public final boolean isOnShip() {
         IPeripheralOwner owner = this.automataCore.getPeripheralOwner();
-        return APAddons.isBlockOnShip(owner.getLevel(), owner.getPos());
+        return APAddon.isBlockOnShip(owner.getLevel(), owner.getPos());
     }
 
     @LuaFunction(mainThread = true)

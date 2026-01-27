@@ -3,7 +3,7 @@ package de.srendi.advancedperipherals.common.items;
 import com.google.common.base.Objects;
 import dan200.computercraft.ComputerCraft;
 import dan200.computercraft.api.ComputerCraftAPI;
-import dan200.computercraft.api.filesystem.IWritableMount;
+import dan200.computercraft.api.filesystem.WritableMount;
 import dan200.computercraft.api.media.IMedia;
 import dan200.computercraft.api.peripheral.IPeripheral;
 import dan200.computercraft.api.pocket.IPocketUpgrade;
@@ -34,6 +34,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ArmorItem;
@@ -306,7 +307,7 @@ public class SmartGlassesItem extends ArmorItem implements IComputerItem, IMedia
 
     @Nullable
     @Override
-    public IWritableMount createDataMount(@NotNull ItemStack stack, @NotNull Level level) {
+    public WritableMount createDataMount(@NotNull ItemStack stack, @NotNull Level level) {
         int id = getComputerID(stack);
         if (id >= 0) {
             return ComputerCraftAPI.createSaveDirMount(level, "computer/" + id, ComputerCraft.computerSpaceLimit);
