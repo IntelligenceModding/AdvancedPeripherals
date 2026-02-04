@@ -73,7 +73,7 @@ public class GeoScannerPeripheral extends BasePeripheral<IPeripheralOwner> {
             ResourceLocation name = BuiltInRegistries.BLOCK.getKey(block);
             data.put("name", name == null ? "unknown" : name.toString());
             data.put("tags", LuaConverter.getHolderTags(block.builtInRegistryHolder()));
-            data.put("state", ScanUtils.serializeState(state));
+            data.put("state", LuaConverter.serializeState(state));
 
             result.add(data);
         });

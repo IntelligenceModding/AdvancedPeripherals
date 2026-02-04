@@ -40,14 +40,4 @@ public class ScanUtils {
             }
         }
     }
-
-    public static Map<String, String> serializeState(BlockState state){
-        Map<String, String> map = new HashMap<>();
-
-        state.getValues().forEach(((prop, val) -> {
-            map.put(prop.getName(), val.toString());
-        }));
-
-        return map;
-    }
 }
