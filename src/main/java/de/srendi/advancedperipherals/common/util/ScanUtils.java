@@ -4,6 +4,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.BiConsumer;
 
 public class ScanUtils {
@@ -37,5 +39,15 @@ public class ScanUtils {
                 }
             }
         }
+    }
+
+    public static Map<String, String> serializeState(BlockState state){
+        Map<String, String> map = new HashMap<>();
+
+        state.getValues().forEach(((prop, val) -> {
+            map.put(prop.getName(), val.toString());
+        }));
+
+        return map;
     }
 }
