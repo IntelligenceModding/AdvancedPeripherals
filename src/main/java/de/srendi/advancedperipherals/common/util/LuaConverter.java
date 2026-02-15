@@ -1,5 +1,6 @@
 package de.srendi.advancedperipherals.common.util;
 
+import dan200.computercraft.api.detail.VanillaDetailRegistries;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.shared.util.NBTUtil;
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.InventoryManagerPeripheral;
@@ -102,11 +103,10 @@ public class LuaConverter {
 
     public static Map<String, Object> stackToObject(@NotNull ItemStack stack) {
         if (stack.isEmpty()) return new HashMap<>();
-        Map<String, Object> map = itemToObject(stack.getItem());
+        Map<String, Object> map = new HashMap<>(VanillaDetailRegistries.ITEM_STACK.getDetails(stack));
         CompoundTag nbt = stack.copy().getOrCreateTag();
-        map.put("count", stack.getCount());
-        map.put("displayName", stack.getDisplayName().getString());
         map.put("maxStackSize", stack.getMaxStackSize());
+        map.put("nbtHash", map.get("nbt"));
         map.put("nbt", NBTUtil.toLua(nbt));
         map.put("fingerprint", ItemUtil.getFingerprint(stack));
         return map;
