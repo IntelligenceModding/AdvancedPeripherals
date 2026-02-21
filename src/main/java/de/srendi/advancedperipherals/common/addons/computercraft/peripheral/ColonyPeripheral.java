@@ -184,7 +184,7 @@ public class ColonyPeripheral extends BasePeripheral<IPeripheralOwner> {
     public final Object getBuildings() throws LuaException {
         IColony colony = getColony();
 
-        IRegisteredStructureManager manager = colony.getBuildingManager();
+        IRegisteredStructureManager manager = colony.getServerBuildingManager();
         List<Object> buildingData = new ArrayList<>();
         for (Map.Entry<BlockPos, IBuilding> building : manager.getBuildings().entrySet()) {
             buildingData.add(MineColonies.buildingToObject(manager, building.getValue(), building.getKey()));
