@@ -24,7 +24,7 @@ import org.jetbrains.annotations.Nullable;
 public class KeyboardContainer extends BaseContainer implements ComputerMenu {
 
     @Nullable
-    private final ServerInputState<KeyboardContainer> input;
+    private final ServerInputState input;
     private final ItemStack keyboardItem;
     @Nullable
     private ServerComputer computer;
@@ -42,7 +42,7 @@ public class KeyboardContainer extends BaseContainer implements ComputerMenu {
             this.computer = null;
             return;
         }
-        this.input = new ServerInputState<>(this, computer);
+        this.input = new ServerInputState(this, computer);
         this.computer = computer;
         if (computer != null) {
             return;

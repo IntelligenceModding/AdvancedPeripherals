@@ -35,8 +35,8 @@ public final class AE2Registries {
 
     public static void registerTags(Function<TagKey<Item>, TagsProvider.TagAppender<Item>> tagger) {
         tagger.apply(getCableP2PTag())
-            .add(ModRegistry.Items.CABLE.getKey())
-            .add(ModRegistry.Items.WIRED_MODEM.getKey())
-            .add(ModRegistry.Items.WIRED_MODEM_FULL.getKey());
+            .addOptional(ModRegistry.Items.CABLE.id())
+            .addOptional(ModRegistry.Items.WIRED_MODEM.id())
+            .addOptional(ModRegistry.Items.WIRED_MODEM_FULL.id());
     }
 }

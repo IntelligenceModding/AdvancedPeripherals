@@ -82,6 +82,10 @@ public class AdvancedPeripherals {
             LOGGER.error("[DEBUG] " + message, throwable);
     }
 
+    public static void exception(String message, Throwable throwable) {
+        LOGGER.error("[ERROR] " + message, throwable);
+    }
+
     public static ResourceLocation getRL(String resource) {
         return ResourceLocation.fromNamespaceAndPath(MOD_ID, resource);
     }

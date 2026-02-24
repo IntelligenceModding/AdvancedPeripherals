@@ -7,12 +7,14 @@ import dan200.computercraft.core.computer.ComputerSide;
 import dan200.computercraft.impl.PocketUpgrades;
 import dan200.computercraft.shared.computer.core.ComputerFamily;
 import dan200.computercraft.shared.computer.core.ServerComputer;
+import dan200.computercraft.shared.computer.core.TerminalSize;
 import de.srendi.advancedperipherals.common.setup.APComputerComponents;
 import de.srendi.advancedperipherals.common.setup.APDataComponents;
 import de.srendi.advancedperipherals.common.smartglasses.modules.IModule;
 import de.srendi.advancedperipherals.common.smartglasses.modules.IModuleItem;
 import de.srendi.advancedperipherals.common.smartglasses.modules.ModulePeripheral;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
@@ -65,7 +67,7 @@ public class SmartGlassesComputer extends ServerComputer {
         this.modulePeripheral = new ModulePeripheral(this);
         if (upgradeDatas != null) {
             for (ComputerSide side : ComputerSide.values()) {
-                final DataComponentPatch data = upgradeDatas.get(APDataComponents.getComputerSideDataKey(side));
+                final DataComponentPatch data = upgradeDatas.get(APDataComponents.getComputerSideDataKey(side)).orElse(null);
                 if (data != null) {
                     this.upgradeDatas.put(side, data);
                 }
@@ -78,7 +80,6 @@ public class SmartGlassesComputer extends ServerComputer {
     }
 
     @Nullable
-    @Override
     public Entity getEntity() {
         if (stack.isEmpty() || entity == null || !entity.isAlive()) {
             return null;
@@ -135,20 +136,21 @@ public class SmartGlassesComputer extends ServerComputer {
         this.isDirty = true;
     }
 
-    @Override
     public void invalidatePeripheral() {
         this.peripheralOutdated = true;
     }
 
     private void updatePeripheralsAndModules(SmartGlassesItemHandler itemHandler) {
+        RegistryAccess registryAccess = this.getLevel().registryAccess();
         for (int slot = 0; slot < SmartGlassesItemHandler.PERIPHERAL_SLOTS; slot++) {
             ComputerSide side = SmartGlassesSlot.indexToSide(slot);
             ItemStack peripheralItem = itemHandler.getStackInSlot(slot);
-            IPocketUpgrade upgrade = PocketUpgrades.instance().get(this.getLevel().registryAccess(), peripheralItem);
-            if (upgrade == null) {
+            UpgradeData<IPocketUpgrade> upgradeData = PocketUpgrades.instance().get(registryAccess, peripheralItem);
+            if (upgradeData == null) {
                 this.removeUpgradeData(side);
                 continue;
             }
+            IPocketUpgrade upgrade = upgradeData.upgrade();
             IPeripheral peripheral = upgrade.createPeripheral(this.sideAccesses.get(side));
             setPeripheral(side, peripheral);
         }

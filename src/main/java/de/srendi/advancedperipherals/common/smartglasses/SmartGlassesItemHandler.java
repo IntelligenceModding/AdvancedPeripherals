@@ -1,11 +1,13 @@
 package de.srendi.advancedperipherals.common.smartglasses;
 
 import dan200.computercraft.api.pocket.IPocketUpgrade;
+import dan200.computercraft.api.upgrades.UpgradeData;
 import dan200.computercraft.impl.PocketUpgrades;
 import de.srendi.advancedperipherals.common.items.SmartGlassesItem;
 import de.srendi.advancedperipherals.common.setup.APDataComponents;
 import de.srendi.advancedperipherals.common.smartglasses.modules.IModuleItem;
 import net.minecraft.core.NonNullList;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.ContainerHelper;
@@ -52,18 +54,16 @@ public class SmartGlassesItemHandler implements IItemHandlerModifiable {
         if (stack.getItem() instanceof SmartGlassesItem) {
             return false;
         }
+        RegistryAccess registryAccess = this.computer.getLevel().registryAccess();
         List<ItemStack> items = this.loadItems();
         if (slot < PERIPHERAL_SLOTS) {
-            IPocketUpgrade upgrade = PocketUpgrades.instance().get(stack);
-            if (upgrade == null) {
+            UpgradeData<IPocketUpgrade> upgradeData = PocketUpgrades.instance().get(registryAccess, stack);
+            if (upgradeData == null) {
                 return false;
             }
-            ResourceLocation id = upgrade.getUpgradeID();
-            for (int i = 0; i < PERIPHERAL_SLOTS; i++) {
-                IPocketUpgrade u = PocketUpgrades.instance().get(items.get(i));
-                if (u != null && u.getUpgradeID().equals(id)) {
-                    return false;
-                }
+            IPocketUpgrade upgrade = upgradeData.upgrade();
+            if (!upgrade.isItemSuitable(stack)) {
+                return false;
             }
             return true;
         }

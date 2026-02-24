@@ -1,11 +1,13 @@
 package de.srendi.advancedperipherals.client.smartglasses;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.client.smartglasses.objects.twodim.ITwoDObjectRenderer;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.RenderableObject;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.LayeredDraw;
+import net.minecraft.resources.ResourceLocation;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,7 +16,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 public class OverlayModuleOverlay implements LayeredDraw.Layer {
-    public static final String ID = "overlay_module_overlay";
+    public static final ResourceLocation ID = AdvancedPeripherals.getRL("overlay_module_overlay");
 
     @Override
     public void render(GuiGraphics gui, DeltaTracker deltaTracker) {

@@ -31,6 +31,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+import static de.srendi.advancedperipherals.common.addons.computercraft.operations.SingleOperation.ACTIVE_PORTAL;
+import static de.srendi.advancedperipherals.common.addons.computercraft.operations.SingleOperation.PREPARE_PORTAL;
 import static de.srendi.advancedperipherals.common.addons.computercraft.operations.SingleOperation.WARP;
 import static de.srendi.advancedperipherals.common.setup.APDataComponents.POINT_DATA_MARK;
 import static de.srendi.advancedperipherals.common.setup.APDataComponents.WORLD_DATA_MARK;
@@ -254,7 +256,7 @@ public class AutomataWarpingPlugin extends AutomataCorePlugin {
                             shipPearls.remove(shipId);
                             return;
                         }
-                        Level level = pearl.getLevel();
+                        Level level = pearl.level();
                         if (level == turtle.getLevel()) {
                             automataCore.queueEvent(PortalPrepareCallback.FAILED_EVENT_ID, shipId, "NO_PORTAL_FOUND");
                             pearl.discard();

@@ -123,7 +123,7 @@ public class WiredCableP2PTunnelPart extends CapabilityP2PTunnelPart<WiredCableP
     }
 
     protected void refreshConnection() {
-        WiredElement elem = this.getLevel().getCapability(WiredElementCapability.get(), this.getFacingPos(), this.getSide().getOpposite()).orElse(null);
+        WiredElement elem = this.getLevel().getCapability(WiredElementCapability.get(), this.getFacingPos(), this.getSide().getOpposite());
         if (elem == null) {
             return;
         }

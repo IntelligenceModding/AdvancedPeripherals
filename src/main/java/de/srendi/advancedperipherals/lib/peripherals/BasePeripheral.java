@@ -15,6 +15,7 @@ import de.srendi.advancedperipherals.common.util.CoordUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -127,12 +128,30 @@ public abstract class BasePeripheral<O extends IPeripheralOwner> implements IBas
         return getPeripheralConfiguration();
     }
 
-    protected BlockPos getPos() {
+    public BlockPos getPos() {
         return owner.getPos();
     }
 
-    protected ServerLevel getLevel() {
+    public Vec3 getCenterPos() {
+        return owner.getCenterPos();
+    }
+
+    public ServerLevel getLevel() {
         return (ServerLevel) owner.getLevel();
+    }
+
+    public boolean isOnShip() {
+        return false;
+        // return APAddons.isBlockOnShip(owner.getLevel(), owner.getPos());
+    }
+
+    public Vec3 getPhysicsPos() {
+        Vec3 pos = this.getCenterPos();
+        return pos;
+        // if (!APAddons.vs2Loaded) {
+        //     return pos;
+        // }
+        // return ValkyrienSkies.transformToWorldPos(owner.getLevel(), owner.getPos(), pos);
     }
 
     protected Direction validateSide(String direction) throws LuaException {

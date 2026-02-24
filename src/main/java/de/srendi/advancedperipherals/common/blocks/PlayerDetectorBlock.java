@@ -31,7 +31,7 @@ public class PlayerDetectorBlock extends APBlockEntityBlock<PlayerDetectorEntity
 
     @NotNull
     @Override
-    public @NotNull InteractionResult useWithoutItem(@NotNull BlockState state, Level levelIn, @NotNull BlockPos pos, @NotNull Player player, @NotNull BlockHitResult hit) {
+    public InteractionResult useWithoutItem(@NotNull BlockState state, Level levelIn, @NotNull BlockPos pos, @NotNull Player player, @NotNull BlockHitResult hit) {
         if (!APConfig.PERIPHERALS_CONFIG.enablePlayerDetector.get())
             return super.useWithoutItem(state, levelIn, pos, player, hit);
         BlockEntity tileEntity = levelIn.getBlockEntity(pos);
