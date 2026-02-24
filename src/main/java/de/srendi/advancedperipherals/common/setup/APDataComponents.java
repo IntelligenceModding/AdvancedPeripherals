@@ -1,6 +1,7 @@
 package de.srendi.advancedperipherals.common.setup;
 
 import com.mojang.serialization.Codec;
+import dan200.computercraft.core.computer.ComputerSide;
 import net.minecraft.core.Registry;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.core.component.DataComponentPatch;
@@ -18,22 +19,45 @@ import java.util.function.UnaryOperator;
 
 public class APDataComponents {
 
-    public static final DeferredHolder<DataComponentType<?>, DataComponentType<DataComponentPatch>> TURTLE_UPGRADE_STORED_DATA = registerDataComponent("stored_data");
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<DataComponentPatch>> ABILITY_COOLDOWN = registerDataComponent("cooldowns");
-    public static final DeferredHolder<DataComponentType<?>, DataComponentType<UUID>> OWNER = registerUUID("owner_id");
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> BINDING_COMPUTER = registerInt("binding_computer");
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<UUID>> CHUNKY_ID = registerUUID("chunky_id");
-    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> ROTATION_CHARGE_SETTING = registerInt("rotation_charge_setting");
-    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> FUEL_CONSUMPTION_RATE = registerInt("fuel_consumption_rate");
-    public static final DeferredHolder<DataComponentType<?>, DataComponentType<CompoundTag>> ENTITY_TRANSFER = registerNBT("entity_transfer");
-    public static final DeferredHolder<DataComponentType<?>, DataComponentType<String>> WORLD_DATA_MARK = registerString("world_data_mark");
-    public static final DeferredHolder<DataComponentType<?>, DataComponentType<CompoundTag>> POINT_DATA_MARK = registerNBT("point_data_mark");
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<CompoundTag>> CONSUMED_ENTITY_COMPOUND = registerNBT("consumed_entity_compound");
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<CompoundTag>> ENTITY_TRANSFER = registerNBT("entity_transfer");
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> FUEL_CONSUMPTION_RATE = registerInt("fuel_consumption_rate");
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<CompoundTag>> ITEMS = registerNBT("items");
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Boolean>> KEYBOARD_OPENED = registerBoolean("keyboard_opened");
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> KEY_PRESSED_DURATION = registerBoolean("key_pressed_duration");
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<UUID>> OWNER = registerUUID("owner_id");
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<CompoundTag>> POINT_DATA_MARK = registerNBT("point_data_mark");
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> ROTATION_CHARGE_SETTING = registerInt("rotation_charge_setting");
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<DataComponentPatch>> STORED_DATA = registerDataComponent("stored_data");
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<DataComponentPatch>> UPGRADE_DATAS = registerNBT("upgrade_datas");
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<String>> WORLD_DATA_MARK = registerString("world_data_mark");
 
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Long>> SIMPLE_FREE_OPERATION = registerLong("free_operation_cooldown");
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Long>> SINGLE_OPERATION = registerLong("single_operation");
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Long>> SPHERE_OPERATION = registerLong("sphere_operation");
 
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<DataComponentPatch>> BACK_DATA = registerDataComponent("back_data");
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<DataComponentPatch>> BOTTOM_DATA = registerDataComponent("bottom_data");
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<DataComponentPatch>> FRONT_DATA = registerDataComponent("front_data");
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<DataComponentPatch>> LEFT_DATA = registerDataComponent("left_data");
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<DataComponentPatch>> RIGHT_DATA = registerDataComponent("right_data");
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<DataComponentPatch>> TOP_DATA = registerDataComponent("top_data");
+
     public static void register() {
+    }
+
+    public static DataComponentType<DataComponentPatch> getComputerSideDataKey(final ComputerSide side) {
+        return switch (side) {
+            case BACK -> BACK_DATA;
+            case BOTTOM -> BOTTOM_DATA;
+            case FRONT -> FRONT_DATA;
+            case LEFT -> LEFT_DATA;
+            case RIGHT -> RIGHT_DATA;
+            case TOP -> TOP_DATA;
+        };
     }
 
     private static <TYPE> DeferredHolder<DataComponentType<?>, DataComponentType<TYPE>> simple(String name, UnaryOperator<DataComponentType.Builder<TYPE>> operator) {

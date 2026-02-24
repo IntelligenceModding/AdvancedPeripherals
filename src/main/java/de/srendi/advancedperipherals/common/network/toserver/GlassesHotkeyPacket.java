@@ -4,8 +4,8 @@ import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.items.SmartGlassesItem;
 import de.srendi.advancedperipherals.common.network.IAPPacket;
 import de.srendi.advancedperipherals.common.network.toclient.UsernameToCachePacket;
-import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesAccess;
 import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesComputer;
+import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesSideAccess;
 import de.srendi.advancedperipherals.common.smartglasses.modules.keyboard.KeyboardModule;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
@@ -50,15 +50,11 @@ public class GlassesHotkeyPacket implements IAPPacket {
             computer.queueEvent("glasses_key_pressed", new Object[]{keyBind, keyPressDuration});
             return;
         }
-        SmartGlassesAccess glasses = computer.getSmartGlassesAccess();
-        computer.getModules().values()
-            .stream()
-            .filter(KeyboardModule.class::isInstance)
-            .map(KeyboardModule.class::cast)
-            .findFirst()
-            .ifPresent((keyboardModule) -> {
-                keyboardModule.openKeyboard(glasses);
-            });
+        SmartGlassesSideAccess glasses = computer.getSmartGlassesModuleAccess();
+        KeyboardModule keyboardModule = computer.getModule(KeyboardModule.class);
+        if (keyboardModule != null) {
+            keyboardModule.openKeyboard(glasses);
+        }
     }
 
     @Override

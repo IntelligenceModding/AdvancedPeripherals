@@ -4,7 +4,7 @@ import dan200.computercraft.api.lua.IArguments;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.lua.MethodResult;
-import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesAccess;
+import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesSideAccess;
 import de.srendi.advancedperipherals.common.smartglasses.modules.IModuleFunctions;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.three_dim.BlockObject;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.three_dim.BoxObject;
@@ -22,7 +22,7 @@ import net.minecraft.world.phys.Vec3;
 public class OverlayGlassesFunctions implements IModuleFunctions {
 
     private final OverlayModule overlayModule;
-    private final SmartGlassesAccess access;
+    private final SmartGlassesSideAccess access;
 
     public OverlayGlassesFunctions(OverlayModule overlayModule) {
         this.overlayModule = overlayModule;

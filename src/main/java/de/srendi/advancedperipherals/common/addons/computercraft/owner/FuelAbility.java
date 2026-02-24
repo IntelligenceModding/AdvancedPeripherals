@@ -51,6 +51,7 @@ public abstract class FuelAbility<T extends IPeripheralOwner> implements IOwnerA
         if (rate > maxFuelRate) rate = maxFuelRate;
         PatchedDataComponentMap settings = PatchedDataComponentMap.fromPatch(DataComponentMap.EMPTY, owner.getDataStorage());
         settings.set(FUEL_CONSUMPTION_RATE.get(), rate);
+        owner.putDataStorage(settings.asPatch());
     }
 
     public abstract boolean isFuelConsumptionDisable();

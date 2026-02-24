@@ -2,6 +2,7 @@ package de.srendi.advancedperipherals.common.smartglasses.modules;
 
 import dan200.computercraft.api.peripheral.IPeripheral;
 import dan200.computercraft.core.computer.ComputerSide;
+import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.BasePeripheralOwner;
 import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesComputer;
 import de.srendi.advancedperipherals.common.util.fakeplayer.APFakePlayer;
@@ -24,7 +25,7 @@ import java.util.stream.Stream;
 
 public class ModulePeripheralOwner extends BasePeripheralOwner {
 
-    //TODO: Think about making our own smart glasses access so we don't have the not used stuff like the color or the light
+    // TODO: Think about making our own smart glasses access so we don't have the not used stuff like the color or the light
     // We would need to remove the pocket stuff from the SmartGlassesComputer
     private final SmartGlassesComputer computer;
 
@@ -41,13 +42,13 @@ public class ModulePeripheralOwner extends BasePeripheralOwner {
     @Nullable
     @Override
     public Level getLevel() {
-        return computer.getEntity().getLevel();
+        return computer.getEntity().level();
     }
 
     @NotNull
     @Override
     public BlockPos getPos() {
-        return new BlockPos(computer.getEntity().getEyePosition());
+        return BlockPos.containing(computer.getEntity().getEyePosition());
     }
 
     @NotNull
@@ -96,13 +97,23 @@ public class ModulePeripheralOwner extends BasePeripheralOwner {
 
     @NotNull
     @Override
-    public CompoundTag getDataStorage() {
-        return computer.getUpgradeNBTData();
+    public DataComponentPatch getDataStorage() {
+        return computer.getModulesData();
+    }
+
+    @Override
+    public void putDataStorage(DataComponentPatch patch) {
+        computer.setModulesData(patch);
+    }
+
+    @Override
+    public CompoundTag getNbtStorage() {
+        AdvancedPeripherals.debug("Smartglasses module tried to use nbt storage but it should instead use data component storage, report to github!", org.apache.logging.log4j.Level.WARN);
+        return null;
     }
 
     @Override
     public void markDataStorageDirty() {
-        computer.updateUpgradeNBTData();
     }
 
     @Override

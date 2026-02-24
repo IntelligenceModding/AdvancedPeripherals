@@ -1,7 +1,7 @@
 package de.srendi.advancedperipherals.common.smartglasses.modules.overlay;
 
 import de.srendi.advancedperipherals.common.items.base.BaseItem;
-import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesAccess;
+import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesSideAccess;
 import de.srendi.advancedperipherals.common.smartglasses.modules.IModule;
 import de.srendi.advancedperipherals.common.smartglasses.modules.IModuleItem;
 import net.minecraft.world.item.ItemStack;
@@ -14,7 +14,7 @@ public class OverlayGlassesItem extends BaseItem implements IModuleItem {
     }
 
     @Override
-    public IModule createModule(SmartGlassesAccess smartGlassesAccess, ItemStack stack) {
-        return new OverlayModule(smartGlassesAccess);
+    public IModule createModule(SmartGlassesSideAccess access, ItemStack stack) {
+        return new OverlayModule(access);
     }
 }

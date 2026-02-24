@@ -300,7 +300,7 @@ public class AutomataWarpingPlugin extends AutomataCorePlugin {
             shipPearls.remove(id);
             return MethodResult.of(null, "ID_NOT_EXISTS");
         }
-        Level level = shipPearl.getLevel();
+        Level level = shipPearl.level();
         BlockPos newPosition = shipPearl.blockPosition();
         return automataCore.withOperation(ACTIVE_PORTAL, new SingleOperationContext(getCostsToLevel(level), 1), context -> {
             shipPearl.discard();

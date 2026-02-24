@@ -138,7 +138,7 @@ public class ChemicalUtil {
 
     public static String getFingerprint(@NotNull ChemicalStack stack) {
         // A pretty lame fingerprint, a chemical stack does not have any components or other stuff
-        FingerprintUtil.FingerprintKey fingerprintKey = new FingerprintUtil.FingerprintKey(getRegistryKey(stack), null, null);
+        FingerprintUtil.FingerprintKey fingerprintKey = new FingerprintUtil.FingerprintKey(getRegistryKey(stack), 0);
 
         return FingerprintUtil.hash(fingerprintKey);
     }

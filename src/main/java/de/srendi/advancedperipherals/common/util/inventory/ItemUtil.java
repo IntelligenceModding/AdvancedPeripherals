@@ -24,7 +24,7 @@ public class ItemUtil {
      * @return A generated XXHash64 hash from the item stack
      */
     public static String getFingerprint(ItemStack stack) {
-        FingerprintUtil.FingerprintKey fingerprintKey = new FingerprintUtil.FingerprintKey(getRegistryKey(stack), stack.getComponentsPatch().hashCode(), stack.getDisplayName().getString());
+        FingerprintUtil.FingerprintKey fingerprintKey = new FingerprintUtil.FingerprintKey(getRegistryKey(stack), stack.getComponentsPatch().hashCode());
 
         return FingerprintUtil.hash(fingerprintKey);
     }

@@ -1,7 +1,7 @@
 package de.srendi.advancedperipherals.common.smartglasses.modules.nightvision;
 
 import de.srendi.advancedperipherals.common.items.base.BaseItem;
-import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesAccess;
+import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesSideAccess;
 import de.srendi.advancedperipherals.common.smartglasses.modules.IModule;
 import de.srendi.advancedperipherals.common.smartglasses.modules.IModuleItem;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -20,12 +20,12 @@ public class NightVisionModuleItem extends BaseItem implements IModuleItem {
     }
 
     @Override
-    public IModule createModule(SmartGlassesAccess access, ItemStack stack) {
+    public IModule createModule(SmartGlassesSideAccess access, ItemStack stack) {
         return new NightVisionModule();
     }
 
     @Override
-    public void inventoryTick(ItemStack itemStack, Level level, Entity entity, int inventorySlot, boolean isCurrentItem, @Nullable SmartGlassesAccess access, @Nullable IModule module) {
+    public void inventoryTick(ItemStack itemStack, Level level, Entity entity, int inventorySlot, boolean isCurrentItem, @Nullable SmartGlassesSideAccess access, @Nullable IModule module) {
         if (level.isClientSide() || !(entity instanceof Player player)) {
             return;
         }

@@ -9,6 +9,7 @@ import dan200.computercraft.shared.computer.terminal.TerminalState;
 import de.srendi.advancedperipherals.common.container.base.BaseContainer;
 import de.srendi.advancedperipherals.common.items.KeyboardItem;
 import de.srendi.advancedperipherals.common.setup.APContainerTypes;
+import de.srendi.advancedperipherals.common.setup.APDataComponents;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
@@ -41,17 +42,16 @@ public class KeyboardContainer extends BaseContainer implements ComputerMenu {
             this.computer = null;
             return;
         }
-        this.input = new ServerInputState<>(this);
+        this.input = new ServerInputState<>(this, computer);
         this.computer = computer;
         if (computer != null) {
             return;
         }
-        CompoundTag data = keyboardItem.getOrCreateTag();
-        if (!data.contains(KeyboardItem.BIND_TAG)) {
+        if (!keyboardItem.has(APDataComponents.BINDING_COMPUTER.get())) {
             return;
         }
         // Cannot use instance ID here since they will change after reload the block
-        int computerId = data.getInt(KeyboardItem.BIND_TAG);
+        int computerId = keyboardItem.get(APDataComponents.BINDING_COMPUTER.get());
         for (ServerComputer computr : ServerContext.get(serverLevel.getServer()).registry().getComputers()) {
             if (computr.getID() == computerId) {
                 this.computer = computr;

@@ -1,5 +1,6 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.owner;
 
+import dan200.computercraft.api.peripheral.IPeripheral;
 import de.srendi.advancedperipherals.common.util.fakeplayer.APFakePlayer;
 import de.srendi.advancedperipherals.lib.peripherals.IPeripheralOperation;
 import net.minecraft.core.BlockPos;
@@ -7,9 +8,11 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.FrontAndTop;
 import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -23,9 +26,15 @@ public interface IPeripheralOwner {
 
     @NotNull BlockPos getPos();
 
+    @NotNull Vec3 getCenterPos();
+
     @NotNull Direction getFacing();
 
     @NotNull FrontAndTop getOrientation();
+
+    @NotNull Vec3 getDirection();
+
+    @Nullable Entity getHoldingEntity();
 
     @Nullable Player getOwner();
 
@@ -69,4 +78,6 @@ public interface IPeripheralOwner {
         for (IPeripheralOperation<?> operation : operations)
             operationAbility.registerOperation(operation);
     }
+
+    <T extends IPeripheral> T getConnectedPeripheral(Class<T> type);
 }

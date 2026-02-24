@@ -1,7 +1,7 @@
 package de.srendi.advancedperipherals.common.smartglasses.modules.nightvision;
 
 import de.srendi.advancedperipherals.AdvancedPeripherals;
-import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesAccess;
+import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesSideAccess;
 import de.srendi.advancedperipherals.common.smartglasses.modules.IModule;
 import de.srendi.advancedperipherals.common.smartglasses.modules.IModuleFunctions;
 import net.minecraft.resources.ResourceLocation;
@@ -11,7 +11,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class NightVisionModule implements IModule {
 
-    private boolean nightVisionEnabled = true;
+    private volatile boolean nightVisionEnabled = true;
 
     public NightVisionModule() {
 
@@ -24,16 +24,14 @@ public class NightVisionModule implements IModule {
 
     @Override
     @Nullable
-    public IModuleFunctions getFunctions(SmartGlassesAccess smartGlassesAccess) {
+    public IModuleFunctions getFunctions(SmartGlassesSideAccess access) {
         return new NightVisionFunctions(this);
     }
 
     @Override
-    public void onUnequipped(SmartGlassesAccess smartGlassesAccess) {
-        if (smartGlassesAccess.getEntity() != null) {
-            if (smartGlassesAccess.getEntity() instanceof Player player) {
-                player.removeEffect(MobEffects.NIGHT_VISION);
-            }
+    public void onUnequipped(SmartGlassesSideAccess access) {
+        if (access.getEntity() instanceof Player player) {
+            player.removeEffect(MobEffects.NIGHT_VISION);
         }
     }
 

@@ -14,7 +14,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
-import org.jspecify.annotations.NonNull;
+import org.jetbrains.annotations.NotNull;
 
 public class SaddleTurtleOverlay implements LayeredDraw.Layer {
     public static final ResourceLocation ID = AdvancedPeripherals.getRL("saddle_turtle_overlay");

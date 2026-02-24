@@ -6,7 +6,7 @@ import de.srendi.advancedperipherals.common.network.toclient.RenderableObjectBul
 import de.srendi.advancedperipherals.common.network.toclient.RenderableObjectClearPacket;
 import de.srendi.advancedperipherals.common.network.toclient.RenderableObjectDeletePacket;
 import de.srendi.advancedperipherals.common.network.toclient.RenderableObjectSyncPacket;
-import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesAccess;
+import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesSideAccess;
 import de.srendi.advancedperipherals.common.smartglasses.modules.IModule;
 import de.srendi.advancedperipherals.common.smartglasses.modules.IModuleFunctions;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.RenderableObject;
@@ -27,7 +27,7 @@ public class OverlayModule implements IModule {
 
     public final ConcurrentHashMap<Integer, RenderableObject> objects = new ConcurrentHashMap<>();
     public final ConcurrentHashMap<Integer, RenderableObject> objectsToUpdate = new ConcurrentHashMap<>();
-    public final SmartGlassesAccess access;
+    public final SmartGlassesSideAccess access;
 
     public boolean autoUpdate = true;
     private int idCounter = 0;
@@ -36,7 +36,7 @@ public class OverlayModule implements IModule {
     private int screenHeight = 0;
     private double guiScale = 1;
 
-    public OverlayModule(SmartGlassesAccess access) {
+    public OverlayModule(SmartGlassesSideAccess access) {
         this.access = access;
     }
 
@@ -46,15 +46,14 @@ public class OverlayModule implements IModule {
     }
 
     @Override
-    public IModuleFunctions getFunctions(SmartGlassesAccess smartGlassesAccess) {
+    public IModuleFunctions getFunctions(SmartGlassesSideAccess access) {
         return new OverlayGlassesFunctions(this);
     }
 
     @Override
-    public void tick(@NotNull SmartGlassesAccess smartGlassesAccess) {
-
-        Entity entity = smartGlassesAccess.getEntity();
-        if (entity instanceof ServerPlayer player && entity.getLevel().getGameTime() % 2 == 0) {
+    public void tick(@NotNull SmartGlassesSideAccess access) {
+        Entity entity = access.getEntity();
+        if (entity instanceof ServerPlayer player && player.level().getGameTime() % 2 == 0) {
             PacketDistributor.sendToPlayer(player, new OverlayModuleClientRequestPacket());
         }
     }
@@ -77,7 +76,7 @@ public class OverlayModule implements IModule {
         return guiScale;
     }
 
-    public SmartGlassesAccess getAccess() {
+    public SmartGlassesSideAccess getAccess() {
         return access;
     }
 

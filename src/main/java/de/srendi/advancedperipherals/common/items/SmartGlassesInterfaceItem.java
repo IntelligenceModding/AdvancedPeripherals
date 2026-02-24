@@ -16,8 +16,7 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.neoforged.common.capabilities.ForgeCapabilities;
-import net.neoforged.common.util.LazyOptional;
+import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
@@ -43,12 +42,10 @@ public class SmartGlassesInterfaceItem extends BaseItem {
         SmartGlassesComputer computer = glassesItem.getOrCreateComputer((ServerLevel) world, player, player.getInventory(), glasses);
         computer.turnOn();
 
-        LazyOptional<IItemHandler> itemHandler = glasses.getCapability(ForgeCapabilities.ITEM_HANDLER);
-        if (!itemHandler.isPresent() || itemHandler.resolve().isEmpty()) {
-            AdvancedPeripherals.debug("There was an issue with the item handler of the glasses while trying to open the gui");
-            return super.use(world, player, hand);
+        IItemHandler itemHandler = glasses.getCapability(Capabilities.ItemHandler.ITEM);
+        if (itemHandler != null) {
+            NetworkHooks.openScreen((ServerPlayer) player, new SmartGlassesMenuProvider(computer, glasses, itemHandler), bytes -> new ComputerContainerData(computer, glasses).toBytes(bytes));
         }
-        NetworkHooks.openScreen((ServerPlayer) player, new SmartGlassesMenuProvider(computer, glasses, itemHandler.resolve().get()), bytes -> new ComputerContainerData(computer, glasses).toBytes(bytes));
 
         return super.use(world, player, hand);
     }

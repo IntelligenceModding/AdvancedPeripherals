@@ -29,6 +29,7 @@ import de.srendi.advancedperipherals.common.addons.computercraft.turtles.metaphy
 import de.srendi.advancedperipherals.common.addons.computercraft.turtles.metaphysics.OverpoweredHusbandryAutomata;
 import de.srendi.advancedperipherals.common.addons.computercraft.turtles.metaphysics.OverpoweredWeakAutomata;
 import de.srendi.advancedperipherals.common.addons.computercraft.turtles.metaphysics.WeakAutomata;
+import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesAPI;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.registries.DeferredHolder;
 

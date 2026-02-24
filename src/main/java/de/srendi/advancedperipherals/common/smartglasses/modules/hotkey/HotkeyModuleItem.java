@@ -4,7 +4,8 @@ import de.srendi.advancedperipherals.client.KeyBindings;
 import de.srendi.advancedperipherals.common.items.base.BaseItem;
 import de.srendi.advancedperipherals.common.network.APNetworking;
 import de.srendi.advancedperipherals.common.network.toserver.GlassesHotkeyPacket;
-import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesAccess;
+import de.srendi.advancedperipherals.common.setup.APDataComponents;
+import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesSideAccess;
 import de.srendi.advancedperipherals.common.smartglasses.modules.IModule;
 import de.srendi.advancedperipherals.common.smartglasses.modules.IModuleItem;
 import de.srendi.advancedperipherals.common.util.KeybindUtil;
@@ -17,15 +18,13 @@ import org.jetbrains.annotations.NotNull;
 
 public class HotkeyModuleItem extends BaseItem implements IModuleItem {
 
-    private static final String KEY_PRESS_DURATION_NBT = "KeyPressDuration";
-
     @Override
     public boolean isEnabled() {
         return true;
     }
 
     @Override
-    public IModule createModule(SmartGlassesAccess access, ItemStack stack) {
+    public IModule createModule(SmartGlassesSideAccess access, ItemStack stack) {
         return new HotkeyModule();
     }
 
@@ -52,10 +51,10 @@ public class HotkeyModuleItem extends BaseItem implements IModuleItem {
     }
 
     public static int getKeyPressDuration(ItemStack stack) {
-        return stack.hasTag() ? stack.getTag().getInt(KEY_PRESS_DURATION_NBT) : 0;
+        return stack.getOrDefault(APDataComponents.KEY_PRESSED_DURATION, 0);
     }
 
     public static void setKeyPressDuration(ItemStack stack, int keyPressDuration) {
-        stack.getOrCreateTag().putInt(KEY_PRESS_DURATION_NBT, keyPressDuration);
+        stack.set(APDataComponents.KEY_PRESSED_DURATION, keyPressDuration);
     }
 }

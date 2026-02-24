@@ -241,7 +241,6 @@ dependencies {
     compileOnly "org.jetbrains:annotations:${jb_annotations}"
     implementation "net.neoforged:neoforge:${neo_version}"
     implementation "cc.tweaked:cc-tweaked-${minecraft_version}-forge:${cc_version}"
-    compileOnly "cc.tweaked:cc-tweaked-${minecraft_version}-core:${cc_version}"
 
     // Minimal requirements end
 

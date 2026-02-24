@@ -25,7 +25,7 @@ public class BlockRenderer implements IThreeDObjectRenderer {
 
     @Override
     public void renderBatch(List<ThreeDimensionalObject> batch, RenderLevelStageEvent event, PoseStack poseStack, Vec3 view) {
-        Level level = event.getCamera().getEntity().getLevel();
+        Level level = event.getCamera().getEntity().level();
         BlockRenderDispatcher blockRenderer = Minecraft.getInstance().getBlockRenderer();
         MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
         VertexConsumer bufferBuilder = bufferSource.getBuffer(RenderType.solid());

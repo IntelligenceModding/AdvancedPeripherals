@@ -1,13 +1,14 @@
 package de.srendi.advancedperipherals.common.items;
 
-import dan200.computercraft.shared.computer.blocks.TileComputerBase;
+import dan200.computercraft.shared.computer.blocks.AbstractComputerBlockEntity;
 import dan200.computercraft.shared.computer.core.ServerComputer;
 import de.srendi.advancedperipherals.client.KeyBindings;
 import de.srendi.advancedperipherals.common.container.KeyboardContainer;
 import de.srendi.advancedperipherals.common.items.base.BaseItem;
 import de.srendi.advancedperipherals.common.items.base.IInventoryItem;
 import de.srendi.advancedperipherals.common.network.toserver.GlassesHotkeyPacket;
-import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesAccess;
+import de.srendi.advancedperipherals.common.setup.APDataComponents;
+import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesSideAccess;
 import de.srendi.advancedperipherals.common.smartglasses.modules.IModule;
 import de.srendi.advancedperipherals.common.smartglasses.modules.IModuleItem;
 import de.srendi.advancedperipherals.common.smartglasses.modules.keyboard.KeyboardModule;
@@ -15,7 +16,6 @@ import de.srendi.advancedperipherals.common.util.EnumColor;
 import de.srendi.advancedperipherals.common.util.SideHelper;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
@@ -38,9 +38,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class KeyboardItem extends BaseItem implements IInventoryItem, IModuleItem {
-
-    public static final String BIND_TAG = "bind";
-    public static final String OPENING_TAG = "KeyboardOpening";
 
     public KeyboardItem() {
         super(new Properties().stacksTo(1));
@@ -65,7 +62,7 @@ public class KeyboardItem extends BaseItem implements IInventoryItem, IModuleIte
             return InteractionResult.PASS;
 
         BlockEntity entity = context.getLevel().getBlockEntity(context.getClickedPos());
-        if (entity instanceof TileComputerBase) {
+        if (entity instanceof AbstractComputerBlockEntity) {
             bind(player, context.getItemInHand(), context.getLevel(), context.getClickedPos());
         } else {
             clear(player, context.getItemInHand());
@@ -74,20 +71,19 @@ public class KeyboardItem extends BaseItem implements IInventoryItem, IModuleIte
     }
 
     @Override
-    public void inventoryTick(ItemStack itemStack, Level level, Entity entity, int inventorySlot, boolean isCurrentItem, @Nullable SmartGlassesAccess access, @Nullable IModule module) {
+    public void inventoryTick(ItemStack itemStack, Level level, Entity entity, int inventorySlot, boolean isCurrentItem, @Nullable SmartGlassesSideAccess access, @Nullable IModule module) {
         if (!level.isClientSide()) {
-            itemStack.removeTagKey(BIND_TAG);
+            itemStack.remove(APDataComponents.BINDING_COMPUTER.get());
             return;
         }
         if (!(entity instanceof LocalPlayer player)) {
             return;
         }
         boolean pressed = KeyBindings.GLASSES_HOTKEY_KEYBINDING.isDown();
-        CompoundTag data = itemStack.getOrCreateTag();
-        if (data.getBoolean(OPENING_TAG) == pressed) {
+        if (itemStack.getOrDefault(APDataComponents.KEYBOARD_OPENED.get(), false).booleanValue() == pressed) {
             return;
         }
-        data.putBoolean(OPENING_TAG, pressed);
+        itemStack.set(APDataComponents.KEYBOARD_OPENED.get(), pressed);
         if (!pressed) {
             return;
         }
@@ -107,8 +103,8 @@ public class KeyboardItem extends BaseItem implements IInventoryItem, IModuleIte
         if (playerIn.isShiftKeyDown()) {
             return new InteractionResultHolder<>(InteractionResult.PASS, playerIn.getItemInHand(handIn));
         }
-        CompoundTag data = playerIn.getItemInHand(handIn).getTag();
-        if (data == null || !data.contains(BIND_TAG)) {
+        ItemStack stack = playerIn.getItemInHand(handIn);
+        if (!stack.has(APDataComponents.BINDING_COMPUTER.get())) {
             playerIn.displayClientMessage(EnumColor.buildTextComponent(Component.translatable("text.advancedperipherals.keyboard_notbound")), false);
             return new InteractionResultHolder<>(InteractionResult.PASS, playerIn.getItemInHand(handIn));
         }
@@ -117,19 +113,17 @@ public class KeyboardItem extends BaseItem implements IInventoryItem, IModuleIte
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable Level levelIn, List<Component> tooltip, TooltipFlag flagIn) {
-        super.appendHoverText(stack, levelIn, tooltip, flagIn);
-        CompoundTag data = stack.getOrCreateTag();
-        if (data.contains(BIND_TAG)) {
-            tooltip.add(EnumColor.buildTextComponent(Component.translatable("item.advancedperipherals.tooltip.binding.bound_to", data.getInt(BIND_TAG))));
+    public void appendHoverText(ItemStack stack, @Nullable TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
+        super.appendHoverText(stack, context, tooltip, flagIn);
+        if (stack.has(APDataComponents.BINDING_COMPUTER.get())) {
+            tooltip.add(EnumColor.buildTextComponent(Component.translatable("item.advancedperipherals.tooltip.binding.bound_to", stack.get(APDataComponents.BINDING_COMPUTER.get()))));
         }
     }
 
-    private void bind(Player player, ItemStack itemStack, Level world, BlockPos pos) {
-        CompoundTag data = itemStack.getOrCreateTag();
-        data.remove(BIND_TAG);
+    private void bind(Player player, ItemStack stack, Level world, BlockPos pos) {
+        stack.remove(APDataComponents.BINDING_COMPUTER.get());
 
-        if (!(world.getBlockEntity(pos) instanceof TileComputerBase computer)) {
+        if (!(world.getBlockEntity(pos) instanceof AbstractComputerBlockEntity computer)) {
             // TODO: should it show bind failed message?
             return;
         }
@@ -139,20 +133,19 @@ public class KeyboardItem extends BaseItem implements IInventoryItem, IModuleIte
             // TODO: show computer not initialized error?
             return;
         }
-        data.putInt(BIND_TAG, id);
+        stack.set(APDataComponents.BINDING_COMPUTER.get(), id);
 
         player.displayClientMessage(EnumColor.buildTextComponent(Component.translatable("text.advancedperipherals.bind_keyboard", pos.toShortString())), true);
     }
 
-    private void clear(Player player, ItemStack itemStack) {
-        CompoundTag data = itemStack.getOrCreateTag();
-        data.remove(BIND_TAG);
+    private void clear(Player player, ItemStack stack) {
+        stack.remove(APDataComponents.BINDING_COMPUTER.get());
 
         player.displayClientMessage(EnumColor.buildTextComponent(Component.translatable("text.advancedperipherals.cleared_keyboard")), true);
     }
 
     @Override
-    public MenuProvider createContainer(Player playerEntity, ItemStack itemStack) {
+    public MenuProvider createContainer(Player playerEntity, ItemStack stack) {
         return new MenuProvider() {
             @NotNull
             @Override
@@ -162,12 +155,12 @@ public class KeyboardItem extends BaseItem implements IInventoryItem, IModuleIte
 
             @Override
             public AbstractContainerMenu createMenu(int pContainerId, @NotNull Inventory playerInv, @NotNull Player player) {
-                return new KeyboardContainer(pContainerId, playerInv, player.blockPosition(), player.level(), itemStack);
+                return new KeyboardContainer(pContainerId, playerInv, player.blockPosition(), player.level(), stack);
             }
         };
     }
 
-    public MenuProvider createContainerWithComputer(Player playerEntity, ItemStack itemStack, ServerComputer computer) {
+    public MenuProvider createContainerWithComputer(Player playerEntity, ItemStack stack, ServerComputer computer) {
         return new MenuProvider() {
             @NotNull
             @Override
@@ -177,7 +170,7 @@ public class KeyboardItem extends BaseItem implements IInventoryItem, IModuleIte
 
             @Override
             public AbstractContainerMenu createMenu(int pContainerId, @NotNull Inventory playerInv, @NotNull Player player) {
-                return new KeyboardContainer(pContainerId, playerInv, player.blockPosition(), player.level(), itemStack, computer);
+                return new KeyboardContainer(pContainerId, playerInv, player.blockPosition(), player.level(), stack, computer);
             }
         };
     }
@@ -189,7 +182,7 @@ public class KeyboardItem extends BaseItem implements IInventoryItem, IModuleIte
     }
 
     @Override
-    public IModule createModule(SmartGlassesAccess access, ItemStack stack) {
+    public IModule createModule(SmartGlassesSideAccess access, ItemStack stack) {
         return new KeyboardModule(this, stack);
     }
 }

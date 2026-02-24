@@ -19,7 +19,7 @@ public abstract class PoweredPeripheralBlockEntity<T extends BasePeripheral<?>> 
 
     protected PoweredPeripheralBlockEntity(BlockEntityType<?> tileEntityTypeIn, BlockPos pos, BlockState state) {
         super(tileEntityTypeIn, pos, state);
-        this.energyStorage = APConfig.PERIPHERALS_CONFIG.enablePoweredPeripherals.get() ? EnergyStorage(this.getMaxEnergyStored()) : null;
+        this.energyStorage = APConfig.PERIPHERALS_CONFIG.enablePoweredPeripherals.get() ? new EnergyStorage(this.getMaxEnergyStored()) : null;
     }
 
     protected abstract int getMaxEnergyStored();

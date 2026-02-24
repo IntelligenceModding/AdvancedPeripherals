@@ -3,8 +3,10 @@ package de.srendi.advancedperipherals.common.smartglasses;
 import dan200.computercraft.api.pocket.IPocketUpgrade;
 import dan200.computercraft.impl.PocketUpgrades;
 import de.srendi.advancedperipherals.common.items.SmartGlassesItem;
+import de.srendi.advancedperipherals.common.setup.APDataComponents;
 import de.srendi.advancedperipherals.common.smartglasses.modules.IModuleItem;
 import net.minecraft.core.NonNullList;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.item.Item;
@@ -147,7 +149,7 @@ public class SmartGlassesItemHandler implements IItemHandlerModifiable {
     @Override
     public void setStackInSlot(int slot, @NotNull ItemStack stack) {
         NonNullList<ItemStack> items = loadItems();
-        if (ItemStack.isSameItemSameTags(stack, items.get(slot))) {
+        if (ItemStack.isSameItemSameComponents(stack, items.get(slot))) {
             return;
         }
         items.set(slot, stack);
@@ -162,12 +164,12 @@ public class SmartGlassesItemHandler implements IItemHandlerModifiable {
     }
 
     public void saveItems(NonNullList<ItemStack> items) {
-        ContainerHelper.saveAllItems(this.glasses.getOrCreateTag(), items);
+        this.glasses.set(APDataComponents.ITEMS, ContainerHelper.saveAllItems(new CompoundTag(), items));
     }
 
     public NonNullList<ItemStack> loadItems() {
         NonNullList<ItemStack> items = NonNullList.withSize(SLOTS, ItemStack.EMPTY);
-        ContainerHelper.loadAllItems(this.glasses.getOrCreateTag(), items);
+        ContainerHelper.loadAllItems(this.glasses.getOrDefault(APDataComponents.ITEMS, new CompoundTag()), items);
         return items;
     }
 }

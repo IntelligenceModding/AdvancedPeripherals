@@ -67,7 +67,7 @@ public class InventoryManagerEntity extends PeripheralBlockEntity<InventoryManag
         } else {
             shouldClearOwner = true;
         }
-        if (shouldClearOwner && this.getLevel() != null && !this.getLevel().isClientSide) {
+        if (shouldClearOwner && this.getLevel() != null && !this.getLevel().isClientSide()) {
             this.owner = null;
         }
         super.setItem(index, stack);

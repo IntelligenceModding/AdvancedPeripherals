@@ -7,26 +7,30 @@ import dan200.computercraft.api.filesystem.Mount;
 import dan200.computercraft.api.media.IMedia;
 import dan200.computercraft.api.peripheral.IPeripheral;
 import dan200.computercraft.api.pocket.IPocketUpgrade;
-import dan200.computercraft.shared.ModRegistry;
+import dan200.computercraft.core.computer.ComputerSide;
 import dan200.computercraft.impl.PocketUpgrades;
+import dan200.computercraft.shared.ModRegistry;
 import dan200.computercraft.shared.computer.core.ComputerFamily;
 import dan200.computercraft.shared.computer.core.ServerComputerRegistry;
 import dan200.computercraft.shared.computer.core.ServerContext;
+import dan200.computercraft.shared.computer.items.ServerComputerReference;
 import dan200.computercraft.shared.network.container.ComputerContainerData;
 import dan200.computercraft.shared.util.DataComponentUtil;
 import dan200.computercraft.shared.util.IDAssigner;
 import dan200.computercraft.shared.util.NonNegativeId;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.addons.APAddon;
+import de.srendi.advancedperipherals.common.setup.APDataComponents;
 import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesAPI;
-import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesAccess;
 import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesComputer;
 import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesItemHandler;
 import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesMenuProvider;
+import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesSideAccess;
 import de.srendi.advancedperipherals.common.smartglasses.modules.IModule;
 import de.srendi.advancedperipherals.common.smartglasses.modules.IModuleItem;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.Direction;
+import net.minecraft.core.Holder;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -45,9 +49,7 @@ import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
-import net.neoforged.common.capabilities.Capability;
-import net.neoforged.common.capabilities.ForgeCapabilities;
-import net.neoforged.common.util.LazyOptional;
+import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.ICapabilityProvider;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.server.ServerLifecycleHooks;
@@ -70,8 +72,8 @@ public class SmartGlassesItem extends ArmorItem implements IMedia {
     private static final String NBT_INSTANCE = "InstanceId";
     private static final String NBT_SESSION = "SessionId";
 
-    public SmartGlassesItem(ArmorMaterial material) {
-        super(material, EquipmentSlot.HEAD, new Properties().stacksTo(1));
+    public SmartGlassesItem(Holder<ArmorMaterial> material) {
+        super(material, ArmorItem.Type.HELMET, new Properties().stacksTo(1));
     }
 
     @Nullable
@@ -115,7 +117,7 @@ public class SmartGlassesItem extends ArmorItem implements IMedia {
         boolean on = computer.isOn();
         if (on != isMarkedOn(stack)) {
             changed = true;
-            stack.getOrCreateTag().putBoolean(NBT_ON, on);
+            stack.set(ModRegistry.DataComponents.ON.get(), on);
         }
 
         Entity computerEntity = computer.getEntity();
@@ -130,10 +132,15 @@ public class SmartGlassesItem extends ArmorItem implements IMedia {
             computer.setStack(stack);
         }
 
-        for (Map.Entry<ResourceLocation, IPeripheral> e : computer.getUpgrades().entrySet()) {
-            IPocketUpgrade upgrade = PocketUpgrades.instance().get(e.getKey().toString());
+        // TODO: maintain a constant array/list for vaild upgrade sides
+        for (ComputerSide side : ComputerSide.values()) {
+            if (side == ComputerSide.BACK) {
+                continue;
+            }
+            SmartGlassesSideAccess access = computer.getSmartGlassesUpgradeAccess(side);
+            IPocketUpgrade upgrade = access.getUpgrade().upgrade();
             if (upgrade != null) {
-                upgrade.update(computer, e.getValue());
+                upgrade.update(access, computer.getPeripheral(side));
             }
         }
 
@@ -142,17 +149,16 @@ public class SmartGlassesItem extends ArmorItem implements IMedia {
 
     @Override
     public void inventoryTick(@NotNull ItemStack stack, @NotNull Level world, @NotNull Entity entity, int slotNum, boolean selected) {
-        LazyOptional<IItemHandler> optItemHandler = stack.getCapability(ForgeCapabilities.ITEM_HANDLER);
-        SmartGlassesItemHandler itemHandler = (SmartGlassesItemHandler) optItemHandler.orElse(null);
+        SmartGlassesItemHandler itemHandler = (SmartGlassesItemHandler) stack.getCapability(Capabilities.ItemHandler.ITEM);
         for (int slot = 0; slot < itemHandler.getSlots(); slot++) {
             ItemStack itemStack = itemHandler.getStackInSlot(slot);
             if (itemStack.getItem() instanceof IModuleItem iModuleItem) {
-                SmartGlassesAccess glassesAccess = null;
+                SmartGlassesSideAccess glassesAccess = null;
                 IModule module = null;
                 if (!world.isClientSide) {
                     SmartGlassesComputer computer = getOrCreateComputer((ServerLevel) world, entity, entity instanceof Player player ? player.getInventory() : null, stack);
-                    module = computer.getModules().get(slot);
-                    glassesAccess = computer.getSmartGlassesAccess();
+                    module = computer.getModuleBySlot(slot);
+                    glassesAccess = computer.getSmartGlassesModuleAccess();
                 }
                 iModuleItem.inventoryTick(itemStack, world, entity, slot, selected, glassesAccess, module);
             }
@@ -195,39 +201,18 @@ public class SmartGlassesItem extends ArmorItem implements IMedia {
             SmartGlassesComputer computer = getOrCreateComputer((ServerLevel) world, player, player.getInventory(), glasses);
             computer.turnOn();
 
-            LazyOptional<IItemHandler> itemHandler = glasses.getCapability(ForgeCapabilities.ITEM_HANDLER);
-            if (!itemHandler.isPresent() || itemHandler.resolve().isEmpty()) {
+            IItemHandler itemHandler = glasses.getCapability(Capabilities.ItemHandler.ITEM);
+            if (itemHandler == null) {
                 AdvancedPeripherals.debug("There was an issue with the item handler of the glasses while trying to open the gui");
                 return InteractionResultHolder.sidedSuccess(player.getItemInHand(hand), world.isClientSide);
             }
-            new ComputerContainerData(computer, glasses).open(player, new SmartGlassesMenuProvider(computer, glasses, itemHandler.resolve().get()));
+            new ComputerContainerData(computer, glasses).open(player, new SmartGlassesMenuProvider(computer, glasses, itemHandler));
         }
         return super.use(world, player, hand);
     }
 
-    public ItemStack create(int id, @Nullable String label) {
-        ItemStack result = new ItemStack(this);
-        if (id >= 0) {
-            result.getOrCreateTag().putInt(NBT_ID, id);
-        }
-        if (label != null) {
-            result.setHoverName(Component.literal(label));
-        }
-        return result;
-    }
-
     @Override
-    public ComputerFamily getFamily() {
-        return ComputerFamily.ADVANCED;
-    }
-
-    @Override
-    public ItemStack withFamily(ItemStack stack, ComputerFamily family) {
-        return create(getComputerID(stack), getLabel(stack));
-    }
-
-    @Override
-    public void appendHoverText(@NotNull ItemStack stack, @Nullable Level world, @NotNull List<Component> list, TooltipFlag flag) {
+    public void appendHoverText(@NotNull ItemStack stack, @NotNull TooltipContext context, @NotNull List<Component> list, TooltipFlag flag) {
         if (flag.isAdvanced() || getLabel(stack) == null) {
             int id = getComputerID(stack);
             if (id >= 0) {
@@ -242,22 +227,24 @@ public class SmartGlassesItem extends ArmorItem implements IMedia {
     }
 
     public SmartGlassesComputer getOrCreateComputer(ServerLevel level, Entity entity, @Nullable Container inventory, ItemStack stack) {
-        int sessionID = getSessionID(stack);
-
         ServerComputerRegistry registry = ServerContext.get(level.getServer()).registry();
-        SmartGlassesComputer computer = (SmartGlassesComputer) registry.get(sessionID, getInstanceID(stack));
+        SmartGlassesComputer computer = (SmartGlassesComputer) ServerComputerReference.get(stack, registry);
         if (computer == null) {
             int computerID = getComputerID(stack);
             if (computerID < 0) {
                 computerID = NonNegativeId.getOrCreate(level.getServer(), stack, ModRegistry.DataComponents.COMPUTER_ID.get(), IDAssigner.COMPUTER);
             }
 
-            computer = new SmartGlassesComputer(level, getComputerID(stack), getLabel(stack), getFamily(), stack.getOrCreateTag().getCompound(SmartGlassesComputer.UPGRADE_DATAS_TAG));
+            computer = new SmartGlassesComputer(
+                level,
+                entity.blockPosition(),
+                ServerComputer.properties(getComputerID(stack), ComputerFamily.ADVANCED)
+                    .label(getLabel(stack))
+                    .storageCapacity(StorageCapacity.getOrDefault(stack.get(ModRegistry.DataComponents.STORAGE_CAPACITY.get()), -1)),
+                stack.get(APDataComponents.UPGRADE_DATAS.get())
+            );
 
-            setInstanceID(stack, computer.register());
-            setSessionID(stack, registry.getSessionID());
-
-            computer.addApi(new SmartGlassesAPI());
+            stack.set(ModRegistry.DataComponents.COMPUTER.get(), new ServerComputerReference(registry.getSessionID(), computer.register()));
 
             // Only turn on when initially creating the computer, rather than each tick.
             if (isMarkedOn(stack) && entity instanceof Player) {
@@ -277,7 +264,7 @@ public class SmartGlassesItem extends ArmorItem implements IMedia {
         if (server == null) {
             return null;
         }
-        return (SmartGlassesComputer) ServerContext.get(server).registry().get(getSessionID(stack), getInstanceID(stack));
+        return (SmartGlassesComputer) ServerComputerReference.get(stack, ServerContext.get(server).registry());
     }
 
     private static int getComputerID(ItemStack stack) {
@@ -307,7 +294,7 @@ public class SmartGlassesItem extends ArmorItem implements IMedia {
         if (id < 0) {
             return null;
         }
-        return ComputerCraftAPI.createSaveDirMount(level.getServer(), "computer/" + id, dan200.computercraft.shared.config.Config.computerSpaceLimit);
+        return ComputerCraftAPI.createSaveDirMount(level.getServer(), "computer/" + id, dan200.computercraft.shared.config.ConfigSpec.computerSpaceLimit.get());
     }
 
     public static ItemStack getEquipped(final LivingEntity entity) {
@@ -333,27 +320,8 @@ public class SmartGlassesItem extends ArmorItem implements IMedia {
         return glassesSlot.stack();
     }
 
-    public static int getInstanceID(ItemStack stack) {
-        CompoundTag nbt = stack.getTag();
-        return nbt != null && nbt.contains(NBT_INSTANCE) ? nbt.getInt(NBT_INSTANCE) : -1;
-    }
-
-    private static void setInstanceID(ItemStack stack, int instanceID) {
-        stack.getOrCreateTag().putInt(NBT_INSTANCE, instanceID);
-    }
-
-    private static int getSessionID(ItemStack stack) {
-        CompoundTag nbt = stack.getTag();
-        return nbt != null && nbt.contains(NBT_SESSION) ? nbt.getInt(NBT_SESSION) : -1;
-    }
-
-    private static void setSessionID(ItemStack stack, int sessionID) {
-        stack.getOrCreateTag().putInt(NBT_SESSION, sessionID);
-    }
-
     private static boolean isMarkedOn(ItemStack stack) {
-        CompoundTag nbt = stack.getTag();
-        return nbt != null && nbt.getBoolean(NBT_ON);
+        return stack.getOrDefault(ModRegistry.DataComponents.ON.get(), false);
     }
 
 }

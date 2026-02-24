@@ -1,6 +1,6 @@
 package de.srendi.advancedperipherals.common.smartglasses.modules;
 
-import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesAccess;
+import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesSideAccess;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
 
@@ -16,7 +16,7 @@ public interface IModule {
      * @return an object containing lua functions {@link dan200.computercraft.api.lua.LuaFunction}
      */
     @Nullable
-    IModuleFunctions getFunctions(SmartGlassesAccess smartGlassesAccess);
+    IModuleFunctions getFunctions(SmartGlassesSideAccess SmartGlassesSideAccess);
 
     /**
      * Classic tick function.
@@ -24,9 +24,9 @@ public interface IModule {
      * Implementations should check if the entity is not null since the glasses can still tick without belonging to an entity
      * @param smartGlassesAccess Contains access to the entity, the computer, the level or the upgrades
      */
-    default void tick(SmartGlassesAccess smartGlassesAccess) {}
+    default void tick(SmartGlassesSideAccess smartGlassesAccess) {}
 
-    default void onUnequipped(SmartGlassesAccess smartGlassesAccess) {}
+    default void onUnequipped(SmartGlassesSideAccess smartGlassesAccess) {}
 
     /**
      * ErrorConstants class contains constants for error messages. This is used for easier error handling for users.

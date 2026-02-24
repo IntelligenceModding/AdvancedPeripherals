@@ -4,8 +4,9 @@ import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.container.KeyboardContainer;
 import de.srendi.advancedperipherals.common.items.KeyboardItem;
 import de.srendi.advancedperipherals.common.network.toclient.KeyboardMouseCapturePacket;
-import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesAccess;
+import de.srendi.advancedperipherals.common.setup.APDataComponents;
 import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesComputer;
+import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesSideAccess;
 import de.srendi.advancedperipherals.common.smartglasses.modules.IModule;
 import de.srendi.advancedperipherals.common.smartglasses.modules.IModuleFunctions;
 import net.minecraft.resources.ResourceLocation;
@@ -34,7 +35,7 @@ public class KeyboardModule implements IModule {
 
     @Nullable
     @Override
-    public IModuleFunctions getFunctions(SmartGlassesAccess smartGlassesAccess) {
+    public IModuleFunctions getFunctions(SmartGlassesSideAccess access) {
         return new KeyboardFunctions(this);
     }
 
@@ -50,7 +51,7 @@ public class KeyboardModule implements IModule {
     }
 
     @Override
-    public void tick(SmartGlassesAccess glasses) {
+    public void tick(SmartGlassesSideAccess glasses) {
         if (!(glasses.getEntity() instanceof ServerPlayer player)) {
             return;
         }
@@ -62,7 +63,7 @@ public class KeyboardModule implements IModule {
     }
 
     @Override
-    public void onUnequipped(SmartGlassesAccess glasses) {
+    public void onUnequipped(SmartGlassesSideAccess glasses) {
         if (!(glasses.getEntity() instanceof ServerPlayer player)) {
             return;
         }
@@ -74,14 +75,14 @@ public class KeyboardModule implements IModule {
         }
     }
 
-    public void openKeyboard(SmartGlassesAccess glasses) {
+    public void openKeyboard(SmartGlassesSideAccess glasses) {
         if (!(glasses.getEntity() instanceof ServerPlayer player)) {
             return;
         }
         SmartGlassesComputer computer = glasses.getComputer();
         ItemStack stack = computer.getStack();
 
-        stack.getOrCreateTag().putBoolean(KeyboardItem.OPENING_TAG, true);
+        stack.set(APDataComponents.KEYBOARD_OPENED.get(), true);
         computer.queueEvent("keyboard_open");
 
         KeyboardItem keyboardItem = this.keyboardItem;
