@@ -236,7 +236,7 @@ public class MineColonies {
 
     public static int getAmountOfConstructionSites(IColony colony) {
         int constructionSites = 0;
-        for (IBuilding building : colony.getBuildingManager().getBuildings().values()) {
+        for (IBuilding building : colony.getServerBuildingManager().getBuildings().values()) {
             if (building.isPendingConstruction())
                 constructionSites++;
         }
@@ -345,7 +345,7 @@ public class MineColonies {
      * @return a map with all needed resources
      */
     public static Object builderResourcesToObject(IColony colony, BlockPos pos) {
-        IBuilding building = colony.getBuildingManager().getBuilding(pos);
+        IBuilding building = colony.getServerBuildingManager().getBuilding(pos);
         if (!(building instanceof AbstractBuildingStructureBuilder builderBuilding))
             return null;
 
@@ -361,7 +361,7 @@ public class MineColonies {
         final List<Delivery> deliveries = new ArrayList<>();
 
         if (colonyView != null) {
-            final IBuildingView buildingView = colonyView.getBuilding(pos);
+            final IBuildingView buildingView = colonyView.getClientBuildingManager().getBuilding(pos);
             if (buildingView instanceof BuildingBuilder.View builderBuildingView) {
                 for (Map.Entry<Integer, Collection<IToken<?>>> entry : builderBuildingView.getOpenRequestsByCitizen().entrySet()) {
                     addDeliveryRequestsToList(builderBuildingView, deliveries, ImmutableList.copyOf(entry.getValue()));
