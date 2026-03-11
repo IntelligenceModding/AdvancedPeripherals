@@ -35,7 +35,6 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.entity.player.CanContinueSleepingEvent;
-import net.neoforged.neoforge.server.ServerLifecycleHooks;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -148,7 +147,7 @@ public class EnvironmentDetectorPeripheral extends BasePeripheral<IPeripheralOwn
     @LuaFunction(mainThread = true)
     public final Set<String> listDimensions() {
         Set<String> dimensions = new HashSet<>();
-        ServerLifecycleHooks.getCurrentServer().getAllLevels().forEach(serverWorld -> dimensions.add(serverWorld.dimension().location().getPath()));
+        getLevel().getServer().getAllLevels().forEach(serverWorld -> dimensions.add(serverWorld.dimension().location().getPath()));
         return dimensions;
     }
 
@@ -233,7 +232,7 @@ public class EnvironmentDetectorPeripheral extends BasePeripheral<IPeripheralOwn
 
     @LuaFunction(mainThread = true)
     public final MethodResult canSleepPlayer(String playername) {
-        Player player = ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayerByName(playername);
+        Player player = getLevel().getServer().getPlayerList().getPlayerByName(playername);
         if (player == null)
             return MethodResult.of(false, "player_not_online");
 

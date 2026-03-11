@@ -16,7 +16,7 @@ public class ModulePeripheral extends BasePeripheral<ModulePeripheralOwner> {
 
     public void updateModules() {
         // We need to set the initialization to false so the dynamic peripheral re-builds the plugins
-        clearAllPlugins();
+        this.initialized = false;
 
         SmartGlassesComputer computer = getPeripheralOwner().getComputer();
         SmartGlassesSideAccess smartGlassesModuleAccess = computer.getSmartGlassesModuleAccess();

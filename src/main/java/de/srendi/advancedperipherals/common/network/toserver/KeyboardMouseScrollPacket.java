@@ -12,7 +12,7 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 public class KeyboardMouseScrollPacket implements IAPPacket {
 
-    public static final Type<GlassesHotkeyPacket> TYPE = new Type<>(AdvancedPeripherals.getRL("keyboard_mouse_scroll"));
+    public static final Type<KeyboardMouseScrollPacket> TYPE = new Type<>(AdvancedPeripherals.getRL("keyboard_mouse_scroll"));
 
     private final int deltaY;
     private final int deltaX;

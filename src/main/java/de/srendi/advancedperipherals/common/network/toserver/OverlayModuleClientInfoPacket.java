@@ -10,7 +10,6 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
-import net.neoforged.neoforge.server.ServerLifecycleHooks;
 
 import java.util.UUID;
 
@@ -47,7 +46,7 @@ public class OverlayModuleClientInfoPacket implements IAPPacket {
         if (smartGlasses.isEmpty()) {
             return;
         }
-        SmartGlassesComputer computer = SmartGlassesItem.getServerComputer(ServerLifecycleHooks.getCurrentServer(), smartGlasses);
+        SmartGlassesComputer computer = SmartGlassesItem.getServerComputer(player.serverLevel().getServer(), smartGlasses);
         if (computer == null) {
             return;
         }

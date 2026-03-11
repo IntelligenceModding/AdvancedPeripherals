@@ -12,7 +12,7 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 public class KeyboardMouseMovePacket implements IAPPacket {
 
-    public static final Type<GlassesHotkeyPacket> TYPE = new Type<>(AdvancedPeripherals.getRL("keyboard_mouse_move"));
+    public static final Type<KeyboardMouseMovePacket> TYPE = new Type<>(AdvancedPeripherals.getRL("keyboard_mouse_move"));
 
     private final double dx;
     private final double dy;

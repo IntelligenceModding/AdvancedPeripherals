@@ -126,7 +126,7 @@ public class SaddlePeripheral extends BasePeripheral<TurtlePeripheralOwner> {
         if (this.rider instanceof ServerPlayer player) {
             ITurtleAccess turtle = this.owner.getTurtle();
             SaddleTurtleInfoPacket packet = new SaddleTurtleInfoPacket(turtle.getFuelLevel(), turtle.getFuelLimit(), barColor);
-            PacketDistributor.sendToPlayer(packet, player);
+            PacketDistributor.sendToPlayer(player, packet);
         }
     }
 

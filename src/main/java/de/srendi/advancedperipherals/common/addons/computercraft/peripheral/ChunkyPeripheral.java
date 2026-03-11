@@ -30,16 +30,19 @@ public class ChunkyPeripheral extends BasePeripheral<TurtlePeripheralOwner> {
     }
 
     protected UUID getUUID() {
-        PatchedDataComponentMap patch = PatchedDataComponentMap.fromPatch(DataComponentMap.EMPTY, owner.getDataStorage());
-        if (!patch.has(CHUNKY_ID.get())) {
-            patch.set(CHUNKY_ID.get(), UUID.randomUUID());
-            owner.putDataStorage(patch.asPatch());
+        DataComponentPatch patch = owner.getDataStorage();
+        UUID id = patch.get(CHUNKY_ID.get()).orElse(null);
+        if (id == null) {
+            id = UUID.randomUUID();
+            PatchedDataComponentMap patchMap = PatchedDataComponentMap.fromPatch(DataComponentMap.EMPTY, patch);
+            patchMap.set(CHUNKY_ID.get(), id);
+            owner.putDataStorage(patchMap.asPatch());
         }
-        return patch.get(CHUNKY_ID.get());
+        return id;
     }
 
     public ChunkPos getChunkPos() {
-        return getLevel().getChunkAt(getPos()).getPos();
+        return new ChunkPos(getPos());
     }
 
     @Override

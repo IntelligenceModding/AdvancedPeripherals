@@ -119,9 +119,9 @@ public class AutomataBlockHandPlugin extends AutomataCorePlugin {
         if (!automataCore.getPeripheralOwner().hasConnectedPeripheral(CompassPeripheral.class)) {
             return MethodResult.of(false, "COMPASS_NOT_EQUIPPED");
         }
-        Map<?, ?> opts = arguments.count() > 0 ? arguments.getTable(0) : Collections.emptyMap();
-        float yaw = opts != null ? (float) TableHelper.optNumberField(opts, "yaw", 0) : 0;
-        float pitch = opts != null ? (float) TableHelper.optNumberField(opts, "pitch", 0) : 0;
+        LuaTable<?, ?> opts = arguments.count() > 0 ? new ObjectLuaTable(arguments.getTable(0)) : EmptyLuaTable.INSTANCE;
+        float yaw = opts.optFiniteDouble("yaw").orElse(0).floatValue();
+        float pitch = opts.optFiniteDouble("pitch").orElse(0).floatValue();
         return automataCore.withOperation(UPDATE_BLOCK, context -> {
             TurtlePeripheralOwner owner = automataCore.getPeripheralOwner();
             ItemStack selectedTool = owner.getToolInMainHand();
@@ -134,7 +134,7 @@ public class AutomataBlockHandPlugin extends AutomataCorePlugin {
         });
     }
 
-    private InteractionResult updateBlock(APFakePlayer player, Map<?, ?> options) {
+    private InteractionResult updateBlock(APFakePlayer player, LuaTable<?, ?> options) {
         Level world = player.level();
         HitResult hit = player.findHit(true, false);
         if (!(hit instanceof BlockHitResult blockHit)) {
@@ -143,14 +143,7 @@ public class AutomataBlockHandPlugin extends AutomataCorePlugin {
         BlockPos pos = blockHit.getBlockPos();
         BlockEntity block = world.getBlockEntity(pos);
         if (block instanceof SignBlockEntity sign) {
-            String text;
-            try {
-                text = TableHelper.optStringField(options, "text", null);
-            } catch (LuaException e) {
-                // Why not allow empty catch block? TAT
-                text = null;
-            }
-            if (text != null) {
+            if (options.get("text") instanceof String text) {
                 setSignText(world, sign, StringUtil.convertAndToSectionMark(text));
                 return InteractionResult.CONSUME;
             }

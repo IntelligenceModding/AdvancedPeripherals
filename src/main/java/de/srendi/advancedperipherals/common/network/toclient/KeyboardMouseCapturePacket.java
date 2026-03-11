@@ -10,7 +10,7 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 public class KeyboardMouseCapturePacket implements IAPPacket {
 
-    public static final Type<UsernameToCachePacket> TYPE = new Type<>(AdvancedPeripherals.getRL("keyboard_mouse_capture"));
+    public static final Type<KeyboardMouseCapturePacket> TYPE = new Type<>(AdvancedPeripherals.getRL("keyboard_mouse_capture"));
 
     private final boolean enable;
 

@@ -11,12 +11,12 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.server.ServerLifecycleHooks;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -99,6 +99,6 @@ public class InventoryManagerEntity extends PeripheralBlockEntity<InventoryManag
         if (this.owner == null) {
             return null;
         }
-        return ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayer(this.owner);
+        return ((ServerLevel) this.getLevel()).getServer().getPlayerList().getPlayer(this.owner);
     }
 }

@@ -25,11 +25,11 @@ public class ClientUUIDCache {
     private ClientUUIDCache() { }
 
     @Nullable
-    public static String getUsername(UUID uuid, UUID requester) {
+    public static String getUsername(UUID uuid) {
         if (CACHE.containsKey(uuid))
             return CACHE.get(uuid);
 
-        PacketDistributor.sendToServer(new RetrieveUsernamePacket(uuid, requester));
+        PacketDistributor.sendToServer(new RetrieveUsernamePacket(uuid));
         return null;
     }
 

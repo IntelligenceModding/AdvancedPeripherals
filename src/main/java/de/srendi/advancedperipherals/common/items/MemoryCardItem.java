@@ -28,7 +28,7 @@ public class MemoryCardItem extends APItem {
         super.appendHoverText(stack, context, tooltip, flagIn);
         Minecraft minecraft = Minecraft.getInstance();
         if (stack.has(OWNER)) {
-            String username = ClientUUIDCache.getUsername(stack.get(OWNER), minecraft.player.getUUID());
+            String username = ClientUUIDCache.getUsername(stack.get(OWNER));
             if (username == null) {
                 username = stack.get(OWNER).toString();
             }
