@@ -7,6 +7,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.saveddata.SavedData;
@@ -31,18 +32,21 @@ public class ChunkManager extends SavedData {
 
     private static final String DATA_NAME = AdvancedPeripherals.MOD_ID + "_ForcedChunks";
     private static final String FORCED_CHUNKS_TAG = "forcedChunks";
+    private static final SavedData.Factory<ChunkManager> FACTORY = new SavedData.Factory<>(ChunkManager::new, ChunkManager::load, null);
+    private static final TicketController CONTROLLER = new TicketController(AdvancedPeripherals.getRL("chunkcontroller"), null);
+
     private static long tickCounter = 0;
+
+    private final MinecraftServer server;
     private final Map<UUID, LoadChunkRecord> forcedChunks = new HashMap<>();
     private boolean initialized = false;
 
-    private static final TicketController controller = new TicketController(AdvancedPeripherals.getRL("chunkcontroller"), null);
-
     public ChunkManager() {
-        super();
+        this.server = ServerLifecycleHooks.getCurrentServer();
     }
 
-    public static @NotNull ChunkManager get(@NotNull ServerLevel level) {
-        return level.getDataStorage().computeIfAbsent(new SavedData.Factory<>(ChunkManager::new, ChunkManager::load, null), DATA_NAME);
+    public static @NotNull ChunkManager get(@NotNull MinecraftServer server) {
+        return server.overworld().getDataStorage().computeIfAbsent(FACTORY, DATA_NAME);
     }
 
     public static ChunkManager load(@NotNull CompoundTag data, HolderLookup.Provider provider) {
@@ -57,39 +61,40 @@ public class ChunkManager extends SavedData {
 
     // Registered using the mod bus in the main class
     public static void registerTicketController(RegisterTicketControllersEvent event) {
-        event.register(controller);
+        event.register(CONTROLLER);
     }
 
     @SubscribeEvent
     public static void afterServerStarted(ServerStartedEvent event) {
-        ChunkManager.get(event.getServer().overworld()).init();
+        get(event.getServer()).init();
     }
 
     @SubscribeEvent
     public static void serverTick(ServerTickEvent.Post event) {
-        if (event.hasTime()) {
-            tickCounter++;
-            if (tickCounter % (APConfig.PERIPHERALS_CONFIG.chunkLoadValidTime.get() * 20 / 10) == 0) {
-                ChunkManager.get(ServerLifecycleHooks.getCurrentServer().overworld()).cleanup();
-            }
+        if (!event.hasTime()) {
+            return;
+        }
+        tickCounter++;
+        if (tickCounter % (APConfig.PERIPHERALS_CONFIG.chunkLoadValidTime.get() * 20 / 10) == 0) {
+            get(event.getServer()).cleanup();
         }
     }
 
     private static boolean forceChunk(UUID owner, ServerLevel level, ChunkPos pos) {
         AdvancedPeripherals.debug("Forcing chunk " + pos, Level.WARN);
-        return controller.forceChunk(level, owner, pos.x, pos.z, true, true);
+        return CONTROLLER.forceChunk(level, owner, pos.x, pos.z, true, true);
     }
 
     private static boolean unforceChunk(UUID owner, ServerLevel level, ChunkPos pos) {
         AdvancedPeripherals.debug("Unforcing chunk " + pos, Level.WARN);
-        return controller.forceChunk(level, owner, pos.x, pos.z, false, true);
+        return CONTROLLER.forceChunk(level, owner, pos.x, pos.z, false, true);
     }
 
     public synchronized boolean addForceChunk(ServerLevel level, UUID owner, ChunkPos pos) {
         AdvancedPeripherals.debug("Trying to load forced chunk cluster " + pos, Level.WARN);
         LoadChunkRecord oldRecord = forcedChunks.get(owner);
         if (oldRecord != null) {
-            ServerLevel oldLevel = getServerLevel(oldRecord.getDimensionName());
+            ServerLevel oldLevel = this.getServerLevel(oldRecord.getDimensionName());
             if (oldLevel == level && pos.equals(oldRecord.getPos())) {
                 return true;
             }
@@ -144,14 +149,14 @@ public class ChunkManager extends SavedData {
     }
 
     public synchronized void init() {
-        if (initialized) {
+        if (this.initialized) {
             return;
         }
-        initialized = true;
+        this.initialized = true;
 
         AdvancedPeripherals.debug(String.format("Schedule chunk manager init, forcedChunks = %d", forcedChunks.size()), Level.WARN);
         final int chunkRadius = APConfig.PERIPHERALS_CONFIG.chunkyTurtleRadius.get();
-        final Map<String, ServerLevel> levels = getServerLevels();
+        final Map<String, ServerLevel> levels = this.getServerLevels();
         forcedChunks.forEach((uuid, value) -> {
             String dimensionName = value.getDimensionName();
             ServerLevel level = levels.get(dimensionName);
@@ -165,14 +170,7 @@ public class ChunkManager extends SavedData {
             if (loadedRadius == chunkRadius) {
                 return;
             }
-            if (loadedRadius == -1) {
-                // if it's coming from old version, just force all
-                for (int x = -chunkRadius; x <= chunkRadius; x++) {
-                    for (int z = -chunkRadius; z <= chunkRadius; z++) {
-                        forceChunk(uuid, level, new ChunkPos(pos.x + x, pos.z + z));
-                    }
-                }
-            } else if (loadedRadius > chunkRadius) {
+            if (loadedRadius > chunkRadius) {
                 // clean overflowed load radius
                 for (int x = -loadedRadius; x <= loadedRadius; x++) {
                     for (int z = -loadedRadius; z <= loadedRadius; z++) {
@@ -198,7 +196,7 @@ public class ChunkManager extends SavedData {
 
     public synchronized void cleanup() {
         AdvancedPeripherals.debug("Schedule chunk manager cleanup", Level.WARN);
-        final Map<String, ServerLevel> levels = getServerLevels();
+        final Map<String, ServerLevel> levels = this.getServerLevels();
         final Iterator<Map.Entry<UUID, LoadChunkRecord>> iterator = forcedChunks.entrySet().iterator();
         while (iterator.hasNext()) {
             final Map.Entry<UUID, LoadChunkRecord> entry = iterator.next();
@@ -230,18 +228,18 @@ public class ChunkManager extends SavedData {
         return data;
     }
 
-    private static Map<String, ServerLevel> getServerLevels() {
+    private Map<String, ServerLevel> getServerLevels() {
         Map<String, ServerLevel> levels = new HashMap<>();
-        ServerLifecycleHooks.getCurrentServer().getAllLevels().forEach(level -> {
+        this.server.getAllLevels().forEach(level -> {
             String dimensionName = level.dimension().location().toString();
             levels.put(dimensionName, level);
         });
         return levels;
     }
 
-    private static ServerLevel getServerLevel(String name) {
+    private ServerLevel getServerLevel(String name) {
         ResourceKey<net.minecraft.world.level.Level> key = ResourceKey.create(Registries.DIMENSION, ResourceLocation.parse(name));
-        return ServerLifecycleHooks.getCurrentServer().getLevel(key);
+        return this.server.getLevel(key);
     }
 
     private static class LoadChunkRecord {
@@ -263,9 +261,11 @@ public class ChunkManager extends SavedData {
         }
 
         public static LoadChunkRecord deserialize(@NotNull CompoundTag tag) {
-            Set<String> keys = tag.getAllKeys();
-            int radius = keys.contains(RADIUS_TAG) ? tag.getInt(RADIUS_TAG) : -1;
-            return new LoadChunkRecord(tag.getString(DIMENSION_NAME_TAG), NBTUtil.chunkPosFromNBT(tag.getCompound(POS_TAG)), radius);
+            return new LoadChunkRecord(
+                tag.getString(DIMENSION_NAME_TAG),
+                NBTUtil.chunkPosFromNBT(tag.getCompound(POS_TAG)),
+                tag.getInt(RADIUS_TAG)
+            );
         }
 
         public @NotNull ChunkPos getPos() {

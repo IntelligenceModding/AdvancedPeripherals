@@ -10,6 +10,7 @@ import de.srendi.advancedperipherals.common.blocks.base.ICapabilityProvider;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.network.APNetworking;
 import de.srendi.advancedperipherals.common.setup.APRegistration;
+import de.srendi.advancedperipherals.common.setup.CCRegistration;
 import de.srendi.advancedperipherals.common.util.ChunkManager;
 import de.srendi.advancedperipherals.common.village.VillageStructures;
 import net.minecraft.resources.ResourceLocation;
@@ -46,9 +47,10 @@ public class AdvancedPeripherals {
 
         APConfig.register(ModLoadingContext.get());
 
+        modBus.addListener(this::onCommonSetup);
+        modBus.addListener(this::onLoadComplete);
         modBus.addListener(this::registerCapabilities);
         modBus.addListener(ChunkManager::registerTicketController);
-        modBus.addListener(this::onLoadComplete);
 
         APRegistration.register(modBus);
 
@@ -88,6 +90,13 @@ public class AdvancedPeripherals {
 
     public static ResourceLocation getRL(String resource) {
         return ResourceLocation.fromNamespaceAndPath(MOD_ID, resource);
+    }
+
+    public void onCommonSetup(FMLCommonSetupEvent event) {
+        event.enqueueWork(() -> {
+            // CC:T's registries are not thread safe
+            CCRegistration.register();
+        });
     }
 
     public void onLoadComplete(FMLLoadCompleteEvent event) {

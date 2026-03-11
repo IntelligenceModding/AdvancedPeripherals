@@ -49,7 +49,6 @@ public class APRegistration {
         APEntities.register();
         APContainerTypes.register();
         APVillagers.register();
-        CCRegistration.register();
         APTags.Items.init();
         APDataComponents.register();
     }

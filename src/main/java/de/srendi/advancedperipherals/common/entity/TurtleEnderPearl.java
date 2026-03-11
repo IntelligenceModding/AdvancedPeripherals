@@ -173,7 +173,7 @@ public class TurtleEnderPearl extends ThrowableProjectile {
         if (newEntity instanceof TurtleEnderPearl newPearl) {
             AdvancedPeripherals.debug("Turtle Ender Pearl crossed to dimension " + newLevel.dimension());
             newPearl.spawnPos = newPearl.blockPosition();
-            ChunkManager.get(newLevel).addForceChunk(newLevel, newPearl.getUUID(), newPearl.chunkPosition());
+            ChunkManager.get(newLevel.getServer()).addForceChunk(newLevel, newPearl.getUUID(), newPearl.chunkPosition());
             if (newLevel.dimension() == Level.END) {
                 newPearl.life = 0;
                 // do not spawn turtle on the obsidian platform

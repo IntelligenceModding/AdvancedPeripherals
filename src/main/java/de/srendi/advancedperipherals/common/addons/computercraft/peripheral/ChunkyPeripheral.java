@@ -55,7 +55,7 @@ public class ChunkyPeripheral extends BasePeripheral<TurtlePeripheralOwner> {
     public void updateChunkState() {
         // TODO: should find someway to update after turtle moved or while moving, but not every tick
         ServerLevel level = (ServerLevel) getLevel();
-        ChunkManager manager = ChunkManager.get(level);
+        ChunkManager manager = ChunkManager.get(level.getServer());
         ChunkPos currentChunk = getChunkPos();
         setLoadedChunk(currentChunk, manager, level);
         manager.touch(getUUID());
@@ -83,7 +83,7 @@ public class ChunkyPeripheral extends BasePeripheral<TurtlePeripheralOwner> {
     public void attach(@NotNull IComputerAccess computer) {
         super.attach(computer);
         ServerLevel level = (ServerLevel) owner.getLevel();
-        ChunkManager manager = ChunkManager.get(Objects.requireNonNull(level));
+        ChunkManager manager = ChunkManager.get(level.getServer());
         ChunkPos currentChunk = getChunkPos();
         setLoadedChunk(currentChunk, manager, level);
     }
@@ -97,7 +97,7 @@ public class ChunkyPeripheral extends BasePeripheral<TurtlePeripheralOwner> {
         // The records will be automatically removed by the ChunkManager if they have not been touched a while ago.
 
         // ServerLevel level = (ServerLevel) owner.getLevel();
-        // ChunkManager manager = ChunkManager.get(Objects.requireNonNull(level));
+        // ChunkManager manager = ChunkManager.get(level.getServer());
         // setLoadedChunk(null, manager, level);
     }
 }
