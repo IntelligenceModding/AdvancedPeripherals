@@ -2,6 +2,7 @@ package de.srendi.advancedperipherals.common.blocks.base;
 
 import de.srendi.advancedperipherals.lib.peripherals.IPeripheralTileEntity;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.Container;
@@ -13,6 +14,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.NameTagItem;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.RenderShape;
@@ -41,23 +43,30 @@ public abstract class BaseBlockEntityBlock extends BaseBlock implements EntityBl
 
     @NotNull
     @Override
-    public ItemInteractionResult useItemOn(@NotNull ItemStack stack, @NotNull BlockState state, Level levelIn, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand handIn, @NotNull BlockHitResult hit) {
-        if (levelIn.isClientSide) return ItemInteractionResult.SUCCESS;
-        BlockEntity tileEntity = levelIn.getBlockEntity(pos);
-        if (tileEntity != null && !(tileEntity instanceof IInventoryBlock)) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
-        MenuProvider namedContainerProvider = this.getMenuProvider(state, levelIn, pos);
-        if (namedContainerProvider != null) {
-            if (!(player instanceof ServerPlayer serverPlayerEntity)) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
-            serverPlayerEntity.openMenu(namedContainerProvider, pos);
+    public ItemInteractionResult useItemOn(@NotNull ItemStack stack, @NotNull BlockState state, Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hit) {
+        if (level.isClientSide) {
+            return super.useItemOn(stack, state, level, pos, player, hand, hit);
         }
-        return ItemInteractionResult.SUCCESS;
+        BlockEntity tileEntity = level.getBlockEntity(pos);
+        if (tileEntity instanceof VarNameable nameable && stack.getItem() instanceof NameTagItem) {
+            nameable.setName(stack.get(DataComponents.CUSTOM_NAME));
+            return ItemInteractionResult.SUCCESS;
+        }
+        MenuProvider namedContainerProvider = this.getMenuProvider(state, level, pos);
+        if (namedContainerProvider != null && player instanceof ServerPlayer serverPlayer) {
+            serverPlayer.openMenu(namedContainerProvider, pos);
+            return ItemInteractionResult.SUCCESS;
+        }
+        return super.useItemOn(stack, state, level, pos, player, hand, hit);
     }
 
     @Override
     public void onRemove(BlockState state, @NotNull Level worldIn, @NotNull BlockPos pos, BlockState newState, boolean isMoving) {
         if (state.getBlock() != newState.getBlock()) {
             BlockEntity tileEntity = worldIn.getBlockEntity(pos);
-            if (tileEntity instanceof Container container) Containers.dropContents(worldIn, pos, container);
+            if (tileEntity instanceof Container container) {
+                Containers.dropContents(worldIn, pos, container);
+            }
             super.onRemove(state, worldIn, pos, newState, isMoving);
         }
     }
@@ -67,10 +76,10 @@ public abstract class BaseBlockEntityBlock extends BaseBlock implements EntityBl
         super.setPlacedBy(worldIn, pos, state, placer, stack);
         if (worldIn.getBlockEntity(pos) == null)
             return;
-        //Used for the lua function getName()
-        if (worldIn.getBlockEntity(pos) instanceof BaseContainerBlockEntity blockEntity) {
-            blockEntity.name = stack.getHoverName();
-        }
+        // //Used for the lua function getName()
+        // if (worldIn.getBlockEntity(pos) instanceof BaseContainerBlockEntity blockEntity) {
+        //     blockEntity.name = stack.getHoverName();
+        // }
     }
 
     @Nullable
@@ -90,8 +99,7 @@ public abstract class BaseBlockEntityBlock extends BaseBlock implements EntityBl
     @Override
     public MenuProvider getMenuProvider(@NotNull BlockState pState, Level pLevel, @NotNull BlockPos pPos) {
         BlockEntity blockentity = pLevel.getBlockEntity(pPos);
-        if (!(blockentity instanceof MenuProvider menuProvider)) return null;
-        return menuProvider;
+        return blockentity instanceof MenuProvider menuProvider ? menuProvider : null;
     }
 
     public @NotNull RenderShape getRenderShape(@NotNull BlockState state) {

@@ -31,7 +31,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collections;
 import java.util.Optional;
 
-public abstract class PeripheralBlockEntity<T extends BasePeripheral<?>> extends BaseContainerBlockEntity implements WorldlyContainer, MenuProvider, IPeripheralTileEntity, ICapabilityProvider {
+public abstract class PeripheralBlockEntity<T extends BasePeripheral<?>> extends BaseContainerBlockEntity implements WorldlyContainer, MenuProvider, IPeripheralTileEntity, ICapabilityProvider, VarNameable {
     private static final String PERIPHERAL_SETTINGS_KEY = "peripheralSettings";
     protected CompoundTag peripheralSettings = new CompoundTag();
     protected NonNullList<ItemStack> items;
@@ -47,6 +47,11 @@ public abstract class PeripheralBlockEntity<T extends BasePeripheral<?>> extends
         } else {
             items = NonNullList.withSize(0, ItemStack.EMPTY);
         }
+    }
+
+    @Override
+    public void setName(Component name) {
+        this.name = name;
     }
 
     @Nullable
