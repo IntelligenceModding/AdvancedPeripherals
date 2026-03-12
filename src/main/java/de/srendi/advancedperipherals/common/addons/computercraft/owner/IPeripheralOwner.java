@@ -9,6 +9,7 @@ import net.minecraft.core.FrontAndTop;
 import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.OwnableEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -17,6 +18,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 public interface IPeripheralOwner {
 
@@ -26,17 +29,42 @@ public interface IPeripheralOwner {
 
     @NotNull BlockPos getPos();
 
-    @NotNull Vec3 getCenterPos();
+    @NotNull
+    default Vec3 getCenterPos() {
+        return getPos().getCenter();
+    }
+
+    @NotNull
+    default Vec3 getDirection() {
+        Vec3 dir = Vec3.atLowerCornerOf(getFacing().getNormal());
+        return dir;
+        // if (!APAddons.vs2Loaded) {
+        //     return dir;
+        // }
+        // return ValkyrienSkies.transformToWorldDir(getLevel(), getPos(), dir);
+    }
 
     @NotNull Direction getFacing();
 
     @NotNull FrontAndTop getOrientation();
 
-    @NotNull Vec3 getDirection();
-
     @Nullable Entity getHoldingEntity();
 
-    @Nullable Player getOwner();
+    @Nullable
+    default Player getOwner() {
+        Entity owner = getHoldingEntity();
+        Set<Entity> checked = new HashSet<>();
+        while (owner != null && checked.add(owner)) {
+            if (owner instanceof Player player) {
+                return (Player) player;
+            }
+            if (!(owner instanceof OwnableEntity ownable)) {
+                break;
+            }
+            owner = ownable.getOwner();
+        }
+        return null;
+    }
 
     DataComponentPatch getDataStorage();
 
@@ -80,4 +108,8 @@ public interface IPeripheralOwner {
     }
 
     <T extends IPeripheral> T getConnectedPeripheral(Class<T> type);
+
+    default boolean hasConnectedPeripheral(Class<? extends IPeripheral> type) {
+        return getConnectedPeripheral(type) != null;
+    }
 }

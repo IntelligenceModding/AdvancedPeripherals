@@ -24,8 +24,6 @@ import net.neoforged.neoforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.stream.Stream;
-
 public class TurtlePeripheralOwner extends BasePeripheralOwner {
     public final ITurtleAccess turtle;
     public final TurtleSide side;
@@ -69,7 +67,7 @@ public class TurtlePeripheralOwner extends BasePeripheralOwner {
     @Nullable
     @Override
     public Entity getHoldingEntity() {
-        return null;
+        return getOwner();
     }
 
     @Nullable
@@ -152,16 +150,16 @@ public class TurtlePeripheralOwner extends BasePeripheralOwner {
 
     @Override
     public <T extends IPeripheral> T getConnectedPeripheral(Class<T> type) {
-        IPeripheral foundPeripheral = Stream.of(TurtleSide.values())
-            .map(side -> turtle.getPeripheral(side))
-            .filter(peripheral -> {
-                if (peripheral == null || type.isInstance(peripheral)) {
-                    return false;
-                }
-                return peripheral instanceof IBasePeripheral basePeripheral ? basePeripheral.isEnabled() : true;
-            })
-            .findFirst()
-            .orElse(null);
-        return (T) foundPeripheral;
+        for (TurtleSide side : TurtleSide.values()) {
+            IPeripheral peripheral = turtle.getPeripheral(side);
+            if (peripheral == null || !type.isInstance(peripheral)) {
+                continue;
+            }
+            if (peripheral instanceof IBasePeripheral basePeripheral && !basePeripheral.isEnabled()) {
+                continue;
+            }
+            return (T) peripheral;
+        }
+        return null;
     }
 }

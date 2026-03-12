@@ -101,8 +101,8 @@ public class APCommands {
             );
         }
 
-        ChunkManager manager = ChunkManager.get(source.getServer().overworld());
-        source.sendSuccess(Component.literal("Forced " + manager.getForcedChunksCount() + " chunks"), true);
+        ChunkManager manager = ChunkManager.get(source.getServer());
+        source.sendSuccess(() -> Component.literal("Forced " + manager.getForcedChunksCount() + " chunks"), true);
         table.display(source);
         return computers.length;
     }

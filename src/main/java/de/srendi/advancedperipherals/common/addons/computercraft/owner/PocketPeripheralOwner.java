@@ -1,10 +1,14 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.owner;
 
+import dan200.computercraft.api.peripheral.IPeripheral;
 import dan200.computercraft.api.pocket.IPocketAccess;
+import dan200.computercraft.core.computer.ComputerSide;
+import dan200.computercraft.shared.pocket.core.PocketBrain;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.util.DataStorageUtil;
 import de.srendi.advancedperipherals.common.util.fakeplayer.APFakePlayer;
+import de.srendi.advancedperipherals.lib.peripherals.IBasePeripheral;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.FrontAndTop;
@@ -45,34 +49,44 @@ public class PocketPeripheralOwner extends BasePeripheralOwner {
     @NotNull
     @Override
     public BlockPos getPos() {
-        Vec3 position = pocket.getPosition();
-        return new BlockPos((int) position.x, (int) position.y, (int) position.z);
+        return BlockPos.containing(pocket.getPosition());
+    }
+
+    @NotNull
+    @Override
+    public Vec3 getCenterPos() {
+        return pocket.getPosition();
+    }
+
+    @NotNull
+    @Override
+    public Vec3 getDirection() {
+        Entity owner = pocket.getEntity();
+        return owner == null ? /* North */ new Vec3(0, 0, -1) : owner.getLookAngle();
     }
 
     @NotNull
     @Override
     public Direction getFacing() {
         Entity owner = pocket.getEntity();
-        if (owner == null) return Direction.NORTH;
-        return owner.getDirection();
+        return owner == null ? Direction.NORTH : owner.getDirection();
     }
 
-
-    /**
-     * Not used for pockets
-     */
     @NotNull
     @Override
     public FrontAndTop getOrientation() {
-        return FrontAndTop.NORTH_UP;
+        Entity owner = pocket.getEntity();
+        if (owner == null) {
+            return FrontAndTop.NORTH_UP;
+        }
+        Vec3 up = owner.getUpVector(1.0f);
+        return FrontAndTop.fromFrontAndTop(getFacing(), Direction.getNearest(up.x, up.y, up.z));
     }
 
     @Nullable
     @Override
-    public Player getOwner() {
-        Entity owner = pocket.getEntity();
-        if (owner instanceof Player player) return player;
-        return null;
+    public Entity getHoldingEntity() {
+        return pocket.getEntity();
     }
 
     @Override
@@ -124,5 +138,23 @@ public class PocketPeripheralOwner extends BasePeripheralOwner {
     @Override
     public boolean move(@NotNull Level level, @NotNull BlockPos pos) {
         return false;
+    }
+
+    @Override
+    public <T extends IPeripheral> T getConnectedPeripheral(Class<T> type) {
+        if (pocket instanceof PocketBrain pocketBrain) {
+            for (ComputerSide side : ComputerSide.values()) {
+                IPeripheral peripheral = pocketBrain.computer().getPeripheral(side);
+                if (peripheral == null || !type.isInstance(peripheral)) {
+                    continue;
+                }
+                if (peripheral instanceof IBasePeripheral basePeripheral && !basePeripheral.isEnabled()) {
+                    continue;
+                }
+                return (T) peripheral;
+            }
+            return null;
+        }
+        return null;
     }
 }

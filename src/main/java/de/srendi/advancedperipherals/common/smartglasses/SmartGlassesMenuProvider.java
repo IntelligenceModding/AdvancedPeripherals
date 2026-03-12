@@ -10,8 +10,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
-
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 public class SmartGlassesMenuProvider implements MenuProvider {
     private final ServerComputer computer;
@@ -20,24 +19,19 @@ public class SmartGlassesMenuProvider implements MenuProvider {
 
     public SmartGlassesMenuProvider(ServerComputer computer, ItemStack stack, IItemHandler glassesContainer) {
         this.computer = computer;
-        name = stack.getHoverName();
+        this.name = stack.getHoverName();
         this.glassesContainer = glassesContainer;
     }
 
     @NotNull
     @Override
     public Component getDisplayName() {
-        return name;
+        return this.name;
     }
 
     @Nullable
     @Override
     public AbstractContainerMenu createMenu(int id, @NotNull Inventory inventory, @NotNull Player entity) {
-        return new SmartGlassesContainer(id,
-                p -> {
-                    return true;
-                },
-                computer, inventory, glassesContainer, null
-        );
+        return new SmartGlassesContainer(id, p -> true, computer, inventory, glassesContainer, null);
     }
 }

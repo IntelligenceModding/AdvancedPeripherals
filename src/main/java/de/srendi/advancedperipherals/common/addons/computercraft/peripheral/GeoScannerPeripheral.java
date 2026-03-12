@@ -59,8 +59,8 @@ public class GeoScannerPeripheral extends BasePeripheral<IPeripheralOwner> {
         this(new TurtlePeripheralOwner(turtle, side).attachFuel(1));
     }
 
-    public GeoScannerPeripheral(IPocketAccess pocket, IPocketUpgrade upgrade) {
-        this(new PocketPeripheralOwner(pocket, upgrade));
+    public GeoScannerPeripheral(IPocketAccess pocket) {
+        this(new PocketPeripheralOwner(pocket));
     }
 
     private static List<Map<String, Object>> scan(Level level, BlockPos center, int radius) {

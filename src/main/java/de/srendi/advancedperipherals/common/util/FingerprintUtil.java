@@ -5,6 +5,7 @@ import net.jpountz.xxhash.XXHashFactory;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
 
+import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 
 /**
@@ -26,7 +27,11 @@ public class FingerprintUtil {
             return cachedHashStr;
         }
 
-        byte[] bytesOfHash = new byte[key.itemId().length() + 1 + 4];
+        String itemId = key.itemId();
+        byte[] bytesOfHash = ByteBuffer.allocate(itemId.length() + 4)
+            .put(itemId.getBytes(StandardCharsets.US_ASCII))
+            .putInt(key.dataHashCode())
+            .array();
 
         long hash = XX_HASH_64.hash(bytesOfHash, 0, bytesOfHash.length, SEED);
         final String hashStr = Long.toHexString(hash);

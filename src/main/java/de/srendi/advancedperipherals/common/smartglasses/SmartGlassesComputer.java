@@ -3,6 +3,7 @@ package de.srendi.advancedperipherals.common.smartglasses;
 import dan200.computercraft.api.peripheral.IPeripheral;
 import dan200.computercraft.api.pocket.IPocketAccess;
 import dan200.computercraft.api.pocket.IPocketUpgrade;
+import dan200.computercraft.api.upgrades.UpgradeData;
 import dan200.computercraft.core.computer.ComputerSide;
 import dan200.computercraft.impl.PocketUpgrades;
 import dan200.computercraft.shared.computer.core.ComputerFamily;
@@ -25,8 +26,8 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import com.google.common.collect.ImmutableMap;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumMap;
@@ -34,7 +35,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import javax.annotation.Nullable;
 
 /**
  * Basically just a {@link dan200.computercraft.shared.pocket.core.PocketServerComputer} but with some changes
@@ -134,6 +134,23 @@ public class SmartGlassesComputer extends ServerComputer {
     public void removeUpgradeData(@NotNull ComputerSide side) {
         this.upgradeDatas.remove(side);
         this.isDirty = true;
+    }
+
+    public UpgradeData<IPocketUpgrade> getUpgrade(@NotNull ComputerSide side) {
+        if (this.itemHandler == null) {
+            return null;
+        }
+        ItemStack stack = this.itemHandler.getStackInSlot(SmartGlassesSlot.sideToIndex(side));
+        if (stack.isEmpty()) {
+            return null;
+        }
+        RegistryAccess registryAccess = this.getLevel().registryAccess();
+        return PocketUpgrades.instance().get(registryAccess, stack);
+    }
+
+    public void setUpgrade(@NotNull ComputerSide side, @Nullable UpgradeData<IPocketUpgrade> upgrade) {
+        int slot = SmartGlassesSlot.sideToIndex(side);
+        this.itemHandler.setStackInSlot(slot, upgrade == null ? ItemStack.EMPTY : upgrade.getUpgradeItem());
     }
 
     public void invalidatePeripheral() {

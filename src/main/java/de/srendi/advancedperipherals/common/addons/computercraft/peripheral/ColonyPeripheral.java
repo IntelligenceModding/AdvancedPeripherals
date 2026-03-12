@@ -50,8 +50,8 @@ public class ColonyPeripheral extends BasePeripheral<IPeripheralOwner> {
         super(PERIPHERAL_TYPE, new BlockEntityPeripheralOwner<>(tileEntity));
     }
 
-    public ColonyPeripheral(IPocketAccess access, IPocketUpgrade upgrade) {
-        super(PERIPHERAL_TYPE, new PocketPeripheralOwner(access, upgrade));
+    public ColonyPeripheral(IPocketAccess access) {
+        super(PERIPHERAL_TYPE, new PocketPeripheralOwner(access));
     }
 
     @Override

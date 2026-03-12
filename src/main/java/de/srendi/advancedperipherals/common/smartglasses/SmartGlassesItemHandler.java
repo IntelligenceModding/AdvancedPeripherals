@@ -19,7 +19,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import javax.annotation.Nonnull;
 
 public class SmartGlassesItemHandler implements IItemHandlerModifiable {
 
@@ -27,10 +26,9 @@ public class SmartGlassesItemHandler implements IItemHandlerModifiable {
     public static final int PERIPHERAL_SLOTS = 5;
 
     private final ItemStack glasses;
-    @Nullable
     private final SmartGlassesComputer computer;
 
-    public SmartGlassesItemHandler(ItemStack glasses, @Nullable SmartGlassesComputer computer) {
+    public SmartGlassesItemHandler(ItemStack glasses, SmartGlassesComputer computer) {
         this.glasses = glasses;
         this.computer = computer;
     }
@@ -80,8 +78,8 @@ public class SmartGlassesItemHandler implements IItemHandlerModifiable {
     }
 
     @Override
-    @Nonnull
-    public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
+    @NotNull
+    public ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
         if (stack.isEmpty()) {
             return ItemStack.EMPTY;
         }
@@ -114,7 +112,7 @@ public class SmartGlassesItemHandler implements IItemHandlerModifiable {
     }
 
     @Override
-    @Nonnull
+    @NotNull
     public ItemStack extractItem(int slot, int amount, boolean simulate) {
         if (amount == 0) {
             return ItemStack.EMPTY;
@@ -164,12 +162,14 @@ public class SmartGlassesItemHandler implements IItemHandlerModifiable {
     }
 
     public void saveItems(NonNullList<ItemStack> items) {
-        this.glasses.set(APDataComponents.ITEMS, ContainerHelper.saveAllItems(new CompoundTag(), items));
+        RegistryAccess registryAccess = this.computer.getLevel().registryAccess();
+        this.glasses.set(APDataComponents.ITEMS, ContainerHelper.saveAllItems(new CompoundTag(), items, registryAccess));
     }
 
     public NonNullList<ItemStack> loadItems() {
+        RegistryAccess registryAccess = this.computer.getLevel().registryAccess();
         NonNullList<ItemStack> items = NonNullList.withSize(SLOTS, ItemStack.EMPTY);
-        ContainerHelper.loadAllItems(this.glasses.getOrDefault(APDataComponents.ITEMS, new CompoundTag()), items);
+        ContainerHelper.loadAllItems(this.glasses.getOrDefault(APDataComponents.ITEMS, new CompoundTag()), items, registryAccess);
         return items;
     }
 }

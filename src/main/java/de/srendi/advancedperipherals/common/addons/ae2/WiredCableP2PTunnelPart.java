@@ -17,13 +17,13 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import javax.annotation.Nonnull;
 
 public class WiredCableP2PTunnelPart extends CapabilityP2PTunnelPart<WiredCableP2PTunnelPart, WiredElement> {
     private static final P2PModels MODELS = new P2PModels(AdvancedPeripherals.getRL("part/p2p/p2p_tunnel_cable"));
@@ -143,25 +143,25 @@ public class WiredCableP2PTunnelPart extends CapabilityP2PTunnelPart<WiredCableP
     private class P2PWiredElement implements WiredElement {
         private final WiredNode node = ComputerCraftAPI.createWiredNodeForElement(this);
 
-        @Nonnull
+        @NotNull
         @Override
         public WiredNode getNode() {
             return node;
         }
 
-        @Nonnull
+        @NotNull
         @Override
         public String getSenderID() {
             return "p2p";
         }
 
-        @Nonnull
+        @NotNull
         @Override
         public Level getLevel() {
             return WiredCableP2PTunnelPart.this.getLevel();
         }
 
-        @Nonnull
+        @NotNull
         @Override
         public Vec3 getPosition() {
             return Vec3.atCenterOf(WiredCableP2PTunnelPart.this.getBlockEntity().getBlockPos());

@@ -31,17 +31,17 @@ public class PlayerDetectorBlock extends APBlockEntityBlock<PlayerDetectorEntity
 
     @NotNull
     @Override
-    public InteractionResult useWithoutItem(@NotNull BlockState state, Level levelIn, @NotNull BlockPos pos, @NotNull Player player, @NotNull BlockHitResult hit) {
+    public InteractionResult useWithoutItem(@NotNull BlockState state, Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull BlockHitResult hit) {
         if (!APConfig.PERIPHERALS_CONFIG.enablePlayerDetector.get()) {
-            return super.useWithoutItem(state, levelIn, pos, player, hit);
+            return super.useWithoutItem(state, level, pos, player, hit);
         }
-        BlockEntity tileEntity = levelIn.getBlockEntity(pos);
+        BlockEntity tileEntity = level.getBlockEntity(pos);
         if (tileEntity instanceof PlayerDetectorEntity entity) {
             for (IComputerAccess computer : entity.getConnectedComputers()) {
-                computer.queueEvent("player_click", playerName, level.dimension().location().toString());
+                computer.queueEvent("player_click", player.getName().getString(), level.dimension().location().toString());
             }
         }
-        return super.useWithoutItem(state, levelIn, pos, player, hit);
+        return super.useWithoutItem(state, level, pos, player, hit);
     }
 
 }

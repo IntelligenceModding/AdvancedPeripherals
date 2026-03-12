@@ -12,7 +12,6 @@ import de.srendi.advancedperipherals.common.smartglasses.modules.IModuleFunction
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.network.NetworkHooks;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.Nullable;
 
@@ -86,7 +85,7 @@ public class KeyboardModule implements IModule {
         computer.queueEvent("keyboard_open");
 
         KeyboardItem keyboardItem = this.keyboardItem;
-        NetworkHooks.openScreen(player, keyboardItem.createContainerWithComputer(player, stack, computer), buf -> keyboardItem.writeContainerData(player, stack, buf));
+        player.openMenu(keyboardItem.createContainerWithComputer(player, stack, computer), buf -> keyboardItem.writeContainerData(player, stack, buf));
         boolean captureMouse = this.captureMouse;
         this.lastCaptureMouse = captureMouse;
         if (captureMouse) {

@@ -15,6 +15,7 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Matrix3f;
@@ -48,6 +49,18 @@ public class DistanceDetectorRenderer implements BlockEntityRenderer<DistanceDet
     @Override
     public int getViewDistance() {
         return 256;
+    }
+
+    @Override
+    public AABB getRenderBoundingBox(DistanceDetectorEntity be) {
+        float currentDistance = be.getCurrentDistance();
+        if (currentDistance == -1) {
+            currentDistance = be.getMaxRange();
+        }
+        currentDistance += 1.5f;
+        Direction direction = be.getBlockState().getValue(BaseBlock.ORIENTATION).front();
+        Vec3 blockPos = Vec3.atCenterOf(be.getBlockPos());
+        return new AABB(blockPos, blockPos.add(direction.getStepX() * currentDistance, direction.getStepY() * currentDistance, direction.getStepZ() * currentDistance));
     }
 
     @Override

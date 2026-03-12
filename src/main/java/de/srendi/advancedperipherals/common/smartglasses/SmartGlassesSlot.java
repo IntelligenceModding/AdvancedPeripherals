@@ -29,6 +29,17 @@ public class SmartGlassesSlot extends SlotItemHandler {
         return 1;
     }
 
+    public static int sideToIndex(ComputerSide side) {
+        return switch (side) {
+            case TOP -> 0;
+            case LEFT -> 1;
+            case FRONT -> 2;
+            case RIGHT -> 3;
+            case BOTTOM -> 4;
+            default -> throw new IllegalArgumentException("side cannot be back");
+        };
+    }
+
     public static ComputerSide indexToSide(int slot) {
         return switch (slot) {
             case 0 -> ComputerSide.TOP;

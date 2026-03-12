@@ -59,8 +59,8 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
         this(new TurtlePeripheralOwner(turtle, side));
     }
 
-    public ChatBoxPeripheral(IPocketAccess pocket, IPocketUpgrade upgrade) {
-        this(new PocketPeripheralOwner(pocket, upgrade));
+    public ChatBoxPeripheral(IPocketAccess pocket) {
+        this(new PocketPeripheralOwner(pocket));
     }
 
     @Override
@@ -165,7 +165,7 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
                 if (!APConfig.PERIPHERALS_CONFIG.chatBoxMultiDimensional.get() && player.level().dimension() != dimension) {
                     continue;
                 }
-                if (CoordUtil.isInRange(getPos(), getLevel(), player, range, maxRange)) {
+                if (CoordUtil.isInRange(getCenterPos(), getLevel(), player, range, maxRange)) {
                     player.sendSystemMessage(preparedMessage);
                 }
             }
@@ -226,7 +226,7 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
                 if (!APConfig.PERIPHERALS_CONFIG.chatBoxMultiDimensional.get() && player.level().dimension() != dimension) {
                     continue;
                 }
-                if (CoordUtil.isInRange(getPos(), getLevel(), player, range, maxRange)) {
+                if (CoordUtil.isInRange(getCenterPos(), getLevel(), player, range, maxRange)) {
                     player.sendSystemMessage(preparedMessage);
                 }
             }
@@ -296,7 +296,7 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
                 return MethodResult.of(false, "NOT_SAME_DIMENSION");
             }
 
-            if (CoordUtil.isInRange(getPos(), getLevel(), player, range, maxRange)) {
+            if (CoordUtil.isInRange(getCenterPos(), getLevel(), player, range, maxRange)) {
                 player.sendSystemMessage(preparedMessage);
             }
             return MethodResult.of(true);
@@ -442,7 +442,7 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
             if (!APConfig.PERIPHERALS_CONFIG.chatBoxMultiDimensional.get() && player.level().dimension() != dimension)
                 return MethodResult.of(false, "NOT_SAME_DIMENSION");
 
-            if (CoordUtil.isInRange(getPos(), getLevel(), player, range, maxRange)) {
+            if (CoordUtil.isInRange(getCenterPos(), getLevel(), player, range, maxRange)) {
                 player.sendSystemMessage(preparedMessage, false);
             }
             return MethodResult.of(true);

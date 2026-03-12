@@ -54,6 +54,7 @@ import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.ICapabilityProvider;
 import net.neoforged.neoforge.items.IItemHandler;
+import net.neoforged.neoforge.server.ServerLifecycleHooks;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import top.theillusivec4.curios.api.CuriosApi;
@@ -63,37 +64,16 @@ import top.theillusivec4.curios.api.type.capability.ICuriosItemHandler;
 import java.util.List;
 import java.util.Map;
 
-public class SmartGlassesItem extends ArmorItem implements IMedia {
-
-    private static final String NBT_UPGRADE = "Upgrade";
-    private static final String NBT_UPGRADE_INFO = "UpgradeInfo";
-    public static final String NBT_LIGHT = "Light";
-    public static final String NBT_ON = "On";
-
-    private static final String NBT_INSTANCE = "InstanceId";
-    private static final String NBT_SESSION = "SessionId";
+public class SmartGlassesItem extends ArmorItem {
 
     public SmartGlassesItem(Holder<ArmorMaterial> material) {
         super(material, ArmorItem.Type.HELMET, new Properties().stacksTo(1));
     }
 
-    @Nullable
-    @Override
-    public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundTag nbt) {
-        return new ICapabilityProvider() {
-            @NotNull
-            @Override
-            public <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
-                if (cap == ForgeCapabilities.ITEM_HANDLER) {
-                    return LazyOptional.of(() -> {
-                        SmartGlassesComputer computer = getServerComputer(ServerLifecycleHooks.getCurrentServer(), stack);
-                        SmartGlassesItemHandler handler = new SmartGlassesItemHandler(stack, computer);
-                        return handler;
-                    }).cast();
-                }
-                return LazyOptional.empty();
-            }
-        };
+    public IItemHandler createItemHandlerCap(ItemStack stack) {
+        SmartGlassesComputer computer = getServerComputer(ServerLifecycleHooks.getCurrentServer(), stack);
+        SmartGlassesItemHandler handler = new SmartGlassesItemHandler(stack, computer);
+        return handler;
     }
 
     private boolean tick(ItemStack stack, Level world, Entity entity, SmartGlassesComputer computer) {
@@ -207,7 +187,10 @@ public class SmartGlassesItem extends ArmorItem implements IMedia {
                 AdvancedPeripherals.debug("There was an issue with the item handler of the glasses while trying to open the gui");
                 return InteractionResultHolder.sidedSuccess(player.getItemInHand(hand), world.isClientSide);
             }
-            new ComputerContainerData(computer, glasses).open(player, new SmartGlassesMenuProvider(computer, glasses, itemHandler));
+            player.openMenu(
+                new SmartGlassesMenuProvider(computer, glasses, itemHandler),
+                new ComputerContainerData(computer, glasses)::toBytes
+            );
         }
         return super.use(world, player, hand);
     }
@@ -220,11 +203,6 @@ public class SmartGlassesItem extends ArmorItem implements IMedia {
                 list.add(Component.translatable("gui.computercraft.tooltip.computer_id", id).withStyle(ChatFormatting.GRAY));
             }
         }
-    }
-
-    @Override
-    public String getCreatorModId(ItemStack stack) {
-        return AdvancedPeripherals.MOD_ID;
     }
 
     public SmartGlassesComputer getOrCreateComputer(ServerLevel level, Entity entity, @Nullable Container inventory, ItemStack stack) {
@@ -276,26 +254,8 @@ public class SmartGlassesItem extends ArmorItem implements IMedia {
         return DataComponentUtil.getCustomName(stack);
     }
 
-    @Nullable
-    @Override
-    public String getLabel(HolderLookup.Provider registries, ItemStack stack) {
-        return getLabel(stack);
-    }
-
-    @Override
-    public boolean setLabel(ItemStack stack, @Nullable String label) {
+    private boolean setLabel(ItemStack stack, @Nullable String label) {
         DataComponentUtil.setCustomName(stack, label);
-        return true;
-    }
-
-    @Nullable
-    @Override
-    public Mount createDataMount(@NotNull ItemStack stack, @NotNull ServerLevel level) {
-        int id = getComputerID(stack);
-        if (id < 0) {
-            return null;
-        }
-        return ComputerCraftAPI.createSaveDirMount(level.getServer(), "computer/" + id, dan200.computercraft.shared.config.ConfigSpec.computerSpaceLimit.get());
     }
 
     public static ItemStack getEquipped(final LivingEntity entity) {

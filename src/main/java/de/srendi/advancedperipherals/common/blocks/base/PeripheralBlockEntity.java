@@ -136,7 +136,7 @@ public abstract class PeripheralBlockEntity<T extends BasePeripheral<?>> extends
 
     @Override
     protected Component getDefaultName() {
-        return this instanceof IInventoryBlock<?> inventoryBlock ? inventoryBlock.getDisplayName() : null;
+        return this instanceof IInventoryMenuBlock<?> inventoryBlock ? inventoryBlock.getDisplayName() : null;
     }
 
     @Nullable
@@ -147,7 +147,7 @@ public abstract class PeripheralBlockEntity<T extends BasePeripheral<?>> extends
 
     @Override
     protected AbstractContainerMenu createMenu(int id, @NotNull Inventory player) {
-        return this instanceof IInventoryBlock<?> inventoryBlock ? inventoryBlock.createContainer(id, player, worldPosition, level) : null;
+        return this instanceof IInventoryMenuBlock<?> inventoryBlock ? inventoryBlock.createContainer(id, player, worldPosition, level) : null;
     }
 
     @Override

@@ -12,10 +12,11 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.common.capabilities.ForgeCapabilities;
+import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
 import java.util.function.Predicate;
 
 public class SmartGlassesContainer extends AbstractComputerMenu {
@@ -72,7 +73,7 @@ public class SmartGlassesContainer extends AbstractComputerMenu {
     }
 
     public SmartGlassesContainer(int id, Predicate<Player> predicate, ServerComputer computer, ComputerContainerData data, Inventory player, ItemStack glasses) {
-        this(id, predicate, computer, player, glasses.getCapability(ForgeCapabilities.ITEM_HANDLER).orElseThrow(NullPointerException::new), data);
+        this(id, predicate, computer, player, Objects.requireNonNull(glasses.getCapability(Capabilities.ItemHandler.ITEM)), data);
     }
 
     @NotNull

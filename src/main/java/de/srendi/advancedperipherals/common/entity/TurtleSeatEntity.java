@@ -3,18 +3,20 @@ package de.srendi.advancedperipherals.common.entity;
 import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.shared.computer.core.ServerComputer;
 import dan200.computercraft.shared.network.container.ComputerContainerData;
+import dan200.computercraft.shared.platform.PlatformHelper;
 import dan200.computercraft.shared.turtle.blocks.TurtleBlockEntity;
 import dan200.computercraft.shared.turtle.core.TurtleBrain;
 import de.srendi.advancedperipherals.common.network.toserver.SaddleTurtleControlPacket;
 import de.srendi.advancedperipherals.common.setup.APEntities;
 import de.srendi.advancedperipherals.common.util.InputKeySet;
+import net.minecraft.Util;
 import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
@@ -81,18 +83,13 @@ public class TurtleSeatEntity extends Entity implements HasCustomInventoryScreen
     }
 
     @Override
-    public Packet<?> getAddEntityPacket() {
-        return new ClientboundAddEntityPacket(this);
-    }
-
-    @Override
     public void readAdditionalSaveData(CompoundTag storage) {}
 
     @Override
     public void addAdditionalSaveData(CompoundTag storage) {}
 
     @Override
-    protected void defineSynchedData() {}
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {}
 
     @Override
     public void setPos(double x, double y, double z) {
@@ -117,18 +114,18 @@ public class TurtleSeatEntity extends Entity implements HasCustomInventoryScreen
     }
 
     @Override
-    public Entity getControllingPassenger() {
+    public LivingEntity getControllingPassenger() {
         return null; // this.getFirstPassenger();
     }
 
-    @Override
-    public double getPassengersRidingOffset() {
-        return 0.05;
-    }
+    // @Override
+    // public double getPassengersRidingOffset() {
+    //     return 0.05;
+    // }
 
     @Override
     public void tick() {
-        if (this.level.isClientSide) {
+        if (this.level().isClientSide) {
             return;
         }
         this.life--;
@@ -166,8 +163,8 @@ public class TurtleSeatEntity extends Entity implements HasCustomInventoryScreen
 
     @Override
     public void openCustomInventoryScreen(Player player) {
-        if (!this.level.isClientSide && this.hasPassenger(player)) {
-            if (this.downKey) {
+        if (!this.level().isClientSide && this.hasPassenger(player)) {
+            if (this.inputs.down()) {
                 player.stopRiding();
                 this.discard();
                 return;
@@ -179,10 +176,9 @@ public class TurtleSeatEntity extends Entity implements HasCustomInventoryScreen
                 }
                 ServerComputer computer = tile.createServerComputer();
                 BlockState state = tile.getBlockState();
-                // AbstractComputerBlock.getItem is protected, so we need use Block.getCloneItemStack instead
-                // TODO: ask Squid if AbstractComputerBlock.getItem can be public
-                ItemStack stack = state.getBlock().getCloneItemStack(this.level, tile.getBlockPos(), state);
-                new ComputerContainerData(computer, stack).open(player, tile);
+                ItemStack stack = new ItemStack(tile.getBlockState().getBlock());
+                stack.applyComponents(Util.make(DataComponentMap.builder(), tile::collectSafeComponents).build());
+                PlatformHelper.get().openMenu(player, tile.getName(), tile, new ComputerContainerData(computer, stack));
             }
         }
     }

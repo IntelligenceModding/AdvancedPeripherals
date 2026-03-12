@@ -154,6 +154,10 @@ public abstract class BasePeripheral<O extends IPeripheralOwner> implements IBas
         // return ValkyrienSkies.transformToWorldPos(owner.getLevel(), owner.getPos(), pos);
     }
 
+    public final BlockPos getPhysicsBlockPos() {
+        return BlockPos.containing(this.getPhysicsPos());
+    }
+
     protected Direction validateSide(String direction) throws LuaException {
         return CoordUtil.getDirection(owner.getOrientation(), direction);
     }

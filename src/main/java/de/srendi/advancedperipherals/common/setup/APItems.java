@@ -9,10 +9,10 @@ import de.srendi.advancedperipherals.common.items.MemoryCardItem;
 import de.srendi.advancedperipherals.common.items.SmartGlassesInterfaceItem;
 import de.srendi.advancedperipherals.common.items.SmartGlassesItem;
 import de.srendi.advancedperipherals.common.items.WeakAutomataCore;
-import de.srendi.advancedperipherals.common.items.base.SmartGlassesMaterials;
 import de.srendi.advancedperipherals.common.smartglasses.modules.hotkey.HotkeyModuleItem;
 import de.srendi.advancedperipherals.common.smartglasses.modules.nightvision.NightVisionModuleItem;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.OverlayGlassesItem;
+import net.minecraft.world.item.ArmorMaterials;
 import net.minecraft.world.item.Item;
 import net.neoforged.neoforge.registries.DeferredHolder;
 
@@ -31,9 +31,9 @@ public class APItems {
     public static final DeferredHolder<Item, APItem> OVERPOWERED_END_AUTOMATA_CORE = APRegistration.ITEMS.register("overpowered_end_automata_core", () -> new APItem(new Item.Properties().stacksTo(1), APConfig.METAPHYSICS_CONFIG.enableEndAutomataCore));
     public static final DeferredHolder<Item, APItem> OVERPOWERED_HUSBANDRY_AUTOMATA_CORE = APRegistration.ITEMS.register("overpowered_husbandry_automata_core", () -> new APItem(new Item.Properties().stacksTo(1), APConfig.METAPHYSICS_CONFIG.enableHusbandryAutomataCore));
     public static final DeferredHolder<Item, APItem> OVERPOWERED_WEAK_AUTOMATA_CORE = APRegistration.ITEMS.register("overpowered_weak_automata_core", () -> new APItem(new Item.Properties().stacksTo(1), APConfig.METAPHYSICS_CONFIG.enableWeakAutomataCore));
-    public static final DeferredHolder<Item, SmartGlassesItem> SMART_GLASSES = APRegistration.ITEMS.register("smart_glasses", () -> new SmartGlassesItem(SmartGlassesMaterials.CHAIN));
+    public static final DeferredHolder<Item, SmartGlassesItem> SMART_GLASSES = APRegistration.ITEMS.register("smart_glasses", () -> new SmartGlassesItem(ArmorMaterials.CHAIN));
     public static final DeferredHolder<Item, SmartGlassesInterfaceItem> SMART_GLASSES_INTERFACE = APRegistration.ITEMS.register("smart_glasses_interface", SmartGlassesInterfaceItem::new);
-    public static final DeferredHolder<Item, SmartGlassesItem> SMART_GLASSES_NETHERITE = APRegistration.ITEMS.register("smart_glasses_netherite", () -> new SmartGlassesItem(SmartGlassesMaterials.NETHERITE));
+    public static final DeferredHolder<Item, SmartGlassesItem> SMART_GLASSES_NETHERITE = APRegistration.ITEMS.register("smart_glasses_netherite", () -> new SmartGlassesItem(ArmorMaterials.NETHERITE));
     public static final DeferredHolder<Item, WeakAutomataCore> WEAK_AUTOMATA_CORE = APRegistration.ITEMS.register("weak_automata_core", () -> new WeakAutomataCore(new Item.Properties().stacksTo(1)));
 
     protected static void register() {

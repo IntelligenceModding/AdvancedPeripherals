@@ -29,12 +29,12 @@ public class KeyboardContainer extends BaseContainer implements ComputerMenu {
     @Nullable
     private ServerComputer computer;
 
-    public KeyboardContainer(int id, Inventory inventory, BlockPos pos, Level level, ItemStack keyboardItem) {
-        this(id, inventory, pos, level, keyboardItem, null);
+    public KeyboardContainer(int id, Inventory inventory, Level level, ItemStack keyboardItem) {
+        this(id, inventory, level, keyboardItem, null);
     }
 
-    public KeyboardContainer(int id, Inventory inventory, BlockPos pos, Level level, ItemStack keyboardItem, ServerComputer computer) {
-        super(APContainerTypes.KEYBOARD_CONTAINER.get(), id, inventory, pos, level);
+    public KeyboardContainer(int id, Inventory inventory, Level level, ItemStack keyboardItem, ServerComputer computer) {
+        super(APContainerTypes.KEYBOARD_CONTAINER.get(), id, inventory, null, level);
         this.keyboardItem = keyboardItem;
 
         if (!(level instanceof final ServerLevel serverLevel)) {

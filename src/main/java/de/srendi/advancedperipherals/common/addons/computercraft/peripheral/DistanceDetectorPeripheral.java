@@ -50,7 +50,8 @@ public class DistanceDetectorPeripheral extends BasePeripheral<IPeripheralOwner>
     protected DistanceDetectorPeripheral(IPeripheralOwner owner) {
         super(PERIPHERAL_TYPE, owner);
         this.tileEntity = null;
-        CompoundTag data = this.owner.getDataStorage();
+        // TODO: move to data storage
+        CompoundTag data = this.owner.getNbtStorage();
         this.maxRange = new AtomicInteger(Float.floatToRawIntBits(data.contains("maxRange") ? data.getFloat("maxRange") : this.getConfiguredMaxRange()));
         this.currentDistance = data.contains("currentDistance") ? data.getFloat("currentDistance") : -1;
         this.showLaser = new AtomicBoolean(data.contains("showLaser") ? data.getBoolean("showLaser") : true);
@@ -59,8 +60,8 @@ public class DistanceDetectorPeripheral extends BasePeripheral<IPeripheralOwner>
         this.detectionType = new AtomicReference<>(data.contains("detectionType") ? DetectionType.values()[data.getByte("detectionType")] : DetectionType.BOTH);
     }
 
-    public DistanceDetectorPeripheral(IPocketAccess pocket, IPocketUpgrade upgrade) {
-        this(new PocketPeripheralOwner(pocket, upgrade));
+    public DistanceDetectorPeripheral(IPocketAccess pocket) {
+        this(new PocketPeripheralOwner(pocket));
     }
 
     @Override
@@ -286,7 +287,7 @@ public class DistanceDetectorPeripheral extends BasePeripheral<IPeripheralOwner>
 
         if (this.isDirty.getAndSet(false)) {
             if (this.tileEntity == null) {
-                CompoundTag data = this.owner.getDataStorage();
+                CompoundTag data = this.owner.getNbtStorage();
                 data.putFloat("maxRange", this.getMaxRange());
                 data.putFloat("currentDistance", this.getCurrentDistance());
                 data.putBoolean("showLaser", this.getShowLaser());

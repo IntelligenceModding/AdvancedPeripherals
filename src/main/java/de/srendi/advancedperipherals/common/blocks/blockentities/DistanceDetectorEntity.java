@@ -83,18 +83,6 @@ public class DistanceDetectorEntity extends PeripheralBlockEntity<DistanceDetect
     }
 
     @Override
-    public AABB getRenderBoundingBox() {
-        float currentDistance = this.getCurrentDistance();
-        if (currentDistance == -1) {
-            currentDistance = this.getMaxRange();
-        }
-        currentDistance += 1.5f;
-        Direction direction = getBlockState().getValue(BaseBlock.ORIENTATION).front();
-        Vec3 blockPos = Vec3.atCenterOf(this.getBlockPos());
-        return new AABB(blockPos, blockPos.add(direction.getStepX() * currentDistance, direction.getStepY() * currentDistance, direction.getStepZ() * currentDistance));
-    }
-
-    @Override
     public void loadAdditional(@NotNull CompoundTag compound, @NotNull HolderLookup.Provider provider) {
         this.setMaxRange(compound.getFloat("maxRange"));
         this.setCurrentDistance(compound.getFloat("currentDistance"));
@@ -102,7 +90,7 @@ public class DistanceDetectorEntity extends PeripheralBlockEntity<DistanceDetect
         this.setCalculatePeriodically(compound.getBoolean("calculatePeriodically"));
         this.setIgnoreTransparent(compound.getBoolean("ignoreTransparent"));
         this.setDetectionType(DistanceDetectorPeripheral.DetectionType.values()[compound.getByte("detectionType")]);
-        super.load(compound, provider);
+        super.loadAdditional(compound, provider);
     }
 
     @Override
@@ -117,8 +105,8 @@ public class DistanceDetectorEntity extends PeripheralBlockEntity<DistanceDetect
     }
 
     @Override
-    public CompoundTag getUpdateTag() {
-        CompoundTag compound = super.getUpdateTag();
+    public CompoundTag getUpdateTag(@NotNull HolderLookup.Provider provider) {
+        CompoundTag compound = super.getUpdateTag(provider);
         compound.putFloat("maxRange", this.getMaxRange());
         compound.putFloat("currentDistance", this.getCurrentDistance());
         compound.putBoolean("showLaser", this.getShowLaser());

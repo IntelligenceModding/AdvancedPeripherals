@@ -15,7 +15,7 @@ import de.srendi.advancedperipherals.common.smartglasses.modules.keyboard.Keyboa
 import de.srendi.advancedperipherals.common.util.EnumColor;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -154,7 +154,7 @@ public class KeyboardItem extends BaseItem implements IInventoryItem, IModuleIte
 
             @Override
             public AbstractContainerMenu createMenu(int pContainerId, @NotNull Inventory playerInv, @NotNull Player player) {
-                return new KeyboardContainer(pContainerId, playerInv, player.blockPosition(), player.level(), stack);
+                return new KeyboardContainer(pContainerId, playerInv, player.level(), stack);
             }
         };
     }
@@ -169,15 +169,14 @@ public class KeyboardItem extends BaseItem implements IInventoryItem, IModuleIte
 
             @Override
             public AbstractContainerMenu createMenu(int pContainerId, @NotNull Inventory playerInv, @NotNull Player player) {
-                return new KeyboardContainer(pContainerId, playerInv, player.blockPosition(), player.level(), stack, computer);
+                return new KeyboardContainer(pContainerId, playerInv, player.level(), stack, computer);
             }
         };
     }
 
     @Override
-    public void writeContainerData(Player player, ItemStack stack, FriendlyByteBuf buf) {
-        buf.writeBlockPos(player.blockPosition());
-        buf.writeItem(stack);
+    public void writeContainerData(Player player, ItemStack stack, RegistryFriendlyByteBuf buf) {
+        ItemStack.STREAM_CODEC.encode(buf, stack);
     }
 
     @Override

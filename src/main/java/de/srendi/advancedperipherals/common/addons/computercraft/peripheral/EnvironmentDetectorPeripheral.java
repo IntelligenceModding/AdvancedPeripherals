@@ -70,8 +70,8 @@ public class EnvironmentDetectorPeripheral extends BasePeripheral<IPeripheralOwn
         this(new TurtlePeripheralOwner(turtle, side).attachFuel(1));
     }
 
-    public EnvironmentDetectorPeripheral(IPocketAccess pocket, IPocketUpgrade upgrade) {
-        this(new PocketPeripheralOwner(pocket, upgrade));
+    public EnvironmentDetectorPeripheral(IPocketAccess pocket) {
+        this(new PocketPeripheralOwner(pocket));
     }
 
     private static int estimateCost(int radius) {

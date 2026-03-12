@@ -100,7 +100,7 @@ public class LuaConverter {
                 data.put("lastDamageSource", entity.getLastDamageSource() == null ? null : entity.getLastDamageSource().toString());
                 Map<String, Object> effMap = new HashMap<>();
                 entity.getActiveEffectsMap().forEach((key, value) -> {
-                    effMap.put(key.getDescriptionId(), effectToLua(value));
+                    effMap.put(key.value().getDescriptionId(), effectToLua(value));
                 });
                 data.put("effects", effMap);
             }
@@ -110,8 +110,8 @@ public class LuaConverter {
         });
         registerEntityConverter(Animal.class, (entity, data, ctx) -> {
             data.put("inLove", entity.isInLove());
-            if (ctx.detailed() && !ctx.itemInHand().isEmpty() && entity instanceof IForgeShearable shareable) {
-                data.put("shareable", shareable.isShearable(ctx.itemInHand(), entity.level, entity.blockPosition()));
+            if (ctx.detailed() && !ctx.itemInHand().isEmpty() && entity instanceof IShearable shareable) {
+                data.put("shareable", shareable.isShearable(null, ctx.itemInHand(), entity.level(), entity.blockPosition()));
             }
         });
         registerEntityConverter(Player.class, (entity, data, ctx) -> {
@@ -235,9 +235,6 @@ public class LuaConverter {
         }
         Map<String, Object> properties = itemToObject(stack.getItem());
         DataComponentPatch components = stack.getComponentsPatch();
-        if (nbt == null) {
-            nbt = EMPTY_TAG;
-        }
         properties.put("count", stack.getCount());
         properties.put("displayName", stack.getDisplayName().getString());
         properties.put("maxStackSize", stack.getMaxStackSize());

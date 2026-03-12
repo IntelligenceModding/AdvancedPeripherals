@@ -18,7 +18,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.items.IItemHandler;
-import net.neoforged.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
 
 public class SmartGlassesInterfaceItem extends BaseItem {
@@ -44,7 +43,10 @@ public class SmartGlassesInterfaceItem extends BaseItem {
 
         IItemHandler itemHandler = glasses.getCapability(Capabilities.ItemHandler.ITEM);
         if (itemHandler != null) {
-            NetworkHooks.openScreen((ServerPlayer) player, new SmartGlassesMenuProvider(computer, glasses, itemHandler), bytes -> new ComputerContainerData(computer, glasses).toBytes(bytes));
+            player.openMenu(
+                new SmartGlassesMenuProvider(computer, glasses, itemHandler),
+                new ComputerContainerData(computer, glasses)::toBytes
+            );
         }
 
         return super.use(world, player, hand);

@@ -5,6 +5,7 @@ import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.lua.LuaTable;
 import dan200.computercraft.api.lua.MethodResult;
+import dan200.computercraft.api.lua.ObjectLuaTable;
 import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
 import dan200.computercraft.shared.turtle.core.TurtlePlayer;
@@ -112,16 +113,17 @@ public class AutomataBlockHandPlugin extends AutomataCorePlugin {
      *   yaw: relative yaw
      *   pitch: relative pitch
      *
-     *   text: the text going to write if the target is a sign.
+     *   text: the text going to write on the sign's front side. Default is null
+     *   backText: the text going to write on the sign's back side. Default is null
      */
     @LuaFunction(mainThread = true)
     public final MethodResult updateBlock(@NotNull IArguments arguments) throws LuaException {
         if (!automataCore.getPeripheralOwner().hasConnectedPeripheral(CompassPeripheral.class)) {
             return MethodResult.of(false, "COMPASS_NOT_EQUIPPED");
         }
-        LuaTable<?, ?> opts = arguments.count() > 0 ? new ObjectLuaTable(arguments.getTable(0)) : EmptyLuaTable.INSTANCE;
-        float yaw = opts.optFiniteDouble("yaw").orElse(0).floatValue();
-        float pitch = opts.optFiniteDouble("pitch").orElse(0).floatValue();
+        LuaTable<?, ?> opts = EmptyLuaTable.orEmpty(arguments.getTable(0));
+        float yaw = opts.optFiniteDouble("yaw").orElse(0.0).floatValue();
+        float pitch = opts.optFiniteDouble("pitch").orElse(0.0).floatValue();
         return automataCore.withOperation(UPDATE_BLOCK, context -> {
             TurtlePeripheralOwner owner = automataCore.getPeripheralOwner();
             ItemStack selectedTool = owner.getToolInMainHand();
@@ -143,8 +145,15 @@ public class AutomataBlockHandPlugin extends AutomataCorePlugin {
         BlockPos pos = blockHit.getBlockPos();
         BlockEntity block = world.getBlockEntity(pos);
         if (block instanceof SignBlockEntity sign) {
-            if (options.get("text") instanceof String text) {
-                setSignText(world, sign, StringUtil.convertAndToSectionMark(text));
+            String text = StringUtil.convertAndToSectionMark(options.optString("text").orElse(null));
+            if (text != null) {
+                setSignText(world, sign, text, true);
+            }
+            String backText = StringUtil.convertAndToSectionMark(options.optString("backText").orElse(null));
+            if (backText != null) {
+                setSignText(world, sign, backText, false);
+            }
+            if (text != null || backText != null) {
                 return InteractionResult.CONSUME;
             }
         }
@@ -167,15 +176,15 @@ public class AutomataBlockHandPlugin extends AutomataCorePlugin {
      */
     @LuaFunction(mainThread = true)
     public final MethodResult placeBlock(@NotNull IArguments arguments) throws LuaException {
-        LuaTable<?, ?> options = EmptyLuaTable.orEmpty(arguments.optTable(0).orElse(null));
+        LuaTable<?, ?> options = EmptyLuaTable.orEmpty(arguments.getTable(0));
 
         ITurtleAccess turtle = automataCore.getPeripheralOwner().getTurtle();
         if (!automataCore.getPeripheralOwner().hasConnectedPeripheral(CompassPeripheral.class)) {
             return MethodResult.of(false, "COMPASS_NOT_EQUIPPED");
         }
         int x = options.optInt("x").orElse(0);
-        int y = options.optInt( "y").orElse(0);
-        int z = options.optInt( "z").orElse(0);
+        int y = options.optInt("y").orElse(0);
+        int z = options.optInt("z").orElse(0);
         final int maxDist = APConfig.PERIPHERALS_CONFIG.compassAccurePlaceRadius.get();
         final int freeDist = APConfig.PERIPHERALS_CONFIG.compassAccurePlaceFreeRadius.get();
         if (Math.abs(x) > maxDist || Math.abs(y) > maxDist || Math.abs(z) > maxDist) {

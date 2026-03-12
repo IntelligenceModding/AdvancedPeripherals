@@ -24,7 +24,7 @@ public abstract class BaseContainer extends AbstractContainerMenu {
     protected BaseContainer(@Nullable MenuType<?> type, int id, Inventory inventory, BlockPos pos, Level world) {
         super(type, id);
         this.inventory = new InvWrapper(inventory);
-        if (world != null) {
+        if (world != null && pos != null) {
             BlockEntity blockEntity = world.getBlockEntity(pos);
             // for player containers, pos is the position of the player
             // We don't actual need a block entity for player containers

@@ -12,6 +12,7 @@ import de.srendi.advancedperipherals.common.addons.computercraft.owner.Periphera
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.TurtlePeripheralOwner;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.entity.TurtleEnderPearl;
+import de.srendi.advancedperipherals.common.setup.APDataComponents;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
 import de.srendi.advancedperipherals.common.util.NBTUtil;
 import de.srendi.advancedperipherals.common.util.Pair;
@@ -31,11 +32,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-import static de.srendi.advancedperipherals.common.addons.computercraft.operations.SingleOperation.ACTIVE_PORTAL;
-import static de.srendi.advancedperipherals.common.addons.computercraft.operations.SingleOperation.PREPARE_PORTAL;
-import static de.srendi.advancedperipherals.common.addons.computercraft.operations.SingleOperation.WARP;
-import static de.srendi.advancedperipherals.common.setup.APDataComponents.POINT_DATA_MARK;
-import static de.srendi.advancedperipherals.common.setup.APDataComponents.WORLD_DATA_MARK;
+import static de.srendi.advancedperipherals.common.addons.computercraft.operations.SingleOperation.*;
 
 public class AutomataWarpingPlugin extends AutomataCorePlugin {
 
@@ -51,36 +48,24 @@ public class AutomataWarpingPlugin extends AutomataCorePlugin {
     }
 
     @NotNull
-    protected Pair<MethodResult, CompoundTag> getPointData() {
+    protected CompoundTag getPointData() {
         TurtlePeripheralOwner owner = automataCore.getPeripheralOwner();
-        PatchedDataComponentMap settings = PatchedDataComponentMap.fromPatch(DataComponentMap.EMPTY, owner.getDataStorage());
-        if (!settings.has(WORLD_DATA_MARK.get())) {
-            settings.set(WORLD_DATA_MARK.get(), owner.getLevel().dimension().location().toString());
-        } else {
-            String worldName = settings.get(WORLD_DATA_MARK.get());
-            if (!owner.getLevel().dimension().location().toString().equals(worldName))
-                return Pair.onlyLeft(MethodResult.of(null, "Incorrect world for this upgrade"));
+        CompoundTag data = owner.getDataStorage().get(APDataComponents.POINT_DATA_MARK.get()).orElse(null);
+        if (data == null) {
+            return new CompoundTag();
         }
-        if (!settings.has(POINT_DATA_MARK.get())) {
-            settings.set(POINT_DATA_MARK.get(), new CompoundTag());
-        }
-
-        return Pair.onlyRight(settings.get(POINT_DATA_MARK.get()));
+        return data;
     }
 
     protected void setPointData(@NotNull CompoundTag data) {
         TurtlePeripheralOwner owner = automataCore.getPeripheralOwner();
         PatchedDataComponentMap settings = PatchedDataComponentMap.fromPatch(DataComponentMap.EMPTY, owner.getDataStorage());
-        settings.set(POINT_DATA_MARK.get(), data);
+        settings.set(APDataComponents.POINT_DATA_MARK.get(), data);
         owner.putDataStorage(settings.asPatch());
     }
 
     protected Pair<MethodResult, CompoundTag> getPoint(String name) {
-        Pair<MethodResult, CompoundTag> res = getPointData();
-        if (res.leftPresent()) {
-            return Pair.onlyLeft(res.getLeft());
-        }
-        CompoundTag points = res.getRight();
+        CompoundTag points = getPointData();
         if (!points.contains(name)) {
             return Pair.onlyLeft(MethodResult.of(null, "Warp point not exists"));
         }
@@ -100,17 +85,14 @@ public class AutomataWarpingPlugin extends AutomataCorePlugin {
     @LuaFunction(mainThread = true)
     public final MethodResult savePoint(String name) {
         automataCore.addRotationCycle();
-        Pair<MethodResult, CompoundTag> pairData = getPointData();
-        if (pairData.leftPresent()) {
-            return pairData.getLeft();
-        }
-
-        CompoundTag data = pairData.getRight();
+        CompoundTag data = getPointData();
         if (data.getAllKeys().size() >= APConfig.METAPHYSICS_CONFIG.endAutomataCoreWarpPointLimit.get()) {
             return MethodResult.of(null, "Cannot add new point, limit reached");
         }
 
-        data.put(name, NBTUtil.toNBT(automataCore.getPeripheralOwner().getPos()));
+        TurtlePeripheralOwner owner = automataCore.getPeripheralOwner();
+        Level level = owner.getLevel();
+        data.put(name, NBTUtil.toNBT(level, owner.getPos()));
         setPointData(data);
         return MethodResult.of(true);
     }
@@ -118,12 +100,7 @@ public class AutomataWarpingPlugin extends AutomataCorePlugin {
     @LuaFunction(mainThread = true)
     public final MethodResult deletePoint(String name) {
         automataCore.addRotationCycle();
-        Pair<MethodResult, CompoundTag> pairData = getPointData();
-        if (pairData.leftPresent()) {
-            return pairData.getLeft();
-        }
-
-        CompoundTag data = pairData.getRight();
+        CompoundTag data = getPointData();
         if (!data.contains(name)) {
             return MethodResult.of(null, "Cannot find point to delete");
         }
@@ -135,12 +112,7 @@ public class AutomataWarpingPlugin extends AutomataCorePlugin {
 
     @LuaFunction(mainThread = true)
     public final MethodResult points() {
-        Pair<MethodResult, CompoundTag> pairData = getPointData();
-        if (pairData.leftPresent()) {
-            return pairData.getLeft();
-        }
-
-        CompoundTag data = pairData.getRight();
+        CompoundTag data = getPointData();
         return MethodResult.of(data.getAllKeys());
     }
 
@@ -151,16 +123,13 @@ public class AutomataWarpingPlugin extends AutomataCorePlugin {
             return pairData.getLeft();
         }
 
-        CompoundTag data = pairData.getRight();
-
-        if (!data.contains(name))
-            return MethodResult.of(null, "Cannot find point to teleport");
-
         TurtlePeripheralOwner owner = automataCore.getPeripheralOwner();
-        Level level = owner.getLevel();
-        BlockPos newPosition = NBTUtil.blockPosFromNBT(data.getCompound(name));
-        return automataCore.withOperation(WARP, automataCore.toDistance(newPosition), context -> {
-            boolean result = owner.move(level, newPosition);
+        Pair<Level, BlockPos> newLevelAndPosition = NBTUtil.levelAndBlockPosFromNBT(automataCore.getLevel().getServer(), pairData.getRight());
+        Level newLevel = newLevelAndPosition.getLeft();
+        BlockPos newPosition = newLevelAndPosition.getRight();
+
+        return automataCore.withOperation(WARP, getWarpContext(newLevel, newPosition), context -> {
+            boolean result = owner.move(newLevel, newPosition);
             if (!result) {
                 return MethodResult.of(null, "Cannot teleport to location");
             }
@@ -322,7 +291,7 @@ public class AutomataWarpingPlugin extends AutomataCorePlugin {
 
     private static int getCostsToLevel(Level level) {
         String dimension = level.dimension().location().toString();
-        // TODO: load fuel costs from config
+        // TODO: load fuel costs from config / datapack
         switch (dimension) {
             case "minecraft:overworld":
                 return 10000;

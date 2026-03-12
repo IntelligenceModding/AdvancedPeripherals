@@ -47,7 +47,7 @@ public class FluidStorageProxy extends AbstractStorageProxy implements IFluidHan
         }
         this.receiving = true;
         try {
-            IFluidHandler storage = fluidDetectorEntity.getOutputStorage().get();
+            IFluidHandler storage = fluidDetectorEntity.getOutputStorage();
             if (storage == null) {
                 return 0;
             }
