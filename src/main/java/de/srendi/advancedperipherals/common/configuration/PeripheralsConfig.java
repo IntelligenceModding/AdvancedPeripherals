@@ -77,8 +77,8 @@ public class PeripheralsConfig implements IAPConfig {
     // Inventory Manager
     public final ModConfigSpec.BooleanValue enableInventoryManager;
 
-    // Redstone Integrator
-    public final ModConfigSpec.BooleanValue enableRedstoneIntegrator;
+    // // Redstone Integrator
+    // public final ModConfigSpec.BooleanValue enableRedstoneIntegrator;
 
     // Block reader
     public final ModConfigSpec.BooleanValue enableBlockReader;
@@ -145,6 +145,9 @@ public class PeripheralsConfig implements IAPConfig {
         playerSpy = builder
             .comment("Activates the \"getPlayerPos\" function of the Player Detector")
             .define("enablePlayerPosFunction", true);
+        showSpectators = builder
+            .comment("Returns a play in any function even when they are in spectator")
+            .define("showSpectators", true);
         morePlayerInformation = builder
             .comment("Adds more information to `getPlayerPos` of the Player Detector. Like rotation and dimension")
             .define("morePlayerInformation", true);
