@@ -254,7 +254,7 @@ public class SmartGlassesItem extends ArmorItem {
         return DataComponentUtil.getCustomName(stack);
     }
 
-    private boolean setLabel(ItemStack stack, @Nullable String label) {
+    private void setLabel(ItemStack stack, @Nullable String label) {
         DataComponentUtil.setCustomName(stack, label);
     }
 
