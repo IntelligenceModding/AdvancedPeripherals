@@ -1,5 +1,6 @@
 package de.srendi.advancedperipherals.common.addons.dimstorage;
 
+import com.mojang.authlib.GameProfile;
 import dan200.computercraft.api.lua.LuaFunction;
 import de.srendi.advancedperipherals.lib.peripherals.APGenericPeripheral;
 import edivad.dimstorage.api.Frequency;
@@ -10,11 +11,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.UUID;
 
 public class DimChestIntegration implements APGenericPeripheral {
-
-    protected DimChestIntegration(BlockEntity entity) {
-        super(entity);
-    }
-
     @NotNull
     @Override
     public String getPeripheralType() {
@@ -23,11 +19,11 @@ public class DimChestIntegration implements APGenericPeripheral {
 
     @LuaFunction(mainThread = true)
     public final String getOwnerUUID(BlockEntityDimChest blockEntity) {
-        UUID uuid = blockEntity.getFrequency().getOwnerUUID();
-        if (uuid == null) {
+        GameProfile profile = blockEntity.getFrequency().gameProfile().orElse(null);
+        if (profile == null) {
             return null;
         }
-        return uuid.toString();
+        return profile.getId().toString();
     }
 
     @LuaFunction(mainThread = true)
@@ -42,7 +38,7 @@ public class DimChestIntegration implements APGenericPeripheral {
 
     @LuaFunction(mainThread = true)
     public final int getChannel(BlockEntityDimChest blockEntity) {
-        return blockEntity.getFrequency().getChannel();
+        return blockEntity.getFrequency().channel();
     }
 
     @LuaFunction(mainThread = true)

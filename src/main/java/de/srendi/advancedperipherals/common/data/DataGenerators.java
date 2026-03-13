@@ -19,7 +19,7 @@ import net.neoforged.neoforge.data.event.GatherDataEvent;
 
 import java.util.concurrent.CompletableFuture;
 
-@EventBusSubscriber(modid = AdvancedPeripherals.MOD_ID)
+@EventBusSubscriber
 public class DataGenerators {
 
     private DataGenerators() {

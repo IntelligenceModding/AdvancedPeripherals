@@ -16,7 +16,7 @@ import java.util.UUID;
 public class BoxObject extends ThreeDimensionalObject {
     public static final int TYPE_ID = 4;
 
-    private static final IObjectRenderer RENDERER = new BoxRenderer();
+    private static final IThreeDObjectRenderer RENDERER = new BoxRenderer();
 
     public BoxObject(OverlayModule module, IArguments arguments) throws LuaException {
         super(module, arguments);
@@ -49,7 +49,7 @@ public class BoxObject extends ThreeDimensionalObject {
     }
 
     @Override
-    public IObjectRenderer getObjectRenderer() {
+    public IThreeDObjectRenderer getObjectRenderer() {
         return RENDERER;
     }
 }

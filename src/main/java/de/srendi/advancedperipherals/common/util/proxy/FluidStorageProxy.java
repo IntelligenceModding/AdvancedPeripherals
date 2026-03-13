@@ -27,17 +27,20 @@ public class FluidStorageProxy extends AbstractStorageProxy implements IFluidHan
 
     @Override
     public @NotNull FluidStack getFluidInTank(int tank) {
-        return fluidDetectorEntity.getOutputStorage().map(outStorage -> outStorage.getFluidInTank(tank)).orElse(FluidStack.EMPTY);
+        IFluidHandler storage = fluidDetectorEntity.getOutputStorage();
+        return storage != null ? storage.getFluidInTank(tank) : FluidStack.EMPTY;
     }
 
     @Override
     public int getTankCapacity(int tank) {
-        return fluidDetectorEntity.getOutputStorage().map(outStorage -> outStorage.getTankCapacity(tank)).orElse(0);
+        IFluidHandler storage = fluidDetectorEntity.getOutputStorage();
+        return storage != null ? storage.getTankCapacity(tank) : 0;
     }
 
     @Override
     public boolean isFluidValid(int tank, @NotNull FluidStack stack) {
-        return fluidDetectorEntity.getOutputStorage().map(outStorage -> outStorage.isFluidValid(tank, stack)).orElse(false);
+        IFluidHandler storage = fluidDetectorEntity.getOutputStorage();
+        return storage != null ? storage.isFluidValid(tank, stack) : false;
     }
 
     @Override

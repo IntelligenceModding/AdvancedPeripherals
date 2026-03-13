@@ -142,7 +142,7 @@ public class SaddleTurtleOverlay implements LayeredDraw.Layer {
     }
 
     @Override
-    public void render(@NonNull GuiGraphics guiGraphics, @NonNull DeltaTracker deltaTracker) {
+    public void render(@NotNull GuiGraphics guiGraphics, @NotNull DeltaTracker deltaTracker) {
         if (!this.isPlayerMountedOnTurtle()) {
             return;
         }

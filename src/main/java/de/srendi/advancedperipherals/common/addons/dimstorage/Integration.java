@@ -1,12 +1,10 @@
 package de.srendi.advancedperipherals.common.addons.dimstorage;
 
-import de.srendi.advancedperipherals.common.addons.computercraft.integrations.IntegrationPeripheralProvider;
-import edivad.dimstorage.blockentities.BlockEntityDimChest;
+import dan200.computercraft.api.ComputerCraftAPI;
 
 public class Integration implements Runnable {
-
     @Override
     public void run() {
-        IntegrationPeripheralProvider.registerBlockEntityIntegration(DimChestIntegration::new, BlockEntityDimChest.class);
+        ComputerCraftAPI.registerGenericSource(new DimChestIntegration());
     }
 }

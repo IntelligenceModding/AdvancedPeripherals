@@ -1,5 +1,6 @@
 package de.srendi.advancedperipherals.client.screens.base;
 
+import de.srendi.advancedperipherals.common.container.base.BaseContainer;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;

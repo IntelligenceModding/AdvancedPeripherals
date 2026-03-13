@@ -14,7 +14,7 @@ import net.neoforged.neoforge.event.village.WandererTradesEvent;
 
 import static de.srendi.advancedperipherals.common.village.VillagerTrade.TradeBuilder;
 
-@EventBusSubscriber(modid = AdvancedPeripherals.MOD_ID)
+@EventBusSubscriber
 public class VillagerTrades {
 
     @SubscribeEvent

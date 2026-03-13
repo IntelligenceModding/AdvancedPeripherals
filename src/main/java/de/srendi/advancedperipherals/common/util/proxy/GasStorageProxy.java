@@ -21,29 +21,35 @@ public class GasStorageProxy extends AbstractStorageProxy implements IChemicalHa
     }
 
     @Override
-    public int getTanks() {
+    public int getChemicalTanks() {
         return 1;
     }
 
     @NotNull
     @Override
     public ChemicalStack getChemicalInTank(int tank) {
-        return gasDetectorEntity.getOutputStorage().map(outStorage -> outStorage.getChemicalInTank(tank)).orElse(ChemicalStack.EMPTY);
+        IChemicalHandler storage = gasDetectorEntity.getOutputStorage();
+        return storage != null ? storage.getChemicalInTank(tank) : ChemicalStack.EMPTY;
     }
 
     @Override
     public void setChemicalInTank(int tank, @NotNull ChemicalStack stack) {
-        gasDetectorEntity.getOutputStorage().ifPresent(outStorage -> outStorage.setChemicalInTank(tank, stack));
+        IChemicalHandler storage = gasDetectorEntity.getOutputStorage();
+        if (storage != null) {
+            storage.setChemicalInTank(tank, stack);
+        }
     }
 
     @Override
-    public long getTankCapacity(int tank) {
-        return gasDetectorEntity.getOutputStorage().map(outStorage -> outStorage.getTankCapacity(tank)).orElse(0L);
+    public long getChemicalTankCapacity(int tank) {
+        IChemicalHandler storage = gasDetectorEntity.getOutputStorage();
+        return storage != null ? storage.getChemicalTankCapacity(tank) : 0L;
     }
 
     @Override
     public boolean isValid(int tank, @NotNull ChemicalStack stack) {
-        return gasDetectorEntity.getOutputStorage().map(outStorage -> outStorage.isValid(tank, stack)).orElse(false);
+        IChemicalHandler storage = gasDetectorEntity.getOutputStorage();
+        return storage != null ? storage.isValid(tank, stack) : false;
     }
 
     @NotNull
@@ -54,7 +60,7 @@ public class GasStorageProxy extends AbstractStorageProxy implements IChemicalHa
         }
         this.receiving = true;
         try {
-            IChemicalHandler storage = gasDetectorEntity.getOutputStorage().orElse(null);
+            IChemicalHandler storage = gasDetectorEntity.getOutputStorage();
             if (storage == null) {
                 return ChemicalStack.EMPTY;
             }

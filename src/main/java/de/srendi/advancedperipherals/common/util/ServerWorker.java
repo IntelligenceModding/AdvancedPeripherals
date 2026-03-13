@@ -8,7 +8,7 @@ import net.neoforged.neoforge.event.tick.ServerTickEvent;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-@EventBusSubscriber(modid = AdvancedPeripherals.MOD_ID)
+@EventBusSubscriber
 public class ServerWorker {
 
     private static final Queue<Runnable> callQueue = new ConcurrentLinkedQueue<>();

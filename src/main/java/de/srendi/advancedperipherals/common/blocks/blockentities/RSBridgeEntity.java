@@ -40,7 +40,7 @@ public class RSBridgeEntity extends PeripheralBlockEntity<RSBridgePeripheral> im
     private boolean addedListener = false;
 
     public RSBridgeEntity(BlockPos pos, BlockState state) {
-        super(BlockEntityTypes.RS_BRIDGE.get(), pos, state);
+        super(APBlockEntityTypes.RS_BRIDGE.get(), pos, state);
         peripheralSettings = new CompoundTag();
         ConnectionStrategy connectionStrategy = new SimpleConnectionStrategy(pos);
         node = new SimpleNetworkNode(APConfig.PERIPHERALS_CONFIG.rsConsumption.get());

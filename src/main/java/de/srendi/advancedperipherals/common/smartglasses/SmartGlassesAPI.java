@@ -1,5 +1,6 @@
 package de.srendi.advancedperipherals.common.smartglasses;
 
+import dan200.computercraft.api.lua.IComputerSystem;
 import dan200.computercraft.api.lua.ILuaAPI;
 import de.srendi.advancedperipherals.common.setup.APComputerComponents;
 

@@ -5,8 +5,6 @@ package de.srendi.advancedperipherals.common.data;
 import appeng.core.definitions.AEBlocks;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.items.ModItems;
-import com.refinedmods.refinedstorage.RSBlocks;
-import com.refinedmods.refinedstorage.RSItems;
 import com.refinedmods.refinedstorage.common.misc.ProcessorItem;
 import dan200.computercraft.shared.ModRegistry;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
@@ -32,6 +30,7 @@ import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.common.conditions.IConditionBuilder;
 import net.neoforged.neoforge.common.conditions.ModLoadedCondition;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -114,11 +113,11 @@ public class RecipesProvider extends RecipeProvider implements IConditionBuilder
         ShapelessRecipeBuilder.shapeless(RecipeCategory.REDSTONE, APItems.OVERPOWERED_HUSBANDRY_AUTOMATA_CORE.get()).requires(APItems.HUSBANDRY_AUTOMATA_CORE.get()).requires(Items.NETHER_STAR).unlockedBy(HAS_ITEM, has(APItems.HUSBANDRY_AUTOMATA_CORE.get())).save(recipeOutput);
     }
 
-    private void addSmithing(@NotNull Consumer<FinishedRecipe> consumer) {
-        UpgradeRecipeBuilder
-                .smithing(Ingredient.of(APItems.SMART_GLASSES.get()), Ingredient.of(Items.NETHERITE_INGOT), APItems.SMART_GLASSES_NETHERITE.get())
-                .unlocks("has_item", has(Items.NETHERITE_INGOT))
-                .save(consumer, AdvancedPeripherals.getRL("armor/" + APItems.SMART_GLASSES_NETHERITE.getKey().location().getPath()));
-    }
+    // private void addSmithing(@NotNull Consumer<FinishedRecipe> consumer) {
+    //     UpgradeRecipeBuilder
+    //             .smithing(Ingredient.of(APItems.SMART_GLASSES.get()), Ingredient.of(Items.NETHERITE_INGOT), APItems.SMART_GLASSES_NETHERITE.get())
+    //             .unlocks("has_item", has(Items.NETHERITE_INGOT))
+    //             .save(consumer, AdvancedPeripherals.getRL("armor/" + APItems.SMART_GLASSES_NETHERITE.getKey().location().getPath()));
+    // }
 
 }

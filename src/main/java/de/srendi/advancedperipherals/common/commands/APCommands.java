@@ -29,7 +29,7 @@ import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import java.util.Comparator;
 
 
-@EventBusSubscriber(modid = AdvancedPeripherals.MOD_ID)
+@EventBusSubscriber
 public class APCommands {
     public static final String ROOT_LITERAL = "advancedperipherals";
     public static final String FORCELOAD_LITERAL = "forceload";

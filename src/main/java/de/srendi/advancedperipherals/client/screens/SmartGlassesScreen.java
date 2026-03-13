@@ -13,6 +13,7 @@ import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.client.widgets.SmartGlassesSettingsSwitch;
 import de.srendi.advancedperipherals.common.container.SmartGlassesContainer;
 import de.srendi.advancedperipherals.common.smartglasses.SlotType;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
@@ -44,7 +45,13 @@ public class SmartGlassesScreen extends AbstractComputerScreen<SmartGlassesConta
 
     @Override
     protected TerminalWidget createTerminal() {
-        return new TerminalWidget(terminalData, input, leftPos + TurtleMenu.BORDER + AbstractComputerMenu.SIDEBAR_WIDTH, topPos + TurtleMenu.BORDER);
+        return new TerminalWidget(
+            terminalData,
+            computerInput,
+            computerActions,
+            leftPos + TurtleMenu.BORDER + AbstractComputerMenu.SIDEBAR_WIDTH,
+            topPos + TurtleMenu.BORDER
+        );
     }
 
     @Override

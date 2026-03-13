@@ -23,7 +23,7 @@ public class APContainerTypes {
         })
     );
 
-    public static final DeferredHolder<MenuType<KeyboardContainer>> KEYBOARD_CONTAINER = APRegistration.CONTAINER_TYPES.register(
+    public static final DeferredHolder<MenuType<?>, MenuType<KeyboardContainer>> KEYBOARD_CONTAINER = APRegistration.CONTAINER_TYPES.register(
         "keyboard_container",
         () -> IMenuTypeExtension.create((windowId, inv, buf) -> {
             ItemStack keyboardItem = ItemStack.STREAM_CODEC.decode(buf);
@@ -32,7 +32,7 @@ public class APContainerTypes {
         })
     );
 
-    public static final DeferredHolder<MenuType<SmartGlassesContainer>> SMART_GLASSES_CONTAINER = APRegistration.CONTAINER_TYPES.register(
+    public static final DeferredHolder<MenuType<?>, MenuType<SmartGlassesContainer>> SMART_GLASSES_CONTAINER = APRegistration.CONTAINER_TYPES.register(
         "smart_glasses_container",
         () -> ContainerData.toType(
             ComputerContainerData.STREAM_CODEC,

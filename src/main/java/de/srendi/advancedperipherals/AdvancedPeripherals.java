@@ -1,6 +1,8 @@
 package de.srendi.advancedperipherals;
 
+import dan200.computercraft.api.media.MediaCapability;
 import dan200.computercraft.api.peripheral.PeripheralCapability;
+import dan200.computercraft.shared.media.MountMedia;
 import de.srendi.advancedperipherals.common.addons.APAddon;
 import de.srendi.advancedperipherals.common.addons.ae2.AE2Registries;
 import de.srendi.advancedperipherals.common.addons.appliedenergistics.AEApi;
@@ -16,6 +18,7 @@ import de.srendi.advancedperipherals.common.setup.CCRegistration;
 import de.srendi.advancedperipherals.common.util.ChunkManager;
 import de.srendi.advancedperipherals.common.village.VillageStructures;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.ItemLike;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModLoadingContext;
 import net.neoforged.fml.common.Mod;

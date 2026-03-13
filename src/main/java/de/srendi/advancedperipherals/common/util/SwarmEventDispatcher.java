@@ -23,7 +23,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * SwarmEventDispatcher will combine multiple same events which fired from different peripherals into one event as a table.
  * Then we can save ComputerCraft's event queue space.
  */
-@EventBusSubscriber(modid = AdvancedPeripherals.MOD_ID)
+@EventBusSubscriber
 public final class SwarmEventDispatcher {
     private static final ConcurrentMap<String, ConcurrentMap<Integer, ConcurrentMap<String, Set<Object>>>> events = new ConcurrentHashMap<>();
     private static final AtomicBoolean updated = new AtomicBoolean();

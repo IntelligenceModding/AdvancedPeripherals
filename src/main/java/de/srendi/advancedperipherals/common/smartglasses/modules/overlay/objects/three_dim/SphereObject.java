@@ -19,7 +19,7 @@ import java.util.UUID;
 public class SphereObject extends ThreeDimensionalObject {
     public static final int TYPE_ID = 6;
 
-    private static final IObjectRenderer RENDERER = new SphereRenderer();
+    private static final IThreeDObjectRenderer RENDERER = new SphereRenderer();
 
     @FixedPointNumberProperty(min = 1, max = 1024)
     public int sectors = 16;

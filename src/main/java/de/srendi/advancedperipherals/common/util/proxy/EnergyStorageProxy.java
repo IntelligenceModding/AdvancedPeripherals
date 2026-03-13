@@ -28,7 +28,7 @@ public class EnergyStorageProxy extends AbstractStorageProxy implements IEnergyS
         }
         this.receiving = true;
         try {
-            IEnergyStorage storage = energyDetectorTE.getOutputStorage().orElse(null);
+            IEnergyStorage storage = energyDetectorTE.getOutputStorage();
             if (storage == null) {
                 return 0;
             }
@@ -65,12 +65,14 @@ public class EnergyStorageProxy extends AbstractStorageProxy implements IEnergyS
 
     @Override
     public int getEnergyStored() {
-        return energyDetectorTE.getOutputStorage().map(IEnergyStorage::getEnergyStored).orElse(0);
+        IEnergyStorage storage = energyDetectorTE.getOutputStorage();
+        return storage != null ? storage.getEnergyStored() : 0;
     }
 
     @Override
     public int getMaxEnergyStored() {
-        return energyDetectorTE.getOutputStorage().map(IEnergyStorage::getMaxEnergyStored).orElse(0);
+        IEnergyStorage storage = energyDetectorTE.getOutputStorage();
+        return storage != null ? storage.getMaxEnergyStored() : 0;
     }
 
     @Override

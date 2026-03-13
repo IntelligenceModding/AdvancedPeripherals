@@ -69,7 +69,7 @@ public class APFakePlayer extends FakePlayer {
     private double reachRange = -1;
 
     public APFakePlayer(ServerLevel world, Entity owner, GameProfile profile) {
-        super(world, profile != null && profile.isComplete() ? profile : PROFILE);
+        super(world, profile != null ? profile : PROFILE);
         if (owner != null) {
             setCustomName(owner.getName());
             this.owner = new WeakReference<>(owner);

@@ -27,7 +27,7 @@ public class FingerprintUtil {
             return cachedHashStr;
         }
 
-        String itemId = key.itemId();
+        String itemId = key.itemId().toString();
         byte[] bytesOfHash = ByteBuffer.allocate(itemId.length() + 4)
             .put(itemId.getBytes(StandardCharsets.US_ASCII))
             .putInt(key.dataHashCode())

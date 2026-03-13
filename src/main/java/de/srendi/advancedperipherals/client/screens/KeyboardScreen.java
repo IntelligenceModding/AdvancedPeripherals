@@ -8,10 +8,11 @@ package de.srendi.advancedperipherals.client.screens;
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.vertex.PoseStack;
-import dan200.computercraft.client.gui.ClientInputHandler;
+import dan200.computercraft.client.gui.ClientComputerActions;
+import dan200.computercraft.client.gui.ClientComputerInput;
 import dan200.computercraft.client.gui.widgets.TerminalWidget;
+import dan200.computercraft.core.input.UserComputerInput;
 import dan200.computercraft.core.terminal.Terminal;
-import dan200.computercraft.shared.computer.core.InputHandler;
 import de.srendi.advancedperipherals.client.ClientWorker;
 import de.srendi.advancedperipherals.common.container.KeyboardContainer;
 import de.srendi.advancedperipherals.common.network.toserver.KeyboardMouseClickPacket;
@@ -19,6 +20,7 @@ import de.srendi.advancedperipherals.common.network.toserver.KeyboardMouseMovePa
 import de.srendi.advancedperipherals.common.network.toserver.KeyboardMouseScrollPacket;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.MenuAccess;
 import net.minecraft.network.chat.Component;
@@ -35,7 +37,8 @@ import org.lwjgl.glfw.GLFW;
 public class KeyboardScreen extends Screen implements MenuAccess<KeyboardContainer> {
 
     protected final KeyboardContainer keyboardContainer;
-    protected final InputHandler input;
+    protected final UserComputerInput input;
+    protected final ClientComputerActions actions;
     private final Terminal terminalData;
     private TerminalWidget terminal;
     private MouseState mouseState = MouseState.RELEASED;
@@ -50,7 +53,8 @@ public class KeyboardScreen extends Screen implements MenuAccess<KeyboardContain
     public KeyboardScreen(KeyboardContainer keyboardContainer, Inventory inv, Component titleIn) {
         super(titleIn);
         this.keyboardContainer = keyboardContainer;
-        this.input = new ClientInputHandler(keyboardContainer);
+        this.input = new UserComputerInput(new ClientComputerInput(keyboardContainer), false, 0, 0);
+        this.actions = new ClientComputerActions(keyboardContainer);
         this.terminalData = new Terminal(0, 0, false);
     }
 
@@ -74,7 +78,7 @@ public class KeyboardScreen extends Screen implements MenuAccess<KeyboardContain
         // poseStack.scale(scale, scale, 1);
 
         Component text = Component.translatable("text.advancedperipherals.keyboard.close");
-        graphics.drawCenteredString(minecraft.font, text, screenWidth / 2f, 1, 0xFFFFFF);
+        graphics.drawCenteredString(minecraft.font, text, screenWidth / 2, 1, 0xFFFFFF);
     }
 
     @Override
@@ -89,7 +93,7 @@ public class KeyboardScreen extends Screen implements MenuAccess<KeyboardContain
         super.init();
         // this.minecraft.keyboardHandler.setSendRepeatsToGui(true);
 
-        this.terminal = addWidget(new TerminalWidget(terminalData, new ClientInputHandler(this.keyboardContainer), 0, 0));
+        this.terminal = addWidget(new TerminalWidget(terminalData, this.input, this.actions, 0, 0));
         this.terminal.visible = false;
         this.terminal.active = false;
         setFocused(this.terminal);

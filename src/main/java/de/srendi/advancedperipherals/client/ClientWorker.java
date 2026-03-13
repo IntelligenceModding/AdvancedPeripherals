@@ -9,7 +9,7 @@ import net.neoforged.neoforge.client.event.ClientTickEvent;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-@EventBusSubscriber(value = Dist.CLIENT, modid = AdvancedPeripherals.MOD_ID)
+@EventBusSubscriber(Dist.CLIENT)
 public class ClientWorker {
 
     private static final Map<String, Runnable> tasks = new ConcurrentHashMap<>();
