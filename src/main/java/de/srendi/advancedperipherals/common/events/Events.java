@@ -67,13 +67,18 @@ public class Events {
 
     @SubscribeEvent
     public static void onCommand(CommandEvent event) throws CommandSyntaxException {
-        if (!getCommandName(event.getParseResults().getContext()).equals("say"))
+        if (event.getException() != null) {
             return;
+        }
+        CommandContextBuilder<CommandSourceStack> context = event.getParseResults().getContext();
+        if (context.getCommand() == null || !getCommandName(context).equals("say")) {
+            return;
+        }
         String username = "sayCommand";
         String uuid = null;
-        String message = MessageArgument.getMessage(event.getParseResults().getContext().build("apChatEvent"), "message").getString();
+        String message = MessageArgument.getMessage(context.build(""), "message").getString();
         boolean isHidden = false;
-        CommandSourceStack source = event.getParseResults().getContext().getSource();
+        CommandSourceStack source = context.getSource();
         if (source.getEntity() != null) {
             username = source.getEntity().getDisplayName().getString();
             uuid = source.getEntity().getUUID().toString();
@@ -87,7 +92,7 @@ public class Events {
     }
 
     private static String getCommandName(CommandContextBuilder<?> context) {
-        if (context != null && context.getNodes() != null && !context.getNodes().isEmpty()) {
+        if (context != null && !context.getNodes().isEmpty()) {
             return context.getNodes().get(0).getNode().getName();
         }
         return "";
