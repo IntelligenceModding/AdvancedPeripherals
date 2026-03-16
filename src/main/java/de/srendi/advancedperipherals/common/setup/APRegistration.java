@@ -51,6 +51,7 @@ public class APRegistration {
         APVillagers.register();
         APTags.Items.init();
         APDataComponents.register();
+        CCRegistration.register();
 
         modEventBus.addListener(APRegistration::onCommonSetup);
     }
@@ -58,7 +59,7 @@ public class APRegistration {
     private static void onCommonSetup(FMLCommonSetupEvent event) {
         event.enqueueWork(() -> {
             // CC:T's registries are not thread safe
-            CCRegistration.register();
+            CCRegistration.registerMain();
         });
     }
 }

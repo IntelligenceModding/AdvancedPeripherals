@@ -1,5 +1,6 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.owner;
 
+import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.peripheral.IPeripheral;
 import dan200.computercraft.api.pocket.IPocketAccess;
 import dan200.computercraft.core.computer.ComputerSide;
@@ -109,7 +110,7 @@ public class PocketPeripheralOwner extends BasePeripheralOwner {
     }
 
     @Override
-    public <T> T withPlayer(APFakePlayer.Action<T> function) {
+    public <T> T withPlayer(APFakePlayer.Action<T> function) throws LuaException {
         throw new RuntimeException("Not implemented yet");
     }
 

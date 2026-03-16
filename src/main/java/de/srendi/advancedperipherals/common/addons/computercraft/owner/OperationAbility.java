@@ -20,8 +20,6 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 
 import static de.srendi.advancedperipherals.common.setup.APDataComponents.ABILITY_COOLDOWN;
 
@@ -88,16 +86,27 @@ public class OperationAbility implements IOwnerAbility, IPeripheralPlugin {
         }
     }
 
-    public <T> @NotNull MethodResult performOperation(IPeripheralOperation<T> operation, T context, @Nullable IPeripheralCheck<T> check, IPeripheralFunction<T, MethodResult> method, @Nullable Consumer<T> successCallback, @Nullable BiConsumer<MethodResult, FailReason> failCallback) throws LuaException {
+    public <T> @NotNull MethodResult performOperation(
+        IPeripheralOperation<T> operation,
+        T context,
+        @Nullable IPeripheralCheck<T> check,
+        IPeripheralFunction<T, MethodResult> method,
+        @Nullable IPeripheralOperation.Successor<T> successCallback,
+        @Nullable IPeripheralOperation.Failer failCallback
+    ) throws LuaException {
         if (isOnCooldown(operation)) {
             MethodResult result = MethodResult.of(null, String.format("%s is on cooldown", operation.settingsName()));
-            if (failCallback != null) failCallback.accept(result, FailReason.COOLDOWN);
+            if (failCallback != null) {
+                failCallback.accept(result, FailReason.COOLDOWN);
+            }
             return result;
         }
         if (check != null) {
             MethodResult checkResult = check.check(context);
             if (checkResult != null) {
-                if (failCallback != null) failCallback.accept(checkResult, FailReason.CHECK_FAILED);
+                if (failCallback != null) {
+                    failCallback.accept(checkResult, FailReason.CHECK_FAILED);
+                }
                 return checkResult;
             }
         }
@@ -108,20 +117,25 @@ public class OperationAbility implements IOwnerAbility, IPeripheralPlugin {
             fuelAbility = owner.getAbility(PeripheralOwnerAbility.FUEL);
             if (fuelAbility == null) {
                 MethodResult result = MethodResult.of(null, "This peripheral has no fuel at all");
-                if (failCallback != null) failCallback.accept(result, FailReason.NOT_ENOUGH_FUEL);
+                if (failCallback != null) {
+                    failCallback.accept(result, FailReason.NOT_ENOUGH_FUEL);
+                }
                 return result;
             }
             if (!fuelAbility.consumeFuel(cost, false)) {
                 MethodResult result = MethodResult.of(null, "Not enough fuel for operation");
-                if (failCallback != null) failCallback.accept(result, FailReason.NOT_ENOUGH_FUEL);
+                if (failCallback != null) {
+                    failCallback.accept(result, FailReason.NOT_ENOUGH_FUEL);
+                }
                 return result;
             }
             cooldown = fuelAbility.reduceCooldownAccordingToConsumptionRate(cooldown);
         }
 
         MethodResult result = method.apply(context);
-        if (successCallback != null)
+        if (successCallback != null) {
             successCallback.accept(context);
+        }
 
         setCooldown(operation, cooldown);
         return result;

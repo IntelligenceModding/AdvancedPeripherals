@@ -7,9 +7,6 @@ import de.srendi.advancedperipherals.common.addons.computercraft.owner.Operation
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.PeripheralOwnerAbility;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
-
 public abstract class BasePeripheralPlugin implements IPeripheralPlugin {
     protected final IPeripheralOwner owner;
 
@@ -21,11 +18,11 @@ public abstract class BasePeripheralPlugin implements IPeripheralPlugin {
         return this.owner;
     }
 
-    protected <T> MethodResult withOperation(IPeripheralOperation<T> operation, T context, @Nullable IPeripheralCheck<T> check, IPeripheralFunction<T, MethodResult> method, @Nullable Consumer<T> successCallback) throws LuaException {
+    protected <T> MethodResult withOperation(IPeripheralOperation<T> operation, T context, @Nullable IPeripheralCheck<T> check, IPeripheralFunction<T, MethodResult> method, @Nullable IPeripheralOperation.Successor<T> successCallback) throws LuaException {
         return withOperation(operation, context, check, method, successCallback, null);
     }
 
-    protected <T> MethodResult withOperation(IPeripheralOperation<T> operation, T context, @Nullable IPeripheralCheck<T> check, IPeripheralFunction<T, MethodResult> method, @Nullable Consumer<T> successCallback, @Nullable BiConsumer<MethodResult, OperationAbility.FailReason> failCallback) throws LuaException {
+    protected <T> MethodResult withOperation(IPeripheralOperation<T> operation, T context, @Nullable IPeripheralCheck<T> check, IPeripheralFunction<T, MethodResult> method, @Nullable IPeripheralOperation.Successor<T> successCallback, @Nullable IPeripheralOperation.Failer failCallback) throws LuaException {
         OperationAbility operationAbility = this.owner.getAbility(PeripheralOwnerAbility.OPERATION);
         if (operationAbility == null) throw new IllegalArgumentException("This shouldn't happen at all");
         return operationAbility.performOperation(operation, context, check, method, successCallback, failCallback);

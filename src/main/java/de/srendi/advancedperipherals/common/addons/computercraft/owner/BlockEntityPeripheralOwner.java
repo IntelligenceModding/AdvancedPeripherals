@@ -1,5 +1,6 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.owner;
 
+import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.peripheral.IPeripheral;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.blocks.base.BaseBlock;
@@ -103,7 +104,7 @@ public class BlockEntityPeripheralOwner<T extends BlockEntity & IPeripheralTileE
     }
 
     @Override
-    public <T1> T1 withPlayer(APFakePlayer.Action<T1> function) {
+    public <T1> T1 withPlayer(APFakePlayer.Action<T1> function) throws LuaException {
         throw new NotImplementedException();
     }
 

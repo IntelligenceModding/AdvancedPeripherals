@@ -127,7 +127,7 @@ public class AutomataBlockHandPlugin extends AutomataCorePlugin {
         });
     }
 
-    private InteractionResult updateBlock(APFakePlayer player, LuaTable<?, ?> options) {
+    private InteractionResult updateBlock(APFakePlayer player, LuaTable<?, ?> options) throws LuaException {
         Level world = player.level();
         HitResult hit = player.findHit(true, false);
         if (!(hit instanceof BlockHitResult blockHit)) {
@@ -135,22 +135,18 @@ public class AutomataBlockHandPlugin extends AutomataCorePlugin {
         }
         BlockPos pos = blockHit.getBlockPos();
         BlockEntity block = world.getBlockEntity(pos);
-        try {
-            if (block instanceof SignBlockEntity sign) {
-                String text = StringUtil.convertAndToSectionMark(options.optString("text").orElse(null));
-                if (text != null) {
-                    setSignText(world, sign, text, true);
-                }
-                String backText = StringUtil.convertAndToSectionMark(options.optString("backText").orElse(null));
-                if (backText != null) {
-                    setSignText(world, sign, backText, false);
-                }
-                if (text != null || backText != null) {
-                    return InteractionResult.CONSUME;
-                }
+        if (block instanceof SignBlockEntity sign) {
+            String text = StringUtil.convertAndToSectionMark(options.optString("text").orElse(null));
+            if (text != null) {
+                setSignText(world, sign, text, true);
             }
-        } catch (LuaException ignored) {
-            return InteractionResult.PASS;
+            String backText = StringUtil.convertAndToSectionMark(options.optString("backText").orElse(null));
+            if (backText != null) {
+                setSignText(world, sign, backText, false);
+            }
+            if (text != null || backText != null) {
+                return InteractionResult.CONSUME;
+            }
         }
         return InteractionResult.PASS;
     }

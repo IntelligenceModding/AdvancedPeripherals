@@ -1,5 +1,6 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.owner;
 
+import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.peripheral.IPeripheral;
 import de.srendi.advancedperipherals.common.util.fakeplayer.APFakePlayer;
 import de.srendi.advancedperipherals.lib.peripherals.IPeripheralOperation;
@@ -75,7 +76,7 @@ public interface IPeripheralOwner {
 
     void markDataStorageDirty();
 
-    <T> T withPlayer(APFakePlayer.Action<T> function);
+    <T> T withPlayer(APFakePlayer.Action<T> function) throws LuaException;
 
     ItemStack getToolInMainHand();
 

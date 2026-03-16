@@ -1,6 +1,7 @@
 package de.srendi.advancedperipherals.common.util.fakeplayer;
 
 import com.mojang.authlib.GameProfile;
+import dan200.computercraft.api.lua.LuaException;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.util.HitResultUtil;
 import de.srendi.advancedperipherals.common.util.Pair;
@@ -123,7 +124,7 @@ public class APFakePlayer extends FakePlayer {
         return player -> player.<T>doActionWithRot(yaw, pitch, action);
     }
 
-    public <T> T doActionWithRot(float yaw, float pitch, Action<T> action) {
+    public <T> T doActionWithRot(float yaw, float pitch, Action<T> action) throws LuaException {
         final float yRot = this.getYRot(), xRot = this.getXRot();
         this.setRot(yRot + yaw, xRot + pitch);
         try {
@@ -137,7 +138,7 @@ public class APFakePlayer extends FakePlayer {
         return player -> player.<T>doActionWithShiftKey(shift, action);
     }
 
-    public <T> T doActionWithShiftKey(boolean shift, Action<T> action) {
+    public <T> T doActionWithShiftKey(boolean shift, Action<T> action) throws LuaException {
         boolean old = this.isShiftKeyDown();
         this.setShiftKeyDown(shift);
         try {
@@ -151,7 +152,7 @@ public class APFakePlayer extends FakePlayer {
         return player -> player.<T>doActionWithReachRange(range, action);
     }
 
-    public <T> T doActionWithReachRange(double range, Action<T> action) {
+    public <T> T doActionWithReachRange(double range, Action<T> action) throws LuaException {
         this.reachRange = range;
         try {
             return action.apply(this);
@@ -388,6 +389,6 @@ public class APFakePlayer extends FakePlayer {
 
     @FunctionalInterface
     public interface Action<T> {
-        T apply(APFakePlayer player);
+        T apply(APFakePlayer player) throws LuaException;
     }
 }

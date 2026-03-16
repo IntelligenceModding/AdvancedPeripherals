@@ -1,5 +1,6 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.peripheral.plugins;
 
+import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.lua.MethodResult;
 import dan200.computercraft.api.peripheral.IPeripheral;
@@ -17,7 +18,7 @@ public class AutomataSoulFeedingPlugin extends AutomataCorePlugin {
     }
 
     @LuaFunction(mainThread = true)
-    public final MethodResult feedSoul() {
+    public final MethodResult feedSoul() throws LuaException {
         TurtlePeripheralOwner owner = automataCore.getPeripheralOwner();
         if (!(owner.getToolInMainHand().getItem() instanceof IFeedableAutomataCore))
             return MethodResult.of(null, "Well, you should feed correct mechanical soul!");

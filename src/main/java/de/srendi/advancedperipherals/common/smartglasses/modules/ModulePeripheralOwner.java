@@ -1,5 +1,6 @@
 package de.srendi.advancedperipherals.common.smartglasses.modules;
 
+import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.peripheral.IPeripheral;
 import dan200.computercraft.core.computer.ComputerSide;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
@@ -117,7 +118,7 @@ public class ModulePeripheralOwner extends BasePeripheralOwner {
     }
 
     @Override
-    public <T> T withPlayer(APFakePlayer.Action<T> function) {
+    public <T> T withPlayer(APFakePlayer.Action<T> function) throws LuaException {
         throw new NotImplementedException();
     }
 

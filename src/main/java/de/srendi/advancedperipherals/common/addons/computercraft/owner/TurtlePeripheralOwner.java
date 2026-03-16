@@ -1,6 +1,7 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.owner;
 
 import com.mojang.authlib.GameProfile;
+import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.peripheral.IPeripheral;
 import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
@@ -97,7 +98,7 @@ public class TurtlePeripheralOwner extends BasePeripheralOwner {
     }
 
     @Override
-    public <T> T withPlayer(APFakePlayer.Action<T> function) {
+    public <T> T withPlayer(APFakePlayer.Action<T> function) throws LuaException {
         return FakePlayerProviderTurtle.withPlayer(turtle, function);
     }
 
@@ -118,12 +119,15 @@ public class TurtlePeripheralOwner extends BasePeripheralOwner {
 
     @Override
     public boolean isMovementPossible(@NotNull Level level, @NotNull BlockPos pos) {
-        return FakePlayerProviderTurtle.withPlayer(turtle, player -> {
-            if (level.isOutsideBuildHeight(pos)) return false;
-            if (!level.isInWorldBounds(pos)) return false;
-            if (!level.isAreaLoaded(pos, 0)) return false;
-            return level.getWorldBorder().isWithinBounds(pos);
-        });
+        try {
+            return FakePlayerProviderTurtle.withPlayer(turtle, player -> {
+                if (!level.isInWorldBounds(pos)) return false;
+                if (!level.hasChunkAt(pos)) return false;
+                return level.getWorldBorder().isWithinBounds(pos);
+            });
+        } catch (LuaException e) {
+            throw new RuntimeException(e); // never
+        }
     }
 
     @Override

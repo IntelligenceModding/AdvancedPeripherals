@@ -1,6 +1,7 @@
 package de.srendi.advancedperipherals.common.util.fakeplayer;
 
 import com.mojang.authlib.GameProfile;
+import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.shared.util.InventoryUtil;
 import dan200.computercraft.shared.util.WorldUtil;
@@ -103,13 +104,11 @@ public final class FakePlayerProviderTurtle {
         }
     }
 
-
-    public static <T> T withPlayer(ITurtleAccess turtle, APFakePlayer.Action<T> function) {
+    public static <T> T withPlayer(ITurtleAccess turtle, APFakePlayer.Action<T> action) throws LuaException {
         APFakePlayer player = getPlayer(turtle, turtle.getOwningPlayer());
         load(player, turtle);
-        T result = function.apply(player);
+        T result = action.apply(player);
         unload(player, turtle);
         return result;
     }
-
 }

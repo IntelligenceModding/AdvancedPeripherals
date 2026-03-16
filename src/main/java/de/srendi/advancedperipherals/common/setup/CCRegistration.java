@@ -53,6 +53,12 @@ public class CCRegistration {
     public static final DeferredHolder<UpgradeType<? extends IPocketUpgrade>, UpgradeType<PocketPlayerDetectorUpgrade>> PLAYER_DETECTOR_POCKET = APRegistration.POCKET_SERIALIZER.register(ID.PLAYER_POCKET.getPath(), () -> UpgradeType.simpleWithCustomItem(PocketPlayerDetectorUpgrade::new));
 
     public static void register() {
+    }
+
+    /**
+     * register main should only be invoked on main thread.
+     */
+    public static void registerMain() {
         IntegrationPeripheralProvider.load();
         ComputerCraftAPI.registerAPIFactory(system -> GlobalVersionsLuaAPI.INSTANCE);
         ComputerCraftAPI.registerAPIFactory(SmartGlassesAPI::create);
