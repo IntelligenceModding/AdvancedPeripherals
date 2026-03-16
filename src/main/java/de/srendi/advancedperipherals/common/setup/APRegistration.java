@@ -38,6 +38,7 @@ public class APRegistration {
         CONTAINER_TYPES.register(modEventBus);
         POI_TYPES.register(modEventBus);
         VILLAGER_PROFESSIONS.register(modEventBus);
+        ENTITIES.register(modEventBus);
         TURTLE_SERIALIZER.register(modEventBus);
         POCKET_SERIALIZER.register(modEventBus);
         CREATIVE_MODE_TABS.register(modEventBus);
@@ -51,5 +52,7 @@ public class APRegistration {
         APVillagers.register();
         APTags.Items.init();
         APDataComponents.register();
+
+        CCRegistration.register();
     }
 }

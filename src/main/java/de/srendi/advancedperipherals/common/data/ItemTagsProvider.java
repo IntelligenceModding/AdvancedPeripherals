@@ -6,16 +6,22 @@ import de.srendi.advancedperipherals.common.setup.APItems;
 import de.srendi.advancedperipherals.common.setup.APRegistration;
 import de.srendi.advancedperipherals.common.setup.APTags;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.data.DataGenerator;
+import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.TagsProvider;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.Item;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.concurrent.CompletableFuture;
+
 public class ItemTagsProvider extends TagsProvider<Item> {
 
-    protected ItemTagsProvider(DataGenerator generator, @Nullable ExistingFileHelper existingFileHelper) {
-        super(generator, APRegistration.ITEMS, AdvancedPeripherals.MOD_ID, existingFileHelper);
+    protected ItemTagsProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider, @Nullable ExistingFileHelper existingFileHelper) {
+        super(output, Registries.ITEM, lookupProvider, AdvancedPeripherals.MOD_ID, existingFileHelper);
     }
 
     @Override

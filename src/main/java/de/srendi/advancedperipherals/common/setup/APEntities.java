@@ -30,6 +30,7 @@ public class APEntities {
             .build("turtle_seat"));
 
     public static void register() {
+
     }
 
     @SubscribeEvent

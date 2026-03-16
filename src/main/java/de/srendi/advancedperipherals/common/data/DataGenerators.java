@@ -7,6 +7,7 @@ import de.srendi.advancedperipherals.common.setup.APRegistration;
 import net.minecraft.Util;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.RegistrySetBuilder;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.registries.RegistryPatchGenerator;
@@ -43,7 +44,7 @@ public class DataGenerators {
         generator.addProvider(event.includeServer(), new DatapackBuiltinEntriesProvider(packOutput, fullRegistryPatch, null));
         generator.addProvider(event.includeServer(), new PoiTypeProvider(packOutput, completablefuture, existingFileHelper));
         generator.addProvider(event.includeServer(), new BlockStatesAndModelsProvider(packOutput, existingFileHelper));
-        generator.addProvider(event.includeServer(), new ItemTagsProvider(generator, existingFileHelper));
+        generator.addProvider(event.includeServer(), new ItemTagsProvider(packOutput, lookupProvider, existingFileHelper));
 
         generator.addProvider(event.includeClient(), new EnUsLanguageProvider(packOutput));
     }

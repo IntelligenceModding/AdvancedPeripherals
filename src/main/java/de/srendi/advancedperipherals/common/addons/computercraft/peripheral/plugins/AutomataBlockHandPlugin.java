@@ -109,7 +109,7 @@ public class AutomataBlockHandPlugin extends AutomataCorePlugin {
      * updateBlock method let turtle update specific block's status.
      * It require a compass to be equipped to perform actions.
      *
-     * @param options A table contains where to find the block and how to update the block
+     * @param arguments A table contains where to find the block and how to update the block
      *   yaw: relative yaw
      *   pitch: relative pitch
      *
@@ -136,7 +136,7 @@ public class AutomataBlockHandPlugin extends AutomataCorePlugin {
         });
     }
 
-    private InteractionResult updateBlock(APFakePlayer player, LuaTable<?, ?> options) {
+    private InteractionResult updateBlock(APFakePlayer player, LuaTable<?, ?> options){
         Level world = player.level();
         HitResult hit = player.findHit(true, false);
         if (!(hit instanceof BlockHitResult blockHit)) {
@@ -144,18 +144,22 @@ public class AutomataBlockHandPlugin extends AutomataCorePlugin {
         }
         BlockPos pos = blockHit.getBlockPos();
         BlockEntity block = world.getBlockEntity(pos);
-        if (block instanceof SignBlockEntity sign) {
-            String text = StringUtil.convertAndToSectionMark(options.optString("text").orElse(null));
-            if (text != null) {
-                setSignText(world, sign, text, true);
+        try {
+            if (block instanceof SignBlockEntity sign) {
+                String text = StringUtil.convertAndToSectionMark(options.optString("text").orElse(null));
+                if (text != null) {
+                    setSignText(world, sign, text, true);
+                }
+                String backText = StringUtil.convertAndToSectionMark(options.optString("backText").orElse(null));
+                if (backText != null) {
+                    setSignText(world, sign, backText, false);
+                }
+                if (text != null || backText != null) {
+                    return InteractionResult.CONSUME;
+                }
             }
-            String backText = StringUtil.convertAndToSectionMark(options.optString("backText").orElse(null));
-            if (backText != null) {
-                setSignText(world, sign, backText, false);
-            }
-            if (text != null || backText != null) {
-                return InteractionResult.CONSUME;
-            }
+        } catch (LuaException ignored) {
+            return InteractionResult.PASS;
         }
         return InteractionResult.PASS;
     }

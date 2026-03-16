@@ -19,7 +19,8 @@ public class VillagerTrades {
 
     @SubscribeEvent
     public static void registerWanderingTrade(WandererTradesEvent event) {
-        if (APConfig.WORLD_CONFIG.enableWanderingTraderTrades.get()) {
+        //if (APConfig.WORLD_CONFIG.enableWanderingTraderTrades.get()) {
+        if (false) {
             TradeBuilder.createTrade(event, APBlocks.PERIPHERAL_CASING.get(), VillagerTrade.Type.ITEM_FOR_EMERALD, 1, 1)
                     .setMaxUses(8)
                     .build();
@@ -31,7 +32,8 @@ public class VillagerTrades {
 
     @SubscribeEvent
     public static void registerVillagerTrades(VillagerTradesEvent event) {
-        if (event.getType() == APVillagers.COMPUTER_SCIENTIST.get()) {
+
+        if (false && event.getType() == APVillagers.COMPUTER_SCIENTIST.get()) {
 
             TradeBuilder.createTrade(event, APBlocks.PERIPHERAL_CASING.get(), VillagerTrade.Type.ITEM_FOR_EMERALD, 1, 1)
                     .setXp(1)

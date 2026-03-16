@@ -177,7 +177,8 @@ public class TurtleSeatEntity extends Entity implements HasCustomInventoryScreen
                 ServerComputer computer = tile.createServerComputer();
                 BlockState state = tile.getBlockState();
                 ItemStack stack = new ItemStack(tile.getBlockState().getBlock());
-                stack.applyComponents(Util.make(DataComponentMap.builder(), tile::collectSafeComponents).build());
+                //stack.applyComponents(Util.make(DataComponentMap.builder(), tile::collectComponents).build());
+                stack.applyComponents(tile.collectComponents());
                 PlatformHelper.get().openMenu(player, tile.getName(), tile, new ComputerContainerData(computer, stack));
             }
         }
