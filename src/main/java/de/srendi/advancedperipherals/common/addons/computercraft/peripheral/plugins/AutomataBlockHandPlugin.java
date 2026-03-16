@@ -5,9 +5,7 @@ import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.lua.LuaTable;
 import dan200.computercraft.api.lua.MethodResult;
-import dan200.computercraft.api.lua.ObjectLuaTable;
 import dan200.computercraft.api.turtle.ITurtleAccess;
-import dan200.computercraft.api.turtle.TurtleSide;
 import dan200.computercraft.shared.turtle.core.TurtlePlayer;
 import de.srendi.advancedperipherals.common.addons.computercraft.operations.SingleOperationContext;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.TurtlePeripheralOwner;
@@ -42,14 +40,7 @@ import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collections;
-import java.util.Map;
-import java.util.stream.Stream;
-
-import static de.srendi.advancedperipherals.common.addons.computercraft.operations.SingleOperation.ACCURE_PLACE;
-import static de.srendi.advancedperipherals.common.addons.computercraft.operations.SingleOperation.DIG;
-import static de.srendi.advancedperipherals.common.addons.computercraft.operations.SingleOperation.UPDATE_BLOCK;
-import static de.srendi.advancedperipherals.common.addons.computercraft.operations.SingleOperation.USE_ON_BLOCK;
+import static de.srendi.advancedperipherals.common.addons.computercraft.operations.SingleOperation.*;
 
 public class AutomataBlockHandPlugin extends AutomataCorePlugin {
 
@@ -68,7 +59,7 @@ public class AutomataBlockHandPlugin extends AutomataCorePlugin {
 
         boolean sneak = options.optBoolean("sneak").orElse(false);
         float yaw = options.optDouble("yaw").orElse(0d).floatValue();
-        float pitch = options.optDouble( "pitch").orElse(0d).floatValue();
+        float pitch = options.optDouble("pitch").orElse(0d).floatValue();
 
         return automataCore.withOperation(DIG, context -> {
             TurtlePeripheralOwner owner = automataCore.getPeripheralOwner();
@@ -91,7 +82,7 @@ public class AutomataBlockHandPlugin extends AutomataCorePlugin {
 
         boolean sneak = options.optBoolean("sneak").orElse(false);
         float yaw = options.optDouble("yaw").orElse(0d).floatValue();
-        float pitch = options.optDouble( "pitch").orElse(0d).floatValue();
+        float pitch = options.optDouble("pitch").orElse(0d).floatValue();
 
         return automataCore.withOperation(USE_ON_BLOCK, context -> {
             TurtlePeripheralOwner owner = automataCore.getPeripheralOwner();
@@ -110,11 +101,11 @@ public class AutomataBlockHandPlugin extends AutomataCorePlugin {
      * It require a compass to be equipped to perform actions.
      *
      * @param arguments A table contains where to find the block and how to update the block
-     *   yaw: relative yaw
-     *   pitch: relative pitch
-     *
-     *   text: the text going to write on the sign's front side. Default is null
-     *   backText: the text going to write on the sign's back side. Default is null
+     *                  yaw: relative yaw
+     *                  pitch: relative pitch
+     *                  <p>
+     *                  text: the text going to write on the sign's front side. Default is null
+     *                  backText: the text going to write on the sign's back side. Default is null
      */
     @LuaFunction(mainThread = true)
     public final MethodResult updateBlock(@NotNull IArguments arguments) throws LuaException {
@@ -136,7 +127,7 @@ public class AutomataBlockHandPlugin extends AutomataCorePlugin {
         });
     }
 
-    private InteractionResult updateBlock(APFakePlayer player, LuaTable<?, ?> options){
+    private InteractionResult updateBlock(APFakePlayer player, LuaTable<?, ?> options) {
         Level world = player.level();
         HitResult hit = player.findHit(true, false);
         if (!(hit instanceof BlockHitResult blockHit)) {
@@ -169,14 +160,14 @@ public class AutomataBlockHandPlugin extends AutomataCorePlugin {
      * It should not able to place fluids / use any item, because compass does not recognize them.
      *
      * @param arguments A table contains how to place the block:
-     *   x: the x offset relative to the turtle. Default 0
-     *   y: the y offset relative to the turtle. Default 0
-     *   z: the z offset relative to the turtle. Default 0
-     *   anchor: the direction the block is going to hanging on. Default is the direction of the turtle
-     *   front: the direction the block is going to facing. Default is same as anchor
-     *   top: the direction the block's top is going to facing. Default is TOP
-     *   text: the text going to write on the sign's front side. Default is null
-     *   backText: the text going to write on the sign's back side. Default is null
+     *                  x: the x offset relative to the turtle. Default 0
+     *                  y: the y offset relative to the turtle. Default 0
+     *                  z: the z offset relative to the turtle. Default 0
+     *                  anchor: the direction the block is going to hanging on. Default is the direction of the turtle
+     *                  front: the direction the block is going to facing. Default is same as anchor
+     *                  top: the direction the block's top is going to facing. Default is TOP
+     *                  text: the text going to write on the sign's front side. Default is null
+     *                  backText: the text going to write on the sign's back side. Default is null
      */
     @LuaFunction(mainThread = true)
     public final MethodResult placeBlock(@NotNull IArguments arguments) throws LuaException {
@@ -202,9 +193,9 @@ public class AutomataBlockHandPlugin extends AutomataCorePlugin {
         Direction topDir = top != null ? automataCore.validateSide(top) : null;
 
         int distance =
-            Math.max(0, Math.abs(x) - freeDist) +
-            Math.max(0, Math.abs(y) - freeDist) +
-            Math.max(0, Math.abs(z) - freeDist);
+                Math.max(0, Math.abs(x) - freeDist) +
+                        Math.max(0, Math.abs(y) - freeDist) +
+                        Math.max(0, Math.abs(z) - freeDist);
         return automataCore.withOperation(ACCURE_PLACE, new SingleOperationContext(1, distance), context -> {
             ItemStack stack = turtle.getInventory().getItem(turtle.getSelectedSlot());
             if (stack.isEmpty()) {
@@ -295,12 +286,18 @@ public class AutomataBlockHandPlugin extends AutomataCorePlugin {
         @Override
         public Direction[] getNearestLookingDirections() {
             return switch (this.anchor) {
-                case DOWN -> new Direction[]{Direction.DOWN, Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST, Direction.UP};
-                case UP -> new Direction[]{Direction.UP, Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST, Direction.DOWN};
-                case NORTH -> new Direction[]{Direction.NORTH, Direction.EAST, Direction.WEST, Direction.UP, Direction.DOWN, Direction.SOUTH};
-                case SOUTH -> new Direction[]{Direction.SOUTH, Direction.EAST, Direction.WEST, Direction.UP, Direction.DOWN, Direction.NORTH};
-                case WEST -> new Direction[]{Direction.WEST, Direction.SOUTH, Direction.UP, Direction.NORTH, Direction.DOWN, Direction.EAST};
-                case EAST -> new Direction[]{Direction.EAST, Direction.SOUTH, Direction.UP, Direction.NORTH, Direction.DOWN, Direction.WEST};
+                case DOWN ->
+                        new Direction[]{Direction.DOWN, Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST, Direction.UP};
+                case UP ->
+                        new Direction[]{Direction.UP, Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST, Direction.DOWN};
+                case NORTH ->
+                        new Direction[]{Direction.NORTH, Direction.EAST, Direction.WEST, Direction.UP, Direction.DOWN, Direction.SOUTH};
+                case SOUTH ->
+                        new Direction[]{Direction.SOUTH, Direction.EAST, Direction.WEST, Direction.UP, Direction.DOWN, Direction.NORTH};
+                case WEST ->
+                        new Direction[]{Direction.WEST, Direction.SOUTH, Direction.UP, Direction.NORTH, Direction.DOWN, Direction.EAST};
+                case EAST ->
+                        new Direction[]{Direction.EAST, Direction.SOUTH, Direction.UP, Direction.NORTH, Direction.DOWN, Direction.WEST};
             };
         }
     }

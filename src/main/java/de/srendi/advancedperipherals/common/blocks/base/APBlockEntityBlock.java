@@ -1,7 +1,5 @@
 package de.srendi.advancedperipherals.common.blocks.base;
 
-import com.refinedmods.refinedstorage.common.detector.DetectorBlockEntity;
-import de.srendi.advancedperipherals.common.blocks.blockentities.EnergyDetectorEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.LevelReader;

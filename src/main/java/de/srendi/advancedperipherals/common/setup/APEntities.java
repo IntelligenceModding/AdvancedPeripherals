@@ -1,6 +1,5 @@
 package de.srendi.advancedperipherals.common.setup;
 
-import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.entity.TurtleEnderPearl;
 import de.srendi.advancedperipherals.common.entity.TurtleSeatEntity;
 import net.minecraft.world.entity.EntityType;

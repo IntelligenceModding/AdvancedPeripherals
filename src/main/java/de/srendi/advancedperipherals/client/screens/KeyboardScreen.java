@@ -7,7 +7,6 @@ package de.srendi.advancedperipherals.client.screens;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.platform.Window;
-import com.mojang.blaze3d.vertex.PoseStack;
 import dan200.computercraft.client.gui.ClientComputerActions;
 import dan200.computercraft.client.gui.ClientComputerInput;
 import dan200.computercraft.client.gui.widgets.TerminalWidget;

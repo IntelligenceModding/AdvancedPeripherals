@@ -2,7 +2,6 @@ package de.srendi.advancedperipherals.common.smartglasses.modules.hotkey;
 
 import de.srendi.advancedperipherals.client.KeyBindings;
 import de.srendi.advancedperipherals.common.items.base.BaseItem;
-import de.srendi.advancedperipherals.common.network.APNetworking;
 import de.srendi.advancedperipherals.common.network.toserver.GlassesHotkeyPacket;
 import de.srendi.advancedperipherals.common.setup.APDataComponents;
 import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesSideAccess;

@@ -3,7 +3,6 @@ package de.srendi.advancedperipherals.common.network.toserver;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.items.SmartGlassesItem;
 import de.srendi.advancedperipherals.common.network.IAPPacket;
-import de.srendi.advancedperipherals.common.network.toclient.UsernameToCachePacket;
 import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesComputer;
 import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesSideAccess;
 import de.srendi.advancedperipherals.common.smartglasses.modules.keyboard.KeyboardModule;
@@ -12,8 +11,6 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
-
-import java.util.UUID;
 
 public class GlassesHotkeyPacket implements IAPPacket {
 

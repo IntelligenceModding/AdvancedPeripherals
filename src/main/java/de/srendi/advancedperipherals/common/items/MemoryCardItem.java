@@ -2,7 +2,6 @@ package de.srendi.advancedperipherals.common.items;
 
 import de.srendi.advancedperipherals.client.ClientUUIDCache;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
-import de.srendi.advancedperipherals.common.items.base.BaseItem;
 import de.srendi.advancedperipherals.common.util.EnumColor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;

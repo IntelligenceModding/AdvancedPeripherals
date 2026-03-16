@@ -1,18 +1,15 @@
 package de.srendi.advancedperipherals.client;
 
 import com.mojang.blaze3d.platform.InputConstants;
-import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.entity.TurtleSeatEntity;
 import de.srendi.advancedperipherals.common.network.toserver.SaddleTurtleControlPacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.Input;
 import net.neoforged.api.distmarker.Dist;
-
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.InputEvent;
 import net.neoforged.neoforge.client.event.MovementInputUpdateEvent;
-import net.neoforged.neoforge.client.event.RenderGuiEvent;
 import net.neoforged.neoforge.client.event.RenderGuiLayerEvent;
 import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
 import net.neoforged.neoforge.event.entity.EntityMountEvent;

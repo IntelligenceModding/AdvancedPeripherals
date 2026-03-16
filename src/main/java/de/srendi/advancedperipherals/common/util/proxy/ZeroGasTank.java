@@ -1,10 +1,8 @@
 package de.srendi.advancedperipherals.common.util.proxy;
 
 import mekanism.api.Action;
-import mekanism.api.chemical.Chemical;
 import mekanism.api.chemical.ChemicalStack;
 import mekanism.api.chemical.IChemicalHandler;
-import mekanism.api.chemical.IChemicalTank;
 import org.jetbrains.annotations.NotNull;
 
 public class ZeroGasTank implements IChemicalHandler {

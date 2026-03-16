@@ -1,7 +1,6 @@
 package de.srendi.advancedperipherals.common.setup;
 
 import dan200.computercraft.api.ComputerCraftAPI;
-import dan200.computercraft.api.ForgeComputerCraftAPI;
 import dan200.computercraft.api.pocket.IPocketUpgrade;
 import dan200.computercraft.api.turtle.ITurtleUpgrade;
 import dan200.computercraft.api.upgrades.UpgradeType;

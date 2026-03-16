@@ -2,13 +2,11 @@ package de.srendi.advancedperipherals.common.smartglasses.modules.overlay.object
 
 import dan200.computercraft.api.lua.IArguments;
 import dan200.computercraft.api.lua.LuaException;
-import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.client.smartglasses.objects.IObjectRenderer;
 import de.srendi.advancedperipherals.client.smartglasses.objects.twodim.RectangleRenderer;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.OverlayModule;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.RenderableObject;
 import net.minecraft.network.FriendlyByteBuf;
-import org.w3c.dom.css.Rect;
 
 import java.util.Optional;
 import java.util.UUID;

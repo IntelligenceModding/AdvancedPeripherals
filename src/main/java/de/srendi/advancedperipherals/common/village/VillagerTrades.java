@@ -1,8 +1,6 @@
 package de.srendi.advancedperipherals.common.village;
 
 import dan200.computercraft.shared.ModRegistry;
-import de.srendi.advancedperipherals.AdvancedPeripherals;
-import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.setup.APBlocks;
 import de.srendi.advancedperipherals.common.setup.APItems;
 import de.srendi.advancedperipherals.common.setup.APVillagers;
@@ -32,8 +30,7 @@ public class VillagerTrades {
 
     @SubscribeEvent
     public static void registerVillagerTrades(VillagerTradesEvent event) {
-
-        if (false && event.getType() == APVillagers.COMPUTER_SCIENTIST.get()) {
+        if (event.getType() == APVillagers.COMPUTER_SCIENTIST.get()) {
 
             TradeBuilder.createTrade(event, APBlocks.PERIPHERAL_CASING.get(), VillagerTrade.Type.ITEM_FOR_EMERALD, 1, 1)
                     .setXp(1)

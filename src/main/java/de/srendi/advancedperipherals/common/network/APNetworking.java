@@ -20,11 +20,9 @@ import de.srendi.advancedperipherals.common.network.toserver.SaddleTurtleControl
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.codec.StreamDecoder;
-import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModLoadingContext;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 
@@ -54,7 +52,7 @@ public class APNetworking {
     private static <T extends IAPPacket> StreamCodec<RegistryFriendlyByteBuf, T> makeReader(StreamDecoder<RegistryFriendlyByteBuf, T> reader) {
         return StreamCodec.ofMember(IAPPacket::write, reader);
     }
-    
+
     @SubscribeEvent
     public static void register(final RegisterPayloadHandlersEvent event) {
         final String version = ModLoadingContext.get().getActiveContainer().getModInfo().getVersion().toString();

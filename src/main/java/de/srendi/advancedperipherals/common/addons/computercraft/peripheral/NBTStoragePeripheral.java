@@ -14,8 +14,8 @@ import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.TagParser;
 
-import java.io.IOException;
 import java.io.DataOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Map;
 

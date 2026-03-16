@@ -1,20 +1,16 @@
 package de.srendi.advancedperipherals.client.widgets;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import dan200.computercraft.shared.computer.inventory.AbstractComputerMenu;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.client.screens.SmartGlassesScreen;
 import de.srendi.advancedperipherals.common.smartglasses.SlotType;
 import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesSlot;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.Slot;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Collections;
 
 public class SmartGlassesSettingsSwitch extends AbstractWidget {
 

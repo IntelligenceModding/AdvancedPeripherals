@@ -39,13 +39,6 @@ import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.FluidType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.joml.Quaterniondc;
-import org.joml.Vector3d;
-import org.joml.Vector3dc;
-// import org.joml.primitives.AABBic;
-// import org.valkyrienskies.core.api.ships.ServerShip;
-// import org.valkyrienskies.core.api.ships.properties.ShipInertiaData;
-// import org.valkyrienskies.core.api.ships.properties.ShipTransform;
 
 import java.util.ArrayList;
 import java.util.HashMap;

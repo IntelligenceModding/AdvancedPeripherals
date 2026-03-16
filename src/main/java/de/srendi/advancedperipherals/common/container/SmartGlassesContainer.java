@@ -1,6 +1,5 @@
 package de.srendi.advancedperipherals.common.container;
 
-import dan200.computercraft.client.gui.widgets.ComputerSidebar;
 import dan200.computercraft.shared.computer.core.ComputerFamily;
 import dan200.computercraft.shared.computer.core.ServerComputer;
 import dan200.computercraft.shared.computer.inventory.AbstractComputerMenu;

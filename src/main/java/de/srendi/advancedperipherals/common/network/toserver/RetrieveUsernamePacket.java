@@ -2,7 +2,6 @@ package de.srendi.advancedperipherals.common.network.toserver;
 
 import com.mojang.authlib.GameProfile;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
-import de.srendi.advancedperipherals.common.network.APNetworking;
 import de.srendi.advancedperipherals.common.network.IAPPacket;
 import de.srendi.advancedperipherals.common.network.toclient.UsernameToCachePacket;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -10,7 +9,6 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
-import net.neoforged.neoforge.server.ServerLifecycleHooks;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;

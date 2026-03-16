@@ -5,10 +5,7 @@ import dan200.computercraft.api.lua.LuaFunction;
 import de.srendi.advancedperipherals.lib.peripherals.APGenericPeripheral;
 import edivad.dimstorage.api.Frequency;
 import edivad.dimstorage.blockentities.BlockEntityDimChest;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.UUID;
 
 public class DimChestIntegration implements APGenericPeripheral {
     @NotNull

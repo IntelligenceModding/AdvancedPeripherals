@@ -14,7 +14,6 @@ import net.minecraft.network.FriendlyByteBuf;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 public abstract class RenderableObject extends OverlayObject {
 

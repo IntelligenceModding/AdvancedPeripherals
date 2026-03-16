@@ -7,7 +7,6 @@ import de.srendi.advancedperipherals.client.smartglasses.objects.threedim.IThree
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.OverlayModule;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.RenderableObject;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertytypes.BooleanProperty;
-import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertytypes.FloatingNumberProperty;
 import net.minecraft.network.FriendlyByteBuf;
 
 import java.util.UUID;

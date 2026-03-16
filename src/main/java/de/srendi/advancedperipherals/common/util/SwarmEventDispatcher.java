@@ -3,7 +3,6 @@ package de.srendi.advancedperipherals.common.util;
 import dan200.computercraft.api.peripheral.IComputerAccess;
 import dan200.computercraft.shared.computer.core.ServerComputer;
 import dan200.computercraft.shared.computer.core.ServerContext;
-import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
 import net.minecraft.server.MinecraftServer;
 import net.neoforged.bus.api.SubscribeEvent;

@@ -1,7 +1,6 @@
 package de.srendi.advancedperipherals.common.util;
 
 import com.google.gson.JsonObject;
-import de.srendi.advancedperipherals.common.util.RegistryUtil;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;

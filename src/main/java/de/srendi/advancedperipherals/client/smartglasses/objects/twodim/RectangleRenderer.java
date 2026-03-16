@@ -14,7 +14,6 @@ import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.GameRenderer;
 import org.joml.Matrix4f;
-import org.joml.Vector3f;
 
 import java.util.List;
 
@@ -48,7 +47,7 @@ public class RectangleRenderer implements ITwoDObjectRenderer {
             float blue = RenderUtil.getBlue(obj.color);
 
             bufferBuilder.addVertex(matrix, 0, obj.maxY - obj.y, 0).setColor(red, green, blue, alpha);
-            bufferBuilder.addVertex(matrix, obj.maxX - obj.x, obj.maxY  - obj.y, 0).setColor(red, green, blue, alpha);
+            bufferBuilder.addVertex(matrix, obj.maxX - obj.x, obj.maxY - obj.y, 0).setColor(red, green, blue, alpha);
             bufferBuilder.addVertex(matrix, obj.maxX - obj.x, 0, 0).setColor(red, green, blue, alpha);
             bufferBuilder.addVertex(matrix, 0, 0, 0).setColor(red, green, blue, alpha);
             poseStack.popPose();

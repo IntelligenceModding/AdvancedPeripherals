@@ -16,7 +16,6 @@ import net.minecraft.world.level.ChunkPos;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Objects;
 import java.util.UUID;
 
 import static de.srendi.advancedperipherals.common.setup.APDataComponents.CHUNKY_ID;
