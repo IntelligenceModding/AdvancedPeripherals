@@ -50,14 +50,16 @@ public class APDataComponents {
     }
 
     public static DataComponentType<DataComponentPatch> getComputerSideDataKey(final ComputerSide side) {
-        return (switch (side) {
-            case BACK -> BACK_DATA;
-            case BOTTOM -> BOTTOM_DATA;
-            case FRONT -> FRONT_DATA;
-            case LEFT -> LEFT_DATA;
-            case RIGHT -> RIGHT_DATA;
-            case TOP -> TOP_DATA;
-        }).get();
+        return (
+            switch (side) {
+                case BACK -> BACK_DATA;
+                case BOTTOM -> BOTTOM_DATA;
+                case FRONT -> FRONT_DATA;
+                case LEFT -> LEFT_DATA;
+                case RIGHT -> RIGHT_DATA;
+                case TOP -> TOP_DATA;
+            }
+        ).get();
     }
 
     private static <TYPE> DeferredHolder<DataComponentType<?>, DataComponentType<TYPE>> simple(String name, UnaryOperator<DataComponentType.Builder<TYPE>> operator) {

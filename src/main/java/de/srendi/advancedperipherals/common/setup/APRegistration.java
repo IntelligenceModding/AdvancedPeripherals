@@ -13,8 +13,8 @@ import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.registries.DeferredRegister;
-
 
 public class APRegistration {
 
@@ -52,6 +52,13 @@ public class APRegistration {
         APTags.Items.init();
         APDataComponents.register();
 
-        CCRegistration.register();
+        modEventBus.addListener(APRegistration::onCommonSetup);
+    }
+
+    private static void onCommonSetup(FMLCommonSetupEvent event) {
+        event.enqueueWork(() -> {
+            // CC:T's registries are not thread safe
+            CCRegistration.register();
+        });
     }
 }

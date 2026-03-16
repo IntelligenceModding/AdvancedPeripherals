@@ -16,7 +16,7 @@ public interface IModule {
      * @return an object containing lua functions {@link dan200.computercraft.api.lua.LuaFunction}
      */
     @Nullable
-    IModuleFunctions getFunctions(SmartGlassesSideAccess SmartGlassesSideAccess);
+    IModuleFunctions getFunctions(SmartGlassesSideAccess smartGlassesAccess);
 
     /**
      * Classic tick function.

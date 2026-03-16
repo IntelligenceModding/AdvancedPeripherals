@@ -13,14 +13,12 @@ import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.items.SmartGlassesItem;
 import de.srendi.advancedperipherals.common.setup.APItems;
 import de.srendi.advancedperipherals.common.setup.APRegistration;
-import de.srendi.advancedperipherals.common.setup.CCRegistration;
 import de.srendi.advancedperipherals.common.util.ChunkManager;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.ItemLike;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModLoadingContext;
 import net.neoforged.fml.common.Mod;
-import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.fml.event.lifecycle.FMLLoadCompleteEvent;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
@@ -50,7 +48,6 @@ public class AdvancedPeripherals {
 
         APConfig.register(ModLoadingContext.get());
 
-        modBus.addListener(this::onCommonSetup);
         modBus.addListener(this::onLoadComplete);
         modBus.addListener(this::registerCapabilities);
         modBus.addListener(ChunkManager::registerTicketController);
@@ -93,13 +90,6 @@ public class AdvancedPeripherals {
 
     public static ResourceLocation getRL(String resource) {
         return ResourceLocation.fromNamespaceAndPath(MOD_ID, resource);
-    }
-
-    public void onCommonSetup(FMLCommonSetupEvent event) {
-        event.enqueueWork(() -> {
-            // CC:T's registries are not thread safe
-            CCRegistration.register();
-        });
     }
 
     public void onLoadComplete(FMLLoadCompleteEvent event) {
