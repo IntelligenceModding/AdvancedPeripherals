@@ -71,7 +71,30 @@ public class Events {
             return;
         String username = "sayCommand";
         String uuid = null;
-        String message = MessageArgument.getMessage(event.getParseResults().getContext().build("apChatEvent"), "message").getString();
+        /*
+        - 修复：在ATM10 V6.0整合包中安装该模组，当服务端后台cmd发送say且不带有参数即仅发送say时触发服务器崩溃
+        - MessageArgument.getMessage() 方法在参数不存在时会抛出 IllegalArgumentException
+        - 代码没有处理这种异常情况
+        - 貌似是这样(: (可能有误)
+
+        - Fix: When installing this mod in the ATM10 V6.0 modpack, executing 'say' from the server backend CMD without any parameters (i.e., just 'say') triggers a server crash
+        - MessageArgument.getMessage() throws IllegalArgumentException when the parameter does not exist
+        - The code does not handle this exception
+        - That seems to be the case (: (might be inaccurate)
+        */
+        //↓================================修改点Refactoring====================================================↓
+        //并不是专业的程序员，因此修改仅供参考
+        //I'm not a professional programmer, so the modifications I make are for reference only.
+        //Previous: String message = MessageArgument.getMessage(event.getParseResults().getContext().build("apChatEvent"), "message").getString();
+        String message;
+        try {
+            message = MessageArgument.getMessage(event.getParseResults().getContext().build("apChatEvent"), "message").getString();
+        } catch (IllegalArgumentException e) {
+            return;
+        }
+        //↑===============================修改点Refactoring====================================================↑
+
+
         boolean isHidden = false;
         CommandSourceStack source = event.getParseResults().getContext().getSource();
         if (source.getEntity() != null) {
