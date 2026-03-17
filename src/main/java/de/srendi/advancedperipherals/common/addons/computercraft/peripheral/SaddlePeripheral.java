@@ -29,7 +29,6 @@ import net.minecraft.world.entity.vehicle.Boat;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
-import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -40,14 +39,9 @@ import java.util.function.Predicate;
 import static de.srendi.advancedperipherals.common.addons.computercraft.operations.SimpleFreeOperation.SADDLE_CAPTURE;
 
 public class SaddlePeripheral extends BasePeripheral<TurtlePeripheralOwner> {
-
-    private static final int ANIM_DURATION = 8; // Should be same as TurtleBrain.ANIM_DURATION
-
     public static final String PERIPHERAL_TYPE = "saddle";
     private TurtleSeatEntity seat = null;
     private volatile Entity rider = null;
-    private BlockPos lastPos = null;
-    private int moveProg = 0;
     private int tickCount = 0;
 
     private int barColor = 0;
@@ -74,7 +68,6 @@ public class SaddlePeripheral extends BasePeripheral<TurtlePeripheralOwner> {
     @Override
     public void attach(@NotNull IComputerAccess computer) {
         super.attach(computer);
-        this.lastPos = this.owner.getPos();
     }
 
     @Override
@@ -97,22 +90,6 @@ public class SaddlePeripheral extends BasePeripheral<TurtlePeripheralOwner> {
                 this.seat.setTurtle(this.owner.getTurtle());
                 this.seat.keepAlive();
                 this.rider = this.seat.getFirstPassenger();
-                this.moveProg = 0;
-                this.lastPos = pos;
-            } else {
-                BlockPos dir = pos.subtract(this.lastPos);
-                int dist = Math.abs(dir.getX()) + Math.abs(dir.getY()) + Math.abs(dir.getZ());
-                if (dist != 0) {
-                    Vec3 newPos = this.seat.getTurtlePos();
-                    if (dist == 1 && ++this.moveProg < ANIM_DURATION) {
-                        float step = ((float) this.moveProg) / ANIM_DURATION;
-                        newPos = newPos.add(Vec3.atLowerCornerOf(dir).scale(step - 1));
-                    } else {
-                        this.moveProg = 0;
-                        this.lastPos = pos;
-                    }
-                    this.seat.moveTo(newPos);
-                }
             }
             this.tickCount++;
             if (this.tickCount > 40) {

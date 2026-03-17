@@ -15,15 +15,15 @@ public class APEntities {
 
     public static final DeferredHolder<EntityType<?>, EntityType<TurtleEnderPearl>> TURTLE_ENDER_PEARL = APRegistration.ENTITIES.register("turtle_ender_pearl",
         () -> EntityType.Builder.<TurtleEnderPearl>of(TurtleEnderPearl::new, MobCategory.MISC)
-            .sized(0.5F, 0.5F)
+            .sized(0.5f, 0.5f)
             .clientTrackingRange(4)
             .updateInterval(4)
             .fireImmune()
             .build("turtle_ender_pearl"));
     public static final DeferredHolder<EntityType<?>, EntityType<TurtleSeatEntity>> TURTLE_SEAT = APRegistration.ENTITIES.register("turtle_seat",
         () -> EntityType.Builder.<TurtleSeatEntity>of(TurtleSeatEntity::new, MobCategory.MISC)
-            .sized(0.8F, 0.8F)
-            .clientTrackingRange(4)
+            .sized(0.8f, 0.8f)
+            .passengerAttachments(0.2f)
             .updateInterval(1)
             .fireImmune()
             .build("turtle_seat"));

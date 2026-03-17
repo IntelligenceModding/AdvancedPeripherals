@@ -30,12 +30,13 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
+// TODO: better rendering
 public class TurtleSeatEntity extends Entity implements HasCustomInventoryScreen {
-
-    // TODO: better rendering
+    private static final int ANIM_DURATION = 8; // Should be same as TurtleBrain.ANIM_DURATION
 
     private ITurtleAccess turtle = null;
     private int life = 0;
+    private int moveProg = 0;
 
     private InputKeySet inputs = InputKeySet.NONE;
     private InputKeySet oldInputs = InputKeySet.NONE;
@@ -115,13 +116,21 @@ public class TurtleSeatEntity extends Entity implements HasCustomInventoryScreen
         return null; // this.getFirstPassenger();
     }
 
-    // @Override
-    // public double getPassengersRidingOffset() {
-    //     return 0.05;
-    // }
+    @Override
+    public boolean isInvisible() {
+        return true;
+    }
 
     @Override
-    public void tick() {
+    public void baseTick() {
+        if (this.level().isClientSide && (this.turtle == null || this.turtle.isRemoved())) {
+            if (this.level().getBlockEntity(this.blockPosition()) instanceof TurtleBlockEntity be) {
+                this.turtle = be.getAccess();
+            }
+        }
+        if (this.turtle != null && !this.turtle.isRemoved() && this.turtle instanceof TurtleBrain brain) {
+            this.moveTo(brain.getVisualPosition(1.0f));
+        }
         if (this.level().isClientSide) {
             return;
         }
@@ -174,7 +183,6 @@ public class TurtleSeatEntity extends Entity implements HasCustomInventoryScreen
                 ServerComputer computer = tile.createServerComputer();
                 BlockState state = tile.getBlockState();
                 ItemStack stack = new ItemStack(tile.getBlockState().getBlock());
-                //stack.applyComponents(Util.make(DataComponentMap.builder(), tile::collectComponents).build());
                 stack.applyComponents(tile.collectComponents());
                 PlatformHelper.get().openMenu(player, tile.getName(), tile, new ComputerContainerData(computer, stack));
             }
@@ -187,12 +195,12 @@ public class TurtleSeatEntity extends Entity implements HasCustomInventoryScreen
         }
 
         @Override
-        public boolean shouldRender(TurtleSeatEntity a0, Frustum a1, double a2, double a3, double a4) {
-            return false;
+        public boolean shouldRender(TurtleSeatEntity entity, Frustum frustum, double x, double y, double z) {
+            return true;
         }
 
         @Override
-        public ResourceLocation getTextureLocation(TurtleSeatEntity a0) {
+        public ResourceLocation getTextureLocation(TurtleSeatEntity entity) {
             return null;
         }
     }
@@ -218,5 +226,5 @@ public class TurtleSeatEntity extends Entity implements HasCustomInventoryScreen
     }
 
     @Override
-    public void setDeltaMovement(Vec3 a0) {}
+    public void setDeltaMovement(Vec3 movement) {}
 }
