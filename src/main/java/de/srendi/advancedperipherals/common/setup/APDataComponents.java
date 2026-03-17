@@ -1,7 +1,7 @@
 package de.srendi.advancedperipherals.common.setup;
 
 import com.mojang.serialization.Codec;
-import dan200.computercraft.core.computer.ComputerSide;
+import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.DistanceDetectorPeripheral.DetectionType;
 import net.minecraft.core.Registry;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.core.component.DataComponentPatch;
@@ -12,6 +12,8 @@ import net.minecraft.network.chat.ComponentSerialization;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.ExtraCodecs;
+import net.minecraft.util.StringRepresentable;
+import net.neoforged.neoforge.network.codec.NeoForgeStreamCodecs;
 import net.neoforged.neoforge.registries.DeferredHolder;
 
 import java.util.UUID;
@@ -19,7 +21,7 @@ import java.util.function.UnaryOperator;
 
 public class APDataComponents {
 
-    public static final DeferredHolder<DataComponentType<?>, DataComponentType<DataComponentPatch>> ABILITY_COOLDOWN = registerDataComponent("cooldowns");
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<CompoundTag>> ABILITY_COOLDOWNS = registerNBT("cooldowns");
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> BINDING_COMPUTER = registerInt("binding_computer");
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<UUID>> CHUNKY_ID = registerUUID("chunky_id");
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<CompoundTag>> CONSUMED_ENTITY_COMPOUND = registerNBT("consumed_entity_compound");
@@ -35,34 +37,17 @@ public class APDataComponents {
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<DataComponentPatch>> STORED_DATA = registerDataComponent("stored_data");
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<String>> WORLD_DATA_MARK = registerString("world_data_mark");
 
-    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Long>> SIMPLE_FREE_OPERATION = registerLong("free_operation_cooldown");
-    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Long>> SINGLE_OPERATION = registerLong("single_operation");
-    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Long>> SPHERE_OPERATION = registerLong("sphere_operation");
-
-    public static final DeferredHolder<DataComponentType<?>, DataComponentType<DataComponentPatch>> BACK_DATA = registerDataComponent("back_data");
-    public static final DeferredHolder<DataComponentType<?>, DataComponentType<DataComponentPatch>> BOTTOM_DATA = registerDataComponent("bottom_data");
-    public static final DeferredHolder<DataComponentType<?>, DataComponentType<DataComponentPatch>> FRONT_DATA = registerDataComponent("front_data");
-    public static final DeferredHolder<DataComponentType<?>, DataComponentType<DataComponentPatch>> LEFT_DATA = registerDataComponent("left_data");
-    public static final DeferredHolder<DataComponentType<?>, DataComponentType<DataComponentPatch>> RIGHT_DATA = registerDataComponent("right_data");
-    public static final DeferredHolder<DataComponentType<?>, DataComponentType<DataComponentPatch>> TOP_DATA = registerDataComponent("top_data");
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Float>> MAX_RANGE = registerFloat("max_range");
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Float>> CURRENT_DISTANCE = registerFloat("current_distance");
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Boolean>> SHOW_LASER = registerBoolean("show_laser");
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Boolean>> CALCULATE_PERIODICALLY = registerBoolean("calculate_periodically");
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Boolean>> IGNORE_TRANSPARENT = registerBoolean("ignore_transparent");
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<DetectionType>> DETECTION_TYPE = registerEnum("detection_type", DetectionType.values());
 
     public static void register() {
     }
 
-    public static DataComponentType<DataComponentPatch> getComputerSideDataKey(final ComputerSide side) {
-        return (
-            switch (side) {
-                case BACK -> BACK_DATA;
-                case BOTTOM -> BOTTOM_DATA;
-                case FRONT -> FRONT_DATA;
-                case LEFT -> LEFT_DATA;
-                case RIGHT -> RIGHT_DATA;
-                case TOP -> TOP_DATA;
-            }
-        ).get();
-    }
-
-    private static <TYPE> DeferredHolder<DataComponentType<?>, DataComponentType<TYPE>> simple(String name, UnaryOperator<DataComponentType.Builder<TYPE>> operator) {
+    private static <T> DeferredHolder<DataComponentType<?>, DataComponentType<T>> simple(String name, UnaryOperator<DataComponentType.Builder<T>> operator) {
         return APRegistration.DATA_COMPONENT_TYPES.register(name, () -> operator.apply(DataComponentType.builder()).build());
     }
 
@@ -96,6 +81,11 @@ public class APDataComponents {
                 .networkSynchronized(ByteBufCodecs.VAR_LONG));
     }
 
+    private static DeferredHolder<DataComponentType<?>, DataComponentType<Float>> registerFloat(String name) {
+        return simple(name, builder -> builder.persistent(Codec.FLOAT)
+                .networkSynchronized(ByteBufCodecs.FLOAT));
+    }
+
     private static DeferredHolder<DataComponentType<?>, DataComponentType<UUID>> registerUUID(String name) {
         return simple(name, builder -> builder.persistent(UUIDUtil.CODEC)
                 .networkSynchronized(UUIDUtil.STREAM_CODEC));
@@ -111,8 +101,13 @@ public class APDataComponents {
                 .cacheEncoding());
     }
 
-    private static <TYPE> DeferredHolder<DataComponentType<?>, DataComponentType<ResourceKey<TYPE>>> registerResourceKey(String name, ResourceKey<? extends Registry<TYPE>> registryKey) {
+    private static <T> DeferredHolder<DataComponentType<?>, DataComponentType<ResourceKey<T>>> registerResourceKey(String name, ResourceKey<? extends Registry<T>> registryKey) {
         return simple(name, builder -> builder.persistent(ResourceKey.codec(registryKey))
                 .networkSynchronized(ResourceKey.streamCodec(registryKey)));
+    }
+
+    private static <T extends Enum<T> & StringRepresentable> DeferredHolder<DataComponentType<?>, DataComponentType<T>> registerEnum(String name, T... values) {
+        return simple(name, builder -> builder.persistent(StringRepresentable.fromEnum(() -> values))
+                .networkSynchronized(NeoForgeStreamCodecs.enumCodec(values[0].getClass())));
     }
 }

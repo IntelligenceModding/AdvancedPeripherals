@@ -221,7 +221,7 @@ public class HitResultUtil {
         private final BlockPos source;
 
         protected AdvancedClipContext(Vec3 from, Vec3 to, ShapeGetter blockShapeGetter, Fluid fluidShapeGetter, @Nullable Entity entity, BlockPos source) {
-            super(from, to, Block.COLLIDER, fluidShapeGetter, entity);
+            super(from, to, Block.COLLIDER, fluidShapeGetter, entity == null ? CollisionContext.empty() : CollisionContext.of(entity));
             this.blockShapeGetter = blockShapeGetter;
             this.source = source;
         }

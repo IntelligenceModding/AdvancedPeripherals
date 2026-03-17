@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Supplier;
 
 import static de.srendi.advancedperipherals.common.setup.APDataComponents.CONSUMED_ENTITY_COMPOUND;
 
@@ -35,13 +36,13 @@ public class WeakAutomataCore extends APItem implements IFeedableAutomataCore {
     static {
         Map<String, Integer> endSouls = new HashMap<>();
         endSouls.put(BuiltInRegistries.ENTITY_TYPE.getKey(EntityType.ENDERMAN).toString(), 10);
-        WeakAutomataCoreRecord endSoulRecord = new WeakAutomataCoreRecord(endSouls, APItems.END_AUTOMATA_CORE.get());
+        WeakAutomataCoreRecord endSoulRecord = new WeakAutomataCoreRecord(endSouls, () -> APItems.END_AUTOMATA_CORE.get());
 
         Map<String, Integer> husbandrySouls = new HashMap<>();
         husbandrySouls.put(BuiltInRegistries.ENTITY_TYPE.getKey(EntityType.COW).toString(), 3);
         husbandrySouls.put(BuiltInRegistries.ENTITY_TYPE.getKey(EntityType.SHEEP).toString(), 3);
         husbandrySouls.put(BuiltInRegistries.ENTITY_TYPE.getKey(EntityType.CHICKEN).toString(), 3);
-        WeakAutomataCoreRecord husbandrySoulRecord = new WeakAutomataCoreRecord(husbandrySouls, APItems.HUSBANDRY_AUTOMATA_CORE.get());
+        WeakAutomataCoreRecord husbandrySoulRecord = new WeakAutomataCoreRecord(husbandrySouls, () -> APItems.HUSBANDRY_AUTOMATA_CORE.get());
 
         endSoulRecord.ingredients.keySet().forEach(entityType -> AUTOMATA_CORE_REGISTRY.put(entityType, endSoulRecord));
         husbandrySoulRecord.ingredients.keySet().forEach(entityType -> AUTOMATA_CORE_REGISTRY.put(entityType, husbandrySoulRecord));
@@ -96,7 +97,7 @@ public class WeakAutomataCore extends APItem implements IFeedableAutomataCore {
             entityCompound.putString(CONSUMED_ENTITY_NAME, entity.getName().getString());
             consumedData.put(entityType, entityCompound);
             if (record.isFinished(consumedData)) {
-                player.setItemInHand(hand, new ItemStack(record.resultSoul));
+                player.setItemInHand(hand, new ItemStack(record.resultSoul().get()));
             }
             stack.set(CONSUMED_ENTITY_COMPOUND.get(), consumedData);
             return InteractionResult.SUCCESS;
@@ -104,7 +105,7 @@ public class WeakAutomataCore extends APItem implements IFeedableAutomataCore {
         return InteractionResult.PASS;
     }
 
-    public record WeakAutomataCoreRecord(Map<String, Integer> ingredients, Item resultSoul) {
+    public record WeakAutomataCoreRecord(Map<String, Integer> ingredients, Supplier<Item> resultSoul) {
 
         public int getRequiredCount(String entityType) {
             return this.ingredients.getOrDefault(entityType, 0);

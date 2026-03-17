@@ -308,8 +308,11 @@ dependencies {
 
     testModImplementation sourceSets.main.output
 
+    // Testing stuffs
+
+    compileOnly "org.apiguardian:apiguardian-api:1.1.2" // prevent `warning: unknown enum constant Status.STABLE`
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junit_version}"
-    // Testing stuff
+
     // EMI
     runtimeOnly "dev.emi:emi-neoforge:${emi_version}"
     // Spark

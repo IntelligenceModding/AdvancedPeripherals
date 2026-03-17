@@ -39,22 +39,23 @@ public class KeyboardContainer extends BaseContainer implements ComputerMenu {
             this.computer = null;
             return;
         }
-        this.input = new ServerInputState(this, computer);
-        this.computer = computer;
-        if (computer != null) {
-            return;
-        }
-        if (!keyboardItem.has(APDataComponents.BINDING_COMPUTER.get())) {
-            return;
-        }
-        // Cannot use instance ID here since they will change after reload the block
-        int computerId = keyboardItem.get(APDataComponents.BINDING_COMPUTER.get());
-        for (ServerComputer computr : ServerContext.get(serverLevel.getServer()).registry().getComputers()) {
-            if (computr.getID() == computerId) {
-                this.computer = computr;
-                break;
+        if (computer == null) {
+            if (!keyboardItem.has(APDataComponents.BINDING_COMPUTER.get())) {
+                this.input = null;
+                this.computer = null;
+                return;
+            }
+            // Cannot use instance ID here since they will change after reload the block
+            int computerId = keyboardItem.get(APDataComponents.BINDING_COMPUTER.get());
+            for (ServerComputer computr : ServerContext.get(serverLevel.getServer()).registry().getComputers()) {
+                if (computr.getID() == computerId) {
+                    computer = computr;
+                    break;
+                }
             }
         }
+        this.computer = computer;
+        this.input = new ServerInputState(this, computer);
     }
 
     public ItemStack getKeyboardItem() {
@@ -70,7 +71,7 @@ public class KeyboardContainer extends BaseContainer implements ComputerMenu {
     public void removed(Player player) {
         super.removed(player);
         if (player instanceof ServerPlayer) {
-            computer.queueEvent("keyboard_closed");
+            this.computer.queueEvent("keyboard_closed");
         }
     }
 

@@ -1,13 +1,13 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.owner;
 
 import de.srendi.advancedperipherals.common.configuration.APConfig;
-import de.srendi.advancedperipherals.lib.peripherals.IPeripheralTileEntity;
+import de.srendi.advancedperipherals.lib.peripherals.IPeripheralBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.energy.IEnergyStorage;
 import org.jetbrains.annotations.NotNull;
 
-public class TileEntityFuelAbility<T extends BlockEntity & IPeripheralTileEntity> extends FuelAbility<BlockEntityPeripheralOwner<T>> {
+public class TileEntityFuelAbility<T extends BlockEntity & IPeripheralBlockEntity> extends FuelAbility<BlockEntityPeripheralOwner<T>> {
 
     public TileEntityFuelAbility(@NotNull BlockEntityPeripheralOwner<T> owner) {
         super(owner);
@@ -31,11 +31,11 @@ public class TileEntityFuelAbility<T extends BlockEntity & IPeripheralTileEntity
 
     @Override
     protected int getMaxFuelConsumptionRate() {
-        return DEFAULT_FUEL_CONSUMING_RATE;
+        return FuelAbility.MIN_FUEL_CONSUMING_RATE;
     }
 
     @Override
-    public boolean isFuelConsumptionDisable() {
+    public boolean isFuelConsumptionDisabled() {
         return !APConfig.PERIPHERALS_CONFIG.enablePoweredPeripherals.get();
     }
 

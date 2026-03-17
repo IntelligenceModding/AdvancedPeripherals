@@ -23,7 +23,7 @@ public class InfinitePocketFuelAbility extends FuelAbility<PocketPeripheralOwner
     }
 
     @Override
-    public boolean isFuelConsumptionDisable() {
+    public boolean isFuelConsumptionDisabled() {
         return true;
     }
 

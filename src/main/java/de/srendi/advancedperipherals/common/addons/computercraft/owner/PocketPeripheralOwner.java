@@ -6,7 +6,6 @@ import dan200.computercraft.api.pocket.IPocketAccess;
 import dan200.computercraft.core.computer.ComputerSide;
 import dan200.computercraft.shared.computer.core.ServerComputer;
 import dan200.computercraft.shared.pocket.core.PocketBrain;
-import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesSideAccess;
 import de.srendi.advancedperipherals.common.util.fakeplayer.APFakePlayer;
@@ -15,7 +14,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.FrontAndTop;
 import net.minecraft.core.component.DataComponentPatch;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -97,18 +95,8 @@ public class PocketPeripheralOwner extends BasePeripheralOwner {
     }
 
     @Override
-    public CompoundTag getNbtStorage() {
-        AdvancedPeripherals.debug("Pocket peripheral at " + getPos() + " tried to use nbt storage but it should instead use data component storage, report to github!", org.apache.logging.log4j.Level.WARN);
-        return null;
-    }
-
-    @Override
     public void putDataStorage(DataComponentPatch dataStorage) {
         pocket.setUpgradeData(dataStorage);
-    }
-
-    @Override
-    public void markDataStorageDirty() {
     }
 
     @Override

@@ -1,12 +1,10 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.turtles;
 
-import dan200.computercraft.api.peripheral.IPeripheral;
 import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.ITurtleUpgrade;
 import dan200.computercraft.api.turtle.TurtleSide;
 import dan200.computercraft.api.upgrades.UpgradeType;
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.SaddlePeripheral;
-import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.setup.CCRegistration;
 import de.srendi.advancedperipherals.lib.turtle.PeripheralTurtleUpgrade;
 import net.minecraft.client.resources.model.ModelResourceLocation;
@@ -37,16 +35,5 @@ public class TurtleSaddleUpgrade extends PeripheralTurtleUpgrade<SaddlePeriphera
     @Override
     public UpgradeType<? extends ITurtleUpgrade> getType() {
         return CCRegistration.SADDLE_TURTLE.get();
-    }
-
-    @Override
-    public void update(@NotNull ITurtleAccess turtle, @NotNull TurtleSide side) {
-        super.update(turtle, side);
-        if (APConfig.PERIPHERALS_CONFIG.enableSaddleTurtle.get()) {
-            IPeripheral peripheral = turtle.getPeripheral(side);
-            if (peripheral instanceof SaddlePeripheral saddlePeripheral) {
-                saddlePeripheral.update();
-            }
-        }
     }
 }

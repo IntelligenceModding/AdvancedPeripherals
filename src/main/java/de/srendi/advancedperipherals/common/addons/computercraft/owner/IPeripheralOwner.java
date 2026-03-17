@@ -10,7 +10,6 @@ import net.minecraft.core.FrontAndTop;
 import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.component.PatchedDataComponentMap;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.OwnableEntity;
 import net.minecraft.world.entity.player.Player;
@@ -79,12 +78,7 @@ public interface IPeripheralOwner {
         return PatchedDataComponentMap.fromPatch(defaults, this.getDataStorage());
     }
 
-    // Not everything from MC uses the new data component system, so we provide a nbt data storage too
-    CompoundTag getNbtStorage();
-
     void putDataStorage(DataComponentPatch dataStorage);
-
-    void markDataStorageDirty();
 
     <T> T withPlayer(APFakePlayer.Action<T> function) throws LuaException;
 

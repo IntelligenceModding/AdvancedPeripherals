@@ -2,16 +2,15 @@ package de.srendi.advancedperipherals.common.addons.computercraft.owner;
 
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.lua.MethodResult;
+import de.srendi.advancedperipherals.common.setup.APDataComponents;
 import de.srendi.advancedperipherals.lib.peripherals.IPeripheralPlugin;
 import net.minecraft.core.component.PatchedDataComponentMap;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
-import static de.srendi.advancedperipherals.common.setup.APDataComponents.FUEL_CONSUMPTION_RATE;
-
 public abstract class FuelAbility<T extends IPeripheralOwner> implements IOwnerAbility, IPeripheralPlugin {
-    protected static final int DEFAULT_FUEL_CONSUMING_RATE = 1;
+    protected static final int MIN_FUEL_CONSUMING_RATE = 1;
 
     protected @NotNull T owner;
 
@@ -27,12 +26,13 @@ public abstract class FuelAbility<T extends IPeripheralOwner> implements IOwnerA
      * @return the fuel consumption rate
      */
     protected int getConsumptionRate() {
-        Integer rate = owner.getPatchedDataStorage().get(FUEL_CONSUMPTION_RATE.get());
-        if (rate == null || rate == 0) {
-            setConsumptionRate(DEFAULT_FUEL_CONSUMING_RATE);
-            return DEFAULT_FUEL_CONSUMING_RATE;
-        }
-        return rate;
+        return Math.min(
+            Math.max(
+                owner.getPatchedDataStorage().getOrDefault(APDataComponents.FUEL_CONSUMPTION_RATE.get(), MIN_FUEL_CONSUMING_RATE),
+                MIN_FUEL_CONSUMING_RATE
+            ),
+            getMaxFuelConsumptionRate()
+        );
     }
 
     /**
@@ -41,15 +41,19 @@ public abstract class FuelAbility<T extends IPeripheralOwner> implements IOwnerA
      * @param rate the new fuel consumption rate
      */
     protected void setConsumptionRate(int rate) {
-        if (rate < DEFAULT_FUEL_CONSUMING_RATE) rate = DEFAULT_FUEL_CONSUMING_RATE;
+        if (rate < MIN_FUEL_CONSUMING_RATE) {
+            rate = MIN_FUEL_CONSUMING_RATE;
+        }
         int maxFuelRate = getMaxFuelConsumptionRate();
-        if (rate > maxFuelRate) rate = maxFuelRate;
+        if (rate > maxFuelRate) {
+            rate = maxFuelRate;
+        }
         PatchedDataComponentMap settings = owner.getPatchedDataStorage();
-        settings.set(FUEL_CONSUMPTION_RATE.get(), rate);
+        settings.set(APDataComponents.FUEL_CONSUMPTION_RATE.get(), rate);
         owner.putDataStorage(settings.asPatch());
     }
 
-    public abstract boolean isFuelConsumptionDisable();
+    public abstract boolean isFuelConsumptionDisabled();
 
     public abstract int getFuelCount();
 
@@ -66,9 +70,13 @@ public abstract class FuelAbility<T extends IPeripheralOwner> implements IOwnerA
     }
 
     public boolean consumeFuel(int count, boolean simulate) {
-        if (isFuelConsumptionDisable()) return true;
+        if (isFuelConsumptionDisabled()) {
+            return true;
+        }
         int realCount = count * getFuelConsumptionMultiply();
-        if (simulate) return getFuelLevel() >= realCount;
+        if (simulate) {
+            return getFuelLevel() >= realCount;
+        }
         return consumeFuel(realCount);
     }
 
@@ -89,8 +97,12 @@ public abstract class FuelAbility<T extends IPeripheralOwner> implements IOwnerA
 
     @LuaFunction(mainThread = true)
     public final MethodResult setFuelConsumptionRate(int rate) {
-        if (rate < 1) return MethodResult.of(null, "Too small fuel consumption rate");
-        if (rate > getMaxFuelConsumptionRate()) return MethodResult.of(null, "Too big fuel consumption rate");
+        if (rate < 1) {
+            return MethodResult.of(null, "Too small fuel consumption rate");
+        }
+        if (rate > getMaxFuelConsumptionRate()) {
+            return MethodResult.of(null, "Too big fuel consumption rate");
+        }
         setConsumptionRate(rate);
         return MethodResult.of(true);
     }

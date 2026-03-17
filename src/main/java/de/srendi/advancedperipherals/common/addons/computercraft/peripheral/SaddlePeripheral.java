@@ -76,6 +76,7 @@ public class SaddlePeripheral extends BasePeripheral<TurtlePeripheralOwner> {
         super.detach(computer);
     }
 
+    @Override
     public void update() {
         if (this.seat != null) {
             if (!isEntityRiding()) {

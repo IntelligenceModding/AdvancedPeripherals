@@ -1,8 +1,6 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.operations;
 
-import de.srendi.advancedperipherals.common.setup.APDataComponents;
 import de.srendi.advancedperipherals.lib.peripherals.IPeripheralOperation;
-import net.minecraft.core.component.DataComponentType;
 import net.neoforged.neoforge.common.ModConfigSpec;
 
 import java.util.HashMap;
@@ -46,10 +44,5 @@ public enum SimpleFreeOperation implements IPeripheralOperation<Object> {
         data.put("type", getClass().getSimpleName());
         data.put("cooldown", cooldown.get());
         return data;
-    }
-
-    @Override
-    public DataComponentType<Long> dataComponentType() {
-        return APDataComponents.SIMPLE_FREE_OPERATION.get();
     }
 }

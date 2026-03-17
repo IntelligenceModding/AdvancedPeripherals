@@ -23,16 +23,17 @@ import java.util.stream.Stream;
 public class APCreativeTab {
 
     public static void populateCreativeTabBuilder(CreativeModeTab.Builder builder) {
-        builder.displayItems((set, out) -> {
-            APRegistration.ITEMS.getEntries().stream().map(DeferredHolder::get).forEach(out::accept);
+        builder
+            .icon(() -> new ItemStack(APBlocks.CHAT_BOX.get()))
+            .title(Component.translatable("advancedperipherals.name"))
+            .displayItems((set, out) -> {
+                APRegistration.ITEMS.getEntries().stream().map(DeferredHolder::get).forEach(out::accept);
 
-            addTurtle(out, ModRegistry.Items.TURTLE_NORMAL.get(), set.holders());
-            addTurtle(out, ModRegistry.Items.TURTLE_ADVANCED.get(), set.holders());
-            addPocket(out, ModRegistry.Items.POCKET_COMPUTER_NORMAL.get(), set.holders());
-            addPocket(out, ModRegistry.Items.POCKET_COMPUTER_ADVANCED.get(), set.holders());
-        });
-        builder.icon(() -> new ItemStack(APBlocks.CHAT_BOX.get()));
-        builder.title(Component.translatable("advancedperipherals.name"));
+                addTurtle(out, ModRegistry.Items.TURTLE_NORMAL.get(), set.holders());
+                addTurtle(out, ModRegistry.Items.TURTLE_ADVANCED.get(), set.holders());
+                addPocket(out, ModRegistry.Items.POCKET_COMPUTER_NORMAL.get(), set.holders());
+                addPocket(out, ModRegistry.Items.POCKET_COMPUTER_ADVANCED.get(), set.holders());
+            });
     }
 
     // Friendly stolen from CC:Tweaked ModRegistry.class

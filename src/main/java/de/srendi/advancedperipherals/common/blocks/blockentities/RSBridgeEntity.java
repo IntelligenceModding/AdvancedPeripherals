@@ -17,9 +17,7 @@ import de.srendi.advancedperipherals.common.blocks.base.PeripheralBlockEntity;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.setup.APBlockEntityTypes;
 import de.srendi.advancedperipherals.common.util.inventory.BasicCraftJob;
-import de.srendi.advancedperipherals.lib.peripherals.IPeripheralTileEntity;
 import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -31,9 +29,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public class RSBridgeEntity extends PeripheralBlockEntity<RSBridgePeripheral> implements IPeripheralTileEntity, NetworkNodeContainerProvider, TaskStatusListener {
+public class RSBridgeEntity extends PeripheralBlockEntity<RSBridgePeripheral> implements NetworkNodeContainerProvider, TaskStatusListener {
 
-    protected CompoundTag peripheralSettings;
     private final NetworkNode node;
     private final InWorldNetworkNodeContainer networkNodeContainer;
     private final List<RSCraftJob> jobs = new CopyOnWriteArrayList<>();
@@ -41,7 +38,6 @@ public class RSBridgeEntity extends PeripheralBlockEntity<RSBridgePeripheral> im
 
     public RSBridgeEntity(BlockPos pos, BlockState state) {
         super(APBlockEntityTypes.RS_BRIDGE.get(), pos, state);
-        peripheralSettings = new CompoundTag();
         ConnectionStrategy connectionStrategy = new SimpleConnectionStrategy(pos);
         node = new SimpleNetworkNode(APConfig.PERIPHERALS_CONFIG.rsConsumption.get());
         networkNodeContainer = new InWorldNetworkNodeContainerImpl(this, node, "RS Bridge", 1, connectionStrategy, null);
@@ -54,17 +50,8 @@ public class RSBridgeEntity extends PeripheralBlockEntity<RSBridgePeripheral> im
     }
 
     @Override
-    public CompoundTag getPeripheralSettings() {
-        return peripheralSettings;
-    }
-
-    @Override
-    public void markSettingsChanged() {
-        setChanged();
-    }
-
-    @Override
     public <T extends BlockEntity> void handleTick(Level level, BlockState state, BlockEntityType<T> type) {
+        super.handleTick(level, state, type);
         if (getNode().getNetwork() != null) {
             AutocraftingNetworkComponent manager = getNode().getNetwork().getComponent(AutocraftingNetworkComponent.class);
             if (!this.addedListener) {

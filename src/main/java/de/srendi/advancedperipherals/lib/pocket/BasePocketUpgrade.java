@@ -34,7 +34,7 @@ public abstract class BasePocketUpgrade<T extends IBasePeripheral<?>> extends Ab
     @Override
     public void update(@NotNull IPocketAccess access, @Nullable IPeripheral peripheral) {
         super.update(access, peripheral);
-        if (peripheral instanceof IBasePeripheral basePeripheral) {
+        if (peripheral instanceof IBasePeripheral<?> basePeripheral) {
             basePeripheral.update();
         }
     }

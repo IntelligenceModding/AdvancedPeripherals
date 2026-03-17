@@ -63,6 +63,10 @@ public class KeyboardScreen extends Screen implements MenuAccess<KeyboardContain
     }
 
     @Override
+    public void renderBackground(GuiGraphics graphics, int x, int y, float partialTicks) {
+    }
+
+    @Override
     public void render(@NotNull GuiGraphics graphics, int x, int y, float partialTicks) {
         super.render(graphics, x, y, partialTicks);
 

@@ -6,6 +6,7 @@ import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.TurtlePeripheralOwner;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
+import de.srendi.advancedperipherals.common.setup.APDataComponents;
 import de.srendi.advancedperipherals.common.util.ChunkManager;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
 import net.minecraft.core.component.PatchedDataComponentMap;
@@ -15,8 +16,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
-
-import static de.srendi.advancedperipherals.common.setup.APDataComponents.CHUNKY_ID;
 
 public class ChunkyPeripheral extends BasePeripheral<TurtlePeripheralOwner> {
 
@@ -29,10 +28,10 @@ public class ChunkyPeripheral extends BasePeripheral<TurtlePeripheralOwner> {
 
     protected UUID getUUID() {
         PatchedDataComponentMap patchMap = owner.getPatchedDataStorage();
-        UUID id = patchMap.get(CHUNKY_ID.get());
+        UUID id = patchMap.get(APDataComponents.CHUNKY_ID.get());
         if (id == null) {
             id = UUID.randomUUID();
-            patchMap.set(CHUNKY_ID.get(), id);
+            patchMap.set(APDataComponents.CHUNKY_ID.get(), id);
             owner.putDataStorage(patchMap.asPatch());
         }
         return id;
@@ -52,7 +51,8 @@ public class ChunkyPeripheral extends BasePeripheral<TurtlePeripheralOwner> {
         return ChunkManager.getMaxLoadRadius();
     }
 
-    public void updateChunkState() {
+    @Override
+    public void update() {
         // TODO: should find someway to update after turtle moved or while moving, but not every tick
         ServerLevel level = (ServerLevel) getLevel();
         ChunkManager manager = ChunkManager.get(level.getServer());

@@ -1,6 +1,6 @@
 package de.srendi.advancedperipherals.common.blocks.base;
 
-import de.srendi.advancedperipherals.lib.peripherals.IPeripheralTileEntity;
+import de.srendi.advancedperipherals.lib.peripherals.IPeripheralBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.server.level.ServerPlayer;
@@ -86,7 +86,7 @@ public abstract class BaseBlockEntityBlock extends BaseBlock implements EntityBl
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, @NotNull BlockState state, @NotNull BlockEntityType<T> type) {
         if (level.isClientSide || !belongToTickingEntity) return null;
         return (level1, blockPos, blockState, entity) -> {
-            if (entity instanceof IPeripheralTileEntity blockEntity) {
+            if (entity instanceof IPeripheralBlockEntity blockEntity) {
                 blockEntity.handleTick(level, state, type);
             }
         };

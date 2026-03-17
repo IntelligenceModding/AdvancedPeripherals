@@ -3,7 +3,6 @@ package de.srendi.advancedperipherals.common.smartglasses.modules;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.peripheral.IPeripheral;
 import dan200.computercraft.core.computer.ComputerSide;
-import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.BasePeripheralOwner;
 import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesComputer;
 import de.srendi.advancedperipherals.common.util.fakeplayer.APFakePlayer;
@@ -12,7 +11,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.FrontAndTop;
 import net.minecraft.core.component.DataComponentPatch;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -105,16 +103,6 @@ public class ModulePeripheralOwner extends BasePeripheralOwner {
     @Override
     public void putDataStorage(DataComponentPatch patch) {
         computer.setModulesData(patch);
-    }
-
-    @Override
-    public CompoundTag getNbtStorage() {
-        AdvancedPeripherals.debug("Smartglasses module tried to use nbt storage but it should instead use data component storage, report to github!", org.apache.logging.log4j.Level.WARN);
-        return null;
-    }
-
-    @Override
-    public void markDataStorageDirty() {
     }
 
     @Override

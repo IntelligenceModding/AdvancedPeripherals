@@ -4,7 +4,8 @@ import dan200.computercraft.api.peripheral.IComputerAccess;
 import dan200.computercraft.api.peripheral.IPeripheral;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
 import de.srendi.advancedperipherals.lib.peripherals.DisabledPeripheral;
-import de.srendi.advancedperipherals.lib.peripherals.IPeripheralTileEntity;
+import de.srendi.advancedperipherals.lib.peripherals.IBasePeripheral;
+import de.srendi.advancedperipherals.lib.peripherals.IPeripheralBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
@@ -14,11 +15,13 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.WorldlyContainer;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
@@ -31,7 +34,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collections;
 import java.util.Optional;
 
-public abstract class PeripheralBlockEntity<T extends BasePeripheral<?>> extends BaseContainerBlockEntity implements WorldlyContainer, MenuProvider, IPeripheralTileEntity, ICapabilityProvider, VarNameable {
+public abstract class PeripheralBlockEntity<T extends BasePeripheral<?>> extends BaseContainerBlockEntity implements WorldlyContainer, MenuProvider, IPeripheralBlockEntity, ICapabilityProvider, VarNameable {
     private static final String PERIPHERAL_SETTINGS_KEY = "peripheralSettings";
     protected CompoundTag peripheralSettings = new CompoundTag();
     protected NonNullList<ItemStack> items;
@@ -229,13 +232,27 @@ public abstract class PeripheralBlockEntity<T extends BasePeripheral<?>> extends
         items.clear();
     }
 
+    @Override
     public CompoundTag getPeripheralSettings() {
-        return peripheralSettings;
+        return this.peripheralSettings;
+    }
+
+    @Override
+    public void setPeripheralSettings(CompoundTag tag) {
+        this.peripheralSettings = tag;
+        this.markSettingsChanged();
     }
 
     @Override
     public void markSettingsChanged() {
         this.setChanged();
+    }
+
+    @Override
+    public <U extends BlockEntity> void handleTick(Level level, BlockState state, BlockEntityType<U> type) {
+        if (!level.isClientSide()) {
+            this.getPeripheralOptional().ifPresent(IBasePeripheral::update);
+        }
     }
 
     public void sendUpdate() {
