@@ -1,6 +1,7 @@
 package de.srendi.advancedperipherals.common.village;
 
 import dan200.computercraft.shared.ModRegistry;
+import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.setup.APBlocks;
 import de.srendi.advancedperipherals.common.setup.APItems;
 import de.srendi.advancedperipherals.common.setup.APVillagers;
@@ -17,8 +18,7 @@ public class VillagerTrades {
 
     @SubscribeEvent
     public static void registerWanderingTrade(WandererTradesEvent event) {
-        //if (APConfig.WORLD_CONFIG.enableWanderingTraderTrades.get()) {
-        if (false) {
+        if (APConfig.WORLD_CONFIG.enableWanderingTraderTrades.get()) {
             TradeBuilder.createTrade(event, APBlocks.PERIPHERAL_CASING.get(), VillagerTrade.Type.ITEM_FOR_EMERALD, 1, 1)
                     .setMaxUses(8)
                     .build();

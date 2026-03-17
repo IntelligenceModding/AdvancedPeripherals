@@ -41,6 +41,6 @@ public class WorldConfig implements IAPConfig {
 
     @Override
     public ModConfig.Type getType() {
-        return ModConfig.Type.SERVER;
+        return ModConfig.Type.COMMON;
     }
 }

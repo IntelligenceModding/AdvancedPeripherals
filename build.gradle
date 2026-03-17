@@ -292,15 +292,10 @@ dependencies {
     compileOnly "com.ldtteam:domum-ornamentum:${domumornamentum_version}"
     compileOnly "com.ldtteam:minecolonies:${minecolonies_version}"
     compileOnly "com.ldtteam:structurize:${structurize_version}"
-
-    // IMPORTANT. This should be removed/commented when running `runData`
-    // Automated now, tho if you are not executing runData directly it's no help
-    if (!project.gradle.startParameter.taskNames.contains("runData")) {
-        runtimeOnly "com.ldtteam:blockui:${blockui_version}"
-        runtimeOnly "com.ldtteam:domum-ornamentum:${domumornamentum_version}"
-        runtimeOnly "com.ldtteam:minecolonies:${minecolonies_version}"
-        runtimeOnly "com.ldtteam:structurize:${structurize_version}"
-    }
+    runtimeOnly "com.ldtteam:blockui:${blockui_version}"
+    runtimeOnly "com.ldtteam:domum-ornamentum:${domumornamentum_version}"
+    runtimeOnly "com.ldtteam:minecolonies:${minecolonies_version}"
+    runtimeOnly "com.ldtteam:structurize:${structurize_version}"
 
     // Patchouli
     compileOnly "vazkii.patchouli:Patchouli:${patchouli_version}-NEOFORGE"

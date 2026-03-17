@@ -1,0 +1,30 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "ae2"
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "A": {
+      "item": "advancedperipherals:peripheral_casing"
+    },
+    "F": {
+      "item": "ae2:fluix_block"
+    },
+    "I": {
+      "item": "ae2:interface"
+    }
+  },
+  "pattern": [
+    "FIF",
+    "IAI",
+    "FIF"
+  ],
+  "result": {
+    "count": 1,
+    "id": "advancedperipherals:me_bridge"
+  }
+}

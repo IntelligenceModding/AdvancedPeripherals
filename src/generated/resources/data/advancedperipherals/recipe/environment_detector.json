@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "A": {
+      "item": "advancedperipherals:peripheral_casing"
+    },
+    "C": {
+      "tag": "c:crops"
+    },
+    "L": {
+      "tag": "minecraft:leaves"
+    },
+    "S": {
+      "tag": "minecraft:saplings"
+    },
+    "W": {
+      "tag": "minecraft:wool"
+    }
+  },
+  "pattern": [
+    "WSW",
+    "LAL",
+    "WCW"
+  ],
+  "result": {
+    "count": 1,
+    "id": "advancedperipherals:environment_detector"
+  }
+}

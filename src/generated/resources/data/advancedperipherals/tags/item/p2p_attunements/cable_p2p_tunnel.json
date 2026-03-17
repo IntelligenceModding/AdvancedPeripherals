@@ -1,0 +1,16 @@
+{
+  "values": [
+    {
+      "id": "computercraft:cable",
+      "required": false
+    },
+    {
+      "id": "computercraft:wired_modem",
+      "required": false
+    },
+    {
+      "id": "computercraft:wired_modem_full",
+      "required": false
+    }
+  ]
+}

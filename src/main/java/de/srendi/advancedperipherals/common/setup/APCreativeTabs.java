@@ -14,8 +14,8 @@ public class APCreativeTabs {
         APCreativeTab.populateCreativeTabBuilder(builder);
         return builder.build();
     }
-    public static void register() {
 
+    public static void register() {
     }
 
 }

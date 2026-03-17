@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "A": {
+      "item": "advancedperipherals:peripheral_casing"
+    },
+    "D": {
+      "tag": "c:gems/diamond"
+    },
+    "L": {
+      "item": "minecraft:potion"
+    },
+    "R": {
+      "tag": "c:storage_blocks/redstone"
+    },
+    "S": {
+      "item": "minecraft:soul_lantern"
+    }
+  },
+  "pattern": [
+    "RAR",
+    "DSD",
+    "RLR"
+  ],
+  "result": {
+    "count": 1,
+    "id": "advancedperipherals:weak_automata_core"
+  }
+}

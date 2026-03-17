@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "A": {
+      "item": "advancedperipherals:peripheral_casing"
+    },
+    "C": {
+      "tag": "c:chests"
+    },
+    "I": {
+      "tag": "c:ingots/iron"
+    },
+    "R": {
+      "tag": "c:storage_blocks/redstone"
+    }
+  },
+  "pattern": [
+    "ICI",
+    "CAC",
+    "RCR"
+  ],
+  "result": {
+    "count": 1,
+    "id": "advancedperipherals:nbt_storage"
+  }
+}

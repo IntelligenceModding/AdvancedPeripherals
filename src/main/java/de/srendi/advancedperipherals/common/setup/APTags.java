@@ -8,12 +8,15 @@ import org.jetbrains.annotations.NotNull;
 
 public class APTags {
 
+    public static void register() {
+        Items.register();
+    }
+
     public static class Items {
 
         // public static final TagKey<Item> SMART_GLASSES = tag("smart_glasses"); // unused
 
-        public static void init() {
-
+        public static void register() {
         }
 
         private static TagKey<Item> tag(@NotNull String name) {

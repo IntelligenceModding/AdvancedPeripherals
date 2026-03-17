@@ -44,6 +44,7 @@ public class AdvancedPeripherals {
 
     public AdvancedPeripherals(IEventBus modBus) {
         LOGGER.info("AdvancedPeripherals says hello!");
+
         APAddon.setup();
 
         APConfig.register(ModLoadingContext.get());

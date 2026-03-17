@@ -44,12 +44,13 @@ public class APRegistration {
         DATA_COMPONENT_TYPES.register(modEventBus);
 
         APBlocks.register();
-        APBlockEntityTypes.register();
         APItems.register();
-        APEntities.register();
+        APBlockEntityTypes.register();
         APContainerTypes.register();
+        APTags.register();
         APVillagers.register();
-        APTags.Items.init();
+        APEntities.register();
+        APCreativeTabs.register();
         APDataComponents.register();
         CCRegistration.register();
 

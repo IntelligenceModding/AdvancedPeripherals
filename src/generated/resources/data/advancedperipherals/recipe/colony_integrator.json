@@ -1,0 +1,36 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "minecolonies"
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "A": {
+      "item": "advancedperipherals:peripheral_casing"
+    },
+    "B": {
+      "item": "minecolonies:build_goggles"
+    },
+    "O": {
+      "tag": "minecraft:logs"
+    },
+    "R": {
+      "item": "minecolonies:blockminecoloniesrack"
+    },
+    "S": {
+      "item": "structurize:sceptergold"
+    }
+  },
+  "pattern": [
+    "ORO",
+    "BAS",
+    "ORO"
+  ],
+  "result": {
+    "count": 1,
+    "id": "advancedperipherals:colony_integrator"
+  }
+}
