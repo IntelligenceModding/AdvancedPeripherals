@@ -38,4 +38,9 @@ public abstract class BasePocketUpgrade<T extends IBasePeripheral<?>> extends Ab
             basePeripheral.update();
         }
     }
+
+    @Override
+    public boolean isItemSuitable(ItemStack stack) {
+        return true;
+    }
 }

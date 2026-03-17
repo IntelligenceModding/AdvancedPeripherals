@@ -34,12 +34,14 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 import java.util.UUID;
+import java.util.regex.Pattern;
 
 import static de.srendi.advancedperipherals.common.addons.computercraft.operations.SimpleFreeOperation.CHAT_MESSAGE;
 
 public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
 
     public static final String PERIPHERAL_TYPE = "chat_box";
+    private static final Pattern UUID_PATTERN = Pattern.compile("^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$");
 
     private long lastConsumedMessage;
 
@@ -78,11 +80,10 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
                 formattablePrefix = MutableComponent.Serializer.fromJson(prefix, RegistryAccess.EMPTY);
                 prefixComponent = formattablePrefix;
             } catch (JsonSyntaxException exception) {
-                AdvancedPeripherals.debug("Non json prefix, using plain text instead.");
+                AdvancedPeripherals.debug("Not vaild json prefix, using plain text instead.");
                 prefixComponent = Component.literal(prefix);
             }
         }
-        if (brackets.isEmpty()) brackets = "[]";
 
         return Component.literal(color + brackets.charAt(0) + "\u00a7r").append(prefixComponent).append(color + brackets.charAt(1) + "\u00a7r ");
     }
@@ -93,8 +94,9 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
      */
     private ServerPlayer getPlayer(String argument) {
         MinecraftServer server = getLevel().getServer();
-        if (argument.matches("\\b[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}\\b"))
+        if (UUID_PATTERN.matcher(argument).matches()) {
             return server.getPlayerList().getPlayer(UUID.fromString(argument));
+        }
         return server.getPlayerList().getPlayerByName(argument);
     }
 
@@ -248,7 +250,6 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
                 message = StringUtil.byteStringToUTF8(message);
             }
 
-
             String playerName = arguments.getString(1);
             int maxRange = APConfig.PERIPHERALS_CONFIG.chatBoxMaxRange.get();
             int range = arguments.optInt(5, -1);
@@ -278,7 +279,6 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
             if (useUTF8) {
                 bracketColor = StringUtil.byteStringToUTF8(bracketColor);
             }
-
 
             MutableComponent preparedMessage = appendPrefix(
                     StringUtil.convertAndToSectionMark(prefix.orElseGet(APConfig.PERIPHERALS_CONFIG.defaultChatBoxPrefix)),

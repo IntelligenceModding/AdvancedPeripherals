@@ -7,7 +7,6 @@ import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
 import dan200.computercraft.shared.util.InventoryUtil;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
-import de.srendi.advancedperipherals.common.util.DataStorageUtil;
 import de.srendi.advancedperipherals.common.util.fakeplayer.APFakePlayer;
 import de.srendi.advancedperipherals.common.util.fakeplayer.FakePlayerProviderTurtle;
 import de.srendi.advancedperipherals.lib.peripherals.IBasePeripheral;
@@ -79,7 +78,7 @@ public class TurtlePeripheralOwner extends BasePeripheralOwner {
 
     @Override
     public DataComponentPatch getDataStorage() {
-        return DataStorageUtil.getDataStorage(turtle, side);
+        return turtle.getUpgradeData(side);
     }
 
     @Override
@@ -90,7 +89,7 @@ public class TurtlePeripheralOwner extends BasePeripheralOwner {
 
     @Override
     public void putDataStorage(DataComponentPatch dataStorage) {
-        DataStorageUtil.putDataStorage(turtle, side, dataStorage);
+        turtle.setUpgradeData(side, dataStorage);
     }
 
     @Override

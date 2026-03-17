@@ -8,8 +8,6 @@ import de.srendi.advancedperipherals.common.addons.computercraft.owner.TurtlePer
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.util.ChunkManager;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
-import net.minecraft.core.component.DataComponentMap;
-import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.component.PatchedDataComponentMap;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.ChunkPos;
@@ -30,11 +28,10 @@ public class ChunkyPeripheral extends BasePeripheral<TurtlePeripheralOwner> {
     }
 
     protected UUID getUUID() {
-        DataComponentPatch patch = owner.getDataStorage();
-        UUID id = patch.get(CHUNKY_ID.get()).orElse(null);
+        PatchedDataComponentMap patchMap = owner.getPatchedDataStorage();
+        UUID id = patchMap.get(CHUNKY_ID.get());
         if (id == null) {
             id = UUID.randomUUID();
-            PatchedDataComponentMap patchMap = PatchedDataComponentMap.fromPatch(DataComponentMap.EMPTY, patch);
             patchMap.set(CHUNKY_ID.get(), id);
             owner.putDataStorage(patchMap.asPatch());
         }

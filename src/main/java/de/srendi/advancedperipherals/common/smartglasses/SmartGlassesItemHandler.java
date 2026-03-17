@@ -24,10 +24,12 @@ public class SmartGlassesItemHandler implements IItemHandlerModifiable {
 
     private final ItemStack glasses;
     private final SmartGlassesComputer computer;
+    private final RegistryAccess registryAccess;
 
-    public SmartGlassesItemHandler(ItemStack glasses, SmartGlassesComputer computer) {
+    public SmartGlassesItemHandler(ItemStack glasses, SmartGlassesComputer computer, RegistryAccess registryAccess) {
         this.glasses = glasses;
         this.computer = computer;
+        this.registryAccess = registryAccess;
     }
 
     public ItemStack getGlasses() {
@@ -49,10 +51,9 @@ public class SmartGlassesItemHandler implements IItemHandlerModifiable {
         if (stack.getItem() instanceof SmartGlassesItem) {
             return false;
         }
-        RegistryAccess registryAccess = this.computer.getLevel().registryAccess();
         List<ItemStack> items = this.loadItems();
         if (slot < PERIPHERAL_SLOTS) {
-            UpgradeData<IPocketUpgrade> upgradeData = PocketUpgrades.instance().get(registryAccess, stack);
+            UpgradeData<IPocketUpgrade> upgradeData = PocketUpgrades.instance().get(this.registryAccess, stack);
             if (upgradeData == null) {
                 return false;
             }
@@ -61,6 +62,9 @@ public class SmartGlassesItemHandler implements IItemHandlerModifiable {
                 return false;
             }
             return true;
+        }
+        if (slot >= SLOTS) {
+            return false;
         }
         Item item = stack.getItem();
         if (!(item instanceof IModuleItem module)) {
@@ -84,11 +88,7 @@ public class SmartGlassesItemHandler implements IItemHandlerModifiable {
             return stack;
         }
         ItemStack existing = getStackInSlot(slot);
-        if (!existing.isEmpty()) {
-            return stack;
-        }
-
-        int limit = getSlotLimit(slot);
+        int limit = getSlotLimit(slot) - existing.getCount();
         if (limit <= 0) {
             return stack;
         }
@@ -100,9 +100,8 @@ public class SmartGlassesItemHandler implements IItemHandlerModifiable {
                 setStackInSlot(slot, reachedLimit ? stack.copyWithCount(limit) : stack);
             } else {
                 existing.grow(reachedLimit ? limit : stack.getCount());
+                setStackInSlot(slot, existing);
             }
-
-            setChanged();
         }
 
         return reachedLimit ? stack.copyWithCount(stack.getCount() - limit) : ItemStack.EMPTY;
@@ -159,14 +158,12 @@ public class SmartGlassesItemHandler implements IItemHandlerModifiable {
     }
 
     public void saveItems(NonNullList<ItemStack> items) {
-        RegistryAccess registryAccess = this.computer.getLevel().registryAccess();
-        this.glasses.set(APDataComponents.ITEMS, ContainerHelper.saveAllItems(new CompoundTag(), items, registryAccess));
+        this.glasses.set(APDataComponents.ITEMS, ContainerHelper.saveAllItems(new CompoundTag(), items, this.registryAccess));
     }
 
     public NonNullList<ItemStack> loadItems() {
-        RegistryAccess registryAccess = this.computer.getLevel().registryAccess();
         NonNullList<ItemStack> items = NonNullList.withSize(SLOTS, ItemStack.EMPTY);
-        ContainerHelper.loadAllItems(this.glasses.getOrDefault(APDataComponents.ITEMS, new CompoundTag()), items, registryAccess);
+        ContainerHelper.loadAllItems(this.glasses.getOrDefault(APDataComponents.ITEMS, new CompoundTag()), items, this.registryAccess);
         return items;
     }
 }

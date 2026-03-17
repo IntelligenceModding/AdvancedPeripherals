@@ -21,7 +21,6 @@ import de.srendi.advancedperipherals.lib.peripherals.AutomataCorePeripheral;
 import de.srendi.advancedperipherals.lib.peripherals.IPeripheralOperation;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.component.PatchedDataComponentMap;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.Level;
@@ -50,7 +49,7 @@ public class AutomataWarpingPlugin extends AutomataCorePlugin {
     @NotNull
     protected CompoundTag getPointData() {
         TurtlePeripheralOwner owner = automataCore.getPeripheralOwner();
-        CompoundTag data = owner.getDataStorage().get(APDataComponents.POINT_DATA_MARK.get()).orElse(null);
+        CompoundTag data = owner.getPatchedDataStorage().get(APDataComponents.POINT_DATA_MARK.get());
         if (data == null) {
             return new CompoundTag();
         }
@@ -59,7 +58,7 @@ public class AutomataWarpingPlugin extends AutomataCorePlugin {
 
     protected void setPointData(@NotNull CompoundTag data) {
         TurtlePeripheralOwner owner = automataCore.getPeripheralOwner();
-        PatchedDataComponentMap settings = PatchedDataComponentMap.fromPatch(DataComponentMap.EMPTY, owner.getDataStorage());
+        PatchedDataComponentMap settings = owner.getPatchedDataStorage();
         settings.set(APDataComponents.POINT_DATA_MARK.get(), data);
         owner.putDataStorage(settings.asPatch());
     }

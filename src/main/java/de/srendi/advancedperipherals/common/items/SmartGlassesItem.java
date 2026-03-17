@@ -2,6 +2,7 @@ package de.srendi.advancedperipherals.common.items;
 
 import com.google.common.base.Objects;
 import dan200.computercraft.api.pocket.IPocketUpgrade;
+import dan200.computercraft.api.upgrades.UpgradeData;
 import dan200.computercraft.core.computer.ComputerSide;
 import dan200.computercraft.shared.ModRegistry;
 import dan200.computercraft.shared.computer.core.ComputerFamily;
@@ -23,9 +24,7 @@ import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesMenuProvide
 import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesSideAccess;
 import de.srendi.advancedperipherals.common.smartglasses.modules.IModule;
 import de.srendi.advancedperipherals.common.smartglasses.modules.IModuleItem;
-import net.minecraft.ChatFormatting;
 import net.minecraft.core.Holder;
-import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.Container;
@@ -39,7 +38,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.items.IItemHandler;
@@ -50,8 +48,6 @@ import top.theillusivec4.curios.api.CuriosApi;
 import top.theillusivec4.curios.api.SlotResult;
 import top.theillusivec4.curios.api.type.capability.ICuriosItemHandler;
 
-import java.util.List;
-
 public class SmartGlassesItem extends ArmorItem {
 
     public SmartGlassesItem(Holder<ArmorMaterial> material) {
@@ -59,8 +55,9 @@ public class SmartGlassesItem extends ArmorItem {
     }
 
     public IItemHandler createItemHandlerCap(ItemStack stack) {
-        SmartGlassesComputer computer = getServerComputer(ServerLifecycleHooks.getCurrentServer(), stack);
-        SmartGlassesItemHandler handler = new SmartGlassesItemHandler(stack, computer);
+        MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
+        SmartGlassesComputer computer = getServerComputer(server, stack);
+        SmartGlassesItemHandler handler = new SmartGlassesItemHandler(stack, computer, server.registryAccess());
         return handler;
     }
 
@@ -107,9 +104,9 @@ public class SmartGlassesItem extends ArmorItem {
                 continue;
             }
             SmartGlassesSideAccess access = computer.getSmartGlassesUpgradeAccess(side);
-            IPocketUpgrade upgrade = access.getUpgrade().upgrade();
+            UpgradeData<IPocketUpgrade> upgrade = access.getUpgrade();
             if (upgrade != null) {
-                upgrade.update(access, computer.getPeripheral(side));
+                upgrade.upgrade().update(access, computer.getPeripheral(side));
             }
         }
 
@@ -183,16 +180,6 @@ public class SmartGlassesItem extends ArmorItem {
         return super.use(world, player, hand);
     }
 
-    @Override
-    public void appendHoverText(@NotNull ItemStack stack, @NotNull TooltipContext context, @NotNull List<Component> list, TooltipFlag flag) {
-        if (flag.isAdvanced() || getLabel(stack) == null) {
-            int id = getComputerID(stack);
-            if (id >= 0) {
-                list.add(Component.translatable("gui.computercraft.tooltip.computer_id", id).withStyle(ChatFormatting.GRAY));
-            }
-        }
-    }
-
     public SmartGlassesComputer getOrCreateComputer(ServerLevel level, Entity entity, @Nullable Container inventory, ItemStack stack) {
         ServerComputerRegistry registry = ServerContext.get(level.getServer()).registry();
         SmartGlassesComputer computer = (SmartGlassesComputer) ServerComputerReference.get(stack, registry);
@@ -208,7 +195,7 @@ public class SmartGlassesItem extends ArmorItem {
                 ServerComputer.properties(getComputerID(stack), ComputerFamily.ADVANCED)
                     .label(getLabel(stack))
                     .storageCapacity(StorageCapacity.getOrDefault(stack.get(ModRegistry.DataComponents.STORAGE_CAPACITY.get()), -1)),
-                stack.get(APDataComponents.UPGRADE_DATAS.get())
+                stack.get(APDataComponents.MODULE_DATAS.get())
             );
 
             stack.set(ModRegistry.DataComponents.COMPUTER.get(), new ServerComputerReference(registry.getSessionID(), computer.register()));
@@ -228,9 +215,6 @@ public class SmartGlassesItem extends ArmorItem {
 
     @Nullable
     public static SmartGlassesComputer getServerComputer(MinecraftServer server, ItemStack stack) {
-        if (server == null) {
-            return null;
-        }
         return (SmartGlassesComputer) ServerComputerReference.get(stack, ServerContext.get(server).registry());
     }
 

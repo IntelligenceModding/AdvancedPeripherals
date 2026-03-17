@@ -1,6 +1,7 @@
 package de.srendi.advancedperipherals.client.screens;
 
 import dan200.computercraft.client.gui.AbstractComputerScreen;
+// import dan200.computercraft.client.gui.widgets.ComputerSidebar;
 import dan200.computercraft.client.gui.widgets.TerminalWidget;
 import dan200.computercraft.shared.computer.inventory.AbstractComputerMenu;
 import dan200.computercraft.shared.turtle.inventory.TurtleMenu;
@@ -57,9 +58,8 @@ public class SmartGlassesScreen extends AbstractComputerScreen<SmartGlassesConta
             graphics.blit(BACKGROUND, leftPos + AbstractComputerMenu.SIDEBAR_WIDTH + 222, topPos + 183, 186, 183, 18, 18);
         }
 
-        // RenderSystem.setShaderTexture(0, SIDEBAR);
-        // TODO: render the background texture
-        // See https://github.com/cc-tweaked/CC-Tweaked/blob/mc-1.21.x/projects/common/src/client/java/dan200/computercraft/client/gui/ComputerScreen.java#L41
+        // TODO: render sidebar on the top-left corner
+        // graphics.blit(SIDEBAR, leftPos, topPos + sidebarYOffset, AbstractComputerMenu.SIDEBAR_WIDTH, ComputerSidebar.HEIGHT);
     }
 
     // TODO:
@@ -75,8 +75,8 @@ public class SmartGlassesScreen extends AbstractComputerScreen<SmartGlassesConta
 
     @Override
     protected void renderLabels(@NotNull GuiGraphics graphics, int x, int y) {
-        FormattedCharSequence formattedcharsequence = currentType.getName().getVisualOrderText();
-        graphics.drawCenteredString(this.font, formattedcharsequence, 212 + AbstractComputerMenu.SIDEBAR_WIDTH, 133, 4210752);
+        FormattedCharSequence invName = currentType.getName().getVisualOrderText();
+        graphics.drawString(this.font, invName, 212 + AbstractComputerMenu.SIDEBAR_WIDTH - this.font.width(invName) / 2, 133, 0x404040, false);
     }
 
     public void setCurrentType(SlotType currentType) {

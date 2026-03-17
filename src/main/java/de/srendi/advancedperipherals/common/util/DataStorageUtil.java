@@ -1,12 +1,10 @@
 package de.srendi.advancedperipherals.common.util;
 
-import dan200.computercraft.api.pocket.IPocketAccess;
 import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.IPeripheralOwner;
 import de.srendi.advancedperipherals.lib.peripherals.IPeripheralTileEntity;
 import net.minecraft.core.component.DataComponentMap;
-import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.component.PatchedDataComponentMap;
 import net.minecraft.nbt.CompoundTag;
 import org.jetbrains.annotations.NotNull;
@@ -16,25 +14,8 @@ import java.util.Optional;
 import static de.srendi.advancedperipherals.common.setup.APDataComponents.ROTATION_CHARGE_SETTING;
 
 public class DataStorageUtil {
-
-    public static DataComponentPatch getDataStorage(@NotNull ITurtleAccess access, @NotNull TurtleSide side) {
-        return access.getUpgradeData(side);
-    }
-
-    public static void putDataStorage(@NotNull ITurtleAccess access, @NotNull TurtleSide side, DataComponentPatch dataComponent) {
-        access.setUpgradeData(side, dataComponent);
-    }
-
     public static CompoundTag getDataStorage(@NotNull IPeripheralTileEntity tileEntity) {
         return tileEntity.getPeripheralSettings();
-    }
-
-    public static DataComponentPatch getDataStorage(@NotNull IPocketAccess pocket) {
-        return pocket.getUpgradeData();
-    }
-
-    public static void putDataStorage(@NotNull IPocketAccess pocket, DataComponentPatch dataComponent) {
-        pocket.setUpgradeData(dataComponent);
     }
 
     /**
@@ -49,26 +30,27 @@ public class DataStorageUtil {
          * Used for gear rotation animation
          */
         public static int get(@NotNull ITurtleAccess access, @NotNull TurtleSide side) {
-            Optional<? extends Integer> rotationCharge = getDataStorage(access, side).get(ROTATION_CHARGE_SETTING.get());
+            Optional<? extends Integer> rotationCharge = access.getUpgradeData(side).get(ROTATION_CHARGE_SETTING.get());
             return rotationCharge != null && rotationCharge.isPresent() ? rotationCharge.get() : 0;
         }
 
         public static boolean consume(@NotNull ITurtleAccess access, @NotNull TurtleSide side) {
-            PatchedDataComponentMap patch = PatchedDataComponentMap.fromPatch(DataComponentMap.EMPTY, getDataStorage(access, side));
+            PatchedDataComponentMap patch = PatchedDataComponentMap.fromPatch(DataComponentMap.EMPTY, access.getUpgradeData(side));
             int currentCharge = get(access, side);
             if (currentCharge > 0) {
                 patch.set(ROTATION_CHARGE_SETTING.get(), Math.max(0, get(access, side) - 1));
-                putDataStorage(access, side, patch.asPatch());
+                access.setUpgradeData(side, patch.asPatch());
                 return true;
             }
             return false;
         }
 
         public static void addCycles(IPeripheralOwner owner, int count) {
-            PatchedDataComponentMap patch = PatchedDataComponentMap.fromPatch(DataComponentMap.EMPTY, owner.getDataStorage());
+            PatchedDataComponentMap patch = owner.getPatchedDataStorage();
             Integer currentCharge = patch.get(ROTATION_CHARGE_SETTING.get());
-            if (currentCharge == null || currentCharge < 0)
+            if (currentCharge == null || currentCharge < 0) {
                 currentCharge = 0;
+            }
             patch.set(ROTATION_CHARGE_SETTING.get(), currentCharge + count * ROTATION_STEPS);
             owner.putDataStorage(patch.asPatch());
         }

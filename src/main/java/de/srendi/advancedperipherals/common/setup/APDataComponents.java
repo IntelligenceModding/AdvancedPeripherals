@@ -28,11 +28,11 @@ public class APDataComponents {
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<CompoundTag>> ITEMS = registerNBT("items");
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Boolean>> KEYBOARD_OPENED = registerBoolean("keyboard_opened");
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> KEY_PRESSED_DURATION = registerInt("key_pressed_duration");
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<DataComponentPatch>> MODULE_DATAS = registerDataComponent("module_datas");
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<UUID>> OWNER = registerUUID("owner_id");
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<CompoundTag>> POINT_DATA_MARK = registerNBT("point_data_mark");
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> ROTATION_CHARGE_SETTING = registerInt("rotation_charge_setting");
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<DataComponentPatch>> STORED_DATA = registerDataComponent("stored_data");
-    public static final DeferredHolder<DataComponentType<?>, DataComponentType<DataComponentPatch>> UPGRADE_DATAS = registerDataComponent("upgrade_datas");
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<String>> WORLD_DATA_MARK = registerString("world_data_mark");
 
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Long>> SIMPLE_FREE_OPERATION = registerLong("free_operation_cooldown");

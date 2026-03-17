@@ -7,7 +7,9 @@ import de.srendi.advancedperipherals.lib.peripherals.IPeripheralOperation;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.FrontAndTop;
+import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.component.DataComponentPatch;
+import net.minecraft.core.component.PatchedDataComponentMap;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.OwnableEntity;
@@ -68,6 +70,14 @@ public interface IPeripheralOwner {
     }
 
     DataComponentPatch getDataStorage();
+
+    default PatchedDataComponentMap getPatchedDataStorage() {
+        return this.getPatchedDataStorage(DataComponentMap.EMPTY);
+    }
+
+    default PatchedDataComponentMap getPatchedDataStorage(DataComponentMap defaults) {
+        return PatchedDataComponentMap.fromPatch(defaults, this.getDataStorage());
+    }
 
     // Not everything from MC uses the new data component system, so we provide a nbt data storage too
     CompoundTag getNbtStorage();

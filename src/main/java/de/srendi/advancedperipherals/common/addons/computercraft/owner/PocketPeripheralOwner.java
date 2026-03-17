@@ -4,10 +4,11 @@ import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.peripheral.IPeripheral;
 import dan200.computercraft.api.pocket.IPocketAccess;
 import dan200.computercraft.core.computer.ComputerSide;
+import dan200.computercraft.shared.computer.core.ServerComputer;
 import dan200.computercraft.shared.pocket.core.PocketBrain;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
-import de.srendi.advancedperipherals.common.util.DataStorageUtil;
+import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesSideAccess;
 import de.srendi.advancedperipherals.common.util.fakeplayer.APFakePlayer;
 import de.srendi.advancedperipherals.lib.peripherals.IBasePeripheral;
 import net.minecraft.core.BlockPos;
@@ -28,8 +29,9 @@ public class PocketPeripheralOwner extends BasePeripheralOwner {
     public PocketPeripheralOwner(IPocketAccess pocket) {
         super();
         this.pocket = pocket;
-        if(APConfig.PERIPHERALS_CONFIG.disablePocketFuelConsumption.get())
+        if (APConfig.PERIPHERALS_CONFIG.disablePocketFuelConsumption.get()) {
             attachAbility(PeripheralOwnerAbility.FUEL, new InfinitePocketFuelAbility(this));
+        }
     }
 
     @Nullable
@@ -91,7 +93,7 @@ public class PocketPeripheralOwner extends BasePeripheralOwner {
 
     @Override
     public DataComponentPatch getDataStorage() {
-        return DataStorageUtil.getDataStorage(pocket);
+        return pocket.getUpgradeData();
     }
 
     @Override
@@ -102,7 +104,7 @@ public class PocketPeripheralOwner extends BasePeripheralOwner {
 
     @Override
     public void putDataStorage(DataComponentPatch dataStorage) {
-        DataStorageUtil.putDataStorage(pocket, dataStorage);
+        pocket.setUpgradeData(dataStorage);
     }
 
     @Override
@@ -142,9 +144,15 @@ public class PocketPeripheralOwner extends BasePeripheralOwner {
 
     @Override
     public <T extends IPeripheral> T getConnectedPeripheral(Class<T> type) {
+        ServerComputer computer = null;
         if (pocket instanceof PocketBrain pocketBrain) {
+            computer = pocketBrain.computer();
+        } else if (pocket instanceof SmartGlassesSideAccess sideAccess) {
+            computer = sideAccess.getComputer();
+        }
+        if (computer != null) {
             for (ComputerSide side : ComputerSide.values()) {
-                IPeripheral peripheral = pocketBrain.computer().getPeripheral(side);
+                IPeripheral peripheral = computer.getPeripheral(side);
                 if (peripheral == null || !type.isInstance(peripheral)) {
                     continue;
                 }
@@ -153,7 +161,6 @@ public class PocketPeripheralOwner extends BasePeripheralOwner {
                 }
                 return (T) peripheral;
             }
-            return null;
         }
         return null;
     }

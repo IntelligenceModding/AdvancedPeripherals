@@ -3,13 +3,10 @@ package de.srendi.advancedperipherals.common.addons.computercraft.owner;
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.lua.MethodResult;
 import de.srendi.advancedperipherals.lib.peripherals.IPeripheralPlugin;
-import net.minecraft.core.component.DataComponentMap;
-import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.component.PatchedDataComponentMap;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
-import java.util.Optional;
 
 import static de.srendi.advancedperipherals.common.setup.APDataComponents.FUEL_CONSUMPTION_RATE;
 
@@ -30,10 +27,8 @@ public abstract class FuelAbility<T extends IPeripheralOwner> implements IOwnerA
      * @return the fuel consumption rate
      */
     protected int getConsumptionRate() {
-        DataComponentPatch settings = owner.getDataStorage();
-        Optional<? extends Integer> opt = settings.get(FUEL_CONSUMPTION_RATE.get());
-        int rate = opt != null && opt.isPresent() ? opt.get() : 0;
-        if (rate == 0) {
+        Integer rate = owner.getPatchedDataStorage().get(FUEL_CONSUMPTION_RATE.get());
+        if (rate == null || rate == 0) {
             setConsumptionRate(DEFAULT_FUEL_CONSUMING_RATE);
             return DEFAULT_FUEL_CONSUMING_RATE;
         }
@@ -49,7 +44,7 @@ public abstract class FuelAbility<T extends IPeripheralOwner> implements IOwnerA
         if (rate < DEFAULT_FUEL_CONSUMING_RATE) rate = DEFAULT_FUEL_CONSUMING_RATE;
         int maxFuelRate = getMaxFuelConsumptionRate();
         if (rate > maxFuelRate) rate = maxFuelRate;
-        PatchedDataComponentMap settings = PatchedDataComponentMap.fromPatch(DataComponentMap.EMPTY, owner.getDataStorage());
+        PatchedDataComponentMap settings = owner.getPatchedDataStorage();
         settings.set(FUEL_CONSUMPTION_RATE.get(), rate);
         owner.putDataStorage(settings.asPatch());
     }

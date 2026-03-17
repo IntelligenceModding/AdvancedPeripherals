@@ -34,45 +34,55 @@ public class OperationAbility implements IOwnerAbility, IPeripheralPlugin {
     }
 
     protected void setCooldown(@NotNull IPeripheralOperation<?> operation, int cooldown) {
-        if (cooldown > 0) {
-            if (owner instanceof BlockEntityPeripheralOwner<?>) {
-                CompoundTag dataStorage = owner.getNbtStorage();
-                if (!dataStorage.contains(COOLDOWNS_TAG)) dataStorage.put(COOLDOWNS_TAG, new CompoundTag());
-                dataStorage.getCompound(COOLDOWNS_TAG).putLong(operation.settingsName(), Timestamp.valueOf(LocalDateTime.now().plus(cooldown, ChronoUnit.MILLIS)).getTime());
+        if (owner instanceof BlockEntityPeripheralOwner<?>) {
+            CompoundTag dataStorage = owner.getNbtStorage();
+            if (!dataStorage.contains(COOLDOWNS_TAG)) {
+                dataStorage.put(COOLDOWNS_TAG, new CompoundTag());
             }
-
-            PatchedDataComponentMap patch = PatchedDataComponentMap.fromPatch(DataComponentMap.EMPTY, owner.getDataStorage());
-            if (!patch.has(ABILITY_COOLDOWN.get())) patch.set(ABILITY_COOLDOWN.get(), DataComponentPatch.EMPTY);
-
-            PatchedDataComponentMap operationPatch = PatchedDataComponentMap.fromPatch(DataComponentMap.EMPTY, patch.get(ABILITY_COOLDOWN.get()));
-            operationPatch.set(operation.dataComponentType(), (long) cooldown);
-
-            patch.set(ABILITY_COOLDOWN.get(), operationPatch.asPatch());
-            owner.putDataStorage(patch.asPatch());
+            dataStorage.getCompound(COOLDOWNS_TAG).putLong(operation.settingsName(), Timestamp.valueOf(LocalDateTime.now().plus(cooldown, ChronoUnit.MILLIS)).getTime());
         }
+
+        PatchedDataComponentMap patch = owner.getPatchedDataStorage();
+        if (!patch.has(ABILITY_COOLDOWN.get())) {
+            patch.set(ABILITY_COOLDOWN.get(), DataComponentPatch.EMPTY);
+        }
+
+        PatchedDataComponentMap operationPatch = PatchedDataComponentMap.fromPatch(DataComponentMap.EMPTY, patch.get(ABILITY_COOLDOWN.get()));
+        operationPatch.set(operation.dataComponentType(), (long) cooldown);
+
+        patch.set(ABILITY_COOLDOWN.get(), operationPatch.asPatch());
+        owner.putDataStorage(patch.asPatch());
     }
 
     protected int getCooldown(@NotNull IPeripheralOperation<?> operation) {
         if (owner instanceof BlockEntityPeripheralOwner<?>) {
             CompoundTag dataStorage = owner.getNbtStorage();
-            if (!dataStorage.contains(COOLDOWNS_TAG)) return 0;
+            if (!dataStorage.contains(COOLDOWNS_TAG)) {
+                return 0;
+            }
             CompoundTag cooldowns = dataStorage.getCompound(COOLDOWNS_TAG);
             String operationName = operation.settingsName();
-            if (!cooldowns.contains(operationName)) return 0;
+            if (!cooldowns.contains(operationName)) {
+                return 0;
+            }
             long currentTime = Timestamp.valueOf(LocalDateTime.now()).getTime();
             return (int) Math.max(0, cooldowns.getLong(operationName) - currentTime);
         }
 
-        PatchedDataComponentMap patch = PatchedDataComponentMap.fromPatch(DataComponentMap.EMPTY, owner.getDataStorage());
+        PatchedDataComponentMap patch = owner.getPatchedDataStorage();
 
         if (!patch.has(ABILITY_COOLDOWN.get())) {
             patch.set(ABILITY_COOLDOWN.get(), DataComponentPatch.EMPTY);
             owner.putDataStorage(patch.asPatch());
         }
-        if (patch.get(ABILITY_COOLDOWN.get()).isEmpty()) return 0;
+        if (patch.get(ABILITY_COOLDOWN.get()).isEmpty()) {
+            return 0;
+        }
 
         DataComponentPatch cooldowns = patch.get(ABILITY_COOLDOWN.get());
-        if (cooldowns.get(operation.dataComponentType()).isEmpty()) return 0;
+        if (cooldowns.get(operation.dataComponentType()).isEmpty()) {
+            return 0;
+        }
 
         long currentTime = Timestamp.valueOf(LocalDateTime.now()).getTime();
         return (int) Math.max(0, cooldowns.get(operation.dataComponentType()).get() - currentTime);
@@ -82,7 +92,9 @@ public class OperationAbility implements IOwnerAbility, IPeripheralPlugin {
         allowedOperations.put(operation.settingsName(), operation);
         if (LibConfig.initialCooldownEnabled) {
             int initialCooldown = operation.getInitialCooldown();
-            if (initialCooldown >= LibConfig.initialCooldownSensitivity) setCooldown(operation, initialCooldown);
+            if (initialCooldown >= LibConfig.initialCooldownSensitivity) {
+                setCooldown(operation, initialCooldown);
+            }
         }
     }
 
@@ -115,15 +127,14 @@ public class OperationAbility implements IOwnerAbility, IPeripheralPlugin {
         FuelAbility<?> fuelAbility;
         if (cost != 0) {
             fuelAbility = owner.getAbility(PeripheralOwnerAbility.FUEL);
+            String errorMsg = null;
             if (fuelAbility == null) {
-                MethodResult result = MethodResult.of(null, "This peripheral has no fuel at all");
-                if (failCallback != null) {
-                    failCallback.accept(result, FailReason.NOT_ENOUGH_FUEL);
-                }
-                return result;
+                errorMsg = "This peripheral has no fuel at all";
+            } else if (!fuelAbility.consumeFuel(cost, false)) {
+                errorMsg = "Not enough fuel for operation";
             }
-            if (!fuelAbility.consumeFuel(cost, false)) {
-                MethodResult result = MethodResult.of(null, "Not enough fuel for operation");
+            if (errorMsg != null) {
+                MethodResult result = MethodResult.of(null, errorMsg);
                 if (failCallback != null) {
                     failCallback.accept(result, FailReason.NOT_ENOUGH_FUEL);
                 }
@@ -159,7 +170,9 @@ public class OperationAbility implements IOwnerAbility, IPeripheralPlugin {
     @LuaFunction(mainThread = true)
     public final MethodResult getOperationCooldown(String name) {
         IPeripheralOperation<?> op = allowedOperations.get(name);
-        if (op == null) return MethodResult.of(null, "Cannot find this operation");
+        if (op == null) {
+            return MethodResult.of(null, "Cannot find this operation");
+        }
         return MethodResult.of(getCurrentCooldown(op));
     }
 

@@ -40,16 +40,16 @@ public class SmartGlassesComputer extends ServerComputer {
     private final EnumMap<ComputerSide, SmartGlassesSideAccess> sideAccesses = new EnumMap<>(ComputerSide.class);
     @Nullable
     private SmartGlassesItemHandler itemHandler = null;
-    @NotNull
-    private final ModulePeripheral modulePeripheral;
 
     private boolean peripheralOutdated = false;
     private boolean isDirty = true;
 
-    private final EnumMap<ComputerSide, DataComponentPatch> upgradeDatas = new EnumMap<>(ComputerSide.class);
+    @NotNull
+    private final ModulePeripheral modulePeripheral;
     private final Map<Integer, IModule> modules = new HashMap<>();
+    private DataComponentPatch moduleDatas;
 
-    public SmartGlassesComputer(ServerLevel level, BlockPos pos, ServerComputer.Properties properties, DataComponentPatch upgradeDatas) {
+    public SmartGlassesComputer(ServerLevel level, BlockPos pos, ServerComputer.Properties properties, DataComponentPatch moduleDatas) {
         super(
             level,
             pos,
@@ -58,14 +58,7 @@ public class SmartGlassesComputer extends ServerComputer {
                 .addComponent(APComputerComponents.SMARTGLASSES, Boolean.TRUE)
         );
         this.modulePeripheral = new ModulePeripheral(this);
-        if (upgradeDatas != null) {
-            for (ComputerSide side : ComputerSide.values()) {
-                final DataComponentPatch data = upgradeDatas.get(APDataComponents.getComputerSideDataKey(side)).orElse(null);
-                if (data != null) {
-                    this.upgradeDatas.put(side, data);
-                }
-            }
-        }
+        this.moduleDatas = moduleDatas;
         for (ComputerSide side : ComputerSide.values()) {
             this.sideAccesses.put(side, new SmartGlassesSideAccess(side, this));
         }
@@ -107,25 +100,14 @@ public class SmartGlassesComputer extends ServerComputer {
 
     @NotNull
     public DataComponentPatch getModulesData() {
-        final DataComponentPatch data = this.getUpgradeData(ComputerSide.BACK);
-        return data != null ? data : DataComponentPatch.EMPTY;
+        return this.moduleDatas;
     }
 
     public void setModulesData(DataComponentPatch data) {
-        this.setUpgradeData(ComputerSide.BACK, data);
-    }
-
-    public DataComponentPatch getUpgradeData(@NotNull ComputerSide side) {
-        return this.upgradeDatas.get(side);
-    }
-
-    public void setUpgradeData(@NotNull ComputerSide side, DataComponentPatch data) {
-        this.upgradeDatas.put(side, data);
-        this.isDirty = true;
-    }
-
-    public void removeUpgradeData(@NotNull ComputerSide side) {
-        this.upgradeDatas.remove(side);
+        if (this.moduleDatas.equals(data)) {
+            return;
+        }
+        this.moduleDatas = data;
         this.isDirty = true;
     }
 
@@ -157,12 +139,12 @@ public class SmartGlassesComputer extends ServerComputer {
             ItemStack peripheralItem = itemHandler.getStackInSlot(slot);
             UpgradeData<IPocketUpgrade> upgradeData = PocketUpgrades.instance().get(registryAccess, peripheralItem);
             if (upgradeData == null) {
-                this.removeUpgradeData(side);
+                this.setPeripheral(side, null);
                 continue;
             }
             IPocketUpgrade upgrade = upgradeData.upgrade();
             IPeripheral peripheral = upgrade.createPeripheral(this.sideAccesses.get(side));
-            setPeripheral(side, peripheral);
+            this.setPeripheral(side, peripheral);
         }
         SmartGlassesSideAccess smartGlassesModuleAccess = this.getSmartGlassesModuleAccess();
         for (int slot = SmartGlassesItemHandler.PERIPHERAL_SLOTS; slot < SmartGlassesItemHandler.SLOTS; slot++) {
@@ -183,8 +165,8 @@ public class SmartGlassesComputer extends ServerComputer {
             }
         }
         this.modulePeripheral.updateModules();
-        setPeripheral(ComputerSide.BACK, null);
-        setPeripheral(ComputerSide.BACK, this.modulePeripheral);
+        this.setPeripheral(ComputerSide.BACK, null);
+        this.setPeripheral(ComputerSide.BACK, this.modulePeripheral);
         if (this.entity instanceof Player player) {
             player.getInventory().setChanged();
         }
@@ -205,9 +187,7 @@ public class SmartGlassesComputer extends ServerComputer {
         }
         if (this.isDirty) {
             this.isDirty = false;
-            DataComponentPatch.Builder upgradesData = DataComponentPatch.builder();
-            this.upgradeDatas.forEach((side, data) -> upgradesData.set(APDataComponents.getComputerSideDataKey(side), data));
-            this.stack.set(APDataComponents.UPGRADE_DATAS.get(), upgradesData.build());
+            this.stack.set(APDataComponents.MODULE_DATAS.get(), this.moduleDatas);
         }
         if (shouldUpdateInventory && entity instanceof Player player) {
             player.getInventory().setChanged();

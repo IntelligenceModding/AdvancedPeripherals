@@ -44,20 +44,23 @@ public abstract class BasePeripheral<O extends IPeripheralOwner> implements IBas
         this.owner = owner;
     }
 
-    protected void buildPlugins() {
-        if (!initialized) {
-            initialized = true;
-            this.pluggedMethods.clear();
-            if (plugins != null) plugins.forEach(plugin -> {
-                if (plugin.isSuitable(this))
-                    pluggedMethods.addAll(plugin.getMethods());
-            });
-            owner.getAbilities().forEach(ability -> {
-                if (ability instanceof IPeripheralPlugin peripheralPlugin)
-                    pluggedMethods.addAll(peripheralPlugin.getMethods());
-            });
-            this.methodNames = pluggedMethods.stream().map(BoundMethod::getName).toArray(String[]::new);
+    protected void tryBuildPlugins() {
+        if (this.initialized) {
+            return;
         }
+        this.initialized = true;
+        this.pluggedMethods.clear();
+        if (this.plugins != null) {
+            this.plugins.stream()
+                .filter(plugin -> plugin.isSuitable(this))
+                .forEach(plugin -> this.pluggedMethods.addAll(plugin.getMethods()));
+        }
+        owner.getAbilities().forEach(ability -> {
+            if (ability instanceof IPeripheralPlugin peripheralPlugin) {
+                this.pluggedMethods.addAll(peripheralPlugin.getMethods());
+            }
+        });
+        this.methodNames = this.pluggedMethods.stream().map(BoundMethod::getName).toArray(String[]::new);
     }
 
     protected void addPlugin(@NotNull IPeripheralPlugin plugin) {
@@ -66,10 +69,12 @@ public abstract class BasePeripheral<O extends IPeripheralOwner> implements IBas
         IPeripheralOperation<?>[] operations = plugin.getOperations();
         if (operations != null) {
             OperationAbility operationAbility = owner.getAbility(PeripheralOwnerAbility.OPERATION);
-            if (operationAbility == null)
+            if (operationAbility == null) {
                 throw new IllegalArgumentException("This is not possible to attach plugin with operations to not operationable owner");
-            for (IPeripheralOperation<?> operation : operations)
+            }
+            for (IPeripheralOperation<?> operation : operations) {
                 operationAbility.registerOperation(operation);
+            }
         }
     }
 
@@ -163,16 +168,14 @@ public abstract class BasePeripheral<O extends IPeripheralOwner> implements IBas
     @Override
     @NotNull
     public String @NotNull [] getMethodNames() {
-        if (!initialized)
-            buildPlugins();
+        this.tryBuildPlugins();
         return methodNames;
     }
 
     @Override
     @NotNull
     public MethodResult callMethod(@NotNull IComputerAccess access, @NotNull ILuaContext context, int index, @NotNull IArguments arguments) throws LuaException {
-        if (!initialized)
-            buildPlugins();
+        this.tryBuildPlugins();
         return pluggedMethods.get(index).apply(access, context, arguments);
     }
 
