@@ -30,12 +30,6 @@ public class TurtlePeripheralOwner extends BasePeripheralOwner {
         this.side = side;
     }
 
-    @Nullable
-    @Override
-    public String getCustomName() {
-        return null;
-    }
-
     @NotNull
     @Override
     public Level getLevel() {

@@ -120,6 +120,11 @@ public abstract class BasePeripheral<O extends IPeripheralOwner> implements IBas
         return owner.getCustomName();
     }
 
+    @LuaFunction(mainThread = true)
+    public final void setName(String name) {
+        owner.setCustomName(name);
+    }
+
     public Map<String, Object> getPeripheralConfiguration() {
         Map<String, Object> data = new HashMap<>();
         owner.getAbilities().forEach(ability -> ability.collectConfiguration(data));

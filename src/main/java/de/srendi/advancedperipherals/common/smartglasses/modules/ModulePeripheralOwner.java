@@ -23,9 +23,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.stream.Stream;
 
 public class ModulePeripheralOwner extends BasePeripheralOwner {
-
-    // TODO: Think about making our own smart glasses access so we don't have the not used stuff like the color or the light
-    // We would need to remove the pocket stuff from the SmartGlassesComputer
     private final SmartGlassesComputer computer;
 
     public ModulePeripheralOwner(SmartGlassesComputer computer) {
@@ -35,7 +32,7 @@ public class ModulePeripheralOwner extends BasePeripheralOwner {
     @Nullable
     @Override
     public String getCustomName() {
-        return "smartglasses";
+        return null;
     }
 
     @Nullable
@@ -47,7 +44,7 @@ public class ModulePeripheralOwner extends BasePeripheralOwner {
     @NotNull
     @Override
     public BlockPos getPos() {
-        return BlockPos.containing(computer.getEntity().getEyePosition());
+        return BlockPos.containing(getCenterPos());
     }
 
     @NotNull

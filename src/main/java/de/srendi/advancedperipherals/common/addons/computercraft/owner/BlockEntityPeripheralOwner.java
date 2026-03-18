@@ -3,7 +3,9 @@ package de.srendi.advancedperipherals.common.addons.computercraft.owner;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.peripheral.IPeripheral;
 import de.srendi.advancedperipherals.common.blocks.base.BaseBlock;
+import de.srendi.advancedperipherals.common.blocks.base.VarNameable;
 import de.srendi.advancedperipherals.common.util.DataStorageUtil;
+import de.srendi.advancedperipherals.common.util.StringUtil;
 import de.srendi.advancedperipherals.common.util.fakeplayer.APFakePlayer;
 import de.srendi.advancedperipherals.lib.peripherals.IPeripheralBlockEntity;
 import net.minecraft.core.BlockPos;
@@ -35,13 +37,23 @@ public class BlockEntityPeripheralOwner<T extends BlockEntity & IPeripheralBlock
     @Nullable
     @Override
     public String getCustomName() {
-        if (tileEntity instanceof Nameable nameableEntity) {
-            Component name = nameableEntity.getCustomName();
-            if (name != null) {
-                return name.getString();
-            }
+        if (!(tileEntity instanceof Nameable nameableEntity)) {
+            return null;
+        }
+        Component name = nameableEntity.getCustomName();
+        if (name != null) {
+            return name.getString();
         }
         return null;
+    }
+
+    @Override
+    public void setCustomName(String name) {
+        if (!(tileEntity instanceof VarNameable nameableEntity)) {
+            return;
+        }
+        name = StringUtil.validateName(name);
+        nameableEntity.setName(name == null ? null : Component.literal(name));
     }
 
     @NotNull

@@ -6,22 +6,24 @@ import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage.common.support.resource.ItemResource;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaTable;
+import dan200.computercraft.api.lua.LuaValues;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.addons.APAddon;
 import de.srendi.advancedperipherals.common.util.DataComponentUtil;
 import de.srendi.advancedperipherals.common.util.NBTUtil;
 import de.srendi.advancedperipherals.common.util.Pair;
 import de.srendi.advancedperipherals.common.util.RegistryUtil;
-import net.minecraft.core.component.PatchedDataComponentMap;
+import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.nbt.Tag;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
+import java.util.Map;
 
 public class ItemFilter extends GenericFilter<ItemStack> {
 
@@ -29,8 +31,7 @@ public class ItemFilter extends GenericFilter<ItemStack> {
 
     private Item item = Items.AIR;
     private TagKey<Item> tag = null;
-    private Tag componentsAsNbt = null;
-    private PatchedDataComponentMap components;
+    private DataComponentPatch components = null;
     private int count = 64;
     private String fingerprint = "";
     public int fromSlot = -1;
@@ -41,8 +42,9 @@ public class ItemFilter extends GenericFilter<ItemStack> {
 
     public static Pair<ItemFilter, String> parse(LuaTable<?, ?> item) throws LuaException {
         // If the map is empty, return a filter without any filters
-        if (item.isEmpty())
+        if (item.isEmpty()) {
             return Pair.of(EMPTY, null);
+        }
 
         ItemFilter itemFilter = createEmpty();
 
@@ -55,15 +57,16 @@ public class ItemFilter extends GenericFilter<ItemStack> {
             }
         }
         if (item.containsKey("components")) {
-            try {
-                itemFilter.componentsAsNbt = NBTUtil.fromText(item.getString("components"));
-            } catch (LuaException e1) {
-                try {
-                    itemFilter.componentsAsNbt = NBTUtil.fromText(item.getTable("components").toString());
-                } catch (LuaException e2) {
-                    throw new LuaException("bad field \"components\", expect NBT string or table");
-                }
+            Object components = item.get("components");
+            CompoundTag componentsAsNbt;
+            if (components instanceof String snbt) {
+                componentsAsNbt = NBTUtil.fromSNBT(snbt);
+            } else if (components instanceof Map<?, ?> map) {
+                componentsAsNbt = NBTUtil.mapToNBT(map);
+            } else {
+                throw LuaValues.badField("components", "string or table", LuaValues.getType(components));
             }
+            itemFilter.components = DataComponentUtil.nbtToPatch(componentsAsNbt);
         }
         if (item.containsKey("fingerprint")) {
             itemFilter.fingerprint = item.getString("fingerprint");
@@ -90,8 +93,7 @@ public class ItemFilter extends GenericFilter<ItemStack> {
         ItemFilter filter = createEmpty();
         filter.item = stack.getItem();
         filter.count = count;
-        filter.componentsAsNbt = DataComponentUtil.toNbt(stack.getComponentsPatch());
-        filter.components = (PatchedDataComponentMap) stack.getComponents();
+        filter.components = stack.getComponentsPatch();
         return filter;
     }
 
@@ -100,7 +102,7 @@ public class ItemFilter extends GenericFilter<ItemStack> {
     }
 
     public boolean isEmpty() {
-        return this == EMPTY || (fingerprint.isEmpty() && item == Items.AIR && tag == null && componentsAsNbt == null);
+        return this == EMPTY || (fingerprint.isEmpty() && item == Items.AIR && tag == null && components == null);
     }
 
     @Override
@@ -130,7 +132,6 @@ public class ItemFilter extends GenericFilter<ItemStack> {
         ItemFilter newFilter = new ItemFilter();
         newFilter.item = this.item;
         newFilter.tag = this.tag;
-        newFilter.componentsAsNbt = this.componentsAsNbt;
         newFilter.components = this.components;
         newFilter.count = this.count;
         newFilter.fingerprint = this.fingerprint;
@@ -147,7 +148,7 @@ public class ItemFilter extends GenericFilter<ItemStack> {
 
     public ItemStack toItemStack() {
         var result = new ItemStack(item, count);
-        if (components != null) {
+        if (components != null && !components.isEmpty()) {
             result.applyComponents(components);
         }
         return result;
@@ -168,7 +169,7 @@ public class ItemFilter extends GenericFilter<ItemStack> {
         if (tag != null && !stack.is(tag)) {
             return false;
         }
-        if (componentsAsNbt != null && !DataComponentUtil.toNbt(stack.getComponentsPatch()).equals(componentsAsNbt)) {
+        if (components != null && !stack.getComponentsPatch().equals(components)) {
             return false;
         }
         return true;
@@ -190,8 +191,8 @@ public class ItemFilter extends GenericFilter<ItemStack> {
         return toSlot;
     }
 
-    public Tag getComponentsAsNbt() {
-        return componentsAsNbt;
+    public DataComponentPatch getComponents() {
+        return components;
     }
 
     @Override
@@ -199,7 +200,7 @@ public class ItemFilter extends GenericFilter<ItemStack> {
         return "ItemFilter{" +
                 "item=" + ItemUtil.getRegistryKey(item) +
                 ", tag=" + tag +
-                ", components=" + componentsAsNbt +
+                ", components=" + components +
                 ", count=" + count +
                 ", fingerprint='" + fingerprint + '\'' +
                 ", fromSlot=" + fromSlot +

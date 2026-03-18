@@ -57,12 +57,25 @@ public class OperationAbility implements IOwnerAbility, IPeripheralPlugin {
 
     public void registerOperation(@NotNull IPeripheralOperation<?> operation) {
         allowedOperations.put(operation.settingsName(), operation);
-        if (LibConfig.initialCooldownEnabled) {
-            int initialCooldown = operation.getInitialCooldown();
-            if (initialCooldown >= LibConfig.initialCooldownSensitivity) {
-                setCooldown(operation, initialCooldown);
-            }
+        if (!LibConfig.initialCooldownEnabled) {
+            return;
         }
+        PatchedDataComponentMap patch = owner.getPatchedDataStorage();
+        CompoundTag cooldowns = patch.get(APDataComponents.ABILITY_COOLDOWNS.get());
+        if (cooldowns != null && cooldowns.contains(operation.settingsName())) {
+            return;
+        }
+        int initialCooldown = operation.getInitialCooldown();
+        if (initialCooldown < LibConfig.initialCooldownSensitivity) {
+            return;
+        }
+        long newTS = Timestamp.valueOf(LocalDateTime.now().plus(initialCooldown, ChronoUnit.MILLIS)).getTime();
+        if (cooldowns == null) {
+            cooldowns = new CompoundTag();
+            patch.set(APDataComponents.ABILITY_COOLDOWNS.get(), cooldowns);
+        }
+        cooldowns.putLong(operation.settingsName(), newTS);
+        owner.putDataStorage(patch.asPatch());
     }
 
     public <T> @NotNull MethodResult performOperation(

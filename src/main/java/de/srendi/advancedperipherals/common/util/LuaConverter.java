@@ -9,6 +9,7 @@ import de.srendi.advancedperipherals.common.util.inventory.ChemicalUtil;
 import de.srendi.advancedperipherals.common.util.inventory.FluidUtil;
 import de.srendi.advancedperipherals.common.util.inventory.ItemUtil;
 import mekanism.api.MekanismAPI;
+import mekanism.api.MekanismAPITags;
 import mekanism.api.chemical.Chemical;
 import mekanism.api.chemical.ChemicalStack;
 import net.minecraft.core.BlockPos;
@@ -51,6 +52,10 @@ public class LuaConverter {
     private static final CompoundTag EMPTY_TAG = new CompoundTag();
     private static final Map<Class<? extends Entity>, List<EntityConverter<?>>> ENTITY_CONVERTERS = new HashMap<>();
 
+    static {
+        registerDefaultEntityConverters();
+    }
+
     /**
      * registerEntityConverter register a converter for a type of entity.
      * If an old converter exists, it will invoke the old one first before invoke the new converter.
@@ -60,69 +65,6 @@ public class LuaConverter {
      */
     public static <T extends Entity> void registerEntityConverter(Class<T> clazz, EntityConverter<T> converter) {
         ENTITY_CONVERTERS.computeIfAbsent(clazz, (k) -> new ArrayList<>(1)).add(converter);
-    }
-
-    // register default entity converters
-    static {
-        registerEntityConverter(Entity.class, (entity, data, ctx) -> {
-            data.put("id", entity.getId());
-            data.put("uuid", entity.getStringUUID());
-            if (entity.hasCustomName())
-                data.put("customName", entity.getCustomName().getString());
-            EntityType<?> type = entity.getType();
-            data.put("displayName", type.getDescription().getString());
-            data.put("name", type.builtInRegistryHolder().key().location().toString());
-            if (ctx.detailed()) {
-                data.put("type", type.getDescriptionId());
-                data.put("category", type.getCategory().getName());
-                data.put("canBurn", entity.fireImmune());
-                data.put("canFreeze", entity.canFreeze());
-                data.put("tags", entity.getTags());
-                data.put("isGlowing", entity.isCurrentlyGlowing());
-                data.put("isUnderWater", entity.isUnderWater());
-                data.put("isInLava", entity.isInLava());
-                data.put("isInWall", entity.isInWall());
-                data.put("team", teamToLua(entity.getTeam()));
-            }
-        });
-        registerEntityConverter(LivingEntity.class, (entity, data, ctx) -> {
-            data.put("baby", entity.isBaby());
-            data.put("health", entity.getHealth());
-            data.put("maxHealth", entity.getMaxHealth());
-            if (ctx.detailed()) {
-                data.put("lastDamageSource", entity.getLastDamageSource() == null ? null : entity.getLastDamageSource().toString());
-                Map<String, Object> effMap = new HashMap<>();
-                entity.getActiveEffectsMap().forEach((key, value) -> {
-                    effMap.put(key.value().getDescriptionId(), effectToLua(value));
-                });
-                data.put("effects", effMap);
-            }
-        });
-        registerEntityConverter(Mob.class, (entity, data, ctx) -> {
-            data.put("aggressive", entity.isAggressive());
-        });
-        registerEntityConverter(Animal.class, (entity, data, ctx) -> {
-            data.put("inLove", entity.isInLove());
-            if (ctx.detailed() && !ctx.itemInHand().isEmpty() && entity instanceof IShearable shareable) {
-                data.put("shareable", shareable.isShearable(null, ctx.itemInHand(), entity.level(), entity.blockPosition()));
-            }
-        });
-        registerEntityConverter(Player.class, (entity, data, ctx) -> {
-            data.put("score", entity.getScore());
-            data.put("luck", entity.getLuck());
-            Inventory inv = entity.getInventory();
-            data.put("handSlot", inv.selected);
-            if (ctx.detailed()) {
-                Map<Integer, Object> invMap = new HashMap<>();
-                for (int slot = 0; slot < inv.getContainerSize(); slot++) {
-                    ItemStack item = inv.getItem(slot);
-                    if (!item.isEmpty()) {
-                        invMap.put(slot, itemStackToObject(item));
-                    }
-                }
-                data.put("inventory", invMap);
-            }
-        });
     }
 
     @FunctionalInterface
@@ -189,6 +131,68 @@ public class LuaConverter {
         return data;
     }
 
+    private static void registerDefaultEntityConverters() {
+        registerEntityConverter(Entity.class, (entity, data, ctx) -> {
+            data.put("id", entity.getId());
+            data.put("uuid", entity.getStringUUID());
+            if (entity.hasCustomName())
+                data.put("customName", entity.getCustomName().getString());
+            EntityType<?> type = entity.getType();
+            data.put("displayName", type.getDescription().getString());
+            data.put("name", type.builtInRegistryHolder().key().location().toString());
+            if (ctx.detailed()) {
+                data.put("type", type.getDescriptionId());
+                data.put("category", type.getCategory().getName());
+                data.put("canBurn", entity.fireImmune());
+                data.put("canFreeze", entity.canFreeze());
+                data.put("tags", entity.getTags());
+                data.put("isGlowing", entity.isCurrentlyGlowing());
+                data.put("isUnderWater", entity.isUnderWater());
+                data.put("isInLava", entity.isInLava());
+                data.put("isInWall", entity.isInWall());
+                data.put("team", teamToLua(entity.getTeam()));
+            }
+        });
+        registerEntityConverter(LivingEntity.class, (entity, data, ctx) -> {
+            data.put("baby", entity.isBaby());
+            data.put("health", entity.getHealth());
+            data.put("maxHealth", entity.getMaxHealth());
+            if (ctx.detailed()) {
+                data.put("lastDamageSource", entity.getLastDamageSource() == null ? null : entity.getLastDamageSource().toString());
+                Map<String, Object> effMap = new HashMap<>();
+                entity.getActiveEffectsMap().forEach((key, value) -> {
+                    effMap.put(key.value().getDescriptionId(), effectToLua(value));
+                });
+                data.put("effects", effMap);
+            }
+        });
+        registerEntityConverter(Mob.class, (entity, data, ctx) -> {
+            data.put("aggressive", entity.isAggressive());
+        });
+        registerEntityConverter(Animal.class, (entity, data, ctx) -> {
+            data.put("inLove", entity.isInLove());
+            if (ctx.detailed() && !ctx.itemInHand().isEmpty() && entity instanceof IShearable shareable) {
+                data.put("shareable", shareable.isShearable(null, ctx.itemInHand(), entity.level(), entity.blockPosition()));
+            }
+        });
+        registerEntityConverter(Player.class, (entity, data, ctx) -> {
+            data.put("score", entity.getScore());
+            data.put("luck", entity.getLuck());
+            Inventory inv = entity.getInventory();
+            data.put("handSlot", inv.selected);
+            if (ctx.detailed()) {
+                Map<Integer, Object> invMap = new HashMap<>();
+                for (int slot = 0; slot < inv.getContainerSize(); slot++) {
+                    ItemStack item = inv.getItem(slot);
+                    if (!item.isEmpty()) {
+                        invMap.put(slot, itemStackToObject(item));
+                    }
+                }
+                data.put("inventory", invMap);
+            }
+        });
+    }
+
     /**
      * Block states to a lua representable object
      *
@@ -232,7 +236,7 @@ public class LuaConverter {
         properties.put("displayName", stack.getDisplayName().getString());
         properties.put("maxStackSize", stack.getMaxStackSize());
         try {
-            properties.put("components", NBTUtil.toLua(DataComponentUtil.toNbt(components)));
+            properties.put("components", NBTUtil.toLua(DataComponentUtil.patchToNbt(components)));
         } catch (IllegalStateException ex) {
             AdvancedPeripherals.debug("Couldn't create components for Item Stack " + stack, ex);
         }
@@ -251,7 +255,7 @@ public class LuaConverter {
         properties.put("displayName", stack.getDisplayName().getString());
         properties.put("maxStackSize", stack.getMaxStackSize());
         try {
-            properties.put("components", NBTUtil.toLua(DataComponentUtil.toNbt(components, level)));
+            properties.put("components", NBTUtil.toLua(DataComponentUtil.patchToNbt(components, level.registryAccess())));
         } catch (IllegalStateException ex) {
             AdvancedPeripherals.debug("Couldn't create components for Item Stack " + stack, ex);
         }
@@ -268,7 +272,7 @@ public class LuaConverter {
         properties.put("count", stack.getAmount());
         properties.put("displayName", stack.getHoverName().getString());
         properties.put("fluidType", fluidTypeToObject(stack.getFluidType()));
-        properties.put("components", NBTUtil.toLua(DataComponentUtil.toNbt(components)));
+        properties.put("components", NBTUtil.toLua(DataComponentUtil.patchToNbt(components)));
         properties.put("fingerprint", FluidUtil.getFingerprint(stack));
         return properties;
     }
@@ -286,6 +290,7 @@ public class LuaConverter {
         properties.put("count", stack.getAmount());
         properties.put("displayName", stack.getTextComponent().getString());
         properties.put("fingerprint", ChemicalUtil.getFingerprint(stack));
+        properties.put("isGaseous", stack.is(MekanismAPITags.Chemicals.GASEOUS));
         return properties;
     }
 
@@ -376,7 +381,6 @@ public class LuaConverter {
 
         Map<String, Object> properties = new HashMap<>();
         properties.put("tags", getHolderTags(MekanismAPI.CHEMICAL_REGISTRY.wrapAsHolder(chemical)));
-        properties.put("isGaseous", chemical.isGaseous());
         properties.put("radioactivity", chemical.isRadioactive());
         properties.put("name", ChemicalUtil.getRegistryKey(chemical).toString());
         return properties;

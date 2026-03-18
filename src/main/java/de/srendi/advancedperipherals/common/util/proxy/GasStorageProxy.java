@@ -54,6 +54,7 @@ public class GasStorageProxy extends AbstractStorageProxy implements IChemicalHa
 
     @NotNull
     @Override
+    @SuppressWarnings("removal")
     public ChemicalStack insertChemical(@NotNull ChemicalStack stack, @NotNull Action action) {
         if (this.receiving) {
             return ChemicalStack.EMPTY;
@@ -67,7 +68,7 @@ public class GasStorageProxy extends AbstractStorageProxy implements IChemicalHa
             ChemicalStack transferring = stack.copyWithAmount(Math.min(stack.getAmount(), this.getTransferRate()));
             ChemicalStack left = storage.insertChemical(transferring, action);
             if (!action.simulate()) {
-                this.wasReady = stack.getTypeRegistryName();
+                this.wasReady = stack.getTypeRegistryName(); // TODO: replace deprecated api
                 long transferred = transferring.getAmount() - left.getAmount();
                 if (transferred > 0) {
                     this.onTransfered(transferred);

@@ -34,12 +34,6 @@ public class PocketPeripheralOwner extends BasePeripheralOwner {
 
     @Nullable
     @Override
-    public String getCustomName() {
-        return null;
-    }
-
-    @Nullable
-    @Override
     public Level getLevel() {
         // TODO: Certain version of CC will make pocket computer has null level while changing dimensions.
         // Not sure if this is fixed in later CC so bunch of null checks can be removed. :3
@@ -49,12 +43,18 @@ public class PocketPeripheralOwner extends BasePeripheralOwner {
     @NotNull
     @Override
     public BlockPos getPos() {
-        return BlockPos.containing(pocket.getPosition());
+        return BlockPos.containing(getCenterPos());
     }
 
     @NotNull
     @Override
     public Vec3 getCenterPos() {
+        if (pocket instanceof SmartGlassesSideAccess) {
+            Entity owner = pocket.getEntity();
+            if (owner != null) {
+                return owner.getEyePosition();
+            }
+        }
         return pocket.getPosition();
     }
 

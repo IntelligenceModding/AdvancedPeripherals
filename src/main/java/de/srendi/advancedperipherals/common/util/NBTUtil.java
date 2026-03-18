@@ -62,13 +62,14 @@ public class NBTUtil {
         return nbt;
     }
 
-    public static CompoundTag fromText(String json) {
+    public static CompoundTag fromSNBT(String snbt) {
         try {
-            return json == null ? null : TagParser.parseTag(json);
+            return snbt == null ? null : TagParser.parseTag(snbt);
         } catch (CommandSyntaxException ex) {
-            AdvancedPeripherals.debug("Could not parse json data to NBT", org.apache.logging.log4j.Level.ERROR);
-            if(APConfig.GENERAL_CONFIG.enableDebugMode.get())
+            if (APConfig.GENERAL_CONFIG.enableDebugMode.get()) {
+                AdvancedPeripherals.debug("Could not parse SNBT to NBT", org.apache.logging.log4j.Level.ERROR);
                 ex.printStackTrace();
+            }
             return null;
         }
     }

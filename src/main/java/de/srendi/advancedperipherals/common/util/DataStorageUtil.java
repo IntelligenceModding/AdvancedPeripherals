@@ -8,7 +8,7 @@ import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.component.PatchedDataComponentMap;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtOps;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
@@ -21,19 +21,14 @@ public class DataStorageUtil {
         if (tag.isEmpty()) {
             return DataComponentPatch.EMPTY;
         }
-        return DataComponentPatch.CODEC
-            .parse(NbtOps.INSTANCE, tag)
-            .resultOrPartial()
-            .orElse(DataComponentPatch.EMPTY);
+        return DataComponentUtil.nbtToPatch(tag, ((BlockEntity) tileEntity).getLevel().registryAccess());
     }
 
     public static void putDataStorage(@NotNull IPeripheralBlockEntity tileEntity, DataComponentPatch patch) {
         if (patch.isEmpty() && tileEntity.getPeripheralSettings().isEmpty()) {
             return;
         }
-        tileEntity.setPeripheralSettings((CompoundTag) DataComponentPatch.CODEC
-            .encodeStart(NbtOps.INSTANCE, patch)
-            .getOrThrow());
+        tileEntity.setPeripheralSettings(DataComponentUtil.patchToNbt(patch, ((BlockEntity) tileEntity).getLevel().registryAccess()));
     }
 
     /**

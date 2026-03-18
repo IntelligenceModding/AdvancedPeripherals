@@ -60,4 +60,12 @@ public class StringUtil {
     public static String utf8ToByteString(String utf8String) {
         return new String(utf8String.getBytes(StandardCharsets.UTF_8), StandardCharsets.ISO_8859_1);
     }
+
+    public static String validateName(String name) {
+        if (name == null) {
+            return null;
+        }
+        name = net.minecraft.util.StringUtil.filterText(name);
+        return name.length() <= 50 ? name : null;
+    }
 }

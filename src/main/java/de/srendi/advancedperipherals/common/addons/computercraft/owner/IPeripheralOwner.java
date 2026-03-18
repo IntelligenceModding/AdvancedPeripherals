@@ -2,6 +2,7 @@ package de.srendi.advancedperipherals.common.addons.computercraft.owner;
 
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.peripheral.IPeripheral;
+import de.srendi.advancedperipherals.common.util.StringUtil;
 import de.srendi.advancedperipherals.common.util.fakeplayer.APFakePlayer;
 import de.srendi.advancedperipherals.lib.peripherals.IPeripheralOperation;
 import net.minecraft.core.BlockPos;
@@ -9,7 +10,9 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.FrontAndTop;
 import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.component.DataComponentPatch;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.component.PatchedDataComponentMap;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.OwnableEntity;
 import net.minecraft.world.entity.player.Player;
@@ -21,11 +24,30 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 public interface IPeripheralOwner {
 
-    @Nullable String getCustomName();
+    @Nullable
+    default String getCustomName() {
+        Optional<? extends Component> component = this.getDataStorage().get(DataComponents.CUSTOM_NAME);
+        if (component == null || component.isPresent()) {
+            return null;
+        }
+        return component.get().getString();
+    }
+
+    default void setCustomName(String name) {
+        name = StringUtil.validateName(name);
+        PatchedDataComponentMap data = this.getPatchedDataStorage();
+        if (name == null || name.isEmpty()) {
+            data.remove(DataComponents.CUSTOM_NAME);
+        } else {
+            data.set(DataComponents.CUSTOM_NAME, Component.literal(name));
+        }
+        this.putDataStorage(data.asPatch());
+    }
 
     @NotNull Level getLevel();
 
