@@ -23,6 +23,9 @@ run
 runs
 server
 
+# cache
+/src/generated/resources/.cache/
+
 # Files from Forge MDK
 forge*changelog.txt
 
