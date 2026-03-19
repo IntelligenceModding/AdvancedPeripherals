@@ -24,7 +24,7 @@ import java.util.UUID;
 
 import static de.srendi.advancedperipherals.common.setup.APDataComponents.OWNER;
 
-public class InventoryManagerEntity extends PeripheralBlockEntity<InventoryManagerPeripheral> implements IInventoryMenuBlock<InventoryManagerContainer> {
+public class InventoryManagerEntity extends PeripheralBlockEntity<InventoryManagerPeripheral> implements IInventoryMenuBlock {
 
     private UUID owner = null;
 
@@ -38,9 +38,15 @@ public class InventoryManagerEntity extends PeripheralBlockEntity<InventoryManag
         return new InventoryManagerPeripheral(this);
     }
 
+    @NotNull
     @Override
-    public InventoryManagerContainer createContainer(int id, Inventory playerInventory, BlockPos pos, Level world) {
-        return new InventoryManagerContainer(id, playerInventory, pos, world);
+    public Component getDisplayName() {
+        return Component.translatable("block.advancedperipherals.inventory_manager");
+    }
+
+    @Override
+    protected InventoryManagerContainer createMenu(int id, Inventory playerInventory) {
+        return new InventoryManagerContainer(id, playerInventory, this.getBlockPos(), this.getLevel());
     }
 
     @Override
@@ -71,12 +77,6 @@ public class InventoryManagerEntity extends PeripheralBlockEntity<InventoryManag
             this.owner = null;
         }
         super.setItem(index, stack);
-    }
-
-    @NotNull
-    @Override
-    public Component getDisplayName() {
-        return Component.translatable("block.advancedperipherals.inventory_manager");
     }
 
     @Override

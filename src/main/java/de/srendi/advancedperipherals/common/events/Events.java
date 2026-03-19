@@ -1,12 +1,11 @@
 package de.srendi.advancedperipherals.common.events;
 
-import com.google.common.collect.EvictingQueue;
 import com.mojang.brigadier.context.CommandContextBuilder;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.addons.APAddon;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
-import de.srendi.advancedperipherals.common.util.Pair;
+import de.srendi.advancedperipherals.lib.misc.DataPublisher;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.arguments.MessageArgument;
 import net.minecraft.nbt.CompoundTag;
@@ -25,12 +24,8 @@ import java.util.function.Consumer;
 public class Events {
 
     private static final String PLAYED_BEFORE = "ap_played_before";
-    private static final int CHAT_QUEUE_MAX_SIZE = 50;
-    private static final int PLAYER_QUEUE_MAX_SIZE = 50;
-    private static final EvictingQueue<Pair<Long, ChatMessageObject>> messageQueue = EvictingQueue.create(CHAT_QUEUE_MAX_SIZE);
-    private static final EvictingQueue<Pair<Long, PlayerMessageObject>> playerMessageQueue = EvictingQueue.create(PLAYER_QUEUE_MAX_SIZE);
-    private static long lastChatMessageID = 0;
-    private static long lastPlayerMessageID = 0;
+    private static final DataPublisher<ChatMessageObject> messageQueue = new DataPublisher<>(64);
+    private static final DataPublisher<PlayerMessageObject> playerMessageQueue = new DataPublisher<>(64);
 
     @SubscribeEvent
     public static void onWorldJoin(PlayerEvent.PlayerLoggedInEvent event) {
@@ -47,13 +42,13 @@ public class Events {
             }
         }
 
-        putPlayerMessage(Pair.of(getLastPlayerMessageID(), new PlayerMessageObject("player_join", player.getName().getString(), player.level().dimension().location().toString(), null)));
+        putPlayerMessage(new PlayerMessageObject("player_join", player.getName().getString(), player.level().dimension().location().toString(), null));
     }
 
     @SubscribeEvent
     public static void onWorldLeave(PlayerEvent.PlayerLoggedOutEvent event) {
         Player player = event.getEntity();
-        putPlayerMessage(Pair.of(getLastPlayerMessageID(), new PlayerMessageObject("player_leave", player.getName().getString(), player.level().dimension().location().toString(), null)));
+        putPlayerMessage(new PlayerMessageObject("player_leave", player.getName().getString(), player.level().dimension().location().toString(), null));
     }
 
     @SubscribeEvent
@@ -62,7 +57,7 @@ public class Events {
         String fromDim = event.getFrom().location().toString();
         String toDim = event.getTo().location().toString();
 
-        putPlayerMessage(Pair.of(getLastPlayerMessageID(), new PlayerMessageObject("player_changed_dimension", player.getName().getString(), fromDim, toDim)));
+        putPlayerMessage(new PlayerMessageObject("player_changed_dimension", player.getName().getString(), fromDim, toDim));
     }
 
     @SubscribeEvent
@@ -88,7 +83,7 @@ public class Events {
             message = message.substring(1);
             isHidden = true;
         }
-        putChatMessage(Pair.of(getLastChatMessageID(), new ChatMessageObject(username, message, uuid, isHidden)));
+        putChatMessage(new ChatMessageObject(username, message, uuid, isHidden));
     }
 
     private static String getCommandName(CommandContextBuilder<?> context) {
@@ -108,59 +103,32 @@ public class Events {
                 message = message.substring(1);
                 isHidden = true;
             }
-            putChatMessage(Pair.of(getLastChatMessageID(), new ChatMessageObject(event.getUsername(), message, event.getPlayer().getUUID().toString(), isHidden)));
+            putChatMessage(new ChatMessageObject(event.getUsername(), message, event.getPlayer().getUUID().toString(), isHidden));
         }
     }
 
-    public static void putChatMessage(Pair<Long, ChatMessageObject> message) {
-        synchronized (messageQueue) {
-            messageQueue.add(message);
-            lastChatMessageID++;
-        }
+    public static void putChatMessage(ChatMessageObject message) {
+        messageQueue.add(message);
     }
 
-    public static void putPlayerMessage(Pair<Long, PlayerMessageObject> message) {
-        synchronized (playerMessageQueue) {
-            playerMessageQueue.add(message);
-            lastPlayerMessageID++;
-        }
+    public static void putPlayerMessage(PlayerMessageObject message) {
+        playerMessageQueue.add(message);
     }
 
     public static long traverseChatMessages(long lastConsumedMessage, Consumer<ChatMessageObject> consumer) {
-        synchronized (messageQueue) {
-            for (Pair<Long, ChatMessageObject> message : messageQueue) {
-                if (message.getLeft() <= lastConsumedMessage)
-                    continue;
-                consumer.accept(message.getRight());
-                lastConsumedMessage = message.getLeft();
-            }
-        }
-        return lastConsumedMessage;
+        return messageQueue.traverse(lastConsumedMessage, consumer);
     }
 
     public static long traversePlayerMessages(long lastConsumedMessage, Consumer<PlayerMessageObject> consumer) {
-        synchronized (playerMessageQueue) {
-            for (Pair<Long, PlayerMessageObject> message : playerMessageQueue) {
-                if (message.getLeft() <= lastConsumedMessage) {
-                    continue;
-                }
-                consumer.accept(message.getRight());
-                lastConsumedMessage = message.getLeft();
-            }
-        }
-        return lastConsumedMessage;
+        return playerMessageQueue.traverse(lastConsumedMessage, consumer);
     }
 
     public static long getLastChatMessageID() {
-        synchronized (messageQueue) {
-            return lastChatMessageID;
-        }
+        return messageQueue.getLastID();
     }
 
     public static long getLastPlayerMessageID() {
-        synchronized (playerMessageQueue) {
-            return lastPlayerMessageID;
-        }
+        return playerMessageQueue.getLastID();
     }
 
     private static boolean getAndSetPlayedBefore(Player player) {

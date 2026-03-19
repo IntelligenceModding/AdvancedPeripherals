@@ -5,6 +5,8 @@ import de.srendi.advancedperipherals.common.blocks.blockentities.PlayerDetectorE
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.setup.APBlockEntityTypes;
 import net.minecraft.core.BlockPos;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -34,7 +36,12 @@ public class PlayerDetectorBlock extends APBlockEntityBlock<PlayerDetectorEntity
         }
         BlockEntity tileEntity = level.getBlockEntity(pos);
         if (tileEntity instanceof PlayerDetectorEntity entity) {
+            level.playSound(player, pos, SoundEvents.NETHER_WOOD_BUTTON_CLICK_ON, SoundSource.BLOCKS);
+            if (level.isClientSide()) {
+                return InteractionResult.SUCCESS;
+            }
             entity.queueEvent("player_click", player.getName().getString(), level.dimension().location().toString());
+            return InteractionResult.CONSUME;
         }
         return super.useWithoutItem(state, level, pos, player, hit);
     }

@@ -1,5 +1,6 @@
 package de.srendi.advancedperipherals.common.blocks.base;
 
+import de.srendi.advancedperipherals.common.blocks.base.IInventoryMenuBlock;
 import de.srendi.advancedperipherals.lib.peripherals.IPeripheralBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
@@ -8,6 +9,7 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.world.Container;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.LivingEntity;
@@ -42,43 +44,41 @@ public abstract class BaseBlockEntityBlock extends BaseBlock implements EntityBl
 
     @NotNull
     @Override
-    public ItemInteractionResult useItemOn(@NotNull ItemStack stack, @NotNull BlockState state, Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hit) {
-        if (level.isClientSide) {
-            return super.useItemOn(stack, state, level, pos, player, hand, hit);
-        }
+    protected ItemInteractionResult useItemOn(@NotNull ItemStack stack, @NotNull BlockState state, Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hit) {
         BlockEntity tileEntity = level.getBlockEntity(pos);
         if (tileEntity instanceof VarNameable nameable && stack.getItem() instanceof NameTagItem) {
+            if (level.isClientSide()) {
+                return ItemInteractionResult.CONSUME;
+            }
             nameable.setName(stack.get(DataComponents.CUSTOM_NAME));
-            return ItemInteractionResult.SUCCESS;
-        }
-        MenuProvider namedContainerProvider = this.getMenuProvider(state, level, pos);
-        if (namedContainerProvider != null && player instanceof ServerPlayer serverPlayer) {
-            serverPlayer.openMenu(namedContainerProvider, pos);
             return ItemInteractionResult.SUCCESS;
         }
         return super.useItemOn(stack, state, level, pos, player, hand, hit);
     }
 
     @Override
-    public void onRemove(BlockState state, @NotNull Level worldIn, @NotNull BlockPos pos, BlockState newState, boolean isMoving) {
-        if (state.getBlock() != newState.getBlock()) {
-            BlockEntity tileEntity = worldIn.getBlockEntity(pos);
-            if (tileEntity instanceof Container container) {
-                Containers.dropContents(worldIn, pos, container);
+    protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
+        MenuProvider namedContainerProvider = this.getMenuProvider(state, level, pos);
+        if (namedContainerProvider != null) {
+            if (player instanceof ServerPlayer serverPlayer) {
+                serverPlayer.openMenu(namedContainerProvider, pos);
+                return InteractionResult.CONSUME;
             }
-            super.onRemove(state, worldIn, pos, newState, isMoving);
+            return InteractionResult.SUCCESS;
         }
+        return super.useWithoutItem(state, level, pos, player, hit);
     }
 
     @Override
-    public void setPlacedBy(@NotNull Level worldIn, @NotNull BlockPos pos, @NotNull BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
-        super.setPlacedBy(worldIn, pos, state, placer, stack);
-        if (worldIn.getBlockEntity(pos) == null)
+    public void onRemove(BlockState state, @NotNull Level level, @NotNull BlockPos pos, BlockState newState, boolean isMoving) {
+        super.onRemove(state, level, pos, newState, isMoving);
+        if (state.is(newState.getBlock())) {
             return;
-        // //Used for the lua function getName()
-        // if (worldIn.getBlockEntity(pos) instanceof BaseContainerBlockEntity blockEntity) {
-        //     blockEntity.name = stack.getHoverName();
-        // }
+        }
+        BlockEntity tileEntity = level.getBlockEntity(pos);
+        if (tileEntity instanceof Container container) {
+            Containers.dropContents(level, pos, container);
+        }
     }
 
     @Nullable
@@ -92,13 +92,12 @@ public abstract class BaseBlockEntityBlock extends BaseBlock implements EntityBl
         };
     }
 
-
     @Deprecated
     @Nullable
     @Override
     public MenuProvider getMenuProvider(@NotNull BlockState pState, Level pLevel, @NotNull BlockPos pPos) {
         BlockEntity blockentity = pLevel.getBlockEntity(pPos);
-        return blockentity instanceof MenuProvider menuProvider ? menuProvider : null;
+        return blockentity instanceof IInventoryMenuBlock menuProvider ? menuProvider : null;
     }
 
     public @NotNull RenderShape getRenderShape(@NotNull BlockState state) {

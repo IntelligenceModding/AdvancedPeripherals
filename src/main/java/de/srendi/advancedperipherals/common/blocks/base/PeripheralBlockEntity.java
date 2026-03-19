@@ -29,7 +29,7 @@ import net.neoforged.neoforge.items.wrapper.SidedInvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class PeripheralBlockEntity<T extends BasePeripheral<?>> extends BaseContainerBlockEntity implements WorldlyContainer, MenuProvider, IPeripheralBlockEntity, ICapabilityProvider, VarNameable {
+public abstract class PeripheralBlockEntity<T extends BasePeripheral<?>> extends BaseContainerBlockEntity implements WorldlyContainer, IPeripheralBlockEntity, ICapabilityProvider, VarNameable {
     private static final String PERIPHERAL_SETTINGS_KEY = "peripheralSettings";
     protected CompoundTag peripheralSettings = new CompoundTag();
     protected NonNullList<ItemStack> items;
@@ -97,6 +97,9 @@ public abstract class PeripheralBlockEntity<T extends BasePeripheral<?>> extends
     }
 
     public void queueEvent(String event, Object... args) {
+        if (this.getLevel().isClientSide()) {
+            return;
+        }
         T peripheral = this.getPeripheral();
         if (peripheral != null) {
             peripheral.queueEvent(event, args);
@@ -130,18 +133,12 @@ public abstract class PeripheralBlockEntity<T extends BasePeripheral<?>> extends
 
     @Override
     protected Component getDefaultName() {
-        return this instanceof IInventoryMenuBlock<?> inventoryBlock ? inventoryBlock.getDisplayName() : null;
-    }
-
-    @Nullable
-    @Override
-    public AbstractContainerMenu createMenu(int id, @NotNull Inventory inventory, @NotNull Player playerEntity) {
-        return createMenu(id, inventory);
+        return this instanceof IInventoryMenuBlock inventoryBlock ? inventoryBlock.getDisplayName() : null;
     }
 
     @Override
     protected AbstractContainerMenu createMenu(int id, @NotNull Inventory player) {
-        return this instanceof IInventoryMenuBlock<?> inventoryBlock ? inventoryBlock.createContainer(id, player, worldPosition, level) : null;
+        return null;
     }
 
     @Override

@@ -5,6 +5,5 @@ package de.srendi.advancedperipherals.common.blocks.base;
  *
  */
 public interface IInventoryBlock {
-
     int getInvSize();
 }

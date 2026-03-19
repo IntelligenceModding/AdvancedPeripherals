@@ -12,7 +12,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 
 public class PlayerDetectorEntity extends PeripheralBlockEntity<PlayerDetectorPeripheral> {
-    private Long lastConsumedMessage;
+    private long lastConsumedMessage = Events.getLastPlayerMessageID();
 
     public PlayerDetectorEntity(BlockPos pos, BlockState state) {
         super(APBlockEntityTypes.PLAYER_DETECTOR.get(), pos, state);
