@@ -141,8 +141,9 @@ public class Events {
     public static long traversePlayerMessages(long lastConsumedMessage, Consumer<PlayerMessageObject> consumer) {
         synchronized (playerMessageQueue) {
             for (Pair<Long, PlayerMessageObject> message : playerMessageQueue) {
-                if (message.getLeft() <= lastConsumedMessage)
+                if (message.getLeft() <= lastConsumedMessage) {
                     continue;
+                }
                 consumer.accept(message.getRight());
                 lastConsumedMessage = message.getLeft();
             }

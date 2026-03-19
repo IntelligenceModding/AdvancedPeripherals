@@ -1,10 +1,8 @@
 package de.srendi.advancedperipherals.common.blocks.base;
 
-import dan200.computercraft.api.peripheral.IComputerAccess;
 import dan200.computercraft.api.peripheral.IPeripheral;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
 import de.srendi.advancedperipherals.lib.peripherals.DisabledPeripheral;
-import de.srendi.advancedperipherals.lib.peripherals.IBasePeripheral;
 import de.srendi.advancedperipherals.lib.peripherals.IPeripheralBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -30,9 +28,6 @@ import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.wrapper.SidedInvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Collections;
-import java.util.Optional;
 
 public abstract class PeripheralBlockEntity<T extends BasePeripheral<?>> extends BaseContainerBlockEntity implements WorldlyContainer, MenuProvider, IPeripheralBlockEntity, ICapabilityProvider, VarNameable {
     private static final String PERIPHERAL_SETTINGS_KEY = "peripheralSettings";
@@ -67,7 +62,7 @@ public abstract class PeripheralBlockEntity<T extends BasePeripheral<?>> extends
             // Recreate peripheral to allow CC: Tweaked correctly handle
             // peripheral update logic, so new peripheral and old one will be
             // different
-            this.peripheral = this.createPeripheralDisable();
+            this.peripheral = this.createPeripheralOrDisabled();
         }
         return this.peripheral;
     }
@@ -93,7 +88,7 @@ public abstract class PeripheralBlockEntity<T extends BasePeripheral<?>> extends
     @NotNull
     protected abstract T createPeripheral();
 
-    protected IPeripheral createPeripheralDisable() {
+    protected IPeripheral createPeripheralOrDisabled() {
         T peripheral = this.createPeripheral();
         if (peripheral.isEnabled()) {
             return peripheral;
@@ -101,8 +96,11 @@ public abstract class PeripheralBlockEntity<T extends BasePeripheral<?>> extends
         return new DisabledPeripheral(peripheral);
     }
 
-    public Iterable<IComputerAccess> getConnectedComputers() {
-        return this.getPeripheralOptional().map(BasePeripheral::getConnectedComputers).orElse(Collections.emptyList());
+    public void queueEvent(String event, Object... args) {
+        T peripheral = this.getPeripheral();
+        if (peripheral != null) {
+            peripheral.queueEvent(event, args);
+        }
     }
 
     @Nullable
@@ -114,20 +112,13 @@ public abstract class PeripheralBlockEntity<T extends BasePeripheral<?>> extends
         return (T) peripheral;
     }
 
-    public Optional<T> getPeripheralOptional() {
-        return Optional.ofNullable(this.getPeripheral());
-    }
-
-    /*@Override
-    public ITextComponent getDisplayName() {
-        return this instanceof IInventoryBlock ? ((IInventoryBlock) this).getDisplayName() : null;
-    }*/
-
     @Override
     protected void saveAdditional(@NotNull CompoundTag tag, @NotNull HolderLookup.Provider provider) {
         super.saveAdditional(tag, provider);
         ContainerHelper.saveAllItems(tag, items, provider);
-        if (!peripheralSettings.isEmpty()) tag.put(PERIPHERAL_SETTINGS_KEY, peripheralSettings);
+        if (!peripheralSettings.isEmpty()) {
+            tag.put(PERIPHERAL_SETTINGS_KEY, peripheralSettings);
+        }
     }
 
     @Override
@@ -176,9 +167,11 @@ public abstract class PeripheralBlockEntity<T extends BasePeripheral<?>> extends
     @Override
     public boolean isEmpty() {
         for (ItemStack itemStack : items) {
-            if (itemStack.isEmpty()) return true;
+            if (!itemStack.isEmpty()) {
+                return false;
+            }
         }
-        return false;
+        return true;
     }
 
 
@@ -251,7 +244,10 @@ public abstract class PeripheralBlockEntity<T extends BasePeripheral<?>> extends
     @Override
     public <U extends BlockEntity> void handleTick(Level level, BlockState state, BlockEntityType<U> type) {
         if (!level.isClientSide()) {
-            this.getPeripheralOptional().ifPresent(IBasePeripheral::update);
+            T peripheral = this.getPeripheral();
+            if (peripheral != null) {
+                peripheral.update();
+            }
         }
     }
 

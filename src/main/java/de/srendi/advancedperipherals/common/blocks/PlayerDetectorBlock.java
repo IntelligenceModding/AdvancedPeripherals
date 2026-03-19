@@ -1,6 +1,5 @@
 package de.srendi.advancedperipherals.common.blocks;
 
-import dan200.computercraft.api.peripheral.IComputerAccess;
 import de.srendi.advancedperipherals.common.blocks.base.APBlockEntityBlock;
 import de.srendi.advancedperipherals.common.blocks.blockentities.PlayerDetectorEntity;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
@@ -35,9 +34,7 @@ public class PlayerDetectorBlock extends APBlockEntityBlock<PlayerDetectorEntity
         }
         BlockEntity tileEntity = level.getBlockEntity(pos);
         if (tileEntity instanceof PlayerDetectorEntity entity) {
-            for (IComputerAccess computer : entity.getConnectedComputers()) {
-                computer.queueEvent("player_click", player.getName().getString(), level.dimension().location().toString());
-            }
+            entity.queueEvent("player_click", player.getName().getString(), level.dimension().location().toString());
         }
         return super.useWithoutItem(state, level, pos, player, hit);
     }

@@ -5,7 +5,6 @@ import dan200.computercraft.api.lua.IArguments;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.lua.MethodResult;
-import dan200.computercraft.api.peripheral.IComputerAccess;
 import dan200.computercraft.api.pocket.IPocketAccess;
 import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
@@ -524,9 +523,7 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
     public void update() {
         lastConsumedMessage = Events.traverseChatMessages(lastConsumedMessage, message -> {
             String byteString = StringUtil.utf8ToByteString(message.message());
-            for (IComputerAccess computer : getConnectedComputers()) {
-                computer.queueEvent("chat", message.username(), message.message(), message.uuid(), message.isHidden(), byteString);
-            }
+            queueEvent("chat", message.username(), message.message(), message.uuid(), message.isHidden(), byteString);
         });
     }
 }

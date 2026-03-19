@@ -5,6 +5,7 @@ import dan200.computercraft.api.lua.ILuaContext;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.lua.MethodResult;
+import dan200.computercraft.api.peripheral.AttachedComputerSet;
 import dan200.computercraft.api.peripheral.IComputerAccess;
 import dan200.computercraft.api.peripheral.IDynamicPeripheral;
 import dan200.computercraft.api.peripheral.IPeripheral;
@@ -20,18 +21,16 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Consumer;
 
 public abstract class BasePeripheral<O extends IPeripheralOwner> implements IBasePeripheral<O>, IDynamicPeripheral {
 
-    protected final Set<IComputerAccess> connectedComputers = Collections.newSetFromMap(new ConcurrentHashMap<>());
+    protected final AttachedComputerSet attachedComputers = new AttachedComputerSet();
     protected final String type;
     protected final O owner;
     protected final List<BoundMethod> pluggedMethods = new ArrayList<>();
@@ -78,11 +77,6 @@ public abstract class BasePeripheral<O extends IPeripheralOwner> implements IBas
         }
     }
 
-    @Override
-    public Iterable<IComputerAccess> getConnectedComputers() {
-        return connectedComputers;
-    }
-
     @Nullable
     @Override
     public Object getTarget() {
@@ -96,13 +90,18 @@ public abstract class BasePeripheral<O extends IPeripheralOwner> implements IBas
     }
 
     @Override
+    public void forEachConnectedComputers(Consumer<? super IComputerAccess> consumer) {
+        attachedComputers.forEach(consumer);
+    }
+
+    @Override
     public void attach(@NotNull IComputerAccess computer) {
-        connectedComputers.add(computer);
+        attachedComputers.add(computer);
     }
 
     @Override
     public void detach(@NotNull IComputerAccess computer) {
-        connectedComputers.remove(computer);
+        attachedComputers.remove(computer);
     }
 
     @Override
