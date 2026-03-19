@@ -47,6 +47,13 @@ You can also download the [IntelliJ IDEA][idea] IDE, which is what we recommend 
 - You can now begin making changes to the project. If you're using IntelliJ IDEA, you can run the game by clicking on the `runClient` button in the gradle window.
   If you're not using IntelliJ IDEA, you can run the game by running `./gradlew runClient`.
 
+### Editing the block animations
+
+The texture files of the blocks that have various glow-like effects on them are generated procedurally by [a dedicated script](https://github.com/sjeulu/advanced-peripherals-util)
+from the source textures in `./src/main/resources/`. Making updates to the source textures that don't involve changing the glowing parts of the blocks (which can be identified by
+comparing the textures in `./src/main/resources/` with what you can see in the game and in `./src/generated/block-textures/`) requires regenerating the animations with the script
+as per instructions in [its README](https://github.com/sjeulu/advanced-peripherals-util/blob/main/README.md).
+
 If you're having trouble setting up a development environment, [ask the community via discord][discord] or [open an issue][new-issue].
 
 ## Developing Advanced Peripherals
