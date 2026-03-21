@@ -49,10 +49,10 @@ public class ChemicalFilter extends GenericFilter<ChemicalStack> {
             chemicalFilter.fingerprint = item.getString("fingerprint");
         }
         if (item.containsKey("fromSlot")) {
-            chemicalFilter.fromSlot = item.getInt("fromSlot");
+            chemicalFilter.fromSlot = item.getInt("fromSlot") - 1;
         }
         if (item.containsKey("toSlot")) {
-            chemicalFilter.toSlot = item.getInt("toSlot");
+            chemicalFilter.toSlot = item.getInt("toSlot") - 1;
         }
         if (item.containsKey("amount")) {
             chemicalFilter.amount = item.getLong("amount");

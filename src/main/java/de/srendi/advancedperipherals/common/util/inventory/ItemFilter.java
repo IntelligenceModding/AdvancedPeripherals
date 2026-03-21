@@ -72,10 +72,10 @@ public class ItemFilter extends GenericFilter<ItemStack> {
             itemFilter.fingerprint = item.getString("fingerprint");
         }
         if (item.containsKey("fromSlot")) {
-            itemFilter.fromSlot = item.getInt("fromSlot");
+            itemFilter.fromSlot = item.getInt("fromSlot") - 1;
         }
         if (item.containsKey("toSlot")) {
-            itemFilter.toSlot = item.getInt("toSlot");
+            itemFilter.toSlot = item.getInt("toSlot") - 1;
         }
         if (item.containsKey("count")) {
             itemFilter.count = item.getInt("count");

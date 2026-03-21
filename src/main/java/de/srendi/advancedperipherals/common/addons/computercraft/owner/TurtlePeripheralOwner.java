@@ -57,7 +57,7 @@ public class TurtlePeripheralOwner extends BasePeripheralOwner {
     @Nullable
     @Override
     public Entity getHoldingEntity() {
-        return getOwner();
+        return null;
     }
 
     @Nullable

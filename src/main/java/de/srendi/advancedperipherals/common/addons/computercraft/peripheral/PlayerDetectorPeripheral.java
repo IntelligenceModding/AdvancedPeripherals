@@ -25,8 +25,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
-// TODO: Improve player detect logic
-// Check player's box in the area instead of check player in the players in the area
 public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
 
     public static final String PERIPHERAL_TYPE = "player_detector";
@@ -131,19 +129,32 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
         return player != null && CoordUtil.isInRange(getCenterPos(), getLevel(), player, range, MAX_RANGE);
     }
 
-    @LuaFunction(value = {"getPlayerPos", "getPlayer"}, mainThread = true)
-    public final Map<String, Object> getPlayerPos(IArguments arguments) throws LuaException {
+    @LuaFunction(mainThread = true)
+    public final Map<String, Object> getPlayer(IArguments arguments) throws LuaException {
         if (!APConfig.PERIPHERALS_CONFIG.playerSpy.get()) {
             throw new LuaException("This function is disabled in the config. Activate it or ask an admin if he can activate it.");
         }
         ServerPlayer player = getPlayer(arguments.getString(0));
+        int posPrecision = arguments.optInt(1, 0);
         if (player == null) {
             return null;
         }
         if (MAX_RANGE != -1 && !CoordUtil.isInRange(getCenterPos(), getLevel(), player, MAX_RANGE, MAX_RANGE)) {
             return null;
         }
+        return getPlayerInfo(player, posPrecision);
+    }
 
+    @LuaFunction(mainThread = true)
+    public final Map<String, Object> getOwner(IArguments arguments) throws LuaException {
+        if (!(owner.getHoldingEntity() instanceof ServerPlayer player)) {
+            return null;
+        }
+        int posPrecision = arguments.optInt(0, 0);
+        return getPlayerInfo(player, posPrecision);
+    }
+
+    private Map<String, Object> getPlayerInfo(ServerPlayer player, int posPrecision) {
         Map<String, Object> info = new HashMap<>();
 
         double x = player.getX(), y = player.getY(), z = player.getZ();
@@ -181,7 +192,7 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
             }
         }
 
-        int decimals = Math.min(arguments.optInt(1, 0), 4);
+        int decimals = Math.min(posPrecision, 4);
 
         final double unit = Math.pow(10, decimals);
         info.put("x", Math.floor(x * unit) / unit);

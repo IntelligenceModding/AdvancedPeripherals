@@ -44,9 +44,12 @@ public class InventoryManagerPeripheral extends BasePeripheral<InventoryManagerO
     }
 
     @LuaFunction
-    public final String getOwner() throws LuaException {
-        if (owner.getOwner() == null) return null;
-        return getOwnerPlayer().getName().getString();
+    public final MethodResult getOwner() throws LuaException {
+        Player player = owner.getOwner();
+        if (player == null) {
+            return MethodResult.of();
+        }
+        return MethodResult.of(player.getName().getString(), player.getUUID().toString());
     }
 
 
@@ -56,9 +59,9 @@ public class InventoryManagerPeripheral extends BasePeripheral<InventoryManagerO
     @LuaFunction(mainThread = true)
     public final MethodResult addItemToPlayer(String invDirection, Map<?, ?> item) throws LuaException {
         Pair<ItemFilter, String> filter = ItemFilter.parse(new ObjectLuaTable(item));
-        if (filter.rightPresent())
+        if (filter.rightPresent()) {
             return MethodResult.of(0, filter.getRight());
-
+        }
         return addItemCommon(invDirection, filter.getLeft());
     }
 
@@ -67,8 +70,9 @@ public class InventoryManagerPeripheral extends BasePeripheral<InventoryManagerO
 
         Pair<IItemHandler, Integer> inventoryTo = getHandlerFromSlot(filter.getToSlot());
         IItemHandler inventoryFrom = getLevel().getCapability(Capabilities.ItemHandler.BLOCK, owner.getPos().relative(direction), direction.getOpposite());
-        if (inventoryFrom == null)
+        if (inventoryFrom == null) {
             return MethodResult.of(0, "INVENTORY_FROM_INVALID");
+        }
 
         inventoryTo.ifRightPresent(slot -> filter.toSlot = slot);
 
@@ -81,9 +85,9 @@ public class InventoryManagerPeripheral extends BasePeripheral<InventoryManagerO
     @LuaFunction(mainThread = true)
     public final MethodResult removeItemFromPlayer(String invDirection, Map<?, ?> item) throws LuaException {
         Pair<ItemFilter, String> filter = ItemFilter.parse(new ObjectLuaTable(item));
-        if (filter.rightPresent())
+        if (filter.rightPresent()) {
             return MethodResult.of(0, filter.getRight());
-
+        }
         return removeItemCommon(invDirection, filter.getLeft());
     }
 
@@ -93,18 +97,19 @@ public class InventoryManagerPeripheral extends BasePeripheral<InventoryManagerO
         Pair<IItemHandler, Integer> inventoryFrom = getHandlerFromSlot(filter.getFromSlot());
         IItemHandler inventoryTo = getLevel().getCapability(Capabilities.ItemHandler.BLOCK, owner.getPos().relative(direction), direction.getOpposite());
 
-        if (inventoryTo == null)
+        if (inventoryTo == null) {
             return MethodResult.of(0, "INVENTORY_TO_INVALID");
+        }
 
         inventoryFrom.ifRightPresent(slot -> filter.fromSlot = slot);
 
         return MethodResult.of(InventoryUtil.moveItem(inventoryFrom.getLeft(), inventoryTo, filter));
     }
 
-    @LuaFunction(value = {"list", "getItems"}, mainThread = true)
-    public final List<Object> getItems() throws LuaException {
+    @LuaFunction(mainThread = true)
+    public final List<Object> list() throws LuaException {
         List<Object> items = new ArrayList<>();
-        List<ItemStack> stacks = getOwnerPlayer().getInventory().items;
+        List<ItemStack> stacks = getOwnerPlayerOrError().getInventory().items;
         // Used to let users easily sort the items by the slots. Also, a better way for the user to see where an item actually is
         for (int slot = 0; slot < stacks.size(); slot++) {
             ItemStack stack = stacks.get(slot);
@@ -115,14 +120,15 @@ public class InventoryManagerPeripheral extends BasePeripheral<InventoryManagerO
         return items;
     }
 
-    @LuaFunction(value = {"listChest", "getItemsChest"}, mainThread = true)
-    public final MethodResult getItemsChest(String target) throws LuaException {
+    @LuaFunction(mainThread = true)
+    public final MethodResult listChest(String target) throws LuaException {
         Direction direction = validateSide(target);
 
         IItemHandler inventoryTo = getLevel().getCapability(Capabilities.ItemHandler.BLOCK, owner.getPos().relative(direction), direction.getOpposite());
 
-        if (inventoryTo == null)
+        if (inventoryTo == null) {
             return MethodResult.of(null, "INVENTORY_TO_INVALID");
+        }
 
         List<Object> items = new ArrayList<>();
         for (int slot = 0; slot < inventoryTo.getSlots(); slot++) {
@@ -136,7 +142,7 @@ public class InventoryManagerPeripheral extends BasePeripheral<InventoryManagerO
     @LuaFunction(mainThread = true)
     public final List<Object> getArmor() throws LuaException {
         List<Object> items = new ArrayList<>();
-        for (ItemStack stack : getOwnerPlayer().getInventory().armor) {
+        for (ItemStack stack : getOwnerPlayerOrError().getInventory().armor) {
             if (!stack.isEmpty()) {
                 items.add(LuaConverter.stackToObjectWithSlot(stack, ArmorSlot.getSlotForItem(stack)));
             }
@@ -146,7 +152,7 @@ public class InventoryManagerPeripheral extends BasePeripheral<InventoryManagerO
 
     @LuaFunction(mainThread = true)
     public final boolean isPlayerEquipped() throws LuaException {
-        for (ItemStack stack : getOwnerPlayer().getInventory().armor) {
+        for (ItemStack stack : getOwnerPlayerOrError().getInventory().armor) {
             if (!stack.isEmpty()) {
                 return true;
             }
@@ -156,65 +162,71 @@ public class InventoryManagerPeripheral extends BasePeripheral<InventoryManagerO
 
     @LuaFunction(mainThread = true)
     public final boolean isWearing(int index) throws LuaException {
-        List<ItemStack> armor = getOwnerPlayer().getInventory().armor;
+        index--;
+        List<ItemStack> armor = getOwnerPlayerOrError().getInventory().armor;
         return 0 <= index && index < armor.size() && !armor.get(index).isEmpty();
     }
 
     @LuaFunction(mainThread = true)
     public final int getEmptySpace() throws LuaException {
         int count = 0;
-        for (ItemStack stack : getOwnerPlayer().getInventory().items) {
-            if (stack.isEmpty())
+        for (ItemStack stack : getOwnerPlayerOrError().getInventory().items) {
+            if (stack.isEmpty()) {
                 count++;
+            }
         }
         return count;
     }
 
     @LuaFunction(mainThread = true)
     public final boolean isSpaceAvailable() throws LuaException {
-        return getEmptySpace() > 0;
+        return getOwnerPlayerOrError().getInventory().getFreeSlot() >= 0;
     }
 
     @LuaFunction(mainThread = true)
     public final int getFreeSlot() throws LuaException {
-        return getOwnerPlayer().getInventory().getFreeSlot();
+        return getOwnerPlayerOrError().getInventory().getFreeSlot() + 1;
     }
 
     @LuaFunction(mainThread = true)
     public final int getHandSlot() throws LuaException {
-        return getOwnerPlayer().getInventory().selected;
+        return getOwnerPlayerOrError().getInventory().selected + 1;
     }
 
     @LuaFunction(mainThread = true)
     public final Map<String, Object> getItemInHand() throws LuaException {
-        return LuaConverter.itemStackToObject(getOwnerPlayer().getMainHandItem(), getOwnerPlayer().getInventory().selected);
+        Player player = getOwnerPlayerOrError();
+        return LuaConverter.stackToObjectWithSlot(player.getMainHandItem(), player.getInventory().selected);
     }
 
     @LuaFunction(mainThread = true)
     public final Map<String, Object> getItemInOffHand() throws LuaException {
-        return LuaConverter.itemStackToObject(getOwnerPlayer().getOffhandItem());
+        return LuaConverter.itemStackToObject(getOwnerPlayerOrError().getOffhandItem());
     }
 
-    private Player getOwnerPlayer() throws LuaException {
-        if (owner.getOwner() == null)
+    private Player getOwnerPlayerOrError() throws LuaException {
+        Player player = owner.getOwner();
+        if (player == null) {
             throw new LuaException("The Inventory Manager doesn't have a memory card or it isn't bound to a player.");
-        return owner.getOwner();
+        }
+        return player;
     }
 
     @NotNull
     private Pair<IItemHandler, Integer> getHandlerFromSlot(int slot) throws LuaException {
+        Player player = getOwnerPlayerOrError();
         IItemHandler handler;
         if (slot >= 100 && slot <= 103) {
-            handler = new PlayerArmorInvWrapper(getOwnerPlayer().getInventory());
+            handler = new PlayerArmorInvWrapper(player.getInventory());
             // If the slot is between 100 and 103, change the index to a normal index between 0 and 3.
             // This is necessary since the PlayerArmorInvWrapper does not work with these higher indexes
             slot = slot - 100;
         } else if (slot == 36) {
-            handler = new PlayerOffhandInvWrapper(getOwnerPlayer().getInventory());
+            handler = new PlayerOffhandInvWrapper(player.getInventory());
             // Set the "from slot" to zero so the offhand wrapper can work with that
             slot = 0;
         } else {
-            handler = new PlayerInvWrapper(getOwnerPlayer().getInventory());
+            handler = new PlayerInvWrapper(player.getInventory());
         }
         return Pair.of(handler, slot);
     }
@@ -248,7 +260,7 @@ public class InventoryManagerPeripheral extends BasePeripheral<InventoryManagerO
                 }
             }
             AdvancedPeripherals.debug("Tried to get armor item slot for non armor item " + stack + ". Returning 0", Level.WARN);
-            return 0;
+            return -1;
         }
 
         public int getSlot() {
