@@ -16,7 +16,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.component.DataComponentPatch;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.StringRepresentable;
@@ -49,7 +48,6 @@ import java.util.stream.Stream;
 
 public class LuaConverter {
 
-    private static final CompoundTag EMPTY_TAG = new CompoundTag();
     private static final Map<Class<? extends Entity>, List<EntityConverter<?>>> ENTITY_CONVERTERS = new HashMap<>();
 
     static {
@@ -135,8 +133,9 @@ public class LuaConverter {
         registerEntityConverter(Entity.class, (entity, data, ctx) -> {
             data.put("id", entity.getId());
             data.put("uuid", entity.getStringUUID());
-            if (entity.hasCustomName())
+            if (entity.hasCustomName()) {
                 data.put("customName", entity.getCustomName().getString());
+            }
             EntityType<?> type = entity.getType();
             data.put("displayName", type.getDescription().getString());
             data.put("name", type.builtInRegistryHolder().key().location().toString());
