@@ -82,7 +82,7 @@ public class ChemicalUtil {
                 continue;
             }
             needs -= inserted;
-            inventoryFrom.extractChemical(i, inserted, Action.SIMULATE);
+            inventoryFrom.extractChemical(i, inserted, Action.EXECUTE);
             if (needs <= 0) {
                 break;
             }
