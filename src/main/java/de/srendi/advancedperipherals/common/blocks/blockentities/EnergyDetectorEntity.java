@@ -22,7 +22,7 @@ public class EnergyDetectorEntity extends BaseDetectorEntity<IEnergyStorage, Ene
 
     @Override
     @NotNull
-    protected EnergyDetectorPeripheral createPeripheral() {
+    protected EnergyDetectorPeripheral buildPeripheral() {
         return new EnergyDetectorPeripheral(this);
     }
 

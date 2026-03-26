@@ -19,7 +19,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public abstract class PeripheralTurtleUpgrade<T extends IBasePeripheral<?>> extends AbstractTurtleUpgrade {
-    protected int tick;
+    protected int tick = 0;
 
     protected PeripheralTurtleUpgrade(ResourceLocation id, ItemStack item) {
         super(TurtleUpgradeType.PERIPHERAL, TranslationUtil.turtle(id.getPath()), item);
@@ -55,15 +55,13 @@ public abstract class PeripheralTurtleUpgrade<T extends IBasePeripheral<?>> exte
     @Override
     public IPeripheral createPeripheral(@NotNull ITurtleAccess turtle, @NotNull TurtleSide side) {
         T peripheral = buildPeripheral(turtle, side);
-        if (!peripheral.isEnabled()) {
-            return new DisabledPeripheral(peripheral);
-        }
-        return peripheral;
+        return peripheral.isEnabled() ? peripheral : new DisabledPeripheral(peripheral);
     }
 
     @Override
     public void update(@NotNull ITurtleAccess turtle, @NotNull TurtleSide side) {
         super.update(turtle, side);
+        this.tick++;
         if (!turtle.getLevel().isClientSide() && turtle.getPeripheral(side) instanceof IBasePeripheral<?> basePeripheral) {
             basePeripheral.update();
         }

@@ -15,7 +15,7 @@ public class ColonyIntegratorEntity extends PeripheralBlockEntity<ColonyPeripher
 
     @NotNull
     @Override
-    protected ColonyPeripheral createPeripheral() {
+    protected ColonyPeripheral buildPeripheral() {
         return new ColonyPeripheral(this);
     }
 }

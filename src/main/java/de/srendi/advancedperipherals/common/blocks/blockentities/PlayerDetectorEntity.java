@@ -20,7 +20,7 @@ public class PlayerDetectorEntity extends PeripheralBlockEntity<PlayerDetectorPe
 
     @NotNull
     @Override
-    protected PlayerDetectorPeripheral createPeripheral() {
+    protected PlayerDetectorPeripheral buildPeripheral() {
         return new PlayerDetectorPeripheral(this);
     }
 

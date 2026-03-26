@@ -16,14 +16,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public abstract class BasePocketUpgrade<T extends IBasePeripheral<?>> extends AbstractPocketUpgrade {
-
-    protected T peripheral;
-
     protected BasePocketUpgrade(ResourceLocation id, ItemStack stack) {
         super(TranslationUtil.pocket(id.getPath()), stack);
     }
 
-    protected abstract T getPeripheral(IPocketAccess access);
+    protected abstract T buildPeripheral(IPocketAccess access);
 
     @Override
     public ItemStack getUpgradeItem(DataComponentPatch upgradeData) {
@@ -48,11 +45,8 @@ public abstract class BasePocketUpgrade<T extends IBasePeripheral<?>> extends Ab
     @Nullable
     @Override
     public IPeripheral createPeripheral(@NotNull IPocketAccess access) {
-        peripheral = getPeripheral(access);
-        if (!peripheral.isEnabled()) {
-            return new DisabledPeripheral(peripheral);
-        }
-        return peripheral;
+        T peripheral = buildPeripheral(access);
+        return peripheral.isEnabled() ? peripheral : new DisabledPeripheral(peripheral);
     }
 
     @Override

@@ -20,7 +20,7 @@ public class NBTStorageEntity extends PeripheralBlockEntity<NBTStoragePeripheral
 
     @NotNull
     @Override
-    protected NBTStoragePeripheral createPeripheral() {
+    protected NBTStoragePeripheral buildPeripheral() {
         return new NBTStoragePeripheral(this);
     }
 

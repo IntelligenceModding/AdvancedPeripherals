@@ -85,14 +85,11 @@ public abstract class PeripheralBlockEntity<T extends BasePeripheral<?>> extends
     }
 
     @NotNull
-    protected abstract T createPeripheral();
+    protected abstract T buildPeripheral();
 
     protected IPeripheral createPeripheralOrDisabled() {
-        T peripheral = this.createPeripheral();
-        if (peripheral.isEnabled()) {
-            return peripheral;
-        }
-        return new DisabledPeripheral(peripheral);
+        T peripheral = this.buildPeripheral();
+        return peripheral.isEnabled() ? peripheral : new DisabledPeripheral(peripheral);
     }
 
     public void queueEvent(String event, Object... args) {

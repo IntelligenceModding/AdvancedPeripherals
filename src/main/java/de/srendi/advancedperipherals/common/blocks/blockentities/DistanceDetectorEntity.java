@@ -23,7 +23,7 @@ public class DistanceDetectorEntity extends PeripheralBlockEntity<DistanceDetect
 
     @NotNull
     @Override
-    protected DistanceDetectorPeripheral createPeripheral() {
+    protected DistanceDetectorPeripheral buildPeripheral() {
         return new DistanceDetectorPeripheral(this);
     }
 

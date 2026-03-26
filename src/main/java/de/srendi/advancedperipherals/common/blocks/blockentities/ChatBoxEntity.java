@@ -15,7 +15,7 @@ public class ChatBoxEntity extends PeripheralBlockEntity<ChatBoxPeripheral> {
 
     @NotNull
     @Override
-    protected ChatBoxPeripheral createPeripheral() {
+    protected ChatBoxPeripheral buildPeripheral() {
         return new ChatBoxPeripheral(this);
     }
 }

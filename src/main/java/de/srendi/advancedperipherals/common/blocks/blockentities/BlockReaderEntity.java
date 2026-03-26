@@ -15,7 +15,7 @@ public class BlockReaderEntity extends PeripheralBlockEntity<BlockReaderPeripher
 
     @NotNull
     @Override
-    protected BlockReaderPeripheral createPeripheral() {
+    protected BlockReaderPeripheral buildPeripheral() {
         return new BlockReaderPeripheral(this);
     }
 }

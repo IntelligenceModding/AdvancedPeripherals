@@ -23,7 +23,7 @@ public class GasDetectorEntity extends BaseDetectorEntity<IChemicalHandler, GasS
 
     @Override
     @NotNull
-    protected GasDetectorPeripheral createPeripheral() {
+    protected GasDetectorPeripheral buildPeripheral() {
         return new GasDetectorPeripheral(this);
     }
 

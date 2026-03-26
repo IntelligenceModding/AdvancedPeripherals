@@ -45,7 +45,7 @@ public class RSBridgeEntity extends PeripheralBlockEntity<RSBridgePeripheral> im
 
     @NotNull
     @Override
-    protected RSBridgePeripheral createPeripheral() {
+    protected RSBridgePeripheral buildPeripheral() {
         return new RSBridgePeripheral(this);
     }
 

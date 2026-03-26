@@ -22,7 +22,7 @@ public class FluidDetectorEntity extends BaseDetectorEntity<IFluidHandler, Fluid
 
     @Override
     @NotNull
-    protected FluidDetectorPeripheral createPeripheral() {
+    protected FluidDetectorPeripheral buildPeripheral() {
         return new FluidDetectorPeripheral(this);
     }
 

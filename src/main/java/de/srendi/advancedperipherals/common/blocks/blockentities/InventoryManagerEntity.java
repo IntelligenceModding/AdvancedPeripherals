@@ -33,7 +33,7 @@ public class InventoryManagerEntity extends PeripheralBlockEntity<InventoryManag
 
     @NotNull
     @Override
-    protected InventoryManagerPeripheral createPeripheral() {
+    protected InventoryManagerPeripheral buildPeripheral() {
         return new InventoryManagerPeripheral(this);
     }
 

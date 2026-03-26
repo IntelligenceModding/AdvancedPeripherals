@@ -18,7 +18,7 @@ public class PocketDistanceDetectorUpgrade extends BasePocketUpgrade<DistanceDet
 
     @Nullable
     @Override
-    public DistanceDetectorPeripheral getPeripheral(@NotNull IPocketAccess pocketAccess) {
+    protected DistanceDetectorPeripheral buildPeripheral(@NotNull IPocketAccess pocketAccess) {
         return new DistanceDetectorPeripheral(pocketAccess);
     }
 

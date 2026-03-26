@@ -54,7 +54,7 @@ public class MEBridgeEntity extends PeripheralBlockEntity<MEBridgePeripheral> im
 
     @NotNull
     @Override
-    protected MEBridgePeripheral createPeripheral() {
+    protected MEBridgePeripheral buildPeripheral() {
         return new MEBridgePeripheral(this);
     }
 

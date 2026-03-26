@@ -20,7 +20,7 @@ public class GeoScannerEntity extends PoweredPeripheralBlockEntity<GeoScannerPer
     }
 
     @Override
-    protected @NotNull GeoScannerPeripheral createPeripheral() {
+    protected @NotNull GeoScannerPeripheral buildPeripheral() {
         return new GeoScannerPeripheral(this);
     }
 

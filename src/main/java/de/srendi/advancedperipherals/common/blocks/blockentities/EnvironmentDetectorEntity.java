@@ -21,7 +21,7 @@ public class EnvironmentDetectorEntity extends PoweredPeripheralBlockEntity<Envi
 
     @NotNull
     @Override
-    protected EnvironmentDetectorPeripheral createPeripheral() {
+    protected EnvironmentDetectorPeripheral buildPeripheral() {
         return new EnvironmentDetectorPeripheral(this);
     }
 
