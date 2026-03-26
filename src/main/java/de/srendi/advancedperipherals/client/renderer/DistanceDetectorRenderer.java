@@ -27,20 +27,17 @@ public class DistanceDetectorRenderer implements BlockEntityRenderer<DistanceDet
     }
 
     @Override
-    public void render(@NotNull DistanceDetectorEntity pBlockEntity, float pPartialTick, @NotNull PoseStack pPoseStack, MultiBufferSource pBufferSource, int pPackedLight, int pPackedOverlay) {
-        if (pBlockEntity.getShowLaser()) {
-            float distance = pBlockEntity.getCurrentDistance();
-            float[] color = EnumColor.RED.getRgb();
-            if (distance == -1) {
-                distance = pBlockEntity.getMaxRange();
-                color = EnumColor.DARK_RED.getRgb();
-            }
-            renderBeaconBeam(pBlockEntity, pPoseStack, pBufferSource, BeaconRenderer.BEAM_LOCATION, pPartialTick, 1, 0, distance + 0.5f, color, 0.05f, 0.09f);
+    public void render(@NotNull DistanceDetectorEntity be, float partialTick, @NotNull PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
+        if (!be.getShowLaser()) {
+            return;
         }
+        float distance = Mth.lerp(partialTick, be.currentDistanceO, be.currentDistanceLerped);
+        float[] color = (be.detected() ? EnumColor.RED : EnumColor.DARK_RED).getRgb();
+        renderBeaconBeam(be, poseStack, bufferSource, BeaconRenderer.BEAM_LOCATION, partialTick, 1, 0, distance + 0.5f, color, 0.05f, 0.09f);
     }
 
     @Override
-    public boolean shouldRenderOffScreen(@NotNull DistanceDetectorEntity pBlockEntity) {
+    public boolean shouldRenderOffScreen(@NotNull DistanceDetectorEntity be) {
         return true;
     }
 

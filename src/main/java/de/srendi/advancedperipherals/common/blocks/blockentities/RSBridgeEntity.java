@@ -52,6 +52,9 @@ public class RSBridgeEntity extends PeripheralBlockEntity<RSBridgePeripheral> im
     @Override
     public <T extends BlockEntity> void handleTick(Level level, BlockState state, BlockEntityType<T> type) {
         super.handleTick(level, state, type);
+        if (level.isClientSide()) {
+            return;
+        }
         if (getNode().getNetwork() != null) {
             AutocraftingNetworkComponent manager = getNode().getNetwork().getComponent(AutocraftingNetworkComponent.class);
             if (!this.addedListener) {

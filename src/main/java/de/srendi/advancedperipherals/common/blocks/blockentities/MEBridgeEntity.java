@@ -61,7 +61,7 @@ public class MEBridgeEntity extends PeripheralBlockEntity<MEBridgePeripheral> im
     @Override
     public <T extends BlockEntity> void handleTick(Level level, BlockState state, BlockEntityType<T> type) {
         super.handleTick(level, state, type);
-        if (this.level.isClientSide) {
+        if (level.isClientSide()) {
             return;
         }
         if (!initialized) {

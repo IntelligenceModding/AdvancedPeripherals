@@ -81,9 +81,9 @@ public abstract class BaseBlockEntityBlock extends BaseBlock implements EntityBl
 
     @Nullable
     @Override
-    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, @NotNull BlockState state, @NotNull BlockEntityType<T> type) {
-        if (level.isClientSide || !belongToTickingEntity) return null;
-        return (level1, blockPos, blockState, entity) -> {
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level0, @NotNull BlockState state0, @NotNull BlockEntityType<T> type) {
+        if (!belongToTickingEntity) return null;
+        return (level, pos, state, entity) -> {
             if (entity instanceof IPeripheralBlockEntity blockEntity) {
                 blockEntity.handleTick(level, state, type);
             }

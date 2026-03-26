@@ -236,11 +236,12 @@ public abstract class PeripheralBlockEntity<T extends BasePeripheral<?>> extends
 
     @Override
     public <U extends BlockEntity> void handleTick(Level level, BlockState state, BlockEntityType<U> type) {
-        if (!level.isClientSide()) {
-            T peripheral = this.getPeripheral();
-            if (peripheral != null) {
-                peripheral.update();
-            }
+        if (level.isClientSide()) {
+            return;
+        }
+        T peripheral = this.getPeripheral();
+        if (peripheral != null) {
+            peripheral.update();
         }
     }
 

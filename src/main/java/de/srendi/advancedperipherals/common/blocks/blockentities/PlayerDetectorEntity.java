@@ -27,6 +27,9 @@ public class PlayerDetectorEntity extends PeripheralBlockEntity<PlayerDetectorPe
     @Override
     public <T extends BlockEntity> void handleTick(Level level, BlockState state, BlockEntityType<T> type) {
         super.handleTick(level, state, type);
+        if (level.isClientSide()) {
+            return;
+        }
         lastConsumedMessage = Events.traversePlayerMessages(
             lastConsumedMessage,
             message -> queueEvent(message.eventName(), message.playerName(), message.fromDimension(), message.toDimension())
