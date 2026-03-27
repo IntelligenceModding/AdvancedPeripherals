@@ -25,6 +25,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.common.Tags;
 import org.jetbrains.annotations.NotNull;
 
@@ -61,13 +62,13 @@ public class GeoScannerPeripheral extends BasePeripheral<IPeripheralOwner> {
         this(new PocketPeripheralOwner(pocket));
     }
 
-    private static List<Map<String, Object>> scan(Level level, BlockPos center, int radius) {
+    private static List<Map<String, Object>> scan(Level level, Vec3 center, int radius) {
         List<Map<String, Object>> result = new ArrayList<>();
-        ScanUtils.relativeTraverseBlocks(level, center, radius, (state, pos) -> {
+        ScanUtils.traverseBlocks(level, center, radius, (state, pos) -> {
             Map<String, Object> data = new HashMap<>(6 * 2);
-            data.put("x", pos.getX());
-            data.put("y", pos.getY());
-            data.put("z", pos.getZ());
+            data.put("x", pos.x);
+            data.put("y", pos.y);
+            data.put("z", pos.z);
 
             Block block = state.getBlock();
             ResourceLocation name = BuiltInRegistries.BLOCK.getKey(block);
@@ -122,7 +123,7 @@ public class GeoScannerPeripheral extends BasePeripheral<IPeripheralOwner> {
                 Map.ofEntries(
                     data.entrySet()
                         .stream()
-                        .map((entry) -> new AbstractMap.SimpleImmutableEntry(entry.getKey().toString(), entry.getValue()))
+                        .map((entry) -> new AbstractMap.SimpleImmutableEntry<>(entry.getKey().toString(), entry.getValue()))
                         .toArray(Map.Entry[]::new)
                 )
             );
@@ -137,6 +138,6 @@ public class GeoScannerPeripheral extends BasePeripheral<IPeripheralOwner> {
                 return MethodResult.of(null, "Radius is exceed max value");
             }
             return null;
-        }, context -> MethodResult.of(scan(getLevel(), getPos(), context.getRadius())), null);
+        }, context -> MethodResult.of(scan(getLevel(), getCenterPos(), context.getRadius())), null);
     }
 }
