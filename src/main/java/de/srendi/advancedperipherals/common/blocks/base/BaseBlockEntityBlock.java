@@ -28,16 +28,12 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public abstract class BaseBlockEntityBlock extends BaseBlock implements EntityBlock {
-
-    private final boolean belongToTickingEntity;
-
-    public BaseBlockEntityBlock(boolean belongToTickingEntity) {
-        this(belongToTickingEntity, Properties.of().sound(SoundType.METAL).mapColor(DyeColor.GRAY).strength(1, 5).sound(SoundType.METAL).noOcclusion().requiresCorrectToolForDrops());
+    public BaseBlockEntityBlock() {
+        this(Properties.of().sound(SoundType.METAL).mapColor(DyeColor.GRAY).strength(1, 5).sound(SoundType.METAL).noOcclusion().requiresCorrectToolForDrops());
     }
 
-    public BaseBlockEntityBlock(boolean belongToTickingEntity, Properties properties) {
+    public BaseBlockEntityBlock(Properties properties) {
         super(properties, BlockTags.NEEDS_IRON_TOOL);
-        this.belongToTickingEntity = belongToTickingEntity;
     }
 
     @NotNull
@@ -46,10 +42,10 @@ public abstract class BaseBlockEntityBlock extends BaseBlock implements EntityBl
         BlockEntity tileEntity = level.getBlockEntity(pos);
         if (tileEntity instanceof VarNameable nameable && stack.getItem() instanceof NameTagItem) {
             if (level.isClientSide()) {
-                return ItemInteractionResult.CONSUME;
+                return ItemInteractionResult.SUCCESS;
             }
             nameable.setName(stack.get(DataComponents.CUSTOM_NAME));
-            return ItemInteractionResult.SUCCESS;
+            return ItemInteractionResult.CONSUME;
         }
         return super.useItemOn(stack, state, level, pos, player, hand, hit);
     }
@@ -82,7 +78,6 @@ public abstract class BaseBlockEntityBlock extends BaseBlock implements EntityBl
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level0, @NotNull BlockState state0, @NotNull BlockEntityType<T> type) {
-        if (!belongToTickingEntity) return null;
         return (level, pos, state, entity) -> {
             if (entity instanceof IPeripheralBlockEntity blockEntity) {
                 blockEntity.handleTick(level, state, type);

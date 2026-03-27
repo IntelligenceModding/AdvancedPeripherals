@@ -134,7 +134,7 @@ public abstract class BaseDetectorEntity<T, S extends IStorageProxy, P extends B
     }
 
     @Override
-    public <T extends BlockEntity> void handleTick(Level level, BlockState state, BlockEntityType<T> type) {
+    public <U extends BlockEntity> void handleTick(Level level, BlockState state, BlockEntityType<U> type) {
         super.handleTick(level, state, type);
         if (!level.isClientSide()) {
             this.transferRate = this.proxy.getAndResetTransfered();
