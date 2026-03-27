@@ -30,6 +30,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.phys.Vec3;
@@ -209,6 +210,16 @@ public class LuaConverter {
         } else {
             return null;
         }
+    }
+
+    public static Map<String, String> serializeState(BlockState state) {
+        Map<String, String> map = new HashMap<>();
+
+        state.getValues().forEach(((prop, val) -> {
+            map.put(prop.getName(), val.toString());
+        }));
+
+        return map;
     }
 
     @Nullable
