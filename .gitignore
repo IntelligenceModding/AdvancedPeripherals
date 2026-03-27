@@ -19,9 +19,12 @@ build
 
 # other
 eclipse
+run/
 runs/
 server
-run
+
+# cache
+/src/generated/resources/.cache/
 
 # Files from Forge MDK
 forge*changelog.txt

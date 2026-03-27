@@ -1,10 +1,9 @@
 package de.srendi.advancedperipherals.common.blocks.base;
 
-import dan200.computercraft.api.peripheral.IComputerAccess;
 import dan200.computercraft.api.peripheral.IPeripheral;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
 import de.srendi.advancedperipherals.lib.peripherals.DisabledPeripheral;
-import de.srendi.advancedperipherals.lib.peripherals.IPeripheralTileEntity;
+import de.srendi.advancedperipherals.lib.peripherals.IPeripheralBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
@@ -12,13 +11,14 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.ContainerHelper;
-import net.minecraft.world.MenuProvider;
 import net.minecraft.world.WorldlyContainer;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
@@ -28,10 +28,7 @@ import net.neoforged.neoforge.items.wrapper.SidedInvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collections;
-import java.util.Optional;
-
-public abstract class PeripheralBlockEntity<T extends BasePeripheral<?>> extends BaseContainerBlockEntity implements WorldlyContainer, MenuProvider, IPeripheralTileEntity, ICapabilityProvider {
+public abstract class PeripheralBlockEntity<T extends BasePeripheral<?>> extends BaseContainerBlockEntity implements WorldlyContainer, IPeripheralBlockEntity, ICapabilityProvider, VarNameable {
     private static final String PERIPHERAL_SETTINGS_KEY = "peripheralSettings";
     protected CompoundTag peripheralSettings = new CompoundTag();
     protected NonNullList<ItemStack> items;
@@ -42,11 +39,16 @@ public abstract class PeripheralBlockEntity<T extends BasePeripheral<?>> extends
 
     protected PeripheralBlockEntity(BlockEntityType<?> tileEntityTypeIn, BlockPos pos, BlockState state) {
         super(tileEntityTypeIn, pos, state);
-        if (this instanceof IInventoryBlock<?> inventoryBlock) {
+        if (this instanceof IInventoryBlock inventoryBlock) {
             items = NonNullList.withSize(inventoryBlock.getInvSize(), ItemStack.EMPTY);
         } else {
             items = NonNullList.withSize(0, ItemStack.EMPTY);
         }
+    }
+
+    @Override
+    public void setName(Component name) {
+        this.name = name;
     }
 
     @Nullable
@@ -59,7 +61,7 @@ public abstract class PeripheralBlockEntity<T extends BasePeripheral<?>> extends
             // Recreate peripheral to allow CC: Tweaked correctly handle
             // peripheral update logic, so new peripheral and old one will be
             // different
-            this.peripheral = this.createPeripheralDisable();
+            this.peripheral = this.createPeripheralOrDisabled();
         }
         return this.peripheral;
     }
@@ -83,18 +85,21 @@ public abstract class PeripheralBlockEntity<T extends BasePeripheral<?>> extends
     }
 
     @NotNull
-    protected abstract T createPeripheral();
+    protected abstract T buildPeripheral();
 
-    protected IPeripheral createPeripheralDisable() {
-        T peripheral = this.createPeripheral();
-        if (peripheral.isEnabled()) {
-            return peripheral;
-        }
-        return new DisabledPeripheral(peripheral);
+    protected IPeripheral createPeripheralOrDisabled() {
+        T peripheral = this.buildPeripheral();
+        return peripheral.isEnabled() ? peripheral : new DisabledPeripheral(peripheral);
     }
 
-    public Iterable<IComputerAccess> getConnectedComputers() {
-        return this.getPeripheralOptional().map(BasePeripheral::getConnectedComputers).orElse(Collections.emptyList());
+    public void queueEvent(String event, Object... args) {
+        if (this.getLevel().isClientSide()) {
+            return;
+        }
+        T peripheral = this.getPeripheral();
+        if (peripheral != null) {
+            peripheral.queueEvent(event, args);
+        }
     }
 
     @Nullable
@@ -106,20 +111,13 @@ public abstract class PeripheralBlockEntity<T extends BasePeripheral<?>> extends
         return (T) peripheral;
     }
 
-    public Optional<T> getPeripheralOptional() {
-        return Optional.ofNullable(this.getPeripheral());
-    }
-
-    /*@Override
-    public ITextComponent getDisplayName() {
-        return this instanceof IInventoryBlock ? ((IInventoryBlock) this).getDisplayName() : null;
-    }*/
-
     @Override
     protected void saveAdditional(@NotNull CompoundTag tag, @NotNull HolderLookup.Provider provider) {
         super.saveAdditional(tag, provider);
         ContainerHelper.saveAllItems(tag, items, provider);
-        if (!peripheralSettings.isEmpty()) tag.put(PERIPHERAL_SETTINGS_KEY, peripheralSettings);
+        if (!peripheralSettings.isEmpty()) {
+            tag.put(PERIPHERAL_SETTINGS_KEY, peripheralSettings);
+        }
     }
 
     @Override
@@ -131,18 +129,12 @@ public abstract class PeripheralBlockEntity<T extends BasePeripheral<?>> extends
 
     @Override
     protected Component getDefaultName() {
-        return this instanceof IInventoryBlock<?> inventoryBlock ? inventoryBlock.getDisplayName() : null;
-    }
-
-    @Nullable
-    @Override
-    public AbstractContainerMenu createMenu(int id, @NotNull Inventory inventory, @NotNull Player playerEntity) {
-        return createMenu(id, inventory);
+        return this instanceof IInventoryMenuBlock inventoryBlock ? inventoryBlock.getDisplayName() : null;
     }
 
     @Override
     protected AbstractContainerMenu createMenu(int id, @NotNull Inventory player) {
-        return this instanceof IInventoryBlock<?> inventoryBlock ? inventoryBlock.createContainer(id, player, worldPosition, level) : null;
+        return null;
     }
 
     @Override
@@ -168,9 +160,11 @@ public abstract class PeripheralBlockEntity<T extends BasePeripheral<?>> extends
     @Override
     public boolean isEmpty() {
         for (ItemStack itemStack : items) {
-            if (itemStack.isEmpty()) return true;
+            if (!itemStack.isEmpty()) {
+                return false;
+            }
         }
-        return false;
+        return true;
     }
 
 
@@ -224,12 +218,38 @@ public abstract class PeripheralBlockEntity<T extends BasePeripheral<?>> extends
         items.clear();
     }
 
+    @Override
     public CompoundTag getPeripheralSettings() {
-        return peripheralSettings;
+        return this.peripheralSettings;
+    }
+
+    @Override
+    public void setPeripheralSettings(CompoundTag tag) {
+        this.peripheralSettings = tag;
+        this.markSettingsChanged();
     }
 
     @Override
     public void markSettingsChanged() {
         this.setChanged();
+    }
+
+    @Override
+    public <U extends BlockEntity> void handleTick(Level level, BlockState state, BlockEntityType<U> type) {
+        if (level.isClientSide()) {
+            return;
+        }
+        T peripheral = this.getPeripheral();
+        if (peripheral != null) {
+            peripheral.update();
+        }
+    }
+
+    public void sendUpdate() {
+        if (this.getLevel().isClientSide) {
+            return;
+        }
+        this.setChanged();
+        this.getLevel().sendBlockUpdated(this.getBlockPos(), this.getBlockState(), this.getBlockState(), 0 /* no use on server-side */);
     }
 }

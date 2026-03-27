@@ -1,11 +1,11 @@
 package de.srendi.advancedperipherals.client;
 
 import de.srendi.advancedperipherals.AdvancedPeripherals;
-import de.srendi.advancedperipherals.network.APNetworking;
-import de.srendi.advancedperipherals.network.toserver.RetrieveUsernamePacket;
+import de.srendi.advancedperipherals.common.network.toserver.RetrieveUsernamePacket;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
+import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
@@ -25,11 +25,11 @@ public class ClientUUIDCache {
     private ClientUUIDCache() { }
 
     @Nullable
-    public static String getUsername(UUID uuid, UUID requester) {
+    public static String getUsername(UUID uuid) {
         if (CACHE.containsKey(uuid))
             return CACHE.get(uuid);
 
-        APNetworking.sendToServer(new RetrieveUsernamePacket(uuid, requester));
+        PacketDistributor.sendToServer(new RetrieveUsernamePacket(uuid));
         return null;
     }
 

@@ -1,7 +1,7 @@
 package de.srendi.advancedperipherals.common.items;
 
 import de.srendi.advancedperipherals.common.configuration.APConfig;
-import de.srendi.advancedperipherals.common.setup.Items;
+import de.srendi.advancedperipherals.common.setup.APItems;
 import de.srendi.advancedperipherals.common.util.EnumColor;
 import de.srendi.advancedperipherals.lib.metaphysics.IFeedableAutomataCore;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -23,8 +23,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Supplier;
 
-import static de.srendi.advancedperipherals.common.setup.DataComponents.CONSUMED_ENTITY_COMPOUND;
+import static de.srendi.advancedperipherals.common.setup.APDataComponents.CONSUMED_ENTITY_COMPOUND;
 
 public class WeakAutomataCore extends APItem implements IFeedableAutomataCore {
 
@@ -35,13 +36,13 @@ public class WeakAutomataCore extends APItem implements IFeedableAutomataCore {
     static {
         Map<String, Integer> endSouls = new HashMap<>();
         endSouls.put(BuiltInRegistries.ENTITY_TYPE.getKey(EntityType.ENDERMAN).toString(), 10);
-        WeakAutomataCoreRecord endSoulRecord = new WeakAutomataCoreRecord(endSouls, Items.END_AUTOMATA_CORE.get());
+        WeakAutomataCoreRecord endSoulRecord = new WeakAutomataCoreRecord(endSouls, () -> APItems.END_AUTOMATA_CORE.get());
 
         Map<String, Integer> husbandrySouls = new HashMap<>();
         husbandrySouls.put(BuiltInRegistries.ENTITY_TYPE.getKey(EntityType.COW).toString(), 3);
         husbandrySouls.put(BuiltInRegistries.ENTITY_TYPE.getKey(EntityType.SHEEP).toString(), 3);
         husbandrySouls.put(BuiltInRegistries.ENTITY_TYPE.getKey(EntityType.CHICKEN).toString(), 3);
-        WeakAutomataCoreRecord husbandrySoulRecord = new WeakAutomataCoreRecord(husbandrySouls, Items.HUSBANDRY_AUTOMATA_CORE.get());
+        WeakAutomataCoreRecord husbandrySoulRecord = new WeakAutomataCoreRecord(husbandrySouls, () -> APItems.HUSBANDRY_AUTOMATA_CORE.get());
 
         endSoulRecord.ingredients.keySet().forEach(entityType -> AUTOMATA_CORE_REGISTRY.put(entityType, endSoulRecord));
         husbandrySoulRecord.ingredients.keySet().forEach(entityType -> AUTOMATA_CORE_REGISTRY.put(entityType, husbandrySoulRecord));
@@ -72,7 +73,7 @@ public class WeakAutomataCore extends APItem implements IFeedableAutomataCore {
     @NotNull
     public InteractionResult interactLivingEntity(@NotNull ItemStack stack, @NotNull Player player, @NotNull LivingEntity entity, @NotNull InteractionHand hand) {
         if (!(player instanceof FakePlayer)) {
-            player.displayClientMessage(Component.translatable("text.advancedperipherals.automata_core_feed_by_player"), true);
+            player.displayClientMessage(Component.translatable("text.advancedperipherals.automata_core.feed_by_player"), true);
             return InteractionResult.FAIL;
         }
         String entityType = EntityType.getKey(entity.getType()).toString();
@@ -96,7 +97,7 @@ public class WeakAutomataCore extends APItem implements IFeedableAutomataCore {
             entityCompound.putString(CONSUMED_ENTITY_NAME, entity.getName().getString());
             consumedData.put(entityType, entityCompound);
             if (record.isFinished(consumedData)) {
-                player.setItemInHand(hand, new ItemStack(record.resultSoul));
+                player.setItemInHand(hand, new ItemStack(record.resultSoul().get()));
             }
             stack.set(CONSUMED_ENTITY_COMPOUND.get(), consumedData);
             return InteractionResult.SUCCESS;
@@ -104,7 +105,7 @@ public class WeakAutomataCore extends APItem implements IFeedableAutomataCore {
         return InteractionResult.PASS;
     }
 
-    public record WeakAutomataCoreRecord(Map<String, Integer> ingredients, Item resultSoul) {
+    public record WeakAutomataCoreRecord(Map<String, Integer> ingredients, Supplier<Item> resultSoul) {
 
         public int getRequiredCount(String entityType) {
             return this.ingredients.getOrDefault(entityType, 0);

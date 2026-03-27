@@ -21,8 +21,8 @@ import de.srendi.advancedperipherals.common.addons.appliedenergistics.MEBridgeEn
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.MEBridgePeripheral;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralBlockEntity;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
-import de.srendi.advancedperipherals.common.setup.BlockEntityTypes;
-import de.srendi.advancedperipherals.common.setup.Blocks;
+import de.srendi.advancedperipherals.common.setup.APBlockEntityTypes;
+import de.srendi.advancedperipherals.common.setup.APBlocks;
 import de.srendi.advancedperipherals.common.util.inventory.BasicCraftJob;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -48,35 +48,40 @@ public class MEBridgeEntity extends PeripheralBlockEntity<MEBridgePeripheral> im
     private final IManagedGridNode mainNode = GridHelper.createManagedNode(this, MEBridgeEntityListener.INSTANCE);
 
     public MEBridgeEntity(BlockPos pos, BlockState state) {
-        super(BlockEntityTypes.ME_BRIDGE.get(), pos, state);
+        super(APBlockEntityTypes.ME_BRIDGE.get(), pos, state);
         getMainNode().setExposedOnSides(getGridConnectableSides(null));
     }
 
     @NotNull
     @Override
-    protected MEBridgePeripheral createPeripheral() {
+    protected MEBridgePeripheral buildPeripheral() {
         return new MEBridgePeripheral(this);
     }
 
     @Override
     public <T extends BlockEntity> void handleTick(Level level, BlockState state, BlockEntityType<T> type) {
-        if (!this.level.isClientSide) {
-            if (!initialized) {
-                mainNode.setFlags(GridFlags.REQUIRE_CHANNEL);
-                mainNode.setIdlePowerUsage(APConfig.PERIPHERALS_CONFIG.meConsumption.get());
-                mainNode.setVisualRepresentation(new ItemStack(Blocks.ME_BRIDGE.get()));
-                mainNode.setInWorldNode(true);
-                mainNode.create(level, getBlockPos());
-                this.getPeripheralOptional().ifPresent(peripheral -> peripheral.setNode(mainNode));
-                initialized = true;
-            }
-
-            // Try to start the job if the job calculation finished
-            jobs.forEach(AECraftJob::tick);
-
-            // Remove the job if the crafting started, we can't do anything with it anymore
-            jobs.removeIf(AECraftJob::canBePurged);
+        super.handleTick(level, state, type);
+        if (level.isClientSide()) {
+            return;
         }
+        if (!initialized) {
+            initialized = true;
+            mainNode.setFlags(GridFlags.REQUIRE_CHANNEL);
+            mainNode.setIdlePowerUsage(APConfig.PERIPHERALS_CONFIG.meConsumption.get());
+            mainNode.setVisualRepresentation(new ItemStack(APBlocks.ME_BRIDGE.get()));
+            mainNode.setInWorldNode(true);
+            mainNode.create(level, getBlockPos());
+            MEBridgePeripheral peripheral = this.getPeripheral();
+            if (peripheral != null) {
+                peripheral.setNode(mainNode);
+            }
+        }
+
+        // Try to start the job if the job calculation finished
+        jobs.forEach(AECraftJob::tick);
+
+        // Remove the job if the crafting started, we can't do anything with it anymore
+        jobs.removeIf(AECraftJob::canBePurged);
     }
 
     @NotNull

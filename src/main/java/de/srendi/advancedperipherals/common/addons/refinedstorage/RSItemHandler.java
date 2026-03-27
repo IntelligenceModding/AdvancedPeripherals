@@ -1,5 +1,6 @@
 package de.srendi.advancedperipherals.common.addons.refinedstorage;
 
+import com.refinedmods.refinedstorage.api.core.Action;
 import com.refinedmods.refinedstorage.api.network.Network;
 import com.refinedmods.refinedstorage.api.network.storage.StorageNetworkComponent;
 import com.refinedmods.refinedstorage.api.storage.Actor;
@@ -9,7 +10,6 @@ import de.srendi.advancedperipherals.common.util.inventory.ItemFilter;
 import de.srendi.advancedperipherals.common.util.inventory.StorageProcessor;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import com.refinedmods.refinedstorage.api.core.Action;
 
 import java.util.List;
 

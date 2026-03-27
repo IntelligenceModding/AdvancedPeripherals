@@ -9,14 +9,14 @@ import java.util.concurrent.atomic.AtomicLong;
 
 public abstract class BasicCraftJob {
 
-    private static final String EVENT = "_crafting";
+    private static final String EVENT_SUFFIX = "_crafting";
     private static final int JOB_DONE_PURGE_TIME = 5 * 60 * 1000;
 
     public static final AtomicLong ID_SEQ = new AtomicLong();
 
     protected final long id = ID_SEQ.incrementAndGet();
     protected final IComputerAccess computer;
-    protected final String eventName;
+    protected final String eventPrefix;
     protected final long amount;
     protected final Level world;
 
@@ -29,9 +29,9 @@ public abstract class BasicCraftJob {
     protected boolean isJobCanceled = false;
     protected String debugMessage = null;
 
-    public BasicCraftJob(IComputerAccess computer, String eventName, Level world, long amount) {
+    public BasicCraftJob(IComputerAccess computer, String eventPrefix, Level world, long amount) {
         this.computer = computer;
-        this.eventName = eventName;
+        this.eventPrefix = eventPrefix;
         this.world = world;
         this.amount = amount;
     }
@@ -182,13 +182,13 @@ public abstract class BasicCraftJob {
     }
 
     protected void fireEvent(boolean error, StatusConstants message) {
-        this.computer.queueEvent(eventName + EVENT, error, this.id, message.toString());
+        this.computer.queueEvent(eventPrefix + EVENT_SUFFIX, error, this.id, message.toString());
         this.debugMessage = message.toString();
         this.errorOccurred = error;
     }
 
     protected void fireEvent(boolean error, String message) {
-        this.computer.queueEvent(eventName + EVENT, error, this.id, message);
+        this.computer.queueEvent(eventPrefix + EVENT_SUFFIX, error, this.id, message);
         this.debugMessage = message;
         this.errorOccurred = error;
     }

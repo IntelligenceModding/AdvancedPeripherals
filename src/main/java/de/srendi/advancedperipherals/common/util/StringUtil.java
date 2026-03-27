@@ -5,16 +5,6 @@ import java.nio.charset.StandardCharsets;
 public class StringUtil {
     private static final char[] HEX_ARRAY = "0123456789ABCDEF".toCharArray();
 
-    public static String toHexString(byte[] bytes) {
-        char[] hexChars = new char[bytes.length * 2];
-        for (int j = 0; j < bytes.length; j++) {
-            int v = bytes[j] & 0xFF;
-            hexChars[j * 2] = HEX_ARRAY[v >>> 4];
-            hexChars[j * 2 + 1] = HEX_ARRAY[v & 0x0F];
-        }
-        return new String(hexChars);
-    }
-
     /**
      * This method will convert "&[0-9a-z]" to "§[0-9a-z]", then we can make colored message in CC easier
      * If a '&' is behind reverse slash '\', it will be ignored.
@@ -32,6 +22,15 @@ public class StringUtil {
      */
     public static String convertAndToSectionMark(String str) {
         return str == null ? null : str.replaceAll("(?<!\\\\)&(?=[0-9a-z])", "\u00a7").replaceAll("\\\\&", "&");
+    }
+
+    public static String removeFloatingPoints(String number) {
+        int i = number.indexOf(".");
+        // . should not be the first character anyway
+        if (i > 0) {
+            return number.substring(0, i);
+        }
+        return number;
     }
 
     /**
@@ -60,5 +59,13 @@ public class StringUtil {
      */
     public static String utf8ToByteString(String utf8String) {
         return new String(utf8String.getBytes(StandardCharsets.UTF_8), StandardCharsets.ISO_8859_1);
+    }
+
+    public static String validateName(String name) {
+        if (name == null) {
+            return null;
+        }
+        name = net.minecraft.util.StringUtil.filterText(name);
+        return name.length() <= 50 ? name : null;
     }
 }

@@ -1,7 +1,7 @@
 package de.srendi.advancedperipherals.common.data;
 
 import de.srendi.advancedperipherals.AdvancedPeripherals;
-import de.srendi.advancedperipherals.common.setup.Registration;
+import de.srendi.advancedperipherals.common.setup.APRegistration;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.PoiTypeTagsProvider;
@@ -18,7 +18,6 @@ import java.util.concurrent.CompletableFuture;
 
 public class PoiTypeProvider extends PoiTypeTagsProvider {
 
-
     public PoiTypeProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> future, @Nullable ExistingFileHelper existingFileHelper) {
         super(output, future, AdvancedPeripherals.MOD_ID, existingFileHelper);
     }
@@ -26,7 +25,7 @@ public class PoiTypeProvider extends PoiTypeTagsProvider {
     @Override
     protected void addTags(HolderLookup.@NotNull Provider provider) {
         TagsProvider.TagAppender<PoiType> appender = tag(PoiTypeTags.ACQUIRABLE_JOB_SITE);
-        Registration.POI_TYPES.getEntries().stream().map(DeferredHolder::getKey).filter(Objects::nonNull).forEach(appender::add);
+        APRegistration.POI_TYPES.getEntries().stream().map(DeferredHolder::getKey).filter(Objects::nonNull).forEach(appender::add);
     }
 
     @NotNull

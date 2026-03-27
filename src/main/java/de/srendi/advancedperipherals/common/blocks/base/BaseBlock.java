@@ -49,31 +49,31 @@ public class BaseBlock extends Block implements IHarvestableBlock {
     }
 
     @Override
-    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> pBuilder) {
-        pBuilder.add(ORIENTATION);
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+        builder.add(ORIENTATION);
     }
 
     @Override
-    public BlockState rotate(BlockState pState, Rotation pRotation) {
-        return pState.setValue(ORIENTATION, pRotation.rotation().rotate(pState.getValue(ORIENTATION)));
+    public BlockState rotate(BlockState state, Rotation rotation) {
+        return state.setValue(ORIENTATION, rotation.rotation().rotate(state.getValue(ORIENTATION)));
     }
 
     @Override
-    public BlockState mirror(BlockState pState, Mirror pMirror) {
-        return pState.setValue(ORIENTATION, pMirror.rotation().rotate(pState.getValue(ORIENTATION)));
+    public BlockState mirror(BlockState state, Mirror mirror) {
+        return state.setValue(ORIENTATION, mirror.rotation().rotate(state.getValue(ORIENTATION)));
     }
 
     @Override
-    public BlockState getStateForPlacement(BlockPlaceContext pContext) {
-        Direction direction = pContext.getNearestLookingDirection().getOpposite();
-        Direction direction1;
-        if (direction.getAxis() == Direction.Axis.Y) {
-            direction1 = pContext.getHorizontalDirection();
+    public BlockState getStateForPlacement(BlockPlaceContext context) {
+        Direction front = context.getNearestLookingDirection().getOpposite();
+        Direction top;
+        if (front.getAxis() == Direction.Axis.Y) {
+            top = context.getHorizontalDirection();
         } else {
-            direction1 = Direction.UP;
+            top = Direction.UP;
         }
 
-        return this.defaultBlockState().setValue(ORIENTATION, FrontAndTop.fromFrontAndTop(direction, direction1));
+        return this.defaultBlockState().setValue(ORIENTATION, FrontAndTop.fromFrontAndTop(front, top));
     }
 
 }

@@ -11,6 +11,7 @@ public class WorldConfig implements IAPConfig {
     public final ModConfigSpec.BooleanValue givePlayerBookOnJoin;
     public final ModConfigSpec.IntValue villagerStructureWeight;
     public final ModConfigSpec.BooleanValue enableWanderingTraderTrades;
+    public final ModConfigSpec.BooleanValue enableComputerScientistTrades;
     private final ModConfigSpec configSpec;
 
     public WorldConfig() {
@@ -22,6 +23,7 @@ public class WorldConfig implements IAPConfig {
         givePlayerBookOnJoin = builder.comment("Gives the ap documentation to new players.").define("givePlayerBookOnJoin", true);
         villagerStructureWeight = builder.comment("The weight of the villager structures.").defineInRange("villagerStructureWeight", 10, 0, 16000);
         enableWanderingTraderTrades = builder.comment("Enable new wandering trader trades.").define("enableWanderingTraderTrades", true);
+        enableComputerScientistTrades = builder.comment("Enable computer scientist trades.").define("enableComputerScientistTrades", true);
 
         builder.pop();
         configSpec = builder.build();
@@ -41,7 +43,4 @@ public class WorldConfig implements IAPConfig {
     public ModConfig.Type getType() {
         return ModConfig.Type.COMMON;
     }
-    /*
-    [
-     */
 }

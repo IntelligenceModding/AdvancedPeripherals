@@ -4,7 +4,6 @@ import dan200.computercraft.api.lua.IArguments;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.lua.MethodResult;
-import dan200.computercraft.api.peripheral.IComputerAccess;
 import dan200.computercraft.api.pocket.IPocketAccess;
 import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
@@ -18,13 +17,11 @@ import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
 import de.srendi.advancedperipherals.lib.peripherals.IPeripheralPlugin;
-import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LightLayer;
@@ -32,15 +29,14 @@ import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.levelgen.WorldgenRandom;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.entity.player.CanContinueSleepingEvent;
-import net.neoforged.neoforge.server.ServerLifecycleHooks;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -52,13 +48,14 @@ import static de.srendi.advancedperipherals.common.addons.computercraft.operatio
 public class EnvironmentDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
 
     public static final String PERIPHERAL_TYPE = "environment_detector";
-    private static final List<Function<IPeripheralOwner, IPeripheralPlugin>> PERIPHERAL_PLUGINS = new LinkedList<>();
+    private static final List<Function<IPeripheralOwner, IPeripheralPlugin>> PERIPHERAL_PLUGINS = new ArrayList<>();
 
     protected EnvironmentDetectorPeripheral(IPeripheralOwner owner) {
         super(PERIPHERAL_TYPE, owner);
         owner.attachOperation(SCAN_ENTITIES);
-        for (Function<IPeripheralOwner, IPeripheralPlugin> plugin : PERIPHERAL_PLUGINS)
+        for (Function<IPeripheralOwner, IPeripheralPlugin> plugin : PERIPHERAL_PLUGINS) {
             addPlugin(plugin.apply(owner));
+        }
     }
 
     public EnvironmentDetectorPeripheral(PeripheralBlockEntity<?> tileEntity) {
@@ -94,24 +91,24 @@ public class EnvironmentDetectorPeripheral extends BasePeripheral<IPeripheralOwn
 
     @LuaFunction(mainThread = true)
     public final String getBiome() {
-        Optional<ResourceKey<Biome>> biome = getLevel().getBiome(getPos()).unwrapKey();
+        Optional<ResourceKey<Biome>> biome = getLevel().getBiome(this.getPhysicsBlockPos()).unwrapKey();
         return biome.map(biomeResourceKey -> biomeResourceKey.location().toString()).orElse("unknown");
     }
 
     @LuaFunction(mainThread = true)
     public final int getSkyLightLevel() {
-        return getLevel().getBrightness(LightLayer.SKY, getPos().offset(0, 1, 0));
+        return getLevel().getBrightness(LightLayer.SKY, this.getPhysicsBlockPos().offset(0, 1, 0));
     }
 
     @LuaFunction(mainThread = true)
     public final int getBlockLightLevel() {
-        return getLevel().getBrightness(LightLayer.BLOCK, getPos().offset(0, 1, 0));
+        return getLevel().getBrightness(LightLayer.BLOCK, this.getPhysicsBlockPos().offset(0, 1, 0));
     }
 
     @LuaFunction(mainThread = true)
     public final int getDayLightLevel() {
         Level level = getLevel();
-        int i = level.getBrightness(LightLayer.SKY, getPos().offset(0, 1, 0)) - level.getSkyDarken();
+        int i = level.getBrightness(LightLayer.SKY, this.getPhysicsBlockPos().offset(0, 1, 0)) - level.getSkyDarken();
         float f = level.getSunAngle(1.0F);
         if (i > 0) {
             float f1 = f < (float) Math.PI ? 0.0F : ((float) Math.PI * 2F);
@@ -129,7 +126,7 @@ public class EnvironmentDetectorPeripheral extends BasePeripheral<IPeripheralOwn
 
     @LuaFunction(mainThread = true)
     public final boolean isSlimeChunk() {
-        ChunkPos chunkPos = new ChunkPos(getPos());
+        ChunkPos chunkPos = new ChunkPos(this.getPhysicsBlockPos());
         return WorldgenRandom.seedSlimeChunk(chunkPos.x, chunkPos.z, ((WorldGenLevel) getLevel()).getSeed(), 987234911L).nextInt(10) == 0;
     }
 
@@ -146,7 +143,7 @@ public class EnvironmentDetectorPeripheral extends BasePeripheral<IPeripheralOwn
     @LuaFunction(mainThread = true)
     public final Set<String> listDimensions() {
         Set<String> dimensions = new HashSet<>();
-        ServerLifecycleHooks.getCurrentServer().getAllLevels().forEach(serverWorld -> dimensions.add(serverWorld.dimension().location().getPath()));
+        getLevel().getServer().getAllLevels().forEach(serverWorld -> dimensions.add(serverWorld.dimension().location().getPath()));
         return dimensions;
     }
 
@@ -178,13 +175,10 @@ public class EnvironmentDetectorPeripheral extends BasePeripheral<IPeripheralOwn
                 case 5 -> moon.put(5, "Waxing crescent");
                 case 6 -> moon.put(6, "First quarter");
                 case 7 -> moon.put(7, "Waxing gibbous");
-                default ->
-                    //should never happen
-                    moon.put(0, "What is a moon");
+                default -> moon.put(0, "What is a moon");
             }
         } else {
-            //Yay, easter egg
-            //Returns when the function is not used in the overworld
+            // aren't we in the overworld?
             moon.put(0, "Moon.exe not found...");
         }
         return moon;
@@ -206,17 +200,15 @@ public class EnvironmentDetectorPeripheral extends BasePeripheral<IPeripheralOwn
     }
 
     @LuaFunction(mainThread = true)
-    public final MethodResult scanEntities(@NotNull IComputerAccess access, @NotNull IArguments arguments) throws LuaException {
+    public final MethodResult scanEntities(@NotNull IArguments arguments) throws LuaException {
         int radius = arguments.getInt(0);
+        boolean detailed = arguments.count() > 1 ? arguments.getBoolean(1) : false;
         return withOperation(SCAN_ENTITIES, new SphereOperationContext(radius), context -> {
-            if (radius > SCAN_ENTITIES.getMaxCostRadius())
-                return MethodResult.of(null, "Radius exceeds max value");
-            return null;
+            return context.getRadius() > SCAN_ENTITIES.getMaxCostRadius() ? MethodResult.of(null, "Radius exceeds max value") : null;
         }, context -> {
-            BlockPos pos = owner.getPos();
-            AABB box = new AABB(pos);
-            List<Map<String, Object>> entities = new ArrayList<>();
-            getLevel().getEntities((Entity) null, box.inflate(radius), LivingEntity.class::isInstance).forEach(entity -> entities.add(LuaConverter.completeEntityWithPositionToLua(entity, ItemStack.EMPTY, pos)));
+            Vec3 pos = this.getPhysicsPos();
+            AABB box = new AABB(pos, pos);
+            List<Map<String, Object>> entities = getLevel().getEntities((Entity) null, box.inflate(context.getRadius() + 0.5), entity -> entity instanceof LivingEntity && entity.isAlive()).stream().map(entity -> LuaConverter.completeEntityWithPositionToLua(entity, pos, detailed)).toList();
             return MethodResult.of(entities);
         }, null);
     }
@@ -236,11 +228,11 @@ public class EnvironmentDetectorPeripheral extends BasePeripheral<IPeripheralOwn
 
     @LuaFunction(mainThread = true)
     public final MethodResult canSleepPlayer(String playername) {
-        Player player = ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayerByName(playername);
-        if(player == null)
+        Player player = getLevel().getServer().getPlayerList().getPlayerByName(playername);
+        if (player == null)
             return MethodResult.of(false, "player_not_online");
 
-        if(!player.level().dimensionType().bedWorks())
+        if (!player.level().dimensionType().bedWorks())
             return MethodResult.of(false, "not_allowed_in_dimension");
 
         CanContinueSleepingEvent evt = new CanContinueSleepingEvent(player, null);

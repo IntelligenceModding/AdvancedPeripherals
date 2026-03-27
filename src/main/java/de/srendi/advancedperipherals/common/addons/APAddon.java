@@ -45,4 +45,23 @@ public enum APAddon {
                 .map(APAddon::getModId)
                 .toArray(String[]::new);
     }
+
+    /*@SubscribeEvent
+    public static void interModComms(InterModEnqueueEvent event) {
+        if (!curiosLoaded)
+            return;
+
+        InterModComms.sendTo(CURIOS_MODID, SlotTypeMessage.REGISTER_TYPE,
+                () -> new SlotTypeMessage.Builder("glasses")
+                        .size(1)
+                        .icon(AdvancedPeripherals.getRL("slot/empty_glasses_slot"))
+                        .build());
+    }
+
+    public static boolean isBlockOnShip(Level level, BlockPos pos) {
+        if (!vs2Loaded) {
+            return false;
+        }
+        return ValkyrienSkies.isBlockOnShip(level, pos);
+    }*/
 }

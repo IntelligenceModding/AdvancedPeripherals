@@ -1,25 +1,24 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.owner;
 
 import com.mojang.authlib.GameProfile;
+import dan200.computercraft.api.lua.LuaException;
+import dan200.computercraft.api.peripheral.IPeripheral;
 import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
 import dan200.computercraft.shared.util.InventoryUtil;
-import de.srendi.advancedperipherals.AdvancedPeripherals;
-import de.srendi.advancedperipherals.common.util.DataStorageUtil;
 import de.srendi.advancedperipherals.common.util.fakeplayer.APFakePlayer;
 import de.srendi.advancedperipherals.common.util.fakeplayer.FakePlayerProviderTurtle;
+import de.srendi.advancedperipherals.lib.peripherals.IBasePeripheral;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.FrontAndTop;
 import net.minecraft.core.component.DataComponentPatch;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.function.Function;
 
 public class TurtlePeripheralOwner extends BasePeripheralOwner {
     public final ITurtleAccess turtle;
@@ -29,12 +28,6 @@ public class TurtlePeripheralOwner extends BasePeripheralOwner {
         super();
         this.turtle = turtle;
         this.side = side;
-    }
-
-    @Nullable
-    @Override
-    public String getCustomName() {
-        return null;
     }
 
     @NotNull
@@ -63,6 +56,12 @@ public class TurtlePeripheralOwner extends BasePeripheralOwner {
 
     @Nullable
     @Override
+    public Entity getHoldingEntity() {
+        return null;
+    }
+
+    @Nullable
+    @Override
     public Player getOwner() {
         GameProfile owningPlayer = turtle.getOwningPlayer();
         if (owningPlayer == null) return null;
@@ -71,26 +70,16 @@ public class TurtlePeripheralOwner extends BasePeripheralOwner {
 
     @Override
     public DataComponentPatch getDataStorage() {
-        return DataStorageUtil.getDataStorage(turtle, side);
-    }
-
-    @Override
-    public CompoundTag getNbtStorage() {
-        AdvancedPeripherals.debug("Turtle peripheral at " + getPos() + " tried to use nbt storage but it should instead use data component storage, report to github!", org.apache.logging.log4j.Level.WARN);
-        return null;
+        return turtle.getUpgradeData(side);
     }
 
     @Override
     public void putDataStorage(DataComponentPatch dataStorage) {
-        DataStorageUtil.putDataStorage(turtle, side, dataStorage);
+        turtle.setUpgradeData(side, dataStorage);
     }
 
     @Override
-    public void markDataStorageDirty() {
-    }
-
-    @Override
-    public <T> T withPlayer(Function<APFakePlayer, T> function) {
+    public <T> T withPlayer(APFakePlayer.Action<T> function) throws LuaException {
         return FakePlayerProviderTurtle.withPlayer(turtle, function);
     }
 
@@ -111,12 +100,15 @@ public class TurtlePeripheralOwner extends BasePeripheralOwner {
 
     @Override
     public boolean isMovementPossible(@NotNull Level level, @NotNull BlockPos pos) {
-        return FakePlayerProviderTurtle.withPlayer(turtle, player -> {
-            if (level.isOutsideBuildHeight(pos)) return false;
-            if (!level.isInWorldBounds(pos)) return false;
-            if (!level.isAreaLoaded(pos, 0)) return false;
-            return level.getWorldBorder().isWithinBounds(pos);
-        });
+        try {
+            return FakePlayerProviderTurtle.withPlayer(turtle, player -> {
+                if (!level.isInWorldBounds(pos)) return false;
+                if (!level.hasChunkAt(pos)) return false;
+                return level.getWorldBorder().isWithinBounds(pos);
+            });
+        } catch (LuaException e) {
+            throw new RuntimeException(e); // never
+        }
     }
 
     @Override
@@ -137,5 +129,20 @@ public class TurtlePeripheralOwner extends BasePeripheralOwner {
     public TurtlePeripheralOwner attachFuel(int maxFuelConsumptionLevel) {
         attachAbility(PeripheralOwnerAbility.FUEL, new TurtleFuelAbility(this, maxFuelConsumptionLevel));
         return this;
+    }
+
+    @Override
+    public <T extends IPeripheral> T getConnectedPeripheral(Class<T> type) {
+        for (TurtleSide side : TurtleSide.values()) {
+            IPeripheral peripheral = turtle.getPeripheral(side);
+            if (peripheral == null || !type.isInstance(peripheral)) {
+                continue;
+            }
+            if (peripheral instanceof IBasePeripheral basePeripheral && !basePeripheral.isEnabled()) {
+                continue;
+            }
+            return (T) peripheral;
+        }
+        return null;
     }
 }

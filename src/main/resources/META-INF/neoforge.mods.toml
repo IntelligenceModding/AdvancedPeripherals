@@ -1,7 +1,7 @@
 modLoader = "javafml"
-loaderVersion="${loader_version}"
-license = "All rights reserved"
-issueTrackerURL = "https://github.com/Seniorendi/AdvancedPeripherals/issues"
+loaderVersion = "[${loader_version},)"
+license = "Apache-2.0"
+issueTrackerURL = "https://github.com/IntelligenceModding/AdvancedPeripherals/issues"
 logoFile = "pack.png"
 
 [[mods]]
@@ -34,7 +34,7 @@ side = "BOTH"
 modId = "computercraft"
 type = "required"
 versionRange = "[${cc_version},)"
-ordering = "NONE"
+ordering = "AFTER"
 side = "BOTH"
 [[dependencies.${mod_id}]]
 modId = "ae2"

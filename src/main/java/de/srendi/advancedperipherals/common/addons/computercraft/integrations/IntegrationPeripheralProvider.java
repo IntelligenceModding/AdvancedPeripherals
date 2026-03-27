@@ -30,7 +30,9 @@ public class IntegrationPeripheralProvider {
 
     public static void registerBlockIntegrations(RegisterCapabilitiesEvent event) {
         event.registerBlock(
-                PeripheralCapability.get(),
-                (level, pos, state, blockEntity, side) -> new NoteBlockIntegration(level, pos), Blocks.NOTE_BLOCK);
+            PeripheralCapability.get(),
+            (level, pos, state, blockEntity, side) -> new NoteBlockIntegration(level, pos),
+            Blocks.NOTE_BLOCK
+        );
     }
 }

@@ -1,7 +1,6 @@
 package de.srendi.advancedperipherals.common.util;
 
 import com.google.gson.JsonObject;
-import de.srendi.advancedperipherals.common.util.inventory.ItemUtil;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
@@ -26,7 +25,7 @@ public class RawValue implements Ingredient.Value {
 
     @NotNull
     public Collection<ItemStack> getItems() {
-        return Collections.singleton(new ItemStack(ItemUtil.getRegistryEntry(this.item.toString(), BuiltInRegistries.ITEM)));
+        return Collections.singleton(new ItemStack(RegistryUtil.getRegistryEntry(this.item.toString(), BuiltInRegistries.ITEM)));
     }
 
     @NotNull

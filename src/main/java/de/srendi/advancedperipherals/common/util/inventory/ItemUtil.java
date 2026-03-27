@@ -1,8 +1,6 @@
 package de.srendi.advancedperipherals.common.util.inventory;
 
 import de.srendi.advancedperipherals.common.util.FingerprintUtil;
-import net.minecraft.ResourceLocationException;
-import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
@@ -17,22 +15,6 @@ public class ItemUtil {
     private ItemUtil() {
     }
 
-    public static <T> T getRegistryEntry(String name, Registry<T> forgeRegistry) {
-        ResourceLocation location;
-        try {
-            location = ResourceLocation.parse(name);
-        } catch (ResourceLocationException ex) {
-            location = null;
-        }
-
-        T value;
-        if (location != null && forgeRegistry.containsKey(location) && (value = forgeRegistry.get(location)) != null) {
-            return value;
-        } else {
-            return null;
-        }
-    }
-
     /**
      * Fingerprints are XXHash64 hashes generated out of the nbt tag, the registry name and the display name from item stacks
      * Used to filter inventory specific operations. See {@link ItemFilter}
@@ -40,7 +22,7 @@ public class ItemUtil {
      * @return A generated XXHash64 hash from the item stack
      */
     public static String getFingerprint(ItemStack stack) {
-        FingerprintUtil.FingerprintKey fingerprintKey = new FingerprintUtil.FingerprintKey(getRegistryKey(stack), stack.getComponentsPatch().hashCode(), stack.getDisplayName().getString());
+        FingerprintUtil.FingerprintKey fingerprintKey = new FingerprintUtil.FingerprintKey(getRegistryKey(stack), stack.getComponentsPatch().hashCode());
 
         return FingerprintUtil.hash(fingerprintKey);
     }

@@ -2,7 +2,6 @@ package de.srendi.advancedperipherals.common.items;
 
 import de.srendi.advancedperipherals.client.ClientUUIDCache;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
-import de.srendi.advancedperipherals.common.items.base.BaseItem;
 import de.srendi.advancedperipherals.common.util.EnumColor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
@@ -16,17 +15,11 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-import static de.srendi.advancedperipherals.common.setup.DataComponents.OWNER;
+import static de.srendi.advancedperipherals.common.setup.APDataComponents.OWNER;
 
-public class MemoryCardItem extends BaseItem {
-
+public class MemoryCardItem extends APItem {
     public MemoryCardItem() {
-        super(new Properties().stacksTo(1));
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return APConfig.PERIPHERALS_CONFIG.enableInventoryManager.get();
+        super(new Properties().stacksTo(1), APConfig.PERIPHERALS_CONFIG.enableInventoryManager);
     }
 
     @Override
@@ -34,9 +27,10 @@ public class MemoryCardItem extends BaseItem {
         super.appendHoverText(stack, context, tooltip, flagIn);
         Minecraft minecraft = Minecraft.getInstance();
         if (stack.has(OWNER)) {
-            String username = ClientUUIDCache.getUsername(stack.get(OWNER), minecraft.player.getUUID());
-            if (username == null)
+            String username = ClientUUIDCache.getUsername(stack.get(OWNER));
+            if (username == null) {
                 username = stack.get(OWNER).toString();
+            }
             tooltip.add(EnumColor.buildTextComponent(Component.translatable("item.advancedperipherals.tooltip.memory_card.bound", username)));
         }
     }

@@ -1,11 +1,12 @@
 package de.srendi.advancedperipherals.common.blocks;
 
-import dan200.computercraft.api.peripheral.IComputerAccess;
 import de.srendi.advancedperipherals.common.blocks.base.APBlockEntityBlock;
 import de.srendi.advancedperipherals.common.blocks.blockentities.PlayerDetectorEntity;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
-import de.srendi.advancedperipherals.common.setup.BlockEntityTypes;
+import de.srendi.advancedperipherals.common.setup.APBlockEntityTypes;
 import net.minecraft.core.BlockPos;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -18,27 +19,31 @@ import org.jetbrains.annotations.Nullable;
 public class PlayerDetectorBlock extends APBlockEntityBlock<PlayerDetectorEntity> {
 
     public PlayerDetectorBlock() {
-        super(BlockEntityTypes.PLAYER_DETECTOR, true);
+        super(APBlockEntityTypes.PLAYER_DETECTOR);
     }
 
     @Nullable
     @Override
     public BlockEntity newBlockEntity(@NotNull BlockPos pos, @NotNull BlockState state) {
-        return BlockEntityTypes.PLAYER_DETECTOR.get().create(pos, state);
+        return APBlockEntityTypes.PLAYER_DETECTOR.get().create(pos, state);
     }
 
+    @NotNull
     @Override
-    public @NotNull InteractionResult useWithoutItem(@NotNull BlockState state, Level levelIn, @NotNull BlockPos pos, @NotNull Player player, @NotNull BlockHitResult hit) {
-        if (!APConfig.PERIPHERALS_CONFIG.enablePlayerDetector.get())
-            return super.useWithoutItem(state, levelIn, pos, player, hit);
-        BlockEntity tileEntity = levelIn.getBlockEntity(pos);
-        if (tileEntity instanceof PlayerDetectorEntity entity) {
-            for (IComputerAccess computer : entity.getConnectedComputers()) {
-                computer.queueEvent("playerClick", player.getName().getString(), computer.getAttachmentName());
-            }
+    public InteractionResult useWithoutItem(@NotNull BlockState state, Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull BlockHitResult hit) {
+        if (!APConfig.PERIPHERALS_CONFIG.enablePlayerDetector.get()) {
+            return super.useWithoutItem(state, level, pos, player, hit);
         }
-
-        return super.useWithoutItem(state, levelIn, pos, player, hit);
+        BlockEntity tileEntity = level.getBlockEntity(pos);
+        if (tileEntity instanceof PlayerDetectorEntity entity) {
+            level.playSound(player, pos, SoundEvents.NETHER_WOOD_BUTTON_CLICK_ON, SoundSource.BLOCKS);
+            if (level.isClientSide()) {
+                return InteractionResult.SUCCESS;
+            }
+            entity.queueEvent("player_click", player.getName().getString(), level.dimension().location().toString());
+            return InteractionResult.CONSUME;
+        }
+        return super.useWithoutItem(state, level, pos, player, hit);
     }
 
 }

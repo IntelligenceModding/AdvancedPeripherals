@@ -24,15 +24,11 @@ public class EnderCellIntegration implements APGenericPeripheral {
 
     @LuaFunction
     public final int getChannel(EnderCellTile blockEntity) {
-        // Lua, and generally slots in MC, seem to be 1 based, make the conversion here
-        int channel = blockEntity.getChannel().get();
-        return channel + 1;
+        return blockEntity.getChannel().get();
     }
 
     @LuaFunction(mainThread = true)
     public final void setChannel(EnderCellTile blockEntity, int channel) {
-        // Lua, and generally slots in MC, seem to be 1 based, make the conversion here
-        channel = channel - 1;
         blockEntity.getChannel().set(channel);
     }
 

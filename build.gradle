@@ -23,7 +23,7 @@ java {
 }
 
 wrapper {
-    gradleVersion = '8.11'
+    gradleVersion = '8.14.2'
     distributionType = Wrapper.DistributionType.BIN
 }
 
@@ -120,23 +120,23 @@ repositories {
         }
     }
     maven {
-        name = "Blamejared maven botania patchouli"
-        url = 'https://maven.blamejared.com'
+        name = "Blamejared Maven"
+        url = "https://maven.blamejared.com"
         content {
             includeGroup("vazkii.botania")
             includeGroup("vazkii.patchouli")
         }
     }
     maven {
-        name = "Squiddev maven cct"
-        url = 'https://maven.squiddev.cc'
+        name = "Squiddev Maven"
+        url = "https://maven.squiddev.cc"
         content {
             includeGroup("cc.tweaked")
             includeModule("org.squiddev", "Cobalt")
         }
     }
     maven {
-        name = "Theillusivec4 maven curios"
+        name = "Theillusivec4 Maven"
         url = "https://maven.theillusivec4.top/"
         content {
             includeGroup("top.theillusivec4.curios")
@@ -144,14 +144,14 @@ repositories {
     }
     maven {
         name = "LDT Team minecolonies"
-        url = 'https://ldtteam.jfrog.io/ldtteam/modding'
+        url = "https://ldtteam.jfrog.io/ldtteam/modding"
         content {
             includeGroup("com.ldtteam")
         }
     }
     maven {
-        name = "Modmaven Jei"
-        url = 'https://modmaven.dev/'
+        name = "Modmaven"
+        url = "https://modmaven.dev/"
         content {
             includeGroup("mezz.jei")
             includeGroup("appeng")
@@ -195,11 +195,11 @@ repositories {
     }
     maven {
         name = "EMI"
-        url = uri("https://maven.terraformersmc.com/")
+        url = "https://maven.terraformersmc.com/"
     }
     maven {
-        name = 'Kotlin for Forge'
-        url = 'https://thedarkcolour.github.io/KotlinForForge/'
+        name = "Kotlin for Forge"
+        url = "https://thedarkcolour.github.io/KotlinForForge/"
         content {
             includeModule("thedarkcolour", "kotlinforforge")
         }
@@ -241,7 +241,6 @@ dependencies {
     compileOnly "org.jetbrains:annotations:${jb_annotations}"
     implementation "net.neoforged:neoforge:${neo_version}"
     implementation "cc.tweaked:cc-tweaked-${minecraft_version}-forge:${cc_version}"
-    compileOnly "cc.tweaked:cc-tweaked-${minecraft_version}-core:${cc_version}"
 
     // Minimal requirements end
 
@@ -253,7 +252,7 @@ dependencies {
     // Transitive prevents that this dependency would load other dependencies which are used by refined storage and are faulty marked
     compileOnly("com.refinedmods.refinedstorage:refinedstorage-mekanism-integration:${refinedstorage_mekanism_version}")
     runtimeOnly("com.refinedmods.refinedstorage:refinedstorage-mekanism-integration:${refinedstorage_mekanism_version}")  {
-            transitive = false
+        transitive = false
     }
 
     // Extended requirements
@@ -273,19 +272,26 @@ dependencies {
     compileOnly "curse.maven:ae2things-609977:${ae2things_version}-sources"
     runtimeOnly "curse.maven:ae2things-609977:${ae2things_version}-sources"
 
+    // Create
     implementation ("com.simibubi.create:create-${minecraft_version}:${create_version}:slim") { transitive = false }
     implementation "net.createmod.ponder:Ponder-NeoForge-${minecraft_version}:${ponder_version}"
     compileOnly "dev.engine-room.flywheel:flywheel-neoforge-api-${minecraft_version}:${flywheel_version}"
     runtimeOnly "dev.engine-room.flywheel:flywheel-neoforge-${minecraft_version}:${flywheel_version}"
     implementation "com.tterrag.registrate:Registrate:${registrate_version}"
 
+    // Curios
+    runtimeOnly "top.theillusivec4.curios:curios-neoforge:${curios_version}"
+    compileOnly "top.theillusivec4.curios:curios-neoforge:${curios_version}:api"
+
+    // DimStorage
+    compileOnly "curse.maven:dimstorage-353882:${dimstorage_version}"
+    compileOnly "curse.maven:edivadlib-638508:${edivadlib_version}"
+
     // Minecolonies
     compileOnly "com.ldtteam:blockui:${blockui_version}"
     compileOnly "com.ldtteam:domum-ornamentum:${domumornamentum_version}"
     compileOnly "com.ldtteam:minecolonies:${minecolonies_version}"
     compileOnly "com.ldtteam:structurize:${structurize_version}"
-
-    // Remove/Comment this section if you want to use runData.
     runtimeOnly "com.ldtteam:blockui:${blockui_version}"
     runtimeOnly "com.ldtteam:domum-ornamentum:${domumornamentum_version}"
     runtimeOnly "com.ldtteam:minecolonies:${minecolonies_version}"
@@ -302,8 +308,11 @@ dependencies {
 
     testModImplementation sourceSets.main.output
 
+    // Testing stuffs
+
+    compileOnly "org.apiguardian:apiguardian-api:1.1.2" // prevent `warning: unknown enum constant Status.STABLE`
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junit_version}"
-    // Testing stuff
+
     // EMI
     runtimeOnly "dev.emi:emi-neoforge:${emi_version}"
     // Spark
@@ -408,6 +417,23 @@ tasks.register('publishCurseForge', TaskPublishCurseForge, { task ->
         releaseType = "${release_type}"
     }
 })
+
+tasks.register("copyBlockTextures", Copy) {
+    from 'src/generated/block-textures'
+    into "src/generated/resources/assets/${project.mod_id}/textures/block"
+}
+
+tasks.named("runData") {
+    finalizedBy("copyBlockTextures")
+}
+
+tasks.named("processResources") {
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
+}
+
+tasks.withType(Jar).configureEach {
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
+}
 
 githubRelease {
     releaseAssets = jar.archiveFile

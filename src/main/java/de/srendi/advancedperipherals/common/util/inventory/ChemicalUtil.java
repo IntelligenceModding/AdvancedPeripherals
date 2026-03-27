@@ -82,7 +82,7 @@ public class ChemicalUtil {
                 continue;
             }
             needs -= inserted;
-            inventoryFrom.extractChemical(i, inserted, Action.SIMULATE);
+            inventoryFrom.extractChemical(i, inserted, Action.EXECUTE);
             if (needs <= 0) {
                 break;
             }
@@ -138,7 +138,7 @@ public class ChemicalUtil {
 
     public static String getFingerprint(@NotNull ChemicalStack stack) {
         // A pretty lame fingerprint, a chemical stack does not have any components or other stuff
-        FingerprintUtil.FingerprintKey fingerprintKey = new FingerprintUtil.FingerprintKey(getRegistryKey(stack), null, null);
+        FingerprintUtil.FingerprintKey fingerprintKey = new FingerprintUtil.FingerprintKey(getRegistryKey(stack), 0);
 
         return FingerprintUtil.hash(fingerprintKey);
     }

@@ -12,6 +12,7 @@ import de.srendi.advancedperipherals.common.addons.computercraft.owner.PocketPer
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.TurtlePeripheralOwner;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralBlockEntity;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
+import de.srendi.advancedperipherals.common.events.Events;
 import de.srendi.advancedperipherals.common.util.CoordUtil;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
@@ -28,6 +29,7 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
 
     public static final String PERIPHERAL_TYPE = "player_detector";
     private static final int MAX_RANGE = APConfig.PERIPHERALS_CONFIG.playerDetMaxRange.get();
+    private long lastConsumedMessage = Events.getLastPlayerMessageID() - 1;
 
     public PlayerDetectorPeripheral(PeripheralBlockEntity<?> tileEntity) {
         super(PERIPHERAL_TYPE, new BlockEntityPeripheralOwner<>(tileEntity));
@@ -64,7 +66,7 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
         BlockPos secondPos = LuaConverter.convertToBlockPos(secondCoord);
 
         return getPlayers()
-            .filter(player -> CoordUtil.isInRange(getPos(), player, getLevel(), firstPos, secondPos, MAX_RANGE))
+            .filter(player -> CoordUtil.isInRange(getCenterPos(), player, getLevel(), firstPos, secondPos, MAX_RANGE))
             .map(player -> player.getName().getString())
             .toList();
     }
@@ -72,7 +74,7 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
     @LuaFunction(mainThread = true)
     public final List<String> getPlayersInCubic(int x, int y, int z) {
         return getPlayers()
-            .filter(player -> CoordUtil.isInRange(getPos(), getLevel(), player, x, y, z, MAX_RANGE))
+            .filter(player -> CoordUtil.isInRange(getCenterPos(), getLevel(), player, x, y, z, MAX_RANGE))
             .map(player -> player.getName().getString())
             .toList();
     }
@@ -80,7 +82,7 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
     @LuaFunction(mainThread = true)
     public final List<String> getPlayersInRange(int range) {
         return getPlayers()
-            .filter(player -> CoordUtil.isInRange(getPos(), getLevel(), player, range, MAX_RANGE))
+            .filter(player -> CoordUtil.isInRange(getCenterPos(), getLevel(), player, range, MAX_RANGE))
             .map(player -> player.getName().getString())
             .toList();
     }
@@ -91,19 +93,19 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
         BlockPos secondPos = LuaConverter.convertToBlockPos(secondCoord);
 
         return getPlayers()
-            .anyMatch(player -> CoordUtil.isInRange(getPos(), player, getLevel(), firstPos, secondPos, MAX_RANGE));
+            .anyMatch(player -> CoordUtil.isInRange(getCenterPos(), player, getLevel(), firstPos, secondPos, MAX_RANGE));
     }
 
     @LuaFunction(mainThread = true)
     public final boolean isPlayersInCubic(int x, int y, int z) {
         return getPlayers()
-            .anyMatch(player -> CoordUtil.isInRange(getPos(), getLevel(), player, x, y, z, MAX_RANGE));
+            .anyMatch(player -> CoordUtil.isInRange(getCenterPos(), getLevel(), player, x, y, z, MAX_RANGE));
     }
 
     @LuaFunction(mainThread = true)
     public final boolean isPlayersInRange(int range) {
         return getPlayers()
-            .anyMatch(player -> CoordUtil.isInRange(getPos(), getLevel(), player, range, MAX_RANGE));
+            .anyMatch(player -> CoordUtil.isInRange(getCenterPos(), getLevel(), player, range, MAX_RANGE));
     }
 
     @LuaFunction(mainThread = true)
@@ -112,35 +114,47 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
         BlockPos secondPos = LuaConverter.convertToBlockPos(secondCoord);
 
         ServerPlayer player = getPlayer(username);
-        return player != null && CoordUtil.isInRange(getPos(), player, getLevel(), firstPos, secondPos, MAX_RANGE);
+        return player != null && CoordUtil.isInRange(getCenterPos(), player, getLevel(), firstPos, secondPos, MAX_RANGE);
     }
 
     @LuaFunction(mainThread = true)
     public final boolean isPlayerInCubic(int x, int y, int z, String username) {
-
         ServerPlayer player = getPlayer(username);
-        return player != null && CoordUtil.isInRange(getPos(), getLevel(), player, x, y, z, MAX_RANGE);
+        return player != null && CoordUtil.isInRange(getCenterPos(), getLevel(), player, x, y, z, MAX_RANGE);
     }
 
     @LuaFunction(mainThread = true)
     public final boolean isPlayerInRange(int range, String username) {
-
         ServerPlayer player = getPlayer(username);
-        return player != null && CoordUtil.isInRange(getPos(), getLevel(), player, range, MAX_RANGE);
+        return player != null && CoordUtil.isInRange(getCenterPos(), getLevel(), player, range, MAX_RANGE);
     }
 
-    @LuaFunction(value = {"getPlayerPos", "getPlayer"}, mainThread = true)
-    public final Map<String, Object> getPlayerPos(IArguments arguments) throws LuaException {
-        if (!APConfig.PERIPHERALS_CONFIG.playerSpy.get())
+    @LuaFunction(mainThread = true)
+    public final Map<String, Object> getPlayer(IArguments arguments) throws LuaException {
+        if (!APConfig.PERIPHERALS_CONFIG.playerSpy.get()) {
             throw new LuaException("This function is disabled in the config. Activate it or ask an admin if he can activate it.");
+        }
         ServerPlayer player = getPlayer(arguments.getString(0));
+        int posPrecision = arguments.optInt(1, 0);
         if (player == null) {
             return null;
         }
-        if (MAX_RANGE != -1 && !CoordUtil.isInRange(getPos(), getLevel(), player, MAX_RANGE, MAX_RANGE)) {
+        if (MAX_RANGE != -1 && !CoordUtil.isInRange(getCenterPos(), getLevel(), player, MAX_RANGE, MAX_RANGE)) {
             return null;
         }
+        return getPlayerInfo(player, posPrecision);
+    }
 
+    @LuaFunction(mainThread = true)
+    public final Map<String, Object> getOwner(IArguments arguments) throws LuaException {
+        if (!(owner.getHoldingEntity() instanceof ServerPlayer player)) {
+            return null;
+        }
+        int posPrecision = arguments.optInt(0, 0);
+        return getPlayerInfo(player, posPrecision);
+    }
+
+    private Map<String, Object> getPlayerInfo(ServerPlayer player, int posPrecision) {
         Map<String, Object> info = new HashMap<>();
 
         double x = player.getX(), y = player.getY(), z = player.getZ();
@@ -165,7 +179,7 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
             maxDistance = Math.max(minDistance, maxDistance);
 
             // Calculate Euclidean distance between the player locator and the player in question
-            double distanceFromPlayer = Math.sqrt(getPos().distToCenterSqr(x, y, z));
+            double distanceFromPlayer = Math.sqrt(getCenterPos().distanceToSqr(x, y, z));
 
             distanceFromPlayer -= minDistance;
             if (distanceFromPlayer > 0) {
@@ -178,7 +192,7 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
             }
         }
 
-        int decimals = Math.min(arguments.optInt(1, 0), 4);
+        int decimals = Math.min(posPrecision, 4);
 
         final double unit = Math.pow(10, decimals);
         info.put("x", Math.floor(x * unit) / unit);
@@ -229,5 +243,13 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
             return null;
         }
         return player;
+    }
+
+    @Override
+    public void update() {
+        lastConsumedMessage = Events.traversePlayerMessages(
+            lastConsumedMessage,
+            message -> queueEvent(message.eventName(), message.playerName(), message.fromDimension(), message.toDimension())
+        );
     }
 }

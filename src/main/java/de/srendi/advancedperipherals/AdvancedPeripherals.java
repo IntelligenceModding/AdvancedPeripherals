@@ -1,18 +1,25 @@
 package de.srendi.advancedperipherals;
 
+import dan200.computercraft.api.media.MediaCapability;
 import dan200.computercraft.api.peripheral.PeripheralCapability;
+import dan200.computercraft.shared.media.MountMedia;
 import de.srendi.advancedperipherals.common.addons.APAddon;
+import de.srendi.advancedperipherals.common.addons.ae2.AE2Registries;
 import de.srendi.advancedperipherals.common.addons.appliedenergistics.AEApi;
 import de.srendi.advancedperipherals.common.addons.computercraft.integrations.IntegrationPeripheralProvider;
 import de.srendi.advancedperipherals.common.addons.refinedstorage.RSApi;
 import de.srendi.advancedperipherals.common.blocks.base.ICapabilityProvider;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
-import de.srendi.advancedperipherals.common.setup.Registration;
+import de.srendi.advancedperipherals.common.items.SmartGlassesItem;
+import de.srendi.advancedperipherals.common.setup.APItems;
+import de.srendi.advancedperipherals.common.setup.APRegistration;
 import de.srendi.advancedperipherals.common.util.ChunkManager;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.ItemLike;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModLoadingContext;
 import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.event.lifecycle.FMLLoadCompleteEvent;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import org.apache.logging.log4j.Level;
@@ -37,14 +44,16 @@ public class AdvancedPeripherals {
 
     public AdvancedPeripherals(IEventBus modBus) {
         LOGGER.info("AdvancedPeripherals says hello!");
+
         APAddon.setup();
 
         APConfig.register(ModLoadingContext.get());
 
+        modBus.addListener(this::onLoadComplete);
         modBus.addListener(this::registerCapabilities);
         modBus.addListener(ChunkManager::registerTicketController);
 
-        Registration.register(modBus);
+        APRegistration.register(modBus);
 
         try {
             fingerprintMessageDigest = MessageDigest.getInstance("MD5");
@@ -76,49 +85,63 @@ public class AdvancedPeripherals {
             LOGGER.error("[DEBUG] " + message, throwable);
     }
 
+    public static void exception(String message, Throwable throwable) {
+        LOGGER.error("[ERROR] " + message, throwable);
+    }
+
     public static ResourceLocation getRL(String resource) {
         return ResourceLocation.fromNamespaceAndPath(MOD_ID, resource);
     }
 
-    public void registerCapabilities(RegisterCapabilitiesEvent event) {
-        Registration.BLOCK_ENTITIES.getEntries().forEach((entry) -> {
+    public void onLoadComplete(FMLLoadCompleteEvent event) {
+        event.enqueueWork(() -> {
+            if (APAddon.AE2.isLoaded()) {
+                AE2Registries.finishRegister();
+            }
+        });
+    }
 
+    public void registerCapabilities(RegisterCapabilitiesEvent event) {
+        APRegistration.BLOCK_ENTITIES.getEntries().forEach((entry) -> {
             event.registerBlockEntity(
                     PeripheralCapability.get(),
                     entry.get(),
-                    (blockEntity, side) -> {
-                        if (blockEntity instanceof ICapabilityProvider provider)
-                            return provider.createPeripheralCap(side);
-                        return null;
-                    });
+                    (blockEntity, side) ->
+                            blockEntity instanceof ICapabilityProvider provider ? provider.createPeripheralCap(side) : null
+            );
 
             event.registerBlockEntity(
                     Capabilities.ItemHandler.BLOCK,
                     entry.get(),
-                    (blockEntity, side) -> {
-                        if (blockEntity instanceof ICapabilityProvider provider)
-                            return provider.createItemHandlerCap(side);
-                        return null;
-                    });
+                    (blockEntity, side) ->
+                            blockEntity instanceof ICapabilityProvider provider ? provider.createItemHandlerCap(side) : null
+            );
 
             event.registerBlockEntity(
                     Capabilities.FluidHandler.BLOCK,
                     entry.get(),
-                    (blockEntity, side) -> {
-                        if (blockEntity instanceof ICapabilityProvider provider)
-                            return provider.createFluidHandlerCap(side);
-                        return null;
-                    });
+                    (blockEntity, side) ->
+                            blockEntity instanceof ICapabilityProvider provider ? provider.createFluidHandlerCap(side) : null
+            );
 
             event.registerBlockEntity(
                     Capabilities.EnergyStorage.BLOCK,
                     entry.get(),
-                    (blockEntity, side) -> {
-                        if (blockEntity instanceof ICapabilityProvider provider)
-                            return provider.createEnergyStorageCap(side);
-                        return null;
-                    });
+                    (blockEntity, side) ->
+                            blockEntity instanceof ICapabilityProvider provider ? provider.createEnergyStorageCap(side) : null
+            );
         });
+
+        ItemLike[] smartGlasses = new ItemLike[]{
+                APItems.SMART_GLASSES.get(),
+                APItems.SMART_GLASSES_NETHERITE.get(),
+        };
+        event.registerItem(MediaCapability.get(), (stack, ignored) -> MountMedia.COMPUTER, smartGlasses);
+        event.registerItem(
+                Capabilities.ItemHandler.ITEM,
+                (stack, ignored) -> ((SmartGlassesItem) (stack.getItem())).createItemHandlerCap(stack),
+                smartGlasses
+        );
 
         if (APAddon.AE2.isLoaded())
             AEApi.registerCapabilities(event);

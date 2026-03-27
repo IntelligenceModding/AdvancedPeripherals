@@ -10,12 +10,14 @@ import de.srendi.advancedperipherals.common.util.EmptyLuaTable;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
 import de.srendi.advancedperipherals.common.util.fakeplayer.APFakePlayer;
 import de.srendi.advancedperipherals.lib.peripherals.AutomataCorePeripheral;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -41,12 +43,22 @@ public class AutomataLookPlugin extends AutomataCorePlugin {
             return MethodResult.of(null, "No block find");
 
         BlockHitResult blockHit = (BlockHitResult) result;
-        BlockState state = owner.getLevel().getBlockState(blockHit.getBlockPos());
+        BlockPos blockPos = blockHit.getBlockPos();
+        BlockState state = owner.getLevel().getBlockState(blockPos);
         Map<String, Object> data = new HashMap<>();
         ResourceLocation blockName = BuiltInRegistries.BLOCK.getKey(state.getBlock());
         if (blockName != null)
             data.put("name", blockName.toString());
+
         data.put("tags", LuaConverter.getHolderTags(state.getBlock().builtInRegistryHolder()));
+        Vec3 pos = blockHit.getLocation();
+        Vec3 origin = automataCore.getPhysicsPos();
+        data.put("x", pos.x - origin.x);
+        data.put("y", pos.y - origin.y);
+        data.put("z", pos.z - origin.z);
+        // if (APAddon.VALKYRIENSKIES) {
+        //     ValkyrienSkies.encodeShipInfo(automataCore.getLevel(), blockPos, data);
+        // }
         return MethodResult.of(data);
     }
 
@@ -63,7 +75,8 @@ public class AutomataLookPlugin extends AutomataCorePlugin {
             return MethodResult.of(null, "No entity find");
 
         EntityHitResult entityHit = (EntityHitResult) result;
-        return MethodResult.of(LuaConverter.entityToLua(entityHit.getEntity()));
+        Vec3 origin = automataCore.getPhysicsPos();
+        return MethodResult.of(LuaConverter.completeEntityWithPositionToLua(entityHit.getEntity(), origin, true));
     }
 
 }

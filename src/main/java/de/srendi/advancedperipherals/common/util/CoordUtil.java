@@ -9,6 +9,7 @@ import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -27,8 +28,8 @@ public class CoordUtil {
      *
      * @return If the player is in the {@code range} as well as in the {@code maxRange}, or {@code range} and {@code maxRange} are -1
      */
-    public static boolean isInRange(@Nullable BlockPos pos, @Nullable Level world, @Nullable Player player, int range, int maxRange) {
-        // There are rare cases where these are null. For example if a player detector pocket computer runs while not in a player inventory
+    public static boolean isInRange(@Nullable Vec3 pos, @Nullable Level world, @Nullable Player player, int range, int maxRange) {
+        // There are rare cases where these can be null. For example if a player detector pocket computer runs while not in a player inventory
         // Fixes https://github.com/SirEndii/AdvancedPeripherals/issues/356
         if (pos == null || world == null || player == null) {
             return false;
@@ -49,7 +50,7 @@ public class CoordUtil {
     }
 
     // To fix issue #439
-    private static boolean isPlayerInBlockRange(@NotNull BlockPos pos, @NotNull Level world, @NotNull Player player, double range) {
+    private static boolean isPlayerInBlockRange(@NotNull Vec3 pos, @NotNull Level world, @NotNull Player player, double range) {
         if (range != -1 && player.level() != world)
             return false;
 
@@ -59,13 +60,12 @@ public class CoordUtil {
             ey = y;
             y = tmp;
         }
-        double bx = (double)(pos.getX() + 0.5), by = (double)(pos.getY() + 0.5), bz = (double)(pos.getZ() + 0.5);
-        return Math.abs(x - bx) <= range && Math.abs(z - bz) <= range &&
+        return Math.abs(x - pos.x) <= range && Math.abs(z - pos.z) <= range &&
             // check both feet position and eye position, and ensure it will work if player is higher than 2 blocks
-            ((y <= by && by <= ey) || Math.min(Math.abs(y - by), Math.abs(ey - by)) <= range);
+            ((y <= pos.y && pos.y <= ey) || Math.min(Math.abs(y - pos.y), Math.abs(ey - pos.y)) <= range);
     }
 
-    public static boolean isInRange(@Nullable BlockPos pos, @Nullable Level world, @Nullable Player player, int x, int y, int z, int maxRange) {
+    public static boolean isInRange(@Nullable Vec3 pos, @Nullable Level world, @Nullable Player player, int x, int y, int z, int maxRange) {
         if (pos == null || world == null || player == null)
             return false;
 
@@ -76,7 +76,7 @@ public class CoordUtil {
         return isPlayerInBlockRangeXYZ(pos, world, player, (double) x, (double) y, (double) z, maxRange);
     }
 
-    private static boolean isPlayerInBlockRangeXYZ(@NotNull BlockPos pos, @NotNull Level world, @NotNull Player player, double dx, double dy, double dz, int maxRange) {
+    private static boolean isPlayerInBlockRangeXYZ(@NotNull Vec3 pos, @NotNull Level world, @NotNull Player player, double dx, double dy, double dz, int maxRange) {
         if (maxRange != -1 && player.level() != world)
             return false;
 
@@ -86,22 +86,22 @@ public class CoordUtil {
             ey = y;
             y = tmp;
         }
-        double bx = (double)(pos.getX() + 0.5), by = (double)(pos.getY() + 0.5), bz = (double)(pos.getZ() + 0.5);
-        return Math.abs(x - bx) <= dx && Math.abs(z - bz) <= dz &&
-            ((y <= by && by <= ey) || Math.min(Math.abs(y - by), Math.abs(ey - by)) <= dy);
+        return Math.abs(x - pos.x) <= dx && Math.abs(z - pos.z) <= dz &&
+            ((y <= pos.y && pos.y <= ey) || Math.min(Math.abs(y - pos.y), Math.abs(ey - pos.y)) <= dy);
     }
 
-    public static boolean isInRange(@Nullable BlockPos blockPos, @Nullable Player player, @Nullable Level world, @NotNull BlockPos firstPos, @NotNull BlockPos secondPos, int maxRange) {
-        if (blockPos == null || world == null || player == null)
+    public static boolean isInRange(@Nullable Vec3 pos, @Nullable Player player, @Nullable Level world, @NotNull BlockPos firstPos, @NotNull BlockPos secondPos, int maxRange) {
+        if (pos == null || world == null || player == null)
             return false;
 
-        double i = Math.abs(player.getX() - blockPos.getX());
-        double j = Math.abs(player.getZ() - blockPos.getZ());
+        double x = Math.abs(player.getX() - pos.x);
+        double y = Math.abs(player.getY() - pos.y);
+        double z = Math.abs(player.getZ() - pos.z);
         // Check if the distance of the player is within the max range of the player detector
         // Use manhattan distance, not euclidean distance to keep same behavior than other `isInRange` functions
-        if (i + j > (maxRange != -1 ? maxRange : Integer.MAX_VALUE))
+        if (maxRange != -1 && x + y + z > maxRange)
             return false;
-        return world.getNearbyPlayers(TargetingConditions.forNonCombat(), null, new AABB(firstPos.getX(), firstPos.getY(), firstPos.getZ(), secondPos.getX(), secondPos.getY(), secondPos.getZ())).contains(player);
+        return world.getNearbyPlayers(TargetingConditions.forNonCombat(), null, AABB.encapsulatingFullBlocks(firstPos, secondPos)).contains(player);
     }
 
     @Nullable
@@ -114,6 +114,7 @@ public class CoordUtil {
         Direction dir = Direction.byName(computerSide);
         if (dir != null)
             return dir;
+
         Direction top = orientation.top();
         Direction front = orientation.front();
 
@@ -131,16 +132,50 @@ public class CoordUtil {
                 case RIGHT -> top.getClockWise();
                 case LEFT -> top.getCounterClockWise();
             };
-        } else {
-            return switch (side) {
-                case FRONT -> front;
-                case BACK -> front.getOpposite();
-                case TOP -> Direction.UP;
-                case BOTTOM -> Direction.DOWN;
-                case RIGHT -> front.getCounterClockWise();
-                case LEFT -> front.getClockWise();
-            };
         }
+        return switch (side) {
+            case FRONT -> front;
+            case BACK -> front.getOpposite();
+            case TOP -> Direction.UP;
+            case BOTTOM -> Direction.DOWN;
+            case RIGHT -> front.getCounterClockWise();
+            case LEFT -> front.getClockWise();
+        };
     }
 
+    public static ComputerSide getComputerSide(FrontAndTop orientation, Direction direction) {
+        Direction top = orientation.top();
+        Direction front = orientation.front();
+
+        if (direction == front) {
+            return ComputerSide.FRONT;
+        }
+        if (direction == front.getOpposite()) {
+            return ComputerSide.BACK;
+        }
+        if (front.getAxis() == Direction.Axis.Y) {
+            if (direction == top) {
+                return ComputerSide.TOP;
+            }
+            if (direction == top.getOpposite()) {
+                return ComputerSide.BOTTOM;
+            }
+            if (direction == top.getClockWise()) {
+                return ComputerSide.RIGHT;
+            }
+            if (direction == top.getCounterClockWise()) {
+                return ComputerSide.LEFT;
+            }
+        }
+        if (direction == front.getClockWise()) {
+            return ComputerSide.RIGHT;
+        }
+        if (direction == front.getCounterClockWise()) {
+            return ComputerSide.LEFT;
+        }
+        if (direction == Direction.UP) {
+            return ComputerSide.TOP;
+        }
+        return ComputerSide.BOTTOM;
+    }
 }

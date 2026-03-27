@@ -1,0 +1,1 @@
+print("The earth is flat, at least in minecraft!")

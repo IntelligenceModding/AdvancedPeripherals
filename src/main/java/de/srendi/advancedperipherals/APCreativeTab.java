@@ -8,8 +8,8 @@ import dan200.computercraft.shared.ModRegistry;
 import dan200.computercraft.shared.pocket.items.PocketComputerItem;
 import dan200.computercraft.shared.turtle.items.TurtleItem;
 import dan200.computercraft.shared.util.DataComponentUtil;
-import de.srendi.advancedperipherals.common.setup.Blocks;
-import de.srendi.advancedperipherals.common.setup.Registration;
+import de.srendi.advancedperipherals.common.setup.APBlocks;
+import de.srendi.advancedperipherals.common.setup.APRegistration;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.network.chat.Component;
@@ -23,16 +23,17 @@ import java.util.stream.Stream;
 public class APCreativeTab {
 
     public static void populateCreativeTabBuilder(CreativeModeTab.Builder builder) {
-        builder.displayItems((set, out) -> {
-            Registration.ITEMS.getEntries().stream().map(DeferredHolder::get).forEach(out::accept);
+        builder
+            .icon(() -> new ItemStack(APBlocks.CHAT_BOX.get()))
+            .title(Component.translatable("advancedperipherals.name"))
+            .displayItems((set, out) -> {
+                APRegistration.ITEMS.getEntries().stream().map(DeferredHolder::get).forEach(out::accept);
 
-            addTurtle(out, ModRegistry.Items.TURTLE_NORMAL.get(), set.holders());
-            addTurtle(out, ModRegistry.Items.TURTLE_ADVANCED.get(), set.holders());
-            addPocket(out, ModRegistry.Items.POCKET_COMPUTER_NORMAL.get(), set.holders());
-            addPocket(out, ModRegistry.Items.POCKET_COMPUTER_ADVANCED.get(), set.holders());
-        });
-        builder.icon(() -> new ItemStack(Blocks.CHAT_BOX.get()));
-        builder.title(Component.translatable("advancedperipherals.name"));
+                addTurtle(out, ModRegistry.Items.TURTLE_NORMAL.get(), set.holders());
+                addTurtle(out, ModRegistry.Items.TURTLE_ADVANCED.get(), set.holders());
+                addPocket(out, ModRegistry.Items.POCKET_COMPUTER_NORMAL.get(), set.holders());
+                addPocket(out, ModRegistry.Items.POCKET_COMPUTER_ADVANCED.get(), set.holders());
+            });
     }
 
     // Friendly stolen from CC:Tweaked ModRegistry.class

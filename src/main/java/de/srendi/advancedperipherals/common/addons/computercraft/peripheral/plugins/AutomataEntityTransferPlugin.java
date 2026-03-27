@@ -12,7 +12,6 @@ import de.srendi.advancedperipherals.common.util.fakeplayer.APFakePlayer;
 import de.srendi.advancedperipherals.lib.peripherals.AutomataCorePeripheral;
 import de.srendi.advancedperipherals.lib.peripherals.IPeripheralOperation;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.component.PatchedDataComponentMap;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
@@ -24,11 +23,10 @@ import net.minecraft.world.phys.HitResult;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Optional;
 import java.util.function.Predicate;
 
 import static de.srendi.advancedperipherals.common.addons.computercraft.operations.SingleOperation.CAPTURE_ANIMAL;
-import static de.srendi.advancedperipherals.common.setup.DataComponents.ENTITY_TRANSFER;
+import static de.srendi.advancedperipherals.common.setup.APDataComponents.ENTITY_TRANSFER;
 
 public class AutomataEntityTransferPlugin extends AutomataCorePlugin {
 
@@ -40,29 +38,27 @@ public class AutomataEntityTransferPlugin extends AutomataCorePlugin {
     }
 
     @Override
-    public @org.jetbrains.annotations.Nullable IPeripheralOperation<?>[] getOperations() {
+    @Nullable
+    public IPeripheralOperation<?>[] getOperations() {
         return new IPeripheralOperation[]{CAPTURE_ANIMAL};
     }
 
     protected boolean isEntityInside() {
-        Optional<? extends CompoundTag> entityTransfer = automataCore.getPeripheralOwner().getDataStorage().get(ENTITY_TRANSFER.get());
-        if (entityTransfer != null)
-            return entityTransfer.isPresent();
-        return false;
+        return automataCore.getPeripheralOwner().getPatchedDataStorage().has(ENTITY_TRANSFER.get());
     }
 
     protected void saveEntity(CompoundTag data) {
-        PatchedDataComponentMap patch = PatchedDataComponentMap.fromPatch(DataComponentMap.EMPTY, automataCore.getPeripheralOwner().getDataStorage());
+        PatchedDataComponentMap patch = automataCore.getPeripheralOwner().getPatchedDataStorage();
         patch.set(ENTITY_TRANSFER.get(), data);
         automataCore.getPeripheralOwner().putDataStorage(patch.asPatch());
     }
 
     protected CompoundTag getEntity() {
-        return automataCore.getPeripheralOwner().getDataStorage().get(ENTITY_TRANSFER.get()).get();
+        return automataCore.getPeripheralOwner().getPatchedDataStorage().get(ENTITY_TRANSFER.get());
     }
 
     protected void removeEntity() {
-        PatchedDataComponentMap patch = PatchedDataComponentMap.fromPatch(DataComponentMap.EMPTY, automataCore.getPeripheralOwner().getDataStorage());
+        PatchedDataComponentMap patch = automataCore.getPeripheralOwner().getPatchedDataStorage();
         patch.remove(ENTITY_TRANSFER.get());
         automataCore.getPeripheralOwner().putDataStorage(patch.asPatch());
     }
@@ -73,8 +69,9 @@ public class AutomataEntityTransferPlugin extends AutomataCorePlugin {
         EntityType<?> type = EntityType.byString(data.getString("entity")).orElse(null);
         if (type != null) {
             Entity entity = type.create(automataCore.getPeripheralOwner().getLevel());
-            if (entity == null)
+            if (entity == null) {
                 return null;
+            }
             entity.load(data);
             return entity;
         }
@@ -129,8 +126,12 @@ public class AutomataEntityTransferPlugin extends AutomataCorePlugin {
     }
 
     @LuaFunction(mainThread = true)
-    public final MethodResult getCapturedAnimal() {
+    public final MethodResult getCapturedAnimal(IArguments args) throws LuaException {
+        boolean detailed = args.count() > 0 ? args.getBoolean(0) : false;
         Entity extractedEntity = extractEntity();
-        return MethodResult.of(LuaConverter.completeEntityToLua(extractedEntity, automataCore.getPeripheralOwner().getToolInMainHand()));
+        if (extractedEntity == null) {
+            return MethodResult.of(null, "No entity is stored");
+        }
+        return MethodResult.of(LuaConverter.completeEntityToLua(extractedEntity, automataCore.getPeripheralOwner().getToolInMainHand(), detailed));
     }
 }

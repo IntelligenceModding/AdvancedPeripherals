@@ -31,7 +31,7 @@ import appeng.me.cluster.implementations.CraftingCPUCluster;
 import appeng.parts.storagebus.StorageBusPart;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.addons.APAddon;
-import de.srendi.advancedperipherals.common.setup.BlockEntityTypes;
+import de.srendi.advancedperipherals.common.setup.APBlockEntityTypes;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
 import de.srendi.advancedperipherals.common.util.Pair;
 import de.srendi.advancedperipherals.common.util.StatusConstants;
@@ -73,7 +73,7 @@ import java.util.stream.Collectors;
 public class AEApi {
 
     public static void registerCapabilities(RegisterCapabilitiesEvent event) {
-        event.registerBlockEntity(AECapabilities.IN_WORLD_GRID_NODE_HOST, BlockEntityTypes.ME_BRIDGE.get(), (blockEntity, side) -> blockEntity);
+        event.registerBlockEntity(AECapabilities.IN_WORLD_GRID_NODE_HOST, APBlockEntityTypes.ME_BRIDGE.get(), (blockEntity, side) -> blockEntity);
     }
 
     @NotNull
@@ -190,7 +190,7 @@ public class AEApi {
      * The error message is "NOT_FOUND" if no pattern is found. See {@link StatusConstants#NOT_FOUND}
      */
     @NotNull
-    public static Pair<Pair<EncodedPatternItem<?>, IPatternDetails>, String> findPatternFromFilters(IGrid grid, net.minecraft.world.level.Level level, @Nullable GenericFilter<?> inputFilter, @Nullable GenericFilter<?> outputFilter) {
+    public static Pair<Pair<EncodedPatternItem<?>, IPatternDetails>, String> findPatternFromFilters(IGrid grid, Level level, @Nullable GenericFilter<?> inputFilter, @Nullable GenericFilter<?> outputFilter) {
         for (Pair<EncodedPatternItem<?>, IPatternDetails> pattern : getPatterns(grid, level)) {
             IPatternDetails patternDetails = pattern.getRight();
             if (patternDetails.getInputs().length == 0)
@@ -624,7 +624,7 @@ public class AEApi {
 
         for (IGridNode iGridNode : node.getGrid().getMachineNodes(StorageBusPart.class)) {
             StorageBusPart bus = (StorageBusPart) iGridNode.getService(IStorageProvider.class);
-            net.minecraft.world.level.Level level = bus.getLevel();
+            Level level = bus.getLevel();
             BlockPos connectedInventoryPos = bus.getHost().getBlockEntity().getBlockPos().relative(bus.getSide());
             BlockEntity connectedInventoryEntity = level.getBlockEntity(connectedInventoryPos);
 

@@ -1,23 +1,21 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.peripheral;
 
+import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.peripheral.IComputerAccess;
 import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.TurtlePeripheralOwner;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
+import de.srendi.advancedperipherals.common.setup.APDataComponents;
 import de.srendi.advancedperipherals.common.util.ChunkManager;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
-import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.component.PatchedDataComponentMap;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.ChunkPos;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Objects;
 import java.util.UUID;
-
-import static de.srendi.advancedperipherals.common.setup.DataComponents.CHUNKY_ID;
 
 public class ChunkyPeripheral extends BasePeripheral<TurtlePeripheralOwner> {
 
@@ -29,16 +27,18 @@ public class ChunkyPeripheral extends BasePeripheral<TurtlePeripheralOwner> {
     }
 
     protected UUID getUUID() {
-        PatchedDataComponentMap patch = PatchedDataComponentMap.fromPatch(DataComponentMap.EMPTY, owner.getDataStorage());
-        if (!patch.has(CHUNKY_ID.get())) {
-            patch.set(CHUNKY_ID.get(), UUID.randomUUID());
-            owner.putDataStorage(patch.asPatch());
+        PatchedDataComponentMap patchMap = owner.getPatchedDataStorage();
+        UUID id = patchMap.get(APDataComponents.CHUNKY_ID.get());
+        if (id == null) {
+            id = UUID.randomUUID();
+            patchMap.set(APDataComponents.CHUNKY_ID.get(), id);
+            owner.putDataStorage(patchMap.asPatch());
         }
-        return patch.get(CHUNKY_ID.get());
+        return id;
     }
 
     public ChunkPos getChunkPos() {
-        return getLevel().getChunkAt(getPos()).getPos();
+        return new ChunkPos(getPos());
     }
 
     @Override
@@ -46,10 +46,16 @@ public class ChunkyPeripheral extends BasePeripheral<TurtlePeripheralOwner> {
         return APConfig.PERIPHERALS_CONFIG.enableChunkyTurtle.get();
     }
 
-    public void updateChunkState() {
+    @LuaFunction
+    public int getRadius() {
+        return ChunkManager.getMaxLoadRadius();
+    }
+
+    @Override
+    public void update() {
         // TODO: should find someway to update after turtle moved or while moving, but not every tick
         ServerLevel level = (ServerLevel) getLevel();
-        ChunkManager manager = ChunkManager.get(level);
+        ChunkManager manager = ChunkManager.get(level.getServer());
         ChunkPos currentChunk = getChunkPos();
         setLoadedChunk(currentChunk, manager, level);
         manager.touch(getUUID());
@@ -74,10 +80,10 @@ public class ChunkyPeripheral extends BasePeripheral<TurtlePeripheralOwner> {
     }
 
     @Override
-    public void attach(IComputerAccess computer) {
+    public void attach(@NotNull IComputerAccess computer) {
         super.attach(computer);
         ServerLevel level = (ServerLevel) owner.getLevel();
-        ChunkManager manager = ChunkManager.get(Objects.requireNonNull(level));
+        ChunkManager manager = ChunkManager.get(level.getServer());
         ChunkPos currentChunk = getChunkPos();
         setLoadedChunk(currentChunk, manager, level);
     }
@@ -91,7 +97,7 @@ public class ChunkyPeripheral extends BasePeripheral<TurtlePeripheralOwner> {
         // The records will be automatically removed by the ChunkManager if they have not been touched a while ago.
 
         // ServerLevel level = (ServerLevel) owner.getLevel();
-        // ChunkManager manager = ChunkManager.get(Objects.requireNonNull(level));
+        // ChunkManager manager = ChunkManager.get(level.getServer());
         // setLoadedChunk(null, manager, level);
     }
 }

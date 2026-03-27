@@ -20,7 +20,7 @@ public class ChemicalFilter extends GenericFilter<ChemicalStack> {
 
     public static final ChemicalFilter EMPTY = new ChemicalFilter();
 
-    private Holder<Chemical> chemical = MekanismAPI.EMPTY_CHEMICAL.getAsHolder();
+    private Holder<Chemical> chemical = MekanismAPI.EMPTY_CHEMICAL_HOLDER;
     private TagKey<Chemical> tag = null;
     private long amount = 1000;
     private String fingerprint = "";
@@ -49,16 +49,13 @@ public class ChemicalFilter extends GenericFilter<ChemicalStack> {
             chemicalFilter.fingerprint = item.getString("fingerprint");
         }
         if (item.containsKey("fromSlot")) {
-            chemicalFilter.fromSlot = item.getInt("fromSlot");
+            chemicalFilter.fromSlot = item.getInt("fromSlot") - 1;
         }
         if (item.containsKey("toSlot")) {
-            chemicalFilter.toSlot = item.getInt("toSlot");
+            chemicalFilter.toSlot = item.getInt("toSlot") - 1;
         }
-        // TODO: rename count to amount in 0.8
         if (item.containsKey("amount")) {
             chemicalFilter.amount = item.getLong("amount");
-        } else if (item.containsKey("count")) {
-            chemicalFilter.amount = item.getLong("count");
         }
 
         AdvancedPeripherals.debug("Parsed item filter: " + chemicalFilter);
@@ -81,7 +78,7 @@ public class ChemicalFilter extends GenericFilter<ChemicalStack> {
     }
 
     public boolean isEmpty() {
-        return this == EMPTY || (fingerprint.isEmpty() && chemical.is(MekanismAPI.EMPTY_CHEMICAL_NAME) && tag == null);
+        return this == EMPTY || (fingerprint.isEmpty() && chemical.is(MekanismAPI.EMPTY_CHEMICAL_KEY) && tag == null);
     }
 
     @Override
@@ -130,7 +127,7 @@ public class ChemicalFilter extends GenericFilter<ChemicalStack> {
             return fingerprint.equals(testFingerprint);
         }
 
-        if (!chemical.is(MekanismAPI.EMPTY_CHEMICAL_NAME) && !stack.is(chemical)) {
+        if (!chemical.is(MekanismAPI.EMPTY_CHEMICAL_KEY) && !stack.is(chemical)) {
             return false;
         }
         if (tag != null && !stack.is(tag)) {

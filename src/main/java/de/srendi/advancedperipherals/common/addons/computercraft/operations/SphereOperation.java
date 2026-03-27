@@ -1,9 +1,7 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.operations;
 
 import com.google.common.math.IntMath;
-import de.srendi.advancedperipherals.common.setup.DataComponents;
 import de.srendi.advancedperipherals.lib.peripherals.IPeripheralOperation;
-import net.minecraft.core.component.DataComponentType;
 import net.neoforged.neoforge.common.ModConfigSpec;
 
 import java.util.HashMap;
@@ -11,7 +9,8 @@ import java.util.Map;
 
 public enum SphereOperation implements IPeripheralOperation<SphereOperationContext> {
     SCAN_BLOCKS(2_000, 8, 16, 0.17),
-    SCAN_ENTITIES(2_000, 8, 16, 0.17);
+    SCAN_ENTITIES(2_000, 8, 16, 0.17),
+    SCAN_SHIPS(2_500, 8 * 3, 16 * 10 /* common view distance */, 0.17);
 
     private final int defaultCooldown;
     private final int defaultMaxFreeRadius;
@@ -81,10 +80,5 @@ public enum SphereOperation implements IPeripheralOperation<SphereOperationConte
 
     public SphereOperationContext cost() {
         return new SphereOperationContext(getMaxCostRadius());
-    }
-
-    @Override
-    public DataComponentType<Long> dataComponentType() {
-        return DataComponents.SPHERE_OPERATION.get();
     }
 }

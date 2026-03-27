@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class APConfig {
-
+    private static final String CONFIG_DIR_NAME = "Advancedperipherals";
     private static final Map<IConfigSpec, IAPConfig> KNOWN_CONFIGS = new HashMap<>();
 
     public static final GeneralConfig GENERAL_CONFIG = new GeneralConfig();
@@ -22,7 +22,7 @@ public class APConfig {
 
     public static void register(ModLoadingContext context) {
         //Creates the config folder
-        FMLPaths.getOrCreateGameRelativePath(FMLPaths.CONFIGDIR.get().resolve("Advancedperipherals"));
+        FMLPaths.getOrCreateGameRelativePath(FMLPaths.CONFIGDIR.get().resolve(CONFIG_DIR_NAME));
 
         ModContainer modContainer = context.getActiveContainer();
         APConfigHelper.registerConfig(KNOWN_CONFIGS, modContainer, GENERAL_CONFIG);
@@ -33,11 +33,11 @@ public class APConfig {
 
     public static class APConfigHelper {
         public static String getAPConfigFilePath(IAPConfig config) {
-            return "Advancedperipherals/" + config.getFileName() + ".toml";
+            return CONFIG_DIR_NAME + "/" + config.getFileName() + ".toml";
         }
 
         public static void registerConfig(Map<IConfigSpec, IAPConfig> knownConfigs, ModContainer modContainer, IAPConfig config) {
-            modContainer.registerConfig(config.getType(), config.getConfigSpec(), APConfigHelper.getAPConfigFilePath(config));
+            modContainer.registerConfig(config.getType(), config.getConfigSpec(), getAPConfigFilePath(config));
             knownConfigs.put(config.getConfigSpec(), config);
         }
     }

@@ -1,6 +1,14 @@
 {
-  "parent": "item/generated",
+  "parent": "minecraft:item/generated",
   "textures": {
     "layer0": "advancedperipherals:item/memory_card"
-  }
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "advancedperipherals:bounded": 1
+      },
+      "model": "advancedperipherals:item/memory_card_bounded"
+    }
+  ]
 }

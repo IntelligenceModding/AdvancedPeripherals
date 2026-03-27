@@ -1,30 +1,31 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.owner;
 
-import de.srendi.advancedperipherals.AdvancedPeripherals;
+import dan200.computercraft.api.lua.LuaException;
+import dan200.computercraft.api.peripheral.IPeripheral;
 import de.srendi.advancedperipherals.common.blocks.base.BaseBlock;
-import de.srendi.advancedperipherals.common.blocks.blockentities.InventoryManagerEntity;
+import de.srendi.advancedperipherals.common.blocks.base.VarNameable;
 import de.srendi.advancedperipherals.common.util.DataStorageUtil;
+import de.srendi.advancedperipherals.common.util.StringUtil;
 import de.srendi.advancedperipherals.common.util.fakeplayer.APFakePlayer;
-import de.srendi.advancedperipherals.lib.peripherals.IPeripheralTileEntity;
+import de.srendi.advancedperipherals.lib.peripherals.IPeripheralBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.FrontAndTop;
 import net.minecraft.core.component.DataComponentPatch;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.Nameable;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.JigsawBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import org.apache.commons.lang3.NotImplementedException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
-import java.util.function.Function;
 
-public class BlockEntityPeripheralOwner<T extends BlockEntity & IPeripheralTileEntity> extends BasePeripheralOwner {
+public class BlockEntityPeripheralOwner<T extends BlockEntity & IPeripheralBlockEntity> extends BasePeripheralOwner {
 
     public final T tileEntity;
 
@@ -36,13 +37,23 @@ public class BlockEntityPeripheralOwner<T extends BlockEntity & IPeripheralTileE
     @Nullable
     @Override
     public String getCustomName() {
-        if (tileEntity instanceof Nameable nameableEntity) {
-            Component name = nameableEntity.getCustomName();
-            if (name != null) {
-                return name.getString();
-            }
+        if (!(tileEntity instanceof Nameable nameableEntity)) {
+            return null;
+        }
+        Component name = nameableEntity.getCustomName();
+        if (name != null) {
+            return name.getString();
         }
         return null;
+    }
+
+    @Override
+    public void setCustomName(String name) {
+        if (!(tileEntity instanceof VarNameable nameableEntity)) {
+            return;
+        }
+        name = StringUtil.validateName(name);
+        nameableEntity.setName(name == null ? null : Component.literal(name));
     }
 
     @NotNull
@@ -60,7 +71,7 @@ public class BlockEntityPeripheralOwner<T extends BlockEntity & IPeripheralTileE
     @NotNull
     @Override
     public Direction getFacing() {
-        return tileEntity.getBlockState().getValue(JigsawBlock.ORIENTATION).front();
+        return getOrientation().front();
     }
 
     @NotNull
@@ -71,36 +82,29 @@ public class BlockEntityPeripheralOwner<T extends BlockEntity & IPeripheralTileE
 
     @Nullable
     @Override
+    public Entity getHoldingEntity() {
+        return null;
+    }
+
+    @Nullable
+    @Override
     public Player getOwner() {
-        if (tileEntity instanceof InventoryManagerEntity inventoryManagerEntity)
-            return inventoryManagerEntity.getOwnerPlayer();
         return null;
     }
 
     @Override
     public DataComponentPatch getDataStorage() {
-        AdvancedPeripherals.debug("Block Entity peripheral at " + getPos() + " tried to use data component storage but it should instead use nbt storage, report to github!", org.apache.logging.log4j.Level.WARN);
-        return DataComponentPatch.EMPTY;
-    }
-
-    @Override
-    public CompoundTag getNbtStorage() {
         return DataStorageUtil.getDataStorage(tileEntity);
     }
 
     @Override
     public void putDataStorage(DataComponentPatch dataStorage) {
-        AdvancedPeripherals.debug("Block Entity peripheral at " + getPos() + " tried to use data component storage but it should instead use nbt storage, report to github!", org.apache.logging.log4j.Level.WARN);
+        DataStorageUtil.putDataStorage(tileEntity, dataStorage);
     }
 
     @Override
-    public void markDataStorageDirty() {
-        tileEntity.setChanged();
-    }
-
-    @Override
-    public <T1> T1 withPlayer(Function<APFakePlayer, T1> function) {
-        throw new RuntimeException("Not implemented yet");
+    public <T1> T1 withPlayer(APFakePlayer.Action<T1> function) throws LuaException {
+        throw new NotImplementedException();
     }
 
     @Override
@@ -111,7 +115,7 @@ public class BlockEntityPeripheralOwner<T extends BlockEntity & IPeripheralTileE
     @Override
     public ItemStack storeItem(ItemStack stored) {
         // TODO: tricks with capability needed
-        throw new RuntimeException("Not implemented yet");
+        throw new NotImplementedException();
     }
 
     @Override
@@ -132,5 +136,10 @@ public class BlockEntityPeripheralOwner<T extends BlockEntity & IPeripheralTileE
     public BlockEntityPeripheralOwner<T> attachFuel() {
         attachAbility(PeripheralOwnerAbility.FUEL, new TileEntityFuelAbility<>(this));
         return this;
+    }
+
+    @Override
+    public <U extends IPeripheral> U getConnectedPeripheral(Class<U> type) {
+        throw new NotImplementedException();
     }
 }

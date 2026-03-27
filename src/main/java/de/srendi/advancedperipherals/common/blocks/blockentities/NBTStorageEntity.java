@@ -2,7 +2,7 @@ package de.srendi.advancedperipherals.common.blocks.blockentities;
 
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.NBTStoragePeripheral;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralBlockEntity;
-import de.srendi.advancedperipherals.common.setup.BlockEntityTypes;
+import de.srendi.advancedperipherals.common.setup.APBlockEntityTypes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
@@ -14,13 +14,13 @@ public class NBTStorageEntity extends PeripheralBlockEntity<NBTStoragePeripheral
     private CompoundTag stored;
 
     public NBTStorageEntity(BlockPos pos, BlockState state) {
-        super(BlockEntityTypes.NBT_STORAGE.get(), pos, state);
+        super(APBlockEntityTypes.NBT_STORAGE.get(), pos, state);
         stored = new CompoundTag();
     }
 
     @NotNull
     @Override
-    protected NBTStoragePeripheral createPeripheral() {
+    protected NBTStoragePeripheral buildPeripheral() {
         return new NBTStoragePeripheral(this);
     }
 

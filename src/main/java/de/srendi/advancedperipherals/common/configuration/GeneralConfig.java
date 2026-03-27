@@ -33,7 +33,6 @@ public class GeneralConfig implements IAPConfig {
         configSpec = builder.build();
     }
 
-
     @Override
     public ModConfigSpec getConfigSpec() {
         return configSpec;

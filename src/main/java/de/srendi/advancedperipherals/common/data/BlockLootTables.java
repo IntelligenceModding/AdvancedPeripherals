@@ -1,6 +1,6 @@
 package de.srendi.advancedperipherals.common.data;
 
-import de.srendi.advancedperipherals.common.setup.Registration;
+import de.srendi.advancedperipherals.common.setup.APRegistration;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.loot.BlockLootSubProvider;
 import net.minecraft.world.flag.FeatureFlags;
@@ -18,7 +18,7 @@ public class BlockLootTables extends BlockLootSubProvider {
 
     @Override
     protected void generate() {
-        Registration.BLOCKS.getEntries().stream().map(DeferredHolder::get).forEach(registeredBlock -> {
+        APRegistration.BLOCKS.getEntries().stream().map(DeferredHolder::get).forEach(registeredBlock -> {
             //Allow blocks to transfer their name to the dropped block when broken
             this.add(registeredBlock, this::createNameableBlockEntityTable);
         });
@@ -27,6 +27,6 @@ public class BlockLootTables extends BlockLootSubProvider {
     @NotNull
     @Override
     protected Iterable<Block> getKnownBlocks() {
-        return Registration.BLOCKS.getEntries().stream().map(DeferredHolder::get).map((block) -> (Block) block)::iterator;
+        return (Iterable<Block>) APRegistration.BLOCKS.getEntries().stream().map(DeferredHolder::get).toList();
     }
 }

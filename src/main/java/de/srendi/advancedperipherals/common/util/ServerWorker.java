@@ -8,25 +8,34 @@ import net.neoforged.neoforge.event.tick.ServerTickEvent;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-@EventBusSubscriber(modid = AdvancedPeripherals.MOD_ID)
+@EventBusSubscriber
 public class ServerWorker {
 
     private static final Queue<Runnable> callQueue = new ConcurrentLinkedQueue<>();
+    private static int tasksRan = 0;
 
-    public static void add(final Runnable call) {
-        if (call != null) {
-            callQueue.add(call);
-        }
+    /**
+     * This method will queue a task to current tick's end.
+     * If a task added during the end of a tick, the task will be delayed to the next tick;
+     */
+    public static void add(final Runnable task) {
+        callQueue.add(task);
+    }
+
+    /**
+     * Add to next tick will execute the task in next tick.
+     * It's an alias of ServerWorker.add(() -> ServerWorker.add(task));
+     */
+    public static void addToNextTick(final Runnable task) {
+        add(() -> add(task));
     }
 
     @SubscribeEvent
-    public static void serverTick(ServerTickEvent.Post event) {
-        while (true) {
+    public static void serverTick(final ServerTickEvent.Post event) {
+        for (int remain = callQueue.size(); remain > 0; remain--) {
             final Runnable runnable = callQueue.poll();
-            if (runnable == null) {
-                return;
-            }
-            AdvancedPeripherals.debug("Running queued server worker call: " + runnable);
+            tasksRan++;
+            AdvancedPeripherals.debug("Running task #" + tasksRan + ". Running " + runnable.getClass());
             runnable.run();
         }
     }

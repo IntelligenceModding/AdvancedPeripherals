@@ -17,13 +17,9 @@ public abstract class PoweredPeripheralBlockEntity<T extends BasePeripheral<?>> 
 
     private final IEnergyStorage energyStorage;
 
-    public PoweredPeripheralBlockEntity(BlockEntityType<?> tileEntityTypeIn, BlockPos pos, BlockState state) {
+    protected PoweredPeripheralBlockEntity(BlockEntityType<?> tileEntityTypeIn, BlockPos pos, BlockState state) {
         super(tileEntityTypeIn, pos, state);
-        if (APConfig.PERIPHERALS_CONFIG.enablePoweredPeripherals.get()) {
-            energyStorage = new EnergyStorage(this.getMaxEnergyStored());
-        } else {
-            energyStorage = null;
-        }
+        this.energyStorage = APConfig.PERIPHERALS_CONFIG.enablePoweredPeripherals.get() ? new EnergyStorage(this.getMaxEnergyStored()) : null;
     }
 
     protected abstract int getMaxEnergyStored();
@@ -47,5 +43,4 @@ public abstract class PoweredPeripheralBlockEntity<T extends BasePeripheral<?>> 
     public IEnergyStorage createEnergyStorageCap(@Nullable Direction side) {
         return energyStorage;
     }
-
 }

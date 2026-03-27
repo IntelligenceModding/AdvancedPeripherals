@@ -36,15 +36,4 @@ public class TurtleChatBoxUpgrade extends PeripheralTurtleUpgrade<ChatBoxPeriphe
     public UpgradeType<? extends ITurtleUpgrade> getType() {
         return CCRegistration.CHAT_BOX_TURTLE.get();
     }
-
-    @Override
-    public void update(@NotNull ITurtleAccess turtle, @NotNull TurtleSide side) {
-        super.update(turtle, side);
-        if (turtle.getLevel().isClientSide)
-            return;
-
-        if (turtle.getPeripheral(side) instanceof ChatBoxPeripheral chatBox) {
-            chatBox.update();
-        }
-    }
 }

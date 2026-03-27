@@ -20,6 +20,7 @@ public enum StatusConstants {
     FILTER_ITEM_NOT_FOUND, // Item could not be found in registry
     FILTER_FLUID_NOT_FOUND, // Fluid could not be found in registry
     FILTER_CHEMICAL_NOT_FOUND, // Chemical could not be found in registry
+    MISSING_FILTER,
     NO_VALID_FLUID, // Fluid property of filter is not a string
     NO_VALID_ITEM, // Item property of filter is not a string
     NO_VALID_FROMSLOT,
@@ -31,6 +32,7 @@ public enum StatusConstants {
     NO_VALID_FILTER_TYPE,
     // Inventory,
     INVENTORY_NOT_FOUND,
+    TARGET_NOT_FOUND,
     ITEM_NOT_FOUND, // Debug message when an item couldn't be found in an/the target inventory
     FLUID_NOT_FOUND,
     CHEMICAL_NOT_FOUND,
@@ -47,6 +49,4 @@ public enum StatusConstants {
     public String withInfo(APAddon addon) {
         return this + "_" + addon.getModId();
     }
-
-
 }

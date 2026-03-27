@@ -18,7 +18,7 @@ public class PocketGeoScannerUpgrade extends BasePocketUpgrade<GeoScannerPeriphe
 
     @Nullable
     @Override
-    public GeoScannerPeripheral getPeripheral(@NotNull IPocketAccess iPocketAccess) {
+    protected GeoScannerPeripheral buildPeripheral(@NotNull IPocketAccess iPocketAccess) {
         return new GeoScannerPeripheral(iPocketAccess);
     }
 

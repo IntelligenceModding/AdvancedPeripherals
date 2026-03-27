@@ -1,0 +1,87 @@
+package de.srendi.advancedperipherals.common.util.proxy;
+
+import de.srendi.advancedperipherals.common.blocks.blockentities.EnergyDetectorEntity;
+import net.neoforged.neoforge.energy.IEnergyStorage;
+
+public class EnergyStorageProxy extends AbstractStorageProxy implements IEnergyStorage {
+
+    private final EnergyDetectorEntity energyDetectorTE;
+    private boolean lastTransfered = false;
+    private boolean wasReady = false;
+    private volatile boolean ready = false;
+    private boolean receiving = false;
+
+    public EnergyStorageProxy(EnergyDetectorEntity energyDetectorTE, int maxTransferRate) {
+        super(maxTransferRate);
+        this.energyDetectorTE = energyDetectorTE;
+    }
+
+    @Override
+    public boolean canReceive() {
+        return true;
+    }
+
+    @Override
+    public int receiveEnergy(int maxReceive, boolean simulate) {
+        if (this.receiving) {
+            return 0;
+        }
+        this.receiving = true;
+        try {
+            IEnergyStorage storage = energyDetectorTE.getOutputStorage();
+            if (storage == null) {
+                return 0;
+            }
+            int transferred = storage.receiveEnergy((int) Math.min(maxReceive, this.getTransferRate()), simulate);
+            if (!simulate) {
+                this.wasReady = true;
+                if (transferred > 0) {
+                    this.lastTransfered = true;
+                    this.onTransfered(transferred);
+                }
+            }
+            return transferred;
+        } finally {
+            this.receiving = false;
+        }
+    }
+
+    @Override
+    public String getLastTransferedId() {
+        return this.lastTransfered ? "forge:energy" : null;
+    }
+
+    @Override
+    public String getReadyTransferId() {
+        return this.ready ? "forge:energy" : null;
+    }
+
+    @Override
+    protected void resetStatus() {
+        super.resetStatus();
+        this.ready = this.wasReady;
+        this.wasReady = false;
+    }
+
+    @Override
+    public int getEnergyStored() {
+        IEnergyStorage storage = energyDetectorTE.getOutputStorage();
+        return storage != null ? storage.getEnergyStored() : 0;
+    }
+
+    @Override
+    public int getMaxEnergyStored() {
+        IEnergyStorage storage = energyDetectorTE.getOutputStorage();
+        return storage != null ? storage.getMaxEnergyStored() : 0;
+    }
+
+    @Override
+    public boolean canExtract() {
+        return false;
+    }
+
+    @Override
+    public int extractEnergy(int maxExtract, boolean simulate) {
+        return 0;
+    }
+}

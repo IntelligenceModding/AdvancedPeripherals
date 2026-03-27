@@ -30,7 +30,7 @@ import com.refinedmods.refinedstorage.neoforge.support.resource.VariantUtil;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.addons.APAddon;
 import de.srendi.advancedperipherals.common.blocks.blockentities.RSBridgeEntity;
-import de.srendi.advancedperipherals.common.setup.BlockEntityTypes;
+import de.srendi.advancedperipherals.common.setup.APBlockEntityTypes;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
 import de.srendi.advancedperipherals.common.util.Pair;
 import de.srendi.advancedperipherals.common.util.inventory.ChemicalFilter;
@@ -64,7 +64,7 @@ public class RSApi {
     public static void registerCapabilities(@NotNull RegisterCapabilitiesEvent event) {
         event.registerBlockEntity(
                 RefinedStorageNeoForgeApi.INSTANCE.getNetworkNodeContainerProviderCapability(),
-                BlockEntityTypes.RS_BRIDGE.get(),
+                APBlockEntityTypes.RS_BRIDGE.get(),
                 (blockEntity, side) -> blockEntity);
     }
 

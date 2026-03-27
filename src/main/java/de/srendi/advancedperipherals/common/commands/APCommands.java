@@ -10,8 +10,8 @@ import dan200.computercraft.shared.command.text.ChatHelpers;
 import dan200.computercraft.shared.command.text.TableBuilder;
 import dan200.computercraft.shared.computer.core.ServerComputer;
 import dan200.computercraft.shared.computer.core.ServerContext;
-import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.ChunkyPeripheral;
+import de.srendi.advancedperipherals.common.util.ChunkManager;
 import de.srendi.advancedperipherals.common.util.inventory.ItemUtil;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
@@ -28,7 +28,7 @@ import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import java.util.Comparator;
 
 
-@EventBusSubscriber(modid = AdvancedPeripherals.MOD_ID)
+@EventBusSubscriber
 public class APCommands {
     public static final String ROOT_LITERAL = "advancedperipherals";
     public static final String FORCELOAD_LITERAL = "forceload";
@@ -45,8 +45,8 @@ public class APCommands {
                 .executes(APCommands::safeExecute))
             .build();
         event.getDispatcher().register(Commands.literal(ROOT_LITERAL)
-            .then(Commands.literal("getHashItem").executes(context -> getHashItem(context.getSource())))
-            .then(Commands.literal(FORCELOAD_LITERAL)
+                .then(Commands.literal("getHashItem")
+                        .executes(context -> getHashItem(context.getSource()))).then(Commands.literal(FORCELOAD_LITERAL)
                 .executes(context -> forceloadHelp(context.getSource()))
                 .then(Commands.literal("help")
                     .executes(context -> forceloadHelp(context.getSource())))
@@ -100,6 +100,8 @@ public class APCommands {
             );
         }
 
+        ChunkManager manager = ChunkManager.get(source.getServer());
+        source.sendSuccess(() -> Component.literal("Forced " + manager.getForcedChunksCount() + " chunks"), true);
         table.display(source);
         return computers.length;
     }

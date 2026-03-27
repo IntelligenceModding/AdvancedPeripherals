@@ -3,8 +3,8 @@ package de.srendi.advancedperipherals.common.container;
 import de.srendi.advancedperipherals.common.container.base.BaseContainer;
 import de.srendi.advancedperipherals.common.container.base.SlotCondition;
 import de.srendi.advancedperipherals.common.container.base.SlotInputHandler;
-import de.srendi.advancedperipherals.common.setup.ContainerTypes;
-import de.srendi.advancedperipherals.common.setup.Items;
+import de.srendi.advancedperipherals.common.setup.APContainerTypes;
+import de.srendi.advancedperipherals.common.setup.APItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -16,10 +16,10 @@ import org.jetbrains.annotations.NotNull;
 public class InventoryManagerContainer extends BaseContainer {
 
     public InventoryManagerContainer(int id, Inventory inventory, BlockPos pos, Level level) {
-        super(ContainerTypes.INVENTORY_MANAGER_CONTAINER.get(), id, inventory, pos, level);
+        super(APContainerTypes.INVENTORY_MANAGER_CONTAINER.get(), id, inventory, pos, level);
         layoutPlayerInventorySlots(7, 84);
         if (tileEntity != null) {
-            addSlot(new SlotInputHandler(tileEntity.createItemHandlerCap(null), 0, 79, 29, new SlotCondition().setNeededItem(Items.MEMORY_CARD.get()))); //Input
+            addSlot(new SlotInputHandler(tileEntity.createItemHandlerCap(null), 0, 79, 29, new SlotCondition().setNeededItem(APItems.MEMORY_CARD.get()))); //Input
         }
     }
 
@@ -41,7 +41,7 @@ public class InventoryManagerContainer extends BaseContainer {
                     return ItemStack.EMPTY;
                 }
             } else if (index <= 35) {
-                if (itemstack1.getItem().equals(Items.MEMORY_CARD.get())) {
+                if (itemstack1.getItem().equals(APItems.MEMORY_CARD.get())) {
                     if (!this.moveItemStackTo(itemstack1, 36, 37, true)) {
                         return ItemStack.EMPTY;
                     }
@@ -65,4 +65,5 @@ public class InventoryManagerContainer extends BaseContainer {
 
         return itemstack;
     }
+
 }

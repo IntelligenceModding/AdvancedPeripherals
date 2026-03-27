@@ -38,7 +38,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 public class ColonyPeripheral extends BasePeripheral<IPeripheralOwner> {
 
@@ -276,7 +275,7 @@ public class ColonyPeripheral extends BasePeripheral<IPeripheralOwner> {
             map.put("state", request.getState().toString());
             map.put("count", deliverableRequest.getCount());
             map.put("minCount", deliverableRequest.getMinimumCount());
-            map.put("items", request.getDisplayStacks().stream().map(item -> LuaConverter.itemStackToObject(item, getLevel())).collect(Collectors.toList()));
+            map.put("items", request.getDisplayStacks().stream().map(item -> LuaConverter.itemStackToObject(item, getLevel())).toList());
             map.put("target", request.getRequester().getRequesterDisplayName(requestManager, request).getString());
             result.add(map);
         });
