@@ -24,6 +24,6 @@ public class ThermoIntegration implements APGenericPeripheral {
 
     @LuaFunction
     public final Object getCoolantTank(ThermoTile blockEntity) {
-        return LuaConverter.fluidStackToObject(blockEntity.getTank().getFluid());
+        return LuaConverter.fluidStackToLua(blockEntity.getTank().getFluid());
     }
 }

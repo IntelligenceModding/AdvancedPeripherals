@@ -1,9 +1,6 @@
 package de.srendi.advancedperipherals.common.util;
 
 import dan200.computercraft.api.lua.LuaException;
-import dan200.computercraft.shared.util.NBTUtil;
-import de.srendi.advancedperipherals.AdvancedPeripherals;
-import de.srendi.advancedperipherals.common.addons.APAddon;
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.InventoryManagerPeripheral;
 import de.srendi.advancedperipherals.common.util.inventory.ChemicalUtil;
 import de.srendi.advancedperipherals.common.util.inventory.FluidUtil;
@@ -16,9 +13,12 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.component.DataComponentPatch;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.StringRepresentable;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -29,7 +29,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.level.material.Fluid;
@@ -70,63 +70,72 @@ public class LuaConverter {
     public interface EntityConverter<T extends Entity> {
         void entityToMap(T entity, Map<String, Object> data, Context ctx);
 
-        record Context(boolean detailed, ItemStack itemInHand) {}
+        record Context(boolean detailed, ItemStack itemInHand, Vec3 position) {}
     }
 
-    public static Map<String, Object> completeEntityToLua(Entity entity) {
-        return completeEntityToLua(entity, false);
+    private static final EntityConverter.Context EMPTY_ENTITY_CONVERTER_CONTEXT = new EntityConverter.Context(false, null, null);
+
+    public static EntityContextBuilder entityContextBuilder() {
+        return new EntityContextBuilder();
     }
 
-    public static Map<String, Object> completeEntityToLua(Entity entity, boolean detailed) {
-        return completeEntityToLua(entity, ItemStack.EMPTY, detailed);
+    public static final class EntityContextBuilder {
+        private boolean detailed = false;
+        private ItemStack itemInHand = null;
+        private Vec3 position = null;
+
+        public EntityContextBuilder detailed(boolean detailed) {
+            this.detailed = detailed;
+            return this;
+        }
+
+        public EntityContextBuilder detailed() {
+            return this.detailed(true);
+        }
+
+        public EntityContextBuilder itemInHand(ItemStack stack) {
+            this.itemInHand = stack;
+            return this;
+        }
+
+        public EntityContextBuilder position(Vec3 pos) {
+            this.position = pos;
+            return this;
+        }
+
+        public EntityContextBuilder position(BlockPos pos) {
+            return this.position(pos.getCenter());
+        }
+
+        public EntityConverter.Context build() {
+            return new EntityConverter.Context(this.detailed, this.itemInHand, this.position);
+        }
     }
 
-    public static Map<String, Object> completeEntityToLua(Entity entity, ItemStack itemInHand) {
-        return completeEntityToLua(entity, itemInHand, false);
+    public static Map<String, Object> entityToLua(Entity entity) {
+        return entityToLua(entity, EMPTY_ENTITY_CONVERTER_CONTEXT);
     }
 
-    public static Map<String, Object> completeEntityToLua(Entity entity, ItemStack itemInHand, boolean detailed) {
+    public static Map<String, Object> entityToLua(Entity entity, EntityConverter.Context ctx) {
         if (entity == null) {
             return null;
         }
-        EntityConverter.Context ctx = new EntityConverter.Context(detailed, itemInHand);
         Map<String, Object> data = new HashMap<>();
         for (Class<?> entityClass = entity.getClass(); Entity.class.isAssignableFrom(entityClass); entityClass = entityClass.getSuperclass()) {
-            List<EntityConverter<? extends Entity>> converters = ENTITY_CONVERTERS.get((Class<? extends Entity>) entityClass);
-            if (converters != null) {
-                for (EntityConverter<? extends Entity> converter : converters) {
-                    ((EntityConverter<Entity>) converter).entityToMap(entity, data, ctx);
-                }
+            List<EntityConverter<?>> converters = ENTITY_CONVERTERS.get(entityClass);
+            if (converters == null) {
+                continue;
+            }
+            for (EntityConverter<?> converter : converters) {
+                ((EntityConverter<Entity>) converter).entityToMap(entity, data, ctx);
             }
         }
-        return data;
-    }
-
-    public static Map<String, Object> completeEntityWithPositionToLua(Entity entity, BlockPos pos) {
-        return completeEntityWithPositionToLua(entity, pos, false);
-    }
-
-    public static Map<String, Object> completeEntityWithPositionToLua(Entity entity, Vec3 pos) {
-        return completeEntityWithPositionToLua(entity, pos, false);
-    }
-
-    public static Map<String, Object> completeEntityWithPositionToLua(Entity entity, BlockPos pos, boolean detailed) {
-        return completeEntityWithPositionToLua(entity, ItemStack.EMPTY, pos, detailed);
-    }
-
-    public static Map<String, Object> completeEntityWithPositionToLua(Entity entity, Vec3 pos, boolean detailed) {
-        return completeEntityWithPositionToLua(entity, ItemStack.EMPTY, pos, detailed);
-    }
-
-    public static Map<String, Object> completeEntityWithPositionToLua(Entity entity, ItemStack itemInHand, BlockPos pos, boolean detailed) {
-        return completeEntityWithPositionToLua(entity, itemInHand, Vec3.atCenterOf(pos), detailed);
-    }
-
-    public static Map<String, Object> completeEntityWithPositionToLua(Entity entity, ItemStack itemInHand, Vec3 pos, boolean detailed) {
-        Map<String, Object> data = completeEntityToLua(entity, itemInHand, detailed);
-        data.put("x", entity.getX() - pos.x);
-        data.put("y", entity.getY() - pos.y);
-        data.put("z", entity.getZ() - pos.z);
+        Vec3 pos = ctx.position();
+        if (pos != null) {
+            data.put("x", entity.getX() - pos.x);
+            data.put("y", entity.getY() - pos.y);
+            data.put("z", entity.getZ() - pos.z);
+        }
         return data;
     }
 
@@ -158,7 +167,8 @@ public class LuaConverter {
             data.put("health", entity.getHealth());
             data.put("maxHealth", entity.getMaxHealth());
             if (ctx.detailed()) {
-                data.put("lastDamageSource", entity.getLastDamageSource() == null ? null : entity.getLastDamageSource().toString());
+                DamageSource lastDamageSource = entity.getLastDamageSource();
+                data.put("lastDamageSource", lastDamageSource == null ? null : lastDamageSource.toString());
                 Map<String, Object> effMap = new HashMap<>();
                 entity.getActiveEffectsMap().forEach((key, value) -> {
                     effMap.put(key.value().getDescriptionId(), effectToLua(value));
@@ -185,7 +195,7 @@ public class LuaConverter {
                 for (int slot = 0; slot < inv.getContainerSize(); slot++) {
                     ItemStack item = inv.getItem(slot);
                     if (!item.isEmpty()) {
-                        invMap.put(slot, itemStackToObject(item));
+                        invMap.put(slot, itemStackToLua(item));
                     }
                 }
                 data.put("inventory", invMap);
@@ -196,34 +206,51 @@ public class LuaConverter {
     /**
      * Block states to a lua representable object
      *
-     * @param blockStateValue block state see {@link net.minecraft.world.level.block.state.BlockState#getValue(Property)}
+     * @param stateValue block state see {@link net.minecraft.world.level.block.state.BlockState#getValue(Property)}
      * @return the state cast to a lua representable object
      */
-    public static Object stateToObject(Comparable<?> blockStateValue) {
-        if (blockStateValue == null) {
-            return null;
-        } else if (blockStateValue instanceof Boolean || blockStateValue instanceof Number || blockStateValue instanceof String) {
-            // Just return the value since lua can represent them just fine
-            return blockStateValue;
-        } else if (blockStateValue instanceof StringRepresentable stringRepresentable) {
-            return stringRepresentable.getSerializedName();
-        } else {
+    public static Object stateToLua(Comparable<?> stateValue) {
+        if (stateValue == null) {
             return null;
         }
+        if (stateValue instanceof Boolean || stateValue instanceof Number || stateValue instanceof String) {
+            // Just return the value since lua can represent them just fine
+            return stateValue;
+        }
+        if (stateValue instanceof StringRepresentable stringRepresentable) {
+            return stringRepresentable.getSerializedName();
+        }
+        return null;
     }
 
-    public static Map<String, String> serializeState(BlockState state) {
-        Map<String, String> map = new HashMap<>();
+    public static Map<String, Object> blockStateValuesToLua(BlockState state) {
+        return Map.ofEntries(
+            state.getValues()
+                .entrySet()
+                .stream()
+                .map(((entry) -> Map.entry(entry.getKey().getName(), stateToLua(entry.getValue()))))
+                .toArray(Map.Entry[]::new)
+        );
+    }
 
-        state.getValues().forEach(((prop, val) -> {
-            map.put(prop.getName(), val.toString());
-        }));
+    private static final LRUCache<BlockState, Map<String, Object>> BLOCKSTATES_CACHE = new LRUCache<>(256);
 
-        return map;
+    public static Map<String, Object> blockStateToLua(BlockState state0) {
+        Map<String, Object> data = BLOCKSTATES_CACHE.computeIfAbsent(state0, (state) -> {
+            Block block = state.getBlock();
+            ResourceLocation name = BuiltInRegistries.BLOCK.getKey(block);
+            return Map.of(
+                "name", name == null ? null : name.toString(),
+                "tags", getHolderTags(block.builtInRegistryHolder()),
+                "state", blockStateValuesToLua(state)
+            );
+        });
+
+        return data;
     }
 
     @Nullable
-    public static Object posToObject(BlockPos pos) {
+    public static Object posToLua(BlockPos pos) {
         if (pos == null) {
             return null;
         }
@@ -235,68 +262,62 @@ public class LuaConverter {
         return properties;
     }
 
-    @Nullable
-    public static Map<String, Object> itemStackToObject(@NotNull ItemStack stack) {
-        if (stack.isEmpty()) {
-            return null;
-        }
-        Map<String, Object> properties = itemToObject(stack.getItem());
-        DataComponentPatch components = stack.getComponentsPatch();
-        properties.put("count", stack.getCount());
-        properties.put("displayName", stack.getDisplayName().getString());
-        properties.put("maxStackSize", stack.getMaxStackSize());
-        try {
-            properties.put("components", NBTUtil.toLua(DataComponentUtil.patchToNbt(components)));
-        } catch (IllegalStateException ex) {
-            AdvancedPeripherals.debug("Couldn't create components for Item Stack " + stack, ex);
-        }
-        properties.put("fingerprint", ItemUtil.getFingerprint(stack));
+    public static Map<String, Object> itemToLua(@NotNull Item item) {
+        Map<String, Object> properties = new HashMap<>();
+        properties.put("tags", getHolderTags(item.builtInRegistryHolder()));
+        properties.put("name", ItemUtil.getRegistryKey(item).toString());
+        return properties;
+    }
+
+    public static Map<String, Object> fluidToLua(@NotNull Fluid fluid) {
+        Map<String, Object> properties = new HashMap<>();
+        properties.put("tags", getHolderTags(fluid.builtInRegistryHolder()));
+        properties.put("name", FluidUtil.getRegistryKey(fluid).toString());
+        return properties;
+    }
+
+    public static Map<String, Object> chemicalToLua(@NotNull Chemical chemical) {
+        Map<String, Object> properties = new HashMap<>();
+        properties.put("tags", getHolderTags(MekanismAPI.CHEMICAL_REGISTRY.wrapAsHolder(chemical)));
+        properties.put("name", ChemicalUtil.getRegistryKey(chemical).toString());
+        properties.put("radioactivity", chemical.isRadioactive());
         return properties;
     }
 
     @Nullable
-    public static Map<String, Object> itemStackToObject(@NotNull ItemStack stack, Level level) {
+    public static Map<String, Object> itemStackToLua(@NotNull ItemStack stack) {
         if (stack.isEmpty()) {
             return null;
         }
-        Map<String, Object> properties = itemToObject(stack.getItem());
+        Map<String, Object> properties = itemToLua(stack.getItem());
         DataComponentPatch components = stack.getComponentsPatch();
         properties.put("count", stack.getCount());
         properties.put("displayName", stack.getDisplayName().getString());
         properties.put("maxStackSize", stack.getMaxStackSize());
-        try {
-            properties.put("components", NBTUtil.toLua(DataComponentUtil.patchToNbt(components, level.registryAccess())));
-        } catch (IllegalStateException ex) {
-            AdvancedPeripherals.debug("Couldn't create components for Item Stack " + stack, ex);
-        }
+        properties.put("components", DataComponentUtil.patchToLua(components));
         properties.put("fingerprint", ItemUtil.getFingerprint(stack));
         return properties;
     }
 
-    public static Map<String, Object> fluidStackToObject(@NotNull FluidStack stack) {
+    public static Map<String, Object> fluidStackToLua(@NotNull FluidStack stack) {
         if (stack.isEmpty()) {
             return null;
         }
-        Map<String, Object> properties = fluidToObject(stack.getFluid());
+        Map<String, Object> properties = fluidToLua(stack.getFluid());
         DataComponentPatch components = stack.getComponentsPatch();
         properties.put("count", stack.getAmount());
         properties.put("displayName", stack.getHoverName().getString());
-        properties.put("fluidType", fluidTypeToObject(stack.getFluidType()));
-        properties.put("components", NBTUtil.toLua(DataComponentUtil.patchToNbt(components)));
+        properties.put("type", fluidTypeToLua(stack.getFluidType()));
+        properties.put("components", DataComponentUtil.patchToLua(components));
         properties.put("fingerprint", FluidUtil.getFingerprint(stack));
         return properties;
     }
 
-    public static Map<String, Object> chemicalStackToObject(@NotNull ChemicalStack stack) {
-        // In theory should not be called if the addon is not installed, but just to be save
-        if (!APAddon.MEKANISM.isLoaded()) {
-            return null;
-        }
-
+    public static Map<String, Object> chemicalStackToLua(@NotNull ChemicalStack stack) {
         if (stack.isEmpty()) {
             return null;
         }
-        Map<String, Object> properties = chemicalToObject(stack.getChemical());
+        Map<String, Object> properties = chemicalToLua(stack.getChemical());
         properties.put("count", stack.getAmount());
         properties.put("displayName", stack.getTextComponent().getString());
         properties.put("fingerprint", ChemicalUtil.getFingerprint(stack));
@@ -304,7 +325,7 @@ public class LuaConverter {
         return properties;
     }
 
-    public static Map<String, Object> fluidTypeToObject(FluidType type) {
+    public static Map<String, Object> fluidTypeToLua(@NotNull FluidType type) {
         Map<String, Object> properties = new HashMap<>();
         properties.put("viscosity", type.getViscosity());
         properties.put("density", type.getDensity());
@@ -319,34 +340,29 @@ public class LuaConverter {
         return properties;
     }
 
-    public static Map<String, Object> itemStackToObject(@NotNull ItemStack itemStack, long count) {
+    public static Map<String, Object> itemStackToLua(@NotNull ItemStack itemStack, long count) {
         if (itemStack.isEmpty()) {
             return null;
         }
-        Map<String, Object> properties = itemStackToObject(itemStack);
+        Map<String, Object> properties = itemStackToLua(itemStack);
         properties.put("count", count);
         return properties;
     }
 
-    public static Map<String, Object> fluidStackToObject(@NotNull FluidStack fluidStack, long count) {
+    public static Map<String, Object> fluidStackToLua(@NotNull FluidStack fluidStack, long count) {
         if (fluidStack.isEmpty()) {
             return null;
         }
-        Map<String, Object> properties = fluidStackToObject(fluidStack);
+        Map<String, Object> properties = fluidStackToLua(fluidStack);
         properties.put("count", count);
         return properties;
     }
 
-    public static Map<String, Object> chemicalStackToObject(@NotNull ChemicalStack chemicalStack, long count) {
-        // In theory should not be called if the addon is not installed, but just to be save
-        if (!APAddon.MEKANISM.isLoaded()) {
-            return null;
-        }
-
+    public static Map<String, Object> chemicalStackToLua(@NotNull ChemicalStack chemicalStack, long count) {
         if (chemicalStack.isEmpty()) {
             return null;
         }
-        Map<String, Object> properties = chemicalStackToObject(chemicalStack);
+        Map<String, Object> properties = chemicalStackToLua(chemicalStack);
         properties.put("count", count);
         return properties;
     }
@@ -360,39 +376,12 @@ public class LuaConverter {
      * @see InventoryManagerPeripheral#getItems()
      */
     @Nullable
-    public static Map<String, Object> stackToObjectWithSlot(@NotNull ItemStack stack, int slot) {
+    public static Map<String, Object> itemStackToLuaWithSlot(@NotNull ItemStack stack, int slot) {
         if (stack.isEmpty()) {
             return null;
         }
-        Map<String, Object> properties = itemStackToObject(stack);
+        Map<String, Object> properties = itemStackToLua(stack);
         properties.put("slot", slot + 1);
-        return properties;
-    }
-
-    public static Map<String, Object> itemToObject(@NotNull Item item) {
-        Map<String, Object> properties = new HashMap<>();
-        properties.put("tags", getHolderTags(item.builtInRegistryHolder()));
-        properties.put("name", ItemUtil.getRegistryKey(item).toString());
-        return properties;
-    }
-
-    public static Map<String, Object> fluidToObject(@NotNull Fluid fluid) {
-        Map<String, Object> properties = new HashMap<>();
-        properties.put("tags", getHolderTags(fluid.builtInRegistryHolder()));
-        properties.put("name", FluidUtil.getRegistryKey(fluid).toString());
-        return properties;
-    }
-
-    public static Map<String, Object> chemicalToObject(@NotNull Chemical chemical) {
-        // In theory should not be called if the addon is not installed, but just to be save
-        if (!APAddon.MEKANISM.isLoaded()) {
-            return null;
-        }
-
-        Map<String, Object> properties = new HashMap<>();
-        properties.put("tags", getHolderTags(MekanismAPI.CHEMICAL_REGISTRY.wrapAsHolder(chemical)));
-        properties.put("radioactivity", chemical.isRadioactive());
-        properties.put("name", ChemicalUtil.getRegistryKey(chemical).toString());
         return properties;
     }
 

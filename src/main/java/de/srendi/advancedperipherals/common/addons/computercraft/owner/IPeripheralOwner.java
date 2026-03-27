@@ -59,6 +59,16 @@ public interface IPeripheralOwner {
     }
 
     @NotNull
+    default Vec3 getPhysicsPos() {
+        Vec3 pos = this.getCenterPos();
+        return pos;
+        // if (!APAddons.vs2Loaded) {
+        //     return pos;
+        // }
+        // return ValkyrienSkies.transformToWorldPos(getLevel(), getPos(), pos);
+    }
+
+    @NotNull
     default Vec3 getDirection() {
         Vec3 dir = Vec3.atLowerCornerOf(getFacing().getNormal());
         return dir;

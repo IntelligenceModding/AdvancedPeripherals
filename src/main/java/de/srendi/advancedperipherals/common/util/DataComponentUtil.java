@@ -1,5 +1,6 @@
 package de.srendi.advancedperipherals.common.util;
 
+import dan200.computercraft.shared.util.NBTUtil;
 import de.srendi.advancedperipherals.common.setup.APDataComponents;
 
 import net.minecraft.core.RegistryAccess;
@@ -13,6 +14,7 @@ import net.minecraft.resources.RegistryOps;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.server.ServerLifecycleHooks;
 
+import java.util.Map;
 import java.util.Optional;
 
 public class DataComponentUtil {
@@ -35,6 +37,15 @@ public class DataComponentUtil {
             .parse(RegistryOps.create(NbtOps.INSTANCE, registryAccess), tag)
             .resultOrPartial()
             .orElse(DataComponentPatch.EMPTY);
+    }
+
+    public static Map<String, Object> patchToLua(DataComponentPatch patch) {
+        return patchToLua(patch, ServerLifecycleHooks.getCurrentServer().registryAccess());
+    }
+
+    public static Map<String, Object> patchToLua(DataComponentPatch patch, RegistryAccess registryAccess) {
+        // TODO: write an Codec to convert to java objects?
+        return (Map<String, Object>) NBTUtil.toLua(patchToNbt(patch, registryAccess));
     }
 
     public static DataComponentPatch getStoredDataFromItem(ItemStack stack) {

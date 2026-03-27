@@ -114,7 +114,7 @@ public class InventoryManagerPeripheral extends BasePeripheral<InventoryManagerO
         for (int slot = 0; slot < stacks.size(); slot++) {
             ItemStack stack = stacks.get(slot);
             if (!stack.isEmpty()) {
-                items.add(LuaConverter.stackToObjectWithSlot(stack, slot));
+                items.add(LuaConverter.itemStackToLuaWithSlot(stack, slot));
             }
         }
         return items;
@@ -133,7 +133,7 @@ public class InventoryManagerPeripheral extends BasePeripheral<InventoryManagerO
         List<Object> items = new ArrayList<>();
         for (int slot = 0; slot < inventoryTo.getSlots(); slot++) {
             if (!inventoryTo.getStackInSlot(slot).isEmpty()) {
-                items.add(LuaConverter.stackToObjectWithSlot(inventoryTo.getStackInSlot(slot), slot));
+                items.add(LuaConverter.itemStackToLuaWithSlot(inventoryTo.getStackInSlot(slot), slot));
             }
         }
         return MethodResult.of(items);
@@ -144,7 +144,7 @@ public class InventoryManagerPeripheral extends BasePeripheral<InventoryManagerO
         List<Object> items = new ArrayList<>();
         for (ItemStack stack : getOwnerPlayerOrError().getInventory().armor) {
             if (!stack.isEmpty()) {
-                items.add(LuaConverter.stackToObjectWithSlot(stack, ArmorSlot.getSlotForItem(stack)));
+                items.add(LuaConverter.itemStackToLuaWithSlot(stack, ArmorSlot.getSlotForItem(stack)));
             }
         }
         return items;
@@ -196,12 +196,12 @@ public class InventoryManagerPeripheral extends BasePeripheral<InventoryManagerO
     @LuaFunction(mainThread = true)
     public final Map<String, Object> getItemInHand() throws LuaException {
         Player player = getOwnerPlayerOrError();
-        return LuaConverter.stackToObjectWithSlot(player.getMainHandItem(), player.getInventory().selected);
+        return LuaConverter.itemStackToLuaWithSlot(player.getMainHandItem(), player.getInventory().selected);
     }
 
     @LuaFunction(mainThread = true)
     public final Map<String, Object> getItemInOffHand() throws LuaException {
-        return LuaConverter.itemStackToObject(getOwnerPlayerOrError().getOffhandItem());
+        return LuaConverter.itemStackToLua(getOwnerPlayerOrError().getOffhandItem());
     }
 
     private Player getOwnerPlayerOrError() throws LuaException {

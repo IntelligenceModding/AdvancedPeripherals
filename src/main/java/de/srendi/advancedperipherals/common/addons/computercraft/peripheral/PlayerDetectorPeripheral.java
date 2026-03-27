@@ -208,7 +208,7 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
             info.put("health", player.getHealth());
             info.put("maxHealth", player.getMaxHealth());
             info.put("airSupply", player.getAirSupply());
-            info.put("respawnPosition", LuaConverter.posToObject(player.getRespawnPosition()));
+            info.put("respawnPosition", LuaConverter.posToLua(player.getRespawnPosition()));
             info.put("respawnDimension", player.getRespawnDimension().location().toString());
             info.put("respawnAngle", player.getRespawnAngle());
         }

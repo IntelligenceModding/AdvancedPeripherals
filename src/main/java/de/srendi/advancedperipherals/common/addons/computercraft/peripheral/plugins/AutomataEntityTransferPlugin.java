@@ -84,7 +84,7 @@ public class AutomataEntityTransferPlugin extends AutomataCorePlugin {
         LuaTable<?, ?> options = EmptyLuaTable.orEmpty(arguments.optTable(0).orElse(null));
 
         float yaw = options.optDouble("yaw").orElse(0d).floatValue();
-        float pitch = options.optDouble( "pitch").orElse(0d).floatValue();
+        float pitch = options.optDouble("pitch").orElse(0d).floatValue();
 
         HitResult entityHit = automataCore.getPeripheralOwner().withPlayer(APFakePlayer.wrapActionWithRot(yaw, pitch, p -> p.findHit(false, true, suitableEntity)));
         if (entityHit.getType() == HitResult.Type.MISS)
@@ -132,6 +132,6 @@ public class AutomataEntityTransferPlugin extends AutomataCorePlugin {
         if (extractedEntity == null) {
             return MethodResult.of(null, "No entity is stored");
         }
-        return MethodResult.of(LuaConverter.completeEntityToLua(extractedEntity, automataCore.getPeripheralOwner().getToolInMainHand(), detailed));
+        return MethodResult.of(LuaConverter.entityToLua(extractedEntity, LuaConverter.entityContextBuilder().detailed(detailed).itemInHand(automataCore.getPeripheralOwner().getToolInMainHand()).build()));
     }
 }

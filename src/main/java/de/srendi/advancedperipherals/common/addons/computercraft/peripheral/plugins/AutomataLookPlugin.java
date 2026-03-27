@@ -34,21 +34,23 @@ public class AutomataLookPlugin extends AutomataCorePlugin {
         LuaTable<?, ?> options = EmptyLuaTable.orEmpty(arguments.optTable(0).orElse(null));
 
         float yaw = options.optDouble("yaw").orElse(0d).floatValue();
-        float pitch = options.optDouble( "pitch").orElse(0d).floatValue();
+        float pitch = options.optDouble("pitch").orElse(0d).floatValue();
 
         automataCore.addRotationCycle();
         TurtlePeripheralOwner owner = automataCore.getPeripheralOwner();
         HitResult result = owner.withPlayer(APFakePlayer.wrapActionWithRot(yaw, pitch, p -> p.findHit(true, false)));
-        if (result.getType() == HitResult.Type.MISS)
+        if (result.getType() == HitResult.Type.MISS) {
             return MethodResult.of(null, "No block find");
+        }
 
         BlockHitResult blockHit = (BlockHitResult) result;
         BlockPos blockPos = blockHit.getBlockPos();
         BlockState state = owner.getLevel().getBlockState(blockPos);
         Map<String, Object> data = new HashMap<>();
         ResourceLocation blockName = BuiltInRegistries.BLOCK.getKey(state.getBlock());
-        if (blockName != null)
+        if (blockName != null) {
             data.put("name", blockName.toString());
+        }
 
         data.put("tags", LuaConverter.getHolderTags(state.getBlock().builtInRegistryHolder()));
         Vec3 pos = blockHit.getLocation();
@@ -67,16 +69,17 @@ public class AutomataLookPlugin extends AutomataCorePlugin {
         LuaTable<?, ?> options = EmptyLuaTable.orEmpty(arguments.optTable(0).orElse(null));
 
         float yaw = options.optDouble("yaw").orElse(0d).floatValue();
-        float pitch = options.optDouble( "pitch").orElse(0d).floatValue();
+        float pitch = options.optDouble("pitch").orElse(0d).floatValue();
 
         automataCore.addRotationCycle();
         HitResult result = automataCore.getPeripheralOwner().withPlayer(APFakePlayer.wrapActionWithRot(yaw, pitch, p -> p.findHit(false, true)));
-        if (result.getType() == HitResult.Type.MISS)
+        if (result.getType() == HitResult.Type.MISS) {
             return MethodResult.of(null, "No entity find");
+        }
 
         EntityHitResult entityHit = (EntityHitResult) result;
         Vec3 origin = automataCore.getPhysicsPos();
-        return MethodResult.of(LuaConverter.completeEntityWithPositionToLua(entityHit.getEntity(), origin, true));
+        return MethodResult.of(LuaConverter.entityToLua(entityHit.getEntity(), LuaConverter.entityContextBuilder().detailed().position(origin).build()));
     }
 
 }

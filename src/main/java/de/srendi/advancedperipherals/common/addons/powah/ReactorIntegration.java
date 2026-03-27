@@ -56,7 +56,7 @@ public class ReactorIntegration implements APGenericPeripheral {
     private static Object getInventoryAt(ReactorPartTile blockEntity, int slot) {
         return blockEntity.core()
             .map(t -> t.getStack(slot))
-            .map(LuaConverter::itemStackToObject)
+            .map(LuaConverter::itemStackToLua)
             .orElse(null);
     }
 

@@ -22,14 +22,12 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.common.Tags;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -65,17 +63,10 @@ public class GeoScannerPeripheral extends BasePeripheral<IPeripheralOwner> {
     private static List<Map<String, Object>> scan(Level level, Vec3 center, int radius) {
         List<Map<String, Object>> result = new ArrayList<>();
         ScanUtils.traverseBlocks(level, center, radius, (state, pos) -> {
-            Map<String, Object> data = new HashMap<>(6 * 2);
+            Map<String, Object> data = new HashMap<>(LuaConverter.blockStateToLua(state));
             data.put("x", pos.x);
             data.put("y", pos.y);
             data.put("z", pos.z);
-
-            Block block = state.getBlock();
-            ResourceLocation name = BuiltInRegistries.BLOCK.getKey(block);
-            data.put("name", name == null ? "unknown" : name.toString());
-            data.put("tags", LuaConverter.getHolderTags(block.builtInRegistryHolder()));
-            data.put("state", LuaConverter.serializeState(state));
-
             result.add(data);
         });
 
@@ -124,7 +115,7 @@ public class GeoScannerPeripheral extends BasePeripheral<IPeripheralOwner> {
                 Map.ofEntries(
                     data.entrySet()
                         .stream()
-                        .map((entry) -> new AbstractMap.SimpleImmutableEntry<>(entry.getKey().toString(), entry.getValue()))
+                        .map((entry) -> Map.entry(entry.getKey().toString(), entry.getValue()))
                         .toArray(Map.Entry[]::new)
                 )
             );

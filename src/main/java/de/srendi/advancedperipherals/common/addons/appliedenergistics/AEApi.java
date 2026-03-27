@@ -406,8 +406,8 @@ public class AEApi {
         properties.put("totalBytes", totalBytes);
         properties.put("cells", driveCells);
         properties.put("priority", drive.getPriority());
-        properties.put("menuIcon", LuaConverter.itemToObject(drive.getMainMenuIcon().getItem()));
-        properties.put("position", LuaConverter.posToObject(drive.getBlockPos()));
+        properties.put("menuIcon", LuaConverter.itemToLua(drive.getMainMenuIcon().getItem()));
+        properties.put("position", LuaConverter.posToLua(drive.getBlockPos()));
         properties.put("name", drive.hasCustomName() ? drive.getCustomName().getString() : drive.getDisplayName().getString());
 
         return properties;
@@ -417,7 +417,7 @@ public class AEApi {
         Map<Object, Object> properties = new HashMap<>();
         BasicCellInventory cellInventory = BasicCellHandler.INSTANCE.getCellInventory(cellItem, null);
 
-        properties.put("item", LuaConverter.itemToObject(cellItem.getItem()));
+        properties.put("item", LuaConverter.itemToLua(cellItem.getItem()));
         properties.put("type", cell.getKeyType().toString());
         properties.put("bytes", cell.getBytes(cellItem));
         properties.put("bytesPerType", cell.getBytesPerType(cellItem));
@@ -435,7 +435,7 @@ public class AEApi {
         if (cellInventory == null)
             return null;
 
-        properties.put("item", LuaConverter.itemToObject(stack.getItem()));
+        properties.put("item", LuaConverter.itemToLua(stack.getItem()));
         properties.put("type", drive.getKeyType().toString());
         properties.put("bytes", drive.getBytes(stack));
         properties.put("bytesPerType", 0);
@@ -447,21 +447,19 @@ public class AEApi {
     }
 
     private static Map<String, Object> parseItemStack(Pair<Long, AEItemKey> stack, @Nullable ICraftingService craftingService) {
-        Map<String, Object> properties = LuaConverter.itemStackToObject(stack.getRight().getReadOnlyStack());
-        properties.put("count", stack.getLeft());
+        Map<String, Object> properties = LuaConverter.itemStackToLua(stack.getRight().getReadOnlyStack(), stack.getLeft());
         properties.put("isCraftable", craftingService != null && craftingService.isCraftable(stack.getRight()));
         return properties;
     }
 
     private static Map<String, Object> parseFluidStack(Pair<Long, AEFluidKey> stack, @Nullable ICraftingService craftingService) {
-        Map<String, Object> properties = LuaConverter.fluidStackToObject(stack.getRight().toStack(1));
-        properties.put("count", stack.getLeft());
+        Map<String, Object> properties = LuaConverter.fluidStackToLua(stack.getRight().toStack(1), stack.getLeft());
         properties.put("isCraftable", craftingService != null && craftingService.isCraftable(stack.getRight()));
         return properties;
     }
 
     private static Map<String, Object> parseChemStack(Pair<Long, MekanismKey> stack, @Nullable ICraftingService craftingService) {
-        Map<String, Object> properties = LuaConverter.chemicalStackToObject(stack.getRight().withAmount(stack.getLeft()));
+        Map<String, Object> properties = LuaConverter.chemicalStackToLua(stack.getRight().withAmount(stack.getLeft()));
         properties.put("isCraftable", craftingService != null && craftingService.isCraftable(stack.getRight()));
         return properties;
     }

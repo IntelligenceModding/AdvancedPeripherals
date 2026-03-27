@@ -135,6 +135,10 @@ public abstract class BasePeripheral<O extends IPeripheralOwner> implements IBas
         return getPeripheralConfiguration();
     }
 
+    public ServerLevel getLevel() {
+        return (ServerLevel) owner.getLevel();
+    }
+
     public BlockPos getPos() {
         return owner.getPos();
     }
@@ -143,22 +147,13 @@ public abstract class BasePeripheral<O extends IPeripheralOwner> implements IBas
         return owner.getCenterPos();
     }
 
-    public ServerLevel getLevel() {
-        return (ServerLevel) owner.getLevel();
-    }
-
     public boolean isOnShip() {
         return false;
         // return APAddons.isBlockOnShip(owner.getLevel(), owner.getPos());
     }
 
     public Vec3 getPhysicsPos() {
-        Vec3 pos = this.getCenterPos();
-        return pos;
-        // if (!APAddons.vs2Loaded) {
-        //     return pos;
-        // }
-        // return ValkyrienSkies.transformToWorldPos(owner.getLevel(), owner.getPos(), pos);
+        return owner.getPhysicsPos();
     }
 
     public final BlockPos getPhysicsBlockPos() {

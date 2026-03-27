@@ -80,9 +80,9 @@ public class MineColonies {
         Map<String, Object> map = new HashMap<>();
         map.put("id", citizen.getId());
         map.put("name", citizen.getName());
-        map.put("bedPos", LuaConverter.posToObject(citizen.getBedPos()));
+        map.put("bedPos", LuaConverter.posToLua(citizen.getBedPos()));
         map.put("children", citizen.getChildren());
-        map.put("location", LuaConverter.posToObject(citizen.getLastPosition()));
+        map.put("location", LuaConverter.posToLua(citizen.getLastPosition()));
         map.put("state", citizen.getStatus() == null ? "Idle" : Component.translatable(citizen.getStatus().getTranslationKey()).getString());
         map.put("isChild", citizen.isChild() ? "child" : "adult");
         map.put("gender", citizen.isFemale() ? "female" : "male");
@@ -114,13 +114,13 @@ public class MineColonies {
         Map<String, Object> map = new HashMap<>();
         map.put("id", visitor.getId());
         map.put("name", visitor.getName());
-        map.put("location", LuaConverter.posToObject(visitor.getSittingPosition()));
+        map.put("location", LuaConverter.posToLua(visitor.getSittingPosition()));
         map.put("isChild", visitor.isChild() ? "child" : "adult");
         map.put("gender", visitor.isFemale() ? "female" : "male");
         map.put("saturation", visitor.getSaturation());
         map.put("happiness", visitor.getCitizenHappinessHandler().getHappiness(visitor.getColony(), visitor));
         map.put("skills", skillsToObject(visitor.getCitizenSkillHandler().getSkills()));
-        map.put("recruitCost", LuaConverter.itemStackToObject(visitor.getRecruitCost()));
+        map.put("recruitCost", LuaConverter.itemStackToLua(visitor.getRecruitCost()));
 
         return map;
     }
@@ -134,7 +134,7 @@ public class MineColonies {
      */
     public static Object jobToObject(IBuilding work, IJob<?> job) {
         Map<String, Object> map = new HashMap<>();
-        map.put("location", LuaConverter.posToObject(work.getLocation().getInDimensionLocation()));
+        map.put("location", LuaConverter.posToLua(work.getLocation().getInDimensionLocation()));
         map.put("type", work.getSchematicName());
         map.put("level", work.getBuildingLevel());
         map.put("name", work.getBuildingDisplayName());
@@ -151,7 +151,7 @@ public class MineColonies {
      */
     public static Object homeToObject(IBuilding home) {
         Map<String, Object> map = new HashMap<>();
-        map.put("location", LuaConverter.posToObject(home.getLocation().getInDimensionLocation()));
+        map.put("location", LuaConverter.posToLua(home.getLocation().getInDimensionLocation()));
         map.put("type", home.getSchematicName());
         map.put("level", home.getBuildingLevel());
 
@@ -186,8 +186,8 @@ public class MineColonies {
      */
     public static Object buildingToObject(IRegisteredStructureManager buildingManager, IBuilding building, BlockPos pos) {
         Map<String, Object> structureData = new HashMap<>();
-        structureData.put("cornerA", LuaConverter.posToObject(building.getCorners().getA()));
-        structureData.put("cornerB", LuaConverter.posToObject(building.getCorners().getB()));
+        structureData.put("cornerA", LuaConverter.posToLua(building.getCorners().getA()));
+        structureData.put("cornerB", LuaConverter.posToLua(building.getCorners().getB()));
         structureData.put("rotation", building.getRotationMirror().toString());
         structureData.put("mirror", building.getRotationMirror().isMirrored());
 
@@ -200,7 +200,7 @@ public class MineColonies {
         }
 
         Map<String, Object> map = new HashMap<>();
-        map.put("location", LuaConverter.posToObject(pos));
+        map.put("location", LuaConverter.posToLua(pos));
         map.put("type", building.getSchematicName());
         map.put("style", building.getStructurePack());
         map.put("level", building.getBuildingLevel());
@@ -247,11 +247,11 @@ public class MineColonies {
     public static Object workOrderToObject(IWorkOrder workOrder) {
         Map<String, Object> map = new HashMap<>();
 
-        map.put("builder", LuaConverter.posToObject(workOrder.getClaimedBy()));
+        map.put("builder", LuaConverter.posToLua(workOrder.getClaimedBy()));
         map.put("id", workOrder.getID());
         map.put("priority", workOrder.getPriority());
         map.put("isClaimed", workOrder.isClaimed());
-        map.put("location", LuaConverter.posToObject(workOrder.getLocation()));
+        map.put("location", LuaConverter.posToLua(workOrder.getLocation()));
         map.put("type", workOrder.getClass().getSimpleName());
         map.put("buildingName", workOrder.getDisplayName().getString());
         map.put("targetLevel", workOrder.getTargetLevel());
@@ -294,7 +294,7 @@ public class MineColonies {
                     List<Map<String, Object>> researchCostItems = new ArrayList<>();
 
                     for (ItemStack costItem : item.getItems())
-                        researchCostItems.add(LuaConverter.itemStackToObject(costItem));
+                        researchCostItems.add(LuaConverter.itemStackToLua(costItem));
 
                     researchCost.put("validItems", researchCostItems);
                     researchCost.put("count", item.count());
@@ -374,7 +374,7 @@ public class MineColonies {
             Map<String, Object> map = new HashMap<>();
             ItemStack stack = resource.getItemStack().copy();
 
-            map.put("item", LuaConverter.itemStackToObject(stack));
+            map.put("item", LuaConverter.itemStackToLua(stack));
             map.put("displayName", resource.getName());
             map.put("available", resource.getAvailable());
             int amountInDelivery = 0;

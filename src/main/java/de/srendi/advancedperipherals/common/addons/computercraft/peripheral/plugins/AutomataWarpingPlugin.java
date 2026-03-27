@@ -233,7 +233,7 @@ public class AutomataWarpingPlugin extends AutomataCorePlugin {
                         BlockPos pos = pearl.blockPosition();
                         Map<String, Object> data = new HashMap<>();
                         data.put("name", level.dimension().location().toString());
-                        data.put("pos", LuaConverter.posToObject(pos));
+                        data.put("pos", LuaConverter.posToLua(pos));
                         data.put("facing", pearl.getDirection().getName());
                         data.put("costs", getCostsToLevel(level));
                         data.put("canSpawn", owner.isMovementPossible(level, pos));

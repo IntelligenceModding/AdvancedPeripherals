@@ -658,7 +658,7 @@ public class RSApi {
         properties.put("disks", disks);
         properties.put("mode", storageConfiguration.getFilterMode().toString());
         properties.put("access_type", storageConfiguration.getAccessMode().toString());
-        properties.put("position", LuaConverter.posToObject(nodeContainer.getLocalPosition()));
+        properties.put("position", LuaConverter.posToLua(nodeContainer.getLocalPosition()));
         properties.put("priority", nodeContainer.getPriority());
 
         return properties;
@@ -736,7 +736,7 @@ public class RSApi {
         ItemResource resource = (ItemResource) trackedResourceAmount.resource();
         long count = trackedResourceAmount.amount();
         ItemStack stack = resource.toItemStack();
-        Map<String, Object> properties = LuaConverter.itemStackToObject(stack, count);
+        Map<String, Object> properties = LuaConverter.itemStackToLua(stack, count);
         properties.put("isCraftable", autocraftingComponent != null && !autocraftingComponent.getPatternsByOutput(trackedResourceAmount.resource()).isEmpty());
         return properties;
     }
@@ -765,7 +765,7 @@ public class RSApi {
         FluidResource resource = (FluidResource) trackedResourceAmount.resource();
         long count = trackedResourceAmount.amount();
         FluidStack stack = VariantUtil.toFluidStack(resource, count);
-        Map<String, Object> properties = LuaConverter.fluidStackToObject(stack, count);
+        Map<String, Object> properties = LuaConverter.fluidStackToLua(stack, count);
         properties.put("isCraftable", autocraftingComponent != null && !autocraftingComponent.getPatternsByOutput(trackedResourceAmount.resource()).isEmpty());
         return properties;
     }
@@ -796,7 +796,7 @@ public class RSApi {
         ChemicalResource resource = (ChemicalResource) trackedResourceAmount.resource();
         long count = trackedResourceAmount.amount();
         ChemicalStack stack = resourceToChemicalStack(resource, count);
-        Map<String, Object> properties = LuaConverter.chemicalStackToObject(stack, count);
+        Map<String, Object> properties = LuaConverter.chemicalStackToLua(stack, count);
         properties.put("isCraftable", autocraftingComponent != null && !autocraftingComponent.getPatternsByOutput(trackedResourceAmount.resource()).isEmpty());
         return properties;
     }

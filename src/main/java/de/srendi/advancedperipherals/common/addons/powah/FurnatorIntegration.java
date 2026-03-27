@@ -35,6 +35,6 @@ public class FurnatorIntegration implements APGenericPeripheral {
 
     @LuaFunction(mainThread = true)
     public final Object getFuelSlot(FurnatorTile blockEntity) {
-        return LuaConverter.itemStackToObject(blockEntity.getInventory().getStackInSlot(1));
+        return LuaConverter.itemStackToLua(blockEntity.getInventory().getStackInSlot(1));
     }
 }

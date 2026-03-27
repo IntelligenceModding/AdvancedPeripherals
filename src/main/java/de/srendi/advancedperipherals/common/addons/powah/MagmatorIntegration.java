@@ -30,6 +30,6 @@ public class MagmatorIntegration implements APGenericPeripheral {
     // getTank is thread safe
     @LuaFunction
     public final Object getFuelTank(MagmatorTile blockEntity) {
-        return LuaConverter.fluidStackToObject(blockEntity.getTank().getFluid());
+        return LuaConverter.fluidStackToLua(blockEntity.getTank().getFluid());
     }
 }

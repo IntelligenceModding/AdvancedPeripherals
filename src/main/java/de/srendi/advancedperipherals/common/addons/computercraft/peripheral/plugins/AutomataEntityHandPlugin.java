@@ -11,7 +11,6 @@ import de.srendi.advancedperipherals.common.util.LuaConverter;
 import de.srendi.advancedperipherals.common.util.fakeplayer.APFakePlayer;
 import de.srendi.advancedperipherals.lib.peripherals.AutomataCorePeripheral;
 import de.srendi.advancedperipherals.lib.peripherals.IPeripheralOperation;
-import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.animal.Animal;
@@ -19,6 +18,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -48,7 +49,7 @@ public class AutomataEntityHandPlugin extends AutomataCorePlugin {
 
         boolean sneak = options.optBoolean("sneak").orElse(false);
         float yaw = options.optDouble("yaw").orElse(0d).floatValue();
-        float pitch = options.optDouble( "pitch").orElse(0d).floatValue();
+        float pitch = options.optDouble("pitch").orElse(0d).floatValue();
 
         return automataCore.withOperation(USE_ON_ANIMAL, context -> {
             TurtlePeripheralOwner owner = automataCore.getPeripheralOwner();
@@ -66,21 +67,22 @@ public class AutomataEntityHandPlugin extends AutomataCorePlugin {
     public final MethodResult inspectAnimal(@NotNull IArguments arguments) throws LuaException {
         LuaTable<?, ?> options = EmptyLuaTable.orEmpty(arguments.optTable(0).orElse(null));
 
-        boolean sneak = options.optBoolean("sneak").orElse(false);
         float yaw = options.optDouble("yaw").orElse(0d).floatValue();
-        float pitch = options.optDouble( "pitch").orElse(0d).floatValue();
+        float pitch = options.optDouble("pitch").orElse(0d).floatValue();
 
         automataCore.addRotationCycle();
         TurtlePeripheralOwner owner = automataCore.getPeripheralOwner();
         HitResult entityHit = owner.withPlayer(APFakePlayer.wrapActionWithRot(yaw, pitch, p -> p.findHit(false, true, suitableEntity)));
-        if (entityHit.getType() == HitResult.Type.MISS)
+        if (entityHit.getType() == HitResult.Type.MISS) {
             return MethodResult.of(null, "Nothing found");
+        }
 
         Entity entity = ((EntityHitResult) entityHit).getEntity();
-        if (!(entity instanceof Animal animal))
+        if (!(entity instanceof Animal animal)) {
             return MethodResult.of(null, "Well, entity is not animal entity, but how?");
+        }
 
-        return MethodResult.of(LuaConverter.completeEntityToLua(animal, owner.getToolInMainHand(), true));
+        return MethodResult.of(LuaConverter.entityToLua(animal, LuaConverter.entityContextBuilder().detailed().itemInHand(owner.getToolInMainHand()).build()));
     }
 
     @LuaFunction(mainThread = true)
@@ -88,10 +90,19 @@ public class AutomataEntityHandPlugin extends AutomataCorePlugin {
         boolean detailed = args.count() > 0 ? args.getBoolean(0) : false;
         automataCore.addRotationCycle();
         TurtlePeripheralOwner owner = automataCore.getPeripheralOwner();
-        BlockPos currentPos = owner.getPos();
-        AABB box = new AABB(currentPos);
-        ItemStack itemInHand = owner.getToolInMainHand();
-        List<Map<String, Object>> entities = owner.getLevel().getEntities((Entity) null, box.inflate(automataCore.getInteractionRadius()), suitableEntity).stream().map(entity -> LuaConverter.completeEntityWithPositionToLua(entity, itemInHand, currentPos, detailed)).toList();
+        Vec3 currentPos = owner.getPhysicsPos();
+        AABB box = new AABB(currentPos, currentPos).inflate(automataCore.getInteractionRadius() + 0.5);
+        LuaConverter.EntityConverter.Context convContext = LuaConverter.entityContextBuilder()
+            .detailed(detailed)
+            .itemInHand(owner.getToolInMainHand())
+            .position(currentPos)
+            .build();
+        List<Map<String, Object>> entities = owner
+            .getLevel()
+            .getEntities((Entity) null, box, suitableEntity)
+            .stream()
+            .map(entity -> LuaConverter.entityToLua(entity, convContext))
+            .toList();
         return MethodResult.of(entities);
     }
 }

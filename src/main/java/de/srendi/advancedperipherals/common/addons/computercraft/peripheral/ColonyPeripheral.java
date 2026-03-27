@@ -131,7 +131,7 @@ public class ColonyPeripheral extends BasePeripheral<IPeripheralOwner> {
     public final Object getLocation() throws LuaException {
         IColony colony = getColony();
 
-        return LuaConverter.posToObject(colony.getCenter());
+        return LuaConverter.posToLua(colony.getCenter());
     }
 
     @LuaFunction(mainThread = true)
@@ -275,7 +275,7 @@ public class ColonyPeripheral extends BasePeripheral<IPeripheralOwner> {
             map.put("state", request.getState().toString());
             map.put("count", deliverableRequest.getCount());
             map.put("minCount", deliverableRequest.getMinimumCount());
-            map.put("items", request.getDisplayStacks().stream().map(item -> LuaConverter.itemStackToObject(item, getLevel())).toList());
+            map.put("items", request.getDisplayStacks().stream().map(item -> LuaConverter.itemStackToLua(item)).toList());
             map.put("target", request.getRequester().getRequesterDisplayName(requestManager, request).getString());
             result.add(map);
         });

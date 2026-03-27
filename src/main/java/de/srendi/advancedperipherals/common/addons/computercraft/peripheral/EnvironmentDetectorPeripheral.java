@@ -207,8 +207,16 @@ public class EnvironmentDetectorPeripheral extends BasePeripheral<IPeripheralOwn
             return context.getRadius() > SCAN_ENTITIES.getMaxCostRadius() ? MethodResult.of(null, "Radius exceeds max value") : null;
         }, context -> {
             Vec3 pos = this.getPhysicsPos();
-            AABB box = new AABB(pos, pos);
-            List<Map<String, Object>> entities = getLevel().getEntities((Entity) null, box.inflate(context.getRadius() + 0.5), entity -> entity instanceof LivingEntity && entity.isAlive()).stream().map(entity -> LuaConverter.completeEntityWithPositionToLua(entity, pos, detailed)).toList();
+            AABB box = new AABB(pos, pos).inflate(context.getRadius() + 0.5);
+            LuaConverter.EntityConverter.Context convContext = LuaConverter.entityContextBuilder()
+                .detailed(detailed)
+                .position(pos)
+                .build();
+            List<Map<String, Object>> entities = getLevel()
+                .getEntities((Entity) null, box, entity -> entity instanceof LivingEntity && entity.isAlive())
+                .stream()
+                .map(entity -> LuaConverter.entityToLua(entity, convContext))
+                .toList();
             return MethodResult.of(entities);
         }, null);
     }
