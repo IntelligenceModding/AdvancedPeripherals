@@ -65,7 +65,7 @@ public class BlockStatesAndModelsProvider extends BlockStateProvider {
                 y = (int) (orientation.front().toYRot() + 180) % 360;
             } else {
                 x = orientation.front() == Direction.DOWN ? 90 : 270;
-                y = (int) (orientation.top().toYRot() + 180) % 360;
+                y = (int) orientation.top().toYRot();
             }
             builder.rotationX(x);
             builder.rotationY(y);
